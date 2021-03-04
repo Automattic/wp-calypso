@@ -1299,13 +1299,6 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@choojs/findup@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@choojs/findup/-/findup-0.2.1.tgz#ac13c59ae7be6e1da64de0779a0a7f03d75615a3"
-  integrity sha512-YstAqNb0MCN8PjdLCDfRsBcGVRN41f3vgLvaI0IrIcBp4AqILRSS0DeWNGkicC+f/zRIPJLc+9RURVSepwvfBw==
-  dependencies:
-    commander "^2.15.1"
-
 "@cnakazawa/watch@^1.0.3":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@cnakazawa/watch/-/watch-1.0.4.tgz#f864ae85004d0fcab6f50be9141c4da368d1656a"
@@ -1355,6 +1348,7 @@
     "@emotion/utils" "0.11.3"
     babel-plugin-emotion "^10.0.27"
 
+<<<<<<< HEAD
 "@emotion/hash@0.7.4":
   version "0.7.4"
   resolved "https://registry.yarnpkg.com/@emotion/hash/-/hash-0.7.4.tgz#f14932887422c9056b15a8d222a9074a7dfa2831"
@@ -1367,6 +1361,13 @@
   integrity sha512-mnZMho3Sq8BfzkYYRVc8ilQTnc8U02Ytp6J1AwM6taQStZ3AhsEJBX2LzhA/LJirNCwM2VtHL3VFIZ+sNJUgUQ==
   dependencies:
     "@emotion/memoize" "0.7.4"
+=======
+<<<<<<< HEAD
+"@emotion/hash@0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@emotion/hash/-/hash-0.8.0.tgz#bbbff68978fefdbe68ccb533bc8cbe1d1afb5413"
+  integrity sha512-kBJtf7PH6aWwZ6fka3zQ0p6SBYzx4fl1LoZXE2RrnYST9Xljm7WfKJrU4g/Xr3Beg72MLrp1AWNUmuYJTL7Cow==
+>>>>>>> Reverting yarn.lock
 
 "@emotion/is-prop-valid@^0.8.6":
 =======
@@ -1382,7 +1383,25 @@
 =======
 "@emotion/is-prop-valid@^0.8.2", "@emotion/is-prop-valid@^0.8.6", "@emotion/is-prop-valid@^0.8.8":
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+<<<<<<< HEAD
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+=======
+"@emotion/hash@0.7.4":
+  version "0.7.4"
+  resolved "https://registry.yarnpkg.com/@emotion/hash/-/hash-0.7.4.tgz#f14932887422c9056b15a8d222a9074a7dfa2831"
+  integrity sha512-fxfMSBMX3tlIbKUdtGKxqB1fyrH6gVrX39Gsv3y8lRYKUqlgDt3UMqQyGnR1bQMa2B8aGnhLZokZgg8vT0Le+A==
+
+"@emotion/is-prop-valid@0.8.6":
+  version "0.8.6"
+  resolved "https://registry.yarnpkg.com/@emotion/is-prop-valid/-/is-prop-valid-0.8.6.tgz#4757646f0a58e9dec614c47c838e7147d88c263c"
+  integrity sha512-mnZMho3Sq8BfzkYYRVc8ilQTnc8U02Ytp6J1AwM6taQStZ3AhsEJBX2LzhA/LJirNCwM2VtHL3VFIZ+sNJUgUQ==
+  dependencies:
+    "@emotion/memoize" "0.7.4"
+
+"@emotion/is-prop-valid@^0.8.6":
+>>>>>>> Reverting yarn.lock
+>>>>>>> Reverting yarn.lock
   version "0.8.8"
   resolved "https://registry.yarnpkg.com/@emotion/is-prop-valid/-/is-prop-valid-0.8.8.tgz#db28b1c4368a259b60a97311d6a952d4fd01ac1a"
   integrity sha512-u5WtneEAr5IDG2Wv65yhunPSMLIpuKsbuOktRojfrEiEvRyC85LgPMZI63cr7NUqT8ZIGdSVg8ZKGxIug4lXcA==
@@ -1548,11 +1567,6 @@
   resolved "https://registry.yarnpkg.com/@istanbuljs/schema/-/schema-0.1.3.tgz#e45e384e4b8ec16bce2fd903af78450f6bf7ec98"
   integrity sha512-ZXRY4jNvVgSVQ8DL3LTcakaAtXwTVUxE81hslsyD2AtoXW/wVob10HkOJ1X/pAlcI7D+2YoZKg5do8G/w6RYgA==
 >>>>>>> reverting yarn.lock
-
-"@itsjonq/is@0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@itsjonq/is/-/is-0.0.2.tgz#eaa8e1ba341181c9de051887bbcfbda1c9692451"
-  integrity sha512-P0Ug+chfjCV1JV8MUxAGPz0BM76yDlR76AIfPwRZ6mAJW56k6b9j0s2cIcEsEAu0gNj/RJD1STw777AQyBN3CQ==
 
 "@jest/console@^24.9.0":
   version "24.9.0"
@@ -4764,6 +4778,7 @@
     "@wordpress/dom-ready" "^2.12.0"
     "@wordpress/i18n" "^3.17.0"
 
+<<<<<<< HEAD
 "@wordpress/a11y@^2.14.3":
   version "2.14.3"
   resolved "https://registry.yarnpkg.com/@wordpress/a11y/-/a11y-2.14.3.tgz#9bd07b8ac4fc0c70f333f08f6776c2fd7074b39a"
@@ -4774,7 +4789,12 @@
     "@wordpress/i18n" "^3.18.0"
 
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+<<<<<<< HEAD
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+=======
+>>>>>>> Reverting yarn.lock
+>>>>>>> Reverting yarn.lock
 "@wordpress/api-fetch@^3.21.1":
   version "3.21.1"
   resolved "https://registry.yarnpkg.com/@wordpress/api-fetch/-/api-fetch-3.21.1.tgz#89b462b0c3eda068931faca632560c57bbbf71c7"
@@ -5030,11 +5050,14 @@
     uuid "^8.3.0"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 "@wordpress/compose@1.x.x - 3.x.x", "@wordpress/compose@^3.23.1", "@wordpress/compose@^3.9.0":
   version "3.23.1"
   resolved "https://registry.yarnpkg.com/@wordpress/compose/-/compose-3.23.1.tgz#7ca838dc68c6857b7b5f935edf3a4b4f1981bdcc"
   integrity sha512-42xMoQZghhdErpBAvxcjlNKK21Lewq86KemDtAmbq9R+CYj93LGDYwceWdaqW7TwYuD9AgdI4ggr+dPhYFOCAA==
 =======
+=======
+>>>>>>> Reverting yarn.lock
 <<<<<<< HEAD
 "@wordpress/compose@1.x.x - 3.x.x", "@wordpress/compose@^3.23.1", "@wordpress/compose@^3.24.0", "@wordpress/compose@^3.24.5", "@wordpress/compose@^3.9.0":
   version "3.24.5"
@@ -5101,6 +5124,8 @@
     uuid "^8.3.0"
 
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+>>>>>>> Reverting yarn.lock
 "@wordpress/compose@1.x.x - 3.x.x", "@wordpress/compose@^3.23.1", "@wordpress/compose@^3.9.0":
   version "3.23.1"
   resolved "https://registry.yarnpkg.com/@wordpress/compose/-/compose-3.23.1.tgz#7ca838dc68c6857b7b5f935edf3a4b4f1981bdcc"
@@ -5141,6 +5166,7 @@
     use-memo-one "^1.1.1"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> reverting yarn.lock
 =======
 "@wordpress/compose@^3.24.4":
@@ -5164,6 +5190,8 @@
     use-memo-one "^1.1.1"
 
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+>>>>>>> Reverting yarn.lock
 "@wordpress/core-data@^2.25.1":
   version "2.25.1"
   resolved "https://registry.yarnpkg.com/@wordpress/core-data/-/core-data-2.25.1.tgz#f070197e190865f1281beb16a820ee4df7ae34ab"
@@ -5228,9 +5256,12 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+>>>>>>> Reverting yarn.lock
 "@wordpress/date@^3.13.0", "@wordpress/date@^3.13.1", "@wordpress/date@^3.7.0":
   version "3.13.1"
   resolved "https://registry.yarnpkg.com/@wordpress/date/-/date-3.13.1.tgz#a2a760c3dd51f2be51aaeb549a56b01d47fdc088"
@@ -5261,7 +5292,12 @@
     use-memo-one "^1.1.1"
 
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+<<<<<<< HEAD
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+=======
+>>>>>>> Reverting yarn.lock
+>>>>>>> Reverting yarn.lock
 "@wordpress/date@^3.13.0", "@wordpress/date@^3.7.0":
   version "3.13.0"
   resolved "https://registry.yarnpkg.com/@wordpress/date/-/date-3.13.0.tgz#47e601aadb1645f47b427fb6940de21767de4b42"
@@ -5277,10 +5313,13 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 "@wordpress/dependency-extraction-webpack-plugin@^2.8.0", "@wordpress/dependency-extraction-webpack-plugin@^2.9.0":
 =======
 =======
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+>>>>>>> Reverting yarn.lock
 <<<<<<< HEAD
 "@wordpress/dependency-extraction-webpack-plugin@^2.9.0":
 =======
@@ -5295,6 +5334,8 @@
     moment-timezone "^0.5.31"
 
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+>>>>>>> Reverting yarn.lock
 "@wordpress/dependency-extraction-webpack-plugin@^2.8.0", "@wordpress/dependency-extraction-webpack-plugin@^2.9.0":
 >>>>>>> reverting yarn.lock
 >>>>>>> reverting yarn.lock
@@ -5343,14 +5384,6 @@
     "@babel/runtime" "^7.12.5"
     "@wordpress/hooks" "^2.11.0"
 
-"@wordpress/deprecated@^2.11.1":
-  version "2.11.1"
-  resolved "https://registry.yarnpkg.com/@wordpress/deprecated/-/deprecated-2.11.1.tgz#c7b3f10b568cb0aa2de27caa9b92d90154a3842c"
-  integrity sha512-ri5M3TSAhonRN9G67KDwu8AXthrxay/1lLwBVbRA+6Dpj6hpC4qUBxOP4Yx5VLYOJEJW2YJx3w3G3XFYiyqfFg==
-  dependencies:
-    "@babel/runtime" "^7.12.5"
-    "@wordpress/hooks" "^2.11.1"
-
 "@wordpress/dom-ready@^2.12.0", "@wordpress/dom-ready@^2.9.0":
   version "2.12.0"
   resolved "https://registry.yarnpkg.com/@wordpress/dom-ready/-/dom-ready-2.12.0.tgz#d7bd6ab8bc8c7ed6dc85903e14922493d4f70066"
@@ -5358,6 +5391,7 @@
   dependencies:
     "@babel/runtime" "^7.12.5"
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> reverting yarn.lock
 =======
@@ -5369,6 +5403,8 @@
     "@babel/runtime" "^7.12.5"
 
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+>>>>>>> Reverting yarn.lock
 "@wordpress/dom@^2.16.0":
   version "2.16.0"
   resolved "https://registry.yarnpkg.com/@wordpress/dom/-/dom-2.16.0.tgz#8bd9dda66f65ca0592eafe8b3e71baa26083004a"
@@ -5377,14 +5413,6 @@
 =======
 >>>>>>> reverting yarn.lock
 >>>>>>> reverting yarn.lock
-  dependencies:
-    "@babel/runtime" "^7.12.5"
-    lodash "^4.17.19"
-
-"@wordpress/dom@^2.16.2":
-  version "2.16.2"
-  resolved "https://registry.yarnpkg.com/@wordpress/dom/-/dom-2.16.2.tgz#d72cd40342e439d6cb7f15148473222594cbd497"
-  integrity sha512-w95LZR98sqmxkXm5RtynXi+/tIb5vw2gSBAWlbc0OHhZkC2DC9oy6QDR0pthUUYCa3NJht4KMyhBbwN/cePq8w==
   dependencies:
     "@babel/runtime" "^7.12.5"
     lodash "^4.17.19"
@@ -5546,19 +5574,6 @@
     react "^16.13.1"
     react-dom "^16.13.1"
 
-"@wordpress/element@^2.19.1":
-  version "2.19.1"
-  resolved "https://registry.yarnpkg.com/@wordpress/element/-/element-2.19.1.tgz#1f66a4cc39d45db3bc1b928e4aaf3885bdd29e32"
-  integrity sha512-mjgFYJzSCNlQBFXvVP806pJiKh9nSIB+NeAVUVwMOntek4aCdKk+t4aTU2cRmktZI2QRySmy+lyDrY2aVkwdyg==
-  dependencies:
-    "@babel/runtime" "^7.12.5"
-    "@types/react" "^16.9.0"
-    "@types/react-dom" "^16.9.0"
-    "@wordpress/escape-html" "^1.11.1"
-    lodash "^4.17.19"
-    react "^16.13.1"
-    react-dom "^16.13.1"
-
 "@wordpress/env@^2.1.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@wordpress/env/-/env-2.1.0.tgz#182418a99a572def479ea11db530d7cecb371d97"
@@ -5607,6 +5622,7 @@
     "@babel/runtime" "^7.12.5"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> reverting yarn.lock
 =======
 "@wordpress/escape-html@^1.11.1":
@@ -5617,6 +5633,8 @@
     "@babel/runtime" "^7.12.5"
 
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+>>>>>>> Reverting yarn.lock
 "@wordpress/eslint-plugin@^7.3.0":
   version "7.3.0"
   resolved "https://registry.yarnpkg.com/@wordpress/eslint-plugin/-/eslint-plugin-7.3.0.tgz#a97ae738dcae052d4677f0e131d6cb58888b240a"
@@ -5691,6 +5709,7 @@
     "@babel/runtime" "^7.12.5"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> reverting yarn.lock
 =======
 "@wordpress/hooks@^2.11.1":
@@ -5701,6 +5720,8 @@
     "@babel/runtime" "^7.12.5"
 
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+>>>>>>> Reverting yarn.lock
 "@wordpress/html-entities@^2.10.0", "@wordpress/html-entities@^2.5.0":
   version "2.10.0"
   resolved "https://registry.yarnpkg.com/@wordpress/html-entities/-/html-entities-2.10.0.tgz#7352c2e294605d37323439d2bd7c4b0c5bf32fd1"
@@ -5740,11 +5761,14 @@
     tannin "^1.2.0"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 "@wordpress/icons@^2.9.0":
   version "2.9.0"
   resolved "https://registry.yarnpkg.com/@wordpress/icons/-/icons-2.9.0.tgz#6a4fb2e0f6a67a836f79050bfcc32489b747b4eb"
   integrity sha512-eQJQIaCLdmdo8iTjequNkB14Fzx3qLRbjzZTk26fnggG41L+uGRblIeheZDcHY/jPKDd2H4+v9c9/0LqfjuPCA==
 =======
+=======
+>>>>>>> Reverting yarn.lock
 <<<<<<< HEAD
 "@wordpress/icons@^2.9.0", "@wordpress/icons@^2.9.1":
   version "2.9.1"
@@ -5775,6 +5799,8 @@
     tannin "^1.2.0"
 
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+>>>>>>> Reverting yarn.lock
 "@wordpress/icons@^2.9.0":
   version "2.9.0"
   resolved "https://registry.yarnpkg.com/@wordpress/icons/-/icons-2.9.0.tgz#6a4fb2e0f6a67a836f79050bfcc32489b747b4eb"
@@ -5785,15 +5811,6 @@
     "@wordpress/primitives" "^1.11.0"
 >>>>>>> reverting yarn.lock
 >>>>>>> reverting yarn.lock
-
-"@wordpress/icons@^2.9.1":
-  version "2.9.1"
-  resolved "https://registry.yarnpkg.com/@wordpress/icons/-/icons-2.9.1.tgz#932389e4d602748707321684eda08cb923e2b814"
-  integrity sha512-SLP3cJpnY2jNvoCpbBiaM37N3vZmfqqJsNspkRQXuPkLqBLu576GV+WX7l1Eqq6i12/nLUfHu3blhOAQrNtxYQ==
-  dependencies:
-    "@babel/runtime" "^7.12.5"
-    "@wordpress/element" "^2.19.1"
-    "@wordpress/primitives" "^1.11.1"
 
 "@wordpress/interface@^0.11.1":
   version "0.11.1"
@@ -5848,6 +5865,7 @@
     "@babel/runtime" "^7.12.5"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 "@wordpress/jest-console@^3.10.0":
   version "3.10.0"
   resolved "https://registry.yarnpkg.com/@wordpress/jest-console/-/jest-console-3.10.0.tgz#3863008226c45f22cfcbdbc43bd2f1ab2abc34c5"
@@ -5865,7 +5883,12 @@
     "@babel/runtime" "^7.12.5"
 
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+<<<<<<< HEAD
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+=======
+>>>>>>> Reverting yarn.lock
+>>>>>>> Reverting yarn.lock
 "@wordpress/jest-console@^3.9.0":
   version "3.9.0"
   resolved "https://registry.yarnpkg.com/@wordpress/jest-console/-/jest-console-3.9.0.tgz#88a81585e7d95dd1957994b5c9d83e82d9fe8a1a"
@@ -5938,6 +5961,7 @@
     lodash "^4.17.19"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> reverting yarn.lock
 =======
 "@wordpress/keycodes@^2.18.3":
@@ -5950,6 +5974,8 @@
     lodash "^4.17.19"
 
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+>>>>>>> Reverting yarn.lock
 "@wordpress/media-utils@^1.19.1":
   version "1.19.1"
   resolved "https://registry.yarnpkg.com/@wordpress/media-utils/-/media-utils-1.19.1.tgz#ec1483e557e96827533df711f91d43611edeee5d"
@@ -6071,15 +6097,6 @@
     "@wordpress/element" "^2.19.0"
     classnames "^2.2.5"
 
-"@wordpress/primitives@^1.11.1":
-  version "1.11.1"
-  resolved "https://registry.yarnpkg.com/@wordpress/primitives/-/primitives-1.11.1.tgz#24eb34ab216a4fe1d40bc2210ecd38bb597f66ba"
-  integrity sha512-xYxcQ0JGnYjaSo1oXCapFl69jBjOPT8iuLf9RC1TulmZFnQsvqIv7Mu9VW9YPTg4gMXAavLD2EB+fqXdI1NNhQ==
-  dependencies:
-    "@babel/runtime" "^7.12.5"
-    "@wordpress/element" "^2.19.1"
-    classnames "^2.2.5"
-
 "@wordpress/priority-queue@^1.10.0":
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/@wordpress/priority-queue/-/priority-queue-1.10.0.tgz#ea64e661fdd49bb773e906d22e536a46d0e909ad"
@@ -6087,6 +6104,7 @@
   dependencies:
     "@babel/runtime" "^7.12.5"
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> reverting yarn.lock
 =======
@@ -6098,6 +6116,8 @@
     "@babel/runtime" "^7.12.5"
 
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+>>>>>>> Reverting yarn.lock
 "@wordpress/redux-routine@^3.13.0":
   version "3.13.0"
   resolved "https://registry.yarnpkg.com/@wordpress/redux-routine/-/redux-routine-3.13.0.tgz#e883e7663724aabac912b2095a24c147711c7cd8"
@@ -6114,9 +6134,12 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+>>>>>>> Reverting yarn.lock
 <<<<<<< HEAD
 "@wordpress/reusable-blocks@^1.1.10":
   version "1.1.10"
@@ -6150,7 +6173,12 @@
     rungen "^0.3.2"
 
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+<<<<<<< HEAD
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+=======
+>>>>>>> Reverting yarn.lock
+>>>>>>> Reverting yarn.lock
 "@wordpress/reusable-blocks@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@wordpress/reusable-blocks/-/reusable-blocks-1.1.1.tgz#aa306cea6afa65657875f825530c7856c983a214"
@@ -6211,6 +6239,7 @@
     rememo "^3.0.0"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> reverting yarn.lock
 =======
@@ -6234,6 +6263,8 @@
     rememo "^3.0.0"
 
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+>>>>>>> Reverting yarn.lock
 "@wordpress/scripts@^12.5.0":
   version "12.5.0"
   resolved "https://registry.yarnpkg.com/@wordpress/scripts/-/scripts-12.5.0.tgz#cf3e7735322c3a2fe09a98a8339a7cd98167616e"
@@ -6348,6 +6379,7 @@
   integrity sha512-MdZ/4k2KmdH4h71KfKUXPCm8eR4fnD1t9W70vIX5+MsdiA7uplkwcDWxybITYVOmVT0Zk4F5CJ29AcsJAvtgZg==
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 "@wordpress/wordcount@^2.14.1":
   version "2.14.1"
   resolved "https://registry.yarnpkg.com/@wordpress/wordcount/-/wordcount-2.14.1.tgz#b123367ed9e9725f701b01e677feba80e323bbfc"
@@ -6363,7 +6395,12 @@
   integrity sha512-MdZ/4k2KmdH4h71KfKUXPCm8eR4fnD1t9W70vIX5+MsdiA7uplkwcDWxybITYVOmVT0Zk4F5CJ29AcsJAvtgZg==
 
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+<<<<<<< HEAD
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+=======
+>>>>>>> Reverting yarn.lock
+>>>>>>> Reverting yarn.lock
 "@wordpress/wordcount@^2.14.0":
   version "2.14.0"
   resolved "https://registry.yarnpkg.com/@wordpress/wordcount/-/wordcount-2.14.0.tgz#434cf0007bf6c6ab5bffa216b8242b8b97659ebf"
@@ -6375,80 +6412,6 @@
   dependencies:
     "@babel/runtime" "^7.12.5"
     lodash "^4.17.19"
-
-"@wp-g2/components@^0.0.140":
-  version "0.0.140"
-  resolved "https://registry.yarnpkg.com/@wp-g2/components/-/components-0.0.140.tgz#5160c6ccbdae8685c8b93d8e7b5401b9208c9195"
-  integrity sha512-bychuhZ3wPSB457CHYcogoPQPlP/eUA9GoTo0Fv0rj7f44Gr9XlPoqVT+GQa3CmPnvSCAl1sjoe75Vkaoo/O1w==
-  dependencies:
-    "@popperjs/core" "^2.5.4"
-    "@wp-g2/context" "^0.0.140"
-    "@wp-g2/styles" "^0.0.140"
-    "@wp-g2/utils" "^0.0.140"
-    csstype "^3.0.3"
-    downshift "^6.0.15"
-    framer-motion "^2.1.0"
-    highlight-words-core "^1.2.2"
-    history "^4.9.0"
-    lodash "^4.17.19"
-    path-to-regexp "^1.7.0"
-    react-colorful "4.4.4"
-    react-textarea-autosize "^8.2.0"
-    react-use-gesture "^9.0.0"
-    reakit "1.1.0"
-
-"@wp-g2/context@^0.0.140":
-  version "0.0.140"
-  resolved "https://registry.yarnpkg.com/@wp-g2/context/-/context-0.0.140.tgz#a59b3b4761d134a65a73575ae610066141a94bb5"
-  integrity sha512-z32fxZ2tCVmYQC+wyyziyrhEvWBPFBQfUhUHF85JmTUPzQQeEPiLC3rgDAT0fUTFlJHinPJQq6871RDqFSwCUA==
-  dependencies:
-    "@wp-g2/styles" "^0.0.140"
-    "@wp-g2/utils" "^0.0.140"
-    lodash "^4.17.19"
-
-"@wp-g2/create-styles@^0.0.140":
-  version "0.0.140"
-  resolved "https://registry.yarnpkg.com/@wp-g2/create-styles/-/create-styles-0.0.140.tgz#40d061297319772284d0326ecaa853e4688fad8c"
-  integrity sha512-/60DxWjCAhsoYOqY7aiHVbkTAF+L6qZIyHyH50oNs9FTVkcRLHQFSC0kHgAam+Z9K3eImQ7hM52wfBDqae0q2Q==
-  dependencies:
-    "@emotion/core" "^10.1.1"
-    "@emotion/is-prop-valid" "^0.8.8"
-    "@wp-g2/utils" "^0.0.140"
-    create-emotion "^10.0.27"
-    emotion "^10.0.27"
-    emotion-theming "^10.0.27"
-    lodash "^4.17.19"
-    mitt "^2.1.0"
-    rtlcss "^2.6.2"
-    styled-griddie "^0.1.3"
-
-"@wp-g2/styles@^0.0.140":
-  version "0.0.140"
-  resolved "https://registry.yarnpkg.com/@wp-g2/styles/-/styles-0.0.140.tgz#638e375b691d35362219fbd688685d1f82c11f61"
-  integrity sha512-wAvtqQOqX2zYpfEdVK4l4abH/hUUgw/+8+E5PvPgrsvqFg8IehNSksnjNF5/IloLRGAH70d8ytjMuMnUK8PVYA==
-  dependencies:
-    "@wp-g2/create-styles" "^0.0.140"
-    "@wp-g2/utils" "^0.0.140"
-
-"@wp-g2/utils@^0.0.140":
-  version "0.0.140"
-  resolved "https://registry.yarnpkg.com/@wp-g2/utils/-/utils-0.0.140.tgz#daaf0f9869e8e7a1c2d9f11432ce4fbe5e7b5bc4"
-  integrity sha512-a4uYi/XQEDrOAIO3JUQ+L/oeSkgp+08pSy41xxQ1nIRHs7X+Du84X2EFQrvZfGBRuXuVlVuUIlN2e0IE8yUZKw==
-  dependencies:
-    copy-to-clipboard "^3.3.1"
-    create-emotion "^10.0.27"
-    deepmerge "^4.2.2"
-    fast-deep-equal "^3.1.3"
-    hoist-non-react-statics "^3.3.2"
-    json2mq "^0.2.0"
-    lodash "^4.17.19"
-    memize "^1.1.0"
-    react-merge-refs "^1.1.0"
-    react-resize-aware "^3.1.0"
-    reakit-warning "^0.5.5"
-    tinycolor2 "^1.4.2"
-    use-enhanced-state "^0.0.13"
-    use-isomorphic-layout-effect "^1.0.0"
 
 "@xmpp/client-core@^0.3.0":
   version "0.3.0"
@@ -7820,7 +7783,7 @@ babel-register@^6.26.0:
     mkdirp "^0.5.1"
     source-map-support "^0.4.15"
 
-babel-runtime@^6.22.0, babel-runtime@^6.26.0, babel-runtime@^6.9.2:
+babel-runtime@^6.22.0, babel-runtime@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
   integrity sha1-llxwWGaOgrVde/4E/yM3vItWR/4=
@@ -8072,11 +8035,6 @@ body-scroll-lock@^3.0.2:
 =======
 >>>>>>> reverting yarn.lock
 >>>>>>> reverting yarn.lock
-
-body-scroll-lock@^3.1.5:
-  version "3.1.5"
-  resolved "https://registry.yarnpkg.com/body-scroll-lock/-/body-scroll-lock-3.1.5.tgz#c1392d9217ed2c3e237fee1e910f6cdd80b7aaec"
-  integrity sha512-Yi1Xaml0EvNA0OYWxXiYNqY24AfWkbA6w5vxE7GWxtKfzIbZM+Qw+aSmkgsbWzbHiy/RCSkUZBplVxTA+E4jJg==
 
 body@^5.1.0:
   version "5.1.0"
@@ -9549,10 +9507,13 @@ commander@2.8.x:
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 commander@^2.11.0, commander@^2.18.0, commander@^2.19.0, commander@^2.20.0, commander@^2.9.0, commander@~2.20.3:
 =======
 =======
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+>>>>>>> Reverting yarn.lock
 <<<<<<< HEAD
 commander@^2.15.1, commander@^2.18.0, commander@^2.19.0, commander@^2.20.0, commander@^2.9.0:
 =======
@@ -9564,7 +9525,13 @@ commander@^2.11.0, commander@^2.18.0, commander@^2.19.0, commander@^2.20.0, comm
 =======
 commander@^2.11.0, commander@^2.15.1, commander@^2.18.0, commander@^2.19.0, commander@^2.20.0, commander@^2.9.0, commander@~2.20.3:
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+<<<<<<< HEAD
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+=======
+commander@^2.11.0, commander@^2.18.0, commander@^2.19.0, commander@^2.20.0, commander@^2.9.0, commander@~2.20.3:
+>>>>>>> Reverting yarn.lock
+>>>>>>> Reverting yarn.lock
   version "2.20.3"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.3.tgz#fd485e84c03eb4881c20722ba48035e8531aeb33"
   integrity sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==
@@ -9738,11 +9705,6 @@ compute-scroll-into-view@^1.0.14, compute-scroll-into-view@^1.0.9:
 =======
 >>>>>>> reverting yarn.lock
 >>>>>>> reverting yarn.lock
-
-compute-scroll-into-view@^1.0.16:
-  version "1.0.17"
-  resolved "https://registry.yarnpkg.com/compute-scroll-into-view/-/compute-scroll-into-view-1.0.17.tgz#6a88f18acd9d42e9cf4baa6bec7e0522607ab7ab"
-  integrity sha512-j4dx+Fb0URmzbwwMUrhqWM2BEWHdFGx+qZ9qqASHRPqvTYdqvWnHg0H1hIbcyLnvgnoNAVMlwkepyqM3DaIFUg==
 
 computed-style@~0.1.3:
   version "0.1.4"
@@ -10034,7 +9996,7 @@ copy-dir@^1.3.0:
   resolved "https://registry.yarnpkg.com/copy-dir/-/copy-dir-1.3.0.tgz#8c65130e11d8313a6ac2c0578e4c6c6f70b456ba"
   integrity sha512-Q4+qBFnN4bwGwvtXXzbp4P/4iNk0MaiGAzvQ8OiMtlLjkIKjmNN689uVzShSM0908q7GoFHXIPx4zi75ocoaHw==
 
-copy-to-clipboard@^3.0.8, copy-to-clipboard@^3.3.1:
+copy-to-clipboard@^3.0.8:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/copy-to-clipboard/-/copy-to-clipboard-3.3.1.tgz#115aa1a9998ffab6196f93076ad6da3b913662ae"
   integrity sha512-i13qo6kIHTTpCm8/Wup+0b1mVWETvu2kIMzKoK8FpkLkFxlt0znUAHcMzox+T8sPlqtZXq3CulEjQHsYiGFJUw==
@@ -10193,6 +10155,7 @@ create-emotion@^10.0.27:
     "@emotion/utils" "0.11.3"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 create-hash@^1.1.0, create-hash@^1.1.2, create-hash@^1.2.0:
 =======
 =======
@@ -10207,6 +10170,8 @@ create-emotion@^10.0.27:
     "@emotion/utils" "0.11.3"
 
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+>>>>>>> Reverting yarn.lock
 create-hash@^1.1.0, create-hash@^1.1.2:
 >>>>>>> reverting yarn.lock
 >>>>>>> reverting yarn.lock
@@ -10709,6 +10674,7 @@ csstype@^3.0.2, csstype@^3.0.3:
 >>>>>>> reverting yarn.lock
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> reverting yarn.lock
 =======
@@ -10718,6 +10684,8 @@ csstype@^3.0.3:
   integrity sha512-KxnUB0ZMlnUWCsx2Z8MUsr6qV6ja1w9ArPErJaJaF8a5SOWoHLIszeCTKGRGRgtLgYrs1E8CHkNSP1VZTTPc9g==
 
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+>>>>>>> Reverting yarn.lock
 ctype@0.5.3:
   version "0.5.3"
   resolved "https://registry.yarnpkg.com/ctype/-/ctype-0.5.3.tgz#82c18c2461f74114ef16c135224ad0b9144ca12f"
@@ -11649,16 +11617,6 @@ downshift@^5.4.0:
 >>>>>>> reverting yarn.lock
     react-is "^16.13.1"
 
-downshift@^6.0.15:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/downshift/-/downshift-6.1.0.tgz#f008063d9b63935910d9db12ead07979ab51ce66"
-  integrity sha512-MnEJERij+1pTVAsOPsH3q9MJGNIZuu2sT90uxOCEOZYH6sEzkVGtUcTBVDRQkE8y96zpB7uEbRn24aE9VpHnZg==
-  dependencies:
-    "@babel/runtime" "^7.12.5"
-    compute-scroll-into-view "^1.0.16"
-    prop-types "^15.7.2"
-    react-is "^17.0.1"
-
 downshift@^6.0.6:
   version "6.0.6"
   resolved "https://registry.yarnpkg.com/downshift/-/downshift-6.0.6.tgz#82aee8e2e260d7ad99df8a0969bd002dd523abe8"
@@ -11855,6 +11813,7 @@ emotion-theming@^10.0.19, emotion-theming@^10.0.27:
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 enabled@1.0.x:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/enabled/-/enabled-1.0.2.tgz#965f6513d2c2d1c5f4652b64a2e3396467fc2f93"
@@ -11864,6 +11823,8 @@ enabled@1.0.x:
 =======
 <<<<<<< HEAD
 =======
+=======
+>>>>>>> Reverting yarn.lock
 <<<<<<< HEAD
 =======
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
@@ -11884,6 +11845,8 @@ enabled@2.0.x:
 =======
 =======
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+>>>>>>> Reverting yarn.lock
 enabled@1.0.x:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/enabled/-/enabled-1.0.2.tgz#965f6513d2c2d1c5f4652b64a2e3396467fc2f93"
@@ -13155,11 +13118,6 @@ fast-deep-equal@^3.1.1:
 >>>>>>> reverting yarn.lock
 >>>>>>> reverting yarn.lock
 
-fast-deep-equal@^3.1.3:
-  version "3.1.3"
-  resolved "https://registry.yarnpkg.com/fast-deep-equal/-/fast-deep-equal-3.1.3.tgz#3a7d56b559d6cbc3eb512325244e619a65c6c525"
-  integrity sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==
-
 fast-diff@^1.1.2:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/fast-diff/-/fast-diff-1.2.0.tgz#73ee11982d86caaf7959828d519cfe927fac5f03"
@@ -13766,26 +13724,6 @@ fragment-cache@^0.2.1:
   integrity sha1-QpD60n8T6Jvn8zeZxrxaCr//DRk=
   dependencies:
     map-cache "^0.2.2"
-
-framer-motion@^2.1.0:
-  version "2.9.5"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-2.9.5.tgz#bbb185325d531c57f494cf3f6cf7719fc2c225c7"
-  integrity sha512-epSX4Co1YbDv0mjfHouuY0q361TpHE7WQzCp/xMTilxy4kXd+Z23uJzPVorfzbm1a/9q1Yu8T5bndaw65NI4Tg==
-  dependencies:
-    framesync "^4.1.0"
-    hey-listen "^1.0.8"
-    popmotion "9.0.0-rc.20"
-    style-value-types "^3.1.9"
-    tslib "^1.10.0"
-  optionalDependencies:
-    "@emotion/is-prop-valid" "^0.8.2"
-
-framesync@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/framesync/-/framesync-4.1.0.tgz#69a8db3ca432dc70d6a76ba882684a1497ef068a"
-  integrity sha512-MmgZ4wCoeVxNbx2xp5hN/zPDCbLSKiDt4BbbslK7j/pM2lg5S0vhTNv1v8BCVb99JPIo6hXBFdwzU7Q4qcAaoQ==
-  dependencies:
-    hey-listen "^1.0.5"
 
 fresh@0.5.2:
   version "0.5.2"
@@ -14981,6 +14919,7 @@ hex-color-regex@^1.1.0:
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -15009,7 +14948,12 @@ highlight.js@^10.1.1, highlight.js@~10.6.0:
 =======
 =======
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+<<<<<<< HEAD
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+=======
+>>>>>>> Reverting yarn.lock
+>>>>>>> Reverting yarn.lock
 highlight.js@^10.1.1, highlight.js@~10.4.0:
   version "10.4.1"
   resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-10.4.1.tgz#d48fbcf4a9971c4361b3f95f302747afe19dbad0"
@@ -15062,7 +15006,7 @@ hoist-non-react-statics@^2.1.1:
   resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-2.5.5.tgz#c5903cf409c0dfd908f388e619d86b9c1174cb47"
   integrity sha512-rqcy4pJo55FTTLWt+bU8ukscqHeE/e9KWvsOW2b/a3afxQZhwkQdT1rPPCJ0rYXdj4vNcasY8zHTH+jF/qStxw==
 
-hoist-non-react-statics@^3.1.0, hoist-non-react-statics@^3.2.1, hoist-non-react-statics@^3.3.0, hoist-non-react-statics@^3.3.2:
+hoist-non-react-statics@^3.1.0, hoist-non-react-statics@^3.2.1, hoist-non-react-statics@^3.3.0:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-3.3.2.tgz#ece0acaf71d62c2969c2ec59feff42a4b1a85b45"
   integrity sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==
@@ -17864,13 +17808,6 @@ json-stringify-safe@^5.0.1, json-stringify-safe@~5.0.0, json-stringify-safe@~5.0
   resolved "https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
   integrity sha1-Epai1Y/UXxmg9s4B1lcB4sc1tus=
 
-json2mq@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/json2mq/-/json2mq-0.2.0.tgz#b637bd3ba9eabe122c83e9720483aeb10d2c904a"
-  integrity sha1-tje9O6nqvhIsg+lyBIOusQ0skEo=
-  dependencies:
-    string-convert "^0.2.0"
-
 json2php@^0.0.4:
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/json2php/-/json2php-0.0.4.tgz#6bd85a1dda6a5dd7e91022bb24403cc1b7c2ee34"
@@ -19609,11 +19546,6 @@ mississippi@^3.0.0:
     pumpify "^1.3.3"
     stream-each "^1.1.0"
     through2 "^2.0.0"
-
-mitt@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/mitt/-/mitt-2.1.0.tgz#f740577c23176c6205b121b2973514eade1b2230"
-  integrity sha512-ILj2TpLiysu2wkBbWjAmww7TkZb65aiQO+DkVdUTBpBXq+MHYiETENkKFMtsJZX1Lf4pe4QOrTSjIfUwN5lRdg==
 
 mixedindentlint@^1.2.0:
   version "1.2.0"
@@ -21791,16 +21723,6 @@ polished@^3.4.4:
     "@babel/runtime" "^7.12.5"
 >>>>>>> reverting yarn.lock
 
-popmotion@9.0.0-rc.20:
-  version "9.0.0-rc.20"
-  resolved "https://registry.yarnpkg.com/popmotion/-/popmotion-9.0.0-rc.20.tgz#f3550042ae31957b5416793ae8723200951ad39d"
-  integrity sha512-f98sny03WuA+c8ckBjNNXotJD4G2utG/I3Q23NU69OEafrXtxxSukAaJBxzbtxwDvz3vtZK69pu9ojdkMoBNTg==
-  dependencies:
-    framesync "^4.1.0"
-    hey-listen "^1.0.8"
-    style-value-types "^3.1.9"
-    tslib "^1.10.0"
-
 portfinder@^1.0.17, portfinder@^1.0.28:
   version "1.0.28"
   resolved "https://registry.yarnpkg.com/portfinder/-/portfinder-1.0.28.tgz#67c4622852bd5374dd1dd900f779f53462fac778"
@@ -22573,7 +22495,7 @@ postcss@^5.0.21:
     source-map "^0.5.6"
     supports-color "^3.2.3"
 
-postcss@^6.0.14, postcss@^6.0.23:
+postcss@^6.0.14:
   version "6.0.23"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-6.0.23.tgz#61c82cc328ac60e677645f979054eb98bc0e3324"
   integrity sha512-soOk1h6J3VMTZtVeVpv15/Hpdl2cBLX3CAw4TAbkpTJiNPk9YP/zWcD1ND+xEtvyuuvKzbxliTOIyvkSeSJ6ag==
@@ -23279,11 +23201,6 @@ react-color@^2.17.0:
     reactcss "^1.2.0"
     tinycolor2 "^1.4.1"
 
-react-colorful@4.4.4:
-  version "4.4.4"
-  resolved "https://registry.yarnpkg.com/react-colorful/-/react-colorful-4.4.4.tgz#38e7c5b7075bbf63d3cce22d8c61a439a58b7561"
-  integrity sha512-01V2/6rr6sa1vaZntWZJXZxnU7ew02NG2rqq0eoVp4d3gFU5Ug9lDzNMbr+8ns0byXsJbBR8LbwQTlAjz6x7Kg==
-
 react-dates@^17.1.1:
   version "17.2.0"
   resolved "https://registry.yarnpkg.com/react-dates/-/react-dates-17.2.0.tgz#d8cfe29ceecb3fbe37abbaa385683504cc53cdf6"
@@ -23480,7 +23397,7 @@ react-live@^1.12.0:
     prop-types "^15.5.8"
     unescape "^0.2.0"
 
-react-merge-refs@^1.0.0, react-merge-refs@^1.1.0:
+react-merge-refs@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/react-merge-refs/-/react-merge-refs-1.1.0.tgz#73d88b892c6c68cbb7a66e0800faa374f4c38b06"
   integrity sha512-alTKsjEL0dKH/ru1Iyn7vliS2QRcBp9zZPGoWxUOvRGWPUYgjo+V01is7p04It6KhgrzhJGnIj9GgX8W4bZoCQ==
@@ -23587,11 +23504,6 @@ react-resize-aware@^3.0.1:
 >>>>>>> reverting yarn.lock
 >>>>>>> reverting yarn.lock
 
-react-resize-aware@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/react-resize-aware/-/react-resize-aware-3.1.0.tgz#fa1da751d1d72f90c3b79969d05c2c577dfabd92"
-  integrity sha512-bIhHlxVTX7xKUz14ksXMEHjzCZPTpQZKZISY3nbTD273pDKPABGFNFBP6Tr42KECxzC5YQiKpMchjTVJCqaxpA==
-
 react-router-dom@^5.1.2:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-5.1.2.tgz#06701b834352f44d37fbb6311f870f84c76b9c18"
@@ -23685,6 +23597,7 @@ react-textarea-autosize@^8.1.1, react-textarea-autosize@^8.2.0:
     use-latest "^1.0.0"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> reverting yarn.lock
 =======
@@ -23698,6 +23611,8 @@ react-textarea-autosize@^8.2.0:
     use-latest "^1.0.0"
 
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+>>>>>>> Reverting yarn.lock
 react-transition-group@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.3.0.tgz#fea832e386cf8796c58b61874a3319704f5ce683"
@@ -23725,11 +23640,6 @@ react-use-gesture@^7.0.15:
 =======
 >>>>>>> reverting yarn.lock
 >>>>>>> reverting yarn.lock
-
-react-use-gesture@^9.0.0:
-  version "9.1.2"
-  resolved "https://registry.yarnpkg.com/react-use-gesture/-/react-use-gesture-9.1.2.tgz#bfb622f75f02715af95803796a9c6bca7852a5f6"
-  integrity sha512-C+h7l/S3TooZ11MF65Iqmnh59i+qWnnbwOlAxHW47SbSmEsFUyxQnmRh/Qq9DOKZLsxC4uZjWpoinMP5nSG9Xw==
 
 react-with-direction@^1.3.0:
   version "1.3.1"
@@ -24043,6 +23953,7 @@ reakit-system@^0.15.1:
     reakit-utils "^0.15.1"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 reakit-utils@^0.13.0, reakit-utils@^0.13.1:
   version "0.13.1"
   resolved "https://registry.yarnpkg.com/reakit-utils/-/reakit-utils-0.13.1.tgz#060b8b2a55eea1170c6d8ff37cd98c10c63ee55c"
@@ -24057,6 +23968,8 @@ reakit-system@^0.15.1:
     reakit-utils "^0.15.1"
 
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+>>>>>>> Reverting yarn.lock
 reakit-utils@^0.13.0:
   version "0.13.0"
   resolved "https://registry.yarnpkg.com/reakit-utils/-/reakit-utils-0.13.0.tgz#e752d139254027cbbdae46b7cb643f3817eb7ddc"
@@ -24085,16 +23998,6 @@ reakit-warning@^0.5.3:
 =======
 >>>>>>> reverting yarn.lock
 
-reakit-utils@^0.14.4:
-  version "0.14.4"
-  resolved "https://registry.yarnpkg.com/reakit-utils/-/reakit-utils-0.14.4.tgz#1ecf035faf58960ba48eac2963f70269596effcf"
-  integrity sha512-jDEf/NmZVJ6fs10G16ifD+RFhQikSLN7VfjRHu0CPoUj4g6lFXd5PPcRXCY81qiqc9FVHjr2d2fmsw1hs6xUxA==
-
-reakit-utils@^0.15.1:
-  version "0.15.1"
-  resolved "https://registry.yarnpkg.com/reakit-utils/-/reakit-utils-0.15.1.tgz#797f0a43f6a1dbc22d161224d5d2272e287dbfe3"
-  integrity sha512-6cZgKGvOkAMQgkwU9jdYbHfkuIN1Pr+vwcB19plLvcTfVN0Or10JhIuj9X+JaPZyI7ydqTDFaKNdUcDP69o/+Q==
-
 reakit-warning@^0.4.0:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/reakit-warning/-/reakit-warning-0.4.1.tgz#a715302812c5fc7f89f35772d650423f09029b00"
@@ -24102,20 +24005,6 @@ reakit-warning@^0.4.0:
   dependencies:
     reakit-utils "^0.13.1"
 >>>>>>> reverting yarn.lock
-
-reakit-warning@^0.5.5:
-  version "0.5.5"
-  resolved "https://registry.yarnpkg.com/reakit-warning/-/reakit-warning-0.5.5.tgz#551afcfd9b0c3dc92eab21fcca001fc2ebbc8465"
-  integrity sha512-OuP1r7rlSSJZsoLuc0CPA2ACPKnWO8HDbFktiiidbT67UjuX6udYV1AUsIgMJ8ado9K5gZGjPj7IB/GDYo9Yjg==
-  dependencies:
-    reakit-utils "^0.14.4"
-
-reakit-warning@^0.6.1:
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/reakit-warning/-/reakit-warning-0.6.1.tgz#dba33bb8866aebe30e67ac433ead707d16d38a36"
-  integrity sha512-poFUV0EyxB+CcV9uTNBAFmcgsnR2DzAbOTkld4Ul+QOKSeEHZB3b3+MoZQgcYHmbvG19Na1uWaM7ES+/Eyr8tQ==
-  dependencies:
-    reakit-utils "^0.15.1"
 
 reakit@1.1.0:
   version "1.1.0"
@@ -24162,17 +24051,6 @@ reakit@^1.1.0, reakit@^1.2.3:
 =======
 >>>>>>> reverting yarn.lock
 >>>>>>> reverting yarn.lock
-
-reakit@^1.3.5:
-  version "1.3.6"
-  resolved "https://registry.yarnpkg.com/reakit/-/reakit-1.3.6.tgz#0a58a1b5ba839b24cf722a5816efe72dc2240e7f"
-  integrity sha512-/I7XNPEUuRjCVwDkriy7HKuSKTtCmojZrrClGIg1gexB7Ij5vjpEbyUZzwHMmvIEoMqUZDC0Q6cDWfLpqaY9vA==
-  dependencies:
-    "@popperjs/core" "^2.5.4"
-    body-scroll-lock "^3.1.5"
-    reakit-system "^0.15.1"
-    reakit-utils "^0.15.1"
-    reakit-warning "^0.6.1"
 
 realistic-structured-clone@^2.0.1:
   version "2.0.2"
@@ -25554,17 +25432,6 @@ rtlcss@^2.4.0:
 >>>>>>> reverting yarn.lock
     strip-json-comments "^2.0.0"
 
-rtlcss@^2.6.2:
-  version "2.6.2"
-  resolved "https://registry.yarnpkg.com/rtlcss/-/rtlcss-2.6.2.tgz#55b572b52c70015ba6e03d497e5c5cb8137104b4"
-  integrity sha512-06LFAr+GAPo+BvaynsXRfoYTJvSaWRyOhURCQ7aeI1MKph9meM222F+Zkt3bDamyHHJuGi3VPtiRkpyswmQbGA==
-  dependencies:
-    "@choojs/findup" "^0.2.1"
-    chalk "^2.4.2"
-    mkdirp "^0.5.1"
-    postcss "^6.0.23"
-    strip-json-comments "^2.0.0"
-
 run-async@^2.2.0, run-async@^2.4.0:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/run-async/-/run-async-2.4.1.tgz#8440eccf99ea3e70bd409d49aab88e10c189a455"
@@ -26809,9 +26676,12 @@ strict-uri-encode@^1.0.0:
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+>>>>>>> Reverting yarn.lock
 <<<<<<< HEAD
 strict-uri-encode@^2.0.0:
   version "2.0.0"
@@ -26833,7 +26703,12 @@ string-convert@^0.2.0:
 =======
 =======
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+<<<<<<< HEAD
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+=======
+>>>>>>> Reverting yarn.lock
+>>>>>>> Reverting yarn.lock
 string-length@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/string-length/-/string-length-3.1.0.tgz#107ef8c23456e187a8abd4a61162ff4ac6e25837"
@@ -27099,19 +26974,6 @@ style-search@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/style-search/-/style-search-0.1.0.tgz#7958c793e47e32e07d2b5cafe5c0bf8e12e77902"
   integrity sha1-eVjHk+R+MuB9K1yv5cC/jhLneQI=
-
-style-value-types@^3.1.9:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/style-value-types/-/style-value-types-3.2.0.tgz#eb89cab1340823fa7876f3e289d29d99c92111bb"
-  integrity sha512-ih0mGsrYYmVvdDi++/66O6BaQPRPRMQHoZevNNdMMcPlP/cH28Rnfsqf1UEba/Bwfuw9T8BmIMwbGdzsPwQKrQ==
-  dependencies:
-    hey-listen "^1.0.8"
-    tslib "^1.10.0"
-
-styled-griddie@^0.1.3:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/styled-griddie/-/styled-griddie-0.1.3.tgz#57bda4ab05f082c2916f049ae0ee03b9c49b9614"
-  integrity sha512-RjsiiADJrRpdPTF8NR26nlZutnvkrX78tiM5/za/E+ftVdpjD8ZBb2iOzrIzfix80uDcHYQbg3iIR0lOGaYmEQ==
 
 stylehacks@^4.0.0:
   version "4.0.3"
@@ -27856,10 +27718,13 @@ tiny-lr@^1.1.1:
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 tiny-warning@^1.0.0, tiny-warning@^1.0.2:
 =======
 =======
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+>>>>>>> Reverting yarn.lock
 <<<<<<< HEAD
 tiny-warning@^1.0.0, tiny-warning@^1.0.3:
 =======
@@ -27871,7 +27736,13 @@ tiny-warning@^1.0.0, tiny-warning@^1.0.2:
 =======
 tiny-warning@^1.0.0, tiny-warning@^1.0.2, tiny-warning@^1.0.3:
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+<<<<<<< HEAD
 >>>>>>> Reverted yarn.lock and then ran yarn && yarn start
+=======
+=======
+tiny-warning@^1.0.0, tiny-warning@^1.0.2:
+>>>>>>> Reverting yarn.lock
+>>>>>>> Reverting yarn.lock
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/tiny-warning/-/tiny-warning-1.0.3.tgz#94a30db453df4c643d0fd566060d60a875d84754"
   integrity sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA==
@@ -27893,11 +27764,6 @@ tinycolor2@^1.4.1:
 =======
 >>>>>>> reverting yarn.lock
 >>>>>>> reverting yarn.lock
-
-tinycolor2@^1.4.2:
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/tinycolor2/-/tinycolor2-1.4.2.tgz#3f6a4d1071ad07676d7fa472e1fac40a719d8803"
-  integrity sha512-vJhccZPs965sV/L2sU4oRQVAos0pQXwsvTLkWYdqJ+a8Q5kPFzJTuOFwy7UniPli44NKQGAglksjvOcpo95aZA==
 
 tinymce@^4.9.6:
   version "4.9.6"
@@ -28950,14 +28816,6 @@ use-debounce@^3.1.0:
   integrity sha512-nxy+opOxDccWfhMl36J5BSCTpvcj89iaQk2OZWLAtBJQj7ISCtx1gh+rFbdjGfMl6vtCZf6gke/kYvrkVfHMoA==
 >>>>>>> reverting yarn.lock
 
-use-enhanced-state@^0.0.13:
-  version "0.0.13"
-  resolved "https://registry.yarnpkg.com/use-enhanced-state/-/use-enhanced-state-0.0.13.tgz#cf65297a6122547cd639515264454da9dc149314"
-  integrity sha512-RCtUQdhfUXu/0GAQqLnKPetUt3BheYFpOTogppHe9x1XGwluiu6DQLKVNnc3yMfj0HM3IOVBgw5nVJJuZS5TWQ==
-  dependencies:
-    "@itsjonq/is" "0.0.2"
-    tiny-warning "^1.0.3"
-
 use-isomorphic-layout-effect@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/use-isomorphic-layout-effect/-/use-isomorphic-layout-effect-1.1.0.tgz#4db2111e0d53ca694187ea5fd5cb2ba610286fe0"
@@ -29869,7 +29727,7 @@ wpcom-oauth-cors@^1.0.2-beta:
   dependencies:
     debug "3.1.0"
 
-wpcom-xhr-request@^1.1.2, wpcom-xhr-request@^1.2.0:
+wpcom-xhr-request@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/wpcom-xhr-request/-/wpcom-xhr-request-1.2.0.tgz#522cbe099ce64be6f7b4c1d14ca7a211c39bca48"
   integrity sha512-ANCYje2CdUJoERDG4mX638ZkAC0gLdVw0Z9er9cj18rmCxSB1mpcvmiENfHLFMPbfs8O5Zy2xwnDfXq1WDHsuw==
@@ -29878,16 +29736,6 @@ wpcom-xhr-request@^1.1.2, wpcom-xhr-request@^1.2.0:
     debug "^3.1.0"
     superagent "^3.8.3"
     wp-error "^1.3.0"
-
-wpcom@^5.4.2:
-  version "5.4.2"
-  resolved "https://registry.yarnpkg.com/wpcom/-/wpcom-5.4.2.tgz#5f4e7a72f5197c15832100ffd7e4d9dbccb017dd"
-  integrity sha512-fVrJU9U979m9T0B0IEeAfpIQRM397J5NcsWLPcJov87jATubxVt6akZATczAh9rN40H1h2HCj/YtAW6L1zh8QA==
-  dependencies:
-    babel-runtime "^6.9.2"
-    debug "^3.1.0"
-    qs "^6.5.2"
-    wpcom-xhr-request "^1.1.2"
 
 wrap-ansi@^2.0.0:
   version "2.1.0"
