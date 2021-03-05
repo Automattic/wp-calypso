@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
@@ -14,16 +14,9 @@ import useUsers from 'calypso/data/users/use-users';
 
 function TeamList( props ) {
 	const dispatch = useDispatch();
-	const { site, search, translate } = props;
-	const fetchOptions = {
-		siteId: site?.ID,
-		order: 'ASC',
-		order_by: 'display_name',
-	};
+	const translate = useTranslate();
 
-	if ( search ) {
-		fetchOptions.search = `*${ search }*`;
-		fetchOptions.search_columns = [ 'display_name', 'user_login' ];
+	const { site, search } = props;
 	}
 
 	const {
@@ -65,4 +58,4 @@ function TeamList( props ) {
 	);
 }
 
-export default localize( TeamList );
+export default TeamList;
