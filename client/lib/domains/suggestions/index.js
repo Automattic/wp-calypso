@@ -15,7 +15,7 @@ import { getDomainSuggestionsVendor } from '@automattic/domain-picker';
  * @returns {string} Vendor string to pass as part of the domain suggestions query.
  */
 export const getSuggestionsVendor = ( options = {} ) => {
-	// If the isPremium property is not explicitly given
+	// If the isPremium property is explicitly given
 	// and premium domain purchases is enabled, set isPremium to true.
 	if ( options.isPremium !== undefined && config.isEnabled( 'domains/premium-domain-purchases' ) ) {
 		options.isPremium = true;
