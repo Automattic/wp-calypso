@@ -201,7 +201,7 @@ $sidebar-width: 324px;
 		display: block;
 	}
 
-	.components-button {
+	.components-button.is-tertiary {
 		display: block;
 		width: auto;
 		height: auto;
@@ -214,7 +214,7 @@ $sidebar-width: 324px;
 
 		&.is-tertiary:not( :disabled ):hover {
 			box-shadow: none;
-			color: $template-selector-link-hover-text;
+			color: $template-selector-link-hover-text !important;
 		}
 
 		&.is-tertiary:not( :disabled ):active {
