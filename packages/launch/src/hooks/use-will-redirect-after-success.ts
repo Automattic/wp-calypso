@@ -8,8 +8,7 @@ import { useLocale } from '@automattic/i18n-utils';
 /**
  * Internal dependencies
  */
-import { LAUNCH_STORE } from '../stores';
-import { PLANS_STORE } from '../stores';
+import { LAUNCH_STORE, PLANS_STORE } from '../stores';
 import LaunchContext from '../context';
 
 /**
