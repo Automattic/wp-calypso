@@ -15,6 +15,7 @@
 
 	@include breakpoint-deprecated( '>660px' ) {
 		flex-direction: row;
+		margin-bottom: calc( 32px * 3 );
 	}
 }
 
