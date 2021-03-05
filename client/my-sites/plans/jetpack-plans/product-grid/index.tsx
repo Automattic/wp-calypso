@@ -217,7 +217,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 						</li>
 					) ) }
 				</ul>
-				<div className="product-grid__free">{ bottomCard }</div>
+				{ bottomCard && <div className="product-grid__free">{ bottomCard }</div> }
 			</section>
 			<StoreFooter />
 		</Experiment>
