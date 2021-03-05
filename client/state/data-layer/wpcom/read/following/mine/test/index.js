@@ -2,7 +2,6 @@
  * External dependencies
  */
 import freeze from 'deep-freeze';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,6 +22,7 @@ import { READER_FOLLOWS_SYNC_START } from 'calypso/state/reader/action-types';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { receiveFollows, follow, syncComplete } from 'calypso/state/reader/follows/actions';
 
+const noop = () => {};
 const successfulApiResponse = freeze( {
 	number: 2,
 	page: 1,

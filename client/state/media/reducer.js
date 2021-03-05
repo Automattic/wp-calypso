@@ -144,58 +144,56 @@ export const errors = ( state = {}, action ) => {
 	return state;
 };
 
-export const queries = ( () => {
-	function applyToManager( state, siteId, method, createDefault, ...args ) {
-		if ( ! state[ siteId ] ) {
-			if ( ! createDefault ) {
-				return state;
-			}
-
-			return {
-				...state,
-				[ siteId ]: new MediaQueryManager()[ method ]( ...args ),
-			};
-		}
-
-		const nextManager = state[ siteId ][ method ]( ...args );
-
-		if ( nextManager === state[ siteId ] ) {
+function applyToManager( state, siteId, method, createDefault, ...args ) {
+	if ( ! state[ siteId ] ) {
+		if ( ! createDefault ) {
 			return state;
 		}
 
 		return {
 			...state,
-			[ siteId ]: nextManager,
+			[ siteId ]: new MediaQueryManager()[ method ]( ...args ),
 		};
 	}
 
-	return ( state = {}, action ) => {
-		switch ( action.type ) {
-			case MEDIA_RECEIVE: {
-				const { siteId, media, found, query } = action;
-				return applyToManager( state, siteId, 'receive', true, media, { found, query } );
-			}
-			case MEDIA_DELETE: {
-				const { siteId, mediaIds } = action;
-				return applyToManager( state, siteId, 'removeItems', true, mediaIds );
-			}
-			case MEDIA_ITEM_EDIT: {
-				const { siteId, mediaItem } = action;
-				return applyToManager( state, siteId, 'receive', true, mediaItem, { patch: true } );
-			}
-			case MEDIA_SOURCE_CHANGE:
-			case MEDIA_CLEAR_SITE: {
-				if ( ! action.siteId ) {
-					return state;
-				}
+	const nextManager = state[ siteId ][ method ]( ...args );
 
-				return omit( state, action.siteId );
-			}
-		}
-
+	if ( nextManager === state[ siteId ] ) {
 		return state;
+	}
+
+	return {
+		...state,
+		[ siteId ]: nextManager,
 	};
-} )();
+}
+
+export const queries = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case MEDIA_RECEIVE: {
+			const { siteId, media, found, query } = action;
+			return applyToManager( state, siteId, 'receive', true, media, { found, query } );
+		}
+		case MEDIA_DELETE: {
+			const { siteId, mediaIds } = action;
+			return applyToManager( state, siteId, 'removeItems', true, mediaIds );
+		}
+		case MEDIA_ITEM_EDIT: {
+			const { siteId, mediaItem } = action;
+			return applyToManager( state, siteId, 'receive', true, mediaItem, { patch: true } );
+		}
+		case MEDIA_SOURCE_CHANGE:
+		case MEDIA_CLEAR_SITE: {
+			if ( ! action.siteId ) {
+				return state;
+			}
+
+			return omit( state, action.siteId );
+		}
+	}
+
+	return state;
+};
 
 /**
  * Returns the media library selected items state after an action has been

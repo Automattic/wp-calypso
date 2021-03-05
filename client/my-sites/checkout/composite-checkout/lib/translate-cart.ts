@@ -435,17 +435,6 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.
 		if ( isRenewalItem ) {
 			return translate( 'Plan Renewal' );
 		}
-
-		switch ( serverCartItem.months_per_bill_period ) {
-			case 1:
-				return translate( 'Monthly subscription' );
-			case 12:
-				return translate( 'One year subscription' );
-			case 24:
-				return translate( 'Two year subscription' );
-			default:
-				return translate( 'Plan Subscription' );
-		}
 	}
 
 	if ( isPlan( serverCartItem ) ) {

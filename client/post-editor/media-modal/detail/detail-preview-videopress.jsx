@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { get, invoke, noop } from 'lodash';
+import { get, invoke } from 'lodash';
 import classNames from 'classnames';
 import debug from 'debug';
 import wpcomProxyRequest from 'wpcom-proxy-request';
@@ -18,8 +18,8 @@ import { loadScript, removeScriptCallback } from '@automattic/load-script';
  * Module variables
  */
 const log = debug( 'calypso:post-editor:videopress' );
-const videoPressUrl =
-	'https://wordpress.com/wp-content/plugins/video/assets/js/videojs/videopress.js';
+const videoPressUrl = 'https://wordpress.com/wp-content/plugins/video/assets/js/videojs/videopress.js';
+const noop = () => {};
 
 class EditorMediaModalDetailPreviewVideoPress extends Component {
 	static propTypes = {

@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { identity, includes, noop, union } from 'lodash';
+import { identity, includes, union } from 'lodash';
 import PropTypes from 'prop-types';
 
 /**
@@ -22,6 +22,8 @@ import DataSource from './data-source';
 // the site icon editor, where we want to disable them because the editor
 // can't handle the large images.
 const largeImageSources = [ 'pexels', 'google_photos' ];
+
+const noop = () => {};
 
 export class MediaLibraryFilterBar extends Component {
 	static propTypes = {

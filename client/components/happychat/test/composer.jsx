@@ -7,12 +7,13 @@
  */
 import React from 'react';
 import { mount } from 'enzyme';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { Composer } from '../composer';
+
+const noop = () => {};
 
 describe( '<Composer />', () => {
 	describe( 'onChange event ', () => {

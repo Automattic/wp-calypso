@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { isArray } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import {
@@ -31,7 +26,7 @@ export const customersFailure = ( siteId, searchTerm, error = false ) => {
 
 export const customersReceive = ( siteId, searchTerm, customers ) => {
 	// This passed through the API layer successfully, but failed at the remote site.
-	if ( ! isArray( customers ) ) {
+	if ( ! Array.isArray( customers ) ) {
 		return customersFailure( siteId, searchTerm, customers );
 	}
 	return {

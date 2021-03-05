@@ -14,7 +14,6 @@ import {
 	isEmpty,
 	isEqual,
 	mapKeys,
-	noop,
 	pick,
 	pickBy,
 	reject,
@@ -105,6 +104,7 @@ const debug = debugFactory( 'calypso:domains:register-domain-step' );
 // TODO: Enable A/B test handling for M2.1 release
 const isPaginationEnabled = config.isEnabled( 'domains/kracken-ui/pagination' );
 
+const noop = () => {};
 const domains = wpcom.domains();
 
 // max amount of domain suggestions we should fetch/display
@@ -461,8 +461,9 @@ class RegisterDomainStep extends React.Component {
 							onSearchChange={ this.onSearchChange }
 							placeholder={ this.getPlaceholderText() }
 							ref={ this.bindSearchCardReference }
-						/>
-						{ this.renderSearchFilters() }
+						>
+							{ this.renderSearchFilters() }
+						</Search>
 					</CompactCard>
 				</StickyPanel>
 				{ availabilityMessage && (

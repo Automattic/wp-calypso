@@ -2,7 +2,7 @@
  * External dependencies
  */
 import deterministicStringify from 'fast-json-stable-stringify';
-import { get, identity, merge, noop } from 'lodash';
+import { get, identity, merge } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -13,6 +13,8 @@ import warn from '@wordpress/warning';
  * Internal dependencies
  */
 import { keyedReducer } from 'calypso/state/utils';
+
+const noop = () => {};
 
 /**
  * Returns response data from an HTTP request success action if available

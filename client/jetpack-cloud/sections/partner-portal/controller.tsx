@@ -10,7 +10,11 @@ import type PageJS from 'page';
  */
 import { addQueryArgs } from 'calypso/lib/route';
 import { getActivePartnerKey } from 'calypso/state/partner-portal/partner/selectors';
-import { valueToEnum } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import {
+	publicToInternalLicenseFilter,
+	publicToInternalLicenseSortField,
+	valueToEnum,
+} from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import Header from './header';
 import JetpackComFooter from 'calypso/jetpack-cloud/sections/pricing/jpcom-footer';
 import PartnerPortalSidebar from 'calypso/jetpack-cloud/sections/partner-portal/sidebar';
@@ -32,17 +36,9 @@ export function partnerKeyContext( context: PageJS.Context, next: () => void ): 
 
 export function partnerPortalContext( context: PageJS.Context, next: () => void ): void {
 	const { s: search, sort_field, sort_direction, page } = context.query;
-	const filter = valueToEnum< LicenseFilter >(
-		LicenseFilter,
-		context.params.state,
-		LicenseFilter.NotRevoked
-	);
+	const filter = publicToInternalLicenseFilter( context.params.filter, LicenseFilter.NotRevoked );
 	const currentPage = parseInt( page ) || 1;
-	const sortField = valueToEnum< LicenseSortField >(
-		LicenseSortField,
-		sort_field,
-		LicenseSortField.IssuedAt
-	);
+	const sortField = publicToInternalLicenseSortField( sort_field, LicenseSortField.IssuedAt );
 	const sortDirection = valueToEnum< LicenseSortDirection >(
 		LicenseSortDirection,
 		sort_direction,

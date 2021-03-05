@@ -3,7 +3,6 @@
  */
 import debug from 'debug';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 import React from 'react';
 
 /**
@@ -18,7 +17,7 @@ import { setSection } from 'calypso/state/ui/section/actions';
  * Module variables
  */
 const log = debug( 'calypso:layout' );
-
+const noop = () => {};
 const LoadingErrorMessage = localize( ( { translate } ) => (
 	<EmptyContent
 		illustration="/calypso/images/illustrations/error.svg"

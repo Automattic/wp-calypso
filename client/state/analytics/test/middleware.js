@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,6 +25,8 @@ import { spy as mockGA } from 'calypso/lib/analytics/ga';
 import { spy as mockPageView } from 'calypso/lib/analytics/page-view';
 import { spy as mockTracks } from 'calypso/lib/analytics/tracks';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
+
+const noop = () => {};
 
 jest.mock( 'calypso/lib/analytics/page-view', () => {
 	const pageViewSpy = require( 'sinon' ).spy();

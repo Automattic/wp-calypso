@@ -17,11 +17,7 @@ import {
 } from '@automattic/composite-checkout';
 import { ThemeProvider } from 'emotion-theming';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import type {
-	RequestCartProduct,
-	ResponseCart,
-	ResponseCartProduct,
-} from '@automattic/shopping-cart';
+import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import colorStudio from '@automattic/color-studio';
 import { useStripe } from '@automattic/calypso-stripe';
 import type { PaymentCompleteCallbackArguments } from '@automattic/composite-checkout';
@@ -50,7 +46,7 @@ import useIsApplePayAvailable from './hooks/use-is-apple-pay-available';
 import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-methods';
 import useStoredCards from './hooks/use-stored-cards';
 import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
-import useCreatePaymentMethods from './use-create-payment-methods';
+import useCreatePaymentMethods from './hooks/use-create-payment-methods';
 import {
 	applePayProcessor,
 	freePurchaseProcessor,
@@ -68,7 +64,7 @@ import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
 import useCountryList from './hooks/use-country-list';
 import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
 import useActOnceOnStrings from './hooks/use-act-once-on-strings';
-import useRedirectIfCartEmpty from './hooks/use-redirect-if-cart-empty';
+import useRemoveFromCartAndRedirect from './hooks/use-remove-from-cart-and-redirect';
 import useRecordCheckoutLoaded from './hooks/use-record-checkout-loaded';
 import useRecordCartLoaded from './hooks/use-record-cart-loaded';
 import useAddProductsFromUrl from './hooks/use-add-products-from-url';
@@ -92,6 +88,7 @@ import getPostalCode from './lib/get-postal-code';
 import mergeIfObjects from './lib/merge-if-objects';
 import type { ReactStandardAction } from './types/analytics';
 import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
+import useMaybeJetpackIntroCouponCode from './hooks/use-maybe-jetpack-intro-coupon-code';
 
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
@@ -103,26 +100,6 @@ const wpcom = wp.undocumented();
 // Aliasing wpcom functions explicitly bound to wpcom is required here;
 // otherwise we get `this is not defined` errors.
 const wpcomGetStoredCards = (): StoredCard[] => wpcom.getStoredCards();
-
-// Can be safely removed after 2021-03-03 when the FRESHPACK coupon expires
-import moment from 'moment';
-import { isJetpackProductSlug, isJetpackPlanSlug } from 'calypso/lib/products-values';
-const useMaybeGetFRESHPACKCode = ( products: RequestCartProduct[] ) =>
-	useMemo( () => {
-		const includesJetpackItems = products
-			.map( ( p ) => p.product_slug )
-			.some( ( slug ) => isJetpackProductSlug( slug ) || isJetpackPlanSlug( slug ) );
-
-		// Only apply FRESHPACK if there's a Jetpack
-		// product or plan present in the cart
-		if ( ! includesJetpackItems ) {
-			return undefined;
-		}
-
-		const endDate = moment.utc( '2021-03-04' );
-
-		return moment().isBefore( endDate ) ? 'FRESHPACK' : undefined;
-	}, [ products ] );
 
 export default function CompositeCheckout( {
 	siteSlug,
@@ -232,7 +209,6 @@ export default function CompositeCheckout( {
 	} );
 
 	const {
-		removeProductFromCart,
 		couponStatus,
 		applyCoupon,
 		removeCoupon,
@@ -246,14 +222,17 @@ export default function CompositeCheckout( {
 		addProductsToCart,
 	} = useShoppingCart();
 
-	const maybeFRESHPACKCode = useMaybeGetFRESHPACKCode( productsForCart );
+	const maybeJetpackIntroCouponCode = useMaybeJetpackIntroCouponCode(
+		productsForCart,
+		couponStatus === 'applied'
+	);
 
 	const isInitialCartLoading = useAddProductsFromUrl( {
 		isLoadingCart,
 		isCartPendingUpdate,
 		productsForCart,
 		areCartProductsPreparing,
-		couponCodeFromUrl: couponCodeFromUrl || maybeFRESHPACKCode,
+		couponCodeFromUrl: couponCodeFromUrl || maybeJetpackIntroCouponCode,
 		applyCoupon,
 		addProductsToCart,
 	} );
@@ -344,21 +323,17 @@ export default function CompositeCheckout( {
 	).filter( doesValueExist );
 	debug( 'items for checkout', itemsForCheckout );
 
-	let cartEmptyRedirectUrl = `/plans/${ siteSlug || '' }`;
-
-	if ( createUserAndSiteBeforeTransaction ) {
-		const siteSlugLoggedOutCart = select( 'wpcom' )?.getSiteSlug();
-		cartEmptyRedirectUrl = siteSlugLoggedOutCart ? `/plans/${ siteSlugLoggedOutCart }` : '/start';
-	}
-
 	const errors = responseCart.messages?.errors ?? [];
 	const areThereErrors =
 		[ ...errors, cartLoadingError, cartProductPrepError ].filter( doesValueExist ).length > 0;
-	const doNotRedirect = isInitialCartLoading || isCartPendingUpdate || areThereErrors;
-	const areWeRedirecting = useRedirectIfCartEmpty(
-		doNotRedirect,
-		responseCart.products,
-		cartEmptyRedirectUrl,
+
+	const siteSlugLoggedOutCart: string | undefined = select( 'wpcom' )?.getSiteSlug();
+	const {
+		isRemovingProductFromCart,
+		removeProductFromCartAndMaybeRedirect,
+	} = useRemoveFromCartAndRedirect(
+		siteSlug,
+		siteSlugLoggedOutCart,
 		createUserAndSiteBeforeTransaction
 	);
 
@@ -621,7 +596,7 @@ export default function CompositeCheckout( {
 	if (
 		shouldShowEmptyCartPage( {
 			responseCart,
-			areWeRedirecting,
+			areWeRedirecting: isRemovingProductFromCart,
 			areThereErrors,
 			isCartPendingUpdate,
 			isInitialCartLoading,
@@ -682,7 +657,7 @@ export default function CompositeCheckout( {
 				initiallySelectedPaymentMethodId={ paymentMethods?.length ? paymentMethods[ 0 ].id : null }
 			>
 				<WPCheckout
-					removeProductFromCart={ removeProductFromCart }
+					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
 					updateLocation={ updateLocation }
 					applyCoupon={ applyCoupon }
 					removeCoupon={ removeCoupon }

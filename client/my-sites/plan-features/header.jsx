@@ -229,17 +229,19 @@ export class PlanFeaturesHeader extends Component {
 			translate,
 			planType,
 			currentSitePlan,
-			annualPricePerMonth,
 			isInSignup,
 			isMonthlyPlan,
+			relatedYearlyPlan,
+			isLoggedInMonthlyPricing,
 		} = this.props;
 
-		if ( isInSignup && isMonthlyPlan && annualPricePerMonth < rawPrice ) {
+		if ( ( isInSignup || isLoggedInMonthlyPricing ) && isMonthlyPlan && relatedYearlyPlan ) {
+			const annualPricePerMonth = relatedYearlyPlan.raw_price / 12;
 			const discountRate = Math.round( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice );
 			return translate( `Save %(discountRate)s%% by paying annually`, { args: { discountRate } } );
 		}
 
-		if ( isInSignup && ! isMonthlyPlan ) {
+		if ( ( isInSignup || isLoggedInMonthlyPricing ) && ! isMonthlyPlan ) {
 			return translate( 'billed annually' );
 		}
 
@@ -277,12 +279,15 @@ export class PlanFeaturesHeader extends Component {
 			hideMonthly,
 			isInSignup,
 			plansWithScroll,
+			isLoggedInMonthlyPricing,
+			isMonthlyPlan,
 		} = this.props;
 
 		const isDiscounted = !! discountPrice;
 		const timeframeClasses = classNames( 'plan-features__header-timeframe', {
 			'is-discounted': isDiscounted,
 			'is-placeholder': isPlaceholder,
+			'is-logged-in-monthly-pricing': isLoggedInMonthlyPricing,
 		} );
 		const perMonthDescription = this.getPerMonthDescription() || billingTimeFrame;
 		if ( isInSignup || plansWithScroll ) {
@@ -302,7 +307,7 @@ export class PlanFeaturesHeader extends Component {
 			return (
 				<p className={ timeframeClasses }>
 					{ ! isPlaceholder ? perMonthDescription : '' }
-					{ isDiscounted && ! isPlaceholder && (
+					{ isDiscounted && ! isPlaceholder && ! isMonthlyPlan && (
 						<InfoPopover
 							className="plan-features__header-tip-info"
 							position={ isMobile() ? 'top' : 'bottom left' }
@@ -318,9 +323,9 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	isPlanCurrent() {
-		const { planType, current, currentSitePlan } = this.props;
+		const { planType, current, currentSitePlan, isLoggedInMonthlyPricing, isJetpack } = this.props;
 
-		if ( ! currentSitePlan ) {
+		if ( ! currentSitePlan || ( isLoggedInMonthlyPricing && ! isJetpack ) ) {
 			return current;
 		}
 
@@ -337,6 +342,7 @@ export class PlanFeaturesHeader extends Component {
 			discountPrice,
 			rawPrice,
 			relatedMonthlyPlan,
+			isLoggedInMonthlyPricing,
 		} = this.props;
 
 		if ( isPlaceholder && ! isInSignup ) {
@@ -348,7 +354,7 @@ export class PlanFeaturesHeader extends Component {
 			return <div className={ classes } />;
 		}
 
-		if ( availableForPurchase ) {
+		if ( availableForPurchase && ! isLoggedInMonthlyPricing ) {
 			// Only multiply price by 12 for Jetpack plans where we sell both monthly and yearly
 			if ( isJetpack && ! isSiteAT && relatedMonthlyPlan ) {
 				return this.renderPriceGroup(
@@ -369,6 +375,7 @@ export class PlanFeaturesHeader extends Component {
 			isInSignup,
 			plansWithScroll,
 			isInVerticalScrollingPlansExperiment,
+			isLoggedInMonthlyPricing,
 		} = this.props;
 		const displayFlatPrice =
 			isInSignup && ! plansWithScroll && ! isInVerticalScrollingPlansExperiment;
@@ -381,14 +388,14 @@ export class PlanFeaturesHeader extends Component {
 							currencyCode={ currencyCode }
 							rawPrice={ fullPrice }
 							displayFlatPrice={ displayFlatPrice }
-							isInSignup={ isInSignup }
+							displayPerMonthNotation={ false }
 							original
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ discountedPrice }
 							displayFlatPrice={ displayFlatPrice }
-							isInSignup={ isInSignup }
+							displayPerMonthNotation={ false }
 							discounted
 						/>
 					</div>
@@ -402,7 +409,7 @@ export class PlanFeaturesHeader extends Component {
 				currencyCode={ currencyCode }
 				rawPrice={ fullPrice }
 				displayFlatPrice={ displayFlatPrice }
-				isInSignup={ isInSignup }
+				displayPerMonthNotation={ isInSignup || isLoggedInMonthlyPricing }
 			/>
 		);
 	}
@@ -470,6 +477,7 @@ export class PlanFeaturesHeader extends Component {
 				)
 			);
 		}
+
 		return null;
 	}
 }
@@ -500,8 +508,7 @@ PlanFeaturesHeader.propTypes = {
 	isSiteAT: PropTypes.bool,
 	relatedYearlyPlan: PropTypes.object,
 
-	// For Monthly Pricing test
-	annualPricePerMonth: PropTypes.number,
+	isLoggedInMonthlyPricing: PropTypes.bool,
 };
 
 PlanFeaturesHeader.defaultProps = {
@@ -518,6 +525,7 @@ PlanFeaturesHeader.defaultProps = {
 	popular: false,
 	showPlanCreditsApplied: false,
 	siteSlug: '',
+	isLoggedInMonthlyPricing: false,
 };
 
 export default connect( ( state, { planType, relatedMonthlyPlan } ) => {

@@ -3,7 +3,6 @@
  */
 import React, { ReactElement } from 'react';
 import { useTranslate } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,6 +28,9 @@ interface Props {
 	revokedAt: string | null;
 	onCopyLicense?: () => void;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 
 export default function LicenseDetails( {
 	licenseKey,
@@ -70,14 +72,14 @@ export default function LicenseDetails( {
 
 				{ licenseState === LicenseState.Attached && (
 					<li className="license-details__list-item">
-						<h4 className="license-details__label">{ translate( 'Attached on' ) }</h4>
+						<h4 className="license-details__label">{ translate( 'Assigned on' ) }</h4>
 						<FormattedDate date={ attachedAt } format="LLL" />
 					</li>
 				) }
 
 				{ licenseState === LicenseState.Detached && (
 					<li className="license-details__list-item">
-						<h4 className="license-details__label">{ translate( 'Attached on' ) }</h4>
+						<h4 className="license-details__label">{ translate( 'Assigned on' ) }</h4>
 						<Gridicon icon="minus" />
 					</li>
 				) }

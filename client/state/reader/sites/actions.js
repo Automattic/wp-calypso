@@ -1,9 +1,4 @@
 /**
- * External Dependencies
- */
-import { isArray } from 'lodash';
-
-/**
  * Internal Dependencies
  */
 import {
@@ -42,7 +37,7 @@ export function receiveReaderSiteRequestFailure( action, error ) {
 }
 
 export function updateSites( sites ) {
-	if ( ! isArray( sites ) ) {
+	if ( ! Array.isArray( sites ) ) {
 		sites = [ sites ];
 	}
 	return {

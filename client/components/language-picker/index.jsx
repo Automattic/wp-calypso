@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment, PureComponent } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { find, isString, noop } from 'lodash';
+import { find, isString } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,6 +19,8 @@ import { getLanguageCodeLabels } from './utils';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class LanguagePicker extends PureComponent {
 	static propTypes = {

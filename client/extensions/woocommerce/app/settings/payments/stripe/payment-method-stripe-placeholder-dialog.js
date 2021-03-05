@@ -4,12 +4,13 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
+
+const noop = () => {};
 
 const PaymentMethodStripePlaceholderDialog = ( { translate } ) => {
 	const buttons = [

@@ -1,10 +1,4 @@
 /**
- * External dependencies
- */
-
-import { stubFalse, stubTrue } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { combineReducers, keyedReducer } from 'calypso/state/utils';
@@ -18,42 +12,34 @@ import {
 	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
 } from 'calypso/state/action-types';
 
-export const items = ( state = {}, action ) => {
+export const items = keyedReducer( 'siteId', ( state = null, action ) => {
 	switch ( action.type ) {
-		case SITE_MONITOR_SETTINGS_RECEIVE: {
-			const { siteId, settings } = action;
-
-			return {
-				...state,
-				[ siteId ]: settings,
-			};
-		}
-	}
-
-	return state;
-};
-
-export const requesting = keyedReducer( 'siteId', ( state = {}, action ) => {
-	switch ( action.type ) {
-		case SITE_MONITOR_SETTINGS_REQUEST:
-			return stubTrue( state, action );
-		case SITE_MONITOR_SETTINGS_REQUEST_SUCCESS:
-			return stubFalse( state, action );
-		case SITE_MONITOR_SETTINGS_REQUEST_FAILURE:
-			return stubFalse( state, action );
+		case SITE_MONITOR_SETTINGS_RECEIVE:
+			return action.settings;
 	}
 
 	return state;
 } );
 
-export const updating = keyedReducer( 'siteId', ( state = {}, action ) => {
+export const requesting = keyedReducer( 'siteId', ( state = false, action ) => {
+	switch ( action.type ) {
+		case SITE_MONITOR_SETTINGS_REQUEST:
+			return true;
+		case SITE_MONITOR_SETTINGS_REQUEST_SUCCESS:
+		case SITE_MONITOR_SETTINGS_REQUEST_FAILURE:
+			return false;
+	}
+
+	return state;
+} );
+
+export const updating = keyedReducer( 'siteId', ( state = false, action ) => {
 	switch ( action.type ) {
 		case SITE_MONITOR_SETTINGS_UPDATE:
-			return stubTrue( state, action );
+			return true;
 		case SITE_MONITOR_SETTINGS_UPDATE_SUCCESS:
-			return stubFalse( state, action );
 		case SITE_MONITOR_SETTINGS_UPDATE_FAILURE:
-			return stubFalse( state, action );
+			return false;
 	}
 
 	return state;

@@ -26,7 +26,10 @@ import LoggedOutForm from 'calypso/components/logged-out-form';
 import Notice from 'calypso/components/notice';
 import { CHECK_YOUR_EMAIL_PAGE } from 'calypso/state/login/magic-login/constants';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getRedirectToOriginal } from 'calypso/state/login/selectors';
+import {
+	getRedirectToOriginal,
+	getLastCheckedUsernameOrEmail,
+} from 'calypso/state/login/selectors';
 import { hideMagicLoginRequestNotice } from 'calypso/state/login/magic-login/actions';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
@@ -41,6 +44,7 @@ class RequestLoginEmailForm extends React.Component {
 		requestError: PropTypes.string,
 		showCheckYourEmail: PropTypes.bool,
 		userEmail: PropTypes.string,
+		flow: PropTypes.string,
 
 		// mapped to dispatch
 		sendEmailLogin: PropTypes.func.isRequired,
@@ -87,6 +91,7 @@ class RequestLoginEmailForm extends React.Component {
 		this.props.sendEmailLogin( usernameOrEmail, {
 			redirectTo: this.props.redirectTo,
 			requestLoginEmailFormFlow: true,
+			...( this.props.flow ? { flow: this.props.flow } : {} ),
 		} );
 	};
 
@@ -183,6 +188,7 @@ const mapState = ( state ) => {
 		showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
 		emailRequested: getMagicLoginRequestedEmailSuccessfully( state ),
 		userEmail:
+			getLastCheckedUsernameOrEmail( state ) ||
 			getCurrentQueryArguments( state ).email_address ||
 			getInitialQueryArguments( state ).email_address,
 	};

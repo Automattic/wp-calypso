@@ -19,6 +19,7 @@ import Search from 'calypso/components/search';
 import UrlSearch from 'calypso/lib/url-search';
 import QueryJetpackPartnerPortalLicenseCounts from 'calypso/components/data/query-jetpack-partner-portal-license-counts';
 import { getLicenseCounts } from 'calypso/state/partner-portal/licenses/selectors';
+import { internalToPublicLicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 
 /**
  * Style dependencies
@@ -44,11 +45,11 @@ function LicenseStateFilter( { filter, search, doSearch }: Props ): ReactElement
 		},
 		{
 			key: LicenseFilter.Detached,
-			label: translate( 'Detached' ),
+			label: translate( 'Unassigned' ),
 		},
 		{
 			key: LicenseFilter.Attached,
-			label: translate( 'Attached' ),
+			label: translate( 'Assigned' ),
 		},
 		{
 			key: LicenseFilter.Revoked,
@@ -58,7 +59,7 @@ function LicenseStateFilter( { filter, search, doSearch }: Props ): ReactElement
 		...navItem,
 		count: counts[ navItem.key ] || 0,
 		selected: filter === navItem.key,
-		path: basePath + ( LicenseFilter.NotRevoked !== navItem.key ? navItem.key : '' ),
+		path: basePath + internalToPublicLicenseFilter( navItem.key ),
 		children: navItem.label,
 	} ) );
 

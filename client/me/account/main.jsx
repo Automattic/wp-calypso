@@ -41,7 +41,7 @@ import Main from 'calypso/components/main';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
 import { successNotice, errorNotice, removeNotice } from 'calypso/state/notices/actions';
-import { getLanguage, isLocaleVariant, canBeTranslated } from 'calypso/lib/i18n-utils';
+import { getLanguage, isLocaleVariant, canBeTranslated, localizeUrl } from 'calypso/lib/i18n-utils';
 import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
 import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -71,6 +71,8 @@ import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 
 export const noticeId = 'me-settings-notice';
 const noticeOptions = {
@@ -1054,7 +1056,7 @@ class Account extends React.Component {
 
 						{ this.props.canDisplayCommunityTranslator && this.communityTranslator() }
 
-						{ config.isEnabled( 'nav-unification' ) && (
+						{ this.props.isNavUnificationEnabled && (
 							<FormFieldset className="account__link-destination">
 								<FormLabel id="account__link_destination" htmlFor="link_destination">
 									{ translate( 'Dashboard appearance' ) }
@@ -1064,8 +1066,20 @@ class Account extends React.Component {
 									onChange={ this.toggleLinkDestination }
 								>
 									{ translate(
-										'Replace all dashboard pages with WP Admin equivalents when possible.'
+										'{{spanlead}}Show advanced dashboard pages.{{/spanlead}} {{spanextra}}Enabling this will replace your dashboard pages with more advanced wp-admin equivalents when possible.{{/spanextra}}',
+										{
+											components: {
+												spanlead: <strong className="account__link-destination-label-lead" />,
+												spanextra: <span className="account__link-destination-label-extra" />,
+											},
+										}
 									) }
+									<InlineSupportLink
+										supportPostId={ 80368 }
+										supportLink={ localizeUrl(
+											'https://wordpress.com/support/account-settings/#dashboard-appearance'
+										) }
+									/>
 								</FormToggle>
 							</FormFieldset>
 						) }
@@ -1112,6 +1126,7 @@ export default compose(
 			unsavedUserSettings: getUnsavedUserSettings( state ),
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 			onboardingUrl: getOnboardingUrl( state ),
+			isNavUnificationEnabled: isNavUnificationEnabled( state ),
 		} ),
 		{
 			bumpStat,

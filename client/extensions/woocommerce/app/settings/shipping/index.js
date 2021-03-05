@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Main from 'calypso/components/main';
-import LabelSettings from 'woocommerce/woocommerce-services/views/label-settings';
 import Packages from 'woocommerce/woocommerce-services/views/packages';
 import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import ShippingHeader from './shipping-header';
@@ -48,7 +47,6 @@ class Shipping extends Component {
 				<ShippingHeader onSaveSuccess={ this.onSaveSuccess } toSave={ toSave } />
 				<ShippingOrigin onChange={ this.onChangeUnits } />
 				<ShippingZoneList />
-				{ wcsEnabled && <LabelSettings onChange={ this.onChangeShipping } /> }
 				{ wcsEnabled && <Packages onChange={ this.onChangeShipping } /> }
 				<ProtectFormGuard isChanged={ ! every( this.state.pristine ) } />
 			</Main>

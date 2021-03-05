@@ -45,9 +45,9 @@ import { withCurrentRoute } from 'calypso/components/route';
 import QueryExperiments from 'calypso/components/data/query-experiments';
 import Experiment from 'calypso/components/experiment';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
-import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import { getShouldShowAppBanner, handleScroll } from './utils';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 
 /**
  * Style dependencies
@@ -55,7 +55,6 @@ import { isWpMobileApp } from 'calypso/lib/mobile-app';
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
 import './style.scss';
-import { getShouldShowAppBanner, handleScroll } from './utils';
 
 const scrollCallback = ( e ) => handleScroll( e );
 
@@ -74,11 +73,6 @@ class Layout extends Component {
 		shouldShowAppBanner: PropTypes.bool,
 	};
 
-	UNSAFE_componentWillMount() {
-		// This is temporary helper function until we have rolled out to 100% of customers.
-		this.isNavUnificationEnabled();
-	}
-
 	componentDidMount() {
 		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
 			return;
@@ -93,7 +87,7 @@ class Layout extends Component {
 	}
 
 	componentWillUnmount() {
-		if ( config.isEnabled( 'nav-unification' ) ) {
+		if ( this.props.isNavUnificationEnabled ) {
 			window.removeEventListener( 'scroll', scrollCallback );
 			window.removeEventListener( 'resize', scrollCallback );
 		}
@@ -101,13 +95,9 @@ class Layout extends Component {
 
 	componentDidUpdate( prevProps ) {
 		// This code should be removed when the nav-unification project has been rolled out to 100% of the customers.
-		if ( config.isEnabled( 'nav-unification' ) ) {
+		if ( this.props.isNavUnificationEnabled ) {
 			window.addEventListener( 'scroll', scrollCallback );
 			window.addEventListener( 'resize', scrollCallback );
-		}
-		if ( prevProps.teams !== this.props.teams ) {
-			// This is temporary helper function until we have rolled out to 100% of customers.
-			this.isNavUnificationEnabled();
 		}
 		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
 			return;
@@ -162,28 +152,6 @@ class Layout extends Component {
 		);
 	}
 
-	// This is temporary helper function until we have rolled out to 100% of customers.
-	isNavUnificationEnabled() {
-		if ( ! this.props.teams.length ) {
-			return;
-		}
-
-		// Having the feature enabled by default in all environments, will let anyone use ?disable-nav-unification to temporary disable it.
-		// We still have the feature disabled in production as safety mechanism for all customers.
-		if ( new URL( document.location ).searchParams.has( 'disable-nav-unification' ) ) {
-			return;
-		}
-
-		// Leave the feature enabled for all a12s.
-		if ( isAutomatticTeamMember( this.props.teams ) ) {
-			// Force enable even in Production.
-			return config.enable( 'nav-unification' );
-		}
-
-		// Disable the feature for all customers and non a12s accounts.
-		return config.disable( 'nav-unification' );
-	}
-
 	render() {
 		const sectionClass = classnames( 'layout', `focus-${ this.props.currentLayoutFocus }`, {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
@@ -202,17 +170,19 @@ class Layout extends Component {
 				config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 				isWooOAuth2Client( this.props.oauth2Client ) &&
 				this.props.wccomFrom,
-			'is-nav-unification': config.isEnabled( 'nav-unification' ),
 		} );
 
 		const optionalBodyProps = () => {
-			const optionalProps = {};
-
+			const bodyClass = [];
 			if ( this.props.isNewLaunchFlow || this.props.isCheckoutFromGutenboarding ) {
-				optionalProps.bodyClass = 'is-new-launch-flow';
+				bodyClass.push( 'is-new-launch-flow' );
 			}
-
-			return optionalProps;
+			if ( this.props.isNavUnificationEnabled ) {
+				bodyClass.push( 'is-nav-unification' );
+			}
+			return {
+				bodyClass,
+			};
 		};
 
 		const { shouldShowAppBanner } = this.props;
@@ -368,7 +338,7 @@ export default compose(
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 			isNewLaunchFlow,
 			isCheckoutFromGutenboarding,
-			teams: getReaderTeams( state ),
+			isNavUnificationEnabled: isNavUnificationEnabled( state ),
 		};
 	} )
 )( Layout );

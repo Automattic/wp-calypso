@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { noop, flow } from 'lodash';
+import { flow } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -23,6 +23,7 @@ import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/prefe
 import './style.scss';
 
 const PREFERENCE_PREFIX = 'dismissible-card-';
+const noop = () => {};
 
 class DismissibleCard extends Component {
 	static propTypes = {

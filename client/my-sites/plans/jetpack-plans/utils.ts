@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate, TranslateResult, numberFormat } from 'i18n-calypso';
-import { compact, isArray, isObject, isFunction } from 'lodash';
+import { compact, isObject, isFunction } from 'lodash';
 import page from 'page';
 import React, { createElement, Fragment } from 'react';
 import formatCurrency from '@automattic/format-currency';
@@ -115,24 +115,10 @@ export function durationToString( duration: Duration ): DurationString {
 
 export function durationToText( duration: Duration ): TranslateResult {
 	if ( duration === TERM_MONTHLY ) {
-		return (
-			getForCurrentCROIteration( {
-				[ Iterations.NPIP ]: translate( '/month, paid monthly' ),
-			} ) ||
-			translate( 'per month{{br/}}billed monthly', {
-				components: { br: createElement( 'br' ) },
-			} )
-		);
+		return translate( '/month, paid monthly' );
 	}
 
-	return (
-		getForCurrentCROIteration( {
-			[ Iterations.NPIP ]: translate( '/month, paid yearly' ),
-		} ) ||
-		translate( 'per month{{br/}}billed yearly', {
-			components: { br: createElement( 'br' ) },
-		} )
-	);
+	return translate( '/month, paid yearly' );
 }
 
 // In the case of products that have options (daily and real-time), we want to display
@@ -528,7 +514,7 @@ export function buildCardFeatureItemFromFeatureKey(
 	let feature;
 	let subFeaturesKeys;
 
-	if ( isArray( featureKey ) ) {
+	if ( Array.isArray( featureKey ) ) {
 		const [ key, subKeys ] = featureKey;
 
 		feature = getFeatureByKey( key );
@@ -569,7 +555,7 @@ export function buildCardFeaturesFromFeatureKeys(
 	variation?: Iterations
 ): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
 	// Without sections (JetpackPlanCardFeature[])
-	if ( isArray( features ) ) {
+	if ( Array.isArray( features ) ) {
 		return compact(
 			features.map( ( f ) => buildCardFeatureItemFromFeatureKey( f, options, variation ) )
 		);
@@ -665,7 +651,7 @@ export function checkout(
 	products: string | string[],
 	urlQueryArgs: QueryArgs = {}
 ): void {
-	const productsArray = isArray( products ) ? products : [ products ];
+	const productsArray = Array.isArray( products ) ? products : [ products ];
 	const productsString = productsArray.join( ',' );
 
 	// If there is not siteSlug, we need to redirect the user to the site selection

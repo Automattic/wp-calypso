@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +15,8 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import Spinner from 'calypso/components/spinner';
 import SuggestionSearch from 'calypso/components/suggestion-search';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+
+const noop = () => {};
 
 class JetpackConnectSiteUrlInput extends Component {
 	static propTypes = {

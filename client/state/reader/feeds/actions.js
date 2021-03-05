@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { isArray } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import {
@@ -42,7 +37,7 @@ export function receiveReaderFeedRequestFailure( feedId, error ) {
 }
 
 export function updateFeeds( feeds ) {
-	if ( ! isArray( feeds ) ) {
+	if ( ! Array.isArray( feeds ) ) {
 		feeds = [ feeds ];
 	}
 

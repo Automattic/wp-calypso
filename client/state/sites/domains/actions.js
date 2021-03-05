@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { map, noop } from 'lodash';
+import { map } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -29,6 +29,7 @@ import 'calypso/state/data-layer/wpcom/domains/privacy/index.js';
  */
 const debug = debugFactory( 'calypso:state:sites:domains:actions' );
 const wpcom = wp.undocumented();
+const noop = () => {};
 
 /**
  * Action creator function

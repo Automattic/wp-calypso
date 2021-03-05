@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { identity, includes, noop, without } from 'lodash';
+import { identity, includes, without } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +21,8 @@ import TranslatableString from 'calypso/components/translatable/proptype';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class DropZone extends React.Component {
 	static propTypes = {

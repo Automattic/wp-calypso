@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classnames from 'classnames';
 import { Button } from '@automattic/components';
-import { noop } from 'lodash';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 
 /**
@@ -25,6 +24,9 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
  * Style dependencies
  */
 import './style.scss';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 
 interface Props {
 	threat: Threat;
@@ -177,7 +179,7 @@ const ThreatItem: React.FC< Props > = ( {
 						target="_blank"
 						rel="noopener noreferrer"
 						tracksEventName="calypso_jetpack_scan_threat_codeable_estimate"
-						onClick={ () => {} }
+						onClick={ noop }
 					>
 						{ translate( 'Get a free estimate' ) }
 					</ExternalLinkWithTracking>

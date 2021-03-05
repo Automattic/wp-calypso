@@ -42,22 +42,21 @@ function camelCaseDash( string ) {
 	return string.replace( /-([a-z])/g, ( _, letter ) => letter.toUpperCase() );
 }
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Experimental features we depend on are available (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
 
 	step( 'Can log in', async function () {
 		this.loginFlow = new LoginFlow( driver, gutenbergUser );
 		return await this.loginFlow.loginAndStartNewPost( null, true );
 	} );
 
-	describe( 'Can find experimental package features', async function () {
+	describe( 'Can find experimental package features', function () {
 		for ( const [ packageName, features ] of Object.entries( EXPERIMENTAL_FEATURES ) ) {
 			// Removes the `@wordpress/` prefix and hyphens from package name
 			// The algorithm WP uses to convert package names to variable names is here: https://github.com/WordPress/gutenberg/blob/a03ea51e11a36d0abeecb4ce4e4cea5ffebdffc5/packages/dependency-extraction-webpack-plugin/lib/util.js#L40-L45

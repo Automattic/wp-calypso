@@ -1,8 +1,14 @@
 const { merge } = require( 'lodash' );
 const reactVersion = require( './client/package.json' ).dependencies.react;
+const path = require( 'path' );
 
 module.exports = {
 	root: true,
+	parserOptions: {
+		babelOptions: {
+			configFile: path.join( __dirname, './babel.config.js' ),
+		},
+	},
 	extends: [
 		'plugin:wpcalypso/react',
 		'plugin:jsx-a11y/recommended',
@@ -80,6 +86,8 @@ module.exports = {
 				'mocha/no-exclusive-tests': 'error',
 				'mocha/handle-done-callback': [ 'error', { ignoreSkipped: true } ],
 				'mocha/no-global-tests': 'error',
+				'mocha/no-async-describe': 'error',
+				'mocha/no-top-level-hooks': 'error',
 				'no-console': 'off',
 				// Disable all rules from "plugin:jest/recommended", as e2e tests use mocha
 				...Object.keys( require( 'eslint-plugin-jest' ).configs.recommended.rules ).reduce(
@@ -402,13 +410,18 @@ module.exports = {
 		'you-dont-need-lodash-underscore/contains': 'error',
 		'you-dont-need-lodash-underscore/detect': 'error',
 		'you-dont-need-lodash-underscore/drop': 'error',
+		'you-dont-need-lodash-underscore/drop-right': 'error',
 		'you-dont-need-lodash-underscore/ends-with': 'error',
 		'you-dont-need-lodash-underscore/entries': 'error',
 		'you-dont-need-lodash-underscore/extend-own': 'error',
+		'you-dont-need-lodash-underscore/fill': 'error',
 		'you-dont-need-lodash-underscore/foldl': 'error',
 		'you-dont-need-lodash-underscore/foldr': 'error',
+		'you-dont-need-lodash-underscore/index-of': 'error',
 		'you-dont-need-lodash-underscore/inject': 'error',
+		'you-dont-need-lodash-underscore/is-array': 'error',
 		'you-dont-need-lodash-underscore/is-finite': 'error',
+		'you-dont-need-lodash-underscore/is-nan': 'error',
 		'you-dont-need-lodash-underscore/is-nil': 'error',
 		'you-dont-need-lodash-underscore/is-null': 'error',
 		'you-dont-need-lodash-underscore/last-index-of': 'error',

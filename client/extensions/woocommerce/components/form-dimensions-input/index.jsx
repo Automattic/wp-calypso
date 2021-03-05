@@ -8,7 +8,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,6 +17,8 @@ import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-w
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getDimensionsUnitSetting } from 'woocommerce/state/sites/settings/products/selectors';
 import { fetchSettingsProducts } from 'woocommerce/state/sites/settings/products/actions';
+
+const noop = () => {};
 
 class FormDimensionsInput extends Component {
 	static propTypes = {

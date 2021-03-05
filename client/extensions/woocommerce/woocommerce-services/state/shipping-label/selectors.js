@@ -2,7 +2,6 @@
  * External dependencies
  */
 import {
-	fill,
 	find,
 	flatten,
 	forEach,
@@ -296,7 +295,7 @@ export const getCustomsErrors = (
 		flatten( map( packages, ( pckg ) => map( pckg.items, 'product_id' ) ) )
 	);
 
-	const valuesByProductId = zipObject( usedProductIds, fill( Array( usedProductIds.length ), 0 ) );
+	const valuesByProductId = zipObject( usedProductIds, Array( usedProductIds.length ).fill( 0 ) );
 	forEach( packages, ( pckg ) => {
 		forEach(
 			pckg.items,

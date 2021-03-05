@@ -279,7 +279,6 @@ function addTracksContext( context, next ) {
 }
 
 export default async function ( _, addReducer ) {
-	const isStoreRemoved = config.isEnabled( 'woocommerce/store-removed' );
 	await addReducer( [ 'extensions', 'woocommerce' ], reducer );
 	installActionHandlers();
 
@@ -289,7 +288,7 @@ export default async function ( _, addReducer ) {
 	getStorePages().forEach( function ( storePage ) {
 		if ( config.isEnabled( storePage.configKey ) ) {
 			// Store deprecation would redirect most store pages to dashboard
-			if ( isStoreRemoved && ! ( '/store/:site' === storePage.path ) ) {
+			if ( ! ( '/store/:site' === storePage.path ) ) {
 				page( storePage.path, addTracksContext, ( context ) => {
 					context.store.dispatch( bumpStat( 'calypso_store_post_sunset', storePage.statName ) );
 					page.redirect( `/store/${ context.params.site }?${ context.querystring }` );

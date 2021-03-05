@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { get, isEmpty, isEqual, noop, some } from 'lodash';
+import { get, isEmpty, isEqual, some } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import photon from 'photon';
@@ -26,6 +26,8 @@ import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class Theme extends Component {
 	static propTypes = {

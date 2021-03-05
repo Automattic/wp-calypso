@@ -4,7 +4,6 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -13,6 +12,8 @@ import classNames from 'classnames';
 import Spinner from 'calypso/components/spinner';
 import MediaImage from 'calypso/my-sites/media-library/media-image';
 import { url, isItemBeingUploaded } from 'calypso/lib/media/utils';
+
+const noop = () => {};
 
 export default class EditorMediaModalDetailPreviewImage extends Component {
 	static propTypes = {

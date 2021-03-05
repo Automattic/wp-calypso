@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, isArray, noop, map } from 'lodash';
+import { isEmpty, map } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -17,6 +17,8 @@ import { memo } from '@wordpress/element';
 import TemplateSelectorItem from './template-selector-item';
 import replacePlaceholders from '../utils/replace-placeholders';
 
+const noop = () => {};
+
 export const TemplateSelectorControl = ( {
 	label,
 	legendLabel,
@@ -31,7 +33,7 @@ export const TemplateSelectorControl = ( {
 	siteInformation = {},
 	selectedTemplate,
 } ) => {
-	if ( isEmpty( templates ) || ! isArray( templates ) ) {
+	if ( isEmpty( templates ) || ! Array.isArray( templates ) ) {
 		return null;
 	}
 

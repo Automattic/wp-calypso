@@ -339,7 +339,7 @@ class Help extends React.PureComponent {
 					<Experiment name="calypso_help_contact_button">
 						<Variation name="treatment">
 							<div className="help__contact-us-header-button">
-								<Button onClick={ this.trackContactUsClick }>
+								<Button onClick={ this.trackContactUsClick } href="/help/contact/">
 									{ translate( 'Contact support' ) }
 								</Button>
 							</div>

@@ -4,7 +4,7 @@
 import page from 'page';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { get, noop, some, startsWith, uniq } from 'lodash';
+import { get, some, startsWith, uniq } from 'lodash';
 import { removeQueryArgs } from '@wordpress/url';
 
 /**
@@ -84,6 +84,7 @@ const getStore = ( context ) => ( {
  * Module vars
  */
 const sitesPageTitleForAnalytics = 'Sites';
+const noop = () => {};
 
 /*
  * The main navigation of My Sites consists of a component with

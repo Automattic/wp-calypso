@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-import { omit, noop } from 'lodash';
+import { omit } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -14,6 +14,8 @@ import LikeButton from './button';
 import { getPostLikeCount } from 'calypso/state/posts/selectors/get-post-like-count';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import QueryPostLikes from 'calypso/components/data/query-post-likes';
+
+const noop = () => {};
 
 class LikeButtonContainer extends Component {
 	static propTypes = {

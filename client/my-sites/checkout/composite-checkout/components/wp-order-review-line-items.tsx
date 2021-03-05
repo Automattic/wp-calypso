@@ -31,12 +31,7 @@ import {
 	isGSuiteOrExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 } from 'calypso/lib/gsuite';
-import { planMatches, isWpComPlan } from 'calypso/lib/plans';
-import {
-	isMonthly as isMonthlyPlan,
-	TERM_ANNUALLY,
-	TERM_BIENNIALLY,
-} from 'calypso/lib/plans/constants';
+import { isWpComPlan } from 'calypso/lib/plans';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
@@ -47,7 +42,7 @@ import {
 	getTaxLineItem,
 	getCreditsLineItem,
 } from '../lib/translate-cart';
-import { isPlan } from 'calypso/lib/products-values';
+import { isPlan, isMonthly, isYearly, isBiennially } from 'calypso/lib/products-values';
 import type {
 	WPCOMProductSlug,
 	WPCOMProductVariant,
@@ -562,43 +557,29 @@ function LineItemSublabelAndPrice( {
 	const isDomainMap = product.product_slug === 'domain_map';
 	const productSlug = product.product_slug;
 	const sublabel = String( getSublabel( product ) );
-	const type = isPlan( product ) ? 'plan' : product.product_slug;
 
 	const isGSuite =
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
 
-	if ( type === 'plan' && product.months_per_bill_period && product.months_per_bill_period > 1 ) {
-		return (
-			<>
-				{ translate( '%(sublabel)s: %(monthlyPrice)s/month × %(monthsPerBillPeriod)s', {
-					args: {
-						sublabel: sublabel,
-						monthlyPrice: product.item_subtotal_monthly_cost_display,
-						monthsPerBillPeriod: product.months_per_bill_period,
-					},
-					comment:
-						'product type and monthly breakdown of total cost, separated by a colon. For "/month", there is no space before and after the "/" but please add a space if it makes sense in other languages.',
-				} ) }
-			</>
-		);
-	}
+	if ( isPlan( product ) ) {
+		const options = {
+			args: {
+				sublabel,
+				price: product.item_original_subtotal_display,
+			},
+		};
 
-	if ( type === 'plan' && product.months_per_bill_period === 1 ) {
-		if ( isWpComPlan( productSlug ) ) {
-			return <>{ translate( 'Monthly subscription' ) }</>;
+		if ( isMonthly( product ) ) {
+			return <>{ translate( '%(sublabel)s: %(price)s per month', options ) }</>;
 		}
 
-		return (
-			<>
-				{ translate( '%(sublabel)s: %(monthlyPrice)s per month', {
-					args: {
-						sublabel: sublabel,
-						monthlyPrice: product.item_subtotal_monthly_cost_display,
-					},
-					comment: 'product type and monthly breakdown of total cost, separated by a colon',
-				} ) }
-			</>
-		);
+		if ( isYearly( product ) ) {
+			return <>{ translate( '%(sublabel)s: %(price)s per year', options ) }</>;
+		}
+
+		if ( isBiennially( product ) ) {
+			return <>{ translate( '%(sublabel)s: %(price)s per two years', options ) }</>;
+		}
 	}
 
 	if (
@@ -623,24 +604,35 @@ function LineItemSublabelAndPrice( {
 	return <>{ sublabel || null }</>;
 }
 
-function AnnualDiscountCallout( {
+function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) {
+	return coupon_savings_integer > 0;
+}
+
+function FirstTermDiscountCallout( {
 	product,
 }: {
 	product: ResponseCartProduct;
 } ): JSX.Element | null {
 	const translate = useTranslate();
 	const planSlug = product.product_slug;
+	const origCost = product.item_original_cost_integer;
+	const cost = product.product_cost_integer;
+	const isRenewal = product.is_renewal;
 
-	if ( ! isWpComPlan( planSlug ) || isMonthlyPlan( planSlug ) ) {
+	if ( ! isWpComPlan( planSlug ) || origCost <= cost || isRenewal || isCouponApplied( product ) ) {
 		return null;
 	}
 
-	if ( planMatches( planSlug, { term: TERM_ANNUALLY } ) ) {
-		return <DiscountCallout>{ translate( 'Annual discount' ) }</DiscountCallout>;
+	if ( isMonthly( product ) ) {
+		return <DiscountCallout>{ translate( 'Discount for first month' ) }</DiscountCallout>;
 	}
 
-	if ( planMatches( planSlug, { term: TERM_BIENNIALLY } ) ) {
-		return <DiscountCallout>{ translate( 'Biennial discount' ) }</DiscountCallout>;
+	if ( isYearly( product ) ) {
+		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
+	}
+
+	if ( isBiennially( product ) ) {
+		return <DiscountCallout>{ translate( 'Discount for first term' ) }</DiscountCallout>;
 	}
 
 	return null;
@@ -662,6 +654,20 @@ function DomainDiscountCallout( {
 		product.product_slug === 'domain_map' && product.item_subtotal_integer === 0;
 	if ( isFreeDomainMapping ) {
 		return <DiscountCallout>{ translate( 'Free with your plan' ) }</DiscountCallout>;
+	}
+
+	return null;
+}
+
+function CouponDiscountCallout( {
+	product,
+}: {
+	product: ResponseCartProduct;
+} ): JSX.Element | null {
+	const translate = useTranslate();
+
+	if ( isCouponApplied( product ) ) {
+		return <DiscountCallout>{ translate( 'Discounts applied' ) }</DiscountCallout>;
 	}
 
 	return null;
@@ -743,12 +749,9 @@ function WPLineItem( {
 	const sublabel = String( getSublabel( product ) );
 	const label = getLabel( product );
 
-	let originalAmountDisplay = product.item_original_subtotal_display;
-	let originalAmountInteger = product.item_original_subtotal_integer;
-	if ( product.related_monthly_plan_cost_integer && product.related_monthly_plan_cost_display ) {
-		originalAmountInteger = product.related_monthly_plan_cost_integer;
-		originalAmountDisplay = product.related_monthly_plan_cost_display;
-	}
+	const originalAmountDisplay = product.item_original_subtotal_display;
+	const originalAmountInteger = product.item_original_subtotal_integer;
+
 	const actualAmountDisplay = product.item_subtotal_display;
 	const isDiscounted = Boolean(
 		product.item_subtotal_integer < originalAmountInteger && originalAmountDisplay
@@ -776,7 +779,8 @@ function WPLineItem( {
 				<LineItemMeta>
 					<LineItemSublabelAndPrice product={ product } />
 					<DomainDiscountCallout product={ product } />
-					<AnnualDiscountCallout product={ product } />
+					<FirstTermDiscountCallout product={ product } />
+					<CouponDiscountCallout product={ product } />
 				</LineItemMeta>
 			) }
 			{ isGSuite && <GSuiteUsersList product={ product } /> }

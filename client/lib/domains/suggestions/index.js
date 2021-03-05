@@ -17,7 +17,7 @@ export const getSuggestionsVendor = ( options = {} ) => {
 		return 'variation4_front';
 	}
 	if ( config.isEnabled( 'domains/premium-domain-purchases' ) ) {
-		return 'variation7_front';
+		return 'variation8_front';
 	}
 	return 'variation2_front';
 };

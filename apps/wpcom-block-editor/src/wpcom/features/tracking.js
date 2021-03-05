@@ -4,7 +4,7 @@
 import { use, select } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 import { applyFilters } from '@wordpress/hooks';
-import { castArray, noop, find } from 'lodash';
+import { castArray, find } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -15,6 +15,8 @@ import delegateEventTracking from './tracking/delegate-event-tracking';
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
+
+const noop = () => {};
 
 /**
  * Global handler.

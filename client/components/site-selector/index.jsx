@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
-import { filter, find, flow, get, includes, isEmpty, noop } from 'lodash';
+import { filter, find, flow, get, includes, isEmpty } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -38,7 +38,7 @@ import { getUrlParts, getUrlFromParts, determineUrlType, format } from 'calypso/
 import './style.scss';
 
 const ALL_SITES = 'ALL_SITES';
-
+const noop = () => {};
 const debug = debugFactory( 'calypso:site-selector' );
 
 class SiteSelector extends Component {

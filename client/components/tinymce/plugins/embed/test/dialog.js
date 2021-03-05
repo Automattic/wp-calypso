@@ -4,7 +4,7 @@
 import React from 'react';
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 import { spy } from 'sinon';
 
 /**
@@ -14,6 +14,7 @@ import { Dialog } from '@automattic/components';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
 const testSiteId = 5089392;
+const noop = () => {};
 
 describe( 'EmbedDialog', () => {
 	let EmbedDialog;

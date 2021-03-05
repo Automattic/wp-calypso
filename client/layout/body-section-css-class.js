@@ -37,12 +37,19 @@ export default function BodySectionCssClass( { group, section, bodyClass } ) {
 	React.useEffect( addGroupClass( group ), [ group ] );
 	React.useEffect( addSectionClass( section ), [ section ] );
 	React.useEffect( () => {
-		if ( ! bodyClass ) {
+		if ( ! Array.isArray( bodyClass ) || bodyClass.length === 0 ) {
 			return;
 		}
 
-		document.body.classList.add( bodyClass );
-		return () => document.body.classList.remove( bodyClass );
+		bodyClass.forEach( ( className ) => {
+			document.body.classList.add( className );
+		} );
+
+		return () => {
+			bodyClass.forEach( ( className ) => {
+				document.body.classList.remove( className );
+			} );
+		};
 	}, [ bodyClass ] );
 
 	return null;

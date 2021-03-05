@@ -1,10 +1,7 @@
 /**
- */
-
-/**
  * External dependencies
  */
-import { find, get, includes, isArray } from 'lodash';
+import { find, get, includes } from 'lodash';
 import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from './constants';
 
 /**
@@ -46,7 +43,7 @@ export function getLanguageGroupFromTerritoryId(
 export function getLanguageGroupByLangSlug( langSlug, languages, openInPopular = false ) {
 	const language = find( languages, ( l ) => l.langSlug === langSlug );
 	const territoryId =
-		language && isArray( language.territories ) ? language.territories[ 0 ] : null;
+		language && Array.isArray( language.territories ) ? language.territories[ 0 ] : null;
 	return get( language, 'popular', null ) && openInPopular === true
 		? 'popular'
 		: getLanguageGroupFromTerritoryId( territoryId );

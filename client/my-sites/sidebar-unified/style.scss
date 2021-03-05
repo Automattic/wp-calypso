@@ -27,7 +27,7 @@
 	--color-sidebar-submenu-selected-background: transparent;
 	--color-sidebar-submenu-selected-text: white;
 
-	.is-sidebar-collapsed:not( .is-section-reader ):not( .is-section-me ) & {
+	&.is-sidebar-collapsed:not( .is-section-reader ):not( .is-section-me ) {
 		--sidebar-width-max: 36px;
 		--sidebar-width-min: 36px;
 	}
@@ -99,14 +99,14 @@ $font-size: rem( 14px );
 		}
 
 		// Apply hover and focus effects only to tabbable items assuming they are links.
-		.sidebar__heading:not([tabindex="-1"]),
+		.sidebar__heading:not( [tabindex='-1'] ),
 		.sidebar__menu-link {
 			&:hover,
 			&:focus {
 				background-color: var( --color-sidebar-menu-hover-background );
 				color: var( --color-sidebar-menu-hover-text );
 				box-shadow: inset 4px 0 0 0 currentColor;
- 				transition: box-shadow .1s linear;
+ 				transition: box-shadow 0.1s linear;
 			}
 		}
 
@@ -353,7 +353,7 @@ $font-size: rem( 14px );
 		padding: 10px 0 10px 8px;
 	}
 
-	.is-sidebar-collapsed & {
+	&.is-sidebar-collapsed {
 		.dashicons-admin-collapse::before {
 			transform: rotate( 180deg );
 		}
@@ -481,7 +481,7 @@ $font-size: rem( 14px );
 
 	// Reader specific styles
 	// client/reader/sidebar/style.scss
-	.is-section-reader & {
+	&.is-section-reader {
 		.sidebar__menu .count {
 			background: transparent;
 			color: var( --color-sidebar-menu-text );
@@ -523,8 +523,8 @@ $font-size: rem( 14px );
 		// TODO: For prototype only, this prevents the sidebar from being scrollable.
 		// In wp-admin there's custom JS to a) position the sidebar based on the scroll
 		// position and b) position the flyout menu based on available screen space.
-		&.focus-content,
-		&.focus-sidebar {
+		.focus-content,
+		.focus-sidebar {
 			.sidebar,
 			.layout__secondary {
 				z-index: z-index( 'root', '.is-nav-unification .layout__secondary' );
@@ -572,7 +572,7 @@ $font-size: rem( 14px );
 @media screen and ( max-width: 782px ) {
 	// client/layout/sidebar/style.scss
 	.is-nav-unification {
-		&.focus-content .layout__content {
+		.focus-content .layout__content {
 			padding: 71px 24px 24px;
 			transition: padding 0.15s ease-in-out;
 		}
@@ -648,7 +648,7 @@ $font-size: rem( 14px );
 			min-height: initial;
 		}
 
-		&.focus-content .layout__content {
+		.focus-content .layout__content {
 			padding: 47px 0 0;
 		}
 

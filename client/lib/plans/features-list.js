@@ -174,6 +174,15 @@ export const FEATURES_LIST = {
 			),
 	},
 
+	[ constants.FEATURE_HOSTING ]: {
+		getSlug: () => constants.FEATURE_HOSTING,
+		getTitle: () => i18n.translate( 'Best-in-class hosting' ),
+		getDescription: () =>
+			i18n.translate(
+				'Site hosting is included with your plan, eliminating additional cost and technical hassle.'
+			),
+	},
+
 	[ constants.FEATURE_PREMIUM_THEMES ]: {
 		getSlug: () => constants.FEATURE_PREMIUM_THEMES,
 		getTitle: () => i18n.translate( 'Unlimited premium themes' ),
@@ -1047,7 +1056,10 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_PREMIUM_CONTENT_BLOCK ]: {
 		getSlug: () => constants.FEATURE_PREMIUM_CONTENT_BLOCK,
 		getTitle: () => i18n.translate( 'Subscriber-only content' ),
-		getDescription: () => i18n.translate( 'Limit content to paying subscribers.' ),
+		getDescription: () =>
+			i18n.translate(
+				'Create additional, premium content that you can make available to paying subscribers only.'
+			),
 	},
 
 	[ constants.FEATURE_PLAN_SECURITY_DAILY ]: {
@@ -1571,12 +1583,6 @@ export const FEATURES_LIST = {
 		getSlug: () => constants.FEATURE_P2_CUSTOM_DOMAIN,
 		getTitle: () => i18n.translate( 'Custom domain' ),
 		getDescription: () => i18n.translate( 'Make your P2 more memorable using your own domain.' ),
-	},
-
-	[ constants.FEATURE_HOSTING ]: {
-		getSlug: () => constants.FEATURE_HOSTING,
-		getTitle: () => i18n.translate( 'Best-in-class hosting' ),
-		getDescription: () => {},
 	},
 
 	[ constants.FEATURE_SFTP_DATABASE ]: {

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { noop } from 'lodash';
 import React, { useRef, FunctionComponent, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -34,6 +33,9 @@ import cloudIcon from 'calypso/components/jetpack/daily-backup-status/status-car
  * Type dependencies
  */
 import type { Activity } from 'calypso/state/activity-log/types';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 
 type Props = {
 	activity: Activity;

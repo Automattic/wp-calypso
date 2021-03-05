@@ -906,8 +906,11 @@ object RunCalypsoE2eDesktopTests : BuildType({
 
 				export LIVEBRANCHES=true
 				export NODE_CONFIG_ENV=test
-				#export MAGELLANDEBUG=true
 				export TEST_VIDEO=true
+
+				# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
+				# mocha-teamcity-reporter to work.
+				export MAGELLANDEBUG=true
 
 				function join() {
 					local IFS=${'$'}1
@@ -949,7 +952,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 				export TEST_FILES=${'$'}(join ',' ${'$'}(ls -1 specs*/**/*spec.js))
 
-			yarn magellan --config=magellan.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --test=${'$'}{TEST_FILES}
+				yarn magellan --config=magellan.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerImage = "%docker_image_e2e%"
@@ -966,10 +969,6 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				set -o pipefail
 				set -x
 
-				# Collect results
-				mkdir -p reports
-				find test/e2e/temp -path '*/reports/*' -print0 | xargs -r -0 mv -t reports
-
 				mkdir -p screenshots
 				find test/e2e/temp -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
 
@@ -983,11 +982,6 @@ object RunCalypsoE2eDesktopTests : BuildType({
 	}
 
 	features {
-		feature {
-			type = "xml-report-plugin"
-			param("xmlReportParsing.reportType", "junit")
-			param("xmlReportParsing.reportDirs", "test/e2e/temp/**/reports/*.xml")
-		}
 		perfmon {
 		}
 		pullRequests {
@@ -1022,10 +1016,6 @@ object RunCalypsoE2eDesktopTests : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 20
-		// With testFailure=true, TeamCity detects test that fail but succeed after a retry as build failures
-		// With this option disabled, TeamCity fails the build if `yarn magellan` returns an exit code other than 0.
-		testFailure = false
-
 		// TeamCity will mute a test if it fails and then succeeds within the same build. Otherwise TeamCity UI will not
 		// display a difference between real errors and retries, making it hard to understand what is actually failing.
 		supportTestRetry = true
@@ -1266,169 +1256,8 @@ object WpDesktop_DesktopE2ETests : BuildType({
 
 object WPComPlugins : Project({
 	name = "WPCom Plugins"
-	buildType(WPComPlugins_EditorToolKit)
+	buildType(_self.builds.WPComPlugins_EditorToolKit)
 	params {
 		text("docker_image_wpcom", "registry.a8c.com/calypso/ci-wpcom:latest", label = "Docker image", description = "Docker image to use for the run", allowEmpty = true)
-	}
-})
-
-object WPComPlugins_EditorToolKit : BuildType({
-	name = "Editor ToolKit"
-
-	artifactRules = "editing-toolkit.zip"
-
-	dependencies {
-		artifacts(AbsoluteId("calypso_WPComPlugins_EditorToolKit")) {
-			buildRule = tag("etk-release-build", "+:trunk")
-			artifactRules = """
-				+:editing-toolkit.zip!** => etk-release-build
-			""".trimIndent()
-		}
-	}
-
-	buildNumberPattern = "%build.prefix%.%build.counter%"
-	params {
-		param("build.prefix", "3")
-	}
-
-	vcs {
-		root(WpCalypso)
-		cleanCheckout = true
-	}
-
-	triggers {
-		vcs {
-			branchFilter = """
-				+:*
-				-:pull*
-			""".trimIndent()
-		}
-	}
-
-	features {
-		pullRequests {
-			vcsRootExtId = "${WpCalypso.id}"
-			provider = github {
-				authType = token {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
-			}
-		}
-
-		commitStatusPublisher {
-			vcsRootExtId = "${WpCalypso.id}"
-			publisher = github {
-				githubUrl = "https://api.github.com"
-				authType = personalToken {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-			}
-		}
-	}
-
-	steps {
-		script {
-			name = "Prepare environment"
-			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
-				# Update composer
-				composer install
-
-				# Install modules
-				yarn install
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image_wpcom%"
-			dockerRunParameters = "-u %env.UID%"
-		}
-		script {
-			name = "Run tests"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
-				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-				export JEST_JUNIT_OUTPUT_DIR="../../test_results/editing-toolkit"
-
-				cd apps/editing-toolkit
-				yarn test:js --reporters=default --reporters=jest-junit --maxWorkers=${'$'}JEST_MAX_WORKERS
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image_wpcom%"
-			dockerRunParameters = "-u %env.UID%"
-		}
-		script {
-			name = "Build artifacts"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
-				export NODE_ENV="production"
-
-				cd apps/editing-toolkit
-				yarn build
-
-				echo
-				prev_release_build_num=${'$'}(grep build_number ../../etk-release-build/build_meta.txt | sed -e "s/build_number=//")
-				rm ../../etk-release-build/build_meta.txt # Adds a source of randomness which we don't want for comparison.
-				echo "Previous tagged trunk build: ${'$'}prev_release_build_num"
-
-				# Update plugin version in the plugin file and readme.txt.
-				# Note: we also update the previous release build to the same version to restore idempotence
-				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php ../../etk-release-build/full-site-editing-plugin.php
-				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt ../../etk-release-build/readme.txt
-
-				if ! diff -rq ./editing-toolkit-plugin/ ../../etk-release-build/ ; then
-					echo "The build is different from the last release build. Therefore, this can be tagged as a release build."
-					curl -X POST -H "Content-Type: text/plain" --data "etk-release-build" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" %teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/
-				else
-					echo "The build is not different from the last release build. Therefore, this build has no effect."
-				fi
-
-				cd editing-toolkit-plugin/
-				# Metadata file with info for the download script.
-				tee build_meta.txt <<-EOM
-					commit_hash=%build.vcs.number%
-					commit_url=https://github.com/Automattic/wp-calypso/commit/%build.vcs.number%
-					build_number=%build.number%
-					EOM
-
-				echo
-				zip -r ../../../editing-toolkit.zip .
-
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image_wpcom%"
-			dockerRunParameters = "-u %env.UID%"
-		}
 	}
 })

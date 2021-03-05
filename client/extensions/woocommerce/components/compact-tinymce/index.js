@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { assign, noop, uniqueId, forEach } from 'lodash';
+import { assign, uniqueId, forEach } from 'lodash';
 import classNames from 'classnames';
 import { ReactReduxContext } from 'react-redux';
 
@@ -22,6 +22,8 @@ import { wpautop } from 'calypso/lib/formatting';
 import wplinkPlugin from 'calypso/components/tinymce/plugins/wplink/plugin';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { isLocaleRtl } from 'calypso/lib/i18n-utils';
+
+const noop = () => {};
 
 class CompactTinyMCE extends Component {
 	static propTypes = {

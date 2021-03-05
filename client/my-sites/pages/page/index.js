@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import pageRouter from 'page';
 import { connect } from 'react-redux';
-import { flow, get, includes, noop, partial } from 'lodash';
+import { flow, get, includes, partial } from 'lodash';
 import { saveAs } from 'browser-filesaver';
 import classNames from 'classnames';
 
@@ -51,6 +51,7 @@ import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import config from '@automattic/calypso-config';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
+const noop = () => {};
 
 function sleep( ms ) {
 	return new Promise( ( r ) => setTimeout( r, ms ) );

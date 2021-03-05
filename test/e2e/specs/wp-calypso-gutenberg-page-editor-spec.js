@@ -30,15 +30,14 @@ const host = dataHelper.getJetpackHost();
 const gutenbergUser =
 	process.env.GUTENBERG_EDGE === 'true' ? 'gutenbergSimpleSiteEdgeUser' : 'gutenbergSimpleSiteUser';
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
 
 	describe( 'Public Pages: @parallel', function () {
 		let fileDetails;
@@ -70,13 +69,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			const gEditorSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
 			await gEditorSidebarComponent.enterImageAltText( fileDetails );
 			await gEditorComponent.closeSidebar();
-
-			const errorShown = await gEditorComponent.errorDisplayed();
-			return assert.strictEqual(
-				errorShown,
-				false,
-				'There is an error shown on the Gutenberg editor page!'
-			);
 		} );
 
 		/* Skip until sharing is added in Gutenberg editor
@@ -271,13 +263,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			step( 'Can enter page title and content and set to password protected', async function () {
 				let gHeaderComponent = await GutenbergEditorComponent.Expect( driver );
 				await gHeaderComponent.enterTitle( pageTitle );
-
-				const errorShown = await gHeaderComponent.errorDisplayed();
-				assert.strictEqual(
-					errorShown,
-					false,
-					'There is an error shown on the Gutenberg editor page!'
-				);
 
 				const gSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
 				await gSidebarComponent.chooseDocumentSettings();
@@ -544,9 +529,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 
 			const gPaymentComponent = await SimplePaymentsBlockComponent.Expect( driver, blockId );
 			await gPaymentComponent.insertPaymentButtonDetails( paymentButtonDetails );
-
-			const errorShown = await gEditorComponent.errorDisplayed();
-			assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 
 			await gEditorComponent.enterTitle( pageTitle );
 			await gEditorComponent.ensureSaved();

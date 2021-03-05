@@ -16,16 +16,6 @@ import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
 import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
-import {
-	getForCurrentCROIteration,
-	Iterations,
-} from 'calypso/my-sites/plans/jetpack-plans/iterations';
-
-// Fresh Start 2021 promotion; runs from Feb 1 00:00 to Feb 14 23:59 UTC automatically.
-// Safe to remove on or after Feb 15.
-import FreshStart2021SaleBanner from 'calypso/components/jetpack/fresh-start-2021-sale-banner';
-
-// Part of the NPIP test iteration
 import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
 
 const StandardPlansHeader = () => (
@@ -80,21 +70,10 @@ const PlansHeader = ( { context }: { context: PageJS.Context } ) => {
 };
 
 export default function setJetpackHeader( context: PageJS.Context ) {
-	// Don't show for the NPIP variant
-	const showFreshStartBanner = getForCurrentCROIteration(
-		( variation: Iterations ) => variation !== Iterations.NPIP
-	);
-
-	// *Only* show for the NPIP variant
-	const showIntroPricingBanner = getForCurrentCROIteration(
-		( variation: Iterations ) => variation === Iterations.NPIP
-	);
-
 	context.header = (
 		<>
 			<PlansHeader context={ context } />
-			{ showFreshStartBanner && <FreshStart2021SaleBanner urlQueryArgs={ context.query } /> }
-			{ showIntroPricingBanner && <IntroPricingBanner /> }
+			<IntroPricingBanner />
 		</>
 	);
 }
