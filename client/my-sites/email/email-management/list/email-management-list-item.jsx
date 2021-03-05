@@ -340,7 +340,7 @@ export default connect( ( state, ownProps ) => {
 		const gsuiteUsersForSite = ! hasGSuiteWithUs( ownProps.domain )
 			? []
 			: getGSuiteUsers( state, selectedSiteId ) ?? [];
-		const gsuiteUsers = getGSuiteUsersForDomain( gsuiteUsersForSite );
+		const gsuiteUsers = getGSuiteUsersForDomain( gsuiteUsersForSite, ownProps.domain?.name );
 
 		emails = normalizeGsuiteUsers( gsuiteUsers );
 	} else if ( hasEmailForwards( ownProps.domain ) ) {
