@@ -6,7 +6,6 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { combineReducers, serialize, deserialize } from 'calypso/state/utils';
 import {
 	dismissRewindRestoreProgress,
 	rewindRequestDismiss,
@@ -79,34 +78,5 @@ describe( 'rewindRequestRestore', () => {
 
 		const state = restoreRequest( prevState, rewindRequestDismiss( SITE_ID ) );
 		expect( state ).not.toHaveProperty( [ SITE_ID ] );
-	} );
-} );
-
-describe( 'restore persistence', () => {
-	const reducer = combineReducers( { restoreProgress, restoreRequest } );
-
-	const state = {
-		restoreProgress: {
-			[ SITE_ID ]: {
-				restoreId: 1,
-				status: 'queued',
-				timestamp: TIMESTAMP,
-			},
-		},
-		restoreRequest: {
-			[ SITE_ID ]: ACTIVITY_ID,
-		},
-	};
-
-	test( 'serialization persists only the restoreProgress part', () => {
-		const serialized = serialize( reducer, state ).root();
-		expect( serialized ).toHaveProperty( 'restoreProgress' );
-		expect( serialized ).not.toHaveProperty( 'restoreRequest' );
-	} );
-
-	test( 'deserialization restores only the restoreProgress part', () => {
-		const deserialized = deserialize( reducer, state );
-		expect( deserialized ).toHaveProperty( [ 'restoreProgress', SITE_ID ] );
-		expect( deserialized ).not.toHaveProperty( [ 'restoreRequest', SITE_ID ] );
 	} );
 } );

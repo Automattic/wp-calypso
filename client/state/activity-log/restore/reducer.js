@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { restoreProgressSchema } from './schema';
 import {
 	REWIND_RESTORE,
 	REWIND_RESTORE_DISMISS,
@@ -9,7 +8,7 @@ import {
 	REWIND_RESTORE_REQUEST,
 	REWIND_RESTORE_UPDATE_PROGRESS,
 } from 'calypso/state/action-types';
-import { keyedReducer, withSchemaValidation, withPersistence } from 'calypso/state/utils';
+import { keyedReducer } from 'calypso/state/utils';
 
 const startProgress = ( state, { timestamp } ) => ( {
 	errorCode: '',
@@ -48,26 +47,20 @@ const updateProgress = (
 	currentEntry,
 } );
 
-export const restoreProgress = withSchemaValidation(
-	restoreProgressSchema,
-	keyedReducer(
-		'siteId',
-		withPersistence( ( state = {}, action ) => {
-			switch ( action.type ) {
-				case REWIND_RESTORE:
-					return startProgress( state, action );
-				case REWIND_RESTORE_DISMISS_PROGRESS:
-					return null;
-				case REWIND_RESTORE_UPDATE_PROGRESS:
-					return updateProgress( state, action );
-				case REWIND_RESTORE_DISMISS:
-					return null;
-			}
+export const restoreProgress = keyedReducer( 'siteId', ( state = {}, action ) => {
+	switch ( action.type ) {
+		case REWIND_RESTORE:
+			return startProgress( state, action );
+		case REWIND_RESTORE_DISMISS_PROGRESS:
+			return null;
+		case REWIND_RESTORE_UPDATE_PROGRESS:
+			return updateProgress( state, action );
+		case REWIND_RESTORE_DISMISS:
+			return null;
+	}
 
-			return state;
-		} )
-	)
-);
+	return state;
+} );
 
 export const restoreRequest = keyedReducer( 'siteId', ( state = null, action ) => {
 	switch ( action.type ) {
