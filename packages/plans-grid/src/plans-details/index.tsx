@@ -58,7 +58,7 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale, bil
 		__i18n_text_domain__
 	);
 	const annualBillingLabel =
-		locale === 'en' || hasTranslation?.( 'Monthly price (billed yearly)', __i18n_text_domain__ )
+		locale === 'en' || hasTranslation?.( 'Monthly price (billed yearly)' )
 			? newAnnualBillingLabel
 			: fallbackAnnualBillingLabel;
 
