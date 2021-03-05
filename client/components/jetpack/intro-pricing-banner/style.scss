@@ -31,22 +31,28 @@
 }
 
 .intro-pricing-banner__header {
-	text-align: center;
-
-	font-size: 1.5rem;
-	font-weight: 700;
-
 	margin-top: -8px;
 	margin-bottom: 8px;
 
+	text-align: center;
+	font-size: $font-title-small;
+	font-weight: 700;
+
 	@include breakpoint-deprecated( '>660px' ) {
 		text-align: initial;
+		font-size: $font-title-medium;
 	}
 }
 
 .intro-pricing-banner__call-to-action {
-	color: var( --studio-gray-60 );
 	margin-bottom: initial;
+
+	font-size: $font-body-small;
+	color: var( --studio-gray-60 );
+
+	@include breakpoint-deprecated( '>660px' ) {
+		font-size: $font-body;
+	}
 }
 
 .intro-pricing-banner__badge {
