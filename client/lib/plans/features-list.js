@@ -175,7 +175,7 @@ export const FEATURES_LIST = {
 	},
 
 	[ constants.FEATURE_HOSTING ]: {
-		getSlug: () => constants.FEATURE_SITE_HOSTING,
+		getSlug: () => constants.FEATURE_HOSTING,
 		getTitle: () => i18n.translate( 'Best-in-class hosting' ),
 		getDescription: () =>
 			i18n.translate(
