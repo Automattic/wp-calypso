@@ -60,7 +60,7 @@ export default {
 		allowExistingUsers: false,
 	},
 	jetpackPopularPlans: {
-		datestamp: '20210304',
+		datestamp: '20210308',
 		variations: {
 			withFree_test: 50,
 			withoutFree_control: 50,
