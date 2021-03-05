@@ -33,14 +33,13 @@ class Block_Patterns_From_API {
 	 */
 	private function __construct() {
 		$this->is_site_editor_enabled = function_exists( 'gutenberg_is_fse_theme' ) && gutenberg_is_fse_theme();
-
 		// Tells the backend which patterns source site to default to.
 		$this->patterns_source    = $this->is_site_editor_enabled ? 'fse_block_patterns' : 'block_patterns';
 		$this->patterns_cache_key = sha1(
 			implode(
 				'_',
 				array(
-					$this->pattern_source,
+					$this->patterns_source,
 					A8C_ETK_PLUGIN_VERSION,
 					$this->get_block_patterns_locale(),
 				)
