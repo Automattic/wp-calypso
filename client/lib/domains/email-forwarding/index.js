@@ -4,12 +4,6 @@
 import { mapValues } from 'lodash';
 import emailValidator from 'email-validator';
 
-/**
- * Internal dependencies
- */
-import { getEmailForwardsCount } from './get-email-forwards-count';
-import { hasEmailForwards } from './has-email-forwards';
-
 function validateAllFields( fieldValues ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
 		const isValid = validateField( {
@@ -32,4 +26,6 @@ function validateField( { name, value } ) {
 	}
 }
 
-export { getEmailForwardsCount, hasEmailForwards, validateAllFields };
+export { getEmailForwardsCount } from './get-email-forwards-count';
+export { hasEmailForwards } from './has-email-forwards';
+export { validateAllFields };
