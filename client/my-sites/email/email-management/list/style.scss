@@ -1,0 +1,61 @@
+.email-management-list__active-emails {
+	.foldable-card {
+		margin-bottom: 0;
+
+		&.is-expanded .foldable-card__content {
+			padding: 0;
+		}
+	}
+
+	.email-management-list-item__foldable-content-email-item {
+		padding-left: 76px;
+
+		.material-icon-email {
+			fill: var( --color-neutral-60 );
+			vertical-align: bottom;
+		}
+
+		.email-management-list-item__foldable-content-email-address {
+			margin-left: 10px;
+		}
+
+		.badge {
+			margin-left: 10px;
+		}
+	}
+}
+
+.email-management-list-item__header-text {
+	display: flex;
+	flex-direction: column;
+	margin-left: 24px;
+
+	span {
+		color: var( --color-neutral-60 );
+	}
+}
+
+.email-management-list-item__header-icon {
+	height: 36px;
+	margin-left: 8px;
+	width: 36px;
+
+	&.gridicon.titan {
+		fill: var( --color-wordpress-com );
+	}
+}
+
+.email-management-list__active-emails + .email-management-list__other-domains-header {
+	margin-top: 2em;
+}
+
+.email-management-list__other-domain {
+	display: flex;
+
+	.email-management-list__other-domain-actions {
+		display: flex;
+		flex: 1 1;
+		justify-content: flex-end;
+		text-align: right;
+	}
+}
