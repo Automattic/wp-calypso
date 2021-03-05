@@ -133,7 +133,7 @@ function displayCartMessages( {
 				messages.errors.map( ( error ) => (
 					<p key={ `${ error.code }-${ error.message }` }>{ error.message }</p>
 				) ),
-				{ persistent: true }
+				{ isPersistent: true }
 			)
 		);
 		return;
