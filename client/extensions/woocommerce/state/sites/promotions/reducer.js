@@ -5,7 +5,7 @@
 /**
  * External dependencies
  */
-import { fill, find, findIndex } from 'lodash';
+import { find, findIndex } from 'lodash';
 
 /**
  * Internal dependencies
@@ -80,7 +80,7 @@ function couponsUpdated( state, action ) {
 	const { params, totalCoupons } = action;
 
 	if ( undefined !== params.offset ) {
-		const newCoupons = fill( Array( totalCoupons ), null );
+		const newCoupons = Array( totalCoupons ).fill( null );
 
 		if ( state.coupons ) {
 			// Copy over existing coupons from previous state.
@@ -140,7 +140,7 @@ function productsRequestSuccess( state, action ) {
 	const { params, totalProducts } = action;
 
 	if ( undefined !== params.offset ) {
-		const newProducts = fill( Array( totalProducts ), null );
+		const newProducts = Array( totalProducts ).fill( null );
 
 		if ( state.products ) {
 			// Copy over existing products from previous state.

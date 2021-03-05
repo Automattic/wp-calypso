@@ -414,6 +414,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/ends-with': 'error',
 		'you-dont-need-lodash-underscore/entries': 'error',
 		'you-dont-need-lodash-underscore/extend-own': 'error',
+		'you-dont-need-lodash-underscore/fill': 'error',
 		'you-dont-need-lodash-underscore/foldl': 'error',
 		'you-dont-need-lodash-underscore/foldr': 'error',
 		'you-dont-need-lodash-underscore/index-of': 'error',
