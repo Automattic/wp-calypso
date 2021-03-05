@@ -18,6 +18,6 @@ export default function useLastLocation(): { goLastLocation: () => void } {
 	};
 
 	return {
-		goLastLocation: goLastLocation,
+		goLastLocation,
 	};
 }
