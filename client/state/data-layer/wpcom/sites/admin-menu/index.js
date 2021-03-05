@@ -20,7 +20,11 @@ export const requestFetchAdminMenu = ( action ) =>
 
 const sanitizeUrl = ( url, wpAdminUrl ) => {
 	const isSafeInternalUrl = new RegExp( '^/' ).test( url );
-	const isSafeWpAdminUrl = new RegExp( `^${ wpAdminUrl }` ).test( url );
+	// The replace function removes the protocol.
+	const isSafeWpAdminUrl = new RegExp( `^${ wpAdminUrl?.replace( /^https?:\/\//, '' ) }` ).test(
+		url?.replace( /^https?:\/\//, '' )
+	);
+
 	if ( isSafeInternalUrl || isSafeWpAdminUrl ) {
 		return url;
 	}

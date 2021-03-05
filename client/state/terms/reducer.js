@@ -9,15 +9,13 @@ import { mapValues, merge } from 'lodash';
  */
 import { withStorageKey } from '@automattic/state-utils';
 import {
-	DESERIALIZE,
 	TERM_REMOVE,
 	TERMS_RECEIVE,
 	TERMS_REQUEST,
 	TERMS_REQUEST_FAILURE,
 	TERMS_REQUEST_SUCCESS,
-	SERIALIZE,
 } from 'calypso/state/action-types';
-import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import TermQueryManager from 'calypso/lib/query-manager/term';
 import { getSerializedTermsQuery } from './utils';
 import { queriesSchema } from './schema';
@@ -54,7 +52,8 @@ export function queryRequests( state = {}, action ) {
  * The state reflects a mapping of serialized query key to an array of term IDs
  * for the query, if a query response was successfully received.
  */
-export const queries = withSchemaValidation( queriesSchema, ( state = {}, action ) => {
+
+const queriesReducer = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case TERMS_RECEIVE: {
 			const { siteId, query, taxonomy, terms, found } = action;
@@ -93,24 +92,24 @@ export const queries = withSchemaValidation( queriesSchema, ( state = {}, action
 				},
 			};
 		}
-		case SERIALIZE: {
-			return mapValues( state, ( taxonomies ) => {
-				return mapValues( taxonomies, ( { data, options } ) => {
-					return { data, options };
-				} );
-			} );
-		}
-		case DESERIALIZE: {
-			return mapValues( state, ( taxonomies ) => {
-				return mapValues( taxonomies, ( { data, options } ) => {
-					return new TermQueryManager( data, options );
-				} );
-			} );
-		}
 	}
 
 	return state;
-} );
+};
+
+export const queries = withSchemaValidation(
+	queriesSchema,
+	withPersistence( queriesReducer, {
+		serialize: ( state ) =>
+			mapValues( state, ( taxonomies ) =>
+				mapValues( taxonomies, ( { data, options } ) => ( { data, options } ) )
+			),
+		deserialize: ( persisted ) =>
+			mapValues( persisted, ( taxonomies ) =>
+				mapValues( taxonomies, ( { data, options } ) => new TermQueryManager( data, options ) )
+			),
+	} )
+);
 
 const combinedReducer = combineReducers( {
 	queries,

@@ -50,8 +50,7 @@ export default function useCartUpdateAndRevalidate(
 
 		hookDispatch( { type: 'REQUEST_UPDATED_RESPONSE_CART' } );
 
-		// We need to add is_update so that we don't add a plan automatically when the cart gets updated (DWPO).
-		setServerCart( { ...requestCart, is_update: true } )
+		setServerCart( requestCart )
 			.then( ( response ) => {
 				debug( 'update cart request complete', requestCart, '; updated cart is', response );
 				if ( responseCart !== pendingResponseCart.current ) {

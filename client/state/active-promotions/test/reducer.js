@@ -21,6 +21,7 @@ import activePromotionsReducer, {
 
 import { WPCOM_RESPONSE } from './fixture';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { serialize, deserialize } from 'calypso/state/utils';
 
 describe( 'reducer', () => {
 	let sandbox;
@@ -73,13 +74,12 @@ describe( 'reducer', () => {
 		test( 'should persist state', () => {
 			const activePromotions = WPCOM_RESPONSE;
 			const initialState = activePromotions;
-			const action = { type: 'SERIALIZE' };
 			const expectedState = activePromotions;
 
 			deepFreeze( initialState );
 			deepFreeze( expectedState );
 
-			const newState = itemsReducer( initialState, action );
+			const newState = serialize( itemsReducer, initialState );
 
 			expect( newState ).to.eql( expectedState );
 		} );
@@ -87,12 +87,11 @@ describe( 'reducer', () => {
 		test( 'should load persisted state', () => {
 			const activePromotions = WPCOM_RESPONSE;
 			const initialState = activePromotions;
-			const action = { type: 'DESERIALIZE' };
 			const expectedState = activePromotions;
 			deepFreeze( initialState );
 			deepFreeze( expectedState );
 
-			const newState = itemsReducer( initialState, action );
+			const newState = deserialize( itemsReducer, initialState );
 
 			expect( newState ).to.eql( expectedState );
 		} );
@@ -101,12 +100,11 @@ describe( 'reducer', () => {
 			// each entry should be `string`
 			const activePromotions = [ 1234 ];
 			const initialState = activePromotions;
-			const action = { type: 'DESERIALIZE' };
 			deepFreeze( initialState );
 			const expectedState = [];
 			deepFreeze( expectedState );
 
-			const newState = itemsReducer( initialState, action );
+			const newState = deserialize( itemsReducer, initialState );
 
 			expect( newState ).to.eql( expectedState );
 		} );

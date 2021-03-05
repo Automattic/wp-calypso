@@ -34,7 +34,9 @@ class TitanControlPanelLoginCard extends React.Component {
 	componentDidMount() {
 		this._mounted = true;
 
-		fetchTitanIframeURL( getTitanMailOrderId( this.props.domain ) ).then(
+		const { context, domain } = this.props;
+
+		fetchTitanIframeURL( getTitanMailOrderId( domain ), context ).then(
 			( { error, iframeURL } ) => {
 				if ( error ) {
 					this.props.errorNotice(
@@ -56,19 +58,21 @@ class TitanControlPanelLoginCard extends React.Component {
 			return;
 		}
 
-		const { domain, translate } = this.props;
+		const { context, domain, translate } = this.props;
 		this.setState( { isFetchingAutoLoginLink: true } );
 
-		fetchTitanAutoLoginURL( getTitanMailOrderId( domain ) ).then( ( { error, loginURL } ) => {
-			this.setState( { isFetchingAutoLoginLink: false } );
-			if ( error ) {
-				this.props.errorNotice(
-					error ?? translate( 'An unknown error occurred. Please try again later.' )
-				);
-			} else {
-				window.location.href = loginURL;
+		fetchTitanAutoLoginURL( getTitanMailOrderId( domain ), context ).then(
+			( { error, loginURL } ) => {
+				this.setState( { isFetchingAutoLoginLink: false } );
+				if ( error ) {
+					this.props.errorNotice(
+						error ?? translate( 'An unknown error occurred. Please try again later.' )
+					);
+				} else {
+					window.location.href = loginURL;
+				}
 			}
-		} );
+		);
 	};
 
 	renderAutoLogin() {
@@ -148,6 +152,7 @@ class TitanControlPanelLoginCard extends React.Component {
 }
 
 TitanControlPanelLoginCard.propTypes = {
+	context: PropTypes.string,
 	domain: PropTypes.object.isRequired,
 };
 

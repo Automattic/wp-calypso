@@ -54,8 +54,8 @@ import {
 	isJetpackSite,
 	canCurrentUserUseEarn,
 	getSiteOption,
-	canCurrentUserUseCalypsoStore,
 	canCurrentUserUseWooCommerceCoreStore,
+	getSiteWoocommerceUrl,
 } from 'calypso/state/sites/selectors';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
 import getSiteTaskList from 'calypso/state/selectors/get-site-task-list';
@@ -694,7 +694,6 @@ export class MySitesSidebar extends Component {
 			translate,
 			site,
 			siteSuffix,
-			canUserUseCalypsoStore,
 			canUserUseWooCommerceCoreStore,
 			isSiteWpcomStore,
 		} = this.props;
@@ -712,7 +711,7 @@ export class MySitesSidebar extends Component {
 			// So, we'll just continue to change the link here as we have been doing.
 			experience = 'wpadmin-woocommerce-core';
 			storeLink = site.options.admin_url + 'admin.php?page=wc-admin';
-		} else if ( ! canUserUseCalypsoStore ) {
+		} else {
 			return null;
 		}
 
@@ -763,7 +762,13 @@ export class MySitesSidebar extends Component {
 	}
 
 	woocommerce() {
-		const { site, canUserUseWooCommerceCoreStore, siteSuffix, isSiteWpcomStore } = this.props;
+		const {
+			site,
+			canUserUseWooCommerceCoreStore,
+			siteSuffix,
+			isSiteWpcomStore,
+			woocommerceUrl,
+		} = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -776,10 +781,10 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		let storeLink = site.options.admin_url + 'admin.php?page=wc-admin&from-calypso';
+		let storeLink = woocommerceUrl;
 		if ( ! isSiteWpcomStore ) {
-			// Navigate to Store UI for installation.
-			storeLink = '/store' + siteSuffix + '?redirect_after_install';
+			// Navigate to installation.
+			storeLink = '/woocommerce-installation' + siteSuffix;
 		}
 
 		return (
@@ -1161,7 +1166,6 @@ function mapStateToProps( state ) {
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
 		canUserManagePlugins: canCurrentUserManagePlugins( state ),
-		canUserUseCalypsoStore: canCurrentUserUseCalypsoStore( state, siteId ),
 		canUserUseWooCommerceCoreStore: canCurrentUserUseWooCommerceCoreStore( state, siteId ),
 		canUserUseEarn: canCurrentUserUseEarn( state, siteId ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
@@ -1207,6 +1211,7 @@ function mapStateToProps( state ) {
 		sitePlanSlug: getSitePlanSlug( state, siteId ),
 		onboardingUrl: getOnboardingUrl( state ),
 		isSiteWpcomStore: getSiteOption( state, siteId, 'is_wpcom_store' ), // 'is_automated_transfer' && 'woocommerce_is_active'
+		woocommerceUrl: getSiteWoocommerceUrl( state, siteId ),
 	};
 }
 

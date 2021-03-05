@@ -25,9 +25,10 @@ import 'calypso/state/posts/init';
  *
  * @param  {number}   siteId Site ID
  * @param  {number}   postId Post ID
+ * @param  {boolean}  silent Whether to stop related notices from appearing
  * @returns {Function}        Action thunk
  */
-export function restorePost( siteId, postId ) {
+export function restorePost( siteId, postId, silent = false ) {
 	return ( dispatch, getState ) => {
 		dispatch( {
 			type: POST_RESTORE,
@@ -45,7 +46,9 @@ export function restorePost( siteId, postId ) {
 					postId,
 				} );
 				dispatch( receivePost( restoredPost ) );
-				dispatch( successNotice( translate( 'Post successfully restored' ) ) );
+				if ( ! silent ) {
+					dispatch( successNotice( translate( 'Post successfully restored' ) ) );
+				}
 			},
 			( error ) => {
 				dispatch( {
@@ -54,6 +57,10 @@ export function restorePost( siteId, postId ) {
 					postId,
 					error,
 				} );
+
+				if ( silent ) {
+					return;
+				}
 
 				const post = getSitePost( getState(), siteId, postId );
 

@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { filter, get, isFinite, omit, sumBy } from 'lodash';
+import { filter, get, omit, sumBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -120,7 +120,7 @@ export const isOrderLoading = ( state, orderId, siteId = getSelectedSiteId( stat
  * @returns {boolean} Whether this order is currently being updated on the server
  */
 export const isOrderUpdating = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! isFinite( orderId ) ) {
+	if ( ! Number.isFinite( orderId ) ) {
 		orderId = JSON.stringify( orderId );
 	}
 	const isUpdating = get( state, [
@@ -139,7 +139,7 @@ export const isOrderUpdating = ( state, orderId, siteId = getSelectedSiteId( sta
  * @param {object} state Whole Redux state tree
  * @param {object} [query] Query used to fetch orders. Can contain page, status, etc. If not provided, defaults to first page, all orders.
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @returns {Array|false} List of orders, or false if there was an error
+ * @returns {Array|boolean} List of orders, or false if there was an error
  */
 export const getOrders = ( state, query = {}, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areOrdersLoaded( state, query, siteId ) ) {

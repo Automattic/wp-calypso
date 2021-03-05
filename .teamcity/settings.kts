@@ -13,6 +13,8 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.githubConnec
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
+import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
+import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
 
 /*
 The settings script is an entry point for defining a TeamCity
@@ -48,7 +50,7 @@ project {
 	buildType(CheckCodeStyle)
 	buildType(CheckCodeStyleBranch)
 	buildType(BuildDockerImage)
-	buildType(RunCanaryE2eTests)
+	buildType(RunCalypsoE2eDesktopTests)
 
 	params {
 		param("env.NODE_OPTIONS", "--max-old-space-size=32000")
@@ -326,6 +328,39 @@ object RunAllUnitTests : BuildType({
 			dockerRunParameters = "-u %env.UID%"
 		}
 		script {
+			name = "Prevent duplicated packages"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				# Duplicated packages
+				DUPLICATED_PACKAGES=${'$'}(npx yarn-deduplicate --list)
+				if [[ -n "${'$'}DUPLICATED_PACKAGES" ]]; then
+					echo "Repository contains duplicated packages: "
+					echo ""
+					echo "${'$'}DUPLICATED_PACKAGES"
+					echo ""
+					echo "To fix them, you need to checkout the branch, run 'npx yarn-deduplicate && yarn',"
+					echo "verify that the new packages work and commit the changes in 'yarn.lock'."
+					exit 1
+				else
+					echo "No duplicated packages found."
+				fi
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
 			name = "Run type checks"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
@@ -343,6 +378,7 @@ object RunAllUnitTests : BuildType({
 
 				# Run type checks
 				yarn tsc --build packages/tsconfig.json
+				yarn tsc --build apps/editing-toolkit/tsconfig.json
 				yarn tsc --project client/landing/gutenboarding
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
@@ -668,6 +704,15 @@ object CheckCodeStyle : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 20
+		nonZeroExitCode = false
+		failOnMetricChange {
+			metric = BuildFailureOnMetric.MetricType.INSPECTION_ERROR_COUNT
+			units = BuildFailureOnMetric.MetricUnit.DEFAULT_UNIT
+			comparison = BuildFailureOnMetric.MetricComparison.MORE
+			compareTo = build {
+				buildRule = lastSuccessful()
+			}
+		}
 	}
 
 	features {
@@ -801,9 +846,10 @@ object CheckCodeStyleBranch : BuildType({
 	}
 })
 
-object RunCanaryE2eTests : BuildType({
-	name = "Canary e2e tests"
-	description = "Run canary e2e tests"
+object RunCalypsoE2eDesktopTests : BuildType({
+	uuid = "52f38738-92b2-43cb-b7fb-19fce03cb67c"
+	name = "Run browser e2e tests (desktop)"
+	description = "Run browser e2e tests (desktop)"
 
 	artifactRules = """
 		reports => reports
@@ -841,7 +887,7 @@ object RunCanaryE2eTests : BuildType({
 			dockerRunParameters = "-u %env.UID%"
 		}
 		script {
-			name = "Run e2e tests: Canary (mobile, desktop)"
+			name = "Run e2e tests (desktop)"
 			scriptContent = """
 				#!/bin/bash
 
@@ -852,6 +898,7 @@ object RunCanaryE2eTests : BuildType({
 				set -o errexit
 				set -o nounset
 				set -o pipefail
+				shopt -s globstar
 				set -x
 
 				cd test/e2e
@@ -859,9 +906,17 @@ object RunCanaryE2eTests : BuildType({
 
 				export LIVEBRANCHES=true
 				export NODE_CONFIG_ENV=test
+				export TEST_VIDEO=true
 
-				## Uncomment to debug Magellan
-				#export MAGELLANDEBUG=true
+				# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
+				# mocha-teamcity-reporter to work.
+				export MAGELLANDEBUG=true
+
+				function join() {
+					local IFS=${'$'}1
+					shift
+					echo "${'$'}*"
+				}
 
 				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
 				MAX_LOOP=10
@@ -891,15 +946,17 @@ object RunCanaryE2eTests : BuildType({
 				# Decrypt config
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
-				# Start framebuffer
-				Xvfb ${'$'}{DISPLAY} -screen 0 1440x1000x24 &
-
 				# Run the test
-				./run.sh -R -a %E2E_WORKERS% -C -s "mobile,desktop" -u "${'$'}{URL%/}"
+				export BROWSERSIZE="desktop"
+				export BROWSERLOCALE="en"
+				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+				export TEST_FILES=${'$'}(join ',' ${'$'}(ls -1 specs*/**/*spec.js))
+
+				yarn magellan --config=magellan.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerImage = "%docker_image_e2e%"
-			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json"
+			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
 		}
 		script {
 			name = "Collect results"
@@ -911,10 +968,6 @@ object RunCanaryE2eTests : BuildType({
 				set -o nounset
 				set -o pipefail
 				set -x
-
-				# Collect results
-				mkdir -p reports
-				find test/e2e/temp -path '*/reports/*' -print0 | xargs -r -0 mv -t reports
 
 				mkdir -p screenshots
 				find test/e2e/temp -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
@@ -929,11 +982,6 @@ object RunCanaryE2eTests : BuildType({
 	}
 
 	features {
-		feature {
-			type = "xml-report-plugin"
-			param("xmlReportParsing.reportType", "junit")
-			param("xmlReportParsing.reportDirs", "reports/*.xml")
-		}
 		perfmon {
 		}
 		pullRequests {
@@ -956,8 +1004,20 @@ object RunCanaryE2eTests : BuildType({
 		}
 	}
 
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:trunk
+				-:pull*
+			""".trimIndent()
+		}
+	}
+
 	failureConditions {
 		executionTimeoutMin = 20
+		// TeamCity will mute a test if it fails and then succeeds within the same build. Otherwise TeamCity UI will not
+		// display a difference between real errors and retries, making it hard to understand what is actually failing.
 		supportTestRetry = true
 	}
 
@@ -981,7 +1041,7 @@ object WpCalypso : GitVcsRoot({
 })
 
 object WpDesktop : Project({
-	name = "Desktop"
+	name = "Desktop app"
 	buildType(WpDesktop_DesktopE2ETests)
 
 	params {
@@ -993,7 +1053,7 @@ object WpDesktop : Project({
 })
 
 object WpDesktop_DesktopE2ETests : BuildType({
-	name = "Desktop e2e tests"
+	name = "Run e2e tests"
 	description = "Run wp-desktop e2e tests in Linux"
 
 	artifactRules = """
@@ -1196,150 +1256,8 @@ object WpDesktop_DesktopE2ETests : BuildType({
 
 object WPComPlugins : Project({
 	name = "WPCom Plugins"
-	buildType(WPComPlugins_EditorToolKit)
+	buildType(_self.builds.WPComPlugins_EditorToolKit)
 	params {
 		text("docker_image_wpcom", "registry.a8c.com/calypso/ci-wpcom:latest", label = "Docker image", description = "Docker image to use for the run", allowEmpty = true)
-	}
-})
-
-object WPComPlugins_EditorToolKit : BuildType({
-	name = "Editor ToolKit"
-
-	artifactRules = "editing-toolkit.zip"
-
-	buildNumberPattern = "%build.prefix%.%build.counter%"
-	params {
-		param("build.prefix", "3")
-	}
-
-	vcs {
-		root(WpCalypso)
-		cleanCheckout = true
-	}
-
-	triggers {
-		vcs {
-			triggerRules = "+:apps/editing-toolkit/**"
-			branchFilter = """
-				+:*
-				-:pull*
-			""".trimIndent()
-
-		}
-	}
-
-	features {
-		pullRequests {
-			vcsRootExtId = "${WpCalypso.id}"
-			provider = github {
-				authType = token {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
-			}
-		}
-
-		commitStatusPublisher {
-			vcsRootExtId = "${WpCalypso.id}"
-			publisher = github {
-				githubUrl = "https://api.github.com"
-				authType = personalToken {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-			}
-		}
-	}
-
-	steps {
-		script {
-			name = "Prepare environment"
-			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
-				# Update composer
-				composer install
-
-				# Install modules
-				yarn install
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image_wpcom%"
-			dockerRunParameters = "-u %env.UID%"
-		}
-		script {
-			name = "Run tests"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
-				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-				export JEST_JUNIT_OUTPUT_DIR="../../test_results/editing-toolkit"
-
-				cd apps/editing-toolkit
-				yarn test:js --reporters=default --reporters=jest-junit --maxWorkers=${'$'}JEST_MAX_WORKERS
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image_wpcom%"
-			dockerRunParameters = "-u %env.UID%"
-		}
-		script {
-			name = "Build artifacts"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
-				export NODE_ENV="production"
-
-				cd apps/editing-toolkit
-
-				# Update plugin version in the plugin file.
-				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php
-
-				# Update plugin stable tag in readme.txt.
-				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt
-
-				yarn build
-				cd editing-toolkit-plugin/
-
-				# Metadata file with info for the download script.
-				tee build_meta.txt <<-EOM
-					commit_hash=%build.vcs.number%
-					commit_url=https://github.com/Automattic/wp-calypso/commit/%build.vcs.number%
-					build_number=%build.number%
-					EOM
-
-				zip -r ../../../editing-toolkit.zip .
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image_wpcom%"
-			dockerRunParameters = "-u %env.UID%"
-		}
 	}
 })

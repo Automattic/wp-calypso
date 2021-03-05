@@ -23,6 +23,7 @@ import { getPlanByPathSlug } from 'calypso/lib/plans';
 import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
 import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
 import doesValueExist from '../lib/does-value-exist';
+import useStripProductsFromUrl from './use-strip-products-from-url';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for-cart' );
 
@@ -41,13 +42,17 @@ const initialPreparedProductsState = {
 export default function usePrepareProductsForCart( {
 	productAliasFromUrl,
 	purchaseId: originalPurchaseId,
+	isInEditor,
 	isJetpackNotAtomic,
 	isPrivate,
+	siteSlug,
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
+	isInEditor?: boolean;
 	isJetpackNotAtomic: boolean;
 	isPrivate: boolean;
+	siteSlug: string | undefined;
 } ): PreparedProductsForCart {
 	const initializePreparedProductsState = (
 		initialState: PreparedProductsForCart
@@ -90,6 +95,10 @@ export default function usePrepareProductsForCart( {
 		dispatch,
 		addHandler,
 	} );
+
+	// Do not strip products from url until the URL has been parsed
+	const areProductsRetrievedFromUrl = ! state.isLoading && ! isInEditor;
+	useStripProductsFromUrl( siteSlug, ! areProductsRetrievedFromUrl );
 
 	return state;
 }

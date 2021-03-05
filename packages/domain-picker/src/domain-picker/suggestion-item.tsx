@@ -4,6 +4,7 @@
 import * as React from 'react';
 import classnames from 'classnames';
 import { useI18n } from '@automattic/react-i18n';
+import { useLocale } from '@automattic/i18n-utils';
 import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 
@@ -64,10 +65,11 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 	type = ITEM_TYPE_RADIO,
 	buttonRef,
 } ) => {
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
+	const locale = useLocale();
 	const localizeUrl = useLocalizeUrl();
 
-	const isMobile = useViewportMatch( 'small', '<' );
+	const isMobile = ! useViewportMatch( 'small', '>=' );
 
 	const dotPos = domain.indexOf( '.' );
 	const domainName = domain.slice( 0, dotPos );
@@ -76,41 +78,38 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 	const [ previousDomain, setPreviousDomain ] = React.useState< string | undefined >();
 	const [ previousRailcarId, setPreviousRailcarId ] = React.useState< string | undefined >();
 
+	// translators: 'Default' will be shown next to the standard, free domain
 	const freeDomainLabelDefault = __( 'Default', __i18n_text_domain__ );
 	const freeDomainLabelFree = __( 'Free', __i18n_text_domain__ );
-
-	const firstYearLabel = __( 'Included in paid plans', __i18n_text_domain__ );
-	const firstYearLabelAlt = __( 'Included with annual plans', __i18n_text_domain__ );
-	// translators: text in between the <strong></strong> marks is styled as bold text
-	const firstYearLabelFormatted = __(
-		'<strong>First year included</strong> in paid plans',
-		__i18n_text_domain__
-	);
-
 	const freeDomainLabel =
 		type === ITEM_TYPE_INDIVIDUAL_ITEM ? freeDomainLabelDefault : freeDomainLabelFree;
 
-	const firstYearIncludedInPaidLabel = isMobile
-		? firstYearLabel
-		: createInterpolateElement( firstYearLabelFormatted, {
+	const fallbackIncludedLabel = __( 'Included with annual plans', __i18n_text_domain__ );
+	const newIncludedLabel = __( 'Included in annual plans', __i18n_text_domain__ );
+	const includedLabel =
+		locale === 'en' || hasTranslation?.( 'Included in annual plans' )
+			? newIncludedLabel
+			: fallbackIncludedLabel;
+
+	// translators: text in between the <strong></strong> marks is styled as bold text
+	const fallbackIncludedLabelFormatted = __(
+		'<strong>First year included</strong> in paid plans',
+		__i18n_text_domain__
+	);
+	// translators: text in between the <strong></strong> marks is styled as bold text
+	const newIncludedLabelFormatted = __(
+		'<strong>First year included</strong> in annual plans',
+		__i18n_text_domain__
+	);
+	const includedLabelFormatted =
+		locale === 'en' || hasTranslation?.( '<strong>First year included</strong> in annual plans' )
+			? newIncludedLabelFormatted
+			: fallbackIncludedLabelFormatted;
+	const paidIncludedDomainLabel = isMobile
+		? includedLabel
+		: createInterpolateElement( includedLabelFormatted, {
 				strong: <strong />,
 		  } );
-
-	/**
-	 *  IIFE executes immediately after creation, hence it returns the translated values immediately.
-	 * The great advantage is that:
-	 * 1. We don't have to execute it during rendering.
-	 * 2. We don't have to use nested ternaries (which is not allowed by the linter).
-	 * 3. It improves the readability of our code
-	 */
-	const paidIncludedDomainLabel = ( () => {
-		if ( type === ITEM_TYPE_INDIVIDUAL_ITEM ) {
-			return firstYearIncludedInPaidLabel;
-		} else if ( isMobile ) {
-			return freeDomainLabelFree;
-		}
-		return firstYearLabelAlt;
-	} )();
 
 	React.useEffect( () => {
 		// Only record TrainTracks render event when the domain name and railcarId change.

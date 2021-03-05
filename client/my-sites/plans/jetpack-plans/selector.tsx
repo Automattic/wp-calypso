@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 /**
@@ -20,12 +20,7 @@ import Main from 'calypso/components/main';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import {
-	getForCurrentCROIteration,
-	Iterations,
-} from 'calypso/my-sites/plans/jetpack-plans/iterations';
-import ProductsGridI5 from './i5/products-grid-i5';
-import ProductsGridSpp from './spp/products-grid-spp';
+import ProductGrid from './product-grid';
 
 /**
  * Type dependencies
@@ -54,15 +49,6 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	const siteSlugState = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const siteSlug = siteSlugProp || siteSlugState;
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
-
-	const Grid = useMemo(
-		() =>
-			getForCurrentCROIteration( {
-				[ Iterations.I5 ]: ProductsGridI5,
-				[ Iterations.SPP ]: ProductsGridSpp,
-			} ),
-		[]
-	);
 
 	useEffect( () => {
 		setDuration( defaultDuration );
@@ -151,14 +137,12 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 
 			{ header }
 
-			{ Grid && (
-				<Grid
-					duration={ currentDuration }
-					onSelectProduct={ selectProduct }
-					urlQueryArgs={ urlQueryArgs }
-					onDurationChange={ trackDurationChange }
-				/>
-			) }
+			<ProductGrid
+				duration={ currentDuration }
+				onSelectProduct={ selectProduct }
+				urlQueryArgs={ urlQueryArgs }
+				onDurationChange={ trackDurationChange }
+			/>
 
 			<QueryProductsList />
 			<QueryProducts />

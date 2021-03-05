@@ -9,20 +9,30 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { Button, CompactCard } from '@automattic/components';
 import {
 	emailManagementManageTitanAccount,
 	emailManagementNewTitanAccount,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
+import FoldableCard from 'calypso/components/foldable-card';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import Gridicon from 'calypso/components/gridicon';
 import { isEnabled } from '@automattic/calypso-config';
-import SectionHeader from 'calypso/components/section-header';
+import titanCalendarIcon from 'calypso/assets/images/email-providers/titan/services/calendar.svg';
+import titanContactsIcon from 'calypso/assets/images/email-providers/titan/services/contacts.svg';
+import titanMailIcon from 'calypso/assets/images/email-providers/titan/services/mail.svg';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
+import {
+	getConfiguredTitanMailboxCount,
+	getMaxTitanMailboxCount,
+	getTitanProductName,
+} from 'calypso/lib/titan';
+import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
 
 /**
  * Style
@@ -32,11 +42,20 @@ import './style.scss';
 class TitanManagementNav extends React.Component {
 	static propTypes = {
 		domain: PropTypes.object.isRequired,
+
+		// Props injected via connect()
+		currentRoute: PropTypes.string.isRequired,
+		selectedSiteSlug: PropTypes.string.isRequired,
+
+		// Props injected via localize()
+		translate: PropTypes.func.isRequired,
 	};
 
 	renderTitanManagementLink = () => {
 		const { currentRoute, domain, selectedSiteSlug, translate } = this.props;
+
 		const linkTitle = translate( 'Manage your email settings and accounts' );
+
 		if ( isEnabled( 'titan/iframe-control-panel' ) ) {
 			return (
 				<VerticalNavItem
@@ -46,6 +65,7 @@ class TitanManagementNav extends React.Component {
 				</VerticalNavItem>
 			);
 		}
+
 		return (
 			<VerticalNavItem
 				path={ emailManagementTitanControlPanelRedirect(
@@ -62,6 +82,7 @@ class TitanManagementNav extends React.Component {
 
 	renderPurchaseManagementLink = () => {
 		const { domain, selectedSiteSlug, translate } = this.props;
+
 		if ( ! domain?.titanMailSubscription?.subscriptionId ) {
 			return null;
 		}
@@ -78,39 +99,133 @@ class TitanManagementNav extends React.Component {
 		);
 	};
 
-	renderAddMailboxesLink = () => {
+	renderMailboxSetupPrompt = () => {
 		const { currentRoute, domain, selectedSiteSlug, translate } = this.props;
-		// If we don't have a subscription, we can't add mailboxes.
-		if ( ! domain?.titanMailSubscription?.subscriptionId ) {
-			return null;
+
+		const numberOfUnusedMailboxes =
+			getMaxTitanMailboxCount( domain ) - getConfiguredTitanMailboxCount( domain );
+
+		if ( numberOfUnusedMailboxes <= 0 ) {
+			return;
 		}
 
+		const showExternalControlPanelLink = ! isEnabled( 'titan/iframe-control-panel' );
+		const controlPanelUrl = showExternalControlPanelLink
+			? emailManagementTitanControlPanelRedirect( selectedSiteSlug, domain.name, currentRoute, {
+					context: TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
+			  } )
+			: emailManagementManageTitanAccount( selectedSiteSlug, domain.name, currentRoute, {
+					context: TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
+			  } );
+
 		return (
-			<VerticalNavItem
-				path={ emailManagementNewTitanAccount( selectedSiteSlug, domain.name, currentRoute ) }
-			>
-				{ translate( 'Add more mailboxes' ) }
-			</VerticalNavItem>
+			<CompactCard className="titan-management-nav__mailbox-setup-prompt" highlight="info">
+				<span>
+					<Gridicon icon="info-outline" size={ 18 } />
+					<em>
+						{ translate(
+							'You have %(numberOfMailboxes)d unused mailbox',
+							'You have %(numberOfMailboxes)d unused mailboxes',
+							{
+								count: numberOfUnusedMailboxes,
+								args: {
+									numberOfMailboxes: numberOfUnusedMailboxes,
+								},
+								comment:
+									'This refers to the number of mailboxes purchased that have not been set up yet',
+							}
+						) }
+					</em>
+				</span>
+
+				{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+				<Button
+					compact
+					href={ controlPanelUrl }
+					target={ showExternalControlPanelLink ? '_blank' : null }
+				>
+					{ translate( 'Finish Setup' ) }
+					{ showExternalControlPanelLink && <Gridicon icon="external" size={ 16 } /> }
+				</Button>
+				{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
+			</CompactCard>
 		);
 	};
 
 	render() {
-		const { domain, translate } = this.props;
-		const headerLabel = translate( '%(productName)s: %(domainName)s', {
-			args: {
-				domainName: domain.name,
-				productName: getTitanProductName(),
-			},
-			comment:
-				'%(domainName)s is a domain name, e.g. example.com; %(productName)s is the product name, either "Email" or "Titan Mail"',
-		} );
+		const { currentRoute, domain, selectedSiteSlug, translate } = this.props;
+
+		const header = (
+			<>
+				<Gridicon
+					className="titan-management-nav__foldable-card-header-icon"
+					icon="my-sites"
+					size={ 36 }
+				/>
+
+				<span className="titan-management-nav__foldable-card-header-text">
+					<strong>{ getTitanProductName() }</strong>
+					<em>{ domain.name }</em>
+				</span>
+			</>
+		);
+
+		const summary = domain?.titanMailSubscription?.subscriptionId && (
+			<Button
+				primary
+				compact
+				href={ emailManagementNewTitanAccount( selectedSiteSlug, domain.name, currentRoute ) }
+			>
+				{ translate( 'Add New Mailboxes' ) }
+			</Button>
+		);
+
 		return (
 			<div className="titan-management-nav">
-				<SectionHeader label={ headerLabel } />
+				<FoldableCard
+					className="titan-management-nav__foldable-card"
+					header={ header }
+					summary={ summary }
+					expandedSummary={ summary }
+				>
+					<ul className="titan-management-nav__foldable-card-services">
+						<li>
+							<a href="https://wp.titan.email/mail/" target="_blank" rel="noreferrer noopener">
+								<img src={ titanMailIcon } alt={ translate( 'Titan Mail icon' ) } />
+								<strong>
+									{ translate( 'Mail', {
+										comment: 'This refers to the Email application (i.e. the webmail) of Titan',
+									} ) }
+								</strong>
+							</a>
+						</li>
+						<li>
+							<a href="https://wp.titan.email/calendar/" target="_blank" rel="noreferrer noopener">
+								<img src={ titanCalendarIcon } alt={ translate( 'Titan Calendar icon' ) } />
+								<strong>
+									{ translate( 'Calendar', {
+										comment: 'This refers to the Calendar application of Titan',
+									} ) }
+								</strong>
+							</a>
+						</li>
+						<li>
+							<a href="https://wp.titan.email/contacts/" target="_blank" rel="noreferrer noopener">
+								<img src={ titanContactsIcon } alt={ translate( 'Titan Contacts icon' ) } />
+								<strong>
+									{ translate( 'Contacts', {
+										comment: 'This refers to the Contacts application of Titan',
+									} ) }
+								</strong>
+							</a>
+						</li>
+					</ul>
+				</FoldableCard>
+
 				<VerticalNav>
+					{ this.renderMailboxSetupPrompt() }
 					{ this.renderTitanManagementLink() }
 					{ this.renderPurchaseManagementLink() }
-					{ this.renderAddMailboxesLink() }
 				</VerticalNav>
 			</div>
 		);

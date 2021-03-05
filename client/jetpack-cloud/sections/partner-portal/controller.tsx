@@ -10,12 +10,21 @@ import type PageJS from 'page';
  */
 import { addQueryArgs } from 'calypso/lib/route';
 import { getActivePartnerKey } from 'calypso/state/partner-portal/partner/selectors';
-import { stringToLicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import {
+	publicToInternalLicenseFilter,
+	publicToInternalLicenseSortField,
+	valueToEnum,
+} from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import Header from './header';
 import JetpackComFooter from 'calypso/jetpack-cloud/sections/pricing/jpcom-footer';
 import PartnerPortalSidebar from 'calypso/jetpack-cloud/sections/partner-portal/sidebar';
 import SelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/select-partner-key';
-import LicenseList from 'calypso/jetpack-cloud/sections/partner-portal/license-list';
+import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/licenses';
+import {
+	LicenseFilter,
+	LicenseSortDirection,
+	LicenseSortField,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
 export function partnerKeyContext( context: PageJS.Context, next: () => void ): void {
 	context.header = <Header />;
@@ -26,12 +35,26 @@ export function partnerKeyContext( context: PageJS.Context, next: () => void ): 
 }
 
 export function partnerPortalContext( context: PageJS.Context, next: () => void ): void {
-	const licenseFilter = stringToLicenseFilter( context.params.state );
+	const { s: search, sort_field, sort_direction, page } = context.query;
+	const filter = publicToInternalLicenseFilter( context.params.filter, LicenseFilter.NotRevoked );
+	const currentPage = parseInt( page ) || 1;
+	const sortField = publicToInternalLicenseSortField( sort_field, LicenseSortField.IssuedAt );
+	const sortDirection = valueToEnum< LicenseSortDirection >(
+		LicenseSortDirection,
+		sort_direction,
+		LicenseSortDirection.Descending
+	);
 
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	context.primary = (
-		<LicenseList licenseFilter={ licenseFilter } search={ context.query.s || '' } />
+		<Licenses
+			filter={ filter }
+			search={ search || '' }
+			currentPage={ currentPage }
+			sortDirection={ sortDirection }
+			sortField={ sortField }
+		/>
 	);
 	context.footer = <JetpackComFooter />;
 	next();

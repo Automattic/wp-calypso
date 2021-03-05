@@ -2,11 +2,20 @@
 
 ## trunk
 
+- Breaking: Drop option `postCssConfig` for Sass loader. The property `postCssOptions` will be passed as is
+  to `postcss-loader`. See the doc in <https://github.com/webpack-contrib/postcss-loader#postcssoptions>
+- Added: peer dependency postcss ^8.2.6
+- Updated dependencies:
+  - postcss-custom-properties to ^11.0.0
+  - postcss-loader to ^5.0.0
+
 ## 7.0.0
 
 - Breaking: drop support for wepback 4
 - Breaking: renamed option `output-jsonp-function` to `output-chunk-loading-global`
+- Changed: Use `contenthash` hash strategy instead of `chunkhash`
 - Added: support for webpack 5
+- Added: plugin to transform i18n imports to local variables
 - Updated dependencies
   - @wordpress/dependency-extraction-webpack-plugin to ^2.9.0
 

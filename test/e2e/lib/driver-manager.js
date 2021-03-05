@@ -2,9 +2,9 @@
  * External dependencies
  */
 import webdriver from 'selenium-webdriver';
-import chromedriver from 'chromedriver'; // eslint-disable-line no-unused-vars
 import firefox from 'selenium-webdriver/firefox';
 import chrome from 'selenium-webdriver/chrome';
+import chromedriver from 'chromedriver';
 import config from 'config';
 import proxy from 'selenium-webdriver/proxy';
 import SauceLabs from 'saucelabs';
@@ -142,7 +142,6 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 				} );
 				options.setProxy( getProxyType() );
 				options.addArguments( '--no-first-run' );
-				options.addArguments( '--disable-dev-shm-usage' );
 				options.addArguments( '--no-sandbox' );
 
 				if ( useCustomUA ) {
@@ -166,10 +165,14 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 
 				// eslint-disable-next-line no-case-declarations
 				const service = new chrome.ServiceBuilder( chromedriver.path )
-					.loggingTo( './chromedriver.' + Math.random() + '.log' )
+					.loggingTo( './chromedriver.' + process.pid + '.log' )
 					.enableVerboseLogging()
 					.build();
 				chrome.setDefaultService( service );
+				options.setChromeLogFile( './chrome.' + process.pid + '.log' );
+				options.addArguments( '--enable-logging' );
+				options.addArguments( '--log-level 0' );
+				options.addArguments( '--log-net-log ./chrome.net.' + process.pid + '.log' );
 
 				builder = new webdriver.Builder();
 				builder.setChromeOptions( options );

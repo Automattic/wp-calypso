@@ -14,8 +14,10 @@ import {
 	withSchemaValidation,
 	combineReducers,
 	isValidStateWithSchema,
+	withPersistence,
 	withoutPersistence,
 	withEnhancers,
+	deserialize,
 } from 'calypso/state/utils';
 
 /**
@@ -363,22 +365,27 @@ describe( 'utils', () => {
 
 		const age = ( state = 0, action ) => ( 'GROW' === action.type ? state + 1 : state );
 
-		const date = ( state = new Date( 0 ), action ) => {
-			switch ( action.type ) {
-				case 'GROW':
-					return new Date( state.getTime() + 1 );
-				case SERIALIZE:
-					return state.getTime();
-				case DESERIALIZE:
-					if ( isValidStateWithSchema( state, schema ) ) {
-						return new Date( state );
+		test( 'should always pass valid state to the inner serialize handler', () => {
+			const date = withSchemaValidation(
+				schema,
+				withPersistence(
+					( state = new Date( 0 ), action ) => {
+						switch ( action.type ) {
+							case 'GROW':
+								return new Date( state.getTime() + 1 );
+							default:
+								return state;
+						}
+					},
+					{
+						serialize: ( state ) => state.getTime(),
+						deserialize: ( persisted ) => new Date( persisted ),
 					}
-					return new Date( 0 );
-				default:
-					return state;
-			}
-		};
-		date.hasCustomPersistence = true;
+				)
+			);
+
+			expect( deserialize( date, 0 ) ).toEqual( new Date( 0 ) );
+		} );
 
 		test( 'should invalidate DESERIALIZED state', () => {
 			const validated = withSchemaValidation( schema, age );

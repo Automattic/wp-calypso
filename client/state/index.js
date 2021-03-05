@@ -23,7 +23,6 @@ import { addReducerEnhancer } from 'calypso/state/utils/add-reducer-enhancer';
  * Redux middleware
  */
 import navigationMiddleware from './navigation/middleware';
-import noticesMiddleware from './notices/middleware';
 import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
 
 /**
@@ -52,7 +51,6 @@ export function createReduxStore( initialState, reducer = initialReducer ) {
 		// responses. Therefore we need to inject the data layer
 		// as early as possible into the middleware chain.
 		wpcomApiMiddleware,
-		noticesMiddleware,
 		isBrowser && require( './happychat/middleware.js' ).default,
 		isBrowser && require( './happychat/middleware-calypso.js' ).default,
 		dynamicMiddlewares,

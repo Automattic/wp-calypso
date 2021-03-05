@@ -28,8 +28,8 @@
 		"prepare": "node bin/prepare-sass-assets.js && node bin/build-css.js"
 	},
 	"devDependencies": {
-		"postcss": "^7.0.32",
-		"postcss-custom-properties": "^9.1.1",
+		"postcss": "^8.2.6",
+		"postcss-custom-properties": "^11.0.0",
 		"node-sass": "^4.13.0"
 	}
 }

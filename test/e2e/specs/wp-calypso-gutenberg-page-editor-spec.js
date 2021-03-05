@@ -3,7 +3,6 @@
  */
 import assert from 'assert';
 import config from 'config';
-import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -31,15 +30,14 @@ const host = dataHelper.getJetpackHost();
 const gutenbergUser =
 	process.env.GUTENBERG_EDGE === 'true' ? 'gutenbergSimpleSiteEdgeUser' : 'gutenbergSimpleSiteUser';
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
 
 	describe( 'Public Pages: @parallel', function () {
 		let fileDetails;
@@ -65,25 +63,12 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.enterTitle( pageTitle );
 			await gEditorComponent.enterText( pageQuote );
-			const imageBlockId = await gEditorComponent.addImage( fileDetails );
-
-			// Force-select the image block. Workaround for  https://github.com/WordPress/gutenberg/issues/28932.
-			// This is needed or the sidebar won't have the contextual settings for the block, and the step will fail.
-			// ToDo: Once the fix for https://github.com/WordPress/gutenberg/issues/28932 is available,
-			// revert this and the assignment above.
-			await driverHelper.clickWhenClickable( driver, By.css( `#${ imageBlockId }` ) );
+			await gEditorComponent.addImage( fileDetails );
 
 			await gEditorComponent.openSidebar();
 			const gEditorSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
 			await gEditorSidebarComponent.enterImageAltText( fileDetails );
 			await gEditorComponent.closeSidebar();
-
-			const errorShown = await gEditorComponent.errorDisplayed();
-			return assert.strictEqual(
-				errorShown,
-				false,
-				'There is an error shown on the Gutenberg editor page!'
-			);
 		} );
 
 		/* Skip until sharing is added in Gutenberg editor
@@ -278,13 +263,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			step( 'Can enter page title and content and set to password protected', async function () {
 				let gHeaderComponent = await GutenbergEditorComponent.Expect( driver );
 				await gHeaderComponent.enterTitle( pageTitle );
-
-				const errorShown = await gHeaderComponent.errorDisplayed();
-				assert.strictEqual(
-					errorShown,
-					false,
-					'There is an error shown on the Gutenberg editor page!'
-				);
 
 				const gSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
 				await gSidebarComponent.chooseDocumentSettings();
@@ -552,9 +530,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			const gPaymentComponent = await SimplePaymentsBlockComponent.Expect( driver, blockId );
 			await gPaymentComponent.insertPaymentButtonDetails( paymentButtonDetails );
 
-			const errorShown = await gEditorComponent.errorDisplayed();
-			assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
-
 			await gEditorComponent.enterTitle( pageTitle );
 			await gEditorComponent.ensureSaved();
 			return await gPaymentComponent.ensurePaymentButtonDisplayedInEditor();
@@ -562,7 +537,9 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 
 		step( 'Can publish and view content', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			return await gEditorComponent.publish( { visit: true } );
+			// closePanel is set to false because the panel is forcibly dismissed after publishing.
+			// See https://github.com/Automattic/wp-calypso/issues/50302.
+			return await gEditorComponent.publish( { closePanel: false, visit: true } );
 		} );
 
 		step( 'Can see the payment button in our published page', async function () {

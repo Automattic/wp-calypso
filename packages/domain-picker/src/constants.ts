@@ -5,6 +5,7 @@ import { DomainSuggestions } from '@automattic/data-stores';
 
 export const PAID_DOMAINS_TO_SHOW = 5;
 export const PAID_DOMAINS_TO_SHOW_EXPANDED = 10;
+export const DOMAIN_QUERY_MINIMUM_LENGTH = 2;
 
 /**
  * Debounce our input + HTTP dependent select changes

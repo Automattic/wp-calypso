@@ -8,11 +8,14 @@ import { translate } from 'i18n-calypso';
  */
 import { getTld } from 'calypso/lib/domains';
 
+export const TLD_EXACT_MATCH = 'tld-exact';
+export const SLD_EXACT_MATCH = 'exact-match';
+
 // NOTE: This is actually a sorted list.
 export const VALID_MATCH_REASONS = [
-	'exact-match',
+	SLD_EXACT_MATCH,
 	'similar-match',
-	'tld-exact',
+	TLD_EXACT_MATCH,
 	'tld-similar',
 	'tld-common',
 ];

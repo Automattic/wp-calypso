@@ -34,15 +34,14 @@ const screenSize = driverManager.currentScreenSize();
 const domainsInboxId = config.get( 'domainsInboxId' );
 const host = dataHelper.getJetpackHost();
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Managing Domains: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
 
 	describe( 'Adding a domain to an existing site @parallel', function () {
 		const blogName = dataHelper.getNewBlogName();
@@ -87,7 +86,8 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function () {
 
 		step( 'Can search for a blog name', async function () {
 			const findADomainComponent = await FindADomainComponent.Expect( driver );
-			return await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
+			// Search for the full blog name including the .com, as the default TLD suggestion is not always .com.
+			return await findADomainComponent.searchForBlogNameAndWaitForResults( expectedDomainName );
 		} );
 
 		step( 'Can select the .com search result and decline Google Apps for email', async function () {

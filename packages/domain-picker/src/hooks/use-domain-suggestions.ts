@@ -9,7 +9,11 @@ import { useDebounce } from 'use-debounce';
 /**
  * Internal dependencies
  */
-import { DOMAIN_SUGGESTIONS_STORE, DOMAIN_SEARCH_DEBOUNCE_INTERVAL } from '../constants';
+import {
+	DOMAIN_SUGGESTIONS_STORE,
+	DOMAIN_SEARCH_DEBOUNCE_INTERVAL,
+	DOMAIN_QUERY_MINIMUM_LENGTH,
+} from '../constants';
 
 type DomainSuggestionsResult = {
 	allDomainSuggestions: DomainSuggestion[] | undefined;
@@ -34,7 +38,7 @@ export function useDomainSuggestions(
 
 	return useSelect(
 		( select ) => {
-			if ( ! domainSearch || domainSearch.length < 2 ) {
+			if ( ! domainSearch || domainSearch.length < DOMAIN_QUERY_MINIMUM_LENGTH ) {
 				return;
 			}
 			const { getDomainSuggestions, getDomainState, getDomainErrorMessage } = select(

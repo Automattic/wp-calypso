@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import page from 'page';
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import { errorNotice } from 'calypso/state/notices/actions';
 import { concatTitle } from 'calypso/lib/react-helpers';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -25,7 +26,7 @@ import Column from 'calypso/components/layout/column';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 import { isEnabled } from '@automattic/calypso-config';
 import PaymentMethodSelector from 'calypso/me/purchases/manage-purchase/payment-method-selector';
-import { useCreateCreditCard } from 'calypso/my-sites/checkout/composite-checkout/use-create-payment-methods';
+import { useCreateCreditCard } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-methods';
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 
 function AddNewPaymentMethod() {
@@ -46,6 +47,12 @@ function AddNewPaymentMethod() {
 		activePayButtonText: translate( 'Save card' ),
 	} );
 	const paymentMethodList = useMemo( () => [ stripeMethod ].filter( Boolean ), [ stripeMethod ] );
+	const reduxDispatch = useDispatch();
+	useEffect( () => {
+		if ( stripeLoadingError ) {
+			reduxDispatch( errorNotice( stripeLoadingError.message ) );
+		}
+	}, [ stripeLoadingError, reduxDispatch ] );
 
 	if ( paymentMethodList.length === 0 ) {
 		return <PaymentMethodLoader title={ addPaymentMethodTitle } />;

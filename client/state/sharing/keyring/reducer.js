@@ -15,11 +15,11 @@ import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
 } from 'calypso/state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemSchema } from './schema';
 
 // Tracks fetching state for keyring connections
-export const isFetching = withoutPersistence( ( state = false, action ) => {
+export const isFetching = ( state = false, action ) => {
 	switch ( action.type ) {
 		case KEYRING_CONNECTIONS_REQUEST:
 			return true;
@@ -30,7 +30,7 @@ export const isFetching = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+};
 
 // Stores the list of available keyring connections
 export const items = withSchemaValidation( itemSchema, ( state = {}, action ) => {

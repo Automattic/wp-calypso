@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { find, debounce, isNumber, indexOf } from 'lodash';
+import { find, debounce, isNumber } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -61,7 +60,7 @@ class ProductVariationTypesForm extends Component {
 
 	setAttributeNameError = ( id ) => {
 		const attributeNameErrors = this.state.attributeNameErrors;
-		if ( indexOf( attributeNameErrors, id ) === -1 ) {
+		if ( attributeNameErrors.indexOf( id ) === -1 ) {
 			attributeNameErrors.push( id );
 		}
 		this.setState( { attributeNameErrors } );
@@ -112,7 +111,7 @@ class ProductVariationTypesForm extends Component {
 		const { attributeNames, attributeNameErrors } = this.state;
 
 		const attributeName = ( attributeNames && attributeNames[ attribute.uid ] ) || attribute.name;
-		const duplicateNameIssue = indexOf( attributeNameErrors, attribute.uid ) !== -1;
+		const duplicateNameIssue = attributeNameErrors.indexOf( attribute.uid ) !== -1;
 		const classes = classNames( 'products__variation-types-form-fieldset', {
 			'is-error': duplicateNameIssue,
 		} );

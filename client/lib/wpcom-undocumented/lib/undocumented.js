@@ -789,15 +789,17 @@ Undocumented.prototype.getTitanDetailsForIncomingRedirect = function ( mode, jwt
 /**
  * Retrieves the auto login link to Titan's control panel.
  *
- * @param orderId the Titan order ID
+ * @param emailAccountId The email account ID
+ * @param context Optional context enum to launch into a specific part of the control panel
  * @param fn The callback function
  */
-Undocumented.prototype.getTitanControlPanelAutoLoginURL = function ( orderId, fn ) {
+Undocumented.prototype.getTitanControlPanelAutoLoginURL = function ( emailAccountId, context, fn ) {
 	return this.wpcom.req.get(
 		{
-			path: `/emails/titan/${ encodeURIComponent( orderId ) }/control-panel-auto-login-url`,
+			path: `/emails/titan/${ encodeURIComponent( emailAccountId ) }/control-panel-auto-login-url`,
 			apiNamespace: 'wpcom/v2',
 		},
+		{ context },
 		fn
 	);
 };
@@ -805,15 +807,17 @@ Undocumented.prototype.getTitanControlPanelAutoLoginURL = function ( orderId, fn
 /**
  * Retrieves the URL to embed Titan's control panel in an iframe.
  *
- * @param orderId the Titan order ID
+ * @param emailAccountId The email account ID
+ * @param context Optional context enum to launch into a specific part of the control panel
  * @param fn The callback function
  */
-Undocumented.prototype.getTitanControlPanelIframeURL = function ( orderId, fn ) {
+Undocumented.prototype.getTitanControlPanelIframeURL = function ( emailAccountId, context, fn ) {
 	return this.wpcom.req.get(
 		{
-			path: `/emails/titan/${ encodeURIComponent( orderId ) }/control-panel-iframe-url`,
+			path: `/emails/titan/${ encodeURIComponent( emailAccountId ) }/control-panel-iframe-url`,
 			apiNamespace: 'wpcom/v2',
 		},
+		{ context },
 		fn
 	);
 };
@@ -958,6 +962,14 @@ Undocumented.prototype.getStoredCards = function ( fn ) {
 Undocumented.prototype.getPaymentMethods = function ( query, fn ) {
 	debug( '/me/payment-methods query', { query } );
 	return this.wpcom.req.get( '/me/payment-methods', query, fn );
+};
+
+/**
+ * Get a list of the user's allowed payment methods
+ */
+Undocumented.prototype.getAllowedPaymentMethods = function () {
+	debug( '/me/allowed-payment-methods query' );
+	return this.wpcom.req.get( { path: '/me/allowed-payment-methods' } );
 };
 
 /**
@@ -2612,18 +2624,6 @@ Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function (
 		} );
 
 	return request();
-};
-
-/**
- * Request the Partner Portal partner and it's keys for the current WPCOM user.
- *
- * @returns {Promise} A promise
- */
-Undocumented.prototype.getJetpackPartnerPortalPartner = function () {
-	return this.wpcom.req.get( {
-		apiNamespace: 'wpcom/v2',
-		path: '/jetpack-licensing/partner',
-	} );
 };
 
 /**

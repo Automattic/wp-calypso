@@ -26,13 +26,6 @@ const host = dataHelper.getJetpackHost();
 const gutenbergUser =
 	process.env.GUTENBERG_EDGE === 'true' ? 'gutenbergSimpleSiteEdgeUser' : 'gutenbergSimpleSiteUser';
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
 function getEventsFiredForBlock( eventsStack, event, block ) {
 	if ( ! eventsStack || ! event || ! block ) {
 		return false;
@@ -49,6 +42,12 @@ function getTotalEventsFiredForBlock( eventsStack, event, block ) {
 
 describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
 
 	describe( 'Tracking: @parallel', function () {
 		step( 'Can log in to WPAdmin and create new Post', async function () {

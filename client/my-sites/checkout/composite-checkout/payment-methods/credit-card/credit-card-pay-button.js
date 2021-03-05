@@ -156,7 +156,8 @@ function isCreditCardFormValid( store, paymentPartner, __ ) {
 				} ).reduce( ( accum, [ key, managedValue ] ) => {
 					accum[ key ] = managedValue?.value;
 					return accum;
-				}, {} )
+				}, {} ),
+				'ebanx'
 			);
 			Object.entries( validationResults.errors ).map( ( [ key, errors ] ) => {
 				errors.map( ( error ) => {

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
 /**
  * Internal dependencies

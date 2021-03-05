@@ -6,12 +6,12 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { __ } from '@wordpress/i18n';
 import DomainPicker, { mockDomainSuggestion, ITEM_TYPE_BUTTON } from '@automattic/domain-picker';
 import { Title, SubTitle } from '@automattic/onboarding';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import type { DomainSuggestions } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -27,6 +27,7 @@ const ANALYTICS_UI_LOCATION = 'domain_step';
 
 const DomainDetails: React.FunctionComponent = () => {
 	const { getCurrentLaunchFlowUrl, redirectTo } = React.useContext( LaunchContext );
+	const { __, hasTranslation } = useI18n();
 	const locale = useLocale();
 
 	const { siteSubdomain } = useSiteDomains();
@@ -62,6 +63,19 @@ const DomainDetails: React.FunctionComponent = () => {
 		} );
 	};
 
+	const fallbackSubtitleText = __(
+		'Free for the first year with any paid plan.',
+		__i18n_text_domain__
+	);
+	const newSubtitleText = __(
+		'Free for the first year with any annual plan.',
+		__i18n_text_domain__
+	);
+	const subtitleText =
+		locale === 'en' || hasTranslation?.( 'Free for the first year with any annual plan.' )
+			? newSubtitleText
+			: fallbackSubtitleText;
+
 	return (
 		<div className="focused-launch-container">
 			<div className="focused-launch-details__back-button-wrapper">
@@ -69,9 +83,7 @@ const DomainDetails: React.FunctionComponent = () => {
 			</div>
 			<div className="focused-launch-details__header">
 				<Title>{ __( 'Choose a domain', __i18n_text_domain__ ) }</Title>
-				<SubTitle>
-					{ __( 'Free for the first year with any paid plan.', __i18n_text_domain__ ) }
-				</SubTitle>
+				<SubTitle>{ subtitleText }</SubTitle>
 			</div>
 			<div className="focused-launch-details__body">
 				<DomainPicker

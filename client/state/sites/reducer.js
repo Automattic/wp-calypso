@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { omit, merge, get, includes, reduce, isEqual, stubFalse, stubTrue } from 'lodash';
+import { omit, merge, get, includes, reduce, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -39,12 +39,7 @@ import {
 } from 'calypso/state/action-types';
 import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
 import { sitesSchema, hasAllSitesListSchema } from './schema';
-import {
-	combineReducers,
-	keyedReducer,
-	withSchemaValidation,
-	withoutPersistence,
-} from 'calypso/state/utils';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 
 /**
  * Tracks all known site objects, indexed by site ID.
@@ -295,7 +290,7 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
  * @param  {object} action Action object
  * @returns {object}        Updated state
  */
-export const requestingAll = withoutPersistence( ( state = false, action ) => {
+export const requestingAll = ( state = false, action ) => {
 	switch ( action.type ) {
 		case SITES_REQUEST:
 			return true;
@@ -306,7 +301,7 @@ export const requestingAll = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated requesting state after an action has been dispatched.
@@ -316,7 +311,7 @@ export const requestingAll = withoutPersistence( ( state = false, action ) => {
  * @param  {object} action Action object
  * @returns {object}        Updated state
  */
-export const requesting = withoutPersistence( ( state = {}, action ) => {
+export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_REQUEST: {
 			const { siteId } = action;
@@ -333,7 +328,7 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated deleting state after an action has been dispatched.
@@ -343,21 +338,17 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action object
  * @returns {object}        Updated state
  */
-export const deleting = keyedReducer(
-	'siteId',
-	withoutPersistence( ( state = {}, action ) => {
-		switch ( action.type ) {
-			case SITE_DELETE:
-				return stubTrue( state, action );
-			case SITE_DELETE_FAILURE:
-				return stubFalse( state, action );
-			case SITE_DELETE_SUCCESS:
-				return stubFalse( state, action );
-		}
+export const deleting = keyedReducer( 'siteId', ( state = {}, action ) => {
+	switch ( action.type ) {
+		case SITE_DELETE:
+			return true;
+		case SITE_DELETE_SUCCESS:
+		case SITE_DELETE_FAILURE:
+			return false;
+	}
 
-		return state;
-	} )
-);
+	return state;
+} );
 
 /**
  * Tracks whether all sites have been fetched.

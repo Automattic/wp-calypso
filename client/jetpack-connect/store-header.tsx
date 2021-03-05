@@ -14,14 +14,11 @@ import JetpackHeader from 'calypso/components/jetpack-header';
 import DocumentHead from 'calypso/components/data/document-head';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-
-// Fresh Start 2021 promotion; runs from Feb 1 00:00 to Feb 14 23:59 UTC automatically.
-// Safe to remove on or after Feb 15.
-import FreshStart2021SaleBanner from 'calypso/components/jetpack/fresh-start-2021-sale-banner';
+import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
 
 import './style.scss';
 
-export default function StoreHeader( { urlQueryArgs = {} } = {} ): React.ReactElement {
+export default function StoreHeader(): React.ReactElement {
 	const translate = useTranslate();
 	const partnerSlug = useSelector( ( state ) => getPartnerSlugFromQuery( state ) );
 	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
@@ -52,7 +49,7 @@ export default function StoreHeader( { urlQueryArgs = {} } = {} ): React.ReactEl
 				/>
 			) }
 
-			<FreshStart2021SaleBanner urlQueryArgs={ urlQueryArgs } />
+			<IntroPricingBanner />
 		</>
 	);
 }

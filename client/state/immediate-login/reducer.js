@@ -3,7 +3,6 @@
  */
 
 import { withStorageKey } from '@automattic/state-utils';
-import { withoutPersistence } from 'calypso/state/utils';
 import { IMMEDIATE_LOGIN_SAVE_INFO } from 'calypso/state/action-types';
 
 const initialState = {
@@ -14,7 +13,7 @@ const initialState = {
 	locale: null,
 };
 
-const reducer = withoutPersistence( ( state = initialState, action ) => {
+const reducer = ( state = initialState, action ) => {
 	switch ( action.type ) {
 		case IMMEDIATE_LOGIN_SAVE_INFO: {
 			const { success, reason, email, locale } = action;
@@ -30,6 +29,6 @@ const reducer = withoutPersistence( ( state = initialState, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default withStorageKey( 'immediateLogin', reducer );

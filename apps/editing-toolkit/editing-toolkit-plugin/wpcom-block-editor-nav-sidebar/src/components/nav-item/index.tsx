@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import classNames from 'classnames';
 import { Button } from '@wordpress/components';
 import { forwardRef } from '@wordpress/element';
@@ -38,7 +39,7 @@ const NavItem = forwardRef< HTMLLIElement, NavItemProps >(
 			defaultEditUrl,
 			item.id,
 			postType.slug
-		);
+		) as string;
 		const trackEvent = () => {
 			recordTracksEvent( 'calypso_editor_sidebar_item_edit', { post_type: postType.slug } );
 		};
@@ -49,7 +50,11 @@ const NavItem = forwardRef< HTMLLIElement, NavItemProps >(
 					className={ buttonClasses }
 					href={ editUrl }
 					onClick={ trackEvent }
-					target={ applyFilters( 'a8c.WpcomBlockEditorNavSidebar.linkTarget', undefined ) }
+					target={
+						applyFilters( 'a8c.WpcomBlockEditorNavSidebar.linkTarget', undefined ) as
+							| string
+							| undefined
+					}
 				>
 					<div className={ titleClasses } title={ item.title?.raw }>
 						{ item.title?.raw ||

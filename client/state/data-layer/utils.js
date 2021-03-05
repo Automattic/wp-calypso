@@ -1,16 +1,7 @@
 /**
  * External dependencies
  */
-import {
-	camelCase,
-	isArray,
-	isObjectLike,
-	isPlainObject,
-	map,
-	reduce,
-	set,
-	snakeCase,
-} from 'lodash';
+import { camelCase, isObjectLike, isPlainObject, map, reduce, set, snakeCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,7 +26,7 @@ export const bypassDataLayer = ( action ) => extendAction( action, doBypassDataL
  * @returns {object} a new object with all keys converted
  */
 export function convertKeysBy( obj, fn ) {
-	if ( isArray( obj ) ) {
+	if ( Array.isArray( obj ) ) {
 		return map( obj, ( v ) => convertKeysBy( v, fn ) );
 	}
 

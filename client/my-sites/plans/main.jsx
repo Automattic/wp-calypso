@@ -132,7 +132,14 @@ class Plans extends React.Component {
 					) }
 					{ canAccessPlans && (
 						<>
-							<FormattedHeader brandFont headerText={ translate( 'Plans' ) } align="left" />
+							<FormattedHeader
+								brandFont
+								headerText={ translate( 'Plans' ) }
+								subHeaderText={
+									'See and compare the features available on each WordPress.com plan.'
+								}
+								align="left"
+							/>
 							<div id="plans" className="plans plans__has-sidebar">
 								<PlansNavigation path={ this.props.context.path } />
 								{ isEnabled( 'p2/p2-plus' ) && isWPForTeamsSite ? (

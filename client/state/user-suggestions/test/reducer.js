@@ -11,8 +11,6 @@ import {
 	USER_SUGGESTIONS_RECEIVE,
 	USER_SUGGESTIONS_REQUEST,
 	USER_SUGGESTIONS_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
 } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
@@ -96,26 +94,6 @@ describe( 'reducer', () => {
 			expect( state ).toEqual( {
 				124: false,
 				123: false,
-			} );
-		} );
-
-		describe( 'persistence', () => {
-			test( 'never persists state', () => {
-				const original = deepFreeze( {
-					124: false,
-					123: true,
-				} );
-				const state = requesting( original, { type: SERIALIZE } );
-				expect( state ).toBeUndefined();
-			} );
-
-			test( 'never loads persisted state', () => {
-				const original = deepFreeze( {
-					124: false,
-					123: true,
-				} );
-				const state = requesting( original, { type: DESERIALIZE } );
-				expect( state ).toEqual( {} );
 			} );
 		} );
 	} );

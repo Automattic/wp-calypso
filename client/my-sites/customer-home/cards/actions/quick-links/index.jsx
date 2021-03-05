@@ -34,7 +34,8 @@ import { expandHomeQuickLinks, collapseHomeQuickLinks } from 'calypso/state/home
 /**
  * Image dependencies
  */
-import logoIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
+import fiverrLogoIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
+import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';
 
 /**
  * Style dependencies
@@ -55,6 +56,7 @@ export const QuickLinks = ( {
 	trackCustomizeThemeAction,
 	changeThemeAction,
 	trackDesignLogoAction,
+	trackAnchorPodcastAction,
 	addEmailAction,
 	addDomainAction,
 	isExpanded,
@@ -144,7 +146,15 @@ export const QuickLinks = ( {
 				target="_blank"
 				label={ translate( 'Create a logo with Fiverr' ) }
 				external
-				iconSrc={ logoIcon }
+				iconSrc={ fiverrLogoIcon }
+			/>
+			<ActionBox
+				href="https://anchor.fm/wordpressdotcom"
+				onClick={ trackAnchorPodcastAction }
+				target="_blank"
+				label={ translate( 'Create a podcast with Anchor' ) }
+				external
+				iconSrc={ anchorLogoIcon }
 			/>
 		</div>
 	);
@@ -242,6 +252,14 @@ const trackDesignLogoAction = ( isStaticHomePage ) =>
 		bumpStat( 'calypso_customer_home', 'my_site_design_logo' )
 	);
 
+const trackAnchorPodcastAction = ( isStaticHomePage ) =>
+	composeAnalytics(
+		recordTracksEvent( 'calypso_customer_home_my_site_anchor_podcast_click', {
+			is_static_home_page: isStaticHomePage,
+		} ),
+		bumpStat( 'calypso_customer_home', 'my_site_design_logo' )
+	);
+
 const addEmailAction = ( siteSlug, isStaticHomePage ) =>
 	withAnalytics(
 		composeAnalytics(
@@ -296,6 +314,7 @@ const mapDispatchToProps = {
 	trackCustomizeThemeAction,
 	changeThemeAction,
 	trackDesignLogoAction,
+	trackAnchorPodcastAction,
 	addEmailAction,
 	addDomainAction,
 	expand: expandHomeQuickLinks,
@@ -315,6 +334,7 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		trackCustomizeThemeAction: () => dispatchProps.trackCustomizeThemeAction( isStaticHomePage ),
 		changeThemeAction: () => dispatchProps.changeThemeAction( siteSlug, isStaticHomePage ),
 		trackDesignLogoAction: () => dispatchProps.trackDesignLogoAction( isStaticHomePage ),
+		trackAnchorPodcastAction: () => dispatchProps.trackAnchorPodcastAction( isStaticHomePage ),
 		addEmailAction: () => dispatchProps.addEmailAction( siteSlug, isStaticHomePage ),
 		addDomainAction: () => dispatchProps.addDomainAction( siteSlug, isStaticHomePage ),
 		...ownProps,

@@ -9,16 +9,20 @@ import Gridicon from 'calypso/components/gridicon';
 /**
  * Internal Dependencies
  */
-import config from '@automattic/calypso-config';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-function MobileBackToSidebar( { children, toggleSidebar } ) {
-	if ( config.isEnabled( 'nav-unification' ) ) {
+function MobileBackToSidebar( {
+	children,
+	toggleSidebar,
+	isNavUnificationEnabled: isUnifiedNavEnabled,
+} ) {
+	if ( isUnifiedNavEnabled ) {
 		return null;
 	}
 
@@ -30,6 +34,9 @@ function MobileBackToSidebar( { children, toggleSidebar } ) {
 	);
 }
 
-export default connect( null, { toggleSidebar: () => setLayoutFocus( 'sidebar' ) } )(
-	MobileBackToSidebar
-);
+export default connect(
+	( state ) => ( {
+		isNavUnificationEnabled: isNavUnificationEnabled( state ),
+	} ),
+	{ toggleSidebar: () => setLayoutFocus( 'sidebar' ) }
+)( MobileBackToSidebar );

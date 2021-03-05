@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { isArray } from 'lodash';
 import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -95,7 +94,7 @@ export const useFirstMatchingBackupAttempt = (
 
 	const rewindCapabilities = useSelector( ( state ) => getRewindCapabilities( state, siteId ) );
 	const hasRealtimeBackups =
-		isArray( rewindCapabilities ) && rewindCapabilities.includes( 'backup-realtime' );
+		Array.isArray( rewindCapabilities ) && rewindCapabilities.includes( 'backup-realtime' );
 
 	const filter = hasRealtimeBackups
 		? getRealtimeAttemptFilter( { before, after, sortOrder } )

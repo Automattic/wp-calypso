@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, find, includes, indexOf, isEmpty, pick, sortBy } from 'lodash';
+import { filter, find, includes, isEmpty, pick, sortBy } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -76,12 +76,12 @@ export function getValidPath( parameters ) {
 
 export function getPreviousStepName( flowName, currentStepName ) {
 	const flow = flows.getFlow( flowName );
-	return flow.steps[ indexOf( flow.steps, currentStepName ) - 1 ];
+	return flow.steps[ flow.steps.indexOf( currentStepName ) - 1 ];
 }
 
 export function getNextStepName( flowName, currentStepName ) {
 	const flow = flows.getFlow( flowName );
-	return flow.steps[ indexOf( flow.steps, currentStepName ) + 1 ];
+	return flow.steps[ flow.steps.indexOf( currentStepName ) + 1 ];
 }
 
 export function getFlowSteps( flowName ) {

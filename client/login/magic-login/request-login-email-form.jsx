@@ -41,6 +41,7 @@ class RequestLoginEmailForm extends React.Component {
 		requestError: PropTypes.string,
 		showCheckYourEmail: PropTypes.bool,
 		userEmail: PropTypes.string,
+		flow: PropTypes.string,
 
 		// mapped to dispatch
 		sendEmailLogin: PropTypes.func.isRequired,
@@ -87,6 +88,7 @@ class RequestLoginEmailForm extends React.Component {
 		this.props.sendEmailLogin( usernameOrEmail, {
 			redirectTo: this.props.redirectTo,
 			requestLoginEmailFormFlow: true,
+			...( this.props.flow ? { flow: this.props.flow } : {} ),
 		} );
 	};
 
@@ -149,7 +151,7 @@ class RequestLoginEmailForm extends React.Component {
 						) }
 					</p>
 					<FormLabel htmlFor="usernameOrEmail">
-						{ this.props.translate( 'Email Address' ) }
+						{ this.props.translate( 'Email Address or Username' ) }
 					</FormLabel>
 					<FormFieldset className="magic-login__email-fields">
 						<FormTextInput
@@ -183,8 +185,8 @@ const mapState = ( state ) => {
 		showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
 		emailRequested: getMagicLoginRequestedEmailSuccessfully( state ),
 		userEmail:
-			getInitialQueryArguments( state ).email_address ||
-			getCurrentQueryArguments( state ).email_address,
+			getCurrentQueryArguments( state ).email_address ||
+			getInitialQueryArguments( state ).email_address,
 	};
 };
 

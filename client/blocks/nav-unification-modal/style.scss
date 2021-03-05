@@ -27,7 +27,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 		}
 
 		@media ( min-width: $modal-breakpoint ) {
-			width: 720px;
+			width: 740px;
 			height: $modal-content-min-height;
 			top: calc( 50% - #{$modal-footer-height / 2} );
 		}
@@ -163,41 +163,37 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 }
 
 .nav-unification-modal__picture {
-	display: flex;
-	margin-top: 20px;
-	// Preserve image aspect ratio on Safari (default for align-items is stretch)
-	align-items: flex-end;
+	max-height: 100%;
 
 	@media ( min-width: $modal-breakpoint ) {
 		margin-top: 0;
 	}
 
 	&--center {
+		display: flex;
+		align-items: center;
+
 		@media ( min-width: $modal-breakpoint ) {
-			position: absolute;
-			transform: translateY( -50% );
-			top: 50%;
+			align-self: center;
 		}
 	}
 
 	&--bottom-right {
+		align-self: flex-end;
+		margin-bottom: -10px;
+
 		@media ( min-width: $modal-breakpoint ) {
 			position: absolute;
 			bottom: 0;
+			align-self: auto;
 		}
 	}
 
-	&--top-right {
-		align-self: flex-start;
-
-		@media ( min-width: $modal-breakpoint ) {
-			position: absolute;
-			top: 0;
+	&--bottom-center-small {
+		@media ( max-width: $modal-breakpoint ) {
+			align-self: flex-end;
+			margin-bottom: -10px;
 		}
-	}
-
-	&--no-margin {
-		margin-top: 0;
 	}
 }
 
@@ -205,12 +201,18 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	@include onboarding-font-recoleta;
 	/* Gray / Gray 90 */
 	color: #1d2327;
-
 	font-size: 24px;
-	line-height: 1.19;
+	
+	h2 {
+		line-height: 1.19;
+	}
 
 	@media ( min-width: $modal-breakpoint ) {
 		font-size: 24px;
+
+		h2 {
+			margin: 26px 0;
+		}
 	}
 }
 

@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -10,6 +11,7 @@ import React from 'react';
 import config from '@automattic/calypso-config';
 import SitePicker from 'calypso/my-sites/picker';
 import AsyncLoad from 'calypso/components/async-load';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 
 class MySitesNavigation extends React.Component {
 	static displayName = 'MySitesNavigation';
@@ -29,7 +31,7 @@ class MySitesNavigation extends React.Component {
 		let asyncSidebar = null;
 		if ( config.isEnabled( 'jetpack-cloud' ) ) {
 			asyncSidebar = <AsyncLoad require="calypso/components/jetpack/sidebar" { ...asyncProps } />;
-		} else if ( config.isEnabled( 'nav-unification' ) ) {
+		} else if ( this.props.isNavUnificationEnabled ) {
 			asyncSidebar = <AsyncLoad require="calypso/my-sites/sidebar-unified" { ...asyncProps } />;
 		} else {
 			asyncSidebar = <AsyncLoad require="calypso/my-sites/sidebar" { ...asyncProps } />;
@@ -48,4 +50,6 @@ class MySitesNavigation extends React.Component {
 	}
 }
 
-export default MySitesNavigation;
+export default connect( ( state ) => ( {
+	isNavUnificationEnabled: isNavUnificationEnabled( state ),
+} ) )( MySitesNavigation );

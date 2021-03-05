@@ -29,31 +29,6 @@ describe( 'isAlive', () => {
 	} );
 } );
 
-describe( 'isRecent', () => {
-	it( 'returns true for ExperimentAssignments within maximumRecencyDelta', () => {
-		expect(
-			ExperimentAssignments.isRecent( {
-				...validExperimentAssignment,
-				retrievedTimestamp: Date.now(),
-			} )
-		).toBe( true );
-		expect(
-			ExperimentAssignments.isRecent( {
-				...validExperimentAssignment,
-				retrievedTimestamp: Date.now() - 1000 * 60 * 60 * 24 * 14 + 100,
-			} )
-		).toBe( true );
-	} );
-	it( 'returns false for ExperimentAssignments outside of maximumRecencyDelta', () => {
-		expect(
-			ExperimentAssignments.isRecent( {
-				...validExperimentAssignment,
-				retrievedTimestamp: Date.now() - 1000 * 60 * 60 * 24 * 14,
-			} )
-		).toBe( false );
-	} );
-} );
-
 describe( 'createFallbackExperimentAssignment', () => {
 	it( 'creates a fallback ExperimentAssignment', () => {
 		const now = Date.now();
@@ -63,7 +38,6 @@ describe( 'createFallbackExperimentAssignment', () => {
 
 		expect( fallbackExperimentAssignment.retrievedTimestamp ).toBeGreaterThanOrEqual( now );
 		expect( ExperimentAssignments.isAlive( fallbackExperimentAssignment ) ).toBe( true );
-		expect( ExperimentAssignments.isRecent( fallbackExperimentAssignment ) ).toBe( true );
 
 		expect( {
 			...fallbackExperimentAssignment,
@@ -72,7 +46,43 @@ describe( 'createFallbackExperimentAssignment', () => {
 			experimentName: 'experiment_name',
 			variationName: null,
 			retrievedTimestamp: now,
-			ttl: 60,
+			ttl: ExperimentAssignments.minimumTtl,
+			isFallbackExperimentAssignment: true,
+		} );
+	} );
+
+	it( 'creates a fallback ExperimentAssignment correctly with a provided ttl under the minimum', () => {
+		const now = Date.now();
+		const fallbackExperimentAssignment = ExperimentAssignments.createFallbackExperimentAssignment(
+			'experiment_name',
+			ExperimentAssignments.minimumTtl - 1
+		);
+		expect( {
+			...fallbackExperimentAssignment,
+			retrievedTimestamp: now,
+		} ).toEqual( {
+			experimentName: 'experiment_name',
+			variationName: null,
+			retrievedTimestamp: now,
+			ttl: ExperimentAssignments.minimumTtl,
+			isFallbackExperimentAssignment: true,
+		} );
+	} );
+
+	it( 'creates a fallback ExperimentAssignment correctly with a provided ttl over the minimum', () => {
+		const now = Date.now();
+		const fallbackExperimentAssignment = ExperimentAssignments.createFallbackExperimentAssignment(
+			'experiment_name',
+			ExperimentAssignments.minimumTtl + 1
+		);
+		expect( {
+			...fallbackExperimentAssignment,
+			retrievedTimestamp: now,
+		} ).toEqual( {
+			experimentName: 'experiment_name',
+			variationName: null,
+			retrievedTimestamp: now,
+			ttl: ExperimentAssignments.minimumTtl + 1,
 			isFallbackExperimentAssignment: true,
 		} );
 	} );

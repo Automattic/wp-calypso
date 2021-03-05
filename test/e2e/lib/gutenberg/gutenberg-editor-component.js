@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import webdriver, { By, Key, until } from 'selenium-webdriver';
+import webdriver, { By, until } from 'selenium-webdriver';
 import { kebabCase } from 'lodash';
 
 /**
@@ -15,21 +15,24 @@ import { ContactFormBlockComponent } from './blocks';
 import { ShortcodeBlockComponent } from './blocks/shortcode-block-component';
 import { ImageBlockComponent } from './blocks/image-block-component';
 import { FileBlockComponent } from './blocks/file-block-component';
+import GuideComponent from '../components/guide-component.js';
 
 export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	constructor( driver, url, editorType = 'iframe' ) {
 		super( driver, By.css( '.edit-post-header' ), url );
 		this.editorType = editorType;
 
-		this.publishSelector = By.css(
-			'.editor-post-publish-panel__header-publish-button button.editor-post-publish-button'
+		this.editoriFrameSelector = By.css( '.calypsoify.is-iframe iframe' );
+		this.publishHeaderSelector = By.css( '.editor-post-publish-panel__header' );
+		this.prePublishButtonSelector = By.css(
+			'.editor-post-publish-panel__toggle[aria-disabled="false"]'
+		);
+		this.publishButtonSelector = By.css(
+			'.editor-post-publish-panel__header-publish-button button.editor-post-publish-button[aria-disabled="false"]'
 		);
 		this.publishingSpinnerSelector = By.css(
 			'.editor-post-publish-panel__content .components-spinner'
 		);
-		this.prePublishButtonSelector = By.css( '.editor-post-publish-panel__toggle' );
-		this.publishHeaderSelector = By.css( '.editor-post-publish-panel__header' );
-		this.editoriFrameSelector = By.css( '.calypsoify.is-iframe iframe' );
 	}
 
 	static async Expect( driver, editorType ) {
@@ -60,19 +63,16 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		if ( dismissPageTemplateSelector ) {
 			await this.dismissPageTemplateSelector();
 		}
-		await this.dismissEditorWelcomeModal();
+		const editorWelcomeModal = new GuideComponent( this.driver );
+		await editorWelcomeModal.dismiss( 4000 );
 		return await this.closeSidebar();
 	}
 
 	async publish( { visit = false, closePanel = true } = {} ) {
-		const snackBarNoticeLinkSelector = By.css( '.components-snackbar__content a' );
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishHeaderSelector );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishSelector );
-		await this.driver.sleep( 1000 );
-		const button = await this.driver.findElement( this.publishSelector );
-		await this.driver.executeScript( 'arguments[0].click();', button );
+		await driverHelper.clickWhenClickable( this.driver, this.publishButtonSelector );
 		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
+
 		if ( closePanel ) {
 			try {
 				await this.closePublishedPanel();
@@ -80,13 +80,16 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				console.log( 'Publish panel already closed' );
 			}
 		}
+
 		await this.waitForSuccessViewPostNotice();
+
+		const snackBarNoticeLinkSelector = By.css( '.components-snackbar__content a' );
 		const url = await this.driver.findElement( snackBarNoticeLinkSelector ).getAttribute( 'href' );
 
 		if ( visit ) {
-			const snackbar = await this.driver.findElement( snackBarNoticeLinkSelector );
-			await this.driver.executeScript( 'arguments[0].click();', snackbar );
+			await driverHelper.clickWhenClickable( this.driver, snackBarNoticeLinkSelector );
 		}
+
 		await this.driver.sleep( 1000 );
 		await driverHelper.acceptAlertIfPresent( this.driver );
 		return url;
@@ -158,7 +161,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async toggleOptionsMenu() {
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.xpath( "//button[@aria-label='Options']" )
+			By.css( ".edit-post-more-menu button[aria-label='Options']" )
 		);
 
 		// This sleep is needed for the Options menu to be accessible. I've tried `waitTillPresentAndDisplayed`
@@ -329,7 +332,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			case 'Instagram':
 			case 'Twitter':
 			case 'YouTube':
-				blockSettings = { ariaLabel: 'Block: Embed', prefix: 'embed-' };
+				blockSettings = { ariaLabel: 'Block: Embed', prefix: 'embed\\/' };
 				break;
 			case 'Form':
 				blockSettings = { prefix: 'jetpack-', blockClass: 'contact-form' };
@@ -388,17 +391,20 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			title
 		);
 
-		// @TODO Remove the `deprecatedInserterBlockItemSelector` definition and usage after we activate GB 9.4.1 on production.
-		const deprecatedInserterBlockItemSelector = `.edit-post-layout__inserter-panel .block-editor-inserter__block-list button.editor-block-list-item-${ prefix }${ blockClass }`;
+		// @TODO Remove the `deprecatedInserterBlockItemSelector` definition and usage after we activate GB 10.x on production.
+		const deprecatedInserterBlockItemSelector = `.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix.replace(
+			'\\/',
+			'-'
+		) }${ blockClass }`;
 		const inserterBlockItemSelector = By.css(
 			`.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }, ${ deprecatedInserterBlockItemSelector }`
 		);
 
-		const insertedBlockSelectorStr = `.block-editor-block-list__block.${
-			initsWithChildFocus ? 'has-child-selected' : 'is-selected'
-		}[aria-label*='${ ariaLabel }']`;
-
-		let insertedBlockSelector = By.css( insertedBlockSelectorStr );
+		const insertedBlockSelector = By.css(
+			`.block-editor-block-list__block.${
+				initsWithChildFocus ? 'has-child-selected' : 'is-selected'
+			}[aria-label*='${ ariaLabel }']`
+		);
 
 		await this.openBlockInserterAndSearch( title );
 
@@ -409,46 +415,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		// The normal click is needed to avoid hovering the element, which seems
 		// to cause the element to become stale.
 		await driverHelper.clickWhenClickable( this.driver, inserterBlockItemSelector );
-
-		await driverHelper
-			.waitTillPresentAndDisplayed( this.driver, insertedBlockSelector )
-			.catch( () => {
-				/**
-				 * Temporary workaround for https://github.com/WordPress/gutenberg/issues/28932.
-				 * More context: p1612999643307600-slack-C7YPUHBB2.
-				 *
-				 * Why not skipping the step? Because:
-				 * - The bug is not critical;
-				 * - We still want the rest of the step*[0] to run, ideally;
-				 * - While the bug is not critical and AFAIK it only happens in a single step
-				 *   in the Desktop viewport, it's possible it could manifest in other situations and
-				 *   break more tests while we don't have a fix upstream.
-				 *
-				 * *[0] https://github.com/Automattic/wp-calypso/blob/trunk/test/e2e/specs/wp-calypso-gutenberg-post-editor-spec.js#L72
-				 *
-				 * The change also tries to be as less intrusive as possible and only takes place if
-				 * an element that's expected to be found, can't.
-				 *
-				 * What are we doing here, exactly?
-				 *
-				 * At this point, the block has been just inserted in the editor.
-				 *
-				 * We then try to find it with the selector generated by `getInserterBlockSelector()` above,
-				 * by default it includes the `is-selected` CSS class, which assumes the block is focused/selected
-				 * in the editor.
-				 *
-				 * If we can't find it (which means we fell into the buggy scenario described in the issue above), we
-				 * regenerate the selector, this time making sure that it doesn't include an `is-selected` class selector
-				 * as part of it. This should be enugh for the rest of the code to find it and proceed as expected.
-				 *
-				 * ToDo: Once the fix for https://github.com/WordPress/gutenberg/issues/28932 is available,
-				 * revert this.
-				 */
-
-				// No need to wait here as if we got to this point, we already waited
-				// for the `waitTillPresentAndDisplayed`'s timeout.
-				insertedBlockSelector = By.css( insertedBlockSelectorStr.replace( '.is-selected', '' ) );
-			} );
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, insertedBlockSelector );
 
 		return this.driver.findElement( insertedBlockSelector ).getAttribute( 'id' );
 	}
@@ -562,10 +529,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async closePublishedPanel() {
-		const closeButton = await this.driver.findElement(
+		return await driverHelper.clickWhenClickable(
+			this.driver,
 			By.css( '.editor-post-publish-panel__header button[aria-label="Close panel"]' )
 		);
-		return await this.driver.executeScript( 'arguments[0].click();', closeButton );
 	}
 
 	async ensureSaved() {
@@ -638,7 +605,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			By.css( '.editor-post-publish-panel__link' ),
 			publishDate
 		);
-		await driverHelper.clickWhenClickable( this.driver, this.publishSelector );
+		await driverHelper.clickWhenClickable( this.driver, this.publishButtonSelector );
 		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
 		await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,
@@ -661,7 +628,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async submitForReview() {
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishHeaderSelector );
-		return await driverHelper.clickWhenClickable( this.driver, this.publishSelector );
+		return await driverHelper.clickWhenClickable( this.driver, this.publishButtonSelector );
 	}
 
 	async closeEditor() {
@@ -683,6 +650,18 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async dismissPageTemplateSelector() {
 		if ( await driverHelper.isElementPresent( this.driver, By.css( '.page-template-modal' ) ) ) {
 			if ( driverManager.currentScreenSize() === 'mobile' ) {
+				// For some reason, when the screensize is set to mobile,
+				// the welcome guide modal is not closed when the template button
+				// is clicked, causing the test to fail with a timeout.
+				//
+				// The same doesn't seem to happen if I run the test
+				// in the Desktop screen size, but resize to a mobileish size.
+				// For this reason, when in the mobile screen size, we force-close
+				// the welcome modal before trying to click the template selector.
+				await driverHelper.clickIfPresent(
+					this.driver,
+					By.css( '.edit-post-welcome-guide button[aria-label="Close dialog"]' )
+				);
 				await driverHelper.clickWhenClickable(
 					this.driver,
 					By.css( 'button.template-selector-item__label[value="blank"]' )
@@ -692,33 +671,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 					By.css( '.page-template-modal__buttons .components-button.is-primary' )
 				);
 				await this.driver.executeScript( 'arguments[0].click()', useBlankButton );
-			}
-		}
-	}
-
-	async dismissEditorWelcomeModal() {
-		const welcomeModal = By.css( '.components-guide__container' );
-		if (
-			await driverHelper.isEventuallyPresentAndDisplayed(
-				this.driver,
-				welcomeModal,
-				this.explicitWaitMS / 5
-			)
-		) {
-			try {
-				// Easiest way to dismiss it, but it might not work in IE.
-				await this.driver.findElement( By.css( '.components-guide' ) ).sendKeys( Key.ESCAPE );
-			} catch {
-				// Click to the last page of the welcome guide.
-				await driverHelper.clickWhenClickable(
-					this.driver,
-					By.css( 'ul.components-guide__page-control li:last-child button' )
-				);
-				// Click the finish button.
-				await driverHelper.clickWhenClickable(
-					this.driver,
-					By.css( '.components-guide__finish-button' )
-				);
 			}
 		}
 	}

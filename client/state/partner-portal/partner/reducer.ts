@@ -9,24 +9,24 @@ import { AnyAction } from 'redux';
 import {
 	JETPACK_PARTNER_PORTAL_PARTNER_ACTIVE_PARTNER_KEY_UPDATE,
 	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST,
-	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_FAILURE,
-	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_SUCCESS,
+	JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE,
+	JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE_ERROR,
 } from 'calypso/state/action-types';
-import { combineReducers, withoutPersistence, withSchemaValidation } from 'calypso/state/utils';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 
 export const initialState = {
 	hasFetched: false,
 	isFetching: false,
 	activePartnerKey: 0,
 	current: null,
-	error: '',
+	error: null,
 };
 
 export const hasFetched = withoutPersistence(
 	( state = initialState.isFetching, action: AnyAction ) => {
 		switch ( action.type ) {
-			case JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_SUCCESS:
-			case JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_FAILURE:
+			case JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE:
+			case JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE_ERROR:
 				return true;
 		}
 
@@ -40,8 +40,8 @@ export const isFetching = withoutPersistence(
 			case JETPACK_PARTNER_PORTAL_PARTNER_REQUEST:
 				return true;
 
-			case JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_SUCCESS:
-			case JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_FAILURE:
+			case JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE:
+			case JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE_ERROR:
 				return false;
 		}
 
@@ -49,10 +49,7 @@ export const isFetching = withoutPersistence(
 	}
 );
 
-export const activePartnerKey = withSchemaValidation(
-	{
-		type: 'number',
-	},
+export const activePartnerKey = withoutPersistence(
 	( state = initialState.activePartnerKey, action: AnyAction ) => {
 		switch ( action.type ) {
 			case JETPACK_PARTNER_PORTAL_PARTNER_ACTIVE_PARTNER_KEY_UPDATE:
@@ -65,7 +62,7 @@ export const activePartnerKey = withSchemaValidation(
 
 export const current = withoutPersistence( ( state = initialState.current, action: AnyAction ) => {
 	switch ( action.type ) {
-		case JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_SUCCESS:
+		case JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE:
 			if ( action.partner.keys.length === 0 ) {
 				// Ignore the partner if all of it does not have any keys or all of its keys are disabled.
 				return null;
@@ -79,8 +76,8 @@ export const current = withoutPersistence( ( state = initialState.current, actio
 
 export const error = withoutPersistence( ( state = initialState.error, action: AnyAction ) => {
 	switch ( action.type ) {
-		case JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_FAILURE:
-			return `${ action.error.status }: ${ action.error.message }`;
+		case JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE_ERROR:
+			return action.error;
 	}
 
 	return state;
