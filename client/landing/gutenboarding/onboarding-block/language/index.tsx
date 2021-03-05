@@ -12,6 +12,7 @@ import LanguagePicker, { createLanguageGroups } from '@automattic/language-picke
  * WordPress dependencies
  */
 import { useSelect } from '@wordpress/data';
+import useLastLocation from '../../hooks/use-last-location';
 
 /**
  * Internal dependencies
@@ -49,11 +50,12 @@ const LanguageStep: React.FunctionComponent< Props > = ( { previousStep } ) => {
 
 	const history = useHistory();
 	const makePath = usePath();
+	const { goLastLocation } = useLastLocation();
 
 	const goBack = ( lang = '' ) => {
 		staticPreviousStep.current
 			? history.push( makePath( Step[ staticPreviousStep.current ], lang ) )
-			: history.goBack();
+			: goLastLocation();
 	};
 
 	return (
