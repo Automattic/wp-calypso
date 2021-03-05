@@ -112,7 +112,8 @@ object WPComPlugins_EditorToolKit : BuildType({
 				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php ../../etk-release-build/full-site-editing-plugin.php
 				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt ../../etk-release-build/readme.txt
 
-				if ! diff -rq ./editing-toolkit-plugin/ ../../etk-release-build/ ; then
+				# Note: we exclude asset changes because we only really care if the build files (JS/CSS) change. That file is basically just metadata.
+				if ! diff -rq --exclude="*.asset.php" ./editing-toolkit-plugin/ ../../etk-release-build/ ; then
 					echo "The build is different from the last release build. Therefore, this can be tagged as a release build."
 					curl -X POST -H "Content-Type: text/plain" --data "etk-release-build" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" %teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/
 				else
