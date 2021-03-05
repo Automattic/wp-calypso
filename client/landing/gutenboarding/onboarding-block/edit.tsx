@@ -123,16 +123,13 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	const { setLastLocation } = useDispatch( STORE_KEY );
 
 	React.useEffect( () => {
+		const modalSteps: StepType[] = [ Step.DomainsModal, Step.PlansModal, Step.LanguageModal ];
 		if (
 			// When location.key is undefined, this means user has just entered gutenboarding from url.
 			location.key !== undefined &&
 			// When step exists, and step is not any from the modals
 			step &&
-			! [
-				Step.DomainsModal as string,
-				Step.PlansModal as string,
-				Step.LanguageModal as string,
-			].includes( step )
+			! modalSteps.includes( step )
 		) {
 			// Remember last location
 			setLastLocation( location.pathname );
