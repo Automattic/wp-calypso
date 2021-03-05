@@ -37,7 +37,6 @@ export interface AvailableProductVariant {
 	priceFullBeforeDiscount: number;
 	priceFull: number;
 	priceFinal: number;
-	priceMonthly: number;
 }
 
 export type GetProductVariants = ( productSlug: WPCOMProductSlug ) => WPCOMProductVariant[];

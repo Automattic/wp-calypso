@@ -41,7 +41,6 @@ export const computeFullAndMonthlyPricesForPlan = (
 			getPlanPrice( state, siteId, planObject, false ) - credits - couponDiscount,
 			0,
 		] ),
-		priceMonthly: getPlanPrice( state, siteId, planObject, true ),
 	};
 };
 
@@ -66,6 +65,5 @@ function computePricesForWpComPlan( state, planObject ) {
 		priceFullBeforeDiscount,
 		priceFull,
 		priceFinal: priceFull,
-		priceMonthly,
 	};
 }
