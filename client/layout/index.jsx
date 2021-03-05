@@ -173,15 +173,16 @@ class Layout extends Component {
 		} );
 
 		const optionalBodyProps = () => {
-			const optionalProps = {
-				bodyClass: classnames( {
-					'is-new-launch-flow':
-						this.props.isNewLaunchFlow || this.props.isCheckoutFromGutenboarding,
-					'is-nav-unification': this.props.isNavUnificationEnabled,
-				} ),
+			const bodyClass = [];
+			if ( this.props.isNewLaunchFlow || this.props.isCheckoutFromGutenboarding ) {
+				bodyClass.push( 'is-new-launch-flow' );
+			}
+			if ( this.props.isNavUnificationEnabled ) {
+				bodyClass.push( 'is-nav-unification' );
+			}
+			return {
+				bodyClass,
 			};
-
-			return optionalProps;
 		};
 
 		const { shouldShowAppBanner } = this.props;
