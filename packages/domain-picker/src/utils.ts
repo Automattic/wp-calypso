@@ -61,10 +61,10 @@ type DomainSuggestionsVendor = 'variation2_front' | 'variation4_front' | 'variat
 export function getDomainSuggestionsVendor(
 	options: DomainSuggestionsVendorOptions = {}
 ): DomainSuggestionsVendor {
-	if ( options?.isSignup && ! options?.isDomainOnly ) {
+	if ( options.isSignup && ! options.isDomainOnly ) {
 		return 'variation4_front';
 	}
-	if ( options?.isPremium ) {
+	if ( options.isPremium ) {
 		return 'variation8_front';
 	}
 	return 'variation2_front';
