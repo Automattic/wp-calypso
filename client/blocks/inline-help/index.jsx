@@ -175,7 +175,7 @@ class InlineHelp extends Component {
 						onClose={ this.closeDialog }
 					/>
 				) }
-				{ this.props.isHappychatButtonVisible && config.isEnabled( 'happychat' ) && (
+				{ this.props.hasActiveHappyChat && config.isEnabled( 'happychat' ) && (
 					<HappychatButton className="inline-help__happychat-button" allowMobileRedirect />
 				) }
 			</div>
@@ -185,7 +185,7 @@ class InlineHelp extends Component {
 
 const mapStateToProps = ( state ) => {
 	return {
-		isHappychatButtonVisible: hasActiveHappychatSession( state ),
+		hasActiveHappyChat: hasActiveHappychatSession( state ),
 		isHappychatOpen: isHappychatOpen( state ),
 		isPopoverVisible: isInlineHelpPopoverVisible( state ),
 		isInlineHelpVisible: isInlineHelpVisible( state ),
