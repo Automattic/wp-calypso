@@ -6,7 +6,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, GuidePage } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
 
-function WhatsNewPage( { description, heading, imageSrc, isLastPage, key, link, pageNumber } ) {
+function WhatsNewPage( { description, heading, imageSrc, isLastPage, link, pageNumber } ) {
 	const __ = useI18n().__;
 
 	useEffect( () => {
@@ -38,7 +38,6 @@ function WhatsNewPage( { description, heading, imageSrc, isLastPage, key, link, 
 			<div className="whats-new-page__visual">
 				{ imageSrc && (
 					<img
-						key={ key }
 						src={ imageSrc }
 						alt={ description }
 						aria-hidden="true"

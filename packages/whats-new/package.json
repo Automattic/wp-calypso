@@ -37,15 +37,17 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
-		"@babel/runtime": "^7.12.5",
-		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@automattic/i18n-utils": "^1.0.0",
-		"@wordpress/components": "^12.0.7",
-		"wpcom": "^5.4.2"
+		"@automattic/react-i18n": "^1.0.0-alpha.0",
+		"@wordpress/components": "^12.0.1",
+		"wpcom-proxy-request": "^6.0.0",
+		"wpcom": "^6.0.0"
 	},
 	"devDependencies": {
-		"wpcom-proxy-request": "^6.0.0",
 		"@automattic/calypso-build": "^7.0.0",
 		"react": "^16.12.0"
+	},
+	"peerDependencies": {
+		"react": "^16.8"
 	}
 }

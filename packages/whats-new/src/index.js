@@ -37,14 +37,14 @@ const WhatsNewGuide = () => {
 
 	return (
 		<Guide
-			className="src__main"
-			contentLabel={ __( "What's New at WordPress.com", __i18n_text_domain__ ) }
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+			className="whats-new-guide__main"
+			contentLabel={ __( "What's new at WordPress.com", __i18n_text_domain__ ) }
 			finishButtonText={ __( 'Close', __i18n_text_domain__ ) }
 			onFinish={ toggleWhatsNew }
 		>
 			{ whatsNewData.map( ( page, index ) => (
 				<WhatsNewPage
-					key={ page.announcementId }
 					pageNumber={ index + 1 }
 					isLastPage={ index === whatsNewData.length - 1 }
 					description={ page.description }
