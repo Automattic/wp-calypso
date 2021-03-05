@@ -9,13 +9,11 @@ import { Title, SubTitle, NextButton, BackButton } from '@automattic/onboarding'
 import { Icon, external } from '@wordpress/icons';
 import { ClipboardButton } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { PLANS_STORE } from '../../stores';
-import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
  */
-import { useSiteDomains } from '../../hooks';
+import { useSiteDomains, useWillRedirectAfterSuccess } from '../../hooks';
 import Confetti from './confetti';
 import LaunchContext from '../../context';
 import { LAUNCH_STORE, SITE_STORE } from '../../stores';
@@ -25,22 +23,15 @@ import './style.scss';
 // Success is shown when the site is launched but also while the site is still launching.
 // This view is technically going to be the selected view in the modal even while the user goes through the checkout flow (which is rendered on top of this view).
 const Success: React.FunctionComponent = () => {
-	const { redirectTo, siteId, getCurrentLaunchFlowUrl, isInIframe } = React.useContext(
-		LaunchContext
-	);
+	const { redirectTo, siteId, getCurrentLaunchFlowUrl } = React.useContext( LaunchContext );
 
 	const isSiteLaunching = useSelect(
 		( select ) => select( SITE_STORE ).isSiteLaunching( siteId ),
 		[]
 	);
 
-	const locale = useLocale();
-
-	const [ isSelectedPlanPaid, planProductId ] = useSelect(
-		( select ) => [
-			select( LAUNCH_STORE ).isSelectedPlanPaid(),
-			select( LAUNCH_STORE ).getSelectedPlanProductId(),
-		],
+	const isSelectedPlanPaid = useSelect(
+		( select ) => select( LAUNCH_STORE ).isSelectedPlanPaid(),
 		[]
 	);
 
@@ -51,18 +42,9 @@ const Success: React.FunctionComponent = () => {
 	const [ displayedSiteUrl, setDisplayedSiteUrl ] = React.useState( '' );
 	const [ hasCopied, setHasCopied ] = React.useState( false );
 
-	const isEcommercePlan = useSelect(
-		( select ) => {
-			const plansStore = select( PLANS_STORE );
-			const plan = plansStore.getPlanByProductId( planProductId, locale );
-			return plansStore.isPlanEcommerce( plan?.periodAgnosticSlug );
-		},
-		[ planProductId, locale ]
-	);
-
 	// if the user has an ecommerce plan or they're using focused launch from wp-admin
 	// they will be automatically redirected to /checkout, in which case the CTAs are not needed
-	const willUserBeRedirectedAutomatically = ! isInIframe || isEcommercePlan;
+	const willUserBeRedirectedAutomatically = useWillRedirectAfterSuccess();
 
 	React.useEffect( () => {
 		setDisplayedSiteUrl( `https://${ sitePrimaryDomain?.domain }` );
