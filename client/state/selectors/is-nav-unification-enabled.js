@@ -11,10 +11,13 @@ import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+
+// Gradual rollout (segment of existing users + all new users registered after March 5, 2021).
+const NEW_USER_ID_THRESHOLD = 202731080; // ID of user who first registered on March 5, 2021.
+const CURRENT_ROLLOUT_SEGMENT_PERCENTAGE = 5;
 
 export default ( state ) => {
-	const userDate = getCurrentUserDate( state );
-	const userId = getCurrentUserId( state );
 	// Disable if explicitly requested by the `?disable-nav-unification` query param.
 	if ( new URL( document.location ).searchParams.has( 'disable-nav-unification' ) ) {
 		return false;
@@ -24,6 +27,12 @@ export default ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	if ( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) {
 		return false;
+	}
+
+	// Users belonging to the current segment OR New Users.
+	const userId = getCurrentUserId( state );
+	if ( userId % 100 < CURRENT_ROLLOUT_SEGMENT_PERCENTAGE || userId >= NEW_USER_ID_THRESHOLD ) {
+		return true;
 	}
 
 	// Enable nav-unification for all a12s.
