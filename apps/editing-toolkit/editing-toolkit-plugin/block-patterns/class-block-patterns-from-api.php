@@ -33,12 +33,14 @@ class Block_Patterns_From_API {
 	 */
 	private function __construct() {
 		$this->is_site_editor_enabled = function_exists( 'gutenberg_is_fse_theme' ) && gutenberg_is_fse_theme();
-		$cache_key_prefix             = $this->is_site_editor_enabled ? 'fse_block_patterns' : 'block_patterns';
-		$this->patterns_cache_key     = sha1(
+
+		// Tells the backend which patterns source site to default to.
+		$this->patterns_source    = $this->is_site_editor_enabled ? 'fse_block_patterns' : 'block_patterns';
+		$this->patterns_cache_key = sha1(
 			implode(
 				'_',
 				array(
-					$cache_key_prefix,
+					$this->pattern_source,
 					A8C_ETK_PLUGIN_VERSION,
 					$this->get_block_patterns_locale(),
 				)
@@ -181,9 +183,9 @@ class Block_Patterns_From_API {
 			$request_url = esc_url_raw(
 				add_query_arg(
 					array(
-						'tags'         => 'pattern',
-						'pattern_meta' => 'is_web',
-						'is_fse'       => $this->is_site_editor_enabled,
+						'tags'            => 'pattern',
+						'pattern_meta'    => 'is_web',
+						'patterns_source' => $this->patterns_source,
 					),
 					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_block_patterns_locale()
 				)
