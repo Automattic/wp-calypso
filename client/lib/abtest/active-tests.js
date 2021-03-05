@@ -51,8 +51,8 @@ export default {
 	newUsersWithFreePlan: {
 		datestamp: '20210107',
 		variations: {
-			newOnboarding: 50,
-			control: 50,
+			newOnboarding: 0,
+			control: 100,
 		},
 		localeTargets: 'any',
 		localeExceptions: [ 'en', 'es' ],
