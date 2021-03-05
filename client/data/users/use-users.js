@@ -23,12 +23,12 @@ const useUsers = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
 
 	return useInfiniteQuery(
 		[ 'users', siteId, search ],
-		async ( { pageParam = 0 } ) => {
-			const res = await wpcom
-				.site( siteId )
-				.usersList( { ...defaults, ...fetchOptions, offset: pageParam } );
-			return res;
-		},
+		( { pageParam = 0 } ) =>
+			wpcom.req.get( `/sites/${ siteId }/users`, {
+				...defaults,
+				...fetchOptions,
+				offset: pageParam,
+			} ),
 		{
 			enabled: !! siteId,
 			getNextPageParam: ( lastPage, allPages ) => {
