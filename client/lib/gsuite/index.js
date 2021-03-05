@@ -12,6 +12,7 @@ export {
 	getGoogleSlidesUrl,
 } from './get-services-urls';
 export { getGSuiteMailboxCount } from './get-gsuite-mailbox-count';
+export { getGSuiteOwnerId } from './get-gsuite-owner-id';
 export { getLoginUrlWithTOSRedirect } from './get-login-url-with-tos-redirect';
 export { getMonthlyPrice } from './get-monthly-price';
 export {
