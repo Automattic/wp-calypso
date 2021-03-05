@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux';
 import QueryViewers from 'calypso/components/data/query-viewers';
 import { getViewers } from 'calypso/state/selectors/get-viewers';
 
-export default function ViewersList( { siteId } ) {
+export default function ViewersList() {
 	const siteId = 1;
 	const viewers = useSelector( ( state ) => getViewers( state, siteId ) );
 
