@@ -906,8 +906,11 @@ object RunCalypsoE2eDesktopTests : BuildType({
 
 				export LIVEBRANCHES=true
 				export NODE_CONFIG_ENV=test
-				#export MAGELLANDEBUG=true
 				export TEST_VIDEO=true
+
+				# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
+				# mocha-teamcity-reporter to work.
+				export MAGELLANDEBUG=true
 
 				function join() {
 					local IFS=${'$'}1
@@ -949,7 +952,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 				export TEST_FILES=${'$'}(join ',' ${'$'}(ls -1 specs*/**/*spec.js))
 
-			yarn magellan --config=magellan.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --test=${'$'}{TEST_FILES}
+				yarn magellan --config=magellan.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerImage = "%docker_image_e2e%"
@@ -966,10 +969,6 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				set -o pipefail
 				set -x
 
-				# Collect results
-				mkdir -p reports
-				find test/e2e/temp -path '*/reports/*' -print0 | xargs -r -0 mv -t reports
-
 				mkdir -p screenshots
 				find test/e2e/temp -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
 
@@ -983,11 +982,6 @@ object RunCalypsoE2eDesktopTests : BuildType({
 	}
 
 	features {
-		feature {
-			type = "xml-report-plugin"
-			param("xmlReportParsing.reportType", "junit")
-			param("xmlReportParsing.reportDirs", "test/e2e/temp/**/reports/*.xml")
-		}
 		perfmon {
 		}
 		pullRequests {
@@ -1022,10 +1016,6 @@ object RunCalypsoE2eDesktopTests : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 20
-		// With testFailure=true, TeamCity detects test that fail but succeed after a retry as build failures
-		// With this option disabled, TeamCity fails the build if `yarn magellan` returns an exit code other than 0.
-		testFailure = false
-
 		// TeamCity will mute a test if it fails and then succeeds within the same build. Otherwise TeamCity UI will not
 		// display a difference between real errors and retries, making it hard to understand what is actually failing.
 		supportTestRetry = true
