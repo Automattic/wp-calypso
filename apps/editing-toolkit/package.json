@@ -121,7 +121,7 @@
 		"@wordpress/edit-post": "^3.26.1",
 		"@wordpress/editor": "^9.25.1",
 		"@wordpress/element": "^2.19.0",
-		"@wordpress/env": "^2.1.0",
+		"@wordpress/env": "^3.0.0",
 		"@wordpress/escape-html": "^1.11.0",
 		"@wordpress/hooks": "^2.11.0",
 		"@wordpress/html-entities": "^2.10.0",

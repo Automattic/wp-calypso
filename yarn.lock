@@ -5202,10 +5202,10 @@
     react "^16.13.1"
     react-dom "^16.13.1"
 
-"@wordpress/env@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@wordpress/env/-/env-2.1.0.tgz#182418a99a572def479ea11db530d7cecb371d97"
-  integrity sha512-ytPfTZLYksLyS9pWRexs3yT+TKkf2wr3IFuoBGxIcPJZGxPBiOUyOPLXOezQiDFetLkyXbsDIeb7cFDojM4KIA==
+"@wordpress/env@^3.0.0":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@wordpress/env/-/env-3.0.2.tgz#2ce00c87e88a53739e07c4bbe2505eb256ceccf0"
+  integrity sha512-AE4FD8z1Tm3Os64vGpLjlbIdPAaUL8PcWKo7cscscaPpyHjF7XXisA8BHdwlNa0wowCdpOZgV8p+mntp/VexwQ==
   dependencies:
     chalk "^4.0.0"
     copy-dir "^1.3.0"
@@ -5214,7 +5214,7 @@
     got "^10.7.0"
     inquirer "^7.1.0"
     js-yaml "^3.13.1"
-    nodegit "^0.26.2"
+    nodegit "^0.27.0"
     ora "^4.0.2"
     rimraf "^3.0.2"
     terminal-link "^2.0.0"
@@ -8233,7 +8233,7 @@ chokidar@3.4.2:
   optionalDependencies:
     fsevents "~2.1.2"
 
-chokidar@^3.2.3, chokidar@^3.3.0, chokidar@^3.4.0, chokidar@^3.4.1, chokidar@^3.4.3:
+chokidar@^3.2.3, chokidar@^3.3.0, chokidar@^3.4.0, chokidar@^3.4.1, chokidar@^3.4.3, chokidar@^3.5.1:
   version "3.5.1"
   resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-3.5.1.tgz#ee9ce7bbebd2b79f49f304799d5468e31e14e68a"
   integrity sha512-9+s+Od+W0VJJzawDma/gvBNQqkTiqYTWLuZoyAsivsI4AaWTCzHG06/TMjsf1cYe9Cb97UCEhjz7HvnPk2p/tw==
@@ -19193,27 +19193,19 @@ node-watch@^0.6.3:
   resolved "https://registry.yarnpkg.com/node-watch/-/node-watch-0.6.4.tgz#50e564046eb7be15151c25f9c5aac4b5f495c291"
   integrity sha512-cI6CHzivIFESe8djiK3Wh90CtWQBxLwMem8x8S+2GSvCvFgoMuOKVlfJtQ/2v3Afg3wOnHl/+tXotEs8z5vOrg==
 
-nodegit-promise@~4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/nodegit-promise/-/nodegit-promise-4.0.0.tgz#5722b184f2df7327161064a791d2e842c9167b34"
-  integrity sha1-VyKxhPLfcycWEGSnkdLoQskWezQ=
-  dependencies:
-    asap "~2.0.3"
-
-nodegit@^0.26.2:
-  version "0.26.5"
-  resolved "https://registry.yarnpkg.com/nodegit/-/nodegit-0.26.5.tgz#1534d8aaa52de7acfbbe18de28df2075de86f7d2"
-  integrity sha512-l9l2zhcJ0V7FYzPdXIsuJcXN8UnLuhQgM+377HJfCYE/eupL/OWtMVvUOq42F9dRsgC3bAYH9j2Xbwr0lpYVZQ==
+nodegit@^0.27.0:
+  version "0.27.0"
+  resolved "https://registry.yarnpkg.com/nodegit/-/nodegit-0.27.0.tgz#4e8cc236f60e1c97324a5acff99056fe116a6ebe"
+  integrity sha512-E9K4gPjWiA0b3Tx5lfWCzG7Cvodi2idl3V5UD2fZrOrHikIfrN7Fc2kWLtMUqqomyoToYJLeIC8IV7xb1CYRLA==
   dependencies:
     fs-extra "^7.0.0"
+    got "^10.7.0"
     json5 "^2.1.0"
     lodash "^4.17.14"
     nan "^2.14.0"
     node-gyp "^4.0.0"
     node-pre-gyp "^0.13.0"
-    promisify-node "~0.3.0"
     ramda "^0.25.0"
-    request-promise-native "^1.0.5"
     tar-fs "^1.16.3"
 
 noms@0.0.0:
@@ -21601,13 +21593,6 @@ promise@^8.0.3:
   integrity sha512-W04AqnILOL/sPRXziNicCjSNRruLAuIHEOVBazepu0545DDNGYHz7ar9ZgZ1fMU8/MA4mVxp5rkBWRi6OXIy3Q==
   dependencies:
     asap "~2.0.6"
-
-promisify-node@~0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/promisify-node/-/promisify-node-0.3.0.tgz#b4b55acf90faa7d2b8b90ca396899086c03060cf"
-  integrity sha1-tLVaz5D6p9K4uQyjlomQhsAwYM8=
-  dependencies:
-    nodegit-promise "~4.0.0"
 
 prompts@^2.0.1, prompts@^2.3.0:
   version "2.3.1"
