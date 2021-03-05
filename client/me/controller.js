@@ -8,7 +8,6 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import userSettings from 'calypso/lib/user-settings';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import SidebarComponent from 'calypso/me/sidebar';
 import AppsComponent from 'calypso/me/get-apps';
@@ -28,7 +27,6 @@ export function profile( context, next ) {
 	const ProfileComponent = require( 'calypso/me/profile' ).default;
 
 	context.primary = React.createElement( ProfileComponent, {
-		userSettings: userSettings,
 		path: context.path,
 	} );
 	next();

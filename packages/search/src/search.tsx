@@ -2,6 +2,8 @@
 /**
  * External dependencies
  */
+
+import { withI18n, I18nReact } from '@automattic/react-i18n';
 import classNames from 'classnames';
 import React, { ChangeEvent, FocusEvent, FormEvent, KeyboardEvent, MouseEvent } from 'react';
 import { debounce } from 'lodash';
@@ -10,7 +12,6 @@ import { debounce } from 'lodash';
  * WordPress dependencies
  */
 import { Button, Spinner } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 import { close, search, Icon } from '@wordpress/icons';
 
 /**
@@ -41,20 +42,21 @@ const keyListener = (
 };
 
 type Props = {
-	autoFocus: boolean;
+	__: I18nReact[ '__' ];
+	autoFocus?: boolean;
 	className?: string;
-	compact: boolean;
-	defaultIsOpen: boolean;
+	compact?: boolean;
+	defaultIsOpen?: boolean;
 	defaultValue?: string;
-	delaySearch: boolean;
-	delayTimeout: number;
+	delaySearch?: boolean;
+	delayTimeout?: number;
 	describedBy?: string;
 	dir?: 'ltr' | 'rtl';
-	disableAutocorrect: boolean;
-	disabled: boolean;
-	fitsContainer: boolean;
-	hideClose: boolean;
-	hideOpenIcon: boolean;
+	disableAutocorrect?: boolean;
+	disabled?: boolean;
+	fitsContainer?: boolean;
+	hideClose?: boolean;
+	hideOpenIcon?: boolean;
 	inputLabel?: string;
 	openIconSide?: 'left' | 'right';
 	maxLength?: number;
@@ -63,21 +65,22 @@ type Props = {
 	onClick?: () => void;
 	onKeyDown?: ( event: KeyboardEvent< HTMLInputElement > ) => void;
 	onSearch: ( search: string ) => void;
-	onSearchChange: ( search: string ) => void;
-	onSearchOpen: (
+	onSearchChange?: ( search: string ) => void;
+	onSearchOpen?: (
 		event?:
 			| MouseEvent< HTMLButtonElement | HTMLInputElement >
 			| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
 	) => void;
-	onSearchClose: (
+	onSearchClose?: (
 		event:
 			| MouseEvent< HTMLButtonElement | HTMLInputElement >
 			| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
 	) => void;
 	overlayStyling?: ( search: string ) => React.ReactNode;
 	placeholder?: string;
-	pinned: boolean;
-	searching: boolean;
+	pinned?: boolean;
+	recordEvent?: ( eventName: string ) => void;
+	searching?: boolean;
 	value?: string;
 };
 
@@ -87,13 +90,13 @@ type State = {
 	hasFocus: boolean;
 };
 
-class Search extends React.Component< Props, State > {
+export class Search extends React.Component< Props, State > {
 	static defaultProps = {
 		autoFocus: false,
 		compact: false,
 		delaySearch: false,
 		delayTimeout: SEARCH_DEBOUNCE_MS,
-		describedBy: null,
+		describedBy: undefined,
 		dir: undefined,
 		disableAutocorrect: false,
 		disabled: false,
@@ -106,11 +109,12 @@ class Search extends React.Component< Props, State > {
 		onSearchChange: noop,
 		onSearchOpen: noop,
 		onSearchClose: noop,
-		openIconSide: 'left',
+		openIconSide: 'left' as const,
 		//undefined value for overlayStyling is an optimization that will
 		//disable overlay scrolling calculation when no overlay is provided.
 		overlayStyling: undefined,
 		pinned: false,
+		recordEvent: noop,
 		searching: false,
 	};
 
@@ -131,8 +135,8 @@ class Search extends React.Component< Props, State > {
 
 	state = {
 		keyword: this.props.defaultValue ?? '',
-		isOpen: this.props.defaultIsOpen,
-		hasFocus: this.props.autoFocus,
+		isOpen: this.props.defaultIsOpen ?? false,
+		hasFocus: this.props.autoFocus ?? false,
 	};
 
 	openSearch = (
@@ -145,9 +149,10 @@ class Search extends React.Component< Props, State > {
 			keyword: '',
 			isOpen: true,
 		} );
-		this.props.onSearchOpen( event );
+		this.props.onSearchOpen?.( event );
 		// prevent outlines around the open icon after being clicked
 		this.openIcon.current?.blur();
+		this.props.recordEvent?.( 'Clicked Open Search' );
 	};
 
 	closeSearch = (
@@ -177,7 +182,9 @@ class Search extends React.Component< Props, State > {
 			this.searchInput.current?.focus();
 		}
 
-		this.props.onSearchClose( event );
+		this.props.onSearchClose?.( event );
+
+		this.props.recordEvent?.( 'Clicked Close Search' );
 	};
 
 	closeListener = keyListener( this.closeSearch );
@@ -207,7 +214,7 @@ class Search extends React.Component< Props, State > {
 			this.props.onSearch( this.state.keyword );
 		}
 
-		this.props.onSearchChange( this.state.keyword );
+		this.props.onSearchChange?.( this.state.keyword );
 	}
 
 	scrollOverlay = (): void => {
@@ -300,7 +307,7 @@ class Search extends React.Component< Props, State > {
 	// with `initialValue` set.
 	onFocus = (): void => {
 		this.setState( { hasFocus: true } );
-		this.props.onSearchOpen();
+		this.props.onSearchOpen?.();
 
 		if ( ! this.searchInput.current ) {
 			return;
@@ -321,7 +328,7 @@ class Search extends React.Component< Props, State > {
 
 	render(): JSX.Element {
 		const searchValue = this.state.keyword;
-		const placeholder = this.props.placeholder || __( 'Search…' );
+		const placeholder = this.props.placeholder || this.props.__( 'Search…', __i18n_text_domain__ );
 		const inputLabel = this.props.inputLabel;
 		const isOpenUnpinnedOrQueried = this.state.isOpen || ! this.props.pinned || searchValue;
 
@@ -355,7 +362,7 @@ class Search extends React.Component< Props, State > {
 						id={ 'search-component-' + this.instanceId }
 						autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 						aria-describedby={ this.props.describedBy }
-						aria-label={ inputLabel ? inputLabel : __( 'Search' ) }
+						aria-label={ inputLabel ? inputLabel : this.props.__( 'Search', __i18n_text_domain__ ) }
 						aria-hidden={ ! isOpenUnpinnedOrQueried }
 						className={ inputClass }
 						placeholder={ placeholder }
@@ -393,9 +400,11 @@ class Search extends React.Component< Props, State > {
 				tabIndex={ enableOpenIcon ? 0 : undefined }
 				onKeyDown={ enableOpenIcon ? this.openListener : undefined }
 				aria-controls={ 'search-component-' + this.instanceId }
-				aria-label={ __( 'Open Search' ) }
+				aria-label={ this.props.__( 'Open Search', __i18n_text_domain__ ) }
 			>
 				{ ! this.props.hideOpenIcon && (
+					// `className` is accepted for some reason the intrisic attributes for SVG won't allow it (but it does work)
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 					/* @ts-ignore */
 					<Icon icon={ search } className="search-component__open-icon" />
 				) }
@@ -423,8 +432,10 @@ class Search extends React.Component< Props, State > {
 					tabIndex={ 0 }
 					onKeyDown={ this.closeListener }
 					aria-controls={ 'search-component-' + this.instanceId }
-					aria-label={ __( 'Close Search' ) }
+					aria-label={ this.props.__( 'Close Search', __i18n_text_domain__ ) }
 				>
+					{ /* `className` is accepted for some reason the intrisic attributes for SVG won't allow it (but it does work) */ }
+					{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
 					{ /* @ts-ignore */ }
 					<Icon icon={ close } className="search-component__close-icon" />
 				</Button>
@@ -435,4 +446,4 @@ class Search extends React.Component< Props, State > {
 	}
 }
 
-export default Search;
+export default withI18n( Search );

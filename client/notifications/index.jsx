@@ -28,7 +28,7 @@ import NotificationsPanel, {
  */
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';

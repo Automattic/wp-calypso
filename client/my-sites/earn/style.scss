@@ -20,9 +20,9 @@
 }
 
 .earn .promo-section__promos .gridicon {
-    fill: var( --studio-blue-10 );
-    position: relative;
-    top: -8px;
+	fill: var( --color-primary-10 );
+	position: relative;
+	top: -8px;
 }
 
 @include break-wide {

@@ -27,6 +27,7 @@ describe( 'assembler', () => {
 	test( 'should convert the payment credit card data to the right data structure', () => {
 		const purchase = createPurchasesArray( [
 			{
+				stored_details_id: 1234,
 				payment_card_id: 1234,
 				payment_card_type: 'visa',
 				payment_details: 7890,
@@ -49,5 +50,6 @@ describe( 'assembler', () => {
 		expect( payment.countryCode ).to.equal( 'US' );
 		expect( payment.countryName ).to.equal( 'United States' );
 		expect( payment.name ).to.equal( 'My VISA' );
+		expect( payment.storedDetailsId ).to.equal( 1234 );
 	} );
 } );

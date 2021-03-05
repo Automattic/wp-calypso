@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { ReactElement } from 'react';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 
 /**
@@ -27,6 +27,7 @@ import JetpackSearchSVG from 'calypso/assets/images/illustrations/jetpack-search
 export default function JetpackSearchUpsell(): ReactElement {
 	const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_search_upsell' );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const translate = useTranslate();
 
 	return (
 		<Main className="jetpack-search">
@@ -57,8 +58,9 @@ export default function JetpackSearchUpsell(): ReactElement {
 						text: translate( 'Upgrade to Jetpack Search' ),
 						action: {
 							url:
-								'https://jetpack.com/upgrade/search/?utm_campaign=my-sites-jetpack-search&utm_source=calypso&site=' +
-								siteSlug,
+								'/checkout/' +
+								siteSlug +
+								'/jetpack_search_monthly?utm_campaign=my-sites-jetpack-search&utm_source=calypso',
 							onClick: onUpgradeClick,
 							selfTarget: true,
 						},

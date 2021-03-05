@@ -2,12 +2,12 @@
  * Internal dependencies
  */
 import UserUtils from '../utils';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import User from 'calypso/lib/user';
 
 const user = User();
 
-jest.mock( 'calypso/config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	const mock = jest.fn();
 	mock.isEnabled = jest.fn();
 

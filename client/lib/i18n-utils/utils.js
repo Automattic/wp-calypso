@@ -8,7 +8,7 @@ import { localizeUrl as _localizeUrl } from '@automattic/i18n-utils';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import languages from '@automattic/languages';
 import { getUrlParts } from 'calypso/lib/url/url-parts';
 

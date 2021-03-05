@@ -27,7 +27,7 @@
 	--color-sidebar-submenu-selected-background: transparent;
 	--color-sidebar-submenu-selected-text: white;
 
-	.is-sidebar-collapsed:not( .is-section-reader ):not( .is-section-me ) & {
+	&.is-sidebar-collapsed:not( .is-section-reader ):not( .is-section-me ) {
 		--sidebar-width-max: 36px;
 		--sidebar-width-min: 36px;
 	}
@@ -46,6 +46,11 @@ $font-size: rem( 14px );
 }
 
 .is-nav-unification {
+	// client/layout/style.scss
+	.layout__content {
+		min-height: 101vh; // Hack to give JS the chance to trigger the scroll event when the content is short. JS code: client/layout/utils.ts:36.
+	}
+
 	// client/layout/sidebar/style.scss
 	.sidebar {
 		position: relative;
@@ -77,15 +82,10 @@ $font-size: rem( 14px );
 			color: var( --color-sidebar-text );
 			align-items: center;
 
-			&:hover,
-			&:focus {
-				background-color: var( --color-sidebar-menu-hover-background );
-				color: var( --color-sidebar-menu-hover-text );
-			}
-
 			&::after {
 				content: ' ';
 				display: none;
+				z-index: 1;
 				position: absolute;
 				top: 50%;
 				right: 0;
@@ -98,7 +98,24 @@ $font-size: rem( 14px );
 			}
 		}
 
+		// Apply hover and focus effects only to tabbable items assuming they are links.
+		.sidebar__heading:not( [tabindex='-1'] ),
+		.sidebar__menu-link {
+			&:hover,
+			&:focus {
+				background-color: var( --color-sidebar-menu-hover-background );
+				color: var( --color-sidebar-menu-hover-text );
+				box-shadow: inset 4px 0 0 0 currentColor;
+ 				transition: box-shadow 0.1s linear;
+			}
+		}
+
+		.sidebar__informative-title {
+			display: block;
+		}
+
 		.sidebar__expandable-title,
+		.sidebar__informative-title,
 		.sidebar__menu-link-text {
 			padding: $sidebar-item-padding;
 			max-height: 34px;
@@ -107,7 +124,6 @@ $font-size: rem( 14px );
 
 		.sidebar__expandable-arrow,
 		.gridicons-external {
-			display: none;
 			width: 20px;
 			height: 20px;
 		}
@@ -151,24 +167,35 @@ $font-size: rem( 14px );
 			opacity: 0.6;
 		}
 
-		.sidebar__menu-item-parent {
-			&.selected {
-				.sidebar__menu-link {
-					background: var( --color-sidebar-menu-selected-background );
-					color: var( --color-sidebar-menu-selected-text );
+		.selected .sidebar__menu-link {
+			background: var( --color-sidebar-menu-selected-background );
+			color: var( --color-sidebar-menu-selected-text );
 
-					.sidebar__menu-icon {
-						color: var( --color-sidebar-menu-selected-text );
-					}
+			&::after {
+				display: block;
+			}
+		}
 
-					img.sidebar__menu-icon {
-						opacity: 1;
-					}
+		.sidebar__menu--selected .selected .sidebar__menu-link::after,
+		.sidebar__expandable-content .selected .sidebar__menu-link::after {
+			display: none;
+		}
 
-					&::after {
-						display: block;
-					}
-				}
+		.sidebar__menu-item-parent.selected .sidebar__menu-link {
+			.stats-sparkline {
+				--color-stats-sparkline: var( --color-sidebar-menu-selected-text );
+			}
+
+			.sidebar__menu-icon {
+				color: var( --color-sidebar-menu-selected-text );
+			}
+
+			img.sidebar__menu-icon {
+				opacity: 1;
+			}
+
+			&::after {
+				display: block;
 			}
 		}
 
@@ -225,6 +252,10 @@ $font-size: rem( 14px );
 			&.sidebar__menu--selected .sidebar__heading {
 				background: var( --color-sidebar-menu-selected-background );
 				color: var( --color-sidebar-menu-selected-text );
+
+				.stats-sparkline {
+					--color-stats-sparkline: var( --color-sidebar-menu-selected-text );
+				}
 
 				.sidebar__menu-icon {
 					color: var( --color-sidebar-menu-selected-text );
@@ -287,10 +318,7 @@ $font-size: rem( 14px );
 		color: #000;
 		padding: 7px 12px 7px 4px;
 		line-height: 26px;
-	}
-
-	.upsell-nudge.banner.card.is-compact .banner__content {
-		padding-left: 3px;
+		margin-top: 8px;
 	}
 
 	.upsell-nudge.banner.card.is-compact .banner__info .banner__title {
@@ -298,6 +326,7 @@ $font-size: rem( 14px );
 	}
 
 	.upsell-nudge.banner.card.is-compact .banner__action {
+		top: 0;
 		margin-left: 0;
 	}
 
@@ -324,7 +353,7 @@ $font-size: rem( 14px );
 		padding: 10px 0 10px 8px;
 	}
 
-	.is-sidebar-collapsed & {
+	&.is-sidebar-collapsed {
 		.dashicons-admin-collapse::before {
 			transform: rotate( 180deg );
 		}
@@ -360,6 +389,10 @@ $font-size: rem( 14px );
 		}
 
 		// client/blocks/upsell-nudge/style.scss
+		.upsell-nudge.banner.card.is-compact {
+			margin: 8px 3px 7px;
+		}
+
 		.current-site__notices > a::before {
 			content: '\f534';
 			font-family: 'dashicons';
@@ -443,22 +476,42 @@ $font-size: rem( 14px );
 	}
 
 	.sidebar-unified__sparkline {
-		width: 80px;
-		height: 21px;
 		margin-right: 8px;
 	}
 
-	/*
-	 * Because the sparkline is an image, there's an exception here
-	 * where specific color schemes are targeted instead of using
-	 * CSS variables. This ensures that the sparkline can still be
-	 * seen (as white) on some of the darker color schemes.
-	 */
-	.is-classic-blue .sidebar__menu li.stats.selected .sidebar-unified__sparkline,
-	.is-powder-snow .sidebar__menu li.stats.selected .sidebar-unified__sparkline,
-	.is-nightfall .sidebar__menu li.stats.selected .sidebar-unified__sparkline {
-		filter: brightness( 100 );
-		-webkit-filter: brightness( 100 );
+	// Reader specific styles
+	// client/reader/sidebar/style.scss
+	&.is-section-reader {
+		.sidebar__menu .count {
+			background: transparent;
+			color: var( --color-sidebar-menu-text );
+			border-color: var( --color-sidebar-menu-text );
+		}
+
+		.sidebar__menu-link:hover .count {
+			color: var( --color-sidebar-submenu-hover-text );
+			border-color: var( --color-sidebar-submenu-hover-text );
+		}
+
+		.selected .sidebar__menu-link .count {
+			color: var( --color-sidebar-submenu-selected-text );
+			border-color: var( --color-sidebar-submenu-selected-text );
+		}
+
+		.sidebar__menu.is-toggle-open {
+			.sidebar__heading {
+				background: var( --color-sidebar-menu-selected-background );
+				color: var( --color-sidebar-menu-selected-text );
+
+				&::after {
+					display: block;
+				}
+
+				.sidebar__menu-icon {
+					fill: var( --color-sidebar-menu-selected-text );
+				}
+			}
+		}
 	}
 }
 
@@ -470,11 +523,11 @@ $font-size: rem( 14px );
 		// TODO: For prototype only, this prevents the sidebar from being scrollable.
 		// In wp-admin there's custom JS to a) position the sidebar based on the scroll
 		// position and b) position the flyout menu based on available screen space.
-		&.focus-content,
-		&.focus-sidebar {
+		.focus-content,
+		.focus-sidebar {
 			.sidebar,
 			.layout__secondary {
-				z-index: 1;
+				z-index: z-index( 'root', '.is-nav-unification .layout__secondary' );
 				overflow: initial;
 			}
 		}
@@ -502,6 +555,11 @@ $font-size: rem( 14px );
 				position: absolute;
 				left: var( --sidebar-width-max );
 				width: 160px;
+				box-shadow: 0 3px 5px rgba( 0, 0, 0, 0.2 );
+
+				> ul {
+					border-left: 5px solid transparent;
+				}
 
 				.sidebar__menu-link:hover {
 					font-weight: normal;
@@ -514,7 +572,7 @@ $font-size: rem( 14px );
 @media screen and ( max-width: 782px ) {
 	// client/layout/sidebar/style.scss
 	.is-nav-unification {
-		&.focus-content .layout__content {
+		.focus-content .layout__content {
 			padding: 71px 24px 24px;
 			transition: padding 0.15s ease-in-out;
 		}
@@ -584,8 +642,17 @@ $font-size: rem( 14px );
 }
 
 @media screen and ( max-width: 660px ) {
-	// client/layout/sidebar/style.scss
 	.is-nav-unification {
+		// client/layout/style.scss
+		.layout__content {
+			min-height: initial;
+		}
+
+		.focus-content .layout__content {
+			padding: 47px 0 0;
+		}
+
+		// client/layout/sidebar/style.scss
 		.sidebar {
 			position: absolute;
 		}

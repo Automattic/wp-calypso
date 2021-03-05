@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import isDirectlyReady from 'calypso/state/selectors/is-directly-ready';
 import isEligibleForUpworkSupport from 'calypso/state/selectors/is-eligible-for-upwork-support';

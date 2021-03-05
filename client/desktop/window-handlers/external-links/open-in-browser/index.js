@@ -19,13 +19,9 @@ function isValidBrowserUrl( url ) {
 	return false;
 }
 
-module.exports = function ( event, url ) {
+module.exports = function ( url ) {
 	if ( isValidBrowserUrl( url ) ) {
 		log.info( `Using system default handler for URL: ${ url }` );
 		shell.openExternal( url );
-	}
-
-	if ( event ) {
-		event.preventDefault();
 	}
 };

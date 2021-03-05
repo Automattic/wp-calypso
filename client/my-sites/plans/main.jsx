@@ -6,7 +6,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import page from 'page';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -108,7 +108,6 @@ class Plans extends React.Component {
 			canAccessPlans,
 			customerType,
 			isWPForTeamsSite,
-			hasWpcomMonthlyPlan,
 			showTreatmentPlansReorderTest,
 		} = this.props;
 
@@ -133,7 +132,14 @@ class Plans extends React.Component {
 					) }
 					{ canAccessPlans && (
 						<>
-							<FormattedHeader brandFont headerText={ translate( 'Plans' ) } align="left" />
+							<FormattedHeader
+								brandFont
+								headerText={ translate( 'Plans' ) }
+								subHeaderText={
+									'See and compare the features available on each WordPress.com plan.'
+								}
+								align="left"
+							/>
 							<div id="plans" className="plans plans__has-sidebar">
 								<PlansNavigation path={ this.props.context.path } />
 								{ isEnabled( 'p2/p2-plus' ) && isWPForTeamsSite ? (
@@ -149,7 +155,6 @@ class Plans extends React.Component {
 										displayJetpackPlans={ displayJetpackPlans }
 										hideFreePlan={ true }
 										customerType={ customerType }
-										isMonthlyPricingTest={ hasWpcomMonthlyPlan }
 										intervalType={ this.props.intervalType }
 										selectedFeature={ this.props.selectedFeature }
 										selectedPlan={ this.props.selectedPlan }
@@ -177,11 +182,9 @@ export default connect( ( state ) => {
 	const jetpackSite = isJetpackSite( state, selectedSiteId );
 	const isSiteAutomatedTransfer = isSiteAutomatedTransferSelector( state, selectedSiteId );
 	const currentPlan = getCurrentPlan( state, selectedSiteId );
-	let currentPlanIntervalType = getIntervalTypeForTerm( getPlan( currentPlan?.productSlug )?.term );
-
-	if ( 'BRL' === currentPlan?.currencyCode ) {
-		currentPlanIntervalType = 'yearly';
-	}
+	const currentPlanIntervalType = getIntervalTypeForTerm(
+		getPlan( currentPlan?.productSlug )?.term
+	);
 
 	return {
 		currentPlanIntervalType,

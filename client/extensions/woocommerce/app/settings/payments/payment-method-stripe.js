@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { connect } from 'react-redux';
 import {
 	getOAuthParamsFromLocation,

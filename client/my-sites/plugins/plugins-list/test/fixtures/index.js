@@ -51,3 +51,8 @@ export const sites = [
 		user_can_manage: true,
 	},
 ];
+
+export const sitesObject = sites.reduce( ( acc, site ) => {
+	acc[ site.ID ] = site;
+	return acc;
+}, {} );

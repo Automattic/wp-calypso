@@ -3,7 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { find, flowRight, isArray } from 'lodash';
+import { find, flowRight } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -53,7 +53,7 @@ class ConfirmDisconnection extends PureComponent {
 		const surveyData = {
 			'why-cancel': {
 				response: find( this.constructor.allowedReasons, ( r ) => r === reason ),
-				text: isArray( text ) ? text.join() : text,
+				text: Array.isArray( text ) ? text.join() : text,
 			},
 			source: {
 				from: 'Calypso',

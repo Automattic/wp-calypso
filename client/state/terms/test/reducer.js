@@ -10,14 +10,13 @@ import deepFreeze from 'deep-freeze';
 import reducer, { queries, queryRequests } from '../reducer';
 import TermQueryManager from 'calypso/lib/query-manager/term';
 import {
-	DESERIALIZE,
 	TERM_REMOVE,
 	TERMS_RECEIVE,
 	TERMS_REQUEST,
 	TERMS_REQUEST_FAILURE,
 	TERMS_REQUEST_SUCCESS,
-	SERIALIZE,
 } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 /**
@@ -254,7 +253,7 @@ describe( 'reducer', () => {
 				} )
 			);
 
-			const state = queries( original, { type: SERIALIZE } );
+			const state = serialize( queries, original );
 
 			expect( state ).to.have.keys( [ '2916284' ] );
 			expect( state[ 2916284 ] ).to.have.keys( [ 'category' ] );
@@ -273,21 +272,18 @@ describe( 'reducer', () => {
 				} )
 			);
 
-			const serialized = queries( original, { type: SERIALIZE } );
-			const state = queries( serialized, { type: DESERIALIZE } );
+			const serialized = serialize( queries, original );
+			const state = deserialize( queries, serialized );
 
 			expect( state ).to.eql( original );
 		} );
 
 		test( 'should not load invalid persisted state', () => {
-			const state = queries(
-				{
-					2916284: {
-						category: '{~!--BROKEN',
-					},
+			const state = deserialize( queries, {
+				2916284: {
+					category: '{~!--BROKEN',
 				},
-				{ type: DESERIALIZE }
-			);
+			} );
 
 			expect( state ).to.eql( {} );
 		} );

@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, includes, map, concat } from 'lodash';
 import { localize } from 'i18n-calypso';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import Gridicon from 'calypso/components/gridicon';
 import { current as currentPage } from 'page';
 

@@ -9,9 +9,11 @@ import type {
 	SiteError,
 	Cart,
 	Domain,
+	SiteLaunchError as SiteLaunchErrorType,
 } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
 import { wpcomRequest } from '../wpcom-request-controls';
+import { SiteLaunchError } from './types';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
 	const fetchSite = () => ( {
@@ -100,20 +102,29 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		siteId,
 	} );
 
-	const launchSiteComplete = ( siteId: number ) => ( {
-		type: 'LAUNCH_SITE_COMPLETE' as const,
+	const launchSiteSuccess = ( siteId: number ) => ( {
+		type: 'LAUNCH_SITE_SUCCESS' as const,
 		siteId,
+	} );
+
+	const launchSiteFailure = ( siteId: number, error: SiteLaunchErrorType ) => ( {
+		type: 'LAUNCH_SITE_FAILURE' as const,
+		siteId,
+		error,
 	} );
 
 	function* launchSite( siteId: number ) {
 		yield launchSiteStart( siteId );
-		yield wpcomRequest( {
-			path: `/sites/${ siteId }/launch`,
-			apiVersion: '1.1',
-			method: 'post',
-		} );
-		yield launchSiteComplete( siteId );
-		return true;
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ siteId }/launch`,
+				apiVersion: '1.1',
+				method: 'post',
+			} );
+			yield launchSiteSuccess( siteId );
+		} catch ( _ ) {
+			yield launchSiteFailure( siteId, SiteLaunchError.INTERNAL );
+		}
 	}
 
 	// TODO: move getCart and setCart to a 'cart' data-store
@@ -170,7 +181,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		reset,
 		launchSite,
 		launchSiteStart,
-		launchSiteComplete,
+		launchSiteSuccess,
+		launchSiteFailure,
 		getCart,
 		setCart,
 	};
@@ -191,7 +203,8 @@ export type Action =
 			| ActionCreators[ 'reset' ]
 			| ActionCreators[ 'resetNewSiteFailed' ]
 			| ActionCreators[ 'launchSiteStart' ]
-			| ActionCreators[ 'launchSiteComplete' ]
+			| ActionCreators[ 'launchSiteSuccess' ]
+			| ActionCreators[ 'launchSiteFailure' ]
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };

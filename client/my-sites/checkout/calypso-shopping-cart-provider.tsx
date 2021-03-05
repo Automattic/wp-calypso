@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { ShoppingCartProvider } from '@automattic/shopping-cart';
+import { ShoppingCartProvider, useShoppingCart } from '@automattic/shopping-cart';
 import type { RequestCart, ResponseCart } from '@automattic/shopping-cart';
 
 /**
@@ -12,6 +12,7 @@ import type { RequestCart, ResponseCart } from '@automattic/shopping-cart';
 import wp from 'calypso/lib/wp';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getCartKey from './get-cart-key';
+import CartMessages from 'calypso/my-sites/checkout/cart/cart-messages';
 
 // Aliasing wpcom functions explicitly bound to wpcom is required here;
 // otherwise we get `this is not defined` errors.
@@ -41,7 +42,13 @@ export default function CalypsoShoppingCartProvider( {
 			getCart={ getCart || wpcomGetCart }
 			setCart={ wpcomSetCart }
 		>
+			<CalypsoShoppingCartMessages />
 			{ children }
 		</ShoppingCartProvider>
 	);
+}
+
+function CalypsoShoppingCartMessages() {
+	const { responseCart, isLoading } = useShoppingCart();
+	return <CartMessages cart={ responseCart } isLoadingCart={ isLoading } />;
 }

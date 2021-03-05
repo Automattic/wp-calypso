@@ -8,7 +8,7 @@ jest.mock( 'react-redux', () => ( {
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'calypso/config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	const fn = () => {
 		return [];
 	};
@@ -38,10 +38,13 @@ import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
+	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_PREMIUM_MONTHLY,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
+	PLAN_PERSONAL_MONTHLY,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_JETPACK_FREE,
@@ -209,10 +212,10 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 		} );
 		const plans = instance.getPlansForPlanFeatures();
 		expect( plans ).toEqual( [
-			PLAN_PERSONAL,
-			PLAN_PREMIUM,
+			PLAN_PERSONAL_MONTHLY,
+			PLAN_PREMIUM_MONTHLY,
 			PLAN_BUSINESS_MONTHLY,
-			PLAN_ECOMMERCE,
+			PLAN_ECOMMERCE_MONTHLY,
 		] );
 	} );
 

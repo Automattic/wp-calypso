@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, find, indexOf, values } from 'lodash';
+import { get, find, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -167,6 +167,6 @@ export function didInviteDeletionSucceed( state, siteId, inviteId ) {
  */
 export function isDeletingAnyInvite( state, siteId ) {
 	return (
-		-1 !== indexOf( values( get( state, [ 'invites', 'deleting', siteId ], {} ) ), 'requesting' )
+		-1 !== values( get( state, [ 'invites', 'deleting', siteId ], {} ) ).indexOf( 'requesting' )
 	);
 }

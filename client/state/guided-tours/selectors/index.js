@@ -26,7 +26,7 @@ import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-
 import { getActionLog } from 'calypso/state/ui/action-log/selectors';
 import { preferencesLastFetchedTimestamp } from 'calypso/state/preferences/selectors';
 import GuidedToursConfig from 'calypso/layout/guided-tours/config';
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import findOngoingTour from './find-ongoing-tour';
 import getToursHistory from './get-tours-history';
 

@@ -20,7 +20,7 @@ import {
 	paymentMethods,
 	addPaymentMethod,
 } from './controller';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 
 export default ( router ) => {
 	page( '/purchases', siteSelection, navigation, sites, makeLayout, clientRender );

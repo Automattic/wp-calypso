@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';

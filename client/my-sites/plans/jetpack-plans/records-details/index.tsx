@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { useTranslate, numberFormat } from 'i18n-calypso';
-import { isFinite } from 'lodash';
 import React, { FunctionComponent, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -71,7 +70,7 @@ const RecordsDetails: FunctionComponent< Props > = ( { productSlug } ) => {
 		return null;
 	}
 
-	const isDiscounted = isFinite( discountedPrice );
+	const isDiscounted = Number.isFinite( discountedPrice );
 	const recordCount = searchProduct?.price_tier_usage_quantity;
 	const translations = getJetpackProducts().find( ( p ) => p.slugs.includes( productSlug ) ) as
 		| ProductTranslations

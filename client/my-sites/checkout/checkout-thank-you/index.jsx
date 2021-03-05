@@ -43,7 +43,7 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isEcommerce,
-	isGoogleApps,
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGuidedTransfer,
 	isJetpackPlan,
 	isPlan,
@@ -53,6 +53,7 @@ import {
 	isBusiness,
 	isSiteRedirect,
 	isTheme,
+	isTitanMail,
 } from 'calypso/lib/products-values';
 import { isExternal } from 'calypso/lib/url';
 import JetpackPlanDetails from './jetpack-plan-details';
@@ -92,6 +93,9 @@ import { getActiveTheme } from 'calypso/state/themes/selectors';
 import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
 import getCheckoutUpgradeIntent from 'calypso/state/selectors/get-checkout-upgrade-intent';
 import { isProductsListFetching } from 'calypso/state/products-list/selectors';
+import { isTreatmentDifmUpsellTest } from 'calypso/state/marketing/selectors';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+
 /**
  * Style dependencies
  */
@@ -329,8 +333,9 @@ export class CheckoutThankYou extends React.Component {
 				return page( domainManagementList( siteSlug ) );
 			}
 
-			if ( purchases.some( isGoogleApps ) ) {
-				const purchase = find( purchases, isGoogleApps );
+			if ( purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace ) ) {
+				const purchase = find( purchases, isGSuiteOrExtraLicenseOrGoogleWorkspace );
+
 				return page( emailManagement( siteSlug, purchase.meta ) );
 			}
 		}
@@ -386,7 +391,13 @@ export class CheckoutThankYou extends React.Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const {
+			translate,
+			selectedSiteSlug,
+			receiptId,
+			shouldShowDifmUpsell,
+			previousRoute,
+		} = this.props;
 		let purchases = [];
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
@@ -434,6 +445,15 @@ export class CheckoutThankYou extends React.Component {
 				return (
 					<TransferPending orderId={ this.props.receiptId } siteId={ this.props.selectedSite.ID } />
 				);
+			}
+
+			// This is for the DIFM upsell A/B test. Check pcbrnV-Y3-p2.
+			recordTracksEvent( 'calypso_eligible_difm_upsell' );
+			if (
+				shouldShowDifmUpsell &&
+				! previousRoute.includes( `/checkout/${ selectedSiteSlug }/offer-difm/${ receiptId }` )
+			) {
+				page( `/checkout/${ selectedSiteSlug }/offer-difm/${ receiptId }` );
 			}
 
 			return (
@@ -529,14 +549,19 @@ export class CheckoutThankYou extends React.Component {
 					DomainRegistrationDetails,
 					...findPurchaseAndDomain( purchases, isDomainRegistration ),
 				];
-			} else if ( purchases.some( isGoogleApps ) ) {
-				return [ GoogleAppsDetails, ...findPurchaseAndDomain( purchases, isGoogleApps ) ];
+			} else if ( purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace ) ) {
+				return [
+					GoogleAppsDetails,
+					...findPurchaseAndDomain( purchases, isGSuiteOrExtraLicenseOrGoogleWorkspace ),
+				];
 			} else if ( purchases.some( isDomainMapping ) ) {
 				return [ DomainMappingDetails, ...findPurchaseAndDomain( purchases, isDomainMapping ) ];
 			} else if ( purchases.some( isSiteRedirect ) ) {
 				return [ SiteRedirectDetails, ...findPurchaseAndDomain( purchases, isSiteRedirect ) ];
 			} else if ( purchases.some( isDomainTransfer ) ) {
 				return [ false, ...findPurchaseAndDomain( purchases, isDomainTransfer ) ];
+			} else if ( purchases.some( isTitanMail ) ) {
+				return [ false, ...findPurchaseAndDomain( purchases, isTitanMail ) ];
 			} else if ( purchases.some( isChargeback ) ) {
 				return [ ChargebackDetails, find( purchases, isChargeback ) ];
 			} else if ( purchases.some( isGuidedTransfer ) ) {
@@ -668,6 +693,8 @@ export default connect(
 			selectedSiteSlug: getSiteSlug( state, siteId ),
 			siteHomeUrl: getSiteHomeUrl( state, siteId ),
 			customizeUrl: getCustomizeOrEditFrontPageUrl( state, activeTheme, siteId ),
+			shouldShowDifmUpsell: isTreatmentDifmUpsellTest( state ),
+			previousRoute: getPreviousRoute( state ),
 		};
 	},
 	( dispatch ) => {

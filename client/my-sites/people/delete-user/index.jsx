@@ -125,7 +125,7 @@ class DeleteUser extends React.Component {
 	getAuthorSelectPlaceholder = () => {
 		return (
 			<span className="delete-user__select-placeholder">
-				<User size={ 26 } user={ { name: /* Don't translate yet */ 'Choose an author…' } } />
+				<User size={ 26 } user={ { name: this.props.translate( 'Choose an author…' ) } } />
 			</span>
 		);
 	};

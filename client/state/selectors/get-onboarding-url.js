@@ -4,7 +4,7 @@
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getVariationForUser } from 'calypso/state/experiments/selectors';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Returns the onboarding URL.

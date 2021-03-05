@@ -3,7 +3,7 @@
  */
 import { login } from '../';
 
-jest.mock( 'calypso/config', () => ( {
+jest.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
 	default: jest.fn( ( key ) => {
 		if ( 'login_url' === key ) {

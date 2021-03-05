@@ -13,7 +13,7 @@ import Gridicon from 'calypso/components/gridicon';
 /**
  * Internal Dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
 import { Button, RootChild } from '@automattic/components';
@@ -154,7 +154,7 @@ class InlineHelp extends Component {
 					title={ translate( 'Help' ) }
 					ref={ this.inlineHelpToggleRef }
 				>
-					<Gridicon icon="help" size={ 48 } />
+					<Gridicon icon={ ! isPopoverVisible ? 'help' : 'cross-circle' } size={ 48 } />
 				</Button>
 				{ isPopoverVisible && (
 					<InlineHelpPopover

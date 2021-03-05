@@ -72,6 +72,7 @@ function createMediaQueryList( { min, max } = {} ) {
 const mediaQueryLists = {
 	'<480px': createMediaQueryList( { max: 480 } ),
 	'<660px': createMediaQueryList( { max: 660 } ),
+	'<782px': createMediaQueryList( { max: 782 } ),
 	'<800px': createMediaQueryList( { max: 800 } ),
 	'<960px': createMediaQueryList( { max: 960 } ),
 	'<1040px': createMediaQueryList( { max: 1040 } ),
@@ -79,6 +80,7 @@ const mediaQueryLists = {
 	'<1400px': createMediaQueryList( { max: 1400 } ),
 	'>480px': createMediaQueryList( { min: 480 } ),
 	'>660px': createMediaQueryList( { min: 660 } ),
+	'>782px': createMediaQueryList( { min: 782 } ),
 	'>800px': createMediaQueryList( { min: 800 } ),
 	'>960px': createMediaQueryList( { min: 960 } ),
 	'>1040px': createMediaQueryList( { min: 1040 } ),
@@ -187,3 +189,31 @@ export function subscribeIsDesktop( listener ) {
 export function getWindowInnerWidth() {
 	return isServer ? SERVER_WIDTH : window.innerWidth;
 }
+
+/******************************************/
+/*       Vertical Scroll Experiment       */
+/*  	       pcbrnV-XN-p2               */
+/******************************************/
+
+//TODO: To be refactored using above using the DESKTOP_BREAKPOINT constant
+export function isTabletResolution() {
+	if ( ! isServer ) {
+		return window.innerWidth < 1040;
+	}
+	return false;
+}
+
+export const DEVICE_MOBILE = 'mobile';
+export const DEVICE_TABLET = 'tablet';
+export const DEVICE_DESKTOP = 'desktop';
+
+export function resolveDeviceTypeByViewPort() {
+	if ( isMobile() ) {
+		return DEVICE_MOBILE;
+	} else if ( isTabletResolution() ) {
+		return DEVICE_TABLET;
+	}
+	return DEVICE_DESKTOP;
+}
+
+/******************************************/

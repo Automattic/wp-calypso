@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useTranslate } from 'i18n-calypso';
-import { get, isArray } from 'lodash';
+import { get } from 'lodash';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
@@ -32,7 +32,7 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const hasRealtimeBackups = useSelector( ( state ) => {
 		const capabilities = getRewindCapabilities( state, siteId );
-		return isArray( capabilities ) && capabilities.includes( 'backup-realtime' );
+		return Array.isArray( capabilities ) && capabilities.includes( 'backup-realtime' );
 	} );
 
 	const moment = useLocalizedMoment();

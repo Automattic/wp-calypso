@@ -8,7 +8,6 @@ import { isObject } from 'lodash';
  */
 import * as constants from './constants';
 import { getJetpackProductsShortNames } from './translations';
-import { POPULAR_PRODUCTS_OFFERING_VARIANT } from 'calypso/my-sites/plans/jetpack-plans/experiments';
 import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
@@ -18,9 +17,7 @@ import {
 	FEATURE_BACKUP_REALTIME_V2,
 	FEATURE_ONE_CLICK_RESTORE_V2,
 	FEATURE_SECURE_STORAGE_V2,
-	FEATURE_ACTIVITY_LOG_30_DAYS_V2,
 	FEATURE_ACTIVITY_LOG_1_YEAR_V2,
-	FEATURE_PRIORITY_SUPPORT_V2,
 	FEATURE_SCAN_V2,
 	FEATURE_ONE_CLICK_FIX_V2,
 	FEATURE_INSTANT_EMAIL_V2,
@@ -58,16 +55,11 @@ export const JETPACK_PRODUCTS_LIST: Record< JetpackProductSlug, Product > = {
 		type: constants.PRODUCT_JETPACK_BACKUP_DAILY,
 		term: TERM_ANNUALLY,
 		bill_period: PLAN_ANNUAL_PERIOD,
-		getFeatures: ( variation: string ): string[] =>
-			POPULAR_PRODUCTS_OFFERING_VARIANT === variation
-				? [ FEATURE_BACKUP_DAILY_V2, FEATURE_ONE_CLICK_RESTORE_V2, FEATURE_SECURE_STORAGE_V2 ]
-				: [
-						FEATURE_BACKUP_DAILY_V2,
-						FEATURE_ONE_CLICK_RESTORE_V2,
-						FEATURE_SECURE_STORAGE_V2,
-						FEATURE_ACTIVITY_LOG_30_DAYS_V2,
-						FEATURE_PRIORITY_SUPPORT_V2,
-				  ],
+		getFeatures: (): string[] => [
+			FEATURE_BACKUP_DAILY_V2,
+			FEATURE_ONE_CLICK_RESTORE_V2,
+			FEATURE_SECURE_STORAGE_V2,
+		],
 	},
 	[ constants.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: {
 		product_name: PRODUCT_SHORT_NAMES[ constants.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ],
@@ -75,16 +67,11 @@ export const JETPACK_PRODUCTS_LIST: Record< JetpackProductSlug, Product > = {
 		type: constants.PRODUCT_JETPACK_BACKUP_DAILY,
 		term: TERM_MONTHLY,
 		bill_period: PLAN_MONTHLY_PERIOD,
-		getFeatures: ( variation: string ): string[] =>
-			POPULAR_PRODUCTS_OFFERING_VARIANT === variation
-				? [ FEATURE_BACKUP_DAILY_V2, FEATURE_ONE_CLICK_RESTORE_V2, FEATURE_SECURE_STORAGE_V2 ]
-				: [
-						FEATURE_BACKUP_DAILY_V2,
-						FEATURE_ONE_CLICK_RESTORE_V2,
-						FEATURE_SECURE_STORAGE_V2,
-						FEATURE_ACTIVITY_LOG_30_DAYS_V2,
-						FEATURE_PRIORITY_SUPPORT_V2,
-				  ],
+		getFeatures: (): string[] => [
+			FEATURE_BACKUP_DAILY_V2,
+			FEATURE_ONE_CLICK_RESTORE_V2,
+			FEATURE_SECURE_STORAGE_V2,
+		],
 	},
 	[ constants.PRODUCT_JETPACK_BACKUP_REALTIME ]: {
 		product_name: PRODUCT_SHORT_NAMES[ constants.PRODUCT_JETPACK_BACKUP_REALTIME ],
@@ -97,7 +84,6 @@ export const JETPACK_PRODUCTS_LIST: Record< JetpackProductSlug, Product > = {
 			FEATURE_ONE_CLICK_RESTORE_V2,
 			FEATURE_SECURE_STORAGE_V2,
 			FEATURE_ACTIVITY_LOG_1_YEAR_V2,
-			FEATURE_PRIORITY_SUPPORT_V2,
 		],
 	},
 	[ constants.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: {
@@ -111,7 +97,6 @@ export const JETPACK_PRODUCTS_LIST: Record< JetpackProductSlug, Product > = {
 			FEATURE_ONE_CLICK_RESTORE_V2,
 			FEATURE_SECURE_STORAGE_V2,
 			FEATURE_ACTIVITY_LOG_1_YEAR_V2,
-			FEATURE_PRIORITY_SUPPORT_V2,
 		],
 	},
 	[ constants.PRODUCT_JETPACK_SCAN ]: {
@@ -124,7 +109,6 @@ export const JETPACK_PRODUCTS_LIST: Record< JetpackProductSlug, Product > = {
 			FEATURE_SCAN_V2,
 			FEATURE_ONE_CLICK_FIX_V2,
 			FEATURE_INSTANT_EMAIL_V2,
-			FEATURE_PRIORITY_SUPPORT_V2,
 		],
 	},
 	[ constants.PRODUCT_JETPACK_SCAN_MONTHLY ]: {
@@ -137,7 +121,31 @@ export const JETPACK_PRODUCTS_LIST: Record< JetpackProductSlug, Product > = {
 			FEATURE_SCAN_V2,
 			FEATURE_ONE_CLICK_FIX_V2,
 			FEATURE_INSTANT_EMAIL_V2,
-			FEATURE_PRIORITY_SUPPORT_V2,
+		],
+	},
+	// SCAN_REALTIME is not publically offered as an individual add-on product at this time
+	[ constants.PRODUCT_JETPACK_SCAN_REALTIME ]: {
+		product_name: PRODUCT_SHORT_NAMES[ constants.PRODUCT_JETPACK_SCAN_REALTIME ],
+		product_slug: constants.PRODUCT_JETPACK_SCAN_REALTIME,
+		type: constants.PRODUCT_JETPACK_SCAN_REALTIME,
+		term: TERM_ANNUALLY,
+		bill_period: PLAN_ANNUAL_PERIOD,
+		getFeatures: (): string[] => [
+			FEATURE_SCAN_V2,
+			FEATURE_ONE_CLICK_FIX_V2,
+			FEATURE_INSTANT_EMAIL_V2,
+		],
+	},
+	[ constants.PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: {
+		product_name: PRODUCT_SHORT_NAMES[ constants.PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ],
+		product_slug: constants.PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY,
+		type: constants.PRODUCT_JETPACK_SCAN_REALTIME,
+		term: TERM_MONTHLY,
+		bill_period: PLAN_MONTHLY_PERIOD,
+		getFeatures: (): string[] => [
+			FEATURE_SCAN_V2,
+			FEATURE_ONE_CLICK_FIX_V2,
+			FEATURE_INSTANT_EMAIL_V2,
 		],
 	},
 	[ constants.PRODUCT_JETPACK_SEARCH ]: {
@@ -151,7 +159,6 @@ export const JETPACK_PRODUCTS_LIST: Record< JetpackProductSlug, Product > = {
 			FEATURE_FILTERING_V2,
 			FEATURE_LANGUAGE_SUPPORT_V2,
 			FEATURE_SPELLING_CORRECTION_V2,
-			FEATURE_PRIORITY_SUPPORT_V2,
 		],
 	},
 	[ constants.PRODUCT_JETPACK_SEARCH_MONTHLY ]: {
@@ -165,7 +172,6 @@ export const JETPACK_PRODUCTS_LIST: Record< JetpackProductSlug, Product > = {
 			FEATURE_FILTERING_V2,
 			FEATURE_LANGUAGE_SUPPORT_V2,
 			FEATURE_SPELLING_CORRECTION_V2,
-			FEATURE_PRIORITY_SUPPORT_V2,
 		],
 	},
 	[ constants.PRODUCT_JETPACK_ANTI_SPAM ]: {
@@ -179,7 +185,6 @@ export const JETPACK_PRODUCTS_LIST: Record< JetpackProductSlug, Product > = {
 			FEATURE_AKISMET_V2,
 			FEATURE_SPAM_BLOCK_V2,
 			FEATURE_ADVANCED_STATS_V2,
-			FEATURE_PRIORITY_SUPPORT_V2,
 		],
 	},
 	[ constants.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: {
@@ -193,7 +198,6 @@ export const JETPACK_PRODUCTS_LIST: Record< JetpackProductSlug, Product > = {
 			FEATURE_AKISMET_V2,
 			FEATURE_SPAM_BLOCK_V2,
 			FEATURE_ADVANCED_STATS_V2,
-			FEATURE_PRIORITY_SUPPORT_V2,
 		],
 	},
 };

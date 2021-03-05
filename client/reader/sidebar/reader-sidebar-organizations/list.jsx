@@ -92,6 +92,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 				title={ organization.title }
 				onClick={ this.handleClick }
 				customIcon={ this.renderIcon() }
+				disableFlyout={ true }
 			>
 				{ this.renderAll() }
 				{ this.renderSites() }

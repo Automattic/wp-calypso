@@ -10,7 +10,7 @@ import { map, pick, throttle } from 'lodash';
 import { APPLY_STORED_STATE, SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
 import { getAllStoredItems, setStoredItem, clearStorage } from 'calypso/lib/browser-storage';
 import { isSupportSession } from 'calypso/lib/user/support-user-interop';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import user from 'calypso/lib/user';
 
 /**

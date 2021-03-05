@@ -1,5 +1,7 @@
-#### builder image
-FROM node:12.19.1 as builder
+#### cache image
+#### This image is not pushed to any repository and it shouldn't be used as base image for any other docker build.
+#### Its main goal is to create a `/calypso/.cache` that can be copied over other images that can benefit from a warm cache.
+FROM node:12.21.0 as cache
 
 ARG node_memory=8192
 WORKDIR /calypso
@@ -8,9 +10,8 @@ ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV NVM_DIR=/calypso/.nvm
 ENV NODE_ENV=production
 ENV CALYPSO_ENV=production
+ENV BUILD_TRANSLATION_CHUNKS=true
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
-ENV CHROMEDRIVER_SKIP_DOWNLOAD=true
-ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV HOME=/calypso
 
 RUN git clone --branch v0.37.0 --depth 1 https://github.com/nvm-sh/nvm.git "$NVM_DIR" \
@@ -19,7 +20,7 @@ RUN git clone --branch v0.37.0 --depth 1 https://github.com/nvm-sh/nvm.git "$NVM
 COPY . .
 
 # Run nvm.sh in a different dir so it doesn't try to use the version specified in /calypso/.nvmrc.
-# If not, it will fail the image generation
+# If not, it will fail the image generation.
 RUN cd / \
 	&& . "$NVM_DIR/nvm.sh" \
 	&& cd $HOME \
@@ -31,8 +32,9 @@ RUN cd / \
 
 ENTRYPOINT [ "/bin/bash" ]
 
-#### ci image
-FROM node:12.19.1 as ci
+#### base image
+#### This image can be used as a base image for other builds, or to uni test and build calypso.
+FROM node:12.21.0 as base
 
 ARG node_memory=8192
 ARG UID=1003
@@ -43,24 +45,29 @@ ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV NVM_DIR=/calypso/.nvm
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV HOME=/calypso
+ENV CHROMEDRIVER_SKIP_DOWNLOAD=true
+ENV PUPPETEER_SKIP_DOWNLOAD=true
 RUN chown $UID /calypso
 
 # Set bash as the default shell
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 # Copy nvm cache so we don't need to download it again
-COPY --from=builder --chown=$UID /calypso/.nvm /calypso/.nvm
+COPY --from=cache --chown=$UID /calypso/.nvm /calypso/.nvm
 # Copy all other caches (webpack, babel, yarn...)
-COPY --from=builder --chown=$UID /calypso/.cache /calypso/.cache
-COPY --from=builder --chown=$UID /calypso/.bashrc /calypso/.bashrc
+COPY --from=cache --chown=$UID /calypso/.cache /calypso/.cache
+COPY --from=cache --chown=$UID /calypso/.bashrc /calypso/.bashrc
 
 ENTRYPOINT [ "/bin/bash" ]
 
 #### ci-desktop image
-FROM ci as ci-desktop
+#### This image is used to run desktop tests.
+FROM base as ci-desktop
 
 ENV ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
 ENV USE_HARD_LINKS=false
-# This chrome image is the latest version supported by wp-desktop's chromedriver, declared in desktop/package.json
+ENV CHROMEDRIVER_SKIP_DOWNLOAD=false
+ENV PUPPETEER_SKIP_DOWNLOAD=false
+# This chrome image is the latest version supported by wp-desktop's chromedriver, declared in desktop/package.json.
 ENV CHROME_VERSION="80.0.3987.163-1"
 ENV DISPLAY=:99
 
@@ -97,15 +104,34 @@ RUN wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-
 ENTRYPOINT [ "/bin/bash" ]
 
 #### ci-e2e image
+#### This image is used to run e2e tests. The only difference with ci-desktop is the Chrome version.
 FROM ci-desktop as ci-e2e
 
-# This chrome image is the latest version that accepts SameSite=None
-# test/e2e/test/mocha.env.js will install a compatible chromedriver
+# This chrome image is the latest version that accepts SameSite=None.
+# test/e2e/test/mocha.env.js will install a compatible chromedriver.
 ENV CHROME_VERSION="84.0.4147.135-1"
 ENV DETECT_CHROMEDRIVER_VERSION=true
 
 RUN wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
 	&& apt-get install -y ./google-chrome-stable_${CHROME_VERSION}_amd64.deb \
 	&& rm ./google-chrome-stable_${CHROME_VERSION}_amd64.deb
+
+ENTRYPOINT [ "/bin/bash" ]
+
+
+#### ci-wpcom image
+#### This image is used to test and build WPCOM plugins in Calypso repo.
+FROM base as ci-wpcom
+
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+COPY --from=cache --chown=$UID /calypso/composer.* /calypso/
+
+RUN apt update &&\
+	apt-get install -y apt-transport-https zip &&\
+	wget https://packages.sury.org/php/apt.gpg -O /etc/apt/trusted.gpg.d/php-sury.gpg &&\
+	echo "deb https://packages.sury.org/php/ stretch main" > /etc/apt/sources.list.d/php-sury.list &&\
+	apt update &&\
+	apt-get install -y php7.4-cli php7.4-xml php7.4-mbstring &&\
+	composer install
 
 ENTRYPOINT [ "/bin/bash" ]

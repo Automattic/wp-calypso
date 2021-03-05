@@ -9,7 +9,7 @@ import { Button } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import FixAllThreatsDialog from 'calypso/components/jetpack/fix-all-threats-dialog';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import ThreatDialog from 'calypso/components/jetpack/threat-dialog';

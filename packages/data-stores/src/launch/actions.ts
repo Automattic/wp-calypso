@@ -2,14 +2,14 @@
  * External dependencies
  */
 import type * as DomainSuggestions from '../domain-suggestions';
-import type * as Plans from '../plans';
-import { select } from '@wordpress/data-controls';
+import { select } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import { PLANS_STORE } from './constants';
 import type { LaunchStepType } from './types';
+import { PLANS_STORE } from './constants';
+import type { Plans } from '..';
 
 export const setSidebarFullscreen = () =>
 	( {
@@ -25,6 +25,12 @@ export const setStep = ( step: LaunchStepType ) =>
 	( {
 		type: 'SET_STEP',
 		step,
+	} as const );
+
+export const setSiteTitle = ( title: string ) =>
+	( {
+		type: 'SET_SITE_TITLE',
+		title,
 	} as const );
 
 export const setDomain = ( domain: DomainSuggestions.DomainSuggestion ) =>
@@ -49,21 +55,44 @@ export const setDomainSearch = ( domainSearch: string ) =>
 		domainSearch,
 	} as const );
 
-export const setPlan = ( plan: Plans.Plan ) =>
+/**
+ * It's not recommended to export this function. We need the billing period
+ * to be a side-effect of the plan. Please don't export this action creator as you might
+ * create a discrepancy between the selected plan and the selected billing period
+ *
+ * @param billingPeriod the period
+ */
+const __internalSetBillingPeriod = ( billingPeriod: Plans.PlanBillingPeriod ) =>
 	( {
-		type: 'SET_PLAN',
-		plan,
+		type: 'SET_PLAN_BILLING_PERIOD',
+		billingPeriod,
 	} as const );
 
-export const unsetPlan = () =>
+export const setPlanProductId = function* ( planProductId: number | undefined ) {
+	const isFree = select( PLANS_STORE ).isPlanProductFree( planProductId );
+
+	if ( ! isFree ) {
+		const planProduct = select( PLANS_STORE ).getPlanProductById( planProductId );
+		const billingPeriod = planProduct?.billingPeriod ?? 'ANNUALLY';
+
+		yield __internalSetBillingPeriod( billingPeriod );
+	}
+
+	return {
+		type: 'SET_PLAN_PRODUCT_ID',
+		planProductId,
+	} as const;
+};
+
+export const unsetPlanProductId = () =>
 	( {
-		type: 'UNSET_PLAN',
+		type: 'UNSET_PLAN_PRODUCT_ID',
 	} as const );
 
 /* eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types */
-export function* updatePlan( planSlug: Plans.PlanSlug ) {
-	const plan: Plans.Plan = yield select( PLANS_STORE, 'getPlanBySlug', planSlug );
-	yield setPlan( plan );
+export function updatePlan( planProductId: number | undefined ) {
+	// keep updatePlan for backwards compat
+	return setPlanProductId( planProductId );
 }
 
 export const openSidebar = () =>
@@ -86,9 +115,9 @@ export const closeFocusedLaunch = () =>
 		type: 'CLOSE_FOCUSED_LAUNCH',
 	} as const );
 
-export const enableExperimental = () =>
+export const enableAnchorFm = () =>
 	( {
-		type: 'ENABLE_EXPERIMENTAL',
+		type: 'ENABLE_ANCHOR_FM',
 	} as const );
 
 export const showSiteTitleStep = () =>
@@ -126,19 +155,33 @@ export const disablePersistentSuccessView = () =>
 		type: 'DISABLE_SUCCESS_VIEW',
 	} as const );
 
-export type LaunchAction = ReturnType<
+/**
+ * Usually we use ReturnType of all the action creators to deduce all the actions.
+ * This works until one of the action creators is a generator and doesn't actually "Return" an action.
+ * This type helper allows for actions to be both functions and generators
+ */
+type ReturnOrGeneratorYieldUnion< T extends ( ...args: any ) => any > = T extends (
+	...args: any
+) => infer Return
+	? Return extends Generator< infer T, infer U, any >
+		? T | U
+		: Return
+	: never;
+
+export type LaunchAction = ReturnOrGeneratorYieldUnion<
+	| typeof setSiteTitle
 	| typeof unsetDomain
 	| typeof setStep
 	| typeof setDomain
 	| typeof confirmDomainSelection
 	| typeof setDomainSearch
-	| typeof setPlan
+	| typeof setPlanProductId
 	| typeof openFocusedLaunch
 	| typeof closeFocusedLaunch
-	| typeof unsetPlan
+	| typeof unsetPlanProductId
 	| typeof openSidebar
 	| typeof closeSidebar
-	| typeof enableExperimental
+	| typeof enableAnchorFm
 	| typeof setSidebarFullscreen
 	| typeof unsetSidebarFullscreen
 	| typeof showSiteTitleStep
@@ -146,6 +189,4 @@ export type LaunchAction = ReturnType<
 	| typeof unsetModalDismissible
 	| typeof showModalTitle
 	| typeof hideModalTitle
-	| typeof enablePersistentSuccessView
-	| typeof disablePersistentSuccessView
 >;

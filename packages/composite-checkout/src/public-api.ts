@@ -84,7 +84,10 @@ import {
 import useProcessPayment from './components/use-process-payment';
 import RadioButton from './components/radio-button';
 import checkoutTheme from './lib/theme';
+import InvalidPaymentProcessorResponseError from './lib/invalid-payment-processor-response-error';
 export * from './types';
+
+export type { Theme } from './lib/theme';
 
 // Re-export the public API
 export {
@@ -106,6 +109,7 @@ export {
 	CheckoutSubmitButton,
 	CheckoutSummaryArea,
 	CheckoutSummaryCard,
+	InvalidPaymentProcessorResponseError,
 	MainContentWrapper,
 	OrderReviewLineItems,
 	OrderReviewSection,

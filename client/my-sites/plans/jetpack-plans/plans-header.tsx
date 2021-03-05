@@ -16,6 +16,7 @@ import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
 import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
+import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
 
 const StandardPlansHeader = () => (
 	<>
@@ -69,5 +70,10 @@ const PlansHeader = ( { context }: { context: PageJS.Context } ) => {
 };
 
 export default function setJetpackHeader( context: PageJS.Context ) {
-	context.header = <PlansHeader context={ context } />;
+	context.header = (
+		<>
+			<PlansHeader context={ context } />
+			<IntroPricingBanner />
+		</>
+	);
 }

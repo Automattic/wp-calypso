@@ -16,7 +16,6 @@ import { withShoppingCart } from '@automattic/shopping-cart';
  */
 import CartBody from './cart-body';
 import CartBodyLoadingPlaceholder from './cart-body/loading-placeholder';
-import CartMessages from './cart-messages';
 import HeaderButton from 'calypso/components/header-button';
 import CartButtons from './cart-buttons';
 import Count from 'calypso/components/count';
@@ -87,7 +86,6 @@ class PopoverCart extends React.Component {
 	};
 
 	render() {
-		const { cart, selectedSite, shoppingCartManager } = this.props;
 		let countBadge;
 		const classes = classNames( 'popover-cart', {
 			pinned: this.props.pinned,
@@ -104,11 +102,6 @@ class PopoverCart extends React.Component {
 
 		return (
 			<div>
-				<CartMessages
-					cart={ cart }
-					selectedSite={ selectedSite }
-					isLoadingCart={ ! shoppingCartManager.isLoading }
-				/>
 				<div className={ classes }>
 					<HeaderButton
 						icon="cart"

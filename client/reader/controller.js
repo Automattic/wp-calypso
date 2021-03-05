@@ -29,7 +29,7 @@ import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/ac
 import { getLastPath } from 'calypso/state/reader-ui/selectors';
 import { getSection } from 'calypso/state/ui/selectors';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
-import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 
 const analyticsPageTitle = 'Reader';
 

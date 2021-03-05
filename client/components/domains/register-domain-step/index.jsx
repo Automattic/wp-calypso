@@ -14,7 +14,6 @@ import {
 	isEmpty,
 	isEqual,
 	mapKeys,
-	noop,
 	pick,
 	pickBy,
 	reject,
@@ -26,11 +25,12 @@ import { v4 as uuid } from 'uuid';
 import { stringify } from 'qs';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
 import { CompactCard, Button } from '@automattic/components';
 import Notice from 'calypso/components/notice';
@@ -104,6 +104,7 @@ const debug = debugFactory( 'calypso:domains:register-domain-step' );
 // TODO: Enable A/B test handling for M2.1 release
 const isPaginationEnabled = config.isEnabled( 'domains/kracken-ui/pagination' );
 
+const noop = () => {};
 const domains = wpcom.domains();
 
 // max amount of domain suggestions we should fetch/display
@@ -130,6 +131,7 @@ function getQueryObject( props ) {
 class RegisterDomainStep extends React.Component {
 	static propTypes = {
 		cart: PropTypes.object,
+		isCartPendingUpdate: PropTypes.bool,
 		isDomainOnly: PropTypes.bool,
 		onDomainsAvailabilityChange: PropTypes.func,
 		products: PropTypes.object,
@@ -459,8 +461,9 @@ class RegisterDomainStep extends React.Component {
 							onSearchChange={ this.onSearchChange }
 							placeholder={ this.getPlaceholderText() }
 							ref={ this.bindSearchCardReference }
-						/>
-						{ this.renderSearchFilters() }
+						>
+							{ this.renderSearchFilters() }
+						</Search>
 					</CompactCard>
 				</StickyPanel>
 				{ availabilityMessage && (
@@ -1190,6 +1193,7 @@ class RegisterDomainStep extends React.Component {
 						suggestion={ suggestion }
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
+						isCartPendingUpdate={ this.props.isCartPendingUpdate }
 						selectedSite={ this.props.selectedSite }
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 						onButtonClick={ this.onAddDomain }
@@ -1371,6 +1375,7 @@ class RegisterDomainStep extends React.Component {
 				railcarId={ this.state.railcarId }
 				fetchAlgo={ this.getFetchAlgo() }
 				cart={ this.props.cart }
+				isCartPendingUpdate={ this.props.isCartPendingUpdate }
 				pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 				unavailableDomains={ this.state.unavailableDomains }
 				onSkip={ this.props.onSkip }
@@ -1538,4 +1543,4 @@ export default connect(
 		hideSitePreview,
 		showSitePreview,
 	}
-)( localize( RegisterDomainStep ) );
+)( withShoppingCart( localize( RegisterDomainStep ) ) );

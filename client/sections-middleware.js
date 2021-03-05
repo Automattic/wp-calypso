@@ -6,7 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { setSectionLoading } from 'calypso/state/ui/actions';
 import { activateNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { bumpStat } from 'calypso/state/analytics/actions';

@@ -102,7 +102,7 @@ export default class LoginPage extends AsyncBaseContainer {
 	async requestMagicLink( emailAddress ) {
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( 'a[data-e2e-link="magic-login-link"]' )
+			By.css( '[data-e2e-link="magic-login-link"]' )
 		);
 		await this.driver.sleep( 500 );
 		await driverHelper.setWhenSettable(

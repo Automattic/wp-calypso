@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { startsWith, noop, get } from 'lodash';
+import { startsWith, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 
@@ -18,6 +18,8 @@ import safeImageUrl from 'calypso/lib/safe-image-url';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 const ReaderAvatar = ( {
 	author,

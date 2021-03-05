@@ -7,7 +7,7 @@
  */
 import deepFreeze from 'deep-freeze';
 import React from 'react';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 import { shallow } from 'enzyme';
 
 /**
@@ -15,6 +15,7 @@ import { shallow } from 'enzyme';
  */
 import { JetpackAuthorize } from '../authorize';
 
+const noop = () => {};
 const CLIENT_ID = 98765;
 const SITE_SLUG = 'an.example.site';
 const DEFAULT_PROPS = deepFreeze( {
@@ -64,7 +65,7 @@ const DEFAULT_PROPS = deepFreeze( {
 	userAlreadyConnected: false,
 } );
 
-jest.mock( 'calypso/config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	const mock = () => 'development';
 	mock.isEnabled = jest.fn( () => true );
 	return mock;
@@ -224,6 +225,30 @@ describe( 'JetpackAuthorize', () => {
 			};
 
 			expect( isJetpackUpgradeFlow( props ) ).toBe( true );
+		} );
+	} );
+
+	describe( 'isFromJetpackConnectionManager', () => {
+		const isFromJetpackConnectionManager = new JetpackAuthorize().isFromJetpackConnectionManager;
+
+		test( 'is from connection manager', () => {
+			const props = {
+				authQuery: {
+					from: 'connection-ui',
+				},
+			};
+
+			expect( isFromJetpackConnectionManager( props ) ).toBe( true );
+		} );
+
+		test( 'is not from connection manager', () => {
+			const props = {
+				authQuery: {
+					from: 'not-connection-ui',
+				},
+			};
+
+			expect( isFromJetpackConnectionManager( props ) ).toBe( false );
 		} );
 	} );
 

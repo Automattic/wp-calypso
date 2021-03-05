@@ -38,7 +38,7 @@
 
 	&:last-child {
 		border-bottom: 1px solid var( --color-neutral-0 );
-		border-radius: 0 0 3px 3px;
+		border-radius: 0 0 2px 2px;
 	}
 }
 
@@ -179,6 +179,7 @@
 	font-size: $font-title-small;
 	font-weight: 400;
 	margin-top: 15px;
+	word-break: break-word;
 }
 
 .checkout-thank-you__header.is-placeholder {

@@ -44,7 +44,7 @@ export default function useOnLogin(): void {
 				visibility,
 				anchorFmPodcastId: null,
 				anchorFmEpisodeId: null,
-				anchorFmSpotifyShowUrl: null,
+				anchorFmSpotifyUrl: null,
 			} );
 		}
 	}, [

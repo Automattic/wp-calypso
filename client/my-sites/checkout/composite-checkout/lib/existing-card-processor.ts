@@ -76,9 +76,6 @@ function isValidTransactionData(
 	// Validate data required for this payment method type. Some other data may
 	// be required by the server but not required here since the server will give
 	// a better localized error message than we can provide.
-	if ( ! data.siteId ) {
-		throw new Error( 'Transaction requires siteId and none was provided' );
-	}
 	if ( ! data.country ) {
 		throw new Error( 'Transaction requires country code and none was provided' );
 	}

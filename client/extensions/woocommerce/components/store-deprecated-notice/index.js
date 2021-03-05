@@ -11,23 +11,21 @@ import React, { Component } from 'react';
 
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import './style.scss';
 
 class StoreDeprecatedNotice extends Component {
 	render() {
 		return (
-			<div className="store-deprecated-notice">
-				<Notice
-					status="is-success"
-					icon="notice"
-					text={ translate( 'Store is moving to WooCommerce' ) }
-					showDismiss={ false }
-				>
-					<NoticeAction href="https://wordpress.com/support/store/">
-						{ translate( 'More' ) }
-					</NoticeAction>
-				</Notice>
-			</div>
+			<Notice
+				status="is-warning"
+				text={ translate(
+					'Your favorite Store functions will become part of WooCommerce menus in February.'
+				) }
+				showDismiss={ false }
+			>
+				<NoticeAction href="https://wordpress.com/support/new-woocommerce-experience-on-wordpress-dot-com/">
+					{ translate( 'Learn more' ) }
+				</NoticeAction>
+			</Notice>
 		);
 	}
 }

@@ -3,12 +3,13 @@
  */
 import { useSelect } from '@wordpress/data';
 import { useDispatch } from '@wordpress/data';
+import { isGoodDefaultDomainQuery, DOMAIN_QUERY_MINIMUM_LENGTH } from '@automattic/domain-picker';
+
 /**
- * External dependencies
+ * Internal dependencies
  */
 import { LAUNCH_STORE } from '../stores';
 import { useSite, useTitle } from './';
-import { isDefaultSiteTitle } from '../utils';
 import { useSiteDomains } from './use-site-domains';
 
 export function useDomainSearch(): {
@@ -16,22 +17,38 @@ export function useDomainSearch(): {
 	isLoading: boolean;
 	setDomainSearch: ( search: string ) => void;
 } {
-	const { domainSearch } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
-	const { title } = useTitle();
-	const { isLoadingSite } = useSite();
+	const existingDomainSearch = useSelect(
+		( select ) => select( LAUNCH_STORE ).getDomainSearch(),
+		[]
+	);
+	const { isDefaultTitle, title } = useTitle();
+	const { isLoadingSite: isLoading } = useSite();
 	const { siteSubdomain } = useSiteDomains();
 
 	const { setDomainSearch } = useDispatch( LAUNCH_STORE );
 
-	let search = domainSearch.trim() || title;
+	const searchQueryFromTitle =
+		typeof title !== 'undefined' && title.length >= DOMAIN_QUERY_MINIMUM_LENGTH && ! isDefaultTitle
+			? title
+			: '';
 
-	if ( ! search || isDefaultSiteTitle( { currentSiteTitle: search } ) ) {
-		search = siteSubdomain?.domain?.split( '.' )[ 0 ] ?? '';
-	}
+	// Domain search query is determined by evaluating the following, in order:
+	// 1. existing domain search string saved in Launch store
+	// 2. site title, if it's not the default site title
+	// 3. site subdomain name
+	const domainSearch =
+		( existingDomainSearch.trim() ||
+			filterUnsuitableTitles( searchQueryFromTitle ) ||
+			siteSubdomain?.domain?.split( '.' )[ 0 ] ) ??
+		'';
 
 	return {
-		domainSearch: search,
-		isLoading: isLoadingSite,
+		domainSearch,
+		isLoading,
 		setDomainSearch,
 	};
+}
+
+function filterUnsuitableTitles( title: string ): string {
+	return isGoodDefaultDomainQuery( title ) ? title : '';
 }

@@ -17,7 +17,7 @@ import {
 import SiftScience from 'calypso/lib/siftscience';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
 import { noSite, siteSelection } from 'calypso/my-sites/controller';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import userFactory from 'calypso/lib/user';
 
 export default function () {
@@ -131,6 +131,14 @@ export default function () {
 			clientRender
 		);
 	}
+
+	page(
+		'/checkout/:site/offer-difm/:receiptId?',
+		siteSelection,
+		upsellNudge,
+		makeLayout,
+		clientRender
+	);
 
 	page( '/checkout/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
 

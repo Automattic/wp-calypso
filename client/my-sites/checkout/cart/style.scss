@@ -215,25 +215,6 @@
 	font-size: $font-body-small;
 }
 
-.cart__cart-ad {
-	background: var( --color-neutral-0 );
-	border: 1px solid var( --color-neutral-0 );
-	border-radius: 2px;
-	color: var( --color-text );
-	font-size: $font-body-extra-small;
-	margin: 15px 15px 0;
-	padding: 10px;
-
-	@include breakpoint-deprecated( '<660px' ) {
-		display: none;
-	}
-
-	.button.is-borderless {
-		color: var( --color-link );
-		font-weight: 600;
-	}
-}
-
 .cart__cart-plan-discount-ad-paragraph:last-child {
 	margin-bottom: 0;
 }

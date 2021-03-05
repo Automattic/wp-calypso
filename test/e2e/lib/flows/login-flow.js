@@ -13,6 +13,7 @@ import CustomerHome from '../pages/customer-home-page';
 
 import SidebarComponent from '../components/sidebar-component.js';
 import NavBarComponent from '../components/nav-bar-component.js';
+import GuideComponent from '../components/guide-component.js';
 
 import * as dataHelper from '../data-helper';
 import * as driverManager from '../driver-manager';
@@ -53,6 +54,8 @@ export default class LoginFlow {
 
 	async login( { emailSSO = false, jetpackSSO = false } = {} ) {
 		await driverManager.ensureNotLoggedIn( this.driver );
+		process.env.FLAGS &&
+			( await this.driver.manage().addCookie( { name: 'flags', value: process.env.FLAGS } ) );
 
 		// Disabling re-use of cookies as latest versions of Chrome don't currently support it.
 		// We can check later to see if we can find a different way to support it.
@@ -93,6 +96,13 @@ export default class LoginFlow {
 		}
 
 		await loginPage.login( this.account.email || this.account.username, this.account.password );
+
+		if ( process.env.FLAGS === 'nav-unification' ) {
+			// Makes sure that the nav-unification welcome modal will be dismissed.
+			const guideComponent = new GuideComponent( this.driver );
+			await guideComponent.dismiss( 1000, '.nav-unification-modal' );
+		}
+
 		return await loginCookieHelper.saveLogin( this.driver, this.account.username );
 	}
 

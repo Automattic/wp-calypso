@@ -900,8 +900,8 @@ export type WpcomStoreState = {
 type PurchaseSiteId = number;
 
 export interface TransactionResponse {
-	failed_purchases?: Record< PurchaseSiteId, Purchase >;
-	purchases?: Record< PurchaseSiteId, Purchase >;
+	failed_purchases?: Record< PurchaseSiteId, Purchase[] >;
+	purchases?: Record< PurchaseSiteId, Purchase[] >;
 	receipt_id?: number;
 	order_id?: number;
 	redirect_url?: string;

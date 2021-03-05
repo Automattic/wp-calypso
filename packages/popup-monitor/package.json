@@ -34,7 +34,7 @@
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
-		"lodash": "^4.17.15"
+		"lodash": "^4.17.20"
 	},
 	"devDependencies": {
 		"chai": "^4.2.0"

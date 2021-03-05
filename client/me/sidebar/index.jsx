@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import ProfileGravatar from 'calypso/me/profile-gravatar';
 import {
 	addCreditCard,
@@ -36,6 +36,7 @@ import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
  * Style dependencies
  */
 import './style.scss';
+import 'calypso/my-sites/sidebar-unified/style.scss'; // nav-unification overrides. Should be removed once launched.
 
 class MeSidebar extends React.Component {
 	onNavigate = () => {
@@ -127,7 +128,9 @@ class MeSidebar extends React.Component {
 					</div>
 
 					<SidebarMenu>
-						<SidebarHeading>{ translate( 'Profile' ) }</SidebarHeading>
+						<SidebarHeading>
+							<span className="sidebar__informative-title">{ translate( 'Profile' ) }</span>
+						</SidebarHeading>
 
 						<SidebarItem
 							selected={ selected === 'profile' }
@@ -153,7 +156,7 @@ class MeSidebar extends React.Component {
 						<SidebarItem
 							selected={ selected === 'purchases' }
 							link={ purchasesRoot }
-							label={ translate( 'Manage Purchases' ) }
+							label={ translate( 'Purchases' ) }
 							materialIcon="credit_card"
 							onNavigate={ this.onNavigate }
 							preloadSectionName="purchases"
@@ -175,6 +178,12 @@ class MeSidebar extends React.Component {
 							materialIcon="visibility"
 							onNavigate={ this.onNavigate }
 							preloadSectionName="privacy"
+						/>
+
+						<SidebarItem
+							link={ 'https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs' }
+							label={ translate( 'Manage Blogs' ) }
+							materialIcon="apps"
 						/>
 
 						<SidebarItem
@@ -201,7 +210,9 @@ class MeSidebar extends React.Component {
 					</SidebarMenu>
 
 					<SidebarMenu>
-						<SidebarHeading>{ translate( 'Special' ) }</SidebarHeading>
+						<SidebarHeading>
+							<span className="sidebar__informative-title">{ translate( 'Special' ) }</span>
+						</SidebarHeading>
 
 						<SidebarItem
 							selected={ selected === 'get-apps' }

@@ -96,7 +96,7 @@
 		padding-bottom: 4px;
 		&.is-selected {
 			padding-bottom: 2px;
-			border-bottom: 2px solid #3582c4;
+			border-bottom: 2px solid var( --color-primary );
 		}
 	}
 

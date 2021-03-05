@@ -24,6 +24,17 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
 } from 'calypso/state/action-types';
+import {
+	onAccountRecoveryPhoneValidationFailed,
+	onAccountRecoveryPhoneValidationSuccess,
+	onAccountRecoverySettingsDeleteFailed,
+	onAccountRecoverySettingsDeleteSuccess,
+	onAccountRecoverySettingsFetchFailed,
+	onAccountRecoverySettingsUpdateFailed,
+	onAccountRecoverySettingsUpdateSuccess,
+	onResentAccountRecoveryEmailValidationFailed,
+	onResentAccountRecoveryEmailValidationSuccess,
+} from 'calypso/state/account-recovery/settings/notices';
 
 import 'calypso/state/account-recovery/init';
 
@@ -54,7 +65,10 @@ export const accountRecoverySettingsFetch = () => ( dispatch ) => {
 		.then( ( accountRecoverySettings ) =>
 			dispatch( accountRecoverySettingsFetchSuccess( accountRecoverySettings ) )
 		)
-		.catch( ( error ) => dispatch( accountRecoverySettingsFetchFailed( error ) ) );
+		.catch( ( error ) => {
+			dispatch( accountRecoverySettingsFetchFailed( error ) );
+			dispatch( onAccountRecoverySettingsFetchFailed() );
+		} );
 };
 
 const updateSuccessAction = ( target, value ) => ( {
@@ -96,8 +110,14 @@ export const updateAccountRecoveryPhone = ( newPhone ) => ( dispatch ) => {
 		.undocumented()
 		.me()
 		.updateAccountRecoveryPhone( newPhone.countryCode, newPhone.number )
-		.then( () => dispatch( updateAccountRecoveryPhoneSuccess( newPhone ) ) )
-		.catch( ( error ) => dispatch( updateAccountRecoveryPhoneFailed( error ) ) );
+		.then( () => {
+			dispatch( updateAccountRecoveryPhoneSuccess( newPhone ) );
+			dispatch( onAccountRecoverySettingsUpdateSuccess( { target: TARGET_PHONE } ) );
+		} )
+		.catch( ( error ) => {
+			dispatch( updateAccountRecoveryPhoneFailed( error ) );
+			dispatch( onAccountRecoverySettingsUpdateFailed( { target: TARGET_PHONE } ) );
+		} );
 };
 
 export const deleteAccountRecoveryPhoneSuccess = () => deleteSuccessAction( TARGET_PHONE );
@@ -115,8 +135,14 @@ export const deleteAccountRecoveryPhone = () => ( dispatch ) => {
 		.undocumented()
 		.me()
 		.deleteAccountRecoveryPhone()
-		.then( () => dispatch( deleteAccountRecoveryPhoneSuccess() ) )
-		.catch( ( error ) => dispatch( deleteAccountRecoveryPhoneFailed( error ) ) );
+		.then( () => {
+			dispatch( deleteAccountRecoveryPhoneSuccess() );
+			dispatch( onAccountRecoverySettingsDeleteSuccess( { target: TARGET_PHONE } ) );
+		} )
+		.catch( ( error ) => {
+			dispatch( deleteAccountRecoveryPhoneFailed( error ) );
+			dispatch( onAccountRecoverySettingsDeleteFailed( { target: TARGET_PHONE } ) );
+		} );
 };
 
 export const updateAccountRecoveryEmailSuccess = ( email ) =>
@@ -135,8 +161,14 @@ export const updateAccountRecoveryEmail = ( newEmail ) => ( dispatch ) => {
 		.undocumented()
 		.me()
 		.updateAccountRecoveryEmail( newEmail )
-		.then( () => dispatch( updateAccountRecoveryEmailSuccess( newEmail ) ) )
-		.catch( ( error ) => dispatch( updateAccountRecoveryEmailFailed( error ) ) );
+		.then( () => {
+			dispatch( updateAccountRecoveryEmailSuccess( newEmail ) );
+			dispatch( onAccountRecoverySettingsUpdateSuccess( { target: TARGET_EMAIL } ) );
+		} )
+		.catch( ( error ) => {
+			dispatch( updateAccountRecoveryEmailFailed( error ) );
+			dispatch( onAccountRecoverySettingsUpdateFailed( { target: TARGET_EMAIL } ) );
+		} );
 };
 
 export const deleteAccountRecoveryEmailSuccess = () => deleteSuccessAction( TARGET_EMAIL );
@@ -154,8 +186,14 @@ export const deleteAccountRecoveryEmail = () => ( dispatch ) => {
 		.undocumented()
 		.me()
 		.deleteAccountRecoveryEmail()
-		.then( () => dispatch( deleteAccountRecoveryEmailSuccess() ) )
-		.catch( ( error ) => dispatch( deleteAccountRecoveryEmailFailed( error ) ) );
+		.then( () => {
+			dispatch( deleteAccountRecoveryEmailSuccess() );
+			dispatch( onAccountRecoverySettingsDeleteSuccess( { target: TARGET_EMAIL } ) );
+		} )
+		.catch( ( error ) => {
+			dispatch( deleteAccountRecoveryEmailFailed( error ) );
+			dispatch( onAccountRecoverySettingsDeleteFailed( { target: TARGET_EMAIL } ) );
+		} );
 };
 
 export const resendAccountRecoveryEmailValidationSuccess = () => {
@@ -183,8 +221,14 @@ export const resendAccountRecoveryEmailValidation = () => ( dispatch ) => {
 		.undocumented()
 		.me()
 		.newValidationAccountRecoveryEmail()
-		.then( () => dispatch( resendAccountRecoveryEmailValidationSuccess() ) )
-		.catch( ( error ) => dispatch( resendAccountRecoveryEmailValidationFailed( error ) ) );
+		.then( () => {
+			dispatch( resendAccountRecoveryEmailValidationSuccess() );
+			dispatch( onResentAccountRecoveryEmailValidationSuccess( { target: TARGET_EMAIL } ) );
+		} )
+		.catch( ( error ) => {
+			dispatch( resendAccountRecoveryEmailValidationFailed( error ) );
+			dispatch( onResentAccountRecoveryEmailValidationFailed( { target: TARGET_EMAIL } ) );
+		} );
 };
 
 export const resendAccountRecoveryPhoneValidationSuccess = () => {
@@ -212,8 +256,14 @@ export const resendAccountRecoveryPhoneValidation = () => ( dispatch ) => {
 		.undocumented()
 		.me()
 		.newValidationAccountRecoveryPhone()
-		.then( () => dispatch( resendAccountRecoveryPhoneValidationSuccess() ) )
-		.catch( ( error ) => dispatch( resendAccountRecoveryPhoneValidationFailed( error ) ) );
+		.then( () => {
+			dispatch( resendAccountRecoveryPhoneValidationSuccess() );
+			dispatch( onResentAccountRecoveryEmailValidationSuccess( { target: TARGET_PHONE } ) );
+		} )
+		.catch( ( error ) => {
+			dispatch( resendAccountRecoveryPhoneValidationFailed( error ) );
+			dispatch( onResentAccountRecoveryEmailValidationFailed( { target: TARGET_PHONE } ) );
+		} );
 };
 
 export const validateAccountRecoveryPhoneSuccess = () => {
@@ -238,6 +288,12 @@ export const validateAccountRecoveryPhone = ( code ) => ( dispatch ) => {
 		.undocumented()
 		.me()
 		.validateAccountRecoveryPhone( replace( code, /\s/g, '' ) )
-		.then( () => dispatch( validateAccountRecoveryPhoneSuccess() ) )
-		.catch( ( error ) => dispatch( validateAccountRecoveryPhoneFailed( error ) ) );
+		.then( () => {
+			dispatch( validateAccountRecoveryPhoneSuccess() );
+			dispatch( onAccountRecoveryPhoneValidationSuccess() );
+		} )
+		.catch( ( error ) => {
+			dispatch( validateAccountRecoveryPhoneFailed( error ) );
+			dispatch( onAccountRecoveryPhoneValidationFailed() );
+		} );
 };

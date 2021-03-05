@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import user from 'calypso/lib/user';
 
@@ -10,7 +11,7 @@ import user from 'calypso/lib/user';
  */
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import notices from 'calypso/notices';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
@@ -63,13 +64,13 @@ class HelpUnverifiedWarning extends Component {
 					const nextResendState = RESEND_SUCCESS;
 
 					this.setState( { resendState: nextResendState } );
-					notices.success( resendStateToMessage( nextResendState ) );
+					this.props.successNotice( resendStateToMessage( nextResendState ) );
 				} )
 				.catch( () => {
 					const nextResendState = RESEND_ERROR;
 
 					this.setState( { resendState: nextResendState } );
-					notices.error( resendStateToMessage( nextResendState ) );
+					this.props.errorNotice( resendStateToMessage( nextResendState ) );
 				} );
 		};
 
@@ -91,4 +92,7 @@ class HelpUnverifiedWarning extends Component {
 	}
 }
 
-export default localize( HelpUnverifiedWarning );
+export default connect( null, {
+	errorNotice,
+	successNotice,
+} )( localize( HelpUnverifiedWarning ) );

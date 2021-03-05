@@ -13,7 +13,7 @@ import CSSTransition from 'react-transition-group/CSSTransition';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import Comment from 'calypso/my-sites/comments/comment';
 import CommentListHeader from 'calypso/my-sites/comments/comment-list/comment-list-header';
 import CommentNavigation from 'calypso/my-sites/comments/comment-navigation';

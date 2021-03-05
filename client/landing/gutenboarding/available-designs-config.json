@@ -16,9 +16,9 @@
 		},
 		{
 			"title": "Twenty Twenty One",
-			"slug": "twentytwentyone-blocks",
-			"template": "twentytwentyone-blocks",
-			"theme": "twentytwentyone-blocks",
+			"slug": "tt1-blocks",
+			"template": "tt1-blocks",
+			"theme": "tt1-blocks",
 			"fonts": {
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
@@ -51,7 +51,7 @@
 				"base": "Open Sans"
 			},
 			"categories": [ "featured", "blog" ],
-			"is_premium": true,
+			"is_premium": false,
 			"features": []
 		},
 		{
@@ -77,7 +77,7 @@
 				"base": "Fira Sans"
 			},
 			"categories": [ "featured", "business" ],
-			"is_premium": true,
+			"is_premium": false,
 			"features": []
 		},
 		{
@@ -130,6 +130,7 @@
 			},
 			"categories": [ "featured", "portfolio" ],
 			"is_premium": false,
+			"is_alpha": true,
 			"features": []
 		},
 		{
@@ -302,30 +303,58 @@
 			"features": []
 		},
 		{
-			"title": "Leven (Anchor Placeholder, to be removed)",
-			"slug": "leven",
-			"template": "leven",
-			"theme": "leven",
+			"title": "Gilbert",
+			"slug": "gilbert",
+			"template": "gilbert",
+			"theme": "spearhead",
 			"fonts": {
-				"headings": "Chivo",
-				"base": "Open Sans"
+				"headings": "Roboto",
+				"base": "Roboto"
 			},
-			"categories": [ "featured", "portfolio", "small business" ],
+			"categories": [ "featured" ],
 			"is_premium": false,
 			"features": [ "anchorfm" ]
 		},
 		{
-			"title": "Gibbs (Anchor Placeholder, to be removed)",
-			"slug": "gibbs",
-			"template": "gibbs",
-			"theme": "rockfield",
+			"title": "Riley",
+			"slug": "riley",
+			"template": "riley",
+			"theme": "spearhead",
 			"fonts": {
-				"headings": "Fira Sans",
-				"base": "Fira Sans"
+				"headings": "Raleway",
+				"base": "Cabin"
 			},
-			"categories": [ "featured", "restaurant", "small business" ],
+			"categories": [ "featured" ],
 			"is_premium": false,
 			"features": [ "anchorfm" ]
+		},
+		{
+			"title": "Balan",
+			"slug": "balan",
+			"template": "balan",
+			"theme": "mayland",
+			"preview": "static",
+			"fonts": {
+				"headings": "Rubik",
+				"base": "Roboto"
+			},
+			"categories": [ "featured" ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Pollard",
+			"slug": "pollard",
+			"template": "pollard",
+			"theme": "mayland",
+			"preview": "static",
+			"fonts": {
+				"headings": "Cabin",
+				"base": "Raleway"
+			},
+			"categories": [ "featured" ],
+			"is_premium": false,
+			"features": []
 		}
 	]
 }

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { get, has, isInteger, noop } from 'lodash';
+import { get, has, isInteger } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,7 +22,7 @@ import {
 	isJetpackSite,
 	isSSOEnabled,
 } from 'calypso/state/sites/selectors';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { Placeholder } from './placeholder';
 
 import { makeLayout, render } from 'calypso/controller';
@@ -32,6 +32,8 @@ import { REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO } from 'calypso/state/desktop/
 import { notifyDesktopCannotOpenEditor } from 'calypso/state/desktop/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { stopEditingPost } from 'calypso/state/editor/actions';
+
+const noop = () => {};
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/post/' ) ) {
@@ -199,8 +201,8 @@ function getPressThisData( query ) {
 }
 
 function getAnchorFmData( query ) {
-	const { anchor_podcast, anchor_episode, spotify_show_url } = query;
-	return { anchor_podcast, anchor_episode, spotify_show_url };
+	const { anchor_podcast, anchor_episode, spotify_url } = query;
+	return { anchor_podcast, anchor_episode, spotify_url };
 }
 
 export const post = ( context, next ) => {

@@ -10,11 +10,11 @@ import { translate } from 'i18n-calypso';
  */
 import MarketingTools from './tools';
 import MarketingBusinessTools from './business-tools';
-import notices from 'calypso/notices';
 import Sharing from './main';
 import SharingButtons from './buttons/buttons';
 import SharingConnections from './connections/connections';
 import Traffic from './traffic/';
+import UltimateTrafficGuide from './ultimate-traffic-guide';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
 	getSiteSlug,
@@ -22,6 +22,7 @@ import {
 	isJetpackModuleActive,
 	getSiteOption,
 } from 'calypso/state/sites/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
@@ -86,8 +87,8 @@ export const connections = ( context, next ) => {
 	const siteId = getSelectedSiteId( state );
 
 	if ( siteId && ! canCurrentUser( state, siteId, 'publish_posts' ) ) {
-		notices.error(
-			translate( 'You are not authorized to manage sharing settings for this site.' )
+		dispatch(
+			errorNotice( translate( 'You are not authorized to manage sharing settings for this site.' ) )
 		);
 	}
 
@@ -114,8 +115,8 @@ export const sharingButtons = ( context, next ) => {
 	const siteId = getSelectedSiteId( state );
 
 	if ( siteId && ! canCurrentUser( state, siteId, 'manage_options' ) ) {
-		notices.error(
-			translate( 'You are not authorized to manage sharing settings for this site.' )
+		store.dispatch(
+			errorNotice( translate( 'You are not authorized to manage sharing settings for this site.' ) )
 		);
 	}
 
@@ -127,9 +128,11 @@ export const sharingButtons = ( context, next ) => {
 		( ! isJetpackModuleActive( state, siteId, 'sharedaddy' ) ||
 			versionCompare( siteJetpackVersion, '3.4-dev', '<' ) )
 	) {
-		notices.error(
-			translate(
-				'This page is only available to Jetpack sites running version 3.4 or higher with the Sharing module activated.'
+		store.dispatch(
+			errorNotice(
+				translate(
+					'This page is only available to Jetpack sites running version 3.4 or higher with the Sharing module activated.'
+				)
 			)
 		);
 	}
@@ -141,6 +144,12 @@ export const sharingButtons = ( context, next ) => {
 
 export const traffic = ( context, next ) => {
 	context.contentComponent = createElement( Traffic );
+
+	next();
+};
+
+export const ultimateTrafficGuide = ( context, next ) => {
+	context.contentComponent = createElement( UltimateTrafficGuide );
 
 	next();
 };

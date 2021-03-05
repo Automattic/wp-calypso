@@ -24,16 +24,14 @@
 }
 
 .more-info-box__more-button.button {
-	display: flex;
+	display: inline-flex;
 	align-items: center;
 
-	max-width: 310px;
 	margin: 0 auto;
 	padding: 10px 16px 10px 40px;
 
 	border: solid 2px currentColor;
 	border-radius: 4px;
-	color: var( --studio-jetpack-green-40 );
 
 	font-size: 1rem;
 	font-weight: 700;
@@ -45,9 +43,12 @@
 	margin-left: 8px;
 }
 
-/* I5 specifics */
 .is-section-jetpack-cloud-pricing {
 	.more-info-box__more-container {
 		background-color: rgba( var( --studio-jetpack-green-10-rgb ), 0.1 );
+	}
+
+	.more-info-box__more-button.button {
+		color: var( --studio-jetpack-green-40 );
 	}
 }

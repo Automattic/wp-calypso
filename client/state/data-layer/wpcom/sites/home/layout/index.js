@@ -6,7 +6,7 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { HOME_LAYOUT_REQUEST, HOME_LAYOUT_SKIP_CURRENT_VIEW } from 'calypso/state/action-types';
 import { setHomeLayout } from 'calypso/state/home/actions';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 const requestLayout = ( action ) => {
 	const isDev = config.isEnabled( 'home/layout-dev' ) || action.isDev;

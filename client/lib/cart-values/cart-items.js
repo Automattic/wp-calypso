@@ -23,12 +23,13 @@ import emailValidator from 'email-validator';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GSUITE_BASIC_SLUG,
 	GSUITE_EXTRA_LICENSE_SLUG,
 } from 'calypso/lib/gsuite/constants';
+import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import {
 	formatProduct,
 	getDomain,
@@ -43,7 +44,8 @@ import {
 	isEcommerce,
 	isFreeTrial,
 	isFreeWordPressComDomain,
-	isGoogleApps,
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
+	isGSuiteOrGoogleWorkspace,
 	isJetpackPlan,
 	isJetpackProduct,
 	isNoAds,
@@ -58,6 +60,8 @@ import {
 	isUnlimitedThemes,
 	isVideoPress,
 	isConciergeSession,
+	isTrafficGuide,
+	isTitanMail,
 	isMonthly,
 } from 'calypso/lib/products-values';
 import sortProducts from 'calypso/lib/products-values/sort';
@@ -552,6 +556,16 @@ export function hasConciergeSession( cart ) {
 }
 
 /**
+ * Determines whether there is a traffic guide item in the specified shopping cart.
+ *
+ * @param {CartValue} cart - cart as `CartValue` object
+ * @returns {boolean} true if there is a traffic guide item, false otherwise
+ */
+export function hasTrafficGuide( cart ) {
+	return some( getAllCartItems( cart ), isTrafficGuide );
+}
+
+/**
  * Returns a bill period of given cartItem
  *
  * @param {object} cartItem - cartItem
@@ -735,14 +749,13 @@ export function domainTransfer( properties ) {
 }
 
 /**
- * Retrieves all the G Suite items in the specified shopping cart.
- * Out-dated name Google Apps is still used here for consistency in naming.
+ * Retrieves all the items in the specified shopping cart for G Suite or Google Workspace.
  *
  * @param {CartValue} cart - cart as `CartValue` object
  * @returns {CartItemValue[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 export function getGoogleApps( cart ) {
-	return filter( getAllCartItems( cart ), isGoogleApps );
+	return filter( getAllCartItems( cart ), isGSuiteOrExtraLicenseOrGoogleWorkspace );
 }
 
 export function googleApps( properties ) {
@@ -752,9 +765,12 @@ export function googleApps( properties ) {
 			? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
 			: GSUITE_BASIC_SLUG );
 
-	const item = domainItem( productSlug, properties.meta ? properties.meta : properties.domain );
-
-	return assign( item, { extra: { google_apps_users: properties.users } } );
+	return assign( domainItem( productSlug, properties.meta ?? properties.domain ), {
+		extra: { google_apps_users: properties.users },
+		...( productSlug === GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
+			? { quantity: properties.quantity }
+			: {} ),
+	} );
 }
 
 export function googleAppsExtraLicenses( properties ) {
@@ -763,14 +779,19 @@ export function googleAppsExtraLicenses( properties ) {
 	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
 
-export function fillGoogleAppsRegistrationData( cart, registrationData ) {
-	const googleAppsItems = filter( getAllCartItems( cart ), isGoogleApps );
-	return flow.apply(
-		null,
-		googleAppsItems.map( function ( item ) {
-			item.extra = assign( item.extra, { google_apps_registration_data: registrationData } );
-			return addCartItem( item );
-		} )
+/**
+ * Creates a new shopping cart item for Titan Mail Monthly.
+ *
+ * @param {object} properties - list of properties
+ * @returns {CartItemValue} the new item as `CartItemValue` object
+ */
+export function titanMailMonthly( properties ) {
+	return assign(
+		domainItem( TITAN_MAIL_MONTHLY_SLUG, properties.meta ?? properties.domain, properties.source ),
+		{
+			quantity: properties.quantity,
+			extra: properties.extra,
+		}
 	);
 }
 
@@ -817,7 +838,11 @@ export function hasInvalidAlternateEmailDomain( cart, contactDetails ) {
 }
 
 export function hasGoogleApps( cart ) {
-	return some( getAllCartItems( cart ), isGoogleApps );
+	return some( getAllCartItems( cart ), isGSuiteOrExtraLicenseOrGoogleWorkspace );
+}
+
+export function hasTitanMail( cart ) {
+	return some( getAllCartItems( cart ), isTitanMail );
 }
 
 export function customDesignItem() {
@@ -960,8 +985,12 @@ export function getRenewalItemFromProduct( product, properties ) {
 		cartItem = planItem( product.product_slug );
 	}
 
-	if ( isGoogleApps( product ) ) {
+	if ( isGSuiteOrGoogleWorkspace( product ) ) {
 		cartItem = googleApps( product );
+	}
+
+	if ( isTitanMail( product ) ) {
+		cartItem = titanMailMonthly( product );
 	}
 
 	if ( isSiteRedirect( product ) ) {
@@ -1279,12 +1308,36 @@ export function isPaidDomain( domainPriceRule ) {
 	return 'PRICE' === domainPriceRule;
 }
 
-export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion, isDomainOnly ) {
+const isMonthlyOrFreeFlow = ( flowName ) => {
+	return (
+		flowName &&
+		[
+			'free',
+			'personal-monthly',
+			'premium-monthly',
+			'business-monthly',
+			'ecommerce-monthly',
+		].includes( flowName )
+	);
+};
+
+export function getDomainPriceRule(
+	withPlansOnly,
+	selectedSite,
+	cart,
+	suggestion,
+	isDomainOnly,
+	flowName
+) {
 	if ( ! suggestion.product_slug || suggestion.cost === 'Free' ) {
 		return 'FREE_DOMAIN';
 	}
 
 	if ( suggestion?.is_premium ) {
+		return 'PRICE';
+	}
+
+	if ( isMonthlyOrFreeFlow( flowName ) ) {
 		return 'PRICE';
 	}
 

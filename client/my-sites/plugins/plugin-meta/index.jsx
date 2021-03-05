@@ -24,14 +24,14 @@ import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'calypso/my-sites/plugins/plugin-remove-button';
 import PluginInformation from 'calypso/my-sites/plugins/plugin-information';
 import WpcomPluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button-wpcom';
 import PluginAutomatedTransfer from 'calypso/my-sites/plugins/plugin-automated-transfer';
-import { getExtensionSettingsPath } from 'calypso/my-sites/plugins/utils';
+import { getExtensionSettingsPath, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { userCan } from 'calypso/lib/site/utils';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { FEATURE_UPLOAD_PLUGINS, TYPE_BUSINESS } from 'calypso/lib/plans/constants';
@@ -45,8 +45,32 @@ import { isAutomatedTransferActive } from 'calypso/state/automated-transfer/sele
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import { isATEnabled } from 'calypso/lib/automated-transfer';
+import {
+	getPluginOnSites,
+	isPluginActionInProgress,
+} from 'calypso/state/plugins/installed/selectors';
 import { updatePlugin } from 'calypso/state/plugins/installed/actions';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
+import {
+	ACTIVATE_PLUGIN,
+	DEACTIVATE_PLUGIN,
+	DISABLE_AUTOUPDATE_PLUGIN,
+	ENABLE_AUTOUPDATE_PLUGIN,
+	REMOVE_PLUGIN,
+} from 'calypso/lib/plugins/constants';
+
+const activationPreventionActions = [
+	ENABLE_AUTOUPDATE_PLUGIN,
+	DISABLE_AUTOUPDATE_PLUGIN,
+	REMOVE_PLUGIN,
+];
+const autoupdatePreventionActions = [ ACTIVATE_PLUGIN, DEACTIVATE_PLUGIN, REMOVE_PLUGIN ];
+const removalPreventionActions = [
+	ACTIVATE_PLUGIN,
+	DEACTIVATE_PLUGIN,
+	ENABLE_AUTOUPDATE_PLUGIN,
+	DISABLE_AUTOUPDATE_PLUGIN,
+];
 
 /**
  * Style dependencies
@@ -178,6 +202,7 @@ export class PluginMeta extends Component {
 						plugin={ this.props.plugin }
 						site={ this.props.selectedSite }
 						isMock={ this.props.isMock }
+						disabled={ this.props.disabledActivation }
 					/>
 				) }
 				{ canToggleAutoupdate && (
@@ -186,6 +211,7 @@ export class PluginMeta extends Component {
 						site={ this.props.selectedSite }
 						wporg={ this.props.plugin.wporg }
 						isMock={ this.props.isMock }
+						disabled={ this.props.disabledAutoupdate }
 					/>
 				) }
 				{ canRemove && (
@@ -193,6 +219,7 @@ export class PluginMeta extends Component {
 						plugin={ this.props.plugin }
 						site={ this.props.selectedSite }
 						isMock={ this.props.isMock }
+						disabled={ this.props.disabledRemoval }
 					/>
 				) }
 			</div>
@@ -404,26 +431,35 @@ export class PluginMeta extends Component {
 	}
 
 	getAvailableNewVersions() {
+		const { pluginsOnSites } = this.props;
 		return this.props.sites
 			.map( ( site ) => {
 				if ( ! site.canUpdateFiles ) {
 					return null;
 				}
-				if ( site.plugin && site.plugin.update ) {
-					if ( 'error' !== site.plugin.update && site.plugin.update.new_version ) {
-						return {
-							title: site.title,
-							newVersion: site.plugin.update.new_version,
-						};
-					}
+
+				const sitePlugin = pluginsOnSites?.sites[ site.ID ];
+				if ( sitePlugin?.update?.new_version && 'error' !== sitePlugin.update.new_version ) {
+					return {
+						title: site.title,
+						newVersion: sitePlugin.update.new_version,
+					};
 				}
 			} )
 			.filter( ( newVersions ) => newVersions );
 	}
 
+	getPluginForSite = ( siteId ) => {
+		return {
+			...this.props.plugin,
+			...this.props.pluginsOnSites?.sites[ siteId ],
+		};
+	};
+
 	handlePluginUpdatesSingleSite = ( event ) => {
 		event.preventDefault();
-		this.props.updatePlugin( this.props.sites[ 0 ].ID, this.props.sites[ 0 ].plugin );
+		const plugin = this.getPluginForSite( this.props.sites[ 0 ].ID );
+		this.props.updatePlugin( this.props.sites[ 0 ].ID, plugin );
 
 		gaRecordEvent(
 			'Plugins',
@@ -433,7 +469,7 @@ export class PluginMeta extends Component {
 		);
 		recordTracksEvent( 'calypso_plugins_actions_update_plugin', {
 			site: this.props.sites[ 0 ].ID,
-			plugin: this.props.sites[ 0 ].plugin.slug,
+			plugin: plugin.slug,
 			selected_site: this.props.sites[ 0 ].ID,
 		} );
 	};
@@ -441,7 +477,7 @@ export class PluginMeta extends Component {
 	handlePluginUpdatesMultiSite = ( event ) => {
 		event.preventDefault();
 		this.props.sites.forEach( ( site ) => {
-			const { plugin } = site;
+			const plugin = this.getPluginForSite( site.ID );
 			if (
 				site.canUpdateFiles &&
 				plugin.update &&
@@ -501,10 +537,11 @@ export class PluginMeta extends Component {
 			'is-placeholder': !! this.props.isPlaceholder,
 		} );
 
-		const plugin =
-			this.props.selectedSite && this.props.sites[ 0 ] && this.props.sites[ 0 ].plugin
-				? this.props.sites[ 0 ].plugin
-				: this.props.plugin;
+		let { plugin } = this.props;
+		if ( this.props.selectedSite ) {
+			plugin = this.getPluginForSite( this.props.selectedSite.ID );
+		}
+
 		const path =
 			( ! this.props.selectedSite || plugin.active ) && getExtensionSettingsPath( plugin );
 
@@ -577,16 +614,31 @@ export class PluginMeta extends Component {
 	}
 }
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = ( state, { plugin, sites } ) => {
 	const siteId = getSelectedSiteId( state );
 	const selectedSite = getSelectedSite( state );
+	const siteIds = siteObjectsToSiteIds( sites );
 
 	return {
+		disabledActivation: isPluginActionInProgress(
+			state,
+			siteId,
+			plugin.id,
+			activationPreventionActions
+		),
+		disabledAutoupdate: isPluginActionInProgress(
+			state,
+			siteId,
+			plugin.id,
+			autoupdatePreventionActions
+		),
+		disabledRemoval: isPluginActionInProgress( state, siteId, plugin.id, removalPreventionActions ),
 		atEnabled: isATEnabled( selectedSite ),
 		isTransferring: isAutomatedTransferActive( state, siteId ),
 		automatedTransferSite: isSiteAutomatedTransfer( state, siteId ),
 		isVipSite: isVipSite( state, siteId ),
 		slug: getSiteSlug( state, siteId ),
+		pluginsOnSites: getPluginOnSites( state, siteIds, plugin.slug ),
 	};
 };
 

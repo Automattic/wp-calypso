@@ -23,7 +23,7 @@
 .reader__content {
 	sup, sub {
 		position: relative;
-		font-size: 0.83em;
+		font-size: 0.875rem;
 	}
 
 	sup {
@@ -218,11 +218,11 @@
 .is-group-reader .comment-button__label-status,
 .is-group-reader .like-button__label-status {
 	@media( max-width: 530px ) {
-		display: none;
+		@include screen-reader-text();
 	}
 
 	@media( min-width: 661px ) and ( max-width: 790px ) {
-		display: none;
+		@include screen-reader-text();
 	}
 }
 

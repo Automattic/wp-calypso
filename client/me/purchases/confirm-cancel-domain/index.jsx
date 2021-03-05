@@ -33,7 +33,6 @@ import { isDataLoading } from '../utils';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isDomainRegistration } from 'calypso/lib/products-values';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
-import notices from 'calypso/notices';
 import { cancelPurchase, purchasesRoot } from 'calypso/me/purchases/paths';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { receiveDeletedSite } from 'calypso/state/sites/actions';
@@ -43,6 +42,7 @@ import titles from 'calypso/me/purchases/titles';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
@@ -135,7 +135,7 @@ class ConfirmCancelDomain extends React.Component {
 			}
 
 			if ( error ) {
-				notices.error(
+				this.props.errorNotice(
 					error.message ||
 						translate(
 							'Unable to cancel your purchase. Please try again later or contact support.'
@@ -145,11 +145,11 @@ class ConfirmCancelDomain extends React.Component {
 				return;
 			}
 
-			notices.success(
+			this.props.successNotice(
 				translate( '%(purchaseName)s was successfully cancelled and refunded.', {
 					args: { purchaseName },
 				} ),
-				{ persistent: true }
+				{ displayOnNextPage: true }
 			);
 
 			this.props.refreshSitePlans( purchase.siteId );
@@ -339,8 +339,10 @@ export default connect(
 	},
 	{
 		clearPurchases,
+		errorNotice,
 		refreshSitePlans,
 		receiveDeletedSite,
 		setAllSitesSelected,
+		successNotice,
 	}
 )( localize( ConfirmCancelDomain ) );

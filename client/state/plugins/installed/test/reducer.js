@@ -7,7 +7,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { ACTIVATE_PLUGIN } from '../constants';
+import { ACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { isRequesting, plugins } from '../reducer';
 import status from '../status/reducer';
 import { akismet, jetpack } from './fixtures/plugins';

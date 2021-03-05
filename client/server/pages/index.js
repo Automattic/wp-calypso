@@ -9,7 +9,7 @@ import crypto from 'crypto';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, includes, pick, snakeCase, split } from 'lodash';
+import { get, includes, pick, snakeCase } from 'lodash';
 import bodyParser from 'body-parser';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
@@ -17,7 +17,7 @@ import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import sanitize from 'calypso/server/sanitize';
 import utils from 'calypso/server/bundler/utils';
 import { pathToRegExp } from 'calypso/utils';
@@ -34,6 +34,7 @@ import {
 } from 'calypso/server/render';
 import stateCache from 'calypso/server/state-cache';
 import getBootstrappedUser from 'calypso/server/user-bootstrap';
+import isWpMobileApp from 'calypso/server/lib/is-wp-mobile-app';
 import { createReduxStore } from 'calypso/state';
 import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
 import { setStore } from 'calypso/state/redux-store';
@@ -174,6 +175,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	context.app = {
 		// use ipv4 address when is ipv4 mapped address
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
+		isWpMobileApp: isWpMobileApp( request.useragent.source ),
 		isDebug,
 		staticUrls: staticFilesUrls,
 	};
@@ -535,7 +537,7 @@ const renderServerError = ( entrypoint = 'entry-main' ) => ( err, req, res, next
  */
 function handleLocaleSubdomains( req, res, next ) {
 	const langSlug = req.hostname?.endsWith( config( 'hostname' ) )
-		? split( req.hostname, '.' )[ 0 ]
+		? req.hostname.split( '.' )[ 0 ]
 		: null;
 
 	if ( langSlug && includes( config( 'magnificent_non_en_locales' ), langSlug ) ) {

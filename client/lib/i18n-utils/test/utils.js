@@ -20,7 +20,7 @@ import {
 	isMagnificentLocale,
 } from 'calypso/lib/i18n-utils';
 
-jest.mock( 'calypso/config', () => ( key ) => {
+jest.mock( '@automattic/calypso-config', () => ( key ) => {
 	if ( 'i18n_default_locale_slug' === key ) {
 		return 'en';
 	}
@@ -247,7 +247,7 @@ describe( 'utils', () => {
 	describe( '#localizeUrl', () => {
 		test( 'localizeUrl is still provided by client/lib/i18n-utils', () => {
 			expect( localizeUrl( 'https://wordpress.com/', 'de' ) ).toEqual(
-				'https://de.wordpress.com/'
+				'https://wordpress.com/de/'
 			);
 		} );
 

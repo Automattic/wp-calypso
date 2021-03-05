@@ -3,7 +3,7 @@
  */
 import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
-import type { DomainSuggestions, Plans, WPCOMFeatures } from '@automattic/data-stores';
+import type { DomainSuggestions, WPCOMFeatures } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -13,14 +13,6 @@ import type { OnboardAction } from './actions';
 import type { FontPair } from '../../constants';
 
 type FeatureId = WPCOMFeatures.FeatureId;
-
-// Returns true if the url has a `?latest`, which is used to enable experimental features
-export function hasExperimentalQueryParam() {
-	if ( typeof window !== 'undefined' ) {
-		return new URLSearchParams( window.location.search ).has( 'latest' );
-	}
-	return false;
-}
 
 const domain: Reducer< DomainSuggestions.DomainSuggestion | undefined, OnboardAction > = (
 	state,
@@ -75,16 +67,6 @@ const hasUsedPlansStep: Reducer< boolean, OnboardAction > = ( state = false, act
 	return state;
 };
 
-const isExperimental: Reducer< boolean, OnboardAction > = (
-	state = hasExperimentalQueryParam(),
-	action
-) => {
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return false;
-	}
-	return state;
-};
-
 const isRedirecting: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'SET_IS_REDIRECTING' ) {
 		return action.isRedirecting;
@@ -108,9 +90,9 @@ const pageLayouts: Reducer< string[], OnboardAction > = ( state = [], action ) =
 	return state;
 };
 
-const plan: Reducer< Plans.Plan | undefined, OnboardAction > = ( state, action ) => {
-	if ( action.type === 'SET_PLAN' ) {
-		return action.plan;
+const planProductId: Reducer< number | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_PLAN_PRODUCT_ID' ) {
+		return action.planProductId;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return undefined;
@@ -259,9 +241,8 @@ const reducer = combineReducers( {
 	siteTitle,
 	siteVertical,
 	showSignupDialog,
-	plan,
+	planProductId,
 	wasVerticalSkipped,
-	isExperimental,
 	randomizedDesigns,
 	hasOnboardingStarted,
 } );

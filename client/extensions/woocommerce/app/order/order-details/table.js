@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
-import { every, find, findIndex, get, isNaN, noop } from 'lodash';
+import { every, find, findIndex, get } from 'lodash';
 import formatCurrency from '@automattic/format-currency';
 
 /**
@@ -36,6 +36,8 @@ import OrderTotalRow from './row-total';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
+
+const noop = () => {};
 
 class OrderDetailsTable extends Component {
 	static propTypes = {
@@ -102,7 +104,7 @@ class OrderDetailsTable extends Component {
 		const { order } = this.props;
 		// Name is `quantity-x`, where x is the ID of the item
 		let id = event.target.name.split( '-' )[ 1 ];
-		if ( ! isNaN( parseInt( id ) ) ) {
+		if ( ! Number.isNaN( parseInt( id ) ) ) {
 			id = parseInt( id );
 		}
 		const item = find( order.line_items, { id } );
@@ -387,7 +389,7 @@ class OrderDetailsTable extends Component {
 						currency={ order.currency }
 						label={ translate( 'Shipping' ) }
 						initialValue={ initialShippingValue }
-						value={ isNaN( currentShippingValue ) ? '' : currentShippingValue }
+						value={ Number.isNaN( currentShippingValue ) ? '' : currentShippingValue }
 						taxValue={ getOrderShippingTax( order ) }
 						showTax={ showTax }
 						isEditable={ isEditing }

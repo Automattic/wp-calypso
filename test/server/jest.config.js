@@ -1,6 +1,6 @@
 module.exports = {
 	cacheDirectory: '<rootDir>/../.cache/jest',
-	modulePaths: [ '<rootDir>/../test', '<rootDir>/server', '<rootDir>', '<rootDir>/extensions' ],
+	modulePaths: [ '<rootDir>/extensions' ],
 	rootDir: '../../client',
 	roots: [ '<rootDir>/server' ],
 	testEnvironment: 'node',
@@ -15,8 +15,8 @@ module.exports = {
 		'node_modules[\\/\\\\](?!draft-js|calypso)(?!.*\\.(?:gif|jpg|jpeg|png|svg|scss|sass|css))',
 	],
 	moduleNameMapper: {
-		'^calypso/config$': 'calypso/server/config',
-		'^calypso/config/(.*)$': 'calypso/server/config/$1',
+		'^@automattic/calypso-config$': 'calypso/server/config',
+		'^@automattic/calypso-config/(.*)$': 'calypso/server/config/$1',
 	},
 	testMatch: [ '<rootDir>/server/**/test/*.[jt]s?(x)', '!**/.eslintrc.*' ],
 	timers: 'fake',

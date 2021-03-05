@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { NPS_SURVEY_DIALOG_IS_SHOWING } from 'calypso/state/action-types';
 import {
 	setNpsSurveyEligibility,

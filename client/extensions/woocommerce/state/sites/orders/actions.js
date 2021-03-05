@@ -1,8 +1,4 @@
 /**
- * External dependencies
- */
-import { isArray, noop } from 'lodash';
-/**
  * Internal dependencies
  */
 import {
@@ -26,6 +22,8 @@ import {
 	WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
+
+const noop = () => {};
 
 export const deleteOrder = ( site, orderId ) => {
 	return {
@@ -75,7 +73,7 @@ export const failOrders = ( siteId, query = {}, error = false ) => {
 
 export const updateOrders = ( siteId, query = {}, orders = [], total = 0 ) => {
 	// This passed through the API layer successfully, but failed at the remote site.
-	if ( ! isArray( orders ) ) {
+	if ( ! Array.isArray( orders ) ) {
 		return failOrders( siteId, query, orders );
 	}
 	return {

@@ -20,7 +20,7 @@ import {
 	sidebar,
 	updateLastRoute,
 } from './controller';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { addMiddleware } from 'redux-dynamic-middlewares';
 

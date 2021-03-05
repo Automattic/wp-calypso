@@ -7,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { READER_FOLLOW } from 'calypso/state/reader/action-types';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';

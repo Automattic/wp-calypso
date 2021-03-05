@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { filter, find, get, noop } from 'lodash';
+import { filter, find, get } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 
@@ -20,6 +20,8 @@ import TranslatableString from 'calypso/components/translatable/proptype';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class SelectDropdown extends Component {
 	static Item = DropdownItem;

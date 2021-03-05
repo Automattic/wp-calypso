@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 
 const headerClass = 'features-helper__feature-header';
@@ -15,7 +15,7 @@ const enabledClass = 'features-helper__feature-item-enabled';
 const disabledClass = 'features-helper__feature-item-disabled';
 
 export const FeatureList = React.memo( () => {
-	const currentXLProjects = [ 'anchor-fm-dev', 'nav-unification' ];
+	const currentXLProjects = [];
 	const enabledFeatures = config.enabledFeatures();
 	return (
 		<>

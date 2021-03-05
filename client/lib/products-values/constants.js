@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 
 // Jetpack products constants
 export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
@@ -15,10 +15,14 @@ export const PRODUCT_WPCOM_SEARCH = 'wpcom_search';
 export const PRODUCT_WPCOM_SEARCH_MONTHLY = 'wpcom_search_monthly';
 export const PRODUCT_JETPACK_SCAN = 'jetpack_scan';
 export const PRODUCT_JETPACK_SCAN_MONTHLY = 'jetpack_scan_monthly';
+export const PRODUCT_JETPACK_SCAN_REALTIME = 'jetpack_scan_realtime';
+export const PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY = 'jetpack_scan_realtime_monthly';
 export const PRODUCT_JETPACK_ANTI_SPAM = 'jetpack_anti_spam';
 export const PRODUCT_JETPACK_ANTI_SPAM_MONTHLY = 'jetpack_anti_spam_monthly';
 export const PRODUCT_JETPACK_CRM = 'jetpack_crm';
 export const PRODUCT_JETPACK_CRM_MONTHLY = 'jetpack_crm_monthly';
+export const PRODUCT_JETPACK_CRM_FREE = 'jetpack_crm_free';
+export const PRODUCT_JETPACK_CRM_FREE_MONTHLY = 'jetpack_crm_free_monthly';
 
 export const JETPACK_PRODUCTS_BY_TERM = [
 	{
@@ -49,6 +53,10 @@ export const JETPACK_PRODUCTS_BY_TERM = [
 		yearly: PRODUCT_JETPACK_CRM,
 		monthly: PRODUCT_JETPACK_CRM_MONTHLY,
 	},
+	{
+		yearly: PRODUCT_JETPACK_CRM_FREE,
+		monthly: PRODUCT_JETPACK_CRM_FREE_MONTHLY,
+	},
 ];
 
 export const JETPACK_BACKUP_PRODUCTS_YEARLY = [
@@ -71,9 +79,18 @@ export const JETPACK_SEARCH_PRODUCTS = [
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
 ];
 
-export const JETPACK_SCAN_PRODUCTS = [ PRODUCT_JETPACK_SCAN, PRODUCT_JETPACK_SCAN_MONTHLY ];
+export const JETPACK_SCAN_PRODUCTS = [
+	PRODUCT_JETPACK_SCAN,
+	PRODUCT_JETPACK_SCAN_MONTHLY,
+	PRODUCT_JETPACK_SCAN_REALTIME,
+	PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY,
+];
 
 export const JETPACK_CRM_PRODUCTS = [ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ];
+export const JETPACK_CRM_FREE_PRODUCTS = [
+	PRODUCT_JETPACK_CRM_FREE,
+	PRODUCT_JETPACK_CRM_FREE_MONTHLY,
+];
 
 export const JETPACK_ANTI_SPAM_PRODUCTS = [
 	PRODUCT_JETPACK_ANTI_SPAM,
@@ -122,3 +139,5 @@ export const JETPACK_PRODUCT_PRICE_MATRIX = {
 		ratio: 12,
 	},
 };
+
+export const WPCOM_TRAFFIC_GUIDE = 'traffic-guide';

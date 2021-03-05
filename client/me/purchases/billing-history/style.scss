@@ -158,32 +158,28 @@
 
 // View Receipt
 .billing-history__app-overview {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
 	min-height: 65px;
-	padding: 10px 40px;
+	padding: 10px 20px;
 	position: relative;
-	overflow: auto;
 
-	@include breakpoint-deprecated( '<480px' ) {
-		padding: 10px 20px;
+	@include breakpoint-deprecated( '>480px' ) {
+		flex-wrap: nowrap;
+		padding: 10px 40px;
 	}
 
 	img {
-		max-width: 65px;
-		min-height: 65px;
-		float: left;
-
-		@include breakpoint-deprecated( '<480px' ) {
-			left: 20px;
-		}
+		width: 65px;
+		height: 65px;
 	}
 
 	h2 {
-		clear: none;
-		float: left;
-		padding: 10px 20px;
+		padding: 0 10px;
 
-		@include breakpoint-deprecated( '<480px' ) {
-			padding-top: 0;
+		@include breakpoint-deprecated( '>480px' ) {
+			padding: 0 20px;
 		}
 
 		small {
@@ -194,10 +190,10 @@
 	.billing-history__transaction-date {
 		color: var( --color-neutral );
 		font-size: $font-body-small;
-		font-style: italic;
-		padding: 5px 0 0;
+		padding: 20px 0 0;
 
 		@include breakpoint-deprecated( '>480px' ) {
+			padding: 5px 0 0;
 			position: absolute;
 			top: 10px;
 			right: 40px;
@@ -227,7 +223,7 @@ textarea.billing-history__billing-details-editable {
 	background: var( --color-neutral-0 );
 	list-style: none;
 	padding: 20px 40px;
-	margin: 20px 0 0;
+	margin: 10px 0 0;
 	overflow: auto;
 
 	@include breakpoint-deprecated( '<480px' ) {
@@ -379,6 +375,7 @@ textarea.billing-history__billing-details-editable {
 .billing-history__receipt-card.is-placeholder {
 	.billing-history__app-overview {
 		display: flex;
+		flex-wrap: nowrap;
 		margin-bottom: 16px;
 
 		.billing-history__placeholder-image,

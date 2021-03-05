@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { filter, find, get, intersection, noop, reduce, uniqBy, values } from 'lodash';
+import { filter, find, get, intersection, reduce, uniqBy, values } from 'lodash';
 import { localize } from 'i18n-calypso';
 import formatCurrency from '@automattic/format-currency';
 
@@ -25,6 +25,8 @@ import { getVariationsForProduct } from 'woocommerce/state/sites/product-variati
 import { areVariationsSelected, isProductSelected, isVariableProduct } from './utils';
 import ProductVariations from './variations';
 import ImageThumb from 'woocommerce/components/image-thumb';
+
+const noop = () => {};
 
 class ProductSearchRow extends Component {
 	static propTypes = {

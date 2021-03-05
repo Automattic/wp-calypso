@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import {
@@ -11,6 +16,7 @@ import {
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import wp from 'calypso/lib/wp';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/billing-transactions/init';
 
@@ -22,7 +28,6 @@ export const requestBillingTransactions = () => {
 
 		return wp
 			.undocumented()
-			.me()
 			.billingHistory()
 			.then( ( { billing_history, upcoming_charges } ) => {
 				dispatch( {
@@ -59,6 +64,7 @@ export const sendBillingReceiptEmail = ( receiptId ) => {
 					type: BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
 					receiptId,
 				} );
+				dispatch( successNotice( translate( 'Your receipt was sent by email successfully.' ) ) );
 			} )
 			.catch( ( error ) => {
 				dispatch( {
@@ -66,6 +72,13 @@ export const sendBillingReceiptEmail = ( receiptId ) => {
 					receiptId,
 					error,
 				} );
+				dispatch(
+					errorNotice(
+						translate(
+							'There was a problem sending your receipt. Please try again later or contact support.'
+						)
+					)
+				);
 			} );
 	};
 };

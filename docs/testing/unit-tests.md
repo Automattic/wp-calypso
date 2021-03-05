@@ -181,7 +181,7 @@ For instance, in Calypso, we use the ['config'](https://github.com/Automattic/wp
 
 ```javascript
 // bilbo.js
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 export const isBilboVisible = () => ( config.isEnabled( 'the-ring' ) ? false : true );
 ```
 
@@ -189,7 +189,7 @@ To test the behaviour under each condition, we stub the config object and use a 
 
 ```javascript
 // test/bilbo.js
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { isBilboVisible } from '../bilbo';
 
 jest.mock( 'config', () => ( {

@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { groupBy, head, isEmpty, map, noop, size, values } from 'lodash';
+import { groupBy, head, isEmpty, map, size, values } from 'lodash';
 import PropTypes from 'prop-types';
 import page from 'page';
 import classnames from 'classnames';
@@ -37,13 +37,15 @@ import {
 import { pauseGuidedTour, resumeGuidedTour } from 'calypso/state/guided-tours/actions';
 import { deleteKeyringConnection } from 'calypso/state/sharing/keyring/actions';
 import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
-import { withoutNotice } from 'calypso/state/notices/actions';
 import { clearMediaErrors, changeMediaSource } from 'calypso/state/media/actions';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Style dependencies
  */
 import './content.scss';
+
+const noop = () => {};
 
 export class MediaLibraryContent extends React.Component {
 	static propTypes = {
@@ -135,7 +137,10 @@ export class MediaLibraryContent extends React.Component {
 			let status = 'is-error';
 			let upgradeNudgeName = undefined;
 			let upgradeNudgeFeature = undefined;
+			let actionText = undefined;
+			let actionLink = undefined;
 			let tryAgain = false;
+			let externalAction = false;
 
 			switch ( errorType ) {
 				case MediaValidationErrors.FILE_TYPE_NOT_IN_PLAN:
@@ -154,6 +159,9 @@ export class MediaLibraryContent extends React.Component {
 						'%d files could not be uploaded because their file types are unsupported.',
 						i18nOptions
 					);
+					actionText = translate( 'See supported file types' );
+					actionLink = localizeUrl( 'https://support.wordpress.com/accepted-filetypes' );
+					externalAction = true;
 					break;
 				case MediaValidationErrors.UPLOAD_VIA_URL_404:
 					message = translate(
@@ -215,6 +223,11 @@ export class MediaLibraryContent extends React.Component {
 			return (
 				<Notice key={ errorType } status={ status } text={ message } onDismissClick={ onDismiss }>
 					{ this.renderNoticeAction( upgradeNudgeName, upgradeNudgeFeature ) }
+					{ actionText && (
+						<NoticeAction href={ actionLink } external={ externalAction }>
+							{ actionText }
+						</NoticeAction>
+					) }
 					{ tryAgain && this.renderTryAgain() }
 				</Notice>
 			);
@@ -469,12 +482,7 @@ export default connect(
 		toggleGuidedTour: ( shouldPause ) => ( dispatch ) => {
 			dispatch( shouldPause ? pauseGuidedTour() : resumeGuidedTour() );
 		},
-		deleteKeyringConnection: ( connection ) => ( dispatch ) => {
-			// We don't want this to trigger a global notice - a notice is shown inline
-			const deleteKeyring = withoutNotice( () => deleteKeyringConnection( connection ) );
-
-			dispatch( deleteKeyring() );
-		},
+		deleteKeyringConnection,
 		clearMediaErrors,
 		changeMediaSource,
 	},

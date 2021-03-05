@@ -8,7 +8,7 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { assignToExperiments } from 'calypso/state/experiments/actions';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { getAnonIdFromCookie } from 'calypso/state/experiments/reducer';
 
 /**

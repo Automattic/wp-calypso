@@ -29,13 +29,14 @@ import getPostalCode from './lib/get-postal-code';
 import getDomainDetails from './lib/get-domain-details';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
 import userAgent from 'calypso/lib/user-agent';
+import { recordTransactionBeginAnalytics } from './lib/analytics';
 
 const { select } = defaultRegistry;
 
 export async function genericRedirectProcessor(
 	paymentMethodId,
 	submitData,
-	{ getThankYouUrl, siteSlug, includeDomainDetails, includeGSuiteDetails }
+	{ getThankYouUrl, siteSlug, includeDomainDetails, includeGSuiteDetails, reduxDispatch }
 ) {
 	const { protocol, hostname, port, pathname } = parseUrl(
 		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com',
@@ -62,6 +63,12 @@ export async function genericRedirectProcessor(
 		pathname,
 		query: cancelUrlQuery,
 	} );
+
+	recordTransactionBeginAnalytics( {
+		paymentMethodId,
+		reduxDispatch,
+	} );
+
 	return submitRedirectTransaction(
 		paymentMethodId,
 		{
@@ -82,9 +89,13 @@ export async function genericRedirectProcessor(
 
 export async function weChatProcessor(
 	submitData,
-	{ getThankYouUrl, siteSlug, includeDomainDetails, includeGSuiteDetails }
+	{ getThankYouUrl, siteSlug, includeDomainDetails, includeGSuiteDetails, reduxDispatch }
 ) {
 	const paymentMethodId = 'wechat';
+	recordTransactionBeginAnalytics( {
+		reduxDispatch,
+		paymentMethodId,
+	} );
 	const { protocol, hostname, port, pathname } = parseUrl(
 		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com',
 		true
@@ -275,12 +286,20 @@ export async function fullCreditsProcessor(
 	).then( makeSuccessResponse );
 }
 
-export async function payPalProcessor(
-	submitData,
-	{ getThankYouUrl, couponItem, includeDomainDetails, includeGSuiteDetails },
-	transactionOptions
-) {
-	const { createUserAndSiteBeforeTransaction } = transactionOptions;
+export async function payPalProcessor( submitData, transactionOptions ) {
+	const {
+		getThankYouUrl,
+		couponItem,
+		includeDomainDetails,
+		includeGSuiteDetails,
+		createUserAndSiteBeforeTransaction,
+		reduxDispatch,
+	} = transactionOptions;
+	recordTransactionBeginAnalytics( {
+		reduxDispatch,
+		paymentMethodId: 'paypal',
+	} );
+
 	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
 
 	const successUrl = resolveUrl( window.location.href, getThankYouUrl() );

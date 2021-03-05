@@ -12,11 +12,11 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import { Button, CompactCard } from '@automattic/components';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import PaymentMethod from 'calypso/me/purchases/payment-methods/payment-method';
 import PaymentMethodDelete from 'calypso/me/purchases/payment-methods/payment-method-delete';
 import {
-	getStoredCards,
+	getAllStoredCards,
 	getUniquePaymentAgreements,
 	hasLoadedStoredCardsFromServer,
 	isFetchingStoredCards,
@@ -42,7 +42,9 @@ class PaymentMethodList extends Component {
 		}
 
 		if ( ! cards.length ) {
-			return <CompactCard>{ this.props.translate( 'You have no saved cards.' ) }</CompactCard>;
+			return (
+				<CompactCard>{ this.props.translate( 'You have no saved payment methods.' ) }</CompactCard>
+			);
 		}
 
 		return cards.map( ( card ) => {
@@ -74,18 +76,19 @@ class PaymentMethodList extends Component {
 	}
 
 	render() {
+		let paymentMethods = this.props.cards;
+		if ( this.props.hasLoadedFromServer && this.props.paymentAgreements.length > 0 ) {
+			paymentMethods = paymentMethods.concat( this.props.paymentAgreements );
+		}
+
 		return (
 			<div className="payment-method-list">
 				<QueryStoredCards />
-				<SectionHeader label={ this.props.translate( 'Manage Your Payment Agreements' ) }>
+				<SectionHeader label={ this.props.translate( 'Manage Your Payment Methods' ) }>
 					{ this.renderAddPaymentMethodButton() }
 				</SectionHeader>
 
-				{ this.renderPaymentMethods( this.props.cards ) }
-
-				{ this.props.hasLoadedFromServer && this.props.paymentAgreements.length > 0 && (
-					<>{ this.renderPaymentMethods( this.props.paymentAgreements ) }</>
-				) }
+				{ this.renderPaymentMethods( paymentMethods ) }
 			</div>
 		);
 	}
@@ -101,7 +104,7 @@ PaymentMethodList.propTypes = {
 };
 
 export default connect( ( state ) => ( {
-	cards: getStoredCards( state ),
+	cards: getAllStoredCards( state ),
 	paymentAgreements: getUniquePaymentAgreements( state ),
 	hasLoadedFromServer: hasLoadedStoredCardsFromServer( state ),
 	isFetching: isFetchingStoredCards( state ),

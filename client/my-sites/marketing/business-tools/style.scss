@@ -141,26 +141,9 @@
 		margin-top: 1em;
 	}
 
-	.google-voucher__initial-step .purchase-detail__button {
-		float: right;
-		font-size: $font-body-extra-small;
-		line-height: 1;
-		padding: 7px;
-	}
-
-	.google-voucher__initial-step {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-	}
-
 	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
 		justify-content: flex-start;
-
-		.google-voucher__initial-step {
-			display: block;
-		}
 
 		.button {
 			width: auto;

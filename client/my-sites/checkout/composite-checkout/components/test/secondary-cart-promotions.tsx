@@ -17,12 +17,12 @@ import { checkoutTheme } from '@automattic/composite-checkout';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { responseCartWithRenewal, storeData } from './lib/fixtures';
 import SecondaryCartPromotions from '../secondary-cart-promotions';
 
 const mockConfig = ( config as unknown ) as { isEnabled: jest.Mock };
-jest.mock( 'calypso/config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	const mock = () => '';
 	mock.isEnabled = jest.fn();
 	return mock;

@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import 'moment-timezone'; // monkey patches the existing moment.js
 
 /**

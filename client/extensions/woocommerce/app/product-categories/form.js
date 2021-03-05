@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
-import { isNumber, head, isNull } from 'lodash';
+import { isNumber, head } from 'lodash';
 
 /**
  * Internal dependencies
@@ -65,7 +65,7 @@ class ProductCategoryForm extends Component {
 		}
 
 		if ( nextProps.category.parent !== this.props.category.parent ) {
-			if ( isNull( nextProps.category.parent ) ) {
+			if ( nextProps.category.parent === null ) {
 				this.setState( {
 					selectedParent: [],
 					isTopLevel: false,
@@ -274,7 +274,7 @@ class ProductCategoryForm extends Component {
 									</span>
 								</FormLabel>
 
-								{ ( ! isTopLevel || isNull( category.parent ) ) && (
+								{ ( ! isTopLevel || category.parent === null ) && (
 									<div>
 										<FormLabel>{ translate( 'Select a parent category' ) }</FormLabel>
 										<TermTreeSelectorTerms

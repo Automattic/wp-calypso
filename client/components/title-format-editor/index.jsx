@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get, head, map, max, min, noop } from 'lodash';
+import { get, head, map, max, min } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -24,6 +24,7 @@ import { localize } from 'i18n-calypso';
 import 'draft-js/dist/Draft.css';
 import './style.scss';
 
+const noop = () => {};
 const Chip = ( onClick ) => ( props ) => <Token { ...props } onClick={ onClick } />;
 
 export class TitleFormatEditor extends Component {

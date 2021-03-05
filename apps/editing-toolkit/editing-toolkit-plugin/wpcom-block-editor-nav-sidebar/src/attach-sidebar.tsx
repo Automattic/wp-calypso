@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, createPortal, useState } from '@wordpress/element';
-import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/interface';
+import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
 
 /**
@@ -13,7 +14,7 @@ import WpcomBlockEditorNavSidebar from './components/nav-sidebar';
 import ToggleSidebarButton from './components/toggle-sidebar-button';
 
 const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>
-	originalRegisterPlugin( name, settings as any );
+	originalRegisterPlugin( name, settings as PluginSettings );
 
 if ( typeof MainDashboardButton !== 'undefined' ) {
 	registerPlugin( 'a8c-full-site-editing-nav-sidebar', {

@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import Dispatcher from 'calypso/dispatcher';
 import wpcom from 'calypso/lib/wp';
+import getNetworkSites from 'calypso/state/selectors/get-network-sites';
 import {
 	PLUGINS_RECEIVE,
 	PLUGINS_REQUEST,
@@ -38,10 +38,11 @@ import {
 	DISABLE_AUTOUPDATE_PLUGIN,
 	INSTALL_PLUGIN,
 	REMOVE_PLUGIN,
-} from './constants';
+} from 'calypso/lib/plugins/constants';
 import { getSite } from 'calypso/state/sites/selectors';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { sitePluginUpdated } from 'calypso/state/sites/actions';
 
 import 'calypso/state/plugins/init';
 
@@ -91,9 +92,7 @@ const recordEvent = ( eventType, plugin, siteId, error ) => {
 };
 
 export function activatePlugin( siteId, plugin ) {
-	return ( dispatch, getState ) => {
-		const state = getState();
-		const site = getSite( state, siteId );
+	return ( dispatch ) => {
 		const pluginId = plugin.id;
 		const defaultAction = {
 			action: ACTIVATE_PLUGIN,
@@ -102,25 +101,7 @@ export function activatePlugin( siteId, plugin ) {
 		};
 		dispatch( { ...defaultAction, type: PLUGIN_ACTIVATE_REQUEST } );
 
-		// @TODO: Remove when this flux action is completely reduxified
-		Dispatcher.handleViewAction( {
-			type: 'ACTIVATE_PLUGIN',
-			action: 'ACTIVATE_PLUGIN',
-			site,
-			plugin,
-		} );
-
 		const afterActivationCallback = ( error, data ) => {
-			// @TODO: Remove when this flux action is completely reduxified
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_ACTIVATED_PLUGIN',
-				action: 'ACTIVATE_PLUGIN',
-				site,
-				plugin,
-				data,
-				error,
-			} );
-
 			// Sometime data can be empty or the plugin always
 			// return the active state even when the error is empty.
 			// Activation error is ok, because it means the plugin is already active
@@ -173,9 +154,7 @@ export function activatePlugin( siteId, plugin ) {
 }
 
 export function deactivatePlugin( siteId, plugin ) {
-	return ( dispatch, getState ) => {
-		const state = getState();
-		const site = getSite( state, siteId );
+	return ( dispatch ) => {
 		const pluginId = plugin.id;
 		const defaultAction = {
 			action: DEACTIVATE_PLUGIN,
@@ -184,25 +163,7 @@ export function deactivatePlugin( siteId, plugin ) {
 		};
 		dispatch( { ...defaultAction, type: PLUGIN_DEACTIVATE_REQUEST } );
 
-		// @TODO: Remove when this flux action is completely reduxified
-		Dispatcher.handleViewAction( {
-			type: 'DEACTIVATE_PLUGIN',
-			action: 'DEACTIVATE_PLUGIN',
-			site,
-			plugin,
-		} );
-
-		const afterDeactivationCallback = ( error, data ) => {
-			// @TODO: Remove when this flux action is completely reduxified
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_DEACTIVATED_PLUGIN',
-				action: 'DEACTIVATE_PLUGIN',
-				site,
-				plugin,
-				data,
-				error,
-			} );
-
+		const afterDeactivationCallback = ( error ) => {
 			// Sometime data can be empty or the plugin always
 			// return the active state even when the error is empty.
 			// Activation error is ok, because it means the plugin is already active
@@ -229,7 +190,7 @@ export function deactivatePlugin( siteId, plugin ) {
 
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_DEACTIVATE_REQUEST_SUCCESS, data } );
-			afterDeactivationCallback( undefined, data );
+			afterDeactivationCallback( undefined );
 		};
 
 		const errorCallback = ( error ) => {
@@ -238,7 +199,7 @@ export function deactivatePlugin( siteId, plugin ) {
 				successCallback( plugin );
 			}
 			dispatch( { ...defaultAction, type: PLUGIN_DEACTIVATE_REQUEST_FAILURE, error } );
-			afterDeactivationCallback( error, undefined );
+			afterDeactivationCallback( error );
 		};
 
 		return getPluginHandler( siteId, pluginId )
@@ -263,13 +224,11 @@ export function togglePluginActivation( siteId, plugin ) {
 }
 
 export function updatePlugin( siteId, plugin ) {
-	return ( dispatch, getState ) => {
+	return ( dispatch ) => {
 		if ( ! plugin.update ) {
 			return Promise.reject( 'Error: Plugin already up-to-date.' );
 		}
 
-		const state = getState();
-		const site = getSite( state, siteId );
 		const pluginId = plugin.id;
 		const defaultAction = {
 			action: UPDATE_PLUGIN,
@@ -278,42 +237,19 @@ export function updatePlugin( siteId, plugin ) {
 		};
 		dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST } );
 
-		// @TODO: Remove when this flux action is completely reduxified
-		Dispatcher.handleViewAction( {
-			type: 'UPDATE_PLUGIN',
-			action: 'UPDATE_PLUGIN',
-			site,
-			plugin,
-		} );
-
-		const afterUpdateCallback = ( error, data ) => {
-			// @TODO: Remove when this flux action is completely reduxified
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_UPDATED_PLUGIN',
-				action: 'UPDATE_PLUGIN',
-				site,
-				plugin,
-				data,
-				error,
-			} );
+		const afterUpdateCallback = ( error ) => {
 			dispatch( recordEvent( 'calypso_plugin_updated', plugin, siteId, error ) );
 		};
 
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_SUCCESS, data } );
-			afterUpdateCallback( undefined, data );
-
-			// @TODO: Remove when this flux action is completely reduxified
-			Dispatcher.handleViewAction( {
-				type: 'REMOVE_PLUGINS_UPDATE_INFO',
-				site,
-				plugin,
-			} );
+			afterUpdateCallback( undefined );
+			sitePluginUpdated( siteId );
 		};
 
 		const errorCallback = ( error ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_FAILURE, error } );
-			afterUpdateCallback( error, undefined );
+			afterUpdateCallback( error );
 		};
 
 		return getPluginHandler( siteId, pluginId )
@@ -324,9 +260,7 @@ export function updatePlugin( siteId, plugin ) {
 }
 
 export function enableAutoupdatePlugin( siteId, plugin ) {
-	return ( dispatch, getState ) => {
-		const state = getState();
-		const site = getSite( state, siteId );
+	return ( dispatch ) => {
 		const pluginId = plugin.id;
 		const defaultAction = {
 			action: ENABLE_AUTOUPDATE_PLUGIN,
@@ -336,38 +270,21 @@ export function enableAutoupdatePlugin( siteId, plugin ) {
 
 		dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST } );
 
-		// @TODO: Remove when this flux action is completely reduxified
-		Dispatcher.handleViewAction( {
-			type: 'ENABLE_AUTOUPDATE_PLUGIN',
-			action: 'ENABLE_AUTOUPDATE_PLUGIN',
-			site,
-			plugin,
-		} );
-
-		const afterEnableAutoupdateCallback = ( error, data ) => {
-			// @TODO: Remove when this flux action is completely reduxified
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_ENABLED_AUTOUPDATE_PLUGIN',
-				action: 'ENABLE_AUTOUPDATE_PLUGIN',
-				site,
-				plugin,
-				data,
-				error,
-			} );
+		const afterEnableAutoupdateCallback = ( error ) => {
 			recordEvent( 'calypso_plugin_autoupdate_enabled', plugin, siteId, error );
 		};
 
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS, data } );
-			afterEnableAutoupdateCallback( undefined, data );
+			afterEnableAutoupdateCallback( undefined );
 			if ( data.update ) {
-				updatePlugin( siteId, data )( dispatch, getState );
+				updatePlugin( siteId, data )( dispatch );
 			}
 		};
 
 		const errorCallback = ( error ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_FAILURE, error } );
-			afterEnableAutoupdateCallback( error, undefined );
+			afterEnableAutoupdateCallback( error );
 		};
 
 		return getPluginHandler( siteId, pluginId )
@@ -378,9 +295,7 @@ export function enableAutoupdatePlugin( siteId, plugin ) {
 }
 
 export function disableAutoupdatePlugin( siteId, plugin ) {
-	return ( dispatch, getState ) => {
-		const state = getState();
-		const site = getSite( state, siteId );
+	return ( dispatch ) => {
 		const pluginId = plugin.id;
 		const defaultAction = {
 			action: DISABLE_AUTOUPDATE_PLUGIN,
@@ -390,35 +305,18 @@ export function disableAutoupdatePlugin( siteId, plugin ) {
 
 		dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST } );
 
-		// @TODO: Remove when this flux action is completely reduxified
-		Dispatcher.handleViewAction( {
-			type: 'DISABLE_AUTOUPDATE_PLUGIN',
-			action: 'DISABLE_AUTOUPDATE_PLUGIN',
-			site,
-			plugin,
-		} );
-
-		const afterDisableAutoupdateCallback = ( error, data ) => {
-			// @TODO: Remove when this flux action is completely reduxified
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_DISABLED_AUTOUPDATE_PLUGIN',
-				action: 'DISABLE_AUTOUPDATE_PLUGIN',
-				site,
-				plugin,
-				data,
-				error,
-			} );
+		const afterDisableAutoupdateCallback = ( error ) => {
 			recordEvent( 'calypso_plugin_autoupdate_disabled', plugin, siteId, error );
 		};
 
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS, data } );
-			afterDisableAutoupdateCallback( undefined, data );
+			afterDisableAutoupdateCallback( undefined );
 		};
 
 		const errorCallback = ( error ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_FAILURE, error } );
-			afterDisableAutoupdateCallback( error, undefined );
+			afterDisableAutoupdateCallback( error );
 		};
 
 		return getPluginHandler( siteId, pluginId )
@@ -446,11 +344,21 @@ export function togglePluginAutoUpdate( siteId, plugin ) {
 	};
 }
 
+function refreshNetworkSites( siteId ) {
+	return ( dispatch, getState ) => {
+		const state = getState();
+		const networkSites = getNetworkSites( state, siteId );
+		if ( networkSites ) {
+			networkSites.forEach( ( networkSite ) => dispatch( fetchSitePlugins( networkSite.ID ) ) );
+		}
+	};
+}
+
 function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 	return ( dispatch, getState ) => {
 		const state = getState();
 		const site = getSite( state, siteId );
-		const pluginId = plugin.id;
+		const pluginId = plugin.id || plugin.slug;
 		const defaultAction = {
 			action: INSTALL_PLUGIN,
 			siteId,
@@ -474,27 +382,17 @@ function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 			return getPluginHandler( siteId, pluginData.id ).enableAutoupdate();
 		};
 
-		const dispatchMessage = ( type, responseData, error ) => {
-			const message = {
-				type,
-				action: 'INSTALL_PLUGIN',
-				site,
-				plugin,
-				data: responseData,
-				error: error,
-			};
-			if ( 'INSTALL_PLUGIN' === type ) {
-				Dispatcher.handleViewAction( message );
+		const recordInstallPluginEvent = ( type, error ) => {
+			if ( INSTALL_PLUGIN === type ) {
 				return;
 			}
-
-			Dispatcher.handleServerAction( message );
 			recordEvent( 'calypso_plugin_installed', plugin, site, error );
 		};
 
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_INSTALL_REQUEST_SUCCESS, data } );
-			dispatchMessage( 'RECEIVE_INSTALLED_PLUGIN', data );
+			recordInstallPluginEvent( 'RECEIVE_INSTALLED_PLUGIN' );
+			refreshNetworkSites( siteId );
 		};
 
 		const errorCallback = ( error ) => {
@@ -518,11 +416,9 @@ function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 					.catch( errorCallback );
 			}
 			dispatch( { ...defaultAction, type: PLUGIN_INSTALL_REQUEST_FAILURE, error } );
-			dispatchMessage( 'RECEIVE_INSTALLED_PLUGIN', null, error );
+			recordInstallPluginEvent( 'RECEIVE_INSTALLED_PLUGIN', error );
 			return Promise.reject( error );
 		};
-
-		dispatchMessage( 'INSTALL_PLUGIN' );
 
 		if ( isMainNetworkSite ) {
 			return doInstall( plugin )
@@ -551,7 +447,7 @@ export function removePlugin( siteId, plugin ) {
 	return ( dispatch, getState ) => {
 		const state = getState();
 		const site = getSite( state, siteId );
-		const pluginId = plugin.id;
+		const pluginId = plugin.id || plugin.slug;
 		const defaultAction = {
 			action: REMOVE_PLUGIN,
 			siteId,
@@ -559,24 +455,7 @@ export function removePlugin( siteId, plugin ) {
 		};
 		dispatch( { ...defaultAction, type: PLUGIN_REMOVE_REQUEST } );
 
-		Dispatcher.handleViewAction( {
-			type: 'REMOVE_PLUGIN',
-			action: 'REMOVE_PLUGIN',
-			site,
-			plugin,
-		} );
-
-		const dispatchMessage = ( type, responseData, error ) => {
-			const message = {
-				type,
-				action: 'REMOVE_PLUGIN',
-				site,
-				plugin,
-				data: responseData,
-				error: error,
-			};
-
-			Dispatcher.handleServerAction( message );
+		const recordRemovePluginEvent = ( type, error ) => {
 			recordEvent( 'calypso_plugin_removed', plugin, site, error );
 		};
 
@@ -598,14 +477,15 @@ export function removePlugin( siteId, plugin ) {
 			return getPluginHandler( siteId, pluginData.id ).delete();
 		};
 
-		const successCallback = ( data ) => {
+		const successCallback = () => {
 			dispatch( { ...defaultAction, type: PLUGIN_REMOVE_REQUEST_SUCCESS } );
-			dispatchMessage( 'RECEIVE_REMOVE_PLUGIN', data );
+			recordRemovePluginEvent( 'RECEIVE_REMOVE_PLUGIN' );
+			refreshNetworkSites( siteId );
 		};
 
 		const errorCallback = ( error ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_REMOVE_REQUEST_FAILURE, error } );
-			dispatchMessage( 'RECEIVE_REMOVE_PLUGIN', null, error );
+			recordRemovePluginEvent( 'RECEIVE_REMOVE_PLUGIN', error );
 			return Promise.reject( error );
 		};
 
@@ -626,40 +506,25 @@ export function receiveSitePlugins( siteId, plugins ) {
 }
 
 export function fetchSitePlugins( siteId ) {
-	return ( dispatch, getState ) => {
-		const state = getState();
-		const site = getSite( state, siteId );
+	return ( dispatch ) => {
 		const defaultAction = {
 			siteId,
 		};
 		dispatch( { ...defaultAction, type: PLUGINS_REQUEST } );
 
-		const afterFetchCallback = ( error, data ) => {
-			// @TODO: Remove when this flux action is completely reduxified
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_PLUGINS',
-				action: 'RECEIVE_PLUGINS',
-				site,
-				data,
-				error,
-			} );
-		};
-
 		const receivePluginsDispatchSuccess = ( data ) => {
 			dispatch( receiveSitePlugins( siteId, data.plugins ) );
-			afterFetchCallback( undefined, data );
 			dispatch( { ...defaultAction, type: PLUGINS_REQUEST_SUCCESS } );
 
 			data.plugins.map( ( plugin ) => {
 				if ( plugin.update && plugin.autoupdate ) {
-					updatePlugin( siteId, plugin )( dispatch, getState );
+					updatePlugin( siteId, plugin )( dispatch );
 				}
 			} );
 		};
 
 		const receivePluginsDispatchFail = ( error ) => {
 			dispatch( { ...defaultAction, type: PLUGINS_REQUEST_FAILURE, error } );
-			afterFetchCallback( error, undefined );
 		};
 
 		return wpcom

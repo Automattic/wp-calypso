@@ -25,7 +25,7 @@ import {
 	DEACTIVATE_PLUGIN,
 	ENABLE_AUTOUPDATE_PLUGIN,
 	DISABLE_AUTOUPDATE_PLUGIN,
-} from '../constants';
+} from 'calypso/lib/plugins/constants';
 import { akismet, helloDolly, jetpack, jetpackUpdated } from './fixtures/plugins';
 import {
 	PLUGINS_RECEIVE,

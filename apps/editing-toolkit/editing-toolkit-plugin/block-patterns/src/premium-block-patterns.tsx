@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React, { ReactNode } from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
+import type { EditorSettings } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -16,13 +17,17 @@ interface PatternTitleProps {
 	description?: string;
 }
 
+interface ExperimentalEditorSettings extends EditorSettings {
+	__experimentalBlockPatterns: ExperimentalBlockPattern[];
+}
+
 interface ExperimentalBlockPattern {
 	categories: string[];
 	content: string;
 	description: string;
 	isPremium: boolean;
 	name: string;
-	title: string;
+	title: ReactNode;
 	viewportWidth: number;
 }
 
@@ -40,12 +45,16 @@ export const PatternTitleContainer: React.FunctionComponent< PatternTitleProps >
 export const PremiumBlockPatterns: React.FunctionComponent = () => {
 	const { __experimentalBlockPatterns } = useSelect( ( select ) =>
 		select( 'core/block-editor' ).getSettings()
+	) as ExperimentalEditorSettings;
+	const {
+		updateSettings,
+	}: { updateSettings: ( settings: Partial< ExperimentalEditorSettings > ) => void } = useDispatch(
+		'core/block-editor'
 	);
-	const { updateSettings } = useDispatch( 'core/block-editor' );
 
 	if ( __experimentalBlockPatterns ) {
 		let shouldUpdateBlockPatterns = false;
-		const updatedPatterns: Array = [];
+		const updatedPatterns: ExperimentalBlockPattern[] = [];
 
 		__experimentalBlockPatterns.forEach( ( originalPattern: ExperimentalBlockPattern ) => {
 			const pattern = { ...originalPattern };
@@ -53,16 +62,23 @@ export const PremiumBlockPatterns: React.FunctionComponent = () => {
 			if ( pattern.isPremium && typeof pattern.title === 'string' ) {
 				const originalTitle = pattern.title;
 
-				pattern.title = <PatternTitleContainer title={ originalTitle } />;
-				// Add simple premium badging for screen readers
-				pattern.title.toString = () =>
-					sprintf(
-						// translators: %s is the title of a block pattern e.g. "Two columns (Premium)". "Premium" is synonymous with "paid"
-						__( '%s (Premium)', 'full-site-editing' ),
-						originalTitle
-					);
+				const titleOverride = <PatternTitleContainer title={ originalTitle } />;
 
-				shouldUpdateBlockPatterns = true;
+				// When React is running in development mode, ReactElement calls Object.freeze() on the element.
+				// To prevent the editor from throwing a fatal, we should only attempt to run the override
+				// when the React element is extensible so we can use the custom toString method. This means that
+				// in React development mode (define SCRIPT_DEBUG as true in PHP) this feature is switched off.
+				// See: https://github.com/facebook/react/blob/702fad4b1b48ac8f626ed3f35e8f86f5ea728084/packages/react/src/jsx/ReactJSXElement.js#L194
+				if ( Object.isExtensible( titleOverride ) ) {
+					pattern.title = titleOverride;
+					pattern.title.toString = () =>
+						sprintf(
+							// translators: %s is the title of a block pattern e.g. "Two columns (Premium)". "Premium" is synonymous with "paid"
+							__( '%s (Premium)', 'full-site-editing' ),
+							originalTitle
+						);
+					shouldUpdateBlockPatterns = true;
+				}
 			}
 			updatedPatterns.push( pattern );
 		} );

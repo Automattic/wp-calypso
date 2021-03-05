@@ -61,7 +61,7 @@ export class PremiumPlanUpgradeUpsell extends PureComponent {
 		return (
 			<header className="premium-plan-upgrade-upsell__small-header">
 				<h2 className="premium-plan-upgrade-upsell__title">
-					{ translate( 'This is a special offer' ) }
+					{ translate( "Hold tight, we're getting your site ready." ) }
 				</h2>
 			</header>
 		);
@@ -188,8 +188,9 @@ export class PremiumPlanUpgradeUpsell extends PureComponent {
 						</ul>
 						<p>
 							{ translate(
-								'Try Premium risk-free with our {{strong}}30-day money-back guarantee{{/strong}}. If you don’t love it, you can return to the Personal Plan.',
+								'Try Premium risk-free with our {{strong}}%(days)d-day money-back guarantee{{/strong}}. If you don’t love it, you can return to the Personal Plan.',
 								{
+									args: { days: 14 },
 									components: { strong: <strong /> },
 								}
 							) }

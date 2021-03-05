@@ -30,10 +30,6 @@ import {
 import { ProductPurchaseFeaturesList } from '../index';
 
 jest.mock(
-	'calypso/blocks/product-purchase-features-list/google-vouchers',
-	() => 'GoogleVouchers'
-);
-jest.mock(
 	'calypso/blocks/product-purchase-features-list/video-audio-posts',
 	() => 'VideoAudioPosts'
 );

@@ -36,7 +36,12 @@ import { planLevelsMatch } from 'calypso/lib/plans/index';
 
 export class PlanFeaturesHeader extends Component {
 	render() {
-		const { isInSignup, plansWithScroll, planType } = this.props;
+		const {
+			isInSignup,
+			plansWithScroll,
+			planType,
+			isInVerticalScrollingPlansExperiment,
+		} = this.props;
 
 		if ( planType === PLAN_P2_FREE ) {
 			return this.renderPlansHeaderP2Free();
@@ -46,10 +51,20 @@ export class PlanFeaturesHeader extends Component {
 		if ( plansWithScroll ) {
 			return this.renderPlansHeaderNoTabs();
 		} else if ( isInSignup ) {
+			if ( isInVerticalScrollingPlansExperiment ) {
+				return this.renderPlansHeaderNoTabs();
+			}
 			return this.renderSignupHeader();
 		}
-
 		return this.renderPlansHeader();
+	}
+
+	resolveIsPillInCorner() {
+		const { isInSignup, isInVerticalScrollingPlansExperiment, plansWithScroll } = this.props;
+		return (
+			( isInVerticalScrollingPlansExperiment && isInSignup && plansWithScroll ) ||
+			( ! isInVerticalScrollingPlansExperiment && isInSignup )
+		);
 	}
 
 	renderPlansHeader() {
@@ -81,16 +96,20 @@ export class PlanFeaturesHeader extends Component {
 					{ this.getPlanFeaturesPrices() }
 					{ this.getBillingTimeframe() }
 				</div>
-				{ ! isInSignup && isCurrent && <PlanPill>{ translate( 'Your Plan' ) }</PlanPill> }
+				{ ! isInSignup && isCurrent && (
+					<PlanPill isInSignup={ isInSignup }>{ translate( 'Your Plan' ) }</PlanPill>
+				) }
 				{ planLevelsMatch( selectedPlan, planType ) && ! isCurrent && (
-					<PlanPill>{ translate( 'Suggested' ) }</PlanPill>
+					<PlanPill isInSignup={ isInSignup }>{ translate( 'Suggested' ) }</PlanPill>
 				) }
 				{ popular && ! selectedPlan && ! isCurrent && (
-					<PlanPill>{ translate( 'Popular' ) }</PlanPill>
+					<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
 				) }
-				{ newPlan && ! selectedPlan && ! isCurrent && <PlanPill>{ translate( 'New' ) }</PlanPill> }
+				{ newPlan && ! selectedPlan && ! isCurrent && (
+					<PlanPill isInSignup={ isInSignup }>{ translate( 'New' ) }</PlanPill>
+				) }
 				{ bestValue && ! selectedPlan && ! isCurrent && (
-					<PlanPill>{ translate( 'Best Value' ) }</PlanPill>
+					<PlanPill isInSignup={ isInSignup }>{ translate( 'Best Value' ) }</PlanPill>
 				) }
 			</header>
 		);
@@ -109,6 +128,7 @@ export class PlanFeaturesHeader extends Component {
 		} = this.props;
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
+		const isPillInCorner = this.resolveIsPillInCorner();
 
 		return (
 			<span>
@@ -116,11 +136,17 @@ export class PlanFeaturesHeader extends Component {
 					<h4 className="plan-features__header-title">{ title }</h4>
 					<div className="plan-features__audience">{ audience }</div>
 					{ planLevelsMatch( selectedPlan, planType ) && (
-						<PlanPill>{ translate( 'Suggested' ) }</PlanPill>
+						<PlanPill isInSignup={ isPillInCorner }>{ translate( 'Suggested' ) }</PlanPill>
 					) }
-					{ popular && ! selectedPlan && <PlanPill>{ translate( 'Popular' ) }</PlanPill> }
-					{ newPlan && ! selectedPlan && <PlanPill>{ translate( 'New' ) }</PlanPill> }
-					{ bestValue && ! selectedPlan && <PlanPill>{ translate( 'Best Value' ) }</PlanPill> }
+					{ popular && ! selectedPlan && (
+						<PlanPill isInSignup={ isPillInCorner }>{ translate( 'Popular' ) }</PlanPill>
+					) }
+					{ newPlan && ! selectedPlan && (
+						<PlanPill isInSignup={ isPillInCorner }>{ translate( 'New' ) }</PlanPill>
+					) }
+					{ bestValue && ! selectedPlan && (
+						<PlanPill isInSignup={ isPillInCorner }>{ translate( 'Best Value' ) }</PlanPill>
+					) }
 				</header>
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
@@ -204,16 +230,16 @@ export class PlanFeaturesHeader extends Component {
 			planType,
 			currentSitePlan,
 			annualPricePerMonth,
-			isMonthlyPricingTest,
+			isInSignup,
 			isMonthlyPlan,
 		} = this.props;
 
-		if ( isMonthlyPricingTest && isMonthlyPlan && annualPricePerMonth < rawPrice ) {
+		if ( isInSignup && isMonthlyPlan && annualPricePerMonth < rawPrice ) {
 			const discountRate = Math.round( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice );
 			return translate( `Save %(discountRate)s%% by paying annually`, { args: { discountRate } } );
 		}
 
-		if ( isMonthlyPricingTest && ! isMonthlyPlan ) {
+		if ( isInSignup && ! isMonthlyPlan ) {
 			return translate( 'billed annually' );
 		}
 
@@ -338,8 +364,14 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	renderPriceGroup( fullPrice, discountedPrice = null ) {
-		const { currencyCode, isInSignup, isMonthlyPricingTest, plansWithScroll } = this.props;
-		const displayFlatPrice = isInSignup && ! plansWithScroll;
+		const {
+			currencyCode,
+			isInSignup,
+			plansWithScroll,
+			isInVerticalScrollingPlansExperiment,
+		} = this.props;
+		const displayFlatPrice =
+			isInSignup && ! plansWithScroll && ! isInVerticalScrollingPlansExperiment;
 
 		if ( fullPrice && discountedPrice ) {
 			return (
@@ -348,13 +380,15 @@ export class PlanFeaturesHeader extends Component {
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ fullPrice }
-							isInSignup={ displayFlatPrice }
+							displayFlatPrice={ displayFlatPrice }
+							isInSignup={ isInSignup }
 							original
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ discountedPrice }
-							isInSignup={ displayFlatPrice }
+							displayFlatPrice={ displayFlatPrice }
+							isInSignup={ isInSignup }
 							discounted
 						/>
 					</div>
@@ -367,8 +401,8 @@ export class PlanFeaturesHeader extends Component {
 			<PlanPrice
 				currencyCode={ currencyCode }
 				rawPrice={ fullPrice }
-				isInSignup={ displayFlatPrice }
-				isMonthlyPricingTest={ isMonthlyPricingTest }
+				displayFlatPrice={ displayFlatPrice }
+				isInSignup={ isInSignup }
 			/>
 		);
 	}
@@ -468,7 +502,6 @@ PlanFeaturesHeader.propTypes = {
 
 	// For Monthly Pricing test
 	annualPricePerMonth: PropTypes.number,
-	isMonthlyPricingTest: PropTypes.bool,
 };
 
 PlanFeaturesHeader.defaultProps = {
@@ -485,7 +518,6 @@ PlanFeaturesHeader.defaultProps = {
 	popular: false,
 	showPlanCreditsApplied: false,
 	siteSlug: '',
-	isMonthlyPricingTest: false,
 };
 
 export default connect( ( state, { planType, relatedMonthlyPlan } ) => {

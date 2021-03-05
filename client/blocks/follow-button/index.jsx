@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop, omitBy, isUndefined } from 'lodash';
+import { omitBy, isUndefined } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -12,6 +12,8 @@ import { connect } from 'react-redux';
 import FollowButton from './button';
 import { isFollowing } from 'calypso/state/reader/follows/selectors';
 import { follow, unfollow } from 'calypso/state/reader/follows/actions';
+
+const noop = () => {};
 
 class FollowButtonContainer extends Component {
 	static propTypes = {

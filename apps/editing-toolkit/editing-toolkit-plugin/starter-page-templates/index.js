@@ -1,18 +1,16 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
-import { select, dispatch, subscribe } from '@wordpress/data';
-import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
+import { dispatch } from '@wordpress/data';
+import { initializeTracksWithIdentity } from '@automattic/page-template-modal';
 
 /**
  * Internal dependencies
  */
-import { PageTemplatesPlugin } from './page-template-modal';
-import SidebarTemplatesPlugin from './page-template-modal/components/sidebar-modal-opener';
-import { initializeWithIdentity } from './page-template-modal/utils/tracking';
+import { PageTemplatesPlugin } from './page-template-plugin';
 import './store';
+import './index.scss';
 
 // Load config passed from backend.
 const {
@@ -23,11 +21,12 @@ const {
 	screenAction,
 	theme,
 	isFrontPage,
+	locale,
 	hideFrontPageTitle,
 } = window.starterPageTemplatesConfig;
 
 if ( tracksUserData ) {
-	initializeWithIdentity( tracksUserData );
+	initializeTracksWithIdentity( tracksUserData );
 }
 
 const templatesPluginSharedProps = {
@@ -36,6 +35,7 @@ const templatesPluginSharedProps = {
 	theme,
 	vertical,
 	isFrontPage,
+	locale,
 	hidePageTitle: Boolean( isFrontPage && hideFrontPageTitle ),
 };
 
@@ -50,25 +50,7 @@ registerPlugin( 'page-templates', {
 		return (
 			<>
 				<PageTemplatesPlugin { ...templatesPluginSharedProps } shouldPrefetchAssets={ false } />
-				<PluginDocumentSettingPanel
-					name="Template Modal Opener"
-					title={ __( 'Page Layout', 'full-site-editing' ) }
-					className="page-template-modal__sidebar"
-					icon="none"
-				>
-					<SidebarTemplatesPlugin />
-				</PluginDocumentSettingPanel>
 			</>
 		);
 	},
-} );
-
-// Make sidebar plugin open by default.
-const unsubscribe = subscribe( () => {
-	if (
-		! select( 'core/edit-post' ).isEditorPanelOpened( 'page-templates/Template Modal Opener' )
-	) {
-		dispatch( 'core/edit-post' ).toggleEditorPanelOpened( 'page-templates/Template Modal Opener' );
-	}
-	unsubscribe();
 } );

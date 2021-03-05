@@ -8,18 +8,17 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import Modal from 'react-modal';
 import store from 'store';
+import accessibleFocus from '@automattic/accessible-focus';
 
 /**
  * Internal dependencies
  */
 import { setupLocale } from './locale';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { ProviderWrappedLayout } from 'calypso/controller';
-import notices from 'calypso/notices';
 import { getToken } from 'calypso/lib/oauth-token';
 import emailVerification from 'calypso/components/email-verification';
 import { getSavedVariations } from 'calypso/lib/abtest'; // used by error logger
-import accessibleFocus from 'calypso/lib/accessible-focus';
 import Logger from 'calypso/lib/catch-js-errors';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import { installPerfmonPageHandlers } from 'calypso/lib/perfmon';
@@ -55,6 +54,7 @@ import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions'
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { inJetpackCloudOAuthOverride } from 'calypso/lib/jetpack/oauth-override';
 import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 
 const debug = debugFactory( 'calypso' );
 
@@ -155,7 +155,7 @@ const oauthTokenMiddleware = () => {
 				// the user back to it once the login flow is finished. We also set an expiration
 				// to this because we don't want to redirect by mistake a user with an old path
 				// stored in their session.
-				if ( isJetpackCloud && currentPath !== '/' ) {
+				if ( isJetpackCloud() && currentPath !== '/' ) {
 					const EXPIRATION_IN_SECONDS = 300;
 					const SESSION_STORAGE_PATH_KEY = 'jetpack_cloud_redirect_path';
 					const SESSION_STORAGE_PATH_KEY_EXPIRES_IN = 'jetpack_cloud_redirect_path_expires_in';
@@ -180,11 +180,6 @@ const setRouteMiddleware = () => {
 
 		next();
 	} );
-};
-
-const clearNoticesMiddleware = () => {
-	//TODO: remove this one when notices are reduxified - it is for old notices
-	page( '*', notices.clearNoticesOnNavigation );
 };
 
 const unsavedFormsMiddleware = () => {
@@ -284,7 +279,6 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	oauthTokenMiddleware();
 	setupRoutes();
 	setRouteMiddleware();
-	clearNoticesMiddleware();
 	unsavedFormsMiddleware();
 
 	// The analytics module requires user (when logged in) and superProps objects. Inject these here.
@@ -362,6 +356,11 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 
 			next();
 		} );
+	} else {
+		// Temporary Experiment testing the new ExPlat client
+		loadExperimentAssignment( 'explat_test_aa_calypso_boot' );
+		// Duplicated on purpose
+		loadExperimentAssignment( 'explat_test_aa_calypso_boot' );
 	}
 
 	const state = reduxStore.getState();
@@ -384,6 +383,11 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	if ( config.isEnabled( 'desktop' ) ) {
 		require( 'calypso/lib/desktop' ).default.init();
 	}
+
+	// temp: test -- will revert
+	window.electron?.receive( 'ping', () => {
+		window.electron?.send( 'pong' );
+	} );
 
 	if (
 		config.isEnabled( 'dev/test-helper' ) &&

@@ -2,7 +2,7 @@ jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.mock( 'calypso/config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	const defaultExport = jest.fn();
 	defaultExport.isEnabled = jest.fn();
 	defaultExport.default = jest.fn();
@@ -42,7 +42,7 @@ import {
  */
 import { isATEnabled } from '../index';
 
-const config = require( 'calypso/config' );
+const config = require( '@automattic/calypso-config' );
 const utils = require( 'calypso/lib/site/utils' );
 
 const site = {

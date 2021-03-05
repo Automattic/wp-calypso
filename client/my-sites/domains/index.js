@@ -15,7 +15,7 @@ import {
 import domainsController from './controller';
 import domainManagementController from './domain-management/controller';
 import SiftScience from 'calypso/lib/siftscience';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import * as paths from './paths';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 

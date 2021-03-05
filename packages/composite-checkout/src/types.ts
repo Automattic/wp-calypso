@@ -9,11 +9,33 @@ import { ReactElement } from 'react';
  */
 import { Theme } from './lib/theme';
 
+export interface CheckoutStepProps {
+	stepId: string;
+	titleContent: React.ReactNode;
+	isCompleteCallback: IsCompleteCallback;
+	activeStepContent?: React.ReactNode;
+	completeStepContent?: React.ReactNode;
+	className?: string;
+	editButtonText?: string;
+	editButtonAriaLabel?: string;
+	nextStepButtonText?: string;
+	nextStepButtonAriaLabel?: string;
+	validatingButtonText?: string;
+	validatingButtonAriaLabel?: string;
+}
+
+export type IsCompleteCallback = () => boolean | Promise< boolean >;
+
+export interface OrderSummaryData {
+	className: string;
+	summaryContent: React.ReactNode;
+}
+
 export interface PaymentMethod {
 	id: string;
-	label: React.ReactNode;
-	activeContent: React.ReactNode;
-	inactiveContent: React.ReactNode;
+	label?: React.ReactNode;
+	activeContent?: React.ReactNode;
+	inactiveContent?: React.ReactNode;
 	submitButton: ReactElement;
 	getAriaLabel: ( localize: ( value: string ) => string ) => string;
 }
@@ -24,7 +46,7 @@ export interface LineItem {
 	id: string;
 	type: string;
 	label: string;
-	subLabel?: string;
+	sublabel?: string;
 	amount: LineItemAmount;
 }
 
@@ -76,7 +98,7 @@ export type ReactStandardAction< T = string, P = unknown > = P extends void
 	  }
 	: {
 			type: T;
-			payload: P;
+			payload?: P;
 	  };
 
 export interface CheckoutProviderProps {

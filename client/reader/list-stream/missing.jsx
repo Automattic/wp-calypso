@@ -4,14 +4,15 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import EmptyContent from 'calypso/components/empty-content';
-import { isDiscoverEnabled } from 'calypso/reader/discover/helper';
 import QueryReaderList from 'calypso/components/data/query-reader-list';
-import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 class ListMissing extends React.Component {
 	static propTypes = {
@@ -22,13 +23,7 @@ class ListMissing extends React.Component {
 	recordAction = () => {
 		recordAction( 'clicked_following_on_empty' );
 		recordGaEvent( 'Clicked Following on EmptyContent' );
-		recordTrack( 'calypso_reader_following_on_missing_list_clicked' );
-	};
-
-	recordSecondaryAction = () => {
-		recordAction( 'clicked_discover_on_empty' );
-		recordGaEvent( 'Clicked Discover on EmptyContent' );
-		recordTrack( 'calypso_reader_discover_on_missing_list_clicked' );
+		this.props.recordReaderTracksEvent( 'calypso_reader_following_on_missing_list_clicked' );
 	};
 
 	render() {
@@ -42,15 +37,6 @@ class ListMissing extends React.Component {
 				{ this.props.translate( 'Back to Followed Sites' ) }
 			</a>
 		);
-		const secondaryAction = isDiscoverEnabled() ? (
-			<a
-				className="empty-content__action button"
-				onClick={ this.recordSecondaryAction }
-				href="/discover"
-			>
-				{ this.props.translate( 'Explore' ) }
-			</a>
-		) : null;
 
 		return (
 			<div>
@@ -59,7 +45,6 @@ class ListMissing extends React.Component {
 					title={ this.props.translate( 'List not found' ) }
 					line={ this.props.translate( "Sorry, we couldn't find that list." ) }
 					action={ action }
-					secondaryAction={ secondaryAction }
 					illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
 					illustrationWidth={ 500 }
 				/>
@@ -69,4 +54,6 @@ class ListMissing extends React.Component {
 	}
 }
 
-export default localize( ListMissing );
+export default connect( null, {
+	recordReaderTracksEvent,
+} )( localize( ListMissing ) );

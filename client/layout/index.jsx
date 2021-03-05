@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -14,9 +13,9 @@ import classnames from 'classnames';
 import AsyncLoad from 'calypso/components/async-load';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
+import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
-import notices from 'calypso/notices';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import OfflineStatus from 'calypso/layout/offline-status';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -33,7 +32,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import KeyboardShortcutsMenu from 'calypso/lib/keyboard-shortcuts/menu';
 import SupportUser from 'calypso/support/support-user';
-import { isCommunityTranslatorEnabled } from 'calypso/components/community-translator/utils';
+import isCommunityTranslatorEnabled from 'calypso/state/selectors/is-community-translator-enabled';
 import { isE2ETest } from 'calypso/lib/e2e';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import BodySectionCssClass from './body-section-css-class';
@@ -45,7 +44,10 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { withCurrentRoute } from 'calypso/components/route';
 import QueryExperiments from 'calypso/components/data/query-experiments';
 import Experiment from 'calypso/components/experiment';
-import { getVariationForUser } from 'calypso/state/experiments/selectors';
+import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
+import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import { getShouldShowAppBanner, handleScroll } from './utils';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 
 /**
  * Style dependencies
@@ -53,7 +55,6 @@ import { getVariationForUser } from 'calypso/state/experiments/selectors';
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
 import './style.scss';
-import { getShouldShowAppBanner, handleScroll } from './utils';
 
 const scrollCallback = ( e ) => handleScroll( e );
 
@@ -83,22 +84,21 @@ class Layout extends Component {
 					.classList.add( `is-${ this.props.colorSchemePreference }` );
 			}
 		}
-
-		// This code should be removed when the nav-unification project has been rolled out to 100% of the customers.
-		if ( config.isEnabled( 'nav-unification' ) ) {
-			window.addEventListener( 'scroll', scrollCallback );
-			window.addEventListener( 'resize', scrollCallback );
-		}
 	}
 
 	componentWillUnmount() {
-		if ( config.isEnabled( 'nav-unification' ) ) {
+		if ( this.props.isNavUnificationEnabled ) {
 			window.removeEventListener( 'scroll', scrollCallback );
 			window.removeEventListener( 'resize', scrollCallback );
 		}
 	}
 
 	componentDidUpdate( prevProps ) {
+		// This code should be removed when the nav-unification project has been rolled out to 100% of the customers.
+		if ( this.props.isNavUnificationEnabled ) {
+			window.addEventListener( 'scroll', scrollCallback );
+			window.addEventListener( 'resize', scrollCallback );
+		}
 		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
 			return;
 		}
@@ -119,6 +119,10 @@ class Layout extends Component {
 			return false;
 		}
 
+		if ( isWpMobileApp() ) {
+			return false;
+		}
+
 		const exemptedSections = [ 'jetpack-connect', 'happychat', 'devdocs', 'help' ];
 		const exemptedRoutes = [ '/log-in/jetpack', '/me/account/closed' ];
 		const exemptedRoutesStartingWith = [ '/start/p2' ];
@@ -133,6 +137,9 @@ class Layout extends Component {
 	}
 
 	renderMasterbar() {
+		if ( this.props.masterbarIsHidden ) {
+			return <EmptyMasterbar />;
+		}
 		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
 			? JetpackCloudMasterbar
 			: MasterbarLoggedIn;
@@ -163,24 +170,19 @@ class Layout extends Component {
 				config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 				isWooOAuth2Client( this.props.oauth2Client ) &&
 				this.props.wccomFrom,
-			'is-nav-unification': this.props.navUnificationVariation === 'treatment',
 		} );
 
 		const optionalBodyProps = () => {
-			const optionalProps = {};
-
-			if ( this.props.isNewLaunchFlow || this.props.isCheckoutFromGutenboarding ) {
-				optionalProps.bodyClass = 'is-new-launch-flow';
-			}
+			const optionalProps = {
+				bodyClass: classnames( {
+					'is-new-launch-flow':
+						this.props.isNewLaunchFlow || this.props.isCheckoutFromGutenboarding,
+					'is-nav-unification': this.props.isNavUnificationEnabled,
+				} ),
+			};
 
 			return optionalProps;
 		};
-
-		if ( this.props.navUnificationVariation === 'treatment' ) {
-			config.enable( 'nav-unification' );
-		} else {
-			config.disable( 'nav-unification' );
-		}
 
 		const { shouldShowAppBanner } = this.props;
 		return (
@@ -223,7 +225,6 @@ class Layout extends Component {
 						require="calypso/components/global-notices"
 						placeholder={ null }
 						id="notices"
-						notices={ notices.list }
 					/>
 					<div id="secondary" className="layout__secondary" role="navigation">
 						{ this.props.secondary }
@@ -233,7 +234,7 @@ class Layout extends Component {
 					</div>
 				</div>
 				{ config.isEnabled( 'i18n/community-translator' )
-					? isCommunityTranslatorEnabled() && (
+					? this.props.isCommunityTranslatorEnabled && (
 							<AsyncLoad require="calypso/components/community-translator" />
 					  )
 					: config( 'restricted_me_access' ) && (
@@ -264,6 +265,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
 				) }
+				<QueryReaderTeams />
 			</div>
 		);
 	}
@@ -281,8 +283,7 @@ export default compose(
 		const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
 		const isCheckoutFromGutenboarding =
 			'checkout' === sectionName && '1' === currentQuery?.preLaunch;
-		const noMasterbarForRoute =
-			isJetpackLogin || isCheckoutFromGutenboarding || currentRoute === '/me/account/closed';
+		const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';
 		const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 		const isJetpackWooCommerceFlow =
@@ -305,13 +306,17 @@ export default compose(
 
 		return {
 			masterbarIsHidden:
-				! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
+				! masterbarIsVisible( state ) ||
+				noMasterbarForSection ||
+				noMasterbarForRoute ||
+				isWpMobileApp(),
 			isJetpack,
 			isJetpackLogin,
 			isJetpackWooCommerceFlow,
 			isJetpackWooDnaFlow,
 			isJetpackMobileFlow,
 			isEligibleForJITM,
+			isCommunityTranslatorEnabled: isCommunityTranslatorEnabled( state ),
 			oauth2Client,
 			wccomFrom,
 			isSupportSession: isSupportSession( state ),
@@ -332,7 +337,7 @@ export default compose(
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 			isNewLaunchFlow,
 			isCheckoutFromGutenboarding,
-			navUnificationVariation: getVariationForUser( state, 'nav_unification_v2' ),
+			isNavUnificationEnabled: isNavUnificationEnabled( state ),
 		};
 	} )
 )( Layout );

@@ -4,10 +4,12 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { map, partial, pickBy, isArray, flowRight } from 'lodash';
+import { map, partial, pickBy, flowRight } from 'lodash';
 /* eslint-disable no-restricted-imports */
 import url from 'url';
 import { localize, LocalizeProps } from 'i18n-calypso';
+import type { RequestCart } from '@automattic/shopping-cart';
+
 /**
  * Internal dependencies
  */
@@ -32,7 +34,6 @@ import getGutenbergEditorUrl from 'calypso/state/selectors/get-gutenberg-editor-
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
 import wpcom from 'calypso/lib/wp';
-import EditorRevisionsDialog from 'calypso/post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'calypso/state/posts/revisions/actions';
 import { setEditorIframeLoaded, startEditingPost } from 'calypso/state/editor/actions';
 import {
@@ -47,7 +48,7 @@ import { protectForm, ProtectedFormProps } from 'calypso/lib/protect-form';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import EditorDocumentHead from 'calypso/post-editor/editor-document-head';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import {
@@ -58,7 +59,6 @@ import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'calypso/state/de
 import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
 import { fetchMediaItem, getMediaItem } from 'calypso/state/media/thunks';
 import Iframe from './iframe';
-import type { RequestCart } from '@automattic/shopping-cart';
 
 /**
  * Types
@@ -80,12 +80,17 @@ interface Props {
 	anchorFmData: {
 		anchor_podcast: string | undefined;
 		anchor_episode: string | undefined;
-		spotify_show_url: string | undefined;
+		spotify_url: string | undefined;
 	};
 	siteAdminUrl: T.URL | null;
 	fseParentPageId: T.PostId;
 	parentPostId: T.PostId;
 	stripeConnectSuccess: 'gutenberg' | null;
+}
+
+interface CheckoutModalOptions extends RequestCart {
+	redirectTo?: string;
+	isFocusedLaunch?: boolean;
 }
 
 interface State {
@@ -101,7 +106,7 @@ interface State {
 	multiple?: any;
 	postUrl?: T.URL;
 	previewUrl: T.URL;
-	cartData?: RequestCart;
+	checkoutModalOptions?: CheckoutModalOptions;
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
@@ -145,7 +150,7 @@ class CalypsoifyIframe extends Component<
 		isPreviewVisible: false,
 		previewUrl: 'about:blank',
 		currentIFrameUrl: '',
-		cartData: {},
+		checkoutModalOptions: undefined,
 	};
 
 	iframeRef: React.RefObject< HTMLIFrameElement > = React.createRef();
@@ -153,6 +158,7 @@ class CalypsoifyIframe extends Component<
 	mediaSelectPort: MessagePort | null = null;
 	mediaCancelPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
+	checkoutPort: MessagePort | null = null;
 	successfulIframeLoad = false;
 	waitForIframeToInit: ReturnType< typeof setInterval > | undefined = undefined;
 	waitForIframeToLoad: ReturnType< typeof setTimeout > | undefined = undefined;
@@ -166,7 +172,7 @@ class CalypsoifyIframe extends Component<
 		// a 3rd party cookie auth issue fix in place https://github.com/Automattic/jetpack/pull/16167
 		this.waitForIframeToInit = setInterval( () => {
 			if ( this.props.shouldLoadIframe ) {
-				clearInterval( this.waitForIframeToInit );
+				clearInterval( ( this.waitForIframeToInit as unknown ) as number );
 				this.waitForIframeToLoad = setTimeout( () => {
 					isDesktop
 						? this.props.notifyDesktopCannotOpenEditor(
@@ -294,7 +300,11 @@ class CalypsoifyIframe extends Component<
 		}
 
 		if ( EditorActions.OpenCheckoutModal === action ) {
-			this.setState( { isCheckoutModalVisible: true, cartData: payload } );
+			this.checkoutPort = ports[ 0 ];
+			this.setState( {
+				isCheckoutModalVisible: true,
+				checkoutModalOptions: payload,
+			} );
 		}
 
 		if ( EditorActions.GetCheckoutModalStatus === action ) {
@@ -377,21 +387,11 @@ class CalypsoifyIframe extends Component<
 
 		if ( EditorActions.GetGutenboardingStatus === action ) {
 			const isGutenboarding = this.props.siteCreationFlow === 'gutenboarding';
-			const isSiteUnlaunched = this.props.isSiteUnlaunched;
-			const launchUrl = `${ window.location.origin }/start/launch-site?siteSlug=${ this.props.siteSlug }`;
-			const isNewLaunchMobile = config.isEnabled( 'gutenboarding/new-launch-mobile' ); // TODO: remove after ETK 2.8.6 is released
-			const isExperimental = config.isEnabled( 'gutenboarding/feature-picker' ); // TODO: remove after ETK 2.8.6 is released
-			const isPersistentLaunchButton = config.isEnabled( 'create/persistent-launch-button' ); // TODO: remove after ETK 2.8.6 is released
-			const isFocusedLaunchFlow = config.isEnabled( 'create/focused-launch-flow' );
+			const currentCalypsoUrl = window.location.href; // Used to pass in the Calypso URL to Focused Launch for the "Domain I Own" flow Back Button
 
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
-				isSiteUnlaunched,
-				launchUrl,
-				isNewLaunchMobile,
-				isExperimental,
-				isPersistentLaunchButton,
-				isFocusedLaunchFlow,
+				currentCalypsoUrl,
 			} );
 		}
 
@@ -432,7 +432,7 @@ class CalypsoifyIframe extends Component<
 		// Pipes errors in the iFrame context to the Calypso error handler if it exists:
 		if ( EditorActions.LogError === action ) {
 			const { error } = payload;
-			if ( isArray( error ) && error.length > 4 && window.onerror ) {
+			if ( Array.isArray( error ) && error.length > 4 && window.onerror ) {
 				const errorObject = error[ 4 ];
 				error[ 4 ] = errorObject && JSON.parse( errorObject );
 				window.onerror( ...error );
@@ -690,6 +690,22 @@ class CalypsoifyIframe extends Component<
 		this.setState( { isIframeLoaded: true, currentIFrameUrl: iframeUrl } );
 	};
 
+	handleCheckoutSuccess = () => {
+		if ( this.checkoutPort ) {
+			this.checkoutPort.postMessage( 'checkout complete' );
+
+			// this is a once-only port
+			// after sending our message we want to close it out
+			// and prevent sending more messages (which will be ignored)
+
+			this.checkoutPort.close();
+
+			this.checkoutPort = null;
+
+			this.setState( { isCheckoutModalVisible: false } );
+		}
+	};
+
 	render() {
 		const { iframeUrl, shouldLoadIframe } = this.props;
 		const {
@@ -704,12 +720,12 @@ class CalypsoifyIframe extends Component<
 			postUrl,
 			editedPost,
 			currentIFrameUrl,
-			cartData,
+			checkoutModalOptions,
 		} = this.state;
 
 		const isUsingClassicBlock = !! classicBlockEditorId;
 		const isCheckoutOverlayEnabled = config.isEnabled( 'post-editor/checkout-overlay' );
-		const isFocusedLaunchCalypsoEnabled = config.isEnabled( 'create/focused-launch-flow-calypso' );
+		const { redirectTo, isFocusedLaunch, ...cartData } = checkoutModalOptions || {};
 
 		return (
 			<Fragment>
@@ -749,17 +765,21 @@ class CalypsoifyIframe extends Component<
 				/>
 				{ isCheckoutOverlayEnabled && (
 					<AsyncLoad
+						checkoutOnSuccessCallback={ this.handleCheckoutSuccess }
 						require="calypso/blocks/editor-checkout-modal"
 						onClose={ this.closeCheckoutModal }
-						cartData={ cartData }
 						placeholder={ null }
 						isOpen={ isCheckoutModalVisible }
+						cartData={ cartData }
+						redirectTo={ redirectTo }
+						isFocusedLaunch={ isFocusedLaunch }
 					/>
 				) }
-				{ isFocusedLaunchCalypsoEnabled && (
-					<AsyncLoad require="calypso/blocks/editor-launch-modal" />
-				) }
-				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
+				<AsyncLoad
+					require="calypso/post-editor/editor-revisions/dialog"
+					placeholder={ null }
+					loadRevision={ this.loadRevision }
+				/>
 				<WebPreview
 					externalUrl={ postUrl }
 					onClose={ this.closePreviewModal }
@@ -828,10 +848,7 @@ const mapStateToProps = (
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
 
 	// Prevents the iframe from loading using a cached frame nonce.
-	const shouldLoadIframe =
-		! isRequestingSite( state, siteId ) ||
-		// Temporarily disable iframe loading for faster dev
-		config.isEnabled( 'create/focused-launch-flow-calypso' );
+	const shouldLoadIframe = ! isRequestingSite( state, siteId );
 
 	const { url: closeUrl, label: closeLabel } = getEditorCloseConfig(
 		state,

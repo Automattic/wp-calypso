@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { filter, find, flow, forEach, map, pull, take } from 'lodash';
+import { filter, find, flow, forEach, map, take } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -143,7 +143,7 @@ export default function waitForImagesToLoad( post ) {
 				.then( () => {
 					// check to see if all of the promises have settled
 					// if so, accept what loaded and resolve the main promise
-					promises = pull( promises, promise );
+					promises = promises.filter( ( p ) => p !== promise );
 					if ( promises.length === 0 ) {
 						const imagesInOrder = filter(
 							map( imagesToCheck, ( src ) => {

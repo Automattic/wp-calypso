@@ -9,7 +9,7 @@ import { keys, filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import ca from './ca-form';
 import fr from './fr-form';
 import uk from './uk-form';

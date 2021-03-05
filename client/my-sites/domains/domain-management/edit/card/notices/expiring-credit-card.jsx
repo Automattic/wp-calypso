@@ -11,7 +11,7 @@ import { Button } from '@automattic/components';
 import { shouldRenderExpiringCreditCard, creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
 import { getChangePaymentMethodPath } from 'calypso/me/purchases/utils';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 
 function ExpiringCreditCard( props ) {
 	const { selectedSite, purchase, domain } = props;

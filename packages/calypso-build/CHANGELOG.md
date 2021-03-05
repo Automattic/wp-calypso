@@ -1,18 +1,49 @@
 # Changelog
 
-## trunk (6.5.0)
+## trunk
+
+- Breaking: Drop option `postCssConfig` for Sass loader. The property `postCssOptions` will be passed as is
+  to `postcss-loader`. See the doc in <https://github.com/webpack-contrib/postcss-loader#postcssoptions>
+- Added: peer dependency postcss ^8.2.6
+- Updated dependencies:
+  - postcss-custom-properties to ^11.0.0
+  - postcss-loader to ^5.0.0
+
+## 7.0.0
+
+- Breaking: drop support for wepback 4
+- Breaking: renamed option `output-jsonp-function` to `output-chunk-loading-global`
+- Changed: Use `contenthash` hash strategy instead of `chunkhash`
+- Added: support for webpack 5
+- Added: plugin to transform i18n imports to local variables
+- Updated dependencies
+  - @wordpress/dependency-extraction-webpack-plugin to ^2.9.0
+
+## 6.5.0
+
+- Added `corejs`, `debug`, and `useBuiltIns` options to the `babel/default` preset.
+
+## 6.4.0
 
 - Added `--esm` and `--cjs` options to `copy-assets` and `transpile` to do only one kind of
   the build (ESM or CJS) instead of both that are done by default
 - Add more target ECMAScript versions to Terser config and switch dependencies
 - Migrated from `webpack-rtl-plugin` to `@automattic/webpack-rtl-plugin`.
-
-## 6.4.0
-
-- Removed the exceptions for the `import/no-extraneous-dependencies` eslint rule for `*.md.jsx` and `*.md.js` files
-- Upgraded dependencies
+- Added `calypso:src` as a field used to resolve modules.
+- Updated dependencies
+  - @babel/cli to ^7.12.1
+  - @babel/core to ^7.12.3
+  - @babel/helpers to ^7.12.5
+  - @babel/plugin-proposal-class-properties to ^7.12.1
+  - @babel/plugin-transform-react-jsx to ^7.12.5
+  - @babel/plugin-transform-runtime to ^7.12.1
+  - @babel/preset-env to ^7.12.1
+  - @babel/preset-react to ^7.12.5
+  - @babel/preset-typescript to ^7.12.1
   - typescript to ^4.0.3
   - terser-webpack-plugin to "4.2.2
+- Do not mangle functions called '\_\_', '\_n', '\_nx' or '\_x' (used for extracting translations)
+- Removed the exceptions for the `import/no-extraneous-dependencies` eslint rule for `*.md.jsx` and `*.md.js` files
 - Adds option to customize the [`output.jsonpFunction` setting for webpack](https://v4.webpack.js.org/configuration/output/#outputjsonpfunction)
 
 ## 6.3.0

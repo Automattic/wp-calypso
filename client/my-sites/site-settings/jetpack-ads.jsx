@@ -22,12 +22,17 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { FEATURE_WORDADS_INSTANT, PLAN_JETPACK_SECURITY_DAILY } from 'calypso/lib/plans/constants';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCustomizerUrl } from 'calypso/state/sites/selectors';
+import { isWordAdsApproved } from 'calypso/lib/ads/utils';
 
 class JetpackAds extends Component {
 	static defaultProps = {
@@ -249,7 +254,13 @@ class JetpackAds extends Component {
 	}
 
 	render() {
-		const { hasWordadsFeature, isSavingSettings, onSubmitForm, translate } = this.props;
+		const {
+			hasWordadsFeature,
+			wordAdsApproved,
+			isSavingSettings,
+			onSubmitForm,
+			translate,
+		} = this.props;
 
 		return (
 			<div>
@@ -261,19 +272,24 @@ class JetpackAds extends Component {
 					title={ translate( 'Ads' ) }
 				/>
 
-				{ hasWordadsFeature ? this.renderSettings() : this.renderUpgradeBanner() }
+				{ hasWordadsFeature || wordAdsApproved
+					? this.renderSettings()
+					: this.renderUpgradeBanner() }
 			</div>
 		);
 	}
 }
 
 export default connect( ( state ) => {
+	const site = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
 	const selectedSiteSlug = getSelectedSiteSlug( state );
 	const hasWordadsFeature = hasFeature( state, selectedSiteId, FEATURE_WORDADS_INSTANT );
+	const wordAdsApproved = isWordAdsApproved( site );
 
 	return {
 		hasWordadsFeature,
+		wordAdsApproved,
 		selectedSiteId,
 		selectedSiteSlug,
 		wordadsModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'wordads' ),

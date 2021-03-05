@@ -2,13 +2,12 @@
  * External dependencies
  */
 import { once, defer } from 'lodash';
-import notices from 'calypso/notices';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import {
 	JETPACK_DISCONNECT_RECEIVE,
 	NOTIFICATIONS_PANEL_TOGGLE,
@@ -32,6 +31,7 @@ import {
 	createPathWithoutImmediateLoginInformation,
 } from 'calypso/state/immediate-login/utils';
 import { saveImmediateLoginInformation } from 'calypso/state/immediate-login/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Module variables
@@ -83,7 +83,7 @@ const notifyAboutImmediateLoginLinkEffects = once( ( dispatch, action, getState 
 
 	// Let redux process all dispatches that are currently queued and show the message
 	defer( () => {
-		notices.success( createImmediateLoginMessage( action.query.login_reason, email ) );
+		dispatch( successNotice( createImmediateLoginMessage( action.query.login_reason, email ) ) );
 	} );
 } );
 

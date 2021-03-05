@@ -16,8 +16,8 @@ import { getSite } from 'calypso/state/sites/selectors';
  * const numericID = getSiteId( state, siteIdentifierOfUnknownFormat );
  *
  * @param  {object}  state       Global state tree
- * @param  {number|string|null}  siteIdOrSlug Site ID
- * @returns {?number}             Site object
+ * @param  {number|string|null}  siteIdOrSlug Site ID or slug
+ * @returns {?number}            Site ID
  */
 export default function getSiteId( state, siteIdOrSlug ) {
 	if ( ! siteIdOrSlug ) {

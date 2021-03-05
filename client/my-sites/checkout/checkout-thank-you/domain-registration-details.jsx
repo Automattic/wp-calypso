@@ -13,7 +13,7 @@ import i18n from 'i18n-calypso';
 import { getDomainManagementUrl } from './utils';
 import GoogleAppsDetails from './google-apps-details';
 import {
-	isGoogleApps,
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isBlogger,
 	isPlan,
 	isFreePlan,
@@ -33,7 +33,7 @@ const DomainRegistrationDetails = ( {
 	hasNonPrimaryDomainsFlag,
 	onPickPlanUpsellClick,
 } ) => {
-	const googleAppsWasPurchased = purchases.some( isGoogleApps );
+	const googleAppsWasPurchased = purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace );
 	const domainContactEmailVerified = purchases.some( ( purchase ) => purchase.isEmailVerified );
 	const hasOtherPrimaryDomain =
 		selectedSite.options && selectedSite.options.is_mapped_domain && selectedSite.domain !== domain;

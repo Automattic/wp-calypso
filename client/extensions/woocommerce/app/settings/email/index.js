@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import PropTypes from 'prop-types';
 
 /**

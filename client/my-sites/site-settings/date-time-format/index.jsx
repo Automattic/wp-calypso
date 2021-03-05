@@ -14,7 +14,7 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DateFormatOption from './date-format-option';
 import StartOfWeekOption from './start-of-week-option';
 import TimeFormatOption from './time-format-option';
-import { defaultDateFormats, defaultTimeFormats } from './default-formats';
+import { getDefaultDateFormats, getDefaultTimeFormats } from './default-formats';
 import { getLocalizedDate, phpToMomentDatetimeFormat } from './utils';
 
 /**
@@ -58,8 +58,8 @@ export class DateTimeFormat extends Component {
 		}
 
 		this.setState( {
-			customDateFormat: ! includes( defaultDateFormats, dateFormat ),
-			customTimeFormat: ! includes( defaultTimeFormats, timeFormat ),
+			customDateFormat: ! includes( getDefaultDateFormats(), dateFormat ),
+			customTimeFormat: ! includes( getDefaultTimeFormats(), timeFormat ),
 			isLoadingSettings: false,
 		} );
 	}
@@ -72,9 +72,9 @@ export class DateTimeFormat extends Component {
 		} );
 	};
 
-	setDateFormat = this.setFormat( 'date', defaultDateFormats );
+	setDateFormat = this.setFormat( 'date', getDefaultDateFormats() );
 
-	setTimeFormat = this.setFormat( 'time', defaultTimeFormats );
+	setTimeFormat = this.setFormat( 'time', getDefaultTimeFormats() );
 
 	setCustomFormat = ( name ) => ( event ) => {
 		const { value: format } = event.currentTarget;

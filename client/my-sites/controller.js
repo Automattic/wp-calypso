@@ -4,11 +4,14 @@
 import page from 'page';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { get, noop, some, startsWith, uniq } from 'lodash';
+import { get, some, startsWith, uniq } from 'lodash';
+import { removeQueryArgs } from '@wordpress/url';
 
 /**
  * Internal Dependencies
  */
+import { cloudSiteSelection } from 'calypso/jetpack-cloud/controller';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
 	getSite,
@@ -22,9 +25,14 @@ import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
 import NavigationComponent from 'calypso/my-sites/navigation';
-import { addQueryArgs, getSiteFragment, sectionify } from 'calypso/lib/route';
-import notices from 'calypso/notices';
-import config from 'calypso/config';
+import {
+	addQueryArgs,
+	getSiteFragment,
+	sectionify,
+	externalRedirect,
+	trailingslashit,
+} from 'calypso/lib/route';
+import config from '@automattic/calypso-config';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -57,7 +65,7 @@ import {
 	emailManagementNewGSuiteAccount,
 } from 'calypso/my-sites/email/paths';
 import SitesComponent from 'calypso/my-sites/sites';
-import { warningNotice } from 'calypso/state/notices/actions';
+import { successNotice, warningNotice } from 'calypso/state/notices/actions';
 import { makeLayout, render as clientRender, setSectionMiddleware } from 'calypso/controller';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import EmptyContentComponent from 'calypso/components/empty-content';
@@ -76,6 +84,7 @@ const getStore = ( context ) => ( {
  * Module vars
  */
 const sitesPageTitleForAnalytics = 'Sites';
+const noop = () => {};
 
 /*
  * The main navigation of My Sites consists of a component with
@@ -100,7 +109,7 @@ function createNavigation( context ) {
 	);
 }
 
-function renderEmptySites( context ) {
+export function renderEmptySites( context ) {
 	setSectionMiddleware( { group: 'sites' } )( context );
 
 	context.primary = React.createElement( NoSitesMessage );
@@ -109,7 +118,7 @@ function renderEmptySites( context ) {
 	clientRender( context );
 }
 
-function renderNoVisibleSites( context ) {
+export function renderNoVisibleSites( context ) {
 	const { getState } = getStore( context );
 	const state = getState();
 	const currentUser = getCurrentUser( state );
@@ -252,19 +261,27 @@ function onSelectedSiteAvailable( context, basePath ) {
 		return false;
 	}
 
-	// Update recent sites preference
+	updateRecentSitesPreferences( context );
+
+	return true;
+}
+
+export function updateRecentSitesPreferences( context ) {
+	const state = context.store.getState();
+
 	if ( hasReceivedRemotePreferences( state ) ) {
+		const siteId = getSelectedSiteId( state );
 		const recentSites = getPreference( state, 'recentSites' );
-		if ( selectedSite.ID !== recentSites[ 0 ] ) {
-			//also filter recent sites if not available locally
-			const updatedRecentSites = uniq( [ selectedSite.ID, ...recentSites ] )
+
+		if ( siteId && siteId !== recentSites[ 0 ] ) {
+			// Also filter recent sites if not available locally
+			const updatedRecentSites = uniq( [ siteId, ...recentSites ] )
 				.slice( 0, 5 )
 				.filter( ( recentId ) => !! getSite( state, recentId ) );
+
 			context.store.dispatch( savePreference( 'recentSites', updatedRecentSites ) );
 		}
 	}
-
-	return true;
 }
 
 /**
@@ -296,7 +313,7 @@ function createSitesComponent( context ) {
 	);
 }
 
-function showMissingPrimaryError( currentUser, dispatch ) {
+export function showMissingPrimaryError( currentUser, dispatch ) {
 	const { username, primary_blog, primary_blog_url, primary_blog_is_jetpack } = currentUser;
 	const tracksPayload = {
 		username,
@@ -337,6 +354,11 @@ export function noSite( context, next ) {
  * Set up site selection based on last URL param and/or handle no-sites error cases
  */
 export function siteSelection( context, next ) {
+	if ( isJetpackCloud() ) {
+		cloudSiteSelection( context, next );
+		return;
+	}
+
 	const { getState, dispatch } = getStore( context );
 	const siteFragment = context.params.site || getSiteFragment( context.path );
 	const basePath = sectionify( context.path, siteFragment );
@@ -346,17 +368,15 @@ export function siteSelection( context, next ) {
 	// The user doesn't have any sites: render `NoSitesMessage`
 	if ( currentUser && currentUser.site_count === 0 ) {
 		renderEmptySites( context );
-		return recordPageView( '/no-sites', sitesPageTitleForAnalytics + ' > No Sites', {
-			base_path: basePath,
-		} );
+		recordNoSitesPageView( context, siteFragment );
+		return;
 	}
 
 	// The user has all sites set as hidden: render help message with how to make them visible
 	if ( currentUser && currentUser.visible_site_count === 0 ) {
 		renderNoVisibleSites( context );
-		return recordPageView( '/no-sites', `${ sitesPageTitleForAnalytics } > All Sites Hidden`, {
-			base_path: basePath,
-		} );
+		recordNoVisibleSitesPageView( context, siteFragment );
+		return;
 	}
 
 	/*
@@ -370,26 +390,16 @@ export function siteSelection( context, next ) {
 	 */
 	if ( hasOneSite && ! siteFragment ) {
 		const primarySiteId = getPrimarySiteId( getState() );
-
-		const redirectToPrimary = ( primarySiteSlug ) => {
-			const pathNameSplit = context.pathname.split( '/no-site' )[ 0 ];
-			const pathname = pathNameSplit.replace( /\/?$/, '/' ); // append trailing slash if not present
-			let redirectPath = `${ pathname }${ primarySiteSlug }`;
-			if ( context.querystring ) {
-				redirectPath += `?${ context.querystring }`;
-			}
-			page.redirect( redirectPath );
-		};
-
 		const primarySiteSlug = getSiteSlug( getState(), primarySiteId );
+
 		if ( primarySiteSlug ) {
-			redirectToPrimary( primarySiteSlug );
+			redirectToPrimary( context, primarySiteSlug );
 		} else {
 			// Fetch the primary site by ID and then try to determine its slug again.
 			dispatch( requestSite( primarySiteId ) ).then( () => {
 				const freshPrimarySiteSlug = getSiteSlug( getState(), primarySiteId );
 				if ( freshPrimarySiteSlug ) {
-					redirectToPrimary( freshPrimarySiteSlug );
+					redirectToPrimary( context, freshPrimarySiteSlug );
 				} else {
 					// If the primary site does not exist, skip redirect
 					// and display a useful error notification
@@ -417,7 +427,7 @@ export function siteSelection( context, next ) {
 		}
 	} else {
 		// Fetch the site by siteFragment and then try to select again
-		dispatch( requestSite( siteFragment ) ).then( () => {
+		dispatch( requestSite( siteFragment ) ).then( ( response ) => {
 			let freshSiteId = getSiteId( getState(), siteFragment );
 
 			if ( ! freshSiteId ) {
@@ -435,6 +445,8 @@ export function siteSelection( context, next ) {
 				if ( onSelectedSiteAvailable( context, basePath ) ) {
 					next();
 				}
+			} else if ( shouldRedirectToJetpackAuthorize( context, response ) ) {
+				externalRedirect( getJetpackAuthorizeURL( context, response ) );
 			} else {
 				// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
 				const allSitesPath = addQueryArgs(
@@ -445,6 +457,26 @@ export function siteSelection( context, next ) {
 			}
 		} );
 	}
+}
+
+export function recordNoSitesPageView( context, siteFragment, title ) {
+	recordPageView( '/no-sites', sitesPageTitleForAnalytics + ` > ${ title || 'No Sites' }`, {
+		base_path: sectionify( context.path, siteFragment ),
+	} );
+}
+
+export function recordNoVisibleSitesPageView( context, siteFragment ) {
+	recordNoSitesPageView( context, siteFragment, 'All Sites Hidden' );
+}
+
+export function redirectToPrimary( context, primarySiteSlug ) {
+	const pathNameSplit = context.pathname.split( '/no-site' )[ 0 ];
+	const pathname = pathNameSplit.replace( /\/?$/, '/' ); // append trailing slash if not present
+	let redirectPath = `${ pathname }${ primarySiteSlug }`;
+	if ( context.querystring ) {
+		redirectPath += `?${ context.querystring }`;
+	}
+	page.redirect( redirectPath );
 }
 
 export function jetpackModuleActive( moduleId, redirect ) {
@@ -480,9 +512,11 @@ export function navigation( context, next ) {
  */
 export function sites( context, next ) {
 	if ( context.query.verified === '1' ) {
-		notices.success(
-			i18n.translate(
-				"Email verified! Now that you've confirmed your email address you can publish posts on your blog."
+		context.store.dispatch(
+			successNotice(
+				i18n.translate(
+					"Email verified! Now that you've confirmed your email address you can publish posts on your blog."
+				)
 			)
 		);
 	}
@@ -553,4 +587,33 @@ export function wpForTeamsGeneralNotSupportedRedirect( context, next ) {
 	}
 
 	next();
+}
+
+/**
+ * Whether we need to redirect user to the Jetpack site for authorization.
+ *
+ * @param {object} context -- The context object.
+ * @param {object} response -- The site information HTTP response.
+ * @returns {boolean} shouldRedirect -- Whether we need to redirect user to the Jetpack site for authorization.
+ */
+export function shouldRedirectToJetpackAuthorize( context, response ) {
+	return '1' === context.query?.unlinked && !! response?.site?.URL;
+}
+
+/**
+ * Get redirect URL to the Jetpack site for authorization.
+ *
+ * @param {object} context -- The context object.
+ * @param {object} response -- The site information HTTP response.
+ * @returns {string} redirectURL -- The redirect URL.
+ */
+export function getJetpackAuthorizeURL( context, response ) {
+	return addQueryArgs(
+		{
+			page: 'jetpack',
+			action: 'authorize_redirect',
+			dest_url: removeQueryArgs( window.origin + context.path, 'unlinked' ),
+		},
+		trailingslashit( response?.site?.URL ) + 'wp-admin/'
+	);
 }

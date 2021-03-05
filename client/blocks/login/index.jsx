@@ -13,7 +13,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Gridicon from 'calypso/components/gridicon';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
 import {
 	getAuthAccountType,
@@ -48,6 +48,7 @@ import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
+import { getIsAnchorFmSignup } from 'calypso/landing/gutenboarding/utils';
 
 /**
  * Style dependencies
@@ -94,7 +95,9 @@ class Login extends Component {
 	componentDidMount() {
 		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
 			// Disallow access to the 2FA pages unless the user has 2FA enabled
-			page( login( { isNative: true, isJetpack: this.props.isJetpack } ) );
+			page(
+				login( { isNative: true, isJetpack: this.props.isJetpack, locale: this.props.locale } )
+			);
 		}
 
 		window.scrollTo( 0, 0 );
@@ -152,6 +155,7 @@ class Login extends Component {
 					isGutenboarding: this.props.isGutenboarding,
 					// If no notification is sent, the user is using the authenticator for 2FA by default
 					twoFactorAuthType: authType,
+					locale: this.props.locale,
 				} )
 			);
 		}
@@ -165,6 +169,7 @@ class Login extends Component {
 				login( {
 					isNative: true,
 					socialConnect: true,
+					locale: this.props.locale,
 				} )
 			);
 		}
@@ -222,6 +227,7 @@ class Login extends Component {
 			translate,
 			twoStepNonce,
 			fromSite,
+			isAnchorFmSignup,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
@@ -369,6 +375,14 @@ class Login extends Component {
 					/>
 				</div>
 			);
+		} else if ( isAnchorFmSignup ) {
+			postHeader = (
+				<p className="login__header-subtitle">
+					{ translate(
+						'Log in to your WordPress.com account to transcribe and save your Anchor.fm podcasts.'
+					) }
+				</p>
+			);
 		} else if ( fromSite ) {
 			// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
 			postHeader = <VisitSite siteSlug={ fromSite } />;
@@ -430,6 +444,7 @@ class Login extends Component {
 			disableAutoFocus,
 			locale,
 			userEmail,
+			handleUsernameChange,
 		} = this.props;
 
 		if ( socialConnect ) {
@@ -473,6 +488,7 @@ class Login extends Component {
 				isGutenboarding={ isGutenboarding }
 				locale={ locale }
 				userEmail={ userEmail }
+				handleUsernameChange={ handleUsernameChange }
 			/>
 		);
 	}
@@ -522,6 +538,9 @@ export default connect(
 		isJetpackWooCommerceFlow:
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+		isAnchorFmSignup: getIsAnchorFmSignup(
+			get( getCurrentQueryArguments( state ), 'redirect_to' )
+		),
 	} ),
 	{
 		rebootAfterLogin,

@@ -36,6 +36,9 @@ const EVENT_NAME_EXCEPTIONS = [
 	'wcadmin_storeprofiler_login_jetpack_account',
 	'wcadmin_storeprofiler_payment_login',
 	'wcadmin_storeprofiler_payment_create_account',
+	// Checkout
+	'calypso_checkout_switch_to_p_24',
+	'calypso_checkout_composite_p24_submit_clicked',
 ];
 let _superProps: any; // Added to all Tracks events.
 let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments.
@@ -103,6 +106,13 @@ function checkForBlockedTracks(): Promise< void > {
 			'/nostats.js?_ut=' + encodeURIComponent( _ut ) + '&_ui=' + encodeURIComponent( _ui )
 		);
 	} );
+}
+
+/**
+ * Returns a promise that marks whether and when the external Tracks script loads.
+ */
+export function getTracksLoadPromise() {
+	return _loadTracksResult;
 }
 
 export function pushEventToTracksQueue( args: Array< any > ) {

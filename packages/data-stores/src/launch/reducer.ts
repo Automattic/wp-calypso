@@ -4,7 +4,6 @@
 import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
 import type * as DomainSuggestions from '../domain-suggestions';
-import type * as Plans from '../plans';
 
 /**
  * Internal dependencies
@@ -12,10 +11,18 @@ import type * as Plans from '../plans';
 import { LaunchStep } from './data';
 import type { LaunchStepType } from './types';
 import type { LaunchAction } from './actions';
+import type { Plans } from '..';
 
 const step: Reducer< LaunchStepType, LaunchAction > = ( state = LaunchStep.Name, action ) => {
 	if ( action.type === 'SET_STEP' ) {
 		return action.step;
+	}
+	return state;
+};
+
+const siteTitle: Reducer< string | undefined, LaunchAction > = ( state = undefined, action ) => {
+	if ( action.type === 'SET_SITE_TITLE' ) {
+		return action.title;
 	}
 	return state;
 };
@@ -47,12 +54,22 @@ const confirmedDomainSelection: Reducer< boolean, LaunchAction > = ( state = fal
 	return state;
 };
 
-const plan: Reducer< Plans.Plan | undefined, LaunchAction > = ( state, action ) => {
-	if ( action.type === 'SET_PLAN' ) {
-		return action.plan;
+const planProductId: Reducer< number | undefined, LaunchAction > = ( state, action ) => {
+	if ( action.type === 'SET_PLAN_PRODUCT_ID' ) {
+		return action.planProductId;
 	}
-	if ( action.type === 'UNSET_PLAN' ) {
+	if ( action.type === 'UNSET_PLAN_PRODUCT_ID' ) {
 		return undefined;
+	}
+	return state;
+};
+
+const planBillingPeriod: Reducer< Plans.PlanBillingPeriod, LaunchAction > = (
+	state = 'ANNUALLY',
+	action
+) => {
+	if ( action.type === 'SET_PLAN_BILLING_PERIOD' ) {
+		return action.billingPeriod;
 	}
 	return state;
 };
@@ -92,8 +109,8 @@ const isSidebarFullscreen: Reducer< boolean, LaunchAction > = ( state = false, a
 	return state;
 };
 
-const isExperimental: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
-	if ( action.type === 'ENABLE_EXPERIMENTAL' ) {
+const isAnchorFm: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
+	if ( action.type === 'ENABLE_ANCHOR_FM' ) {
 		return true;
 	}
 
@@ -135,33 +152,21 @@ const isModalTitleVisible: Reducer< boolean, LaunchAction > = ( state = true, ac
 	return state;
 };
 
-// Check if launch Success view should be displayed (user didn't dismissed the Success View modal)
-const shouldDisplaySuccessView: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
-	if ( action.type === 'ENABLE_SUCCESS_VIEW' ) {
-		return true;
-	}
-
-	if ( action.type === 'DISABLE_SUCCESS_VIEW' ) {
-		return false;
-	}
-
-	return state;
-};
-
 const reducer = combineReducers( {
 	step,
+	siteTitle,
 	domain,
 	confirmedDomainSelection,
 	domainSearch,
-	plan,
+	planBillingPeriod,
+	planProductId,
 	isSidebarOpen,
 	isSidebarFullscreen,
-	isExperimental,
+	isAnchorFm,
 	isFocusedLaunchOpen,
 	isSiteTitleStepVisible,
 	isModalDismissible,
 	isModalTitleVisible,
-	shouldDisplaySuccessView,
 } );
 
 export type State = ReturnType< typeof reducer >;

@@ -10,7 +10,6 @@ import {
 	Button,
 	FormStatus,
 	useLineItems,
-	useEvents,
 	useFormStatus,
 	useTransactionStatus,
 	registerStore,
@@ -143,7 +142,6 @@ function WeChatPayButton( { disabled, onClick, store, stripe, stripeConfiguratio
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
 	const { resetTransaction } = useTransactionStatus();
-	const onEvent = useEvents();
 	const customerName = useSelect( ( select ) => select( 'wechat' ).getCustomerName() );
 	const { responseCart: cart } = useShoppingCart();
 	const [ stripeResponseWithCode, setStripeResponseWithCode ] = useState( null );
@@ -171,7 +169,6 @@ function WeChatPayButton( { disabled, onClick, store, stripe, stripeConfiguratio
 			onClick={ () => {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting wechat payment' );
-					onEvent( { type: 'REDIRECT_TRANSACTION_BEGIN', payload: { paymentMethodId: 'wechat' } } );
 					onClick( 'wechat', {
 						stripe,
 						name: customerName?.value,
@@ -220,6 +217,7 @@ function ButtonContents( { formStatus, total } ) {
 		return __( 'Processing…' );
 	}
 	if ( formStatus === FormStatus.READY ) {
+		/* translators: %s is the total to be paid in localized currency */
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );

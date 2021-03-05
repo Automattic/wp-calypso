@@ -113,9 +113,6 @@ body.is-section-signup.is-white-signup {
 	}
 
 	.plans-features-main {
-		.plans-features-main__group.is-wpcom {
-			padding-top: 0;
-		}
 
 		.plans-features-main__banner-content {
 			box-shadow: none;
@@ -147,11 +144,13 @@ body.is-section-signup.is-white-signup {
 			}
 
 			.plan-pill {
-				text-transform: none;
 				background: var( --color-text );
 				color: var( --color-text-inverted );
 				font-size: 13px; /* stylelint-disable-line */
+				top: unset;
+				bottom: -10px;
 				left: 20px;
+				right: unset;
 				padding: 2px 8px 3px;
 			}
 		}
@@ -234,133 +233,5 @@ body.is-section-signup.is-white-signup {
 				}
 			}
 		}
-	}
-}
-
-.is-monthly-pricing-test {
-	&.segmented-control.is-compact {
-		margin-bottom: 0;
-
-		&.is-monthly-selected {
-			@media screen and ( max-width: 960px ) {
-				margin-bottom: 65px;
-			}
-		}
-
-		.segmented-control__item {
-			--color-primary: var( --color-neutral-100 );
-			--color-text-inverted: var( --color-neutral-0 );
-			--color-primary-light: var( --color-neutral-80 );
-			--color-primary-dark: var( --color-neutral-80 );
-			--item-padding: 3px;
-
-			padding: var( --item-padding ) 0;
-
-			&:first-child {
-				padding-left: var( --item-padding );
-			}
-
-			&:last-child {
-				padding-right: var( --item-padding );
-			}
-		}
-
-		.segmented-control__link {
-			border: none;
-			padding-top: 6px;
-			padding-bottom: 6px;
-			color: var( --color-neutral-80 );
-		}
-
-		.segmented-control__item:not( .is-selected ) {
-			.segmented-control__link:hover {
-				background-color: var( --color-neutral-5 );
-			}
-		}
-	}
-}
-
-.plan-type-selector__popover {
-	display: none;
-
-	&.is-right {
-		.popover__arrow {
-			border-right-color: var( --color-neutral-100 );
-			&::before {
-				border-right-color: var( --color-neutral-100 );
-			}
-		}
-	}
-
-	&.is-bottom {
-		.popover__arrow {
-			border-bottom-color: var( --color-neutral-100 );
-			&::before {
-				border-bottom-color: var( --color-neutral-100 );
-			}
-		}
-	}
-
-	.popover__inner {
-		padding: 8px 10px;
-		max-width: 210px;
-		background-color: var( --color-neutral-100 );
-		border-color: var( --color-neutral-100 );
-		color: var( --color-neutral-0 );
-		border-radius: 2px;
-		text-align: left;
-	}
-
-	// Animation
-	&-enter {
-		opacity: 0.01;
-
-		&.is-right {
-			transform: translate( 40px, 0 );
-			@include break-large {
-				display: block;
-			}
-		}
-
-		&.is-bottom {
-			display: block;
-			transform: translate( 0, 22px );
-			@include break-large {
-				display: none;
-			}
-		}
-	}
-	&-enter-active {
-		opacity: 1;
-		transition-property: opacity, transform;
-		transition-duration: 300ms;
-		transition-timing-function: ease-in;
-
-		&.is-right {
-			transform: translate( 30px, 0 );
-		}
-
-		&.is-bottom {
-			transform: translate( 0, 12px );
-		}
-	}
-	&-enter-done {
-		&.is-right {
-			display: none;
-			transform: translate( 30px, 0 );
-			@include break-large {
-				display: block;
-			}
-		}
-		&.is-bottom {
-			display: block;
-			transform: translate( 0, 12px );
-			@include break-large {
-				display: none;
-			}
-		}
-	}
-	&-exit {
-		opacity: 1;
 	}
 }

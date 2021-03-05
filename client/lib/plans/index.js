@@ -6,7 +6,7 @@ import { difference, get, has, includes, pick, values, isFunction } from 'lodash
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { isFreeJetpackPlan } from 'calypso/lib/products-values/is-free-jetpack-plan';
 import { isJetpackPlan } from 'calypso/lib/products-values/is-jetpack-plan';
 import { isMonthly } from 'calypso/lib/products-values/is-monthly';

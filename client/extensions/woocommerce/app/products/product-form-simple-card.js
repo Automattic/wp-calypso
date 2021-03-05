@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { isNull, isUndefined } from 'lodash';
+import { isUndefined } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -102,7 +102,7 @@ const ProductFormSimpleCard = ( {
 	} );
 
 	const { stock_quantity } = product;
-	const quantity = isNull( stock_quantity ) || isUndefined( stock_quantity ) ? '' : stock_quantity;
+	const quantity = stock_quantity === null || isUndefined( stock_quantity ) ? '' : stock_quantity;
 
 	const stockDisabled = 'no' === storeIsManagingStock ? true : false;
 	const inventorySettingsUrl =

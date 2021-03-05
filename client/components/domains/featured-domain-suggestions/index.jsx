@@ -21,6 +21,7 @@ import './style.scss';
 export class FeaturedDomainSuggestions extends Component {
 	static propTypes = {
 		cart: PropTypes.object,
+		isCartPendingUpdate: PropTypes.bool,
 		fetchAlgo: PropTypes.string,
 		showStrikedOutPrice: PropTypes.bool,
 		primarySuggestion: PropTypes.object,
@@ -34,6 +35,7 @@ export class FeaturedDomainSuggestions extends Component {
 	getChildProps() {
 		const childKeys = [
 			'cart',
+			'isCartPendingUpdate',
 			'isDomainOnly',
 			'domainsWithPlansOnly',
 			'showStrikedOutPrice',

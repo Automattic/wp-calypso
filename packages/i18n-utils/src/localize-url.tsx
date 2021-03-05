@@ -51,7 +51,7 @@ const setLocalizedWpComPath = (
 	url.pathname = prefix + url.pathname;
 
 	if ( validLocales.includes( localeSlug ) && localeSlug !== 'en' ) {
-		url.pathname = ( localesToSubdomains[ localeSlug ] || localeSlug ) + url.pathname;
+		url.pathname = localeSlug + url.pathname;
 	}
 	return url;
 };
@@ -67,12 +67,12 @@ const prefixLocalizedUrlPath = (
 	}
 
 	if ( validLocales.includes( localeSlug ) && localeSlug !== 'en' ) {
-		url.pathname = ( localesToSubdomains[ localeSlug ] || localeSlug ) + url.pathname;
+		url.pathname = localeSlug + url.pathname;
 	}
 	return url;
 };
 
-type LinkLocalizer = ( url: URL, localeSlug: string ) => URL;
+type LinkLocalizer = ( url: URL, localeSlug: string, isLoggedIn: boolean ) => URL;
 
 interface UrlLocalizationMapping {
 	[ key: string ]: LinkLocalizer;
@@ -80,18 +80,28 @@ interface UrlLocalizationMapping {
 
 const urlLocalizationMapping: UrlLocalizationMapping = {
 	'wordpress.com/support/': prefixLocalizedUrlPath( supportSiteLocales ),
+	'wordpress.com/forums/': prefixLocalizedUrlPath( forumLocales ),
 	'wordpress.com/blog/': prefixLocalizedUrlPath( localesWithBlog, /^\/blog\/?$/ ),
-	'wordpress.com/tos/': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
+	'wordpress.com/tos/': prefixLocalizedUrlPath( magnificentNonEnLocales ),
+	'wordpress.com/wp-admin/': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
+	'wordpress.com/wp-login.php': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
 	'jetpack.com': setLocalizedUrlHost( 'jetpack.com', jetpackComLocales ),
 	'en.support.wordpress.com': setLocalizedWpComPath( '/support', supportSiteLocales ),
 	'en.blog.wordpress.com': setLocalizedWpComPath( '/blog', localesWithBlog, /^\/$/ ),
-	'en.forums.wordpress.com': setLocalizedUrlHost( 'forums.wordpress.com', forumLocales ),
+	'en.forums.wordpress.com': setLocalizedWpComPath( '/forums', forumLocales ),
 	'automattic.com/privacy/': prefixLocalizedUrlPath( localesWithPrivacyPolicy ),
 	'automattic.com/cookies/': prefixLocalizedUrlPath( localesWithCookiePolicy ),
-	'wordpress.com': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
+	'wordpress.com/help/contact/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
+		if ( isLoggedIn ) {
+			return url;
+		}
+		url.pathname = url.pathname.replace( /\/help\//, '/support/' );
+		return prefixLocalizedUrlPath( supportSiteLocales )( url, localeSlug );
+	},
+	'wordpress.com': prefixLocalizedUrlPath( magnificentNonEnLocales ),
 };
 
-export function localizeUrl( fullUrl: string, locale: Locale ): string {
+export function localizeUrl( fullUrl: string, locale: Locale, isLoggedIn = true ): string {
 	let url;
 	try {
 		url = new URL( String( fullUrl ), INVALID_URL );
@@ -113,26 +123,22 @@ export function localizeUrl( fullUrl: string, locale: Locale ): string {
 		url.pathname = ( url.pathname + '/' ).replace( /\/+$/, '/' );
 	}
 
-	if ( ! locale || 'en' === locale ) {
-		if ( 'en.wordpress.com' === url.host ) {
-			url.host = 'wordpress.com';
-			return url.href;
-		}
-	}
+	const firstPathSegment = url.pathname.substr( 0, 1 + url.pathname.indexOf( '/', 1 ) );
 
 	if ( 'en.wordpress.com' === url.host ) {
 		url.host = 'wordpress.com';
 	}
 
-	const lookup = [
-		url.host,
-		url.host + url.pathname,
-		url.host + url.pathname.substr( 0, 1 + url.pathname.indexOf( '/', 1 ) ),
-	];
+	if ( '/' + locale + '/' === firstPathSegment ) {
+		return url.href;
+	}
+
+	// Lookup is checked back to front.
+	const lookup = [ url.host, url.host + firstPathSegment, url.host + url.pathname ];
 
 	for ( let i = lookup.length - 1; i >= 0; i-- ) {
 		if ( lookup[ i ] in urlLocalizationMapping ) {
-			return urlLocalizationMapping[ lookup[ i ] ]( url, locale ).href;
+			return urlLocalizationMapping[ lookup[ i ] ]( url, locale, isLoggedIn ).href;
 		}
 	}
 
@@ -140,15 +146,15 @@ export function localizeUrl( fullUrl: string, locale: Locale ): string {
 	return fullUrl;
 }
 
-export function useLocalizeUrl(): ( fullUrl: string, locale?: Locale ) => string {
+export function useLocalizeUrl() {
 	const providerLocale = useLocale();
 
 	return useCallback(
-		( fullUrl: string, locale?: Locale ) => {
+		( fullUrl: string, locale?: Locale, isLoggedIn?: boolean ) => {
 			if ( locale ) {
-				return localizeUrl( fullUrl, locale );
+				return localizeUrl( fullUrl, locale, isLoggedIn );
 			}
-			return localizeUrl( fullUrl, providerLocale );
+			return localizeUrl( fullUrl, providerLocale, isLoggedIn );
 		},
 		[ providerLocale ]
 	);

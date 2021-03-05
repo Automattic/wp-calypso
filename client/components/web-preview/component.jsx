@@ -6,7 +6,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +20,8 @@ import WebPreviewContent from './content';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class WebPreviewModal extends Component {
 	static propTypes = {

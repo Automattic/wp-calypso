@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import { spy } from 'sinon';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +19,8 @@ import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATE,
 	WOOCOMMERCE_PRODUCT_CATEGORY_DELETE,
 } from 'woocommerce/state/action-types';
+
+const noop = () => {};
 
 describe( 'actions', () => {
 	describe( '#fetchProductCategories()', () => {

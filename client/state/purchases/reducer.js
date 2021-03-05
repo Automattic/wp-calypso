@@ -6,7 +6,8 @@ import { find, matches } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { withoutPersistence, withStorageKey } from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import {
 	PURCHASES_REMOVE,
 	PURCHASES_SITE_FETCH,

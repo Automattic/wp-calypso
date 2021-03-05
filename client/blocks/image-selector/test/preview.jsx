@@ -6,13 +6,14 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { noop } from 'lodash';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import React from 'react';
 import sinon from 'sinon';
 
 import { ImageSelectorPreview } from '../preview';
+
+const noop = () => {};
 
 describe( 'ImageSelectorPreview', () => {
 	const testProps = {

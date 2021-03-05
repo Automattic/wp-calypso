@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEqual, noop } from 'lodash';
+import { isEqual } from 'lodash';
 import React from 'react';
 import classNames from 'classnames';
 
@@ -21,6 +21,9 @@ import EditorMediaModalGalleryHelp from 'calypso/post-editor/media-modal/gallery
  * Style dependencies
  */
 import './list-item.scss';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 
 // TODO: move to lib/media/utils once it gets typed.
 interface MediaObject {

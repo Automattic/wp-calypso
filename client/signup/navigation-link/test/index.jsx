@@ -3,7 +3,6 @@
  */
 import { shallow } from 'enzyme';
 import React from 'react';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +15,7 @@ jest.mock( 'calypso/signup/utils', () => ( {
 	getFilteredSteps: jest.fn(),
 } ) );
 
+const noop = () => {};
 const signupUtils = require( 'calypso/signup/utils' );
 const { getStepUrl, getFilteredSteps } = signupUtils;
 
@@ -48,8 +48,8 @@ describe( 'NavigationLink', () => {
 	test( 'should render Button element', () => {
 		const wrapper = shallow( <NavigationLink { ...props } /> );
 
-		expect( wrapper.find( 'Button' ) ).toHaveLength( 1 );
-		expect( wrapper.find( 'Button' ).props().className ).toEqual( 'navigation-link' );
+		expect( wrapper.find( 'ForwardRef(Button)' ) ).toHaveLength( 1 );
+		expect( wrapper.find( 'ForwardRef(Button)' ).props().className ).toEqual( 'navigation-link' );
 	} );
 
 	test( 'should render no icons when the direction prop is undefined', () => {

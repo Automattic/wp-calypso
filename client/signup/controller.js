@@ -8,7 +8,7 @@ import { isEmpty } from 'lodash';
 /**
  * Internal Dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { sectionify } from 'calypso/lib/route';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import SignupComponent from './main';
@@ -43,6 +43,10 @@ import { requestGeoLocation } from 'calypso/state/data-getters';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { abtest } from 'calypso/lib/abtest';
 import user from 'calypso/lib/user';
+import getSiteId from 'calypso/state/selectors/get-site-id';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
+import { dangerouslyGetExperimentAssignment } from 'calypso/lib/explat';
 
 /**
  * Constants
@@ -60,6 +64,20 @@ const removeWhiteBackground = function () {
 	}
 
 	document.body.classList.remove( 'is-white-signup' );
+};
+
+const gutenbergRedirect = function ( flowName, locale ) {
+	const url = new URL( window.location );
+	let path = '/new';
+	if ( [ 'free', 'personal', 'premium', 'business', 'ecommerce' ].includes( flowName ) ) {
+		path += `/${ flowName }`;
+	}
+	if ( locale ) {
+		path += `/${ locale }`;
+	}
+
+	url.pathname = path;
+	window.location.replace( url.toString() );
 };
 
 export const addP2SignupClassName = () => {
@@ -113,6 +131,21 @@ export default {
 			waitForHttpData( () => ( { geo: requestGeoLocation() } ) )
 				.then( ( { geo } ) => {
 					const countryCode = geo.data;
+					const localeFromParams = context.params.lang;
+					const flowName = getFlowName( context.params );
+
+					if ( flowName === 'free' && 'newOnboarding' === abtest( 'newUsersWithFreePlan' ) ) {
+						gutenbergRedirect( flowName, localeFromParams );
+						return;
+					}
+
+					// Temporary Experiment testing the new ExPlat client
+					try {
+						dangerouslyGetExperimentAssignment( 'explat_test_aa_calypso_signup' );
+					} catch ( e ) {
+						// Do nothing
+					}
+
 					if (
 						( ! user() || ! user().get() ) &&
 						-1 === context.pathname.indexOf( 'free' ) &&
@@ -126,7 +159,6 @@ export default {
 						removeWhiteBackground();
 						const stepName = getStepName( context.params );
 						const stepSectionName = getStepSectionName( context.params );
-						const localeFromParams = context.params.lang;
 						const urlWithLocale = getStepUrl(
 							'onboarding-registrationless',
 							stepName,
@@ -264,7 +296,7 @@ export default {
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
 
-		if ( flowName !== 'launch-site' ) {
+		if ( ! [ 'launch-site', 'new-launch' ].includes( flowName ) ) {
 			context.store.dispatch( setSelectedSiteId( null ) );
 		}
 
@@ -283,6 +315,33 @@ export default {
 		} );
 
 		next();
+	},
+	setSelectedSiteForSignup( { store: signupStore, query }, next ) {
+		const { getState, dispatch } = signupStore;
+		const signupDependencies = getSignupDependencyStore( getState() );
+
+		const siteSlug = signupDependencies?.siteSlug || query?.siteSlug;
+		const siteId = getSiteId( getState(), siteSlug );
+		if ( siteId ) {
+			dispatch( setSelectedSiteId( siteId ) );
+			next();
+		} else {
+			// Fetch the site by siteSlug and then try to select again
+			dispatch( requestSite( siteSlug ) ).then( () => {
+				let freshSiteId = getSiteId( getState(), siteSlug );
+
+				if ( ! freshSiteId ) {
+					const wpcomStagingFragment = siteSlug.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
+					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
+				}
+
+				if ( freshSiteId ) {
+					dispatch( setSelectedSiteId( freshSiteId ) );
+					next();
+				}
+			} );
+			next();
+		}
 	},
 	importSiteInfoFromQuery( { store: signupStore, query }, next ) {
 		const state = signupStore.getState();

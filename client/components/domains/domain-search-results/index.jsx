@@ -38,6 +38,7 @@ class DomainSearchResults extends React.Component {
 		lastDomainStatus: PropTypes.string,
 		lastDomainSearched: PropTypes.string,
 		cart: PropTypes.object,
+		isCartPendingUpdate: PropTypes.bool,
 		premiumDomains: PropTypes.object,
 		products: PropTypes.object,
 		selectedSite: PropTypes.object,
@@ -263,6 +264,7 @@ class DomainSearchResults extends React.Component {
 			featuredSuggestionElement = (
 				<FeaturedDomainSuggestions
 					cart={ this.props.cart }
+					isCartPendingUpdate={ this.props.isCartPendingUpdate }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					isDomainOnly={ isDomainOnly }
 					fetchAlgo={ this.props.fetchAlgo }
@@ -288,6 +290,7 @@ class DomainSearchResults extends React.Component {
 
 				return (
 					<DomainRegistrationSuggestion
+						isCartPendingUpdate={ this.props.isCartPendingUpdate }
 						isDomainOnly={ isDomainOnly }
 						suggestion={ suggestion }
 						key={ suggestion.domain_name }

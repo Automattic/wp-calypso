@@ -15,7 +15,7 @@ import {
 	setLocaleData,
 } from '@wordpress/i18n';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { createHooks, addAction as globalAddAction } from '@wordpress/hooks';
+import { createHooks } from '@wordpress/hooks';
 import type { addFilter, removeFilter, hasFilter, applyFilters } from '@wordpress/hooks';
 
 /**
@@ -50,15 +50,7 @@ interface I18nFilters {
 
 export const I18nProvider: React.FunctionComponent< Props > = ( { children, localeData } ) => {
 	const hooks = React.useMemo( () => createHooks(), [] );
-	const {
-		addAction,
-		removeAction,
-		doAction,
-		addFilter,
-		removeFilter,
-		hasFilter,
-		applyFilters,
-	} = hooks;
+	const { addAction, removeAction, addFilter, removeFilter, hasFilter, applyFilters } = hooks;
 	const [ filters, setFilters ] = React.useState( {
 		addFilter,
 		removeFilter,
@@ -67,20 +59,6 @@ export const I18nProvider: React.FunctionComponent< Props > = ( { children, loca
 	} );
 
 	React.useEffect( () => {
-		/**
-		 * Transmits internal hooks from the shared instance to the private one
-		 * due to a problem in with private hooks instances in @wordpress/hooks.
-		 *
-		 * @see  https://github.com/WordPress/gutenberg/pull/26498
-		 * @todo Remove when issue gets fixed in @wordpress/hooks.
-		 */
-		globalAddAction( 'hookAdded', 'a8c/react-i18n/transmit-internal-hooks', ( ...args ) => {
-			doAction( 'hookAdded', ...args );
-		} );
-		globalAddAction( 'hookRemoved', 'a8c/react-i18n/transmit-internal-hooks', ( ...args ) => {
-			doAction( 'hookRemoved', ...args );
-		} );
-
 		addAction( 'hookAdded', 'a8c/react-i18n/filters', () => {
 			setFilters( { addFilter, removeFilter, hasFilter, applyFilters } );
 			return () => removeAction( 'hookAdded', 'a8c/react-i18n/filters' );
@@ -133,6 +111,8 @@ export const withI18n = createHigherOrderComponent< I18nReact >( ( InnerComponen
 	};
 }, 'withI18n' );
 
+type TranslationFunction = '__' | '_n' | '_nx' | '_x';
+
 /**
  * Bind an I18n function to its instance
  *
@@ -141,7 +121,11 @@ export const withI18n = createHigherOrderComponent< I18nReact >( ( InnerComponen
  * @param filters Make context filters instance
  * @returns Bound I18n function with applied transformation hooks
  */
-function bindI18nFunction( i18n: I18n, fnName: '__' | '_n' | '_nx' | '_x', filters: I18nFilters ) {
+function bindI18nFunction< T extends TranslationFunction >(
+	i18n: I18n,
+	fnName: T,
+	filters: I18nFilters
+): I18n[ T ] {
 	const translateFn = i18n[ fnName ];
 	const { hasFilter, applyFilters } = filters;
 
@@ -149,17 +133,22 @@ function bindI18nFunction( i18n: I18n, fnName: '__' | '_n' | '_nx' | '_x', filte
 		return translateFn;
 	}
 
-	return ( ...args: ( string | number )[] ) => {
-		const filteredArguments = applyFilters( 'preTranslation', args, fnName, filters );
+	return ( ( ( ...args: Parameters< I18n[ T ] > ): ReturnType< I18n[ T ] > => {
+		const filteredArguments: Parameters< I18n[ T ] > = applyFilters(
+			'preTranslation',
+			args,
+			fnName,
+			filters
+		) as Parameters< I18n[ T ] >;
 
 		return applyFilters(
 			'postTranslation',
-			translateFn( ...filteredArguments ),
+			( translateFn as any )( ...filteredArguments ),
 			filteredArguments,
 			fnName,
 			filters
-		);
-	};
+		) as any;
+	} ) as unknown ) as I18n[ T ];
 }
 
 const CONTEXT_DELIMETER = '\u0004';

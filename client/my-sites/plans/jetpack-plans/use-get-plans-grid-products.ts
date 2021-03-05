@@ -9,23 +9,27 @@ import { useSelector } from 'react-redux';
 import { getPlan } from 'calypso/lib/plans';
 import {
 	JETPACK_ANTI_SPAM_PRODUCTS,
-	JETPACK_BACKUP_PRODUCTS,
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+	PRODUCT_JETPACK_SCAN,
+	PRODUCT_JETPACK_SCAN_MONTHLY,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
-	PRODUCT_JETPACK_CRM,
-	PRODUCT_JETPACK_CRM_MONTHLY,
+	JETPACK_CRM_FREE_PRODUCTS,
 } from 'calypso/lib/products-values/constants';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { slugToSelectorProduct } from './utils';
 
-const useSelectorPageProducts = ( siteId: number | null ) => {
+/**
+ * Type dependencies
+ */
+import type { PlanGridProducts, SelectorProduct } from './types';
+
+const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	let availableProducts: string[] = [];
 
 	// Products/features included in the current plan
@@ -52,54 +56,33 @@ const useSelectorPageProducts = ( siteId: number | null ) => {
 
 	// Include Jetpack CRM
 	if (
-		! ownedProducts.some( ( ownedProduct ) =>
-			[ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ].includes( ownedProduct )
-		)
+		! ownedProducts.some( ( ownedProduct ) => JETPACK_CRM_FREE_PRODUCTS.includes( ownedProduct ) )
 	) {
-		availableProducts = [ ...availableProducts, PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ];
+		availableProducts = [ ...availableProducts, ...JETPACK_CRM_FREE_PRODUCTS ];
 	}
 
-	const backupProductsToShow = [];
-	const currentCROvariant = getJetpackCROActiveVersion();
-	// In v1, we show the Backup product the site owns or Jetpack Backup Daily.
-	if ( currentCROvariant === 'v1' ) {
-		if (
-			! ownedProducts.some( ( ownedProduct ) => JETPACK_BACKUP_PRODUCTS.includes( ownedProduct ) )
-		) {
-			backupProductsToShow.push(
-				PRODUCT_JETPACK_BACKUP_DAILY,
-				PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY
-			);
-		}
-		// We show the Backup product the site owns and the one the site doesn't own. In other words,
-		// we always show both Backup Daily and Backup Real-time.
-	} else {
-		if (
-			! ownedProducts.some( ( ownedProduct ) =>
-				[ PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ].includes(
-					ownedProduct
-				)
-			)
-		) {
-			backupProductsToShow.push(
-				PRODUCT_JETPACK_BACKUP_DAILY,
-				PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY
-			);
-		}
+	const backupProductsToShow: string[] = [];
 
-		if (
-			! ownedProducts.some( ( ownedProduct ) =>
-				[ PRODUCT_JETPACK_BACKUP_REALTIME, PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ].includes(
-					ownedProduct
-				)
-			)
-		) {
-			backupProductsToShow.push(
-				PRODUCT_JETPACK_BACKUP_REALTIME,
-				PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY
-			);
-		}
+	const ownsDaily =
+		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_DAILY ) ||
+		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY );
+	const ownsRealtime =
+		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_REALTIME ) ||
+		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY );
+
+	// Show the Backup product the site owns, and the one it doesn't own.
+	// In other words, always show both Backup Daily and Backup Real-time.
+	if ( ! ownsDaily ) {
+		backupProductsToShow.push( PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY );
 	}
+
+	if ( ! ownsRealtime ) {
+		backupProductsToShow.push(
+			PRODUCT_JETPACK_BACKUP_REALTIME,
+			PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY
+		);
+	}
+
 	availableProducts = [ ...availableProducts, ...backupProductsToShow ];
 
 	// If Jetpack Backup is directly or indirectly owned, continue, otherwise make it available by displaying
@@ -109,7 +92,10 @@ const useSelectorPageProducts = ( siteId: number | null ) => {
 	if (
 		! ownedProducts.some( ( ownedProduct ) => JETPACK_SCAN_PRODUCTS.includes( ownedProduct ) )
 	) {
-		availableProducts = [ ...availableProducts, ...JETPACK_SCAN_PRODUCTS ];
+		availableProducts = [
+			...availableProducts,
+			...[ PRODUCT_JETPACK_SCAN, PRODUCT_JETPACK_SCAN_MONTHLY ],
+		];
 	}
 
 	// If Jetpack Anti-spam is directly or indirectly owned, continue, otherwise make it available.
@@ -120,9 +106,11 @@ const useSelectorPageProducts = ( siteId: number | null ) => {
 	}
 
 	return {
-		availableProducts: availableProducts.map( slugToSelectorProduct ),
-		purchasedProducts: purchasedProducts.map( slugToSelectorProduct ),
-		includedInPlanProducts: includedInPlanProducts.map( slugToSelectorProduct ),
+		availableProducts: availableProducts.map( slugToSelectorProduct ) as SelectorProduct[],
+		purchasedProducts: purchasedProducts.map( slugToSelectorProduct ) as SelectorProduct[],
+		includedInPlanProducts: includedInPlanProducts.map(
+			slugToSelectorProduct
+		) as SelectorProduct[],
 	};
 };
 

@@ -3,7 +3,7 @@
  */
 import wpcom from 'calypso/lib/wp';
 import { translate } from 'i18n-calypso';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { create, supported } from '@github/webauthn-json';
 
 const POST = 'POST';

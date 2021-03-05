@@ -12,12 +12,18 @@ import type {
 	PaymentCompleteCallbackArguments,
 } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
+import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 
 /**
  * Internal dependencies
  */
-import notices from 'calypso/notices';
-import { hasRenewalItem, getRenewalItems, hasPlan } from 'calypso/lib/cart-values/cart-items';
+import { infoNotice, successNotice } from 'calypso/state/notices/actions';
+import {
+	hasRenewalItem,
+	getRenewalItems,
+	hasPlan,
+	hasEcommercePlan,
+} from 'calypso/lib/cart-values/cart-items';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -44,9 +50,12 @@ import {
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { logStashLoadErrorEventAction } from '../lib/analytics';
-import { isTreatmentOneClickTest } from 'calypso/state/marketing/selectors';
+import {
+	isTreatmentOneClickTest,
+	isTreatmentDifmUpsellTest,
+} from 'calypso/state/marketing/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-on-payment-complete' );
 
@@ -58,6 +67,7 @@ export default function useCreatePaymentCompleteCallback( {
 	feature,
 	isInEditor,
 	isComingFromUpsell,
+	isFocusedLaunch,
 }: {
 	createUserAndSiteBeforeTransaction?: boolean;
 	productAliasFromUrl?: string | undefined;
@@ -66,6 +76,7 @@ export default function useCreatePaymentCompleteCallback( {
 	feature?: string | undefined;
 	isInEditor?: boolean;
 	isComingFromUpsell?: boolean;
+	isFocusedLaunch?: boolean;
 } ): PaymentCompleteCallback {
 	const { responseCart } = useShoppingCart();
 	const reduxDispatch = useDispatch();
@@ -79,6 +90,7 @@ export default function useCreatePaymentCompleteCallback( {
 	const adminUrl = selectedSiteData?.options?.admin_url;
 	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( responseCart );
 	const shouldShowOneClickTreatment = useSelector( ( state ) => isTreatmentOneClickTest( state ) );
+	const shouldShowDifmUpsell = useSelector( ( state ) => isTreatmentDifmUpsellTest( state ) );
 	const previousRoute = useSelector( ( state ) => getPreviousRoute( state ) );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const isJetpackNotAtomic =
@@ -103,6 +115,7 @@ export default function useCreatePaymentCompleteCallback( {
 				productAliasFromUrl,
 				isEligibleForSignupDestinationResult,
 				shouldShowOneClickTreatment,
+				shouldShowDifmUpsell,
 				hideNudge: isComingFromUpsell,
 				isInEditor,
 				previousRoute,
@@ -121,24 +134,11 @@ export default function useCreatePaymentCompleteCallback( {
 				} );
 			} catch ( err ) {
 				console.error( err ); // eslint-disable-line no-console
-				// This is a fallback to catch any errors caused by the analytics code
-				// Anything in this block should remain very simple and extremely
-				// tolerant of any kind of data. It should make no assumptions about
-				// the data it uses.  There's no fallback for the fallback!
-				debug( 'checkout event error', err.message );
-				reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_composite_error', {
-						error_message: err.message,
-						action_type: 'useCreatePaymentCompleteCallback',
-						action_payload: '',
-					} )
-				);
-				reduxDispatch(
-					logStashLoadErrorEventAction( 'calypso_checkout_composite_error', err.message, {
-						action_type: 'useCreatePaymentCompleteCallback',
-						action_payload: '',
-					} )
-				);
+				recordCompositeCheckoutErrorDuringAnalytics( {
+					reduxDispatch,
+					errorObject: err,
+					failureDescription: 'useCreatePaymentCompleteCallback',
+				} );
 			}
 
 			const receiptId = transactionResult?.receipt_id;
@@ -156,7 +156,13 @@ export default function useCreatePaymentCompleteCallback( {
 
 			if ( hasRenewalItem( responseCart ) && transactionResult?.purchases ) {
 				debug( 'purchase had a renewal' );
-				displayRenewalSuccessNotice( responseCart, transactionResult.purchases, translate, moment );
+				displayRenewalSuccessNotice(
+					responseCart,
+					transactionResult.purchases,
+					translate,
+					moment,
+					reduxDispatch
+				);
 			}
 
 			if ( receiptId && transactionResult?.purchases ) {
@@ -174,7 +180,7 @@ export default function useCreatePaymentCompleteCallback( {
 					Object.keys( transactionResult?.failed_purchases ?? {} ).length === 0 ) ||
 				( isDomainOnly && hasPlan( responseCart ) && ! siteId )
 			) {
-				notices.info( translate( 'Almost done…' ) );
+				reduxDispatch( infoNotice( translate( 'Almost done…' ) ) );
 
 				const domainName = getDomainNameFromReceiptOrCart( transactionResult, responseCart );
 
@@ -183,7 +189,7 @@ export default function useCreatePaymentCompleteCallback( {
 					fetchSitesAndUser(
 						domainName,
 						() => {
-							page.redirect( url );
+							performRedirect( url );
 						},
 						reduxStore
 					);
@@ -192,13 +198,21 @@ export default function useCreatePaymentCompleteCallback( {
 				}
 			}
 
+			// Focused Launch is showing a success dialog directly in editor instead of a thank you page.
+			// See https://github.com/Automattic/wp-calypso/pull/47808#issuecomment-755196691
+			if ( isInEditor && isFocusedLaunch && ! hasEcommercePlan( responseCart ) ) {
+				return;
+			}
+
 			debug( 'just redirecting to', url );
 
 			if ( createUserAndSiteBeforeTransaction ) {
 				try {
 					window.localStorage.removeItem( 'shoppingCart' );
 					window.localStorage.removeItem( 'siteParams' );
-				} catch ( err ) {}
+				} catch ( err ) {
+					debug( 'error while clearing localStorage cart' );
+				}
 
 				// We use window.location instead of page.redirect() so that the cookies are detected on fresh page load.
 				// Using page.redirect() will take to the log in page which we don't want.
@@ -206,11 +220,12 @@ export default function useCreatePaymentCompleteCallback( {
 				return;
 			}
 
-			page.redirect( url );
+			performRedirect( url );
 		},
 		[
 			previousRoute,
 			shouldShowOneClickTreatment,
+			shouldShowDifmUpsell,
 			siteSlug,
 			adminUrl,
 			redirectTo,
@@ -229,20 +244,30 @@ export default function useCreatePaymentCompleteCallback( {
 			translate,
 			responseCart,
 			createUserAndSiteBeforeTransaction,
+			isFocusedLaunch,
 		]
 	);
 }
 
+function performRedirect( url: string ): void {
+	try {
+		page( url );
+	} catch ( err ) {
+		window.location.href = url;
+	}
+}
+
 function displayRenewalSuccessNotice(
 	responseCart: ResponseCart,
-	purchases: Record< number, Purchase >,
+	purchases: Record< number, Purchase[] >,
 	translate: ReturnType< typeof useTranslate >,
-	moment: ReturnType< typeof useLocalizedMoment >
+	moment: ReturnType< typeof useLocalizedMoment >,
+	reduxDispatch: ReturnType< typeof useDispatch >
 ): void {
 	const renewalItem = getRenewalItems( responseCart )[ 0 ];
 	// group all purchases into an array
 	const purchasedProducts = Object.values( purchases ?? {} ).reduce(
-		( result: Purchase[], value: Purchase ) => [ ...result, value ],
+		( result: Purchase[], value: Purchase[] ) => [ ...result, ...value ],
 		[]
 	);
 	// and take the first product which matches the product id of the renewalItem
@@ -257,39 +282,43 @@ function displayRenewalSuccessNotice(
 
 	if ( product.will_auto_renew ) {
 		debug( 'showing notice for product that will auto-renew' );
-		notices.success(
-			translate(
-				'%(productName)s has been renewed and will now auto renew in the future. ' +
-					'{{a}}Learn more{{/a}}',
-				{
-					args: {
-						productName: renewalItem.product_name,
-					},
-					components: {
-						a: <a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />,
-					},
-				}
-			),
-			{ persistent: true }
+		reduxDispatch(
+			successNotice(
+				translate(
+					'%(productName)s has been renewed and will now auto renew in the future. ' +
+						'{{a}}Learn more{{/a}}',
+					{
+						args: {
+							productName: renewalItem.product_name,
+						},
+						components: {
+							a: <a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />,
+						},
+					}
+				),
+				{ displayOnNextPage: true }
+			)
 		);
 		return;
 	}
 
 	debug( 'showing notice for product that will not auto-renew' );
-	notices.success(
-		translate(
-			'Success! You renewed %(productName)s for %(duration)s, until %(date)s. ' +
-				'We sent your receipt to %(email)s.',
-			{
-				args: {
-					productName: renewalItem.product_name,
-					duration: moment.duration( { days: renewalItem.bill_period } ).humanize(),
-					date: moment( product.expiry ).format( 'LL' ),
-					email: product.user_email,
-				},
-			}
-		),
-		{ persistent: true }
+	reduxDispatch(
+		successNotice(
+			translate(
+				'Success! You renewed %(productName)s for %(duration)s, until %(date)s. ' +
+					'We sent your receipt to %(email)s.',
+				{
+					args: {
+						productName: renewalItem.product_name,
+						duration: moment.duration( { days: renewalItem.bill_period } ).humanize(),
+						date: moment( product.expiry ).format( 'LL' ),
+						email: product.user_email,
+					},
+				}
+			),
+			{ displayOnNextPage: true }
+		)
 	);
 }
 
@@ -309,12 +338,15 @@ function recordPaymentCompleteAnalytics( {
 	const wpcomPaymentMethod = paymentMethodId
 		? translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId )
 		: null;
+
+	const device = resolveDeviceTypeByViewPort();
 	reduxDispatch(
 		recordTracksEvent( 'calypso_checkout_payment_success', {
 			coupon_code: responseCart.coupon,
 			currency: responseCart.currency,
 			payment_method: wpcomPaymentMethod || '',
 			total_cost: responseCart.total_cost,
+			device,
 		} )
 	);
 	recordPurchase( {
@@ -328,6 +360,7 @@ function recordPaymentCompleteAnalytics( {
 		},
 		orderId: transactionResult?.receipt_id,
 	} );
+
 	return reduxDispatch(
 		recordTracksEvent( 'calypso_checkout_composite_payment_complete', {
 			redirect_url: redirectUrl,
@@ -335,6 +368,7 @@ function recordPaymentCompleteAnalytics( {
 			total: responseCart.total_cost_integer,
 			currency: responseCart.currency,
 			payment_method: wpcomPaymentMethod || '',
+			device,
 		} )
 	);
 }

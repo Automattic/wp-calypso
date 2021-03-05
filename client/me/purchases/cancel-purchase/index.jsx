@@ -16,6 +16,7 @@ import CancelPurchaseLoadingPlaceholder from 'calypso/me/purchases/cancel-purcha
 import CancelPurchaseRefundInformation from './refund-information';
 import {
 	getName,
+	purchaseType,
 	hasAmountAvailableToRefund,
 	isCancelable,
 	isOneTimePurchase,
@@ -38,6 +39,7 @@ import ProductLink from 'calypso/me/purchases/product-link';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
 
 /**
  * Style dependencies
@@ -167,7 +169,7 @@ class CancelPurchase extends React.Component {
 
 		const { purchase } = this.props;
 		const purchaseName = getName( purchase );
-		const { siteName, domain: siteDomain } = purchase;
+		const { siteName, domain: siteDomain, siteId } = purchase;
 
 		let heading;
 
@@ -211,9 +213,10 @@ class CancelPurchase extends React.Component {
 					/>
 				</Card>
 
+				<PurchaseSiteHeader siteId={ siteId } name={ siteName } domain={ siteDomain } />
 				<CompactCard className="cancel-purchase__product-information">
 					<div className="cancel-purchase__purchase-name">{ purchaseName }</div>
-					<div className="cancel-purchase__site-title">{ siteName || siteDomain }</div>
+					<div className="cancel-purchase__description">{ purchaseType( purchase ) }</div>
 					<ProductLink purchase={ purchase } selectedSite={ this.props.site } />
 				</CompactCard>
 				<CompactCard className="cancel-purchase__footer">

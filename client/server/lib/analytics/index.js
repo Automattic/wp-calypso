@@ -9,7 +9,7 @@ import { isUndefined, omit, assign, get, has } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { statsdTimingUrl, statsdCountingUrl } from 'calypso/lib/analytics/statsd-utils';
 const URL = require( 'url' );
 

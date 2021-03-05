@@ -6,13 +6,13 @@ import { useSelector } from 'react-redux';
 import page from 'page';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { isArray } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
@@ -29,7 +29,6 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
-import { useDateWithOffset } from './hooks';
 import { backupMainPath } from './paths';
 import BackupDatePicker from './backup-date-picker';
 import EnableRestoresBanner from './enable-restores-banner';
@@ -145,7 +144,7 @@ const BackupStatus = ( { selectedDate } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const rewindCapabilities = useSelector( ( state ) => getRewindCapabilities( state, siteId ) );
 
-	if ( ! isArray( rewindCapabilities ) ) {
+	if ( ! Array.isArray( rewindCapabilities ) ) {
 		return <BackupPlaceholder showDatePicker={ false } />;
 	}
 

@@ -91,7 +91,9 @@ export default class PlanFeaturesScroller extends PureComponent {
 			this.setState( { scrollSnapDisabled: true }, async () => {
 				await this.animateScroll( from, to );
 				this.setState( { scrollSnapDisabled: false }, () => {
-					this.scrollWrapperDOM.scrollLeft = to;
+					if ( this.scrollWrapperDOM ) {
+						this.scrollWrapperDOM.scrollLeft = to;
+					}
 				} );
 			} );
 		}
@@ -109,7 +111,9 @@ export default class PlanFeaturesScroller extends PureComponent {
 
 				let nextPos = from + ( timestamp - startTime ) * step;
 				nextPos = step < 0 ? Math.max( nextPos, to ) : Math.min( nextPos, to );
-				this.scrollWrapperDOM.scrollLeft = nextPos;
+				if ( this.scrollWrapperDOM ) {
+					this.scrollWrapperDOM.scrollLeft = nextPos;
+				}
 
 				if ( Math.abs( to - nextPos ) > 50 ) {
 					window.requestAnimationFrame( animate );

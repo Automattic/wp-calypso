@@ -3,12 +3,11 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop, size, map } from 'lodash';
+import { size, map } from 'lodash';
 import page from 'page';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import config from 'calypso/config';
 
 /**
  * Internal dependencies
@@ -26,7 +25,7 @@ import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
-import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
@@ -38,11 +37,16 @@ import {
 	requestMarkAsUnseenBlog,
 } from 'calypso/state/reader/seen-posts/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {
@@ -57,6 +61,8 @@ class ReaderPostOptionsMenu extends React.Component {
 		showReportSite: PropTypes.bool,
 		position: PropTypes.string,
 		posts: PropTypes.array,
+		isWPForTeamsItem: PropTypes.bool,
+		teams: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -245,7 +251,7 @@ class ReaderPostOptionsMenu extends React.Component {
 	};
 
 	render() {
-		const { post, site, feed, teams, translate, position, posts } = this.props;
+		const { post, site, feed, teams, translate, position, posts, isWPForTeamsItem } = this.props;
 
 		if ( ! post ) {
 			return null;
@@ -307,19 +313,27 @@ class ReaderPostOptionsMenu extends React.Component {
 						/>
 					) }
 
-					{ config.isEnabled( 'reader/seen-posts' ) && post.is_seen && (
-						<PopoverMenuItem onClick={ this.markAsUnSeen } icon="not-visible" itemComponent={ 'a' }>
-							{ size( posts ) > 0 && translate( 'Mark all as unseen' ) }
-							{ size( posts ) === 0 && translate( 'Mark as unseen' ) }
-						</PopoverMenuItem>
-					) }
+					{ isEligibleForUnseen( { teams, isWPForTeamsItem } ) &&
+						canBeMarkedAsSeen( { post, posts } ) &&
+						post.is_seen && (
+							<PopoverMenuItem
+								onClick={ this.markAsUnSeen }
+								icon="not-visible"
+								itemComponent={ 'a' }
+							>
+								{ size( posts ) > 0 && translate( 'Mark all as unseen' ) }
+								{ size( posts ) === 0 && translate( 'Mark as unseen' ) }
+							</PopoverMenuItem>
+						) }
 
-					{ config.isEnabled( 'reader/seen-posts' ) && ! post.is_seen && (
-						<PopoverMenuItem onClick={ this.markAsSeen } icon="visible">
-							{ size( posts ) > 0 && translate( 'Mark all as seen' ) }
-							{ size( posts ) === 0 && translate( 'Mark as seen' ) }
-						</PopoverMenuItem>
-					) }
+					{ isEligibleForUnseen( { teams, isWPForTeamsItem } ) &&
+						canBeMarkedAsSeen( { post, posts } ) &&
+						! post.is_seen && (
+							<PopoverMenuItem onClick={ this.markAsSeen } icon="visible">
+								{ size( posts ) > 0 && translate( 'Mark all as seen' ) }
+								{ size( posts ) === 0 && translate( 'Mark as seen' ) }
+							</PopoverMenuItem>
+						) }
 
 					{ this.props.showVisitPost && post.URL && (
 						<PopoverMenuItem onClick={ this.visitPost } icon="external">
@@ -366,6 +380,7 @@ export default connect(
 		const siteId = is_external ? null : site_ID;
 
 		return Object.assign(
+			{ isWPForTeamsItem: isSiteWPForTeams( state, siteId ) || isFeedWPForTeams( state, feedId ) },
 			{ teams: getReaderTeams( state ) },
 			feedId > 0 && { feed: getFeed( state, feedId ) },
 			siteId > 0 && { site: getSite( state, siteId ) }

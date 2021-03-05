@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-
-import { find, get, isArray } from 'lodash';
+import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,7 +19,7 @@ const getRawGeneralSettings = ( state, siteId ) => {
  * @returns {boolean} Whether the general settings list has been successfully loaded from the server
  */
 export const areSettingsGeneralLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return isArray( getRawGeneralSettings( state, siteId ) );
+	return Array.isArray( getRawGeneralSettings( state, siteId ) );
 };
 
 /**

@@ -13,6 +13,8 @@ import { Card } from '@automattic/components';
 import Main from 'calypso/components/main';
 import SiteSelector from 'calypso/components/site-selector';
 import VisitSite from 'calypso/blocks/visit-site';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+
 /**
  * Style dependencies
  */
@@ -22,6 +24,16 @@ class Sites extends Component {
 	static propTypes = {
 		siteBasePath: PropTypes.string.isRequired,
 	};
+
+	componentDidMount() {
+		const path = this.getPath();
+		if ( this.props.fromSite && path ) {
+			recordTracksEvent( 'calypso_site_selector_site_missing', {
+				path,
+				site: this.props.fromSite,
+			} );
+		}
+	}
 
 	filterSites = ( site ) => {
 		const path = this.props.siteBasePath;
@@ -53,15 +65,26 @@ class Sites extends Component {
 		return site;
 	};
 
+	/**
+	 * Get the site path the user is trying to access.
+	 *
+	 * @returns {string} The path.
+	 */
+	getPath() {
+		let path = this.props.siteBasePath.split( '?' )[ 0 ].split( '/' )[ 1 ];
+		if ( typeof path !== 'undefined' ) {
+			path = path.toLowerCase();
+		}
+
+		return path;
+	}
+
 	getHeaderText() {
 		if ( this.props.getSiteSelectionHeaderText ) {
 			return this.props.getSiteSelectionHeaderText();
 		}
 
-		let path = this.props.siteBasePath.split( '?' )[ 0 ].split( '/' )[ 1 ];
-		if ( typeof path !== 'undefined' ) {
-			path = path.toLowerCase();
-		}
+		let path = this.getPath();
 
 		const { translate } = this.props;
 

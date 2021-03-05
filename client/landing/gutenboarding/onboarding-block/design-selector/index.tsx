@@ -1,9 +1,11 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
 import { Tooltip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
+import { useLocale } from '@automattic/i18n-utils';
 import React from 'react';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 
@@ -15,10 +17,12 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { useTrackStep } from '../../hooks/use-track-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import Badge from '../../components/badge';
-import { getDesignImageUrl } from '../../available-designs';
+import MShotsImage from '../../components/mshots-image';
+import { getDesignImageUrl, getDesignUrl, mShotOptions } from '../../available-designs';
 import JetpackLogo from 'calypso/components/jetpack-logo'; // @TODO: extract to @automattic package
 import type { Design } from '../../stores/onboard/types';
 import { useIsAnchorFm } from '../../path';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Style dependencies
@@ -29,6 +33,7 @@ const makeOptionId = ( { slug }: Design ): string => `design-selector__option-na
 
 const DesignSelector: React.FunctionComponent = () => {
 	const { __ } = useI18n();
+	const locale = useLocale();
 	const { goBack, goNext } = useStepNavigation();
 
 	const { setSelectedDesign, setFonts } = useDispatch( ONBOARD_STORE );
@@ -84,12 +89,31 @@ const DesignSelector: React.FunctionComponent = () => {
 									goNext();
 								} }
 							>
-								<span className="design-selector__image-frame">
-									<img
-										alt=""
-										aria-labelledby={ makeOptionId( design ) }
-										src={ getDesignImageUrl( design ) }
-									/>
+								<span
+									className={ classnames(
+										'design-selector__image-frame',
+										isEnabled( 'gutenboarding/landscape-preview' )
+											? 'design-selector__landscape'
+											: 'design-selector__portrait',
+										design.preview === 'static'
+											? 'design-selector__static'
+											: 'design-selector__scrollable'
+									) }
+								>
+									{ isEnabled( 'gutenboarding/mshot-preview' ) ? (
+										<MShotsImage
+											url={ getDesignUrl( design, locale ) }
+											aria-labelledby={ makeOptionId( design ) }
+											alt=""
+											options={ mShotOptions() }
+										/>
+									) : (
+										<img
+											alt=""
+											aria-labelledby={ makeOptionId( design ) }
+											src={ getDesignImageUrl( design ) }
+										/>
+									) }
 								</span>
 								<span className="design-selector__option-overlay">
 									<span id={ makeOptionId( design ) } className="design-selector__option-meta">

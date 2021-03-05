@@ -12,9 +12,9 @@ import { connect } from 'react-redux';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import { recordTrack } from 'calypso/reader/stats';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Asset dependencies
@@ -33,20 +33,30 @@ class FollowingIntro extends React.Component {
 		}
 	}
 
+	dismiss = () => {
+		this.props.recordReaderTracksEvent( 'calypso_reader_following_intro_dismiss' );
+		return this.props.savePreference( 'is_new_reader', false );
+	};
+
+	handleManageLinkClick = () => {
+		this.props.recordReaderTracksEvent( 'calypso_reader_following_intro_link_clicked' );
+		return this.props.savePreference( 'is_new_reader', false );
+	};
+
 	recordRenderTrack = ( props = this.props ) => {
 		if ( props.isNewReader === true ) {
-			recordTrack( 'calypso_reader_following_intro_render' );
+			this.props.recordReaderTracksEvent( 'calypso_reader_following_intro_render' );
 		}
 	};
 
 	render() {
-		const { isNewReader, translate, dismiss, isNewUser } = this.props;
+		const { isNewReader, isNewUser, translate } = this.props;
 
 		if ( ! isNewReader || ! isNewUser ) {
 			return null;
 		}
 
-		const linkElement = <a onClick={ this.props.handleManageLinkClick } href="/following/manage" />;
+		const linkElement = <a onClick={ this.handleManageLinkClick } href="/following/manage" />;
 
 		return (
 			<header
@@ -72,11 +82,12 @@ class FollowingIntro extends React.Component {
 							) }
 						</span>
 					</div>
+
 					<img className="following__intro-character" src={ readerImage } alt="" />
 
 					<button
 						className="following__intro-close"
-						onClick={ dismiss }
+						onClick={ this.dismiss }
 						title={ translate( 'Close' ) }
 						aria-label={ translate( 'Close' ) }
 					>
@@ -101,13 +112,7 @@ export default connect(
 		};
 	},
 	{
-		dismiss: () => {
-			recordTrack( 'calypso_reader_following_intro_dismiss' );
-			return savePreference( 'is_new_reader', false );
-		},
-		handleManageLinkClick: () => {
-			recordTrack( 'calypso_reader_following_intro_link_clicked' );
-			return savePreference( 'is_new_reader', false );
-		},
+		recordReaderTracksEvent,
+		savePreference,
 	}
 )( localize( FollowingIntro ) );

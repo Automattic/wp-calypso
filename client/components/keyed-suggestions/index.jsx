@@ -5,7 +5,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
 	has,
-	noop,
 	pick,
 	pickBy,
 	without,
@@ -25,6 +24,8 @@ import i18n from 'i18n-calypso';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 function SuggestionsButtonAll( props ) {
 	function click() {

@@ -9,7 +9,6 @@ import {
 	get,
 	includes,
 	isEmpty,
-	isNull,
 	omitBy,
 	pick,
 	startsWith,
@@ -24,7 +23,7 @@ import {
 import wpcom from 'calypso/lib/wp';
 import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
 import user from 'calypso/lib/user';
-import { abtest, getSavedVariations } from 'calypso/lib/abtest';
+import { getSavedVariations } from 'calypso/lib/abtest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import {
@@ -101,7 +100,10 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 
 		SignupCart.createCart(
 			siteId,
-			omitBy( pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ), isNull ),
+			omitBy(
+				pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ),
+				( dep ) => dep === null
+			),
 			( error ) => {
 				callback( error, providedDependencies );
 			}
@@ -804,7 +806,7 @@ export function isFreePlansDomainUpsellFulfilled( stepName, defaultDependencies,
 		return;
 	}
 
-	if ( isPaidPlan || domainItem || cartItem || 'test' !== abtest( 'freePlansDomainUpsell' ) ) {
+	if ( isPaidPlan || domainItem || cartItem ) {
 		const selectedDomainUpsellItem = null;
 		submitSignupStep(
 			{ stepName, selectedDomainUpsellItem, wasSkipped: true },

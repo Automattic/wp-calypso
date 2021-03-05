@@ -3,7 +3,7 @@
  */
 import type { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
 import { isRedirectPaymentMethod } from './translate-payment-method-names';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 export default function isPaymentMethodEnabled(
 	slug: CheckoutPaymentMethodSlug,

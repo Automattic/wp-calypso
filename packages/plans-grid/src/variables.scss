@@ -23,4 +23,5 @@ $plans-details-min-width-desktop-medium: #{to-number( $plans-table-total-content
 	$onboarding-block-margin-medium * 2};
 $plans-details-min-width-mobile: 700px;
 
-$plans-grid-max-page-width: 1440px;
+// $break-wide defined in @wordpress/base-styles/_breakpoints.scss
+$plans-grid-max-page-width: $break-huge;

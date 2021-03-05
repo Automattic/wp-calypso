@@ -4,9 +4,22 @@
 import moment, { MomentInput, Moment } from 'moment-timezone';
 
 /**
+ * A collection of parameters for applying a site's timezone or UTC offset to
+ * a given MomentInput.
+ *
  * @typedef OffsetParams
- * @property {?string} timezone  Timezone representation to apply.
- * @property {?string|number} gmtOffset Offset to apply if timezone isn't supplied.
+ * @property {string|null} [timezone] Timezone representation to apply.
+ * @property {string|number|null} [gmtOffset] Offset to apply if timezone isn't supplied.
+ * @property {boolean} [keepLocalTime=false]
+ * 		If false (default), apply timezone or gmtOffset to the input without
+ * 		modifying the underlying Unix-epoch timestamp, shifting the
+ * 		human-readable representation by the appropriate amount; if true,
+ * 		apply timezone or gmtOffset to shift the underlying timestamp,
+ * 		but keep the human-readable representation the same.
+ *
+ * 		Example: Applying UTC-6 to 2020-01-01T00:00:00+0000
+ * 		- { keepLocalTime: false }	-> 2019-12-31T18:00:00-0600
+ * 		- { keepLocalTime: true }	-> 2020-01-01T00:00:00-0600
  */
 
 /**

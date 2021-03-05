@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -15,6 +14,8 @@ import {
 	getImageEditorFileInfo,
 	imageEditorHasChanges,
 } from 'calypso/state/editor/image-editor/selectors';
+
+const noop = () => {};
 
 class ImageEditorButtons extends Component {
 	static propTypes = {

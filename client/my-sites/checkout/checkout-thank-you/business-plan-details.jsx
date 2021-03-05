@@ -14,8 +14,8 @@ import i18n from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
-import { isEnabled } from 'calypso/config';
-import { isBusiness, isGoogleApps } from 'calypso/lib/products-values';
+import { isEnabled } from '@automattic/calypso-config';
+import { isBusiness, isGSuiteOrExtraLicenseOrGoogleWorkspace } from 'calypso/lib/products-values';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -48,7 +48,7 @@ const BusinessPlanDetails = ( {
 	);
 
 	const plan = find( sitePlans.data, isBusiness );
-	const googleAppsWasPurchased = purchases.some( isGoogleApps );
+	const googleAppsWasPurchased = purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace );
 
 	const locale = i18n.getLocaleSlug();
 	const isEnglish = -1 !== [ 'en', 'en-gb' ].indexOf( locale );

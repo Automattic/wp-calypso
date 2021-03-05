@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { every, find, get, isArray, isObject, some, startsWith } from 'lodash';
+import { every, find, get, isObject, some, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -46,11 +46,11 @@ export const areShippingZoneMethodsLoaded = (
 	siteId = getSelectedSiteId( state )
 ) => {
 	const zones = getAPIShippingZones( state, siteId );
-	if ( ! isArray( zones ) ) {
+	if ( ! Array.isArray( zones ) ) {
 		return false;
 	}
 	const zone = find( zones, { id: zoneId } );
-	if ( ! zone || ! isArray( zone.methodIds ) ) {
+	if ( ! zone || ! Array.isArray( zone.methodIds ) ) {
 		return false;
 	}
 	if ( ! isWcsEnabled( state, siteId ) ) {
@@ -80,7 +80,7 @@ export const areShippingZoneMethodsLoading = (
 	siteId = getSelectedSiteId( state )
 ) => {
 	const zones = getAPIShippingZones( state, siteId );
-	if ( ! isArray( zones ) ) {
+	if ( ! Array.isArray( zones ) ) {
 		return false;
 	}
 	const zone = find( zones, { id: zoneId } );
@@ -90,7 +90,7 @@ export const areShippingZoneMethodsLoading = (
 	if ( LOADING === zone.methodIds ) {
 		return true;
 	}
-	if ( ! isWcsEnabled( state, siteId ) || ! isArray( zone.methodIds ) ) {
+	if ( ! isWcsEnabled( state, siteId ) || ! Array.isArray( zone.methodIds ) ) {
 		return false;
 	}
 	const wcsMethods = zone.methodIds

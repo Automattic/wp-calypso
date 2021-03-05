@@ -27,6 +27,7 @@ The following items did not change:
 - `editing-toolkit-plugin/`: The root of the editing toolkit plugin.
   - `full-site-editing-plugin.php`: All initialization code should go here.
   - `block-patterns/`: Additional block patterns for Gutenberg.
+  - `coming-soon/`: Coming Soon page and associated functionality.
   - `common/`: General functionality which doesn't fit a specific feature and is always executed.
   - `dotcom-fse/`: (_deprecated_) An early experiment for a consistent site editing experience in Gutenberg. (Superceeded by the site-editor work in Gutenberg.)
   - `e2e-test-helpers/`: Functions to assist with e2e tests in Puppeteer.
@@ -136,6 +137,14 @@ If you wish to "watch" and run tests on file change then run:
 // Note the additional `:watch` below
 yarn test:js:watch
 ```
+
+To run PHP units tests:
+
+```shell
+yarn run test:php
+```
+
+Making sure you add your test suite to `editing-toolkit-plugin/phpunit.xml.dist`
 
 ### Troubleshooting wp-env
 

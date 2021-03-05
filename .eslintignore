@@ -16,6 +16,7 @@ node_modules/
 /desktop/config/
 /desktop/public/
 /desktop/release/
+/client/state/data-layer/wpcom/activity-log/update-credentials/vendor/
 
 # Built packages
 /packages/*/dist/

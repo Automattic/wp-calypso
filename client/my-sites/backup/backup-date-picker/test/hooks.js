@@ -6,7 +6,7 @@ jest.mock( 'react', () => ( {
 	useCallback: jest.fn( ( fn ) => fn ),
 } ) );
 jest.mock( 'calypso/components/localized-moment' );
-jest.mock( 'calypso/my-sites/backup/hooks' );
+jest.mock( 'calypso/lib/jetpack/hooks/use-date-with-offset' );
 
 /**
  * External dependencies
@@ -18,7 +18,7 @@ import { useCallback } from 'react';
  * Internal dependencies
  */
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useDateWithOffset } from 'calypso/my-sites/backup/hooks';
+import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { useCanGoToDate } from '../hooks';
 
 describe( 'useCanGoToDate', () => {
@@ -27,7 +27,7 @@ describe( 'useCanGoToDate', () => {
 
 		useCallback.mockImplementation( ( fn ) => fn );
 		useLocalizedMoment.mockImplementation( () => moment );
-		useDateWithOffset.mockImplementation( ( d ) => d );
+		useDateWithOffset.mockImplementation( ( date ) => date );
 	} );
 
 	test( 'Allows both forward and backward navigation between the oldest date and the present (inclusive)', () => {

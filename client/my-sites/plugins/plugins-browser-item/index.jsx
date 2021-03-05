@@ -17,6 +17,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 
 /**
  * Style dependencies
@@ -140,12 +141,7 @@ export default compose(
 
 		const sitesWithPlugin =
 			site && currentSites
-				? getSitesWithPlugin(
-						state,
-						// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-						currentSites.map( ( currentSite ) => currentSite.ID ),
-						plugin.slug
-				  )
+				? getSitesWithPlugin( state, siteObjectsToSiteIds( currentSites ), plugin.slug )
 				: [];
 
 		return {

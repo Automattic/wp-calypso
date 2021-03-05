@@ -10,8 +10,8 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import notices from 'calypso/notices';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import { getPlan } from 'calypso/lib/plans';
 import { isMonthly as isMonthlyPlan } from 'calypso/lib/plans/constants';
@@ -20,14 +20,17 @@ import {
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
+	isGoogleWorkspace,
 	isJetpackPlan,
 	isMonthly as isMonthlyProduct,
 	isPlan,
 	isTheme,
+	isTitanMail,
 	isConciergeSession,
 } from 'calypso/lib/products-values';
 import { getJetpackProductsDisplayNames } from 'calypso/lib/products-values/translations';
 import { MembershipSubscription, MembershipSubscriptionsSite } from 'calypso/lib/purchases/types';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 const debug = debugFactory( 'calypso:purchases' );
 
@@ -148,11 +151,11 @@ function handleRenewNowClick( purchase, siteSlug, options = {} ) {
 	} );
 
 	if ( ! renewItem.extra.purchaseId ) {
-		notices.error( 'Could not find purchase id for renewal.' );
+		reduxDispatch( errorNotice( 'Could not find purchase id for renewal.' ) );
 		throw new Error( 'Could not find purchase id for renewal.' );
 	}
 	if ( ! renewItem.product_slug ) {
-		notices.error( 'Could not find product slug for renewal.' );
+		reduxDispatch( errorNotice( 'Could not find product slug for renewal.' ) );
 		throw new Error( 'Could not find product slug for renewal.' );
 	}
 	const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( [ renewItem ] );
@@ -194,7 +197,7 @@ function handleRenewMultiplePurchasesClick( purchases, siteSlug, options = {} ) 
 	const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( renewItems );
 
 	if ( purchaseIds.length === 0 ) {
-		notices.error( 'Could not find product slug or purchase id for renewal.' );
+		reduxDispatch( errorNotice( 'Could not find product slug or purchase id for renewal.' ) );
 		throw new Error( 'Could not find product slug or purchase id for renewal.' );
 	}
 
@@ -459,7 +462,7 @@ function isRechargeable( purchase ) {
 
 /**
  * Checks if a purchase can be canceled and refunded via the WordPress.com API.
- * Purchases usually can be refunded up to 30 days after purchase.
+ * Purchases usually can be refunded up to 14 days after purchase.
  * Domains and domain mappings can be refunded up to 96 hours.
  * Purchases included with plan can't be refunded.
  *
@@ -603,6 +606,7 @@ function creditCardHasAlreadyExpired( purchase ) {
 	const creditCard = purchase?.payment?.creditCard;
 
 	return (
+		creditCard &&
 		isPaidWithCreditCard( purchase ) &&
 		hasCreditCardData( purchase ) &&
 		moment( creditCard.expiryDate, 'MM/YY' ).isBefore( moment.now(), 'months' )
@@ -674,6 +678,22 @@ function purchaseType( purchase ) {
 
 	if ( isDomainMapping( purchase ) ) {
 		return purchase.productName;
+	}
+
+	if ( isGoogleWorkspace( purchase ) ) {
+		return i18n.translate( 'Productivity and Collaboration Tools at %(domain)s', {
+			args: {
+				domain: purchase.meta,
+			},
+		} );
+	}
+
+	if ( isTitanMail( purchase ) ) {
+		return i18n.translate( 'Mailboxes at %(domain)s', {
+			args: {
+				domain: purchase.meta,
+			},
+		} );
 	}
 
 	if ( purchase.meta ) {

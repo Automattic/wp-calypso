@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { find, get } from 'lodash';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies

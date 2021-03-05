@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -33,7 +33,7 @@ function Orders( { className, params, site, translate } ) {
 			<ActionHeader breadcrumbs={ <span>{ translate( 'Orders' ) }</span> }>
 				{ addButton }
 			</ActionHeader>
-			{ config.isEnabled( 'woocommerce/store-deprecated' ) && <StoreDeprecatedNotice /> }
+			{ <StoreDeprecatedNotice /> }
 			<OrdersList currentStatus={ params && params.filter } />
 		</Main>
 	);

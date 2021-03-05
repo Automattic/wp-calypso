@@ -7,13 +7,6 @@ jest.mock( 'calypso/lib/abtest', () => ( {
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'calypso/lib/plugins/wporg-data/list-store', () => ( {
-	getShortList: () => {},
-	getFullList: () => {},
-	getSearchList: () => {},
-	on: () => {},
-} ) );
-jest.mock( 'calypso/lib/plugins/wporg-data/actions', () => ( {} ) );
 jest.mock( 'calypso/components/main', () => 'MainComponent' );
 jest.mock( 'calypso/blocks/upsell-nudge', () => 'UpsellNudge' );
 jest.mock( 'calypso/components/notice', () => 'Notice' );
@@ -42,6 +35,11 @@ import {
 import { PluginsBrowser } from '../';
 
 const props = {
+	pluginsByCategory: [],
+	pluginsByCategoryNew: [],
+	pluginsByCategoryPopular: [],
+	pluginsByCategoryFeatured: [],
+	pluginsBySearchTerm: [],
 	site: {
 		plan: PLAN_FREE,
 	},

@@ -57,6 +57,11 @@ describe( 'getSite', () => {
 
 		// First call returns undefined
 		expect( select( store ).getSite( slug ) ).toEqual( undefined );
+
+		// In the first state update, the resolver starts resolving
+		await listenForStateUpdate();
+
+		// In the second update, the resolver is finished resolving and we can read the result in state
 		await listenForStateUpdate();
 
 		// By the second call, the resolver will have resolved

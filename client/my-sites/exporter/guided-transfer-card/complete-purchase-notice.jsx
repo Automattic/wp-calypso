@@ -12,13 +12,10 @@ import { localize } from 'i18n-calypso';
  */
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { guidedTransferItem } from 'calypso/lib/cart-values/cart-items';
-import { addItem } from 'calypso/lib/cart/actions';
 import page from 'page';
 
 const redirectToCart = ( siteSlug ) => () => {
-	addItem( guidedTransferItem() );
-	page( `/checkout/${ siteSlug }` );
+	page( `/checkout/${ siteSlug }/guided_transfer` );
 };
 
 const CompletePurchaseNotice = ( { translate, siteSlug } ) => (

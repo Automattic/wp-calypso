@@ -6,7 +6,7 @@ import { every, find } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import {
 	getPlugins,
 	isRequestingForSites,
@@ -14,7 +14,7 @@ import {
 } from 'calypso/state/plugins/installed/selectors';
 import { getRequiredPluginsForCalypso } from 'woocommerce/lib/get-required-plugins';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 
 import 'calypso/state/plugins/init';
 

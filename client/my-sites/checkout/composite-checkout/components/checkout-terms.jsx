@@ -14,6 +14,7 @@ import DomainRegistrationAgreement from './domain-registration-agreement';
 import DomainRegistrationHsts from './domain-registration-hsts';
 import ConciergeRefundPolicy from './concierge-refund-policy';
 import BundledDomainNotice from './bundled-domain-notice';
+import TitanTermsOfService from './titan-terms-of-service';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -36,6 +37,7 @@ class CheckoutTerms extends React.Component {
 				<DomainRefundPolicy cart={ cart } />
 				<ConciergeRefundPolicy cart={ cart } />
 				<BundledDomainNotice cart={ cart } />
+				<TitanTermsOfService cart={ cart } />
 			</Fragment>
 		);
 	}

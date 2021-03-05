@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { flowRight, get, includes, noop } from 'lodash';
+import { flowRight, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import url from 'url';
 import Gridicon from 'calypso/components/gridicon';
@@ -25,11 +25,13 @@ import { Button, ScreenReaderText } from '@automattic/components';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import versionCompare from 'calypso/lib/version-compare';
 import { getMimePrefix, isItemBeingUploaded, isVideoPressItem } from 'calypso/lib/media/utils';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'calypso/state/sites/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
+
+const noop = () => {};
 
 export class EditorMediaModalDetailItem extends Component {
 	static propTypes = {

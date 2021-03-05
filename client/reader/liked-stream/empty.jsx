@@ -3,14 +3,15 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import EmptyContent from 'calypso/components/empty-content';
-import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
-import { isDiscoverEnabled } from 'calypso/reader/discover/helper';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 class TagEmptyContent extends React.Component {
 	shouldComponentUpdate() {
@@ -20,13 +21,7 @@ class TagEmptyContent extends React.Component {
 	recordAction = () => {
 		recordAction( 'clicked_following_on_empty_likes' );
 		recordGaEvent( 'Clicked Following on Empty Like Stream' );
-		recordTrack( 'calypso_reader_following_on_empty_like_stream_clicked' );
-	};
-
-	recordSecondaryAction = () => {
-		recordAction( 'clicked_discover_on_empty_likes' );
-		recordGaEvent( 'Clicked Discover on Empty Like Stream' );
-		recordTrack( 'calypso_reader_discover_on_empty_like_stream_clicked' );
+		this.props.recordReaderTracksEvent( 'calypso_reader_following_on_empty_like_stream_clicked' );
 	};
 
 	render() {
@@ -40,22 +35,12 @@ class TagEmptyContent extends React.Component {
 				{ this.props.translate( 'Back to Following' ) }
 			</a>
 		);
-		const secondaryAction = isDiscoverEnabled() ? (
-			<a
-				className="empty-content__action button"
-				onClick={ this.recordSecondaryAction }
-				href="/discover"
-			>
-				{ this.props.translate( 'Explore' ) }
-			</a>
-		) : null;
 
 		return (
 			<EmptyContent
 				title={ this.props.translate( 'No likes yet' ) }
 				line={ this.props.translate( 'Posts that you like will appear here.' ) }
 				action={ action }
-				secondaryAction={ secondaryAction }
 				illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
 				illustrationWidth={ 400 }
 			/>
@@ -64,4 +49,6 @@ class TagEmptyContent extends React.Component {
 	}
 }
 
-export default withPerformanceTrackerStop( localize( TagEmptyContent ) );
+export default connect( null, {
+	recordReaderTracksEvent,
+} )( withPerformanceTrackerStop( localize( TagEmptyContent ) ) );

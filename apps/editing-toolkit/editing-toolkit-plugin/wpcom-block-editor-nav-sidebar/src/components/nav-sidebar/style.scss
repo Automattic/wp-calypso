@@ -7,6 +7,8 @@ $sidebar-width: 272px;
 $sidebar-transition-period: 100ms;
 $sidebar-background-color: #23282e; // WP-admin gray to match the close button background color
 $sidebar-nav-header-background-color: #32373d; // WP-admin gray to match the close button background hover color
+$sidebar-untitled-text-color: #b5bcc2; // former $light-gray-800
+$sidebar-button-text-color: #a2aab2; // former $light-gray-900
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__click-guard {
 	position: fixed;
@@ -16,11 +18,13 @@ $sidebar-nav-header-background-color: #32373d; // WP-admin gray to match the clo
 	bottom: 0;
 	// Use the same z-index as the edit-post-layout header
 	z-index: z-index( '.interface-interface-skeleton__header' );
-	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $sidebar-transition-period ease-out forwards;
+	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $sidebar-transition-period ease-out
+		forwards;
 	@include reduce-motion( 'animation' );
 
 	&.is-fading-out {
-		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $sidebar-transition-period ease-in reverse;
+		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $sidebar-transition-period ease-in
+			reverse;
 		@include reduce-motion( 'animation' );
 	}
 }
@@ -48,7 +52,8 @@ $sidebar-nav-header-background-color: #32373d; // WP-admin gray to match the clo
 	@include reduce-motion( 'animation' );
 
 	&.is-sliding-left {
-		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__slide $sidebar-transition-period ease-in reverse;
+		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__slide $sidebar-transition-period ease-in
+			reverse;
 		@include reduce-motion( 'animation' );
 	}
 }
@@ -87,7 +92,7 @@ $sidebar-nav-header-background-color: #32373d; // WP-admin gray to match the clo
 
 	a,
 	a.is-untitled {
-		color: $light-gray-800;
+		color: $sidebar-untitled-text-color;
 
 		&:active,
 		&:focus,
@@ -132,7 +137,8 @@ $sidebar-nav-header-background-color: #32373d; // WP-admin gray to match the clo
 .wpcom-block-editor-nav-sidebar-nav-sidebar__list-heading,
 .wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading {
 	padding: $grid-unit-05 $grid-unit-20;
-	font-size: $big-font-size;
+	/* stylelint-disable-next-line scales/font-size */
+	font-size: 18px;
 	color: $white;
 	margin: 0 0 8px;
 }
@@ -151,7 +157,7 @@ $sidebar-nav-header-background-color: #32373d; // WP-admin gray to match the clo
 	}
 
 	a {
-		color: $light-gray-900;
+		color: $sidebar-button-text-color;
 	}
 
 	.is-selected {
@@ -169,7 +175,7 @@ $sidebar-nav-header-background-color: #32373d; // WP-admin gray to match the clo
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons {
-	border-top: 1px solid $light-gray-900;
+	border-top: 1px solid $sidebar-button-text-color;
 	position: absolute;
 	bottom: 0;
 	width: 100%;

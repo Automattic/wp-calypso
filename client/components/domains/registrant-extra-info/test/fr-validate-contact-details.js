@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { omit, repeat } from 'lodash';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -104,7 +104,7 @@ describe( 'validateContactDetails', () => {
 
 			test( 'should reject long strings', () => {
 				const testDetails = Object.assign( {}, organizationDetails, {
-					organization: repeat( '0123456789', 11 ),
+					organization: '0123456789'.repeat( 11 ),
 				} );
 
 				const result = validateContactDetails( testDetails );

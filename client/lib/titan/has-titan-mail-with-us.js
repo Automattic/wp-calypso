@@ -4,6 +4,6 @@
 import { get } from 'lodash';
 
 export function hasTitanMailWithUs( domain ) {
-	const domainStatus = get( domain, 'titanMailSubscription.status', '' );
-	return domainStatus === 'active';
+	const subscriptionStatus = get( domain, 'titanMailSubscription.status', '' );
+	return subscriptionStatus === 'active' || subscriptionStatus === 'suspended';
 }

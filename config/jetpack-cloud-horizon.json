@@ -66,6 +66,5 @@
 		"jetpack-connect": true
 	},
 	"site_filter": [ "jetpack" ],
-	"theme": "jetpack-cloud",
-	"olark_chat_identity": "5581-687-10-4070"
+	"theme": "jetpack-cloud"
 }

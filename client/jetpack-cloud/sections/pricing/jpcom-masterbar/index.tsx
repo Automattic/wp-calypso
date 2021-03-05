@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 
@@ -12,8 +12,6 @@ import { Button } from '@automattic/components';
 import ExternalLink from 'calypso/components/external-link';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
-import { Iterations } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 
 /**
  * Style dependencies
@@ -40,9 +38,7 @@ const MENU_ITEMS = [
 	},
 ];
 
-const JetpackComMasterbar = () => {
-	const iteration = useMemo( getJetpackCROActiveVersion, [] ) as Iterations;
-
+const JetpackComMasterbar: React.FC = () => {
 	const [ isMenuOpen, setIsMenuOpen ] = useState( false );
 
 	const toggleMenu = () => {
@@ -50,7 +46,7 @@ const JetpackComMasterbar = () => {
 	};
 
 	return (
-		<div className={ `jpcom-masterbar iteration-${ iteration }` }>
+		<div className="jpcom-masterbar">
 			<div className="jpcom-masterbar__inner">
 				<ExternalLink
 					className="jpcom-masterbar__logo"

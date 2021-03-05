@@ -47,6 +47,22 @@ export const fontPairings = [
 	},
 ] as const;
 
+/**
+ * Pairings of fontFamilies for AnchorFM onboarding
+ *
+ * To get the name of the font for display, use `getFontTitle( fontName )`.
+ */
+export const anchorFmFontPairings = [
+	{
+		headings: 'Roboto',
+		base: 'Roboto',
+	},
+	{
+		headings: 'Raleway',
+		base: 'Cabin',
+	},
+] as const;
+
 export type Font = ValuesType< ValuesType< typeof fontPairings > >;
 export interface FontPair {
 	headings: Font;

@@ -83,7 +83,7 @@ export default function useShoppingCartManager( {
 
 	const dispatchAndWaitForValid = useCallback(
 		( action ) => {
-			return new Promise< void >( ( resolve ) => {
+			return new Promise< ResponseCart >( ( resolve ) => {
 				isMounted.current && hookDispatch( action );
 				cartValidCallbacks.current.push( resolve );
 			} );
@@ -165,7 +165,9 @@ export default function useShoppingCartManager( {
 		debug( `cacheStatus changed to ${ cacheStatus } and cartValidCallbacks exist` );
 		if ( hookState.queuedActions.length === 0 && cacheStatus === 'valid' ) {
 			debug( 'calling cartValidCallbacks' );
-			cartValidCallbacks.current.forEach( ( callback ) => callback() );
+			cartValidCallbacks.current.forEach( ( callback ) =>
+				callback( lastValidResponseCart.current )
+			);
 			cartValidCallbacks.current = [];
 		}
 	}, [ hookState.queuedActions, cacheStatus ] );

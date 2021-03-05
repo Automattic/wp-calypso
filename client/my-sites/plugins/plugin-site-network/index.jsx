@@ -18,7 +18,13 @@ import PluginUpdateIndicator from 'calypso/my-sites/plugins/plugin-site-update-i
 import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'calypso/my-sites/plugins/plugin-remove-button';
 import Site from 'calypso/blocks/site';
-import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
+import {
+	getPluginOnSite,
+	getPluginOnSites,
+	isPluginActionInProgress,
+} from 'calypso/state/plugins/installed/selectors';
+import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 
 /**
  * Style dependencies
@@ -78,10 +84,10 @@ class PluginSiteNetwork extends React.Component {
 			<div className="plugin-site-network__actions">
 				<PluginAutoupdateToggle
 					site={ this.props.site }
-					plugin={ this.props.site.plugin }
+					plugin={ this.props.pluginOnSite }
 					wporg={ true }
 				/>
-				<PluginRemoveButton plugin={ this.props.site.plugin } site={ this.props.site } />
+				<PluginRemoveButton plugin={ this.props.pluginOnSite } site={ this.props.site } />
 			</div>
 		);
 	};
@@ -133,9 +139,14 @@ class PluginSiteNetwork extends React.Component {
 	};
 
 	renderSecondarySiteActions = ( site ) => {
+		const sitePlugin = {
+			...this.props.plugin,
+			...this.props.pluginsOnSecondarySites?.sites[ site.ID ],
+		};
+
 		return (
 			<div className="plugin-site-network__secondary-site-actions">
-				<PluginActivateToggle site={ site } plugin={ site.plugin } />
+				<PluginActivateToggle site={ site } plugin={ sitePlugin } />
 			</div>
 		);
 	};
@@ -145,7 +156,7 @@ class PluginSiteNetwork extends React.Component {
 			return null;
 		}
 
-		if ( ! this.props.site.plugin ) {
+		if ( ! this.props.pluginOnSite ) {
 			return this.renderInstallPlugin();
 		}
 
@@ -153,6 +164,12 @@ class PluginSiteNetwork extends React.Component {
 	}
 }
 
-export default connect( ( state, { site, plugin } ) => ( {
-	installInProgress: isPluginActionInProgress( state, site.ID, plugin.id, 'INSTALL_PLUGIN' ),
-} ) )( localize( PluginSiteNetwork ) );
+export default connect( ( state, { plugin, secondarySites, site } ) => {
+	const secondarySiteIds = siteObjectsToSiteIds( secondarySites );
+
+	return {
+		pluginOnSite: getPluginOnSite( state, site.ID, plugin.slug ),
+		pluginsOnSecondarySites: getPluginOnSites( state, secondarySiteIds, plugin.slug ),
+		installInProgress: isPluginActionInProgress( state, site.ID, plugin.id, INSTALL_PLUGIN ),
+	};
+} )( localize( PluginSiteNetwork ) );

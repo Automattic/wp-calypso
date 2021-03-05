@@ -12,7 +12,7 @@ import {
 } from '../../../../lib/i18n-utils/switch-locale';
 import { getLanguageSlugs } from '../../../../lib/i18n-utils';
 import { getUrlParts } from '../../../../lib/url/url-parts';
-import config from '../../../../config';
+import config from '@automattic/calypso-config';
 import type { User } from '@automattic/data-stores';
 import { LocaleProvider } from '@automattic/i18n-utils';
 

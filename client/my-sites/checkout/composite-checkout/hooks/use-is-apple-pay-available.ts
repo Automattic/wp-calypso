@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { useEffect, useState } from 'react';
-import type { LineItem } from '@automattic/composite-checkout';
 import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
 import debugFactory from 'debug';
 
@@ -27,7 +26,7 @@ export default function useIsApplePayAvailable(
 	stripe: Stripe | null,
 	stripeConfiguration: StripeConfiguration | null,
 	isStripeError: boolean,
-	items: LineItem[]
+	currency: string | null
 ): CanMakePaymentState {
 	const [ canMakePayment, setCanMakePayment ] = useState< CanMakePaymentState >( {
 		isLoading: true,
@@ -83,12 +82,24 @@ export default function useIsApplePayAvailable(
 		}
 
 		// Ask Stripe if apple pay can be used. This is async.
-		const countryCode =
-			stripeConfiguration && stripeConfiguration.processor_id === 'stripe_ie' ? 'IE' : 'US';
-		const currency = items.reduce(
-			( firstCurrency, item ) => firstCurrency || item.amount.currency,
-			null
-		);
+		let countryCode = 'US';
+
+		if ( stripeConfiguration ) {
+			switch ( stripeConfiguration.processor_id ) {
+				case 'stripe_ie':
+					countryCode = 'IE';
+					break;
+				case 'stripe_au':
+					countryCode = 'AU';
+					break;
+				case 'stripe_ca':
+					countryCode = 'CA';
+					break;
+				default:
+					break;
+			}
+		}
+
 		const paymentRequestOptions = {
 			requestPayerName: true,
 			requestPayerPhone: false,
@@ -115,7 +126,7 @@ export default function useIsApplePayAvailable(
 		} );
 
 		return unsubscribe;
-	}, [ canMakePayment, stripe, items, stripeConfiguration, isStripeError ] );
+	}, [ canMakePayment, stripe, currency, stripeConfiguration, isStripeError ] );
 
 	debug( 'useIsApplePayAvailable', canMakePayment );
 	return canMakePayment;

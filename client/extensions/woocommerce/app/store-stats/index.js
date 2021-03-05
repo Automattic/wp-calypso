@@ -30,7 +30,7 @@ import {
 } from 'woocommerce/app/store-stats/constants';
 import { getEndPeriod, getQueries, getWidgetPath } from './utils';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import StoreStatsReferrerWidget from './store-stats-referrer-widget';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import titlecase from 'to-title-case';

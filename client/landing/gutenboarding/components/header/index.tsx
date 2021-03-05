@@ -15,7 +15,6 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import DomainPickerButton from '../domain-picker-button';
 import PlansButton from '../plans-button';
 import { useCurrentStep, useIsAnchorFm, usePath, Step } from '../../path';
-import { isEnabled } from '../../../../config';
 import Link from '../link';
 
 /**
@@ -41,6 +40,10 @@ const Header: React.FunctionComponent = () => {
 	const showPlansButton =
 		[ 'DesignSelection', 'Style', 'Features' ].includes( currentStep ) && ! isAnchorFmSignup;
 
+	// locale button is hidden on DomainsModal, PlansModal, and AnchorFM flavored gutenboarding
+	const showLocaleButton =
+		! [ 'DomainsModal', 'PlansModal' ].includes( currentStep ) && ! isAnchorFmSignup;
+
 	// CreateSite step clears state before redirecting, don't show the default text in this case
 	const siteTitleDefault = 'CreateSite' === currentStep ? '' : __( 'Start your website' );
 
@@ -49,17 +52,16 @@ const Header: React.FunctionComponent = () => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 	const changeLocaleButton = () => {
-		if ( isEnabled( 'gutenboarding/language-picker' ) ) {
-			return (
-				<div className="gutenboarding__header-section-item gutenboarding__header-language-section">
-					<Link to={ makePath( Step.LanguageModal ) }>
-						<span>{ __( 'Site Language' ) } </span>
-						<span className="gutenboarding__header-site-language-badge">{ locale }</span>
-					</Link>
-				</div>
-			);
-		}
-		return null;
+		return (
+			<div className="gutenboarding__header-section-item gutenboarding__header-section-item--right gutenboarding__header-language-section">
+				<Link to={ makePath( Step.LanguageModal ) }>
+					<span className="gutenboarding__header-site-language-label">
+						{ __( 'Site Language' ) }
+					</span>
+					<span className="gutenboarding__header-site-language-badge">{ locale }</span>
+				</Link>
+			</div>
+		);
 	};
 
 	return (
@@ -85,10 +87,12 @@ const Header: React.FunctionComponent = () => {
 				<div className="gutenboarding__header-section-item gutenboarding__header-domain-section">
 					{ showDomainsButton && <DomainPickerButton /> }
 				</div>
-				{ changeLocaleButton() }
-				<div className="gutenboarding__header-section-item gutenboarding__header-plan-section gutenboarding__header-section-item--right">
-					{ showPlansButton && <PlansButton /> }
-				</div>
+				{ showLocaleButton && changeLocaleButton() }
+				{ showPlansButton && (
+					<div className="gutenboarding__header-section-item gutenboarding__header-plan-section gutenboarding__header-section-item--right">
+						<PlansButton />
+					</div>
+				) }
 			</section>
 		</div>
 	);

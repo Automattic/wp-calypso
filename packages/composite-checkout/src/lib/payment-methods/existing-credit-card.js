@@ -81,6 +81,7 @@ function formatDate( cardExpiry ) {
 export function ExistingCardLabel( { last4, cardExpiry, cardholderName, brand } ) {
 	const { __, _x } = useI18n();
 
+	/* translators: %s is the last 4 digits of the credit card number */
 	const maskedCardDetails = sprintf( _x( '**** %s', 'Masked credit card number' ), last4 );
 
 	return (
@@ -147,6 +148,7 @@ function ButtonContents( { formStatus, total, activeButtonText = undefined } ) {
 		return __( 'Processing…' );
 	}
 	if ( formStatus === FormStatus.READY ) {
+		/* translators: %s is the total to be paid in localized currency */
 		return activeButtonText || sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
@@ -155,6 +157,7 @@ function ButtonContents( { formStatus, total, activeButtonText = undefined } ) {
 function ExistingCardSummary( { cardholderName, cardExpiry, brand, last4 } ) {
 	const { __, _x } = useI18n();
 
+	/* translators: %s is the last 4 digits of the credit card number */
 	const maskedCardDetails = sprintf( _x( '**** %s', 'Masked credit card number' ), last4 );
 
 	return (

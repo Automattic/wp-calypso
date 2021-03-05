@@ -3,9 +3,9 @@
  */
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-import { noop, get } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +14,8 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import DocumentHead from 'calypso/components/data/document-head';
 import BackButton from 'calypso/components/back-button';
 import ExternalLink from 'calypso/components/external-link';
+
+const noop = () => {};
 
 const ReaderFullPostUnavailable = ( { post, onBackClick, translate } ) => {
 	const statusCode = get( post, [ 'error', 'statusCode' ] );

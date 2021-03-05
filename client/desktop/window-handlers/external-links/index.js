@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const { ipcMain: ipc } = require( 'electron' );
+const { ipcMain: ipc, dialog } = require( 'electron' );
 const { URL, format } = require( 'url' );
 
 /**
@@ -11,6 +11,7 @@ const Config = require( 'calypso/desktop/lib/config' );
 const { handleJetpackEnableSSO, handleUndefined } = require( './editor' );
 const openInBrowser = require( './open-in-browser' );
 const log = require( 'calypso/desktop/lib/logger' )( 'desktop:external-links' );
+const platform = require( 'calypso/desktop/lib/platform' );
 
 /**
  * Module variables
@@ -30,6 +31,9 @@ const ALWAYS_OPEN_IN_APP = [
 
 const DONT_OPEN_IN_BROWSER = [ Config.server_url, 'https://public-api.wordpress.com/connect/' ];
 
+const isWpAdminPostUrl = ( requestUrl ) =>
+	requestUrl.includes( 'wp-admin' ) && requestUrl.includes( 'post' );
+
 const domainAndPathSame = ( first, second ) =>
 	first.hostname === second.hostname &&
 	( first.pathname === second.pathname || second.pathname === '/*' );
@@ -48,18 +52,50 @@ function replaceInternalCalypsoUrl( url ) {
 module.exports = function ( mainWindow ) {
 	const webContents = mainWindow.webContents;
 
-	webContents.on( 'will-navigate', function ( event, url ) {
+	webContents.on( 'will-navigate', async function ( event, url ) {
 		const parsedUrl = new URL( url );
+		log.info( `Navigating to URL: '${ parsedUrl }'` );
 
 		for ( let x = 0; x < ALWAYS_OPEN_IN_APP.length; x++ ) {
 			const alwaysOpenUrl = new URL( ALWAYS_OPEN_IN_APP[ x ] );
 
 			if ( domainAndPathSame( parsedUrl, alwaysOpenUrl ) ) {
+				log.info( 'Domain and path same, returning...' );
 				return;
 			}
 		}
 
-		openInBrowser( event, url );
+		event.preventDefault();
+
+		if ( isWpAdminPostUrl( url ) ) {
+			log.info( `Prompting to navigate to WP-Admin URL: '${ url }'` );
+
+			const redirectDialogOptions = {
+				buttons: [ 'Confirm', 'Cancel' ],
+				title: platform.isWindows() ? 'WordPress.com' : 'Proceed in External Browser?',
+				message: 'Proceed in External Browser?',
+				detail:
+					// eslint-disable-next-line prettier/prettier
+					`You have one or more plugins that prevent editing content` +
+					` within WordPress Desktop.` +
+					`\n\n` +
+					`Continue in an external browser?`,
+			};
+
+			const selected = await dialog.showMessageBox( mainWindow, redirectDialogOptions );
+			const button = selected.response;
+
+			if ( button === 0 ) {
+				log.info( `WP-Admin redirect prompt: selected 'Confirm'` );
+				// no-op -- proceed to open in browser
+				openInBrowser( url );
+			} else {
+				log.info( `WP-Admin redirect prompt: selected 'Cancel'` );
+			}
+			return;
+		}
+
+		openInBrowser( url );
 	} );
 
 	webContents.on( 'new-window', function ( event, url, frameName, disposition, options ) {
@@ -81,11 +117,11 @@ module.exports = function ( mainWindow ) {
 			}
 		}
 
+		event.preventDefault();
+
 		parsedUrl = replaceInternalCalypsoUrl( parsedUrl );
-
 		const openUrl = format( parsedUrl );
-
-		openInBrowser( event, openUrl );
+		openInBrowser( openUrl );
 	} );
 
 	ipc.on( 'cannot-use-editor', ( _, info ) => {
@@ -102,6 +138,6 @@ module.exports = function ( mainWindow ) {
 
 	ipc.on( 'view-post-clicked', ( _, url ) => {
 		log.info( `View Post handler for URL: ${ url }` );
-		openInBrowser( null, url );
+		openInBrowser( url );
 	} );
 };

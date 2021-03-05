@@ -4,11 +4,17 @@
 import * as React from 'react';
 import { addQueryArgs } from '@wordpress/url';
 
-interface LaunchContext {
+export interface LaunchContextProps {
 	siteId: number;
 	redirectTo: ( url: string ) => void;
-	openCheckout: ( siteId: number, isEcommerce?: boolean ) => void;
+	openCheckout: (
+		siteSlug?: string,
+		isEcommerce?: boolean,
+		onSuccessCallback?: () => void
+	) => void;
+	getCurrentLaunchFlowUrl: () => string;
 	flow: string;
+	isInIframe: boolean;
 }
 
 const defaultRedirectTo = ( url: string ) => {
@@ -16,19 +22,23 @@ const defaultRedirectTo = ( url: string ) => {
 	window.location.href = url;
 };
 
-const LaunchContext = React.createContext< LaunchContext >( {
+const defaultCurrentLaunchFlowUrl = (): string => window.location.href;
+
+const LaunchContext = React.createContext< LaunchContextProps >( {
 	siteId: 0,
 	redirectTo: defaultRedirectTo,
-	openCheckout: ( siteId, isEcommerce ) => {
+	getCurrentLaunchFlowUrl: defaultCurrentLaunchFlowUrl,
+	openCheckout: ( siteSlug, isEcommerce ) => {
 		defaultRedirectTo(
-			addQueryArgs( `/checkout/${ siteId }`, {
+			addQueryArgs( `/checkout/${ siteSlug }`, {
 				preLaunch: 1,
 				// Redirect to My Home after checkout only if the selected plan is not eCommerce
-				...( ! isEcommerce && { redirect_to: `/home/${ siteId }` } ),
+				...( ! isEcommerce && { redirect_to: `/home/${ siteSlug }` } ),
 			} )
 		);
 	},
 	flow: 'launch',
+	isInIframe: false,
 } );
 
 export default LaunchContext;

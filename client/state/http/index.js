@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { fromPairs, identity, toPairs } from 'lodash';
+import { identity, toPairs } from 'lodash';
 
 /**
  * Internal dependencies
@@ -60,7 +60,7 @@ export const httpHandler = async ( { dispatch }, action ) => {
 		return;
 	}
 
-	const fetchHeaders = fromPairs( headers );
+	const fetchHeaders = Object.fromEntries( headers );
 	fetchHeaders.Accept = 'application/json';
 
 	const contentType = ( fetchHeaders[ 'Content-Type' ] || '' ).split( ';' )[ 0 ];

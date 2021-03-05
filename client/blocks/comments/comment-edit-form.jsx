@@ -7,7 +7,6 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -24,6 +23,8 @@ import PostCommentFormTextarea from './form-textarea';
  * Style dependencies
  */
 import './comment-edit-form.scss';
+
+const noop = () => {};
 
 class PostCommentForm extends Component {
 	constructor( props ) {

@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { getHappychatAuth } from '../utils';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import * as wpcom from 'calypso/lib/wp';
 import * as selectedSite from 'calypso/state/help/selectors';
 

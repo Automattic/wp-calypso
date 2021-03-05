@@ -18,7 +18,7 @@ import { themes } from 'calypso/lib/signup/themes-data';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSurveyVertical } from 'calypso/state/signup/steps/survey/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 

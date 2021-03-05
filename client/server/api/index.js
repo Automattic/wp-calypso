@@ -7,7 +7,7 @@ import express from 'express';
  * Internal dependencies
  */
 import pkgJson from '../../package.json';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import oauth from './oauth';
 import signInWithApple from './sign-in-with-apple';
 

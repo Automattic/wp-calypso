@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
 import AuthFormHeader from './auth-form-header';
 import { Button, Card } from '@automattic/components';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import Disclaimer from './disclaimer';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -227,7 +227,8 @@ export class JetpackAuthorize extends Component {
 			this.isFromBlockEditor() ||
 			this.shouldRedirectJetpackStart() ||
 			getRoleFromScope( scope ) === 'subscriber' ||
-			this.isJetpackUpgradeFlow()
+			this.isJetpackUpgradeFlow() ||
+			this.isFromJetpackConnectionManager()
 		) {
 			debug(
 				'Going back to WP Admin.',
@@ -301,6 +302,11 @@ export class JetpackAuthorize extends Component {
 	isJetpackUpgradeFlow( props = this.props ) {
 		const { redirectAfterAuth } = props.authQuery;
 		return redirectAfterAuth.includes( 'page=jetpack&action=authorize_redirect' );
+	}
+
+	isFromJetpackConnectionManager( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'connection-ui' );
 	}
 
 	isWooRedirect = ( props = this.props ) => {

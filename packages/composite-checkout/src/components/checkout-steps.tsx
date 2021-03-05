@@ -34,7 +34,7 @@ import {
 } from '../public-api';
 import styled from '../lib/styled';
 import { Theme } from '../lib/theme';
-import { FormStatus } from '../types';
+import { FormStatus, CheckoutStepProps } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 
@@ -275,20 +275,7 @@ export const CheckoutStep = ( {
 	nextStepButtonAriaLabel,
 	validatingButtonText,
 	validatingButtonAriaLabel,
-}: {
-	stepId: string;
-	titleContent: React.ReactNode;
-	isCompleteCallback: () => boolean | Promise< boolean >;
-	activeStepContent?: React.ReactNode;
-	completeStepContent?: React.ReactNode;
-	className?: string;
-	editButtonText?: string;
-	editButtonAriaLabel?: string;
-	nextStepButtonText?: string;
-	nextStepButtonAriaLabel?: string;
-	validatingButtonText?: string;
-	validatingButtonAriaLabel?: string;
-} ): JSX.Element => {
+}: CheckoutStepProps ): JSX.Element => {
 	const { __ } = useI18n();
 	const { setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } = useContext(
 		CheckoutStepDataContext

@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-
 import { omit } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,6 +17,7 @@ import {
 	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
 	GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
+import { successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Receives the status of a guided transfer for a particular site
@@ -37,7 +38,7 @@ export function receiveGuidedTransferStatus( siteId, guidedTransferStatus ) {
  * Requests the status of guided transfer for a particular site
  *
  * @param {number} siteId The site ID to which the status belongs
- * @returns {Thunk} Action thunk
+ * @returns {Function} Action thunk
  */
 export function requestGuidedTransferStatus( siteId ) {
 	return ( dispatch ) => {
@@ -84,7 +85,7 @@ export function saveHostDetailsFailure( siteId, error = {} ) {
  *
  * @param {number} siteId The id of the source site to transfer
  * @param {object} data The form data containing the target host details
- * @returns {Thunk} Action thunk
+ * @returns {Function} Action thunk
  */
 export function saveHostDetails( siteId, data ) {
 	return ( dispatch ) => {
@@ -109,6 +110,8 @@ export function saveHostDetails( siteId, data ) {
 				type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
 				siteId,
 			} );
+
+			dispatch( successNotice( translate( 'Thanks for confirming those details!' ) ) );
 		};
 
 		return wpcom

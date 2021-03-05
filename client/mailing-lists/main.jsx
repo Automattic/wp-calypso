@@ -1,23 +1,19 @@
 /**
  * External dependencies
  */
-
 import page from 'page';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
-import notices from 'calypso/notices';
+import Gridicon from 'calypso/components/gridicon';
 import utils from './utils';
+import { Card } from '@automattic/components';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { preventWidows } from 'calypso/lib/formatting';
-
-/**
- * Constants
- */
 
 class MainComponent extends React.Component {
 	static displayName = 'MainComponent';
@@ -36,12 +32,12 @@ class MainComponent extends React.Component {
 
 	componentDidUpdate( prevProps, prevState ) {
 		if ( this.state.isSubscribed !== prevState.isSubscribed ) {
-			notices.success(
+			this.props.successNotice(
 				this.state.isSubscribed ? this.getSubscribedMessage() : this.getUnsubscribedMessage(),
 				{ overlay: false, showDismiss: false }
 			);
 		} else if ( this.state.isError ) {
-			notices.error(
+			this.props.errorNotice(
 				this.state.isSubscribed
 					? this.getUnsubscribedErrorMessage()
 					: this.getSubscribedErrorMessage(),
@@ -122,6 +118,8 @@ class MainComponent extends React.Component {
 			return this.props.translate( 'Jetpack Promotions' );
 		} else if ( 'jetpack_news' === category ) {
 			return this.props.translate( 'Jetpack Newsletter' );
+		} else if ( 'jetpack_reports' === category ) {
+			return this.props.translate( 'Jetpack Reports' );
 		}
 
 		return category;
@@ -159,6 +157,8 @@ class MainComponent extends React.Component {
 			return this.props.translate( 'Sales and promotions for Jetpack products and services.' );
 		} else if ( 'jetpack_news' === category ) {
 			return this.props.translate( 'Jetpack news, announcements, and product spotlights.' );
+		} else if ( 'jetpack_reports' === category ) {
+			return this.props.translate( 'Jetpack security and performance reports.' );
 		}
 
 		return null;
@@ -280,4 +280,7 @@ class MainComponent extends React.Component {
 	}
 }
 
-export default localize( MainComponent );
+export default connect( null, {
+	errorNotice,
+	successNotice,
+} )( localize( MainComponent ) );

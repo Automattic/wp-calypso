@@ -27,7 +27,6 @@ export interface RequestCart {
 	is_coupon_applied: boolean;
 	temporary: false;
 	extra: string;
-	is_update?: boolean;
 }
 
 export type RequestCartTaxData = null | {
@@ -166,6 +165,8 @@ export interface CartLocation {
 export type ResponseCartProductExtra = {
 	context?: string;
 	source?: string;
+	premium?: boolean;
+	new_quantity?: number;
 	domain_to_bundle?: string;
 	google_apps_users?: GSuiteProductUser[];
 	google_apps_registration_data?: DomainContactDetails;

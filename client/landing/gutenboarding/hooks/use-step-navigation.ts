@@ -35,7 +35,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	// @TODO: move site creation to a separate hook or an action on the ONBOARD store
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
-	const { anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyShowUrl } = useAnchorFmParams();
+	const { anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyUrl } = useAnchorFmParams();
 
 	const { createSite } = useDispatch( ONBOARD_STORE );
 	const newSiteVisibility = useNewSiteVisibility();
@@ -49,7 +49,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 				visibility: newSiteVisibility,
 				anchorFmPodcastId,
 				anchorFmEpisodeId,
-				anchorFmSpotifyShowUrl,
+				anchorFmSpotifyUrl,
 			} );
 		}
 		// Adding a newUser check works for Anchor.fm flow.  Without it, we ask for login twice.
@@ -61,7 +61,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 				visibility: newSiteVisibility,
 				anchorFmPodcastId,
 				anchorFmEpisodeId,
-				anchorFmSpotifyShowUrl,
+				anchorFmSpotifyUrl,
 			} );
 		}
 		return onSignupDialogOpen();
@@ -86,8 +86,8 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	if ( anchorFmEpisodeId ) {
 		locationState.anchorFmEpisodeId = anchorFmEpisodeId;
 	}
-	if ( anchorFmSpotifyShowUrl ) {
-		locationState.anchorFmSpotifyShowUrl = anchorFmSpotifyShowUrl;
+	if ( anchorFmSpotifyUrl ) {
+		locationState.anchorFmSpotifyUrl = anchorFmSpotifyUrl;
 	}
 
 	const handleBack = () => history.push( previousStepPath, locationState );

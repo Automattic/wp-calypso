@@ -14,7 +14,6 @@ import MapDomainStep from 'calypso/components/domains/map-domain-step';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
 import UseYourDomainStep from 'calypso/components/domains/use-your-domain-step';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
-import CartData from 'calypso/components/data/cart';
 import { getStepUrl } from 'calypso/signup/utils';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
@@ -44,7 +43,7 @@ import { getDomainProductSlug, TRUENAME_COUPONS, TRUENAME_TLDS } from 'calypso/l
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { getSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getVerticalForDomainSuggestions } from 'calypso/state/signup/steps/site-vertical/selectors';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -56,9 +55,9 @@ import { getABTestVariation } from 'calypso/lib/abtest';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/selectors';
 import { getStepModuleName } from 'calypso/signup/config/step-components';
-import { tracksAnonymousUserId } from 'calypso/lib/analytics/ad-tracking';
-import QueryExperiments from 'calypso/components/data/query-experiments';
 import { getExternalBackUrl } from './utils';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+
 /**
  * Style dependencies
  */
@@ -81,7 +80,6 @@ class DomainsStep extends React.Component {
 		selectedSite: PropTypes.object,
 		vertical: PropTypes.string,
 		isReskinned: PropTypes.bool,
-		hasAnonId: PropTypes.bool,
 	};
 
 	getDefaultState = () => ( {
@@ -485,50 +483,51 @@ class DomainsStep extends React.Component {
 			? TRUENAME_TLDS
 			: null;
 
-		const registerDomainStep = (
-			<RegisterDomainStep
-				key="domainForm"
-				path={ this.props.path }
-				initialState={ initialState }
-				onAddDomain={ this.handleAddDomain }
-				products={ this.props.productsList }
-				basePath={ this.props.path }
-				promoTlds={ trueNamePromoTlds }
-				mapDomainUrl={ this.getMapDomainUrl() }
-				transferDomainUrl={ this.getTransferDomainUrl() }
-				useYourDomainUrl={ this.getUseYourDomainUrl() }
-				onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
-				onSave={ this.handleSave.bind( this, 'domainForm' ) }
-				offerUnavailableOption={ ! this.props.isDomainOnly }
-				isDomainOnly={ this.props.isDomainOnly }
-				analyticsSection={ this.getAnalyticsSection() }
-				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-				includeWordPressDotCom={ trueNamePromoTlds ? false : includeWordPressDotCom }
-				includeDotBlogSubdomain={ trueNamePromoTlds ? false : this.shouldIncludeDotBlogSubdomain() }
-				isSignupStep
-				isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableInFlow }
-				showExampleSuggestions={ showExampleSuggestions }
-				suggestion={ initialQuery }
-				designType={ this.getDesignType() }
-				vendor={ getSuggestionsVendor( { isSignup: true, isDomainOnly: this.props.isDomainOnly } ) }
-				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
-				selectedSite={ this.props.selectedSite }
-				showSkipButton={ this.props.showSkipButton }
-				vertical={ this.props.vertical }
-				onSkip={ this.handleSkip }
-				hideFreePlan={ this.handleSkip }
-				forceHideFreeDomainExplainerAndStrikeoutUi={
-					this.props.forceHideFreeDomainExplainerAndStrikeoutUi
-				}
-				isReskinned={ this.props.isReskinned }
-			/>
+		return (
+			<CalypsoShoppingCartProvider>
+				<RegisterDomainStep
+					key="domainForm"
+					path={ this.props.path }
+					initialState={ initialState }
+					onAddDomain={ this.handleAddDomain }
+					products={ this.props.productsList }
+					basePath={ this.props.path }
+					promoTlds={ trueNamePromoTlds }
+					mapDomainUrl={ this.getMapDomainUrl() }
+					transferDomainUrl={ this.getTransferDomainUrl() }
+					useYourDomainUrl={ this.getUseYourDomainUrl() }
+					onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
+					onSave={ this.handleSave.bind( this, 'domainForm' ) }
+					offerUnavailableOption={ ! this.props.isDomainOnly }
+					isDomainOnly={ this.props.isDomainOnly }
+					analyticsSection={ this.getAnalyticsSection() }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+					includeWordPressDotCom={ trueNamePromoTlds ? false : includeWordPressDotCom }
+					includeDotBlogSubdomain={
+						trueNamePromoTlds ? false : this.shouldIncludeDotBlogSubdomain()
+					}
+					isSignupStep
+					isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableInFlow }
+					showExampleSuggestions={ showExampleSuggestions }
+					suggestion={ initialQuery }
+					designType={ this.getDesignType() }
+					vendor={ getSuggestionsVendor( {
+						isSignup: true,
+						isDomainOnly: this.props.isDomainOnly,
+					} ) }
+					deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
+					selectedSite={ this.props.selectedSite }
+					showSkipButton={ this.props.showSkipButton }
+					vertical={ this.props.vertical }
+					onSkip={ this.handleSkip }
+					hideFreePlan={ this.handleSkip }
+					forceHideFreeDomainExplainerAndStrikeoutUi={
+						this.props.forceHideFreeDomainExplainerAndStrikeoutUi
+					}
+					isReskinned={ this.props.isReskinned }
+				/>
+			</CalypsoShoppingCartProvider>
 		);
-
-		if ( 'launch-site' === this.props.flowName ) {
-			return <CartData>{ registerDomainStep }</CartData>;
-		}
-
-		return registerDomainStep;
 	};
 
 	mappingForm = () => {
@@ -538,17 +537,19 @@ class DomainsStep extends React.Component {
 
 		return (
 			<div className="domains__step-section-wrapper" key="mappingForm">
-				<MapDomainStep
-					analyticsSection={ this.getAnalyticsSection() }
-					initialState={ initialState }
-					path={ this.props.path }
-					onRegisterDomain={ this.handleAddDomain }
-					onMapDomain={ this.handleAddMapping.bind( this, 'mappingForm' ) }
-					onSave={ this.handleSave.bind( this, 'mappingForm' ) }
-					products={ this.props.productsList }
-					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					initialQuery={ initialQuery }
-				/>
+				<CalypsoShoppingCartProvider>
+					<MapDomainStep
+						analyticsSection={ this.getAnalyticsSection() }
+						initialState={ initialState }
+						path={ this.props.path }
+						onRegisterDomain={ this.handleAddDomain }
+						onMapDomain={ this.handleAddMapping.bind( this, 'mappingForm' ) }
+						onSave={ this.handleSave.bind( this, 'mappingForm' ) }
+						products={ this.props.productsList }
+						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+						initialQuery={ initialQuery }
+					/>
+				</CalypsoShoppingCartProvider>
 			</div>
 		);
 	};
@@ -562,18 +563,20 @@ class DomainsStep extends React.Component {
 
 		return (
 			<div className="domains__step-section-wrapper" key="transferForm">
-				<TransferDomainStep
-					analyticsSection={ this.getAnalyticsSection() }
-					basePath={ this.props.path }
-					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					initialQuery={ initialQuery }
-					isSignupStep
-					mapDomainUrl={ this.getMapDomainUrl() }
-					onRegisterDomain={ this.handleAddDomain }
-					onTransferDomain={ this.handleAddTransfer }
-					onSave={ this.onTransferSave }
-					products={ this.props.productsList }
-				/>
+				<CalypsoShoppingCartProvider>
+					<TransferDomainStep
+						analyticsSection={ this.getAnalyticsSection() }
+						basePath={ this.props.path }
+						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+						initialQuery={ initialQuery }
+						isSignupStep
+						mapDomainUrl={ this.getMapDomainUrl() }
+						onRegisterDomain={ this.handleAddDomain }
+						onTransferDomain={ this.handleAddTransfer }
+						onSave={ this.onTransferSave }
+						products={ this.props.productsList }
+					/>
+				</CalypsoShoppingCartProvider>
 			</div>
 		);
 	};
@@ -583,16 +586,18 @@ class DomainsStep extends React.Component {
 
 		return (
 			<div className="domains__step-section-wrapper" key="useYourDomainForm">
-				<UseYourDomainStep
-					analyticsSection={ this.getAnalyticsSection() }
-					basePath={ this.props.path }
-					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					initialQuery={ initialQuery }
-					isSignupStep
-					mapDomainUrl={ this.getMapDomainUrl() }
-					transferDomainUrl={ this.getTransferDomainUrl() }
-					products={ this.props.productsList }
-				/>
+				<CalypsoShoppingCartProvider>
+					<UseYourDomainStep
+						analyticsSection={ this.getAnalyticsSection() }
+						basePath={ this.props.path }
+						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+						initialQuery={ initialQuery }
+						isSignupStep
+						mapDomainUrl={ this.getMapDomainUrl() }
+						transferDomainUrl={ this.getTransferDomainUrl() }
+						products={ this.props.productsList }
+					/>
+				</CalypsoShoppingCartProvider>
 			</div>
 		);
 	};
@@ -731,7 +736,6 @@ class DomainsStep extends React.Component {
 				fallbackSubHeaderText={ fallbackSubHeaderText }
 				stepContent={
 					<div>
-						{ ! this.props.hasAnonId && <QueryExperiments /> }
 						{ ! this.props.productsLoaded && <QueryProductsList /> }
 						{ this.renderContent() }
 					</div>
@@ -796,12 +800,11 @@ export default connect(
 			siteGoals: getSiteGoals( state ),
 			siteType: getSiteType( state ),
 			vertical: getVerticalForDomainSuggestions( state ),
-			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
+			selectedSite: getSelectedSite( state ),
 			isSitePreviewVisible: isSitePreviewVisible( state ),
 			sites: getSitesItems( state ),
 			isReskinned,
 			isPlanStepSkipped: isPlanStepExistsAndSkipped( state ),
-			hasAnonId: !! tracksAnonymousUserId( state ),
 		};
 	},
 	{

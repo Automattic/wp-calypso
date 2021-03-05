@@ -1,6 +1,23 @@
 @import '~@wordpress/base-styles/breakpoints';
 @import '~@wordpress/base-styles/mixins';
 
+.help__heading {
+	display: flex;
+
+	.formatted-header {
+		margin-right: 12px;
+	}
+
+	.formatted-header__subtitle {
+		margin-bottom: 0;
+	}
+
+	.help__contact-us-header-button {
+		margin: auto;
+		margin-right: 0;
+	}
+}
+
 .help .upwork-banner {
 	margin: 10px 10px 20px;
 
@@ -115,7 +132,11 @@
 	.help__support-session-text,
 	.help__support-session-illustration {
 		box-sizing: border-box;
-		padding: 24px;
+		padding: 24px 16px;
+
+		@include break-large {
+			padding: 24px;
+		}
 
 		@include break-huge {
 			padding: 32px;
@@ -184,7 +205,8 @@
 	justify-content: space-between;
 	margin-bottom: 48px;
 
-	&:hover .gridicon {
+	&:hover .gridicon,
+	.gridicon {
 		fill: var( --color-primary );
 	}
 

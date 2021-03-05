@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
-import { isNumber, noop } from 'lodash';
+import { isNumber } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +16,8 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import MediaImage from 'calypso/my-sites/media-library/media-image';
 import ProductImageUploader from 'woocommerce/components/product-image-uploader';
 import Spinner from 'calypso/components/spinner';
+
+const noop = () => {};
 
 class ProductFormImages extends Component {
 	static propTypes = {

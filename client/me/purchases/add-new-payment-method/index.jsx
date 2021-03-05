@@ -1,20 +1,18 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import page from 'page';
-import React from 'react';
-import PropTypes from 'prop-types';
-import { StripeHookProvider } from '@automattic/calypso-stripe';
+import React, { useMemo, useEffect } from 'react';
+import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { addStoredCard } from 'calypso/state/stored-cards/actions';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { concatTitle } from 'calypso/lib/react-helpers';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
-import PaymentMethodForm from 'calypso/me/purchases/components/payment-method-form';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
@@ -26,14 +24,39 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
+import PaymentMethodSelector from 'calypso/me/purchases/manage-purchase/payment-method-selector';
+import { useCreateCreditCard } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-methods';
+import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 
-function AddNewPaymentMethod( props ) {
+function AddNewPaymentMethod() {
 	const goToPaymentMethods = () => page( paymentMethods );
-	const recordFormSubmitEvent = () => recordTracksEvent( 'calypso_add_credit_card_form_submit' );
 	const addPaymentMethodTitle = isEnabled( 'purchases/new-payment-methods' )
 		? titles.addPaymentMethod
 		: titles.addCreditCard;
+
+	const translate = useTranslate();
+	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
+	const stripeMethod = useCreateCreditCard( {
+		isStripeLoading,
+		stripeLoadingError,
+		stripeConfiguration,
+		stripe,
+		shouldUseEbanx: false,
+		shouldShowTaxFields: true,
+		activePayButtonText: translate( 'Save card' ),
+	} );
+	const paymentMethodList = useMemo( () => [ stripeMethod ].filter( Boolean ), [ stripeMethod ] );
+	const reduxDispatch = useDispatch();
+	useEffect( () => {
+		if ( stripeLoadingError ) {
+			reduxDispatch( errorNotice( stripeLoadingError.message ) );
+		}
+	}, [ stripeLoadingError, reduxDispatch ] );
+
+	if ( paymentMethodList.length === 0 ) {
+		return <PaymentMethodLoader title={ addPaymentMethodTitle } />;
+	}
 
 	return (
 		<Main className="add-new-payment-method is-wide-layout">
@@ -43,26 +66,19 @@ function AddNewPaymentMethod( props ) {
 						? '/me/purchases/add-payment-method'
 						: '/me/purchases/add-credit-card'
 				}
-				title={ concatTitle( titles.purchases, addPaymentMethodTitle ) }
+				title={ concatTitle( titles.activeUpgrades, addPaymentMethodTitle ) }
 			/>
-			<DocumentHead title={ concatTitle( titles.purchases, addPaymentMethodTitle ) } />
+			<DocumentHead title={ concatTitle( titles.activeUpgrades, addPaymentMethodTitle ) } />
 
 			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<HeaderCake onClick={ goToPaymentMethods }>{ addPaymentMethodTitle }</HeaderCake>
 
 			<Layout>
 				<Column type="main">
-					<StripeHookProvider
-						configurationArgs={ { needs_intent: true } }
-						locale={ props.locale }
-						fetchStripeConfiguration={ getStripeConfiguration }
-					>
-						<PaymentMethodForm
-							recordFormSubmitEvent={ recordFormSubmitEvent }
-							saveStoredCard={ props.addStoredCard }
-							successCallback={ goToPaymentMethods }
-						/>
-					</StripeHookProvider>
+					<PaymentMethodSelector
+						paymentMethods={ paymentMethodList }
+						successCallback={ goToPaymentMethods }
+					/>
 				</Column>
 				<Column type="sidebar">
 					<PaymentMethodSidebar />
@@ -72,18 +88,15 @@ function AddNewPaymentMethod( props ) {
 	);
 }
 
-AddNewPaymentMethod.propTypes = {
-	addStoredCard: PropTypes.func.isRequired,
-	locale: PropTypes.string,
-};
-
-const mapDispatchToProps = {
-	addStoredCard,
-};
-
-export default connect(
-	( state ) => ( {
-		locale: getCurrentUserLocale( state ),
-	} ),
-	mapDispatchToProps
-)( AddNewPaymentMethod );
+export default function AccountLevelAddNewPaymentMethodWrapper( props ) {
+	const locale = useSelector( getCurrentUserLocale );
+	return (
+		<StripeHookProvider
+			locale={ locale }
+			configurationArgs={ { needs_intent: true } }
+			fetchStripeConfiguration={ getStripeConfiguration }
+		>
+			<AddNewPaymentMethod { ...props } />
+		</StripeHookProvider>
+	);
+}

@@ -2,168 +2,98 @@
  * Internal dependencies
  */
 import reducer from '../reducer';
-import { setPrices, setPlans, setFeaturesByType, setFeatures } from '../actions';
-import {
-	PLAN_FREE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
-} from '../constants';
+import { setPlans, setFeaturesByType, setFeatures, setPlanProducts } from '../actions';
+import * as MockData from '../mock';
+import { buildPlanFeaturesDict } from '../test-utils';
+
+const MOCK_LOCALE = 'test-locale';
 
 describe( 'Plans reducer', () => {
-	describe( 'Prices', () => {
-		it( 'defaults to no price info', () => {
-			const { prices } = reducer( undefined, { type: 'DUMMY' } );
-			expect( prices[ PLAN_FREE ] ).toBe( '' );
-			expect( prices[ PLAN_PERSONAL ] ).toBe( '' );
-			expect( prices[ PLAN_PREMIUM ] ).toBe( '' );
-			expect( prices[ PLAN_BUSINESS ] ).toBe( '' );
-			expect( prices[ PLAN_ECOMMERCE ] ).toBe( '' );
-		} );
-
-		it( 'replaces old prices with new prices', () => {
-			const state = reducer(
-				undefined,
-				setPrices( {
-					[ PLAN_PERSONAL ]: '$1',
-					[ PLAN_PREMIUM ]: '$3',
-				} )
-			);
-			const { prices } = reducer(
-				state,
-				setPrices( {
-					[ PLAN_PERSONAL ]: '$2',
-				} )
-			);
-
-			expect( prices[ PLAN_PERSONAL ] ).toBe( '$2' );
-			expect( prices[ PLAN_PREMIUM ] ).toBeUndefined();
-		} );
-	} );
-
-	describe( 'Supported Plan Slugs', () => {
-		it( 'defaults to a list of supported plans', () => {
-			const state = reducer( undefined, { type: 'DUMMY' } );
-			expect( state.supportedPlanSlugs.sort() ).toEqual(
-				[
-					'free_plan',
-					'personal-bundle',
-					'value_bundle',
-					'business-bundle',
-					'ecommerce-bundle',
-				].sort()
-			);
-		} );
-	} );
-
-	describe( 'Plans', () => {
-		it( 'defaults to no plans info', () => {
-			const { plans } = reducer( undefined, { type: 'DUMMY' } );
+	describe( 'plans', () => {
+		it( 'should default to no plans info', () => {
+			const { plans } = reducer( undefined, { type: 'NOOP' } );
 			expect( plans ).toEqual( {} );
 		} );
 
-		it( 'replaces old plans with new plans', () => {
-			const state = reducer(
-				undefined,
-				setPlans( {
-					[ PLAN_FREE ]: {
-						title: 'free',
-						description: 'description',
-						productId: 1,
-						storeSlug: PLAN_FREE,
-						pathSlug: 'free',
-						features: [],
-					},
-					[ PLAN_PREMIUM ]: {
-						title: 'premium',
-						description: 'description',
-						productId: 1,
-						storeSlug: PLAN_PREMIUM,
-						pathSlug: 'premium',
-						features: [],
-					},
-				} )
-			);
-			const { plans } = reducer(
+		it( 'should replace old plans with new plans', () => {
+			let state = reducer( undefined, setPlans( [ MockData.STORE_PLAN_FREE ], MOCK_LOCALE ) );
+
+			state = reducer(
 				state,
-				setPlans( {
-					[ PLAN_FREE ]: {
-						title: 'new free',
-						description: 'description',
-						productId: 1,
-						storeSlug: PLAN_FREE,
-						pathSlug: 'free',
-						features: [],
-					},
-				} )
+				setPlanProducts( [
+					MockData.STORE_PRODUCT_FREE,
+					MockData.STORE_PRODUCT_PREMIUM_ANNUALLY,
+					MockData.STORE_PRODUCT_PREMIUM_MONTHLY,
+				] )
 			);
 
-			expect( plans[ PLAN_FREE ].title ).toBe( 'new free' );
-			expect( plans[ PLAN_PREMIUM ] ).toBeUndefined();
+			const newFreePlan = { ...MockData.STORE_PLAN_FREE, title: 'new free' };
+
+			const { plans } = reducer( state, setPlans( [ newFreePlan ], MOCK_LOCALE ) );
+
+			expect( plans[ MOCK_LOCALE ][ 0 ].title ).toBe( newFreePlan.title );
+			expect( plans[ MOCK_LOCALE ][ 1 ] ).toBeUndefined();
 		} );
 	} );
 
-	describe( 'Features By Type', () => {
-		it( 'defaults to no featuresByType info', () => {
-			const { featuresByType } = reducer( undefined, { type: 'DUMMY' } );
-			expect( featuresByType ).toEqual( [] );
+	describe( 'featuresByType', () => {
+		it( 'should default to no featuresByType info', () => {
+			const { featuresByType } = reducer( undefined, { type: 'NOOP' } );
+			expect( featuresByType ).toEqual( {} );
 		} );
 
-		it( 'replaces old featuresByType info with new featuresByType info', () => {
+		it( 'should replace old featuresByType info with new featuresByType info', () => {
 			const state = reducer(
 				undefined,
-				setFeaturesByType( [
-					{
-						id: '1',
-						name: 'one',
-						features: [],
-					},
-					{
-						id: '2',
-						name: 'two',
-						features: [],
-					},
-				] )
+				setFeaturesByType(
+					[ MockData.API_FEATURES_BY_TYPE_GENERAL, MockData.API_FEATURES_BY_TYPE_COMMERCE ],
+					MOCK_LOCALE
+				)
 			);
 
 			const { featuresByType } = reducer(
 				state,
-				setFeaturesByType( [
-					{
-						id: '3',
-						name: 'three',
-						features: [],
-					},
-				] )
+				setFeaturesByType( [ MockData.API_FEATURES_BY_TYPE_MARKETING ], MOCK_LOCALE )
 			);
 
-			expect( featuresByType ).toEqual( [
-				{
-					id: '3',
-					name: 'three',
-					features: [],
-				},
+			expect( featuresByType[ MOCK_LOCALE ] ).toEqual( [
+				MockData.API_FEATURES_BY_TYPE_MARKETING,
 			] );
 		} );
 	} );
 
-	describe( 'Features', () => {
-		it( 'defaults to no feature info', () => {
-			const { features } = reducer( undefined, { type: 'DUMMY' } );
+	describe( 'features', () => {
+		it( 'should default to no feature info', () => {
+			const { features } = reducer( undefined, { type: 'NOOP' } );
 			expect( features ).toEqual( {} );
 		} );
 
-		it( 'replaces old features with new features', () => {
+		it( 'should replace old features with new features', () => {
 			const state = reducer(
 				undefined,
-				setFeatures( { [ PLAN_FREE ]: { name: 'name' }, [ PLAN_PREMIUM ]: { name: 'name' } } )
+				setFeatures(
+					buildPlanFeaturesDict( [
+						MockData.STORE_PLAN_FEATURE_CUSTOM_DOMAIN,
+						MockData.STORE_PLAN_FEATURE_LIVE_SUPPORT,
+					] ),
+					MOCK_LOCALE
+				)
 			);
 
-			const { features } = reducer( state, setFeatures( { [ PLAN_FREE ]: { name: 'new name' } } ) );
+			const { features } = reducer(
+				state,
+				setFeatures(
+					buildPlanFeaturesDict( [ MockData.STORE_PLAN_FEATURE_PRIORITY_SUPPORT ] ),
+					MOCK_LOCALE
+				)
+			);
 
-			expect( features[ PLAN_FREE ].name ).toBe( 'new name' );
-			expect( features[ PLAN_PREMIUM ] ).toBeUndefined();
+			expect(
+				features[ MOCK_LOCALE ][ MockData.STORE_PLAN_FEATURE_PRIORITY_SUPPORT.id ].name
+			).toBe( MockData.STORE_SIMPLIFIED_FEATURE_PRIORITY_SUPPORT.name );
+			expect(
+				features[ MOCK_LOCALE ][ MockData.STORE_PLAN_FEATURE_CUSTOM_DOMAIN.id ]
+			).toBeUndefined();
 		} );
 	} );
 } );

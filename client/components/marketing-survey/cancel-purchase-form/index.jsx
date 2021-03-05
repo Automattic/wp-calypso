@@ -11,7 +11,7 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
 /**
  * Internal Dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { Dialog, Button } from '@automattic/components';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -33,7 +33,11 @@ import UpgradeATStep from './step-components/upgrade-at-step';
 import PrecancellationChatButton from './precancellation-chat-button';
 import DowngradeStep from './step-components/downgrade-step';
 import { getName, isRefundable } from 'calypso/lib/purchases';
-import { isGoogleApps, isJetpackPlanSlug, isJetpackProductSlug } from 'calypso/lib/products-values';
+import {
+	isGSuiteOrGoogleWorkspace,
+	isJetpackPlanSlug,
+	isJetpackProductSlug,
+} from 'calypso/lib/products-values';
 import { radioTextOption, radioSelectOption } from './radio-option';
 import {
 	cancellationOptionsForPurchase,
@@ -274,7 +278,7 @@ class CancelPurchaseForm extends React.Component {
 	onSubmit = () => {
 		const { purchase } = this.props;
 
-		if ( ! isGoogleApps( purchase ) ) {
+		if ( ! isGSuiteOrGoogleWorkspace( purchase ) ) {
 			this.setState( {
 				isSubmitting: true,
 			} );

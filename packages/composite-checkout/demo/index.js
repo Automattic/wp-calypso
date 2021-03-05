@@ -46,7 +46,7 @@ const initialItems = [
 	},
 	{
 		label: 'Domain registration',
-		subLabel: 'example.com',
+		sublabel: 'example.com',
 		id: 'wpcom-domain',
 		type: 'domain',
 		amount: { currency: 'USD', value: 0, displayValue: '$0' },

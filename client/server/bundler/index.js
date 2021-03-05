@@ -10,11 +10,11 @@ const chalk = require( 'chalk' );
 const webpackConfig = require( 'calypso/webpack.config' );
 const { execSync } = require( 'child_process' );
 
-const config = require( 'calypso/config' );
+const config = require( '@automattic/calypso-config' );
 
-const protocol = process.env.PROTOCOL || config( 'protocol' );
-const host = process.env.HOST || config( 'hostname' );
-const port = process.env.PORT || config( 'port' );
+const protocol = config( 'protocol' );
+const host = config( 'hostname' );
+const port = config( 'port' );
 const shouldProfile = process.env.PROFILE === 'true';
 const shouldBuildChunksMap =
 	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
@@ -110,26 +110,7 @@ function middleware( app ) {
 	}
 
 	app.use( waitForCompiler );
-	app.use(
-		webpackMiddleware( compiler, {
-			mode: 'development',
-			publicPath: `/calypso/${ process.env.DEV_TARGET || 'evergreen' }/`,
-			stats: {
-				colors: true,
-				hash: true,
-				version: false,
-				timings: true,
-				assets: false,
-				chunks: false,
-				modules: false,
-				cached: false,
-				reasons: false,
-				source: false,
-				errorDetails: true,
-				entrypoints: false,
-			},
-		} )
-	);
+	app.use( webpackMiddleware( compiler ) );
 }
 
 module.exports = middleware;

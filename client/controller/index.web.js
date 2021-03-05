@@ -4,11 +4,12 @@
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 /**
  * Internal Dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
@@ -31,6 +32,8 @@ import { hydrate } from './web-util.js';
  */
 export { setSectionMiddleware, setLocaleMiddleware } from './shared.js';
 export { render, hydrate } from './web-util.js';
+
+const queryClient = new QueryClient();
 
 export const ProviderWrappedLayout = ( {
 	store,
@@ -57,9 +60,11 @@ export const ProviderWrappedLayout = ( {
 				currentRoute={ currentRoute }
 				currentQuery={ currentQuery }
 			>
-				<ReduxProvider store={ store }>
-					<MomentProvider>{ layout }</MomentProvider>
-				</ReduxProvider>
+				<QueryClientProvider client={ queryClient }>
+					<ReduxProvider store={ store }>
+						<MomentProvider>{ layout }</MomentProvider>
+					</ReduxProvider>
+				</QueryClientProvider>
 			</RouteProvider>
 		</CalypsoI18nProvider>
 	);

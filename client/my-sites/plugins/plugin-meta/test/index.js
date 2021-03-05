@@ -34,13 +34,6 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 jest.mock( 'calypso/lib/translator-jumpstart', () => ( {} ) );
-jest.mock( 'calypso/lib/plugins/wporg-data/actions', () => ( {} ) );
-jest.mock( 'calypso/lib/plugins/wporg-data/list-store', () => ( {
-	getShortList: () => {},
-	getFullList: () => {},
-	getSearchList: () => {},
-	on: () => {},
-} ) );
 jest.mock( 'calypso/state/guided-tours/selectors', () => ( {} ) );
 jest.mock( 'calypso/my-sites/plugins/utils', () => ( {
 	getExtensionSettingsPath: () => '',
@@ -65,6 +58,9 @@ const selectedSite = {
 const props = {
 	selectedSite,
 	sites: [ [ {} ] ],
+	pluginsOnSites: {
+		sites: {},
+	},
 	plugin: { active: false },
 	selectedSiteId: 123,
 	translate: ( x ) => x,

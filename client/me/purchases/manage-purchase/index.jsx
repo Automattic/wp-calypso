@@ -16,7 +16,7 @@ import { abtest } from 'calypso/lib/abtest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { applyTestFiltersToPlansList } from 'calypso/lib/plans';
 import { Button, Card, CompactCard, ProductIcon } from '@automattic/components';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import {
 	cardProcessorSupportsUpdates,
 	getDomainRegistrationAgreementUrl,
@@ -40,7 +40,11 @@ import {
 	purchaseType,
 	getName,
 } from 'calypso/lib/purchases';
-import { canEditPaymentDetails, getChangePaymentMethodPath } from '../utils';
+import {
+	canEditPaymentDetails,
+	getAddNewPaymentMethodPath,
+	getChangePaymentMethodPath,
+} from '../utils';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
@@ -49,6 +53,7 @@ import {
 } from 'calypso/state/purchases/selectors';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import Gridicon from 'calypso/components/gridicon';
 import HeaderCake from 'calypso/components/header-cake';
@@ -65,11 +70,13 @@ import {
 	isDomainRegistration,
 	isDomainMapping,
 	isDomainTransfer,
-	isGoogleApps,
+	isGoogleWorkspace,
+	isGSuiteOrGoogleWorkspace,
 	isJetpackSearch,
 	isTheme,
 	isJetpackProduct,
 	isConciergeSession,
+	isTitanMail,
 } from 'calypso/lib/products-values';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
@@ -96,7 +103,6 @@ import {
 	getCurrentUser,
 	getCurrentUserId,
 } from 'calypso/state/current-user/selectors';
-import CartStore from 'calypso/lib/cart/store';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
@@ -106,11 +112,12 @@ import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dial
  * Style dependencies
  */
 import './style.scss';
+import { isP2Plus } from 'calypso/lib/products-values/is-p2-plus';
 
 class ManagePurchase extends Component {
 	static propTypes = {
 		cardTitle: PropTypes.string,
-		getAddPaymentMethodUrlFor: PropTypes.func,
+		getAddNewPaymentMethodUrlFor: PropTypes.func,
 		getCancelPurchaseUrlFor: PropTypes.func,
 		getChangePaymentMethodUrlFor: PropTypes.func,
 		getManagePurchaseUrlFor: PropTypes.func,
@@ -134,9 +141,8 @@ class ManagePurchase extends Component {
 	static defaultProps = {
 		showHeader: true,
 		purchaseListUrl: purchasesRoot,
-		getAddPaymentMethodUrlFor: getChangePaymentMethodPath,
+		getAddNewPaymentMethodUrlFor: getAddNewPaymentMethodPath,
 		getChangePaymentMethodUrlFor: getChangePaymentMethodPath,
-		cardTitle: titles.managePurchase,
 		getCancelPurchaseUrlFor: cancelPurchase,
 		getManagePurchaseUrlFor: managePurchase,
 	};
@@ -153,22 +159,10 @@ class ManagePurchase extends Component {
 		}
 	}
 
-	componentDidMount() {
-		if ( this.props.siteId ) {
-			CartStore.setSelectedSiteId( this.props.siteId );
-		}
-	}
-
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
 			page.redirect( this.props.purchaseListUrl );
 			return;
-		}
-	}
-
-	componentDidUpdate( { siteId } ) {
-		if ( this.props.siteId && siteId !== this.props.siteId ) {
-			CartStore.setSelectedSiteId( this.props.siteId );
 		}
 	}
 
@@ -266,7 +260,12 @@ class ManagePurchase extends Component {
 			? translate( 'Pick Another Plan' )
 			: translate( 'Upgrade Plan' );
 
-		if ( ! isPlan( purchase ) || isEcommerce( purchase ) || isComplete( purchase ) ) {
+		if (
+			! isPlan( purchase ) ||
+			isEcommerce( purchase ) ||
+			isComplete( purchase ) ||
+			isP2Plus( purchase )
+		) {
 			return null;
 		}
 
@@ -399,7 +398,8 @@ class ManagePurchase extends Component {
 		if (
 			isAtomicSite &&
 			isSubscription( purchase ) &&
-			! isGoogleApps( purchase ) &&
+			! isGSuiteOrGoogleWorkspace( purchase ) &&
+			! isTitanMail( purchase ) &&
 			! isJetpackSearch( purchase )
 		) {
 			text = translate( 'Contact Support to Cancel your Subscription' );
@@ -450,8 +450,9 @@ class ManagePurchase extends Component {
 		);
 	}
 
-	renderPlanIcon() {
-		const { purchase } = this.props;
+	renderPurchaseIcon() {
+		const { purchase, translate } = this.props;
+
 		if ( isPlan( purchase ) || isJetpackProduct( purchase ) ) {
 			return (
 				<div className="manage-purchase__plan-icon">
@@ -468,6 +469,14 @@ class ManagePurchase extends Component {
 			);
 		}
 
+		if ( isGoogleWorkspace( purchase ) ) {
+			return (
+				<div className="manage-purchase__plan-icon">
+					<img src={ googleWorkspaceIcon } alt={ translate( 'Google Workspace icon' ) } />
+				</div>
+			);
+		}
+
 		if ( isTheme( purchase ) ) {
 			return (
 				<div className="manage-purchase__plan-icon">
@@ -476,13 +485,22 @@ class ManagePurchase extends Component {
 			);
 		}
 
+		if ( isTitanMail( purchase ) ) {
+			return (
+				<div className="manage-purchase__plan-icon">
+					<Gridicon icon="my-sites" size={ 54 } />
+				</div>
+			);
+		}
+
 		return null;
 	}
 
-	renderPlanDescription() {
+	renderPurchaseDescription() {
 		const { plan, purchase, site, theme, translate } = this.props;
 
 		let description = purchaseType( purchase );
+
 		if ( isPlan( purchase ) ) {
 			description = plan.getDescription();
 		} else if ( isTheme( purchase ) && theme ) {
@@ -504,6 +522,52 @@ class ManagePurchase extends Component {
 				'Transfers an existing domain from another provider to WordPress.com, ' +
 					'helping you manage your site and domain in one place.'
 			);
+		} else if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
+			description = translate(
+				'The best way to create, communicate, and collaborate. An integrated workspace that is simple and easy to use.'
+			);
+
+			if ( purchase.purchaseRenewalQuantity ) {
+				description = (
+					<>
+						{ description }{ ' ' }
+						{ translate(
+							'This purchase is for %(numberOfUsers)d user for the domain %(domain)s.',
+							'This purchase is for %(numberOfUsers)d users for the domain %(domain)s.',
+							{
+								count: purchase.purchaseRenewalQuantity,
+								args: {
+									numberOfUsers: purchase.purchaseRenewalQuantity,
+									domain: purchase.meta,
+								},
+							}
+						) }
+					</>
+				);
+			}
+		} else if ( isTitanMail( purchase ) ) {
+			description = translate(
+				'Easy-to-use email with incredibly powerful features. Manage your email and more on any device.'
+			);
+
+			if ( purchase.purchaseRenewalQuantity ) {
+				description = (
+					<>
+						{ description }{ ' ' }
+						{ translate(
+							'This purchase is for %(numberOfMailboxes)d mailbox for the domain %(domain)s.',
+							'This purchase is for %(numberOfMailboxes)d mailboxes for the domain %(domain)s.',
+							{
+								count: purchase.purchaseRenewalQuantity,
+								args: {
+									numberOfMailboxes: purchase.purchaseRenewalQuantity,
+									domain: purchase.meta,
+								},
+							}
+						) }
+					</>
+				);
+			}
 		}
 
 		const registrationAgreementUrl = getDomainRegistrationAgreementUrl( purchase );
@@ -605,7 +669,7 @@ class ManagePurchase extends Component {
 				) }
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
-						{ this.renderPlanIcon() }
+						{ this.renderPurchaseIcon() }
 						<h2 className="manage-purchase__title">{ getDisplayName( purchase ) }</h2>
 						<div className="manage-purchase__description">{ purchaseType( purchase ) }</div>
 						<div className="manage-purchase__price">
@@ -627,7 +691,7 @@ class ManagePurchase extends Component {
 							) }
 						</div>
 					</header>
-					{ this.renderPlanDescription() }
+					{ this.renderPurchaseDescription() }
 					{ ! isPartnerPurchase( purchase ) && (
 						<PurchaseMeta
 							purchaseId={ purchase.id }
@@ -669,7 +733,7 @@ class ManagePurchase extends Component {
 			isPurchaseTheme,
 			translate,
 			getManagePurchaseUrlFor,
-			getAddPaymentMethodUrlFor,
+			getAddNewPaymentMethodUrlFor,
 			getChangePaymentMethodUrlFor,
 			isProductOwner,
 		} = this.props;
@@ -701,7 +765,9 @@ class ManagePurchase extends Component {
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
 
-				<HeaderCake backHref={ this.props.purchaseListUrl }>{ this.props.cardTitle }</HeaderCake>
+				<HeaderCake backHref={ this.props.purchaseListUrl }>
+					{ this.props.cardTitle || titles.managePurchase }
+				</HeaderCake>
 				{ showExpiryNotice ? (
 					<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
 						<NoticeAction href={ `/plans/${ siteSlug || '' }` }>
@@ -720,7 +786,7 @@ class ManagePurchase extends Component {
 						changePaymentMethodPath={ changePaymentMethodPath }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 						isProductOwner={ isProductOwner }
-						getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
+						getAddNewPaymentMethodUrlFor={ getAddNewPaymentMethodUrlFor }
 					/>
 				) }
 				<AsyncLoad

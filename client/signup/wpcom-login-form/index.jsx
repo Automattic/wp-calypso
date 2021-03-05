@@ -9,7 +9,7 @@ const debug = debugFactory( 'calypso:signup:wpcom-login' );
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 export default class WpcomLoginForm extends Component {
 	form = null;

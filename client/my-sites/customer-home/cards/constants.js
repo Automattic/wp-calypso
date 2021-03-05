@@ -27,3 +27,4 @@ export const TASK_SITE_SETUP_CHECKLIST = 'home-task-site-setup-checklist';
 export const TASK_SITE_SETUP_CHECKLIST_ECOMMERCE = 'home-task-site-setup-checklist-ecommerce';
 export const TASK_WEBINARS = 'home-task-webinars';
 export const TASK_WP_COURSES = 'home-task-wp-courses';
+export const TASK_CLOUDFLARE = 'home-task-cloudflare';

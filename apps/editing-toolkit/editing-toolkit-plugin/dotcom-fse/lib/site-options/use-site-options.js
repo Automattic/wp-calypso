@@ -50,10 +50,12 @@ export function useSiteOptions(
 			)
 			.catch( () => {
 				createErrorNotice(
+					/* translators: %s is a site option (e.g. `title`, `description`, etc.). */
 					sprintf( __( 'Unable to load site %s', 'full-site-editing' ), siteOption )
 				);
 				setSiteOptions( {
 					...siteOptions,
+					/* translators: %s is a site option (e.g. `title`, `description`, etc.). */
 					option: sprintf( __( 'Error loading site %s', 'full-site-editing' ), siteOption ),
 					error: true,
 				} );
@@ -94,6 +96,7 @@ export function useSiteOptions(
 			.then( () => updatePreviousOption( option ) )
 			.catch( () => {
 				createErrorNotice(
+					/* translators: %s is a site option (e.g. `title`, `description`, etc.). */
 					sprintf( __( 'Unable to save site %s', 'full-site-editing' ), siteOption )
 				);
 				revertOption();

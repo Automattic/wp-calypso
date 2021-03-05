@@ -145,7 +145,7 @@ class PurchasesList extends Component {
 					<Main className="purchases-list is-wide-layout">
 						<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
 						<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-						<PurchasesNavigation section="purchases" />
+						<PurchasesNavigation section="activeUpgrades" />
 						<NoSitesMessage />
 					</Main>
 				);
@@ -178,7 +178,7 @@ class PurchasesList extends Component {
 				<MeSidebarNavigation />
 
 				<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-				<PurchasesNavigation section="purchases" />
+				<PurchasesNavigation section="activeUpgrades" />
 				{ content }
 				{ this.renderMembershipSubscriptions() }
 				<QueryConciergeInitial />

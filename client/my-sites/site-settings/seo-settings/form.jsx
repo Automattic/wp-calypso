@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, isArray, isEqual, mapValues, omit, pickBy, partial } from 'lodash';
+import { get, isEqual, mapValues, omit, pickBy, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -16,7 +16,6 @@ import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-secti
 import MetaTitleEditor from 'calypso/components/seo/meta-title-editor';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import notices from 'calypso/notices';
 import { protectForm } from 'calypso/lib/protect-form';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -34,10 +33,12 @@ import {
 } from 'calypso/state/site-settings/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
 import isHiddenSite from 'calypso/state/selectors/is-hidden-site';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { toApi as seoTitleToApi } from 'calypso/components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -47,7 +48,6 @@ import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
 	TYPE_BUSINESS,
-	JETPACK_RESET_PLANS,
 } from 'calypso/lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -116,7 +116,12 @@ export class SeoForm extends React.Component {
 		// save error
 		if ( this.state.isSubmittingForm && nextProps.saveError ) {
 			this.setState( { isSubmittingForm: false } );
-			notices.error( translate( 'There was a problem saving your changes. Please, try again.' ) );
+			this.props.errorNotice(
+				translate( 'There was a problem saving your changes. Please, try again.' ),
+				{
+					id: 'seo-settings-form-error',
+				}
+			);
 		}
 
 		// if we are changing sites, everything goes
@@ -190,7 +195,7 @@ export class SeoForm extends React.Component {
 			event.preventDefault();
 		}
 
-		notices.clearNotices( 'notices' );
+		this.props.removeNotice( 'seo-settings-form-error' );
 
 		this.setState( {
 			isSubmittingForm: true,
@@ -220,7 +225,7 @@ export class SeoForm extends React.Component {
 		// We will pass an empty string in this case.
 		updatedOptions.advanced_seo_title_formats = mapValues(
 			updatedOptions.advanced_seo_title_formats,
-			( format ) => ( isArray( format ) && 0 === format.length ? '' : format )
+			( format ) => ( Array.isArray( format ) && 0 === format.length ? '' : format )
 		);
 
 		this.props.saveSiteSettings( siteId, updatedOptions );
@@ -363,19 +368,17 @@ export class SeoForm extends React.Component {
 						</NoticeAction>
 					</Notice>
 				) }
-
-				{ ! this.props.hasSeoPreviewFeature &&
-					! this.props.hasAdvancedSEOFeature &&
-					selectedSite.plan && (
-						<UpsellNudge
-							{ ...upsellProps }
-							description={ translate(
-								'Get tools to optimize your site for improved search engine results.'
-							) }
-							event={ 'calypso_seo_settings_upgrade_nudge' }
-							showIcon={ true }
-						/>
-					) }
+				{ ! showAdvancedSeo && selectedSite.plan && (
+					<UpsellNudge
+						forceDisplay={ siteIsJetpack }
+						{ ...upsellProps }
+						description={ translate(
+							'Get tools to optimize your site for improved search engine results.'
+						) }
+						event={ 'calypso_seo_settings_upgrade_nudge' }
+						showIcon={ true }
+					/>
+				) }
 				<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
 					{ showAdvancedSeo && ! conflictedSeoPlugin && (
 						<div>
@@ -477,13 +480,15 @@ export class SeoForm extends React.Component {
 
 const mapStateToProps = ( state ) => {
 	const selectedSite = getSelectedSite( state );
-	// SEO Tools are available with Business plan on WordPress.com, and with Premium plan on Jetpack sites
-	const isAdvancedSeoEligible =
-		selectedSite.plan &&
-		( hasSiteSeoFeature( selectedSite ) ||
-			JETPACK_RESET_PLANS.includes( selectedSite.plan.product_slug ) );
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
+	// SEO Tools are available with Business plan on WordPress.com, and
+	// will soon be available on all Jetpack sites, so we're checking
+	// the availability of the module.
+	const isAdvancedSeoEligible =
+		selectedSite.plan &&
+		hasSiteSeoFeature( selectedSite ) &&
+		( ! siteIsJetpack || get( getJetpackModules( state, siteId ), 'seo-tools.available', false ) );
 
 	const activePlugins = getPlugins( state, [ siteId ], 'active' );
 	const conflictedSeoPlugin = siteIsJetpack
@@ -511,6 +516,8 @@ const mapStateToProps = ( state ) => {
 };
 
 const mapDispatchToProps = {
+	errorNotice,
+	removeNotice,
 	refreshSiteData: requestSite,
 	requestSiteSettings,
 	saveSiteSettings,

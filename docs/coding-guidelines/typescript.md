@@ -88,8 +88,10 @@ Because TypeScript infers most types don't feel obligated to add types to everth
 #### Avoid
 
 ```ts
-const name = 'Calypso';
-const isDesktopBuild = false;
+/* eslint-disable @typescript-eslint/no-inferrable-types */
+
+const name: string = 'Calypso';
+const isDesktopBuild: boolean = false;
 const flags: string[] = [ 'cool/feature' ];
 ```
 

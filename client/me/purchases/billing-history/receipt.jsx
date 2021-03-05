@@ -19,7 +19,12 @@ import { withLocalizedMoment, useLocalizedMoment } from 'calypso/components/loca
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { billingHistory } from 'calypso/me/purchases/paths';
 import QueryBillingTransaction from 'calypso/components/data/query-billing-transaction';
-import { groupDomainProducts, renderTransactionAmount } from './utils';
+import {
+	getTransactionTermLabel,
+	groupDomainProducts,
+	renderTransactionAmount,
+	renderTransactionQuantitySummary,
+} from './utils';
 import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-transaction';
 import isPastBillingTransactionError from 'calypso/state/selectors/is-past-billing-transaction-error';
 import {
@@ -27,7 +32,6 @@ import {
 	requestBillingTransaction,
 } from 'calypso/state/billing-transactions/individual-transactions/actions';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { getPlanTermLabel } from 'calypso/lib/plans';
 import { PARTNER_PAYPAL_EXPRESS } from 'calypso/lib/checkout/payment-methods';
 import titles from 'calypso/me/purchases/titles';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -102,7 +106,6 @@ export function ReceiptBody( { transaction, handlePrintLinkClick } ) {
 				<div className="billing-history__app-overview">
 					<img src={ transaction.icon } title={ transaction.service } alt={ transaction.service } />
 					<h2>
-						{ ' ' }
 						{ translate( '{{link}}%(service)s{{/link}} {{small}}by %(organization)s{{/small}}', {
 							components: {
 								link: serviceLink,
@@ -117,10 +120,11 @@ export function ReceiptBody( { transaction, handlePrintLinkClick } ) {
 								'The {{link}} and {{small}} add html styling and attributes. ' +
 								'Screenshot: https://cloudup.com/isX-WEFYlOs',
 						} ) }
-						<div className="billing-history__transaction-date">
-							{ moment( transaction.date ).format( 'll' ) }
-						</div>
+						<small className="billing-history__organization-address">{ transaction.address }</small>
 					</h2>
+					<span className="billing-history__transaction-date">
+						{ moment( transaction.date ).format( 'll' ) }
+					</span>
 				</div>
 				<ul className="billing-history__receipt-details group">
 					<li>
@@ -191,7 +195,7 @@ function ReceiptLineItems( { transaction } ) {
 	const groupedTransactionItems = groupDomainProducts( transaction.items, translate );
 
 	const items = groupedTransactionItems.map( ( item ) => {
-		const termLabel = getPlanTermLabel( item.wpcom_product_slug, translate );
+		const termLabel = getTransactionTermLabel( item, translate );
 		return (
 			<tr key={ item.id }>
 				<td className="billing-history__receipt-item-name">
@@ -200,6 +204,9 @@ function ReceiptLineItems( { transaction } ) {
 					{ termLabel ? <em>{ termLabel }</em> : null }
 					<br />
 					<em>{ item.domain }</em>
+					{ item.licensed_quantity && (
+						<em>{ renderTransactionQuantitySummary( item, translate ) }</em>
+					) }
 				</td>
 				<td className={ 'billing-history__receipt-amount ' + transaction.credit }>
 					{ item.amount }

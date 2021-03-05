@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
  * Internal dependencies
  */
 import { CartItemValue } from 'calypso/lib/cart-values/types';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { googleApps, googleAppsExtraLicenses } from 'calypso/lib/cart-values/cart-items';
 import { hasGSuiteWithUs } from './has-gsuite-with-us';
 
@@ -99,7 +99,7 @@ const validEmailCharacterField = ( { value, error }: GSuiteNewUserField ): GSuit
 	error:
 		! error && ! /^[0-9a-z_'-](\.?[0-9a-z_'-])*$/i.test( value )
 			? translate(
-					'Only number, letters, dashes, underscores, apostrophes and periods are allowed.'
+					'Only numbers, letters, dashes, underscores, apostrophes and periods are allowed.'
 			  )
 			: error,
 } );

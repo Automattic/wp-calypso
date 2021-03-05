@@ -5,11 +5,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { noop } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -20,10 +19,14 @@ import { getSite, getSiteSlug, isSitePreviewable } from 'calypso/state/sites/sel
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import isAtomicAndEditingToolkitPluginDeactivated from 'calypso/state/selectors/is-atomic-and-editing-toolkit-plugin-deactivated';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class Site extends React.Component {
 	static defaultProps = {
@@ -159,7 +162,7 @@ class Site extends React.Component {
 						<div className="site__title">{ site.title }</div>
 						<div className="site__domain">
 							{ /* eslint-disable-next-line no-nested-ternary */ }
-							{ isEnabled( 'nav-unification' )
+							{ this.props.isNavUnificationEnabled && ! isEnabled( 'jetpack-cloud' )
 								? site.domain
 								: this.props.homeLink
 								? translate( 'View %(domain)s', {
@@ -216,6 +219,7 @@ function mapStateToProps( state, ownProps ) {
 			state,
 			siteId
 		),
+		isNavUnificationEnabled: isNavUnificationEnabled( state ),
 	};
 }
 

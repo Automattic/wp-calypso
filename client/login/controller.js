@@ -8,7 +8,7 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import MagicLogin from './magic-login';
 import WPLogin from './wp-login';

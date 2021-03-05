@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -17,6 +16,8 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { enhanceWithLocationCounts } from 'calypso/my-sites/google-my-business/utils';
 import { withEnhancers } from 'calypso/state/utils';
+
+const noop = () => {};
 
 class GoogleMyBusinessSelectLocationButton extends Component {
 	static propTypes = {

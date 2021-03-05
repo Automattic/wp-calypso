@@ -1,24 +1,62 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
+
 /**
  * Internal dependencies
  */
-import QueryViewers from 'calypso/components/data/query-viewers';
-import { localize } from 'i18n-calypso';
 import Viewers from './viewers';
+import useViewers from 'calypso/data/viewers/use-viewers';
+import useRemoveViewer from 'calypso/data/viewers/remove-viewer';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 
 const ViewersList = ( { site, label } ) => {
-	const [ page, setPage ] = useState( 1 );
-	const incrementPage = () => setPage( page + 1 );
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+	const {
+		data,
+		isLoading,
+		fetchNextPage,
+		isFetchingNextPage,
+		hasNextPage,
+		error,
+		refetch,
+	} = useViewers( {
+		siteId: site.ID,
+	} );
+	const { removeViewer } = useRemoveViewer();
+
+	useEffect( () => {
+		if ( error ) {
+			dispatch(
+				errorNotice( 'There was an error retrieving viewer', {
+					id: 'site-viewers-notice',
+					button: 'Try again',
+					onClick: () => {
+						removeNotice( 'site-viewers-notice' );
+						refetch();
+					},
+				} )
+			);
+		}
+	}, [ dispatch, error, refetch, translate ] );
 
 	return (
-		<>
-			<QueryViewers siteId={ site.ID } page={ page } />
-			<Viewers site={ site } label={ label } incrementPage={ incrementPage } page={ page } />
-		</>
+		<Viewers
+			site={ site }
+			label={ label }
+			viewers={ data?.viewers ?? [] }
+			isFetching={ isLoading }
+			totalViewers={ data?.total }
+			fetchNextPage={ fetchNextPage }
+			hasNextPage={ hasNextPage }
+			isFetchingNextPage={ isFetchingNextPage }
+			removeViewer={ removeViewer }
+		/>
 	);
 };
 
-export default localize( ViewersList );
+export default ViewersList;

@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-
 import { translate } from 'i18n-calypso';
-import { isArray } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -31,7 +29,7 @@ export const receiveBlogStickerListError = () =>
 	errorNotice( translate( 'Sorry, we had a problem retrieving blog stickers. Please try again.' ) );
 
 export const receiveBlogStickerList = ( action, response ) =>
-	! response || ! isArray( response )
+	! response || ! Array.isArray( response )
 		? receiveBlogStickerListError( action )
 		: receiveBlogStickers( action.payload.blogId, response );
 

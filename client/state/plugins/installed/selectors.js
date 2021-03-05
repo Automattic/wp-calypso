@@ -6,7 +6,7 @@ import { every, filter, find, get, pick, reduce, some, sortBy, values } from 'lo
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import {
 	getSite,
 	getSiteTitle,
@@ -35,7 +35,7 @@ const _filters = {
 	},
 	updates: function ( plugin ) {
 		return some( plugin.sites, function ( site ) {
-			return site.update;
+			return site.update && ! site.update.recentlyUpdated;
 		} );
 	},
 	isEqual: function ( pluginSlug, plugin ) {
@@ -63,6 +63,10 @@ export function getPlugins( state, siteIds, pluginFilter ) {
 	let pluginList = reduce(
 		siteIds,
 		( memo, siteId ) => {
+			if ( isRequesting( state, siteId ) ) {
+				return memo;
+			}
+
 			const list = state.plugins.installed.plugins[ siteId ] || [];
 			list.forEach( ( item ) => {
 				const sitePluginInfo = pick( item, [ 'active', 'autoupdate', 'update' ] );
@@ -96,6 +100,14 @@ export function getPluginsWithUpdates( state, siteIds ) {
 	} ) );
 }
 
+export function getPluginsOnSites( state, plugins ) {
+	return Object.values( plugins ).reduce( ( acc, plugin ) => {
+		const siteIds = Object.keys( plugin.sites );
+		acc[ plugin.slug ] = getPluginOnSites( state, siteIds, plugin.slug );
+		return acc;
+	}, {} );
+}
+
 export function getPluginOnSites( state, siteIds, pluginSlug ) {
 	return getPlugins( state, siteIds ).find( ( plugin ) => plugin.slug === pluginSlug );
 }
@@ -118,6 +130,11 @@ export function getSitesWithPlugin( state, siteIds, pluginSlug ) {
 	} );
 
 	return sortBy( pluginSites, ( siteId ) => getSiteTitle( state, siteId ).toLowerCase() );
+}
+
+export function getSiteObjectsWithPlugin( state, siteIds, pluginSlug ) {
+	const siteIdsWithPlugin = getSitesWithPlugin( state, siteIds, pluginSlug );
+	return siteIdsWithPlugin.map( ( siteId ) => getSite( state, siteId ) );
 }
 
 export function getSitesWithoutPlugin( state, siteIds, pluginSlug ) {

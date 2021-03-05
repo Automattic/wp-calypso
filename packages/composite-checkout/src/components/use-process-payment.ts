@@ -8,7 +8,11 @@ import { useI18n } from '@automattic/react-i18n';
 /**
  * Internal dependencies
  */
-import { usePaymentProcessors, useTransactionStatus } from '../public-api';
+import {
+	usePaymentProcessors,
+	useTransactionStatus,
+	InvalidPaymentProcessorResponseError,
+} from '../public-api';
 import {
 	PaymentProcessorResponse,
 	PaymentProcessorResponseType,
@@ -78,7 +82,7 @@ function useHandlePaymentProcessorResponse() {
 }
 
 async function handlePaymentProcessorResponse(
-	processorResponse: PaymentProcessorResponse,
+	rawResponse: unknown,
 	paymentProcessorId: string,
 	redirectErrorMessage: string,
 	{
@@ -89,7 +93,12 @@ async function handlePaymentProcessorResponse(
 		setTransactionComplete: SetTransactionComplete;
 	}
 ): Promise< PaymentProcessorResponse > {
-	debug( 'payment processor function response', processorResponse );
+	debug( 'payment processor function response', rawResponse );
+	const isValid = validateProcessorResponse( rawResponse );
+	if ( ! isValid ) {
+		throw new InvalidPaymentProcessorResponseError( paymentProcessorId );
+	}
+	const processorResponse = rawResponse as PaymentProcessorResponse;
 	if ( processorResponse.type === PaymentProcessorResponseType.REDIRECT ) {
 		if ( ! processorResponse.payload ) {
 			throw new Error( redirectErrorMessage );
@@ -104,5 +113,13 @@ async function handlePaymentProcessorResponse(
 	if ( processorResponse.type === PaymentProcessorResponseType.MANUAL ) {
 		return processorResponse;
 	}
-	throw new Error( `Unknown payment processor response for processor "${ paymentProcessorId }"` );
+	throw new InvalidPaymentProcessorResponseError( paymentProcessorId );
+}
+
+function validateProcessorResponse( response: unknown ): response is PaymentProcessorResponse {
+	const processorResponse = response as PaymentProcessorResponse;
+	if ( ! processorResponse || ! processorResponse.type ) {
+		return false;
+	}
+	return true;
 }

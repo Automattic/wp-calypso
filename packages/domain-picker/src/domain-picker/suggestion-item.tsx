@@ -1,22 +1,27 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import * as React from 'react';
+import classnames from 'classnames';
 import { useI18n } from '@automattic/react-i18n';
+import { useLocale } from '@automattic/i18n-utils';
+import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
+
+/**
+ * Wordpress dependencies
+ */
 import { createInterpolateElement } from '@wordpress/element';
 import { Spinner } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import classnames from 'classnames';
-import { sprintf } from '@wordpress/i18n';
-import { v4 as uuid } from 'uuid';
-import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
-import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import InfoTooltip from '../info-tooltip';
+import WrappingComponent from './suggestion-item-wrapper';
 // TODO: remove when all needed core types are available
 /*#__PURE__*/ import '../types-patch';
 
@@ -27,12 +32,11 @@ export type SUGGESTION_ITEM_TYPE =
 	| typeof ITEM_TYPE_RADIO
 	| typeof ITEM_TYPE_BUTTON
 	| typeof ITEM_TYPE_INDIVIDUAL_ITEM;
-
 interface Props {
 	isUnavailable?: boolean;
 	domain: string;
 	isLoading?: boolean;
-	cost: string;
+	cost?: string;
 	hstsRequired?: boolean;
 	isFree?: boolean;
 	isExistingSubdomain?: boolean;
@@ -42,9 +46,10 @@ interface Props {
 	onSelect: ( domain: string ) => void;
 	selected?: boolean;
 	type?: SUGGESTION_ITEM_TYPE;
+	buttonRef?: React.Ref< HTMLButtonElement >;
 }
 
-const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
+const DomainPickerSuggestionItem: React.FC< Props > = ( {
 	isUnavailable,
 	domain,
 	isLoading,
@@ -58,41 +63,55 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	onRender,
 	selected,
 	type = ITEM_TYPE_RADIO,
+	buttonRef,
 } ) => {
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
+	const locale = useLocale();
 	const localizeUrl = useLocalizeUrl();
 
-	const isMobile = useViewportMatch( 'small', '<' );
+	const isMobile = ! useViewportMatch( 'small', '>=' );
 
 	const dotPos = domain.indexOf( '.' );
 	const domainName = domain.slice( 0, dotPos );
 	const domainTld = domain.slice( dotPos );
 
-	const [ previousDomain, setPreviousDomain ] = useState< string | undefined >();
-	const [ previousRailcarId, setPreviousRailcarId ] = useState< string | undefined >();
+	const [ previousDomain, setPreviousDomain ] = React.useState< string | undefined >();
+	const [ previousRailcarId, setPreviousRailcarId ] = React.useState< string | undefined >();
 
-	const labelId = uuid();
-
+	// translators: 'Default' will be shown next to the standard, free domain
+	const freeDomainLabelDefault = __( 'Default', __i18n_text_domain__ );
+	const freeDomainLabelFree = __( 'Free', __i18n_text_domain__ );
 	const freeDomainLabel =
-		type === ITEM_TYPE_INDIVIDUAL_ITEM
-			? __( 'Default', __i18n_text_domain__ )
-			: __( 'Free', __i18n_text_domain__ );
+		type === ITEM_TYPE_INDIVIDUAL_ITEM ? freeDomainLabelDefault : freeDomainLabelFree;
 
-	const firstYearIncludedInPaid = isMobile
-		? __( 'Included in paid plans', __i18n_text_domain__ )
-		: createInterpolateElement(
-				__( '<strong>First year included</strong> in paid plans', __i18n_text_domain__ ),
-				{
-					strong: <strong />,
-				}
-		  );
+	const fallbackIncludedLabel = __( 'Included with annual plans', __i18n_text_domain__ );
+	const newIncludedLabel = __( 'Included in annual plans', __i18n_text_domain__ );
+	const includedLabel =
+		locale === 'en' || hasTranslation?.( 'Included in annual plans' )
+			? newIncludedLabel
+			: fallbackIncludedLabel;
 
-	const paidIncludedDomainLabel =
-		type === ITEM_TYPE_INDIVIDUAL_ITEM
-			? firstYearIncludedInPaid
-			: __( 'Included in plans', __i18n_text_domain__ );
+	// translators: text in between the <strong></strong> marks is styled as bold text
+	const fallbackIncludedLabelFormatted = __(
+		'<strong>First year included</strong> in paid plans',
+		__i18n_text_domain__
+	);
+	// translators: text in between the <strong></strong> marks is styled as bold text
+	const newIncludedLabelFormatted = __(
+		'<strong>First year included</strong> in annual plans',
+		__i18n_text_domain__
+	);
+	const includedLabelFormatted =
+		locale === 'en' || hasTranslation?.( '<strong>First year included</strong> in annual plans' )
+			? newIncludedLabelFormatted
+			: fallbackIncludedLabelFormatted;
+	const paidIncludedDomainLabel = isMobile
+		? includedLabel
+		: createInterpolateElement( includedLabelFormatted, {
+				strong: <strong />,
+		  } );
 
-	useEffect( () => {
+	React.useEffect( () => {
 		// Only record TrainTracks render event when the domain name and railcarId change.
 		// This effectively records the render event only once for each set of search results.
 		if ( domain !== previousDomain && previousRailcarId !== railcarId && railcarId ) {
@@ -113,8 +132,14 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 		onSelect( domain );
 	};
 
+	const selectButtonLabelSelected = __( 'Selected', __i18n_text_domain__ );
+	const selectButtonLabelUnselected = __( 'Select', __i18n_text_domain__ );
+
 	return (
-		<label
+		<WrappingComponent
+			ref={ buttonRef }
+			type={ type }
+			key={ domainName }
 			className={ classnames(
 				'domain-picker__suggestion-item',
 				{
@@ -124,19 +149,19 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				},
 				`type-${ type }`
 			) }
+			// if the wrapping element is a div, don't assign a click listener
+			onClick={ type !== 'button' ? onDomainSelect : undefined }
+			disabled={ isUnavailable }
 		>
-			{ [ ITEM_TYPE_RADIO, ITEM_TYPE_INDIVIDUAL_ITEM ].indexOf( type ) > -1 &&
+			{ type === ITEM_TYPE_RADIO &&
 				( isLoading ? (
 					<Spinner />
 				) : (
-					<input
-						aria-labelledby={ labelId }
-						className="domain-picker__suggestion-radio-button"
-						type="radio"
-						disabled={ isUnavailable }
-						name="domain-picker-suggestion-option"
-						onChange={ onDomainSelect }
-						checked={ selected && ! isUnavailable }
+					<span
+						className={ classnames( 'domain-picker__suggestion-radio-circle', {
+							'is-checked': selected,
+							'is-unavailable': isUnavailable,
+						} ) }
 					/>
 				) ) }
 			<div className="domain-picker__suggestion-item-name">
@@ -149,6 +174,11 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 						<span className="domain-picker__domain-sub-domain">{ domainName }</span>
 						<span className="domain-picker__domain-tld">{ domainTld }</span>
 					</span>
+					{ isRecommended && ! isUnavailable && (
+						<div className="domain-picker__badge is-recommended">
+							{ __( 'Recommended', __i18n_text_domain__ ) }
+						</div>
+					) }
 					{ hstsRequired && (
 						<InfoTooltip
 							position={ isMobile ? 'bottom center' : 'middle right' }
@@ -173,11 +203,6 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 							) }
 						</InfoTooltip>
 					) }
-					{ isRecommended && ! isUnavailable && (
-						<div className="domain-picker__badge is-recommended">
-							{ __( 'Recommended', __i18n_text_domain__ ) }
-						</div>
-					) }
 				</div>
 				{ isExistingSubdomain && type !== ITEM_TYPE_INDIVIDUAL_ITEM && (
 					<div className="domain-picker__change-subdomain-tip">
@@ -197,15 +222,23 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				{ isFree && ! isUnavailable && freeDomainLabel }
 				{ ! isFree && ! isUnavailable && (
 					<>
+						<span className="domain-picker__price-cost">
+							{ sprintf(
+								// translators: %s is the price with currency. Eg: $15/year
+								__( '%s/year', __i18n_text_domain__ ),
+								cost
+							) }
+						</span>
 						<span className="domain-picker__price-inclusive">
 							{ /* Intentional whitespace to get the spacing around the text right */ }{ ' ' }
 							{ paidIncludedDomainLabel }{ ' ' }
 						</span>
-						<span className="domain-picker__price-cost">
-							{
-								/* translators: %s is the price with currency. Eg: $15/year. */
-								sprintf( __( '%s/year', __i18n_text_domain__ ), cost )
-							}
+						<span className="domain-picker__price-renewal">
+							{ sprintf(
+								// translators: %s is the domain renewal cost (i.e. "Renews at: 20$ / year" )
+								__( 'Renews at: %s /year', __i18n_text_domain__ ),
+								cost
+							) }
 						</span>
 					</>
 				) }
@@ -216,8 +249,8 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				) : (
 					<div className="domain-picker__action">
 						<Button
+							ref={ buttonRef }
 							isSecondary
-							aria-labelledby={ labelId }
 							className={ classnames( 'domain-picker__suggestion-select-button', {
 								'is-selected': selected && ! isUnavailable,
 							} ) }
@@ -225,13 +258,15 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 							onClick={ onDomainSelect }
 						>
 							{ selected && ! isUnavailable
-								? __( 'Selected', __i18n_text_domain__ )
-								: __( 'Select', __i18n_text_domain__ ) }
+								? selectButtonLabelSelected
+								: selectButtonLabelUnselected }
 						</Button>
 					</div>
 				) ) }
-		</label>
+		</WrappingComponent>
 	);
 };
 
-export default DomainPickerSuggestionItem;
+export default React.forwardRef< HTMLButtonElement, Props >( ( props, ref ) => {
+	return <DomainPickerSuggestionItem { ...props } buttonRef={ ref } />;
+} );

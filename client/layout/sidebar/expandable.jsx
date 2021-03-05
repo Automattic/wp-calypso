@@ -4,6 +4,7 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { useState, useRef, useLayoutEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { get, uniqueId } from 'lodash';
 
 /**
@@ -14,7 +15,7 @@ import ExpandableSidebarHeading from './expandable-heading';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import HoverIntent from 'calypso/lib/hover-intent';
-import config from 'calypso/config';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 
 const isTouch = hasTouch();
 
@@ -55,12 +56,14 @@ export const ExpandableSidebarMenu = ( {
 	materialIconStyle,
 	customIcon,
 	children,
+	disableFlyout,
 	...props
 } ) => {
 	let { expanded } = props;
 	const menu = React.createRef(); // Needed for HoverIntent.
 	const submenu = useRef();
 	const [ submenuHovered, setSubmenuHovered ] = useState( false );
+	const isUnifiedMenuEnabled = useSelector( isNavUnificationEnabled );
 
 	if ( submenu.current ) {
 		// Sets flyout to expand towards bottom.
@@ -79,7 +82,7 @@ export const ExpandableSidebarMenu = ( {
 	} );
 
 	const onEnter = () => {
-		if ( expanded || isTouch || ! config.isEnabled( 'nav-unification' ) ) {
+		if ( disableFlyout || expanded || isTouch || ! isUnifiedMenuEnabled ) {
 			return;
 		}
 
@@ -87,7 +90,8 @@ export const ExpandableSidebarMenu = ( {
 	};
 
 	const onLeave = () => {
-		if ( expanded || isTouch || ! config.isEnabled( 'nav-unification' ) ) {
+		// Remove "hovered" state even if menu is expanded.
+		if ( isTouch || ! isUnifiedMenuEnabled ) {
 			return;
 		}
 
@@ -116,7 +120,10 @@ export const ExpandableSidebarMenu = ( {
 				<ExpandableSidebarHeading
 					title={ title }
 					count={ count }
-					onClick={ onClick }
+					onClick={ () => {
+						setSubmenuHovered( false );
+						onClick();
+					} }
 					customIcon={ customIcon }
 					icon={ icon }
 					materialIcon={ materialIcon }
@@ -148,6 +155,7 @@ ExpandableSidebarMenu.propTypes = {
 	materialIcon: PropTypes.string,
 	materialIconStyle: PropTypes.string,
 	expanded: PropTypes.bool,
+	disableFlyout: PropTypes.bool,
 };
 
 export default ExpandableSidebarMenu;

@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { flowRight as compose, noop } from 'lodash';
+import { flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -12,6 +12,8 @@ import { connect } from 'react-redux';
 import connectSite from 'calypso/lib/reader-connect-site';
 import ReaderListItem from '.';
 import { isFollowing as isFollowingSelector } from 'calypso/state/reader/follows/selectors';
+
+const noop = () => {};
 
 class ConnectedReaderListItem extends React.Component {
 	static propTypes = {

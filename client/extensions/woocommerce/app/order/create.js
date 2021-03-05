@@ -3,7 +3,7 @@
  */
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { get, isEmpty, noop, omit } from 'lodash';
+import { get, isEmpty, omit } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 import page from 'page';
@@ -36,6 +36,8 @@ import OrderDetails from './order-details';
 import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import { recordTrack } from 'woocommerce/lib/analytics';
 import { sendOrderInvoice } from 'woocommerce/state/sites/orders/send-invoice/actions';
+
+const noop = () => {};
 
 class Order extends Component {
 	componentDidMount() {

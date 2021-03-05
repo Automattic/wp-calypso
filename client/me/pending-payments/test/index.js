@@ -37,16 +37,8 @@ describe( 'PendingPayments', () => {
 	describe( 'Loading Placeholder', () => {
 		const wrapper = shallow( <PendingPayments { ...defaultProps } /> );
 
-		const rules = [
-			'Main.pending-payments Connect(MeSidebarNavigation)',
-			'Main.pending-payments PurchasesNavigation[section="pending"]',
-			'Connect(PurchasesSite)[isPlaceholder=true]',
-		];
-
-		rules.forEach( ( rule ) => {
-			test( rule, () => {
-				expect( wrapper.find( rule ) ).toHaveLength( 1 );
-			} );
+		test( 'Connect(PurchasesSite)[isPlaceholder=true]', () => {
+			expect( wrapper.find( 'Connect(PurchasesSite)[isPlaceholder=true]' ) ).toHaveLength( 1 );
 		} );
 	} );
 
@@ -55,16 +47,10 @@ describe( 'PendingPayments', () => {
 			<PendingPayments { ...defaultProps } response={ { state: 'success' } } />
 		);
 
-		const rules = [
-			'Main.pending-payments Connect(MeSidebarNavigation)',
-			'Main.pending-payments PurchasesNavigation[section="pending"]',
-			'.pending-payments .pending-payments__no-content EmptyContent',
-		];
-
-		rules.forEach( ( rule ) => {
-			test( rule, () => {
-				expect( wrapper.find( rule ) ).toHaveLength( 1 );
-			} );
+		test( '.pending-payments .pending-payments__no-content EmptyContent', () => {
+			expect(
+				wrapper.find( '.pending-payments .pending-payments__no-content EmptyContent' )
+			).toHaveLength( 1 );
 		} );
 	} );
 
@@ -80,16 +66,8 @@ describe( 'PendingPayments', () => {
 			/>
 		);
 
-		const rules = [
-			'Main.pending-payments Connect(MeSidebarNavigation)',
-			'Main.pending-payments PurchasesNavigation[section="pending"]',
-			'Main.pending-payments Connect(PendingListItem)',
-		];
-
-		rules.forEach( ( rule ) => {
-			test( rule, () => {
-				expect( wrapper.find( rule ) ).toHaveLength( 1 );
-			} );
+		test( 'Main.pending-payments Connect(PendingListItem)', () => {
+			expect( wrapper.find( 'Main.pending-payments Connect(PendingListItem)' ) ).toHaveLength( 1 );
 		} );
 	} );
 } );

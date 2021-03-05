@@ -2,13 +2,14 @@
  * External dependencies
  */
 import React from 'react';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import VerticalNav from '../index';
 import VerticalNavItem from '../item/index';
+
+const noop = () => {};
 
 VerticalNav.displayName = 'VerticalNav';
 VerticalNavItem.displayName = 'VerticalNavItem';

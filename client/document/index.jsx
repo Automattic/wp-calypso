@@ -9,7 +9,7 @@ import path from 'path';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import Head from 'calypso/components/head';
 import EnvironmentBadge, {
 	TestHelper,
@@ -122,6 +122,7 @@ class Document extends React.Component {
 						[ 'is-group-' + sectionGroup ]: sectionGroup,
 						[ 'is-section-' + sectionName ]: sectionName,
 						'is-white-signup': sectionName === 'signup',
+						'is-mobile-app-view': app?.isWpMobileApp,
 					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
@@ -203,12 +204,7 @@ class Document extends React.Component {
 					 * this lets us have the performance benefit in prod, without breaking HMR in dev
 					 * since the manifest needs to be updated on each save
 					 */ }
-					{ env === 'development' && (
-						<>
-							<script src={ `/calypso/${ target }/manifest.js` } />
-							<script src={ `/calypso/${ target }/runtime.js` } />
-						</>
-					) }
+					{ env === 'development' && <script src={ `/calypso/${ target }/runtime.js` } /> }
 					{ env !== 'development' &&
 						manifests.map( ( manifest ) => (
 							<script

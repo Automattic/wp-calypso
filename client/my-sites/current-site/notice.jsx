@@ -7,7 +7,7 @@ import React from 'react';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import config, { isEnabled } from 'calypso/config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { get, reject } from 'lodash';
 
 /**

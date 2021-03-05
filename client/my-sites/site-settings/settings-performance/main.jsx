@@ -12,6 +12,7 @@ import { flowRight, partialRight, pick } from 'lodash';
  */
 import AmpJetpack from 'calypso/my-sites/site-settings/amp/jetpack';
 import AmpWpcom from 'calypso/my-sites/site-settings/amp/wpcom';
+import Cloudflare from 'calypso/my-sites/site-settings/cloudflare';
 import DocumentHead from 'calypso/components/data/document-head';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
@@ -30,6 +31,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import config from '@automattic/calypso-config';
 
 class SiteSettingsPerformance extends Component {
 	render() {
@@ -45,6 +47,7 @@ class SiteSettingsPerformance extends Component {
 			siteIsAtomicPrivate,
 			siteIsUnlaunched,
 			siteSlug,
+			showCloudflare,
 			submitForm,
 			translate,
 			trackEvent,
@@ -63,6 +66,8 @@ class SiteSettingsPerformance extends Component {
 					align="left"
 				/>
 				<SiteSettingsNavigation site={ site } section="performance" />
+
+				{ showCloudflare && <Cloudflare /> }
 
 				<Search
 					handleAutosavingToggle={ handleAutosavingToggle }
@@ -132,6 +137,7 @@ const connectComponent = connect( ( state ) => {
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const siteIsAtomicPrivate =
 		isSiteAutomatedTransfer( state, siteId ) && isPrivateSite( state, siteId );
+	const showCloudflare = config.isEnabled( 'cloudflare' );
 
 	return {
 		site,
@@ -139,6 +145,7 @@ const connectComponent = connect( ( state ) => {
 		siteIsAtomicPrivate,
 		siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
+		showCloudflare,
 	};
 } );
 
