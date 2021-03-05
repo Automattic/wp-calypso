@@ -3,12 +3,14 @@
  */
 import React from 'react';
 import page from 'page';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal Dependencies
  */
 import EmailForwarding from 'calypso/my-sites/email/email-forwarding';
 import EmailManagement from 'calypso/my-sites/email/email-management';
+import EmailManagementList from 'calypso/my-sites/email/email-management/list';
 import { emailManagementAddGSuiteUsers } from 'calypso/my-sites/email/paths';
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
 import TitanMailQuantitySelection from 'calypso/my-sites/email/titan-mail-quantity-selection';
@@ -86,7 +88,15 @@ export default {
 	},
 
 	emailManagement( pageContext, next ) {
-		pageContext.primary = <EmailManagement selectedDomainName={ pageContext.params.domain } />;
+		if ( isEnabled( 'email/management-nav' ) && ! pageContext.params.domain ) {
+			pageContext.primary = (
+				<CalypsoShoppingCartProvider>
+					<EmailManagementList />
+				</CalypsoShoppingCartProvider>
+			);
+		} else {
+			pageContext.primary = <EmailManagement selectedDomainName={ pageContext.params.domain } />;
+		}
 
 		next();
 	},
