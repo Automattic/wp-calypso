@@ -1,4 +1,4 @@
-@import '~@automattic/onboarding/styles/variables';
+@import '~@automattic/color-studio/dist/color-variables';
 @import '~@automattic/typography/styles/fonts';
 @import '~@automattic/typography/styles/variables';
 @import '~@wordpress/base-styles/variables';
@@ -16,8 +16,12 @@
 	word-wrap: normal !important;
 }
 
-$template-selector-border-color: #ddd;
-$template-selector-empty-background: #fff;
+$template-selector-border-color: $studio-gray-5;
+$template-selector-hover-border-color: $studio-gray-50;
+$template-selector-empty-background: $studio-white;
+$template-selector-focus-color: var( --wp-admin-theme-color );
+$template-selector-link-text: $studio-gray-60;
+$template-selector-link-hover-text: var( --color-text );
 
 // Breakpoints
 $breakpoint-mobile: 600px;
@@ -70,7 +74,7 @@ $sidebar-width: 324px;
 }
 
 .page-template-modal__description {
-	color: var( --studio-gray-60 );
+	color: $studio-gray-50;
 	margin: 0 0 24px;
 	font-size: 1rem;
 	line-height: 1.5;
@@ -117,18 +121,20 @@ $sidebar-width: 324px;
 	background-color: $template-selector-empty-background;
 	position: relative;
 	transform: translateZ( 0 ); // Fix for Safari rounded border overflow (1/2).
+	color: $template-selector-link-text;
 
 	&:focus {
-		box-shadow: 0 0 0 1px $template-selector-empty-background, 0 0 0 3px $onboarding-accent-blue;
+		box-shadow: 0 0 0 1px $template-selector-empty-background,
+			0 0 0 3px $template-selector-focus-color;
 		// Windows High Contrast mode will show this outline, but not the box-shadow.
 		outline: 2px solid transparent;
 	}
 
 	&:hover {
-		color: $onboarding-accent-blue;
+		color: $template-selector-link-hover-text;
 
 		.template-selector-item__preview-wrap {
-			border: solid 2px $onboarding-accent-blue;
+			border: solid 1px $template-selector-hover-border-color;
 		}
 	}
 }
@@ -147,7 +153,7 @@ $sidebar-width: 324px;
 	pointer-events: none;
 	opacity: 1;
 	transform: translateZ( 0 ); // Fix for Safari rounded border overflow (2/2).
-	border: solid 2px $template-selector-border-color;
+	border: solid 1px $template-selector-border-color;
 	margin-bottom: 1em;
 
 	&.is-rendering {
@@ -199,7 +205,7 @@ $sidebar-width: 324px;
 		display: block;
 		width: auto;
 		height: auto;
-		color: var( --color-text );
+		color: $template-selector-link-text;
 		font-size: 0.875rem;
 		margin-left: -12px;
 		padding: 6px 12px;
@@ -208,7 +214,7 @@ $sidebar-width: 324px;
 
 		&.is-tertiary:not( :disabled ):hover {
 			box-shadow: none;
-			color: $onboarding-accent-blue;
+			color: $template-selector-link-hover-text;
 		}
 
 		&.is-tertiary:not( :disabled ):active {
@@ -216,7 +222,7 @@ $sidebar-width: 324px;
 		}
 
 		&.is-tertiary:not( :disabled ):focus {
-			box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) $onboarding-accent-blue;
+			box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) $template-selector-focus-color;
 		}
 	}
 
@@ -226,8 +232,11 @@ $sidebar-width: 324px;
 	}
 
 	.components-menu-item__button:not( :disabled )[aria-selected='true'] {
+		color: $template-selector-link-hover-text;
+		font-weight: 600;
+
 		.page-template-modal__category-item-selection-wrapper {
-			border-bottom-color: $onboarding-accent-blue;
+			border-bottom-color: $template-selector-link-hover-text;
 		}
 	}
 }
@@ -253,16 +262,16 @@ $sidebar-width: 324px;
 	}
 
 	&.is-secondary:hover:not( :disabled ) {
-		box-shadow: inset 0 0 0 1px $template-selector-border-color;
-		color: $onboarding-accent-blue;
+		box-shadow: inset 0 0 0 1px $template-selector-hover-border-color;
+		color: var( --color-text );
 	}
 
 	&.is-secondary:focus:not( :disabled ) {
-		box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) $onboarding-accent-blue;
+		box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) $template-selector-focus-color;
 	}
 
 	&.is-secondary:hover:focus:not( :disabled ) {
-		box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) $onboarding-accent-blue;
+		box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) $template-selector-focus-color;
 		outline: 3px solid transparent;
 	}
 }
