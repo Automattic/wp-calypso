@@ -37,6 +37,7 @@
 		"domains/cctlds/ca": true,
 		"domains/cctlds/fr": true,
 		"domains/cctlds/uk": true,
+		"email/management-nav": false,
 		"external-media": true,
 		"external-media/google-photos": true,
 		"external-media/free-photo-library": true,

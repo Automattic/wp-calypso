@@ -38,6 +38,7 @@
 		"domains/kracken-ui/pagination": true,
 		"domains/new-status-design": true,
 		"domains/premium-domain-purchases": true,
+		"email/management-nav": false,
 		"external-media": true,
 		"external-media/google-photos": true,
 		"external-media/free-photo-library": true,
