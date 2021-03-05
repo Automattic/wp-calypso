@@ -175,8 +175,17 @@ $sidebar-width: 324px;
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		position: fixed;
 		width: calc( #{$sidebar-width} - 24px );
-		pointer-events: none;
 		padding-right: 44px;
+
+		// Manually choosing when to enable/disable pointer events so that
+		// the scroll wheel behaviour feels natural when the mouse is over
+		// the sidebar. The sidebar is fixed position so it doesn't move when
+		// the modal is scrolled, but by default this prevents the modal
+		// from scrolling when the mouse is over the sidebar.
+		// `pointer-events: none` fixes this, but then we need to reenable
+		// events again so the mouse clicks get through to the buttons.
+
+		pointer-events: none;
 
 		> * {
 			pointer-events: auto;
