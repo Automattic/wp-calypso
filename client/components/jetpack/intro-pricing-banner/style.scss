@@ -1,21 +1,24 @@
 .intro-pricing-banner {
-	margin-top: calc( 32px * 3 );
-
 	display: flex;
 	flex-direction: column;
-
 	justify-content: space-between;
 	align-items: center;
 
-	border: 1px solid rgba( var( --studio-gray-10-rgb ), 0.6 );
-	border-radius: calc( 2px * 4 );
+	margin-top: calc( 32px * 3 );
 	padding: 32px;
+
+	border-width: 1px 0;
+	border-style: solid;
+	border-color: rgba( var( --studio-gray-10-rgb ), 0.6 );
 
 	background-color: rgba( var( --studio-white-rgb ), 0.6 );
 
 	@include breakpoint-deprecated( '>660px' ) {
 		flex-direction: row;
 		margin-bottom: calc( 32px * 3 );
+
+		border-width: 1px;
+		border-radius: calc( 2px * 4 );
 	}
 }
 
