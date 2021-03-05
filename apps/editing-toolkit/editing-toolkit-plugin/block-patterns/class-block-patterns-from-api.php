@@ -8,7 +8,7 @@
 namespace A8C\FSE;
 
 /**
- * Class Block_Patterns_From_API
+ * Class B  lock_Patterns_From_API
  */
 class Block_Patterns_From_API {
 
