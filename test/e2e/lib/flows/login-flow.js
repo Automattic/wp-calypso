@@ -217,10 +217,9 @@ export default class LoginFlow {
 	async loginAndSelectAllSites() {
 		await this.loginAndSelectMySite();
 
-		// visit stats, as home does not have an all sites option
-		await StatsPage.Visit( this.driver );
-
 		const sideBarComponent = await SidebarComponent.Expect( this.driver );
+		await sideBarComponent.selectStats();
+		await sideBarComponent.ensureSidebarMenuVisible();
 		await sideBarComponent.selectSiteSwitcher();
 		return await sideBarComponent.selectAllSites();
 	}

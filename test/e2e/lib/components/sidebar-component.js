@@ -43,11 +43,11 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectThemes() {
-		return await this.expandDrawerItem( 'Appearance' );
+		await this.expandDrawerItem( 'Appearance' );
+		return await this._scrollToAndClickMenuItem( 'Themes' );
 	}
 
 	async selectAllSitesThemes() {
-		await this.expandDrawerItem( 'Appearance' );
 		return await this._scrollToAndClickMenuItem( 'Themes' );
 	}
 
@@ -196,13 +196,17 @@ export default class SidebarComponent extends AsyncBaseContainer {
 				);
 			} catch ( e ) {
 				console.log( 'All sites button did not click' );
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css( 'a[data-tip-target="my-sites"]' )
+				)
 			}
 		}
 		return await driverHelper.waitTillPresentAndDisplayed( this.driver, sidebarSelector );
 	}
 
 	async selectSiteSwitcher() {
-		const siteSwitcherSelector = By.css( '.current-site__switch-sites' );
+		const siteSwitcherSelector = By.css( '.current-site__switch-sites button' );
 		await this.ensureSidebarMenuVisible();
 		const present = await driverHelper.isEventuallyPresentAndDisplayed(
 			this.driver,
