@@ -6,7 +6,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { compact, get, map, noop, reduce } from 'lodash';
+import { compact, get, map, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -85,6 +85,8 @@ import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class PlanFeaturesComparison extends Component {
 	render() {

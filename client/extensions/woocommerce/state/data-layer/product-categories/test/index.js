@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import { spy, match } from 'sinon';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,6 +30,8 @@ import {
 	deleteProductCategory,
 } from 'woocommerce/state/sites/product-categories/actions';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+
+const noop = () => {};
 
 describe( 'handlers', () => {
 	describe( '#fetch()', () => {

@@ -5,7 +5,7 @@ import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
-import { findLast, noop, times } from 'lodash';
+import { findLast, times } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -57,7 +57,7 @@ import './style.scss';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
-
+const noop = () => {};
 const pagesByKey = new Map();
 
 class ReaderStream extends React.Component {

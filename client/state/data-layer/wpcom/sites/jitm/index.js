@@ -1,9 +1,4 @@
 /**
- * External Dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
@@ -14,6 +9,8 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { JITM_DISMISS, JITM_FETCH } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 /**
  * Existing libraries do not escape decimal encoded entities that php encodes, this handles that.

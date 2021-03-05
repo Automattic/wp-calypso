@@ -5,7 +5,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { identity, includes, noop } from 'lodash';
+import { identity, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -20,6 +20,8 @@ import UsAddressFieldset from './us-address-fieldset';
 import EuAddressFieldset from './eu-address-fieldset';
 import UkAddressFieldset from './uk-address-fieldset';
 import { Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
+
+const noop = () => {};
 
 export class RegionAddressFieldsets extends Component {
 	static propTypes = {

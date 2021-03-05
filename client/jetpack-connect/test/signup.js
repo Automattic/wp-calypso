@@ -7,7 +7,7 @@
  */
 import deepFreeze from 'deep-freeze';
 import React from 'react';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 import { shallow } from 'enzyme';
 
 /**
@@ -16,6 +16,7 @@ import { shallow } from 'enzyme';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import { JetpackSignup } from '../signup.js';
 
+const noop = () => {};
 const CLIENT_ID = 98765;
 const SITE_SLUG = 'an.example.site';
 const DEFAULT_PROPS = deepFreeze( {

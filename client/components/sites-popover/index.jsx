@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -17,6 +16,8 @@ import SiteSelector from 'calypso/components/site-selector';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class SitesPopover extends React.Component {
 	static propTypes = {

@@ -15,7 +15,6 @@ import {
 	isBoolean,
 	isEqual,
 	map,
-	noop,
 	pick,
 	sumBy,
 	uniqBy,
@@ -110,6 +109,7 @@ import {
 
 const PRINTING_FAILED_NOTICE_ID = 'label-image-download-failed';
 const PRINTING_IN_PROGRESS_NOTICE_ID = 'label-image-download-printing';
+const noop = () => {};
 
 export const fetchLabelsData = ( orderId, siteId ) => ( dispatch ) => {
 	dispatch( {

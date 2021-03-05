@@ -3,7 +3,7 @@
  */
 import React, { FunctionComponent, useState, useEffect, Fragment } from 'react';
 import { useSelect } from '@wordpress/data';
-import { noop, times } from 'lodash';
+import { times } from 'lodash';
 import { Button, TextControl, Notice } from '@wordpress/components';
 import { Icon, search } from '@wordpress/icons';
 import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-analytics';
@@ -37,6 +37,9 @@ import type { SUGGESTION_ITEM_TYPE } from './suggestion-item';
  * Style dependencies
  */
 import './style.scss';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 type DomainGroup = 'sub-domain' | 'professional';

@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
@@ -19,6 +18,7 @@ import { isMonthly, PLAN_P2_FREE } from 'calypso/lib/plans/constants';
 import { getPlanClass, planLevelsMatch } from 'calypso/lib/plans';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
+const noop = () => {};
 const PlanFeaturesComparisonActions = ( props ) => {
 	return (
 		<div className="plan-features-comparison__actions">

@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -18,6 +17,8 @@ import Gridicon from 'calypso/components/gridicon';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class FoldableCard extends Component {
 	static displayName = 'FoldableCard';

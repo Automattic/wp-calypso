@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -33,7 +32,7 @@ const PurchasesWrapper = ( { title = null, children } ) => {
 		</React.Fragment>
 	);
 };
-
+const noop = () => {};
 const userHasNoSites = ( state ) => getCurrentUserSiteCount( state ) <= 0;
 
 function noSites( context, analyticsPath ) {

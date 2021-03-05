@@ -6,7 +6,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { compact, get, findIndex, last, map, noop, reduce } from 'lodash';
+import { compact, get, findIndex, last, map, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import formatCurrency from '@automattic/format-currency';
@@ -86,6 +86,8 @@ import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class PlanFeatures extends Component {
 	render() {

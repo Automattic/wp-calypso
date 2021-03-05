@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, noop, map } from 'lodash';
+import { isEmpty, map } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -16,6 +16,8 @@ import { memo } from '@wordpress/element';
  */
 import TemplateSelectorItem from './template-selector-item';
 import replacePlaceholders from '../utils/replace-placeholders';
+
+const noop = () => {};
 
 export const TemplateSelectorControl = ( {
 	label,

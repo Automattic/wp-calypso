@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -18,6 +18,7 @@ const WINDOWS_LINK = 'https://apps.wordpress.com/d/windows?ref=getapps';
 const MAC_LINK = 'https://apps.wordpress.com/d/osx?ref=getapps';
 const LINUX_TAR_LINK = 'https://apps.wordpress.com/d/linux?ref=getapps';
 const LINUX_DEB_LINK = 'https://apps.wordpress.com/d/linux-deb?ref=getapps';
+const noop = () => {};
 
 class DesktopDownloadCard extends Component {
 	static propTypes = {

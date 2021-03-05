@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { each, filter, get, castArray, debounce, noop } from 'lodash';
+import { each, filter, get, castArray, debounce } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -23,6 +23,8 @@ import { compose, withSafeTimeout } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 
 import CustomBlockPreview from './block-preview';
+
+const noop = () => {};
 
 // Debounce time applied to the on resize window event.
 const DEBOUNCE_TIMEOUT = 300;

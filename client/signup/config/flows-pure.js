@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -9,6 +8,8 @@ import { translate } from 'i18n-calypso';
  */
 import { isEnabled } from '@automattic/calypso-config';
 import { addQueryArgs } from 'calypso/lib/route';
+
+const noop = () => {};
 
 export function generateFlows( {
 	getSiteDestination = noop,

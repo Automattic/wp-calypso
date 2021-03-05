@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { assign, noop } from 'lodash';
+import { assign } from 'lodash';
+
+const noop = () => {};
 
 export default class TrackInputChanges extends Component {
 	static displayName = 'TrackInputChanges';

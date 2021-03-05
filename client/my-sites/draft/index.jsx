@@ -8,7 +8,7 @@ import classnames from 'classnames';
 import url from 'url';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop, get } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,6 +24,8 @@ import { getEditorUrl } from 'calypso/state/selectors/get-editor-url';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class Draft extends Component {
 	static propTypes = {

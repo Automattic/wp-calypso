@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty, noop } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import page from 'page';
 import { stringify } from 'qs';
@@ -58,6 +58,8 @@ import './style.scss';
  */
 import themesImage from 'calypso/assets/images/illustrations/themes.svg';
 import migratingHostImage from 'calypso/assets/images/illustrations/migrating-host-diy.svg';
+
+const noop = () => {};
 
 class UseYourDomainStep extends React.Component {
 	static propTypes = {

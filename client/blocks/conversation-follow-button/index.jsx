@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { assign, noop } from 'lodash';
+import { assign } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -19,6 +19,8 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class ConversationFollowButtonContainer extends Component {
 	static propTypes = {

@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -13,6 +8,8 @@ import { receiveUserProfileLinks } from 'calypso/state/profile-links/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 import 'calypso/state/profile-links/init';
+
+const noop = () => {};
 
 /**
  * Dispatches a request to fetch profile links of the current user

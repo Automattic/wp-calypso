@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { createReduxStore } from '../';
@@ -11,6 +6,8 @@ import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/sel
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'calypso/lib/user', () => () => {} );
+
+const noop = () => {};
 
 describe( 'index', () => {
 	describe( 'createReduxStore', () => {
