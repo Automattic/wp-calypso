@@ -59,9 +59,6 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 
 			await this.loginFlow.loginAndSelectWPAdmin();
 
-			await driverHelper.waitForNumberOfWindows( driver, 2, 10000 );
-			await driverHelper.switchToWindowByIndex( driver, 1 );
-
 			const wpadminSidebarComponent = await WPAdminSidebar.Expect( driver );
 			await wpadminSidebarComponent.selectNewPost();
 		} );

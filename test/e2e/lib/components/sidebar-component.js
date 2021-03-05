@@ -47,6 +47,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectAllSitesThemes() {
+		await this.expandDrawerItem( 'Appearance' );
 		return await this._scrollToAndClickMenuItem( 'Themes' );
 	}
 
@@ -58,7 +59,9 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectWPAdmin() {
-		return await this._scrollToAndClickMenuItemByText( 'wpadmin' );
+		//Wp-admin isn't in nav-unification. Workaround to get to wp-admin
+		await this.expandDrawerItem( 'Tools' );
+		return await this._scrollToAndClickMenuItem( 'Other tools' );
 	}
 
 	async customizeTheme() {
@@ -81,7 +84,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectStats() {
-		return await this._scrollToAndClickMenuItemByText( 'Stats' );
+		return await this._scrollToAndClickMenuItem( 'Stats' );
 	}
 
 	async selectActivity() {
