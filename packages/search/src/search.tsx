@@ -42,13 +42,13 @@ const SEARCH_DEBOUNCE_MS = 300;
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = (): void => {};
 
-const keyListener = (
-	methodToCall: (
-		e:
-			| MouseEvent< HTMLButtonElement | HTMLInputElement >
-			| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
-	) => void
-) => ( event: KeyboardEvent< HTMLButtonElement | HTMLInputElement > ) => {
+type KeyboardOrMouseEvent =
+	| MouseEvent< HTMLButtonElement | HTMLInputElement >
+	| KeyboardEvent< HTMLButtonElement | HTMLInputElement >;
+
+const keyListener = ( methodToCall: ( e: KeyboardOrMouseEvent ) => void ) => (
+	event: KeyboardEvent< HTMLButtonElement | HTMLInputElement >
+) => {
 	switch ( event.key ) {
 		case ' ':
 		case 'Enter':
@@ -81,16 +81,8 @@ type Props = {
 	onKeyDown?: ( event: KeyboardEvent< HTMLInputElement > ) => void;
 	onSearch: ( search: string ) => void;
 	onSearchChange?: ( search: string ) => void;
-	onSearchOpen?: (
-		event?:
-			| MouseEvent< HTMLButtonElement | HTMLInputElement >
-			| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
-	) => void;
-	onSearchClose?: (
-		event:
-			| MouseEvent< HTMLButtonElement | HTMLInputElement >
-			| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
-	) => void;
+	onSearchOpen?: () => void;
+	onSearchClose?: ( event: KeyboardOrMouseEvent ) => void;
 	overlayStyling?: ( search: string ) => React.ReactNode;
 	placeholder?: string;
 	pinned?: boolean;
@@ -225,11 +217,7 @@ const InnerSearch = (
 	}, [ doSearch, keyword, onSearchChange ] );
 
 	const openSearch = React.useCallback(
-		(
-			event:
-				| MouseEvent< HTMLButtonElement | HTMLInputElement >
-				| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
-		): void => {
+		( event: KeyboardOrMouseEvent ): void => {
 			event.preventDefault();
 
 			setKeyword( '' );
@@ -241,15 +229,11 @@ const InnerSearch = (
 			openIcon.current?.blur();
 			recordEvent?.( 'Clicked Open Search' );
 		},
-		[ onSearchOpen, recordEvent, focus ]
+		[ recordEvent, focus ]
 	);
 
 	const closeSearch = React.useCallback(
-		(
-			event:
-				| MouseEvent< HTMLButtonElement | HTMLInputElement >
-				| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
-		): void => {
+		( event: KeyboardOrMouseEvent ): void => {
 			event.preventDefault();
 
 			if ( disabled ) {
