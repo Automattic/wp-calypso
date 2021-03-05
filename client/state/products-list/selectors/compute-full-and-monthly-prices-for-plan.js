@@ -57,7 +57,9 @@ function computePricesForWpComPlan( state, planObject ) {
 	const monthlyPlanObject = isMonthly
 		? planObject
 		: getPlan( getMonthlyPlanByYearly( planObject.getStoreSlug() ) );
-	const priceMonthly = getPlanRawPrice( state, monthlyPlanObject.getProductId(), true );
+	const priceMonthly = monthlyPlanObject
+		? getPlanRawPrice( state, monthlyPlanObject.getProductId(), true )
+		: 0;
 	const priceFullBeforeDiscount = priceMonthly * getBillingMonthsForTerm( planObject.term );
 
 	return {
