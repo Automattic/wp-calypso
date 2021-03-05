@@ -29,14 +29,20 @@ const Success: React.FunctionComponent = () => {
 		LaunchContext
 	);
 
-	const isSiteLaunching = useSelect( ( select ) => select( SITE_STORE ).isSiteLaunching( siteId ) );
+	const isSiteLaunching = useSelect(
+		( select ) => select( SITE_STORE ).isSiteLaunching( siteId ),
+		[]
+	);
 
 	const locale = useLocale();
 
-	const [ isSelectedPlanPaid, planProductId ] = useSelect( ( select ) => [
-		select( LAUNCH_STORE ).isSelectedPlanPaid(),
-		select( LAUNCH_STORE ).getSelectedPlanProductId(),
-	] );
+	const [ isSelectedPlanPaid, planProductId ] = useSelect(
+		( select ) => [
+			select( LAUNCH_STORE ).isSelectedPlanPaid(),
+			select( LAUNCH_STORE ).getSelectedPlanProductId(),
+		],
+		[]
+	);
 
 	const { unsetModalDismissible, hideModalTitle, closeFocusedLaunch } = useDispatch( LAUNCH_STORE );
 
