@@ -17,7 +17,12 @@ function TeamList( props ) {
 	const translate = useTranslate();
 
 	const { site, search } = props;
-	}
+	const fetchOptions = search
+		? {
+				search: `*${ search }*`,
+				search_columns: [ 'display_name', 'user_login' ],
+		  }
+		: {};
 
 	const {
 		data,
@@ -27,7 +32,7 @@ function TeamList( props ) {
 		fetchNextPage,
 		error,
 		refetch,
-	} = useUsers( fetchOptions );
+	} = useUsers( site.ID, fetchOptions );
 
 	React.useEffect( () => {
 		error &&

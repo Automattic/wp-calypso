@@ -9,17 +9,17 @@ import { uniqueBy } from '@automattic/js-utils';
  */
 import wpcom from 'calypso/lib/wp';
 
-export const DEFAULT_NUMBER = 100;
 export const defaults = {
-	number: DEFAULT_NUMBER,
-	offset: 0,
+	number: 100,
+	order: 'ASC',
+	order_by: 'display_name',
 };
 
 const extractPages = ( pages = [] ) => pages.flatMap( ( page ) => page.users );
 const compareUnique = ( a, b ) => a.ID === b.ID;
 
-const useUsers = ( fetchOptions = {}, queryOptions = {} ) => {
-	const { search, siteId } = fetchOptions;
+const useUsers = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
+	const { search } = fetchOptions;
 
 	return useInfiniteQuery(
 		[ 'users', siteId, search ],
@@ -30,11 +30,13 @@ const useUsers = ( fetchOptions = {}, queryOptions = {} ) => {
 			return res;
 		},
 		{
+			enabled: !! siteId,
 			getNextPageParam: ( lastPage, allPages ) => {
-				if ( lastPage.found <= allPages.length * DEFAULT_NUMBER ) {
+				const n = fetchOptions.number ?? defaults.number;
+				if ( lastPage.found <= allPages.length * n ) {
 					return;
 				}
-				return allPages.length * DEFAULT_NUMBER;
+				return allPages.length * n;
 			},
 			select: ( data ) => {
 				return {
