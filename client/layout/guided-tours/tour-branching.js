@@ -3,7 +3,7 @@
  */
 
 import { Children } from 'react';
-import { fromPairs, flatMap, identity, isFunction } from 'lodash';
+import { flatMap, identity, isFunction } from 'lodash';
 
 /*
  * Transforms a React `Children` object into an array. The children of a `Step` are
@@ -81,5 +81,7 @@ const branching = ( element ) => {
 export const tourBranching = ( tourTree ) => {
 	const steps = childrenToArray( tourTree.props.children );
 
-	return fromPairs( steps.map( ( step ) => [ step.props.name, fromPairs( branching( step ) ) ] ) );
+	return Object.fromEntries(
+		steps.map( ( step ) => [ step.props.name, Object.fromEntries( branching( step ) ) ] )
+	);
 };
