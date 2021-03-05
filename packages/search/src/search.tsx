@@ -216,121 +216,106 @@ const InnerSearch = (
 		onSearchChange?.( keyword );
 	}, [ doSearch, keyword, onSearchChange ] );
 
-	const openSearch = React.useCallback(
-		( event: KeyboardOrMouseEvent ): void => {
-			event.preventDefault();
+	const openSearch = ( event: KeyboardOrMouseEvent ): void => {
+		event.preventDefault();
 
-			setKeyword( '' );
-			setIsOpen( true );
+		setKeyword( '' );
+		setIsOpen( true );
 
-			focus();
-			// no need to call `onSearchOpen` as it will be called by `onFocus` once the searcbox is focused
-			// prevent outlines around the open icon after being clicked
-			openIcon.current?.blur();
-			recordEvent?.( 'Clicked Open Search' );
-		},
-		[ recordEvent, focus ]
-	);
+		focus();
+		// no need to call `onSearchOpen` as it will be called by `onFocus` once the searcbox is focused
+		// prevent outlines around the open icon after being clicked
+		openIcon.current?.blur();
+		recordEvent?.( 'Clicked Open Search' );
+	};
 
-	const closeSearch = React.useCallback(
-		( event: KeyboardOrMouseEvent ): void => {
-			event.preventDefault();
+	const closeSearch = ( event: KeyboardOrMouseEvent ): void => {
+		event.preventDefault();
 
-			if ( disabled ) {
-				return;
-			}
+		if ( disabled ) {
+			return;
+		}
 
-			setKeyword( '' );
-			setIsOpen( false );
+		setKeyword( '' );
+		setIsOpen( false );
 
-			if ( searchInput.current ) {
-				searchInput.current.value = ''; // will not trigger onChange
-			}
+		if ( searchInput.current ) {
+			searchInput.current.value = ''; // will not trigger onChange
+		}
 
-			if ( pinned ) {
-				searchInput.current?.blur();
-				openIcon.current?.focus();
-			} else {
-				searchInput.current?.focus();
-			}
+		if ( pinned ) {
+			searchInput.current?.blur();
+			openIcon.current?.focus();
+		} else {
+			searchInput.current?.focus();
+		}
 
-			onSearchClose?.( event );
+		onSearchClose?.( event );
 
-			recordEvent?.( 'Clicked Close Search' );
-		},
-		[ disabled, pinned, onSearchClose, recordEvent ]
-	);
+		recordEvent?.( 'Clicked Close Search' );
+	};
 
-	const closeListener = React.useMemo( () => keyListener( closeSearch ), [ closeSearch ] );
-	const openListener = React.useMemo( () => keyListener( openSearch ), [ openSearch ] );
+	const closeListener = keyListener( closeSearch );
+	const openListener = keyListener( openSearch );
 
-	const scrollOverlay = React.useCallback( (): void => {
+	const scrollOverlay = (): void => {
 		overlay &&
 			window.requestAnimationFrame( () => {
 				if ( overlay.current && searchInput.current ) {
 					overlay.current.scrollLeft = getScrollLeft( searchInput.current );
 				}
 			} );
-	}, [] );
+	};
 
 	React.useEffect( () => {
 		scrollOverlay();
-	}, [ keyword, isOpen, hasFocus, scrollOverlay ] );
+	}, [ keyword, isOpen, hasFocus ] );
 
-	const onBlur = React.useCallback(
-		( event: FocusEvent< HTMLInputElement > ): void => {
-			if ( onBlurProp ) {
-				onBlurProp( event );
-			}
+	const onBlur = ( event: FocusEvent< HTMLInputElement > ): void => {
+		if ( onBlurProp ) {
+			onBlurProp( event );
+		}
 
-			setHasFocus( false );
-		},
-		[ onBlurProp ]
-	);
+		setHasFocus( false );
+	};
 
-	const onChange = React.useCallback( ( event: ChangeEvent< HTMLInputElement > ): void => {
+	const onChange = ( event: ChangeEvent< HTMLInputElement > ): void => {
 		setKeyword( event.target.value );
-	}, [] );
+	};
 
-	const onKeyUp = React.useCallback(
-		( event: KeyboardEvent< HTMLInputElement > ): void => {
-			if ( event.key === 'Enter' && window.innerWidth < 480 ) {
-				//dismiss soft keyboards
-				blur();
-			}
+	const onKeyUp = ( event: KeyboardEvent< HTMLInputElement > ): void => {
+		if ( event.key === 'Enter' && window.innerWidth < 480 ) {
+			//dismiss soft keyboards
+			blur();
+		}
 
-			if ( ! pinned ) {
-				return;
-			}
+		if ( ! pinned ) {
+			return;
+		}
 
-			if ( event.key === 'Escape' ) {
-				closeListener( event );
-			}
-			scrollOverlay();
-		},
-		[ pinned, blur, closeListener, scrollOverlay ]
-	);
+		if ( event.key === 'Escape' ) {
+			closeListener( event );
+		}
+		scrollOverlay();
+	};
 
-	const onKeyDown = React.useCallback(
-		( event: KeyboardEvent< HTMLInputElement > ): void => {
-			scrollOverlay();
+	const onKeyDown = ( event: KeyboardEvent< HTMLInputElement > ): void => {
+		scrollOverlay();
 
-			if (
-				event.key === 'Escape' &&
-				// currentTarget will be the input element, rather than target which can be anything
-				event.currentTarget?.value === ''
-			) {
-				closeListener( event );
-			}
+		if (
+			event.key === 'Escape' &&
+			// currentTarget will be the input element, rather than target which can be anything
+			event.currentTarget?.value === ''
+		) {
+			closeListener( event );
+		}
 
-			onKeyDownProp?.( event );
-		},
-		[ scrollOverlay, closeListener, onKeyDownProp ]
-	);
+		onKeyDownProp?.( event );
+	};
 
 	// Puts the cursor at end of the text when starting
 	// with `defaultValue` set.
-	const onFocus = React.useCallback( (): void => {
+	const onFocus = (): void => {
 		setHasFocus( true );
 		onSearchOpen?.();
 
@@ -344,12 +329,12 @@ const InnerSearch = (
 			searchInput.current.value = '';
 			searchInput.current.value = setValue;
 		}
-	}, [ onSearchOpen ] );
+	};
 
-	const handleSubmit = React.useCallback( ( event: FormEvent ): void => {
+	const handleSubmit = ( event: FormEvent ): void => {
 		event.preventDefault();
 		event.stopPropagation();
-	}, [] );
+	};
 
 	const searchValue = keyword;
 	const placeholder = placeholderProp || __( 'Search…', __i18n_text_domain__ );
