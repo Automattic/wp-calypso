@@ -1585,12 +1585,6 @@ export const FEATURES_LIST = {
 		getDescription: () => i18n.translate( 'Make your P2 more memorable using your own domain.' ),
 	},
 
-	[ constants.FEATURE_HOSTING ]: {
-		getSlug: () => constants.FEATURE_HOSTING,
-		getTitle: () => i18n.translate( 'Best-in-class hosting' ),
-		getDescription: () => {},
-	},
-
 	[ constants.FEATURE_SFTP_DATABASE ]: {
 		getSlug: () => constants.FEATURE_SFTP_DATABASE,
 		getTitle: () => i18n.translate( 'SFTP (SSH File Transfer Protocol) and Database Access' ),
