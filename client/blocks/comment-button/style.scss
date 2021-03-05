@@ -1,26 +1,29 @@
 .comment-button {
 	align-items: center;
 	box-sizing: border-box;
-	color: var( --color-text-subtle );
 	cursor: pointer;
 	display: inline-flex;
 	list-style-type: none;
 	padding: 4px;
 	position: relative;
 
+	.comment-button__label-status {
+		@include breakpoint-deprecated( '<480px' ) {
+			@include hide-content-accessibly();
+		}
+	}
+}
+
+a.comment-button {
+	color: var( --color-text-subtle );
+
+	&:visited {
+		color: var( --color-text-subtle );
+	}
+
 	&:hover,
 	&:active {
 		color: var( --color-primary );
-	}
-
-	.comment-button__label-count {
-		margin-right: 4px;
-	}
-
-	.comment-button__label-status {
-		@include breakpoint-deprecated( '<480px' ) {
-			display: none;
-		}
 	}
 }
 

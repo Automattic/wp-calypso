@@ -30,7 +30,9 @@
 
 	& > button {
 		line-height: inherit;
+	}
 
+	& > button,  & > a {
 		&:focus {
 			outline: thin dotted;
 		}

@@ -387,7 +387,7 @@
 	}
 
 	.comment-button__label-status {
-		display: none;
+		@include hide-content-accessibly();
 	}
 }
 
