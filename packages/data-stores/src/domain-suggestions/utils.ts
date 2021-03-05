@@ -3,10 +3,6 @@
  */
 import deterministicStringify from 'fast-json-stable-stringify';
 import formatCurrency from '@automattic/format-currency';
-// This is commented out due to cyclic package dependency compilation error.
-// Since domain picker passes in the vendor prop it is safe to hardcode this for now.
-// We can re-enable this in a separate PR.
-// import { getDomainSuggestionsVendor } from '@automattic/domain-picker';
 
 /**
  * Internal dependencies
@@ -58,10 +54,6 @@ export function normalizeDomainSuggestionQuery(
 		include_dotblogsubdomain: false,
 		only_wordpressdotcom: false,
 		quantity: 5,
-		// This is commented out due to cyclic package dependency compilation error.
-		// Since domain picker passes in the vendor prop it is safe to hardcode this for now.
-		// We can re-enable this in a separate PR.
-		// vendor: getDomainSuggestionsVendor(),
 		vendor: 'variation2_front',
 
 		// Merge options
