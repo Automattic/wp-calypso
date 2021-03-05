@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -7,22 +5,26 @@ import {
 	GOOGLE_MY_BUSINESS_STATS_FAILURE,
 	GOOGLE_MY_BUSINESS_STATS_RECEIVE,
 	GOOGLE_MY_BUSINESS_STATS_REQUEST,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import {
 	createSiteKeyring,
 	updateSiteKeyring,
 	deleteSiteKeyring,
-} from 'state/site-keyrings/actions';
-import { getSiteKeyringsForService, getSiteKeyringConnection } from 'state/site-keyrings/selectors';
+} from 'calypso/state/site-keyrings/actions';
+import {
+	getSiteKeyringsForService,
+	getSiteKeyringConnection,
+} from 'calypso/state/site-keyrings/selectors';
 
-import 'state/data-layer/wpcom/sites/stats/google-my-business';
+import 'calypso/state/data-layer/wpcom/sites/stats/google-my-business';
+import 'calypso/state/google-my-business/init';
 
-export const disconnectGoogleMyBusinessAccount = ( siteId, keyringId ) => dispatch =>
+export const disconnectGoogleMyBusinessAccount = ( siteId, keyringId ) => ( dispatch ) =>
 	dispatch( deleteSiteKeyring( siteId, keyringId ) );
 
-export const disconnectAllGoogleMyBusinessAccounts = siteId => ( dispatch, getState ) =>
+export const disconnectAllGoogleMyBusinessAccounts = ( siteId ) => ( dispatch, getState ) =>
 	Promise.all(
-		getSiteKeyringsForService( getState(), siteId, 'google_my_business' ).map( siteKeyring =>
+		getSiteKeyringsForService( getState(), siteId, 'google_my_business' ).map( ( siteKeyring ) =>
 			dispatch( disconnectGoogleMyBusinessAccount( siteId, siteKeyring.keyring_id ) )
 		)
 	);
@@ -46,10 +48,10 @@ export const connectGoogleMyBusinessAccount = ( siteId, keyringId, locationId = 
 	);
 };
 
-export const connectGoogleMyBusinessLocation = ( siteId, keyringId, locationId ) => dispatch =>
+export const connectGoogleMyBusinessLocation = ( siteId, keyringId, locationId ) => ( dispatch ) =>
 	dispatch( updateSiteKeyring( siteId, keyringId, locationId ) );
 
-export const disconnectGoogleMyBusinessLocation = ( siteId, keyringId ) => dispatch =>
+export const disconnectGoogleMyBusinessLocation = ( siteId, keyringId ) => ( dispatch ) =>
 	dispatch( updateSiteKeyring( siteId, keyringId, null ) );
 
 export const requestGoogleMyBusinessStats = (

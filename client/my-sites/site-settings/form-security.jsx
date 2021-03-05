@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,15 +13,15 @@ import { localize } from 'i18n-calypso';
 import wrapSettingsForm from './wrap-settings-form';
 import Protect from './protect';
 import Sso from './sso';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
-import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
+import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import SpamFilteringSettings from './spam-filtering-settings';
-import QueryJetpackSettings from 'components/data/query-jetpack-settings';
-import { isATEnabled } from 'lib/automated-transfer';
+import QueryJetpackSettings from 'calypso/components/data/query-jetpack-settings';
+import { isATEnabled } from 'calypso/lib/automated-transfer';
 
 class SiteSettingsFormSecurity extends Component {
 	render() {
@@ -79,7 +77,7 @@ class SiteSettingsFormSecurity extends Component {
 							isSaving={ isSavingSettings }
 							onButtonClick={ handleSubmitForm }
 							showButton
-							title={ translate( 'Jetpack Anti-spam' ) }
+							title={ translate( 'Anti-spam' ) }
 						/>
 						<SpamFilteringSettings
 							dirtyFields={ dirtyFields }
@@ -104,7 +102,7 @@ class SiteSettingsFormSecurity extends Component {
 	}
 }
 
-const connectComponent = connect( state => {
+const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const selectedSite = getSelectedSite( state );
 	const protectModuleActive = !! isJetpackModuleActive( state, siteId, 'protect' );

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,11 +8,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
+import { Dialog } from '@automattic/components';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 
 // @see components/tinymce/plugins/wplink/dialog.jsx
 const REGEXP_EMAIL = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
@@ -35,7 +34,7 @@ export class AddLinkDialog extends Component {
 		linkUrl: '',
 	};
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		this.setState( {
 			linkUrl: this.inferUrl( newProps.selectedText ),
 			linkText: newProps.selectedText,
@@ -62,11 +61,11 @@ export class AddLinkDialog extends Component {
 		return '';
 	}
 
-	setLinkUrl = event => this.setState( { linkUrl: event.target.value } );
+	setLinkUrl = ( event ) => this.setState( { linkUrl: event.target.value } );
 
-	setLinkText = event => this.setState( { linkText: event.target.value } );
+	setLinkText = ( event ) => this.setState( { linkText: event.target.value } );
 
-	setLinkNewTab = event => this.setState( { linkNewTab: event.target.checked } );
+	setLinkNewTab = ( event ) => this.setState( { linkNewTab: event.target.checked } );
 
 	closeDialog = () =>
 		this.setState(

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,8 +10,6 @@ import {
 	includes,
 	isEmpty,
 	isEqual,
-	isFinite,
-	isNil,
 	map,
 	mapValues,
 	omit,
@@ -23,12 +19,13 @@ import {
 	uniq,
 	zipObject,
 } from 'lodash';
+import { isNullish } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { createSelector } from '@automattic/state-utils';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import {
 	areSettingsLoaded,
@@ -114,11 +111,12 @@ export const getForm = ( state, orderId, siteId = getSelectedSiteId( state ) ) =
 
 /**
  * Returns a breakdown of the total price for selected labels in form of { prices, discount, total }
- * @param {Object} state global state tree
- * @param {Number} orderId order Id
- * @param {Number} siteId site Id
  *
- * @returns {Object} price breakdown
+ * @param {object} state global state tree
+ * @param {number} orderId order Id
+ * @param {number} siteId site Id
+ *
+ * @returns {object} price breakdown
  */
 export const getTotalPriceBreakdown = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const form = getForm( state, orderId, siteId );
@@ -185,18 +183,18 @@ export const isCustomsFormRequired = createSelector(
 /**
  * Generates an object with errors for all fields within an address.
  *
- * @param {Object}  appState            Local Redux state.
- * @param {Object}  addressData         Address to check, including normalization state and values.
+ * @param {object}  appState            Local Redux state.
+ * @param {object}  addressData         Address to check, including normalization state and values.
  * @param {number}  siteId              The ID of the current site ID.
  * @param {boolean} shouldValidatePhone An indiator whether phone validation is required.
- * @return {Object}                     A hash of errors with field names as keys.
+ * @returns {object}                     A hash of errors with field names as keys.
  */
 const getRawAddressErrors = ( appState, addressData, siteId, shouldValidatePhone ) => {
 	const { values } = addressData;
 	const { phone, postcode, state, country } = getAddressValues( addressData );
 	const requiredFields = [ 'name', 'address', 'city', 'postcode', 'country' ];
 	const errors = {};
-	requiredFields.forEach( field => {
+	requiredFields.forEach( ( field ) => {
 		if ( ! values[ field ] ) {
 			errors[ field ] = translate( 'This field is required' );
 		}
@@ -221,13 +219,7 @@ const getRawAddressErrors = ( appState, addressData, siteId, shouldValidatePhone
 				'Please enter a phone number for your origin address. ' +
 					"It's required because this shipment requires a customs form."
 			);
-		} else if (
-			10 !==
-			phone
-				.split( /\D+/g )
-				.join( '' )
-				.replace( /^1/, '' ).length
-		) {
+		} else if ( 10 !== phone.split( /\D+/g ).join( '' ).replace( /^1/, '' ).length ) {
 			errors.phone = translate(
 				'Customs forms require a 10-digit phone number. ' +
 					'Please edit your phone number so it has at most 10 digits.'
@@ -259,7 +251,7 @@ const getAddressErrors = ( addressData, appState, siteId, shouldValidatePhone = 
 	const errors = getRawAddressErrors( appState, addressData, siteId, shouldValidatePhone );
 
 	if ( ignoreValidation ) {
-		Object.keys( errors ).forEach( field => {
+		Object.keys( errors ).forEach( ( field ) => {
 			if ( ignoreValidation[ field ] ) {
 				delete errors[ field ];
 			}
@@ -269,15 +261,15 @@ const getAddressErrors = ( addressData, appState, siteId, shouldValidatePhone = 
 	return errors;
 };
 
-const getPackagesErrors = values =>
-	mapValues( values, pckg => {
+const getPackagesErrors = ( values ) =>
+	mapValues( values, ( pckg ) => {
 		const errors = {};
 
 		if ( 'not_selected' === pckg.box_id ) {
 			errors.box_id = translate( 'Please select a package' );
 		}
 
-		const isInvalidDimension = dimension => ! isFinite( dimension ) || 0 >= dimension;
+		const isInvalidDimension = ( dimension ) => ! Number.isFinite( dimension ) || 0 >= dimension;
 
 		if ( isInvalidDimension( pckg.weight ) ) {
 			errors.weight = translate( 'Invalid weight' );
@@ -301,11 +293,11 @@ export const getCustomsErrors = (
 	destinationCountryName
 ) => {
 	const usedProductIds = uniq(
-		flatten( map( packages, pckg => map( pckg.items, 'product_id' ) ) )
+		flatten( map( packages, ( pckg ) => map( pckg.items, 'product_id' ) ) )
 	);
 
 	const valuesByProductId = zipObject( usedProductIds, fill( Array( usedProductIds.length ), 0 ) );
-	forEach( packages, pckg => {
+	forEach( packages, ( pckg ) => {
 		forEach(
 			pckg.items,
 			( { quantity, product_id } ) =>
@@ -324,7 +316,7 @@ export const getCustomsErrors = (
 	} );
 
 	return {
-		packages: mapValues( packages, pckg => {
+		packages: mapValues( packages, ( pckg ) => {
 			const errors = {};
 
 			if ( 'other' === pckg.contentsType && ! pckg.contentsExplanation ) {
@@ -381,14 +373,14 @@ export const getCustomsErrors = (
 				itemErrors.description = translate( 'This field is required' );
 			}
 			if ( ! customs.ignoreWeightValidation[ productId ] ) {
-				if ( isNil( itemData.weight ) || '' === itemData.weight ) {
+				if ( isNullish( itemData.weight ) || '' === itemData.weight ) {
 					itemErrors.weight = translate( 'This field is required' );
 				} else if ( ! ( parseFloat( itemData.weight ) > 0 ) ) {
 					itemErrors.weight = translate( 'Weight must be greater than zero' );
 				}
 			}
 			if ( ! customs.ignoreValueValidation[ productId ] ) {
-				if ( isNil( itemData.value ) || '' === itemData.value ) {
+				if ( isNullish( itemData.value ) || '' === itemData.value ) {
 					itemErrors.value = translate( 'This field is required' );
 				} else if ( ! ( parseFloat( itemData.value ) > 0 ) ) {
 					itemErrors.value = translate( 'Declared value must be greater than zero' );
@@ -405,7 +397,9 @@ export const getCustomsErrors = (
 export const getRatesErrors = ( { values: selectedRates, available: allRates } ) =>
 	mapValues( allRates, ( rate, boxId ) => {
 		if ( ! isEmpty( rate.errors ) ) {
-			const messages = rate.errors.map( err => err.userMessage || err.message ).filter( Boolean );
+			const messages = rate.errors
+				.map( ( err ) => err.userMessage || err.message )
+				.filter( Boolean );
 			return messages.length
 				? messages
 				: [ "We couldn't get a rate for this package, please try again." ];
@@ -423,7 +417,7 @@ export const getRatesErrors = ( { values: selectedRates, available: allRates } )
 		return [ translate( 'Please choose a rate' ) ];
 	} );
 
-const getSidebarErrors = paperSize => {
+const getSidebarErrors = ( paperSize ) => {
 	const errors = {};
 	if ( ! paperSize ) {
 		errors.paperSize = translate( 'This field is required' );
@@ -468,10 +462,10 @@ export const getFormErrors = createSelector(
  * Checks whether an address has enough data to be forcefully saved
  * without normalization/verification.
  *
- * @param {Object} appState The local Redux state.
+ * @param {object} appState The local Redux state.
  * @param {number} orderId  ID of the order that the label belongs to.
  * @param {number} siteId   The ID of the site that is being currently modified.
- * @return {boolean}
+ * @returns {boolean}
  */
 export const isAddressUsable = createSelector(
 	( appState, orderId, group, siteId = getSelectedSiteId( appState ) ) => {
@@ -498,12 +492,12 @@ export const isCustomsFormStepSubmitted = (
 	}
 
 	const usedProductIds = uniq(
-		flatten( map( form.packages.selected, pckg => map( pckg.items, 'product_id' ) ) )
+		flatten( map( form.packages.selected, ( pckg ) => map( pckg.items, 'product_id' ) ) )
 	);
 	return ! some(
 		usedProductIds.map(
-			productId =>
-				isNil( form.customs.items[ productId ].tariffNumber ) ||
+			( productId ) =>
+				isNullish( form.customs.items[ productId ].tariffNumber ) ||
 				form.customs.ignoreWeightValidation[ productId ] ||
 				form.customs.ignoreValueValidation[ productId ]
 		)
@@ -512,11 +506,12 @@ export const isCustomsFormStepSubmitted = (
 
 /**
  * Checks the form for errors and returns a step with an error in it or null
- * @param {Object} state global state tree
- * @param {Object} orderId order Id
- * @param {Object} siteId site Id
  *
- * @returns {String} erroneous step name or null
+ * @param {object} state global state tree
+ * @param {object} orderId order Id
+ * @param {object} siteId site Id
+ *
+ * @returns {string} erroneous step name or null
  */
 export const getFirstErroneousStep = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const form = getForm( state, orderId, siteId );
@@ -581,9 +576,9 @@ export const canPurchase = createSelector(
 );
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object} Map with the pairs { countryCode: countryName } of countries that are available as origin to print shipping labels
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {object} Map with the pairs { countryCode: countryName } of countries that are available as origin to print shipping labels
  */
 export const getOriginCountryNames = createSelector(
 	( state, siteId = getSelectedSiteId( state ) ) => {
@@ -596,9 +591,9 @@ export const getOriginCountryNames = createSelector(
 );
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object} Map with the pairs { countryCode: countryName } of countries that are available as destination to print shipping labels
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {object} Map with the pairs { countryCode: countryName } of countries that are available as destination to print shipping labels
  */
 export const getDestinationCountryNames = createSelector(
 	( state, siteId = getSelectedSiteId( state ) ) => {
@@ -611,11 +606,11 @@ export const getDestinationCountryNames = createSelector(
 );
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {String} countryCode 2-letter ISO country code
- * @param {String} stateCode 2-letter code of the country's state
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object|null} Map with the form { stateCode: stateName } with all the states of the given country, or null if
+ * @param {object} state Whole Redux state tree
+ * @param {string} countryCode 2-letter ISO country code
+ * @param {string} stateCode 2-letter code of the country's state
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {object|null} Map with the form { stateCode: stateName } with all the states of the given country, or null if
  * the country doesn't have a list of states
  */
 export const getStateNames = createSelector(

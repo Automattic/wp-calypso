@@ -1,23 +1,20 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { find, debounce, isNumber, indexOf, pull } from 'lodash';
+import { find, debounce, isNumber } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import TokenField from 'components/token-field';
+import { Button } from '@automattic/components';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import TokenField from 'calypso/components/token-field';
 
 class ProductVariationTypesForm extends Component {
 	state = {
@@ -36,10 +33,11 @@ class ProductVariationTypesForm extends Component {
 		editProductAttribute: PropTypes.func.isRequired,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { product } = this.props;
 		const attributes =
-			( product.attributes && product.attributes.filter( attribute => attribute.variation ) ) || [];
+			( product.attributes && product.attributes.filter( ( attribute ) => attribute.variation ) ) ||
+			[];
 		if ( ! attributes.length ) {
 			this.addType();
 		}
@@ -60,21 +58,20 @@ class ProductVariationTypesForm extends Component {
 		editProductAttribute( siteId, product, null, this.getNewFields() );
 	};
 
-	setAttributeNameError = id => {
+	setAttributeNameError = ( id ) => {
 		const attributeNameErrors = this.state.attributeNameErrors;
-		if ( indexOf( attributeNameErrors, id ) === -1 ) {
+		if ( attributeNameErrors.indexOf( id ) === -1 ) {
 			attributeNameErrors.push( id );
 		}
 		this.setState( { attributeNameErrors } );
 	};
 
-	removeAttributeNameError = id => {
-		const attributeNameErrors = this.state.attributeNameErrors;
-		pull( attributeNameErrors, id );
+	removeAttributeNameError = ( id ) => {
+		const attributeNameErrors = this.state.attributeNameErrors.filter( ( e ) => e !== id );
 		this.setState( { attributeNameErrors } );
 	};
 
-	updateNameHandler = e => {
+	updateNameHandler = ( e ) => {
 		const attributeNames = { ...this.state.attributeNames };
 		attributeNames[ e.target.id ] = e.target.value;
 		this.setState( { attributeNames } );
@@ -85,14 +82,14 @@ class ProductVariationTypesForm extends Component {
 		const { siteId, product, editProductAttribute } = this.props;
 		const attribute =
 			product.attributes &&
-			find( product.attributes, function( a ) {
+			find( product.attributes, function ( a ) {
 				return a.uid === attributeId;
 			} );
 
 		// Ensure we don't have an existing variation type with the same name.
 		const existingAttribute =
 			product.attributes &&
-			find( product.attributes, function( a ) {
+			find( product.attributes, function ( a ) {
 				return a.uid !== attributeId && a.name.trim().toLowerCase() === name.trim().toLowerCase();
 			} );
 
@@ -114,7 +111,7 @@ class ProductVariationTypesForm extends Component {
 		const { attributeNames, attributeNameErrors } = this.state;
 
 		const attributeName = ( attributeNames && attributeNames[ attribute.uid ] ) || attribute.name;
-		const duplicateNameIssue = indexOf( attributeNameErrors, attribute.uid ) !== -1;
+		const duplicateNameIssue = attributeNameErrors.indexOf( attribute.uid ) !== -1;
 		const classes = classNames( 'products__variation-types-form-fieldset', {
 			'is-error': duplicateNameIssue,
 		} );
@@ -136,7 +133,7 @@ class ProductVariationTypesForm extends Component {
 						name="values"
 						disabled={ duplicateNameIssue }
 						/* eslint-disable react/jsx-no-bind */
-						onChange={ values => this.updateValues( values, attribute ) }
+						onChange={ ( values ) => this.updateValues( values, attribute ) }
 					/>
 				</div>
 				{ duplicateNameIssue && (
@@ -150,7 +147,7 @@ class ProductVariationTypesForm extends Component {
 		const { product, translate } = this.props;
 		const { attributes } = product;
 		const variationTypes =
-			( attributes && attributes.filter( attribute => attribute.variation ) ) || [];
+			( attributes && attributes.filter( ( attribute ) => attribute.variation ) ) || [];
 		const inputs = variationTypes.map( this.renderInputs, this );
 
 		return (

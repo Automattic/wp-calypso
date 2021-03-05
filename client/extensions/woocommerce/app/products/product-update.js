@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,11 +12,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import accept from 'lib/accept';
-import { ProtectFormGuard } from 'lib/protect-form';
+import Main from 'calypso/components/main';
+import accept from 'calypso/lib/accept';
+import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
 import {
 	fetchProduct,
@@ -51,7 +49,7 @@ import { getSaveErrorMessage } from './save-error-message';
 import page from 'page';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
-import { withAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import { withAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 class ProductUpdate extends React.Component {
 	static propTypes = {
@@ -89,7 +87,7 @@ class ProductUpdate extends React.Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { params, site } = this.props;
 		const productId = Number( params.product_id );
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
@@ -113,13 +111,13 @@ class ProductUpdate extends React.Component {
 	}
 
 	onUploadStart = () => {
-		this.setState( prevState => ( {
+		this.setState( ( prevState ) => ( {
 			isUploading: [ ...prevState.isUploading, [ true ] ],
 		} ) );
 	};
 
 	onUploadFinish = () => {
-		this.setState( prevState => ( {
+		this.setState( ( prevState ) => ( {
 			isUploading: prevState.isUploading.slice( 1 ),
 		} ) );
 	};
@@ -131,7 +129,7 @@ class ProductUpdate extends React.Component {
 		const areYouSure = translate( "Are you sure you want to permanently delete '%(name)s'?", {
 			args: { name: product.name },
 		} );
-		accept( areYouSure, function( accepted ) {
+		accept( areYouSure, function ( accepted ) {
 			if ( ! accepted ) {
 				return;
 			}
@@ -174,7 +172,7 @@ class ProductUpdate extends React.Component {
 			);
 		};
 
-		const failureAction = error => {
+		const failureAction = ( error ) => {
 			const errorSlug = ( error && error.error ) || undefined;
 
 			return errorNotice( getSaveErrorMessage( errorSlug, product.name, translate ), {
@@ -278,7 +276,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ProductUpdate ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ProductUpdate ) );

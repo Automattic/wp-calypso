@@ -4,17 +4,16 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
-import importerConfig from 'lib/importer/importer-config';
-import Button from '../../../components/button';
-import Card from 'components/card';
-import ImporterLogo from 'my-sites/importer/importer-logo';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import importerConfig from 'calypso/lib/importer/importer-config';
+import { Button, Card } from '@automattic/components';
+import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
 import StepWrapper from '../../step-wrapper';
 
 /**
@@ -48,17 +47,6 @@ class ImportPreview extends Component {
 				],
 				unsupported: translate(
 					"We're unable to import your theme, plugins, comments, or online store."
-				),
-			},
-			'godaddy-gocentral': {
-				supported: [
-					translate( 'Pages' ),
-					translate( 'Blog posts' ),
-					translate( 'Images' ),
-					translate( 'Other media' ),
-				],
-				unsupported: translate(
-					"We're unable to import your online store, site layout, or styling."
 				),
 			},
 			medium: {
@@ -128,7 +116,7 @@ class ImportPreview extends Component {
 		// The preceding steps always provide a value for importSiteEngine
 		const items = this.previewData[ importSiteEngine ].supported || [];
 
-		const listItems = items.map( item => {
+		const listItems = items.map( ( item ) => {
 			return (
 				<li className="import-preview__supported-item" key={ item }>
 					<Gridicon icon="checkmark" size={ 18 } className="import-preview__checkmark" />
@@ -202,10 +190,7 @@ class ImportPreview extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		saveSignupStep,
-		submitSignupStep,
-	}
-)( localize( ImportPreview ) );
+export default connect( null, {
+	saveSignupStep,
+	submitSignupStep,
+} )( localize( ImportPreview ) );

@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import { SIGNUP_SEGMENTS_REQUEST, SIGNUP_SEGMENTS_SET } from 'state/action-types';
+import { SIGNUP_SEGMENTS_REQUEST, SIGNUP_SEGMENTS_SET } from 'calypso/state/action-types';
 import { requestSegments, setSegments } from '../actions';
 
 describe( 'state/signup/segments/actions', () => {

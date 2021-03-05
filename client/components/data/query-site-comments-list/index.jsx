@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestCommentsList } from 'state/comments/actions';
+import { requestCommentsList } from 'calypso/state/comments/actions';
 
 export class QuerySiteCommentsList extends PureComponent {
 	static propTypes = {
@@ -47,7 +45,4 @@ export class QuerySiteCommentsList extends PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{ requestCommentsList }
-)( QuerySiteCommentsList );
+export default connect( null, { requestCommentsList } )( QuerySiteCommentsList );

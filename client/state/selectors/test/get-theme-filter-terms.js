@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getThemeFilterTerms from 'state/selectors/get-theme-filter-terms';
+import { getThemeFilterTerms } from 'calypso/state/themes/selectors';
 import { state } from './fixtures/theme-filters';
 
 describe( 'getThemeFilterTerms()', () => {

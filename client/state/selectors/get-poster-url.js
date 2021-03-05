@@ -1,12 +1,16 @@
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/posts/init';
+
+/**
  * Returns the poster URL of the video.
  *
  *
- * @format
- * @param {Object}  state Global state tree
- * @return {String}  URL of the poster.
+ * @param {object}  state Global state tree
+ * @returns {string}  URL of the poster.
  */
 
 export default function getPosterUrl( state ) {
-	return state.ui.editor.videoEditor.url;
+	return state.editor.videoEditor.url;
 }

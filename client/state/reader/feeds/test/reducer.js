@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,10 +13,9 @@ import {
 	READER_FEED_REQUEST_SUCCESS,
 	READER_FEED_REQUEST_FAILURE,
 	READER_FEED_UPDATE,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
-import { captureConsole } from 'test/helpers/console';
+} from 'calypso/state/reader/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { captureConsole } from 'calypso/test-helpers/console';
 
 describe( 'reducer', () => {
 	describe( 'items', () => {
@@ -50,6 +48,8 @@ describe( 'reducer', () => {
 				description: undefined,
 				last_update: undefined,
 				image: undefined,
+				organization_id: undefined,
+				unseen_count: undefined,
 			} );
 		} );
 
@@ -78,6 +78,8 @@ describe( 'reducer', () => {
 				subscribers_count: undefined,
 				last_update: undefined,
 				image: undefined,
+				organization_id: undefined,
+				unseen_count: undefined,
 			} );
 		} );
 
@@ -107,12 +109,14 @@ describe( 'reducer', () => {
 				subscribers_count: undefined,
 				last_update: undefined,
 				image: undefined,
+				organization_id: undefined,
+				unseen_count: undefined,
 			} );
 		} );
 
 		test( 'should serialize feed entries', () => {
 			const unvalidatedObject = deepFreeze( { hi: 'there' } );
-			expect( items( unvalidatedObject, { type: SERIALIZE } ) ).to.deep.equal( unvalidatedObject );
+			expect( serialize( items, unvalidatedObject ) ).to.deep.equal( unvalidatedObject );
 		} );
 
 		test( 'should not serialize errors', () => {
@@ -123,7 +127,7 @@ describe( 'reducer', () => {
 					is_error: true,
 				},
 			} );
-			expect( items( stateWithErrors, { type: SERIALIZE } ) ).to.deep.equal( {
+			expect( serialize( items, stateWithErrors ) ).to.deep.equal( {
 				12: { feed_ID: 12 },
 			} );
 		} );
@@ -132,7 +136,7 @@ describe( 'reducer', () => {
 			'should reject deserializing entries it cannot validate',
 			captureConsole( () => {
 				const unvalidatedObject = deepFreeze( { hi: 'there' } );
-				expect( items( unvalidatedObject, { type: DESERIALIZE } ) ).to.deep.equal( {} );
+				expect( deserialize( items, unvalidatedObject ) ).to.deep.equal( {} );
 			} )
 		);
 
@@ -150,7 +154,7 @@ describe( 'reducer', () => {
 					image: 'http://example.com/favicon',
 				},
 			} );
-			expect( items( validState, { type: DESERIALIZE } ) ).to.deep.equal( validState );
+			expect( deserialize( items, validState ) ).to.deep.equal( validState );
 		} );
 
 		test( 'should stash an error object in the map if the request fails', () => {
@@ -191,6 +195,8 @@ describe( 'reducer', () => {
 					description: undefined,
 					last_update: undefined,
 					image: 'http://example.com/image',
+					organization_id: undefined,
+					unseen_count: undefined,
 				},
 			} );
 		} );
@@ -229,6 +235,8 @@ describe( 'reducer', () => {
 					description: undefined,
 					last_update: undefined,
 					image: undefined,
+					organization_id: undefined,
+					unseen_count: undefined,
 				},
 				1: {
 					feed_ID: 1,
@@ -241,6 +249,8 @@ describe( 'reducer', () => {
 					description: undefined,
 					last_update: undefined,
 					image: undefined,
+					organization_id: undefined,
+					unseen_count: undefined,
 				},
 				2: {
 					feed_ID: 2,
@@ -253,6 +263,8 @@ describe( 'reducer', () => {
 					description: undefined,
 					last_update: undefined,
 					image: undefined,
+					organization_id: undefined,
+					unseen_count: undefined,
 				},
 			} );
 		} );
@@ -288,9 +300,7 @@ describe( 'reducer', () => {
 				type: READER_FEED_REQUEST_SUCCESS,
 				payload: { feed_ID: 1 },
 			};
-			expect( lastFetched( original, action ) )
-				.to.have.a.property( 1 )
-				.that.is.a( 'number' );
+			expect( lastFetched( original, action ) ).to.have.a.property( 1 ).that.is.a( 'number' );
 		} );
 
 		test( 'should update the last fetched time on feed update', () => {
@@ -299,9 +309,7 @@ describe( 'reducer', () => {
 				type: READER_FEED_UPDATE,
 				payload: [ { feed_ID: 1 } ],
 			};
-			expect( lastFetched( original, action ) )
-				.to.have.a.property( 1 )
-				.that.is.a( 'number' );
+			expect( lastFetched( original, action ) ).to.have.a.property( 1 ).that.is.a( 'number' );
 		} );
 	} );
 } );

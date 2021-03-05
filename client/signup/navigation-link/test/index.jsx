@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,19 +9,17 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { NavigationLink } from '../';
-import EMPTY_COMPONENT from 'components/empty-component';
+import Gridicon from 'calypso/components/gridicon';
 
-jest.mock( 'signup/utils', () => ( {
+jest.mock( 'calypso/signup/utils', () => ( {
 	getStepUrl: jest.fn(),
 	getFilteredSteps: jest.fn(),
 } ) );
-jest.mock( 'gridicons', () => require( 'components/empty-component' ) );
 
-const signupUtils = require( 'signup/utils' );
+const signupUtils = require( 'calypso/signup/utils' );
 const { getStepUrl, getFilteredSteps } = signupUtils;
 
 describe( 'NavigationLink', () => {
-	const Gridicon = EMPTY_COMPONENT;
 	const props = {
 		flowName: 'test:flow',
 		stepName: 'test:step2',
@@ -36,7 +33,7 @@ describe( 'NavigationLink', () => {
 		recordTracksEvent: noop,
 		submitSignupStep: noop,
 		goToNextStep: jest.fn(),
-		translate: str => `translated:${ str }`,
+		translate: ( str ) => `translated:${ str }`,
 	};
 
 	beforeEach( () => {
@@ -51,8 +48,8 @@ describe( 'NavigationLink', () => {
 	test( 'should render Button element', () => {
 		const wrapper = shallow( <NavigationLink { ...props } /> );
 
-		expect( wrapper.find( 'Button' ) ).toHaveLength( 1 );
-		expect( wrapper.find( 'Button' ).props().className ).toEqual( 'navigation-link' );
+		expect( wrapper.find( 'ForwardRef(Button)' ) ).toHaveLength( 1 );
+		expect( wrapper.find( 'ForwardRef(Button)' ).props().className ).toEqual( 'navigation-link' );
 	} );
 
 	test( 'should render no icons when the direction prop is undefined', () => {

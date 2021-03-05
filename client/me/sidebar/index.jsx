@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,39 +9,34 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import config from 'config';
-import ProfileGravatar from 'me/profile-gravatar';
+import { Button } from '@automattic/components';
+import config from '@automattic/calypso-config';
+import ProfileGravatar from 'calypso/me/profile-gravatar';
 import {
 	addCreditCard,
 	billingHistory,
-	upcomingCharges,
 	pendingPayments,
-	myMemberships,
 	purchasesRoot,
-} from 'me/purchases/paths';
-import Sidebar from 'layout/sidebar';
-import SidebarFooter from 'layout/sidebar/footer';
-import SidebarHeading from 'layout/sidebar/heading';
-import SidebarItem from 'layout/sidebar/item';
-import SidebarMenu from 'layout/sidebar/menu';
-import SidebarRegion from 'layout/sidebar/region';
-import userFactory from 'lib/user';
-import userUtilities from 'lib/user/utils';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { logoutUser } from 'state/logout/actions';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+	deprecated as deprecatedPaths,
+} from 'calypso/me/purchases/paths';
+import Sidebar from 'calypso/layout/sidebar';
+import SidebarFooter from 'calypso/layout/sidebar/footer';
+import SidebarHeading from 'calypso/layout/sidebar/heading';
+import SidebarItem from 'calypso/layout/sidebar/item';
+import SidebarMenu from 'calypso/layout/sidebar/menu';
+import SidebarRegion from 'calypso/layout/sidebar/region';
+import user from 'calypso/lib/user';
+import userUtilities from 'calypso/lib/user/utils';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { logoutUser } from 'calypso/state/logout/actions';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-/**
- * Module variables
- */
-const user = userFactory();
+import 'calypso/my-sites/sidebar-unified/style.scss'; // nav-unification overrides. Should be removed once launched.
 
 class MeSidebar extends React.Component {
 	onNavigate = () => {
@@ -65,7 +59,7 @@ class MeSidebar extends React.Component {
 		if ( config.isEnabled( 'login/wp-login' ) ) {
 			try {
 				const { redirect_to } = await this.props.logoutUser( redirectTo );
-				await user.clear();
+				await user().clear();
 				window.location.href = redirect_to || '/';
 			} catch {
 				// The logout endpoint might fail if the nonce has expired.
@@ -85,6 +79,7 @@ class MeSidebar extends React.Component {
 			'/me': 'profile',
 			'/me/security/account-recovery': 'security',
 			'/me/security/connected-applications': 'security',
+			'/me/security/password': 'security',
 			'/me/security/social-login': 'security',
 			'/me/security/two-step': 'security',
 			'me/privacy': 'privacy',
@@ -95,9 +90,9 @@ class MeSidebar extends React.Component {
 			[ purchasesRoot ]: 'purchases',
 			[ billingHistory ]: 'purchases',
 			[ addCreditCard ]: 'purchases',
-			[ upcomingCharges ]: 'purchases',
+			[ deprecatedPaths.upcomingCharges ]: 'purchases',
 			[ pendingPayments ]: 'purchases',
-			[ myMemberships ]: 'purchases',
+			[ deprecatedPaths.otherPurchases ]: 'purchases',
 			'/me/chat': 'happychat',
 			'/me/site-blocks': 'site-blocks',
 		};
@@ -128,96 +123,104 @@ class MeSidebar extends React.Component {
 							onClick={ this.onSignOut }
 							title={ translate( 'Log out of WordPress.com' ) }
 						>
-							{ translate( 'Log Out' ) }
+							{ translate( 'Log out' ) }
 						</Button>
 					</div>
 
 					<SidebarMenu>
-						<SidebarHeading>{ translate( 'Profile' ) }</SidebarHeading>
-						<ul>
-							<SidebarItem
-								selected={ selected === 'profile' }
-								link={
-									config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile'
-								}
-								label={ translate( 'My Profile' ) }
-								materialIcon="person"
-								onNavigate={ this.onNavigate }
-							/>
+						<SidebarHeading>
+							<span className="sidebar__informative-title">{ translate( 'Profile' ) }</span>
+						</SidebarHeading>
 
-							<SidebarItem
-								selected={ selected === 'account' }
-								link={
-									config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account'
-								}
-								label={ translate( 'Account Settings' ) }
-								materialIcon="settings"
-								onNavigate={ this.onNavigate }
-								preloadSectionName="account"
-							/>
+						<SidebarItem
+							selected={ selected === 'profile' }
+							link={
+								config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile'
+							}
+							label={ translate( 'My Profile' ) }
+							materialIcon="person"
+							onNavigate={ this.onNavigate }
+						/>
 
-							<SidebarItem
-								selected={ selected === 'purchases' }
-								link={ purchasesRoot }
-								label={ translate( 'Manage Purchases' ) }
-								materialIcon="credit_card"
-								onNavigate={ this.onNavigate }
-								preloadSectionName="purchases"
-							/>
+						<SidebarItem
+							selected={ selected === 'account' }
+							link={
+								config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account'
+							}
+							label={ translate( 'Account Settings' ) }
+							materialIcon="settings"
+							onNavigate={ this.onNavigate }
+							preloadSectionName="account"
+						/>
 
-							<SidebarItem
-								selected={ selected === 'security' }
-								link={ '/me/security' }
-								label={ translate( 'Security' ) }
-								materialIcon="lock"
-								onNavigate={ this.onNavigate }
-								preloadSectionName="security"
-							/>
+						<SidebarItem
+							selected={ selected === 'purchases' }
+							link={ purchasesRoot }
+							label={ translate( 'Purchases' ) }
+							materialIcon="credit_card"
+							onNavigate={ this.onNavigate }
+							preloadSectionName="purchases"
+						/>
 
-							<SidebarItem
-								selected={ selected === 'privacy' }
-								link={ '/me/privacy' }
-								label={ translate( 'Privacy' ) }
-								materialIcon="visibility"
-								onNavigate={ this.onNavigate }
-								preloadSectionName="privacy"
-							/>
+						<SidebarItem
+							selected={ selected === 'security' }
+							link={ '/me/security' }
+							label={ translate( 'Security' ) }
+							materialIcon="lock"
+							onNavigate={ this.onNavigate }
+							preloadSectionName="security"
+						/>
 
-							<SidebarItem
-								selected={ selected === 'notifications' }
-								link={
-									config.isEnabled( 'me/notifications' )
-										? '/me/notifications'
-										: '//wordpress.com/me/notifications'
-								}
-								label={ translate( 'Notification Settings' ) }
-								materialIcon="notifications"
-								onNavigate={ this.onNavigate }
-								preloadSectionName="notification-settings"
-							/>
+						<SidebarItem
+							selected={ selected === 'privacy' }
+							link={ '/me/privacy' }
+							label={ translate( 'Privacy' ) }
+							materialIcon="visibility"
+							onNavigate={ this.onNavigate }
+							preloadSectionName="privacy"
+						/>
 
-							<SidebarItem
-								selected={ selected === 'site-blocks' }
-								link={ '/me/site-blocks' }
-								label={ translate( 'Blocked Sites' ) }
-								materialIcon="block"
-								onNavigate={ this.onNavigate }
-								preloadSectionName="site-blocks"
-							/>
-						</ul>
+						<SidebarItem
+							link={ 'https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs' }
+							label={ translate( 'Manage Blogs' ) }
+							materialIcon="apps"
+						/>
+
+						<SidebarItem
+							selected={ selected === 'notifications' }
+							link={
+								config.isEnabled( 'me/notifications' )
+									? '/me/notifications'
+									: '//wordpress.com/me/notifications'
+							}
+							label={ translate( 'Notification Settings' ) }
+							materialIcon="notifications"
+							onNavigate={ this.onNavigate }
+							preloadSectionName="notification-settings"
+						/>
+
+						<SidebarItem
+							selected={ selected === 'site-blocks' }
+							link={ '/me/site-blocks' }
+							label={ translate( 'Blocked Sites' ) }
+							materialIcon="block"
+							onNavigate={ this.onNavigate }
+							preloadSectionName="site-blocks"
+						/>
 					</SidebarMenu>
 
 					<SidebarMenu>
-						<SidebarHeading>{ translate( 'Special' ) }</SidebarHeading>
-						<ul>
-							<SidebarItem
-								selected={ selected === 'get-apps' }
-								link={ '/me/get-apps' }
-								label={ translate( 'Get Apps' ) }
-								icon="my-sites"
-								onNavigate={ this.onNavigate }
-							/>
-						</ul>
+						<SidebarHeading>
+							<span className="sidebar__informative-title">{ translate( 'Special' ) }</span>
+						</SidebarHeading>
+
+						<SidebarItem
+							selected={ selected === 'get-apps' }
+							link={ '/me/get-apps' }
+							label={ translate( 'Get Apps' ) }
+							icon="my-sites"
+							onNavigate={ this.onNavigate }
+						/>
 					</SidebarMenu>
 				</SidebarRegion>
 				<SidebarFooter />
@@ -229,7 +232,7 @@ class MeSidebar extends React.Component {
 const enhance = flow(
 	localize,
 	connect(
-		state => ( {
+		( state ) => ( {
 			currentUser: getCurrentUser( state ),
 		} ),
 		{

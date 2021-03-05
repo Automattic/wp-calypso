@@ -1,37 +1,43 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducerWithValidation } from 'state/utils';
-import { TIMEZONES_RECEIVE } from 'state/action-types';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
+import { TIMEZONES_RECEIVE } from 'calypso/state/action-types';
 
 import { rawOffsetsSchema, labelsSchema, continentsSchema } from './schema';
 
-export const rawOffsets = createReducerWithValidation(
-	{},
-	{
-		[ TIMEZONES_RECEIVE ]: ( state, actions ) => actions.rawOffsets,
-	},
-	rawOffsetsSchema
-);
+export const rawOffsets = withSchemaValidation( rawOffsetsSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case TIMEZONES_RECEIVE:
+			return action.rawOffsets;
+	}
 
-export const labels = createReducerWithValidation(
-	{},
-	{
-		[ TIMEZONES_RECEIVE ]: ( state, actions ) => actions.labels,
-	},
-	labelsSchema
-);
+	return state;
+} );
 
-export const byContinents = createReducerWithValidation(
-	{},
-	{
-		[ TIMEZONES_RECEIVE ]: ( state, actions ) => actions.byContinents,
-	},
-	continentsSchema
-);
+export const labels = withSchemaValidation( labelsSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case TIMEZONES_RECEIVE:
+			return action.labels;
+	}
 
-export default combineReducers( {
+	return state;
+} );
+
+export const byContinents = withSchemaValidation( continentsSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case TIMEZONES_RECEIVE:
+			return action.byContinents;
+	}
+
+	return state;
+} );
+
+const combinedReducer = combineReducers( {
 	rawOffsets,
 	labels,
 	byContinents,
 } );
+
+export default withStorageKey( 'timezones', combinedReducer );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,9 +13,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getPlugins, isRequesting } from 'state/plugins/installed/selectors';
+import { getPlugins, isRequesting } from 'calypso/state/plugins/installed/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import SettingsTaxesPlaceholder from './taxes-placeholder';
 import SettingsTaxesTaxJar from './taxes-taxjar';
 import SettingsTaxesWooCommerceServices from './taxes-wcs';
@@ -46,7 +44,7 @@ class SettingsTaxes extends Component {
 		}
 	};
 
-	componentDidUpdate = prevProps => {
+	componentDidUpdate = ( prevProps ) => {
 		if ( this.props.setupChoicesLoaded && ! prevProps.setupChoicesLoaded ) {
 			this.maybeSetCheckedTaxSetup();
 		}
@@ -115,7 +113,4 @@ function mapDispatchToProps( dispatch ) {
 		dispatch
 	);
 }
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( SettingsTaxes ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SettingsTaxes ) );

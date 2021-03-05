@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import {
 	cancelEditingPaymentMethod,
 	changePaymentMethodEnabled,
@@ -23,9 +21,9 @@ import {
 } from 'woocommerce/state/ui/payments/methods/actions';
 import { getCurrentlyEditingPaymentMethod } from 'woocommerce/state/ui/payments/methods/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import ExternalLink from 'components/external-link';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
+import ExternalLink from 'calypso/components/external-link';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
 import { hasStripeKeyPairForMode } from './stripe/payment-method-stripe-utils';
 import ListItem from 'woocommerce/components/list/list-item';
 import ListItemField from 'woocommerce/components/list/list-item-field';
@@ -82,7 +80,7 @@ class PaymentMethodItem extends Component {
 		this.props.changePaymentMethodField( this.props.site.ID, field, value );
 	};
 
-	onChangeEnabled = e => {
+	onChangeEnabled = ( e ) => {
 		const { method, site } = this.props;
 
 		this.props.onChange();
@@ -173,7 +171,7 @@ class PaymentMethodItem extends Component {
 		);
 	};
 
-	renderEnabledField = method => {
+	renderEnabledField = ( method ) => {
 		const { translate } = this.props;
 		let showEnableField = true;
 		if ( method.id === 'stripe' ) {
@@ -263,9 +261,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default localize(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( PaymentMethodItem )
-);
+export default localize( connect( mapStateToProps, mapDispatchToProps )( PaymentMethodItem ) );

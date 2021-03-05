@@ -1,11 +1,10 @@
-Post Item
-=========
+# Post Item
 
 `<PostItem />` is a connected React component for rendering a post card, including its title, metadata, thumbnail, and actions for managing that post.
 
 ## Usage
 
-Render the component, passing a global ID of the post to be rendered. 
+Render the component, passing a global ID of the post to be rendered.
 
 ```jsx
 function MyPostList() {
@@ -13,7 +12,7 @@ function MyPostList() {
 }
 ```
 
-The component does not render a [query component](https://github.com/Automattic/wp-calypso/blob/master/docs/our-approach-to-data.md#query-components), so it's assumed that the post will already have been loaded into global state prior to rendering the component.
+The component does not render a [query component](https://github.com/Automattic/wp-calypso/blob/HEAD/docs/our-approach-to-data.md#query-components), so it's assumed that the post will already have been loaded into global state prior to rendering the component.
 
 ## Props
 
@@ -25,3 +24,13 @@ The component does not render a [query component](https://github.com/Automattic/
 </table>
 
 The global ID of the post to be displayed. If omitted, it's assumed that the post is currently loading, and a post with placeholder styling will be shown instead.
+
+### `showPublishedStatus`
+
+<table>
+	<tr><th>Type</th><td>Bool</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Default</th><td>false</td></tr>
+</table>
+
+If true, statuses will be shown for scheduled, trashed, drafted, and published posts.

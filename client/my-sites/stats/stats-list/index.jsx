@@ -24,7 +24,7 @@ export default class extends React.Component {
 		activeGroups: [],
 	};
 
-	isGroupActive = groupName => {
+	isGroupActive = ( groupName ) => {
 		return this.state.activeGroups.indexOf( groupName ) >= 0;
 	};
 
@@ -43,7 +43,7 @@ export default class extends React.Component {
 		} );
 
 		if ( groups ) {
-			results = groups.map( function( group, groupIndex ) {
+			results = groups.map( function ( group, groupIndex ) {
 				let childResults;
 				const groupTree = parentKey ? [ parentKey ] : [];
 
@@ -68,7 +68,6 @@ export default class extends React.Component {
 						children={ childResults }
 						key={ groupKey }
 						itemClickHandler={ clickHandler }
-						followList={ this.props.followList }
 						useShortLabel={ this.props.useShortLabel }
 					/>
 				);

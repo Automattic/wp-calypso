@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -8,17 +7,17 @@ import { get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import Stream from 'reader/stream';
-import DocumentHead from 'components/data/document-head';
+import Stream from 'calypso/reader/stream';
+import DocumentHead from 'calypso/components/data/document-head';
 import ConversationsIntro from './intro';
-import ConversationsEmptyContent from 'blocks/conversations/empty';
+import ConversationsEmptyContent from 'calypso/blocks/conversations/empty';
 
 /**
  * Style dependencies
  */
 import './stream.scss';
 
-export default function( props ) {
+export default function ( props ) {
 	const isInternal = get( props, 'store.id' ) === 'conversations-a8c';
 	const emptyContent = <ConversationsEmptyContent />;
 	const intro = <ConversationsIntro isInternal={ isInternal } />;

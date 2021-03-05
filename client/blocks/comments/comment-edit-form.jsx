@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,10 +13,11 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import Notice from 'components/notice';
-import { editComment } from 'state/comments/actions';
-import { recordAction, recordGaEvent } from 'reader/stats';
+import AutoDirection from 'calypso/components/auto-direction';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import Notice from 'calypso/components/notice';
+import { editComment } from 'calypso/state/comments/actions';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import PostCommentFormTextarea from './form-textarea';
 
 /**
@@ -36,18 +35,18 @@ class PostCommentForm extends Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.setState( {
 			commentText: nextProps.commentText || '',
 		} );
 	}
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 		this.submit();
 	};
 
-	handleKeyDown = event => {
+	handleKeyDown = ( event ) => {
 		// Use Ctrl+Enter to submit comment
 		if ( event.keyCode === 13 && ( event.ctrlKey || event.metaKey ) ) {
 			event.preventDefault();
@@ -69,7 +68,7 @@ class PostCommentForm extends Component {
 
 	handleFocus = () => this.setState( { haveFocus: true } );
 
-	handleTextChange = event => {
+	handleTextChange = ( event ) => {
 		const commentText = event.target.value;
 
 		this.setState( { commentText } );
@@ -152,7 +151,7 @@ class PostCommentForm extends Component {
 		// http://alistapart.com/article/expanding-text-areas-made-elegant
 		return (
 			<form className="comments__edit-form">
-				<fieldset>
+				<FormFieldset>
 					<div className={ expandingAreaClasses }>
 						<pre>
 							<span>{ this.state.commentText }</span>
@@ -178,7 +177,7 @@ class PostCommentForm extends Component {
 						{ translate( 'Send' ) }
 					</button>
 					{ this.renderError() }
-				</fieldset>
+				</FormFieldset>
 			</form>
 		);
 	}
@@ -198,9 +197,6 @@ PostCommentForm.defaultProps = {
 	onCommentSubmit: noop,
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators( { editComment }, dispatch );
+const mapDispatchToProps = ( dispatch ) => bindActionCreators( { editComment }, dispatch );
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( PostCommentForm );
+export default connect( null, mapDispatchToProps )( PostCommentForm );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingPostFormats } from 'state/post-formats/selectors';
-import { requestPostFormats } from 'state/post-formats/actions';
+import { isRequestingPostFormats } from 'calypso/state/post-formats/selectors';
+import { requestPostFormats } from 'calypso/state/post-formats/actions';
 
 class QueryPostFormats extends Component {
 	static propTypes = {
@@ -21,11 +19,11 @@ class QueryPostFormats extends Component {
 		requestPostFormats: PropTypes.func,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId !== nextProps.siteId ) {
 			this.request( nextProps );
 		}

@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -14,12 +13,12 @@ import page from 'page';
  */
 import { showSelectedPost } from '../utils';
 
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 jest.mock( 'page', () => ( {
 	show: require( 'sinon' ).spy(),
 } ) );
-jest.mock( 'lib/redux-bridge', () => ( {
-	reduxGetState: function() {
+jest.mock( 'calypso/lib/redux-bridge', () => ( {
+	reduxGetState: function () {
 		return { reader: { posts: { items: {} } } };
 	},
 } ) );

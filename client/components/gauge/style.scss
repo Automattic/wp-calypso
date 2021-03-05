@@ -13,9 +13,9 @@
 		display: block;
 		color: var( --color-neutral-50 );
 		text-transform: uppercase;
-		font-size: 10px;
+		font-size: $font-body-extra-small;
 		letter-spacing: 0.1em;
-		font-weight: bold;
+		font-weight: 600;
 		line-height: 0.7;
 	}
 

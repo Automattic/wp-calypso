@@ -12,7 +12,7 @@
 	}
 
 	input {
-		font-size: 14px;
+		font-size: $font-body-small;
 		padding: 5px 10px;
 	}
 
@@ -26,8 +26,8 @@
 			max-height: 400px;
 			min-height: 33px;
 			margin: 0;
-			padding: 5px 60px 5px 5px;
-			font-size: 14px;
+			padding: 5px;
+			font-size: $font-body-small;
 			font-family: $serif;
 			line-height: 21px;
 
@@ -59,21 +59,16 @@
 	button {
 		opacity: 0;
 		position: absolute;
-		top: 4px;
-		right: 16px;
-		padding: 4px;
-		font-size: 12px;
-		font-weight: 600;
-		text-transform: uppercase;
-	color: var( --color-text-subtle );
+		margin: 16px 0 -19px;
 		transition: all 0.2s ease-in-out;
 
 		&.is-active {
-			color: var( --color-primary );
 			cursor: pointer;
 		}
 
 		&.is-visible {
+			position: static;
+			float: right;
 			opacity: 1;
 		}
 	}
@@ -84,8 +79,20 @@
 	}
 
 	.comments__cancel-reply {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		cursor: pointer;
+	}
+}
+
+// On /read/conversations, balance the space below and
+// above the "Send" button.  The default negative margin
+// of -19px is intended for the pages like
+// /read/feeds/123456789/posts/9876543210.
+.conversations__comment-list {
+	.comments__form {
+		button {
+			margin-bottom: -9px;
+		}
 	}
 }
 
@@ -97,5 +104,5 @@
 	text-align: center;
 	border-top: 1px solid var( --color-neutral-0 );
 	padding-top: 22px;
-	font-size: 14px;
+	font-size: $font-body-small;
 }

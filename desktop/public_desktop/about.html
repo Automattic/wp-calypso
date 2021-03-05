@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html class="desktop-preferences">
+<head>
+	<title>About WordPress.com</title>
+	<style type="text/css">
+	/* Try to mimic native window styling */
+	@font-face {
+		font-family: system;
+		font-style: normal;
+		font-weight: 400;
+		src: local(".SFNSText-Regular"), local(".HelveticaNeueDeskInterface-Regular"), local(".LucidaGrandeUI");
+	}
+
+	@font-face {
+		font-family: system;
+		font-style: normal;
+		font-weight: 700;
+		src: local(".SFNSText-Bold"), local(".HelveticaNeueDeskInterface-Bold"), local(".LucidaGrandeUI");
+	}
+
+	html, body {
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+    	background: #ebebeb;
+    	cursor: default;
+	}
+
+	body {
+		padding: 10px 20px;
+		font-family: "Segoe UI", Segoe, Ubuntu, system, sans-serif;
+		font-size: 13px;
+		text-align: center;
+	}
+
+	.options {
+		max-width: 600px;
+		width: 100%;
+		margin: 0 auto;
+		border-collapse: collapse;
+	}
+
+	.options td {
+		vertical-align: top;
+	}
+
+	.option-group span {
+		margin-right: 5px;
+	}
+
+	strong {
+		font-weight: bold;
+	}
+
+	p a {
+		text-decoration: none;
+		color: #000;
+	}
+	</style>
+</head>
+<body>
+
+<script type="text/javascript">
+	const config = window.electron.config;
+
+	const version = config.version;
+	const build = config.build;
+
+	if ( build === 'development' )
+		version += ' dev';
+	else if ( build === 'updater' )
+		version += ' updater';
+	else if ( build === 'release' )
+		version += ' release';
+</script>
+
+<p><img src="app-logo.png" alt="WordPress.com" width="64" height="64" /></p>
+
+<p><strong>WordPress.com</strong></p>
+
+<p>Version <script type="text/javascript">document.write( version )</script></p>
+
+<p>Copyright <a href="#">&copy;</a> Automattic, Inc. <br/>
+Proudly released under the GPL</p>
+
+<script>
+	var KEY_RIGHT = 39;
+	var KEY_LEFT = 37;
+	var KEY_SPACE = 32;
+	var KEY_UP = 38;
+	var KEY_DOWN = 40;
+	var KEY_A = 65;
+	var KEY_B = 66;
+
+	var KONAMI = [ KEY_UP, KEY_UP, KEY_DOWN, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_LEFT, KEY_RIGHT, KEY_B, KEY_A ];
+	var keyPos = 0;
+
+	document.querySelector( 'a' ).addEventListener( 'click', function() {
+		window.electron.send( 'secrets', 0 );
+		return false;
+	} );
+
+	document.addEventListener( 'keyup', function( ev ) {
+		if ( KONAMI[keyPos] === ev.keyCode ) {
+			keyPos++;
+
+			if ( keyPos === KONAMI.length ) {
+				keyPos = 0;
+				window.electron.send( 'secrets', 1 );
+			}
+		}
+		else {
+			keyPos = 0;
+		}
+	} );
+</script>
+</body>
+</html>

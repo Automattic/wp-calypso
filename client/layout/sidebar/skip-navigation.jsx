@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,14 +8,14 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 class SkipNavigation extends React.Component {
 	static propTypes = {
 		skipToElementId: PropTypes.string,
 	};
 
-	onClick = event => {
+	onClick = ( event ) => {
 		event.preventDefault();
 		const element = document.getElementById( this.props.skipToElementId );
 		// Make the element focusable

@@ -5,14 +5,14 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { assign, isArray, isEmpty } from 'lodash';
+import { assign, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { first, when, forEach } from './functional';
 import autoscroll from './autoscroll';
-import Emojify from 'components/emojify';
+import Emojify from 'calypso/components/emojify';
 import scrollbleed from './scrollbleed';
 import { addSchemeIfMissing, setUrlScheme } from './url';
 
@@ -116,7 +116,7 @@ const renderGroupedMessages = ( { item, isCurrentUser, twemojiUrl, isExternalUrl
 	);
 };
 
-const itemTypeIs = type => ( { item: [ firstItem ] } ) => firstItem.type === type;
+const itemTypeIs = ( type ) => ( { item: [ firstItem ] } ) => firstItem.type === type;
 
 /*
  * Renders a chat bubble with multiple messages grouped by user.
@@ -126,7 +126,7 @@ const renderGroupedTimelineItem = first(
 	( { item: [ firstItem ] } ) => debug( 'no handler for message type', firstItem.type, firstItem )
 );
 
-const groupMessages = messages => {
+const groupMessages = ( messages ) => {
 	const grouped = messages.reduce(
 		( { user_id, type, group, groups, source }, message ) => {
 			const message_user_id = message.user_id;
@@ -164,7 +164,7 @@ const welcomeMessage = ( { currentUserEmail, translate } ) => (
 	</div>
 );
 
-const timelineHasContent = ( { timeline } ) => isArray( timeline ) && ! isEmpty( timeline );
+const timelineHasContent = ( { timeline } ) => Array.isArray( timeline ) && ! isEmpty( timeline );
 
 const renderTimeline = ( {
 	timeline,
@@ -181,7 +181,7 @@ const renderTimeline = ( {
 		onMouseEnter={ scrollbleedLock }
 		onMouseLeave={ scrollbleedUnlock }
 	>
-		{ groupMessages( timeline ).map( item =>
+		{ groupMessages( timeline ).map( ( item ) =>
 			renderGroupedTimelineItem( {
 				item,
 				isCurrentUser: isCurrentUser( item[ 0 ] ),

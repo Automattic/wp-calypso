@@ -1,5 +1,4 @@
 /**
- * @format
  */
 
 /**
@@ -27,7 +26,7 @@ const PostCommentFormRoot = ( {
 	// Are we displaying the comment form elsewhere? If so, don't render the root form.
 	if (
 		activeReplyCommentId ||
-		some( commentsTree, comment => {
+		some( commentsTree, ( comment ) => {
 			return comment.data && comment.data.isPlaceholder && ! comment.data.parent;
 		} )
 	) {

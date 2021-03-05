@@ -4,16 +4,21 @@
 		border-color: transparent;
 		box-shadow: none;
 		padding: 24px 0 0;
-		margin-bottom: 4px;
+		margin-top: 12px;
 	}
 
 	.section-header__label::before {
 		background-image: none;
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		.card {
 			padding-left: 15px;
+		}
+	}
+
+	@include breakpoint-deprecated( '<480px' ) {
+		.card {
 			padding-right: 15px;
 		}
 	}
@@ -26,5 +31,4 @@
 			animation: loading-fade 1.6s ease-in-out infinite;
 		}
 	}
-
 }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import { By } from 'selenium-webdriver';
  * Internal dependencies
  */
 import AsyncBaseContainer from '../async-base-container';
-import DisconnectSurveyPage from '../pages/disconnect-survey-page.js';
+// import DisconnectSurveyPage from '../pages/disconnect-survey-page.js';
 import * as driverHelper from '../driver-helper.js';
 
 export default class SidebarComponent extends AsyncBaseContainer {
@@ -17,9 +15,12 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		super( driver, By.css( '.sidebar' ) );
 		this.storeSelector = By.css( '.menu-link-text[data-e2e-sidebar="Store"]' );
 	}
+	async _postInit() {
+		return await this.ensureSidebarMenuVisible();
+	}
 
 	async expandDrawerItem( itemName ) {
-		const selector = await driverHelper.getElementByText(
+		const selector = driverHelper.getElementByText(
 			this.driver,
 			By.css( '.sidebar__heading' ),
 			itemName
@@ -36,11 +37,6 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		}
 	}
 
-	async selectDomains() {
-		await this.expandDrawerItem( 'Manage' );
-		return await this._scrollToAndClickMenuItem( 'domains' );
-	}
-
 	async selectPeople() {
 		await this.expandDrawerItem( 'Manage' );
 		return await this._scrollToAndClickMenuItem( 'people' );
@@ -54,21 +50,48 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		); // TODO: data-tip-target target is missing
 	}
 
+	async selectSiteEditor() {
+		await this.expandDrawerItem( 'Design' );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.menu-link-text[data-e2e-sidebar="Site Editor (beta)"]' )
+		);
+	}
+
+	async selectWPAdmin() {
+		return await this._scrollToAndClickMenuItem( 'wpadmin' );
+	}
+
 	async customizeTheme() {
 		return await this._scrollToAndClickMenuItem( 'themes' );
 	}
 
-	async selectPlan() {
-		return await this._scrollToAndClickMenuItem( 'plan' );
+	async selectPlans() {
+		await this.expandDrawerItem( 'Upgrades' );
+		return await this._scrollToAndClickMenuItem( 'plans' );
+	}
+
+	async selectDomains() {
+		await this.expandDrawerItem( 'Upgrades' );
+		return await this._scrollToAndClickMenuItem( 'domains' );
+	}
+
+	async selectMyHome() {
+		return await this._scrollToAndClickMenuItem( 'myhome' );
 	}
 
 	async selectStats() {
-		return await this._scrollToAndClickMenuItem( 'menus' );
+		return await this._scrollToAndClickMenuItem( 'stats' );
 	}
 
 	async selectActivity() {
-		await this.expandDrawerItem( 'Tools' );
+		await this.expandDrawerItem( 'Jetpack' );
 		return await this._scrollToAndClickMenuItem( 'activity' );
+	}
+
+	async selectMarketing() {
+		await this.expandDrawerItem( 'Tools' );
+		return await this._scrollToAndClickMenuItem( 'marketing' );
 	}
 
 	async selectViewThisSite() {
@@ -118,11 +141,15 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, this.storeSelector );
 	}
 
-	async settingsOptionExists() {
-		return await driverHelper.isElementPresent(
+	async settingsOptionExists( click = false ) {
+		const isDisplayed = await driverHelper.isElementPresent(
 			this.driver,
 			SidebarComponent._getSidebarSelector( 'settings' )
 		);
+		if ( click ) {
+			await this._scrollToAndClickMenuItem( 'settings' );
+		}
+		return isDisplayed;
 	}
 
 	async mediaOptionExists() {
@@ -139,7 +166,10 @@ export default class SidebarComponent extends AsyncBaseContainer {
 
 	async _scrollToAndClickMenuItem( target, { clickButton = false } = {} ) {
 		const selector = SidebarComponent._getSidebarSelector( target, { getButton: clickButton } );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( '.site__notices' ) );
+		await driverHelper.waitTillPresentAndDisplayed(
+			this.driver,
+			By.css( '.current-site__notices' )
+		);
 
 		if ( ! ( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector, 500 ) ) ) {
 			const settingsSelector = SidebarComponent._getSidebarSelector( 'settings' );
@@ -158,10 +188,20 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	async ensureSidebarMenuVisible() {
 		const allSitesSelector = By.css( '.current-section button' );
 		const sidebarSelector = By.css( '.sidebar .sidebar__region' );
-		const sidebarVisible = await this.driver.findElement( sidebarSelector ).isDisplayed();
+		const sidebar = await this.driver.findElement( sidebarSelector );
+		const sidebarRect = await sidebar.getRect();
+		const sidebarVisible = sidebar.isDisplayed() && sidebarRect.x >= -100;
 
 		if ( ! sidebarVisible ) {
-			await driverHelper.clickWhenClickable( this.driver, allSitesSelector );
+			try {
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					allSitesSelector,
+					this.explicitWaitMS / 4
+				);
+			} catch ( e ) {
+				console.log( 'All sites button did not click' );
+			}
 		}
 		return await driverHelper.waitTillPresentAndDisplayed( this.driver, sidebarSelector );
 	}
@@ -214,7 +254,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	/**
 	 * Removes a single jetpack site with error label from the sites list.
 	 *
-	 * @return {Promise<boolean>} true if a site was removed
+	 * @returns {Promise<boolean>} true if a site was removed
 	 */
 	async removeBrokenSite() {
 		const siteSwitcherSelector = By.css( '.current-site__switch-sites' );
@@ -244,11 +284,42 @@ export default class SidebarComponent extends AsyncBaseContainer {
 			// no broken sites
 			return false;
 		}
-		await driverHelper.clickWhenClickable( this.driver, brokenSiteButton );
+
+		const countSelector = By.css( '.count' );
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, countSelector );
+		const count = await this.driver.findElement( countSelector ).getText();
+
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, brokenSiteButton );
+		const buttons = await this.driver.findElements( brokenSiteButton );
+		if ( buttons.length > 1 ) {
+			await buttons[ 1 ].click();
+		} else {
+			await driverHelper.clickWhenClickable( this.driver, brokenSiteButton );
+		}
+
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, disconnectJetpackButton );
 		await driverHelper.clickWhenClickable( this.driver, disconnectJetpackButton );
-		const surveyPage = await DisconnectSurveyPage.Expect( this.driver );
-		await surveyPage.skipSurveyAndDisconnectSite();
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.disconnect-site__actions a[href*="down"]' )
+		);
+
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.disconnect-jetpack__button-wrap a[href*="/stats"]' )
+		);
+
+		await this.driver.wait(
+			async () => {
+				const newCount = await this.driver.findElement( countSelector ).getText();
+				return parseInt( newCount ) < parseInt( count );
+			},
+			this.explicitWaitMS * 2,
+			'Unable to disconnect the site. Site count not updating.'
+		);
+
+		// const surveyPage = await DisconnectSurveyPage.Expect( this.driver );
+		// await surveyPage.skipSurveyAndDisconnectSite();
 		// Necessary to drive the loop forward
 		return true;
 	}

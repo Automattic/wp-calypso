@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,11 +9,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { deleteDns, addDns } from 'lib/upgrades/actions';
-import Toggle from 'components/forms/form-toggle';
-import { domainConnect } from 'lib/domains/constants';
-import { getNormalizedData } from 'lib/domains/dns';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { addDns, deleteDns } from 'calypso/state/domains/dns/actions';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import { domainConnect } from 'calypso/lib/domains/constants';
+import { getNormalizedData } from 'calypso/state/domains/dns/utils';
 import DnsRecordsList from '../dns-records/list';
 import DnsRecordsListItem from '../dns-records/item';
 
@@ -32,7 +30,7 @@ class DomainConnectRecord extends React.Component {
 	};
 
 	state = {
-		enabled: this.props.enabled,
+		dnsRecordIsBeingUpdated: false,
 	};
 
 	disableDomainConnect = () => {
@@ -43,20 +41,24 @@ class DomainConnectRecord extends React.Component {
 			type: 'TXT',
 		};
 
-		deleteDns( selectedDomainName, record, error => {
-			if ( error ) {
-				this.props.errorNotice(
-					error.message || translate( 'The Domain Connect record could not be disabled.' )
-				);
-			} else {
-				const successNoticeId = 'domain-connect-disable-success-notice';
-				this.props.successNotice( translate( 'The Domain Connect record has been disabled.' ), {
-					id: successNoticeId,
-					showDismiss: false,
-					duration: 5000,
-				} );
-			}
-		} );
+		this.props
+			.deleteDns( selectedDomainName, record )
+			.then(
+				() => {
+					const successNoticeId = 'domain-connect-disable-success-notice';
+					this.props.successNotice( translate( 'The Domain Connect record has been disabled.' ), {
+						id: successNoticeId,
+						showDismiss: false,
+						duration: 5000,
+					} );
+				},
+				( error ) => {
+					this.props.errorNotice(
+						error.message || translate( 'The Domain Connect record could not be disabled.' )
+					);
+				}
+			)
+			.then( () => this.setState( { dnsRecordIsBeingUpdated: false } ) );
 	};
 
 	enableDomainConnect() {
@@ -69,22 +71,26 @@ class DomainConnectRecord extends React.Component {
 
 		const normalizedData = getNormalizedData( record, this.props.selectedDomainName );
 
-		addDns( this.props.selectedDomainName, normalizedData, error => {
-			if ( error ) {
-				this.props.errorNotice(
-					error.message || translate( 'The Domain Connect record could not be enabled.' )
-				);
-			} else {
-				this.props.successNotice( translate( 'The Domain Connect record has been enabled.' ), {
-					showDismiss: false,
-					duration: 5000,
-				} );
-			}
-		} );
+		this.props
+			.addDns( this.props.selectedDomainName, normalizedData )
+			.then(
+				() => {
+					this.props.successNotice( translate( 'The Domain Connect record has been enabled.' ), {
+						showDismiss: false,
+						duration: 5000,
+					} );
+				},
+				( error ) => {
+					this.props.errorNotice(
+						error.message || translate( 'The Domain Connect record could not be enabled.' )
+					);
+				}
+			)
+			.then( () => this.setState( { dnsRecordIsBeingUpdated: false } ) );
 	}
 
 	handleToggle = () => {
-		// this.setState( { enabled: ! this.state.enabled } );
+		this.setState( { dnsRecordIsBeingUpdated: true } );
 		if ( this.props.enabled ) {
 			this.disableDomainConnect();
 		} else {
@@ -111,13 +117,13 @@ class DomainConnectRecord extends React.Component {
 						content={ translate( 'Handled by WordPress.com' ) }
 						action={
 							<form className="dns__domain-connect-toggle">
-								<Toggle
+								<FormToggle
 									id="domain-connect-record"
 									name="domain-connect-record"
 									onChange={ this.handleToggle }
-									type="checkbox"
 									checked={ enabled }
 									value="active"
+									disabled={ this.state.dnsRecordIsBeingUpdated }
 								/>
 							</form>
 						}
@@ -136,11 +142,10 @@ class DomainConnectRecord extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		errorNotice,
-		removeNotice,
-		successNotice,
-	}
-)( localize( DomainConnectRecord ) );
+export default connect( null, {
+	addDns,
+	deleteDns,
+	errorNotice,
+	removeNotice,
+	successNotice,
+} )( localize( DomainConnectRecord ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,7 +17,7 @@ import { areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/s
 import { areShippingMethodsLoaded } from 'woocommerce/state/sites/shipping-methods/selectors';
 import { areLocationsLoaded } from 'woocommerce/state/sites/data/locations/selectors';
 import { areShippingClassesLoaded } from 'woocommerce/state/sites/shipping-classes/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import QueryLocations from 'woocommerce/components/query-locations';
 
 class QueryShippingZones extends Component {
@@ -29,7 +27,7 @@ class QueryShippingZones extends Component {
 		this.props.actions.fetchShippingClasses( siteId );
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { siteId, loaded } = this.props;
 
 		if ( siteId && ! loaded ) {
@@ -37,7 +35,7 @@ class QueryShippingZones extends Component {
 		}
 	}
 
-	componentWillReceiveProps( { siteId, loaded } ) {
+	UNSAFE_componentWillReceiveProps( { siteId, loaded } ) {
 		//site ID changed, fetch new settings
 		if ( siteId !== this.props.siteId && ! loaded ) {
 			this.fetch( siteId );
@@ -66,7 +64,7 @@ export default connect(
 	( state, ownProps ) => ( {
 		loaded: areShippingZonesFullyLoaded( state, ownProps.siteId ),
 	} ),
-	dispatch => ( {
+	( dispatch ) => ( {
 		actions: bindActionCreators(
 			{
 				fetchShippingZones,

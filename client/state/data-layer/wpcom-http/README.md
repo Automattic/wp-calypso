@@ -19,6 +19,7 @@ Let's look at how this system works from a high-level perspective.
 ## Overview
 
 <!-- the following diagram was generated in draw.io - it can be edited by pasting in the contents of the SVG itself -->
+
 ![](https://cldup.com/unQOzvDkjtq/BpewKu.svg)
 
 Wow, that can look confusing!
@@ -87,13 +88,15 @@ Inside of this model we can build a simple interface for issuing and responding 
 Use the `http` function to create a Redux action describing an HTTP request.
 
 ```js
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 // announce presence - requires no response inside of Calypso
-dispatch( http( {
-	method: 'POST',
-	path: '/me/fairly-land/announce-presence'
-} ) );
+dispatch(
+	http( {
+		method: 'POST',
+		path: '/me/fairly-land/announce-presence',
+	} )
+);
 ```
 
 This function accepts an array of parameters for further specifying information about the request.
@@ -101,20 +104,22 @@ Please see `state/data-layer/wpcom-http/actions.js` for more information.
 
 Specify one or more of the following properties in an HTTP request in order to respond to the different lifecycle events of the request.
 
- - `onSuccess` dispatched when the request returns with a `2xx` status code
- - `onFailure` dispatched when the request fails for any reason whether for an error status code, network timeout, or otherwise
- - `onProgress` _if_ issuing a `POST` request _and_ uploading a file then this is dispatched on progress events
+- `onSuccess` dispatched when the request returns with a `2xx` status code
+- `onFailure` dispatched when the request fails for any reason whether for an error status code, network timeout, or otherwise
+- `onProgress` _if_ issuing a `POST` request _and_ uploading a file then this is dispatched on progress events
 
 Please note that _these are not callback functions_ but rather normal Redux actions which can be serialized and deserialized, inspected and transformed, and monitored or logged.
 
 ```js
 // get fictional blog updates
 // we will ignore failures if they exist
-dispatch( http( {
-	method: 'GET',
-	path: `/sites/${ siteId }/fairy-land/updates`,
-	onSuccess: { type: ADD_UPDATE, siteId }
-} ) );
+dispatch(
+	http( {
+		method: 'GET',
+		path: `/sites/${ siteId }/fairy-land/updates`,
+		onSuccess: { type: ADD_UPDATE, siteId },
+	} )
+);
 ```
 
 You may need to know about the original action which triggered the request when the response comes back in.
@@ -126,11 +131,13 @@ const missileMiddleware = ( store, action ) => {
 		return;
 	}
 
-	dispatch( http( {
-		method: 'POST',
-		path: '/foe/missile/new',
-		onError: { type: TAKE_A_NAP, duration: 5 * MINUTES_IN_SECONDS, nextAction: FIRE_ZE_MISSILES }
-	} ) );
+	dispatch(
+		http( {
+			method: 'POST',
+			path: '/foe/missile/new',
+			onError: { type: TAKE_A_NAP, duration: 5 * MINUTES_IN_SECONDS, nextAction: FIRE_ZE_MISSILES },
+		} )
+	);
 };
 ```
 
@@ -138,7 +145,7 @@ We can be as creative or dull as we want to be in the request lifecycle.
 Because the information from the request response extends the action through meta, we can actually re-use the originating action and handle it based on that meta.
 
 ```js
-import { getProgress } from 'state/data-layer/wpcom-http/utils';
+import { getProgress } from 'calypso/state/data-layer/wpcom-http/utils';
 
 const packageMiddleware = ( store, action ) => {
 	if ( CREATE_PACKAGE !== action.type ) {
@@ -150,32 +157,39 @@ const packageMiddleware = ( store, action ) => {
 		return dispatch( {
 			type: UPDATE_PACKAGE_UPLOAD,
 			packageId: action.packageId,
-			progress
+			progress,
 		} );
 	}
 
 	// reuse the action so we don't need to create
 	// additional action types for _PROGRESS etc...
-	return dispatch( http( {
-		method: 'POST',
-		path: '/packages/new',
-		body: action.FileData,
-		onProgress: action
-	} ) );
-}
+	return dispatch(
+		http( {
+			method: 'POST',
+			path: '/packages/new',
+			body: action.FileData,
+			onProgress: action,
+		} )
+	);
+};
 ```
 
 If we decide to reuse the actions it can get tedious to write out the same action every time.
 Therefore you can skip the responder actions and pass along the original action as the second and optional parameter to `http()`.
 
 ```js
-dispatch( http( {
-	method: 'GET',
-	path: '/me/splines',
-	query: {
-		fields: 'ID,tremie_pipe_type'
-	}
-}, action ) );
+dispatch(
+	http(
+		{
+			method: 'GET',
+			path: '/me/splines',
+			query: {
+				fields: 'ID,tremie_pipe_type',
+			},
+		},
+		action
+	)
+);
 ```
 
 If given, the action passed as the second and optional parameter will take the place of all unspecified `onSuccess`, `onFailure`, and `onProgress` responder events.
@@ -183,7 +197,7 @@ If given, the action passed as the second and optional parameter will take the p
 Because we have a very common pattern when issuing requests there is a built-in helper to hand each action off to the right function based on the (possibly) attached metadata.
 
 ```js
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 // create request when no meta present, add on success, alert on failure
 dispatchRequest( { fetch: fetchMenu, onSuccess: addMenuItems, onError: alertFailure } );
@@ -193,7 +207,7 @@ dispatchRequest( {
 	fetch: sendRecipe,
 	onSuccess: indicateSuccess,
 	onError: removeRecipe,
-	onProgress: updateRecipeProgress
+	onProgress: updateRecipeProgress,
 } );
 ```
 
@@ -204,9 +218,9 @@ That helper is the `dispatchRequest()` function and it handles all of the networ
 At its most basic form it implies three actions we need to provide: a function which generates descriptive HTTP requests; a function which handles successful responses; and a function which handles failing responses.
 Additionally there are other semantics of network requests it can manage.
 
- - A function to handle progress events during data uploads
- - A schema to validate the response data and fail invalid formats
- - A way to indicate data "freshness" or how new data must be to fetch it (coming soon!)
+- A function to handle progress events during data uploads
+- A schema to validate the response data and fail invalid formats
+- A way to indicate data "freshness" or how new data must be to fetch it (coming soon!)
 
 Each of these lifecycle functions is in fact an action creator. As arguments, it takes the original
 associated action and the data coming from the response. It returns the action we want to be dispatched
@@ -220,14 +234,15 @@ Its inclusion here is meant merely to illustrate how the pieces can fit together
 
 ```js
 // API Middleware, Post Like
-import { LIKE_POST, LIKE_POST_PROGRESS, UNLIKE_POST } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { QUEUE_REQUEST } from 'state/data-layer/wpcom-http/constants';
+import { LIKE_POST, LIKE_POST_PROGRESS, UNLIKE_POST } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { QUEUE_REQUEST } from 'calypso/state/data-layer/wpcom-http/constants';
 
 /**
  * @see https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/posts/%24post_ID/likes/new/ API description
+ * @param action the action
  */
-const likePost = ( action ) => (
+const likePost = ( action ) =>
 	// dispatch intent to issue HTTP request by not supplying onSuccess, onError,
 	// and onProgress, but when it comes back it will be wrapped with meta information
 	// describing the response from the HTTP events
@@ -243,17 +258,19 @@ const likePost = ( action ) => (
 		// when the network reconnects
 		// (not implemented yet)
 		whenOffline: QUEUE_REQUEST,
-	} )
-);
+	} );
 
 /**
  * Called on success from HTTP middleware with `data` parameter
  *
  * This is the place to map fromAPI to Calypso formats
+ *
+ * @param data
  */
 const verifyLike = ( { siteId, postId }, data ) => {
 	if ( ! data.hasOwnProperty( 'i_like' ) ) {
 		// something went wrong, so failover
+		// eslint-disable-next-line no-use-before-define
 		return undoLike( { siteId, postId }, 'Invalid data' );
 	}
 
@@ -265,38 +282,43 @@ const verifyLike = ( { siteId, postId }, data ) => {
 		postId,
 		likeCount: data.like_count,
 	} );
-}
+};
 
 /**
  * Called on failure from the HTTP middleware with `error` parameter
+ *
+ * @param error
  */
-const undoLike = ( { siteId, postId }, error ) => (
+const undoLike = ( { siteId, postId }, error ) =>
 	// skip data-layer middleware
 	bypassDataLayer( {
 		type: UNLIKE_POST,
 		siteId,
 		postId,
-	} )
-);
+	} );
 
 /**
  * Maps progress information from the API into a Calypso-native representation
+ *
+ * @param progress
  */
 const updateProgress = ( { siteId, postId }, progress ) => ( {
 	type: LIKE_POST_PROGRESS,
 	siteId,
 	postId,
-	percentage: 100 * progress.loaded / ( progress.total + Number.EPSILON )
+	percentage: ( 100 * progress.loaded ) / ( progress.total + Number.EPSILON ),
 } );
 
 export default {
 	// watch for this action
-	[ LIKE_POST ]: [ dispatchRequest( {
-		fetch: likePost,
-		onSuccess: verifyLike,
-		onError: undoLike,
-		onProgress: updateProgress
-	} ) ],
+	[ LIKE_POST ]: [
+		dispatchRequest( {
+			fetch: likePost,
+			onSuccess: verifyLike,
+			onError: undoLike,
+			onProgress: updateProgress,
+		} ),
+	],
 };
 ```
 
@@ -313,49 +335,48 @@ It's allowed to be a conformal spec where we can ignore anything beyond what we 
 ```js
 // defines the shape and type of data we can recognize
 const likeSchema = {
-	id : "sites-posts-likes-new-response",
-	title : "New Like Response",
-	type : "object",
-	$schema : "http://json-schema.org/draft-04/schema#",
-	properties : {
-		i_like : {
-			 type : "boolean"
-		}
+	id: 'sites-posts-likes-new-response',
+	title: 'New Like Response',
+	type: 'object',
+	$schema: 'http://json-schema.org/draft-04/schema#',
+	properties: {
+		i_like: {
+			type: 'boolean',
+		},
 	},
-	required : [
-		"i_like"
-	]
+	required: [ 'i_like' ],
 };
 
 // change the shape of the data and maybe add more information
 const toLike = ( { i_like } ) => ( {
 	isLiked: i_like,
-	lastLiked: Date.now()
+	lastLiked: Date.now(),
 } );
 
 export default {
-	[ LIKE_POST ]: [ dispatchRequest( {
-		fetch: likePost, // initiate the request
-		onSuccess: verifyLike, // update the Redux store if need be
-		onError: undoLike, // remove the like if we failed
-		onProgress: updateProgress, // update progress tracking UI
-		fromApi: makeJsonSchemaParser( likeSchema, toLike ), // validate and convert to internal Calypso object
-	} ) ]
-}
+	[ LIKE_POST ]: [
+		dispatchRequest( {
+			fetch: likePost, // initiate the request
+			onSuccess: verifyLike, // update the Redux store if need be
+			onError: undoLike, // remove the like if we failed
+			onProgress: updateProgress, // update progress tracking UI
+			fromApi: makeJsonSchemaParser( likeSchema, toLike ), // validate and convert to internal Calypso object
+		} ),
+	],
+};
 ```
 
 Of course, not every response is very complicated or warrants a full-blown parser.
 Sometimes we just want to determine the failure or success based off of a simple value in the response.
 Let's put this together for a fictitious two-factor authentication process.
 
-
 ```js
-const fromApi = response => {
+const fromApi = ( response ) => {
 	if ( ! response.hasOwnProperty( 'auth_granted' ) ) {
 		throw new ValueError( 'Could not understand API response' );
 	}
 
-	if (  ! response.auth_granted ) {
+	if ( ! response.auth_granted ) {
 		throw 'authorization-denied';
 	}
 
@@ -363,14 +384,9 @@ const fromApi = response => {
 		token: response.auth_token,
 		expiresAt: response.auth_valid_until,
 	};
-}
+};
 
-dispatchRequest(
-	fetch2Auth,
-	approveAuth,
-	announceAppropriateFailureMessage,
-	{ fromApi },
-)
+dispatchRequest( fetch2Auth, approveAuth, announceAppropriateFailureMessage, { fromApi } );
 ```
 
 In this case we're not only validating the _schema_ of the response data but also the values and deciding

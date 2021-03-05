@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,10 +10,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { isExternal } from 'lib/url';
+import config from '@automattic/calypso-config';
+import { isOutsideCalypso } from 'calypso/lib/url';
 // actions
-import { sendMessage, sendNotTyping, sendTyping } from 'state/happychat/connection/actions';
+import { sendMessage, sendNotTyping, sendTyping } from 'calypso/state/happychat/connection/actions';
 import {
 	blur,
 	focus,
@@ -23,17 +21,17 @@ import {
 	minimizeChat,
 	minimizedChat,
 	setCurrentMessage,
-} from 'state/happychat/ui/actions';
+} from 'calypso/state/happychat/ui/actions';
 // selectors
-import canUserSendMessages from 'state/happychat/selectors/can-user-send-messages';
-import { getCurrentUser } from 'state/current-user/selectors';
-import getCurrentMessage from 'state/happychat/selectors/get-happychat-current-message';
-import getHappychatChatStatus from 'state/happychat/selectors/get-happychat-chat-status';
-import getHappychatConnectionStatus from 'state/happychat/selectors/get-happychat-connection-status';
-import getHappychatTimeline from 'state/happychat/selectors/get-happychat-timeline';
-import isHappychatMinimizing from 'state/happychat/selectors/is-happychat-minimizing';
-import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
-import isHappychatServerReachable from 'state/happychat/selectors/is-happychat-server-reachable';
+import canUserSendMessages from 'calypso/state/happychat/selectors/can-user-send-messages';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import getCurrentMessage from 'calypso/state/happychat/selectors/get-happychat-current-message';
+import getHappychatChatStatus from 'calypso/state/happychat/selectors/get-happychat-chat-status';
+import getHappychatConnectionStatus from 'calypso/state/happychat/selectors/get-happychat-connection-status';
+import getHappychatTimeline from 'calypso/state/happychat/selectors/get-happychat-timeline';
+import isHappychatMinimizing from 'calypso/state/happychat/selectors/is-happychat-minimizing';
+import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
+import isHappychatServerReachable from 'calypso/state/happychat/selectors/is-happychat-server-reachable';
 // UI components
 import HappychatConnection from './connection-connected';
 import { Title } from './title';
@@ -152,11 +150,11 @@ Happychat.propTypes = {
 	twemojiUrl: PropTypes.string,
 };
 
-const isMessageFromCurrentUser = currentUser => ( { user_id, source } ) => {
+const isMessageFromCurrentUser = ( currentUser ) => ( { user_id, source } ) => {
 	return user_id.toString() === currentUser.ID.toString() && source === 'customer';
 };
 
-const mapState = state => {
+const mapState = ( state ) => {
 	const currentUser = getCurrentUser( state );
 	return {
 		chatStatus: getHappychatChatStatus( state ),
@@ -165,7 +163,7 @@ const mapState = state => {
 		disabled: ! canUserSendMessages( state ),
 		isChatOpen: isHappychatOpen( state ),
 		isCurrentUser: isMessageFromCurrentUser( currentUser ), // see redux-no-bound-selectors eslint-rule
-		isExternalUrl: isExternal,
+		isExternalUrl: isOutsideCalypso,
 		isMinimizing: isHappychatMinimizing( state ),
 		isServerReachable: isHappychatServerReachable( state ),
 		message: getCurrentMessage( state ),
@@ -186,7 +184,4 @@ const mapDispatch = {
 	setFocused: focus,
 };
 
-export default connect(
-	mapState,
-	mapDispatch
-)( localize( Happychat ) );
+export default connect( mapState, mapDispatch )( localize( Happychat ) );

@@ -1,44 +1,27 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isFetchingPreferences } from 'state/preferences/selectors';
-import { fetchPreferences } from 'state/preferences/actions';
+import { isFetchingPreferences } from 'calypso/state/preferences/selectors';
+import { fetchPreferences } from 'calypso/state/preferences/actions';
 
-class QueryPreferences extends Component {
-	componentWillMount() {
-		if ( ! this.props.fetchingPreferences ) {
-			this.props.fetchPreferences();
-		}
+const request = () => ( dispatch, getState ) => {
+	if ( ! isFetchingPreferences( getState() ) ) {
+		dispatch( fetchPreferences() );
 	}
+};
 
-	render() {
-		return null;
-	}
+export default function QueryPreferences() {
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		dispatch( request() );
+	}, [ dispatch ] );
+
+	return null;
 }
-
-QueryPreferences.propTypes = {
-	fetchingPreferences: PropTypes.bool,
-	fetchPreferences: PropTypes.func,
-};
-
-QueryPreferences.defaultProps = {
-	fetchPreferences: () => {},
-	fetchingPreferences: false,
-};
-
-export default connect(
-	state => ( { fetchingPreferences: isFetchingPreferences( state ) } ),
-	{
-		fetchPreferences,
-	}
-)( QueryPreferences );

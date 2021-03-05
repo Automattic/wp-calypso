@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,12 +7,12 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { siteSelection, sites, navigation } from 'my-sites/controller';
+import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
 import { customize } from './controller';
-import config from 'config';
-import { makeLayout, render as clientRender } from 'controller';
+import config from '@automattic/calypso-config';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
-export default function() {
+export default function () {
 	if ( config.isEnabled( 'manage/customize' ) ) {
 		page( '/customize/:panel([^.]+)?', siteSelection, sites, makeLayout, clientRender );
 		page(

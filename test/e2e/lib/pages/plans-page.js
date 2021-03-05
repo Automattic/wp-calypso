@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -29,10 +27,19 @@ export default class PlansPage extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}
 
+	async openAdvancedPlansSegment() {
+		const selector = by.css(
+			'.plans-features-main ul.segmented-control.is-primary.plan-features__interval-type.is-customer-type-toggle li:nth-child(2)'
+		);
+		return await driverHelper.clickWhenClickable( this.driver, selector );
+	}
+
 	async waitForComparison() {
+		const plansPageMainCssClass =
+			host === 'WPCOM' ? '.plans-features-main__group' : '.selector__main';
 		return await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,
-			by.css( '.plans-features-main__group' )
+			by.css( plansPageMainCssClass )
 		);
 	}
 
@@ -50,7 +57,7 @@ export default class PlansPage extends AsyncBaseContainer {
 	}
 
 	async confirmCurrentPlan( planName ) {
-		let selector = by.css( `.is-current.is-${ planName }-plan` );
+		let selector = by.css( `.is-${ planName }-plan .plan-pill` );
 		if ( host !== 'WPCOM' ) {
 			selector = by.css( `.is-${ planName }-plan` );
 		}
@@ -59,15 +66,22 @@ export default class PlansPage extends AsyncBaseContainer {
 	}
 
 	async planTypesShown( planType ) {
+		const plansCssHandle =
+			planType === 'jetpack' ? '.selector__main' : `[data-e2e-plans="${ planType }"]`;
 		return await driverHelper.isEventuallyPresentAndDisplayed(
 			this.driver,
-			by.css( `[data-e2e-plans="${ planType }"]` )
+			by.css( plansCssHandle )
 		);
 	}
 
-	async selectBusinessPlan() {
+	async selectPaidPlan() {
 		// Wait a little for loading animation
 		await this.driver.sleep( 1000 );
+
+		if ( host !== 'WPCOM' ) {
+			return await this.selectJetpackSecurity();
+		}
+
 		if ( currentScreenSize() === 'mobile' ) {
 			return await driverHelper.clickWhenClickable(
 				this.driver,
@@ -78,6 +92,13 @@ export default class PlansPage extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			by.css( 'td.is-top-buttons button.is-business-plan' )
+		);
+	}
+
+	async selectJetpackSecurity() {
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			by.css( '[data-e2e-product-slug="jetpack_security_daily"] .button' )
 		);
 	}
 }

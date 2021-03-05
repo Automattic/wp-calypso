@@ -1,26 +1,24 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'calypso/dispatcher';
 
 /**
  * Internal Dependencies
  */
-import { action as InvitesActionTypes } from 'lib/invites/constants';
+import { action as InvitesActionTypes } from 'calypso/lib/invites/constants';
 import User from './user';
 let _user = false;
 
-export default function() {
+export default function () {
 	if ( ! _user ) {
 		_user = new User();
 	}
 	return _user;
 }
 
-User.dispatchToken = Dispatcher.register( function( payload ) {
+User.dispatchToken = Dispatcher.register( function ( payload ) {
 	const action = payload.action;
 	switch ( action.type ) {
 		case InvitesActionTypes.INVITE_ACCEPTED:

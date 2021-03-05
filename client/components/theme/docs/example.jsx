@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Theme from 'components/theme';
+import Theme from 'calypso/components/theme';
 
 const ThemeExample = () => {
 	const theme = {
@@ -26,19 +24,19 @@ const ThemeExample = () => {
 				buttonContents={ {
 					action1: {
 						label: 'Menu Item 1',
-						action: function() {
+						action: function () {
 							console.log( 'Menu Item 1 selected' );
 						},
 					},
 					action2: {
 						label: 'Menu Item 2',
-						action: function() {
+						action: function () {
 							console.log( 'Menu Item 2 selected' );
 						},
 					},
 				} }
 				actionLabel="Click Action"
-				onScreenshotClick={ function() {
+				onScreenshotClick={ function () {
 					console.log( 'onScreenshotClick triggered' );
 				} }
 			/>

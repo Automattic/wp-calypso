@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,28 +13,28 @@ import { localize } from 'i18n-calypso';
  */
 import ButtonsAppearance from './appearance';
 import ButtonsOptions from './options';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import QuerySharingButtons from 'components/data/query-sharing-buttons';
-import { saveSiteSettings } from 'state/site-settings/actions';
-import { saveSharingButtons } from 'state/sites/sharing-buttons/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import QuerySharingButtons from 'calypso/components/data/query-sharing-buttons';
+import { saveSiteSettings } from 'calypso/state/site-settings/actions';
+import { saveSharingButtons } from 'calypso/state/sites/sharing-buttons/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	getSiteSettings,
 	isSavingSiteSettings,
 	isSiteSettingsSaveSuccessful,
-} from 'state/site-settings/selectors';
-import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
-import getSharingButtons from 'state/selectors/get-sharing-buttons';
-import isSavingSharingButtons from 'state/selectors/is-saving-sharing-buttons';
-import isSharingButtonsSaveSuccessful from 'state/selectors/is-sharing-buttons-save-successful';
-import { isJetpackSite } from 'state/sites/selectors';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import { activateModule } from 'state/jetpack/modules/actions';
-import { protectForm } from 'lib/protect-form';
+} from 'calypso/state/site-settings/selectors';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import getSharingButtons from 'calypso/state/selectors/get-sharing-buttons';
+import isSavingSharingButtons from 'calypso/state/selectors/is-saving-sharing-buttons';
+import isSharingButtonsSaveSuccessful from 'calypso/state/selectors/is-sharing-buttons-save-successful';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import { protectForm } from 'calypso/lib/protect-form';
 
 class SharingButtons extends Component {
 	state = {
@@ -56,7 +54,7 @@ class SharingButtons extends Component {
 		translate: PropTypes.func,
 	};
 
-	saveChanges = event => {
+	saveChanges = ( event ) => {
 		const { isJetpack, isLikesModuleActive, siteId, path } = this.props;
 
 		event.preventDefault();
@@ -88,12 +86,12 @@ class SharingButtons extends Component {
 		} );
 	};
 
-	handleButtonsChange = buttons => {
+	handleButtonsChange = ( buttons ) => {
 		this.props.markChanged();
 		this.setState( { buttonsPendingSave: buttons } );
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// Save request has been performed
 		if ( this.props.isSaving && ! nextProps.isSaving ) {
 			if (
@@ -136,7 +134,7 @@ class SharingButtons extends Component {
 			<form
 				onSubmit={ this.saveChanges }
 				id="sharing-buttons"
-				className="sharing-settings sharing-buttons"
+				className="buttons__sharing-settings buttons__sharing-buttons"
 			>
 				<PageViewTracker
 					path="/marketing/sharing-buttons/:site"
@@ -164,7 +162,7 @@ class SharingButtons extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const settings = getSiteSettings( state, siteId );
 		const buttons = getSharingButtons( state, siteId );
@@ -199,8 +197,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	protectForm,
-	localize
-)( SharingButtons );
+export default flowRight( connectComponent, protectForm, localize )( SharingButtons );

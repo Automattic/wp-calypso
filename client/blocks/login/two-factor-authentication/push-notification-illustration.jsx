@@ -2,12 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { colors as PALETTE } from '@automattic/color-studio';
-
-/**
- * Internal dependencies
- */
-import { useLocalizedMoment } from 'components/localized-moment';
+import colorStudio from '@automattic/color-studio';
 
 /**
  * Style dependencies
@@ -17,6 +12,7 @@ import './push-notification-illustration.scss';
 /**
  * Module constants
  */
+const PALETTE = colorStudio.colors;
 const COLOR_BLUE_10 = PALETTE[ 'WordPress Blue 10' ];
 const COLOR_BLUE_20 = PALETTE[ 'WordPress Blue 20' ];
 const COLOR_BLUE_40 = PALETTE[ 'WordPress Blue 40' ];
@@ -72,17 +68,16 @@ function NotificationSvg() {
 }
 
 export default function PushNotificationIllustration() {
-	const moment = useLocalizedMoment();
-	const currentTime = moment().format( 'h:mm' );
-
 	// Inlining two stacked SVGs because they’re a part of an animated image.
 	// By not loading them externally, we’re making sure the animation will
 	// get fired right away with all of its elements in place.
+	const now = new Date();
+	const time = `${ now.getHours() % 12 || 12 }:${ String( now.getMinutes() ).padStart( 2, '0' ) }`;
 
 	return (
 		<div className="two-factor-authentication__illustration" aria-hidden="true">
 			<DeviceSvg />
-			<div className="two-factor-authentication__illustration-screen">{ currentTime }</div>
+			<div className="two-factor-authentication__illustration-screen">{ time }</div>
 			<div className="two-factor-authentication__illustration-notification-container">
 				<NotificationSvg />
 			</div>

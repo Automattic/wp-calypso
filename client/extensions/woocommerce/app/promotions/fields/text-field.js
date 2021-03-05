@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,14 +7,14 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormField from './form-field';
 
-const TextField = props => {
+const TextField = ( props ) => {
 	const { fieldName, explanationText, placeholderText, value, edit } = props;
 	const renderedValue = 'undefined' !== typeof value ? value : '';
 
-	const onChange = e => {
+	const onChange = ( e ) => {
 		const newValue = e.target.value;
 		edit( fieldName, newValue );
 	};

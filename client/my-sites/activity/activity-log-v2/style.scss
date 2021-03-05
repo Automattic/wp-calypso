@@ -1,0 +1,32 @@
+main.activity-log-v2 {
+	&:not( .wordpressdotcom ) {
+		.activity-log-v2__header {
+			margin-top: 32px;
+		}
+		.activity-log-v2__content {
+			margin-top: 32px;
+			margin-bottom: 32px;
+		}
+	}
+
+	.filterbar .filterbar__wrap.card {
+		display: flex;
+	}
+}
+
+.activity-log-v2__header {
+	& > * {
+		&:not( :first-child ) {
+			margin-top: 16px;
+		}
+	}
+
+	// use sub-section styling at mobile sizes
+	@include breakpoint-deprecated( '<660px' ) {
+		h2 {
+			font-size: $font-body;
+			font-weight: 600;
+			line-height: 23px;
+		}
+	}
+}

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Style Dependencies
@@ -54,7 +53,7 @@ class EmptyContent extends Component {
 					primary
 					className="empty-content__action"
 					onClick={ this.props.actionCallback }
-					href={ this.props.actionURL }
+					href={ localizeUrl( this.props.actionURL ) }
 					target={ this.props.actionTarget }
 					onMouseEnter={ this.props.actionHoverCallback }
 					onTouchStart={ this.props.actionHoverCallback }

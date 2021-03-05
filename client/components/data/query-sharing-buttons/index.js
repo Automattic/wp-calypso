@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,15 +9,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import isRequestingSharingButtons from 'state/selectors/is-requesting-sharing-buttons';
-import { requestSharingButtons } from 'state/sites/sharing-buttons/actions';
+import isRequestingSharingButtons from 'calypso/state/selectors/is-requesting-sharing-buttons';
+import { requestSharingButtons } from 'calypso/state/sites/sharing-buttons/actions';
 
 class QuerySharingButtons extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.requestSettings( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { siteId } = this.props;
 		if ( ! nextProps.siteId || siteId === nextProps.siteId ) {
 			return;

@@ -1,16 +1,13 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
-import { addQueryArgs } from 'lib/url';
-import { addLocaleToPath, localizeUrl } from 'lib/i18n-utils';
-import config, { isEnabled } from 'config';
+import { addQueryArgs } from 'calypso/lib/url';
+import { addLocaleToPath, localizeUrl } from 'calypso/lib/i18n-utils';
+import config, { isEnabled } from '@automattic/calypso-config';
 
 export function login( {
 	isJetpack,
-	isWoo,
+	isGutenboarding,
 	isNative,
 	locale,
 	redirectTo,
@@ -21,6 +18,8 @@ export function login( {
 	oauth2ClientId,
 	wccomFrom,
 	site,
+	useMagicLink,
+	from,
 } = {} ) {
 	let url = config( 'login_url' );
 
@@ -29,12 +28,20 @@ export function login( {
 
 		if ( socialService ) {
 			url += '/' + socialService + '/callback';
+		} else if ( twoFactorAuthType && isJetpack ) {
+			url += '/jetpack/' + twoFactorAuthType;
+		} else if ( twoFactorAuthType && isGutenboarding ) {
+			url += '/new/' + twoFactorAuthType;
 		} else if ( twoFactorAuthType ) {
 			url += '/' + twoFactorAuthType;
 		} else if ( socialConnect ) {
 			url += '/social-connect';
 		} else if ( isJetpack ) {
 			url += '/jetpack';
+		} else if ( isGutenboarding ) {
+			url += '/new';
+		} else if ( useMagicLink ) {
+			url += '/link';
 		}
 	}
 
@@ -62,12 +69,12 @@ export function login( {
 		url = addQueryArgs( { client_id: oauth2ClientId }, url );
 	}
 
-	if ( isWoo ) {
-		url = addQueryArgs( { from: 'woocommerce-setup-wizard' }, url );
-	}
-
 	if ( wccomFrom ) {
 		url = addQueryArgs( { 'wccom-from': wccomFrom }, url );
+	}
+
+	if ( from ) {
+		url = addQueryArgs( { from }, url );
 	}
 
 	return url;

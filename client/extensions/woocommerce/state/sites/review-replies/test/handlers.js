@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -26,7 +24,7 @@ import {
 	announceCreateFailure,
 } from '../handlers.js';
 import reviewReplies from './fixtures/review-replies';
-import { NOTICE_CREATE, WPCOM_HTTP_REQUEST } from 'state/action-types';
+import { NOTICE_CREATE, WPCOM_HTTP_REQUEST } from 'calypso/state/action-types';
 import {
 	WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
 	WOOCOMMERCE_REVIEW_REPLIES_REQUEST,

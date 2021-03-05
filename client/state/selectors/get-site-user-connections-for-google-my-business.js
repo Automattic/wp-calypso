@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,8 +6,8 @@ import { filter, last } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSiteKeyringsForService } from 'state/site-keyrings/selectors';
-import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
+import { getSiteKeyringsForService } from 'calypso/state/site-keyrings/selectors';
+import { getKeyringConnectionsByName } from 'calypso/state/sharing/keyring/selectors';
 
 function isConnected( keyringConnection, externalUser, siteKeyring ) {
 	return (
@@ -25,9 +23,9 @@ function isConnected( keyringConnection, externalUser, siteKeyring ) {
  * The format of the `connections` returned matches the one returned by
  * `getSiteUserConnectionsForService` used for Publicize services.
  *
- * @param  {Object} state  Global state tree
- * @param  {Object} siteId The site ID
- * @return {Object}        List of GMB connections for this site
+ * @param  {object} state  Global state tree
+ * @param  {object} siteId The site ID
+ * @returns {object}        List of GMB connections for this site
  */
 export default function getSiteUserConnectionsForGoogleMyBusiness( state, siteId ) {
 	// Google My Business can only have one location connected at a time
@@ -42,9 +40,9 @@ export default function getSiteUserConnectionsForGoogleMyBusiness( state, siteId
 	const keyringConnections = getKeyringConnectionsByName( state, 'google_my_business' );
 	const locations = [];
 
-	keyringConnections.forEach( keyringConnection => {
+	keyringConnections.forEach( ( keyringConnection ) => {
 		if ( keyringConnection.additional_external_users ) {
-			keyringConnection.additional_external_users.forEach( externalUser => {
+			keyringConnection.additional_external_users.forEach( ( externalUser ) => {
 				locations.push( {
 					...keyringConnection,
 					keyring_connection_ID: keyringConnection.ID,

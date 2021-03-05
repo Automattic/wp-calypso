@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { get, keys, last, map, omit, reduce, slice } from 'lodash';
 /**
  * Internal dependencies
  */
-import InfiniteList from 'components/infinite-list';
+import InfiniteList from 'calypso/components/infinite-list';
 import Label from './label';
 
 /**
@@ -68,7 +66,7 @@ class SortedGrid extends PureComponent {
 		);
 	}
 
-	renderItem = item => {
+	renderItem = ( item ) => {
 		if ( item.isGridLabel ) {
 			return this.renderLabels( item );
 		}

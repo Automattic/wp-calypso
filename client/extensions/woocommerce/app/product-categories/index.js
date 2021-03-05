@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,18 +11,18 @@ import { union, includes, trim, debounce } from 'lodash';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Main from 'components/main';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
+import Main from 'calypso/components/main';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
 import ProductCategoriesList from 'woocommerce/app/product-categories/list';
 import { recordTrack } from 'woocommerce/lib/analytics';
-import SectionNav from 'components/section-nav';
-import Search from 'components/search';
-import { withAnalytics } from 'state/analytics/actions';
+import SectionNav from 'calypso/components/section-nav';
+import Search from 'calypso/components/search';
+import { withAnalytics } from 'calypso/state/analytics/actions';
 
 class ProductCategories extends Component {
 	state = {
@@ -37,14 +35,14 @@ class ProductCategories extends Component {
 		this.debouncedOnSearch = debounce( this.onSearch, 500 );
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { siteId } = this.props;
 		if ( siteId ) {
 			this.props.fetchProductCategories( siteId, { page: 1 } );
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { siteId } = this.props;
 		const newSiteId = newProps.siteId || null;
 		if ( siteId !== newSiteId ) {
@@ -52,7 +50,7 @@ class ProductCategories extends Component {
 		}
 	}
 
-	requestPages = pages => {
+	requestPages = ( pages ) => {
 		const { site } = this.props;
 		const { searchQuery } = this.state;
 
@@ -63,7 +61,7 @@ class ProductCategories extends Component {
 		}
 		const requestedPages = this.state[ stateName ];
 
-		pages.forEach( page => {
+		pages.forEach( ( page ) => {
 			if ( ! includes( requestedPages, page ) ) {
 				this.props.fetchProductCategories( site.ID, { search: searchQuery, page } );
 			}
@@ -74,7 +72,7 @@ class ProductCategories extends Component {
 		} );
 	};
 
-	onSearch = query => {
+	onSearch = ( query ) => {
 		const { site } = this.props;
 
 		if ( trim( query ) === '' ) {
@@ -136,7 +134,7 @@ function mapStateToProps( state ) {
 	};
 }
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	searchProductCategories: ( siteId, query ) =>
 		withAnalytics(
 			recordTrack( 'calypso_woocommerce_product_category_search', query ),
@@ -145,7 +143,4 @@ const mapDispatchToProps = dispatch => ( {
 	fetchProductCategories: ( ...args ) => fetchProductCategories( ...args )( dispatch ),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ProductCategories ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ProductCategories ) );

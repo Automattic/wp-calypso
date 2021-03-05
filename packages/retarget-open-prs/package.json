@@ -1,0 +1,25 @@
+{
+	"name": "@automattic/retarget-open-prs",
+	"version": "0.1.0",
+	"description": "A tool to retarget open PRs from one branch to another.",
+	"main": "index.js",
+	"author": "Automattic Inc.",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/retarget-open-prs"
+	},
+	"keywords": [
+		"inclusion",
+		"diversity",
+		"github"
+	],
+	"license": "GPL-2.0-or-later",
+	"bin": {
+		"retarget-open-prs": "./cli.js"
+	},
+	"dependencies": {
+		"@octokit/core": "^3.1.2",
+		"yargs": "^15.3.1"
+	}
+}

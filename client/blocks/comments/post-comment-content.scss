@@ -4,12 +4,12 @@
 
 	&.is-single-line,
 	&.is-single-line .comments__comment-content {
-		max-height: 15px * 1.6;
+		max-height: $font-body * 1.6;
 	}
 
 	&.is-excerpt,
 	&.is-excerpt .comments__comment-content {
-		max-height: 16px * 1.4375 * 3; // Needs to be exactly 69px so a 3-liner only and 3-liner excerpt align
+		max-height: $font-body * 1.6 * 3; // 3 lines
 	}
 
 	&.is-single-line .comments__comment-content,
@@ -34,30 +34,6 @@
 }
 
 .comments__comment-content {
-	@extend %content-font;
-	font-size: 15px;
+	@extend %rendered-block-content;
 	line-height: 1.56;
-	word-break: break-word;
-
-	p {
-		color: var( --color-text );
-
-		&:last-child {
-			margin-bottom: 0;
-		}
-	}
-
-	blockquote {
-		background: var( --color-neutral-0 );
-		border-left: 2px solid var( --color-neutral-0 );
-		border-radius: 0;
-		color: var( --color-text );
-		margin: 8px 0 16px;
-		padding: 8px 16px;
-	}
-
-	pre {
-		white-space: pre-wrap;
-	}
 }
-

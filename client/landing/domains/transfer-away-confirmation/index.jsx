@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
  */
 import DomainsLandingHeader from '../header';
 import DomainsLandingContentCard from '../content-card';
-import { CALYPSO_CONTACT } from 'lib/url/support';
-import wp from 'lib/wp';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import wp from 'calypso/lib/wp';
 import { getMaintenanceMessageFromError } from '../utils';
 
 const wpcom = wp.undocumented();
@@ -41,7 +41,7 @@ class TransferAwayConfirmationPage extends Component {
 		this.state = this.getLoadingState();
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { domain, recipientId, token } = this.props;
 		const { verifyEmail } = VerifyConfirmationCommand;
 
@@ -49,7 +49,7 @@ class TransferAwayConfirmationPage extends Component {
 			() => {
 				this.setState( this.getConfirmationSelectState() );
 			},
-			error => {
+			( error ) => {
 				this.setErrorState( error );
 			}
 		);
@@ -197,7 +197,7 @@ class TransferAwayConfirmationPage extends Component {
 		};
 	};
 
-	getRunningMaintenanceErrorState = error => {
+	getRunningMaintenanceErrorState = ( error ) => {
 		const { translate } = this.props;
 
 		const message = getMaintenanceMessageFromError( error, translate );
@@ -234,7 +234,7 @@ class TransferAwayConfirmationPage extends Component {
 		};
 	};
 
-	setErrorState = error => {
+	setErrorState = ( error ) => {
 		let errorState;
 
 		switch ( error.error ) {
@@ -312,7 +312,7 @@ class TransferAwayConfirmationPage extends Component {
 		};
 	};
 
-	setSuccessState = success => {
+	setSuccessState = ( success ) => {
 		let successState;
 
 		switch ( success ) {

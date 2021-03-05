@@ -1,30 +1,62 @@
-/** @format */
 /**
  * External dependencies
  */
-import React from 'react';
-import { localize } from 'i18n-calypso';
+import React, { useEffect } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import ViewersData from 'components/data/viewers-data';
 import Viewers from './viewers';
+import useViewers from 'calypso/data/viewers/use-viewers';
+import useRemoveViewer from 'calypso/data/viewers/remove-viewer';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 
-class ViewersList extends React.PureComponent {
-	static displayName = 'ViewersList';
+const ViewersList = ( { site, label } ) => {
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+	const {
+		data,
+		isLoading,
+		fetchNextPage,
+		isFetchingNextPage,
+		hasNextPage,
+		error,
+		refetch,
+	} = useViewers( {
+		siteId: site.ID,
+	} );
+	const { removeViewer } = useRemoveViewer();
 
-	render() {
-		return (
-			<ViewersData
-				site={ this.props.site }
-				siteId={ this.props.site.ID }
-				label={ this.props.label }
-			>
-				<Viewers />
-			</ViewersData>
-		);
-	}
-}
+	useEffect( () => {
+		if ( error ) {
+			dispatch(
+				errorNotice( 'There was an error retrieving viewer', {
+					id: 'site-viewers-notice',
+					button: 'Try again',
+					onClick: () => {
+						removeNotice( 'site-viewers-notice' );
+						refetch();
+					},
+				} )
+			);
+		}
+	}, [ dispatch, error, refetch, translate ] );
 
-export default localize( ViewersList );
+	return (
+		<Viewers
+			site={ site }
+			label={ label }
+			viewers={ data?.viewers ?? [] }
+			isFetching={ isLoading }
+			totalViewers={ data?.total }
+			fetchNextPage={ fetchNextPage }
+			hasNextPage={ hasNextPage }
+			isFetchingNextPage={ isFetchingNextPage }
+			removeViewer={ removeViewer }
+		/>
+	);
+};
+
+export default ViewersList;

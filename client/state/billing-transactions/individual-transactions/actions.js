@@ -1,4 +1,8 @@
-/** @format */
+/**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -8,10 +12,14 @@ import {
 	BILLING_TRANSACTION_RECEIVE,
 	BILLING_TRANSACTION_REQUEST_FAILURE,
 	BILLING_TRANSACTION_REQUEST_SUCCESS,
-} from 'state/action-types';
-import wp from 'lib/wp';
+} from 'calypso/state/action-types';
+import wp from 'calypso/lib/wp';
+import { billingHistoryReceipt } from 'calypso/me/purchases/paths';
+import { errorNotice } from 'calypso/state/notices/actions';
 
-export const requestBillingTransaction = transactionId => dispatch => {
+import 'calypso/state/billing-transactions/init';
+
+export const requestBillingTransaction = ( transactionId ) => ( dispatch ) => {
 	dispatch( {
 		type: BILLING_TRANSACTION_REQUEST,
 		transactionId,
@@ -21,7 +29,7 @@ export const requestBillingTransaction = transactionId => dispatch => {
 		.undocumented()
 		.me()
 		.getReceipt( transactionId, { format: 'display' } )
-		.then( receipt => {
+		.then( ( receipt ) => {
 			dispatch( {
 				type: BILLING_TRANSACTION_REQUEST_SUCCESS,
 				transactionId,
@@ -32,16 +40,41 @@ export const requestBillingTransaction = transactionId => dispatch => {
 				receipt: receipt,
 			} );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( {
 				type: BILLING_TRANSACTION_REQUEST_FAILURE,
 				transactionId,
 				error,
 			} );
+
+			const displayOnNextPage = true;
+			const id = `transaction-fetch-${ transactionId }`;
+			if ( 'invalid_receipt' === error.error ) {
+				dispatch(
+					errorNotice(
+						translate( "Sorry, we couldn't find receipt #%s.", { args: transactionId } ),
+						{
+							id,
+							displayOnNextPage,
+							duration: 5000,
+						}
+					)
+				);
+				return;
+			}
+
+			dispatch(
+				errorNotice( translate( "Sorry, we weren't able to load the requested receipt." ), {
+					id,
+					displayOnNextPage,
+					button: translate( 'Try again' ),
+					href: billingHistoryReceipt( transactionId ),
+				} )
+			);
 		} );
 };
 
-export const clearBillingTransactionError = transactionId => ( {
+export const clearBillingTransactionError = ( transactionId ) => ( {
 	type: BILLING_TRANSACTION_ERROR_CLEAR,
 	transactionId,
 } );

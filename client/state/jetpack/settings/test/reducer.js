@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,18 +8,17 @@ import deepFreeze from 'deep-freeze';
  */
 import reducer, { settingsReducer } from '../reducer';
 import {
-	DESERIALIZE,
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
 	JETPACK_MODULES_RECEIVE,
 	JETPACK_SETTINGS_SAVE_SUCCESS,
 	JETPACK_SETTINGS_UPDATE,
-	SERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -45,18 +42,18 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should mark the module as active upon successful module activation', () => {
-			const siteId = 12345678,
-				initialState = {
-					12345678: {
-						setting_123: 'test',
-						'module-a': false,
-					},
+			const siteId = 12345678;
+			const initialState = {
+				12345678: {
+					setting_123: 'test',
+					'module-a': false,
 				},
-				action = {
-					type: JETPACK_MODULE_ACTIVATE_SUCCESS,
-					siteId,
-					moduleSlug: 'module-a',
-				};
+			};
+			const action = {
+				type: JETPACK_MODULE_ACTIVATE_SUCCESS,
+				siteId,
+				moduleSlug: 'module-a',
+			};
 			const state = settingsReducer( deepFreeze( initialState ), action );
 			expect( state ).toEqual( {
 				12345678: {
@@ -67,18 +64,18 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should mark the module as inactive upon successful module deactivation', () => {
-			const siteId = 12345678,
-				initialState = {
-					12345678: {
-						setting_123: 'test',
-						'module-a': true,
-					},
+			const siteId = 12345678;
+			const initialState = {
+				12345678: {
+					setting_123: 'test',
+					'module-a': true,
 				},
-				action = {
-					type: JETPACK_MODULE_DEACTIVATE_SUCCESS,
-					siteId,
-					moduleSlug: 'module-a',
-				};
+			};
+			const action = {
+				type: JETPACK_MODULE_DEACTIVATE_SUCCESS,
+				siteId,
+				moduleSlug: 'module-a',
+			};
 			const state = settingsReducer( deepFreeze( initialState ), action );
 			expect( state ).toEqual( {
 				12345678: {
@@ -89,26 +86,26 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should update the module activation state upon receiving new modules', () => {
-			const siteId = 12345678,
-				initialState = {
-					12345678: {
-						setting_123: 'test',
-						'module-a': true,
-						'module-b': false,
+			const siteId = 12345678;
+			const initialState = {
+				12345678: {
+					setting_123: 'test',
+					'module-a': true,
+					'module-b': false,
+				},
+			};
+			const action = {
+				type: JETPACK_MODULES_RECEIVE,
+				siteId,
+				modules: {
+					'module-a': {
+						active: false,
+					},
+					'module-b': {
+						active: true,
 					},
 				},
-				action = {
-					type: JETPACK_MODULES_RECEIVE,
-					siteId,
-					modules: {
-						'module-a': {
-							active: false,
-						},
-						'module-b': {
-							active: true,
-						},
-					},
-				};
+			};
 			const state = settingsReducer( deepFreeze( initialState ), action );
 			expect( state ).toEqual( {
 				12345678: {
@@ -120,29 +117,29 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should update module settings with normalized ones when receiving new modules', () => {
-			const siteId = 12345678,
-				initialState = {
-					12345678: {
-						setting_123: 'test',
-					},
+			const siteId = 12345678;
+			const initialState = {
+				12345678: {
+					setting_123: 'test',
 				},
-				action = {
-					type: JETPACK_MODULES_RECEIVE,
-					siteId,
-					modules: {
-						minileven: {
-							active: true,
-							options: {
-								wp_mobile_excerpt: {
-									current_value: true,
-								},
-								some_other_option: {
-									current_value: '123',
-								},
+			};
+			const action = {
+				type: JETPACK_MODULES_RECEIVE,
+				siteId,
+				modules: {
+					minileven: {
+						active: true,
+						options: {
+							wp_mobile_excerpt: {
+								current_value: true,
+							},
+							some_other_option: {
+								current_value: '123',
 							},
 						},
 					},
-				};
+				},
+			};
 			const state = settingsReducer( deepFreeze( initialState ), action );
 			expect( state ).toEqual( {
 				12345678: {
@@ -277,7 +274,7 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {
 				[ 12345678 ]: settings,
 			} );
-			const state = settingsReducer( original, { type: SERIALIZE } );
+			const state = serialize( settingsReducer, original );
 
 			expect( state.root() ).toEqual( original );
 		} );
@@ -287,21 +284,16 @@ describe( 'reducer', () => {
 				[ 12345678 ]: settings,
 			} );
 
-			const state = settingsReducer( original, { type: DESERIALIZE } );
+			const state = deserialize( settingsReducer, original );
 
 			expect( state ).toEqual( original );
 		} );
 
 		test( 'should not load invalid persisted state', () => {
 			const original = deepFreeze( {
-				[ 12345678 ]: {
-					onboarding: {
-						...settings.onboarding,
-						siteTitle: {},
-					},
-				},
+				[ 12345678 ]: [ 'test' ],
 			} );
-			const state = settingsReducer( original, { type: DESERIALIZE } );
+			const state = deserialize( settingsReducer, original );
 
 			expect( state ).toEqual( {} );
 		} );

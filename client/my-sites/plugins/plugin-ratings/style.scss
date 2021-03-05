@@ -9,20 +9,20 @@
 }
 
 .plugin-ratings__rating-stars {
-	font-size: 24px;
+	font-size: $font-title-medium;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		display: inline-block;
 		margin-right: 8px;
 	}
 }
 
 .plugin-ratings__rating-text {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	color: var( --color-neutral-light );
 	margin-bottom: 16px;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		display: inline;
 		line-height: 24px;
 		vertical-align: top;
@@ -31,7 +31,7 @@
 
 .plugin-ratings__rating-tier-text,
 .plugin-ratings__downloads {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	color: var( --color-neutral-light );
 	white-space: pre;
 	text-overflow: ellipsis;

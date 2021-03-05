@@ -1,5 +1,3 @@
-/** @format */
-
 export const actionType = {
 	CLOSE: 'CLOSE',
 	READY_TO_SUBMIT: 'READY_TO_SUBMIT',

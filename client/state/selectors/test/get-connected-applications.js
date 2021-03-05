@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import getConnectedApplications from 'state/selectors/get-connected-applications';
+import getConnectedApplications from 'calypso/state/selectors/get-connected-applications';
 
 describe( 'getConnectedApplications()', () => {
 	test( 'should return connected applications of the current user', () => {

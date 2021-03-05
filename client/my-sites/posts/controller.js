@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,20 +6,18 @@ import page from 'page';
 import React from 'react';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:my-sites:posts' );
-import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import Posts from 'my-sites/posts/main';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite, isSingleUserSite } from 'calypso/state/sites/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import Posts from 'calypso/my-sites/posts/main';
 
 export default {
-	posts: function( context, next ) {
+	posts: function ( context, next ) {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 		const author = context.params.author === 'my' ? getCurrentUserId( state ) : null;
@@ -54,9 +50,6 @@ export default {
 			page.redirect( context.path.replace( /\/my\b/, '' ) );
 			return;
 		}
-
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Blog Posts', { textOnly: true } ) ) );
 
 		context.primary = React.createElement( Posts, {
 			context,

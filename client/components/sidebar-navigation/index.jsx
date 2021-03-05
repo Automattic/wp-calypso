@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,31 +5,38 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal Dependencies
  */
-import { getDocumentHeadTitle } from 'state/document-head/selectors';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import TranslatableString from 'components/translatable/proptype';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import TranslatableString from 'calypso/components/translatable/proptype';
+import config from '@automattic/calypso-config';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-function SidebarNavigation( { title, sectionTitle, children, toggleSidebar } ) {
+function SidebarNavigation( {
+	sectionTitle,
+	children,
+	toggleSidebar,
+	isNavUnificationEnabled: isUnifiedNavEnabled,
+} ) {
+	if ( isUnifiedNavEnabled && ! config.isEnabled( 'jetpack-cloud' ) ) {
+		return null;
+	}
+
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<header className="current-section">
 			<button onClick={ toggleSidebar }>
-				<Gridicon icon="chevron-left" />
+				<Gridicon icon="menu" />
 				{ children }
-				<div>
-					<p className="current-section__group-title">{ sectionTitle }</p>
-					<h1 className="current-section__section-title">{ title }</h1>
-				</div>
+				<h1 className="current-section__site-title">{ sectionTitle }</h1>
 			</button>
 		</header>
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -39,14 +44,13 @@ function SidebarNavigation( { title, sectionTitle, children, toggleSidebar } ) {
 }
 
 SidebarNavigation.propTypes = {
-	title: TranslatableString,
 	sectionTitle: TranslatableString,
 	toggleSidebar: PropTypes.func.isRequired,
 };
 
 export default connect(
-	state => ( {
-		title: getDocumentHeadTitle( state ),
+	( state ) => ( {
+		isNavUnificationEnabled: isNavUnificationEnabled( state ),
 	} ),
 	{
 		toggleSidebar: () => setLayoutFocus( 'sidebar' ),

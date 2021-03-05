@@ -1,12 +1,14 @@
 /**
- * @module templates/index
+ * External dependencies
  */
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { find, findIndex, matchesProperty } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import BackButton from './button-back';
 import NavButton from './nav-button';
 import NoteList from './note-list';
@@ -20,6 +22,8 @@ import getAllNotes from '../state/selectors/get-all-notes';
 import getIsNoteHidden from '../state/selectors/get-is-note-hidden';
 import getIsPanelOpen from '../state/selectors/get-is-panel-open';
 import getSelectedNoteId from '../state/selectors/get-selected-note-id';
+import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
+import { modifierKeyIsActive } from '../helpers/input';
 
 const KEY_ENTER = 13;
 const KEY_ESC = 27;
@@ -37,17 +41,17 @@ const KEY_N = 78;
 const KEY_U = 85;
 
 /**
- * @typedef {Object} Notification
- * @property {!Number} id notification id
+ * @typedef {object} Notification
+ * @property {!number} id notification id
  */
 
 /**
  * Returns the next index into a list of notes following
  * the index for the given sought-after notification id
  *
- * @param {!Number} noteId id of note to search for
+ * @param {!number} noteId id of note to search for
  * @param {!Array<Notification>} notes list of notes to search through
- * @returns {?Number} index into note list of note following that given by noteId
+ * @returns {?number} index into note list of note following that given by noteId
  */
 export const findNextNoteId = ( noteId, notes ) => {
 	if ( notes.length === 0 ) {
@@ -76,18 +80,17 @@ class Layout extends React.Component {
 		selectedNote: null,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.filterController = FilterBarController( this.refreshNotesToDisplay );
 		this.props.global.client = this.props.client;
 		this.props.global.toggleNavigation = this.toggleNavigation;
 
-		if ( 'undefined' == typeof this.props.global.navigation ) {
+		if ( 'undefined' === typeof this.props.global.navigation ) {
 			this.props.global.navigation = {};
 
 			/* Keyboard shortcutes */
-			this.props.global.keyboardShortcutsAreEnabled = true;
+			this.props.enableKeyboardShortcuts();
 			this.props.global.input = {
-				modifierKeyIsActive: this.modifierKeyIsActive,
 				lastInputWasKeyboard: false,
 			};
 		}
@@ -102,7 +105,7 @@ class Layout extends React.Component {
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.selectedNoteId ) {
 			this.setState( {
 				previousDetailScrollTop: this.detailView ? this.detailView.scrollTop : 0,
@@ -127,7 +130,7 @@ class Layout extends React.Component {
 		} );
 	}
 
-	componentWillUpdate( nextProps ) {
+	UNSAFE_componentWillUpdate( nextProps ) {
 		const { selectedNoteId: nextNote } = nextProps;
 		const { selectedNoteId: prevNote } = this.props;
 		const noteList = ReactDOM.findDOMNode( this.noteList );
@@ -171,10 +174,10 @@ class Layout extends React.Component {
 		window.removeEventListener( 'resize', this.redraw );
 	}
 
-	navigateByDirection = direction => {
+	navigateByDirection = ( direction ) => {
 		const filteredNotes = this.filterController.getFilteredNotes( this.props.notes );
 
-		if ( ! this.props.global.keyboardShortcutsAreEnabled ) {
+		if ( ! this.props.keyboardShortcutsAreEnabled ) {
 			return;
 		}
 
@@ -199,7 +202,7 @@ class Layout extends React.Component {
 		}
 
 		const stepAtom = direction > 0 ? 1 : -1;
-		const noteIndexIsSelectable = index => {
+		const noteIndexIsSelectable = ( index ) => {
 			/* Note doesn't exist */
 			if ( 'undefined' === typeof filteredNotes[ index ] ) {
 				return false;
@@ -294,7 +297,7 @@ class Layout extends React.Component {
 		this.navigateByDirection( -1 );
 	};
 
-	toggleNavigation = navigationEnabled => {
+	toggleNavigation = ( navigationEnabled ) => {
 		return 'boolean' === typeof navigationEnabled && this.setState( { navigationEnabled } );
 	};
 
@@ -313,16 +316,12 @@ class Layout extends React.Component {
 		this.forceUpdate();
 	};
 
-	modifierKeyIsActive = e => {
-		return e.altKey || e.ctrlKey || e.metaKey;
-	};
-
-	handleKeyDown = event => {
+	handleKeyDown = ( event ) => {
 		if ( ! this.props.isShowing ) {
 			return;
 		}
 
-		const stopEvent = function() {
+		const stopEvent = function () {
 			event.stopPropagation();
 			event.preventDefault();
 		};
@@ -340,7 +339,7 @@ class Layout extends React.Component {
 		}
 
 		/* otherwise bypass if shortcuts are disabled */
-		if ( ! this.props.global.keyboardShortcutsAreEnabled ) {
+		if ( ! this.props.keyboardShortcutsAreEnabled ) {
 			return;
 		}
 
@@ -350,7 +349,7 @@ class Layout extends React.Component {
 		 * that require a modifier key should be
 		 * captured above.
 		 */
-		if ( this.props.global.input.modifierKeyIsActive( event ) ) {
+		if ( modifierKeyIsActive( event ) ) {
 			return;
 		}
 
@@ -418,7 +417,7 @@ class Layout extends React.Component {
 		}
 	};
 
-	refreshNotesToDisplay = allNotes => {
+	refreshNotesToDisplay = ( allNotes ) => {
 		const notes = this.filterController.getFilteredNotes( allNotes );
 		if (
 			this.state.selectedNote &&
@@ -430,16 +429,16 @@ class Layout extends React.Component {
 		this.setState( { notes } );
 	};
 
-	storeNoteList = ref => {
+	storeNoteList = ( ref ) => {
 		this.noteList = ref;
 	};
 
-	storeNoteListVisibilityUpdater = updater => {
-		this.noteListVisibilityUpdater = updater;
+	storeDetailViewRef = ( ref ) => {
+		this.detailView = ref;
 	};
 
-	storeDetailViewRef = ref => {
-		this.detailView = ref;
+	storeNoteListVisibilityUpdater = ( updater ) => {
+		this.noteListVisibilityUpdater = updater;
 	};
 
 	render() {
@@ -482,7 +481,7 @@ class Layout extends React.Component {
 										className="wpnc__prev"
 										isEnabled={
 											( filteredNotes[ 0 ] &&
-												filteredNotes[ 0 ].id != this.props.selectedNoteId ) ||
+												filteredNotes[ 0 ].id !== this.props.selectedNoteId ) ||
 											false
 										}
 										navigate={ this.navigateToPrevNote }
@@ -492,7 +491,7 @@ class Layout extends React.Component {
 										className="wpnc__next"
 										isEnabled={
 											( filteredNotes[ 0 ] &&
-												filteredNotes[ filteredNotes.length - 1 ].id !=
+												filteredNotes[ filteredNotes.length - 1 ].id !==
 													this.props.selectedNoteId ) ||
 											false
 										}
@@ -522,20 +521,19 @@ class Layout extends React.Component {
 	}
 }
 
-const mapStateToProps = state => ( {
-	isNoteHidden: noteId => getIsNoteHidden( state, noteId ),
+const mapStateToProps = ( state ) => ( {
+	isNoteHidden: ( noteId ) => getIsNoteHidden( state, noteId ),
 	isPanelOpen: getIsPanelOpen( state ),
 	notes: getAllNotes( state ),
 	selectedNoteId: getSelectedNoteId( state ),
+	keyboardShortcutsAreEnabled: getKeyboardShortcutsEnabled( state ),
 } );
 
 const mapDispatchToProps = {
 	closePanel: actions.ui.closePanel,
 	selectNote: actions.ui.selectNote,
 	unselectNote: actions.ui.unselectNote,
+	enableKeyboardShortcuts: actions.ui.enableKeyboardShortcuts,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( Layout );
+export default connect( mapStateToProps, mapDispatchToProps )( Layout );

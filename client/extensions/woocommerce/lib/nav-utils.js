@@ -1,10 +1,8 @@
-/** @format */
-
 /* Returns a string with :site replaced with the site.slug
  *
- * @param {String} path Relative or absolute URL with :site in it.
- * @param {Object} site Site object. We need just the slug (string) from it.
- * @return {String} URL with site.
+ * @param {string} path Relative or absolute URL with :site in it.
+ * @param {object} site Site object. We need just the slug (string) from it.
+ * @returns {string} URL with site.
  */
 export const getLink = ( path, site ) => {
 	if ( ! site || ! site.slug ) {
@@ -15,7 +13,7 @@ export const getLink = ( path, site ) => {
 
 /* Returns the origin for the current browser window
  *
- * @return {String} origin for the current browser window, wordpress.com by default
+ * @returns {string} origin for the current browser window, wordpress.com by default
  */
 export const getOrigin = () => {
 	let origin = 'https://wordpress.com';

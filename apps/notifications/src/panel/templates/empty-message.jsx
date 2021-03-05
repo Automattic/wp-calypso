@@ -1,12 +1,18 @@
+/**
+ * External dependencies
+ */
 import React, { Component } from 'react';
 
+/**
+ * Internal dependencies
+ */
 import { bumpStat } from '../rest-client/bump-stat';
 
 // from $wpnc__title-bar-height in boot/sizes.scss
 const TITLE_OFFSET = 38;
 
 export class EmptyMessage extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( this.props.showing ) {
 			bumpStat( 'notes-empty-message', this.props.name + '_shown' );
 		}
@@ -32,7 +38,12 @@ export class EmptyMessage extends Component {
 					<div className="wpnc__empty-notes">
 						<h2>{ emptyMessage }</h2>
 						<p>
-							<a href={ link } target="_blank" onClick={ this.handleClick }>
+							<a
+								href={ link }
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ this.handleClick }
+							>
 								{ linkMessage }
 							</a>
 						</p>

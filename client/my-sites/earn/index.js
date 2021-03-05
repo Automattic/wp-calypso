@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,11 +6,11 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { navigation, siteSelection, sites } from 'my-sites/controller';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import earnController from './controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
-export default function() {
+export default function () {
 	page( '/earn', siteSelection, sites, makeLayout, clientRender );
 	page( '/earn/payments', siteSelection, sites, makeLayout, clientRender );
 	// This is legacy, we are leaving it here because it may have been public
@@ -25,6 +24,9 @@ export default function() {
 
 	page( '/earn/ads-settings', siteSelection, sites, makeLayout, clientRender );
 	page( '/earn/ads-earnings', siteSelection, sites, makeLayout, clientRender );
+
+	page( '/earn/refer-a-friend', siteSelection, sites, makeLayout, clientRender );
+
 	// These are legacy URLs to redirect if they are present anywhere on the web.
 	page( '/ads/earnings/:site_id', earnController.redirectToAdsEarnings, makeLayout, clientRender );
 	page( '/ads/settings/:site_id', earnController.redirectToAdsSettings, makeLayout, clientRender );

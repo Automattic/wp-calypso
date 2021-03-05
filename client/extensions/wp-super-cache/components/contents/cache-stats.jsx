@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,11 +11,11 @@ import { flowRight, get, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import FoldableCard from 'components/foldable-card';
+import { Button } from '@automattic/components';
+import FoldableCard from 'calypso/components/foldable-card';
 import { deleteFile } from '../../state/stats/actions';
 import { isDeletingFile } from '../../state/stats/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 function getAge( lower, upper ) {
 	if ( lower && upper ) {
@@ -50,7 +48,7 @@ class CacheStats extends Component {
 		url: '',
 	};
 
-	deleteFile = event => {
+	deleteFile = ( event ) => {
 		const url = get( event, 'currentTarget.dataset.url', '' );
 
 		if ( ! url ) {
@@ -104,7 +102,7 @@ class CacheStats extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
@@ -115,7 +113,4 @@ const connectComponent = connect(
 	{ deleteFile }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( CacheStats );
+export default flowRight( connectComponent, localize )( CacheStats );

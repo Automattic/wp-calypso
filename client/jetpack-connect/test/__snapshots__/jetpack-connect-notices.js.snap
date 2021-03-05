@@ -24,7 +24,7 @@ exports[`JetpackConnectNotices Should render notice 1`] = `
     icon="notice"
     showDismiss={false}
     status="is-error"
-    text="That's not a valid url."
+    text="This site can't be connected to WordPress.com because it violates our {{a}}Terms of Service{{/a}}."
   />
 </div>
 `;

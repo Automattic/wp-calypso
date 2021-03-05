@@ -1,15 +1,14 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import config from 'config';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 
 class PostUnavailable extends React.PureComponent {
 	componentDidMount() {

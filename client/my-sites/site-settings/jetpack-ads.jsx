@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,20 +10,29 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Banner from 'components/banner';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import ExternalLink from 'components/external-link';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import SupportInfo from 'components/support-info';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { hasFeature } from 'state/sites/plans/selectors';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { FEATURE_WORDADS_INSTANT, PLAN_JETPACK_PREMIUM } from 'lib/plans/constants';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import { Card, CompactCard } from '@automattic/components';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import ExternalLink from 'calypso/components/external-link';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import SupportInfo from 'calypso/components/support-info';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { FEATURE_WORDADS_INSTANT, PLAN_JETPACK_SECURITY_DAILY } from 'calypso/lib/plans/constants';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { getCustomizerUrl } from 'calypso/state/sites/selectors';
+import { isWordAdsApproved } from 'calypso/lib/ads/utils';
 
 class JetpackAds extends Component {
 	static defaultProps = {
@@ -51,14 +58,15 @@ class JetpackAds extends Component {
 		const { translate } = this.props;
 
 		return (
-			<Banner
+			<UpsellNudge
 				description={ translate(
 					'Add advertising to your site through our WordAds program and earn money from impressions.'
 				) }
 				event={ 'calypso_wordads_settings_upgrade_nudge' }
 				feature={ FEATURE_WORDADS_INSTANT }
-				plan={ PLAN_JETPACK_PREMIUM }
-				title={ translate( 'Enable WordAds by upgrading to Jetpack Premium' ) }
+				plan={ PLAN_JETPACK_SECURITY_DAILY }
+				title={ translate( 'Enable WordAds by upgrading to a Jetpack Security or Complete plan' ) }
+				showIcon={ true }
 			/>
 		);
 	}
@@ -66,13 +74,13 @@ class JetpackAds extends Component {
 	renderToggle( name, isDisabled, label ) {
 		const { fields, handleAutosavingToggle } = this.props;
 		return (
-			<CompactFormToggle
+			<FormToggle
 				checked={ !! fields[ name ] }
 				disabled={ this.isFormPending() || isDisabled }
 				onChange={ handleAutosavingToggle( name ) }
 			>
 				{ label }
-			</CompactFormToggle>
+			</FormToggle>
 		);
 	}
 
@@ -114,7 +122,16 @@ class JetpackAds extends Component {
 	}
 
 	renderSettings() {
-		const { selectedSiteId, selectedSiteSlug, wordadsModuleActive, translate } = this.props;
+		const {
+			fields,
+			onChangeField,
+			selectedSiteId,
+			selectedSiteSlug,
+			wordadsModuleActive,
+			translate,
+			siteIsAtomic,
+			widgetsUrl,
+		} = this.props;
 		const formPending = this.isFormPending();
 
 		return (
@@ -140,6 +157,91 @@ class JetpackAds extends Component {
 							) }
 						</div>
 					</FormFieldset>
+
+					<hr />
+					<FormSectionHeading>{ translate( 'Privacy and Consent' ) }</FormSectionHeading>
+					<FormFieldset>
+						<SupportInfo
+							text={ translate(
+								'Enables a targeted advertising opt-out link for California consumers, as required by the California Consumer Privacy Act (CCPA).'
+							) }
+							link={
+								siteIsAtomic
+									? 'https://wordpress.com/support/your-wordpress-com-site-and-the-ccpa/'
+									: 'https://jetpack.com/support/ads/'
+							}
+						/>
+						{ this.renderToggle(
+							'wordads_ccpa_enabled',
+							! wordadsModuleActive,
+							translate( 'Enable targeted advertising to California site visitors (CCPA)' )
+						) }
+
+						<div className="site-settings__child-settings">
+							<FormSettingExplanation>
+								{ translate(
+									'For more information about the California Consumer Privacy Act (CCPA) and how it pertains to your site, please consult our {{a}}CCPA guide for site owners{{/a}}.',
+									{
+										components: {
+											a: (
+												<a
+													href={
+														siteIsAtomic
+															? 'https://wordpress.com/support/your-wordpress-com-site-and-the-ccpa/'
+															: 'https://jetpack.com/support/ads/'
+													}
+													target="_blank"
+													rel="noopener noreferrer"
+												/>
+											),
+										},
+									}
+								) }
+							</FormSettingExplanation>
+						</div>
+					</FormFieldset>
+
+					{ fields.wordads_ccpa_enabled && (
+						<div className="site-settings__child-settings">
+							<FormFieldset>
+								<FormLabel>{ translate( 'Do Not Sell Link' ) }</FormLabel>
+								<span>
+									{ translate(
+										'CCPA requires that you place a "Do Not Sell My Personal Information" link on every page of your site where targeted advertising will appear. You can use the {{a}}Do Not Sell Link (CCPA) Widget{{/a}}, or the {{code}}[ccpa-do-not-sell-link]{{/code}} shortcode to automatically place this link on your site. Note: the link will always display to logged in administrators regardless of geolocation.',
+										{
+											components: {
+												a: <a href={ widgetsUrl } target="_blank" rel="noopener noreferrer" />,
+												code: <code />,
+											},
+										}
+									) }
+								</span>
+								<FormSettingExplanation>
+									{ translate(
+										'Failure to add this link will result in non-compliance with CCPA.'
+									) }
+								</FormSettingExplanation>
+							</FormFieldset>
+							<FormFieldset>
+								<FormLabel htmlFor="ccpa-privacy-policy-url">
+									{ translate( 'Privacy Policy URL' ) }
+								</FormLabel>
+								<FormTextInput
+									name="ccpa_privacy_policy_url"
+									id="ccpa-privacy-policy-url"
+									value={ fields.wordads_ccpa_privacy_policy_url || '' }
+									onChange={ onChangeField( 'wordads_ccpa_privacy_policy_url' ) }
+									disabled={ formPending }
+									placeholder="https://"
+								/>
+								<FormSettingExplanation>
+									{ translate(
+										'Adds a link to your privacy policy to the bottom of the CCPA notice popup (optional).'
+									) }
+								</FormSettingExplanation>
+							</FormFieldset>
+						</div>
+					) }
 				</Card>
 
 				{ wordadsModuleActive && (
@@ -152,27 +254,46 @@ class JetpackAds extends Component {
 	}
 
 	render() {
-		const { hasWordadsFeature, translate } = this.props;
+		const {
+			hasWordadsFeature,
+			wordAdsApproved,
+			isSavingSettings,
+			onSubmitForm,
+			translate,
+		} = this.props;
 
 		return (
 			<div>
-				<SettingsSectionHeader title={ translate( 'Ads' ) } />
+				<SettingsSectionHeader
+					disabled={ this.isFormPending() }
+					isSaving={ isSavingSettings }
+					onButtonClick={ onSubmitForm }
+					showButton={ hasWordadsFeature }
+					title={ translate( 'Ads' ) }
+				/>
 
-				{ hasWordadsFeature ? this.renderSettings() : this.renderUpgradeBanner() }
+				{ hasWordadsFeature || wordAdsApproved
+					? this.renderSettings()
+					: this.renderUpgradeBanner() }
 			</div>
 		);
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
+	const site = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
 	const selectedSiteSlug = getSelectedSiteSlug( state );
 	const hasWordadsFeature = hasFeature( state, selectedSiteId, FEATURE_WORDADS_INSTANT );
+	const wordAdsApproved = isWordAdsApproved( site );
 
 	return {
 		hasWordadsFeature,
+		wordAdsApproved,
 		selectedSiteId,
 		selectedSiteSlug,
 		wordadsModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'wordads' ),
+		siteIsAtomic: isSiteAutomatedTransfer( state, selectedSiteId ),
+		widgetsUrl: getCustomizerUrl( state, selectedSiteId, 'widgets' ),
 	};
 } )( localize( JetpackAds ) );

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,10 +8,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Banner from 'components/banner';
-import { getSiteAdminUrl } from 'state/sites/selectors';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import getRewindState from 'state/selectors/get-rewind-state';
+import Banner from 'calypso/components/banner';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
 
 export const RewindUnavailabilityNotice = ( {
 	adminUrl,
@@ -34,7 +33,7 @@ export const RewindUnavailabilityNotice = ( {
 					href={ adminUrl }
 					title={ translate( 'The site is not connected.' ) }
 					description={ translate(
-						"We can't back up or rewind your site until it has been reconnected."
+						"We can't back up or restore your site until it has been reconnected."
 					) }
 				/>
 			);

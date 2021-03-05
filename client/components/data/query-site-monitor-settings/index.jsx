@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import isRequestingSiteMonitorSettings from 'state/selectors/is-requesting-site-monitor-settings';
-import { requestSiteMonitorSettings } from 'state/sites/monitor/actions';
+import isRequestingSiteMonitorSettings from 'calypso/state/selectors/is-requesting-site-monitor-settings';
+import { requestSiteMonitorSettings } from 'calypso/state/sites/monitor/actions';
 
 class QuerySiteMonitorSettings extends Component {
 	static propTypes = {
@@ -26,7 +24,7 @@ class QuerySiteMonitorSettings extends Component {
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId !== nextProps.siteId ) {
 			this.request( nextProps );
 		}

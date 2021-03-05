@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestWordadsStatus } from 'state/wordads/status/actions';
+import { requestWordadsStatus } from 'calypso/state/wordads/status/actions';
 
 class QueryWordadsStatus extends Component {
 	static propTypes = {
@@ -38,7 +36,4 @@ class QueryWordadsStatus extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestWordadsStatus }
-)( QueryWordadsStatus );
+export default connect( null, { requestWordadsStatus } )( QueryWordadsStatus );

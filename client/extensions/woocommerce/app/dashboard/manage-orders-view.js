@@ -1,10 +1,9 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import config from 'config';
+import config from '@automattic/calypso-config';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -17,12 +16,12 @@ import {
 	getCountNewOrders,
 	getCountPendingReviews,
 } from 'woocommerce/state/sites/data/counts/selectors';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import DashboardWidget from 'woocommerce/components/dashboard-widget';
 import DashboardWidgetRow from 'woocommerce/components/dashboard-widget/row';
 import LabelsSetupNotice from 'woocommerce/woocommerce-services/components/labels-setup-notice';
 import { fetchCounts } from 'woocommerce/state/sites/data/counts/actions';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import InventoryWidget from './widgets/inventory-widget';
@@ -212,7 +211,4 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	{ fetchCounts }
-)( localize( ManageOrdersView ) );
+export default connect( mapStateToProps, { fetchCounts } )( localize( ManageOrdersView ) );

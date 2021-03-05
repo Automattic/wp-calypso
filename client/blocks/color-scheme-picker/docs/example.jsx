@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,8 +6,8 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import ColorSchemePicker from 'blocks/color-scheme-picker';
+import { Card } from '@automattic/components';
+import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
 
 class ColorSchemePickerExample extends PureComponent {
 	static displayName = 'ColorSchemePicker';
@@ -17,7 +16,7 @@ class ColorSchemePickerExample extends PureComponent {
 		selectedColorScheme: null,
 	};
 
-	handleColorSchemeSelection = colorScheme => {
+	handleColorSchemeSelection = ( colorScheme ) => {
 		this.setState( { selectedColorScheme: colorScheme } );
 	};
 

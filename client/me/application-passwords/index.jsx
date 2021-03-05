@@ -1,35 +1,32 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import AppPasswordItem from 'me/application-password-item';
-import Button from 'components/button';
-import Card from 'components/card';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormTextInput from 'components/forms/form-text-input';
-import QueryApplicationPasswords from 'components/data/query-application-passwords';
-import SectionHeader from 'components/section-header';
+import AppPasswordItem from 'calypso/me/application-password-item';
+import { Button, Card } from '@automattic/components';
+import FormButton from 'calypso/components/forms/form-button';
+import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import QueryApplicationPasswords from 'calypso/components/data/query-application-passwords';
+import SectionHeader from 'calypso/components/section-header';
 import {
 	clearNewApplicationPassword,
 	createApplicationPassword,
-} from 'state/application-passwords/actions';
-import getApplicationPasswords from 'state/selectors/get-application-passwords';
-import getNewApplicationPassword from 'state/selectors/get-new-application-password';
-import { recordGoogleEvent } from 'state/analytics/actions';
+} from 'calypso/state/application-passwords/actions';
+import getApplicationPasswords from 'calypso/state/selectors/get-application-passwords';
+import getNewApplicationPassword from 'calypso/state/selectors/get-new-application-password';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -44,14 +41,14 @@ class ApplicationPasswords extends Component {
 
 	state = this.constructor.initialState;
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.state.submittingForm && ! this.props.newAppPassword && !! nextProps.newAppPassword ) {
 			this.setState( { submittingForm: false } );
 		}
 	}
 
 	getClickHandler = ( action, callback ) => {
-		return event => {
+		return ( event ) => {
 			this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 
 			if ( callback ) {
@@ -64,7 +61,7 @@ class ApplicationPasswords extends Component {
 		this.props.recordGoogleEvent( 'Me', 'Focused on Application Name Field' );
 	};
 
-	createApplicationPassword = event => {
+	createApplicationPassword = ( event ) => {
 		event.preventDefault();
 		this.setState( { submittingForm: true } );
 		this.props.createApplicationPassword( this.state.applicationName );
@@ -75,12 +72,12 @@ class ApplicationPasswords extends Component {
 		this.setState( this.constructor.initialState );
 	};
 
-	toggleNewPassword = event => {
+	toggleNewPassword = ( event ) => {
 		event.preventDefault();
 		this.setState( { addingPassword: ! this.state.addingPassword } );
 	};
 
-	handleChange = event => {
+	handleChange = ( event ) => {
 		const { name, value } = event.currentTarget;
 		this.setState( { [ name ]: value } );
 	};
@@ -99,7 +96,7 @@ class ApplicationPasswords extends Component {
 					onSubmit={ this.createApplicationPassword }
 				>
 					<FormFieldset>
-						<FormLabel htmlFor="application-name">{ translate( 'Application Name' ) }</FormLabel>
+						<FormLabel htmlFor="application-name">{ translate( 'Application name' ) }</FormLabel>
 						<FormTextInput
 							className="application-passwords__add-new-field"
 							disabled={ this.state.submittingForm }
@@ -181,7 +178,7 @@ class ApplicationPasswords extends Component {
 			<div className="application-passwords__active">
 				<FormSectionHeading>{ translate( 'Active Passwords' ) }</FormSectionHeading>
 				<ul className="application-passwords__list">
-					{ appPasswords.map( password => (
+					{ appPasswords.map( ( password ) => (
 						<AppPasswordItem password={ password } key={ password.ID } />
 					) ) }
 				</ul>
@@ -196,7 +193,7 @@ class ApplicationPasswords extends Component {
 			<Fragment>
 				<QueryApplicationPasswords />
 
-				<SectionHeader label={ translate( 'Application Passwords' ) }>
+				<SectionHeader label={ translate( 'Application passwords' ) }>
 					{ ! newAppPassword && (
 						<Button
 							compact
@@ -208,7 +205,7 @@ class ApplicationPasswords extends Component {
 							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 							<Gridicon icon="plus-small" size={ 16 } />
 							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-							{ translate( 'Add New Application Password' ) }
+							{ translate( 'Add new application password' ) }
 						</Button>
 					) }
 				</SectionHeader>
@@ -231,7 +228,7 @@ class ApplicationPasswords extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		appPasswords: getApplicationPasswords( state ),
 		newAppPassword: getNewApplicationPassword( state ),
 	} ),

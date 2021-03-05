@@ -1,4 +1,3 @@
-/** @format */
 export const itemSchema = {
 	type: 'object',
 	additionalProperties: false,
@@ -9,7 +8,7 @@ export const itemSchema = {
 			properties: {
 				ID: { type: 'integer' },
 				additional_external_users: { type: 'array' },
-				expires: { type: 'string' },
+				expires: { type: [ 'number', 'boolean' ] },
 				external_ID: { type: [ 'string', 'null' ] },
 				external_display: { type: [ 'string', 'null' ] },
 				external_name: { type: [ 'string', 'null' ] },

@@ -1,0 +1,204 @@
+.rewind-flow__header {
+	display: flex;
+	justify-content: center;
+	padding-bottom: 16px;
+	padding-top: 32px;
+	.gridicon {
+		fill: var( --color-primary );
+	}
+	img {
+		height: 48px;
+		width: 48px;
+	}
+}
+
+.rewind-flow__content {
+	margin-top: 16px;
+}
+
+.rewind-flow__title {
+	text-align: center;
+	font-size: $font-title-small;
+	font-weight: 600;
+	padding-bottom: 32px;
+
+	&.error {
+		color: var( --color-error );
+	}
+}
+
+.rewind-flow__icon-placeholder {
+	@include placeholder( --color-neutral-light );
+	height: 48px;
+	width: 48px;
+}
+
+.rewind-flow__title-placeholder {
+	@include placeholder( --color-neutral-light );
+	font-size: $font-title-small;
+	font-weight: 600;
+}
+
+.rewind-flow__rewind-config-editor {
+	margin: 15px 5px;
+}
+
+.rewind-flow__rewind-config-editor-label {
+	align-items: center;
+	display: flex;
+	font-size: $font-body;
+	font-weight: normal;
+	margin-bottom: 15px;
+
+	// this is the margin between the checkbox and the label text
+	span.rewind-flow__rewind-config-editor-label-text {
+		margin-left: 10px;
+	}
+}
+
+// this rule is extremely specific to override other stylings
+input.rewind-flow__rewind-config-editor-checkbox.form-checkbox {
+	margin-right: 5px;
+	margin-bottom: 2px;
+	&:checked::before {
+		content: url( '/calypso/images/checkbox-icons/checkmark-jetpack.svg' );
+	}
+}
+
+.rewind-flow-notice {
+	.gridicon {
+		margin-right: 5px;
+	}
+
+	// the component renders a top-level a or div, depending on if it is a link or not
+	a,
+	div {
+		display: flex;
+		flex-direction: row;
+		margin-bottom: 16px;
+		width: fit-content;
+	}
+
+	a,
+	h4,
+	p {
+		font-size: $font-body;
+	}
+
+	// this allows the gridicon and text to align on their centers
+	p {
+		margin: 0;
+	}
+	a {
+		align-items: center;
+		display: flex;
+	}
+}
+
+// when the reminder is default make the header more bold
+.rewind-flow-notice__title-reminder h4 {
+	font-size: $font-body;
+	font-weight: 600;
+}
+
+div.rewind-flow-notice__title-notice,
+a.rewind-flow-notice__title-notice,
+a.rewind-flow-notice__title-notice:visited {
+	color: var( --color-neutral-light );
+	fill: var( --color-neutral-light );
+
+	&:hover {
+		color: var( --color-neutral );
+		fill: var( --color-neutral );
+	}
+}
+div.rewind-flow-notice__title-warning,
+a.rewind-flow-notice__title-warning,
+a.rewind-flow-notice__title-warning:visited {
+	.gridicon {
+		fill: var( --color-error );
+	}
+
+	&:hover {
+		fill: var( --color-error-dark );
+	}
+}
+
+.rewind-flow__primary-button {
+	margin-bottom: 22.5px;
+	text-align: center;
+	width: 100%;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		text-align: auto;
+		width: auto;
+	}
+}
+
+.rewind-flow__progress-bar {
+	margin-bottom: 22.5px;
+
+	p {
+		font-size: $font-body-small;
+		margin: 0;
+	}
+}
+
+.rewind-flow__progress-bar-header {
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+}
+
+.rewind-flow__progress-bar-percent {
+	color: var( --studio-gray-50 );
+}
+
+.rewind-flow__progress-bar-message {
+	font-weight: 700;
+}
+
+.rewind-flow__progress-bar-entry {
+	color: var( --studio-gray-50 );
+}
+
+.rewind-flow__info {
+	font-size: $font-body;
+}
+
+.rewind-flow__cta {
+	font-size: $font-body;
+	font-weight: 600;
+}
+
+.theme-jetpack-cloud .main.rewind-flow {
+	margin-left: auto;
+}
+
+/* This is a button that's meant to be styled as a link */
+.rewind-flow__info .rewind-flow__error-retry-button {
+	padding: initial;
+	border: initial;
+	font-weight: normal;
+	vertical-align: initial;
+	font-size: initial;
+	color: var( --color-link );
+
+	&:hover,
+	&:active,
+	&:focus {
+		background: initial;
+		color: var( --color-link-dark );
+	}
+
+	&:hover,
+	&:active {
+		outline: initial;
+	}
+
+	&:focus {
+		outline: thin dotted;
+		box-shadow: initial;
+		border: initial;
+	}
+}

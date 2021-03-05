@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,14 +10,14 @@ import { flowRight, map, mapValues, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import ExternalLink from 'components/external-link';
-import SectionHeader from 'components/section-header';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormToggle from 'components/forms/form-toggle/compact';
+import { Card } from '@automattic/components';
+import ExternalLink from 'calypso/components/external-link';
+import SectionHeader from 'calypso/components/section-header';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import WrapSettingsForm from '../wrap-settings-form';
 import QueryPlugins from '../data/query-plugins';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { togglePlugin } from '../../state/plugins/actions';
 import { isRequestingPlugins, isTogglingPlugin, getPlugins } from '../../state/plugins/selectors';
 
@@ -113,14 +111,14 @@ class PluginsTab extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const plugins = getPlugins( state, siteId );
 		const isRequesting = isRequestingPlugins( state, siteId );
 
 		return {
 			isRequesting,
-			plugins: mapValues( plugins, plugin => ( {
+			plugins: mapValues( plugins, ( plugin ) => ( {
 				...plugin,
 				toggling: isTogglingPlugin( state, siteId, plugin.key ),
 			} ) ),
@@ -129,11 +127,8 @@ const connectComponent = connect(
 	{ togglePlugin }
 );
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'plugin_list' ] );
 };
 
-export default flowRight(
-	connectComponent,
-	WrapSettingsForm( getFormSettings )
-)( PluginsTab );
+export default flowRight( connectComponent, WrapSettingsForm( getFormSettings ) )( PluginsTab );

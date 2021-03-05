@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,65 +9,60 @@ import { intersection } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { parse as parseQs } from 'qs';
+import { Button } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import { getTld, isSubdomain } from 'lib/domains';
-import { getSiteBySlug } from 'state/sites/selectors';
-import StepWrapper from 'signup/step-wrapper';
-import PlansFeaturesMain from 'my-sites/plans-features-main';
-import QueryPlans from 'components/data/query-plans';
+import { getTld, isSubdomain } from 'calypso/lib/domains';
+import { getSiteBySlug } from 'calypso/state/sites/selectors';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import GutenboardingHeader from 'calypso/my-sites/plans-features-main/gutenboarding-header';
+import QueryPlans from 'calypso/components/data/query-plans';
 import { FEATURE_UPLOAD_THEMES_PLUGINS } from '../../../lib/plans/constants';
 import { planHasFeature } from '../../../lib/plans';
-import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
-import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
+import { getUrlParts } from 'calypso/lib/url/url-parts';
+import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import { Experiment } from 'calypso/components/experiment';
+import { getVariationForUser, isLoading } from 'calypso/state/experiments/selectors';
+import PulsingDot from 'calypso/components/pulsing-dot';
+import { isTabletResolution } from '@automattic/viewport';
 
 export class PlansStep extends Component {
-	componentDidMount() {
-		if (
-			typeof window !== 'undefined' &&
-			window.location &&
-			typeof document !== 'undefined' &&
-			document.createElement &&
-			document.body
-		) {
-			if ( window.location.search ) {
-				// save this so that we can enter debug mode in the widget
-				window.salesteam_initial_search_string = window.location.search;
-			}
+	state = {
+		plansWithScroll: ! isTabletResolution(),
+	};
 
-			const salesTeamStyles = document.createElement( 'link' );
-			salesTeamStyles.setAttribute(
-				'href',
-				'//s0.wp.com/wp-content/a8c-plugins/wpcom-salesteam/css/wpcom-salesteam.css?ver=1'
-			);
-			salesTeamStyles.setAttribute( 'rel', 'stylesheet' );
-			salesTeamStyles.setAttribute( 'type', 'text/css' );
-			salesTeamStyles.setAttribute( 'media', 'all' );
-			document.head.appendChild( salesTeamStyles );
+	windowResize = () => {
+		this.setState( { plansWithScroll: ! isTabletResolution() } );
+	};
 
-			const salesTeamScript = document.createElement( 'script' );
-			salesTeamScript.setAttribute(
-				'src',
-				'//s0.wp.com/wp-content/a8c-plugins/wpcom-salesteam/js/wpcom-salesteam.js?ver=20190418'
-			);
-			salesTeamScript.setAttribute( 'defer', true );
-			document.head.appendChild( salesTeamScript );
+	componentWillUnmount() {
+		if ( typeof window === 'object' ) {
+			window.removeEventListener( 'resize', this.windowResize );
 		}
+	}
 
+	componentDidMount() {
+		if ( typeof window === 'object' ) {
+			window.addEventListener( 'resize', this.windowResize );
+		}
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
-	onSelectPlan = cartItem => {
+	onSelectPlan = ( cartItem ) => {
 		const { additionalStepData, stepSectionName, stepName, flowName } = this.props;
 
 		if ( cartItem ) {
@@ -103,7 +96,9 @@ export class PlansStep extends Component {
 			...additionalStepData,
 		};
 
-		this.props.submitSignupStep( step, { cartItem } );
+		this.props.submitSignupStep( step, {
+			cartItem,
+		} );
 		this.props.goToNextStep();
 	};
 
@@ -119,14 +114,9 @@ export class PlansStep extends Component {
 		}
 
 		const siteGoals = this.props.siteGoals.split( ',' );
-		let customerType =
+		const customerType =
 			getSiteTypePropertyValue( 'slug', this.props.siteType, 'customerType' ) ||
 			( intersection( siteGoals, [ 'sell', 'promote' ] ).length > 0 ? 'business' : 'personal' );
-
-		// Default to 'business' when the blogger plan is not available.
-		if ( customerType === 'personal' && this.props.disableBloggerPlanWithNonBlogDomain ) {
-			customerType = 'business';
-		}
 
 		return customerType;
 	}
@@ -134,6 +124,35 @@ export class PlansStep extends Component {
 	handleFreePlanButtonClick = () => {
 		this.onSelectPlan( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
 	};
+
+	getGutenboardingHeader() {
+		// launch flow coming from Gutenboarding
+		if ( this.props.flowName === 'new-launch' ) {
+			const { headerText, subHeaderText } = this.props;
+
+			return (
+				<GutenboardingHeader
+					headerText={ headerText }
+					subHeaderText={ subHeaderText }
+					onFreePlanSelect={ this.handleFreePlanButtonClick }
+				/>
+			);
+		}
+
+		return null;
+	}
+
+	getIntervalType() {
+		const urlParts = getUrlParts( typeof window !== 'undefined' ? window.location?.href : '' );
+		const intervalType = urlParts?.searchParams.get( 'intervalType' );
+
+		if ( [ 'yearly', 'monthly' ].includes( intervalType ) ) {
+			return intervalType;
+		}
+
+		// Default value
+		return 'yearly';
+	}
 
 	plansFeaturesList() {
 		const {
@@ -143,64 +162,156 @@ export class PlansStep extends Component {
 			selectedSite,
 			planTypes,
 			flowName,
+			showTreatmentPlansReorderTest,
+			isLoadingExperiment,
+			isInVerticalScrollingPlansExperiment,
+			isTreatmentPlansRedesign,
 		} = this.props;
+
+		const shouldShowPlansRedesign = isTreatmentPlansRedesign && this.state.plansWithScroll;
 
 		return (
 			<div>
 				<QueryPlans />
-
-				<PlansFeaturesMain
-					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-					hideFreePlan={ hideFreePlan }
-					isInSignup={ true }
-					isLaunchPage={ isLaunchPage }
-					onUpgradeClick={ this.onSelectPlan }
-					showFAQ={ false }
-					displayJetpackPlans={ false }
-					domainName={ this.getDomainName() }
-					customerType={ this.getCustomerType() }
-					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-					plansWithScroll={ true }
-					planTypes={ planTypes }
-					flowName={ flowName }
-				/>
+				{ isLoadingExperiment ? (
+					<div className="plans__loading-container">
+						<PulsingDot delay={ 400 } active />
+					</div>
+				) : (
+					<PlansFeaturesMain
+						site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+						hideFreePlan={ hideFreePlan }
+						isInSignup={ true }
+						isLaunchPage={ isLaunchPage }
+						intervalType={ this.getIntervalType() }
+						onUpgradeClick={ this.onSelectPlan }
+						showFAQ={ false }
+						displayJetpackPlans={ false }
+						domainName={ this.getDomainName() }
+						customerType={ this.getCustomerType() }
+						disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+						plansWithScroll={
+							isInVerticalScrollingPlansExperiment ? this.state.plansWithScroll : true
+						}
+						planTypes={ planTypes }
+						flowName={ flowName }
+						customHeader={ this.getGutenboardingHeader() }
+						showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
+						isAllPaidPlansShown={ true }
+						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+						shouldShowPlansRedesign={ shouldShowPlansRedesign }
+					/>
+				) }
 			</div>
 		);
 	}
 
+	getHeaderText() {
+		const { isLoadingExperiment, isTreatmentPlansRedesign, headerText, translate } = this.props;
+
+		if ( isLoadingExperiment ) {
+			return '';
+		}
+
+		const shouldShowPlansRedesign = isTreatmentPlansRedesign && this.state.plansWithScroll;
+		if ( shouldShowPlansRedesign ) {
+			return translate( 'Choose a plan' );
+		}
+
+		return headerText || translate( "Pick a plan that's right for you." );
+	}
+
+	getSubHeaderText() {
+		const {
+			hideFreePlan,
+			subHeaderText,
+			isTreatmentPlansRedesign,
+			isLoadingExperiment,
+			translate,
+		} = this.props;
+		const shouldShowPlansRedesign = isTreatmentPlansRedesign && this.state.plansWithScroll;
+
+		if ( isLoadingExperiment ) {
+			return '';
+		}
+
+		if ( ! hideFreePlan ) {
+			if ( shouldShowPlansRedesign ) {
+				return translate(
+					"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
+					{
+						components: {
+							link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
+						},
+					}
+				);
+			}
+
+			return translate( 'Choose a plan or {{link}}start with a free site{{/link}}.', {
+				components: {
+					link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
+				},
+			} );
+		}
+
+		if ( shouldShowPlansRedesign ) {
+			return translate( "Pick one that's right for you and unlock features that help you grow." );
+		}
+
+		return subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
+	}
+
 	plansFeaturesSelection() {
-		const { flowName, stepName, positionInFlow, translate, selectedSite, siteSlug } = this.props;
+		const {
+			flowName,
+			stepName,
+			positionInFlow,
+			translate,
+			hasInitializedSitesBackUrl,
+		} = this.props;
 
-		const headerText = this.props.headerText || translate( "Pick a plan that's right for you." );
-
+		const headerText = this.getHeaderText();
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
-		const subHeaderText = this.props.subHeaderText;
-		let backUrl, backLabelText;
+		const subHeaderText = this.getSubHeaderText();
+		const fallbackSubHeaderText = this.props.fallbackSubHeaderText || subHeaderText;
 
-		if ( 0 === positionInFlow && selectedSite ) {
-			backUrl = '/view/' + siteSlug;
-			backLabelText = translate( 'Back to Site' );
+		let backUrl;
+		let backLabelText;
+
+		if ( 0 === positionInFlow && hasInitializedSitesBackUrl ) {
+			backUrl = hasInitializedSitesBackUrl;
+			backLabelText = translate( 'Back to My Sites' );
 		}
 
 		return (
-			<StepWrapper
-				flowName={ flowName }
-				stepName={ stepName }
-				positionInFlow={ positionInFlow }
-				headerText={ headerText }
-				fallbackHeaderText={ fallbackHeaderText }
-				subHeaderText={ subHeaderText }
-				isWideLayout={ true }
-				stepContent={ this.plansFeaturesList() }
-				allowBackFirstStep={ !! selectedSite }
-				backUrl={ backUrl }
-				backLabelText={ backLabelText }
-			/>
+			<>
+				<Experiment name="vertical_plan_listing_v2" />
+				<Experiment name="signup_plans_step_redesign_v1" />
+				<StepWrapper
+					flowName={ flowName }
+					stepName={ stepName }
+					positionInFlow={ positionInFlow }
+					headerText={ headerText }
+					fallbackHeaderText={ fallbackHeaderText }
+					subHeaderText={ subHeaderText }
+					fallbackSubHeaderText={ fallbackSubHeaderText }
+					isWideLayout={ true }
+					stepContent={ this.plansFeaturesList() }
+					allowBackFirstStep={ !! hasInitializedSitesBackUrl }
+					backUrl={ backUrl }
+					backLabelText={ backLabelText }
+					hideFormattedHeader={ !! this.getGutenboardingHeader() }
+				/>
+			</>
 		);
 	}
 
 	render() {
+		const shouldShowPlansRedesign =
+			this.props.isTreatmentPlansRedesign && this.state.plansWithScroll;
 		const classes = classNames( 'plans plans-step', {
+			'in-vertically-scrolled-plans-experiment': this.props.isInVerticalScrollingPlansExperiment,
+			'in-plans-redesign-experiment': shouldShowPlansRedesign,
 			'has-no-sidebar': true,
 			'is-wide-layout': true,
 		} );
@@ -220,16 +331,18 @@ PlansStep.propTypes = {
 	customerType: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 	planTypes: PropTypes.array,
+	flowName: PropTypes.string,
+	isTreatmentPlansReorderTest: PropTypes.bool,
 };
 
 /**
  * Checks if the domainItem picked in the domain step is a top level .blog domain -
  * we only want to make Blogger plan available if it is.
  *
- * @param {Object} domainItem domainItem object stored in the "choose domain" step
- * @return {bool} is .blog domain registration
+ * @param {object} domainItem domainItem object stored in the "choose domain" step
+ * @returns {boolean} is .blog domain registration
  */
-export const isDotBlogDomainRegistration = domainItem => {
+export const isDotBlogDomainRegistration = ( domainItem ) => {
 	if ( ! domainItem ) {
 		return false;
 	}
@@ -239,7 +352,10 @@ export const isDotBlogDomainRegistration = domainItem => {
 };
 
 export default connect(
-	( state, { path, signupDependencies: { siteSlug, domainItem } } ) => ( {
+	(
+		state,
+		{ path, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation }, flowName }
+	) => ( {
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 		disableBloggerPlanWithNonBlogDomain:
 			domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
@@ -250,7 +366,15 @@ export default connect(
 		customerType: parseQs( path.split( '?' ).pop() ).customerType,
 		siteGoals: getSiteGoals( state ) || '',
 		siteType: getSiteType( state ),
-		siteSlug,
+		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
+		showTreatmentPlansReorderTest:
+			'treatment' === plans_reorder_abtest_variation || isTreatmentPlansReorderTest( state ),
+		isLoadingExperiment: isLoading( state ),
+		isInVerticalScrollingPlansExperiment:
+			'treatment' === getVariationForUser( state, 'vertical_plan_listing_v2' ),
+		isTreatmentPlansRedesign:
+			flowName === 'onboarding' &&
+			'treatment' === getVariationForUser( state, 'signup_plans_step_redesign_v1' ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -10,7 +9,7 @@ import { noop } from 'lodash';
 /**
  * Internal Dependencies
  */
-import SearchCard from 'components/search-card';
+import SearchCard from 'calypso/components/search-card';
 
 class FollowingManageSearchFollowed extends Component {
 	static propTypes = {
@@ -29,7 +28,7 @@ class FollowingManageSearchFollowed extends Component {
 				pinned={ false }
 				className="following-manage__search-followed"
 				additionalClasses="following-manage__search-followed-input"
-				placeholder={ this.props.translate( 'Search Followed Sites…' ) }
+				placeholder={ this.props.translate( 'Search followed sites…' ) }
 				onSearch={ this.props.onSearch }
 				initialValue={ this.props.initialValue }
 				delaySearch={ true }

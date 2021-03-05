@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`basic.js 1`] = `
+"import { combineReducers } from \\"state/utils\\";
+
+combineReducers( {
+	foo,
+	bar,
+} );
+
+"
+`;

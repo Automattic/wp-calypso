@@ -1,11 +1,5 @@
 /**
- * @format
  */
-
-/**
- * External dependencies
- */
-import { mapValues } from 'lodash';
 
 export const payments = {
 	stored: {
@@ -64,7 +58,7 @@ export const payments = {
 		},
 	},
 	creditCard: {
-		paymentMethod: 'WPCOM_Billing_MoneyPress_Paygate',
+		paymentMethod: 'WPCOM_Billing_Stripe_Payment_Method',
 		newCardDetails: {
 			country: 'US1',
 			name: 'Albert A. User',
@@ -91,7 +85,7 @@ export const payments = {
 		},
 	},
 	newCardNoPostalCode: {
-		paymentMethod: 'WPCOM_Billing_MoneyPress_Paygate',
+		paymentMethod: 'WPCOM_Billing_Stripe_Payment_Method',
 		newCardDetails: {
 			country: 'AI',
 			name: 'Albert A. User',
@@ -102,7 +96,7 @@ export const payments = {
 		},
 	},
 	newCardNoCountryCode: {
-		paymentMethod: 'WPCOM_Billing_MoneyPress_Paygate',
+		paymentMethod: 'WPCOM_Billing_Stripe_Payment_Method',
 		newCardDetails: {
 			name: 'Albert A. User',
 			'postal-code': '90314',
@@ -113,15 +107,3 @@ export const payments = {
 		},
 	},
 };
-
-export const transactionPaymentSetActions = mapValues( payments, payment => ( {
-	type: 'TRANSACTION_PAYMENT_SET',
-	payment,
-} ) );
-
-export const paymentActionLocations = [
-	[ 'stored', { postalCode: '90001', countryCode: 'US' } ],
-	[ 'creditCard', { postalCode: '90014', countryCode: 'US1' } ],
-	[ 'credits', { postalCode: null, countryCode: null } ],
-	[ 'unrecognized', { postalCode: null, countryCode: null } ],
-];

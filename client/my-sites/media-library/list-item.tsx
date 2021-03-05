@@ -8,14 +8,14 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Spinner from 'components/spinner';
-import Gridicon from 'components/gridicon';
+import Spinner from 'calypso/components/spinner';
+import Gridicon from 'calypso/components/gridicon';
 import ListItemImage from './list-item-image';
 import ListItemVideo from './list-item-video';
 import ListItemAudio from './list-item-audio';
 import ListItemDocument from './list-item-document';
-import { getMimePrefix } from 'lib/media/utils';
-import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
+import { getMimePrefix } from 'calypso/lib/media/utils';
+import EditorMediaModalGalleryHelp from 'calypso/post-editor/media-modal/gallery-help';
 
 /**
  * Style dependencies
@@ -26,7 +26,7 @@ import './list-item.scss';
 interface MediaObject {
 	transient?: boolean;
 	file?: string;
-	[propName: string]: any;
+	[ propName: string ]: any;
 }
 type Media = string | MediaObject;
 // END TODO
@@ -43,7 +43,7 @@ interface Props {
 	style?: React.CSSProperties;
 }
 
-type DivProps = Omit< React.ComponentProps< 'button' >, 'style' | 'onClick' >;
+type DivProps = Omit< React.ComponentPropsWithoutRef< 'button' >, 'style' | 'onClick' >;
 
 export default class MediaLibraryListItem extends React.Component< Props & DivProps > {
 	static defaultProps = {
@@ -96,7 +96,8 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 	};
 
 	render() {
-		let title, selectedNumber;
+		let title;
+		let selectedNumber;
 
 		const {
 			media,

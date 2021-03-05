@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Internal dependencies
  */
@@ -6,11 +5,12 @@ import {
 	COUNTRIES_DOMAINS_FETCH,
 	COUNTRIES_PAYMENTS_FETCH,
 	COUNTRIES_SMS_FETCH,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/domains/countries-list/index.js';
-import 'state/data-layer/wpcom/me/transactions/supported-countries';
-import 'state/data-layer/wpcom/meta/sms-country-codes';
+import 'calypso/state/data-layer/wpcom/domains/countries-list/index.js';
+import 'calypso/state/data-layer/wpcom/me/transactions/supported-countries';
+import 'calypso/state/data-layer/wpcom/meta/sms-country-codes';
+import 'calypso/state/countries/init';
 
 export const fetchDomainCountries = () => ( { type: COUNTRIES_DOMAINS_FETCH } );
 

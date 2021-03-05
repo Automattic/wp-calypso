@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,25 +15,25 @@ import {
 	computeProductsWithPrices,
 } from '../selectors';
 
-import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
-import { getPlanRawPrice } from 'state/plans/selectors';
-import { TERM_MONTHLY, TERM_ANNUALLY } from 'lib/plans/constants';
-const plans = require( 'lib/plans' );
+import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
+import { getPlanRawPrice } from 'calypso/state/plans/selectors';
+import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
+const plans = require( 'calypso/lib/plans' );
 
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.mock( 'state/sites/plans/selectors', () => ( {
+jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	getPlanDiscountedRawPrice: jest.fn(),
 } ) );
 
-plans.applyTestFiltersToPlansList = jest.fn( x => x );
+plans.applyTestFiltersToPlansList = jest.fn( ( x ) => x );
 plans.getPlan = jest.fn();
 
 const { getPlan } = plans;
 
-jest.mock( 'state/plans/selectors', () => ( {
+jest.mock( 'calypso/state/plans/selectors', () => ( {
 	getPlanRawPrice: jest.fn(),
 } ) );
 
@@ -185,7 +183,7 @@ describe( 'selectors', () => {
 				return isMonthly ? 20 : 240;
 			} );
 
-			getPlan.mockImplementation( slug => testPlans[ slug ] );
+			getPlan.mockImplementation( ( slug ) => testPlans[ slug ] );
 		} );
 
 		test( 'Should return list of shapes { priceFull, priceFullBeforeDiscount, priceMonthly, plan, product, planSlug }', () => {

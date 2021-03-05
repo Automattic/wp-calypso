@@ -1,4 +1,3 @@
-/** @format */
 export default {
 	site: {
 		slug: 'test',
@@ -8,9 +7,5 @@ export default {
 	plugin: {
 		slug: 'test',
 	},
-	notices: {
-		completed: [],
-		errors: [],
-	},
-	action: function() {},
+	action: function () {},
 };

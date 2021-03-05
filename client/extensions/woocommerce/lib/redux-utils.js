@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,10 +8,11 @@ import { isFunction, reduce } from 'lodash';
 /**
  * Calls Redux' bindActionCreators on the passed in actionCreators
  * and also binds their first argument to be siteId
- * @param { Function|Object } actionCreators - action creators to be bound to siteId and passed on to bindActionCreators
+ *
+ * @param { Function|object } actionCreators - action creators to be bound to siteId and passed on to bindActionCreators
  * @param { Function } dispatch - dispatch function
- * @param { Number } siteId - site ID
- * @returns {Function|Object} result of bindActionCreators
+ * @param {number} siteId - site ID
+ * @returns {Function|object} result of bindActionCreators
  */
 export const bindActionCreatorsWithSiteId = ( actionCreators, dispatch, siteId ) => {
 	if ( isFunction( actionCreators ) ) {

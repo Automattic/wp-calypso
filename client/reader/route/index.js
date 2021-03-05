@@ -1,9 +1,8 @@
-/** @format */
 /**
  * Internal dependencies
  */
 
-import config from 'config';
+import config from '@automattic/calypso-config';
 
 const FEED_URL_BASE = '/read/feeds/';
 const SITE_URL_BASE = '/read/blogs/';

@@ -1,19 +1,14 @@
-Clipboard Button
-================
+# Clipboard Button
 
 Clipboard Button is a React component to facilitate creating a "click-to-copy" button. Under the hood, the component uses [Clipboard.js](https://github.com/zenorocha/clipboard.js), which is a more recent library leveraging newer browser features enabling access to the user's clipboard. Browser support is [fairly good](https://github.com/zenorocha/clipboard.js#browser-support), with Safari being the notable exception. In browsers where clipboard access is not granted, the user will be presented with a prompt window after pressing the button, from which they can copy the text via system copy.
 
 ## Usage
 
 ```jsx
-import React, { Component } from 'react';
-import ClipboardButton from 'components/forms/clipboard-button';
+import React, { Component } from 'react';
+import ClipboardButton from 'calypso/components/forms/clipboard-button';
 
-const MyComponent = () => (
-	<ClipboardButton text="Text to copy">
-		Button Text
-	</ClipboardButton>
-);
+const MyComponent = () => <ClipboardButton text="Text to copy">Button Text</ClipboardButton>;
 ```
 
 ## Props

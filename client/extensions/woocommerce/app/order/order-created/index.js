@@ -1,13 +1,12 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 
-import { withLocalizedMoment } from 'components/localized-moment';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 class OrderCreated extends Component {
 	static propTypes = {

@@ -1,9 +1,11 @@
-/** @format */
 /**
  * Internal dependencies
  */
 import { deactivateSucceeded, deactivateFailed } from '../';
-import { rewindDeactivateSuccess, rewindDeactivateFailure } from 'state/activity-log/actions';
+import {
+	rewindDeactivateSuccess,
+	rewindDeactivateFailure,
+} from 'calypso/state/activity-log/actions';
 
 const siteId = 77203074;
 

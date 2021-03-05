@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,11 +10,11 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import coerceFormValues from 'woocommerce/woocommerce-services/lib/utils/coerce-values';
-import createSelector from 'lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import { getShippingMethodSchema } from 'woocommerce/woocommerce-services/state/shipping-method-schemas/selectors';
 import { getCurrentlyEditingShippingZone } from 'woocommerce/state/ui/shipping/zones/selectors';
 import { getCurrentlyOpenShippingZoneMethod } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export const EMPTY_ERROR = {
 	level: 'error',
@@ -54,20 +52,20 @@ Object.freeze( EMPTY_ERROR );
  * 	}
  * }
  */
-const parseErrorsList = errantFields => {
+const parseErrorsList = ( errantFields ) => {
 	if ( ! isObject( errantFields ) ) {
 		return {};
 	}
 
 	const parsedErrors = {};
-	Object.keys( errantFields ).forEach( fieldName => {
+	Object.keys( errantFields ).forEach( ( fieldName ) => {
 		const errorPath = ObjectPath.parse( fieldName );
 		let newName = errorPath;
 		if ( 'data' === errorPath[ 0 ] ) {
 			newName = errorPath.slice( 1 );
 		}
 		let currentNode = parsedErrors;
-		newName.forEach( pathChunk => {
+		newName.forEach( ( pathChunk ) => {
 			if ( ! currentNode[ pathChunk ] ) {
 				currentNode[ pathChunk ] = {};
 			}
@@ -78,7 +76,7 @@ const parseErrorsList = errantFields => {
 	return parsedErrors;
 };
 
-const getFirstFieldPathNode = fieldPath => {
+const getFirstFieldPathNode = ( fieldPath ) => {
 	const fieldPathPieces = ObjectPath.parse( fieldPath );
 
 	if ( 'data' === fieldPathPieces[ 0 ] ) {
@@ -95,7 +93,7 @@ const getRawFormErrors = ( schema, data, fieldsToCheck ) => {
 	const rawErrors = {};
 
 	if ( ! success && validate.errors && validate.errors.length ) {
-		validate.errors.forEach( error => {
+		validate.errors.forEach( ( error ) => {
 			// Ignore validation errors for fields that haven't been interacted with
 			const errorField = getFirstFieldPathNode( error.field );
 

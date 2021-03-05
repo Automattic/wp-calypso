@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,10 +10,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormSelect from 'components/forms/form-select';
+import FormFieldSet from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormSelect from 'calypso/components/forms/form-select';
 import PriceInput from 'woocommerce/components/price-input';
 import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
 import {
@@ -24,8 +22,8 @@ import {
 } from 'woocommerce/state/ui/shipping/zones/methods/free-shipping/actions';
 
 const FreeShippingMethod = ( { id, requires, min_amount, currency, translate, actions } ) => {
-	const onConditionChange = event => actions.setFreeShippingCondition( id, event.target.value );
-	const onMinAmountChange = event => actions.setFreeShippingMinCost( id, event.target.value );
+	const onConditionChange = ( event ) => actions.setFreeShippingCondition( id, event.target.value );
+	const onMinAmountChange = ( event ) => actions.setFreeShippingMinCost( id, event.target.value );
 
 	const isAdvancedSettings = 'coupon' === requires || 'either' === requires || 'both' === requires;
 
@@ -96,16 +94,13 @@ FreeShippingMethod.propTypes = {
 	currency: PropTypes.string,
 };
 
-export default connect(
-	null,
-	( dispatch, ownProps ) => ( {
-		actions: bindActionCreatorsWithSiteId(
-			{
-				setFreeShippingCondition,
-				setFreeShippingMinCost,
-			},
-			dispatch,
-			ownProps.siteId
-		),
-	} )
-)( localize( FreeShippingMethod ) );
+export default connect( null, ( dispatch, ownProps ) => ( {
+	actions: bindActionCreatorsWithSiteId(
+		{
+			setFreeShippingCondition,
+			setFreeShippingMinCost,
+		},
+		dispatch,
+		ownProps.siteId
+	),
+} ) )( localize( FreeShippingMethod ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,32 +6,31 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import ActionCard from 'components/action-card';
-import Button from 'components/button';
-import canCurrentUser from 'state/selectors/can-current-user';
-import Card from 'components/card';
-import CardHeading from 'components/card-heading';
-import DocumentHead from 'components/data/document-head';
-import ExternalLink from 'components/external-link';
-import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
-import HeaderCake from 'components/header-cake';
-import KeyringConnectButton from 'blocks/keyring-connect-button';
-import Main from 'components/main';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QueryKeyringConnections from 'components/data/query-keyring-connections';
-import QuerySiteKeyrings from 'components/data/query-site-keyrings';
-import QueryKeyringServices from 'components/data/query-keyring-services';
-import { enhanceWithLocationCounts } from 'my-sites/google-my-business/utils';
-import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { withEnhancers } from 'state/utils';
-import { connectGoogleMyBusinessAccount } from 'state/google-my-business/actions';
+import ActionCard from 'calypso/components/action-card';
+import { Button, Card } from '@automattic/components';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import CardHeading from 'calypso/components/card-heading';
+import DocumentHead from 'calypso/components/data/document-head';
+import ExternalLink from 'calypso/components/external-link';
+import getGoogleMyBusinessLocations from 'calypso/state/selectors/get-google-my-business-locations';
+import HeaderCake from 'calypso/components/header-cake';
+import KeyringConnectButton from 'calypso/blocks/keyring-connect-button';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
+import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
+import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
+import { enhanceWithLocationCounts } from 'calypso/my-sites/google-my-business/utils';
+import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { withEnhancers } from 'calypso/state/utils';
+import { connectGoogleMyBusinessAccount } from 'calypso/state/google-my-business/actions';
 
 /**
  * Style dependencies
@@ -52,10 +49,10 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	};
 
 	goBack = () => {
-		page.back( `/stats/day/${ this.props.siteSlug }` );
+		page.back( `/marketing/tools/${ this.props.siteSlug }` );
 	};
 
-	handleConnect = keyringConnection => {
+	handleConnect = ( keyringConnection ) => {
 		const { siteId, siteSlug } = this.props;
 
 		this.props.connectGoogleMyBusinessAccount( siteId, keyringConnection.ID ).then( () => {
@@ -120,7 +117,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 				>
 					{ translate( 'Create Listing', {
 						comment: 'Call to Action to add a business listing to Google My Business',
-					} ) }{' '}
+					} ) }{ ' ' }
 					<Gridicon icon="external" />
 				</Button>
 			);
@@ -167,6 +164,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	render() {
 		const { siteId, translate } = this.props;
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main className="gmb-select-business-type" wideLayout>
 				<PageViewTracker
@@ -227,7 +225,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {

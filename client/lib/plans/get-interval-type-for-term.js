@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
+import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'calypso/lib/plans/constants';
 
 export default function getIntervalTypeFromTerm( term ) {
 	switch ( term ) {

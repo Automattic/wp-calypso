@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,10 +10,6 @@ import * as driverHelper from '../../driver-helper';
 import GutenbergBlockComponent from './gutenberg-block-component';
 
 export class ImageBlockComponent extends GutenbergBlockComponent {
-	constructor( driver, blockID ) {
-		super( driver, blockID );
-	}
-
 	async uploadImage( fileDetails ) {
 		await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,
@@ -34,11 +28,15 @@ export class ImageBlockComponent extends GutenbergBlockComponent {
 	async openMediaModal() {
 		await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,
-			By.css( '.editor-media-placeholder' )
+			By.css( '.block-editor-media-placeholder' )
 		);
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.components-form-file-upload + button' )
+			By.css( 'button.jetpack-external-media-button-menu' )
+		);
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.components-popover__content button.components-menu-item__button:nth-child(1)' )
 		);
 		await this.driver.switchTo().defaultContent();
 		return await driverHelper.waitTillPresentAndDisplayed(

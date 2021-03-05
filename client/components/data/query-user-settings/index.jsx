@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,10 +8,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { fetchUserSettings } from 'state/user-settings/actions';
+import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 
 class QueryUserSettings extends Component {
-	componentWillMount() {
+	componentDidMount() {
 		this.props.fetchUserSettings();
 	}
 
@@ -22,7 +20,4 @@ class QueryUserSettings extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ fetchUserSettings }
-)( QueryUserSettings );
+export default connect( null, { fetchUserSettings } )( QueryUserSettings );

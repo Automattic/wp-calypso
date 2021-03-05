@@ -2,20 +2,25 @@
  * This file contains data for use in tests in the form it could be expected
  * to be received from the wpcom API
  *
- * @format
  */
 
 export const SAMPLE_ADVANCED_SETTINGS = {
 	feedback: [],
 	page: {
 		authors: [ { value: 95752520, label: 'Test User' } ],
-		dates: [ { value: '2015-11', label: 'Nov 2015' }, { value: '2015-10', label: 'Oct 2015' } ],
+		dates: [
+			{ value: '2015-11', label: 'Nov 2015' },
+			{ value: '2015-10', label: 'Oct 2015' },
+		],
 		statuses: [ { label: 'Published', value: 'publish' } ],
 	},
 	post: {
 		categories: [ { label: 'Uncategorized', value: 1 } ],
 		authors: [ { value: 95752520, label: 'Test User' } ],
-		dates: [ { value: '2015-11', label: 'Nov 2015' }, { value: '2015-10', label: 'Oct 2015' } ],
+		dates: [
+			{ value: '2015-11', label: 'Nov 2015' },
+			{ value: '2015-10', label: 'Oct 2015' },
+		],
 		statuses: [ { label: 'Published', value: 'publish' } ],
 	},
 };

@@ -6,11 +6,12 @@ import { reject } from 'lodash';
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	CONNECTED_APPLICATION_DELETE_SUCCESS,
 	CONNECTED_APPLICATIONS_RECEIVE,
-} from 'state/action-types';
-import { withSchemaValidation } from 'state/utils';
+} from 'calypso/state/action-types';
+import { withSchemaValidation } from 'calypso/state/utils';
 import schema from './schema';
 
 const reducer = ( state = null, action ) => {
@@ -24,4 +25,6 @@ const reducer = ( state = null, action ) => {
 	}
 };
 
-export default withSchemaValidation( schema, reducer );
+const validatedReducer = withSchemaValidation( schema, reducer );
+
+export default withStorageKey( 'connectedApplications', validatedReducer );

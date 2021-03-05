@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import { editOrder } from 'woocommerce/state/ui/orders/actions';
 import { isCurrentlyEditingOrder, getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
 import { isOrderEditable } from 'woocommerce/lib/order-status';
@@ -24,7 +23,7 @@ import OrderFulfillment from '../order-fulfillment';
 import OrderPaymentCard from '../order-payment';
 import OrderStatus from 'woocommerce/components/order-status';
 import OrderStatusSelect from 'woocommerce/components/order-status/select';
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'calypso/components/section-header';
 
 class OrderDetails extends Component {
 	static propTypes = {
@@ -41,14 +40,14 @@ class OrderDetails extends Component {
 		};
 	}
 
-	updateStatus = event => {
+	updateStatus = ( event ) => {
 		const { siteId, order } = this.props;
 		if ( siteId ) {
 			this.props.editOrder( siteId, { id: order.id, status: event.target.value } );
 		}
 	};
 
-	updateOrder = newOrder => {
+	updateOrder = ( newOrder ) => {
 		const { siteId, order } = this.props;
 		if ( siteId ) {
 			this.props.editOrder( siteId, { id: order.id, ...newOrder } );
@@ -121,5 +120,5 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch => bindActionCreators( { editOrder }, dispatch )
+	( dispatch ) => bindActionCreators( { editOrder }, dispatch )
 )( localize( OrderDetails ) );

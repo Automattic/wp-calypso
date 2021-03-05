@@ -34,7 +34,7 @@
 	display: flex;
 	width: 100%;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		padding: 4px 0;
 		border-bottom: 1px solid var( --color-neutral-0 );
 
@@ -53,12 +53,12 @@
 		.shipping-services__entry-header {
 			display: inline-block;
 			margin-left: 0;
-			font-weight: bold;
+			font-weight: 600;
 		}
 
 		.shipping-services__entry-price-adjustment {
 			float: right;
-			@include breakpoint( '>480px' ) {
+			@include breakpoint-deprecated( '>480px' ) {
 				padding-right: 8px;
 			}
 		}
@@ -80,14 +80,14 @@
 
 	.shipping-services__entry-title {
 		flex-basis: 70%;
-		font-size: 13px;
+		font-size: $font-body-small;
 	}
 
 	.form-text-input {
 		flex-basis: 10%;
 		margin: 8px;
 		padding: 6px 12px;
-		font-size: 13px;
+		font-size: $font-body-small;
 		min-width: 42px;
 	}
 
@@ -95,7 +95,7 @@
 		flex-basis: 20%;
 		padding: 6px 32px 5px 14px;
 		line-height: 22px;
-		font-size: 13px;
+		font-size: $font-body-small;
 		box-shadow: none;
 
 		&:disabled {

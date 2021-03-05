@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
 	MEMBERSHIPS_PRODUCTS_LIST,
 	MEMBERSHIPS_PRODUCT_RECEIVE,
@@ -11,15 +8,16 @@ import {
 	MEMBERSHIPS_PRODUCT_ADD_FAILURE,
 	MEMBERSHIPS_PRODUCT_UPDATE,
 	MEMBERSHIPS_PRODUCT_UPDATE_FAILURE,
-	NOTICE_CREATE,
 	MEMBERSHIPS_PRODUCT_DELETE,
 	MEMBERSHIPS_PRODUCT_DELETE_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+import wpcom from 'calypso/lib/wp';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { membershipProductFromApi } from 'calypso/state/data-layer/wpcom/sites/memberships';
 
-import wpcom from 'lib/wp';
-import { membershipProductFromApi } from 'state/data-layer/wpcom/sites/memberships';
+import 'calypso/state/memberships/init';
 
-export const requestProducts = siteId => ( {
+export const requestProducts = ( siteId ) => ( {
 	siteId,
 	type: MEMBERSHIPS_PRODUCTS_LIST,
 } );
@@ -41,7 +39,7 @@ export function receiveDeleteProduct( siteId, productId ) {
 }
 
 export const requestAddProduct = ( siteId, product, noticeText ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: MEMBERSHIPS_PRODUCT_ADD,
 			siteId,
@@ -56,39 +54,33 @@ export const requestAddProduct = ( siteId, product, noticeText ) => {
 				},
 				product
 			)
-			.then( newProduct => {
+			.then( ( newProduct ) => {
 				const membershipProduct = membershipProductFromApi( newProduct.product );
 				dispatch( receiveUpdateProduct( siteId, membershipProduct ) );
-				dispatch( {
-					type: NOTICE_CREATE,
-					notice: {
+				dispatch(
+					successNotice( noticeText, {
 						duration: 5000,
-						text: noticeText,
-						status: 'is-success',
-					},
-				} );
+					} )
+				);
 				return membershipProduct;
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: MEMBERSHIPS_PRODUCT_ADD_FAILURE,
 					siteId,
 					error,
 				} );
-				dispatch( {
-					type: NOTICE_CREATE,
-					notice: {
+				dispatch(
+					errorNotice( error.message, {
 						duration: 10000,
-						text: error.message,
-						status: 'is-error',
-					},
-				} );
+					} )
+				);
 			} );
 	};
 };
 
 export const requestUpdateProduct = ( siteId, product, noticeText ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: MEMBERSHIPS_PRODUCT_UPDATE,
 			siteId,
@@ -103,39 +95,33 @@ export const requestUpdateProduct = ( siteId, product, noticeText ) => {
 				},
 				product
 			)
-			.then( newProduct => {
+			.then( ( newProduct ) => {
 				const membershipProduct = membershipProductFromApi( newProduct.product );
 				dispatch( receiveUpdateProduct( siteId, membershipProduct ) );
-				dispatch( {
-					type: NOTICE_CREATE,
-					notice: {
+				dispatch(
+					successNotice( noticeText, {
 						duration: 5000,
-						text: noticeText,
-						status: 'is-success',
-					},
-				} );
+					} )
+				);
 				return membershipProduct;
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: MEMBERSHIPS_PRODUCT_UPDATE_FAILURE,
 					siteId,
 					error,
 				} );
-				dispatch( {
-					type: NOTICE_CREATE,
-					notice: {
+				dispatch(
+					errorNotice( error.message, {
 						duration: 10000,
-						text: error.message,
-						status: 'is-error',
-					},
-				} );
+					} )
+				);
 			} );
 	};
 };
 
 export const requestDeleteProduct = ( siteId, product, noticeText ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: MEMBERSHIPS_PRODUCT_DELETE,
 			siteId,
@@ -148,31 +134,25 @@ export const requestDeleteProduct = ( siteId, product, noticeText ) => {
 				path: `/sites/${ siteId }/memberships/product/${ product.ID }/delete`,
 			} )
 			.then( () => {
-				dispatch( {
-					type: NOTICE_CREATE,
-					notice: {
+				dispatch(
+					successNotice( noticeText, {
 						duration: 5000,
-						text: noticeText,
-						status: 'is-success',
-					},
-				} );
+					} )
+				);
 				return product.ID;
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: MEMBERSHIPS_PRODUCT_DELETE_FAILURE,
 					siteId,
 					error,
 					product,
 				} );
-				dispatch( {
-					type: NOTICE_CREATE,
-					notice: {
+				dispatch(
+					errorNotice( error.message, {
 						duration: 10000,
-						text: error.message,
-						status: 'is-error',
-					},
-				} );
+					} )
+				);
 			} );
 	};
 };

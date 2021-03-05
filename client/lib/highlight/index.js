@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,8 +16,8 @@ function wrap( innerHtml, wrapperNode ) {
 }
 
 function replaceChildNodesWithGroup( node, newChildren, oldChild ) {
-	let child = newChildren.pop(),
-		last;
+	let child = newChildren.pop();
+	let last;
 	if ( child ) {
 		node.replaceChild( child, oldChild );
 		last = child;
@@ -34,12 +32,12 @@ function replaceChildNodesWithGroup( node, newChildren, oldChild ) {
  * @private
  */
 function highlightNode( node, term, wrapperNode ) {
-	let nodes = [],
-		found = false,
-		pos,
-		leftText,
-		midText,
-		remainingText;
+	let nodes = [];
+	let found = false;
+	let pos;
+	let leftText;
+	let midText;
+	let remainingText;
 	if ( node.nodeName === '#text' ) {
 		remainingText = node.nodeValue;
 	}
@@ -87,6 +85,7 @@ function walk( node, term, wrapperNode ) {
 
 /**
  * Wraps strings in a html to highlight
+ *
  * @param {string} term Term to search for
  * @param {string} html HTML string to search and wrap
  * @param {HTMLElement} [wrapperNode] Custom node to wrap the elements with, defaults to <mark>

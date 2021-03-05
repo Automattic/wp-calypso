@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,7 +20,7 @@ export default class WPAdminPluginsPage extends AsyncBaseContainer {
 		);
 		const located = await driverHelper.isElementPresent( this.driver, activateSelector );
 		if ( located === true ) {
-			return await driverHelper.clickWhenClickable( self.driver, activateSelector );
+			return await driverHelper.clickWhenClickable( this.driver, activateSelector );
 		}
 	}
 

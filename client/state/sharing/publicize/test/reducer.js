@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,10 +19,9 @@ import {
 	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
 	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
-	DESERIALIZE,
-	SERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	describe( 'fetchConnection()', () => {
@@ -57,30 +54,6 @@ describe( 'reducer', () => {
 
 			expect( state[ 2 ] ).to.be.false;
 		} );
-
-		describe( 'persistence', () => {
-			test( 'never loads persisted data', () => {
-				const persistedState = deepFreeze( {
-					2: false,
-					123456: undefined,
-				} );
-				const state = fetchingConnection( persistedState, {
-					type: DESERIALIZE,
-				} );
-				expect( state ).to.eql( {} );
-			} );
-
-			test( 'never persists data', () => {
-				const state = deepFreeze( {
-					2: false,
-					123456: undefined,
-				} );
-				const persistedState = fetchingConnection( state, {
-					type: SERIALIZE,
-				} );
-				expect( persistedState ).to.be.undefined;
-			} );
-		} );
 	} );
 
 	describe( '#fetchingConnections()', () => {
@@ -109,30 +82,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state[ 2916284 ] ).to.be.false;
-		} );
-
-		describe( 'persistence', () => {
-			test( 'never loads persisted data', () => {
-				const persistedState = deepFreeze( {
-					2916284: false,
-					123456: undefined,
-				} );
-				const state = fetchingConnections( persistedState, {
-					type: DESERIALIZE,
-				} );
-				expect( state ).to.eql( {} );
-			} );
-
-			test( 'never persists data', () => {
-				const state = deepFreeze( {
-					2916284: false,
-					123456: undefined,
-				} );
-				const persistedState = fetchingConnections( state, {
-					type: SERIALIZE,
-				} );
-				expect( persistedState ).to.be.undefined;
-			} );
 		} );
 	} );
 
@@ -214,17 +163,17 @@ describe( 'reducer', () => {
 
 		describe( 'PUBLICIZE_CONNECTION_CREATE', () => {
 			test( 'should add new connection', () => {
-				const existingConnection = { ID: 1, site_ID: 2916284 },
-					newConnection = { ID: 2, site_ID: 2916284 },
-					state = connections(
-						deepFreeze( {
-							1: existingConnection,
-						} ),
-						{
-							type: PUBLICIZE_CONNECTION_CREATE,
-							connection: newConnection,
-						}
-					);
+				const existingConnection = { ID: 1, site_ID: 2916284 };
+				const newConnection = { ID: 2, site_ID: 2916284 };
+				const state = connections(
+					deepFreeze( {
+						1: existingConnection,
+					} ),
+					{
+						type: PUBLICIZE_CONNECTION_CREATE,
+						connection: newConnection,
+					}
+				);
 
 				expect( state ).to.eql( {
 					1: existingConnection,
@@ -233,16 +182,16 @@ describe( 'reducer', () => {
 			} );
 
 			test( 'should update existing connections', () => {
-				const newConnection = { ID: 1, site_ID: 2916284 },
-					state = connections(
-						deepFreeze( {
-							1: { ID: 1, site_ID: 77203074 },
-						} ),
-						{
-							type: PUBLICIZE_CONNECTION_CREATE,
-							connection: newConnection,
-						}
-					);
+				const newConnection = { ID: 1, site_ID: 2916284 };
+				const state = connections(
+					deepFreeze( {
+						1: { ID: 1, site_ID: 77203074 },
+					} ),
+					{
+						type: PUBLICIZE_CONNECTION_CREATE,
+						connection: newConnection,
+					}
+				);
 
 				expect( state ).to.eql( {
 					1: newConnection,
@@ -274,17 +223,17 @@ describe( 'reducer', () => {
 
 		describe( 'PUBLICIZE_CONNECTION_RECEIVE', () => {
 			test( 'should add new connection', () => {
-				const existingConnection = { ID: 1, site_ID: 2916284 },
-					newConnection = { ID: 2, site_ID: 2916284 },
-					state = connections(
-						deepFreeze( {
-							1: existingConnection,
-						} ),
-						{
-							type: PUBLICIZE_CONNECTION_RECEIVE,
-							connection: newConnection,
-						}
-					);
+				const existingConnection = { ID: 1, site_ID: 2916284 };
+				const newConnection = { ID: 2, site_ID: 2916284 };
+				const state = connections(
+					deepFreeze( {
+						1: existingConnection,
+					} ),
+					{
+						type: PUBLICIZE_CONNECTION_RECEIVE,
+						connection: newConnection,
+					}
+				);
 
 				expect( state ).to.eql( {
 					1: existingConnection,
@@ -293,16 +242,16 @@ describe( 'reducer', () => {
 			} );
 
 			test( 'should update existing connections', () => {
-				const newConnection = { ID: 1, site_ID: 2916284 },
-					state = connections(
-						deepFreeze( {
-							1: { ID: 1, site_ID: 77203074 },
-						} ),
-						{
-							type: PUBLICIZE_CONNECTION_RECEIVE,
-							connection: newConnection,
-						}
-					);
+				const newConnection = { ID: 1, site_ID: 2916284 };
+				const state = connections(
+					deepFreeze( {
+						1: { ID: 1, site_ID: 77203074 },
+					} ),
+					{
+						type: PUBLICIZE_CONNECTION_RECEIVE,
+						connection: newConnection,
+					}
+				);
 
 				expect( state ).to.eql( {
 					1: newConnection,
@@ -312,17 +261,17 @@ describe( 'reducer', () => {
 
 		describe( 'PUBLICIZE_CONNECTION_UPDATE', () => {
 			test( 'should add new connection', () => {
-				const existingConnection = { ID: 1, site_ID: 2916284 },
-					newConnection = { ID: 2, site_ID: 2916284 },
-					state = connections(
-						deepFreeze( {
-							1: existingConnection,
-						} ),
-						{
-							type: PUBLICIZE_CONNECTION_UPDATE,
-							connection: newConnection,
-						}
-					);
+				const existingConnection = { ID: 1, site_ID: 2916284 };
+				const newConnection = { ID: 2, site_ID: 2916284 };
+				const state = connections(
+					deepFreeze( {
+						1: existingConnection,
+					} ),
+					{
+						type: PUBLICIZE_CONNECTION_UPDATE,
+						connection: newConnection,
+					}
+				);
 
 				expect( state ).to.eql( {
 					1: existingConnection,
@@ -331,16 +280,16 @@ describe( 'reducer', () => {
 			} );
 
 			test( 'should update existing connections', () => {
-				const newConnection = { ID: 1, site_ID: 2916284 },
-					state = connections(
-						deepFreeze( {
-							1: { ID: 1, site_ID: 77203074 },
-						} ),
-						{
-							type: PUBLICIZE_CONNECTION_UPDATE,
-							connection: newConnection,
-						}
-					);
+				const newConnection = { ID: 1, site_ID: 2916284 };
+				const state = connections(
+					deepFreeze( {
+						1: { ID: 1, site_ID: 77203074 },
+					} ),
+					{
+						type: PUBLICIZE_CONNECTION_UPDATE,
+						connection: newConnection,
+					}
+				);
 
 				expect( state ).to.eql( {
 					1: newConnection,
@@ -349,14 +298,14 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'persistence', () => {
-			useSandbox( sandbox => sandbox.stub( console, 'warn' ) );
+			useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );
 
 			test( 'should persist data', () => {
 				const state = deepFreeze( {
 					1: { ID: 1, site_ID: 2916284 },
 					2: { ID: 2, site_ID: 2916284 },
 				} );
-				const persistedState = connections( state, { type: SERIALIZE } );
+				const persistedState = serialize( connections, state );
 				expect( persistedState ).to.eql( state );
 			} );
 
@@ -365,9 +314,7 @@ describe( 'reducer', () => {
 					1: { ID: 1, site_ID: 2916284 },
 					2: { ID: 2, site_ID: 2916284 },
 				} );
-				const state = connections( persistedState, {
-					type: DESERIALIZE,
-				} );
+				const state = deserialize( connections, persistedState );
 				expect( state ).to.eql( persistedState );
 			} );
 
@@ -376,9 +323,7 @@ describe( 'reducer', () => {
 					foo: { ID: 1, site_ID: 2916284 },
 					bar: { ID: 2, site_ID: 2916284 },
 				} );
-				const state = connections( persistedState, {
-					type: DESERIALIZE,
-				} );
+				const state = deserialize( connections, persistedState );
 				expect( state ).to.eql( {} );
 			} );
 
@@ -387,9 +332,7 @@ describe( 'reducer', () => {
 					1: { ID: 1, site_ID: 'foo' },
 					2: { ID: 2, site_ID: 2916284 },
 				} );
-				const state = connections( persistedState, {
-					type: DESERIALIZE,
-				} );
+				const state = deserialize( connections, persistedState );
 				expect( state ).to.eql( {} );
 			} );
 		} );

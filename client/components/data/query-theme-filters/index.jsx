@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestThemeFilters } from 'state/themes/actions';
+import { requestThemeFilters } from 'calypso/state/themes/actions';
 
 export class QueryThemeFilters extends Component {
 	static propTypes = {
@@ -27,7 +25,4 @@ export class QueryThemeFilters extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestThemeFilters }
-)( QueryThemeFilters );
+export default connect( null, { requestThemeFilters } )( QueryThemeFilters );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import {
 	getOptedOutOfShippingSetup,
 	getOptedOutofTaxesSetup,
@@ -36,7 +34,7 @@ class SetupTasksView extends Component {
 		} ),
 	};
 
-	onFinished = event => {
+	onFinished = ( event ) => {
 		event.preventDefault();
 		recordTrack( 'calypso_woocommerce_dashboard_action_click', {
 			action: 'finished',
@@ -93,7 +91,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( SetupTasksView ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SetupTasksView ) );

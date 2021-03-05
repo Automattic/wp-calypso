@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,26 +6,20 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getSites from 'state/selectors/get-sites';
+import getSites from 'calypso/state/selectors/get-sites';
 
-const currentUserState = {
-	currentUser: {
-		id: 12345678,
-		capabilities: {},
+const currentUser = {
+	id: 12345678,
+	user: {
+		primary_blog: 2916288,
 	},
-	users: {
-		items: {
-			12345678: {
-				primary_blog: 2916288,
-			},
-		},
-	},
+	capabilities: {},
 };
 
 describe( 'getSites()', () => {
 	test( 'should return an empty array if no sites in state', () => {
 		const state = {
-			...currentUserState,
+			currentUser,
 			sites: {
 				items: {},
 			},
@@ -38,7 +30,7 @@ describe( 'getSites()', () => {
 
 	test( 'should return the primary site if the user has only one site', () => {
 		const state = {
-			...currentUserState,
+			currentUser,
 			sites: {
 				items: {
 					2916288: { ID: 2916288, name: 'WordPress.com Example Blog' },
@@ -52,7 +44,7 @@ describe( 'getSites()', () => {
 
 	test( 'should return the sites lists if the user has no primary site', () => {
 		const state = {
-			...currentUserState,
+			currentUser,
 			sites: {
 				items: {
 					2916287: { ID: 2916287, name: 'WordPress.com Example Blog' },
@@ -67,7 +59,7 @@ describe( 'getSites()', () => {
 
 	test( 'should return all the sites in state', () => {
 		const state = {
-			...currentUserState,
+			currentUser,
 			sites: {
 				items: {
 					2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
@@ -86,7 +78,7 @@ describe( 'getSites()', () => {
 
 	test( 'should return the primary site as the first element of the list', () => {
 		const state = {
-			...currentUserState,
+			currentUser,
 			sites: {
 				items: {
 					2916287: { ID: 2916287, name: 'WordPress.com Example Blog' },
@@ -106,7 +98,7 @@ describe( 'getSites()', () => {
 
 	test( 'should return sites in alphabetical order by name and url', () => {
 		const state = {
-			...currentUserState,
+			currentUser,
 			sites: {
 				items: {
 					2916287: { ID: 2916287, name: 'WordPress.com B Site', URL: '' },

@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -20,12 +19,13 @@ import { shallow } from 'enzyme';
  */
 import { Theme } from '../';
 
-jest.mock( 'components/popover/menu', () => 'components--popover--menu' );
-jest.mock( 'components/popover/menu-item', () => 'components--popover--menu-item' );
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/components/popover/menu', () => 'components--popover--menu' );
+jest.mock( 'calypso/components/popover/menu-item', () => 'components--popover--menu-item' );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'Theme', () => {
-	let props, themeNode;
+	let props;
+	let themeNode;
 
 	beforeEach( () => {
 		props = {
@@ -37,6 +37,7 @@ describe( 'Theme', () => {
 			},
 			buttonContents: { dummyAction: { label: 'Dummy action', action: sinon.spy() } }, // TODO: test if called when clicked
 			translate: identity,
+			setThemesBookmark: () => {},
 		};
 	} );
 

@@ -1,22 +1,20 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import Button from 'components/button';
-import Main from 'components/main';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import WordPressLogo from 'components/wordpress-logo';
+import config from '@automattic/calypso-config';
+import { Button } from '@automattic/components';
+import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 
 class Connect extends React.Component {
 	getCreateAccountUrl = () => {

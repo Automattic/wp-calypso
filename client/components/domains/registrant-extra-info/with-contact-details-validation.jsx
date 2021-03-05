@@ -1,9 +1,7 @@
 /**
  * Extrenal dependencies
  *
- * @format
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -13,11 +11,15 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:domains:with-contact-details-validation' );
 
 /**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
+
+/**
  * Internal dependencies
  */
-import getValidationSchemas from 'state/selectors/get-validation-schemas';
-import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
-import warn from 'lib/warn';
+import getValidationSchemas from 'calypso/state/selectors/get-validation-schemas';
+import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export function disableSubmitButton( children ) {
 	if ( isEmpty( children ) ) {
@@ -42,7 +44,9 @@ export function disableSubmitButton( children ) {
  * }
  */
 export function interpretIMJVError( error, schema ) {
-	let explicitPath, errorCode, errorMessage;
+	let explicitPath;
+	let errorCode;
+	let errorMessage;
 
 	if ( schema ) {
 		// Search up the schema for an explicit errorField & message
@@ -77,7 +81,7 @@ export function formatIMJVErrors( errors, schema ) {
 			// error message
 			const error = interpretIMJVError( rawError, schema );
 
-			return update( accumulatedErrors, error.path, errorsForField => [
+			return update( accumulatedErrors, error.path, ( errorsForField ) => [
 				...( errorsForField || [] ),
 				error,
 			] );
@@ -103,11 +107,11 @@ export default function WithContactDetailsValidation( tld, WrappedComponent ) {
 
 		displayName = 'WithContactDetailsValidation(' + tld + ', ' + wrappedComponentName + ')';
 
-		componentWillMount() {
+		UNSAFE_componentWillMount() {
 			this.compileValidator();
 		}
 
-		componentWillReceiveProps( nextProps ) {
+		UNSAFE_componentWillReceiveProps( nextProps ) {
 			if ( nextProps.validationSchema !== this.props.validationSchema ) {
 				this.compileValidator();
 			}
@@ -175,7 +179,7 @@ export default function WithContactDetailsValidation( tld, WrappedComponent ) {
 	}
 
 	return connect(
-		state => ( {
+		( state ) => ( {
 			validationSchema: get( getValidationSchemas( state ), tld, { not: {} } ),
 			recordTracksEvent,
 		} ),

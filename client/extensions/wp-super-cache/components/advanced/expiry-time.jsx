@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,16 +9,15 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormSelect from 'components/forms/form-select';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
-import FormToggle from 'components/forms/form-toggle/compact';
-import SectionHeader from 'components/section-header';
+import { Button, Card } from '@automattic/components';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import SectionHeader from 'calypso/components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
 const ExpiryTime = ( {
@@ -83,19 +80,21 @@ const ExpiryTime = ( {
 						name="cache_schedule_type"
 						onChange={ handleRadio }
 						value="interval"
+						label={
+							<>
+								{ translate( 'Timer' ) }
+								<FormTextInput
+									disabled={ isDisabled || 'interval' !== cache_schedule_type }
+									min="1"
+									onChange={ handleChange( 'cache_time_interval' ) }
+									step="1"
+									type="number"
+									value={ cache_time_interval || '' }
+								/>
+								{ translate( 'seconds' ) }
+							</>
+						}
 					/>
-					<span>
-						{ translate( 'Timer' ) }
-						<FormTextInput
-							disabled={ isDisabled || 'interval' !== cache_schedule_type }
-							min="1"
-							onChange={ handleChange( 'cache_time_interval' ) }
-							step="1"
-							type="number"
-							value={ cache_time_interval || '' }
-						/>
-						{ translate( 'seconds' ) }
-					</span>
 				</FormLabel>
 				<FormSettingExplanation isIndented>
 					{ translate( 'Check for stale cached files every interval seconds.' ) }
@@ -108,16 +107,18 @@ const ExpiryTime = ( {
 						name="cache_schedule_type"
 						onChange={ handleRadio }
 						value="time"
+						label={
+							<>
+								{ translate( 'Clock' ) }
+								<FormTextInput
+									disabled={ isDisabled || 'time' !== cache_schedule_type }
+									onChange={ handleChange( 'cache_scheduled_time' ) }
+									value={ cache_scheduled_time || '' }
+								/>
+								{ translate( 'HH:MM' ) }
+							</>
+						}
 					/>
-					<span>
-						{ translate( 'Clock' ) }
-						<FormTextInput
-							disabled={ isDisabled || 'time' !== cache_schedule_type }
-							onChange={ handleChange( 'cache_scheduled_time' ) }
-							value={ cache_scheduled_time || '' }
-						/>
-						{ translate( 'HH:MM' ) }
-					</span>
 				</FormLabel>
 				<FormSettingExplanation isIndented>
 					{ translate(
@@ -168,15 +169,12 @@ const ExpiryTime = ( {
 		);
 	};
 
-	const formatUnixTimestamp = timestamp => {
+	const formatUnixTimestamp = ( timestamp ) => {
 		if ( ! timestamp ) {
 			return;
 		}
 
-		return moment
-			.unix( timestamp )
-			.utc()
-			.format( 'YYYY-MM-DD H:mm:ss' );
+		return moment.unix( timestamp ).utc().format( 'YYYY-MM-DD H:mm:ss' );
 	};
 
 	return (
@@ -188,10 +186,7 @@ const ExpiryTime = ( {
 			</SectionHeader>
 			<Card>
 				<p>
-					{ translate( 'UTC time is ' ) +
-						moment()
-							.utc()
-							.format( 'YYYY-MM-DD H:mm:ss' ) }
+					{ translate( 'UTC time is ' ) + moment().utc().format( 'YYYY-MM-DD H:mm:ss' ) }
 					<br />
 					{ translate( 'Local time is ' ) + moment().format( 'YYYY-MM-DD H:mm:ss' ) }
 				</p>
@@ -222,7 +217,7 @@ const ExpiryTime = ( {
 	);
 };
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'cache_gc_email_me',
 		'cache_max_time',

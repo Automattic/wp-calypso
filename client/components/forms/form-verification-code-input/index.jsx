@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import constants from 'me/constants';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import constants from 'calypso/me/constants';
 
 /**
  * Style dependencies
@@ -34,7 +33,7 @@ export default class FormVerificationCodeInput extends React.Component {
 		this.input.focus();
 	};
 
-	saveRef = input => {
+	saveRef = ( input ) => {
 		this.input = input;
 	};
 
@@ -55,7 +54,7 @@ export default class FormVerificationCodeInput extends React.Component {
 		}
 
 		return (
-			<input
+			<FormTextInput
 				autoComplete="off"
 				className={ classes }
 				pattern="[0-9 ]*"

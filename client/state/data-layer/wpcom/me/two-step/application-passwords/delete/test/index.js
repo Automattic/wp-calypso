@@ -1,14 +1,12 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 import { handleRemoveError, handleRemoveSuccess, removeApplicationPassword } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	deleteApplicationPassword,
 	deleteApplicationPasswordSuccess,
-} from 'state/application-passwords/actions';
+} from 'calypso/state/application-passwords/actions';
 
 const appPasswordId = 12345;
 

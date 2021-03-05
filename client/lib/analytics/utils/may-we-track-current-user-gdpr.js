@@ -12,7 +12,7 @@ import isCurrentUserMaybeInGdprZone from './is-current-user-maybe-in-gdpr-zone';
 /**
  * Returns a boolean telling whether we may track the current user.
  *
- * @returns {Boolean} Whether we may track the current user
+ * @returns {boolean} Whether we may track the current user
  */
 export default function mayWeTrackCurrentUserGdpr() {
 	let result = false;

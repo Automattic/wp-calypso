@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,6 @@ import deepFreeze from 'deep-freeze';
  */
 import reducer, { status, isFetching, isSaving } from '../reducer';
 import {
-	DESERIALIZE,
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE,
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
@@ -19,14 +16,14 @@ import {
 	GUIDED_TRANSFER_STATUS_REQUEST,
 	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
 	GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
-	SERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	const testSiteId = 100658273;
 
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -72,7 +69,7 @@ describe( 'reducer', () => {
 						host_details_entered: false,
 					},
 				} );
-				const state = status( original, { type: SERIALIZE } );
+				const state = serialize( status, original );
 				expect( state ).to.eql( original );
 			} );
 
@@ -83,7 +80,7 @@ describe( 'reducer', () => {
 						host_details_entered: false,
 					},
 				} );
-				const state = status( original, { type: DESERIALIZE } );
+				const state = deserialize( status, original );
 				expect( state ).to.eql( original );
 			} );
 
@@ -94,7 +91,7 @@ describe( 'reducer', () => {
 						host_details_entered: false,
 					},
 				} );
-				const state = status( original, { type: DESERIALIZE } );
+				const state = deserialize( status, original );
 				expect( state ).to.eql( {} );
 			} );
 		} );
@@ -129,28 +126,6 @@ describe( 'reducer', () => {
 				siteId: testSiteId,
 			} );
 			expect( state[ testSiteId ] ).to.be.false;
-		} );
-
-		test( 'should never persist state', () => {
-			const state = isFetching(
-				{
-					[ testSiteId ]: true,
-				},
-				{ type: SERIALIZE }
-			);
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should never load persisted state', () => {
-			const state = isFetching(
-				{
-					[ testSiteId ]: true,
-				},
-				{ type: DESERIALIZE }
-			);
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 

@@ -3,13 +3,18 @@
  */
 import validator from 'is-my-json-valid';
 import { forEach, get, isEmpty, isEqual } from 'lodash';
+import { getInitialState } from '@automattic/state-utils';
+
+/**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
 
 /**
  * Internal dependencies
  */
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
-import { getInitialState } from './get-initial-state';
-import warn from 'lib/warn';
+import { serialize } from './serialize';
+import { DESERIALIZE } from 'calypso/state/action-types';
 
 export function isValidStateWithSchema( state, schema, debugInfo ) {
 	const validate = validator( schema, {
@@ -55,7 +60,7 @@ function isValidSerializedState( schema, reducer, state ) {
 	// Note that we need to serialize the initial state to make a correct check. For reducers
 	// with custom persistence, the initial state can be arbitrary non-serializable object. We
 	// need to compare two serialized objects.
-	const serializedInitialState = reducer( undefined, { type: SERIALIZE } );
+	const serializedInitialState = serialize( reducer, getInitialState( reducer ) );
 	if ( isEqual( state, serializedInitialState ) ) {
 		return true;
 	}
@@ -92,8 +97,8 @@ function isValidSerializedState( schema, reducer, state ) {
  * age( 23, { type: DESERIALIZE } ) === 23
  *
  * @param {object} schema JSON-schema description of state
- * @param {function} reducer normal reducer from ( state, action ) to new state
- * @returns {function} wrapped reducer handling validation on DESERIALIZE
+ * @param {Function} reducer normal reducer from ( state, action ) to new state
+ * @returns {Function} wrapped reducer handling validation on DESERIALIZE
  */
 export const withSchemaValidation = ( schema, reducer ) => {
 	if ( process.env.NODE_ENV !== 'production' && ! schema ) {

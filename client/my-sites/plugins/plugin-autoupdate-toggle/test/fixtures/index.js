@@ -1,4 +1,3 @@
-/** @format */
 export default {
 	site: {
 		slug: 'test',
@@ -9,10 +8,6 @@ export default {
 		jetpack: true,
 	},
 	plugin: { slug: 'test' },
-	notices: {
-		completed: [],
-		errors: [],
-	},
 	wporg: true,
-	action: function() {},
+	action: function () {},
 };

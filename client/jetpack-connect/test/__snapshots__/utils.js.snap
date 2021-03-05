@@ -9,6 +9,7 @@ Object {
   "closeWindowAfterLogin": false,
   "from": "[unknown]",
   "homeUrl": "https://yourjetpack.blog",
+  "isPopup": false,
   "jpVersion": null,
   "nonce": "foobar",
   "redirectAfterAuth": null,
@@ -20,5 +21,7 @@ Object {
   "siteUrl": "https://yourjetpack.blog",
   "state": "1",
   "userEmail": null,
+  "woodna_help_url": null,
+  "woodna_service_name": null,
 }
 `;

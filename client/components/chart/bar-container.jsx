@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,14 +11,21 @@ import React from 'react';
 import Bar from './bar';
 import XAxis from './x-axis';
 
+const X_AXIS_LABEL_WIDTH = 42;
+
 export default class ChartBarContainer extends React.PureComponent {
 	static propTypes = {
 		barClick: PropTypes.func,
 		data: PropTypes.array,
+		isPlaceholder: PropTypes.bool,
 		isRtl: PropTypes.bool,
 		isTouch: PropTypes.bool,
 		width: PropTypes.number,
 		yAxisMax: PropTypes.number,
+	};
+
+	static defaultProps = {
+		isPlaceholder: false,
 	};
 
 	render() {
@@ -39,11 +44,17 @@ export default class ChartBarContainer extends React.PureComponent {
 							count={ this.props.data.length }
 							chartWidth={ this.props.chartWidth }
 							setTooltip={ this.props.setTooltip }
-							isRtl={ this.props.isRtl }
 						/>
 					) ) }
 				</div>
-				<XAxis data={ this.props.data } labelWidth={ 42 } isRtl={ this.props.isRtl } />
+				{ ! this.props.isPlaceholder && (
+					<XAxis
+						data={ this.props.data }
+						labelWidth={ X_AXIS_LABEL_WIDTH }
+						isRtl={ this.props.isRtl }
+						chartWidth={ this.props.chartWidth }
+					/>
+				) }
 			</>
 		);
 	}

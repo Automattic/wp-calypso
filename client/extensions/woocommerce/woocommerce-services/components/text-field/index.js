@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,11 +7,11 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import FieldError from '../field-error';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 
 const TextField = ( {
 	id,
@@ -25,7 +23,7 @@ const TextField = ( {
 	error,
 	className,
 } ) => {
-	const handleChangeEvent = event => updateValue( event.target.value );
+	const handleChangeEvent = ( event ) => updateValue( event.target.value );
 
 	return (
 		<FormFieldset className={ className }>

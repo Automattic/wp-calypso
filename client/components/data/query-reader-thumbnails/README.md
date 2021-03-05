@@ -1,5 +1,4 @@
-Query Reader Thumbnails
-========================
+# Query Reader Thumbnails
 
 `<QueryReaderThumbnails />` is a React component used in managing network requests for Reader thumbnail urls.
 
@@ -9,19 +8,19 @@ Render the component. It does not accept any children, nor does it render any el
 
 ```jsx
 import React from 'react';
-import QueryReaderThumbnails from 'components/data/query-reader-thumbnail';
-import getThumbnailForIframe;
+import QueryReaderThumbnails from 'calypso/components/data/query-reader-thumbnail';
+import { getThumbnailForIframe } from 'calypso/state/reader/thumbnails/selectors';
 
 function MyFeaturedAsset( { embedUrl, thumbnailUrl } ) {
 	return (
 		<div>
-			<QueryReaderThumbnails embedUrl={ embedUrl } } />
+			<QueryReaderThumbnails embedUrl={ embedUrl } />
 			<image src={ thumbnailUrl } />
 		</div>
 	);
 }
 
-connect( ( state, ownProps) => ( {
+connect( ( state, ownProps ) => ( {
 	thumbnailUrl: getThumbnailForIframe( state, ownProps.embedUrl ),
-	} ) )( MyFeaturedAsset );
+} ) )( MyFeaturedAsset );
 ```

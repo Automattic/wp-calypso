@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import { get, maxBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { LegendItemPlaceholder } from 'components/legend-item';
+import { LegendItemPlaceholder } from 'calypso/components/legend-item';
 
 function getLongestName( dataSeriesInfo ) {
 	return get( maxBy( dataSeriesInfo, 'name.length' ), 'name', '' );
@@ -21,7 +19,7 @@ function PieChartLegendPlaceholder( { dataSeriesInfo } ) {
 
 	return (
 		<div className="pie-chart__placeholder-legend">
-			{ dataSeriesInfo.map( datumInfo => {
+			{ dataSeriesInfo.map( ( datumInfo ) => {
 				return (
 					<LegendItemPlaceholder
 						key={ datumInfo.name }

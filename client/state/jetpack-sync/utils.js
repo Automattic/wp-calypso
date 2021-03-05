@@ -3,8 +3,7 @@
  * from the API when checking sync status for a site.
  *
  *
- * @format
- * @return {Array} Array of strings that are expected keys in API response.
+ * @returns {Array} Array of strings that are expected keys in API response.
  */
 
 export function getExpectedResponseKeys() {
@@ -18,6 +17,7 @@ export function getExpectedResponseKeys() {
 		'is_scheduled',
 		'total',
 		'config',
+		'progress',
 		'queue_size',
 		'queue_lag',
 		'full_queue_size',

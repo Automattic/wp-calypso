@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -14,11 +12,11 @@ import 'moment-timezone'; // monkey patches the existing moment.js
 /**
  * Internal dependencies
  */
-import SegmentedControl from 'components/segmented-control';
-import InfoPopover from 'components/info-popover';
-import { withLocalizedMoment } from 'components/localized-moment';
-import getSiteSetting from 'state/selectors/get-site-setting';
-import { isMobile } from 'lib/viewport';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import SegmentedControl from 'calypso/components/segmented-control';
+import InfoPopover from 'calypso/components/info-popover';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 
 /**
  * Local dependencies
@@ -32,11 +30,11 @@ import {
 } from './utils';
 
 class PostScheduleClock extends Component {
-	adjustHour = event => this.handleKeyDown( event, 'hour' );
-	adjustMinute = event => this.handleKeyDown( event, 'minute' );
+	adjustHour = ( event ) => this.handleKeyDown( event, 'hour' );
+	adjustMinute = ( event ) => this.handleKeyDown( event, 'minute' );
 
-	setAm = event => this.setAmPm( event, 'AM' );
-	setPm = event => this.setAmPm( event, 'PM' );
+	setAm = ( event ) => this.setAmPm( event, 'AM' );
+	setPm = ( event ) => this.setAmPm( event, 'PM' );
 
 	amPmRef = React.createRef();
 	hourRef = React.createRef();
@@ -116,8 +114,8 @@ class PostScheduleClock extends Component {
 	/**
 	 * Converts a 12-hour time to a 24-hour time, depending on time format.
 	 *
-	 * @param {Number}  hour The hour to convert.
-	 * @return {Number}      The converted hour.
+	 * @param {number}  hour The hour to convert.
+	 * @returns {number}      The converted hour.
 	 */
 	convertTo24Hour( hour ) {
 		if ( 'PM' === this.amPmRef.current.value && hour < 12 ) {
@@ -136,7 +134,8 @@ class PostScheduleClock extends Component {
 			return;
 		}
 
-		let diffInMinutes, tzDateOffset;
+		let diffInMinutes;
+		let tzDateOffset;
 
 		if ( timezone ) {
 			const tzDate = date.clone().tz( timezone );
@@ -187,26 +186,24 @@ class PostScheduleClock extends Component {
 
 		return (
 			<div className="post-schedule__clock">
-				<input
+				<FormTextInput
 					className="post-schedule__clock-time"
 					name="post-schedule__clock_hour"
-					ref={ this.hourRef }
+					inputRef={ this.hourRef }
 					value={ date.format( is12hour ? 'hh' : 'HH' ) }
 					onChange={ this.setTime }
 					onKeyDown={ this.adjustHour }
-					type="text"
 				/>
 
 				<span className="post-schedule__clock-divisor">:</span>
 
-				<input
+				<FormTextInput
 					className="post-schedule__clock-time"
 					name="post-schedule__clock_minute"
-					ref={ this.minRef }
+					inputRef={ this.minRef }
 					value={ date.format( 'mm' ) }
 					onChange={ this.setTime }
 					onKeyDown={ this.adjustMinute }
-					type="text"
 				/>
 
 				{ is12hour && (

@@ -1,5 +1,4 @@
-Order Refunds
-=============
+# Order Refunds
 
 This module is used to manage refunds for orders on a site.
 
@@ -18,17 +17,19 @@ Create a refund for the given order. Refund should have `amount` & an optional `
 This is saved inside the orders state tree, which is keyed by site ID. Children of `refunds` are objects keyed by order ID, with `isSaving` and `items` properties. `isSaving` is a boolean, tracking whether an order refund is currently being submitted (saved). `items` lists all the refunds for that order.
 
 ```js
-{
-	"refunds": {
+const object = {
+	refunds: {
 		// Keyed by order ID
 		10: {
-			"isSaving": true,
-			"items": [
-				{ … refund object }
-			]
-		}
-	}
-}
+			isSaving: true,
+			items: [
+				{
+					/*refund object*/
+				},
+			],
+		},
+	},
+};
 ```
 
 ## Selectors

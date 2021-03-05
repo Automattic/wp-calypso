@@ -1,0 +1,34 @@
+{
+	"compilerOptions": {
+		"target": "ES5",
+		"lib": [ "DOM", "ESNext" ],
+		"module": "ESNext",
+		"allowJs": true,
+		"checkJs": false,
+		"jsx": "react",
+		"declaration": true,
+		"declarationDir": "dist/types",
+		"outDir": "dist/esm",
+		"isolatedModules": true,
+
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+
+		"forceConsistentCasingInFileNames": true,
+
+		"typeRoots": [ "../../node_modules/@types" ],
+		"types": [],
+		"rootDir": "src",
+
+		"importHelpers": true,
+
+		"composite": true
+	},
+	"include": [ "src" ]
+}

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,8 +11,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import Notice from 'components/notice';
+import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import Notice from 'calypso/components/notice';
 
 class SetupNotices extends Component {
 	static propTypes = {

@@ -1,0 +1,241 @@
+@import './base-styles';
+@import './variables';
+
+@mixin onboarding-font-recoleta {
+	font-family: $brand-serif;
+	font-weight: 400;
+	letter-spacing: -0.4px;
+}
+
+@mixin onboarding-heading-text {
+	@include onboarding-font-recoleta;
+	font-size: 42px; /* stylelint-disable-line */
+	line-height: 57px;
+}
+
+@mixin onboarding-heading-text-tablet {
+	@include onboarding-font-recoleta;
+	font-size: 36px; /* stylelint-disable-line */
+	line-height: 40px;
+}
+
+@mixin onboarding-heading-text-mobile {
+	@include onboarding-font-recoleta;
+	font-size: 32px; /* stylelint-disable-line */
+	line-height: 40px;
+}
+
+@mixin onboarding-heading-title {
+	@include onboarding-heading-text-mobile;
+	color: var( --mainColor );
+
+	@include break-mobile {
+		@include onboarding-heading-text-tablet;
+	}
+
+	@include break-xlarge {
+		@include onboarding-heading-text;
+	}
+}
+
+@mixin onboarding-large-text {
+	font-size: 16px; /* stylelint-disable-line */
+	line-height: 24px;
+}
+
+@mixin onboarding-medium-text {
+	font-size: $font-body-small;
+	line-height: 17px;
+}
+
+@mixin onboarding-small-text {
+	font-size: $font-body-extra-small;
+	line-height: 14px;
+}
+
+@mixin onboarding-x-small-text {
+	font-size: $font-body-extra-small;
+	line-height: 13px;
+}
+
+@mixin onboarding-block-margin {
+	margin-left: $onboarding-block-margin-mobile;
+	margin-right: $onboarding-block-margin-mobile;
+
+	@include break-small {
+		margin-left: $onboarding-block-margin-small;
+		margin-right: $onboarding-block-margin-small;
+	}
+
+	@include break-medium {
+		margin-left: $onboarding-block-margin-medium;
+		margin-right: $onboarding-block-margin-medium;
+	}
+}
+
+@mixin onboarding-heading-padding {
+	margin: $onboarding-heading-margin-mobile;
+
+	@include break-small {
+		margin: $onboarding-heading-margin-small;
+	}
+
+	@include break-medium {
+		margin: $onboarding-heading-margin-medium;
+	}
+}
+
+@mixin onboarding-body-margin {
+	margin: $onboarding-body-margin-mobile;
+
+	@include break-small {
+		margin: $onboarding-body-margin-small;
+	}
+
+	@include break-medium {
+		margin: $onboarding-body-margin-medium;
+	}
+}
+
+/* (1920x1080) Full HD Display */
+@mixin onboarding-break-gigantic() {
+	@media ( min-width: 1920px ) {
+		@content;
+	}
+}
+
+@mixin onboarding-break-mobile-tall() {
+	@media ( min-height: 750px ) {
+		@content;
+	}
+}
+
+@mixin onboarding-modal-overlay {
+	// Absolute positioning allows the modal
+	// to reuse the <body> element's scrollbar.
+	position: absolute;
+
+	// This positions the domain picker modal
+	// right below the gutenboarding header,
+	// keeping the header clickable.
+	top: $onboarding-header-height;
+	left: 0;
+
+	// Using min-height lets the overlay cover
+	// the entire viewport ensuring nothing behind
+	// it can be seen.
+	//
+	// When the domain picker's content is taller
+	// than the viewport height, it will expand taller
+	// than the provided min-height, triggering
+	// the appearance of the <body> element's scrollbar.
+	min-height: calc( 100vh - #{$onboarding-header-height} );
+	width: 100%;
+
+	background: var( --studio-white );
+}
+
+@mixin onboarding-block-edge2edge {
+	margin-left: #{$onboarding-block-margin-mobile * -1};
+	margin-right: #{$onboarding-block-margin-mobile * -1};
+
+	@include break-small {
+		margin-left: #{$onboarding-block-margin-small * -1};
+		margin-right: #{$onboarding-block-margin-small * -1};
+	}
+
+	@include break-medium {
+		margin-left: #{$onboarding-block-margin-medium * -1};
+		margin-right: #{$onboarding-block-margin-medium * -1};
+	}
+}
+
+@mixin onboarding-block-edge2edge-container {
+	@include onboarding-block-edge2edge;
+
+	width: auto;
+}
+
+@mixin onboarding-block-edge2edge-content {
+	border-left: $onboarding-block-margin-mobile solid transparent;
+	border-right: $onboarding-block-margin-mobile solid transparent;
+
+	@include break-small {
+		border-left: $onboarding-block-margin-small solid transparent;
+		border-right: $onboarding-block-margin-small solid transparent;
+	}
+
+	@include break-medium {
+		border-left: $onboarding-block-margin-medium solid transparent;
+		border-right: $onboarding-block-margin-medium solid transparent;
+	}
+}
+
+@mixin onboarding-block-edge2edge-columns {
+	&:first-child {
+		border-left: $onboarding-block-margin-mobile solid transparent;
+	}
+	&:last-child {
+		border-right: $onboarding-block-margin-mobile solid transparent;
+	}
+
+	@include break-small {
+		&:first-child {
+			border-left: $onboarding-block-margin-small solid transparent;
+		}
+		&:last-child {
+			border-right: $onboarding-block-margin-small solid transparent;
+		}
+	}
+
+	@include break-medium {
+		&:first-child {
+			border-left: $onboarding-block-margin-medium solid transparent;
+		}
+		&:last-child {
+			border-right: $onboarding-block-margin-medium solid transparent;
+		}
+	}
+}
+
+// onaboarding-placeholder() mixin is a copy of 'client/assets/stylesheets/shared/mixins/placeholder'
+
+@mixin onboarding-placeholder( $color-property: $gray-100 ) {
+	@include onboarding-loading( $color-property );
+	color: transparent;
+
+	&::after {
+		content: '\00a0';
+	}
+}
+
+@mixin onboarding-loading( $color-property: $gray-100 ) {
+	animation: onboarding-loading-pulse 1.6s ease-in-out infinite;
+	background: $color-property;
+}
+
+// a pulsing animation for placeholders
+@keyframes onboarding-loading-pulse {
+	0% {
+		opacity: 0.5;
+	}
+	50% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0.5;
+	}
+}
+
+// Hide visually without allowing screen reader access.
+@mixin onboarding-screen-reader-text {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect( 0, 0, 0, 0 );
+	white-space: nowrap;
+	border-width: 0;
+}

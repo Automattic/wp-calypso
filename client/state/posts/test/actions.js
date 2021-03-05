@@ -1,10 +1,3 @@
-/** @format */
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import sinon from 'sinon';
-
 /**
  * Internal dependencies
  */
@@ -16,15 +9,11 @@ import {
 	requestAllSitesPosts,
 	editPost,
 	savePost,
-	savePostSuccess,
 	trashPost,
 	deletePost,
 	restorePost,
-	addTermForPost,
-	updatePostMetadata,
-	deletePostMetadata,
-} from '../actions';
-import PostQueryManager from 'lib/query-manager/post';
+} from 'calypso/state/posts/actions';
+import { savePostSuccess } from 'calypso/state/posts/actions/save-post-success';
 import {
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
@@ -43,14 +32,24 @@ import {
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
 	POSTS_REQUEST_FAILURE,
-} from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
+} from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
+
+jest.mock( 'calypso/state/posts/actions/save-post-success', () => ( {
+	savePostSuccess: jest.fn(),
+} ) );
 
 describe( 'actions', () => {
-	const spy = sinon.spy();
+	let dispatch;
+	let getState;
 
 	beforeEach( () => {
-		spy.resetHistory();
+		dispatch = jest.fn();
+		getState = jest.fn( () => ( {
+			posts: {
+				queries: {},
+			},
+		} ) );
 	} );
 
 	describe( '#receivePost()', () => {
@@ -58,7 +57,7 @@ describe( 'actions', () => {
 			const post = { ID: 841, title: 'Hello World' };
 			const action = receivePost( post );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: POSTS_RECEIVE,
 				posts: [ post ],
 			} );
@@ -70,7 +69,7 @@ describe( 'actions', () => {
 			const posts = [ { ID: 841, title: 'Hello World' } ];
 			const action = receivePosts( posts );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: POSTS_RECEIVE,
 				posts,
 			} );
@@ -78,12 +77,16 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'savePostSuccess()', () => {
+		// eslint-disable-next-line no-shadow
+		const { savePostSuccess } = jest.requireActual(
+			'calypso/state/posts/actions/save-post-success'
+		);
 		test( 'should return an action object', () => {
 			const savedPost = { ID: 841, title: 'Hello World' };
 			const attributes = { status: 'draft' };
-			const action = savePostSuccess( 10, 841, savedPost, attributes );
+			savePostSuccess( 10, 841, savedPost, attributes )( dispatch );
 
-			expect( action ).to.eql( {
+			expect( dispatch ).toHaveBeenCalledWith( {
 				type: POST_SAVE_SUCCESS,
 				siteId: 10,
 				postId: 841,
@@ -94,13 +97,16 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSitePosts()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/posts' )
 				.reply( 200, {
 					found: 2,
-					posts: [ { ID: 841, title: 'Hello World' }, { ID: 413, title: 'Ribs & Chicken' } ],
+					posts: [
+						{ ID: 841, title: 'Hello World' },
+						{ ID: 413, title: 'Ribs & Chicken' },
+					],
 				} )
 				.get( '/rest/v1.1/sites/2916284/posts' )
 				.query( { search: 'Hello' } )
@@ -116,9 +122,9 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fetch action when thunk triggered', () => {
-			requestSitePosts( 2916284 )( spy );
+			requestSitePosts( 2916284 )( dispatch );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( dispatch ).toHaveBeenCalledWith( {
 				type: POSTS_REQUEST,
 				siteId: 2916284,
 				query: {},
@@ -126,29 +132,35 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch posts receive action when request completes', () => {
-			return requestSitePosts( 2916284 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+			return requestSitePosts( 2916284 )( dispatch ).then( () => {
+				expect( dispatch ).toHaveBeenCalledWith( {
 					type: POSTS_RECEIVE,
-					posts: [ { ID: 841, title: 'Hello World' }, { ID: 413, title: 'Ribs & Chicken' } ],
+					posts: [
+						{ ID: 841, title: 'Hello World' },
+						{ ID: 413, title: 'Ribs & Chicken' },
+					],
 				} );
 			} );
 		} );
 
 		test( 'should dispatch success action when posts request completes', () => {
-			return requestSitePosts( 2916284 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+			return requestSitePosts( 2916284 )( dispatch ).then( () => {
+				expect( dispatch ).toHaveBeenCalledWith( {
 					type: POSTS_REQUEST_SUCCESS,
 					siteId: 2916284,
 					query: {},
 					found: 2,
-					posts: [ { ID: 841, title: 'Hello World' }, { ID: 413, title: 'Ribs & Chicken' } ],
+					posts: [
+						{ ID: 841, title: 'Hello World' },
+						{ ID: 413, title: 'Ribs & Chicken' },
+					],
 				} );
 			} );
 		} );
 
 		test( 'should dispatch posts request success action with query results', () => {
-			return requestSitePosts( 2916284, { search: 'Hello' } )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+			return requestSitePosts( 2916284, { search: 'Hello' } )( dispatch ).then( () => {
+				expect( dispatch ).toHaveBeenCalledWith( {
 					type: POSTS_REQUEST_SUCCESS,
 					siteId: 2916284,
 					query: { search: 'Hello' },
@@ -159,40 +171,48 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch failure action when request fails', () => {
-			return requestSitePosts( 77203074 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: POSTS_REQUEST_FAILURE,
-					siteId: 77203074,
-					query: {},
-					error: sinon.match( { message: 'User cannot access this private blog.' } ),
-				} );
+			return requestSitePosts( 77203074 )( dispatch ).then( () => {
+				expect( dispatch ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						type: POSTS_REQUEST_FAILURE,
+						siteId: 77203074,
+						query: {},
+						error: expect.objectContaining( { message: 'User cannot access this private blog.' } ),
+					} )
+				);
 			} );
 		} );
 	} );
 
 	describe( '#requestAllSitesPosts()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/me/posts' )
 				.reply( 200, {
 					found: 2,
-					posts: [ { ID: 841, title: 'Hello World' }, { ID: 413, title: 'Ribs & Chicken' } ],
+					posts: [
+						{ ID: 841, title: 'Hello World' },
+						{ ID: 413, title: 'Ribs & Chicken' },
+					],
 				} );
 		} );
 
 		test( 'should dispatch posts receive action when request completes', () => {
-			return requestAllSitesPosts()( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+			return requestAllSitesPosts()( dispatch ).then( () => {
+				expect( dispatch ).toHaveBeenCalledWith( {
 					type: POSTS_RECEIVE,
-					posts: [ { ID: 841, title: 'Hello World' }, { ID: 413, title: 'Ribs & Chicken' } ],
+					posts: [
+						{ ID: 841, title: 'Hello World' },
+						{ ID: 413, title: 'Ribs & Chicken' },
+					],
 				} );
 			} );
 		} );
 	} );
 
 	describe( '#requestSitePost()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/posts/413' )
@@ -205,9 +225,9 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when thunk triggered', () => {
-			requestSitePost( 2916284, 413 )( spy );
+			requestSitePost( 2916284, 413 )( dispatch );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( dispatch ).toHaveBeenCalledWith( {
 				type: POST_REQUEST,
 				siteId: 2916284,
 				postId: 413,
@@ -215,17 +235,23 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch posts receive action when request completes', () => {
-			return requestSitePost( 2916284, 413 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+			return requestSitePost(
+				2916284,
+				413
+			)( dispatch ).then( () => {
+				expect( dispatch ).toHaveBeenCalledWith( {
 					type: POSTS_RECEIVE,
-					posts: [ sinon.match( { ID: 413, title: 'Ribs & Chicken' } ) ],
+					posts: [ expect.objectContaining( { ID: 413, title: 'Ribs & Chicken' } ) ],
 				} );
 			} );
 		} );
 
 		test( 'should dispatch posts posts request success action when request completes', () => {
-			return requestSitePost( 2916284, 413 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+			return requestSitePost(
+				2916284,
+				413
+			)( dispatch ).then( () => {
+				expect( dispatch ).toHaveBeenCalledWith( {
 					type: POST_REQUEST_SUCCESS,
 					siteId: 2916284,
 					postId: 413,
@@ -234,12 +260,15 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			return requestSitePost( 2916284, 420 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+			return requestSitePost(
+				2916284,
+				420
+			)( dispatch ).then( () => {
+				expect( dispatch ).toHaveBeenCalledWith( {
 					type: POST_REQUEST_FAILURE,
 					siteId: 2916284,
 					postId: 420,
-					error: sinon.match( { message: 'Unknown post' } ),
+					error: expect.objectContaining( { message: 'Unknown post' } ),
 				} );
 			} );
 		} );
@@ -256,7 +285,7 @@ describe( 'actions', () => {
 				2916284
 			);
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: POST_EDIT,
 				siteId: 2916284,
 				postId: null,
@@ -269,7 +298,7 @@ describe( 'actions', () => {
 				title: 'Hello World',
 			} );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: POST_EDIT,
 				siteId: 2916284,
 				postId: 413,
@@ -279,7 +308,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'savePost()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.2/sites/2916284/posts/new', {
@@ -309,9 +338,9 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch save action when thunk triggered for new post', () => {
-			savePost( 2916284, null, { title: 'Hello World' } )( spy );
+			savePost( 2916284, null, { title: 'Hello World' } )( dispatch );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( dispatch ).toHaveBeenCalledWith( {
 				type: POST_SAVE,
 				siteId: 2916284,
 				postId: null,
@@ -322,26 +351,23 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch success action when saving new post succeeds', () => {
-			return savePost( 2916284, null, { title: 'Hello World' } )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: POST_SAVE_SUCCESS,
-					siteId: 2916284,
-					postId: null,
-					post: { title: 'Hello World' },
-					savedPost: sinon.match( {
-						ID: 13640,
-						title: 'Hello World',
-					} ),
-				} );
+			return savePost( 2916284, null, { title: 'Hello World' } )( dispatch, getState ).then( () => {
+				expect( savePostSuccess ).toHaveBeenCalledWith(
+					2916284,
+					null,
+					{ ID: 13640, title: 'Hello World' },
+					{ title: 'Hello World' },
+					false
+				);
 			} );
 		} );
 
 		test( 'should dispatch received post action when saving new post succeeds', () => {
-			return savePost( 2916284, null, { title: 'Hello World' } )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+			return savePost( 2916284, null, { title: 'Hello World' } )( dispatch ).then( () => {
+				expect( dispatch ).toHaveBeenCalledWith( {
 					type: POSTS_RECEIVE,
 					posts: [
-						sinon.match( {
+						expect.objectContaining( {
 							ID: 13640,
 							title: 'Hello World',
 						} ),
@@ -351,9 +377,9 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch save action when thunk triggered for existing post', () => {
-			savePost( 2916284, 13640, { title: 'Updated' } )( spy );
+			savePost( 2916284, 13640, { title: 'Updated' } )( dispatch );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( dispatch ).toHaveBeenCalledWith( {
 				type: POST_SAVE,
 				siteId: 2916284,
 				postId: 13640,
@@ -364,26 +390,23 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch success action when saving existing post succeeds', () => {
-			return savePost( 2916284, 13640, { title: 'Updated' } )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: POST_SAVE_SUCCESS,
-					siteId: 2916284,
-					postId: 13640,
-					post: { title: 'Updated' },
-					savedPost: sinon.match( {
-						ID: 13640,
-						title: 'Updated',
-					} ),
-				} );
+			return savePost( 2916284, 13640, { title: 'Updated' } )( dispatch, getState ).then( () => {
+				expect( savePostSuccess ).toHaveBeenCalledWith(
+					2916284,
+					13640,
+					{ ID: 13640, title: 'Updated' },
+					{ title: 'Updated' },
+					false
+				);
 			} );
 		} );
 
 		test( 'should dispatch received post action when saving existing post succeeds', () => {
-			return savePost( 2916284, 13640, { title: 'Updated' } )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+			return savePost( 2916284, 13640, { title: 'Updated' } )( dispatch ).then( () => {
+				expect( dispatch ).toHaveBeenCalledWith( {
 					type: POSTS_RECEIVE,
 					posts: [
-						sinon.match( {
+						expect.objectContaining( {
 							ID: 13640,
 							title: 'Updated',
 						} ),
@@ -392,36 +415,40 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch failure action when saving new post fails', done => {
-			savePost( 77203074, null, { title: 'Hello World' } )( spy ).catch( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: POST_SAVE_FAILURE,
-					siteId: 77203074,
-					postId: null,
-					error: sinon.match( { message: 'User cannot edit posts' } ),
+		test( 'should dispatch failure action when saving new post fails', () => {
+			return new Promise( ( done ) => {
+				savePost( 77203074, null, { title: 'Hello World' } )( dispatch ).catch( () => {
+					expect( dispatch ).toHaveBeenCalledWith( {
+						type: POST_SAVE_FAILURE,
+						siteId: 77203074,
+						postId: null,
+						error: expect.objectContaining( { message: 'User cannot edit posts' } ),
+					} );
+					done();
 				} );
-				done();
 			} );
 		} );
 
-		test( 'should dispatch failure action when saving existing post fails', done => {
-			savePost( 77203074, 102, { title: 'Hello World' } )( spy ).catch( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: POST_SAVE_FAILURE,
-					siteId: 77203074,
-					postId: 102,
-					error: sinon.match( { message: 'User cannot edit post' } ),
+		test( 'should dispatch failure action when saving existing post fails', () => {
+			return new Promise( ( done ) => {
+				savePost( 77203074, 102, { title: 'Hello World' } )( dispatch ).catch( () => {
+					expect( dispatch ).toHaveBeenCalledWith( {
+						type: POST_SAVE_FAILURE,
+						siteId: 77203074,
+						postId: 102,
+						error: expect.objectContaining( { message: 'User cannot edit post' } ),
+					} );
+					done();
 				} );
-				done();
 			} );
 		} );
 	} );
 
 	describe( 'trashPost()', () => {
 		test( 'should dispatch save request with trash status payload', () => {
-			trashPost( 2916284, 13640 )( spy );
+			trashPost( 2916284, 13640 )( dispatch );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( dispatch ).toHaveBeenCalledWith( {
 				type: POST_SAVE,
 				siteId: 2916284,
 				postId: 13640,
@@ -433,7 +460,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'deletePost()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/posts/13640/delete' )
@@ -449,9 +476,9 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when thunk triggered', () => {
-			deletePost( 2916284, 13640 )( spy );
+			deletePost( 2916284, 13640 )( dispatch, getState );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( dispatch ).toHaveBeenCalledWith( {
 				type: POST_DELETE,
 				siteId: 2916284,
 				postId: 13640,
@@ -459,8 +486,8 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch success action when deleting post succeeds', () => {
-			return deletePost( 2916284, 13640 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+			return deletePost( 2916284, 13640 )( dispatch, getState ).then( () => {
+				expect( dispatch ).toHaveBeenCalledWith( {
 					type: POST_DELETE_SUCCESS,
 					siteId: 2916284,
 					postId: 13640,
@@ -468,21 +495,23 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch failure action when deleting post fails', done => {
-			deletePost( 77203074, 102 )( spy ).catch( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: POST_DELETE_FAILURE,
-					siteId: 77203074,
-					postId: 102,
-					error: sinon.match( { message: 'User cannot delete posts' } ),
+		test( 'should dispatch failure action when deleting post fails', () => {
+			return new Promise( ( done ) => {
+				deletePost( 77203074, 102 )( dispatch, getState ).catch( () => {
+					expect( dispatch ).toHaveBeenCalledWith( {
+						type: POST_DELETE_FAILURE,
+						siteId: 77203074,
+						postId: 102,
+						error: expect.objectContaining( { message: 'User cannot delete posts' } ),
+					} );
+					done();
 				} );
-				done();
 			} );
 		} );
 	} );
 
 	describe( 'restorePost()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/posts/13640/restore' )
@@ -498,9 +527,9 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when thunk triggered', () => {
-			restorePost( 2916284, 13640 )( spy );
+			restorePost( 2916284, 13640 )( dispatch, getState );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( dispatch ).toHaveBeenCalledWith( {
 				type: POST_RESTORE,
 				siteId: 2916284,
 				postId: 13640,
@@ -508,8 +537,8 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch the received post when request completes successfully', () => {
-			return restorePost( 2916284, 13640 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+			return restorePost( 2916284, 13640 )( dispatch, getState ).then( () => {
+				expect( dispatch ).toHaveBeenCalledWith( {
 					type: POSTS_RECEIVE,
 					posts: [ { ID: 13640, status: 'draft' } ],
 				} );
@@ -517,8 +546,8 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch success action when restoring post succeeds', () => {
-			return restorePost( 2916284, 13640 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+			return restorePost( 2916284, 13640 )( dispatch, getState ).then( () => {
+				expect( dispatch ).toHaveBeenCalledWith( {
 					type: POST_RESTORE_SUCCESS,
 					siteId: 2916284,
 					postId: 13640,
@@ -526,147 +555,17 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch failure action when restoring post fails', done => {
-			restorePost( 77203074, 102 )( spy ).catch( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: POST_RESTORE_FAILURE,
-					siteId: 77203074,
-					postId: 102,
-					error: sinon.match( { message: 'User cannot restore trashed posts' } ),
+		test( 'should dispatch failure action when restoring post fails', () => {
+			return new Promise( ( done ) => {
+				restorePost( 77203074, 102 )( dispatch, getState ).catch( () => {
+					expect( dispatch ).toHaveBeenCalledWith( {
+						type: POST_RESTORE_FAILURE,
+						siteId: 77203074,
+						postId: 102,
+						error: expect.objectContaining( { message: 'User cannot restore trashed posts' } ),
+					} );
+					done();
 				} );
-				done();
-			} );
-		} );
-	} );
-
-	describe( 'addTermForPost()', () => {
-		const postObject = {
-			ID: 841,
-			site_ID: 2916284,
-			global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-			title: 'Hello World',
-		};
-		const getState = () => {
-			return {
-				posts: {
-					items: {
-						'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
-					},
-					queries: {
-						2916284: new PostQueryManager( {
-							items: { 841: postObject },
-						} ),
-					},
-					edits: {},
-				},
-			};
-		};
-
-		test( 'should dispatch a POST_EDIT event with the new term', () => {
-			addTermForPost( 2916284, 'jetpack-portfolio', { ID: 123, name: 'ribs' }, 841 )(
-				spy,
-				getState
-			);
-			expect( spy ).to.have.been.calledWith( {
-				post: {
-					terms: {
-						'jetpack-portfolio': [
-							{
-								ID: 123,
-								name: 'ribs',
-							},
-						],
-					},
-				},
-				postId: 841,
-				siteId: 2916284,
-				type: POST_EDIT,
-			} );
-		} );
-
-		test( 'should not dispatch anything if no post', () => {
-			addTermForPost( 2916284, 'jetpack-portfolio', { ID: 123, name: 'ribs' }, 3434 )(
-				spy,
-				getState
-			);
-			expect( spy ).not.to.have.been.called;
-		} );
-
-		test( 'should not dispatch anything if no term', () => {
-			addTermForPost( 2916284, 'jetpack-portfolio', null, 841 )( spy, getState );
-			expect( spy ).not.to.have.been.called;
-		} );
-
-		test( 'should not dispatch anything if the term is temporary', () => {
-			addTermForPost( 2916284, 'jetpack-portfolio', { id: 'temporary' }, 841 )( spy, getState );
-			expect( spy ).not.to.have.been.called;
-		} );
-	} );
-
-	describe( '#updateMetadata()', () => {
-		const siteId = 1;
-		const postId = 2;
-
-		test( 'should dispatch a post edit with a new metadata value', () => {
-			const action = updatePostMetadata( siteId, postId, 'foo', 'bar' );
-
-			expect( action ).to.eql( {
-				type: 'POST_EDIT',
-				siteId,
-				postId,
-				post: {
-					metadata: [ { key: 'foo', value: 'bar', operation: 'update' } ],
-				},
-			} );
-		} );
-
-		test( 'accepts an object of key value pairs', () => {
-			const action = updatePostMetadata( siteId, postId, {
-				foo: 'bar',
-				baz: 'qux',
-			} );
-
-			expect( action ).to.eql( {
-				type: 'POST_EDIT',
-				siteId,
-				postId,
-				post: {
-					metadata: [
-						{ key: 'foo', value: 'bar', operation: 'update' },
-						{ key: 'baz', value: 'qux', operation: 'update' },
-					],
-				},
-			} );
-		} );
-	} );
-
-	describe( '#deleteMetadata()', () => {
-		const siteId = 1;
-		const postId = 2;
-
-		test( 'should dispatch a post edit with a deleted metadata', () => {
-			const action = deletePostMetadata( siteId, postId, 'foo' );
-
-			expect( action ).to.eql( {
-				type: 'POST_EDIT',
-				siteId,
-				postId,
-				post: {
-					metadata: [ { key: 'foo', operation: 'delete' } ],
-				},
-			} );
-		} );
-
-		test( 'should accept an array of metadata keys to delete', () => {
-			const action = deletePostMetadata( siteId, postId, [ 'foo', 'bar' ] );
-
-			expect( action ).to.eql( {
-				type: 'POST_EDIT',
-				siteId,
-				postId,
-				post: {
-					metadata: [ { key: 'foo', operation: 'delete' }, { key: 'bar', operation: 'delete' } ],
-				},
 			} );
 		} );
 	} );

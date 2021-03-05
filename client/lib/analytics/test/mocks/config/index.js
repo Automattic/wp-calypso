@@ -1,6 +1,4 @@
-/** @format */
-
-const config = key => {
+const config = ( key ) => {
 	if ( key === 'mc_analytics_enabled' ) {
 		return true;
 	}
@@ -8,7 +6,7 @@ const config = key => {
 	throw new Error( 'key ' + key + ' not expected to be needed' );
 };
 
-config.isEnabled = feature => {
+config.isEnabled = ( feature ) => {
 	if ( 'google-analytics' === feature ) {
 		return false;
 	}

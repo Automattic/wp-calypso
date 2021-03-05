@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,10 +9,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormSelect from 'components/forms/form-select';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormSelect from 'calypso/components/forms/form-select';
 
 // Use a constant for the default attribute state.
 const DEFAULT_ATTR = 'any';
@@ -28,28 +27,28 @@ class ProductVariations extends Component {
 		super( props );
 		this.state = {};
 		const attributes = filter( props.product.attributes, { variation: true } );
-		forEach( attributes, attr => {
+		forEach( attributes, ( attr ) => {
 			this.state[ attr.name ] = DEFAULT_ATTR;
 		} );
 	}
 
-	onChange = name => event => {
+	onChange = ( name ) => ( event ) => {
 		this.setState( { [ name ]: event.target.value }, () => {
 			this.props.onChange( this.state, this.resetAttrs );
 		} );
 	};
 
 	resetAttrs = () => {
-		this.setState( prevState => {
+		this.setState( ( prevState ) => {
 			const newState = {};
-			keys( prevState ).map( name => {
+			keys( prevState ).map( ( name ) => {
 				newState[ name ] = DEFAULT_ATTR;
 			} );
 			return newState;
 		} );
 	};
 
-	renderAttribute = attribute => {
+	renderAttribute = ( attribute ) => {
 		const { translate } = this.props;
 		const fieldId = kebabCase( attribute.name );
 		return (

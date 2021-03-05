@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,16 +7,16 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { noop, get } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Site from 'blocks/site';
-import SitePlaceholder from 'blocks/site/placeholder';
-import SiteSelector from 'components/site-selector';
-import getPrimarySiteId from 'state/selectors/get-primary-site-id';
-import { getCurrentUser } from 'state/current-user/selectors';
+import Site from 'calypso/blocks/site';
+import SitePlaceholder from 'calypso/blocks/site/placeholder';
+import SiteSelector from 'calypso/components/site-selector';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 /**
  * Style dependencies
@@ -117,7 +115,7 @@ export class SitesDropdown extends PureComponent {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	primarySiteId: getPrimarySiteId( state ),
 	hasMultipleSites: get( getCurrentUser( state ), 'site_count', 1 ) > 1,
 } ) )( SitesDropdown );

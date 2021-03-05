@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WordPress.com REST API Proxy Media Upload Test Page</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <div>Select one or more files to upload media library (site_id=<strong id="site"></strong>):</div>
+    <div><input type="file" id="file" multiple disabled></div>
+    <script src="./dist/wpcom-proxy-request.js"></script>
+    <script>
+      WPCOMProxyRequest({
+        metaAPI: { accessAllUsersBlogs: true }
+      }, function(err) {
+        if (err) throw err;
+        console.log('proxy now running in "access all user\'s blogs" mode');
+      });
+
+      var site;
+      var input = document.getElementById('file');
+
+      WPCOMProxyRequest('/me', function (err, data) {
+        if (err) throw err;
+        site = data.primary_blog;
+        document.getElementById('site').innerHTML = site;
+        input.removeAttribute('disabled');
+      });
+
+      // select files on the "input" element
+      input.onchange = function (e) {
+
+        // construct a 2D `formData` array for the selected files
+        var formData = [];
+        for (var i = 0; i < e.target.files.length; i++) {
+          formData.push(['media[]', e.target.files[i]]);
+        }
+
+        // do the API request through the iframe proxy
+        var req = WPCOMProxyRequest({
+          path: '/sites/' + site + '/media/new',
+          method: 'POST',
+          formData: formData
+        }, function(err, res){
+          if (err) throw err;
+          console.log('response', res);
+        });
+        console.log(req);
+
+        req.upload.onprogress = onprogress;
+      };
+
+      function onprogress (e) {
+        if (e.lengthComputable) {
+          var percentComplete = e.loaded / e.total * 100;
+          console.log('progress event! %s%', percentComplete.toFixed(2));
+        } else {
+          // Unable to compute progress information since the total size is unknown
+        }
+      }
+    </script>
+  </body>
+</html>

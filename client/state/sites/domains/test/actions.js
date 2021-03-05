@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +7,6 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	togglePrivacy,
 	domainsReceiveAction,
 	domainsRequestAction,
 	domainsRequestSuccessAction,
@@ -19,24 +17,23 @@ import {
 	SITE_ID_FIRST as siteId,
 	REST_API_RESPONSE as wpcomResponse,
 	REST_API_ERROR_RESPONSE as wpcomErrorResponse,
-	DOMAIN_PRIMARY as firstDomain,
-	ACTION_DOMAIN_PRIVACY_TOGGLE,
 	ACTION_SITE_DOMAIN_RECEIVE,
 	ACTION_SITE_DOMAIN_REQUEST,
 	ACTION_SITE_DOMAIN_REQUEST_SUCCESS,
 	ACTION_SITE_DOMAIN_REQUEST_FAILURE,
 	ERROR_MESSAGE_RESPONSE as errorResponse,
 } from './fixture';
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+import useNock from 'calypso/test-helpers/use-nock';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'actions', () => {
-	let sandbox, spy;
+	let sandbox;
+	let spy;
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		spy = sandbox.spy();
 	} );
@@ -62,15 +59,10 @@ describe( 'actions', () => {
 			const action = domainsRequestFailureAction( siteId, errorResponse );
 			expect( action ).to.eql( ACTION_SITE_DOMAIN_REQUEST_FAILURE );
 		} );
-
-		test( '#togglePrivacy()', () => {
-			const action = togglePrivacy( siteId, firstDomain.domain );
-			expect( action ).to.eql( ACTION_DOMAIN_PRIVACY_TOGGLE );
-		} );
 	} );
 
 	describe( '#fetchSiteDomains() - success', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.2/sites/${ siteId }/domains` )
@@ -94,7 +86,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#fetchSiteDomains() - failure', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.2/sites/${ siteId }/domains` )

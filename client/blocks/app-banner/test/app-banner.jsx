@@ -1,13 +1,12 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
 /**
  * Internal dependencies
  */
-import { getiOSDeepLink, buildDeepLinkFragment } from 'blocks/app-banner';
-import { EDITOR, NOTES, READER, STATS, getCurrentSection } from 'blocks/app-banner/utils';
+import { getiOSDeepLink, buildDeepLinkFragment } from 'calypso/blocks/app-banner';
+import { EDITOR, NOTES, READER, STATS, getCurrentSection } from 'calypso/blocks/app-banner/utils';
 
 describe( 'iOS deep link fragments', () => {
 	test( 'properly encodes tricky fragments', () => {
@@ -22,7 +21,7 @@ describe( 'iOS deep link fragments', () => {
 	} );
 
 	test( 'returns a fragment for each section', () => {
-		[ STATS, READER, EDITOR, NOTES ].forEach( section =>
+		[ STATS, READER, EDITOR, NOTES ].forEach( ( section ) =>
 			expect( buildDeepLinkFragment( '/test', section ) ).toMatchSnapshot()
 		);
 	} );
@@ -31,8 +30,8 @@ describe( 'iOS deep link fragments', () => {
 		expect( buildDeepLinkFragment( 'test', 'example' ).length ).toBeFalsy();
 	} );
 
-	test( 'returns a valid Reader URI for the root path', () => {
-		expect( buildDeepLinkFragment( '/', READER ) ).toBe( '%2Fread' );
+	test( 'returns a valid Reader URI for the root of the Reader section', () => {
+		expect( buildDeepLinkFragment( '/read', READER ) ).toBe( '%2Fread' );
 	} );
 
 	test( 'passes through a non-root Reader path', () => {
@@ -52,7 +51,7 @@ describe( 'iOS deep links', () => {
 	} );
 
 	test( 'returns URIs for each path', () => {
-		[ STATS, READER, EDITOR, NOTES ].forEach( section =>
+		[ STATS, READER, EDITOR, NOTES ].forEach( ( section ) =>
 			expect( getiOSDeepLink( '/test', section ) ).toMatchSnapshot()
 		);
 	} );

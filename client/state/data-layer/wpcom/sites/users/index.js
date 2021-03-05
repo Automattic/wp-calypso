@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,12 +7,12 @@ import { get, isUndefined, map, noop, omit, omitBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { POST_REVISIONS_AUTHORS_REQUEST } from 'state/action-types';
-import { dispatchRequest, getHeaders } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { receivePostRevisionAuthors } from 'state/posts/revisions/authors/actions';
+import { POST_REVISIONS_AUTHORS_REQUEST } from 'calypso/state/action-types';
+import { dispatchRequest, getHeaders } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { receivePostRevisionAuthors } from 'calypso/state/posts/revisions/authors/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const DEFAULT_PER_PAGE = 10;
 
@@ -22,10 +20,10 @@ export const DEFAULT_PER_PAGE = 10;
  * Normalize a WP REST API (v2) user ressource for consumption in Calypso which
  * uses legacy API (v1) names internally.
  *
- * @param {Object} user Raw user from the API
- * @returns {Object} the normalized user
+ * @param {object} user Raw user from the API
+ * @returns {object} the normalized user
  */
-export const normalizeUser = user =>
+export const normalizeUser = ( user ) =>
 	omitBy(
 		{
 			ID: user.id,
@@ -38,10 +36,10 @@ export const normalizeUser = user =>
 /**
  * Dispatches a request to fetch post revisions authors
  *
- * @param {Object} action The `POST_REVISIONS_AUTHORS_REQUEST` action used to trigger the fetch
- * @returns {Object} The low-level action used to execute the fetch
+ * @param {object} action The `POST_REVISIONS_AUTHORS_REQUEST` action used to trigger the fetch
+ * @returns {object} The low-level action used to execute the fetch
  */
-export const fetchPostRevisionAuthors = action => {
+export const fetchPostRevisionAuthors = ( action ) => {
 	const { siteId, ids, page = 1, perPage = DEFAULT_PER_PAGE } = action;
 	return http(
 		{
@@ -61,11 +59,11 @@ export const fetchPostRevisionAuthors = action => {
 /**
  * Dispatches returned post revision authors
  *
- * @param {Object} action The `POST_REVISIONS_AUTHORS_REQUEST` action with response data as meta
+ * @param {object} action The `POST_REVISIONS_AUTHORS_REQUEST` action with response data as meta
  * @param {Array} users raw data from post revisions API
- * @returns {Object|Function} Action or action thunk that handles the response
+ * @returns {object|Function} Action or action thunk that handles the response
  */
-export const receivePostRevisionAuthorsSuccess = ( action, users ) => dispatch => {
+export const receivePostRevisionAuthorsSuccess = ( action, users ) => ( dispatch ) => {
 	// receive users from response into Redux state
 	const normalizedUsers = map( users, normalizeUser );
 	dispatch( receivePostRevisionAuthors( normalizedUsers ) );

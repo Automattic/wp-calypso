@@ -1,8 +1,7 @@
-/** @format */
 /**
  * Internal dependencies
  */
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
 
 export function recordAuthorClick( author ) {
 	recordGaEvent( 'Clicked Discover Card Attribution Author' );

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,9 +8,9 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormRadio from 'components/forms/form-radio';
-import FormLabel from 'components/forms/form-label';
-import TranslatableString from 'components/translatable/proptype';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormLabel from 'calypso/components/forms/form-label';
+import TranslatableString from 'calypso/components/translatable/proptype';
 
 /**
  * Style dependencies
@@ -30,8 +29,7 @@ const FormRadioWithThumbnail = ( { label, thumbnail, ...otherProps } ) => {
 				>
 					{ imageUrl && <img src={ imageUrl } alt={ label } /> }
 				</div>
-				<FormRadio { ...otherProps } />
-				<span>{ label }</span>
+				<FormRadio label={ label } { ...otherProps } />
 			</FormLabel>
 		</div>
 	);

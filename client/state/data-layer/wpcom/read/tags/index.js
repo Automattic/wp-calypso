@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,14 +7,14 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { READER_TAGS_REQUEST } from 'state/action-types';
-import { receiveTags } from 'state/reader/tags/items/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest, getHeaders } from 'state/data-layer/wpcom-http/utils';
-import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
-import { errorNotice } from 'state/notices/actions';
+import { READER_TAGS_REQUEST } from 'calypso/state/reader/action-types';
+import { receiveTags } from 'calypso/state/reader/tags/items/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest, getHeaders } from 'calypso/state/data-layer/wpcom-http/utils';
+import { fromApi } from 'calypso/state/data-layer/wpcom/read/tags/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export function requestTags( action ) {
 	const path =
@@ -37,14 +36,14 @@ export function requestTags( action ) {
  * If the payload does not have a slug, then we assume it was a request for the set of
  *   user's followed tags
  */
-const isFollowedTagsRequest = action => ! get( action, 'payload.slug' );
+const isFollowedTagsRequest = ( action ) => ! get( action, 'payload.slug' );
 
 export function receiveTagsSuccess( action, tags ) {
 	const isFollowedTags = isFollowedTagsRequest( action );
 	const resetFollowingData = isFollowedTags;
 
 	if ( isFollowedTags ) {
-		tags = map( tags, tag => ( { ...tag, isFollowing: true } ) );
+		tags = map( tags, ( tag ) => ( { ...tag, isFollowing: true } ) );
 	}
 
 	return receiveTags( { payload: tags, resetFollowingData } );

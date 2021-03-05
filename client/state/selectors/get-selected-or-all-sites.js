@@ -1,15 +1,13 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import createSelector from 'lib/create-selector';
-import getSites from 'state/selectors/get-sites';
-import { getSelectedSite } from 'state/ui/selectors';
+import { createSelector } from '@automattic/state-utils';
+import getSites from 'calypso/state/selectors/get-sites';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 export default createSelector(
-	state => {
+	( state ) => {
 		const selectedSite = getSelectedSite( state );
 		return selectedSite ? [ selectedSite ] : getSites( state );
 	},

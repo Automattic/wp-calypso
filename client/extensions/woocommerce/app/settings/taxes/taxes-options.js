@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,12 +9,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ExtendedHeader from 'woocommerce/components/extended-header';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 
 class TaxesOptions extends Component {
 	static propTypes = {

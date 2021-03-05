@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,14 +9,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import SingleSiteThemeShowcaseWpcom from './single-site-wpcom';
 import SingleSiteThemeShowcaseJetpack from './single-site-jetpack';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { isThemeActive } from 'state/themes/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isThemeActive } from 'calypso/state/themes/selectors';
 
-const SingleSiteThemeShowcaseWithOptions = props => {
+const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 	const { isJetpack, siteId, translate } = props;
 
 	// If we've only just switched from single to multi-site, there's a chance
@@ -54,12 +52,12 @@ const SingleSiteThemeShowcaseWithOptions = props => {
 	);
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
 		siteId: selectedSiteId,
 		isJetpack: isJetpackSite( state, selectedSiteId ),
-		getScreenshotOption: themeId =>
+		getScreenshotOption: ( themeId ) =>
 			isThemeActive( state, themeId, selectedSiteId ) ? 'customize' : 'info',
 	};
 } )( localize( SingleSiteThemeShowcaseWithOptions ) );

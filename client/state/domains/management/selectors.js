@@ -1,8 +1,12 @@
-/** @format */
 /**
  * External dependencies
  */
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/domains/init';
 
 export function isUpdatingWhois( state, domain ) {
 	return get( state, [ 'domains', 'management', 'isSaving', `${ domain }`, 'saving' ], false );

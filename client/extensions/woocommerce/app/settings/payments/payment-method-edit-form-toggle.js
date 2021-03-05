@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,9 +9,9 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactFormToggle from 'components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 
-const PaymentMethodEditFormToggle = props => {
+const PaymentMethodEditFormToggle = ( props ) => {
 	const { checked, name, onChange } = props;
 	const onChangeHandler = () => {
 		const fakeEvent = {
@@ -26,7 +24,7 @@ const PaymentMethodEditFormToggle = props => {
 	};
 
 	return (
-		<CompactFormToggle
+		<FormToggle
 			{ ...omit( props, [ 'onChange' ] ) }
 			checked={ checked }
 			name={ name }

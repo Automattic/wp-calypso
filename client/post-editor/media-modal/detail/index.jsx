@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -14,11 +11,11 @@ import { noop, partial } from 'lodash';
  * Internal dependencies
  */
 import DetailItem from './detail-item';
-import { getMimePrefix, filterItemsByMimePrefix, url } from 'lib/media/utils';
-import HeaderCake from 'components/header-cake';
+import { getMimePrefix, filterItemsByMimePrefix, url } from 'calypso/lib/media/utils';
+import HeaderCake from 'calypso/components/header-cake';
 import preloadImage from '../preload-image';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import { setEditorMediaModalView } from 'state/ui/editor/actions';
+import { ModalViews } from 'calypso/state/ui/media-modal/constants';
+import { setEditorMediaModalView } from 'calypso/state/editor/actions';
 
 /**
  * Style dependencies
@@ -50,7 +47,7 @@ class EditorMediaModalDetailBase extends React.Component {
 	}
 
 	preloadImages = () => {
-		filterItemsByMimePrefix( this.props.items, 'image' ).forEach( function( image ) {
+		filterItemsByMimePrefix( this.props.items, 'image' ).forEach( function ( image ) {
 			const src = url( image, {
 				photon: this.props.site && ! this.props.site.is_private,
 			} );
@@ -59,7 +56,7 @@ class EditorMediaModalDetailBase extends React.Component {
 		}, this );
 	};
 
-	incrementIndex = increment => {
+	incrementIndex = ( increment ) => {
 		this.props.onSelectedIndexChange( this.props.selectedIndex + increment );
 	};
 
@@ -110,11 +107,8 @@ export const EditorMediaModalDetail = localize( EditorMediaModalDetailBase );
 // component state there to conditionally display the image/video editor.
 // (This is also the reason why we're `localize()`ing the named export.)
 // TODO: Fix this mess, rely on Redux state everywhere.
-export default connect(
-	null,
-	{
-		onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
-		onEditImageItem: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
-		onEditVideoItem: partial( setEditorMediaModalView, ModalViews.VIDEO_EDITOR ),
-	}
-)( EditorMediaModalDetail );
+export default connect( null, {
+	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
+	onEditImageItem: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
+	onEditVideoItem: partial( setEditorMediaModalView, ModalViews.VIDEO_EDITOR ),
+} )( EditorMediaModalDetail );

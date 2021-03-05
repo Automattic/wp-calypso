@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import getPaymentCountryCode from 'state/selectors/get-payment-country-code';
+import getPaymentCountryCode from 'calypso/state/selectors/get-payment-country-code';
 
 describe( 'getPaymentCountryCode()', () => {
 	test( 'should return null if there is no payment country available', () => {
@@ -14,10 +12,8 @@ describe( 'getPaymentCountryCode()', () => {
 
 	test( 'should return the correct payment country code from the payment state', () => {
 		const state = {
-			ui: {
-				payment: {
-					countryCode: 'US',
-				},
+			payment: {
+				countryCode: 'US',
 			},
 		};
 		const result = getPaymentCountryCode( state );

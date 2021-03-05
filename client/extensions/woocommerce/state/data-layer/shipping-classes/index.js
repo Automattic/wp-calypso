@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import request from 'woocommerce/state/sites/http-request';
 import {
 	fetchShippingClassesFailure,
@@ -12,16 +10,16 @@ import {
 import { WOOCOMMERCE_SHIPPING_CLASSES_REQUEST } from 'woocommerce/state/action-types';
 import { verifyResponseHasData } from 'woocommerce/state/data-layer/utils';
 
-export const fetch = action => {
+export const fetch = ( action ) => {
 	const { siteId } = action;
 	return request( siteId, action ).get( 'products/shipping_classes' );
 };
 
-const onError = ( action, error ) => dispatch => {
+const onError = ( action, error ) => ( dispatch ) => {
 	dispatch( fetchShippingClassesFailure( action, error, dispatch ) );
 };
 
-const onSuccess = ( { siteId }, { data } ) => dispatch => {
+const onSuccess = ( { siteId }, { data } ) => ( dispatch ) => {
 	dispatch( fetchShippingClassesSuccess( siteId, data ) );
 };
 

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -7,11 +5,12 @@ import {
 	GSUITE_USERS_REQUEST,
 	GSUITE_USERS_REQUEST_SUCCESS,
 	GSUITE_USERS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/gsuite-users';
+import 'calypso/state/data-layer/wpcom/gsuite-users';
+import 'calypso/state/gsuite-users/init';
 
-export const getGSuiteUsers = siteId => {
+export const getGSuiteUsers = ( siteId ) => {
 	return {
 		type: GSUITE_USERS_REQUEST,
 		siteId,

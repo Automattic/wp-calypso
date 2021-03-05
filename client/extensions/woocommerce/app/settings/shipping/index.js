@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,14 +11,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import LabelSettings from 'woocommerce/woocommerce-services/views/label-settings';
+import Main from 'calypso/components/main';
 import Packages from 'woocommerce/woocommerce-services/views/packages';
-import { ProtectFormGuard } from 'lib/protect-form';
+import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import ShippingHeader from './shipping-header';
 import ShippingOrigin from './shipping-origin';
 import ShippingZoneList from './shipping-zone-list';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 
 class Shipping extends Component {
@@ -36,7 +33,7 @@ class Shipping extends Component {
 		this.setState( { pristine: Object.assign( {}, this.state.pristine, { shipping: false } ) } );
 	};
 
-	onSaveSuccess = option => {
+	onSaveSuccess = ( option ) => {
 		this.setState( { pristine: Object.assign( {}, this.state.pristine, { [ option ]: true } ) } );
 	};
 
@@ -50,7 +47,6 @@ class Shipping extends Component {
 				<ShippingHeader onSaveSuccess={ this.onSaveSuccess } toSave={ toSave } />
 				<ShippingOrigin onChange={ this.onChangeUnits } />
 				<ShippingZoneList />
-				{ wcsEnabled && <LabelSettings onChange={ this.onChangeShipping } /> }
 				{ wcsEnabled && <Packages onChange={ this.onChangeShipping } /> }
 				<ProtectFormGuard isChanged={ ! every( this.state.pristine ) } />
 			</Main>
@@ -62,7 +58,7 @@ Shipping.propTypes = {
 	className: PropTypes.string,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const site = getSelectedSite( state );
 	return {
 		wcsEnabled: isWcsEnabled( state, site.ID ),

@@ -8,8 +8,8 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Search from 'components/search';
+import { Card } from '@automattic/components';
+import Search from 'calypso/components/search';
 
 /**
  * Style dependencies

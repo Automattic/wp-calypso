@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestPrivacyPolicy } from 'state/privacy-policy/actions';
+import { requestPrivacyPolicy } from 'calypso/state/privacy-policy/actions';
 
 export class QueryPrivacyPolicy extends Component {
 	static propTypes = {
@@ -27,7 +25,4 @@ export class QueryPrivacyPolicy extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestPrivacyPolicy }
-)( QueryPrivacyPolicy );
+export default connect( null, { requestPrivacyPolicy } )( QueryPrivacyPolicy );

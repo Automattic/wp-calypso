@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	getPaymentCurrencySettings,
 	areSettingsGeneralLoaded,
@@ -20,9 +18,9 @@ export const getCurrencyEdits = ( state, siteId ) => {
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {String} Returns the currently set currency with any local edits.
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {string} Returns the currently set currency with any local edits.
  */
 export const getCurrencyWithEdits = ( state, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areSettingsGeneralLoaded( state, siteId ) ) {

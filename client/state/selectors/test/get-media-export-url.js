@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import getMediaExportUrl from 'state/selectors/get-media-export-url';
+import getMediaExportUrl from 'calypso/state/selectors/get-media-export-url';
 
 describe( 'getMediaExportUrl()', () => {
 	test( 'should return the stored media export url field.', () => {

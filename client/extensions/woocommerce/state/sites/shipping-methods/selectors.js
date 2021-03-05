@@ -1,16 +1,14 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { every, filter, find, get, isArray, some, startsWith } from 'lodash';
+import { every, filter, find, get, some, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { createSelector } from '@automattic/state-utils';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 import { LOADING } from 'woocommerce/state/constants';
 import {
@@ -29,9 +27,9 @@ const METHOD_NAMES = {
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} The list of shipping methods, as retrieved from the server. It can also be the string "LOADING"
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {Array} The list of shipping methods, as retrieved from the server. It can also be the string "LOADING"
  * if the methods are currently being fetched, or a "falsy" value if that haven't been fetched at all.
  */
 export const getShippingMethods = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -42,25 +40,25 @@ export const getShippingMethods = ( state, siteId = getSelectedSiteId( state ) )
 		siteId,
 		'shippingMethods',
 	] );
-	if ( ! isArray( allMethods ) ) {
+	if ( ! Array.isArray( allMethods ) ) {
 		return allMethods;
 	}
 	const availableMethods = isWcsEnabled( state, siteId )
 		? allMethods
 		: filter( allMethods, ( { id } ) => ! startsWith( id, 'wc_services' ) );
-	return availableMethods.map( method => ( {
+	return availableMethods.map( ( method ) => ( {
 		...method,
 		title: METHOD_NAMES[ method.id ] || method.title,
 	} ) );
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the shipping methods list has been successfully loaded from the server
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {boolean} Whether the shipping methods list has been successfully loaded from the server
  */
 export const areShippingMethodsLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! isArray( getShippingMethods( state, siteId ) ) ) {
+	if ( ! Array.isArray( getShippingMethods( state, siteId ) ) ) {
 		return false;
 	}
 	const wcsMethods = filter( getShippingMethods( state, siteId ), ( { id } ) =>
@@ -70,9 +68,9 @@ export const areShippingMethodsLoaded = ( state, siteId = getSelectedSiteId( sta
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the shipping methods list is currently being retrieved from the server
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {boolean} Whether the shipping methods list is currently being retrieved from the server
  */
 export const areShippingMethodsLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
 	if ( LOADING === getShippingMethods( state, siteId ) ) {
@@ -85,10 +83,10 @@ export const areShippingMethodsLoading = ( state, siteId = getSelectedSiteId( st
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number|Object} id Shipping method ID
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object} The shipping method definition, or an object with dummy (but valid) values if it wasn't found
+ * @param {object} state Whole Redux state tree
+ * @param {number|object} id Shipping method ID
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {object} The shipping method definition, or an object with dummy (but valid) values if it wasn't found
  */
 export const getShippingMethod = ( state, id, siteId = getSelectedSiteId( state ) ) => {
 	if ( areShippingMethodsLoaded( state, siteId ) ) {
@@ -101,14 +99,14 @@ export const getShippingMethod = ( state, id, siteId = getSelectedSiteId( state 
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {Function} utility function taking method type as an argument and returning a matched type
  */
 export const getShippingMethodNameMap = createSelector(
 	( state, siteId = getSelectedSiteId( state ) ) => {
 		if ( ! areShippingMethodsLoaded( state, siteId ) ) {
-			return typeId => typeId;
+			return ( typeId ) => typeId;
 		}
 
 		const map = getShippingMethods( state, siteId ).reduce( ( result, { id, title } ) => {
@@ -116,7 +114,7 @@ export const getShippingMethodNameMap = createSelector(
 			return result;
 		}, {} );
 
-		return typeId => map[ typeId ] || typeId;
+		return ( typeId ) => map[ typeId ] || typeId;
 	},
 	[ areShippingMethodsLoaded, getShippingMethods ]
 );

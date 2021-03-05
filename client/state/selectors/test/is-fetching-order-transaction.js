@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import isFetchingOrderTransaction from 'state/selectors/is-fetching-order-transaction';
+import isFetchingOrderTransaction from 'calypso/state/selectors/is-fetching-order-transaction';
 
 describe( 'isFetchingOrderTransaction', () => {
 	const orderId = 123;

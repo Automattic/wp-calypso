@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import debugFactory from 'debug';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 const debug = debugFactory( 'calypso:redirect-when-logged-in' );
 
@@ -50,16 +48,11 @@ class RedirectWhenLoggedIn extends React.Component {
 		return true;
 	}
 
-	storageEventHandler = e => {
-		if ( e.key !== 'wpcom_user' ) {
-			return;
+	storageEventHandler = ( e ) => {
+		if ( e.key === 'wpcom_user_id' && e.newValue != null ) {
+			debug( 'detected change of wpcom_user_id, redirecting' );
+			this.doTheRedirect();
 		}
-		try {
-			const newUser = JSON.parse( e.newValue );
-			if ( this.isUserLoggedIn( newUser ) ) {
-				this.doTheRedirect();
-			}
-		} catch {}
 	};
 
 	componentDidMount() {
@@ -89,7 +82,7 @@ class RedirectWhenLoggedIn extends React.Component {
 	}
 }
 
-const mapState = state => {
+const mapState = ( state ) => {
 	return {
 		currentUser: getCurrentUser( state ),
 	};

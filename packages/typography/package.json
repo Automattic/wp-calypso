@@ -1,0 +1,25 @@
+{
+	"name": "@automattic/typography",
+	"version": "1.0.0",
+	"description": "Typographic elements for WordPress.com products",
+	"main": "styles/fonts.scss",
+	"keywords": [
+		"wordpress"
+	],
+	"author": "Automattic Inc.",
+	"private": true,
+	"contributors": [],
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/typography"
+	},
+	"publishConfig": {
+		"access": "private"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	}
+}

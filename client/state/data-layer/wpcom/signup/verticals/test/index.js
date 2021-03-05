@@ -1,12 +1,10 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { requestVerticals, storeVerticals, showVerticalsRequestError } from '../';
-import { setVerticals } from 'state/signup/verticals/actions';
-import { NOTICE_CREATE } from 'state/action-types';
+import { setVerticals } from 'calypso/state/signup/verticals/actions';
+import { NOTICE_CREATE } from 'calypso/state/action-types';
 
 describe( 'data-layer/wpcom/signup/verticals', () => {
 	test( 'requestVerticals()', () => {
@@ -27,6 +25,7 @@ describe( 'data-layer/wpcom/signup/verticals', () => {
 						site_type: mockAction.siteTypeId,
 						limit: mockAction.limit,
 						include_preview: true,
+						allow_synonyms: true,
 					},
 				},
 				mockAction

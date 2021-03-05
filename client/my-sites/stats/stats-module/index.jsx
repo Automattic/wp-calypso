@@ -18,19 +18,19 @@ import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
 import DatePicker from '../stats-date-picker';
 import DownloadCsv from '../stats-download-csv';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import StatsModulePlaceholder from './placeholder';
-import SectionHeader from 'components/section-header';
-import QuerySiteStats from 'components/data/query-site-stats';
-import UpgradeNudge from 'blocks/upgrade-nudge';
+import SectionHeader from 'calypso/components/section-header';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import AllTimeNav from './all-time-nav';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
-} from 'state/stats/lists/selectors';
-import { FEATURE_GOOGLE_ANALYTICS } from 'lib/plans/constants';
+} from 'calypso/state/stats/lists/selectors';
+import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from 'calypso/lib/plans/constants';
 
 /**
  * Style dependencies
@@ -50,7 +50,6 @@ class StatsModule extends Component {
 		statType: PropTypes.string,
 		showSummaryLink: PropTypes.bool,
 		translate: PropTypes.func,
-		moment: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -62,7 +61,7 @@ class StatsModule extends Component {
 		loaded: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.requesting && this.props.requesting ) {
 			this.setState( { loaded: true } );
 		}
@@ -195,13 +194,17 @@ class StatsModule extends Component {
 						<StatsModuleExpand href={ summaryLink } />
 					) }
 					{ summary && 'countryviews' === path && (
-						<UpgradeNudge
+						<UpsellNudge
 							title={ translate( 'Add Google Analytics' ) }
-							message={ translate(
-								'Upgrade to a Business Plan for Google Analytics integration.'
+							description={ translate(
+								'Upgrade to a Premium Plan for Google Analytics integration.'
 							) }
 							event="googleAnalytics-stats-countries"
 							feature={ FEATURE_GOOGLE_ANALYTICS }
+							plan={ PLAN_PREMIUM }
+							tracksImpressionName="calypso_upgrade_nudge_impression"
+							tracksClickName="calypso_upgrade_nudge_cta_click"
+							showIcon={ true }
 						/>
 					) }
 				</Card>

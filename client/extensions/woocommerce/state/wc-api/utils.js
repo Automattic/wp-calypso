@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,7 @@ import {
 
 const debug = debugFactory( 'woocommerce:wc-api' );
 
-import { dispatchRequest as dataLayerDispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest as dataLayerDispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 export function dispatchRequest( fetch, onSuccess, onError ) {
 	return dataLayerDispatchRequest( {
@@ -28,7 +26,7 @@ export function dispatchRequest( fetch, onSuccess, onError ) {
 
 export function apiSuccess( onSuccess, onFailure ) {
 	return function apiSuccessHandler( action, response ) {
-		return dispatch => {
+		return ( dispatch ) => {
 			const { data } = response;
 
 			switch ( data.status ) {
@@ -79,7 +77,7 @@ export function apiSuccess( onSuccess, onFailure ) {
 
 export function apiFailure( onFailure ) {
 	return function apiErrorHandler( action, error ) {
-		return dispatch => {
+		return ( dispatch ) => {
 			debug( 'Unrecognized API Error: ' + JSON.stringify( error ) );
 
 			dispatch( {

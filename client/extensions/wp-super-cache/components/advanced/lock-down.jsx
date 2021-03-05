@@ -1,24 +1,22 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
 import { pick } from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import FormToggle from 'components/forms/form-toggle/compact';
-import ClipboardButton from 'components/forms/clipboard-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import { Card } from '@automattic/components';
+import SectionHeader from 'calypso/components/section-header';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import Gridicon from 'calypso/components/gridicon';
+import ClipboardButton from 'calypso/components/forms/clipboard-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import WrapSettingsForm from '../wrap-settings-form';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 
 const LockDown = ( {
 	fields: { cache_lock_down },
@@ -100,7 +98,7 @@ const LockDown = ( {
 	);
 };
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'cache_lock_down' ] );
 };
 

@@ -1,4 +1,5 @@
-/** @format */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 /**
  * External dependencies
  */
@@ -9,47 +10,31 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import PeopleListItem from 'my-sites/people/people-list-item';
-import Card from 'components/card';
-import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
-import ViewersActions from 'lib/viewers/actions';
-import ViewersStore from 'lib/viewers/store';
-import InfiniteList from 'components/infinite-list';
-import EmptyContent from 'components/empty-content';
-import accept from 'lib/accept';
-import ListEnd from 'components/list-end';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import PeopleListItem from 'calypso/my-sites/people/people-list-item';
+import { Card } from '@automattic/components';
+import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
+import InfiniteList from 'calypso/components/infinite-list';
+import EmptyContent from 'calypso/components/empty-content';
+import accept from 'calypso/lib/accept';
+import ListEnd from 'calypso/components/list-end';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
-class Viewers extends React.PureComponent {
-	static displayName = 'Viewers';
-
-	constructor() {
-		super();
-
-		this.infiniteList = React.createRef();
-	}
-
-	state = {
-		bulkEditing: false,
-	};
+class Viewers extends React.Component {
+	infiniteList = React.createRef();
 
 	renderPlaceholders = () => <PeopleListItem key="people-list-item-placeholder" />;
 
 	fetchNextPage = () => {
-		const paginationData = ViewersStore.getPaginationData( this.props.siteId );
-		const currentPage = paginationData.currentViewersPage ? paginationData.currentViewersPage : 0;
-		const page = currentPage + 1;
-
 		this.props.recordGoogleEvent(
 			'People',
 			'Fetched more viewers with infinite list',
 			'page',
-			page
+			this.props.page + 1
 		);
-		ViewersActions.fetch( this.props.siteId, page );
+		this.props.fetchNextPage();
 	};
 
-	removeViewer = viewer => {
+	removeViewer = ( viewer ) => {
 		this.props.recordGoogleEvent( 'People', 'Clicked Remove Viewer Button On Viewers List' );
 		accept(
 			<div>
@@ -60,13 +45,13 @@ class Viewers extends React.PureComponent {
 				</p>
 				<p>{ this.props.translate( 'Would you still like to remove this viewer?' ) }</p>
 			</div>,
-			accepted => {
+			( accepted ) => {
 				if ( accepted ) {
 					this.props.recordGoogleEvent(
 						'People',
 						'Clicked Remove Button In Remove Viewer Confirmation'
 					);
-					ViewersActions.remove( this.props.site.ID, viewer );
+					this.props.removeViewer( { siteId: this.props.site.ID, viewerId: viewer.ID } );
 				} else {
 					this.props.recordGoogleEvent(
 						'People',
@@ -78,7 +63,7 @@ class Viewers extends React.PureComponent {
 		);
 	};
 
-	renderViewer = viewer => {
+	renderViewer = ( viewer ) => {
 		const removeThisViewer = () => {
 			this.removeViewer( viewer );
 		};
@@ -89,18 +74,14 @@ class Viewers extends React.PureComponent {
 				user={ viewer }
 				type="viewer"
 				site={ this.props.site }
-				isSelectable={ this.state.bulkEditing }
 				onRemove={ removeThisViewer }
 			/>
 		);
 	};
 
-	getViewerRef = viewer => 'viewer-' + viewer.ID;
-
-	isLastPage = () => this.props.totalViewers <= this.props.viewers.length;
+	getViewerRef = ( viewer ) => 'viewer-' + viewer.ID;
 
 	render() {
-		const listClass = this.state.bulkEditing ? 'bulk-editing' : null;
 		let viewers;
 		let emptyContentArgs = {
 			title:
@@ -109,7 +90,7 @@ class Viewers extends React.PureComponent {
 					: this.props.translate( "You don't have any viewers yet." ),
 		};
 
-		if ( ! this.props.viewers.length && ! this.props.fetching ) {
+		if ( ! this.props.viewers.length && ! this.props.isFetching ) {
 			if ( this.props.site && ! this.props.site.jetpack && ! this.props.site.is_private ) {
 				emptyContentArgs = Object.assign( emptyContentArgs, {
 					line: this.props.translate(
@@ -127,12 +108,12 @@ class Viewers extends React.PureComponent {
 		if ( this.props.viewers.length ) {
 			viewers = (
 				<InfiniteList
-					key={ this.props.siteId }
+					key={ this.props.site.ID }
 					items={ this.props.viewers }
 					className="viewers-list__infinite is-people"
 					ref={ this.infiniteList }
-					fetchingNextPage={ this.props.fetching }
-					lastPage={ this.isLastPage() }
+					fetchingNextPage={ this.props.isFetchingNextPage }
+					lastPage={ ! this.props.hasNextPage }
 					fetchNextPage={ this.fetchNextPage }
 					getItemRef={ this.getViewerRef }
 					renderLoadingPlaceholders={ this.renderPlaceholders }
@@ -149,16 +130,18 @@ class Viewers extends React.PureComponent {
 				<PeopleListSectionHeader
 					label={ this.props.label }
 					site={ this.props.site }
-					count={ this.props.fetching ? null : this.props.totalViewers }
+					isPlaceholder={ this.props.isFetching }
+					count={ this.props.isFetching ? null : this.props.totalViewers }
 				/>
-				<Card className={ listClass }>{ viewers }</Card>
-				{ this.isLastPage() && <ListEnd /> }
+				<Card className="people-invites__invites-list">{ viewers }</Card>
+				{ ! this.props.hasNextPage && <ListEnd /> }
 			</div>
 		);
 	}
 }
 
-export default connect(
-	null,
-	{ recordGoogleEvent }
-)( localize( Viewers ) );
+const mapDispatchToProps = {
+	recordGoogleEvent,
+};
+
+export default connect( null, mapDispatchToProps )( localize( Viewers ) );

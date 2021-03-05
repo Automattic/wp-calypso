@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,8 +20,8 @@ import {
 	createAccount,
 	oauthInit,
 } from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
-import Dialog from 'components/dialog';
-import { getCurrentUserEmail } from 'state/current-user/selectors';
+import { Dialog } from '@automattic/components';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import {
 	getError,
 	getIsCreating,
@@ -32,7 +30,7 @@ import {
 } from 'woocommerce/state/sites/settings/stripe-connect-account/selectors';
 import { getLink, getOrigin } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 import StripeConnectPrompt from './payment-method-stripe-connect-prompt';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 
@@ -49,7 +47,7 @@ class PaymentMethodStripeSetupDialog extends Component {
 		};
 	}
 
-	componentWillMount = () => {
+	UNSAFE_componentWillMount = () => {
 		this.props.clearError();
 	};
 
@@ -200,8 +198,5 @@ function mapDispatchToProps( dispatch ) {
 }
 
 export default localize(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( PaymentMethodStripeSetupDialog )
+	connect( mapStateToProps, mapDispatchToProps )( PaymentMethodStripeSetupDialog )
 );

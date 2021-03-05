@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { flagUrl } from 'lib/flags';
+import { flagUrl } from 'calypso/lib/flags';
 
 class LocationFlag extends Component {
 	constructor( props ) {

@@ -1,5 +1,4 @@
-Query Connected Applications
-===========================
+# Query Connected Applications
 
 `<QueryConnectedApplications />` is a React component used to request the connected applications of the current user.
 
@@ -9,7 +8,7 @@ Render the component without props. It does not accept any children, nor does it
 
 ```jsx
 import React, { Fragment } from 'react';
-import QueryConnectedApplications from 'components/data/query-connected-applications';
+import QueryConnectedApplications from 'calypso/components/data/query-connected-applications';
 
 export default () => (
 	<Fragment>

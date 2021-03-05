@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,20 +8,18 @@ import deepFreeze from 'deep-freeze';
  */
 import jetpackConnectAuthorize from '../jetpack-connect-authorize.js';
 import {
-	DESERIALIZE,
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 	JETPACK_CONNECT_QUERY_SET,
-	SERIALIZE,
-	SITE_REQUEST_FAILURE,
-} from 'state/action-types';
-
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/jetpack-connect/action-types';
+import { SITE_REQUEST_FAILURE } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( '#jetpackConnectAuthorize()', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -161,9 +158,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 			clientId: 1234,
 			timestamp: 1410647400000,
 		} );
-		const state = jetpackConnectAuthorize( originalState, {
-			type: SERIALIZE,
-		} );
+		const state = serialize( jetpackConnectAuthorize, originalState );
 
 		expect( state ).toEqual( originalState );
 	} );
@@ -173,9 +168,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 			clientId: 1234,
 			timestamp: Infinity, // Ensure timestamp is not expired
 		} );
-		const state = jetpackConnectAuthorize( originalState, {
-			type: DESERIALIZE,
-		} );
+		const state = deserialize( jetpackConnectAuthorize, originalState );
 
 		expect( state ).toEqual( originalState );
 	} );
@@ -185,9 +178,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 			clientId: 1234,
 			timestamp: -Infinity, // Ensure timestamp is expired
 		} );
-		const state = jetpackConnectAuthorize( originalState, {
-			type: DESERIALIZE,
-		} );
+		const state = deserialize( jetpackConnectAuthorize, originalState );
 
 		expect( state ).toEqual( {} );
 	} );

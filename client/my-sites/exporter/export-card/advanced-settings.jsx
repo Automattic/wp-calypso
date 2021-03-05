@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,9 +11,9 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import PostTypeOptions from './post-type-options';
-import SpinnerButton from 'components/spinner-button';
-import { isDateRangeValid as isExportDateRangeValid } from 'state/exporter/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import SpinnerButton from 'calypso/components/spinner-button';
+import { isDateRangeValid as isExportDateRangeValid } from 'calypso/state/exporter/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Displays additional options for customising an export
@@ -66,7 +64,7 @@ class AdvancedSettings extends React.Component {
 					loading={ this.props.shouldShowProgress }
 					isPrimary={ false }
 					onClick={ this.props.onClickExport }
-					text={ this.props.translate( 'Export Selected Content' ) }
+					text={ this.props.translate( 'Export selected content' ) }
 					loadingText={ this.props.translate( 'Exporting…' ) }
 				/>
 			</div>

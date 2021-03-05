@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FormButtonsBar from 'components/forms/form-buttons-bar';
+import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 
 /**
  * Style dependencies

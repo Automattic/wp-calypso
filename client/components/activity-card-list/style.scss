@@ -1,0 +1,216 @@
+.activity-card-list {
+	.filterbar {
+		margin-bottom: 2rem;
+	}
+}
+
+.activity-card-list__pagination-bottom {
+	margin-bottom: 1rem;
+}
+
+@include breakpoint-deprecated( '<660px' ) {
+	.activity-card-list .filterbar__wrap.card {
+		background: transparent;
+		box-shadow: none;
+	}
+
+	.activity-card-list .filterbar__label {
+		margin-left: 0;
+	}
+}
+
+.activity-card-list__date-group-date {
+	font-weight: 600;
+	font-size: $font-body;
+	line-height: 23px;
+	border-bottom: 1px solid #000000;
+}
+
+// draw vertical lines through each date "group"
+.activity-card-list__date-group-content {
+	position: relative;
+
+	&::before {
+		background: var( --color-neutral-5 );
+		content: '';
+		height: 100%;
+		// center on the icons ( they render @ 16px, so half that )
+		left: 8px;
+		position: absolute;
+		top: 0;
+		width: 1px;
+		z-index: -2;
+	}
+}
+
+// make sure the vertical lines don't appear through the transparent backgrounds of the icons
+.activity-card-list {
+	.activity-card {
+		margin-bottom: 32px;
+		.activity-card__time {
+			background: var( --color-surface-backdrop );
+		}
+	}
+}
+
+// primary cards get primary card emphasis on the left
+.activity-card-list__primary-card,
+.activity-card-list__primary-card-with-more {
+	> .card {
+		padding-left: 12px; // reduce standard 16px padding by 4
+		border-left: 4px solid var( --color-primary-40 );
+	}
+}
+
+.activity-card-list__primary-card-with-more {
+	// draw vertical line after the card
+	&::before {
+		background: var( --color-neutral-5 );
+		content: '';
+		height: 16px;
+		// center on the icons ( they render @ 1.1rem, so half that )
+		left: 8px;
+		position: absolute;
+		top: 100%;
+		width: 1px;
+		z-index: -2;
+	}
+	// draw ball on the end of the line
+	&::after {
+		background: var( --color-neutral-5 );
+		content: '';
+		// make sure we stay in our element
+		height: 9px;
+		width: 9px;
+		left: calc( 8px - 4px );
+		position: absolute;
+		// immediately after the existing horizontal line draw on over the top of it
+		top: calc( 100% + 16px );
+		visibility: visible;
+		z-index: -1;
+		border-radius: 50%;
+	}
+}
+
+// work happens in the secondary cards
+.activity-card-list__secondary-card,
+.activity-card-list__secondary-card-with-more {
+	// this brings in the right side, otherwise the translated elements would look the same
+	// 32px to adjust for the scooch, 16px to make the card shorted than the primary one
+	width: calc( 100% - 32px - 16px );
+
+	// scooch secondary card elements over
+	> .activity-card__time,
+	> .card {
+		transform: translateX( 32px );
+	}
+
+	> .card {
+		// this draws the horizontal line
+		&::before {
+			// same as the left on the vertical line above
+			background: var( --color-neutral-5 );
+			content: '';
+			height: 1px;
+			left: calc( 8px - 32px );
+			position: absolute;
+			top: 50%;
+			width: calc( 32px - 8px );
+			z-index: -2;
+		}
+	}
+}
+
+.activity-card-list__secondary-card {
+	// draw over the line that goes off the screen on the last card
+	&:last-of-type {
+		> .card {
+			&::after {
+				background: var( --color-surface-backdrop );
+				content: '';
+				// make sure we stay in our element
+				height: calc( 50% - 1px );
+				left: calc( 8px - 32px );
+				position: absolute;
+				// immediately after the existing horizontal line draw on over the top of it
+				top: calc( 50% + 1px );
+				visibility: visible;
+				width: 1px;
+				z-index: -1;
+			}
+		}
+	}
+}
+
+.activity-card-list__secondary-card-with-more {
+	// a tiny circle at the end of the line, indicating there is more on the next pagination
+	&:last-of-type {
+		> .card {
+			&::after {
+				background: var( --color-neutral-5 );
+				content: '';
+				// make sure we stay in our element
+				height: 9px;
+				width: 9px;
+				left: calc( 8px - 32px - 4px );
+				position: absolute;
+				// immediately after the existing horizontal line draw on over the top of it
+				top: calc( 100% - 9px );
+				visibility: visible;
+				z-index: -1;
+				border-radius: 50%;
+			}
+		}
+	}
+}
+
+.activity-card-list__loading-placeholder {
+	.filterbar {
+		@include placeholder( --color-neutral-10 );
+		height: 51px;
+		margin-bottom: 2rem;
+	}
+
+	.activity-card-list__pagination-top,
+	.activity-card-list__pagination-bottom {
+		@include placeholder( --color-neutral-10 );
+		height: 34px;
+		width: 50%;
+		margin: 0 auto;
+
+		&.is-compact {
+			height: 28px;
+		}
+	}
+
+	.activity-card-list__date-group-date {
+		span {
+			@include placeholder( --color-neutral-10 );
+			font-weight: 600;
+			font-size: 1rem;
+			line-height: 23px;
+		}
+	}
+
+	.activity-card-list__date-group-content::before {
+		background: transparent;
+	}
+
+	.activity-card__time-text {
+		@include placeholder( --color-neutral-10 );
+	}
+
+	.activity-card {
+		margin-bottom: 32px;
+	}
+
+	.card {
+		@include placeholder( --color-neutral-10 );
+		height: 102px;
+		border-left: initial;
+
+		&::before {
+			background: transparent;
+		}
+	}
+}

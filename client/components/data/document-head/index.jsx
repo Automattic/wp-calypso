@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -12,17 +9,18 @@ import { debounce, isEqual } from 'lodash';
 /**
  * Internal dependencies.
  */
-import { getDocumentHeadFormattedTitle } from 'state/document-head/selectors';
+import { getDocumentHeadTitle } from 'calypso/state/document-head/selectors/get-document-head-title';
+import { getDocumentHeadFormattedTitle } from 'calypso/state/document-head/selectors/get-document-head-formatted-title';
 import {
 	setDocumentHeadTitle as setTitle,
 	setDocumentHeadLink as setLink,
 	setDocumentHeadMeta as setMeta,
 	setDocumentHeadUnreadCount as setUnreadCount,
-} from 'state/document-head/actions';
-import TranslatableString from 'components/translatable/proptype';
+} from 'calypso/state/document-head/actions';
+import TranslatableString from 'calypso/components/translatable/proptype';
 
 class DocumentHead extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { title, unreadCount } = this.props;
 
 		if ( this.props.title !== undefined ) {
@@ -46,8 +44,15 @@ class DocumentHead extends Component {
 		this.setFormattedTitle( this.props.formattedTitle );
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.title !== undefined && this.props.title !== nextProps.title ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
+		// The `title` prop is commonly receiving its value as a result from a `translate` call
+		// and in some cases it returns a React component instead of string.
+		// A shallow comparison of two React components may result in unnecessary title updates.
+		// To avoid that, we compare the string representation of the passed `title` prop value.
+		if (
+			nextProps.title !== undefined &&
+			this.props.title?.toString?.() !== nextProps.title?.toString?.()
+		) {
 			this.props.setTitle( nextProps.title );
 		}
 
@@ -72,7 +77,7 @@ class DocumentHead extends Component {
 		this.setFormattedTitle.cancel();
 	}
 
-	setFormattedTitle = debounce( title => {
+	setFormattedTitle = debounce( ( title ) => {
 		document.title = title;
 	} );
 
@@ -83,6 +88,7 @@ class DocumentHead extends Component {
 
 DocumentHead.propTypes = {
 	title: TranslatableString,
+	skipTitleFormatting: PropTypes.bool,
 	unreadCount: PropTypes.number,
 	link: PropTypes.array,
 	meta: PropTypes.array,
@@ -93,8 +99,10 @@ DocumentHead.propTypes = {
 };
 
 export default connect(
-	state => ( {
-		formattedTitle: getDocumentHeadFormattedTitle( state ),
+	( state, props ) => ( {
+		formattedTitle: props.skipTitleFormatting
+			? getDocumentHeadTitle( state )
+			: getDocumentHeadFormattedTitle( state ),
 	} ),
 	{
 		setTitle,

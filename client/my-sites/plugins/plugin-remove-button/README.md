@@ -1,24 +1,19 @@
-Plugin Remove Button
-====================
+# Plugin Remove Button
 
 This component is used to display a button that launch a remove action when clicked.
 
-#### How to use:
+## How to use
 
 ```js
-import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
+import PluginRemoveButton from 'calypso/my-sites/plugins/plugin-remove-button';
 
-render() {
-	return <PluginRemoveButton
-				plugin={ plugin }
-				site={ site }
-				notices={ notices }
-			/>;
+function render() {
+	return <PluginRemoveButton plugin={ plugin } site={ site } notices={ notices } />;
 }
 ```
 
-#### Props
+## Props
 
-* `plugin`: a plugin object.
-* `site`: a site object.
-* `notices` : (object) Object of errored, inProgress, and completed actions.
+- `plugin`: a plugin object.
+- `site`: a site object.
+- `notices` : (object) Object of errored, inProgress, and completed actions.

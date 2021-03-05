@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -14,26 +13,37 @@ import React from 'react';
  * Internal dependencies
  */
 import MediaLibrary from '..';
-import { requestKeyringConnections as requestStub } from 'state/sharing/keyring/actions';
+import { requestKeyringConnections as requestStub } from 'calypso/state/sharing/keyring/actions';
 
-jest.mock( 'components/data/query-preferences', () => require( 'components/empty-component' ) );
-jest.mock( 'components/data/media-validation-data', () => require( 'components/empty-component' ) );
-jest.mock( 'lib/media/library-selected-store', () => () => null );
-jest.mock( 'lib/media/actions', () => () => null );
-jest.mock( 'my-sites/media-library/content', () => require( 'components/empty-component' ) );
-jest.mock( 'my-sites/media-library/drop-zone', () => require( 'components/empty-component' ) );
-jest.mock( 'my-sites/media-library/filter-bar', () => require( 'components/empty-component' ) );
-jest.mock( 'state/sharing/keyring/actions', () => ( {
+jest.mock( 'calypso/components/data/query-preferences', () =>
+	require( 'calypso/components/empty-component' )
+);
+jest.mock( 'calypso/my-sites/media-library/content', () =>
+	require( 'calypso/components/empty-component' )
+);
+jest.mock( 'calypso/my-sites/media-library/drop-zone', () =>
+	require( 'calypso/components/empty-component' )
+);
+jest.mock( 'calypso/my-sites/media-library/filter-bar', () =>
+	require( 'calypso/components/empty-component' )
+);
+jest.mock( 'calypso/state/sharing/keyring/actions', () => ( {
 	requestKeyringConnections: require( 'sinon' ).stub(),
 } ) );
-jest.mock( 'state/sharing/keyring/selectors', () => ( {
+jest.mock( 'calypso/state/sharing/keyring/selectors', () => ( {
 	getKeyringConnections: () => null,
 	isKeyringConnectionsFetching: () => null,
 } ) );
 
 describe( 'MediaLibrary', () => {
 	const store = {
-		getState: () => ( {} ),
+		getState: () => ( {
+			media: {
+				errors: {},
+				queries: {},
+				selectedItems: {},
+			},
+		} ),
 		dispatch: () => false,
 		subscribe: () => false,
 	};
@@ -42,7 +52,7 @@ describe( 'MediaLibrary', () => {
 		requestStub.resetHistory();
 	} );
 
-	const getItem = source => mount( <MediaLibrary store={ store } source={ source } /> );
+	const getItem = ( source ) => mount( <MediaLibrary store={ store } source={ source } /> );
 
 	describe( 'keyring request', () => {
 		test( 'is issued when component mounted and viewing an external source', () => {

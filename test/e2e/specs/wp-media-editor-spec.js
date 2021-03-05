@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,23 +20,22 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-let driver;
-
-before( async function() {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
-describe( `[${ host }] Media: Edit Media (${ screenSize }) @parallel @jetpack`, function() {
+describe( `[${ host }] Media: Edit Media (${ screenSize }) @parallel @jetpack`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
 
-	describe( 'Edit Existing Media:', function() {
-		before( 'Can login and select my site', async function() {
-			const loginFlow = new LoginFlow( driver );
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
+
+	describe( 'Edit Existing Media:', function () {
+		before( 'Can login and select my site', async function () {
+			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
 			await loginFlow.loginAndSelectMySite();
 		} );
 
-		step( "Can see a 'Media' option", async function() {
+		step( "Can see a 'Media' option", async function () {
 			const sideBarComponent = await SideBarComponent.Expect( driver );
 			return assert(
 				await sideBarComponent.mediaOptionExists(),
@@ -46,20 +43,20 @@ describe( `[${ host }] Media: Edit Media (${ screenSize }) @parallel @jetpack`, 
 			);
 		} );
 
-		step( "Select 'Media' option and see media content", async function() {
+		step( "Select 'Media' option and see media content", async function () {
 			const sideBarComponent = await SideBarComponent.Expect( driver );
 			await sideBarComponent.selectMedia();
 			return await MediaPage.Expect( driver );
 		} );
 
-		step( 'Select a random media item and click edit', async function() {
+		step( 'Select a random media item and click edit', async function () {
 			const mediaPage = await MediaPage.Expect( driver );
 			await mediaPage.selectFirstImage();
 			await mediaPage.selectEditMedia();
 			return await mediaPage.mediaEditorShowing();
 		} );
 
-		step( 'Click Edit Image', async function() {
+		step( 'Click Edit Image', async function () {
 			const mediaPage = await MediaPage.Expect( driver );
 			await mediaPage.clickEditImage();
 			return await mediaPage.imageShowingInEditor();

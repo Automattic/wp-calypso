@@ -43,7 +43,7 @@ class ConnectionsList extends PureComponent {
 
 		return (
 			<div className="post-share__connections">
-				{ connections.map( connection => (
+				{ connections.map( ( connection ) => (
 					<Connection
 						{ ...{
 							connection,

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestSiteBlocks } from 'state/reader/site-blocks/actions';
+import { requestSiteBlocks } from 'calypso/state/reader/site-blocks/actions';
 
 class QuerySiteBlocks extends Component {
 	static propTypes = {
@@ -37,7 +35,4 @@ class QuerySiteBlocks extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestSiteBlocks }
-)( QuerySiteBlocks );
+export default connect( null, { requestSiteBlocks } )( QuerySiteBlocks );

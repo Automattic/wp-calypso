@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,7 @@ import page from 'page';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import {
 	areSettingsGeneralLoaded,
 	getPaymentCurrencySettings,
@@ -21,7 +20,7 @@ import {
 import { clearOrderEdits, editOrder } from 'woocommerce/state/ui/orders/actions';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { saveOrder } from 'woocommerce/state/sites/orders/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import {
@@ -31,10 +30,10 @@ import {
 } from 'woocommerce/state/ui/orders/selectors';
 import { isOrderUpdating } from 'woocommerce/state/sites/orders/selectors';
 import { isOrderWaitingPayment } from 'woocommerce/lib/order-status';
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import OrderCustomerCreate from './order-customer/create';
 import OrderDetails from './order-details';
-import { ProtectFormGuard } from 'lib/protect-form';
+import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import { recordTrack } from 'woocommerce/lib/analytics';
 import { sendOrderInvoice } from 'woocommerce/state/sites/orders/send-invoice/actions';
 
@@ -49,7 +48,7 @@ class Order extends Component {
 		this.possiblyFetchDefaultCurrency( this.props );
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		if ( this.props.siteId !== newProps.siteId ) {
 			this.props.editOrder( newProps.siteId, {} );
 		}
@@ -79,7 +78,7 @@ class Order extends Component {
 
 	triggerInvoice = ( siteId, orderId ) => {
 		const { translate } = this.props;
-		const onSuccess = dispatch => {
+		const onSuccess = ( dispatch ) => {
 			dispatch(
 				successNotice( translate( 'An invoice has been sent to the customer.' ), {
 					duration: 8000,
@@ -114,7 +113,7 @@ class Order extends Component {
 			}
 			page.redirect( getLink( `/store/order/:site/${ orderId }`, site ) );
 		};
-		const onFailure = dispatch => {
+		const onFailure = ( dispatch ) => {
 			dispatch( errorNotice( translate( 'Unable to create order.' ), { duration: 8000 } ) );
 		};
 
@@ -158,7 +157,7 @@ class Order extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSiteWithFallback( state );
 		const siteId = site ? site.ID : false;
 		const orderId = getCurrentlyEditingOrderId( state );
@@ -185,7 +184,7 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch =>
+	( dispatch ) =>
 		bindActionCreators(
 			{
 				clearOrderEdits,

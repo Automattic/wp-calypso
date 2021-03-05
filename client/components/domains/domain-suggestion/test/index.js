@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -14,7 +13,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import DomainSuggestion from 'components/domains/domain-suggestion';
+import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 
 describe( 'Domain Suggestion', () => {
 	describe( 'has attributes', () => {

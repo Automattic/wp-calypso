@@ -1,4 +1,3 @@
-/** @format */
 export const sites = [
 	{
 		ID: 43889156,
@@ -36,8 +35,6 @@ export const sites = [
 				quote: 'Quote',
 				image: 'Image',
 			},
-			default_likes_enabled: true,
-			default_sharing_status: false,
 			default_comment_status: true,
 			default_ping_status: true,
 			software_version: '4.0-beta2-20140728',
@@ -54,3 +51,8 @@ export const sites = [
 		user_can_manage: true,
 	},
 ];
+
+export const sitesObject = sites.reduce( ( acc, site ) => {
+	acc[ site.ID ] = site;
+	return acc;
+}, {} );

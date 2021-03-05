@@ -1,22 +1,3 @@
-
 .color-scheme-picker .form-radio-with-thumbnail__thumbnail {
 	height: 80px;
-
-	$color-scheme-names:
-		'classic-blue',
-		'classic-bright',
-		'contrast',
-		'nightfall',
-		'midnight',
-		'ocean',
-		'sakura',
-		'powder-snow',
-		'sunset';
-
-	@each $name in $color-scheme-names {
-		&.is-#{$name} {
-			// stylelint-disable-next-line string-quotes
-			background-image: url( "/calypso/images/color-schemes/color-scheme-thumbnail-#{$name}.svg" );
-		}
-	}
 }

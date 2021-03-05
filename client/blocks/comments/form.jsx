@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,14 +11,16 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import FormInputValidation from 'components/forms/form-input-validation';
-import Gravatar from 'components/gravatar';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { writeComment, deleteComment, replyComment } from 'state/comments/actions';
-import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
-import { isCommentableDiscoverPost } from 'blocks/comments/helper';
-import { ProtectFormGuard } from 'lib/protect-form';
+import { Button } from '@automattic/components';
+import AutoDirection from 'calypso/components/auto-direction';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import Gravatar from 'calypso/components/gravatar';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { writeComment, deleteComment, replyComment } from 'calypso/state/comments/actions';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
+import { isCommentableDiscoverPost } from 'calypso/blocks/comments/helper';
+import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import PostCommentFormTextarea from './form-textarea';
 
 /**
@@ -38,12 +39,12 @@ class PostCommentForm extends React.Component {
 
 		// bind event handlers to this instance
 		Object.getOwnPropertyNames( PostCommentForm.prototype )
-			.filter( prop => prop.indexOf( 'handle' ) === 0 )
-			.filter( prop => typeof this[ prop ] === 'function' )
-			.forEach( prop => ( this[ prop ] = this[ prop ].bind( this ) ) );
+			.filter( ( prop ) => prop.indexOf( 'handle' ) === 0 )
+			.filter( ( prop ) => typeof this[ prop ] === 'function' )
+			.forEach( ( prop ) => ( this[ prop ] = this[ prop ].bind( this ) ) );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.setState( {
 			commentText: nextProps.commentText || '',
 		} );
@@ -191,7 +192,7 @@ class PostCommentForm extends React.Component {
 		return (
 			<form className="comments__form">
 				<ProtectFormGuard isChanged={ this.hasCommentText() } />
-				<fieldset>
+				<FormFieldset>
 					<Gravatar user={ this.props.currentUser } />
 					<div className={ expandingAreaClasses }>
 						<pre>
@@ -212,15 +213,15 @@ class PostCommentForm extends React.Component {
 							/>
 						</AutoDirection>
 					</div>
-					<button
+					<Button
 						className={ buttonClasses }
 						disabled={ this.state.commentText.length === 0 }
 						onClick={ this.handleSubmit }
 					>
 						{ this.props.error ? translate( 'Resend' ) : translate( 'Send' ) }
-					</button>
+					</Button>
 					{ this.renderError() }
-				</fieldset>
+				</FormFieldset>
 			</form>
 		);
 	}
@@ -246,7 +247,7 @@ PostCommentForm.defaultProps = {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		currentUser: getCurrentUser( state ),
 	} ),
 	{ writeComment, deleteComment, replyComment }

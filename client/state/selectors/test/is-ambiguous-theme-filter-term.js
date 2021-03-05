@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isAmbiguousThemeFilterTerm from 'state/selectors/is-ambiguous-theme-filter-term';
+import { isAmbiguousThemeFilterTerm } from 'calypso/state/themes/selectors';
 import { state } from './fixtures/theme-filters';
 
 describe( 'isAmbiguousThemeFilterTerm()', () => {

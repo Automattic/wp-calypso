@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,16 +6,19 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 import { includes } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 
-import { appStates } from 'state/imports/constants';
-import Card from 'components/card';
+import { appStates } from 'calypso/state/imports/constants';
+import { Card } from '@automattic/components';
 import ImporterHeader from '../importer-header';
 import ImportingPane from '../importing-pane';
 import SiteImporterInputPane from './site-importer-input-pane';
+import { startImport } from 'calypso/state/imports/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -42,9 +43,7 @@ const uploadingStates = [
 	appStates.UPLOADING,
 ];
 
-export default class extends React.PureComponent {
-	static displayName = 'SiteImporter';
-
+class SiteImporter extends React.PureComponent {
 	static propTypes = {
 		importerData: PropTypes.shape( {
 			title: PropTypes.string.isRequired,
@@ -61,38 +60,64 @@ export default class extends React.PureComponent {
 			importerState: PropTypes.string.isRequired,
 			percentComplete: PropTypes.number,
 			statusMessage: PropTypes.string,
+			type: PropTypes.string.isRequired,
 		} ),
+		site: PropTypes.shape( {
+			ID: PropTypes.number.isRequired,
+		} ),
+		fromSite: PropTypes.string,
+	};
+
+	handleClick = () => {
+		const {
+			importerStatus: { type },
+			site: { ID: siteId },
+		} = this.props;
+
+		this.props.startImport( siteId, type );
+
+		this.props.recordTracksEvent( 'calypso_importer_main_start_clicked', {
+			blog_id: siteId,
+			importer_id: type,
+		} );
 	};
 
 	render() {
 		const { title, icon, description, uploadDescription } = this.props.importerData;
-		const site = this.props.site;
-		const state = this.props.importerStatus;
-		const isEnabled = appStates.DISABLED !== state.importerState;
+		const { importerStatus } = this.props;
+		const isEnabled = appStates.DISABLED !== importerStatus.importerState;
+		const showStart = includes( compactStates, importerStatus.importerState );
 		const cardClasses = classNames( 'importer__site-importer-card', {
-			'is-compact': includes( compactStates, state.importerState ),
+			'is-compact': showStart,
 			'is-disabled': ! isEnabled,
 		} );
+		const cardProps = {
+			displayAsLink: true,
+			onClick: this.handleClick,
+			tagName: 'button',
+		};
 
 		return (
-			<Card className={ cardClasses }>
+			<Card className={ cardClasses } { ...( showStart ? cardProps : undefined ) }>
 				<ImporterHeader
-					importerStatus={ state }
-					{ ...{ icon, title, description, isEnabled, site } }
+					importerStatus={ importerStatus }
+					icon={ icon }
+					title={ title }
+					description={ description }
 				/>
-				{ includes( importingStates, state.importerState ) && (
+				{ includes( importingStates, importerStatus.importerState ) && (
 					<ImportingPane
 						{ ...this.props }
-						importerStatus={ state }
+						importerStatus={ importerStatus }
 						sourceType={ title }
 						site={ this.props.site }
 					/>
 				) }
-				{ includes( uploadingStates, state.importerState ) && (
+				{ includes( uploadingStates, importerStatus.importerState ) && (
 					<SiteImporterInputPane
 						{ ...this.props }
 						description={ uploadDescription }
-						importerStatus={ state }
+						importerStatus={ importerStatus }
 						onStartImport={ this.validateSite }
 						isEnabled={ isEnabled }
 					/>
@@ -101,3 +126,5 @@ export default class extends React.PureComponent {
 		);
 	}
 }
+
+export default connect( null, { recordTracksEvent, startImport } )( SiteImporter );

@@ -1,26 +1,25 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	POST_FORMATS_RECEIVE,
 	POST_FORMATS_REQUEST,
 	POST_FORMATS_REQUEST_SUCCESS,
 	POST_FORMATS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+
+import 'calypso/state/post-formats/init';
 
 /**
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve post formats for a site.
  *
- * @param  {Number}   siteId Site ID
- * @return {Function}        Action thunk
+ * @param  {number}   siteId Site ID
+ * @returns {Function}        Action thunk
  */
 export function requestPostFormats( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: POST_FORMATS_REQUEST,
 			siteId,
@@ -42,7 +41,7 @@ export function requestPostFormats( siteId ) {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: POST_FORMATS_REQUEST_FAILURE,
 					siteId,

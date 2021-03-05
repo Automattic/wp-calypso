@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,7 +15,7 @@ import reducer, {
 	siteRequests,
 	edits,
 } from '../reducer';
-import PostQueryManager from 'lib/query-manager/post';
+import PostQueryManager from 'calypso/lib/query-manager/post';
 import {
 	EDITOR_START,
 	EDITOR_STOP,
@@ -36,13 +34,12 @@ import {
 	POSTS_REQUEST,
 	POSTS_REQUEST_FAILURE,
 	POSTS_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -131,7 +128,7 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
 			} );
-			const state = items( original, { type: SERIALIZE } );
+			const state = serialize( items, original );
 
 			expect( state ).to.eql( original );
 		} );
@@ -140,7 +137,7 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
 			} );
-			const state = items( original, { type: DESERIALIZE } );
+			const state = deserialize( items, original );
 
 			expect( state ).to.eql( original );
 		} );
@@ -154,7 +151,7 @@ describe( 'reducer', () => {
 					title: 'Hello World',
 				},
 			} );
-			const state = items( original, { type: DESERIALIZE } );
+			const state = deserialize( items, original );
 
 			expect( state ).to.eql( {} );
 		} );
@@ -622,7 +619,7 @@ describe( 'reducer', () => {
 				} )
 			);
 
-			const state = queries( original, { type: SERIALIZE } );
+			const state = serialize( queries, original );
 
 			expect( state ).to.eql( {
 				2916284: {
@@ -674,7 +671,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			const state = queries( original, { type: DESERIALIZE } );
+			const state = deserialize( queries, original );
 
 			expect( state ).to.eql( {
 				2916284: new PostQueryManager( {
@@ -701,7 +698,7 @@ describe( 'reducer', () => {
 				2916284: '{INVALID',
 			} );
 
-			const state = queries( original, { type: DESERIALIZE } );
+			const state = deserialize( queries, original );
 
 			expect( state ).to.eql( {} );
 		} );
@@ -1394,14 +1391,14 @@ describe( 'reducer', () => {
 				},
 			};
 
-			const editsStateWithStatus = status =>
+			const editsStateWithStatus = ( status ) =>
 				deepFreeze( {
 					2916284: {
 						841: [ { status } ],
 					},
 				} );
 
-			const receivePostActionWithStatus = status => ( {
+			const receivePostActionWithStatus = ( status ) => ( {
 				type: POSTS_RECEIVE,
 				posts: [
 					{
@@ -1929,7 +1926,7 @@ describe( 'reducer', () => {
 				} )
 			);
 
-			const state = allSitesQueries( original, { type: SERIALIZE } );
+			const state = serialize( allSitesQueries, original );
 
 			expect( state ).to.eql( {
 				data: {
@@ -1977,7 +1974,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			const state = allSitesQueries( original, { type: DESERIALIZE } );
+			const state = deserialize( allSitesQueries, original );
 
 			expect( state ).to.eql(
 				new PostQueryManager(
@@ -2005,7 +2002,7 @@ describe( 'reducer', () => {
 		test( 'should not load invalid persisted state', () => {
 			const original = '{INVALID';
 
-			const state = allSitesQueries( original, { type: DESERIALIZE } );
+			const state = deserialize( allSitesQueries, original );
 
 			expect( state ).to.be.an.instanceof( PostQueryManager );
 			expect( state.data ).to.eql( { items: {}, queries: {} } );

@@ -1,30 +1,26 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { withMobileBreakpoint } from '@automattic/viewport-react';
 import React from 'react';
 import PropTypes from 'prop-types';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
 import { intersection, difference, includes, flowRight as compose } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Search from 'components/search';
-import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
-import KeyedSuggestions from 'components/keyed-suggestions';
-import StickyPanel from 'components/sticky-panel';
-import config from 'config';
-import { withMobileBreakpoint } from 'lib/viewport/react';
+import Search from 'calypso/components/search';
+import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
+import KeyedSuggestions from 'calypso/components/keyed-suggestions';
+import StickyPanel from 'calypso/components/sticky-panel';
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import MagicSearchWelcome from './welcome';
-import getThemeFilters from 'state/selectors/get-theme-filters';
-import getThemeFilterToTermTable from 'state/selectors/get-theme-filter-to-term-table';
+import { getThemeFilters, getThemeFilterToTermTable } from 'calypso/state/themes/selectors';
 
 /**
  * Style dependencies
@@ -64,11 +60,11 @@ class ThemesMagicSearchCard extends React.Component {
 		};
 	}
 
-	setSuggestionsRefs = key => suggestionComponent => {
+	setSuggestionsRefs = ( key ) => ( suggestionComponent ) => {
 		this.suggestionsRefs[ key ] = suggestionComponent;
 	};
 
-	setSearchInputRef = search => ( this.searchInputRef = search );
+	setSearchInputRef = ( search ) => ( this.searchInputRef = search );
 
 	componentDidMount() {
 		this.findTextForSuggestions( this.props.search );
@@ -82,7 +78,7 @@ class ThemesMagicSearchCard extends React.Component {
 		this.setState( { searchIsOpen: false } );
 	};
 
-	onKeyDown = event => {
+	onKeyDown = ( event ) => {
 		const txt = event.target.value;
 		this.findTextForSuggestions( txt );
 
@@ -103,7 +99,7 @@ class ThemesMagicSearchCard extends React.Component {
 		}
 	};
 
-	onClick = event => {
+	onClick = ( event ) => {
 		this.findTextForSuggestions( event.target.value );
 	};
 
@@ -145,7 +141,7 @@ class ThemesMagicSearchCard extends React.Component {
 		return '';
 	};
 
-	findTextForSuggestions = input => {
+	findTextForSuggestions = ( input ) => {
 		const val = input;
 		window.requestAnimationFrame( () => {
 			this.setState( {
@@ -165,7 +161,7 @@ class ThemesMagicSearchCard extends React.Component {
 		} );
 	};
 
-	insertSuggestion = suggestion => {
+	insertSuggestion = ( suggestion ) => {
 		const tokens = this.state.searchInput.split( /(\s+)/ );
 		// Get rid of empty match at end
 		tokens[ tokens.length - 1 ] === '' && tokens.splice( tokens.length - 1, 1 );
@@ -177,18 +173,18 @@ class ThemesMagicSearchCard extends React.Component {
 		return tokens.join( '' );
 	};
 
-	insertTextAtCursor = text => {
+	insertTextAtCursor = ( text ) => {
 		const input = this.state.searchInput;
 		const position = this.state.cursorPosition;
 		return input.slice( 0, position ) + text + input.slice( position );
 	};
 
-	onSearchChange = input => {
+	onSearchChange = ( input ) => {
 		this.findTextForSuggestions( input );
 		this.setState( { searchInput: input } );
 	};
 
-	searchTokens = input => {
+	searchTokens = ( input ) => {
 		//We are not able to scroll overlay on Edge so just create empty div
 		if ( typeof window !== 'undefined' && /(Edge)/.test( window.navigator.userAgent ) ) {
 			return <div />;
@@ -226,17 +222,17 @@ class ThemesMagicSearchCard extends React.Component {
 		} );
 	};
 
-	updateInput = updatedInput => {
+	updateInput = ( updatedInput ) => {
 		this.setState( { searchInput: updatedInput } );
 		this.searchInputRef.clear();
 	};
 
-	suggest = suggestion => {
+	suggest = ( suggestion ) => {
 		const updatedInput = this.insertSuggestion( suggestion );
 		this.updateInput( updatedInput );
 	};
 
-	insertTextInInput = text => {
+	insertTextInInput = ( text ) => {
 		const updatedInput = this.insertTextAtCursor( text );
 		this.updateInput( updatedInput );
 	};
@@ -361,7 +357,7 @@ class ThemesMagicSearchCard extends React.Component {
 }
 
 export default compose(
-	connect( state => ( {
+	connect( ( state ) => ( {
 		filters: getThemeFilters( state ),
 		allValidFilters: Object.keys( getThemeFilterToTermTable( state ) ),
 	} ) ),

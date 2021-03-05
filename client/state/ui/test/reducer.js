@@ -1,49 +1,25 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
-import reducer, { isNotificationsOpen, selectedSiteId, siteSelectionInitialized } from '../reducer';
-import { SELECTED_SITE_SET, NOTIFICATIONS_PANEL_TOGGLE } from 'state/action-types';
+import {
+	isNotificationsOpen,
+	selectedSiteId,
+	sidebarIsCollapsed,
+	siteSelectionInitialized,
+} from '../reducer';
+import {
+	SELECTED_SITE_SET,
+	NOTIFICATIONS_PANEL_TOGGLE,
+	SIDEBAR_TOGGLE_VISIBILITY,
+} from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
-	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'actionLog',
-			'billingTransactions',
-			'comments',
-			'dropZone',
-			'editor',
-			'googleMyBusiness',
-			'guidedTour',
-			'gutenbergOptInDialog',
-			'hasSidebar',
-			'isLoading',
-			'isNotificationsOpen',
-			'isPreviewShowing',
-			'layoutFocus',
-			'language',
-			'masterbarVisibility',
-			'mediaModal',
-			'npsSurveyNotice',
-			'oauth2Clients',
-			'payment',
-			'postTypeList',
-			'preview',
-			'route',
-			'reader',
-			'section',
-			'selectedSiteId',
-			'siteSelectionInitialized',
-			'themeSetup',
-		] );
-	} );
-
 	describe( '#selectedSiteId()', () => {
 		test( 'should default to null', () => {
 			const state = selectedSiteId( undefined, {} );
@@ -123,6 +99,33 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.be.true;
+		} );
+	} );
+
+	describe( '#getSidebarIsCollapsed()', () => {
+		test( 'should default to false', () => {
+			const defaultState = deepFreeze( false );
+			expect( sidebarIsCollapsed( undefined, {} ) ).equal( defaultState );
+		} );
+
+		test( 'should be true when collapsed', () => {
+			const defaultState = deepFreeze( true );
+			const state = sidebarIsCollapsed( false, {
+				type: SIDEBAR_TOGGLE_VISIBILITY,
+				collapsed: true,
+			} );
+
+			expect( state ).equal( defaultState );
+		} );
+
+		test( 'should be false when expanded', () => {
+			const defaultState = deepFreeze( false );
+			const state = sidebarIsCollapsed( true, {
+				type: SIDEBAR_TOGGLE_VISIBILITY,
+				collapsed: false,
+			} );
+
+			expect( state ).equal( defaultState );
 		} );
 	} );
 } );

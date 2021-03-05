@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -7,7 +6,7 @@
  * Internal dependencies
  */
 import { getAvailabilityNotice } from '../availability-messages';
-import { domainAvailability } from 'lib/domains/constants';
+import { domainAvailability } from 'calypso/lib/domains/constants';
 
 jest.mock( 'i18n-calypso', () => ( {
 	translate: jest.fn( () => 'default' ),
@@ -26,7 +25,7 @@ describe( 'getAvailabilityNotice()', () => {
 
 	test( 'Should return default message when domain is not a string', () => {
 		expect(
-			getAvailabilityNotice( null, domainAvailability.BLACKLISTED, {
+			getAvailabilityNotice( null, domainAvailability.DISALLOWED, {
 				site: 1,
 				maintenanceEndTime: 2,
 			} )
@@ -65,7 +64,7 @@ describe( 'getAvailabilityNotice()', () => {
 			domainAvailability.AVAILABLE,
 			domainAvailability.TLD_NOT_SUPPORTED,
 			domainAvailability.UNKNOWN,
-		].forEach( error => {
+		].forEach( ( error ) => {
 			expect( getAvailabilityNotice( null, error, null ) ).toEqual( {
 				message: undefined,
 				severity: 'error',

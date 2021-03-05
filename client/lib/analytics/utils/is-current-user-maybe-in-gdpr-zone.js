@@ -7,7 +7,7 @@ import { includes } from 'lodash';
 /**
  * Returns a boolean telling whether the current user could be in the GDPR zone.
  *
- * @returns {Boolean} Whether the current user could be in the GDPR zone
+ * @returns {boolean} Whether the current user could be in the GDPR zone
  */
 export default function isCurrentUserMaybeInGdprZone() {
 	const cookies = cookie.parse( document.cookie );

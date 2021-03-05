@@ -1,9 +1,3 @@
-/** @format */
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
 /**
  * Internal dependencies
  */
@@ -13,6 +7,7 @@ import {
 	getSubscribedLists,
 	isUpdatedList,
 	getListByOwnerAndSlug,
+	getMatchingItem,
 	isSubscribedByOwnerAndSlug,
 	hasError,
 	isMissingByOwnerAndSlug,
@@ -29,7 +24,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( isRequesting ).to.be.false;
+			expect( isRequesting ).toBeFalsy();
 		} );
 
 		test( 'should return true if fetching', () => {
@@ -41,7 +36,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( isRequesting ).to.be.true;
+			expect( isRequesting ).toBeTruthy();
 		} );
 	} );
 
@@ -55,7 +50,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( isRequesting ).to.be.false;
+			expect( isRequesting ).toBeFalsy();
 		} );
 
 		test( 'should return true if fetching', () => {
@@ -67,7 +62,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( isRequesting ).to.be.true;
+			expect( isRequesting ).toBeTruthy();
 		} );
 	} );
 
@@ -87,10 +82,10 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( subscribedLists ).to.eql( [] );
+			expect( subscribedLists ).toEqual( [] );
 		} );
 
-		test( 'should retrieve items in a-z slug order', () => {
+		test( 'should retrieve items in title order', () => {
 			const subscribedLists = getSubscribedLists( {
 				reader: {
 					lists: {
@@ -98,10 +93,12 @@ describe( 'selectors', () => {
 							123: {
 								ID: 123,
 								slug: 'bananas',
+								title: 'def',
 							},
 							456: {
 								ID: 456,
 								slug: 'ants',
+								title: 'abc',
 							},
 						},
 						subscribedLists: [ 123, 456 ],
@@ -109,9 +106,9 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( subscribedLists ).to.eql( [
-				{ ID: 456, slug: 'ants' },
-				{ ID: 123, slug: 'bananas' },
+			expect( subscribedLists ).toEqual( [
+				{ ID: 456, slug: 'ants', title: 'abc' },
+				{ ID: 123, slug: 'bananas', title: 'def' },
 			] );
 		} );
 	} );
@@ -129,7 +126,7 @@ describe( 'selectors', () => {
 				123
 			);
 
-			expect( isUpdated ).to.be.false;
+			expect( isUpdated ).toBeFalsy();
 		} );
 
 		test( 'should return true if the list has been updated', () => {
@@ -144,7 +141,7 @@ describe( 'selectors', () => {
 				123
 			);
 
-			expect( isUpdated ).to.be.true;
+			expect( isUpdated ).toBeTruthy();
 		} );
 	} );
 
@@ -160,7 +157,7 @@ describe( 'selectors', () => {
 				'bananas'
 			);
 
-			expect( list ).to.eql( undefined );
+			expect( list ).toEqual( undefined );
 		} );
 
 		test( 'should return a list if the owner and slug match', () => {
@@ -187,11 +184,74 @@ describe( 'selectors', () => {
 				'bananas'
 			);
 
-			expect( list ).to.eql( {
+			expect( list ).toEqual( {
 				ID: 123,
 				owner: 'lister',
 				slug: 'bananas',
 			} );
+		} );
+	} );
+
+	describe( '#getMatchingItem()', () => {
+		const feed = {
+			feed_ID: 1,
+		};
+		const feedItem = {
+			feed_URL: 'https://www.example.com/rss',
+			feed_ID: 1,
+		};
+		const site = {
+			meta: { data: { site: { blog_ID: 0 } } },
+			site_ID: 1,
+		};
+		const tag = {
+			meta: { data: { tag: { blog_ID: 0 } } },
+			tag_ID: 1,
+		};
+		// state.reader.feeds.items
+		const state = {
+			reader: {
+				feeds: { items: { 1: feedItem } },
+				lists: { listItems: { 1: [ feed, site, tag ] } },
+			},
+		};
+		test( 'should return false if the list does not exist', () => {
+			expect( getMatchingItem( state, { feedUrl: 'www.example.com', listId: 2 } ) ).toEqual(
+				false
+			);
+		} );
+
+		test( 'should return the matching feed by its ID if it exists in the specified list', () => {
+			expect( getMatchingItem( state, { feedId: 1, listId: 1 } ) ).toEqual( feed );
+			expect( getMatchingItem( state, { feedId: '1', listId: 1 } ) ).toEqual( feed );
+			expect( getMatchingItem( state, { feedId: 1, listId: '1' } ) ).toEqual( feed );
+			expect( getMatchingItem( state, { feedId: 2, listId: 1 } ) ).toEqual( false );
+		} );
+
+		test( 'should return the matching feed by its URL if it exists in the specified list', () => {
+			expect(
+				getMatchingItem( state, { feedUrl: 'https://www.example.com/rss', listId: 1 } )
+			).toEqual( feed );
+			expect(
+				getMatchingItem( state, { feedUrl: 'http://www.example.com/rss', listId: 1 } )
+			).toEqual( feed );
+			expect( getMatchingItem( state, { feedUrl: 'www.example.com/rss', listId: 1 } ) ).toEqual(
+				feed
+			);
+		} );
+
+		test( 'should return the matching site by its ID if it exists in the specified list', () => {
+			expect( getMatchingItem( state, { siteId: 1, listId: 1 } ) ).toEqual( site );
+			expect( getMatchingItem( state, { siteId: '1', listId: 1 } ) ).toEqual( site );
+			expect( getMatchingItem( state, { siteId: 1, listId: '1' } ) ).toEqual( site );
+			expect( getMatchingItem( state, { siteId: 2, listId: 1 } ) ).toEqual( false );
+		} );
+
+		test( 'should return the matching tag by its ID if it exists in the specified list', () => {
+			expect( getMatchingItem( state, { tagId: 1, listId: 1 } ) ).toEqual( tag );
+			expect( getMatchingItem( state, { tagId: '1', listId: 1 } ) ).toEqual( tag );
+			expect( getMatchingItem( state, { tagId: 1, listId: '1' } ) ).toEqual( tag );
+			expect( getMatchingItem( state, { tagId: 2, listId: 1 } ) ).toEqual( false );
 		} );
 	} );
 
@@ -208,7 +268,7 @@ describe( 'selectors', () => {
 				'bananas'
 			);
 
-			expect( isSubscribed ).to.eql( false );
+			expect( isSubscribed ).toEqual( false );
 		} );
 
 		test( 'should return true if the owner and slug match a subscribed list', () => {
@@ -236,7 +296,7 @@ describe( 'selectors', () => {
 				'bananas'
 			);
 
-			expect( isSubscribed ).to.eql( true );
+			expect( isSubscribed ).toEqual( true );
 		} );
 	} );
 
@@ -253,7 +313,7 @@ describe( 'selectors', () => {
 				456
 			);
 
-			expect( result ).to.be.false;
+			expect( result ).toBeFalsy();
 		} );
 
 		test( 'should return true if the list has an error', () => {
@@ -268,7 +328,7 @@ describe( 'selectors', () => {
 				123
 			);
 
-			expect( result ).to.be.true;
+			expect( result ).toBeTruthy();
 		} );
 	} );
 
@@ -286,7 +346,7 @@ describe( 'selectors', () => {
 				'bananas'
 			);
 
-			expect( isMissing ).to.eql( false );
+			expect( isMissing ).toEqual( false );
 		} );
 
 		test( 'should return true if the owner and slug match a missing list', () => {
@@ -302,7 +362,7 @@ describe( 'selectors', () => {
 				'bananas'
 			);
 
-			expect( isMissing ).to.eql( true );
+			expect( isMissing ).toEqual( true );
 		} );
 	} );
 } );

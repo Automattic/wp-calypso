@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,19 +10,19 @@ import { omit, trim } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import FieldError from '../../components/field-error';
 import inputFilters from './input-filters';
 
 const renderDimensionsInput = ( dimensionsName, dimensionsStr, dimensionsUnit, updateField ) => {
 	const { length, width, height } = inputFilters.parseDimensions( dimensionsStr );
-	const onChange = event => {
+	const onChange = ( event ) => {
 		const name = event.target.name;
 		const value = event.target.value;
 		const allDimensions = [
@@ -45,7 +43,7 @@ const renderDimensionsInput = ( dimensionsName, dimensionsStr, dimensionsUnit, u
 };
 
 const OuterDimensionsToggle = ( { siteId, toggleOuterDimensions, translate } ) => {
-	const onClick = event => {
+	const onClick = ( event ) => {
 		event.preventDefault();
 		toggleOuterDimensions( siteId );
 	};
@@ -57,7 +55,7 @@ const OuterDimensionsToggle = ( { siteId, toggleOuterDimensions, translate } ) =
 	);
 };
 
-const EditPackage = props => {
+const EditPackage = ( props ) => {
 	const {
 		siteId,
 		form,
@@ -85,7 +83,7 @@ const EditPackage = props => {
 		updatePackagesField( siteId, { [ key ]: value } );
 	};
 
-	const updateTextField = event => {
+	const updateTextField = ( event ) => {
 		const key = event.target.name;
 		const value = event.target.value;
 		updateField( key, value );
@@ -98,7 +96,7 @@ const EditPackage = props => {
 		return modalErrors[ field ] ? <FieldError text={ text } /> : null;
 	};
 
-	const onPackageTypeSelect = event => {
+	const onPackageTypeSelect = ( event ) => {
 		updatePackagesField( siteId, { is_letter: 'envelope' === event.target.value } );
 	};
 	const renderTypeSelection = () => {

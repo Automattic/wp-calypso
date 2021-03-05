@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { LOGSTASH } from 'state/action-types';
-import 'state/data-layer/wpcom/logstash';
+import { LOGSTASH } from 'calypso/state/action-types';
+import 'calypso/state/data-layer/wpcom/logstash';
 
 /**
  * Parameters sent to logstash endpoint.
@@ -13,13 +13,13 @@ interface LogToLogstashParams {
 	/**
 	 * Feature name.
 	 *
-	 * Should be whitelisted. @see D31385-code
+	 * Should be explicitly allowed. @see D31385-code
 	 */
 	feature: 'calypso_ssr' | 'calypso_client';
 	message: string;
 	extra?: any;
 	site_id?: number;
-	[key: string]: any;
+	[ key: string ]: any;
 }
 
 /**

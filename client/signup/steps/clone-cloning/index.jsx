@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,9 +11,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import Card from 'components/card';
-import Button from 'components/button';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { Card, Button } from '@automattic/components';
 
 /**
  * Style dependencies

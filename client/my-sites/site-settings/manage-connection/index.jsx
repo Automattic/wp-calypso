@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,11 +11,11 @@ import { localize } from 'i18n-calypso';
  */
 import DataSynchronization from './data-synchronization';
 import DisconnectSiteLink from './disconnect-site-link';
-import DocumentHead from 'components/data/document-head';
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
+import DocumentHead from 'calypso/components/data/document-head';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
 import SiteOwnership from './site-ownership';
-import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
+import redirectNonJetpack from 'calypso/my-sites/site-settings/redirect-non-jetpack';
 
 /**
  * Style dependencies
@@ -42,7 +40,4 @@ class ManageConnection extends Component {
 	}
 }
 
-export default flowRight(
-	localize,
-	redirectNonJetpack()
-)( ManageConnection );
+export default flowRight( localize, redirectNonJetpack() )( ManageConnection );

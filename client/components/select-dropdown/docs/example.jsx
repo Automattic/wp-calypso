@@ -1,16 +1,14 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import SelectDropdown from 'components/select-dropdown';
+import SelectDropdown from 'calypso/components/select-dropdown';
 
 class SelectDropdownExample extends React.PureComponent {
 	static displayName = 'SelectDropdownExample';
@@ -222,7 +220,7 @@ class SelectDropdownExample extends React.PureComponent {
 	}
 
 	getSelectItemHandler = ( name, count, icon ) => {
-		return event => {
+		return ( event ) => {
 			event.preventDefault();
 			this.selectItem( name, count, icon );
 		};

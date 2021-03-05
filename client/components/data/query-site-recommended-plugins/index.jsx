@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { fetchRecommendedPlugins } from 'state/plugins/recommended/actions';
+import { fetchRecommendedPlugins } from 'calypso/state/plugins/recommended/actions';
 
 class QuerySiteRecommendedPlugins extends Component {
 	static propTypes = {
@@ -30,9 +30,6 @@ class QuerySiteRecommendedPlugins extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		fetchRecommendedPlugins,
-	}
-)( QuerySiteRecommendedPlugins );
+export default connect( null, {
+	fetchRecommendedPlugins,
+} )( QuerySiteRecommendedPlugins );

@@ -1,4 +1,7 @@
-/** @format */
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/application/init';
 
 export function isOffline( state ) {
 	return state.application.connectionState === 'OFFLINE';

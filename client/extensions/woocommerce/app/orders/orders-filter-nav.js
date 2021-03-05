@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,15 +12,15 @@ import React, { Component } from 'react';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getOrdersCurrentSearch } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
 import { ORDER_UNPAID, ORDER_UNFULFILLED, ORDER_COMPLETED } from 'woocommerce/lib/order-status';
-import Search from 'components/search';
-import SectionNav from 'components/section-nav';
+import Search from 'calypso/components/search';
+import SectionNav from 'calypso/components/section-nav';
 import { updateCurrentOrdersQuery } from 'woocommerce/state/ui/orders/actions';
 
 class OrdersFilterNav extends Component {
-	doSearch = search => {
+	doSearch = ( search ) => {
 		this.props.updateCurrentOrdersQuery( this.props.site.ID, { search } );
 	};
 
@@ -82,9 +81,9 @@ class OrdersFilterNav extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		site: getSelectedSiteWithFallback( state ),
 		search: getOrdersCurrentSearch( state ),
 	} ),
-	dispatch => bindActionCreators( { updateCurrentOrdersQuery }, dispatch )
+	( dispatch ) => bindActionCreators( { updateCurrentOrdersQuery }, dispatch )
 )( localize( OrdersFilterNav ) );

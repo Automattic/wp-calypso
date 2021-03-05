@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import { getBackPath, isThemesBannerVisible } from '../selectors';
+import { getBackPath } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getBackPath', () => {
@@ -61,19 +59,6 @@ describe( 'selectors', () => {
 				},
 			};
 			expect( getBackPath( state ) ).toBe( '/themes/example.wordpress.com' );
-		} );
-	} );
-
-	describe( '#isThemesBannerVisible', () => {
-		test( 'Should return the showcase banner visible state', () => {
-			const state = {
-				themes: {
-					themesUI: {
-						themesBannerVisible: false,
-					},
-				},
-			};
-			expect( isThemesBannerVisible( state ) ).toBe( false );
 		} );
 	} );
 } );

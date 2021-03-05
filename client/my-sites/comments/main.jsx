@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,27 +5,22 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import getSiteId from 'state/selectors/get-site-id';
-import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
-import Main from 'components/main';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import DocumentHead from 'components/data/document-head';
+import EmptyContent from 'calypso/components/empty-content';
+import getSiteId from 'calypso/state/selectors/get-site-id';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import DocumentHead from 'calypso/components/data/document-head';
 import CommentList from './comment-list';
 import CommentTree from './comment-tree';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { preventWidows } from 'lib/formatting';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import { updatePlugin } from 'state/plugins/installed/actions';
-import { getPlugins } from 'state/plugins/installed/selectors';
-import { infoNotice } from 'state/notices/actions';
-import { isEnabled } from 'config';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { preventWidows } from 'calypso/lib/formatting';
+import { isEnabled } from '@automattic/calypso-config';
 import { NEWEST_FIRST } from './constants';
 
 /**
@@ -56,14 +50,7 @@ export class CommentsManagement extends Component {
 		order: NEWEST_FIRST,
 	};
 
-	setOrder = order => () => this.setState( { order } );
-
-	updateJetpackHandler = () => {
-		const { siteId, translate, jetpackPlugin } = this.props;
-
-		this.props.infoNotice( translate( 'Please wait while we update your Jetpack plugin.' ) );
-		this.props.updatePlugin( siteId, jetpackPlugin );
-	};
+	setOrder = ( order ) => () => this.setState( { order } );
 
 	render() {
 		const {
@@ -73,7 +60,6 @@ export class CommentsManagement extends Component {
 			postId,
 			showCommentList,
 			showCommentTree,
-			showJetpackUpdateScreen,
 			showPermissionError,
 			siteId,
 			siteFragment,
@@ -84,22 +70,21 @@ export class CommentsManagement extends Component {
 
 		return (
 			<Main className="comments" wideLayout>
-				{ showJetpackUpdateScreen && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				<PageViewTracker path={ analyticsPath } title="Comments" />
 				<DocumentHead title={ translate( 'Comments' ) } />
-				{ showJetpackUpdateScreen && (
-					<EmptyContent
-						title={ preventWidows( translate( "Looking to manage this site's comments?" ) ) }
-						line={ preventWidows(
-							translate( 'Please update to the latest version of Jetpack first' )
+				<SidebarNavigation />
+				{ ! showPermissionError && (
+					<FormattedHeader
+						brandFont
+						className="comments__page-heading"
+						headerText={ translate( 'Comments' ) }
+						subHeaderText={ translate(
+							'View, reply to, and manage all the comments across your site.'
 						) }
-						illustration="/calypso/images/illustrations/illustration-404.svg"
-						action={ translate( 'Update Jetpack' ) }
-						actionCallback={ this.updateJetpackHandler }
+						align="left"
 					/>
 				) }
-				{ ! showJetpackUpdateScreen && <SidebarNavigation /> }
-				{ ! showJetpackUpdateScreen && showPermissionError && (
+				{ showPermissionError && (
 					<EmptyContent
 						title={ preventWidows(
 							translate( "Oops! You don't have permission to manage comments." )
@@ -141,39 +126,21 @@ export class CommentsManagement extends Component {
 
 const mapStateToProps = ( state, { postId, siteFragment } ) => {
 	const siteId = getSiteId( state, siteFragment );
-	const isJetpack = isJetpackSite( state, siteId );
 	const isPostView = !! postId;
 	const canModerateComments = canCurrentUser( state, siteId, 'edit_posts' );
-	const showPermissionError = false === canModerateComments;
-	const showJetpackUpdateScreen = isJetpack && ! isJetpackMinimumVersion( state, siteId, '5.6' );
-
-	const sitePlugins = getPlugins( state, [ siteId ] );
-	const jetpackPlugin = find( sitePlugins, { slug: 'jetpack' } );
+	const showPermissionError = ! canModerateComments;
 
 	const showCommentTree =
-		! showJetpackUpdateScreen &&
-		! showPermissionError &&
-		isPostView &&
-		isEnabled( 'comments/management/threaded-view' );
+		! showPermissionError && isPostView && isEnabled( 'comments/management/threaded-view' );
 
-	const showCommentList = ! showCommentTree && ! showJetpackUpdateScreen && ! showPermissionError;
+	const showCommentList = ! showCommentTree && ! showPermissionError;
 
 	return {
 		siteId,
-		jetpackPlugin,
 		showCommentList,
 		showCommentTree,
-		showJetpackUpdateScreen,
 		showPermissionError,
 	};
 };
 
-const mapDispatchToProps = {
-	updatePlugin,
-	infoNotice,
-};
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( CommentsManagement ) );
+export default connect( mapStateToProps )( localize( CommentsManagement ) );

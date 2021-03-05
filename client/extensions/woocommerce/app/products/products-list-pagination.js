@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Pagination from 'components/pagination';
+import Pagination from 'calypso/components/pagination';
 import { DEFAULT_QUERY } from 'woocommerce/state/sites/products/utils';
 
 const ProductsListPagination = ( {

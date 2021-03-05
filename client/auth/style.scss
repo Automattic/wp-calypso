@@ -27,7 +27,8 @@
 }
 
 .auth.main {
-	background: var( --color-primary );
+	// Use WordPress.com’s brand color for the auth background
+	background: var( --color-wordpress-com );
 	float: none;
 	height: 100%;
 	display: flex;
@@ -87,12 +88,6 @@
 		float: none;
 		margin: 0;
 		width: calc( 100% - 20px );
-	}
-
-	.form-buttons-bar button,
-	.form-buttons-bar .button.is-primary[disabled] {
-		background: #00a8db;
-		border: #00a8db;
 	}
 
 	.form-buttons-bar .button.is-primary[disabled],
@@ -190,7 +185,7 @@
 	text-align: left;
 	counter-reset: item;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		left: 0;
 		top: -8px;
 		right: 0;
@@ -226,11 +221,11 @@
 		display: inline-block;
 		position: absolute;
 		left: -3em;
-		font-weight: bold;
+		font-weight: 600;
 	}
 
 	h2 {
-		font-weight: bold;
+		font-weight: 600;
 		margin-bottom: 1.5em;
 	}
 

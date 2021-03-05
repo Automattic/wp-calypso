@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,15 +10,23 @@ import renderer from 'react-test-renderer';
 import GSuitePrice from '../';
 
 describe( 'GSuitePrice', () => {
-	test( 'it renders GSuitePrice without monthly prices', () => {
-		const tree = renderer.create( <GSuitePrice cost={ 72 } currencyCode={ 'USD' } /> ).toJSON();
-		expect( tree ).toMatchSnapshot();
-	} );
+	const product = {
+		product_id: 69,
+		product_name: 'G Suite',
+		product_slug: 'gapps',
+		description: '',
+		cost: 76,
+		available: true,
+		is_domain_registration: false,
+		cost_display: '€76.00',
+		currency_code: 'EUR',
+	};
 
-	test( 'it renders GSuitePrice with monthly prices', () => {
+	test( 'renders correctly', () => {
 		const tree = renderer
-			.create( <GSuitePrice cost={ 144 } currencyCode={ 'USD' } showMonthlyPrice /> )
+			.create( <GSuitePrice product={ product } currencyCode={ 'EUR' } /> )
 			.toJSON();
+
 		expect( tree ).toMatchSnapshot();
 	} );
 } );

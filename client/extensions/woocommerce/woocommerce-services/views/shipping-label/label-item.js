@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,8 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import RefundDialog from './label-refund-modal';
 import ReprintDialog from './label-reprint-modal';
 import DetailsDialog from './label-details-modal';
@@ -25,7 +23,7 @@ import {
 } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 export class LabelItem extends Component {
-	renderRefund = label => {
+	renderRefund = ( label ) => {
 		const { orderId, siteId, translate } = this.props;
 
 		const today = new Date();
@@ -49,7 +47,7 @@ export class LabelItem extends Component {
 		);
 	};
 
-	renderReprint = label => {
+	renderReprint = ( label ) => {
 		const todayTime = new Date().getTime();
 		if (
 			label.anonymized ||
@@ -72,7 +70,7 @@ export class LabelItem extends Component {
 		);
 	};
 
-	renderLabelDetails = label => {
+	renderLabelDetails = ( label ) => {
 		const { orderId, siteId, translate } = this.props;
 
 		const openDialog = () => {
@@ -159,11 +157,8 @@ LabelItem.propTypes = {
 	openDetailsDialog: PropTypes.func.isRequired,
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { openRefundDialog, openReprintDialog, openDetailsDialog }, dispatch );
 };
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( localize( LabelItem ) );
+export default connect( null, mapDispatchToProps )( localize( LabelItem ) );

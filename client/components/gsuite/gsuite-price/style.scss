@@ -1,19 +1,38 @@
-.gsuite-price__price-per-user {
-	strong {
-		color: var( --color-text );
-		font-size: 24px;
-		font-weight: 300;
-	}
+.gsuite-price__monthly-price {
+	font-size: $font-title-small;
+	font-weight: 600;
 
-	span {
-		color: var( --color-text-subtle );
-		font-size: 13px;
+	strong {
+		font-size: $font-title-medium;
 		font-weight: normal;
 	}
 }
 
 .gsuite-price__annual-price {
 	color: var( --color-text-subtle );
-	font-size: 13px;
+	display: inline-block;
+
+	&.discounted {
+		margin-right: 7px;
+		text-decoration: line-through;
+	}
+}
+
+.gsuite-price__price-per-user-per-month {
+	strong {
+		color: var( --color-text );
+		font-size: $font-title-medium;
+	}
+
+	span {
+		color: var( --color-text-subtle );
+		font-size: $font-body-small;
+		font-weight: normal;
+	}
+}
+
+.gsuite-price__price-per-user-per-year {
+	color: var( --color-text-subtle );
+	font-size: $font-body-small;
 	font-style: italic;
 }

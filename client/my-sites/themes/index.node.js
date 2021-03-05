@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import { makeLayout } from 'controller';
+import { makeLayout } from 'calypso/controller';
 import {
 	fetchThemeData,
 	fetchThemeFilters,
@@ -14,7 +12,7 @@ import {
 } from './controller';
 import { validateFilters, validateVertical } from './validate-filters';
 
-export default function( router ) {
+export default function ( router ) {
 	// Redirect interim showcase route to permanent one
 	router( [ '/design', '/design/*' ], ( { originalUrl, res } ) => {
 		res.redirect( 301, '/themes' + originalUrl.slice( '/design'.length ) );

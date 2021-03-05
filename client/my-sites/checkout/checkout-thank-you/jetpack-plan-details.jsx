@@ -1,32 +1,34 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
-import userFactory from 'lib/user';
-import { getSiteFileModDisableReason } from 'lib/site/utils';
-import { recordTracksEvent } from 'state/analytics/actions';
-import config from 'config';
-const user = userFactory();
+import PurchaseDetail from 'calypso/components/purchase-detail';
+import { getSiteFileModDisableReason } from 'calypso/lib/site/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import config from '@automattic/calypso-config';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 
-const BasicDetails = ( { translate } ) => (
-	<PurchaseDetail
-		icon="cog"
-		title={ translate( 'Set up your VaultPress and Akismet accounts' ) }
-		description={ translate(
-			'We emailed you at %(email)s with information for setting up Akismet and VaultPress on your site. ' +
-				'Follow the instructions in the email to get started.',
-			{ args: { email: user.get().email } }
-		) }
-	/>
-);
+const BasicDetails = ( { translate } ) => {
+	const email = useSelector( getCurrentUserEmail );
+	return (
+		<PurchaseDetail
+			icon="cog"
+			title={ translate( 'Set up your VaultPress and Akismet accounts' ) }
+			description={ translate(
+				'We emailed you at %(email)s with information for setting up Akismet and VaultPress on your site. ' +
+					'Follow the instructions in the email to get started.',
+				{ args: { email } }
+			) }
+		/>
+	);
+};
 
 class EnhancedDetails extends Component {
 	componentDidMount() {
@@ -46,7 +48,7 @@ class EnhancedDetails extends Component {
 							'protect your site from spam and data loss. ' +
 							"If you have any questions along the way, we're here to help!"
 					) }
-					href="https://en.support.wordpress.com/setting-up-premium-services/"
+					href={ localizeUrl( 'https://wordpress.com/support/setting-up-premium-services/' ) }
 					onClick={ trackManualInstall }
 				/>
 			);
@@ -68,7 +70,7 @@ class EnhancedDetails extends Component {
 								<a
 									target="_blank"
 									rel="noopener noreferrer"
-									href="https://en.support.wordpress.com/setting-up-premium-services/"
+									href="https://wordpress.com/support/setting-up-premium-services/"
 									onClick={ trackManualInstall }
 								/>
 							),
@@ -81,20 +83,13 @@ class EnhancedDetails extends Component {
 	}
 }
 
-const getTracksDataForAutoconfigHalt = selectedSite => {
+const getTracksDataForAutoconfigHalt = ( selectedSite ) => {
 	const reasons = getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
 
 	if ( reasons && reasons.length > 0 ) {
 		return {
 			name: 'calypso_plans_autoconfig_halt_filemod',
 			properties: { error: reasons[ 0 ] },
-		};
-	}
-
-	if ( ! selectedSite.hasMinimumJetpackVersion ) {
-		return {
-			name: 'calypso_plans_autoconfig_halt_jpversion',
-			properties: { jetpack_version: selectedSite.options.jetpack_version },
 		};
 	}
 
@@ -131,10 +126,7 @@ const mapDispatchToProps = ( dispatch, { selectedSite } ) => ( {
 } );
 
 const JetpackPlanDetails = config.isEnabled( 'manage/plugins/setup' )
-	? connect(
-			null,
-			mapDispatchToProps
-	  )( EnhancedDetails )
+	? connect( null, mapDispatchToProps )( EnhancedDetails )
 	: BasicDetails;
 
 export default localize( JetpackPlanDetails );

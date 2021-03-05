@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,8 +13,8 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getDimensionsUnitSetting } from 'woocommerce/state/sites/settings/products/selectors';
 import { fetchSettingsProducts } from 'woocommerce/state/sites/settings/products/actions';
@@ -49,7 +47,7 @@ class FormDimensionsInput extends Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		if ( newProps.siteId !== this.props.siteId ) {
 			this.props.fetchSettingsProducts( newProps.siteId );
 		}
@@ -114,7 +112,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( FormDimensionsInput ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( FormDimensionsInput ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,17 +6,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { debounce, find } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import FoldableCard from 'components/foldable-card';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import TokenField from 'components/token-field';
+import { Button } from '@automattic/components';
+import FoldableCard from 'calypso/components/foldable-card';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import TokenField from 'calypso/components/token-field';
 
 class ProductFormAdditionalDetailsCard extends Component {
 	state = {
@@ -42,7 +40,8 @@ class ProductFormAdditionalDetailsCard extends Component {
 	getAttributes() {
 		const { product } = this.props;
 		return (
-			( product.attributes && product.attributes.filter( attribute => ! attribute.variation ) ) ||
+			( product.attributes &&
+				product.attributes.filter( ( attribute ) => ! attribute.variation ) ) ||
 			[]
 		);
 	}
@@ -50,7 +49,7 @@ class ProductFormAdditionalDetailsCard extends Component {
 	getAttribute( { attributes }, attributeId ) {
 		return (
 			attributes &&
-			find( attributes, function( a ) {
+			find( attributes, function ( a ) {
 				return a.uid === attributeId;
 			} )
 		);
@@ -80,7 +79,7 @@ class ProductFormAdditionalDetailsCard extends Component {
 		}
 	};
 
-	removeAttributeHandler = e => {
+	removeAttributeHandler = ( e ) => {
 		this.removeAttribute( e.currentTarget.id );
 	};
 
@@ -97,7 +96,7 @@ class ProductFormAdditionalDetailsCard extends Component {
 		editProductAttribute( siteId, product, attribute, { options: values, visible: true } );
 	};
 
-	updateNameHandler = e => {
+	updateNameHandler = ( e ) => {
 		const attributeNames = { ...this.state.attributeNames };
 		attributeNames[ e.target.id ] = e.target.value;
 		this.setState( { attributeNames } );
@@ -115,7 +114,7 @@ class ProductFormAdditionalDetailsCard extends Component {
 		const { attributeNames } = this.state;
 		const attributeName = ( attributeNames && attributeNames[ attribute.uid ] ) || attribute.name;
 		const attributes = this.getAttributes();
-		const updateValues = values => {
+		const updateValues = ( values ) => {
 			this.updateValues( values, attribute );
 		};
 		const removeButton = attributes.length > 1 && (

@@ -1,17 +1,15 @@
-/** @format */
-
 /**
  * External Dependencies
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal Dependencies
  */
-import JetpackLogo from 'components/jetpack-logo';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 
 class PartnerLogoGroup extends PureComponent {
 	static displayName = 'JetpackPartnerLogoGroup';
@@ -28,11 +26,14 @@ class PartnerLogoGroup extends PureComponent {
 		return (
 			<svg width={ width } viewBox={ viewBox }>
 				<title>
-					{ translate( 'Co-branded Jetpack and %(partnerName)s logo', {
-						args: {
-							partnerName,
-						},
-					} ) }
+					{
+						// translators: partnerName is something like MilesWeb, WooCommerce or DreamHost
+						translate( 'Co-branded Jetpack and %(partnerName)s logo', {
+							args: {
+								partnerName,
+							},
+						} )
+					}
 				</title>
 				<g fill="none" fillRule="evenodd">
 					<g>

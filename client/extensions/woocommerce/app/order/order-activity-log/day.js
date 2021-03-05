@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +8,8 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
+import FoldableCard from 'calypso/components/foldable-card';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 class OrderEventsByDay extends Component {
 	static propTypes = {
@@ -54,4 +54,4 @@ class OrderEventsByDay extends Component {
 	}
 }
 
-export default localize( OrderEventsByDay );
+export default localize( withLocalizedMoment( OrderEventsByDay ) );

@@ -1,15 +1,12 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import getPastBillingTransactions from 'state/selectors/get-past-billing-transactions';
+import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
 
 describe( 'getPastBillingTransactions()', () => {
 	test( 'should return the past billing transactions', () => {
@@ -33,8 +30,8 @@ describe( 'getPastBillingTransactions()', () => {
 				},
 			},
 		};
-		const expected = state.billingTransactions.items.past.map( transaction => {
-			transaction.date = moment( transaction.date ).toDate();
+		const expected = state.billingTransactions.items.past.map( ( transaction ) => {
+			transaction.date = new Date( transaction.date );
 			return transaction;
 		} );
 		const output = getPastBillingTransactions( state );

@@ -1,47 +1,43 @@
-Track Form Higher Order Component
-=================================
+# Track Form Higher Order Component
 
 This HoC provides an alternative to `dirtyLinkedState` mixin for ES6 React component and functional components.
 
-Usage
------
+## Usage
 
 ```javascript
-  const MyComponent = ( { fields, dirtyFields, updateFields, clearDirtyFields } ) => {
+const MyComponent = ( { fields, dirtyFields, updateFields, clearDirtyFields } ) => {
+	const submit = () => {
+		const updatedFields = omit( fields, dirtyFields );
+		// Do what you want with fields and dirtyFields
 
-    const submit = () => {
-      const updatedFields = omit( fields, dirtyFields );
-      // Do what you want with fields and dirtyFields
+		clearDirtyFields();
+	};
 
-      clearDirtyFields();
-    };
+	const reset = () => {
+		clearDirtyFields();
+		replaceFields( {
+			key: 'value',
+		} );
+	};
 
-    const reset = () => {
-      clearDirtyFields();
-      replaceFields( {
-        key: 'value'
-      } );
-    };
+	const updateName = ( event ) => {
+		updateFields( {
+			name: event.target.value,
+		} );
+	};
 
-    const updateName = event => {
-      updateFields( {
-        name: event.target.value
-      } );
-    };
+	return (
+		<Form onSubmit={ submit }>
+			<FormInput value={ fields.name } onChange={ updateName } />
+			<button onClick={ reset }>Reset</button>
+		</Form>
+	);
+};
 
-    return (
-      <Form onSubmit={ submit }>
-        <FormInput value={ fields.name } onChange={ updateName } />
-        <button onClick={ reset }>Reset</button>
-      </Form>
-    );
-  }
-
-  export default trackForm( MyComponent );
+export default trackForm( MyComponent );
 ```
 
 This HoC exposes the following props:
-
 
 ### `fields`
 

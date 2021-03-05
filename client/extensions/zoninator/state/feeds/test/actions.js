@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,7 +18,10 @@ describe( 'actions', () => {
 	const siteId = 1234;
 	const zoneId = 5678;
 
-	const posts = [ { ID: 1, title: 'A test post' }, { ID: 2, title: 'Another test post' } ];
+	const posts = [
+		{ ID: 1, title: 'A test post' },
+		{ ID: 2, title: 'Another test post' },
+	];
 
 	describe( 'requestFeed()', () => {
 		test( 'should return an action object', () => {
@@ -48,11 +49,10 @@ describe( 'actions', () => {
 
 	describe( 'saveFeed()', () => {
 		test( 'should return an action object', () => {
-			const action = saveFeed( siteId, zoneId, 'test-form', posts );
+			const action = saveFeed( siteId, zoneId, posts );
 
 			expect( action ).to.deep.equal( {
 				type: ZONINATOR_SAVE_FEED,
-				form: 'test-form',
 				posts,
 				siteId,
 				zoneId,

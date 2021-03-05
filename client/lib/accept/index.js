@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import React from 'react';
  */
 import AcceptDialog from './dialog';
 
-export default function( message, callback, confirmButtonText, cancelButtonText, options ) {
+export default function ( message, callback, confirmButtonText, cancelButtonText, options ) {
 	let wrapper = document.createElement( 'div' );
 	document.body.appendChild( wrapper );
 

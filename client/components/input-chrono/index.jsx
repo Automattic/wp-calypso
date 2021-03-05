@@ -1,13 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import chrono from 'chrono-node';
+
+/**
+ * Internal dependencies
+ */
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
  * Style dependencies
@@ -42,17 +44,17 @@ class InputChrono extends React.Component {
 
 	focused = false;
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! this.focused && this.props.value !== nextProps.value ) {
 			this.setState( { value: nextProps.value } );
 		}
 	}
 
-	handleChange = event => {
+	handleChange = ( event ) => {
 		this.setState( { value: event.target.value } );
 	};
 
-	handleBlur = event => {
+	handleBlur = ( event ) => {
 		this.setDateText( event );
 		this.focused = false;
 	};
@@ -61,7 +63,7 @@ class InputChrono extends React.Component {
 		this.focused = true;
 	};
 
-	onKeyDown = event => {
+	onKeyDown = ( event ) => {
 		if ( 13 !== event.keyCode ) {
 			return;
 		}
@@ -69,7 +71,7 @@ class InputChrono extends React.Component {
 		this.setDateText( event );
 	};
 
-	setDateText = event => {
+	setDateText = ( event ) => {
 		const date = chrono.parseDate( event.target.value );
 
 		if ( date ) {
@@ -78,7 +80,7 @@ class InputChrono extends React.Component {
 		}
 	};
 
-	isLangSupported = lang => {
+	isLangSupported = ( lang ) => {
 		return supportedLanguages.indexOf( lang ) >= 0;
 	};
 
@@ -103,4 +105,4 @@ class InputChrono extends React.Component {
 	}
 }
 
-export default localize( InputChrono );
+export default localize( withLocalizedMoment( InputChrono ) );

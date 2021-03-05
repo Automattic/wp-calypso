@@ -1,9 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import { combineReducers, withStorageKey } from 'state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers } from 'calypso/state/utils';
 import ui from './ui/reducer';
 import sites from './sites/reducer';
 import actionList from './action-list/reducer';

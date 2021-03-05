@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,10 +11,10 @@ import emailValidator from 'email-validator';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormTextInput from 'components/forms/form-text-input';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Buttons from './buttons';
 
 class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
@@ -50,8 +48,8 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
 	};
 
 	renderExplanation = () => {
-		let explanation = null,
-			text;
+		let explanation = null;
+		let text;
 
 		if ( this.props.primaryEmail ) {
 			text = this.props.translate( 'Your primary email address is {{email/}}', {
@@ -110,7 +108,7 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
 		return true;
 	};
 
-	onKeyUp = event => {
+	onKeyUp = ( event ) => {
 		if ( event.key === 'Enter' ) {
 			this.onSave();
 		}
@@ -151,7 +149,7 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
 		this.props.onDelete();
 	};
 
-	handleChange = e => {
+	handleChange = ( e ) => {
 		const { name, value } = e.currentTarget;
 		this.setState( { [ name ]: value } );
 	};

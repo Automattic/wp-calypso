@@ -7,9 +7,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import GeneralForm from 'my-sites/site-settings/form-general';
+import GeneralForm from 'calypso/my-sites/site-settings/form-general';
 import SiteTools from './site-tools';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const SiteSettingsGeneral = ( { site } ) => (
 	<div className="site-settings__main general-settings">
@@ -18,6 +18,6 @@ const SiteSettingsGeneral = ( { site } ) => (
 	</div>
 );
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	site: getSelectedSite( state ),
 } ) )( SiteSettingsGeneral );

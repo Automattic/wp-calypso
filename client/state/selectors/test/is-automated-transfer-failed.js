@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isFailed } from '../is-automated-transfer-failed';
-import { transferStates } from 'state/automated-transfer/constants';
+import { isFailed } from 'calypso/state/automated-transfer/selectors/is-automated-transfer-failed';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
 
 describe( 'Automated Transfer', () => {
 	describe( 'isFailed()', () => {

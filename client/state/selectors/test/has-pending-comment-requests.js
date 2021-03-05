@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,9 +6,9 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import hasPendingCommentRequests from 'state/selectors/has-pending-comment-requests';
-import { COMMENTS_CHANGE_STATUS } from 'state/action-types';
-import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
+import hasPendingCommentRequests from 'calypso/state/selectors/has-pending-comment-requests';
+import { COMMENTS_CHANGE_STATUS } from 'calypso/state/action-types';
+import { getRequestKey } from 'calypso/state/data-layer/wpcom-http/utils';
 
 const actionKey = getRequestKey( {
 	type: COMMENTS_CHANGE_STATUS,
@@ -36,7 +34,7 @@ const actionKey2 = getRequestKey( {
 describe( 'hasPendingCommentRequests()', () => {
 	test( 'should return true if we have pending actions', () => {
 		const state = deepFreeze( {
-			ui: { comments: { pendingActions: [ actionKey, actionKey2 ] } },
+			comments: { ui: { pendingActions: [ actionKey, actionKey2 ] } },
 			dataRequests: {
 				[ actionKey ]: { status: 'success' },
 				[ actionKey2 ]: { status: 'pending' },
@@ -46,7 +44,7 @@ describe( 'hasPendingCommentRequests()', () => {
 	} );
 	test( 'should return false if do not have pending actions', () => {
 		const state = deepFreeze( {
-			ui: { comments: { pendingActions: [ actionKey, actionKey2 ] } },
+			comments: { ui: { pendingActions: [ actionKey, actionKey2 ] } },
 			dataRequests: {
 				[ actionKey ]: { status: 'success' },
 				[ actionKey2 ]: { status: 'success' },
@@ -56,7 +54,7 @@ describe( 'hasPendingCommentRequests()', () => {
 	} );
 	test( 'only checks against actions we track in ui state', () => {
 		const state = deepFreeze( {
-			ui: { comments: { pendingActions: [ actionKey ] } },
+			comments: { ui: { pendingActions: [ actionKey ] } },
 			dataRequests: {
 				[ actionKey ]: { status: 'success' },
 				[ actionKey2 ]: { status: 'pending' },

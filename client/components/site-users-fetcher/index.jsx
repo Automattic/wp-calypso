@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,9 +11,9 @@ const debug = debugFactory( 'calypso:site-users-fetcher' );
 /**
  * Internal dependencies
  */
-import UsersStore from 'lib/users/store';
-import { fetchUpdated, fetchUsers } from 'lib/users/actions';
-import pollers from 'lib/data-poller';
+import UsersStore from 'calypso/lib/users/store';
+import { fetchUpdated, fetchUsers } from 'calypso/lib/users/actions';
+import pollers from 'calypso/lib/data-poller';
 
 /**
  * Module variables
@@ -33,7 +31,7 @@ export default class extends React.Component {
 		exclude: PropTypes.oneOfType( [ PropTypes.arrayOf( PropTypes.number ), PropTypes.func ] ),
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		debug( 'Mounting SiteUsersFetcher' );
 		UsersStore.on( 'change', this._updateSiteUsers );
 		this._fetchIfEmpty();
@@ -47,7 +45,7 @@ export default class extends React.Component {
 		pollers.remove( this._poller );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.fetchOptions ) {
 			return;
 		}
@@ -69,16 +67,16 @@ export default class extends React.Component {
 		return this.props.children ? React.cloneElement( this.props.children, childrenProps ) : null;
 	}
 
-	_updateSiteUsers = fetchOptions => {
+	_updateSiteUsers = ( fetchOptions ) => {
 		fetchOptions = fetchOptions || this.props.fetchOptions;
 		this.setState( this._getState( fetchOptions ) );
 	};
 
-	_getState = fetchOptions => {
-		let paginationData, users;
+	_getState = ( fetchOptions ) => {
+		let users;
 		fetchOptions = fetchOptions || this.props.fetchOptions;
 		fetchOptions = Object.assign( {}, defaultOptions, fetchOptions );
-		paginationData = UsersStore.getPaginationData( fetchOptions );
+		const paginationData = UsersStore.getPaginationData( fetchOptions );
 		users = UsersStore.getUsers( fetchOptions );
 
 		if ( this.props.exclude ) {
@@ -87,7 +85,7 @@ export default class extends React.Component {
 			// users[1] will be a list of the excluded users.
 			users = partition(
 				users,
-				function( user ) {
+				function ( user ) {
 					if ( 'function' === typeof this.props.exclude ) {
 						return ! this.props.exclude( user );
 					}
@@ -104,7 +102,7 @@ export default class extends React.Component {
 		} );
 	};
 
-	_fetchIfEmpty = fetchOptions => {
+	_fetchIfEmpty = ( fetchOptions ) => {
 		fetchOptions = fetchOptions || this.props.fetchOptions;
 		if ( ! fetchOptions || ! fetchOptions.siteId ) {
 			return;
@@ -115,7 +113,7 @@ export default class extends React.Component {
 			return;
 		}
 		// defer fetch requests to avoid dispatcher conflicts
-		setTimeout( function() {
+		setTimeout( function () {
 			const paginationData = UsersStore.getPaginationData( fetchOptions );
 			if ( paginationData.fetchingUsers ) {
 				return;

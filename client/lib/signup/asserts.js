@@ -6,7 +6,7 @@ import { get, keys, difference } from 'lodash';
 /**
  * Internal dependencies
  */
-import steps from 'signup/config/steps-pure';
+import steps from 'calypso/signup/config/steps-pure';
 
 export function assertValidDependencies( stepName, providedDependencies ) {
 	const providesDependencies = get( steps, [ stepName, 'providesDependencies' ], [] );

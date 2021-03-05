@@ -1,17 +1,18 @@
-/** @format */
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Count from 'components/count';
+import Count from 'calypso/components/count';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 
 /**
  * Style dependencies
@@ -58,9 +59,8 @@ export class BulkSelect extends React.Component {
 
 		return (
 			<span className="bulk-select">
-				<label className="bulk-select__container">
-					<input
-						type="checkbox"
+				<FormLabel className="bulk-select__container">
+					<FormInputCheckbox
 						className={ inputClasses }
 						checked={ isChecked }
 						onChange={ this.handleToggleAll }
@@ -68,7 +68,7 @@ export class BulkSelect extends React.Component {
 					/>
 					<Count count={ this.props.selectedElements } />
 					{ this.getStateIcon() }
-				</label>
+				</FormLabel>
 			</span>
 		);
 	}

@@ -10,11 +10,15 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import getNetworkSites from 'state/selectors/get-network-sites';
-import isConnectedSecondaryNetworkSite from 'state/selectors/is-connected-secondary-network-site';
-import PluginSite from 'my-sites/plugins/plugin-site/plugin-site';
-import PluginsStore from 'lib/plugins/store';
-import SectionHeader from 'components/section-header';
+import getNetworkSites from 'calypso/state/selectors/get-network-sites';
+import isConnectedSecondaryNetworkSite from 'calypso/state/selectors/is-connected-secondary-network-site';
+import PluginSite from 'calypso/my-sites/plugins/plugin-site/plugin-site';
+import SectionHeader from 'calypso/components/section-header';
+import {
+	getPluginOnSites,
+	getSiteObjectsWithPlugin,
+} from 'calypso/state/plugins/installed/selectors';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 
 /**
  * Style dependencies
@@ -23,7 +27,6 @@ import './style.scss';
 
 export class PluginSiteList extends Component {
 	static propTypes = {
-		notices: PropTypes.object,
 		plugin: PropTypes.object,
 		sites: PropTypes.array,
 		sitesWithSecondarySites: PropTypes.array,
@@ -31,9 +34,12 @@ export class PluginSiteList extends Component {
 	};
 
 	getSecondaryPluginSites( site, secondarySites ) {
-		const secondaryPluginSites = site.plugin
-			? PluginsStore.getSites( secondarySites, this.props.plugin.slug )
-			: secondarySites;
+		const pluginsOnSites = this.props.pluginsOnSites?.sites[ site.ID ];
+		const secondarySitesWithPlugin = this.props.sitesWithPlugin.filter(
+			( siteWithPlugin ) =>
+				secondarySites && secondarySites.some( ( secSite ) => secSite.ID === siteWithPlugin.ID )
+		);
+		const secondaryPluginSites = pluginsOnSites ? secondarySitesWithPlugin : secondarySites;
 		return compact( secondaryPluginSites );
 	}
 
@@ -45,7 +51,6 @@ export class PluginSiteList extends Component {
 				secondarySites={ this.getSecondaryPluginSites( site, secondarySites ) }
 				plugin={ this.props.plugin }
 				wporg={ this.props.wporg }
-				notices={ this.props.notices }
 			/>
 		);
 	}
@@ -54,8 +59,8 @@ export class PluginSiteList extends Component {
 		if ( ! this.props.sites || this.props.sites.length === 0 ) {
 			return null;
 		}
-		const classes = classNames( 'plugin-site-list', this.props.className ),
-			pluginSites = this.props.sitesWithSecondarySites.map( this.renderPluginSite, this );
+		const classes = classNames( 'plugin-site-list', this.props.className );
+		const pluginSites = this.props.sitesWithSecondarySites.map( this.renderPluginSite, this );
 
 		return (
 			<div className={ classes }>
@@ -69,13 +74,19 @@ export class PluginSiteList extends Component {
 // TODO: make this memoized after sites-list is removed and `sites` comes from Redux
 function getSitesWithSecondarySites( state, sites ) {
 	return sites
-		.filter( site => ! isConnectedSecondaryNetworkSite( state, site.ID ) )
-		.map( site => ( {
+		.filter( ( site ) => ! isConnectedSecondaryNetworkSite( state, site.ID ) )
+		.map( ( site ) => ( {
 			site,
 			secondarySites: getNetworkSites( state, site.ID ),
 		} ) );
 }
 
-export default connect( ( state, props ) => ( {
-	sitesWithSecondarySites: getSitesWithSecondarySites( state, props.sites ),
-} ) )( PluginSiteList );
+export default connect( ( state, { plugin, sites } ) => {
+	const siteIds = siteObjectsToSiteIds( sites );
+
+	return {
+		sitesWithPlugin: getSiteObjectsWithPlugin( state, siteIds, plugin.slug ),
+		sitesWithSecondarySites: getSitesWithSecondarySites( state, sites ),
+		pluginsOnSites: getPluginOnSites( state, siteIds, plugin.slug ),
+	};
+} )( PluginSiteList );

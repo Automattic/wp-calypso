@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,18 +5,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { isArray } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormSelect from 'components/forms/form-select';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextarea from 'components/forms/form-textarea';
+import { Dialog } from '@automattic/components';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormPasswordInput from 'calypso/components/forms/form-password-input';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextarea from 'calypso/components/forms/form-textarea';
 import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
 
 class PaymentMethodEdit extends Component {
@@ -39,11 +36,11 @@ class PaymentMethodEdit extends Component {
 		onDone: PropTypes.func.isRequired,
 	};
 
-	onEditFieldHandler = e => {
+	onEditFieldHandler = ( e ) => {
 		this.props.onEditField( e.target.name, e.target.value );
 	};
 
-	renderEditCheckbox = setting => {
+	renderEditCheckbox = ( setting ) => {
 		const checked = 'yes' === setting.value;
 		return (
 			<PaymentMethodEditFormToggle
@@ -54,9 +51,13 @@ class PaymentMethodEdit extends Component {
 		);
 	};
 
-	renderEditField = editField => {
+	renderEditField = ( editField ) => {
 		const { method } = this.props;
-		if ( method.fields && isArray( method.fields ) && method.fields.indexOf( editField ) < 0 ) {
+		if (
+			method.fields &&
+			Array.isArray( method.fields ) &&
+			method.fields.indexOf( editField ) < 0
+		) {
 			return;
 		}
 		const setting = method.settings[ editField ];
@@ -73,7 +74,7 @@ class PaymentMethodEdit extends Component {
 		);
 	};
 
-	renderEditPassword = setting => {
+	renderEditPassword = ( setting ) => {
 		return (
 			<FormPasswordInput
 				name={ setting.id }
@@ -83,18 +84,18 @@ class PaymentMethodEdit extends Component {
 		);
 	};
 
-	renderEditSelect = setting => {
+	renderEditSelect = ( setting ) => {
 		const optionKeys = setting.options && Object.keys( setting.options );
 		return (
 			<FormSelect name={ setting.id } onChange={ this.onEditFieldHandler } value={ setting.value }>
-				{ optionKeys.map( option => {
+				{ optionKeys.map( ( option ) => {
 					return this.renderSelectOption( option, setting.options[ option ] );
 				} ) }
 			</FormSelect>
 		);
 	};
 
-	renderEditTextbox = setting => {
+	renderEditTextbox = ( setting ) => {
 		return (
 			<FormTextInput
 				name={ setting.id }
@@ -104,7 +105,7 @@ class PaymentMethodEdit extends Component {
 		);
 	};
 
-	renderEditTextarea = setting => {
+	renderEditTextarea = ( setting ) => {
 		return (
 			<FormTextarea
 				name={ setting.id }

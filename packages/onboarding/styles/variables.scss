@@ -1,0 +1,26 @@
+@import './base-styles';
+
+// Reusable style variables
+$onboarding-header-height: $header-height;
+$onboarding-footer-height: $header-height;
+
+// Block margins increment by 2x
+$onboarding-block-margin-mobile: 24px;
+$onboarding-block-margin-small: 48px;
+$onboarding-block-margin-medium: 96px;
+
+// Heading margins increment by 16px
+$onboarding-heading-margin-mobile: 48px 0 ( 48px * 0.8 );
+$onboarding-heading-margin-small: 64px 0 ( 64px * 0.8 );
+$onboarding-heading-margin-medium: 80px 0 ( 80px * 0.8 );
+
+// Body margins increment by 16px
+$onboarding-body-margin-mobile: 0 0 48px 0;
+$onboarding-body-margin-small: 0 0 64px 0;
+$onboarding-body-margin-medium: 0 0 80px 0;
+
+// @TODO: refactor to common variable in onboarding
+// see https://github.com/Automattic/wp-calypso/issues/47181
+// the blue accent this is used as the primary color in focused-launch
+$onboarding-accent-blue: #117ac9;
+$onboarding-accent-blue-background: #fafcfe;

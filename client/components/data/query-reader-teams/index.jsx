@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -11,10 +8,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestTeams } from 'state/reader/teams/actions';
+import { requestTeams } from 'calypso/state/teams/actions';
 
 class QueryReaderTeams extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.props.requestTeams();
 	}
 
@@ -27,7 +24,4 @@ QueryReaderTeams.propTypes = {
 	request: PropTypes.func,
 };
 
-export default connect(
-	null,
-	{ requestTeams }
-)( QueryReaderTeams );
+export default connect( null, { requestTeams } )( QueryReaderTeams );

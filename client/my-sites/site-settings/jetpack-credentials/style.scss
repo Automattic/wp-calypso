@@ -1,5 +1,13 @@
 .jetpack-credentials {
 	margin-bottom: 15px;
+
+	&.is-highlighted {
+		box-shadow: 0 0 0 3px var( --color-accent );
+
+		.card {
+			box-shadow: 0 0 0 1px var( --color-accent );
+		}
+	}
 }
 
 .jetpack-credentials .foldable-card.card.is-expanded {

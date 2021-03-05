@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -45,7 +43,7 @@ export default class TermTreeSelector extends React.Component {
 		search: '',
 	};
 
-	onSearch = searchTerm => {
+	onSearch = ( searchTerm ) => {
 		if ( searchTerm !== this.state.search ) {
 			this.setState( {
 				search: searchTerm,
@@ -53,7 +51,7 @@ export default class TermTreeSelector extends React.Component {
 		}
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.taxonomy !== this.props.taxonomy ) {
 			this.setState( { search: '' } );
 		}

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import AsyncLoad from 'components/async-load';
+import AsyncLoad from 'calypso/components/async-load';
 import Placeholder from './placeholder';
 
 export default class DevdocsAsyncLoad extends React.PureComponent {

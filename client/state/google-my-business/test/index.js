@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import googleMyBusinessReducer from '../reducer';
 import {
 	GOOGLE_MY_BUSINESS_STATS_RECEIVE,
 	GOOGLE_MY_BUSINESS_STATS_REQUEST,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#stats', () => {
@@ -38,6 +36,7 @@ describe( 'reducer', () => {
 						},
 					},
 					statsError: {},
+					statsInterval: {},
 				},
 			} );
 		} );
@@ -135,6 +134,7 @@ describe( 'reducer', () => {
 						},
 					},
 					statsError: {},
+					statsInterval: {},
 				},
 			} );
 		} );

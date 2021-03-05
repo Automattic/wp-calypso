@@ -15,14 +15,14 @@
 		margin-bottom: 0;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		display: flex;
-		font-size: 16px;
+		font-size: $font-body;
 		padding: 16px 24px;
 	}
 
-	@include breakpoint( '>960px' ) {
-		font-size: 16px;
+	@include breakpoint-deprecated( '>960px' ) {
+		font-size: $font-body;
 		padding: 16px 32px;
 		max-width: 960px;
 		left: calc( 50% - 480px );
@@ -80,7 +80,7 @@
 .gdpr-banner__buttons {
 	margin-top: 14px;
 	text-align: center;
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		flex: 0 0 auto;
 		margin: 0 0 0 16px;
 		text-align: inherit;
@@ -90,7 +90,7 @@
 .gdpr-banner__acknowledge-button {
 	width: 100%;
 	text-align: center;
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		width: auto;
 	}
 }

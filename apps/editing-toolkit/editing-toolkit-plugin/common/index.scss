@@ -1,0 +1,12 @@
+body.hide-homepage-title {
+
+	// Allow homepage title to be edited even when hidden
+	// Lighter color to signify not visible from front page
+	.editor-post-title {
+		opacity: .4;
+	}
+}
+
+.interface-interface-skeleton__editor {
+	max-width: 100%;
+}

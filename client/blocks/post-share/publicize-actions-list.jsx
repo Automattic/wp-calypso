@@ -1,35 +1,33 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import getPostSharePublishedActions from 'state/selectors/get-post-share-published-actions';
+import getPostSharePublishedActions from 'calypso/state/selectors/get-post-share-published-actions';
 
-import getPostShareScheduledActions from 'state/selectors/get-post-share-scheduled-actions';
-import QuerySharePostActions from 'components/data/query-share-post-actions/index.jsx';
-import SocialLogo from 'components/social-logo';
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
+import getPostShareScheduledActions from 'calypso/state/selectors/get-post-share-scheduled-actions';
+import QuerySharePostActions from 'calypso/components/data/query-share-post-actions/index.jsx';
+import SocialLogo from 'calypso/components/social-logo';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import { SCHEDULED, PUBLISHED } from './constants';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import { isEnabled } from 'config';
-import Dialog from 'components/dialog';
-import { deletePostShareAction } from 'state/sharing/publicize/publicize-actions/actions';
-import analytics from 'lib/analytics';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
+import { isEnabled } from '@automattic/calypso-config';
+import { Dialog } from '@automattic/components';
+import { deletePostShareAction } from 'calypso/state/sharing/publicize/publicize-actions/actions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import SharingPreviewModal from './sharing-preview-modal';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 class PublicizeActionsList extends PureComponent {
 	static propTypes = {
@@ -48,8 +46,8 @@ class PublicizeActionsList extends PureComponent {
 		previewService: '',
 	};
 
-	setFooterSection = selectedShareTab => () => {
-		analytics.tracks.recordEvent( 'calypso_publicize_action_tab_click', { tab: selectedShareTab } );
+	setFooterSection = ( selectedShareTab ) => () => {
+		recordTracksEvent( 'calypso_publicize_action_tab_click', { tab: selectedShareTab } );
 		this.setState( { selectedShareTab } );
 	};
 
@@ -66,7 +64,8 @@ class PublicizeActionsList extends PureComponent {
 	};
 
 	renderActionItem( item, index ) {
-		const { service, connectionName, shareDate, message } = item;
+		const { service, connectionName, date, message } = item;
+		const shareDate = this.props.moment( date ).format( 'llll' );
 
 		return (
 			<div className="post-share__footer-items" key={ index }>
@@ -149,10 +148,10 @@ class PublicizeActionsList extends PureComponent {
 		};
 	}
 
-	closeDeleteDialog = dialogAction => {
+	closeDeleteDialog = ( dialogAction ) => {
 		if ( dialogAction === 'delete' ) {
 			const { siteId, postId } = this.props;
-			analytics.tracks.recordEvent( 'calypso_publicize_scheduled_delete' );
+			recordTracksEvent( 'calypso_publicize_scheduled_delete' );
 			this.props.deletePostShareAction( siteId, postId, this.state.selectedScheduledShareId );
 		}
 
@@ -278,4 +277,4 @@ export default connect(
 		};
 	},
 	{ deletePostShareAction }
-)( localize( PublicizeActionsList ) );
+)( localize( withLocalizedMoment( PublicizeActionsList ) ) );

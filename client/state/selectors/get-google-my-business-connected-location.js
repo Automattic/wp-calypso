@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,15 +6,15 @@ import { filter, last } from 'lodash';
 /**
  * Internal dependencies
  */
-import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
+import getGoogleMyBusinessLocations from 'calypso/state/selectors/get-google-my-business-locations';
 
 /**
  * Returns the Google My Business location/external user the given site
  * is connected to
  *
- * @param  {Object} state  Global state tree
- * @param  {Object} siteId The site ID
- * @return {Object}        A connected GMB location
+ * @param  {object} state  Global state tree
+ * @param  {?number} siteId The site ID
+ * @returns {object[]}        A connected GMB location
  */
 export default function getGoogleMyBusinessConnectedLocation( state, siteId ) {
 	return last(

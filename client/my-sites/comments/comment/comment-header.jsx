@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,11 +8,11 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import CommentAuthor from 'my-sites/comments/comment/comment-author';
-import CommentAuthorMoreInfo from 'my-sites/comments/comment/comment-author-more-info';
-import FormCheckbox from 'components/forms/form-checkbox';
-import getSiteComment from 'state/selectors/get-site-comment';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import CommentAuthor from 'calypso/my-sites/comments/comment/comment-author';
+import CommentAuthorMoreInfo from 'calypso/my-sites/comments/comment/comment-author-more-info';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import { getSiteComment } from 'calypso/state/comments/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export class CommentHeader extends PureComponent {
 	render() {
@@ -30,7 +29,7 @@ export class CommentHeader extends PureComponent {
 			<div className="comment__header">
 				{ isBulkMode && (
 					<span className="comment__bulk-select">
-						<FormCheckbox checked={ isSelected } tabIndex="0" disabled={ isDisabled } />
+						<FormCheckbox checked={ isSelected } disabled={ isDisabled } readOnly tabIndex="0" />
 					</span>
 				) }
 

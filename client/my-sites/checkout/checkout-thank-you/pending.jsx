@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,15 +11,15 @@ import { identity } from 'lodash';
 /**
  * Internal dependencies
  */
-import getOrderTransaction from 'state/selectors/get-order-transaction';
+import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
 
-import getOrderTransactionError from 'state/selectors/get-order-transaction-error';
-import { ORDER_TRANSACTION_STATUS } from 'state/order-transactions/constants';
-import { errorNotice } from 'state/notices/actions';
-import QueryOrderTransaction from 'components/data/query-order-transaction';
-import EmptyContent from 'components/empty-content';
-import Main from 'components/main';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
+import { ORDER_TRANSACTION_STATUS } from 'calypso/state/order-transactions/constants';
+import { errorNotice } from 'calypso/state/notices/actions';
+import QueryOrderTransaction from 'calypso/components/data/query-order-transaction';
+import EmptyContent from 'calypso/components/empty-content';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 class CheckoutPending extends PureComponent {
 	static propTypes = {
@@ -31,6 +29,7 @@ class CheckoutPending extends PureComponent {
 		error: PropTypes.object,
 		errorNotice: PropTypes.func,
 		localize: PropTypes.func,
+		redirectTo: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -38,9 +37,10 @@ class CheckoutPending extends PureComponent {
 		errorNotice: identity,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { transaction, error } = nextProps;
 		const { translate, showErrorNotice, siteSlug } = this.props;
+		const redirectTo = this.props.redirectTo || `/checkout/thank-you/${ siteSlug }/pending`;
 
 		const retryOnError = () => {
 			page( `/checkout/${ siteSlug }` );
@@ -58,11 +58,8 @@ class CheckoutPending extends PureComponent {
 			if ( ORDER_TRANSACTION_STATUS.SUCCESS === processingStatus ) {
 				const { receiptId } = transaction;
 
-				page(
-					receiptId
-						? `/checkout/thank-you/${ siteSlug }/${ receiptId }`
-						: `/checkout/thank-you/${ siteSlug }`
-				);
+				const redirectPath = redirectTo.replace( 'pending', receiptId );
+				page( redirectPath );
 
 				return;
 			}

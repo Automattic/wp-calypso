@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -13,18 +11,18 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import * as steps from './steps';
-import Dialog from 'components/dialog';
-import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getName, purchaseType } from 'lib/purchases';
-import { getPurchasesError } from 'state/purchases/selectors';
+import { Dialog } from '@automattic/components';
+import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getName } from 'calypso/lib/purchases';
+import { getPurchasesError } from 'calypso/state/purchases/selectors';
 import GSuiteCancellationFeatures from './gsuite-cancellation-features';
 import GSuiteCancellationSurvey from './gsuite-cancellation-survey';
-import notices from 'notices';
-import { purchasesRoot } from 'me/purchases/paths';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { removePurchase } from 'state/purchases/actions';
-import wpcom from 'lib/wp';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { purchasesRoot } from 'calypso/me/purchases/paths';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { removePurchase } from 'calypso/state/purchases/actions';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Style dependencies
@@ -72,13 +70,13 @@ class GSuiteCancelPurchaseDialog extends Component {
 		this.setState( { step: prevStep } );
 	};
 
-	cancelButtonClick = closeDialog => {
+	cancelButtonClick = ( closeDialog ) => {
 		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_keep_it_click' );
 		closeDialog();
 		this.resetState();
 	};
 
-	removeButtonClick = async closeDialog => {
+	removeButtonClick = async ( closeDialog ) => {
 		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_click' );
 
 		this.setState( {
@@ -96,7 +94,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 	};
 
 	saveSurveyResults = async () => {
-		const { purchase, site } = this.props;
+		const { purchase } = this.props;
 		const { surveyAnswerId, surveyAnswerText } = this.state;
 		const survey = wpcom.marketing().survey( 'calypso-gsuite-remove-purchase', purchase.siteId );
 		const surveyData = {
@@ -106,11 +104,11 @@ class GSuiteCancelPurchaseDialog extends Component {
 			},
 			type: 'remove',
 		};
-		survey.addResponses( enrichedSurveyData( surveyData, moment(), site, purchase ) );
+		survey.addResponses( enrichedSurveyData( surveyData, purchase ) );
 
 		const response = await survey.submit();
 		if ( ! response.success ) {
-			notices.error( response.err );
+			this.props.errorNotice( response.err );
 		}
 	};
 
@@ -122,11 +120,11 @@ class GSuiteCancelPurchaseDialog extends Component {
 		const { purchasesError } = this.props;
 
 		if ( purchasesError ) {
-			notices.error( purchasesError );
+			this.props.errorNotice( purchasesError );
 			return false;
 		}
 
-		notices.success(
+		this.props.successNotice(
 			translate( '%(productName)s was removed from {{domain/}}.', {
 				args: {
 					productName,
@@ -136,7 +134,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 				},
 			} ),
 			{
-				persistent: true,
+				isPersistent: true,
 			}
 		);
 
@@ -208,6 +206,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 	render() {
 		const { isVisible, onClose, purchase } = this.props;
 		const { surveyAnswerId, surveyAnswerText, isRemoving } = this.state;
+
 		return (
 			// By checking isVisible here we prevent rendering a "reset" dialog state before it closes
 			isVisible && (
@@ -223,6 +222,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 						<GSuiteCancellationSurvey
 							disabled={ isRemoving }
 							onSurveyAnswerChange={ this.onSurveyAnswerChange }
+							purchase={ purchase }
 							surveyAnswerId={ surveyAnswerId }
 							surveyAnswerText={ surveyAnswerText }
 						/>
@@ -248,13 +248,15 @@ export default connect(
 	( state, { purchase } ) => {
 		return {
 			productName: getName( purchase ),
-			domain: purchaseType( purchase ),
+			domain: purchase.meta,
 			purchasesError: getPurchasesError( state ),
 			userId: getCurrentUserId( state ),
 		};
 	},
 	{
+		errorNotice,
 		recordTracksEvent,
 		removePurchase,
+		successNotice,
 	}
 )( localize( GSuiteCancelPurchaseDialog ) );

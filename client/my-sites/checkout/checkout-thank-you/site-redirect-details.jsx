@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import { getDomainManagementUrl } from './utils';
-import PurchaseDetail from 'components/purchase-detail';
+import PurchaseDetail from 'calypso/components/purchase-detail';
 
 const SiteRedirectDetails = ( { selectedSite, domain } ) => {
 	return (

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestProducts } from 'state/memberships/product-list/actions';
+import { requestProducts } from 'calypso/state/memberships/product-list/actions';
 
 class QueryMemberships extends Component {
 	static propTypes = {
@@ -46,7 +44,4 @@ class QueryMemberships extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestProducts }
-)( QueryMemberships );
+export default connect( null, { requestProducts } )( QueryMemberships );

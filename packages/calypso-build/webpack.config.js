@@ -20,13 +20,14 @@ const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extrac
 /**
  * Internal dependencies
  */
-const { cssNameFromFilename } = require( './webpack/util' );
+const { cssNameFromFilename, shouldTranspileDependency } = require( './webpack/util' );
 // const { workerCount } = require( './webpack.common' ); // todo: shard...
 
 /**
  * Internal variables
  */
 const isDevelopment = process.env.NODE_ENV !== 'production';
+const cachePath = path.resolve( '.cache' );
 
 /**
  * Return a webpack config object
@@ -37,13 +38,15 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  * @see {@link https://webpack.js.org/api/cli/}
  *
- * @param  {object}  env                           environment options
- * @param  {object}  argv                          options map
- * @param  {object}  argv.entry                    Entry point(s)
- * @param  {string}  argv.'output-path'            Output path
- * @param  {string}  argv.'output-filename'        Output filename pattern
- * @param  {string}  argv.'output-library-target'  Output library target
- * @return {object}                                webpack config
+ * @param  {object}  env                                 environment options
+ * @param  {object}  argv                                options map
+ * @param  {object}  argv.entry                          Entry point(s)
+ * @param  {string}  argv.'output-chunk-filename'        Output chunk filename
+ * @param  {string}  argv.'output-path'                  Output path
+ * @param  {string}  argv.'output-filename'              Output filename pattern
+ * @param  {string}  argv.'output-library-target'        Output library target
+ * @param  {string}  argv.'output-chunk-loading-global'  Output chunk loading global
+ * @returns {object}                                     webpack config
  */
 function getWebpackConfig(
 	env = {},
@@ -53,7 +56,8 @@ function getWebpackConfig(
 		'output-path': outputPath = path.join( process.cwd(), 'dist' ),
 		'output-filename': outputFilename = '[name].js',
 		'output-library-target': outputLibraryTarget = 'window',
-	}
+		'output-chunk-loading-global': outputChunkLoadingGlobal = 'webpackChunkwebpack',
+	} = {}
 ) {
 	const workerCount = 1;
 
@@ -71,50 +75,62 @@ function getWebpackConfig(
 		babelConfig = undefined;
 	}
 
+	// Use this package's PostCSS config. If it doesn't exist postcss will look
+	// for the config file starting in the current directory (https://github.com/webpack-contrib/postcss-loader#config-cascade)
+	const postCssConfigPath = path.join( process.cwd(), 'postcss.config.js' );
+
 	const webpackConfig = {
 		bail: ! isDevelopment,
 		entry,
 		mode: isDevelopment ? 'development' : 'production',
-		devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
+		devtool: process.env.SOURCEMAP || ( isDevelopment ? 'eval' : false ),
 		output: {
 			chunkFilename: outputChunkFilename,
 			path: outputPath,
 			filename: outputFilename,
 			libraryTarget: outputLibraryTarget,
+			chunkLoadingGlobal: outputChunkLoadingGlobal,
 		},
 		optimization: {
 			minimize: ! isDevelopment,
 			minimizer: Minify( {
-				cache: process.env.CIRCLECI
-					? `${ process.env.HOME }/terser-cache`
-					: 'docker' !== process.env.CONTAINER,
 				parallel: workerCount,
-				sourceMap: Boolean( process.env.SOURCEMAP ),
+				extractComments: false,
 				terserOptions: {
 					ecma: 5,
 					safari10: true,
-					mangle: true,
+					mangle: { reserved: [ '__', '_n', '_nx', '_x' ] },
 				},
 			} ),
 		},
 		module: {
+			strictExportPresence: true,
 			rules: [
 				TranspileConfig.loader( {
-					cacheDirectory: true,
+					cacheDirectory: path.resolve( cachePath, 'babel' ),
 					configFile: babelConfig,
 					exclude: /node_modules\//,
 					presets,
 					workerCount,
 				} ),
+				TranspileConfig.loader( {
+					cacheDirectory: path.resolve( cachePath, 'babel' ),
+					include: shouldTranspileDependency,
+					presets: [ path.join( __dirname, 'babel', 'dependencies' ) ],
+					workerCount,
+				} ),
 				SassConfig.loader( {
-					preserveCssCustomProperties: false,
-					prelude: '@import "~@automattic/calypso-color-schemes/src/shared/colors";',
+					postCssOptions: {
+						...( fs.existsSync( postCssConfigPath ) ? { config: postCssConfigPath } : {} ),
+					},
+					cacheDirectory: path.resolve( cachePath, 'css-loader' ),
 				} ),
 				FileConfig.loader(),
 			],
 		},
 		resolve: {
 			extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+			mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
 			modules: [ 'node_modules' ],
 		},
 		node: false,

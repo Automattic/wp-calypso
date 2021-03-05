@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
@@ -12,8 +9,8 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import ImageEditor from '../';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { AspectRatios } from 'state/ui/editor/image-editor/constants';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
 
 class ImageEditorExample extends Component {
 	constructor() {
@@ -48,7 +45,7 @@ class ImageEditorExample extends Component {
 		fileInput.addEventListener( 'change', this.onImageUpload );
 	}
 
-	onImageUpload = e => {
+	onImageUpload = ( e ) => {
 		const imageFile = e.target.files[ 0 ];
 
 		const imageObjectUrl = URL.createObjectURL( imageFile );
@@ -105,7 +102,7 @@ class ImageEditorExample extends Component {
 	}
 }
 
-const ConnectedImageEditorExample = connect( state => {
+const ConnectedImageEditorExample = connect( ( state ) => {
 	const primarySiteId = get( getCurrentUser( state ), 'primary_blog', null );
 
 	return {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,8 +7,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { submitSignupStep } from 'state/signup/progress/actions';
+import { Button } from '@automattic/components';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 export class SubmitStepButton extends Component {
 	handleSubmit = () => {
@@ -27,7 +25,4 @@ export class SubmitStepButton extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ submitSignupStep }
-)( SubmitStepButton );
+export default connect( null, { submitSignupStep } )( SubmitStepButton );

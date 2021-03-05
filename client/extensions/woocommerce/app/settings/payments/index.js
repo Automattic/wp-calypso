@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,9 +14,9 @@ import page from 'page';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { createPaymentSettingsActionList } from 'woocommerce/state/ui/payments/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
 import { getCurrencyEdits } from 'woocommerce/state/ui/payments/currency/selectors';
@@ -31,8 +29,8 @@ import {
 	hasOAuthCompleteInLocation,
 } from './stripe/payment-method-stripe-utils';
 import { openPaymentMethodForEdit } from 'woocommerce/state/ui/payments/methods/actions';
-import { ProtectFormGuard } from 'lib/protect-form';
-import Main from 'components/main';
+import { ProtectFormGuard } from 'calypso/lib/protect-form';
+import Main from 'calypso/components/main';
 import PaymentMethodList from './payment-method-list';
 import SettingsPaymentsLocationCurrency from './payments-location-currency';
 import SettingsNavigation from '../navigation';
@@ -179,7 +177,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( SettingsPayments ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SettingsPayments ) );

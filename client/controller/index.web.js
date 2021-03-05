@@ -4,28 +4,46 @@
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 /**
  * Internal Dependencies
  */
-import config from 'config';
-import Layout from 'layout';
-import LayoutLoggedOut from 'layout/logged-out';
-import { MomentProvider } from 'components/localized-moment/context';
-import { login } from 'lib/paths';
+import config from '@automattic/calypso-config';
+import { translate } from 'i18n-calypso';
+import Layout from 'calypso/layout';
+import LayoutLoggedOut from 'calypso/layout/logged-out';
+import EmptyContent from 'calypso/components/empty-content';
+import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
+import MomentProvider from 'calypso/components/localized-moment/provider';
+import { RouteProvider } from 'calypso/components/route';
+import { login } from 'calypso/lib/paths';
 import { makeLayoutMiddleware } from './shared.js';
-import { isUserLoggedIn } from 'state/current-user/selectors';
-import { getImmediateLoginEmail, getImmediateLoginLocale } from 'state/immediate-login/selectors';
-import { getSiteFragment } from 'lib/route';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getImmediateLoginEmail,
+	getImmediateLoginLocale,
+} from 'calypso/state/immediate-login/selectors';
+import { getSiteFragment } from 'calypso/lib/route';
 import { hydrate } from './web-util.js';
 
 /**
  * Re-export
  */
-export { setSection, setUpLocale } from './shared.js';
-export { render, hydrate, redirectLoggedIn } from './web-util.js';
+export { setSectionMiddleware, setLocaleMiddleware } from './shared.js';
+export { render, hydrate } from './web-util.js';
 
-export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => {
+const queryClient = new QueryClient();
+
+export const ProviderWrappedLayout = ( {
+	store,
+	currentSection,
+	currentRoute,
+	currentQuery,
+	primary,
+	secondary,
+	redirectUri,
+} ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
 
@@ -36,29 +54,29 @@ export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } )
 	);
 
 	return (
-		<ReduxProvider store={ store }>
-			<MomentProvider>{ layout }</MomentProvider>
-		</ReduxProvider>
+		<CalypsoI18nProvider>
+			<RouteProvider
+				currentSection={ currentSection }
+				currentRoute={ currentRoute }
+				currentQuery={ currentQuery }
+			>
+				<QueryClientProvider client={ queryClient }>
+					<ReduxProvider store={ store }>
+						<MomentProvider>{ layout }</MomentProvider>
+					</ReduxProvider>
+				</QueryClientProvider>
+			</RouteProvider>
+		</CalypsoI18nProvider>
 	);
 };
 
-export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
-
-const ReduxWrappedLoggedOutLayout = ( { store, primary, secondary, redirectUri } ) => (
-	<ReduxProvider store={ store }>
-		<MomentProvider>
-			<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
-		</MomentProvider>
-	</ReduxProvider>
-);
-
-export const makeLoggedOutLayout = makeLayoutMiddleware( ReduxWrappedLoggedOutLayout );
+export const makeLayout = makeLayoutMiddleware( ProviderWrappedLayout );
 
 /**
  * Isomorphic routing helper, client side
  *
  * @param { string } route - A route path
- * @param { ...function } middlewares - Middleware to be invoked for route
+ * @param {...Function} middlewares - Middleware to be invoked for route
  *
  * This function is passed to individual sections' controllers via
  * `server/bundler/loader`. Sections are free to either ignore it, or use it
@@ -104,3 +122,18 @@ export function redirectLoggedOut( context, next ) {
 	}
 	next();
 }
+
+export const notFound = ( context, next ) => {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	context.primary = (
+		<EmptyContent
+			className="content-404"
+			illustration="/calypso/images/illustrations/illustration-404.svg"
+			title={ translate( 'Uh oh. Page not found.' ) }
+			line={ translate( "Sorry, the page you were looking for doesn't exist or has been moved." ) }
+		/>
+	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
+
+	next();
+};

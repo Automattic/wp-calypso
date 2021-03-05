@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,12 +5,12 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { localizeUrl } from 'lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 class JetpackConnectDisclaimer extends PureComponent {
 	static propTypes = {
@@ -52,9 +50,6 @@ class JetpackConnectDisclaimer extends PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( JetpackConnectDisclaimer ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( JetpackConnectDisclaimer ) );

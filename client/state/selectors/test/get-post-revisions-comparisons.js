@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getPostRevisionsComparisons from 'state/selectors/get-post-revisions-comparisons';
+import { getPostRevisionsComparisons } from 'calypso/state/posts/selectors/get-post-revisions-comparisons';
 
 describe( 'getPostRevisionsComparisons', () => {
 	test( 'should return an empty object if there are no revisions in the state for `siteId, postId`', () => {

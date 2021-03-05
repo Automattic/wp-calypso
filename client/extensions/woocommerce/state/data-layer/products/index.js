@@ -1,11 +1,14 @@
-/** @format */
 /**
  * External dependencies
  */
 import debugFactory from 'debug';
 import { isUndefined, mapValues, omitBy } from 'lodash';
 import { stringify } from 'qs';
-import warn from 'lib/warn';
+
+/**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
 
 /**
  * Internal dependencies
@@ -51,11 +54,11 @@ export function apiError( { dispatch }, action, error ) {
 /**
  * Wraps an action with a product update action.
  *
- * @param {Number} siteId The id of the site upon which the request should be made.
- * @param {Object} originatingAction The action which precipitated this request.
- * @param {Object} successAction Will be dispatched with extra props: { sentData, receivedData }
- * @param {Object} [sentData] The sentData to be embedded in the successAction along with receivedData.
- * @return {Function} Curried function to be dispatched.
+ * @param {number} siteId The id of the site upon which the request should be made.
+ * @param {object} originatingAction The action which precipitated this request.
+ * @param {object} successAction Will be dispatched with extra props: { sentData, receivedData }
+ * @param {object} [sentData] The sentData to be embedded in the successAction along with receivedData.
+ * @returns {Function} Curried function to be dispatched.
  */
 function updatedAction( siteId, originatingAction, successAction, sentData ) {
 	return ( dispatch, getState, { data: receivedData } ) => {
@@ -100,7 +103,7 @@ export function handleProductUpdate( { dispatch }, action ) {
 		return;
 	}
 
-	const data = mapValues( product, value => {
+	const data = mapValues( product, ( value ) => {
 		// JSON doesn't allow undefined,
 		// so change it to empty string for properties to be removed.
 		if ( isUndefined( value ) ) {
@@ -122,7 +125,7 @@ export function handleProductRequest( { dispatch }, action ) {
 
 export function productsRequest( action ) {
 	const { siteId, params } = action;
-	const queryString = stringify( omitBy( params, val => '' === val ) );
+	const queryString = stringify( omitBy( params, ( val ) => '' === val ) );
 
 	return request( siteId, action ).getWithHeaders( `products?${ queryString }` );
 }
@@ -137,8 +140,9 @@ export function receivedProducts( { dispatch }, action, { data } ) {
 
 	if ( undefined !== params.offset ) {
 		debug(
-			`Products ${ params.offset + 1 }-${ params.offset +
-				body.length } out of ${ totalProducts } received.`
+			`Products ${ params.offset + 1 }-${
+				params.offset + body.length
+			} out of ${ totalProducts } received.`
 		);
 
 		const remainder = totalProducts - params.offset - body.length;

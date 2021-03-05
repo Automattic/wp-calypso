@@ -12,19 +12,19 @@ import { get, find, map } from 'lodash';
  * Internal dependencies
  */
 import { getPostImage, getExcerptForPost, getSummaryForPost } from './utils';
-import FacebookSharePreview from 'components/share/facebook-share-preview';
-import LinkedinSharePreview from 'components/share/linkedin-share-preview';
-import TwitterSharePreview from 'components/share/twitter-share-preview';
-import TumblrSharePreview from 'components/share/tumblr-share-preview';
-import VerticalMenu from 'components/vertical-menu';
-import { SocialItem } from 'components/vertical-menu/items';
-import { getSitePost } from 'state/posts/selectors';
-import { getSeoTitle, getSite, getSiteSlug } from 'state/sites/selectors';
-import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import getSiteIconUrl from 'state/selectors/get-site-icon-url';
+import FacebookSharePreview from 'calypso/components/share/facebook-share-preview';
+import LinkedinSharePreview from 'calypso/components/share/linkedin-share-preview';
+import TwitterSharePreview from 'calypso/components/share/twitter-share-preview';
+import TumblrSharePreview from 'calypso/components/share/tumblr-share-preview';
+import VerticalMenu from 'calypso/components/vertical-menu';
+import { SocialItem } from 'calypso/components/vertical-menu/items';
+import { getSitePost } from 'calypso/state/posts/selectors';
+import { getSeoTitle, getSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteUserConnections } from 'calypso/state/sharing/publicize/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
 
 /**
  * Style dependencies
@@ -59,14 +59,14 @@ class SharingPreviewPane extends PureComponent {
 		super( props );
 
 		const connectedServices = map( props.connections, 'service' );
-		const firstConnectedService = find( props.services, service => {
-			return find( connectedServices, connectedService => service === connectedService );
+		const firstConnectedService = find( props.services, ( service ) => {
+			return find( connectedServices, ( connectedService ) => service === connectedService );
 		} );
 		const selectedService = props.selectedService || firstConnectedService;
 		this.state = { selectedService };
 	}
 
-	selectPreview = selectedService => {
+	selectPreview = ( selectedService ) => {
 		this.setState( { selectedService } );
 	};
 
@@ -160,7 +160,7 @@ class SharingPreviewPane extends PureComponent {
 						</p>
 					</div>
 					<VerticalMenu onClick={ this.selectPreview } initialItemIndex={ initialMenuItemIndex }>
-						{ services.map( service => (
+						{ services.map( ( service ) => (
 							<SocialItem { ...{ key: service, service } } />
 						) ) }
 					</VerticalMenu>

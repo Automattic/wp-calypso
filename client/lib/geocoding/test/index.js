@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -26,13 +25,15 @@ describe( 'geocoding', () => {
 				expect( geocode( TEST_ADDRESS ) ).to.be.an.instanceof( Promise );
 			} );
 
-			test( 'should call to the Google Maps API', done => {
-				geocode( TEST_ADDRESS )
-					.then( results => {
-						expect( results ).to.eql( [ 1, 2, 3 ] );
-						done();
-					} )
-					.catch( done );
+			test( 'should call to the Google Maps API', () => {
+				return new Promise( ( done ) => {
+					geocode( TEST_ADDRESS )
+						.then( ( results ) => {
+							expect( results ).to.eql( [ 1, 2, 3 ] );
+							done();
+						} )
+						.catch( done );
+				} );
 			} );
 		} );
 	} );
@@ -43,13 +44,15 @@ describe( 'geocoding', () => {
 				expect( reverseGeocode( TEST_LATITUDE, TEST_LONGITUDE ) ).to.be.an.instanceof( Promise );
 			} );
 
-			test( 'should call to the Google Maps API', done => {
-				reverseGeocode( TEST_LATITUDE, TEST_LONGITUDE )
-					.then( results => {
-						expect( results ).to.eql( [ 1, 2, 3 ] );
-						done();
-					} )
-					.catch( done );
+			test( 'should call to the Google Maps API', () => {
+				return new Promise( ( done ) => {
+					reverseGeocode( TEST_LATITUDE, TEST_LONGITUDE )
+						.then( ( results ) => {
+							expect( results ).to.eql( [ 1, 2, 3 ] );
+							done();
+						} )
+						.catch( done );
+				} );
 			} );
 		} );
 	} );

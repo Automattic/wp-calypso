@@ -1,5 +1,3 @@
-/** @format */
-
 /* eslint-disable react/no-danger */
 /**
  * External dependencies
@@ -10,11 +8,11 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLegend from 'calypso/components/forms/form-legend';
 import sanitizeHTML from 'woocommerce/woocommerce-services/lib/utils/sanitize-html';
 
-const renderTitle = title => {
+const renderTitle = ( title ) => {
 	if ( ! title ) {
 		return null;
 	}
@@ -22,7 +20,7 @@ const renderTitle = title => {
 	return <FormLegend dangerouslySetInnerHTML={ sanitizeHTML( title ) } />;
 };
 
-const renderText = text => {
+const renderText = ( text ) => {
 	return <span dangerouslySetInnerHTML={ sanitizeHTML( text ) } />;
 };
 

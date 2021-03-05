@@ -1,10 +1,9 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/** @format */
 /**
  * External dependencies
  */
-import deterministicStringify from 'json-stable-stringify';
+import deterministicStringify from 'fast-json-stable-stringify';
 import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import React from 'react';
@@ -14,40 +13,25 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import classNames from 'classnames';
-import PeopleListItem from 'my-sites/people/people-list-item';
-import { fetchUsers } from 'lib/users/actions';
-import InfiniteList from 'components/infinite-list';
-import NoResults from 'my-sites/no-results';
-import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
-import ListEnd from 'components/list-end';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { Card } from '@automattic/components';
+import PeopleListItem from 'calypso/my-sites/people/people-list-item';
+import { fetchUsers } from 'calypso/lib/users/actions';
+import InfiniteList from 'calypso/components/infinite-list';
+import NoResults from 'calypso/my-sites/no-results';
+import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
+import ListEnd from 'calypso/components/list-end';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 const debug = debugFactory( 'calypso:my-sites:people:team-list' );
 
 class Team extends React.Component {
-	static displayName = 'Team';
-
-	constructor() {
-		super();
-
-		this.infiniteList = React.createRef();
-	}
-
-	state = {
-		bulkEditing: false,
-	};
+	infiniteList = React.createRef();
 
 	isLastPage = () =>
 		this.props.totalUsers <= this.props.users.length + this.props.excludedUsers.length;
 
 	render() {
-		const key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) ),
-			listClass = classNames( {
-				'bulk-editing': this.state.bulkEditing,
-				'people-invites__invites-list': true,
-			} );
+		const key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) );
 		let people;
 		let headerText;
 		if ( this.props.totalUsers ) {
@@ -125,23 +109,15 @@ class Team extends React.Component {
 					site={ this.props.site }
 					isPlaceholder={ this.props.fetchingUsers || this.props.fetchOptions.search }
 				/>
-				<Card className={ listClass }>{ people }</Card>
+				<Card className="people-invites__invites-list">{ people }</Card>
 				{ this.isLastPage() && <ListEnd /> }
 			</div>
 		);
 	}
 
-	renderPerson = user => {
-		return (
-			<PeopleListItem
-				key={ user.ID }
-				user={ user }
-				type="user"
-				site={ this.props.site }
-				isSelectable={ this.state.bulkEditing }
-			/>
-		);
-	};
+	renderPerson = ( user ) => (
+		<PeopleListItem key={ user.ID } user={ user } type="user" site={ this.props.site } />
+	);
 
 	fetchNextPage = () => {
 		const offset = this.props.users.length;
@@ -156,12 +132,9 @@ class Team extends React.Component {
 		fetchUsers( fetchOptions );
 	};
 
-	getPersonRef = user => 'user-' + user.ID;
+	getPersonRef = ( user ) => 'user-' + user.ID;
 
 	renderLoadingPeople = () => <PeopleListItem key="people-list-item-placeholder" />;
 }
 
-export default connect(
-	null,
-	{ recordGoogleEvent }
-)( localize( Team ) );
+export default connect( null, { recordGoogleEvent } )( localize( Team ) );

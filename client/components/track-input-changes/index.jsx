@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,7 +17,7 @@ export default class TrackInputChanges extends Component {
 		onNewValue: noop,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.inputEdited = false;
 	}
 
@@ -27,7 +25,7 @@ export default class TrackInputChanges extends Component {
 		this.inputEdited = true;
 	};
 
-	onInputBlur = event => {
+	onInputBlur = ( event ) => {
 		if ( this.inputEdited ) {
 			this.props.onNewValue( event );
 			this.inputEdited = false;
@@ -39,13 +37,13 @@ export default class TrackInputChanges extends Component {
 		const child = React.Children.only( this.props.children );
 
 		const props = assign( {}, child.props, {
-			onChange: event => {
+			onChange: ( event ) => {
 				if ( typeof child.props.onChange === 'function' ) {
 					child.props.onChange.call( child, event );
 				}
 				this.onInputChange( event );
 			},
-			onBlur: event => {
+			onBlur: ( event ) => {
 				if ( typeof child.props.onBlur === 'function' ) {
 					child.props.onBlur.call( child, event );
 				}

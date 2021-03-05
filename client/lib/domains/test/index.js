@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,14 +6,14 @@ import { forEach } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getFixedDomainSearch, getDomainSuggestionSearch } from 'lib/domains';
+import { getFixedDomainSearch, getDomainSuggestionSearch } from 'calypso/lib/domains';
 
 describe( 'index', () => {
 	describe( '#getFixedDomainSearch', () => {
 		test( 'should return an empty string when searching for generic URL prefixes', () => {
 			const searches = [ 'http://', 'https://' ];
 
-			forEach( searches, search => {
+			forEach( searches, ( search ) => {
 				expect( getFixedDomainSearch( search ) ).toEqual( '' );
 			} );
 		} );
@@ -30,7 +28,7 @@ describe( 'index', () => {
 				'https://www.example.com',
 			];
 
-			forEach( searches, search => {
+			forEach( searches, ( search ) => {
 				expect( getFixedDomainSearch( search ) ).toEqual( 'example.com' );
 			} );
 		} );
@@ -38,7 +36,7 @@ describe( 'index', () => {
 		test( 'should allow domain names beginning with www or http(s)', () => {
 			const searches = [ 'wwwexample.com', 'httpexample.com', 'httpsexample.com' ];
 
-			forEach( searches, search => {
+			forEach( searches, ( search ) => {
 				expect( getFixedDomainSearch( search ) ).toEqual( search );
 			} );
 		} );
@@ -48,7 +46,7 @@ describe( 'index', () => {
 		test( 'should return an empty string when searching for www, http or https', () => {
 			const searches = [ 'www', 'http', 'https' ];
 
-			forEach( searches, search => {
+			forEach( searches, ( search ) => {
 				expect( getDomainSuggestionSearch( search ) ).toEqual( '' );
 			} );
 		} );

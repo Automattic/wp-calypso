@@ -1,4 +1,3 @@
-/** @format */
 // Here be dragons...
 /* eslint-disable react/no-danger */
 

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,12 +5,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Tooltip from 'components/tooltip';
+import Tooltip from 'calypso/components/tooltip';
 
 export default class extends React.PureComponent {
 	static displayName = 'Token';

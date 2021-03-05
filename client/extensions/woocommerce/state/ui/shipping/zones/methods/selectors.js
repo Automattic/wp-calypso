@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,20 +7,19 @@ import {
 	intersection,
 	isEmpty,
 	isNumber,
-	isNil,
 	map,
 	merge,
 	mergeWith,
 	pullAll,
 	startsWith,
-	isArray,
 } from 'lodash';
+import { isNullish } from '@automattic/js-utils';
 
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { createSelector } from '@automattic/state-utils';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	getAPIShippingZones,
 	areShippingZonesLoaded,
@@ -81,8 +78,8 @@ const getShippingZoneMethodsEdits = ( state, zoneId, siteId ) => {
 
 const sortShippingZoneMethods = ( state, siteId, methods ) => {
 	return methods.sort( ( a, b ) => {
-		const aId = isNil( a._originalId ) ? a.id : a._originalId;
-		const bId = isNil( b._originalId ) ? b.id : b._originalId;
+		const aId = isNullish( a._originalId ) ? a.id : a._originalId;
+		const bId = isNullish( b._originalId ) ? b.id : b._originalId;
 
 		if ( isNumber( aId ) ) {
 			// Both IDs are numbers (come from the server), so compare their "order" property
@@ -112,8 +109,8 @@ const overlayShippingZoneMethods = ( state, zone, siteId, extraEdits ) => {
 
 	// Overlay the current edits on top of (a copy of) the wc-api zone methods
 	pullAll( methodIds, map( deletes, 'id' ) );
-	const methods = methodIds.map( methodId => getShippingZoneMethod( state, methodId, siteId ) );
-	updates.forEach( update => {
+	const methods = methodIds.map( ( methodId ) => getShippingZoneMethod( state, methodId, siteId ) );
+	updates.forEach( ( update ) => {
 		const index = methodIds.indexOf( update.id );
 		if ( -1 === index ) {
 			return;
@@ -122,9 +119,9 @@ const overlayShippingZoneMethods = ( state, zone, siteId, extraEdits ) => {
 	} );
 
 	// Compute the "enabled" prop for all the methods. If a method hasn't been explicitly disabled (enabled===false), then it's enabled
-	const allMethods = [ ...methods, ...creates ].map( method => {
+	const allMethods = [ ...methods, ...creates ].map( ( method ) => {
 		let enabled = method.enabled;
-		if ( isNil( enabled ) && 'number' === typeof method._originalId ) {
+		if ( isNullish( enabled ) && 'number' === typeof method._originalId ) {
 			// If the "enabled" prop hasn't been modified, use the value from the original method
 			enabled = getShippingZoneMethod( state, method._originalId, siteId ).enabled;
 		}
@@ -141,10 +138,10 @@ const overlayShippingZoneMethods = ( state, zone, siteId, extraEdits ) => {
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [zoneId] Shipping Zone ID
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} The list of shipping methods included in the given shipping zone. On any failure, it will return
+ * @param {object} state Whole Redux state tree
+ * @param {number} [zoneId] Shipping Zone ID
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {Array} The list of shipping methods included in the given shipping zone. On any failure, it will return
  * an empty Array
  */
 export const getShippingZoneMethods = createSelector(
@@ -174,9 +171,9 @@ export const getShippingZoneMethods = createSelector(
 );
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} The list of shipping methods included in the shipping zone currently being edited, including
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {Array} The list of shipping methods included in the shipping zone currently being edited, including
  * shipping methods that haven't yet been "committed" to the main state tree. On any failure, it will return
  * an empty Array
  */
@@ -202,9 +199,9 @@ export const getCurrentlyEditingShippingZoneMethods = createSelector(
 );
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object|null} The currently open shipping method or null
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {object|null} The currently open shipping method or null
  */
 export const getCurrentlyOpenShippingZoneMethod = (
 	state,
@@ -235,13 +232,13 @@ export const getCurrentlyOpenShippingZoneMethod = (
 		return null;
 	}
 
-	const enabled = isNil( zone.methods.currentlyEditingChanges.enabled )
+	const enabled = isNullish( zone.methods.currentlyEditingChanges.enabled )
 		? false !== openMethod.enabled
 		: false !== zone.methods.currentlyEditingChanges.enabled;
 
 	// Overwrites the default behavior of `merge` while ignoring arrays and focusing on objects.
 	const customizer = ( objValue, srcValue ) => {
-		if ( isArray( objValue ) ) {
+		if ( Array.isArray( objValue ) ) {
 			return srcValue;
 		}
 	};
@@ -251,18 +248,16 @@ export const getCurrentlyOpenShippingZoneMethod = (
 	 * in standard mode `merge` does not always allow the elements of
 	 * standard arrays to be removed.
 	 *
-	 * Example:
-
-	const openMethod              = { shipping_classes: [ 19 ] };
-	const currentlyEditingChanges = { shipping_classes: [] };
-
-	_.merge( {}, openMethod, currentlyEditingChanges );
-	// { shipping_classes: [ 19 ] }
-
-	_.mergeWith( {}, openMethod, currentlyEditingChanges, customizer );
-	// { shipping_classes: [] }
-	*/
-
+	 * @example
+	 * const openMethod = { shipping_classes: [ 19 ] };
+	 * const currentlyEditingChanges = { shipping_classes: [] };
+	 *
+	 * _.merge( {}, openMethod, currentlyEditingChanges );
+	 * // { shipping_classes: [ 19 ] }
+	 *
+	 * _.mergeWith( {}, openMethod, currentlyEditingChanges, customizer );
+	 * // { shipping_classes: [] }
+	 */
 	return mergeWith(
 		{},
 		defaultValues,
@@ -274,9 +269,9 @@ export const getCurrentlyOpenShippingZoneMethod = (
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Boolean} Whether the opened method is new or not
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {boolean} Whether the opened method is new or not
  */
 export const isCurrentlyOpenShippingZoneMethodNew = (
 	state,
@@ -295,10 +290,10 @@ export const isCurrentlyOpenShippingZoneMethodNew = (
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [zoneId] Shipping Zone ID. If not provided, it will default to the shipping zone currently being edited
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} The list of Shipping Method types that can be added to the given shipping Zone
+ * @param {object} state Whole Redux state tree
+ * @param {number} [zoneId] Shipping Zone ID. If not provided, it will default to the shipping zone currently being edited
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {Array} The list of Shipping Method types that can be added to the given shipping Zone
  */
 export const getNewMethodTypeOptions = (
 	state,
@@ -316,7 +311,7 @@ export const getNewMethodTypeOptions = (
 		Object.keys( builtInShippingMethods ),
 		map( getShippingMethods( state, siteId ), 'id' )
 	);
-	allMethods.forEach( methodType => {
+	allMethods.forEach( ( methodType ) => {
 		// A user can add as many "Local Pickup" and Live Rates methods as he wants for a given zone
 		if (
 			'local_pickup' === methodType ||
@@ -344,11 +339,11 @@ export const getNewMethodTypeOptions = (
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} currentMethodType Shipping method type currently being used
- * @param {Number} [zoneId] Shipping Zone ID. If not provided, it will default to the shipping zone currently being edited
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} The list of Shipping Method types that this shipping zone method can be changed too. It
+ * @param {object} state Whole Redux state tree
+ * @param {number} currentMethodType Shipping method type currently being used
+ * @param {number} [zoneId] Shipping Zone ID. If not provided, it will default to the shipping zone currently being edited
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {Array} The list of Shipping Method types that this shipping zone method can be changed too. It
  * includes the current method type.
  */
 export const getMethodTypeChangeOptions = (

@@ -6,34 +6,29 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { testSchema } from './mocks/schema';
-import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { withStorageKey } from '@automattic/state-utils';
+import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
 import {
-	cachingActionCreatorFactory,
-	createReducer,
-	createReducerWithValidation,
 	extendAction,
 	keyedReducer,
 	withSchemaValidation,
 	combineReducers,
 	isValidStateWithSchema,
+	withPersistence,
 	withoutPersistence,
 	withEnhancers,
-	withStorageKey,
-} from 'state/utils';
-import warn from 'lib/warn';
+	deserialize,
+} from 'calypso/state/utils';
 
-jest.mock( 'lib/warn', () => jest.fn() );
+/**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
+
+jest.mock( '@wordpress/warning', () => jest.fn() );
 
 describe( 'utils', () => {
 	beforeEach( () => warn.mockReset() );
-
-	const currentState = deepFreeze( {
-			test: [ 'one', 'two', 'three' ],
-		} ),
-		actionSerialize = { type: SERIALIZE },
-		actionDeserialize = { type: DESERIALIZE };
-	let reducer;
 
 	describe( 'extendAction()', () => {
 		test( 'should return an updated action object, merging data', () => {
@@ -63,7 +58,7 @@ describe( 'utils', () => {
 		test( 'should return an updated action thunk, merging data on dispatch', () => {
 			const dispatch = jest.fn();
 			const action = extendAction(
-				thunkDispatch =>
+				( thunkDispatch ) =>
 					thunkDispatch( {
 						type: 'ACTION_TEST',
 						meta: {
@@ -121,8 +116,8 @@ describe( 'utils', () => {
 		test( 'should return an updated nested action thunk, merging data on dispatch', () => {
 			const dispatch = jest.fn();
 			const action = extendAction(
-				thunkDispatch =>
-					thunkDispatch( nestedThunkDispatch =>
+				( thunkDispatch ) =>
+					thunkDispatch( ( nestedThunkDispatch ) =>
 						nestedThunkDispatch( {
 							type: 'ACTION_TEST',
 							meta: {
@@ -149,143 +144,10 @@ describe( 'utils', () => {
 		} );
 	} );
 
-	describe( '#createReducer()', () => {
-		describe( 'with null initial state and no handlers', () => {
-			beforeAll( () => {
-				reducer = createReducer( null, {} );
-			} );
-
-			test( 'should throw when a schema is provided', () => {
-				const initialState = {};
-				expect( () => createReducer( initialState, {}, testSchema ) ).toThrow();
-			} );
-
-			test( 'should return a function', () => {
-				expect( typeof reducer ).toBe( 'function' );
-			} );
-
-			test( 'should return initial state when hydration action passed', () => {
-				expect( reducer( undefined, { type: '@@calypso/INIT' } ) ).toBeNull();
-			} );
-
-			test( 'should return identical state when invalid action passed', () => {
-				const invalidAction = {};
-				expect( reducer( currentState, invalidAction ) ).toBe( currentState );
-			} );
-
-			test( 'should return identical state when unknown action type passed', () => {
-				const unknownAction = { type: 'UNKNOWN' };
-				expect( reducer( currentState, unknownAction ) ).toBe( currentState );
-			} );
-
-			test( 'should return undefined when serialize action type passed', () => {
-				expect( reducer( currentState, actionSerialize ) ).toBeUndefined();
-			} );
-
-			test( 'should return default null state when deserialize action type passed', () => {
-				expect( reducer( currentState, actionDeserialize ) ).toBeNull();
-			} );
-
-			test( 'should throw an error when passed an undefined type', () => {
-				expect( () => reducer( undefined, { type: undefined } ) ).toThrow();
-			} );
-		} );
-
-		describe( 'with reducers and default state provided', () => {
-			const initialState = {},
-				TEST_ADD = 'TEST_ADD';
-
-			beforeAll( () => {
-				reducer = createReducer( initialState, {
-					[ TEST_ADD ]: ( state, action ) => {
-						return {
-							test: [ ...state.test, action.value ],
-						};
-					},
-				} );
-			} );
-
-			test( 'should return undefined state when SERIALIZE action type passed', () => {
-				expect( reducer( currentState, actionSerialize ) ).toBeUndefined();
-			} );
-
-			test( 'should return default {} state when DESERIALIZE action type passed', () => {
-				expect( reducer( currentState, actionDeserialize ) ).toBe( initialState );
-			} );
-
-			test( 'should add new value to test array when acc action passed', () => {
-				const addAction = {
-					type: TEST_ADD,
-					value: 'four',
-				};
-
-				const newState = reducer( currentState, addAction );
-
-				expect( newState ).not.toBe( currentState );
-				expect( newState ).toEqual( {
-					test: [ 'one', 'two', 'three', 'four' ],
-				} );
-			} );
-		} );
-
-		describe( 'with default actions overrides', () => {
-			const overriddenState = { overridden: 'state' };
-
-			beforeAll( () => {
-				reducer = createReducer( null, {
-					[ SERIALIZE ]: () => overriddenState,
-					[ DESERIALIZE ]: () => overriddenState,
-				} );
-			} );
-
-			test( 'should return overridden state when serialize action type passed', () => {
-				expect( reducer( currentState, actionSerialize ) ).toBe( overriddenState );
-				expect( reducer( currentState, actionSerialize ) ).toEqual( overriddenState );
-			} );
-
-			test( 'should return overridden state when deserialize action type passed', () => {
-				expect( reducer( currentState, actionDeserialize ) ).toBe( overriddenState );
-				expect( reducer( currentState, actionDeserialize ) ).toEqual( overriddenState );
-			} );
-		} );
-	} );
-
-	describe( '#createReducerWithValidation()', () => {
-		test( 'should throw when no schema is provided', () => {
-			const initialState = {};
-			reducer = createReducer( null, {} );
-
-			expect( () => createReducerWithValidation( initialState, {} ) ).toThrow();
-		} );
-
-		describe( 'with schema provided', () => {
-			const initialState = {};
-
-			beforeAll( () => {
-				reducer = createReducerWithValidation( initialState, {}, testSchema );
-			} );
-
-			test( 'should return current state when serialize action type passed', () => {
-				expect( reducer( currentState, actionSerialize ) ).toBe( currentState );
-				expect( reducer( currentState, actionSerialize ) ).toEqual( currentState );
-			} );
-
-			test( 'should return initial state when valid initial state and deserialize action type passed', () => {
-				expect( reducer( currentState, actionDeserialize ) ).toBe( currentState );
-				expect( reducer( currentState, actionDeserialize ) ).toEqual( currentState );
-			} );
-
-			test( 'should return default state when invalid initial state and deserialize action type passed', () => {
-				expect( reducer( { invalid: 'state' }, actionDeserialize ) ).toBe( initialState );
-				expect( reducer( { invalid: 'state' }, actionDeserialize ) ).toEqual( initialState );
-			} );
-		} );
-	} );
-
 	describe( '#keyedReducer', () => {
-		const grow = name => ( { type: 'GROW', name } );
-		const reset = name => ( { type: 'RESET', name } );
-		const remove = name => ( { type: 'REMOVE', name } );
+		const grow = ( name ) => ( { type: 'GROW', name } );
+		const reset = ( name ) => ( { type: 'RESET', name } );
+		const remove = ( name ) => ( { type: 'REMOVE', name } );
 
 		const age = ( state = 0, action ) => {
 			if ( 'GROW' === action.type ) {
@@ -440,9 +302,9 @@ describe( 'utils', () => {
 			const keyed = keyedReducer( 'id', age );
 
 			// state with non-initial value
-			const state = { '1': 1 };
+			const state = { 1: 1 };
 			const serialized = keyed( state, { type: 'SERIALIZE' } );
-			expect( serialized.root() ).toEqual( { '1': 1 } );
+			expect( serialized.root() ).toEqual( { 1: 1 } );
 		} );
 
 		test( 'should not serialize nested empty state', () => {
@@ -459,9 +321,9 @@ describe( 'utils', () => {
 			// right thing.
 			// Another reason why empty state might not be persisted is that the tested reducer didn't
 			// opt in into persistence in the first place -- and we DON'T want to test that!
-			const stateWithData = { a: { '1': 1 } };
+			const stateWithData = { a: { 1: 1 } };
 			const serializedWithData = nestedReducer( stateWithData, { type: 'SERIALIZE' } );
-			expect( serializedWithData.root() ).toEqual( { a: { '1': 1 } } );
+			expect( serializedWithData.root() ).toEqual( { a: { 1: 1 } } );
 
 			// initial state should not serialize
 			const state = nestedReducer( undefined, { type: 'INIT' } );
@@ -503,22 +365,27 @@ describe( 'utils', () => {
 
 		const age = ( state = 0, action ) => ( 'GROW' === action.type ? state + 1 : state );
 
-		const date = ( state = new Date( 0 ), action ) => {
-			switch ( action.type ) {
-				case 'GROW':
-					return new Date( state.getTime() + 1 );
-				case SERIALIZE:
-					return state.getTime();
-				case DESERIALIZE:
-					if ( isValidStateWithSchema( state, schema ) ) {
-						return new Date( state );
+		test( 'should always pass valid state to the inner serialize handler', () => {
+			const date = withSchemaValidation(
+				schema,
+				withPersistence(
+					( state = new Date( 0 ), action ) => {
+						switch ( action.type ) {
+							case 'GROW':
+								return new Date( state.getTime() + 1 );
+							default:
+								return state;
+						}
+					},
+					{
+						serialize: ( state ) => state.getTime(),
+						deserialize: ( persisted ) => new Date( persisted ),
 					}
-					return new Date( 0 );
-				default:
-					return state;
-			}
-		};
-		date.hasCustomPersistence = true;
+				)
+			);
+
+			expect( deserialize( date, 0 ) ).toEqual( new Date( 0 ) );
+		} );
 
 		test( 'should invalidate DESERIALIZED state', () => {
 			const validated = withSchemaValidation( schema, age );
@@ -785,19 +652,6 @@ describe( 'utils', () => {
 			const invalid = reducers( { height: -1, count: 44 }, load );
 			expect( invalid ).toEqual( { height: 160, count: 1 } );
 		} );
-
-		test( 'uses the provided validation from createReducerWithValidation', () => {
-			reducers = combineReducers( {
-				height: createReducerWithValidation( 160, {}, schema ),
-				count,
-			} );
-
-			const valid = reducers( { height: 22, count: 44 }, write );
-			expect( valid.root() ).toEqual( { height: 22 } );
-
-			const invalid = reducers( { height: -1, count: 44 }, load );
-			expect( invalid ).toEqual( { height: 160, count: 1 } );
-		} );
 	} );
 
 	describe( '#withoutPersistence', () => {
@@ -834,103 +688,16 @@ describe( 'utils', () => {
 		} );
 	} );
 
-	describe( '#cachingActionCreatorFactory', () => {
-		let dispatch;
-		let successfulWorker;
-		let failingWorker;
-		let loadingActionCreator;
-		let successActionCreator;
-		let failureActionCreator;
-
-		let connectedLoadingActionCreator;
-		let connectedSuccessActionCreator;
-		let connectedFailureActionCreator;
-
-		beforeEach( () => {
-			dispatch = jest.fn( identity => identity );
-			successfulWorker = jest.fn( () => Promise.resolve( 'success_data' ) );
-			failingWorker = jest.fn( () => Promise.reject( 'error_data' ) );
-
-			loadingActionCreator = jest.fn( () => dispatch( { type: 'loading' } ) );
-			successActionCreator = jest.fn( () => dispatch( { type: 'success' } ) );
-			failureActionCreator = jest.fn( () => dispatch( { type: 'failure' } ) );
-
-			connectedLoadingActionCreator = () => loadingActionCreator;
-			connectedSuccessActionCreator = () => successActionCreator;
-			connectedFailureActionCreator = () => failureActionCreator;
-		} );
-
-		test( 'should call apropriate action creators on success', async () => {
-			const actionCreator = cachingActionCreatorFactory(
-				successfulWorker,
-				connectedLoadingActionCreator,
-				connectedSuccessActionCreator,
-				connectedFailureActionCreator
-			);
-
-			await actionCreator( 123 )( dispatch );
-			expect( loadingActionCreator ).toHaveBeenCalledWith( 123 );
-			expect( successActionCreator ).toHaveBeenCalledWith( 'success_data' );
-			expect( failureActionCreator ).not.toHaveBeenCalledWith();
-		} );
-
-		test( 'should call apropriate action creators on failure', async () => {
-			const actionCreator = cachingActionCreatorFactory(
-				failingWorker,
-				connectedLoadingActionCreator,
-				connectedSuccessActionCreator,
-				connectedFailureActionCreator
-			);
-
-			await actionCreator( 123 )( dispatch );
-			expect( loadingActionCreator ).toHaveBeenCalledWith( 123 );
-			expect( failureActionCreator ).toHaveBeenCalledWith( 'error_data' );
-			expect( successActionCreator ).not.toHaveBeenCalled();
-		} );
-
-		test( 'should cache same parameters successful call', async () => {
-			const actionCreator = cachingActionCreatorFactory(
-				successfulWorker,
-				connectedLoadingActionCreator,
-				connectedSuccessActionCreator,
-				connectedFailureActionCreator
-			);
-
-			const callActionCreator = () => actionCreator( 123 )( dispatch );
-
-			await callActionCreator();
-			await callActionCreator();
-
-			expect( successfulWorker ).toHaveBeenCalledTimes( 1 );
-		} );
-
-		test( 'should not cache same parameters failed call', async () => {
-			const actionCreator = cachingActionCreatorFactory(
-				failingWorker,
-				connectedLoadingActionCreator,
-				connectedSuccessActionCreator,
-				connectedFailureActionCreator
-			);
-
-			const callActionCreator = () => actionCreator( 123 )( dispatch );
-
-			await callActionCreator();
-			await callActionCreator();
-
-			expect( failingWorker ).toHaveBeenCalledTimes( 2 );
-		} );
-	} );
-
 	describe( '#withEnhancers', () => {
 		it( 'should enhance action creator', () => {
 			const actionCreator = () => ( { type: 'HELLO' } );
-			const enhancedActionCreator = withEnhancers( actionCreator, action =>
+			const enhancedActionCreator = withEnhancers( actionCreator, ( action ) =>
 				Object.assign( { name: 'test' }, action )
 			);
 			const thunk = enhancedActionCreator();
 			const getState = () => ( {} );
 			let dispatchedAction = null;
-			const dispatch = action => ( dispatchedAction = action );
+			const dispatch = ( action ) => ( dispatchedAction = action );
 			thunk( dispatch, getState );
 
 			expect( dispatchedAction ).toEqual( {
@@ -942,14 +709,14 @@ describe( 'utils', () => {
 		it( 'should enhance with multiple enhancers, from last to first', () => {
 			const actionCreator = () => ( { type: 'HELLO' } );
 			const enhancedActionCreator = withEnhancers( actionCreator, [
-				action => Object.assign( { name: 'test' }, action ),
-				action => Object.assign( { name: 'test!!!' }, action ),
-				action => Object.assign( { meetup: 'akumal' }, action ),
+				( action ) => Object.assign( { name: 'test' }, action ),
+				( action ) => Object.assign( { name: 'test!!!' }, action ),
+				( action ) => Object.assign( { meetup: 'akumal' }, action ),
 			] );
 			const thunk = enhancedActionCreator();
 			const getState = () => ( {} );
 			let dispatchedAction = null;
-			const dispatch = action => ( dispatchedAction = action );
+			const dispatch = ( action ) => ( dispatchedAction = action );
 			thunk( dispatch, getState );
 
 			expect( dispatchedAction ).toEqual( {
@@ -970,7 +737,7 @@ describe( 'utils', () => {
 			] );
 			const thunk = enhancedActionCreator();
 			const getState = () => ( {} );
-			const dispatch = action => action;
+			const dispatch = ( action ) => action;
 			thunk( dispatch, getState );
 
 			expect( providedGetState ).toEqual( getState );
@@ -979,14 +746,14 @@ describe( 'utils', () => {
 		it( 'should accept an action creator as first parameter', () => {
 			const actionCreator = () => ( { type: 'HELLO' } );
 			const enhancedActionCreator = withEnhancers(
-				withEnhancers( actionCreator, action => Object.assign( { name: 'test' }, action ) ),
-				action => Object.assign( { hello: 'world' }, action )
+				withEnhancers( actionCreator, ( action ) => Object.assign( { name: 'test' }, action ) ),
+				( action ) => Object.assign( { hello: 'world' }, action )
 			);
 
 			const thunk = enhancedActionCreator();
 			const getState = () => ( {} );
 			let dispatchedAction = null;
-			const dispatch = action => ( dispatchedAction = action );
+			const dispatch = ( action ) => ( dispatchedAction = action );
 			thunk( dispatch, getState );
 
 			expect( dispatchedAction ).toEqual( {
@@ -1000,7 +767,7 @@ describe( 'utils', () => {
 
 describe( 'addReducer', () => {
 	// creator of toy reducers that initialize to `initialValue` and don't react to other actions
-	const toyReducer = initialValue => ( state = initialValue ) => state;
+	const toyReducer = ( initialValue ) => ( state = initialValue ) => state;
 
 	describe( 'basic tests', () => {
 		test( 'can add a new top-level reducer', () => {
@@ -1060,7 +827,7 @@ describe( 'addReducer', () => {
 	} );
 
 	describe( 'interaction with persistence', () => {
-		const persistedToyReducer = initialState =>
+		const persistedToyReducer = ( initialState ) =>
 			withSchemaValidation( { type: 'string' }, toyReducer( initialState ) );
 
 		test( 'storageKey survives adding a new reducer', () => {

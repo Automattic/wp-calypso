@@ -1,19 +1,17 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import getThemeFilterStringFromTerm from 'state/selectors/get-theme-filter-string-from-term';
-
-import getThemeFilterTerm from 'state/selectors/get-theme-filter-term';
-import getThemeFilterTermFromString from 'state/selectors/get-theme-filter-term-from-string';
-import isValidThemeFilterTerm from 'state/selectors/is-valid-theme-filter-term';
+import {
+	getThemeFilterStringFromTerm,
+	getThemeFilterTerm,
+	getThemeFilterTermFromString,
+	isValidThemeFilterTerm,
+} from 'calypso/state/themes/selectors';
 
 // Reorder and remove invalid filters to redirect to canonical URL
 export function validateFilters( context, next ) {
@@ -27,7 +25,7 @@ export function validateFilters( context, next ) {
 	// Accept commas, which were previously used as canonical filter separators
 	const validFilters = filterParam
 		.split( /[,+]/ )
-		.filter( term => isValidThemeFilterTerm( context.store.getState(), term ) );
+		.filter( ( term ) => isValidThemeFilterTerm( context.store.getState(), term ) );
 	const sortedValidFilters = sortFilterTerms( context, validFilters ).join( '+' );
 
 	if ( sortedValidFilters !== filterParam ) {
@@ -73,13 +71,13 @@ export function validateVertical( context, next ) {
  * prefixed taxonomy:term. Returned terms will
  * keep this prefix.
  *
- * @param {Object} context Routing context
- * @param {array} terms Array of term strings
- * @return {array} Sorted array
+ * @param {object} context Routing context
+ * @param {Array} terms Array of term strings
+ * @returns {Array} Sorted array
  */
 export function sortFilterTerms( context, terms ) {
 	return terms
-		.map( term => getThemeFilterStringFromTerm( context.store.getState(), term ) )
+		.map( ( term ) => getThemeFilterStringFromTerm( context.store.getState(), term ) )
 		.sort()
-		.map( filter => getThemeFilterTermFromString( context.store.getState(), filter ) );
+		.map( ( filter ) => getThemeFilterTermFromString( context.store.getState(), filter ) );
 }

@@ -1,33 +1,45 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
-import { get } from 'lodash';
 import page from 'page';
 
 /**
  * Internal Dependencies
  */
-import { abtest } from 'lib/abtest';
 import CustomerHome from './main';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { canCurrentUserUseCustomerHome } from 'calypso/state/sites/selectors';
 
-export default function( context, next ) {
+export default async function ( context, next ) {
+	const state = await context.store.getState();
+	const siteId = await getSelectedSiteId( state );
+
+	const isDev = context.query.dev === 'true';
+	const forcedView = context.query.view;
+	const noticeType = context.query.notice;
+
 	// Scroll to the top
 	if ( typeof window !== 'undefined' ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	context.primary = <CustomerHome checklistMode={ get( context, 'query.d' ) } />;
+	context.primary = (
+		<CustomerHome
+			key={ siteId }
+			isDev={ isDev }
+			forcedView={ forcedView }
+			noticeType={ noticeType }
+		/>
+	);
 
 	next();
 }
 
 export function maybeRedirect( context, next ) {
-	const slug = getSelectedSiteSlug( context.store.getState() );
-	if ( 'hide' === abtest( 'customerHomePage' ) ) {
+	const state = context.store.getState();
+	const slug = getSelectedSiteSlug( state );
+	if ( ! canCurrentUserUseCustomerHome( state ) ) {
 		page.redirect( `/stats/day/${ slug }` );
 		return;
 	}

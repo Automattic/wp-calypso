@@ -1,15 +1,12 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import { isFinite, keyBy, omit } from 'lodash';
+import { keyBy, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import { getSerializedOrdersQuery } from './utils';
 import invoice from './send-invoice/reducer';
 import notes from './notes/reducer';
@@ -34,9 +31,9 @@ import refunds from './refunds/reducer';
  * dispatched. The state reflects a mapping of order ID to a
  * boolean reflecting whether a request for that page is in progress.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function isDeleting( state = {}, action ) {
 	switch ( action.type ) {
@@ -56,9 +53,9 @@ export function isDeleting( state = {}, action ) {
  * dispatched. The state reflects a mapping of order ID to a
  * boolean reflecting whether a request for that page is in progress.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function isLoading( state = {}, action ) {
 	switch ( action.type ) {
@@ -78,17 +75,18 @@ export function isLoading( state = {}, action ) {
  * dispatched. The state reflects a mapping of query (page number) to a
  * boolean reflecting whether a request for that page is in progress.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function isQueryLoading( state = {}, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_ORDERS_REQUEST:
 		case WOOCOMMERCE_ORDERS_REQUEST_SUCCESS:
-		case WOOCOMMERCE_ORDERS_REQUEST_FAILURE:
+		case WOOCOMMERCE_ORDERS_REQUEST_FAILURE: {
 			const query = getSerializedOrdersQuery( action.query );
 			return Object.assign( {}, state, { [ query ]: WOOCOMMERCE_ORDERS_REQUEST === action.type } );
+		}
 		default:
 			return state;
 	}
@@ -99,12 +97,14 @@ export function isQueryLoading( state = {}, action ) {
  * dispatched. The state reflects a mapping of order ID to a
  * boolean reflecting whether there is a save in progress.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function isUpdating( state = {}, action ) {
-	const orderId = isFinite( action.orderId ) ? action.orderId : JSON.stringify( action.orderId );
+	const orderId = Number.isFinite( action.orderId )
+		? action.orderId
+		: JSON.stringify( action.orderId );
 	switch ( action.type ) {
 		case WOOCOMMERCE_ORDER_UPDATE:
 		case WOOCOMMERCE_ORDER_UPDATE_SUCCESS:
@@ -120,9 +120,9 @@ export function isUpdating( state = {}, action ) {
 /**
  * Tracks all known order objects, indexed by post ID.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function items( state = {}, action ) {
 	let orders;
@@ -143,16 +143,17 @@ export function items( state = {}, action ) {
  * Tracks the orders which belong to a query, as a list of IDs
  * referencing items in `orders.items`.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function queries( state = {}, action ) {
 	switch ( action.type ) {
-		case WOOCOMMERCE_ORDERS_REQUEST_SUCCESS:
-			const idList = action.orders.map( order => order.id );
+		case WOOCOMMERCE_ORDERS_REQUEST_SUCCESS: {
+			const idList = action.orders.map( ( order ) => order.id );
 			const query = getSerializedOrdersQuery( action.query );
 			return Object.assign( {}, state, { [ query ]: idList } );
+		}
 		default:
 			return state;
 	}
@@ -161,15 +162,16 @@ export function queries( state = {}, action ) {
 /**
  * Tracks the total number of pages of orders for the current site.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function total( state = 1, action ) {
 	switch ( action.type ) {
-		case WOOCOMMERCE_ORDERS_REQUEST_SUCCESS:
+		case WOOCOMMERCE_ORDERS_REQUEST_SUCCESS: {
 			const query = getSerializedOrdersQuery( omit( action.query, 'page' ) );
 			return Object.assign( {}, state, { [ query ]: action.total } );
+		}
 		default:
 			return state;
 	}

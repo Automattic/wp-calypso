@@ -1,13 +1,20 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import { THEMES_BANNER_HIDE } from 'state/action-types';
+import { THEMES_SHOWCASE_OPEN, THEMES_BOOKMARK_SET } from 'calypso/state/themes/action-types';
 
-// Hides the theme showcase banner.
-export function hideThemesBanner() {
+import 'calypso/state/themes/init';
+
+// Open "More Themes" search area.
+export function openThemesShowcase() {
 	return {
-		type: THEMES_BANNER_HIDE,
+		type: THEMES_SHOWCASE_OPEN,
+	};
+}
+
+export function setThemesBookmark( state ) {
+	return {
+		type: THEMES_BOOKMARK_SET,
+		payload: state,
 	};
 }

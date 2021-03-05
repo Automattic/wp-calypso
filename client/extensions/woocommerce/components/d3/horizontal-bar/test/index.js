@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -35,10 +34,7 @@ describe( 'HorizontalBar', () => {
 		const extent = [ 0, dataMax ];
 		const bar = mount( <HorizontalBar width={ width } data={ data } extent={ extent } /> );
 		const correctWidth = ( data / dataMax ) * width;
-		const rectAttribures = bar
-			.render()
-			.find( 'rect' )
-			.attr();
+		const rectAttribures = bar.render().find( 'rect' ).attr();
 		assert.equal( rectAttribures.width, correctWidth );
 	} );
 
@@ -48,10 +44,7 @@ describe( 'HorizontalBar', () => {
 		const dataMax = 100;
 		const extent = [ 0, dataMax ];
 		const bar = mount( <HorizontalBar width={ width } data={ data } extent={ extent } /> );
-		const textAttribures = bar
-			.render()
-			.find( 'text' )
-			.attr();
+		const textAttribures = bar.render().find( 'text' ).attr();
 		assert.equal( textAttribures[ 'text-anchor' ], 'end' );
 	} );
 
@@ -61,10 +54,7 @@ describe( 'HorizontalBar', () => {
 		const dataMax = 100;
 		const extent = [ 0, dataMax ];
 		const bar = mount( <HorizontalBar width={ width } data={ data } extent={ extent } /> );
-		const textAttribures = bar
-			.render()
-			.find( 'text' )
-			.attr();
+		const textAttribures = bar.render().find( 'text' ).attr();
 		assert.equal( textAttribures[ 'text-anchor' ], 'start' );
 	} );
 
@@ -76,10 +66,7 @@ describe( 'HorizontalBar', () => {
 		const bar = mount(
 			<HorizontalBar width={ width } data={ data } extent={ extent } currency="NZD" />
 		);
-		const text = bar
-			.render()
-			.find( 'text' )
-			.text();
+		const text = bar.render().find( 'text' ).text();
 		assert.match( text, /NZ\$\d/ );
 	} );
 } );
