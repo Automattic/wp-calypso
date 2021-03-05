@@ -41,7 +41,6 @@ export const computeFullAndMonthlyPricesForPlan = (
 			getPlanPrice( state, siteId, planObject, false ) - credits - couponDiscount,
 			0,
 		] ),
-		priceMonthly: getPlanPrice( state, siteId, planObject, true ),
 	};
 };
 
@@ -52,20 +51,21 @@ export const computeFullAndMonthlyPricesForPlan = (
  * @param {object} planObject Plan object returned by getPlan() from lib/plans
  */
 function computePricesForWpComPlan( state, planObject ) {
-	const priceFull = getPlanRawPrice( state, planObject.getProductId(), false );
+	const priceFull = getPlanRawPrice( state, planObject.getProductId(), false ) || 0;
 	const isMonthly = planObject.term === TERM_MONTHLY;
 	const monthlyPlanObject = isMonthly
 		? planObject
 		: getPlan( getMonthlyPlanByYearly( planObject.getStoreSlug() ) );
 	const priceMonthly = monthlyPlanObject
-		? getPlanRawPrice( state, monthlyPlanObject.getProductId(), true )
+		? getPlanRawPrice( state, monthlyPlanObject.getProductId(), true ) || 0
 		: 0;
-	const priceFullBeforeDiscount = priceMonthly * getBillingMonthsForTerm( planObject.term );
+	const priceFullBeforeDiscount = priceMonthly
+		? priceMonthly * getBillingMonthsForTerm( planObject.term )
+		: priceFull;
 
 	return {
 		priceFullBeforeDiscount,
 		priceFull,
 		priceFinal: priceFull,
-		priceMonthly,
 	};
 }
