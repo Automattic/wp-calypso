@@ -34,9 +34,13 @@ import PluginAutomatedTransfer from 'calypso/my-sites/plugins/plugin-automated-t
 import { getExtensionSettingsPath, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { userCan } from 'calypso/lib/site/utils';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { FEATURE_UPLOAD_PLUGINS, TYPE_BUSINESS, TYPE_MARKETPLACE, FEATURE_MARKETPLACE_YOAST_PREMIUM } from 'calypso/lib/plans/constants';
+import {
+	FEATURE_UPLOAD_PLUGINS,
+	TYPE_BUSINESS,
+	FEATURE_MARKETPLACE_YOAST_PREMIUM,
+} from 'calypso/lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
-import { isBusiness, isEcommerce, isEnterprise } from 'calypso/lib/products-values';
+import { isBusiness, isEcommerce, isEnterprise, isFreePlan } from 'calypso/lib/products-values';
 import { addSiteFragment } from 'calypso/lib/route';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -58,6 +62,7 @@ import {
 	ENABLE_AUTOUPDATE_PLUGIN,
 	REMOVE_PLUGIN,
 } from 'calypso/lib/plugins/constants';
+import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 
 const activationPreventionActions = [
 	ENABLE_AUTOUPDATE_PLUGIN,
@@ -118,6 +123,15 @@ export class PluginMeta extends Component {
 				</div>
 			);
 		}
+	}
+
+	hasFreePlan() {
+		if ( ! this.props.selectedSite ) {
+			return false;
+		}
+		// eslint-disable-next-line
+		console.log( this.props.siteProducts );
+		return isFreePlan( this.props.selectedSite.plan );
 	}
 
 	hasBusinessPlan() {
@@ -509,12 +523,6 @@ export class PluginMeta extends Component {
 			return null;
 		}
 		const bannerURL = `/checkout/${ slug }/yoast_premium`;
-		const plan = findFirstSimilarPlanKey( this.props.selectedSite.plan.product_slug, {
-			type: TYPE_MARKETPLACE,
-		} );
-
-		// eslint-disable-next-line
-		console.log( plan );
 
 		const title = translate( 'Buy Yoast Premium!' );
 
@@ -525,7 +533,6 @@ export class PluginMeta extends Component {
 					event="calypso_plugin_detail_page_upgrade_nudge"
 					href={ bannerURL }
 					feature={ FEATURE_MARKETPLACE_YOAST_PREMIUM }
-					plan={ plan }
 					title={ title }
 					showIcon={ true }
 				/>
@@ -639,9 +646,11 @@ export class PluginMeta extends Component {
 					! this.isWpcomPreinstalled() &&
 					( this.maybeDisplayUnsupportedNotice() || this.renderUpsell() ) }
 
-				{ 'wordpress-seo' === this.props.plugin.slug &&
-					this.renderYoastUpsell()
-				}
+				{ this.props.selectedSite &&
+					! get( this.props.selectedSite, 'jetpack' ) &&
+					this.hasFreePlan() &&
+					'wordpress-seo' === this.props.plugin.slug &&
+					this.renderYoastUpsell() }
 
 				{ this.getVersionWarning() }
 				{ this.getUpdateWarning() }
@@ -675,6 +684,7 @@ const mapStateToProps = ( state, { plugin, sites } ) => {
 		isVipSite: isVipSite( state, siteId ),
 		slug: getSiteSlug( state, siteId ),
 		pluginsOnSites: getPluginOnSites( state, siteIds, plugin.slug ),
+		siteProducts: getSiteProducts( state, siteId ),
 	};
 };
 
