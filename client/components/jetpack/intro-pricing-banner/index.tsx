@@ -35,8 +35,6 @@ const Banner: React.FC = () => {
 				className="intro-pricing-banner__badge"
 				alt={ translate( 'Money Back %(days)d-Day Guarantee', { args: { days: 14 } } ) }
 				src={ badgeIcon }
-				width="241"
-				height="239"
 			/>
 		</div>
 	);
