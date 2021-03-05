@@ -41,12 +41,12 @@ export default function BodySectionCssClass( { group, section, bodyClass } ) {
 			return;
 		}
 
-		bodyClass.forEach( bodyClass, ( className ) => {
+		bodyClass.forEach( ( className ) => {
 			document.body.classList.add( className );
 		} );
 
 		return () => {
-			bodyClass.forEach( bodyClass, ( className ) => {
+			bodyClass.forEach( ( className ) => {
 				document.body.classList.remove( className );
 			} );
 		};
