@@ -604,8 +604,8 @@ function LineItemSublabelAndPrice( {
 	return <>{ sublabel || null }</>;
 }
 
-function isCouponApplied( { cost, cost_before_coupon = 0 }: ResponseCartProduct ) {
-	return cost < cost_before_coupon;
+function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) {
+	return coupon_savings_integer > 0;
 }
 
 function FirstTermDiscountCallout( {
