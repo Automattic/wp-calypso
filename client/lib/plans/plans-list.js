@@ -122,6 +122,7 @@ const getPlanPersonalDetails = () => ( {
 	getPlanCompareFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
 		constants.FEATURE_CUSTOM_DOMAIN,
+		constants.FEATURE_HOSTING,
 		constants.FEATURE_JETPACK_ESSENTIAL,
 		constants.FEATURE_EMAIL_SUPPORT,
 		constants.FEATURE_FREE_THEMES,
@@ -192,6 +193,7 @@ const getPlanEcommerceDetails = () => ( {
 			constants.FEATURE_CUSTOM_DOMAIN,
 			isLoggedInMonthlyPricing && constants.FEATURE_LIVE_CHAT_SUPPORT,
 			isLoggedInMonthlyPricing && constants.FEATURE_EMAIL_SUPPORT,
+			constants.FEATURE_HOSTING,
 			constants.FEATURE_JETPACK_ADVANCED,
 			! isLoggedInMonthlyPricing && constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
@@ -296,6 +298,7 @@ const getPlanPremiumDetails = () => ( {
 			constants.FEATURE_CUSTOM_DOMAIN,
 			isLoggedInMonthlyPricing && constants.FEATURE_LIVE_CHAT_SUPPORT,
 			isLoggedInMonthlyPricing && constants.FEATURE_EMAIL_SUPPORT,
+			constants.FEATURE_HOSTING,
 			constants.FEATURE_JETPACK_ESSENTIAL,
 			! isLoggedInMonthlyPricing && constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
@@ -379,6 +382,7 @@ const getPlanBusinessDetails = () => ( {
 			constants.FEATURE_CUSTOM_DOMAIN,
 			isLoggedInMonthlyPricing && constants.FEATURE_LIVE_CHAT_SUPPORT,
 			isLoggedInMonthlyPricing && constants.FEATURE_EMAIL_SUPPORT,
+			constants.FEATURE_HOSTING,
 			constants.FEATURE_JETPACK_ADVANCED,
 			! isLoggedInMonthlyPricing && constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
