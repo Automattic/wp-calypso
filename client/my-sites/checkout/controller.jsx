@@ -5,6 +5,7 @@ import i18n from 'i18n-calypso';
 import React from 'react';
 import { get, isEmpty } from 'lodash';
 import page from 'page';
+import debugFactory from 'debug';
 
 /**
  * Internal Dependencies
@@ -18,7 +19,6 @@ import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import { canUserPurchaseGSuite } from 'calypso/lib/gsuite';
-import { getRememberedCoupon } from 'calypso/lib/cart/actions';
 import { setSectionMiddleware } from 'calypso/controller';
 import { sites } from 'calypso/my-sites/controller';
 import CartData from 'calypso/components/data/cart';
@@ -35,6 +35,10 @@ import UpsellNudge, {
 	CONCIERGE_QUICKSTART_SESSION,
 	DIFM_UPSELL,
 } from './upsell-nudge';
+import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
+import { TRUENAME_COUPONS } from 'calypso/lib/domains';
+
+const debug = debugFactory( 'calypso:checkout-controller' );
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
@@ -243,4 +247,68 @@ export function redirectToSupportSession( context ) {
 		page.redirect( `/checkout/offer-support-session/${ receiptId }/${ site }` );
 	}
 	page.redirect( `/checkout/offer-support-session/${ site }` );
+}
+
+function getRememberedCoupon() {
+	// read coupon list from localStorage, return early if it's not there
+	let coupons = null;
+	try {
+		const couponsJson = window.localStorage.getItem( MARKETING_COUPONS_KEY );
+		coupons = JSON.parse( couponsJson );
+	} catch ( err ) {}
+	if ( ! coupons ) {
+		debug( 'No coupons found in localStorage: ', coupons );
+		return null;
+	}
+	const ALLOWED_COUPON_CODE_LIST = [
+		'ALT',
+		'FBSAVE15',
+		'FIVERR',
+		'FLASHFB20OFF',
+		'FLASHFB50OFF',
+		'GENEA',
+		'KITVISA',
+		'LINKEDIN',
+		'PATREON',
+		'ROCKETLAWYER',
+		'RBC',
+		'SAFE',
+		'SBDC',
+		'TXAM',
+		...TRUENAME_COUPONS,
+	];
+	const THIRTY_DAYS_MILLISECONDS = 30 * 24 * 60 * 60 * 1000;
+	const now = Date.now();
+	debug( 'Found coupons in localStorage: ', coupons );
+
+	// delete coupons if they're older than thirty days; find the most recent one
+	let mostRecentTimestamp = 0;
+	let mostRecentCouponCode = null;
+	Object.keys( coupons ).forEach( ( key ) => {
+		if ( now > coupons[ key ] + THIRTY_DAYS_MILLISECONDS ) {
+			delete coupons[ key ];
+		} else if ( coupons[ key ] > mostRecentTimestamp ) {
+			mostRecentCouponCode = key;
+			mostRecentTimestamp = coupons[ key ];
+		}
+	} );
+
+	// write remembered coupons back to localStorage
+	try {
+		debug( 'Storing coupons in localStorage: ', coupons );
+		window.localStorage.setItem( MARKETING_COUPONS_KEY, JSON.stringify( coupons ) );
+	} catch ( err ) {}
+
+	if (
+		ALLOWED_COUPON_CODE_LIST.includes(
+			mostRecentCouponCode?.includes( '_' )
+				? mostRecentCouponCode.substring( 0, mostRecentCouponCode.indexOf( '_' ) )
+				: mostRecentCouponCode
+		)
+	) {
+		debug( 'returning coupon code:', mostRecentCouponCode );
+		return mostRecentCouponCode;
+	}
+	debug( 'not returning any coupon code.' );
+	return null;
 }
