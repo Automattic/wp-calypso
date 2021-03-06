@@ -33,7 +33,6 @@ import {
 	isDomainMapping,
 } from 'calypso/lib/products-values';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
-import { disableCart } from 'calypso/lib/cart/actions';
 import {
 	recordSignupStart,
 	recordSignupComplete,
@@ -159,11 +158,6 @@ class Signup extends React.Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		// Signup updates the cart through `SignupCart`. To prevent
-		// synchronization issues and unnecessary polling, the cart is disabled
-		// here.
-		disableCart();
-
 		const flow = flows.getFlow( this.props.flowName );
 		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
 
