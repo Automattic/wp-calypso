@@ -8,7 +8,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { hasRenewalItem, hasFreeTrial, hasDomainRegistration, hasPlan } from './cart-items';
+import { hasRenewalItem, hasDomainRegistration, hasPlan } from './cart-items';
 import {
 	isCredits,
 	isDomainRedemption,
@@ -130,10 +130,6 @@ export function getNewMessages( previousCartValue, nextCartValue ) {
 	const hasNewServerData = new Date( nextCartTimestamp ) > new Date( previousCartTimestamp );
 
 	return hasNewServerData ? nextCartMessages : {};
-}
-
-export function isFree( cart ) {
-	return cart.total_cost === 0 && ! hasFreeTrial( cart );
 }
 
 export function fillInAllCartItemAttributes( cart, products ) {

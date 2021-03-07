@@ -42,7 +42,6 @@ import {
 	isDomainTransfer,
 	isBundled,
 	isEcommerce,
-	isFreeTrial,
 	isFreeWordPressComDomain,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
@@ -142,7 +141,6 @@ export function addCartItemWithoutReplace( newCartItem ) {
  * Determines if the given cart item should replace the cart.
  * This can happen if the given item:
  * - will result in mixed renewals/non-renewals or multiple renewals (excluding privacy protection).
- * - is a free trial plan
  *
  * @param {CartItemValue} cartItem - `CartItemValue` object
  * @param {object} cart - the existing shopping cart
@@ -156,12 +154,6 @@ export function cartItemShouldReplaceCart( cartItem, cart ) {
 
 	if ( ! isRenewal( cartItem ) && hasRenewalItem( cart ) ) {
 		// all items should replace the cart if the cart contains a renewal
-		return true;
-	}
-
-	if ( isFreeTrial( cartItem ) || hasFreeTrial( cart ) ) {
-		// adding a free trial plan to your cart replaces the cart
-		// adding another product to a cart containing a free trial removes the free trial
 		return true;
 	}
 
@@ -298,16 +290,6 @@ export function getRenewalItems( cart ) {
 }
 
 /**
- * Determines whether there is at least one item with free trial in the specified shopping cart.
- *
- * @param {CartValue} cart - cart as `CartValue` object
- * @returns {boolean} true if there is at least one item with free trial, false otherwise
- */
-export function hasFreeTrial( cart ) {
-	return some( getAllCartItems( cart ), 'free_trial' );
-}
-
-/**
  * Determines whether there is any kind of plan (e.g. Premium or Business) in the shopping cart.
  *
  * @param {CartValue} cart - cart as `CartValue` object
@@ -391,17 +373,6 @@ export function getTlds( cart ) {
 	const domains = concat( getDomainRegistrations( cart ), getDomainTransfers( cart ) );
 
 	return uniq( map( domains, ( cartItem ) => getTld( cartItem.meta ) ) );
-}
-
-/**
- * Determines whether all items in the specified shopping are free trial or free domains
- *
- * @param {CartValue} cart - cart as `CartValue` object
- * @returns {boolean} true if all items have free trial, false otherwise
- * @todo This will fail when a domain is purchased with a plan, as the domain will be included in the free trial
- */
-export function hasOnlyFreeTrial( cart ) {
-	return cart.products && findFreeTrial( cart ) && every( getAllCartItems( cart ), { cost: 0 } );
 }
 
 /**
@@ -613,7 +584,6 @@ export function planItem( productSlug, properties ) {
 
 	return {
 		product_slug: productSlug,
-		free_trial: get( properties, 'isFreeTrialItem', false ),
 		...( domainToBundle ? { extra: { domain_to_bundle: domainToBundle } } : {} ),
 	};
 }
@@ -933,16 +903,6 @@ export function getItemForPlan( plan, properties ) {
 	}
 
 	throw new Error( 'Invalid plan product slug: ' + plan.product_slug );
-}
-
-/**
- * Retrieves the first item with free trial in the specified shopping cart.
- *
- * @param {CartValue} cart - cart as `CartValue` object
- * @returns {CartItemValue} the corresponding item in the shopping cart as `CartItemValue` object
- */
-export function findFreeTrial( cart ) {
-	return find( getAllCartItems( cart ), { free_trial: true } );
 }
 
 /**
