@@ -184,10 +184,6 @@ export function paymentMethodName( method ) {
 	return paymentMethodsNames[ method ] || method;
 }
 
-export function getLocationOrigin( l ) {
-	return l.protocol + '//' + l.hostname + ( l.port ? ':' + l.port : '' );
-}
-
 export function hasPendingPayment( cart ) {
 	if ( cart && cart.has_pending_payment ) {
 		return true;
