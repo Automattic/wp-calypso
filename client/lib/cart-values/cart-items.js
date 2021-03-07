@@ -2,22 +2,7 @@
  * External dependencies
  */
 import update from 'immutability-helper';
-import {
-	assign,
-	concat,
-	every,
-	filter,
-	find,
-	flatten,
-	flow,
-	get,
-	isEqual,
-	map,
-	merge,
-	reject,
-	some,
-	uniq,
-} from 'lodash';
+import { assign, every, filter, find, get, isEqual, merge, some } from 'lodash';
 import emailValidator from 'email-validator';
 
 /**
@@ -32,9 +17,7 @@ import {
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import {
 	formatProduct,
-	getDomain,
 	isCustomDesign,
-	isDependentProduct,
 	isDomainMapping,
 	isDomainProduct,
 	isDomainRedemption,
@@ -66,15 +49,7 @@ import {
 import sortProducts from 'calypso/lib/products-values/sort';
 import { getTld } from 'calypso/lib/domains';
 import { domainProductSlugs } from 'calypso/lib/domains/constants';
-import {
-	getPlan,
-	isBloggerPlan,
-	isBusinessPlan,
-	isPersonalPlan,
-	isPremiumPlan,
-	isWpComFreePlan,
-	isWpComBloggerPlan,
-} from 'calypso/lib/plans';
+import { getPlan, isBloggerPlan, isWpComFreePlan, isWpComBloggerPlan } from 'calypso/lib/plans';
 import { getTermDuration } from 'calypso/lib/plans/constants';
 
 /**
@@ -105,34 +80,6 @@ export function addCartItem( newCartItem ) {
 			return update( cart, { products: { $set: [ newCartItem ] } } );
 		}
 
-		return update( cart, { products: { $apply: appendItem } } );
-	};
-}
-
-export function clearCart() {
-	return function ( cart ) {
-		return update( cart, { products: { $set: [] } } );
-	};
-}
-
-/**
- * Adds the specified item to a shopping cart without replacing the cart
- *
- * @param {CartItemValue} newCartItem - new item as `CartItemValue` object
- * @returns {Function} the function that adds the item to a shopping cart
- */
-export function addCartItemWithoutReplace( newCartItem ) {
-	function appendItem( products ) {
-		products = products || [];
-
-		const isDuplicate = products.some( function ( existingCartItem ) {
-			return isEqual( newCartItem, existingCartItem );
-		} );
-
-		return isDuplicate ? products : products.concat( [ newCartItem ] );
-	}
-
-	return function ( cart ) {
 		return update( cart, { products: { $apply: appendItem } } );
 	};
 }
@@ -170,80 +117,6 @@ export function cartItemShouldReplaceCart( cartItem, cart ) {
 	}
 
 	return false;
-}
-
-/**
- * Removes the specified item from a shopping cart.
- *
- * @param {CartItemValue} cartItemToRemove - item as `CartItemValue` object
- * @returns {Function} the function that removes the item from a shopping cart
- */
-export function remove( cartItemToRemove ) {
-	function rejectItem( products ) {
-		const productsLeft = reject( products, function ( existingCartItem ) {
-			return (
-				cartItemToRemove.product_slug === existingCartItem.product_slug &&
-				cartItemToRemove.meta === existingCartItem.meta
-			);
-		} );
-
-		const isRemovingDomainProduct =
-			isDomainMapping( cartItemToRemove ) || isDomainRegistration( cartItemToRemove );
-		return productsLeft.map( ( existingCartItem ) => {
-			if (
-				isPlan( existingCartItem ) &&
-				isRemovingDomainProduct &&
-				getDomain( cartItemToRemove ) === getDomain( existingCartItem )
-			) {
-				return update( existingCartItem, { extra: { $merge: { domain_to_bundle: '' } } } );
-			}
-
-			return existingCartItem;
-		} );
-	}
-
-	return function ( cart ) {
-		return update( cart, { products: { $apply: rejectItem } } );
-	};
-}
-
-/**
- * Removes the specified item and its dependency items from a shopping cart.
- *
- * @param {CartItemValue} cartItemToRemove - item as `CartItemValue` object
- * @param {CartValue} cart - cart as `CartValue` object
- * @param {boolean} domainsWithPlansOnly - Whether we should consider domains as dependents of products
- * @returns {Function} the function that removes the items from a shopping cart
- */
-export function removeItemAndDependencies( cartItemToRemove, cart, domainsWithPlansOnly ) {
-	const dependencies = getDependentProducts( cartItemToRemove, cart, domainsWithPlansOnly );
-	const changes = dependencies.map( remove ).concat( remove( cartItemToRemove ) );
-
-	return flow.apply( null, changes );
-}
-
-/**
- * Retrieves the dependency items from the shopping cart for the given cart item.
- *
- * @param {CartItemValue} cartItem - item as `CartItemValue` object
- * @param {CartValue} cart - cart as `CartValue` object
- * @param {boolean} domainsWithPlansOnly - Whether we should consider domains as dependents of products
- * @returns {object[]} the list of dependency items in the shopping cart
- */
-export function getDependentProducts( cartItem, cart, domainsWithPlansOnly ) {
-	const dependentProducts = getAllCartItems( cart ).filter( function ( existingCartItem ) {
-		return isDependentProduct( cartItem, existingCartItem, domainsWithPlansOnly );
-	} );
-
-	return uniq(
-		flatten(
-			dependentProducts.concat(
-				dependentProducts.map( ( dependentProduct ) =>
-					getDependentProducts( dependentProduct, cart )
-				)
-			)
-		)
-	);
 }
 
 /**
@@ -343,26 +216,6 @@ export function hasMonthlyCartItem( cart ) {
 }
 
 /**
- * Whether the cart has a registration with a specific TLD
- *
- * @param {CartValue} cart - cart as `CartValue` object
- * @param {string} tld - TLD to look for, no leading dot
- *
- * @returns {boolean} - Whether or not the cart contains a domain with that TLD
- */
-export function hasTld( cart, tld ) {
-	const domains = concat( getDomainRegistrations( cart ), getDomainTransfers( cart ) );
-
-	return some( domains, ( cartItem ) => getTld( cartItem.meta ) === tld );
-}
-
-export function getTlds( cart ) {
-	const domains = concat( getDomainRegistrations( cart ), getDomainTransfers( cart ) );
-
-	return uniq( map( domains, ( cartItem ) => getTld( cartItem.meta ) ) );
-}
-
-/**
  * Determines whether there is at least one item of a given product in the specified shopping cart.
  *
  * @param {CartValue} cart - cart as `CartValue` object
@@ -435,24 +288,6 @@ function isNewDomainRegistration( cartItem ) {
  */
 function isDomainRenewal( cartItem ) {
 	return isRenewal( cartItem ) && isDomainRegistration( cartItem );
-}
-
-export function hasAllDomainProductsWithPrivacySupport( cart ) {
-	return every(
-		concat( getDomainTransfers( cart ), getDomainRegistrations( cart ) ),
-		privacyAvailable
-	);
-}
-
-export function hasSomeDomainProductsWithPrivacySupport( cart ) {
-	return some(
-		concat( getDomainTransfers( cart ), getDomainRegistrations( cart ) ),
-		privacyAvailable
-	);
-}
-
-export function hasDomainMapping( cart ) {
-	return some( getAllCartItems( cart ), isDomainMapping );
 }
 
 export function hasDomainBeingUsedForPlan( cart ) {
@@ -868,31 +703,6 @@ export function jetpackProductItem( slug ) {
 }
 
 /**
- * Creates a new shopping cart item for the specified plan.
- *
- * @param {object} plan - plan provided by the `PlansList` object
- * @param {object} [properties] - list of properties
- * @returns {CartItemValue} the new item as `CartItemValue` object
- */
-export function getItemForPlan( plan, properties ) {
-	properties = properties || {};
-
-	if ( isPersonalPlan( plan.product_slug ) ) {
-		return personalPlan( plan.product_slug, properties );
-	}
-
-	if ( isPremiumPlan( plan.product_slug ) ) {
-		return premiumPlan( plan.product_slug, properties );
-	}
-
-	if ( isBusinessPlan( plan.product_slug ) ) {
-		return businessPlan( plan.product_slug, properties );
-	}
-
-	throw new Error( 'Invalid plan product slug: ' + plan.product_slug );
-}
-
-/**
  * Retrieves all the domain registration items in the specified shopping cart.
  *
  * @param {CartValue} cart - cart as `CartValue` object
@@ -995,69 +805,8 @@ export function getRenewalItemFromCartItem( cartItem, properties ) {
 	} );
 }
 
-/**
- * Retrieves all the site redirect items in the specified shopping cart.
- *
- * @param {CartValue} cart - cart as `CartValue` object
- * @returns {CartItemValue[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
- */
-export function getSiteRedirects( cart ) {
-	return filter( getAllCartItems( cart ), { product_slug: 'offsite_redirect' } );
-}
-
 export function hasDomainInCart( cart, domain ) {
 	return some( getAllCartItems( cart ), { is_domain_registration: true, meta: domain } );
-}
-
-/**
- * Retrieves the domain registration items in the specified shopping cart that do not have corresponding
- * private whois items.
- *
- * @param {CartValue} cart - cart as `CartValue` object
- * @returns {CartItemValue[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
- */
-export function getDomainRegistrationsWithoutPrivacy( cart ) {
-	return getDomainRegistrations( cart ).filter( function ( cartItem ) {
-		return ! some( cart.products, {
-			meta: cartItem.meta,
-			extra: { privacy: true },
-		} );
-	} );
-}
-
-/**
- * Retrieves the domain incoming transfer items in the specified shopping cart that do not have corresponding
- * private incoming transfer item.
- *
- * @param {CartValue} cart - cart as `CartValue` object
- * @returns {CartItemValue[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
- */
-export function getDomainTransfersWithoutPrivacy( cart ) {
-	return getDomainTransfers( cart ).filter( function ( cartItem ) {
-		return ! some( cart.products, {
-			meta: cartItem.meta,
-			extra: { privacy: true },
-		} );
-	} );
-}
-
-/**
- * Changes presence of a privacy protection for the given domain cart items.
- *
- * @param {CartValue} cart - cart as `CartValue` object
- * @param {CartItemValue[]} domainItems - the list of `CartItemValue` objects for domain registrations
- * @param {Function} changeFunction - the function that adds/removes the privacy protection to a shopping cart
- * @param {boolean} value - whether privacy is on or off
- *
- * @returns {Function} the function that adds/removes privacy protections from the shopping cart
- */
-export function changePrivacyForDomains( cart, domainItems, changeFunction, value ) {
-	return flow.apply(
-		null,
-		domainItems.map( function ( item ) {
-			return changeFunction( item, updatePrivacyForDomain( item, value ) );
-		} )
-	);
 }
 
 /**
