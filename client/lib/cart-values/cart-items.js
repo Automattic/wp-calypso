@@ -223,19 +223,6 @@ export function removeItemAndDependencies( cartItemToRemove, cart, domainsWithPl
 }
 
 /**
- * Removes the specified item and its dependency items from a shopping cart.
- *
- * @param {CartItemValue} oldItem - item as `CartItemValue` object
- * @param {CartItemValue} newItem - item as `CartItemValue` object
- * @returns {Function} the function that removes the items from a shopping cart
- */
-export function replaceItem( oldItem, newItem ) {
-	return function ( cart ) {
-		return flow( [ remove( oldItem ), addCartItem( newItem ) ] )( cart );
-	};
-}
-
-/**
  * Retrieves the dependency items from the shopping cart for the given cart item.
  *
  * @param {CartItemValue} cartItem - item as `CartItemValue` object
@@ -1087,27 +1074,6 @@ export function updatePrivacyForDomain( item, value ) {
 			privacy: value,
 		},
 	} );
-}
-
-export function addPrivacyToAllDomains( cart ) {
-	return changePrivacyForDomains(
-		cart,
-		[
-			...getDomainRegistrationsWithoutPrivacy( cart ),
-			...getDomainTransfersWithoutPrivacy( cart ),
-		],
-		replaceItem,
-		true
-	);
-}
-
-export function removePrivacyFromAllDomains( cart ) {
-	return changePrivacyForDomains(
-		cart,
-		[ ...getDomainRegistrations( cart ), ...getDomainTransfers( cart ) ],
-		replaceItem,
-		false
-	);
 }
 
 /**

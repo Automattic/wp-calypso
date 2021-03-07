@@ -27,7 +27,6 @@ const { getPlan } = require( 'calypso/lib/plans' );
 const { getTermDuration } = require( 'calypso/lib/plans/constants' );
 const {
 	planItem,
-	replaceItem,
 	getItemForPlan,
 	isNextDomainFree,
 	hasRenewableSubscription,
@@ -167,52 +166,6 @@ describe( 'hasRenewableSubscription()', () => {
 				} )
 			).toBe( true );
 		} );
-	} );
-} );
-
-describe( 'replaceItem()', () => {
-	test( 'should return a function', () => {
-		expect( typeof replaceItem() ).toBe( 'function' );
-	} );
-
-	test( 'should replace a cart item', () => {
-		const oldProduct = { id: 1, product_slug: '1' };
-		const newProduct = { id: 2, product_slug: '2' };
-		const cart = {
-			products: [ oldProduct ],
-		};
-		const newCart = replaceItem( oldProduct, newProduct )( cart );
-		expect( typeof newCart ).toBe( 'object' );
-		expect( newCart.products ).toHaveLength( 1 );
-		expect( newCart.products[ 0 ] ).toBe( newProduct );
-	} );
-
-	test( 'should preserve other cart items when replacing a cart item', () => {
-		const oldProduct = { id: 1, product_slug: '1' };
-		const newProduct = { id: 2, product_slug: '2' };
-		const neutralProduct = { id: 3, product_slug: '3' };
-		const cart = {
-			products: [ oldProduct, neutralProduct ],
-		};
-		const newCart = replaceItem( oldProduct, newProduct )( cart );
-		expect( typeof newCart ).toBe( 'object' );
-		expect( newCart.products ).toHaveLength( 2 );
-		expect( newCart.products[ 0 ] ).toBe( neutralProduct );
-		expect( newCart.products[ 1 ] ).toBe( newProduct );
-	} );
-
-	test( 'should just add new item when old one is missing', () => {
-		const oldProduct = { id: 1, product_slug: '1' };
-		const newProduct = { id: 2, product_slug: '2' };
-		const neutralProduct = { id: 3, product_slug: '3' };
-		const cart = {
-			products: [ neutralProduct ],
-		};
-		const newCart = replaceItem( oldProduct, newProduct )( cart );
-		expect( typeof newCart ).toBe( 'object' );
-		expect( newCart.products ).toHaveLength( 2 );
-		expect( newCart.products[ 0 ] ).toBe( neutralProduct );
-		expect( newCart.products[ 1 ] ).toBe( newProduct );
 	} );
 } );
 
