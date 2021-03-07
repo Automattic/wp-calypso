@@ -8,7 +8,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { hasRenewalItem, hasDomainRegistration, hasPlan } from './cart-items';
+import { hasRenewalItem } from './cart-items';
 import {
 	isCredits,
 	isDomainRedemption,
@@ -87,6 +87,7 @@ export function preprocessCartForServer( {
 export function emptyCart( siteId, attributes ) {
 	return Object.assign( { blog_id: siteId, products: [] }, attributes );
 }
+
 export function canRemoveFromCart( cart, cartItem ) {
 	if ( isCredits( cartItem ) ) {
 		return false;
@@ -152,28 +153,6 @@ export function fillInSingleCartItemAttributes( cartItem, products ) {
 	const attributes = allowedProductAttributes( product );
 
 	return { ...cartItem, ...attributes };
-}
-
-/**
- * Return a string that represents the overall refund policy for all the items
- * in the shopping cart. See the support documentation for more details on
- * these policies:
- *
- * https://wordpress.com/support/refunds/
- *
- * @param {object} cart - cart as `CartValue` object
- * @returns {string} the refund policy type
- */
-export function getRefundPolicy( cart ) {
-	if ( hasDomainRegistration( cart ) && hasPlan( cart ) ) {
-		return 'planWithDomainRefund';
-	}
-
-	if ( hasDomainRegistration( cart ) ) {
-		return 'domainRefund';
-	}
-
-	return 'genericRefund';
 }
 
 /**
