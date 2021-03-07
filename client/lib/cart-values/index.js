@@ -88,26 +88,6 @@ export function emptyCart( siteId, attributes ) {
 	return Object.assign( { blog_id: siteId, products: [] }, attributes );
 }
 
-export function applyCoupon( coupon ) {
-	return function ( cart ) {
-		return update( cart, {
-			coupon: { $set: coupon },
-			is_coupon_applied: { $set: false },
-			$unset: [ 'is_coupon_removed' ],
-		} );
-	};
-}
-
-export function removeCoupon() {
-	return function ( cart ) {
-		return update( cart, {
-			coupon: { $set: '' },
-			is_coupon_applied: { $set: false },
-			$merge: { is_coupon_removed: true },
-		} );
-	};
-}
-
 export const getTaxCountryCode = ( cart ) => cart?.tax?.location?.country_code;
 
 export const getTaxPostalCode = ( cart ) => cart?.tax?.location?.postal_code;
