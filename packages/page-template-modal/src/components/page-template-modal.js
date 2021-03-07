@@ -114,12 +114,13 @@ class PageTemplateModal extends Component {
 		}
 
 		const template = this.props.templates.find( ( t ) => t.name === name );
+		const isHomepageTemplate = ( template.categories || {} ).hasOwnProperty( 'home' );
 
 		// Load content.
 		const blocks = this.getBlocksForSelection( name );
 
 		// Only overwrite the page title if the template is not one of the Homepage Layouts
-		const title = template.category === 'home' ? null : template.title || '';
+		const title = isHomepageTemplate ? null : template.title || '';
 
 		// Skip inserting if this is not a blank template
 		// and there's nothing to insert.
