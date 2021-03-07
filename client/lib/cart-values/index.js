@@ -87,53 +87,6 @@ export function preprocessCartForServer( {
 export function emptyCart( siteId, attributes ) {
 	return Object.assign( { blog_id: siteId, products: [] }, attributes );
 }
-
-export const getTaxCountryCode = ( cart ) => cart?.tax?.location?.country_code;
-
-export const getTaxPostalCode = ( cart ) => cart?.tax?.location?.postal_code;
-
-export const getTaxLocation = ( cart ) => cart?.tax?.location ?? {};
-
-export function setTaxCountryCode( countryCode ) {
-	return function ( cart ) {
-		return update( cart, {
-			$auto: {
-				tax: {
-					$auto: {
-						location: {
-							$auto: {
-								country_code: {
-									$set: countryCode,
-								},
-							},
-						},
-					},
-				},
-			},
-		} );
-	};
-}
-
-export function setTaxPostalCode( postalCode ) {
-	return function ( cart ) {
-		return update( cart, {
-			$auto: {
-				tax: {
-					$auto: {
-						location: {
-							$auto: {
-								postal_code: {
-									$set: postalCode,
-								},
-							},
-						},
-					},
-				},
-			},
-		} );
-	};
-}
-
 export function canRemoveFromCart( cart, cartItem ) {
 	if ( isCredits( cartItem ) ) {
 		return false;
