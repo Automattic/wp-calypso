@@ -291,6 +291,7 @@ class Layout extends Component {
 						require="calypso/components/happychat/button"
 						placeholder={ null }
 						allowMobileRedirect
+						borderless={ false }
 						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 						className={ classnames( 'floating-happychat-button', {
 							offset: loadInlineHelp,

@@ -332,7 +332,7 @@
 }
 
 
-.floating-happychat-button.button.is-borderless {
+.floating-happychat-button {
 	position: fixed;
 	right: 24px;
 	bottom: 24px;
@@ -342,7 +342,6 @@
 	border-radius: 100%; /* stylelint-disable-line */
 	background: var( --color-primary );
 	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
-	border: 1px solid var( --color-primary );
 
 	.gridicon {
 		fill: var( --color-text-inverted );
@@ -366,11 +365,5 @@
 		bottom: calc( 24px + 60px );
 		right: calc( 24px + 5px );
 	}
-
-	@include breakpoint-deprecated( '<660px' ) {
-		padding: 1px;
-	}
 }
-
-
 
