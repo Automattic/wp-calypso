@@ -951,7 +951,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				export BROWSERSIZE="desktop"
 				export BROWSERLOCALE="en"
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-				export TEST_FILES=${'$'}(join ',' ${'$'}(ls -1 specs*/**/*spec.js))
+				export TEST_FILES=${'$'}(join ',' ${'$'}(ls -1 specs*/**/*spec-playwright.js))
 
 				yarn magellan --config=magellan.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
 			""".trimIndent()
