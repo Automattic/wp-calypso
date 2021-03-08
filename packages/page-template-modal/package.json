@@ -28,7 +28,7 @@
 		"src"
 	],
 	"dependencies": {
-		"@automattic/js-utils": "^1.0.0",
+		"@automattic/js-utils": "^0.1.0",
 		"@wordpress/api-fetch": "^3.21.1",
 		"@wordpress/block-editor": "^5.2.1",
 		"@wordpress/blocks": "^6.25.1",
