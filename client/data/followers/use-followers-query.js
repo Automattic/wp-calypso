@@ -27,7 +27,7 @@ const extractPages = ( pages = [] ) =>
 	pages.flatMap( ( page ) => page.subscribers ).map( normalizeFollower );
 const compareUnique = ( a, b ) => a.ID === b.ID;
 
-const useFollowers = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
+const useFollowersQuery = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
 	const { search, type } = fetchOptions;
 
 	return useInfiniteQuery(
@@ -56,4 +56,4 @@ const useFollowers = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
 	);
 };
 
-export default useFollowers;
+export default useFollowersQuery;

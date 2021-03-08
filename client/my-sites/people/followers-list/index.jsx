@@ -11,7 +11,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import Followers from './followers';
-import useFollowers from 'calypso/data/followers/use-followers';
+import useFollowersQuery from 'calypso/data/followers/use-followers-query';
 import useRemoveFollower from 'calypso/data/followers/remove-follower';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 
@@ -39,7 +39,7 @@ const FollowersList = ( { site, search, type = 'wpcom' } ) => {
 		hasNextPage,
 		refetch,
 		error,
-	} = useFollowers( site.ID, fetchOptions );
+	} = useFollowersQuery( site.ID, fetchOptions );
 	const { removeFollower } = useRemoveFollower();
 
 	useEffect( () => {
