@@ -31,11 +31,10 @@ import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
 	TERM_BIENNIALLY,
-	JETPACK_PLANS,
+	JETPACK_LEGACY_PLANS,
 	JETPACK_RESET_PLANS,
 	JETPACK_SECURITY_PLANS,
 	JETPACK_PLANS_BY_TERM,
-	PLAN_JETPACK_FREE,
 } from 'calypso/lib/plans/constants';
 import {
 	getPlan,
@@ -119,11 +118,7 @@ export function durationToText( duration: Duration ): TranslateResult {
 		return translate( '/month, paid monthly' );
 	}
 
-	if ( duration === TERM_ANNUALLY ) {
-		return translate( '/month, paid yearly' );
-	}
-
-	return duration;
+	return translate( '/month, paid yearly' );
 }
 
 // In the case of products that have options (daily and real-time), we want to display
@@ -348,7 +343,7 @@ function slugIsJetpackProductSlug( slug: string ): slug is JetpackProductSlug {
 	return slug in JETPACK_PRODUCTS_LIST;
 }
 function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlugs {
-	return JETPACK_PLANS.includes( slug );
+	return [ ...JETPACK_LEGACY_PLANS, ...JETPACK_RESET_PLANS ].includes( slug );
 }
 
 /**
@@ -390,6 +385,7 @@ function objectIsPlan( item: Record< string, unknown > | Plan ): item is Plan {
 	const requiredKeys = [
 		'group',
 		'type',
+		'term',
 		'getBillingTimeFrame',
 		'getTitle',
 		'getDescription',
@@ -474,7 +470,6 @@ export function itemToSelectorProduct(
 			productSlug,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug: ( yearlyProductSlug || productSlug ) + iconAppend,
-			isFree: productSlug === PLAN_JETPACK_FREE,
 			displayName: getForCurrentCROIteration( item.getTitle ),
 			buttonLabel: getForCurrentCROIteration( item.getButtonLabel ),
 			type,
@@ -483,7 +478,6 @@ export function itemToSelectorProduct(
 			tagline: getForCurrentCROIteration( item.getTagline ) || '',
 			description: getForCurrentCROIteration( item.getDescription ),
 			monthlyProductSlug,
-			displayTerm: item.getDisplayTerm?.(),
 			term: item.term === TERM_BIENNIALLY ? TERM_ANNUALLY : item.term,
 			features: {
 				items:
