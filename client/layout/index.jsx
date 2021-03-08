@@ -75,12 +75,6 @@ class Layout extends Component {
 		shouldShowAppBanner: PropTypes.bool,
 	};
 
-	attemptStartHappyChat() {
-		if ( this.props.hasActiveHappyChat && config.isEnabled( 'happychat' ) ) {
-			this.props.openHappyChat();
-		}
-	}
-
 	componentDidMount() {
 		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
 			return;
@@ -124,6 +118,38 @@ class Layout extends Component {
 		this.attemptStartHappyChat();
 
 		// intentionally don't remove these in unmount
+	}
+
+	attemptStartHappyChat() {
+		if ( this.props.hasActiveHappyChat && config.isEnabled( 'happychat' ) ) {
+			this.props.openHappyChat();
+		}
+	}
+
+	shouldShowHappyChatButton() {
+		if ( ! config.isEnabled( 'happychat' ) ) {
+			return false;
+		}
+
+		if ( isWpMobileApp() ) {
+			return false;
+		}
+
+		if ( ! this.props.hasActiveHappyChat ) {
+			return false;
+		}
+
+		const exemptedSections = [ 'jetpack-connect', 'happychat', 'devdocs' ];
+		const exemptedRoutes = [ '/log-in/jetpack', '/me/account/closed' ];
+		const exemptedRoutesStartingWith = [ '/start/p2' ];
+
+		return (
+			! exemptedSections.includes( this.props.sectionName ) &&
+			! exemptedRoutes.includes( this.props.currentRoute ) &&
+			! some( exemptedRoutesStartingWith, ( startsWithString ) =>
+				this.props.currentRoute?.startsWith( startsWithString )
+			)
+		);
 	}
 
 	shouldLoadInlineHelp() {
@@ -198,6 +224,9 @@ class Layout extends Component {
 		};
 
 		const { shouldShowAppBanner } = this.props;
+
+		const loadInlineHelp = this.shouldLoadInlineHelp();
+
 		return (
 			<div className={ sectionClass }>
 				<QueryExperiments />
@@ -263,9 +292,20 @@ class Layout extends Component {
 				{ 'development' === process.env.NODE_ENV && (
 					<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 				) }
-				{ this.shouldLoadInlineHelp() && (
+				{ loadInlineHelp && (
 					<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />
 				) }
+				{ this.shouldShowHappyChatButton() && (
+					<AsyncLoad
+						require="calypso/components/happychat/button"
+						placeholder={ null }
+						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+						className={ classnames( 'floating-happychat-button', {
+							'floating-happychat-button--offset-bottom': loadInlineHelp,
+						} ) }
+					/>
+				) }
+
 				{ config.isEnabled( 'layout/support-article-dialog' ) && (
 					<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
 				) }

@@ -18,7 +18,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
 import { Button, RootChild } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
-import HappychatButton from 'calypso/components/happychat/button';
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'calypso/components/async-load';
@@ -174,9 +173,6 @@ class InlineHelp extends Component {
 						videoLink={ videoLink }
 						onClose={ this.closeDialog }
 					/>
-				) }
-				{ this.props.hasActiveHappyChat && config.isEnabled( 'happychat' ) && (
-					<HappychatButton className="inline-help__happychat-button" allowMobileRedirect />
 				) }
 			</div>
 		);
