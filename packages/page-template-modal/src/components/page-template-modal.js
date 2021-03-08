@@ -247,17 +247,15 @@ class PageTemplateModal extends Component {
 		}
 
 		return (
-			<fieldset className="page-template-modal__list">
-				<TemplateSelectorControl
-					label={ __( 'Layout', __i18n_text_domain__ ) }
-					legendLabel={ groupTitle }
-					templates={ filteredTemplatesList }
-					onTemplateSelect={ this.setTemplate }
-					theme={ this.props.theme }
-					locale={ this.props.locale }
-					siteInformation={ this.props.siteInformation }
-				/>
-			</fieldset>
+			<TemplateSelectorControl
+				label={ __( 'Layout', __i18n_text_domain__ ) }
+				legendLabel={ groupTitle }
+				templates={ filteredTemplatesList }
+				onTemplateSelect={ this.setTemplate }
+				theme={ this.props.theme }
+				locale={ this.props.locale }
+				siteInformation={ this.props.siteInformation }
+			/>
 		);
 	};
 
