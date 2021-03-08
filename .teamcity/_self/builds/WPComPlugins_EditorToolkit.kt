@@ -18,7 +18,7 @@ object WPComPlugins_EditorToolKit : BuildType({
 		artifacts(AbsoluteId("calypso_WPComPlugins_EditorToolKit")) {
 			buildRule = tag("etk-release-build", "+:trunk")
 			artifactRules = """
-				+:apps/editing-toolkit/editing-toolkit-plugin => etk-release-build
+				+:./apps/editing-toolkit/editing-toolkit-plugin => etk-release-build
 			""".trimIndent()
 		}
 	}
