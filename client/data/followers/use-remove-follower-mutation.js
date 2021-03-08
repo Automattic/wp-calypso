@@ -8,7 +8,7 @@ import { useMutation, useQueryClient } from 'react-query';
  */
 import wp from 'calypso/lib/wp';
 
-function useRemoveFollower() {
+function useRemoveFollowerMutation() {
 	const queryClient = useQueryClient();
 	const { mutate: removeFollower, ...rest } = useMutation(
 		( { siteId, follower, type } ) => {
@@ -26,4 +26,4 @@ function useRemoveFollower() {
 	return { removeFollower, ...rest };
 }
 
-export default useRemoveFollower;
+export default useRemoveFollowerMutation;

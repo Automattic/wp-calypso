@@ -12,7 +12,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import Followers from './followers';
 import useFollowersQuery from 'calypso/data/followers/use-followers-query';
-import useRemoveFollower from 'calypso/data/followers/remove-follower';
+import useRemoveFollowerMutation from 'calypso/data/followers/use-remove-follower-mutation';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 
 /**
@@ -40,7 +40,7 @@ const FollowersList = ( { site, search, type = 'wpcom' } ) => {
 		refetch,
 		error,
 	} = useFollowersQuery( site.ID, fetchOptions );
-	const { removeFollower } = useRemoveFollower();
+	const { removeFollower } = useRemoveFollowerMutation();
 
 	useEffect( () => {
 		if ( error ) {
