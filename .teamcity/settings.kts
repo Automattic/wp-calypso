@@ -908,6 +908,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				export LIVEBRANCHES=true
 				export NODE_CONFIG_ENV=test
 				export TEST_VIDEO=true
+				export PLAYWRIGHT_BROWSERS_PATH=0
 
 				# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
 				# mocha-teamcity-reporter to work.
@@ -951,7 +952,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				export BROWSERSIZE="desktop"
 				export BROWSERLOCALE="en"
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-				export TEST_FILES=${'$'}(join ',' ${'$'}(ls -1 specs*/**/*spec.js))
+				export TEST_FILES=${'$'}(join ',' ${'$'}(ls -1 specs*/**/*spec-playwright.js))
 
 				yarn magellan --config=magellan.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
 			""".trimIndent()
