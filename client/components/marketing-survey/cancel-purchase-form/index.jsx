@@ -802,7 +802,7 @@ class CancelPurchaseForm extends React.Component {
 				primary
 				data-e2e-button="remove"
 			>
-				{ this.props.disableButtons ? 'Removing' : 'Remove It' }
+				{ this.props.disableButtons ? translate( 'Removing' ) : translate( 'Remove It' ) }
 			</Button>
 		);
 
