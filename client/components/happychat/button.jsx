@@ -56,7 +56,7 @@ export class HappychatButton extends Component {
 	onClick = ( event ) => {
 		if ( this.props.allowMobileRedirect && isMobile() ) {
 			// For mobile clients, happychat will always use the
-			// page componet instead of the sidebar
+			// page component instead of the sidebar.
 			page( '/me/chat' );
 		} else {
 			this.props.openChat();
