@@ -185,6 +185,8 @@ class Layout extends Component {
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': ! this.props.secondary,
+			'is-inline-help-showing': this.shouldLoadInlineHelp(),
+			'is-happychat-button-showing': this.shouldShowHappyChatButton(),
 			'has-chat': this.props.chatIsOpen,
 			'has-no-masterbar': this.props.masterbarIsHidden,
 			'is-jetpack-login': this.props.isJetpackLogin,
@@ -288,9 +290,10 @@ class Layout extends Component {
 					<AsyncLoad
 						require="calypso/components/happychat/button"
 						placeholder={ null }
+						allowMobileRedirect
 						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 						className={ classnames( 'floating-happychat-button', {
-							'offset-bottom': loadInlineHelp,
+							offset: loadInlineHelp,
 						} ) }
 					/>
 				) }

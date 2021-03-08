@@ -362,8 +362,9 @@
 		border-color: var( --color-accent );
 	}
 
-	&.offset-bottom {
-		bottom: 60px;
+	&.offset {
+		bottom: calc( 24px + 60px );
+		right: calc( 24px + 5px );
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
