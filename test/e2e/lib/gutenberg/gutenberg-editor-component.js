@@ -158,19 +158,43 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return contactFormBlock.insertSubject( subject );
 	}
 
-	async toggleOptionsMenu() {
-		await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( ".edit-post-more-menu button[aria-label='Options']" )
-		);
+	async openOptionsMenu() {
+		const buttonSelector = ".edit-post-more-menu button[aria-label='Options']";
+		const buttonLocator = By.css( buttonSelector );
+		const activeButtonLocator = By.css( buttonSelector + '[aria-expanded="true"]' );
 
-		// This sleep is needed for the Options menu to be accessible. I've tried `waitTillPresentAndDisplayed`
-		// but it doesn't seem to work consistently, but this is pending improvement as this adds up on total time.
-		await this.driver.sleep( 2000 );
+		const isOpen = await driverHelper.isElementPresent( this.driver, activeButtonLocator );
+		if ( ! isOpen ) {
+			const popoverSlot = await this.driver.findElement( By.css( '#editor > .popover-slot' ) );
+			const menuButton = await this.driver.findElement( buttonLocator );
+
+			this.driver.executeAsyncScript(
+				"arguments[ 0 ].addEventListener( 'animationend', arguments[ arguments.length - 1 ] );",
+				popoverSlot
+			);
+
+			await menuButton.click();
+			await driverHelper.highlightElement( this.driver, menuButton );
+		} else {
+			console.log( 'Options menu is already open.' );
+		}
+	}
+
+	async closeOptionsMenu() {
+		const buttonSelector = ".edit-post-more-menu button[aria-label='Options']";
+		const closedMenuLocator = By.css( buttonSelector + '[aria-expanded="false"]' );
+
+		const isClosed = await driverHelper.isElementPresent( this.driver, closedMenuLocator );
+		if ( ! isClosed ) {
+			await driverHelper.clickWhenClickable( this.driver, By.css( buttonSelector ) );
+			await driverHelper.isEventuallyPresentAndDisplayed( this.driver, closedMenuLocator );
+		} else {
+			console.log( 'Options menu is already closed.' );
+		}
 	}
 
 	async switchToCodeEditor() {
-		await this.toggleOptionsMenu();
+		await this.openOptionsMenu();
 
 		await driverHelper.clickWhenClickable(
 			this.driver,
@@ -179,12 +203,11 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			)
 		);
 
-		// Wait for the code editor element.
 		const textAreaSelector = By.css( 'textarea.editor-post-text-editor' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, textAreaSelector );
 
-		// Close the menu.
-		await this.toggleOptionsMenu();
+		// Wait for the Code Editor to load and close the menu.
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, textAreaSelector );
+		await this.closeOptionsMenu();
 
 		return textAreaSelector;
 	}
