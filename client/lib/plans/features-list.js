@@ -1608,21 +1608,6 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Live chat support 24X7' ),
 		getDescription: () => {},
 	},
-
-	// Jetpack Free features
-
-	[ constants.FEATURE_JETPACK_FREE_SITE_STATS ]: {
-		getSlug: () => constants.FEATURE_JETPACK_FREE_SITE_STATS,
-		getTitle: () => i18n.translate( 'Site stats' ),
-	},
-	[ constants.FEATURE_JETPACK_FREE_ATTACK_PROTECTION ]: {
-		getSlug: () => constants.FEATURE_JETPACK_FREE_ATTACK_PROTECTION,
-		getTitle: () => i18n.translate( 'Brute force attack protection' ),
-	},
-	[ constants.FEATURE_JETPACK_FREE_CDN ]: {
-		getSlug: () => constants.FEATURE_JETPACK_FREE_CDN,
-		getTitle: () => i18n.translate( 'Content delivery network' ),
-	},
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList ) => {

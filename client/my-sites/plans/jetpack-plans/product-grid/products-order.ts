@@ -1,13 +1,11 @@
 /**
  * Internal dependencies
  */
-import { getForCurrentCROIteration, Iterations } from '../iterations';
 import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
-	PLAN_JETPACK_FREE,
 	JETPACK_COMPLETE_PLANS,
 } from 'calypso/lib/plans/constants';
 import {
@@ -46,28 +44,5 @@ const PRODUCT_POSITION_IN_GRID: Record< string, number > = {
 	...setProductsInPosition( JETPACK_CRM_FREE_PRODUCTS, 80 ),
 };
 
-const PRODUCT_POSITION_IN_GRID_I7: Record< string, number > = {
-	[ PLAN_JETPACK_FREE ]: 1,
-	[ PLAN_JETPACK_SECURITY_DAILY ]: 10,
-	[ PLAN_JETPACK_SECURITY_DAILY_MONTHLY ]: 10,
-	...setProductsInPosition( JETPACK_COMPLETE_PLANS, 20 ),
-	[ PRODUCT_JETPACK_BACKUP_DAILY ]: 30,
-	[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: 30,
-	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: 40,
-	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: 40,
-	[ PLAN_JETPACK_SECURITY_REALTIME ]: 50,
-	[ PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ]: 50,
-	...setProductsInPosition( JETPACK_SCAN_PRODUCTS, 60 ),
-	...setProductsInPosition( JETPACK_ANTI_SPAM_PRODUCTS, 70 ),
-	...setProductsInPosition( JETPACK_SEARCH_PRODUCTS, 80 ),
-	...setProductsInPosition( JETPACK_CRM_FREE_PRODUCTS, 90 ),
-};
-
-export const getProductPosition = ( slug: JetpackPlanSlugs | JetpackProductSlug ): number => {
-	const positions =
-		getForCurrentCROIteration( {
-			[ Iterations.I7 ]: PRODUCT_POSITION_IN_GRID_I7,
-		} ) || PRODUCT_POSITION_IN_GRID;
-
-	return positions[ slug ] ?? 100;
-};
+export const getProductPosition = ( slug: JetpackPlanSlugs | JetpackProductSlug ): number =>
+	PRODUCT_POSITION_IN_GRID[ slug ] ?? 100;

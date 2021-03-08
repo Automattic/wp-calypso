@@ -33,13 +33,13 @@ export class PlanPrice extends Component {
 			translate,
 		} = this.props;
 
-		if ( ! currencyCode || typeof rawPrice !== 'number' ) {
+		if ( ! currencyCode || ! rawPrice ) {
 			return null;
 		}
 
 		// "Normalize" the input price or price range.
 		const rawPriceRange = Array.isArray( rawPrice ) ? rawPrice.slice( 0, 2 ) : [ rawPrice ];
-		if ( rawPrice > 0 && rawPriceRange.includes( 0 ) ) {
+		if ( rawPriceRange.includes( 0 ) ) {
 			return null;
 		}
 
