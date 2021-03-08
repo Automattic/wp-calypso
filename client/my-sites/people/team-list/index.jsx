@@ -12,10 +12,29 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import Team from './team';
 import useUsers from 'calypso/data/users/use-users';
 
-function TeamList( props ) {
+const useErrorNotice = ( error, refetch ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
+	React.useEffect( () => {
+		if ( ! error ) {
+			return;
+		}
+
+		dispatch(
+			errorNotice( translate( 'There was an error retrieving users' ), {
+				id: 'site-users-notice',
+				button: 'Try again.',
+				onClick: () => {
+					dispatch( removeNotice( 'site-users-notice' ) );
+					refetch();
+				},
+			} )
+		);
+	}, [ dispatch, translate, error, refetch ] );
+};
+
+function TeamList( props ) {
 	const { site, search } = props;
 	const fetchOptions = search
 		? {
@@ -35,19 +54,7 @@ function TeamList( props ) {
 		refetch,
 	} = useUsers( site.ID, fetchOptions );
 
-	React.useEffect( () => {
-		error &&
-			dispatch(
-				errorNotice( translate( 'There was an error retrieving users' ), {
-					id: 'site-users-notice',
-					button: 'Try again.',
-					onClick: () => {
-						dispatch( removeNotice( 'site-users-notice' ) );
-						refetch();
-					},
-				} )
-			);
-	}, [ dispatch, translate, refetch, error ] );
+	useErrorNotice( error, refetch );
 
 	return (
 		<Team
