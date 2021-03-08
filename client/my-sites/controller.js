@@ -309,6 +309,7 @@ function createSitesComponent( context ) {
 			siteBasePath={ basePath }
 			getSiteSelectionHeaderText={ context.getSiteSelectionHeaderText }
 			fromSite={ context.query.site }
+			clearPageTitle={ context.clearPageTitle }
 		/>
 	);
 }
