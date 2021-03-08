@@ -19,7 +19,6 @@ import getGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
 import { Button, RootChild } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
-import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'calypso/components/async-load';
 import { showInlineHelpPopover, hideInlineHelpPopover } from 'calypso/state/inline-help/actions';
 import isInlineHelpPopoverVisible from 'calypso/state/inline-help/selectors/is-inline-help-popover-visible';
@@ -181,7 +180,6 @@ class InlineHelp extends Component {
 
 const mapStateToProps = ( state ) => {
 	return {
-		hasActiveHappyChat: hasActiveHappychatSession( state ),
 		isHappychatOpen: isHappychatOpen( state ),
 		isPopoverVisible: isInlineHelpPopoverVisible( state ),
 		isInlineHelpVisible: isInlineHelpVisible( state ),
