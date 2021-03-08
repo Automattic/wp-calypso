@@ -877,6 +877,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				set -o pipefail
 
 				export NODE_ENV="test"
+				export PLAYWRIGHT_BROWSERS_PATH=0
 
 				# Install modules
 				yarn install
