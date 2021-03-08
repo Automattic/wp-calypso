@@ -11,20 +11,6 @@ let file;
 let xvfb;
 let ffVideo;
 
-function createDir( dir ) {
-	dir = path.resolve( dir );
-	if ( fs.existsSync( dir ) ) return dir;
-	try {
-		fs.mkdirSync( dir );
-		return dir;
-	} catch ( error ) {
-		if ( error.code === 'ENOENT' ) {
-			return createDir( path.dirname( dir ) ) && createDir( dir );
-		}
-		throw error;
-	}
-}
-
 function isVideoEnabled() {
 	const video = config.has( 'useTestVideo' )
 		? config.get( 'useTestVideo' )
@@ -69,7 +55,7 @@ export function startVideo() {
 	const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
 	const fileName = `${ global.displayNum }-${ dateTime }.mpg`;
 	file = path.resolve( path.join( './screenshots/videos', fileName ) );
-	createDir( path.dirname( file ) );
+	fs.mkdirSync( path.dirname( file ), { recursive: true } );
 	ffVideo = child_process.spawn( ffmpeg.path, [
 		'-f',
 		'x11grab',
