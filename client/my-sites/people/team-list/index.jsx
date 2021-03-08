@@ -11,7 +11,7 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
  * Internal dependencies
  */
 import Team from './team';
-import useUsers from 'calypso/data/users/use-users';
+import useUsersQuery from 'calypso/data/users/use-users-query';
 
 const useErrorNotice = ( error, refetch ) => {
 	const dispatch = useDispatch();
@@ -52,7 +52,7 @@ function TeamList( { site, search } ) {
 		fetchNextPage,
 		error,
 		refetch,
-	} = useUsers( site.ID, fetchOptions );
+	} = useUsersQuery( site.ID, fetchOptions );
 
 	useErrorNotice( error, refetch );
 

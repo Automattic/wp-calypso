@@ -18,7 +18,7 @@ export const defaults = {
 const extractPages = ( pages = [] ) => pages.flatMap( ( page ) => page.users );
 const compareUnique = ( a, b ) => a.ID === b.ID;
 
-const useUsers = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
+const useUsersQuery = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
 	const { search } = fetchOptions;
 
 	return useInfiniteQuery(
@@ -51,4 +51,4 @@ const useUsers = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
 	);
 };
 
-export default useUsers;
+export default useUsersQuery;
