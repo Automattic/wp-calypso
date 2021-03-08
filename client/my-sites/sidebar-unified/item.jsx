@@ -22,7 +22,6 @@ import {
 	collapseAllMySitesSidebarSections,
 	expandMySitesSidebarSection,
 } from 'calypso/state/my-sites/sidebar/actions';
-import { isExternal, addQueryArgs } from 'calypso/lib/url';
 
 export const MySitesSidebarUnifiedItem = ( {
 	count,
@@ -44,20 +43,11 @@ export const MySitesSidebarUnifiedItem = ( {
 		reduxDispatch( expandMySitesSidebarSection( sectionId ) );
 	};
 
-	const getLink = () => {
-		if ( ! isExternal( url ) ) {
-			return url;
-		}
-		// In case of external links, let's add a `return` query arg so that we give
-		// other interfaces ( eg WP Admin ) a chance to return us where we started from.
-		return addQueryArgs( { return: document.location.href }, url );
-	};
-
 	return (
 		<SidebarItem
 			count={ count }
 			label={ title }
-			link={ getLink() }
+			link={ url }
 			onNavigate={ ( event ) => continueInCalypso( url, event ) && onNavigate() }
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
