@@ -12,14 +12,12 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 object WPComPlugins_EditorToolKit : BuildType({
 	name = "Editor ToolKit"
 
-	artifactRules = "editing-toolkit.zip"
+	artifactRules = "./apps/editing-toolkit/editing-toolkit-plugin"
 
 	dependencies {
 		artifacts(AbsoluteId("calypso_WPComPlugins_EditorToolKit")) {
 			buildRule = tag("etk-release-build", "+:trunk")
-			artifactRules = """
-				+:./apps/editing-toolkit/editing-toolkit-plugin => etk-release-build
-			""".trimIndent()
+			artifactRules = "+:editing-toolkit.zip!** => etk-release-build"
 		}
 	}
 
