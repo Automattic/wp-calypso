@@ -39,7 +39,7 @@ const FollowersList = ( { site, search, type = 'wpcom' } ) => {
 		hasNextPage,
 		refetch,
 		error,
-	} = useFollowers( query );
+	} = useFollowers( site.ID, fetchOptions );
 	const { removeFollower } = useRemoveFollower();
 
 	useEffect( () => {
