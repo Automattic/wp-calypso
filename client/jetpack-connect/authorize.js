@@ -301,7 +301,9 @@ export class JetpackAuthorize extends Component {
 	 */
 	isJetpackUpgradeFlow( props = this.props ) {
 		const { redirectAfterAuth } = props.authQuery;
-		return redirectAfterAuth.includes( 'page=jetpack&action=authorize_redirect' );
+		return (
+			redirectAfterAuth && redirectAfterAuth.includes( 'page=jetpack&action=authorize_redirect' )
+		);
 	}
 
 	isFromJetpackConnectionManager( props = this.props ) {
@@ -798,6 +800,9 @@ export class JetpackAuthorize extends Component {
 	render() {
 		const { translate } = this.props;
 		const wooDna = this.getWooDnaConfig();
+
+		const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
+
 		return (
 			<MainWrapper
 				isWoo={ this.isWooOnboarding() }
@@ -823,7 +828,7 @@ export class JetpackAuthorize extends Component {
 							{ this.renderNotices() }
 							{ this.renderStateAction() }
 						</Card>
-						{ this.renderFooterLinks() }
+						{ ! isJetpackMagicLinkSignUpFlow && this.renderFooterLinks() }
 					</div>
 				</div>
 			</MainWrapper>
