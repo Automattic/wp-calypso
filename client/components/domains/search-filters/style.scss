@@ -3,9 +3,10 @@
 
 .search-filters__dropdown-filters {
 	align-items: center;
-	border-left: 1px solid var( --color-neutral-10 );
 	height: 51px; // same as .search
 	z-index: z-index( 'root', '.search' );
+	/*!rtl:ignore*/
+	border-left: 1px solid var( --color-neutral-10 );
 
 	.button {
 		align-items: center;
