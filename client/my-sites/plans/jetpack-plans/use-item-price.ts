@@ -12,7 +12,7 @@ import { getProductCost } from 'calypso/state/products-list/selectors/get-produc
 import getProductPriceTiers, {
 	PriceTiers,
 } from 'calypso/state/products-list/selectors/get-product-price-tiers';
-import { TERM_MONTHLY } from 'calypso/lib/plans/constants';
+import { TERM_MONTHLY, PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
 import {
 	getSiteAvailableProductCost,
 	isRequestingSiteProducts,
@@ -139,10 +139,15 @@ const useItemPrice = (
 		}
 	}
 
-	// Jetpack CRM price won't come from the API, so we need to hard-code it for now.
-	if ( item && [ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ].includes( item.productSlug ) ) {
-		discountedPrice = item.displayPrice || -1;
-		originalPrice = item.displayPrice || -1;
+	// Jetpack CRM and Free prices won't come from the API, so we need to hard-code it for now.
+	if (
+		item &&
+		[ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY, PLAN_JETPACK_FREE ].includes(
+			item.productSlug
+		)
+	) {
+		discountedPrice = item.displayPrice ?? -1;
+		originalPrice = item.displayPrice ?? -1;
 	}
 
 	return {

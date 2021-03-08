@@ -13,6 +13,7 @@ import { Card } from '@automattic/components';
 import Main from 'calypso/components/main';
 import SiteSelector from 'calypso/components/site-selector';
 import VisitSite from 'calypso/blocks/visit-site';
+import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 /**
@@ -23,6 +24,7 @@ import './style.scss';
 class Sites extends Component {
 	static propTypes = {
 		siteBasePath: PropTypes.string.isRequired,
+		clearPageTitle: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -139,20 +141,21 @@ class Sites extends Component {
 	}
 
 	render() {
+		const { clearPageTitle, fromSite, siteBasePath } = this.props;
+
 		return (
-			<Main className="sites">
-				<div className="sites__select-header">
-					<h2 className="sites__select-heading">{ this.getHeaderText() }</h2>
-					{ this.props.fromSite && <VisitSite siteSlug={ this.props.fromSite } /> }
-				</div>
-				<Card className="sites__select-wrapper">
-					<SiteSelector
-						filter={ this.filterSites }
-						siteBasePath={ this.props.siteBasePath }
-						groups
-					/>
-				</Card>
-			</Main>
+			<>
+				{ clearPageTitle && <DocumentHead title="" /> }
+				<Main className="sites">
+					<div className="sites__select-header">
+						<h2 className="sites__select-heading">{ this.getHeaderText() }</h2>
+						{ fromSite && <VisitSite siteSlug={ fromSite } /> }
+					</div>
+					<Card className="sites__select-wrapper">
+						<SiteSelector filter={ this.filterSites } siteBasePath={ siteBasePath } groups />
+					</Card>
+				</Main>
+			</>
 		);
 	}
 }

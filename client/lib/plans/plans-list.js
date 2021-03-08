@@ -942,52 +942,22 @@ export const PLANS_LIST = {
 	},
 
 	[ constants.PLAN_JETPACK_FREE ]: {
-		term: constants.TERM_ANNUALLY,
 		group: constants.GROUP_JETPACK,
 		type: constants.TYPE_FREE,
-		getTitle: () => i18n.translate( 'Free' ),
-		getAudience: () => i18n.translate( 'Best for students' ),
+		getTitle: () => i18n.translate( 'Jetpack Free' ),
 		getProductId: () => 2002,
 		getStoreSlug: () => constants.PLAN_JETPACK_FREE,
-		getTagline: ( siteFeatures = [] ) => {
-			const hasSiteJetpackBackup = siteFeatures.some( ( feature ) =>
-				[
-					constants.FEATURE_JETPACK_BACKUP_DAILY,
-					constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
-					constants.FEATURE_JETPACK_BACKUP_REALTIME,
-					constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
-				].includes( feature )
-			);
-			const hasSiteJetpackScan = siteFeatures.some( ( feature ) =>
-				[
-					constants.FEATURE_JETPACK_SCAN_DAILY,
-					constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
-				].includes( feature )
-			);
-			if ( hasSiteJetpackBackup && hasSiteJetpackScan ) {
-				return i18n.translate(
-					'Upgrade your site to access additional features, including spam protection and priority support.'
-				);
-			} else if ( hasSiteJetpackBackup ) {
-				return i18n.translate(
-					'Upgrade your site to access additional features, including spam protection, security scanning, and priority support.'
-				);
-			} else if ( hasSiteJetpackScan ) {
-				return i18n.translate(
-					'Upgrade your site to access additional features, including spam protection, backups, and priority support.'
-				);
-			}
-			return i18n.translate(
-				'Upgrade your site for additional features, including spam protection, backups, security scanning, and priority support.'
-			);
-		},
 		getDescription: () =>
 			i18n.translate(
-				'The features most needed by WordPress sites' +
-					' — perfectly packaged and optimized for everyone.'
+				'Power up your WordPress site with essential security and performance features.'
 			),
+		getDisplayTerm: () => i18n.translate( 'free forever' ),
+		getPlanCardFeatures: () => [
+			constants.FEATURE_JETPACK_FREE_ATTACK_PROTECTION,
+			constants.FEATURE_JETPACK_FREE_SITE_STATS,
+			constants.FEATURE_JETPACK_FREE_CDN,
+		],
 		getPlanCompareFeatures: () => [
-			// pay attention to ordering, shared features should align on /plan page
 			constants.FEATURE_STANDARD_SECURITY_TOOLS,
 			constants.FEATURE_SITE_STATS,
 			constants.FEATURE_TRAFFIC_TOOLS,
