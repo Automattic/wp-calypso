@@ -290,7 +290,7 @@ class Layout extends Component {
 						placeholder={ null }
 						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 						className={ classnames( 'floating-happychat-button', {
-							'floating-happychat-button--offset-bottom': loadInlineHelp,
+							'offset-bottom': loadInlineHelp,
 						} ) }
 					/>
 				) }

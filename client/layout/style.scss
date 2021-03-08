@@ -336,12 +336,10 @@
 	position: fixed;
 	right: 24px;
 	bottom: 24px;
-
 	z-index: z-index( 'root', '.floating-help' );
-
 	line-height: 0;
 	padding: 1px;
-	border-radius: 100%;
+	border-radius: 100%; /* stylelint-disable-line */
 	background: var( --color-primary );
 	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
 	border: 1px solid var( --color-primary );
@@ -358,20 +356,20 @@
 		background: var( --color-primary );
 		border-color: var( --color-primary-40 );
 	}
-}
 
-.floating-happychat-button--offset-bottom.button.is-borderless {
-	bottom: 90px;
-}
+	&.has-unread {
+		background-color: var( --color-accent );
+		border-color: var( --color-accent );
+	}
 
-.floating-happychat-button.has-unread.button.is-borderless {
-	background-color: var( --color-accent );
-	border-color: var( --color-accent );
-}
+	&.offset-bottom {
+		bottom: 60px;
+	}
 
-@include breakpoint-deprecated( '<660px' ) {
-	.floating-happychat-button.button.is-borderless {
+	@include breakpoint-deprecated( '<660px' ) {
 		padding: 1px;
 	}
 }
+
+
 
