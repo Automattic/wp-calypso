@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import classNames from 'classnames';
 import { useDispatch, useSelector } from 'react-redux';
 import page from 'page';
 import { useTranslate } from 'i18n-calypso';
