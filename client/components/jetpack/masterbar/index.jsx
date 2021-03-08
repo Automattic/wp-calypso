@@ -56,10 +56,10 @@ const JetpackCloudMasterBar = () => {
 					comment: 'Jetpack Cloud top navigation bar item',
 				} ) }
 			>
-				<JetpackLogo size={ 28 } full={ ! isNarrow || isExteriorPage } />
+				<JetpackLogo size={ 28 } full={ ! isNarrow || isExteriorPage } aria={ { hidden: true } } />
 			</Item>
 			<AsyncLoad require="calypso/components/jetpack/portal-nav" placeholder={ null } />
-			<h1 className="masterbar__item-title">{ headerTitle }</h1>
+			{ headerTitle && <h1 className="masterbar__item-title">{ headerTitle }</h1> }
 			<Item
 				tipTarget="me"
 				url="#" // @todo: add a correct URL
