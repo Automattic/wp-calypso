@@ -2,11 +2,11 @@
  * External dependencies
  */
 import { useInfiniteQuery } from 'react-query';
+import { uniqueBy } from '@automattic/js-utils';
 
 /**
  * Internal dependencies
  */
-import { uniqueBy } from 'calypso/lib/js-utils';
 import wpcom from 'calypso/lib/wp';
 
 const extractPages = ( pages = [] ) => pages.flatMap( ( page ) => page.viewers );

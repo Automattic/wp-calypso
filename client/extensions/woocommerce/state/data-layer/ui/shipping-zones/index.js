@@ -3,6 +3,7 @@
  */
 import { translate } from 'i18n-calypso';
 import { find, flatten, isEmpty, map, omit, some, startsWith, xor } from 'lodash';
+import { isNullish } from '@automattic/js-utils';
 
 /**
  * Internal dependencies
@@ -50,7 +51,6 @@ import { getStoreLocation } from 'woocommerce/state/sites/settings/general/selec
 import { getActionList } from 'woocommerce/state/action-list/selectors';
 import { getCountryName } from 'woocommerce/state/sites/data/locations/selectors';
 import { isDefaultShippingZoneCreated } from 'woocommerce/state/sites/setup-choices/selectors';
-import { isNullish } from 'calypso/lib/js-utils';
 import { setCreatedDefaultShippingZone } from 'woocommerce/state/sites/setup-choices/actions';
 import { recordTrack } from 'woocommerce/lib/analytics';
 

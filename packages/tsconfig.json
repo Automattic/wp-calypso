@@ -17,6 +17,7 @@
 		{ "path": "./data-stores" },
 		{ "path": "./domain-picker" },
 		{ "path": "./i18n-utils" },
+		{ "path": "./js-utils" },
 		{ "path": "./language-picker" },
 		{ "path": "./languages" },
 		{ "path": "./launch" },

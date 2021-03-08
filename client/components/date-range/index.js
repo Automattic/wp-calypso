@@ -10,6 +10,7 @@ import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import moment from 'moment';
+import { isNullish } from '@automattic/js-utils';
 
 /**
  * Internal dependencies
@@ -20,7 +21,6 @@ import { Button } from '@automattic/components';
 import DateRangeInputs from './inputs';
 import DateRangeHeader from './header';
 import DateRangeTrigger from './trigger';
-import { isNullish } from 'calypso/lib/js-utils';
 
 /**
  * Style dependencies
