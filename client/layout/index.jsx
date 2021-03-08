@@ -86,8 +86,6 @@ class Layout extends Component {
 					.classList.add( `is-${ this.props.colorSchemePreference }` );
 			}
 		}
-
-		this.attemptStartHappyChat();
 	}
 
 	componentWillUnmount() {
@@ -115,15 +113,7 @@ class Layout extends Component {
 			classList.add( `is-${ this.props.colorSchemePreference }` );
 		}
 
-		this.attemptStartHappyChat();
-
 		// intentionally don't remove these in unmount
-	}
-
-	attemptStartHappyChat() {
-		if ( this.props.hasActiveHappyChat && config.isEnabled( 'happychat' ) ) {
-			this.props.openHappyChat();
-		}
 	}
 
 	shouldShowHappyChatButton() {
