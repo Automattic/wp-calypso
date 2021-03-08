@@ -2,7 +2,6 @@
  * External dependencies
  */
 import classnames from 'classnames';
-import { isNullish } from '@automattic/js-utils';
 
 const TemplateSelectorItem = ( props ) => {
 	const {
@@ -17,7 +16,7 @@ const TemplateSelectorItem = ( props ) => {
 		isSelected,
 	} = props;
 
-	if ( isNullish( id ) || isNullish( title ) || isNullish( value ) ) {
+	if ( id == null || title == null || value == null ) {
 		return null;
 	}
 

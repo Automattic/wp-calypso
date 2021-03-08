@@ -3,7 +3,6 @@
  */
 import { translate } from 'i18n-calypso';
 import { find, flatten, isEmpty, map, omit, some, startsWith, xor } from 'lodash';
-import { isNullish } from '@automattic/js-utils';
 
 /**
  * Internal dependencies
@@ -221,7 +220,7 @@ const getZoneMethodUpdateSteps = ( siteId, zoneId, method, state ) => {
 
 	const isNew = 'number' !== typeof id;
 	const wasEnabled = ! isNew && getShippingZoneMethod( state, id, siteId ).enabled;
-	const enabledChanged = ! isNullish( enabled ) && wasEnabled !== enabled;
+	const enabledChanged = enabled != null && wasEnabled !== enabled;
 	const isWcsMethod = startsWith( realMethodType, 'wc_services' );
 	// The WCS method needs to be updated in 2 steps: "enable/disable" toggle uses the normal endpoint, rest of the props use a custom one
 	const methodPropsToUpdate = isWcsMethod ? {} : { ...extraMethodProps };
@@ -284,7 +283,7 @@ const getZoneMethodCreateSteps = ( siteId, zoneId, method, defaultOrder, state )
 			...omit( method, '_originalId' ),
 			order: originalMethod.order,
 		};
-		if ( isNullish( method.enabled ) ) {
+		if ( method.enabled == null ) {
 			// If the user didn't change the "Enabled" toggle, use the value from the original method
 			method.enabled = originalMethod.enabled;
 		}

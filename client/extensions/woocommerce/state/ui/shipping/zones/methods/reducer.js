@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { find, findIndex, isEmpty, isEqual, omit, reject } from 'lodash';
-import { isNullish } from '@automattic/js-utils';
 
 /**
  * Internal dependencies
@@ -134,7 +133,7 @@ function handleZoneMethodClose( state ) {
 	if ( currentlyEditingChangedType ) {
 		const method = find( state[ bucket ], { id: currentlyEditingId } );
 		let originalId = currentlyEditingId;
-		if ( method && ! isNullish( method._originalId ) ) {
+		if ( method && method._originalId != null ) {
 			originalId = method._originalId;
 		}
 
@@ -149,9 +148,10 @@ function handleZoneMethodClose( state ) {
 				{
 					...currentlyEditingChanges,
 					// If the "Enabled" toggle hasn't been modified in the current changes, use the value from the old method
-					enabled: isNullish( currentlyEditingChanges.enabled )
-						? method && method.enabled
-						: currentlyEditingChanges.enabled,
+					enabled:
+						currentlyEditingChanges.enabled == null
+							? method && method.enabled
+							: currentlyEditingChanges.enabled,
 					id: nextCreateId( state ),
 					_originalId: originalId,
 				},
