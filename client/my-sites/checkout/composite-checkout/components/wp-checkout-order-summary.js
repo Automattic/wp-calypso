@@ -136,6 +136,7 @@ function CheckoutSummaryFeaturesList( props ) {
 	);
 	const { hasMonthlyPlan = false } = props;
 
+	const showRefundText = responseCart.total_cost > 0;
 	let refundText = translate( 'Money back guarantee' );
 
 	let refundDays = 0;
@@ -178,10 +179,12 @@ function CheckoutSummaryFeaturesList( props ) {
 					{ ...props }
 				/>
 			</CheckoutSummaryFeaturesListItem>
-			<CheckoutSummaryFeaturesListItem>
-				<WPCheckoutCheckIcon />
-				{ refundText }
-			</CheckoutSummaryFeaturesListItem>
+			{ showRefundText && (
+				<CheckoutSummaryFeaturesListItem>
+					<WPCheckoutCheckIcon />
+					{ refundText }
+				</CheckoutSummaryFeaturesListItem>
+			) }
 		</CheckoutSummaryFeaturesListWrapper>
 	);
 }
