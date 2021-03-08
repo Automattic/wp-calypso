@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
@@ -12,13 +10,12 @@ import { isFunction } from 'lodash';
 /**
  * Internal dependencies
  */
-import { addQueryArgs, isExternal } from 'calypso/lib/url';
+import { addQueryArgs, isExternal, getUrlParts } from 'calypso/lib/url';
 import MaterialIcon from 'calypso/components/material-icon';
 import Count from 'calypso/components/count';
 import { preload } from 'calypso/sections-helper';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
-import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 
 export default function SidebarItem( props ) {
 	const isExternalLink = isExternal( props.link );
@@ -28,11 +25,15 @@ export default function SidebarItem( props ) {
 		'has-unseen': props.hasUnseen,
 	} );
 	const { materialIcon, materialIconStyle, icon, customIcon, count } = props;
-	const isUnifiedMenuEnabled = useSelector( isNavUnificationEnabled );
-	const url =
-		isExternalLink && ! isUnifiedMenuEnabled
-			? addQueryArgs( { from: 'calypso-old-menu' }, props.link ) // `from` param is used by WP Admin on Atomic sites for disabling Nav Unification in that context. Can be removed after rolling Nav Unification out to 100% of users.
-			: props.link;
+
+	let url = props.link;
+	if ( isExternalLink ) {
+		const { search } = getUrlParts( url );
+		if ( ! search.includes( 'from=' ) ) {
+			// `from` param is used by WP Admin on Atomic sites for disabling Nav Unification in that context. Can be removed after rolling Nav Unification out to 100% of users.
+			url = addQueryArgs( { from: 'calypso-old-menu' }, url );
+		}
+	}
 
 	let _preloaded = false;
 
