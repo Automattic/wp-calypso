@@ -24,12 +24,12 @@ const FollowersList = ( { site, search, type = 'wpcom' } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const query = {
+	const fetchOptions = {
 		max: 100,
-		siteId: site.ID,
 		type,
 		search,
 	};
+	const listKey = [ 'followers', site.ID, type, search ].join( '-' );
 
 	const {
 		data,
@@ -64,6 +64,7 @@ const FollowersList = ( { site, search, type = 'wpcom' } ) => {
 
 	return (
 		<Followers
+			listKey={ listKey }
 			followers={ data?.followers ?? [] }
 			isFetching={ isLoading }
 			isFetchingNextPage={ isFetchingNextPage }
@@ -74,7 +75,7 @@ const FollowersList = ( { site, search, type = 'wpcom' } ) => {
 			site={ site }
 			currentPage={ 1 }
 			type={ type }
-			query={ query }
+			search={ search }
 		/>
 	);
 };

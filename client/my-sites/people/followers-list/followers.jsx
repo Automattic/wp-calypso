@@ -4,8 +4,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import deterministicStringify from 'fast-json-stable-stringify';
-import { omit } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -92,8 +90,8 @@ class Followers extends Component {
 	};
 
 	noFollowerSearchResults() {
-		const { query, followers, isFetching } = this.props;
-		return query.search && ! followers.length && ! isFetching;
+		const { search, followers, isFetching } = this.props;
+		return search && ! followers.length && ! isFetching;
 	}
 
 	siteHasNoFollowers() {
@@ -113,14 +111,12 @@ class Followers extends Component {
 	}
 
 	render() {
-		const key = deterministicStringify( omit( this.props.query, [ 'max', 'page' ] ) );
-
 		if ( this.noFollowerSearchResults() ) {
 			return (
 				<NoResults
 					image="/calypso/images/people/mystery-person.svg"
 					text={ this.props.translate( 'No results found for {{em}}%(searchTerm)s{{/em}}', {
-						args: { searchTerm: this.props.query.search },
+						args: { searchTerm: this.props.search },
 						components: { em: <em /> },
 					} ) }
 				/>
@@ -164,7 +160,7 @@ class Followers extends Component {
 
 		let followers;
 		if ( this.props.followers.length ) {
-			if ( this.props.query.search && this.props.totalFollowers ) {
+			if ( this.props.search && this.props.totalFollowers ) {
 				headerText = this.props.translate(
 					'%(numberPeople)d Follower Matching {{em}}"%(searchTerm)s"{{/em}}',
 					'%(numberPeople)d Followers Matching {{em}}"%(searchTerm)s"{{/em}}',
@@ -172,7 +168,7 @@ class Followers extends Component {
 						count: this.props.followers.length,
 						args: {
 							numberPeople: this.props.totalFollowers,
-							searchTerm: this.props.query.search,
+							searchTerm: this.props.search,
 						},
 						components: {
 							em: <em />,
@@ -183,7 +179,7 @@ class Followers extends Component {
 
 			followers = (
 				<InfiniteList
-					key={ key }
+					key={ this.props.listKey }
 					items={ this.props.followers }
 					className="followers-list__infinite is-people"
 					ref={ this.infiniteList }
@@ -200,7 +196,7 @@ class Followers extends Component {
 			followers = this.renderPlaceholders();
 		}
 
-		const canDownloadCsv = this.props.query.type === 'email' && !! this.props.site;
+		const canDownloadCsv = this.props.type === 'email' && !! this.props.site;
 		const downloadListLink = canDownloadCsv
 			? addQueryArgs(
 					{ page: 'stats', blog: this.props.site.ID, blog_subscribers: 'csv', type: 'email' },
@@ -212,7 +208,7 @@ class Followers extends Component {
 			<>
 				<PeopleListSectionHeader
 					isFollower
-					isPlaceholder={ this.props.isFetching || this.props.query.search }
+					isPlaceholder={ this.props.isFetching || this.props.search }
 					label={ headerText }
 					site={ this.props.site }
 				>
