@@ -10,7 +10,6 @@ import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import moment from 'moment';
-import { isNullish } from '@automattic/js-utils';
 
 /**
  * Internal dependencies
@@ -83,19 +82,21 @@ export class DateRange extends Component {
 			has( this.props, 'lastSelectableDate' ) && this.props.moment( this.props.lastSelectableDate );
 
 		// Clamp start/end dates to ranges (if specified)
-		let startDate = isNullish( this.props.selectedStartDate )
-			? NO_DATE_SELECTED_VALUE
-			: this.clampDateToRange( this.props.moment( this.props.selectedStartDate ), {
-					dateFrom: firstSelectableDate,
-					dateTo: lastSelectableDate,
-			  } );
+		let startDate =
+			this.props.selectedStartDate == null
+				? NO_DATE_SELECTED_VALUE
+				: this.clampDateToRange( this.props.moment( this.props.selectedStartDate ), {
+						dateFrom: firstSelectableDate,
+						dateTo: lastSelectableDate,
+				  } );
 
-		let endDate = isNullish( this.props.selectedEndDate )
-			? NO_DATE_SELECTED_VALUE
-			: this.clampDateToRange( this.props.moment( this.props.selectedEndDate ), {
-					dateFrom: firstSelectableDate,
-					dateTo: lastSelectableDate,
-			  } );
+		let endDate =
+			this.props.selectedEndDate == null
+				? NO_DATE_SELECTED_VALUE
+				: this.clampDateToRange( this.props.moment( this.props.selectedEndDate ), {
+						dateFrom: firstSelectableDate,
+						dateTo: lastSelectableDate,
+				  } );
 
 		// Ensure start is before end otherwise flip the values
 		if ( startDate && endDate && endDate.isBefore( startDate ) ) {
