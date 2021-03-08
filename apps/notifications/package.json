@@ -46,6 +46,6 @@
 		"@automattic/calypso-build": "^7.0.0",
 		"enzyme": "^3.11.0",
 		"html-webpack-plugin": "^5.0.0-beta.4",
-		"webpack": "^5.13.0"
+		"webpack": "^5.24.4"
 	}
 }

@@ -23,7 +23,7 @@
 	},
 	"scripts": {},
 	"peerDependencies": {
-		"webpack": "^5.13.0"
+		"webpack": "^5.24.4"
 	},
 	"dependencies": {
 		"semver": "^7.0.0"
