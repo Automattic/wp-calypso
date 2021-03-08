@@ -62,7 +62,8 @@ export default function GSuiteUpgrade( { domain } ) {
 		if ( cart && ! isLoading && ! hasDomainInCart( cart, domain ) ) {
 			didRedirect.current = true;
 			const message = translate(
-				'There is no domain in your cart, so you cannot add an email product.'
+				'To add email for %(domain)s, you must either own the domain or have it in your shopping cart.',
+				{ args: { domain } }
 			);
 			reduxDispatch( infoNotice( message, { displayOnNextPage: true } ) );
 			// Should we handle this more gracefully?
