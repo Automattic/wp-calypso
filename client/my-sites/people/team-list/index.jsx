@@ -23,6 +23,7 @@ function TeamList( props ) {
 				search_columns: [ 'display_name', 'user_login' ],
 		  }
 		: {};
+	const listKey = [ 'team', site.ID, search ].join( '-' );
 
 	const {
 		data,
@@ -50,12 +51,12 @@ function TeamList( props ) {
 
 	return (
 		<Team
+			listKey={ listKey }
 			fetchingUsers={ isLoading }
 			fetchingNextPage={ isFetchingNextPage }
 			totalUsers={ data?.total }
 			users={ data?.users ?? [] }
 			excludedUsers={ [] }
-			fetchOptions={ fetchOptions }
 			fetchNextPage={ fetchNextPage }
 			hasNextPage={ hasNextPage }
 			{ ...props }

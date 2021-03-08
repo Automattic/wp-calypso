@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import deterministicStringify from 'fast-json-stable-stringify';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -34,7 +33,7 @@ class Team extends React.Component {
 		const {
 			site,
 			users,
-			fetchOptions,
+			listKey,
 			search,
 			fetchingUsers,
 			fetchingNextPage,
@@ -43,9 +42,6 @@ class Team extends React.Component {
 			fetchNextPage,
 			translate,
 		} = this.props;
-
-		const { number, offset, ...keyProps } = fetchOptions;
-		const key = deterministicStringify( keyProps );
 
 		let people;
 		let headerText;
@@ -64,7 +60,7 @@ class Team extends React.Component {
 			);
 		}
 
-		if ( ! users.length && fetchOptions.search && ! fetchingUsers ) {
+		if ( ! users.length && search && ! fetchingUsers ) {
 			return (
 				<NoResults
 					image="/calypso/images/people/mystery-person.svg"
@@ -96,7 +92,7 @@ class Team extends React.Component {
 
 			people = (
 				<InfiniteList
-					key={ key }
+					key={ listKey }
 					items={ users }
 					className="team-list__infinite is-people"
 					ref={ this.infiniteList }
