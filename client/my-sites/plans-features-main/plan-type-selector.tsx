@@ -242,10 +242,18 @@ const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean; isInSig
 
 			&:first-of-type {
 				padding-left: var( --item-padding );
+
+				.rtl & {
+					padding-right: var( --item-padding );
+				}
 			}
 
 			&:last-of-type {
 				padding-right: var( --item-padding );
+
+				.rtl & {
+					padding-left: var( --item-padding );
+				}
 			}
 
 			&:last-of-type .segmented-control__link {
@@ -285,7 +293,8 @@ const StyledPopover = styled( Popover )`
 		transition-duration: 0.01s;
 	}
 
-	&.is-right {
+	&.is-right,
+	.rtl &.is-left {
 		@media ( min-width: 960px ) {
 			display: block;
 		}
@@ -304,6 +313,20 @@ const StyledPopover = styled( Popover )`
 			&::before {
 				border-right-color: var( --color-neutral-100 );
 			}
+		}
+	}
+
+	.rtl &.is-left {
+		.popover__arrow {
+			right: 35px;
+			border-left-color: var( --color-neutral-100 );
+			&::before {
+				border-left-color: var( --color-neutral-100 );
+			}
+		}
+
+		.popover__inner {
+			left: -45px;
 		}
 	}
 
