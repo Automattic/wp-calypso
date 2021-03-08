@@ -106,7 +106,8 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectSettings() {
-		return await this.expandDrawerItem( 'Settings' );
+		await this.expandDrawerItem( 'Settings' );
+		return await this._scrollToAndClickMenuItem( 'General' );
 	}
 
 	async selectMedia() {
