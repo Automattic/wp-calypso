@@ -3,6 +3,7 @@
  */
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 
@@ -70,5 +71,10 @@ function TeamList( props ) {
 		/>
 	);
 }
+
+TeamList.propTypes = {
+	site: PropTypes.object.isRequired,
+	search: PropTypes.string,
+};
 
 export default TeamList;
