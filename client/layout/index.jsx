@@ -150,7 +150,7 @@ class Layout extends Component {
 			return false;
 		}
 
-		const exemptedSections = [ 'jetpack-connect', 'happychat', 'devdocs', 'help' ];
+		const exemptedSections = [ 'jetpack-connect', 'happychat', 'devdocs', 'help', 'home' ];
 		const exemptedRoutes = [ '/log-in/jetpack', '/me/account/closed' ];
 		const exemptedRoutesStartingWith = [ '/start/p2' ];
 
