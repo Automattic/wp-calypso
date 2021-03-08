@@ -86,14 +86,10 @@ class MappedDomainType extends React.Component {
 			);
 		}
 
-		const setupInstructionsMessage = translate(
-			'Follow these instructions to set up your domain mapping.'
-		);
-
 		return (
 			<React.Fragment>
 				<div>
-					<p>{ setupInstructionsMessage }</p>
+					<p>{ translate( 'Follow these instructions to set up your domain mapping:' ) }</p>
 					{ this.renderRecommendedSetupMessage( primaryMessage ) }
 					{ domain.aRecordsRequiredForMapping && this.renderARecordsMappingMessage() }
 				</div>
@@ -105,9 +101,12 @@ class MappedDomainType extends React.Component {
 	renderRecommendedSetupMessage( primaryMessage ) {
 		const { domain, translate } = this.props;
 
-		const recommendedSetupTitle = translate( 'Recommended setup' );
 		return (
-			<FoldableFAQ id="recommended-mapping-setup" question={ recommendedSetupTitle } expanded>
+			<FoldableFAQ
+				id="recommended-mapping-setup"
+				question={ translate( 'Recommended setup' ) }
+				expanded
+			>
 				<p>{ primaryMessage }</p>
 				{ ! isSubdomain( domain.name ) && (
 					<ul className="mapped-domain-type__name-server-list">
