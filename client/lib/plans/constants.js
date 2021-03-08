@@ -328,6 +328,11 @@ export const FEATURE_FILTERING_V2 = 'filtering-v2';
 export const FEATURE_LANGUAGE_SUPPORT_V2 = 'language-support-v2';
 export const FEATURE_SPELLING_CORRECTION_V2 = 'spelling-correction-v2';
 
+// Jetpack Free features
+export const FEATURE_JETPACK_FREE_SITE_STATS = 'jetpack-free-site-stats';
+export const FEATURE_JETPACK_FREE_ATTACK_PROTECTION = 'jetpack-free-attack-protection';
+export const FEATURE_JETPACK_FREE_CDN = 'jetpack-free-cdn';
+
 // P2 project features
 export const FEATURE_P2_3GB_STORAGE = 'p2-3gb-storage';
 export const FEATURE_P2_UNLIMITED_USERS = 'p2-unlimited-users';

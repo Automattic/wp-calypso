@@ -1,13 +1,16 @@
 /**
  * Internal dependencies
  */
+import { abtest } from 'calypso/lib/abtest';
 import { getUrlParts } from 'calypso/lib/url/url-parts';
 
 /**
  * Iterations
  */
 
-export enum Iterations {}
+export enum Iterations {
+	I7 = 'i7', // Jetpack Free in most popular plans
+}
 
 const iterationNames: string[] = Object.values( Iterations );
 
@@ -38,8 +41,7 @@ const getCurrentCROIterationName = (): Iterations | null => {
 		}
 	}
 
-	// There are no active iterations right now
-	return null;
+	return abtest( 'jetpackPopularPlans' ) === 'withFree_test' ? Iterations.I7 : null;
 };
 
 type IterationValueFunction< T > = ( key: Iterations | null ) => T | undefined;

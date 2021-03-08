@@ -2,8 +2,10 @@
  * Internal dependencies
  */
 import { getMonthlyPlanByYearly, getYearlyPlanByMonthly } from 'calypso/lib/plans';
-import { JETPACK_RESET_PLANS } from 'calypso/lib/plans/constants';
+import { JETPACK_RESET_PLANS, PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
+import { JETPACK_CRM_FREE_PRODUCTS } from 'calypso/lib/products-values/constants';
 import { SELECTOR_PLANS } from '../constants';
+import { doForCurrentCROIteration, Iterations } from '../iterations';
 import { getJetpackDescriptionWithOptions, slugToSelectorProduct } from '../utils';
 
 /**
@@ -22,13 +24,21 @@ export const getPlansToDisplay = ( {
 	const currentPlanTerms = currentPlanSlug
 		? [ getMonthlyPlanByYearly( currentPlanSlug ), getYearlyPlanByMonthly( currentPlanSlug ) ]
 		: [];
+	let plans = SELECTOR_PLANS;
 
-	const plansToDisplay = SELECTOR_PLANS.map( slugToSelectorProduct )
+	doForCurrentCROIteration( ( variant ) => {
+		if ( variant === Iterations.I7 ) {
+			plans = [ ...plans, PLAN_JETPACK_FREE ];
+		}
+	} );
+
+	const plansToDisplay = plans
+		.map( slugToSelectorProduct )
 		// Remove plans that don't fit the filters or have invalid data.
 		.filter(
 			( product: SelectorProduct | null ): product is SelectorProduct =>
 				!! product &&
-				product.term === duration &&
+				( ! product.term || product.term === duration ) &&
 				// Don't include a plan the user already owns, regardless of the term
 				! currentPlanTerms.includes( product.productSlug )
 		)
@@ -58,12 +68,22 @@ export const getProductsToDisplay = ( {
 	purchasedProducts: ( SelectorProduct | null )[];
 	includedInPlanProducts: ( SelectorProduct | null )[];
 } ): SelectorProduct[] => {
+	let excludedProducts: string[] = [];
+
+	doForCurrentCROIteration( ( variant ) => {
+		if ( variant === Iterations.I7 ) {
+			excludedProducts = [ ...excludedProducts, ...JETPACK_CRM_FREE_PRODUCTS ];
+		}
+	} );
+
 	const purchasedSlugs =
 		purchasedProducts?.map( ( p ) => p?.productSlug )?.filter( ( slug ) => slug ) || [];
 
 	// Products that have not been directly purchased must honor the current filter
 	// selection since they exist in both monthly and yearly version.
 	const filteredProducts = [ ...includedInPlanProducts, ...availableProducts ]
+		// Remove products we explicitly don't want
+		.filter( ( product ) => product && excludedProducts.indexOf( product.productSlug ) === -1 )
 		// Remove products that don't match the selected duration
 		.filter( ( product ): product is SelectorProduct => product?.term === duration )
 		// Remove duplicates (only happens if the site somehow has the same product
