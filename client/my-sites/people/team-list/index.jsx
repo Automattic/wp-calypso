@@ -35,8 +35,7 @@ const useErrorNotice = ( error, refetch ) => {
 	}, [ dispatch, translate, error, refetch ] );
 };
 
-function TeamList( props ) {
-	const { site, search } = props;
+function TeamList( { site, search } ) {
 	const fetchOptions = search
 		? {
 				search: `*${ search }*`,
@@ -67,7 +66,8 @@ function TeamList( props ) {
 			excludedUsers={ [] }
 			fetchNextPage={ fetchNextPage }
 			hasNextPage={ hasNextPage }
-			{ ...props }
+			site={ site }
+			search={ search }
 		/>
 	);
 }
