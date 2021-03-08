@@ -70,7 +70,7 @@ describe( 'handlers', () => {
 						slug: 'my-custom-menu-3',
 						title: 'Settings',
 						type: 'submenu-item',
-						url: 'https://example.wordpress.com/wp-admin/settings.php',
+						url: 'https://example.wordpress.com/wp-admin/settings.php?from=calypso-unified-menu',
 					},
 					{
 						parent: 'my-custom-menu-4',
