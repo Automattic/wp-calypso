@@ -132,7 +132,7 @@ export function generateFlows( {
 		},
 
 		desktop: {
-			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
+			steps: [ 'user', 'about', 'themes', 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Signup flow for desktop app',
 			lastModified: '2020-08-11',
