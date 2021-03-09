@@ -1,10 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`webpack-config-flag-plugin should produce expected output: Output bundle should match snapshot 1`] = `
-"(window[\\"webpackChunk\\"] = window[\\"webpackChunk\\"] || []).push([[\\"main\\"],{
+"(() => {
+var exports = {};
+exports.id = \\"main\\";
+exports.ids = [\\"main\\"];
+exports.modules = {
 
 /***/ \\"./main.js\\":
-/***/ (function(__unused_webpack_module, __unused_webpack___webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __unused_webpack___webpack_exports__, __webpack_require__) => {
 
 \\"use strict\\";
 
@@ -25,7 +29,7 @@ function isEnabled( flag ) {
 	return 'argh';
 }
 
-/* harmony default export */ var config = ({ isEnabled });
+/* harmony default export */ const config = ({ isEnabled });
 
 ;// CONCATENATED MODULE: ./default-import/config/module.js
 
@@ -413,6 +417,12 @@ if ( isEnabled( 'bar' ) ) {
 
 /***/ })
 
-},
-0,[[\\"./main.js\\",\\"runtime~main\\"]]]);"
+};
+;
+
+// load runtime
+var __webpack_require__ = require(\\"./runtime~main.js\\");
+__webpack_require__.C(exports);
+return __webpack_require__.X([], \\"./main.js\\");
+})();"
 `;
