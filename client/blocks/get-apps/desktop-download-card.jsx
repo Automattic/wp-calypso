@@ -16,6 +16,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const WINDOWS_LINK = 'https://apps.wordpress.com/d/windows?ref=getapps';
 const MAC_LINK = 'https://apps.wordpress.com/d/osx?ref=getapps';
+const MAC_ARM_LINK = 'https://apps.wordpress.com/d/osx-arm?ref=getapps';
 const LINUX_TAR_LINK = 'https://apps.wordpress.com/d/linux?ref=getapps';
 const LINUX_DEB_LINK = 'https://apps.wordpress.com/d/linux-deb?ref=getapps';
 const noop = () => {};
@@ -25,6 +26,7 @@ class DesktopDownloadCard extends Component {
 		translate: PropTypes.func,
 		trackWindowsClick: PropTypes.func,
 		trackMacClick: PropTypes.func,
+		trackMacArmClick: PropTypes.func,
 		trackLinuxTarClick: PropTypes.func,
 		trackLinuxDebClick: PropTypes.func,
 	};
@@ -33,6 +35,7 @@ class DesktopDownloadCard extends Component {
 		translate: identity,
 		trackWindowsClick: noop,
 		trackMacClick: noop,
+		trackMacArmClick: noop,
 		trackLinuxTarClick: noop,
 		trackLinuxDebClick: noop,
 	};
@@ -66,9 +69,9 @@ class DesktopDownloadCard extends Component {
 		switch ( platform ) {
 			case 'MacIntel':
 				return {
-					firstAvailableLink: this.getLinkAnchorTag( WINDOWS_LINK ),
-					secondAvailableLink: this.getLinkAnchorTag( LINUX_TAR_LINK ),
-					thirdAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
+					firstAvailableLink: this.getLinkAnchorTag( MAC_ARM_LINK ),
+					secondAvailableLink: this.getLinkAnchorTag( WINDOWS_LINK ),
+					thirdAvailableLink: this.getLinkAnchorTag( LINUX_TAR_LINK ),
 				};
 			case 'Linux i686':
 			case 'Linux i686 on x86_64':
@@ -92,9 +95,9 @@ class DesktopDownloadCard extends Component {
 			case 'MacIntel':
 				return translate(
 					'Also available for: ' +
-						'{{firstAvailableLink}}Windows{{/firstAvailableLink}}, ' +
-						'{{secondAvailableLink}}Linux (.tar.gz){{/secondAvailableLink}}, ' +
-						'{{thirdAvailableLink}}Linux (.deb){{/thirdAvailableLink}}.',
+						'{{firstAvailableLink}}Apple Silicon{{/firstAvailableLink}}, ' +
+						'{{secondAvailableLink}}Windows{{/secondAvailableLink}}, ' +
+						'{{thirdAvailableLink}}Linux (.tar.gz){{/thirdAvailableLink}}.',
 					{ components: this.getTranslateComponents( platform ) }
 				);
 			case 'Linux i686':
@@ -158,11 +161,19 @@ class DesktopDownloadCard extends Component {
 	}
 
 	getLinkAnchorTag( platformLink ) {
-		const { trackWindowsClick, trackMacClick, trackLinuxTarClick, trackLinuxDebClick } = this.props;
+		const {
+			trackWindowsClick,
+			trackMacClick,
+			trackMacArmClick,
+			trackLinuxTarClick,
+			trackLinuxDebClick,
+		} = this.props;
 
 		switch ( platformLink ) {
 			case MAC_LINK:
 				return <a href={ platformLink } onClick={ trackMacClick } />;
+			case MAC_ARM_LINK:
+				return <a href={ platformLink } onClick={ trackMacArmClick } />;
 			case LINUX_TAR_LINK:
 				return <a href={ platformLink } onClick={ trackLinuxTarClick } />;
 			case LINUX_DEB_LINK:
@@ -201,6 +212,7 @@ class DesktopDownloadCard extends Component {
 const mapDispatchToProps = {
 	trackWindowsClick: () => recordTracksEvent( 'calypso_app_download_windows_click' ),
 	trackMacClick: () => recordTracksEvent( 'calypso_app_download_mac_click' ),
+	trackMacArmClick: () => recordTracksEvent( 'calypso_app_download_mac_arm_click' ),
 	trackLinuxTarClick: () => recordTracksEvent( 'calypso_app_download_linux_tar_click' ),
 	trackLinuxDebClick: () => recordTracksEvent( 'calypso_app_download_linux_deb_click' ),
 };
