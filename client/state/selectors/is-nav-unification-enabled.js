@@ -37,7 +37,8 @@ export default ( state ) => {
 	}
 
 	// Users belonging to the current segment OR New Users.
-	if ( userId % 100 < CURRENT_ROLLOUT_SEGMENT_PERCENTAGE || isNavUnificationNewUser( state ) ) {
+	const userInCurrentRolloutSegment = userId % 100 < CURRENT_ROLLOUT_SEGMENT_PERCENTAGE;
+	if ( userInCurrentRolloutSegment || isNavUnificationNewUser( state ) ) {
 		return true;
 	}
 
