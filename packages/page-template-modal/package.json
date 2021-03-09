@@ -40,7 +40,7 @@
 		"@wordpress/nux": "^3.24.1",
 		"@wordpress/url": "^2.21.0",
 		"classnames": "^2.2.6",
-		"lodash": "^4.17.20"
+		"lodash": "^4.17.21"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "^7.0.0",
