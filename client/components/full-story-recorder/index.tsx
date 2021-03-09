@@ -15,22 +15,37 @@ interface WindowWithFullStory extends Window {
 	_fs_initialized?: boolean;
 }
 
-const FullStoryRecorder: FunctionComponent = () => {
+interface Props {
+	record: boolean;
+}
+
+const FullStoryRecorder: FunctionComponent< Props > = ( { record = true } ) => {
 	const currentUserCountryCode = useSelector< string | null >( ( state ) =>
 		getCurrentUserCountryCode( state )
 	);
 
 	useEffect( () => {
-		if ( ! ( window as WindowWithFullStory )._fs_initialized && 'US' === currentUserCountryCode ) {
-			init( { orgId: TRACKING_IDS.fullStoryOrgId } );
-		} else {
-			restart();
-		}
+		// No tracking can happen unless we have a US user
+		if ( 'US' === currentUserCountryCode ) {
+			if ( ! ( window as WindowWithFullStory )._fs_initialized ) {
+				init( {
+					orgId: TRACKING_IDS.fullStoryOrgId,
+					recordOnlyThisIFrame: true,
+					devMode: 'development' === process.env.NODE_ENV,
+				} );
+				// FullStory will start after init, therefore we need to shut it down if we are not supposed to be recording
+				if ( ! record ) {
+					shutdown();
+				}
+			} else if ( record ) {
+				restart();
+			}
 
-		return () => {
-			shutdown();
-		};
-	} );
+			return () => {
+				shutdown();
+			};
+		}
+	}, [ currentUserCountryCode, record ] );
 	return null;
 };
 
