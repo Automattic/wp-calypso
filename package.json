@@ -299,7 +299,7 @@
 		"webpack": "^5.24.4",
 		"webpack-bundle-analyzer": "^4.4.0",
 		"webpack-cli": "^4.5.0",
-		"webpack-dev-middleware": "^4.0.2",
+		"webpack-dev-middleware": "^4.1.0",
 		"webpack-dev-server": "^4.0.0-beta.0",
 		"whybundled": "^1.4.2",
 		"wpcom": "^6.0.0",
