@@ -14,9 +14,8 @@ const DEFAULT_STATE = {
 	isActive: true,
 };
 
-const guide: Reducer< WhatsNew, Action > = ( state = DEFAULT_STATE, action ) => {
+export const guide: Reducer< WhatsNew, Action > = ( state = DEFAULT_STATE, action ) => {
 	if ( action.type === 'TOGGLE_FEATURE' ) {
-		console.log( JSON.stringify( state ) );
 		return {
 			isActive: ! state.isActive,
 		};

@@ -20,12 +20,12 @@ let isRegistered = false;
 export function register(): typeof STORE_KEY {
 	if ( ! isRegistered ) {
 		isRegistered = true;
+		registerStore< State >( STORE_KEY, {
+			actions,
+			reducer: reducer as any,
+			selectors,
+		} );
 	}
-	registerStore< State >( STORE_KEY, {
-		actions,
-		reducer: reducer as any,
-		selectors,
-	} );
 	return STORE_KEY;
 }
 

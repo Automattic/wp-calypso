@@ -17,14 +17,12 @@ import { WhatsNew } from '@automattic/data-stores';
 import WhatsNewPage from './whats-new-page';
 
 const WhatsNewGuide = () => {
-	const WHATS_NEW_STORE = WhatsNew.register();
-	const { toggleWhatsNew } = useDispatch( WHATS_NEW_STORE );
-	const showGuide = useSelect( ( select ) => select( WHATS_NEW_STORE ).isWhatsNewActive() );
-
-	// const [ showGuide, setShowGuide ] = useState( true );
-	const [ whatsNewData, setWhatsNewData ] = useState( null );
 	const __ = useI18n().__;
 	const locale = useLocale();
+	const WHATS_NEW_STORE = WhatsNew.register();
+	const { toggleWhatsNew } = useDispatch( WHATS_NEW_STORE );
+	const [ whatsNewData, setWhatsNewData ] = useState( null );
+	const showGuide = useSelect( ( select ) => select( WHATS_NEW_STORE ).isWhatsNewActive() );
 
 	// Load What's New list on first site load
 	useEffect( () => {
@@ -36,8 +34,6 @@ const WhatsNewGuide = () => {
 				setWhatsNewData( returnedList );
 			} );
 	}, [ locale ] );
-
-	// const toggleWhatsNew = () => setShowGuide( false );
 
 	if ( ! ( whatsNewData && showGuide ) ) return null;
 
