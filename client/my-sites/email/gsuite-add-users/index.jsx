@@ -225,7 +225,7 @@ class GSuiteAddUsers extends React.Component {
 
 				<SectionHeader
 					label={ translate( 'Add New Users', {
-						comments: "'Users' refers to Google Workspace user accounts",
+						comment: 'This refers to Google Workspace user accounts',
 					} ) }
 				/>
 
