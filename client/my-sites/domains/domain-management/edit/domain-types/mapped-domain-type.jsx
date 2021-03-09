@@ -51,7 +51,7 @@ class MappedDomainType extends React.Component {
 			return null;
 		}
 
-		const learnMoreLink = ( linksTo ) => (
+		const generateLinkTo = ( linksTo ) => (
 			<a href={ linksTo } target="_blank" rel="noopener noreferrer" />
 		);
 		let setupInstructionsMessage;
@@ -67,7 +67,7 @@ class MappedDomainType extends React.Component {
 				{
 					components: {
 						strong: <strong />,
-						learnMoreLink: learnMoreLink( MAP_SUBDOMAIN ),
+						link: generateLinkTo( MAP_SUBDOMAIN ),
 					},
 					args: { domainName: domain.name },
 					context: 'Notice for mapped subdomain that has DNS records need to set up',
@@ -84,16 +84,16 @@ class MappedDomainType extends React.Component {
 				'Follow these instructions to set up your domain mapping:'
 			);
 			primaryMessage = translate(
-				'In order to connect your domain to WordPress.com, please log into your account at your domain registrar and update the name servers of your domain to use the following values, as per {{learnMoreLink}}these instructions{{/learnMoreLink}}:',
+				'In order to connect your domain to WordPress.com, please log into your account at your domain registrar and update the name servers of your domain to use the following values, as per {{link}}these instructions{{/link}}:',
 				{
 					context: 'Notice for mapped domain notice with NS records pointing to somewhere else',
-					components: { learnMoreLink: learnMoreLink( MAP_DOMAIN_CHANGE_NAME_SERVERS ) },
+					components: { link: generateLinkTo( MAP_DOMAIN_CHANGE_NAME_SERVERS ) },
 				}
 			);
 			secondaryMessage = translate(
 				"Please note that it can take up to 72 hours for your changes to become available. If you're still not seeing your site loading at %(domainName)s, please wait a few more hours, clear your browser cache, and try again. {{learnMoreLink}}Learn all about mapping an existing domain in our support docs{{/learnMoreLink}}.",
 				{
-					components: { learnMoreLink: learnMoreLink( MAP_EXISTING_DOMAIN ) },
+					components: { learnMoreLink: generateLinkTo( MAP_EXISTING_DOMAIN ) },
 					args: { domainName: domain.name },
 				}
 			);
