@@ -24,9 +24,7 @@ const ViewersList = ( { site, label } ) => {
 		hasNextPage,
 		error,
 		refetch,
-	} = useViewersQuery( {
-		siteId: site.ID,
-	} );
+	} = useViewersQuery( site.ID );
 	const { removeViewer } = useRemoveViewer();
 
 	useEffect( () => {

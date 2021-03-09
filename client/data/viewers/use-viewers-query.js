@@ -12,15 +12,11 @@ import wpcom from 'calypso/lib/wp';
 const extractPages = ( pages = [] ) => pages.flatMap( ( page ) => page.viewers );
 const compareUnique = ( a, b ) => a.ID === b.ID;
 
-const DEFAULT_NUMBER = 100;
 const defaults = {
-	page: 1,
 	number: 100,
 };
 
-const useViewersQuery = ( fetchOptions = {}, queryOptions = {} ) => {
-	const { siteId } = fetchOptions;
-
+const useViewersQuery = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
 	return useInfiniteQuery(
 		[ 'viewers', siteId ],
 		( { pageParam = 1 } ) =>
@@ -31,7 +27,7 @@ const useViewersQuery = ( fetchOptions = {}, queryOptions = {} ) => {
 			} ),
 		{
 			getNextPageParam: ( lastPage, allPages ) => {
-				if ( lastPage.found <= allPages.length * DEFAULT_NUMBER ) {
+				if ( lastPage.found <= allPages.length * defaults.number ) {
 					return;
 				}
 				return allPages.length + 1;
