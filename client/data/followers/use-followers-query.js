@@ -32,10 +32,11 @@ const useFollowersQuery = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
 
 	return useInfiniteQuery(
 		[ 'followers', siteId, type, search ],
-		async ( { pageParam = 1 } ) => {
-			const res = await wpcom.site( siteId ).statsFollowers( { ...fetchOptions, page: pageParam } );
-			return res;
-		},
+		async ( { pageParam = 1 } ) =>
+			wpcom.req.get( `/sites/${ siteId }/followers`, {
+				...fetchOptions,
+				page: pageParam,
+			} ),
 		{
 			getNextPageParam: ( lastPage, allPages ) => {
 				if ( lastPage.pages <= allPages.length || allPages.length >= MAX_FOLLOWERS ) {
