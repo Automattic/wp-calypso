@@ -18,7 +18,8 @@ import { loadScript, removeScriptCallback } from '@automattic/load-script';
  * Module variables
  */
 const log = debug( 'calypso:post-editor:videopress' );
-const videoPressUrl = 'https://wordpress.com/wp-content/plugins/video/assets/js/videojs/videopress.js';
+const videoPressUrl =
+	'https://wordpress.com/wp-content/plugins/video/assets/js/videojs/videopress.js';
 const noop = () => {};
 
 class EditorMediaModalDetailPreviewVideoPress extends Component {
