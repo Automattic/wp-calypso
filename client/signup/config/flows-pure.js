@@ -135,7 +135,7 @@ export function generateFlows( {
 			steps: [ 'user', 'about', 'themes', 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Signup flow for desktop app',
-			lastModified: '2020-08-11',
+			lastModified: '2021-03-09',
 			showRecaptcha: true,
 		},
 
