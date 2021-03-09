@@ -305,7 +305,7 @@ class StatsSite extends Component {
 							description={ translate(
 								'Accept payments for just about anything and turn your website into a reliable source of income with payments and ads.'
 							) }
-							callToAction={ planSupportsWordAdsInstantFeature ? translate( 'Learn more!' ) : null }
+							callToAction={ planSupportsWordAdsInstantFeature ? translate( 'Learn more' ) : null }
 							href={ `/earn/${ slug }` }
 							dismissPreferenceName={
 								planSupportsWordAdsInstantFeature ? `stats-earn-nudge-wordads-${ siteId }` : null
