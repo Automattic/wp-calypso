@@ -84,7 +84,7 @@ class MappedDomainType extends React.Component {
 				'Follow these instructions to set up your domain mapping:'
 			);
 			primaryMessage = translate(
-				'In order to connect your domain to WordPress.com, please log into your account at your domain registrar and update the name servers of your domain to use the following values, as per {{link}}these instructions{{/link}}:',
+				'In order to connect your domain to WordPress.com, please log into your account at your domain registrar and update the name servers of your domain to use the following values, as detailed in {{link}}these instructions{{/link}}:',
 				{
 					context: 'Notice for mapped domain notice with NS records pointing to somewhere else',
 					components: { link: generateLinkTo( MAP_DOMAIN_CHANGE_NAME_SERVERS ) },
