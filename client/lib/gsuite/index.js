@@ -13,6 +13,7 @@ export {
 } from './get-services-urls';
 export { getGSuiteMailboxCount } from './get-gsuite-mailbox-count';
 export { getGSuiteOwnerId } from './get-gsuite-owner-id';
+export { getGSuiteProductSlug } from './get-gsuite-product-slug';
 export { getLoginUrlWithTOSRedirect } from './get-login-url-with-tos-redirect';
 export { getMonthlyPrice } from './get-monthly-price';
 export {

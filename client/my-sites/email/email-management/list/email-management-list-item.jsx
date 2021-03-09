@@ -28,6 +28,7 @@ import {
 	getGoogleMailServiceFamily,
 	getGSuiteMailboxCount,
 	getGSuiteOwnerId,
+	getGSuiteProductSlug,
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
 import {
@@ -171,7 +172,7 @@ class EmailManagementListItem extends React.Component {
 		}
 
 		if ( hasGSuiteWithUs( domain ) ) {
-			return domain.productName ?? getGoogleMailServiceFamily();
+			return getGoogleMailServiceFamily( getGSuiteProductSlug( domain ) );
 		}
 
 		if ( hasEmailForwards( domain ) ) {
