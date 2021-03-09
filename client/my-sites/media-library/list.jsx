@@ -44,7 +44,6 @@ export class MediaLibraryList extends React.Component {
 		mediaOnFetchNextPage: PropTypes.func,
 		single: PropTypes.bool,
 		scrollable: PropTypes.bool,
-		onEditItem: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -55,7 +54,6 @@ export class MediaLibraryList extends React.Component {
 		mediaOnFetchNextPage: noop,
 		single: false,
 		scrollable: false,
-		onEditItem: noop,
 	};
 
 	state = {};
@@ -179,7 +177,6 @@ export class MediaLibraryList extends React.Component {
 				showGalleryHelp={ showGalleryHelp }
 				selectedIndex={ selectedIndex }
 				onToggle={ this.toggleItem }
-				onEditItem={ this.props.onEditItem }
 			/>
 		);
 	};
