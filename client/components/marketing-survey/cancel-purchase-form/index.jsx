@@ -794,6 +794,8 @@ class CancelPurchaseForm extends React.Component {
 			onClick: this.downgradeClick,
 			isPrimary: true,
 		};
+		const removeText = translate( 'Remove It' );
+		const removingText = translate( 'Removing' );
 		const remove = (
 			<Button
 				disabled={ this.props.disableButtons }
@@ -802,7 +804,7 @@ class CancelPurchaseForm extends React.Component {
 				primary
 				data-e2e-button="remove"
 			>
-				{ this.props.disableButtons ? 'Removing' : 'Remove It' }
+				{ this.props.disableButtons ? removingText : removeText }
 			</Button>
 		);
 
