@@ -90,12 +90,11 @@
 		content: '*';
 	}
 
-	text-align: center;
 	color: var( --color-neutral-light );
 
-	font-size: $font-title-medium;
-	letter-spacing: -0.95px;
-	line-height: $font-headline-large;
+	font-size: $font-body;
+	line-height: 2;
+	text-align: center;
 }
 
 .product-grid__more.is-detached {
