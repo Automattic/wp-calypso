@@ -128,8 +128,8 @@ class Layout extends Component {
 			return false;
 		}
 
-		const exemptedSections = [ 'jetpack-connect', 'happychat', 'devdocs' ];
-		const exemptedRoutes = [ '/log-in/jetpack', '/me/account/closed' ];
+		const exemptedSections = [ 'happychat', 'devdocs' ];
+		const exemptedRoutes = [ '/log-in/jetpack' ];
 		const exemptedRoutesStartingWith = [ '/start/p2' ];
 
 		return (
@@ -151,7 +151,7 @@ class Layout extends Component {
 		}
 
 		const exemptedSections = [ 'jetpack-connect', 'happychat', 'devdocs', 'help', 'home' ];
-		const exemptedRoutes = [ '/log-in/jetpack', '/me/account/closed' ];
+		const exemptedRoutes = [ '/log-in/jetpack' ];
 		const exemptedRoutesStartingWith = [ '/start/p2' ];
 
 		return (
