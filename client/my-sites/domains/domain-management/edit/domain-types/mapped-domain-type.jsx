@@ -17,7 +17,12 @@ import { WPCOM_DEFAULT_NAMESERVERS } from 'calypso/state/domains/nameservers/con
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { isSubdomain, resolveDomainStatus } from 'calypso/lib/domains';
-import { MAP_EXISTING_DOMAIN, MAP_SUBDOMAIN } from 'calypso/lib/url/support';
+import {
+	MAP_DOMAIN_CHANGE_NAME_SERVERS,
+	MAP_EXISTING_DOMAIN,
+	MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS,
+	MAP_SUBDOMAIN,
+} from 'calypso/lib/url/support';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -79,9 +84,10 @@ class MappedDomainType extends React.Component {
 				'Follow these instructions to set up your domain mapping:'
 			);
 			primaryMessage = translate(
-				'In order to connect your domain to WordPress.com, log into your account at your domain registrar and update the name servers of your domain to use the following values:',
+				'In order to connect your domain to WordPress.com, please log into your account at your domain registrar and update the name servers of your domain to use the following values, as per {{learnMoreLink}}these instructions{{/learnMoreLink}}:',
 				{
 					context: 'Notice for mapped domain notice with NS records pointing to somewhere else',
+					components: { learnMoreLink: learnMoreLink( MAP_DOMAIN_CHANGE_NAME_SERVERS ) },
 				}
 			);
 			secondaryMessage = translate(
@@ -129,9 +135,15 @@ class MappedDomainType extends React.Component {
 	renderARecordsMappingMessage() {
 		const { domain, translate } = this.props;
 
+		const generateLinkTo = ( href ) => (
+			<a href={ href } target="_blank" rel="noopener noreferrer" />
+		);
 		const advancedSetupUsingARecordsTitle = translate( 'Advanced setup using root A records' );
 		const aRecordsSetupMessage = translate(
-			'We recommend using WordPress.com’s name servers to map your domain, but if you prefer you can use different name servers and manage the configuration of your domain yourself. If you do that, you can point your domain to WordPress.com by defining the following IP addresses as root A records:'
+			'We recommend using WordPress.com’s name servers to map your domain, but if you prefer you can use different name servers and manage the configuration of your domain yourself. To point your domain to WordPress.com, please add the following IP addresses as root A records using {{link}}these instructions{{/link}}:',
+			{
+				components: { link: generateLinkTo( MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS ) },
+			}
 		);
 		return (
 			<FoldableFAQ id="advanced-mapping-setup" question={ advancedSetupUsingARecordsTitle }>
