@@ -5,7 +5,7 @@ import { memoize } from 'lodash';
 import { __ } from '@wordpress/i18n';
 import { Button, MenuItem, Modal, NavigableMenu, VisuallyHidden } from '@wordpress/components';
 import { Component } from '@wordpress/element';
-import { parse as parseBlocks } from '@wordpress/blocks';
+import { BlockInstance, parse as parseBlocks } from '@wordpress/blocks';
 import { withInstanceId } from '@wordpress/compose';
 
 /**
@@ -18,8 +18,27 @@ import mapBlocksRecursively from '../utils/map-blocks-recursively';
 import containsMissingBlock from '../utils/contains-missing-block';
 import { sortGroupNames } from '../utils/group-utils';
 
-class PageTemplateModal extends Component {
-	constructor( props ) {
+interface PageTemplateModalProps {
+	areTipsEnabled?: boolean;
+	hideWelcomeGuide: () => void;
+	insertTemplate: ( title: string | null, blocks: unknown[] ) => void;
+	instanceId: number;
+	isOpen: boolean;
+	isWelcomeGuideActive?: boolean;
+	locale?: string;
+	saveTemplateChoice: ( name: string ) => void;
+	setOpenState: ( isOpen: boolean ) => void;
+	siteInformation?: Record< string, string >;
+	templates: LayoutDefinition[];
+	theme?: string;
+}
+
+interface PageTemplateModalState {
+	selectedCategory: string | null;
+}
+
+class PageTemplateModal extends Component< PageTemplateModalProps, PageTemplateModalState > {
+	constructor( props: PageTemplateModalProps ) {
 		super( props );
 		this.state = {
 			selectedCategory: this.getDefaultSelectedCategory(),
@@ -27,19 +46,19 @@ class PageTemplateModal extends Component {
 	}
 
 	// Parse templates blocks and memoize them.
-	getBlocksByTemplateSlugs = memoize( ( templates ) => {
+	getBlocksByTemplateSlugs = memoize( ( templates: LayoutDefinition[] ) => {
 		const blocksByTemplateSlugs = templates.reduce( ( prev, { name, html } ) => {
 			prev[ name ] = html
 				? parseBlocks( replacePlaceholders( html, this.props.siteInformation ) )
 				: [];
 			return prev;
-		}, {} );
+		}, {} as Record< string, BlockInstance[] > );
 
 		// Remove templates that include a missing block
 		return this.filterTemplatesWithMissingBlocks( blocksByTemplateSlugs );
 	} );
 
-	filterTemplatesWithMissingBlocks( templates ) {
+	filterTemplatesWithMissingBlocks( templates: Record< string, BlockInstance[] > ) {
 		return Object.entries( templates ).reduce( ( acc, [ name, templateBlocks ] ) => {
 			// Does the template contain any missing blocks?
 			const templateHasMissingBlocks = containsMissingBlock( templateBlocks );
@@ -52,10 +71,10 @@ class PageTemplateModal extends Component {
 			}
 
 			return acc;
-		}, {} );
+		}, {} as Record< string, BlockInstance[] > );
 	}
 
-	getBlocksForSelection = ( selectedTemplate ) => {
+	getBlocksForSelection = ( selectedTemplate: string ) => {
 		const blocks = this.getBlocksByTemplateSlug( selectedTemplate );
 		// Modify the existing blocks returning new block object references.
 		return mapBlocksRecursively( blocks, function modifyBlocksForSelection( block ) {
@@ -74,7 +93,7 @@ class PageTemplateModal extends Component {
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate( prevProps: PageTemplateModalProps ) {
 		// Only track when the modal is first displayed
 		// and if it didn't already happen during componentDidMount.
 		if ( ! prevProps.isOpen && this.props.isOpen ) {
@@ -100,7 +119,7 @@ class PageTemplateModal extends Component {
 		return categories[ 0 ].slug;
 	}
 
-	setTemplate = ( name ) => {
+	setTemplate = ( name: string ) => {
 		// Track selection and mark post as using a template in its postmeta.
 		trackSelection( name );
 		this.props.saveTemplateChoice( name );
@@ -114,13 +133,13 @@ class PageTemplateModal extends Component {
 		}
 
 		const template = this.props.templates.find( ( t ) => t.name === name );
-		const isHomepageTemplate = ( template.categories || {} ).hasOwnProperty( 'home' );
+		const isHomepageTemplate = ( template?.categories || {} ).hasOwnProperty( 'home' );
 
 		// Load content.
 		const blocks = this.getBlocksForSelection( name );
 
 		// Only overwrite the page title if the template is not one of the Homepage Layouts
-		const title = isHomepageTemplate ? null : template.title || '';
+		const title = isHomepageTemplate ? null : template?.title || '';
 
 		// Skip inserting if this is not a blank template
 		// and there's nothing to insert.
@@ -133,7 +152,7 @@ class PageTemplateModal extends Component {
 		this.props.setOpenState( false );
 	};
 
-	handleCategorySelection = ( selectedCategory ) => {
+	handleCategorySelection = ( selectedCategory: string | null ) => {
 		this.setState( { selectedCategory } );
 	};
 
@@ -142,7 +161,7 @@ class PageTemplateModal extends Component {
 		this.props.setOpenState( false );
 	};
 
-	getBlocksByTemplateSlug( name ) {
+	getBlocksByTemplateSlug( name: string ) {
 		return this.getBlocksByTemplateSlugs( this.props.templates )?.[ name ] ?? [];
 	}
 
@@ -151,7 +170,7 @@ class PageTemplateModal extends Component {
 			return null;
 		}
 
-		const templateGroups = {};
+		const templateGroups: Record< string, LayoutCategory > = {};
 		for ( const template of this.props.templates ) {
 			for ( const key in template.categories ) {
 				if ( ! ( key in templateGroups ) ) {
@@ -172,13 +191,13 @@ class PageTemplateModal extends Component {
 		return sortGroupNames( preferredGroupOrder, templateGroups );
 	};
 
-	getTemplatesForGroup = ( groupName ) => {
+	getTemplatesForGroup = ( groupName: string ): LayoutDefinition[] | null => {
 		if ( ! this.props.templates.length ) {
 			return null;
 		}
 
 		if ( 'blank' === groupName ) {
-			return [ { name: 'blank', title: 'Blank', html: '' } ];
+			return [ { name: 'blank', title: 'Blank', html: '', ID: null } ];
 		}
 
 		const templates = [];
@@ -209,17 +228,24 @@ class PageTemplateModal extends Component {
 		return categories;
 	};
 
-	renderTemplateGroup = ( groupName, groupTitle ) => {
-		const templates = this.getTemplatesForGroup( groupName );
-
-		if ( ! templates.length ) {
+	renderTemplateGroup = () => {
+		const { selectedCategory } = this.state;
+		if ( ! selectedCategory ) {
 			return null;
 		}
+
+		const templates = this.getTemplatesForGroup( selectedCategory );
+
+		if ( ! templates?.length ) {
+			return null;
+		}
+
+		const groupTitle = this.getTemplateGroups()?.[ selectedCategory ]?.title;
 
 		return this.renderTemplatesList( templates, groupTitle );
 	};
 
-	renderTemplatesList = ( templatesList, groupTitle ) => {
+	renderTemplatesList = ( templatesList: LayoutDefinition[], groupTitle?: string ) => {
 		if ( ! templatesList.length ) {
 			return null;
 		}
@@ -233,7 +259,10 @@ class PageTemplateModal extends Component {
 
 		const templatesWithoutMissingBlocks = Object.keys( blocksByTemplateSlug );
 
-		const filterOutTemplatesWithMissingBlocks = ( templatesToFilter, filterIn ) => {
+		const filterOutTemplatesWithMissingBlocks = (
+			templatesToFilter: LayoutDefinition[],
+			filterIn: string[]
+		) => {
 			return templatesToFilter.filter( ( template ) => filterIn.includes( template.name ) );
 		};
 
@@ -269,6 +298,7 @@ class PageTemplateModal extends Component {
 
 		return (
 			<Modal
+				title="" // We're providing the title with the `aria.labelledby` prop
 				className="page-template-modal"
 				onRequestClose={ this.closeModal }
 				aria={ {
@@ -303,10 +333,10 @@ class PageTemplateModal extends Component {
 							</Button>
 							<select
 								className="page-template-modal__mobile-category-dropdown"
-								value={ selectedCategory }
+								value={ selectedCategory ?? undefined }
 								onChange={ ( e ) => this.handleCategorySelection( e.currentTarget.value ) }
 							>
-								{ this.getTemplateCategories().map( ( { slug, name } ) => (
+								{ this.getTemplateCategories()?.map( ( { slug, name } ) => (
 									<option key={ slug } value={ slug }>
 										{ name }
 									</option>
@@ -320,9 +350,11 @@ class PageTemplateModal extends Component {
 							className="page-template-modal__category-list"
 							orientation="vertical"
 							aria-labelledby={ `page-template-modal__list-heading-${ instanceId }` }
-							onNavigate={ ( index, child ) => this.handleCategorySelection( child.dataset.slug ) }
+							onNavigate={ ( _index, child ) =>
+								this.handleCategorySelection( child.dataset.slug ?? null )
+							}
 						>
-							{ this.getTemplateCategories().map( ( { slug, name } ) => (
+							{ this.getTemplateCategories()?.map( ( { slug, name } ) => (
 								<MenuItem
 									key={ slug }
 									isTertiary
@@ -330,7 +362,7 @@ class PageTemplateModal extends Component {
 									data-slug={ slug }
 									onClick={ () => this.handleCategorySelection( slug ) }
 									className="page-template-modal__category-button"
-									tabIndex={ slug === selectedCategory ? null : -1 }
+									tabIndex={ slug === selectedCategory ? undefined : -1 }
 								>
 									<span className="page-template-modal__category-item-selection-wrapper">
 										{ name }
@@ -340,10 +372,7 @@ class PageTemplateModal extends Component {
 						</NavigableMenu>
 					</div>
 					<div className="page-template-modal__template-list-container">
-						{ this.renderTemplateGroup(
-							selectedCategory,
-							this.getTemplateGroups()[ selectedCategory ]?.title
-						) }
+						{ this.renderTemplateGroup() }
 					</div>
 				</div>
 			</Modal>

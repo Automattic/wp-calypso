@@ -1,16 +1,21 @@
 /**
  * External dependencies
  */
-import { cloneBlock } from '@wordpress/blocks';
+import { BlockInstance, cloneBlock } from '@wordpress/blocks';
+
+type Writeable< T > = { -readonly [ P in keyof T ]: T[ P ] };
 
 /**
  * Recursively maps over a collection of blocks calling the modifier function on
  * each to modify it and returning a collection of new block references.
  *
- * @param {Array} blocks an array of block objects
- * @param {Function} modifier a callback function used to modify the blocks
+ * @param blocks an array of block objects
+ * @param modifier a callback function used to modify the blocks
  */
-function mapBlocksRecursively( blocks, modifier ) {
+function mapBlocksRecursively(
+	blocks: Writeable< BlockInstance >[],
+	modifier: ( block: BlockInstance ) => BlockInstance
+): BlockInstance[] {
 	return blocks.map( ( block ) => {
 		// `blocks` is an object. Therefore any changes made here will
 		// be reflected across all references to the blocks object. To ensure we

@@ -14,6 +14,8 @@ import React from 'react';
  */
 import PageTemplateModal from '../page-template-modal';
 
+const noop = () => undefined;
+
 const templates = [
 	{ ID: null, title: 'Blank', name: 'blank' },
 	{
@@ -46,7 +48,7 @@ beforeEach( () => {
 		attributes: {
 			content: { type: 'string', source: 'text' },
 		},
-		save: ( { attributes } ) => attributes.content,
+		save: ( { attributes } ) => <>{ attributes.content }</>,
 		category: 'text',
 		title: 'test block',
 	} );
@@ -65,8 +67,9 @@ describe( '<PageTemplateModal>', () => {
 				isOpen={ true }
 				templates={ templates }
 				insertTemplate={ insertTemplate }
-				saveTemplateChoice={ () => {} }
-				setOpenState={ () => {} }
+				saveTemplateChoice={ noop }
+				setOpenState={ noop }
+				hideWelcomeGuide={ noop }
 			/>
 		);
 		// 1th button because the 0th is the mobile drop down menu
@@ -82,8 +85,9 @@ describe( '<PageTemplateModal>', () => {
 				isOpen={ true }
 				templates={ templates }
 				insertTemplate={ insertTemplate }
-				saveTemplateChoice={ () => {} }
-				setOpenState={ () => {} }
+				saveTemplateChoice={ noop }
+				setOpenState={ noop }
+				hideWelcomeGuide={ noop }
 			/>
 		);
 		// 1th button because the 0th is the mobile drop down menu
@@ -99,8 +103,9 @@ describe( '<PageTemplateModal>', () => {
 				isOpen={ true }
 				templates={ templates }
 				insertTemplate={ insertTemplate }
-				saveTemplateChoice={ () => {} }
-				setOpenState={ () => {} }
+				saveTemplateChoice={ noop }
+				setOpenState={ noop }
+				hideWelcomeGuide={ noop }
 			/>
 		);
 		fireEvent.click( screen.getByText( 'Blank page' ) );
