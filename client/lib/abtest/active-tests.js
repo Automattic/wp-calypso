@@ -59,4 +59,13 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: false,
 	},
+	jetpackSocialProofHeader: {
+		datestamp: '20210309',
+		variations: {
+			withoutSocialProof_control: 50,
+			withSocialProof_test: 50,
+		},
+		defaultVariation: 'withoutSocialProof_control',
+		allowExistingUsers: true,
+	},
 };
