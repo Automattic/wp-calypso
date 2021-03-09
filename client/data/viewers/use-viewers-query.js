@@ -18,7 +18,7 @@ const defaults = {
 	number: 100,
 };
 
-const useViewers = ( fetchOptions = {}, queryOptions = {} ) => {
+const useViewersQuery = ( fetchOptions = {}, queryOptions = {} ) => {
 	const { siteId } = fetchOptions;
 
 	return useInfiniteQuery(
@@ -49,4 +49,4 @@ const useViewers = ( fetchOptions = {}, queryOptions = {} ) => {
 	);
 };
 
-export default useViewers;
+export default useViewersQuery;

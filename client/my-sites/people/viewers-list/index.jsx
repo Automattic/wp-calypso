@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux';
  * Internal dependencies
  */
 import Viewers from './viewers';
-import useViewers from 'calypso/data/viewers/use-viewers';
+import useViewersQuery from 'calypso/data/viewers/use-viewers-query';
 import useRemoveViewer from 'calypso/data/viewers/remove-viewer';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 
@@ -24,7 +24,7 @@ const ViewersList = ( { site, label } ) => {
 		hasNextPage,
 		error,
 		refetch,
-	} = useViewers( {
+	} = useViewersQuery( {
 		siteId: site.ID,
 	} );
 	const { removeViewer } = useRemoveViewer();
