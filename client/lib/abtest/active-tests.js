@@ -59,4 +59,13 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: false,
 	},
+	jetpackProductsOrder: {
+		datestamp: '20210309',
+		variations: {
+			securityFirst_test: 50,
+			backupsFirst_control: 50,
+		},
+		defaultVariation: 'backupsFirst_control',
+		allowExistingUsers: true,
+	},
 };

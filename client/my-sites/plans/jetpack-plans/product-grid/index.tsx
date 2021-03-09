@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { SWITCH_PLAN_SIDES_EXPERIMENT, SWITCH_PLAN_SIDES_TREATMENT } from '../experiments';
+import { SWITCH_PLAN_SIDES_EXPERIMENT } from '../experiments';
 import PlansFilterBar from '../plans-filter-bar';
 import ProductCard from '../product-card';
 import { getProductPosition } from '../product-grid/products-order';
@@ -24,7 +24,6 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 } from 'calypso/lib/plans/constants';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
-import { getVariationForUser } from 'calypso/state/experiments/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import MoreInfoBox from '../more-info-box';
@@ -61,8 +60,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const currentPlanSlug =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
-	const exPlatVariation =
-		useSelector( ( state ) => getVariationForUser( state, SWITCH_PLAN_SIDES_EXPERIMENT ) ) || '';
 
 	const { availableProducts, purchasedProducts, includedInPlanProducts } = useGetPlansGridProducts(
 		siteId
@@ -140,7 +137,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 						showDiscountMessage
 						onDurationChange={ onDurationChange }
 						duration={ duration }
-						withTreatmentVariant={ exPlatVariation === SWITCH_PLAN_SIDES_TREATMENT }
 					/>
 				</div>
 				<ul
