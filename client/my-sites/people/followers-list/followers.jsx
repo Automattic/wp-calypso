@@ -57,11 +57,7 @@ class Followers extends Component {
 						'People',
 						'Clicked Remove Button In Remove ' + listType + ' Confirmation'
 					);
-					this.props.removeFollower( {
-						siteId: site.ID,
-						follower,
-						type,
-					} );
+					this.props.removeFollower( site.ID, type, follower.ID );
 				} else {
 					gaRecordEvent(
 						'People',
