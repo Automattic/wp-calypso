@@ -40,6 +40,7 @@
 		"@automattic/i18n-utils": "^1.0.0",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@wordpress/components": "^12.0.1",
+		"@wordpress/data": "^4.26.1",
 		"wpcom-proxy-request": "^6.0.0",
 		"wpcom": "^6.0.0"
 	},

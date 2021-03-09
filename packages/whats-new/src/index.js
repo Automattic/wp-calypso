@@ -7,15 +7,21 @@ import { useI18n } from '@automattic/react-i18n';
 import { useLocale } from '@automattic/i18n-utils';
 import wpcom from 'wpcom';
 import proxyRequest from 'wpcom-proxy-request';
+import { useDispatch, useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import './style.scss';
+import { WhatsNew } from '@automattic/data-stores';
 import WhatsNewPage from './whats-new-page';
 
 const WhatsNewGuide = () => {
-	const [ showGuide, setShowGuide ] = useState( true );
+	const WHATS_NEW_STORE = WhatsNew.register();
+	const { toggleWhatsNew } = useDispatch( WHATS_NEW_STORE );
+	const showGuide = useSelect( ( select ) => select( WHATS_NEW_STORE ).isWhatsNewActive() );
+
+	// const [ showGuide, setShowGuide ] = useState( true );
 	const [ whatsNewData, setWhatsNewData ] = useState( null );
 	const __ = useI18n().__;
 	const locale = useLocale();
@@ -31,7 +37,7 @@ const WhatsNewGuide = () => {
 			} );
 	}, [ locale ] );
 
-	const toggleWhatsNew = () => setShowGuide( false );
+	// const toggleWhatsNew = () => setShowGuide( false );
 
 	if ( ! ( whatsNewData && showGuide ) ) return null;
 

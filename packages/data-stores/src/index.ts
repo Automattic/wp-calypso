@@ -10,6 +10,7 @@ import * as Site from './site';
 import * as Verticals from './verticals';
 import * as Launch from './launch';
 import * as WPCOMFeatures from './wpcom-features';
+import * as WhatsNew from './whats-new';
 import * as VerticalsTemplates from './verticals-templates';
 import * as I18n from './i18n';
 
@@ -24,6 +25,7 @@ export {
 	Plans,
 	Launch,
 	WPCOMFeatures,
+	WhatsNew,
 	persistenceConfigFactory,
 };
 
