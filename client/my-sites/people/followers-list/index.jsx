@@ -20,27 +20,9 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
  */
 import './style.scss';
 
-const FollowersList = ( { site, search, type = 'wpcom' } ) => {
+const useErrorNotice = ( type, error, refetch ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-
-	const fetchOptions = {
-		max: 100,
-		type,
-		search,
-	};
-	const listKey = [ 'followers', site.ID, type, search ].join( '-' );
-
-	const {
-		data,
-		isLoading,
-		fetchNextPage,
-		isFetchingNextPage,
-		hasNextPage,
-		refetch,
-		error,
-	} = useFollowersQuery( site.ID, fetchOptions );
-	const { removeFollower } = useRemoveFollowerMutation();
 
 	useEffect( () => {
 		if ( error ) {
@@ -61,6 +43,28 @@ const FollowersList = ( { site, search, type = 'wpcom' } ) => {
 			);
 		}
 	}, [ dispatch, error, refetch, translate, type ] );
+};
+
+const FollowersList = ( { site, search, type = 'wpcom' } ) => {
+	const fetchOptions = {
+		max: 100,
+		type,
+		search,
+	};
+	const listKey = [ 'followers', site.ID, type, search ].join( '-' );
+
+	const {
+		data,
+		isLoading,
+		fetchNextPage,
+		isFetchingNextPage,
+		hasNextPage,
+		refetch,
+		error,
+	} = useFollowersQuery( site.ID, fetchOptions );
+	const { removeFollower } = useRemoveFollowerMutation();
+
+	useErrorNotice( type, error, refetch );
 
 	return (
 		<Followers
