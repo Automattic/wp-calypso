@@ -55,6 +55,7 @@ const Modal = () => {
 	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
 	const translate = useTranslate();
 
+	// Don't show Modal to new users as they have nav-unification enabled by default.
 	if ( isNewUser ) {
 		return null;
 	}
