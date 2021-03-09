@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { ARIA_STATES, ARIA_PROPERTIES } from './constants';
+import type { ARIA_STATES, ARIA_PROPERTIES } from './constants';
 
 export type RawAriaState = typeof ARIA_STATES[ number ];
 export type RawAriaStates = Record< RawAriaState, boolean >;
