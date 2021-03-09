@@ -104,7 +104,7 @@ const urlLocalizationMapping: UrlLocalizationMapping = {
 			return url;
 		}
 		// Don't rewrite Calypso URLs that have the URL at the end.
-		if ( /\/([a-z0-9-]+\.)+[a-z]{2,}(\/|$)/.test( url.pathname ) ) {
+		if ( /\/([a-z0-9-]+\.)+[a-z]{2,}\/?$/.test( url.pathname ) ) {
 			return url;
 		}
 		return prefixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
