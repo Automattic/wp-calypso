@@ -155,6 +155,6 @@
 		"@types/wordpress__plugins": "^2.3.7",
 		"@wordpress/eslint-plugin": "^7.3.0",
 		"babel-jest": "^26.3.0",
-		"webpack": "^5.13.0"
+		"webpack": "^5.24.4"
 	}
 }
