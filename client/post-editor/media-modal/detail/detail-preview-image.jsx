@@ -13,43 +13,29 @@ import Spinner from 'calypso/components/spinner';
 import MediaImage from 'calypso/my-sites/media-library/media-image';
 import { url, isItemBeingUploaded } from 'calypso/lib/media/utils';
 
-const noop = () => {};
-
 export default class EditorMediaModalDetailPreviewImage extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		item: PropTypes.object.isRequired,
-		site: PropTypes.object,
 	};
 
-	static defaultProps = {
-		onLoad: noop,
-	};
+	state = { URL: this.props.item.URL, loading: true };
 
-	constructor( props ) {
-		super( props );
-
-		this.onImagePreloaderLoad = this.onImagePreloaderLoad.bind( this );
-		this.state = { loading: false };
-	}
-
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.item.URL === nextProps.item.URL ) {
-			return null;
+	getDerivedStateFromProps( props, state ) {
+		if ( props.item.URL !== state.URL ) {
+			this.setState( { URL: props.item.URL, loading: true } );
 		}
-
-		this.setState( { loading: true } );
 	}
 
-	onImagePreloaderLoad() {
+	onImagePreloaderLoad = () => {
 		this.setState( { loading: false } );
-		this.props.onLoad();
-	}
+		if ( this.props.onLoad ) {
+			this.props.onLoad();
+		}
+	};
 
 	render() {
-		const src = url( this.props.item, {
-			photon: this.props.site && ! this.props.site.is_private,
-		} );
+		const src = url( this.props.item );
 		const uploading = isItemBeingUploaded( this.props.item );
 		const loading = this.state.loading;
 		const isBlob = /^blob/.test( src );
