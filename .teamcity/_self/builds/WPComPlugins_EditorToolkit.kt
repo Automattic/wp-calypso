@@ -19,6 +19,7 @@ object WPComPlugins_EditorToolKit : BuildType({
 			buildRule = tag("etk-release-build", "+:trunk")
 			artifactRules = """
 				+:editing-toolkit.zip!** => etk-release-build
+				-:editing-toolkit.zip!build_meta.txt
 			""".trimIndent()
 		}
 	}
@@ -76,15 +77,7 @@ object WPComPlugins_EditorToolKit : BuildType({
 			"""
 		}
 		bashNodeScript {
-			name = "Run PHP Lint"
-			scriptContent = """
-				cd apps/editing-toolkit
-				yarn lint:php
-			"""
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-		}
-		bashNodeScript {
-			name = "Run tests"
+			name = "Run JS tests"
 			scriptContent = """
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
 				export JEST_JUNIT_OUTPUT_DIR="../../test_results/editing-toolkit"
@@ -102,36 +95,52 @@ object WPComPlugins_EditorToolKit : BuildType({
 				cd apps/editing-toolkit
 				yarn build
 
-				echo
-				prev_release_build_num=${'$'}(grep build_number ../../etk-release-build/build_meta.txt | sed -e "s/build_number=//")
-				rm ../../etk-release-build/build_meta.txt # Adds a source of randomness which we don't want for comparison.
-				echo "Previous tagged trunk build: ${'$'}prev_release_build_num"
-
 				# Update plugin version in the plugin file and readme.txt.
-				# Note: we also update the previous release build to the same version to restore idempotence
+				# We also update the previous trunk version to match, so that
+				# we can diff the old and new versions without random data.
 				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php ../../etk-release-build/full-site-editing-plugin.php
 				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt ../../etk-release-build/readme.txt
+			"""
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+		}
+		// Note: We run the PHP lint after the build to verify that the newspack-blocks
+		// code is also formatted correctly.
+		bashNodeScript {
+			name = "Run PHP Lint"
+			scriptContent = """
+				cd apps/editing-toolkit
+				if [ ! -d "./editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks" ] ; then
+					echo "Newspack blocks were not build correctly."
+					exit 1
+				fi
+				yarn lint:php
+			"""
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+		}
+		bashNodeScript {
+			name = "Process artifact"
+			scriptContent = """
+				cd apps/editing-toolkit
 
+				# 1. Tag build if it has changed:
 				# Note: we exclude asset changes because we only really care if the build files (JS/CSS) change. That file is basically just metadata.
 				if ! diff -rq --exclude="*.asset.php" ./editing-toolkit-plugin/ ../../etk-release-build/ ; then
 					echo "The build is different from the last release build. Therefore, this can be tagged as a release build."
 					curl -X POST -H "Content-Type: text/plain" --data "etk-release-build" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" %teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/
-				else
-					echo "The build is not different from the last release build. Therefore, this build has no effect."
 				fi
 
-				cd editing-toolkit-plugin/
-				# Metadata file with info for the download script.
+				# 2. Create metadata file with info for the download script.
+				cd editing-toolkit-plugin
 				tee build_meta.txt <<-EOM
 					commit_hash=%build.vcs.number%
 					commit_url=https://github.com/Automattic/wp-calypso/commit/%build.vcs.number%
 					build_number=%build.number%
 					EOM
 
+				# 3. Create artifact.
 				echo
 				zip -r ../../../editing-toolkit.zip .
 			"""
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 		}
 	}
 })
