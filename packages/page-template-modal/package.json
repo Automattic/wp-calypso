@@ -28,7 +28,6 @@
 		"src"
 	],
 	"dependencies": {
-		"@automattic/js-utils": "^1.0.0",
 		"@wordpress/api-fetch": "^3.21.1",
 		"@wordpress/block-editor": "^5.2.1",
 		"@wordpress/blocks": "^6.25.1",
@@ -41,7 +40,7 @@
 		"@wordpress/nux": "^3.24.1",
 		"@wordpress/url": "^2.21.0",
 		"classnames": "^2.2.6",
-		"lodash": "^4.17.20"
+		"lodash": "^4.17.21"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "^7.0.0",
@@ -49,7 +48,7 @@
 		"jest": "^26.4.0",
 		"react": "^16.12.0",
 		"react-dom": "^16.12.0",
-		"webpack": "^5.13.0"
+		"webpack": "^5.24.4"
 	},
 	"peerDependencies": {
 		"react": "^16.8"

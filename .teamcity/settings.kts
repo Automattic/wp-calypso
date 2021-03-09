@@ -970,7 +970,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				set -x
 
 				mkdir -p screenshots
-				find test/e2e/temp -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+				find test/e2e/temp -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
 
 				mkdir -p logs
 				find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz

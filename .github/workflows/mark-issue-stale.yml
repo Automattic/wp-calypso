@@ -16,7 +16,7 @@ jobs:
           # Days before issue is considered stale.
           days-before-issue-stale: 180
           # Exempt issue labels.
-          exempt-issue-labels: '[Pri] High,[Pri] BLOCKER,[Status] Keep Open,[Status] Stale'
+          exempt-issue-labels: '[Pri] High,[Pri] BLOCKER,[Status] Keep Open'
           # Disable auto-close of both issues and PRs.
           days-before-close: -1
           # Get issues in ascending (oldest first) order.

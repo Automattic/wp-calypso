@@ -60,7 +60,6 @@ export class MediaLibraryContent extends React.Component {
 		scrollable: PropTypes.bool,
 		onAddMedia: PropTypes.func,
 		onMediaScaleChange: PropTypes.func,
-		onEditItem: PropTypes.func,
 		postId: PropTypes.number,
 		isConnected: PropTypes.bool,
 	};
@@ -398,7 +397,6 @@ export class MediaLibraryContent extends React.Component {
 					thumbnailType={ this.getThumbnailType() }
 					single={ this.props.single }
 					scrollable={ this.props.scrollable }
-					onEditItem={ this.props.onEditItem }
 				/>
 			</MediaListData>
 		);

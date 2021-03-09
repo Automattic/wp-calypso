@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { isEmpty, mapValues, omit, pickBy, without, merge, isEqual } from 'lodash';
-import { isNullish } from '@automattic/js-utils';
 
 /**
  * Internal dependencies
@@ -354,9 +353,7 @@ export const transientItems = ( state = {}, action ) => {
 			 * in this reducer, if none of the received media were previously
 			 * transient, we can skip this work.
 			 */
-			const justSavedMedia = savedMedia.filter(
-				( mediaItem ) => ! isNullish( mediaItem.transientId )
-			);
+			const justSavedMedia = savedMedia.filter( ( mediaItem ) => mediaItem.transientId != null );
 
 			if ( justSavedMedia.length === 0 ) {
 				return state;

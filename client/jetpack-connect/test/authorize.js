@@ -67,7 +67,12 @@ const DEFAULT_PROPS = deepFreeze( {
 
 jest.mock( '@automattic/calypso-config', () => {
 	const mock = () => 'development';
-	mock.isEnabled = jest.fn( () => true );
+	mock.isEnabled = jest.fn( ( featureFlag ) => {
+		if ( featureFlag === 'jetpack/magic-link-signup' ) {
+			return false;
+		}
+		return true;
+	} );
 	return mock;
 } );
 

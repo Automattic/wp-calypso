@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -11,7 +10,7 @@ import { isFunction } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isExternal } from 'calypso/lib/url';
+import { addQueryArgs, isExternal, getUrlParts } from 'calypso/lib/url';
 import MaterialIcon from 'calypso/components/material-icon';
 import Count from 'calypso/components/count';
 import { preload } from 'calypso/sections-helper';
@@ -26,6 +25,15 @@ export default function SidebarItem( props ) {
 		'has-unseen': props.hasUnseen,
 	} );
 	const { materialIcon, materialIconStyle, icon, customIcon, count } = props;
+
+	let url = props.link;
+	if ( isExternalLink ) {
+		const { search } = getUrlParts( url );
+		if ( ! search.includes( 'from=' ) ) {
+			// `from` param is used by WP Admin on Atomic sites for disabling Nav Unification in that context. Can be removed after rolling Nav Unification out to 100% of users.
+			url = addQueryArgs( { from: 'calypso-old-menu' }, url );
+		}
+	}
 
 	let _preloaded = false;
 
@@ -51,7 +59,7 @@ export default function SidebarItem( props ) {
 			<a
 				className="sidebar__menu-link"
 				onClick={ props.onNavigate }
-				href={ props.link }
+				href={ url }
 				target={ showAsExternal ? '_blank' : null }
 				rel={ isExternalLink ? 'noopener noreferrer' : null }
 				onMouseEnter={ itemPreload }

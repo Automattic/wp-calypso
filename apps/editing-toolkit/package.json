@@ -140,7 +140,7 @@
 		"enzyme": "^3.11.0",
 		"eslint": "^7.12.0",
 		"jest": "^26.4.0",
-		"lodash": "^4.17.20",
+		"lodash": "^4.17.21",
 		"moment": "^2.26.0",
 		"newspack-blocks": "github:Automattic/newspack-blocks#v1.21.0",
 		"npm-run-all": "^4.1.5",
@@ -155,6 +155,6 @@
 		"@types/wordpress__plugins": "^2.3.7",
 		"@wordpress/eslint-plugin": "^7.3.0",
 		"babel-jest": "^26.3.0",
-		"webpack": "^5.13.0"
+		"webpack": "^5.24.4"
 	}
 }
