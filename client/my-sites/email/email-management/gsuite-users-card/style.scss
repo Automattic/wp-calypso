@@ -37,54 +37,54 @@
 
 .gsuite-users-card__foldable-card {
 	margin-bottom: 0;
+}
 
-	.gsuite-users-card__foldable-card-header-icon {
-		margin-right: 10px;
-		max-width: 36px;
+.gsuite-users-card__foldable-card-header-icon {
+	margin-right: 10px;
+	max-width: 36px;
+}
+
+.gsuite-users-card__foldable-card-header-text {
+	display: flex;
+	flex-direction: column;
+
+	em {
+		color: var( --color-neutral-50 );
+		font-style: normal;
+	}
+}
+
+.gsuite-users-card__foldable-card-services {
+	column-gap: 10px;
+	display: grid;
+	grid-template-columns: repeat( 7, 1fr );
+	list-style: none;
+	margin: 0;
+	row-gap: 10px;
+
+	@include breakpoint-deprecated( '<960px' ) {
+		grid-template-columns: repeat( 4, 1fr );
+		grid-template-rows: repeat( 2, 1fr );
 	}
 
-	.gsuite-users-card__foldable-card-header-text {
+	a {
+		align-items: center;
 		display: flex;
 		flex-direction: column;
+		padding: 10px;
+		text-align: center;
 
-		em {
-			color: var( --color-neutral-50 );
-			font-style: normal;
-		}
-	}
-
-	.gsuite-users-card__foldable-card-services {
-		column-gap: 10px;
-		display: grid;
-		grid-template-columns: repeat( 7, 1fr );
-		list-style: none;
-		margin: 0;
-		row-gap: 10px;
-
-		@include breakpoint-deprecated( '<960px' ) {
-			grid-template-columns: repeat( 4, 1fr );
-			grid-template-rows: repeat( 2, 1fr );
+		&:hover {
+			background-color: #eee;
+			border-radius: 5px;
 		}
 
-		a {
-			align-items: center;
-			display: flex;
-			flex-direction: column;
-			padding: 10px;
-			text-align: center;
+		img {
+			max-width: 30px;
+		}
 
-			&:hover {
-				background-color: #eee;
-				border-radius: 5px;
-			}
-
-			img {
-				max-width: 30px;
-			}
-
-			strong {
-				padding-top: 5px;
-			}
+		strong {
+			padding-top: 5px;
 		}
 	}
 }
