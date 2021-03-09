@@ -152,8 +152,8 @@ class StatsSite extends Component {
 	renderStats() {
 		const {
 			date,
-			hasInstantWordAds,
 			hasWordAds,
+			planSupportsWordAdsInstantFeature,
 			siteId,
 			slug,
 			isAdmin,
@@ -305,12 +305,17 @@ class StatsSite extends Component {
 							description={ translate(
 								'Accept payments for just about anything and turn your website into a reliable source of income with payments and ads.'
 							) }
+							callToAction={ planSupportsWordAdsInstantFeature ? translate( 'Learn more!' ) : null }
 							href={ `/earn/${ slug }` }
+							dismissPreferenceName={
+								planSupportsWordAdsInstantFeature ? `stats-earn-nudge-wordads-${ siteId }` : null
+							}
 							event="stats_earn_nudge"
 							tracksImpressionName="calypso_upgrade_nudge_impression"
 							tracksClickName="calypso_upgrade_nudge_cta_click"
 							showIcon={ true }
 							jetpack={ false }
+							horizontal
 						/>
 					) }
 				</div>
@@ -382,7 +387,7 @@ export default connect(
 			isVip,
 			slug: getSelectedSiteSlug( state ),
 			planSlug: getSitePlanSlug( state, siteId ),
-			hasInstantWordAds: hasFeature( state, siteId, FEATURE_WORDADS_INSTANT ),
+			planSupportsWordAdsInstantFeature: hasFeature( state, siteId, FEATURE_WORDADS_INSTANT ),
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
 		};
