@@ -41,15 +41,15 @@ import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-
 import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	getConfiguredTitanMailboxCount,
+	getMaxTitanMailboxCount,
 	getTitanExpiryDate,
 	getTitanMailboxPurchaseCost,
 	getTitanMailboxRenewalCost,
-	getMaxTitanMailboxCount,
+	getTitanProductName,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
-import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
 import {
 	TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
 	TITAN_MAIL_MONTHLY_SLUG,
