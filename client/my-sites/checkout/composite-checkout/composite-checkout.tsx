@@ -17,11 +17,6 @@ import {
 } from '@automattic/composite-checkout';
 import { ThemeProvider } from 'emotion-theming';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import type {
-	RequestCartProduct,
-	ResponseCart,
-	ResponseCartProduct,
-} from '@automattic/shopping-cart';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import colorStudio from '@automattic/color-studio';
 import { useStripe } from '@automattic/calypso-stripe';
