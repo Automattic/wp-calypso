@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0-alpha.2
+## 2.0.0-alpha.0
 
 - Initial release with stores:
   - Domain Suggestions
