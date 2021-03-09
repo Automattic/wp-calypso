@@ -95,3 +95,6 @@
 /client/state/experiments @Automattic/experimentation-platform
 /client/lib/explat @Automattic/experimentation-platform
 /packages/explat-* @Automattic/experimentation-platform
+
+# Framework
+/packages/js-utils @Automattic/team-calypso-frameworks
