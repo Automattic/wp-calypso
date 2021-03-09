@@ -774,7 +774,7 @@ jobs:
           when: always
           name: Clean Up
           command: |
-            rm -rf desktop/release/mac
+            rm -rf desktop/release/mac/WordPress.com.app
             rm -rf desktop/release/mac-arm64
       - store_artifacts:
           when: always
