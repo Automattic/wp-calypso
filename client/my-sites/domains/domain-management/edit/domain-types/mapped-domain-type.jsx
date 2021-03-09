@@ -49,10 +49,14 @@ class MappedDomainType extends React.Component {
 		const learnMoreLink = ( linksTo ) => (
 			<a href={ linksTo } target="_blank" rel="noopener noreferrer" />
 		);
+		let setupInstructionsMessage;
 		let primaryMessage;
 		let secondaryMessage;
 
 		if ( isSubdomain( domain.name ) ) {
+			setupInstructionsMessage = translate(
+				'Follow these instructions to set up your subdomain mapping:'
+			);
 			primaryMessage = translate(
 				'Your subdomain mapping has not been set up. You need to create the correct CNAME or NS records at your current DNS provider. {{learnMoreLink}}Learn how to do that in our support guide for mapping subdomains{{/learnMoreLink}}.',
 				{
@@ -71,8 +75,11 @@ class MappedDomainType extends React.Component {
 				}
 			);
 		} else {
+			setupInstructionsMessage = translate(
+				'Follow these instructions to set up your domain mapping:'
+			);
 			primaryMessage = translate(
-				'Your domain mapping has not been set up. You need to update your name servers at the company where you purchased the domain to:',
+				'In order to connect your domain to WordPress.com, log into your account at your domain registrar and update the name servers of your domain to use the following values:',
 				{
 					context: 'Notice for mapped domain notice with NS records pointing to somewhere else',
 				}
@@ -89,7 +96,7 @@ class MappedDomainType extends React.Component {
 		return (
 			<React.Fragment>
 				<div>
-					<p>{ translate( 'Follow these instructions to set up your domain mapping:' ) }</p>
+					<p>{ setupInstructionsMessage }</p>
 					{ this.renderRecommendedSetupMessage( primaryMessage ) }
 					{ domain.aRecordsRequiredForMapping && this.renderARecordsMappingMessage() }
 				</div>
@@ -124,7 +131,7 @@ class MappedDomainType extends React.Component {
 
 		const advancedSetupUsingARecordsTitle = translate( 'Advanced setup using root A records' );
 		const aRecordsSetupMessage = translate(
-			"If you have already set up your domain's DNS records in its own provider and just want to point it to WordPress.com, use these IP addresses as your root A records:"
+			'We recommend using WordPress.com’s name servers to map your domain, but if you prefer you can use different name servers and manage the configuration of your domain yourself. If you do that, you can point your domain to WordPress.com by defining the following IP addresses as root A records:'
 		);
 		return (
 			<FoldableFAQ id="advanced-mapping-setup" question={ advancedSetupUsingARecordsTitle }>
