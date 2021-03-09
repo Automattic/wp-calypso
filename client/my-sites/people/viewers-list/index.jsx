@@ -13,19 +13,9 @@ import useViewersQuery from 'calypso/data/viewers/use-viewers-query';
 import useRemoveViewer from 'calypso/data/viewers/remove-viewer';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 
-const ViewersList = ( { site, label } ) => {
+const useErrorNotice = ( error, refetch ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const {
-		data,
-		isLoading,
-		fetchNextPage,
-		isFetchingNextPage,
-		hasNextPage,
-		error,
-		refetch,
-	} = useViewersQuery( site.ID );
-	const { removeViewer } = useRemoveViewer();
 
 	useEffect( () => {
 		if ( error ) {
@@ -41,6 +31,21 @@ const ViewersList = ( { site, label } ) => {
 			);
 		}
 	}, [ dispatch, error, refetch, translate ] );
+};
+
+const ViewersList = ( { site, label } ) => {
+	const {
+		data,
+		isLoading,
+		fetchNextPage,
+		isFetchingNextPage,
+		hasNextPage,
+		error,
+		refetch,
+	} = useViewersQuery( site.ID );
+	const { removeViewer } = useRemoveViewer();
+
+	useErrorNotice( error, refetch );
 
 	return (
 		<Viewers
