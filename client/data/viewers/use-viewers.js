@@ -23,13 +23,12 @@ const useViewers = ( fetchOptions = {}, queryOptions = {} ) => {
 
 	return useInfiniteQuery(
 		[ 'viewers', siteId ],
-		async ( { pageParam = 1 } ) => {
-			const res = await wpcom
-				.undocumented()
-				.site( siteId )
-				.getViewers( { ...defaults, ...fetchOptions, page: pageParam } );
-			return res;
-		},
+		( { pageParam = 1 } ) =>
+			wpcom.req.get( `/sites/${ siteId }/viewers`, {
+				...defaults,
+				...fetchOptions,
+				page: pageParam,
+			} ),
 		{
 			getNextPageParam: ( lastPage, allPages ) => {
 				if ( lastPage.found <= allPages.length * DEFAULT_NUMBER ) {
