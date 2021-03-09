@@ -259,12 +259,11 @@ const InnerSearch = (
 	const openListener = keyListener( openSearch );
 
 	const scrollOverlay = (): void => {
-		overlay &&
-			window.requestAnimationFrame( () => {
-				if ( overlay.current && searchInput.current ) {
-					overlay.current.scrollLeft = getScrollLeft( searchInput.current );
-				}
-			} );
+		window.requestAnimationFrame( () => {
+			if ( overlay.current && searchInput.current ) {
+				overlay.current.scrollLeft = getScrollLeft( searchInput.current );
+			}
+		} );
 	};
 
 	React.useEffect( () => {
