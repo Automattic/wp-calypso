@@ -361,6 +361,8 @@
 		border-color: var( --color-accent );
 	}
 
+	// Make happychat button appear above the FAB icon
+	// when the latter is already is already shown.
 	&.offset {
 		bottom: calc( 24px + 60px );
 		right: calc( 24px + 5px );
