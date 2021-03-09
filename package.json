@@ -46,6 +46,9 @@
 		],
 		"server": [
 			"current node"
+		],
+		"test": [
+			"current node"
 		]
 	},
 	"engines": {
