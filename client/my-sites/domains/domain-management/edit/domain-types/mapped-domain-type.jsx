@@ -70,7 +70,7 @@ class MappedDomainType extends React.Component {
 						link: generateLinkTo( MAP_SUBDOMAIN ),
 					},
 					args: { domainName: domain.name },
-					context: 'Notice for mapped subdomain that has DNS records need to set up',
+					comment: 'Notice for mapped subdomain that has DNS records need to set up',
 				}
 			);
 			secondaryMessage = translate(
@@ -86,7 +86,7 @@ class MappedDomainType extends React.Component {
 			primaryMessage = translate(
 				'In order to connect your domain to WordPress.com, please log into your account at your domain registrar and update the name servers of your domain to use the following values, as detailed in {{link}}these instructions{{/link}}:',
 				{
-					context: 'Notice for mapped domain notice with NS records pointing to somewhere else',
+					comment: 'Notice for mapped domain notice with NS records pointing to somewhere else',
 					components: { link: generateLinkTo( MAP_DOMAIN_CHANGE_NAME_SERVERS ) },
 				}
 			);
