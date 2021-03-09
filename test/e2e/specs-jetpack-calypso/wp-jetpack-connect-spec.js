@@ -116,7 +116,7 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 		} );
 	} );
 
-	describe( 'Connect via SSO: @parallel @jetpack', function () {
+	describe.skip( 'Connect via SSO: @parallel @jetpack', function () {
 		before( async function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );

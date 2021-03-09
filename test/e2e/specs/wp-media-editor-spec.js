@@ -20,7 +20,7 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-describe( `[${ host }] Media: Edit Media (${ screenSize }) @parallel @jetpack`, function () {
+describe( `[${ host }] Media: Edit Media (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
 	let driver;
 

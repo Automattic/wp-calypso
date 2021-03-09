@@ -15,7 +15,7 @@ export default class PluginDetailsPage extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, by.css( '.plugin__page' ) );
 		this.successNoticeSelector = by.css( '.notice.is-success.is-dismissable' );
-		this.activatePluginSelector = by.css( '.plugin-activate-toggle .form-toggle__switch' );
+		this.activatePluginSelector = by.css( '.plugin-activate-toggle input' );
 	}
 
 	async clickActivateToggleForPlugin() {
