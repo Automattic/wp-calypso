@@ -8,12 +8,12 @@ import { useLocale } from '@automattic/i18n-utils';
 import wpcom from 'wpcom';
 import proxyRequest from 'wpcom-proxy-request';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { WhatsNew } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
 import './style.scss';
-import { WhatsNew } from '@automattic/data-stores';
 import WhatsNewPage from './whats-new-page';
 
 const WhatsNewGuide = () => {

@@ -11,7 +11,7 @@ import type { WhatsNew } from './types';
 import type { Action } from './actions';
 
 const DEFAULT_STATE = {
-	isActive: true,
+	isActive: false,
 };
 
 export const guide: Reducer< WhatsNew, Action > = ( state = DEFAULT_STATE, action ) => {
