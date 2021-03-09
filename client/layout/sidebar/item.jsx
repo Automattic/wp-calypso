@@ -31,7 +31,7 @@ export default function SidebarItem( props ) {
 		const { search } = getUrlParts( url );
 		if ( ! search.includes( 'from=' ) ) {
 			// `from` param is used by WP Admin on Atomic sites for disabling Nav Unification in that context. Can be removed after rolling Nav Unification out to 100% of users.
-			url = addQueryArgs( { from: 'calypso-old-menu' }, url );
+			url = addQueryArgs( { from: 'calypso-old-menu', calypsoify: 0 }, url );
 		}
 	}
 
