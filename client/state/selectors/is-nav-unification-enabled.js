@@ -13,36 +13,10 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import isNavUnificationNewUser from 'calypso/state/selectors/is-nav-unification-new-user';
+import { isE2ETest } from 'calypso/lib/e2e';
 
 // Gradual rollout (segment of existing users + all new users registered after March 5, 2021).
 const CURRENT_ROLLOUT_SEGMENT_PERCENTAGE = 5;
-// Test users found in test/e2e/config/local-decrypted.json.
-const TEST_USER_IDS = [
-	114387625,
-	196072882,
-	147903583,
-	176665678,
-	191685058,
-	99044787,
-	115575915,
-	125513142,
-	140566456,
-	139474794,
-	139474794,
-	102365391,
-	106276422,
-	106276977,
-	107524077,
-	107524337,
-	107524381,
-	107524493,
-	107524451,
-	107523085,
-	127372741,
-	123892165,
-	126716843,
-	132724203,
-];
 
 export default ( state ) => {
 	// Disable if explicitly requested by the `?disable-nav-unification` query param.
@@ -58,7 +32,7 @@ export default ( state ) => {
 
 	const userId = getCurrentUserId( state );
 	// Disable for Test Users.
-	if ( TEST_USER_IDS.includes( userId ) ) {
+	if ( isE2ETest() ) {
 		return false;
 	}
 
