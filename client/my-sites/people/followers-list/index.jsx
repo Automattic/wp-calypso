@@ -46,11 +46,7 @@ const useErrorNotice = ( type, error, refetch ) => {
 };
 
 const FollowersList = ( { site, search, type = 'wpcom' } ) => {
-	const fetchOptions = {
-		max: 100,
-		type,
-		search,
-	};
+	const fetchOptions = { search };
 	const listKey = [ 'followers', site.ID, type, search ].join( '-' );
 
 	const {
@@ -61,7 +57,7 @@ const FollowersList = ( { site, search, type = 'wpcom' } ) => {
 		hasNextPage,
 		refetch,
 		error,
-	} = useFollowersQuery( site.ID, fetchOptions );
+	} = useFollowersQuery( site.ID, type, fetchOptions );
 	const { removeFollower } = useRemoveFollowerMutation();
 
 	useErrorNotice( type, error, refetch );
