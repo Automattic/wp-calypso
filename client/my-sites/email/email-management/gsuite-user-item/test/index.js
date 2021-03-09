@@ -16,6 +16,7 @@ describe( 'GSuiteUserItem', () => {
 		const tree = renderer
 			.create(
 				<GSuiteUserItem
+					isSubscriptionActive={ false }
 					onClick={ noop }
 					user={ { email: 'foo@bar.buzz', domain: 'bar.buzz', agreed_to_terms: true } }
 				/>
@@ -28,6 +29,7 @@ describe( 'GSuiteUserItem', () => {
 		const tree = renderer
 			.create(
 				<GSuiteUserItem
+					isSubscriptionActive={ false }
 					onClick={ noop }
 					user={ { email: 'foo@bar.buzz', domain: 'bar.buzz', agreed_to_terms: false } }
 				/>
@@ -44,6 +46,7 @@ describe( 'GSuiteUserItem', () => {
 
 			const instance = renderer.create(
 				<GSuiteUserItem
+					isSubscriptionActive={ false }
 					onClick={ callback }
 					user={ { email: 'foo@bar.buzz', domain: 'bar.buzz', agreed_to_terms: true } }
 				/>

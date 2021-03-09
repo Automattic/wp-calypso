@@ -4,10 +4,11 @@
 import { get } from 'lodash';
 
 /**
- * Does a domain have pending G Suite Users
+ * Determines whether the specified G Suite account have at least one pending G Suite user. A pending user refers to a
+ * user who has not agreed to Google ToS yet.
  *
- * @param {object} domain - domain object
- * @returns {boolean} - Does domain have pending G Suite users
+ * @param {object} domain - domain identifying a G Suite account
+ * @returns {boolean} - true if that account have pending G Suite users, false otherwise
  */
 export function hasPendingGSuiteUsers( domain ) {
 	return get( domain, 'googleAppsSubscription.pendingUsers.length', 0 ) !== 0;

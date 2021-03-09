@@ -5,6 +5,7 @@ export { getEligibleGSuiteDomain } from './get-eligible-gsuite-domain';
 export {
 	getGmailUrl,
 	getGoogleAdminUrl,
+	getGoogleAdminWithTosUrl,
 	getGoogleCalendarUrl,
 	getGoogleDocsUrl,
 	getGoogleDriveUrl,
@@ -12,7 +13,6 @@ export {
 	getGoogleSlidesUrl,
 } from './get-services-urls';
 export { getGSuiteMailboxCount } from './get-gsuite-mailbox-count';
-export { getLoginUrlWithTOSRedirect } from './get-login-url-with-tos-redirect';
 export { getMonthlyPrice } from './get-monthly-price';
 export {
 	isGoogleWorkspaceProductSlug,
@@ -25,4 +25,5 @@ export { getGSuiteSupportedDomains, hasGSuiteSupportedDomain } from './gsuite-su
 export { hasGSuiteWithAnotherProvider } from './has-gsuite-with-another-provider';
 export { hasGSuiteWithUs } from './has-gsuite-with-us';
 export { hasPendingGSuiteUsers } from './has-pending-gsuite-users';
+export { isGSuiteSubscriptionActive } from './is-gsuite-subscription-active';
 export { getGoogleMailServiceFamily } from './get-google-mail-service-family';

@@ -28,6 +28,7 @@ import {
 	getGoogleSheetsUrl,
 	getGoogleSlidesUrl,
 	hasPendingGSuiteUsers,
+	isGSuiteSubscriptionActive,
 } from 'calypso/lib/gsuite';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSelectedDomain } from 'calypso/lib/domains';
@@ -218,6 +219,7 @@ class GSuiteUsersCard extends React.Component {
 
 			const domain = find( this.props.domains, { name: user.domain } );
 			const subscribedDate = get( domain, 'googleAppsSubscription.subscribedDate', false );
+
 			if ( subscribedDate ) {
 				if ( this.isNewUser( user, subscribedDate ) ) {
 					status = null;
@@ -242,10 +244,11 @@ class GSuiteUsersCard extends React.Component {
 
 		return (
 			<GSuiteUserItem
+				isSubscriptionActive={ isGSuiteSubscriptionActive( user.domain ) }
 				key={ `google-apps-user-${ user.domain }-${ index }` }
-				user={ user }
 				onClick={ this.generateClickHandler( user ) }
 				siteSlug={ this.props.selectedSiteSlug }
+				user={ user }
 			/>
 		);
 	}

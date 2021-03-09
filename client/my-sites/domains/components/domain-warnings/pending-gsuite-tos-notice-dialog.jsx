@@ -19,7 +19,7 @@ import {
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { getLoginUrlWithTOSRedirect } from 'calypso/lib/gsuite';
+import { getGoogleAdminWithTosUrl } from 'calypso/lib/gsuite';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import wp from 'calypso/lib/wp';
@@ -164,7 +164,7 @@ function PendingGSuiteTosNoticeDialog( props ) {
 					</p>
 
 					<Button
-						href={ getLoginUrlWithTOSRedirect( props.user, props.domainName ) }
+						href={ getGoogleAdminWithTosUrl( props.user, props.domainName ) }
 						onClick={ onResetPasswordLogInClick }
 						primary
 						rel="noopener noreferrer"
@@ -185,7 +185,7 @@ function PendingGSuiteTosNoticeDialog( props ) {
 
 					<VerticalNavItem
 						onClick={ onLogInClick }
-						path={ getLoginUrlWithTOSRedirect( props.user, props.domainName ) }
+						path={ getGoogleAdminWithTosUrl( props.user, props.domainName ) }
 						external
 						key="1"
 					>

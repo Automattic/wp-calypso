@@ -10,7 +10,7 @@ import { get } from 'lodash';
  * @returns {boolean} - true if the domain is with another provider, false otherwise
  */
 export function hasGSuiteWithAnotherProvider( domain ) {
-	const domainStatus = get( domain, 'googleAppsSubscription.status', '' );
+	const status = get( domain, 'googleAppsSubscription.status', '' );
 
-	return 'other_provider' === domainStatus;
+	return 'other_provider' === status;
 }

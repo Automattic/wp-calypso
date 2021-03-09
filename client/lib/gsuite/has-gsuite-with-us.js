@@ -11,6 +11,7 @@ import { get, includes } from 'lodash';
  */
 export function hasGSuiteWithUs( domain ) {
 	const defaultValue = '';
-	const domainStatus = get( domain, 'googleAppsSubscription.status', defaultValue );
-	return ! includes( [ defaultValue, 'no_subscription', 'other_provider' ], domainStatus );
+	const status = get( domain, 'googleAppsSubscription.status', defaultValue );
+
+	return ! includes( [ defaultValue, 'no_subscription', 'other_provider' ], status );
 }
