@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import webdriver, { until } from 'selenium-webdriver';
+import webdriver, { until, WebElementCondition } from 'selenium-webdriver';
 import config from 'config';
 import { forEach } from 'lodash';
 
@@ -24,45 +24,42 @@ export async function highlightElement( driver, element ) {
 	}
 }
 
-export function clickWhenClickable(
-	driver,
-	selector,
-	waitOverride = null,
-	extraErrorString = null
-) {
-	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
-	const extraErrorStringAppend = extraErrorString ? ' ' + extraErrorString : '';
+export function elementIsAriaEnabled( element ) {
+	return new WebElementCondition( 'until element is not aria-disabled', function () {
+		return element
+			.getAttribute( 'aria-disabled' )
+			.then( ( v ) => ( v !== 'true' ? element : null ) );
+	} );
+}
 
-	return driver.wait(
-		function () {
-			return driver.findElement( selector ).then(
-				async function ( element ) {
-					await highlightElement( driver, element );
-					return element.click().then(
-						function () {
-							return true;
-						},
-						function () {
-							// Flaky response back from IE, so assume success and hope for the best
-							if ( global.browserName === 'Internet Explorer' ) {
-								console.log(
-									"WARNING: IE claims the click action failed, but we're proceeding anyway!"
-								);
-								return true;
-							}
+export async function clickWhenClickable( driver, locator, timeout = explicitWaitMS ) {
+	function wait( condition ) {
+		return driver.wait( condition, timeout );
+	}
 
-							return false;
-						}
-					);
-				},
-				function () {
-					return false;
-				}
-			);
-		},
-		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be clickable${ extraErrorStringAppend }`
-	);
+	// Wait for the element to be located
+	const element = await wait( until.elementLocated( locator ) );
+	// Wait for the element to be visible
+	await wait( until.elementIsVisible( element ) );
+	// Wait for the element to not be disabled
+	await wait( until.elementIsEnabled( element ) );
+	// Wait for the element to not be aria-disabled
+	await wait( elementIsAriaEnabled( element ) );
+
+	try {
+		// Highlight & click the element
+		await highlightElement( driver, element );
+		await element.click();
+	} catch ( error ) {
+		// Flaky response back from IE, so assume success and hope for the best
+		if ( global.browserName === 'Internet Explorer' ) {
+			console.log( "WARNING: IE claims the click action failed, but we're proceeding anyway!" );
+		} else {
+			throw error;
+		}
+	}
+
+	return element;
 }
 
 export function waitTillFocused( driver, selector, pollingOverride, waitOverride ) {
