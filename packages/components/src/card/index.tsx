@@ -78,4 +78,7 @@ const Card = < T extends TagName = 'div' >(
 	);
 };
 
-export default React.memo( React.forwardRef( Card ) );
+const ForwardedRefCard = React.forwardRef( Card );
+ForwardedRefCard.displayName = 'ForwardRef(Card)';
+
+export default React.memo( ForwardedRefCard );
