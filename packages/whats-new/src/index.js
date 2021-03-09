@@ -39,7 +39,7 @@ const WhatsNewGuide = () => {
 		<Guide
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			className="whats-new-guide__main"
-			contentLabel={ __( "What's new at WordPress.com", __i18n_text_domain__ ) }
+			contentLabel={ __( "What's New at WordPress.com", __i18n_text_domain__ ) }
 			finishButtonText={ __( 'Close', __i18n_text_domain__ ) }
 			onFinish={ toggleWhatsNew }
 		>
