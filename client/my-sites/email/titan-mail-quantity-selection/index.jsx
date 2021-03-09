@@ -121,12 +121,7 @@ class TitanMailQuantitySelection extends React.Component {
 			] )
 			.then( () => {
 				const { errors } = this.props?.cart?.messages;
-				const errorCodesToDisplayLocally = [ 'invalid-quantity', 'missing_quantity_data' ];
-				if (
-					errors &&
-					errors.length &&
-					errors.filter( ( error ) => errorCodesToDisplayLocally.includes( error.code ) ).length
-				) {
+				if ( errors && errors.length ) {
 					// Stay on the page to show the relevant error
 					return;
 				}
