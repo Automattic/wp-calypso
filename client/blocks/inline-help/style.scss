@@ -4,43 +4,6 @@
 	bottom: 24px;
 
 	z-index: z-index( 'root', '.floating-help' );
-
-	.button.inline-help__happychat-button {
-		position: absolute;
-		bottom: 60px;
-		right: 5px;
-
-		line-height: 0;
-		padding: 1px;
-		border-radius: 100%;
-		background: var( --color-primary );
-		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
-		border: 1px solid var( --color-primary );
-
-		.gridicon {
-			fill: var( --color-text-inverted );
-			margin: 2px;
-			top: 0;
-			height: 24px;
-			width: 24px;
-		}
-
-		&.is-active {
-			background: var( --color-primary );
-			border-color: var( --color-primary-40 );
-		}
-	}
-
-	.button.inline-help__happychat-button.has-unread {
-		background-color: var( --color-accent );
-		border-color: var( --color-accent );
-	}
-
-	@include breakpoint-deprecated( '<660px' ) {
-		.button.is-borderless.inline-help__button {
-			padding: 1px;
-		}
-	}
 }
 
 .button.inline-help__classic-editor-toggle,
@@ -55,7 +18,7 @@
 	bottom: 0;
 	line-height: 0;
 	padding: 1px;
-	border-radius: 100%;
+	border-radius: 100%; /* stylelint-disable-line */
 	background-color: var( --color-primary );
 	@include elevation( 4dp );
 	border: 1px solid var( --color-primary-dark );
@@ -73,7 +36,7 @@
 		left: 5px;
 		content: '';
 		background: var( --color-surface );
-		border-radius: 100%;
+		border-radius: 100%; /* stylelint-disable-line */
 	}
 
 	&:focus {
@@ -110,7 +73,7 @@
 		background-color: var( --color-accent-30 );
 		border: 2px solid var( --color-border-inverted );
 		content: '';
-		border-radius: 50%;
+		border-radius: 50%; /* stylelint-disable-line */
 		width: 10px;
 		height: 10px;
 		position: absolute;
@@ -448,7 +411,7 @@
 				color: var( --color-text-inverted );
 			}
 		}
-		
+
 	}
 
 	.help-contact-form & {
