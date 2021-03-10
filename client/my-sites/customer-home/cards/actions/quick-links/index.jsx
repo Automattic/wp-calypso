@@ -257,7 +257,7 @@ const trackAnchorPodcastAction = ( isStaticHomePage ) =>
 		recordTracksEvent( 'calypso_customer_home_my_site_anchor_podcast_click', {
 			is_static_home_page: isStaticHomePage,
 		} ),
-		bumpStat( 'calypso_customer_home', 'my_site_design_logo' )
+		bumpStat( 'calypso_customer_home', 'my_site_anchor_podcast' )
 	);
 
 const addEmailAction = ( siteSlug, isStaticHomePage ) =>
