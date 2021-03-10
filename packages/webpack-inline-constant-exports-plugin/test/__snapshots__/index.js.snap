@@ -61,6 +61,6 @@ console.log( FOO );
 // load runtime
 var __webpack_require__ = require(\\"./runtime~main.js\\");
 __webpack_require__.C(exports);
-return __webpack_require__.X([], \\"./index.js\\");
+var __webpack_exports__ = __webpack_require__.X([], \\"./index.js\\");
 })();"
 `;
