@@ -117,7 +117,7 @@ function findPurchaseAndDomain( purchases, predicate ) {
 	return [ purchase, purchase.meta ];
 }
 
-class CheckoutThankYou extends React.Component {
+export class CheckoutThankYou extends React.Component {
 	static propTypes = {
 		domainOnlySiteFlow: PropTypes.bool.isRequired,
 		failedPurchases: PropTypes.array,
@@ -146,7 +146,7 @@ class CheckoutThankYou extends React.Component {
 		} = this.props;
 
 		if ( selectedSite ) {
-			this.props.fetchAtomicTransfer( selectedSite );
+			this.props.fetchAtomicTransfer?.( selectedSite );
 		}
 
 		if ( selectedSite && receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct() ) {
