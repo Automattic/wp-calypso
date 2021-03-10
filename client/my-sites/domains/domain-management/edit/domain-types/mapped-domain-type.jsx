@@ -40,6 +40,7 @@ import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
 import PendingGSuiteTosNotice from 'calypso/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 import FoldableFAQ from 'calypso/components/foldable-faq';
 import Notice from 'calypso/components/notice';
+
 class MappedDomainType extends React.Component {
 	renderSettingUpNameserversAndARecords() {
 		const { domain, translate } = this.props;
