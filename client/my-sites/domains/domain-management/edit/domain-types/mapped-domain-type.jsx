@@ -64,7 +64,7 @@ class MappedDomainType extends React.Component {
 				'Your subdomain mapping has not been set up. You need to create the correct CNAME or NS records at your current DNS provider. {{learnMoreLink}}Learn how to do that in our support guide for mapping subdomains{{/learnMoreLink}}.',
 				{
 					components: {
-						link: this.renderLinkTo( MAP_SUBDOMAIN ),
+						learnMoreLink: this.renderLinkTo( MAP_SUBDOMAIN ),
 					},
 					args: { domainName: domain.name },
 					comment: 'Notice for mapped subdomain that has DNS records need to set up',
