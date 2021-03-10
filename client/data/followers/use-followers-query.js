@@ -30,7 +30,7 @@ const extractPages = ( pages = [] ) =>
 	pages.flatMap( ( page ) => page.subscribers ).map( normalizeFollower );
 const compareUnique = ( a, b ) => a.ID === b.ID;
 
-const useFollowersQuery = ( siteId, type, fetchOptions = {}, queryOptions = {} ) => {
+const useFollowersQuery = ( siteId, type = 'wpcom', fetchOptions = {}, queryOptions = {} ) => {
 	const { search } = fetchOptions;
 
 	return useInfiniteQuery(
