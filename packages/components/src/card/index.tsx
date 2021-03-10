@@ -62,19 +62,12 @@ const Card = < T extends TagName = 'div' >(
 			{ children }
 		</a>
 	) : (
-		React.createElement(
-			tagName,
-			{ ...props, className: elementClass, ref: forwardedRef },
-			<>
-				{ displayAsLink && (
-					<Gridicon
-						className="card__link-indicator"
-						icon={ target ? 'external' : 'chevron-right' }
-					/>
-				) }
-				{ children }
-			</>
-		)
+		React.createElement( tagName, { ...props, className: elementClass, ref: forwardedRef }, [
+			displayAsLink && (
+				<Gridicon className="card__link-indicator" icon={ target ? 'external' : 'chevron-right' } />
+			),
+			children,
+		] )
 	);
 };
 
