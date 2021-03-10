@@ -3,7 +3,6 @@
  */
 import React, { useEffect, useState, useCallback } from 'react';
 import { useTranslate } from 'i18n-calypso';
-import styled from '@emotion/styled';
 import {
 	Checkout,
 	CheckoutStep,
@@ -24,6 +23,7 @@ import {
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import type { RemoveProductFromCart, RequestCartProduct } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -57,10 +57,18 @@ import {
 import QueryExperiments from 'calypso/components/data/query-experiments';
 import PaymentMethodStep from './payment-method-step';
 import CheckoutHelpLink from './checkout-help-link';
+import styled from '../lib/styled';
+import type { CountryListItem } from '../types/country-list-item';
+import type { GetProductVariants } from '../hooks/product-variants';
+import type { ManagedContactDetails } from '../types/wpcom-store-state';
+import type { OnChangeItemVariant } from '../components/item-variation-picker';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
-const ContactFormTitle = () => {
+// This will make converting to TS less noisy. The order of components can be reorganized later
+/* eslint-disable @typescript-eslint/no-use-before-define */
+
+const ContactFormTitle = (): JSX.Element => {
 	const translate = useTranslate();
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
@@ -68,59 +76,86 @@ const ContactFormTitle = () => {
 	const contactDetailsType = getContactDetailsType( responseCart );
 
 	if ( contactDetailsType === 'domain' ) {
-		return ! isActive && isComplete
-			? translate( 'Contact information' )
-			: translate( 'Enter your contact information' );
+		return (
+			<>
+				{ ! isActive && isComplete
+					? String( translate( 'Contact information' ) )
+					: String( translate( 'Enter your contact information' ) ) }
+			</>
+		);
 	}
 
 	if ( contactDetailsType === 'gsuite' ) {
-		return ! isActive && isComplete
-			? translate( '%(googleMailService)s account information', {
-					args: {
-						googleMailService: getGoogleMailServiceFamily(),
-					},
-					comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
-			  } )
-			: translate( 'Enter your %(googleMailService)s account information', {
-					args: {
-						googleMailService: getGoogleMailServiceFamily(),
-					},
-					comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
-			  } );
+		return (
+			<>
+				{ ! isActive && isComplete
+					? String(
+							translate( '%(googleMailService)s account information', {
+								args: {
+									googleMailService: getGoogleMailServiceFamily(),
+								},
+								comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+							} )
+					  )
+					: String(
+							translate( 'Enter your %(googleMailService)s account information', {
+								args: {
+									googleMailService: getGoogleMailServiceFamily(),
+								},
+								comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+							} )
+					  ) }
+			</>
+		);
 	}
 
-	return ! isActive && isComplete
-		? translate( 'Billing information' )
-		: translate( 'Enter your billing information' );
+	return (
+		<>
+			{ ! isActive && isComplete
+				? String( translate( 'Billing information' ) )
+				: String( translate( 'Enter your billing information' ) ) }
+		</>
+	);
 };
 
 const OrderReviewTitle = () => {
 	const translate = useTranslate();
-	return translate( 'Your order' );
+	return <>{ String( translate( 'Your order' ) ) }</>;
 };
 
 const paymentMethodStep = getDefaultPaymentMethodStep();
 
 export default function WPCheckout( {
 	removeProductFromCart,
-	updateLocation,
-	applyCoupon,
-	removeCoupon,
-	couponStatus,
 	changePlanLength,
 	siteId,
 	siteUrl,
 	countriesList,
-	StateSelect,
 	getItemVariants,
-	responseCart,
 	addItemToCart,
-	isCartPendingUpdate,
 	showErrorMessageBriefly,
 	isLoggedOutCart,
 	infoMessage,
 	createUserAndSiteBeforeTransaction,
-} ) {
+}: {
+	removeProductFromCart: RemoveProductFromCart;
+	changePlanLength: OnChangeItemVariant;
+	siteId: number | undefined;
+	siteUrl: string | undefined;
+	countriesList: CountryListItem[];
+	getItemVariants: GetProductVariants;
+	addItemToCart: ( item: Partial< RequestCartProduct > ) => void;
+	showErrorMessageBriefly: ( error: string ) => void;
+	isLoggedOutCart: boolean;
+	infoMessage?: JSX.Element;
+	createUserAndSiteBeforeTransaction: boolean;
+} ): JSX.Element {
+	const {
+		responseCart,
+		applyCoupon,
+		updateLocation,
+		isPendingUpdate: isCartPendingUpdate,
+	} = useShoppingCart();
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const total = useTotal();
@@ -132,9 +167,9 @@ export default function WPCheckout( {
 	const isGSuiteInCart = hasGoogleApps( responseCart );
 
 	const contactDetailsType = getContactDetailsType( responseCart );
-	const shouldShowContactStep = contactDetailsType !== 'none';
 
-	const contactInfo = useSelect( ( sel ) => sel( 'wpcom' ).getContactInfo() ) || {};
+	const contactInfo: ManagedContactDetails =
+		useSelect( ( sel ) => sel( 'wpcom' ).getContactInfo() ) || {};
 	const { setSiteId, touchContactFields, applyDomainContactValidationResults } = useDispatch(
 		'wpcom'
 	);
@@ -144,7 +179,7 @@ export default function WPCheckout( {
 		setShouldShowContactDetailsValidationErrors,
 	] = useState( false );
 
-	const emailTakenLoginRedirectMessage = ( emailAddress ) => {
+	const emailTakenLoginRedirectMessage = ( emailAddress: string ) => {
 		const redirectTo = '/checkout/no-site?cart=no-user';
 		const isNative = config.isEnabled( 'login/native-login-links' );
 		const loginUrl = login( { redirectTo, emailAddress, isNative } );
@@ -170,7 +205,7 @@ export default function WPCheckout( {
 			handleContactValidationResult( {
 				recordEvent: onEvent,
 				showErrorMessage: showErrorMessageBriefly,
-				paymentMethodId: activePaymentMethod.id,
+				paymentMethodId: activePaymentMethod?.id ?? '',
 				validationResult,
 				applyDomainContactValidationResults,
 			} );
@@ -193,7 +228,7 @@ export default function WPCheckout( {
 			handleContactValidationResult( {
 				recordEvent: onEvent,
 				showErrorMessage: showErrorMessageBriefly,
-				paymentMethodId: activePaymentMethod.id,
+				paymentMethodId: activePaymentMethod?.id ?? '',
 				validationResult,
 				applyDomainContactValidationResults,
 			} );
@@ -207,7 +242,7 @@ export default function WPCheckout( {
 			handleContactValidationResult( {
 				recordEvent: onEvent,
 				showErrorMessage: showErrorMessageBriefly,
-				paymentMethodId: activePaymentMethod.id,
+				paymentMethodId: activePaymentMethod?.id ?? '',
 				validationResult,
 				applyDomainContactValidationResults,
 			} );
@@ -357,13 +392,10 @@ export default function WPCheckout( {
 					activeStepContent={
 						<WPCheckoutOrderReview
 							removeProductFromCart={ removeProductFromCart }
-							couponStatus={ couponStatus }
 							couponFieldStateProps={ couponFieldStateProps }
-							removeCoupon={ removeCoupon }
 							onChangePlanLength={ changePlanLength }
 							getItemVariants={ getItemVariants }
 							siteUrl={ siteUrl }
-							siteId={ siteId }
 							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						/>
 					}
@@ -371,26 +403,24 @@ export default function WPCheckout( {
 					completeStepContent={
 						<WPCheckoutOrderReview
 							isSummary
-							couponStatus={ couponStatus }
 							couponFieldStateProps={ couponFieldStateProps }
 							siteUrl={ siteUrl }
-							siteId={ siteId }
 						/>
 					}
-					editButtonText={ translate( 'Edit' ) }
-					editButtonAriaLabel={ translate( 'Edit your order' ) }
-					nextStepButtonText={ translate( 'Save order' ) }
-					nextStepButtonAriaLabel={ translate( 'Save your order' ) }
-					validatingButtonText={
+					editButtonText={ String( translate( 'Edit' ) ) }
+					editButtonAriaLabel={ String( translate( 'Edit your order' ) ) }
+					nextStepButtonText={ String( translate( 'Save order' ) ) }
+					nextStepButtonAriaLabel={ String( translate( 'Save your order' ) ) }
+					validatingButtonText={ String(
 						isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
-					}
-					validatingButtonAriaLabel={
+					) }
+					validatingButtonAriaLabel={ String(
 						isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
-					}
+					) }
 					formStatus={ formStatus }
 				/>
 				<CheckoutSteps areStepsActive={ ! isOrderReviewActive }>
-					{ shouldShowContactStep && (
+					{ contactDetailsType !== 'none' && (
 						<CheckoutStep
 							stepId={ 'contact-form' }
 							isCompleteCallback={ () => {
@@ -398,13 +428,11 @@ export default function WPCheckout( {
 								// Touch the fields so they display validation errors
 								touchContactFields();
 								updateCartContactDetails();
-								return validateContactDetailsAndDisplayErrors( isLoggedOutCart );
+								return validateContactDetailsAndDisplayErrors();
 							} }
 							activeStepContent={
 								<WPContactForm
-									siteUrl={ siteUrl }
 									countriesList={ countriesList }
-									StateSelect={ StateSelect }
 									shouldShowContactDetailsValidationErrors={
 										shouldShowContactDetailsValidationErrors
 									}
@@ -421,16 +449,18 @@ export default function WPCheckout( {
 								/>
 							}
 							titleContent={ <ContactFormTitle /> }
-							editButtonText={ translate( 'Edit' ) }
-							editButtonAriaLabel={ translate( 'Edit the contact details' ) }
-							nextStepButtonText={ translate( 'Continue' ) }
-							nextStepButtonAriaLabel={ translate( 'Continue with the entered contact details' ) }
-							validatingButtonText={
+							editButtonText={ String( translate( 'Edit' ) ) }
+							editButtonAriaLabel={ String( translate( 'Edit the contact details' ) ) }
+							nextStepButtonText={ String( translate( 'Continue' ) ) }
+							nextStepButtonAriaLabel={ String(
+								translate( 'Continue with the entered contact details' )
+							) }
+							validatingButtonText={ String(
 								isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
-							}
-							validatingButtonAriaLabel={
+							) }
+							validatingButtonAriaLabel={ String(
 								isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
-							}
+							) }
 						/>
 					) }
 					<CheckoutStep
@@ -440,16 +470,19 @@ export default function WPCheckout( {
 						}
 						completeStepContent={ paymentMethodStep.completeStepContent }
 						titleContent={ paymentMethodStep.titleContent }
-						editButtonText={ translate( 'Edit' ) }
-						editButtonAriaLabel={ translate( 'Edit the payment method' ) }
-						nextStepButtonText={ translate( 'Continue' ) }
-						nextStepButtonAriaLabel={ translate( 'Continue with the selected payment method' ) }
-						validatingButtonText={
+						editButtonText={ String( translate( 'Edit' ) ) }
+						editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
+						nextStepButtonText={ String( translate( 'Continue' ) ) }
+						nextStepButtonAriaLabel={ String(
+							translate( 'Continue with the selected payment method' )
+						) }
+						validatingButtonText={ String(
 							isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
-						}
-						validatingButtonAriaLabel={
+						) }
+						validatingButtonAriaLabel={ String(
 							isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
-						}
+						) }
+						isCompleteCallback={ () => false }
 					/>
 				</CheckoutSteps>
 			</CheckoutStepArea>
@@ -552,7 +585,7 @@ const CheckoutSummaryBody = styled.div`
 function SubmitButtonHeader() {
 	const translate = useTranslate();
 
-	const scrollToTOS = () => document.getElementById( 'checkout-terms' ).scrollIntoView();
+	const scrollToTOS = () => document?.getElementById( 'checkout-terms' )?.scrollIntoView();
 
 	return (
 		<SubmitButtonHeaderWrapper>
