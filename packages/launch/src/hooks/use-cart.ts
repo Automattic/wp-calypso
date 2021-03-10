@@ -11,7 +11,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../stores';
 import LaunchContext from '../context';
 import { getDomainProduct, getPlanProductForFlow } from '../utils';
-import { useSiteDomains } from '../hooks';
+import { useSiteDomains, useWillRedirectAfterSuccess } from '../hooks';
 
 type LaunchCart = {
 	goToCheckout: () => Promise< void >; // used in gutenboarding-launch
@@ -20,7 +20,7 @@ type LaunchCart = {
 };
 
 export function useCart(): LaunchCart {
-	const { siteId, flow, openCheckout, isInIframe } = React.useContext( LaunchContext );
+	const { siteId, flow, openCheckout } = React.useContext( LaunchContext );
 
 	const locale = useLocale();
 
@@ -49,6 +49,8 @@ export function useCart(): LaunchCart {
 
 	const [ isCartUpdating, setIsCartUpdating ] = React.useState( false );
 
+	const willRedirectAfterSuccess = useWillRedirectAfterSuccess();
+
 	const addProductsToCart = async () => {
 		if ( isCartUpdating ) {
 			return;
@@ -75,7 +77,7 @@ export function useCart(): LaunchCart {
 	};
 
 	const goToCheckoutAndLaunch = async () => {
-		if ( ! isInIframe || isEcommercePlan ) {
+		if ( willRedirectAfterSuccess ) {
 			// We launch the site first and then open Checkout in these cases:
 			// - Focused Launch is loaded outside Calypso iframe (in wp-admin)
 			// - eCommerce plan is selected so Checkout will handle thank-you redirect after purchase
