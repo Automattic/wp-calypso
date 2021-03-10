@@ -24,7 +24,7 @@
 	},
 	"dependencies": {
 		"@automattic/explat-client": "^0.0.1",
-		"react": "^16.12.0"
+		"react": "^16.14.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-polyfills": "^1.0.0",

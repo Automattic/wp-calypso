@@ -45,9 +45,9 @@
 		"debug": "^4.1.1",
 		"emotion-theming": "^10.0.27",
 		"prop-types": "^15.7.2",
-		"react-dom": "^16.12.0",
+		"react-dom": "^16.14.0",
 		"react-stripe-elements": "^4.0.2",
-		"react": "^16.12.0"
+		"react": "^16.14.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "^7.0.0",

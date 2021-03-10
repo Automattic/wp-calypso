@@ -38,8 +38,8 @@
 		"tslib": "^1.10.0"
 	},
 	"peerDependencies": {
-		"react": "^16.8",
-		"react-dom": "^16.8"
+		"react": "^16.14",
+		"react-dom": "^16.14"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",

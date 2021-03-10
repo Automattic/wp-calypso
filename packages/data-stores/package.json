@@ -48,7 +48,7 @@
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^4",
-		"react": "^16.8"
+		"react": "^16.14"
 	},
 	"devDependencies": {
 		"jest-fetch-mock": "^2.1.2",
