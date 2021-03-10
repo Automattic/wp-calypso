@@ -15,7 +15,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import './style.scss';
-const blockPatternsImage = 'https://s0.wp.com/i/whats-new/block-patterns.png';
+const universalNavImage = 'https://s0.wp.com/i/whats-new/universal-nav.png';
 const dragDropImage = 'https://s0.wp.com/i/whats-new/drag-drop.png';
 const singlePageSiteImage = 'https://s0.wp.com/i/whats-new/single-page-website.png';
 const anchorFmImage = 'https://s0.wp.com/i/whats-new/convert-to-audio.jpg';
@@ -61,18 +61,18 @@ function WhatsNewMenuItem() {
 function getWhatsNewPages() {
 	return [
 		{
-			imgSrc: blockPatternsImage,
-			heading: __( 'New block patterns', 'full-site-editing' ),
+			imgSrc: universalNavImage,
+			heading: __( 'Navigate easier than ever', 'full-site-editing' ),
 			description: createInterpolateElement(
 				/* translators: the embed is a link */
 				__(
-					'<p>Choose from hundreds of pre-made patterns for buttons, headers, galleries, and more available via the + button at the top of all pages.</p><p><Link>Learn more</Link></p>',
+					'<p>This month all WordPress.com accounts will receive sidebar and menu updates, making it easier than ever to manage your site from the left sidebar.</p><p><Link>Learn more</Link></p>',
 					'full-site-editing'
 				),
 				{
 					Link: (
 						<a
-							href="https://wordpress.com/support/block-pattern/"
+							href="https://wordpress.com/support/account-settings/#dashboard-appearance"
 							target="_blank"
 							rel="noreferrer"
 						/>
