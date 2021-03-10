@@ -131,6 +131,7 @@ export interface Cart {
 }
 
 export interface Domain {
+	a_records_required_for_mapping?: string[];
 	primary_domain: boolean;
 	blog_id: number;
 	subscription_id?: any;
