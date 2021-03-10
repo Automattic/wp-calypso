@@ -43,6 +43,7 @@ const useFollowersQuery = ( siteId, type = 'wpcom', fetchOptions = {}, queryOpti
 				page: pageParam,
 			} ),
 		{
+			...queryOptions,
 			getNextPageParam: ( lastPage, allPages ) => {
 				if ( lastPage.pages <= allPages.length || allPages.length >= MAX_FOLLOWERS ) {
 					return;
@@ -57,7 +58,6 @@ const useFollowersQuery = ( siteId, type = 'wpcom', fetchOptions = {}, queryOpti
 					...data,
 				};
 			},
-			...queryOptions,
 		}
 	);
 };
