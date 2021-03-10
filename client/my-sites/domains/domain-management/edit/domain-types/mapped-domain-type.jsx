@@ -58,10 +58,10 @@ class MappedDomainType extends React.Component {
 
 		if ( isSubdomain( domain.name ) ) {
 			setupInstructionsMessage = translate(
-				'Follow these instructions to set up your subdomain mapping:'
+				'You need to follow these instructions to set up your subdomain mapping:'
 			);
 			primaryMessage = translate(
-				'Your subdomain mapping has not been set up. You need to create the correct CNAME or NS records at your current DNS provider. {{learnMoreLink}}Learn how to do that in our support guide for mapping subdomains{{/learnMoreLink}}.',
+				'Please create the correct CNAME or NS records at your current DNS provider. {{learnMoreLink}}Learn how to do that in our support guide for mapping subdomains{{/learnMoreLink}}.',
 				{
 					components: {
 						learnMoreLink: this.renderLinkTo( MAP_SUBDOMAIN ),
