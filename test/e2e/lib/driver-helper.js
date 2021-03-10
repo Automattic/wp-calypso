@@ -37,29 +37,31 @@ export async function clickWhenClickable( driver, locator, timeout = explicitWai
 		return driver.wait( condition, timeout );
 	}
 
-	// Wait for the element to be located
-	const element = await wait( until.elementLocated( locator ) );
-	// Wait for the element to be visible
-	await wait( until.elementIsVisible( element ) );
-	// Wait for the element to not be disabled
-	await wait( until.elementIsEnabled( element ) );
-	// Wait for the element to not be aria-disabled
-	await wait( elementIsAriaEnabled( element ) );
-
 	try {
-		// Highlight & click the element
-		await highlightElement( driver, element );
-		await element.click();
-	} catch ( error ) {
-		// Flaky response back from IE, so assume success and hope for the best
-		if ( global.browserName === 'Internet Explorer' ) {
-			console.log( "WARNING: IE claims the click action failed, but we're proceeding anyway!" );
-		} else {
-			throw error;
-		}
-	}
+		const element = await wait( until.elementLocated( locator ) );
 
-	return element;
+		await wait( until.elementIsEnabled( element ) );
+		await wait( elementIsAriaEnabled( element ) );
+		await highlightElement( driver, element );
+
+		try {
+			await element.click();
+		} catch ( error ) {
+			// Flaky response back from IE, so assume success and hope for the best
+			if ( global.browserName === 'Internet Explorer' ) {
+				console.log( "WARNING: IE claims the click action failed, but we're proceeding anyway!" );
+			} else {
+				throw error;
+			}
+		}
+
+		return element;
+	} catch ( error ) {
+		const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
+		error.message = 'Could not click element ' + locatorStr + '\n' + error.message;
+
+		throw error;
+	}
 }
 
 export function waitTillFocused( driver, selector, pollingOverride, waitOverride ) {
