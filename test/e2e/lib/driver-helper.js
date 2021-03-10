@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-import webdriver, { until, WebElementCondition } from 'selenium-webdriver';
+import webdriver, { WebElementCondition } from 'selenium-webdriver';
 import config from 'config';
 import { forEach } from 'lodash';
-
 /**
  * Internal dependencies
  */
@@ -15,6 +14,50 @@ import * as driverManager from './driver-manager';
 const explicitWaitMS = config.get( 'explicitWaitMS' );
 const by = webdriver.By;
 
+/**
+ * Helper utils
+ */
+
+export function getLocatorString( locator ) {
+	return typeof locator === 'function' ? 'by function()' : locator + '';
+}
+
+export function isTextLocator( locator ) {
+	return typeof locator === 'object' && locator !== null && locator.text && locator.locator;
+}
+
+/**
+ * Custom "until" conditions
+ */
+const until = {
+	...webdriver.until,
+	elementLocated( locator ) {
+		if ( isTextLocator( locator ) ) {
+			return this.elementWithTextLocated( ...locator );
+		}
+
+		return webdriver.until.elementLocated( locator );
+	},
+	elementWithTextLocated( locator, text ) {
+		const checkedLocator = by.checkedLocator( locator );
+		const locatorStr = getLocatorString( checkedLocator );
+
+		return new WebElementCondition(
+			`for element with text '${ text }' to be located ${ locatorStr }`,
+			function ( driver ) {
+				return findElementByText( driver, checkedLocator, text );
+			}
+		);
+	},
+	elementIsAriaEnabled( element ) {
+		return new WebElementCondition( 'until element is not aria-disabled', function () {
+			return element
+				.getAttribute( 'aria-disabled' )
+				.then( ( v ) => ( v !== 'true' ? element : null ) );
+		} );
+	},
+};
+
 export async function highlightElement( driver, element ) {
 	if ( process.env.HIGHLIGHT_ELEMENT === 'true' ) {
 		return await driver.executeScript(
@@ -24,12 +67,21 @@ export async function highlightElement( driver, element ) {
 	}
 }
 
-export function elementIsAriaEnabled( element ) {
-	return new WebElementCondition( 'until element is not aria-disabled', function () {
-		return element
-			.getAttribute( 'aria-disabled' )
-			.then( ( v ) => ( v !== 'true' ? element : null ) );
-	} );
+export function findElement( driver, locator ) {
+	if ( isTextLocator( locator ) ) {
+		return findElementByText( driver, locator.locator, locator.text );
+	}
+	return driver.findElement( locator );
+}
+
+export async function findElementByText( driver, locator, text ) {
+	const allElements = await driver.findElements( locator );
+	const filteredElements = await webdriver.promise.filter(
+		allElements,
+		getInnerTextMatcherFunction( text )
+	);
+
+	return filteredElements[ 0 ];
 }
 
 export async function clickWhenClickable( driver, locator, timeout = explicitWaitMS ) {
@@ -44,7 +96,7 @@ export async function clickWhenClickable( driver, locator, timeout = explicitWai
 	// Wait for the element to not be disabled
 	await wait( until.elementIsEnabled( element ) );
 	// Wait for the element to not be aria-disabled
-	await wait( elementIsAriaEnabled( element ) );
+	await wait( until.elementIsAriaEnabled( element ) );
 
 	try {
 		// Highlight & click the element
@@ -117,29 +169,21 @@ export function followLinkWhenFollowable( driver, selector, waitOverride ) {
 	);
 }
 
-export function waitTillPresentAndDisplayed( driver, selector, waitOverride ) {
-	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
+export async function waitUntilLocatedAndVisible( driver, locator, timeout = explicitWaitMS ) {
+	function wait( condition ) {
+		return driver.wait( condition, timeout );
+	}
 
-	return driver.wait(
-		function () {
-			return driver.findElement( selector ).then(
-				function ( element ) {
-					return element.isDisplayed().then(
-						function () {
-							return true;
-						},
-						function () {
-							return false;
-						}
-					);
-				},
-				function () {
-					return false;
-				}
-			);
-		},
-		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be present and displayed`
+	const element = await wait( until.elementLocated( locator ) );
+	await wait( until.elementIsVisible( element ) );
+
+	return element;
+}
+
+export function isEventuallyLocatedAndVisible( driver, locator, timeout = explicitWaitMS ) {
+	return waitUntilLocatedAndVisible( driver, locator, timeout ).then(
+		( element ) => !! element,
+		() => false
 	);
 }
 
@@ -167,37 +211,6 @@ export function waitTillSelected( driver, selector, waitOverride ) {
 		timeoutWait,
 		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be selected`
 	);
-}
-
-export function isEventuallyPresentAndDisplayed( driver, selector, waitOverride ) {
-	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
-
-	return driver
-		.wait( function () {
-			return driver.findElement( selector ).then(
-				function ( element ) {
-					return element.isDisplayed().then(
-						function () {
-							return true;
-						},
-						function () {
-							return false;
-						}
-					);
-				},
-				function () {
-					return false;
-				}
-			);
-		}, timeoutWait )
-		.then(
-			( shown ) => {
-				return shown;
-			},
-			() => {
-				return false;
-			}
-		);
 }
 
 export function clickIfPresent( driver, selector, attempts ) {
@@ -411,7 +424,7 @@ export function logPerformance( driver ) {
 export async function ensureMobileMenuOpen( driver ) {
 	const self = this;
 	const mobileHeaderSelector = by.css( '.section-nav__mobile-header' );
-	await waitTillPresentAndDisplayed( driver, mobileHeaderSelector );
+	await waitUntilLocatedAndVisible( driver, mobileHeaderSelector );
 	return driver
 		.findElement( mobileHeaderSelector )
 		.isDisplayed()
@@ -491,7 +504,7 @@ export async function refreshIfJNError( driver, timeout = 2000 ) {
 	const jnDBError = by.xpath( '//h1[.="Error establishing a database connection"]' );
 
 	const refreshIfNeeded = async () => {
-		const jnErrorDisplayed = await isEventuallyPresentAndDisplayed( driver, jnSiteError, timeout );
+		const jnErrorDisplayed = await isEventuallyLocatedAndVisible( driver, jnSiteError, timeout );
 		const jnDBErrorDisplayed = await isElementPresent( driver, jnDBError );
 		if ( jnErrorDisplayed || jnDBErrorDisplayed ) {
 			console.log( 'JN Error! Refreshing the page' );
@@ -520,29 +533,6 @@ export async function scrollIntoView( driver, selector, position = 'center' ) {
 		`arguments[0].scrollIntoView( { block: "${ position }", inline: "center" } )`,
 		selectorElement
 	);
-}
-
-export async function selectElementByText( driver, selector, text ) {
-	const element = async () => {
-		const allElements = await driver.findElements( selector );
-		return await webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
-	};
-	return await this.clickWhenClickable( driver, element, null, `while looking for '${ text }'` );
-}
-
-export async function verifyTextPresent( driver, selector, text ) {
-	const element = async () => {
-		const allElements = await driver.findElements( selector );
-		return await webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
-	};
-	return await this.isElementPresent( driver, element );
-}
-
-export function getElementByText( driver, selector, text ) {
-	return async () => {
-		const allElements = await driver.findElements( selector );
-		return await webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
-	};
 }
 
 export async function clearTextArea( driver, selector ) {
@@ -588,23 +578,4 @@ function getInnerTextMatcherFunction( match ) {
 		}
 		throw new Error( 'Unknown matcher type; must be a string or a regular expression' );
 	};
-}
-
-export async function waitTillTextPresent( driver, selector, text, waitOverride ) {
-	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
-
-	return driver.wait(
-		function () {
-			return driver.findElements( selector ).then(
-				async function ( allElements ) {
-					return await webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
-				},
-				function () {
-					return false;
-				}
-			);
-		},
-		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be present and displayed with text '${ text }'`
-	);
 }
