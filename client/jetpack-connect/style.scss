@@ -521,10 +521,13 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	text-align: center;
 }
 
-.is-support-session .jetpack-connect__tos-link {
-	// We should not have the appearance of ToS acceptance on behalf of users.
-	// Using visibility:hidden rather than display:none to avoid unintentional layout changes.
-	visibility: hidden;
+.is-support-session {
+	.jetpack-connect__sso,
+	.jetpack-connect__authorize-form {
+		.jetpack-connect__tos-link {
+			display: none;
+		}
+	}
 }
 
 .jetpack-connect__tos-link-text {
