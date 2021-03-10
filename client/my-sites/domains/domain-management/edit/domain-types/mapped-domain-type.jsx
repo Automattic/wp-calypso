@@ -66,7 +66,6 @@ class MappedDomainType extends React.Component {
 					components: {
 						learnMoreLink: this.renderLinkTo( MAP_SUBDOMAIN ),
 					},
-					args: { domainName: domain.name },
 					comment: 'Notice for mapped subdomain that has DNS records need to set up',
 				}
 			);
