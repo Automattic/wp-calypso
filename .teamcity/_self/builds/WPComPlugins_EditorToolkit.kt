@@ -108,7 +108,7 @@ object WPComPlugins_EditorToolKit : BuildType({
 			scriptContent = """
 				cd apps/editing-toolkit
 				if [ ! -d "./editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks" ] ; then
-					echo "Newspack blocks were not build correctly."
+					echo "Newspack blocks were not built correctly."
 					exit 1
 				fi
 				yarn lint:php
