@@ -2,48 +2,17 @@
  * Internal dependencies
  */
 import { withStorageKey } from '@automattic/state-utils';
-import {
-	combineReducers,
-	keyedReducer,
-	withoutPersistence,
-	withSchemaValidation,
-} from 'calypso/state/utils';
-import { atomicTransfer as schema } from './schema';
-import {
-	ATOMIC_TRANSFER_REQUEST,
-	ATOMIC_TRANSFER_REQUEST_FAILURE,
-	ATOMIC_TRANSFER_SET,
-	ATOMIC_TRANSFER_COMPLETE,
-} from 'calypso/state/action-types';
+import { keyedReducer } from 'calypso/state/utils';
+import { ATOMIC_TRANSFER_SET } from 'calypso/state/action-types';
 
-export const atomicTransfer = withSchemaValidation( schema, ( state = {}, action ) => {
+export const atomicTransfer = ( state = {}, action ) => {
 	switch ( action.type ) {
-		case ATOMIC_TRANSFER_SET: {
-			const { transfer } = action;
-			return { ...state, ...transfer };
-		}
+		case ATOMIC_TRANSFER_SET:
+			return { ...state, ...action.transfer };
 	}
 
 	return state;
-} );
-
-export const fetchingTransfer = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
-		case ATOMIC_TRANSFER_REQUEST:
-			return true;
-		case ATOMIC_TRANSFER_REQUEST_FAILURE:
-			return false;
-		case ATOMIC_TRANSFER_COMPLETE:
-			return false;
-	}
-
-	return state;
-} );
-
-export const atomicTransferReducers = combineReducers( {
-	atomicTransfer,
-	fetchingTransfer,
-} );
+};
 
 //export default atomicTransferReducers;
-export default withStorageKey( 'atomicTransfer', keyedReducer( 'siteId', atomicTransferReducers ) );
+export default withStorageKey( 'atomicTransfer', keyedReducer( 'siteId', atomicTransfer ) );

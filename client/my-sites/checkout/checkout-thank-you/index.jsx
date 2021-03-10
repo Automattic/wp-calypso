@@ -3,7 +3,7 @@
  */
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, identity } from 'lodash';
+import { find, get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -85,7 +85,6 @@ import { isRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
-import isFetchingTransfer from 'calypso/state/selectors/is-fetching-atomic-transfer';
 import { getSiteHomeUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -118,11 +117,10 @@ function findPurchaseAndDomain( purchases, predicate ) {
 	return [ purchase, purchase.meta ];
 }
 
-export class CheckoutThankYou extends React.Component {
+class CheckoutThankYou extends React.Component {
 	static propTypes = {
 		domainOnlySiteFlow: PropTypes.bool.isRequired,
 		failedPurchases: PropTypes.array,
-		isFetchingTransfer: PropTypes.bool,
 		isSimplified: PropTypes.bool,
 		receiptId: PropTypes.number,
 		gsuiteReceiptId: PropTypes.number,
@@ -132,10 +130,6 @@ export class CheckoutThankYou extends React.Component {
 		siteHomeUrl: PropTypes.string.isRequired,
 		transferComplete: PropTypes.bool,
 		siteUnlaunchedBeforeUpgrade: PropTypes.bool,
-	};
-
-	static defaultProps = {
-		fetchAtomicTransfer: identity,
 	};
 
 	componentDidMount() {
@@ -151,7 +145,7 @@ export class CheckoutThankYou extends React.Component {
 			sitePlans,
 		} = this.props;
 
-		if ( selectedSite && ! this.props.isFetchingTransfer ) {
+		if ( selectedSite ) {
 			this.props.fetchAtomicTransfer( selectedSite );
 		}
 
@@ -674,7 +668,6 @@ export default connect(
 		const activeTheme = getActiveTheme( state, siteId );
 
 		return {
-			isFetchingTransfer: isFetchingTransfer( state, siteId ),
 			isProductsListFetching: isProductsListFetching( state ),
 			planSlug,
 			receipt: getReceiptById( state, props.receiptId ),
@@ -686,9 +679,7 @@ export default connect(
 				-1,
 			user: getCurrentUser( state ),
 			userDate: getCurrentUserDate( state ),
-			transferComplete:
-				transferStates.COMPLETED ===
-				get( getAtomicTransfer( state, siteId ), 'status', transferStates.PENDING ),
+			transferComplete: transferStates.COMPLETED === getAtomicTransfer( state, siteId ).status,
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 			selectedSiteSlug: getSiteSlug( state, siteId ),
 			siteHomeUrl: getSiteHomeUrl( state, siteId ),
@@ -697,26 +688,12 @@ export default connect(
 			previousRoute: getPreviousRoute( state ),
 		};
 	},
-	( dispatch ) => {
-		return {
-			activatedTheme( meta, site ) {
-				dispatch( themeActivated( meta, site, 'calypstore', true ) );
-			},
-			fetchReceipt( receiptId ) {
-				dispatch( fetchReceipt( receiptId ) );
-			},
-			fetchSitePlans( site ) {
-				dispatch( fetchSitePlans( site.ID ) );
-			},
-			refreshSitePlans( site ) {
-				dispatch( refreshSitePlans( site.ID ) );
-			},
-			recordStartTransferClickInThankYou( domain ) {
-				dispatch( recordStartTransferClickInThankYou( domain ) );
-			},
-			fetchAtomicTransfer( site ) {
-				dispatch( fetchAtomicTransfer( site.ID ) );
-			},
-		};
+	{
+		activatedTheme: ( meta, site ) => themeActivated( meta, site, 'calypstore', true ),
+		fetchReceipt: ( receiptId ) => fetchReceipt( receiptId ),
+		fetchSitePlans: ( site ) => fetchSitePlans( site.ID ),
+		refreshSitePlans: ( site ) => refreshSitePlans( site.ID ),
+		recordStartTransferClickInThankYou: ( domain ) => recordStartTransferClickInThankYou( domain ),
+		fetchAtomicTransfer: ( site ) => fetchAtomicTransfer( site.ID ),
 	}
 )( localize( CheckoutThankYou ) );
