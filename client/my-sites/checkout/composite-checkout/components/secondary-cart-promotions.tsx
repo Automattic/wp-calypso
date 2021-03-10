@@ -4,7 +4,7 @@
 import React, { FunctionComponent, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import styled from '@emotion/styled';
-import { ResponseCart } from '@automattic/shopping-cart';
+import type { ResponseCart, RequestCartProduct } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -17,7 +17,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 type PartialCart = Pick< ResponseCart, 'products' >;
 interface Props {
 	responseCart: PartialCart;
-	addItemToCart: () => void;
+	addItemToCart: ( item: RequestCartProduct ) => void;
 }
 
 export interface MockResponseCart extends PartialCart {
