@@ -8,6 +8,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { preventWidows } from 'calypso/lib/formatting';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
@@ -22,8 +23,14 @@ const StandardPlansHeader = () => (
 	<>
 		<FormattedHeader headerText={ translate( 'Plans' ) } align="left" brandFont />
 		<PlansNavigation path={ '/plans' } />
+		<h2 className="jetpack-plans__pricing-header">
+			{ preventWidows(
+				translate( 'Security, performance, and marketing tools made for WordPress' )
+			) }
+		</h2>
 	</>
 );
+
 const ConnectFlowPlansHeader = () => (
 	<>
 		<div className="jetpack-plans__heading">
