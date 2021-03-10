@@ -1091,13 +1091,13 @@ workflows:
       #          requires:
       #            - wait-calypso-live
       #          test-flags: '-C -S $CIRCLE_SHA1'
-      - test-e2e-canary:
-          name: test-e2e-canary-ie
-          requires:
-            - wait-calypso-live
-          test-flags: '-z -S $CIRCLE_SHA1'
-          test-target: 'IE11'
-          slack-webhook: '$SLACK_IE'
+      # - test-e2e-canary:
+      #     name: test-e2e-canary-ie
+      #     requires:
+      #       - wait-calypso-live
+      #     test-flags: '-z -S $CIRCLE_SHA1'
+      #     test-target: 'IE11'
+      #     slack-webhook: '$SLACK_IE'
       - test-e2e-canary:
           name: test-e2e-canary-safari
           requires:
