@@ -3,7 +3,7 @@
  */
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 
-const NEW_USER_ID_THRESHOLD = 203012733; // ID of user who first registered on March 10, 2021.
+const NEW_USER_ID_THRESHOLD = 203012733; // ID of user who registered on March 10, 2021 at 8am UTC.
 
 export default ( state ) => {
 	const userId = getCurrentUserId( state );
