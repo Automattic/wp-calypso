@@ -150,6 +150,10 @@
 			margin-bottom: 0.5em;
 		}
 
+		.mapped-domain-type__main-content {
+			padding-bottom: 0;
+		}
+
 		.mapped-domain-type__small-message {
 			font-size: $font-body-small;
 		}
@@ -160,6 +164,10 @@
 			padding-bottom: 1.5em;
 			> p:last-child {
 				margin-bottom: 0;
+			}
+
+			> div:last-of-type .foldable-faq__answer {
+				border-bottom: 0;
 			}
 		}
 

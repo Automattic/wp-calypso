@@ -98,7 +98,7 @@ class MappedDomainType extends React.Component {
 
 		return (
 			<React.Fragment>
-				<div>
+				<div className="mapped-domain-type__main-content">
 					<p>{ setupInstructionsMessage }</p>
 					{ this.renderRecommendedSetupMessage( primaryMessage ) }
 					{ domain.aRecordsRequiredForMapping && this.renderARecordsMappingMessage() }
