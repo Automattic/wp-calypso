@@ -39,7 +39,7 @@ import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
 import PendingGSuiteTosNotice from 'calypso/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 import FoldableFAQ from 'calypso/components/foldable-faq';
-
+import Notice from 'calypso/components/notice';
 class MappedDomainType extends React.Component {
 	renderSettingUpNameserversAndARecords() {
 		const { domain, translate } = this.props;
@@ -63,7 +63,6 @@ class MappedDomainType extends React.Component {
 				'Your subdomain mapping has not been set up. You need to create the correct CNAME or NS records at your current DNS provider. {{learnMoreLink}}Learn how to do that in our support guide for mapping subdomains{{/learnMoreLink}}.',
 				{
 					components: {
-						strong: <strong />,
 						link: this.renderLinkTo( MAP_SUBDOMAIN ),
 					},
 					args: { domainName: domain.name },
@@ -78,13 +77,19 @@ class MappedDomainType extends React.Component {
 			);
 		} else {
 			setupInstructionsMessage = translate(
-				'Follow these instructions to set up your domain mapping:'
+				'You need to follow these instructions to finish connecting the %(domainName)s domain to your WordPress.com site:',
+				{
+					args: { domainName: domain.name },
+				}
 			);
 			primaryMessage = translate(
-				'In order to connect your domain to WordPress.com, please log into your account at your domain registrar and update the name servers of your domain to use the following values, as detailed in {{link}}these instructions{{/link}}:',
+				'Please log into your account at your domain registrar and {{strong}}update the name servers{{/strong}} of your domain to use the following values, as detailed in {{link}}these instructions{{/link}}:',
 				{
 					comment: 'Notice for mapped domain notice with NS records pointing to somewhere else',
-					components: { link: this.renderLinkTo( MAP_DOMAIN_CHANGE_NAME_SERVERS ) },
+					components: {
+						strong: <strong />,
+						link: this.renderLinkTo( MAP_DOMAIN_CHANGE_NAME_SERVERS ),
+					},
 				}
 			);
 			secondaryMessage = translate(
@@ -137,14 +142,20 @@ class MappedDomainType extends React.Component {
 		const { domain, translate } = this.props;
 
 		const advancedSetupUsingARecordsTitle = translate( 'Advanced setup using root A records' );
+		const aRecordMappingWarning = translate(
+			'If you map a domain using A records rather than WordPress.com name servers, you will need to manage your domain’s DNS records yourself for any other services you are using with your domain, including email forwarding or email hosting (i.e. with Google Workspace or Titan)'
+		);
 		const aRecordsSetupMessage = translate(
-			'We recommend using WordPress.com’s name servers to map your domain, but if you prefer you can use different name servers and manage the configuration of your domain yourself. To point your domain to WordPress.com, please add the following IP addresses as root A records using {{link}}these instructions{{/link}}:',
+			'Please set the following IP addresses as root A records using {{link}}these instructions{{/link}}:',
 			{
 				components: { link: this.renderLinkTo( MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS ) },
 			}
 		);
 		return (
 			<FoldableFAQ id="advanced-mapping-setup" question={ advancedSetupUsingARecordsTitle }>
+				<Notice status="is-warning" showDismiss={ false }>
+					{ aRecordMappingWarning }
+				</Notice>
 				<p>{ aRecordsSetupMessage }</p>
 				<ul className="mapped-domain-type__name-server-list">
 					{ domain.aRecordsRequiredForMapping.map( ( aRecord ) => {
