@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { isEligibleForGutenframe } from 'calypso/state/gutenberg-iframe-eligible/is-eligible-for-gutenframe';
+import { shouldCalypsoifyJetpack } from 'calypso/state/selectors/should-calypsoify-jetpack';
 import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 import { getEditorPath } from 'calypso/state/editor/selectors';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -16,7 +17,7 @@ export const getEditorUrl = ( state, siteId, postId = null, postType = 'post' ) 
 			url = `${ siteAdminUrl }post.php?post=${ postId }&action=edit`;
 		}
 
-		if ( ! isVipSite( state, siteId ) ) {
+		if ( ! isVipSite( state, siteId ) && shouldCalypsoifyJetpack( state, siteId ) ) {
 			url = addQueryArgs( { calypsoify: '1' }, url );
 		}
 
