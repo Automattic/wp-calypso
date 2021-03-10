@@ -51,9 +51,6 @@ class MappedDomainType extends React.Component {
 			return null;
 		}
 
-		const generateLinkTo = ( linksTo ) => (
-			<a href={ linksTo } target="_blank" rel="noopener noreferrer" />
-		);
 		let setupInstructionsMessage;
 		let primaryMessage;
 		let secondaryMessage;
@@ -67,7 +64,7 @@ class MappedDomainType extends React.Component {
 				{
 					components: {
 						strong: <strong />,
-						link: generateLinkTo( MAP_SUBDOMAIN ),
+						link: this.renderLinkTo( MAP_SUBDOMAIN ),
 					},
 					args: { domainName: domain.name },
 					comment: 'Notice for mapped subdomain that has DNS records need to set up',
@@ -87,13 +84,13 @@ class MappedDomainType extends React.Component {
 				'In order to connect your domain to WordPress.com, please log into your account at your domain registrar and update the name servers of your domain to use the following values, as detailed in {{link}}these instructions{{/link}}:',
 				{
 					comment: 'Notice for mapped domain notice with NS records pointing to somewhere else',
-					components: { link: generateLinkTo( MAP_DOMAIN_CHANGE_NAME_SERVERS ) },
+					components: { link: this.renderLinkTo( MAP_DOMAIN_CHANGE_NAME_SERVERS ) },
 				}
 			);
 			secondaryMessage = translate(
 				"Please note that it can take up to 72 hours for your changes to become available. If you're still not seeing your site loading at %(domainName)s, please wait a few more hours, clear your browser cache, and try again. {{learnMoreLink}}Learn all about mapping an existing domain in our support docs{{/learnMoreLink}}.",
 				{
-					components: { learnMoreLink: generateLinkTo( MAP_EXISTING_DOMAIN ) },
+					components: { learnMoreLink: this.renderLinkTo( MAP_EXISTING_DOMAIN ) },
 					args: { domainName: domain.name },
 				}
 			);
@@ -109,6 +106,10 @@ class MappedDomainType extends React.Component {
 				<div className="mapped-domain-type__small-message">{ secondaryMessage }</div>
 			</React.Fragment>
 		);
+	}
+
+	renderLinkTo( url ) {
+		return <a href={ url } target="_blank" rel="noopener noreferrer" />;
 	}
 
 	renderRecommendedSetupMessage( primaryMessage ) {
@@ -135,14 +136,11 @@ class MappedDomainType extends React.Component {
 	renderARecordsMappingMessage() {
 		const { domain, translate } = this.props;
 
-		const generateLinkTo = ( href ) => (
-			<a href={ href } target="_blank" rel="noopener noreferrer" />
-		);
 		const advancedSetupUsingARecordsTitle = translate( 'Advanced setup using root A records' );
 		const aRecordsSetupMessage = translate(
 			'We recommend using WordPress.com’s name servers to map your domain, but if you prefer you can use different name servers and manage the configuration of your domain yourself. To point your domain to WordPress.com, please add the following IP addresses as root A records using {{link}}these instructions{{/link}}:',
 			{
-				components: { link: generateLinkTo( MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS ) },
+				components: { link: this.renderLinkTo( MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS ) },
 			}
 		);
 		return (
