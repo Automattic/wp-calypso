@@ -61,9 +61,7 @@ export const queries = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case COMMENTS_CHANGE_STATUS:
 		case COMMENTS_DELETE: {
-			const query = action.refreshCommentListQuery
-				? action.refreshCommentListQuery
-				: get( action, 'meta.comment.commentsListQuery' );
+			const query = action.refreshCommentListQuery;
 			if ( ! query ) {
 				return state;
 			}
