@@ -15,7 +15,7 @@ export default class DomainFirstPage extends AsyncBaseContainer {
 	}
 
 	async chooseJustBuyTheDomain() {
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.site-or-domain__choices' )
 		);

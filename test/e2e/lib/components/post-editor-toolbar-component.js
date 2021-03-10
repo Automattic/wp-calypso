@@ -39,11 +39,11 @@ export default class PostEditorToolbarComponent extends AsyncBaseContainer {
 			await driverHelper.clickIfPresent( this.driver, saveSelector, 3 );
 		}
 
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, savedSelector );
+		return await driverHelper.waitUntilLocatedAndVisible( this.driver, savedSelector );
 	}
 
 	async clickPublishPost() {
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishButtonSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, this.publishButtonSelector );
 		await this.waitForPublishButtonToBeEnabled();
 		return await driverHelper.clickWhenClickable( this.driver, this.publishButtonSelector );
 	}
@@ -95,7 +95,7 @@ export default class PostEditorToolbarComponent extends AsyncBaseContainer {
 		const viewPostSelector = By.css( '.editor-action-bar__cell.is-right a' );
 		const driver = this.driver;
 
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, viewPostSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, viewPostSelector );
 
 		const url = await driver.findElement( viewPostSelector ).getAttribute( 'href' );
 		if ( reloadPageTwice === true ) {
@@ -114,7 +114,7 @@ export default class PostEditorToolbarComponent extends AsyncBaseContainer {
 	}
 
 	async waitForIsPendingStatus() {
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.editor-status-label.is-pending' )
 		);
@@ -128,7 +128,7 @@ export default class PostEditorToolbarComponent extends AsyncBaseContainer {
 	}
 
 	async waitForIsDraftStatus() {
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.editor-status-label.is-draft' )
 		);

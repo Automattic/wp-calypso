@@ -28,12 +28,12 @@ export default class CommentsAreaComponent extends AsyncBaseContainer {
 		await this.switchToFrameIfJetpack();
 
 		await driverHelper.clickWhenClickable( this.driver, commentForm );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, submitButton );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, submitButton );
 		await driverHelper.scrollIntoView( this.driver, submitButton );
 		await driverHelper.setWhenSettable( this.driver, commentField, comment );
 		await driverHelper.clickWhenClickable( this.driver, submitButton );
 		await this.driver.switchTo().defaultContent();
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, commentContent );
+		return await driverHelper.waitUntilLocatedAndVisible( this.driver, commentContent );
 	}
 
 	async reply( commentObj, depth = 2 ) {
@@ -43,7 +43,7 @@ export default class CommentsAreaComponent extends AsyncBaseContainer {
 		);
 		await driverHelper.clickWhenClickable( this.driver, replyButton );
 		await this._postComment( commentObj );
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, replyContent );
+		return await driverHelper.waitUntilLocatedAndVisible( this.driver, replyContent );
 	}
 
 	async switchToFrameIfJetpack() {
@@ -55,7 +55,7 @@ export default class CommentsAreaComponent extends AsyncBaseContainer {
 		const iFrameSelector = By.css( 'iframe.jetpack_remote_comment' );
 
 		await this.driver.switchTo().defaultContent();
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, iFrameSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, iFrameSelector );
 		await this.driver.wait(
 			until.ableToSwitchToFrame( iFrameSelector ),
 			this.explicitWaitMS,

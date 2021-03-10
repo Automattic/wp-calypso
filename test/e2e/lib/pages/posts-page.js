@@ -23,19 +23,19 @@ export default class PostsPage extends AsyncBaseContainer {
 
 	async addNewPost() {
 		const addNewPostSelector = By.css( '.post-type-list__add-post' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, addNewPostSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, addNewPostSelector );
 		return await driverHelper.clickWhenClickable( this.driver, addNewPostSelector );
 	}
 
 	async waitForPostTitled( title ) {
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			PostsPage.getPostTitleSelector( title )
 		);
 	}
 
 	async isPostDisplayed( title ) {
-		return await driverHelper.isEventuallyPresentAndDisplayed(
+		return await driverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			PostsPage.getPostTitleSelector( title )
 		);
@@ -79,7 +79,7 @@ export default class PostsPage extends AsyncBaseContainer {
 	}
 
 	async isPostPending() {
-		return await driverHelper.isEventuallyPresentAndDisplayed(
+		return await driverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( '.post-status.is-pending' )
 		);

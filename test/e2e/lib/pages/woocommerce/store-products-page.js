@@ -17,14 +17,14 @@ export default class StoreProductsPage extends AsyncBaseContainer {
 	}
 
 	async atLeastOneProductDisplayed() {
-		return await driverHelper.isEventuallyPresentAndDisplayed(
+		return await driverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			by.css( '.products__list-wrapper tr.has-action' )
 		);
 	}
 
 	async productDisplayed( productTitle ) {
-		return await driverHelper.verifyTextPresent(
+		return await driverHelper.waitUntilElementWithTextLocated(
 			this.driver,
 			by.css( '.products__list-name' ),
 			productTitle
@@ -32,10 +32,9 @@ export default class StoreProductsPage extends AsyncBaseContainer {
 	}
 
 	async selectProduct( productTitle ) {
-		return await driverHelper.selectElementByText(
-			this.driver,
-			by.css( '.products__list-name' ),
-			productTitle
-		);
+		return await driverHelper.clickWhenClickable( this.driver, {
+			locator: by.css( '.products__list-name' ),
+			text: productTitle,
+		} );
 	}
 }

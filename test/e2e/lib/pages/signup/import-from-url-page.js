@@ -21,7 +21,7 @@ export default class ImportFromURLPage extends AsyncBaseContainer {
 
 	async submitForm() {
 		const buttonSelector = By.css( '.import-url__submit-button' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, buttonSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, buttonSelector );
 		await driverHelper.scrollIntoView( this.driver, buttonSelector );
 		return await driverHelper.clickWhenClickable( this.driver, buttonSelector );
 	}
@@ -34,7 +34,7 @@ export default class ImportFromURLPage extends AsyncBaseContainer {
 	}
 
 	async errorDisplayed() {
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.import-url__url-input-message.is-error' )
 		);

@@ -18,10 +18,7 @@ export default class StoreOrdersPage extends AsyncBaseContainer {
 	}
 
 	async atLeastOneOrderDisplayed() {
-		return await driverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			this.firstOrderSelector
-		);
+		return await driverHelper.isEventuallyLocatedAndVisible( this.driver, this.firstOrderSelector );
 	}
 
 	async clickFirstOrder() {

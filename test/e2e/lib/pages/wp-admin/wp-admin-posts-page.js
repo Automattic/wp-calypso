@@ -17,8 +17,8 @@ export default class WPAdminPostsPage extends AsyncBaseContainer {
 	async viewFirstPost() {
 		const viewAnchor = By.css( '.status-publish .row-actions .view a' );
 		const postPage = By.css( '#page' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, viewAnchor );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, viewAnchor );
 		await driverHelper.followLinkWhenFollowable( this.driver, viewAnchor );
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, postPage );
+		return await driverHelper.waitUntilLocatedAndVisible( this.driver, postPage );
 	}
 }

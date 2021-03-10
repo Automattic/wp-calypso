@@ -73,7 +73,7 @@ export default class PeoplePage extends AsyncBaseContainer {
 
 		let displayed;
 		for ( let i = 0; i <= retries; i++ ) {
-			displayed = await DriverHelper.isEventuallyPresentAndDisplayed(
+			displayed = await DriverHelper.isEventuallyLocatedAndVisible(
 				this.driver,
 				By.css( `.people-profile__login[data-e2e-login="${ username }"]` ),
 				500
@@ -111,7 +111,7 @@ export default class PeoplePage extends AsyncBaseContainer {
 		if ( classNames.includes( 'is-open' ) === false ) {
 			await DriverHelper.clickWhenClickable( this.driver, this.searchButtonSelector );
 		}
-		return await DriverHelper.waitTillPresentAndDisplayed( this.driver, this.searchInputSelector );
+		return await DriverHelper.waitUntilLocatedAndVisible( this.driver, this.searchInputSelector );
 	}
 
 	async waitForSearchResults() {
@@ -138,7 +138,7 @@ export default class PeoplePage extends AsyncBaseContainer {
 		const driver = this.driver;
 		return await driver.wait( async () => {
 			driver.navigate().refresh();
-			await DriverHelper.waitTillPresentAndDisplayed(
+			await DriverHelper.waitUntilLocatedAndVisible(
 				this.driver,
 				By.css( `.people-invites__pending .people-profile__username[title="${ emailAddress }"]` )
 			);

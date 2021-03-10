@@ -41,7 +41,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		step( 'Can insert the Click to Tweet block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.addBlock( 'Click to Tweet' );
-			return await driverHelper.waitTillPresentAndDisplayed(
+			return await driverHelper.waitUntilLocatedAndVisible(
 				driver,
 				By.css( '.wp-block-coblocks-click-to-tweet' )
 			);
@@ -49,7 +49,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 
 		step( 'Can enter text to tweet', async function () {
 			const textSelector = By.css( '.wp-block-coblocks-click-to-tweet__text' );
-			await driverHelper.waitTillPresentAndDisplayed( driver, textSelector );
+			await driverHelper.waitUntilLocatedAndVisible( driver, textSelector );
 			return await driver
 				.findElement( textSelector )
 				.sendKeys(
@@ -66,7 +66,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		} );
 
 		step( 'Can see the Click to Tweet block in our published post', async function () {
-			return await driverHelper.waitTillPresentAndDisplayed(
+			return await driverHelper.waitUntilLocatedAndVisible(
 				driver,
 				By.css( '.entry-content .wp-block-coblocks-click-to-tweet' )
 			);
@@ -82,7 +82,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		step( 'Can insert the Dynamic HR block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.addBlock( 'Dynamic HR' );
-			return await driverHelper.waitTillPresentAndDisplayed(
+			return await driverHelper.waitUntilLocatedAndVisible(
 				driver,
 				By.css( '.wp-block-coblocks-dynamic-separator' )
 			);
@@ -94,7 +94,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		} );
 
 		step( 'Can see the Dynamic HR block in our published post', async function () {
-			return await driverHelper.waitTillPresentAndDisplayed(
+			return await driverHelper.waitUntilLocatedAndVisible(
 				driver,
 				By.css( '.entry-content .wp-block-coblocks-dynamic-separator' )
 			);
@@ -110,7 +110,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		step( 'Can insert the Hero block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.addBlock( 'Hero' );
-			return await driverHelper.waitTillPresentAndDisplayed(
+			return await driverHelper.waitUntilLocatedAndVisible(
 				driver,
 				By.css( '.wp-block-coblocks-hero' )
 			);
@@ -122,7 +122,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		} );
 
 		step( 'Can see the Hero block in our published post', async function () {
-			return await driverHelper.waitTillPresentAndDisplayed(
+			return await driverHelper.waitUntilLocatedAndVisible(
 				driver,
 				By.css( '.entry-content .wp-block-coblocks-hero' )
 			);
@@ -146,18 +146,18 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		step( 'Can insert the Logos block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.addBlock( 'Logos' );
-			return await driverHelper.waitTillPresentAndDisplayed(
+			return await driverHelper.waitUntilLocatedAndVisible(
 				driver,
 				By.css( '.wp-block-coblocks-logos' )
 			);
 		} );
 
 		step( 'Can select an image as a logo', async function () {
-			await driverHelper.waitTillPresentAndDisplayed(
+			await driverHelper.waitUntilLocatedAndVisible(
 				driver,
 				By.css( '.block-editor-media-placeholder' )
 			);
-			await driverHelper.waitTillPresentAndDisplayed(
+			await driverHelper.waitUntilLocatedAndVisible(
 				driver,
 				By.css( '.components-form-file-upload ' )
 			);
@@ -177,7 +177,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		} );
 
 		step( 'Can see the Logos block in our published post', async function () {
-			return await driverHelper.waitTillPresentAndDisplayed(
+			return await driverHelper.waitUntilLocatedAndVisible(
 				driver,
 				By.css( '.entry-content .wp-block-coblocks-logos' )
 			);
@@ -193,7 +193,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		step( 'Can insert the Pricing Table block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.addBlock( 'Pricing Table' );
-			return await driverHelper.waitTillPresentAndDisplayed(
+			return await driverHelper.waitUntilLocatedAndVisible(
 				driver,
 				By.css( '.wp-block-coblocks-pricing-table' )
 			);
@@ -205,7 +205,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		} );
 
 		step( 'Can see the Pricing Table block in our published post', async function () {
-			return await driverHelper.waitTillPresentAndDisplayed(
+			return await driverHelper.waitUntilLocatedAndVisible(
 				driver,
 				By.css( '.entry-content .wp-block-coblocks-pricing-table' )
 			);
@@ -225,7 +225,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 			const name = { None: 'no', S: 'small', M: 'medium', L: 'large', XL: 'huge' }[ buttonText ];
 
 			await buttonEl.click();
-			await driverHelper.waitTillPresentAndDisplayed(
+			await driverHelper.waitUntilLocatedAndVisible(
 				driver,
 				By.css( `.wp-block-coblocks-pricing-table__inner.has-${ name }-gutter` )
 			);
@@ -239,12 +239,12 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		step( 'Can see gutter controls for supporting block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.addBlock( 'Pricing Table' );
-			await driverHelper.waitTillPresentAndDisplayed(
+			await driverHelper.waitUntilLocatedAndVisible(
 				driver,
 				By.css( '.wp-block-coblocks-pricing-table' )
 			);
 			await gEditorComponent.openSidebar();
-			await driverHelper.waitTillPresentAndDisplayed( driver, gutterControlsLocator );
+			await driverHelper.waitUntilLocatedAndVisible( driver, gutterControlsLocator );
 		} );
 
 		step( 'Can set the "None" gutter value', async function () {

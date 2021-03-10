@@ -26,7 +26,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		);
 		await driverHelper.scrollIntoView( this.driver, by );
 		await driverHelper.clickWhenClickable( this.driver, by );
-		return driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( '.components-panel' ) );
+		return driverHelper.waitUntilLocatedAndVisible( this.driver, By.css( '.components-panel' ) );
 	}
 
 	async selectDocumentTab() {
@@ -97,36 +97,37 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async _expandOrCollapseSectionByText( text, expand = true ) {
-		const sectionSelector = await driverHelper.getElementByText(
+		const sectionLocator = () =>
+			driverHelper.findElement( this.driver, {
+				locator: By.css( '.components-panel__body-toggle' ),
+				text,
+			} );
+		const sectionButton = await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
-			By.css( '.components-panel__body-toggle' ),
-			text
+			sectionLocator
 		);
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, sectionSelector );
-		const sectionButton = await this.driver.findElement( sectionSelector );
 		const c = await sectionButton.getAttribute( 'aria-expanded' );
 		if ( expand && c === 'false' ) {
-			await driverHelper.scrollIntoView( this.driver, sectionSelector );
+			await driverHelper.scrollIntoView( this.driver, sectionLocator );
 			return await sectionButton.click();
 		}
 		if ( ! expand && c === 'true' ) {
-			await driverHelper.scrollIntoView( this.driver, sectionSelector );
+			await driverHelper.scrollIntoView( this.driver, sectionLocator );
 			return await sectionButton.click();
 		}
 	}
 
 	async setCommentsPreference( { allow = true } = {} ) {
-		const labelSelector = await driverHelper.getElementByText(
-			this.driver,
-			By.css( '.components-checkbox-control__label' ),
-			'Allow comments'
-		);
-		const checkBoxSelectorID = await this.driver.findElement( labelSelector ).getAttribute( 'for' );
-		const checkBoxSelector = By.id( checkBoxSelectorID );
+		const labelElement = await driverHelper.findElement( this.driver, {
+			locator: By.css( '.components-checkbox-control__label' ),
+			text: 'Allow comments',
+		} );
+		const checkBoxSelector = await labelElement.getAttribute( 'for' );
+		const checkBoxLocator = By.id( checkBoxSelector );
 		if ( allow === true ) {
-			await driverHelper.setCheckbox( this.driver, checkBoxSelector );
+			await driverHelper.setCheckbox( this.driver, checkBoxLocator );
 		} else {
-			await driverHelper.unsetCheckbox( this.driver, checkBoxSelector );
+			await driverHelper.unsetCheckbox( this.driver, checkBoxLocator );
 		}
 	}
 
@@ -147,7 +148,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 
 		await driverHelper.setWhenSettable( driver, categoryNameInputSelector, category );
 		await driverHelper.clickWhenClickable( driver, saveCategoryButtonSelector );
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			driver,
 			By.xpath( `//label[contains(text(), '${ category }')]` )
 		);
@@ -156,7 +157,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	async addNewTag( tag ) {
 		const tagEntrySelector = By.css( 'input.components-form-token-field__input' );
 
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, tagEntrySelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, tagEntrySelector );
 		await driverHelper.scrollIntoView( this.driver, tagEntrySelector );
 		await driverHelper.waitForFieldClearable( this.driver, tagEntrySelector );
 		const tagEntryElement = await this.driver.findElement( tagEntrySelector );
@@ -247,8 +248,8 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		);
 		// schedulePost post for the first day of the next month
 		await driverHelper.clickWhenClickable( this.driver, nextMonthSelector );
-		await driverHelper.selectElementByText( this.driver, firstDay, '1' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, publishDateSelector );
+		await driverHelper.clickWhenClickable( this.driver, { locator: firstDay, text: '1' } );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, publishDateSelector );
 		const publishDate = await this.driver.findElement( publishDateSelector ).getText();
 
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
@@ -259,7 +260,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 
 	async getSelectedPublishDate() {
 		const publishDateSelector = By.css( '.edit-post-post-schedule__toggle' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, publishDateSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, publishDateSelector );
 		return await this.driver.findElement( publishDateSelector ).getText();
 	}
 
@@ -267,7 +268,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		const trashSelector = By.css( 'button.editor-post-trash' );
 
 		await this.selectDocumentTab();
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, trashSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, trashSelector );
 		await driverHelper.clickWhenClickable( this.driver, trashSelector );
 
 		// wait for 'Move to trash' button to disappear
@@ -290,7 +291,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 
 	async enterImageAltText( fileDetails ) {
 		const altTextInputSelector = By.css( '.components-textarea-control__input' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, altTextInputSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, altTextInputSelector );
 		return await driverHelper.setWhenSettable(
 			this.driver,
 			altTextInputSelector,

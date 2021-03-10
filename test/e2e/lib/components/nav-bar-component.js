@@ -19,11 +19,10 @@ export default class NavBarComponent extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable( this.driver, postButtonSelector );
 		await this.dismissComponentPopover();
 		if ( siteURL !== null ) {
-			return await driverHelper.selectElementByText(
-				this.driver,
-				by.css( '.site__domain' ),
-				siteURL
-			);
+			return await driverHelper.clickWhenClickable( this.driver, {
+				locator: by.css( '.site__domain' ),
+				text: siteURL,
+			} );
 		}
 	}
 	async dismissComponentPopover() {
@@ -41,14 +40,11 @@ export default class NavBarComponent extends AsyncBaseContainer {
 	async clickMySites() {
 		const mySitesSelector = by.css( 'header.masterbar a.masterbar__item' );
 		await driverHelper.clickWhenClickable( this.driver, mySitesSelector );
-		await driverHelper.isEventuallyPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			by.css( '.sidebar__menu-wrapper' )
 		);
-		return await driverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			by.css( '.is-group-sites' )
-		);
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, by.css( '.is-group-sites' ) );
 	}
 	hasUnreadNotifications() {
 		return this.driver
@@ -67,7 +63,7 @@ export default class NavBarComponent extends AsyncBaseContainer {
 		}
 	}
 	async openNotificationsShortcut() {
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			by.css( '.masterbar__notifications' )
 		);
@@ -75,7 +71,7 @@ export default class NavBarComponent extends AsyncBaseContainer {
 	}
 	async confirmNotificationsOpen() {
 		const selector = by.css( '.wpnt-open' );
-		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
+		return await driverHelper.isEventuallyLocatedAndVisible( this.driver, selector );
 	}
 	async dismissGuidedTours() {
 		const self = this;

@@ -41,7 +41,7 @@ export default class PagesPage extends AsyncBaseContainer {
 		const startPageSelector = By.css( '.empty-content__action' ); // Add button when there are no pages
 
 		if (
-			await driverHelper.isEventuallyPresentAndDisplayed(
+			await driverHelper.isEventuallyLocatedAndVisible(
 				this.driver,
 				addPageSelector,
 				this.explicitWaitMS / 5
@@ -49,7 +49,7 @@ export default class PagesPage extends AsyncBaseContainer {
 		) {
 			return await driverHelper.clickWhenClickable( this.driver, addPageSelector );
 		} else if (
-			await driverHelper.isEventuallyPresentAndDisplayed(
+			await driverHelper.isEventuallyLocatedAndVisible(
 				this.driver,
 				startPageSelector,
 				this.explicitWaitMS / 5

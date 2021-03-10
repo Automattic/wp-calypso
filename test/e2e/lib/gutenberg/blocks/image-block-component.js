@@ -11,7 +11,7 @@ import GutenbergBlockComponent from './gutenberg-block-component';
 
 export class ImageBlockComponent extends GutenbergBlockComponent {
 	async uploadImage( fileDetails ) {
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.components-form-file-upload ' )
 		);
@@ -26,7 +26,7 @@ export class ImageBlockComponent extends GutenbergBlockComponent {
 	}
 
 	async openMediaModal() {
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.block-editor-media-placeholder' )
 		);
@@ -39,7 +39,7 @@ export class ImageBlockComponent extends GutenbergBlockComponent {
 			By.css( '.components-popover__content button.components-menu-item__button:nth-child(1)' )
 		);
 		await this.driver.switchTo().defaultContent();
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.dialog__content .media-library' )
 		);

@@ -22,7 +22,7 @@ export default class AccountSettingsPage extends AsyncBaseContainer {
 	}
 
 	async getUsername() {
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			by.css( '.profile-gravatar__user-display-name' )
 		);

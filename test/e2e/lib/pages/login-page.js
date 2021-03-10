@@ -27,7 +27,7 @@ export default class LoginPage extends AsyncBaseContainer {
 		const changeAccountSelector = By.css( '#loginAsAnotherUser' );
 		const alreadyLoggedInSelector = By.css( '.continue-as-user' );
 
-		const isDisplayed = await driverHelper.isEventuallyPresentAndDisplayed(
+		const isDisplayed = await driverHelper.isEventuallyLocatedAndVisible(
 			driver,
 			alreadyLoggedInSelector,
 			2000
@@ -35,13 +35,13 @@ export default class LoginPage extends AsyncBaseContainer {
 		if ( isDisplayed ) {
 			await driverHelper.clickWhenClickable( driver, changeAccountSelector );
 		}
-		await driverHelper.waitTillPresentAndDisplayed( driver, userNameSelector );
+		await driverHelper.waitUntilLocatedAndVisible( driver, userNameSelector );
 		await driverHelper.setWhenSettable( driver, userNameSelector, username );
 		await this.driver.sleep( 1000 );
 		await driver.findElement( userNameSelector ).sendKeys( Key.ENTER );
 
 		if ( emailSSO === false ) {
-			await driverHelper.waitTillPresentAndDisplayed( driver, passwordSelector );
+			await driverHelper.waitUntilLocatedAndVisible( driver, passwordSelector );
 			await driverHelper.waitTillFocused( driver, passwordSelector );
 			await driverHelper.setWhenSettable( driver, passwordSelector, password, {
 				secureValue: true,
@@ -115,7 +115,7 @@ export default class LoginPage extends AsyncBaseContainer {
 			this.driver,
 			By.css( '.magic-login__form-action button.is-primary' )
 		);
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.magic-login__check-email-image' )
 		);

@@ -35,7 +35,7 @@ export default class NewPage extends AsyncBaseContainer {
 	}
 
 	async waitForBlock() {
-		return driverHelper.isEventuallyPresentAndDisplayed(
+		return driverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			by.css( '[data-type="automattic/onboarding"]' )
 		);

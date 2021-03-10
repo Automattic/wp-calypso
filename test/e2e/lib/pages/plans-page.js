@@ -37,7 +37,7 @@ export default class PlansPage extends AsyncBaseContainer {
 	async waitForComparison() {
 		const plansPageMainCssClass =
 			host === 'WPCOM' ? '.plans-features-main__group' : '.selector__main';
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			by.css( plansPageMainCssClass )
 		);
@@ -62,13 +62,13 @@ export default class PlansPage extends AsyncBaseContainer {
 			selector = by.css( `.is-${ planName }-plan` );
 		}
 
-		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
+		return await driverHelper.isEventuallyLocatedAndVisible( this.driver, selector );
 	}
 
 	async planTypesShown( planType ) {
 		const plansCssHandle =
 			planType === 'jetpack' ? '.selector__main' : `[data-e2e-plans="${ planType }"]`;
-		return await driverHelper.isEventuallyPresentAndDisplayed(
+		return await driverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			by.css( plansCssHandle )
 		);

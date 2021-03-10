@@ -35,11 +35,11 @@ export default class StoreSidebarComponent extends AsyncBaseContainer {
 	}
 
 	productsLinkDisplayed() {
-		return driverHelper.isEventuallyPresentAndDisplayed( this.driver, this.productsLinkSelector );
+		return driverHelper.isEventuallyLocatedAndVisible( this.driver, this.productsLinkSelector );
 	}
 
 	ordersLinkDisplayed() {
-		return driverHelper.isEventuallyPresentAndDisplayed( this.driver, this.ordersLinkSelector );
+		return driverHelper.isEventuallyLocatedAndVisible( this.driver, this.ordersLinkSelector );
 	}
 
 	selectProducts() {
@@ -52,11 +52,14 @@ export default class StoreSidebarComponent extends AsyncBaseContainer {
 
 	addProduct() {
 		this.selectProducts();
-		return driverHelper.selectElementByText( this.driver, By.css( '.button' ), 'Add a product' );
+		return driverHelper.clickWhenClickable( this.driver, {
+			locator: By.css( '.button' ),
+			text: 'Add a product',
+		} );
 	}
 
 	settingsLinkDisplayed() {
-		return driverHelper.isEventuallyPresentAndDisplayed( this.driver, this.settingsLinkSelector );
+		return driverHelper.isEventuallyLocatedAndVisible( this.driver, this.settingsLinkSelector );
 	}
 
 	selectSettings() {

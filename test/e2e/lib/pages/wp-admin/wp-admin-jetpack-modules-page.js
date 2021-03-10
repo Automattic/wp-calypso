@@ -20,7 +20,7 @@ export default class WPAdminJetpackModulesPage extends AsyncBaseContainer {
 
 	async activateMarkdown() {
 		const markdownActivateLinkSelector = By.css( '#markdown .activate a' );
-		const isNotActive = await driverHelper.isEventuallyPresentAndDisplayed(
+		const isNotActive = await driverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			markdownActivateLinkSelector,
 			5000

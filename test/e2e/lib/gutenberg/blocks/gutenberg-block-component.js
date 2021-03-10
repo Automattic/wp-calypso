@@ -28,6 +28,6 @@ export default class GutenbergBlockComponent extends AsyncBaseContainer {
 		);
 
 		await driverHelper.clickWhenClickable( this.driver, this.expectedElementSelector );
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, selectedBlockSelector );
+		return await driverHelper.waitUntilLocatedAndVisible( this.driver, selectedBlockSelector );
 	}
 }

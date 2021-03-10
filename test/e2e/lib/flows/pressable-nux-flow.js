@@ -22,13 +22,13 @@ export default class PressableNUXFlow {
 		const continueSelector = By.css( 'a.creds-complete__button' );
 		const successNoticeSelector = By.css( '#notices .is-success .gridicons-checkmark' );
 
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			shareCredentialsSelector,
 			explicitWaitMS * 2
 		);
 		await driverHelper.clickWhenClickable( this.driver, shareCredentialsSelector );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, successNoticeSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, successNoticeSelector );
 		await driverHelper.clickWhenClickable( this.driver, continueSelector );
 		const loginPage = await WPAdminLogonPage.Expect( this.driver );
 		return await loginPage.logonSSO();

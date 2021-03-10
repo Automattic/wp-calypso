@@ -28,7 +28,7 @@ class SitePreviewComponent extends AsyncBaseContainer {
 		const explicitWaitMS = config.get( 'explicitWaitMS' );
 
 		await this.driver.switchTo().defaultContent();
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.web-preview__inner.is-visible.is-loaded' )
 		);

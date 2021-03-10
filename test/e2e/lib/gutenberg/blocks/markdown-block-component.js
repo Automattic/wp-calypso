@@ -13,12 +13,12 @@ export default class MarkdownBlockComponent extends GutenbergBlockComponent {
 	async setContent( content ) {
 		const inputSelector = By.css( `${ this.blockID } textarea.wp-block-jetpack-markdown__editor` );
 
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, inputSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, inputSelector );
 		return await driverHelper.setWhenSettable( this.driver, inputSelector, content );
 	}
 
 	async revealToolbar() {
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.expectedElementSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, this.expectedElementSelector );
 		await driverHelper.clickWhenClickable( this.driver, By.css( '.editor-post-title' ) );
 		return await driverHelper.clickWhenClickable( this.driver, this.expectedElementSelector );
 	}
@@ -36,13 +36,13 @@ export default class MarkdownBlockComponent extends GutenbergBlockComponent {
 	// Caution! make sure you in preview mode before calling this.
 	async getPreviewHTML() {
 		const previewSelector = By.css( `${ this.blockID } .wp-block-jetpack-markdown__preview` );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, previewSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, previewSelector );
 		return await this.driver.findElement( previewSelector ).getAttribute( 'innerHTML' );
 	}
 
 	async _switchMode( expectedSelector ) {
 		await this.revealToolbar();
-		const isVisible = await driverHelper.isEventuallyPresentAndDisplayed(
+		const isVisible = await driverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			expectedSelector,
 			1000
@@ -54,6 +54,6 @@ export default class MarkdownBlockComponent extends GutenbergBlockComponent {
 			`${ this.blockID } button.components-tab-button:not(.is-active)`
 		);
 		await driverHelper.clickWhenClickable( this.driver, switchSelector );
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, expectedSelector );
+		return await driverHelper.waitUntilLocatedAndVisible( this.driver, expectedSelector );
 	}
 }

@@ -29,10 +29,10 @@ export default class WPAdminLogonPage extends AsyncBaseContainer {
 		const passwordSelector = By.css( '#user_pass' );
 		const submitSelector = By.css( '#wp-submit' );
 
-		if ( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, ssoButton, 2000 ) ) {
+		if ( await driverHelper.isEventuallyLocatedAndVisible( this.driver, ssoButton, 2000 ) ) {
 			await this.toggleSSOLogin();
 		}
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, userNameSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, userNameSelector );
 		await driverHelper.setWhenSettable( this.driver, userNameSelector, username );
 		await driverHelper.setWhenSettable( this.driver, passwordSelector, password, {
 			secureValue: true,

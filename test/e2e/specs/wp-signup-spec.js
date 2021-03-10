@@ -792,7 +792,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 				checkOutPage = await CheckOutPage.Expect( driver );
 			} catch ( err ) {
 				//TODO: Check this code once more when domain registration is not available
-				if ( driverHelper.isEventuallyPresentAndDisplayed( driver, By.css( '.empty-content' ) ) ) {
+				if ( driverHelper.isEventuallyLocatedAndVisible( driver, By.css( '.empty-content' ) ) ) {
 					await SlackNotifier.warn(
 						"OOPS! Something went wrong, you don't have a site! Check if domains registrations is available."
 					);

@@ -34,28 +34,28 @@ export default class SettingsPage extends AsyncBaseContainer {
 	}
 
 	async mediaSettingsSectionDisplayed() {
-		return await DriverHelper.isEventuallyPresentAndDisplayed(
+		return await DriverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( '.site-settings__media-settings' )
 		);
 	}
 
 	async photonToggleDisplayed() {
-		return await DriverHelper.isEventuallyPresentAndDisplayed(
+		return await DriverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( '[id*=photon-toggle]' )
 		);
 	}
 
 	async carouselToggleDisplayed() {
-		return await DriverHelper.isEventuallyPresentAndDisplayed(
+		return await DriverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( '[id*=carousel-toggle]' )
 		);
 	}
 
 	async carouseBackgroundColorDisplayed() {
-		return await DriverHelper.isEventuallyPresentAndDisplayed(
+		return await DriverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( '#carousel_background_color' )
 		);
@@ -102,7 +102,7 @@ export default class SettingsPage extends AsyncBaseContainer {
 			this.driver,
 			By.className( 'button is-primary is-scary' )
 		);
-		return await DriverHelper.waitTillPresentAndDisplayed(
+		return await DriverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '#notices .is-success' )
 		);

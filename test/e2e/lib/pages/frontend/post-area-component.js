@@ -16,7 +16,7 @@ export default class PostAreaComponent extends AsyncBaseContainer {
 
 	async getPostHTML() {
 		const postSelector = By.css( '.post .entry-content' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, postSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, postSelector );
 		return await this.driver.findElement( postSelector ).getAttribute( 'innerHTML' );
 	}
 }

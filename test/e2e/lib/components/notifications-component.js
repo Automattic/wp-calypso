@@ -21,7 +21,7 @@ export default class NotificationsComponent extends AsyncBaseContainer {
 			this.driver,
 			by.css( 'li[data-filter-name="comments"]' )
 		);
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			by.css( 'li.wpnc__comment' )
 		);
@@ -34,7 +34,10 @@ export default class NotificationsComponent extends AsyncBaseContainer {
 
 	async selectCommentByText( commentText ) {
 		const commentSelector = by.css( '.wpnc__excerpt' );
-		return await driverHelper.selectElementByText( this.driver, commentSelector, commentText );
+		return await driverHelper.clickWhenClickable( this.driver, {
+			locator: commentSelector,
+			text: commentText,
+		} );
 	}
 
 	async trashComment() {
@@ -63,7 +66,7 @@ export default class NotificationsComponent extends AsyncBaseContainer {
 	}
 
 	async waitForUndoMessage() {
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, this.undoSelector );
+		return await driverHelper.waitUntilLocatedAndVisible( this.driver, this.undoSelector );
 	}
 
 	async waitForUndoMessageToDisappear() {

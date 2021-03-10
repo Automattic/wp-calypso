@@ -24,7 +24,7 @@ export default class CloseAccountPage extends AsyncBaseContainer {
 		const confirmDialogSelector = by.css( '.account-close__confirm-dialog' );
 		const pauseBetweenClickAttemptsMS = 100;
 
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, buttonSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, buttonSelector );
 
 		// Click doesn't always fire even if the button is already displayed.
 		// We can safely attempt to click the button until the confirmation dialog pop-up window is present.
@@ -56,11 +56,10 @@ export default class CloseAccountPage extends AsyncBaseContainer {
 	}
 
 	async ConfirmAccountHasBeenClosed() {
-		await driverHelper.verifyTextPresent(
-			this.driver,
-			by.css( '.empty-content__title' ),
-			'Your account has been closed'
-		);
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, {
+			locator: by.css( '.empty-content__title' ),
+			text: 'Your account has been closed',
+		} );
 		return driverHelper.clickWhenClickable( this.driver, by.css( 'button.empty-content__action' ) );
 	}
 }

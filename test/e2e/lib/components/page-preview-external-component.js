@@ -1,3 +1,5 @@
+// ⚠️ THIS DOESN'T SEEM TO BE USED ANYWHERE
+
 /**
  * External dependencies
  */
@@ -42,7 +44,7 @@ export default class PagePreviewExternalComponent extends AsyncBaseContainer {
 	}
 
 	async isDisplayed() {
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			previewWindowMainSelector,
 			explicitWaitMS
@@ -52,7 +54,7 @@ export default class PagePreviewExternalComponent extends AsyncBaseContainer {
 	static async switchToWindow( driver ) {
 		const handles = await driver.getAllWindowHandles();
 		await driver.switchTo().window( handles[ 1 ] );
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			previewWindowMainSelector,
 			explicitWaitMS

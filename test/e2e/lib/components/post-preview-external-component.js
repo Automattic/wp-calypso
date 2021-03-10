@@ -1,3 +1,5 @@
+// ⚠️ THIS DOESN'T SEEM TO BE USED ANYWHERE
+
 /**
  * External dependencies
  */
@@ -52,7 +54,7 @@ export default class PostPreviewExternalComponent extends AsyncBaseContainer {
 	}
 
 	async isDisplayed() {
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			previewWindowMainSelector,
 			explicitWaitMS
