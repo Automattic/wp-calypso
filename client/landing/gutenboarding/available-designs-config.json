@@ -355,6 +355,20 @@
 			"categories": [ "featured" ],
 			"is_premium": false,
 			"features": []
+		},
+		{
+			"title": "Fredrickson",
+			"slug": "fredrickson",
+			"template": "fredrickson",
+			"theme": "blank-canvas",
+			"preview": "static",
+			"fonts": {
+				"headings": "Cabin",
+				"base": "Cabin"
+			},
+			"categories": [ "featured" ],
+			"is_premium": false,
+			"features": []
 		}
 	]
 }
