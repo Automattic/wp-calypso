@@ -20,6 +20,7 @@ const useViewersQuery = ( siteId, { number = DEFAULT_PER_PAGE } = {}, queryOptio
 		( { pageParam = 1 } ) =>
 			wpcom.req.get( `/sites/${ siteId }/viewers`, { number, page: pageParam } ),
 		{
+			...queryOptions,
 			getNextPageParam: ( lastPage, allPages ) => {
 				if ( lastPage.found <= allPages.length * number ) {
 					return;
@@ -34,7 +35,6 @@ const useViewersQuery = ( siteId, { number = DEFAULT_PER_PAGE } = {}, queryOptio
 					...data,
 				};
 			},
-			...queryOptions,
 		}
 	);
 };
