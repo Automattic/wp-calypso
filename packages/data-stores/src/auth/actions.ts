@@ -90,7 +90,7 @@ export function createActions( {
 		const escaped = encodeURIComponent( usernameOrEmail );
 
 		try {
-			const authOptions = yield wpcomRequest( {
+			const authOptions: AuthOptionsSuccessResponse = yield wpcomRequest( {
 				path: `/users/${ escaped }/auth-options`,
 				apiVersion: '1.1',
 			} );
@@ -99,7 +99,7 @@ export function createActions( {
 
 			if ( authOptions.passwordless ) {
 				try {
-					const emailResponse = yield wpcomRequest( {
+					const emailResponse: SendLoginEmailSuccessResponse = yield wpcomRequest( {
 						path: `/auth/send-login-email`,
 						apiVersion: '1.2',
 						method: 'post',
@@ -139,7 +139,7 @@ export function createActions( {
 
 	function* submitPassword( password: string ) {
 		yield clearErrors();
-		const username = yield select( STORE_KEY, 'getUsernameOrEmail' );
+		const username: string = yield select( STORE_KEY, 'getUsernameOrEmail' );
 
 		try {
 			const loginResponse = yield* wpLogin( 'login-endpoint', {
@@ -211,7 +211,7 @@ export function createActions( {
 		yield startPollingTask( pollingTaskId );
 
 		while ( true ) {
-			const currentPollingTaskId = yield select( STORE_KEY, 'getPollingTaskId' );
+			const currentPollingTaskId: number = yield select( STORE_KEY, 'getPollingTaskId' );
 
 			if ( currentPollingTaskId !== pollingTaskId ) {
 				// Polling has been canceled, either by `reset()` or by a subsequent call to log in
@@ -242,8 +242,8 @@ export function createActions( {
 
 	type WpLoginAction = 'two-step-authentication-endpoint' | 'login-endpoint';
 
-	function* wpLogin( action: WpLoginAction, body: object ) {
-		const response = yield fetchAndParse(
+	function* wpLogin( action: WpLoginAction, body: any ) {
+		const response: { body: WpLoginResponse } = yield fetchAndParse(
 			// TODO Wrap this in `localizeUrl` from lib/i18n-utils
 			'https://wordpress.com/wp-login.php?action=' + encodeURIComponent( action ),
 			{

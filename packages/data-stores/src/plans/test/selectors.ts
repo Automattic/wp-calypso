@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import * as deprecate from '@wordpress/deprecated';
-
-/**
  * Internal dependencies
  */
 import * as Selectors from '../selectors';
@@ -262,27 +257,6 @@ describe( 'Plans selectors', () => {
 	describe( 'getPlansProducts', () => {
 		it( 'should select all of the plans products from the store', () => {
 			expect( Selectors.getPlansProducts( mockState ) ).toEqual( mockPlanProducts );
-		} );
-	} );
-
-	describe( 'getPrices', () => {
-		it( 'should select the prices for each plan product for a given locale', () => {
-			const expectedPrices = {
-				[ MockData.STORE_PRODUCT_FREE.storeSlug ]: MockData.STORE_PRODUCT_FREE.price,
-				[ MockData.STORE_PRODUCT_PREMIUM_ANNUALLY.storeSlug ]:
-					MockData.STORE_PRODUCT_PREMIUM_ANNUALLY.price,
-			};
-			expect( Selectors.getPrices( mockState, MOCK_LOCALE_1 ) ).toEqual( expectedPrices );
-			expect( Selectors.getPrices( mockState, MOCK_LOCALE_2 ) ).toEqual( expectedPrices );
-		} );
-
-		it( 'should be marked as deprecated', () => {
-			Selectors.getPrices( mockState, MOCK_LOCALE_1 );
-
-			expect( deprecate ).toHaveBeenCalled();
-			expect( deprecate ).toHaveBeenCalledWith( 'getPrices', {
-				alternative: 'getPlanProduct().price',
-			} );
 		} );
 	} );
 
