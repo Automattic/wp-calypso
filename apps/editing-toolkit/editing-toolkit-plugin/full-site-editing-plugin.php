@@ -249,12 +249,16 @@ function load_block_patterns_from_api( $current_screen ) {
 		return;
 	}
 
-	if ( ! $current_screen->is_block_editor ) {
+	$is_site_editor = ( function_exists( 'gutenberg_is_edit_site_page' ) && gutenberg_is_edit_site_page( $current_screen->id ) );
+
+	if ( ! $current_screen->is_block_editor && ! $is_site_editor ) {
 		return;
 	}
 
+	$pattern_source = $is_site_editor ? 'fse_block_patterns' : 'block_patterns';
+
 	require_once __DIR__ . '/block-patterns/class-block-patterns-from-api.php';
-	Block_Patterns_From_API::get_instance();
+	Block_Patterns_From_API::get_instance( $pattern_source );
 }
 add_action( 'current_screen', __NAMESPACE__ . '\load_block_patterns_from_api' );
 

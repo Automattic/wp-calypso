@@ -29,12 +29,19 @@ class Block_Patterns_From_API {
 	private $patterns_cache_key;
 
 	/**
-	 * Block_Patterns constructor.
+	 * Valid source strings for retrieving patterns.
 	 */
-	private function __construct() {
-		$this->is_site_editor_enabled = function_exists( 'gutenberg_is_fse_theme' ) && gutenberg_is_fse_theme();
+	private $valid_patterns_sources = array( 'block_patterns', 'fse_block_patterns' );
+
+	/**
+	 * Block_Patterns constructor.
+	 *
+	 * @param string $patterns_source A string matching a valid source for retrieving patterns.
+	 */
+	private function __construct( $patterns_source ) {
 		// Tells the backend which patterns source site to default to.
-		$this->patterns_source    = $this->is_site_editor_enabled ? 'fse_block_patterns' : 'block_patterns';
+		$this->patterns_source = in_array( $patterns_source, $this->valid_patterns_sources ) ? $patterns_source : 'block_patterns';
+
 		$this->patterns_cache_key = sha1(
 			implode(
 				'_',
@@ -52,11 +59,12 @@ class Block_Patterns_From_API {
 	/**
 	 * Creates instance.
 	 *
+	 * @param string $patterns_source A string matching a valid source for retrieving patterns.
 	 * @return \A8C\FSE\Block_Patterns
 	 */
-	public static function get_instance() {
+	public static function get_instance( $patterns_source ) {
 		if ( null === self::$instance ) {
-			self::$instance = new self();
+			self::$instance = new self( $patterns_source );
 		}
 
 		return self::$instance;
