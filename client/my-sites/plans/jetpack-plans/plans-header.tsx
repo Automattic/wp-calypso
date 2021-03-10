@@ -23,7 +23,7 @@ import useMaybeSocialProofHeader from 'calypso/my-sites/plans/jetpack-plans/use-
 const StandardPlansHeader = () => {
 	const headerText =
 		useMaybeSocialProofHeader() ??
-		translate( 'Security, performance, and marketing tools made for WordPress' );
+		translate( 'Security, performance, and marketing tools made for WordPress' );
 
 	return (
 		<>
