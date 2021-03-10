@@ -1090,7 +1090,13 @@ class Account extends React.Component {
 									<FormLabel id="account__color_scheme" htmlFor="color_scheme">
 										{ translate( 'Dashboard color scheme' ) }
 									</FormLabel>
-									<ColorSchemePicker temporarySelection onSelection={ this.updateColorScheme } />
+									<ColorSchemePicker
+										temporarySelection
+										defaultSelection={
+											this.props.isNavUnificationEnabled ? 'classic-dark' : 'classic-bright'
+										}
+										onSelection={ this.updateColorScheme }
+									/>
 								</FormFieldset>
 							) }
 
