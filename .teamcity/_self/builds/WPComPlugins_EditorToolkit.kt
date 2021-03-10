@@ -85,7 +85,6 @@ object WPComPlugins_EditorToolKit : BuildType({
 				cd apps/editing-toolkit
 				yarn test:js --reporters=default --reporters=jest-junit --maxWorkers=${'$'}JEST_MAX_WORKERS
 			"""
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 		}
 		bashNodeScript {
 			name = "Build artifacts"
@@ -101,7 +100,6 @@ object WPComPlugins_EditorToolKit : BuildType({
 				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php ../../etk-release-build/full-site-editing-plugin.php
 				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt ../../etk-release-build/readme.txt
 			"""
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 		}
 		// Note: We run the PHP lint after the build to verify that the newspack-blocks
 		// code is also formatted correctly.
@@ -115,7 +113,6 @@ object WPComPlugins_EditorToolKit : BuildType({
 				fi
 				yarn lint:php
 			"""
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 		}
 		bashNodeScript {
 			name = "Process artifact"
