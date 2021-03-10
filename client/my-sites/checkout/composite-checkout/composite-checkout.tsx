@@ -31,7 +31,6 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import { StateSelect } from 'calypso/my-sites/domains/components/form';
 import { getPlan } from 'calypso/lib/plans';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
@@ -213,7 +212,6 @@ export default function CompositeCheckout( {
 	const {
 		couponStatus,
 		applyCoupon,
-		removeCoupon,
 		updateLocation,
 		replaceProductInCart,
 		isLoading: isLoadingCart,
@@ -660,21 +658,14 @@ export default function CompositeCheckout( {
 			>
 				<WPCheckout
 					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
-					updateLocation={ updateLocation }
-					applyCoupon={ applyCoupon }
-					removeCoupon={ removeCoupon }
-					couponStatus={ couponStatus }
 					changePlanLength={ changePlanLength }
 					siteId={ siteId }
 					siteUrl={ siteSlug }
 					countriesList={ countriesList }
-					StateSelect={ StateSelect }
 					getItemVariants={ getItemVariants }
-					responseCart={ responseCart }
 					addItemToCart={ addItemWithEssentialProperties }
-					isCartPendingUpdate={ isCartPendingUpdate }
 					showErrorMessageBriefly={ showErrorMessageBriefly }
-					isLoggedOutCart={ isLoggedOutCart }
+					isLoggedOutCart={ !! isLoggedOutCart }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					infoMessage={ infoMessage }
 				/>
