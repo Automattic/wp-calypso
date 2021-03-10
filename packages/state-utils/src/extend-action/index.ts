@@ -21,7 +21,7 @@ function isThunk( action: Action | AnyThunkAction ): action is AnyThunkAction {
  * @param data   Additional data to include in action
  * @returns Augmented action object or thunk
  */
-export function extendAction< TAction extends Action | AnyThunkAction >(
+function extendAction< TAction extends Action | AnyThunkAction >(
 	action: TAction,
 	data: Record< string, unknown > = {}
 ): TAction {
@@ -38,3 +38,5 @@ export function extendAction< TAction extends Action | AnyThunkAction >(
 		);
 	} ) as TAction;
 }
+
+export default extendAction;

@@ -2,11 +2,11 @@
  * External dependencies
  */
 import { identity, toPairs } from 'lodash';
+import { extendAction } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
-import { extendAction } from 'calypso/state/utils';
 import { HTTP_REQUEST } from 'calypso/state/action-types';
 import { failureMeta, successMeta } from 'calypso/state/data-layer/wpcom-http';
 
