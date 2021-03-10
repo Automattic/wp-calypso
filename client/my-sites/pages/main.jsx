@@ -124,7 +124,7 @@ class PagesMain extends React.Component {
 				<Experiment
 					name={ `explat_test_aa_weekly_calypso_next_client_${ moment
 						.utc()
-						.format( 'GGGG' ) }_week_${ moment.utc().format( 'WW' ) }` }
+						.format( 'GGGG' ) }_week_${ moment.utc().format( 'WW' ) }_v2` }
 				>
 					{ {
 						treatment: null,
