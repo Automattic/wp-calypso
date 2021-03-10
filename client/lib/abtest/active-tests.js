@@ -60,7 +60,7 @@ export default {
 		allowExistingUsers: false,
 	},
 	jetpackSocialProofHeader: {
-		datestamp: '20210309',
+		datestamp: '20210310',
 		variations: {
 			withoutSocialProof_control: 50,
 			withSocialProof_test: 50,
