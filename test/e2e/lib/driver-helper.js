@@ -527,7 +527,7 @@ export async function selectElementByText( driver, selector, text ) {
 		const allElements = await driver.findElements( selector );
 		return await webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
 	};
-	return await this.clickWhenClickable( driver, element, null, `while looking for '${ text }'` );
+	return await this.clickWhenClickable( driver, element );
 }
 
 export async function verifyTextPresent( driver, selector, text ) {
