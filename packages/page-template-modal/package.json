@@ -56,8 +56,8 @@
 		"react": "^16.8"
 	},
 	"scripts": {
-		"clean": "npx rimraf dist",
-		"build": "transpile && copy-assets",
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
 		"prepack": "yarn run clean && yarn run build"
 	}
 }
