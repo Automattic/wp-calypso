@@ -18,15 +18,22 @@ const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Playwright Canary: (${ screenSize }) @playwright @parallel`, function () {
 	this.timeout( mochaTimeOut );
+	let page;
+	let browser;
 
+	before( 'Start browser', async function () {
+		browser = await playwright.chromium.launch( { headless: false } );
+		const browserContext = await browser.newContext();
+		page = await browserContext.newPage();
+	} );
 	describe( 'Loading the log-in screen using Playwright', function () {
 		step( 'Can see the log in screen', async function () {
-			const browser = await playwright.chromium.launch( { headless: false } );
 			const url = await LoginPage.getLoginURL();
-			const browserContext = await browser.newContext();
-			const page = await browserContext.newPage();
 			await page.goto( url, { waitUntill: 'networkidle' } );
-			await browser.close();
 		} );
+	} );
+
+	after( 'close browser', function () {
+		browser.close();
 	} );
 } );
