@@ -17,7 +17,7 @@ import LanguagePicker from 'calypso/components/language-picker';
 import SectionHeader from 'calypso/components/section-header';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { protectForm } from 'calypso/lib/protect-form';
-import config, { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import languages from '@automattic/languages';
 import { supportsCssCustomProperties } from 'calypso/lib/feature-detection';
 import { Card, Button } from '@automattic/components';
@@ -1093,7 +1093,7 @@ class Account extends React.Component {
 									<ColorSchemePicker
 										temporarySelection
 										defaultSelection={
-											isEnabled( 'nav-unification' ) ? 'classic-dark' : 'classic-bright'
+											this.props.isNavUnificationEnabled ? 'classic-dark' : 'classic-bright'
 										}
 										onSelection={ this.updateColorScheme }
 									/>
