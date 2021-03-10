@@ -30,6 +30,8 @@ class Block_Patterns_From_API {
 
 	/**
 	 * Valid source strings for retrieving patterns.
+	 *
+	 * @var array
 	 */
 	private $valid_patterns_sources = array( 'block_patterns', 'fse_block_patterns' );
 
@@ -40,7 +42,7 @@ class Block_Patterns_From_API {
 	 */
 	private function __construct( $patterns_source ) {
 		// Tells the backend which patterns source site to default to.
-		$this->patterns_source = in_array( $patterns_source, $this->valid_patterns_sources ) ? $patterns_source : 'block_patterns';
+		$this->patterns_source = in_array( $patterns_source, $this->valid_patterns_sources, true ) ? $patterns_source : 'block_patterns';
 
 		$this->patterns_cache_key = sha1(
 			implode(
