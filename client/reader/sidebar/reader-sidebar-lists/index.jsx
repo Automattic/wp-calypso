@@ -42,6 +42,7 @@ export class ReaderSidebarLists extends Component {
 					onClick={ onClick }
 					materialIcon={ 'list' }
 					disableFlyout={ true }
+					disableHighlight={ true }
 				>
 					<li>
 						<ReaderSidebarListsList { ...passedProps } />

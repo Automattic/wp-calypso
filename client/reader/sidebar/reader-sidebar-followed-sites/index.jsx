@@ -77,6 +77,7 @@ export class ReaderSidebarFollowedSites extends Component {
 				onClick={ this.props.toggleReaderSidebarFollowing }
 				materialIcon="check_circle"
 				disableFlyout={ true }
+				disableHighlight={ true }
 			>
 				{ this.renderAll() }
 				{ this.renderSites() }

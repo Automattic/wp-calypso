@@ -502,7 +502,7 @@ $font-size: rem( 14px );
 			border-color: var( --color-sidebar-submenu-selected-text );
 		}
 
-		.sidebar__menu.is-toggle-open {
+		.sidebar__menu.is-toggle-open:not( .disable-highlight ) {
 			.sidebar__heading {
 				background: var( --color-sidebar-menu-selected-background );
 				color: var( --color-sidebar-menu-selected-text );

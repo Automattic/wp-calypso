@@ -64,6 +64,7 @@ export class ReaderSidebarTags extends Component {
 					onClick={ onClick }
 					materialIcon="local_offer"
 					disableFlyout={ true }
+					disableHighlight={ true }
 				>
 					<ReaderSidebarTagsList { ...this.props } />
 
