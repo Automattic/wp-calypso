@@ -40,8 +40,13 @@ import { hasUnseen } from 'calypso/state/reader-ui/seen-posts/selectors';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path.js';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+import PopUpSearch from '../popup-search';
 
 class MasterbarLoggedIn extends React.Component {
+	state = {
+		isActionSearchVisible: false,
+	};
+
 	static propTypes = {
 		user: PropTypes.object.isRequired,
 		domainOnlySite: PropTypes.bool,
@@ -126,6 +131,16 @@ class MasterbarLoggedIn extends React.Component {
 		this.handleLayoutFocus( 'me' );
 	};
 
+	clickSearchActions = () => {
+		this.props.recordTracksEvent( 'calypso_masterbar_search_actions_clicked' );
+		this.handleLayoutFocus( 'search-actions' );
+		this.setState( { isActionSearchVisible: true } );
+	};
+
+	onSearchActionsClose = () => {
+		this.setState( { isActionSearchVisible: false } );
+	};
+
 	preloadMySites = () => {
 		preload( this.props.domainOnlySite ? 'domains' : 'stats' );
 	};
@@ -197,6 +212,8 @@ class MasterbarLoggedIn extends React.Component {
 			title,
 		} = this.props;
 
+		const { isActionSearchVisible } = this.state;
+
 		if ( isCheckout ) {
 			return (
 				<AsyncLoad
@@ -211,62 +228,78 @@ class MasterbarLoggedIn extends React.Component {
 		}
 
 		return (
-			<Masterbar>
-				{ this.renderMySites() }
-				<Item
-					tipTarget="reader"
-					className="masterbar__reader"
-					url="/read"
-					icon="reader"
-					onClick={ this.clickReader }
-					isActive={ this.isActive( 'reader' ) }
-					tooltip={ translate( 'Read the blogs and topics you follow' ) }
-					preloadSection={ this.preloadReader }
-					hasUnseen={ this.props.hasUnseen }
-				>
-					{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
-				</Item>
-				{ ( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) && (
-					<AsyncLoad require="./quick-language-switcher" placeholder={ null } />
-				) }
-				<AsyncLoad require="calypso/my-sites/resume-editing" placeholder={ null } />
-				{ ! domainOnlySite && ! isMigrationInProgress && (
-					<AsyncLoad
-						require="./publish"
-						placeholder={ null }
-						isActive={ this.isActive( 'post' ) }
-						className="masterbar__item-new"
-						tooltip={ translate( 'Create a New Post' ) }
+			<>
+				{ isActionSearchVisible ? <PopUpSearch onClose={ this.onSearchActionsClose } /> : null }
+				<Masterbar>
+					{ this.renderMySites() }
+					<Item
+						tipTarget="reader"
+						className="masterbar__reader"
+						url="/read"
+						icon="reader"
+						onClick={ this.clickReader }
+						isActive={ this.isActive( 'reader' ) }
+						tooltip={ translate( 'Read the blogs and topics you follow' ) }
+						preloadSection={ this.preloadReader }
+						hasUnseen={ this.props.hasUnseen }
 					>
-						{ translate( 'Write' ) }
-					</AsyncLoad>
-				) }
-				<Item
-					tipTarget="me"
-					url="/me"
-					icon="user-circle"
-					onClick={ this.clickMe }
-					isActive={ this.isActive( 'me' ) }
-					className="masterbar__item-me"
-					tooltip={ translate( 'Update your profile, personal settings, and more' ) }
-					preloadSection={ this.preloadMe }
-				>
-					<Gravatar user={ this.props.user } alt={ translate( 'My Profile' ) } size={ 18 } />
-					<span className="masterbar__item-me-label">
-						{ translate( 'My Profile', { context: 'Toolbar, must be shorter than ~12 chars' } ) }
-					</span>
-				</Item>
-				<Notifications
-					isShowing={ this.props.isNotificationsShowing }
-					isActive={ this.isActive( 'notifications' ) }
-					className="masterbar__item-notifications"
-					tooltip={ translate( 'Manage your notifications' ) }
-				>
-					<span className="masterbar__item-notifications-label">
-						{ translate( 'Notifications', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
-					</span>
-				</Notifications>
-			</Masterbar>
+						{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
+					</Item>
+					{ ( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) && (
+						<AsyncLoad require="./quick-language-switcher" placeholder={ null } />
+					) }
+					<Item
+						tipTarget="Action Search"
+						icon="search"
+						onClick={ this.clickSearchActions }
+						isActive={ false }
+						className="masterbar__item-action-search"
+						tooltip={ translate( 'Search' ) }
+						preloadSection={ this.preloadMe }
+					>
+						{ translate( 'Search Actions' ) }
+					</Item>
+					<AsyncLoad require="calypso/my-sites/resume-editing" placeholder={ null } />
+					{ ! domainOnlySite && ! isMigrationInProgress && (
+						<AsyncLoad
+							require="./publish"
+							placeholder={ null }
+							isActive={ this.isActive( 'post' ) }
+							className="masterbar__item-new"
+							tooltip={ translate( 'Create a New Post' ) }
+						>
+							{ translate( 'Write' ) }
+						</AsyncLoad>
+					) }
+					<Item
+						tipTarget="me"
+						url="/me"
+						icon="user-circle"
+						onClick={ this.clickMe }
+						isActive={ this.isActive( 'me' ) }
+						className="masterbar__item-me"
+						tooltip={ translate( 'Update your profile, personal settings, and more' ) }
+						preloadSection={ this.preloadMe }
+					>
+						<Gravatar user={ this.props.user } alt={ translate( 'My Profile' ) } size={ 18 } />
+						<span className="masterbar__item-me-label">
+							{ translate( 'My Profile', { context: 'Toolbar, must be shorter than ~12 chars' } ) }
+						</span>
+					</Item>
+					<Notifications
+						isShowing={ this.props.isNotificationsShowing }
+						isActive={ this.isActive( 'notifications' ) }
+						className="masterbar__item-notifications"
+						tooltip={ translate( 'Manage your notifications' ) }
+					>
+						<span className="masterbar__item-notifications-label">
+							{ translate( 'Notifications', {
+								comment: 'Toolbar, must be shorter than ~12 chars',
+							} ) }
+						</span>
+					</Notifications>
+				</Masterbar>
+			</>
 		);
 	}
 }

@@ -1,0 +1,76 @@
+/**
+ * External dependencies
+ */
+import React from 'react';
+import { localize, useTranslate } from 'i18n-calypso';
+import { connect } from 'react-redux';
+
+/**
+ * Internal dependencies
+ */
+import HelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getInlineHelpAdminSectionSearchResultsForQuery } from 'calypso/state/inline-help/selectors/get-inline-help-search-results-for-query';
+import hasInlineHelpAPIResults from 'calypso/state/selectors/has-inline-help-api-results';
+import { selectResult } from 'calypso/state/inline-help/actions';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+export function PopUpSearch( props ) {
+	const translate = useTranslate();
+
+	const onChildClick = ( e ) => e.stopPropagation();
+
+	const onResultClick = ( link ) => {
+		props.onClose();
+		window.location.href = localizeUrl( link );
+	};
+	return (
+		<div role="button" className="popup-search__mask" onClick={ props.onClose }>
+			<div className="popup-search__container" onClick={ onChildClick }>
+				<HelpSearchCard
+					onSelect={ () => {} }
+					query={ '' }
+					location={ 'TEST' }
+					placeholder={ translate( 'Search wordpress actions' ) }
+				/>
+				<div className="popup-search__results" aria-label="Pop Up Search">
+					{ props.searchResults &&
+						props.searchResults.map(
+							( { link, key, title, support_type, post_id, description } ) => (
+								<a href={ localizeUrl( link ) }>
+									<div
+										role="button"
+										className="popup-search__result-single"
+										key={ key }
+										onClick={ () => onResultClick( link ) }
+									>
+										<div className="popup-search__results-cell">
+											<div>
+												<h2>{ title }</h2>
+											</div>
+											<div>{ description }</div>
+										</div>
+									</div>
+								</a>
+							)
+						) }
+				</div>
+			</div>
+		</div>
+	);
+}
+
+export default connect(
+	( state ) => ( {
+		searchResults: getInlineHelpAdminSectionSearchResultsForQuery( state ),
+		hasAPIResults: hasInlineHelpAPIResults( state ),
+	} ),
+	{
+		track: recordTracksEvent,
+		selectSearchResult: selectResult,
+	}
+)( localize( PopUpSearch ) );
