@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import webdriver, { until, WebElementCondition } from 'selenium-webdriver';
+import webdriver, { WebElementCondition } from 'selenium-webdriver';
 import config from 'config';
 import { forEach } from 'lodash';
 
@@ -24,14 +24,33 @@ export async function highlightElement( driver, element ) {
 	}
 }
 
-export function elementIsAriaEnabled( element ) {
-	return new WebElementCondition( 'until element is not aria-disabled', function () {
-		return element
-			.getAttribute( 'aria-disabled' )
-			.then( ( v ) => ( v !== 'true' ? element : null ) );
-	} );
-}
+const until = {
+	...webdriver.until,
+	/**
+	 * Creates a condition that will loop until element's aria-disabled attribute
+	 * is not 'true'.
+	 *
+	 * @param {webdriver.WebElement} element The element to test
+	 * @returns {webdriver.WebElementCondition} The new condition
+	 */
+	elementIsAriaEnabled( element ) {
+		return new WebElementCondition( 'until element is not aria-disabled', function () {
+			return element
+				.getAttribute( 'aria-disabled' )
+				.then( ( v ) => ( v !== 'true' ? element : null ) );
+		} );
+	},
+};
 
+/**
+ * Makes sure that the element is located and enabled before clicking. Will
+ * throw error otherwise.
+ *
+ * @param {webdriver.WebDriver} driver The current driver instance
+ * @param {webdriver.By} locator The element's locator
+ * @param {number} [timeout=explicitWaitMS] The wait function's timeout in milliseconds
+ * @returns {webdriver.WebElement} The clicked element
+ */
 export async function clickWhenClickable( driver, locator, timeout = explicitWaitMS ) {
 	function wait( condition ) {
 		return driver.wait( condition, timeout );
@@ -39,10 +58,9 @@ export async function clickWhenClickable( driver, locator, timeout = explicitWai
 
 	try {
 		const element = await wait( until.elementLocated( locator ) );
-
 		await highlightElement( driver, element );
 		await wait( until.elementIsEnabled( element ) );
-		await wait( elementIsAriaEnabled( element ) );
+		await wait( until.elementIsAriaEnabled( element ) );
 
 		try {
 			await element.click();
