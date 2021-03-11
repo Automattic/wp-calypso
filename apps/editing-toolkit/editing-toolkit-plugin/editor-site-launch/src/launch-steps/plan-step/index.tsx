@@ -42,8 +42,13 @@ const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 		<LaunchStepContainer>
 			<div className="nux-launch-step__header">
 				<div>
-					<Title>{ __( 'Select a plan', 'full-site-editing' ) }</Title>
-					<SubTitle>
+					<Title data-e2e-string="Select a plan">
+						{ __( 'Select a plan', 'full-site-editing' ) }
+					</Title>
+					<SubTitle
+						data-e2e-string="Pick a plan that’s right for you. Switch plans as your needs change. There’s no risk, you can cancel for a full refund within %1$d days."
+						data-e2e-string-params="[14]"
+					>
 						{ sprintf(
 							/* translators: number of days */
 							__(

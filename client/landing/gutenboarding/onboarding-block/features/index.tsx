@@ -59,8 +59,10 @@ const FeaturesStep: React.FunctionComponent = () => {
 		<div className="gutenboarding-page features">
 			<div className="features__header">
 				<div className="features__heading">
-					<Title>{ __( 'Which features will you need?' ) }</Title>
-					<SubTitle>
+					<Title data-e2e-string="Which features will you need?">
+						{ __( 'Which features will you need?' ) }
+					</Title>
+					<SubTitle data-e2e-string="Choose the features that matter to you and we'll suggest a plan to suit your needs. Don't worry, you won't be charged and can change it at any time.">
 						{ __(
 							"Choose the features that matter to you and we'll suggest a plan to suit your needs. Don't worry, you won't be charged and can change it at any time."
 						) }
@@ -91,8 +93,16 @@ const FeaturesStep: React.FunctionComponent = () => {
 								<FeatureIcon featureId={ feature.id } />
 							</div>
 							<div className="features__item-heading">
-								<div className="features__item-name">{ getFeatureText( feature.id, __ ).name }</div>
-								<div className="features__item-description">
+								<div
+									className="features__item-name"
+									data-e2e-string={ getFeatureText( feature.id, __ ).originals.name }
+								>
+									{ getFeatureText( feature.id, __ ).name }
+								</div>
+								<div
+									className="features__item-description"
+									data-e2e-string={ getFeatureText( feature.id, __ ).originals.description }
+								>
 									{ getFeatureText( feature.id, __ ).description }
 								</div>
 							</div>
@@ -110,6 +120,10 @@ function getFeatureText( featureId: FeatureId, __: ReturnType< typeof useI18n >[
 			return {
 				name: __( 'Custom domains' ),
 				description: __( 'Help your site stand out. The first year is free with a plan.' ),
+				originals: {
+					name: 'Custom domains',
+					description: 'Help your site stand out. The first year is free with a plan.',
+				},
 			};
 		case 'store':
 			return {
@@ -117,36 +131,65 @@ function getFeatureText( featureId: FeatureId, __: ReturnType< typeof useI18n >[
 				description: __(
 					'Sell unlimited products or services with a powerful, flexible online store.'
 				),
+				originals: {
+					name: 'Store',
+					description:
+						'Sell unlimited products or services with a powerful, flexible online store.',
+				},
 			};
 		case 'seo':
 			return {
 				name: __( 'SEO tools' ),
 				description: __( 'Boost your SEO and connect a Google Analytics account.' ),
+				originals: {
+					name: 'SEO tools',
+					description: 'Boost your SEO and connect a Google Analytics account.',
+				},
 			};
 		case 'plugins':
 			return {
 				name: __( 'Plugins' ),
 				description: __( 'Install plugins to extend the power of your site.' ),
+				originals: {
+					name: 'Plugins',
+					description: 'Install plugins to extend the power of your site.',
+				},
 			};
 		case 'ad-free':
 			return {
 				name: __( 'Ad-free' ),
 				description: __( 'Remove advertisements and own your brand.' ),
+				originals: {
+					name: 'Ad-free',
+					description: 'Remove advertisements and own your brand.',
+				},
 			};
 		case 'image-storage':
 			return {
 				name: __( 'Image storage' ),
 				description: __( 'Extended storage space for hi-res images.' ),
+				originals: {
+					name: 'Image storage',
+					description: 'Extended storage space for hi-res images.',
+				},
 			};
 		case 'video-storage':
 			return {
 				name: __( 'Video storage' ),
 				description: __( 'Host your own ad-free videos' ),
+				originals: {
+					name: 'Video storage',
+					description: 'Host your own ad-free videos',
+				},
 			};
 		case 'support':
 			return {
 				name: __( 'Priority support' ),
 				description: __( 'Chat with an expert live.' ),
+				originals: {
+					name: 'Priority support',
+					description: 'Chat with an expert live.',
+				},
 			};
 	}
 }

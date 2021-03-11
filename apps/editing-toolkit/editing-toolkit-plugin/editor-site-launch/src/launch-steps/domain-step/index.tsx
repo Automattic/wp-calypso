@@ -54,8 +54,12 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 		<LaunchStepContainer>
 			<div className="nux-launch-step__header">
 				<div>
-					<Title>{ __( 'Choose a domain', 'full-site-editing' ) }</Title>
-					<SubTitle>{ subtitleText }</SubTitle>
+					<Title data-e2e-string="Choose a domain">
+						{ __( 'Choose a domain', 'full-site-editing' ) }
+					</Title>
+					<SubTitle data-e2e-string="Free for the first year with any annual plan.">
+						{ subtitleText }
+					</SubTitle>
 				</div>
 				<ActionButtons sticky={ false }>
 					<NextButton onClick={ handleNext } disabled={ ! domainSearch } />

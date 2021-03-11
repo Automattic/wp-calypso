@@ -9,6 +9,12 @@ import {
 	WebElement,
 	WebElementCondition,
 } from 'selenium-webdriver';
+import request from 'request-promise';
+import { sprintf } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import * as dataHelper from './data-helper';
 import * as driverManager from './driver-manager';
 
@@ -606,4 +612,90 @@ function getLocatorString( locator ) {
 		return locator.name ? `by function ${ locator.name }()` : 'by function()';
 	}
 	return locator.toString();
+}
+
+async function fetchTranslations( originals, locale, project = 'wpcom' ) {
+	return request
+		.post( 'https://translate.wordpress.com/api/translations/-query-by-originals', {
+			form: {
+				project,
+				locale_slug: locale,
+				original_strings: JSON.stringify( originals ),
+			},
+		} )
+		.then( ( response ) => {
+			let translations = JSON.parse( response );
+			delete translations.originals_not_found;
+			translations = Object.values( translations );
+
+			return translations;
+		} )
+		.catch( () => null );
+}
+
+async function getElementsTranslations( elements, locale, project ) {
+	// Default locale doesn't have translations
+	if ( locale === 'en' ) {
+		return null;
+	}
+
+	const originals = await webdriver.promise.map( elements, async ( element ) => {
+		const singular = await element.getAttribute( 'data-e2e-string' );
+		return { singular };
+	} );
+
+	return fetchTranslations( originals, locale, project );
+}
+
+export async function verifyTranslationsPresent(
+	driver,
+	locale,
+	selector = '[data-e2e-string]',
+	waitOverride
+) {
+	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
+	const translatableElements = await webdriver.promise.filter(
+		await driver.findElements( by.css( selector ) ),
+		Boolean
+	);
+	const translations = await getElementsTranslations( translatableElements, locale );
+
+	for ( const element of translatableElements ) {
+		const singular = await element.getAttribute( 'data-e2e-string' );
+		const params = await element.getAttribute( 'data-e2e-string-params' );
+		let translation = singular;
+
+		// Translation for default locale should match the original
+		if ( locale !== 'en' ) {
+			const translationEntry =
+				translations && translations.find( ( entry ) => entry.original.singular === singular );
+			translation =
+				translationEntry &&
+				translationEntry.translations &&
+				translationEntry.translations[ 0 ] &&
+				translationEntry.translations[ 0 ].translation_0;
+		}
+
+		if ( params ) {
+			translation = sprintf( translation, ...JSON.parse( params ) );
+		}
+
+		await driver.wait(
+			function () {
+				return ( async () => {
+					// Non-breaking space characters are being replaced with regular space characters,
+					// due to an inconsistency in `element.getText()` causing it to return the text with
+					// the non-breaking space characters converted in some cases.
+					const elementTextSanitized = ( await element.getText() )
+						.trim()
+						.replace( /[\u00A0]/g, ' ' );
+					const translationSanitized = translation.trim().replace( /[\u00A0]/g, ' ' );
+
+					return elementTextSanitized === translationSanitized;
+				} )();
+			},
+			timeoutWait,
+			`Timed out waiting for element with translatable string '${ singular }' to be displayed with translation '${ translation }'`
+		);
+	}
 }
