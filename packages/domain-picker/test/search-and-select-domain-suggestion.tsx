@@ -3,12 +3,12 @@
  */
 import * as React from 'react';
 import { render, screen } from '@testing-library/react';
+import { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
 
 /**
  * Internal dependencies
  */
 import DomainPicker from '../src/domain-picker';
-import { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
 
 Object.defineProperty( window, 'matchMedia', {
 	writable: true,
