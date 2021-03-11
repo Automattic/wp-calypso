@@ -33,6 +33,9 @@ jest.mock( '../src/hooks/use-domain-suggestions', () => ( {
 	useDomainSuggestions: () => mockUseDomainSuggestionsResult,
 } ) );
 
+beforeEach( () => {
+	jest.clearAllMocks();
+} );
 
 describe( 'Search for a domain and select a suggestion', () => {
 	it( 'should search for a domain', () => {
