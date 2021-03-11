@@ -411,6 +411,10 @@ export function logPerformance( driver ) {
 }
 
 export async function ensureMobileMenuOpen( driver ) {
+	if ( process.env.BROWSERSIZE !== 'mobile' ) {
+		return null;
+	}
+
 	const mobileHeaderLocator = by.css( '.section-nav__mobile-header' );
 	const menuLocator = by.css( '.section-nav' );
 	const openMenuLocator = by.css( '.section-nav.is-open' );
