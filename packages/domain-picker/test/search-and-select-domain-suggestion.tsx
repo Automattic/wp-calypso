@@ -3,8 +3,7 @@
  */
 import * as React from 'react';
 import { render, screen } from '@testing-library/react';
-import { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
-import type { DomainSuggestion } from '@automattic/data-stores/src/domain-suggestions/types';
+import { DataStatus, DomainSuggestion } from '@automattic/data-stores/src/domain-suggestions';
 
 /**
  * Internal dependencies
