@@ -65,9 +65,9 @@ export const trackDismiss = (): void => {
 /**
  * Track layout selection.
  *
- * @param template Template slug.
+ * @param pattern Pattern slug.
  */
-export const trackSelection = ( template: string ): void => {
+export const trackSelection = ( pattern: string ): void => {
 	if ( ! tracksIdentity ) {
 		return;
 	}
@@ -76,7 +76,7 @@ export const trackSelection = ( template: string ): void => {
 		'a8c_full_site_editing_template_selector_template_selected',
 		{
 			blog_id: tracksIdentity.blogid,
-			template,
+			pattern,
 		},
 	] );
 };

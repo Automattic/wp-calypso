@@ -98,7 +98,7 @@
 		"@automattic/i18n-utils": "^1.0.0",
 		"@automattic/launch": "^1.0.0",
 		"@automattic/onboarding": "^1.0.0",
-		"@automattic/page-template-modal": "^1.0.0-alpha.0",
+		"@automattic/page-pattern-modal": "^1.0.0-alpha.0",
 		"@automattic/plans-grid": "^1.0.0-alpha.0",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@automattic/typography": "^1.0.0",

@@ -1,14 +1,14 @@
-export interface LayoutCategory {
+export interface PatternCategory {
 	slug: string;
 	title: string;
 	description: string;
 }
 
-export interface LayoutDefinition {
+export interface PatternDefinition {
 	name: string;
 	ID: number | null;
 	title: string;
-	categories?: Record< string, LayoutCategory >;
+	categories?: Record< string, PatternCategory >;
 	description?: string;
 	html?: string;
 	modified_date?: string;

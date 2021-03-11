@@ -4,19 +4,19 @@
 import '@wordpress/nux';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addFilter, removeFilter } from '@wordpress/hooks';
-import { LayoutDefinition, PageTemplateModal } from '@automattic/page-template-modal';
+import { PagePatternModal, PatternDefinition } from '@automattic/page-pattern-modal';
 import React, { useCallback } from '@wordpress/element';
 
-const INSERTING_HOOK_NAME = 'isInsertingPageTemplate';
-const INSERTING_HOOK_NAMESPACE = 'automattic/full-site-editing/inserting-template';
+const INSERTING_HOOK_NAME = 'isInsertingPagePattern';
+const INSERTING_HOOK_NAMESPACE = 'automattic/full-site-editing/inserting-pattern';
 
-interface PageTemplatesPluginProps {
-	templates: LayoutDefinition[];
+interface PagePatternsPluginProps {
+	patterns: PatternDefinition[];
 	locale?: string;
 	theme?: string;
 }
 
-export function PageTemplatesPlugin( props: PageTemplatesPluginProps ): JSX.Element {
+export function PagePatternsPlugin( props: PagePatternsPluginProps ): JSX.Element {
 	const { setOpenState } = useDispatch( 'automattic/starter-page-layouts' );
 	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
 	const { editPost } = useDispatch( 'core/editor' );
@@ -43,9 +43,9 @@ export function PageTemplatesPlugin( props: PageTemplatesPluginProps ): JSX.Elem
 		};
 	} );
 
-	const saveTemplateChoice = useCallback(
+	const savePatternChoice = useCallback(
 		( name: string ) => {
-			// Save selected template slug in meta.
+			// Save selected pattern slug in meta.
 			const currentMeta = getMeta();
 			editPost( {
 				meta: {
@@ -57,7 +57,7 @@ export function PageTemplatesPlugin( props: PageTemplatesPluginProps ): JSX.Elem
 		[ editPost, getMeta ]
 	);
 
-	const insertTemplate = useCallback(
+	const insertPattern = useCallback(
 		( title, blocks ) => {
 			// Add filter to let the tracking library know we are inserting a template.
 			addFilter( INSERTING_HOOK_NAME, INSERTING_HOOK_NAMESPACE, () => true );
@@ -89,11 +89,11 @@ export function PageTemplatesPlugin( props: PageTemplatesPluginProps ): JSX.Elem
 	}, [ areTipsEnabled, disableTips, isWelcomeGuideActive, toggleFeature ] );
 
 	return (
-		<PageTemplateModal
+		<PagePatternModal
 			{ ...selectProps }
 			setOpenState={ setOpenState }
-			saveTemplateChoice={ saveTemplateChoice }
-			insertTemplate={ insertTemplate }
+			savePatternChoice={ savePatternChoice }
+			insertPattern={ insertPattern }
 			hideWelcomeGuide={ hideWelcomeGuide }
 			{ ...props }
 		/>

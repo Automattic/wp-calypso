@@ -12,11 +12,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import PageTemplateModal from '../page-template-modal';
+import PagePatternModal from '../page-pattern-modal';
 
 const noop = () => undefined;
 
-const templates = [
+const patterns = [
 	{ ID: null, title: 'Blank', name: 'blank' },
 	{
 		ID: 1,
@@ -59,15 +59,15 @@ afterEach( () => {
 	unregisterBlockType( 'test/test-block' );
 } );
 
-describe( '<PageTemplateModal>', () => {
+describe( '<PagePatternModal>', () => {
 	it( 'sets the page title after selecting a layout', () => {
-		const insertTemplate = jest.fn();
+		const insertPattern = jest.fn();
 		render(
-			<PageTemplateModal
+			<PagePatternModal
 				isOpen={ true }
-				templates={ templates }
-				insertTemplate={ insertTemplate }
-				saveTemplateChoice={ noop }
+				patterns={ patterns }
+				insertPattern={ insertPattern }
+				savePatternChoice={ noop }
 				setOpenState={ noop }
 				hideWelcomeGuide={ noop }
 			/>
@@ -75,17 +75,17 @@ describe( '<PageTemplateModal>', () => {
 		// 1th button because the 0th is the mobile drop down menu
 		fireEvent.click( screen.getAllByText( 'Blog' )[ 1 ] );
 		fireEvent.click( screen.getByText( 'Descriptive Name One' ) );
-		expect( insertTemplate ).toHaveBeenCalledWith( 'Layout One', expect.anything() );
+		expect( insertPattern ).toHaveBeenCalledWith( 'Layout One', expect.anything() );
 	} );
 
 	it( "doesn't set the page title after selecting a home page layout", () => {
-		const insertTemplate = jest.fn();
+		const insertPattern = jest.fn();
 		render(
-			<PageTemplateModal
+			<PagePatternModal
 				isOpen={ true }
-				templates={ templates }
-				insertTemplate={ insertTemplate }
-				saveTemplateChoice={ noop }
+				patterns={ patterns }
+				insertPattern={ insertPattern }
+				savePatternChoice={ noop }
 				setOpenState={ noop }
 				hideWelcomeGuide={ noop }
 			/>
@@ -93,22 +93,22 @@ describe( '<PageTemplateModal>', () => {
 		// 1th button because the 0th is the mobile drop down menu
 		fireEvent.click( screen.getAllByText( 'Home' )[ 1 ] );
 		fireEvent.click( screen.getByText( 'Descriptive Name Two' ) );
-		expect( insertTemplate ).toHaveBeenCalledWith( null, expect.anything() );
+		expect( insertPattern ).toHaveBeenCalledWith( null, expect.anything() );
 	} );
 
 	it( 'clears the page title after selecting blank layout', () => {
-		const insertTemplate = jest.fn();
+		const insertPattern = jest.fn();
 		render(
-			<PageTemplateModal
+			<PagePatternModal
 				isOpen={ true }
-				templates={ templates }
-				insertTemplate={ insertTemplate }
-				saveTemplateChoice={ noop }
+				patterns={ patterns }
+				insertPattern={ insertPattern }
+				savePatternChoice={ noop }
 				setOpenState={ noop }
 				hideWelcomeGuide={ noop }
 			/>
 		);
 		fireEvent.click( screen.getByText( 'Blank page' ) );
-		expect( insertTemplate ).toHaveBeenCalledWith( '', expect.anything() );
+		expect( insertPattern ).toHaveBeenCalledWith( '', expect.anything() );
 	} );
 } );

@@ -3,20 +3,20 @@
  */
 import { registerPlugin } from '@wordpress/plugins';
 import { dispatch } from '@wordpress/data';
-import { initializeTracksWithIdentity, LayoutDefinition } from '@automattic/page-template-modal';
+import { initializeTracksWithIdentity, PatternDefinition } from '@automattic/page-pattern-modal';
 import React from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import { PageTemplatesPlugin } from './page-template-plugin';
+import { PagePatternsPlugin } from './page-patterns-plugin';
 import './store';
 import './index.scss';
 
 declare global {
 	interface Window {
 		starterPageTemplatesConfig?: {
-			templates?: LayoutDefinition[];
+			templates?: PatternDefinition[];
 			locale?: string;
 			theme?: string;
 			screenAction?: string;
@@ -26,7 +26,7 @@ declare global {
 }
 
 // Load config passed from backend.
-const { templates = [], tracksUserData, screenAction, theme, locale } =
+const { templates: patterns = [], tracksUserData, screenAction, theme, locale } =
 	window.starterPageTemplatesConfig ?? {};
 
 if ( tracksUserData ) {
@@ -39,9 +39,9 @@ if ( screenAction === 'add' ) {
 }
 
 // Always register ability to open from document sidebar.
-registerPlugin( 'page-templates', {
+registerPlugin( 'page-patterns', {
 	render: () => {
-		return <PageTemplatesPlugin templates={ templates } theme={ theme } locale={ locale } />;
+		return <PagePatternsPlugin patterns={ patterns } theme={ theme } locale={ locale } />;
 	},
 
 	// `registerPlugin()` types assume `icon` is mandatory however it isn't
