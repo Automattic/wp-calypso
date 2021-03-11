@@ -73,7 +73,7 @@ export function useCreateCreditCard( {
 	stripe: Stripe | null;
 	shouldUseEbanx: boolean;
 	shouldShowTaxFields?: boolean;
-	activePayButtonText?: boolean | undefined;
+	activePayButtonText?: string | undefined;
 } ): PaymentMethod | null {
 	const shouldLoadStripeMethod = ! isStripeLoading && ! stripeLoadingError;
 	const stripePaymentMethodStore = useMemo( () => createCreditCardPaymentMethodStore(), [] );

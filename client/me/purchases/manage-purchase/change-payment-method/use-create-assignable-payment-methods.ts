@@ -39,7 +39,7 @@ export default function useCreateAssignablePaymentMethods(
 		stripe,
 		shouldUseEbanx: false,
 		shouldShowTaxFields: true,
-		activePayButtonText: translate( 'Save card' ),
+		activePayButtonText: String( translate( 'Save card' ) ),
 	} );
 
 	const payPalMethod = useCreatePayPal( {
