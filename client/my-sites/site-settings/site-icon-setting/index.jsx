@@ -20,7 +20,7 @@ import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
 import { setEditorMediaModalView } from 'calypso/state/editor/actions';
 import { resetAllImageEditorState } from 'calypso/state/editor/image-editor/actions';
-import { getCustomizerUrl, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { ModalViews } from 'calypso/state/ui/media-modal/constants';
 import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
@@ -34,8 +34,6 @@ import {
 } from 'calypso/state/editor/image-editor/selectors';
 import getSiteIconId from 'calypso/state/selectors/get-site-icon-id';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import isSiteSupportingImageEditor from 'calypso/state/selectors/is-site-supporting-image-editor';
 import { uploadSiteIcon } from 'calypso/state/media/thunks';
 
 /**
@@ -47,13 +45,9 @@ class SiteIconSetting extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
 		siteId: PropTypes.number,
-		isJetpack: PropTypes.bool,
-		isPrivate: PropTypes.bool,
 		hasIcon: PropTypes.bool,
 		iconUrl: PropTypes.string,
 		isSaving: PropTypes.bool,
-		siteSupportsImageEditor: PropTypes.bool,
-		customizerUrl: PropTypes.string,
 		generalOptionsUrl: PropTypes.string,
 		onEditSelectedMedia: PropTypes.func,
 		onCancelEditingIcon: PropTypes.func,
@@ -168,36 +162,25 @@ class SiteIconSetting extends Component {
 	}
 
 	render() {
-		const {
-			isJetpack,
-			isPrivate,
-			iconUrl,
-			customizerUrl,
-			generalOptionsUrl,
-			siteSupportsImageEditor,
-		} = this.props;
+		const { iconUrl, generalOptionsUrl } = this.props;
 		const { isModalVisible, hasToggledModal, isEditingSiteIcon } = this.state;
 
 		let buttonProps;
-		if ( siteSupportsImageEditor ) {
+		// In case where site is private but still has Blavatar assigned,
+		// send to wp-admin instead (Customizer field unsupported)
+		const hasBlavatar = includes( iconUrl, '.gravatar.com/blavatar/' );
+		if ( hasBlavatar ) {
+			buttonProps = {
+				rel: 'external',
+				href: generalOptionsUrl,
+				target: '_blank',
+			};
+		} else {
 			buttonProps = {
 				type: 'button',
 				onClick: this.showModal,
 				onMouseEnter: this.preloadModal,
 			};
-		} else {
-			buttonProps = { rel: 'external' };
-
-			// In case where site is private but still has Blavatar assigned,
-			// send to wp-admin instead (Customizer field unsupported)
-			const hasBlavatar = includes( iconUrl, '.gravatar.com/blavatar/' );
-
-			if ( isJetpack || ( isPrivate && ! hasBlavatar ) ) {
-				buttonProps.href = customizerUrl;
-			} else {
-				buttonProps.href = generalOptionsUrl;
-				buttonProps.target = '_blank';
-			}
 		}
 
 		// Merge analytics click handler into existing button props
@@ -283,14 +266,10 @@ export default connect(
 
 		return {
 			siteId,
-			isJetpack: isJetpackSite( state, siteId ),
-			isPrivate: isPrivateSite( state, siteId ),
 			siteIconId: getSiteIconId( state, siteId ),
 			hasIcon: !! getSiteIconUrl( state, siteId ),
 			iconUrl: getSiteIconUrl( state, siteId ),
 			isSaving: isSavingSiteSettings( state, siteId ),
-			siteSupportsImageEditor: isSiteSupportingImageEditor( state, siteId ),
-			customizerUrl: getCustomizerUrl( state, siteId, 'identity' ),
 			generalOptionsUrl: getSiteAdminUrl( state, siteId, 'options-general.php' ),
 			crop: getImageEditorCrop( state ),
 			transform: getImageEditorTransform( state ),
