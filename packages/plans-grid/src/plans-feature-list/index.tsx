@@ -119,7 +119,8 @@ function computeDomainFeatureItem(
 		},
 	};
 
-	const domainKey = domain && ( domain.is_free ? 'FREE_DOMAIN' : 'PAID_DOMAIN' );
+	const domainKey =
+		domain && ! domain.unavailable && ( domain.is_free ? 'FREE_DOMAIN' : 'PAID_DOMAIN' );
 	const planKey = isFreePlan ? 'FREE_PLAN' : 'PAID_PLAN';
 
 	return states[ domainKey || 'NO_DOMAIN' ][ planKey ];

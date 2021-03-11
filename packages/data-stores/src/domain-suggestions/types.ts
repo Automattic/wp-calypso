@@ -68,7 +68,7 @@ export interface DomainSuggestionQuery {
 
 export type DomainName = string;
 
-interface AvailableDomainSuggestion {
+export interface AvailableDomainSuggestion {
 	/**
 	 * The domain name
 	 *
@@ -147,7 +147,7 @@ interface AvailableDomainSuggestion {
 	unavailable: false;
 }
 
-interface UnAvailableDomainSuggestion {
+export interface UnAvailableDomainSuggestion {
 	/**
 	 * The domain name
 	 *
