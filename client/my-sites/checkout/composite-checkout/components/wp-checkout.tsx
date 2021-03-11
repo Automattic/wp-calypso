@@ -344,6 +344,10 @@ export default function WPCheckout( {
 		[ onEvent ]
 	);
 
+	const validatingButtonText = isCartPendingUpdate
+		? String( translate( 'Updating cart…' ) )
+		: String( translate( 'Please wait…' ) );
+
 	return (
 		<Checkout>
 			<QueryExperiments />
@@ -411,12 +415,8 @@ export default function WPCheckout( {
 					editButtonAriaLabel={ String( translate( 'Edit your order' ) ) }
 					nextStepButtonText={ String( translate( 'Save order' ) ) }
 					nextStepButtonAriaLabel={ String( translate( 'Save your order' ) ) }
-					validatingButtonText={ String(
-						isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
-					) }
-					validatingButtonAriaLabel={ String(
-						isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
-					) }
+					validatingButtonText={ validatingButtonText }
+					validatingButtonAriaLabel={ validatingButtonText }
 					formStatus={ formStatus }
 				/>
 				<CheckoutSteps areStepsActive={ ! isOrderReviewActive }>
@@ -455,12 +455,8 @@ export default function WPCheckout( {
 							nextStepButtonAriaLabel={ String(
 								translate( 'Continue with the entered contact details' )
 							) }
-							validatingButtonText={ String(
-								isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
-							) }
-							validatingButtonAriaLabel={ String(
-								isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
-							) }
+							validatingButtonText={ validatingButtonText }
+							validatingButtonAriaLabel={ validatingButtonText }
 						/>
 					) }
 					<CheckoutStep
@@ -476,12 +472,8 @@ export default function WPCheckout( {
 						nextStepButtonAriaLabel={ String(
 							translate( 'Continue with the selected payment method' )
 						) }
-						validatingButtonText={ String(
-							isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
-						) }
-						validatingButtonAriaLabel={ String(
-							isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
-						) }
+						validatingButtonText={ validatingButtonText }
+						validatingButtonAriaLabel={ validatingButtonText }
 						isCompleteCallback={ () => false }
 					/>
 				</CheckoutSteps>
