@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
-import DomainPicker from '@automattic/domain-picker';
+import DomainPicker, { getDomainSuggestionsVendor } from '@automattic/domain-picker';
 import type { DomainSuggestions } from '@automattic/data-stores';
 import {
 	Title,
@@ -168,6 +168,7 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				analyticsUiAlgo={ isModal ? 'domain_modal' : 'domain_page' }
 				locale={ locale }
 				onUseYourDomainClick={ currentUser ? handleUseYourDomain : undefined }
+				vendor={ getDomainSuggestionsVendor( { isSignup: true } ) }
 			/>
 		</div>
 	);
