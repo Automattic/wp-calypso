@@ -346,7 +346,7 @@
 			"title": "Pollard",
 			"slug": "pollard",
 			"template": "pollard",
-			"theme": "mayland",
+			"theme": "blank-canvas",
 			"preview": "static",
 			"fonts": {
 				"headings": "Cabin",
