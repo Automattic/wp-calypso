@@ -319,7 +319,7 @@
 	},
 	"devDependencies": {
 		"bunyan": "^1.8.14",
-		"chokidar": "^2.1.8",
+		"chokidar": "^3.5.1",
 		"eslint-nibble": "^6.0.0"
 	}
 }
