@@ -25,6 +25,15 @@ interface ExPlatClientReactHelpers {
 		name: string;
 		children: { default: React.ReactNode; treatment: React.ReactNode; loading: React.ReactNode };
 	} ) => JSX.Element;
+
+	/**
+	 * Inject experiment data into a child component.
+	 * Use when hooks aren't available.
+	 */
+	ProvideExperimentData : ( props: {
+		children: (isLoading: boolean, experimentAssignment: ExperimentAssignment | null) => JSX.Element;
+		name: string;
+	}) => JSX.Element 
 }
 
 export default function createExPlatClientReactHelpers(
@@ -42,6 +51,7 @@ export default function createExPlatClientReactHelpers(
 			let isSubscribed = true;
 			exPlatClient.loadExperimentAssignment( experimentName ).then( ( experimentAssignment ) => {
 				if ( isSubscribed ) {
+					// The order here is important as React can rerender in between these two
 					setExperimentAssignment( experimentAssignment );
 					setIsLoading( false );
 				}
@@ -83,8 +93,20 @@ export default function createExPlatClientReactHelpers(
 		return <>{ children.treatment }</>;
 	};
 
+	const ProvideExperimentData = ({
+		children,
+		name: experimentName,
+	}: {
+		children: (isLoading: boolean, experimentAssignment: ExperimentAssignment | null) => JSX.Element;
+		name: string;
+	}) : JSX.Element => {
+		const [ isLoading, experimentAssignment ] = useExperiment( experimentName );
+		return children(isLoading, experimentAssignment)
+	}
+
 	return {
 		useExperiment,
 		Experiment,
+		ProvideExperimentData,
 	};
 }
