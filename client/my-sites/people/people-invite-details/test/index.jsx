@@ -8,6 +8,7 @@
 import React from 'react';
 import moment from 'moment';
 import { shallow } from 'enzyme';
+import { Card } from '@automattic/components';
 
 const mockGoBack = jest.fn();
 jest.mock( 'page', () => ( { back: mockGoBack } ) );
@@ -152,7 +153,7 @@ describe( 'PeopleInviteDetails', () => {
 
 		// Verify that a placeholder is rendered while waiting for `page.back`
 		// to take effect.
-		const placeholderContainer = inviteDetails.find( 'Card' );
+		const placeholderContainer = inviteDetails.find( Card );
 		expect( placeholderContainer ).toHaveLength( 1 );
 		expect( placeholderContainer.children() ).toHaveLength( 1 );
 		const placeholder = placeholderContainer.childAt( 0 );

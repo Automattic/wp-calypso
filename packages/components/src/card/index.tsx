@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons'; // eslint-disable-line no-restricted-imports
-import type { ElementType, ComponentProps, ReactNode } from 'react';
+import type { ElementType, ComponentProps, ReactNode, Ref } from 'react';
 
 /**
  * Style dependencies
@@ -30,53 +30,48 @@ type ElementProps< P, T extends TagName > = P &
 
 export type Props< T extends TagName > = ElementProps< OwnProps, T >;
 
-class Card< T extends TagName = 'div' > extends PureComponent< Props< T > > {
-	render(): JSX.Element {
-		const {
-			children,
-			className,
-			compact,
-			displayAsLink,
-			highlight,
-			tagName = 'div',
-			href,
-			target,
-			...props
-		} = this.props;
+const Card = < T extends TagName = 'div' >(
+	{
+		children,
+		className,
+		compact,
+		displayAsLink,
+		highlight,
+		tagName = 'div',
+		href,
+		target,
+		...props
+	}: Props< T >,
+	forwardedRef: Ref< any > // eslint-disable-line @typescript-eslint/no-explicit-any
+) => {
+	const elementClass = classNames(
+		'card',
+		className,
+		{
+			'is-card-link': displayAsLink || href,
+			'is-clickable': props.onClick,
+			'is-compact': compact,
+			'is-highlight': highlight,
+		},
+		highlight ? 'is-' + highlight : false
+	);
 
-		const elementClass = classNames(
-			'card',
-			className,
-			{
-				'is-card-link': displayAsLink || href,
-				'is-clickable': this.props.onClick,
-				'is-compact': compact,
-				'is-highlight': highlight,
-			},
-			highlight ? 'is-' + highlight : false
-		);
-
-		return href ? (
-			<a { ...props } href={ href } target={ target } className={ elementClass }>
+	return href ? (
+		<a { ...props } href={ href } target={ target } className={ elementClass } ref={ forwardedRef }>
+			<Gridicon className="card__link-indicator" icon={ target ? 'external' : 'chevron-right' } />
+			{ children }
+		</a>
+	) : (
+		React.createElement( tagName, { ...props, className: elementClass, ref: forwardedRef }, [
+			displayAsLink && (
 				<Gridicon className="card__link-indicator" icon={ target ? 'external' : 'chevron-right' } />
-				{ children }
-			</a>
-		) : (
-			React.createElement(
-				tagName,
-				{ ...props, className: elementClass },
-				<>
-					{ displayAsLink && (
-						<Gridicon
-							className="card__link-indicator"
-							icon={ target ? 'external' : 'chevron-right' }
-						/>
-					) }
-					{ children }
-				</>
-			)
-		);
-	}
-}
+			),
+			children,
+		] )
+	);
+};
 
-export default Card;
+const ForwardedRefCard = React.forwardRef( Card );
+ForwardedRefCard.displayName = 'Card';
+
+export default React.memo( ForwardedRefCard );
