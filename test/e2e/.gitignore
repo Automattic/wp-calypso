@@ -9,3 +9,6 @@
 
 # config overrides
 /config/local-*
+
+# chromedriver logs
+chrome*.log
