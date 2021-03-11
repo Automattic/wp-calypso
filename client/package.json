@@ -233,6 +233,7 @@
 		"yamlparser": "^0.0.2"
 	},
 	"devDependencies": {
+		"@testing-library/react": "^11.2.5",
 		"autoprefixer": "^9.7.3",
 		"component-event": "^0.1.4",
 		"component-query": "^0.0.3",

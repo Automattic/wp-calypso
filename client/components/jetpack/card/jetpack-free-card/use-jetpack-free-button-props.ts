@@ -45,9 +45,7 @@ const buildHref = (
 		// Ensure that URL is valid
 		try {
 			// Slugs of secondary sites of a multisites network follow this syntax: example.net::second-site
-			wpAdminUrlFromQuery = new URL(
-				`https://${ site.replaceAll( '::', '/' ) }/wp-admin/admin.php`
-			);
+			wpAdminUrlFromQuery = new URL( `https://${ site.replace( /::/g, '/' ) }/wp-admin/admin.php` );
 		} catch ( e ) {}
 
 		if ( wpAdminUrlFromQuery ) {
