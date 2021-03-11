@@ -12,7 +12,7 @@ import classNames from 'classnames';
 import { CompactCard } from '@automattic/components';
 import InfoPopover from 'calypso/components/info-popover';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
-import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
+import { getTitanProductName } from 'calypso/lib/titan';
 
 /**
  * Style dependencies

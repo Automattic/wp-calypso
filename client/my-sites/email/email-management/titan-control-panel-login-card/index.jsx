@@ -17,8 +17,7 @@ import {
 	fetchTitanAutoLoginURL,
 	fetchTitanIframeURL,
 } from 'calypso/my-sites/email/email-management/titan-functions';
-import { getTitanMailOrderId } from 'calypso/lib/titan/get-titan-mail-order-id';
-import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
+import { getTitanMailOrderId, getTitanProductName } from 'calypso/lib/titan';
 
 /**
  * Style dependencies
