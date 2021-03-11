@@ -2,7 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import { DataStatus, DomainSuggestion } from '@automattic/data-stores/src/domain-suggestions';
 
 /**
@@ -49,5 +49,32 @@ describe( 'Search for a domain and select a suggestion', () => {
 
 		expect( getByText( '€15.00/year' ) ).toBeInTheDocument();
 	} );
+
+	it( 'should call the onDomainSelect callback when a button is clicked ', () => {
+		const onDomainSelectCallback = jest.fn();
+		const { getAllByText } = render(
+			<DomainPicker
+				onDomainSelect={ onDomainSelectCallback }
+				analyticsUiAlgo="testalgo"
+				analyticsFlowId="12345"
+				initialDomainSearch="water"
+				itemType="button"
+			/>
+		);
+
+		const selectDomainButtons = getAllByText( 'Select', { exact: true, selector: 'button' } );
+
+		// Expect as many buttons as there are suggestion items in the data
+		expect( selectDomainButtons ).toHaveLength(
+			mockUseDomainSuggestionsResult.allDomainSuggestions.length
+		);
+
+		// Check if callback is called correctly
+		fireEvent.click( selectDomainButtons[ 0 ] );
+
+		expect( onDomainSelectCallback ).toHaveBeenCalledTimes( 1 );
+		expect( onDomainSelectCallback ).toHaveBeenCalledWith(
+			mockUseDomainSuggestionsResult.allDomainSuggestions[ 0 ]
+		);
 	} );
 } );
