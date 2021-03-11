@@ -146,13 +146,13 @@ export class CheckoutThankYou extends React.Component {
 		} = this.props;
 
 		if ( selectedSite ) {
-			this.props.fetchAtomicTransfer?.( selectedSite );
+			this.props.fetchAtomicTransfer?.( selectedSite.ID );
 		}
 
 		if ( selectedSite && receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct() ) {
-			this.props.refreshSitePlans( selectedSite );
+			this.props.refreshSitePlans( selectedSite.ID );
 		} else if ( shouldFetchSitePlans( sitePlans, selectedSite ) ) {
-			this.props.fetchSitePlans( selectedSite );
+			this.props.fetchSitePlans( selectedSite.ID );
 		}
 
 		if ( receiptId && ! receipt.hasLoadedFromServer && ! receipt.isRequesting ) {
@@ -183,7 +183,7 @@ export class CheckoutThankYou extends React.Component {
 			this.hasPlanOrDomainProduct( nextProps ) &&
 			this.props.selectedSite
 		) {
-			this.props.refreshSitePlans( this.props.selectedSite );
+			this.props.refreshSitePlans( this.props.selectedSite.ID );
 		}
 	}
 
@@ -276,8 +276,12 @@ export class CheckoutThankYou extends React.Component {
 			purchases.every( isTheme )
 		) {
 			const themeId = purchases[ 0 ].meta;
-			this.props.activatedTheme( 'premium/' + themeId, this.props.selectedSite.ID );
-
+			this.props.themeActivated(
+				'premium/' + themeId,
+				this.props.selectedSite.ID,
+				'calypstore',
+				true
+			);
 			page.redirect( '/themes/' + this.props.selectedSite.slug );
 		}
 	};
@@ -689,11 +693,11 @@ export default connect(
 		};
 	},
 	{
-		activatedTheme: ( meta, site ) => themeActivated( meta, site, 'calypstore', true ),
-		fetchReceipt: ( receiptId ) => fetchReceipt( receiptId ),
-		fetchSitePlans: ( site ) => fetchSitePlans( site.ID ),
-		refreshSitePlans: ( site ) => refreshSitePlans( site.ID ),
-		recordStartTransferClickInThankYou: ( domain ) => recordStartTransferClickInThankYou( domain ),
-		fetchAtomicTransfer: ( site ) => fetchAtomicTransfer( site.ID ),
+		themeActivated,
+		fetchReceipt,
+		fetchSitePlans,
+		refreshSitePlans,
+		recordStartTransferClickInThankYou,
+		fetchAtomicTransfer,
 	}
 )( localize( CheckoutThankYou ) );
