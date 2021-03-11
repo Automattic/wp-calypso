@@ -53,9 +53,7 @@ import type { StoredCard } from '../../types/stored-cards';
 
 export { useCreateExistingCards };
 
-export function useCreatePayPal( {
-	labelText = null,
-}: { labelText?: string | null } = {} ): PaymentMethod {
+export function useCreatePayPal( { labelText }: { labelText?: string | null } ): PaymentMethod {
 	const paypalMethod = useMemo( () => createPayPalMethod( { labelText } ), [ labelText ] );
 	return paypalMethod;
 }
@@ -403,7 +401,7 @@ export default function useCreatePaymentMethods( {
 } ): PaymentMethod[] {
 	const { responseCart } = useShoppingCart();
 
-	const paypalMethod = useCreatePayPal();
+	const paypalMethod = useCreatePayPal( {} );
 
 	const idealMethod = useCreateIdeal( {
 		isStripeLoading,
