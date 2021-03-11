@@ -57,11 +57,9 @@ export default function createExPlatClientReactHelpers(
 			experimentName !== previousExperimentName &&
 			! previousExperimentName.startsWith( 'explat_test' )
 		) {
-			const message = '[ExPlat] useExperiment: experimentName should never change between renders!';
-			if ( exPlatClient.config.isDevelopmentMode ) {
-				throw new Error( message );
-			}
-			exPlatClient.config.logError( { message } );
+			exPlatClient.config.logError( {
+				message: '[ExPlat] useExperiment: experimentName should never change between renders!',
+			} );
 		}
 
 		return [ isLoading, experimentAssignment ];
