@@ -89,6 +89,7 @@ import mergeIfObjects from './lib/merge-if-objects';
 import type { ReactStandardAction } from './types/analytics';
 import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
 import useMaybeJetpackIntroCouponCode from './hooks/use-maybe-jetpack-intro-coupon-code';
+import type { PaymentProcessorOptions } from './types/payment-processors';
 
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
@@ -445,7 +446,7 @@ export default function CompositeCheckout( {
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const transactionOptions = { createUserAndSiteBeforeTransaction };
-	const dataForProcessor = useMemo(
+	const dataForProcessor: PaymentProcessorOptions = useMemo(
 		() => ( {
 			includeDomainDetails,
 			includeGSuiteDetails,
@@ -453,6 +454,8 @@ export default function CompositeCheckout( {
 			createUserAndSiteBeforeTransaction,
 			stripeConfiguration,
 			reduxDispatch,
+			items,
+			total,
 		} ),
 		[
 			includeDomainDetails,
@@ -461,6 +464,8 @@ export default function CompositeCheckout( {
 			createUserAndSiteBeforeTransaction,
 			stripeConfiguration,
 			reduxDispatch,
+			items,
+			total,
 		]
 	);
 	const dataForRedirectProcessor = useMemo(
