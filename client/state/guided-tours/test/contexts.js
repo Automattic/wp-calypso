@@ -17,10 +17,7 @@ import {
 	hasUserRegisteredBefore,
 	isUserNewerThan,
 } from '../contexts';
-import {
-	SOURCE_GOOGLE_DOCS,
-	SOURCE_UNKNOWN,
-} from 'calypso/components/tinymce/plugins/wpcom-track-paste/sources';
+import { SOURCE_GOOGLE_DOCS, SOURCE_UNKNOWN } from 'calypso/lib/wpcom-track-paste/sources';
 import { EDITOR_PASTE_EVENT } from 'calypso/state/action-types';
 
 jest.mock( 'calypso/layout/guided-tours/config', () => {

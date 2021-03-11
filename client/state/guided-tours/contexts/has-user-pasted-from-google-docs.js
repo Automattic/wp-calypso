@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { EDITOR_PASTE_EVENT } from 'calypso/state/action-types';
-import { SOURCE_GOOGLE_DOCS } from 'calypso/components/tinymce/plugins/wpcom-track-paste/sources';
+import { SOURCE_GOOGLE_DOCS } from 'calypso/lib/wpcom-track-paste/sources';
 import { getLastAction } from 'calypso/state/ui/action-log/selectors';
 
 /**
