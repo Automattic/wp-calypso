@@ -33,6 +33,25 @@
 	flex-wrap: wrap;
 }
 
+.email-provider-details__additional-price-information {
+	color: var( --color-text-subtle );
+	display: inline-block;
+	font-size: $font-body-extra-small;
+	font-style: normal;
+	margin-top: 3px;
+}
+
 .email-provider-details__cta {
-	margin: 16px auto 16px 0;
+	margin-top: 16px;
+	margin-right: auto;
+	margin-bottom: 16px;
+
+	.gsuite & {
+		margin-top: 16px;
+	}
+
+	@include breakpoint-deprecated( '>1040px' ) {
+		margin-top: 40px;
+		margin-bottom: 25px;
+	}
 }
