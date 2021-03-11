@@ -35,6 +35,20 @@ const Success: React.FunctionComponent = () => {
 		[]
 	);
 
+	// Save the post before displaying the action buttons and launch succes message
+	const [ isPostSaved, setIsPostSaved ] = React.useState( false );
+	const { savePost } = useDispatch( 'core/editor' );
+
+	React.useEffect( () => {
+		const asyncSavePost = async () => {
+			if ( ! isPostSaved ) {
+				await savePost();
+				setIsPostSaved( true );
+			}
+		};
+		asyncSavePost();
+	}, [ isPostSaved, savePost ] );
+
 	const { unsetModalDismissible, hideModalTitle, closeFocusedLaunch } = useDispatch( LAUNCH_STORE );
 
 	const { siteSubdomain, sitePrimaryDomain } = useSiteDomains();
@@ -82,14 +96,16 @@ const Success: React.FunctionComponent = () => {
 	const copyButtonLabelIdle = __( 'Copy Link', __i18n_text_domain__ );
 	const copyButtonLabelActivated = __( 'Copied!', __i18n_text_domain__ );
 
+	const isLaunchComplete = ! isSiteLaunching && isPostSaved;
+
 	return (
 		<div className="focused-launch-container focused-launch-success__wrapper">
 			<Confetti className="focused-launch-success__confetti" />
 			<Title tagName="h2">{ __( 'Hooray!', __i18n_text_domain__ ) }</Title>
 			<SubTitle tagName="h3">
-				{ isSiteLaunching ? subtitleTextLaunching : subtitleTextLaunched }
+				{ isLaunchComplete ? subtitleTextLaunched : subtitleTextLaunching }
 			</SubTitle>
-			{ ! willUserBeRedirectedAutomatically && ! isSiteLaunching && (
+			{ ! willUserBeRedirectedAutomatically && isLaunchComplete && (
 				<>
 					<div className="focused-launch-success__url-wrapper">
 						<span className="focused-launch-success__url-field">{ displayedSiteUrl }</span>
