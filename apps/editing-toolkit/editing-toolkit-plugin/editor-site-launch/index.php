@@ -93,6 +93,11 @@ function enqueue_launch_flow_script_and_style( $site_launch_options ) {
 			return;
 	}
 
+	$anchor_podcast = $site_launch_options['anchor_podcast'];
+	if ( ! empty( $anchor_podcast ) ) {
+		$script_name = 'focused-launch';
+	}
+
 	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/' . $script_name . '.asset.php';
 	$script_dependencies = isset( $asset_file['dependencies'] ) ? $asset_file['dependencies'] : array();
 	$script_file         = 'dist/' . $script_name . '.js';
