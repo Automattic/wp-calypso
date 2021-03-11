@@ -4,6 +4,7 @@
 	}
 
 	&__button {
+		// Button needs to be above the list to partly hide its top border
 		position: relative;
 		z-index: 1;
 
@@ -11,6 +12,7 @@
 		justify-content: center;
 		align-items: center;
 
+		// Minimum recommended width for touch interactions
 		min-width: 48px;
 		height: 100%;
 
@@ -29,6 +31,8 @@
 		}
 	}
 
+	// Hide focus state right after a user clicked the button. The focus state
+	// is still shown if we know the user is using a keyboard exclusively.
 	html.accessible-focus &__button:focus {
 		box-shadow: inset 0 0 0 2px var( --color-primary-light );
 	}
@@ -55,6 +59,7 @@
 
 		font-size: 0.875rem;
 
+		// Required for older browsers
 		&[hidden] {
 			display: none;
 		}
