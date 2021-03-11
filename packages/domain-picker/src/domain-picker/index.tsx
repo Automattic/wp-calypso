@@ -114,7 +114,7 @@ export interface Props {
 	/** Callback for when a user clicks "Use a domain I own" item */
 	onUseYourDomainClick?: () => void;
 
-	/** Vendor string for domain suggestionts */
+	/** Vendor string for domain suggestions */
 	vendor?: string;
 }
 
@@ -140,7 +140,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	areDependenciesLoading = false,
 	orderSubDomainsLast = false,
 	onUseYourDomainClick,
-	vendor,
+	vendor = getDomainSuggestionsVendor(),
 } ) => {
 	const { __ } = useI18n();
 	const label = __( 'Search for a domain', __i18n_text_domain__ );
@@ -149,9 +149,6 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	// Keep domain query in local state to allow free editing of the input value while the modal is open
 	const [ domainSearch, setDomainSearch ] = useState< string >( initialDomainSearch );
 	const [ domainCategory, setDomainCategory ] = useState< string | undefined >();
-
-	// If no vendor given, get default vendor.
-	const domainSuggestionVendor = vendor || getDomainSuggestionsVendor();
 
 	const {
 		allDomainSuggestions,
@@ -219,7 +216,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		uiPosition: number,
 		isRecommended: boolean
 	) => {
-		const fetchAlgo = `/domains/search/${ domainSuggestionVendor }/${ analyticsFlowId }${
+		const fetchAlgo = `/domains/search/${ vendor }/${ analyticsFlowId }${
 			domainCategory ? '/' + domainCategory : ''
 		}`;
 
