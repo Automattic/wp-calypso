@@ -217,23 +217,23 @@ describe( `[${ host }, ${ screenSize }] Test Gutenberg upgrade against most popu
 				} );
 
 				verifyBlockInPublishedPage( Block );
-			} );
 
-			describe( `Test the same block on a corresponding edge site`, function () {
-				step( `Start a new post`, async function () {
-					const loginFlow = new LoginFlow( driver, 'gutenbergUpgradeEdgeUser' );
+				describe( `Test the same block on a corresponding edge site`, function () {
+					step( `Start a new post`, async function () {
+						const loginFlow = new LoginFlow( driver, 'gutenbergUpgradeEdgeUser' );
 
-					// No need to log in again as the edge site is owned by the same user.
-					editor = await startNewPost( loginFlow );
+						// No need to log in again as the edge site is owned by the same user.
+						editor = await startNewPost( loginFlow );
+					} );
+
+					step( 'Load the block via markup copied from the non-edge site', async function () {
+						await editor.setBlocksCode( currentGutenbergBlocksCode );
+					} );
+
+					verifyBlockInEditor( Block );
+
+					verifyBlockInPublishedPage( Block );
 				} );
-
-				step( 'Load the block via markup copied from the non-edge site', async function () {
-					await editor.setBlocksCode( currentGutenbergBlocksCode );
-				} );
-
-				verifyBlockInEditor( Block );
-
-				verifyBlockInPublishedPage( Block );
 			} );
 		} );
 	} );
