@@ -122,4 +122,84 @@ describe( 'NavigationLink', () => {
 		wrapper.simulate( 'click' );
 		expect( props.goToNextStep ).not.toHaveBeenCalled();
 	} );
+
+	test( 'getPreviousStep() When in 2nd step should return 1st step', () => {
+		const navigationLink = new NavigationLink();
+		const { flowName, signupProgress, stepName } = props;
+		getPreviousStepName.mockReturnValue( 'test:step1' );
+		const previousStep = navigationLink.getPreviousStep( flowName, signupProgress, stepName );
+		expect( previousStep.stepName ).toBe( 'test:step1' );
+	} );
+
+	test( 'getPreviousStep() When in 1st step should return nullish step', () => {
+		const navigationLink = new NavigationLink();
+		const { flowName, signupProgress } = props;
+		isFirstStepInFlow.mockReturnValue( true );
+		const previousStep = navigationLink.getPreviousStep( flowName, signupProgress, 'test:step1' );
+		expect( previousStep.stepName ).toBe( null );
+	} );
+
+	test( 'getPreviousStep() When in 3rd step should return 2nd step', () => {
+		const navigationLink = new NavigationLink();
+		const { flowName, signupProgress } = props;
+		getPreviousStepName.mockReturnValue( 'test:step2' );
+		isFirstStepInFlow.mockReturnValue( false );
+		const previousStep = navigationLink.getPreviousStep( flowName, signupProgress, 'test:step3' );
+		expect( previousStep.stepName ).toBe( 'test:step2' );
+	} );
+
+	test( 'getPreviousStep() When in unknown step should return last step in progress which belong to the current flow', () => {
+		const navigationLink = new NavigationLink();
+		const { flowName, signupProgress } = props;
+
+		const singupProgressWithSomeStepsThatDoNotBelongToThisFlow = {
+			...signupProgress,
+			'some-random-step': {
+				stepName: 'test:step4',
+				stepSectionName: 'test:section4',
+				wasSkipped: false,
+			},
+		};
+
+		isFirstStepInFlow.mockReturnValue( false );
+		//Mock getPreviousStepName() Will return undefined since 'some-other-random-step' does not belong to this flow
+		getPreviousStepName.mockReturnValue( undefined );
+		const currentStepName = 'some-other-random-step';
+		const previousStep = navigationLink.getPreviousStep(
+			flowName,
+			singupProgressWithSomeStepsThatDoNotBelongToThisFlow,
+			currentStepName
+		);
+		const progressStepNames = Object.keys( signupProgress );
+		expect( previousStep.stepName ).toBe( progressStepNames[ progressStepNames.length - 1 ] );
+	} );
+
+	test( 'getPreviousStep() When current progress does not contain any step of the current flow return nullish step', () => {
+		const navigationLink = new NavigationLink();
+		const { flowName } = props;
+
+		const singupProgressWithOnlyStepsThatDoNotBelongToThisFlow = {
+			'some-random-step': {
+				stepName: 'test:step4',
+				stepSectionName: 'test:section4',
+				wasSkipped: false,
+			},
+			'another-random-step': {
+				stepName: 'test:step4',
+				stepSectionName: 'test:section4',
+				wasSkipped: false,
+			},
+		};
+
+		getFilteredSteps.mockReturnValue( [] );
+		isFirstStepInFlow.mockReturnValue( false );
+		const currentStepName = 'some-other-random-step';
+		const previousStep = navigationLink.getPreviousStep(
+			// eslint-disable-next-line no-undef
+			flowName,
+			singupProgressWithOnlyStepsThatDoNotBelongToThisFlow,
+			currentStepName
+		);
+		expect( previousStep.stepName ).toBe( null );
+	} );
 } );

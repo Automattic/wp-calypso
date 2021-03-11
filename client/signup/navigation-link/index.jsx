@@ -46,6 +46,14 @@ export class NavigationLink extends Component {
 		allowBackFirstStep: false,
 	};
 
+	/**
+	 * Returns the last step in a signup progress , skipping over steps with the
+	 * `wasSkipped` property.
+	 *
+	 * @param signUpProgress current corted, ompleted steps in a flow
+	 * @param currentStepName current step name
+	 * @returns {object} The previous step object
+	 */
 	getLastKnownStep( signUpProgress, currentStepName ) {
 		const [ lastKnownStepInFlow ] = signUpProgress
 			.filter( ( step ) => step.stepName !== currentStepName )
@@ -54,36 +62,31 @@ export class NavigationLink extends Component {
 		return lastKnownStepInFlow;
 	}
 
-	/**
-	 * Returns the previous step , skipping over steps with the
-	 * `wasSkipped` property.
-	 *
-	 * @returns {object} The previous step object
-	 */
-	getPreviousStep() {
-		const { flowName, signupProgress, stepName: currentStepName } = this.props;
+	getPreviousStep( flowName, signupProgress, currentStepName ) {
 		let previousStep = { stepName: null };
 
-		if ( isFirstStepInFlow( currentStepName ) ) {
+		if ( isFirstStepInFlow( flowName, currentStepName ) ) {
 			return previousStep;
 		}
 
-		const sortedProgressedStepsThatBelongInCurrentFlow = getFilteredSteps(
-			flowName,
-			signupProgress
-		);
+		//Progressed steps will be filtered and sorted in relation to the steps definition of the current flow
+		const filteredProgressedSteps = getFilteredSteps( flowName, signupProgress );
+		if ( filteredProgressedSteps.length === 0 ) {
+			return previousStep;
+		}
 
-		const previousStepAccordingToFlowDefinition = getPreviousStepName( flowName, currentStepName );
-		const previousStepFromProgress = sortedProgressedStepsThatBelongInCurrentFlow.find(
-			( step ) => step.stepName !== previousStepAccordingToFlowDefinition.stepName
+		//Get the previous step according to the step definition
+		const previousStepName = getPreviousStepName( flowName, currentStepName );
+
+		//Find previous step in current relevant progress
+		const previousStepFromProgress = filteredProgressedSteps.find(
+			( step ) => step.stepName === previousStepName
 		);
 		if ( previousStepFromProgress ) {
 			previousStep = previousStepFromProgress;
 		} else {
-			previousStep = this.getLastKnownStep(
-				sortedProgressedStepsThatBelongInCurrentFlow,
-				currentStepName
-			);
+			//If no previous step found in progress, go to the last step of the progress that belongs to the current flow
+			previousStep = this.getLastKnownStep( filteredProgressedSteps, currentStepName );
 		}
 
 		return previousStep;
@@ -98,7 +101,8 @@ export class NavigationLink extends Component {
 			return this.props.backUrl;
 		}
 
-		const previousStep = this.getPreviousStep();
+		const { flowName, signupProgress, stepName } = this.props;
+		const previousStep = this.getPreviousStep( flowName, signupProgress, stepName );
 
 		const stepSectionName = get(
 			this.props.signupProgress,
