@@ -31,17 +31,18 @@
 	.masterbar__item-title {
 		flex: 1 1 auto;
 		align-self: center;
-
 		padding-left: 16px;
-
 		color: var( --color-neutral-80 );
-
 		text-transform: none;
 	}
 
 	.masterbar__item-me {
-		min-width: 18px;
+		min-width: 24px;
 		flex: 0 0 auto;
+
+		&:hover {
+			background: none;
+		}
 
 		// Calypso's masterbar hides this item content and we need to show it
 		// so we override its display property.
@@ -49,6 +50,11 @@
 			.masterbar__item-content {
 				display: block;
 			}
+		}
+
+		.gravatar {
+			width: 24px;
+			height: 24px;
 		}
 	}
 
