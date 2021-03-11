@@ -105,7 +105,7 @@ export class ImageEditorCanvas extends Component {
 			src = src + '?'; // Fix #7991 by forcing Safari to ignore cache and perform valid CORS request
 		}
 
-		return window.fetch( src ).then( ( response ) => response.blob() );
+		return window.fetch( src, { credentials: 'include' } ).then( ( response ) => response.blob() );
 	}
 
 	getImage( src ) {

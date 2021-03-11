@@ -27,8 +27,6 @@ import { getMimePrefix, isItemBeingUploaded, isVideoPressItem } from 'calypso/li
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'calypso/state/sites/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 
 const noop = () => {};
 
@@ -74,29 +72,6 @@ export class EditorMediaModalDetailItem extends Component {
 			}
 			// WP.com and VideoPress disabled
 		} else if ( ! isVideoPressEnabled ) {
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * This function returns true if the image editor can be
-	 * enabled/shown
-	 *
-	 * @param  {object} item - media item
-	 * @returns {boolean} `true` if the image-editor can be enabled.
-	 */
-	shouldShowImageEditingButtons( item ) {
-		const { isSitePrivate, isSiteAtomic } = this.props;
-
-		// do not allow if, for some reason, there isn't a valid item yet
-		if ( ! item ) {
-			return false;
-		}
-
-		// do not allow for non-atomic private sites
-		if ( isSitePrivate && ! isSiteAtomic ) {
 			return false;
 		}
 
@@ -171,12 +146,6 @@ export class EditorMediaModalDetailItem extends Component {
 	}
 
 	renderImageEditorButtons( classname ) {
-		const { item } = this.props;
-
-		if ( ! this.shouldShowImageEditingButtons( item ) ) {
-			return null;
-		}
-
 		const classes = classNames( 'editor-media-modal-detail__edition-bar', classname );
 
 		return (
@@ -311,8 +280,6 @@ const connectComponent = connect( ( state ) => {
 		isJetpack: isJetpackSite( state, siteId ),
 		isVideoPressEnabled: getSiteOption( state, siteId, 'videopress_enabled' ),
 		isVideoPressModuleActive: isJetpackModuleActive( state, siteId, 'videopress' ),
-		isSitePrivate: isPrivateSite( state, siteId ),
-		isSiteAtomic: isSiteAutomatedTransfer( state, siteId ),
 		siteId,
 		canUserUploadFiles,
 	};
