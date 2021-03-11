@@ -1,12 +1,7 @@
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
-import { isFetchingAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
+import { isFetchingAutomatedTransferStatus } from '../selectors';
 
 describe( 'isFetchingAutomatedTransferStatus()', () => {
 	test(
@@ -17,8 +12,8 @@ describe( 'isFetchingAutomatedTransferStatus()', () => {
 				automatedTransfer: {},
 			};
 
-			expect( isFetchingAutomatedTransferStatus( state ) ).to.be.null;
-			expect( isFetchingAutomatedTransferStatus( state, 12345 ) ).to.be.null;
+			expect( isFetchingAutomatedTransferStatus( state ) ).toBeNull();
+			expect( isFetchingAutomatedTransferStatus( state, 12345 ) ).toBeNull();
 		}
 	);
 
@@ -31,7 +26,7 @@ describe( 'isFetchingAutomatedTransferStatus()', () => {
 			},
 		};
 
-		expect( isFetchingAutomatedTransferStatus( state, 12345 ) ).to.be.false;
+		expect( isFetchingAutomatedTransferStatus( state, 12345 ) ).toBe( false );
 	} );
 
 	test( 'should return true when transfer status is being fetched for a given site', () => {
@@ -43,6 +38,6 @@ describe( 'isFetchingAutomatedTransferStatus()', () => {
 			},
 		};
 
-		expect( isFetchingAutomatedTransferStatus( state, 12345 ) ).to.be.true;
+		expect( isFetchingAutomatedTransferStatus( state, 12345 ) ).toBe( true );
 	} );
 } );
