@@ -22,9 +22,6 @@ export const hasPaidDomain = ( state: State ): boolean => {
 	if ( ! state.domain ) {
 		return false;
 	}
-	if ( state.domain.unavailable ) {
-		return false;
-	}
 	return ! state.domain.is_free;
 };
 export const getSelectedDomain = ( state: State ): DomainSuggestions.DomainSuggestion | undefined =>

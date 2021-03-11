@@ -17,7 +17,6 @@ import {
 } from './actions';
 import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
 import { getFormattedPrice } from './utils';
-
 import type { DomainSuggestion, DomainSuggestionQuery } from './types';
 
 function getAvailabilityURL( domainName: string ) {
@@ -26,9 +25,7 @@ function getAvailabilityURL( domainName: string ) {
 	) }/is-available?is_cart_pre_check=true`;
 }
 
-export const isAvailable = function* isAvailable(
-	domainName: TailParameters< Selectors[ 'isAvailable' ] >[ 0 ]
-) {
+export const isAvailable = function* isAvailable( domainName: string ) {
 	const url = getAvailabilityURL( domainName );
 
 	try {

@@ -632,9 +632,7 @@ const Summary: React.FunctionComponent = () => {
 		<PlanStep
 			highlighted={ isPlansStepHighlighted }
 			hasPaidPlan={ hasPaidPlan }
-			selectedPaidDomain={
-				selectedDomain && ! selectedDomain.unavailable && ! selectedDomain.is_free
-			}
+			selectedPaidDomain={ selectedDomain && ! selectedDomain.is_free }
 			hasPaidDomain={ hasPaidDomain }
 			stepIndex={ forwardStepIndex ? stepIndex : undefined }
 			key={ stepIndex }

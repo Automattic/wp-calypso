@@ -30,7 +30,7 @@ const PlanDetails: React.FunctionComponent = () => {
 
 	const { updatePlan } = useDispatch( LAUNCH_STORE );
 
-	const hasPaidDomain = domain && ! domain.unavailable && ! domain.is_free;
+	const hasPaidDomain = domain && ! domain.is_free;
 
 	const goBack = () => {
 		history.goBack();

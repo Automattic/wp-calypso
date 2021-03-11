@@ -68,7 +68,7 @@ export interface DomainSuggestionQuery {
 
 export type DomainName = string;
 
-export interface AvailableDomainSuggestion {
+export interface DomainSuggestion {
 	/**
 	 * The domain name
 	 *
@@ -142,26 +142,10 @@ export interface AvailableDomainSuggestion {
 	hsts_required?: boolean;
 
 	/**
-	 * Whether the domain is available
+	 * Whether the domain is unavailable
 	 */
-	unavailable: false;
+	unavailable: boolean;
 }
-
-export interface UnAvailableDomainSuggestion {
-	/**
-	 * The domain name
-	 *
-	 * @example "example.com"
-	 */
-	domain_name: DomainName;
-	/**
-	 * Whether the domain is available
-	 */
-	unavailable: true;
-}
-
-export type DomainSuggestion = AvailableDomainSuggestion | UnAvailableDomainSuggestion;
-
 export interface DomainCategory {
 	/**
 	 * The domain category title
