@@ -9,7 +9,6 @@ import { useI18n } from '@automattic/react-i18n';
 import {
 	Button,
 	FormStatus,
-	useLineItems,
 	useFormStatus,
 	registerStore,
 	useSelect,
@@ -17,6 +16,7 @@ import {
 } from '@automattic/composite-checkout';
 import { camelCase } from 'lodash';
 import { useDispatch as useReduxDispatch } from 'react-redux';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -213,7 +213,7 @@ const NetBankingField = styled( Field )`
 
 function NetBankingPayButton( { disabled, onClick, store } ) {
 	const { __ } = useI18n();
-	const [ total ] = useLineItems();
+	const { responseCart } = useShoppingCart();
 	const { formStatus } = useFormStatus();
 	const customerName = useSelect( ( select ) => select( 'netbanking' ).getCustomerName() );
 	const fields = useSelect( ( select ) => select( 'netbanking' ).getFields() );
@@ -243,7 +243,7 @@ function NetBankingPayButton( { disabled, onClick, store } ) {
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } total={ total } />
+			<ButtonContents formStatus={ formStatus } total={ responseCart.total_cost_display } />
 		</Button>
 	);
 }
