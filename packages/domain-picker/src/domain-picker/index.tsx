@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { FunctionComponent, useState, useEffect, Fragment } from 'react';
-import { noop, times } from 'lodash';
+import { times } from 'lodash';
 import { Button, TextControl, Notice } from '@wordpress/components';
 import { Icon, search } from '@wordpress/icons';
 import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-analytics';
@@ -125,11 +125,11 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	onExistingSubdomainSelect,
 	quantity = PAID_DOMAINS_TO_SHOW,
 	quantityExpanded = PAID_DOMAINS_TO_SHOW_EXPANDED,
-	onDomainSearchBlur = noop,
+	onDomainSearchBlur,
 	analyticsFlowId,
 	analyticsUiAlgo,
 	initialDomainSearch = '',
-	onSetDomainSearch = noop,
+	onSetDomainSearch,
 	currentDomain,
 	isCheckingDomainAvailability,
 	existingSubdomain,
@@ -235,7 +235,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 	const handleInputChange = ( searchQuery: string ) => {
 		setDomainSearch( searchQuery );
-		onSetDomainSearch( searchQuery );
+		if ( onSetDomainSearch ) {
+			onSetDomainSearch( searchQuery );
+		}
 	};
 
 	// Force blur to close keyboard when submitting the form using Search button on mobile
