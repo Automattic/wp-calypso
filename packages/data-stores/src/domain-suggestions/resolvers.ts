@@ -3,7 +3,7 @@
  */
 import { stringify } from 'qs';
 import { translate } from 'i18n-calypso';
-import { isFQDN } from 'validator';
+import validator from 'validator';
 
 /**
  * Internal dependencies
@@ -88,7 +88,7 @@ export function* __internalGetDomainSuggestions( queryObject: DomainSuggestionQu
 	// TODO: query the availability endpoint to find the exact reason why it's unavailable
 	// all the possible responses can be found here https://github.com/Automattic/wp-calypso/blob/trunk/client/lib/domains/registration/availability-messages.js#L40-L390
 	if (
-		isFQDN( queryObject.query ) &&
+		validator.isFQDN( queryObject.query ) &&
 		suggestions &&
 		! suggestions.some( ( s ) => s.domain_name.toLowerCase() === queryObject.query )
 	) {
