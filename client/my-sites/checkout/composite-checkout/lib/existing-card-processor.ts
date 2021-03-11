@@ -23,11 +23,18 @@ export default async function existingCardProcessor(
 	if ( ! isValidTransactionData( transactionData ) ) {
 		throw new Error( 'Required purchase data is missing' );
 	}
-	const { stripeConfiguration, recordEvent } = dataForProcessor;
+	const { stripeConfiguration, recordEvent, items } = dataForProcessor;
 	if ( ! stripeConfiguration ) {
 		throw new Error( 'Stripe configuration is required' );
 	}
-	return submitExistingCardPayment( transactionData, dataForProcessor )
+	return submitExistingCardPayment(
+		{
+			...transactionData,
+			items,
+			paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
+		},
+		dataForProcessor
+	)
 		.then( ( stripeResponse ) => {
 			if ( stripeResponse?.message?.payment_intent_client_secret ) {
 				// 3DS authentication required
@@ -48,14 +55,13 @@ export default async function existingCardProcessor(
 }
 
 async function submitExistingCardPayment(
-	transactionData: ExistingCardTransactionRequest,
+	transactionData: ExistingCardTransactionRequestWithLineItems,
 	transactionOptions: PaymentProcessorOptions
 ) {
 	debug( 'formatting existing card transaction', transactionData );
-	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
-		...transactionData,
-		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
-	} );
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems(
+		transactionData
+	);
 	debug( 'submitting existing card transaction', formattedTransactionData );
 
 	return wpcomTransaction( formattedTransactionData, transactionOptions );
@@ -63,16 +69,14 @@ async function submitExistingCardPayment(
 
 type ExistingCardTransactionRequest = Omit<
 	ExistingCardTransactionRequestWithLineItems,
-	'paymentMethodType'
+	// These properties are added by the processor function here
+	'paymentMethodType' | 'items'
 >;
 
 function isValidTransactionData(
 	submitData: unknown
 ): submitData is ExistingCardTransactionRequest {
 	const data = submitData as ExistingCardTransactionRequest;
-	if ( ! ( data?.items?.length > 0 ) ) {
-		throw new Error( 'Transaction requires items and none were provided' );
-	}
 	// Validate data required for this payment method type. Some other data may
 	// be required by the server but not required here since the server will give
 	// a better localized error message than we can provide.

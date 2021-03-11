@@ -53,6 +53,7 @@ export type ExistingCardTransactionRequestWithLineItems = Partial< TransactionRe
 			| 'siteId'
 			| 'paymentMethodToken'
 			| 'paymentPartnerProcessorId'
+			| 'paymentMethodType'
 		>
 	>;
 
