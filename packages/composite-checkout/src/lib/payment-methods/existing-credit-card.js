@@ -111,7 +111,7 @@ function ExistingCardPayButton( {
 	paymentPartnerProcessorId,
 	activeButtonText = undefined,
 } ) {
-	const [ items, total ] = useLineItems();
+	const [ total ] = useLineItems();
 	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
 
@@ -122,7 +122,6 @@ function ExistingCardPayButton( {
 				debug( 'submitting existing card payment' );
 				onEvent( { type: 'EXISTING_CARD_TRANSACTION_BEGIN' } );
 				onClick( 'existing-card', {
-					items,
 					name: cardholderName,
 					storedDetailsId,
 					paymentMethodToken,
