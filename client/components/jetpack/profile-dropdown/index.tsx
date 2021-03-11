@@ -83,28 +83,29 @@ const ProfileDropdown: React.FC< Props > = ( { isOpen, close } ) => {
 
 	return (
 		<div className="profile-dropdown" ref={ ref }>
-			<Gravatar user={ user } alt={ translate( 'My Profile' ) } size={ 18 } />
+			<Gravatar user={ user } alt={ translate( 'My Profile' ) } size={ 32 } />
 			<span className="profile-dropdown__me-label">
 				{ translate( 'My Profile', { context: 'Toolbar, must be shorter than ~12 chars' } ) }
 			</span>
 			{ isOpen && (
 				<div className="profile-dropdown__items">
 					<div className="profile-dropdown__logout-item">
-						<Gravatar
-							className="profile-dropdown__logout-gravatar"
-							user={ user }
-							alt={ translate( 'My Profile' ) }
-							size={ 64 }
-						/>
 						<span className="profile-dropdown__me-label">
 							{ translate( 'My Profile', {
 								context: 'Toolbar, must be shorter than ~12 chars',
 							} ) }
 						</span>
 
-						<div className="profile-dropdown__logout-username">
-							<span>{ user.username }</span>
-							<Button borderless onClick={ trackedLogOut }>
+						<div className="profile-dropdown__logout-options">
+							<div className="profile-dropdown__logout-username">
+								<strong>{ user.display_name }</strong>
+								<span>{ '@' + user.username }</span>
+							</div>
+							<Button
+								className="profile-dropdown__logout-button"
+								borderless
+								onClick={ trackedLogOut }
+							>
 								{ translate( 'Log out' ) }
 							</Button>
 						</div>
