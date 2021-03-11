@@ -58,16 +58,13 @@ const ProfileDropdown: React.FC = () => {
 					className="profile-dropdown__button-gravatar"
 					user={ user }
 					alt={ translate( 'My Profile' ) }
-					size={ 18 }
+					size={ 24 }
 				/>
 			</button>
 			<ul className="profile-dropdown__list" id="menu-list" hidden={ ! isExpanded }>
 				<li className="profile-dropdown__list-item">
-					<Gravatar className="profile-dropdown__list-gravatar" user={ user } alt="" size={ 64 } />
-					{ translate( 'Logged in as {{username}}%s{{/username}}', {
-						args: user.username,
-						components: { username: <span className="profile-dropdown__username" /> },
-					} ) }
+					<span className="profile-dropdown__display-name">{ user.display_name }</span>
+					<span className="profile-dropdown__username">{ `@${ user.username }` }</span>
 				</li>
 				<li className="profile-dropdown__list-item">
 					<button className="profile-dropdown__logout" onClick={ trackedLogOut }>
