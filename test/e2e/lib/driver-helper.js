@@ -411,24 +411,20 @@ export function logPerformance( driver ) {
 }
 
 export async function ensureMobileMenuOpen( driver ) {
-	const self = this;
-	const mobileHeaderSelector = by.css( '.section-nav__mobile-header' );
-	await waitTillPresentAndDisplayed( driver, mobileHeaderSelector );
-	return driver
-		.findElement( mobileHeaderSelector )
-		.isDisplayed()
-		.then( ( mobileDisplayed ) => {
-			if ( mobileDisplayed ) {
-				driver
-					.findElement( by.css( '.section-nav' ) )
-					.getAttribute( 'class' )
-					.then( ( classNames ) => {
-						if ( classNames.includes( 'is-open' ) === false ) {
-							self.clickWhenClickable( driver, mobileHeaderSelector );
-						}
-					} );
-			}
-		} );
+	const mobileHeaderLocator = by.css( '.section-nav__mobile-header' );
+	const menuLocator = by.css( '.section-nav' );
+	const openMenuLocator = by.css( '.section-nav.is-open' );
+
+	await waitTillPresentAndDisplayed( driver, menuLocator );
+	const menuElement = await driver.findElement( menuLocator );
+	const isMenuOpen = await menuElement
+		.getAttribute( 'class' )
+		.then( ( classNames ) => classNames.includes( 'is-open' ) );
+
+	if ( ! isMenuOpen ) {
+		await clickWhenClickable( driver, mobileHeaderLocator );
+		await waitTillPresentAndDisplayed( driver, openMenuLocator );
+	}
 }
 
 export function waitForInfiniteListLoad( driver, elementSelector, { numElements = 10 } = {} ) {
