@@ -39,7 +39,7 @@
 		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
 		"@automattic/i18n-utils": "^1.0.0",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
-		"@wordpress/components": "^12.0.1",
+		"@wordpress/components": "^12.0.8",
 		"wpcom-proxy-request": "^6.0.0",
 		"wpcom": "^6.0.0"
 	},
