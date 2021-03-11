@@ -212,6 +212,9 @@ class TitanManagementNav extends React.Component {
 					header={ header }
 					summary={ summary }
 					expandedSummary={ summary }
+					onOpen={ () => {
+						this.recordNavItemClick( 'quick_links_show' );
+					} }
 				>
 					<ul className="titan-management-nav__foldable-card-services">
 						<li>
