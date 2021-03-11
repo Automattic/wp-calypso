@@ -62,11 +62,11 @@ function getWhatsNewPages() {
 	return [
 		{
 			imgSrc: universalNavImage,
-			heading: __( 'Navigate easier than ever', 'full-site-editing' ),
+			heading: __( 'Easier navigation', 'full-site-editing' ),
 			description: createInterpolateElement(
 				/* translators: the embed is a link */
 				__(
-					'<p>This month all WordPress.com accounts will receive sidebar and menu updates, making it easier than ever to manage your site from the left sidebar.</p><p><Link>Learn more</Link></p>',
+					'<p>This month all WordPress.com accounts will receive sidebar and menu updates, making it easier to manage your site from the left sidebar.</p><p><Link>Learn more</Link></p>',
 					'full-site-editing'
 				),
 				{
