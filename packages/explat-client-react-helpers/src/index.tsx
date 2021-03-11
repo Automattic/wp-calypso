@@ -23,7 +23,9 @@ interface ExPlatClientReactHelpers {
 	 */
 	Experiment: ( props: {
 		name: string;
-		children: { default: React.ReactNode; treatment: React.ReactNode; loading: React.ReactNode };
+		default: React.ReactNode;
+		treatment: React.ReactNode;
+		loading: React.ReactNode;
 	} ) => JSX.Element;
 }
 
@@ -68,19 +70,24 @@ export default function createExPlatClientReactHelpers(
 	};
 
 	const Experiment = ( {
-		children,
+		// As default is a keyword:
+		default: defaultExperience,
+		treatment,
+		loading,
 		name: experimentName,
 	}: {
-		children: { default: React.ReactNode; treatment: React.ReactNode; loading: React.ReactNode };
+		default: React.ReactNode;
+		treatment: React.ReactNode;
+		loading: React.ReactNode;
 		name: string;
 	} ): JSX.Element => {
 		const [ isLoading, experimentAssignment ] = useExperiment( experimentName );
 		if ( isLoading ) {
-			return <>{ children.loading }</>;
+			return <>{ loading }</>;
 		} else if ( ! experimentAssignment?.variationName ) {
-			return <>{ children.default }</>;
+			return <>{ defaultExperience }</>;
 		}
-		return <>{ children.treatment }</>;
+		return <>{ treatment }</>;
 	};
 
 	return {
