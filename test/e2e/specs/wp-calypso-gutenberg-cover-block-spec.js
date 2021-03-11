@@ -4,6 +4,7 @@
 import assert from 'assert';
 import config from 'config';
 import { By } from 'selenium-webdriver';
+// import { until } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -38,7 +39,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Cover Block (${ screenSize })`,
 		driver = await driverManager.startBrowser();
 	} );
 
-	xdescribe( 'Cover Block: Preview and Publish default cover block', function () {
+	describe( 'Cover Block: Preview and Publish default cover block', function () {
 		const blogPostTitle = dataHelper.randomPhrase();
 
 		step( 'Can log in', async function () {
@@ -80,7 +81,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Cover Block (${ screenSize })`,
 		} );
 	} );
 
-	xdescribe( 'Cover Block: Preview and Publish cover block with image and text', function () {
+	describe( 'Cover Block: Preview and Publish cover block with image and text', function () {
 		let fileDetails;
 		const blogPostTitle = dataHelper.randomPhrase();
 		const coverTitle = dataHelper.randomPhrase();
@@ -197,13 +198,10 @@ describe( `[${ host }] Calypso Gutenberg Editor: Cover Block (${ screenSize })`,
 			return await gEditorComponent.enterTitle( blogPostTitle );
 		} );
 
-		step( 'Can add cover block with image and title', async function () {
+		step( 'Can add cover block with image and aligned to full width', async function () {
 			// const textSelector = By.css( '.block-editor-rich-text__editable' );
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			const blockID = await gEditorComponent.addBlock( 'Cover' );
-
-			const imageBlock = await ImageBlockComponent.Expect( driver, blockID );
-			await imageBlock.uploadImage( fileDetails );
 
 			// Regardless of whether this is included the Paragraph block still gets created
 			// preventing the menu from the cover block coming up
@@ -223,10 +221,39 @@ describe( `[${ host }] Calypso Gutenberg Editor: Cover Block (${ screenSize })`,
 
 			await driverHelper.clickWhenClickable( driver, By.css( `.wp-block-cover` ) );
 
+			// Attempt to switch the iFrame
+			// const toolbariFrameSelector = By.css( '.components-popover iframe' );
+			// await driver.wait(
+			// 	until.ableToSwitchToFrame( toolbariFrameSelector ),
+			// 	3000,
+			// 	'Could not locate the toolbar iFrame.'
+			// );
+
+			// The above shows an empty iFrame
+			// console.log( await driver.getPageSource() );
+
+			// Make sure we successfully switched iFrames
+			// const coverBlock = await driver.findElement(
+			// 	By.css( '.wp-block-cover' )
+			// );
+			// await coverBlock.click();
+
+			// const coverBlockToolbar = await driver.findElement(
+			// 	By.css( '.components-dropdown-menu__toggle button[aria-label="Align"]' )
+			// );
+			// await coverBlockToolbar.click();
+
+			// await driverHelper.waitTillPresentAndDisplayed( driver, By.css( '.block-editor-block-toolbar') );
+			// await driverHelper.clickWhenClickable( driver, By.css( '.block-editor-block-toolbar' ) );
+
 			// It never finds this as the menu does not get opened
-			const alignmentSelector = By.css( '.components-dropdown-menu' );
+			// const alignmentSelector = By.css( '.components-dropdown-menu__toggle button[aria-label="Align"]');
+			const alignmentSelector = By.css( 'button[aria-label="Align"]' );
 			await driverHelper.waitTillPresentAndDisplayed( driver, By.css( alignmentSelector ) );
 			await driverHelper.clickWhenClickable( driver, By.css( alignmentSelector ) );
+
+			const imageBlock = await ImageBlockComponent.Expect( driver, blockID );
+			await imageBlock.uploadImage( fileDetails );
 
 			return await driverHelper.waitTillPresentAndDisplayed( driver, By.css( '.wp-block-cover' ) );
 		} );
