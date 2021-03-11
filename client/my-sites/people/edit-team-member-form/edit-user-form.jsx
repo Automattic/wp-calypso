@@ -4,7 +4,7 @@
 import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import debugModule from 'debug';
-import { connect, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -25,8 +25,7 @@ import {
 	requestExternalContributorsRemoval,
 } from 'calypso/state/data-getters';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import useUpdateUserMutation from 'calypso/data/users/use-update-user-mutation';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import withUpdateUser from './with-update-user';
 
 /**
  * Style dependencies
@@ -119,7 +118,7 @@ class EditUserForm extends React.Component {
 			? Object.assign( changedSettings, { roles: [ changedSettings.roles ] } )
 			: changedSettings;
 
-		this.props.updateUser( this.state.ID, changedAttributes );
+		this.props.updateUser( user.ID, changedAttributes );
 
 		if ( true === changedSettings.isExternalContributor ) {
 			requestExternalContributorsAddition(
@@ -264,43 +263,6 @@ class EditUserForm extends React.Component {
 		);
 	}
 }
-
-const withUpdateUser = ( Component ) => {
-	return ( props ) => {
-		const { siteId, user, translate } = props;
-		const dispatch = useDispatch();
-		const { updateUser, isSuccess, isError, error } = useUpdateUserMutation( siteId, user?.login );
-
-		React.useEffect( () => {
-			isSuccess &&
-				dispatch(
-					successNotice(
-						translate( 'Successfully updated @%(user)s', {
-							args: { user: user?.login },
-							context: 'Success message after a user has been modified.',
-						} ),
-						{ id: 'update-user-notice' }
-					)
-				);
-		}, [ isSuccess, translate, dispatch, user ] );
-
-		React.useEffect( () => {
-			isError &&
-				error &&
-				dispatch(
-					errorNotice(
-						translate( 'There was an error updating @%(user)s', {
-							args: { user: user?.login },
-							context: 'Error message after A site has failed to perform actions on a user.',
-						} ),
-						{ id: 'update-user-notice' }
-					)
-				);
-		}, [ isError, error, translate, dispatch, user ] );
-
-		return <Component { ...props } updateUser={ updateUser } />;
-	};
-};
 
 export default localize(
 	connect(
