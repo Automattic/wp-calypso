@@ -213,7 +213,7 @@ const NetBankingField = styled( Field )`
 
 function NetBankingPayButton( { disabled, onClick, store } ) {
 	const { __ } = useI18n();
-	const [ items, total ] = useLineItems();
+	const [ total ] = useLineItems();
 	const { formStatus } = useFormStatus();
 	const customerName = useSelect( ( select ) => select( 'netbanking' ).getCustomerName() );
 	const fields = useSelect( ( select ) => select( 'netbanking' ).getFields() );
@@ -236,8 +236,6 @@ function NetBankingPayButton( { disabled, onClick, store } ) {
 						...massagedFields,
 						name: customerName?.value,
 						address: massagedFields?.address1,
-						items,
-						total,
 					} );
 				}
 			} }
