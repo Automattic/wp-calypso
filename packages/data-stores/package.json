@@ -49,10 +49,10 @@
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^4",
-		"react": "^16.8"
+		"react": "^16.8",
+		"@types/validator": "^13.1.3"
 	},
 	"devDependencies": {
-		"@types/validator": "^13.1.3",
 		"jest-fetch-mock": "^2.1.2",
 		"nock": "^12.0.3",
 		"wait-for-expect": "^3.0.2"
