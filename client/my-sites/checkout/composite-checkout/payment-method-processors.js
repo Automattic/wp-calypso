@@ -36,7 +36,15 @@ const { select } = defaultRegistry;
 export async function genericRedirectProcessor(
 	paymentMethodId,
 	submitData,
-	{ getThankYouUrl, siteSlug, includeDomainDetails, includeGSuiteDetails, reduxDispatch }
+	{
+		getThankYouUrl,
+		siteSlug,
+		includeDomainDetails,
+		includeGSuiteDetails,
+		reduxDispatch,
+		items,
+		total,
+	}
 ) {
 	const { protocol, hostname, port, pathname } = parseUrl(
 		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com',
@@ -73,6 +81,8 @@ export async function genericRedirectProcessor(
 		paymentMethodId,
 		{
 			...submitData,
+			items,
+			total,
 			successUrl,
 			cancelUrl,
 			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
