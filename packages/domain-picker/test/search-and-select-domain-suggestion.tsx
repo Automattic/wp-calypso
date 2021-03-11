@@ -8,21 +8,9 @@ import { DataStatus } from '@automattic/data-stores/src/domain-suggestions/const
 /**
  * Internal dependencies
  */
+import '../matchMedia.mock';
 import DomainPicker from '../src/domain-picker';
 
-Object.defineProperty( window, 'matchMedia', {
-	writable: true,
-	value: jest.fn().mockImplementation( ( query ) => ( {
-		matches: false,
-		media: query,
-		onchange: null,
-		addListener: jest.fn(), // deprecated
-		removeListener: jest.fn(), // deprecated
-		addEventListener: jest.fn(),
-		removeEventListener: jest.fn(),
-		dispatchEvent: jest.fn(),
-	} ) ),
-} );
 
 import { useDomainSuggestions } from '../src/hooks';
 jest.mock( '../src/hooks/use-domain-suggestions' );
