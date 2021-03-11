@@ -47,7 +47,16 @@ const ProfileDropdown: React.FC = () => {
 	useOutsideClickCallback( ref, trackedClose );
 
 	return (
-		<nav className="profile-dropdown__nav" id="user-navigation" ref={ ref }>
+		<nav
+			className="profile-dropdown__nav"
+			id="user-navigation"
+			aria-label={
+				translate( 'User menu', {
+					comment: 'Label used to differentiate navigation landmarks in screen readers',
+				} ) as string
+			}
+			ref={ ref }
+		>
 			<button
 				className="profile-dropdown__button"
 				aria-expanded={ isExpanded }
