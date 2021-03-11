@@ -2614,7 +2614,7 @@ Undocumented.prototype.getAtomicSiteLogs = function ( siteIdOrSlug, start, end, 
 		{
 			start,
 			end,
-			page_size: 10,
+			page_size: 1000,
 			scroll_id: scrollId,
 		}
 	);
