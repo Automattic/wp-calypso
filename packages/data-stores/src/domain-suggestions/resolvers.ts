@@ -3,6 +3,7 @@
  */
 import { stringify } from 'qs';
 import { translate } from 'i18n-calypso';
+import { isFQDN } from 'validator';
 
 /**
  * Internal dependencies
@@ -19,10 +20,16 @@ import { getFormattedPrice } from './utils';
 
 import type { DomainSuggestion, DomainSuggestionQuery } from './types';
 
-export const isAvailable = function* isAvailable( domainName: string ) {
-	const url = `https://public-api.wordpress.com/rest/v1.3/domains/${ encodeURIComponent(
+function getAvailabilityURL( domainName: string ) {
+	return `https://public-api.wordpress.com/rest/v1.3/domains/${ encodeURIComponent(
 		domainName
 	) }/is-available?is_cart_pre_check=true`;
+}
+
+export const isAvailable = function* isAvailable(
+	domainName: TailParameters< Selectors[ 'isAvailable' ] >[ 0 ]
+) {
+	const url = getAvailabilityURL( domainName );
 
 	try {
 		const { body } = yield fetchAndParse( url );
@@ -54,7 +61,8 @@ export function* __internalGetDomainSuggestions( queryObject: DomainSuggestionQu
 
 	yield fetchDomainSuggestions();
 
-	let suggestions;
+	let suggestions: DomainSuggestion[];
+
 	try {
 		suggestions = yield wpcomRequest( {
 			apiVersion: '1.1',
@@ -68,20 +76,44 @@ export function* __internalGetDomainSuggestions( queryObject: DomainSuggestionQu
 		);
 	}
 
-	if ( ! suggestions || suggestions === '' ) {
+	if ( ! suggestions ) {
 		// Other internal server errors
 		return receiveDomainSuggestionsError(
 			translate( 'Invalid response from the server' ) as string
 		);
 	}
 
-	const processedSuggestions = suggestions.map( ( suggestion: DomainSuggestion ) => ( {
-		...suggestion,
-		...( suggestion.raw_price &&
-			suggestion.currency_code && {
-				cost: getFormattedPrice( suggestion.raw_price, suggestion.currency_code ),
-			} ),
-	} ) );
+	// if the query is a FQDN and the results don't have it,
+	// this implies that the user is searching for an unavailable domain name
+	// TODO: query the availability endpoint to find the exact reason why it's unavailable
+	// all the possible responses can be found here https://github.com/Automattic/wp-calypso/blob/trunk/client/lib/domains/registration/availability-messages.js#L40-L390
+	if (
+		isFQDN( queryObject.query ) &&
+		suggestions &&
+		! suggestions.some( ( s ) => s.domain_name.toLowerCase() === queryObject.query )
+	) {
+		const unavailableSuggestion: DomainSuggestion = {
+			domain_name: queryObject.query,
+			unavailable: true,
+			cost: '',
+			raw_price: 0,
+			currency_code: '',
+		};
+		suggestions.unshift( unavailableSuggestion );
+	}
+
+	const processedSuggestions = suggestions.map( ( suggestion: DomainSuggestion ) => {
+		if ( suggestion.unavailable ) {
+			return suggestion;
+		}
+		return {
+			...suggestion,
+			...( suggestion.raw_price &&
+				suggestion.currency_code && {
+					cost: getFormattedPrice( suggestion.raw_price, suggestion.currency_code ),
+				} ),
+		};
+	} );
 
 	return receiveDomainSuggestionsSuccess( queryObject, processedSuggestions );
 }

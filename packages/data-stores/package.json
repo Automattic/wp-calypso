@@ -44,6 +44,7 @@
 		"redux": "^4.0.5",
 		"tslib": "^2.1.0",
 		"utility-types": "^3.10.0",
+		"validator": "^13.5.2",
 		"wpcom-proxy-request": "^6.0.0"
 	},
 	"peerDependencies": {
