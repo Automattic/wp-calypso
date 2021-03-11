@@ -131,7 +131,8 @@ object WPComPlugins_EditorToolKit : BuildType({
 				wget "%teamcity.serverUrl%/repository/download/calypso_WPComPlugins_EditorToolKit/etk-release-build.tcbuildtag/editing-toolkit.zip?guest=1&branch=trunk" -O ./tmp-etk-download.zip
 				mkdir ./current-etk-release
 				unzip ./tmp-etk-download.zip -d ./current-etk-release
-			
+				echo "Diffing against current trunk release build (`grep build_number ./current-etk-release/build_meta.txt | sed s/build_number=//`).";
+
 				# 2. Change anything from the ETK release build which is "unstable", like the version number and build metadata.
 				# These operations restore idempotence between the two builds.
 				rm -f ./current-etk-release/build_meta.txt
