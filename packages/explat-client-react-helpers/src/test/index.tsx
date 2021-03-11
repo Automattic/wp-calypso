@@ -161,27 +161,27 @@ describe( 'ProvideExperimentData', () => {
 			typeof exPlatClient.loadExperimentAssignment
 		> ).mockImplementationOnce( () => controllablePromise1.promise );
 
-		const capture = jest.fn()
-		const { container, rerender } = render(
+		const capture = jest.fn();
+		render(
 			<ProvideExperimentData name="experiment_a">
-				{(isLoading, experimentAssignment) => (
-					<>
-					{ capture(isLoading, experimentAssignment)}
-					</>
+				{ ( isLoading, experimentAssignment ) => (
+					<>{ capture( isLoading, experimentAssignment ) }</>
 				) }
 			</ProvideExperimentData>
 		);
-		expect(capture.mock.calls.length).toBe(1)
-		expect(capture.mock.calls[capture.mock.calls.length - 1]).toEqual([true, null])
-		capture.mockReset()
-		const experimentAssignment = { ...validExperimentAssignment, variationName: null }
-		await actReact( async () =>
-			controllablePromise1.resolve( experimentAssignment )
-		);
+		expect( capture.mock.calls.length ).toBe( 1 );
+		expect( capture.mock.calls[ capture.mock.calls.length - 1 ] ).toEqual( [ true, null ] );
+		capture.mockReset();
+		const experimentAssignment = { ...validExperimentAssignment, variationName: null };
+		await actReact( async () => controllablePromise1.resolve( experimentAssignment ) );
 		// In testing I capture two rerenders: [true, experimentAssignment], [false, experimentAssignment]
-		// React can't guarentee us that this will always happen so we are doing this:
-		await waitFor( () => { expect(capture.mock.calls.length).toBeGreaterThan(1) })
-		// And checking the last experiment
-		expect(capture.mock.calls[capture.mock.calls.length - 1]).toEqual([false, experimentAssignment])
-	})
-})
+		// React can't guarentee us that this will always happen so will just check the last render
+		await waitFor( () => {
+			expect( capture.mock.calls.length ).toBeGreaterThan( 1 );
+		} );
+		expect( capture.mock.calls[ capture.mock.calls.length - 1 ] ).toEqual( [
+			false,
+			experimentAssignment,
+		] );
+	} );
+} );
