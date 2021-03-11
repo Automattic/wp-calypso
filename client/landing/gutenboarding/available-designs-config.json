@@ -332,7 +332,7 @@
 			"title": "Balan",
 			"slug": "balan",
 			"template": "balan",
-			"theme": "mayland",
+			"theme": "blank-canvas",
 			"preview": "static",
 			"fonts": {
 				"headings": "Rubik",
