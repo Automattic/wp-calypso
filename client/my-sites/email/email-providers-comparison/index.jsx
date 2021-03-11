@@ -246,31 +246,16 @@ class EmailProvidersComparison extends React.Component {
 	renderGSuiteDetails( className ) {
 		const { currencyCode, gSuiteProduct, translate } = this.props;
 
-		let title = translate( 'G Suite by Google' );
-		let description = translate(
-			"We've partnered with Google to offer you email, storage, docs, calendars, and more."
-		);
-		let logo = gSuiteLogo;
-		let buttonLabel = translate( 'Add G Suite' );
-
-		if ( config.isEnabled( 'google-workspace-migration' ) ) {
-			title = getGoogleMailServiceFamily();
-			description = translate(
-				'Professional email integrated with Google Meet and other collaboration tools from Google.'
-			);
-			logo = googleWorkspaceIcon;
-			buttonLabel = translate( 'Add %(googleMailService)s', {
-				args: {
-					googleMailService: getGoogleMailServiceFamily(),
-				},
-				comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
-			} );
-		}
+		const logo = config.isEnabled( 'google-workspace-migration' )
+			? googleWorkspaceIcon
+			: gSuiteLogo;
 
 		return (
 			<EmailProviderDetails
-				title={ title }
-				description={ description }
+				title={ getGoogleMailServiceFamily() }
+				description={ translate(
+					'Professional email integrated with Google Meet and other collaboration tools from Google.'
+				) }
 				image={ { path: logo } }
 				features={ [
 					translate( 'Annual billing' ),
@@ -302,7 +287,12 @@ class EmailProvidersComparison extends React.Component {
 					},
 					comment: "Annual price formatted with the currency (e.g. '$99.99')",
 				} ) }
-				buttonLabel={ buttonLabel }
+				buttonLabel={ translate( 'Add %(googleMailService)s', {
+					args: {
+						googleMailService: getGoogleMailServiceFamily(),
+					},
+					comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+				} ) }
 				onButtonClick={ this.goToAddGSuite }
 				className={ classNames( className, 'gsuite' ) }
 			/>
