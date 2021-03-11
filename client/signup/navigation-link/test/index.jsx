@@ -148,7 +148,7 @@ describe( 'NavigationLink', () => {
 		expect( previousStep.stepName ).toBe( 'test:step2' );
 	} );
 
-	test( 'getPreviousStep() When in unknown step should return last step in progress which belong to the current flow', () => {
+	test( 'getPreviousStep() When current steps is unknown, step should return last step in progress which belong to the current flow', () => {
 		const navigationLink = new NavigationLink();
 		const { flowName, signupProgress } = props;
 
@@ -179,27 +179,47 @@ describe( 'NavigationLink', () => {
 		const { flowName } = props;
 
 		const singupProgressWithOnlyStepsThatDoNotBelongToThisFlow = {
-			'some-random-step': {
-				stepName: 'test:step4',
-				stepSectionName: 'test:section4',
+			'test:some-random-step': {
+				stepName: 'test:some-random-step',
+				stepSectionName: 'test:some-random-step:section',
 				wasSkipped: false,
 			},
-			'another-random-step': {
-				stepName: 'test:step4',
-				stepSectionName: 'test:section4',
+			'test:some-other-random-step': {
+				stepName: 'test:some-other-random-step',
+				stepSectionName: 'test:some-other-random-step',
 				wasSkipped: false,
 			},
 		};
 
+		//This simulates not having relevant steps in current flow
 		getFilteredSteps.mockReturnValue( [] );
+
 		isFirstStepInFlow.mockReturnValue( false );
-		const currentStepName = 'some-other-random-step';
+		const currentStepName = 'test:whatever-current-step';
 		const previousStep = navigationLink.getPreviousStep(
-			// eslint-disable-next-line no-undef
 			flowName,
 			singupProgressWithOnlyStepsThatDoNotBelongToThisFlow,
 			currentStepName
 		);
 		expect( previousStep.stepName ).toBe( null );
+	} );
+
+	test( 'getPreviousStep() When there are skipped steps they should be ignored', () => {
+		const { flowName, signupProgress } = props;
+		const navigationLink = new NavigationLink();
+		const stepsWithSkippedSteps = {
+			'test:step1': { stepName: 'test:step1', stepSectionName: 'test:section1', wasSkipped: false },
+			'test:step2': { stepName: 'test:step2', stepSectionName: 'test:section2', wasSkipped: true },
+			'test:step3': { stepName: 'test:step3', stepSectionName: 'test:section3', wasSkipped: true },
+			'test:step4': { stepName: 'test:step4', stepSectionName: 'test:section4', wasSkipped: false },
+		};
+
+		//According to step definitions the last step would return as mocked here
+		getPreviousStepName.mockReturnValue( 'test:step3' );
+
+		getFilteredSteps.mockReturnValue( Object.values( stepsWithSkippedSteps ) );
+		isFirstStepInFlow.mockReturnValue( false );
+		const previousStep = navigationLink.getPreviousStep( flowName, signupProgress, 'test:step4' );
+		expect( previousStep.stepName ).toBe( 'test:step1' );
 	} );
 } );
