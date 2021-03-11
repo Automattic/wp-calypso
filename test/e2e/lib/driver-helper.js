@@ -40,9 +40,9 @@ export async function clickWhenClickable( driver, locator, timeout = explicitWai
 	try {
 		const element = await wait( until.elementLocated( locator ) );
 
+		await highlightElement( driver, element );
 		await wait( until.elementIsEnabled( element ) );
 		await wait( elementIsAriaEnabled( element ) );
-		await highlightElement( driver, element );
 
 		try {
 			await element.click();
