@@ -154,7 +154,9 @@ class TitanManagementNav extends React.Component {
 					href={ controlPanelUrl }
 					target={ showExternalControlPanelLink ? '_blank' : null }
 					onClick={ () => {
-						this.recordNavItemClick( 'set_up_mailbox' );
+						recordTracksEvent( 'calypso_email_management_titan_nav_finish_setup_click', {
+							domain: domain.name,
+						} );
 					} }
 				>
 					{ translate( 'Finish Setup' ) }
@@ -198,7 +200,9 @@ class TitanManagementNav extends React.Component {
 				compact
 				href={ emailManagementNewTitanAccount( selectedSiteSlug, domain.name, currentRoute ) }
 				onClick={ () => {
-					this.recordNavItemClick( 'add_mailboxes' );
+					recordTracksEvent( 'calypso_email_management_titan_nav_add_mailbox_click', {
+						domain: domain.name,
+					} );
 				} }
 			>
 				{ translate( 'Add New Mailboxes' ) }
