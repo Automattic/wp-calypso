@@ -13,11 +13,13 @@ import Gridicon from 'calypso/components/gridicon';
 jest.mock( 'calypso/signup/utils', () => ( {
 	getStepUrl: jest.fn(),
 	getFilteredSteps: jest.fn(),
+	getPreviousStepName: jest.fn(),
+	isFirstStepInFlow: jest.fn(),
 } ) );
 
 const noop = () => {};
 const signupUtils = require( 'calypso/signup/utils' );
-const { getStepUrl, getFilteredSteps } = signupUtils;
+const { getStepUrl, getFilteredSteps, getPreviousStepName, isFirstStepInFlow } = signupUtils;
 
 describe( 'NavigationLink', () => {
 	const props = {
@@ -37,6 +39,8 @@ describe( 'NavigationLink', () => {
 	};
 
 	beforeEach( () => {
+		getPreviousStepName.mockReturnValue( 'test:step1' );
+		isFirstStepInFlow.mockReturnValue( false );
 		getFilteredSteps.mockReturnValue( Object.values( props.signupProgress ) );
 	} );
 
@@ -89,6 +93,8 @@ describe( 'NavigationLink', () => {
 
 		// when it is the first step
 		getStepUrl.mockReset();
+		getPreviousStepName.mockReturnValue( 'test:step1' );
+		isFirstStepInFlow.mockReturnValue( true );
 		getFilteredSteps.mockReturnValue( [
 			{ stepName: 'test:step1', stepSectionName: 'test:section1', wasSkipped: false },
 		] );

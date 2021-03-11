@@ -13,7 +13,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { getStepUrl } from 'calypso/signup/utils';
+import { getPreviousStepName, getStepUrl, isFirstStepInFlow } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
@@ -46,6 +46,14 @@ export class NavigationLink extends Component {
 		allowBackFirstStep: false,
 	};
 
+	getLastKnownStep( signUpProgress, currentStepName ) {
+		const [ lastKnownStepInFlow ] = signUpProgress
+			.filter( ( step ) => step.stepName !== currentStepName )
+			.filter( ( step ) => ! step.wasSkipped )
+			.slice( -1 );
+		return lastKnownStepInFlow;
+	}
+
 	/**
 	 * Returns the previous step , skipping over steps with the
 	 * `wasSkipped` property.
@@ -54,15 +62,31 @@ export class NavigationLink extends Component {
 	 */
 	getPreviousStep() {
 		const { flowName, signupProgress, stepName: currentStepName } = this.props;
+		let previousStep = { stepName: null };
 
-		const stepsThatBelongToTheCurrentFlow = getFilteredSteps( flowName, signupProgress );
+		if ( isFirstStepInFlow( currentStepName ) ) {
+			return previousStep;
+		}
 
-		const [ previousStep ] = stepsThatBelongToTheCurrentFlow
-			.filter( ( step ) => step.stepName !== currentStepName )
-			.filter( ( step ) => ! step.wasSkipped )
-			.slice( -1 );
+		const sortedProgressedStepsThatBelongInCurrentFlow = getFilteredSteps(
+			flowName,
+			signupProgress
+		);
 
-		return previousStep || { stepName: null };
+		const previousStepAccordingToFlowDefinition = getPreviousStepName( flowName, currentStepName );
+		const previousStepFromProgress = sortedProgressedStepsThatBelongInCurrentFlow.find(
+			( step ) => step.stepName !== previousStepAccordingToFlowDefinition.stepName
+		);
+		if ( previousStepFromProgress ) {
+			previousStep = previousStepFromProgress;
+		} else {
+			previousStep = this.getLastKnownStep(
+				sortedProgressedStepsThatBelongInCurrentFlow,
+				currentStepName
+			);
+		}
+
+		return previousStep;
 	}
 
 	getBackUrl() {
