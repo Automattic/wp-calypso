@@ -45,8 +45,8 @@ export default function useCreateAssignablePaymentMethods(
 	const payPalMethod = useCreatePayPal( {
 		labelText:
 			currentPaymentMethodId === 'paypal-existing'
-				? translate( 'New PayPal account' )
-				: translate( 'PayPal' ),
+				? String( translate( 'New PayPal account' ) )
+				: String( translate( 'PayPal' ) ),
 	} );
 
 	const storedCards = useSelector( getStoredCards );
