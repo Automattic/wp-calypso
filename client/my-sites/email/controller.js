@@ -88,7 +88,7 @@ export default {
 	},
 
 	emailManagement( pageContext, next ) {
-		if ( isEnabled( 'email/management-nav' ) && ! pageContext.params.domain ) {
+		if ( isEnabled( 'email/centralized-home' ) && ! pageContext.params.domain ) {
 			pageContext.primary = (
 				<CalypsoShoppingCartProvider>
 					<EmailManagementList />
