@@ -38,7 +38,7 @@ beforeEach( () => {
 
 describe( 'Search for a domain and select a suggestion', () => {
 	it( 'should search for a domain', () => {
-		const { debug } = render(
+		const { getByText } = render(
 			<DomainPicker
 				onDomainSelect={ jest.fn() }
 				analyticsUiAlgo="testalgo"
@@ -46,7 +46,8 @@ describe( 'Search for a domain and select a suggestion', () => {
 				initialDomainSearch="water"
 			/>
 		);
-		debug();
-		expect( screen.getByText( '€15.00/year' ) ).toBeTruthy();
+
+		expect( getByText( '€15.00/year' ) ).toBeInTheDocument();
+	} );
 	} );
 } );
