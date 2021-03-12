@@ -7,6 +7,7 @@ import debugFactory from 'debug';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { getEmptyResponseCart } from '@automattic/shopping-cart';
 
 /**
  * Internal Dependencies
@@ -26,6 +27,8 @@ import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 // otherwise we get `this is not defined` errors.
 const wpcom = wp.undocumented();
 
+const emptyCart = getEmptyResponseCart();
+
 const debug = debugFactory( 'calypso:checkout-system-decider' );
 
 export default function CheckoutSystemDecider( {
@@ -39,7 +42,6 @@ export default function CheckoutSystemDecider( {
 	redirectTo,
 	isLoggedOutCart,
 	isNoSiteCart,
-	cart: otherCart,
 } ) {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
@@ -80,23 +82,14 @@ export default function CheckoutSystemDecider( {
 		[ reduxDispatch ]
 	);
 
-	// We have to monitor the old cart manager in case it's waiting on a
-	// requested change. To prevent race conditions, we will return undefined in
-	// that case, which will cause the ShoppingCartProvider to enter a loading
-	// state. We have to use null because CalypsoShoppingCartProvider assumes
-	// undefined means to try for its own cartKey.
-	const waitForOtherCartUpdates =
-		otherCart?.hasPendingServerUpdates || ! otherCart?.hasLoadedFromServer;
 	const cartKey = useMemo(
 		() =>
-			waitForOtherCartUpdates
-				? null
-				: getCartKey( {
-						selectedSite,
-						isLoggedOutCart,
-						isNoSiteCart,
-				  } ),
-		[ waitForOtherCartUpdates, selectedSite, isLoggedOutCart, isNoSiteCart ]
+			getCartKey( {
+				selectedSite,
+				isLoggedOutCart,
+				isNoSiteCart,
+			} ),
+		[ selectedSite, isLoggedOutCart, isNoSiteCart ]
 	);
 	debug( 'cartKey is', cartKey );
 
@@ -110,8 +103,9 @@ export default function CheckoutSystemDecider( {
 		}
 	}
 
-	const getCart = isLoggedOutCart || isNoSiteCart ? () => Promise.resolve( otherCart ) : undefined;
-	debug( 'getCart being controlled by', { isLoggedOutCart, isNoSiteCart, otherCart } );
+	// If we do not have a site or user, we cannot fetch the initial cart from
+	// the server, so we'll just mock it as an empty cart here.
+	const getCart = isLoggedOutCart || isNoSiteCart ? () => Promise.resolve( emptyCart ) : undefined;
 
 	return (
 		<>
