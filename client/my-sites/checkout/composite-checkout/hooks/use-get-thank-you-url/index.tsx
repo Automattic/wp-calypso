@@ -71,6 +71,7 @@ export default function useGetThankYouUrl( {
 		debug( 'getThankYouUrl returned', url );
 		return url;
 	}, [
+		previousRoute,
 		isInEditor,
 		transactionResult,
 		isEligibleForSignupDestinationResult,
