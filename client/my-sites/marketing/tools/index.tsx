@@ -30,7 +30,7 @@ import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
  * Images
  */
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
-import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
+import logotronLogo from 'calypso/assets/images/illustrations/logotron-logo.svg';
 import facebookLogo from 'calypso/assets/images/illustrations/facebook-logo.png';
 import canvaLogo from 'calypso/assets/images/illustrations/canva-logo.svg';
 import sendinblueLogo from 'calypso/assets/images/illustrations/sendinblue-logo.svg';
@@ -119,9 +119,9 @@ export const MarketingTools: FunctionComponent = () => {
 				<MarketingToolsFeature
 					title={ translate( 'Want to build a great brand? Start with a great logo' ) }
 					description={ translate(
-						'A custom logo helps your brand pop and makes your site memorable. Make a professional logo in a few clicks with our partner Fiverr.'
+						'A custom logo helps your brand pop and makes your site memorable. Make a professional logo in a few clicks with our partner Logotron.'
 					) }
-					imagePath={ fiverrLogo }
+					imagePath={ logotronLogo }
 				>
 					<Button
 						onClick={ handleCreateALogoClick }
