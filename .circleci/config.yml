@@ -1087,22 +1087,6 @@ workflows:
                 - trunk
                 # Do not spin up calypso.live for fork pull requests. Calypso.live will not build them.
                 - /pull\/[0-9]+/
-      #      - test-e2e-canary:
-      #          requires:
-      #            - wait-calypso-live
-      #          test-flags: '-C -S $CIRCLE_SHA1'
-      # - test-e2e-canary:
-      #     name: test-e2e-canary-ie
-      #     requires:
-      #       - wait-calypso-live
-      #     test-flags: '-z -S $CIRCLE_SHA1'
-      #     test-target: 'IE11'
-      #     slack-webhook: '$SLACK_IE'
-      - test-e2e-canary:
-          name: test-e2e-canary-safari
-          requires:
-            - wait-calypso-live
-          test-flags: '-y -S $CIRCLE_SHA1'
   wp-desktop:
     jobs:
       - wp-desktop-source:
