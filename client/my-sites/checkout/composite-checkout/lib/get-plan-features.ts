@@ -52,7 +52,7 @@ export default function getPlanFeatures(
 	if ( isWpComPersonalPlan( productSlug ) ) {
 		return [
 			isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
-			String( translate( 'Email support' ) ),
+			String( translate( 'Best-in-class hosting' ) ),
 			String( translate( 'Dozens of Free Themes' ) ),
 		].filter( doesValueExist );
 	}
