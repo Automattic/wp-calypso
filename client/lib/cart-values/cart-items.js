@@ -1043,7 +1043,6 @@ export function getRenewalItemFromCartItem( cartItem, properties ) {
 	return merge( {}, cartItem, {
 		extra: {
 			purchaseId: properties.id,
-			purchaseDomain: properties.domain,
 			purchaseType: 'renewal',
 			includedDomain: properties.includedDomain,
 		},
