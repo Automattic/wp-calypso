@@ -58,7 +58,7 @@
 			0 1px 2px rgba( var( --studio-gray-100-rgb ), 0.1 );
 		list-style-type: none;
 
-		font-size: 0.875rem;
+		font-size: $font-body-small;
 
 		// Required for older browsers
 		&[hidden] {
