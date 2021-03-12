@@ -96,6 +96,7 @@ class RequiredPluginsInstallView extends Component {
 			totalSeconds: this.getTotalSeconds(),
 		};
 		this.updateTimer = false;
+		this.timeoutTimer = false;
 	}
 
 	componentDidMount() {
@@ -149,6 +150,41 @@ class RequiredPluginsInstallView extends Component {
 		if ( this.updateTimer ) {
 			window.clearInterval( this.updateTimer );
 			this.updateTimer = false;
+		}
+	};
+
+	createTimeoutTimer = () => {
+		if ( this.timeoutTimer ) {
+			return;
+		}
+
+		// Timeout setup after 25 seconds.
+		this.timeoutTimer = window.setTimeout( this.timeoutElapsed, 25000 );
+	};
+
+	timeoutElapsed = () => {
+		// These status means store setup is finished, not stalled.
+		if ( [ 'IDLE', 'DONESUCCESS', 'DONEFAILURE' ].includes( this.state.engineState ) ) {
+			return;
+		}
+
+		recordTrack( 'calypso_woocommerce_setup_timeout', {
+			engine_state: this.state.engineState,
+			to_activate: this.state.toActivate.join( ',' ),
+			to_install: this.state.toInstall.join( ',' ),
+			working_on: this.state.workingOn,
+			progress: this.state.progress,
+		} );
+
+		this.setState( {
+			engineState: 'DONETIMEOUT',
+		} );
+	};
+
+	destroyTimeoutTimer = () => {
+		if ( this.timeoutTimer ) {
+			window.clearTimeout( this.timeoutTimer );
+			this.timeoutTimer = false;
 		}
 	};
 
@@ -295,6 +331,7 @@ class RequiredPluginsInstallView extends Component {
 			this.setState( {
 				engineState: 'DONEFAILURE',
 			} );
+			this.destroyTimeoutTimer();
 		}
 	};
 
@@ -352,6 +389,7 @@ class RequiredPluginsInstallView extends Component {
 		this.setState( {
 			engineState: 'IDLE',
 		} );
+		this.destroyTimeoutTimer();
 
 		// Delay to ensure user wont bump into permission error
 		// that happens if navigated to wc-admin too soon.
@@ -400,6 +438,7 @@ class RequiredPluginsInstallView extends Component {
 			this.setState( {
 				engineState: 'INITIALIZING',
 			} );
+			this.createTimeoutTimer();
 		}
 	};
 
@@ -436,7 +475,7 @@ class RequiredPluginsInstallView extends Component {
 		return TIME_TO_PLUGIN_INSTALLATION;
 	};
 
-	renderContactSupport() {
+	renderContactSupportForFailure() {
 		const { translate, wporgPlugins } = this.props;
 		const { workingOn } = this.state;
 		const plugin = wporgPlugins?.[ workingOn ] ?? {};
@@ -475,6 +514,38 @@ class RequiredPluginsInstallView extends Component {
 		);
 	}
 
+	renderContactSupportForTimeout() {
+		const { translate } = this.props;
+
+		const subtitle = [
+			<p key="line-1">
+				{ translate( 'Sorry, we had a problem setting up your store.', {
+					components: { b: <strong /> },
+				} ) }
+			</p>,
+			<p key="line-2">
+				{ translate( "Please contact support and we'll get your store up and running!" ) }
+			</p>,
+		];
+
+		return (
+			<div className="dashboard__setup-wrapper setup__wrapper">
+				<div className="card dashboard__plugins-install-view">
+					<SetupHeader
+						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
+						imageWidth={ 160 }
+						title={ translate( "We can't set up your store" ) }
+						subtitle={ subtitle }
+					>
+						<Button primary href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer">
+							{ translate( 'Get in touch' ) }
+						</Button>
+					</SetupHeader>
+				</div>
+			</div>
+		);
+	}
+
 	render() {
 		const { hasPendingAT, fixMode, translate } = this.props;
 		const { engineState, progress, totalSeconds } = this.state;
@@ -484,7 +555,11 @@ class RequiredPluginsInstallView extends Component {
 		}
 
 		if ( 'DONEFAILURE' === engineState ) {
-			return this.renderContactSupport();
+			return this.renderContactSupportForFailure();
+		}
+
+		if ( 'DONETIMEOUT' === engineState ) {
+			return this.renderContactSupportForTimeout();
 		}
 
 		const title = fixMode ? translate( 'Updating your store' ) : translate( 'Building your store' );
