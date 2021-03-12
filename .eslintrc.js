@@ -406,6 +406,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/all': 'error',
 		'you-dont-need-lodash-underscore/any': 'error',
 		'you-dont-need-lodash-underscore/bind': 'error',
+		'you-dont-need-lodash-underscore/cast-array': 'error',
 		'you-dont-need-lodash-underscore/collect': 'error',
 		'you-dont-need-lodash-underscore/contains': 'error',
 		'you-dont-need-lodash-underscore/detect': 'error',
