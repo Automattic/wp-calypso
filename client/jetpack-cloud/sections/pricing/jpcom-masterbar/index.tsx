@@ -21,7 +21,7 @@ import './style.scss';
 const JETPACK_COM_BASE_URL = 'https://jetpack.com';
 const MENU_ITEMS = [
 	{
-		title: translate( 'Product Tour' ),
+		title: translate( 'Security' ),
 		path: 'features',
 	},
 	{
