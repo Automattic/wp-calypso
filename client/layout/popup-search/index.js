@@ -14,10 +14,13 @@ import { getInlineHelpAdminSectionSearchResultsForQuery } from 'calypso/state/in
 import hasInlineHelpAPIResults from 'calypso/state/selectors/has-inline-help-api-results';
 import { selectResult } from 'calypso/state/inline-help/actions';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+import QueryInlineHelpSearch from 'calypso/components/data/query-inline-help-search';
+
 /**
  * Style dependencies
  */
 import './style.scss';
+import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
 
 export function PopUpSearch( props ) {
 	const translate = useTranslate();
@@ -33,32 +36,34 @@ export function PopUpSearch( props ) {
 			<div className="popup-search__container" onClick={ onChildClick }>
 				<HelpSearchCard
 					onSelect={ () => {} }
-					query={ '' }
+					query={ props.searchQuery }
 					location={ 'TEST' }
 					placeholder={ translate( 'Search wordpress actions' ) }
 				/>
-				<div className="popup-search__results" aria-label="Pop Up Search">
-					{ props.searchResults &&
-						props.searchResults.map(
-							( { link, key, title, support_type, post_id, description } ) => (
-								<a href={ localizeUrl( link ) }>
-									<div
-										role="button"
-										className="popup-search__result-single"
-										key={ key }
-										onClick={ () => onResultClick( link ) }
-									>
-										<div className="popup-search__results-cell">
-											<div>
-												<h2>{ title }</h2>
-											</div>
-											<div>{ description }</div>
+				<QueryInlineHelpSearch query={ props.searchQuery } />
+				{ props.searchResults.length > 0 && (
+					<div className="popup-search__results" aria-label="Pop Up Search">
+						{ props.searchResults.map( ( { link, key, title, post_id, description } ) => (
+							<a href={ localizeUrl( link ) }>
+								<div
+									role="button"
+									className="popup-search__result-single"
+									key={ key }
+									onClick={ () => onResultClick( link ) }
+								>
+									<div className="popup-search__results-cell">
+										<div>
+											<h2>{ title }</h2>
+										</div>
+										<div className="popup-search__description">
+											<em>{ description }</em>
 										</div>
 									</div>
-								</a>
-							)
-						) }
-				</div>
+								</div>
+							</a>
+						) ) }
+					</div>
+				) }
 			</div>
 		</div>
 	);
@@ -66,6 +71,7 @@ export function PopUpSearch( props ) {
 
 export default connect(
 	( state ) => ( {
+		searchQuery: getSearchQuery( state ),
 		searchResults: getInlineHelpAdminSectionSearchResultsForQuery( state ),
 		hasAPIResults: hasInlineHelpAPIResults( state ),
 	} ),

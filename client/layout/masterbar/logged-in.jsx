@@ -73,12 +73,26 @@ class MasterbarLoggedIn extends React.Component {
 		}
 	};
 
+	actionSearchShortcut( ctx ) {
+		return () => {
+			if ( event.ctrlKey && event.shiftKey && event.key === 'F' ) {
+				ctx.clickSearchActions();
+			}
+		};
+	}
+
 	componentDidMount() {
 		// Give a chance to direct URLs to open the sidebar on page load ( eg by clicking 'me' in wp-admin ).
 		const qryString = parse( document.location.search.replace( /^\?/, '' ) );
 		if ( qryString?.openSidebar === 'true' ) {
 			this.props.setNextLayoutFocus( 'sidebar' );
 		}
+		this.actionSearchShortCutListener = this.actionSearchShortcut( this );
+		document.addEventListener( 'keydown', this.actionSearchShortCutListener );
+	}
+
+	componentWillUnmount() {
+		document.removeEventListener( 'keydown', this.actionSearchShortCutListener );
 	}
 
 	clickMySites = () => {
