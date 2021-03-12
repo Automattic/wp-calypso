@@ -46,6 +46,20 @@ export class LoginLinks extends React.Component {
 		usernameOrEmail: PropTypes.string,
 	};
 
+	constructor( props ) {
+		super( props );
+
+		this.loginLinkRef = React.createRef();
+	}
+
+	componentDidMount() {
+		this.loginLinkRef.current?.addEventListener( 'click', this.handleMagicLoginLinkClick );
+	}
+
+	componentWillUnmount() {
+		this.loginLinkRef.current?.removeEventListener( 'click', this.handleMagicLoginLinkClick );
+	}
+
 	recordBackToWpcomLinkClick = () => {
 		this.props.recordTracksEvent( 'calypso_login_back_to_wpcom_link_click' );
 	};
@@ -74,25 +88,14 @@ export class LoginLinks extends React.Component {
 		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' );
 		this.props.resetMagicLoginRequestForm();
 
-		const { locale, currentRoute, isGutenboarding, query, usernameOrEmail } = this.props;
-		const loginParameters = {
-			isNative: true,
-			locale: locale,
-			twoFactorAuthType: 'link',
-		};
+		// Add typed email address as a query param
+		const { query, usernameOrEmail } = this.props;
 		const emailAddress = usernameOrEmail || query?.email_address;
+		const { pathname, search } = getUrlParts(
+			addQueryArgs( { email_address: emailAddress }, event.target.href )
+		);
 
-		if ( emailAddress ) {
-			loginParameters.emailAddress = emailAddress;
-		}
-
-		if ( currentRoute === '/log-in/jetpack' ) {
-			loginParameters.twoFactorAuthType = 'jetpack/link';
-		} else if ( isGutenboarding ) {
-			loginParameters.twoFactorAuthType = 'new/link';
-		}
-
-		page( login( loginParameters ) );
+		page( pathname + search );
 	};
 
 	recordResetPasswordLinkClick = () => {
@@ -101,6 +104,26 @@ export class LoginLinks extends React.Component {
 
 	recordSignUpLinkClick = () => {
 		this.props.recordTracksEvent( 'calypso_login_sign_up_link_click' );
+	};
+
+	getLoginLinkPageUrl = () => {
+		// The email address from the URL (if present) is added to the login
+		// parameters in this.handleMagicLoginLinkClick(). But it's left out
+		// here deliberately, to ensure that if someone copies this link to
+		// paste somewhere else, their email address isn't included in it.
+		const loginParameters = {
+			isNative: true,
+			locale: this.props.locale,
+			twoFactorAuthType: 'link',
+		};
+
+		if ( this.props.currentRoute === '/log-in/jetpack' ) {
+			loginParameters.twoFactorAuthType = 'jetpack/link';
+		} else if ( this.props.isGutenboarding ) {
+			loginParameters.twoFactorAuthType = 'new/link';
+		}
+
+		return login( loginParameters );
 	};
 
 	renderBackLink() {
@@ -217,17 +240,21 @@ export class LoginLinks extends React.Component {
 			return null;
 		}
 
-		// Using a `button` here because page.js seems to add an onClick handler
-		// to `a` tags with internal links, which prevents the onClick handler
-		// below from being called.
 		return (
-			<button
+			<a
+				// Event listeners added with `onClick` are not called, because
+				// page.js adds an event listener itself. By explicitely adding
+				// an event listener through the ref, we can intercept the event
+				// and prevent this page.js behaviour.
+				// A simpler solution would have been to add rel=external or
+				// rel=download, but it would have been semantically wrong.
+				ref={ this.loginLinkRef }
+				href={ this.getLoginLinkPageUrl() }
 				key="magic-login-link"
 				data-e2e-link="magic-login-link"
-				onClick={ this.handleMagicLoginLinkClick }
 			>
 				{ this.props.translate( 'Email me a login link' ) }
-			</button>
+			</a>
 		);
 	}
 
