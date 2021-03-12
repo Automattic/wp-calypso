@@ -46,7 +46,7 @@ const JetpackComMasterbar: React.FC = () => {
 	};
 
 	return (
-		<div className="jpcom-masterbar">
+		<nav className="jpcom-masterbar">
 			<div className="jpcom-masterbar__inner">
 				<ExternalLink
 					className="jpcom-masterbar__logo"
@@ -90,7 +90,7 @@ const JetpackComMasterbar: React.FC = () => {
 					) ) }
 				</ul>
 			</div>
-		</div>
+		</nav>
 	);
 };
 
