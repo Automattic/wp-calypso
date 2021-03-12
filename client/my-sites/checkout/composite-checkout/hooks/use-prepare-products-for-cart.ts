@@ -212,12 +212,7 @@ function useAddRenewalItems( {
 					} );
 					return null;
 				}
-				return createRenewalItemToAddToCart(
-					productSlug,
-					product.product_id,
-					subscriptionId,
-					selectedSiteSlug
-				);
+				return createRenewalItemToAddToCart( productSlug, product.product_id, subscriptionId );
 			} )
 			.filter( doesValueExist );
 
@@ -373,8 +368,7 @@ function getProductSlugFromAlias( productAlias: string ): string {
 function createRenewalItemToAddToCart(
 	productAlias: string,
 	productId: string | number,
-	purchaseId: string | number | undefined | null,
-	selectedSiteSlug: string | null
+	purchaseId: string | number | undefined | null
 ): RequestCartProduct | null {
 	const [ slug, meta ] = productAlias.split( ':' );
 	// See https://github.com/Automattic/wp-calypso/pull/15043 for explanation of
@@ -388,7 +382,6 @@ function createRenewalItemToAddToCart(
 
 	const renewalItemExtra = {
 		purchaseId: String( purchaseId ),
-		purchaseDomain: selectedSiteSlug ? String( selectedSiteSlug ) : undefined,
 		purchaseType: 'renewal',
 	};
 	return {
