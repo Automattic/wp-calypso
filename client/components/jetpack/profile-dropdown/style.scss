@@ -24,9 +24,10 @@
 			box-shadow: -1px 0 var( --studio-gray-20 );
 		}
 
-		&:hover {
+		&:hover,
+		&:focus {
 			img {
-				transform: scale( 1.2, 1.2 );
+				transform: scale( 1.2 );
 			}
 		}
 	}
