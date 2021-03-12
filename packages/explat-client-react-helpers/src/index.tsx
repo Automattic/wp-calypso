@@ -44,19 +44,16 @@ export default function createExPlatClientReactHelpers(
 ): ExPlatClientReactHelpers {
 	const useExperiment = ( experimentName: string ): [ boolean, ExperimentAssignment | null ] => {
 		const [ previousExperimentName ] = useState( experimentName );
-		const [ isLoading, setIsLoading ] = useState< boolean >( true );
-		const [
-			experimentAssignment,
-			setExperimentAssignment,
-		] = useState< ExperimentAssignment | null >( null );
+		const [ state, setState ] = useState< [ boolean, ExperimentAssignment | null ] >( [
+			true,
+			null,
+		] );
 
 		useEffect( () => {
 			let isSubscribed = true;
 			exPlatClient.loadExperimentAssignment( experimentName ).then( ( experimentAssignment ) => {
 				if ( isSubscribed ) {
-					// The order here is important as React can rerender in between these two
-					setExperimentAssignment( experimentAssignment );
-					setIsLoading( false );
+					setState( [ false, experimentAssignment ] );
 				}
 			} );
 			return () => {
@@ -77,7 +74,7 @@ export default function createExPlatClientReactHelpers(
 			exPlatClient.config.logError( { message } );
 		}
 
-		return [ isLoading, experimentAssignment ];
+		return state;
 	};
 
 	const Experiment = ( {

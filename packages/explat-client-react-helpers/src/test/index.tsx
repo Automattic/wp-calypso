@@ -174,10 +174,8 @@ describe( 'ProvideExperimentData', () => {
 		capture.mockReset();
 		const experimentAssignment = { ...validExperimentAssignment, variationName: null };
 		await actReact( async () => controllablePromise1.resolve( experimentAssignment ) );
-		// In testing I capture two rerenders: [true, experimentAssignment], [false, experimentAssignment]
-		// React can't guarentee us that this will always happen so will just check the last render
 		await waitFor( () => {
-			expect( capture.mock.calls.length ).toBeGreaterThan( 1 );
+			expect( capture.mock.calls.length ).toBe( 1 );
 		} );
 		expect( capture.mock.calls[ capture.mock.calls.length - 1 ] ).toEqual( [
 			false,
