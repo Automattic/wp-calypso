@@ -2,10 +2,20 @@
 	justify-content: space-between;
 
 	.masterbar__item-home {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
 		border-right: 1px solid var( --color-masterbar-border );
-		flex: 0 0 auto;
-		padding: 0;
-		width: auto;
+
+		&:hover .jetpack-logo {
+			transform: scale( 1.1 );
+		}
+
+		&:focus {
+			box-shadow: inset 0 0 0 2px var( --color-primary-light );
+			outline-width: 0;
+		}
 
 		@include breakpoint-deprecated( '>660px' ) {
 			min-width: var( --sidebar-width-min );
@@ -14,18 +24,10 @@
 		@include breakpoint-deprecated( '>960px' ) {
 			min-width: var( --sidebar-width-max );
 		}
+	}
 
-		.masterbar__item-content {
-			color: var( --color-masterbar-text );
-			display: flex;
-			justify-content: center;
-			padding: 0 16px;
-			width: 100%;
-
-			svg {
-				fill: var( --color-black );
-			}
-		}
+	.jetpack-logo {
+		transition: transform 0.2s ease;
 	}
 
 	.masterbar__item-title {
@@ -37,22 +39,5 @@
 		color: var( --color-neutral-80 );
 
 		text-transform: none;
-	}
-
-	.masterbar__item-me {
-		min-width: 18px;
-		flex: 0 0 auto;
-
-		// Calypso's masterbar hides this item content and we need to show it
-		// so we override its display property.
-		@include breakpoint-deprecated( '<480px' ) {
-			.masterbar__item-content {
-				display: block;
-			}
-		}
-	}
-
-	.masterbar__item-me--open {
-		box-shadow: 0 -1px 0 1px var( --studio-gray-20 );
 	}
 }

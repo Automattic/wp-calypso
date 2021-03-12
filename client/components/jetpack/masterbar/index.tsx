@@ -10,7 +10,6 @@ import { useTranslate } from 'i18n-calypso';
 import { getDocumentHeadTitle } from 'calypso/state/document-head/selectors/get-document-head-title';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { useSelector } from 'react-redux';
-import Item from 'calypso/layout/masterbar/item';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import ProfileDropdown from 'calypso/components/jetpack/profile-dropdown';
@@ -33,15 +32,17 @@ const JetpackCloudMasterBar: React.FC = () => {
 		<Masterbar
 			className="is-jetpack-cloud-masterbar" // eslint-disable-line wpcalypso/jsx-classname-namespace
 		>
-			<Item
+			<a
 				className="masterbar__item-home"
-				url="/"
-				tooltip={ translate( 'Jetpack Cloud Dashboard', {
-					comment: 'Jetpack Cloud top navigation bar item',
-				} ) }
+				href="/"
+				title={
+					translate( 'Jetpack Cloud Dashboard', {
+						comment: 'Jetpack Cloud top navigation bar item',
+					} ) as string
+				}
 			>
 				<JetpackLogo size={ 28 } full={ ! isNarrow || isExteriorPage } aria={ { hidden: true } } />
-			</Item>
+			</a>
 			<AsyncLoad require="calypso/components/jetpack/portal-nav" placeholder={ null } />
 			{ headerTitle && <h1 className="masterbar__item-title">{ headerTitle }</h1> }
 			<ProfileDropdown />
