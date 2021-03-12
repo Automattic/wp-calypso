@@ -31,7 +31,7 @@ import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
  */
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
-import facebookMessenger from 'calypso/assets/images/illustrations/facebook-messenger.svg';
+import facebookLogo from 'calypso/assets/images/illustrations/facebook-logo.png';
 import canvaLogo from 'calypso/assets/images/illustrations/canva-logo.svg';
 import sendinblueLogo from 'calypso/assets/images/illustrations/sendinblue-logo.svg';
 import simpletextLogo from 'calypso/assets/images/illustrations/simpletext-logo.png';
@@ -74,8 +74,8 @@ export const MarketingTools: FunctionComponent = () => {
 		recordTracksEvent( 'calypso_marketing_tools_create_a_logo_button_click' );
 	};
 
-	const handleFacebookMessengerClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_facebook_messenger_button_click' );
+	const handleFacebookClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_facebook_button_click' );
 	};
 
 	const handleCanvaClick = () => {
@@ -146,23 +146,23 @@ export const MarketingTools: FunctionComponent = () => {
 
 				{ getLocaleSlug() === 'en' && (
 					<MarketingToolsFeature
-						title={ translate( 'Want to convert visitors into customers? Add Messenger Chat!' ) }
+						title={ translate( 'Want to connect with your audience on Facebook and Instagram?' ) }
 						description={ translate(
-							'Customers like to buy from a business they can message. Build trust, help customers, and provide support with the Official Facebook Messenger Chat Plugin. {{em}}Available on Business and eCommerce plans{{/em}}.',
+							'Discover an easy way to advertise your brand across Facebook and Instagram. Capture website actions to help you target audiences and measure results. {{em}}Available on Business and eCommerce plans{{/em}}.',
 							{
 								components: {
 									em: <em />,
 								},
 							}
 						) }
-						imagePath={ facebookMessenger }
+						imagePath={ facebookLogo }
 					>
 						<Button
-							onClick={ handleFacebookMessengerClick }
-							href="https://wordpress.com/plugins/facebook-messenger-customer-chat"
+							onClick={ handleFacebookClick }
+							href="https://wordpress.com/plugins/official-facebook-pixel"
 							target="_blank"
 						>
-							{ translate( 'Add Messenger Chat' ) }
+							{ translate( 'Add Facebook for WordPress.com' ) }
 						</Button>
 					</MarketingToolsFeature>
 				) }
