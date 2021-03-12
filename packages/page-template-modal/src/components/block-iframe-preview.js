@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { each, filter, get, castArray, debounce } from 'lodash';
+import { each, filter, get, debounce } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -105,7 +105,9 @@ const BlockFramePreview = ( {
 	} );
 
 	// Rendering blocks list.
-	const renderedBlocks = useMemo( () => castArray( blocks ), [ blocks ] );
+	const renderedBlocks = useMemo( () => ( Array.isArray( blocks ) ? blocks : [ blocks ] ), [
+		blocks,
+	] );
 	const [ recomputeBlockListKey, triggerRecomputeBlockList ] = useReducer(
 		( state ) => state + 1,
 		0

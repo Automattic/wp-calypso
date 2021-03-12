@@ -4,7 +4,7 @@
 import { use, select } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 import { applyFilters } from '@wordpress/hooks';
-import { castArray, find } from 'lodash';
+import { find } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -89,7 +89,7 @@ const ensureBlockObject = ( block ) => {
  * @returns {void}
  */
 function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parentBlock ) {
-	const castBlocks = castArray( blocks );
+	const castBlocks = Array.isArray( blocks ) ? blocks : [ blocks ];
 	if ( ! castBlocks || ! castBlocks.length ) {
 		return;
 	}
@@ -131,8 +131,10 @@ function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parent
  * @returns {Function} track handler
  */
 const getBlocksTracker = ( eventName ) => ( blockIds ) => {
+	const blockIdArray = Array.isArray( blockIds ) ? blockIds : [ blockIds ];
+
 	// track separately for each block
-	castArray( blockIds ).forEach( ( blockId ) => {
+	blockIdArray.forEach( ( blockId ) => {
 		tracksRecordEvent( eventName, { block_name: getTypeForBlockId( blockId ) } );
 	} );
 };
