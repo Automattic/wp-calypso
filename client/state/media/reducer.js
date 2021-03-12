@@ -27,6 +27,7 @@ import {
 	MEDIA_ITEM_EDIT,
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
+import isTransientMediaId from 'calypso/lib/media/utils/is-transient-media-id';
 import MediaQueryManager from 'calypso/lib/query-manager/media';
 import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
 import { transformSite as transformSiteTransientItems } from 'calypso/state/media/utils/transientItems';
@@ -257,6 +258,12 @@ export const selectedItems = ( state = {}, action ) => {
 		}
 		case MEDIA_ITEM_REQUEST_SUCCESS: {
 			const { mediaId: transientMediaId, siteId } = action;
+
+			// We only want to deselect if it is a transient media item
+			if ( ! isTransientMediaId( transientMediaId ) ) {
+				return state;
+			}
+
 			const media = state[ siteId ] ?? [];
 
 			return {
