@@ -63,6 +63,9 @@ import {
 	emailManagementForwarding,
 	emailManagementAddGSuiteUsers,
 	emailManagementNewGSuiteAccount,
+	emailManagementManageTitanAccount,
+	emailManagementNewTitanAccount,
+	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import SitesComponent from 'calypso/my-sites/sites';
 import { successNotice, warningNotice } from 'calypso/state/notices/actions';
@@ -180,6 +183,9 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		emailManagementAddGSuiteUsers,
 		emailManagementNewGSuiteAccount,
 		emailManagementForwarding,
+		emailManagementManageTitanAccount,
+		emailManagementNewTitanAccount,
+		emailManagementTitanControlPanelRedirect,
 	];
 
 	let domainManagementPaths = allPaths.map( ( pathFactory ) => {
