@@ -168,12 +168,19 @@ class Search extends Component {
 			this.props.onSearch( this.state.keyword );
 		}
 		this.props.onSearchChange( this.state.keyword );
+		if ( this.props.forceFocus && this.searchInput ) {
+			this.searchInput.focus();
+		}
 	}
 
 	componentDidMount() {
 		this.onSearch = this.props.delaySearch
 			? debounce( this.props.onSearch, this.props.delayTimeout )
 			: this.props.onSearch;
+
+		if ( this.props.forceFocus && this.searchInput ) {
+			this.searchInput.focus();
+		}
 	}
 
 	scrollOverlay = () => {

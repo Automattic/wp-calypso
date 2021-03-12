@@ -32,7 +32,8 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 		icon: 'domains',
 	},
 	{
-		title: translate( 'Manage my domain settings' ),
+		title: translate( 'Manage domains' ),
+		description: translate( 'Manage all domains linked to your account.' ),
 		link: `/domains/manage/${ siteSlug }`,
 		synonyms: [ 'domains' ],
 		icon: 'domains',
@@ -349,6 +350,13 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 		icon: 'my-sites',
 	},
 	{
+		title: translate( 'New post' ),
+		description: translate( `Create a new blog post on your site.` ),
+		link: `/post/${ siteSlug }`,
+		synonyms: [ 'lists', 'posts' ],
+		icon: 'my-sites',
+	},
+	{
 		title: translate( 'View my drafted pages' ),
 		link: `/pages/drafts/${ siteSlug }`,
 		synonyms: [ 'pages', 'draft' ],
@@ -425,16 +433,20 @@ export function filterListBySearchTerm( searchTerm = '', collection = [], limit 
 		'gi'
 	);
 
-	return collection
-		.filter( ( item ) => {
-			if ( searchRegex.test( item.title ) ) {
-				return true;
-			}
-			// Until we get the synonyms translated, just check when the language is `'en'`
-			return 'en' === getLocaleSlug()
-				? intersection( item.synonyms, searchTermWords ).length > 0
-				: false;
-		} )
+	const exactMatches = collection.filter(
+		( item ) => item.title.toLowerCase() === searchTerm.toLowerCase()
+	);
+	const partialMatches = collection
+		.filter( ( item ) => ! exactMatches.includes( item ) )
+		.filter( ( item ) => ( searchRegex.test( item.title ) ? true : false ) );
+
+	const synonymMatches = collection
+		.filter( ( item ) => ! exactMatches.includes( item ) )
+		.filter( ( item ) => ! partialMatches.includes( item ) )
+		.filter( ( item ) =>
+			'en' === getLocaleSlug() ? intersection( item.synonyms, searchTermWords ).length > 0 : false
+		);
+	return [ ...exactMatches, ...partialMatches, ...synonymMatches ]
 		.map( ( item ) => ( { ...item, support_type: SUPPORT_TYPE_ADMIN_SECTION, key: item.title } ) )
 		.slice( 0, limit );
 }

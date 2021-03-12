@@ -14,11 +14,12 @@
 		margin: 0 auto;
 		left: 0;
 		right: 0;
+		top: 56px;
 		text-align: center;
 		.popup-search__results {
 			text-align: left;
 			max-height: 75vh;
-			padding: 0px 10px 0px 0px;
+			padding: 0 10px 0 0;
 			overflow-y: scroll;
 			scrollbar-width: none;
 			-ms-overflow-style: none;

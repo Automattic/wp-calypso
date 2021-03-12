@@ -1,3 +1,6 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/interactive-supports-focus */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /**
  * External dependencies
  */
@@ -35,6 +38,7 @@ export function PopUpSearch( props ) {
 		<div role="button" className="popup-search__mask" onClick={ props.onClose }>
 			<div className="popup-search__container" onClick={ onChildClick }>
 				<HelpSearchCard
+					forceFocus={ true }
 					onSelect={ () => {} }
 					query={ props.searchQuery }
 					location={ 'TEST' }
@@ -43,7 +47,7 @@ export function PopUpSearch( props ) {
 				<QueryInlineHelpSearch query={ props.searchQuery } />
 				{ props.searchResults.length > 0 && (
 					<div className="popup-search__results" aria-label="Pop Up Search">
-						{ props.searchResults.map( ( { link, key, title, post_id, description } ) => (
+						{ props.searchResults.map( ( { link, key, title, description } ) => (
 							<a href={ localizeUrl( link ) }>
 								<div
 									role="button"
