@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classnames from 'classnames';
 import { Button } from '@automattic/components';
@@ -13,21 +13,17 @@ import ExternalLinkWithTracking from 'calypso/components/external-link/with-trac
  */
 import LogItem from '../log-item';
 import ThreatDescription from '../threat-description';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header';
 import ThreatItemSubheader from 'calypso/components/jetpack/threat-item-subheader';
 import { Threat } from 'calypso/components/jetpack/threat-item/types';
 import { getThreatFix } from 'calypso/components/jetpack/threat-item/utils';
-import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {};
-
 interface Props {
 	threat: Threat;
 	isPlaceholder: boolean;
@@ -53,6 +49,8 @@ const ThreatItem: React.FC< Props > = ( {
 	isFixing,
 	contactSupportUrl,
 } ) => {
+	const dispatch = useDispatch();
+
 	/**
 	 * Render a CTA button. Currently, this button is rendered three
 	 * times: in the details section, and in the `summary` and `extendSummary`
@@ -130,10 +128,16 @@ const ThreatItem: React.FC< Props > = ( {
 			? { section: currentRoute.includes( '/scan/history' ) ? 'History' : 'Scanner' }
 			: {};
 	}, [ currentRoute ] );
-	const onOpenTrackEvent = useTrackCallback( noop, 'calypso_jetpack_scan_threat_itemtoggle', {
-		threat_signature: threat.signature,
-		...currentRouteProp,
-	} );
+	const onOpenTrackEvent = React.useCallback(
+		() =>
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_scan_threat_itemtoggle', {
+					threat_signature: threat.signature,
+					...currentRouteProp,
+				} )
+			),
+		[ dispatch, threat, currentRouteProp ]
+	);
 
 	if ( isPlaceholder ) {
 		return <ThreatItemPlaceholder />;
@@ -181,7 +185,6 @@ const ThreatItem: React.FC< Props > = ( {
 						target="_blank"
 						rel="noopener noreferrer"
 						tracksEventName="calypso_jetpack_scan_threat_codeable_estimate"
-						onClick={ noop }
 					>
 						{ translate( 'Get a free estimate' ) }
 					</ExternalLinkWithTracking>

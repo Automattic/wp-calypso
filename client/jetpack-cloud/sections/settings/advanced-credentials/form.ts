@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { isEmpty } from 'lodash';
 import { TranslateResult, translate } from 'i18n-calypso';
 
 export enum FormMode {
@@ -81,7 +80,7 @@ export const mergeFoundCredentials = ( foundCredentials: Credentials, formState:
 export const validate = ( formState: FormState, mode: FormMode ): FormErrors => {
 	const formErrors: FormErrors = {};
 	// user checking
-	if ( isEmpty( formState.user ) ) {
+	if ( ! formState.user ) {
 		formErrors.user = {
 			message: translate( 'Please enter your server username.' ),
 			waitForInteraction: true,
@@ -96,7 +95,7 @@ export const validate = ( formState: FormState, mode: FormMode ): FormErrors => 
 		};
 	}
 	// host checking
-	if ( isEmpty( formState.host ) ) {
+	if ( ! formState.host ) {
 		formErrors.host = {
 			message: translate( 'Please enter a valid server address.' ),
 			waitForInteraction: true,
@@ -110,14 +109,14 @@ export const validate = ( formState: FormState, mode: FormMode ): FormErrors => 
 		};
 	}
 
-	if ( FormMode.Password === mode && isEmpty( formState.pass ) ) {
+	if ( FormMode.Password === mode && ! formState.pass ) {
 		formErrors.pass = {
 			message: translate( 'Please enter your server password.' ),
 			waitForInteraction: true,
 		};
 	}
 
-	if ( FormMode.PrivateKey === mode && isEmpty( formState.kpri ) ) {
+	if ( FormMode.PrivateKey === mode && ! formState.kpri ) {
 		formErrors.kpri = {
 			message: translate( 'Please enter your private key.' ),
 			waitForInteraction: true,

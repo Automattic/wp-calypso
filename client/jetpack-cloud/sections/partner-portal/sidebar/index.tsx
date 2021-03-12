@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { memoize } from 'lodash';
 import { localize, translate as TranslateType } from 'i18n-calypso';
 
 /**
@@ -30,15 +29,14 @@ interface Props {
 	dispatchRecordTracksEvent: typeof recordTracksEvent;
 	translate: typeof TranslateType;
 }
-
 class PartnerPortalSidebar extends Component< Props > {
-	onNavigate = memoize( ( menuItem ) => () => {
+	onNavigate = ( menuItem: string ) => () => {
 		this.props.dispatchRecordTracksEvent( 'calypso_jetpack_sidebar_menu_click', {
 			menu_item: menuItem,
 		} );
 
 		window.scrollTo( 0, 0 );
-	} );
+	};
 
 	render() {
 		const { translate, path } = this.props;
@@ -54,7 +52,7 @@ class PartnerPortalSidebar extends Component< Props > {
 								comment: 'Jetpack sidebar navigation item',
 							} ) }
 							link="/partner-portal"
-							onNavigate={ this.onNavigate }
+							onNavigate={ this.onNavigate( 'Jetpack Cloud / Partner Portal / Licenses' ) }
 							selected={ itemLinkMatches( [ '/partner-portal' ], path ) }
 						/>
 					</SidebarMenu>
