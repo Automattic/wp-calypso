@@ -122,7 +122,12 @@ describe( 'Experiment', () => {
 		> ).mockImplementationOnce( () => controllablePromise1.promise );
 
 		const { container, rerender } = render(
-			<Experiment name="experiment_a" treatmentExperience="treatment" defaultExperience="default-1" loadingExperience="loading" />
+			<Experiment
+				name="experiment_a"
+				treatmentExperience="treatment"
+				defaultExperience="default-1"
+				loadingExperience="loading"
+			/>
 		);
 		expect( container.textContent ).toBe( 'loading' );
 		await actReact( async () =>
