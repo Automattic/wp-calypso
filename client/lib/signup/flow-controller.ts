@@ -128,6 +128,13 @@ export default class SignupFlowController {
 			this._assertFlowProvidedDependenciesFromConfig( options.providedDependencies );
 			this._reduxStore.dispatch( updateDependencies( options.providedDependencies ) );
 		} else {
+			// If the launch flow was open in one tab, a new tab opened with the onboarding flow
+			// would have stored dependencies referencing the incorrect (launch flow) site slug.
+			// As a result, any plans selected during onboarding would be added to the launch flow
+			// site's cart, and not the onboarding site's cart. To prevent this, we reset stored
+			// dependencies before initializing the flow controller.
+			this.reset();
+
 			// TODO: synces deps from progress to dep store: are they ever out of sync?
 			const storedDependencies = this._getStoredDependencies();
 			if ( ! isEmpty( storedDependencies ) ) {
