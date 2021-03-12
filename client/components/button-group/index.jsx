@@ -18,4 +18,4 @@ const ButtonGroup = ( { busy, children, className, primary } ) => {
 	return <span className={ buttonGroupClasses }>{ children }</span>;
 };
 
-export default ButtonGroup;
+export default React.memo( ButtonGroup );
