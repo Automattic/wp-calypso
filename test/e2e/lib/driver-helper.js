@@ -15,40 +15,97 @@ const explicitWaitMS = config.get( 'explicitWaitMS' );
 const by = webdriver.By;
 
 /**
- * Helper utils
+ * A string or regular expression used with the RichLocator object.
+ *
+ * @typedef {string|RegExp} ElementTextQuery
  */
 
+/**
+ * Object containing an actual WebDriver locator and a text to search the
+ * element by.
+ *
+ * @typedef {Object} RichLocator
+ * @property {webdriver.By} locator The element's locator
+ * @property {ElementTextQuery} text The text or regular expression the element should contain
+ */
+
+/**
+ * Stringifies the locator object. Useful for error reporting or logging.
+ *
+ * @param {webdriver.By} locator The element's locator
+ * @returns {string} Printable version of the locator
+ */
 export function getLocatorString( locator ) {
 	return typeof locator === 'function' ? 'by function()' : locator + '';
 }
 
-export function isTextLocator( locator ) {
+/**
+ * Checks if the passed locator argument is actually an object
+ * containing a proper locator and a text to find an element by.
+ *
+ * @see findElementByText
+ * @param {webdriver.By} locator The element's locator
+ * @returns {boolean} Whether it's a text locator or not
+ */
+export function isRichLocator( locator ) {
 	return typeof locator === 'object' && locator !== null && locator.text && locator.locator;
 }
 
 /**
- * Custom "until" conditions
+ * Checks if the text passed to find an element by is valid. Throws an error if
+ * it's not.
+ *
+ * @param {string} text The string argument to check
+ * @returns {ElementTextQuery} The same string if it's a valid element query
  */
-const until = {
-	...webdriver.until,
-	elementLocated( locator ) {
-		if ( isTextLocator( locator ) ) {
-			return this.elementWithTextLocated( ...locator );
-		}
+export function byCheckedText( text ) {
+	if ( typeof text !== 'string' ) {
+		throw new TypeError( `Invalid argument. Expected string, got ${ typeof text } instead.` );
+	}
+	if ( text.length === 0 ) {
+		throw new Error( 'String should not be empty.' );
+	}
 
+	return text;
+}
+
+const until = {
+	...webdriver.until, // Merge with original 'untils' for convenience.
+
+	/**
+	 * Creates a condition that will loop until element is located.
+	 *
+	 * @param {webdriver.By|RichLocator} locator The element's locator
+	 * @returns {webdriver.WebElementCondition} The new condition
+	 */
+	elementLocated( locator ) {
+		if ( isRichLocator( locator ) ) {
+			return this.elementWithTextLocated( locator.locator, locator.text );
+		}
 		return webdriver.until.elementLocated( locator );
 	},
+
+	/**
+	 * Creates a condition that will loop until element with given text is
+	 * located.
+	 *
+	 * @param {webdriver.By} locator The element's locator
+	 * @param {string|RegExp} text The text or regular expression the element should contain
+	 * @returns {webdriver.WebElementCondition} The new condition
+	 */
 	elementWithTextLocated( locator, text ) {
+		const checkedText = byCheckedText( text );
 		const checkedLocator = by.checkedLocator( locator );
 		const locatorStr = getLocatorString( checkedLocator );
 
 		return new WebElementCondition(
-			`for element with text '${ text }' to be located ${ locatorStr }`,
+			`for element with text '${ checkedText }' to be located ${ locatorStr }`,
 			function ( driver ) {
-				return findElementByText( driver, checkedLocator, text );
+				return findElementByText( driver, checkedLocator, checkedText );
 			}
 		);
 	},
+
 	/**
 	 * Creates a condition that will loop until element's aria-disabled attribute
 	 * is not 'true'.
@@ -74,18 +131,34 @@ export async function highlightElement( driver, element ) {
 	}
 }
 
+/**
+ * Finds an element via given locator.
+ *
+ * @param {webdriver.WebDriver} driver The current driver instance
+ * @param {webdriver.By|RichLocator} locator The element's locator
+ * @returns {webdriver.WebElement} The located element
+ */
 export function findElement( driver, locator ) {
-	if ( isTextLocator( locator ) ) {
-		return findElementByText( driver, locator.locator, locator.text );
+	if ( isRichLocator( locator ) ) {
+		return findElementByText( driver, ...locator.locator, locator.text );
 	}
 	return driver.findElement( locator );
 }
 
+/**
+ * Finds an element via given locator and text.
+ *
+ * @param {webdriver.WebDriver} driver The current driver instance
+ * @param {webdriver.By} locator The element's locator
+ * @param {ElementTextQuery} text The element's text
+ * @returns {webdriver.WebElement} The located element
+ */
 export async function findElementByText( driver, locator, text ) {
+	const checkedText = byCheckedText( text );
 	const allElements = await driver.findElements( locator );
 	const filteredElements = await webdriver.promise.filter(
 		allElements,
-		getInnerTextMatcherFunction( text )
+		getInnerTextMatcherFunction( checkedText )
 	);
 
 	return filteredElements[ 0 ];
@@ -93,10 +166,10 @@ export async function findElementByText( driver, locator, text ) {
 
 /**
  * Makes sure that the element is located and enabled before clicking. Will
- * throw error otherwise.
+ * throw an error otherwise.
  *
  * @param {webdriver.WebDriver} driver The current driver instance
- * @param {webdriver.By} locator The element's locator
+ * @param {webdriver.By|RichLocator} locator The element's locator
  * @param {number} [timeout=explicitWaitMS] The wait function's timeout in milliseconds
  * @returns {webdriver.WebElement} The clicked element
  */
