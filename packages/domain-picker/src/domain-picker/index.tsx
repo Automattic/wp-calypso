@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { FunctionComponent, useState, useEffect, Fragment } from 'react';
-import { useSelect } from '@wordpress/data';
 import { times } from 'lodash';
 import { Button, TextControl, Notice } from '@wordpress/components';
 import { Icon, search } from '@wordpress/icons';
@@ -26,20 +25,17 @@ import DomainCategories from '../domain-categories';
 import {
 	PAID_DOMAINS_TO_SHOW,
 	PAID_DOMAINS_TO_SHOW_EXPANDED,
-	DOMAIN_SUGGESTIONS_STORE,
 	domainIsAvailableStatus,
 } from '../constants';
 import { DomainNameExplanationImage } from '../domain-name-explanation/';
 import { ITEM_TYPE_RADIO } from './suggestion-item';
 import type { SUGGESTION_ITEM_TYPE } from './suggestion-item';
+import { getDomainSuggestionsVendor } from '../utils';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {};
 
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 type DomainGroup = 'sub-domain' | 'professional';
@@ -117,6 +113,9 @@ export interface Props {
 
 	/** Callback for when a user clicks "Use a domain I own" item */
 	onUseYourDomainClick?: () => void;
+
+	/** Vendor string for domain suggestions */
+	vendor?: string;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
@@ -126,11 +125,11 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	onExistingSubdomainSelect,
 	quantity = PAID_DOMAINS_TO_SHOW,
 	quantityExpanded = PAID_DOMAINS_TO_SHOW_EXPANDED,
-	onDomainSearchBlur = noop,
+	onDomainSearchBlur,
 	analyticsFlowId,
 	analyticsUiAlgo,
 	initialDomainSearch = '',
-	onSetDomainSearch = noop,
+	onSetDomainSearch,
 	currentDomain,
 	isCheckingDomainAvailability,
 	existingSubdomain,
@@ -141,6 +140,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	areDependenciesLoading = false,
 	orderSubDomainsLast = false,
 	onUseYourDomainClick,
+	vendor = getDomainSuggestionsVendor(),
 } ) => {
 	const { __ } = useI18n();
 	const label = __( 'Search for a domain', __i18n_text_domain__ );
@@ -149,10 +149,6 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	// Keep domain query in local state to allow free editing of the input value while the modal is open
 	const [ domainSearch, setDomainSearch ] = useState< string >( initialDomainSearch );
 	const [ domainCategory, setDomainCategory ] = useState< string | undefined >();
-
-	const domainSuggestionVendor = useSelect( ( select ) =>
-		select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestionVendor()
-	);
 
 	const {
 		allDomainSuggestions,
@@ -220,7 +216,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		uiPosition: number,
 		isRecommended: boolean
 	) => {
-		const fetchAlgo = `/domains/search/${ domainSuggestionVendor }/${ analyticsFlowId }${
+		const fetchAlgo = `/domains/search/${ vendor }/${ analyticsFlowId }${
 			domainCategory ? '/' + domainCategory : ''
 		}`;
 
@@ -236,7 +232,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 	const handleInputChange = ( searchQuery: string ) => {
 		setDomainSearch( searchQuery );
-		onSetDomainSearch( searchQuery );
+		if ( onSetDomainSearch ) {
+			onSetDomainSearch( searchQuery );
+		}
 	};
 
 	// Force blur to close keyboard when submitting the form using Search button on mobile
