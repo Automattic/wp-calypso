@@ -101,6 +101,7 @@ class EmailManagement extends React.Component {
 						brandFont
 						className="email-management__page-heading"
 						headerText={ this.props.translate( 'Email' ) }
+						subHeaderText={ this.props.translate( 'Add a custom email address to your domain.' ) }
 						align="left"
 					/>
 				) }
