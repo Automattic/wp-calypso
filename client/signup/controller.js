@@ -139,13 +139,6 @@ export default {
 						return;
 					}
 
-					// Temporary Experiment testing the new ExPlat client
-					try {
-						dangerouslyGetExperimentAssignment( 'explat_test_aa_calypso_signup' );
-					} catch ( e ) {
-						// Do nothing
-					}
-
 					if (
 						( ! user() || ! user().get() ) &&
 						-1 === context.pathname.indexOf( 'free' ) &&
