@@ -69,9 +69,7 @@ const JetpackComMasterbar: React.FC = () => {
 					<span className="jpcom-masterbar__navbox">
 						<span className="jpcom-masterbar__navinner"></span>
 					</span>
-					<span className="jpcom-masterbar__navlabel">
-						{ isMenuOpen ? null : translate( 'Menu' ) }
-					</span>
+					<span className="jpcom-masterbar__navlabel">{ translate( 'Menu' ) }</span>
 				</Button>
 
 				<ul className={ classNames( 'jpcom-masterbar__nav', { 'is-open': isMenuOpen } ) }>
