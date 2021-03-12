@@ -49,6 +49,13 @@ const until = {
 			}
 		);
 	},
+	/**
+	 * Creates a condition that will loop until element's aria-disabled attribute
+	 * is not 'true'.
+	 *
+	 * @param {webdriver.WebElement} element The element to test
+	 * @returns {webdriver.WebElementCondition} The new condition
+	 */
 	elementIsAriaEnabled( element ) {
 		return new WebElementCondition( 'until element is not aria-disabled', function () {
 			return element
@@ -84,34 +91,42 @@ export async function findElementByText( driver, locator, text ) {
 	return filteredElements[ 0 ];
 }
 
+/**
+ * Makes sure that the element is located and enabled before clicking. Will
+ * throw error otherwise.
+ *
+ * @param {webdriver.WebDriver} driver The current driver instance
+ * @param {webdriver.By} locator The element's locator
+ * @param {number} [timeout=explicitWaitMS] The wait function's timeout in milliseconds
+ * @returns {webdriver.WebElement} The clicked element
+ */
 export async function clickWhenClickable( driver, locator, timeout = explicitWaitMS ) {
 	function wait( condition ) {
 		return driver.wait( condition, timeout );
 	}
 
-	// Wait for the element to be located
-	const element = await wait( until.elementLocated( locator ) );
-	// Wait for the element to be visible
-	await wait( until.elementIsVisible( element ) );
-	// Wait for the element to not be disabled
-	await wait( until.elementIsEnabled( element ) );
-	// Wait for the element to not be aria-disabled
-	await wait( until.elementIsAriaEnabled( element ) );
-
 	try {
-		// Highlight & click the element
+		const element = await wait( until.elementLocated( locator ) );
 		await highlightElement( driver, element );
-		await element.click();
-	} catch ( error ) {
-		// Flaky response back from IE, so assume success and hope for the best
-		if ( global.browserName === 'Internet Explorer' ) {
-			console.log( "WARNING: IE claims the click action failed, but we're proceeding anyway!" );
-		} else {
-			throw error;
-		}
-	}
+		await wait( until.elementIsEnabled( element ) );
+		await wait( until.elementIsAriaEnabled( element ) );
 
-	return element;
+		try {
+			await element.click();
+		} catch ( error ) {
+			// Flaky response back from IE, so assume success and hope for the best
+			if ( global.browserName === 'Internet Explorer' ) {
+				console.log( "WARNING: IE claims the click action failed, but we're proceeding anyway!" );
+			} else {
+				throw error;
+			}
+		}
+
+		return element;
+	} catch ( error ) {
+		error.message = 'Could not click element ' + getLocatorString( locator ) + '\n' + error.message;
+		throw error;
+	}
 }
 
 export function waitTillFocused( driver, selector, pollingOverride, waitOverride ) {
@@ -422,24 +437,23 @@ export function logPerformance( driver ) {
 }
 
 export async function ensureMobileMenuOpen( driver ) {
-	const self = this;
-	const mobileHeaderSelector = by.css( '.section-nav__mobile-header' );
-	await waitUntilLocatedAndVisible( driver, mobileHeaderSelector );
-	return driver
-		.findElement( mobileHeaderSelector )
-		.isDisplayed()
-		.then( ( mobileDisplayed ) => {
-			if ( mobileDisplayed ) {
-				driver
-					.findElement( by.css( '.section-nav' ) )
-					.getAttribute( 'class' )
-					.then( ( classNames ) => {
-						if ( classNames.includes( 'is-open' ) === false ) {
-							self.clickWhenClickable( driver, mobileHeaderSelector );
-						}
-					} );
-			}
-		} );
+	if ( process.env.BROWSERSIZE !== 'mobile' ) {
+		return null;
+	}
+
+	const mobileHeaderLocator = by.css( '.section-nav__mobile-header' );
+	const menuLocator = by.css( '.section-nav' );
+	const openMenuLocator = by.css( '.section-nav.is-open' );
+
+	const menuElement = await waitUntilLocatedAndVisible( driver, menuLocator );
+	const isMenuOpen = await menuElement
+		.getAttribute( 'class' )
+		.then( ( classNames ) => classNames.includes( 'is-open' ) );
+
+	if ( ! isMenuOpen ) {
+		await clickWhenClickable( driver, mobileHeaderLocator );
+		await waitUntilLocatedAndVisible( driver, openMenuLocator );
+	}
 }
 
 export function waitForInfiniteListLoad( driver, elementSelector, { numElements = 10 } = {} ) {
