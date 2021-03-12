@@ -46,7 +46,6 @@ import user from 'calypso/lib/user';
 import getSiteId from 'calypso/state/selectors/get-site-id';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
-import { dangerouslyGetExperimentAssignment } from 'calypso/lib/explat';
 
 /**
  * Constants
