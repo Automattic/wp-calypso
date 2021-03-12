@@ -84,18 +84,18 @@ describe( 'Experiment', () => {
 		const { container, rerender } = render(
 			<Experiment
 				name="experiment_a"
-				treatment="treatment-1"
-				default="default"
-				loading="loading-1"
+				treatmentExperience="treatment-1"
+				defaultExperience="default"
+				loadingExperience="loading-1"
 			/>
 		);
 		expect( container.textContent ).toBe( 'loading-1' );
 		rerender(
 			<Experiment
 				name="experiment_a"
-				treatment="treatment-1"
-				default="default"
-				loading="loading-2"
+				treatmentExperience="treatment-1"
+				defaultExperience="default"
+				loadingExperience="loading-2"
 			/>
 		);
 		expect( container.textContent ).toBe( 'loading-2' );
@@ -104,9 +104,9 @@ describe( 'Experiment', () => {
 		rerender(
 			<Experiment
 				name="experiment_a"
-				treatment="treatment-2"
-				default="default"
-				loading="loading-2"
+				treatmentExperience="treatment-2"
+				defaultExperience="default"
+				loadingExperience="loading-2"
 			/>
 		);
 		expect( container.textContent ).toBe( 'treatment-2' );
@@ -122,7 +122,7 @@ describe( 'Experiment', () => {
 		> ).mockImplementationOnce( () => controllablePromise1.promise );
 
 		const { container, rerender } = render(
-			<Experiment name="experiment_a" treatment="treatment" default="default-1" loading="loading" />
+			<Experiment name="experiment_a" treatmentExperience="treatment" defaultExperience="default-1" loadingExperience="loading" />
 		);
 		expect( container.textContent ).toBe( 'loading' );
 		await actReact( async () =>
@@ -132,9 +132,9 @@ describe( 'Experiment', () => {
 		rerender(
 			<Experiment
 				name="experiment_a"
-				treatment="treatment-2"
-				default="default-2"
-				loading="loading-2"
+				treatmentExperience="treatment-2"
+				defaultExperience="default-2"
+				loadingExperience="loading-2"
 			/>
 		);
 		expect( container.textContent ).toBe( 'default-2' );
