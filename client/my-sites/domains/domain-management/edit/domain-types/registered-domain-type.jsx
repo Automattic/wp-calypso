@@ -110,6 +110,7 @@ class RegisteredDomainType extends React.Component {
 				{
 					components: {
 						domainsLink: domainsLink( DOMAIN_EXPIRATION ),
+						strong: <strong />,
 					},
 				}
 			);

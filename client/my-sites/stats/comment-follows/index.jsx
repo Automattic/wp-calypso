@@ -22,7 +22,6 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 class StatsCommentFollows extends Component {
 	static propTypes = {
-		followList: PropTypes.object,
 		page: PropTypes.number,
 		perPage: PropTypes.number,
 		slug: PropTypes.string,
@@ -48,7 +47,7 @@ class StatsCommentFollows extends Component {
 	};
 
 	render() {
-		const { followList, perPage, translate } = this.props;
+		const { perPage, translate } = this.props;
 
 		return (
 			<Main wideLayout={ true }>
@@ -61,7 +60,6 @@ class StatsCommentFollows extends Component {
 					<HeaderCake onClick={ this.goBack }>{ translate( 'Comments Followers' ) }</HeaderCake>
 					<Followers
 						path="comment-follow-summary"
-						followList={ followList }
 						page={ this.props.page }
 						perPage={ perPage }
 						pageClick={ this.paginationHandler }

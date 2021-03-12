@@ -1,13 +1,14 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	EDITOR_IFRAME_LOADED,
 	EDITOR_START,
 	EDITOR_STOP,
 	POST_SAVE_SUCCESS,
 } from 'calypso/state/action-types';
-import { combineReducers, withoutPersistence, withStorageKey } from 'calypso/state/utils';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 import imageEditor from './image-editor/reducer';
 import videoEditor from './video-editor/reducer';
 import lastDraft from './last-draft/reducer';

@@ -33,7 +33,11 @@ import UpgradeATStep from './step-components/upgrade-at-step';
 import PrecancellationChatButton from './precancellation-chat-button';
 import DowngradeStep from './step-components/downgrade-step';
 import { getName, isRefundable } from 'calypso/lib/purchases';
-import { isGoogleApps, isJetpackPlanSlug, isJetpackProductSlug } from 'calypso/lib/products-values';
+import {
+	isGSuiteOrGoogleWorkspace,
+	isJetpackPlanSlug,
+	isJetpackProductSlug,
+} from 'calypso/lib/products-values';
 import { radioTextOption, radioSelectOption } from './radio-option';
 import {
 	cancellationOptionsForPurchase,
@@ -274,7 +278,7 @@ class CancelPurchaseForm extends React.Component {
 	onSubmit = () => {
 		const { purchase } = this.props;
 
-		if ( ! isGoogleApps( purchase ) ) {
+		if ( ! isGSuiteOrGoogleWorkspace( purchase ) ) {
 			this.setState( {
 				isSubmitting: true,
 			} );
@@ -790,6 +794,8 @@ class CancelPurchaseForm extends React.Component {
 			onClick: this.downgradeClick,
 			isPrimary: true,
 		};
+		const removeText = translate( 'Remove It' );
+		const removingText = translate( 'Removing' );
 		const remove = (
 			<Button
 				disabled={ this.props.disableButtons }
@@ -798,7 +804,7 @@ class CancelPurchaseForm extends React.Component {
 				primary
 				data-e2e-button="remove"
 			>
-				{ this.props.disableButtons ? 'Removing' : 'Remove It' }
+				{ this.props.disableButtons ? removingText : removeText }
 			</Button>
 		);
 

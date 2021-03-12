@@ -49,28 +49,28 @@ exports[`Card should render children 1`] = `
 `;
 
 exports[`CompactCard should have \`compact\` prop 1`] = `
-<Card
+<Memo(Card)
   compact={true}
 />
 `;
 
 exports[`CompactCard should have custom class of \`test__ace\` 1`] = `
-<Card
+<Memo(Card)
   className="test__ace"
   compact={true}
 />
 `;
 
 exports[`CompactCard should render children 1`] = `
-<Card
+<Memo(Card)
   compact={true}
 >
   This is a compact card
-</Card>
+</Memo(Card)>
 `;
 
 exports[`CompactCard should use the card component 1`] = `
-<Card
+<Memo(Card)
   compact={true}
 />
 `;

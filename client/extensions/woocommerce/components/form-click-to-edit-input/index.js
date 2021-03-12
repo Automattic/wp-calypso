@@ -6,13 +6,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
-import { noop, omit } from 'lodash';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+
+const noop = () => {};
 
 class FormClickToEditInput extends Component {
 	static propTypes = {

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isArray, isPlainObject, some, values } from 'lodash';
+import { isPlainObject, some, values } from 'lodash';
 
 /**
  * Checks if the given tree-like structure has any non-empty terminal nodes.
@@ -13,7 +13,7 @@ export const hasNonEmptyLeaves = ( tree ) => {
 	if ( ! tree ) {
 		return false;
 	}
-	if ( isArray( tree ) ) {
+	if ( Array.isArray( tree ) ) {
 		return some( tree, hasNonEmptyLeaves );
 	}
 	if ( isPlainObject( tree ) ) {

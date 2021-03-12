@@ -60,7 +60,7 @@ To find all available entry points, you can refer to the `entry` option in Calyp
 
 ### Starting the node debugger
 
-The `yarn start` command will pass anything set in the `NODE_ARGS` environment variable as an option to the Node command. This means that if you want to start up the debugger on a specific port you can run `NODE_ARGS="--debug=5858" yarn start`. Starting the built-in inspector can also be done by running `NODE_ARGS="--inspect" yarn start`. In either case, if you would like to debug the build process as well, it might be convenient to have the inspector break on the first line and wait for you. In that case, you should also pass in the `--debug-brk` option like so `NODE_ARGS="--inspect --debug-brk" yarn start`.
+You can use the `NODE_OPTIONS` environment variable to pass options to the Node command. This means that if you want to start up the debugger on a specific port you can run `NODE_OPTIONS="--inspect=5858" yarn start`. If you would like to debug the build process as well, it might be convenient to have the inspector break on the first line and wait for you. In that case, you should also pass in the `--inspect-brk` option like so `NODE_OPTIONS="--inspect-brk" yarn start`.
 
 ## Using a portable development environment
 

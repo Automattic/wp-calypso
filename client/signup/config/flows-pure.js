@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -9,6 +8,8 @@ import { translate } from 'i18n-calypso';
  */
 import { isEnabled } from '@automattic/calypso-config';
 import { addQueryArgs } from 'calypso/lib/route';
+
+const noop = () => {};
 
 export function generateFlows( {
 	getSiteDestination = noop,
@@ -243,6 +244,14 @@ export function generateFlows( {
 				'Signup flow for creating an online store with an Atomic site, forked from the design-first flow',
 			lastModified: '2019-11-27',
 		};
+
+		flows[ 'ecommerce-monthly' ] = {
+			steps: [ 'user', 'domains', 'plans-ecommerce-monthly' ],
+			destination: getSignupDestination,
+			description: 'Signup flow for creating an online store with an Atomic site',
+			lastModified: '2021-02-02',
+			showRecaptcha: true,
+		};
 	}
 
 	if ( isEnabled( 'signup/wpcc' ) ) {
@@ -399,6 +408,33 @@ export function generateFlows( {
 		lastModified: '2020-11-30',
 		pageTitle: translate( 'Launch your site' ),
 		providesDependenciesInQuery: [ 'siteSlug' ],
+	};
+
+	flows[ 'business-monthly' ] = {
+		steps: [ 'user', 'domains', 'plans-business-monthly' ],
+		destination: getSignupDestination,
+		description:
+			'Create an account and a blog and then add the business monthly plan to the users cart.',
+		lastModified: '2021-02-02',
+		showRecaptcha: true,
+	};
+
+	flows[ 'premium-monthly' ] = {
+		steps: [ 'user', 'domains', 'plans-premium-monthly' ],
+		destination: getSignupDestination,
+		description:
+			'Create an account and a blog and then add the premium monthly plan to the users cart.',
+		lastModified: '2021-02-02',
+		showRecaptcha: true,
+	};
+
+	flows[ 'personal-monthly' ] = {
+		steps: [ 'user', 'domains', 'plans-personal-monthly' ],
+		destination: getSignupDestination,
+		description:
+			'Create an account and a blog and then add the personal monthly plan to the users cart.',
+		lastModified: '2021-02-02',
+		showRecaptcha: true,
 	};
 
 	return flows;

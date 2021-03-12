@@ -8,6 +8,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { preventWidows } from 'calypso/lib/formatting';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
@@ -16,30 +17,40 @@ import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
 import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
+import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
+import useMaybeSocialProofHeader from 'calypso/my-sites/plans/jetpack-plans/use-maybe-social-proof-header';
 
-// New Year 2021 promotion; runs from Jan 1 00:00 to Jan 18 23:59 UTC automatically.
-// Safe to remove on or after Jan 19.
-import NewYear2021SaleBanner from 'calypso/components/jetpack/new-year-2021-sale-banner';
+const StandardPlansHeader = () => {
+	const headerText =
+		useMaybeSocialProofHeader() ??
+		translate( 'Security, performance, and marketing tools made for WordPress' );
 
-const StandardPlansHeader = () => (
-	<>
-		<FormattedHeader headerText={ translate( 'Plans' ) } align="left" brandFont />
-		<PlansNavigation path={ '/plans' } />
-	</>
-);
-const ConnectFlowPlansHeader = () => (
-	<>
-		<div className="jetpack-plans__heading">
-			<FormattedHeader
-				headerText={ translate( 'Explore our Jetpack plans' ) }
-				subHeaderText={ translate( "Now that you're set up, pick a plan that fits your needs." ) }
-				align="left"
-				brandFont
-			/>
-		</div>
-		<PlansNavigation path={ '/plans' } />
-	</>
-);
+	return (
+		<>
+			<FormattedHeader headerText={ translate( 'Plans' ) } align="left" brandFont />
+			<PlansNavigation path={ '/plans' } />
+			<h2 className="jetpack-plans__pricing-header">{ preventWidows( headerText ) }</h2>
+		</>
+	);
+};
+
+const ConnectFlowPlansHeader = () => {
+	const headerText = useMaybeSocialProofHeader() ?? translate( 'Explore our Jetpack plans' );
+
+	return (
+		<>
+			<div className="jetpack-plans__heading">
+				<FormattedHeader
+					headerText={ headerText }
+					subHeaderText={ translate( "Now that you're set up, pick a plan that fits your needs." ) }
+					align="left"
+					brandFont
+				/>
+			</div>
+			<PlansNavigation path={ '/plans' } />
+		</>
+	);
+};
 
 const PlansHeader = ( { context }: { context: PageJS.Context } ) => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -76,7 +87,7 @@ export default function setJetpackHeader( context: PageJS.Context ) {
 	context.header = (
 		<>
 			<PlansHeader context={ context } />
-			<NewYear2021SaleBanner urlQueryArgs={ context.query } />
+			<IntroPricingBanner />
 		</>
 	);
 }

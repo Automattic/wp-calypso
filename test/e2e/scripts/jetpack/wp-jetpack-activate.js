@@ -22,15 +22,14 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-let driver;
-
-before( function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Jetpack Connection: (${ screenSize }) @jetpack`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = driverManager.startBrowser();
+	} );
 
 	describe( 'Activate Jetpack Plugin:', function () {
 		before( async function () {

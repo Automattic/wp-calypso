@@ -10,12 +10,8 @@ import page from 'page';
 import OAuthLogin from './login';
 import ConnectComponent from './connect';
 import { getToken } from 'calypso/lib/oauth-token';
-import wpcom from 'calypso/lib/wp';
 import config from '@automattic/calypso-config';
 import store from 'store';
-import userFactory from 'calypso/lib/user';
-import Main from 'calypso/components/main';
-import PulsingDot from 'calypso/components/pulsing-dot';
 
 /**
  * Style dependencies
@@ -41,9 +37,9 @@ export default {
 		let authUrl;
 
 		if ( config( 'oauth_client_id' ) ) {
-			const protocol = process.env.PROTOCOL || config( 'protocol' );
-			const host = process.env.HOST || config( 'hostname' );
-			const port = process.env.PORT || config( 'port' );
+			const protocol = config( 'protocol' );
+			const host = config( 'hostname' );
+			const port = config( 'port' );
 			const redirectUri = `${ protocol }://${ host }:${ port }/api/oauth/token`;
 
 			const params = new URLSearchParams( {
@@ -61,36 +57,16 @@ export default {
 		next();
 	},
 
-	// Retrieve token from local storage
-	getToken: function ( context, next ) {
+	// Store token into local storage
+	getToken: function ( context ) {
 		if ( context.hash && context.hash.access_token ) {
 			store.set( 'wpcom_token', context.hash.access_token );
-			wpcom.loadToken( context.hash.access_token );
 		}
 
 		if ( context.hash && context.hash.expires_in ) {
 			store.set( 'wpcom_token_expires_in', context.hash.expires_in );
 		}
 
-		// Extract this into a component...
-		context.primary = (
-			<Main className="auth">
-				<p className="auth__welcome">Loading user...</p>
-				<PulsingDot active />
-			</Main>
-		);
-
-		// Fetch user and redirect to / on success.
-		const user = userFactory();
-		user.fetching = false;
-		user.fetch();
-		user.on( 'change', function () {
-			if ( config.isEnabled( 'devdocs' ) ) {
-				window.location = '/devdocs/welcome';
-			} else {
-				window.location = '/';
-			}
-		} );
-		next();
+		document.location.replace( '/' );
 	},
 };

@@ -91,13 +91,6 @@ class Media extends Component {
 		page( redirect );
 	};
 
-	openDetailsModalForASingleImage = ( image ) => {
-		this.setState( {
-			currentDetail: 0,
-			selectedItems: [ image ],
-		} );
-	};
-
 	openDetailsModalForAllSelected = () => {
 		const { selectedItems } = this.props;
 
@@ -364,6 +357,9 @@ class Media extends Component {
 					brandFont
 					className="media__page-heading"
 					headerText={ translate( 'Media' ) }
+					subHeaderText={ translate(
+						'Manage all the media on your site, including images, video, and more.'
+					) }
 					align="left"
 				/>
 				{ this.showDialog() && (
@@ -414,7 +410,6 @@ class Media extends Component {
 						single={ false }
 						filter={ this.props.filter }
 						source={ this.state.source }
-						onEditItem={ this.openDetailsModalForASingleImage }
 						onViewDetails={ this.openDetailsModalForAllSelected }
 						onDeleteItem={ this.handleDeleteMediaEvent }
 						onSourceChange={ this.handleSourceChange }

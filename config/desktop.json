@@ -14,7 +14,6 @@
 	"features": {
 		"ad-tracking": true,
 		"always_use_logout_url": true,
-		"anchor-fm-dev": false,
 		"async-payments": false,
 		"blogger-plan": false,
 		"catch-js-errors": false,
@@ -31,6 +30,7 @@
 		"domains/gdpr-consent-page": true,
 		"domains/kracken-ui/exact-match-filter": true,
 		"domains/kracken-ui/pagination": true,
+		"email/centralized-home": false,
 		"external-media": true,
 		"external-media/google-photos": true,
 		"external-media/free-photo-library": true,
@@ -78,7 +78,6 @@
 		"me/account/color-scheme-picker": true,
 		"me/my-profile": true,
 		"me/notifications": true,
-		"nav-unification": false,
 		"oauth": true,
 		"p2/p2-plus": true,
 		"plans/personal-plan": true,

@@ -1,12 +1,12 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	combineReducers,
 	keyedReducer,
 	withSchemaValidation,
 	withoutPersistence,
-	withStorageKey,
 } from 'calypso/state/utils';
 import {
 	EMAIL_ACCOUNTS_REQUEST,

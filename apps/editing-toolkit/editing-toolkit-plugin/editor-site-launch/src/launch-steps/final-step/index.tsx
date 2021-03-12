@@ -1,15 +1,17 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React from 'react';
 import classnames from 'classnames';
 import { ThemeProvider } from 'emotion-theming';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { sprintf } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Button, Tip } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import { useSiteDomains, useDomainSuggestion, useDomainSearch, useTitle } from '@automattic/launch';
+import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
+import { useI18n } from '@automattic/react-i18n';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 import {
 	CheckoutStepBody,
@@ -33,12 +35,11 @@ import './styles.scss';
 const TickIcon = <Icon icon={ check } size={ 17 } />;
 
 const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, onPrevStep } ) => {
-	const { domain, plan, LaunchStep, isStepCompleted, isFlowCompleted, planProductId } = useSelect(
+	const { domain, LaunchStep, isStepCompleted, isFlowCompleted, planProductId } = useSelect(
 		( select ) => {
 			const launchStore = select( LAUNCH_STORE );
 			return {
 				domain: launchStore.getSelectedDomain(),
-				plan: launchStore.getSelectedPlan(),
 				LaunchStep: launchStore.getLaunchStep(),
 				isStepCompleted: launchStore.isStepCompleted,
 				isFlowCompleted: launchStore.isFlowCompleted(),
@@ -47,9 +48,13 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 		}
 	);
 
-	const planProduct = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlanProductById( planProductId )
-	);
+	const { __, hasTranslation } = useI18n();
+	const locale = useLocale();
+
+	const [ plan, planProduct ] = useSelect( ( select ) => [
+		select( PLANS_STORE ).getPlanByProductId( planProductId, locale ),
+		select( PLANS_STORE ).getPlanProductById( planProductId ),
+	] );
 
 	const { title } = useTitle();
 	const { siteSubdomain } = useSiteDomains();
@@ -57,6 +62,8 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 	const { domainSearch } = useDomainSearch();
 
 	const { setStep } = useDispatch( LAUNCH_STORE );
+
+	const localizeUrl = useLocalizeUrl();
 
 	const nameSummary = (
 		<div className="nux-launch__summary-item">
@@ -76,10 +83,11 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 							<br />
 							<span className="nux-launch__summary-item__domain-price">
 								{ __( 'Domain Registration', 'full-site-editing' ) }:{ ' ' }
-								{
-									/* translators: %s is the price with currency. Eg: $15/year. */
-									sprintf( __( '%s/year', 'full-site-editing' ), domain.cost )
-								}
+								{ sprintf(
+									// translators: %s is the price with currency. Eg: $15/year
+									__( '%s/year', 'full-site-editing' ),
+									domain.cost
+								) }
 							</span>
 						</>
 					) }
@@ -120,6 +128,19 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 		</div>
 	);
 
+	const fallbackPlanSummaryCostLabelAnnually = __( 'billed annually', 'full-site-editing' );
+	// translators: %s is the cost per year (e.g "billed as 96$ annually")
+	const newPlanSummaryCostLabelAnnually = __(
+		'per month, billed as %s annually',
+		'full-site-editing'
+	);
+	const planSummaryCostLabelAnnually =
+		locale === 'en' || hasTranslation?.( 'per month, billed as %s annually' )
+			? sprintf( newPlanSummaryCostLabelAnnually, planProduct?.annualPrice )
+			: fallbackPlanSummaryCostLabelAnnually;
+
+	const planSummaryCostLabelMonthly = __( 'per month, billed monthly', 'full-site-editing' );
+
 	const planSummary = (
 		<div className="nux-launch__summary-item">
 			{ plan && planProduct && ! plan.isFree ? (
@@ -127,8 +148,8 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 					<p className="nux-launch__summary-item__plan-name">WordPress.com { plan.title }</p>
 					{ __( 'Plan subscription', 'full-site-editing' ) }: { planProduct.price }{ ' ' }
 					{ planProduct.billingPeriod === 'ANNUALLY'
-						? __( 'billed annually', 'full-site-editing' )
-						: __( 'per month, billed monthly', 'full-site-editing' ) }
+						? planSummaryCostLabelAnnually
+						: planSummaryCostLabelMonthly }
 				</>
 			) : (
 				<>
@@ -197,7 +218,12 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 									</ul>
 									<p>
 										{ __( 'Questions?', 'full-site-editing' ) }{ ' ' }
-										<Button isLink href="https://wordpress.com/help/contact" target="_blank">
+										<Button
+											isLink
+											href={ localizeUrl( 'https://wordpress.com/help/contact', locale ) }
+											target="_blank"
+											rel="noopener noreferrer"
+										>
 											{ __( 'Ask a Happiness Engineer', 'full-site-editing' ) }
 										</Button>
 									</p>

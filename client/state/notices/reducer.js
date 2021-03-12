@@ -6,8 +6,9 @@ import { omit, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import { NOTICE_CREATE, NOTICE_REMOVE, ROUTE_SET } from 'calypso/state/action-types';
-import { combineReducers, withoutPersistence, withStorageKey } from 'calypso/state/utils';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 
 export const items = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {

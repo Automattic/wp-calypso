@@ -14,7 +14,7 @@ import Experiment, {
 	DefaultVariation,
 	Variation,
 	LoadingVariations,
-} from 'client/components/experiment';
+} from 'calypso/components/experiment';
 
 function SomeExperiment( props ) {
 	return (

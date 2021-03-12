@@ -14,7 +14,7 @@ import CancelAutoRenewalForm from 'calypso/components/marketing-survey/cancel-au
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	isDomainRegistration,
-	isGoogleApps,
+	isGSuiteOrGoogleWorkspace,
 	isPlan,
 	isTitanMail,
 } from 'calypso/lib/products-values';
@@ -57,7 +57,7 @@ class AutoRenewDisablingDialog extends Component {
 			return 'plan';
 		}
 
-		if ( isGoogleApps( purchase ) || isTitanMail( purchase ) ) {
+		if ( isGSuiteOrGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
 			return 'email';
 		}
 
@@ -136,6 +136,23 @@ class AutoRenewDisablingDialog extends Component {
 						comment:
 							'%(emailProductName)s is the name of an email product, e.g. Email, Titan Mail, Google Workspace. ' +
 							'%(domainName)s is a domain name, e.g. example.com. ' +
+							'%(expiryDate)s is a date string, e.g. May 14, 2020',
+					}
+				);
+			default:
+				return translate(
+					'By canceling auto-renewal, your %(productName)s subscription for %(siteDomain)s will expire on %(expiryDate)s. ' +
+						"When it does, you'll lose access to key features you may be using on your site. " +
+						'To avoid that, turn auto-renewal back on or manually renew your subscription before the expiration date.',
+					{
+						args: {
+							productName: purchase.productName,
+							siteDomain,
+							expiryDate,
+						},
+						comment:
+							'%(productName)s is the name of a WordPress.com product. ' +
+							'%(siteDomain)s is a domain name, e.g. example.com, example.wordpress.com. ' +
 							'%(expiryDate)s is a date string, e.g. May 14, 2020',
 					}
 				);

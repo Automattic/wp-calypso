@@ -33,9 +33,9 @@ export interface OrderSummaryData {
 
 export interface PaymentMethod {
 	id: string;
-	label: React.ReactNode;
-	activeContent: React.ReactNode;
-	inactiveContent: React.ReactNode;
+	label?: React.ReactNode;
+	activeContent?: React.ReactNode;
+	inactiveContent?: React.ReactNode;
 	submitButton: ReactElement;
 	getAriaLabel: ( localize: ( value: string ) => string ) => string;
 }
@@ -46,7 +46,7 @@ export interface LineItem {
 	id: string;
 	type: string;
 	label: string;
-	subLabel?: string;
+	sublabel?: string;
 	amount: LineItemAmount;
 }
 
@@ -98,7 +98,7 @@ export type ReactStandardAction< T = string, P = unknown > = P extends void
 	  }
 	: {
 			type: T;
-			payload: P;
+			payload?: P;
 	  };
 
 export interface CheckoutProviderProps {

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { noop, isNil, has } from 'lodash';
+import { has } from 'lodash';
 import { DateUtils } from 'react-day-picker';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
@@ -30,6 +30,7 @@ import './style.scss';
  * Module variables
  */
 const NO_DATE_SELECTED_VALUE = null;
+const noop = () => {};
 
 export class DateRange extends Component {
 	static propTypes = {
@@ -81,19 +82,21 @@ export class DateRange extends Component {
 			has( this.props, 'lastSelectableDate' ) && this.props.moment( this.props.lastSelectableDate );
 
 		// Clamp start/end dates to ranges (if specified)
-		let startDate = isNil( this.props.selectedStartDate )
-			? NO_DATE_SELECTED_VALUE
-			: this.clampDateToRange( this.props.moment( this.props.selectedStartDate ), {
-					dateFrom: firstSelectableDate,
-					dateTo: lastSelectableDate,
-			  } );
+		let startDate =
+			this.props.selectedStartDate == null
+				? NO_DATE_SELECTED_VALUE
+				: this.clampDateToRange( this.props.moment( this.props.selectedStartDate ), {
+						dateFrom: firstSelectableDate,
+						dateTo: lastSelectableDate,
+				  } );
 
-		let endDate = isNil( this.props.selectedEndDate )
-			? NO_DATE_SELECTED_VALUE
-			: this.clampDateToRange( this.props.moment( this.props.selectedEndDate ), {
-					dateFrom: firstSelectableDate,
-					dateTo: lastSelectableDate,
-			  } );
+		let endDate =
+			this.props.selectedEndDate == null
+				? NO_DATE_SELECTED_VALUE
+				: this.clampDateToRange( this.props.moment( this.props.selectedEndDate ), {
+						dateFrom: firstSelectableDate,
+						dateTo: lastSelectableDate,
+				  } );
 
 		// Ensure start is before end otherwise flip the values
 		if ( startDate && endDate && endDate.isBefore( startDate ) ) {

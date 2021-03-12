@@ -8,7 +8,6 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { loadScript } from '@automattic/load-script';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +19,8 @@ import { isFormDisabled } from 'calypso/state/login/selectors';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class FacebookLoginButton extends Component {
 	// See: https://developers.facebook.com/docs/javascript/reference/FB.init/v2.8

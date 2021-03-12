@@ -91,6 +91,12 @@ const sections = [
 		group: 'me',
 	},
 	{
+		name: 'difm',
+		paths: [ '/me/difm-intake' ],
+		module: 'calypso/me/difm-intake',
+		group: 'me',
+	},
+	{
 		name: 'media',
 		paths: [ '/media' ],
 		module: 'calypso/my-sites/media',
@@ -484,6 +490,12 @@ const sections = [
 		paths: [ '/partner-portal' ],
 		module: 'calypso/jetpack-cloud/sections/partner-portal',
 		group: 'jetpack-cloud',
+	},
+	{
+		name: 'woocommerce-installation',
+		paths: [ '/woocommerce-installation' ],
+		module: 'calypso/my-sites/woocommerce',
+		group: 'woocommerce-installation',
 	},
 ];
 

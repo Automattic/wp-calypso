@@ -329,10 +329,10 @@ In general, it's best to avoid checking the type of a value, and instead just re
 If you really must check the type of a value, however, do the following:
 
 - String: `typeof value === 'string'`. This doesn't work for strings created with `new String( ... )`, however, so if you really must check for those for whatever reason, be sure to do `typeof value === 'string' || value instanceof String` instead.
-- Number: [`Number.isFinite( value )`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isFinite) for finite numbers only, or [`isNumber( value )`](https://lodash.com/docs#isNumber) if you accept infinite numbers as well.
+- Number: [`Number.isFinite( value )`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isFinite) for finite numbers only, or `[ Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY ].includes( value )` if you'd like to check for infinite numbers. (avoid using Lodash's `isNumber`).
 - Boolean: `value === true || value === false` (don't use Lodash's `isBoolean`, as it's incredibly wasteful).
-- Object: [`isPlainObject( value )`](https://lodash.com/docs#isPlainObject).
-- Array: [`Array.isArray( value )`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray).
+- Object: [`isPlainObject( value )`](https://lodash.com/docs#isPlainObject). Try to avoid when possible - we'd like to get rid of Lodash in the long term. In most cases, `typeof value === 'object' && value.constructor === Object` should do the job for plain objects.
+- Array: [`Array.isArray( value )`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray). (avoid using Lodash's `isArray`).
 - null: `value === null`.
 - undefined: `value === undefined`.
 - undefined or null (either): `value == null` or `value === null || value === undefined` (clearer)
@@ -756,7 +756,7 @@ If you are using Sublime Text, you can use the `SublimeLinter-eslint` plugin to 
 Before following these instructions, you'll want to globally install ESLint and related dependencies by running the following command in your terminal:
 
 ```bash
-yarn global add eslint babel-eslint eslint-plugin-react eslint-plugin-wpcalypso
+yarn global add eslint @babel/core @babel/eslint-parser eslint-plugin-react eslint-plugin-wpcalypso
 ```
 
 #### Identifying Spaces with Sublime Text

@@ -21,7 +21,8 @@
 		"entitlements": "./resource/macos/entitlements.mac.plist",
 		"entitlementsInherit": "./resource/macos/entitlements.mac.inherit.plist",
 		"hardenedRuntime": true,
-		"artifactName": "wordpress.com-macOS-app-${version}.${ext}"
+		"artifactName": "wordpress.com-macOS-app-${version}-${arch}.${ext}",
+		"target": [ "zip", "dmg" ]
 	},
 	"dmg": {
 		"title": "WordPress.com Installer",
@@ -39,7 +40,7 @@
 				"type": "file"
 			}
 		],
-		"artifactName": "wordpress.com-macOS-dmg-${version}.${ext}"
+		"artifactName": "wordpress.com-macOS-dmg-${version}-${arch}.${ext}"
 	},
 	"win": {
 		"target": {

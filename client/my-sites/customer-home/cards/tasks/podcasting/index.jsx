@@ -21,7 +21,7 @@ const Podcasting = () => {
 				`Easily turn your blog into a podcast with Anchor — the world's biggest podcasting platform.`
 			) }
 			actionText={ translate( 'Create an Anchor account' ) }
-			actionUrl={ `https://anchor.fm/wordpress` }
+			actionUrl={ `https://anchor.fm/wordpressdotcom` }
 			illustration={ podcastingIllustration }
 			taskId={ TASK_PODCASTING }
 		/>

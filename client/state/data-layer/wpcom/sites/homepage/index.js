@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +13,7 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 
+const noop = () => {};
 const getIsPageOnFront = ( show_on_front ) => {
 	if ( 'page' === show_on_front ) {
 		return true;

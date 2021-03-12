@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import PlansFilterBar from 'calypso/my-sites/plans/jetpack-plans/plans-filter-bar';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { checkout, manageSitePurchase } from 'calypso/my-sites/plans/jetpack-plans/utils';
 import QueryProducts from 'calypso/my-sites/plans/jetpack-plans/query-products';
@@ -21,10 +20,7 @@ import Main from 'calypso/components/main';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import {
-	getGridComponent,
-	showFilterBarInSelector,
-} from 'calypso/my-sites/plans/jetpack-plans/iterations';
+import ProductGrid from './product-grid';
 
 /**
  * Type dependencies
@@ -53,8 +49,6 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	const siteSlugState = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const siteSlug = siteSlugProp || siteSlugState;
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
-
-	const Grid = useMemo( () => getGridComponent(), [] );
 
 	useEffect( () => {
 		setDuration( defaultDuration );
@@ -143,18 +137,12 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 
 			{ header }
 
-			{ showFilterBarInSelector() && (
-				<PlansFilterBar onDurationChange={ trackDurationChange } duration={ currentDuration } />
-			) }
-
-			{ Grid && (
-				<Grid
-					duration={ currentDuration }
-					onSelectProduct={ selectProduct }
-					urlQueryArgs={ urlQueryArgs }
-					{ ...( ! showFilterBarInSelector() && { onDurationChange: trackDurationChange } ) }
-				/>
-			) }
+			<ProductGrid
+				duration={ currentDuration }
+				onSelectProduct={ selectProduct }
+				urlQueryArgs={ urlQueryArgs }
+				onDurationChange={ trackDurationChange }
+			/>
 
 			<QueryProductsList />
 			<QueryProducts />

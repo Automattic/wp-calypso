@@ -23,15 +23,14 @@ const host = dataHelper.getJetpackHost();
 const gutenbergUser =
 	process.env.COBLOCKS_EDGE === 'true' ? 'coBlocksSimpleSiteEdgeUser' : 'gutenbergSimpleSiteUser';
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
 
 	describe( 'Insert a Click to Tweet block: @parallel', function () {
 		step( 'Can log in', async function () {
@@ -63,7 +62,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 			// We need to save the post to get a stable post slug for the block's `url` attribute.
 			// See https://github.com/godaddy-wordpress/coblocks/issues/1663.
 			await gEditorComponent.ensureSaved();
-			return await gEditorComponent.publish( { visit: true, closePanel: false } );
+			return await gEditorComponent.publish( { visit: true } );
 		} );
 
 		step( 'Can see the Click to Tweet block in our published post', async function () {
@@ -213,7 +212,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		} );
 	} );
 
-	describe( 'WPCOM-specific gutter controls: @parallel', async function () {
+	describe( 'WPCOM-specific gutter controls: @parallel', function () {
 		const gutterControlsLocator = By.css(
 			'div[aria-label="Editor settings"] div[aria-label="Gutter"]'
 		);

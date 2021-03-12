@@ -5,7 +5,7 @@ import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
@@ -22,6 +22,8 @@ import isHappychatConnectionUninitialized from 'calypso/state/happychat/selector
 import { initConnection } from 'calypso/state/happychat/connection/actions';
 import { openChat } from 'calypso/state/happychat/ui/actions';
 import { Button } from '@automattic/components';
+
+const noop = () => {};
 
 export class HappychatButton extends Component {
 	static propTypes = {
@@ -54,7 +56,7 @@ export class HappychatButton extends Component {
 	onClick = ( event ) => {
 		if ( this.props.allowMobileRedirect && isMobile() ) {
 			// For mobile clients, happychat will always use the
-			// page componet instead of the sidebar
+			// page component instead of the sidebar.
 			page( '/me/chat' );
 		} else {
 			this.props.openChat();

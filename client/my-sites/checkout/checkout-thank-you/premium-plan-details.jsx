@@ -11,7 +11,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
-import { isPremium, isGoogleApps } from 'calypso/lib/products-values';
+import { isPremium, isGSuiteOrExtraLicenseOrGoogleWorkspace } from 'calypso/lib/products-values';
 import { newPost } from 'calypso/lib/paths';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 
@@ -34,7 +34,7 @@ const PremiumPlanDetails = ( {
 	const translate = useTranslate();
 	const plan = find( sitePlans.data, isPremium );
 	const isPremiumPlan = isPremium( selectedSite.plan );
-	const googleAppsWasPurchased = purchases.some( isGoogleApps );
+	const googleAppsWasPurchased = purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace );
 
 	return (
 		<div>

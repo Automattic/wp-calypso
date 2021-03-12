@@ -2,6 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
+import { useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import type { DomainSuggestions, WPCOMFeatures, Plans } from '@automattic/data-stores';
 import { Title } from '@automattic/onboarding';
@@ -21,6 +22,7 @@ import type {
 } from '../plans-table/types';
 import PlansIntervalToggle from '../plans-interval-toggle';
 import { useSupportedPlans } from '../hooks';
+import { PLANS_STORE } from '../stores';
 
 /**
  * Style dependencies
@@ -70,8 +72,12 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 } ) => {
 	const { __ } = useI18n();
 
+	const selectedPlanBillingPeriod = useSelect(
+		( select ) => select( PLANS_STORE ).getPlanProductById( currentPlanProductId )?.billingPeriod
+	);
+
 	const [ billingPeriod, setBillingPeriod ] = React.useState< Plans.PlanBillingPeriod >(
-		'ANNUALLY'
+		selectedPlanBillingPeriod || 'ANNUALLY'
 	);
 
 	React.useEffect( () => {

@@ -16,6 +16,7 @@ import {
 	mapKeys,
 	merge,
 	pick,
+	omitBy,
 	snakeCase,
 } from 'lodash';
 import debugModule from 'debug';
@@ -122,8 +123,13 @@ class SignupForm extends Component {
 
 	state = {
 		submitting: false,
-		focusPassword: false,
-		focusUsername: false,
+		isFieldDirty: {
+			email: false,
+			username: false,
+			password: false,
+			firstName: false,
+			lastName: false,
+		},
 		form: null,
 		signedUp: false,
 		validationInitialized: false,
@@ -237,6 +243,14 @@ class SignupForm extends Component {
 		}
 	};
 
+	filterUntouchedFieldErrors = ( errorMessages ) => {
+		// Filter out "field is empty" error messages unless the field is 'dirty' (it has been interacted with).
+		return omitBy(
+			errorMessages,
+			( value, key ) => value.hasOwnProperty( 'argument' ) && ! this.state.isFieldDirty[ key ]
+		);
+	};
+
 	validate = ( fields, onComplete ) => {
 		const fieldsForValidation = filter( [
 			'email',
@@ -260,6 +274,12 @@ class SignupForm extends Component {
 			let messages = response.success
 				? {}
 				: mapKeys( response.messages, ( value, key ) => camelCase( key ) );
+
+			// Prevent "field is empty" error messages from displaying prematurely
+			// before the form has been submitted or before the field has been interacted with (is dirty).
+			if ( ! this.state.submitting ) {
+				messages = this.filterUntouchedFieldErrors( messages );
+			}
 
 			forEach( messages, ( fieldError, field ) => {
 				if ( ! formState.isFieldInvalid( this.state.form, field ) ) {
@@ -338,25 +358,17 @@ class SignupForm extends Component {
 
 	handleBlur = ( event ) => {
 		const fieldId = event.target.id;
-		// Ensure that username and password field validation does not trigger prematurely
-		if ( fieldId === 'password' ) {
-			this.setState( { focusPassword: true }, () => {
-				this.validateAndSaveForm();
-			} );
-			return;
-		}
-		if ( fieldId === 'username' ) {
-			this.setState( { focusUsername: true }, () => {
-				this.validateAndSaveForm();
-			} );
-			return;
-		}
+		this.setState( {
+			isFieldDirty: { ...this.state.isFieldDirty, [ fieldId ]: true },
+			submitting: false,
+		} );
 
 		this.validateAndSaveForm();
 	};
 
 	validateAndSaveForm = () => {
 		const data = this.getUserData();
+
 		// When a user moves away from the signup form without having entered
 		// anything do not show error messages, think going to click log in.
 		if ( data.username.length === 0 && data.password.length === 0 && data.email.length === 0 ) {

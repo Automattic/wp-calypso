@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import {
-	SERIALIZE,
 	HAPPYCHAT_OPEN,
 	HAPPYCHAT_MINIMIZING,
 	HAPPYCHAT_BLUR,
@@ -10,7 +9,7 @@ import {
 	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 	HAPPYCHAT_SET_CURRENT_MESSAGE,
 } from 'calypso/state/action-types';
-import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 
 /**
  * Tracks the current message the user has typed into the happychat client
@@ -40,22 +39,30 @@ const lostFocusAtSchema = { type: 'number' };
  * @param {object} action Action payload
  * @returns {object}        Updated state
  */
-export const lostFocusAt = withSchemaValidation( lostFocusAtSchema, ( state = null, action ) => {
-	switch ( action.type ) {
-		case SERIALIZE:
-			// If there's already a timestamp set, use that. Otherwise treat a SERIALIZE as a
-			// "loss of focus" since it represents the state when the browser (and HC) closed.
-			if ( state === null ) {
-				return Date.now();
+export const lostFocusAt = withSchemaValidation(
+	lostFocusAtSchema,
+	withPersistence(
+		( state = null, action ) => {
+			switch ( action.type ) {
+				case HAPPYCHAT_BLUR:
+					return Date.now();
+				case HAPPYCHAT_FOCUS:
+					return null;
 			}
 			return state;
-		case HAPPYCHAT_BLUR:
-			return Date.now();
-		case HAPPYCHAT_FOCUS:
-			return null;
-	}
-	return state;
-} );
+		},
+		{
+			serialize: ( state ) => {
+				// If there's already a timestamp set, use that. Otherwise treat serialization as a
+				// "loss of focus" since it represents the state when the browser (and HC) closed.
+				if ( state === null ) {
+					return Date.now();
+				}
+				return state;
+			},
+		}
+	)
+);
 
 const isOpen = ( state = false, action ) => {
 	switch ( action.type ) {

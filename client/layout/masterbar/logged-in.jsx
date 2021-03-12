@@ -13,7 +13,6 @@ import React from 'react';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import Masterbar from './masterbar';
 import Item from './item';
-import Publish from './publish';
 import Notifications from './notifications';
 import Gravatar from 'calypso/components/gravatar';
 import config from '@automattic/calypso-config';
@@ -40,6 +39,7 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { hasUnseen } from 'calypso/state/reader-ui/seen-posts/selectors';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path.js';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 
 class MasterbarLoggedIn extends React.Component {
 	static propTypes = {
@@ -55,7 +55,7 @@ class MasterbarLoggedIn extends React.Component {
 	};
 
 	handleLayoutFocus = ( currentSection ) => {
-		if ( ! config.isEnabled( 'nav-unification' ) ) {
+		if ( ! this.props.isNavUnificationEnabled ) {
 			this.props.setNextLayoutFocus( 'sidebar' );
 		} else if ( currentSection !== this.props.section ) {
 			// When current section is not focused then open the sidebar.
@@ -165,7 +165,7 @@ class MasterbarLoggedIn extends React.Component {
 			: getStatsPathForTab( 'day', siteSlug );
 
 		let mySitesUrl = domainOnlySite ? domainManagementList( siteSlug ) : homeUrl;
-		if ( config.isEnabled( 'nav-unification' ) && 'sites' === section ) {
+		if ( this.props.isNavUnificationEnabled && 'sites' === section ) {
 			mySitesUrl = '';
 		}
 		return (
@@ -231,13 +231,15 @@ class MasterbarLoggedIn extends React.Component {
 				) }
 				<AsyncLoad require="calypso/my-sites/resume-editing" placeholder={ null } />
 				{ ! domainOnlySite && ! isMigrationInProgress && (
-					<Publish
+					<AsyncLoad
+						require="./publish"
+						placeholder={ null }
 						isActive={ this.isActive( 'post' ) }
 						className="masterbar__item-new"
 						tooltip={ translate( 'Create a New Post' ) }
 					>
 						{ translate( 'Write' ) }
-					</Publish>
+					</AsyncLoad>
 				) }
 				<Item
 					tipTarget="me"
@@ -295,6 +297,7 @@ export default connect(
 			previousPath: getPreviousPath( state ),
 			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
+			isNavUnificationEnabled: isNavUnificationEnabled( state ),
 		};
 	},
 	{ setNextLayoutFocus, recordTracksEvent, updateSiteMigrationMeta }

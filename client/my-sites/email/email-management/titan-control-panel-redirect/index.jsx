@@ -11,6 +11,7 @@ import React from 'react';
  */
 import { Card } from '@automattic/components';
 import EmptyContent from 'calypso/components/empty-content';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchTitanAutoLoginURL } from 'calypso/my-sites/email/email-management/titan-functions';
 import { getTitanMailOrderId, hasTitanMailWithUs } from 'calypso/lib/titan';
 import { getSelectedDomain } from 'calypso/lib/domains';
@@ -29,12 +30,17 @@ import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powe
 class TitanControlPanelRedirect extends React.Component {
 	static propTypes = {
 		// Props
+		context: PropTypes.string,
 		domainName: PropTypes.string.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 
 		// Connected props derived from the props above
 		domain: PropTypes.object,
 		siteId: PropTypes.number,
+
+		// Other props added via connect
+		errorNotice: PropTypes.function,
+		translate: PropTypes.function,
 	};
 
 	componentDidMount() {
@@ -58,18 +64,20 @@ class TitanControlPanelRedirect extends React.Component {
 		}
 
 		this._fetchTriggered = true;
-		const { domain, translate } = this.props;
+		const { context, domain, translate } = this.props;
 
-		fetchTitanAutoLoginURL( getTitanMailOrderId( domain ) ).then( ( { error, loginURL } ) => {
-			if ( error ) {
-				this._fetchTriggered = false;
-				this.props.errorNotice(
-					error ?? translate( 'An unknown error occurred. Please try again later.' )
-				);
-			} else {
-				window.location = loginURL;
+		fetchTitanAutoLoginURL( getTitanMailOrderId( domain ), context ).then(
+			( { error, loginURL } ) => {
+				if ( error ) {
+					this._fetchTriggered = false;
+					this.props.errorNotice(
+						error ?? translate( 'An unknown error occurred. Please try again later.' )
+					);
+				} else {
+					window.location = loginURL;
+				}
 			}
-		} );
+		);
 	}
 
 	render() {
@@ -92,15 +100,20 @@ class TitanControlPanelRedirect extends React.Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const site = getSiteBySlug( state, ownProps.siteSlug );
-	const siteId = site?.ID;
-	return {
-		domain: getSelectedDomain( {
-			domains: getDomainsBySiteId( state, siteId ),
-			selectedDomainName: ownProps.domainName,
-			isSiteRedirect: false,
-		} ),
-		siteId,
-	};
-} )( localize( TitanControlPanelRedirect ) );
+export default connect(
+	( state, ownProps ) => {
+		const site = getSiteBySlug( state, ownProps.siteSlug );
+		const siteId = site?.ID;
+		return {
+			domain: getSelectedDomain( {
+				domains: getDomainsBySiteId( state, siteId ),
+				selectedDomainName: ownProps.domainName,
+				isSiteRedirect: false,
+			} ),
+			siteId,
+		};
+	},
+	{
+		errorNotice,
+	}
+)( localize( TitanControlPanelRedirect ) );

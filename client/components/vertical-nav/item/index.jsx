@@ -4,7 +4,6 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -17,6 +16,8 @@ import Gridicon from 'calypso/components/gridicon';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class VerticalNavItem extends Component {
 	static propTypes = {

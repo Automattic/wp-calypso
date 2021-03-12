@@ -10,13 +10,11 @@ import deepFreeze from 'deep-freeze';
 import reducer, { errors, queries, selectedItems, transientItems, fetching } from '../reducer';
 import MediaQueryManager from 'calypso/lib/query-manager/media';
 import {
-	DESERIALIZE,
 	MEDIA_DELETE,
 	MEDIA_RECEIVE,
 	MEDIA_REQUEST,
 	MEDIA_REQUEST_FAILURE,
 	MEDIA_REQUEST_SUCCESS,
-	SERIALIZE,
 } from 'calypso/state/action-types';
 import {
 	changeMediaSource,
@@ -439,12 +437,10 @@ describe( 'reducer', () => {
 		};
 		const anotherSiteId = 87654321;
 		const mediaId = 42;
+		const transientMediaId = 'media-32';
 		const mediaItem = {
 			ID: [ mediaId ],
 		};
-		const baseState = deepFreeze( {
-			[ siteId ]: [ mediaId ],
-		} );
 
 		test( 'should default to an empty object', () => {
 			const state = selectedItems( undefined, {} );
@@ -516,11 +512,11 @@ describe( 'reducer', () => {
 
 		test( 'should deselect any transient media item after its corresponding media was successfully uploaded', () => {
 			const state = {
-				[ site.ID ]: [ 1, mediaId, 2 ],
+				[ site.ID ]: [ 1, transientMediaId, 2 ],
 			};
 			const result = selectedItems(
 				deepFreeze( state ),
-				successMediaItemRequest( siteId, mediaId )
+				successMediaItemRequest( siteId, transientMediaId )
 			);
 
 			expect( result ).to.deep.eql( {
@@ -537,18 +533,6 @@ describe( 'reducer', () => {
 			expect( result ).to.deep.eql( {
 				[ site.ID ]: [ mediaId ],
 			} );
-		} );
-
-		test( 'should never persist state', () => {
-			const state = selectedItems( baseState, { type: SERIALIZE } );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should never load persisted state', () => {
-			const state = selectedItems( baseState, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 
@@ -832,18 +816,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.deep.eql( state2 );
-		} );
-
-		test( 'should never persist state', () => {
-			const state = fetching( deepFreeze( state1 ), { type: SERIALIZE } );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should never load persisted state', () => {
-			const state = fetching( deepFreeze( state1 ), { type: DESERIALIZE } );
-
-			expect( state ).to.eql( {} );
 		} );
 
 		test( 'should set the next page handle', () => {

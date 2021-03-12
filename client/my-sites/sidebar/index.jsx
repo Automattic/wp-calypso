@@ -54,8 +54,8 @@ import {
 	isJetpackSite,
 	canCurrentUserUseEarn,
 	getSiteOption,
-	canCurrentUserUseCalypsoStore,
 	canCurrentUserUseWooCommerceCoreStore,
+	getSiteWoocommerceUrl,
 } from 'calypso/state/sites/selectors';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
 import getSiteTaskList from 'calypso/state/selectors/get-site-task-list';
@@ -90,7 +90,7 @@ import { isUnderEmailManagementAll } from 'calypso/my-sites/email/paths';
 import JetpackSidebarMenuItems from 'calypso/components/jetpack/sidebar/menu-items/calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
-import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
+import { getUrlParts, getUrlFromParts, addQueryArgs } from 'calypso/lib/url';
 import { isP2PlusPlan } from 'calypso/lib/plans';
 
 /**
@@ -694,8 +694,8 @@ export class MySitesSidebar extends Component {
 			translate,
 			site,
 			siteSuffix,
-			canUserUseCalypsoStore,
 			canUserUseWooCommerceCoreStore,
+			isSiteWpcomStore,
 		} = this.props;
 
 		if ( ! site ) {
@@ -711,7 +711,11 @@ export class MySitesSidebar extends Component {
 			// So, we'll just continue to change the link here as we have been doing.
 			experience = 'wpadmin-woocommerce-core';
 			storeLink = site.options.admin_url + 'admin.php?page=wc-admin';
-		} else if ( ! canUserUseCalypsoStore ) {
+		} else {
+			return null;
+		}
+
+		if ( ! isSiteWpcomStore && isBusiness( site.plan ) ) {
 			return null;
 		}
 
@@ -729,7 +733,6 @@ export class MySitesSidebar extends Component {
 				},
 			}
 		);
-		const isCalypsoStoreDeprecated = isEnabled( 'woocommerce/store-deprecated' );
 
 		return (
 			<SidebarItem
@@ -745,7 +748,7 @@ export class MySitesSidebar extends Component {
 				forceInternalLink
 				className="sidebar__store"
 			>
-				{ isCalypsoStoreDeprecated && isBusiness( site.plan ) && (
+				{ isBusiness( site.plan ) && (
 					<InfoPopover
 						className="sidebar__store-tooltip"
 						position="bottom right"
@@ -759,30 +762,29 @@ export class MySitesSidebar extends Component {
 	}
 
 	woocommerce() {
-		const { site, canUserUseWooCommerceCoreStore, siteSuffix, isSiteWpcomStore } = this.props;
+		const {
+			site,
+			canUserUseWooCommerceCoreStore,
+			siteSuffix,
+			isSiteWpcomStore,
+			woocommerceUrl,
+		} = this.props;
 
 		if ( ! site ) {
 			return null;
 		}
 
-		const isCalypsoStoreDeprecatedOrRemoved =
-			isEnabled( 'woocommerce/store-deprecated' ) || isEnabled( 'woocommerce/store-removed' );
-
-		if (
-			! isCalypsoStoreDeprecatedOrRemoved ||
-			! isBusiness( site.plan ) ||
-			! canUserUseWooCommerceCoreStore
-		) {
+		if ( ! isBusiness( site.plan ) || ! canUserUseWooCommerceCoreStore ) {
 			// Right now, we only use the "WooCommerce" label for Business plan sites.
 			// eCommerce sites continue to use the "Store" label for now
 			// (see handling in `store()` above.
 			return null;
 		}
 
-		let storeLink = site.options.admin_url + 'admin.php?page=wc-admin&from-calypso';
+		let storeLink = woocommerceUrl;
 		if ( ! isSiteWpcomStore ) {
-			// Navigate to Store UI for installation.
-			storeLink = '/store' + siteSuffix + '?redirect_after_install';
+			// Navigate to installation.
+			storeLink = '/woocommerce-installation' + siteSuffix;
 		}
 
 		return (
@@ -942,7 +944,11 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		let adminUrl = site.options.admin_url;
+		// `from` param is used by WP Admin on Atomic sites for disabling Nav Unification in that context. Can be removed after rolling Nav Unification out to 100% of users.
+		let adminUrl = addQueryArgs(
+			{ from: 'calypso-old-menu', calypsoify: 0 },
+			site.options.admin_url
+		);
 
 		if ( this.props.isJetpack && ! this.props.isAtomicSite && ! this.props.isVip ) {
 			const urlParts = getUrlParts( site.options.admin_url + 'admin.php' );
@@ -1164,7 +1170,6 @@ function mapStateToProps( state ) {
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
 		canUserManagePlugins: canCurrentUserManagePlugins( state ),
-		canUserUseCalypsoStore: canCurrentUserUseCalypsoStore( state, siteId ),
 		canUserUseWooCommerceCoreStore: canCurrentUserUseWooCommerceCoreStore( state, siteId ),
 		canUserUseEarn: canCurrentUserUseEarn( state, siteId ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
@@ -1210,6 +1215,7 @@ function mapStateToProps( state ) {
 		sitePlanSlug: getSitePlanSlug( state, siteId ),
 		onboardingUrl: getOnboardingUrl( state ),
 		isSiteWpcomStore: getSiteOption( state, siteId, 'is_wpcom_store' ), // 'is_automated_transfer' && 'woocommerce_is_active'
+		woocommerceUrl: getSiteWoocommerceUrl( state, siteId ),
 	};
 }
 

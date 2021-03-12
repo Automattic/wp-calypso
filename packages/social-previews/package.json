@@ -43,15 +43,17 @@
 		"@wordpress/components": "^12.0.1",
 		"@wordpress/i18n": "^3.17.0",
 		"classnames": "^2.2.6",
-		"lodash": "^4.17.20",
+		"lodash": "^4.17.21",
 		"moment": "^2.26.0",
 		"prop-types": "^15.7.2"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "^7.0.0",
 		"enzyme": "^3.11.0",
+		"jest": "^26.4.0",
 		"react": "^16.12.0",
-		"react-dom": "^16.12.0"
+		"react-dom": "^16.12.0",
+		"webpack": "^5.24.4"
 	},
 	"peerDependencies": {
 		"react": "^16.12.0"

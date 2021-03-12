@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debugModule from 'debug';
-import { noop, isFunction } from 'lodash';
+import { isFunction } from 'lodash';
 import page from 'page';
 import { v4 as uuid } from 'uuid';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -29,6 +29,7 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 const debug = debugModule( 'calypso:web-preview' );
+const noop = () => {};
 
 export class WebPreviewContent extends Component {
 	previewId = uuid();

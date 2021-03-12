@@ -15,13 +15,17 @@ export default function PlanFeaturesItem( {
 	description,
 	hideInfoPopover,
 	hideGridicon = false,
+	availableForCurrentPlan = true,
 } ) {
 	const isMobile = useMobileBreakpoint();
 
 	return (
 		<div className="plan-features__item">
-			{ ! hideGridicon && (
+			{ ! hideGridicon && availableForCurrentPlan && (
 				<Gridicon className="plan-features__item-checkmark" size={ 18 } icon="checkmark" />
+			) }
+			{ ! hideGridicon && ! availableForCurrentPlan && (
+				<Gridicon className="plan-features__item-unavailable" size={ 18 } icon="cross" />
 			) }
 			{ children }
 			{ hideInfoPopover ? null : (

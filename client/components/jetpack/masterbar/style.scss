@@ -30,17 +30,13 @@
 
 	.masterbar__item-title {
 		flex: 1 1 auto;
+		align-self: center;
+
 		padding-left: 16px;
-		font-size: $font-body;
+
+		color: var( --color-neutral-80 );
 
 		text-transform: none;
-		font-weight: 400;
-
-		.masterbar__item-content {
-			margin-top: 2px;
-			line-height: normal;
-			color: var( --color-neutral-80 );
-		}
 	}
 
 	.masterbar__item-me {

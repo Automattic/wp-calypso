@@ -11,6 +11,7 @@ import classNames from 'classnames';
  */
 import { playtime } from 'calypso/lib/media/utils';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 
 class EditorMediaModalDetailFileInfo extends React.Component {
 	static displayName = 'EditorMediaModalDetailFileInfo';
@@ -99,6 +100,23 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 		);
 	};
 
+	renderVideoPressShortcode = () => {
+		const videopressGuid = this.getItemValue( 'videopress_guid' );
+
+		if ( ! videopressGuid ) {
+			return;
+		}
+
+		return (
+			<tr>
+				<th>{ this.props.translate( 'Shortcode' ) }</th>
+				<td>
+					<ClipboardButtonInput value={ '[wpvideo ' + videopressGuid + ']' } />
+				</td>
+			</tr>
+		);
+	};
+
 	render() {
 		const classes = classNames( 'editor-media-modal-detail__file-info', {
 			'is-loading': ! this.props.item,
@@ -120,6 +138,7 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 					{ this.renderFileSize() }
 					{ this.renderDimensions() }
 					{ this.renderDuration() }
+					{ this.renderVideoPressShortcode() }
 					<tr>
 						<th>{ this.props.translate( 'Upload Date' ) }</th>
 						<td>{ this.getItemValue( 'date' ) }</td>

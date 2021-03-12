@@ -10,7 +10,7 @@
  * IMPORTANT: When adding to this file please also add the source file in a comment.
  */
 
-.theme-default .is-nav-unification { // excludes theme-jetpack-cloud.
+.theme-default.is-nav-unification { // excludes theme-jetpack-cloud.
 	// breakpoint used in wp-admin
 	@media only screen and ( min-width: 782px ) {
 		// client/assets/stylesheets/shared/_variables.scss
@@ -128,7 +128,7 @@
 	// breakpoint used in wp-admin
 	@media only screen and ( max-width: 782px ) {
 		// client/layout/style.scss
-		&.layout.focus-content .layout__secondary {
+		.layout.focus-content .layout__secondary {
 			transform: translateX( -100% );
 			padding: 71px 24px 24px;
 		}
@@ -164,5 +164,19 @@
 		.masterbar__item-bubble {
 			left: calc( 50% - 14px );
 		}
+	}
+}
+
+/**
+ * Color scheme specific styles
+ *
+ * Nav unification introduces changes that require modifications to existing color schemes.
+ */
+
+// Ensure sidebar is visually separate from the content in the Contrast color scheme
+// client/layout/style.scss
+.theme-default.is-contrast.is-nav-unification {
+	.layout__secondary {
+		outline: 1px solid var( --color-sidebar-border );
 	}
 }

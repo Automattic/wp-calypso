@@ -14,7 +14,10 @@ import { isFreePlan } from 'calypso/lib/plans';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getHttpData } from 'calypso/state/data-layer/http-data';
 import { requestActivityLogs, getRequestActivityLogsId } from 'calypso/state/data-getters';
-import { siteHasBackupProductPurchase } from 'calypso/state/purchases/selectors';
+import {
+	siteHasBackupProductPurchase,
+	siteHasScanProductPurchase,
+} from 'calypso/state/purchases/selectors';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ActivityCardList from 'calypso/components/activity-card-list';
@@ -54,9 +57,12 @@ const ActivityLogV2: FunctionComponent = () => {
 	const siteHasBackupPurchase = useSelector(
 		( state ) => siteId && siteHasBackupProductPurchase( state, siteId )
 	);
+	const siteHasScanPurchase = useSelector(
+		( state ) => siteId && siteHasScanProductPurchase( state, siteId )
+	);
 	const settingsUrl = useSelector( ( state ) => getSettingsUrl( state, siteId, 'general' ) );
 
-	const showUpgrade = siteIsOnFreePlan && ! siteHasBackupPurchase;
+	const showUpgrade = siteIsOnFreePlan && ! siteHasBackupPurchase && ! siteHasScanPurchase;
 	const showFilter = ! showUpgrade;
 
 	const jetpackCloudHeader = showUpgrade ? (

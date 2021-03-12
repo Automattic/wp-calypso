@@ -17,7 +17,6 @@ import {
 	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
-	useLineItems,
 	usePaymentMethod,
 	useSelect,
 	useTotal,
@@ -116,8 +115,6 @@ export default function WPCheckout( {
 	getItemVariants,
 	responseCart,
 	addItemToCart,
-	subtotal,
-	credits,
 	isCartPendingUpdate,
 	showErrorMessageBriefly,
 	isLoggedOutCart,
@@ -130,7 +127,6 @@ export default function WPCheckout( {
 	const activePaymentMethod = usePaymentMethod();
 	const onEvent = useEvents();
 
-	const [ items ] = useLineItems();
 	const areThereDomainProductsInCart =
 		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
 	const isGSuiteInCart = hasGoogleApps( responseCart );
@@ -189,7 +185,10 @@ export default function WPCheckout( {
 		}
 
 		if ( contactDetailsType === 'domain' ) {
-			const validationResult = await getDomainValidationResult( items, contactInfo );
+			const validationResult = await getDomainValidationResult(
+				responseCart.products,
+				contactInfo
+			);
 			debug( 'validating contact details result', validationResult );
 			handleContactValidationResult( {
 				recordEvent: onEvent,
@@ -200,7 +199,10 @@ export default function WPCheckout( {
 			} );
 			return isContactValidationResponseValid( validationResult, contactInfo );
 		} else if ( contactDetailsType === 'gsuite' ) {
-			const validationResult = await getGSuiteValidationResult( items, contactInfo );
+			const validationResult = await getGSuiteValidationResult(
+				responseCart.products,
+				contactInfo
+			);
 			debug( 'validating contact details result', validationResult );
 			handleContactValidationResult( {
 				recordEvent: onEvent,
@@ -232,11 +234,17 @@ export default function WPCheckout( {
 		}
 
 		if ( contactDetailsType === 'domain' ) {
-			const validationResult = await getDomainValidationResult( items, contactInfo );
+			const validationResult = await getDomainValidationResult(
+				responseCart.products,
+				contactInfo
+			);
 			debug( 'validating contact details result', validationResult );
 			return isContactValidationResponseValid( validationResult, contactInfo );
 		} else if ( contactDetailsType === 'gsuite' ) {
-			const validationResult = await getGSuiteValidationResult( items, contactInfo );
+			const validationResult = await getGSuiteValidationResult(
+				responseCart.products,
+				contactInfo
+			);
 			debug( 'validating contact details result', validationResult );
 			return isContactValidationResponseValid( validationResult, contactInfo );
 		}
@@ -428,11 +436,7 @@ export default function WPCheckout( {
 					<CheckoutStep
 						stepId="payment-method-step"
 						activeStepContent={
-							<PaymentMethodStep
-								activeStepContent={ paymentMethodStep.activeStepContent }
-								subtotal={ subtotal }
-								credits={ credits }
-							/>
+							<PaymentMethodStep activeStepContent={ paymentMethodStep.activeStepContent } />
 						}
 						completeStepContent={ paymentMethodStep.completeStepContent }
 						titleContent={ paymentMethodStep.titleContent }

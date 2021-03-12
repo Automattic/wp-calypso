@@ -14,7 +14,6 @@ import {
 } from 'calypso/state/action-types';
 import { normalizeSettings } from './utils';
 
-import 'calypso/state/data-layer/wpcom/sites/homepage';
 import 'calypso/state/site-settings/init';
 import 'calypso/state/ui/init';
 

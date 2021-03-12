@@ -47,7 +47,12 @@ export default {
 	},
 
 	emailManagementManageTitanAccount( pageContext, next ) {
-		pageContext.primary = <TitanManagementIframe domainName={ pageContext.params.domain } />;
+		pageContext.primary = (
+			<TitanManagementIframe
+				domainName={ pageContext.params.domain }
+				context={ pageContext.query.context }
+			/>
+		);
 
 		next();
 	},
@@ -67,6 +72,7 @@ export default {
 			<TitanControlPanelRedirect
 				domainName={ pageContext.params.domain }
 				siteSlug={ pageContext.params.site }
+				context={ pageContext.query.context }
 			/>
 		);
 

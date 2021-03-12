@@ -789,15 +789,17 @@ Undocumented.prototype.getTitanDetailsForIncomingRedirect = function ( mode, jwt
 /**
  * Retrieves the auto login link to Titan's control panel.
  *
- * @param orderId the Titan order ID
+ * @param emailAccountId The email account ID
+ * @param context Optional context enum to launch into a specific part of the control panel
  * @param fn The callback function
  */
-Undocumented.prototype.getTitanControlPanelAutoLoginURL = function ( orderId, fn ) {
+Undocumented.prototype.getTitanControlPanelAutoLoginURL = function ( emailAccountId, context, fn ) {
 	return this.wpcom.req.get(
 		{
-			path: `/emails/titan/${ encodeURIComponent( orderId ) }/control-panel-auto-login-url`,
+			path: `/emails/titan/${ encodeURIComponent( emailAccountId ) }/control-panel-auto-login-url`,
 			apiNamespace: 'wpcom/v2',
 		},
+		{ context },
 		fn
 	);
 };
@@ -805,15 +807,17 @@ Undocumented.prototype.getTitanControlPanelAutoLoginURL = function ( orderId, fn
 /**
  * Retrieves the URL to embed Titan's control panel in an iframe.
  *
- * @param orderId the Titan order ID
+ * @param emailAccountId The email account ID
+ * @param context Optional context enum to launch into a specific part of the control panel
  * @param fn The callback function
  */
-Undocumented.prototype.getTitanControlPanelIframeURL = function ( orderId, fn ) {
+Undocumented.prototype.getTitanControlPanelIframeURL = function ( emailAccountId, context, fn ) {
 	return this.wpcom.req.get(
 		{
-			path: `/emails/titan/${ encodeURIComponent( orderId ) }/control-panel-iframe-url`,
+			path: `/emails/titan/${ encodeURIComponent( emailAccountId ) }/control-panel-iframe-url`,
 			apiNamespace: 'wpcom/v2',
 		},
+		{ context },
 		fn
 	);
 };
@@ -958,6 +962,14 @@ Undocumented.prototype.getStoredCards = function ( fn ) {
 Undocumented.prototype.getPaymentMethods = function ( query, fn ) {
 	debug( '/me/payment-methods query', { query } );
 	return this.wpcom.req.get( '/me/payment-methods', query, fn );
+};
+
+/**
+ * Get a list of the user's allowed payment methods
+ */
+Undocumented.prototype.getAllowedPaymentMethods = function () {
+	debug( '/me/allowed-payment-methods query' );
+	return this.wpcom.req.get( { path: '/me/allowed-payment-methods' } );
 };
 
 /**
@@ -1285,15 +1297,7 @@ Undocumented.prototype.transactions = function ( data, fn ) {
 };
 
 Undocumented.prototype.updateCreditCard = function ( params, fn ) {
-	const data = pick( params, [
-		'country',
-		'zip',
-		'month',
-		'year',
-		'name',
-		'payment_partner',
-		'paygate_token',
-	] );
+	const data = pick( params, [ 'payment_partner', 'paygate_token' ] );
 	return this.wpcom.req.post( '/upgrades/' + params.purchaseId + '/update-credit-card', data, fn );
 };
 
@@ -2623,14 +2627,57 @@ Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function (
 };
 
 /**
- * Request the Partner Portal partner and it's keys for the current WPCOM user.
+ * Look for a site belonging to the currently logged in user that matches the
+ * anchor parameters specified.
+ *
+ * @param anchorFmPodcastId {string | null}  Example: 22b6608
+ * @param anchorFmEpisodeId {string | null}  Example: e324a06c-3148-43a4-85d8-34c0d8222138
+ * @param anchorFmSpotifyUrl {string | null} Example: https%3A%2F%2Fopen.spotify.com%2Fshow%2F6HTZdaDHjqXKDE4acYffoD%3Fsi%3DEVfDYETjQCu7pasVG5D73Q
+ * @param anchorFmSite {string | null} Example: 181129564
+ * @param anchorFmPost {string | null} Example: 5
+ * @returns {Promise} A promise
+ *    The promise should resolve to a json object containing ".location" key as {string|false} type.
+ *    False - There were no matching sites detected, the user should create a new one.
+ *    String - The URL to redirect the user to, to edit a new or existing post on that site.
+ */
+Undocumented.prototype.getMatchingAnchorSite = function (
+	anchorFmPodcastId,
+	anchorFmEpisodeId,
+	anchorFmSpotifyUrl,
+	anchorFmSite,
+	anchorFmPost
+) {
+	const queryParts = {
+		podcast: anchorFmPodcastId,
+		episode: anchorFmEpisodeId,
+		spotify_url: anchorFmSpotifyUrl,
+		site: anchorFmSite,
+		post: anchorFmPost,
+	};
+	Object.keys( queryParts ).forEach( ( k ) => {
+		if ( queryParts[ k ] === null ) {
+			delete queryParts[ k ];
+		}
+	} );
+	return this.wpcom.req.get(
+		{
+			path: '/anchor',
+			method: 'GET',
+			apiNamespace: 'wpcom/v2',
+		},
+		queryParts
+	);
+};
+
+/**
+ * Records the interest of the user for the DIFM upsell offer if they click Accept on the offer page. Check pcbrnV-Y3-p2.
  *
  * @returns {Promise} A promise
  */
-Undocumented.prototype.getJetpackPartnerPortalPartner = function () {
+Undocumented.prototype.saveDifmInterestForUser = function () {
 	return this.wpcom.req.get( {
 		apiNamespace: 'wpcom/v2',
-		path: '/jetpack-licensing/partner',
+		path: '/difm/interested',
 	} );
 };
 

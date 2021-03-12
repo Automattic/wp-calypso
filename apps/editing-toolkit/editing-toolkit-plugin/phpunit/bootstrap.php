@@ -8,7 +8,7 @@
  */
 
 // Require composer dependencies.
-require_once dirname( dirname( __FILE__ ) ) . '/vendor/autoload.php';
+require_once dirname( __DIR__ ) . '/vendor/autoload.php';
 
 $_tests_dir = getenv( 'WP_PHPUNIT__DIR' );
 

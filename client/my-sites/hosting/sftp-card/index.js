@@ -4,7 +4,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -49,6 +48,7 @@ import './style.scss';
 const FILEZILLA_URL = 'https://filezilla-project.org/';
 const SFTP_URL = 'sftp.wp.com';
 const SFTP_PORT = 22;
+const noop = () => {};
 
 export const SftpCard = ( {
 	translate,

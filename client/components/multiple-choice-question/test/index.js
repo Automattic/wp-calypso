@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import React from 'react';
 import renderer from 'react-test-renderer';
 
@@ -9,6 +8,8 @@ import renderer from 'react-test-renderer';
  * Internal dependencies
  */
 import MultipleChoiceQuestion from '../';
+
+const noop = () => {};
 
 describe( 'MultipleChoiceQuestion', () => {
 	test( 'should render with the minimum required properties ( plus extra prop to guarantee order )', () => {

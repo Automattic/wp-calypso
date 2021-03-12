@@ -13,7 +13,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { useSiteDomains } from '../../hooks';
+import { useSiteDomains, useWillRedirectAfterSuccess } from '../../hooks';
 import Confetti from './confetti';
 import LaunchContext from '../../context';
 import { LAUNCH_STORE, SITE_STORE } from '../../stores';
@@ -23,21 +23,28 @@ import './style.scss';
 // Success is shown when the site is launched but also while the site is still launching.
 // This view is technically going to be the selected view in the modal even while the user goes through the checkout flow (which is rendered on top of this view).
 const Success: React.FunctionComponent = () => {
-	const { redirectTo, siteId } = React.useContext( LaunchContext );
+	const { redirectTo, siteId, getCurrentLaunchFlowUrl } = React.useContext( LaunchContext );
 
-	const isSiteLaunching = useSelect( ( select ) => select( SITE_STORE ).isSiteLaunching( siteId ) );
+	const isSiteLaunching = useSelect(
+		( select ) => select( SITE_STORE ).isSiteLaunching( siteId ),
+		[]
+	);
 
-	const {
-		unsetModalDismissible,
-		hideModalTitle,
-		closeFocusedLaunch,
-		disablePersistentSuccessView,
-	} = useDispatch( LAUNCH_STORE );
+	const isSelectedPlanPaid = useSelect(
+		( select ) => select( LAUNCH_STORE ).isSelectedPlanPaid(),
+		[]
+	);
+
+	const { unsetModalDismissible, hideModalTitle, closeFocusedLaunch } = useDispatch( LAUNCH_STORE );
 
 	const { siteSubdomain, sitePrimaryDomain } = useSiteDomains();
 
 	const [ displayedSiteUrl, setDisplayedSiteUrl ] = React.useState( '' );
 	const [ hasCopied, setHasCopied ] = React.useState( false );
+
+	// if the user has an ecommerce plan or they're using focused launch from wp-admin
+	// they will be automatically redirected to /checkout, in which case the CTAs are not needed
+	const willUserBeRedirectedAutomatically = useWillRedirectAfterSuccess();
 
 	React.useEffect( () => {
 		setDisplayedSiteUrl( `https://${ sitePrimaryDomain?.domain }` );
@@ -51,28 +58,38 @@ const Success: React.FunctionComponent = () => {
 	}, [ unsetModalDismissible, hideModalTitle ] );
 
 	const continueEditing = () => {
-		disablePersistentSuccessView();
-		closeFocusedLaunch();
+		if ( isSelectedPlanPaid ) {
+			// After a plan was purchased, we need to reload the page for plans data to be picked up by Jetpack Premium blocks
+			// @TODO: see if there is a way to prevent reloading
+			const pathName = new URL( getCurrentLaunchFlowUrl() || '' )?.pathname;
+			redirectTo( pathName || `/page/${ siteSubdomain?.domain }/home` );
+		} else {
+			// If the site was launched without purchasing a paid plan, don't reload the page
+			closeFocusedLaunch();
+		}
 	};
 
 	const redirectToHome = () => {
-		disablePersistentSuccessView();
 		redirectTo( `/home/${ siteSubdomain?.domain }` );
 	};
+
+	const subtitleTextLaunching = __( 'Your site will be live shortly.', __i18n_text_domain__ );
+	const subtitleTextLaunched = __(
+		"Congratulations, your website is now live. We're excited to watch you grow with WordPress.",
+		__i18n_text_domain__
+	);
+
+	const copyButtonLabelIdle = __( 'Copy Link', __i18n_text_domain__ );
+	const copyButtonLabelActivated = __( 'Copied!', __i18n_text_domain__ );
 
 	return (
 		<div className="focused-launch-container focused-launch-success__wrapper">
 			<Confetti className="focused-launch-success__confetti" />
 			<Title tagName="h2">{ __( 'Hooray!', __i18n_text_domain__ ) }</Title>
 			<SubTitle tagName="h3">
-				{ isSiteLaunching
-					? __( 'Your site will be live shortly.', '__i18n_text_domain__' )
-					: __(
-							"Congratulations, your website is now live. We're excited to watch you grow with WordPress.",
-							__i18n_text_domain__
-					  ) }
+				{ isSiteLaunching ? subtitleTextLaunching : subtitleTextLaunched }
 			</SubTitle>
-			{ ! isSiteLaunching && (
+			{ ! willUserBeRedirectedAutomatically && ! isSiteLaunching && (
 				<>
 					<div className="focused-launch-success__url-wrapper">
 						<span className="focused-launch-success__url-field">{ displayedSiteUrl }</span>
@@ -92,12 +109,9 @@ const Success: React.FunctionComponent = () => {
 							onFinishCopy={ () => setHasCopied( false ) }
 							className="focused-launch-success__url-copy-button"
 						>
-							{ hasCopied
-								? __( 'Copied!', __i18n_text_domain__ )
-								: __( 'Copy Link', __i18n_text_domain__ ) }
+							{ hasCopied ? copyButtonLabelActivated : copyButtonLabelIdle }
 						</ClipboardButton>
 					</div>
-
 					{ /* @TODO: at the moment this only works when the modal is in the block editor. */ }
 					<NextButton
 						onClick={ continueEditing }

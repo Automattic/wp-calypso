@@ -4,7 +4,8 @@
 import page from 'page';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { get, noop, some, startsWith, uniq } from 'lodash';
+import { get, some, startsWith, uniq } from 'lodash';
+import { removeQueryArgs } from '@wordpress/url';
 
 /**
  * Internal Dependencies
@@ -24,7 +25,13 @@ import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
 import NavigationComponent from 'calypso/my-sites/navigation';
-import { addQueryArgs, getSiteFragment, sectionify } from 'calypso/lib/route';
+import {
+	addQueryArgs,
+	getSiteFragment,
+	sectionify,
+	externalRedirect,
+	trailingslashit,
+} from 'calypso/lib/route';
 import config from '@automattic/calypso-config';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -56,6 +63,9 @@ import {
 	emailManagementForwarding,
 	emailManagementAddGSuiteUsers,
 	emailManagementNewGSuiteAccount,
+	emailManagementManageTitanAccount,
+	emailManagementNewTitanAccount,
+	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import SitesComponent from 'calypso/my-sites/sites';
 import { successNotice, warningNotice } from 'calypso/state/notices/actions';
@@ -77,6 +87,7 @@ const getStore = ( context ) => ( {
  * Module vars
  */
 const sitesPageTitleForAnalytics = 'Sites';
+const noop = () => {};
 
 /*
  * The main navigation of My Sites consists of a component with
@@ -172,6 +183,9 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		emailManagementAddGSuiteUsers,
 		emailManagementNewGSuiteAccount,
 		emailManagementForwarding,
+		emailManagementManageTitanAccount,
+		emailManagementNewTitanAccount,
+		emailManagementTitanControlPanelRedirect,
 	];
 
 	let domainManagementPaths = allPaths.map( ( pathFactory ) => {
@@ -301,6 +315,7 @@ function createSitesComponent( context ) {
 			siteBasePath={ basePath }
 			getSiteSelectionHeaderText={ context.getSiteSelectionHeaderText }
 			fromSite={ context.query.site }
+			clearPageTitle={ context.clearPageTitle }
 		/>
 	);
 }
@@ -419,7 +434,7 @@ export function siteSelection( context, next ) {
 		}
 	} else {
 		// Fetch the site by siteFragment and then try to select again
-		dispatch( requestSite( siteFragment ) ).then( () => {
+		dispatch( requestSite( siteFragment ) ).then( ( response ) => {
 			let freshSiteId = getSiteId( getState(), siteFragment );
 
 			if ( ! freshSiteId ) {
@@ -437,6 +452,8 @@ export function siteSelection( context, next ) {
 				if ( onSelectedSiteAvailable( context, basePath ) ) {
 					next();
 				}
+			} else if ( shouldRedirectToJetpackAuthorize( context, response ) ) {
+				externalRedirect( getJetpackAuthorizeURL( context, response ) );
 			} else {
 				// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
 				const allSitesPath = addQueryArgs(
@@ -577,4 +594,33 @@ export function wpForTeamsGeneralNotSupportedRedirect( context, next ) {
 	}
 
 	next();
+}
+
+/**
+ * Whether we need to redirect user to the Jetpack site for authorization.
+ *
+ * @param {object} context -- The context object.
+ * @param {object} response -- The site information HTTP response.
+ * @returns {boolean} shouldRedirect -- Whether we need to redirect user to the Jetpack site for authorization.
+ */
+export function shouldRedirectToJetpackAuthorize( context, response ) {
+	return '1' === context.query?.unlinked && !! response?.site?.URL;
+}
+
+/**
+ * Get redirect URL to the Jetpack site for authorization.
+ *
+ * @param {object} context -- The context object.
+ * @param {object} response -- The site information HTTP response.
+ * @returns {string} redirectURL -- The redirect URL.
+ */
+export function getJetpackAuthorizeURL( context, response ) {
+	return addQueryArgs(
+		{
+			page: 'jetpack',
+			action: 'authorize_redirect',
+			dest_url: removeQueryArgs( window.origin + context.path, 'unlinked' ),
+		},
+		trailingslashit( response?.site?.URL ) + 'wp-admin/'
+	);
 }

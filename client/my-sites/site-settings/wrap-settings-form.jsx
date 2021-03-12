@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
-import { flowRight, isEqual, isObjectLike, keys, omit, pick, isNaN } from 'lodash';
+import { flowRight, isEqual, isObjectLike, keys, omit, pick } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
@@ -122,10 +122,9 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 		handleSubmitForm = ( event ) => {
 			const { dirtyFields, fields, trackTracksEvent, path } = this.props;
 
-			if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
+			if ( event && ! event.isDefaultPrevented() && event.nativeEvent ) {
 				event.preventDefault();
 			}
-
 			dirtyFields.map( function ( value ) {
 				switch ( value ) {
 					case 'blogdescription':
@@ -143,8 +142,10 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 					case 'wga':
 						trackTracksEvent( 'calypso_seo_settings_google_analytics_updated', { path } );
 						break;
-					case 'cloudflare_analytics':
-						trackTracksEvent( 'calypso_seo_settings_cloudflare_analytics_updated', { path } );
+					case 'jetpack_cloudflare_analytics':
+						trackTracksEvent( 'calypso_seo_settings_jetpack_cloudflare_analytics_updated', {
+							path,
+						} );
 						break;
 				}
 			} );
@@ -189,7 +190,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			const { name, value } = event.currentTarget;
 			// Attempt to cast numeric fields value to int
 			const parsedValue = parseInt( value, 10 );
-			this.props.updateFields( { [ name ]: isNaN( parsedValue ) ? value : parsedValue } );
+			this.props.updateFields( { [ name ]: Number.isNaN( parsedValue ) ? value : parsedValue } );
 		};
 
 		handleToggle = ( name ) => () => {

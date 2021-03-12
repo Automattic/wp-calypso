@@ -3,6 +3,7 @@
 
 	// Reference all TS packages
 	"references": [
+		{ "path": "./accessible-focus" },
 		{ "path": "./browser-data-collector" },
 		{ "path": "./calypso-analytics" },
 		{ "path": "./calypso-config" },
@@ -10,9 +11,13 @@
 		{ "path": "./components" },
 		{ "path": "./composite-checkout" },
 		{ "path": "./create-calypso-config" },
+		{ "path": "./explat-client" },
+		{ "path": "./explat-client-react-helpers" },
+		{ "path": "./state-utils" },
 		{ "path": "./data-stores" },
 		{ "path": "./domain-picker" },
 		{ "path": "./i18n-utils" },
+		{ "path": "./js-utils" },
 		{ "path": "./language-picker" },
 		{ "path": "./languages" },
 		{ "path": "./launch" },

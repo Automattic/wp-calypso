@@ -49,7 +49,7 @@ const apiResponse = [
 ];
 
 beforeAll( () => {
-	store = register( { vendor: 'variation2_front' } );
+	store = register();
 } );
 
 beforeEach( () => {

@@ -26,6 +26,7 @@ import { updateNameservers } from 'calypso/state/domains/nameservers/actions';
 import {
 	WPCOM_DEFAULT_NAMESERVERS,
 	WPCOM_DEFAULT_NAMESERVERS_REGEX,
+	CLOUDFLARE_NAMESERVERS_REGEX,
 } from 'calypso/state/domains/nameservers/constants';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -78,6 +79,16 @@ class NameServers extends React.Component {
 		} );
 	};
 
+	hasCloudflareNameservers = () => {
+		if ( this.state.nameservers.length === 0 ) {
+			return false;
+		}
+
+		return this.state.nameservers.every( ( nameserver ) => {
+			return CLOUDFLARE_NAMESERVERS_REGEX.test( nameserver );
+		} );
+	};
+
 	setStateWhenLoadedFromServer( props ) {
 		const prevNameservers = this.props.nameservers;
 		const nextNameservers = props.nameservers;
@@ -106,6 +117,7 @@ class NameServers extends React.Component {
 
 		if (
 			this.hasWpcomNameservers() ||
+			this.hasCloudflareNameservers() ||
 			this.isPendingTransfer() ||
 			this.needsVerification() ||
 			! this.state.nameservers

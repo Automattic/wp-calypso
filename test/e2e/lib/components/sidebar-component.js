@@ -50,6 +50,14 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		); // TODO: data-tip-target target is missing
 	}
 
+	async selectSiteEditor() {
+		await this.expandDrawerItem( 'Design' );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.menu-link-text[data-e2e-sidebar="Site Editor (beta)"]' )
+		);
+	}
+
 	async selectWPAdmin() {
 		return await this._scrollToAndClickMenuItem( 'wpadmin' );
 	}

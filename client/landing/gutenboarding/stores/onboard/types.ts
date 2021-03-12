@@ -41,6 +41,13 @@ export interface Design {
 	src: string;
 	template: string;
 	theme: string;
+	preview?: 'static';
 	title: string;
 	features: Array< DesignFeatures >;
+
+	/**
+	 * Quickly hide a design from the picker without having to remove
+	 * it from the available-designs-config.json file.
+	 */
+	hide?: boolean;
 }

@@ -396,6 +396,7 @@ describe( 'PlanIntervalDiscount', () => {
 		translate: identity,
 		billingTimeFrame: '',
 		title: '',
+		planType: PLAN_JETPACK_FREE,
 	};
 	test( 'should show interval discount for Jetpack during signup', () => {
 		const wrapper = shallow( <PlanFeaturesHeader { ...baseProps } isInSignup isJetpack /> );
@@ -439,7 +440,7 @@ describe( 'PlanFeaturesHeader.renderPriceGroup()', () => {
 		expect( myProps.discounted ).toBe( false );
 		expect( myProps.original ).toBe( false );
 		expect( myProps.currencyCode ).toBe( 'USD' );
-		expect( myProps.isInSignup ).toBe( false );
+		expect( myProps.displayPerMonthNotation ).toBe( false );
 	} );
 	test( 'Should return two prices when two numbers are passed: one original and one discounted', () => {
 		const comp = new PlanFeaturesHeader( baseProps );
@@ -452,7 +453,7 @@ describe( 'PlanFeaturesHeader.renderPriceGroup()', () => {
 		expect( props1.discounted ).toBe( false );
 		expect( props1.original ).toBe( true );
 		expect( props1.currencyCode ).toBe( 'USD' );
-		expect( props1.isInSignup ).toBe( false );
+		expect( props1.displayPerMonthNotation ).toBe( false );
 
 		// We need the dive() here to pick up defaultProps
 		const props2 = wrapper.find( PlanPrice ).at( 1 ).dive().props();
@@ -460,7 +461,7 @@ describe( 'PlanFeaturesHeader.renderPriceGroup()', () => {
 		expect( props2.discounted ).toBe( true );
 		expect( props2.original ).toBe( false );
 		expect( props2.currencyCode ).toBe( 'USD' );
-		expect( props2.isInSignup ).toBe( false );
+		expect( props2.displayPerMonthNotation ).toBe( false );
 	} );
 } );
 

@@ -10,15 +10,6 @@
 /**************************************************************************************************/
 
 export default {
-	cartNudgeUpdateToPremium: {
-		datestamp: '20180917',
-		variations: {
-			test: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	pageBuilderMVP: {
 		datestamp: '20190419',
 		variations: {
@@ -60,22 +51,21 @@ export default {
 	newUsersWithFreePlan: {
 		datestamp: '20210107',
 		variations: {
-			newOnboarding: 50,
-			control: 50,
+			newOnboarding: 0,
+			control: 100,
 		},
 		localeTargets: 'any',
 		localeExceptions: [ 'en', 'es' ],
 		defaultVariation: 'control',
 		allowExistingUsers: false,
 	},
-	jetpackSimplifyPricingPage: {
-		datestamp: '20210125',
+	jetpackSocialProofHeader: {
+		datestamp: '20210310',
 		variations: {
-			test: 50,
-			control: 50,
+			withoutSocialProof_control: 50,
+			withSocialProof_test: 50,
 		},
-		localeTargets: 'any',
-		defaultVariation: 'control',
+		defaultVariation: 'withoutSocialProof_control',
 		allowExistingUsers: true,
 	},
 };

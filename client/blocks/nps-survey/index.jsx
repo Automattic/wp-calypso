@@ -7,7 +7,7 @@ import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import { isNumber, noop, trim } from 'lodash';
+import { isNumber, trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,6 +34,8 @@ import RecommendationSelect from './recommendation-select';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class NpsSurvey extends PureComponent {
 	static propTypes = {

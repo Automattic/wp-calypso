@@ -1,14 +1,18 @@
 /**
  * External dependencies
  */
-import { random, map, includes, get, noop } from 'lodash';
+import { random, map, includes, get } from 'lodash';
+
+/**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
 
 /**
  * Internal dependencies
  */
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import warn from 'calypso/lib/warn';
 import { READER_STREAMS_PAGE_REQUEST } from 'calypso/state/reader/action-types';
 import { receivePage, receiveUpdates } from 'calypso/state/reader/streams/actions';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
@@ -16,6 +20,8 @@ import { keyForPost } from 'calypso/reader/post-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 /**
  * Pull the suffix off of a stream key

@@ -2,15 +2,15 @@
  * External dependencies
  */
 import { translate, TranslateResult, numberFormat } from 'i18n-calypso';
-import { compact, get, isArray, isObject, isFunction } from 'lodash';
+import { compact, isObject, isFunction } from 'lodash';
 import page from 'page';
 import React, { createElement, Fragment } from 'react';
 import formatCurrency from '@automattic/format-currency';
+import { createSelector } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
 import { getFeatureByKey, getFeatureCategoryByKey } from 'calypso/lib/plans/features-list';
 import {
 	DAILY_PRODUCTS,
@@ -60,7 +60,7 @@ import { getJetpackProductDescription } from 'calypso/lib/products-values/get-je
 import { getJetpackProductShortName } from 'calypso/lib/products-values/get-jetpack-product-short-name';
 import config from '@automattic/calypso-config';
 import { managePurchase } from 'calypso/me/purchases/paths';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
+import { getForCurrentCROIteration, Iterations } from './iterations';
 import { MORE_FEATURES_LINK } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
@@ -114,15 +114,11 @@ export function durationToString( duration: Duration ): DurationString {
 }
 
 export function durationToText( duration: Duration ): TranslateResult {
-	if ( [ 'i5', 'spp' ].includes( getJetpackCROActiveVersion() ) ) {
-		return duration === TERM_MONTHLY
-			? translate( 'per month{{br/}}billed monthly', { components: { br: createElement( 'br' ) } } )
-			: translate( 'per month{{br/}}billed yearly', { components: { br: createElement( 'br' ) } } );
+	if ( duration === TERM_MONTHLY ) {
+		return translate( '/month, paid monthly' );
 	}
 
-	return duration === TERM_MONTHLY
-		? translate( 'per month, billed monthly' )
-		: translate( 'per month, billed yearly' );
+	return translate( '/month, paid yearly' );
 }
 
 // In the case of products that have options (daily and real-time), we want to display
@@ -244,67 +240,8 @@ export function productButtonLabel(
 	);
 }
 
-export function productButtonLabelAlt(
-	product: SelectorProduct,
-	isOwned: boolean,
-	isItemPlanFeature: boolean,
-	isUpgradeableToYearly: boolean,
-	currentPlan?: SitePlan | null
-): TranslateResult {
-	if ( isUpgradeableToYearly ) {
-		return translate( 'Upgrade to Yearly' );
-	}
-
-	if (
-		isOwned ||
-		( currentPlan && planHasFeature( currentPlan.product_slug, product.productSlug ) )
-	) {
-		return product.type !== ITEM_TYPE_PRODUCT
-			? translate( 'Manage Plan' )
-			: translate( 'Manage Subscription' );
-	}
-
-	const { buttonLabel } = product;
-
-	// If it's a product with options, we want to use the name of the option
-	// to label the button.
-	const displayName = getProductWithOptionDisplayName( product, isOwned, isItemPlanFeature );
-	if ( getOptionFromSlug( product.productSlug ) ) {
-		return translate( 'Get {{name/}}', {
-			components: {
-				name: createElement( Fragment, {}, displayName ),
-			},
-			comment: '{{name/}} is the name of a product',
-		} );
-	}
-
-	return (
-		buttonLabel ??
-		translate( 'Get {{name/}}', {
-			components: {
-				name: createElement( Fragment, {}, displayName ),
-			},
-			comment: '{{name/}} is the name of a product',
-		} )
-	);
-}
-
 export function slugIsFeaturedProduct( productSlug: string ): boolean {
 	return FEATURED_PRODUCTS.includes( productSlug );
-}
-
-export function productBadgeLabelAlt(
-	product: SelectorProduct,
-	isOwned: boolean,
-	currentPlan?: SitePlan | null
-): TranslateResult | undefined {
-	if ( isOwned ) {
-		return translate( 'You own this' );
-	}
-
-	if ( currentPlan && planHasFeature( currentPlan.product_slug, product.productSlug ) ) {
-		return translate( 'Included in your plan' );
-	}
 }
 
 /**
@@ -413,13 +350,15 @@ function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlugs {
  * Product parsing and data normalization utils.
  */
 
-export function slugToItem( slug: string ): Plan | Product | SelectorProduct | null {
-	const iteration = getJetpackCROActiveVersion();
-
+export function slugToItem( slug: string ): Plan | Product | SelectorProduct | null | undefined {
 	if ( slugIsSelectorProductSlug( slug ) ) {
-		return OPTIONS_SLUG_MAP[ slug ]( iteration );
+		return getForCurrentCROIteration( ( variation: Iterations ) =>
+			OPTIONS_SLUG_MAP[ slug ]( variation )
+		);
 	} else if ( EXTERNAL_PRODUCTS_LIST.includes( slug ) ) {
-		return EXTERNAL_PRODUCTS_SLUG_MAP[ slug ]( iteration );
+		return getForCurrentCROIteration( ( variation: Iterations ) =>
+			EXTERNAL_PRODUCTS_SLUG_MAP[ slug ]( variation )
+		);
 	} else if ( slugIsJetpackProductSlug( slug ) ) {
 		return JETPACK_PRODUCTS_LIST[ slug ];
 	} else if ( slugIsJetpackPlanSlug( slug ) ) {
@@ -482,10 +421,7 @@ export function itemToSelectorProduct(
 			yearlyProductSlug = PRODUCTS_LIST[ item.product_slug as JetpackProductSlug ].type;
 		}
 
-		const currentCROvariant = getJetpackCROActiveVersion();
-		const iconSlug = [ 'v1', 'v2', 'i5' ].includes( currentCROvariant )
-			? `${ yearlyProductSlug || item.product_slug }_v2_dark`
-			: `${ yearlyProductSlug || item.product_slug }_v2`;
+		const iconSlug = `${ yearlyProductSlug || item.product_slug }_v2_dark`;
 
 		return {
 			productSlug: item.product_slug,
@@ -505,19 +441,20 @@ export function itemToSelectorProduct(
 			term: item.term,
 			hidePrice: JETPACK_SEARCH_PRODUCTS.includes( item.product_slug ),
 			features: {
-				items: buildCardFeaturesFromItem(
-					item,
-					{
-						withoutDescription: true,
-						withoutIcon: true,
-					},
-					currentCROvariant
-				),
+				items:
+					getForCurrentCROIteration( ( variation: Iterations ) =>
+						buildCardFeaturesFromItem(
+							item,
+							{
+								withoutDescription: true,
+								withoutIcon: true,
+							},
+							variation
+						)
+					) || [],
 			},
 		};
 	} else if ( objectIsPlan( item ) ) {
-		const currentCROvariant = getJetpackCROActiveVersion();
-
 		const productSlug = item.getStoreSlug();
 		let monthlyProductSlug;
 		let yearlyProductSlug;
@@ -533,17 +470,20 @@ export function itemToSelectorProduct(
 			productSlug,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug: ( yearlyProductSlug || productSlug ) + iconAppend,
-			displayName: item.getTitle( currentCROvariant ),
-			buttonLabel: item.getButtonLabel?.( currentCROvariant ),
+			displayName: getForCurrentCROIteration( item.getTitle ),
+			buttonLabel: getForCurrentCROIteration( item.getButtonLabel ),
 			type,
 			subtypes: [],
-			shortName: item.getTitle( currentCROvariant ),
-			tagline: get( item, 'getTagline', () => '' )( currentCROvariant ),
-			description: item.getDescription( currentCROvariant ),
+			shortName: getForCurrentCROIteration( item.getTitle ),
+			tagline: getForCurrentCROIteration( item.getTagline ) || '',
+			description: getForCurrentCROIteration( item.getDescription ),
 			monthlyProductSlug,
 			term: item.term === TERM_BIENNIALLY ? TERM_ANNUALLY : item.term,
 			features: {
-				items: buildCardFeaturesFromItem( item, undefined, currentCROvariant ),
+				items:
+					getForCurrentCROIteration( ( variation: Iterations ) =>
+						buildCardFeaturesFromItem( item, undefined, variation )
+					) || [],
 				more: MORE_FEATURES_LINK,
 			},
 			legacy: ! isResetPlan,
@@ -574,7 +514,7 @@ export function buildCardFeatureItemFromFeatureKey(
 	let feature;
 	let subFeaturesKeys;
 
-	if ( isArray( featureKey ) ) {
+	if ( Array.isArray( featureKey ) ) {
 		const [ key, subKeys ] = featureKey;
 
 		feature = getFeatureByKey( key );
@@ -612,10 +552,10 @@ export function buildCardFeatureItemFromFeatureKey(
 export function buildCardFeaturesFromFeatureKeys(
 	features: JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection,
 	options?: Record< string, unknown >,
-	variation?: string
+	variation?: Iterations
 ): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
 	// Without sections (JetpackPlanCardFeature[])
-	if ( isArray( features ) ) {
+	if ( Array.isArray( features ) ) {
 		return compact(
 			features.map( ( f ) => buildCardFeatureItemFromFeatureKey( f, options, variation ) )
 		);
@@ -656,7 +596,7 @@ export function buildCardFeaturesFromFeatureKeys(
 export function buildCardFeaturesFromItem(
 	item: Plan | Product | Record< string, unknown >,
 	options?: Record< string, unknown >,
-	variation?: string
+	variation?: Iterations
 ): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
 	if ( objectIsPlan( item ) ) {
 		const features = item.getPlanCardFeatures?.( variation );
@@ -665,7 +605,7 @@ export function buildCardFeaturesFromItem(
 			return buildCardFeaturesFromFeatureKeys( features, options, variation );
 		}
 	} else if ( isFunction( item.getFeatures ) ) {
-		const features = item.getFeatures( variation );
+		const features = getForCurrentCROIteration( item.getFeatures );
 
 		if ( features ) {
 			return buildCardFeaturesFromFeatureKeys( features, options, variation );
@@ -711,7 +651,7 @@ export function checkout(
 	products: string | string[],
 	urlQueryArgs: QueryArgs = {}
 ): void {
-	const productsArray = isArray( products ) ? products : [ products ];
+	const productsArray = Array.isArray( products ) ? products : [ products ];
 	const productsString = productsArray.join( ',' );
 
 	// If there is not siteSlug, we need to redirect the user to the site selection
@@ -724,7 +664,7 @@ export function checkout(
 	if ( isJetpackCloud() && ! config.isEnabled( 'jetpack-cloud/connect' ) ) {
 		window.location.href = addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` );
 	} else {
-		page.redirect( addQueryArgs( urlQueryArgs, path ) );
+		page( addQueryArgs( urlQueryArgs, path ) );
 	}
 }
 
@@ -741,7 +681,7 @@ export function manageSitePurchase( siteSlug: string, purchaseId: number ): void
 	if ( isJetpackCloud() ) {
 		window.location.href = `https://wordpress.com${ relativePath }`;
 	} else {
-		page.redirect( relativePath );
+		page( relativePath );
 	}
 }
 

@@ -7,21 +7,24 @@ import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
-import type { DomainSuggestions, Plans } from '@automattic/data-stores';
-import type { CTAVariation, PopularBadgeVariation } from './types';
+import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { Icon, check } from '@wordpress/icons';
 
-const TickIcon = <Icon icon={ check } size={ 17 } />;
+import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
 import PlansFeatureList from '../plans-feature-list';
+import { PLANS_STORE } from '../stores';
+
+import type { CTAVariation, PopularBadgeVariation } from './types';
 
 // TODO: remove when all needed core types are available
 /*#__PURE__*/ import '../types-patch';
-import { PLANS_STORE } from '../constants';
+
+const TickIcon = <Icon icon={ check } size={ 17 } />;
 
 const ChevronDown = (
 	<svg width="8" viewBox="0 0 8 4">
@@ -61,7 +64,7 @@ export interface Props {
 }
 
 // NOTE: there is some duplicate markup between this plan item (used in the
-// 'table' version of the plans grid) and the accortion plan item (used in the
+// 'table' version of the plans grid) and the accordion plan item (used in the
 // 'accordion' version of the plans grid). Ideally the code should be refactored
 // to use the same markup, with just different styles
 
@@ -83,7 +86,8 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	popularBadgeVariation = 'ON_TOP',
 	isSelected,
 } ) => {
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
+	const locale = useLocale();
 
 	const planProduct = useSelect( ( select ) =>
 		select( PLANS_STORE ).getPlanProduct( slug, billingPeriod )
@@ -93,7 +97,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 	const isDesktop = useViewportMatch( 'mobile', '>=' );
 
-	// show a nbps in price while loading to prevent a janky UI
+	// show a nbsp in price while loading to prevent a jump in the UI
 	const nbsp = '\u00A0';
 
 	React.useEffect( () => {
@@ -101,6 +105,27 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	}, [ allPlansExpanded ] );
 
 	const isOpen = allPlansExpanded || isDesktop || isPopular || isOpenInternalState;
+
+	const normalCtaLabelFallback = __( 'Choose', __i18n_text_domain__ );
+	const fullWidthCtaLabelSelected = __( 'Current Selection', __i18n_text_domain__ );
+	// translators: %s is a WordPress.com plan name (eg: Free, Personal)
+	const fullWidthCtaLabelUnselected = __( 'Select %s', __i18n_text_domain__ );
+
+	const fallbackPlanItemPriceLabelAnnually = __( 'billed annually', __i18n_text_domain__ );
+	// translators: %s is the cost per year (e.g "billed as 96$ annually")
+	const newPlanItemPriceLabelAnnually = __(
+		'per month, billed as %s annually',
+		__i18n_text_domain__
+	);
+	const planItemPriceLabelAnnually =
+		locale === 'en' || hasTranslation?.( 'per month, billed as %s annually' )
+			? sprintf( newPlanItemPriceLabelAnnually, planProduct?.annualPrice )
+			: fallbackPlanItemPriceLabelAnnually;
+
+	const planItemPriceLabelMonthly = __( 'per month, billed monthly', __i18n_text_domain__ );
+
+	const expandToggleLabelExpanded = __( 'Collapse all plans', __i18n_text_domain__ );
+	const expandToggleLabelCollapsed = __( 'Expand all plans', __i18n_text_domain__ );
 
 	return (
 		<div
@@ -153,12 +178,12 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 							{ isFree && __( 'free forever', __i18n_text_domain__ ) }
 							{ ! isFree &&
 								( billingPeriod === 'ANNUALLY'
-									? __( 'billed annually', __i18n_text_domain__ )
-									: __( 'per month, billed monthly', __i18n_text_domain__ ) ) }
+									? planItemPriceLabelAnnually
+									: planItemPriceLabelMonthly ) }
 						</div>
 
 						{ /*
-							For the free plan, the following div is still rendered invisibile
+							For the free plan, the following div is still rendered invisible
 							and ignored by screen readers (via aria-hidden) to ensure the same
 							vertical spacing as the rest of the plan cards
 						 */ }
@@ -186,7 +211,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 									isPrimary
 									disabled={ !! disabledLabel }
 								>
-									<span>{ disabledLabel ?? __( 'Choose', __i18n_text_domain__ ) }</span>
+									<span>{ disabledLabel ?? normalCtaLabelFallback }</span>
 								</Button>
 							) : (
 								<Button
@@ -201,11 +226,14 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 									disabled={ !! disabledLabel }
 								>
 									<span>
-										{ isSelected ? TickIcon : '' }
-										{ isSelected
-											? sprintf( __( 'Current Selection', __i18n_text_domain__ ), name )
-											: /* translators: %s is a WordPress.com plan name (eg: Free, Personal) */
-											  sprintf( __( 'Select %s', __i18n_text_domain__ ), name ) }
+										{ disabledLabel ?? (
+											<>
+												{ isSelected ? TickIcon : '' }
+												{ isSelected
+													? fullWidthCtaLabelSelected
+													: sprintf( fullWidthCtaLabelUnselected, name ) }
+											</>
+										) }
 									</span>
 								</Button>
 							) }
@@ -218,8 +246,11 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 							onPickDomain={ onPickDomainClick }
 							disabledLabel={
 								disabledLabel &&
-								// Translators: %s is the domain name (e.g. "example.com is not included")
-								sprintf( __( '%s is not included', __i18n_text_domain__ ), domain?.domain_name )
+								sprintf(
+									// Translators: %s is the domain name (e.g. "example.com is not included")
+									__( '%s is not included', __i18n_text_domain__ ),
+									domain?.domain_name
+								)
 							}
 							billingPeriod={ billingPeriod }
 						/>
@@ -229,9 +260,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 			{ isPopular && ! isDesktop && (
 				<Button onClick={ onToggleExpandAll } className="plan-item__mobile-expand-all-plans" isLink>
-					{ allPlansExpanded
-						? __( 'Collapse all plans', __i18n_text_domain__ )
-						: __( 'Expand all plans', __i18n_text_domain__ ) }
+					{ allPlansExpanded ? expandToggleLabelExpanded : expandToggleLabelCollapsed }
 				</Button>
 			) }
 		</div>

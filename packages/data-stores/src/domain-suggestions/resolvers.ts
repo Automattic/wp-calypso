@@ -15,12 +15,11 @@ import {
 	receiveDomainAvailability,
 } from './actions';
 import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
-import type { Selectors } from './selectors';
-import type { TailParameters } from '../mapped-types';
+import { getFormattedPrice } from './utils';
 
-export const isAvailable = function* isAvailable(
-	domainName: TailParameters< Selectors[ 'isAvailable' ] >[ 0 ]
-) {
+import type { DomainSuggestion, DomainSuggestionQuery } from './types';
+
+export const isAvailable = function* isAvailable( domainName: string ) {
 	const url = `https://public-api.wordpress.com/rest/v1.3/domains/${ encodeURIComponent(
 		domainName
 	) }/is-available?is_cart_pre_check=true`;
@@ -47,10 +46,7 @@ export function* getCategories() {
 	return receiveCategories( categories.body );
 }
 
-export function* __internalGetDomainSuggestions(
-	// Resolver has the same signature as corresponding selector without the initial state argument
-	queryObject: Parameters< Selectors[ '__internalGetDomainSuggestions' ] >[ 1 ]
-) {
+export function* __internalGetDomainSuggestions( queryObject: DomainSuggestionQuery ) {
 	// If normalized search string (`query`) contains no alphanumerics, endpoint 404s
 	if ( ! queryObject.query ) {
 		return receiveDomainSuggestionsError( 'Empty query' );
@@ -79,5 +75,13 @@ export function* __internalGetDomainSuggestions(
 		);
 	}
 
-	return receiveDomainSuggestionsSuccess( queryObject, suggestions );
+	const processedSuggestions = suggestions.map( ( suggestion: DomainSuggestion ) => ( {
+		...suggestion,
+		...( suggestion.raw_price &&
+			suggestion.currency_code && {
+				cost: getFormattedPrice( suggestion.raw_price, suggestion.currency_code ),
+			} ),
+	} ) );
+
+	return receiveDomainSuggestionsSuccess( queryObject, processedSuggestions );
 }

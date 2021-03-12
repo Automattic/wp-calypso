@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -22,6 +21,8 @@ import { getCurrentUserVisibleSiteCount } from 'calypso/state/current-user/selec
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class AllSites extends Component {
 	static defaultProps = {

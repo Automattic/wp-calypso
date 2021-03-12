@@ -127,11 +127,6 @@ function verifyBlockInEditor( Block ) {
 		assert( blockDisplayed, `The block "${ Block.blockName }" was not found in the editor.` );
 	} );
 
-	step( 'Block does not error in the editor', async function () {
-		const errorDisplayed = await editor.errorDisplayed();
-		assert( ! errorDisplayed, `The block "${ Block.blockName }" errored in the editor.` );
-	} );
-
 	step( 'Block does not invalidate', async function () {
 		const hasInvalidBlocks = await editor.hasInvalidBlocks();
 		assert( ! hasInvalidBlocks, `The block "${ Block.blockName }" is invalid.` );
@@ -165,12 +160,15 @@ function verifyBlockInPublishedPage( Block ) {
 describe( `[${ host }, ${ screenSize }] Test Gutenberg upgrade against most popular blocks:`, function () {
 	before( async function () {
 		if ( process.env.GUTENBERG_EDGE === 'true' ) {
-			this.timeout( startBrowserTimeoutMS );
-			driver = await driverManager.startBrowser();
 			sampleImages = times( 3, () => mediaHelper.createFile() );
 		} else {
 			this.skip();
 		}
+	} );
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
 	} );
 
 	after( async function () {
@@ -219,23 +217,23 @@ describe( `[${ host }, ${ screenSize }] Test Gutenberg upgrade against most popu
 				} );
 
 				verifyBlockInPublishedPage( Block );
-			} );
 
-			describe( `Test the same block on a corresponding edge site`, function () {
-				step( `Start a new post`, async function () {
-					const loginFlow = new LoginFlow( driver, 'gutenbergUpgradeEdgeUser' );
+				describe( `Test the same block on a corresponding edge site`, function () {
+					step( `Start a new post`, async function () {
+						const loginFlow = new LoginFlow( driver, 'gutenbergUpgradeEdgeUser' );
 
-					// No need to log in again as the edge site is owned by the same user.
-					editor = await startNewPost( loginFlow );
+						// No need to log in again as the edge site is owned by the same user.
+						editor = await startNewPost( loginFlow );
+					} );
+
+					step( 'Load the block via markup copied from the non-edge site', async function () {
+						await editor.setBlocksCode( currentGutenbergBlocksCode );
+					} );
+
+					verifyBlockInEditor( Block );
+
+					verifyBlockInPublishedPage( Block );
 				} );
-
-				step( 'Load the block via markup copied from the non-edge site', async function () {
-					await editor.setBlocksCode( currentGutenbergBlocksCode );
-				} );
-
-				verifyBlockInEditor( Block );
-
-				verifyBlockInPublishedPage( Block );
 			} );
 		} );
 	} );

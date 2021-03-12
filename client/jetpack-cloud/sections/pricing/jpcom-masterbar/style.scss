@@ -57,22 +57,6 @@ $jpcom-gray-darken30: darken( $jpcom-gray, 30% ); // #3d596d
 	padding-top: 0.25em;
 }
 
-.jpcom-masterbar {
-	// Pin to the top only on screens wider than `break-large`.
-	// ( and only if not "iteration-i5", iteration-i5 has static, free scrolling masterbar )
-	@include break-large {
-		&:not( .iteration-i5 ) {
-			position: fixed;
-			top: 0;
-			left: 0;
-			z-index: 3;
-
-			width: 100%;
-			margin-top: 0;
-		}
-	}
-}
-
 .jpcom-masterbar__nav {
 	flex: 1 1 100%;
 

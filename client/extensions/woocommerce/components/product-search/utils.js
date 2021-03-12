@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { difference, filter, intersection, isArray, uniq } from 'lodash';
+import { difference, filter, intersection, uniq } from 'lodash';
 
 /**
  * Check if a string is found in a product name or attribute option
@@ -35,7 +35,7 @@ export function productContainsString( product, textString ) {
  * @returns {boolean} Whether the product ID exists in the list of values
  */
 export function isProductSelected( value = [], productId ) {
-	if ( isArray( value ) && value.length ) {
+	if ( Array.isArray( value ) && value.length ) {
 		return -1 !== value.indexOf( productId );
 	}
 	return value === productId;
@@ -53,7 +53,7 @@ export function areVariationsSelected( value = [], product ) {
 	if ( ! variations.length ) {
 		return false;
 	}
-	if ( isArray( value ) && value.length ) {
+	if ( Array.isArray( value ) && value.length ) {
 		return !! intersection( value, variations ).length;
 	}
 	return -1 !== variations.indexOf( value );
@@ -77,7 +77,7 @@ export function isVariableProduct( product ) {
  * @returns {Array} Updated list of values
  */
 export function addProductId( value = [], productId ) {
-	if ( isArray( productId ) ) {
+	if ( Array.isArray( productId ) ) {
 		return uniq( [ ...value, ...productId ] );
 	}
 	return uniq( [ ...value, productId ] );
@@ -91,7 +91,7 @@ export function addProductId( value = [], productId ) {
  * @returns {Array} Updated list of values
  */
 export function removeProductId( value = [], productId ) {
-	if ( isArray( productId ) ) {
+	if ( Array.isArray( productId ) ) {
 		return difference( value, productId );
 	}
 	return value.filter( ( id ) => id !== productId );

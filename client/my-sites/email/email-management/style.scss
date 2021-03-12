@@ -1,13 +1,4 @@
 .email-management {
-	.is-placeholder {
-		.section-header__label {
-			@include placeholder();
-
-			&::before {
-				display: none;
-			}
-		}
-	}
 	.empty-content__illustration {
 		width: 250px;
 		height: auto;

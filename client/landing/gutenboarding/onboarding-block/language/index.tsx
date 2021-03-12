@@ -11,14 +11,14 @@ import LanguagePicker, { createLanguageGroups } from '@automattic/language-picke
 /**
  * WordPress dependencies
  */
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
+import useLastLocation from '../../hooks/use-last-location';
 
 /**
  * Internal dependencies
  */
 import { ChangeLocaleContextConsumer } from '../../components/locale-context';
 import { I18N_STORE } from '../../stores/i18n';
-import { PLANS_STORE } from '../../stores/plans';
 import { USER_STORE } from '../../stores/user';
 import { Step, usePath } from '../../path';
 import type { StepNameType } from '../../path';
@@ -50,13 +50,12 @@ const LanguageStep: React.FunctionComponent< Props > = ( { previousStep } ) => {
 
 	const history = useHistory();
 	const makePath = usePath();
-
-	const { invalidateResolution } = useDispatch( 'core/data' );
+	const { goLastLocation } = useLastLocation();
 
 	const goBack = ( lang = '' ) => {
 		staticPreviousStep.current
 			? history.push( makePath( Step[ staticPreviousStep.current ], lang ) )
-			: history.goBack();
+			: goLastLocation();
 	};
 
 	return (
@@ -73,10 +72,6 @@ const LanguageStep: React.FunctionComponent< Props > = ( { previousStep } ) => {
 						languageGroups={ createLanguageGroups( __ ) }
 						languages={ languages }
 						onSelectLanguage={ ( language ) => {
-							// Invalidate the resolution cache for getSupportedPlans
-							// when the locale changes, to force the data for the plans grid
-							// to be fetched again, fresh from the plans/details and plans endpoints.
-							invalidateResolution( PLANS_STORE, 'getSupportedPlans', [ language.langSlug ] );
 							changeLocale( language.langSlug );
 							goBack( language.langSlug );
 						} }

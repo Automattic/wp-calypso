@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import React, { useEffect, useCallback, useState, useContext, createContext } from 'react';
+import React, { useRef, useEffect, useCallback, useState, useContext, createContext } from 'react';
 import { loadScript } from '@automattic/load-script';
 // We are several versions old for react-stripe-elements, and probably should
 // actually upgrade to the new Stripe.js anyway. Trying to use the actual types
@@ -73,11 +73,13 @@ export interface StripeConfiguration {
 
 export type ReloadStripeConfiguration = () => void;
 
+export type StripeLoadingError = undefined | null | Error;
+
 export interface StripeData {
 	stripe: null | Stripe;
 	stripeConfiguration: null | StripeConfiguration;
 	isStripeLoading: boolean;
-	stripeLoadingError: undefined | null | Error;
+	stripeLoadingError: StripeLoadingError;
 	reloadStripeConfiguration: ReloadStripeConfiguration;
 }
 
@@ -427,16 +429,17 @@ function useStripeConfiguration(
 		() => setReloadCount( ( count ) => count + 1 ),
 		[]
 	);
+	const memoizedRequestArgs = useMemoCompare( requestArgs, areRequestArgsEqual );
 
 	useEffect( () => {
 		debug( 'loading stripe configuration' );
 		let isSubscribed = true;
-		fetchStripeConfiguration( requestArgs || {} )
+		fetchStripeConfiguration( memoizedRequestArgs || {} )
 			.then( ( configuration ) => {
 				if ( ! isSubscribed ) {
 					return;
 				}
-				if ( requestArgs?.needs_intent && ! configuration.setup_intent_id ) {
+				if ( memoizedRequestArgs?.needs_intent && ! configuration.setup_intent_id ) {
 					debug( 'invalid stripe configuration; missing setup_intent_id', configuration );
 					throw new StripeConfigurationError(
 						'Error loading new payment method configuration. Received invalid data from the server.'
@@ -461,8 +464,21 @@ function useStripeConfiguration(
 		return () => {
 			isSubscribed = false;
 		};
-	}, [ requestArgs, stripeReloadCount, fetchStripeConfiguration ] );
+	}, [ memoizedRequestArgs, stripeReloadCount, fetchStripeConfiguration ] );
 	return { stripeConfiguration, stripeConfigurationError, reloadStripeConfiguration };
+}
+
+function areRequestArgsEqual(
+	previous: undefined | null | GetStripeConfigurationArgs,
+	next: undefined | null | GetStripeConfigurationArgs
+): boolean {
+	if ( next?.country !== previous?.country ) {
+		return false;
+	}
+	if ( next?.needs_intent !== previous?.needs_intent ) {
+		return false;
+	}
+	return true;
 }
 
 function StripeHookProviderInnerWrapper( {
@@ -610,4 +626,30 @@ function getStripeLocaleForLocale( locale: string | null | undefined ): string {
 		return 'auto';
 	}
 	return stripeLocale;
+}
+
+// See https://usehooks.com/useMemoCompare/
+function useMemoCompare< A, B >(
+	next: B,
+	compare: ( previous: A | B | undefined, next: B ) => boolean
+): A | B | undefined {
+	// Ref for storing previous value
+	const previousRef = useRef< undefined | A | B >();
+	const previous = previousRef.current;
+
+	// Pass previous and next value to compare function
+	// to determine whether to consider them equal.
+	const isEqual = compare( previous, next );
+
+	// If not equal update previousRef to next value.
+	// We only update if not equal so that this hook continues to return
+	// the same old value if compare keeps returning true.
+	useEffect( () => {
+		if ( ! isEqual ) {
+			previousRef.current = next;
+		}
+	} );
+
+	// Finally, if equal then return the previous value
+	return isEqual ? previous : next;
 }

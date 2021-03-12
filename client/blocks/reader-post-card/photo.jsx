@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop, debounce } from 'lodash';
+import { debounce } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -12,6 +12,8 @@ import classnames from 'classnames';
 import AutoDirection from 'calypso/components/auto-direction';
 import Emojify from 'calypso/components/emojify';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
+
+const noop = () => {};
 
 class PostPhoto extends React.Component {
 	state = {

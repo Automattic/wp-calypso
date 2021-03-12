@@ -16,7 +16,7 @@ import { emailManagement } from 'calypso/my-sites/email/paths';
 import { getThemeDetailsUrl } from 'calypso/state/themes/selectors';
 import {
 	isDomainProduct,
-	isGoogleApps,
+	isGSuiteOrGoogleWorkspace,
 	isPlan,
 	isSiteRedirect,
 	isTheme,
@@ -34,7 +34,7 @@ const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 
 	if ( isPlan( purchase ) ) {
 		url = '/plans/my-plan/' + selectedSite.slug;
-		text = i18n.translate( 'View Plan Features' );
+		text = i18n.translate( 'Plan Features' );
 	}
 
 	if ( isDomainProduct( purchase ) || isSiteRedirect( purchase ) ) {
@@ -42,7 +42,7 @@ const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 		text = i18n.translate( 'Domain Settings' );
 	}
 
-	if ( isGoogleApps( purchase ) || isTitanMail( purchase ) ) {
+	if ( isGSuiteOrGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
 		url = emailManagement( selectedSite.slug, purchase.meta );
 		text = i18n.translate( 'Email Settings' );
 	}

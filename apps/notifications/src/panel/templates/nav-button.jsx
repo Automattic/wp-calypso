@@ -4,12 +4,13 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Gridicon from './gridicons';
+
+const noop = () => {};
 
 export class NavButton extends Component {
 	static propTypes = {

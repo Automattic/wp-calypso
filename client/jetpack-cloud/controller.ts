@@ -136,6 +136,9 @@ const siteSelectionWithFragment = async (
 		if ( id ) {
 			selectSite( context, id );
 			next();
+		} else if ( '1' === context.query.unlinked ) {
+			// The user is not linked to that Jetpack site, we'll do that later on when needed.
+			next();
 		} else {
 			const allSitesPath = addQueryArgs(
 				{ site: siteFragment },

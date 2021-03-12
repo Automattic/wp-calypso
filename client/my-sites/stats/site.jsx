@@ -30,6 +30,8 @@ import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { isJetpackSite, getSitePlanSlug, getSiteOption } from 'calypso/state/sites/selectors';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { FEATURE_WORDADS_INSTANT } from 'calypso/lib/plans/constants';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -60,29 +62,44 @@ const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
 	date: endOf.format( 'YYYY-MM-DD' ),
 } ) );
 
-const CHARTS = [
-	{
-		attr: 'views',
-		legendOptions: [ 'visitors' ],
-		gridicon: 'visible',
-		label: translate( 'Views', { context: 'noun' } ),
-	},
-	{
-		attr: 'visitors',
-		gridicon: 'user',
-		label: translate( 'Visitors', { context: 'noun' } ),
-	},
-	{
-		attr: 'likes',
-		gridicon: 'star',
-		label: translate( 'Likes', { context: 'noun' } ),
-	},
-	{
-		attr: 'comments',
-		gridicon: 'comment',
-		label: translate( 'Comments', { context: 'noun' } ),
-	},
-];
+const CHART_VIEWS = {
+	attr: 'views',
+	legendOptions: [ 'visitors' ],
+	gridicon: 'visible',
+	label: translate( 'Views', { context: 'noun' } ),
+};
+const CHART_VISITORS = {
+	attr: 'visitors',
+	gridicon: 'user',
+	label: translate( 'Visitors', { context: 'noun' } ),
+};
+const CHART_LIKES = {
+	attr: 'likes',
+	gridicon: 'star',
+	label: translate( 'Likes', { context: 'noun' } ),
+};
+const CHART_COMMENTS = {
+	attr: 'comments',
+	gridicon: 'comment',
+	label: translate( 'Comments', { context: 'noun' } ),
+};
+const CHARTS = [ CHART_VIEWS, CHART_VISITORS, CHART_LIKES, CHART_COMMENTS ];
+
+/**
+ * Define chart properties with translatable strings getters
+ */
+Object.defineProperty( CHART_VIEWS, 'label', {
+	get: () => translate( 'Views', { context: 'noun' } ),
+} );
+Object.defineProperty( CHART_VISITORS, 'label', {
+	get: () => translate( 'Visitors', { context: 'noun' } ),
+} );
+Object.defineProperty( CHART_LIKES, 'label', {
+	get: () => translate( 'Likes', { context: 'noun' } ),
+} );
+Object.defineProperty( CHART_COMMENTS, 'label', {
+	get: () => translate( 'Comments', { context: 'noun' } ),
+} );
 
 const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
 class StatsSite extends Component {
@@ -133,7 +150,16 @@ class StatsSite extends Component {
 	};
 
 	renderStats() {
-		const { date, hasWordAds, siteId, slug, isAdmin, isJetpack, isVip } = this.props;
+		const {
+			date,
+			hasWordAds,
+			planSupportsWordAdsInstantFeature,
+			siteId,
+			slug,
+			isAdmin,
+			isJetpack,
+			isVip,
+		} = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -167,6 +193,9 @@ class StatsSite extends Component {
 					className="stats__section-header"
 					headerText={ translate( 'Stats and Insights' ) }
 					align="left"
+					subHeaderText={ translate(
+						"Learn more about the activity and behavior of your site's visitors."
+					) }
 				/>
 				<StatsNavigation
 					selectedItem={ 'traffic' }
@@ -174,6 +203,8 @@ class StatsSite extends Component {
 					siteId={ siteId }
 					slug={ slug }
 				/>
+				{ ! isVip && isAdmin && ! hasWordAds && <Cloudflare /> }
+
 				<div id="my-stats-content">
 					<ChartTabs
 						activeTab={ getActiveTab( this.props.chartTab ) }
@@ -187,9 +218,6 @@ class StatsSite extends Component {
 						period={ this.props.period }
 						chartTab={ this.props.chartTab }
 					/>
-
-					{ ! isVip && isAdmin && ! hasWordAds && <Cloudflare /> }
-
 					<StickyPanel className="stats__sticky-navigation">
 						<StatsPeriodNavigation
 							date={ date }
@@ -277,12 +305,17 @@ class StatsSite extends Component {
 							description={ translate(
 								'Accept payments for just about anything and turn your website into a reliable source of income with payments and ads.'
 							) }
+							callToAction={ planSupportsWordAdsInstantFeature ? translate( 'Learn more' ) : null }
 							href={ `/earn/${ slug }` }
+							dismissPreferenceName={
+								planSupportsWordAdsInstantFeature ? `stats-earn-nudge-wordads-${ siteId }` : null
+							}
 							event="stats_earn_nudge"
 							tracksImpressionName="calypso_upgrade_nudge_impression"
 							tracksClickName="calypso_upgrade_nudge_cta_click"
 							showIcon={ true }
 							jetpack={ false }
+							horizontal
 						/>
 					) }
 				</div>
@@ -354,6 +387,7 @@ export default connect(
 			isVip,
 			slug: getSelectedSiteSlug( state ),
 			planSlug: getSitePlanSlug( state, siteId ),
+			planSupportsWordAdsInstantFeature: hasFeature( state, siteId, FEATURE_WORDADS_INSTANT ),
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
 		};

@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 import { spy } from 'sinon';
 
@@ -12,6 +11,8 @@ import { spy } from 'sinon';
  */
 import { QueryAutomatedTransferEligibility as QueryEligibility, mapDispatchToProps } from '../';
 import { requestEligibility as requestEligibilityAction } from 'calypso/state/automated-transfer/actions';
+
+const noop = () => {};
 
 describe( 'QueryAutomatedTransferEligibility', () => {
 	const siteId = 1337;

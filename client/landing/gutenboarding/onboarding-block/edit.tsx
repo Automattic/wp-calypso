@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import type { BlockEditProps } from '@wordpress/blocks';
 
 /**
@@ -19,12 +19,15 @@ import {
 	useCurrentStep,
 	usePath,
 	useNewQueryParam,
+	useAnchorFmParams,
+	useStepRouteParam,
 } from '../path';
 import { usePrevious } from '../hooks/use-previous';
 import DesignSelector from './design-selector';
 import CreateSite from './create-site';
 import CreateSiteError from './create-site-error';
 import AcquireIntent from './acquire-intent';
+import AnchorError from './anchor-error';
 import StylePreview from './style-preview';
 import Features from './features';
 import Plans from './plans';
@@ -43,6 +46,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	const newSiteError = useSelect( ( select ) => select( SITE_STORE ).getNewSiteError() );
 	const shouldTriggerCreate = useNewQueryParam();
 	const isAnchorFmSignup = useIsAnchorFm();
+	const { isAnchorFmPodcastIdError } = useAnchorFmParams();
 
 	const makePath = usePath();
 	const currentStep = useCurrentStep();
@@ -113,6 +117,25 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		return redirectToLatestStep;
 	}
 
+	// Remember the last accessed route path
+	const location = useLocation();
+	const step = useStepRouteParam();
+	const { setLastLocation } = useDispatch( STORE_KEY );
+
+	React.useEffect( () => {
+		const modalSteps: StepType[] = [ Step.DomainsModal, Step.PlansModal, Step.LanguageModal ];
+		if (
+			// When location.key is undefined, this means user has just entered gutenboarding from url.
+			location.key !== undefined &&
+			// When step exists, and step is not any from the modals
+			step &&
+			! modalSteps.includes( step )
+		) {
+			// Remember last location
+			setLastLocation( location.pathname );
+		}
+	}, [ location, step, setLastLocation ] );
+
 	return (
 		<div className="onboarding-block">
 			{ isCreatingSite && (
@@ -123,7 +146,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 			) }
 			<Switch>
 				<Route exact path={ makePath( Step.IntentGathering ) }>
-					<AcquireIntent />
+					{ isAnchorFmPodcastIdError ? <AnchorError /> : <AcquireIntent /> }
 				</Route>
 
 				<Route path={ makePath( Step.DesignSelection ) }>

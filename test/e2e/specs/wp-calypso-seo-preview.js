@@ -24,16 +24,16 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-	await driverManager.clearCookiesAndDeleteLocalStorage( driver );
-} );
-
 describe( `[${ host }] SEO Preview page: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
+	} );
+
 	describe( 'SEO Preview page:', function () {
 		// Login as Business plan user and open the sidebar
 		step( 'Log In', async function () {

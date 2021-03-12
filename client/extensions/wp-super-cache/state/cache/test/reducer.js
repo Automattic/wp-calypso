@@ -19,7 +19,6 @@ import {
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 } from '../../action-types';
 import reducer from '../reducer';
-import { SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -105,22 +104,6 @@ describe( 'reducer', () => {
 				},
 			} );
 		} );
-
-		test( 'should not persist state', () => {
-			const state = reducer( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = reducer( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state.deleteStatus ).to.eql( {} );
-		} );
 	} );
 
 	describe( 'testing()', () => {
@@ -180,22 +163,6 @@ describe( 'reducer', () => {
 				[ primarySiteId ]: false,
 			} );
 		} );
-
-		test( 'should not persist state', () => {
-			const state = reducer( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = reducer( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state.testing ).to.eql( {} );
-		} );
 	} );
 
 	describe( 'preloading()', () => {
@@ -254,22 +221,6 @@ describe( 'reducer', () => {
 			expect( state.preloading ).to.eql( {
 				[ primarySiteId ]: false,
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = reducer( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = reducer( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state.preloading ).to.eql( {} );
 		} );
 	} );
 
@@ -357,22 +308,6 @@ describe( 'reducer', () => {
 			expect( state.items ).to.eql( {
 				[ primarySiteId ]: newResults,
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = reducer( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = reducer( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state.items ).to.eql( {} );
 		} );
 	} );
 } );

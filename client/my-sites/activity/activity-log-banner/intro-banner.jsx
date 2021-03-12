@@ -25,7 +25,10 @@ import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { isFreePlan } from 'calypso/lib/plans';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { siteHasBackupProductPurchase } from 'calypso/state/purchases/selectors';
+import {
+	siteHasBackupProductPurchase,
+	siteHasScanProductPurchase,
+} from 'calypso/state/purchases/selectors';
 
 /**
  * Style dependencies
@@ -46,27 +49,27 @@ class IntroBanner extends Component {
 	recordDismiss = () => this.props.recordTracksEvent( 'calypso_activitylog_intro_banner_dismiss' );
 
 	renderCardContent() {
-		const { siteIsJetpack, siteHasBackup, siteSlug, translate } = this.props;
+		const { siteIsJetpack, siteSlug, translate, siteHasActivityLog } = this.props;
 		const buttonHref = siteIsJetpack
 			? `/checkout/${ siteSlug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_ACTIVITY_LOG ] }`
 			: `/plans/${ siteSlug }?feature=${ FEATURE_JETPACK_ESSENTIAL }&plan=${ PLAN_PERSONAL }`;
 
 		return (
-			<Fragment>
+			<>
 				<p>
 					{ translate(
 						'We’ll keep track of all the events that take place on your site to help manage things easier. '
 					) }
-					{ ! siteHasBackup
+					{ siteHasActivityLog
 						? translate(
-								'With your free plan, you can monitor the 20 most recent events on your site.'
+								'Looking for something specific? You can filter the events by type and date.'
 						  )
 						: translate(
-								'Looking for something specific? You can filter the events by type and date.'
+								'With your free plan, you can monitor the 20 most recent events on your site.'
 						  ) }
 				</p>
-				{ ! siteHasBackup && (
-					<Fragment>
+				{ ! siteHasActivityLog && (
+					<>
 						<p>{ translate( 'Upgrade to a paid plan to unlock powerful features:' ) }</p>
 						<ul className="activity-log-banner__intro-list">
 							<li>
@@ -80,16 +83,14 @@ class IntroBanner extends Component {
 						</ul>
 
 						<div className="activity-log-banner__intro-actions">
-							{ ! siteHasBackup && (
-								<Button
-									primary
-									className="activity-log-banner__intro-button"
-									href={ buttonHref }
-									onClick={ this.recordUpgrade }
-								>
-									{ translate( 'Upgrade now' ) }
-								</Button>
-							) }
+							<Button
+								primary
+								className="activity-log-banner__intro-button"
+								href={ buttonHref }
+								onClick={ this.recordUpgrade }
+							>
+								{ translate( 'Upgrade now' ) }
+							</Button>
 							<ExternalLink
 								href="https://en.blog.wordpress.com/2018/10/30/introducing-activity/"
 								icon
@@ -99,9 +100,9 @@ class IntroBanner extends Component {
 								{ translate( 'Learn more' ) }
 							</ExternalLink>
 						</div>
-					</Fragment>
+					</>
 				) }
-			</Fragment>
+			</>
 		);
 	}
 
@@ -138,12 +139,16 @@ export default connect(
 	( state, { siteId } ) => {
 		const siteIsOnFreePlan = isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) );
 		const hasBackupPurchase = siteHasBackupProductPurchase( state, siteId );
+		const hasScanPurchase = siteHasScanProductPurchase( state, siteId );
 
 		return {
 			siteId,
-			siteIsJetpack: isJetpackSite( state, siteId ),
-			siteHasBackup: ! siteIsOnFreePlan || hasBackupPurchase,
 			siteSlug: getSiteSlug( state, siteId ),
+			siteIsJetpack: isJetpackSite( state, siteId ),
+
+			// TODO: Eventually use getRewindCapabilities to determine this?
+			// Activity Log doesn't appear to show up there yet though.
+			siteHasActivityLog: ! siteIsOnFreePlan || hasBackupPurchase || hasScanPurchase,
 		};
 	},
 	{

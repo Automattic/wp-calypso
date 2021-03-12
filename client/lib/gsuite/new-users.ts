@@ -99,7 +99,7 @@ const validEmailCharacterField = ( { value, error }: GSuiteNewUserField ): GSuit
 	error:
 		! error && ! /^[0-9a-z_'-](\.?[0-9a-z_'-])*$/i.test( value )
 			? translate(
-					'Only number, letters, dashes, underscores, apostrophes and periods are allowed.'
+					'Only numbers, letters, dashes, underscores, apostrophes and periods are allowed.'
 			  )
 			: error,
 } );

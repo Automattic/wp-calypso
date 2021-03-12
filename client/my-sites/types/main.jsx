@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -22,6 +23,7 @@ import PostTypeForbidden from './post-type-forbidden';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getPostType, isPostTypeSupported } from 'calypso/state/post-types/selectors';
+import QueryPostTypes from 'calypso/components/data/query-post-types';
 
 function Types( {
 	siteId,
@@ -31,6 +33,7 @@ function Types( {
 	userCanEdit,
 	statusSlug,
 	showPublishedStatus,
+	translate,
 } ) {
 	return (
 		<Main wideLayout>
@@ -41,6 +44,11 @@ function Types( {
 				brandFont
 				className="types__page-heading"
 				headerText={ get( postType, 'label', '' ) }
+				subHeaderText={
+					get( postType, 'label', '' ) === 'Testimonials'
+						? translate( 'Create and manage all the testimonials on your site.' )
+						: ''
+				}
 				align="left"
 			/>
 			{ userCanEdit &&
@@ -59,6 +67,7 @@ function Types( {
 				] }
 			{ ! postTypeSupported && <PostTypeUnsupported type={ query.type } /> }
 			{ ! userCanEdit && <PostTypeForbidden /> }
+			{ siteId && <QueryPostTypes siteId={ siteId } /> }
 		</Main>
 	);
 }
@@ -84,4 +93,4 @@ export default connect( ( state, ownProps ) => {
 		postTypeSupported: isPostTypeSupported( state, siteId, ownProps.query.type ),
 		userCanEdit: canCurrentUser( state, siteId, capability ),
 	};
-} )( Types );
+} )( localize( Types ) );

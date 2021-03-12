@@ -1,12 +1,10 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,6 +21,8 @@ import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class ImageSelector extends Component {
 	static propTypes = {

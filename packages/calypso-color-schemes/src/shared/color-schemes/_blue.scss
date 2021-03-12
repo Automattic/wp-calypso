@@ -23,7 +23,7 @@ Used studio-blue for the primary+accent.
 */
 
 .color-scheme.is-blue,
-.color-scheme.is-blue .is-nav-unification {
+.color-scheme.is-blue.is-nav-unification {
 	/* Variables used in Calypso blue */
 	--theme-text-color: #ffffff; /* Direct from wp-admin */
 	--theme-text-color-rgb: 255, 255, 255; /* Manual conversion */
@@ -141,6 +141,6 @@ Used studio-blue for the primary+accent.
 	--color-sidebar-submenu-background: var( --theme-submenu-background-color );
 	--color-sidebar-submenu-text: var( --theme-submenu-text-color );
 	--color-sidebar-submenu-hover-background: transparent;
-	--color-sidebar-submenu-hover-text: var( --theme-highlight-color );
+	--color-sidebar-submenu-hover-text: var( --theme-text-color );
 }
 

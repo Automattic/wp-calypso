@@ -18,7 +18,12 @@ import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
  * Internal dependencies
  */
 import { infoNotice, successNotice } from 'calypso/state/notices/actions';
-import { hasRenewalItem, getRenewalItems, hasPlan } from 'calypso/lib/cart-values/cart-items';
+import {
+	hasRenewalItem,
+	getRenewalItems,
+	hasPlan,
+	hasEcommercePlan,
+} from 'calypso/lib/cart-values/cart-items';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -45,7 +50,10 @@ import {
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isTreatmentOneClickTest } from 'calypso/state/marketing/selectors';
+import {
+	isTreatmentOneClickTest,
+	isTreatmentDifmUpsellTest,
+} from 'calypso/state/marketing/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
 
@@ -59,6 +67,7 @@ export default function useCreatePaymentCompleteCallback( {
 	feature,
 	isInEditor,
 	isComingFromUpsell,
+	isFocusedLaunch,
 }: {
 	createUserAndSiteBeforeTransaction?: boolean;
 	productAliasFromUrl?: string | undefined;
@@ -67,6 +76,7 @@ export default function useCreatePaymentCompleteCallback( {
 	feature?: string | undefined;
 	isInEditor?: boolean;
 	isComingFromUpsell?: boolean;
+	isFocusedLaunch?: boolean;
 } ): PaymentCompleteCallback {
 	const { responseCart } = useShoppingCart();
 	const reduxDispatch = useDispatch();
@@ -80,6 +90,7 @@ export default function useCreatePaymentCompleteCallback( {
 	const adminUrl = selectedSiteData?.options?.admin_url;
 	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( responseCart );
 	const shouldShowOneClickTreatment = useSelector( ( state ) => isTreatmentOneClickTest( state ) );
+	const shouldShowDifmUpsell = useSelector( ( state ) => isTreatmentDifmUpsellTest( state ) );
 	const previousRoute = useSelector( ( state ) => getPreviousRoute( state ) );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const isJetpackNotAtomic =
@@ -104,6 +115,7 @@ export default function useCreatePaymentCompleteCallback( {
 				productAliasFromUrl,
 				isEligibleForSignupDestinationResult,
 				shouldShowOneClickTreatment,
+				shouldShowDifmUpsell,
 				hideNudge: isComingFromUpsell,
 				isInEditor,
 				previousRoute,
@@ -186,6 +198,12 @@ export default function useCreatePaymentCompleteCallback( {
 				}
 			}
 
+			// Focused Launch is showing a success dialog directly in editor instead of a thank you page.
+			// See https://github.com/Automattic/wp-calypso/pull/47808#issuecomment-755196691
+			if ( isInEditor && isFocusedLaunch && ! hasEcommercePlan( responseCart ) ) {
+				return;
+			}
+
 			debug( 'just redirecting to', url );
 
 			if ( createUserAndSiteBeforeTransaction ) {
@@ -207,6 +225,7 @@ export default function useCreatePaymentCompleteCallback( {
 		[
 			previousRoute,
 			shouldShowOneClickTreatment,
+			shouldShowDifmUpsell,
 			siteSlug,
 			adminUrl,
 			redirectTo,
@@ -225,6 +244,7 @@ export default function useCreatePaymentCompleteCallback( {
 			translate,
 			responseCart,
 			createUserAndSiteBeforeTransaction,
+			isFocusedLaunch,
 		]
 	);
 }

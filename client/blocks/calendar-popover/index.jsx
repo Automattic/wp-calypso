@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { noop, pick } from 'lodash';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,6 +19,8 @@ import PostSchedule from 'calypso/components/post-schedule';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class CalendarPopover extends Component {
 	static propTypes = {

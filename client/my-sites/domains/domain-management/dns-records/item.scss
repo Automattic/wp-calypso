@@ -7,7 +7,7 @@
 	position: relative;
 
 	.dns-records__list-type {
-		min-width: 60px;
+		min-width: 65px;
 
 		span {
 			background: var( --color-neutral-light );
@@ -38,7 +38,11 @@
 	}
 
 	&.is-disabled {
-		opacity: 0.2;
-		cursor: not-allowed;
+		.dns-records__list-type,
+		.dns-records__list-info,
+		.dns__list-remove {
+			opacity: 0.4;
+			cursor: not-allowed;
+		}
 	}
 }

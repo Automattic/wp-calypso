@@ -82,6 +82,9 @@ export function getAvailableDesigns(
 ): AvailableDesigns {
 	let designs = availableDesigns;
 
+	// We can tell different environments (via the config JSON) to show pre-prod "alpha" designs.
+	// Otherwise they'll be hidden by default.
+	// Here we filter out designs that have been marked as alpha in available-designs-config.json
 	if ( ! includeAlphaDesigns ) {
 		designs = {
 			...designs,

@@ -1,7 +1,8 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withStorageKey } from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { TIMEZONES_RECEIVE } from 'calypso/state/action-types';
 
 import { rawOffsetsSchema, labelsSchema, continentsSchema } from './schema';

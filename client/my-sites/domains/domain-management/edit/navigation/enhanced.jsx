@@ -43,9 +43,8 @@ import { withoutHttp } from 'calypso/lib/url';
 import RemovePurchase from 'calypso/me/purchases/remove-purchase';
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getMaxTitanMailboxCount } from 'calypso/lib/titan';
+import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
-import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 

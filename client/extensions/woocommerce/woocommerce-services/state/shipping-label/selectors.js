@@ -2,7 +2,6 @@
  * External dependencies
  */
 import {
-	fill,
 	find,
 	flatten,
 	forEach,
@@ -10,8 +9,6 @@ import {
 	includes,
 	isEmpty,
 	isEqual,
-	isFinite,
-	isNil,
 	map,
 	mapValues,
 	omit,
@@ -25,7 +22,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import {
@@ -270,7 +267,7 @@ const getPackagesErrors = ( values ) =>
 			errors.box_id = translate( 'Please select a package' );
 		}
 
-		const isInvalidDimension = ( dimension ) => ! isFinite( dimension ) || 0 >= dimension;
+		const isInvalidDimension = ( dimension ) => ! Number.isFinite( dimension ) || 0 >= dimension;
 
 		if ( isInvalidDimension( pckg.weight ) ) {
 			errors.weight = translate( 'Invalid weight' );
@@ -297,7 +294,7 @@ export const getCustomsErrors = (
 		flatten( map( packages, ( pckg ) => map( pckg.items, 'product_id' ) ) )
 	);
 
-	const valuesByProductId = zipObject( usedProductIds, fill( Array( usedProductIds.length ), 0 ) );
+	const valuesByProductId = zipObject( usedProductIds, Array( usedProductIds.length ).fill( 0 ) );
 	forEach( packages, ( pckg ) => {
 		forEach(
 			pckg.items,
@@ -374,14 +371,14 @@ export const getCustomsErrors = (
 				itemErrors.description = translate( 'This field is required' );
 			}
 			if ( ! customs.ignoreWeightValidation[ productId ] ) {
-				if ( isNil( itemData.weight ) || '' === itemData.weight ) {
+				if ( itemData.weight == null || '' === itemData.weight ) {
 					itemErrors.weight = translate( 'This field is required' );
 				} else if ( ! ( parseFloat( itemData.weight ) > 0 ) ) {
 					itemErrors.weight = translate( 'Weight must be greater than zero' );
 				}
 			}
 			if ( ! customs.ignoreValueValidation[ productId ] ) {
-				if ( isNil( itemData.value ) || '' === itemData.value ) {
+				if ( itemData.value == null || '' === itemData.value ) {
 					itemErrors.value = translate( 'This field is required' );
 				} else if ( ! ( parseFloat( itemData.value ) > 0 ) ) {
 					itemErrors.value = translate( 'Declared value must be greater than zero' );
@@ -498,7 +495,7 @@ export const isCustomsFormStepSubmitted = (
 	return ! some(
 		usedProductIds.map(
 			( productId ) =>
-				isNil( form.customs.items[ productId ].tariffNumber ) ||
+				form.customs.items[ productId ].tariffNumber == null ||
 				form.customs.ignoreWeightValidation[ productId ] ||
 				form.customs.ignoreValueValidation[ productId ]
 		)

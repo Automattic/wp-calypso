@@ -2,9 +2,10 @@
 
 exports[`UpworkBanner renders correctly 1`] = `
 <a
-  className="upwork-banner"
+  className="external-link upwork-banner"
   href="https://wordpress.com/built-by-wordpress-com/"
   onClick={[Function]}
+  rel="external"
   role="button"
   style={
     Object {

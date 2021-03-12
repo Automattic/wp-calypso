@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { Button as OriginalButton } from '@wordpress/components';
 import { wordpress } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -17,11 +18,11 @@ import './style.scss';
 const Button = ( {
 	children,
 	...rest
-}: OriginalButton.Props & { icon?: any; iconSize?: number; showTooltip?: boolean } ) => (
+}: OriginalButton.Props & { icon?: unknown; iconSize?: number; showTooltip?: boolean } ) => (
 	<OriginalButton { ...rest }>{ children }</OriginalButton>
 );
 
-export default function ToggleSidebarButton() {
+export default function ToggleSidebarButton(): JSX.Element {
 	const { toggleSidebar } = useDispatch( STORE_KEY );
 	const isSidebarOpen = useSelect( ( select ) => select( STORE_KEY ).isSidebarOpened() );
 	const isSidebarClosing = useSelect( ( select ) => select( STORE_KEY ).isSidebarClosing() );

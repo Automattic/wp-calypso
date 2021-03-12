@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { get, isUndefined, map, noop, omit, omitBy } from 'lodash';
+import { get, isUndefined, map, omit, omitBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +13,8 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { receivePostRevisionAuthors } from 'calypso/state/posts/revisions/authors/actions';
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 export const DEFAULT_PER_PAGE = 10;
 

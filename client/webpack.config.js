@@ -39,7 +39,6 @@ const { workerCount } = require( './webpack.common' );
 const getAliasesForExtensions = require( '../build-tools/webpack/extensions' );
 const RequireChunkCallbackPlugin = require( '../build-tools/webpack/require-chunk-callback-plugin' );
 const GenerateChunksMapPlugin = require( '../build-tools/webpack/generate-chunks-map-plugin' );
-const ExtractManifestPlugin = require( '../build-tools/webpack/extract-manifest-plugin' );
 const AssetsWriter = require( '../build-tools/webpack/assets-writer-plugin.js' );
 
 /**
@@ -126,8 +125,8 @@ if ( ! process.env.BROWSERSLIST_ENV ) {
 	process.env.BROWSERSLIST_ENV = browserslistEnv;
 }
 
-let outputFilename = '[name].[chunkhash].min.js'; // prefer the chunkhash, which depends on the chunk, not the entire build
-let outputChunkFilename = '[name].[chunkhash].min.js'; // ditto
+let outputFilename = '[name].[contenthash].min.js';
+let outputChunkFilename = '[name].[contenthash].min.js';
 
 // we should not use chunkhash in development: https://github.com/webpack/webpack-dev-server/issues/377#issuecomment-241258405
 // also we don't minify so dont name them .min.js
@@ -209,9 +208,7 @@ const webpackConfig = {
 							safari10: false,
 					  }
 					: {
-							compress: {
-								passes: 2,
-							},
+							compress: true,
 							mangle: true,
 					  } ),
 			},
@@ -237,6 +234,10 @@ const webpackConfig = {
 			SassConfig.loader( {
 				includePaths: [ __dirname ],
 				postCssOptions: {
+					// Do not use postcss.config.js. This ensure we have the final say on how PostCSS is used in calypso.
+					// This is required because Calypso imports `@automattic/notifications` and that package defines its
+					// own `postcss.config.js` that they use for their webpack bundling process.
+					config: false,
 					plugins: [
 						autoprefixerPlugin(),
 						browserslistEnv === 'defaults' &&
@@ -286,6 +287,7 @@ const webpackConfig = {
 
 				// Node polyfills
 				process: 'process/browser',
+				util: findPackage( 'util/' ), //Trailing `/` stops node from resolving it to the built-in module
 			},
 			getAliasesForExtensions( {
 				extensionsDirectory: path.resolve( __dirname, 'extensions' ),
@@ -296,12 +298,16 @@ const webpackConfig = {
 	plugins: [
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
+			'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
 			'process.env.GUTENBERG_PHASE': JSON.stringify( 1 ),
 			'process.env.FORCE_REDUCED_MOTION': JSON.stringify(
 				!! process.env.FORCE_REDUCED_MOTION || false
 			),
 			__i18n_text_domain__: JSON.stringify( 'default' ),
 			global: 'window',
+		} ),
+		new webpack.ProvidePlugin( {
+			process: 'process/browser',
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
@@ -350,7 +356,6 @@ const webpackConfig = {
 				output: path.resolve( '.', `chunks-map.${ extraPath }.json` ),
 			} ),
 		new RequireChunkCallbackPlugin(),
-		isDevelopment && new webpack.HotModuleReplacementPlugin(),
 		...( ! config.isEnabled( 'desktop' )
 			? [
 					new webpack.NormalModuleReplacementPlugin(
@@ -359,6 +364,13 @@ const webpackConfig = {
 					),
 			  ]
 			: [] ),
+		/*
+		 * ExPlat: Don't import the server logger when we are in the browser
+		 */
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/server\/lib\/logger$/,
+			'calypso/lib/explat/internals/logger-browser-replacement'
+		),
 		/*
 		 * Forcibly remove dashicon while we wait for better tree-shaking in `@wordpress/*`.
 		 */
@@ -391,8 +403,6 @@ const webpackConfig = {
 		 * Replace `lodash` with `lodash-es`
 		 */
 		new ExtensiveLodashReplacementPlugin(),
-
-		! isDesktop && ! isDevelopment && new ExtractManifestPlugin(),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],
 };

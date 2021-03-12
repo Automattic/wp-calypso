@@ -4,7 +4,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -22,6 +22,8 @@ import { addQueryArgs } from '@wordpress/url';
  * Internal dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 const TemplateEdit = compose(
 	withState( { templateClientId: null } ),
@@ -177,7 +179,10 @@ const TemplateEdit = compose(
 							{ navigateToTemplate && (
 								<div className="template-block__loading">
 									<Spinner />{ ' ' }
-									{ sprintf( __( 'Loading editor for: %s', 'full-site-editing' ), templateTitle ) }
+									{
+										/* translators: %s is a template title. */
+										sprintf( __( 'Loading editor for: %s', 'full-site-editing' ), templateTitle )
+									}
 								</div>
 							) }
 							<Button
@@ -188,7 +193,10 @@ const TemplateEdit = compose(
 								isLarge
 								ref={ navButton }
 							>
-								{ sprintf( __( 'Edit %s', 'full-site-editing' ), templateTitle ) }
+								{
+									/* translators: %s is a template title. */
+									sprintf( __( 'Edit %s', 'full-site-editing' ), templateTitle )
+								}
 							</Button>
 						</Placeholder>
 					</Fragment>

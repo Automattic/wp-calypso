@@ -20,7 +20,7 @@ import Main from 'calypso/components/main';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import SectionHeader from 'calypso/components/section-header';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { getCurrentUserId, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id.js';
@@ -29,6 +29,7 @@ import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { getUserPurchases, isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
 import { planHasFeature } from 'calypso/lib/plans';
 import { FEATURE_BUSINESS_ONBOARDING } from 'calypso/lib/plans/constants';
+import Experiment, { DefaultVariation, Variation } from 'calypso/components/experiment';
 
 /**
  * Style dependencies
@@ -38,7 +39,13 @@ import './style.scss';
 /**
  * Images
  */
-import supportSession from 'calypso/assets/images/customer-home/illustration-webinars.svg';
+import helpSupportSession from 'calypso/assets/images/customer-home/illustration-webinars.svg';
+import helpDomains from 'calypso/assets/images/illustrations/help-domains.svg';
+import helpGetStarted from 'calypso/assets/images/illustrations/help-getstarted.svg';
+import helpPlugins from 'calypso/assets/images/illustrations/help-plugins.svg';
+import helpWebsite from 'calypso/assets/images/illustrations/help-website.svg';
+import helpPrivacy from 'calypso/assets/images/illustrations/help-privacy.svg';
+import helpPurchases from 'calypso/assets/images/customer-home/illustration--secondary-earn.svg';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -50,6 +57,10 @@ const debug = debugModule( 'calypso:help-search' );
 class Help extends React.PureComponent {
 	static displayName = 'Help';
 
+	state = {
+		isSearching: false,
+	};
+
 	getHelpfulArticles = () => {
 		const helpfulResults = [
 			{
@@ -58,6 +69,7 @@ class Help extends React.PureComponent {
 				description: this.props.translate(
 					'If you’re building a brand new site, you might be wondering if you need a website, a blog, or a website with a blog. At WordPress.com, you can create all of these options easily, right in your dashboard.'
 				),
+				image: helpWebsite,
 			},
 			{
 				link: 'https://wordpress.com/support/business-plan/',
@@ -65,6 +77,7 @@ class Help extends React.PureComponent {
 				description: this.props.translate(
 					'Learn more about installing a custom theme or plugin using the Business plan.'
 				),
+				image: helpPlugins,
 			},
 			{
 				link: 'https://wordpress.com/support/domains/',
@@ -72,6 +85,7 @@ class Help extends React.PureComponent {
 				description: this.props.translate(
 					'Set up your domain whether it’s registered with WordPress.com or elsewhere.'
 				),
+				image: helpDomains,
 			},
 			{
 				link: 'https://wordpress.com/support/start/',
@@ -79,6 +93,7 @@ class Help extends React.PureComponent {
 				description: this.props.translate(
 					'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.'
 				),
+				image: helpGetStarted,
 			},
 			{
 				link: 'https://wordpress.com/support/settings/privacy-settings/',
@@ -86,6 +101,7 @@ class Help extends React.PureComponent {
 				description: this.props.translate(
 					'Limit your site’s visibility or make it completely private.'
 				),
+				image: helpPrivacy,
 			},
 			{
 				link: 'https://wordpress.com/support/manage-purchases/',
@@ -93,31 +109,35 @@ class Help extends React.PureComponent {
 				description: this.props.translate(
 					'Have a question or need to change something about a purchase you have made? Learn how.'
 				),
+				image: helpPurchases,
 			},
 		];
 
 		return (
-			<div className="help-results">
-				<SectionHeader label={ this.props.translate( 'Most Helpful Articles' ) } />
-				{ helpfulResults.map( ( result, index ) => {
-					const trackClick = () => {
-						debug( 'Suggested result click: ', result.link );
-						recordTracksEvent( 'calypso_help_suggested_result_click', {
-							link: result.link,
-							position: index,
-						} );
-					};
+			<>
+				<h2 className="help__section-title">{ this.props.translate( 'Most Helpful Articles' ) }</h2>
+				<div className="help-results">
+					{ helpfulResults.map( ( result, index ) => {
+						const trackClick = () => {
+							debug( 'Suggested result click: ', result.link );
+							recordTracksEvent( 'calypso_help_suggested_result_click', {
+								link: result.link,
+								position: index,
+							} );
+						};
 
-					return (
-						<HelpResult
-							key={ result.link }
-							helpLink={ result }
-							iconTypeDescription="book"
-							onClick={ trackClick }
-						/>
-					);
-				} ) }
-			</div>
+						return (
+							<HelpResult
+								key={ result.link }
+								helpLink={ result }
+								iconTypeDescription="book"
+								onClick={ trackClick }
+								localizedReadArticle={ this.props.translate( 'Read article' ) }
+							/>
+						);
+					} ) }
+				</div>
+			</>
 		);
 	};
 
@@ -260,7 +280,7 @@ class Help extends React.PureComponent {
 					</div>
 				</div>
 				<div className="help__support-session-illustration">
-					<img src={ supportSession } alt="" />
+					<img src={ helpSupportSession } alt="" />
 				</div>
 			</Card>
 		);
@@ -277,6 +297,10 @@ class Help extends React.PureComponent {
 		} );
 	};
 
+	trackContactUsClick = () => {
+		recordTracksEvent( 'calypso_help_header_button_click' );
+	};
+
 	getPlaceholders = () => (
 		<Main className="help" wideLayout>
 			<MeSidebarNavigation />
@@ -287,8 +311,14 @@ class Help extends React.PureComponent {
 		</Main>
 	);
 
+	setIsSearching = ( status ) => {
+		this.setState( {
+			isSearching: status,
+		} );
+	};
+
 	render() {
-		const { isEmailVerified, userId, isLoading } = this.props;
+		const { isEmailVerified, userId, isLoading, translate } = this.props;
 
 		if ( isLoading ) {
 			return this.getPlaceholders();
@@ -298,11 +328,34 @@ class Help extends React.PureComponent {
 			<Main className="help" wideLayout>
 				<PageViewTracker path="/help" title="Help" />
 				<MeSidebarNavigation />
-				<HelpSearch />
-				{ ! isEmailVerified && <HelpUnverifiedWarning /> }
-				{ this.supportSessionCard() }
-				{ this.getHelpfulArticles() }
-				{ this.getSupportLinks() }
+
+				<div className="help__heading">
+					<FormattedHeader
+						brandFont
+						headerText={ translate( 'Support' ) }
+						subHeaderText={ translate( 'Get help with your WordPress.com site' ) }
+						align="left"
+					/>
+					<Experiment name="calypso_help_contact_button">
+						<Variation name="treatment">
+							<div className="help__contact-us-header-button">
+								<Button onClick={ this.trackContactUsClick } href="/help/contact/">
+									{ translate( 'Contact support' ) }
+								</Button>
+							</div>
+						</Variation>
+						<DefaultVariation name="control" />
+					</Experiment>
+				</div>
+				<HelpSearch onSearch={ this.setIsSearching } />
+				{ ! this.state.isSearching && (
+					<div className="help__inner-wrapper">
+						{ ! isEmailVerified && <HelpUnverifiedWarning /> }
+						{ this.supportSessionCard() }
+						{ this.getHelpfulArticles() }
+						{ this.getSupportLinks() }
+					</div>
+				) }
 				{ this.getContactUs() }
 				<QueryConciergeInitial />
 				<QueryUserPurchases userId={ userId } />

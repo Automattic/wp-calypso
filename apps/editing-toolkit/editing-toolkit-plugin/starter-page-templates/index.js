@@ -3,13 +3,14 @@
  */
 import { registerPlugin } from '@wordpress/plugins';
 import { dispatch } from '@wordpress/data';
+import { initializeTracksWithIdentity } from '@automattic/page-template-modal';
 
 /**
  * Internal dependencies
  */
-import { PageTemplatesPlugin } from './page-template-modal';
-import { initializeWithIdentity } from './page-template-modal/utils/tracking';
+import { PageTemplatesPlugin } from './page-template-plugin';
 import './store';
+import './index.scss';
 
 // Load config passed from backend.
 const {
@@ -25,7 +26,7 @@ const {
 } = window.starterPageTemplatesConfig;
 
 if ( tracksUserData ) {
-	initializeWithIdentity( tracksUserData );
+	initializeTracksWithIdentity( tracksUserData );
 }
 
 const templatesPluginSharedProps = {

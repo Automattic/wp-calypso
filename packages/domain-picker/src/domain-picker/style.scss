@@ -374,6 +374,14 @@ $accent-blue: #117ac9;
 	}
 }
 
+.domain-picker__suggestion-item.is-free {
+	// free domains don't include the wide phrase "Included in paid plans"
+	// they only include "Free" or "Default" word, this shrinks their width 
+	.domain-picker__price {
+		flex-grow: 0.1 // this is practically the same as 0. But 0 breaks IE.
+	}
+}
+
 .domain-picker__suggestion-item.type-individual-item {
 	.domain-picker__price {
 		display: flex;
@@ -397,6 +405,10 @@ $accent-blue: #117ac9;
 
 	@include break-small {
 		display: inline;
+	}
+
+	strong {
+		font-weight: 700;
 	}
 }
 
@@ -498,6 +510,7 @@ $accent-blue: #117ac9;
 .domain-picker__item-tip {
 	font-size: $font-body-extra-small;
 	color: var( --studio-gray-40 );
+	word-break: initial; // don't inherit word-breaking behaviour from domain name
 }
 
 .domain-picker__error {

@@ -6,7 +6,7 @@ import { every, filter, find, get, includes, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 
 import 'calypso/state/plugins/init';
 

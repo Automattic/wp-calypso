@@ -7,9 +7,10 @@ import { useTranslate } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/core';
-import { get } from 'lodash';
-import { useEvents, useLineItemsOfType } from '@automattic/composite-checkout';
-import type { LineItem, Theme } from '@automattic/composite-checkout';
+import { useEvents } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import type { Theme } from '@automattic/composite-checkout';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -33,6 +34,7 @@ import {
 	isWpComPersonalPlan,
 	isWpComPremiumPlan,
 } from 'calypso/lib/plans';
+import { isPlan } from 'calypso/lib/products-values';
 
 type StyledProps = {
 	theme?: Theme;
@@ -133,7 +135,8 @@ const LoadingButton = styled.p< StyledProps >`
 export default function CheckoutHelpLink(): JSX.Element {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
-	const plans = useLineItemsOfType( 'plan' );
+	const { responseCart } = useShoppingCart();
+	const plans = responseCart.products.filter( ( product ) => isPlan( product ) );
 
 	const supportVariationDetermined = useSelector( isSupportVariationDetermined );
 	const supportVariation = useSelector( getSupportVariation );
@@ -187,7 +190,7 @@ export default function CheckoutHelpLink(): JSX.Element {
 	);
 }
 
-function getHighestWpComPlanLabel( plans: LineItem[] ) {
+function getHighestWpComPlanLabel( plans: ResponseCartProduct[] ) {
 	const planMatchersInOrder = [
 		{ label: 'WordPress.com eCommerce', matcher: isWpComEcommercePlan },
 		{ label: 'WordPress.com Business', matcher: isWpComBusinessPlan },
@@ -196,7 +199,7 @@ function getHighestWpComPlanLabel( plans: LineItem[] ) {
 	];
 	for ( const { label, matcher } of planMatchersInOrder ) {
 		for ( const plan of plans ) {
-			if ( matcher( get( plan, 'wpcom_meta.product_slug' ) ) ) {
+			if ( matcher( plan.product_slug ) ) {
 				return label;
 			}
 		}

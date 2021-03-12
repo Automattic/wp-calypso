@@ -56,6 +56,11 @@ function enqueue_launch_button_script_and_style( $site_launch_options ) {
 		$options['isGutenboarding'] = '1';
 	}
 
+	$anchor_podcast = $site_launch_options['anchor_podcast'];
+	if ( ! empty( $anchor_podcast ) ) {
+		$options['anchorFmPodcastId'] = $anchor_podcast;
+	}
+
 	// Pass site launch options to client side here.
 	// This is accessible via window.wpcomEditorSiteLaunch.
 	wp_localize_script(

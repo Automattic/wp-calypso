@@ -271,7 +271,7 @@ class WP_REST_Sideload_Image_Controller extends \WP_REST_Attachments_Controller 
 				'type'              => 'string',
 				'required'          => true,
 				'format'            => 'uri',
-				'sanitize_callback' => function( $url ) {
+				'sanitize_callback' => function ( $url ) {
 					return esc_url_raw( strtok( $url, '?' ) );
 				},
 			),

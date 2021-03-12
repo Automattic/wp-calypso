@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map, noop } from 'lodash';
+import { map } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -15,6 +15,8 @@ import FormSelect from 'calypso/components/forms/form-select';
 import QueryTimezones from 'calypso/components/data/query-timezones';
 import getRawOffsets from 'calypso/state/selectors/get-raw-offsets';
 import getTimezones from 'calypso/state/selectors/get-timezones';
+
+const noop = () => {};
 
 class Timezone extends Component {
 	onSelect = ( event ) => {

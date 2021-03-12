@@ -31,6 +31,7 @@ import NavItem from './nav-item';
 import CurrentTaskItem from './current-task-item';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import { getTask } from './get-task';
+import { useExperiment } from 'calypso/lib/explat';
 
 /**
  * Style dependencies
@@ -113,6 +114,9 @@ const SiteSetupList = ( {
 	taskUrls,
 	userEmail,
 } ) => {
+	// Temporary Experiment testing the new ExPlat client
+	useExperiment( 'explat_test_aa_calypso_boot' );
+
 	const [ currentTaskId, setCurrentTaskId ] = useState( null );
 	const [ currentTask, setCurrentTask ] = useState( null );
 	const [ taskIsManuallySelected, setTaskIsManuallySelected ] = useState( false );

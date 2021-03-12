@@ -2,140 +2,130 @@
 @import '~@wordpress/base-styles/mixins';
 
 .plans-filter-bar {
-	$height: 36px;
-	$border-radius: 2px;
-
 	display: flex;
-	justify-content: space-evenly;
+	justify-content: center;
 	align-items: center;
-	background: var( --color-surface );
+	flex-direction: column;
+	flex: 0 0 250px;
 	padding: 16px 0;
-	border-color: var( --color-neutral-5 );
-	border-style: solid;
-	border-width: 1px 0;
+	color: var( --studio-gray-50 );
+
 	box-sizing: border-box;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
+		flex-direction: row;
+	}
+
+	.plans-filter-bar__duration-toggle {
+		display: flex;
 		justify-content: center;
+		align-items: center;
+		font-weight: 700;
+		padding-bottom: 10px;
 
-		border-width: 1px;
-
-		.select-dropdown {
-			margin-right: 24px;
+		.plans-filter-bar__toggle-off-label {
+			color: var( --color-primary );
 		}
-	}
 
-	.select-dropdown {
-		height: $height;
-		margin-left: 16px;
-		margin-right: 8px;
-
-		.select-dropdown__header {
-			font-weight: 400;
-			background-color: var( --color-primary );
-			color: var( --color-text-inverted );
-			border-color: var( --color-primary );
-			border: solid 1px var( --color-neutral-10 );
-			border-radius: $border-radius;
-			height: $height;
-
-			.gridicons-chevron-down {
-				fill: currentColor;
+		&.checked {
+			.plans-filter-bar__toggle-on-label {
+				color: var( --color-primary );
+			}
+			.plans-filter-bar__toggle-off-label {
+				color: var( --studio-gray-50 );
 			}
 		}
 
-		.select-dropdown__option,
-		.select-dropdown__item {
-			height: $height;
-		}
-
-		.select-dropdown__item:hover {
-			color: currentColor;
-			background-color: var( --studio-gray-0 );
-		}
-
-		.select-dropdown__item.is-selected {
-			color: var( --color-text-inverted );
-			background-color: var( --color-primary );
-		}
-
-		.select-dropdown__options {
-			border-radius: 0 0 $border-radius $border-radius;
-		}
-
-		&.is-open {
-			.select-dropdown__header {
-				color: var( --color-neutral-70 );
-				background-color: var( --studio-gray-0 );
-				border-radius: $border-radius $border-radius 0 0;
-			}
+		@include breakpoint-deprecated( '>480px' ) {
+			padding-bottom: 0;
+			margin-right: 20px;
 		}
 	}
+	.plans-filter-bar__toggle-control {
+		> .components-base-control__field {
+			margin-bottom: 0;
 
-	.segmented-control {
-		margin-left: 15px;
-		margin-right: 16px;
-		flex: 0 0 200px;
-
-		.segmented-control__item {
-			flex: 1 1 50%;
+			.components-form-toggle {
+				margin-right: 18px;
+				margin-left: 18px;
+			}
 		}
+		.components-form-toggle {
+			.components-form-toggle__input:focus + .components-form-toggle__track {
+				box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var( --color-primary );
+			}
 
-		.segmented-control__link {
-			padding: 8px 20px;
+			.components-form-toggle__track {
+				width: 42px;
+				height: 22px;
+				border-radius: 11px;
+			}
+
+			.components-form-toggle__thumb {
+				width: 16px;
+				height: 16px;
+			}
+
+			&.is-checked {
+				.components-form-toggle__track {
+					background-color: var( --color-primary );
+				}
+
+				.components-form-toggle__thumb {
+					transform: translateX( 20px );
+				}
+			}
 		}
 	}
 }
 
 .plans-filter-bar__discount-message {
-	display: none;
-	padding-right: 15px;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	padding-top: 2px;
 
-	color: var( --color-primary );
-
-	font-size: $font-body-extra-small;
-	font-style: italic;
-
-	@include break-mobile {
-		display: inline;
+	&.primary {
+		color: var( --color-primary );
 	}
+
+	.plans-filter-bar__discount-message-text {
+		padding-right: 6px;
+	}
+}
+
+.plans-filter-bar__discount-message.treatment .plans-filter-bar__discount-message-text {
+	text-decoration: underline;
 }
 
 .plans-filter-bar.sticky {
 	position: fixed;
+	width: 100%;
+	left: 0;
 	top: var( --masterbar-height );
 
-	width: 100%;
-	max-width: 1040px;
+	background-color: var( --color-surface );
+	box-shadow: 0 4px 24px rgba( 0, 0, 0, 0.05 ), inset 0 0 0 1px #dcdcde;
 
 	z-index: 2;
+}
+.is-section-jetpack-connect,
+.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing {
+	.plans-filter-bar.sticky {
+		top: 0;
+	}
+}
 
-	// At this screen size, div#content (wraps div#primary and div#secondary)
-	// has a left padding of 253px and a right padding of 24px which adds up to 277px.
+// target Calypso pricing filter bar, not jetpack cloud
+.is-group-sites.is-section-plans .plans-filter-bar.sticky {
+	// At this screen size, the left sidebar is 228px;
 	@include breakpoint-deprecated( '>660px' ) {
-		width: calc( 100% - 277px );
+		width: calc( 100% - 228px );
+		left: 228px;
 	}
 
-	// At this screen size, div#content (wraps div#primary and div#secondary)
-	// has a left padding of 305px and a right padding of 32px which adds up to 337px.
-	@include break-large {
-		width: calc( 100% - 337px );
+	// At this screen size, the lft sidebar is 272px;
+	@include breakpoint-deprecated( '>960px' ) {
+		width: calc( 100% - 272px );
+		left: 272px;
 	}
-}
-
-// This margin fills the gap that making the filter bar sticky leaves. Without it,
-// there is a noticeable jump in the UI every time the filter bar goes from sticky
-// to its normal position.
-.plans-filter-bar.sticky + .jetpack-plans__columns {
-	margin-top: 100px;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		margin-top: 80px;
-	}
-}
-.plans-filter-bar.sticky + .products-grid-alt-2 {
-	transform: translateY( 95px );
-}
-.plans-filter-bar.sticky + .products-grid-alt {
-	transform: translateY( 70px );
 }

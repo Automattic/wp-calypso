@@ -31,6 +31,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import config from '@automattic/calypso-config';
 
 class SiteSettingsPerformance extends Component {
 	render() {
@@ -46,6 +47,7 @@ class SiteSettingsPerformance extends Component {
 			siteIsAtomicPrivate,
 			siteIsUnlaunched,
 			siteSlug,
+			showCloudflare,
 			submitForm,
 			translate,
 			trackEvent,
@@ -65,14 +67,14 @@ class SiteSettingsPerformance extends Component {
 				/>
 				<SiteSettingsNavigation site={ site } section="performance" />
 
+				{ showCloudflare && <Cloudflare /> }
+
 				<Search
 					handleAutosavingToggle={ handleAutosavingToggle }
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
 				/>
-
-				<Cloudflare />
 
 				{ siteIsJetpack && (
 					<Fragment>
@@ -135,6 +137,7 @@ const connectComponent = connect( ( state ) => {
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const siteIsAtomicPrivate =
 		isSiteAutomatedTransfer( state, siteId ) && isPrivateSite( state, siteId );
+	const showCloudflare = config.isEnabled( 'cloudflare' );
 
 	return {
 		site,
@@ -142,6 +145,7 @@ const connectComponent = connect( ( state ) => {
 		siteIsAtomicPrivate,
 		siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
+		showCloudflare,
 	};
 } );
 

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { useTranslate } from 'i18n-calypso';
-import { isArray } from 'lodash';
 import React, { ReactElement, FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -32,7 +31,7 @@ const CartPlanOverlapsOwnedProductNotice: FunctionComponent< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
-	const purchase = isArray( purchases )
+	const purchase = Array.isArray( purchases )
 		? purchases.find( ( p ) => p.productSlug === product.productSlug )
 		: null;
 	const purchaseId = purchase?.id;

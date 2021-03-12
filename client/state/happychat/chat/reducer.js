@@ -8,7 +8,6 @@ import { concat, filter, find, map, get, sortBy, takeRight } from 'lodash';
  * Internal dependencies
  */
 import {
-	SERIALIZE,
 	HAPPYCHAT_IO_RECEIVE_MESSAGE,
 	HAPPYCHAT_IO_RECEIVE_STATUS,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE,
@@ -19,7 +18,7 @@ import {
 	HAPPYCHAT_CHAT_STATUS_DEFAULT,
 	HAPPYCHAT_MAX_STORED_MESSAGES,
 } from 'calypso/state/happychat/constants';
-import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { timelineSchema } from './schema';
 
 // We compare incoming timestamps against a known future Unix time in seconds date
@@ -106,10 +105,8 @@ const sortTimeline = ( timeline ) =>
  * @returns {object}        Updated state
  *
  */
-export const timeline = withSchemaValidation( timelineSchema, ( state = [], action ) => {
+const timelineReducer = ( state = [], action ) => {
 	switch ( action.type ) {
-		case SERIALIZE:
-			return takeRight( state, HAPPYCHAT_MAX_STORED_MESSAGES );
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE:
 			// if meta.forOperator is set, skip so won't show to user
 			if ( get( action, 'message.meta.forOperator', false ) ) {
@@ -150,7 +147,14 @@ export const timeline = withSchemaValidation( timelineSchema, ( state = [], acti
 			);
 	}
 	return state;
-} );
+};
+
+export const timeline = withSchemaValidation(
+	timelineSchema,
+	withPersistence( timelineReducer, {
+		serialize: ( state ) => takeRight( state, HAPPYCHAT_MAX_STORED_MESSAGES ),
+	} )
+);
 
 export default combineReducers( {
 	status,

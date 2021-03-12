@@ -43,7 +43,7 @@ import { getDomainProductSlug, TRUENAME_COUPONS, TRUENAME_TLDS } from 'calypso/l
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { getSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getVerticalForDomainSuggestions } from 'calypso/state/signup/steps/site-vertical/selectors';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -563,18 +563,20 @@ class DomainsStep extends React.Component {
 
 		return (
 			<div className="domains__step-section-wrapper" key="transferForm">
-				<TransferDomainStep
-					analyticsSection={ this.getAnalyticsSection() }
-					basePath={ this.props.path }
-					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					initialQuery={ initialQuery }
-					isSignupStep
-					mapDomainUrl={ this.getMapDomainUrl() }
-					onRegisterDomain={ this.handleAddDomain }
-					onTransferDomain={ this.handleAddTransfer }
-					onSave={ this.onTransferSave }
-					products={ this.props.productsList }
-				/>
+				<CalypsoShoppingCartProvider>
+					<TransferDomainStep
+						analyticsSection={ this.getAnalyticsSection() }
+						basePath={ this.props.path }
+						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+						initialQuery={ initialQuery }
+						isSignupStep
+						mapDomainUrl={ this.getMapDomainUrl() }
+						onRegisterDomain={ this.handleAddDomain }
+						onTransferDomain={ this.handleAddTransfer }
+						onSave={ this.onTransferSave }
+						products={ this.props.productsList }
+					/>
+				</CalypsoShoppingCartProvider>
 			</div>
 		);
 	};
@@ -584,16 +586,18 @@ class DomainsStep extends React.Component {
 
 		return (
 			<div className="domains__step-section-wrapper" key="useYourDomainForm">
-				<UseYourDomainStep
-					analyticsSection={ this.getAnalyticsSection() }
-					basePath={ this.props.path }
-					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					initialQuery={ initialQuery }
-					isSignupStep
-					mapDomainUrl={ this.getMapDomainUrl() }
-					transferDomainUrl={ this.getTransferDomainUrl() }
-					products={ this.props.productsList }
-				/>
+				<CalypsoShoppingCartProvider>
+					<UseYourDomainStep
+						analyticsSection={ this.getAnalyticsSection() }
+						basePath={ this.props.path }
+						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+						initialQuery={ initialQuery }
+						isSignupStep
+						mapDomainUrl={ this.getMapDomainUrl() }
+						transferDomainUrl={ this.getTransferDomainUrl() }
+						products={ this.props.productsList }
+					/>
+				</CalypsoShoppingCartProvider>
 			</div>
 		);
 	};
@@ -796,7 +800,7 @@ export default connect(
 			siteGoals: getSiteGoals( state ),
 			siteType: getSiteType( state ),
 			vertical: getVerticalForDomainSuggestions( state ),
-			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
+			selectedSite: getSelectedSite( state ),
 			isSitePreviewVisible: isSitePreviewVisible( state ),
 			sites: getSitesItems( state ),
 			isReskinned,

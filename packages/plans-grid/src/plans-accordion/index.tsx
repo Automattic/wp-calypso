@@ -4,18 +4,20 @@
 import React, { useState } from 'react';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
-import type { DomainSuggestions, Plans, WPCOMFeatures } from '@automattic/data-stores';
 import { Button, SVG, Path } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
+
+import type { DomainSuggestions, Plans, WPCOMFeatures } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
 import PlanItem from '../plans-accordion-item';
 import PlanItemPlaceholder from '../plans-accordion-item/plans-item-placeholder';
-import { PLANS_STORE, WPCOM_FEATURES_STORE } from '../constants';
-import type { DisabledPlansMap } from 'src/plans-table/types';
+import { PLANS_STORE, WPCOM_FEATURES_STORE } from '../stores';
 import { useSupportedPlans } from '../hooks';
+
+import type { DisabledPlansMap } from '../plans-table/types';
 
 /**
  * Style dependencies
@@ -71,14 +73,13 @@ const PlansAccordion: React.FunctionComponent< Props > = ( {
 	);
 
 	const recommendedPlan = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlanByPeriodAgnosticSlug( recommendedPlanSlug )
+		select( PLANS_STORE ).getPlanByPeriodAgnosticSlug( recommendedPlanSlug, locale )
 	);
 
 	const primaryPlan = recommendedPlan || popularPlan;
 
-	const badge = recommendedPlan
-		? __( 'Recommended for you', __i18n_text_domain__ )
-		: __( 'Popular', __i18n_text_domain__ );
+	const badgeTextRecommended = __( 'Recommended for you', __i18n_text_domain__ );
+	const badgeTextPopular = __( 'Popular', __i18n_text_domain__ );
 
 	// Other plans
 	const otherPlans = supportedPlans.filter(
@@ -99,6 +100,9 @@ const PlansAccordion: React.FunctionComponent< Props > = ( {
 			allPlansOpened ? defaultOpenPlans : supportedPlans.map( ( plan ) => plan.periodAgnosticSlug )
 		);
 	};
+
+	const plansToggleExpanded = __( 'Collapse all plans', __i18n_text_domain__ );
+	const plansToggleCollapsed = __( 'Show all plans', __i18n_text_domain__ );
 
 	return (
 		<div className="plans-accordion">
@@ -127,7 +131,7 @@ const PlansAccordion: React.FunctionComponent< Props > = ( {
 								features={ primaryPlan.features ?? [] }
 								billingPeriod={ billingPeriod }
 								domain={ currentDomain }
-								badge={ badge }
+								badge={ recommendedPlan ? badgeTextRecommended : badgeTextPopular }
 								isFree={ primaryPlan.isFree }
 								isOpen
 								isPrimary
@@ -146,9 +150,7 @@ const PlansAccordion: React.FunctionComponent< Props > = ( {
 
 			<div className="plans-accordion__actions">
 				<Button className="plans-accordion__toggle-all-button" onClick={ handleToggleAll } isLink>
-					{ allPlansOpened
-						? __( 'Collapse all plans', __i18n_text_domain__ )
-						: __( 'Show all plans', __i18n_text_domain__ ) }
+					{ allPlansOpened ? plansToggleExpanded : plansToggleCollapsed }
 				</Button>
 			</div>
 

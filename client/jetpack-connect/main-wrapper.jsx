@@ -54,7 +54,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 		} );
 
 		const width = isWoo || isWooDna ? 200 : undefined;
-		const darkColorScheme = isWoo || isWooDna ? false : true;
+		const darkColorScheme = false;
 
 		return (
 			<Main className={ classNames( className, wrapperClassName ) }>

@@ -6,137 +6,28 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
 import {
-	extendAction,
 	keyedReducer,
 	withSchemaValidation,
 	combineReducers,
 	isValidStateWithSchema,
+	withPersistence,
 	withoutPersistence,
 	withEnhancers,
-	withStorageKey,
+	deserialize,
 } from 'calypso/state/utils';
-import warn from 'calypso/lib/warn';
 
-jest.mock( 'calypso/lib/warn', () => jest.fn() );
+/**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
+
+jest.mock( '@wordpress/warning', () => jest.fn() );
 
 describe( 'utils', () => {
 	beforeEach( () => warn.mockReset() );
-
-	describe( 'extendAction()', () => {
-		test( 'should return an updated action object, merging data', () => {
-			const action = extendAction(
-				{
-					type: 'ACTION_TEST',
-					meta: {
-						preserve: true,
-					},
-				},
-				{
-					meta: {
-						ok: true,
-					},
-				}
-			);
-
-			expect( action ).toEqual( {
-				type: 'ACTION_TEST',
-				meta: {
-					preserve: true,
-					ok: true,
-				},
-			} );
-		} );
-
-		test( 'should return an updated action thunk, merging data on dispatch', () => {
-			const dispatch = jest.fn();
-			const action = extendAction(
-				( thunkDispatch ) =>
-					thunkDispatch( {
-						type: 'ACTION_TEST',
-						meta: {
-							preserve: true,
-						},
-					} ),
-				{
-					meta: {
-						ok: true,
-					},
-				}
-			);
-
-			action( dispatch );
-			expect( dispatch ).toHaveBeenCalledWith( {
-				type: 'ACTION_TEST',
-				meta: {
-					preserve: true,
-					ok: true,
-				},
-			} );
-		} );
-
-		test( 'should return an updated action thunk, accepting also getState', () => {
-			const dispatch = jest.fn();
-			const getState = () => ( { selectedSiteId: 42 } );
-
-			const action = extendAction(
-				( thunkDispatch, thunkGetState ) =>
-					thunkDispatch( {
-						type: 'ACTION_TEST',
-						siteId: thunkGetState().selectedSiteId,
-						meta: {
-							preserve: true,
-						},
-					} ),
-				{
-					meta: {
-						ok: true,
-					},
-				}
-			);
-
-			action( dispatch, getState );
-			expect( dispatch ).toHaveBeenCalledWith( {
-				type: 'ACTION_TEST',
-				siteId: 42,
-				meta: {
-					preserve: true,
-					ok: true,
-				},
-			} );
-		} );
-
-		test( 'should return an updated nested action thunk, merging data on dispatch', () => {
-			const dispatch = jest.fn();
-			const action = extendAction(
-				( thunkDispatch ) =>
-					thunkDispatch( ( nestedThunkDispatch ) =>
-						nestedThunkDispatch( {
-							type: 'ACTION_TEST',
-							meta: {
-								preserve: true,
-							},
-						} )
-					),
-				{
-					meta: {
-						ok: true,
-					},
-				}
-			);
-
-			action( dispatch );
-			dispatch.mock.calls[ 0 ][ 0 ]( dispatch );
-			expect( dispatch ).toHaveBeenCalledWith( {
-				type: 'ACTION_TEST',
-				meta: {
-					preserve: true,
-					ok: true,
-				},
-			} );
-		} );
-	} );
 
 	describe( '#keyedReducer', () => {
 		const grow = ( name ) => ( { type: 'GROW', name } );
@@ -359,22 +250,27 @@ describe( 'utils', () => {
 
 		const age = ( state = 0, action ) => ( 'GROW' === action.type ? state + 1 : state );
 
-		const date = ( state = new Date( 0 ), action ) => {
-			switch ( action.type ) {
-				case 'GROW':
-					return new Date( state.getTime() + 1 );
-				case SERIALIZE:
-					return state.getTime();
-				case DESERIALIZE:
-					if ( isValidStateWithSchema( state, schema ) ) {
-						return new Date( state );
+		test( 'should always pass valid state to the inner serialize handler', () => {
+			const date = withSchemaValidation(
+				schema,
+				withPersistence(
+					( state = new Date( 0 ), action ) => {
+						switch ( action.type ) {
+							case 'GROW':
+								return new Date( state.getTime() + 1 );
+							default:
+								return state;
+						}
+					},
+					{
+						serialize: ( state ) => state.getTime(),
+						deserialize: ( persisted ) => new Date( persisted ),
 					}
-					return new Date( 0 );
-				default:
-					return state;
-			}
-		};
-		date.hasCustomPersistence = true;
+				)
+			);
+
+			expect( deserialize( date, 0 ) ).toEqual( new Date( 0 ) );
+		} );
 
 		test( 'should invalidate DESERIALIZED state', () => {
 			const validated = withSchemaValidation( schema, age );

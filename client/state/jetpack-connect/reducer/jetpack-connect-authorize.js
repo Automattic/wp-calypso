@@ -7,10 +7,10 @@ import { isEmpty } from 'lodash';
  * Internal dependencies
  */
 import { isStale } from '../utils';
-import { withSchemaValidation } from 'calypso/state/utils';
+import { withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { JETPACK_CONNECT_AUTHORIZE_TTL } from '../constants';
 import { jetpackConnectAuthorizeSchema } from './schema';
-import { DESERIALIZE, SITE_REQUEST_FAILURE } from 'calypso/state/action-types';
+import { SITE_REQUEST_FAILURE } from 'calypso/state/action-types';
 import {
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
@@ -77,15 +77,20 @@ function jetpackConnectAuthorize( state = {}, action ) {
 		case JETPACK_CONNECT_COMPLETE_FLOW:
 			return {};
 
-		case DESERIALIZE:
-			if ( isStale( state.timestamp, JETPACK_CONNECT_AUTHORIZE_TTL ) ) {
-				return {};
-			}
-			return state;
-
 		default:
 			return state;
 	}
 }
 
-export default withSchemaValidation( jetpackConnectAuthorizeSchema, jetpackConnectAuthorize );
+export default withSchemaValidation(
+	jetpackConnectAuthorizeSchema,
+	withPersistence( jetpackConnectAuthorize, {
+		deserialize( persisted ) {
+			if ( isStale( persisted.timestamp, JETPACK_CONNECT_AUTHORIZE_TTL ) ) {
+				return {};
+			}
+
+			return persisted;
+		},
+	} )
+);
