@@ -55,7 +55,7 @@ const JetpackComMasterbar: React.FC = () => {
 						recordTracksEvent( 'calypso_jetpack_nav_logo_click' );
 					} }
 				>
-					<JetpackLogo className="jpcom-masterbar__jetpack-logo" full size={ 49 } />
+					<JetpackLogo className="jpcom-masterbar__jetpack-logo" full size={ 43 } />
 				</ExternalLink>
 
 				<Button
