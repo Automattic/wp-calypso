@@ -21,7 +21,7 @@
 		cursor: pointer;
 
 		&[aria-expanded='true'] {
-			border-left: 1px solid var( --studio-gray-20 );
+			box-shadow: -1px 0 var( --studio-gray-20 );
 		}
 
 		&:hover {
