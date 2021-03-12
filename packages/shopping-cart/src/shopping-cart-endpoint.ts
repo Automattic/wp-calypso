@@ -174,10 +174,7 @@ export type ResponseCartProductExtra = {
 	domain_to_bundle?: string;
 	google_apps_users?: GSuiteProductUser[];
 	google_apps_registration_data?: DomainContactDetails;
-	purchaseId?: string;
-	purchaseDomain?: string;
 	purchaseType?: string;
-	includedDomain?: string;
 	privacy?: boolean;
 };
 
