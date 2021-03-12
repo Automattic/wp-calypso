@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -9,7 +10,7 @@ import { useDispatch } from 'react-redux';
  */
 import { requestEligibility } from 'calypso/state/automated-transfer/actions';
 
-export default function QueryAutomatedTransferEligibility( siteId ) {
+function QueryAutomatedTransferEligibility( { siteId } ) {
 	const dispatch = useDispatch();
 	React.useEffect( () => {
 		siteId && dispatch( requestEligibility( siteId ) );
@@ -17,3 +18,9 @@ export default function QueryAutomatedTransferEligibility( siteId ) {
 
 	return null;
 }
+
+QueryAutomatedTransferEligibility.propTypes = {
+	siteId: PropTypes.number,
+};
+
+export default QueryAutomatedTransferEligibility;
