@@ -46,7 +46,7 @@ export interface RequestCartProduct {
 	meta: string;
 	volume: number;
 	quantity: number | null;
-	extra: ResponseCartProductExtra;
+	extra: RequestCartProductExtra;
 }
 
 /**
@@ -166,7 +166,7 @@ export interface CartLocation {
 	subdivisionCode: string | null;
 }
 
-export type ResponseCartProductExtra = {
+export interface ResponseCartProductExtra {
 	context?: string;
 	source?: string;
 	premium?: boolean;
@@ -176,7 +176,11 @@ export type ResponseCartProductExtra = {
 	google_apps_registration_data?: DomainContactDetails;
 	purchaseType?: string;
 	privacy?: boolean;
-};
+}
+
+export interface RequestCartProductExtra extends ResponseCartProductExtra {
+	purchaseId?: string;
+}
 
 export interface GSuiteProductUser {
 	firstname: string;
