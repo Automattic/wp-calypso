@@ -12,116 +12,85 @@ import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import { isSubdomain } from 'calypso/lib/domains';
 import { isBusiness } from 'calypso/lib/products-values';
-import { MAP_EXISTING_DOMAIN, MAP_SUBDOMAIN } from 'calypso/lib/url/support';
+import {
+	MAP_DOMAIN_CHANGE_NAME_SERVERS,
+	MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS,
+} from 'calypso/lib/url/support';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { WPCOM_DEFAULT_NAMESERVERS } from 'calypso/state/domains/nameservers/constants';
+import FoldableFAQ from 'calypso/components/foldable-faq';
+import { Notice } from 'calypso/components/notice';
 
-const DomainMappingDetails = ( {
-	domain,
-	isBusinessPlan,
-	isSubdomainMapping,
-	isRootDomainWithUs,
-	registrarSupportUrl,
-	selectedSiteDomain,
-	translate,
-} ) => {
+const DomainMappingDetails = ( { domain, isSubdomainMapping, isRootDomainWithUs, translate } ) => {
 	if ( isSubdomainMapping && isRootDomainWithUs ) {
 		return null;
 	}
 
-	const registrarSupportLink = registrarSupportUrl ? (
-		<a target="_blank" rel="noopener noreferrer" href={ registrarSupportUrl } />
-	) : (
-		<span />
+	const renderLinkTo = ( url ) => {
+		return <a href={ url } target="_blank" rel="noopener noreferrer" />;
+	};
+
+	const primaryMessage = translate(
+		'Please log into your account at your domain registrar and {{strong}}update the name servers{{/strong}} of your domain to use the following values, as detailed in {{link}}these instructions{{/link}}:',
+		{
+			comment: 'Notice for mapped domain notice with NS records pointing to somewhere else',
+			components: {
+				strong: <strong />,
+				link: renderLinkTo( MAP_DOMAIN_CHANGE_NAME_SERVERS ),
+			},
+		}
 	);
 
-	let instructions = (
-		<div>
-			<p>
-				{ translate(
-					'To point your domain at your WordPress.com site, log in to your ' +
-						"{{registrarSupportLink}}domain provider's site{{/registrarSupportLink}} " +
-						'(where you purchased the domain), and update your name servers to:',
-					{
-						components: {
-							registrarSupportLink: registrarSupportLink,
-						},
-					}
+	const renderRecommendedSetupMessage = () => {
+		return (
+			<FoldableFAQ
+				id="recommended-mapping-setup"
+				question={ translate( 'Recommended setup' ) }
+				expanded
+			>
+				<p>{ primaryMessage }</p>
+				{ ! isSubdomain( domain.name ) && (
+					<ul className="checkout-thank-you__name-server-list">
+						{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
+							return <li key={ nameServer }>{ nameServer }</li>;
+						} ) }
+					</ul>
 				) }
-			</p>
-			<ul className="checkout-thank-you__domain-mapping-details-nameservers">
-				<li>ns1.wordpress.com</li>
-				<li>ns2.wordpress.com</li>
-				<li>ns3.wordpress.com</li>
-			</ul>
-		</div>
+			</FoldableFAQ>
+		);
+	};
+
+	const advancedSetupUsingARecordsTitle = translate( 'Advanced setup using root A records' );
+	const aRecordMappingWarning = translate(
+		'If you map a domain using A records rather than WordPress.com name servers, you will need to manage your domain’s DNS records yourself for any other services you are using with your domain, including email forwarding or email hosting (i.e. with Google Workspace or Titan)'
+	);
+	const aRecordsSetupMessage = translate(
+		'Please set the following IP addresses as root A records using {{link}}these instructions{{/link}}:',
+		{
+			components: { link: renderLinkTo( MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS ) },
+		}
 	);
 
-	if ( isSubdomainMapping ) {
-		instructions = (
-			<div>
-				<p>
-					{ translate(
-						'To point your domain at your WordPress.com site, log in to your ' +
-							"{{registrarSupportLink}}domain provider's site{{/registrarSupportLink}} " +
-							'(where you purchased the domain), and edit the DNS records to add a CNAME record:',
-						{
-							components: {
-								registrarSupportLink: registrarSupportLink,
-							},
-						}
-					) }
-				</p>
-				<ul className="checkout-thank-you__domain-mapping-details-nameservers">
-					<li>
-						{ domain }. IN CNAME { selectedSiteDomain }.
-					</li>
+	const newInstructions = (
+		<div className="checkout-thank-you__main-content">
+			{ renderRecommendedSetupMessage( primaryMessage ) }
+			<FoldableFAQ id="advanced-mapping-setup" question={ advancedSetupUsingARecordsTitle }>
+				<Notice status="is-warning" showDismiss={ false } translate={ translate }>
+					{ aRecordMappingWarning }
+				</Notice>
+				<p>{ aRecordsSetupMessage }</p>
+				<ul className="checkout-thank-you__name-server-list">
+					{ /* { domain.aRecordsRequiredForMapping.map( ( aRecord ) => {
+						return <li key={ aRecord }>{ aRecord }</li>;
+					} ) } */ }
 				</ul>
-			</div>
-		);
-	}
-
-	if ( isSubdomainMapping && isBusinessPlan ) {
-		instructions = (
-			<div>
-				<p>
-					{ translate(
-						'To point your domain at your WordPress.com site, log in to your ' +
-							"{{registrarSupportLink}}domain provider's site{{/registrarSupportLink}} " +
-							'(where you purchased the domain), and edit the DNS records to add these NS records:',
-						{
-							components: {
-								registrarSupportLink: registrarSupportLink,
-							},
-						}
-					) }
-				</p>
-				<ul className="checkout-thank-you__domain-mapping-details-nameservers">
-					<li>{ domain }. IN NS ns1.wordpress.com.</li>
-					<li>{ domain }. IN NS ns2.wordpress.com.</li>
-					<li>{ domain }. IN NS ns3.wordpress.com.</li>
-				</ul>
-			</div>
-		);
-	}
-
-	const description = (
-		<div>
-			{ instructions }
-			<p>{ translate( 'If you already did this, no further action is required.' ) }</p>
+			</FoldableFAQ>
 		</div>
 	);
 
 	return (
 		<div className="checkout-thank-you__domain-mapping-details">
-			<PurchaseDetail
-				icon="cog"
-				description={ description }
-				buttonText={ translate( 'Learn more' ) }
-				href={ isSubdomainMapping ? MAP_SUBDOMAIN : MAP_EXISTING_DOMAIN }
-				target="_blank"
-				rel="noopener noreferrer"
-				isRequired
-			/>
+			<PurchaseDetail icon="cog" description={ newInstructions } isRequired />
 		</div>
 	);
 };
