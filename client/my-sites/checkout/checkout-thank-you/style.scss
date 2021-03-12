@@ -668,3 +668,10 @@
 		transform: scale( 1 );
 	}
 }
+
+.checkout-thank-you__dns-records-list-placeholder {
+	li {
+		@include placeholder( --color-neutral-10 );
+		margin-bottom: 0.5em;
+	}
+}

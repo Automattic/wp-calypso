@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PurchaseDetail from 'calypso/components/purchase-detail';
-import { isSubdomain } from 'calypso/lib/domains';
+import { getSelectedDomain, isSubdomain } from 'calypso/lib/domains';
 import { isBusiness } from 'calypso/lib/products-values';
 import {
 	MAP_DOMAIN_CHANGE_NAME_SERVERS,
@@ -20,8 +20,17 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { WPCOM_DEFAULT_NAMESERVERS } from 'calypso/state/domains/nameservers/constants';
 import FoldableFAQ from 'calypso/components/foldable-faq';
 import { Notice } from 'calypso/components/notice';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 
-const DomainMappingDetails = ( { domain, isSubdomainMapping, isRootDomainWithUs, translate } ) => {
+const DomainMappingDetails = ( {
+	domain,
+	domains,
+	isSubdomainMapping,
+	isRootDomainWithUs,
+	siteId,
+	translate,
+} ) => {
 	if ( isSubdomainMapping && isRootDomainWithUs ) {
 		return null;
 	}
@@ -60,6 +69,29 @@ const DomainMappingDetails = ( { domain, isSubdomainMapping, isRootDomainWithUs,
 		);
 	};
 
+	const isDataLoaded = () => {
+		return getSelectedDomain( { domains, selectedDomainName: domain } );
+	};
+
+	const renderARecordsList = () => {
+		if ( isDataLoaded() ) {
+			const purchasedDomain = getSelectedDomain( { domains, selectedDomainName: domain } );
+			return (
+				<ul className="checkout-thank-you__dns-records-list">
+					{ purchasedDomain.aRecordsRequiredForMapping.map( ( aRecord ) => {
+						return <li key={ aRecord }>{ aRecord }</li>;
+					} ) }
+				</ul>
+			);
+		}
+		return (
+			<ul className="checkout-thank-you__dns-records-list-placeholder">
+				<li></li>
+				<li></li>
+			</ul>
+		);
+	};
+
 	const advancedSetupUsingARecordsTitle = translate( 'Advanced setup using root A records' );
 	const aRecordMappingWarning = translate(
 		'If you map a domain using A records rather than WordPress.com name servers, you will need to manage your domain’s DNS records yourself for any other services you are using with your domain, including email forwarding or email hosting (i.e. with Google Workspace or Titan)'
@@ -71,7 +103,7 @@ const DomainMappingDetails = ( { domain, isSubdomainMapping, isRootDomainWithUs,
 		}
 	);
 
-	const newInstructions = (
+	const renderInstructions = () => (
 		<div className="checkout-thank-you__main-content">
 			{ renderRecommendedSetupMessage( primaryMessage ) }
 			<FoldableFAQ id="advanced-mapping-setup" question={ advancedSetupUsingARecordsTitle }>
@@ -79,18 +111,15 @@ const DomainMappingDetails = ( { domain, isSubdomainMapping, isRootDomainWithUs,
 					{ aRecordMappingWarning }
 				</Notice>
 				<p>{ aRecordsSetupMessage }</p>
-				<ul className="checkout-thank-you__name-server-list">
-					{ /* { domain.aRecordsRequiredForMapping.map( ( aRecord ) => {
-						return <li key={ aRecord }>{ aRecord }</li>;
-					} ) } */ }
-				</ul>
+				{ renderARecordsList() }
 			</FoldableFAQ>
 		</div>
 	);
 
 	return (
 		<div className="checkout-thank-you__domain-mapping-details">
-			<PurchaseDetail icon="cog" description={ newInstructions } isRequired />
+			<QuerySiteDomains siteId={ siteId } />
+			<PurchaseDetail icon="cog" description={ renderInstructions() } isRequired />
 		</div>
 	);
 };
@@ -98,9 +127,11 @@ const DomainMappingDetails = ( { domain, isSubdomainMapping, isRootDomainWithUs,
 const mapStateToProps = ( state, { domain } ) => {
 	const selectedSite = getSelectedSite( state );
 	return {
+		domains: getDomainsBySiteId( state, selectedSite.ID ),
 		isBusinessPlan: isBusiness( selectedSite.plan ),
 		isSubdomainMapping: isSubdomain( domain ),
 		selectedSiteDomain: selectedSite.domain,
+		siteId: selectedSite.ID,
 	};
 };
 
