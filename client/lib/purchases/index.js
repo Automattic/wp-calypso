@@ -161,7 +161,7 @@ function handleRenewNowClick( purchase, siteSlug, options = {} ) {
 	const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( [ renewItem ] );
 
 	let renewalUrl = `/checkout/${ productSlugs[ 0 ] }/renew/${ purchaseIds[ 0 ] }/${
-		siteSlug || renewItem.extra.purchaseDomain || ''
+		siteSlug || ''
 	}`;
 	if ( options.redirectTo ) {
 		renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
@@ -202,7 +202,7 @@ function handleRenewMultiplePurchasesClick( purchases, siteSlug, options = {} ) 
 	}
 
 	let renewalUrl = `/checkout/${ productSlugs.join( ',' ) }/renew/${ purchaseIds.join( ',' ) }/${
-		siteSlug || renewItems[ 0 ].extra.purchaseDomain || ''
+		siteSlug || ''
 	}`;
 	if ( options.redirectTo ) {
 		renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );

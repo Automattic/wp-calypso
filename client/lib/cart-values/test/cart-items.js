@@ -738,7 +738,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 			).toEqual( {
 				extra: {
 					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 					source: 'source',
@@ -755,7 +754,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 			).toEqual( {
 				extra: {
 					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -775,7 +773,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 				extra: {
 					google_apps_users: 123,
 					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -794,7 +791,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 			).toEqual( {
 				extra: {
 					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 					source: 'source',
@@ -814,7 +810,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 			).toEqual( {
 				extra: {
 					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -829,7 +824,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 			).toEqual( {
 				extra: {
 					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -844,7 +838,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 			).toEqual( {
 				extra: {
 					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -862,7 +855,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 			).toEqual( {
 				extra: {
 					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -880,7 +872,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 			).toEqual( {
 				extra: {
 					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -898,7 +889,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 			).toEqual( {
 				extra: {
 					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -916,7 +906,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 			).toEqual( {
 				extra: {
 					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
