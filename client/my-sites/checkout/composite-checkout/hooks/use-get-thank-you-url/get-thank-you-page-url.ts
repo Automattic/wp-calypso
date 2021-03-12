@@ -151,16 +151,18 @@ export default function getThankYouPageUrl( {
 	const urlFromCookie = getUrlFromCookie();
 	debug( 'cookie url is', urlFromCookie );
 
-	if ( cart && hasRenewalItem( cart ) ) {
+	if ( cart && hasRenewalItem( cart ) && siteSlug ) {
 		const renewalItem: ResponseCartProduct = getRenewalItems( cart )[ 0 ];
-		const managePurchaseUrl = managePurchase( siteSlug, renewalItem.subscription_id );
-		debug(
-			'renewal item in cart',
-			renewalItem,
-			'so returning managePurchaseUrl',
-			managePurchaseUrl
-		);
-		return managePurchaseUrl;
+		if ( renewalItem && renewalItem.subscription_id ) {
+			const managePurchaseUrl = managePurchase( siteSlug, renewalItem.subscription_id );
+			debug(
+				'renewal item in cart',
+				renewalItem,
+				'so returning managePurchaseUrl',
+				managePurchaseUrl
+			);
+			return managePurchaseUrl;
+		}
 	}
 
 	// Domain only flow
