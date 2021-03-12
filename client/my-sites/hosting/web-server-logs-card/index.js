@@ -21,6 +21,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import wpcom from 'calypso/lib/wp';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { isAtomicSiteLogAccessEnabled } from 'calypso/state/selectors/is-atomic-site-log-access-enabled';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -35,6 +36,9 @@ const WebServerLogsCard = ( props ) => {
 		siteSlug,
 		translate,
 		isAtomicSiteLogAccessEnabled: siteLogsEnabled,
+		atomicLogsDownloadStarted: recordDownloadStarted,
+		atomicLogsDownloadCompleted: recordDownloadCompleted,
+		atomicLogsDownloadError: recordDownloadError,
 	} = props;
 	const now = moment.utc();
 	const oneHourAgo = now.clone().subtract( 1, 'hour' );
@@ -118,6 +122,15 @@ const WebServerLogsCard = ( props ) => {
 		const startTime = startMoment.unix();
 		const endTime = endMoment.unix();
 
+		const tracksProps = {
+			site_slug: siteSlug,
+			site_id: siteId,
+			start_time: startMoment.format( dateTimeFormat ),
+			end_time: endMoment.format( dateTimeFormat ),
+		};
+
+		recordDownloadStarted( tracksProps );
+
 		let scrollId = null;
 		let logs = [];
 		let logFile = new Blob();
@@ -148,8 +161,12 @@ const WebServerLogsCard = ( props ) => {
 				} )
 				.catch( ( error ) => {
 					isError = true;
-
-					downloadErrorNotice( get( error, 'message', 'Could not retrieve logs.' ) );
+					const message = get( error, 'message', 'Could not retrieve logs.' );
+					downloadErrorNotice( message );
+					recordDownloadError( {
+						error_message: message,
+						...tracksProps,
+					} );
 				} );
 		} while ( null !== scrollId );
 
@@ -163,12 +180,18 @@ const WebServerLogsCard = ( props ) => {
 
 		const url = window.URL.createObjectURL( logFile );
 		const link = document.createElement( 'a' );
+		const downloadFilename = siteSlug + '-' + startString + '-' + endString + '.csv';
 		link.href = url;
-		link.setAttribute( 'download', siteSlug + '-' + startString + '-' + endString + '.csv' );
+		link.setAttribute( 'download', downloadFilename );
 		link.click();
 		window.URL.revokeObjectURL( url );
 
 		downloadSuccessNotice( 'Logs downloaded successfully.' );
+		recordDownloadCompleted( {
+			download_filename: downloadFilename,
+			total_log_records_downloaded: totalLogs,
+			...tracksProps,
+		} );
 	};
 
 	const getContent = () => {
@@ -247,6 +270,15 @@ const WebServerLogsCard = ( props ) => {
 	);
 };
 
+export const atomicLogsDownloadStarted = ( props ) =>
+	recordTracksEvent( 'calypso_atomic_logs_download_started', props );
+
+export const atomicLogsDownloadCompleted = ( props ) =>
+	recordTracksEvent( 'calypso_atomic_logs_download_completed', props );
+
+export const atomicLogsDownloadError = ( props ) =>
+	recordTracksEvent( 'calypso_atomic_logs_download_error', props );
+
 export default connect(
 	( state ) => {
 		return {
@@ -255,5 +287,11 @@ export default connect(
 			isAtomicSiteLogAccessEnabled: isAtomicSiteLogAccessEnabled( state ),
 		};
 	},
-	{ successNotice, errorNotice }
+	{
+		atomicLogsDownloadStarted,
+		atomicLogsDownloadCompleted,
+		atomicLogsDownloadError,
+		successNotice,
+		errorNotice,
+	}
 )( localize( WebServerLogsCard ) );
