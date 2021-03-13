@@ -146,11 +146,11 @@ object WPComPlugins_EditorToolKit : BuildType({
 					tag_response=`curl -s -X POST -H "Content-Type: text/plain" --data "etk-release-build" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" %teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/`
 					echo -e "Build tagging status: ${'$'}tag_response\n"
 
-					ping_response=`curl -s -d "commit=%build.vcs.number%&plugin=editing-toolkit" -X POST %mc-post-root%?plugin-deploy-reminder`
-					echo -e "Slack ping status: ${'$'}ping_response\n"
-
+					# Ping commit merger in Slack if we're on the main branch and the build has changed.
 					if [ "%teamcity.build.branch.is_default%" == "true" ] ; then
 						echo "Posting slack reminder."
+						ping_response=`curl -s -d "commit=%build.vcs.number%&plugin=editing-toolkit" -X POST %mc-post-root%?plugin-deploy-reminder`
+						echo -e "Slack ping status: ${'$'}ping_response\n"
 					fi
 				fi
 
