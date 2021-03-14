@@ -8,10 +8,6 @@
 		width: calc( 33% - 0.5em );
 		margin: 8px 0;
 
-		.email-providers-comparison__providers-wordpress-com-email {
-			color: var( --color-wordpress-com );
-		}
-
 		&.no-gsuite {
 			width: calc( 50% - 0.5em );
 		}
@@ -44,6 +40,10 @@
 	}
 }
 
+.email-providers-comparison__providers-wordpress-com-email {
+	color: var( --color-wordpress-com );
+}
+
 .email-providers-comparison__action-panel {
 	@include breakpoint-deprecated( '>1040px' ) {
 		&.is-primary {
@@ -53,5 +53,50 @@
 
 	&.is-primary .action-panel__figure {
 		max-width: 170px;
+	}
+}
+
+.email-providers-comparison__provider-card.promo-card {
+
+	.action-panel__figure {
+		margin-top: 0;
+	}
+
+	.promo-card__title-badge {
+		background: none;
+		padding: 0;
+
+		img {
+			max-height: 18px;
+		}
+	}
+
+	.promo-card__price {
+		.price__cost {
+			font-size: $font-body-small;
+
+			span {
+				font-size: $font-title-medium;
+			}
+
+			.price__discounted {
+				text-decoration: line-through;
+			}
+		}
+
+		.price__discount {
+			display: block;
+			margin-left: 0;
+		}
+	}
+
+	.email-providers-comparison__provider-form-and-features {
+		display: flex;
+		justify-content: space-between;
+		margin-top: 1em;
+
+		.email-providers-comparison__provider-features {
+			padding-left: 36px;
+		}
 	}
 }

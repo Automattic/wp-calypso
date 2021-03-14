@@ -4,21 +4,23 @@
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import page from 'page';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import config from '@automattic/calypso-config';
 import PromoCard from 'calypso/components/promo-section/promo-card';
+import EmailProviderCard from './email-provider-card';
 import EmailProviderDetails from './email-provider-details';
-import {
-	getCurrentUserCurrencyCode,
-	getCurrentUserLocale,
-} from 'calypso/state/current-user/selectors';
+import EmailProviderFeature from './email-provider-details/email-provider-feature';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormPasswordInput from 'calypso/components/forms/form-password-input';
+import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
+import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
@@ -165,10 +167,7 @@ class EmailProvidersComparison extends React.Component {
 					'Use your custom domain in your email address and forward all your mail to another address.'
 				) }
 				image={ { path: forwardingIcon } }
-				features={ [
-					translate( 'No billing' ),
-					translate( 'Receive emails sent to your custom domain' ),
-				] }
+				features={ this.getForwardingFeatures() }
 				buttonLabel={ buttonLabel }
 				onButtonClick={ this.goToEmailForwarding }
 				className={ className }
@@ -177,13 +176,7 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	renderTitanDetails( className ) {
-		const { currencyCode, currentUserLocale, titanMailProduct, translate } = this.props;
-		const isEnglish = includes( config( 'english_locales' ), currentUserLocale );
-		const billingFrequency =
-			! config.isEnabled( 'titan/phase-2' ) &&
-			( isEnglish || i18n.hasTranslation( 'Annual or monthly billing' ) )
-				? translate( 'Annual or monthly billing' )
-				: translate( 'Monthly billing' );
+		const { currencyCode, titanMailProduct, translate } = this.props;
 
 		const formattedPrice = config.isEnabled( 'titan/phase-2' )
 			? translate( '{{price/}} /user /month', {
@@ -224,14 +217,7 @@ class EmailProvidersComparison extends React.Component {
 					'Easy-to-use email with incredibly powerful features. Manage your email and more on any device.'
 				) }
 				image={ providerEmailLogo }
-				features={ [
-					billingFrequency,
-					translate( 'Send and receive from your custom domain' ),
-					translate( '30GB storage' ),
-					translate( 'Email, calendars, and contacts' ),
-					translate( 'One-click import of existing emails and contacts' ),
-					translate( 'Read receipts to track email opens' ),
-				] }
+				features={ this.getTitanFeatures() }
 				formattedPrice={ formattedPrice }
 				buttonLabel={ providerCtaText }
 				hasPrimaryButton={ true }
@@ -244,58 +230,241 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	renderGSuiteDetails( className ) {
-		const { currencyCode, gSuiteProduct, translate } = this.props;
-
-		const logo = config.isEnabled( 'google-workspace-migration' )
-			? googleWorkspaceIcon
-			: gSuiteLogo;
+		const gsuiteProps = this.getGoogleDetailProps();
 
 		return (
 			<EmailProviderDetails
-				title={ getGoogleMailServiceFamily() }
-				description={ translate(
-					'Professional email integrated with Google Meet and other collaboration tools from Google.'
-				) }
-				image={ { path: logo } }
-				features={ [
-					translate( 'Annual billing' ),
-					translate( 'Send and receive from your custom domain' ),
-					translate( '30GB storage' ),
-					translate( 'Email, calendars, and contacts' ),
-					translate( 'Video calls, docs, spreadsheets, and more' ),
-					translate( 'Work from anywhere on any device – even offline' ),
-				] }
-				formattedPrice={ translate( '{{price/}} /user /month', {
+				image={ { path: gsuiteProps.productLogo } }
+				features={ this.getGoogleFeatures() }
+				onButtonClick={ this.goToAddGSuite }
+				className={ classNames( className, 'gsuite' ) }
+				{ ...gsuiteProps }
+			/>
+		);
+	}
+
+	getGoogleDetailProps() {
+		const { currencyCode, gSuiteProduct, translate } = this.props;
+
+		return {
+			title: getGoogleMailServiceFamily(),
+			description: translate(
+				'Professional email integrated with Google Meet and other collaboration tools from Google.'
+			),
+			productLogo: config.isEnabled( 'google-workspace-migration' )
+				? googleWorkspaceIcon
+				: gSuiteLogo,
+			buttonLabel: translate( 'Add %(googleMailService)s', {
+				args: {
+					googleMailService: getGoogleMailServiceFamily(),
+				},
+				comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+			} ),
+			formattedPrice: translate(
+				'{{price/}} /user /month',
+				{
 					components: {
 						price: <span>{ getMonthlyPrice( gSuiteProduct?.cost ?? null, currencyCode ) }</span>,
 					},
 					comment: '{{price/}} is the formatted price, e.g. $20',
-				} ) }
-				discount={
-					hasDiscount( gSuiteProduct )
-						? translate( 'First year %(discountedPrice)s', {
-								args: {
-									discountedPrice: getAnnualPrice( gSuiteProduct.sale_cost, currencyCode ),
-								},
-								comment: '%(discountedPrice)s is a formatted price, e.g. $75',
-						  } )
-						: null
 				}
-				additionalPriceInformation={ translate( '%(price)s billed annually', {
+			),
+			discount: hasDiscount( gSuiteProduct )
+				? translate( 'First year %(discountedPrice)s', {
 					args: {
-						price: getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode ),
+						discountedPrice: getAnnualPrice( gSuiteProduct.sale_cost, currencyCode ),
 					},
-					comment: "Annual price formatted with the currency (e.g. '$99.99')",
-				} ) }
-				buttonLabel={ translate( 'Add %(googleMailService)s', {
-					args: {
-						googleMailService: getGoogleMailServiceFamily(),
-					},
-					comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
-				} ) }
-				onButtonClick={ this.goToAddGSuite }
-				className={ classNames( className, 'gsuite' ) }
+					comment: '%(discountedPrice)s is a formatted price, e.g. $75',
+				} )
+			: null,
+			additionalPriceInformation: translate( '%(price)s billed annually', {
+				args: {
+					price: getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode ),
+				},
+				comment: "Annual price formatted with the currency (e.g. '$99.99')",
+			} ),
+		};
+	}
+
+	getForwardingFeatures() {
+		const { translate } = this.props;
+
+		return [ translate( 'No billing' ), translate( 'Receive emails sent to your custom domain' ) ];
+	}
+
+	getGoogleFeatures() {
+		const { translate } = this.props;
+
+		return [
+			translate( 'Annual billing' ),
+			translate( 'Send and receive from your custom domain' ),
+			translate( '30GB storage' ),
+			translate( 'Email, calendars, and contacts' ),
+			translate( 'Video calls, docs, spreadsheets, and more' ),
+			translate( 'Work from anywhere on any device – even offline' ),
+		];
+	}
+
+	getTitanFeatures() {
+		const { translate } = this.props;
+
+		return [
+			translate( 'Monthly billing' ),
+			translate( 'Send and receive from your custom domain' ),
+			translate( '30GB storage' ),
+			translate( 'Email, calendars, and contacts' ),
+			translate( 'One-click import of existing emails and contacts' ),
+			translate( 'Apps for Android and iOS' ),
+		];
+	}
+
+	renderStackedTitanDetails() {
+		const { currencyCode, domain, titanMailProduct, translate } = this.props;
+
+		const formattedPrice = translate( '{{price/}} /user /month billed monthly', {
+			components: {
+				price: <span>{ formatCurrency( titanMailProduct?.cost ?? 0, currencyCode ) }</span>,
+			},
+			comment: '{{price/}} is the formatted price, e.g. $20',
+		} );
+		// TODO: calculate whether a discount/trial applies for the current domain
+		const discount = translate( '3 months free' );
+		const logo = (
+			<Gridicon
+				className="email-providers-comparison__providers-wordpress-com-email"
+				icon="my-sites"
 			/>
+		);
+		const poweredByTitan = (
+			<img src={ poweredByTitanLogo } alt={ translate( 'Powered by Titan' ) } />
+		);
+
+		const formFields = (
+			<>
+				<FormFieldset>
+					<FormLabel>
+						{ translate( 'Email address' ) }
+						<FormTextInputWithAffixes
+							required
+							suffix={ `@${ domain.name }` }
+							onChange={ this.onTitanEmailChange }
+						/>
+					</FormLabel>
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel>
+						{ translate( 'Password' ) }
+						<FormPasswordInput required onChange={ this.onTitanPasswordChange } />
+					</FormLabel>
+				</FormFieldset>
+			</>
+		);
+
+		return (
+			<EmailProviderCard
+				providerKey="titan"
+				logo={ logo }
+				title={ translate( 'Email' ) }
+				badge={ poweredByTitan }
+				description={ translate(
+					'Easy-to-use email with incredibly powerful features. Manage your email and more on any device.'
+				) }
+				formattedPrice={ formattedPrice }
+				discount={ discount }
+				formFields={ formFields }
+				buttonLabel={ translate( 'Add Email' ) }
+				onButtonClick={ this.onAddTitanClick }
+				features={ this.getTitanFeatures() }
+			/>
+		);
+	}
+
+	renderStackedGoogleDetails() {
+		const { currencyCode, gSuiteProduct, isGSuiteSupported, translate } = this.props;
+
+		if ( ! isGSuiteSupported ) {
+			return null;
+		}
+
+		const googleProps = this.getGoogleDetailProps();
+
+		const formattedPrice = translate( '{{price/}} /user /month billed yearly', {
+			components: {
+				price: <span>{ getMonthlyPrice( gSuiteProduct?.cost ?? null, currencyCode ) }</span>,
+			},
+			comment: '{{price/}} is the formatted price, e.g. $20',
+		} );
+		const discount = hasDiscount( gSuiteProduct )
+			? translate( 'First year %(discountedPrice)s', {
+					args: {
+						discountedPrice: getAnnualPrice( gSuiteProduct.sale_cost, currencyCode ),
+					},
+					comment: '%(discountedPrice)s is a formatted price, e.g. $75',
+			  } )
+			: null;
+
+		const formFields = (
+			<>
+				<p>TODO...</p>
+			</>
+		);
+
+		return (
+			<EmailProviderCard
+				providerKey="google"
+				logo={ { path: googleProps.productLogo } }
+				formattedPrice={ formattedPrice }
+				discount={ discount }
+				formFields={ formFields }
+				onButtonClick={ this.goToAddGSuite }
+				features={ this.getGoogleFeatures() }
+				{ ...googleProps }
+			/>
+		);
+	}
+
+	renderStackedForwardingDetails() {
+		const { domain, translate } = this.props;
+
+		const formFields = (
+			<>
+				<p>TO DO...</p>
+			</>
+		);
+		const buttonLabel =
+			domain.emailForwardsCount > 0
+				? translate( 'Manage email forwarding' )
+				: translate( 'Add email forwarding' );
+
+		return (
+			<EmailProviderCard
+				providerKey="forwarding"
+				logo={ { path: forwardingIcon } }
+				title={ translate( 'Email Forwarding' ) }
+				description={ translate(
+					'Use your custom domain in your email address and forward all your mail to another address.'
+				) }
+				formFields={ formFields }
+				buttonLabel={ buttonLabel }
+				onButtonClick={ this.goToEmailForwarding }
+				features={ this.getForwardingFeatures() }
+			/>
+		);
+	}
+
+	renderFeatures( provider, features ) {
+		return features.map( ( feature, index ) => (
+			<EmailProviderFeature key={ `feature-${ provider }-${ index }` } title={ feature } />
+		) );
+	}
+
+	renderStackedDesign() {
+		return (
+			<>
+				{ this.renderStackedTitanDetails() }
+				{ this.renderStackedGoogleDetails() }
+				{ this.renderStackedForwardingDetails() }
+			</>
 		);
 	}
 
@@ -306,6 +475,16 @@ class EmailProvidersComparison extends React.Component {
 			isGSuiteSupported ? null : 'no-gsuite',
 			isTitanSupported ? null : 'no-titan',
 		] );
+
+		if ( config.isEnabled( 'email/centralized-home' ) ) {
+			return (
+				<>
+					{ this.renderHeaderSection() }
+					{ this.renderStackedDesign() }
+				</>
+			);
+		}
+
 		return (
 			<>
 				{ this.renderHeaderSection() }
@@ -331,7 +510,6 @@ export default connect(
 
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
-			currentUserLocale: getCurrentUserLocale( state ),
 			gSuiteProduct: getProductBySlug( state, productSlug ),
 			titanMailProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 			currentRoute: getCurrentRoute( state ),
