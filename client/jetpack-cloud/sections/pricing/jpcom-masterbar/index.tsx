@@ -22,7 +22,7 @@ const JETPACK_COM_BASE_URL = 'https://jetpack.com';
 const MENU_ITEMS = [
 	{
 		title: translate( 'Security' ),
-		path: 'features',
+		path: 'features/security',
 	},
 	{
 		title: translate( 'Pricing' ),
