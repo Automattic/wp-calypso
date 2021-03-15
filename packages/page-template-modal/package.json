@@ -27,6 +27,7 @@
 		"dist",
 		"src"
 	],
+	"types": "dist/types",
 	"dependencies": {
 		"@automattic/typography": "1.0.0",
 		"@wordpress/blocks": "^6.25.1",

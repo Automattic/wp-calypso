@@ -17,17 +17,18 @@ import replacePlaceholders from '../utils/replace-placeholders';
 import mapBlocksRecursively from '../utils/map-blocks-recursively';
 import containsMissingBlock from '../utils/contains-missing-block';
 import { sortGroupNames } from '../utils/group-utils';
+import type { LayoutCategory, LayoutDefinition } from '../layout-definition';
 
 interface PageTemplateModalProps {
 	areTipsEnabled?: boolean;
 	hideWelcomeGuide: () => void;
-	insertTemplate: ( title: string | null, blocks: unknown[] ) => void;
+	insertTemplate: ( title: string | null, blocks: BlockInstance[] ) => void;
 	instanceId: number;
 	isOpen: boolean;
 	isWelcomeGuideActive?: boolean;
 	locale?: string;
 	saveTemplateChoice: ( name: string ) => void;
-	setOpenState: ( isOpen: boolean ) => void;
+	setOpenState: ( isOpen: false ) => void;
 	siteInformation?: Record< string, string >;
 	templates: LayoutDefinition[];
 	theme?: string;

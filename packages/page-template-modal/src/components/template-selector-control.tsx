@@ -3,13 +3,14 @@
  */
 import { BaseControl } from '@wordpress/components';
 import { memo } from '@wordpress/element';
+import { withInstanceId } from '@wordpress/compose';
 
 /**
  * Internal dependencies
  */
 import TemplateSelectorItem from './template-selector-item';
 import replacePlaceholders from '../utils/replace-placeholders';
-import { withInstanceId } from '@wordpress/compose';
+import type { LayoutDefinition } from '../layout-definition';
 
 const noop = () => undefined;
 
