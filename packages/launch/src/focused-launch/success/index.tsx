@@ -13,7 +13,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { useSiteDomains } from '../../hooks';
+import { useSiteDomains, useWillRedirectAfterSuccess } from '../../hooks';
 import Confetti from './confetti';
 import LaunchContext from '../../context';
 import { LAUNCH_STORE, SITE_STORE } from '../../stores';
@@ -25,7 +25,10 @@ import './style.scss';
 const Success: React.FunctionComponent = () => {
 	const { redirectTo, siteId, getCurrentLaunchFlowUrl } = React.useContext( LaunchContext );
 
-	const isSiteLaunching = useSelect( ( select ) => select( SITE_STORE ).isSiteLaunching( siteId ) );
+	const isSiteLaunching = useSelect(
+		( select ) => select( SITE_STORE ).isSiteLaunching( siteId ),
+		[]
+	);
 
 	const isSelectedPlanPaid = useSelect(
 		( select ) => select( LAUNCH_STORE ).isSelectedPlanPaid(),
@@ -38,6 +41,10 @@ const Success: React.FunctionComponent = () => {
 
 	const [ displayedSiteUrl, setDisplayedSiteUrl ] = React.useState( '' );
 	const [ hasCopied, setHasCopied ] = React.useState( false );
+
+	// if the user has an ecommerce plan or they're using focused launch from wp-admin
+	// they will be automatically redirected to /checkout, in which case the CTAs are not needed
+	const willUserBeRedirectedAutomatically = useWillRedirectAfterSuccess();
 
 	React.useEffect( () => {
 		setDisplayedSiteUrl( `https://${ sitePrimaryDomain?.domain }` );
@@ -82,7 +89,7 @@ const Success: React.FunctionComponent = () => {
 			<SubTitle tagName="h3">
 				{ isSiteLaunching ? subtitleTextLaunching : subtitleTextLaunched }
 			</SubTitle>
-			{ ! isSiteLaunching && (
+			{ ! willUserBeRedirectedAutomatically && ! isSiteLaunching && (
 				<>
 					<div className="focused-launch-success__url-wrapper">
 						<span className="focused-launch-success__url-field">{ displayedSiteUrl }</span>
@@ -105,7 +112,6 @@ const Success: React.FunctionComponent = () => {
 							{ hasCopied ? copyButtonLabelActivated : copyButtonLabelIdle }
 						</ClipboardButton>
 					</div>
-
 					{ /* @TODO: at the moment this only works when the modal is in the block editor. */ }
 					<NextButton
 						onClick={ continueEditing }

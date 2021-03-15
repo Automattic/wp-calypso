@@ -1,10 +1,11 @@
+/* global localStorage */
 /**
  * Internal dependencies
  */
 import * as types from '../../action-types';
 import getIsNoteRead from '../../selectors/get-is-note-read';
 import getNote from '../../selectors/get-note';
-import { markReadStatus } from '../../../rest-client/wpcom';
+import { markReadStatus, markPostAsSeen } from '../../../rest-client/wpcom';
 import { bumpStat } from '../../../rest-client/bump-stat';
 
 const clearLocalReadCache = ( noteId ) => {
@@ -27,6 +28,13 @@ export const markAsRead = ( { getState }, { noteId } ) => {
 
 	if ( ! note || getIsNoteRead( state, note ) ) {
 		return;
+	}
+
+	const isSeenSupportedType = note.type === 'automattcher' || note.type === 'new_post';
+	const hasRequiredIds = note.meta && note.meta.ids && note.meta.ids.site && note.meta.ids.post;
+	if ( isSeenSupportedType && hasRequiredIds ) {
+		// Mark post as seen if notification is open.
+		markPostAsSeen( note.meta.ids.site, note.meta.ids.post );
 	}
 
 	// If the note hasn't yet been marked as read then mark it

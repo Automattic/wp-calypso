@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 // @todo: Convert to import from `components/gridicon`
@@ -33,6 +32,7 @@ const GRIDICONS_WITH_DROP = [
 	'play',
 	'spam',
 ];
+const noop = () => {};
 
 export class Notice extends Component {
 	static defaultProps = {

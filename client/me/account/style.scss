@@ -37,7 +37,7 @@
 	.components-toggle-control__label {
 		color: var( --color-text-subtle );
 
-		span {
+		strong {
 			display: block;
 		}
 	}
@@ -45,6 +45,10 @@
 	.account__link-destination-label-extra {
 		font-style: italic;
 		margin-top: 0.1em;
+	}
+
+	.inline-support-link {
+		margin-left: 4px;
 	}
 }
 

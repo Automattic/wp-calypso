@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { Card } from '@automattic/components';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { get, isUndefined, omitBy } from 'lodash';
@@ -14,7 +14,6 @@ import CardHeading from 'calypso/components/card-heading';
 import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
-import { hideInlineHelp, showInlineHelp } from 'calypso/state/inline-help/actions';
 import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
 import HelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import HelpSearchResults from 'calypso/blocks/inline-help/inline-help-search-results';
@@ -39,17 +38,8 @@ const amendYouTubeLink = ( link = '' ) =>
 
 const getResultLink = ( result ) => amendYouTubeLink( get( result, RESULT_LINK ) );
 
-const HelpSearch = ( { searchQuery, hideInlineHelpUI, showInlineHelpUI, openDialog, track } ) => {
+const HelpSearch = ( { searchQuery, openDialog, track } ) => {
 	const translate = useTranslate();
-
-	// When the Customer Home Support is shown we must hide the
-	// Inline Help FAB
-	// see https://github.com/Automattic/wp-calypso/issues/38860
-	useEffect( () => {
-		hideInlineHelpUI();
-
-		return () => showInlineHelpUI();
-	}, [ hideInlineHelpUI, showInlineHelpUI ] );
 
 	// trackResultView: Given a result, send an "_open" tracking event indicating that result is opened.
 	const trackResultView = ( result ) => {
@@ -124,8 +114,6 @@ const mapStateToProps = ( state ) => ( {
 } );
 
 const mapDispatchToProps = {
-	hideInlineHelpUI: hideInlineHelp,
-	showInlineHelpUI: showInlineHelp,
 	openDialog: openSupportArticleDialog,
 	track: recordTracksEvent,
 };

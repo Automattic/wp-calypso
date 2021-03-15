@@ -11,7 +11,7 @@ Environment Variables are values that are defined at the system level to serve a
 
 ## CircleCI Environment Variables
 
-These environment variables are intended for use inside CircleCI, to control which tests are being run
+These environment variables are intended for use inside CircleCI, to control which tests are being run.
 
 | Name              | Description                                                                                                                                                   | Default       | Required |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- | -------- |

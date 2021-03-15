@@ -4,7 +4,6 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { noop } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -24,6 +23,7 @@ import smartSetState from 'calypso/lib/react-smart-set-state';
  */
 import './style.scss';
 
+const noop = () => {};
 const debug = debugFactory( 'calypso:infinite-list' );
 
 export default class InfiniteList extends React.Component {

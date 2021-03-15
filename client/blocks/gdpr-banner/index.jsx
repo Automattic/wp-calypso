@@ -3,7 +3,6 @@
  */
 import classNames from 'classnames';
 import cookie from 'cookie';
-import { noop } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
@@ -24,8 +23,8 @@ import { isWpMobileApp } from 'calypso/lib/mobile-app';
  */
 import './style.scss';
 
+const noop = () => {};
 const SIX_MONTHS = 6 * 30 * 24 * 60 * 60;
-
 const STATUS = {
 	NOT_RENDERED: 'not-rendered',
 	RENDERED: 'rendered',

@@ -51,12 +51,21 @@ export default {
 	newUsersWithFreePlan: {
 		datestamp: '20210107',
 		variations: {
-			newOnboarding: 50,
-			control: 50,
+			newOnboarding: 0,
+			control: 100,
 		},
 		localeTargets: 'any',
 		localeExceptions: [ 'en', 'es' ],
 		defaultVariation: 'control',
 		allowExistingUsers: false,
+	},
+	jetpackSocialProofHeader: {
+		datestamp: '20210310',
+		variations: {
+			withoutSocialProof_control: 50,
+			withSocialProof_test: 50,
+		},
+		defaultVariation: 'withoutSocialProof_control',
+		allowExistingUsers: true,
 	},
 };

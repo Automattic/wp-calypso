@@ -10,12 +10,13 @@ import React from 'react';
 import TestUtils from 'react-dom/test-utils';
 import ReactDOM from 'react-dom';
 import sinon from 'sinon';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { UserStep as User } from '../';
+
+const noop = () => {};
 
 jest.mock( 'calypso/blocks/signup-form', () => require( 'calypso/components/empty-component' ) );
 jest.mock( 'calypso/lib/abtest', () => ( {

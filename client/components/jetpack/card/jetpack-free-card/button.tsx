@@ -82,7 +82,10 @@ const JetpackFreeCardButton: FC< JetpackFreeCardButtonProps > = ( {
 	const { site: url, ...restQueryArgs } = urlQueryArgs;
 	const startHref =
 		isJetpackCloud() && ! isSiteinContext
-			? addQueryArgs( { url, ...restQueryArgs }, `https://wordpress.com${ JPC_PATH_BASE }` )
+			? addQueryArgs(
+					{ url, ...restQueryArgs, plan: PLAN_JETPACK_FREE },
+					`https://wordpress.com${ JPC_PATH_BASE }`
+			  )
 			: wpAdminUrl || jetpackAdminUrlFromQuery || JPC_PATH_BASE;
 
 	return (

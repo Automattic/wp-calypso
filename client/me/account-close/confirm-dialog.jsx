@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 import { connect } from 'react-redux';
 import page from 'page';
 
@@ -24,6 +23,8 @@ import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
  * Style dependencies
  */
 import './confirm-dialog.scss';
+
+const noop = () => {};
 
 class AccountCloseConfirmDialog extends React.Component {
 	state = {

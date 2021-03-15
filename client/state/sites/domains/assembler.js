@@ -26,6 +26,7 @@ export const createSiteDomainObject = ( domain ) => {
 	}
 
 	return {
+		aRecordsRequiredForMapping: domain.a_records_required_for_mapping,
 		autoRenewalDate: String( domain.auto_renewal_date ),
 		adminEmail: domain.admin_email,
 		autoRenewing: Boolean( domain.auto_renewing ),

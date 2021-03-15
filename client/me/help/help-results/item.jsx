@@ -60,24 +60,28 @@ export default class extends React.PureComponent {
 	};
 
 	render() {
+		const { compact, helpLink } = this.props;
 		return (
 			<a
 				className="help-result"
-				href={ localizeUrl( this.props.helpLink.link ) }
+				href={ localizeUrl( helpLink.link ) }
 				target="__blank"
 				onClick={ this.onClick }
 			>
 				<CompactCard className="help-result__wrapper">
+					{ compact && this.getResultIcon() }
 					<div className="help-result__content-wrapper">
-						<h2 className="help-result__title">{ decodeEntities( this.props.helpLink.title ) }</h2>
-						<p className="help-result__description">
-							{ decodeEntities( this.props.helpLink.description ) }
-						</p>
+						<h2 className="help-result__title">{ decodeEntities( helpLink.title ) }</h2>
+						{ ! compact && (
+							<p className="help-result__description">{ decodeEntities( helpLink.description ) }</p>
+						) }
 					</div>
-					<div className="help-result__icon-wrapper">
-						{ this.getResultImage() }
-						{ this.getResultIcon() }
-					</div>
+					{ ! compact && (
+						<div className="help-result__icon-wrapper">
+							{ this.getResultImage() }
+							{ this.getResultIcon() }
+						</div>
+					) }
 				</CompactCard>
 			</a>
 		);

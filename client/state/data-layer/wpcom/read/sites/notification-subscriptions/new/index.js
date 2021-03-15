@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS } from 'calypso/state/reader/action-types';
@@ -15,6 +10,8 @@ import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { unsubscribeToNewPostNotifications } from 'calypso/state/reader/follows/actions';
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 export function fromApi( response ) {
 	const isSubscribed = !! ( response && response.subscribed );

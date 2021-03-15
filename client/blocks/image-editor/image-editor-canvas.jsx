@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { noop, startsWith } from 'lodash';
+import { startsWith } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -23,6 +23,8 @@ import {
 	setImageEditorImageHasLoaded,
 } from 'calypso/state/editor/image-editor/actions';
 import getImageEditorIsGreaterThanMinimumDimensions from 'calypso/state/selectors/get-image-editor-is-greater-than-minimum-dimensions';
+
+const noop = () => {};
 
 export class ImageEditorCanvas extends Component {
 	static propTypes = {

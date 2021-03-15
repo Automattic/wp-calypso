@@ -2,10 +2,9 @@
  * External dependencies
  */
 import * as React from 'react';
-import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
-import DomainPicker from '@automattic/domain-picker';
+import DomainPicker, { getDomainSuggestionsVendor } from '@automattic/domain-picker';
 import type { DomainSuggestions } from '@automattic/data-stores';
 import {
 	Title,
@@ -22,6 +21,7 @@ import { useLocale } from '@automattic/i18n-utils';
  */
 import { useTrackStep } from '../../hooks/use-track-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
+import useLastLocation from '../../hooks/use-last-location';
 import { trackEventWithFlow } from '../../lib/analytics';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { DOMAIN_SUGGESTIONS_STORE } from '../../stores/domain-suggestions';
@@ -44,8 +44,8 @@ interface Props {
 const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const { __, hasTranslation } = useI18n();
 	const locale = useLocale();
-	const history = useHistory();
 	const { goBack, goNext } = useStepNavigation();
+	const { goLastLocation } = useLastLocation();
 
 	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
 
@@ -76,13 +76,13 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 		selected_domain: selectedDomainRef.current,
 	} ) );
 
-	const handleBack = () => ( isModal ? history.goBack() : goBack() );
+	const handleBack = () => ( isModal ? goLastLocation() : goBack() );
 	const handleNext = () => {
 		trackEventWithFlow( 'calypso_newsite_domain_select', {
 			domain_name: selectedDomainRef.current,
 		} );
 		if ( isModal ) {
-			history.goBack();
+			goLastLocation();
 		} else {
 			goNext();
 		}
@@ -168,6 +168,7 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				analyticsUiAlgo={ isModal ? 'domain_modal' : 'domain_page' }
 				locale={ locale }
 				onUseYourDomainClick={ currentUser ? handleUseYourDomain : undefined }
+				vendor={ getDomainSuggestionsVendor( { isSignup: true } ) }
 			/>
 		</div>
 	);

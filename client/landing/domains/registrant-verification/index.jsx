@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { get, join } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -62,7 +62,7 @@ class RegistrantVerificationPage extends Component {
 	getVerificationSuccessState = ( domains ) => {
 		const { translate } = this.props;
 
-		const verifiedDomains = join( domains, ', ' );
+		const verifiedDomains = domains.join( ', ' );
 
 		return {
 			title: translate( 'Success!' ),

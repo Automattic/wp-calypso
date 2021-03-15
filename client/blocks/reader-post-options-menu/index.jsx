@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop, size, map } from 'lodash';
+import { size, map } from 'lodash';
 import page from 'page';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -46,6 +46,8 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {

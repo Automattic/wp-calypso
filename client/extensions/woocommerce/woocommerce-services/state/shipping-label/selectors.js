@@ -2,7 +2,6 @@
  * External dependencies
  */
 import {
-	fill,
 	find,
 	flatten,
 	forEach,
@@ -19,7 +18,6 @@ import {
 	uniq,
 	zipObject,
 } from 'lodash';
-import { isNullish } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
@@ -296,7 +294,7 @@ export const getCustomsErrors = (
 		flatten( map( packages, ( pckg ) => map( pckg.items, 'product_id' ) ) )
 	);
 
-	const valuesByProductId = zipObject( usedProductIds, fill( Array( usedProductIds.length ), 0 ) );
+	const valuesByProductId = zipObject( usedProductIds, Array( usedProductIds.length ).fill( 0 ) );
 	forEach( packages, ( pckg ) => {
 		forEach(
 			pckg.items,
@@ -373,14 +371,14 @@ export const getCustomsErrors = (
 				itemErrors.description = translate( 'This field is required' );
 			}
 			if ( ! customs.ignoreWeightValidation[ productId ] ) {
-				if ( isNullish( itemData.weight ) || '' === itemData.weight ) {
+				if ( itemData.weight == null || '' === itemData.weight ) {
 					itemErrors.weight = translate( 'This field is required' );
 				} else if ( ! ( parseFloat( itemData.weight ) > 0 ) ) {
 					itemErrors.weight = translate( 'Weight must be greater than zero' );
 				}
 			}
 			if ( ! customs.ignoreValueValidation[ productId ] ) {
-				if ( isNullish( itemData.value ) || '' === itemData.value ) {
+				if ( itemData.value == null || '' === itemData.value ) {
 					itemErrors.value = translate( 'This field is required' );
 				} else if ( ! ( parseFloat( itemData.value ) > 0 ) ) {
 					itemErrors.value = translate( 'Declared value must be greater than zero' );
@@ -497,7 +495,7 @@ export const isCustomsFormStepSubmitted = (
 	return ! some(
 		usedProductIds.map(
 			( productId ) =>
-				isNullish( form.customs.items[ productId ].tariffNumber ) ||
+				form.customs.items[ productId ].tariffNumber == null ||
 				form.customs.ignoreWeightValidation[ productId ] ||
 				form.customs.ignoreValueValidation[ productId ]
 		)

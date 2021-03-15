@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { noop, truncate, get } from 'lodash';
+import { truncate, get } from 'lodash';
 import classnames from 'classnames';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
@@ -45,6 +45,8 @@ import { getReaderTeams } from 'calypso/state/teams/selectors';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+
+const noop = () => {};
 
 class ReaderPostCard extends React.Component {
 	static propTypes = {

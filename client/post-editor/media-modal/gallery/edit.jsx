@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { map, noop, sortBy } from 'lodash';
+import { map, sortBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -14,6 +14,8 @@ import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import SortableList from 'calypso/components/forms/sortable-list';
 import EditorMediaModalGalleryEditItem from './edit-item';
+
+const noop = () => {};
 
 class EditorMediaModalGalleryEdit extends React.Component {
 	static propTypes = {

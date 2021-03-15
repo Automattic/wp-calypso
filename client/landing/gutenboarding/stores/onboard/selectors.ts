@@ -6,6 +6,7 @@ import { isGoodDefaultDomainQuery } from '@automattic/domain-picker';
 
 export const getIsRedirecting = ( state: State ) => state.isRedirecting;
 export const getPlanProductId = ( state: State ) => state.planProductId;
+export const getLastLocation = ( state: State ) => state.lastLocation;
 export const getRandomizedDesigns = ( state: State ) => state.randomizedDesigns;
 export const getSelectedDesign = ( state: State ) => state.selectedDesign;
 export const getSelectedDomain = ( state: State ) => state.domain;

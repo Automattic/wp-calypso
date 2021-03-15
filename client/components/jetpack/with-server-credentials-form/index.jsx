@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -37,7 +36,7 @@ function mergeFormWithCredentials( form, credentials, siteSlug ) {
 		newForm.path = credentials.abspath || newForm.path;
 	}
 	// Populate the host field with the site slug if needed
-	newForm.host = isEmpty( newForm.host ) && siteSlug ? siteSlug.split( '::' )[ 0 ] : newForm.host;
+	newForm.host = ! newForm.host && siteSlug ? siteSlug.split( '::' )[ 0 ] : newForm.host;
 	return newForm;
 }
 
@@ -120,9 +119,9 @@ function withServerCredentialsForm( WrappedComponent ) {
 				! payload.path && requirePath && { path: translate( 'Please enter a server path.' ) }
 			);
 
-			return isEmpty( errors )
-				? this.props.updateCredentials( siteId, payload )
-				: this.setState( { formErrors: errors } );
+			return errors && Object.keys( errors ).length > 0
+				? this.setState( { formErrors: errors } )
+				: this.props.updateCredentials( siteId, payload );
 		};
 
 		handleDelete = () => this.props.deleteCredentials( this.props.siteId, this.props.role );

@@ -332,7 +332,7 @@
 			"title": "Balan",
 			"slug": "balan",
 			"template": "balan",
-			"theme": "mayland",
+			"theme": "blank-canvas",
 			"preview": "static",
 			"fonts": {
 				"headings": "Rubik",
@@ -346,11 +346,25 @@
 			"title": "Pollard",
 			"slug": "pollard",
 			"template": "pollard",
-			"theme": "mayland",
+			"theme": "blank-canvas",
 			"preview": "static",
 			"fonts": {
 				"headings": "Cabin",
 				"base": "Raleway"
+			},
+			"categories": [ "featured" ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Fredrickson",
+			"slug": "fredrickson",
+			"template": "fredrickson",
+			"theme": "blank-canvas",
+			"preview": "static",
+			"fonts": {
+				"headings": "Cabin",
+				"base": "Cabin"
 			},
 			"categories": [ "featured" ],
 			"is_premium": false,

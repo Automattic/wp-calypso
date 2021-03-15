@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
@@ -16,6 +15,8 @@ import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 const GSuiteLearnMore = ( { onLearnMoreClick, productSlug } ) => {
 	const translate = useTranslate();

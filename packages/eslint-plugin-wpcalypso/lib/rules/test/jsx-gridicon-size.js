@@ -17,7 +17,7 @@ const RuleTester = require( 'eslint' ).RuleTester;
 //------------------------------------------------------------------------------
 
 new RuleTester( {
-	parser: require.resolve( 'babel-eslint' ),
+	parser: require.resolve( '@babel/eslint-parser' ),
 	parserOptions: {
 		ecmaFeatures: { jsx: true },
 	},

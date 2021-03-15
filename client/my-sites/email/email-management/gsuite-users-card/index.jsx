@@ -47,7 +47,7 @@ import PendingGSuiteTosNotice from 'calypso/my-sites/domains/components/domain-w
 import TitanControlPanelLoginCard from 'calypso/my-sites/email/email-management/titan-control-panel-login-card';
 import TitanManagementNav from 'calypso/my-sites/email/email-management/titan-management-nav';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
+import { hasTitanMailWithUs } from 'calypso/lib/titan';
 
 /**
  * Style dependencies

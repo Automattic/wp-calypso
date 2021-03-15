@@ -13,7 +13,7 @@ import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, get, includes, noop } from 'lodash';
+import { flowRight, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { Button, Card } from '@wordpress/components';
 
@@ -56,6 +56,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import wooDnaConfig from './woo-dna-config';
 
 const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
+const noop = () => {};
 
 export class JetpackSignup extends Component {
 	static propTypes = {

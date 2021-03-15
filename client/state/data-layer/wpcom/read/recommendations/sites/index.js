@@ -1,9 +1,4 @@
 /**
- * External Dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal Dependencies
  */
 import { READER_RECOMMENDED_SITES_REQUEST } from 'calypso/state/reader/action-types';
@@ -13,6 +8,8 @@ import { receiveRecommendedSites } from 'calypso/state/reader/recommended-sites/
 import { decodeEntities } from 'calypso/lib/formatting';
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 export const requestRecommendedSites = ( action ) => {
 	const { seed = 1, number = 10, offset = 0 } = action.payload;

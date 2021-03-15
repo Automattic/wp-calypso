@@ -4,7 +4,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
-import { isNaN } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
@@ -51,7 +50,7 @@ class InventoryControls extends Component {
 
 	setValue = ( name ) => ( event ) => {
 		const value = parseInt( event.target.value );
-		this.setState( { [ name ]: isNaN( value ) ? 0 : value } );
+		this.setState( { [ name ]: Number.isNaN( value ) ? 0 : value } );
 	};
 
 	increaseValue = ( name ) => () => {
@@ -232,8 +231,8 @@ export default connect(
 
 		return {
 			isLoaded,
-			lowStockThreshold: isNaN( lowStockThreshold ) ? 0 : lowStockThreshold,
-			noStockThreshold: isNaN( noStockThreshold ) ? 0 : noStockThreshold,
+			lowStockThreshold: Number.isNaN( lowStockThreshold ) ? 0 : lowStockThreshold,
+			noStockThreshold: Number.isNaN( noStockThreshold ) ? 0 : noStockThreshold,
 			notifyLowStockEnabled,
 			notifyNoStockEnabled,
 			site,

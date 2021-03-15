@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,6 +16,8 @@ import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class EmailProviderDetails extends React.Component {
 	static propTypes = {

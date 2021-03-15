@@ -7,6 +7,7 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { ADMIN_MENU_REQUEST } from 'calypso/state/action-types';
 import { receiveAdminMenu } from 'calypso/state/admin-menu/actions';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { addQueryArgs } from 'calypso/lib/url';
 
 export const requestFetchAdminMenu = ( action ) =>
 	http(
@@ -24,6 +25,16 @@ const sanitizeUrl = ( url, wpAdminUrl ) => {
 	const isSafeWpAdminUrl = new RegExp( `^${ wpAdminUrl?.replace( /^https?:\/\//, '' ) }` ).test(
 		url?.replace( /^https?:\/\//, '' )
 	);
+
+	if ( isSafeWpAdminUrl ) {
+		url = addQueryArgs(
+			{
+				return: document.location.href, // Gives WP Admin a chance to return to where we started from.
+				from: 'calypso-unified-menu', // `from` param is used by WP Admin on Atomic sites for enabling Nav Unification in that context. Can be removed after rolling Nav Unification out to 100% of users.
+			},
+			url
+		);
+	}
 
 	if ( isSafeInternalUrl || isSafeWpAdminUrl ) {
 		return url;

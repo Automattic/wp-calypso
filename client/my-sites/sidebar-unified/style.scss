@@ -266,6 +266,10 @@ $font-size: rem( 14px );
 			}
 		}
 
+		.sidebar__menu.is-togglable.is-toggle-open .sidebar__expandable-arrow {
+			margin-right: 10px;
+		}
+
 		.notice {
 			/* stylelint-disable-next-line scales/font-weight */
 			font-weight: 300;

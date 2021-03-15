@@ -1,8 +1,4 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-/**
  * Internal dependencies
  */
 import {
@@ -26,6 +22,8 @@ import {
 	WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
+
+const noop = () => {};
 
 export const deleteOrder = ( site, orderId ) => {
 	return {

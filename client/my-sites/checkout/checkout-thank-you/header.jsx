@@ -614,8 +614,8 @@ export class CheckoutThankYouHeader extends PureComponent {
 		const CHECKMARK_SIZE = 24;
 		return (
 			<ul className="checkout-thank-you__success-messages">
-				{ messages.map( ( message ) => (
-					<li className="checkout-thank-you__success-message-item">
+				{ messages.map( ( message, i ) => (
+					<li key={ i } className="checkout-thank-you__success-message-item">
 						<Gridicon icon="checkmark-circle" size={ CHECKMARK_SIZE } />
 						<div>{ preventWidows( message ) }</div>
 					</li>

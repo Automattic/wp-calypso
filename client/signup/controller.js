@@ -46,7 +46,6 @@ import user from 'calypso/lib/user';
 import getSiteId from 'calypso/state/selectors/get-site-id';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
-import { dangerouslyGetExperimentAssignment } from 'calypso/lib/explat';
 
 /**
  * Constants
@@ -137,13 +136,6 @@ export default {
 					if ( flowName === 'free' && 'newOnboarding' === abtest( 'newUsersWithFreePlan' ) ) {
 						gutenbergRedirect( flowName, localeFromParams );
 						return;
-					}
-
-					// Temporary Experiment testing the new ExPlat client
-					try {
-						dangerouslyGetExperimentAssignment( 'explat_test_aa_calypso_signup' );
-					} catch ( e ) {
-						// Do nothing
 					}
 
 					if (

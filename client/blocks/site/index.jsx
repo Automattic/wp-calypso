@@ -5,7 +5,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { noop } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -26,6 +25,8 @@ import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class Site extends React.Component {
 	static defaultProps = {

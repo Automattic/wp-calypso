@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -17,6 +17,8 @@ import Emojify from 'calypso/components/emojify';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 const ReaderAuthorLink = ( { author, post, siteUrl, children, className, onClick } ) => {
 	const recordAuthorClick = () => {

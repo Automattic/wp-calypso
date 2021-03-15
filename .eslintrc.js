@@ -1,8 +1,14 @@
 const { merge } = require( 'lodash' );
 const reactVersion = require( './client/package.json' ).dependencies.react;
+const path = require( 'path' );
 
 module.exports = {
 	root: true,
+	parserOptions: {
+		babelOptions: {
+			configFile: path.join( __dirname, './babel.config.js' ),
+		},
+	},
 	extends: [
 		'plugin:wpcalypso/react',
 		'plugin:jsx-a11y/recommended',
@@ -400,6 +406,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/all': 'error',
 		'you-dont-need-lodash-underscore/any': 'error',
 		'you-dont-need-lodash-underscore/bind': 'error',
+		'you-dont-need-lodash-underscore/cast-array': 'error',
 		'you-dont-need-lodash-underscore/collect': 'error',
 		'you-dont-need-lodash-underscore/contains': 'error',
 		'you-dont-need-lodash-underscore/detect': 'error',
@@ -408,14 +415,17 @@ module.exports = {
 		'you-dont-need-lodash-underscore/ends-with': 'error',
 		'you-dont-need-lodash-underscore/entries': 'error',
 		'you-dont-need-lodash-underscore/extend-own': 'error',
+		'you-dont-need-lodash-underscore/fill': 'error',
 		'you-dont-need-lodash-underscore/foldl': 'error',
 		'you-dont-need-lodash-underscore/foldr': 'error',
 		'you-dont-need-lodash-underscore/index-of': 'error',
 		'you-dont-need-lodash-underscore/inject': 'error',
 		'you-dont-need-lodash-underscore/is-array': 'error',
 		'you-dont-need-lodash-underscore/is-finite': 'error',
+		'you-dont-need-lodash-underscore/is-nan': 'error',
 		'you-dont-need-lodash-underscore/is-nil': 'error',
 		'you-dont-need-lodash-underscore/is-null': 'error',
+		'you-dont-need-lodash-underscore/join': 'error',
 		'you-dont-need-lodash-underscore/last-index-of': 'error',
 		'you-dont-need-lodash-underscore/pad-end': 'error',
 		'you-dont-need-lodash-underscore/pad-start': 'error',
@@ -424,6 +434,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/reverse': 'error',
 		'you-dont-need-lodash-underscore/select': 'error',
 		'you-dont-need-lodash-underscore/split': 'error',
+		'you-dont-need-lodash-underscore/take-right': 'error',
 		'you-dont-need-lodash-underscore/to-lower': 'error',
 		'you-dont-need-lodash-underscore/to-upper': 'error',
 	},

@@ -36,7 +36,7 @@ describe( 'isRequestingJetpackConnectionStatus()', () => {
 		expect( output ).to.be.false;
 	} );
 
-	test( 'should return null if the site is not known yet', () => {
+	test( 'should return false if the site is not known yet', () => {
 		const stateIn = {
 			jetpack: {
 				connection: {
@@ -46,6 +46,6 @@ describe( 'isRequestingJetpackConnectionStatus()', () => {
 		};
 		const siteId = 88888888;
 		const output = isRequestingJetpackConnectionStatus( stateIn, siteId );
-		expect( output ).to.be.null;
+		expect( output ).to.be.false;
 	} );
 } );

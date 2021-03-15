@@ -134,9 +134,6 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 					experimentName,
 					source: 'loadExperimentAssignment-initialError',
 				} );
-				if ( config.isDevelopmentMode ) {
-					throw initialError;
-				}
 			}
 
 			// Fetching failed and we're not in development mode.

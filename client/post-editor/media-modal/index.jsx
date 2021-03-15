@@ -5,25 +5,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import {
-	findIndex,
-	flow,
-	get,
-	head,
-	isEmpty,
-	identity,
-	includes,
-	noop,
-	partial,
-	some,
-	values,
-} from 'lodash';
+import { flow, get, head, isEmpty, identity, includes, partial, some, values } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import MediaLibrary from 'calypso/my-sites/media-library';
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat as mcBumpStat } from 'calypso/lib/analytics/mc';
 import { recordEditorEvent, recordEditorStat } from 'calypso/state/posts/stats';
 import MediaModalGallery from './gallery';
@@ -53,6 +40,8 @@ import { withAnalytics, bumpStat, recordGoogleEvent } from 'calypso/state/analyt
  * Style dependencies
  */
 import './index.scss';
+
+const noop = () => {};
 
 function areMediaActionsDisabled( modalView, mediaItems, isParentReady ) {
 	return (
@@ -396,32 +385,6 @@ export class EditorMediaModal extends Component {
 		this.props.onClose();
 	};
 
-	editItem = ( item ) => {
-		const { site, selectedItems, single } = this.props;
-		if ( ! site ) {
-			return;
-		}
-
-		// Append item to set of selected items if not already selected.
-		let items = selectedItems;
-		if ( ! items.some( ( selected ) => selected.ID === item.ID ) ) {
-			if ( single ) {
-				items = [ item ];
-			} else {
-				items = items.concat( item );
-			}
-			this.props.setMediaLibrarySelectedItems( site.ID, items );
-		}
-
-		// Find and set detail selected index for the edited item
-		this.setDetailSelectedIndex( findIndex( items, { ID: item.ID } ) );
-
-		mcBumpStat( 'editor_media_actions', 'edit_button_contextual' );
-		gaRecordEvent( 'Media', 'Clicked Contextual Edit Button' );
-
-		this.props.setView( ModalViews.DETAIL );
-	};
-
 	getFirstEnabledFilter() {
 		if ( this.props.enabledFilters ) {
 			return head( this.props.enabledFilters );
@@ -564,7 +527,6 @@ export class EditorMediaModal extends Component {
 						onScaleChange={ this.onScaleChange }
 						onSourceChange={ this.onSourceChange }
 						onSearch={ this.onSearch }
-						onEditItem={ this.editItem }
 						fullScreenDropZone={ false }
 						single={ this.props.single }
 						onDeleteItem={ this.deleteMedia }

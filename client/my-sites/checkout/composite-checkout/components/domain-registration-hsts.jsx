@@ -4,7 +4,7 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { isEmpty, join, merge, reduce } from 'lodash';
+import { isEmpty, merge, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,7 +42,7 @@ class DomainRegistrationHsts extends React.PureComponent {
 			[]
 		);
 
-		return join( hstsTlds, ', ' );
+		return hstsTlds.join( ', ' );
 	};
 
 	render() {

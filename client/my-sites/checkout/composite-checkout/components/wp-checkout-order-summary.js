@@ -136,6 +136,7 @@ function CheckoutSummaryFeaturesList( props ) {
 	);
 	const { hasMonthlyPlan = false } = props;
 
+	const showRefundText = responseCart.total_cost > 0;
 	let refundText = translate( 'Money back guarantee' );
 
 	let refundDays = 0;
@@ -178,29 +179,21 @@ function CheckoutSummaryFeaturesList( props ) {
 					{ ...props }
 				/>
 			</CheckoutSummaryFeaturesListItem>
-			<CheckoutSummaryFeaturesListItem>
-				<WPCheckoutCheckIcon />
-				{ refundText }
-			</CheckoutSummaryFeaturesListItem>
+			{ showRefundText && (
+				<CheckoutSummaryFeaturesListItem>
+					<WPCheckoutCheckIcon />
+					{ refundText }
+				</CheckoutSummaryFeaturesListItem>
+			) }
 		</CheckoutSummaryFeaturesListWrapper>
 	);
 }
 
-function SupportText( { hasPlanInCart, isJetpackNotAtomic, hasMonthlyPlan } ) {
+function SupportText( { hasPlanInCart, isJetpackNotAtomic } ) {
 	const translate = useTranslate();
-	const { responseCart } = useShoppingCart();
-	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
 
 	if ( hasPlanInCart && ! isJetpackNotAtomic ) {
-		if ( hasMonthlyPlan ) {
-			return null;
-		}
-
-		if ( 'personal-bundle' === plan?.product_slug || 'personal-bundle-2y' === plan?.product_slug ) {
-			return <span>{ translate( 'Access unlimited email support' ) }</span>;
-		}
-
-		return <span>{ translate( 'Email and live chat support' ) }</span>;
+		return <span>{ translate( 'Unlimited email support' ) }</span>;
 	}
 
 	return <span>{ translate( 'Email support' ) }</span>;

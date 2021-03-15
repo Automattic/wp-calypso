@@ -76,7 +76,7 @@ The colors for both internal and external brands have also been defined [in one 
 
 Please note that `--color-primary` in the default color scheme is a different shade of blue than WordPress.com’s primary brand color.
 
-## Dashb#oard Color Schemes
+## Dashboard Color Schemes
 
 All of the above has been systematized with WordPress.com’s dashboard color schemes in mind. Please test new designs under of all them.
 
