@@ -10,10 +10,6 @@
 
 		border-right: 1px solid var( --color-masterbar-border );
 
-		&:hover .jetpack-logo {
-			transform: scale( 1.1 );
-		}
-
 		&:focus {
 			box-shadow: inset 0 0 0 2px var( --color-primary-light );
 			outline-width: 0;
@@ -26,10 +22,6 @@
 		@include breakpoint-deprecated( '>960px' ) {
 			min-width: var( --sidebar-width-max );
 		}
-	}
-
-	.jetpack-logo {
-		transition: transform 0.2s ease;
 	}
 
 	.masterbar__item-title {
