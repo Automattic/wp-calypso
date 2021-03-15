@@ -6,16 +6,7 @@
 import { useI18n } from '@automattic/react-i18n';
 import classNames from 'classnames';
 import React, { useEffect } from 'react';
-import type {
-	Ref,
-	RefObject,
-	MutableRefObject,
-	ChangeEvent,
-	FocusEvent,
-	FormEvent,
-	KeyboardEvent,
-	MouseEvent,
-} from 'react';
+import type { Ref, ChangeEvent, FocusEvent, FormEvent, KeyboardEvent, MouseEvent } from 'react';
 import { debounce } from 'lodash';
 
 /**
@@ -39,8 +30,9 @@ import './style.scss';
  * Internal variables
  */
 const SEARCH_DEBOUNCE_MS = 300;
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = (): void => {};
+const noop = () => {
+	/* Default noop callback for some props */
+};
 
 type KeyboardOrMouseEvent =
 	| MouseEvent< HTMLButtonElement | HTMLInputElement >
@@ -156,35 +148,33 @@ const InnerSearch = (
 		hideClose,
 	}: Props,
 	forwardedRef: Ref< ImperativeHandle >
-): JSX.Element => {
+) => {
 	const { __ } = useI18n();
 	const [ keyword, setKeyword ] = React.useState( defaultValue );
 	const [ isOpen, setIsOpen ] = React.useState( defaultIsOpen );
 	const [ hasFocus, setHasFocus ] = React.useState( autoFocus );
 
 	const instanceId = useInstanceId( InnerSearch, 'search' );
-	const searchInput: MutableRefObject< HTMLInputElement | null > = React.useRef( null );
-	const openIcon: RefObject< HTMLButtonElement | null > = React.useRef( null );
-	const overlay: RefObject< HTMLDivElement | null > = React.useRef( null );
-
-	const focus = React.useCallback( () => {
-		// if we call focus before the element has been entirely synced up with the DOM, we stand a decent chance of
-		// causing the browser to scroll somewhere odd. Instead, defer the focus until a future turn of the event loop.
-		setTimeout( () => searchInput.current?.focus(), 0 );
-	}, [] );
-
-	const blur = React.useCallback( () => searchInput.current?.blur(), [] );
-
-	const clear = React.useCallback( (): void => setKeyword( '' ), [] );
+	const searchInput = React.useRef< HTMLInputElement >( null );
+	const openIcon = React.useRef< HTMLButtonElement >( null );
+	const overlay = React.useRef< HTMLDivElement >( null );
 
 	React.useImperativeHandle(
 		forwardedRef,
 		() => ( {
-			focus,
-			blur,
-			clear,
+			// if we call focus before the element has been entirely synced up with the DOM, we stand a decent chance of
+			// causing the browser to scroll somewhere odd. Instead, defer the focus until a future turn of the event loop.
+			focus() {
+				setTimeout( () => searchInput.current?.focus(), 0 );
+			},
+			blur() {
+				searchInput.current?.blur();
+			},
+			clear() {
+				setKeyword( '' );
+			},
 		} ),
-		[ focus, blur, clear ]
+		[]
 	);
 
 	const doSearch: ( ( search: string ) => void ) & { cancel?: () => void } = React.useMemo(
@@ -216,7 +206,7 @@ const InnerSearch = (
 		onSearchChange?.( keyword );
 	}, [ doSearch, keyword, onSearchChange ] );
 
-	const openSearch = ( event: KeyboardOrMouseEvent ): void => {
+	const openSearch = ( event: KeyboardOrMouseEvent ) => {
 		event.preventDefault();
 
 		setKeyword( '' );
@@ -229,7 +219,7 @@ const InnerSearch = (
 		recordEvent?.( 'Clicked Open Search' );
 	};
 
-	const closeSearch = ( event: KeyboardOrMouseEvent ): void => {
+	const closeSearch = ( event: KeyboardOrMouseEvent ) => {
 		event.preventDefault();
 
 		if ( disabled ) {
@@ -258,7 +248,7 @@ const InnerSearch = (
 	const closeListener = keyListener( closeSearch );
 	const openListener = keyListener( openSearch );
 
-	const scrollOverlay = (): void => {
+	const scrollOverlay = () => {
 		window.requestAnimationFrame( () => {
 			if ( overlay.current && searchInput.current ) {
 				overlay.current.scrollLeft = getScrollLeft( searchInput.current );
@@ -270,7 +260,7 @@ const InnerSearch = (
 		scrollOverlay();
 	}, [ keyword, isOpen, hasFocus ] );
 
-	const onBlur = ( event: FocusEvent< HTMLInputElement > ): void => {
+	const onBlur = ( event: FocusEvent< HTMLInputElement > ) => {
 		if ( onBlurProp ) {
 			onBlurProp( event );
 		}
@@ -278,11 +268,11 @@ const InnerSearch = (
 		setHasFocus( false );
 	};
 
-	const onChange = ( event: ChangeEvent< HTMLInputElement > ): void => {
+	const onChange = ( event: ChangeEvent< HTMLInputElement > ) => {
 		setKeyword( event.target.value );
 	};
 
-	const onKeyUp = ( event: KeyboardEvent< HTMLInputElement > ): void => {
+	const onKeyUp = ( event: KeyboardEvent< HTMLInputElement > ) => {
 		if ( event.key === 'Enter' && window.innerWidth < 480 ) {
 			//dismiss soft keyboards
 			blur();
@@ -298,13 +288,13 @@ const InnerSearch = (
 		scrollOverlay();
 	};
 
-	const onKeyDown = ( event: KeyboardEvent< HTMLInputElement > ): void => {
+	const onKeyDown = ( event: KeyboardEvent< HTMLInputElement > ) => {
 		scrollOverlay();
 
 		if (
 			event.key === 'Escape' &&
 			// currentTarget will be the input element, rather than target which can be anything
-			event.currentTarget?.value === ''
+			event.currentTarget.value === ''
 		) {
 			closeListener( event );
 		}
@@ -314,7 +304,7 @@ const InnerSearch = (
 
 	// Puts the cursor at end of the text when starting
 	// with `defaultValue` set.
-	const onFocus = (): void => {
+	const onFocus = () => {
 		setHasFocus( true );
 		onSearchOpen?.();
 
@@ -330,7 +320,7 @@ const InnerSearch = (
 		}
 	};
 
-	const handleSubmit = ( event: FormEvent ): void => {
+	const handleSubmit = ( event: FormEvent ) => {
 		event.preventDefault();
 		event.stopPropagation();
 	};
@@ -362,10 +352,7 @@ const InnerSearch = (
 	const renderStylingDiv = () => {
 		if ( typeof overlayStyling === 'function' ) {
 			return (
-				<div
-					className="search-component__text-overlay"
-					ref={ overlay as RefObject< HTMLDivElement > }
-				>
+				<div className="search-component__text-overlay" ref={ overlay }>
 					{ overlayStyling( keyword ) }
 				</div>
 			);
@@ -379,7 +366,7 @@ const InnerSearch = (
 		return (
 			<Button
 				className="search-component__icon-navigation"
-				ref={ openIcon as RefObject< HTMLButtonElement > }
+				ref={ openIcon }
 				onClick={ enableOpenIcon ? openSearch : focus }
 				tabIndex={ enableOpenIcon ? 0 : undefined }
 				onKeyDown={ enableOpenIcon ? openListener : undefined }
