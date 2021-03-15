@@ -47,6 +47,7 @@ ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV HOME=/calypso
 ENV CHROMEDRIVER_SKIP_DOWNLOAD=true
 ENV PUPPETEER_SKIP_DOWNLOAD=true
+ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
 RUN chown $UID /calypso
 
 # Set bash as the default shell
@@ -67,6 +68,7 @@ ENV ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
 ENV USE_HARD_LINKS=false
 ENV CHROMEDRIVER_SKIP_DOWNLOAD=false
 ENV PUPPETEER_SKIP_DOWNLOAD=false
+ENV PLAYWRIGHT_SKIP_DOWNLOAD=false
 # This chrome image is the latest version supported by wp-desktop's chromedriver, declared in desktop/package.json.
 ENV CHROME_VERSION="80.0.3987.163-1"
 ENV DISPLAY=:99

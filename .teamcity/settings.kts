@@ -877,6 +877,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				set -o pipefail
 
 				export NODE_ENV="test"
+				export PLAYWRIGHT_BROWSERS_PATH=0
 
 				# Install modules
 				yarn install
@@ -907,6 +908,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				export LIVEBRANCHES=true
 				export NODE_CONFIG_ENV=test
 				export TEST_VIDEO=true
+				export PLAYWRIGHT_BROWSERS_PATH=0
 
 				# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
 				# mocha-teamcity-reporter to work.
