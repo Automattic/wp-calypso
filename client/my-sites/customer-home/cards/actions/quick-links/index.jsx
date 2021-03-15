@@ -34,7 +34,7 @@ import { expandHomeQuickLinks, collapseHomeQuickLinks } from 'calypso/state/home
 /**
  * Image dependencies
  */
-import fiverrLogoIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
+import logotronIcon from 'calypso/assets/images/customer-home/logotron-logo-grey.svg';
 import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';
 
 /**
@@ -144,9 +144,9 @@ export const QuickLinks = ( {
 				href="https://wp.me/logo-maker"
 				onClick={ trackDesignLogoAction }
 				target="_blank"
-				label={ translate( 'Create a logo with Fiverr' ) }
+				label={ translate( 'Create a logo with Logotron' ) }
 				external
-				iconSrc={ fiverrLogoIcon }
+				iconSrc={ logotronIcon }
 			/>
 			<ActionBox
 				href="https://anchor.fm/wordpressdotcom"
