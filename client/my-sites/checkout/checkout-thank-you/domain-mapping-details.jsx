@@ -24,6 +24,14 @@ import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import ExternalLink from 'calypso/components/external-link';
 
+function renderLinkTo( url ) {
+	return <ExternalLink href={ url } target="_blank" />;
+}
+
+function isDataLoaded( domains, domain ) {
+	return getSelectedDomain( { domains, selectedDomainName: domain } );
+}
+
 const DomainMappingDetails = ( {
 	domain,
 	domains,
@@ -35,10 +43,6 @@ const DomainMappingDetails = ( {
 	if ( isSubdomainMapping && isRootDomainWithUs ) {
 		return null;
 	}
-
-	const renderLinkTo = ( url ) => {
-		return <ExternalLink href={ url } target="_blank" />;
-	};
 
 	const primaryMessage = translate(
 		'Please log into your account at your domain registrar and {{strong}}update the name servers{{/strong}} of your domain to use the following values, as detailed in {{link}}these instructions{{/link}}:',
@@ -69,12 +73,8 @@ const DomainMappingDetails = ( {
 		);
 	};
 
-	const isDataLoaded = () => {
-		return getSelectedDomain( { domains, selectedDomainName: domain } );
-	};
-
 	const renderARecordsList = () => {
-		if ( ! isDataLoaded() ) {
+		if ( ! isDataLoaded( domains, domain ) ) {
 			return (
 				<ul className="checkout-thank-you__dns-records-list-placeholder">
 					<li></li>
