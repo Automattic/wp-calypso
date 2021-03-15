@@ -90,6 +90,14 @@
 		}
 	}
 
+	.email-providers-comparison__provider-additional-price-information {
+		color: var( --color-text-subtle );
+		display: inline-block;
+		font-size: $font-body-extra-small;
+		font-style: normal;
+		margin-top: 3px;
+	}
+
 	.email-providers-comparison__provider-form-and-features {
 		display: flex;
 		justify-content: space-between;

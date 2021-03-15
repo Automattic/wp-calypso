@@ -264,6 +264,15 @@ class EmailProvidersComparison extends React.Component {
 	getGoogleDetailProps() {
 		const { currencyCode, gSuiteProduct, translate } = this.props;
 
+		const priceArguments = {
+			components: {
+				price: <span>{ getMonthlyPrice( gSuiteProduct?.cost ?? null, currencyCode ) }</span>,
+			},
+			comment: '{{price/}} is the formatted price, e.g. $20',
+		};
+		const formattedPrice = config.isEnabled( 'email/centralized-home' )
+			? translate( '{{price/}} /user /month billed annually', priceArguments )
+			: translate( '{{price/}} /user /month', priceArguments );
 		return {
 			title: getGoogleMailServiceFamily(),
 			description: translate(
@@ -278,23 +287,15 @@ class EmailProvidersComparison extends React.Component {
 				},
 				comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
 			} ),
-			formattedPrice: translate(
-				'{{price/}} /user /month',
-				{
-					components: {
-						price: <span>{ getMonthlyPrice( gSuiteProduct?.cost ?? null, currencyCode ) }</span>,
-					},
-					comment: '{{price/}} is the formatted price, e.g. $20',
-				}
-			),
+			formattedPrice: formattedPrice,
 			discount: hasDiscount( gSuiteProduct )
 				? translate( 'First year %(discountedPrice)s', {
-					args: {
-						discountedPrice: getAnnualPrice( gSuiteProduct.sale_cost, currencyCode ),
-					},
-					comment: '%(discountedPrice)s is a formatted price, e.g. $75',
-				} )
-			: null,
+						args: {
+							discountedPrice: getAnnualPrice( gSuiteProduct.sale_cost, currencyCode ),
+						},
+						comment: '%(discountedPrice)s is a formatted price, e.g. $75',
+				  } )
+				: null,
 			additionalPriceInformation: translate( '%(price)s billed annually', {
 				args: {
 					price: getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode ),
@@ -434,7 +435,7 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	renderStackedGoogleDetails() {
-		const { currencyCode, domain, gSuiteProduct, isGSuiteSupported, translate } = this.props;
+		const { domain, isGSuiteSupported } = this.props;
 
 		if ( ! isGSuiteSupported ) {
 			return null;
@@ -446,21 +447,6 @@ class EmailProvidersComparison extends React.Component {
 			( this.state.googleUsers ?? [] ).length === 0
 				? newUsers( domain.name )
 				: this.state.googleUsers;
-
-		const formattedPrice = translate( '{{price/}} /user /month billed yearly', {
-			components: {
-				price: <span>{ getMonthlyPrice( gSuiteProduct?.cost ?? null, currencyCode ) }</span>,
-			},
-			comment: '{{price/}} is the formatted price, e.g. $20',
-		} );
-		const discount = hasDiscount( gSuiteProduct )
-			? translate( 'First year %(discountedPrice)s', {
-					args: {
-						discountedPrice: getAnnualPrice( gSuiteProduct.sale_cost, currencyCode ),
-					},
-					comment: '%(discountedPrice)s is a formatted price, e.g. $75',
-			  } )
-			: null;
 
 		const formFields = (
 			<FormFieldset>
@@ -479,8 +465,6 @@ class EmailProvidersComparison extends React.Component {
 			<EmailProviderCard
 				providerKey="google"
 				logo={ { path: googleProps.productLogo } }
-				formattedPrice={ formattedPrice }
-				discount={ discount }
 				formFields={ formFields }
 				onButtonClick={ this.onGoogleConfirmNewUsers }
 				buttonDisabled={ ! areAllUsersValid( googleUsers ) }
