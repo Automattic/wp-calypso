@@ -78,6 +78,17 @@ private object EditingToolkit : BuildType({
 				yarn lint:php
 			"""
 		}
+		bashNodeScript {
+			name = "Run PHP unit tests"
+			scriptContent = """
+				cd apps/editing-toolkit
+				# Add Gutenberg to wp-env:
+				echo '{ "plugins": [ "./editing-toolkit-plugin", "https://downloads.wordpress.org/plugin/gutenberg.latest-stable.zip" ], "themes": [] }' > .wp-env.override.json
+
+				yarn wp-env start
+				yarn test:php
+			"""
+		}
 	}
 })
 
