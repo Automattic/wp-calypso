@@ -177,10 +177,17 @@ export async function waitUntilLocatedAndVisible( driver, locator, timeout = exp
 		return driver.wait( condition, timeout );
 	}
 
-	const element = await wait( until.elementLocated( locator ) );
-	await wait( until.elementIsVisible( element ) );
+	try {
+		const element = await wait( until.elementLocated( locator ) );
+		await wait( until.elementIsVisible( element ) );
 
-	return element;
+		return element;
+	} catch ( error ) {
+		const locatorStr = getLocatorString( locator );
+		error.message = `Couldn't locate ${ locatorStr } or element invisible\n ${ error.message }`;
+
+		throw error;
+	}
 }
 
 /**
@@ -233,7 +240,9 @@ export async function clickWhenClickable( driver, locator, timeout = explicitWai
 
 		return element;
 	} catch ( error ) {
-		error.message = 'Could not click element ' + getLocatorString( locator ) + '\n' + error.message;
+		const locatorStr = getLocatorString( locator );
+		error.message = `Couldn't click element ${ locatorStr }\n ${ error.message }`;
+
 		throw error;
 	}
 }
