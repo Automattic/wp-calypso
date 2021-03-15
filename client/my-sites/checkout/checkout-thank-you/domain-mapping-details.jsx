@@ -22,6 +22,7 @@ import FoldableFAQ from 'calypso/components/foldable-faq';
 import { Notice } from 'calypso/components/notice';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import ExternalLink from 'calypso/components/external-link';
 
 const DomainMappingDetails = ( {
 	domain,
@@ -36,7 +37,7 @@ const DomainMappingDetails = ( {
 	}
 
 	const renderLinkTo = ( url ) => {
-		return <a href={ url } target="_blank" rel="noopener noreferrer" />;
+		return <ExternalLink href={ url } target="_blank" />;
 	};
 
 	const primaryMessage = translate(
