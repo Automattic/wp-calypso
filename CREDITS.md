@@ -56,8 +56,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 
 ## <https://github.com/WordPress/WordPress>
 
-### client/components/tinymce/plugins/wplink
-
 ### client/lib/media/constants.js
 
 ### client/post-editor/media-modal/markup.js

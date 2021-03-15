@@ -259,14 +259,6 @@ const webpackConfig = {
 				loader: 'html-loader',
 			},
 			fileLoader,
-			{
-				include: require.resolve( 'tinymce/tinymce' ),
-				use: 'exports-loader?window=tinymce',
-			},
-			{
-				test: /node_modules[/\\]tinymce/,
-				use: 'imports-loader?this=>window',
-			},
 		],
 	},
 	resolve: {

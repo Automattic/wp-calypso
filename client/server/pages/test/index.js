@@ -640,15 +640,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		expect( request.context.app.isDebug ).toEqual( true );
 	} );
 
-	it( 'sets the static files urls', async () => {
-		const { request } = await app.run();
-		const staticUrls = request.context.app.staticUrls;
-		expect( staticUrls ).toEqual( {
-			'tinymce/skins/wordpress/wp-content.css':
-				'/calypso/tinymce/skins/wordpress/wp-content.css?v=hash',
-		} );
-	} );
-
 	describe( 'with environment wpcalypso', () => {
 		let customApp;
 
