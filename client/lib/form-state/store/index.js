@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-
-import { isFunction, reduce } from 'lodash';
+import { reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,7 +41,7 @@ class Store {
 	}
 
 	_dispatch( action ) {
-		if ( isFunction( action ) ) {
+		if ( typeof action === 'function' ) {
 			action( this._dispatch.bind( this ), this.get.bind( this ) );
 			return;
 		}
