@@ -11,10 +11,10 @@
     lodash "^4.17.4"
     recast "^0.12.1"
 
-"@automattic/color-studio@2.4.0", "@automattic/color-studio@^2.3.0":
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/@automattic/color-studio/-/color-studio-2.4.0.tgz#d21406b30eca90077f7ca9bf3ca884d79ce8dda6"
-  integrity sha512-xdiW5uBONTi3+R6Eee1PpsPxWQH9DGPpEu5NN0/uHd5DjL6EfBNAOI7qujz4eqz76bWoz2R/zRNNjCn91caWjw==
+"@automattic/color-studio@2.5.0":
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/@automattic/color-studio/-/color-studio-2.5.0.tgz#27f69e2569062258f24ca50f0a4b8a572a00e287"
+  integrity sha512-gZWaJbx3p1oennAIoJtMGluTmoM95Efk4rc44TSBxWSZZ8gH3Am2eh1o3i1NhrZmg2Zt3AiVFeZZ4AJccIpBKQ==
 
 "@automattic/lasagna@^0.6.1":
   version "0.6.1"
