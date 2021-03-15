@@ -34,7 +34,7 @@ const useErrorNotice = ( type, error, refetch ) => {
 			dispatch(
 				errorNotice( notice, {
 					id: 'site-followers-notice',
-					button: 'Try again',
+					button: translate( 'Try again' ),
 					onClick: () => {
 						dispatch( removeNotice( 'site-followers-notice' ) );
 						refetch();
