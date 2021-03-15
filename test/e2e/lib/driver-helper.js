@@ -15,7 +15,7 @@ const explicitWaitMS = config.get( 'explicitWaitMS' );
 const by = webdriver.By;
 
 /**
- * A string or regular expression used with the RichLocator object.
+ * A string or regular expression used to query elements by.
  *
  * @typedef {string|RegExp} ElementTextQuery
  */
@@ -26,7 +26,7 @@ const by = webdriver.By;
  *
  * @typedef {Object} RichLocator
  * @property {webdriver.By} locator The element's locator
- * @property {ElementTextQuery} text The text or regular expression the element should contain
+ * @property {ElementTextQuery} text The text to query the element by
  */
 
 /**
@@ -40,8 +40,7 @@ export function getLocatorString( locator ) {
 }
 
 /**
- * Checks if the passed locator argument is actually an object
- * containing a proper locator and a text to find an element by.
+ * Checks if an object contains a proper locator and a text to find an element by.
  *
  * @see findElementByText
  * @param {webdriver.By} locator The element's locator
@@ -57,8 +56,9 @@ export function isRichLocator( locator ) {
  *
  * @param {string} text The string argument to check
  * @returns {ElementTextQuery} The same string if it's a valid element query
+ * @throws {TypeError}
  */
-export function checkedText( text ) {
+export function checkedElementTextQuery( text ) {
 	if (
 		( typeof text === 'string' && text.length > 0 ) ||
 		( typeof text === 'object' && text.constructor.name === 'RegExp' )
@@ -94,7 +94,7 @@ const until = {
 	 * @returns {webdriver.WebElementCondition} The new condition
 	 */
 	elementWithTextLocated( locator, text ) {
-		const validText = checkedText( text );
+		const validText = checkedElementTextQuery( text );
 		const locatorStr = getLocatorString( locator );
 
 		return new WebElementCondition(
@@ -153,7 +153,7 @@ export function findElement( driver, locator ) {
  * @returns {webdriver.WebElement} The located element
  */
 export async function findElementByText( driver, locator, text ) {
-	const validText = checkedText( text );
+	const validText = checkedElementTextQuery( text );
 	const allElements = await driver.findElements( locator );
 	const filteredElements = await webdriver.promise.filter(
 		allElements,
@@ -164,13 +164,50 @@ export async function findElementByText( driver, locator, text ) {
 }
 
 /**
- * Makes sure that the element is located and enabled before clicking. Will
- * throw an error otherwise.
+ * Waits for the element to become located and visible. Throws an error after it
+ * times out.
+ *
+ * @param {webdriver.WebDriver} driver The current driver instance
+ * @param {webdriver.By} locator The element's locator
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {webdriver.WebElement} The located element
+ */
+export async function waitUntilLocatedAndVisible( driver, locator, timeout = explicitWaitMS ) {
+	function wait( condition ) {
+		return driver.wait( condition, timeout );
+	}
+
+	const element = await wait( until.elementLocated( locator ) );
+	await wait( until.elementIsVisible( element ) );
+
+	return element;
+}
+
+/**
+ * Checks if an element eventually becomes located and visible. Returns false
+ * after it times out.
+ *
+ * @param {webdriver.WebDriver} driver The current driver instance
+ * @param {webdriver.By} locator The element's locator
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {boolean} Whether the element was found or not
+ */
+export function isEventuallyLocatedAndVisible( driver, locator, timeout = explicitWaitMS ) {
+	return waitUntilLocatedAndVisible( driver, locator, timeout ).then(
+		( element ) => !! element,
+		() => false
+	);
+}
+
+/**
+ * Clicks an element once it becomes (aria-)enabled. Throws an error after it
+ * times out.
  *
  * @param {webdriver.WebDriver} driver The current driver instance
  * @param {webdriver.By|RichLocator} locator The element's locator
- * @param {number} [timeout=explicitWaitMS] The wait function's timeout in milliseconds
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
  * @returns {webdriver.WebElement} The clicked element
+ * @throws {*}
  */
 export async function clickWhenClickable( driver, locator, timeout = explicitWaitMS ) {
 	function wait( condition ) {
@@ -253,24 +290,6 @@ export function followLinkWhenFollowable( driver, selector, waitOverride ) {
 		},
 		timeoutWait,
 		`Timed out waiting for link with ${ selector.using } of '${ selector.value }' to be followable`
-	);
-}
-
-export async function waitUntilLocatedAndVisible( driver, locator, timeout = explicitWaitMS ) {
-	function wait( condition ) {
-		return driver.wait( condition, timeout );
-	}
-
-	const element = await wait( until.elementLocated( locator ) );
-	await wait( until.elementIsVisible( element ) );
-
-	return element;
-}
-
-export function isEventuallyLocatedAndVisible( driver, locator, timeout = explicitWaitMS ) {
-	return waitUntilLocatedAndVisible( driver, locator, timeout ).then(
-		( element ) => !! element,
-		() => false
 	);
 }
 
