@@ -139,7 +139,7 @@ export async function highlightElement( driver, element ) {
  */
 export function findElement( driver, locator ) {
 	if ( isRichLocator( locator ) ) {
-		return findElementByText( driver, ...locator.locator, locator.text );
+		return findElementByText( driver, locator.locator, locator.text );
 	}
 	return driver.findElement( locator );
 }
