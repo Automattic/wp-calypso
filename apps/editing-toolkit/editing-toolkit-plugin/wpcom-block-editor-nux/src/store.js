@@ -32,20 +32,10 @@ const tourRatingReducer = ( state = undefined, action ) => {
 	}
 };
 
-const showWpcomNuxVariantReducer = ( state = false, action ) => {
-	switch ( action.type ) {
-		case 'WPCOM_BLOCK_EDITOR_SET_NUX_VARIANT':
-			return action.showVariant;
-		default:
-			return state;
-	}
-};
-
 const reducer = combineReducers( {
 	isNuxEnabled: isNuxEnabledReducer,
 	isTourManuallyOpened: isTourManuallyOpenedReducer,
 	tourRating: tourRatingReducer,
-	showWpcomNuxVariant: showWpcomNuxVariantReducer,
 } );
 
 const actions = {
@@ -67,12 +57,6 @@ const actions = {
 	setTourRating: ( tourRating ) => {
 		return { type: 'WPCOM_BLOCK_EDITOR_SET_TOUR_RATING', tourRating };
 	},
-	setShowWpcomNuxVariant: ( { showVariant } ) => {
-		return {
-			type: 'WPCOM_BLOCK_EDITOR_SET_NUX_VARIANT',
-			showVariant,
-		};
-	},
 	setTourOpenStatus: ( { isTourManuallyOpened } ) => {
 		return {
 			type: 'WPCOM_BLOCK_EDITOR_SET_TOUR_OPEN',
@@ -85,7 +69,6 @@ const selectors = {
 	isTourManuallyOpened: ( state ) => state.isTourManuallyOpened,
 	isWpcomNuxEnabled: ( state ) => state.isNuxEnabled,
 	tourRating: ( state ) => state.tourRating,
-	shouldShowWpcomNuxVariant: ( state ) => state.showWpcomNuxVariant,
 };
 
 registerStore( 'automattic/nux', {
