@@ -14,16 +14,6 @@ object WPComPlugins_EditorToolKit : BuildType({
 
 	artifactRules = "editing-toolkit.zip"
 
-	dependencies {
-		artifacts(AbsoluteId("calypso_WPComPlugins_EditorToolKit")) {
-			buildRule = tag("etk-release-build", "+:trunk")
-			artifactRules = """
-				+:editing-toolkit.zip!** => etk-release-build
-				-:editing-toolkit.zip!build_meta.txt
-			""".trimIndent()
-		}
-	}
-
 	buildNumberPattern = "%build.prefix%.%build.counter%"
 	params {
 		param("build.prefix", "3")
@@ -95,10 +85,8 @@ object WPComPlugins_EditorToolKit : BuildType({
 				yarn build
 
 				# Update plugin version in the plugin file and readme.txt.
-				# We also update the previous trunk version to match, so that
-				# we can diff the old and new versions without random data.
-				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php ../../etk-release-build/full-site-editing-plugin.php
-				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt ../../etk-release-build/readme.txt
+				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php
+				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt
 			"""
 		}
 		// Note: We run the PHP lint after the build to verify that the newspack-blocks
@@ -114,19 +102,51 @@ object WPComPlugins_EditorToolKit : BuildType({
 				yarn lint:php
 			"""
 		}
+		/**
+		 * We download the archive directly in this step rather than relying on
+		 * an artifact dependency. We do this because if two commits on trunk
+		 * build at the same time, then they will both point to the same artifact
+		 * dependency. In this scenario, we actually want the current build to
+		 * diff against the artifact from that other commit build.
+		 * 
+		 * Using the artifact dependency feature, we can only rely on already-finished
+		 * builds at the time the current build *starts*. This means every build
+		 * would have to run in serial, which is not possible in TeamCity without
+		 * a plugin. As a result, commits have to happen several minutes apart
+		 * in order for the diff tagging feature to work correctly in this scenario.
+		 * 
+		 * Downloading from the API directly means that the previous build only
+		 * has to finish by the time this *step* begins. As a result, as long as
+		 * the two builds start further apart than the time this step takes,
+		 * then we can diff against the correct artifact. This means two builds
+		 * can be started within a few seconds of each other on trunk, and the
+		 * most recent build of the two can still rely on the other's artifact.
+		 */
 		bashNodeScript {
 			name = "Process artifact"
 			scriptContent = """
 				cd apps/editing-toolkit
 
-				# 1. Tag build if it has changed:
+				# 1. Downlaod and unzip current ETK release build.
+				wget "%teamcity.serverUrl%/repository/download/calypso_WPComPlugins_EditorToolKit/etk-release-build.tcbuildtag/editing-toolkit.zip?guest=1&branch=trunk" -O ./tmp-etk-download.zip
+				mkdir ./current-etk-release
+				unzip ./tmp-etk-download.zip -d ./current-etk-release
+				echo "Diffing against current trunk release build (`grep build_number ./current-etk-release/build_meta.txt | sed s/build_number=//`).";
+
+				# 2. Change anything from the ETK release build which is "unstable", like the version number and build metadata.
+				# These operations restore idempotence between the two builds.
+				rm -f ./current-etk-release/build_meta.txt
+				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./current-etk-release/full-site-editing-plugin.php
+				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./current-etk-release/readme.txt
+
+				# 3. Check if the current build has changed, and if so, tag it for release.
 				# Note: we exclude asset changes because we only really care if the build files (JS/CSS) change. That file is basically just metadata.
-				if ! diff -rq --exclude="*.asset.php" ./editing-toolkit-plugin/ ../../etk-release-build/ ; then
-					echo "The build is different from the last release build. Therefore, this can be tagged as a release build."
+				if ! diff -rq --exclude="*.asset.php" ./editing-toolkit-plugin/ ./current-etk-release/ ; then
+					echo "The build is different from the most current release build. Therefore, this can be tagged as a new release build."
 					curl -X POST -H "Content-Type: text/plain" --data "etk-release-build" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" %teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/
 				fi
 
-				# 2. Create metadata file with info for the download script.
+				# 4. Create metadata file with info for the download script.
 				cd editing-toolkit-plugin
 				tee build_meta.txt <<-EOM
 					commit_hash=%build.vcs.number%
@@ -134,7 +154,7 @@ object WPComPlugins_EditorToolKit : BuildType({
 					build_number=%build.number%
 					EOM
 
-				# 3. Create artifact.
+				# 5. Create artifact of cwd.
 				echo
 				zip -r ../../../editing-toolkit.zip .
 			"""

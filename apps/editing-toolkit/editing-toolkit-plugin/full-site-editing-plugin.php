@@ -310,7 +310,7 @@ function load_wpcom_block_editor_sidebar() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_sidebar' );
 
 /**
- * Coming soon
+ * Coming soon.
  */
 function load_coming_soon() {
 	if (
