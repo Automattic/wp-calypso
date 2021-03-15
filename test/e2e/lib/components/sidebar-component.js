@@ -162,18 +162,10 @@ export default class SidebarComponent extends AsyncBaseContainer {
 
 	async _scrollToAndClickMenuItem( target, { clickButton = false } = {} ) {
 		const selector = SidebarComponent._getSidebarSelector( target, { getButton: clickButton } );
-		await driverHelper.waitUntilLocatedAndVisible(
-			this.driver,
-			By.css( '.current-site__notices' )
-		);
-
-		if ( ! ( await driverHelper.isEventuallyLocatedAndVisible( this.driver, selector, 500 ) ) ) {
-			const settingsSelector = SidebarComponent._getSidebarSelector( 'settings' );
-			await driverHelper.scrollIntoView( this.driver, settingsSelector );
-		}
 
 		await driverHelper.waitUntilLocatedAndVisible( this.driver, selector );
-		return await driverHelper.clickWhenClickable( this.driver, selector );
+		await driverHelper.scrollIntoView( this.driver, selector );
+		await driverHelper.clickWhenClickable( this.driver, selector );
 	}
 
 	static _getSidebarSelector( target, { getButton = false } = {} ) {
