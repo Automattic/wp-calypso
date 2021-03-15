@@ -80,6 +80,8 @@ import {
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import PlanFeaturesScroller from './scroller';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import Experiment from 'calypso/components/experiment';
+import { getVariationForUser } from 'calypso/state/experiments/selectors';
 
 /**
  * Style dependencies
@@ -120,6 +122,7 @@ export class PlanFeatures extends Component {
 		return (
 			<div className={ planWrapperClasses }>
 				<QueryActivePromotions />
+				<Experiment name="hide_ecommerce_from_launch_site" />
 				<div className={ planClasses }>
 					{ this.renderNotice() }
 					<div ref={ this.contentRef } className="plan-features__content">
@@ -842,6 +845,7 @@ export default connect(
 	( state, ownProps ) => {
 		const {
 			isInSignup,
+			isLaunchPage,
 			placeholder,
 			plans,
 			isLandingPage,
@@ -866,9 +870,18 @@ export default connect(
 		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
 		const isLoggedInMonthlyPricing =
 			! isInSignup && ! isJetpack && kindOfPlanTypeSelector === 'interval';
+		const isInHideECommerceExperiment =
+			isInSignup &&
+			isLaunchPage &&
+			'treatment' === getVariationForUser( state, 'hide_ecommerce_from_launch_site' );
+		const filteredPlans = isInHideECommerceExperiment
+			? plans.filter(
+					( plan ) => ! [ 'ecommerce-bundle', 'ecommerce-bundle-monthly' ].includes( plan )
+			  )
+			: plans;
 
 		let planProperties = compact(
-			map( plans, ( plan ) => {
+			map( filteredPlans, ( plan ) => {
 				let isPlaceholder = false;
 				const planConstantObj = applyTestFiltersToPlansList( plan, abtest, {
 					isLoggedInMonthlyPricing,
