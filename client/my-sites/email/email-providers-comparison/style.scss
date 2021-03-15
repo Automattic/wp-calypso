@@ -97,6 +97,14 @@
 
 		.email-providers-comparison__provider-features {
 			padding-left: 36px;
+
+			.email-provider-details__feature:first-child {
+				margin-top: 0;
+			}
+			.email-provider-details__feature:first-child::before {
+				border-bottom: none;
+				margin-bottom: 0;
+			}
 		}
 	}
 }
