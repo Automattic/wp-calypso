@@ -5,7 +5,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -27,6 +26,8 @@ import PostCommentFormTextarea from './form-textarea';
  * Style dependencies
  */
 import './form.scss';
+
+const noop = () => {};
 
 class PostCommentForm extends React.Component {
 	constructor( props ) {

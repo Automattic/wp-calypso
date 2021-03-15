@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,6 +30,8 @@ import {
 	WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
+
+const noop = () => {};
 
 describe( 'actions', () => {
 	describe( '#fetchOrders()', () => {

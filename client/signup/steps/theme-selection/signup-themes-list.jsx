@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -17,6 +17,8 @@ import ThemesList from 'calypso/components/themes-list';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class SignupThemesList extends Component {
 	static propTypes = {

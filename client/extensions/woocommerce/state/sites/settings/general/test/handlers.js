@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { fetchSettingsGeneral } from '../actions';
@@ -14,6 +9,8 @@ import {
 } from '../handlers';
 import { WPCOM_HTTP_REQUEST } from 'calypso/state/action-types';
 import { WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE } from 'woocommerce/state/action-types';
+
+const noop = () => {};
 
 const settingsData = [
 	{

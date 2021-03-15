@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -51,7 +50,7 @@ const ServerCredentialsForm = ( {
 				<FormSelect
 					name="protocol"
 					id="protocol-type"
-					value={ get( form, 'protocol', 'ssh' ) }
+					value={ form?.protocol?.ssh }
 					onChange={ handleFieldChange }
 					disabled={ formIsSubmitting }
 				>
@@ -69,7 +68,7 @@ const ServerCredentialsForm = ( {
 						name="host"
 						id="host-address"
 						placeholder={ translate( 'YourGroovyDomain.com' ) }
-						value={ get( form, 'host', '' ) }
+						value={ form?.host ?? '' }
 						onChange={ handleFieldChange }
 						disabled={ formIsSubmitting }
 						isError={ !! formErrors.host }
@@ -83,7 +82,7 @@ const ServerCredentialsForm = ( {
 						name="port"
 						id="server-port"
 						placeholder="22"
-						value={ get( form, 'port', '' ) }
+						value={ form?.port ?? '' }
 						onChange={ handleFieldChange }
 						disabled={ formIsSubmitting }
 						isError={ !! formErrors.port }
@@ -101,7 +100,7 @@ const ServerCredentialsForm = ( {
 						name="user"
 						id="server-username"
 						placeholder={ translate( 'username' ) }
-						value={ get( form, 'user', '' ) }
+						value={ form?.user ?? '' }
 						onChange={ handleFieldChange }
 						disabled={ formIsSubmitting }
 						isError={ !! formErrors.user }
@@ -119,7 +118,7 @@ const ServerCredentialsForm = ( {
 						name="pass"
 						id="server-password"
 						placeholder={ translate( 'password' ) }
-						value={ get( form, 'pass', '' ) }
+						value={ form?.pass ?? '' }
 						onChange={ handleFieldChange }
 						disabled={ formIsSubmitting }
 						isError={ !! formErrors.pass }
@@ -138,7 +137,7 @@ const ServerCredentialsForm = ( {
 					name="path"
 					id="wordpress-path"
 					placeholder="/public_html/wordpress-site/"
-					value={ get( form, 'path', '' ) }
+					value={ form?.path ?? '' }
 					onChange={ handleFieldChange }
 					disabled={ formIsSubmitting }
 					isError={ !! formErrors.path }
@@ -151,7 +150,7 @@ const ServerCredentialsForm = ( {
 				<FormTextArea
 					name="kpri"
 					id="private-key"
-					value={ get( form, 'kpri', '' ) }
+					value={ form?.kpri ?? '' }
 					onChange={ handleFieldChange }
 					disabled={ formIsSubmitting }
 					className="server-credentials-form__private-key"

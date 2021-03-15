@@ -7,13 +7,14 @@
  */
 import React from 'react';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { MediaLibraryContent } from 'calypso/my-sites/media-library/content';
 import { ValidationErrors } from 'calypso/lib/media/constants';
+
+const noop = () => {};
 
 const googleConnection = {
 	service: 'google_photos',

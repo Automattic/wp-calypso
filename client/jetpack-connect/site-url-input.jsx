@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +15,8 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import Spinner from 'calypso/components/spinner';
 import SuggestionSearch from 'calypso/components/suggestion-search';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+
+const noop = () => {};
 
 class JetpackConnectSiteUrlInput extends Component {
 	static propTypes = {
@@ -53,7 +54,7 @@ class JetpackConnectSiteUrlInput extends Component {
 	}
 
 	handleKeyPress = ( event ) => {
-		if ( 13 === event.keyCode && ! this.isFormSubmitDisabled() ) {
+		if ( 13 === event.keyCode && ! this.isFormSubmitDisabled() && ! this.isFormSubmitBusy() ) {
 			this.props.onSubmit();
 		}
 	};
@@ -79,10 +80,16 @@ class JetpackConnectSiteUrlInput extends Component {
 	}
 
 	isFormSubmitDisabled() {
-		const { isError, isFetching, url } = this.props;
+		const { isError, url } = this.props;
 		const hasError = isError && 'notExists' !== isError;
 
-		return ! url || isFetching || hasError;
+		return ! url || hasError;
+	}
+
+	isFormSubmitBusy() {
+		const { isFetching } = this.props;
+
+		return isFetching;
 	}
 
 	renderTermsOfServiceLink() {
@@ -165,6 +172,7 @@ class JetpackConnectSiteUrlInput extends Component {
 						className="jetpack-connect__connect-button"
 						primary
 						disabled={ this.isFormSubmitDisabled() }
+						busy={ this.isFormSubmitBusy() }
 						onClick={ onSubmit }
 					>
 						{ this.renderButtonLabel() }

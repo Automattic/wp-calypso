@@ -6,7 +6,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +20,8 @@ import { recordEditorStat, recordEditorEvent } from 'calypso/state/posts/stats';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class PublicizeMessage extends Component {
 	static propTypes = {

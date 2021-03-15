@@ -124,14 +124,11 @@ class PagesMain extends React.Component {
 				<Experiment
 					name={ `explat_test_aa_weekly_calypso_next_client_${ moment
 						.utc()
-						.format( 'GGGG' ) }_week_${ moment.utc().format( 'WW' ) }` }
-				>
-					{ {
-						treatment: null,
-						default: null,
-						loading: null,
-					} }
-				</Experiment>
+						.format( 'GGGG' ) }_week_${ moment.utc().format( 'WW' ) }_v2` }
+					defaultExperience={ null }
+					treatmentExperience={ null }
+					loadingExperience={ null }
+				/>
 			</Main>
 		);
 	}

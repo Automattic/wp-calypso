@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { groupBy, head, isEmpty, map, noop, size, values } from 'lodash';
+import { groupBy, head, isEmpty, map, size, values } from 'lodash';
 import PropTypes from 'prop-types';
 import page from 'page';
 import classnames from 'classnames';
@@ -45,6 +45,8 @@ import { localizeUrl } from 'calypso/lib/i18n-utils';
  */
 import './content.scss';
 
+const noop = () => {};
+
 export class MediaLibraryContent extends React.Component {
 	static propTypes = {
 		site: PropTypes.object,
@@ -58,7 +60,6 @@ export class MediaLibraryContent extends React.Component {
 		scrollable: PropTypes.bool,
 		onAddMedia: PropTypes.func,
 		onMediaScaleChange: PropTypes.func,
-		onEditItem: PropTypes.func,
 		postId: PropTypes.number,
 		isConnected: PropTypes.bool,
 	};
@@ -396,7 +397,6 @@ export class MediaLibraryContent extends React.Component {
 					thumbnailType={ this.getThumbnailType() }
 					single={ this.props.single }
 					scrollable={ this.props.scrollable }
-					onEditItem={ this.props.onEditItem }
 				/>
 			</MediaListData>
 		);

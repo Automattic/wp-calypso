@@ -206,6 +206,8 @@ export default function CompositeCheckout( {
 		isJetpackNotAtomic,
 		isPrivate,
 		siteSlug,
+		isLoggedOutCart,
+		isNoSiteCart,
 	} );
 
 	const {

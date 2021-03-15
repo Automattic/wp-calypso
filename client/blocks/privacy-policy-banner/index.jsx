@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flowRight as compose, get, identity, noop } from 'lodash';
+import { flowRight as compose, get, identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,6 +23,7 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 const AUTOMATTIC_ENTITY = 'automattic';
 const PRIVACY_POLICY_PREFERENCE = 'privacy_policy';
 const PRIVACY_POLICY_REQUEST_ID = 'privacy-policy';
+const noop = () => {};
 
 const privacyPolicyQuery = {
 	fetch() {

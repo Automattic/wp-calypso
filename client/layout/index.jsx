@@ -24,6 +24,7 @@ import { isOffline } from 'calypso/state/application/selectors';
 import { getSelectedSiteId, masterbarIsVisible, getSelectedSite } from 'calypso/state/ui/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
+import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import SitePreview from 'calypso/blocks/site-preview';
@@ -114,6 +115,32 @@ class Layout extends Component {
 		// intentionally don't remove these in unmount
 	}
 
+	shouldShowHappyChatButton() {
+		if ( ! config.isEnabled( 'happychat' ) ) {
+			return false;
+		}
+
+		if ( isWpMobileApp() ) {
+			return false;
+		}
+
+		if ( ! this.props.hasActiveHappyChat ) {
+			return false;
+		}
+
+		const exemptedSections = [ 'happychat', 'devdocs' ];
+		const exemptedRoutes = [ '/log-in/jetpack' ];
+		const exemptedRoutesStartingWith = [ '/start/p2' ];
+
+		return (
+			! exemptedSections.includes( this.props.sectionName ) &&
+			! exemptedRoutes.includes( this.props.currentRoute ) &&
+			! some( exemptedRoutesStartingWith, ( startsWithString ) =>
+				this.props.currentRoute?.startsWith( startsWithString )
+			)
+		);
+	}
+
 	shouldLoadInlineHelp() {
 		if ( ! config.isEnabled( 'inline-help' ) ) {
 			return false;
@@ -123,8 +150,8 @@ class Layout extends Component {
 			return false;
 		}
 
-		const exemptedSections = [ 'jetpack-connect', 'happychat', 'devdocs', 'help' ];
-		const exemptedRoutes = [ '/log-in/jetpack', '/me/account/closed' ];
+		const exemptedSections = [ 'jetpack-connect', 'happychat', 'devdocs', 'help', 'home' ];
+		const exemptedRoutes = [ '/log-in/jetpack' ];
 		const exemptedRoutesStartingWith = [ '/start/p2' ];
 
 		return (
@@ -158,6 +185,8 @@ class Layout extends Component {
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': ! this.props.secondary,
+			'is-inline-help-showing': this.shouldLoadInlineHelp(),
+			'is-happychat-button-showing': this.shouldShowHappyChatButton(),
 			'has-chat': this.props.chatIsOpen,
 			'has-no-masterbar': this.props.masterbarIsHidden,
 			'is-jetpack-login': this.props.isJetpackLogin,
@@ -173,18 +202,22 @@ class Layout extends Component {
 		} );
 
 		const optionalBodyProps = () => {
-			const optionalProps = {
-				bodyClass: classnames( {
-					'is-new-launch-flow':
-						this.props.isNewLaunchFlow || this.props.isCheckoutFromGutenboarding,
-					'is-nav-unification': this.props.isNavUnificationEnabled,
-				} ),
+			const bodyClass = [];
+			if ( this.props.isNewLaunchFlow || this.props.isCheckoutFromGutenboarding ) {
+				bodyClass.push( 'is-new-launch-flow' );
+			}
+			if ( this.props.isNavUnificationEnabled ) {
+				bodyClass.push( 'is-nav-unification' );
+			}
+			return {
+				bodyClass,
 			};
-
-			return optionalProps;
 		};
 
 		const { shouldShowAppBanner } = this.props;
+
+		const loadInlineHelp = this.shouldLoadInlineHelp();
+
 		return (
 			<div className={ sectionClass }>
 				<QueryExperiments />
@@ -250,9 +283,22 @@ class Layout extends Component {
 				{ 'development' === process.env.NODE_ENV && (
 					<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 				) }
-				{ this.shouldLoadInlineHelp() && (
+				{ loadInlineHelp && (
 					<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />
 				) }
+				{ this.shouldShowHappyChatButton() && (
+					<AsyncLoad
+						require="calypso/components/happychat/button"
+						placeholder={ null }
+						allowMobileRedirect
+						borderless={ false }
+						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+						className={ classnames( 'floating-happychat-button', {
+							offset: loadInlineHelp,
+						} ) }
+					/>
+				) }
+
 				{ config.isEnabled( 'layout/support-article-dialog' ) && (
 					<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
 				) }
@@ -327,6 +373,7 @@ export default compose(
 			isOffline: isOffline( state ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			chatIsOpen: isHappychatOpen( state ),
+			hasActiveHappyChat: hasActiveHappychatSession( state ),
 			colorSchemePreference: getPreference( state, 'colorScheme' ),
 			siteId,
 			// We avoid requesting sites in the Jetpack Connect authorization step, because this would

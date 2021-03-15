@@ -19,7 +19,6 @@ import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
  */
 import config from '@automattic/calypso-config';
 import sanitize from 'calypso/server/sanitize';
-import utils from 'calypso/server/bundler/utils';
 import { pathToRegExp } from 'calypso/utils';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
@@ -55,18 +54,7 @@ import middlewareCache from '../middleware/cache.js';
 
 const debug = debugFactory( 'calypso:pages' );
 
-const SERVER_BASE_PATH = '/public';
 const calypsoEnv = config( 'env_id' );
-
-const staticFiles = [ { path: 'tinymce/skins/wordpress/wp-content.css' } ];
-
-const staticFilesUrls = staticFiles.reduce( ( result, file ) => {
-	if ( ! file.hash ) {
-		file.hash = utils.hashFile( process.cwd() + SERVER_BASE_PATH + '/' + file.path );
-	}
-	result[ file.path ] = utils.getUrl( file.path, file.hash );
-	return result;
-}, {} );
 
 // TODO: Re-use (a modified version of) client/state/initial-state#getInitialServerState here
 function getInitialServerState( serializedServerState ) {
@@ -177,7 +165,6 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
 		isWpMobileApp: isWpMobileApp( request.useragent.source ),
 		isDebug,
-		staticUrls: staticFilesUrls,
 	};
 
 	if ( calypsoEnv === 'wpcalypso' ) {

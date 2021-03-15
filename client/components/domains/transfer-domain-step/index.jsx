@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty, noop } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import page from 'page';
 import { stringify } from 'qs';
 import classnames from 'classnames';
@@ -61,6 +61,8 @@ import { withShoppingCart } from '@automattic/shopping-cart';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class TransferDomainStep extends React.Component {
 	static propTypes = {
@@ -210,7 +212,7 @@ class TransferDomainStep extends React.Component {
 			);
 		} else if ( domainsWithPlansOnlyButNoPlan ) {
 			domainProductPriceText = translate(
-				'One additional year of domain registration included in paid plans.'
+				'One additional year of domain registration included in annual paid plans.'
 			);
 		} else if ( domainProductSalePrice ) {
 			domainProductPriceText = translate( 'Sale price is %(cost)s', {

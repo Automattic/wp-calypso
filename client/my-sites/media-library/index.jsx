@@ -59,7 +59,6 @@ class MediaLibrary extends Component {
 		onSourceChange: PropTypes.func,
 		onSearch: PropTypes.func,
 		onScaleChange: PropTypes.func,
-		onEditItem: PropTypes.func,
 		fullScreenDropZone: PropTypes.bool,
 		containerWidth: PropTypes.number,
 		single: PropTypes.bool,
@@ -200,7 +199,6 @@ class MediaLibrary extends Component {
 					onMediaScaleChange={ this.props.onScaleChange }
 					onSourceChange={ this.props.onSourceChange }
 					onDeleteItem={ this.props.onDeleteItem }
-					onEditItem={ this.props.onEditItem }
 					onViewDetails={ this.props.onViewDetails }
 					postId={ this.props.postId }
 					mediaValidationErrors={ this.props.site ? this.props.mediaValidationErrors : undefined }

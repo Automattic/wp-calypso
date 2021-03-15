@@ -17,10 +17,6 @@ export const DOMAIN_QUERY_MINIMUM_LENGTH = 2;
  */
 export const DOMAIN_SEARCH_DEBOUNCE_INTERVAL = 300;
 
-// TODO: Check domain suggestions store registration discrepancies
-// (see https://github.com/Automattic/wp-calypso/issues/46869)
-export const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register( {
-	vendor: 'variation2_front',
-} );
+export const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
 export const domainIsAvailableStatus = [ 'available', 'available_premium' ];

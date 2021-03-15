@@ -27,7 +27,7 @@ describe( 'PendingListItem', () => {
 
 	const assertions = [
 		// Check nesting
-		'Card.pending-payments__list-item .pending-payments__list-item-wrapper .pending-payments__list-item-details',
+		'Memo(Card).pending-payments__list-item .pending-payments__list-item-wrapper .pending-payments__list-item-details',
 		'.pending-payments__list-item-details .pending-payments__list-item-title',
 		'.pending-payments__list-item-details .pending-payments__list-item-product',
 		'.pending-payments__list-item-details .pending-payments__list-item-payment',

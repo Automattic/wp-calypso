@@ -142,9 +142,7 @@ Custom config files should be added under `test/e2e/config/` and should follow t
 local-<env>.json
 ```
 
-**NOTE**
-
-`.gitignore` ensures that custom configurations prefixed with `local-` will not be commited to the repository. With tha said however, **please ensure username/passwords and other configuration values are not committed by accident!**
+**Note** that `.gitignore` ensures that custom configurations prefixed with `local-` will not be commited to the repository. With tha said however, **please ensure username/passwords and other configuration values are not committed by accident!**
 
 Values found in the local configuration file will override ones found in `default.json`.
 

@@ -521,6 +521,15 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	text-align: center;
 }
 
+.is-support-session {
+	.jetpack-connect__sso,
+	.jetpack-connect__authorize-form {
+		.jetpack-connect__tos-link {
+			display: none;
+		}
+	}
+}
+
 .jetpack-connect__tos-link-text {
 	white-space: nowrap;
 }

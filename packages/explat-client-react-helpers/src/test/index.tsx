@@ -82,35 +82,32 @@ describe( 'Experiment', () => {
 		> ).mockImplementationOnce( () => controllablePromise1.promise );
 
 		const { container, rerender } = render(
-			<Experiment name="experiment_a">
-				{ {
-					treatment: 'treatment-1',
-					default: 'default',
-					loading: 'loading-1',
-				} }
-			</Experiment>
+			<Experiment
+				name="experiment_a"
+				treatmentExperience="treatment-1"
+				defaultExperience="default"
+				loadingExperience="loading-1"
+			/>
 		);
 		expect( container.textContent ).toBe( 'loading-1' );
 		rerender(
-			<Experiment name="experiment_a">
-				{ {
-					treatment: 'treatment-1',
-					default: 'default',
-					loading: 'loading-2',
-				} }
-			</Experiment>
+			<Experiment
+				name="experiment_a"
+				treatmentExperience="treatment-1"
+				defaultExperience="default"
+				loadingExperience="loading-2"
+			/>
 		);
 		expect( container.textContent ).toBe( 'loading-2' );
 		await actReact( async () => controllablePromise1.resolve( validExperimentAssignment ) );
 		await waitFor( () => expect( container.textContent ).toBe( 'treatment-1' ) );
 		rerender(
-			<Experiment name="experiment_a">
-				{ {
-					treatment: 'treatment-2',
-					default: 'default',
-					loading: 'loading-2',
-				} }
-			</Experiment>
+			<Experiment
+				name="experiment_a"
+				treatmentExperience="treatment-2"
+				defaultExperience="default"
+				loadingExperience="loading-2"
+			/>
 		);
 		expect( container.textContent ).toBe( 'treatment-2' );
 	} );
@@ -125,13 +122,12 @@ describe( 'Experiment', () => {
 		> ).mockImplementationOnce( () => controllablePromise1.promise );
 
 		const { container, rerender } = render(
-			<Experiment name="experiment_a">
-				{ {
-					treatment: 'treatment',
-					default: 'default-1',
-					loading: 'loading',
-				} }
-			</Experiment>
+			<Experiment
+				name="experiment_a"
+				treatmentExperience="treatment"
+				defaultExperience="default-1"
+				loadingExperience="loading"
+			/>
 		);
 		expect( container.textContent ).toBe( 'loading' );
 		await actReact( async () =>
@@ -139,14 +135,46 @@ describe( 'Experiment', () => {
 		);
 		await waitFor( () => expect( container.textContent ).toBe( 'default-1' ) );
 		rerender(
-			<Experiment name="experiment_a">
-				{ {
-					treatment: 'treatment-2',
-					default: 'default-2',
-					loading: 'loading-2',
-				} }
-			</Experiment>
+			<Experiment
+				name="experiment_a"
+				treatmentExperience="treatment-2"
+				defaultExperience="default-2"
+				loadingExperience="loading-2"
+			/>
 		);
 		expect( container.textContent ).toBe( 'default-2' );
+	} );
+} );
+
+describe( 'ProvideExperimentData', () => {
+	it( 'should correctly provide data', async () => {
+		const exPlatClient = createMockExPlatClient();
+		const { ProvideExperimentData } = createExPlatClientReactHelpers( exPlatClient );
+
+		const controllablePromise1 = createControllablePromise< ExperimentAssignment >();
+		( exPlatClient.loadExperimentAssignment as jest.MockedFunction<
+			typeof exPlatClient.loadExperimentAssignment
+		> ).mockImplementationOnce( () => controllablePromise1.promise );
+
+		const capture = jest.fn();
+		render(
+			<ProvideExperimentData name="experiment_a">
+				{ ( isLoading, experimentAssignment ) => (
+					<>{ capture( isLoading, experimentAssignment ) }</>
+				) }
+			</ProvideExperimentData>
+		);
+		expect( capture.mock.calls.length ).toBe( 1 );
+		expect( capture.mock.calls[ capture.mock.calls.length - 1 ] ).toEqual( [ true, null ] );
+		capture.mockReset();
+		const experimentAssignment = { ...validExperimentAssignment, variationName: null };
+		await actReact( async () => controllablePromise1.resolve( experimentAssignment ) );
+		await waitFor( () => {
+			expect( capture.mock.calls.length ).toBe( 1 );
+		} );
+		expect( capture.mock.calls[ capture.mock.calls.length - 1 ] ).toEqual( [
+			false,
+			experimentAssignment,
+		] );
 	} );
 } );

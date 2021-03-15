@@ -7,13 +7,15 @@
  */
 import { assert } from 'chai';
 import { mount, shallow } from 'enzyme';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 import { BulkSelect } from '../index';
+
+const noop = () => {};
 
 describe( 'index', () => {
 	test( 'should have BulkSelect class', () => {

@@ -2,7 +2,9 @@
  * External dependencies
  */
 import sinon from 'sinon';
-import { isFunction, noop } from 'lodash';
+import { isFunction } from 'lodash';
+
+const noop = () => {};
 
 /**
  * Use sinon's fake time controls

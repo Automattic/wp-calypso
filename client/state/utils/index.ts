@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-export { extendAction } from './extend-action';
 export { isValidStateWithSchema, withSchemaValidation } from './schema-utils';
 export { keyedReducer } from './keyed-reducer';
 export { withEnhancers } from './with-enhancers';

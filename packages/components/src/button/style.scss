@@ -109,6 +109,7 @@
 	}
 
 	&.is-busy {
+		pointer-events: none;
 		animation: button__busy-animation 3000ms infinite linear;
 		background-size: 120px 100%;
 		background-image: linear-gradient(

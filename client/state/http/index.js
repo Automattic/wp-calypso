@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import { fromPairs, identity, toPairs } from 'lodash';
+import { identity, toPairs } from 'lodash';
+import { extendAction } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
-import { extendAction } from 'calypso/state/utils';
 import { HTTP_REQUEST } from 'calypso/state/action-types';
 import { failureMeta, successMeta } from 'calypso/state/data-layer/wpcom-http';
 
@@ -60,7 +60,7 @@ export const httpHandler = async ( { dispatch }, action ) => {
 		return;
 	}
 
-	const fetchHeaders = fromPairs( headers );
+	const fetchHeaders = Object.fromEntries( headers );
 	fetchHeaders.Accept = 'application/json';
 
 	const contentType = ( fetchHeaders[ 'Content-Type' ] || '' ).split( ';' )[ 0 ];

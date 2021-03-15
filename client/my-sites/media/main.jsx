@@ -91,13 +91,6 @@ class Media extends Component {
 		page( redirect );
 	};
 
-	openDetailsModalForASingleImage = ( image ) => {
-		this.setState( {
-			currentDetail: 0,
-			selectedItems: [ image ],
-		} );
-	};
-
 	openDetailsModalForAllSelected = () => {
 		const { selectedItems } = this.props;
 
@@ -417,7 +410,6 @@ class Media extends Component {
 						single={ false }
 						filter={ this.props.filter }
 						source={ this.state.source }
-						onEditItem={ this.openDetailsModalForASingleImage }
 						onViewDetails={ this.openDetailsModalForAllSelected }
 						onDeleteItem={ this.handleDeleteMediaEvent }
 						onSourceChange={ this.handleSourceChange }

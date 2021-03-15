@@ -3,7 +3,6 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { noop } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -29,6 +28,8 @@ import { PanelBody } from '@wordpress/components';
  * Internal dependencies
  */
 import { withSiteOptions } from '../../lib';
+
+const noop = () => {};
 
 function SiteDescriptionEdit( {
 	attributes,

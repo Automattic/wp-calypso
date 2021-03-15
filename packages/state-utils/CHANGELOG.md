@@ -1,4 +1,8 @@
-## 1.0.0-alpha.2
+## 1.0.0-alpha.4
+
+Extracted `extendAction` into `state-utils`.
+
+## 1.0.0-alpha.3
 
 Extracted `getInitialState` into `state-utils`.
 

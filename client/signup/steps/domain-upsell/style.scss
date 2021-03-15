@@ -62,4 +62,20 @@
             color: var( --color-neutral-60 );
         }
     }
+
+    &.is_in_domain_upsell_emphasize_free_test {
+        .formatted-header__subtitle {
+            padding-top: 24px;
+        }
+
+        .domain-upsell__buttons {
+            .button {
+                width: 100%;
+            }
+
+            & > :first-child {
+                margin-bottom: 12px;
+            }
+        }
+    }
 }

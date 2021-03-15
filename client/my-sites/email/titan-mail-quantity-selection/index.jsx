@@ -11,7 +11,7 @@ import { withShoppingCart } from '@automattic/shopping-cart';
 /**
  * Internal dependencies
  */
-import { Button, Card, CompactCard } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import DomainManagementHeader from 'calypso/my-sites/domains/domain-management/components/header';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
@@ -36,19 +36,20 @@ import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwar
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	getConfiguredTitanMailboxCount,
+	getMaxTitanMailboxCount,
 	getTitanExpiryDate,
 	getTitanMailboxPurchaseCost,
 	getTitanMailboxRenewalCost,
-	getMaxTitanMailboxCount,
+	getTitanProductName,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
-import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
 import {
 	TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
 	TITAN_MAIL_MONTHLY_SLUG,
@@ -120,12 +121,7 @@ class TitanMailQuantitySelection extends React.Component {
 			] )
 			.then( () => {
 				const { errors } = this.props?.cart?.messages;
-				const errorCodesToDisplayLocally = [ 'invalid-quantity', 'missing_quantity_data' ];
-				if (
-					errors &&
-					errors.length &&
-					errors.filter( ( error ) => errorCodesToDisplayLocally.includes( error.code ) ).length
-				) {
+				if ( errors && errors.length ) {
 					// Stay on the page to show the relevant error
 					return;
 				}
@@ -146,12 +142,14 @@ class TitanMailQuantitySelection extends React.Component {
 		);
 
 		const domainName = isSelectedDomainNameValid ? selectedDomainName : null;
+
 		if ( isEnabled( 'titan/iframe-control-panel' ) ) {
 			page(
 				emailManagementManageTitanAccount( selectedSite.slug, domainName, currentRoute, {
 					context: TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
 				} )
 			);
+
 			return;
 		}
 
@@ -162,12 +160,18 @@ class TitanMailQuantitySelection extends React.Component {
 		);
 	};
 
-	onQuantityChange = ( e ) => {
-		const parsedQuantity = parseInt( e.target.value, 10 );
+	onButtonClick = () => {
+		this.setState( { quantity: this.state.quantity + 1 } );
+	};
+
+	onQuantityChange = ( event ) => {
+		const { target } = event;
+
+		const parsedQuantity = parseInt( target.value, 10 );
 		const quantity = isNaN( parsedQuantity ) ? 1 : Math.max( 1, parsedQuantity );
 
-		if ( quantity.toString() !== e.target.value ) {
-			e.target.value = quantity;
+		if ( quantity.toString() !== target.value ) {
+			target.value = quantity;
 		}
 
 		this.setState( { quantity } );
@@ -197,81 +201,6 @@ class TitanMailQuantitySelection extends React.Component {
 		) : null;
 	}
 
-	renderCurrentMailboxCounts() {
-		const { selectedDomain, translate } = this.props;
-		if ( ! hasTitanMailWithUs( selectedDomain ) ) {
-			return null;
-		}
-
-		const purchasedMailboxCount = getMaxTitanMailboxCount( selectedDomain );
-		if ( purchasedMailboxCount < 1 ) {
-			return null;
-		}
-
-		const configuredMailboxCount = getConfiguredTitanMailboxCount( selectedDomain );
-		if ( configuredMailboxCount >= purchasedMailboxCount ) {
-			return (
-				<CompactCard>
-					<span>
-						{ translate(
-							'You currently have %(mailboxCount)d mailbox for this domain',
-							'You currently have %(mailboxCount)d mailboxes for this domain',
-							{
-								args: {
-									mailboxCount: configuredMailboxCount,
-								},
-								count: configuredMailboxCount,
-								comment:
-									'%(mailboxCount)d is the number of email mailboxes the user has for a domain name',
-							}
-						) }
-					</span>
-				</CompactCard>
-			);
-		}
-
-		const unusedMailboxCount = purchasedMailboxCount - configuredMailboxCount;
-		const showExternalFinishSetupLink = ! isEnabled( 'titan/iframe-control-panel' );
-		return (
-			<CompactCard>
-				<span>
-					{ translate(
-						'You have already bought %(mailboxCount)d mailbox for this domain',
-						'You have already bought %(mailboxCount)d mailboxes for this domain',
-						{
-							args: {
-								mailboxCount: purchasedMailboxCount,
-							},
-							count: purchasedMailboxCount,
-							comment:
-								'%(mailboxCount)d is the number of email mailboxes the user has bought for the domain',
-						}
-					) }
-				</span>
-				<span>
-					{ translate(
-						'You still have %(unusedMailboxCount)d unused mailbox',
-						'You still have %(unusedMailboxCount)d unused mailboxes',
-						{
-							args: {
-								unusedMailboxCount,
-							},
-							count: unusedMailboxCount,
-							comment:
-								'%(unusedMailboxCount)d is the number of unused mailboxes that the user has paid for but is not using',
-						}
-					) }
-					<Button onClick={ this.handleCreateMailbox } compact>
-						{ translate( 'Finish Setup' ) }
-						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-						{ showExternalFinishSetupLink && <Gridicon icon="external" size={ 16 } /> }
-						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-					</Button>
-				</span>
-			</CompactCard>
-		);
-	}
-
 	doesAdditionalPriceMatchStandardPrice() {
 		const { selectedDomain, titanMonthlyProduct } = this.props;
 		if ( ! selectedDomain || ! hasTitanMailWithUs( selectedDomain ) ) {
@@ -287,66 +216,58 @@ class TitanMailQuantitySelection extends React.Component {
 		);
 	}
 
-	renderPricingDetails() {
-		const { moment, selectedDomain, titanMonthlyProduct, translate } = this.props;
+	renderUnusedMailboxesNotice() {
+		const { maxTitanMailboxCount, selectedDomain, translate } = this.props;
 
-		const pricingTitle = <h3>{ translate( 'Pricing' ) }</h3>;
-		// Handle cases where we're only dealing with the standard price
-		if ( this.doesAdditionalPriceMatchStandardPrice() ) {
-			return (
-				<React.Fragment>
-					{ pricingTitle }
-					<span>
-						{ translate( 'Each mailbox costs {{strong}}%(price)s/month{{/strong}}', {
-							args: {
-								price: titanMonthlyProduct.cost_display,
-							},
-							components: {
-								strong: <strong />,
-							},
-							comment:
-								'%(price)s is a formatted price for each mailbox, e.g. $3.50, €3.75, or PLN 3.75',
-						} ) }
-					</span>
-				</React.Fragment>
-			);
+		if ( ! hasTitanMailWithUs( selectedDomain ) ) {
+			return null;
+		}
+
+		const numberOfUnusedMailboxes =
+			maxTitanMailboxCount - getConfiguredTitanMailboxCount( selectedDomain );
+
+		if ( numberOfUnusedMailboxes <= 0 ) {
+			return;
+		}
+
+		const text = translate(
+			'You have %(numberOfMailboxes)d unused mailbox. Do you want to configure it now instead?',
+			'You have %(numberOfMailboxes)d unused mailboxes. Do you want to configure them now instead?',
+			{
+				count: numberOfUnusedMailboxes,
+				args: {
+					numberOfMailboxes: numberOfUnusedMailboxes,
+				},
+				comment: 'This refers to the number of mailboxes purchased that have not been set up yet',
+			}
+		);
+
+		return (
+			<Notice icon="notice" showDismiss={ false } status="is-warning" text={ text }>
+				<NoticeAction
+					external={ ! isEnabled( 'titan/iframe-control-panel' ) }
+					onClick={ this.handleCreateMailbox }
+				>
+					{ translate( 'Finish Setup' ) }
+				</NoticeAction>
+			</Notice>
+		);
+	}
+
+	renderNewMailboxesNotice() {
+		const { moment, selectedDomain, translate } = this.props;
+
+		if ( ! hasTitanMailWithUs( selectedDomain ) ) {
+			return null;
 		}
 
 		const purchaseCost = getTitanMailboxPurchaseCost( selectedDomain );
-		const renewalCost = getTitanMailboxRenewalCost( selectedDomain );
-		const expiryDate = getTitanExpiryDate( selectedDomain );
 
-		const prorationMessage =
-			purchaseCost.amount < renewalCost.amount
-				? translate(
-						'Your initial purchase price is less than your standard monthly price of %(price)s per mailbox because ' +
-							"we're only charging you for the remainder of the current month.",
-						{
-							args: {
-								price: renewalCost.text,
-							},
-							comment:
-								'%(price)s is a formatted price for a monthly email mailbox subscription, e.g. $3.50, €3.75, or PLN 4.50',
-						}
-				  )
-				: translate(
-						'Your initial purchase price is more than your standard monthly price of %(price)s per mailbox because ' +
-							"we're charging you for the remainder of the current month plus one or more months of service.",
-						{
-							args: {
-								price: renewalCost.text,
-							},
-							comment:
-								'%(price)s is a formatted price for a monthly email mailbox subscription, e.g. $3.50, €3.75, or PLN 4.50',
-						}
-				  );
-
-		return (
-			<React.Fragment>
-				{ pricingTitle }
-				<span>
+		if ( this.doesAdditionalPriceMatchStandardPrice() ) {
+			return (
+				<Notice icon="info-outline" showDismiss={ false } status="is-success">
 					{ translate(
-						'Each additional mailbox will cost {{strong}}%(price)s{{/strong}} for this purchase',
+						'You can purchase new mailboxes at the regular price of {{strong}}%(price)s{{/strong}} per mailbox per month.',
 						{
 							args: {
 								price: purchaseCost.text,
@@ -355,37 +276,60 @@ class TitanMailQuantitySelection extends React.Component {
 								strong: <strong />,
 							},
 							comment:
-								'%(price)s is a formatted price for each email mailbox, e.g. $3.50, €3.75, or PLN 4.50',
+								'%(price)s is a formatted price for an email subscription (e.g. $3.50, €3.75, or PLN 4.50)',
 						}
 					) }
-				</span>
-				<span>
+				</Notice>
+			);
+		}
+		const renewalCost = getTitanMailboxRenewalCost( selectedDomain );
+		const expiryDate = getTitanExpiryDate( selectedDomain );
+
+		return (
+			<Notice icon="info-outline" showDismiss={ false } status="is-success">
+				<>
 					{ translate(
-						'All of your mailboxes are due to renew at {{strong}}%(price)s/mailbox/month{{/strong}} on %(date)s',
+						'You can purchase new mailboxes at the prorated price of {{strong}}%(proratedPrice)s{{/strong}} per mailbox.',
 						{
 							args: {
-								date: moment( expiryDate ).format( 'LL' ),
-								price: renewalCost.text,
+								proratedPrice: purchaseCost.text,
 							},
 							components: {
 								strong: <strong />,
 							},
 							comment:
-								'%(price)s is a formatted price for each mailbox, e.g. $3.50, €3.75, or PLN 4.50; ' +
-								'%(date)s is a localized date of the rough form: 17 February 2021',
+								'%(proratedPrice)s is a formatted price for an email subscription (e.g. $3.50, €3.75, or PLN 4.50)',
+						}
+					) }{ ' ' }
+					{ purchaseCost.amount < renewalCost.amount
+						? translate(
+								'This is less than the regular price because you are only charged for the remainder of the current month.'
+						  )
+						: translate(
+								'This is more than the regular price because you are charged for the remainder of the current month plus any additional month until renewal.'
+						  ) }{ ' ' }
+					{ translate(
+						'All of your mailboxes are due to renew at the regular price of {{strong}}%(fullPrice)s{{/strong}} per mailbox when your subscription renews on {{strong}}%(expiryDate)s{{/strong}}.',
+						{
+							args: {
+								fullPrice: renewalCost.text,
+								expiryDate: moment( expiryDate ).format( 'LL' ),
+							},
+							components: {
+								strong: <strong />,
+							},
+							comment:
+								'%(fullPrice)s is a formatted price for an email subscription (e.g. $3.50, €3.75, or PLN 4.50), ' +
+								'%(expiryDate)s is a localized date (e.g. February 17, 2021)',
 						}
 					) }
-				</span>
-				<CompactCard className="titan-mail-quantity-selection__prorating-details">
-					<Gridicon icon="info-outline" size={ 18 } />
-					<span>{ prorationMessage }</span>
-				</CompactCard>
-			</React.Fragment>
+				</>
+			</Notice>
 		);
 	}
 
 	renderForm() {
-		const { isLoadingDomains, selectedDomainName, titanMonthlyProduct, translate } = this.props;
+		const { isLoadingDomains, titanMonthlyProduct, translate } = this.props;
 
 		if ( isLoadingDomains || ! titanMonthlyProduct ) {
 			return <AddEmailAddressesCardPlaceholder />;
@@ -393,45 +337,36 @@ class TitanMailQuantitySelection extends React.Component {
 
 		return (
 			<>
-				<SectionHeader label={ translate( 'Choose Mailbox Quantity' ) } />
+				<SectionHeader label={ translate( 'Add New Mailboxes' ) } />
 
 				<Card>
-					<div className="titan-mail-quantity-selection__domain-info">
-						{ translate( "You're adding mailboxes for {{strong}}%(domainName)s{{/strong}}", {
-							args: {
-								domainName: selectedDomainName,
-							},
-							components: {
-								strong: <strong />,
-							},
-							comment: '%(domainName)s is a domain name',
-						} ) }
-					</div>
-					<div className="titan-mail-quantity-selection__mailbox-info">
-						{ this.renderCurrentMailboxCounts() }
-					</div>
-					<div>
-						<FormLabel>{ translate( 'Number of new mailboxes to add' ) }</FormLabel>
+					<div className="titan-mail-quantity-selection__form">
+						<FormLabel htmlFor="quantity">{ translate( 'Number of mailboxes' ) }</FormLabel>
+
 						<FormTextInput
 							name="quantity"
+							id="quantity"
 							type="number"
 							min="1"
 							max="50"
 							step="1"
-							placeholder={ translate( 'Number of new mailboxes' ) }
+							placeholder={ translate( 'Number of mailboxes' ) }
 							value={ this.state.quantity }
 							onChange={ this.onQuantityChange }
 						/>
-					</div>
-					<hr className="titan-mail-quantity-selection__divider titan-mail-quantity-selection__divider-pricing" />
-					<div className="titan-mail-quantity-selection__pricing-info">
-						{ this.renderPricingDetails() }
+
+						<Button onClick={ this.onButtonClick }>
+							<Gridicon icon="plus" />
+
+							<span>{ translate( 'Add another mailbox' ) }</span>
+						</Button>
 					</div>
 
 					<hr className="titan-mail-quantity-selection__divider" />
 
 					<div className="titan-mail-quantity-selection__buttons">
 						<Button onClick={ this.handleCancel }>{ translate( 'Cancel' ) }</Button>
+
 						<Button primary onClick={ this.handleContinue }>
 							{ translate( 'Continue' ) }
 						</Button>
@@ -447,7 +382,6 @@ class TitanMailQuantitySelection extends React.Component {
 			selectedSite,
 			isSelectedDomainNameValid,
 			isLoadingDomains,
-			translate,
 		} = this.props;
 
 		if ( ! isLoadingDomains && ! isSelectedDomainNameValid ) {
@@ -458,23 +392,20 @@ class TitanMailQuantitySelection extends React.Component {
 		return (
 			<>
 				<QueryProductsList />
+
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
+
 				<Main>
 					<DomainManagementHeader
 						onClick={ this.goToEmail }
 						selectedDomainName={ selectedDomainName }
 					>
-						{ translate( '%(productName)s: %(domainName)s', {
-							args: {
-								domainName: selectedDomainName,
-								productName: getTitanProductName(),
-							},
-							comment:
-								'%(productName)s is the name of the product, either "Email" or "Titan Mail"; %(domainName)s is the name of a domain',
-						} ) }
+						{ getTitanProductName() + ': ' + selectedDomainName }
 					</DomainManagementHeader>
 
 					{ this.renderForwardsNotice() }
+					{ this.renderUnusedMailboxesNotice() }
+					{ this.renderNewMailboxesNotice() }
 					{ this.renderForm() }
 				</Main>
 			</>

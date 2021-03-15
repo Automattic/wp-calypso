@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,6 +24,7 @@ import buildConnection from 'calypso/lib/happychat/connection-async';
 import isHappychatClientConnected from 'calypso/state/happychat/selectors/is-happychat-client-connected';
 import isHappychatChatAssigned from 'calypso/state/happychat/selectors/is-happychat-chat-assigned';
 
+const noop = () => {};
 const eventMessage = {
 	HAPPYCHAT_BLUR: 'Stopped looking at Happychat',
 	HAPPYCHAT_FOCUS: 'Started looking at Happychat',

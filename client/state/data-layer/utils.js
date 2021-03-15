@@ -2,11 +2,7 @@
  * External dependencies
  */
 import { camelCase, isObjectLike, isPlainObject, map, reduce, set, snakeCase } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { extendAction } from 'calypso/state/utils';
+import { extendAction } from '@automattic/state-utils';
 
 const doBypassDataLayer = {
 	meta: {

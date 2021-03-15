@@ -4,7 +4,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { localize, withRtl } from 'i18n-calypso';
-import { noop } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -21,6 +20,7 @@ import BarContainer from './bar-container';
  */
 import './style.scss';
 
+const noop = () => {};
 const isTouch = hasTouch();
 const CHART_PADDING = 20;
 

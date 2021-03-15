@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, find, noop, assign } from 'lodash';
+import { get, find, assign } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,6 +30,8 @@ import { recordGoogleEvent, bumpStat } from 'calypso/state/analytics/actions';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class TermFormDialog extends Component {
 	static initialState = {

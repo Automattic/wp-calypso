@@ -39,14 +39,14 @@ export default function useCreateAssignablePaymentMethods(
 		stripe,
 		shouldUseEbanx: false,
 		shouldShowTaxFields: true,
-		activePayButtonText: translate( 'Save card' ),
+		activePayButtonText: String( translate( 'Save card' ) ),
 	} );
 
 	const payPalMethod = useCreatePayPal( {
 		labelText:
 			currentPaymentMethodId === 'paypal-existing'
-				? translate( 'New PayPal account' )
-				: translate( 'PayPal' ),
+				? String( translate( 'New PayPal account' ) )
+				: String( translate( 'PayPal' ) ),
 	} );
 
 	const storedCards = useSelector( getStoredCards );

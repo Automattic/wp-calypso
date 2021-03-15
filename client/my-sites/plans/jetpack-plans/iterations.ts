@@ -1,13 +1,16 @@
 /**
  * Internal dependencies
  */
+import { abtest } from 'calypso/lib/abtest';
 import { getUrlParts } from 'calypso/lib/url/url-parts';
 
 /**
  * Iterations
  */
 
-export enum Iterations {}
+export enum Iterations {
+	SPROOF = 'jetpackSocialProofHeader',
+}
 
 const iterationNames: string[] = Object.values( Iterations );
 
@@ -38,8 +41,8 @@ const getCurrentCROIterationName = (): Iterations | null => {
 		}
 	}
 
-	// There are no active iterations right now
-	return null;
+	const showSocialProofHeader = abtest( 'jetpackSocialProofHeader' ) === 'withSocialProof_test';
+	return showSocialProofHeader ? Iterations.SPROOF : null;
 };
 
 type IterationValueFunction< T > = ( key: Iterations | null ) => T | undefined;

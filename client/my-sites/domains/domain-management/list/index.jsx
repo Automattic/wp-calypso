@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { find, findIndex, get, identity, noop, times, isEmpty } from 'lodash';
+import { find, findIndex, get, identity, times, isEmpty } from 'lodash';
 import page from 'page';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -58,6 +58,8 @@ import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
  */
 import './style.scss';
 import 'calypso/my-sites/domains/style.scss';
+
+const noop = () => {};
 
 export class List extends React.Component {
 	static propTypes = {

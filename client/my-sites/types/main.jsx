@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -32,6 +33,7 @@ function Types( {
 	userCanEdit,
 	statusSlug,
 	showPublishedStatus,
+	translate,
 } ) {
 	return (
 		<Main wideLayout>
@@ -42,6 +44,11 @@ function Types( {
 				brandFont
 				className="types__page-heading"
 				headerText={ get( postType, 'label', '' ) }
+				subHeaderText={
+					get( postType, 'label', '' ) === 'Testimonials'
+						? translate( 'Create and manage all the testimonials on your site.' )
+						: ''
+				}
 				align="left"
 			/>
 			{ userCanEdit &&
@@ -86,4 +93,4 @@ export default connect( ( state, ownProps ) => {
 		postTypeSupported: isPostTypeSupported( state, siteId, ownProps.query.type ),
 		userCanEdit: canCurrentUser( state, siteId, capability ),
 	};
-} )( Types );
+} )( localize( Types ) );

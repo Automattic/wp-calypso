@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { get, has, isInteger, noop } from 'lodash';
+import { get, has, isInteger } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,6 +32,8 @@ import { REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO } from 'calypso/state/desktop/
 import { notifyDesktopCannotOpenEditor } from 'calypso/state/desktop/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { stopEditingPost } from 'calypso/state/editor/actions';
+
+const noop = () => {};
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/post/' ) ) {

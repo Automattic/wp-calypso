@@ -6,7 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { localize, translate } from 'i18n-calypso';
 import classNames from 'classnames';
-import { omit, noop } from 'lodash';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,6 +17,8 @@ import FormTextarea from 'calypso/components/forms/form-textarea';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class CountedTextarea extends React.Component {
 	static propTypes = {

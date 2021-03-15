@@ -30,6 +30,8 @@ import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { isJetpackSite, getSitePlanSlug, getSiteOption } from 'calypso/state/sites/selectors';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { FEATURE_WORDADS_INSTANT } from 'calypso/lib/plans/constants';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -148,7 +150,16 @@ class StatsSite extends Component {
 	};
 
 	renderStats() {
-		const { date, hasWordAds, siteId, slug, isAdmin, isJetpack, isVip } = this.props;
+		const {
+			date,
+			hasWordAds,
+			planSupportsWordAdsInstantFeature,
+			siteId,
+			slug,
+			isAdmin,
+			isJetpack,
+			isVip,
+		} = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -207,7 +218,6 @@ class StatsSite extends Component {
 						period={ this.props.period }
 						chartTab={ this.props.chartTab }
 					/>
-
 					<StickyPanel className="stats__sticky-navigation">
 						<StatsPeriodNavigation
 							date={ date }
@@ -295,12 +305,17 @@ class StatsSite extends Component {
 							description={ translate(
 								'Accept payments for just about anything and turn your website into a reliable source of income with payments and ads.'
 							) }
+							callToAction={ planSupportsWordAdsInstantFeature ? translate( 'Learn more' ) : null }
 							href={ `/earn/${ slug }` }
+							dismissPreferenceName={
+								planSupportsWordAdsInstantFeature ? `stats-earn-nudge-wordads-${ siteId }` : null
+							}
 							event="stats_earn_nudge"
 							tracksImpressionName="calypso_upgrade_nudge_impression"
 							tracksClickName="calypso_upgrade_nudge_cta_click"
 							showIcon={ true }
 							jetpack={ false }
+							horizontal
 						/>
 					) }
 				</div>
@@ -372,6 +387,7 @@ export default connect(
 			isVip,
 			slug: getSelectedSiteSlug( state ),
 			planSlug: getSitePlanSlug( state, siteId ),
+			planSupportsWordAdsInstantFeature: hasFeature( state, siteId, FEATURE_WORDADS_INSTANT ),
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
 		};

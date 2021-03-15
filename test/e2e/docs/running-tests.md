@@ -124,7 +124,6 @@ Canary tests are triggered _**automatically**_ on all PRs and merges.
 Canary suites include:
 
 - chrome canary
-- internet explorer
 - safari
 - woocommerce
 
@@ -152,7 +151,6 @@ _All times are in UTC._
 | --------------------- | ---------------------------- | -------------------------- |
 | WordPress.com         | Each `wp-calypso` deployment | -                          |
 |                       | Every 6 hours                | 00:00, 06:00, 12:00, 18:00 |
-| Internet Explorer     | ?                            | ?                          |
 | Jetpack               | Every 12 hours               | 01:00, 13:00               |
 | Jetpack Bleeding Edge | Every 12 hours               | 07:00, 19:00               |
 | WooCommerce           | Every 12 hours               | 11:00, 23:00               |

@@ -73,11 +73,13 @@ export interface StripeConfiguration {
 
 export type ReloadStripeConfiguration = () => void;
 
+export type StripeLoadingError = undefined | null | Error;
+
 export interface StripeData {
 	stripe: null | Stripe;
 	stripeConfiguration: null | StripeConfiguration;
 	isStripeLoading: boolean;
-	stripeLoadingError: undefined | null | Error;
+	stripeLoadingError: StripeLoadingError;
 	reloadStripeConfiguration: ReloadStripeConfiguration;
 }
 

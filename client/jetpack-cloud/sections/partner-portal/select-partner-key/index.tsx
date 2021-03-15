@@ -7,7 +7,6 @@ import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { getQueryArg } from '@wordpress/url';
 import page from 'page';
-import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -37,7 +36,7 @@ export default function SelectPartnerKey(): ReactElement | null {
 	const hasFetched = useSelector( hasFetchedPartner );
 	const isFetching = useSelector( isFetchingPartner );
 	const partner = useSelector( getCurrentPartner );
-	const keys = get( partner, 'keys', [] ) as PartnerKey[];
+	const keys = ( partner?.keys || [] ) as PartnerKey[];
 	const showKeys = hasFetched && ! isFetching && keys.length > 0;
 	const showError = hasFetched && ! isFetching && keys.length === 0;
 

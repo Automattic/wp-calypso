@@ -1,7 +1,4 @@
-/**
- * External dependencies
- */
-import { noop } from 'lodash';
+const noop = () => {};
 
 export async function loadmShotsPreview( options = {} ) {
 	const { maxRetries = 1, retryTimeout = 1000 } = options;

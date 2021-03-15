@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { noop, partial } from 'lodash';
+import { partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +21,8 @@ import { setEditorMediaModalView } from 'calypso/state/editor/actions';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class EditorMediaModalDetailBase extends React.Component {
 	static propTypes = {

@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import EmailedLoginLinkSuccessfully from './emailed-login-link-successfully';
+import EmailedLoginLinkSuccessfullyJetpackConnect from './emailed-login-link-successfully-jetpack-connect';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -26,7 +27,10 @@ import LoggedOutForm from 'calypso/components/logged-out-form';
 import Notice from 'calypso/components/notice';
 import { CHECK_YOUR_EMAIL_PAGE } from 'calypso/state/login/magic-login/constants';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getRedirectToOriginal } from 'calypso/state/login/selectors';
+import {
+	getRedirectToOriginal,
+	getLastCheckedUsernameOrEmail,
+} from 'calypso/state/login/selectors';
 import { hideMagicLoginRequestNotice } from 'calypso/state/login/magic-login/actions';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
@@ -37,6 +41,7 @@ class RequestLoginEmailForm extends React.Component {
 		currentUser: PropTypes.object,
 		emailRequested: PropTypes.bool,
 		isFetching: PropTypes.bool,
+		isJetpackMagicLinkSignUpEnabled: PropTypes.bool,
 		redirectTo: PropTypes.string,
 		requestError: PropTypes.string,
 		showCheckYourEmail: PropTypes.bool,
@@ -101,6 +106,7 @@ class RequestLoginEmailForm extends React.Component {
 			currentUser,
 			requestError,
 			isFetching,
+			isJetpackMagicLinkSignUpEnabled,
 			emailRequested,
 			showCheckYourEmail,
 			translate,
@@ -110,7 +116,12 @@ class RequestLoginEmailForm extends React.Component {
 
 		if ( showCheckYourEmail ) {
 			const emailAddress = usernameOrEmail.indexOf( '@' ) > 0 ? usernameOrEmail : null;
-			return <EmailedLoginLinkSuccessfully emailAddress={ emailAddress } />;
+
+			return isJetpackMagicLinkSignUpEnabled ? (
+				<EmailedLoginLinkSuccessfullyJetpackConnect emailAddress={ emailAddress } />
+			) : (
+				<EmailedLoginLinkSuccessfully emailAddress={ emailAddress } />
+			);
 		}
 
 		const submitEnabled =
@@ -185,6 +196,7 @@ const mapState = ( state ) => {
 		showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
 		emailRequested: getMagicLoginRequestedEmailSuccessfully( state ),
 		userEmail:
+			getLastCheckedUsernameOrEmail( state ) ||
 			getCurrentQueryArguments( state ).email_address ||
 			getInitialQueryArguments( state ).email_address,
 	};

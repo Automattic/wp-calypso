@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { values, noop, some, every, flow, partial, pick } from 'lodash';
+import { values, some, every, flow, partial, pick } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 
@@ -21,6 +21,8 @@ import { setEditorMediaModalView } from 'calypso/state/editor/actions';
 import { ModalViews } from 'calypso/state/ui/media-modal/constants';
 import { withAnalytics, bumpStat, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { Button } from '@automattic/components';
+
+const noop = () => {};
 
 class MediaModalSecondaryActions extends Component {
 	static propTypes = {

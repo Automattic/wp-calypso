@@ -11,6 +11,7 @@ import JetpackComMasterbar from '../jpcom-masterbar';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { preventWidows } from 'calypso/lib/formatting';
 import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
+import useMaybeSocialProofHeader from 'calypso/my-sites/plans/jetpack-plans/use-maybe-social-proof-header';
 
 /**
  * Style dependencies
@@ -20,6 +21,10 @@ import './style.scss';
 const Header: React.FC< Props > = () => {
 	const translate = useTranslate();
 
+	const headerText =
+		useMaybeSocialProofHeader() ??
+		translate( 'Security, performance, and marketing tools made for WordPress' );
+
 	return (
 		<>
 			<JetpackComMasterbar />
@@ -27,9 +32,7 @@ const Header: React.FC< Props > = () => {
 			<div className="header">
 				<FormattedHeader
 					className="header__main-title"
-					headerText={ preventWidows(
-						translate( 'Security, performance, and marketing tools made for WordPress' )
-					) }
+					headerText={ preventWidows( headerText ) }
 					align="center"
 				/>
 			</div>
