@@ -82,9 +82,7 @@ class PostCommentForm extends React.Component {
 		this.setState( { haveFocus: true } );
 	}
 
-	handleTextChange( event ) {
-		const commentText = event.target.value;
-
+	handleTextChange( commentText ) {
 		this.setState( { commentText } );
 
 		// Update the comment text in the container's state
@@ -181,13 +179,6 @@ class PostCommentForm extends React.Component {
 			'is-visible': this.state.haveFocus || this.hasCommentText(),
 		} );
 
-		const expandingAreaClasses = classNames( {
-			focused: this.state.haveFocus,
-			'expanding-area': true,
-		} );
-
-		const isReply = !! this.props.parentCommentId;
-
 		// How auto expand works for the textarea is covered in this article:
 		// http://alistapart.com/article/expanding-text-areas-made-elegant
 		return (
@@ -195,25 +186,9 @@ class PostCommentForm extends React.Component {
 				<ProtectFormGuard isChanged={ this.hasCommentText() } />
 				<FormFieldset>
 					<Gravatar user={ this.props.currentUser } />
-					<div className={ expandingAreaClasses }>
-						<pre>
-							<span>{ this.state.commentText }</span>
-							<br />
-						</pre>
-						<AutoDirection>
-							<PostCommentFormTextarea
-								value={ this.state.commentText }
-								placeholder={ translate( 'Enter your comment here…' ) }
-								onKeyUp={ this.handleKeyUp }
-								onKeyDown={ this.handleKeyDown }
-								onFocus={ this.handleFocus }
-								onBlur={ this.handleBlur }
-								onChange={ this.handleTextChange }
-								siteId={ post.site_ID }
-								enableAutoFocus={ isReply }
-							/>
-						</AutoDirection>
-					</div>
+					<AutoDirection>
+						<PostCommentFormTextarea onChange={ this.handleTextChange } siteId={ post.site_ID } />
+					</AutoDirection>
 					<Button
 						className={ buttonClasses }
 						disabled={ this.state.commentText.length === 0 }
