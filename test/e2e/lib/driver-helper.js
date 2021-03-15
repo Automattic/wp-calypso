@@ -528,7 +528,7 @@ export function logPerformance( driver ) {
 }
 
 export async function ensureMobileMenuOpen( driver ) {
-	if ( process.env.BROWSERSIZE !== 'mobile' ) {
+	if ( driverManager.currentScreenSize() !== 'mobile' ) {
 		return null;
 	}
 
