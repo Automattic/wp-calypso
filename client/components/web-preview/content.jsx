@@ -155,7 +155,7 @@ export class WebPreviewContent extends Component {
 				} else if ( typeof selection.removeAllRanges === 'function' ) {
 					selection.removeAllRanges();
 				}
-			} else if ( typeof document.selection && document.selection.empty === 'function' ) {
+			} else if ( document.selection && typeof document.selection.empty === 'function' ) {
 				document.selection.empty();
 			}
 		}
