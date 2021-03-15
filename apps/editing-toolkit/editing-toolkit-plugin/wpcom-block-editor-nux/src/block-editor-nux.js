@@ -19,16 +19,15 @@ import LaunchWpcomWelcomeTour from './welcome-tour/tour-launch';
 
 registerPlugin( 'wpcom-block-editor-nux', {
 	render: function WpcomBlockEditorNux() {
-		const { site, isWpcomNuxEnabled, showWpcomNuxVariant, isSPTOpen } = useSelect( ( select ) => ( {
+		const { site, isWpcomNuxEnabled, isSPTOpen } = useSelect( ( select ) => ( {
 			site: select( 'automattic/site' ).getSite( window._currentSiteId ),
 			isWpcomNuxEnabled: select( 'automattic/nux' ).isWpcomNuxEnabled(),
-			showWpcomNuxVariant: select( 'automattic/nux' ).shouldShowWpcomNuxVariant(),
 			isSPTOpen:
 				select( 'automattic/starter-page-layouts' ) && // Handle the case where SPT is not initalized.
 				select( 'automattic/starter-page-layouts' ).isOpen(),
 		} ) );
 
-		const { setWpcomNuxStatus, setShowWpcomNuxVariant } = useDispatch( 'automattic/nux' );
+		const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
 
 		// On mount check if the WPCOM NUX status exists in state, otherwise fetch it from the API.
 		useEffect( () => {
@@ -39,19 +38,18 @@ registerPlugin( 'wpcom-block-editor-nux', {
 			const fetchWpcomNuxStatus = async () => {
 				const response = await apiFetch( { path: '/wpcom/v2/block-editor/nux' } );
 				setWpcomNuxStatus( { isNuxEnabled: response.is_nux_enabled, bypassApi: true } );
-				setShowWpcomNuxVariant( { showVariant: response.welcome_tour_show_variant } );
 			};
 
 			fetchWpcomNuxStatus();
-		}, [ isWpcomNuxEnabled, setWpcomNuxStatus, setShowWpcomNuxVariant ] );
+		}, [ isWpcomNuxEnabled, setWpcomNuxStatus ] );
 
 		if ( ! isWpcomNuxEnabled || isSPTOpen ) {
 			return null;
 		}
 
 		const isPodcastingSite = !! site?.options?.anchor_podcast;
-
-		if ( showWpcomNuxVariant && ! isPodcastingSite ) {
+		// podcasting sites need to update their onboarding content to Tour format, then NUX Modal code can be removed
+		if ( ! isPodcastingSite ) {
 			return <LaunchWpcomWelcomeTour />;
 		}
 
