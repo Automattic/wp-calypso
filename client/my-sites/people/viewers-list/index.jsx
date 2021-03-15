@@ -20,9 +20,9 @@ const useErrorNotice = ( error, refetch ) => {
 	useEffect( () => {
 		if ( error ) {
 			dispatch(
-				errorNotice( 'There was an error retrieving viewer', {
+				errorNotice( translate( 'There was an error retrieving viewers' ), {
 					id: 'site-viewers-notice',
-					button: 'Try again',
+					button: translate( 'Try again' ),
 					onClick: () => {
 						removeNotice( 'site-viewers-notice' );
 						refetch();
