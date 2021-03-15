@@ -63,11 +63,6 @@
 			margin-right: 1em;
 		}
 	}
-	.purchase-detail__icon {
-		@include breakpoint-deprecated( '>660px' ) {
-			margin: 0;
-		}
-	}
 	/* Remove bottom border of last FAQ element */
 	.checkout-thank-you__main-content div:last-of-type .foldable-faq__answer {
 		border-bottom: 0;
