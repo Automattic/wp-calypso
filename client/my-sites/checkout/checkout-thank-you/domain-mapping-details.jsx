@@ -15,6 +15,7 @@ import { isBusiness } from 'calypso/lib/products-values';
 import {
 	MAP_DOMAIN_CHANGE_NAME_SERVERS,
 	MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS,
+	MAP_SUBDOMAIN,
 } from 'calypso/lib/url/support';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { WPCOM_DEFAULT_NAMESERVERS } from 'calypso/state/domains/nameservers/constants';
@@ -44,15 +45,28 @@ const DomainMappingDetails = ( {
 		return null;
 	}
 
-	const primaryMessage = translate(
-		'Please log into your account at your domain registrar and {{strong}}update the name servers{{/strong}} of your domain to use the following values, as detailed in {{link}}these instructions{{/link}}:',
-		{
-			components: {
-				strong: <strong />,
-				link: renderLinkTo( MAP_DOMAIN_CHANGE_NAME_SERVERS ),
-			},
-		}
-	);
+	let primaryMessage;
+
+	if ( isSubdomainMapping ) {
+		primaryMessage = translate(
+			'Please create the correct CNAME or NS records at your current DNS provider. {{learnMoreLink}}Learn how to do that in our support guide for mapping subdomains{{/learnMoreLink}}.',
+			{
+				components: {
+					learnMoreLink: renderLinkTo( MAP_SUBDOMAIN ),
+				},
+			}
+		);
+	} else {
+		primaryMessage = translate(
+			'Please log into your account at your domain registrar and {{strong}}update the name servers{{/strong}} of your domain to use the following values, as detailed in {{link}}these instructions{{/link}}:',
+			{
+				components: {
+					strong: <strong />,
+					link: renderLinkTo( MAP_DOMAIN_CHANGE_NAME_SERVERS ),
+				},
+			}
+		);
+	}
 
 	const renderRecommendedSetupMessage = () => {
 		return (
@@ -62,7 +76,7 @@ const DomainMappingDetails = ( {
 				expanded
 			>
 				<p>{ primaryMessage }</p>
-				{ ! isSubdomain( domain.name ) && (
+				{ ! isSubdomain( domain ) && (
 					<ul className="checkout-thank-you__name-server-list">
 						{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
 							return <li key={ nameServer }>{ nameServer }</li>;
@@ -103,9 +117,8 @@ const DomainMappingDetails = ( {
 		}
 	);
 
-	const renderInstructions = () => (
-		<div className="checkout-thank-you__main-content">
-			{ renderRecommendedSetupMessage( primaryMessage ) }
+	const renderARecordsMappingMessage = () => {
+		return (
 			<FoldableFAQ id="advanced-mapping-setup" question={ advancedSetupUsingARecordsTitle }>
 				<Notice status="is-warning" showDismiss={ false } translate={ translate }>
 					{ aRecordMappingWarning }
@@ -113,6 +126,15 @@ const DomainMappingDetails = ( {
 				<p>{ aRecordsSetupMessage }</p>
 				{ renderARecordsList() }
 			</FoldableFAQ>
+		);
+	};
+
+	const purchasedDomain = getSelectedDomain( { domains, selectedDomainName: domain } );
+
+	const renderInstructions = () => (
+		<div className="checkout-thank-you__main-content">
+			{ renderRecommendedSetupMessage( primaryMessage ) }
+			{ purchasedDomain?.aRecordsRequiredForMapping && renderARecordsMappingMessage() }
 		</div>
 	);
 
