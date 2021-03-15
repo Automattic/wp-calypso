@@ -74,20 +74,20 @@ const DomainMappingDetails = ( {
 	};
 
 	const renderARecordsList = () => {
-		if ( isDataLoaded() ) {
-			const purchasedDomain = getSelectedDomain( { domains, selectedDomainName: domain } );
+		if ( ! isDataLoaded() ) {
 			return (
-				<ul className="checkout-thank-you__dns-records-list">
-					{ purchasedDomain.aRecordsRequiredForMapping.map( ( aRecord ) => {
-						return <li key={ aRecord }>{ aRecord }</li>;
-					} ) }
+				<ul className="checkout-thank-you__dns-records-list-placeholder">
+					<li></li>
+					<li></li>
 				</ul>
 			);
 		}
+		const purchasedDomain = getSelectedDomain( { domains, selectedDomainName: domain } );
 		return (
-			<ul className="checkout-thank-you__dns-records-list-placeholder">
-				<li></li>
-				<li></li>
+			<ul className="checkout-thank-you__dns-records-list">
+				{ purchasedDomain.aRecordsRequiredForMapping.map( ( aRecord ) => {
+					return <li key={ aRecord }>{ aRecord }</li>;
+				} ) }
 			</ul>
 		);
 	};
