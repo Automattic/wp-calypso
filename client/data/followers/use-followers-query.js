@@ -22,8 +22,10 @@ const defaults = {
  * @returns {object}          A normalized follower object
  */
 export function normalizeFollower( follower ) {
-	follower.avatar_URL = follower.avatar;
-	return follower;
+	return {
+		avatar_URL: follower.avatar,
+		...follower,
+	};
 }
 
 const extractPages = ( pages = [] ) =>
