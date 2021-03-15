@@ -46,7 +46,7 @@ const WebServerLogsCard = ( props ) => {
 	const [ startDateTime, setStartDateTime ] = useState( oneHourAgo.format( dateTimeFormat ) );
 	const [ endDateTime, setEndDateTime ] = useState( now.format( dateTimeFormat ) );
 	const [ downloading, setDownloading ] = useState( false );
-	const [ progress, setProgress ] = useState( null );
+	const [ progress, setProgress ] = useState( { recordsDownloaded: 0, totalRecordsAvailable: 0 } );
 	const [ showProgress, setShowProgress ] = useState( false );
 	const [ startDateValidation, setStartDateValidation ] = useState( {
 		isValid: true,
@@ -109,8 +109,8 @@ const WebServerLogsCard = ( props ) => {
 
 	const downloadLogs = async () => {
 		setShowProgress( true );
-		setProgress( 0 );
 		setDownloading( true );
+		setProgress( { recordsDownloaded: 0, totalRecordsAvailable: 0 } );
 
 		const startMoment = moment.utc( startDateTime );
 		const endMoment = moment.utc( endDateTime );
@@ -157,7 +157,7 @@ const WebServerLogsCard = ( props ) => {
 						} ),
 					];
 
-					setProgress( Math.floor( 100 * ( ( logs.length - 1 ) / totalLogs ) ) );
+					setProgress( { recordsDownloaded: logs.length - 1, totalRecordsAvailable: totalLogs } );
 				} )
 				.catch( ( error ) => {
 					isError = true;
@@ -240,9 +240,23 @@ const WebServerLogsCard = ( props ) => {
 				<div className="web-server-logs-card__download">
 					{ showProgress && (
 						<div>
-							{ downloading && <span>Downloading logs: { progress }%</span> }
-							{ ! downloading && <span>Done</span> }
-							<ProgressBar value={ progress } isPulsing={ downloading } />
+							<span>
+								{ translate(
+									'Download progress: %(logRecordsDownloaded)d of %(totalLogRecordsAvailable)d records',
+									{
+										args: {
+											logRecordsDownloaded: progress.recordsDownloaded,
+											totalLogRecordsAvailable: progress.totalRecordsAvailable,
+										},
+									}
+								) }
+							</span>
+							<ProgressBar
+								value={ progress.recordsDownloaded }
+								total={ progress.totalRecordsAvailable }
+								isPulsing={ downloading }
+								canGoBackwards={ true }
+							/>
 						</div>
 					) }
 					<Button
