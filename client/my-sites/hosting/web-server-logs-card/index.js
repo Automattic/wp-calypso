@@ -46,6 +46,7 @@ const WebServerLogsCard = ( props ) => {
 	const [ startDateTime, setStartDateTime ] = useState( oneHourAgo.format( dateTimeFormat ) );
 	const [ endDateTime, setEndDateTime ] = useState( now.format( dateTimeFormat ) );
 	const [ downloading, setDownloading ] = useState( false );
+	const [ downloadErrorOccurred, setDownloadErrorOccurred ] = useState( false );
 	const [ progress, setProgress ] = useState( { recordsDownloaded: 0, totalRecordsAvailable: 0 } );
 	const [ showProgress, setShowProgress ] = useState( false );
 	const [ startDateValidation, setStartDateValidation ] = useState( {
@@ -111,6 +112,7 @@ const WebServerLogsCard = ( props ) => {
 		setShowProgress( true );
 		setDownloading( true );
 		setProgress( { recordsDownloaded: 0, totalRecordsAvailable: 0 } );
+		setDownloadErrorOccurred( false );
 
 		const startMoment = moment.utc( startDateTime );
 		const endMoment = moment.utc( endDateTime );
@@ -173,6 +175,7 @@ const WebServerLogsCard = ( props ) => {
 		setDownloading( false );
 
 		if ( isError ) {
+			setDownloadErrorOccurred( true );
 			return;
 		}
 
@@ -192,6 +195,40 @@ const WebServerLogsCard = ( props ) => {
 			total_log_records_downloaded: totalLogs,
 			...tracksProps,
 		} );
+	};
+
+	const renderDownloadProgress = () => {
+		if ( ! showProgress ) {
+			return;
+		}
+
+		let progressMessage = translate( 'Download progress: starting download…' );
+
+		if ( downloadErrorOccurred ) {
+			progressMessage = translate( 'Download progress: an error occurred' );
+		} else if ( 0 !== progress.totalRecordsAvailable ) {
+			progressMessage = translate(
+				'Download progress: %(logRecordsDownloaded)d of %(totalLogRecordsAvailable)d records',
+				{
+					args: {
+						logRecordsDownloaded: progress.recordsDownloaded,
+						totalLogRecordsAvailable: progress.totalRecordsAvailable,
+					},
+				}
+			);
+		}
+
+		return (
+			<div>
+				<span>{ progressMessage }</span>
+				<ProgressBar
+					value={ progress.recordsDownloaded }
+					total={ progress.totalRecordsAvailable }
+					isPulsing={ downloading }
+					canGoBackwards={ true }
+				/>
+			</div>
+		);
 	};
 
 	const getContent = () => {
@@ -238,27 +275,7 @@ const WebServerLogsCard = ( props ) => {
 					{ translate( 'Note: Please specify times as YYYY-MM-DD HH:MM:SS in UTC.' ) }
 				</p>
 				<div className="web-server-logs-card__download">
-					{ showProgress && (
-						<div>
-							<span>
-								{ translate(
-									'Download progress: %(logRecordsDownloaded)d of %(totalLogRecordsAvailable)d records',
-									{
-										args: {
-											logRecordsDownloaded: progress.recordsDownloaded,
-											totalLogRecordsAvailable: progress.totalRecordsAvailable,
-										},
-									}
-								) }
-							</span>
-							<ProgressBar
-								value={ progress.recordsDownloaded }
-								total={ progress.totalRecordsAvailable }
-								isPulsing={ downloading }
-								canGoBackwards={ true }
-							/>
-						</div>
-					) }
+					{ renderDownloadProgress() }
 					<Button
 						primary
 						disabled={ downloading || ! startDateValidation.isValid || ! endDateValidation.isValid }
