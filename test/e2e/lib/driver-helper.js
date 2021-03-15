@@ -58,15 +58,15 @@ export function isRichLocator( locator ) {
  * @param {string} text The string argument to check
  * @returns {ElementTextQuery} The same string if it's a valid element query
  */
-export function byCheckedText( text ) {
-	if ( typeof text !== 'string' ) {
-		throw new TypeError( `Invalid argument. Expected string, got ${ typeof text } instead.` );
-	}
-	if ( text.length === 0 ) {
-		throw new Error( 'String should not be empty.' );
+export function checkedText( text ) {
+	if (
+		( typeof text === 'string' && text.length > 0 ) ||
+		( typeof text === 'object' && text.constructor.name === 'RegExp' )
+	) {
+		return text;
 	}
 
-	return text;
+	throw new TypeError( 'Invalid text locator' );
 }
 
 const until = {
@@ -94,14 +94,13 @@ const until = {
 	 * @returns {webdriver.WebElementCondition} The new condition
 	 */
 	elementWithTextLocated( locator, text ) {
-		const checkedText = byCheckedText( text );
-		const checkedLocator = by.checkedLocator( locator );
-		const locatorStr = getLocatorString( checkedLocator );
+		const validText = checkedText( text );
+		const locatorStr = getLocatorString( locator );
 
 		return new WebElementCondition(
-			`for element with text '${ checkedText }' to be located ${ locatorStr }`,
+			`for element with text '${ validText }' to be located ${ locatorStr }`,
 			function ( driver ) {
-				return findElementByText( driver, checkedLocator, checkedText );
+				return findElementByText( driver, locator, validText );
 			}
 		);
 	},
@@ -154,11 +153,11 @@ export function findElement( driver, locator ) {
  * @returns {webdriver.WebElement} The located element
  */
 export async function findElementByText( driver, locator, text ) {
-	const checkedText = byCheckedText( text );
+	const validText = checkedText( text );
 	const allElements = await driver.findElements( locator );
 	const filteredElements = await webdriver.promise.filter(
 		allElements,
-		getInnerTextMatcherFunction( checkedText )
+		getInnerTextMatcherFunction( validText )
 	);
 
 	return filteredElements[ 0 ];
