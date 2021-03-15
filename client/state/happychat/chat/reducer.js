@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { concat, filter, find, map, get, sortBy, takeRight } from 'lodash';
+import { concat, filter, find, map, get, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -152,7 +152,7 @@ const timelineReducer = ( state = [], action ) => {
 export const timeline = withSchemaValidation(
 	timelineSchema,
 	withPersistence( timelineReducer, {
-		serialize: ( state ) => takeRight( state, HAPPYCHAT_MAX_STORED_MESSAGES ),
+		serialize: ( state ) => state.slice( -1 * HAPPYCHAT_MAX_STORED_MESSAGES ),
 	} )
 );
 
