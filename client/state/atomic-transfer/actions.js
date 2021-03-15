@@ -1,12 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	ATOMIC_TRANSFER_REQUEST,
-	ATOMIC_TRANSFER_REQUEST_FAILURE,
-	ATOMIC_TRANSFER_COMPLETE,
-	ATOMIC_TRANSFER_SET,
-} from 'calypso/state/action-types';
+import { ATOMIC_TRANSFER_REQUEST, ATOMIC_TRANSFER_SET } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/sites/transfers/latest';
 import 'calypso/state/atomic-transfer/init';
@@ -19,23 +14,6 @@ import 'calypso/state/atomic-transfer/init';
  */
 export const fetchAtomicTransfer = ( siteId ) => ( {
 	type: ATOMIC_TRANSFER_REQUEST,
-	siteId,
-} );
-
-/**
- * Report a failure of fetching Automated Transfer status (for example, the status
- * endpoint returns 404).
- *
- * @param {number} siteId The site id to which the status belongs
- * @returns {object} An action object
- */
-export const atomicTransferFetchingFailure = ( siteId ) => ( {
-	type: ATOMIC_TRANSFER_REQUEST_FAILURE,
-	siteId,
-} );
-
-export const atomicTransferComplete = ( siteId ) => ( {
-	type: ATOMIC_TRANSFER_COMPLETE,
 	siteId,
 } );
 
