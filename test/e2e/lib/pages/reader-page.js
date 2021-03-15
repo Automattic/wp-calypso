@@ -78,11 +78,7 @@ export default class ReaderPage extends AsyncBaseContainer {
 
 	async waitForCommentToAppear( comment ) {
 		const commentSelector = by.css( '.comments__comment-content' );
-		return await driverHelper.waitUntilElementWithTextLocated(
-			this.driver,
-			commentSelector,
-			comment
-		);
+		return await driverHelper.waitUntilLocatedAndVisible( this.driver, commentSelector, comment );
 	}
 
 	static getReaderURL() {
