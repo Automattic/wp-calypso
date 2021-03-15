@@ -25,7 +25,7 @@ import {
 	GSUITE_BASIC_SLUG,
 } from 'calypso/lib/gsuite/constants';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
-import { getAnnualPrice, getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import { getAnnualPrice, getGoogleMailServiceFamily, getMonthlyPrice } from 'calypso/lib/gsuite';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -246,31 +246,16 @@ class EmailProvidersComparison extends React.Component {
 	renderGSuiteDetails( className ) {
 		const { currencyCode, gSuiteProduct, translate } = this.props;
 
-		let title = translate( 'G Suite by Google' );
-		let description = translate(
-			"We've partnered with Google to offer you email, storage, docs, calendars, and more."
-		);
-		let logo = gSuiteLogo;
-		let buttonLabel = translate( 'Add G Suite' );
-
-		if ( config.isEnabled( 'google-workspace-migration' ) ) {
-			title = getGoogleMailServiceFamily();
-			description = translate(
-				'The best way to create, communicate, and collaborate. An integrated workspace that is simple and easy to use.'
-			);
-			logo = googleWorkspaceIcon;
-			buttonLabel = translate( 'Add %(googleMailService)s', {
-				args: {
-					googleMailService: getGoogleMailServiceFamily(),
-				},
-				comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
-			} );
-		}
+		const logo = config.isEnabled( 'google-workspace-migration' )
+			? googleWorkspaceIcon
+			: gSuiteLogo;
 
 		return (
 			<EmailProviderDetails
-				title={ title }
-				description={ description }
+				title={ getGoogleMailServiceFamily() }
+				description={ translate(
+					'Professional email integrated with Google Meet and other collaboration tools from Google.'
+				) }
 				image={ { path: logo } }
 				features={ [
 					translate( 'Annual billing' ),
@@ -280,9 +265,9 @@ class EmailProvidersComparison extends React.Component {
 					translate( 'Video calls, docs, spreadsheets, and more' ),
 					translate( 'Work from anywhere on any device – even offline' ),
 				] }
-				formattedPrice={ translate( '{{price/}} /user /year', {
+				formattedPrice={ translate( '{{price/}} /user /month', {
 					components: {
-						price: <span>{ getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode ) }</span>,
+						price: <span>{ getMonthlyPrice( gSuiteProduct?.cost ?? null, currencyCode ) }</span>,
 					},
 					comment: '{{price/}} is the formatted price, e.g. $20',
 				} ) }
@@ -296,7 +281,18 @@ class EmailProvidersComparison extends React.Component {
 						  } )
 						: null
 				}
-				buttonLabel={ buttonLabel }
+				additionalPriceInformation={ translate( '%(price)s billed annually', {
+					args: {
+						price: getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode ),
+					},
+					comment: "Annual price formatted with the currency (e.g. '$99.99')",
+				} ) }
+				buttonLabel={ translate( 'Add %(googleMailService)s', {
+					args: {
+						googleMailService: getGoogleMailServiceFamily(),
+					},
+					comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+				} ) }
 				onButtonClick={ this.goToAddGSuite }
 				className={ classNames( className, 'gsuite' ) }
 			/>
