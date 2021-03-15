@@ -46,7 +46,7 @@ export interface RequestCartProduct {
 	meta: string;
 	volume: number;
 	quantity: number | null;
-	extra: ResponseCartProductExtra;
+	extra: RequestCartProductExtra;
 }
 
 /**
@@ -166,7 +166,7 @@ export interface CartLocation {
 	subdivisionCode: string | null;
 }
 
-export type ResponseCartProductExtra = {
+export interface ResponseCartProductExtra {
 	context?: string;
 	source?: string;
 	premium?: boolean;
@@ -174,12 +174,13 @@ export type ResponseCartProductExtra = {
 	domain_to_bundle?: string;
 	google_apps_users?: GSuiteProductUser[];
 	google_apps_registration_data?: DomainContactDetails;
-	purchaseId?: string;
-	purchaseDomain?: string;
 	purchaseType?: string;
-	includedDomain?: string;
 	privacy?: boolean;
-};
+}
+
+export interface RequestCartProductExtra extends ResponseCartProductExtra {
+	purchaseId?: string;
+}
 
 export interface GSuiteProductUser {
 	firstname: string;

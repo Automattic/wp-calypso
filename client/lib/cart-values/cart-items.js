@@ -1043,9 +1043,7 @@ export function getRenewalItemFromCartItem( cartItem, properties ) {
 	return merge( {}, cartItem, {
 		extra: {
 			purchaseId: properties.id,
-			purchaseDomain: properties.domain,
 			purchaseType: 'renewal',
-			includedDomain: properties.includedDomain,
 		},
 	} );
 }
@@ -1180,16 +1178,6 @@ export function isRenewal( cartItem ) {
  */
 export function privacyAvailable( cartItem ) {
 	return get( cartItem, 'extra.privacy_available', true );
-}
-
-/**
- * Get the included domain for a cart item
- *
- * @param {CartItemValue} cartItem - `CartItemValue` object
- * @returns {string} the included domain
- */
-export function getIncludedDomain( cartItem ) {
-	return cartItem.extra && cartItem.extra.includedDomain;
 }
 
 /**

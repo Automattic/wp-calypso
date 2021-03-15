@@ -723,7 +723,6 @@ describe( 'hasToUpgradeToPayForADomain()', () => {
 describe( 'getRenewalItemFromProduct()', () => {
 	const buildPurchase = ( overrides ) => ( {
 		id: 123,
-		includedDomain: 'included.com',
 		domain: 'purchased.com',
 		...overrides,
 	} );
@@ -737,8 +736,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 				getRenewalItemFromProduct( buildPurchase( { product_slug: 'domain_map' } ), properties )
 			).toEqual( {
 				extra: {
-					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 					source: 'source',
@@ -754,8 +751,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 				getRenewalItemFromProduct( buildPurchase( { product_slug: PLAN_PERSONAL } ), properties )
 			).toEqual( {
 				extra: {
-					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -774,8 +769,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 			).toEqual( {
 				extra: {
 					google_apps_users: 123,
-					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -793,8 +786,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 				)
 			).toEqual( {
 				extra: {
-					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 					source: 'source',
@@ -813,8 +804,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 				)
 			).toEqual( {
 				extra: {
-					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -828,8 +817,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 				getRenewalItemFromProduct( buildPurchase( { product_slug: 'custom-design' } ), properties )
 			).toEqual( {
 				extra: {
-					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -843,8 +830,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 				getRenewalItemFromProduct( buildPurchase( { product_slug: 'videopress' } ), properties )
 			).toEqual( {
 				extra: {
-					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -861,8 +846,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 				)
 			).toEqual( {
 				extra: {
-					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -879,8 +862,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 				)
 			).toEqual( {
 				extra: {
-					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -897,8 +878,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 				)
 			).toEqual( {
 				extra: {
-					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -915,8 +894,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 				)
 			).toEqual( {
 				extra: {
-					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
