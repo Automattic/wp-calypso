@@ -86,8 +86,7 @@ class Followers extends Component {
 	};
 
 	noFollowerSearchResults() {
-		const { search, followers, isFetching } = this.props;
-		return search && ! followers.length && ! isFetching;
+		return this.props.search && this.siteHasNoFollowers();
 	}
 
 	siteHasNoFollowers() {
