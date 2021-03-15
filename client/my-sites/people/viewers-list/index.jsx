@@ -24,7 +24,7 @@ const useErrorNotice = ( error, refetch ) => {
 					id: 'site-viewers-notice',
 					button: translate( 'Try again' ),
 					onClick: () => {
-						removeNotice( 'site-viewers-notice' );
+						dispatch( removeNotice( 'site-viewers-notice' ) );
 						refetch();
 					},
 				} )
