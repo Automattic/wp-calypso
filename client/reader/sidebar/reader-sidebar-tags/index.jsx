@@ -55,6 +55,8 @@ export class ReaderSidebarTags extends Component {
 
 	render() {
 		const { tags, isOpen, translate, onClick } = this.props;
+		const isOnPage = startsWith( this.props.path, '/tag/' );
+
 		return (
 			<li>
 				{ ! tags && <QueryReaderFollowedTags /> }
@@ -64,7 +66,8 @@ export class ReaderSidebarTags extends Component {
 					onClick={ onClick }
 					materialIcon="local_offer"
 					disableFlyout={ true }
-					disableHighlight={ true }
+					disableHighlight={ ! isOnPage }
+					hideExpandableIcon={ isOnPage && isOpen }
 				>
 					<ReaderSidebarTagsList { ...this.props } />
 

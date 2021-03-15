@@ -6,21 +6,8 @@ import { assign, some, startsWith } from 'lodash';
 
 const exported = {
 	itemLinkClass: function ( path, currentPath, additionalClasses ) {
-		const basePathLowerCase = decodeURIComponent( currentPath )
-			.split( '?' )[ 0 ]
-			.replace( /\/manage$/, '' )
-			.toLowerCase();
-		const pathLowerCase = decodeURIComponent( path )
-			.replace( /\/manage$/, '' )
-			.toLowerCase();
-
-		let selected = basePathLowerCase === pathLowerCase;
+		const selected = this.isItemSelected( path, currentPath );
 		let isActionButtonSelected = false;
-
-		// Following is a special case, because it can be at / or /following
-		if ( pathLowerCase === '/' && ! selected ) {
-			selected = '/following' === basePathLowerCase;
-		}
 
 		// Are we on the manage page?
 		const pathWithoutQueryString = currentPath.split( '?' )[ 0 ];
@@ -34,6 +21,25 @@ const exported = {
 				additionalClasses
 			)
 		);
+	},
+
+	isItemSelected: function ( path, currentPath ) {
+		const basePathLowerCase = decodeURIComponent( currentPath )
+			.split( '?' )[ 0 ]
+			.replace( /\/manage$/, '' )
+			.toLowerCase();
+		const pathLowerCase = decodeURIComponent( path )
+			.replace( /\/manage$/, '' )
+			.toLowerCase();
+
+		let selected = basePathLowerCase === pathLowerCase;
+
+		// Following is a special case, because it can be at / or /following
+		if ( pathLowerCase === '/' && ! selected ) {
+			selected = '/following' === basePathLowerCase;
+		}
+
+		return selected;
 	},
 
 	itemLinkClassStartsWithOneOf: function ( paths, currentPath, additionalClasses ) {

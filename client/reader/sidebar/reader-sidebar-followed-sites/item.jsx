@@ -7,6 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import ReaderSidebarHelper from '../helper';
+import { getFollowedSitePath } from './helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Count from 'calypso/components/count';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
@@ -33,17 +34,7 @@ const ReaderSidebarFollowingItem = ( props ) => {
 		);
 	};
 
-	let streamLink;
-
-	if ( site.feed_ID ) {
-		streamLink = `/read/feeds/${ site.feed_ID }`;
-	} else if ( site.blog_ID ) {
-		// If subscription is missing a feed ID, fallback to blog stream
-		streamLink = `/read/blogs/${ site.blog_ID }`;
-	} else {
-		// Skip it
-		return null;
-	}
+	const streamLink = getFollowedSitePath( site );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (

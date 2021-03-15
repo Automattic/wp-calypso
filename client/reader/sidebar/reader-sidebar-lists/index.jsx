@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
+import { identity, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
@@ -34,6 +34,8 @@ export class ReaderSidebarLists extends Component {
 
 	render() {
 		const { translate, isOpen, onClick, ...passedProps } = this.props;
+		const isOnPage = startsWith( this.props.path, '/read/list/' );
+
 		return (
 			<li>
 				<ExpandableSidebarMenu
@@ -42,7 +44,8 @@ export class ReaderSidebarLists extends Component {
 					onClick={ onClick }
 					materialIcon={ 'list' }
 					disableFlyout={ true }
-					disableHighlight={ true }
+					disableHighlight={ ! isOnPage }
+					hideExpandableIcon={ isOnPage && isOpen }
 				>
 					<li>
 						<ReaderSidebarListsList { ...passedProps } />
