@@ -23,6 +23,7 @@ function EmailProviderCard( {
 	discount,
 	formFields,
 	buttonLabel,
+	buttonDisabled,
 	onButtonClick,
 	features,
 } ) {
@@ -44,7 +45,7 @@ function EmailProviderCard( {
 			<div className="email-providers-comparison__provider-form-and-features">
 				<div className="email-providers-comparison__provider-form">
 					{ formFields }
-					<Button primary onClick={ onButtonClick }>
+					<Button primary onClick={ onButtonClick } disabled={ buttonDisabled }>
 						{ buttonLabel }
 					</Button>
 				</div>
@@ -67,6 +68,7 @@ EmailProviderCard.propTypes = {
 	discount: PropTypes.string,
 	formFields: PropTypes.node,
 	buttonLabel: PropTypes.string.isRequired,
+	buttonDisabled: PropTypes.bool,
 	onButtonClick: PropTypes.func,
 	features: PropTypes.arrayOf( PropTypes.string ),
 };

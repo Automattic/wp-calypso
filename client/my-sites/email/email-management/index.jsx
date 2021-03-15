@@ -49,6 +49,7 @@ import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import EmailProvidersComparison from '../email-providers-comparison';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 /**
  * Style dependencies
@@ -149,10 +150,12 @@ class EmailManagement extends React.Component {
 
 		const selectedDomain = validDomains[ 0 ];
 		return (
-			<EmailProvidersComparison
-				domain={ selectedDomain }
-				isGSuiteSupported={ hasGSuiteSupportedDomain( [ selectedDomain ] ) }
-			/>
+			<CalypsoShoppingCartProvider>
+				<EmailProvidersComparison
+					domain={ selectedDomain }
+					isGSuiteSupported={ hasGSuiteSupportedDomain( [ selectedDomain ] ) }
+				/>
+			</CalypsoShoppingCartProvider>
 		);
 	}
 

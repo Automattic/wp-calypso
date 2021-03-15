@@ -4,6 +4,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import page from 'page';
@@ -11,17 +12,18 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from '@automattic/calypso-config';
+import { areAllUsersValid, getItemsForCart, newUsers } from 'calypso/lib/gsuite/new-users';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import EmailProviderCard from './email-provider-card';
 import EmailProviderDetails from './email-provider-details';
 import EmailProviderFeature from './email-provider-details/email-provider-feature';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
-import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GSUITE_BASIC_SLUG,
@@ -31,6 +33,7 @@ import { getAnnualPrice, getGoogleMailServiceFamily, getMonthlyPrice } from 'cal
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import {
 	emailManagementForwarding,
 	emailManagementNewGSuiteAccount,
@@ -49,11 +52,14 @@ import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-wo
 import gSuiteLogo from 'calypso/assets/images/email-providers/gsuite.svg';
 import forwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg';
 import { getTitanProductName } from 'calypso/lib/titan';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class EmailProvidersComparison extends React.Component {
 	static propTypes = {
@@ -62,8 +68,20 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	state = {
+		googleUsers: [],
 		isFetchingProvisioningURL: false,
+		titanUsers: [],
 	};
+
+	isMounted = false;
+
+	componentDidMount() {
+		this.isMounted = true;
+	}
+
+	componentWillUnmount() {
+		this.isMounted = false;
+	}
 
 	goToEmailForwarding = () => {
 		const { domain, currentRoute, selectedSiteSlug } = this.props;
@@ -379,14 +397,55 @@ class EmailProvidersComparison extends React.Component {
 		);
 	}
 
+	onGoogleUsersChange = ( changedUsers ) => {
+		this.setState( { googleUsers: changedUsers } );
+	};
+
+	onGoogleFormReturnKeyPress = ( event ) => {
+		// Simulate an implicit submission user form :)
+		if ( event.key === 'Enter' ) {
+			this.onGoogleConfirmUsers();
+		}
+	};
+
+	onGoogleConfirmNewUsers = () => {
+		const { googleUsers } = this.state;
+
+		const usersAreValid = areAllUsersValid( googleUsers );
+		if ( ! usersAreValid ) {
+			return;
+		}
+
+		const { domain, productsList, selectedSiteSlug, shoppingCartManager } = this.props;
+		const domains = [ domain ];
+		const googleProductSlug = config.isEnabled( 'google-workspace-migration' )
+			? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
+			: GSUITE_BASIC_SLUG;
+
+		shoppingCartManager
+			.addProductsToCart(
+				getItemsForCart( domains, googleProductSlug, googleUsers ).map( ( item ) =>
+					fillInSingleCartItemAttributes( item, productsList )
+				)
+			)
+			.then( () => {
+				this.isMounted && page( '/checkout/' + selectedSiteSlug );
+			} );
+	};
+
 	renderStackedGoogleDetails() {
-		const { currencyCode, gSuiteProduct, isGSuiteSupported, translate } = this.props;
+		const { currencyCode, domain, gSuiteProduct, isGSuiteSupported, translate } = this.props;
 
 		if ( ! isGSuiteSupported ) {
 			return null;
 		}
 
 		const googleProps = this.getGoogleDetailProps();
+		// If we don't have any users, initialize the list to have 1 empty user
+		const googleUsers =
+			( this.state.googleUsers ?? [] ).length === 0
+				? newUsers( domain.name )
+				: this.state.googleUsers;
 
 		const formattedPrice = translate( '{{price/}} /user /month billed yearly', {
 			components: {
@@ -404,9 +463,16 @@ class EmailProvidersComparison extends React.Component {
 			: null;
 
 		const formFields = (
-			<>
-				<p>TODO...</p>
-			</>
+			<FormFieldset>
+				<GSuiteNewUserList
+					extraValidation={ noop }
+					domains={ [ domain ] }
+					onUsersChange={ this.onGoogleUsersChange }
+					selectedDomainName={ domain.name }
+					users={ googleUsers }
+					onReturnKeyPress={ this.onGoogleFormReturnKeyPress }
+				/>
+			</FormFieldset>
 		);
 
 		return (
@@ -416,7 +482,8 @@ class EmailProvidersComparison extends React.Component {
 				formattedPrice={ formattedPrice }
 				discount={ discount }
 				formFields={ formFields }
-				onButtonClick={ this.goToAddGSuite }
+				onButtonClick={ this.onGoogleConfirmNewUsers }
+				buttonDisabled={ ! areAllUsersValid( googleUsers ) }
 				features={ this.getGoogleFeatures() }
 				{ ...googleProps }
 			/>
@@ -513,6 +580,7 @@ export default connect(
 			gSuiteProduct: getProductBySlug( state, productSlug ),
 			titanMailProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 			currentRoute: getCurrentRoute( state ),
+			productsList: getProductsList( state ),
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 		};
 	},
@@ -521,4 +589,4 @@ export default connect(
 			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
 		};
 	}
-)( localize( EmailProvidersComparison ) );
+)( withShoppingCart( localize( EmailProvidersComparison ) ) );
