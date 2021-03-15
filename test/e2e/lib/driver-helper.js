@@ -30,16 +30,6 @@ const by = webdriver.By;
  */
 
 /**
- * Stringifies the locator object. Useful for error reporting or logging.
- *
- * @param {webdriver.By} locator The element's locator
- * @returns {string} Printable version of the locator
- */
-export function getLocatorString( locator ) {
-	return typeof locator === 'function' ? 'by function()' : locator + '';
-}
-
-/**
  * Checks if an object contains a proper locator and a text to find an element by.
  *
  * @see findElementByText
@@ -48,6 +38,30 @@ export function getLocatorString( locator ) {
  */
 export function isRichLocator( locator ) {
 	return typeof locator === 'object' && locator !== null && locator.text && locator.locator;
+}
+
+/**
+ * Stringifies the locator object. Useful for error reporting or logging.
+ *
+ * @param {webdriver.By|RichLocator} locator The element's locator
+ * @returns {string} Printable version of the locator
+ */
+export function getLocatorString( locator ) {
+	let loc = locator;
+	let txt;
+
+	if ( isRichLocator( locator ) ) {
+		loc = locator.locator;
+		txt = locator.text;
+	}
+
+	const locString = typeof loc === 'function' ? 'by function()' : loc + '';
+
+	if ( ! txt ) {
+		return locString;
+	}
+
+	return `${ locString } and text "${ txt }"`;
 }
 
 /**
@@ -98,7 +112,7 @@ const until = {
 		const locatorStr = getLocatorString( locator );
 
 		return new WebElementCondition(
-			`for element with text '${ validText }' to be located ${ locatorStr }`,
+			`for element to be located ${ locatorStr }`,
 			function ( driver ) {
 				return findElementByText( driver, locator, validText );
 			}
