@@ -150,3 +150,36 @@ describe( 'Experiment', () => {
 		expect( container.textContent ).toBe( 'default-2' );
 	} );
 } );
+
+describe( 'ProvideExperimentData', () => {
+	it( 'should correctly provide data', async () => {
+		const exPlatClient = createMockExPlatClient();
+		const { ProvideExperimentData } = createExPlatClientReactHelpers( exPlatClient );
+
+		const controllablePromise1 = createControllablePromise< ExperimentAssignment >();
+		( exPlatClient.loadExperimentAssignment as jest.MockedFunction<
+			typeof exPlatClient.loadExperimentAssignment
+		> ).mockImplementationOnce( () => controllablePromise1.promise );
+
+		const capture = jest.fn();
+		render(
+			<ProvideExperimentData name="experiment_a">
+				{ ( isLoading, experimentAssignment ) => (
+					<>{ capture( isLoading, experimentAssignment ) }</>
+				) }
+			</ProvideExperimentData>
+		);
+		expect( capture.mock.calls.length ).toBe( 1 );
+		expect( capture.mock.calls[ capture.mock.calls.length - 1 ] ).toEqual( [ true, null ] );
+		capture.mockReset();
+		const experimentAssignment = { ...validExperimentAssignment, variationName: null };
+		await actReact( async () => controllablePromise1.resolve( experimentAssignment ) );
+		await waitFor( () => {
+			expect( capture.mock.calls.length ).toBe( 1 );
+		} );
+		expect( capture.mock.calls[ capture.mock.calls.length - 1 ] ).toEqual( [
+			false,
+			experimentAssignment,
+		] );
+	} );
+} );

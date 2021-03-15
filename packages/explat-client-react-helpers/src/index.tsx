@@ -25,6 +25,18 @@ interface ExPlatClientReactHelpers {
 		name: string;
 		children: { default: React.ReactNode; treatment: React.ReactNode; loading: React.ReactNode };
 	} ) => JSX.Element;
+
+	/**
+	 * Inject experiment data into a child component.
+	 * Use when hooks aren't available.
+	 */
+	ProvideExperimentData: ( props: {
+		children: (
+			isLoading: boolean,
+			experimentAssignment: ExperimentAssignment | null
+		) => JSX.Element;
+		name: string;
+	} ) => JSX.Element;
 }
 
 export default function createExPlatClientReactHelpers(
@@ -32,18 +44,16 @@ export default function createExPlatClientReactHelpers(
 ): ExPlatClientReactHelpers {
 	const useExperiment = ( experimentName: string ): [ boolean, ExperimentAssignment | null ] => {
 		const [ previousExperimentName ] = useState( experimentName );
-		const [ isLoading, setIsLoading ] = useState< boolean >( true );
-		const [
-			experimentAssignment,
-			setExperimentAssignment,
-		] = useState< ExperimentAssignment | null >( null );
+		const [ state, setState ] = useState< [ boolean, ExperimentAssignment | null ] >( [
+			true,
+			null,
+		] );
 
 		useEffect( () => {
 			let isSubscribed = true;
 			exPlatClient.loadExperimentAssignment( experimentName ).then( ( experimentAssignment ) => {
 				if ( isSubscribed ) {
-					setExperimentAssignment( experimentAssignment );
-					setIsLoading( false );
+					setState( [ false, experimentAssignment ] );
 				}
 			} );
 			return () => {
@@ -62,7 +72,7 @@ export default function createExPlatClientReactHelpers(
 			} );
 		}
 
-		return [ isLoading, experimentAssignment ];
+		return state;
 	};
 
 	const Experiment = ( {
@@ -81,8 +91,23 @@ export default function createExPlatClientReactHelpers(
 		return <>{ children.treatment }</>;
 	};
 
+	const ProvideExperimentData = ( {
+		children,
+		name: experimentName,
+	}: {
+		children: (
+			isLoading: boolean,
+			experimentAssignment: ExperimentAssignment | null
+		) => JSX.Element;
+		name: string;
+	} ): JSX.Element => {
+		const [ isLoading, experimentAssignment ] = useExperiment( experimentName );
+		return children( isLoading, experimentAssignment );
+	};
+
 	return {
 		useExperiment,
 		Experiment,
+		ProvideExperimentData,
 	};
 }
