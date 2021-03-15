@@ -43,7 +43,6 @@ const DomainMappingDetails = ( {
 	const primaryMessage = translate(
 		'Please log into your account at your domain registrar and {{strong}}update the name servers{{/strong}} of your domain to use the following values, as detailed in {{link}}these instructions{{/link}}:',
 		{
-			comment: 'Notice for mapped domain notice with NS records pointing to somewhere else',
 			components: {
 				strong: <strong />,
 				link: renderLinkTo( MAP_DOMAIN_CHANGE_NAME_SERVERS ),
