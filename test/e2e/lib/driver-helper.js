@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import webdriver, { WebElementCondition } from 'selenium-webdriver';
+import webdriver, { By, WebDriver, WebElement, WebElementCondition } from 'selenium-webdriver';
 import config from 'config';
 import { forEach } from 'lodash';
 
@@ -27,59 +27,60 @@ export async function highlightElement( driver, element ) {
 const until = {
 	...webdriver.until,
 	/**
-	 * Creates a condition that will loop until element's aria-disabled attribute
-	 * is not 'true'.
+	 * Creates a condition that will loop until element is clickable. A clickable
+	 * element must be located and not (aria-)disabled.
 	 *
-	 * @param {webdriver.WebElement} element The element to test
-	 * @returns {webdriver.WebElementCondition} The new condition
+	 * @param {By} locator The element's locator
+	 * @returns {WebElementCondition} The new condition
 	 */
-	elementIsAriaEnabled( element ) {
-		return new WebElementCondition( 'until element is not aria-disabled', function () {
-			return element
-				.getAttribute( 'aria-disabled' )
-				.then( ( v ) => ( v !== 'true' ? element : null ) );
-		} );
+	elementIsClickable( locator ) {
+		const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
+
+		return new WebElementCondition(
+			`for element to be clickable ${ locatorStr }`,
+			async function ( driver ) {
+				try {
+					const element = await driver.findElement( locator );
+					const isEnabled = await element.isEnabled();
+					const isAriaEnabled = await element
+						.getAttribute( 'aria-disabled' )
+						.then( ( v ) => v !== 'true' );
+
+					return isEnabled && isAriaEnabled ? element : null;
+				} catch {
+					return null;
+				}
+			}
+		);
 	},
 };
 
 /**
- * Makes sure that the element is located and enabled before clicking. Will
- * throw error otherwise.
+ * Clicks an element when it becomes clickable. Throws an error after it
+ * times out.
  *
- * @param {webdriver.WebDriver} driver The current driver instance
- * @param {webdriver.By} locator The element's locator
- * @param {number} [timeout=explicitWaitMS] The wait function's timeout in milliseconds
- * @returns {webdriver.WebElement} The clicked element
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise<WebElement>} A promise that will be resolved with
+ * the clicked element
  */
 export async function clickWhenClickable( driver, locator, timeout = explicitWaitMS ) {
-	function wait( condition ) {
-		return driver.wait( condition, timeout );
-	}
+	const element = await driver.wait( until.elementIsClickable( locator ), timeout );
 
 	try {
-		const element = await wait( until.elementLocated( locator ) );
 		await highlightElement( driver, element );
-		await wait( until.elementIsEnabled( element ) );
-		await wait( until.elementIsAriaEnabled( element ) );
-
-		try {
-			await element.click();
-		} catch ( error ) {
-			// Flaky response back from IE, so assume success and hope for the best
-			if ( global.browserName === 'Internet Explorer' ) {
-				console.log( "WARNING: IE claims the click action failed, but we're proceeding anyway!" );
-			} else {
-				throw error;
-			}
-		}
-
-		return element;
+		await element.click();
 	} catch ( error ) {
-		const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
-		error.message = 'Could not click element ' + locatorStr + '\n' + error.message;
-
-		throw error;
+		// Flaky response back from IE, so assume success and hope for the best
+		if ( global.browserName === 'Internet Explorer' ) {
+			console.log( "WARNING: IE claims the click action failed, but we're proceeding anyway!" );
+		} else {
+			throw error;
+		}
 	}
+
+	return element;
 }
 
 export function waitTillFocused( driver, selector, pollingOverride, waitOverride ) {
