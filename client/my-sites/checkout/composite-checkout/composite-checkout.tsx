@@ -392,9 +392,6 @@ export default function CompositeCheckout( {
 		: filterAppropriatePaymentMethods( {
 				paymentMethodObjects,
 				countryCode,
-				total,
-				credits,
-				subtotal,
 				allowedPaymentMethods,
 				responseCart,
 		  } );
