@@ -38,16 +38,7 @@ class DomainMappingInstructions extends React.Component {
 	};
 
 	renderARecordsList() {
-		const { aRecordsRequiredForMapping, areDomainDetailsLoaded } = this.props;
-
-		if ( ! areDomainDetailsLoaded ) {
-			return (
-				<ul className="mapping-instructions__dns-records-list-placeholder">
-					<li></li>
-					<li></li>
-				</ul>
-			);
-		}
+		const { aRecordsRequiredForMapping } = this.props;
 		return (
 			<ul className="mapping-instructions__dns-records-list">
 				{ aRecordsRequiredForMapping.map( ( aRecord ) => {
@@ -129,8 +120,26 @@ class DomainMappingInstructions extends React.Component {
 		);
 	}
 
+	renderPlaceholder() {
+		return (
+			<div className="mapping-instructions__placeholder">
+				<p></p>
+				<p></p>
+				<p></p>
+				<p></p>
+				<p></p>
+				<p></p>
+				<p></p>
+			</div>
+		);
+	}
+
 	render() {
-		const { aRecordsRequiredForMapping } = this.props;
+		const { aRecordsRequiredForMapping, areDomainDetailsLoaded } = this.props;
+
+		if ( ! areDomainDetailsLoaded ) {
+			return this.renderPlaceholder();
+		}
 
 		return (
 			<div className="mapping-instructions">

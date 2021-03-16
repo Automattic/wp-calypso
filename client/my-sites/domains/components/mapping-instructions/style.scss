@@ -1,11 +1,19 @@
-.mapping-instructions__dns-records-list-placeholder {
-    li {
-        @include placeholder( --color-neutral-10 );
-        margin-bottom: 0.5em;
-    }
+.mapping-instructions__placeholder {
+	p {
+		@include placeholder( --color-neutral-10 );
+		margin-bottom: 0.5em;
+
+		&:first-child,
+		&:nth-child( 5 ) {
+			width: 40%;
+		}
+		&:nth-child( 4 ) {
+			margin-bottom: 1.5em;
+		}
+	}
 }
 
 /* Remove bottom border of last FAQ element */
 .mapping-instructions div:last-of-type .foldable-faq__answer {
-    border-bottom: 0;
+	border-bottom: 0;
 }
