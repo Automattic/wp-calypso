@@ -1,4 +1,13 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .mapping-instructions__placeholder {
+    padding: 16px;
+
+    @include break-mobile {
+        padding: 0;
+    }
+
 	p {
 		@include placeholder( --color-neutral-10 );
 		margin-bottom: 0.5em;
