@@ -1,7 +1,5 @@
 .woocommerce {
 	@import 'app/dashboard/style';
-	@import 'app/dashboard/widgets/inventory-widget/style';
-	@import 'app/dashboard/setup/style';
 	@import 'app/store-stats/store-stats-chart/style';
 	@import 'app/store-stats/store-stats-orders-chart/style';
 	@import 'app/store-stats/store-stats-module/style';
@@ -26,8 +24,6 @@
 	@import 'components/share-widget/style';
 	@import 'components/table/style';
 	@import 'components/woocommerce-colophon/style';
-
-	@import 'app/dashboard/widgets/stats-widget/style';
 
 	@import 'woocommerce-services/style';
 
