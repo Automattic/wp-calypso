@@ -3,6 +3,7 @@
  */
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -27,6 +28,7 @@ const useSiteMenuItems = () => {
 	const menuItems = useSelector( ( state ) => getAdminMenu( state, selectedSiteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSiteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSiteId ) );
+	const locale = useLocale();
 
 	useEffect( () => {
 		if ( selectedSiteId && siteDomain ) {
@@ -35,7 +37,7 @@ const useSiteMenuItems = () => {
 				dispatch( fetchPlugins( [ selectedSiteId ] ) );
 			}
 		}
-	}, [ dispatch, isJetpack, selectedSiteId, siteDomain ] );
+	}, [ dispatch, isJetpack, selectedSiteId, siteDomain, locale ] );
 
 	/**
 	 * As a general rule we allow fallback data to remain as static as possible.

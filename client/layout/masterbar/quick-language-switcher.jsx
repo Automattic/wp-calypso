@@ -1,15 +1,12 @@
 /**
  * External dependencies
  */
-import React, { Fragment, useEffect, useReducer } from 'react';
+import React, { Fragment, useReducer } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import config from '@automattic/calypso-config';
 import MasterbarItem from './item';
 import LanguagePickerModal from 'calypso/components/language-picker/modal';
@@ -29,11 +26,6 @@ function QuickLanguageSwitcher( props ) {
 		);
 		toggleLanguageEmpathyMode( empathyMode );
 	};
-
-	// After changing the language, the menu should be requested again so that items are fetched with the current locale.
-	useEffect( () => {
-		props.requestAdminMenu( props.selectedSiteId );
-	}, [ props.locale ] );
 
 	return (
 		<Fragment>
@@ -61,7 +53,6 @@ function QuickLanguageSwitcher( props ) {
 export default connect(
 	( state ) => ( {
 		selectedLanguageSlug: getCurrentLocaleSlug( state ),
-		selectedSiteId: getSelectedSiteId( state ),
 	} ),
-	{ setLocale, requestAdminMenu }
-)( localize( QuickLanguageSwitcher ) );
+	{ setLocale }
+)( QuickLanguageSwitcher );
