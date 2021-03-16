@@ -41,14 +41,14 @@ class DomainMappingInstructions extends React.Component {
 
 		if ( isLoaded ) {
 			return (
-				<ul className="domain-mapping-instructions__dns-records-list-placeholder">
+				<ul className="mapping-instructions__dns-records-list-placeholder">
 					<li></li>
 					<li></li>
 				</ul>
 			);
 		}
 		return (
-			<ul className="domain-mapping-instructions__dns-records-list">
+			<ul className="mapping-instructions__dns-records-list">
 				{ domain?.aRecordsRequiredForMapping.map( ( aRecord ) => {
 					return <li key={ aRecord }>{ aRecord }</li>;
 				} ) }
@@ -118,7 +118,7 @@ class DomainMappingInstructions extends React.Component {
 			>
 				<p>{ this.getRecommendedSetupMessage() }</p>
 				{ ! isSubdomain( domain?.name ) && (
-					<ul className="domain-mapping-instructions__name-server-list">
+					<ul className="mapping-instructions__name-server-list">
 						{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
 							return <li key={ nameServer }>{ nameServer }</li>;
 						} ) }
@@ -131,7 +131,7 @@ class DomainMappingInstructions extends React.Component {
 	render() {
 		const { domain } = this.props;
 		return (
-			<div className="domain-mapping-instructions">
+			<div className="mapping-instructions">
 				{ this.renderRecommendedSetupMessage() }
 				{ domain?.aRecordsRequiredForMapping && this.renderARecordsMappingMessage() }
 			</div>
