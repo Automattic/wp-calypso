@@ -175,7 +175,7 @@ export async function highlightElement( driver, element ) {
 /**
  * Finds an element via given locator.
  *
- * @param {webdriver.WebDriver} driver The current driver instance
+ * @param {webdriver.WebDriver} driver The parent WebDriver instance
  * @param {webdriver.By|RichLocator} locator The element's locator
  * @returns {Promise<webdriver.WebElement>} A promise that will resolve with the
  * located element
@@ -190,7 +190,7 @@ export function findElement( driver, locator ) {
 /**
  * Finds an element via given locator and text.
  *
- * @param {webdriver.WebDriver} driver The current driver instance
+ * @param {webdriver.WebDriver} driver The parent WebDriver instance
  * @param {webdriver.By} locator The element's locator
  * @param {ElementTextQuery} text The element's text
  * @returns {Promise<webdriver.WebElement>} A promise that will resolve with the
@@ -199,19 +199,25 @@ export function findElement( driver, locator ) {
 export async function findElementByText( driver, locator, text ) {
 	const checkedText = checkedElementTextQuery( text );
 	const allElements = await driver.findElements( locator );
-	const filteredElements = await webdriver.promise.filter(
+	const elementsWithText = await webdriver.promise.filter(
 		allElements,
 		getInnerTextMatcherFunction( checkedText )
 	);
+	const elementWithText = elementsWithText[ 0 ];
 
-	return filteredElements[ 0 ];
+	if ( ! elementWithText ) {
+		const locatorStr = getLocatorString( { locator, text } );
+		throw new webdriver.error.NoSuchElementError( `Unable to locate element ${ locatorStr }` );
+	}
+
+	return elementWithText;
 }
 
 /**
  * Waits for the element to become located and visible. Throws an error after it
  * times out.
  *
- * @param {webdriver.WebDriver} driver The current driver instance
+ * @param {webdriver.WebDriver} driver The parent WebDriver instance
  * @param {webdriver.By} locator The element's locator
  * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
  * @returns {Promise<webdriver.WebElement>} A promise that will be resolved with
@@ -225,7 +231,7 @@ export function waitUntilLocatedAndVisible( driver, locator, timeout = explicitW
  * Checks if an element eventually becomes located and visible. Returns false
  * after it times out.
  *
- * @param {webdriver.WebDriver} driver The current driver instance
+ * @param {webdriver.WebDriver} driver The parent WebDriver instance
  * @param {webdriver.By} locator The element's locator
  * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
  * @returns {Promise<boolean>} A promise that will be resolved with whether the
@@ -242,7 +248,7 @@ export function isEventuallyLocatedAndVisible( driver, locator, timeout = explic
  * Clicks an element when it becomes clickable. Throws an error after it
  * times out.
  *
- * @param {webdriver.WebDriver} driver The current driver instance
+ * @param {webdriver.WebDriver} driver The parent WebDriver instance
  * @param {webdriver.By|RichLocator} locator The element's locator
  * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
  * @returns {Promise<webdriver.WebElement>} A promise that will be resolved with
