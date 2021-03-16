@@ -735,7 +735,7 @@ function WPLineItem( {
 	const onEvent = useEvents();
 	const isDisabled = formStatus !== FormStatus.READY;
 
-	const isRenewal = !! product?.extra?.purchaseId;
+	const isRenewal = product?.extra?.purchaseType === 'renewal';
 	// Show the variation picker when this is not a renewal
 	const shouldShowVariantSelector = getItemVariants && product && ! isRenewal;
 
