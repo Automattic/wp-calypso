@@ -61,7 +61,7 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		} );
 	}
 
-	async waitForTemplateToLoad( templateName = 'Front Page' ) {
+	async waitForTemplateToLoad( templateName = 'page-home' ) {
 		await driverHelper.waitUntilLocatedAndVisible( this.driver, {
 			locator: By.css( '.edit-site-document-actions__title' ),
 			text: templateName,
