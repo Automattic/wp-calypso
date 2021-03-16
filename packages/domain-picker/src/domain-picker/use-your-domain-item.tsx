@@ -22,6 +22,7 @@ const UseYourDomainItem: React.FunctionComponent< Props > = ( { onClick } ) => {
 			type="button"
 			className="domain-picker__suggestion-item type-link"
 			onClick={ onClick }
+			data-testid="use-domain-i-own-wrapper"
 		>
 			<div className="domain-picker__suggestion-item-name">
 				<span className="domain-picker__domain-wrapper with-margin with-bold-text">

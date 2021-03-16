@@ -21,14 +21,23 @@ describe( '<UseYourDomainItem />', () => {
 		expect( screen.getByText( "You can use it as your site's address." ) ).toBeInTheDocument();
 	} );
 
-	it( 'should fire onClick callback when clicked', () => {
+	it( 'should fire onClick callback when the button is clicked', () => {
 		const onClick = jest.fn();
 
 		render( <UseYourDomainItem onClick={ onClick } /> );
 
 		fireEvent.click( screen.getByText( 'Use a domain I own' ) );
 
-		// TODO: why is it called twice?
-		expect( onClick ).toHaveBeenCalledTimes( 2 );
+		expect( onClick ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'should fire onClick callback when the container is clicked', () => {
+		const onClick = jest.fn();
+
+		render( <UseYourDomainItem onClick={ onClick } /> );
+
+		fireEvent.click( screen.getByTestId( 'use-domain-i-own-wrapper' ) );
+
+		expect( onClick ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
