@@ -8,6 +8,25 @@ import { get, isEqual, mapValues, omit, omitBy, reduce } from 'lodash';
  */
 import { DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
 import { SerializationResult } from 'calypso/state/serialization-result';
+import { withoutPersistence } from './without-persistence';
+
+/*
+ * Wrap the reducer with appropriate persistence code. If it has the `hasCustomPersistence` flag,
+ * it means it's already set up and we don't need to make any changes.
+ */
+function setupReducerPersistence( reducer ) {
+	if ( reducer.hasCustomPersistence ) {
+		return reducer;
+	}
+
+	if ( reducer.schema ) {
+		throw new Error(
+			'`schema` properties in reducers are no longer supported. Please wrap reducers with withSchemaValidation.'
+		);
+	}
+
+	return withoutPersistence( reducer );
+}
 
 /**
  * Creates a super-reducer as a map of reducers over keyed objects
@@ -81,14 +100,16 @@ export const keyedReducer = ( keyPath, reducer ) => {
 		);
 	}
 
-	const initialState = reducer( undefined, { type: '@@calypso/INIT' } );
+	const persistingReducer = setupReducerPersistence( reducer );
 
-	return ( state = {}, action ) => {
+	const initialState = persistingReducer( undefined, { type: '@@calypso/INIT' } );
+
+	const combinedReducer = ( state = {}, action ) => {
 		if ( action.type === SERIALIZE ) {
 			const serialized = reduce(
 				state,
 				( result, itemValue, itemKey ) => {
-					const serializedValue = reducer( itemValue, action );
+					const serializedValue = persistingReducer( itemValue, action );
 					if ( serializedValue !== undefined && ! isEqual( serializedValue, initialState ) ) {
 						if ( ! result ) {
 							// instantiate the result object only when it's going to have at least one property
@@ -105,7 +126,7 @@ export const keyedReducer = ( keyPath, reducer ) => {
 
 		if ( action.type === DESERIALIZE ) {
 			return omitBy(
-				mapValues( state, ( item ) => reducer( item, action ) ),
+				mapValues( state, ( item ) => persistingReducer( item, action ) ),
 				( a ) => a === undefined || isEqual( a, initialState )
 			);
 		}
@@ -123,7 +144,7 @@ export const keyedReducer = ( keyPath, reducer ) => {
 		// we need this to update state and also to compare if
 		// we had any changes, thus the initialState
 		const oldItemState = state[ itemKey ];
-		const newItemState = reducer( oldItemState, action );
+		const newItemState = persistingReducer( oldItemState, action );
 
 		// and do nothing if the new sub-state matches the old sub-state
 		if ( newItemState === oldItemState ) {
@@ -142,4 +163,8 @@ export const keyedReducer = ( keyPath, reducer ) => {
 			[ itemKey ]: newItemState,
 		};
 	};
+
+	combinedReducer.hasCustomPersistence = true;
+
+	return combinedReducer;
 };
