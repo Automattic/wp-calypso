@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { identity } from 'lodash';
 import { cloneBlock } from '@wordpress/blocks';
 
 /**
@@ -11,7 +10,7 @@ import { cloneBlock } from '@wordpress/blocks';
  * @param {Array} blocks an array of block objects
  * @param {Function} modifier a callback function used to modify the blocks
  */
-function mapBlocksRecursively( blocks, modifier = identity ) {
+function mapBlocksRecursively( blocks, modifier ) {
 	return blocks.map( ( block ) => {
 		// `blocks` is an object. Therefore any changes made here will
 		// be reflected across all references to the blocks object. To ensure we

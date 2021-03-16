@@ -1,3 +1,8 @@
+@import '~@automattic/color-studio/dist/color-variables';
+@import '~@automattic/typography/styles/fonts';
+@import '~@automattic/typography/styles/variables';
+@import '~@wordpress/base-styles/variables';
+
 @mixin screen-reader-text() {
 	border: 0;
 	clip: rect( 1px, 1px, 1px, 1px );
@@ -11,121 +16,77 @@
 	word-wrap: normal !important;
 }
 
-$template-modal-background-color: #eeeeee;
-$template-selector-border-color: #e2e4e7;
-$template-selector-border-color-selected: #555d66;
-$template-selector-border-color-active: #00a0d2;
-$template-selector-border-color-hover: #c9c9ca;
-$template-selector-empty-background: #fff;
-$template-selector-modal-offset-bottom: 25px;
-$template-selector-modal-offset-right: 32px;
-$template-selector-blank-template-mobile-height: 70px;
-$template-large-preview-title-height: 120px;
-
-// Preview positioning
-$preview-right-margin: 24px;
+$template-selector-border-color: $studio-gray-5;
+$template-selector-hover-border-color: $studio-gray-50;
+$template-selector-empty-background: $studio-white;
+$template-selector-focus-color: var( --wp-admin-theme-color );
+$template-selector-link-text: $studio-gray-60;
+$template-selector-link-hover-text: var( --color-text );
 
 // Breakpoints
-$breakpoint-mobile: 660px;
+$breakpoint-mobile: 600px;
 $breakpoint-tablet: 783px;
 $breakpoint-desktop: 961px;
 $breakpoint-huge: 1648px;
 
-// WP.org sidebar and admin bar sizes
-$wp-org-sidebar-full: 160px;
-$wp-org-sidebar-collapsed: 36px;
-$wp-org-admin-bar-full: 32px;
-$wp-org-admin-bar-mobile: 46px;
+$sidebar-width: 324px;
 
-// Modal Overlay
-.page-template-modal-screen-overlay {
-	animation: none;
-	background-color: transparent; // hide the overlay visually
-	z-index: 99; // Right below the wp-admin admin bar and sidebar.
-}
-
-// When not in fullscreen mode allow space for WP.org sidebar
-body:not( .is-fullscreen-mode ) {
-	.page-template-modal-screen-overlay {
-		@media screen and ( min-width: $breakpoint-tablet ) {
-			left: $wp-org-sidebar-collapsed;
-		}
-
-		@media screen and ( min-width: $breakpoint-desktop ) {
-			left: $wp-org-sidebar-full;
-		}
-	}
-	@media screen and ( min-width: $breakpoint-tablet ) {
-		&.folded .page-template-modal-screen-overlay {
-			left: $wp-org-sidebar-collapsed;
-		}
-		&:not( .folded ):not( .auto-fold ) .page-template-modal-screen-overlay {
-			left: $wp-org-sidebar-full;
-		}
-	}
-}
-
-// Allow space for admin bar if present and not in full screen mode
-body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
-	top: $wp-org-admin-bar-mobile;
-
-	@media screen and ( min-width: $breakpoint-tablet ) {
-		top: $wp-org-admin-bar-full;
-	}
-}
-
-// Full screen modal
+// Overrides of the Gutenberg modal component
 .page-template-modal {
-	width: 100%;
-	height: 100vh;
-	animation: none;
-	box-shadow: none; // cancel "modal" appearance
-	border: none; // cancel "modal" appearance
-	top: 0; // overlay the Block Editor toolbar
-	left: 0;
-	right: 0;
-	bottom: 0;
-	transform: none;
-	max-width: none;
-	max-height: none;
-	background-color: $template-modal-background-color;
+	@media screen and ( min-width: $breakpoint-mobile ) {
+		width: 90%;
+		height: 90vh;
+		// prevents a 1px strip of content being visible after scrolling
+		overflow-y: hidden;
+		padding-bottom: 24px;
+	}
+
+	.components-modal__content {
+		overflow-y: scroll;
+		-webkit-overflow-scrolling: touch;
+		// prevents a 1px strip of content being visible after scrolling
+		margin-top: -1px;
+	}
+
+	.components-modal__header {
+		border-bottom: none;
+	}
 }
 
-.page-template-modal .components-modal__header-heading-container {
-	@include screen-reader-text();
+.page-template-modal__heading {
+	font-family: $brand-serif;
+	font-weight: 400;
+	letter-spacing: -0.4px;
+	margin: 0;
+
+	font-size: 2rem;
+	line-height: 1.25;
+
+	@media screen and ( min-width: $breakpoint-mobile ) {
+		font-size: 2.25rem;
+		line-height: 1.1;
+	}
+
+	@media screen and ( min-width: $breakpoint-tablet ) {
+		font-size: 3rem;
+		line-height: 1.35;
+	}
 }
 
-// Show close button in all modes.
-.page-template-modal__close-button {
-	display: block;
-	position: absolute;
-	z-index: 20;
-	top: 9px;
-	width: 36px;
-	height: 36px;
-	left: 10px;
+.page-template-modal__description {
+	color: $studio-gray-50;
+	margin: 0 0 24px;
+	font-size: 1rem;
+	line-height: 1.5;
 }
 
-.page-template-modal .components-modal__header::after {
-	display: block;
-	position: absolute;
-	content: ' ';
-	border-right: 1px solid $template-selector-border-color;
-	height: 100%;
-	left: 56px;
-}
-
-.page-template-modal .components-modal__content {
-	overflow-y: scroll;
-	-webkit-overflow-scrolling: touch;
-}
 .page-template-modal__inner {
-	position: relative;
-	margin: 0 auto;
-	padding: 0 20px 40px;
+	@media screen and ( min-width: $breakpoint-mobile ) {
+		padding: 0 20px;
+	}
 }
 
-.page-template-modal__list {
+.template-selector-control {
 	margin-bottom: 20px;
 
 	.components-base-control__label {
@@ -136,13 +97,14 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 .template-selector-control__options {
 	display: grid;
 	grid-template-columns: 1fr;
-	grid-gap: 0.75em;
+	column-gap: 1.5em;
+	row-gap: 3em;
 
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		margin-top: 0;
 		grid-template-columns: repeat(
 			auto-fill,
-			minmax( 110px, 1fr )
+			minmax( 260px, 1fr )
 		); // allow grid to take over number of cols on large screens
 	}
 }
@@ -150,10 +112,8 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 .template-selector-item__label {
 	display: block;
 	width: 100%;
-	font-size: 14px; /* stylelint-disable-line */
 	text-align: center;
-	border: solid 2px $template-selector-border-color;
-	border-radius: 6px; /* stylelint-disable-line */
+	border: none;
 	cursor: pointer;
 	appearance: none;
 	padding: 0;
@@ -161,32 +121,20 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	background-color: $template-selector-empty-background;
 	position: relative;
 	transform: translateZ( 0 ); // Fix for Safari rounded border overflow (1/2).
+	color: $template-selector-link-text;
 
 	&:focus {
 		box-shadow: 0 0 0 1px $template-selector-empty-background,
-			0 0 0 3px $template-selector-border-color-active;
+			0 0 0 3px $template-selector-focus-color;
 		// Windows High Contrast mode will show this outline, but not the box-shadow.
 		outline: 2px solid transparent;
 	}
 
 	&:hover {
-		border: solid 2px $template-selector-border-color-hover;
-	}
+		color: $template-selector-link-hover-text;
 
-	&.is-selected {
-		border: solid 2px $template-selector-border-color-selected;
-		// Windows High Contrast mode will show this outline, but not the box-shadow.
-		outline: 2px solid transparent;
-		outline-offset: -2px;
-
-		&:focus {
-			box-shadow: 0 0 0 1px $template-selector-empty-background,
-				0 0 0 3px $template-selector-border-color-active;
-			border: solid 2px $template-selector-border-color-selected;
-
-			// Windows High Contrast mode will show this outline, but not the box-shadow.
-			outline: 4px solid transparent;
-			outline-offset: -4px;
+		.template-selector-item__preview-wrap {
+			border: solid 1px $template-selector-hover-border-color;
 		}
 	}
 }
@@ -199,16 +147,14 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	border-radius: 0;
 	overflow: hidden;
 	height: 0;
-	padding-top: 120%;
-	box-sizing: content-box;
+	// Aspect ratio of boxes. Height will be 65% of width.
+	padding-top: 65%;
 	position: relative;
 	pointer-events: none;
 	opacity: 1;
 	transform: translateZ( 0 ); // Fix for Safari rounded border overflow (2/2).
-
-	@media screen and ( min-width: $breakpoint-mobile ) {
-		padding-top: 100%; // Aspect radio boxes. It will take the 100% of width.
-	}
+	border: solid 1px $template-selector-border-color;
+	margin-bottom: 1em;
 
 	&.is-rendering {
 		opacity: 0.5;
@@ -217,234 +163,138 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 .template-selector-item__media {
 	width: 100%;
+	height: 100%;
 	display: block;
 	position: absolute;
 	top: 0;
 	left: 0;
+	object-fit: cover;
 }
 
-.page-template-modal__form {
+.page-template-modal__sidebar {
 	@media screen and ( min-width: $breakpoint-mobile ) {
-		max-width: 20%;
-	}
+		position: fixed;
+		width: calc( #{$sidebar-width} - 24px );
+		padding-right: 44px;
 
-	@media screen and ( min-width: $breakpoint-tablet ) {
-		max-width: 30%;
-	}
-}
+		// Manually choosing when to enable/disable pointer events so that
+		// the scroll wheel behaviour feels natural when the mouse is over
+		// the sidebar. The sidebar is fixed position so it doesn't move when
+		// the modal is scrolled, but by default this prevents the modal
+		// from scrolling when the mouse is over the sidebar.
+		// `pointer-events: none` fixes this, but then we need to reenable
+		// events again so the mouse clicks get through to the buttons.
 
-.page-template-modal__form-title {
-	font-weight: bold;
-	margin-bottom: 1em;
-	text-align: center;
-	@media screen and ( min-width: $breakpoint-mobile ) {
-		text-align: left;
-	}
-}
+		pointer-events: none;
 
-.page-template-modal__buttons {
-	position: absolute;
-	right: 0;
-	top: 0;
-	z-index: 10;
-	height: 56px;
-	display: flex;
-	align-items: center;
-	padding-right: 24px;
-
-	@media screen and ( min-width: $breakpoint-mobile ) {
-		display: flex;
-	}
-
-	&.is-visually-hidden {
-		@include screen-reader-text();
-	}
-
-	.components-button {
-		height: 33px; // match to Gutenberg toolbar styles
-	}
-}
-
-// Template Selector Preview
-.template-selector-preview {
-	display: none;
-	position: fixed;
-	top: 111px + $wp-org-admin-bar-mobile;
-	bottom: 24px;
-	left: calc( 20% + #{$preview-right-margin * 2} );
-	right: $preview-right-margin;
-	background: $template-selector-empty-background;
-	border-radius: 2px;
-	overflow: hidden;
-	box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ),
-		0 3px 1px -2px rgba( 0, 0, 0, 0.12 ),
-		0 1px 5px 0 rgba( 0, 0, 0, 0.2 );
-
-	@media screen and ( min-width: $breakpoint-mobile ) {
-		display: block;
-		&.is-blank-preview {
-			align-items: center;
-			display: flex;
-			justify-content: center;
+		> * {
+			pointer-events: auto;
 		}
-	}
 
-	@media screen and ( min-width: $breakpoint-tablet ) {
-		top: 111px + $wp-org-admin-bar-full;
-		left: calc( 30% + #{$preview-right-margin * 1.5 + $wp-org-sidebar-collapsed} );
-		body:not( .auto-fold ):not( .folded ) & {
-			left: calc( 30% + #{$preview-right-margin / 2 + $wp-org-sidebar-full} );
-		}
-	}
-	@media screen and ( min-width: $breakpoint-desktop ) {
-		left: calc( 30% + #{$preview-right-margin / 2 + $wp-org-sidebar-full} );
-		body.folded & {
-			left: calc( 30% + #{$preview-right-margin * 1.5 + $wp-org-sidebar-collapsed} );
-		}
-	}
+		.page-template-modal__category-list {
+			pointer-events: none;
 
-	body.is-fullscreen-mode & {
-		top: 111px;
-		@media screen and ( min-width: $breakpoint-tablet ) {
-			left: calc( 30% + #{$preview-right-margin * 2} ) !important;
-		}
-	}
-
-	.edit-post-visual-editor {
-		margin: 0;
-		padding: 0;
-	}
-
-	// not-selected template
-	&.not-selected {
-		.editor-styles-wrapper {
-			position: relative;
-			width: 100%;
-			height: 100%;
-
-			.template-selector-preview__empty-state {
-				position: absolute;
-				width: 100%;
-				text-align: center;
-				height: 50px;
-				line-height: 50px;
-				top: 50%;
-				margin: -25px 0 0;
+			.page-template-modal__category-button {
+				pointer-events: auto;
 			}
 		}
 	}
 }
 
-.page-template-modal__loading {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate( -50%, -50% );
-	display: flex;
-	align-items: flex-end;
+.page-template-modal__category-list {
+	display: none;
+	margin: 0;
+	padding-top: 35px;
 
-	.components-spinner {
-		float: none;
+	@media screen and ( min-width: $breakpoint-mobile ) {
+		display: block;
+	}
+
+	.components-button.is-tertiary {
+		display: block;
+		width: auto;
+		height: auto;
+		color: $template-selector-link-text;
+		font-size: 0.875rem;
+		margin-left: -12px;
+		padding: 6px 12px;
+		box-shadow: none;
+
+		&.is-tertiary:not( :disabled ):hover {
+			box-shadow: none;
+			color: $template-selector-link-hover-text !important;
+		}
+
+		&.is-tertiary:not( :disabled ):active {
+			background: transparent;
+		}
+
+		&.is-tertiary:not( :disabled ):focus {
+			box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) $template-selector-focus-color;
+		}
+	}
+
+	.page-template-modal__category-item-selection-wrapper {
+		border-bottom: 2px solid transparent;
+		padding-bottom: 2px;
+	}
+
+	.components-menu-item__button:not( :disabled )[aria-selected='true'] {
+		color: $template-selector-link-hover-text;
+		font-weight: 600;
+
+		.page-template-modal__category-item-selection-wrapper {
+			border-bottom-color: $template-selector-link-hover-text;
+		}
 	}
 }
 
-.block-iframe-preview {
-	position: absolute;
-	top: 0;
-	left: 0;
-	transform-origin: top left;
-	text-align: initial;
-	margin: 0;
-	overflow: visible;
-	min-height: auto;
+.page-template-modal__button-container {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	column-gap: 8px;
 
-	// Fallback viewport width.
-	// Used when BlockFramePreview's viewportWidth prop is undefined.
-	// Can be overridden through more specific CSS.
-	width: 1440px;
+	@media screen and ( min-width: $breakpoint-mobile ) {
+		// No grid layout necessary on desktop view
+		display: inline;
+	}
 }
 
-.block-iframe-preview-body {
-	margin: 0;
-	padding: 0;
-	overflow-x: hidden;
-	overflow-y: auto;
+.components-button.page-template-modal__blank-button {
+	min-height: 40px;
+	box-shadow: inset 0 0 0 1px $template-selector-border-color;
+	color: var( --color-text );
 
-	> .block-editor,
-	> .block-editor > .edit-post-visual-editor {
-		padding: 0;
-		margin: 0;
+	&:active {
+		color: var( --color-text );
 	}
 
-	// Hide inserter/appender.
-	.block-list-appender,
-	.block-editor-inserter {
-		display: none !important;
-		visibility: hidden;
-		position: absolute;
-		left: -9999vw;
+	&.is-secondary:hover:not( :disabled ) {
+		box-shadow: inset 0 0 0 1px $template-selector-hover-border-color;
+		color: var( --color-text );
 	}
 
-	// Preview adjustments.
-	.editor-styles-wrapper {
-		// core/cover.
-		.wp-block-cover {
-			height: auto;
-		}
-
-		// TODO: fix the embed iframe blocks properly.
-		.wp-block-embed__wrapper iframe {
-			height: auto;
-			min-height: 400px;
-		}
+	&.is-secondary:focus:not( :disabled ) {
+		box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) $template-selector-focus-color;
 	}
 
-	// Manual CSS Overrides. Remove after better solutions are in place.
+	&.is-secondary:hover:focus:not( :disabled ) {
+		box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) $template-selector-focus-color;
+		outline: 3px solid transparent;
+	}
+}
 
-	// Removes empty paragraph placeholders, i.e. "Write Title..."
-	[data-type='core/paragraph'] [data-rich-text-placeholder] {
+.wp-core-ui select.page-template-modal__mobile-category-dropdown {
+	font-size: $default-font-size;
+	border-color: $template-selector-border-color;
+
+	@media screen and ( min-width: $breakpoint-mobile ) {
 		display: none;
 	}
+}
 
-	/*
-	* Fixes jetpack .wp-block-jetpack-slideshow styles, as the /wp-content/plugins/jetpack/_inc/blocks/vendors~swiper.[hash].css
-	* file is loaded on block insert, not on page load. After the iframe is grabbing these styles, we can remove this code.
-	*/
-	.swiper-wrapper {
-		display: flex;
-	}
-
-	.swiper-button-prev,
-	.swiper-button-next {
-		display: none;
-	}
-
-	.swiper-pagination {
-		text-align: center;
-	}
-
-	.swiper-pagination-bullet {
-		border-radius: 100%; /* stylelint-disable-line */
-	}
-
-	// Fixes cover image spacing and full-width group spacing
-	.editor-styles-wrapper [data-block] {
-		&[data-type='core/group'],
-		&[data-type='core/cover'][data-align='full'] {
-			margin-top: 0;
-			margin-bottom: 0;
-		}
-	}
-
-	// Tweak template title (post-title) component.
-	.block-iframe-preview__template-title {
-		padding-top: 20px;
-	}
-
-	// flex: column; on the parent and flex-basis: 0; on the child in Safari causes a lot of weird overlapping layout
-	// issues in the iframe preview: https://github.com/Automattic/wp-calypso/issues/39874
-	// Using flex-basis: auto; on the child allows the height to be calculated properly
-	.wp-block-columns > .block-editor-inner-blocks > .block-editor-block-list__layout > [data-type='core/column'] .block-core-columns {
-		flex-basis: auto;
+.page-template-modal__template-list-container {
+	@media screen and ( min-width: $breakpoint-mobile ) {
+		padding-left: $sidebar-width;
 	}
 }
