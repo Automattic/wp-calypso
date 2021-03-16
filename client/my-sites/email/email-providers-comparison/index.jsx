@@ -21,6 +21,7 @@ import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
@@ -497,13 +498,24 @@ class EmailProvidersComparison extends React.Component {
 
 		const formFields = (
 			<>
-				<p>TO DO...</p>
+				<FormFieldset>
+					<FormLabel>
+						{ translate( 'Emails sent to' ) }
+						<FormTextInputWithAffixes
+							required
+							suffix={ `@${ domain.name }` }
+							onChange={ this.onForwardingEmailChange }
+						/>
+					</FormLabel>
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel>
+						{ translate( 'Will be forwarded to' ) }
+						<FormTextInput required onChange={ this.onForwardingRecipientEmailChange } />
+					</FormLabel>
+				</FormFieldset>
 			</>
 		);
-		const buttonLabel =
-			domain.emailForwardsCount > 0
-				? translate( 'Manage email forwarding' )
-				: translate( 'Add email forwarding' );
 
 		return (
 			<EmailProviderCard
@@ -516,12 +528,20 @@ class EmailProvidersComparison extends React.Component {
 				detailsExpanded={ this.state.expanded.forwarding }
 				onExpandedChange={ this.onExpandedStateChange }
 				formFields={ formFields }
-				buttonLabel={ buttonLabel }
+				buttonLabel={ translate( 'Add email forwarding' ) }
 				onButtonClick={ this.goToEmailForwarding }
 				features={ this.getForwardingFeatures() }
 			/>
 		);
 	}
+
+	onForwardingEmailChange = () => {
+		// TODO: Validate the local email address
+	};
+
+	onForwardingRecipientEmailChange = () => {
+		// TODO: Validate the receiving email address
+	};
 
 	renderFeatures( provider, features ) {
 		return features.map( ( feature, index ) => (
