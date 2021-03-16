@@ -20,6 +20,11 @@ import type {
 	ResponseCartProduct,
 	RemoveCouponFromCart,
 } from '@automattic/shopping-cart';
+import {
+	getCouponLineItemFromCart,
+	getTaxLineItemFromCart,
+	getCreditsLineItemFromCart,
+} from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -35,13 +40,7 @@ import { isWpComPlan } from 'calypso/lib/plans';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
-import {
-	getSublabel,
-	getLabel,
-	getCouponLineItem,
-	getTaxLineItem,
-	getCreditsLineItem,
-} from '../lib/translate-cart';
+import { getSublabel, getLabel } from '../lib/translate-cart';
 import { isPlan, isMonthly, isYearly, isBiennially } from 'calypso/lib/products-values';
 import type {
 	WPCOMProductSlug,
@@ -350,9 +349,9 @@ export function WPOrderReviewLineItems( {
 	createUserAndSiteBeforeTransaction?: boolean;
 } ): JSX.Element {
 	const { responseCart } = useShoppingCart();
-	const taxLineItem = getTaxLineItem( responseCart );
-	const creditsLineItem = getCreditsLineItem( responseCart );
-	const couponLineItem = getCouponLineItem( responseCart );
+	const taxLineItem = getTaxLineItemFromCart( responseCart );
+	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
+	const couponLineItem = getCouponLineItemFromCart( responseCart );
 
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
