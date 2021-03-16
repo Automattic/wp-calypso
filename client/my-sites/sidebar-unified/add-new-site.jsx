@@ -1,9 +1,4 @@
 /**
- * Collapse Sidebar Menu Item
- *
- **/
-
-/**
  * External dependencies
  */
 import React, { Fragment } from 'react';
