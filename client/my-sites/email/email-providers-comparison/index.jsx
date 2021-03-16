@@ -60,8 +60,6 @@ import { withShoppingCart } from '@automattic/shopping-cart';
  */
 import './style.scss';
 
-const noop = () => {};
-
 class EmailProvidersComparison extends React.Component {
 	static propTypes = {
 		domain: PropTypes.object.isRequired,
@@ -89,14 +87,14 @@ class EmailProvidersComparison extends React.Component {
 		this.isMounted = false;
 	}
 
-	onExpandedStateChange( providerKey, isExpanded ) {
+	onExpandedStateChange = ( providerKey, isExpanded ) => {
 		const expanded = Object.assign(
 			{},
 			this.state.expanded,
 			Object.fromEntries( [ [ providerKey, isExpanded ] ] )
 		);
 		this.setState( { expanded } );
-	}
+	};
 
 	goToEmailForwarding = () => {
 		const { domain, currentRoute, selectedSiteSlug } = this.props;
@@ -468,7 +466,7 @@ class EmailProvidersComparison extends React.Component {
 		const formFields = (
 			<FormFieldset>
 				<GSuiteNewUserList
-					extraValidation={ noop }
+					extraValidation={ ( user ) => user }
 					domains={ [ domain ] }
 					onUsersChange={ this.onGoogleUsersChange }
 					selectedDomainName={ domain.name }
