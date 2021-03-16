@@ -67,7 +67,7 @@
 		}
 	}
 	/* Remove bottom border of last FAQ element */
-	.checkout-thank-you__main-content div:last-of-type .foldable-faq__answer {
+	.domain-mapping-instructions div:last-of-type .foldable-faq__answer {
 		border-bottom: 0;
 	}
 }
@@ -664,12 +664,5 @@
 
 	&.is-large {
 		transform: scale( 1 );
-	}
-}
-
-.checkout-thank-you__dns-records-list-placeholder {
-	li {
-		@include placeholder( --color-neutral-10 );
-		margin-bottom: 0.5em;
 	}
 }

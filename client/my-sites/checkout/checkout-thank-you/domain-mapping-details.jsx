@@ -24,6 +24,7 @@ import { Notice } from 'calypso/components/notice';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import ExternalLink from 'calypso/components/external-link';
+import DomainMappingInstructions from 'calypso/my-sites/domains/domain-management/domain-mapping-instructions';
 
 function renderLinkTo( url ) {
 	return <ExternalLink href={ url } target="_blank" />;
@@ -137,11 +138,22 @@ const DomainMappingDetails = ( {
 			{ purchasedDomain?.aRecordsRequiredForMapping && renderARecordsMappingMessage() }
 		</div>
 	);
+	// TODO: Will remove, added just for the linter to stop complaining
+	renderInstructions();
+
+	const mappingInstructions = (
+		<DomainMappingInstructions
+			isSubdomain={ !! isSubdomainMapping }
+			isLoaded={ isDataLoaded() }
+			domain={ purchasedDomain }
+			translate={ translate }
+		/>
+	);
 
 	return (
 		<div className="checkout-thank-you__domain-mapping-details">
 			<QuerySiteDomains siteId={ siteId } />
-			<PurchaseDetail icon="cog" description={ renderInstructions() } isRequired />
+			<PurchaseDetail icon="cog" description={ mappingInstructions } isRequired />
 		</div>
 	);
 };
