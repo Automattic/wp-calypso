@@ -6,7 +6,7 @@ const browserslist = require( 'browserslist' );
 
 // The list of browsers to check supported by esbuild
 
-const getTarget = () => {
+const getTargets = () => {
 	// esbuild only supports these targets (https://esbuild.github.io/api/#target)
 	const supportedBrowsersByEsbuild = [ 'chrome', 'firefox', 'safari', 'edge' ];
 
@@ -23,11 +23,9 @@ const getTarget = () => {
 	}, {} );
 
 	// Concatenate them in the format expected by esbuild
-	const esbuildTarget = Object.entries( minVersions )
-		.map( ( [ k, v ] ) => `${ k }${ v }` )
-		.join( ',' );
+	const esbuildTargets = Object.entries( minVersions ).map( ( [ k, v ] ) => `${ k }${ v }` );
 
-	return esbuildTarget;
+	return esbuildTargets;
 };
 
 /**
@@ -40,7 +38,7 @@ const getTarget = () => {
 module.exports = () => {
 	return [
 		new ESBuildMinifyPlugin( {
-			target: getTarget(),
+			target: getTargets(),
 		} ),
 	];
 };
