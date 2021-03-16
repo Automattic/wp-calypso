@@ -1,15 +1,15 @@
 /**
  * Internal dependencies
  */
-import { isEligibleForGutenframe } from 'calypso/state/gutenberg-iframe-eligible/is-eligible-for-gutenframe';
 import { shouldCalypsoifyJetpack } from 'calypso/state/selectors/should-calypsoify-jetpack';
+import shouldLoadGutenframe from 'calypso/state/selectors/should-load-gutenframe';
 import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 import { getEditorPath } from 'calypso/state/editor/selectors';
 import { addQueryArgs } from 'calypso/lib/route';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 
 export const getEditorUrl = ( state, siteId, postId = null, postType = 'post' ) => {
-	if ( ! isEligibleForGutenframe( state, siteId ) ) {
+	if ( ! shouldLoadGutenframe( state, siteId ) ) {
 		const siteAdminUrl = getSiteAdminUrl( state, siteId );
 		let url = `${ siteAdminUrl }post-new.php?post_type=${ postType }`;
 

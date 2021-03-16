@@ -7,7 +7,7 @@ import { get, has } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isEligibleForGutenframe } from 'calypso/state/gutenberg-iframe-eligible/is-eligible-for-gutenframe';
+import shouldLoadGutenframe from 'calypso/state/selectors/should-load-gutenframe';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoifyIframe from './calypsoify-iframe';
@@ -180,7 +180,7 @@ export const redirect = async ( context, next ) => {
 	const state = getState();
 	const siteId = getSelectedSiteId( state );
 
-	if ( ! isEligibleForGutenframe( state, siteId ) ) {
+	if ( ! shouldLoadGutenframe( state, siteId ) ) {
 		const postType = determinePostType( context );
 		const postId = getPostID( context );
 
