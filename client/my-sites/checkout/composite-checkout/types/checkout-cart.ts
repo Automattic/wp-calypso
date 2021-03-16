@@ -43,19 +43,6 @@ export type WPCOMCartItem = LineItem & {
 	};
 };
 
-export type WPCOMCartCouponItem = LineItem & {
-	wpcom_meta: {
-		couponCode: string;
-	};
-};
-
-export type WPCOMCartCreditsItem = LineItem & {
-	wpcom_meta: {
-		credits_integer: number;
-		credits_display: string;
-	};
-};
-
 export interface WPCOMCart {
 	items: WPCOMCartItem[];
 	total: LineItem;
