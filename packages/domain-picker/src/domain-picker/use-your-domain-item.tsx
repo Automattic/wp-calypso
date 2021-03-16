@@ -37,7 +37,7 @@ const UseYourDomainItem: React.FunctionComponent< Props > = ( { onClick } ) => {
 					</span>
 				</div>
 			</div>
-			<ArrowButton arrow="right" onClick={ onClick }>
+			<ArrowButton arrow="right">
 				{ _x(
 					'Use a domain I own',
 					'Domain transfer or mapping suggestion button',
