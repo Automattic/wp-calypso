@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -11,6 +12,8 @@ import { Button } from '@automattic/components';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
 import EmailProviderFeature from './email-provider-details/email-provider-feature';
+
+const noop = () => {};
 
 function EmailProviderCard( {
 	children,
@@ -22,26 +25,47 @@ function EmailProviderCard( {
 	formattedPrice,
 	discount,
 	additionalPriceInformation,
+	detailsExpanded = false,
+	onExpandedChange = noop,
 	formFields,
 	buttonLabel,
 	buttonDisabled,
 	onButtonClick,
 	features,
 } ) {
+	const [ isExpanded, setIsExpanded ] = useState( detailsExpanded );
+
 	const renderFeatures = ( providerSlug, featureList ) => {
 		return featureList.map( ( feature, index ) => (
 			<EmailProviderFeature key={ `feature-${ providerSlug }-${ index }` } title={ feature } />
 		) );
 	};
 
+	const toggleVisibility = ( event ) => {
+		event.preventDefault();
+		setIsExpanded( ! isExpanded );
+		onExpandedChange( providerKey, ! isExpanded );
+	};
+
 	return (
 		<PromoCard
-			className="email-providers-comparison__provider-card"
+			className={ classnames( 'email-providers-comparison__provider-card', {
+				'is-expanded': isExpanded,
+			} ) }
 			image={ logo }
 			title={ title }
 			badge={ badge }
 		>
-			<p>{ description }</p>
+			<div className="email-providers-comparison__provider-card-main-details">
+				<p>{ description }</p>
+				<Button
+					primary={ false }
+					onClick={ toggleVisibility }
+					className="email-providers-comparison__provider-expand-cta"
+				>
+					{ buttonLabel }
+				</Button>
+			</div>
 			<PromoCardPrice formattedPrice={ formattedPrice } discount={ discount } />
 			{ additionalPriceInformation && (
 				<span className="email-providers-comparison__provider-additional-price-information">

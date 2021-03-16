@@ -71,6 +71,11 @@ class EmailProvidersComparison extends React.Component {
 		googleUsers: [],
 		isFetchingProvisioningURL: false,
 		titanUsers: [],
+		expanded: {
+			forwarding: false,
+			google: false,
+			titan: true,
+		},
 	};
 
 	isMounted = false;
@@ -81,6 +86,15 @@ class EmailProvidersComparison extends React.Component {
 
 	componentWillUnmount() {
 		this.isMounted = false;
+	}
+
+	onExpandedStateChange( providerKey, isExpanded ) {
+		const expanded = Object.assign(
+			{},
+			this.state.expanded,
+			Object.fromEntries( [ [ providerKey, isExpanded ] ] )
+		);
+		this.setState( { expanded } );
 	}
 
 	goToEmailForwarding = () => {
@@ -388,6 +402,8 @@ class EmailProvidersComparison extends React.Component {
 				description={ translate(
 					'Easy-to-use email with incredibly powerful features. Manage your email and more on any device.'
 				) }
+				detailsExpanded={ this.state.expanded.titan }
+				onExpandedChange={ this.onExpandedStateChange }
 				formattedPrice={ formattedPrice }
 				discount={ discount }
 				formFields={ formFields }
@@ -466,6 +482,8 @@ class EmailProvidersComparison extends React.Component {
 				providerKey="google"
 				logo={ { path: googleProps.productLogo } }
 				formFields={ formFields }
+				detailsExpanded={ this.state.expanded.google }
+				onExpandedChange={ this.onExpandedStateChange }
 				onButtonClick={ this.onGoogleConfirmNewUsers }
 				buttonDisabled={ ! areAllUsersValid( googleUsers ) }
 				features={ this.getGoogleFeatures() }
@@ -495,6 +513,8 @@ class EmailProvidersComparison extends React.Component {
 				description={ translate(
 					'Use your custom domain in your email address and forward all your mail to another address.'
 				) }
+				detailsExpanded={ this.state.expanded.forwarding }
+				onExpandedChange={ this.onExpandedStateChange }
 				formFields={ formFields }
 				buttonLabel={ buttonLabel }
 				onButtonClick={ this.goToEmailForwarding }
