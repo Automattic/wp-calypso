@@ -15,7 +15,7 @@ import { isBusiness } from 'calypso/lib/products-values';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import DomainMappingInstructions from 'calypso/my-sites/domains/domain-management/domain-mapping-instructions';
+import DomainMappingInstructions from 'calypso/my-sites/domains/components/domain-mapping-instructions';
 
 function isDataLoaded( domains, domain ) {
 	return getSelectedDomain( { domains, selectedDomainName: domain } );
