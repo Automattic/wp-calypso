@@ -195,8 +195,6 @@ export default async function ( _, addReducer ) {
 				params: context.params,
 			} );
 			const appProps = {
-				documentTitle: null,
-				isDashboard: true,
 				analyticsPath: getAnalyticsPath( '/store/:site', context.params ),
 				analyticsTitle: 'Store > Dashboard',
 			};
