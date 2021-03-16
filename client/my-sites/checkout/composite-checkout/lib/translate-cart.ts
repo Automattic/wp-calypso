@@ -137,10 +137,6 @@ function translateReponseCartProductToWPCOMCartItem(
 	};
 }
 
-export function getNonProductWPCOMCartItemTypes(): string[] {
-	return [ 'tax', 'coupon', 'total', 'subtotal', 'credits', 'savings' ];
-}
-
 // Create cart object as required by the WPCOM transactions endpoint
 // '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
 export function createTransactionEndpointCartFromLineItems( {
@@ -176,7 +172,6 @@ export function createTransactionEndpointCartFromLineItems( {
 		temporary: false,
 		extra: [],
 		products: items
-			.filter( ( product ) => ! getNonProductWPCOMCartItemTypes().includes( product.type ) )
 			.map( ( item ) => addRegistrationDataToGSuiteItem( item, contactDetails ) )
 			.map( createTransactionEndpointCartItemFromLineItem ),
 		tax: {
