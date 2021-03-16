@@ -4,7 +4,10 @@
 
 - Breaking: Drop option `postCssConfig` for Sass loader. The property `postCssOptions` will be passed as is
   to `postcss-loader`. See the doc in <https://github.com/webpack-contrib/postcss-loader#postcssoptions>
+- Added new minimizer (`/webpack/minify-esbuild`) that uses `esbuild-loader` instead of Terser (see
+  <https://github.com/privatenumber/esbuild-loader#minification-eg-terser>)
 - Added: peer dependency postcss ^8.2.6
+- Added: dependency esbuild-loader ^2.10.0
 - Updated dependencies:
   - postcss-custom-properties to ^11.0.0
   - postcss-loader to ^5.0.0

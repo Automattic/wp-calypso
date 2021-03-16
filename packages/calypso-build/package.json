@@ -58,6 +58,7 @@
 		"duplicate-package-checker-webpack-plugin": "^3.0.0",
 		"enzyme-adapter-react-16": "^1.15.1",
 		"enzyme-to-json": "^3.4.3",
+		"esbuild-loader": "^2.10.0",
 		"file-loader": "^4.3.0",
 		"jest-config": "^26.4.0",
 		"jest-emotion": "^10.0.27",

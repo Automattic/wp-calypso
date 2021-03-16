@@ -17,6 +17,7 @@ const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
+const MinifyESbuild = require( '@automattic/calypso-build/webpack/minify-esbuild' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const calypsoColorSchemes = require( '@automattic/calypso-color-schemes/js' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
@@ -193,26 +194,29 @@ const webpackConfig = {
 		moduleIds: 'named',
 		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'deterministic',
 		minimize: shouldMinify,
-		minimizer: Minify( {
-			// Desktop: number of workers should *not* exceed # of vCPUs available.
-			// For both medium Machine and Docker images, number of vCPUs == 2.
-			// Ref: https://support.circleci.com/hc/en-us/articles/360038192673-NodeJS-Builds-or-Test-Suites-Fail-With-ENOMEM-or-a-Timeout
-			parallel: isDesktop ? 2 : workerCount,
-			// Note: terserOptions will override (Object.assign) default terser options in packages/calypso-build/webpack/minify.js
-			terserOptions: {
-				...( isDesktop
-					? {
-							ecma: 2017,
-							mangle: true,
-							compress: false,
-							safari10: false,
-					  }
-					: {
-							compress: true,
-							mangle: true,
-					  } ),
-			},
-		} ),
+		minimizer:
+			browserslistEnv === 'evergreen' && ! isDesktop
+				? MinifyESbuild()
+				: Minify( {
+						// Desktop: number of workers should *not* exceed # of vCPUs available.
+						// For both medium Machine and Docker images, number of vCPUs == 2.
+						// Ref: https://support.circleci.com/hc/en-us/articles/360038192673-NodeJS-Builds-or-Test-Suites-Fail-With-ENOMEM-or-a-Timeout
+						parallel: isDesktop ? 2 : workerCount,
+						// Note: terserOptions will override (Object.assign) default terser options in packages/calypso-build/webpack/minify.js
+						terserOptions: {
+							...( isDesktop
+								? {
+										ecma: 2017,
+										mangle: true,
+										compress: false,
+										safari10: false,
+								  }
+								: {
+										compress: true,
+										mangle: true,
+								  } ),
+						},
+				  } ),
 	},
 	module: {
 		strictExportPresence: true,
