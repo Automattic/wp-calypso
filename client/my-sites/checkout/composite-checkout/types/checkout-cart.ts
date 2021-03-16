@@ -58,14 +58,8 @@ export type WPCOMCartCreditsItem = LineItem & {
 
 export interface WPCOMCart {
 	items: WPCOMCartItem[];
-	tax: LineItem | null;
 	total: LineItem;
-	savings: LineItem | null;
-	subtotal: LineItem;
-	coupon: WPCOMCartCouponItem | null;
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
-	credits: LineItem | null;
-	couponCode: string | null;
 }
 
 export const emptyWPCOMCart = {
