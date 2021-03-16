@@ -14,7 +14,7 @@ import proxyRequest from 'wpcom-proxy-request';
 import './style.scss';
 import WhatsNewPage from './whats-new-page';
 
-const WhatsNewGuide = ( { toggleWhatsNew } ) => {
+const WhatsNewGuide = ( { onClose } ) => {
 	const [ whatsNewData, setWhatsNewData ] = useState( null );
 	const __ = useI18n().__;
 	const locale = useLocale();
@@ -38,7 +38,7 @@ const WhatsNewGuide = ( { toggleWhatsNew } ) => {
 			className="whats-new-guide__main"
 			contentLabel={ __( "What's New at WordPress.com", __i18n_text_domain__ ) }
 			finishButtonText={ __( 'Close', __i18n_text_domain__ ) }
-			onFinish={ toggleWhatsNew }
+			onFinish={ onClose }
 		>
 			{ whatsNewData.map( ( page, index ) => (
 				<WhatsNewPage
