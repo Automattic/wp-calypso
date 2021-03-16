@@ -652,7 +652,7 @@ function IntroductoryOfferCallout( {
 	const intervalUnit = product.introductory_offer_terms.interval_unit;
 	const intervalCount = product.introductory_offer_terms.interval_count;
 
-	if ( product.cost === 0 ) {
+	if ( product.item_subtotal_integer === 0 ) {
 		if ( intervalUnit === 'month' ) {
 			if ( intervalCount === 1 ) {
 				text = String( translate( 'First month free' ) );
