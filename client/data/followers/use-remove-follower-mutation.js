@@ -11,7 +11,7 @@ import wp from 'calypso/lib/wp';
 
 function useRemoveFollowerMutation() {
 	const queryClient = useQueryClient();
-	const { mutate, ...mutationObj } = useMutation(
+	const mutation = useMutation(
 		( { siteId, type, followerId } ) => {
 			const method = type === 'email' ? 'removeEmailFollower' : 'removeFollower';
 			return wp.undocumented().site( siteId )[ method ]( followerId );
@@ -23,18 +23,13 @@ function useRemoveFollowerMutation() {
 			},
 		}
 	);
-
+	const { mutate } = mutation;
 	const removeFollower = useCallback(
-		( siteId, type, followerId ) =>
-			mutate( {
-				siteId,
-				type,
-				followerId,
-			} ),
+		( siteId, type, followerId ) => mutate( { siteId, type, followerId } ),
 		[ mutate ]
 	);
 
-	return { removeFollower, mutate, ...mutationObj };
+	return { removeFollower, ...mutation };
 }
 
 export default useRemoveFollowerMutation;
