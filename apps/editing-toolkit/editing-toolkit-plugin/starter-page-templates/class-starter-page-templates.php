@@ -36,7 +36,7 @@ class Starter_Page_Templates {
 				'starter_page_templates',
 				A8C_ETK_PLUGIN_VERSION,
 				get_option( 'site_vertical', 'default' ),
-				get_locale(),
+				$this->get_verticals_locale(),
 			)
 		);
 
