@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { identity, isEqual, find, replace, some, isFunction, get } from 'lodash';
+import { identity, isEqual, find, replace, some, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -648,7 +648,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				userId,
 				isExpanded: isServiceExpanded( state, service ),
 			};
-			return isFunction( mapStateToProps ) ? mapStateToProps( state, props ) : props;
+			return typeof mapStateToProps === 'function' ? mapStateToProps( state, props ) : props;
 		},
 		{
 			createSiteConnection,

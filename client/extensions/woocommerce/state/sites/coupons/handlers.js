@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { trim, isFunction } from 'lodash';
+import { trim } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -107,7 +107,7 @@ function apiError( action, error ) {
 		return;
 	}
 
-	if ( isFunction( failureAction ) ) {
+	if ( typeof failureAction === 'function' ) {
 		return failureAction( error );
 	}
 

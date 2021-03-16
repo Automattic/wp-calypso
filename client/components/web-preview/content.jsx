@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debugModule from 'debug';
-import { isFunction } from 'lodash';
 import page from 'page';
 import { v4 as uuid } from 'uuid';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -149,14 +148,14 @@ export class WebPreviewContent extends Component {
 		// remove all textual selections when user gives focus to preview iframe
 		// they might be confusing
 		if ( typeof window !== 'undefined' ) {
-			if ( isFunction( window.getSelection ) ) {
+			if ( typeof window.getSelection === 'function' ) {
 				const selection = window.getSelection();
-				if ( isFunction( selection.empty ) ) {
+				if ( typeof selection.empty === 'function' ) {
 					selection.empty();
-				} else if ( isFunction( selection.removeAllRanges ) ) {
+				} else if ( typeof selection.removeAllRanges === 'function' ) {
 					selection.removeAllRanges();
 				}
-			} else if ( document.selection && isFunction( document.selection.empty ) ) {
+			} else if ( document.selection && typeof document.selection.empty === 'function' ) {
 				document.selection.empty();
 			}
 		}

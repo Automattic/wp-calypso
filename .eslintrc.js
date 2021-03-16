@@ -422,6 +422,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/inject': 'error',
 		'you-dont-need-lodash-underscore/is-array': 'error',
 		'you-dont-need-lodash-underscore/is-finite': 'error',
+		'you-dont-need-lodash-underscore/is-function': 'error',
 		'you-dont-need-lodash-underscore/is-nan': 'error',
 		'you-dont-need-lodash-underscore/is-nil': 'error',
 		'you-dont-need-lodash-underscore/is-null': 'error',
