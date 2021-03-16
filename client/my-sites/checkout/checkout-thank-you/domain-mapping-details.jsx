@@ -37,8 +37,8 @@ const DomainMappingDetails = ( {
 
 	const mappingInstructions = (
 		<DomainMappingInstructions
+			areDomainDetailsLoaded={ isDataLoaded() }
 			isSubdomain={ !! isSubdomainMapping }
-			isLoaded={ isDataLoaded() }
 			domain={ purchasedDomain }
 			translate={ translate }
 		/>

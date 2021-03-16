@@ -26,20 +26,20 @@ import './style.scss';
 
 class DomainMappingInstructions extends React.Component {
 	static propTypes = {
+		areDomainDetailsLoaded: PropTypes.bool,
 		domain: PropTypes.object,
 		isAtomic: PropTypes.bool,
-		isLoaded: PropTypes.bool,
 	};
 
 	static defaultProps = {
+		areDomainDetailsLoaded: false,
 		isAtomic: false,
-		isLoaded: false,
 	};
 
 	renderARecordsList() {
-		const { domain, isLoaded } = this.props;
+		const { domain, areDomainDetailsLoaded } = this.props;
 
-		if ( isLoaded ) {
+		if ( areDomainDetailsLoaded ) {
 			return (
 				<ul className="mapping-instructions__dns-records-list-placeholder">
 					<li></li>
