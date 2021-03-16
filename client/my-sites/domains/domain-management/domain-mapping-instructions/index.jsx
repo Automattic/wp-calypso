@@ -36,59 +36,23 @@ class DomainMappingInstructions extends React.Component {
 		isLoaded: false,
 	};
 
-	render() {
-		const { domain } = this.props;
-		return (
-			<div className="domain-mapping-instructions">
-				{ this.renderRecommendedSetupMessage() }
-				{ domain?.aRecordsRequiredForMapping && this.renderARecordsMappingMessage() }
-			</div>
-		);
-	}
+	renderARecordsList() {
+		const { domain, isLoaded } = this.props;
 
-	renderRecommendedSetupMessage() {
-		const { domain, translate } = this.props;
-
-		return (
-			<FoldableFAQ
-				id="recommended-mapping-setup"
-				question={ translate( 'Recommended setup' ) }
-				expanded
-			>
-				<p>{ this.getRecommendedSetupMessage() }</p>
-				{ ! isSubdomain( domain?.name ) && (
-					<ul className="domain-mapping-instructions__name-server-list">
-						{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
-							return <li key={ nameServer }>{ nameServer }</li>;
-						} ) }
-					</ul>
-				) }
-			</FoldableFAQ>
-		);
-	}
-
-	getRecommendedSetupMessage() {
-		const { domain, translate } = this.props;
-
-		if ( isSubdomain( domain?.name ) ) {
-			return translate(
-				'Please create the correct CNAME or NS records at your current DNS provider. {{learnMoreLink}}Learn how to do that in our support guide for mapping subdomains{{/learnMoreLink}}.',
-				{
-					components: {
-						learnMoreLink: <ExternalLink href={ MAP_SUBDOMAIN } target="_blank" />,
-					},
-				}
+		if ( isLoaded ) {
+			return (
+				<ul className="domain-mapping-instructions__dns-records-list-placeholder">
+					<li></li>
+					<li></li>
+				</ul>
 			);
 		}
-
-		return translate(
-			'Please log into your account at your domain registrar and {{strong}}update the name servers{{/strong}} of your domain to use the following values, as detailed in {{link}}these instructions{{/link}}:',
-			{
-				components: {
-					strong: <strong />,
-					link: <ExternalLink href={ MAP_DOMAIN_CHANGE_NAME_SERVERS } target="_blank" />,
-				},
-			}
+		return (
+			<ul className="domain-mapping-instructions__dns-records-list">
+				{ domain?.aRecordsRequiredForMapping.map( ( aRecord ) => {
+					return <li key={ aRecord }>{ aRecord }</li>;
+				} ) }
+			</ul>
 		);
 	}
 
@@ -118,23 +82,59 @@ class DomainMappingInstructions extends React.Component {
 		);
 	}
 
-	renderARecordsList() {
-		const { domain, isLoaded } = this.props;
+	getRecommendedSetupMessage() {
+		const { domain, translate } = this.props;
 
-		if ( isLoaded ) {
-			return (
-				<ul className="domain-mapping-instructions__dns-records-list-placeholder">
-					<li></li>
-					<li></li>
-				</ul>
+		if ( isSubdomain( domain?.name ) ) {
+			return translate(
+				'Please create the correct CNAME or NS records at your current DNS provider. {{learnMoreLink}}Learn how to do that in our support guide for mapping subdomains{{/learnMoreLink}}.',
+				{
+					components: {
+						learnMoreLink: <ExternalLink href={ MAP_SUBDOMAIN } target="_blank" />,
+					},
+				}
 			);
 		}
+
+		return translate(
+			'Please log into your account at your domain registrar and {{strong}}update the name servers{{/strong}} of your domain to use the following values, as detailed in {{link}}these instructions{{/link}}:',
+			{
+				components: {
+					strong: <strong />,
+					link: <ExternalLink href={ MAP_DOMAIN_CHANGE_NAME_SERVERS } target="_blank" />,
+				},
+			}
+		);
+	}
+
+	renderRecommendedSetupMessage() {
+		const { domain, translate } = this.props;
+
 		return (
-			<ul className="domain-mapping-instructions__dns-records-list">
-				{ domain?.aRecordsRequiredForMapping.map( ( aRecord ) => {
-					return <li key={ aRecord }>{ aRecord }</li>;
-				} ) }
-			</ul>
+			<FoldableFAQ
+				id="recommended-mapping-setup"
+				question={ translate( 'Recommended setup' ) }
+				expanded
+			>
+				<p>{ this.getRecommendedSetupMessage() }</p>
+				{ ! isSubdomain( domain?.name ) && (
+					<ul className="domain-mapping-instructions__name-server-list">
+						{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
+							return <li key={ nameServer }>{ nameServer }</li>;
+						} ) }
+					</ul>
+				) }
+			</FoldableFAQ>
+		);
+	}
+
+	render() {
+		const { domain } = this.props;
+		return (
+			<div className="domain-mapping-instructions">
+				{ this.renderRecommendedSetupMessage() }
+				{ domain?.aRecordsRequiredForMapping && this.renderARecordsMappingMessage() }
+			</div>
 		);
 	}
 }
