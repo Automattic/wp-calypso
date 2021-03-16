@@ -100,7 +100,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 	};
 }
 
-export function getCouponLineItem( responseCart: ResponseCart ): WPCOMCartCouponItem | null {
+function getCouponLineItem( responseCart: ResponseCart ): WPCOMCartCouponItem | null {
 	if ( ! responseCart.coupon || ! responseCart.coupon_savings_total_integer ) {
 		return null;
 	}
@@ -125,7 +125,7 @@ export function getCouponLineItem( responseCart: ResponseCart ): WPCOMCartCoupon
 	};
 }
 
-export function getSubtotalLineItem( responseCart: ResponseCart ): LineItem {
+function getSubtotalLineItem( responseCart: ResponseCart ): LineItem {
 	return {
 		id: 'subtotal',
 		type: 'subtotal',
@@ -138,7 +138,7 @@ export function getSubtotalLineItem( responseCart: ResponseCart ): LineItem {
 	};
 }
 
-export function getTotalLineItem( responseCart: ResponseCart ): LineItem {
+function getTotalLineItem( responseCart: ResponseCart ): LineItem {
 	return {
 		id: 'total',
 		type: 'total',
@@ -151,7 +151,7 @@ export function getTotalLineItem( responseCart: ResponseCart ): LineItem {
 	};
 }
 
-export function getTaxLineItem( responseCart: ResponseCart ): LineItem | null {
+function getTaxLineItem( responseCart: ResponseCart ): LineItem | null {
 	if ( ! responseCart.tax.display_taxes ) {
 		return null;
 	}
@@ -167,7 +167,7 @@ export function getTaxLineItem( responseCart: ResponseCart ): LineItem | null {
 	};
 }
 
-export function getCreditsLineItem( responseCart: ResponseCart ): WPCOMCartCreditsItem | null {
+function getCreditsLineItem( responseCart: ResponseCart ): WPCOMCartCreditsItem | null {
 	if ( responseCart.credits_integer <= 0 ) {
 		return null;
 	}
