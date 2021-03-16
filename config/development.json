@@ -29,6 +29,7 @@
 	"rebrand_cities_prefix": "rebrandcitiesdevelopmentsite",
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
+		"wordpress-action-search": false,
 		"ad-tracking": false,
 		"async-payments": false,
 		"automated-transfer": true,

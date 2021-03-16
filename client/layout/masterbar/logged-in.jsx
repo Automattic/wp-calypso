@@ -215,6 +215,7 @@ class MasterbarLoggedIn extends React.Component {
 	}
 
 	render() {
+		const isWordpressActionSearchFeatureEnabled = config.isEnabled( 'wordpress-action-search' );
 		const {
 			domainOnlySite,
 			translate,
@@ -243,7 +244,9 @@ class MasterbarLoggedIn extends React.Component {
 
 		return (
 			<>
-				{ isActionSearchVisible ? <PopUpSearch onClose={ this.onSearchActionsClose } /> : null }
+				{ isWordpressActionSearchFeatureEnabled && isActionSearchVisible ? (
+					<PopUpSearch onClose={ this.onSearchActionsClose } />
+				) : null }
 				<Masterbar>
 					{ this.renderMySites() }
 					<Item
@@ -262,17 +265,19 @@ class MasterbarLoggedIn extends React.Component {
 					{ ( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) && (
 						<AsyncLoad require="./quick-language-switcher" placeholder={ null } />
 					) }
-					<Item
-						tipTarget="Action Search"
-						icon="search"
-						onClick={ this.clickSearchActions }
-						isActive={ false }
-						className="masterbar__item-action-search"
-						tooltip={ translate( 'Search' ) }
-						preloadSection={ this.preloadMe }
-					>
-						{ translate( 'Search Actions' ) }
-					</Item>
+					{ isWordpressActionSearchFeatureEnabled && (
+						<Item
+							tipTarget="Action Search"
+							icon="search"
+							onClick={ this.clickSearchActions }
+							isActive={ false }
+							className="masterbar__item-action-search"
+							tooltip={ translate( 'Search' ) }
+							preloadSection={ this.preloadMe }
+						>
+							{ translate( 'Search Actions' ) }
+						</Item>
+					) }
 					<AsyncLoad require="calypso/my-sites/resume-editing" placeholder={ null } />
 					{ ! domainOnlySite && ! isMigrationInProgress && (
 						<AsyncLoad
