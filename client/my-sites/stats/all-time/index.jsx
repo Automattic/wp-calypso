@@ -80,6 +80,13 @@ class StatsAllTime extends Component {
 							compact
 						/>
 						<StatsTab
+							gridicon="comment"
+							label={ translate( 'Comments' ) }
+							loading={ isLoading }
+							value={ comments }
+							compact
+						/>
+						<StatsTab
 							gridicon="visible"
 							label={ translate( 'Views' ) }
 							loading={ isLoading }
@@ -91,13 +98,6 @@ class StatsAllTime extends Component {
 							label={ translate( 'Visitors' ) }
 							loading={ isLoading }
 							value={ visitors }
-							compact
-						/>
-						<StatsTab
-							gridicon="comment"
-							label={ translate( 'Comments' ) }
-							loading={ isLoading }
-							value={ comments }
 							compact
 						/>
 						<StatsTab
