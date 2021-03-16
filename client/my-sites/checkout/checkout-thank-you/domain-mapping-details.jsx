@@ -14,17 +14,14 @@ import { getSelectedDomain, isSubdomain } from 'calypso/lib/domains';
 import { isBusiness } from 'calypso/lib/products-values';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import DomainMappingInstructions from 'calypso/my-sites/domains/components/mapping-instructions';
-
-function isDataLoaded( domains, domain ) {
-	return getSelectedDomain( { domains, selectedDomainName: domain } );
-}
 
 const DomainMappingDetails = ( {
 	domain,
 	domains,
 	isSubdomainMapping,
+	isRequestingDomainsDetails,
 	isRootDomainWithUs,
 	siteId,
 } ) => {
@@ -37,7 +34,7 @@ const DomainMappingDetails = ( {
 	const mappingInstructions = (
 		<DomainMappingInstructions
 			aRecordsRequiredForMapping={ purchasedDomain?.aRecordsRequiredForMapping }
-			areDomainDetailsLoaded={ isDataLoaded() }
+			areDomainDetailsLoaded={ ! isRequestingDomainsDetails && !! purchasedDomain }
 			domainName={ purchasedDomain?.name }
 		/>
 	);
@@ -55,6 +52,7 @@ const mapStateToProps = ( state, { domain } ) => {
 	return {
 		domains: getDomainsBySiteId( state, selectedSite.ID ),
 		isBusinessPlan: isBusiness( selectedSite.plan ),
+		isRequestingDomainsDetails: isRequestingSiteDomains( state, selectedSite.ID ),
 		isSubdomainMapping: isSubdomain( domain ),
 		selectedSiteDomain: selectedSite.domain,
 		siteId: selectedSite.ID,

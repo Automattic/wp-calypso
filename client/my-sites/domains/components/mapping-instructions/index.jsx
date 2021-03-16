@@ -40,7 +40,7 @@ class DomainMappingInstructions extends React.Component {
 	renderARecordsList() {
 		const { aRecordsRequiredForMapping, areDomainDetailsLoaded } = this.props;
 
-		if ( areDomainDetailsLoaded ) {
+		if ( ! areDomainDetailsLoaded ) {
 			return (
 				<ul className="mapping-instructions__dns-records-list-placeholder">
 					<li></li>
