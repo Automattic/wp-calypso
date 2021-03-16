@@ -206,7 +206,9 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	}, [ currentStep, dispatch, host ] );
 
 	const hasPurchases = purchases?.length > 0;
-	const disableForm = 'pending' === formSubmissionStatus || ! hasPurchases;
+	// Allow removal/edition if credentials are already saved
+	const preventEdit = ! hasPurchases && ! hasCredentials;
+	const disableForm = 'pending' === formSubmissionStatus || preventEdit;
 	const formHasErrors = formErrors && Object.keys( formErrors ).length > 0;
 
 	const handleDeleteCredentials = () => {
@@ -354,7 +356,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			</Card>
 			<Card>
 				{ startedWithoutConnection && <StepProgress currentStep={ currentStep } steps={ steps } /> }
-				{ ! hasPurchases && (
+				{ preventEdit && (
 					<Notice status="is-warning" showDismiss={ false }>
 						{ translate( '{{a}}Upgrade your plan{{/a}} to edit your server credentials.', {
 							components: {
