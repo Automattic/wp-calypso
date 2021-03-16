@@ -29,7 +29,6 @@ class DomainMappingInstructions extends React.Component {
 		domain: PropTypes.object,
 		isAtomic: PropTypes.bool,
 		isLoaded: PropTypes.bool,
-		translate: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
