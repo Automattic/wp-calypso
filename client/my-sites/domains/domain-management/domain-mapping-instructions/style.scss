@@ -4,3 +4,8 @@
         margin-bottom: 0.5em;
     }
 }
+
+/* Remove bottom border of last FAQ element */
+.domain-mapping-instructions div:last-of-type .foldable-faq__answer {
+    border-bottom: 0;
+}

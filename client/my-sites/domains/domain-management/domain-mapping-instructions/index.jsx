@@ -40,7 +40,7 @@ class DomainMappingInstructions extends React.Component {
 	render() {
 		const { domain } = this.props;
 		return (
-			<div className="domain-mapping-instructions__main-content">
+			<div className="domain-mapping-instructions">
 				{ this.renderRecommendedSetupMessage() }
 				{ domain?.aRecordsRequiredForMapping && this.renderARecordsMappingMessage() }
 			</div>
