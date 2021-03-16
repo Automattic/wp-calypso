@@ -17,16 +17,6 @@ interface Props {
 const UseYourDomainItem: React.FunctionComponent< Props > = ( { onClick } ) => {
 	const { __, _x } = useI18n();
 
-	// Stopping propagation to prevent the `click` event from firing twice when
-	// clicking the button (once on the button, once on the wrapping component)
-	const onClickWithNoPropagation = React.useCallback(
-		( e: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
-			onClick();
-			e.stopPropagation();
-		},
-		[ onClick ]
-	);
-
 	return (
 		<WrappingComponent
 			type="button"
@@ -47,7 +37,7 @@ const UseYourDomainItem: React.FunctionComponent< Props > = ( { onClick } ) => {
 					</span>
 				</div>
 			</div>
-			<ArrowButton arrow="right" onClick={ onClickWithNoPropagation }>
+			<ArrowButton arrow="right">
 				{ _x(
 					'Use a domain I own',
 					'Domain transfer or mapping suggestion button',
