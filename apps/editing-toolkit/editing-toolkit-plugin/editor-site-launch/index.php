@@ -93,6 +93,7 @@ function enqueue_launch_flow_script_and_style( $site_launch_options ) {
 			return;
 	}
 
+	// @TODO: remove this once $launch_flow value is 'focused-launch' for AnchorFM sites
 	$anchor_podcast = $site_launch_options['anchor_podcast'];
 	if ( ! empty( $anchor_podcast ) ) {
 		$script_name = 'focused-launch';
