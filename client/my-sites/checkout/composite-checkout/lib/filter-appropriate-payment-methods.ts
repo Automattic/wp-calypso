@@ -3,12 +3,12 @@
  */
 import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
+import { doesPurchaseHaveFullCredits } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
 import type { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
-import doesPurchaseHaveFullCredits from './does-purchase-have-full-credits';
 import { readCheckoutPaymentMethodSlug } from './translate-payment-method-names';
 import isPaymentMethodEnabled from './is-payment-method-enabled';
 
