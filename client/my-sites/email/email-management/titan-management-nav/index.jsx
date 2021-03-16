@@ -56,14 +56,13 @@ class TitanManagementNav extends React.Component {
 		const { currentRoute, domain, selectedSiteSlug, translate } = this.props;
 
 		const linkTitle = translate( 'Manage your email settings and accounts' );
+		const controlPanelClickHandler = this.getNavItemClickHandler( 'control_panel' );
 
 		if ( isEnabled( 'titan/iframe-control-panel' ) ) {
 			return (
 				<VerticalNavItem
 					path={ emailManagementManageTitanAccount( selectedSiteSlug, domain.name, currentRoute ) }
-					onClick={ () => {
-						this.recordNavItemClick( 'control_panel' );
-					} }
+					onClick={ controlPanelClickHandler }
 				>
 					{ linkTitle }
 				</VerticalNavItem>
@@ -78,9 +77,7 @@ class TitanManagementNav extends React.Component {
 					currentRoute
 				) }
 				external={ true }
-				onClick={ () => {
-					this.recordNavItemClick( 'control_panel' );
-				} }
+				onClick={ controlPanelClickHandler }
 			>
 				{ linkTitle }
 			</VerticalNavItem>
@@ -100,9 +97,7 @@ class TitanManagementNav extends React.Component {
 					selectedSiteSlug,
 					domain.titanMailSubscription.subscriptionId
 				) }
-				onClick={ () => {
-					this.recordNavItemClick( 'manage_purchase' );
-				} }
+				onClick={ this.getNavItemClickHandler( 'manage_purchase' ) }
 			>
 				{ translate( 'Update your billing and payment settings' ) }
 			</VerticalNavItem>
@@ -167,7 +162,7 @@ class TitanManagementNav extends React.Component {
 		);
 	};
 
-	recordNavItemClick = ( clickedItem ) => {
+	getNavItemClickHandler = ( clickedItem ) => () => {
 		const { domain } = this.props;
 
 		recordTracksEvent( 'calypso_email_management_titan_nav_item_click', {
@@ -216,9 +211,7 @@ class TitanManagementNav extends React.Component {
 					header={ header }
 					summary={ summary }
 					expandedSummary={ summary }
-					onOpen={ () => {
-						this.recordNavItemClick( 'quick_links_show' );
-					} }
+					onOpen={ this.getNavItemClickHandler( 'quick_links_show' ) }
 				>
 					<ul className="titan-management-nav__foldable-card-services">
 						<li>
@@ -226,9 +219,7 @@ class TitanManagementNav extends React.Component {
 								href="https://wp.titan.email/mail/"
 								target="_blank"
 								rel="noreferrer noopener"
-								onClick={ () => {
-									this.recordNavItemClick( 'webmail' );
-								} }
+								onClick={ this.getNavItemClickHandler( 'webmail' ) }
 							>
 								<img src={ titanMailIcon } alt={ translate( 'Titan Mail icon' ) } />
 								<strong>
@@ -243,9 +234,7 @@ class TitanManagementNav extends React.Component {
 								href="https://wp.titan.email/calendar/"
 								target="_blank"
 								rel="noreferrer noopener"
-								onClick={ () => {
-									this.recordNavItemClick( 'calendar' );
-								} }
+								onClick={ this.getNavItemClickHandler( 'calendar' ) }
 							>
 								<img src={ titanCalendarIcon } alt={ translate( 'Titan Calendar icon' ) } />
 								<strong>
@@ -260,9 +249,7 @@ class TitanManagementNav extends React.Component {
 								href="https://wp.titan.email/contacts/"
 								target="_blank"
 								rel="noreferrer noopener"
-								onClick={ () => {
-									this.recordNavItemClick( 'contacts' );
-								} }
+								onClick={ this.getNavItemClickHandler( 'contacts' ) }
 							>
 								<img src={ titanContactsIcon } alt={ translate( 'Titan Contacts icon' ) } />
 								<strong>
