@@ -34,8 +34,8 @@ fun BuildSteps.bashNodeScript(init: ScriptBuildStep.() -> Unit): ScriptBuildStep
 	""".trimIndent()
 	result.dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 	result.dockerPull = true
-	result.dockerImage = "%docker_image_wpcom%"
-	result.dockerRunParameters = "-u %env.UID%"
+	result.dockerImage = result.dockerImage ?: "%docker_image%"
+	result.dockerRunParameters = result.dockerRunParameters ?: "-u %env.UID%"
 	step(result)
 	return result
 }

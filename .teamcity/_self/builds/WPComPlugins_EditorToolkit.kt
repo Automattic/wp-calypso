@@ -65,6 +65,7 @@ object WPComPlugins_EditorToolKit : BuildType({
 				# Install modules
 				yarn install
 			"""
+			dockerImage = "%docker_image_wpcom%"
 		}
 		bashNodeScript {
 			name = "Run JS tests"
@@ -75,6 +76,7 @@ object WPComPlugins_EditorToolKit : BuildType({
 				cd apps/editing-toolkit
 				yarn test:js --reporters=default --reporters=jest-junit --maxWorkers=${'$'}JEST_MAX_WORKERS
 			"""
+			dockerImage = "%docker_image_wpcom%"
 		}
 		bashNodeScript {
 			name = "Build artifacts"
@@ -88,6 +90,7 @@ object WPComPlugins_EditorToolKit : BuildType({
 				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php
 				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt
 			"""
+			dockerImage = "%docker_image_wpcom%"
 		}
 		// Note: We run the PHP lint after the build to verify that the newspack-blocks
 		// code is also formatted correctly.
@@ -101,6 +104,7 @@ object WPComPlugins_EditorToolKit : BuildType({
 				fi
 				yarn lint:php
 			"""
+			dockerImage = "%docker_image_wpcom%"
 		}
 		/**
 		 * We download the archive directly in this step rather than relying on
@@ -158,6 +162,7 @@ object WPComPlugins_EditorToolKit : BuildType({
 				echo
 				zip -r ../../../editing-toolkit.zip .
 			"""
+			dockerImage = "%docker_image_wpcom%"
 		}
 	}
 })
