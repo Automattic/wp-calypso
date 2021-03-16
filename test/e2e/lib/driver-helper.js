@@ -112,8 +112,14 @@ const until = {
 
 		return new WebElementCondition(
 			`for element to be located ${ locatorStr }`,
-			function ( driver ) {
-				return findElementByText( driver, locator, text );
+			async function ( driver ) {
+				try {
+					const element = await findElementByText( driver, locator, text );
+
+					return element;
+				} catch {
+					return null;
+				}
 			}
 		);
 	},
@@ -130,10 +136,14 @@ const until = {
 		return new WebElementCondition(
 			`for element to be located and visible ${ locatorStr }`,
 			async function ( driver ) {
-				const element = await findElement( driver, locator );
-				const isDisplayed = element.isDisplayed();
+				try {
+					const element = await findElement( driver, locator );
+					const isDisplayed = element.isDisplayed();
 
-				return isDisplayed ? element : null;
+					return isDisplayed ? element : null;
+				} catch {
+					return null;
+				}
 			}
 		);
 	},
@@ -151,13 +161,17 @@ const until = {
 		return new WebElementCondition(
 			`for element to be clickable ${ locatorStr }`,
 			async function ( driver ) {
-				const element = await findElement( driver, locator );
-				const isEnabled = await element.isEnabled();
-				const isAriaEnabled = await element
-					.getAttribute( 'aria-disabled' )
-					.then( ( v ) => v !== 'true' );
+				try {
+					const element = await findElement( driver, locator );
+					const isEnabled = await element.isEnabled();
+					const isAriaEnabled = await element
+						.getAttribute( 'aria-disabled' )
+						.then( ( v ) => v !== 'true' );
 
-				return isEnabled && isAriaEnabled ? element : null;
+					return isEnabled && isAriaEnabled ? element : null;
+				} catch {
+					return null;
+				}
 			}
 		);
 	},
