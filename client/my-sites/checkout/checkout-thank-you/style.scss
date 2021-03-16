@@ -66,6 +66,13 @@
 			margin-right: 1em;
 		}
 	}
+	.purchase-detail__content {
+		padding: 32px 0 0;
+
+		@include break-mobile {
+			padding: 32px;
+		}
+	}
 }
 
 .checkout-thank-you__domain-mapping-details-nameservers,
