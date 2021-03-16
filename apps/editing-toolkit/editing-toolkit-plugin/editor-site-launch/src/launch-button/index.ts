@@ -66,7 +66,7 @@ domReady( () => {
 
 			switch ( launchFlow ) {
 				case GUTENBOARDING_LAUNCH_FLOW:
-					// temporary solution, before the backend returns correct launch flow value
+					// @TODO: remove this temporary solution once backend returns correct launch flow value
 					if ( isAnchorFm ) {
 						dispatch( 'automattic/launch' ).openFocusedLaunch();
 						break;
