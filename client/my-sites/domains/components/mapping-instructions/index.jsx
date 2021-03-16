@@ -26,8 +26,9 @@ import './style.scss';
 
 class DomainMappingInstructions extends React.Component {
 	static propTypes = {
+		aRecordsRequiredForMapping: PropTypes.array,
 		areDomainDetailsLoaded: PropTypes.bool,
-		domain: PropTypes.object,
+		domainName: PropTypes.string,
 		isAtomic: PropTypes.bool,
 	};
 
@@ -37,7 +38,7 @@ class DomainMappingInstructions extends React.Component {
 	};
 
 	renderARecordsList() {
-		const { domain, areDomainDetailsLoaded } = this.props;
+		const { aRecordsRequiredForMapping, areDomainDetailsLoaded } = this.props;
 
 		if ( areDomainDetailsLoaded ) {
 			return (
@@ -49,7 +50,7 @@ class DomainMappingInstructions extends React.Component {
 		}
 		return (
 			<ul className="mapping-instructions__dns-records-list">
-				{ domain?.aRecordsRequiredForMapping.map( ( aRecord ) => {
+				{ aRecordsRequiredForMapping.map( ( aRecord ) => {
 					return <li key={ aRecord }>{ aRecord }</li>;
 				} ) }
 			</ul>
@@ -83,9 +84,9 @@ class DomainMappingInstructions extends React.Component {
 	}
 
 	getRecommendedSetupMessage() {
-		const { domain, translate } = this.props;
+		const { domainName, translate } = this.props;
 
-		if ( isSubdomain( domain?.name ) ) {
+		if ( isSubdomain( domainName ) ) {
 			return translate(
 				'Please create the correct CNAME or NS records at your current DNS provider. {{learnMoreLink}}Learn how to do that in our support guide for mapping subdomains{{/learnMoreLink}}.',
 				{
@@ -108,7 +109,7 @@ class DomainMappingInstructions extends React.Component {
 	}
 
 	renderRecommendedSetupMessage() {
-		const { domain, translate } = this.props;
+		const { domainName, translate } = this.props;
 
 		return (
 			<FoldableFAQ
@@ -117,7 +118,7 @@ class DomainMappingInstructions extends React.Component {
 				expanded
 			>
 				<p>{ this.getRecommendedSetupMessage() }</p>
-				{ ! isSubdomain( domain?.name ) && (
+				{ ! isSubdomain( domainName ) && (
 					<ul className="mapping-instructions__name-server-list">
 						{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
 							return <li key={ nameServer }>{ nameServer }</li>;
@@ -129,11 +130,12 @@ class DomainMappingInstructions extends React.Component {
 	}
 
 	render() {
-		const { domain } = this.props;
+		const { aRecordsRequiredForMapping } = this.props;
+
 		return (
 			<div className="mapping-instructions">
 				{ this.renderRecommendedSetupMessage() }
-				{ domain?.aRecordsRequiredForMapping && this.renderARecordsMappingMessage() }
+				{ aRecordsRequiredForMapping && this.renderARecordsMappingMessage() }
 			</div>
 		);
 	}

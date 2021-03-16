@@ -27,7 +27,6 @@ const DomainMappingDetails = ( {
 	isSubdomainMapping,
 	isRootDomainWithUs,
 	siteId,
-	translate,
 } ) => {
 	if ( isSubdomainMapping && isRootDomainWithUs ) {
 		return null;
@@ -37,10 +36,9 @@ const DomainMappingDetails = ( {
 
 	const mappingInstructions = (
 		<DomainMappingInstructions
+			aRecordsRequiredForMapping={ purchasedDomain?.aRecordsRequiredForMapping }
 			areDomainDetailsLoaded={ isDataLoaded() }
-			isSubdomain={ !! isSubdomainMapping }
-			domain={ purchasedDomain }
-			translate={ translate }
+			domainName={ purchasedDomain?.name }
 		/>
 	);
 
