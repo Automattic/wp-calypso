@@ -12,7 +12,7 @@ import {
 	Button,
 } from '@automattic/composite-checkout';
 import type { Theme, LineItem as LineItemType } from '@automattic/composite-checkout';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import type {
@@ -644,7 +644,7 @@ function IntroductoryOfferCallout( {
 	product: ResponseCartProduct;
 } ): JSX.Element | null {
 	const translate = useTranslate();
-	let text: TranslateResult = translate( 'Discount for first period' );
+	let text = translate( 'Discount for first period' ) as string;
 	if ( ! product.introductory_offer_terms?.enabled ) {
 		return null;
 	}
@@ -655,47 +655,47 @@ function IntroductoryOfferCallout( {
 	if ( product.cost === 0 ) {
 		if ( intervalUnit === 'month' ) {
 			if ( intervalCount === 1 ) {
-				text = translate( 'First month free' );
+				text = translate( 'First month free' ) as string;
 			} else {
 				text = translate( 'First %(numberOfMonths)d months free', {
 					args: {
 						numberOfMonths: intervalCount,
 					},
-				} );
+				} ) as string;
 			}
 		}
 		if ( intervalUnit === 'year' ) {
 			if ( intervalCount === 1 ) {
-				text = translate( 'First year free' );
+				text = translate( 'First year free' ) as string;
 			} else {
 				text = translate( 'First %(numberOfYears)d years free', {
 					args: {
 						numberOfYears: intervalCount,
 					},
-				} );
+				} ) as string;
 			}
 		}
 	} else {
 		if ( intervalUnit === 'month' ) {
 			if ( intervalCount === 1 ) {
-				text = translate( 'Discount for first month' );
+				text = translate( 'Discount for first month' ) as string;
 			} else {
 				text = translate( 'Discount for first %(numberOfMonths)d months', {
 					args: {
 						numberOfMonths: intervalCount,
 					},
-				} );
+				} ) as string;
 			}
 		}
 		if ( intervalUnit === 'year' ) {
 			if ( intervalCount === 1 ) {
-				text = translate( 'Discount for first year' );
+				text = translate( 'Discount for first year' ) as string;
 			} else {
 				text = translate( 'Discount for first %(numberOfYears)d years', {
 					args: {
 						numberOfYears: intervalCount,
 					},
-				} );
+				} ) as string;
 			}
 		}
 	}
