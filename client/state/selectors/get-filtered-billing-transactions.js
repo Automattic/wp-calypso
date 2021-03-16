@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { getLocaleSlug } from 'i18n-calypso';
-import { compact, flatMap, omit, slice, some, values } from 'lodash';
+import { compact, flatMap, omit, some, values } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -108,7 +108,7 @@ export default createSelector(
 		const total = results.length;
 
 		const pageIndex = page - 1;
-		results = slice( results, pageIndex * PAGE_SIZE, pageIndex * PAGE_SIZE + PAGE_SIZE );
+		results = results.slice( pageIndex * PAGE_SIZE, pageIndex * PAGE_SIZE + PAGE_SIZE );
 
 		return {
 			transactions: results,

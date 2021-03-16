@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, find, get, isEqual, map, orderBy, slice } from 'lodash';
+import { filter, find, get, isEqual, map, orderBy } from 'lodash';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import CSSTransition from 'react-transition-group/CSSTransition';
 
@@ -81,7 +81,7 @@ export class CommentTree extends Component {
 
 	getCommentsPage = ( comments, page ) => {
 		const startingIndex = ( page - 1 ) * COMMENTS_PER_PAGE;
-		return slice( comments, startingIndex, startingIndex + COMMENTS_PER_PAGE );
+		return comments.slice( startingIndex, startingIndex + COMMENTS_PER_PAGE );
 	};
 
 	getEmptyMessage = () => {

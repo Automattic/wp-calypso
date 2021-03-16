@@ -434,6 +434,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/repeat': 'error',
 		'you-dont-need-lodash-underscore/reverse': 'error',
 		'you-dont-need-lodash-underscore/select': 'error',
+		'you-dont-need-lodash-underscore/slice': 'error',
 		'you-dont-need-lodash-underscore/split': 'error',
 		'you-dont-need-lodash-underscore/take-right': 'error',
 		'you-dont-need-lodash-underscore/to-lower': 'error',
