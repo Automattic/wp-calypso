@@ -39,6 +39,7 @@ module.exports = () => {
 	return [
 		new ESBuildMinifyPlugin( {
 			target: getTargets(),
+			format: 'iife',
 		} ),
 	];
 };
