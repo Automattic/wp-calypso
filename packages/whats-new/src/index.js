@@ -14,8 +14,7 @@ import proxyRequest from 'wpcom-proxy-request';
 import './style.scss';
 import WhatsNewPage from './whats-new-page';
 
-const WhatsNewGuide = () => {
-	const [ showGuide, setShowGuide ] = useState( true );
+const WhatsNewGuide = ( { toggleWhatsNew } ) => {
 	const [ whatsNewData, setWhatsNewData ] = useState( null );
 	const __ = useI18n().__;
 	const locale = useLocale();
@@ -31,9 +30,7 @@ const WhatsNewGuide = () => {
 			} );
 	}, [ locale ] );
 
-	const toggleWhatsNew = () => setShowGuide( false );
-
-	if ( ! ( whatsNewData && showGuide ) ) return null;
+	if ( ! whatsNewData ) return null;
 
 	return (
 		<Guide
