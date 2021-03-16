@@ -145,11 +145,7 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_timeline_block' );
 function load_common_module() {
 	require_once __DIR__ . '/common/index.php';
 }
-// Use a custom priority so that the common code is loaded before any of
-// the other modules. This way it can be called very early in the other
-// modules (e.g. during `__construct`). The default priority is 10, so
-// using 9 to load just before.
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_common_module', 9 );
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_common_module' );
 
 /**
  * Load Editor Site Launch.
