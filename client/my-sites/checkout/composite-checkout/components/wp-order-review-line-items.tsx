@@ -644,7 +644,7 @@ function IntroductoryOfferCallout( {
 	product: ResponseCartProduct;
 } ): JSX.Element | null {
 	const translate = useTranslate();
-	let text = translate( 'Discount for first period' ) as string;
+	let text = String( translate( 'Discount for first period' ) );
 	if ( ! product.introductory_offer_terms?.enabled ) {
 		return null;
 	}
@@ -655,47 +655,55 @@ function IntroductoryOfferCallout( {
 	if ( product.cost === 0 ) {
 		if ( intervalUnit === 'month' ) {
 			if ( intervalCount === 1 ) {
-				text = translate( 'First month free' ) as string;
+				text = String( translate( 'First month free' ) );
 			} else {
-				text = translate( 'First %(numberOfMonths)d months free', {
-					args: {
-						numberOfMonths: intervalCount,
-					},
-				} ) as string;
+				text = String(
+					translate( 'First %(numberOfMonths)d months free', {
+						args: {
+							numberOfMonths: intervalCount,
+						},
+					} )
+				);
 			}
 		}
 		if ( intervalUnit === 'year' ) {
 			if ( intervalCount === 1 ) {
-				text = translate( 'First year free' ) as string;
+				text = String( translate( 'First year free' ) );
 			} else {
-				text = translate( 'First %(numberOfYears)d years free', {
-					args: {
-						numberOfYears: intervalCount,
-					},
-				} ) as string;
+				text = String(
+					translate( 'First %(numberOfYears)d years free', {
+						args: {
+							numberOfYears: intervalCount,
+						},
+					} )
+				);
 			}
 		}
 	} else {
 		if ( intervalUnit === 'month' ) {
 			if ( intervalCount === 1 ) {
-				text = translate( 'Discount for first month' ) as string;
+				text = String( translate( 'Discount for first month' ) );
 			} else {
-				text = translate( 'Discount for first %(numberOfMonths)d months', {
-					args: {
-						numberOfMonths: intervalCount,
-					},
-				} ) as string;
+				text = String(
+					translate( 'Discount for first %(numberOfMonths)d months', {
+						args: {
+							numberOfMonths: intervalCount,
+						},
+					} )
+				);
 			}
 		}
 		if ( intervalUnit === 'year' ) {
 			if ( intervalCount === 1 ) {
-				text = translate( 'Discount for first year' ) as string;
+				text = String( translate( 'Discount for first year' ) );
 			} else {
-				text = translate( 'Discount for first %(numberOfYears)d years', {
-					args: {
-						numberOfYears: intervalCount,
-					},
-				} ) as string;
+				text = String(
+					translate( 'Discount for first %(numberOfYears)d years', {
+						args: {
+							numberOfYears: intervalCount,
+						},
+					} )
+				);
 			}
 		}
 	}
