@@ -653,33 +653,11 @@ function IntroductoryOfferCallout( {
 	const intervalCount = product.introductory_offer_terms.interval_count;
 
 	if ( product.cost === 0 ) {
-		if ( intervalUnit === 'day' ) {
-			if ( intervalCount === 1 ) {
-				text = translate( 'Free for first day' );
-			} else {
-				text = translate( 'Free for first %(numberOfDays)d days', {
-					args: {
-						numberOfDays: intervalCount,
-					},
-				} );
-			}
-		}
-		if ( intervalUnit === 'week' ) {
-			if ( intervalCount === 1 ) {
-				text = translate( 'Free for first week' );
-			} else {
-				text = translate( 'Free for first %(numberOfWeeks)d weeks', {
-					args: {
-						numberOfWeeks: intervalCount,
-					},
-				} );
-			}
-		}
 		if ( intervalUnit === 'month' ) {
 			if ( intervalCount === 1 ) {
-				text = translate( 'Free for first month' );
+				text = translate( 'First month free' );
 			} else {
-				text = translate( 'Free for first %(numberOfMonths)d months', {
+				text = translate( 'First %(numberOfMonths)d months free', {
 					args: {
 						numberOfMonths: intervalCount,
 					},
@@ -688,9 +666,9 @@ function IntroductoryOfferCallout( {
 		}
 		if ( intervalUnit === 'year' ) {
 			if ( intervalCount === 1 ) {
-				text = translate( 'Free for first year' );
+				text = translate( 'First year free' );
 			} else {
-				text = translate( 'Free for first %(numberOfYears)d years', {
+				text = translate( 'First %(numberOfYears)d years free', {
 					args: {
 						numberOfYears: intervalCount,
 					},
@@ -698,28 +676,6 @@ function IntroductoryOfferCallout( {
 			}
 		}
 	} else {
-		if ( intervalUnit === 'day' ) {
-			if ( intervalCount === 1 ) {
-				text = translate( 'Discount for first day' );
-			} else {
-				text = translate( 'Discount for first %(numberOfDays)d days', {
-					args: {
-						numberOfDays: intervalCount,
-					},
-				} );
-			}
-		}
-		if ( intervalUnit === 'week' ) {
-			if ( intervalCount === 1 ) {
-				text = translate( 'Discount for first week' );
-			} else {
-				text = translate( 'Discount for first %(numberOfWeeks)d weeks', {
-					args: {
-						numberOfWeeks: intervalCount,
-					},
-				} );
-			}
-		}
 		if ( intervalUnit === 'month' ) {
 			if ( intervalCount === 1 ) {
 				text = translate( 'Discount for first month' );
