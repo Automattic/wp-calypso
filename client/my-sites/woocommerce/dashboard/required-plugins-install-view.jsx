@@ -38,6 +38,7 @@ const TIME_TO_TRANSFER_UPLOADING = 5;
 const TIME_TO_TRANSFER_BACKFILLING = 25;
 const TIME_TO_TRANSFER_COMPLETE = 6;
 const TIME_TO_PLUGIN_INSTALLATION = 15;
+const TIME_TO_PLUGIN_ACTIVATION = 15;
 
 const transferStatusesToTimes = {};
 
@@ -92,7 +93,10 @@ class RequiredPluginsInstallView extends Component {
 			toActivate: [],
 			toInstall: [],
 			workingOn: '',
-			progress: automatedTransferStatus ? transferStatusesToTimes[ automatedTransferStatus ] : 0,
+			progress:
+				automatedTransferStatus && transferStates.COMPLETE === automatedTransferStatus
+					? transferStatusesToTimes[ automatedTransferStatus ]
+					: 0,
 			totalSeconds: this.getTotalSeconds(),
 		};
 		this.updateTimer = false;
@@ -111,6 +115,7 @@ class RequiredPluginsInstallView extends Component {
 
 	componentWillUnmount() {
 		this.destroyUpdateTimer();
+		this.destroyTimeoutTimer();
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -153,13 +158,12 @@ class RequiredPluginsInstallView extends Component {
 		}
 	};
 
-	createTimeoutTimer = () => {
+	createTimeoutTimer = ( durationSeconds ) => {
 		if ( this.timeoutTimer ) {
 			return;
 		}
 
-		// Timeout setup after 25 seconds.
-		this.timeoutTimer = window.setTimeout( this.timeoutElapsed, 25000 );
+		this.timeoutTimer = window.setTimeout( this.timeoutElapsed, durationSeconds * 1000 );
 	};
 
 	timeoutElapsed = () => {
@@ -188,6 +192,14 @@ class RequiredPluginsInstallView extends Component {
 		}
 	};
 
+	resetTimeoutTimer = ( durationInSeconds ) => {
+		if ( this.timeoutTimer ) {
+			this.destroyTimeoutTimer();
+		}
+
+		this.createTimeoutTimer( durationInSeconds );
+	};
+
 	doInitialization = () => {
 		const { fixMode, site, sitePlugins, wporgPlugins } = this.props;
 		const { workingOn } = this.state;
@@ -213,6 +225,8 @@ class RequiredPluginsInstallView extends Component {
 			this.setState( {
 				workingOn: 'WAITING_FOR_PLUGIN_LIST_FROM_SITE',
 			} );
+			// Progress: waiting for plugin list.
+			this.resetTimeoutTimer( transferStatusesToTimes[ transferStates.COMPLETE ] );
 			return;
 		}
 
@@ -241,6 +255,8 @@ class RequiredPluginsInstallView extends Component {
 			this.setState( {
 				workingOn: 'LOAD_PLUGIN_DATA',
 			} );
+			// Progress: load plugins data.
+			this.resetTimeoutTimer( transferStatusesToTimes[ transferStates.COMPLETE ] );
 			return;
 		}
 
@@ -307,6 +323,9 @@ class RequiredPluginsInstallView extends Component {
 				slug: workingOn,
 			};
 
+			// Progress: install a single plugin.
+			this.resetTimeoutTimer( TIME_TO_PLUGIN_INSTALLATION );
+			// installPlugin actually activates it too.
 			this.props.installPlugin( site.ID, plugin );
 
 			this.setState( {
@@ -365,6 +384,8 @@ class RequiredPluginsInstallView extends Component {
 				return;
 			}
 
+			// Progress: activate a single plugin.
+			this.resetTimeoutTimer( TIME_TO_PLUGIN_ACTIVATION );
 			// Otherwise, activate!
 			this.props.activatePlugin( site.ID, pluginToActivate );
 
@@ -438,7 +459,7 @@ class RequiredPluginsInstallView extends Component {
 			this.setState( {
 				engineState: 'INITIALIZING',
 			} );
-			this.createTimeoutTimer();
+			this.resetTimeoutTimer( transferStatusesToTimes[ transferStates.COMPLETE ] );
 		}
 	};
 
@@ -519,11 +540,6 @@ class RequiredPluginsInstallView extends Component {
 
 		const subtitle = [
 			<p key="line-1">
-				{ translate( 'Sorry, we had a problem setting up your store.', {
-					components: { b: <strong /> },
-				} ) }
-			</p>,
-			<p key="line-2">
 				{ translate( "Please contact support and we'll get your store up and running!" ) }
 			</p>,
 		];
@@ -534,7 +550,7 @@ class RequiredPluginsInstallView extends Component {
 					<SetupHeader
 						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
 						imageWidth={ 160 }
-						title={ translate( "We can't set up your store" ) }
+						title={ translate( 'We were unable to set up your store.' ) }
 						subtitle={ subtitle }
 					>
 						<Button primary href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer">
