@@ -452,6 +452,7 @@ export default function CompositeCheckout( {
 			createUserAndSiteBeforeTransaction,
 			stripeConfiguration,
 			reduxDispatch,
+			responseCart,
 		} ),
 		[
 			includeDomainDetails,
@@ -460,6 +461,7 @@ export default function CompositeCheckout( {
 			createUserAndSiteBeforeTransaction,
 			stripeConfiguration,
 			reduxDispatch,
+			responseCart,
 		]
 	);
 	const dataForRedirectProcessor = useMemo(
@@ -521,11 +523,10 @@ export default function CompositeCheckout( {
 					dataForProcessor
 				),
 			paypal: ( transactionData: unknown ) =>
-				payPalProcessor( transactionData, { ...dataForRedirectProcessor, couponItem } ),
+				payPalProcessor( transactionData, dataForRedirectProcessor ),
 		} ),
 		[
 			siteId,
-			couponItem,
 			dataForProcessor,
 			dataForRedirectProcessor,
 			transactionOptions,
