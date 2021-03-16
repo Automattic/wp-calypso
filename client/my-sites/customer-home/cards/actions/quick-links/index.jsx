@@ -144,7 +144,7 @@ export const QuickLinks = ( {
 				href="https://wp.me/logo-maker"
 				onClick={ trackDesignLogoAction }
 				target="_blank"
-				label={ translate( 'Create a logo with BuildMyLogo' ) }
+				label={ translate( 'Create a logo' ) }
 				external
 				iconSrc={ logotronIcon }
 			/>

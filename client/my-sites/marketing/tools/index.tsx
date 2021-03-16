@@ -119,7 +119,7 @@ export const MarketingTools: FunctionComponent = () => {
 				<MarketingToolsFeature
 					title={ translate( 'Want to build a great brand? Start with a great logo' ) }
 					description={ translate(
-						'A custom logo helps your brand pop and makes your site memorable. Make a professional logo in a few clicks with our partner BuildMyLogo.'
+						'A custom logo helps your brand pop and makes your site memorable. Make a professional logo in a few clicks with our partner today.'
 					) }
 					imagePath={ logotronLogo }
 				>
