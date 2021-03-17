@@ -74,7 +74,9 @@ export function CloudflareAnalyticsSettings( {
 	};
 
 	const recordSupportLinkClick = () => {
-		trackTracksEvent( 'calypso_traffic_settings_cloudflare_support_click' );
+		trackTracksEvent( 'calypso_traffic_settings_cloudflare_support_click', {
+			plan: site.plan.product_slug,
+		} );
 	};
 
 	const handleCodeChange = ( event ) => {
@@ -109,8 +111,14 @@ export function CloudflareAnalyticsSettings( {
 			handleFieldChange( '', () => {
 				handleSubmitForm();
 			} );
+			trackTracksEvent( 'calypso_traffic_settings_cloudflare_disable_cloudflare', {
+				plan: site.plan.product_slug,
+			} );
 		} else {
 			setIsCloudflareEnabled( true );
+			trackTracksEvent( 'calypso_traffic_settings_cloudflare_enable_cloudflare', {
+				plan: site.plan.product_slug,
+			} );
 		}
 	};
 
