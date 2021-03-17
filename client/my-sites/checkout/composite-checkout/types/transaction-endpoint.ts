@@ -114,10 +114,12 @@ export type WPCOMTransactionEndpointCart = {
 };
 
 export type WPCOMTransactionEndpointCartItem = {
+	product_slug: string;
 	product_id: number;
 	meta?: string;
 	currency: string;
 	volume: number;
+	quantity: number | null;
 	extra?: ResponseCartProductExtra;
 };
 
