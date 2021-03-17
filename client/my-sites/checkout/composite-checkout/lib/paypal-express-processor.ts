@@ -34,6 +34,7 @@ export default async function payPalProcessor(
 		includeDomainDetails,
 		includeGSuiteDetails,
 		responseCart,
+		siteId,
 	} = transactionOptions;
 	recordTransactionBeginAnalytics( {
 		reduxDispatch,
@@ -60,7 +61,7 @@ export default async function payPalProcessor(
 		responseCart,
 		successUrl,
 		cancelUrl,
-		siteId: select( 'wpcom' )?.getSiteId?.() ?? '',
+		siteId,
 		couponId: responseCart.coupon,
 		country: managedContactDetails?.countryCode?.value ?? '',
 		postalCode: getPostalCode(),
@@ -83,7 +84,7 @@ async function wpcomPayPalExpress(
 
 			// If the account is already created(as happens when we are reprocessing after a transaction error), then
 			// the create account response will not have a site ID, so we fetch from state.
-			const siteId = siteIdFromResponse || select( 'wpcom' )?.getSiteId();
+			const siteId = siteIdFromResponse || transactionOptions.siteId;
 			const newPayload = {
 				...payload,
 				siteId,
@@ -115,7 +116,7 @@ function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 }: {
 	successUrl: string;
 	cancelUrl: string;
-	siteId: string;
+	siteId: string | number | undefined;
 	couponId: string;
 	country: string;
 	postalCode: string;
@@ -127,7 +128,7 @@ function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		successUrl,
 		cancelUrl,
 		cart: createTransactionEndpointCartFromResponseCart( {
-			siteId,
+			siteId: siteId ? String( siteId ) : undefined,
 			couponId,
 			country,
 			postalCode,
