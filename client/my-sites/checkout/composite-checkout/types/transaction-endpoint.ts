@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import type { ResponseCartProductExtra } from '@automattic/shopping-cart';
+import type { RequestCartProduct } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -103,7 +103,7 @@ export type WPCOMTransactionEndpointCart = {
 	currency: string;
 	temporary: false;
 	extra: string[];
-	products: WPCOMTransactionEndpointCartItem[];
+	products: RequestCartProduct[];
 	tax: {
 		location: {
 			country_code: string;
@@ -111,15 +111,6 @@ export type WPCOMTransactionEndpointCart = {
 			subdivision_code?: string;
 		};
 	};
-};
-
-export type WPCOMTransactionEndpointCartItem = {
-	product_id: number;
-	meta?: string;
-	currency: string;
-	volume: number;
-	extra?: ResponseCartProductExtra;
-	quantity: number | null;
 };
 
 export type WPCOMTransactionEndpointResponse = {
