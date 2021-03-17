@@ -6,12 +6,11 @@ This is the React Interface for the standalone client for Automattic's ExPlat. T
 
 ### Type signature
 
-`Experiment: (name: string, defaultExperience, treatmentExperience, loadingExperience) => JSX.Element
-`
+`Experiment: (name: string, defaultExperience, treatmentExperience, loadingExperience) => JSX.Element `
 
 ### Usage
 
-```js
+```
 <Experiment
 	name="experiment_name"
 	defaultExperience={ <DefaultComponent /> }
@@ -31,17 +30,15 @@ This is the React Interface for the standalone client for Automattic's ExPlat. T
 
 ### Usage
 
-```js
-const [isLoadingExperimentAssignment, experimentAssignment] = useExperiment('experiment_name')
+```
+const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment( 'experiment_name' );
 
-if (isLoadingExperimentAssignment) {
-    // Show loading experience
+if ( isLoadingExperimentAssignment ) {
+	// Show loading experience
+} else if ( experimentAssignment.variationName ) {
+	// Provide treatment experience
 } else {
-    if (experimentAssignment.variationName) {
-        // Provide treatment experience
-    } else {
-        // Provide default experience
-    }
+	// Provide default experience
 }
 ```
 
@@ -57,7 +54,7 @@ if (isLoadingExperimentAssignment) {
 
 ### Usage
 
-```js
+```
 <ProvideExperimentData 
     name="experiment_name"
     >

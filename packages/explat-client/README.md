@@ -28,7 +28,7 @@ This type will likely be extended, it can also be missing in some API functions,
 
 ### Usage
 
-```js
+```
 const experimentAssignment = await loadExperimentAssignment('experiment_name')
 ```
 
@@ -47,18 +47,17 @@ const experimentAssignment = await loadExperimentAssignment('experiment_name')
 
 ### Usage
 
-```js
+```
 // An experiment MUST be loaded beforehand:
-loadExperimentAssignment('experiment_name')
+loadExperimentAssignment( 'experiment_name' );
 
 // Then, significantly enough in the future for the loading to have occurred:
 try {
-    const experimentAssignment = dangerouslyGetExperimentAssignment('experiment_name')
-} catch (e) {
-    // You need to ensure that this will happen very rarely, we use throwing and a try catch block
-    // to indicate that this is the exception rather than the norm.
-
-    // You MAY want to provide the default experience here.
+	const experimentAssignment = dangerouslyGetExperimentAssignment( 'experiment_name' );
+} catch ( e ) {
+	// You need to ensure that this will happen very rarely, we use throwing and a try catch block
+	// to indicate that this is the exception rather than the norm.
+	// You MAY want to provide the default experience here.
 }
 ```
 
