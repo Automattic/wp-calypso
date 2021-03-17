@@ -23,6 +23,6 @@
 }
 
 /* Remove bottom border of last FAQ element */
-.mapping-instructions div:last-of-type .foldable-faq__answer {
+.mapping-instructions > div:last-of-type .foldable-faq__answer {
 	border-bottom: 0;
 }
