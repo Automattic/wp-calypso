@@ -5,7 +5,6 @@ import './public-path';
 /**
  * External dependencies
  */
-import { Guide, GuidePage } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
@@ -14,13 +13,11 @@ import apiFetch from '@wordpress/api-fetch';
 /**
  * Internal dependencies
  */
-import WpcomNux from './welcome-modal/wpcom-nux';
 import LaunchWpcomWelcomeTour from './welcome-tour/tour-launch';
 
 registerPlugin( 'wpcom-block-editor-nux', {
 	render: function WpcomBlockEditorNux() {
-		const { site, isWpcomNuxEnabled, isSPTOpen } = useSelect( ( select ) => ( {
-			site: select( 'automattic/site' ).getSite( window._currentSiteId ),
+		const { isWpcomNuxEnabled, isSPTOpen } = useSelect( ( select ) => ( {
 			isWpcomNuxEnabled: select( 'automattic/nux' ).isWpcomNuxEnabled(),
 			isSPTOpen:
 				select( 'automattic/starter-page-layouts' ) && // Handle the case where SPT is not initalized.
@@ -47,16 +44,6 @@ registerPlugin( 'wpcom-block-editor-nux', {
 			return null;
 		}
 
-		const isPodcastingSite = !! site?.options?.anchor_podcast;
-		// podcasting sites need to update their onboarding content to Tour format, then NUX Modal code can be removed
-		if ( ! isPodcastingSite ) {
-			return <LaunchWpcomWelcomeTour />;
-		}
-
-		if ( Guide && GuidePage ) {
-			return <WpcomNux />;
-		}
-
-		return null;
+		return <LaunchWpcomWelcomeTour />;
 	},
 } );
