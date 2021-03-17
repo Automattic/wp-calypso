@@ -35,7 +35,7 @@ const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment( '
 
 if ( isLoadingExperimentAssignment ) {
 	// Show loading experience
-} else if ( experimentAssignment.variationName ) {
+} else if ( experimentAssignment.variationName === 'treatment' ) {
 	// Provide treatment experience
 } else {
 	// Provide default experience
