@@ -17,11 +17,13 @@ import PropTypes from 'prop-types';
  */
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import MySitesSidebarUnifiedStatsSparkline from './sparkline';
 import {
 	collapseAllMySitesSidebarSections,
 	expandMySitesSidebarSection,
 } from 'calypso/state/my-sites/sidebar/actions';
+import { urlToEventName } from './helpers';
 
 export const MySitesSidebarUnifiedItem = ( {
 	count,
@@ -39,6 +41,10 @@ export const MySitesSidebarUnifiedItem = ( {
 	const reduxDispatch = useDispatch();
 
 	const onNavigate = () => {
+		if ( url ) {
+			const eventName = urlToEventName( url );
+			eventName && recordTracksEvent( eventName );
+		}
 		reduxDispatch( collapseAllMySitesSidebarSections() );
 		reduxDispatch( expandMySitesSidebarSection( sectionId ) );
 	};

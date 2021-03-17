@@ -24,11 +24,13 @@ import {
 	collapseAllMySitesSidebarSections,
 } from 'calypso/state/my-sites/sidebar/actions';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import MySitesSidebarUnifiedItem from './item';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import { isExternal } from 'calypso/lib/url';
 import { externalRedirect } from 'calypso/lib/route/path';
 import { itemLinkMatches } from '../sidebar/utils';
+import { urlToEventName } from './helpers';
 
 export const MySitesSidebarUnifiedMenu = ( {
 	count,
@@ -68,6 +70,9 @@ export const MySitesSidebarUnifiedMenu = ( {
 	const onClick = () => {
 		if ( isWithinBreakpoint( '>782px' ) ) {
 			if ( link ) {
+				const eventName = urlToEventName( link );
+				eventName && recordTracksEvent( eventName );
+
 				if ( ! continueInCalypso( link ) ) {
 					return;
 				}
@@ -87,7 +92,6 @@ export const MySitesSidebarUnifiedMenu = ( {
 				reduxDispatch( collapseAllMySitesSidebarSections() );
 			}
 		}
-
 		reduxDispatch( toggleSection( sectionId ) );
 	};
 

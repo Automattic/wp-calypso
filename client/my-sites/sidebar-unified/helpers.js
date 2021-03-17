@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { isSubdomain, isDomain } from 'calypso/lib/domains';
+import { isExternal } from 'calypso/lib/url';
 
 // Because of the unified nav, we need to maintain some existing event names which are being used in funnels. See https://github.com/Automattic/wp-calypso/issues/50847#issuecomment-800258221
 function mapEvents( event ) {
@@ -18,7 +19,8 @@ function mapEvents( event ) {
 }
 
 export function urlToEventName( url ) {
-	if ( typeof url !== 'string' ) {
+	// TODO: Find a solution to tracking non-Calypso links (e.g. WP Admin links).
+	if ( typeof url !== 'string' || isExternal( url ) ) {
 		return null;
 	}
 
