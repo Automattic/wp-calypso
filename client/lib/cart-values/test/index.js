@@ -54,22 +54,6 @@ describe( 'index', () => {
 				assert.deepEqual( newCart, expectedCart );
 			} );
 		} );
-
-		describe( 'cartItems.remove( cartItem )', () => {
-			test( 'should remove the cartItem from the products array', () => {
-				const initialCart = {
-					blog_id: TEST_BLOG_ID,
-					products: [ PREMIUM_PRODUCT, DOMAIN_REGISTRATION_PRODUCT ],
-				};
-				const newCart = cartItems.remove( initialCart.products[ 0 ] )( initialCart );
-				const expectedCart = {
-					blog_id: TEST_BLOG_ID,
-					products: [ DOMAIN_REGISTRATION_PRODUCT ],
-				};
-
-				assert.deepEqual( newCart, expectedCart );
-			} );
-		} );
 	} );
 
 	describe( 'cartItems.hasProduct( cart, productSlug )', () => {
