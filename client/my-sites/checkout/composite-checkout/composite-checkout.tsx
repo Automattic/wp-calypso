@@ -503,7 +503,7 @@ export default function CompositeCheckout( {
 					} ),
 					dataForProcessor
 				),
-			paypal: ( transactionData: unknown ) => payPalProcessor( transactionData, dataForProcessor ),
+			paypal: () => payPalProcessor( dataForProcessor ),
 		} ),
 		[
 			siteId,
