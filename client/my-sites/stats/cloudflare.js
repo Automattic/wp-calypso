@@ -44,6 +44,7 @@ const Cloudflare = () => {
 					iconPath={ cloudflareIllustration }
 					showIcon={ true }
 					tracksImpressionName="calypso_stats_cloudflare_banner_view"
+					tracksClickProperties={ { plan: sitePlan } }
 				/>
 			) }
 			{ !! sitePlan && showUpsell && (
@@ -55,6 +56,7 @@ const Cloudflare = () => {
 					customerType="business"
 					tracksImpressionName="calypso_stats_cloudflare_upsell_view"
 					event="calypso_stats_cloudflare_analytics_upsell_nudge_click"
+					tracksClickProperties={ { plan: sitePlan } }
 					showIcon={ true }
 					callToAction={ translate( 'Upgrade' ) }
 				/>
