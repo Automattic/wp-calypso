@@ -71,12 +71,11 @@ export function addReducer( origReducer, reducers ) {
 }
 
 /**
- * Returns a single reducing function that ensures that persistence is opt-in.
- * If you don't need state to be stored, simply use this method instead of
- * combineReducers from redux. This function uses the same interface.
- * *
+ * Returns a single reducer function that ensures that persistence is opt-in and that
+ * has support for adding reducers dynamically.
  *
  * @example
+ * ```js
  * const age = ( state = 0, action ) =>
  *     GROW === action.type
  *         ? state + 1
@@ -91,43 +90,48 @@ export function addReducer( origReducer, reducers ) {
  *     height
  * } );
  *
- * combinedReducer( { age: -5, height: -5 } ), { type: DESERIALIZE } ); // { age: 0, height: 150 };
- * combinedReducer( { age: -5, height: 123 } ), { type: DESERIALIZE } ); // { age: 0, height: 150 };
- * combinedReducer( { age:  6, height: 123 } ), { type: DESERIALIZE } ); // { age: 6, height: 150 };
- * combinedReducer( { age:  6, height: 123 } ), { type: SERIALIZE } ); // { age: 6, height: 150 };
- * combinedReducer( { age:  6, height: 123 } ), { type: GROW } ); // { age: 7, height: 124 };
+ * // returns `{ age: 0, height: 150 }`, the initial state
+ * deserialize( combinedReducer, { age: 6, height: 123 } );
+ * // returns `undefined`, no serialization
+ * serialize( combinedReducer, { age: 6, height: 123 } );
+ * // returns `{ age: 7, height: 124 }`, handling a normal action
+ * combinedReducer( { age:  6, height: 123 } ), { type: GROW } );
+ * ```
  *
- * If the reducer explicitly handles the SERIALIZE and DESERIALIZE actions, set
- * the hasCustomPersistence property to true on the reducer.
+ * Persistence must be enabled explicitly with the `withPersistence` helper.
  *
  * @example
- * const date = ( state = new Date( 0 ), action ) => {
- * 	switch ( action.type ) {
- * 		case 'GROW':
- * 			return new Date( state.getTime() + 1 );
- * 		case SERIALIZE:
- * 			return state.getTime();
- * 		case DESERIALIZE:
- * 			if ( isValidStateWithSchema( state, schema ) ) {
- * 				return new Date( state );
- * 			}
- * 			return new Date( 0 );
- * 		default:
- * 			return state;
- * 	}
- * };
- * date.hasCustomPersistence = true;
+ * ```js
+ * const date = withPersistence(
+ *   ( state = new Date( 0 ), action ) => {
+ *     switch ( action.type ) {
+ *       case 'GROW':
+ *         return new Date( state.getTime() + 1 );
+ *       default:
+ *         return state;
+ *   },
+ *   {
+ *     serialize: state => state.getTime(),
+ *     deserialize: persisted => {
+ *       if ( isValidStateWithSchema( persisted, schema ) ) {
+ *         return new Date( persisted );
+ *       }
+ *       return new Date( 0 );
+ *     },
+ *   }
+ * );
  *
  * const combinedReducer = combineReducers( {
  *     date,
  *     height
  * } );
  *
- * combinedReducer( { date: -5, height: -5 } ), { type: DESERIALIZE } ); // { date: new Date( 0 ), height: 150 };
- * combinedReducer( { date: -5, height: 123 } ), { type: DESERIALIZE } ); // { date: new Date( 0 ), height: 150 };
- * combinedReducer( { date:  6, height: 123 } ), { type: DESERIALIZE } ); // { date: new Date( 6 ), height: 150 };
- * combinedReducer( { date: new Date( 6 ), height: 123 } ), { type: SERIALIZE } ); // { date: 6, height: 150 };
+ * deserialize( combinedReducer, { date: -5, height: -5 } ); // { date: new Date( 0 ), height: 150 };
+ * deserialize( combinedReducer, { date: -5, height: 123 } ); // { date: new Date( 0 ), height: 150 };
+ * deserialize( combinedReducer, { date:  6, height: 123 } ); // { date: new Date( 6 ), height: 150 };
+ * serialize( combinedReducer, { date: new Date( 6 ), height: 123 } ); // { date: 6 };
  * combinedReducer( { date: new Date( 6 ), height: 123 } ), { type: GROW } ); // { date: new Date( 7 ), height: 124 };
+ * ```
  *
  * @param {object} reducers - object containing the reducers to merge
  * @returns {Function} - Returns the combined reducer function
@@ -187,10 +191,11 @@ function getStorageKeys( reducers ) {
 	};
 }
 
-// SERIALIZE needs behavior that's slightly different from `combineReducers` from Redux:
-// - `undefined` is a valid value returned from SERIALIZE reducer, but `combineReducers`
+// State serialization is very similar to running a reducer on the state, except some behaviors
+// that are slightly different from `combineReducers` from Redux:
+// - `undefined` is a valid value returned from `serialize()`, but `combineReducers`
 //   would throw an exception when seeing it.
-// - if a particular subreducer returns `undefined`, then that property won't be included
+// - if a particular subreducer serializes to `undefined`, then that property won't be included
 //   in the result object at all.
 // - if none of the subreducers produced anything to persist, the combined result will be
 //   `undefined` rather than an empty object.

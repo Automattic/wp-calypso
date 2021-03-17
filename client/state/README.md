@@ -144,38 +144,7 @@ state.users ===
 
 dispatch( { type: DELETE, username: 'hunter02' } );
 
-state.users === {};
-```
-
-Finally, it's sometimes desirable to apply specific actions to all items in the collection.
-In these cases we can tell the `keyedReducer` which actions are in this class.
-Even without the necessary key in the action they will still get applied.
-For example, each item may have a custom persistence need or an action may have related data which is applicable to the items being reduced in this collection.
-
-For these cases we can simply add in a list of global action types.
-
-```js
-const hexPersister = ( state = 0, { type } ) => {
-	switch ( type ) {
-		case INCREMENT:
-			return state + 1;
-
-		case DECREMENT:
-			return state - 1;
-
-		case DESERIALIZE:
-			return parseInt( state, 16 );
-
-		case SERIALIZE:
-			return state.toString( 16 );
-
-		default:
-			return state;
-	}
-};
-
-const hexNumbers = keyedReducer( 'counterId', hexPersister, [ DESERIALIZE, SERIALIZE ] );
-hexNumbers.hasCustomPersistence = true;
+expect( state.users ).toEqual( {} );
 ```
 
 ### withSchemaValidation( schema, reducer )
@@ -185,18 +154,20 @@ If that state was saved from an old version of the reducer code it could be inco
 Thankfully we are given the ability to validate the schema and conditionally load the persisted state only if it's valid.
 
 This helper produces a new reducer given an original reducer and schema.
-The new reducer will automatically validate the persisted state when Calypso loads and reinitialize if it isn't valid.
+The new reducer will automatically validate the persisted state when Calypso loads and will default to initial state if it isn't valid.
 
 #### Example
 
 ```js
-const ageReducer = ( state = 0, action ) => ( GROW === action.type ? state + 1 : state );
+const ageReducer = withPersistence(
+	( state = 0, action ) => ( GROW === action.type ? state + 1 : state )
+);
 
 const schema = { type: 'number', minimum: 0 };
 
 export const age = withSchemaValidation( schema, ageReducer );
 
-ageReducer( -5, { type: DESERIALIZE } ) === -5;
-age( -5, { type: DESERIALIZE } ) === 0;
-age( 23, { type: DESERIALIZE } ) === 23;
+deserialize( ageReducer, -5 ) === -5;
+deserialize( age, -5 ) === 0;
+deserialize( age, 23 ) === 23;
 ```

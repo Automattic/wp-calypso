@@ -21,8 +21,8 @@ The implementation details for theses solutions are discussed in detail below.
 ## Opt-in to Persistence
 
 Note that we opt-in to persistence simply by wrapping the reducer with `withSchemaValidation`.
-`withSchemaValidation` returns a wrapped reducer that validates on `DESERIALIZE` if a schema is present and returns
-initial state on both `SERIALIZE` and `DESERIALIZE` if a schema is not present. [Implementaion](#problem-subtrees-may-contain-class-instances) of `SERIALIZE` and `DESERIALIZE` to handle subtrees with class instances is discussed below.
+`withSchemaValidation` returns a wrapped reducer that validates on `deserialize()` and returns
+initial state on `deserialize()` when the state doesn't match the schema. [Implementation](#problem-subtrees-may-contain-class-instances) of custom `serialize()` and `deserialize()` to handle subtrees with class instances is discussed below.
 
 In Calypso, we combine all of our reducers using `combineReducers` from `state/utils` at every level of the tree instead
 of the default implementation of [combineReducers](http://redux.js.org/docs/api/combineReducers.html) from `redux`.
@@ -46,19 +46,6 @@ return combineReducers( {
 } );
 ```
 
-For a reducer that has custom handlers (needs to perform transforms), we assume the reducer is checking the schema already,
-on `DESERIALIZE` so all we need to do is set a boolean bit on the reducer, to ensure that we don't return initial state
-incorrectly from the default handling provided by `withSchemaValidation`.
-
-```javascript
-date.hasCustomPersistence = true;
-return combineReducers( {
-	age,
-	height,
-	date,
-} );
-```
-
 ### Not persisting data
 
 Some subtrees may choose to never persist data. One such example of this is our online connection state. If connection
@@ -73,65 +60,47 @@ Subtrees may contain class instances. In some cases this is expected, because ce
 Immutable.js. Other subtrees use specialized classes like [QueryManager](https://github.com/Automattic/wp-calypso/tree/HEAD/client/lib/query-manager)
 whose instances are stored in Redux state. However, IndexedDB storage requires that objects be serialized and thus attempting to store a class instance in IndexedDB will throw an error. We must create a custom solution to serialize these classes before saving to IndexedDB.
 
-[#### Solution: SERIALIZE and DESERIALIZE actions](#solution-serialize-deserialize)
+[#### Solution: custom `serialize` and `deserialize` methods](#solution-serialize-deserialize)
 
-To work around this we create two special action types: `SERIALIZE` and `DESERIALIZE`. These actions are not dispatched,
-but are instead used with the reducer directly to prepare state to be serialized to browser storage, and for
-deserializing persisted state to an acceptable initialState for the Redux store.
+To work around this we can assign two special methods to the reducer function: `serialize` and `deserialize`. They are called either to prepare state to be serialized to browser storage, or to deserialize persisted state to an acceptable `initialState` for the Redux store.
 
-```javascript
-reducer( reduxStore.getState(), { type: 'SERIALIZE' } );
+```js
+serialize( reducer, reduxStore.getState() );
 ```
 
 and
 
-```javascript
-reducer( browserState, { type: 'DESERIALIZE' } );
+```js
+deserialize( reducer, browserState );
 ```
 
-Because browser storage is only capable of storing simple JavaScript objects, the purpose of the `SERIALIZE` action
-type reducer handler is to return a plain object representation. In a subtree that uses Immutable.js it should be
-similar to:
-
-```javascript
-export function items( state = defaultState, action ) {
-	switch ( action.type ) {
-		case ACCOUNT_RECOVERY_SETTINGS_UPDATE:
-			return; // ...
-		case SERIALIZE:
-			return state.toJS();
-		default:
-			return state;
-	}
-}
-items.hasCustomPersistence = true;
-```
-
-Be sure to set `hasCustomPersistence` to true, in order to indicate that you have special handling for these actions.
+Because browser storage is only capable of storing simple JavaScript objects, the purpose of the `serialize` method
+on the reducer is to return a plain object representation.
 
 In turn, when the store instance is initialized with the browser storage copy of state, you can convert
-your subtree state back to its expected format from the `DESERIALIZE` handler. In a subtree that uses Immutable.js
-instead of returning a plain object, we create an Immutable.js instance:
+your subtree state back to its expected format by the `deserialize` method.
 
-```javascript
-export function items( state = defaultState, action ) {
-	switch ( action.type ) {
-		case THEMES_RECEIVE:
-			return; // ...
-		case DESERIALIZE:
-			return fromJS( state );
-		default:
-			return state;
+In a subtree that uses Immutable.js, we serialize to a plain object and deserialize into an Immutable.js instance:
+
+```js
+const items = withPersistence(
+	( state = defaultState, action ) => {
+		switch ( action.type ) {
+			case ACCOUNT_RECOVERY_SETTINGS_UPDATE:
+				return; // ...
+			default:
+				return state;
+		}
+	},
+	{
+		serialize: state => state.toJS(),
+		deserialize: persisted => Immutable.fromJS( persisted ),
 	}
-}
-items.hasCustomPersistence = true;
+} );
 ```
 
-Once again, be sure to set `hasCustomPersistence` to true, in order to indicate that you have special handling for
-these actions.
-
 If your reducer state can be serialized by the browser without additional work (e.g. a plain object, string or boolean),
-the `SERIALIZE` and `DESERIALIZE` handlers are not needed. However, please note that the subtree can still see errors
+the `serialize` and `deserialize` methods are not needed. However, please note that the subtree can still see errors
 from changing data shapes, as described below.
 
 #### Problem: Data shapes change over time ( [#3101](https://github.com/Automattic/wp-calypso/pull/3101) )
@@ -195,9 +164,9 @@ export const items = withSchemaValidation( itemsSchema, ( state = defaultState, 
 } );
 ```
 
-If you are not satisfied with the default handling, it is possible to implement your own `SERIALIZE` and
-`DESERIALIZE` action handlers in your reducers to customize data persistence. Always use a schema with your custom
-handlers to avoid data shape errors.
+If you are not satisfied with the default handling, it is possible to further wrap the inner reducer with
+`withPersistence` and implement your own `serialize` and `deserialize` methods to customize data persistence.
+Always use a schema with your custom methods to avoid data shape errors.
 
 #### Problem: Some reducers are loaded dynamically
 
@@ -205,7 +174,7 @@ Dynamically loaded JS modules can add new reducers to the existing state tree. T
 not the same at all times. The initial reducer can be small and new reducers can be added as the user navigates to new
 parts of the app and new code modules are loaded at runtime.
 
-If we persist the state tree as one monolithic object, we run into trouble. To `DESERIALIZE` and check a stored
+If we persist the state tree as one monolithic object, we run into trouble. To `deserialize` and check a stored
 state subtree against a JSON schema, the corresponding reducer needs to be loaded and available.
 It's therefore not possible to load such a state subtree during Calypso boot.
 
