@@ -38,7 +38,7 @@ import { createReduxStore } from 'calypso/state';
 import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
 import { setStore } from 'calypso/state/redux-store';
 import initialReducer from 'calypso/state/reducer';
-import { DESERIALIZE, LOCALE_SET } from 'calypso/state/action-types';
+import { LOCALE_SET } from 'calypso/state/action-types';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { login } from 'calypso/lib/paths';
 import { logSectionResponse } from './analytics';
@@ -47,7 +47,7 @@ import { getLanguage, filterLanguageRevisions } from 'calypso/lib/i18n-utils';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-
+import { deserialize } from 'calypso/state/utils';
 import middlewareBuildTarget from '../middleware/build-target.js';
 import middlewareAssets from '../middleware/assets.js';
 import middlewareCache from '../middleware/cache.js';
@@ -59,7 +59,7 @@ const calypsoEnv = config( 'env_id' );
 // TODO: Re-use (a modified version of) client/state/initial-state#getInitialServerState here
 function getInitialServerState( serializedServerState ) {
 	// Bootstrapped state from a server-render
-	const serverState = initialReducer( serializedServerState, { type: DESERIALIZE } );
+	const serverState = deserialize( initialReducer, serializedServerState );
 	return pick( serverState, Object.keys( serializedServerState ) );
 }
 
