@@ -92,7 +92,7 @@
 		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
 		"@automattic/calypso-build": "^7.0.0",
 		"@automattic/composite-checkout": "^1.0.0",
-		"@automattic/data-stores": "^2.0.0-alpha.0",
+		"@automattic/data-stores": "^2.0.0",
 		"@automattic/domain-picker": "^1.0.0-alpha.0",
 		"@automattic/format-currency": "^1.0.0-alpha.0",
 		"@automattic/i18n-utils": "^1.0.0",
