@@ -439,6 +439,7 @@ export default function CompositeCheckout( {
 			recordEvent,
 			reduxDispatch,
 			responseCart,
+			siteId,
 			siteSlug,
 			stripeConfiguration,
 		} ),
@@ -450,6 +451,7 @@ export default function CompositeCheckout( {
 			recordEvent,
 			reduxDispatch,
 			responseCart,
+			siteId,
 			siteSlug,
 			stripeConfiguration,
 		]

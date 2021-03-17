@@ -21,4 +21,5 @@ export interface PaymentProcessorOptions {
 	responseCart: ResponseCart;
 	getThankYouUrl: GetThankYouUrl;
 	siteSlug: string | undefined;
+	siteId: number | undefined;
 }
