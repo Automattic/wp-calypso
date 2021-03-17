@@ -62,10 +62,7 @@ describe( 'Search for a domain and select a suggestion', () => {
 			/>
 		);
 
-		const selectDomainButtons = screen.getAllByText( 'Select', {
-			exact: true,
-			selector: 'button',
-		} );
+		const selectDomainButtons = screen.getAllByRole( 'button', { name: /select/i } );
 
 		// Expect as many buttons as there are suggestion items in the data
 		expect( selectDomainButtons ).toHaveLength(

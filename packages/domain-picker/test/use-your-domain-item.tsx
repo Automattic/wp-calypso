@@ -26,7 +26,7 @@ describe( '<UseYourDomainItem />', () => {
 
 		render( <UseYourDomainItem onClick={ onClick } /> );
 
-		fireEvent.click( screen.getByText( 'Use a domain I own' ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Use a domain I own' } ) );
 
 		expect( onClick ).toHaveBeenCalledTimes( 1 );
 	} );
