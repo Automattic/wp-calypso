@@ -18,18 +18,15 @@ import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites
 import DomainMappingInstructions from 'calypso/my-sites/domains/components/mapping-instructions';
 
 const DomainMappingDetails = ( {
-	domain,
-	domains,
 	isSubdomainMapping,
 	isRequestingDomainsDetails,
 	isRootDomainWithUs,
+	purchasedDomain,
 	siteId,
 } ) => {
 	if ( isSubdomainMapping && isRootDomainWithUs ) {
 		return null;
 	}
-
-	const purchasedDomain = getSelectedDomain( { domains, selectedDomainName: domain } );
 
 	const mappingInstructions = (
 		<DomainMappingInstructions
@@ -49,11 +46,12 @@ const DomainMappingDetails = ( {
 
 const mapStateToProps = ( state, { domain } ) => {
 	const selectedSite = getSelectedSite( state );
+	const domains = getDomainsBySiteId( state, selectedSite.ID );
 	return {
-		domains: getDomainsBySiteId( state, selectedSite.ID ),
 		isBusinessPlan: isBusiness( selectedSite.plan ),
 		isRequestingDomainsDetails: isRequestingSiteDomains( state, selectedSite.ID ),
 		isSubdomainMapping: isSubdomain( domain ),
+		purchasedDomain: getSelectedDomain( { domains, selectedDomainName: domain } ),
 		selectedSiteDomain: selectedSite.domain,
 		siteId: selectedSite.ID,
 	};
