@@ -94,7 +94,9 @@ class RequiredPluginsInstallView extends Component {
 			toInstall: [],
 			workingOn: '',
 			progress:
-				automatedTransferStatus && ! ( transferStates.COMPLETE === automatedTransferStatus ) // Complete status means we're skipping it altogether.
+				automatedTransferStatus &&
+				transferStatusesToTimes[ automatedTransferStatus ] &&
+				! ( transferStates.COMPLETE === automatedTransferStatus ) // Don't need to wait transfer, proceed with everything else.
 					? transferStatusesToTimes[ automatedTransferStatus ]
 					: 0,
 			totalSeconds: this.getTotalSeconds(),
