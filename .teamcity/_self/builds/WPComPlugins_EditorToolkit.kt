@@ -65,6 +65,7 @@ object WPComPlugins_EditorToolKit : BuildType({
 				# Install modules
 				yarn install
 			"""
+			dockerImage = "%docker_image_wpcom%"
 		}
 		bashNodeScript {
 			name = "Run JS tests"
@@ -75,6 +76,7 @@ object WPComPlugins_EditorToolKit : BuildType({
 				cd apps/editing-toolkit
 				yarn test:js --reporters=default --reporters=jest-junit --maxWorkers=${'$'}JEST_MAX_WORKERS
 			"""
+			dockerImage = "%docker_image_wpcom%"
 		}
 		bashNodeScript {
 			name = "Build artifacts"
@@ -88,6 +90,7 @@ object WPComPlugins_EditorToolKit : BuildType({
 				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php
 				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt
 			"""
+			dockerImage = "%docker_image_wpcom%"
 		}
 		// Note: We run the PHP lint after the build to verify that the newspack-blocks
 		// code is also formatted correctly.
@@ -101,6 +104,7 @@ object WPComPlugins_EditorToolKit : BuildType({
 				fi
 				yarn lint:php
 			"""
+			dockerImage = "%docker_image_wpcom%"
 		}
 		/**
 		 * We download the archive directly in this step rather than relying on
@@ -142,8 +146,16 @@ object WPComPlugins_EditorToolKit : BuildType({
 				# 3. Check if the current build has changed, and if so, tag it for release.
 				# Note: we exclude asset changes because we only really care if the build files (JS/CSS) change. That file is basically just metadata.
 				if ! diff -rq --exclude="*.asset.php" ./editing-toolkit-plugin/ ./current-etk-release/ ; then
-					echo "The build is different from the most current release build. Therefore, this can be tagged as a new release build."
-					curl -X POST -H "Content-Type: text/plain" --data "etk-release-build" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" %teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/
+					echo "The build is different from the last release build. Therefore, this can be tagged as a release build."
+					tag_response=`curl -s -X POST -H "Content-Type: text/plain" --data "etk-release-build" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" %teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/`
+					echo -e "Build tagging status: ${'$'}tag_response\n"
+
+					# Ping commit merger in Slack if we're on the main branch and the build has changed.
+					if [ "%teamcity.build.branch.is_default%" == "true" ] ; then
+						echo "Posting slack reminder."
+						ping_response=`curl -s -d "commit=%build.vcs.number%&plugin=editing-toolkit" -X POST %mc-post-root%?plugin-deploy-reminder`
+						echo -e "Slack ping status: ${'$'}ping_response\n"
+					fi
 				fi
 
 				# 4. Create metadata file with info for the download script.
@@ -158,6 +170,7 @@ object WPComPlugins_EditorToolKit : BuildType({
 				echo
 				zip -r ../../../editing-toolkit.zip .
 			"""
+			dockerImage = "%docker_image_wpcom%"
 		}
 	}
 })

@@ -1,3 +1,4 @@
+import _self.bashNodeScript
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
@@ -5,8 +6,6 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.dockerSupport
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.dockerRegistry
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.githubConnection
@@ -65,6 +64,7 @@ project {
 		text("env.DOCKER_BUILDKIT", "1", label = "Enable Docker BuildKit", description = "Enables BuildKit (faster image generation). Values 0 or 1", allowEmpty = true)
 		password("CONFIG_E2E_ENCRYPTION_KEY", "credentialsJSON:16d15e36-f0f2-4182-8477-8d8072d0b5ec", display = ParameterDisplay.HIDDEN)
 		text("env.SKIP_TSC", "true", label = "Skip TS type generation", description = "Skips running `tsc` on yarn install", allowEmpty = true)
+		password("mc-post-root", "credentialsJSON:2f764583-d399-4d5f-8ee1-06f68ef2e2a6", display = ParameterDisplay.HIDDEN )
 	}
 
 	features {
@@ -274,43 +274,19 @@ object RunAllUnitTests : BuildType({
 	}
 
 	steps {
-		script {
+		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
 				export NODE_ENV="test"
 
 				# Install modules
 				yarn install
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image%"
-			dockerRunParameters = "-u %env.UID%"
+			"""
 		}
-		script {
+		bashNodeScript {
 			name = "Prevent uncommited changes"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
 				export NODE_ENV="test"
 
 				# Prevent uncommited changes
@@ -321,26 +297,12 @@ object RunAllUnitTests : BuildType({
 					echo "You need to checkout the branch, run 'yarn' and commit those files."
 					exit 1
 				fi
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image%"
-			dockerRunParameters = "-u %env.UID%"
+			"""
 		}
-		script {
+		bashNodeScript {
 			name = "Prevent duplicated packages"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
 				# Duplicated packages
 				DUPLICATED_PACKAGES=${'$'}(npx yarn-deduplicate --list)
 				if [[ -n "${'$'}DUPLICATED_PACKAGES" ]]; then
@@ -354,156 +316,72 @@ object RunAllUnitTests : BuildType({
 				else
 					echo "No duplicated packages found."
 				fi
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image%"
-			dockerRunParameters = "-u %env.UID%"
+			"""
 		}
-		script {
+		bashNodeScript {
 			name = "Run type checks"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
 				export NODE_ENV="test"
 
 				# Run type checks
 				yarn tsc --build packages/tsconfig.json
 				yarn tsc --build apps/editing-toolkit/tsconfig.json
 				yarn tsc --project client/landing/gutenboarding
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image%"
-			dockerRunParameters = "-u %env.UID%"
+			"""
 		}
-		script {
+		bashNodeScript {
 			name = "Run unit tests for client"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
 				unset NODE_ENV
 				unset CALYPSO_ENV
 
 				# Run client tests
 				JEST_JUNIT_OUTPUT_DIR="./test_results/client" yarn test-client --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image%"
-			dockerRunParameters = "-u %env.UID%"
+			"""
 		}
-		script {
+		bashNodeScript {
 			name = "Run unit tests for server"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
 				unset NODE_ENV
 				unset CALYPSO_ENV
 
 				# Run server tests
 				JEST_JUNIT_OUTPUT_DIR="./test_results/server" yarn test-server --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image%"
-			dockerRunParameters = "-u %env.UID%"
+			"""
 		}
-		script {
+		bashNodeScript {
 			name = "Run unit tests for packages"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
 				unset NODE_ENV
 				unset CALYPSO_ENV
 
 				# Run packages tests
 				JEST_JUNIT_OUTPUT_DIR="./test_results/packages" yarn test-packages --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image%"
-			dockerRunParameters = "-u %env.UID%"
+			"""
 		}
-		script {
+		bashNodeScript {
 			name = "Run unit tests for build tools"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
 				unset NODE_ENV
 				unset CALYPSO_ENV
 
 				# Run build-tools tests
 				JEST_JUNIT_OUTPUT_DIR="./test_results/build-tools" yarn test-build-tools --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image%"
-			dockerRunParameters = "-u %env.UID%"
+			"""
 		}
-		script {
+		bashNodeScript {
 			name = "Build artifacts"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
 				export NODE_ENV="production"
 
 				# Build o2-blocks
@@ -514,57 +392,25 @@ object RunAllUnitTests : BuildType({
 
 				# Build notifications
 				(cd apps/notifications/ && yarn build --output-path="../../artifacts/notifications")
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image%"
-			dockerRunParameters = "-u %env.UID%"
+			"""
 		}
-		script {
+		bashNodeScript {
 			name = "Build components storybook"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
 				export NODE_ENV="production"
 
 				yarn components:storybook:start --ci --smoke-test
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image%"
-			dockerRunParameters = "-u %env.UID%"
+			"""
 		}
-		script {
+		bashNodeScript {
 			name = "Build search storybook"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
 				export NODE_ENV="production"
 
 				yarn search:storybook:start --ci --smoke-test
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image%"
-			dockerRunParameters = "-u %env.UID%"
+			"""
 		}
 	}
 
@@ -640,52 +486,24 @@ object CheckCodeStyle : BuildType({
 	}
 
 	steps {
-		script {
+		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
 				export NODE_ENV="test"
 
 				# Install modules
 				yarn install
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image%"
-			dockerRunParameters = "-u %env.UID%"
+			"""
 		}
-		script {
+		bashNodeScript {
 			name = "Run linters"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
 				export NODE_ENV="test"
 
 				# Lint files
 				yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" .
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image%"
-			dockerRunParameters = "-u %env.UID%"
+			"""
 		}
 	}
 
@@ -741,43 +559,18 @@ object CheckCodeStyleBranch : BuildType({
 	}
 
 	steps {
-		script {
+		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
 				export NODE_ENV="test"
 
 				# Install modules
 				yarn install
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image%"
-			dockerRunParameters = "-u %env.UID%"
+			"""
 		}
-		script {
+		bashNodeScript {
 			name = "Run linters"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
 				export NODE_ENV="test"
 
 				# Find files to lint
@@ -794,11 +587,7 @@ object CheckCodeStyleBranch : BuildType({
 				if [ ! -z "${'$'}FILES_TO_LINT" ]; then
 					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" ${'$'}FILES_TO_LINT
 				fi
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image%"
-			dockerRunParameters = "-u %env.UID%"
+			"""
 		}
 	}
 
@@ -863,42 +652,20 @@ object RunCalypsoE2eDesktopTests : BuildType({
 	}
 
 	steps {
-		script {
+		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
 				export NODE_ENV="test"
 				export PLAYWRIGHT_BROWSERS_PATH=0
 
 				# Install modules
 				yarn install
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
+			"""
 			dockerImage = "%docker_image_e2e%"
-			dockerRunParameters = "-u %env.UID%"
 		}
-		script {
+		bashNodeScript {
 			name = "Run e2e tests (desktop)"
 			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
 				shopt -s globstar
 				set -x
 
@@ -956,19 +723,13 @@ object RunCalypsoE2eDesktopTests : BuildType({
 
 				yarn magellan --config=magellan.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
 			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
 		}
-		script {
+		bashNodeScript {
 			name = "Collect results"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				#!/bin/bash
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
 				set -x
 
 				mkdir -p screenshots
@@ -977,9 +738,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				mkdir -p logs
 				find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
 			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerImage = "%docker_image_e2e%"
-			dockerRunParameters = "-u %env.UID%"
 		}
 	}
 
@@ -1070,19 +829,9 @@ object WpDesktop_DesktopE2ETests : BuildType({
 	}
 
 	steps {
-		script {
+		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
 				# Restore mtime to maximize cache hits
 				/usr/lib/git-core/git-restore-mtime --force --commit-time --skip-missing
 
@@ -1092,73 +841,34 @@ object WpDesktop_DesktopE2ETests : BuildType({
 				# Install modules
 				yarn install
 				yarn run build-desktop:install-app-deps
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
+			"""
 			dockerImage = "%docker_image_dekstop%"
-			dockerRunParameters = "-u %env.UID%"
 		}
 
-		script {
+		bashNodeScript {
 			name = "Build Calypso source"
 			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
 				# Build desktop
 				yarn run build-desktop:source
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
+			"""
 			dockerImage = "%docker_image_dekstop%"
-			dockerRunParameters = "-u %env.UID%"
 		}
 
-		script {
+		bashNodeScript {
 			name = "Build app (linux)"
 			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
 				export ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
 				export USE_HARD_LINKS=false
 
 				# Build app
 				yarn run build-desktop:app
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
+			"""
 			dockerImage = "%docker_image_dekstop%"
-			dockerRunParameters = "-u %env.UID%"
 		}
 
-		script {
+		bashNodeScript {
 			name = "Run tests (linux)"
 			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
 				export E2EGUTENBERGUSER="%E2EGUTENBERGUSER%"
 				export E2EPASSWORD="%E2EPASSWORD%"
 				export CI=true
@@ -1168,33 +878,23 @@ object WpDesktop_DesktopE2ETests : BuildType({
 
 				# Run tests
 				yarn run test-desktop:e2e
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
+			"""
 			dockerImage = "%docker_image_dekstop%"
 			// See https://stackoverflow.com/a/53975412 and https://blog.jessfraz.com/post/how-to-use-new-docker-seccomp-profiles/
 			// TDLR: Chrome needs access to some kernel level operations to create a sandbox, this option unblocks them.
 			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json"
 		}
 
-		script {
+		bashNodeScript {
 			name = "Clean up artifacts"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
 			scriptContent = """
-				#!/bin/bash
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
 				# Delete artifacts if branch is not trunk
 				if [ "%teamcity.build.branch.is_default%" != "true" ]; then
 					rm -fr desktop/release/*
 				fi
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
+			"""
 			dockerImage = "%docker_image_dekstop%"
-			dockerRunParameters = "-u %env.UID% "
 		}
 	}
 

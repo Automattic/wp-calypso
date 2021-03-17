@@ -98,6 +98,13 @@ const WebServerLogsCard = ( props ) => {
 				validationInfo: translate( 'Start date must be less than 30 days ago.' ),
 			} );
 		}
+
+		if ( startMoment.isBefore( moment.utc().subtract( 14, 'days' ) ) ) {
+			setStartDateValidation( {
+				isValid: false,
+				validationInfo: translate( 'Please select a time range of less than 14 days.' ),
+			} );
+		}
 	}, [ startDateTime, endDateTime ] );
 
 	const updateStartDateTime = ( event ) => {
