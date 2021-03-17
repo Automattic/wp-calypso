@@ -6,27 +6,9 @@ import { get, isEqual, mapValues, omit, omitBy, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import { DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
+import { serialize, deserialize } from './serialize';
 import { SerializationResult } from 'calypso/state/serialization-result';
-import { withoutPersistence } from './without-persistence';
-
-/*
- * Wrap the reducer with appropriate persistence code. If it has the `hasCustomPersistence` flag,
- * it means it's already set up and we don't need to make any changes.
- */
-function setupReducerPersistence( reducer ) {
-	if ( reducer.hasCustomPersistence ) {
-		return reducer;
-	}
-
-	if ( reducer.schema ) {
-		throw new Error(
-			'`schema` properties in reducers are no longer supported. Please wrap reducers with withSchemaValidation.'
-		);
-	}
-
-	return withoutPersistence( reducer );
-}
+import { withPersistence } from './with-persistence';
 
 /**
  * Creates a super-reducer as a map of reducers over keyed objects
@@ -100,37 +82,9 @@ export const keyedReducer = ( keyPath, reducer ) => {
 		);
 	}
 
-	const persistingReducer = setupReducerPersistence( reducer );
-
-	const initialState = persistingReducer( undefined, { type: '@@calypso/INIT' } );
+	const initialState = reducer( undefined, { type: '@@calypso/INIT' } );
 
 	const combinedReducer = ( state = {}, action ) => {
-		if ( action.type === SERIALIZE ) {
-			const serialized = reduce(
-				state,
-				( result, itemValue, itemKey ) => {
-					const serializedValue = persistingReducer( itemValue, action );
-					if ( serializedValue !== undefined && ! isEqual( serializedValue, initialState ) ) {
-						if ( ! result ) {
-							// instantiate the result object only when it's going to have at least one property
-							result = new SerializationResult();
-						}
-						result.addRootResult( itemKey, serializedValue );
-					}
-					return result;
-				},
-				undefined
-			);
-			return serialized;
-		}
-
-		if ( action.type === DESERIALIZE ) {
-			return omitBy(
-				mapValues( state, ( item ) => persistingReducer( item, action ) ),
-				( a ) => a === undefined || isEqual( a, initialState )
-			);
-		}
-
 		// don't allow coercion of key name: null => 0
 		const itemKey = get( action, keyPath, undefined );
 
@@ -144,7 +98,7 @@ export const keyedReducer = ( keyPath, reducer ) => {
 		// we need this to update state and also to compare if
 		// we had any changes, thus the initialState
 		const oldItemState = state[ itemKey ];
-		const newItemState = persistingReducer( oldItemState, action );
+		const newItemState = reducer( oldItemState, action );
 
 		// and do nothing if the new sub-state matches the old sub-state
 		if ( newItemState === oldItemState ) {
@@ -164,7 +118,27 @@ export const keyedReducer = ( keyPath, reducer ) => {
 		};
 	};
 
-	combinedReducer.hasCustomPersistence = true;
-
-	return combinedReducer;
+	return withPersistence( combinedReducer, {
+		serialize: ( state ) =>
+			reduce(
+				state,
+				( result, itemValue, itemKey ) => {
+					const serializedValue = serialize( reducer, itemValue );
+					if ( serializedValue !== undefined && ! isEqual( serializedValue, initialState ) ) {
+						if ( ! result ) {
+							// instantiate the result object only when it's going to have at least one property
+							result = new SerializationResult();
+						}
+						result.addRootResult( itemKey, serializedValue );
+					}
+					return result;
+				},
+				undefined
+			),
+		deserialize: ( persisted ) =>
+			omitBy(
+				mapValues( persisted, ( item ) => deserialize( reducer, item ) ),
+				( a ) => a === undefined || isEqual( a, initialState )
+			),
+	} );
 };

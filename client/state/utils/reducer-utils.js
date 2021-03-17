@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import { get, mapValues, pick, reduce } from 'lodash';
+import { get, mapValues, reduce } from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
  */
-import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
+import { serialize, deserialize } from './serialize';
+import { APPLY_STORED_STATE } from 'calypso/state/action-types';
 import { SerializationResult } from 'calypso/state/serialization-result';
-import { withoutPersistence } from './without-persistence';
 
 /**
  * Create a new reducer from original `reducers` by adding a new `reducer` at `keyPath`
@@ -56,12 +56,12 @@ export function addReducer( origReducer, reducers ) {
 			// })
 			// ```
 			newReducer = restKeys.reduceRight(
-				( subreducer, subkey ) => createCombinedReducer( { [ subkey ]: subreducer } ),
-				setupReducerPersistence( reducer )
+				( subreducer, subkey ) => combineReducers( { [ subkey ]: subreducer } ),
+				reducer
 			);
 		}
 
-		const newCombinedReducer = createCombinedReducer( { ...reducers, [ key ]: newReducer } );
+		const newCombinedReducer = combineReducers( { ...reducers, [ key ]: newReducer } );
 
 		// Preserve the storageKey of the updated reducer
 		newCombinedReducer.storageKey = origReducer.storageKey;
@@ -133,8 +133,24 @@ export function addReducer( origReducer, reducers ) {
  * @returns {Function} - Returns the combined reducer function
  */
 export function combineReducers( reducers ) {
-	// set up persistence of reducers passed from app and then create a combined one
-	return createCombinedReducer( mapValues( reducers, setupReducerPersistence ) );
+	const combined = combine( reducers );
+
+	const combinedReducer = ( state, action ) => {
+		switch ( action.type ) {
+			case APPLY_STORED_STATE:
+				return applyStoredState( reducers, state, action );
+
+			default:
+				return combined( state, action );
+		}
+	};
+
+	combinedReducer.serialize = ( state ) => serializeState( reducers, state );
+	combinedReducer.deserialize = ( persisted ) => deserializeState( reducers, persisted );
+	combinedReducer.addReducer = addReducer( combinedReducer, reducers );
+	combinedReducer.getStorageKeys = getStorageKeys( reducers );
+
+	return combinedReducer;
 }
 
 function applyStoredState( reducers, state, action ) {
@@ -155,32 +171,6 @@ function applyStoredState( reducers, state, action ) {
 
 	// return identical state if the stored state didn't get applied in this reducer
 	return hasChanged ? nextState : state;
-}
-
-function createCombinedReducer( reducers ) {
-	const combined = combine( reducers );
-
-	const combinedReducer = ( state, action ) => {
-		switch ( action.type ) {
-			case SERIALIZE:
-				return serializeState( reducers, state, action );
-
-			case DESERIALIZE:
-				return combined( pick( state, Object.keys( reducers ) ), action );
-
-			case APPLY_STORED_STATE:
-				return applyStoredState( reducers, state, action );
-
-			default:
-				return combined( state, action );
-		}
-	};
-
-	combinedReducer.hasCustomPersistence = true;
-	combinedReducer.addReducer = addReducer( combinedReducer, reducers );
-	combinedReducer.getStorageKeys = getStorageKeys( reducers );
-
-	return combinedReducer;
 }
 
 function getStorageKeys( reducers ) {
@@ -206,7 +196,7 @@ function getStorageKeys( reducers ) {
 //   `undefined` rather than an empty object.
 // - if the state to serialize is `undefined` (happens when some key in state is missing)
 //   the serialized value is `undefined` and there's no need to reduce anything.
-function serializeState( reducers, state, action ) {
+function serializeState( reducers, state ) {
 	if ( state === undefined ) {
 		return undefined;
 	}
@@ -214,7 +204,7 @@ function serializeState( reducers, state, action ) {
 	return reduce(
 		reducers,
 		( result, reducer, reducerKey ) => {
-			const serialized = reducer( state[ reducerKey ], action );
+			const serialized = serialize( reducer, state[ reducerKey ] );
 			if ( serialized !== undefined ) {
 				if ( ! result ) {
 					// instantiate the result object only when it's going to have at least one property
@@ -232,20 +222,8 @@ function serializeState( reducers, state, action ) {
 	);
 }
 
-/*
- * Wrap the reducer with appropriate persistence code. If it has the `hasCustomPersistence` flag,
- * it means it's already set up and we don't need to make any changes.
- */
-function setupReducerPersistence( reducer ) {
-	if ( reducer.hasCustomPersistence ) {
-		return reducer;
-	}
-
-	if ( reducer.schema ) {
-		throw new Error(
-			'`schema` properties in reducers are no longer supported. Please wrap reducers with withSchemaValidation.'
-		);
-	}
-
-	return withoutPersistence( reducer );
+function deserializeState( reducers, persisted ) {
+	return mapValues( reducers, ( reducer, reducerKey ) =>
+		deserialize( reducer, persisted?.[ reducerKey ] )
+	);
 }
