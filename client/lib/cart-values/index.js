@@ -72,22 +72,6 @@ export function preprocessCartForServer( {
 	);
 }
 
-/**
- * Create a new empty cart.
- *
- * A cart has at least a `blog_id` and an empty list of `products`
- * We can give additional attributes and build new types of empty carts.
- * For instance you may want to create a temporary this way:
- * `emptyCart( 123456, { temporary: true } )`
- *
- * @param {number} [siteId] The Site Id the cart will be associated with
- * @param {object} [attributes] Additional attributes for the cart (optional)
- * @returns {object} [emptyCart] The new empty cart created
- */
-export function emptyCart( siteId, attributes ) {
-	return Object.assign( { blog_id: siteId, products: [] }, attributes );
-}
-
 export function canRemoveFromCart( cart, cartItem ) {
 	if ( isCredits( cartItem ) ) {
 		return false;

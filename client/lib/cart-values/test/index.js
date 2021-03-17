@@ -34,7 +34,7 @@ describe( 'index', () => {
 					cartItems.addCartItem( DOMAIN_REGISTRATION_PRODUCT )
 				);
 
-				const newCart = addTwo( cartValues.emptyCart( TEST_BLOG_ID ) );
+				const newCart = addTwo( { blog_id: TEST_BLOG_ID, products: [] } );
 				assert( cartItems.hasProduct( newCart, 'value_bundle' ) );
 				assert( cartItems.hasProduct( newCart, 'dotcom_domain' ) );
 			} );
@@ -42,7 +42,7 @@ describe( 'index', () => {
 
 		describe( 'cartItems.addCartItem( cartItem )', () => {
 			test( 'should add the cartItem to the products array', () => {
-				const initialCart = cartValues.emptyCart( TEST_BLOG_ID );
+				const initialCart = { blog_id: TEST_BLOG_ID, products: [] };
 				const newCart = cartItems.addCartItem( PREMIUM_PRODUCT )( initialCart );
 				const expectedCart = {
 					blog_id: TEST_BLOG_ID,
@@ -67,18 +67,6 @@ describe( 'index', () => {
 				products: [ DOMAIN_REGISTRATION_PRODUCT ],
 			};
 			assert( ! cartItems.hasProduct( cartWithoutPremium, PREMIUM_PRODUCT ) );
-		} );
-	} );
-
-	describe( 'emptyCart( siteID )', () => {
-		describe( 'returns a cart that', () => {
-			test( 'should have the provided blog_id', () => {
-				assert.equal( TEST_BLOG_ID, cartValues.emptyCart( TEST_BLOG_ID ).blog_id );
-			} );
-
-			test( 'should have no products', () => {
-				assert.equal( 0, cartValues.emptyCart( TEST_BLOG_ID ).products.length );
-			} );
 		} );
 	} );
 } );
