@@ -408,7 +408,7 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
  * @param   {number} limit      The maximum number of filtered results to return
  * @returns {Array}             A filtered (or empty) array
  */
-export function filterListBySearchTerm( searchTerm = '', collection = [], limit = 4 ) {
+export function filterListBySearchTerm( searchTerm = '', collection = [], limit = 25 ) {
 	// Early return if search term is empty.
 	if ( ! searchTerm.length ) {
 		return [];

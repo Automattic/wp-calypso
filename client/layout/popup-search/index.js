@@ -47,7 +47,7 @@ export function PopUpSearch( props ) {
 				<QueryInlineHelpSearch query={ props.searchQuery } />
 				{ props.searchResults.length > 0 && (
 					<div className="popup-search__results" aria-label="Pop Up Search">
-						{ props.searchResults.map( ( { link, key, title, description } ) => (
+						{ props.searchResults.slice( 0, 10 ).map( ( { link, key, title, description } ) => (
 							<a href={ localizeUrl( link ) }>
 								<div
 									role="button"

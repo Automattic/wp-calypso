@@ -67,7 +67,7 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 		);
 
 		//Return help_admin results immediately to be shown in action search
-		const helpAdminResults = getAdminHelpResults( state, searchQuery, 5 );
+		const helpAdminResults = getAdminHelpResults( state, searchQuery );
 		dispatch( {
 			type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 			searchQuery,
