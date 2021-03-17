@@ -39,7 +39,7 @@ const DomainMappingDetails = ( {
 	return (
 		<div className="checkout-thank-you__domain-mapping-details">
 			<QuerySiteDomains siteId={ siteId } />
-			<PurchaseDetail icon="cog" description={ mappingInstructions } isRequired />
+			<PurchaseDetail icon="cog" body={ mappingInstructions } isRequired />
 		</div>
 	);
 };
