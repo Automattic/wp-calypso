@@ -12,7 +12,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 object WPComPlugins_EditorToolKit : BuildType({
 	name = "Editor ToolKit"
 
-	artifactRules = "editing-toolkit.zip"
+	artifactRules = "editing-toolkit-%build.number%.zip"
 
 	buildNumberPattern = "%build.prefix%.%build.counter%"
 	params {
@@ -164,7 +164,7 @@ object WPComPlugins_EditorToolKit : BuildType({
 
 				# 5. Create artifact of cwd.
 				echo
-				zip -r ../../../editing-toolkit.zip .
+				zip -r ../../../editing-toolkit-%build.number%.zip .
 			"""
 		}
 	}
