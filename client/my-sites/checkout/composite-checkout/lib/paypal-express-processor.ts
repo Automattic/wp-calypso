@@ -62,7 +62,6 @@ export default async function payPalProcessor(
 		successUrl,
 		cancelUrl,
 		siteId,
-		couponId: responseCart.coupon,
 		country: managedContactDetails?.countryCode?.value ?? '',
 		postalCode: getPostalCode(),
 		subdivisionCode: managedContactDetails?.state?.value ?? '',
@@ -107,7 +106,6 @@ function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 	successUrl,
 	cancelUrl,
 	siteId,
-	couponId,
 	country,
 	postalCode,
 	subdivisionCode,
@@ -117,7 +115,6 @@ function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 	successUrl: string;
 	cancelUrl: string;
 	siteId: string | number | undefined;
-	couponId: string;
 	country: string;
 	postalCode: string;
 	subdivisionCode: string;
@@ -129,7 +126,6 @@ function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		cancelUrl,
 		cart: createTransactionEndpointCartFromResponseCart( {
 			siteId: siteId ? String( siteId ) : undefined,
-			couponId,
 			country,
 			postalCode,
 			subdivisionCode,
