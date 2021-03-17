@@ -325,7 +325,7 @@ describe( 'isPlanFulfilled()', () => {
 			submitSignupStep,
 		};
 		const defaultDependencies = { cartItem: 'testPlan' };
-		const cartItem = { free_trial: false, product_slug: defaultDependencies.cartItem };
+		const cartItem = { product_slug: defaultDependencies.cartItem };
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 		expect( submitSignupStep ).not.toHaveBeenCalled();

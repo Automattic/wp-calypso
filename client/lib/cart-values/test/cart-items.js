@@ -665,7 +665,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
-				free_trial: false,
 				product_slug: PLAN_PERSONAL,
 			} );
 		} );
