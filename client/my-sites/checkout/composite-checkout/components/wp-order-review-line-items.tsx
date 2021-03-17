@@ -644,11 +644,11 @@ function IntroductoryOfferCallout( {
 	product: ResponseCartProduct;
 } ): JSX.Element | null {
 	const translate = useTranslate();
-	let text = String( translate( 'Discount for first period' ) );
 	if ( ! product.introductory_offer_terms?.enabled ) {
 		return null;
 	}
 
+	let text = String( translate( 'Discount for first period' ) );
 	const intervalUnit = product.introductory_offer_terms.interval_unit;
 	const intervalCount = product.introductory_offer_terms.interval_count;
 
