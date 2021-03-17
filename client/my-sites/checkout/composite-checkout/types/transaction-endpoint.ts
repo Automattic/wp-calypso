@@ -119,6 +119,7 @@ export type WPCOMTransactionEndpointCartItem = {
 	currency: string;
 	volume: number;
 	extra?: ResponseCartProductExtra;
+	quantity: number | null;
 };
 
 export type WPCOMTransactionEndpointResponse = {
