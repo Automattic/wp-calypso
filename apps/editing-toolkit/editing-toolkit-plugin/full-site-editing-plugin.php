@@ -237,7 +237,7 @@ function load_blog_posts_block() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_blog_posts_block' );
 
 /**
- * Load WPCOM Block Editor NUX
+ * Load WPCOM Block Editor NUX.
  */
 function load_wpcom_block_editor_nux() {
 	require_once __DIR__ . '/wpcom-block-editor-nux/class-wpcom-block-editor-nux.php';
