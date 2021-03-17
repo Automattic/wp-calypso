@@ -162,10 +162,8 @@ const InnerSearch = (
 	React.useImperativeHandle(
 		forwardedRef,
 		() => ( {
-			// if we call focus before the element has been entirely synced up with the DOM, we stand a decent chance of
-			// causing the browser to scroll somewhere odd. Instead, defer the focus until a future turn of the event loop.
 			focus() {
-				setTimeout( () => searchInput.current?.focus(), 0 );
+				searchInput.current?.focus();
 			},
 			blur() {
 				searchInput.current?.blur();
@@ -212,7 +210,7 @@ const InnerSearch = (
 		setKeyword( '' );
 		setIsOpen( true );
 
-		focus();
+		searchInput.current?.focus();
 		// no need to call `onSearchOpen` as it will be called by `onFocus` once the searcbox is focused
 		// prevent outlines around the open icon after being clicked
 		openIcon.current?.blur();
