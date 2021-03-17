@@ -203,6 +203,7 @@ class StatsSite extends Component {
 					siteId={ siteId }
 					slug={ slug }
 				/>
+
 				{ ! isVip && isAdmin && ! hasWordAds && <Cloudflare /> }
 
 				<div id="my-stats-content">
