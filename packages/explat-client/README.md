@@ -72,4 +72,4 @@ Checklist for use:
 - [ ] Does `loadExperiment` get called before `dangerouslyGetExperimentAssignment` gets called.
 - [ ] Does `loadExperiment` get called significantly before it (minimum 2 seconds looking at perf data, 5-10 seconds is best).
 - [ ] Is `dangerouslyGetExperimentAssignment` wrapped in a try-catch block
-- [ ] Does the catch block sanely handle missing ExperimentAssignments.
+- [ ] Does the catch block gracefully handle missing ExperimentAssignments.
