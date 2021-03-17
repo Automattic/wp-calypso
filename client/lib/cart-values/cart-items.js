@@ -2,8 +2,7 @@
  * External dependencies
  */
 import update from 'immutability-helper';
-import { assign, every, filter, find, get, isEqual, merge, some } from 'lodash';
-import emailValidator from 'email-validator';
+import { assign, filter, find, get, isEqual, merge, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,7 +22,6 @@ import {
 	isDomainRedemption,
 	isDomainRegistration,
 	isDomainTransfer,
-	isBundled,
 	isEcommerce,
 	isFreeWordPressComDomain,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
@@ -179,18 +177,6 @@ export function hasEcommercePlan( cart ) {
 	return cart && some( getAllCartItems( cart ), isEcommerce );
 }
 
-/**
- * Does the cart contain only bundled domains and transfers
- *
- * @param {CartValue} cart - cart as `CartValue` object
- * @returns {boolean} true if there are only bundled domains and transfers
- */
-export function hasOnlyBundledDomainProducts( cart ) {
-	return (
-		cart && every( [ ...getDomainRegistrations( cart ), ...getDomainTransfers( cart ) ], isBundled )
-	);
-}
-
 export function hasBloggerPlan( cart ) {
 	return some( getAllCartItems( cart ), isBlogger );
 }
@@ -226,18 +212,6 @@ export function hasProduct( cart, productSlug ) {
 	return getAllCartItems( cart ).some( function ( cartItem ) {
 		return cartItem.product_slug === productSlug;
 	} );
-}
-
-/**
- * Determines whether every product in the specified shopping cart is of the same productSlug.
- * Will return false if the cart is empty.
- *
- * @param {CartValue} cart - cart as `CartValue` object
- * @param {string} productSlug - the unique string that identifies the product
- * @returns {boolean} true if all the products in the cart are of the productSlug type
- */
-export function hasOnlyProductsOf( cart, productSlug ) {
-	return cart.products && every( getAllCartItems( cart ), { product_slug: productSlug } );
 }
 
 /**
@@ -411,39 +385,6 @@ export function planItem( productSlug, properties ) {
 }
 
 /**
- * Creates a new shopping cart item for a Personal plan.
- *
- * @param {string} slug - e.g. value_bundle, jetpack_premium
- * @param {object} [properties] - list of properties
- * @returns {CartItemValue | null} the new item as `CartItemValue` object
- */
-export function personalPlan( slug, properties ) {
-	return planItem( slug, properties );
-}
-
-/**
- * Creates a new shopping cart item for a Premium plan.
- *
- * @param {string} slug - e.g. value_bundle, jetpack_premium
- * @param {object} [properties] - list of properties
- * @returns {CartItemValue | null} the new item as `CartItemValue` object
- */
-export function premiumPlan( slug, properties ) {
-	return planItem( slug, properties );
-}
-
-/**
- * Creates a new shopping cart item for a Business plan.
- *
- * @param {string} slug - e.g. business-bundle, jetpack_business
- * @param {object} [properties] - list of properties
- * @returns {CartItemValue | null} the new item as `CartItemValue` object
- */
-export function businessPlan( slug, properties ) {
-	return planItem( slug, properties );
-}
-
-/**
  * Determines whether a domain Item supports purchasing a privacy subscription
  *
  * @param {string} productSlug - e.g. domain_reg, dotblog_domain
@@ -587,48 +528,6 @@ export function titanMailMonthly( properties ) {
 	);
 }
 
-/**
- * Returns the domain part of an email address.
- *
- * @param {string} emailAddress - a valid email address
- * @returns {string} the domain
- */
-const getDomainPartFromEmail = ( emailAddress ) =>
-	// Domain is any string after `@` character
-	'string' === typeof emailAddress || 0 < emailAddress.indexOf( '@' )
-		? emailAddress.replace( /.*@([^@>]+)>?$/, '$1' )
-		: null;
-
-/**
- * Returns a predicate that determines if a domain matches a product meta.
- *
- * @param {string} domain domain to compare.
- * @returns {Function(*=): (boolean)} true if the domain matches.
- */
-const isSameDomainAsProductMeta = ( domain ) => ( product ) =>
-	product &&
-	product.meta &&
-	'string' === typeof domain &&
-	'string' === typeof product.meta &&
-	product.meta.trim().toUpperCase() === domain.trim().toUpperCase();
-
-export function needsExplicitAlternateEmailForGSuite( cart, contactDetails ) {
-	return (
-		! emailValidator.validate( contactDetails.email ) ||
-		some(
-			cart.products,
-			isSameDomainAsProductMeta( getDomainPartFromEmail( contactDetails.email ) )
-		)
-	);
-}
-
-export function hasInvalidAlternateEmailDomain( cart, contactDetails ) {
-	return some(
-		cart.products,
-		isSameDomainAsProductMeta( getDomainPartFromEmail( contactDetails.alternateEmail ) )
-	);
-}
-
 export function hasGoogleApps( cart ) {
 	return some( getAllCartItems( cart ), isGSuiteOrExtraLicenseOrGoogleWorkspace );
 }
@@ -640,12 +539,6 @@ export function hasTitanMail( cart ) {
 export function customDesignItem() {
 	return {
 		product_slug: 'custom-design',
-	};
-}
-
-export function guidedTransferItem() {
-	return {
-		product_slug: 'guided_transfer',
 	};
 }
 
@@ -676,17 +569,6 @@ export function unlimitedThemesItem() {
 export function spaceUpgradeItem( slug ) {
 	return {
 		product_slug: slug,
-	};
-}
-
-/**
- * Creates a new shopping cart item for a concierge session.
- *
- * @returns {CartItemValue} the new item as `CartItemValue` object
- */
-export function conciergeSessionItem() {
-	return {
-		product_slug: 'concierge-session',
 	};
 }
 
@@ -831,7 +713,7 @@ export function updatePrivacyForDomain( item, value ) {
  * @param {CartItemValue} cartItem - `CartItemValue` object
  * @returns {boolean} true if item is credits
  */
-export function isPartialCredits( cartItem ) {
+function isPartialCredits( cartItem ) {
 	return cartItem.product_slug === 'wordpress-com-credits';
 }
 
@@ -843,16 +725,6 @@ export function isPartialCredits( cartItem ) {
  */
 export function isRenewal( cartItem ) {
 	return cartItem.extra && cartItem.extra.purchaseType === 'renewal';
-}
-
-/**
- * Determines whether a cart item supports privacy
- *
- * @param {CartItemValue} cartItem - `CartItemValue` object
- * @returns {boolean} true if item supports privacy
- */
-export function privacyAvailable( cartItem ) {
-	return get( cartItem, 'extra.privacy_available', true );
 }
 
 /**

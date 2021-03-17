@@ -17,15 +17,13 @@ describe( 'index', () => {
 	const TEST_BLOG_ID = 1;
 	let DOMAIN_REGISTRATION_PRODUCT;
 	let PREMIUM_PRODUCT;
-	let THEME_PRODUCT;
 
 	beforeAll( () => {
 		DOMAIN_REGISTRATION_PRODUCT = cartItems.domainRegistration( {
 			productSlug: 'dotcom_domain',
 			domain: 'testdomain.com',
 		} );
-		PREMIUM_PRODUCT = cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } );
-		THEME_PRODUCT = cartItems.themeItem( 'mood' );
+		PREMIUM_PRODUCT = cartItems.planItem( 'value_bundle', { isFreeTrial: false } );
 	} );
 
 	describe( 'cart change functions', () => {
@@ -69,27 +67,6 @@ describe( 'index', () => {
 				products: [ DOMAIN_REGISTRATION_PRODUCT ],
 			};
 			assert( ! cartItems.hasProduct( cartWithoutPremium, PREMIUM_PRODUCT ) );
-		} );
-	} );
-
-	describe( 'cartItems.hasOnlyProductsOf( cart, productSlug )', () => {
-		test( 'should return a boolean that says whether only products of productSlug are in the cart items', () => {
-			const cartWithMultipleProductSlugs = {
-				blog_id: TEST_BLOG_ID,
-				products: [ PREMIUM_PRODUCT, THEME_PRODUCT ],
-			};
-
-			assert( ! cartItems.hasOnlyProductsOf( cartWithMultipleProductSlugs, 'premium_theme' ) );
-
-			const cartWithSameProductSlugs = {
-				blog_id: TEST_BLOG_ID,
-				products: [ THEME_PRODUCT, THEME_PRODUCT ],
-			};
-
-			assert( cartItems.hasOnlyProductsOf( cartWithSameProductSlugs, 'premium_theme' ) );
-
-			const emptyCart = {};
-			assert( ! cartItems.hasOnlyProductsOf( emptyCart, 'premium_theme' ) );
 		} );
 	} );
 
