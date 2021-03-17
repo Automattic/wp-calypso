@@ -10,7 +10,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
 object WPComPlugins_EditorToolKit : BuildType({
-	name = "Editor ToolKit"
+	name = "Editing ToolKit"
 
 	artifactRules = "editing-toolkit.zip"
 
