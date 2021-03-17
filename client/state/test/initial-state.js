@@ -15,7 +15,6 @@ import { withStorageKey } from '@automattic/state-utils';
 import * as browserStorage from 'calypso/lib/browser-storage';
 import userFactory from 'calypso/lib/user';
 import { isSupportSession } from 'calypso/lib/user/support-user-interop';
-import { SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
 import { createReduxStore } from 'calypso/state';
 import signupReducer from 'calypso/state/signup/reducer';
 import {
@@ -26,7 +25,7 @@ import {
 	MAX_AGE,
 	SERIALIZE_THROTTLE,
 } from 'calypso/state/initial-state';
-import { combineReducers } from 'calypso/state/utils';
+import { combineReducers, withPersistence } from 'calypso/state/utils';
 import { addReducerToStore } from 'calypso/state/add-reducer';
 
 import currentUser from 'calypso/state/current-user/reducer';
@@ -662,21 +661,19 @@ describe( 'initial-state', () => {
 		let clock;
 		let setStoredItemSpy;
 
-		const dataReducer = ( state = null, { data } ) => {
+		const dataReducer = withPersistence( ( state = null, { data } ) => {
 			if ( data && data !== state ) {
 				return data;
 			}
 			return state;
-		};
-		dataReducer.hasCustomPersistence = true;
+		} );
 
-		const currentUserReducer = ( state = null, { userId } ) => {
+		const currentUserReducer = withPersistence( ( state = null, { userId } ) => {
 			if ( userId && userId !== state.id ) {
 				return { ...state, id: userId };
 			}
 			return state;
-		};
-		currentUserReducer.hasCustomPersistence = true;
+		} );
 
 		const reducer = combineReducers( { data: dataReducer, currentUser: currentUserReducer } );
 
@@ -810,22 +807,14 @@ describe( 'loading stored state with dynamic reducers', () => {
 	// For example, `withKeyPrefix( 'A' )` serializes `{ x: 1, y: 2 }` into `{ 'A:x': 1, 'A:y': 2 }`
 	const withKeyPrefix = ( keyPrefix ) => {
 		const keyPrefixRe = new RegExp( `^${ keyPrefix }:` );
-		const reducer = ( state = {}, action ) => {
-			switch ( action.type ) {
-				case DESERIALIZE:
-					return mapKeys( state, ( value, key ) => key.replace( keyPrefixRe, '' ) );
-				case SERIALIZE:
-					return mapKeys( state, ( value, key ) => `${ keyPrefix }:${ key }` );
-				default:
-					return state;
-			}
-		};
-		reducer.hasCustomPersistence = true;
-		return reducer;
+		return withPersistence( ( state = {} ) => state, {
+			serialize: ( state ) => mapKeys( state, ( value, key ) => `${ keyPrefix }:${ key }` ),
+			deserialize: ( persisted ) =>
+				mapKeys( persisted, ( value, key ) => key.replace( keyPrefixRe, '' ) ),
+		} );
 	};
 
-	const currentUserReducer = ( state = { id: null } ) => state;
-	currentUserReducer.hasCustomPersistence = true;
+	const currentUserReducer = withPersistence( ( state = { id: null } ) => state );
 
 	let getStoredItemSpy;
 
