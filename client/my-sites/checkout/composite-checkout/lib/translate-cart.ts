@@ -144,16 +144,10 @@ function translateReponseCartProductToWPCOMCartItem(
 // '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
 export function createTransactionEndpointCartFromResponseCart( {
 	siteId,
-	country,
-	postalCode,
-	subdivisionCode,
 	contactDetails,
 	responseCart,
 }: {
 	siteId: string | undefined;
-	country: string;
-	postalCode: string;
-	subdivisionCode?: string;
 	contactDetails: DomainContactDetails | null;
 	responseCart: ResponseCart;
 } ): WPCOMTransactionEndpointCart {
@@ -168,13 +162,7 @@ export function createTransactionEndpointCartFromResponseCart( {
 		products: responseCart.products.map( ( item ) =>
 			addRegistrationDataToGSuiteCartProduct( item, contactDetails )
 		),
-		tax: {
-			location: {
-				country_code: country,
-				postal_code: postalCode,
-				subdivision_code: subdivisionCode,
-			},
-		},
+		tax: responseCart.tax,
 	};
 }
 
