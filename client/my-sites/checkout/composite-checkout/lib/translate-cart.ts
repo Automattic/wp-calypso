@@ -334,7 +334,7 @@ function createTransactionEndpointCartItemFromLineItem(
 		volume: item.wpcom_meta?.volume ?? 1,
 		quantity: item.wpcom_meta?.quantity ?? null,
 		extra: item.wpcom_meta?.extra,
-	} as WPCOMTransactionEndpointCartItem;
+	};
 }
 
 function addRegistrationDataToGSuiteItem(
@@ -348,9 +348,12 @@ function addRegistrationDataToGSuiteItem(
 		...item,
 		wpcom_meta: {
 			...item.wpcom_meta,
-			extra: { ...item.wpcom_meta.extra, google_apps_registration_data: contactDetails },
+			extra: {
+				...item.wpcom_meta.extra,
+				google_apps_registration_data: contactDetails || undefined,
+			},
 		},
-	} as WPCOMCartItem;
+	};
 }
 
 export function createTransactionEndpointRequestPayloadFromLineItems( {
