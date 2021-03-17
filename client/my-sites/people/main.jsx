@@ -44,6 +44,21 @@ class People extends React.Component {
 		}
 	}
 
+	renderSubheaderText() {
+		const { translate, filter } = this.props;
+
+		switch ( filter ) {
+			case 'followers':
+				return translate(
+					'People who have subscribed to your site using their WordPress.com account.'
+				);
+			case 'email-followers':
+				return translate( 'People who have subscribed to your site using their email address.' );
+			default:
+				return translate( 'Invite contributors to your site and manage their access settings.' );
+		}
+	}
+
 	render() {
 		const {
 			isComingSoon,
@@ -83,9 +98,7 @@ class People extends React.Component {
 					brandFont
 					className="people__page-heading"
 					headerText={ translate( 'People' ) }
-					subHeaderText={ translate(
-						'Invite contributors to your site and manage their access settings.'
-					) }
+					subHeaderText={ this.renderSubheaderText() }
 					align="left"
 				/>
 				<div>
