@@ -77,11 +77,25 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 	 */
 	const createWrappedExperimentAssignmentFetchAndStore = ( experimentName: string ) =>
 		Timing.asyncOneAtATime( async () => {
+			let startTime: number | null = null;
+			try {
+				startTime = performance.now();
+			} catch (e) {}
 			const fetchedExperimentAssignment = await Request.fetchExperimentAssignment(
 				config,
 				experimentName
 			);
 			experimentAssignmentStore.store( fetchedExperimentAssignment );
+			let timeSinceStartMs: string = ''
+			try {
+				timeSinceStartMs = startTime && performance.now() ? '' + (performance.now() - startTime) : '';
+			} catch (e) {}
+			safeLogError( {
+				message: 'Debugging Promise Timeouts',
+				experiment_name: experimentName,
+				time_since_start_ms: timeSinceStartMs,
+				source: 'experimentAssignmentFetchAndStore',
+			} );
 			return fetchedExperimentAssignment;
 		} );
 	const experimentNameToWrappedExperimentAssignmentFetchAndStore: Record<
@@ -97,6 +111,11 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 
 	return {
 		loadExperimentAssignment: async ( experimentName: string ): Promise< ExperimentAssignment > => {
+			let startTime: number | null = null
+			try {
+				startTime = performance.now()
+			} catch (e) {}
+
 			try {
 				if ( ! Validation.isName( experimentName ) ) {
 					throw new Error( `Invalid experimentName: "${ experimentName }"` );
@@ -129,9 +148,15 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 
 				return fetchedExperimentAssignment;
 			} catch ( initialError ) {
+				let timeSinceStartMs: string = ''
+				try {
+					timeSinceStartMs = startTime && performance.now() ? '' + (performance.now() - startTime) : '';
+				} catch (e) {}
+
 				safeLogError( {
 					message: initialError.message,
-					experimentName,
+					experiment_name: experimentName,
+					time_since_start_ms: timeSinceStartMs,
 					source: 'loadExperimentAssignment-initialError',
 				} );
 			}
