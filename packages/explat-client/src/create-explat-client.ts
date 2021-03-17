@@ -65,6 +65,12 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 		throw new Error( 'Running outside of a browser context.' );
 	}
 
+	const safeLogError: typeof config.logError = ( ...args ) => {
+		try {
+			config.logError( ...args );
+		} catch ( e ) {}
+	};
+
 	const experimentAssignmentStore = new ExperimentAssignmentStore();
 
 	/**
@@ -80,16 +86,17 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 			let startTime: number | null = null;
 			try {
 				startTime = performance.now();
-			} catch (e) {}
+			} catch ( e ) {}
 			const fetchedExperimentAssignment = await Request.fetchExperimentAssignment(
 				config,
 				experimentName
 			);
 			experimentAssignmentStore.store( fetchedExperimentAssignment );
-			let timeSinceStartMs: string = ''
+			let timeSinceStartMs = '';
 			try {
-				timeSinceStartMs = startTime && performance.now() ? '' + (performance.now() - startTime) : '';
-			} catch (e) {}
+				timeSinceStartMs =
+					startTime && performance.now() ? '' + ( performance.now() - startTime ) : '';
+			} catch ( e ) {}
 			safeLogError( {
 				message: 'Debugging Promise Timeouts',
 				experiment_name: experimentName,
@@ -103,18 +110,12 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 		() => Promise< ExperimentAssignment >
 	> = {};
 
-	const safeLogError: typeof config.logError = ( ...args ) => {
-		try {
-			config.logError( ...args );
-		} catch ( e ) {}
-	};
-
 	return {
 		loadExperimentAssignment: async ( experimentName: string ): Promise< ExperimentAssignment > => {
-			let startTime: number | null = null
+			let startTime: number | null = null;
 			try {
-				startTime = performance.now()
-			} catch (e) {}
+				startTime = performance.now();
+			} catch ( e ) {}
 
 			try {
 				if ( ! Validation.isName( experimentName ) ) {
@@ -148,10 +149,11 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 
 				return fetchedExperimentAssignment;
 			} catch ( initialError ) {
-				let timeSinceStartMs: string = ''
+				let timeSinceStartMs = '';
 				try {
-					timeSinceStartMs = startTime && performance.now() ? '' + (performance.now() - startTime) : '';
-				} catch (e) {}
+					timeSinceStartMs =
+						startTime && performance.now() ? '' + ( performance.now() - startTime ) : '';
+				} catch ( e ) {}
 
 				safeLogError( {
 					message: initialError.message,
