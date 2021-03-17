@@ -144,7 +144,6 @@ function translateReponseCartProductToWPCOMCartItem(
 // '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
 export function createTransactionEndpointCartFromResponseCart( {
 	siteId,
-	couponId,
 	country,
 	postalCode,
 	subdivisionCode,
@@ -152,7 +151,6 @@ export function createTransactionEndpointCartFromResponseCart( {
 	responseCart,
 }: {
 	siteId: string | undefined;
-	couponId?: string;
 	country: string;
 	postalCode: string;
 	subdivisionCode?: string;
@@ -163,7 +161,7 @@ export function createTransactionEndpointCartFromResponseCart( {
 		blog_id: siteId || '0',
 		cart_key: siteId || 'no-site',
 		create_new_blog: siteId ? false : true,
-		coupon: couponId || '',
+		coupon: responseCart.coupon || '',
 		currency: responseCart.currency,
 		temporary: false,
 		extra: [],
