@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import {
 	activatePlugin,
-	installPlugin,
+	installPlugin as installAndActivatePlugin,
 	fetchPlugins,
 } from 'calypso/state/plugins/installed/actions';
 import { Button, ProgressBar } from '@automattic/components';
@@ -94,7 +94,7 @@ class RequiredPluginsInstallView extends Component {
 			toInstall: [],
 			workingOn: '',
 			progress:
-				automatedTransferStatus && transferStates.COMPLETE === automatedTransferStatus
+				automatedTransferStatus && ! ( transferStates.COMPLETE === automatedTransferStatus ) // Complete status means we're skipping it altogether.
 					? transferStatusesToTimes[ automatedTransferStatus ]
 					: 0,
 			totalSeconds: this.getTotalSeconds(),
@@ -158,14 +158,6 @@ class RequiredPluginsInstallView extends Component {
 		}
 	};
 
-	createTimeoutTimer = ( durationSeconds ) => {
-		if ( this.timeoutTimer ) {
-			return;
-		}
-
-		this.timeoutTimer = window.setTimeout( this.timeoutElapsed, durationSeconds * 1000 );
-	};
-
 	timeoutElapsed = () => {
 		// These status means store setup is finished, not stalled.
 		if ( [ 'IDLE', 'DONESUCCESS', 'DONEFAILURE' ].includes( this.state.engineState ) ) {
@@ -192,12 +184,12 @@ class RequiredPluginsInstallView extends Component {
 		}
 	};
 
-	resetTimeoutTimer = ( durationInSeconds ) => {
+	setTimeoutTimer = ( durationInSeconds ) => {
 		if ( this.timeoutTimer ) {
 			this.destroyTimeoutTimer();
 		}
 
-		this.createTimeoutTimer( durationInSeconds );
+		this.timeoutTimer = window.setTimeout( this.timeoutElapsed, durationInSeconds * 1000 );
 	};
 
 	doInitialization = () => {
@@ -225,8 +217,7 @@ class RequiredPluginsInstallView extends Component {
 			this.setState( {
 				workingOn: 'WAITING_FOR_PLUGIN_LIST_FROM_SITE',
 			} );
-			// Progress: waiting for plugin list.
-			this.resetTimeoutTimer( transferStatusesToTimes[ transferStates.COMPLETE ] );
+			this.setTimeoutTimer( transferStatusesToTimes[ transferStates.COMPLETE ] );
 			return;
 		}
 
@@ -255,8 +246,7 @@ class RequiredPluginsInstallView extends Component {
 			this.setState( {
 				workingOn: 'LOAD_PLUGIN_DATA',
 			} );
-			// Progress: load plugins data.
-			this.resetTimeoutTimer( transferStatusesToTimes[ transferStates.COMPLETE ] );
+			this.setTimeoutTimer( transferStatusesToTimes[ transferStates.COMPLETE ] );
 			return;
 		}
 
@@ -323,10 +313,8 @@ class RequiredPluginsInstallView extends Component {
 				slug: workingOn,
 			};
 
-			// Progress: install a single plugin.
-			this.resetTimeoutTimer( TIME_TO_PLUGIN_INSTALLATION );
-			// installPlugin actually activates it too.
-			this.props.installPlugin( site.ID, plugin );
+			this.setTimeoutTimer( TIME_TO_PLUGIN_INSTALLATION );
+			this.props.installAndActivatePlugin( site.ID, plugin );
 
 			this.setState( {
 				toInstall,
@@ -384,8 +372,7 @@ class RequiredPluginsInstallView extends Component {
 				return;
 			}
 
-			// Progress: activate a single plugin.
-			this.resetTimeoutTimer( TIME_TO_PLUGIN_ACTIVATION );
+			this.setTimeoutTimer( TIME_TO_PLUGIN_ACTIVATION );
 			// Otherwise, activate!
 			this.props.activatePlugin( site.ID, pluginToActivate );
 
@@ -459,7 +446,7 @@ class RequiredPluginsInstallView extends Component {
 			this.setState( {
 				engineState: 'INITIALIZING',
 			} );
-			this.resetTimeoutTimer( transferStatusesToTimes[ transferStates.COMPLETE ] );
+			this.setTimeoutTimer( transferStatusesToTimes[ transferStates.COMPLETE ] );
 		}
 	};
 
@@ -622,7 +609,7 @@ function mapDispatchToProps( dispatch ) {
 		{
 			activatePlugin,
 			fetchPluginData,
-			installPlugin,
+			installAndActivatePlugin,
 			fetchPlugins,
 		},
 		dispatch
