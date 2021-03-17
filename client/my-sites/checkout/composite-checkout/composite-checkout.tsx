@@ -88,6 +88,7 @@ import mergeIfObjects from './lib/merge-if-objects';
 import type { ReactStandardAction } from './types/analytics';
 import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
 import useMaybeJetpackIntroCouponCode from './hooks/use-maybe-jetpack-intro-coupon-code';
+import type { PaymentProcessorOptions } from './types/payment-processors';
 
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
@@ -429,33 +430,29 @@ export default function CompositeCheckout( {
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const transactionOptions = { createUserAndSiteBeforeTransaction };
-	const dataForProcessor = useMemo(
+	const dataForProcessor: PaymentProcessorOptions = useMemo(
 		() => ( {
+			createUserAndSiteBeforeTransaction,
+			getThankYouUrl,
 			includeDomainDetails,
 			includeGSuiteDetails,
 			recordEvent,
-			createUserAndSiteBeforeTransaction,
-			stripeConfiguration,
 			reduxDispatch,
 			responseCart,
+			siteSlug,
+			stripeConfiguration,
 		} ),
 		[
+			createUserAndSiteBeforeTransaction,
+			getThankYouUrl,
 			includeDomainDetails,
 			includeGSuiteDetails,
 			recordEvent,
-			createUserAndSiteBeforeTransaction,
-			stripeConfiguration,
 			reduxDispatch,
 			responseCart,
-		]
-	);
-	const dataForRedirectProcessor = useMemo(
-		() => ( {
-			...dataForProcessor,
-			getThankYouUrl,
 			siteSlug,
-		} ),
-		[ dataForProcessor, getThankYouUrl, siteSlug ]
+			stripeConfiguration,
+		]
 	);
 
 	const domainDetails = getDomainDetails( {
@@ -473,27 +470,26 @@ export default function CompositeCheckout( {
 			card: ( transactionData: unknown ) =>
 				multiPartnerCardProcessor( transactionData, dataForProcessor, transactionOptions ),
 			alipay: ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'alipay', transactionData, dataForRedirectProcessor ),
+				genericRedirectProcessor( 'alipay', transactionData, dataForProcessor ),
 			p24: ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'p24', transactionData, dataForRedirectProcessor ),
+				genericRedirectProcessor( 'p24', transactionData, dataForProcessor ),
 			bancontact: ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'bancontact', transactionData, dataForRedirectProcessor ),
+				genericRedirectProcessor( 'bancontact', transactionData, dataForProcessor ),
 			giropay: ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'giropay', transactionData, dataForRedirectProcessor ),
-			wechat: ( transactionData: unknown ) =>
-				weChatProcessor( transactionData, dataForRedirectProcessor ),
+				genericRedirectProcessor( 'giropay', transactionData, dataForProcessor ),
+			wechat: ( transactionData: unknown ) => weChatProcessor( transactionData, dataForProcessor ),
 			netbanking: ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'netbanking', transactionData, dataForRedirectProcessor ),
+				genericRedirectProcessor( 'netbanking', transactionData, dataForProcessor ),
 			id_wallet: ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'id_wallet', transactionData, dataForRedirectProcessor ),
+				genericRedirectProcessor( 'id_wallet', transactionData, dataForProcessor ),
 			ideal: ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'ideal', transactionData, dataForRedirectProcessor ),
+				genericRedirectProcessor( 'ideal', transactionData, dataForProcessor ),
 			sofort: ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'sofort', transactionData, dataForRedirectProcessor ),
+				genericRedirectProcessor( 'sofort', transactionData, dataForProcessor ),
 			eps: ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'eps', transactionData, dataForRedirectProcessor ),
+				genericRedirectProcessor( 'eps', transactionData, dataForProcessor ),
 			'ebanx-tef': ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'brazil-tef', transactionData, dataForRedirectProcessor ),
+				genericRedirectProcessor( 'brazil-tef', transactionData, dataForProcessor ),
 			'full-credits': ( transactionData: unknown ) =>
 				fullCreditsProcessor( transactionData, dataForProcessor, transactionOptions ),
 			'existing-card': ( transactionData: unknown ) =>
@@ -507,13 +503,11 @@ export default function CompositeCheckout( {
 					} ),
 					dataForProcessor
 				),
-			paypal: ( transactionData: unknown ) =>
-				payPalProcessor( transactionData, dataForRedirectProcessor ),
+			paypal: ( transactionData: unknown ) => payPalProcessor( transactionData, dataForProcessor ),
 		} ),
 		[
 			siteId,
 			dataForProcessor,
-			dataForRedirectProcessor,
 			transactionOptions,
 			countryCode,
 			subdivisionCode,
