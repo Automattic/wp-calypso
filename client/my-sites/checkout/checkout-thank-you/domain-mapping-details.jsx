@@ -44,14 +44,14 @@ const DomainMappingDetails = ( {
 	);
 };
 
-const mapStateToProps = ( state, { domain } ) => {
+const mapStateToProps = ( state, { domain: selectedDomainName } ) => {
 	const selectedSite = getSelectedSite( state );
 	const domains = getDomainsBySiteId( state, selectedSite.ID );
 	return {
 		isBusinessPlan: isBusiness( selectedSite.plan ),
 		isRequestingDomainsDetails: isRequestingSiteDomains( state, selectedSite.ID ),
-		isSubdomainMapping: isSubdomain( domain ),
-		purchasedDomain: getSelectedDomain( { domains, selectedDomainName: domain } ),
+		isSubdomainMapping: isSubdomain( selectedDomainName ),
+		purchasedDomain: getSelectedDomain( { domains, selectedDomainName } ),
 		selectedSiteDomain: selectedSite.domain,
 		siteId: selectedSite.ID,
 	};
