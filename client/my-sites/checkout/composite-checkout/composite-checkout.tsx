@@ -51,11 +51,11 @@ import {
 	freePurchaseProcessor,
 	multiPartnerCardProcessor,
 	fullCreditsProcessor,
-	payPalProcessor,
 	genericRedirectProcessor,
 	weChatProcessor,
 } from './payment-method-processors';
 import existingCardProcessor from './lib/existing-card-processor';
+import payPalProcessor from './lib/paypal-express-processor';
 import useGetThankYouUrl from './hooks/use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
 import { useProductVariants } from './hooks/product-variants';
