@@ -126,8 +126,6 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		const { isPlaying, item } = this.props;
 		const { height = 480, videopress_guid, width = 854 } = item;
 
-		// todo: Build the URL based on available params
-		// EX: add autoPlay = {props.isPlaying}
 		const params = {
 			autoPlay: isPlaying,
 			height,
