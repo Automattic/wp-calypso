@@ -64,6 +64,7 @@ describe( 'Search for a domain and select a suggestion', () => {
 
 		const selectDomainButtons = screen.getAllByRole( 'button', { name: /select/i } );
 
+		// @TODO: move this check to a unit test (which should also check the "see more" functionality)
 		// Expect as many buttons as there are suggestion items in the data
 		expect( selectDomainButtons ).toHaveLength(
 			mockUseDomainSuggestionsResult.allDomainSuggestions.length
