@@ -53,7 +53,6 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 			country,
 			postalCode,
 			subdivisionCode,
-			items: [],
 			responseCart,
 			contactDetails: domainDetails,
 		} ),
