@@ -7,7 +7,6 @@
  */
 import * as React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
 
 /**
  * Internal dependencies
@@ -15,21 +14,30 @@ import '@testing-library/jest-dom/extend-expect';
 import UseYourDomainItem from '../src/domain-picker/use-your-domain-item';
 
 describe( '<UseYourDomainItem />', () => {
-	test( 'Component renders with correct messaging', () => {
-		const onClick = jest.fn();
+	it( 'should render with correct messaging', () => {
+		render( <UseYourDomainItem onClick={ jest.fn() } /> );
 
-		render( <UseYourDomainItem onClick={ onClick } /> );
-
-		expect( screen.getByText( 'Already own a domain?' ) ).toBeTruthy();
-		expect( screen.getByText( "You can use it as your site's address." ) ).toBeTruthy();
+		expect( screen.getByText( 'Already own a domain?' ) ).toBeInTheDocument();
+		expect( screen.getByText( "You can use it as your site's address." ) ).toBeInTheDocument();
 	} );
 
-	test( 'Component fires onClick callback onClick', () => {
+	it( 'should fire onClick callback when the button is clicked', () => {
 		const onClick = jest.fn();
 
 		render( <UseYourDomainItem onClick={ onClick } /> );
 
-		fireEvent.click( screen.getByText( 'Use a domain I own' ) );
-		expect( onClick ).toHaveBeenCalled();
+		fireEvent.click( screen.getByRole( 'button', { name: 'Use a domain I own' } ) );
+
+		expect( onClick ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'should fire onClick callback when the rest of the row is clicked', () => {
+		const onClick = jest.fn();
+
+		render( <UseYourDomainItem onClick={ onClick } /> );
+
+		fireEvent.click( screen.getByText( 'Already own a domain?' ) );
+
+		expect( onClick ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
