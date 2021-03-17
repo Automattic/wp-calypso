@@ -47,6 +47,7 @@ import type {
 	WPCOMProductVariant,
 	OnChangeItemVariant,
 } from './item-variation-picker';
+import { getIntroductoryOfferIntervalDisplay } from 'calypso/lib/purchases/utils';
 
 const WPOrderReviewList = styled.ul< { theme?: Theme } >`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
@@ -646,67 +647,13 @@ function IntroductoryOfferCallout( {
 	if ( ! product.introductory_offer_terms?.enabled ) {
 		return null;
 	}
-
-	let text = String( translate( 'Discount for first period' ) );
-	const intervalUnit = product.introductory_offer_terms.interval_unit;
-	const intervalCount = product.introductory_offer_terms.interval_count;
-
-	if ( product.item_subtotal_integer === 0 ) {
-		if ( intervalUnit === 'month' ) {
-			if ( intervalCount === 1 ) {
-				text = String( translate( 'First month free' ) );
-			} else {
-				text = String(
-					translate( 'First %(numberOfMonths)d months free', {
-						args: {
-							numberOfMonths: intervalCount,
-						},
-					} )
-				);
-			}
-		}
-		if ( intervalUnit === 'year' ) {
-			if ( intervalCount === 1 ) {
-				text = String( translate( 'First year free' ) );
-			} else {
-				text = String(
-					translate( 'First %(numberOfYears)d years free', {
-						args: {
-							numberOfYears: intervalCount,
-						},
-					} )
-				);
-			}
-		}
-	} else {
-		if ( intervalUnit === 'month' ) {
-			if ( intervalCount === 1 ) {
-				text = String( translate( 'Discount for first month' ) );
-			} else {
-				text = String(
-					translate( 'Discount for first %(numberOfMonths)d months', {
-						args: {
-							numberOfMonths: intervalCount,
-						},
-					} )
-				);
-			}
-		}
-		if ( intervalUnit === 'year' ) {
-			if ( intervalCount === 1 ) {
-				text = String( translate( 'Discount for first year' ) );
-			} else {
-				text = String(
-					translate( 'Discount for first %(numberOfYears)d years', {
-						args: {
-							numberOfYears: intervalCount,
-						},
-					} )
-				);
-			}
-		}
-	}
-
+	const isFreeTrial = product.item_subtotal_integer === 0;
+	const text = getIntroductoryOfferIntervalDisplay(
+		translate,
+		product.introductory_offer_terms.interval_unit,
+		product.introductory_offer_terms.interval_count,
+		isFreeTrial
+	);
 	return <DiscountCallout>{ text }</DiscountCallout>;
 }
 

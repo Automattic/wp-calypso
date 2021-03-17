@@ -24,6 +24,8 @@ import {
 	creditCardExpiresBeforeSubscription,
 	creditCardHasAlreadyExpired,
 	getPartnerName,
+	isWithinIntroductoryOfferPeriod,
+	isIntroductoryOfferFreeTrial,
 } from 'calypso/lib/purchases';
 import { isDomainTransfer, isConciergeSession } from 'calypso/lib/products-values';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -96,6 +98,38 @@ class PurchaseItem extends Component {
 							},
 						}
 					) }
+				</span>
+			);
+		}
+
+		if ( isWithinIntroductoryOfferPeriod( purchase ) && isIntroductoryOfferFreeTrial( purchase ) ) {
+			if ( isRenewing( purchase ) ) {
+				return translate( 'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically', {
+					args: {
+						timeUntilExpiry: expiry.fromNow(),
+						date: expiry.format( 'LL' ),
+					},
+					components: {
+						span: <span className="purchase-item__date" />,
+					},
+				} );
+			}
+			const expiryClass =
+				expiry < moment().add( 7, 'days' )
+					? 'purchase-item__is-error'
+					: 'purchase-item__is-warning';
+
+			return (
+				<span className={ expiryClass }>
+					{ translate( 'Free trial ends on {{span}}%(date)s{{/span}}', {
+						args: {
+							date: expiry.format( 'LL' ),
+						},
+						components: {
+							span: <span className="purchase-item__date" />,
+						},
+					} ) }
+					{ this.trackImpression( 'purchase-expiring' ) }
 				</span>
 			);
 		}

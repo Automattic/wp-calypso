@@ -90,6 +90,7 @@ describe( 'selectors', () => {
 				expiryStatus: '',
 				includedDomain: undefined,
 				includedDomainPurchaseAmount: undefined,
+				introductoryOffer: null,
 				isCancelable: false,
 				isDomainRegistration: false,
 				isRechargeable: true,
