@@ -2,8 +2,12 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import { getTotalLineItemFromCart } from '@automattic/wpcom-checkout';
+import type {
+	ResponseCart,
+	ResponseCartProduct,
+	RequestCartProduct,
+} from '@automattic/shopping-cart';
 import debugFactory from 'debug';
 
 /**
@@ -27,7 +31,6 @@ import doesValueExist from './does-value-exist';
 import type { DomainContactDetails } from '../types/backend/domain-contact-details-components';
 import type {
 	WPCOMTransactionEndpointCart,
-	WPCOMTransactionEndpointCartItem,
 	WPCOMTransactionEndpointRequestPayload,
 	TransactionRequestWithLineItems,
 } from '../types/transaction-endpoint';
@@ -139,6 +142,46 @@ function translateReponseCartProductToWPCOMCartItem(
 
 // Create cart object as required by the WPCOM transactions endpoint
 // '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
+export function createTransactionEndpointCartFromResponseCart( {
+	siteId,
+	couponId,
+	country,
+	postalCode,
+	subdivisionCode,
+	contactDetails,
+	responseCart,
+}: {
+	siteId: string | undefined;
+	couponId?: string;
+	country: string;
+	postalCode: string;
+	subdivisionCode?: string;
+	contactDetails: DomainContactDetails | null;
+	responseCart: ResponseCart;
+} ): WPCOMTransactionEndpointCart {
+	return {
+		blog_id: siteId || '0',
+		cart_key: siteId || 'no-site',
+		create_new_blog: siteId ? false : true,
+		coupon: couponId || '',
+		currency: responseCart.currency,
+		temporary: false,
+		extra: [],
+		products: responseCart.products.map( ( item ) =>
+			addRegistrationDataToGSuiteCartProduct( item, contactDetails )
+		),
+		tax: {
+			location: {
+				country_code: country,
+				postal_code: postalCode,
+				subdivision_code: subdivisionCode,
+			},
+		},
+	};
+}
+
+// Create cart object as required by the WPCOM transactions endpoint
+// '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
 export function createTransactionEndpointCartFromLineItems( {
 	siteId,
 	couponId,
@@ -184,13 +227,11 @@ export function createTransactionEndpointCartFromLineItems( {
 	};
 }
 
-function createTransactionEndpointCartItemFromLineItem(
-	item: WPCOMCartItem
-): WPCOMTransactionEndpointCartItem {
+function createTransactionEndpointCartItemFromLineItem( item: WPCOMCartItem ): RequestCartProduct {
 	return {
+		product_slug: item.wpcom_meta?.product_slug,
 		product_id: item.wpcom_meta?.product_id,
-		meta: item.wpcom_meta?.meta,
-		currency: item.amount.currency,
+		meta: item.wpcom_meta?.meta ?? '',
 		volume: item.wpcom_meta?.volume ?? 1,
 		quantity: item.wpcom_meta?.quantity ?? null,
 		extra: item.wpcom_meta?.extra,
@@ -212,6 +253,22 @@ function addRegistrationDataToGSuiteItem(
 				...item.wpcom_meta.extra,
 				google_apps_registration_data: contactDetails || undefined,
 			},
+		},
+	};
+}
+
+function addRegistrationDataToGSuiteCartProduct(
+	item: ResponseCartProduct,
+	contactDetails: DomainContactDetails | null
+): ResponseCartProduct {
+	if ( ! isGSuiteOrGoogleWorkspaceProductSlug( item.product_slug ) ) {
+		return item;
+	}
+	return {
+		...item,
+		extra: {
+			...item.extra,
+			google_apps_registration_data: contactDetails || undefined,
 		},
 	};
 }
