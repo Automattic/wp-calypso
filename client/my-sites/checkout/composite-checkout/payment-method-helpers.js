@@ -118,7 +118,7 @@ async function createAccountCallback( response ) {
 	} );
 }
 
-async function createAccount() {
+export async function createAccount() {
 	let newSiteParams = null;
 	try {
 		newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
