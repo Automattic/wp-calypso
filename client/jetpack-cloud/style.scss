@@ -74,19 +74,15 @@
 }
 
 .button.is-primary {
-	color: var( --studio-white );
-	background: var( --color-primary-40 );
-	border-color: var( --color-primary-40 );
-
 	&:hover,
 	&:focus {
-		background-color: var( --color-primary-60 );
-		border-color: var( --color-primary-60 );
+		background-color: var( --color-accent-light );
+		border-color: var( --color-accent-light );
 	}
 
 	&:active {
-		background: var( --color-primary-40 );
-		border-color: var( --color-primary-40 );
+		background: var( --color-accent-dark );
+		border-color: var( --color-accent-dark );
 	}
 
 	&[disabled],
