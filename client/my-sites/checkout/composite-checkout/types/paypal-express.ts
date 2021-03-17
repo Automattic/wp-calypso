@@ -1,8 +1,12 @@
 /**
+ * External dependencies
+ */
+import type { ResponseCart } from '@automattic/shopping-cart';
+
+/**
  * Internal dependencies
  */
 import { createTransactionEndpointCartFromLineItems } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-cart';
-import type { WPCOMCartItem } from 'calypso/my-sites/checkout/composite-checkout/types/checkout-cart';
 import type { DomainContactDetails } from 'calypso/my-sites/checkout/composite-checkout/types/backend/domain-contact-details-components';
 import { WPCOMTransactionEndpointCart } from './transaction-endpoint';
 
@@ -28,7 +32,7 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 	postalCode,
 	subdivisionCode,
 	domainDetails,
-	items,
+	responseCart,
 }: {
 	successUrl: string;
 	cancelUrl: string;
@@ -38,7 +42,7 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 	postalCode: string;
 	subdivisionCode: string;
 	domainDetails: DomainContactDetails | null;
-	items: WPCOMCartItem[];
+	responseCart: ResponseCart;
 } ): PayPalExpressEndpointRequestPayload {
 	return {
 		successUrl,
@@ -49,7 +53,8 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 			country,
 			postalCode,
 			subdivisionCode,
-			items,
+			items: [],
+			responseCart,
 			contactDetails: domainDetails,
 		} ),
 		country,
