@@ -78,7 +78,7 @@ export default class PurchaseDetail extends PureComponent {
 
 		return (
 			<div className="purchase-detail__body">
-				{ this.props.href && this.renderPurchaseButton() }
+				{ this.renderPurchaseButton() }
 				{ this.props.info && <TipInfo info={ this.props.info } /> }
 			</div>
 		);
