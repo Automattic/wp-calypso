@@ -331,7 +331,7 @@ const buildApp = ( environment ) => {
 					url: defaultUrl,
 					method: 'GET',
 					get: jest.fn(),
-					connection: {},
+					socket: {},
 					logger: {
 						error: jest.fn(),
 					},
