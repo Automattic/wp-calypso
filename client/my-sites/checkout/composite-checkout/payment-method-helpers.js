@@ -34,6 +34,7 @@ export async function submitApplePayPayment( transactionData, submit, transactio
 export async function submitPayPalExpressRequest( transactionData, submit, transactionOptions ) {
 	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		...transactionData,
+		responseCart: transactionOptions.responseCart,
 	} );
 	debug( 'sending paypal transaction', formattedTransactionData );
 	return submit( formattedTransactionData, transactionOptions );
