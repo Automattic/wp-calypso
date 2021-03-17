@@ -52,10 +52,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import InfoPopover from 'calypso/components/info-popover';
 import ExternalLink from 'calypso/components/external-link';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
-import ButtonGroup from 'calypso/components/button-group';
-import Gridicon from 'calypso/components/gridicon';
-import PopoverMenu from 'calypso/components/popover/menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import AddDomainButton from 'calypso/my-sites/domains/domain-management/list/add-domain-button';
 
 /**
  * Style dependencies
@@ -88,7 +85,6 @@ export class List extends React.Component {
 		primaryDomainIndex: -1,
 		addMenuVisible: false,
 	};
-	addDomainButtonRef = React.createRef();
 
 	isLoading() {
 		return this.props.isRequestingSiteDomains && this.props.domains.length === 0;
@@ -271,56 +267,12 @@ export class List extends React.Component {
 		} );
 	};
 
-	toggleAddMenu = () => {
-		this.setState( ( state ) => {
-			return { isAddMenuVisible: ! state.isAddMenuVisible };
-		} );
-	};
-
-	closeAddMenu = () => {
-		this.setState( { isAddMenuVisible: false } );
-	};
-
 	addDomainButton() {
-		const { translate } = this.props;
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
 			return null;
 		}
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		return (
-			<ButtonGroup>
-				<Button
-					primary
-					compact
-					className="domain-management-list__add-a-domain"
-					onClick={ this.clickAddbDomain }
-				>
-					{ translate( 'Add a domain to this site' ) }
-				</Button>
-				<Button compact primary onClick={ this.toggleAddMenu } ref={ this.addDomainButtonRef }>
-					<Gridicon icon="chevron-down" />
-				</Button>
-				<PopoverMenu
-					isVisible={ this.state.isAddMenuVisible }
-					onClose={ this.closeAddMenu }
-					context={ this.addDomainButtonRef.current }
-					position="bottom left"
-					autoPosition={ true }
-				>
-					<PopoverMenuItem href="/domains/add">
-						{ translate( 'Add a domain to another site' ) }
-					</PopoverMenuItem>
-					<PopoverMenuItem href="/new">
-						{ translate( 'Add a domain to new WordPress.com site' ) }
-					</PopoverMenuItem>
-					<PopoverMenuItem href="/start/domain">
-						{ translate( 'Just buy a domain' ) }
-					</PopoverMenuItem>
-				</PopoverMenu>
-			</ButtonGroup>
-		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
+		return <AddDomainButton />;
 	}
 
 	setPrimaryDomain( domainName ) {
