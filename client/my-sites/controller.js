@@ -152,6 +152,7 @@ export function renderNoVisibleSites( context ) {
 		actionURL: '//dashboard.wordpress.com/wp-admin/index.php?page=my-blogs',
 		secondaryAction: i18n.translate( 'Create New Site' ),
 		secondaryActionURL: `${ onboardingUrl }?ref=calypso-nosites`,
+		className: 'no-visible-sites-message',
 	} );
 
 	makeLayout( context, noop );
