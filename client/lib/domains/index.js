@@ -20,6 +20,7 @@ export { isDomainUpdateable } from './is-domain-updateable';
 export { isDomainInGracePeriod } from './is-domain-in-grace-period';
 export { isHstsRequired } from './is-hsts-required';
 export { isSubdomain } from './is-subdomain';
+export { isDomain } from './is-domain';
 export {
 	getMappedDomains,
 	hasMappedDomain,
