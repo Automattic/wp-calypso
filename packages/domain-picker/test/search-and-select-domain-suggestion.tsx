@@ -2,7 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { screen, render, fireEvent } from '@testing-library/react';
 import { DataStatus, DomainSuggestion } from '@automattic/data-stores/src/domain-suggestions';
 
 /**
@@ -38,7 +38,7 @@ describe( 'Search for a domain and select a suggestion', () => {
 	} );
 
 	it( 'should search for a domain', () => {
-		const { getByText } = render(
+		render(
 			<DomainPicker
 				onDomainSelect={ jest.fn() }
 				analyticsUiAlgo="testalgo"
@@ -47,12 +47,12 @@ describe( 'Search for a domain and select a suggestion', () => {
 			/>
 		);
 
-		expect( getByText( '€15.00/year' ) ).toBeInTheDocument();
+		expect( screen.getByText( '€15.00/year' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should call the onDomainSelect callback when a button is clicked ', () => {
 		const onDomainSelectCallback = jest.fn();
-		const { getAllByText } = render(
+		render(
 			<DomainPicker
 				onDomainSelect={ onDomainSelectCallback }
 				analyticsUiAlgo="testalgo"
@@ -62,7 +62,10 @@ describe( 'Search for a domain and select a suggestion', () => {
 			/>
 		);
 
-		const selectDomainButtons = getAllByText( 'Select', { exact: true, selector: 'button' } );
+		const selectDomainButtons = screen.getAllByText( 'Select', {
+			exact: true,
+			selector: 'button',
+		} );
 
 		// Expect as many buttons as there are suggestion items in the data
 		expect( selectDomainButtons ).toHaveLength(
