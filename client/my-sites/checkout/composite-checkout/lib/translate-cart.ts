@@ -4,7 +4,6 @@
 import { translate } from 'i18n-calypso';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import { getTotalLineItemFromCart } from '@automattic/wpcom-checkout';
-import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -32,8 +31,6 @@ import type {
 	TransactionRequestWithLineItems,
 } from '../types/transaction-endpoint';
 import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
-
-const debug = debugFactory( 'calypso:composite-checkout:translate-cart' );
 
 /**
  * Translate a cart object as returned by the WPCOM cart endpoint to
@@ -146,6 +143,7 @@ export function createTransactionEndpointCartFromLineItems( {
 	postalCode,
 	subdivisionCode,
 	items,
+	responseCart,
 	contactDetails,
 }: {
 	siteId: string | undefined;
@@ -154,14 +152,14 @@ export function createTransactionEndpointCartFromLineItems( {
 	postalCode: string;
 	subdivisionCode?: string;
 	items: WPCOMCartItem[];
+	responseCart?: ResponseCart;
 	contactDetails: DomainContactDetails | null;
 } ): WPCOMTransactionEndpointCart {
-	debug( 'creating cart from items', items );
+	// If responseCart is passed, we'll use it instead of items as it requires very little conversion
 
-	const currency: string = items.reduce(
-		( firstValue: string, item ) => firstValue || item.amount.currency,
-		''
-	);
+	const currency: string = responseCart
+		? responseCart.currency
+		: items.reduce( ( firstValue: string, item ) => firstValue || item.amount.currency, '' );
 
 	return {
 		blog_id: siteId || '0',
@@ -171,9 +169,10 @@ export function createTransactionEndpointCartFromLineItems( {
 		currency: currency || '',
 		temporary: false,
 		extra: [],
-		products: items
-			.map( ( item ) => addRegistrationDataToGSuiteItem( item, contactDetails ) )
-			.map( createTransactionEndpointCartItemFromLineItem ),
+		products: ( responseCart
+			? responseCart.products
+			: items.map( createTransactionEndpointCartItemFromLineItem )
+		).map( ( item ) => addRegistrationDataToGSuiteItem( item, contactDetails ) ),
 		tax: {
 			location: {
 				country_code: country,
@@ -188,29 +187,27 @@ function createTransactionEndpointCartItemFromLineItem(
 	item: WPCOMCartItem
 ): WPCOMTransactionEndpointCartItem {
 	return {
+		product_slug: item.wpcom_meta?.product_slug,
 		product_id: item.wpcom_meta?.product_id,
 		meta: item.wpcom_meta?.meta,
 		currency: item.amount.currency,
 		volume: item.wpcom_meta?.volume ?? 1,
 		quantity: item.wpcom_meta?.quantity ?? null,
 		extra: item.wpcom_meta?.extra,
-	} as WPCOMTransactionEndpointCartItem;
+	};
 }
 
 function addRegistrationDataToGSuiteItem(
-	item: WPCOMCartItem,
+	item: WPCOMTransactionEndpointCartItem,
 	contactDetails: DomainContactDetails | null
-): WPCOMCartItem {
-	if ( ! isGSuiteOrGoogleWorkspaceProductSlug( item.wpcom_meta?.product_slug ) ) {
+): WPCOMTransactionEndpointCartItem {
+	if ( ! isGSuiteOrGoogleWorkspaceProductSlug( item.product_slug ) ) {
 		return item;
 	}
 	return {
 		...item,
-		wpcom_meta: {
-			...item.wpcom_meta,
-			extra: { ...item.wpcom_meta.extra, google_apps_registration_data: contactDetails },
-		},
-	} as WPCOMCartItem;
+		extra: { ...item.extra, google_apps_registration_data: contactDetails || undefined },
+	};
 }
 
 export function createTransactionEndpointRequestPayloadFromLineItems( {
