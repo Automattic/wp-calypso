@@ -31,12 +31,12 @@ describe( '<UseYourDomainItem />', () => {
 		expect( onClick ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'should fire onClick callback when the container is clicked', () => {
+	it( 'should fire onClick callback when the rest of the row is clicked', () => {
 		const onClick = jest.fn();
 
 		render( <UseYourDomainItem onClick={ onClick } /> );
 
-		fireEvent.click( screen.getByTestId( 'use-domain-i-own-wrapper' ) );
+		fireEvent.click( screen.getByText( 'Already own a domain?' ) );
 
 		expect( onClick ).toHaveBeenCalledTimes( 1 );
 	} );
