@@ -15,10 +15,11 @@ import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { WPCOMCartItem } from '../types/checkout-cart';
 import type { ManagedContactDetails } from '../types/wpcom-store-state';
 import getDomainDetails from '../lib/get-domain-details';
-import { createPayPalExpressEndpointRequestPayloadFromLineItems } from '../types/paypal-express'; // FIXME: move from types
 import type { PayPalExpressEndpointRequestPayload } from '../types/paypal-express';
 import { createAccount } from '../payment-method-helpers';
 import wp from 'calypso/lib/wp';
+import type { DomainContactDetails } from '../types/backend/domain-contact-details-components';
+import { createTransactionEndpointCartFromLineItems } from '../lib/translate-cart';
 
 const { select } = defaultRegistry;
 const debug = debugFactory( 'calypso:composite-checkout:paypal-express-processor' );
@@ -116,4 +117,43 @@ async function wpcomPayPalExpress(
 	}
 
 	return wp.undocumented().paypalExpressUrl( payload );
+}
+
+function createPayPalExpressEndpointRequestPayloadFromLineItems( {
+	successUrl,
+	cancelUrl,
+	siteId,
+	couponId,
+	country,
+	postalCode,
+	subdivisionCode,
+	domainDetails,
+	items,
+}: {
+	successUrl: string;
+	cancelUrl: string;
+	siteId: string;
+	couponId: string;
+	country: string;
+	postalCode: string;
+	subdivisionCode: string;
+	domainDetails: DomainContactDetails | null;
+	items: WPCOMCartItem[];
+} ): PayPalExpressEndpointRequestPayload {
+	return {
+		successUrl,
+		cancelUrl,
+		cart: createTransactionEndpointCartFromLineItems( {
+			siteId,
+			couponId,
+			country,
+			postalCode,
+			subdivisionCode,
+			items,
+			contactDetails: domainDetails,
+		} ),
+		country,
+		postalCode,
+		domainDetails,
+	};
 }

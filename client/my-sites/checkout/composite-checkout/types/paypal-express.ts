@@ -1,8 +1,6 @@
 /**
  * Internal dependencies
  */
-import { createTransactionEndpointCartFromLineItems } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-cart';
-import type { WPCOMCartItem } from 'calypso/my-sites/checkout/composite-checkout/types/checkout-cart';
 import type { DomainContactDetails } from 'calypso/my-sites/checkout/composite-checkout/types/backend/domain-contact-details-components';
 import { WPCOMTransactionEndpointCart } from './transaction-endpoint';
 
@@ -18,44 +16,5 @@ export type PayPalExpressEndpointRequestPayload = {
 	country: string;
 	postalCode: string;
 };
-
-export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
-	successUrl,
-	cancelUrl,
-	siteId,
-	couponId,
-	country,
-	postalCode,
-	subdivisionCode,
-	domainDetails,
-	items,
-}: {
-	successUrl: string;
-	cancelUrl: string;
-	siteId: string;
-	couponId: string;
-	country: string;
-	postalCode: string;
-	subdivisionCode: string;
-	domainDetails: DomainContactDetails | null;
-	items: WPCOMCartItem[];
-} ): PayPalExpressEndpointRequestPayload {
-	return {
-		successUrl,
-		cancelUrl,
-		cart: createTransactionEndpointCartFromLineItems( {
-			siteId,
-			couponId,
-			country,
-			postalCode,
-			subdivisionCode,
-			items,
-			contactDetails: domainDetails,
-		} ),
-		country,
-		postalCode,
-		domainDetails,
-	};
-}
 
 export type PayPalExpressEndpointResponse = unknown;
