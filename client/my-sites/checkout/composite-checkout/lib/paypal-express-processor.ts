@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { defaultRegistry, makeRedirectResponse } from '@automattic/composite-checkout';
+import { makeRedirectResponse } from '@automattic/composite-checkout';
 import { format as formatUrl, parse as parseUrl, resolve as resolveUrl } from 'url'; // eslint-disable-line no-restricted-imports
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
@@ -11,9 +11,7 @@ import type { ResponseCart } from '@automattic/shopping-cart';
  * Internal dependencies
  */
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
-import getPostalCode from '../lib/get-postal-code';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { ManagedContactDetails } from '../types/wpcom-store-state';
 import getDomainDetails from '../lib/get-domain-details';
 import type { PayPalExpressEndpointRequestPayload } from '../types/paypal-express';
 import { createAccount } from '../payment-method-helpers';
@@ -21,7 +19,6 @@ import wp from 'calypso/lib/wp';
 import type { DomainContactDetails } from '../types/backend/domain-contact-details-components';
 import { createTransactionEndpointCartFromResponseCart } from '../lib/translate-cart';
 
-const { select } = defaultRegistry;
 const debug = debugFactory( 'calypso:composite-checkout:paypal-express-processor' );
 
 export default async function payPalProcessor(
@@ -53,18 +50,11 @@ export default async function payPalProcessor(
 		query: createUserAndSiteBeforeTransaction ? { cart: 'no-user' } : {},
 	} );
 
-	const managedContactDetails: ManagedContactDetails | undefined = select(
-		'wpcom'
-	)?.getContactInfo();
-
 	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		responseCart,
 		successUrl,
 		cancelUrl,
 		siteId,
-		country: managedContactDetails?.countryCode?.value ?? '',
-		postalCode: getPostalCode(),
-		subdivisionCode: managedContactDetails?.state?.value ?? '',
 		domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ) || null,
 	} );
 	debug( 'sending paypal transaction', formattedTransactionData );
@@ -106,18 +96,12 @@ function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 	successUrl,
 	cancelUrl,
 	siteId,
-	country,
-	postalCode,
-	subdivisionCode,
 	domainDetails,
 	responseCart,
 }: {
 	successUrl: string;
 	cancelUrl: string;
 	siteId: string | number | undefined;
-	country: string;
-	postalCode: string;
-	subdivisionCode: string;
 	domainDetails: DomainContactDetails | null;
 	responseCart: ResponseCart;
 } ): PayPalExpressEndpointRequestPayload {
@@ -126,14 +110,11 @@ function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		cancelUrl,
 		cart: createTransactionEndpointCartFromResponseCart( {
 			siteId: siteId ? String( siteId ) : undefined,
-			country,
-			postalCode,
-			subdivisionCode,
 			contactDetails: domainDetails,
 			responseCart,
 		} ),
-		country,
-		postalCode,
+		country: responseCart.tax.location.country_code ?? '',
+		postalCode: responseCart.tax.location.postal_code ?? '',
 		domainDetails,
 	};
 }
