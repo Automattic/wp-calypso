@@ -151,11 +151,15 @@ export function createTransactionEndpointCartFromLineItems( {
 	country: string;
 	postalCode: string;
 	subdivisionCode?: string;
-	items: WPCOMCartItem[];
+	items?: WPCOMCartItem[];
 	responseCart?: ResponseCart;
 	contactDetails: DomainContactDetails | null;
 } ): WPCOMTransactionEndpointCart {
 	// If responseCart is passed, we'll use it instead of items as it requires very little conversion
+	if ( ! responseCart && ! items ) {
+		throw new Error( 'Either cart or items must be provided for the transaction' );
+	}
+	items = items || [];
 
 	const currency: string = responseCart
 		? responseCart.currency
