@@ -36,7 +36,7 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 		driver = await driverManager.startBrowser();
 	} );
 
-	describe.skip( 'Create new site as existing user @parallel @canary', function () {
+	describe( 'Create new site as existing user @parallel @canary', function () {
 		const siteTitle = dataHelper.randomPhrase();
 		const domainQuery = dataHelper.randomPhrase();
 		let newSiteDomain = '';
@@ -118,6 +118,19 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 				);
 				await plansPage.expandAllPlans();
 				await plansPage.selectFreePlan();
+
+				// Redirect console messages that starts with "onboarding-debug" to E2E log.
+				driver
+					.manage()
+					.logs()
+					.get( 'browser' )
+					.then( function ( logs ) {
+						logs.forEach( ( log ) => {
+							if ( log.message.indexOf( 'onboarding-debug' ) > -1 ) {
+								console.log( log.message );
+							}
+						} );
+					} );
 			}
 		);
 
