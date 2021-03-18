@@ -7,21 +7,21 @@ import React, { FunctionComponent } from 'react';
 /**
  * Internal dependencies
  */
+import { Button } from '@wordpress/components';
 import DismissibleCard from 'calypso/blocks/dismissible-card';
 
 const JetpackReviewPrompt: FunctionComponent = () => {
 	const translate = useTranslate();
 	return (
-		<DismissibleCard preferenceName="jetpack-review-prompt">
-			<a
-				target="_blank"
-				rel="noopener noreferrer"
+		<DismissibleCard preferenceName="jetpack-review-prompt" className="review-prompt">
+			<p>{ translate( 'Had an easy restore experience?' ) }</p>
+			<Button
 				href="https://wordpress.org/support/plugin/jetpack/reviews/#new-post"
+				isSecondary={ true }
+				target="_blank"
 			>
-				{ translate(
-					'Give Jetpack a thumbs up here if you thought it was easy to start a restore'
-				) }
-			</a>
+				{ translate( 'Leave Jetpack a review' ) }
+			</Button>
 		</DismissibleCard>
 	);
 };
