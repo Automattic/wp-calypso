@@ -35,6 +35,7 @@ private object EditingToolkit : BuildType({
 		param("archive_dir", "./editing-toolkit-plugin/")
 		param("build_env", "production")
 		param("release_tag", "etk-release-build")
+		param("with_slack_notify", "true" )
 		param("normalize_files", "sed -i -e \"/^\\s\\* Version:/c\\ * Version: %build.number%\" -e \"/^define( 'A8C_ETK_PLUGIN_VERSION'/c\\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );\" full-site-editing-plugin.php && sed -i -e \"/^Stable tag:\\s/c\\Stable tag: %build.number%\" readme.txt\n")
 	}
 
