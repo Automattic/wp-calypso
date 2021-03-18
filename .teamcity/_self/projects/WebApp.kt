@@ -589,7 +589,7 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 					echo "${'$'}*"
 				}
 
-				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${Settings.BuildDockerImage.depParamRefs.buildNumber}";
+				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
 				MAX_LOOP=10
 				COUNTER=0
 
@@ -682,7 +682,7 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 	}
 
 	dependencies {
-		snapshot(Settings.BuildDockerImage) {
+		snapshot(BuildDockerImage) {
 		}
 	}
 })
