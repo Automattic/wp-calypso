@@ -4,10 +4,8 @@ import _self.bashNodeScript
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
 object WebApp : Project({
@@ -15,6 +13,9 @@ object WebApp : Project({
 	name = "Web app"
 
 	buildType(RunCalypsoE2eDesktopTests)
+	buildType(RunAllUnitTests)
+	buildType(CheckCodeStyleBranch)
+	buildType(BuildDockerImage)
 })
 
 object RunCalypsoE2eDesktopTests : BuildType({
@@ -69,7 +70,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 					echo "${'$'}*"
 				}
 
-				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${Settings.BuildDockerImage.depParamRefs.buildNumber}";
+				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
 				MAX_LOOP=10
 				COUNTER=0
 
@@ -165,7 +166,374 @@ object RunCalypsoE2eDesktopTests : BuildType({
 	}
 
 	dependencies {
-		snapshot(Settings.BuildDockerImage) {
+		snapshot(BuildDockerImage) {
+		}
+	}
+})
+
+object BuildDockerImage : BuildType({
+	uuid = "89fff49e-c79b-4e68-a012-a7ba405359b6"
+	name = "Build docker image"
+	description = "Build docker image for Calypso"
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		dockerCommand {
+			name = "Build docker image"
+			commandType = build {
+				source = file {
+					path = "Dockerfile"
+				}
+				namesAndTags = """
+					registry.a8c.com/calypso/app:build-%build.number%
+					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
+				""".trimIndent()
+				commandArgs = """
+					--pull
+					--label com.a8c.image-builder=teamcity
+					--label com.a8c.target=calypso-live
+					--label com.a8c.build-id=%teamcity.build.id%
+					--build-arg workers=16
+					--build-arg node_memory=32768
+					--build-arg use_cache=true
+				""".trimIndent().replace("\n"," ")
+			}
+			param("dockerImage.platform", "linux")
+		}
+		dockerCommand {
+			commandType = push {
+				namesAndTags = """
+					registry.a8c.com/calypso/app:build-%build.number%
+					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
+				""".trimIndent()
+			}
+		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 20
+	}
+
+	features {
+		perfmon {
+		}
+		pullRequests {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+	}
+})
+
+object RunAllUnitTests : BuildType({
+	uuid = "beb75760-2786-472b-8909-ec33457bdece"
+	name = "Run unit tests"
+	description = "Run unit tests"
+
+	artifactRules = """
+		test_results => test_results
+		artifacts => artifacts
+	""".trimIndent()
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Prepare environment"
+			scriptContent = """
+				export NODE_ENV="test"
+
+				# Install modules
+				yarn install
+			"""
+		}
+		bashNodeScript {
+			name = "Prevent uncommited changes"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				export NODE_ENV="test"
+
+				# Prevent uncommited changes
+				DIRTY_FILES=${'$'}(git status --porcelain 2>/dev/null)
+				if [ ! -z "${'$'}DIRTY_FILES" ]; then
+					echo "Repository contains uncommitted changes: "
+					echo "${'$'}DIRTY_FILES"
+					echo "You need to checkout the branch, run 'yarn' and commit those files."
+					exit 1
+				fi
+			"""
+		}
+		bashNodeScript {
+			name = "Prevent duplicated packages"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				# Duplicated packages
+				DUPLICATED_PACKAGES=${'$'}(npx yarn-deduplicate --list)
+				if [[ -n "${'$'}DUPLICATED_PACKAGES" ]]; then
+					echo "Repository contains duplicated packages: "
+					echo ""
+					echo "${'$'}DUPLICATED_PACKAGES"
+					echo ""
+					echo "To fix them, you need to checkout the branch, run 'npx yarn-deduplicate && yarn',"
+					echo "verify that the new packages work and commit the changes in 'yarn.lock'."
+					exit 1
+				else
+					echo "No duplicated packages found."
+				fi
+			"""
+		}
+		bashNodeScript {
+			name = "Run type checks"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				export NODE_ENV="test"
+
+				# Run type checks
+				yarn tsc --build packages/tsconfig.json
+				yarn tsc --build apps/editing-toolkit/tsconfig.json
+				yarn tsc --project client/landing/gutenboarding
+			"""
+		}
+		bashNodeScript {
+			name = "Run unit tests for client"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				export JEST_JUNIT_OUTPUT_NAME="results.xml"
+				unset NODE_ENV
+				unset CALYPSO_ENV
+
+				# Run client tests
+				JEST_JUNIT_OUTPUT_DIR="./test_results/client" yarn test-client --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+			"""
+		}
+		bashNodeScript {
+			name = "Run unit tests for server"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				export JEST_JUNIT_OUTPUT_NAME="results.xml"
+				unset NODE_ENV
+				unset CALYPSO_ENV
+
+				# Run server tests
+				JEST_JUNIT_OUTPUT_DIR="./test_results/server" yarn test-server --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+			"""
+		}
+		bashNodeScript {
+			name = "Run unit tests for packages"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				export JEST_JUNIT_OUTPUT_NAME="results.xml"
+				unset NODE_ENV
+				unset CALYPSO_ENV
+
+				# Run packages tests
+				JEST_JUNIT_OUTPUT_DIR="./test_results/packages" yarn test-packages --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+			"""
+		}
+		bashNodeScript {
+			name = "Run unit tests for build tools"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				export JEST_JUNIT_OUTPUT_NAME="results.xml"
+				unset NODE_ENV
+				unset CALYPSO_ENV
+
+				# Run build-tools tests
+				JEST_JUNIT_OUTPUT_DIR="./test_results/build-tools" yarn test-build-tools --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+			"""
+		}
+		bashNodeScript {
+			name = "Build artifacts"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				export NODE_ENV="production"
+
+				# Build o2-blocks
+				(cd apps/o2-blocks/ && yarn build --output-path="../../artifacts/o2-blocks")
+
+				# Build wpcom-block-editor
+				(cd apps/wpcom-block-editor/ &&  NODE_ENV=development yarn build --output-path="../../artifacts/wpcom-block-editor")
+
+				# Build notifications
+				(cd apps/notifications/ && yarn build --output-path="../../artifacts/notifications")
+			"""
+		}
+		bashNodeScript {
+			name = "Build components storybook"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				export NODE_ENV="production"
+
+				yarn components:storybook:start --ci --smoke-test
+			"""
+		}
+		bashNodeScript {
+			name = "Build search storybook"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				export NODE_ENV="production"
+
+				yarn search:storybook:start --ci --smoke-test
+			"""
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:pull*
+			""".trimIndent()
+		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 10
+	}
+
+	features {
+		feature {
+			type = "xml-report-plugin"
+			param("xmlReportParsing.reportType", "junit")
+			param("xmlReportParsing.reportDirs", "test_results/**/*.xml")
+		}
+		perfmon {
+		}
+		pullRequests {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#team-calypso-bot"
+				messageFormat = simpleMessageFormat()
+			}
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = true
+			firstSuccessAfterFailure = true
+			buildProbablyHanging = true
+		}
+	}
+})
+
+object CheckCodeStyleBranch : BuildType({
+	uuid = "dfee7987-6bbc-4250-bb10-ef9dd7322bd2"
+	name = "Check code style for branches"
+	description = "Check code style for branches"
+
+	artifactRules = """
+		checkstyle_results => checkstyle_results
+	""".trimIndent()
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Prepare environment"
+			scriptContent = """
+				export NODE_ENV="test"
+
+				# Install modules
+				yarn install
+			"""
+		}
+		bashNodeScript {
+			name = "Run linters"
+			scriptContent = """
+				export NODE_ENV="test"
+
+				# Find files to lint
+				if [ "%calypso.run_full_eslint%" = "true" ]; then
+					FILES_TO_LINT="."
+				else
+					FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?|\.md)${'$'}' || exit 0)
+				fi
+				echo "Files to lint:"
+				echo ${'$'}FILES_TO_LINT
+				echo ""
+
+				# Lint files
+				if [ ! -z "${'$'}FILES_TO_LINT" ]; then
+					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" ${'$'}FILES_TO_LINT
+				fi
+			"""
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:trunk
+				-:pull*
+			""".trimIndent()
+		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 20
+	}
+
+	features {
+		feature {
+			type = "xml-report-plugin"
+			param("xmlReportParsing.reportType", "checkstyle")
+			param("xmlReportParsing.reportDirs", "checkstyle_results/**/*.xml")
+			param("xmlReportParsing.verboseOutput", "true")
+		}
+		perfmon {
+		}
+		pullRequests {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
 		}
 	}
 })
