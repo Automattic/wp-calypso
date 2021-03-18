@@ -56,7 +56,7 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 		await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,
 			By.css(
-				'.plan-features__mobile button.is-business-plan, .plan-features-comparison__table button.is-business-plan'
+				'.plan-features__mobile button.is-business-plan, .plan-features__table button.is-business-plan'
 			)
 		);
 		await this.scrollPlanInToView( level );

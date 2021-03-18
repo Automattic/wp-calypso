@@ -33,7 +33,7 @@ export default ( state ) => {
 	const userId = getCurrentUserId( state );
 	// Disable for Test Users.
 	if ( isE2ETest() ) {
-		return false;
+		//return false;
 	}
 
 	// Users belonging to the current segment OR New Users.
