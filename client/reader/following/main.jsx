@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useState } from 'react';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { flatMap, trim } from 'lodash';
@@ -44,6 +44,7 @@ function handleSearch( query ) {
 }
 
 const FollowingStream = ( props ) => {
+	const [ includeSeenPosts, setIncludeSeenPosts ] = useState( true );
 	const suggestionList =
 		props.suggestions &&
 		flatMap( props.suggestions, ( query ) => [
@@ -60,7 +61,7 @@ const FollowingStream = ( props ) => {
 	};
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<Stream { ...props }>
+		<Stream { ...props } includeSeenPosts={ includeSeenPosts }>
 			<FollowingIntro />
 			<CompactCard className="following__search">
 				<SearchInput
@@ -72,6 +73,11 @@ const FollowingStream = ( props ) => {
 			</CompactCard>
 			<BlankSuggestions suggestions={ suggestionList } />
 			<SectionHeader label={ translate( 'Followed Sites' ) }>
+				{ isEligibleForUnseen( { teams } ) && (
+					<Button compact onClick={ () => setIncludeSeenPosts( ! includeSeenPosts ) }>
+						{ ! includeSeenPosts ? translate( 'Show all' ) : translate( 'Show only unseen' ) }
+					</Button>
+				) }
 				{ isEligibleForUnseen( { teams } ) && (
 					<Button
 						compact

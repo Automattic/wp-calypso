@@ -30,10 +30,19 @@ class PostLifecycle extends React.Component {
 		isDiscoverStream: PropTypes.bool,
 		handleClick: PropTypes.func,
 		recStreamKey: PropTypes.string,
+		includeSeenPosts: PropTypes.bool,
 	};
 
 	render() {
-		const { post, postKey, followSource, isSelected, recsStreamKey, streamKey } = this.props;
+		const {
+			post,
+			postKey,
+			followSource,
+			isSelected,
+			recsStreamKey,
+			streamKey,
+			includeSeenPosts,
+		} = this.props;
 
 		if ( postKey.isRecommendationBlock ) {
 			return (
@@ -54,6 +63,7 @@ class PostLifecycle extends React.Component {
 					followSource={ followSource }
 					showFollowButton={ this.props.showPrimaryFollowButtonOnCards }
 					blockedSites={ this.props.blockedSites }
+					includeSeenPosts={ includeSeenPosts }
 				/>
 			);
 		} else if ( streamKey.indexOf( 'rec' ) > -1 ) {
