@@ -1,7 +1,7 @@
 /**
  * DEPRECATED
- * 
- * This code has been deprecated in favor of /client/lib/explat 
+ *
+ * This code has been deprecated in favor of /client/lib/explat
  */
 
 /**
@@ -16,7 +16,7 @@ import 'calypso/state/experiments/init';
  *
  * @param state The application state
  * @param experiment The name of the experiment
- * 
+ *
  * @deprecated Use /client/lib/explat (useExperiment hook or ProvideExperimentData HOC)
  */
 export const getVariationForUser = ( state: AppState, experiment: string ): string | null =>

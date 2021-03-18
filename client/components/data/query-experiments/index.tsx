@@ -1,7 +1,7 @@
 /**
  * DEPRECATED
- * 
- * This code has been deprecated in favor of /client/lib/explat 
+ *
+ * This code has been deprecated in favor of /client/lib/explat
  */
 
 /**

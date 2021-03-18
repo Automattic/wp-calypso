@@ -1,7 +1,7 @@
 /**
  * DEPRECATED
- * 
- * This code has been deprecated in favor of /client/lib/explat (New Experiment component). 
+ *
+ * This code has been deprecated in favor of /client/lib/explat (New Experiment component).
  * Note that the API has changed to use slots.
  */
 
@@ -33,7 +33,7 @@ import { LoadingProps } from './loading-props';
  * The experiment component to display the experiment variations
  *
  * @param props The properties that describe the experiment
- * 
+ *
  * @deprecated Use /client/lib/explat (New Experiment component). Note that the API has changed to use slots.
  */
 export const Experiment: FunctionComponent< ExperimentProps > = ( props ) => {
