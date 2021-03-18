@@ -15,7 +15,6 @@ import { confirmStripePaymentIntent } from '@automattic/calypso-stripe';
  */
 import {
 	createStripePaymentMethodToken,
-	wpcomTransaction,
 	submitApplePayPayment,
 	submitStripeCardTransaction,
 	submitEbanxCardTransaction,
@@ -28,6 +27,7 @@ import getDomainDetails from './lib/get-domain-details';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
 import userAgent from 'calypso/lib/user-agent';
 import { recordTransactionBeginAnalytics } from './lib/analytics';
+import submitWpcomTransaction from './lib/submit-wpcom-transaction';
 
 const { select } = defaultRegistry;
 
@@ -87,7 +87,7 @@ export async function genericRedirectProcessor(
 			siteId: select( 'wpcom' )?.getSiteId?.(),
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		},
-		wpcomTransaction
+		submitWpcomTransaction
 	).then( ( response ) => {
 		return makeRedirectResponse( response?.redirect_url );
 	} );
@@ -147,7 +147,7 @@ export async function weChatProcessor(
 			siteId: select( 'wpcom' )?.getSiteId?.(),
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		},
-		wpcomTransaction
+		submitWpcomTransaction
 	).then( ( response ) => {
 		// The WeChat payment type should only redirect when on mobile as redirect urls
 		// are mobile app urls: e.g. weixin://wxpay/bizpayurl?pr=RaXzhu4
@@ -172,7 +172,7 @@ export async function applePayProcessor(
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 			postalCode: getPostalCode(),
 		},
-		wpcomTransaction,
+		submitWpcomTransaction,
 		transactionOptions
 	).then( makeSuccessResponse );
 }
@@ -198,7 +198,7 @@ export async function stripeCardProcessor(
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 			paymentMethodToken,
 		},
-		wpcomTransaction,
+		submitWpcomTransaction,
 		transactionOptions
 	)
 		.then( ( stripeResponse ) => {
@@ -240,7 +240,7 @@ export async function ebanxCardProcessor(
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 			paymentMethodToken,
 		},
-		wpcomTransaction
+		submitWpcomTransaction
 	).then( makeSuccessResponse );
 }
 
@@ -273,7 +273,7 @@ export async function freePurchaseProcessor(
 			country: null,
 			postalCode: null,
 		},
-		wpcomTransaction
+		submitWpcomTransaction
 	).then( makeSuccessResponse );
 }
 
@@ -292,7 +292,7 @@ export async function fullCreditsProcessor(
 			postalCode: submitData.postalCode || getPostalCode(),
 			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 		},
-		wpcomTransaction,
+		submitWpcomTransaction,
 		transactionOptions
 	).then( makeSuccessResponse );
 }
