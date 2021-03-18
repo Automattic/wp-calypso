@@ -30,6 +30,14 @@
 	}
 }
 
+.preferences-helper__save-pref-button {
+	color: var( --color-accent );
+	cursor: pointer;
+	&:disabled {
+		color: var( --color-neutral );
+	}
+}
+
 .environment.is-prefs:hover .preferences-helper__current-preferences.card {
 	display: block;
 	max-height: 80vh;
