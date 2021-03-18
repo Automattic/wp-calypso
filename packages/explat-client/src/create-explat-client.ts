@@ -12,7 +12,7 @@ import { createFallbackExperimentAssignment as createFallbackExperimentAssignmen
 /**
  * The number of milliseconds before we abandon fetching an experiment
  */
-const EXPERIMENT_FETCH_TIMEOUT = 5000;
+const EXPERIMENT_FETCH_TIMEOUT = 11000;
 
 export interface ExPlatClient {
 	/**
