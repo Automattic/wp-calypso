@@ -35,12 +35,9 @@ import {
 import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import {
-	getConfiguredTitanMailboxCount,
 	getMaxTitanMailboxCount,
 	getTitanProductName,
 	hasTitanMailWithUs,
@@ -53,6 +50,7 @@ import {
 } from 'calypso/lib/titan/constants';
 import TitanExistingForwardsNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-existing-forwards-notice';
 import TitanMailboxPricingNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-mailbox-pricing-notice';
+import TitanUnusedMailboxesNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-unused-mailbox-notice';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
@@ -176,44 +174,6 @@ class TitanMailQuantitySelection extends React.Component {
 		this.setState( { quantity } );
 	};
 
-	renderUnusedMailboxesNotice() {
-		const { maxTitanMailboxCount, selectedDomain, translate } = this.props;
-
-		if ( ! hasTitanMailWithUs( selectedDomain ) ) {
-			return null;
-		}
-
-		const numberOfUnusedMailboxes =
-			maxTitanMailboxCount - getConfiguredTitanMailboxCount( selectedDomain );
-
-		if ( numberOfUnusedMailboxes <= 0 ) {
-			return;
-		}
-
-		const text = translate(
-			'You have %(numberOfMailboxes)d unused mailbox. Do you want to configure it now instead?',
-			'You have %(numberOfMailboxes)d unused mailboxes. Do you want to configure them now instead?',
-			{
-				count: numberOfUnusedMailboxes,
-				args: {
-					numberOfMailboxes: numberOfUnusedMailboxes,
-				},
-				comment: 'This refers to the number of mailboxes purchased that have not been set up yet',
-			}
-		);
-
-		return (
-			<Notice icon="notice" showDismiss={ false } status="is-warning" text={ text }>
-				<NoticeAction
-					external={ ! isEnabled( 'titan/iframe-control-panel' ) }
-					onClick={ this.handleCreateMailbox }
-				>
-					{ translate( 'Finish Setup' ) }
-				</NoticeAction>
-			</Notice>
-		);
-	}
-
 	renderForm() {
 		const { isLoadingDomains, titanMonthlyProduct, translate } = this.props;
 
@@ -270,6 +230,7 @@ class TitanMailQuantitySelection extends React.Component {
 			selectedSite,
 			isSelectedDomainNameValid,
 			isLoadingDomains,
+			maxTitanMailboxCount,
 			titanMonthlyProduct,
 		} = this.props;
 
@@ -277,6 +238,8 @@ class TitanMailQuantitySelection extends React.Component {
 			this.goToEmail();
 			return null;
 		}
+
+		const finishSetupLinkIsExternal = ! isEnabled( 'titan/iframe-control-panel' );
 
 		return (
 			<>
@@ -293,7 +256,12 @@ class TitanMailQuantitySelection extends React.Component {
 					</DomainManagementHeader>
 
 					<TitanExistingForwardsNotice domainsWithForwards={ domainsWithForwards } />
-					{ this.renderUnusedMailboxesNotice() }
+					<TitanUnusedMailboxesNotice
+						domain={ selectedDomain }
+						linkIsExternal={ finishSetupLinkIsExternal }
+						maxTitanMailboxCount={ maxTitanMailboxCount }
+						onFinishSetupClick={ this.handleCreateMailbox }
+					/>
 					{ selectedDomain && titanMonthlyProduct && (
 						<TitanMailboxPricingNotice
 							domain={ selectedDomain }
