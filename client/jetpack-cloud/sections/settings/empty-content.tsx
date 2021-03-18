@@ -10,6 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import { preventWidows } from 'calypso/lib/formatting';
+import { JETPACK_PRICING_PAGE } from 'calypso/lib/url/support';
 
 const NoSitePurchasesMessage: React.FC = () => {
 	const translate = useTranslate();
@@ -18,7 +19,7 @@ const NoSitePurchasesMessage: React.FC = () => {
 		<Main className="empty-content">
 			<EmptyContent
 				action={
-					<a className="empty-content__action button is-primary" href="https://jetpack.com/pricing">
+					<a className="empty-content__action button is-primary" href={ JETPACK_PRICING_PAGE }>
 						{ translate( 'Upgrade for quick restores' ) }
 					</a>
 				}

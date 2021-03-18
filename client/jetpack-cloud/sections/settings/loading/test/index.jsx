@@ -16,9 +16,7 @@ import AdvancedCredentialsLoadingPlaceholder from '../index';
 
 describe( 'AdvancedCredentialsLoadingPlaceholder', () => {
 	it( 'should render correctly', () => {
-		const { container } = render(
-			<AdvancedCredentialsLoadingPlaceholder></AdvancedCredentialsLoadingPlaceholder>
-		);
+		const { container } = render( <AdvancedCredentialsLoadingPlaceholder /> );
 
 		expect( container ).toMatchSnapshot();
 	} );
