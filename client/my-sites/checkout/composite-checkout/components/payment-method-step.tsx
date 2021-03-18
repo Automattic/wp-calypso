@@ -69,7 +69,7 @@ const CheckoutTermsWrapper = styled.div`
 export default function PaymentMethodStep( {
 	activeStepContent,
 }: {
-	activeStepContent: JSX.Element;
+	activeStepContent: React.ReactNode;
 } ): JSX.Element {
 	const { responseCart } = useShoppingCart();
 	const taxLineItem = getTaxLineItem( responseCart );

@@ -89,6 +89,7 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	messages?: ResponseCartMessages;
 	cart_generated_at_timestamp: number;
 	tax: ResponseCartTaxData;
+	next_domain_is_free: boolean;
 }
 
 export interface ResponseCartTaxData {
