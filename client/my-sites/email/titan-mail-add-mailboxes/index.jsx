@@ -214,8 +214,17 @@ class TitanMailAddMailboxes extends React.Component {
 						onMailboxesChange={ this.onMailboxesChange }
 						domainHasMailboxes={ hasTitanMailboxes }
 					>
-						<Button onClick={ this.handleCancel }>{ translate( 'Cancel' ) }</Button>
-						<Button primary onClick={ this.handleContinue }>
+						<Button
+							className="titan-mail-add-mailboxes__action-cancel"
+							onClick={ this.handleCancel }
+						>
+							{ translate( 'Cancel' ) }
+						</Button>
+						<Button
+							className="titan-mail-add-mailboxes__action-continue"
+							primary
+							onClick={ this.handleContinue }
+						>
 							{ translate( 'Continue' ) }
 						</Button>
 					</TitanNewMailboxList>

@@ -58,111 +58,118 @@ const TitanNewMailbox = ( {
 	const hasPasswordError = passwordFieldTouched && null !== passwordError;
 
 	return (
-		<div className="titan-mail-add-mailboxes__new-mailbox">
-			<FormFieldset>
-				<FormLabel>
-					{ translate( 'Name' ) }
-					<FormTextInput
-						placeholder={ translate( 'Name' ) }
-						value={ name }
-						required
-						isError={ hasNameError }
-						onChange={ ( event ) => {
-							onMailboxValueChange( 'name', event.target.value, mailboxFieldTouched );
-						} }
-						onBlur={ () => {
-							setNameFieldTouched( hasBeenValidated );
-						} }
-						onKeyUp={ onReturnKeyPress }
-						suffix={ `@${ domain }` }
-					/>
-				</FormLabel>
-				{ hasNameError && <FormInputValidation text={ nameError } isError /> }
-			</FormFieldset>
+		<>
+			<div className="titan-mail-add-mailboxes__new-mailbox">
+				<div className="titan-mail-add-mailboxes__new-mailbox-name-and-remove">
+					<FormFieldset>
+						<FormLabel>
+							{ translate( 'Name' ) }
+							<FormTextInput
+								placeholder={ translate( 'Name' ) }
+								value={ name }
+								required
+								isError={ hasNameError }
+								onChange={ ( event ) => {
+									onMailboxValueChange( 'name', event.target.value, mailboxFieldTouched );
+								} }
+								onBlur={ () => {
+									setNameFieldTouched( hasBeenValidated );
+								} }
+								onKeyUp={ onReturnKeyPress }
+								suffix={ `@${ domain }` }
+							/>
+						</FormLabel>
+						{ hasNameError && <FormInputValidation text={ nameError } isError /> }
+					</FormFieldset>
 
-			<Button
-				className="titan-mail-add-mailboxes__new-mailbox-remove-mailbox-button"
-				onClick={ onMailboxRemove }
-			>
-				<Gridicon icon="trash" />
-				<span>{ translate( 'Remove mailbox' ) }</span>
-			</Button>
+					<Button
+						className="titan-mail-add-mailboxes__new-mailbox-remove-mailbox-button"
+						onClick={ onMailboxRemove }
+					>
+						<Gridicon icon="trash" />
+						<span>{ translate( 'Remove mailbox' ) }</span>
+					</Button>
+				</div>
 
-			<FormFieldset>
-				<FormLabel>
-					{ translate( 'Email address' ) }
-					<FormTextInputWithAffixes
-						placeholder={ translate( 'Email' ) }
-						value={ mailbox }
-						isError={ hasMailboxError }
-						onChange={ ( event ) => {
-							onMailboxValueChange( 'mailbox', event.target.value.toLowerCase() );
-						} }
-						onBlur={ () => {
-							setMailboxFieldTouched( hasBeenValidated );
-						} }
-						onKeyUp={ onReturnKeyPress }
-						suffix={ `@${ domain }` }
-					/>
-				</FormLabel>
-				{ hasMailboxError && <FormInputValidation text={ mailboxError } isError /> }
-			</FormFieldset>
+				<FormFieldset>
+					<FormLabel>
+						{ translate( 'Email address' ) }
+						<FormTextInputWithAffixes
+							placeholder={ translate( 'Email' ) }
+							value={ mailbox }
+							isError={ hasMailboxError }
+							onChange={ ( event ) => {
+								onMailboxValueChange( 'mailbox', event.target.value.toLowerCase() );
+							} }
+							onBlur={ () => {
+								setMailboxFieldTouched( hasBeenValidated );
+							} }
+							onKeyUp={ onReturnKeyPress }
+							suffix={ `@${ domain }` }
+						/>
+					</FormLabel>
+					{ hasMailboxError && <FormInputValidation text={ mailboxError } isError /> }
+				</FormFieldset>
 
-			<FormFieldset>
-				<FormLabel>
-					{ translate( 'Password' ) }
-					<FormPasswordInput
-						autoCapitalize="off"
-						autoCorrect="off"
-						placeholder={ translate( 'Password' ) }
-						value={ password }
-						maxLength={ 100 }
-						isError={ hasPasswordError }
-						onChange={ ( event ) => {
-							onMailboxValueChange( 'password', event.target.value );
-						} }
-						onBlur={ () => {
-							setPasswordFieldTouched( hasBeenValidated );
-						} }
-						onKeyUp={ onReturnKeyPress }
-					/>
-				</FormLabel>
-				{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
-			</FormFieldset>
+				<div className="titan-mail-add-mailboxes__new-mailbox-password-and-is-admin">
+					<FormFieldset>
+						<FormLabel>
+							{ translate( 'Password' ) }
+							<FormPasswordInput
+								autoCapitalize="off"
+								autoCorrect="off"
+								placeholder={ translate( 'Password' ) }
+								value={ password }
+								maxLength={ 100 }
+								isError={ hasPasswordError }
+								onChange={ ( event ) => {
+									onMailboxValueChange( 'password', event.target.value );
+								} }
+								onBlur={ () => {
+									setPasswordFieldTouched( hasBeenValidated );
+								} }
+								onKeyUp={ onReturnKeyPress }
+							/>
+						</FormLabel>
+						{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
+					</FormFieldset>
 
-			<FormFieldset>
-				<FormToggle
-					checked={ isAdmin }
-					onChange={ ( newValue ) => {
-						onMailboxValueChange( 'isAdmin', newValue );
-					} }
-					help={ translate( 'Should this user have control panel access?' ) }
-				>
-					{ translate( 'Is admin?' ) }
-				</FormToggle>
-			</FormFieldset>
+					<FormFieldset>
+						<FormToggle
+							checked={ isAdmin }
+							onChange={ ( newValue ) => {
+								onMailboxValueChange( 'isAdmin', newValue );
+							} }
+							help={ translate( 'Should this user have control panel access?' ) }
+						>
+							{ translate( 'Is admin?' ) }
+						</FormToggle>
+					</FormFieldset>
+				</div>
 
-			<FormFieldset>
-				<FormLabel>
-					{ translate( 'Alternative email address' ) }
-					<FormTextInput
-						placeholder={ translate( 'Alternative email' ) }
-						value={ alternativeEmail }
-						isError={ hasAlternativeEmailError }
-						onChange={ ( event ) => {
-							onMailboxValueChange( 'alternativeEmail', event.target.value );
-						} }
-						onBlur={ () => {
-							setAlternativeEmailFieldTouched( hasBeenValidated );
-						} }
-						onKeyUp={ onReturnKeyPress }
-					/>
-				</FormLabel>
-				{ hasAlternativeEmailError && (
-					<FormInputValidation text={ alternativeEmailError } isError />
-				) }
-			</FormFieldset>
-		</div>
+				<FormFieldset>
+					<FormLabel>
+						{ translate( 'Alternative email address' ) }
+						<FormTextInput
+							placeholder={ translate( 'Alternative email' ) }
+							value={ alternativeEmail }
+							isError={ hasAlternativeEmailError }
+							onChange={ ( event ) => {
+								onMailboxValueChange( 'alternativeEmail', event.target.value );
+							} }
+							onBlur={ () => {
+								setAlternativeEmailFieldTouched( hasBeenValidated );
+							} }
+							onKeyUp={ onReturnKeyPress }
+						/>
+					</FormLabel>
+					{ hasAlternativeEmailError && (
+						<FormInputValidation text={ alternativeEmailError } isError />
+					) }
+				</FormFieldset>
+			</div>
+			<hr className="titan-mail-add-mailboxes__new-mailbox-separator" />
+		</>
 	);
 };
 
