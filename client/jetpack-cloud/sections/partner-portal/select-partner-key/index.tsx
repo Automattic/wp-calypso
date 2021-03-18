@@ -42,8 +42,12 @@ export default function SelectPartnerKey(): ReactElement | null {
 
 	useEffect( () => {
 		if ( hasKey ) {
-			const returnUrl = getQueryArg( window.location.href, 'return' ) as string;
-			page.redirect( returnUrl || '/partner-portal' );
+			const returnQuery = getQueryArg( window.location.href, 'return' ) as string;
+			const returnUrl =
+				returnQuery && returnQuery.startsWith( '/partner-portal' )
+					? returnQuery
+					: '/partner-portal';
+			page.redirect( returnUrl );
 		}
 	}, [ hasKey ] );
 

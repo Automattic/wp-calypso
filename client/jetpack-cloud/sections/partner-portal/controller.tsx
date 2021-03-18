@@ -79,7 +79,9 @@ export function requirePartnerKeyContext( context: PageJS.Context, next: () => v
 		return;
 	}
 
-	const returnUrl = '/partner-portal' === pathname ? pathname + search : '/partner-portal';
+	const returnUrl = ! pathname.startsWith( '/partner-portal' )
+		? pathname + search
+		: '/partner-portal';
 
 	page.redirect(
 		addQueryArgs(
