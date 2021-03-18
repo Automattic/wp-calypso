@@ -107,10 +107,16 @@ export type WPCOMTransactionEndpointCart = {
 	tax: Omit< ResponseCartTaxData, 'display_taxes' >;
 };
 
+type PurchaseSiteId = number;
+
 export type WPCOMTransactionEndpointResponse = {
 	success: boolean;
 	error_code: string;
 	error_message: string;
-	receipt_id: number;
-	purchases: Record< number, Purchase >;
+	failed_purchases?: Record< PurchaseSiteId, Purchase[] >;
+	purchases?: Record< PurchaseSiteId, Purchase[] >;
+	receipt_id?: number;
+	order_id?: number;
+	redirect_url?: string;
+	message?: { payment_intent_client_secret: string };
 };
