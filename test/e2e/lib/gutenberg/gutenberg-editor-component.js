@@ -375,6 +375,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			case 'Slideshow':
 				blockSettings = { prefix: 'jetpack-' };
 				break;
+			case 'Social Links':
+				blockSettings = { ariaLabel: 'Social Icons' };
+				break;
 			case 'Star Rating':
 				blockSettings = { prefix: 'jetpack-', blockClass: 'rating-star' };
 				break;

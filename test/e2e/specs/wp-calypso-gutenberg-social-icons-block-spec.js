@@ -48,11 +48,11 @@ describe( `[${ host }] Calypso Gutenberg Editor: Social Icons Block (${ screenSi
 
 		step( 'Can insert the Social icons block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			await gEditorComponent.addBlock( 'Social icons' );
+			await gEditorComponent.addBlock( 'Social Links' );
 
 			return await driverHelper.waitTillPresentAndDisplayed(
 				driver,
-				By.css( '.wp-block-social-icons' )
+				By.css( '.wp-block-social-links' )
 			);
 		} );
 
