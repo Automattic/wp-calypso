@@ -289,7 +289,7 @@ export async function fullCreditsProcessor(
 export async function payPalProcessor( submitData, transactionOptions ) {
 	const {
 		getThankYouUrl,
-		couponItem,
+		responseCart,
 		includeDomainDetails,
 		includeGSuiteDetails,
 		createUserAndSiteBeforeTransaction,
@@ -318,7 +318,7 @@ export async function payPalProcessor( submitData, transactionOptions ) {
 			successUrl,
 			cancelUrl,
 			siteId: select( 'wpcom' )?.getSiteId?.() ?? '',
-			couponId: couponItem?.wpcom_meta?.couponCode,
+			couponId: responseCart.coupon,
 			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '',
 			postalCode: getPostalCode(),
 			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value ?? '',

@@ -244,15 +244,10 @@ export default function CompositeCheckout( {
 		isInitialCartLoading,
 	} );
 
-	const {
-		items,
-		tax,
-		coupon: couponItem,
-		total,
-		credits,
-		subtotal,
-		allowedPaymentMethods,
-	} = useMemo( () => translateResponseCartToWPCOMCart( responseCart ), [ responseCart ] );
+	const { items, total, allowedPaymentMethods } = useMemo(
+		() => translateResponseCartToWPCOMCart( responseCart ),
+		[ responseCart ]
+	);
 
 	const getThankYouUrlBase = useGetThankYouUrl( {
 		siteSlug,
@@ -314,14 +309,6 @@ export default function CompositeCheckout( {
 			errorNotice( errorsToDisplay.map( ( message ) => <p key={ message }>{ message }</p> ) )
 		);
 	} );
-
-	const isFullCredits =
-		credits?.amount && credits.amount.value > 0 && credits.amount.value >= subtotal.amount.value;
-	const itemsForCheckout = ( items.length
-		? [ ...items, tax, couponItem, ...( isFullCredits ? [] : [ credits ] ) ]
-		: []
-	).filter( doesValueExist );
-	debug( 'items for checkout', itemsForCheckout );
 
 	const errors = responseCart.messages?.errors ?? [];
 	const areThereErrors =
@@ -390,9 +377,6 @@ export default function CompositeCheckout( {
 		: filterAppropriatePaymentMethods( {
 				paymentMethodObjects,
 				countryCode,
-				total,
-				credits,
-				subtotal,
 				allowedPaymentMethods,
 				responseCart,
 		  } );
@@ -453,6 +437,7 @@ export default function CompositeCheckout( {
 			createUserAndSiteBeforeTransaction,
 			stripeConfiguration,
 			reduxDispatch,
+			responseCart,
 		} ),
 		[
 			includeDomainDetails,
@@ -461,6 +446,7 @@ export default function CompositeCheckout( {
 			createUserAndSiteBeforeTransaction,
 			stripeConfiguration,
 			reduxDispatch,
+			responseCart,
 		]
 	);
 	const dataForRedirectProcessor = useMemo(
@@ -522,11 +508,10 @@ export default function CompositeCheckout( {
 					dataForProcessor
 				),
 			paypal: ( transactionData: unknown ) =>
-				payPalProcessor( transactionData, { ...dataForRedirectProcessor, couponItem } ),
+				payPalProcessor( transactionData, dataForRedirectProcessor ),
 		} ),
 		[
 			siteId,
-			couponItem,
 			dataForProcessor,
 			dataForRedirectProcessor,
 			transactionOptions,
@@ -641,7 +626,7 @@ export default function CompositeCheckout( {
 			<QueryContactDetailsCache />
 			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
 			<CheckoutProvider
-				items={ itemsForCheckout }
+				items={ items }
 				total={ total }
 				onPaymentComplete={ handlePaymentComplete }
 				showErrorMessage={ showErrorMessage }

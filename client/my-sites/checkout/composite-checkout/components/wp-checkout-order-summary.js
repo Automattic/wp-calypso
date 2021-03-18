@@ -13,6 +13,11 @@ import {
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import {
+	getCouponLineItemFromCart,
+	getTaxLineItemFromCart,
+	getTotalLineItemFromCart,
+} from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -24,7 +29,6 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import Gridicon from 'calypso/components/gridicon';
 import getPlanFeatures from '../lib/get-plan-features';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
-import { getCouponLineItem, getTaxLineItem, getTotalLineItem } from '../lib/translate-cart';
 import { isPlan } from 'calypso/lib/products-values';
 
 export default function WPCheckoutOrderSummary( {
@@ -35,9 +39,9 @@ export default function WPCheckoutOrderSummary( {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
 	const { responseCart } = useShoppingCart();
-	const couponLineItem = getCouponLineItem( responseCart );
-	const taxLineItem = getTaxLineItem( responseCart );
-	const totalLineItem = getTotalLineItem( responseCart );
+	const couponLineItem = getCouponLineItemFromCart( responseCart );
+	const taxLineItem = getTaxLineItemFromCart( responseCart );
+	const totalLineItem = getTotalLineItemFromCart( responseCart );
 
 	const hasRenewalInCart = responseCart.products.some(
 		( product ) => product.extra.purchaseType === 'renewal'

@@ -1,48 +1,30 @@
 /**
  * External dependencies
  */
-import debugFactory from 'debug';
-import type { PaymentMethod, LineItem } from '@automattic/composite-checkout';
+import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
+import { doesPurchaseHaveFullCredits } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
 import type { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
-import doesPurchaseHaveFullCredits from './does-purchase-have-full-credits';
 import { readCheckoutPaymentMethodSlug } from './translate-payment-method-names';
 import isPaymentMethodEnabled from './is-payment-method-enabled';
-
-const debug = debugFactory( 'calypso:composite-checkout:filter-appropriate-payment-methods' );
 
 export default function filterAppropriatePaymentMethods( {
 	paymentMethodObjects,
 	countryCode,
-	total,
-	credits,
-	subtotal,
 	responseCart,
 	allowedPaymentMethods,
 }: {
 	paymentMethodObjects: PaymentMethod[];
 	countryCode: string;
-	total: LineItem;
-	credits: LineItem | null;
-	subtotal: LineItem;
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
 	responseCart: ResponseCart;
 } ): PaymentMethod[] {
-	const isPurchaseFree = total.amount.value === 0;
+	const isPurchaseFree = responseCart.total_cost_integer === 0;
 	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
-	debug( 'filtering payment methods with this input', {
-		total,
-		credits,
-		subtotal,
-		allowedPaymentMethods,
-		isPurchaseFree,
-		isFullCredits,
-		countryCode,
-	} );
 
 	return paymentMethodObjects
 		.filter( ( methodObject ) => {
