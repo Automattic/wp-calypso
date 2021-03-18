@@ -1,0 +1,10 @@
+.loading {
+	padding: 0 16px;
+
+	&__placeholder {
+		@include placeholder();
+
+		width: 100%;
+		height: 186px;
+	}
+}

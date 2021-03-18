@@ -27,13 +27,10 @@ import { JETPACK_CREDENTIALS_UPDATE_RESET } from 'calypso/state/action-types';
 import Gridicon from 'calypso/components/gridicon';
 import HostSelection from './host-selection';
 import Main from 'calypso/components/main';
-import Notice from 'calypso/components/notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import StepProgress from 'calypso/components/step-progress';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
 
 /**
  * Style dependencies
@@ -60,7 +57,6 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 
 	const steps = [
 		{
@@ -205,10 +201,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 		}
 	}, [ currentStep, dispatch, host ] );
 
-	const hasPurchases = purchases?.length > 0;
-	// Allow removal/edition if credentials are already saved
-	const preventEdit = ! hasPurchases && ! hasCredentials;
-	const disableForm = 'pending' === formSubmissionStatus || preventEdit;
+	const disableForm = 'pending' === formSubmissionStatus;
 	const formHasErrors = formErrors && Object.keys( formErrors ).length > 0;
 
 	const handleDeleteCredentials = () => {
@@ -340,7 +333,6 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	return (
 		<Main className="advanced-credentials">
 			<QuerySiteCredentials siteId={ siteId } />
-			<QuerySitePurchases siteId={ siteId } />
 			<DocumentHead title={ translate( 'Settings' ) } />
 			<SidebarNavigation />
 			<PageViewTracker
@@ -356,15 +348,6 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			</Card>
 			<Card>
 				{ startedWithoutConnection && <StepProgress currentStep={ currentStep } steps={ steps } /> }
-				{ preventEdit && (
-					<Notice status="is-warning" showDismiss={ false }>
-						{ translate( '{{a}}Upgrade your plan{{/a}} to edit your server credentials.', {
-							components: {
-								a: <a href="https://jetpack.com/pricing" />,
-							},
-						} ) }
-					</Notice>
-				) }
 				{ render() }
 			</Card>
 		</Main>

@@ -75,3 +75,19 @@
 	font-weight: 600;
 	margin-bottom: 0.3rem;
 }
+
+.is-section-jetpack-cloud-settings {
+	.empty-content {
+		.empty-content__illustration {
+			filter: none;
+
+			min-height: 114px;
+		}
+
+		.empty-content__title,
+		.empty-content__line {
+			font-weight: 400;
+			line-height: inherit;
+		}
+	}
+}
