@@ -162,7 +162,7 @@ export function CloudflareAnalyticsSettings( {
 						</div>
 						<div className="analytics site-settings__analytics-text">
 							<p className="analytics site-settings__analytics-title">
-								{ translate( 'Cloudflare Analytics' ) }
+								{ translate( 'Cloudflare Web Analytics' ) }
 							</p>
 							<p>
 								{ translate(
