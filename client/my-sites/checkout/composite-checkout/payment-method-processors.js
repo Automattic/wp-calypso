@@ -7,7 +7,7 @@ import {
 	makeRedirectResponse,
 	makeManualResponse,
 } from '@automattic/composite-checkout';
-import { format as formatUrl, parse as parseUrl, resolve as resolveUrl } from 'url'; // eslint-disable-line no-restricted-imports
+import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 import { confirmStripePaymentIntent } from '@automattic/calypso-stripe';
 
 /**
@@ -16,14 +16,12 @@ import { confirmStripePaymentIntent } from '@automattic/calypso-stripe';
 import {
 	createStripePaymentMethodToken,
 	wpcomTransaction,
-	wpcomPayPalExpress,
 	submitApplePayPayment,
 	submitStripeCardTransaction,
 	submitEbanxCardTransaction,
 	submitRedirectTransaction,
 	submitFreePurchaseTransaction,
 	submitCreditsTransaction,
-	submitPayPalExpressRequest,
 } from './payment-method-helpers';
 import getPostalCode from './lib/get-postal-code';
 import getDomainDetails from './lib/get-domain-details';
@@ -284,47 +282,4 @@ export async function fullCreditsProcessor(
 		wpcomTransaction,
 		transactionOptions
 	).then( makeSuccessResponse );
-}
-
-export async function payPalProcessor( submitData, transactionOptions ) {
-	const {
-		getThankYouUrl,
-		responseCart,
-		includeDomainDetails,
-		includeGSuiteDetails,
-		createUserAndSiteBeforeTransaction,
-		reduxDispatch,
-	} = transactionOptions;
-	recordTransactionBeginAnalytics( {
-		reduxDispatch,
-		paymentMethodId: 'paypal',
-	} );
-
-	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
-
-	const successUrl = resolveUrl( window.location.href, getThankYouUrl() );
-
-	const cancelUrl = formatUrl( {
-		protocol,
-		hostname,
-		port,
-		pathname,
-		query: createUserAndSiteBeforeTransaction ? { cart: 'no-user' } : {},
-	} );
-
-	return submitPayPalExpressRequest(
-		{
-			...submitData,
-			successUrl,
-			cancelUrl,
-			siteId: select( 'wpcom' )?.getSiteId?.() ?? '',
-			couponId: responseCart.coupon,
-			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '',
-			postalCode: getPostalCode(),
-			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value ?? '',
-			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
-		},
-		wpcomPayPalExpress,
-		transactionOptions
-	).then( makeRedirectResponse );
 }
