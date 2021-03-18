@@ -26,6 +26,8 @@ import { LoadingProps } from './loading-props';
  * The experiment component to display the experiment variations
  *
  * @param props The properties that describe the experiment
+ * 
+ * @deprecated Use /client/lib/explat (New Experiment component). Note that the API has changed to use slots.
  */
 export const Experiment: FunctionComponent< ExperimentProps > = ( props ) => {
 	const { isLoading: loading, variation, children, name: experimentName } = props;
@@ -84,4 +86,7 @@ function mapStateToProps( state: AppState, ownProps?: ExperimentProps ): Experim
 	};
 }
 
+/**
+ * @deprecated Use /client/lib/explat (New Experiment component). Note that the API has changed to use slots.
+ */
 export default connect( mapStateToProps )( Experiment );
