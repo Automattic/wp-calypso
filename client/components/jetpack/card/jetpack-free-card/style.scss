@@ -33,7 +33,6 @@
 	display: block;
 
 	width: 100%;
-	max-width: 210px;
 	margin: 24px 0;
 
 	color: var( --studio-jetpack-green-40 );
@@ -41,6 +40,10 @@
 	border-radius: 4px;
 
 	font-size: 1rem;
+
+	@include break-small {
+		max-width: 210px;
+	}
 
 	@include break-large {
 		margin-bottom: 0;
