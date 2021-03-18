@@ -1,15 +1,24 @@
-package _self.builds
+package _self.projects
 
 import _self.bashNodeScript
-import jetbrains.buildServer.configs.kotlin.v2019_2.AbsoluteId
-import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
+import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
-object WPComPlugins_EditorToolKit : BuildType({
+object WPComPlugins : Project({
+	id("WPComPlugins")
+	name = "WPCom Plugins"
+	buildType(EditingToolKit)
+	params {
+		text("docker_image_wpcom", "registry.a8c.com/calypso/ci-wpcom:latest", label = "Docker image", description = "Docker image to use for the run", allowEmpty = true)
+	}
+})
+
+private object EditingToolKit : BuildType({
+	id("WPComPlugins_EditorToolKit")
 	name = "Editing ToolKit"
 
 	artifactRules = "editing-toolkit.zip"
@@ -112,13 +121,13 @@ object WPComPlugins_EditorToolKit : BuildType({
 		 * build at the same time, then they will both point to the same artifact
 		 * dependency. In this scenario, we actually want the current build to
 		 * diff against the artifact from that other commit build.
-		 * 
+		 *
 		 * Using the artifact dependency feature, we can only rely on already-finished
 		 * builds at the time the current build *starts*. This means every build
 		 * would have to run in serial, which is not possible in TeamCity without
 		 * a plugin. As a result, commits have to happen several minutes apart
 		 * in order for the diff tagging feature to work correctly in this scenario.
-		 * 
+		 *
 		 * Downloading from the API directly means that the previous build only
 		 * has to finish by the time this *step* begins. As a result, as long as
 		 * the two builds start further apart than the time this step takes,
