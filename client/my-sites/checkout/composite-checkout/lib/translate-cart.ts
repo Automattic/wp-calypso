@@ -248,7 +248,7 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	return {
 		cart: createTransactionEndpointCartFromLineItems( {
 			siteId,
-			couponId: couponId || getCouponIdFromProducts( items ),
+			couponId,
 			country,
 			postalCode,
 			subdivisionCode,
@@ -283,11 +283,6 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			nik,
 		},
 	};
-}
-
-function getCouponIdFromProducts( items: WPCOMCartItem[] ): string | undefined {
-	const couponItem = items.find( ( item ) => item.type === 'coupon' );
-	return couponItem?.wpcom_meta?.couponCode;
 }
 
 export function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.TranslateResult {
