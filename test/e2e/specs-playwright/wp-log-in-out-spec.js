@@ -13,7 +13,6 @@ describe( `Auth Screen @canary @parallel`, function () {
 
 	before( 'Start browser', async function () {
 		browser = await playwright.chromium.launch( {
-			args: [ '--disable-dev-shm-usage' ],
 			headless: false,
 		} );
 		const browserContext = await browser.newContext();
