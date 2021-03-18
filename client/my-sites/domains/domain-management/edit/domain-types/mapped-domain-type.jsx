@@ -13,16 +13,10 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DomainStatus from '../card/domain-status';
 import { isExpiringSoon } from 'calypso/lib/domains/utils';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
-import { WPCOM_DEFAULT_NAMESERVERS } from 'calypso/state/domains/nameservers/constants';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { isSubdomain, resolveDomainStatus } from 'calypso/lib/domains';
-import {
-	MAP_DOMAIN_CHANGE_NAME_SERVERS,
-	MAP_EXISTING_DOMAIN,
-	MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS,
-	MAP_SUBDOMAIN,
-} from 'calypso/lib/url/support';
+import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -35,11 +29,10 @@ import {
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
+import DomainMappingInstructions from 'calypso/my-sites/domains/components/mapping-instructions';
 import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
 import PendingGSuiteTosNotice from 'calypso/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
-import FoldableFAQ from 'calypso/components/foldable-faq';
-import Notice from 'calypso/components/notice';
 
 class MappedDomainType extends React.Component {
 	renderSettingUpNameserversAndARecords() {
@@ -53,7 +46,6 @@ class MappedDomainType extends React.Component {
 		}
 
 		let setupInstructionsMessage;
-		let primaryMessage;
 		let secondaryMessage;
 
 		if ( isSubdomain( domain.name ) ) {
@@ -61,15 +53,6 @@ class MappedDomainType extends React.Component {
 				'You need to follow these instructions to finish connecting the %(domainName)s subdomain to your WordPress.com site:',
 				{
 					args: { domainName: domain.name },
-				}
-			);
-			primaryMessage = translate(
-				'Please create the correct CNAME or NS records at your current DNS provider. {{learnMoreLink}}Learn how to do that in our support guide for mapping subdomains{{/learnMoreLink}}.',
-				{
-					components: {
-						learnMoreLink: this.renderLinkTo( MAP_SUBDOMAIN ),
-					},
-					comment: 'Notice for mapped subdomain that has DNS records need to set up',
 				}
 			);
 			secondaryMessage = translate(
@@ -85,16 +68,6 @@ class MappedDomainType extends React.Component {
 					args: { domainName: domain.name },
 				}
 			);
-			primaryMessage = translate(
-				'Please log into your account at your domain registrar and {{strong}}update the name servers{{/strong}} of your domain to use the following values, as detailed in {{link}}these instructions{{/link}}:',
-				{
-					comment: 'Notice for mapped domain notice with NS records pointing to somewhere else',
-					components: {
-						strong: <strong />,
-						link: this.renderLinkTo( MAP_DOMAIN_CHANGE_NAME_SERVERS ),
-					},
-				}
-			);
 			secondaryMessage = translate(
 				"Please note that it can take up to 72 hours for your changes to become available. If you're still not seeing your site loading at %(domainName)s, please wait a few more hours, clear your browser cache, and try again. {{learnMoreLink}}Learn all about mapping an existing domain in our support docs{{/learnMoreLink}}.",
 				{
@@ -108,8 +81,11 @@ class MappedDomainType extends React.Component {
 			<React.Fragment>
 				<div className="mapped-domain-type__main-content">
 					<p>{ setupInstructionsMessage }</p>
-					{ this.renderRecommendedSetupMessage( primaryMessage ) }
-					{ domain.aRecordsRequiredForMapping && this.renderARecordsMappingMessage() }
+					<DomainMappingInstructions
+						aRecordsRequiredForMapping={ domain.aRecordsRequiredForMapping }
+						areDomainDetailsLoaded={ true }
+						domainName={ domain.name }
+					/>
 				</div>
 				<div className="mapped-domain-type__small-message">{ secondaryMessage }</div>
 			</React.Fragment>
@@ -118,55 +94,6 @@ class MappedDomainType extends React.Component {
 
 	renderLinkTo( url ) {
 		return <a href={ url } target="_blank" rel="noopener noreferrer" />;
-	}
-
-	renderRecommendedSetupMessage( primaryMessage ) {
-		const { domain, translate } = this.props;
-
-		return (
-			<FoldableFAQ
-				id="recommended-mapping-setup"
-				question={ translate( 'Recommended setup' ) }
-				expanded
-			>
-				<p>{ primaryMessage }</p>
-				{ ! isSubdomain( domain.name ) && (
-					<ul className="mapped-domain-type__name-server-list">
-						{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
-							return <li key={ nameServer }>{ nameServer }</li>;
-						} ) }
-					</ul>
-				) }
-			</FoldableFAQ>
-		);
-	}
-
-	renderARecordsMappingMessage() {
-		const { domain, translate } = this.props;
-
-		const advancedSetupUsingARecordsTitle = translate( 'Advanced setup using root A records' );
-		const aRecordMappingWarning = translate(
-			'If you map a domain using A records rather than WordPress.com name servers, you will need to manage your domain’s DNS records yourself for any other services you are using with your domain, including email forwarding or email hosting (i.e. with Google Workspace or Titan)'
-		);
-		const aRecordsSetupMessage = translate(
-			'Please set the following IP addresses as root A records using {{link}}these instructions{{/link}}:',
-			{
-				components: { link: this.renderLinkTo( MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS ) },
-			}
-		);
-		return (
-			<FoldableFAQ id="advanced-mapping-setup" question={ advancedSetupUsingARecordsTitle }>
-				<Notice status="is-warning" showDismiss={ false }>
-					{ aRecordMappingWarning }
-				</Notice>
-				<p>{ aRecordsSetupMessage }</p>
-				<ul className="mapped-domain-type__name-server-list">
-					{ domain.aRecordsRequiredForMapping.map( ( aRecord ) => {
-						return <li key={ aRecord }>{ aRecord }</li>;
-					} ) }
-				</ul>
-			</FoldableFAQ>
-		);
 	}
 
 	renderPendingGSuiteTosNotice() {
