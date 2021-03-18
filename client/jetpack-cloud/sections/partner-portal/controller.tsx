@@ -79,7 +79,7 @@ export function requirePartnerKeyContext( context: PageJS.Context, next: () => v
 		return;
 	}
 
-	const returnUrl = ! pathname.startsWith( '/partner-portal' )
+	const returnUrl = pathname.startsWith( '/partner-portal' )
 		? pathname + search
 		: '/partner-portal';
 

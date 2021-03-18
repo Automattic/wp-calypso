@@ -47,6 +47,7 @@ export default function SelectPartnerKey(): ReactElement | null {
 				returnQuery && returnQuery.startsWith( '/partner-portal' )
 					? returnQuery
 					: '/partner-portal';
+
 			page.redirect( returnUrl );
 		}
 	}, [ hasKey ] );
