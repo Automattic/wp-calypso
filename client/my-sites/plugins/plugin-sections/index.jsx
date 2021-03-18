@@ -134,7 +134,7 @@ class PluginSections extends React.Component {
 
 		const linkToAuthor = (
 			<ExternalLink href={ safeProtocolUrl( plugin.author_url ) } target="_blank">
-				{ plugin.author_url }
+				{ translate( 'Author website' ) }
 			</ExternalLink>
 		);
 
@@ -143,7 +143,7 @@ class PluginSections extends React.Component {
 				href={ safeProtocolUrl( 'https://wordpress.org/support/plugin/' + plugin.slug ) }
 				target="_blank"
 			>
-				{ 'https://wordpress.org/support/plugin/' + plugin.slug }
+				{ translate( 'Support forum' ) }
 			</ExternalLink>
 		);
 
@@ -152,15 +152,15 @@ class PluginSections extends React.Component {
 				<h3>{ translate( 'Support' ) }</h3>
 				<p>
 					{ translate(
-						'Support for this plugin is provided by the plugin author. You may find additional documentation at the following websites:'
+						'Support for this plugin is provided by the plugin author. You may find additional documentation here:'
 					) }
 				</p>
 				<ul>
 					<li>
-						<span>{ translate( 'Author website:' ) }</span> { linkToAuthor }
+						<span>{ linkToAuthor }</span>
 					</li>
 					<li>
-						<span>{ translate( 'Support forum:' ) }</span> { linkToSupportForum }
+						<span>{ linkToSupportForum }</span>
 					</li>
 				</ul>
 			</div>
