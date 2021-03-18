@@ -31,7 +31,6 @@ const InlineHelpSearchCard = ( {
 	isVisible = true,
 	placeholder,
 	translate = identity,
-	forceFocus,
 } ) => {
 	const cardRef = useRef();
 
@@ -65,7 +64,6 @@ const InlineHelpSearchCard = ( {
 
 	return (
 		<SearchCard
-			forceFocus={ forceFocus }
 			ref={ cardRef }
 			searching={ isSearching }
 			initialValue={ query }

@@ -29,7 +29,6 @@
 	"rebrand_cities_prefix": "rebrandcitiesdevelopmentsite",
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
-		"wordpress-action-search": false,
 		"ad-tracking": false,
 		"async-payments": false,
 		"automated-transfer": true,
@@ -214,6 +213,7 @@
 		"woocommerce/extension-wcservices/international-labels": true,
 		"woocommerce/onboarding-oauth": true,
 		"woocommerce/store-on-non-atomic-sites": true,
-		"wpcom-user-bootstrap": false
+		"wpcom-user-bootstrap": false,
+		"wordpress-action-search": false
 	}
 }

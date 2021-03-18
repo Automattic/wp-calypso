@@ -32,7 +32,7 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 		icon: 'domains',
 	},
 	{
-		title: translate( 'Manage domains' ),
+		title: translate( 'Manage my domain settings' ),
 		description: translate( 'Manage all domains linked to your account.' ),
 		link: `/domains/manage/${ siteSlug }`,
 		synonyms: [ 'domains' ],
@@ -408,7 +408,7 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
  * @param   {number} limit      The maximum number of filtered results to return
  * @returns {Array}             A filtered (or empty) array
  */
-export function filterListBySearchTerm( searchTerm = '', collection = [], limit = 25 ) {
+export function filterListBySearchTerm( searchTerm = '', collection = [], limit = 4 ) {
 	// Early return if search term is empty.
 	if ( ! searchTerm.length ) {
 		return [];
@@ -433,19 +433,23 @@ export function filterListBySearchTerm( searchTerm = '', collection = [], limit 
 		'gi'
 	);
 
-	const exactMatches = collection.filter(
-		( item ) => item.title.toLowerCase() === searchTerm.toLowerCase()
-	);
-	const partialMatches = collection
-		.filter( ( item ) => ! exactMatches.includes( item ) )
-		.filter( ( item ) => ( searchRegex.test( item.title ) ? true : false ) );
+	const exactMatches = [];
+	const partialMatches = [];
+	const synonymMatches = [];
 
-	const synonymMatches = collection
-		.filter( ( item ) => ! exactMatches.includes( item ) )
-		.filter( ( item ) => ! partialMatches.includes( item ) )
-		.filter( ( item ) =>
-			'en' === getLocaleSlug() ? intersection( item.synonyms, searchTermWords ).length > 0 : false
-		);
+	collection.forEach( ( item ) => {
+		if ( item.title.toLowerCase() === searchTerm.toLowerCase() ) {
+			exactMatches.push( item );
+		} else if ( searchRegex.test( item.title ) ) {
+			partialMatches.push( item );
+		} else if (
+			'en' === getLocaleSlug() &&
+			intersection( item.synonyms, searchTermWords ).length > 0
+		) {
+			synonymMatches.push( item );
+		}
+	} );
+
 	return [ ...exactMatches, ...partialMatches, ...synonymMatches ]
 		.map( ( item ) => ( { ...item, support_type: SUPPORT_TYPE_ADMIN_SECTION, key: item.title } ) )
 		.slice( 0, limit );

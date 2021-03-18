@@ -73,21 +73,17 @@ class MasterbarLoggedIn extends React.Component {
 		}
 	};
 
-	actionSearchShortcut( ctx ) {
-		return () => {
-			if ( event.ctrlKey && event.shiftKey && event.key === 'F' ) {
-				ctx.clickSearchActions();
-			}
-		};
-	}
-
 	componentDidMount() {
 		// Give a chance to direct URLs to open the sidebar on page load ( eg by clicking 'me' in wp-admin ).
 		const qryString = parse( document.location.search.replace( /^\?/, '' ) );
 		if ( qryString?.openSidebar === 'true' ) {
 			this.props.setNextLayoutFocus( 'sidebar' );
 		}
-		this.actionSearchShortCutListener = this.actionSearchShortcut( this );
+		this.actionSearchShortCutListener = () => {
+			if ( event.ctrlKey && event.shiftKey && event.key === 'F' ) {
+				this.clickSearchActions();
+			}
+		};
 		document.addEventListener( 'keydown', this.actionSearchShortCutListener );
 	}
 
@@ -215,7 +211,7 @@ class MasterbarLoggedIn extends React.Component {
 	}
 
 	render() {
-		const isWordpressActionSearchFeatureEnabled = config.isEnabled( 'wordpress-action-search' );
+		const isWordPressActionSearchFeatureEnabled = config.isEnabled( 'wordpress-action-search' );
 		const {
 			domainOnlySite,
 			translate,
@@ -244,7 +240,7 @@ class MasterbarLoggedIn extends React.Component {
 
 		return (
 			<>
-				{ isWordpressActionSearchFeatureEnabled && isActionSearchVisible ? (
+				{ isWordPressActionSearchFeatureEnabled && isActionSearchVisible ? (
 					<PopUpSearch onClose={ this.onSearchActionsClose } />
 				) : null }
 				<Masterbar>
@@ -265,7 +261,7 @@ class MasterbarLoggedIn extends React.Component {
 					{ ( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) && (
 						<AsyncLoad require="./quick-language-switcher" placeholder={ null } />
 					) }
-					{ isWordpressActionSearchFeatureEnabled && (
+					{ isWordPressActionSearchFeatureEnabled && (
 						<Item
 							tipTarget="Action Search"
 							icon="search"

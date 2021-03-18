@@ -22,12 +22,3 @@ export default function getInlineHelpSearchResultsForQuery( state ) {
 	const allResults = get( state, 'inlineHelp.searchResults.search.items' );
 	return get( allResults, [ searchQuery ], [] );
 }
-
-export function getInlineHelpAdminSectionSearchResultsForQuery( state ) {
-	const searchQuery = getSearchQuery( state );
-	const { inlineHelp: { searchResults: { search: { items } = {} } = {} } = {} } = state;
-	const allResults = ( items[ searchQuery ] ?? [] ).filter(
-		( r ) => r.support_type === 'admin_section'
-	);
-	return allResults;
-}

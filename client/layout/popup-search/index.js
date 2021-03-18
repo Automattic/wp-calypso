@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
  */
 import HelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getInlineHelpAdminSectionSearchResultsForQuery } from 'calypso/state/inline-help/selectors/get-inline-help-search-results-for-query';
+import getInlineHelpAdminSectionSearchResultsForQuery from 'calypso/state/inline-help/selectors/get-inline-help-admin-section-search-results-query';
 import hasInlineHelpAPIResults from 'calypso/state/selectors/has-inline-help-api-results';
 import { selectResult } from 'calypso/state/inline-help/actions';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
@@ -32,23 +32,21 @@ export function PopUpSearch( props ) {
 
 	const onResultClick = ( link ) => {
 		props.onClose();
-		window.location.href = localizeUrl( link );
+		window.location.href = localizeUrl( link + window.location.search );
 	};
 	return (
 		<div role="button" className="popup-search__mask" onClick={ props.onClose }>
 			<div className="popup-search__container" onClick={ onChildClick }>
 				<HelpSearchCard
-					forceFocus={ true }
 					onSelect={ () => {} }
 					query={ props.searchQuery }
-					location={ 'TEST' }
 					placeholder={ translate( 'Search wordpress actions' ) }
 				/>
 				<QueryInlineHelpSearch query={ props.searchQuery } />
 				{ props.searchResults.length > 0 && (
 					<div className="popup-search__results" aria-label="Pop Up Search">
 						{ props.searchResults.slice( 0, 10 ).map( ( { link, key, title, description } ) => (
-							<a href={ localizeUrl( link ) }>
+							<div>
 								<div
 									role="button"
 									className="popup-search__result-single"
@@ -64,7 +62,7 @@ export function PopUpSearch( props ) {
 										</div>
 									</div>
 								</div>
-							</a>
+							</div>
 						) ) }
 					</div>
 				) }

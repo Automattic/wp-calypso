@@ -137,7 +137,8 @@
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"use-translation-chunks": true,
-		"wpcom-user-bootstrap": true
+		"wpcom-user-bootstrap": true,
+		"wordpress-action-search": false
 	},
 	"siftscience_key": "a4f69f6759",
 	"wpcom_signup_id": "39911",
