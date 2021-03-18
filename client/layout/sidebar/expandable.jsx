@@ -57,7 +57,6 @@ export const ExpandableSidebarMenu = ( {
 	customIcon,
 	children,
 	disableFlyout,
-	disableHighlight = false,
 	...props
 } ) => {
 	let { expanded } = props;
@@ -78,7 +77,6 @@ export const ExpandableSidebarMenu = ( {
 
 	const classes = classNames( className, {
 		'is-toggle-open': !! expanded,
-		'disable-highlight': disableHighlight,
 		'is-togglable': true,
 		hovered: submenuHovered,
 	} );
@@ -158,11 +156,6 @@ ExpandableSidebarMenu.propTypes = {
 	materialIconStyle: PropTypes.string,
 	expanded: PropTypes.bool,
 	disableFlyout: PropTypes.bool,
-	/**
-	 * disableHighlight prop is only styled correctly for the Reader navigation.
-	 * See here https://github.com/Automattic/wp-calypso/issues/50705 for more context
-	 */
-	disableHighlight: PropTypes.bool,
 };
 
 export default ExpandableSidebarMenu;

@@ -20,7 +20,6 @@ import SidebarItem from 'calypso/layout/sidebar/item';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Count from 'calypso/components/count';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getFollowedSitePath } from './helper';
 
 /**
  * Style dependencies
@@ -65,31 +64,12 @@ export class ReaderSidebarFollowedSites extends Component {
 		);
 	}
 
-	isSelected() {
-		const isItemSelected = ReaderSidebarHelper.isItemSelected;
-
-		if ( isItemSelected( '/read', this.props.path ) ) {
-			return true;
-		}
-
-		for ( const site of this.props.sites ) {
-			if ( isItemSelected( getFollowedSitePath( site ), this.props.path ) ) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
 	render() {
-		const { sites, translate } = this.props;
+		const { path, sites, translate } = this.props;
 
 		if ( ! sites ) {
 			return null;
 		}
-
-		const isSelected = this.isSelected();
-
 		return (
 			<ExpandableSidebarMenu
 				expanded={ this.props.isFollowingOpen }
@@ -97,8 +77,14 @@ export class ReaderSidebarFollowedSites extends Component {
 				onClick={ this.props.toggleReaderSidebarFollowing }
 				materialIcon="check_circle"
 				disableFlyout={ true }
-				disableHighlight={ ! isSelected }
-				hideExpandableIcon={ isSelected && this.props.isFollowingOpen }
+				className={
+					( '/read' === path ||
+						sites.some(
+							( site ) =>
+								`/read/feeds/${ site.feed_ID }` === path || `/read/blogs/${ site.blog_ID }` === path
+						) ) &&
+					'sidebar__menu--selected'
+				}
 			>
 				{ this.renderAll() }
 				{ this.renderSites() }

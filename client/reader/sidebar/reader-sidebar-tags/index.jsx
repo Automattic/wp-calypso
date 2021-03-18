@@ -54,8 +54,7 @@ export class ReaderSidebarTags extends Component {
 	};
 
 	render() {
-		const { tags, isOpen, translate, onClick } = this.props;
-		const isOnPage = startsWith( this.props.path, '/tag/' );
+		const { tags, isOpen, translate, onClick, path } = this.props;
 
 		return (
 			<li>
@@ -66,8 +65,7 @@ export class ReaderSidebarTags extends Component {
 					onClick={ onClick }
 					materialIcon="local_offer"
 					disableFlyout={ true }
-					disableHighlight={ ! isOnPage }
-					hideExpandableIcon={ isOnPage && isOpen }
+					className={ path.startsWith( '/tag' ) && 'sidebar__menu--selected' }
 				>
 					<ReaderSidebarTagsList { ...this.props } />
 
