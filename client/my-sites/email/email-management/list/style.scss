@@ -59,3 +59,38 @@
 		text-align: right;
 	}
 }
+
+.email-management-list__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		align-items: center;
+	}
+}
+
+.email-management-list__header-buttons {
+	display: flex;
+
+	> div {
+		margin-top: 16px;
+		margin-bottom: 16px;
+	}
+
+	.popover-cart {
+		margin-right: 8px;
+	}
+
+	.popover-cart .header-button,
+	.popover-cart .header-button:hover {
+		min-height: initial;
+		background: none;
+		color: var( --color-text );
+	}
+
+	.cart__count-badge .count {
+		top: -7px;
+		right: -3px;
+	}
+}
