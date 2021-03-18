@@ -54,7 +54,8 @@ export class ReaderSidebarTags extends Component {
 	};
 
 	render() {
-		const { tags, isOpen, translate, onClick } = this.props;
+		const { tags, isOpen, translate, onClick, path } = this.props;
+
 		return (
 			<li>
 				{ ! tags && <QueryReaderFollowedTags /> }
@@ -64,6 +65,7 @@ export class ReaderSidebarTags extends Component {
 					onClick={ onClick }
 					materialIcon="local_offer"
 					disableFlyout={ true }
+					className={ path.startsWith( '/tag' ) && 'sidebar__menu--selected' }
 				>
 					<ReaderSidebarTagsList { ...this.props } />
 

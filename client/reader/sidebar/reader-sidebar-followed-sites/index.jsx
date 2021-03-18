@@ -65,7 +65,7 @@ export class ReaderSidebarFollowedSites extends Component {
 	}
 
 	render() {
-		const { sites, translate } = this.props;
+		const { path, sites, translate } = this.props;
 
 		if ( ! sites ) {
 			return null;
@@ -77,6 +77,14 @@ export class ReaderSidebarFollowedSites extends Component {
 				onClick={ this.props.toggleReaderSidebarFollowing }
 				materialIcon="check_circle"
 				disableFlyout={ true }
+				className={
+					( '/read' === path ||
+						sites.some(
+							( site ) =>
+								`/read/feeds/${ site.feed_ID }` === path || `/read/blogs/${ site.blog_ID }` === path
+						) ) &&
+					'sidebar__menu--selected'
+				}
 			>
 				{ this.renderAll() }
 				{ this.renderSites() }
