@@ -294,6 +294,7 @@ class SectionImport extends Component {
 					brandFont
 					className="importer__page-heading"
 					headerText={ translate( 'Import Content' ) }
+					subHeaderText={ translate( 'Import content from another website or platform.' ) }
 					align="left"
 				/>
 				<EmailVerificationGate allowUnlaunched>
