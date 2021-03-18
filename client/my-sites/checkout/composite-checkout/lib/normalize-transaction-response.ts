@@ -1,13 +1,21 @@
 /**
  * Internal dependencies
  */
-import { TransactionResponse } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
+import { WPCOMTransactionEndpointResponse } from '../types/transaction-endpoint';
 
-export default function normalizeTransactionResponse( response: unknown ): TransactionResponse {
+const emptyResponse: WPCOMTransactionEndpointResponse = {
+	success: false,
+	error_code: '',
+	error_message: '',
+};
+
+export default function normalizeTransactionResponse(
+	response: unknown
+): WPCOMTransactionEndpointResponse {
 	if ( ! response ) {
-		return {};
+		return emptyResponse;
 	}
-	const transactionResponse = response as TransactionResponse;
+	const transactionResponse = response as WPCOMTransactionEndpointResponse;
 	if (
 		transactionResponse.message ||
 		transactionResponse.order_id ||
@@ -18,5 +26,5 @@ export default function normalizeTransactionResponse( response: unknown ): Trans
 	) {
 		return transactionResponse;
 	}
-	return {};
+	return emptyResponse;
 }

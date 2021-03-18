@@ -36,7 +36,8 @@ import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
-import type { TransactionResponse, Purchase } from '../types/wpcom-store-state';
+import type { Purchase } from '../types/wpcom-store-state';
+import type { WPCOMTransactionEndpointResponse } from '../types/transaction-endpoint';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
@@ -330,7 +331,7 @@ function recordPaymentCompleteAnalytics( {
 	reduxDispatch,
 }: {
 	paymentMethodId: string | null;
-	transactionResult: TransactionResponse | undefined;
+	transactionResult: WPCOMTransactionEndpointResponse | undefined;
 	redirectUrl: string;
 	responseCart: ResponseCart;
 	reduxDispatch: ReturnType< typeof useDispatch >;

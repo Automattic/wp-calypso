@@ -20,6 +20,7 @@ import {
 } from './backend/domain-contact-validation-endpoint';
 import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
 import { SignupValidationResponse } from './backend/signup-validation-endpoint';
+import type { WPCOMTransactionEndpointResponse } from './transaction-endpoint';
 
 export type ManagedContactDetailsShape< T > = {
 	firstName?: T;

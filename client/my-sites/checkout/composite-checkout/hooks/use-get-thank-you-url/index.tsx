@@ -12,7 +12,7 @@ import type { ResponseCart } from '@automattic/shopping-cart';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 import getThankYouPageUrl from './get-thank-you-page-url';
-import type { TransactionResponse } from '../../types/wpcom-store-state';
+import type { WPCOMTransactionEndpointResponse } from '../../types/transaction-endpoint';
 import {
 	isTreatmentOneClickTest,
 	isTreatmentDifmUpsellTest,
@@ -92,7 +92,7 @@ export default function useGetThankYouUrl( {
 
 export interface GetThankYouUrlProps {
 	siteSlug: string | undefined;
-	transactionResult?: TransactionResponse | undefined;
+	transactionResult?: WPCOMTransactionEndpointResponse | undefined;
 	redirectTo?: string | undefined;
 	purchaseId?: number | undefined;
 	feature?: string | undefined;
