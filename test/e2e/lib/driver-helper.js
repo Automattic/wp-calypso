@@ -1,7 +1,13 @@
 /**
  * External dependencies
  */
-import webdriver, { By, WebDriver, WebElement, WebElementCondition } from 'selenium-webdriver';
+import webdriver, {
+	By,
+	WebDriver,
+	WebElement,
+	WebElementCondition,
+	WebElementPromise,
+} from 'selenium-webdriver';
 import config from 'config';
 
 /**
@@ -10,6 +16,7 @@ import config from 'config';
 import * as SlackNotifier from './slack-notifier.js';
 import * as dataHelper from './data-helper';
 import * as driverManager from './driver-manager';
+import { elementLocated } from 'selenium-webdriver/lib/until';
 
 const { NoSuchElementError } = webdriver.error;
 const explicitWaitMS = config.get( 'explicitWaitMS' );
@@ -17,7 +24,7 @@ const explicitWaitMS = config.get( 'explicitWaitMS' );
 /**
  * A string or a regular expression used to query the element by.
  *
- * @typedef {string|RegExp} ElementTextQuery
+ * @typedef {string|RegExp} ElementInnerText
  */
 
 /**
@@ -26,7 +33,7 @@ const explicitWaitMS = config.get( 'explicitWaitMS' );
  *
  * @typedef {Object} RichLocator
  * @property {By} locator The element's locator
- * @property {ElementTextQuery} text The text to query the element by
+ * @property {ElementInnerText} text The text to query the element by
  */
 
 /**
@@ -45,10 +52,10 @@ export function isRichLocator( locator ) {
  * it's not.
  *
  * @param {string} text The string argument to check
- * @returns {ElementTextQuery} The same string if it's a valid element query
+ * @returns {ElementInnerText} The same string if it's a valid element query
  * @throws {TypeError}
  */
-export function checkedElementTextQuery( text ) {
+export function checkedElementInnerText( text ) {
 	if (
 		( typeof text === 'string' && text.length > 0 ) ||
 		( typeof text === 'object' && text.constructor.name === 'RegExp' )
@@ -71,7 +78,7 @@ export function getLocatorString( locator ) {
 
 	if ( isRichLocator( locator ) ) {
 		loc = locator.locator;
-		txt = checkedElementTextQuery( locator.text );
+		txt = checkedElementInnerText( locator.text );
 	}
 
 	const locString = typeof loc === 'function' ? 'by function()' : loc + '';
@@ -93,28 +100,13 @@ const until = {
 	 * @returns {WebElementCondition} The new condition
 	 */
 	elementLocated( locator ) {
-		if ( isRichLocator( locator ) ) {
-			return this.elementWithTextLocated( locator.locator, locator.text );
-		}
-		return webdriver.until.elementLocated( locator );
-	},
-
-	/**
-	 * Creates a condition that will loop until element with given locator and
-	 * text is located.
-	 *
-	 * @param {By} locator The element's locator
-	 * @param {string|RegExp} text The text or regular expression the element should contain
-	 * @returns {WebElementCondition} The new condition
-	 */
-	elementWithTextLocated( locator, text ) {
 		const locatorStr = getLocatorString( locator );
 
 		return new WebElementCondition(
 			`for element to be located ${ locatorStr }`,
 			async function ( driver ) {
 				try {
-					const element = await findElementByText( driver, locator, text );
+					const element = await findElement( driver, locator );
 
 					return element;
 				} catch {
@@ -193,37 +185,37 @@ export async function highlightElement( driver, element ) {
  * @param {By|RichLocator} locator The element's locator
  * @returns {Promise<WebElement>} A promise that will resolve with the located element
  */
-export function findElement( driver, locator ) {
+export async function findElement( driver, locator ) {
 	if ( isRichLocator( locator ) ) {
-		return findElementByText( driver, locator.locator, locator.text );
+		const elements = await findElements( driver, locator );
+
+		if ( ! elements[ 0 ] ) {
+			const locatorStr = getLocatorString( locator );
+			throw new NoSuchElementError( `Unable to locate element ${ locatorStr }` );
+		}
+		return elements[ 0 ];
 	}
 	return driver.findElement( locator );
 }
 
 /**
- * Finds an element via given locator and text.
+ * Finds elements via given locator and text.
  *
  * @param {WebDriver} driver The parent WebDriver instance
- * @param {By} locator The element's locator
- * @param {ElementTextQuery} text The element's inner text
- * @returns {Promise<WebElement>} A promise that will resolve with the located element
- * @throws {NoSuchElementError}
+ * @param {By|RichLocator} locator The element's locator
+ * @returns {Promise<WebElement>} A promise that will resolve with the located elements
  */
-export async function findElementByText( driver, locator, text ) {
-	const checkedText = checkedElementTextQuery( text );
-	const allElements = await driver.findElements( locator );
-	const elementsWithText = await webdriver.promise.filter(
-		allElements,
-		getInnerTextMatcherFunction( checkedText )
-	);
-	const elementWithText = elementsWithText[ 0 ];
-
-	if ( ! elementWithText ) {
-		const locatorStr = getLocatorString( { locator, text } );
-		throw new NoSuchElementError( `Unable to locate element ${ locatorStr }` );
+export async function findElements( driver, locator ) {
+	if ( ! isRichLocator( locator ) ) {
+		return driver.findElements( locator );
 	}
+	const innerText = checkedElementInnerText( locator.text );
+	const allElements = await driver.findElements( locator.locator );
 
-	return elementWithText;
+	if ( Array.isArray( allElements ) && allElements.length > 0 ) {
+		return webdriver.promise.filter( allElements, getInnerTextMatcherFunction( innerText ) );
+	}
+	return [];
 }
 
 /**
@@ -255,6 +247,21 @@ export function isEventuallyLocatedAndVisible( driver, locator, timeout = explic
 		( element ) => !! element,
 		() => false
 	);
+}
+
+export async function getElementCount( driver, locator ) {
+	const elements = await findElements( driver, locator );
+	return elements.length;
+}
+
+export async function isElementLocated( driver, locator ) {
+	const elements = await findElements( driver, locator );
+	return !! elements.length;
+}
+
+export async function isElementNotLocated( driver, locator ) {
+	const elements = await findElements( driver, locator );
+	return ! elements.length;
 }
 
 /**
@@ -388,22 +395,6 @@ export function clickIfPresent( driver, selector, attempts ) {
 			}
 		);
 	}
-}
-
-export async function getElementCount( driver, selector ) {
-	const elements = await driver.findElements( selector );
-	return elements.length || 0;
-}
-
-export async function isElementPresent( driver, selector ) {
-	const elements = await driver.findElements( selector );
-	return !! elements.length;
-}
-
-export function elementIsNotPresent( driver, selector ) {
-	return this.isElementPresent( driver, selector ).then( function ( isPresent ) {
-		return ! isPresent;
-	} );
 }
 
 export function waitForFieldClearable( driver, selector ) {
@@ -731,3 +722,96 @@ function getInnerTextMatcherFunction( match ) {
 		throw new Error( 'Unknown matcher type; must be a string or a regular expression' );
 	};
 }
+
+async function findVisibleElement( driver, locator ) {
+	const element = await findElement( driver, locator );
+	const isDisplayed = await element.isDisplayed();
+
+	return element && isDisplayed ? element : null;
+}
+
+async function findClickableElement( driver, locator ) {
+	const element = await findElement( driver, locator );
+	const isEnabled = await element.isEnabled();
+	const isAriaEnabled = await element.getAttribute( 'aria-disabled' ).then( ( v ) => v !== 'true' );
+
+	return isEnabled && isAriaEnabled ? element : null;
+}
+
+export const get = {
+	elementCount( driver, selector ) {
+		return findElements( driver, selector )
+			.then( ( elements ) => ( Array.isArray( elements ) ? elements.length : 0 ) )
+			.catch( () => 0 );
+	},
+};
+
+export const is = {
+	elementLocated( driver, locator ) {
+		return resolveToBool( findElement( driver, locator ) );
+	},
+	elementNotLocated( driver, locator ) {
+		return resolveToBool( findElement( driver, locator ) ).then( ( v ) => ! v );
+	},
+	elementLocatedAndVisible( driver, locator ) {
+		return resolveToBool( findVisibleElement( driver, locator ) );
+	},
+	elementClickable( driver, locator ) {
+		return resolveToBool( findClickableElement( driver, locator ) );
+	},
+	elementFocused() {
+		return null;
+	},
+	linkFollowable() {
+		return null;
+	},
+	fieldClearable() {
+		return null;
+	},
+	fieldSettable() {
+		return null;
+	},
+	imageVisible() {
+		return null;
+	},
+	lazyListLoaded() {
+		return null;
+	},
+	windowReady() {
+		return null;
+	},
+	popupClosed() {
+		return null;
+	},
+	alertDisplayed() {
+		return null;
+	},
+};
+
+const untilz = {
+	elementLocatedAndVisible( locator ) {
+		const locatorStr = getLocatorString( locator );
+		return new WebElementCondition(
+			`for element to be located and visible ${ locatorStr }`,
+			( driver ) => resolveToValue( findVisibleElement( driver, locator ) )
+		);
+	},
+};
+
+export const ensure = {
+	elementLocatedAndVisible( driver, locator, timeout ) {
+		return driver.wait( untilz.elementLocatedAndVisible( driver, locator ), timeout );
+	},
+};
+
+export const isEventually = {
+	elementLocatedAndVisible( driver, locator, timeout ) {
+		return resolveToBool( ensure.elementLocatedAndVisible( driver, locator, timeout ) );
+	},
+};
+
+export default {
+	is,
+	ensure,
+	isEventually,
+};
