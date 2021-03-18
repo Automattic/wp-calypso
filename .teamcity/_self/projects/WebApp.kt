@@ -40,7 +40,6 @@ object RunCalypsoE2eDesktopTests : BuildType({
 			name = "Prepare environment"
 			scriptContent = """
 				export NODE_ENV="test"
-				export PLAYWRIGHT_BROWSERS_PATH=0
 
 				# Install modules
 				yarn install
@@ -59,7 +58,6 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				export LIVEBRANCHES=true
 				export NODE_CONFIG_ENV=test
 				export TEST_VIDEO=true
-				export PLAYWRIGHT_BROWSERS_PATH=0
 
 				# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
 				# mocha-teamcity-reporter to work.
@@ -621,7 +619,7 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 				export BROWSERSIZE="mobile"
 				export BROWSERLOCALE="en"
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-				export TEST_FILES=${'$'}(join ',' ${'$'}(find specs*/**/*spec.js -type f -not -path specs-playwright/*))
+				export TEST_FILES=${'$'}(join ',' ${'$'}(ls -1 specs-playwright/**/*spec.js))
 
 				xvfb-run yarn magellan --config=magellan-playwright.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
 			""".trimIndent()
@@ -661,16 +659,6 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
 				}
 			}
-		}
-	}
-
-	triggers {
-		vcs {
-			branchFilter = """
-				+:*
-				-:trunk
-				-:pull*
-			""".trimIndent()
 		}
 	}
 
