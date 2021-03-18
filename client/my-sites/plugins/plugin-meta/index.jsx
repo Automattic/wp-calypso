@@ -152,16 +152,17 @@ export class PluginMeta extends Component {
 
 	renderSupportedFlag() {
 		const supportedAuthors = [ 'Automattic', 'WooCommerce' ];
+		const { plugin, translate } = this.props;
 		if (
 			this.props.isJetpackSite ||
-			supportedAuthors.indexOf( this.props.plugin.author_name ) < 0
+			! supportedAuthors.find( ( author ) => author === plugin.author_name )
 		) {
 			return;
 		}
 
 		return (
 			<div className="plugin-meta__supported-flag">
-				{ this.props.translate( 'Supported by WordPress.com' ) }
+				{ translate( 'Supported by WordPress.com' ) }
 			</div>
 		);
 	}
