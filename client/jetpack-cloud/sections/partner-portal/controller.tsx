@@ -72,16 +72,19 @@ export function issueLicenseContext( context: PageJS.Context, next: () => void )
 export function requirePartnerKeyContext( context: PageJS.Context, next: () => void ): void {
 	const state = context.store.getState();
 	const hasKey = getActivePartnerKey( state );
+	const { pathname, search } = window.location;
 
 	if ( hasKey ) {
 		next();
 		return;
 	}
 
+	const returnUrl = '/partner-portal' === pathname ? pathname + search : '/partner-portal';
+
 	page.redirect(
 		addQueryArgs(
 			{
-				return: window.location.pathname + window.location.search,
+				return: returnUrl,
 			},
 			'/partner-portal/partner-key'
 		)
