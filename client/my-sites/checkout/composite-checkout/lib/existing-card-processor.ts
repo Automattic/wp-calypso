@@ -10,7 +10,7 @@ import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
  * Internal dependencies
  */
 import { createTransactionEndpointRequestPayloadFromLineItems } from './translate-cart';
-import { wpcomTransaction } from '../payment-method-helpers';
+import submitWpcomTransaction from './submit-wpcom-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { ExistingCardTransactionRequestWithLineItems } from '../types/transaction-endpoint';
 
@@ -59,7 +59,7 @@ async function submitExistingCardPayment(
 	} );
 	debug( 'submitting existing card transaction', formattedTransactionData );
 
-	return wpcomTransaction( formattedTransactionData, transactionOptions );
+	return submitWpcomTransaction( formattedTransactionData, transactionOptions );
 }
 
 type ExistingCardTransactionRequest = Omit<
