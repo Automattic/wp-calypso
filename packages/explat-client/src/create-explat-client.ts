@@ -65,12 +65,6 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 		throw new Error( 'Running outside of a browser context.' );
 	}
 
-	const safeLogError: typeof config.logError = ( ...args ) => {
-		try {
-			config.logError( ...args );
-		} catch ( e ) {}
-	};
-
 	const experimentAssignmentStore = new ExperimentAssignmentStore();
 
 	/**
@@ -83,26 +77,11 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 	 */
 	const createWrappedExperimentAssignmentFetchAndStore = ( experimentName: string ) =>
 		Timing.asyncOneAtATime( async () => {
-			let startTime: number | null = null;
-			try {
-				startTime = performance.now();
-			} catch ( e ) {}
 			const fetchedExperimentAssignment = await Request.fetchExperimentAssignment(
 				config,
 				experimentName
 			);
 			experimentAssignmentStore.store( fetchedExperimentAssignment );
-			let timeSinceStartMs = '';
-			try {
-				timeSinceStartMs =
-					startTime && performance.now() ? '' + ( performance.now() - startTime ) : '';
-			} catch ( e ) {}
-			safeLogError( {
-				message: 'Debugging Promise Timeouts',
-				experiment_name: experimentName,
-				time_since_start_ms: timeSinceStartMs,
-				source: 'experimentAssignmentFetchAndStore',
-			} );
 			return fetchedExperimentAssignment;
 		} );
 	const experimentNameToWrappedExperimentAssignmentFetchAndStore: Record<
@@ -110,13 +89,14 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 		() => Promise< ExperimentAssignment >
 	> = {};
 
+	const safeLogError: typeof config.logError = ( ...args ) => {
+		try {
+			config.logError( ...args );
+		} catch ( e ) {}
+	};
+
 	return {
 		loadExperimentAssignment: async ( experimentName: string ): Promise< ExperimentAssignment > => {
-			let startTime: number | null = null;
-			try {
-				startTime = performance.now();
-			} catch ( e ) {}
-
 			try {
 				if ( ! Validation.isName( experimentName ) ) {
 					throw new Error( `Invalid experimentName: "${ experimentName }"` );
@@ -149,16 +129,9 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 
 				return fetchedExperimentAssignment;
 			} catch ( initialError ) {
-				let timeSinceStartMs = '';
-				try {
-					timeSinceStartMs =
-						startTime && performance.now() ? '' + ( performance.now() - startTime ) : '';
-				} catch ( e ) {}
-
 				safeLogError( {
 					message: initialError.message,
-					experiment_name: experimentName,
-					time_since_start_ms: timeSinceStartMs,
+					experimentName,
 					source: 'loadExperimentAssignment-initialError',
 				} );
 			}
