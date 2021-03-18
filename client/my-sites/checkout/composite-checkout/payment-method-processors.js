@@ -246,23 +246,15 @@ export async function ebanxCardProcessor(
 
 export async function multiPartnerCardProcessor(
 	submitData,
-	{ includeDomainDetails, includeGSuiteDetails, recordEvent },
+	dataForProcessor,
 	transactionOptions
 ) {
 	const paymentPartner = submitData.paymentPartner;
 	if ( paymentPartner === 'stripe' ) {
-		return stripeCardProcessor(
-			submitData,
-			{ includeDomainDetails, includeGSuiteDetails, recordEvent },
-			transactionOptions
-		);
+		return stripeCardProcessor( submitData, dataForProcessor, transactionOptions );
 	}
 	if ( paymentPartner === 'ebanx' ) {
-		return ebanxCardProcessor( submitData, {
-			includeDomainDetails,
-			includeGSuiteDetails,
-			recordEvent,
-		} );
+		return ebanxCardProcessor( submitData, dataForProcessor );
 	}
 	throw new RangeError( 'Unrecognized card payment partner: "' + paymentPartner + '"' );
 }
