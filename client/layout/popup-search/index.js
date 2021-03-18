@@ -30,9 +30,22 @@ export function PopUpSearch( props ) {
 
 	const onChildClick = ( e ) => e.stopPropagation();
 
+	const mergeQueryParams = ( queryParamStatement1 = '', queryParamStatement2 = '' ) => {
+		if ( queryParamStatement1 === '' && queryParamStatement2 !== '' ) {
+			return queryParamStatement2;
+		} else if ( queryParamStatement2 === '' && queryParamStatement1 !== '' ) {
+			return queryParamStatement1;
+		}
+		return `${ queryParamStatement1 }&${ queryParamStatement2.slice( 1 ) }`;
+	};
+
 	const onResultClick = ( link ) => {
 		props.onClose();
-		window.location.href = localizeUrl( link + window.location.search );
+		const linkUrlObject = new URL( window.location.origin + link );
+		const combinedQueryParams = mergeQueryParams( linkUrlObject.search, window.location.search );
+		linkUrlObject.search = combinedQueryParams;
+
+		window.location.href = localizeUrl( linkUrlObject.toString() );
 	};
 	return (
 		<div role="button" className="popup-search__mask" onClick={ props.onClose }>
@@ -46,7 +59,7 @@ export function PopUpSearch( props ) {
 				{ props.searchResults.length > 0 && (
 					<div className="popup-search__results" aria-label="Pop Up Search">
 						{ props.searchResults.slice( 0, 10 ).map( ( { link, key, title, description } ) => (
-							<div>
+							<div key={ title }>
 								<div
 									role="button"
 									className="popup-search__result-single"
@@ -54,12 +67,8 @@ export function PopUpSearch( props ) {
 									onClick={ () => onResultClick( link ) }
 								>
 									<div className="popup-search__results-cell">
-										<div>
-											<h2>{ title }</h2>
-										</div>
-										<div className="popup-search__description">
-											<em>{ description }</em>
-										</div>
+										<h2>{ title }</h2>
+										<em className="popup-search__description">{ description }</em>
 									</div>
 								</div>
 							</div>

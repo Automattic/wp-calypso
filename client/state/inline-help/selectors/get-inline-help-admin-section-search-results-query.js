@@ -12,7 +12,7 @@ import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query
  * @returns {Array} List of admin help results for a given search query.
  */
 
-export function getInlineHelpAdminSectionSearchResultsForQuery( state ) {
+export default function getInlineHelpAdminSectionSearchResultsForQuery( state ) {
 	const searchQuery = getSearchQuery( state );
 	const { inlineHelp: { searchResults: { search: { items } = {} } = {} } = {} } = state;
 	const allResults = ( items[ searchQuery ] ?? [] ).filter(
