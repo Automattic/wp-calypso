@@ -16,6 +16,7 @@ object WebApp : Project({
 	buildType(RunAllUnitTests)
 	buildType(CheckCodeStyleBranch)
 	buildType(BuildDockerImage)
+	buildType(RunCalypsoPlaywrightE2eTests)
 })
 
 object RunCalypsoE2eDesktopTests : BuildType({
@@ -39,7 +40,6 @@ object RunCalypsoE2eDesktopTests : BuildType({
 			name = "Prepare environment"
 			scriptContent = """
 				export NODE_ENV="test"
-				export PLAYWRIGHT_BROWSERS_PATH=0
 
 				# Install modules
 				yarn install
@@ -58,7 +58,6 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				export LIVEBRANCHES=true
 				export NODE_CONFIG_ENV=test
 				export TEST_VIDEO=true
-				export PLAYWRIGHT_BROWSERS_PATH=0
 
 				# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
 				# mocha-teamcity-reporter to work.
@@ -102,7 +101,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				export BROWSERSIZE="desktop"
 				export BROWSERLOCALE="en"
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-				export TEST_FILES=${'$'}(join ',' ${'$'}(ls -1 specs*/**/*spec.js))
+				export TEST_FILES=${'$'}(join ',' ${'$'}(find specs*/**/*spec.js -type f -not -path specs-playwright/*))
 
 				yarn magellan --config=magellan.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
 			""".trimIndent()
@@ -534,6 +533,144 @@ object CheckCodeStyleBranch : BuildType({
 					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
 				}
 			}
+		}
+	}
+})
+
+object RunCalypsoPlaywrightE2eTests : BuildType({
+	name = "Playwright E2E tests"
+	description = "Runs Calypso e2e tests using Playwright"
+
+	artifactRules = """
+		reports => reports
+		logs.tgz => logs.tgz
+		screenshots => screenshots
+	""".trimIndent()
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Prepare environment"
+			scriptContent = """
+				export NODE_ENV="test"
+				export PLAYWRIGHT_BROWSERS_PATH=0
+
+				# Install modules
+				yarn install
+			"""
+			dockerImage = "%docker_image_e2e%"
+		}
+		bashNodeScript {
+			name = "Run e2e tests"
+			scriptContent = """
+				shopt -s globstar
+				set -x
+
+				cd test/e2e
+				mkdir temp
+
+				export LIVEBRANCHES=true
+				export NODE_CONFIG_ENV=test
+				export PLAYWRIGHT_BROWSERS_PATH=0
+
+				# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
+				# mocha-teamcity-reporter to work.
+				export MAGELLANDEBUG=true
+
+				function join() {
+					local IFS=${'$'}1
+					shift
+					echo "${'$'}*"
+				}
+
+				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
+				MAX_LOOP=10
+				COUNTER=0
+
+				# Transform an URL like https://calypso.live?image=... into https://<container>.calypso.live
+				while [[ ${'$'}COUNTER -le ${'$'}MAX_LOOP ]]; do
+					COUNTER=${'$'}((COUNTER+1))
+					REDIRECT=${'$'}(curl --output /dev/null --silent --show-error  --write-out "%{http_code} %{redirect_url}" "${'$'}{IMAGE_URL}")
+					read HTTP_STATUS URL <<< "${'$'}{REDIRECT}"
+
+					# 202 means the image is being downloaded, retry in a few seconds
+					if [[ "${'$'}{HTTP_STATUS}" -eq "202" ]]; then
+						sleep 5
+						continue
+					fi
+
+					break
+				done
+
+				if [[ -z "${'$'}URL" ]]; then
+					echo "Can't redirect to ${'$'}{IMAGE_URL}" >&2
+					echo "Curl response: ${'$'}{REDIRECT}" >&2
+					exit 1
+				fi
+
+				# Decrypt config
+				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+
+				# Run the test
+				export BROWSERSIZE="mobile"
+				export BROWSERLOCALE="en"
+				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+				export TEST_FILES=${'$'}(join ',' ${'$'}(ls -1 specs-playwright/**/*spec.js))
+
+				xvfb-run yarn magellan --config=magellan-playwright.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
+		}
+		bashNodeScript {
+			name = "Collect results"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -x
+
+				mkdir -p screenshots-playwright
+				find test/e2e/temp-playwright -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+	}
+
+	features {
+		perfmon {
+		}
+		pullRequests {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 20
+		// TeamCity will mute a test if it fails and then succeeds within the same build. Otherwise TeamCity UI will not
+		// display a difference between real errors and retries, making it hard to understand what is actually failing.
+		supportTestRetry = true
+	}
+
+	dependencies {
+		snapshot(BuildDockerImage) {
 		}
 	}
 })
