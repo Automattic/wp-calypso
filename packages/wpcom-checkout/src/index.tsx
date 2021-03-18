@@ -91,6 +91,7 @@ export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineIt
 	if ( responseCart.credits_integer <= 0 ) {
 		return null;
 	}
+	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
 	return {
 		id: 'credits',
 		// translators: The label of the credits line item in checkout
@@ -98,13 +99,16 @@ export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineIt
 		type: 'credits',
 		amount: {
 			currency: responseCart.currency,
-			value: responseCart.credits_integer,
+			// Clamp the credits value to the total
+			value: isFullCredits
+				? responseCart.sub_total_with_taxes_integer
+				: responseCart.credits_integer,
 			// translators: The discount amount of the credits line item in checkout
 			displayValue: String(
 				translate( '- %(discountAmount)s', {
 					args: {
 						// Clamp the credits display value to the total
-						discountAmount: doesPurchaseHaveFullCredits( responseCart )
+						discountAmount: isFullCredits
 							? responseCart.sub_total_with_taxes_display
 							: responseCart.credits_display,
 					},

@@ -181,7 +181,7 @@ describe( 'getCreditsLineItemFromCart', function () {
 			label: 'Credits',
 			amount: {
 				currency: 'JPY',
-				value: 80000,
+				value: 75000,
 				displayValue: '- JPY 75,000',
 			},
 		};
