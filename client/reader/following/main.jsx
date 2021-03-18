@@ -2,6 +2,7 @@ import { CompactCard, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { trim } from 'lodash';
 import page from 'page';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SearchInput from 'calypso/components/search';
 import SectionHeader from 'calypso/components/section-header';
@@ -32,6 +33,7 @@ function handleSearch( query ) {
 }
 
 function FollowingStream( { suggestions, ...props } ) {
+	const [ includeSeenPosts, setIncludeSeenPosts ] = useState( true );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const teams = useSelector( getReaderTeams );
@@ -55,7 +57,7 @@ function FollowingStream( { suggestions, ...props } ) {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<Stream { ...props }>
+		<Stream { ...props } includeSeenPosts={ includeSeenPosts }>
 			<FollowingIntro />
 			<CompactCard className="following__search">
 				<SearchInput
@@ -67,6 +69,11 @@ function FollowingStream( { suggestions, ...props } ) {
 			</CompactCard>
 			<BlankSuggestions suggestions={ suggestionList } />
 			<SectionHeader label={ translate( 'Followed Sites' ) }>
+				{ isEligibleForUnseen( { teams } ) && (
+					<Button compact onClick={ () => setIncludeSeenPosts( ! includeSeenPosts ) }>
+						{ ! includeSeenPosts ? translate( 'Show all' ) : translate( 'Show unread only' ) }
+					</Button>
+				) }
 				{ isEligibleForUnseen( { teams } ) && (
 					<Button compact onClick={ markAllAsSeen } disabled={ ! feedsInfo.unseenCount }>
 						{ translate( 'Mark all as seen' ) }

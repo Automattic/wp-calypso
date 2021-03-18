@@ -39,12 +39,14 @@ class ReaderCombinedCardComponent extends Component {
 		blockedSites: PropTypes.array,
 		teams: PropTypes.array,
 		isWPForTeamsItem: PropTypes.bool,
+		includeSeenPosts: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		isDiscover: false,
 		showFollowButton: false,
 		blockedSites: [],
+		includeSeenPosts: true,
 	};
 
 	componentDidMount() {
@@ -74,7 +76,6 @@ class ReaderCombinedCardComponent extends Component {
 	render() {
 		const {
 			currentRoute,
-			posts,
 			postKeys,
 			site,
 			feed,
@@ -86,7 +87,9 @@ class ReaderCombinedCardComponent extends Component {
 			translate,
 			teams,
 			isWPForTeamsItem,
+			includeSeenPosts,
 		} = this.props;
+		let { posts } = this.props;
 		const feedId = postKey.feedId;
 		const siteId = postKey.blogId;
 		const siteIcon = get( site, 'icon.img' );
@@ -101,6 +104,10 @@ class ReaderCombinedCardComponent extends Component {
 		// Handle blocked sites here rather than in the post lifecycle, because we don't have the posts there
 		if ( posts[ 0 ] && ! posts[ 0 ].is_external && includes( blockedSites, +posts[ 0 ].site_ID ) ) {
 			return <PostBlocked post={ posts[ 0 ] } />;
+		}
+
+		if ( ! includeSeenPosts ) {
+			posts = posts.filter( ( p ) => ! p.is_seen );
 		}
 
 		return (

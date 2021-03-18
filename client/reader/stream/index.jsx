@@ -57,6 +57,7 @@ class ReaderStream extends Component {
 		intro: PropTypes.object,
 		forcePlaceholders: PropTypes.bool,
 		recsStreamKey: PropTypes.string,
+		includeSeenPosts: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -74,6 +75,7 @@ class ReaderStream extends Component {
 		useCompactCards: false,
 		intro: null,
 		forcePlaceholders: false,
+		includeSeenPosts: true,
 	};
 
 	listRef = createRef();
@@ -229,6 +231,7 @@ class ReaderStream extends Component {
 					recsStreamKey={ this.props.recsStreamKey }
 					index={ index }
 					compact={ this.props.useCompactCards }
+					includeSeenPosts={ this.props.includeSeenPosts }
 				/>
 				{ index === 0 && <PerformanceTrackerStop /> }
 			</Fragment>

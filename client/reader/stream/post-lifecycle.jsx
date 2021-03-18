@@ -23,11 +23,19 @@ class PostLifecycle extends Component {
 		isDiscoverStream: PropTypes.bool,
 		handleClick: PropTypes.func,
 		recStreamKey: PropTypes.string,
+		includeSeenPosts: PropTypes.bool,
 	};
 
 	render() {
-		const { post, postKey, followSource, isSelected, recsStreamKey, streamKey } = this.props;
-
+		const {
+			post,
+			postKey,
+			followSource,
+			isSelected,
+			recsStreamKey,
+			streamKey,
+			includeSeenPosts,
+		} = this.props;
 		if ( postKey.isRecommendationBlock ) {
 			return (
 				<RecommendedPosts
@@ -47,6 +55,7 @@ class PostLifecycle extends Component {
 					followSource={ followSource }
 					showFollowButton={ this.props.showPrimaryFollowButtonOnCards }
 					blockedSites={ this.props.blockedSites }
+					includeSeenPosts={ includeSeenPosts }
 				/>
 			);
 		} else if ( streamKey.indexOf( 'rec' ) > -1 ) {
@@ -86,7 +95,7 @@ class PostLifecycle extends Component {
 			);
 		}
 
-		return <Post { ...this.props } />;
+		return includeSeenPosts || ! post.is_seen ? <Post { ...this.props } /> : null;
 	}
 }
 
