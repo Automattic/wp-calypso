@@ -44,6 +44,7 @@ project {
 	vcsRoot(WpCalypso)
 	subProject(_self.projects.DesktopApp)
 	subProject(_self.projects.WPComPlugins)
+	subProject(_self.projects.WebApp)
 	buildType(RunAllUnitTests)
 	buildType(BuildBaseImages)
 	buildType(CheckCodeStyle)
