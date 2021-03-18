@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .rewind-flow__header {
 	display: flex;
 	justify-content: center;
@@ -203,12 +206,12 @@ a.rewind-flow-notice__title-warning:visited {
 	}
 }
 
-.review-prompt {
-	margin: -16px;
-	margin-top: 12px;
+.review-prompt__button-row {
+	display: flex;
 
-	@include breakpoint-deprecated( '>660px' ) {
-		margin: -24px;
-		margin-top: 12px;
+	:not(:first-child) {
+		margin-left: 12px;
 	}
+	
 }
+
