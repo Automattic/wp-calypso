@@ -1,12 +1,14 @@
+
 import {
 	getPlan,
-	isMonthly as isMonthlyPlan,
+	getProductBillingTermLabel,
 	getProductFromSlug,
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
 	isGSuiteOrGoogleWorkspace,
 	isJetpackPlan,
+	isMonthly as isMonthlyPlan,
 	isMonthlyProduct,
 	isPlan,
 	isTheme,
@@ -16,18 +18,19 @@ import {
 	isWpComPlan,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
+	getPlanBillingTermLabel,
 } from '@automattic/calypso-products';
 import { encodeProductForUrl } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
-import i18n from 'i18n-calypso';
+import i18n, { translate } from 'i18n-calypso';
 import { find } from 'lodash';
 import moment from 'moment';
 import page from 'page';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 const debug = debugFactory( 'calypso:purchases' );
 
@@ -124,6 +127,20 @@ function getPartnerName( purchase ) {
 function getSubscriptionEndDate( purchase ) {
 	const localeSlug = i18n.getLocaleSlug();
 	return moment( purchase.expiryDate ).locale( localeSlug ).format( 'LL' );
+}
+
+/**
+ * Returns a purchase term label (i.e. "every month", "every year", "every two years").
+ *
+ * @param {object} purchase The purchase
+ * @returns {string} The purchase's term label
+ */
+function getPurchaseBillingTermLabel( purchase ) {
+	if ( isPlan( purchase ) ) {
+		return getPlanBillingTermLabel( purchase.productSlug, translate );
+	}
+
+	return getProductBillingTermLabel( purchase.productSlug, translate );
 }
 
 /**
@@ -754,6 +771,7 @@ export {
 	getDisplayName,
 	getPartnerName,
 	getPurchasesBySite,
+	getPurchaseBillingTermLabel,
 	getRenewalPrice,
 	getSubscriptionEndDate,
 	getSubscriptionsBySite,

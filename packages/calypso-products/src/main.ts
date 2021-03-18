@@ -39,8 +39,10 @@ import type {
 	PlanSlug,
 	WithCamelCaseSlug,
 	WithSnakeCaseSlug,
+	ProductSlug,
 } from './types';
 import type { TranslateResult } from 'i18n-calypso';
+import { PRODUCTS_LIST } from './products-list';
 
 export function getPlans(): Record< string, Plan > {
 	return PLANS_LIST;
@@ -565,6 +567,45 @@ export function getPlanTermLabel(
 		case TERM_BIENNIALLY:
 			return translate( 'Two year subscription' );
 	}
+}
+
+export function getPlanBillingTermLabel( 
+	planName: string,
+	translate: ( text: string ) => string
+): string | undefined {
+	const plan = getPlan( planName );
+	if ( ! plan || ! plan.term ) {
+		return;
+	}
+
+	switch ( plan.term ) {
+		case TERM_MONTHLY:
+			return translate( 'monthly' );
+		case TERM_ANNUALLY:
+			return translate( 'yearly' );
+		case TERM_BIENNIALLY:
+			return translate( 'every two years' );
+	}
+}
+
+export function getProductBillingTermLabel( 
+	productSlug: ProductSlug,
+	translate: ( text: string ) => string
+): string | undefined {
+	const product: Product = PRODUCTS_LIST[ productSlug ];
+
+	if ( product && product.term ) {
+		switch ( product.term ) {
+			case TERM_MONTHLY:
+				return String( translate( 'monthly' ) );
+			case TERM_ANNUALLY:
+				return String( translate( 'yearly' ) );
+			case TERM_BIENNIALLY:
+				return String( translate( 'every two years' ) );
+		}
+	}
+
+	return undefined;
 }
 
 export const getPopularPlanSpec = ( {

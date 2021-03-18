@@ -2,6 +2,7 @@ import type { ITEM_TYPE_PLAN, ITEM_TYPE_PRODUCT } from './constants';
 import type { PlanRecommendation } from './plan-upgrade/types';
 import type {
 	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
 	TERM_MONTHLY,
 	JetpackProductCategory,
 } from '@automattic/calypso-products';
@@ -9,7 +10,7 @@ import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactNode, ReactElement } from 'react';
 
-export type Duration = typeof TERM_ANNUALLY | typeof TERM_MONTHLY;
+export type Duration = typeof TERM_ANNUALLY | typeof TERM_MONTHLY | typeof TERM_BIENNIALLY;;
 export type DurationString = 'annual' | 'monthly';
 export type ItemType = typeof ITEM_TYPE_PLAN | typeof ITEM_TYPE_PRODUCT;
 

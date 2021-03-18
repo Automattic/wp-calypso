@@ -12,20 +12,21 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getPaymentMethodImageURL } from 'calypso/lib/checkout/payment-methods';
 import {
+	creditCardExpiresBeforeSubscription,
+	creditCardHasAlreadyExpired,
 	getDisplayName,
+	getPartnerName,
+	getPurchaseBillingTermLabel,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
+	isIntroductoryOfferFreeTrial,
 	isOneTimePurchase,
 	isPartnerPurchase,
 	isRecentMonthlyPurchase,
+	isWithinIntroductoryOfferPeriod,
 	isRenewing,
 	purchaseType,
-	creditCardExpiresBeforeSubscription,
-	creditCardHasAlreadyExpired,
-	getPartnerName,
-	isWithinIntroductoryOfferPeriod,
-	isIntroductoryOfferFreeTrial,
 } from 'calypso/lib/purchases';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
@@ -196,8 +197,9 @@ class PurchaseItem extends Component {
 				);
 			}
 
-			return translate( 'Renews at %(amount)s on {{span}}%(date)s{{/span}}', {
+			return translate( 'Renews %(interval)s at %(amount)s on {{span}}%(date)s{{/span}}', {
 				args: {
+					interval: getPurchaseBillingTermLabel( purchase ),
 					amount: purchase.priceText,
 					date: renewDate.format( 'LL' ),
 				},
