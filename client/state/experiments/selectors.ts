@@ -1,4 +1,10 @@
 /**
+ * DEPRECATED
+ * 
+ * This code has been deprecated in favor of /client/lib/explat 
+ */
+
+/**
  * Internal Dependencies
  */
 import type { AppState } from 'calypso/types';

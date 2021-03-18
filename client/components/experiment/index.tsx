@@ -1,4 +1,11 @@
 /**
+ * DEPRECATED
+ * 
+ * This code has been deprecated in favor of /client/lib/explat (New Experiment component). 
+ * Note that the API has changed to use slots.
+ */
+
+/**
  * External Dependencies
  */
 import React, { FunctionComponent, useEffect, useState } from 'react';
