@@ -30,6 +30,7 @@
 	font-weight: 700;
 
 	@include breakpoint-deprecated( '>660px' ) {
+		margin-top: initial;
 		margin-bottom: initial;
 	}
 }
@@ -77,6 +78,7 @@
 	}
 
 	@include breakpoint-deprecated( '>660px' ) {
+		margin-top: 16px;
 		margin-bottom: 16px;
 	}
 
@@ -87,6 +89,9 @@
 		align-items: center;
 		flex-wrap: wrap;
 		flex: 2 1;
+
+		margin-top: initial;
+		margin-bottom: -14px;
 
 		> li {
 			width: calc( 50% - 8px );
