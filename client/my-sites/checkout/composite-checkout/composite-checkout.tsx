@@ -51,8 +51,8 @@ import {
 	freePurchaseProcessor,
 	multiPartnerCardProcessor,
 	fullCreditsProcessor,
-	weChatProcessor,
 } from './payment-method-processors';
+import weChatProcessor from './lib/we-chat-processor';
 import genericRedirectProcessor from './lib/generic-redirect-processor';
 import existingCardProcessor from './lib/existing-card-processor';
 import payPalProcessor from './lib/paypal-express-processor';
