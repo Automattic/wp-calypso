@@ -3,26 +3,18 @@
  */
 import * as React from 'react';
 import { screen, render, fireEvent } from '@testing-library/react';
-import { DataStatus, DomainSuggestion } from '@automattic/data-stores/src/domain-suggestions';
+import { DataStatus } from '@automattic/data-stores/src/domain-suggestions';
 
 /**
  * Internal dependencies
  */
+import { MOCK_DOMAIN_SUGGESTION } from '../__mock__/';
 import '../__mock__/matchMedia.mock';
 import DomainPicker from '../components';
 import { useDomainSuggestions } from '../hooks/use-domain-suggestions';
 
-// TODO: should we extract to separate mock data file/folder?
-const MOCK_SUGGESTION: DomainSuggestion = {
-	domain_name: 'example.com',
-	cost: '€15.00',
-	raw_price: 15,
-	currency_code: 'EUR',
-	relevance: 0.5,
-};
-
 const mockUseDomainSuggestionsResult: ReturnType< typeof useDomainSuggestions > = {
-	allDomainSuggestions: [ MOCK_SUGGESTION ],
+	allDomainSuggestions: [ MOCK_DOMAIN_SUGGESTION ],
 	errorMessage: null,
 	state: DataStatus.Success,
 	retryRequest: jest.fn(),
