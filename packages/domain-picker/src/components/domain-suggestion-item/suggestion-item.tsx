@@ -24,14 +24,16 @@ import { sprintf } from '@wordpress/i18n';
  */
 import InfoTooltip from '../info-tooltip';
 import WrappingComponent from './suggestion-item-wrapper';
-import {
-	SUGGESTION_ITEM_TYPE,
-	ITEM_TYPE_RADIO,
-	ITEM_TYPE_BUTTON,
-	ITEM_TYPE_INDIVIDUAL_ITEM,
-} from './constants';
 // TODO: remove when all needed core types are available
 /*#__PURE__*/ import '../../types-patch';
+
+export const SUGGESTION_ITEM_TYPE_RADIO = 'radio';
+export const SUGGESTION_ITEM_TYPE_BUTTON = 'button';
+export const SUGGESTION_ITEM_TYPE_INDIVIDUAL = 'individual-item';
+export type SUGGESTION_ITEM_TYPE =
+	| typeof SUGGESTION_ITEM_TYPE_RADIO
+	| typeof SUGGESTION_ITEM_TYPE_BUTTON
+	| typeof SUGGESTION_ITEM_TYPE_INDIVIDUAL;
 
 interface Props {
 	isUnavailable?: boolean;
@@ -63,7 +65,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 	onSelect,
 	onRender,
 	selected,
-	type = ITEM_TYPE_RADIO,
+	type = SUGGESTION_ITEM_TYPE_RADIO,
 	buttonRef,
 } ) => {
 	const { __, hasTranslation } = useI18n();
@@ -83,7 +85,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 	const freeDomainLabelDefault = __( 'Default', __i18n_text_domain__ );
 	const freeDomainLabelFree = __( 'Free', __i18n_text_domain__ );
 	const freeDomainLabel =
-		type === ITEM_TYPE_INDIVIDUAL_ITEM ? freeDomainLabelDefault : freeDomainLabelFree;
+		type === SUGGESTION_ITEM_TYPE_INDIVIDUAL ? freeDomainLabelDefault : freeDomainLabelFree;
 
 	const fallbackIncludedLabel = __( 'Included with annual plans', __i18n_text_domain__ );
 	const newIncludedLabel = __( 'Included in annual plans', __i18n_text_domain__ );
@@ -151,10 +153,10 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 				`type-${ type }`
 			) }
 			// if the wrapping element is a div, don't assign a click listener
-			onClick={ type !== 'button' ? onDomainSelect : undefined }
+			onClick={ type !== SUGGESTION_ITEM_TYPE_BUTTON ? onDomainSelect : undefined }
 			disabled={ isUnavailable }
 		>
-			{ type === ITEM_TYPE_RADIO &&
+			{ type === SUGGESTION_ITEM_TYPE_RADIO &&
 				( isLoading ? (
 					<Spinner />
 				) : (
@@ -205,7 +207,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 						</InfoTooltip>
 					) }
 				</div>
-				{ isExistingSubdomain && type !== ITEM_TYPE_INDIVIDUAL_ITEM && (
+				{ isExistingSubdomain && type !== SUGGESTION_ITEM_TYPE_INDIVIDUAL && (
 					<div className="domain-picker__change-subdomain-tip">
 						{ __(
 							'You can change your free subdomain later under Domain Settings.',
@@ -244,7 +246,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 					</>
 				) }
 			</div>
-			{ type === ITEM_TYPE_BUTTON &&
+			{ type === SUGGESTION_ITEM_TYPE_BUTTON &&
 				( isLoading ? (
 					<Spinner />
 				) : (

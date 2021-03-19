@@ -18,7 +18,7 @@ import {
 	DomainSuggestionItem,
 	DomainSuggestionItemUseYourDomain,
 	DomainSuggestionItemPlaceholder,
-	ITEM_TYPE_RADIO,
+	SUGGESTION_ITEM_TYPE_RADIO,
 	SUGGESTION_ITEM_TYPE,
 } from './domain-suggestion-item';
 import DomainCategories from './domain-categories';
@@ -138,7 +138,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	existingSubdomain,
 	segregateFreeAndPaid = false,
 	showSearchField = true,
-	itemType = ITEM_TYPE_RADIO,
+	itemType = SUGGESTION_ITEM_TYPE_RADIO,
 	locale,
 	areDependenciesLoading = false,
 	orderSubDomainsLast = false,

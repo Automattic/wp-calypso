@@ -5,8 +5,9 @@ export { default } from './components';
 export type { Props } from './components';
 
 export {
-	ITEM_TYPE_RADIO,
-	ITEM_TYPE_BUTTON,
+	SUGGESTION_ITEM_TYPE_BUTTON,
+	SUGGESTION_ITEM_TYPE_RADIO,
+	SUGGESTION_ITEM_TYPE_INDIVIDUAL,
 	SUGGESTION_ITEM_TYPE,
 } from './components/domain-suggestion-item';
 

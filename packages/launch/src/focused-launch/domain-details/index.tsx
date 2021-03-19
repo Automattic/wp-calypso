@@ -6,7 +6,10 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 
-import DomainPicker, { mockDomainSuggestion, ITEM_TYPE_BUTTON } from '@automattic/domain-picker';
+import DomainPicker, {
+	mockDomainSuggestion,
+	SUGGESTION_ITEM_TYPE_BUTTON,
+} from '@automattic/domain-picker';
 import { Title, SubTitle } from '@automattic/onboarding';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import type { DomainSuggestions } from '@automattic/data-stores';
@@ -98,7 +101,7 @@ const DomainDetails: React.FunctionComponent = () => {
 					analyticsUiAlgo={ ANALYTICS_UI_LOCATION }
 					segregateFreeAndPaid
 					locale={ locale }
-					itemType={ ITEM_TYPE_BUTTON }
+					itemType={ SUGGESTION_ITEM_TYPE_BUTTON }
 					onUseYourDomainClick={ redirectToUseDomainFlow }
 				/>
 			</div>
