@@ -5,6 +5,7 @@ import './public-path';
 /**
  * External dependencies
  */
+import { Guide, GuidePage } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
@@ -14,6 +15,7 @@ import apiFetch from '@wordpress/api-fetch';
  * Internal dependencies
  */
 import LaunchWpcomWelcomeTour from './welcome-tour/tour-launch';
+import WpcomNux from './welcome-modal/wpcom-nux';
 
 registerPlugin( 'wpcom-block-editor-nux', {
 	render: function WpcomBlockEditorNux() {
@@ -42,13 +44,12 @@ registerPlugin( 'wpcom-block-editor-nux', {
 			fetchWpcomNuxStatus();
 		}, [ isWpcomNuxEnabled, setWpcomNuxStatus, isMobileDevice ] );
 
-		if (
-			! isWpcomNuxEnabled ||
-			isSPTOpen ||
-			isMobileDevice ||
-			typeof isMobileDevice === 'undefined'
-		) {
+		if ( ! isWpcomNuxEnabled || isSPTOpen || typeof isMobileDevice === 'undefined' ) {
 			return null;
+		}
+
+		if ( isMobileDevice && Guide && GuidePage ) {
+			return <WpcomNux />;
 		}
 
 		return <LaunchWpcomWelcomeTour />;
