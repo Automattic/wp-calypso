@@ -31,7 +31,7 @@ import {
 	ITEM_TYPE_INDIVIDUAL_ITEM,
 } from './constants';
 // TODO: remove when all needed core types are available
-/*#__PURE__*/ import '../types-patch';
+/*#__PURE__*/ import '../../types-patch';
 
 interface Props {
 	isUnavailable?: boolean;
