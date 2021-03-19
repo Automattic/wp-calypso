@@ -1,8 +1,4 @@
 /**
- * @jest-environment jsdom
- */
-
-/**
  * External dependencies
  */
 import * as React from 'react';
@@ -13,7 +9,7 @@ import { render, fireEvent, screen } from '@testing-library/react';
  */
 // https://jestjs.io/docs/en/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
 import '../matchMedia.mock';
-import SuggestionItem from '../src/domain-picker/suggestion-item';
+import SuggestionItem from '../suggestion-item';
 
 const testSuggestion = {
 	domain_name: 'example.com',
