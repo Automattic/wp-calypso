@@ -85,6 +85,21 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 		);
 	};
 
+	renderFileSize = () => {
+		const fileSize = this.getItemValue( 'size' );
+
+		if ( ! fileSize || fileSize === 0 ) {
+			return;
+		}
+
+		return (
+			<tr>
+				<th>{ this.props.translate( 'File Size' ) }</th>
+				<td>{ fileSize }</td>
+			</tr>
+		);
+	};
+
 	renderVideoPressShortcode = () => {
 		const videopressGuid = this.getItemValue( 'videopress_guid' );
 
@@ -120,6 +135,7 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 						<th>{ this.props.translate( 'File Type' ) }</th>
 						<td>{ this.getItemValue( 'extension' ) }</td>
 					</tr>
+					{ this.renderFileSize() }
 					{ this.renderDimensions() }
 					{ this.renderDuration() }
 					{ this.renderVideoPressShortcode() }
