@@ -19,6 +19,7 @@ import {
 	hasActivePartnerKey,
 	hasFetchedPartner,
 } from 'calypso/state/partner-portal/partner/selectors';
+import { ensurePartnerPortalReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import Main from 'calypso/components/main';
 import CardHeading from 'calypso/components/card-heading';
@@ -42,8 +43,10 @@ export default function SelectPartnerKey(): ReactElement | null {
 
 	useEffect( () => {
 		if ( hasKey ) {
-			const returnUrl = getQueryArg( window.location.href, 'return' ) as string;
-			page.redirect( returnUrl || '/partner-portal' );
+			const returnQuery = getQueryArg( window.location.href, 'return' ) as string;
+			const returnUrl = ensurePartnerPortalReturnUrl( returnQuery );
+
+			page.redirect( returnUrl );
 		}
 	}, [ hasKey ] );
 

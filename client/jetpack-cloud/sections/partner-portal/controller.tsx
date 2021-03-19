@@ -14,6 +14,7 @@ import {
 	publicToInternalLicenseFilter,
 	publicToInternalLicenseSortField,
 	valueToEnum,
+	ensurePartnerPortalReturnUrl,
 } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import Header from './header';
 import JetpackComFooter from 'calypso/jetpack-cloud/sections/pricing/jpcom-footer';
@@ -72,16 +73,19 @@ export function issueLicenseContext( context: PageJS.Context, next: () => void )
 export function requirePartnerKeyContext( context: PageJS.Context, next: () => void ): void {
 	const state = context.store.getState();
 	const hasKey = getActivePartnerKey( state );
+	const { pathname, search } = window.location;
 
 	if ( hasKey ) {
 		next();
 		return;
 	}
 
+	const returnUrl = ensurePartnerPortalReturnUrl( pathname + search );
+
 	page.redirect(
 		addQueryArgs(
 			{
-				return: window.location.pathname + window.location.search,
+				return: returnUrl,
 			},
 			'/partner-portal/partner-key'
 		)
