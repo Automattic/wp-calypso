@@ -17,9 +17,14 @@ import type {
 
 const debug = debugFactory( 'calypso:composite-checkout:submit-redirect-transaction' );
 
+type SubmitRedirectTransactionData = Omit<
+	TransactionRequestWithLineItems,
+	'paymentMethodType' | 'paymentPartnerProcessorId'
+>;
+
 export default async function submitRedirectTransaction(
 	paymentMethodId: string,
-	transactionData: TransactionRequestWithLineItems,
+	transactionData: SubmitRedirectTransactionData,
 	transactionOptions: PaymentProcessorOptions
 ): Promise< WPCOMTransactionEndpointResponse > {
 	const paymentMethodType = translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId );
