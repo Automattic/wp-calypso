@@ -346,7 +346,6 @@ class EmailProvidersComparison extends React.Component {
 			translate( '30GB storage' ),
 			translate( 'Email, calendars, and contacts' ),
 			translate( 'One-click import of existing emails and contacts' ),
-			translate( 'Apps for Android and iOS' ),
 		];
 	}
 
