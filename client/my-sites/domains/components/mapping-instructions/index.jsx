@@ -79,10 +79,12 @@ class DomainMappingInstructions extends React.Component {
 
 		if ( isSubdomain( domainName ) ) {
 			return translate(
-				'Please create the correct CNAME or NS records at your current DNS provider. {{learnMoreLink}}Learn how to do that in our support guide for mapping subdomains{{/learnMoreLink}}.',
+				// 'Please create the correct CNAME or NS records at your current DNS provider. {{learnMoreLink}}Learn how to do that in our support guide for mapping subdomains{{/learnMoreLink}}.',
+				'Please log into your account at your domain registrar and {{strong}}set the CNAME record{{/strong}} of your subdomain to match the following value, as detailed in {{link}}these instructions{{/link}}:',
 				{
 					components: {
-						learnMoreLink: <ExternalLink href={ MAP_SUBDOMAIN } target="_blank" />,
+						strong: <strong />,
+						link: <ExternalLink href={ MAP_SUBDOMAIN } target="_blank" />,
 					},
 				}
 			);
@@ -102,6 +104,18 @@ class DomainMappingInstructions extends React.Component {
 	renderRecommendedSetupMessage() {
 		const { domainName, translate } = this.props;
 
+		// TODO: Get these values dynamically
+		const subdomainPart = 'blog';
+		const subdomainName = subdomainPart + '.domain.com';
+		const canonicalName = 'domain.wordpress.com';
+
+		const subdomainInstructions = translate(
+			'Some DNS managers will only require you to add the subdomain (i.e. "%(subdomainPart)s") in a field typically labeled "host", "name" or "@", and the canonical name part (i.e. "%(canonicalName)s") might be labeled as "points to" or "alias".',
+			{
+				args: { subdomainPart, canonicalName },
+			}
+		);
+
 		return (
 			<FoldableFAQ
 				id="recommended-mapping-setup"
@@ -110,11 +124,23 @@ class DomainMappingInstructions extends React.Component {
 			>
 				<p>{ this.getRecommendedSetupMessage() }</p>
 				{ ! isSubdomain( domainName ) && (
-					<ul className="mapping-instructions__name-server-list">
+					<ul>
 						{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
 							return <li key={ nameServer }>{ nameServer }</li>;
 						} ) }
 					</ul>
+				) }
+				{ isSubdomain( domainName ) && (
+					<React.Fragment>
+						<ul>
+							<li>
+								<code>
+									{ subdomainName }. IN CNAME { canonicalName }.
+								</code>
+							</li>
+						</ul>
+						<p>{ subdomainInstructions }</p>
+					</React.Fragment>
 				) }
 			</FoldableFAQ>
 		);
