@@ -8,8 +8,9 @@ export {
 	SUGGESTION_ITEM_TYPE_BUTTON,
 	SUGGESTION_ITEM_TYPE_RADIO,
 	SUGGESTION_ITEM_TYPE_INDIVIDUAL,
-	SUGGESTION_ITEM_TYPE,
 } from './components/domain-suggestion-item';
+
+export type { SUGGESTION_ITEM_TYPE } from './components/domain-suggestion-item';
 
 export {
 	mockDomainSuggestion,
