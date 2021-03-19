@@ -31,65 +31,6 @@ import submitRedirectTransaction from './lib/submit-redirect-transaction';
 
 const { select } = defaultRegistry;
 
-export async function genericRedirectProcessor( paymentMethodId, submitData, options ) {
-	const {
-		getThankYouUrl,
-		siteSlug,
-		includeDomainDetails,
-		includeGSuiteDetails,
-		reduxDispatch,
-		responseCart,
-	} = options;
-	const { protocol, hostname, port, pathname } = parseUrl(
-		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com',
-		true
-	);
-	const cancelUrlQuery = {};
-	const redirectToSuccessUrl = formatUrl( {
-		protocol,
-		hostname,
-		port,
-		pathname: getThankYouUrl(),
-	} );
-	const successUrl = formatUrl( {
-		protocol,
-		hostname,
-		port,
-		pathname: `/checkout/thank-you/${ siteSlug || 'no-site' }/pending`,
-		query: { redirectTo: redirectToSuccessUrl },
-	} );
-	const cancelUrl = formatUrl( {
-		protocol,
-		hostname,
-		port,
-		pathname,
-		query: cancelUrlQuery,
-	} );
-
-	recordTransactionBeginAnalytics( {
-		paymentMethodId,
-		reduxDispatch,
-	} );
-
-	return submitRedirectTransaction(
-		paymentMethodId,
-		{
-			...submitData,
-			successUrl,
-			cancelUrl,
-			couponId: responseCart.coupon,
-			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-			postalCode: submitData.postalCode || getPostalCode(),
-			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-			siteId: select( 'wpcom' )?.getSiteId?.(),
-			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
-		},
-		options
-	).then( ( response ) => {
-		return makeRedirectResponse( response?.redirect_url );
-	} );
-}
-
 export async function weChatProcessor( submitData, options ) {
 	const {
 		getThankYouUrl,
