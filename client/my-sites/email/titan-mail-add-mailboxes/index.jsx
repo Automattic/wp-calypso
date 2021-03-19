@@ -128,7 +128,7 @@ class TitanMailAddMailboxes extends React.Component {
 	handleContinue = () => {
 		const { selectedSite } = this.props;
 		const { mailboxes } = this.state;
-		const canContinue = areAllMailboxesValid( mailboxes );
+		const canContinue = areAllMailboxesValid( mailboxes, [ 'alternativeEmail' ] );
 
 		this.recordClickEvent( 'calypso_email_management_titan_add_mailboxes_continue_button_click', {
 			can_continue: canContinue,

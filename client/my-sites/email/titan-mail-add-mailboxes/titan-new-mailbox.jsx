@@ -33,6 +33,7 @@ const TitanNewMailbox = ( {
 		name: { value: name, error: nameError },
 		password: { value: password, error: passwordError },
 	},
+	showAlternativeEmail = false,
 } ) => {
 	const translate = useTranslate();
 
@@ -147,26 +148,28 @@ const TitanNewMailbox = ( {
 					</FormFieldset>
 				</div>
 
-				<FormFieldset>
-					<FormLabel>
-						{ translate( 'Alternative email address' ) }
-						<FormTextInput
-							placeholder={ translate( 'Alternative email' ) }
-							value={ alternativeEmail }
-							isError={ hasAlternativeEmailError }
-							onChange={ ( event ) => {
-								onMailboxValueChange( 'alternativeEmail', event.target.value );
-							} }
-							onBlur={ () => {
-								setAlternativeEmailFieldTouched( hasBeenValidated );
-							} }
-							onKeyUp={ onReturnKeyPress }
-						/>
-					</FormLabel>
-					{ hasAlternativeEmailError && (
-						<FormInputValidation text={ alternativeEmailError } isError />
-					) }
-				</FormFieldset>
+				{ showAlternativeEmail && (
+					<FormFieldset>
+						<FormLabel>
+							{ translate( 'Alternative email address' ) }
+							<FormTextInput
+								placeholder={ translate( 'Alternative email' ) }
+								value={ alternativeEmail }
+								isError={ hasAlternativeEmailError }
+								onChange={ ( event ) => {
+									onMailboxValueChange( 'alternativeEmail', event.target.value );
+								} }
+								onBlur={ () => {
+									setAlternativeEmailFieldTouched( hasBeenValidated );
+								} }
+								onKeyUp={ onReturnKeyPress }
+							/>
+						</FormLabel>
+						{ hasAlternativeEmailError && (
+							<FormInputValidation text={ alternativeEmailError } isError />
+						) }
+					</FormFieldset>
+				) }
 			</div>
 			<hr className="titan-mail-add-mailboxes__new-mailbox-separator" />
 		</>
@@ -178,6 +181,7 @@ TitanNewMailbox.propTypes = {
 	onMailboxValueChange: PropTypes.func.isRequired,
 	onReturnKeyPress: PropTypes.func.isRequired,
 	mailbox: getMailboxPropTypeShape(),
+	showAlternativeEmail: PropTypes.bool,
 };
 
 export default TitanNewMailbox;
