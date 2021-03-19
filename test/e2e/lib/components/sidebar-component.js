@@ -39,7 +39,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 
 	async selectPeople() {
 		await this.expandDrawerItem( 'Users' );
-		return await this._scrollToAndClickMenuItem( 'All People' );
+		return await this._scrollToAndClickMenuItem( 'All Users' );
 	}
 
 	async selectThemes() {
@@ -60,8 +60,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 
 	async selectWPAdmin() {
 		//Wp-admin isn't in nav-unification. Workaround to get to wp-admin
-		await this.expandDrawerItem( 'Tools' );
-		return await this._scrollToAndClickMenuItem( 'Other tools' );
+		return await this.expandDrawerItem( 'Feedback' );
 	}
 
 	async customizeTheme() {
@@ -168,10 +167,10 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	async _scrollToAndClickMenuItem( target, { clickButton = false } = {} ) {
 		const selector = SidebarComponent._getSidebarSelector( target, { getButton: clickButton } );
 
-		if ( ! ( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector, 500 ) ) ) {
-			const settingsSelector = SidebarComponent._getSidebarSelector( 'Settings' );
-			await driverHelper.scrollIntoView( this.driver, settingsSelector );
-		}
+		// if ( ! ( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector, 500 ) ) ) {
+		// 	const settingsSelector = SidebarComponent._getSidebarSelector( 'Settings' );
+		// 	await driverHelper.scrollIntoView( this.driver, settingsSelector );
+		// }
 
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
