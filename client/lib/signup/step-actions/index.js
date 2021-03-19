@@ -12,7 +12,6 @@ import {
 	omitBy,
 	pick,
 	startsWith,
-	has,
 } from 'lodash';
 
 /**
@@ -797,14 +796,8 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 
 export function isFreePlansDomainUpsellFulfilled( stepName, defaultDependencies, nextProps ) {
 	const { submitSignupStep, isPaidPlan } = nextProps;
-	const hasDomain = has( nextProps, 'signupDependencies.domainItem' );
-	const hasPlan = has( nextProps, 'signupDependencies.cartItem' );
 	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
 	const cartItem = get( nextProps, 'signupDependencies.cartItem', false );
-
-	if ( ! hasDomain || ! hasPlan ) {
-		return;
-	}
 
 	if ( isPaidPlan || domainItem || cartItem ) {
 		const selectedDomainUpsellItem = null;
