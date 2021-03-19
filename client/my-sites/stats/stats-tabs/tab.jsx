@@ -32,10 +32,7 @@ class StatsTabsTab extends React.Component {
 	};
 
 	ensureValue = ( value ) => {
-		const { loading, children, numberFormat, format } = this.props;
-		if ( children ) {
-			return null;
-		}
+		const { loading, numberFormat, format } = this.props;
 
 		if ( ! loading && ( value || value === 0 ) ) {
 			return format ? format( value ) : numberFormat( value );
