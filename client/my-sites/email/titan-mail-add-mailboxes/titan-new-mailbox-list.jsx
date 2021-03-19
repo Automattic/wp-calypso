@@ -26,7 +26,6 @@ const TitanNewMailboxList = ( {
 	mailboxes,
 	onMailboxesChange,
 	onReturnKeyPress = noop,
-	domainHasMailboxes = false,
 	showAlternativeEmail = false,
 } ) => {
 	const translate = useTranslate();
@@ -55,7 +54,7 @@ const TitanNewMailboxList = ( {
 	};
 
 	const onMailboxAdd = () => {
-		onMailboxesChange( [ ...mailboxes, buildNewTitanMailbox( domain ) ] );
+		onMailboxesChange( [ ...mailboxes, buildNewTitanMailbox( domain, false ) ] );
 	};
 
 	const onMailboxRemove = ( currentMailboxes, uuid ) => () => {
@@ -64,7 +63,7 @@ const TitanNewMailboxList = ( {
 		const updatedMailboxes =
 			0 < remainingMailboxes.length
 				? remainingMailboxes
-				: [ buildNewTitanMailbox( domain, ! domainHasMailboxes ) ];
+				: [ buildNewTitanMailbox( domain, false ) ];
 		onMailboxesChange( updatedMailboxes );
 	};
 
@@ -100,7 +99,6 @@ TitanNewMailboxList.propTypes = {
 	mailboxes: PropTypes.arrayOf( getMailboxPropTypeShape() ).isRequired,
 	onMailboxesChange: PropTypes.func.isRequired,
 	onReturnKeyPress: PropTypes.func,
-	domainHasMailboxes: PropTypes.bool,
 	showAlternativeEmail: PropTypes.bool,
 };
 

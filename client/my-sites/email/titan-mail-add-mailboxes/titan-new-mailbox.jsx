@@ -58,6 +58,8 @@ const TitanNewMailbox = ( {
 	const hasNameError = nameFieldTouched && null !== nameError;
 	const hasPasswordError = passwordFieldTouched && null !== passwordError;
 
+	const showIsAdminToggle = false;
+
 	return (
 		<>
 			<div className="titan-mail-add-mailboxes__new-mailbox">
@@ -135,17 +137,19 @@ const TitanNewMailbox = ( {
 						{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
 					</FormFieldset>
 
-					<FormFieldset>
-						<FormToggle
-							checked={ isAdmin }
-							onChange={ ( newValue ) => {
-								onMailboxValueChange( 'isAdmin', newValue );
-							} }
-							help={ translate( 'Should this user have control panel access?' ) }
-						>
-							{ translate( 'Is admin?' ) }
-						</FormToggle>
-					</FormFieldset>
+					{ showIsAdminToggle && (
+						<FormFieldset>
+							<FormToggle
+								checked={ isAdmin }
+								onChange={ ( newValue ) => {
+									onMailboxValueChange( 'isAdmin', newValue );
+								} }
+								help={ translate( 'Should this user have control panel access?' ) }
+							>
+								{ translate( 'Is admin?' ) }
+							</FormToggle>
+						</FormFieldset>
+					) }
 				</div>
 
 				{ showAlternativeEmail && (

@@ -27,7 +27,6 @@ import {
 } from 'calypso/my-sites/email/paths';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import {
-	getConfiguredTitanMailboxCount,
 	getMaxTitanMailboxCount,
 	getTitanProductName,
 	hasTitanMailWithUs,
@@ -65,7 +64,7 @@ import './style.scss';
 
 class TitanMailAddMailboxes extends React.Component {
 	state = {
-		mailboxes: [ buildNewTitanMailbox( this.props.selectedDomainName, true ) ],
+		mailboxes: [ buildNewTitanMailbox( this.props.selectedDomainName, false ) ],
 	};
 
 	isMounted = false;
@@ -189,19 +188,11 @@ class TitanMailAddMailboxes extends React.Component {
 	};
 
 	renderForm() {
-		const {
-			isLoadingDomains,
-			selectedDomain,
-			selectedDomainName,
-			titanMonthlyProduct,
-			translate,
-		} = this.props;
+		const { isLoadingDomains, selectedDomainName, titanMonthlyProduct, translate } = this.props;
 
 		if ( isLoadingDomains || ! titanMonthlyProduct ) {
 			return <AddEmailAddressesCardPlaceholder />;
 		}
-
-		const hasTitanMailboxes = getConfiguredTitanMailboxCount( selectedDomain ) > 0;
 
 		return (
 			<>
@@ -212,7 +203,6 @@ class TitanMailAddMailboxes extends React.Component {
 						domain={ selectedDomainName }
 						mailboxes={ this.state.mailboxes }
 						onMailboxesChange={ this.onMailboxesChange }
-						domainHasMailboxes={ hasTitanMailboxes }
 					>
 						<Button
 							className="titan-mail-add-mailboxes__action-cancel"
