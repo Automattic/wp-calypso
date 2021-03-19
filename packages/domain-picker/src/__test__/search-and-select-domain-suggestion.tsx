@@ -9,8 +9,8 @@ import { DataStatus, DomainSuggestion } from '@automattic/data-stores/src/domain
  * Internal dependencies
  */
 import '../matchMedia.mock';
-import DomainPicker from '../src/domain-picker';
-import { useDomainSuggestions } from '../src/hooks/use-domain-suggestions';
+import DomainPicker from '../components';
+import { useDomainSuggestions } from '../hooks/use-domain-suggestions';
 
 // TODO: should we extract to separate mock data file/folder?
 const MOCK_SUGGESTION: DomainSuggestion = {
@@ -28,7 +28,7 @@ const mockUseDomainSuggestionsResult: ReturnType< typeof useDomainSuggestions > 
 	retryRequest: jest.fn(),
 };
 
-jest.mock( '../src/hooks/use-domain-suggestions', () => ( {
+jest.mock( '../hooks/use-domain-suggestions', () => ( {
 	useDomainSuggestions: () => mockUseDomainSuggestionsResult,
 } ) );
 
