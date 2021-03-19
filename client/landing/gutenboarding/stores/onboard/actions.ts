@@ -108,7 +108,7 @@ export function* createSite( {
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	};
-	const success = yield dispatch( SITE_STORE, 'createSite', params );
+	const success: unknown = yield dispatch( SITE_STORE, 'createSite', params );
 
 	return success;
 }
