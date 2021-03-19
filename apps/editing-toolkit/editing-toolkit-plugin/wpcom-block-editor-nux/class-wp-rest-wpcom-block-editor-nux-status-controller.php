@@ -57,7 +57,7 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 	 * @return boolean
 	 */
 	public function is_nux_enabled( $nux_status ) {
-		if ( defined( 'SHOW_WELCOME_TOUR' ) && SHOW_WELCOME_TOUR ) {
+		if ( defined( 'is_mobile_device' ) && is_mobile_device ) {
 			return true;
 		}
 		return 'enabled' === $nux_status;
@@ -69,6 +69,9 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 	 * @return WP_REST_Response
 	 */
 	public function get_nux_status() {
+		// Designs for WelcomeTour ong mobile are in progress, until then do not show on mobile.g
+		$is_mobile_device = wp_is_mobile();
+
 		if ( has_filter( 'wpcom_block_editor_nux_get_status' ) ) {
 			$nux_status = apply_filters( 'wpcom_block_editor_nux_get_status', false );
 		} elseif ( ! metadata_exists( 'user', get_current_user_id(), 'wpcom_block_editor_nux_status' ) ) {
@@ -78,7 +81,8 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 		}
 		return rest_ensure_response(
 			array(
-				'is_nux_enabled' => $this->is_nux_enabled( $nux_status ),
+				'is_mobile_device' => $is_mobile_device,
+				'is_nux_enabled'   => $this->is_nux_enabled( $nux_status ),
 			)
 		);
 	}
