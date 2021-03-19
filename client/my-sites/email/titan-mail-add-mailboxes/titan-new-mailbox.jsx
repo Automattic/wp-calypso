@@ -155,9 +155,11 @@ const TitanNewMailbox = ( {
 				{ showAlternativeEmail && (
 					<FormFieldset>
 						<FormLabel>
-							{ translate( 'Alternative email address' ) }
+							{ translate( 'Password reset email address', {
+								comment: 'This is the email address we will send password reset emails to',
+							} ) }
 							<FormTextInput
-								placeholder={ translate( 'Alternative email' ) }
+								placeholder={ translate( 'Email address' ) }
 								value={ alternativeEmail }
 								isError={ hasAlternativeEmailError }
 								onChange={ ( event ) => {
