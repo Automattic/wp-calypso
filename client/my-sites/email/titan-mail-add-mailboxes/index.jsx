@@ -271,7 +271,7 @@ class TitanMailAddMailboxes extends React.Component {
 						domain={ selectedDomain }
 						linkIsExternal={ finishSetupLinkIsExternal }
 						maxTitanMailboxCount={ maxTitanMailboxCount }
-						onFinishSetupClick={ this.handleCreateMailbox }
+						onFinishSetupClick={ this.handleUnusedMailboxFinishSetupClick }
 					/>
 					{ selectedDomain && titanMonthlyProduct && (
 						<TitanMailboxPricingNotice
