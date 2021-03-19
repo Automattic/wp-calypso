@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { stubTrue } from 'lodash';
 import '@wordpress/nux';
 import { compose } from '@wordpress/compose';
 import { withDispatch, withSelect } from '@wordpress/data';
@@ -42,7 +41,7 @@ export const PageTemplatesPlugin = compose(
 			},
 			insertTemplate: ( title, blocks ) => {
 				// Add filter to let the tracking library know we are inserting a template.
-				addFilter( INSERTING_HOOK_NAME, INSERTING_HOOK_NAMESPACE, stubTrue );
+				addFilter( INSERTING_HOOK_NAME, INSERTING_HOOK_NAMESPACE, () => true );
 
 				// Set post title.
 				if ( title ) {
