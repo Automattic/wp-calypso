@@ -133,7 +133,7 @@ function getSubscriptionEndDate( purchase ) {
  * Returns a purchase term label (i.e. "every month", "every year", "every two years").
  *
  * @param {object} purchase The purchase
- * @returns {string} The purchase's term label
+ * @returns {string|undefined} The purchase's term label
  */
 function getPurchaseBillingTermLabel( purchase ) {
 	if ( isPlan( purchase ) ) {

@@ -19,7 +19,7 @@ import type { Product } from 'calypso/lib/products-values/products-list';
  * Returns the billing term label for a product (i.e. "every month", "every year", "every two years").
  *
  * @param {ProductSlug} productSlug Product slug
- * @returns {string} Translated billing term label
+ * @returns {string|undefined} Translated billing term label
  */
 export function getProductBillingTermLabel( productSlug: ProductSlug ): string | undefined {
 	const product: Product = PRODUCTS_LIST[ productSlug ];

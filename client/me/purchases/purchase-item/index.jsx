@@ -197,9 +197,21 @@ class PurchaseItem extends Component {
 				);
 			}
 
-			return translate( 'Renews %(interval)s at %(amount)s on {{span}}%(date)s{{/span}}', {
+			if ( getPurchaseBillingTermLabel( purchase ) ) {
+				return translate( 'Renews %(interval)s at %(amount)s on {{span}}%(date)s{{/span}}', {
+					args: {
+						interval: getPurchaseBillingTermLabel( purchase ),
+						amount: purchase.priceText,
+						date: renewDate.format( 'LL' ),
+					},
+					components: {
+						span: <span className="purchase-item__date" />,
+					},
+				} );
+			}
+
+			return translate( 'Renews at %(amount)s on {{span}}%(date)s{{/span}}', {
 				args: {
-					interval: getPurchaseBillingTermLabel( purchase ),
 					amount: purchase.priceText,
 					date: renewDate.format( 'LL' ),
 				},
