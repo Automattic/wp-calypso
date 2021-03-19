@@ -210,6 +210,8 @@ function HelpSearchResults( {
 			let displayedResults = results;
 			switch ( resultType ) {
 				case SUPPORT_TYPE_CONTEXTUAL_HELP:
+					displayedResults = results.filter( ( r ) => r.support_type === resultType ).slice( 0, 6 );
+					break;
 				case SUPPORT_TYPE_API_HELP:
 					displayedResults = results.filter( ( r ) => r.support_type === resultType ).slice( 0, 5 );
 					break;
