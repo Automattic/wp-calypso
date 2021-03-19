@@ -18,7 +18,6 @@ import {
 	submitApplePayPayment,
 	submitStripeCardTransaction,
 	submitEbanxCardTransaction,
-	submitRedirectTransaction,
 	submitFreePurchaseTransaction,
 	submitCreditsTransaction,
 } from './payment-method-helpers';
@@ -28,21 +27,19 @@ import { createEbanxToken } from 'calypso/lib/store-transactions';
 import userAgent from 'calypso/lib/user-agent';
 import { recordTransactionBeginAnalytics } from './lib/analytics';
 import submitWpcomTransaction from './lib/submit-wpcom-transaction';
+import submitRedirectTransaction from './lib/submit-redirect-transaction';
 
 const { select } = defaultRegistry;
 
-export async function genericRedirectProcessor(
-	paymentMethodId,
-	submitData,
-	{
+export async function genericRedirectProcessor( paymentMethodId, submitData, options ) {
+	const {
 		getThankYouUrl,
 		siteSlug,
 		includeDomainDetails,
 		includeGSuiteDetails,
 		reduxDispatch,
 		responseCart,
-	}
-) {
+	} = options;
 	const { protocol, hostname, port, pathname } = parseUrl(
 		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com',
 		true
@@ -87,23 +84,21 @@ export async function genericRedirectProcessor(
 			siteId: select( 'wpcom' )?.getSiteId?.(),
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		},
-		submitWpcomTransaction
+		options
 	).then( ( response ) => {
 		return makeRedirectResponse( response?.redirect_url );
 	} );
 }
 
-export async function weChatProcessor(
-	submitData,
-	{
+export async function weChatProcessor( submitData, options ) {
+	const {
 		getThankYouUrl,
 		siteSlug,
 		includeDomainDetails,
 		includeGSuiteDetails,
 		reduxDispatch,
 		responseCart,
-	}
-) {
+	} = options;
 	const paymentMethodId = 'wechat';
 	recordTransactionBeginAnalytics( {
 		reduxDispatch,
@@ -147,7 +142,7 @@ export async function weChatProcessor(
 			siteId: select( 'wpcom' )?.getSiteId?.(),
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		},
-		submitWpcomTransaction
+		options
 	).then( ( response ) => {
 		// The WeChat payment type should only redirect when on mobile as redirect urls
 		// are mobile app urls: e.g. weixin://wxpay/bizpayurl?pr=RaXzhu4
