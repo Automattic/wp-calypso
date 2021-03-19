@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import React, { useState, useCallback, ReactElement } from 'react';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { getQueryArg } from '@wordpress/url';
+import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import classnames from 'classnames';
 import moment from 'moment';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -52,9 +53,8 @@ export default function LicensePreview( {
 }: Props ): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ isOpen, setOpen ] = useState(
-		getQueryArg( window.location.href, 'highlight' ) === licenseKey
-	);
+	const isHighlighted = getQueryArg( window.location.href, 'highlight' ) === licenseKey;
+	const [ isOpen, setOpen ] = useState( isHighlighted );
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl ? getUrlParts( siteUrl ).hostname : '';
 	const showDomain =
@@ -69,6 +69,14 @@ export default function LicensePreview( {
 	const onCopyLicense = useCallback( () => {
 		dispatch( infoNotice( translate( 'License copied!' ), { duration: 2000 } ) );
 	}, [ dispatch, translate ] );
+
+	useEffect( () => {
+		if ( isHighlighted ) {
+			page.redirect(
+				removeQueryArgs( window.location.pathname + window.location.search, 'highlight' )
+			);
+		}
+	}, [] );
 
 	return (
 		<div
