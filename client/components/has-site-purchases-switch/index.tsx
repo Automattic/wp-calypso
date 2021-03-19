@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React, { ReactNode, useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import React, { ReactNode, useCallback, useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -14,6 +14,7 @@ import {
 	getSitePurchases,
 } from 'calypso/state/purchases/selectors';
 import RenderSwitch from 'calypso/components/jetpack/render-switch';
+import { resetSiteState } from 'calypso/state/purchases/actions';
 
 type Props = {
 	siteId: number;
@@ -28,15 +29,24 @@ const HasSitePurchasesSwitch: React.FC< Props > = ( {
 	falseComponent,
 	loadingComponent,
 } ) => {
+	const dispatch = useDispatch();
+	const [ currentSiteId, setCurrentSiteId ] = useState( siteId );
 	const isFetching = useSelector( isFetchingSitePurchases );
 	const hasLoaded = useSelector( hasLoadedSitePurchasesFromServer );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 
 	const loadingCondition = useCallback( () => ! hasLoaded || isFetching, [
-		isFetching,
 		hasLoaded,
+		isFetching,
 	] );
 	const renderCondition = useCallback( () => purchases.length > 0, [ purchases ] );
+
+	useEffect( () => {
+		if ( siteId !== currentSiteId ) {
+			setCurrentSiteId( siteId );
+			dispatch( resetSiteState() );
+		}
+	}, [ siteId, currentSiteId, setCurrentSiteId, dispatch ] );
 
 	return (
 		<RenderSwitch

@@ -18,6 +18,7 @@ import {
 	PURCHASE_REMOVE_FAILED,
 	PURCHASES_SITE_FETCH_FAILED,
 	PURCHASES_USER_FETCH_FAILED,
+	PURCHASES_SITE_RESET_STATE,
 } from 'calypso/state/action-types';
 
 /**
@@ -146,6 +147,12 @@ const reducer = withoutPersistence( ( state = initialState, action ) => {
 				error: action.error,
 				hasLoadedUserPurchasesFromServer: true,
 				isFetchingUserPurchases: false,
+			};
+		case PURCHASES_SITE_RESET_STATE:
+			return {
+				...state,
+				hasLoadedSitePurchasesFromServer: false,
+				isFetchingSitePurchases: false,
 			};
 	}
 
