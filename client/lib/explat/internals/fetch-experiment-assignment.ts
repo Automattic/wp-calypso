@@ -16,7 +16,7 @@ export default function fetchExperimentAssignment( {
 } ): Promise< unknown > {
 	return wpcom.req.get(
 		{
-			path: '/experiments/0.1.0/assignments/wpcom',
+			path: '/experiments/0.1.0/assignments/calypso',
 			apiNamespace: 'wpcom/v2',
 		},
 		{
