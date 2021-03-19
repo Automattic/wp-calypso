@@ -25,6 +25,13 @@ function getAvailabilityURL( domainName: string ) {
 	) }/is-available?is_cart_pre_check=true`;
 }
 
+function suggestionsLackThisFQDN( suggestions: DomainSuggestion[], domainName: string ) {
+	return (
+		validator.isFQDN( domainName ) &&
+		! suggestions.some( ( s ) => s.domain_name.toLowerCase() === domainName )
+	);
+}
+
 export const isAvailable = function* isAvailable( domainName: string ) {
 	const url = getAvailabilityURL( domainName );
 
@@ -84,11 +91,7 @@ export function* __internalGetDomainSuggestions( queryObject: DomainSuggestionQu
 	// this implies that the user is searching for an unavailable domain name
 	// TODO: query the availability endpoint to find the exact reason why it's unavailable
 	// all the possible responses can be found here https://github.com/Automattic/wp-calypso/blob/trunk/client/lib/domains/registration/availability-messages.js#L40-L390
-	if (
-		validator.isFQDN( queryObject.query ) &&
-		suggestions &&
-		! suggestions.some( ( s ) => s.domain_name.toLowerCase() === queryObject.query )
-	) {
+	if ( suggestionsLackThisFQDN( suggestions, queryObject.query ) ) {
 		const unavailableSuggestion: DomainSuggestion = {
 			domain_name: queryObject.query,
 			unavailable: true,
