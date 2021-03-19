@@ -13,6 +13,7 @@ import { Card } from '@automattic/components';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Gridicon from 'calypso/components/gridicon';
 import FormattedDate from 'calypso/components/formatted-date';
+import LicenseDetailsActions from 'calypso/jetpack-cloud/sections/partner-portal/license-details/actions';
 
 /**
  * Style dependencies
@@ -21,6 +22,8 @@ import './style.scss';
 
 interface Props {
 	licenseKey: string;
+	product: string;
+	domain: string;
 	username: string | null;
 	blogId: number | null;
 	issuedAt: string;
@@ -31,6 +34,8 @@ interface Props {
 
 export default function LicenseDetails( {
 	licenseKey,
+	product,
+	domain,
 	username,
 	blogId,
 	issuedAt,
@@ -98,6 +103,14 @@ export default function LicenseDetails( {
 					{ blogId ? <span>{ blogId }</span> : <Gridicon icon="minus" /> }
 				</li>
 			</ul>
+
+			<LicenseDetailsActions
+				licenseKey={ licenseKey }
+				product={ product }
+				domain={ domain }
+				attachedAt={ attachedAt }
+				revokedAt={ revokedAt }
+			/>
 		</Card>
 	);
 }
