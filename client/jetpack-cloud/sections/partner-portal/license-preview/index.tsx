@@ -1,16 +1,18 @@
 /**
  * External dependencies
  */
-import React, { useState, useCallback, ReactElement } from 'react';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { getUrlParts } from 'calypso/lib/url';
 import classnames from 'classnames';
+import moment from 'moment';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-
+import { getUrlParts } from 'calypso/lib/url';
 import { infoNotice } from 'calypso/state/notices/actions';
 import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { LicenseState, LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
@@ -51,11 +53,14 @@ export default function LicensePreview( {
 }: Props ): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ isOpen, setOpen ] = useState( false );
+	const isHighlighted = getQueryArg( window.location.href, 'highlight' ) === licenseKey;
+	const [ isOpen, setOpen ] = useState( isHighlighted );
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl ? getUrlParts( siteUrl ).hostname : '';
 	const showDomain =
 		domain && [ LicenseState.Attached, LicenseState.Revoked ].indexOf( licenseState ) !== -1;
+	const justIssued =
+		moment.utc( issuedAt, 'YYYY-MM-DD HH:mm:ss' ) > moment.utc().subtract( 1, 'minute' );
 
 	const open = useCallback( () => {
 		setOpen( ! isOpen );
@@ -64,6 +69,14 @@ export default function LicensePreview( {
 	const onCopyLicense = useCallback( () => {
 		dispatch( infoNotice( translate( 'License copied!' ), { duration: 2000 } ) );
 	}, [ dispatch, translate ] );
+
+	useEffect( () => {
+		if ( isHighlighted ) {
+			page.redirect(
+				removeQueryArgs( window.location.pathname + window.location.search, 'highlight' )
+			);
+		}
+	}, [] );
 
 	return (
 		<div
@@ -94,6 +107,13 @@ export default function LicensePreview( {
 							<span className="license-preview__tag license-preview__tag--is-revoked">
 								<Gridicon icon="block" size={ 18 } />
 								{ translate( 'Revoked' ) }
+							</span>
+						) }
+
+						{ justIssued && (
+							<span className="license-preview__tag license-preview__tag--is-just-issued">
+								<Gridicon icon="checkmark-circle" size={ 18 } />
+								{ translate( 'Just issued' ) }
 							</span>
 						) }
 					</h3>

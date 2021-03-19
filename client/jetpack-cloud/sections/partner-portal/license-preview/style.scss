@@ -1,5 +1,6 @@
 @import '~@wordpress/base-styles/_breakpoints.scss';
 @import '~@wordpress/base-styles/_mixins.scss';
+@import '~@wordpress/base-styles/_mixins.scss';
 
 .license-preview {
 	margin: 0;
@@ -75,6 +76,12 @@
 		font-size: 0.875rem;
 		line-height: 1rem;
 
+		&--is-just-issued {
+			color: var( --studio-green-50 );
+			opacity: 0;
+			animation: hide-just-issued-tag 5s linear;
+		}
+
 		&--is-detached {
 			color: var( --studio-orange-40 );
 		}
@@ -126,5 +133,18 @@
 	&--placeholder &__label + div,
 	&--placeholder &__copy-license-key {
 		@include placeholder( --color-neutral-10 );
+	}
+}
+
+@keyframes hide-just-issued-tag {
+	0% {
+		display: inline;
+		opacity: 1;
+	}
+	50% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
 	}
 }
