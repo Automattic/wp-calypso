@@ -152,5 +152,6 @@ const reducer = withoutPersistence( ( state = initialState, action ) => {
 	return state;
 } );
 
-const purchasesReducer = withStorageKey( 'purchases', reducer );
-export default purchasesReducer;
+export { reducer };
+
+export default withStorageKey( 'purchases', reducer );
