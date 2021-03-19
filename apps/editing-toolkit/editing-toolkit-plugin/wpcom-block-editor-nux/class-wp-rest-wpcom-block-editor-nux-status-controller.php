@@ -69,7 +69,7 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 	 * @return WP_REST_Response
 	 */
 	public function get_nux_status() {
-		// Designs for WelcomeTour ong mobile are in progress, until then do not show on mobile.g
+		// Designs for WelcomeTour ong mobile are in progress, until then do not show on mobile.
 		$is_mobile_device = wp_is_mobile();
 
 		if ( has_filter( 'wpcom_block_editor_nux_get_status' ) ) {
