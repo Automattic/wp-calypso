@@ -13,6 +13,7 @@ object WebApp : Project({
 	name = "Web app"
 
 	buildType(RunCalypsoE2eDesktopTests)
+	buildType(RunCalypsoE2eMobileTests)
 	buildType(RunAllUnitTests)
 	buildType(CheckCodeStyleBranch)
 	buildType(BuildDockerImage)
@@ -21,8 +22,8 @@ object WebApp : Project({
 
 object RunCalypsoE2eDesktopTests : BuildType({
 	uuid = "52f38738-92b2-43cb-b7fb-19fce03cb67c"
-	name = "Run browser e2e tests (desktop)"
-	description = "Run browser e2e tests (desktop)"
+	name = "E2E tests (desktop)"
+	description = "Runs Calypso E2E tests using desktop screen resolution"
 
 	artifactRules = """
 		reports => reports
@@ -170,10 +171,160 @@ object RunCalypsoE2eDesktopTests : BuildType({
 	}
 })
 
+object RunCalypsoE2eMobileTests : BuildType({
+	name = "E2E tests (mobile)"
+	description = "Runs Calypso E2E tests using mobile screen resolution"
+
+	artifactRules = """
+		reports => reports
+		logs.tgz => logs.tgz
+		screenshots => screenshots
+	""".trimIndent()
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Prepare environment"
+			scriptContent = """
+				export NODE_ENV="test"
+
+				# Install modules
+				yarn install
+			"""
+			dockerImage = "%docker_image_e2e%"
+		}
+		bashNodeScript {
+			name = "Run e2e tests (mobile)"
+			scriptContent = """
+				shopt -s globstar
+				set -x
+
+				cd test/e2e
+				mkdir temp
+
+				export LIVEBRANCHES=true
+				export NODE_CONFIG_ENV=test
+				export TEST_VIDEO=true
+
+				# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
+				# mocha-teamcity-reporter to work.
+				export MAGELLANDEBUG=true
+
+				function join() {
+					local IFS=${'$'}1
+					shift
+					echo "${'$'}*"
+				}
+
+				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
+				MAX_LOOP=10
+				COUNTER=0
+
+				# Transform an URL like https://calypso.live?image=... into https://<container>.calypso.live
+				while [[ ${'$'}COUNTER -le ${'$'}MAX_LOOP ]]; do
+					COUNTER=${'$'}((COUNTER+1))
+					REDIRECT=${'$'}(curl --output /dev/null --silent --show-error  --write-out "%{http_code} %{redirect_url}" "${'$'}{IMAGE_URL}")
+					read HTTP_STATUS URL <<< "${'$'}{REDIRECT}"
+
+					# 202 means the image is being downloaded, retry in a few seconds
+					if [[ "${'$'}{HTTP_STATUS}" -eq "202" ]]; then
+						sleep 5
+						continue
+					fi
+
+					break
+				done
+
+				if [[ -z "${'$'}URL" ]]; then
+					echo "Can't redirect to ${'$'}{IMAGE_URL}" >&2
+					echo "Curl response: ${'$'}{REDIRECT}" >&2
+					exit 1
+				fi
+
+				# Decrypt config
+				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+
+				# Run the test
+				export BROWSERSIZE="mobile"
+				export BROWSERLOCALE="en"
+				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+				export TEST_FILES=${'$'}(join ',' ${'$'}(find specs*/**/*spec.js -type f -not -path specs-playwright/*))
+
+				yarn magellan --config=magellan.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
+		}
+		bashNodeScript {
+			name = "Collect results"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -x
+
+				mkdir -p screenshots
+				find test/e2e/temp -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+
+				mkdir -p logs
+				find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+	}
+
+	features {
+		perfmon {
+		}
+		pullRequests {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:trunk
+				-:pull*
+			""".trimIndent()
+		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 20
+		// TeamCity will mute a test if it fails and then succeeds within the same build. Otherwise TeamCity UI will not
+		// display a difference between real errors and retries, making it hard to understand what is actually failing.
+		supportTestRetry = true
+	}
+
+	dependencies {
+		snapshot(BuildDockerImage) {
+		}
+	}
+})
+
 object BuildDockerImage : BuildType({
 	uuid = "89fff49e-c79b-4e68-a012-a7ba405359b6"
-	name = "Build docker image"
-	description = "Build docker image for Calypso"
+	name = "Docker image"
+	description = "Build docker image containing Calypso"
 
 	vcs {
 		root(Settings.WpCalypso)
@@ -234,8 +385,8 @@ object BuildDockerImage : BuildType({
 
 object RunAllUnitTests : BuildType({
 	uuid = "beb75760-2786-472b-8909-ec33457bdece"
-	name = "Run unit tests"
-	description = "Run unit tests"
+	name = "Unit tests"
+	description = "Run unit tests (client + server + packages)"
 
 	artifactRules = """
 		test_results => test_results
@@ -448,8 +599,8 @@ object RunAllUnitTests : BuildType({
 
 object CheckCodeStyleBranch : BuildType({
 	uuid = "dfee7987-6bbc-4250-bb10-ef9dd7322bd2"
-	name = "Check code style for branches"
-	description = "Check code style for branches"
+	name = "Code style"
+	description = "Check code style"
 
 	artifactRules = """
 		checkstyle_results => checkstyle_results
