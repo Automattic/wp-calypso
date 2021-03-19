@@ -28,6 +28,10 @@
 	font-family: 'Noto Sans SemiCondensed Bold', 'Noto Sans', $sans;
 	font-size: 1.875rem;
 	font-weight: 700;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-bottom: initial;
+	}
 }
 
 .jetpack-free-card__subheadline {
