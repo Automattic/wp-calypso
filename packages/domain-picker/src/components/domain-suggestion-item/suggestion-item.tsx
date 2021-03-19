@@ -22,16 +22,15 @@ import { sprintf } from '@wordpress/i18n';
  */
 import InfoTooltip from '../info-tooltip';
 import WrappingComponent from './suggestion-item-wrapper';
+import {
+	SUGGESTION_ITEM_TYPE,
+	ITEM_TYPE_RADIO,
+	ITEM_TYPE_BUTTON,
+	ITEM_TYPE_INDIVIDUAL_ITEM,
+} from './constants';
 // TODO: remove when all needed core types are available
 /*#__PURE__*/ import '../types-patch';
 
-export const ITEM_TYPE_RADIO = 'radio';
-export const ITEM_TYPE_BUTTON = 'button';
-export const ITEM_TYPE_INDIVIDUAL_ITEM = 'individual-item';
-export type SUGGESTION_ITEM_TYPE =
-	| typeof ITEM_TYPE_RADIO
-	| typeof ITEM_TYPE_BUTTON
-	| typeof ITEM_TYPE_INDIVIDUAL_ITEM;
 interface Props {
 	isUnavailable?: boolean;
 	domain: string;

@@ -3,7 +3,7 @@
  */
 import React, { FunctionComponent } from 'react';
 import classnames from 'classnames';
-import type { SUGGESTION_ITEM_TYPE } from './suggestion-item';
+import type { SUGGESTION_ITEM_TYPE } from './constants';
 
 const DomainPickerSuggestionItemPlaceholder: FunctionComponent< {
 	type: SUGGESTION_ITEM_TYPE;
