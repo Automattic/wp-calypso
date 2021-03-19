@@ -44,6 +44,7 @@ class SiteSettingsPerformance extends Component {
 			site,
 			siteId,
 			siteIsJetpack,
+			siteIsAtomic,
 			siteIsAtomicPrivate,
 			siteIsUnlaunched,
 			siteSlug,
@@ -53,6 +54,7 @@ class SiteSettingsPerformance extends Component {
 			trackEvent,
 			updateFields,
 		} = this.props;
+		const siteIsJetpackNonAtomic = siteIsJetpack && ! siteIsAtomic;
 
 		return (
 			<Main className="settings-performance site-settings site-settings__performance-settings">
@@ -68,7 +70,7 @@ class SiteSettingsPerformance extends Component {
 				/>
 				<SiteSettingsNavigation site={ site } section="performance" />
 
-				{ showCloudflare && <Cloudflare /> }
+				{ showCloudflare && ! siteIsJetpackNonAtomic && <Cloudflare /> }
 
 				<Search
 					handleAutosavingToggle={ handleAutosavingToggle }
@@ -136,13 +138,14 @@ const connectComponent = connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
-	const siteIsAtomicPrivate =
-		isSiteAutomatedTransfer( state, siteId ) && isPrivateSite( state, siteId );
+	const siteIsAtomic = isSiteAutomatedTransfer( state, siteId );
+	const siteIsAtomicPrivate = siteIsAtomic && isPrivateSite( state, siteId );
 	const showCloudflare = config.isEnabled( 'cloudflare' );
 
 	return {
 		site,
 		siteIsJetpack,
+		siteIsAtomic,
 		siteIsAtomicPrivate,
 		siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
