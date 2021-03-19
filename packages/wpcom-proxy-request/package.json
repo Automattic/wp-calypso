@@ -22,7 +22,6 @@
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/wpcom-proxy-request"
 	},
-	"private": true,
 	"publishConfig": {
 		"access": "public"
 	},
@@ -42,7 +41,7 @@
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
-		"@babel/runtime": "^7.12.5",
+		"@babel/runtime": "^7.13.10",
 		"debug": "^4.1.1",
 		"progress-event": "^1.0.0",
 		"uuid": "^7.0.1",

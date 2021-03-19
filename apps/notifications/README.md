@@ -2,7 +2,7 @@
 
 The _**notifications panel**_ (also known as "masterbar notifications" and "the bell notifications") is a cross-environment app that runs directly inside of Calypso and in an `iframe` on WordPress.com sites which aren't Calypso.
 
-This module is where the code for the notifications panel lives. Calypso views are imported as normal `node` imports while the `iframe` version is served from `https://widgets.wp.com/notes`.
+This module is where the code for the notifications panel lives. Calypso views are imported as normal `node` imports while the `iframe` version is served from `https://widgets.wp.com/notes` or `https://widgets.wp.com/notifications`.
 
 ## Building and developing
 

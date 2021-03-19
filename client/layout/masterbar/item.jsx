@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import { isFunction } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import TranslatableString from 'calypso/components/translatable/proptype';
 
@@ -31,7 +30,7 @@ class MasterbarItem extends Component {
 	_preloaded = false;
 
 	preload = () => {
-		if ( ! this._preloaded && isFunction( this.props.preloadSection ) ) {
+		if ( ! this._preloaded && typeof this.props.preloadSection === 'function' ) {
 			this._preloaded = true;
 			this.props.preloadSection();
 		}

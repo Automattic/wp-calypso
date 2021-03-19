@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { difference, get, has, includes, pick, values, isFunction } from 'lodash';
+import { difference, get, has, includes, pick, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -72,7 +72,7 @@ export function getPlanByPathSlug( pathSlug, group ) {
 	/** @type {Plan[]} */
 	let plans = Object.values( PLANS_LIST );
 	plans = plans.filter( ( p ) => ( group ? p.group === group : true ) );
-	return plans.find( ( p ) => isFunction( p.getPathSlug ) && p.getPathSlug() === pathSlug );
+	return plans.find( ( p ) => typeof p.getPathSlug === 'function' && p.getPathSlug() === pathSlug );
 }
 
 export function getPlanPath( plan ) {

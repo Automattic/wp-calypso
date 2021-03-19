@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { castArray, zip } from 'lodash';
+import { zip } from 'lodash';
 
 /**
  * Internal dependencies
@@ -46,7 +46,11 @@ export const uploadMedia = (
 	onItemFailure = noop
 ) => async ( dispatch ) => {
 	// https://stackoverflow.com/questions/25333488/why-isnt-the-filelist-object-an-array
-	files = isFileList( files ) ? Array.from( files ) : castArray( files );
+	if ( isFileList( files ) ) {
+		files = Array.from( files );
+	} else if ( ! Array.isArray( files ) ) {
+		files = [ files ];
+	}
 	const uploadedItems = [];
 
 	const transientItems = dispatch( createTransientMediaItems( files, site ) );

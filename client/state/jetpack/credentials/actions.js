@@ -9,7 +9,7 @@ import {
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/activity-log/get-credentials';
-import 'calypso/state/data-layer/wpcom/activity-log/delete-credentials';
+import { success as removeCredentialsFromState } from 'calypso/state/data-layer/wpcom/activity-log/delete-credentials';
 import 'calypso/state/data-layer/wpcom/activity-log/update-credentials';
 import 'calypso/state/data-layer/wpcom/activity-log/rewind/activate';
 import 'calypso/state/jetpack/init';
@@ -37,8 +37,18 @@ export const autoConfigCredentials = ( siteId ) => ( {
 	siteId,
 } );
 
-export const deleteCredentials = ( siteId, role ) => ( {
-	type: JETPACK_CREDENTIALS_DELETE,
-	siteId,
-	role,
-} );
+export const deleteCredentials = ( siteId, role ) => ( dispatch ) => {
+	// Optimistically store an empty credentials object,
+	// assuming the API delete request will succeed.
+	//
+	// NOTE: This is a little sub-optimal and ignores the rewind_state parameter,
+	// but we're also not currently handling the error case anyway; see:
+	// client/state/data-layer/wpcom/activity-log/delete-credentials/index.js
+	dispatch( removeCredentialsFromState( { siteId }, {} ) );
+
+	dispatch( {
+		type: JETPACK_CREDENTIALS_DELETE,
+		siteId,
+		role,
+	} );
+};

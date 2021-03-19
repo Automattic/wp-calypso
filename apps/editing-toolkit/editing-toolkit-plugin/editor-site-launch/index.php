@@ -88,13 +88,15 @@ function enqueue_launch_flow_script_and_style( $site_launch_options ) {
 		case 'focused-launch':
 			$script_name = 'focused-launch';
 			break;
-		case 'launch-site':
-			// @TODO: this is just temporary for testing via feature flag. Remove it once focused-launch is live
-			$script_name = 'focused-launch';
-			break;
 		default:
 			// For redirect or invalid flows, skip & exit early.
 			return;
+	}
+
+	// @TODO: remove this once $launch_flow value is 'focused-launch' for AnchorFM sites
+	$anchor_podcast = $site_launch_options['anchor_podcast'];
+	if ( ! empty( $anchor_podcast ) ) {
+		$script_name = 'focused-launch';
 	}
 
 	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/' . $script_name . '.asset.php';

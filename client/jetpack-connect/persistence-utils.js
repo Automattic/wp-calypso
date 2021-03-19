@@ -9,7 +9,7 @@ import cookie from 'cookie';
 import { JETPACK_CONNECT_TTL_SECONDS } from 'calypso/state/jetpack-connect/constants';
 import { urlToSlug } from 'calypso/lib/url';
 
-const SESSION_STORAGE_SELECTED_PLAN = 'jetpack_connect_selected_plan';
+export const SESSION_STORAGE_SELECTED_PLAN = 'jetpack_connect_selected_plan';
 
 /**
  * Utilities for storing jetpack connect state that needs to persist across

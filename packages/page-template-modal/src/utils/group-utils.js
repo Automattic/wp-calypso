@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { intersection, difference } from 'lodash';
-
-/**
  * Sorts the keys on the group object to have a preferred order.
  * If some groups exist without a preferred order, they will be included last
  *
@@ -13,8 +8,8 @@ import { intersection, difference } from 'lodash';
 export function sortGroupNames( preferredGroupOrder, groupsObject ) {
 	const groups = Object.keys( groupsObject );
 
-	const orderedGroups = intersection( preferredGroupOrder, groups );
-	const remainingGroups = difference( groups, preferredGroupOrder );
+	const orderedGroups = preferredGroupOrder.filter( ( x ) => groups.includes( x ) );
+	const remainingGroups = groups.filter( ( x ) => ! preferredGroupOrder.includes( x ) );
 	const allGroups = orderedGroups.concat( remainingGroups.sort() );
 
 	return allGroups.reduce( ( result, groupName ) => {

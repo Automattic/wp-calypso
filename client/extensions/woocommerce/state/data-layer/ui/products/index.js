@@ -3,7 +3,7 @@
  */
 
 import { translate } from 'i18n-calypso';
-import { find, isObject, isFunction, isEqual, compact } from 'lodash';
+import { find, isObject, isEqual, compact } from 'lodash';
 
 /**
  * Internal dependencies
@@ -83,13 +83,13 @@ export function handleProductActionListCreate( store, action ) {
 		const products = Object.values( updatedProductIds ).map( ( productId ) =>
 			getProduct( store.getState(), productId )
 		);
-		if ( isFunction( successAction ) ) {
+		if ( typeof successAction === 'function' ) {
 			return dispatch( successAction( products, updatedProductIds ) );
 		}
 		return dispatch( successAction );
 	};
 	const onFailure = ( dispatch, { productError } ) => {
-		if ( isFunction( failureAction ) ) {
+		if ( typeof failureAction === 'function' ) {
 			dispatch( failureAction( productError ) );
 		} else {
 			dispatch( failureAction );

@@ -47,6 +47,9 @@ define( 'A8C_ETK_PLUGIN_VERSION', 'dev' );
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
 
+// Enqueues the shared JS data stores and defines shared helper functions.
+require_once __DIR__ . '/common/index.php';
+
 /**
  * Load dotcom-FSE.
  */
@@ -140,14 +143,6 @@ function load_timeline_block() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_timeline_block' );
 
 /**
- * Load common module.
- */
-function load_common_module() {
-	require_once __DIR__ . '/common/index.php';
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_common_module' );
-
-/**
  * Load Editor Site Launch.
  */
 function load_editor_site_launch() {
@@ -237,7 +232,7 @@ function load_blog_posts_block() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_blog_posts_block' );
 
 /**
- * Load WPCOM Block Editor NUX
+ * Load WPCOM Block Editor NUX.
  */
 function load_wpcom_block_editor_nux() {
 	require_once __DIR__ . '/wpcom-block-editor-nux/class-wpcom-block-editor-nux.php';
@@ -310,7 +305,7 @@ function load_wpcom_block_editor_sidebar() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_sidebar' );
 
 /**
- * Coming soon
+ * Coming soon.
  */
 function load_coming_soon() {
 	if (

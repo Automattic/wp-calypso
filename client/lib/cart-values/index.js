@@ -8,7 +8,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { hasRenewalItem, hasFreeTrial, hasDomainRegistration, hasPlan } from './cart-items';
+import { hasRenewalItem } from './cart-items';
 import {
 	isCredits,
 	isDomainRedemption,
@@ -72,88 +72,6 @@ export function preprocessCartForServer( {
 	);
 }
 
-/**
- * Create a new empty cart.
- *
- * A cart has at least a `blog_id` and an empty list of `products`
- * We can give additional attributes and build new types of empty carts.
- * For instance you may want to create a temporary this way:
- * `emptyCart( 123456, { temporary: true } )`
- *
- * @param {number} [siteId] The Site Id the cart will be associated with
- * @param {object} [attributes] Additional attributes for the cart (optional)
- * @returns {object} [emptyCart] The new empty cart created
- */
-export function emptyCart( siteId, attributes ) {
-	return Object.assign( { blog_id: siteId, products: [] }, attributes );
-}
-
-export function applyCoupon( coupon ) {
-	return function ( cart ) {
-		return update( cart, {
-			coupon: { $set: coupon },
-			is_coupon_applied: { $set: false },
-			$unset: [ 'is_coupon_removed' ],
-		} );
-	};
-}
-
-export function removeCoupon() {
-	return function ( cart ) {
-		return update( cart, {
-			coupon: { $set: '' },
-			is_coupon_applied: { $set: false },
-			$merge: { is_coupon_removed: true },
-		} );
-	};
-}
-
-export const getTaxCountryCode = ( cart ) => cart?.tax?.location?.country_code;
-
-export const getTaxPostalCode = ( cart ) => cart?.tax?.location?.postal_code;
-
-export const getTaxLocation = ( cart ) => cart?.tax?.location ?? {};
-
-export function setTaxCountryCode( countryCode ) {
-	return function ( cart ) {
-		return update( cart, {
-			$auto: {
-				tax: {
-					$auto: {
-						location: {
-							$auto: {
-								country_code: {
-									$set: countryCode,
-								},
-							},
-						},
-					},
-				},
-			},
-		} );
-	};
-}
-
-export function setTaxPostalCode( postalCode ) {
-	return function ( cart ) {
-		return update( cart, {
-			$auto: {
-				tax: {
-					$auto: {
-						location: {
-							$auto: {
-								postal_code: {
-									$set: postalCode,
-								},
-							},
-						},
-					},
-				},
-			},
-		} );
-	};
-}
-
 export function canRemoveFromCart( cart, cartItem ) {
 	if ( isCredits( cartItem ) ) {
 		return false;
@@ -199,10 +117,6 @@ export function getNewMessages( previousCartValue, nextCartValue ) {
 	return hasNewServerData ? nextCartMessages : {};
 }
 
-export function isFree( cart ) {
-	return cart.total_cost === 0 && ! hasFreeTrial( cart );
-}
-
 export function fillInAllCartItemAttributes( cart, products ) {
 	return update( cart, {
 		products: {
@@ -223,28 +137,6 @@ export function fillInSingleCartItemAttributes( cartItem, products ) {
 	const attributes = allowedProductAttributes( product );
 
 	return { ...cartItem, ...attributes };
-}
-
-/**
- * Return a string that represents the overall refund policy for all the items
- * in the shopping cart. See the support documentation for more details on
- * these policies:
- *
- * https://wordpress.com/support/refunds/
- *
- * @param {object} cart - cart as `CartValue` object
- * @returns {string} the refund policy type
- */
-export function getRefundPolicy( cart ) {
-	if ( hasDomainRegistration( cart ) && hasPlan( cart ) ) {
-		return 'planWithDomainRefund';
-	}
-
-	if ( hasDomainRegistration( cart ) ) {
-		return 'domainRefund';
-	}
-
-	return 'genericRefund';
 }
 
 /**
@@ -274,10 +166,6 @@ export function paymentMethodName( method ) {
 	};
 
 	return paymentMethodsNames[ method ] || method;
-}
-
-export function getLocationOrigin( l ) {
-	return l.protocol + '//' + l.hostname + ( l.port ? ':' + l.port : '' );
 }
 
 export function hasPendingPayment( cart ) {

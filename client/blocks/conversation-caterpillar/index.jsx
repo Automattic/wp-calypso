@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map, get, last, uniqBy, size, filter, takeRight, compact } from 'lodash';
+import { map, get, last, uniqBy, size, filter, compact } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -52,7 +52,7 @@ class ConversationCaterpillarComponent extends React.Component {
 
 	handleTickle = () => {
 		const { blogId, postId } = this.props;
-		const commentsToExpand = takeRight( this.getExpandableComments(), NUMBER_TO_EXPAND );
+		const commentsToExpand = this.getExpandableComments().slice( -1 * NUMBER_TO_EXPAND );
 
 		// expand all N comments to excerpt
 		this.props.expandComments( {
@@ -79,7 +79,7 @@ class ConversationCaterpillarComponent extends React.Component {
 	render() {
 		const { translate, parentCommentId, comments } = this.props;
 		const allExpandableComments = this.getExpandableComments();
-		const expandableComments = takeRight( allExpandableComments, NUMBER_TO_EXPAND );
+		const expandableComments = allExpandableComments.slice( -1 * NUMBER_TO_EXPAND );
 		const isRoot = ! parentCommentId;
 		const numberUnfetchedComments = this.props.commentCount - size( comments );
 		const commentCount = isRoot

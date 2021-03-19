@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import {
 	activatePlugin,
-	installPlugin,
+	installPlugin as installAndActivatePlugin,
 	fetchPlugins,
 } from 'calypso/state/plugins/installed/actions';
 import { Button, ProgressBar } from '@automattic/components';
@@ -38,6 +38,7 @@ const TIME_TO_TRANSFER_UPLOADING = 5;
 const TIME_TO_TRANSFER_BACKFILLING = 25;
 const TIME_TO_TRANSFER_COMPLETE = 6;
 const TIME_TO_PLUGIN_INSTALLATION = 15;
+const TIME_TO_PLUGIN_ACTIVATION = 15;
 
 const transferStatusesToTimes = {};
 
@@ -92,10 +93,16 @@ class RequiredPluginsInstallView extends Component {
 			toActivate: [],
 			toInstall: [],
 			workingOn: '',
-			progress: automatedTransferStatus ? transferStatusesToTimes[ automatedTransferStatus ] : 0,
+			progress:
+				automatedTransferStatus &&
+				transferStatusesToTimes[ automatedTransferStatus ] &&
+				! ( transferStates.COMPLETE === automatedTransferStatus ) // Don't need to wait transfer, proceed with everything else.
+					? transferStatusesToTimes[ automatedTransferStatus ]
+					: 0,
 			totalSeconds: this.getTotalSeconds(),
 		};
 		this.updateTimer = false;
+		this.timeoutTimer = false;
 	}
 
 	componentDidMount() {
@@ -110,6 +117,7 @@ class RequiredPluginsInstallView extends Component {
 
 	componentWillUnmount() {
 		this.destroyUpdateTimer();
+		this.destroyTimeoutTimer();
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -152,6 +160,40 @@ class RequiredPluginsInstallView extends Component {
 		}
 	};
 
+	timeoutElapsed = () => {
+		// These status means store setup is finished, not stalled.
+		if ( [ 'IDLE', 'DONESUCCESS', 'DONEFAILURE' ].includes( this.state.engineState ) ) {
+			return;
+		}
+
+		recordTrack( 'calypso_woocommerce_setup_timeout', {
+			engine_state: this.state.engineState,
+			to_activate: this.state.toActivate.join( ',' ),
+			to_install: this.state.toInstall.join( ',' ),
+			working_on: this.state.workingOn,
+			progress: this.state.progress,
+		} );
+
+		this.setState( {
+			engineState: 'DONETIMEOUT',
+		} );
+	};
+
+	destroyTimeoutTimer = () => {
+		if ( this.timeoutTimer ) {
+			window.clearTimeout( this.timeoutTimer );
+			this.timeoutTimer = false;
+		}
+	};
+
+	setTimeoutTimer = ( durationInSeconds ) => {
+		if ( this.timeoutTimer ) {
+			this.destroyTimeoutTimer();
+		}
+
+		this.timeoutTimer = window.setTimeout( this.timeoutElapsed, durationInSeconds * 1000 );
+	};
+
 	doInitialization = () => {
 		const { fixMode, site, sitePlugins, wporgPlugins } = this.props;
 		const { workingOn } = this.state;
@@ -177,6 +219,7 @@ class RequiredPluginsInstallView extends Component {
 			this.setState( {
 				workingOn: 'WAITING_FOR_PLUGIN_LIST_FROM_SITE',
 			} );
+			this.setTimeoutTimer( transferStatusesToTimes[ transferStates.COMPLETE ] );
 			return;
 		}
 
@@ -205,6 +248,7 @@ class RequiredPluginsInstallView extends Component {
 			this.setState( {
 				workingOn: 'LOAD_PLUGIN_DATA',
 			} );
+			this.setTimeoutTimer( transferStatusesToTimes[ transferStates.COMPLETE ] );
 			return;
 		}
 
@@ -271,7 +315,8 @@ class RequiredPluginsInstallView extends Component {
 				slug: workingOn,
 			};
 
-			this.props.installPlugin( site.ID, plugin );
+			this.setTimeoutTimer( TIME_TO_PLUGIN_INSTALLATION );
+			this.props.installAndActivatePlugin( site.ID, plugin );
 
 			this.setState( {
 				toInstall,
@@ -295,6 +340,7 @@ class RequiredPluginsInstallView extends Component {
 			this.setState( {
 				engineState: 'DONEFAILURE',
 			} );
+			this.destroyTimeoutTimer();
 		}
 	};
 
@@ -328,6 +374,7 @@ class RequiredPluginsInstallView extends Component {
 				return;
 			}
 
+			this.setTimeoutTimer( TIME_TO_PLUGIN_ACTIVATION );
 			// Otherwise, activate!
 			this.props.activatePlugin( site.ID, pluginToActivate );
 
@@ -352,6 +399,7 @@ class RequiredPluginsInstallView extends Component {
 		this.setState( {
 			engineState: 'IDLE',
 		} );
+		this.destroyTimeoutTimer();
 
 		// Delay to ensure user wont bump into permission error
 		// that happens if navigated to wc-admin too soon.
@@ -400,6 +448,7 @@ class RequiredPluginsInstallView extends Component {
 			this.setState( {
 				engineState: 'INITIALIZING',
 			} );
+			this.setTimeoutTimer( transferStatusesToTimes[ transferStates.COMPLETE ] );
 		}
 	};
 
@@ -436,7 +485,7 @@ class RequiredPluginsInstallView extends Component {
 		return TIME_TO_PLUGIN_INSTALLATION;
 	};
 
-	renderContactSupport() {
+	renderContactSupportForFailure() {
 		const { translate, wporgPlugins } = this.props;
 		const { workingOn } = this.state;
 		const plugin = wporgPlugins?.[ workingOn ] ?? {};
@@ -475,6 +524,33 @@ class RequiredPluginsInstallView extends Component {
 		);
 	}
 
+	renderContactSupportForTimeout() {
+		const { translate } = this.props;
+
+		const subtitle = [
+			<p key="line-1">
+				{ translate( "Please contact support and we'll get your store up and running!" ) }
+			</p>,
+		];
+
+		return (
+			<div className="dashboard__setup-wrapper setup__wrapper">
+				<div className="card dashboard__plugins-install-view">
+					<SetupHeader
+						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
+						imageWidth={ 160 }
+						title={ translate( 'We were unable to set up your store.' ) }
+						subtitle={ subtitle }
+					>
+						<Button primary href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer">
+							{ translate( 'Get in touch' ) }
+						</Button>
+					</SetupHeader>
+				</div>
+			</div>
+		);
+	}
+
 	render() {
 		const { hasPendingAT, fixMode, translate } = this.props;
 		const { engineState, progress, totalSeconds } = this.state;
@@ -484,7 +560,11 @@ class RequiredPluginsInstallView extends Component {
 		}
 
 		if ( 'DONEFAILURE' === engineState ) {
-			return this.renderContactSupport();
+			return this.renderContactSupportForFailure();
+		}
+
+		if ( 'DONETIMEOUT' === engineState ) {
+			return this.renderContactSupportForTimeout();
 		}
 
 		const title = fixMode ? translate( 'Updating your store' ) : translate( 'Building your store' );
@@ -531,7 +611,7 @@ function mapDispatchToProps( dispatch ) {
 		{
 			activatePlugin,
 			fetchPluginData,
-			installPlugin,
+			installAndActivatePlugin,
 			fetchPlugins,
 		},
 		dispatch

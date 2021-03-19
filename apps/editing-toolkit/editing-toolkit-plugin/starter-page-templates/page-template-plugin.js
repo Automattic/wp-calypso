@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { stubTrue } from 'lodash';
 import '@wordpress/nux';
 import { compose } from '@wordpress/compose';
 import { withDispatch, withSelect } from '@wordpress/data';
@@ -14,14 +13,11 @@ const INSERTING_HOOK_NAMESPACE = 'automattic/full-site-editing/inserting-templat
 export const PageTemplatesPlugin = compose(
 	withSelect( ( select ) => {
 		const getMeta = () => select( 'core/editor' ).getEditedPostAttribute( 'meta' );
-		const { _starter_page_template } = getMeta();
 		const { isOpen } = select( 'automattic/starter-page-layouts' );
 		const currentBlocks = select( 'core/editor' ).getBlocks();
 		return {
 			isOpen: isOpen(),
 			getMeta,
-			_starter_page_template,
-			currentBlocks,
 			currentPostTitle: select( 'core/editor' ).getCurrentPost().title,
 			postContentBlock: currentBlocks.find( ( block ) => block.name === 'a8c/post-content' ),
 			isWelcomeGuideActive: select( 'core/edit-post' ).isFeatureActive( 'welcomeGuide' ), // Gutenberg 7.2.0 or higher
@@ -45,7 +41,7 @@ export const PageTemplatesPlugin = compose(
 			},
 			insertTemplate: ( title, blocks ) => {
 				// Add filter to let the tracking library know we are inserting a template.
-				addFilter( INSERTING_HOOK_NAME, INSERTING_HOOK_NAMESPACE, stubTrue );
+				addFilter( INSERTING_HOOK_NAME, INSERTING_HOOK_NAMESPACE, () => true );
 
 				// Set post title.
 				if ( title ) {

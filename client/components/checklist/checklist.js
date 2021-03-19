@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import React, { Children, PureComponent, cloneElement } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { isFunction, times } from 'lodash';
+import { times } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -81,7 +81,7 @@ class Checklist extends PureComponent {
 				return { expandedTaskIndex: null }; // Collapse
 			}
 
-			if ( isFunction( this.props.onExpandTask ) ) {
+			if ( typeof this.props.onExpandTask === 'function' ) {
 				this.props.onExpandTask(
 					Children.toArray( this.props.children )[ newExpandedTaskIndex ].props
 				);

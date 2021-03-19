@@ -524,7 +524,7 @@ class ManagePurchase extends Component {
 			);
 		} else if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
 			description = translate(
-				'The best way to create, communicate, and collaborate. An integrated workspace that is simple and easy to use.'
+				'Professional email integrated with Google Meet and other collaboration tools from Google.'
 			);
 
 			if ( purchase.purchaseRenewalQuantity ) {

@@ -17,7 +17,6 @@ export const responseCartWithRenewal = {
 			volume: 1,
 			extra: {
 				purchaseId: '1234',
-				purchaseDomain: 'userpersonalsitetest1234.wordpress.com',
 				purchaseType: 'renewal',
 				context: 'calypstore',
 				registrar: 'OpenSRS',

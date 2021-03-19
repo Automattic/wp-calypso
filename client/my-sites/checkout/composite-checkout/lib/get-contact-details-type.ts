@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { doesPurchaseHaveFullCredits } from '@automattic/wpcom-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
 /**
@@ -13,7 +14,6 @@ import {
 	hasOnlyRenewalItems,
 } from 'calypso/lib/cart-values/cart-items';
 import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
-import doesPurchaseHaveFullCredits from './does-purchase-have-full-credits';
 
 export default function getContactDetailsType( responseCart: ResponseCart ): ContactDetailsType {
 	const hasDomainProduct =

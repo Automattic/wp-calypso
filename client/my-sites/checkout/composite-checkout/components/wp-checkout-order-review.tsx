@@ -3,15 +3,10 @@
  */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import styled from '@emotion/styled';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import type {
-	RemoveProductFromCart,
-	RemoveCouponFromCart,
-	CouponStatus,
-} from '@automattic/shopping-cart';
+import type { RemoveProductFromCart, CouponStatus } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -20,6 +15,7 @@ import joinClasses from './join-classes';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import { isDomainRegistration, isDomainTransfer } from 'calypso/lib/products-values';
+import styled from '../lib/styled';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { GetProductVariants } from '../hooks/product-variants';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -70,8 +66,6 @@ const CouponEnableButton = styled.button`
 export default function WPCheckoutOrderReview( {
 	className,
 	removeProductFromCart,
-	removeCoupon,
-	couponStatus,
 	couponFieldStateProps,
 	getItemVariants,
 	onChangePlanLength,
@@ -80,19 +74,17 @@ export default function WPCheckoutOrderReview( {
 	createUserAndSiteBeforeTransaction,
 }: {
 	className?: string;
-	removeProductFromCart: RemoveProductFromCart;
-	removeCoupon: RemoveCouponFromCart;
-	couponStatus: CouponStatus;
+	removeProductFromCart?: RemoveProductFromCart;
 	couponFieldStateProps: CouponFieldStateProps;
-	getItemVariants: GetProductVariants;
-	onChangePlanLength: OnChangeItemVariant;
+	getItemVariants?: GetProductVariants;
+	onChangePlanLength?: OnChangeItemVariant;
 	siteUrl?: string;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
-	const { responseCart } = useShoppingCart();
+	const { responseCart, removeCoupon, couponStatus } = useShoppingCart();
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
 
 	const firstDomainItem = responseCart.products.find(
@@ -139,11 +131,9 @@ WPCheckoutOrderReview.propTypes = {
 	isSummary: PropTypes.bool,
 	className: PropTypes.string,
 	removeProductFromCart: PropTypes.func,
-	removeCoupon: PropTypes.func,
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
 	siteUrl: PropTypes.string,
-	couponStatus: PropTypes.string,
 	couponFieldStateProps: PropTypes.object.isRequired,
 };
 

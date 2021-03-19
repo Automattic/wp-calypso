@@ -26,6 +26,7 @@ const SiteSettingsDiscussion = ( { site, translate } ) => (
 			brandFont
 			className="settings-discussion__page-heading"
 			headerText={ translate( 'Settings' ) }
+			subHeaderText={ translate( 'Control how people interact with your site through comments.' ) }
 			align="left"
 		/>
 		<SiteSettingsNavigation site={ site } section="discussion" />

@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { castArray } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import {
@@ -49,7 +44,7 @@ export function receiveMedia( siteId, media, found, query ) {
 	return {
 		type: MEDIA_RECEIVE,
 		siteId,
-		media: castArray( media ),
+		media: Array.isArray( media ) ? media : [ media ],
 		found,
 		query,
 	};
@@ -218,7 +213,7 @@ export const updateMediaItem = ( siteId, item, originalMediaItem ) => ( {
 export function deleteMedia( siteId, mediaIds ) {
 	return {
 		type: MEDIA_DELETE,
-		mediaIds: castArray( mediaIds ),
+		mediaIds: Array.isArray( mediaIds ) ? mediaIds : [ mediaIds ],
 		siteId,
 	};
 }

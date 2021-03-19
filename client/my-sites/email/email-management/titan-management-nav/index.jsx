@@ -22,6 +22,7 @@ import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Gridicon from 'calypso/components/gridicon';
 import { isEnabled } from '@automattic/calypso-config';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import titanCalendarIcon from 'calypso/assets/images/email-providers/titan/services/calendar.svg';
 import titanContactsIcon from 'calypso/assets/images/email-providers/titan/services/contacts.svg';
 import titanMailIcon from 'calypso/assets/images/email-providers/titan/services/mail.svg';
@@ -55,11 +56,13 @@ class TitanManagementNav extends React.Component {
 		const { currentRoute, domain, selectedSiteSlug, translate } = this.props;
 
 		const linkTitle = translate( 'Manage your email settings and accounts' );
+		const controlPanelClickHandler = this.getNavItemClickHandler( 'control_panel' );
 
 		if ( isEnabled( 'titan/iframe-control-panel' ) ) {
 			return (
 				<VerticalNavItem
 					path={ emailManagementManageTitanAccount( selectedSiteSlug, domain.name, currentRoute ) }
+					onClick={ controlPanelClickHandler }
 				>
 					{ linkTitle }
 				</VerticalNavItem>
@@ -74,6 +77,7 @@ class TitanManagementNav extends React.Component {
 					currentRoute
 				) }
 				external={ true }
+				onClick={ controlPanelClickHandler }
 			>
 				{ linkTitle }
 			</VerticalNavItem>
@@ -93,6 +97,7 @@ class TitanManagementNav extends React.Component {
 					selectedSiteSlug,
 					domain.titanMailSubscription.subscriptionId
 				) }
+				onClick={ this.getNavItemClickHandler( 'manage_purchase' ) }
 			>
 				{ translate( 'Update your billing and payment settings' ) }
 			</VerticalNavItem>
@@ -143,6 +148,11 @@ class TitanManagementNav extends React.Component {
 					compact
 					href={ controlPanelUrl }
 					target={ showExternalControlPanelLink ? '_blank' : null }
+					onClick={ () => {
+						recordTracksEvent( 'calypso_email_management_titan_nav_finish_setup_click', {
+							domain: domain.name,
+						} );
+					} }
 				>
 					{ translate( 'Finish Setup' ) }
 					{ showExternalControlPanelLink && <Gridicon icon="external" size={ 16 } /> }
@@ -150,6 +160,15 @@ class TitanManagementNav extends React.Component {
 				{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 			</CompactCard>
 		);
+	};
+
+	getNavItemClickHandler = ( clickedItem ) => () => {
+		const { domain } = this.props;
+
+		recordTracksEvent( 'calypso_email_management_titan_nav_item_click', {
+			clicked_item: clickedItem,
+			domain: domain.name,
+		} );
 	};
 
 	render() {
@@ -175,6 +194,11 @@ class TitanManagementNav extends React.Component {
 				primary
 				compact
 				href={ emailManagementNewTitanAccount( selectedSiteSlug, domain.name, currentRoute ) }
+				onClick={ () => {
+					recordTracksEvent( 'calypso_email_management_titan_nav_add_mailbox_click', {
+						domain: domain.name,
+					} );
+				} }
 			>
 				{ translate( 'Add New Mailboxes' ) }
 			</Button>
@@ -187,10 +211,16 @@ class TitanManagementNav extends React.Component {
 					header={ header }
 					summary={ summary }
 					expandedSummary={ summary }
+					onOpen={ this.getNavItemClickHandler( 'quick_links_show' ) }
 				>
 					<ul className="titan-management-nav__foldable-card-services">
 						<li>
-							<a href="https://wp.titan.email/mail/" target="_blank" rel="noreferrer noopener">
+							<a
+								href="https://wp.titan.email/mail/"
+								target="_blank"
+								rel="noreferrer noopener"
+								onClick={ this.getNavItemClickHandler( 'webmail' ) }
+							>
 								<img src={ titanMailIcon } alt={ translate( 'Titan Mail icon' ) } />
 								<strong>
 									{ translate( 'Mail', {
@@ -200,7 +230,12 @@ class TitanManagementNav extends React.Component {
 							</a>
 						</li>
 						<li>
-							<a href="https://wp.titan.email/calendar/" target="_blank" rel="noreferrer noopener">
+							<a
+								href="https://wp.titan.email/calendar/"
+								target="_blank"
+								rel="noreferrer noopener"
+								onClick={ this.getNavItemClickHandler( 'calendar' ) }
+							>
 								<img src={ titanCalendarIcon } alt={ translate( 'Titan Calendar icon' ) } />
 								<strong>
 									{ translate( 'Calendar', {
@@ -210,7 +245,12 @@ class TitanManagementNav extends React.Component {
 							</a>
 						</li>
 						<li>
-							<a href="https://wp.titan.email/contacts/" target="_blank" rel="noreferrer noopener">
+							<a
+								href="https://wp.titan.email/contacts/"
+								target="_blank"
+								rel="noreferrer noopener"
+								onClick={ this.getNavItemClickHandler( 'contacts' ) }
+							>
 								<img src={ titanContactsIcon } alt={ translate( 'Titan Contacts icon' ) } />
 								<strong>
 									{ translate( 'Contacts', {

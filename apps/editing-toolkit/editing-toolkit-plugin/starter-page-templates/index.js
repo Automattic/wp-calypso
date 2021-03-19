@@ -15,29 +15,15 @@ import './index.scss';
 // Load config passed from backend.
 const {
 	templates = [],
-	vertical,
-	segment,
 	tracksUserData,
 	screenAction,
 	theme,
-	isFrontPage,
 	locale,
-	hideFrontPageTitle,
 } = window.starterPageTemplatesConfig;
 
 if ( tracksUserData ) {
 	initializeTracksWithIdentity( tracksUserData );
 }
-
-const templatesPluginSharedProps = {
-	segment,
-	templates,
-	theme,
-	vertical,
-	isFrontPage,
-	locale,
-	hidePageTitle: Boolean( isFrontPage && hideFrontPageTitle ),
-};
 
 // Open plugin only if we are creating new page.
 if ( screenAction === 'add' ) {
@@ -47,10 +33,6 @@ if ( screenAction === 'add' ) {
 // Always register ability to open from document sidebar.
 registerPlugin( 'page-templates', {
 	render: () => {
-		return (
-			<>
-				<PageTemplatesPlugin { ...templatesPluginSharedProps } shouldPrefetchAssets={ false } />
-			</>
-		);
+		return <PageTemplatesPlugin templates={ templates } theme={ theme } locale={ locale } />;
 	},
 } );

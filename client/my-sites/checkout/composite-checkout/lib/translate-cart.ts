@@ -3,18 +3,13 @@
  */
 import { translate } from 'i18n-calypso';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
-import type { LineItem } from '@automattic/composite-checkout';
+import { getTotalLineItemFromCart } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import {
-	WPCOMCart,
-	WPCOMCartItem,
-	WPCOMCartCouponItem,
-	WPCOMCartCreditsItem,
-} from '../types/checkout-cart';
+import { WPCOMCart, WPCOMCartItem } from '../types/checkout-cart';
 import {
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
@@ -29,7 +24,6 @@ import {
 } from 'calypso/lib/products-values';
 import { isRenewal } from 'calypso/lib/cart-values/cart-items';
 import doesValueExist from './does-value-exist';
-import doesPurchaseHaveFullCredits from './does-purchase-have-full-credits';
 import type { DomainContactDetails } from '../types/backend/domain-contact-details-components';
 import type {
 	WPCOMTransactionEndpointCart,
@@ -49,36 +43,9 @@ const debug = debugFactory( 'calypso:composite-checkout:translate-cart' );
  * @returns Cart object suitable for passing to the checkout component
  */
 export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WPCOMCart {
-	const {
-		products,
-		coupon_savings_total_integer,
-		savings_total_display,
-		savings_total_integer,
-		currency,
-		allowed_payment_methods,
-		coupon,
-	} = serverCart;
+	const { products, allowed_payment_methods } = serverCart;
 
-	const taxLineItem = getTaxLineItem( serverCart );
-
-	const couponLineItem = getCouponLineItem( serverCart );
-
-	const creditsLineItem = getCreditsLineItem( serverCart );
-
-	const savingsLineItem: LineItem = {
-		id: 'savings-line-item',
-		label: String( translate( 'Total savings' ) ),
-		type: 'savings',
-		amount: {
-			currency: currency,
-			value: savings_total_integer,
-			displayValue: savings_total_display,
-		},
-	};
-
-	const totalItem = getTotalLineItem( serverCart );
-
-	const subtotalItem = getSubtotalLineItem( serverCart );
+	const totalItem = getTotalLineItemFromCart( serverCart );
 
 	const alwaysEnabledPaymentMethods = [ 'full-credits', 'free-purchase' ];
 
@@ -89,110 +56,8 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 
 	return {
 		items: products.map( translateReponseCartProductToWPCOMCartItem ),
-		tax: taxLineItem,
-		coupon: coupon && coupon_savings_total_integer ? couponLineItem : null,
 		total: totalItem,
-		savings: savings_total_integer > 0 ? savingsLineItem : null,
-		subtotal: subtotalItem,
-		credits: creditsLineItem,
 		allowedPaymentMethods,
-		couponCode: coupon,
-	};
-}
-
-export function getCouponLineItem( responseCart: ResponseCart ): WPCOMCartCouponItem | null {
-	if ( ! responseCart.coupon || ! responseCart.coupon_savings_total_integer ) {
-		return null;
-	}
-	return {
-		id: 'coupon-line-item',
-		label: String(
-			translate( 'Coupon: %(couponCode)s', { args: { couponCode: responseCart.coupon } } )
-		),
-		type: 'coupon',
-		amount: {
-			currency: responseCart.currency,
-			value: responseCart.coupon_savings_total_integer,
-			displayValue: String(
-				translate( '- %(discountAmount)s', {
-					args: { discountAmount: responseCart.coupon_savings_total_display },
-				} )
-			),
-		},
-		wpcom_meta: {
-			couponCode: responseCart.coupon,
-		},
-	};
-}
-
-export function getSubtotalLineItem( responseCart: ResponseCart ): LineItem {
-	return {
-		id: 'subtotal',
-		type: 'subtotal',
-		label: String( translate( 'Subtotal' ) ),
-		amount: {
-			currency: responseCart.currency,
-			value: responseCart.sub_total_integer,
-			displayValue: responseCart.sub_total_display,
-		},
-	};
-}
-
-export function getTotalLineItem( responseCart: ResponseCart ): LineItem {
-	return {
-		id: 'total',
-		type: 'total',
-		label: String( translate( 'Total' ) ),
-		amount: {
-			currency: responseCart.currency,
-			value: responseCart.total_cost_integer,
-			displayValue: responseCart.total_cost_display,
-		},
-	};
-}
-
-export function getTaxLineItem( responseCart: ResponseCart ): LineItem | null {
-	if ( ! responseCart.tax.display_taxes ) {
-		return null;
-	}
-	return {
-		id: 'tax-line-item',
-		label: String( translate( 'Tax' ) ),
-		type: 'tax',
-		amount: {
-			currency: responseCart.currency,
-			value: responseCart.total_tax_integer,
-			displayValue: responseCart.total_tax_display,
-		},
-	};
-}
-
-export function getCreditsLineItem( responseCart: ResponseCart ): WPCOMCartCreditsItem | null {
-	if ( responseCart.credits_integer <= 0 ) {
-		return null;
-	}
-	return {
-		id: 'credits',
-		label: String( translate( 'Credits' ) ),
-		type: 'credits',
-		amount: {
-			currency: responseCart.currency,
-			value: responseCart.credits_integer,
-			displayValue: String(
-				translate( '- %(discountAmount)s', {
-					args: {
-						// Clamp the credits display value to the total
-						discountAmount: doesPurchaseHaveFullCredits( responseCart )
-							? responseCart.sub_total_with_taxes_display
-							: responseCart.credits_display,
-					},
-				} )
-			),
-		},
-		wpcom_meta: {
-			credits_integer: responseCart.credits_integer,
-			credits_display: responseCart.credits_display,
-		},
 	};
 }
 
@@ -272,10 +137,6 @@ function translateReponseCartProductToWPCOMCartItem(
 	};
 }
 
-export function getNonProductWPCOMCartItemTypes(): string[] {
-	return [ 'tax', 'coupon', 'total', 'subtotal', 'credits', 'savings' ];
-}
-
 // Create cart object as required by the WPCOM transactions endpoint
 // '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
 export function createTransactionEndpointCartFromLineItems( {
@@ -311,7 +172,6 @@ export function createTransactionEndpointCartFromLineItems( {
 		temporary: false,
 		extra: [],
 		products: items
-			.filter( ( product ) => ! getNonProductWPCOMCartItemTypes().includes( product.type ) )
 			.map( ( item ) => addRegistrationDataToGSuiteItem( item, contactDetails ) )
 			.map( createTransactionEndpointCartItemFromLineItem ),
 		tax: {
@@ -334,7 +194,7 @@ function createTransactionEndpointCartItemFromLineItem(
 		volume: item.wpcom_meta?.volume ?? 1,
 		quantity: item.wpcom_meta?.quantity ?? null,
 		extra: item.wpcom_meta?.extra,
-	} as WPCOMTransactionEndpointCartItem;
+	};
 }
 
 function addRegistrationDataToGSuiteItem(
@@ -348,9 +208,12 @@ function addRegistrationDataToGSuiteItem(
 		...item,
 		wpcom_meta: {
 			...item.wpcom_meta,
-			extra: { ...item.wpcom_meta.extra, google_apps_registration_data: contactDetails },
+			extra: {
+				...item.wpcom_meta.extra,
+				google_apps_registration_data: contactDetails || undefined,
+			},
 		},
-	} as WPCOMCartItem;
+	};
 }
 
 export function createTransactionEndpointRequestPayloadFromLineItems( {
@@ -385,7 +248,7 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	return {
 		cart: createTransactionEndpointCartFromLineItems( {
 			siteId,
-			couponId: couponId || getCouponIdFromProducts( items ),
+			couponId,
 			country,
 			postalCode,
 			subdivisionCode,
@@ -420,11 +283,6 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			nik,
 		},
 	};
-}
-
-function getCouponIdFromProducts( items: WPCOMCartItem[] ): string | undefined {
-	const couponItem = items.find( ( item ) => item.type === 'coupon' );
-	return couponItem?.wpcom_meta?.couponCode;
 }
 
 export function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.TranslateResult {
@@ -462,7 +320,15 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.
 		}
 	}
 
-	return isRenewalItem ? translate( 'Renewal' ) : '';
+	if ( ! isRenewalItem && serverCartItem.months_per_bill_period === 1 ) {
+		return translate( 'Monthly subscription' );
+	}
+
+	if ( isRenewalItem ) {
+		return translate( 'Renewal' );
+	}
+
+	return '';
 }
 
 export function getLabel( serverCartItem: ResponseCartProduct ): string {

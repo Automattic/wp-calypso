@@ -34,6 +34,7 @@ class StatsAllTime extends Component {
 		siteId: PropTypes.number,
 		requesting: PropTypes.bool,
 		query: PropTypes.object,
+		comments: PropTypes.number,
 		posts: PropTypes.number,
 		views: PropTypes.number,
 		viewsBestDay: PropTypes.string,
@@ -45,6 +46,7 @@ class StatsAllTime extends Component {
 			translate,
 			siteId,
 			requesting,
+			comments,
 			posts,
 			views,
 			visitors,
@@ -67,7 +69,7 @@ class StatsAllTime extends Component {
 		return (
 			<div>
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="stats" query={ query } /> }
-				<SectionHeader label={ translate( 'All-time posts, views, and visitors' ) } />
+				<SectionHeader label={ translate( 'All-time posts, comments, views, and visitors' ) } />
 				<Card className={ classNames( 'stats-module', 'all-time', classes ) }>
 					<StatsTabs borderless>
 						<StatsTab
@@ -75,6 +77,13 @@ class StatsAllTime extends Component {
 							label={ translate( 'Posts' ) }
 							loading={ isLoading }
 							value={ posts }
+							compact
+						/>
+						<StatsTab
+							gridicon="comment"
+							label={ translate( 'Comments' ) }
+							loading={ isLoading }
+							value={ comments }
 							compact
 						/>
 						<StatsTab
@@ -113,6 +122,7 @@ export default connect( ( state ) => {
 	const query = {};
 	const allTimeData = getSiteStatsNormalizedData( state, siteId, 'stats', query ) || {};
 	const allTimeStats = pick( allTimeData, [
+		'comments',
 		'posts',
 		'views',
 		'visitors',

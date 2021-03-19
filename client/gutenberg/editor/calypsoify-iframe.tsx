@@ -30,7 +30,7 @@ import { clearLastNonEditorRoute, setRoute } from 'calypso/state/route/actions';
 import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPostTypeTrashUrl from 'calypso/state/selectors/get-post-type-trash-url';
-import getGutenbergEditorUrl from 'calypso/state/selectors/get-gutenberg-editor-url';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
 import wpcom from 'calypso/lib/wp';
@@ -45,6 +45,7 @@ import WebPreview from 'calypso/components/web-preview';
 import { editPost, trashPost } from 'calypso/state/posts/actions';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'calypso/lib/protect-form';
+import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor.js';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -840,10 +841,19 @@ const mapStateToProps = (
 		queryArgs[ 'in-editor-deprecation-group' ] = 1;
 	}
 
-	const siteAdminUrl =
+	let siteAdminUrl =
 		editorType === 'site'
 			? getSiteAdminUrl( state, siteId, 'admin.php?page=gutenberg-edit-site' )
 			: getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
+
+	// Use the site editor to edit already-published pages if site editor is enabled
+	if ( postId && postType === 'page' && isSiteUsingCoreSiteEditor( state, siteId ) ) {
+		siteAdminUrl = getSiteAdminUrl(
+			state,
+			siteId,
+			`admin.php?page=gutenberg-edit-site&postId=${ postId }&postType=page`
+		);
+	}
 
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
 
@@ -874,7 +884,7 @@ const mapStateToProps = (
 		customizerUrl: getCustomizerUrl( state, siteId ),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		getTemplateEditorUrl: partial(
-			getGutenbergEditorUrl,
+			getEditorUrl,
 			state,
 			siteId,
 			partial.placeholder,

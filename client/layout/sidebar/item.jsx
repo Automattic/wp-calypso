@@ -5,7 +5,6 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
-import { isFunction } from 'lodash';
 
 /**
  * Internal dependencies
@@ -47,7 +46,7 @@ export default function SidebarItem( props ) {
 	const expandSectionIfSelected = () => {
 		const { expandSection, selected } = props;
 
-		if ( selected && isFunction( expandSection ) ) {
+		if ( selected && typeof expandSection === 'function' ) {
 			expandSection();
 		}
 	};

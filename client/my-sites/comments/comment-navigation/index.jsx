@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import { each, get, includes, isEqual, isUndefined, map } from 'lodash';
-import { extendAction } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
@@ -351,32 +350,26 @@ const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 const mapDispatchToProps = ( dispatch, { siteId, commentsListQuery } ) => ( {
 	changeStatus: ( postId, commentId, status, analytics = { alsoUnlike: false } ) =>
 		dispatch(
-			extendAction(
-				withAnalytics(
-					composeAnalytics(
-						recordTracksEvent( 'calypso_comment_management_change_status', {
-							also_unlike: analytics.alsoUnlike,
-							previous_status: analytics.previousStatus,
-							status,
-						} ),
-						bumpStat( 'calypso_comment_management', 'comment_status_changed_to_' + status )
-					),
-					changeCommentStatus( siteId, postId, commentId, status )
+			withAnalytics(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_comment_management_change_status', {
+						also_unlike: analytics.alsoUnlike,
+						previous_status: analytics.previousStatus,
+						status,
+					} ),
+					bumpStat( 'calypso_comment_management', 'comment_status_changed_to_' + status )
 				),
-				{ meta: { comment: { commentsListQuery: commentsListQuery } } }
+				changeCommentStatus( siteId, postId, commentId, status, commentsListQuery )
 			)
 		),
 	deletePermanently: ( postId, commentId ) =>
 		dispatch(
-			extendAction(
-				withAnalytics(
-					composeAnalytics(
-						recordTracksEvent( 'calypso_comment_management_delete' ),
-						bumpStat( 'calypso_comment_management', 'comment_deleted' )
-					),
-					deleteComment( siteId, postId, commentId, { showSuccessNotice: true } )
+			withAnalytics(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_comment_management_delete' ),
+					bumpStat( 'calypso_comment_management', 'comment_deleted' )
 				),
-				{ meta: { comment: { commentsListQuery: commentsListQuery } } }
+				deleteComment( siteId, postId, commentId, { showSuccessNotice: true }, commentsListQuery )
 			)
 		),
 	recordBulkAction: ( action, count, fromList, view = 'site' ) =>

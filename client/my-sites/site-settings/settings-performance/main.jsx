@@ -63,6 +63,7 @@ class SiteSettingsPerformance extends Component {
 					brandFont
 					className="settings-performance__page-heading"
 					headerText={ translate( 'Settings' ) }
+					subHeaderText={ translate( "Explore settings to improve your site's performance." ) }
 					align="left"
 				/>
 				<SiteSettingsNavigation site={ site } section="performance" />

@@ -3,7 +3,7 @@
  */
 
 import { bindActionCreators } from 'redux';
-import { isFunction, reduce } from 'lodash';
+import { reduce } from 'lodash';
 
 /**
  * Calls Redux' bindActionCreators on the passed in actionCreators
@@ -15,7 +15,7 @@ import { isFunction, reduce } from 'lodash';
  * @returns {Function|object} result of bindActionCreators
  */
 export const bindActionCreatorsWithSiteId = ( actionCreators, dispatch, siteId ) => {
-	if ( isFunction( actionCreators ) ) {
+	if ( typeof actionCreators === 'function' ) {
 		return bindActionCreators( actionCreators.bind( null, siteId ), dispatch );
 	}
 

@@ -210,7 +210,7 @@ export function Checkout( {
 	children,
 	className,
 }: {
-	children: React.ReactChildren;
+	children: React.ReactNode;
 	className?: string;
 } ): JSX.Element {
 	const { isRTL } = useI18n();

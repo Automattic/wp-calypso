@@ -34,5 +34,6 @@ export function getEmptyResponseCart(): ResponseCart {
 		locale: 'en-us',
 		tax: { location: {}, display_taxes: false },
 		is_signup: false,
+		next_domain_is_free: false,
 	};
 }
