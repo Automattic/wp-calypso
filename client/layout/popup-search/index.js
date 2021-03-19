@@ -51,7 +51,6 @@ export function PopUpSearch( props ) {
 		<div role="button" className="popup-search__mask" onClick={ props.onClose }>
 			<div className="popup-search__container" onClick={ onChildClick }>
 				<HelpSearchCard
-					onSelect={ () => {} }
 					query={ props.searchQuery }
 					placeholder={ translate( 'Search wordpress actions' ) }
 				/>
