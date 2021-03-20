@@ -116,7 +116,7 @@ const InnerSearch = (
 		pinned = false,
 		onSearchClose,
 		onSearchChange,
-		onSearch: onSearchProp,
+		onSearch,
 		onBlur: onBlurProp,
 		onKeyDown: onKeyDownProp,
 		onClick,
@@ -171,20 +171,20 @@ const InnerSearch = (
 	);
 
 	const doSearch: ( ( search: string ) => void ) & { cancel?: () => void } = React.useMemo( () => {
-		if ( ! onSearchProp ) {
+		if ( ! onSearch ) {
 			return () => {}; // eslint-disable-line @typescript-eslint/no-empty-function
 		}
 
 		if ( ! delaySearch ) {
-			return onSearchProp;
+			return onSearch;
 		}
 
-		return debounce( onSearchProp, delayTimeout );
-	}, [ onSearchProp, delayTimeout, delaySearch ] );
+		return debounce( onSearch, delayTimeout );
+	}, [ onSearch, delayTimeout, delaySearch ] );
 
 	useEffect( () => {
 		if ( keyword ) {
-			onSearchProp?.( keyword );
+			onSearch?.( keyword );
 		}
 		// Disable reason: This effect covers the case where a keyword was passed in as the default value and we only want to run it on first search; the useUpdateEffect below will handle the rest of the time that keyword updates
 		// eslint-disable-next-line react-hooks/exhaustive-deps
