@@ -14,6 +14,7 @@ import {
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	PRODUCT_JETPACK_CRM,
 	PRODUCT_JETPACK_CRM_MONTHLY,
+	PRODUCT_MARKETPLACE_YOAST_PREMIUM,
 } from 'calypso/lib/products-values/constants';
 
 // If JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN is true, checkout will redirect to the site's wp-admin,
@@ -285,6 +286,9 @@ export const FEATURE_JETPACK_SEARCH_MONTHLY = PRODUCT_JETPACK_SEARCH_MONTHLY;
 export const FEATURE_JETPACK_CRM = PRODUCT_JETPACK_CRM;
 export const FEATURE_JETPACK_CRM_MONTHLY = PRODUCT_JETPACK_CRM_MONTHLY;
 
+// Marketplace plugins
+export const FEATURE_MARKETPLACE_YOAST_PREMIUM = PRODUCT_MARKETPLACE_YOAST_PREMIUM;
+
 // jetpack features constants (offer reset)
 export const FEATURE_SECURITY_REALTIME_V2 = 'security-realtime-v2';
 export const FEATURE_BACKUP_V2 = 'backup-v2';
@@ -361,6 +365,8 @@ export const TYPE_SECURITY_DAILY = 'TYPE_SECURITY_DAILY';
 export const TYPE_SECURITY_REALTIME = 'TYPE_SECURITY_REALTIME';
 export const TYPE_ALL = 'TYPE_ALL';
 export const TYPE_P2_PLUS = 'TYPE_P2_PLUS';
+
+export const TYPE_MARKETPLACE = 'TYPE_MARKETPLACE';
 
 export const STORE_DEPRECATION_START_DATE = new Date( '2021-01-19T19:30:00+00:00' );
 

@@ -27,7 +27,7 @@ export default ( state ) => {
 	// Disabled for Jetpack sites.
 	const siteId = getSelectedSiteId( state );
 	if ( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) {
-		return false;
+		// return false;
 	}
 
 	const userId = getCurrentUserId( state );
