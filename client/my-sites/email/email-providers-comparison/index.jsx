@@ -95,12 +95,15 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	onExpandedStateChange = ( providerKey, isExpanded ) => {
-		const expanded = Object.assign(
-			{},
-			this.state.expanded,
-			Object.fromEntries( [ [ providerKey, isExpanded ] ] )
-		);
-		this.setState( { expanded } );
+		const expandedEntries = Object.entries( this.state.expanded ).map( ( entry ) => {
+			const [ key, currentExpanded ] = entry;
+			if ( isExpanded ) {
+				return [ key, key === providerKey ];
+			}
+			return [ key, key === providerKey ? isExpanded : currentExpanded ];
+		} );
+
+		this.setState( { expanded: Object.fromEntries( expandedEntries ) } );
 	};
 
 	goToEmailForwarding = () => {

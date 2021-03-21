@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
@@ -33,8 +33,6 @@ function EmailProviderCard( {
 	ctaLabel,
 	features,
 } ) {
-	const [ isExpanded, setIsExpanded ] = useState( detailsExpanded );
-
 	const renderFeatures = ( providerSlug, featureList ) => {
 		return featureList.map( ( feature, index ) => (
 			<EmailProviderFeature key={ `feature-${ providerSlug }-${ index }` } title={ feature } />
@@ -43,15 +41,14 @@ function EmailProviderCard( {
 
 	const toggleVisibility = ( event ) => {
 		event.preventDefault();
-		setIsExpanded( ! isExpanded );
-		onExpandedChange( providerKey, ! isExpanded );
+		onExpandedChange( providerKey, ! detailsExpanded );
 	};
 	const ctaButtonLabel = ctaLabel ? ctaLabel : buttonLabel;
 
 	return (
 		<PromoCard
 			className={ classnames( 'email-providers-comparison__provider-card', {
-				'is-expanded': isExpanded,
+				'is-expanded': detailsExpanded,
 			} ) }
 			image={ logo }
 			title={ title }
@@ -105,6 +102,7 @@ EmailProviderCard.propTypes = {
 	onButtonClick: PropTypes.func,
 	ctaLabel: PropTypes.string,
 	features: PropTypes.arrayOf( PropTypes.string ),
+	onExpandedChange: PropTypes.func,
 };
 
 export default EmailProviderCard;
