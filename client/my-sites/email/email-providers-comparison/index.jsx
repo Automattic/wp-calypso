@@ -444,6 +444,7 @@ class EmailProvidersComparison extends React.Component {
 				formattedPrice={ formattedPrice }
 				discount={ discount }
 				formFields={ formFields }
+				ctaLabel={ translate( 'Add Email' ) }
 				features={ this.getTitanFeatures() }
 			/>
 		);
