@@ -521,7 +521,6 @@ class EmailProvidersComparison extends React.Component {
 				detailsExpanded={ this.state.expanded.google }
 				onExpandedChange={ this.onExpandedStateChange }
 				onButtonClick={ this.onGoogleConfirmNewUsers }
-				buttonDisabled={ ! areAllUsersValid( googleUsers ) }
 				features={ this.getGoogleFeatures() }
 				{ ...googleProps }
 			/>
