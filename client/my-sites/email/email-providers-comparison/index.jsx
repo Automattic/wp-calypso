@@ -12,7 +12,13 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import {
+	areAllMailboxesValid,
+	buildNewTitanMailbox,
+	transformMailboxForCart,
+} from 'calypso/lib/titan/new-mailbox';
 import { areAllUsersValid, getItemsForCart, newUsers } from 'calypso/lib/gsuite/new-users';
+import { Button } from '@automattic/components';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import EmailProviderCard from './email-provider-card';
 import EmailProviderDetails from './email-provider-details';
@@ -20,7 +26,6 @@ import EmailProviderFeature from './email-provider-details/email-provider-featur
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
@@ -53,6 +58,8 @@ import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-wo
 import gSuiteLogo from 'calypso/assets/images/email-providers/gsuite.svg';
 import forwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg';
 import { getTitanProductName } from 'calypso/lib/titan';
+import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
+import TitanNewMailboxList from 'calypso/my-sites/email/titan-mail-add-mailboxes/titan-new-mailbox-list';
 import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
@@ -69,7 +76,7 @@ class EmailProvidersComparison extends React.Component {
 	state = {
 		googleUsers: [],
 		isFetchingProvisioningURL: false,
-		titanUsers: [],
+		titanMailboxes: [ buildNewTitanMailbox( this.props.domain.name, false ) ],
 		expanded: {
 			forwarding: false,
 			google: false,
@@ -349,6 +356,39 @@ class EmailProvidersComparison extends React.Component {
 		];
 	}
 
+	onTitanMailboxesChange = ( updatedMailboxes ) =>
+		this.setState( { titanMailboxes: updatedMailboxes } );
+
+	onTitanConfirmNewUsers = () => {
+		const { titanMailboxes } = this.state;
+
+		const mailboxesAreValid = areAllMailboxesValid( titanMailboxes );
+		if ( ! mailboxesAreValid ) {
+			return;
+		}
+
+		const { domain, productsList, selectedSiteSlug, shoppingCartManager } = this.props;
+
+		const cartItem = titanMailMonthly( {
+			domain: domain.name,
+			quantity: titanMailboxes.length,
+			extra: {
+				email_users: titanMailboxes.map( transformMailboxForCart ),
+			},
+		} );
+
+		shoppingCartManager
+			.addProductsToCart( fillInSingleCartItemAttributes( cartItem, productsList ) )
+			.then( () => {
+				const { errors } = this.props?.cart?.messages;
+				if ( errors && errors.length ) {
+					// Stay on the page to show the relevant error(s)
+					return;
+				}
+				this.isMounted && page( '/checkout/' + selectedSiteSlug );
+			} );
+	};
+
 	renderStackedTitanDetails() {
 		const { currencyCode, domain, titanMailProduct, translate } = this.props;
 
@@ -359,7 +399,7 @@ class EmailProvidersComparison extends React.Component {
 			comment: '{{price/}} is the formatted price, e.g. $20',
 		} );
 		// TODO: calculate whether a discount/trial applies for the current domain
-		const discount = translate( '3 months free' );
+		const discount = null; //translate( '3 months free' );
 		const logo = (
 			<Gridicon
 				className="email-providers-comparison__providers-wordpress-com-email"
@@ -371,24 +411,19 @@ class EmailProvidersComparison extends React.Component {
 		);
 
 		const formFields = (
-			<>
-				<FormFieldset>
-					<FormLabel>
-						{ translate( 'Email address' ) }
-						<FormTextInputWithAffixes
-							required
-							suffix={ `@${ domain.name }` }
-							onChange={ this.onTitanEmailChange }
-						/>
-					</FormLabel>
-				</FormFieldset>
-				<FormFieldset>
-					<FormLabel>
-						{ translate( 'Password' ) }
-						<FormPasswordInput required onChange={ this.onTitanPasswordChange } />
-					</FormLabel>
-				</FormFieldset>
-			</>
+			<TitanNewMailboxList
+				onMailboxesChange={ this.onTitanMailboxesChange }
+				mailboxes={ this.state.titanMailboxes }
+				domain={ domain.name }
+			>
+				<Button
+					className="email-providers-comparison__titan-mailbox-action-continue"
+					primary
+					onClick={ this.onTitanConfirmNewUsers }
+				>
+					{ translate( 'Add Email' ) }
+				</Button>
+			</TitanNewMailboxList>
 		);
 
 		return (
@@ -405,8 +440,6 @@ class EmailProvidersComparison extends React.Component {
 				formattedPrice={ formattedPrice }
 				discount={ discount }
 				formFields={ formFields }
-				buttonLabel={ translate( 'Add Email' ) }
-				onButtonClick={ this.onAddTitanClick }
 				features={ this.getTitanFeatures() }
 			/>
 		);
