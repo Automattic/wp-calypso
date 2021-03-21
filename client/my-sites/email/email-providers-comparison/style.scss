@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .email-providers-comparison__providers {
 	display: flex;
 	flex-direction: row;
@@ -59,11 +62,18 @@
 .email-providers-comparison__provider-card.promo-card {
 
 	.action-panel__figure {
+		margin-bottom: 0.5em;
 		margin-top: 0;
+
+		img {
+			max-width: 24px;
+		}
 	}
 
-	.action-panel__title {
-		margin-bottom: 0;
+	@include break-mobile {
+		.action-panel__title {
+			margin-bottom: 0;
+		}
 	}
 
 	.promo-card__title-badge {
@@ -77,11 +87,22 @@
 
 	.email-providers-comparison__provider-card-main-details {
 		display: flex;
+		flex-direction: column;
+		margin-bottom: 1em;
+
+		@include break-mobile {
+			flex-direction: column;
+			margin-bottom: 0;
+		}
 
 		p {
-			flex-grow: 7;
-			line-height: 40px;
-			margin-bottom: 0;
+			margin-bottom: 1em;
+
+			@include break-mobile {
+				flex-grow: 7;
+				line-height: 40px;
+				margin-bottom: 0;
+			}
 		}
 		.email-providers-comparison__provider-expand-cta {
 			flex-grow: 1;
