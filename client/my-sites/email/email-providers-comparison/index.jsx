@@ -268,12 +268,19 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	renderGSuiteDetails( className ) {
+		const { translate } = this.props;
 		const gsuiteProps = this.getGoogleDetailProps();
 
 		return (
 			<EmailProviderDetails
 				image={ { path: gsuiteProps.productLogo } }
 				features={ this.getGoogleFeatures() }
+				buttonLabel={ translate( 'Add %(googleMailService)s', {
+					args: {
+						googleMailService: getGoogleMailServiceFamily(),
+					},
+					comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+				} ) }
 				onButtonClick={ this.goToAddGSuite }
 				className={ classNames( className, 'gsuite' ) }
 				{ ...gsuiteProps }
@@ -301,12 +308,6 @@ class EmailProvidersComparison extends React.Component {
 			productLogo: config.isEnabled( 'google-workspace-migration' )
 				? googleWorkspaceIcon
 				: gSuiteLogo,
-			buttonLabel: translate( 'Add %(googleMailService)s', {
-				args: {
-					googleMailService: getGoogleMailServiceFamily(),
-				},
-				comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
-			} ),
 			formattedPrice: formattedPrice,
 			discount: hasDiscount( gSuiteProduct )
 				? translate( 'First year %(discountedPrice)s', {
@@ -487,7 +488,7 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	renderStackedGoogleDetails() {
-		const { domain, isGSuiteSupported } = this.props;
+		const { domain, isGSuiteSupported, translate } = this.props;
 
 		if ( ! isGSuiteSupported ) {
 			return null;
@@ -509,7 +510,20 @@ class EmailProvidersComparison extends React.Component {
 					selectedDomainName={ domain.name }
 					users={ googleUsers }
 					onReturnKeyPress={ this.onGoogleFormReturnKeyPress }
-				/>
+				>
+					<Button
+						className="email-providers-comparison__gsuite-user-list-action-continue"
+						primary
+						onClick={ this.onGoogleConfirmNewUsers }
+					>
+						{ translate( 'Add %(googleMailService)s', {
+							args: {
+								googleMailService: getGoogleMailServiceFamily(),
+							},
+							comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+						} ) }
+					</Button>
+				</GSuiteNewUserList>
 			</FormFieldset>
 		);
 
@@ -521,6 +535,12 @@ class EmailProvidersComparison extends React.Component {
 				detailsExpanded={ this.state.expanded.google }
 				onExpandedChange={ this.onExpandedStateChange }
 				onButtonClick={ this.onGoogleConfirmNewUsers }
+				ctaLabel={ translate( 'Add %(googleMailService)s', {
+					args: {
+						googleMailService: getGoogleMailServiceFamily(),
+					},
+					comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+				} ) }
 				features={ this.getGoogleFeatures() }
 				{ ...googleProps }
 			/>
