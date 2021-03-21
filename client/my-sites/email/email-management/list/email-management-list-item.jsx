@@ -59,6 +59,7 @@ class EmailManagementListItem extends React.Component {
 		selectedSite: PropTypes.object.isRequired,
 		user: PropTypes.object.isRequired,
 		userCanManageOptions: PropTypes.bool.isRequired,
+		titanMailboxes: PropTypes.array,
 	};
 
 	onAddTitanMailbox = () => {
@@ -329,8 +330,8 @@ const normalizeEmailForwardingAddresses = ( emailForwards ) => {
 	} );
 };
 
-function getGSuiteUsersForDomain( gsuiteUsersForSite, domainName ) {
-	return gsuiteUsersForSite.filter( ( gsuiteUser ) => domainName === gsuiteUser.domain );
+function filterEmailListByDomain( emailList, domainName ) {
+	return emailList.filter( ( email ) => domainName === email.domain );
 }
 
 export default connect( ( state, ownProps ) => {
@@ -341,12 +342,14 @@ export default connect( ( state, ownProps ) => {
 		const gsuiteUsersForSite = ! hasGSuiteWithUs( ownProps.domain )
 			? []
 			: getGSuiteUsers( state, selectedSiteId ) ?? [];
-		const gsuiteUsers = getGSuiteUsersForDomain( gsuiteUsersForSite, ownProps.domain?.name );
+		const gsuiteUsers = filterEmailListByDomain( gsuiteUsersForSite, ownProps.domain?.name );
 
 		emails = normalizeGsuiteUsers( gsuiteUsers );
 	} else if ( hasEmailForwards( ownProps.domain ) ) {
 		const emailForwards = getEmailForwards( state, ownProps.domain?.name ) ?? [];
 		emails = normalizeEmailForwardingAddresses( emailForwards );
+	} else if ( hasTitanMailWithUs( ownProps.domain ) ) {
+		emails = filterEmailListByDomain( ownProps.titanMailboxes, ownProps.domain?.name );
 	}
 
 	return {

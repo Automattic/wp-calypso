@@ -775,6 +775,15 @@ Undocumented.prototype.getTitanOrderProvisioningURL = function ( domain, fn ) {
 	);
 };
 
+Undocumented.prototype.getTitanMailboxesForSite = function ( siteId, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/sites/${ encodeURIComponent( siteId ) }/titan-mailboxes`,
+		},
+		fn
+	);
+};
+
 Undocumented.prototype.getTitanDetailsForIncomingRedirect = function ( mode, jwt, fn ) {
 	return this.wpcom.req.get(
 		{

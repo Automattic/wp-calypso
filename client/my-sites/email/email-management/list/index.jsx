@@ -12,6 +12,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import wp from 'calypso/lib/wp';
 import { Button, Card, CompactCard } from '@automattic/components';
 import canUserAddEmail from './can-user-add-email';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -52,6 +53,64 @@ class EmailManagementList extends React.Component {
 		selectedSiteId: PropTypes.number.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
+
+	state = {
+		isLoadingTitanMailboxes: false,
+		errorLoadingTitanMailboxes: false,
+		loadedTitanMailboxes: false,
+		titanMailboxes: [],
+	};
+
+	componentDidMount() {
+		this.loadTitanMailboxes();
+	}
+
+	componentDidUpdate() {
+		this.loadTitanMailboxes();
+	}
+
+	loadTitanMailboxes() {
+		const { selectedSite, domains, hasSiteDomainsLoaded } = this.props;
+
+		if ( ! domains || ! hasSiteDomainsLoaded ) {
+			return;
+		}
+
+		if ( this.state.isLoadingTitanMailboxes || this.state.loadedTitanMailboxes ) {
+			return;
+		}
+
+		const domainsWithTitanMail = domains
+			.filter( ( domain ) => ! domain.isWPCOMDomain )
+			.filter( hasTitanMailWithUs );
+
+		this.setState( {
+			isLoadingTitanMailboxes: true,
+		} );
+
+		if ( domainsWithTitanMail.length > 0 ) {
+			wp.undocumented()
+				.getTitanMailboxesForSite( selectedSite.ID )
+				.then(
+					( data ) => {
+						this.setState( {
+							isLoadingTitanMailboxes: false,
+							errorLoadingTitanMailboxes: false,
+							loadedTitanMailboxes: true,
+							titanMailboxes: data?.accounts || [],
+						} );
+					},
+					() => {
+						this.setState( {
+							isLoadingTitanMailboxes: false,
+							errorLoadingTitanMailboxes: true,
+							loadedTitanMailboxes: true,
+							titanMailboxes: [],
+						} );
+					}
+				);
+		}
+	}
 
 	handleJustDomainClick = ( siteContext ) => {
 		this.recordCtaClick( siteContext, USER_ACTION_JUST_DOMAIN );
@@ -122,6 +181,7 @@ class EmailManagementList extends React.Component {
 					domain={ domain }
 					key={ `email-domain-${ domain.name }--${ index }` }
 					selectedSite={ selectedSite }
+					titanMailboxes={ this.state.titanMailboxes }
 				/>
 			);
 		} );
