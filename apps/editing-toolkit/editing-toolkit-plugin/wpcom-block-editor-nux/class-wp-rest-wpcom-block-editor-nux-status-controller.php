@@ -51,13 +51,13 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 	}
 
 	/**
-	 * Check if NUX is enabled.
+	 * Should we show editor onboarding (i.e. welcome tour or nux modal)
 	 *
 	 * @param mixed $nux_status Can be "enabled", "dismissed", or undefined.
 	 * @return boolean
 	 */
-	public function is_nux_enabled( $nux_status ) {
-		if ( defined( 'is_mobile_device' ) && is_mobile_device ) {
+	public function show_editor_onboarding( $nux_status ) {
+		if ( defined( 'FORCE_SHOW_EDITOR_ONBOARDING' ) && FORCE_SHOW_EDITOR_ONBOARDING ) {
 			return true;
 		}
 		return 'enabled' === $nux_status;
@@ -69,8 +69,13 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 	 * @return WP_REST_Response
 	 */
 	public function get_nux_status() {
-		// Designs for WelcomeTour ong mobile are in progress, until then do not show on mobile.
-		$is_mobile_device = wp_is_mobile();
+
+		if ( wp_is_mobile() ) {
+			// Designs for WelcomeTour on mobile are in progress, until then do not show on mobile.
+			$editor_onboarding_variant = 'modal';
+		} else {
+			$editor_onboarding_variant = 'tour';
+		}
 
 		if ( has_filter( 'wpcom_block_editor_nux_get_status' ) ) {
 			$nux_status = apply_filters( 'wpcom_block_editor_nux_get_status', false );
@@ -79,10 +84,18 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 		} else {
 			$nux_status = get_user_meta( get_current_user_id(), 'wpcom_block_editor_nux_status', true );
 		}
+
+		$show_editor_onboarding = $this->show_editor_onboarding( $nux_status );
+
 		return rest_ensure_response(
 			array(
-				'is_mobile_device' => $is_mobile_device,
-				'is_nux_enabled'   => $this->is_nux_enabled( $nux_status ),
+				'show_editor_onboarding'    => $show_editor_onboarding,
+				'editor_onboarding_variant' => $editor_onboarding_variant,
+
+				// These are legacy rest params that can be removed after
+				// we know the new JS files have been deployed.
+				'is_nux_enabled'            => $show_editor_onboarding,
+				'welcome_tour_show_variant' => 'tour' === $editor_onboarding_variant,
 			)
 		);
 	}
