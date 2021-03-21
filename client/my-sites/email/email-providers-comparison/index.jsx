@@ -283,7 +283,7 @@ class EmailProvidersComparison extends React.Component {
 			},
 			comment: '{{price/}} is the formatted price, e.g. $20',
 		};
-		const formattedPrice = config.isEnabled( 'email/centralized-home' )
+		const formattedPrice = config.isEnabled( 'titan/provision-mailboxes' )
 			? translate( '{{price/}} /user /month billed annually', priceArguments )
 			: translate( '{{price/}} /user /month', priceArguments );
 		return {
@@ -564,7 +564,7 @@ class EmailProvidersComparison extends React.Component {
 			isTitanSupported ? null : 'no-titan',
 		] );
 
-		if ( config.isEnabled( 'email/centralized-home' ) ) {
+		if ( config.isEnabled( 'titan/provision-mailboxes' ) ) {
 			return (
 				<>
 					{ this.renderHeaderSection() }
