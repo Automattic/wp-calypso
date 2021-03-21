@@ -119,6 +119,12 @@
 		justify-content: space-between;
 		margin-top: 1em;
 
+		.email-providers-comparison__provider-form {
+			.titan-new-mailbox-list__actions {
+				justify-content: space-between;
+			}
+		}
+
 		.email-providers-comparison__provider-features {
 			padding-left: 36px;
 
@@ -129,10 +135,6 @@
 				border-bottom: none;
 				margin-bottom: 0;
 			}
-		}
-
-		.email-providers-comparison__provider-form .form-label .form-text-input-with-affixes__suffix {
-			font-weight: normal;
 		}
 	}
 
