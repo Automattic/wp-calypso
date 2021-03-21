@@ -30,7 +30,7 @@ function EmailProviderCard( {
 	formFields,
 	buttonLabel,
 	onButtonClick,
-	ctaLabel,
+	expandButtonLabel,
 	features,
 } ) {
 	const renderFeatures = ( providerSlug, featureList ) => {
@@ -43,7 +43,7 @@ function EmailProviderCard( {
 		event.preventDefault();
 		onExpandedChange( providerKey, ! detailsExpanded );
 	};
-	const ctaButtonLabel = ctaLabel ? ctaLabel : buttonLabel;
+	const labelForExpandButton = expandButtonLabel ? expandButtonLabel : buttonLabel;
 
 	return (
 		<PromoCard
@@ -61,7 +61,7 @@ function EmailProviderCard( {
 					onClick={ toggleVisibility }
 					className="email-providers-comparison__provider-expand-cta"
 				>
-					{ ctaButtonLabel }
+					{ labelForExpandButton }
 				</Button>
 			</div>
 			<PromoCardPrice formattedPrice={ formattedPrice } discount={ discount } />
@@ -100,7 +100,7 @@ EmailProviderCard.propTypes = {
 	formFields: PropTypes.node,
 	buttonLabel: PropTypes.string,
 	onButtonClick: PropTypes.func,
-	ctaLabel: PropTypes.string,
+	expandButtonLabel: PropTypes.string,
 	features: PropTypes.arrayOf( PropTypes.string ),
 	onExpandedChange: PropTypes.func,
 };

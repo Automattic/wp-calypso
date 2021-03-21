@@ -444,7 +444,7 @@ class EmailProvidersComparison extends React.Component {
 				formattedPrice={ formattedPrice }
 				discount={ discount }
 				formFields={ formFields }
-				ctaLabel={ translate( 'Add Email' ) }
+				expandButtonLabel={ translate( 'Add Email' ) }
 				features={ this.getTitanFeatures() }
 			/>
 		);
@@ -457,7 +457,7 @@ class EmailProvidersComparison extends React.Component {
 	onGoogleFormReturnKeyPress = ( event ) => {
 		// Simulate an implicit submission user form :)
 		if ( event.key === 'Enter' ) {
-			this.onGoogleConfirmUsers();
+			this.onGoogleConfirmNewUsers();
 		}
 	};
 
@@ -539,7 +539,7 @@ class EmailProvidersComparison extends React.Component {
 				detailsExpanded={ this.state.expanded.google }
 				onExpandedChange={ this.onExpandedStateChange }
 				onButtonClick={ this.onGoogleConfirmNewUsers }
-				ctaLabel={ translate( 'Add %(googleMailService)s', {
+				expandButtonLabel={ translate( 'Add %(googleMailService)s', {
 					args: {
 						googleMailService: getGoogleMailServiceFamily(),
 					},
