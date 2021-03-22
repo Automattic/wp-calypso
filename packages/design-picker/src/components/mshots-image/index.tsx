@@ -22,7 +22,8 @@ export type MShotsOptions = {
 	vpw: number;
 	vph: number;
 	w: number;
-	h: number;
+	h?: number;
+	screen_height?: number;
 };
 
 export function mshotsUrl( url: string, options: MShotsOptions, count = 0 ): string {
