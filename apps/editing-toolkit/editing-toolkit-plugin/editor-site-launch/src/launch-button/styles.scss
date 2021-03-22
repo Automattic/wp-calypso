@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 // Added to body to allow general overrides
 .editor-gutenberg-launch__fse-overrides {
 	// Override 'Save' button to have tertiary styles.
@@ -16,6 +19,13 @@
 }
 
 .editor-gutenberg-launch__launch-button {
+	// Hide button on screen widths < 480px because there's not enough horizontal space
+	// in the header.
+	display: none;
 	padding: 0 12px;
 	margin: 0 12px 0 3px;
+
+	@include break-mobile {
+		display: block;
+	}
 }
