@@ -146,47 +146,31 @@ describe( 'check conditional elements render correctly', () => {
 
 describe( 'test that suggested items are rendered correctly based on availability', () => {
 	it( 'should have the disabled UI state when provided an availabilityStatus of unavailable', () => {
-		const testRequiredProps = {
-			domain: 'testdomain.com',
-			cost: '€12.00',
-			railcarId: 'id',
-			isRecommended: true,
-			isUnavailable: true,
-		};
-
-		render(
-			<SuggestionItem { ...testRequiredProps } onSelect={ jest.fn() } onRender={ jest.fn() } />
-		);
+		renderComponent( { cost: '€12.00', isRecommended: true, isUnavailable: true } );
 
 		// we have to test for the domain and the TLD separately because they get split in the component
-		expect( screen.queryByText( /testdomain/i ) ).toBeTruthy();
-		expect( screen.queryAllByText( /.com/i ) ).toBeTruthy();
 
-		expect( screen.queryByText( /Unavailable/i ) ).toBeTruthy();
-		expect( screen.queryByText( /Recommended/i ) ).toBeFalsy();
-		expect( screen.queryByRole( 'button' )?.getAttribute( 'disabled' ) ).not.toBe( null );
+		const [ domain, tld ] = MOCK_PROPS.domain.split( '.' );
+		expect( screen.getByText( new RegExp( domain, 'i' ) ) ).toBeInTheDocument();
+		expect( screen.getByText( new RegExp( tld, 'i' ) ) ).toBeInTheDocument();
+
+		expect( screen.getByText( /Unavailable/i ) ).toBeInTheDocument();
+		expect( screen.queryByText( /Recommended/i ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button' ) ).toBeDisabled();
 	} );
 
 	it( 'should have the enabled UI state when provided an availabilityStatus that is available', () => {
-		const testRequiredProps = {
-			domain: 'testdomain.com',
-			cost: '€12.00',
-			railcarId: 'id',
-			isRecommended: true,
-			isUnavailable: false,
-		};
-
-		render(
-			<SuggestionItem { ...testRequiredProps } onSelect={ jest.fn() } onRender={ jest.fn() } />
-		);
+		renderComponent( { cost: '€12.00', isRecommended: true, isUnavailable: false } );
 
 		// we have to test for the domain and the TLD separately because they get split in the component
-		expect( screen.queryByText( /testdomain/i ) ).toBeTruthy();
-		expect( screen.queryAllByText( /.com/i ) ).toBeTruthy();
+		const [ domain, tld ] = MOCK_PROPS.domain.split( '.' );
 
-		expect( screen.queryByText( /Unavailable/i ) ).toBeFalsy();
-		expect( screen.queryByText( /Renews at: €12.00/i ) ).toBeTruthy();
-		expect( screen.queryByText( /Recommended/i ) ).toBeTruthy();
-		expect( screen.queryByRole( 'button' )?.getAttribute( 'disabled' ) ).toBe( null );
+		expect( screen.getByText( new RegExp( domain, 'i' ) ) ).toBeInTheDocument();
+		expect( screen.getByText( new RegExp( `${ tld }$`, 'i' ) ) ).toBeInTheDocument();
+
+		expect( screen.getByText( /Recommended/i ) ).toBeInTheDocument();
+		expect( screen.getByText( /Renews at: €12.00/i ) ).toBeInTheDocument();
+		expect( screen.queryByText( /Unavailable/i ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button' ) ).not.toBeDisabled();
 	} );
 } );
