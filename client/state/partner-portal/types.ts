@@ -44,10 +44,22 @@ export interface LicenseListContext {
 	sortDirection: LicenseSortDirection;
 }
 
-export interface APIError {
-	status: number;
-	code: string | null;
-	message: string;
+/**
+ * API schemas.
+ */
+export interface APIPartnerKey {
+	id: number;
+	name: string;
+	oauth2_token: string;
+	disabled_on: string | null;
+}
+
+export interface APIPartner {
+	id: number;
+	slug: string;
+	name: string;
+	keys: APIPartnerKey[];
+	tos: boolean;
 }
 
 // The API-returned license object is not quite consistent right now so we only define the properties we actively rely on.
@@ -69,6 +81,12 @@ export interface APIProductFamily {
 	products: APIProductFamilyProduct[];
 }
 
+export interface APIError {
+	status: number;
+	code: string | null;
+	message: string;
+}
+
 /**
  * Store.
  */
@@ -84,6 +102,7 @@ export interface Partner {
 	slug: string;
 	name: string;
 	keys: PartnerKey[];
+	tos: boolean;
 }
 
 export interface PartnerStore {

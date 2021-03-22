@@ -15,11 +15,30 @@ import * as controller from './controller';
 import './style.scss';
 
 export default function () {
-	page( `/partner-portal/partner-key`, controller.partnerKeyContext, makeLayout, clientRender );
+	page( `/partner-portal/partner`, controller.partnerContext, makeLayout, clientRender );
+
+	page(
+		`/partner-portal/terms-of-service`,
+		controller.requireAccessContext,
+		controller.termsOfServiceContext,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		`/partner-portal/partner-key`,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.partnerKeyContext,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		`/partner-portal/:filter(unassigned|assigned|revoked)?`,
-		controller.requirePartnerKeyContext,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.requireSelectedPartnerKeyContext,
 		controller.partnerPortalContext,
 		makeLayout,
 		clientRender
@@ -27,7 +46,9 @@ export default function () {
 
 	page(
 		`/partner-portal/issue-license`,
-		controller.requirePartnerKeyContext,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.requireSelectedPartnerKeyContext,
 		controller.issueLicenseContext,
 		makeLayout,
 		clientRender
