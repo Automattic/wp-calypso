@@ -66,9 +66,9 @@ const TitanNewMailbox = ( {
 				<div className="titan-mail-add-mailboxes__new-mailbox-name-and-remove">
 					<FormFieldset>
 						<FormLabel>
-							{ translate( 'Name' ) }
+							{ translate( 'Full name' ) }
 							<FormTextInput
-								placeholder={ translate( 'Name' ) }
+								placeholder={ translate( 'Full name' ) }
 								value={ name }
 								required
 								isError={ hasNameError }
