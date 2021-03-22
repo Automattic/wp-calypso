@@ -3,6 +3,7 @@
  */
 import * as React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
+import type { RenderResult } from '@testing-library/react';
 
 /**
  * Internal dependencies
@@ -11,24 +12,19 @@ import { render, fireEvent, screen } from '@testing-library/react';
 import '../../../__mocks__/matchMedia.mock';
 import SuggestionItem from '../suggestion-item';
 
-const testSuggestion = {
-	domain_name: 'example.com',
-	relevance: 0.9,
-	supports_privacy: true,
-	vendor: 'vendor',
-	cost: '€15.00',
-	product_id: 1234,
-	product_slug: '1234',
+const MOCK_PROPS = {
+	railcarId: 'id',
+	domain: 'example.com',
+	onSelect: jest.fn(),
+	onRender: jest.fn(),
 };
 
-/**
- * disabled the below test suite as these tests have been unmaintained whilst the codebase has moved on
- * and have now become stale. A separate task will be raised to fixed them. See https://github.com/Automattic/wp-calypso/issues/45501
- */
+const renderComponent = ( props = {} ): RenderResult =>
+	render( <SuggestionItem { ...MOCK_PROPS } { ...props } /> );
 
-beforeAll( () => {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	// ( window as any ).configData = require( '../../../../../../config/test.json' );
+describe( 'traintracks events', () => {
+	afterEach( () => {
+		jest.clearAllMocks();
 } );
 
 /* eslint-disable */
