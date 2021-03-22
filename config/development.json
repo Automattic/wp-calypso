@@ -181,6 +181,7 @@
 		"support-user": true,
 		"titan/iframe-control-panel": true,
 		"titan/phase-2": true,
+		"titan/provision-mailboxes": true,
 		"tools/migrate": true,
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,

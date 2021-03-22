@@ -35,16 +35,10 @@ import {
 import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import {
-	getConfiguredTitanMailboxCount,
 	getMaxTitanMailboxCount,
-	getTitanExpiryDate,
-	getTitanMailboxPurchaseCost,
-	getTitanMailboxRenewalCost,
 	getTitanProductName,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
@@ -54,6 +48,9 @@ import {
 	TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
 	TITAN_MAIL_MONTHLY_SLUG,
 } from 'calypso/lib/titan/constants';
+import TitanExistingForwardsNotice from 'calypso/my-sites/email/titan-mail-add-mailboxes/titan-existing-forwards-notice';
+import TitanMailboxPricingNotice from 'calypso/my-sites/email/titan-mail-add-mailboxes/titan-mailbox-pricing-notice';
+import TitanUnusedMailboxesNotice from 'calypso/my-sites/email/titan-mail-add-mailboxes/titan-unused-mailbox-notice';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
@@ -177,157 +174,6 @@ class TitanMailQuantitySelection extends React.Component {
 		this.setState( { quantity } );
 	};
 
-	renderForwardsNotice() {
-		const { domainsWithForwards, translate } = this.props;
-		return domainsWithForwards.length ? (
-			<Notice showDismiss={ false } status="is-warning">
-				{ translate(
-					'Please note that email forwards are not compatible with %(productName)s, ' +
-						'and will be disabled once %(productName)s is added to this domain. The following ' +
-						'domains have forwards:',
-					{
-						args: {
-							productName: getTitanProductName(),
-						},
-						comment: '%(productName)s is the name of the product, e.g. Titan Mail or Email',
-					}
-				) }
-				<ul>
-					{ domainsWithForwards.map( ( domainName ) => {
-						return <li key={ domainName }>{ domainName }</li>;
-					} ) }
-				</ul>
-			</Notice>
-		) : null;
-	}
-
-	doesAdditionalPriceMatchStandardPrice() {
-		const { selectedDomain, titanMonthlyProduct } = this.props;
-		if ( ! selectedDomain || ! hasTitanMailWithUs( selectedDomain ) ) {
-			return true;
-		}
-		const costPerAdditionalMailbox = getTitanMailboxPurchaseCost( selectedDomain );
-		if ( ! costPerAdditionalMailbox ) {
-			return true;
-		}
-		return (
-			costPerAdditionalMailbox.amount === titanMonthlyProduct.cost &&
-			costPerAdditionalMailbox.currency === titanMonthlyProduct.currency_code
-		);
-	}
-
-	renderUnusedMailboxesNotice() {
-		const { maxTitanMailboxCount, selectedDomain, translate } = this.props;
-
-		if ( ! hasTitanMailWithUs( selectedDomain ) ) {
-			return null;
-		}
-
-		const numberOfUnusedMailboxes =
-			maxTitanMailboxCount - getConfiguredTitanMailboxCount( selectedDomain );
-
-		if ( numberOfUnusedMailboxes <= 0 ) {
-			return;
-		}
-
-		const text = translate(
-			'You have %(numberOfMailboxes)d unused mailbox. Do you want to configure it now instead?',
-			'You have %(numberOfMailboxes)d unused mailboxes. Do you want to configure them now instead?',
-			{
-				count: numberOfUnusedMailboxes,
-				args: {
-					numberOfMailboxes: numberOfUnusedMailboxes,
-				},
-				comment: 'This refers to the number of mailboxes purchased that have not been set up yet',
-			}
-		);
-
-		return (
-			<Notice icon="notice" showDismiss={ false } status="is-warning" text={ text }>
-				<NoticeAction
-					external={ ! isEnabled( 'titan/iframe-control-panel' ) }
-					onClick={ this.handleCreateMailbox }
-				>
-					{ translate( 'Finish Setup' ) }
-				</NoticeAction>
-			</Notice>
-		);
-	}
-
-	renderNewMailboxesNotice() {
-		const { moment, selectedDomain, translate } = this.props;
-
-		if ( ! hasTitanMailWithUs( selectedDomain ) ) {
-			return null;
-		}
-
-		const purchaseCost = getTitanMailboxPurchaseCost( selectedDomain );
-
-		if ( this.doesAdditionalPriceMatchStandardPrice() ) {
-			return (
-				<Notice icon="info-outline" showDismiss={ false } status="is-success">
-					{ translate(
-						'You can purchase new mailboxes at the regular price of {{strong}}%(price)s{{/strong}} per mailbox per month.',
-						{
-							args: {
-								price: purchaseCost.text,
-							},
-							components: {
-								strong: <strong />,
-							},
-							comment:
-								'%(price)s is a formatted price for an email subscription (e.g. $3.50, €3.75, or PLN 4.50)',
-						}
-					) }
-				</Notice>
-			);
-		}
-		const renewalCost = getTitanMailboxRenewalCost( selectedDomain );
-		const expiryDate = getTitanExpiryDate( selectedDomain );
-
-		return (
-			<Notice icon="info-outline" showDismiss={ false } status="is-success">
-				<>
-					{ translate(
-						'You can purchase new mailboxes at the prorated price of {{strong}}%(proratedPrice)s{{/strong}} per mailbox.',
-						{
-							args: {
-								proratedPrice: purchaseCost.text,
-							},
-							components: {
-								strong: <strong />,
-							},
-							comment:
-								'%(proratedPrice)s is a formatted price for an email subscription (e.g. $3.50, €3.75, or PLN 4.50)',
-						}
-					) }{ ' ' }
-					{ purchaseCost.amount < renewalCost.amount
-						? translate(
-								'This is less than the regular price because you are only charged for the remainder of the current month.'
-						  )
-						: translate(
-								'This is more than the regular price because you are charged for the remainder of the current month plus any additional month until renewal.'
-						  ) }{ ' ' }
-					{ translate(
-						'All of your mailboxes are due to renew at the regular price of {{strong}}%(fullPrice)s{{/strong}} per mailbox when your subscription renews on {{strong}}%(expiryDate)s{{/strong}}.',
-						{
-							args: {
-								fullPrice: renewalCost.text,
-								expiryDate: moment( expiryDate ).format( 'LL' ),
-							},
-							components: {
-								strong: <strong />,
-							},
-							comment:
-								'%(fullPrice)s is a formatted price for an email subscription (e.g. $3.50, €3.75, or PLN 4.50), ' +
-								'%(expiryDate)s is a localized date (e.g. February 17, 2021)',
-						}
-					) }
-				</>
-			</Notice>
-		);
-	}
-
 	renderForm() {
 		const { isLoadingDomains, titanMonthlyProduct, translate } = this.props;
 
@@ -378,16 +224,22 @@ class TitanMailQuantitySelection extends React.Component {
 
 	render() {
 		const {
+			domainsWithForwards,
+			selectedDomain,
 			selectedDomainName,
 			selectedSite,
 			isSelectedDomainNameValid,
 			isLoadingDomains,
+			maxTitanMailboxCount,
+			titanMonthlyProduct,
 		} = this.props;
 
 		if ( ! isLoadingDomains && ! isSelectedDomainNameValid ) {
 			this.goToEmail();
 			return null;
 		}
+
+		const finishSetupLinkIsExternal = ! isEnabled( 'titan/iframe-control-panel' );
 
 		return (
 			<>
@@ -403,9 +255,19 @@ class TitanMailQuantitySelection extends React.Component {
 						{ getTitanProductName() + ': ' + selectedDomainName }
 					</DomainManagementHeader>
 
-					{ this.renderForwardsNotice() }
-					{ this.renderUnusedMailboxesNotice() }
-					{ this.renderNewMailboxesNotice() }
+					<TitanExistingForwardsNotice domainsWithForwards={ domainsWithForwards } />
+					<TitanUnusedMailboxesNotice
+						domain={ selectedDomain }
+						linkIsExternal={ finishSetupLinkIsExternal }
+						maxTitanMailboxCount={ maxTitanMailboxCount }
+						onFinishSetupClick={ this.handleCreateMailbox }
+					/>
+					{ selectedDomain && titanMonthlyProduct && (
+						<TitanMailboxPricingNotice
+							domain={ selectedDomain }
+							titanMonthlyProduct={ titanMonthlyProduct }
+						/>
+					) }
 					{ this.renderForm() }
 				</Main>
 			</>
