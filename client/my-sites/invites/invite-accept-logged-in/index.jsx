@@ -6,7 +6,6 @@ import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import page from 'page';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { get } from 'lodash';
 
 /**
@@ -153,6 +152,4 @@ class InviteAcceptLoggedIn extends React.Component {
 	}
 }
 
-export default connect( null, ( dispatch ) => bindActionCreators( { acceptInvite }, dispatch ) )(
-	localize( InviteAcceptLoggedIn )
-);
+export default connect( null, { acceptInvite } )( localize( InviteAcceptLoggedIn ) );

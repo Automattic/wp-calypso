@@ -4,7 +4,6 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import store from 'store';
 import debugModule from 'debug';
 import { get } from 'lodash';
@@ -184,6 +183,6 @@ class InviteAcceptLoggedOut extends React.Component {
 	}
 }
 
-export default connect( null, ( dispatch ) =>
-	bindActionCreators( { createAccount, acceptInvite, errorNotice }, dispatch )
-)( localize( InviteAcceptLoggedOut ) );
+export default connect( null, { createAccount, acceptInvite, errorNotice } )(
+	localize( InviteAcceptLoggedOut )
+);
