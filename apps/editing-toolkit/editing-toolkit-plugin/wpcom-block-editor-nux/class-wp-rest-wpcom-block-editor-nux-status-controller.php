@@ -89,13 +89,8 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 
 		return rest_ensure_response(
 			array(
-				'show_welcome_guide'        => $show_welcome_guide,
-				'variant'                   => $variant,
-
-				// These are legacy rest params that can be removed after
-				// we know the new JS files have been deployed.
-				'is_nux_enabled'            => $show_welcome_guide,
-				'welcome_tour_show_variant' => 'tour' === $variant,
+				'show_welcome_guide' => $show_welcome_guide,
+				'variant'            => $variant,
 			)
 		);
 	}
@@ -107,14 +102,8 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 	 * @return WP_REST_Response
 	 */
 	public function update_nux_status( $request ) {
-		$params = $request->get_json_params();
-		if ( isset( $params['show_welcome_guide'] ) ) {
-			$nux_status = $params['show_welcome_guide'] ? 'enabled' : 'dismissed';
-		} else {
-			// This legacy rest param can be removed after we know the new
-			// JS files have been deployed.
-			$nux_status = $params['isNuxEnabled'] ? 'enabled' : 'dismissed';
-		}
+		$params     = $request->get_json_params();
+		$nux_status = $params['show_welcome_guide'] ? 'enabled' : 'dismissed';
 		if ( has_action( 'wpcom_block_editor_nux_update_status' ) ) {
 			do_action( 'wpcom_block_editor_nux_update_status', $nux_status );
 		}
