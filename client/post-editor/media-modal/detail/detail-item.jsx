@@ -25,7 +25,6 @@ import { Button, ScreenReaderText } from '@automattic/components';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import versionCompare from 'calypso/lib/version-compare';
 import { getMimePrefix, isItemBeingUploaded, isVideoPressItem } from 'calypso/lib/media/utils';
-import config from '@automattic/calypso-config';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'calypso/state/sites/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
@@ -94,11 +93,6 @@ export class EditorMediaModalDetailItem extends Component {
 
 		// do not allow if, for some reason, there isn't a valid item yet
 		if ( ! item ) {
-			return false;
-		}
-
-		// do not show if the feature flag isn't set
-		if ( ! config.isEnabled( 'post-editor/image-editor' ) ) {
 			return false;
 		}
 
