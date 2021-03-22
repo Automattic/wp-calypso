@@ -18,6 +18,7 @@ import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites
 import DomainMappingInstructions from 'calypso/my-sites/domains/components/mapping-instructions';
 
 const DomainMappingDetails = ( {
+	isAtomicSite,
 	isSubdomainMapping,
 	isRequestingDomainsDetails,
 	isRootDomainWithUs,
@@ -33,6 +34,7 @@ const DomainMappingDetails = ( {
 			aRecordsRequiredForMapping={ purchasedDomain?.aRecordsRequiredForMapping }
 			areDomainDetailsLoaded={ ! isRequestingDomainsDetails && !! purchasedDomain }
 			domainName={ purchasedDomain?.name }
+			isAtomic={ isAtomicSite }
 		/>
 	);
 
@@ -48,6 +50,7 @@ const mapStateToProps = ( state, { domain: selectedDomainName } ) => {
 	const selectedSite = getSelectedSite( state );
 	const domains = getDomainsBySiteId( state, selectedSite.ID );
 	return {
+		isAtomicSite: selectedSite.options?.is_automated_transfer,
 		isBusinessPlan: isBusiness( selectedSite.plan ),
 		isRequestingDomainsDetails: isRequestingSiteDomains( state, selectedSite.ID ),
 		isSubdomainMapping: isSubdomain( selectedDomainName ),

@@ -85,6 +85,7 @@ class MappedDomainType extends React.Component {
 						aRecordsRequiredForMapping={ domain.aRecordsRequiredForMapping }
 						areDomainDetailsLoaded={ true }
 						domainName={ domain.name }
+						isAtomic={ this.props.isSiteAutomatedTransfer }
 					/>
 				</div>
 				<div className="mapped-domain-type__small-message">{ secondaryMessage }</div>
