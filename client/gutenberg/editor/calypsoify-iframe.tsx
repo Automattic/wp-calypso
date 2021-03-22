@@ -57,7 +57,7 @@ import {
 	PerformanceTrackProps,
 } from 'calypso/lib/performance-tracking';
 import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'calypso/state/desktop/window-events';
-import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
+import { selectMediaItems } from 'calypso/state/media/actions';
 import { fetchMediaItem, getMediaItem } from 'calypso/state/media/thunks';
 import Iframe from './iframe';
 
@@ -243,7 +243,7 @@ class CalypsoifyIframe extends Component<
 		if ( WindowActions.ClassicBlockOpenMediaModel === action ) {
 			if ( data.imageId ) {
 				const { siteId } = this.props;
-				this.props.setMediaLibrarySelectedItems( siteId, [ { ID: data.imageId } ] );
+				this.props.selectMediaItems( siteId, [ { ID: data.imageId } ] );
 			}
 
 			this.setState( {
@@ -292,9 +292,9 @@ class CalypsoifyIframe extends Component<
 					};
 				} );
 
-				this.props.setMediaLibrarySelectedItems( siteId, selectedItems );
+				this.props.selectMediaItems( siteId, selectedItems );
 			} else {
-				this.props.setMediaLibrarySelectedItems( siteId, [] );
+				this.props.selectMediaItems( siteId, [] );
 			}
 
 			this.setState( { isMediaModalVisible: true, allowedTypes, gallery, multiple } );
@@ -910,7 +910,7 @@ const mapDispatchToProps = {
 	trashPost,
 	updateSiteFrontPage,
 	notifyDesktopCannotOpenEditor,
-	setMediaLibrarySelectedItems,
+	selectMediaItems,
 	fetchMediaItem,
 	getMediaItem,
 	clearLastNonEditorRoute,

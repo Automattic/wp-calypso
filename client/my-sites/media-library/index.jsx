@@ -25,7 +25,7 @@ import {
 	getKeyringConnections,
 } from 'calypso/state/sharing/keyring/selectors';
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
-import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
+import { selectMediaItems } from 'calypso/state/media/actions';
 
 /**
  * Style dependencies
@@ -120,7 +120,7 @@ class MediaLibrary extends Component {
 		}
 
 		if ( ! isEqual( selectedItems, filteredItems ) ) {
-			this.props.setMediaLibrarySelectedItems( this.props.site.ID, filteredItems );
+			this.props.selectMediaItems( this.props.site.ID, filteredItems );
 		}
 
 		this.props.onAddMedia();
@@ -217,6 +217,6 @@ export default connect(
 	} ),
 	{
 		requestKeyringConnections,
-		setMediaLibrarySelectedItems,
+		selectMediaItems,
 	}
 )( MediaLibrary );

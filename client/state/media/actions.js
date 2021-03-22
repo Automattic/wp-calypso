@@ -291,7 +291,7 @@ export function setMediaItemErrors( siteId, mediaId, errors ) {
  * @param  {Array}   media  Array of media objects
  * @returns {object}        Action object
  */
-export function setMediaLibrarySelectedItems( siteId, media ) {
+export function selectMediaItems( siteId, media ) {
 	return {
 		type: MEDIA_LIBRARY_SELECTED_ITEMS_UPDATE,
 		media,
