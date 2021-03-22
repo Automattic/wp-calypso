@@ -51,13 +51,13 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 	}
 
 	/**
-	 * Should we show editor onboarding (i.e. welcome tour or nux modal)
+	 * Should we show the wpcom welcome guide (i.e. welcome tour or nux modal)
 	 *
 	 * @param mixed $nux_status Can be "enabled", "dismissed", or undefined.
 	 * @return boolean
 	 */
-	public function show_editor_onboarding( $nux_status ) {
-		if ( defined( 'FORCE_SHOW_EDITOR_ONBOARDING' ) && FORCE_SHOW_EDITOR_ONBOARDING ) {
+	public function show_wpcom_welcome_guide( $nux_status ) {
+		if ( defined( 'FORCE_SHOW_WPCOM_WELCOME_GUIDE' ) && FORCE_SHOW_WPCOM_WELCOME_GUIDE ) {
 			return true;
 		}
 		return 'enabled' === $nux_status;
@@ -71,10 +71,10 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 	public function get_nux_status() {
 
 		if ( wp_is_mobile() ) {
-			// Designs for WelcomeTour on mobile are in progress, until then do not show on mobile.
-			$editor_onboarding_variant = 'modal';
+			// Designs for welcome tour on mobile are in progress, until then do not show on mobile.
+			$variant = 'modal';
 		} else {
-			$editor_onboarding_variant = 'tour';
+			$variant = 'tour';
 		}
 
 		if ( has_filter( 'wpcom_block_editor_nux_get_status' ) ) {
@@ -85,17 +85,17 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 			$nux_status = get_user_meta( get_current_user_id(), 'wpcom_block_editor_nux_status', true );
 		}
 
-		$show_editor_onboarding = $this->show_editor_onboarding( $nux_status );
+		$show_welcome_guide = $this->show_wpcom_welcome_guide( $nux_status );
 
 		return rest_ensure_response(
 			array(
-				'show_editor_onboarding'    => $show_editor_onboarding,
-				'editor_onboarding_variant' => $editor_onboarding_variant,
+				'show_welcome_guide'        => $show_welcome_guide,
+				'variant'                   => $variant,
 
 				// These are legacy rest params that can be removed after
 				// we know the new JS files have been deployed.
-				'is_nux_enabled'            => $show_editor_onboarding,
-				'welcome_tour_show_variant' => 'tour' === $editor_onboarding_variant,
+				'is_nux_enabled'            => $show_welcome_guide,
+				'welcome_tour_show_variant' => 'tour' === $variant,
 			)
 		);
 	}
@@ -107,12 +107,18 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 	 * @return WP_REST_Response
 	 */
 	public function update_nux_status( $request ) {
-		$params     = $request->get_json_params();
-		$nux_status = $params['isNuxEnabled'] ? 'enabled' : 'dismissed';
+		$params = $request->get_json_params();
+		if ( isset( $params['show_welcome_guide'] ) ) {
+			$nux_status = $params['show_welcome_guide'] ? 'enabled' : 'dismissed';
+		} else {
+			// This legacy rest param can be removed after we know the new
+			// JS files have been deployed.
+			$nux_status = $params['isNuxEnabled'] ? 'enabled' : 'dismissed';
+		}
 		if ( has_action( 'wpcom_block_editor_nux_update_status' ) ) {
 			do_action( 'wpcom_block_editor_nux_update_status', $nux_status );
 		}
 		update_user_meta( get_current_user_id(), 'wpcom_block_editor_nux_status', $nux_status );
-		return rest_ensure_response( array( 'is_nux_enabled' => $this->is_nux_enabled( $nux_status ) ) );
+		return rest_ensure_response( array( 'show_welcome_guide' => $this->show_wpcom_welcome_guide( $nux_status ) ) );
 	}
 }
