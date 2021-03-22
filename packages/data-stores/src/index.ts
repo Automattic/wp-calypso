@@ -31,4 +31,4 @@ export {
  * Helper types
  */
 export * from './mapped-types';
-export { ReturnOrGeneratorYieldUnion } from './launch/actions';
+export type { ReturnOrGeneratorYieldUnion } from './launch/actions';
