@@ -25,9 +25,6 @@ import EmailProviderDetails from './email-provider-details';
 import EmailProviderFeature from './email-provider-details/email-provider-feature';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import {
@@ -554,26 +551,10 @@ class EmailProvidersComparison extends React.Component {
 	renderStackedForwardingDetails() {
 		const { domain, translate } = this.props;
 
-		const formFields = (
-			<>
-				<FormFieldset>
-					<FormLabel>
-						{ translate( 'Emails sent to' ) }
-						<FormTextInputWithAffixes
-							required
-							suffix={ `@${ domain.name }` }
-							onChange={ this.onForwardingEmailChange }
-						/>
-					</FormLabel>
-				</FormFieldset>
-				<FormFieldset>
-					<FormLabel>
-						{ translate( 'Will be forwarded to' ) }
-						<FormTextInput required onChange={ this.onForwardingRecipientEmailChange } />
-					</FormLabel>
-				</FormFieldset>
-			</>
-		);
+		const buttonLabel =
+			domain.emailForwardsCount > 0
+				? translate( 'Manage email forwarding' )
+				: translate( 'Add email forwarding' );
 
 		return (
 			<EmailProviderCard
@@ -585,8 +566,8 @@ class EmailProvidersComparison extends React.Component {
 				) }
 				detailsExpanded={ this.state.expanded.forwarding }
 				onExpandedChange={ this.onExpandedStateChange }
-				formFields={ formFields }
-				buttonLabel={ translate( 'Add email forwarding' ) }
+				buttonLabel={ buttonLabel }
+				expandButtonLabel={ translate( 'Add email forwarding' ) }
 				onButtonClick={ this.goToEmailForwarding }
 				features={ this.getForwardingFeatures() }
 			/>
