@@ -18,7 +18,6 @@ import sites from './sites/reducer';
 import streams from './streams/reducer';
 import tags from './tags/reducer';
 import thumbnails from './thumbnails/reducer';
-import viewing from './viewing/reducer';
 import organizations from './organizations/reducer';
 
 const combinedReducer = combineReducers( {
@@ -36,7 +35,6 @@ const combinedReducer = combineReducers( {
 	streams,
 	tags,
 	thumbnails,
-	viewing,
 	organizations,
 } );
 const readerReducer = withStorageKey( 'reader', combinedReducer );
