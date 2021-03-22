@@ -188,11 +188,16 @@ const validateNewUsersAreUnique = ( users: GSuiteNewUser[] ): GSuiteNewUser[] =>
  *
  * @see https://support.google.com/accounts/answer/32040 for requirements
  */
-const validatePasswordField = ( { value, error }: GSuiteNewUserField ): GSuiteNewUserField => {
-	if ( ! error && 12 > value.length ) {
+const validatePasswordField = (
+	{ value, error }: GSuiteNewUserField,
+	minimumLength = 12
+): GSuiteNewUserField => {
+	if ( ! error && minimumLength > value.length ) {
 		return {
 			value,
-			error: translate( "This field can't be shorter than %s characters.", { args: '12' } ),
+			error: translate( "This field can't be shorter than %s characters.", {
+				args: String( minimumLength ),
+			} ),
 		};
 	}
 
@@ -373,6 +378,7 @@ export {
 	sanitizeEmail,
 	validateAgainstExistingUsers,
 	validateNewUsersAreUnique,
+	validatePasswordField,
 	validateUser,
 	validateUsers,
 };
