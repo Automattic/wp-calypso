@@ -8,6 +8,7 @@ import { addQueryArgs } from '@wordpress/url';
 /**
  * Style dependencies
  */
+import { isEnabled } from '@automattic/calypso-config';
 import './style.scss';
 
 interface MShotsImageProps {
@@ -25,7 +26,9 @@ export type MShotsOptions = {
 };
 
 export function mshotsUrl( url: string, options: MShotsOptions, count = 0 ): string {
-	const mshotsUrl = 'https://s0.wp.com/mshots/v1/';
+	const mshotsUrl = isEnabled( 'gutenboarding/local-mshots' )
+		? 'http://127.0.0.1:8000/mshots/v1/'
+		: 'https://s0.wp.com/mshots/v1/';
 	const mshotsRequest = addQueryArgs( mshotsUrl + encodeURIComponent( url ), {
 		...options,
 		count,
