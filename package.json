@@ -26,6 +26,9 @@
 		"url": "https://github.com/Automattic/wp-calypso.git"
 	},
 	"browserslist": {
+		"wpcom": [
+			"extends @wordpress/browserslist-config"
+		],
 		"defaults": [
 			"extends @wordpress/browserslist-config"
 		],

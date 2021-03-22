@@ -39,14 +39,13 @@ const baseCommand = `npx --no-install babel --presets="${ babelPresetFile }" --i
 
 if ( transpileAll || transpileESM ) {
 	execSync( `${ baseCommand } -d "${ outputDirESM }" "${ inputDir }"`, {
-		env: Object.assign( {}, process.env, { BROWSERSLIST_ENV: 'defaults' } ),
 		cwd: root,
 	} );
 }
 
 if ( transpileAll || transpileCJS ) {
 	execSync( `${ baseCommand } -d "${ outputDirCJS }" "${ inputDir }"`, {
-		env: Object.assign( {}, process.env, { BROWSERSLIST_ENV: 'defaults', MODULES: 'commonjs' } ),
+		env: Object.assign( {}, process.env, { MODULES: 'commonjs' } ),
 		cwd: root,
 	} );
 }

@@ -12,7 +12,7 @@
 		"build": "run-s build:modules build:bundle",
 		"prepack": "yarn run clean && yarn run build",
 		"build:modules": "transpile",
-		"build:bundle": "webpack --display errors-only"
+		"build:bundle": "webpack --stats-preset errors-only"
 	},
 	"keywords": [
 		"wordpress",

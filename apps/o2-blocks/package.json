@@ -19,7 +19,7 @@
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prebuild": "yarn run clean",
-		"build": "calypso-build"
+		"build": "BROWSERSLIST_ENV=wpcom calypso-build"
 	},
 	"dependencies": {
 		"@automattic/calypso-build": "^7.0.0",

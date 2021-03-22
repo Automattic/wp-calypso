@@ -19,7 +19,7 @@
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prebuild": "yarn run clean",
-		"build": "calypso-build --config='./webpack.config.js'",
+		"build": "BROWSERSLIST_ENV=wpcom calypso-build --config='./webpack.config.js'",
 		"sync": "yarn run clean && yarn run build && sh ./bin/wpcom-watch-and-sync.sh"
 	},
 	"dependencies": {
