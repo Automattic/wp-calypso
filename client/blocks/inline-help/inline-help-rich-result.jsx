@@ -82,8 +82,7 @@ class InlineHelpRichResult extends Component {
 			this.props.setDialogState( {
 				showDialog: true,
 				dialogType: 'video',
-				// Replace youtube.com links with the embeddable version that can be iframed.
-				videoLink: link.replace( 'youtube.com/watch?v=', 'youtube.com/embed/' ),
+				videoLink: link,
 			} );
 		} else if ( type === RESULT_ARTICLE && postId && isLocaleEnglish ) {
 			// Until we can deliver localized inline support article content, we send the
