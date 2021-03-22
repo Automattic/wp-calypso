@@ -257,12 +257,14 @@ class TitanMailAddMailboxes extends React.Component {
 					</DomainManagementHeader>
 
 					<TitanExistingForwardsNotice domainsWithForwards={ domainsWithForwards } />
-					<TitanUnusedMailboxesNotice
-						domain={ selectedDomain }
-						linkIsExternal={ finishSetupLinkIsExternal }
-						maxTitanMailboxCount={ maxTitanMailboxCount }
-						onFinishSetupClick={ this.handleUnusedMailboxFinishSetupClick }
-					/>
+					{ selectedDomain && (
+						<TitanUnusedMailboxesNotice
+							domain={ selectedDomain }
+							linkIsExternal={ finishSetupLinkIsExternal }
+							maxTitanMailboxCount={ maxTitanMailboxCount }
+							onFinishSetupClick={ this.handleUnusedMailboxFinishSetupClick }
+						/>
+					) }
 					{ selectedDomain && titanMonthlyProduct && (
 						<TitanMailboxPricingNotice
 							domain={ selectedDomain }

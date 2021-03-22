@@ -27,7 +27,7 @@ const TitanUnusedMailboxesNotice = ( {
 	const numberOfUnusedMailboxes = maxTitanMailboxCount - getConfiguredTitanMailboxCount( domain );
 
 	if ( numberOfUnusedMailboxes <= 0 ) {
-		return;
+		return null;
 	}
 
 	const text = translate(
