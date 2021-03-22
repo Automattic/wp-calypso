@@ -106,7 +106,6 @@ class PurchaseItem extends Component {
 			if ( isRenewing( purchase ) ) {
 				return translate( 'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically', {
 					args: {
-						timeUntilExpiry: expiry.fromNow(),
 						date: expiry.format( 'LL' ),
 					},
 					components: {
