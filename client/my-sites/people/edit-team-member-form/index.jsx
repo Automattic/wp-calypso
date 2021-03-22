@@ -159,7 +159,7 @@ export class EditTeamMemberForm extends Component {
 				<Card className="edit-team-member-form__user-profile">
 					<PeopleProfile siteId={ this.props.siteId } user={ this.state.user } />
 					<EditUserForm
-						{ ...this.state.user }
+						user={ this.state.user }
 						disabled={ this.state.removingUser }
 						siteId={ this.props.siteId }
 						isJetpack={ this.props.isJetpack }

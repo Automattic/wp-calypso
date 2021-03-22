@@ -49,10 +49,9 @@ class EditUserForm extends Component {
 	}
 
 	getStateObject( props ) {
-		const { site, ...rest } = props;
 		return {
-			...rest,
-			roles: this.getRole( props.roles ),
+			...props.user,
+			roles: this.getRole( props.user?.roles ),
 			isExternalContributor: props.isExternalContributor,
 		};
 	}
@@ -271,13 +270,11 @@ class EditUserForm extends Component {
 
 export default localize(
 	connect(
-		( state, { siteId, ID: userId, linked_user_ID: linkedUserId } ) => {
+		( state, { siteId, user } ) => {
 			const externalContributors = ( siteId && requestExternalContributors( siteId ).data ) || [];
 			return {
 				currentUser: getCurrentUser( state ),
-				isExternalContributor: externalContributors.includes(
-					undefined !== linkedUserId ? linkedUserId : userId
-				),
+				isExternalContributor: externalContributors.includes( user?.linked_user_ID ?? user?.ID ),
 				isVip: isVipSite( state, siteId ),
 				isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			};
