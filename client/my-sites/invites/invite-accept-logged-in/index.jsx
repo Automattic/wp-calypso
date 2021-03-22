@@ -28,13 +28,14 @@ class InviteAcceptLoggedIn extends React.Component {
 
 	accept = () => {
 		this.setState( { submitting: true } );
-		this.props.acceptInvite( this.props.invite, ( error ) => {
-			if ( error ) {
-				this.setState( { submitting: false } );
-			} else {
+		this.props
+			.acceptInvite( this.props.invite )
+			.then( () => {
 				page( this.props.redirectTo );
-			}
-		} );
+			} )
+			.catch( () => {
+				this.setState( { submitting: false } );
+			} );
 		recordTracksEvent( 'calypso_invite_accept_logged_in_join_button_click' );
 	};
 

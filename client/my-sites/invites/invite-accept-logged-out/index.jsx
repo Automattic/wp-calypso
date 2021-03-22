@@ -54,19 +54,6 @@ class InviteAcceptLoggedOut extends React.Component {
 		this.setState( { submitting: true } );
 		debug( 'Storing invite_accepted: ' + JSON.stringify( invite ) );
 		store.set( 'invite_accepted', invite );
-		const createAccountCallback = ( error, response ) => {
-			const bearerToken = response.bearer_token;
-
-			debug( 'Create account error: ' + JSON.stringify( error ) );
-			debug( 'Create account bearerToken: ' + bearerToken );
-
-			if ( error ) {
-				store.remove( 'invite_accepted' );
-				this.setState( { submitting: false } );
-			} else {
-				this.setState( { bearerToken, userData } );
-			}
-		};
 
 		const enhancedUserData = { ...userData };
 
@@ -74,7 +61,17 @@ class InviteAcceptLoggedOut extends React.Component {
 			enhancedUserData.signup_flow_name = 'p2';
 		}
 
-		this.props.createAccount( enhancedUserData, invite, createAccountCallback );
+		this.props
+			.createAccount( enhancedUserData, invite )
+			.then( ( response ) => {
+				const bearerToken = response.bearer_token;
+				debug( 'Create account bearerToken: ' + bearerToken );
+				this.setState( { bearerToken, userData } );
+			} )
+			.catch( () => {
+				store.remove( 'invite_accepted' );
+				this.setState( { submitting: false } );
+			} );
 	};
 
 	renderFormHeader = () => {
@@ -95,15 +92,16 @@ class InviteAcceptLoggedOut extends React.Component {
 	subscribeUserByEmailOnly = () => {
 		const { invite } = this.props;
 		this.setState( { submitting: true } );
-		this.props.acceptInvite( invite, ( error ) => {
-			if ( ! error ) {
+		this.props
+			.acceptInvite( invite )
+			.then( () => {
 				window.location =
 					'https://subscribe.wordpress.com?update=activate&email=' +
 					encodeURIComponent( invite.sentTo ) +
 					'&key=' +
 					invite.authKey;
-			}
-		} );
+			} )
+			.catch( () => this.setState( { submitting: false } ) );
 		recordTracksEvent( 'calypso_invite_accept_logged_out_follow_by_email_click' );
 	};
 

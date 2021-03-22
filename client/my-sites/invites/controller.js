@@ -42,18 +42,18 @@ export function acceptInvite( context, next ) {
 			user().set( { email_verified: true } );
 		}
 		store.remove( 'invite_accepted' );
-		const acceptInviteCallback = ( error ) => {
-			if ( error ) {
-				debug( 'Accept invite error: ' + JSON.stringify( error ) );
-				page( window.location.href );
-			} else {
+
+		context.store
+			.dispatch( acceptInviteAction( acceptedInvite ) )
+			.then( () => {
 				const redirect = getRedirectAfterAccept( acceptedInvite );
 				debug( 'Accepted invite and redirecting to:  ' + redirect );
 				page( redirect );
-			}
-		};
-
-		acceptInviteAction( acceptedInvite, acceptInviteCallback )( context.store.dispatch );
+			} )
+			.catch( ( error ) => {
+				debug( 'Accept invite error: ' + JSON.stringify( error ) );
+				page( window.location.href );
+			} );
 		return;
 	}
 

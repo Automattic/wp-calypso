@@ -25,31 +25,29 @@ function inviteAccepted( invite ) {
 	return { type: INVITE_ACCEPTED, invite };
 }
 
-export function createAccount( userData, invite, callback ) {
+export function createAccount( userData, invite ) {
 	return ( dispatch ) => {
-		wpcom.undocumented().usersNew(
-			{
-				...userData,
-				validate: false,
-				send_verification_email: userData.email !== invite.sentTo,
-			},
-			( error, response ) => {
-				if ( error ) {
-					if ( error.message ) {
-						dispatch( errorNotice( error.message ) );
-					}
-					recordTracksEvent( 'calypso_invite_account_creation_failed', {
-						error: error.error,
-					} );
-				} else {
-					recordTracksEvent( 'calypso_invite_account_created', {
-						is_p2_site: get( invite, 'site.is_wpforteams_site', false ),
-						inviter_blog_id: get( invite, 'site.ID', false ),
-					} );
+		const result = wpcom.undocumented().usersNew( {
+			...userData,
+			validate: false,
+			send_verification_email: userData.email !== invite.sentTo,
+		} );
+
+		result
+			.then( () => {
+				recordTracksEvent( 'calypso_invite_account_created', {
+					is_p2_site: get( invite, 'site.is_wpforteams_site', false ),
+					inviter_blog_id: get( invite, 'site.ID', false ),
+				} );
+			} )
+			.catch( ( error ) => {
+				if ( error.message ) {
+					dispatch( errorNotice( error.message ) );
 				}
-				callback( error, response );
-			}
-		);
+				recordTracksEvent( 'calypso_invite_account_creation_failed', { error: error.error } );
+			} );
+
+		return result;
 	};
 }
 
@@ -81,17 +79,11 @@ export function disableInviteLinks( siteId ) {
 	};
 }
 
-export function acceptInvite( invite, callback ) {
+export function acceptInvite( invite ) {
 	return ( dispatch ) => {
-		wpcom.undocumented().acceptInvite( invite, ( error, data ) => {
-			if ( error ) {
-				if ( error.message ) {
-					dispatch( errorNotice( error.message, { displayOnNextPage: true } ) );
-				}
-				recordTracksEvent( 'calypso_invite_accept_failed', {
-					error: error.error,
-				} );
-			} else {
+		const result = wpcom.undocumented().acceptInvite( invite );
+		result
+			.then( ( data ) => {
 				if ( invite.role !== 'follower' && invite.role !== 'viewer' ) {
 					dispatch( receiveSites( data.sites ) );
 				}
@@ -107,11 +99,14 @@ export function acceptInvite( invite, callback ) {
 
 				dispatch( inviteAccepted( invite ) );
 				dispatch( requestSites() );
-			}
+			} )
+			.catch( ( error ) => {
+				if ( error.message ) {
+					dispatch( errorNotice( error.message, { displayOnNextPage: true } ) );
+				}
+				recordTracksEvent( 'calypso_invite_accept_failed', { error: error.error } );
+			} );
 
-			if ( typeof callback === 'function' ) {
-				callback( error, data );
-			}
-		} );
+		return result;
 	};
 }
