@@ -8,9 +8,11 @@ import { useQuery } from 'react-query';
  */
 import wpcom from 'calypso/lib/wp';
 
+export const cacheKey = ( siteId, login ) => [ 'user', siteId, login ];
+
 const useUserQuery = ( siteId, login, queryOptions = {} ) => {
 	return useQuery(
-		[ 'user', siteId, login ],
+		cacheKey( siteId, login ),
 		() => wpcom.req.get( `/sites/${ siteId }/users/login:${ login }` ),
 		queryOptions
 	);
