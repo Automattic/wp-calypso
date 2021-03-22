@@ -34,7 +34,6 @@ export function createAccount( userData, invite, callback ) {
 				send_verification_email: userData.email !== invite.sentTo,
 			},
 			( error, response ) => {
-				const bearerToken = response && response.bearer_token;
 				if ( error ) {
 					if ( error.message ) {
 						dispatch( errorNotice( error.message ) );
@@ -48,7 +47,7 @@ export function createAccount( userData, invite, callback ) {
 						inviter_blog_id: get( invite, 'site.ID', false ),
 					} );
 				}
-				callback( error, bearerToken );
+				callback( error, response );
 			}
 		);
 	};
