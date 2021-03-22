@@ -86,14 +86,6 @@ export function acceptInvite( invite, callback ) {
 			invite,
 		} );
 		wpcom.undocumented().acceptInvite( invite, ( error, data ) => {
-			dispatch( {
-				type: error
-					? ActionTypes.RECEIVE_INVITE_ACCEPTED_ERROR
-					: ActionTypes.RECEIVE_INVITE_ACCEPTED_SUCCESS,
-				error,
-				invite,
-				data,
-			} );
 			if ( error ) {
 				if ( error.message ) {
 					dispatch( errorNotice( error.message, { displayOnNextPage: true } ) );
