@@ -65,6 +65,7 @@ import './style.scss';
 class TitanMailAddMailboxes extends React.Component {
 	state = {
 		mailboxes: [ buildNewTitanMailbox( this.props.selectedDomainName, false ) ],
+		isAddingToCart: false,
 	};
 
 	isMounted = false;
@@ -135,11 +136,15 @@ class TitanMailAddMailboxes extends React.Component {
 		} );
 
 		if ( canContinue ) {
+			this.setState( { isAddingToCart: true } );
 			this.props.shoppingCartManager
 				.addProductsToCart( [
 					fillInSingleCartItemAttributes( this.getCartItem(), this.props.productsList ),
 				] )
 				.then( () => {
+					if ( this.isMounted ) {
+						this.setState( { isAddingToCart: false } );
+					}
 					const { errors } = this.props?.cart?.messages;
 					if ( errors && errors.length ) {
 						// Stay on the page to show the relevant error
@@ -213,6 +218,7 @@ class TitanMailAddMailboxes extends React.Component {
 						<Button
 							className="titan-mail-add-mailboxes__action-continue"
 							primary
+							busy={ this.state.isAddingToCart }
 							onClick={ this.handleContinue }
 						>
 							{ translate( 'Continue' ) }
