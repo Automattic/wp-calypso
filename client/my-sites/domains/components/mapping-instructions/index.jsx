@@ -62,6 +62,18 @@ class DomainMappingInstructions extends React.Component {
 		);
 	}
 
+	renderNameServerMessage() {
+		return (
+			<FoldableFAQ
+				id="advanced-mapping-setup-ns-records"
+				key="advanced-mapping-setup-ns-records"
+				question={ this.props.translate( 'Advanced setup using NS records' ) }
+			>
+				{ this.renderNameServerInstructions() }
+			</FoldableFAQ>
+		);
+	}
+
 	renderCnameInstructions() {
 		const { translate } = this.props;
 
@@ -99,6 +111,18 @@ class DomainMappingInstructions extends React.Component {
 				</ul>
 				<p>{ additionalInstructions }</p>
 			</React.Fragment>
+		);
+	}
+
+	renderCnameMessage() {
+		return (
+			<FoldableFAQ
+				id="advanced-mapping-setup-cname-record"
+				key="advanced-mapping-setup-cname-record"
+				question={ this.props.translate( 'Advanced setup using CNAME records' ) }
+			>
+				{ this.renderCnameInstructions() }
+			</FoldableFAQ>
 		);
 	}
 
@@ -144,31 +168,15 @@ class DomainMappingInstructions extends React.Component {
 	}
 
 	renderAdvancedSetupMessages() {
-		const { aRecordsRequiredForMapping, domainName, isAtomic, translate } = this.props;
+		const { aRecordsRequiredForMapping, domainName, isAtomic } = this.props;
 
 		const advancedSetupMessages = [];
 
 		if ( isSubdomain( domainName ) ) {
 			if ( ! isAtomic ) {
-				advancedSetupMessages.push(
-					<FoldableFAQ
-						id="advanced-mapping-setup-ns-records"
-						key="advanced-mapping-setup-ns-records"
-						question={ translate( 'Advanced setup using NS records' ) }
-					>
-						{ this.renderNameServerInstructions() }
-					</FoldableFAQ>
-				);
+				advancedSetupMessages.push( this.renderNameServerMessage() );
 			} else {
-				advancedSetupMessages.push(
-					<FoldableFAQ
-						id="advanced-mapping-setup-cname-record"
-						key="advanced-mapping-setup-cname-record"
-						question={ translate( 'Advanced setup using CNAME records' ) }
-					>
-						{ this.renderCnameInstructions() }
-					</FoldableFAQ>
-				);
+				advancedSetupMessages.push( this.renderCnameMessage() );
 			}
 		}
 
