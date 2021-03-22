@@ -376,7 +376,7 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.
 	}
 
 	if ( ! isRenewalItem && serverCartItem.months_per_bill_period === 1 ) {
-		return translate( 'Monthly subscription' );
+		return translate( 'Billed monthly' );
 	}
 
 	if ( isRenewalItem ) {
