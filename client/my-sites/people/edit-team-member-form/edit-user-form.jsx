@@ -44,6 +44,12 @@ class EditUserForm extends Component {
 		this.setState( this.getStateObject( nextProps ) );
 	}
 
+	componentDidUpdate() {
+		if ( ! this.hasUnsavedSettings() ) {
+			this.props.markSaved();
+		}
+	}
+
 	getRole( roles ) {
 		return roles && roles[ 0 ] ? roles[ 0 ] : null;
 	}
