@@ -4,10 +4,9 @@
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import page from 'page';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,10 +14,12 @@ import { includes } from 'lodash';
 import config from '@automattic/calypso-config';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import EmailProviderDetails from './email-provider-details';
+import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import {
-	getCurrentUserCurrencyCode,
-	getCurrentUserLocale,
-} from 'calypso/state/current-user/selectors';
+	getEmailForwardingFeatures,
+	getGoogleFeatures,
+	getTitanFeatures,
+} from './email-provider-features';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
@@ -41,7 +42,6 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import Gridicon from 'calypso/components/gridicon';
 import formatCurrency from '@automattic/format-currency';
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
-import titanLogo from 'calypso/assets/images/email-providers/titan.svg';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan.svg';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import gSuiteLogo from 'calypso/assets/images/email-providers/gsuite.svg';
@@ -165,10 +165,7 @@ class EmailProvidersComparison extends React.Component {
 					'Use your custom domain in your email address and forward all your mail to another address.'
 				) }
 				image={ { path: forwardingIcon } }
-				features={ [
-					translate( 'No billing' ),
-					translate( 'Receive emails sent to your custom domain' ),
-				] }
+				features={ getEmailForwardingFeatures() }
 				buttonLabel={ buttonLabel }
 				onButtonClick={ this.goToEmailForwarding }
 				className={ className }
@@ -177,27 +174,14 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	renderTitanDetails( className ) {
-		const { currencyCode, currentUserLocale, titanMailProduct, translate } = this.props;
-		const isEnglish = includes( config( 'english_locales' ), currentUserLocale );
-		const billingFrequency =
-			! config.isEnabled( 'titan/phase-2' ) &&
-			( isEnglish || i18n.hasTranslation( 'Annual or monthly billing' ) )
-				? translate( 'Annual or monthly billing' )
-				: translate( 'Monthly billing' );
+		const { currencyCode, titanMailProduct, translate } = this.props;
 
-		const formattedPrice = config.isEnabled( 'titan/phase-2' )
-			? translate( '{{price/}} /user /month', {
-					components: {
-						price: <span>{ formatCurrency( titanMailProduct?.cost ?? 0, currencyCode ) }</span>,
-					},
-					comment: '{{price/}} is the formatted price, e.g. $20',
-			  } )
-			: translate( '{{price/}} /user /month', {
-					components: {
-						price: <span>{ formatCurrency( 3.5, 'USD' ) }</span>,
-					},
-					comment: '{{price/}} is the formatted price, e.g. $20',
-			  } );
+		const formattedPrice = translate( '{{price/}} /user /month', {
+			components: {
+				price: <span>{ formatCurrency( titanMailProduct?.cost ?? 0, currencyCode ) }</span>,
+			},
+			comment: '{{price/}} is the formatted price, e.g. $20',
+		} );
 		const providerName = getTitanProductName();
 		const providerCtaText = translate( 'Add %(emailProductName)s', {
 			args: {
@@ -205,17 +189,13 @@ class EmailProvidersComparison extends React.Component {
 			},
 			comment: '%(emailProductName)s is the product name, either "Email" or "Titan Mail"',
 		} );
-		const providerEmailLogo = config.isEnabled( 'titan/phase-2' ) ? (
+		const providerEmailLogo = (
 			<Gridicon
 				className="email-providers-comparison__providers-wordpress-com-email"
 				icon="my-sites"
 			/>
-		) : (
-			{ path: titanLogo }
 		);
-		const badge = config.isEnabled( 'titan/phase-2' ) ? (
-			<img src={ poweredByTitanLogo } alt={ translate( 'Powered by Titan' ) } />
-		) : null;
+		const badge = <img src={ poweredByTitanLogo } alt={ translate( 'Powered by Titan' ) } />;
 
 		return (
 			<EmailProviderDetails
@@ -224,14 +204,7 @@ class EmailProvidersComparison extends React.Component {
 					'Easy-to-use email with incredibly powerful features. Manage your email and more on any device.'
 				) }
 				image={ providerEmailLogo }
-				features={ [
-					billingFrequency,
-					translate( 'Send and receive from your custom domain' ),
-					translate( '30GB storage' ),
-					translate( 'Email, calendars, and contacts' ),
-					translate( 'One-click import of existing emails and contacts' ),
-					translate( 'Read receipts to track email opens' ),
-				] }
+				features={ getTitanFeatures() }
 				formattedPrice={ formattedPrice }
 				buttonLabel={ providerCtaText }
 				hasPrimaryButton={ true }
@@ -257,14 +230,7 @@ class EmailProvidersComparison extends React.Component {
 					'Professional email integrated with Google Meet and other collaboration tools from Google.'
 				) }
 				image={ { path: logo } }
-				features={ [
-					translate( 'Annual billing' ),
-					translate( 'Send and receive from your custom domain' ),
-					translate( '30GB storage' ),
-					translate( 'Email, calendars, and contacts' ),
-					translate( 'Video calls, docs, spreadsheets, and more' ),
-					translate( 'Work from anywhere on any device – even offline' ),
-				] }
+				features={ getGoogleFeatures() }
 				formattedPrice={ translate( '{{price/}} /user /month', {
 					components: {
 						price: <span>{ getMonthlyPrice( gSuiteProduct?.cost ?? null, currencyCode ) }</span>,
@@ -331,7 +297,6 @@ export default connect(
 
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
-			currentUserLocale: getCurrentUserLocale( state ),
 			gSuiteProduct: getProductBySlug( state, productSlug ),
 			titanMailProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 			currentRoute: getCurrentRoute( state ),
