@@ -21,6 +21,7 @@ import {
 } from 'calypso/state/partner-portal/types';
 import {
 	getActivePartnerKey,
+	getActivePartnerKeyId,
 	isFetchingPartner,
 } from 'calypso/state/partner-portal/partner/selectors';
 import { wpcomJetpackLicensing } from 'calypso/lib/wp';
@@ -31,7 +32,7 @@ import 'calypso/state/partner-portal/init';
 
 export function setActivePartnerKey( partnerKeyId: number ): PartnerPortalThunkAction {
 	return ( dispatch: ReduxDispatch, getState: () => PartnerPortalStore ) => {
-		if ( isFetchingPartner( getState() ) ) {
+		if ( ! partnerKeyId || isFetchingPartner( getState() ) ) {
 			return;
 		}
 
@@ -51,17 +52,21 @@ export function fetchPartner( dispatch: ReduxDispatch, getState: () => PartnerPo
 }
 
 export function receivePartner( partner: Partner ): PartnerPortalThunkAction {
-	return ( dispatch: ReduxDispatch ): void => {
+	return ( dispatch: ReduxDispatch, getState: () => PartnerPortalStore ): void => {
 		dispatch( {
 			type: JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE,
 			partner,
 		} );
 
 		// If we only get a single key, auto-select it for the user for simplicity.
+		// We check the active key otherwise.
 		const keys = partner.keys.map( ( key ) => key.id );
 
 		if ( keys.length === 1 ) {
 			dispatch( setActivePartnerKey( keys[ 0 ] ) );
+		} else if ( keys.length > 1 ) {
+			const currentPartnerKeyId = getActivePartnerKeyId( getState() );
+			dispatch( setActivePartnerKey( currentPartnerKeyId ) );
 		}
 	};
 }
