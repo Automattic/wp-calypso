@@ -18,27 +18,27 @@ import { __ } from '@wordpress/i18n';
 
 function LaunchWpcomWelcomeTour() {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
-	const { isWpcomNuxEnabled, isSPTOpen, isTourManuallyOpened } = useSelect( ( select ) => ( {
-		isWpcomNuxEnabled: select( 'automattic/nux' ).isWpcomNuxEnabled(),
-		// Handle the case where SPT is initialized and open
-		isSPTOpen:
+	const { show, isNewPageLayoutModalOpen, isManuallyOpened } = useSelect( ( select ) => ( {
+		show: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideShown(),
+		// Handle the case where the new page layout modal is initialized and open
+		isNewPageLayoutModalOpen:
 			select( 'automattic/starter-page-layouts' ) &&
 			select( 'automattic/starter-page-layouts' ).isOpen(),
-		isTourManuallyOpened: select( 'automattic/nux' ).isTourManuallyOpened(),
+		isManuallyOpened: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideManuallyOpened(),
 	} ) );
 
 	const { closeGeneralSidebar } = useDispatch( 'core/edit-post' );
 
-	// Preload first card image (others preloaded after NUX status confirmed)
+	// Preload first card image (others preloaded after open state confirmed)
 	new window.Image().src = getTourContent()[ 0 ].imgSrc;
 
 	// Hide editor sidebar first time user sees the editor
 	useEffect( () => {
-		isWpcomNuxEnabled && closeGeneralSidebar();
-	}, [ closeGeneralSidebar, isWpcomNuxEnabled ] );
+		show && closeGeneralSidebar();
+	}, [ closeGeneralSidebar, show ] );
 
 	useEffect( () => {
-		if ( ! isWpcomNuxEnabled && ! isSPTOpen ) {
+		if ( ! show && ! isNewPageLayoutModalOpen ) {
 			return;
 		}
 		portalParent.classList.add( 'wpcom-editor-welcome-tour-portal-parent' );
@@ -47,14 +47,14 @@ function LaunchWpcomWelcomeTour() {
 		// Track opening of the Welcome Guide
 		recordTracksEvent( 'calypso_editor_wpcom_tour_open', {
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
-			is_manually_opened: isTourManuallyOpened,
+			is_manually_opened: isManuallyOpened,
 		} );
 		return () => {
 			document.body.removeChild( portalParent );
 		};
-	}, [ isSPTOpen, isTourManuallyOpened, isWpcomNuxEnabled, portalParent ] );
+	}, [ isNewPageLayoutModalOpen, isManuallyOpened, show, portalParent ] );
 
-	if ( ! isWpcomNuxEnabled || isSPTOpen ) {
+	if ( ! show || isNewPageLayoutModalOpen ) {
 		return null;
 	}
 
@@ -67,16 +67,15 @@ function WelcomeTourFrame() {
 	const [ currentCardIndex, setCurrentCardIndex ] = useState( 0 );
 	const [ justMaximized, setJustMaximized ] = useState( false );
 
-	const { setWpcomNuxStatus, setTourOpenStatus } = useDispatch( 'automattic/nux' );
+	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
 
-	const dismissWpcomNuxTour = ( source ) => {
+	const handleDismiss = ( source ) => {
 		recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
 			slide_number: currentCardIndex + 1,
 			action: source,
 		} );
-		setWpcomNuxStatus( { isNuxEnabled: false } );
-		setTourOpenStatus( { isTourManuallyOpened: false } );
+		setShowWelcomeGuide( false, { openedManually: false } );
 	};
 
 	// Preload card images
@@ -100,7 +99,7 @@ function WelcomeTourFrame() {
 					justMaximized={ justMaximized }
 					key={ currentCardIndex }
 					lastCardIndex={ cardContent.length - 1 }
-					onDismiss={ dismissWpcomNuxTour }
+					onDismiss={ handleDismiss }
 					onMinimize={ setIsMinimized }
 					setJustMaximized={ setJustMaximized }
 					setCurrentCardIndex={ setCurrentCardIndex }

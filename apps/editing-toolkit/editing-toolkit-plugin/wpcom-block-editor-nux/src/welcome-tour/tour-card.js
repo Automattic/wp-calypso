@@ -157,8 +157,10 @@ function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
 
 function TourRating() {
 	let isDisabled = false;
-	const tourRating = useSelect( ( select ) => select( 'automattic/nux' ).tourRating() );
-	const { setTourRating } = useDispatch( 'automattic/nux' );
+	const tourRating = useSelect( ( select ) =>
+		select( 'automattic/wpcom-welcome-guide' ).getTourRating()
+	);
+	const { setTourRating } = useDispatch( 'automattic/wpcom-welcome-guide' );
 
 	if ( ! isDisabled && tourRating ) {
 		isDisabled = true;
