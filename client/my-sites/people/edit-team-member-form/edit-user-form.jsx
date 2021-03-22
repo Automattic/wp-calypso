@@ -50,14 +50,10 @@ class EditUserForm extends Component {
 		}
 	}
 
-	getRole( roles ) {
-		return roles && roles[ 0 ] ? roles[ 0 ] : null;
-	}
-
 	getStateObject( props ) {
 		return {
 			...props.user,
-			roles: this.getRole( props.user?.roles ),
+			roles: props.user?.roles[ 0 ],
 			isExternalContributor: props.isExternalContributor,
 		};
 	}
