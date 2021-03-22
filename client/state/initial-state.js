@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import { map, omit, pick, throttle } from 'lodash';
+import { map, pick, throttle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,6 +36,11 @@ const bootTimestamp = Date.now();
  * persisted reducer.
  */
 let stateCache = {};
+
+function deserializeStored( reducer, stored ) {
+	const { _timestamp, ...state } = stored;
+	return deserialize( reducer, state );
+}
 
 function shouldPersist() {
 	return ! isSupportSession();
@@ -216,7 +221,7 @@ function getInitialServerState( initialReducer ) {
 		return null;
 	}
 
-	const serverState = deserialize( initialReducer, omit( window.initialReduxState, '_timestamp' ) );
+	const serverState = deserializeStored( initialReducer, window.initialReduxState );
 	return pick( serverState, Object.keys( window.initialReduxState ) );
 }
 
@@ -337,7 +342,7 @@ function deserializeState( subkey, state, reducer, isServerState = false ) {
 			return null;
 		}
 
-		const deserializedState = deserialize( reducer, omit( state, '_timestamp' ) );
+		const deserializedState = deserializeStored( reducer, state );
 		if ( ! deserializedState ) {
 			debug( `${ origin } Redux state failed to deserialize, dropping` );
 			return null;
