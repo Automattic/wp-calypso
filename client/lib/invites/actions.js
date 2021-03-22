@@ -26,31 +26,31 @@ function inviteAccepted( invite ) {
 }
 
 export function createAccount( userData, invite, callback ) {
-	const send_verification_email = userData.email !== invite.sentTo;
-
 	return ( dispatch ) => {
-		wpcom
-			.undocumented()
-			.usersNew(
-				Object.assign( {}, userData, { validate: false, send_verification_email } ),
-				( error, response ) => {
-					const bearerToken = response && response.bearer_token;
-					if ( error ) {
-						if ( error.message ) {
-							dispatch( errorNotice( error.message ) );
-						}
-						recordTracksEvent( 'calypso_invite_account_creation_failed', {
-							error: error.error,
-						} );
-					} else {
-						recordTracksEvent( 'calypso_invite_account_created', {
-							is_p2_site: get( invite, 'site.is_wpforteams_site', false ),
-							inviter_blog_id: get( invite, 'site.ID', false ),
-						} );
+		wpcom.undocumented().usersNew(
+			{
+				...userData,
+				validate: false,
+				send_verification_email: userData.email !== invite.sentTo,
+			},
+			( error, response ) => {
+				const bearerToken = response && response.bearer_token;
+				if ( error ) {
+					if ( error.message ) {
+						dispatch( errorNotice( error.message ) );
 					}
-					callback( error, bearerToken );
+					recordTracksEvent( 'calypso_invite_account_creation_failed', {
+						error: error.error,
+					} );
+				} else {
+					recordTracksEvent( 'calypso_invite_account_created', {
+						is_p2_site: get( invite, 'site.is_wpforteams_site', false ),
+						inviter_blog_id: get( invite, 'site.ID', false ),
+					} );
 				}
-			);
+				callback( error, bearerToken );
+			}
+		);
 	};
 }
 
