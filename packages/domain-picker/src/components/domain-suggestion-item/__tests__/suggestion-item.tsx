@@ -27,8 +27,6 @@ describe( 'traintracks events', () => {
 		jest.clearAllMocks();
 } );
 
-/* eslint-disable */
-describe.skip( 'traintracks events', () => {
 	describe( 'render event', () => {
 		it( 'should send render events when first rendered', async () => {
 			renderComponent();
@@ -61,67 +59,15 @@ describe.skip( 'traintracks events', () => {
 			} );
 
 	describe( 'interact event', () => {
-		it( 'sends interact event when selected', async () => {
-			// Delay import so we have time to load configData in `beforeAll`
-			const { default: SuggestionItem } = await import( '../suggestion-item' );
+		it( 'should send an interact event when selected', async () => {
+			renderComponent();
 
-			const recordAnalytics = jest.fn();
-			const railcarId = 'id';
+			fireEvent.click( screen.getByRole( 'button' ) );
 
-			const { getByLabelText } = render(
-				<SuggestionItem
-					isSelected={ false }
-					suggestion={ testSuggestion }
-					onSelect={ jest.fn() }
-					railcarId={ railcarId }
-					recordAnalytics={ recordAnalytics }
-					uiPosition={ 113 }
-				/>
-			);
-
-			fireEvent.click(
-				// Use function matcher to deal with the label containing <spans>
-				getByLabelText( ( content, element ) => element.textContent === 'example.com' )
-			);
-
-			expect( recordAnalytics ).toHaveBeenCalledWith( {
-				trainTracksType: 'interact',
-				action: 'domain_selected',
-				railcarId,
+			expect( MOCK_PROPS.onSelect ).toHaveBeenCalledWith( MOCK_PROPS.domain );
 			} );
 		} );
-
-		it( "doesn't send interact event when deselected", async () => {
-			// Delay import so we have time to load configData in `beforeAll`
-			const { default: SuggestionItem } = await import( '../suggestion-item' );
-
-			const recordAnalytics = jest.fn();
-
-			const { getByLabelText } = render(
-				<SuggestionItem
-					isSelected={ true }
-					suggestion={ testSuggestion }
-					onSelect={ jest.fn() }
-					railcarId="id"
-					recordAnalytics={ recordAnalytics }
-					uiPosition={ 113 }
-				/>
-			);
-
-			fireEvent.click(
-				// Use function matcher to deal with the label containing <spans>
-				getByLabelText( ( content, element ) => element.textContent === 'example.com' )
-			);
-
-			expect( recordAnalytics ).not.toHaveBeenCalledWith(
-				expect.objectContaining( {
-					trainTracksType: 'interact',
-				} )
-			);
 		} );
-	} );
-} );
-/* eslint-enable */
 
 describe( 'check conditional elements render correctly', () => {
 	it( 'renders info tooltip for domains that require HSTS', async () => {
