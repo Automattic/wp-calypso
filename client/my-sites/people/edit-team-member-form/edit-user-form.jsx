@@ -184,7 +184,7 @@ class EditUserForm extends Component {
 						<FormTextInput
 							id="first_name"
 							name="first_name"
-							defaultValue={ this.state.first_name }
+							value={ this.state.first_name }
 							onChange={ this.handleChange }
 							onFocus={ this.recordFieldFocus( 'first_name' ) }
 						/>
@@ -202,7 +202,7 @@ class EditUserForm extends Component {
 						<FormTextInput
 							id="last_name"
 							name="last_name"
-							defaultValue={ this.state.last_name }
+							value={ this.state.last_name }
 							onChange={ this.handleChange }
 							onFocus={ this.recordFieldFocus( 'last_name' ) }
 						/>
@@ -220,7 +220,7 @@ class EditUserForm extends Component {
 						<FormTextInput
 							id="name"
 							name="name"
-							defaultValue={ this.state.name }
+							value={ this.state.name }
 							onChange={ this.handleChange }
 							onFocus={ this.recordFieldFocus( 'name' ) }
 						/>
