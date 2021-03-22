@@ -9,7 +9,8 @@ import i18n from 'i18n-calypso';
 import accept from 'calypso/lib/accept';
 import { getSiteTitle } from 'calypso/state/sites/selectors';
 import { deleteTheme } from 'calypso/state/themes/actions/delete-theme';
-import { getTheme } from 'calypso/state/themes/selectors';
+import { getRecommendedThemes, getTheme } from 'calypso/state/themes/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/themes/init';
 
@@ -24,7 +25,22 @@ import 'calypso/state/themes/init';
  */
 export function confirmDelete( themeId, siteId ) {
 	return ( dispatch, getState ) => {
-		const { name: themeName } = getTheme( getState(), siteId, themeId );
+		let theme = getTheme( getState(), siteId, themeId );
+		if ( ! theme ) {
+			const recommendedThemes = getRecommendedThemes( getState() );
+			theme = recommendedThemes.find( ( recTheme ) => recTheme.id === themeId );
+		}
+
+		if ( ! theme ) {
+			dispatch(
+				errorNotice(
+					i18n.translate( 'An error has occurred while deleting your theme. Please, try again.' )
+				)
+			);
+			return;
+		}
+
+		const themeName = theme.name;
 		const siteTitle = getSiteTitle( getState(), siteId );
 		accept(
 			i18n.translate( 'Are you sure you want to delete %(themeName)s from %(siteTitle)s?', {
