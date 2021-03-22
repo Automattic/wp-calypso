@@ -5,6 +5,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -17,10 +18,10 @@ import InfiniteList from 'calypso/components/infinite-list';
 import NoResults from 'calypso/my-sites/no-results';
 import EmptyContent from 'calypso/components/empty-content';
 import accept from 'calypso/lib/accept';
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import ListEnd from 'calypso/components/list-end';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 class Followers extends Component {
 	infiniteList = React.createRef();
@@ -36,13 +37,16 @@ class Followers extends Component {
 				: 'Fetched more followers with infinite list';
 
 		this.props.fetchNextPage();
-		gaRecordEvent( 'People', analyticsAction, 'page', this.props.currentPage + 1 );
+		this.props.recordGoogleEvent( 'People', analyticsAction, 'page', this.props.currentPage + 1 );
 	};
 
 	removeFollower( follower ) {
 		const { site, type } = this.props;
 		const listType = 'email' === this.props.type ? 'Email Follower' : 'Follower';
-		gaRecordEvent( 'People', 'Clicked Remove Follower Button On' + listType + ' list' );
+		this.props.recordGoogleEvent(
+			'People',
+			'Clicked Remove Follower Button On' + listType + ' list'
+		);
 		accept(
 			<div>
 				<p>
@@ -53,13 +57,13 @@ class Followers extends Component {
 			</div>,
 			( accepted ) => {
 				if ( accepted ) {
-					gaRecordEvent(
+					this.props.recordGoogleEvent(
 						'People',
 						'Clicked Remove Button In Remove ' + listType + ' Confirmation'
 					);
 					this.props.removeFollower( site.ID, type, follower.ID );
 				} else {
-					gaRecordEvent(
+					this.props.recordGoogleEvent(
 						'People',
 						'Clicked Cancel Button In Remove ' + listType + ' Confirmation'
 					);
@@ -220,4 +224,4 @@ class Followers extends Component {
 	}
 }
 
-export default localize( Followers );
+export default connect( null, { recordGoogleEvent } )( localize( Followers ) );
