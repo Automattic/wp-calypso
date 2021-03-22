@@ -4,7 +4,6 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import debugModule from 'debug';
-import { assign, filter, includes, omit, pick } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -50,24 +49,30 @@ class EditUserForm extends Component {
 	}
 
 	getStateObject( props ) {
-		const role = this.getRole( props.roles );
-		return assign( omit( props, 'site' ), {
-			roles: role,
+		const { site, ...rest } = props;
+		return {
+			...rest,
+			roles: this.getRole( props.roles ),
 			isExternalContributor: props.isExternalContributor,
-		} );
+		};
 	}
 
 	getChangedSettings() {
 		const originalUser = this.getStateObject( this.props );
-
-		const changedKeys = filter( this.getAllowedSettingsToChange(), ( setting ) => {
+		const allowedSettings = this.getAllowedSettingsToChange();
+		const changedKeys = allowedSettings.filter( ( setting ) => {
 			return (
 				'undefined' !== typeof originalUser[ setting ] &&
 				'undefined' !== typeof this.state[ setting ] &&
 				originalUser[ setting ] !== this.state[ setting ]
 			);
 		} );
-		return pick( this.state, changedKeys );
+		const changedSettings = changedKeys.reduce( ( acc, key ) => {
+			acc[ key ] = this.state[ key ];
+			return acc;
+		}, {} );
+
+		return changedSettings;
 	}
 
 	getAllowedSettingsToChange() {
@@ -141,10 +146,8 @@ class EditUserForm extends Component {
 	handleExternalChange = ( event ) =>
 		this.setState( { isExternalContributor: event.target.checked } );
 
-	isExternalRole = ( role ) => {
-		const roles = [ 'administrator', 'editor', 'author', 'contributor' ];
-		return includes( roles, role );
-	};
+	isExternalRole = ( role ) =>
+		[ 'administrator', 'editor', 'author', 'contributor' ].includes( role );
 
 	renderField( fieldId ) {
 		let returnField = null;
