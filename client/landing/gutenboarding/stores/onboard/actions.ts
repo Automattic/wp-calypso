@@ -108,7 +108,11 @@ export function* createSite( {
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	};
-	const success: unknown = yield dispatch( SITE_STORE, 'createSite', params );
+	const success: Site.NewSiteBlogDetails | undefined = yield dispatch(
+		SITE_STORE,
+		'createSite',
+		params
+	);
 
 	return success;
 }
