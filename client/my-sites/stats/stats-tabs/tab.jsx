@@ -63,8 +63,8 @@ class StatsTabsTab extends React.Component {
 		} );
 
 		const tabIcon = gridicon ? <Gridicon icon={ gridicon } size={ 18 } /> : null;
-		const tabLabel = <span className="stats-tab__label label">{ label }</span>;
-		const tabValue = <span className="stats-tab__value value">{ this.ensureValue( value ) }</span>;
+		const tabLabel = <span className="stats-tabs__label label">{ label }</span>;
+		const tabValue = <span className="stats-tabs__value value">{ this.ensureValue( value ) }</span>;
 		const hasClickAction = href || tabClick;
 
 		return (
@@ -78,7 +78,7 @@ class StatsTabsTab extends React.Component {
 						{ children }
 					</a>
 				) : (
-					<span className="stats-tab__span no-link">
+					<span className="stats-tabs__span no-link">
 						{ tabIcon }
 						{ tabLabel }
 						{ tabValue }
