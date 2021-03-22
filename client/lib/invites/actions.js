@@ -8,19 +8,22 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'calypso/dispatcher';
 import wpcom from 'calypso/lib/wp';
-import { action as ActionTypes } from 'calypso/lib/invites/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { acceptedNotice } from 'calypso/my-sites/invites/utils';
 import { requestSites, receiveSites } from 'calypso/state/sites/actions';
 import { requestSiteInvites } from 'calypso/state/invites/actions';
+import { INVITE_ACCEPTED } from 'calypso/state/action-types';
 
 /**
  * Module variables
  */
 const debug = new Debug( 'calypso:invites-actions' );
+
+function inviteAccepted( invite ) {
+	return { type: INVITE_ACCEPTED, invite };
+}
 
 export function createAccount( userData, invite, callback ) {
 	const send_verification_email = userData.email !== invite.sentTo;
@@ -81,10 +84,7 @@ export function disableInviteLinks( siteId ) {
 
 export function acceptInvite( invite, callback ) {
 	return ( dispatch ) => {
-		Dispatcher.handleViewAction( {
-			type: ActionTypes.INVITE_ACCEPTED,
-			invite,
-		} );
+		dispatch( inviteAccepted( invite ) );
 		wpcom.undocumented().acceptInvite( invite, ( error, data ) => {
 			if ( error ) {
 				if ( error.message ) {
