@@ -1,13 +1,7 @@
 /**
  * External dependencies
  */
-import webdriver, {
-	By,
-	WebDriver,
-	WebElement,
-	WebElementCondition,
-	WebElementPromise,
-} from 'selenium-webdriver';
+import webdriver, { By, WebDriver, WebElement, WebElementCondition } from 'selenium-webdriver';
 import config from 'config';
 
 /**
@@ -16,126 +10,48 @@ import config from 'config';
 import * as SlackNotifier from './slack-notifier.js';
 import * as dataHelper from './data-helper';
 import * as driverManager from './driver-manager';
-import { elementLocated } from 'selenium-webdriver/lib/until';
 
 const { NoSuchElementError } = webdriver.error;
 const explicitWaitMS = config.get( 'explicitWaitMS' );
 
 /**
- * A string or a regular expression used to query the element by.
- *
- * @typedef {string|RegExp} ElementInnerText
- */
-
-/**
- * Object containing an actual WebDriver locator and a text to query the
- * element by.
- *
- * @typedef {Object} RichLocator
- * @property {By} locator The element's locator
- * @property {ElementInnerText} text The text to query the element by
- */
-
-/**
- * Checks if an object contains a proper locator and a text to find an element by.
- *
- * @see findElementByText
- * @param {By} locator The element's locator
- * @returns {boolean} Whether it's a text locator or not
- */
-export function isRichLocator( locator ) {
-	return typeof locator === 'object' && locator !== null && locator.text && locator.locator;
-}
-
-/**
- * Checks if the text passed to find an element by is valid. Throws an error if
- * it's not.
- *
- * @param {string} text The string argument to check
- * @returns {ElementInnerText} The same string if it's a valid element query
- * @throws {TypeError}
- */
-export function checkedElementInnerText( text ) {
-	if (
-		( typeof text === 'string' && text.length > 0 ) ||
-		( typeof text === 'object' && text.constructor.name === 'RegExp' )
-	) {
-		return text;
-	}
-
-	throw new TypeError( 'Invalid text locator' );
-}
-
-/**
  * Stringifies the locator object. Useful for error reporting or logging.
  *
- * @param {By|RichLocator} locator The element's locator
- * @returns {string} Printable version of the locator
+ * @param {By} locator - The element's locator
+ * @returns {string} - Printable version of the locator
  */
 export function getLocatorString( locator ) {
-	let loc = locator;
-	let txt;
-
-	if ( isRichLocator( locator ) ) {
-		loc = locator.locator;
-		txt = checkedElementInnerText( locator.text );
-	}
-
-	const locString = typeof loc === 'function' ? 'by function()' : loc + '';
-
-	if ( ! txt ) {
-		return locString;
-	}
-
-	return `${ locString } and text "${ txt }"`;
+	return typeof loc === 'function' ? 'by function()' : locator + '';
 }
 
-const until = {
+export const until = {
 	...webdriver.until, // Merge with original 'untils' for convenience.
 
-	/**
-	 * Creates a condition that will loop until element is located.
-	 *
-	 * @param {By|RichLocator} locator The element's locator
-	 * @returns {WebElementCondition} The new condition
-	 */
-	elementLocated( locator ) {
-		const locatorStr = getLocatorString( locator );
 
-		return new WebElementCondition(
-			`for element to be located ${ locatorStr }`,
-			async function ( driver ) {
-				try {
-					const element = await findElement( driver, locator );
+	elementNotLocated( locator ) {
+		
+		const element = ( await findElements( driver, locator ) )[ 0 ];
 
-					return element;
-				} catch {
-					return null;
-				}
-			}
-		);
+		return ! element ? true : element;
 	},
 
 	/**
 	 * Creates a condition that will loop until element is located and visible.
 	 *
-	 * @param {By|RichLocator} locator The element's locator
+	 * @param {By} locator The element's locator
 	 * @returns {WebElementCondition} The new condition
 	 */
 	elementIsLocatedAndVisible( locator ) {
-		const locatorStr = getLocatorString( locator );
-
 		return new WebElementCondition(
-			`for element to be located and visible ${ locatorStr }`,
+			`for element to be located and visible ${ getLocatorString( locator ) }`,
 			async function ( driver ) {
-				try {
-					const element = await findElement( driver, locator );
-					const isDisplayed = element.isDisplayed();
-
-					return isDisplayed ? element : null;
-				} catch {
+				const element = ( await driver.findElements( locator ) )[ 0 ];
+				if ( ! element ) {
 					return null;
 				}
+				const isDisplayed = await element.isDisplayed();
+
+				return isDisplayed ? element : null;
 			}
 		);
 	},
@@ -144,7 +60,7 @@ const until = {
 	 * Creates a condition that will loop until element is clickable. A clickable
 	 * element must be located and not (aria-)disabled.
 	 *
-	 * @param {By|RichLocator} locator The element's locator
+	 * @param {By} locator The element's locator
 	 * @returns {WebElementCondition} The new condition
 	 */
 	elementIsClickable( locator ) {
@@ -153,17 +69,16 @@ const until = {
 		return new WebElementCondition(
 			`for element to be clickable ${ locatorStr }`,
 			async function ( driver ) {
-				try {
-					const element = await findElement( driver, locator );
-					const isEnabled = await element.isEnabled();
-					const isAriaEnabled = await element
-						.getAttribute( 'aria-disabled' )
-						.then( ( v ) => v !== 'true' );
-
-					return isEnabled && isAriaEnabled ? element : null;
-				} catch {
+				const element = ( await driver.findElements( locator ) )[ 0 ];
+				if ( ! element ) {
 					return null;
 				}
+				const isEnabled = await element.isEnabled();
+				const isAriaEnabled = await element
+					.getAttribute( 'aria-disabled' )
+					.then( ( v ) => v !== 'true' );
+
+				return isEnabled && isAriaEnabled ? element : null;
 			}
 		);
 	},
@@ -182,7 +97,7 @@ export async function highlightElement( driver, element ) {
  * Finds an element via given locator.
  *
  * @param {WebDriver} driver The parent WebDriver instance
- * @param {By|RichLocator} locator The element's locator
+ * @param {By} locator The element's locator
  * @returns {Promise<WebElement>} A promise that will resolve with the located element
  */
 export async function findElement( driver, locator ) {
@@ -202,7 +117,7 @@ export async function findElement( driver, locator ) {
  * Finds elements via given locator and text.
  *
  * @param {WebDriver} driver The parent WebDriver instance
- * @param {By|RichLocator} locator The element's locator
+ * @param {By} locator The element's locator
  * @returns {Promise<WebElement>} A promise that will resolve with the located elements
  */
 export async function findElements( driver, locator ) {
@@ -269,7 +184,7 @@ export async function isElementNotLocated( driver, locator ) {
  * times out.
  *
  * @param {WebDriver} driver The parent WebDriver instance
- * @param {By|RichLocator} locator The element's locator
+ * @param {By} locator The element's locator
  * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
  * @returns {Promise<WebElement>} A promise that will be resolved with
  * the clicked element

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import webdriver, { until, WebElementCondition } from 'selenium-webdriver';
+import webdriver, { until, By, WebElementCondition } from 'selenium-webdriver';
 import config from 'config';
 
 /**
@@ -12,8 +12,44 @@ import { resolveToBool } from './utils';
 
 const explicitWaitMS = config.get( 'explicitWaitMS' );
 
+/**
+ * Stringifies the locator object. Useful for error reporting or logging.
+ *
+ * @param {By} locator - The element's locator
+ * @returns {string} - Printable version of the locator
+ */
+export function getLocatorString( locator ) {
+	return typeof loc === 'function' ? 'by function()' : locator + '';
+}
+
+export async function closeCurrentWindow( driver ) {
+	return await driver.close();
+}
+
+export async function switchToWindowByIndex( driver, index ) {
+	const currentScreenSize = driverManager.currentScreenSize();
+	const handles = await driver.getAllWindowHandles();
+	await driver.switchTo().window( handles[ index ] );
+	// Resize target window to ensure we stay in the same viewport size:
+	await driverManager.resizeBrowser( driver, currentScreenSize );
+}
+
+export async function closeAllWindows( driver ) {
+	const handles = await driver.getAllWindowHandles();
+
+	if ( handles.length === 1 ) {
+		await closeCurrentWindow( driver );
+	} else if ( handles.length > 1 ) {
+		for ( let i = handles.length - 1; i >= 0; i-- ) {
+			await switchToWindowByIndex( driver, i );
+			await closeCurrentWindow( driver );
+		}
+	}
+	return handles;
+}
+
 async function elementLocated( driver, locator ) {
-	const element = ( await findElements( driver, locator ) )[ 0 ];
+	const element = ( await driver.findElements( driver, locator ) )[ 0 ];
 
 	return element;
 }
@@ -57,18 +93,6 @@ async function elementFocused( driver, locator ) {
 	return isFocused ? element : null;
 }
 
-// async function fieldClearable( driver, locator ) {
-// 	const field = ( await findElements( driver, locator ) )[ 0 ];
-// 	if ( ! field ) {
-// 		return null;
-// 	}
-// 	await driver.executeScript( "arguments[0].value = '';", field );
-// 	await field.clear();
-// 	const value = await field.getAttribute( 'value' );
-
-// 	return value === '' ? field : null;
-// }
-
 export async function imageVisible( driver, locator ) {
 	const image = ( await driver.findElements( locator ) )[ 0 ];
 	if ( ! image ) {
@@ -82,13 +106,20 @@ export async function imageVisible( driver, locator ) {
 	return isVisible ? image : null;
 }
 
+// wait until
+
 export function waitUntilElementLocated( driver, locator, timeout = explicitWaitMS ) {
 	return driver.wait( until.elementLocated( locator ), timeout );
 }
 
+export function waitUntilElementsLocated( driver, locator, timeout = explicitWaitMS ) {
+	return driver.wait( until.elementsLocated( locator ), timeout );
+}
+
 export function waitUntilElementNotLocated( driver, locator, timeout = explicitWaitMS ) {
+	const locatorStr = getLocatorString( locator );
 	return driver.wait(
-		new WebElementCondition( `for element to NOT be located ${ locatorStr }`, ( driver ) =>
+		new WebElementCondition( `for element to NOT be located ${ locatorStr }`, () =>
 			elementNotLocated( driver, locator )
 		),
 		timeout
@@ -98,7 +129,7 @@ export function waitUntilElementNotLocated( driver, locator, timeout = explicitW
 export function waitUntilElementLocatedAndVisible( driver, locator, timeout = explicitWaitMS ) {
 	const locatorStr = getLocatorString( locator );
 	return driver.wait(
-		new WebElementCondition( `for element to be located and visible ${ locatorStr }`, ( driver ) =>
+		new WebElementCondition( `for element to be located and visible ${ locatorStr }`, () =>
 			elementLocatedAndVisible( driver, locator )
 		),
 		timeout
@@ -108,7 +139,7 @@ export function waitUntilElementLocatedAndVisible( driver, locator, timeout = ex
 export function waitUntilElementClickable( driver, locator, timeout = explicitWaitMS ) {
 	const locatorStr = getLocatorString( locator );
 	return driver.wait(
-		new WebElementCondition( `for element to be clickable ${ locatorStr }`, ( driver ) =>
+		new WebElementCondition( `for element to be clickable ${ locatorStr }`, () =>
 			elementClickable( driver, locator )
 		),
 		timeout
@@ -118,8 +149,8 @@ export function waitUntilElementClickable( driver, locator, timeout = explicitWa
 export function waitUntilElementFocused( driver, locator, timeout = explicitWaitMS ) {
 	const locatorStr = getLocatorString( locator );
 	return driver.wait(
-		new WebElementCondition( `for element to be focused ${ locatorStr }`, ( driver ) =>
-			findElementIfFocused( driver, locator )
+		new WebElementCondition( `for element to be focused ${ locatorStr }`, () =>
+			elementFocused( driver, locator )
 		),
 		timeout
 	);
@@ -128,7 +159,7 @@ export function waitUntilElementFocused( driver, locator, timeout = explicitWait
 export function waitUntilImageVisible( driver, locator, timeout = explicitWaitMS ) {
 	const locatorStr = getLocatorString( locator );
 	return driver.wait(
-		new WebElementCondition( `for image to be visible ${ locatorStr }`, ( driver ) =>
+		new WebElementCondition( `for image to be visible ${ locatorStr }`, () =>
 			imageVisible( driver, locator )
 		),
 		timeout
@@ -137,55 +168,23 @@ export function waitUntilImageVisible( driver, locator, timeout = explicitWaitMS
 
 export function waitUntilNumberOfWindowsOpen( driver, number, timeout = explicitWaitMS ) {
 	return driver.wait(
-		new WebElementCondition( `for ${ number } of windows to be open`, async ( driver ) => {
-			const handles = await driver.getAllWindowHandles();
-			return handles.length === number ? handles : null;
+		new WebElementCondition( `for ${ number } of windows to be open`, async () => {
+			try {
+				const handles = await driver.getAllWindowHandles();
+				return handles.length === number ? handles : null;
+			} catch {
+				return null;
+			}
 		} ),
 		timeout
 	);
-}
-
-
-export async function closeCurrentWindow( driver ) {
-	return await driver.close();
-}
-
-export async function switchToWindowByIndex( driver, index ) {
-	const currentScreenSize = driverManager.currentScreenSize();
-	const handles = await driver.getAllWindowHandles();
-	await driver.switchTo().window( handles[ index ] );
-	// Resize target window to ensure we stay in the same viewport size:
-	await driverManager.resizeBrowser( driver, currentScreenSize );
-}
-
-export async function closeAllWindows( driver ) {
-	const handles = await driver.getAllWindowHandles();
-
-	if ( handles.length === 1 ) {
-		await closeCurrentWindow( driver );
-	} else if ( handles.length > 1 ) {
-		for ( let i = handles.length - 1; i >= 0; i-- ) {
-			await switchToWindowByIndex( driver, i );
-			await closeCurrentWindow( driver );
-		}
-	}
-	return handles;
 }
 
 export async function waitUntilAllWindowsClosed( driver, timeout = explicitWaitMS ) {
 	return driver.wait(
 		new WebElementCondition( 'for all windows to be closed', async () => {
 			try {
-				const handles = await driver.getAllWindowHandles();
-
-				if ( handles.length === 1 ) {
-					await closeCurrentWindow( driver );
-				} else if ( handles.length > 1 ) {
-					for ( let i = handles.length - 1; i >= 0; i-- ) {
-						await switchToWindowByIndex( driver, i );
-						await closeCurrentWindow( driver );
-					}
-				}
+				const handles = await closeAllWindows( driver );
 				return handles;
 			} catch {
 				return null;
