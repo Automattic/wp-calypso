@@ -75,7 +75,7 @@ const MShotsImage = ( {
 					// Test mshots h value matches the desired image
 					// The default image (https://s0.wp.com/mshots/v1/default) is around 400x300 px h
 					// but sometimes slightly off (e.g. h: 299.99)
-					if ( e.currentTarget.naturalHeight !== options.h ) {
+					if ( e.currentTarget.naturalWidth !== options.w ) {
 						// Only refresh 10 times
 						if ( count < MAXTRIES ) {
 							// Triggers a target.src change and image refresh @ 500ms, 1000ms, 1500ms...
