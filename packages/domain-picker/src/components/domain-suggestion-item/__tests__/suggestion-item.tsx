@@ -30,185 +30,35 @@ describe( 'traintracks events', () => {
 /* eslint-disable */
 describe.skip( 'traintracks events', () => {
 	describe( 'render event', () => {
-		it( 'sends render events when first rendered', async () => {
-			// Delay import so we have time to load configData in `beforeAll`
-			const { default: SuggestionItem } = await import( '../suggestion-item' );
+		it( 'should send render events when first rendered', async () => {
+			renderComponent();
 
-			const recordAnalytics = jest.fn();
-			const railcarId = 'id';
-			const uiPosition = 113;
-
-			render(
-				<SuggestionItem
-					suggestion={ testSuggestion }
-					onSelect={ jest.fn() }
-					railcarId={ railcarId }
-					recordAnalytics={ recordAnalytics }
-					uiPosition={ uiPosition }
-				/>
-			);
-
-			expect( recordAnalytics ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					railcarId,
-					result: testSuggestion.domain_name,
-					trainTracksType: 'render',
-					uiPosition,
-				} )
-			);
+			expect( MOCK_PROPS.onRender ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		it( "doesn't send render event when re-rendered with the same props", async () => {
-			// Delay import so we have time to load configData in `beforeAll`
-			const { default: SuggestionItem } = await import( '../suggestion-item' );
+		it( 'should not send a render event when re-rendered with the same props', async () => {
+			const { rerender } = renderComponent();
 
-			const recordAnalytics = jest.fn();
-
-			const props = {
-				suggestion: testSuggestion,
-				onSelect: jest.fn(),
-				railcarId: 'id',
-				recordAnalytics,
-				uiPosition: 113,
-			};
-
-			const { rerender } = render( <SuggestionItem { ...props } /> );
-
-			recordAnalytics.mockClear();
-
-			rerender( <SuggestionItem { ...props } /> );
-
-			expect( recordAnalytics ).not.toHaveBeenCalled();
+			rerender( <SuggestionItem { ...MOCK_PROPS } /> );
+			expect( MOCK_PROPS.onRender ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		it( "doesn't send render event when unrelated props change", async () => {
-			// Delay import so we have time to load configData in `beforeAll`
-			const { default: SuggestionItem } = await import( '../suggestion-item' );
+		it( 'should not send a render event when unrelated props change', async () => {
+			const { rerender } = renderComponent();
+			const updatedProps = { ...MOCK_PROPS, cost: '€11' };
+			rerender( <SuggestionItem { ...updatedProps } /> );
 
-			const unchangedProps = {
-				isRecommended: true,
-				railcarId: 'id',
-				uiPosition: 113,
-			};
-
-			const { rerender } = render(
-				<SuggestionItem
-					{ ...unchangedProps }
-					suggestion={ { ...testSuggestion, domain_name: 'example.com' } }
-					isSelected={ false }
-					onSelect={ jest.fn() }
-					recordAnalytics={ jest.fn() }
-				/>
-			);
-
-			const recordAnalytics = jest.fn();
-
-			rerender(
-				<SuggestionItem
-					{ ...unchangedProps }
-					// Suggestion object is changed, but the domain name itself isn't changed
-					suggestion={ { ...testSuggestion, domain_name: 'example.com' } }
-					isSelected={ true }
-					onSelect={ jest.fn() }
-					recordAnalytics={ recordAnalytics }
-				/>
-			);
-
-			expect( recordAnalytics ).not.toHaveBeenCalled();
+			expect( updatedProps.onRender ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		it( 'sends render event when domain name and railcarId changes', async () => {
-			// Delay import so we have time to load configData in `beforeAll`
-			const { default: SuggestionItem } = await import( '../suggestion-item' );
+		it( 'should send a render event when domain name and railcarId changes', async () => {
+			const { rerender } = renderComponent();
+			const updatedProps = { ...MOCK_PROPS, domain: 'example1.com', railcarId: 'id1' };
+			rerender( <SuggestionItem { ...updatedProps } /> );
 
-			const recordAnalytics = jest.fn();
-
-			const props = {
-				isSelected: false,
-				onSelect: jest.fn(),
-				railcarId: 'id1',
-				recordAnalytics,
-			};
-
-			const { rerender } = render(
-				<SuggestionItem
-					{ ...props }
-					suggestion={ { ...testSuggestion, domain_name: 'example1.com' } }
-					isRecommended={ true }
-					railcarId="id1"
-					uiPosition={ 1 }
-				/>
-			);
-
-			expect( recordAnalytics ).toHaveBeenCalled();
-
-			rerender(
-				<SuggestionItem
-					{ ...props }
-					suggestion={ { ...testSuggestion, domain_name: 'example2.com' } }
-					isRecommended={ false }
-					railcarId="id2"
-					uiPosition={ 2 }
-				/>
-			);
-
-			expect( recordAnalytics ).toHaveBeenCalledTimes( 2 );
-			expect( recordAnalytics ).toHaveBeenLastCalledWith(
-				expect.objectContaining( {
-					railcarId: 'id2',
-					result: 'example2.com',
-					trainTracksType: 'render',
-					uiPosition: 2,
-				} )
-			);
+			expect( updatedProps.onRender ).toHaveBeenCalledTimes( 2 );
 		} );
-
-		[
-			{ prop: 'railcarId', value1: 'id1', value2: 'id2' },
-			{ prop: 'isRecommended', value1: true, value2: false },
-			{ prop: 'categorySlug', value1: null, value2: 'test_category' },
-			{ prop: 'uiPosition', value1: 1, value2: 2 },
-			{
-				prop: 'suggestion',
-				value1: { ...testSuggestion, domain_name: 'example1.com' },
-				value2: { ...testSuggestion, domain_name: 'example2.com' },
-			},
-		].forEach( ( { prop, value1, value2 } ) => {
-			it( `doesn't send render event when only "${ prop }" changes`, async () => {
-				// Delay import so we have time to load configData in `beforeAll`
-				const { default: SuggestionItem } = await import( '../suggestion-item' );
-
-				const recordAnalytics = jest.fn();
-
-				const props = {
-					suggestion: testSuggestion,
-					onSelect: jest.fn(),
-					railcarId: 'id',
-					recordAnalytics,
-					uiPosition: 113,
-					[ prop ]: value1,
-				};
-
-				const { rerender } = render( <SuggestionItem { ...props } /> );
-
-				expect( recordAnalytics ).toHaveBeenCalledWith(
-					expect.objectContaining( {
-						railcarId: props.railcarId,
-						result: expect.stringContaining( props.suggestion.domain_name ),
-						trainTracksType: 'render',
-						uiPosition: props.uiPosition,
-					} )
-				);
-
-				recordAnalytics.mockClear();
-				props[ prop ] = value2;
-
-				rerender( <SuggestionItem { ...props } /> );
-
-				expect( recordAnalytics ).not.toHaveBeenCalled();
 			} );
-		} );
-	} );
 
 	describe( 'interact event', () => {
 		it( 'sends interact event when selected', async () => {
