@@ -19,7 +19,6 @@ import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { errorNotice } from 'calypso/state/notices/actions';
 import { Card } from '@automattic/components';
 import FormButton from 'calypso/components/forms/form-button';
 
@@ -183,6 +182,6 @@ class InviteAcceptLoggedOut extends React.Component {
 	}
 }
 
-export default connect( null, { createAccount, acceptInvite, errorNotice } )(
+export default connect( null, { createAccount, acceptInvite } )(
 	localize( InviteAcceptLoggedOut )
 );
