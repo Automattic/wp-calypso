@@ -40,10 +40,6 @@ const debug = debugModule( 'calypso:my-sites:people:edit-team-member-form' );
 class EditUserForm extends Component {
 	state = this.getStateObject( this.props );
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.setState( this.getStateObject( nextProps ) );
-	}
-
 	componentDidUpdate() {
 		if ( ! this.hasUnsavedSettings() ) {
 			this.props.markSaved();
@@ -51,21 +47,25 @@ class EditUserForm extends Component {
 	}
 
 	getStateObject( props ) {
+		const { first_name, last_name, name, roles } = props.user;
+
 		return {
-			...props.user,
-			roles: props.user?.roles[ 0 ],
+			first_name,
+			last_name,
+			name,
+			roles: roles?.[ 0 ],
 			isExternalContributor: props.isExternalContributor,
 		};
 	}
 
 	getChangedSettings() {
-		const originalUser = this.getStateObject( this.props );
+		const originalSettings = this.getStateObject( this.props );
 		const allowedSettings = this.getAllowedSettingsToChange();
 		const changedKeys = allowedSettings.filter( ( setting ) => {
 			return (
-				'undefined' !== typeof originalUser[ setting ] &&
+				'undefined' !== typeof originalSettings[ setting ] &&
 				'undefined' !== typeof this.state[ setting ] &&
-				originalUser[ setting ] !== this.state[ setting ]
+				originalSettings[ setting ] !== this.state[ setting ]
 			);
 		} );
 		const changedSettings = changedKeys.reduce( ( acc, key ) => {
