@@ -29,7 +29,7 @@
 		"editor-site-launch-button": "BROWSERSLIST_ENV=wpcom calypso-build --env source='editor-site-launch/launch-button'",
 		"editor-site-launch-gutenboarding": "BROWSERSLIST_ENV=wpcom calypso-build --env source='editor-site-launch/gutenboarding-launch'",
 		"editor-site-launch-focused": "BROWSERSLIST_ENV=wpcom calypso-build --env source='editor-site-launch/focused-launch'",
-		"error-reporting": "calypso-build --env source='error-reporting'",
+		"error-reporting": "BROWSERSLIST_ENV=wpcom calypso-build --env source='error-reporting'",
 		"dev:error-reporting": "yarn run error-reporting",
 		"build:error-reporting": "NODE_ENV=production yarn run error-reporting",
 		"dev:editor-site-launch": "yarn run editor-site-launch",
