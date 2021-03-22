@@ -37,6 +37,71 @@ class DomainMappingInstructions extends React.Component {
 		isAtomic: false,
 	};
 
+	renderNameServerInstructions() {
+		const { translate } = this.props;
+
+		const nameServerInstructionsMessage = translate(
+			'Please log into your account at your domain registrar and {{strong}}update the name servers{{/strong}} of your domain to use the following values, as detailed in {{link}}these instructions{{/link}}:',
+			{
+				components: {
+					strong: <strong />,
+					link: <ExternalLink href={ MAP_DOMAIN_CHANGE_NAME_SERVERS } target="_blank" />,
+				},
+			}
+		);
+
+		return (
+			<React.Fragment>
+				<p>{ nameServerInstructionsMessage }</p>
+				<ul>
+					{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
+						return <li key={ nameServer }>{ nameServer }</li>;
+					} ) }
+				</ul>
+			</React.Fragment>
+		);
+	}
+
+	renderCnameInstructions() {
+		const { translate } = this.props;
+
+		const cnameInstructionsMessage = translate(
+			'Please log into your account at your domain registrar and {{strong}}set the CNAME record{{/strong}} of your subdomain to match the following value, as detailed in {{link}}these instructions{{/link}}:',
+			{
+				components: {
+					strong: <strong />,
+					link: <ExternalLink href={ MAP_SUBDOMAIN } target="_blank" />,
+				},
+			}
+		);
+
+		// TODO: Get these values dynamically
+		const subdomainPart = 'blog';
+		const subdomainName = subdomainPart + '.domain.com';
+		const canonicalName = 'domain.wordpress.com';
+
+		const additionalInstructions = translate(
+			'Some DNS managers will only require you to add the subdomain (i.e. "%(subdomainPart)s") in a field typically labeled "host", "name" or "@", and the canonical name part (i.e. "%(canonicalName)s") might be labeled as "points to" or "alias".',
+			{
+				args: { subdomainPart, canonicalName },
+			}
+		);
+
+		return (
+			<React.Fragment>
+				<p>{ cnameInstructionsMessage }</p>
+				<ul>
+					<li>
+						<code>
+							{ subdomainName }. IN CNAME { canonicalName }.
+						</code>
+					</li>
+				</ul>
+				<p>{ additionalInstructions }</p>
+			</React.Fragment>
+		);
+	}
+
 	renderARecordsList() {
 		const { aRecordsRequiredForMapping } = this.props;
 		return (
@@ -64,7 +129,11 @@ class DomainMappingInstructions extends React.Component {
 			}
 		);
 		return (
-			<FoldableFAQ id="advanced-mapping-setup" question={ advancedSetupUsingARecordsTitle }>
+			<FoldableFAQ
+				id="advanced-mapping-setup-a-records"
+				key="advanced-mapping-setup-a-records"
+				question={ advancedSetupUsingARecordsTitle }
+			>
 				<Notice status="is-warning" showDismiss={ false } translate={ this.props.translate }>
 					{ aRecordMappingWarning }
 				</Notice>
@@ -74,47 +143,51 @@ class DomainMappingInstructions extends React.Component {
 		);
 	}
 
-	getRecommendedSetupMessage() {
-		const { domainName, translate } = this.props;
+	renderAdvancedSetupMessages() {
+		const { aRecordsRequiredForMapping, domainName, isAtomic, translate } = this.props;
+
+		const advancedSetupMessages = [];
 
 		if ( isSubdomain( domainName ) ) {
-			return translate(
-				// 'Please create the correct CNAME or NS records at your current DNS provider. {{learnMoreLink}}Learn how to do that in our support guide for mapping subdomains{{/learnMoreLink}}.',
-				'Please log into your account at your domain registrar and {{strong}}set the CNAME record{{/strong}} of your subdomain to match the following value, as detailed in {{link}}these instructions{{/link}}:',
-				{
-					components: {
-						strong: <strong />,
-						link: <ExternalLink href={ MAP_SUBDOMAIN } target="_blank" />,
-					},
-				}
-			);
+			if ( ! isAtomic ) {
+				advancedSetupMessages.push(
+					<FoldableFAQ
+						id="advanced-mapping-setup-ns-records"
+						key="advanced-mapping-setup-ns-records"
+						question={ translate( 'Advanced setup using NS records' ) }
+					>
+						{ this.renderNameServerInstructions() }
+					</FoldableFAQ>
+				);
+			} else {
+				advancedSetupMessages.push(
+					<FoldableFAQ
+						id="advanced-mapping-setup-cname-record"
+						key="advanced-mapping-setup-cname-record"
+						question={ translate( 'Advanced setup using CNAME records' ) }
+					>
+						{ this.renderCnameInstructions() }
+					</FoldableFAQ>
+				);
+			}
 		}
 
-		return translate(
-			'Please log into your account at your domain registrar and {{strong}}update the name servers{{/strong}} of your domain to use the following values, as detailed in {{link}}these instructions{{/link}}:',
-			{
-				components: {
-					strong: <strong />,
-					link: <ExternalLink href={ MAP_DOMAIN_CHANGE_NAME_SERVERS } target="_blank" />,
-				},
-			}
-		);
+		if ( aRecordsRequiredForMapping ) {
+			advancedSetupMessages.push( this.renderARecordsMappingMessage() );
+		}
+
+		return advancedSetupMessages;
 	}
 
 	renderRecommendedSetupMessage() {
-		const { domainName, translate } = this.props;
+		const { domainName, isAtomic, translate } = this.props;
 
-		// TODO: Get these values dynamically
-		const subdomainPart = 'blog';
-		const subdomainName = subdomainPart + '.domain.com';
-		const canonicalName = 'domain.wordpress.com';
-
-		const subdomainInstructions = translate(
-			'Some DNS managers will only require you to add the subdomain (i.e. "%(subdomainPart)s") in a field typically labeled "host", "name" or "@", and the canonical name part (i.e. "%(canonicalName)s") might be labeled as "points to" or "alias".',
-			{
-				args: { subdomainPart, canonicalName },
-			}
-		);
+		let recommendedSetupInstructions = null;
+		if ( ! isAtomic && isSubdomain( domainName ) ) {
+			recommendedSetupInstructions = this.renderCnameInstructions();
+		} else {
+			recommendedSetupInstructions = this.renderNameServerInstructions();
+		}
 
 		return (
 			<FoldableFAQ
@@ -122,26 +195,7 @@ class DomainMappingInstructions extends React.Component {
 				question={ translate( 'Recommended setup' ) }
 				expanded
 			>
-				<p>{ this.getRecommendedSetupMessage() }</p>
-				{ ! isSubdomain( domainName ) && (
-					<ul>
-						{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
-							return <li key={ nameServer }>{ nameServer }</li>;
-						} ) }
-					</ul>
-				) }
-				{ isSubdomain( domainName ) && (
-					<React.Fragment>
-						<ul>
-							<li>
-								<code>
-									{ subdomainName }. IN CNAME { canonicalName }.
-								</code>
-							</li>
-						</ul>
-						<p>{ subdomainInstructions }</p>
-					</React.Fragment>
-				) }
+				{ recommendedSetupInstructions }
 			</FoldableFAQ>
 		);
 	}
@@ -161,7 +215,7 @@ class DomainMappingInstructions extends React.Component {
 	}
 
 	render() {
-		const { aRecordsRequiredForMapping, areDomainDetailsLoaded } = this.props;
+		const { areDomainDetailsLoaded } = this.props;
 
 		if ( ! areDomainDetailsLoaded ) {
 			return this.renderPlaceholder();
@@ -170,7 +224,7 @@ class DomainMappingInstructions extends React.Component {
 		return (
 			<div className="mapping-instructions">
 				{ this.renderRecommendedSetupMessage() }
-				{ aRecordsRequiredForMapping && this.renderARecordsMappingMessage() }
+				{ this.renderAdvancedSetupMessages() }
 			</div>
 		);
 	}
