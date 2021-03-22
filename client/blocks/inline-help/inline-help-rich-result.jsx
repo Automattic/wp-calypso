@@ -28,9 +28,6 @@ import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query
 import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
 import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
 
-const amendYouTubeLink = ( link = '' ) =>
-	link.replace( 'youtube.com/embed/', 'youtube.com/watch?v=' );
-
 class InlineHelpRichResult extends Component {
 	static propTypes = {
 		setDialogState: PropTypes.func.isRequired,
@@ -121,7 +118,7 @@ const mapStateToProps = ( state, { result } ) => ( {
 	searchQuery: getSearchQuery( state ),
 	type: get( result, RESULT_TYPE, RESULT_ARTICLE ),
 	title: get( result, RESULT_TITLE ),
-	link: amendYouTubeLink( get( result, RESULT_LINK ) ),
+	link: get( result, RESULT_LINK ),
 	description: get( result, RESULT_DESCRIPTION ),
 	tour: get( result, RESULT_TOUR ),
 	postId: get( result, 'post_id' ),
