@@ -46,6 +46,7 @@ import { withCurrentRoute } from 'calypso/components/route';
 import QueryExperiments from 'calypso/components/data/query-experiments';
 import Experiment from 'calypso/components/experiment';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { getShouldShowAppBanner, handleScroll } from './utils';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
@@ -245,6 +246,9 @@ class Layout extends Component {
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<LayoutLoader />
+				{ isJetpackCloud() && (
+					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
+				) }
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (

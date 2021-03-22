@@ -19,10 +19,6 @@ import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
  * Style dependencies
  */
 import 'calypso/components/jetpack/sidebar/style.scss';
-// We import these styles from here because this is the only section that gets always
-// loaded when a user visits Jetpack Cloud. We might have to find a better place for
-// this in the future.
-import 'calypso/jetpack-cloud/style.scss';
 
 interface Props {
 	path: string;
