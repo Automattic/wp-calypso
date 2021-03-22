@@ -25,11 +25,7 @@ import { resetMediaModalView } from 'calypso/state/ui/media-modal/actions';
 import { setEditorMediaModalView } from 'calypso/state/editor/actions';
 import { ModalViews } from 'calypso/state/ui/media-modal/constants';
 import { editMedia, deleteMedia, addExternalMedia } from 'calypso/state/media/thunks';
-import {
-	changeMediaSource,
-	setMediaLibrarySelectedItems,
-	setQuery,
-} from 'calypso/state/media/actions';
+import { changeMediaSource, selectMediaItems, setQuery } from 'calypso/state/media/actions';
 import ImageEditor from 'calypso/blocks/image-editor';
 import VideoEditor from 'calypso/blocks/video-editor';
 import MediaModalDialog from './dialog';
@@ -109,7 +105,7 @@ export class EditorMediaModal extends Component {
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.site && this.props.visible && ! nextProps.visible ) {
-			this.props.setMediaLibrarySelectedItems( nextProps.site.ID, [] );
+			this.props.selectMediaItems( nextProps.site.ID, [] );
 		}
 
 		if ( this.props.visible === nextProps.visible ) {
@@ -135,13 +131,13 @@ export class EditorMediaModal extends Component {
 	UNSAFE_componentWillMount() {
 		const { view, selectedItems, site, single } = this.props;
 		if ( ! isEmpty( selectedItems ) && ( view === ModalViews.LIST || single ) ) {
-			this.props.setMediaLibrarySelectedItems( site.ID, [] );
+			this.props.selectMediaItems( site.ID, [] );
 		}
 	}
 
 	componentWillUnmount() {
 		this.props.resetView();
-		this.props.setMediaLibrarySelectedItems( this.props.site.ID, [] );
+		this.props.selectMediaItems( this.props.site.ID, [] );
 	}
 
 	getDefaultState( props ) {
@@ -266,7 +262,7 @@ export class EditorMediaModal extends Component {
 	};
 
 	onAddAndEditImage = () => {
-		this.props.setMediaLibrarySelectedItems( this.props.site.ID, [] );
+		this.props.selectMediaItems( this.props.site.ID, [] );
 
 		this.props.setView( ModalViews.IMAGE_EDITOR );
 	};
@@ -581,7 +577,7 @@ export default connect(
 		recordEditorEvent,
 		recordEditorStat,
 		editMedia,
-		setMediaLibrarySelectedItems,
+		selectMediaItems,
 		setQuery,
 		addExternalMedia,
 		changeMediaSource,

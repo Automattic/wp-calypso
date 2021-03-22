@@ -27,7 +27,7 @@ import {
 	receiveMedia,
 	setMediaItemErrors,
 	setNextPageHandle,
-	setMediaLibrarySelectedItems,
+	selectMediaItems,
 	successMediaItemRequest,
 } from '../actions';
 import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
@@ -468,7 +468,7 @@ describe( 'reducer', () => {
 			};
 			const result = selectedItems(
 				deepFreeze( state ),
-				setMediaLibrarySelectedItems( siteId, [ mediaItem ] )
+				selectMediaItems( siteId, [ mediaItem ] )
 			);
 
 			expect( result ).to.deep.eql( {

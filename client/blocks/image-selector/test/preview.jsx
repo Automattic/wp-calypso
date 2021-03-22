@@ -21,7 +21,7 @@ describe( 'ImageSelectorPreview', () => {
 		onImageSelected: noop,
 		onRemoveImage: noop,
 		imageIds: [],
-		setMediaLibrarySelectedItems: noop,
+		selectMediaItems: noop,
 		translate: () => {},
 		getMediaItem: ( siteId, itemId ) => require( './fixtures' ).DUMMY_MEDIA[ itemId ],
 	};

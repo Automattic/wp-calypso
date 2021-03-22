@@ -60,7 +60,7 @@ describe( 'EditorMediaModal', () => {
 	let spy;
 	let deleteMedia;
 	let onClose;
-	let setMediaLibrarySelectedItems;
+	let selectMediaItems;
 	let changeMediaSource;
 	let baseProps;
 
@@ -68,10 +68,10 @@ describe( 'EditorMediaModal', () => {
 		spy = sandbox.spy();
 		deleteMedia = sandbox.stub();
 		onClose = sandbox.stub();
-		setMediaLibrarySelectedItems = sandbox.stub();
+		selectMediaItems = sandbox.stub();
 		changeMediaSource = sandbox.stub();
 		baseProps = {
-			setMediaLibrarySelectedItems,
+			selectMediaItems,
 			site: DUMMY_SITE,
 			selectedItems: DUMMY_MEDIA,
 			translate,
@@ -87,7 +87,7 @@ describe( 'EditorMediaModal', () => {
 
 	test( 'When `single` selection screen chosen should initialise with no items selected', () => {
 		shallow( <EditorMediaModal { ...baseProps } single={ true } view={ null } /> ).instance();
-		expect( setMediaLibrarySelectedItems ).to.have.been.calledWith( DUMMY_SITE.ID, [] );
+		expect( selectMediaItems ).to.have.been.calledWith( DUMMY_SITE.ID, [] );
 	} );
 
 	test( 'should prompt to delete a single item from the list view', () => {

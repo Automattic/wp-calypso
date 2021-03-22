@@ -20,7 +20,7 @@ import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
 import SortedGrid from 'calypso/components/sorted-grid';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
+import { selectMediaItems } from 'calypso/state/media/actions';
 import isFetchingNextPage from 'calypso/state/selectors/is-fetching-next-page';
 
 const noop = () => {};
@@ -139,7 +139,7 @@ export class MediaLibraryList extends React.Component {
 		} );
 
 		if ( this.props.site ) {
-			this.props.setMediaLibrarySelectedItems( this.props.site.ID, selectedItems );
+			this.props.selectMediaItems( this.props.site.ID, selectedItems );
 		}
 	};
 
@@ -260,5 +260,5 @@ export default connect(
 		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
 		isFetchingNextPage: isFetchingNextPage( state, site?.ID ),
 	} ),
-	{ setMediaLibrarySelectedItems }
+	{ selectMediaItems }
 )( withRtl( withLocalizedMoment( MediaLibraryList ) ) );

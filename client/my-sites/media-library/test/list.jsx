@@ -40,7 +40,7 @@ describe( 'MediaLibraryList item selection', () => {
 	let wrapper;
 	let mediaList;
 
-	const setMediaLibrarySelectedItems = jest.fn();
+	const selectMediaItems = jest.fn();
 
 	function toggleItem( itemIndex, shiftClick ) {
 		mediaList.toggleItem( fixtures.media[ itemIndex ], shiftClick );
@@ -70,7 +70,7 @@ describe( 'MediaLibraryList item selection', () => {
 					mediaScale={ 0.24 }
 					moment={ moment }
 					selectedItems={ [] }
-					setMediaLibrarySelectedItems={ setMediaLibrarySelectedItems }
+					selectMediaItems={ selectMediaItems }
 				/>
 			);
 			mediaList = wrapper.find( MediaList ).instance();
@@ -159,7 +159,7 @@ describe( 'MediaLibraryList item selection', () => {
 					moment={ moment }
 					single
 					selectedItems={ [] }
-					setMediaLibrarySelectedItems={ setMediaLibrarySelectedItems }
+					selectMediaItems={ selectMediaItems }
 				/>
 			);
 			mediaList = wrapper.find( MediaList ).instance();
@@ -202,7 +202,7 @@ describe( 'MediaLibraryList item selection', () => {
 					source={ source }
 					single
 					selectedItems={ [] }
-					setMediaLibrarySelectedItems={ setMediaLibrarySelectedItems }
+					selectMediaItems={ selectMediaItems }
 				/>
 			)
 				.find( MediaList )
