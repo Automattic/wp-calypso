@@ -91,7 +91,7 @@
 		margin-bottom: 1em;
 
 		@include break-mobile {
-			flex-direction: column;
+			flex-direction: row;
 			margin-bottom: 0;
 		}
 
