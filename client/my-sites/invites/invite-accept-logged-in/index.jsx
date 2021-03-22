@@ -6,7 +6,6 @@ import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import page from 'page';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,8 +31,6 @@ class InviteAcceptLoggedIn extends React.Component {
 		this.props.acceptInvite( this.props.invite, ( error ) => {
 			if ( error ) {
 				this.setState( { submitting: false } );
-			} else if ( get( this.props, 'invite.site.is_vip' ) ) {
-				window.location.href = this.props.redirectTo;
 			} else {
 				page( this.props.redirectTo );
 			}

@@ -4,7 +4,6 @@
 import React from 'react';
 import store from 'store';
 import page from 'page';
-import { get } from 'lodash';
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
 
@@ -47,12 +46,8 @@ export function acceptInvite( context, next ) {
 			if ( error ) {
 				debug( 'Accept invite error: ' + JSON.stringify( error ) );
 				page( window.location.href );
-			} else if ( get( acceptedInvite, 'site.is_vip' ) ) {
-				debug( 'Accepted invite for VIP sites' );
-				window.location.href = getRedirectAfterAccept( acceptedInvite );
 			} else {
 				const redirect = getRedirectAfterAccept( acceptedInvite );
-
 				debug( 'Accepted invite and redirecting to:  ' + redirect );
 				page( redirect );
 			}
