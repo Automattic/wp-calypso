@@ -83,7 +83,6 @@ export function disableInviteLinks( siteId ) {
 
 export function acceptInvite( invite, callback ) {
 	return ( dispatch ) => {
-		dispatch( inviteAccepted( invite ) );
 		wpcom.undocumented().acceptInvite( invite, ( error, data ) => {
 			if ( error ) {
 				if ( error.message ) {
@@ -105,8 +104,11 @@ export function acceptInvite( invite, callback ) {
 					is_p2_site: get( invite, 'site.is_wpforteams_site', false ),
 					inviter_blog_id: get( invite, 'site.ID', false ),
 				} );
+
+				dispatch( inviteAccepted( invite ) );
+				dispatch( requestSites() );
 			}
-			dispatch( requestSites() );
+
 			if ( typeof callback === 'function' ) {
 				callback( error, data );
 			}
