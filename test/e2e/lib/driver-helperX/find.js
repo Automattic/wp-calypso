@@ -6,6 +6,104 @@ import webdriver, { By, WebDriver, WebElement } from 'selenium-webdriver';
 const { NoSuchElementError } = webdriver.error;
 
 /**
+ * Finds an element via given locator.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By|TextLocator} locator The element's locator
+ * @returns {Promise.<WebElement>} A promise that will resolve with the located element
+ */
+export async function findElement( driver, locator ) {
+	if ( ! isTextLocator( locator ) ) {
+		return driver.findElement( locator );
+	}
+	const elements = await findElements( driver, locator );
+
+	if ( ! elements[ 0 ] ) {
+		const locatorStr = getLocatorString( locator );
+		throw new NoSuchElementError( `Unable to locate element ${ locatorStr }` );
+	}
+	return elements[ 0 ];
+}
+
+/**
+ * Finds elements via given locator.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By|TextLocator} locator The element's locator
+ * @returns {Promise.<Array.<WebElement>>} A promise that will resolve with an array of elements
+ */
+export async function findElements( driver, locator ) {
+	if ( ! isTextLocator( locator ) ) {
+		return driver.findElements( locator );
+	}
+	const allElements = await driver.findElements( locator.locator );
+
+	if ( Array.isArray( allElements ) && allElements.length > 0 ) {
+		return webdriver.promise.filter( allElements, ( element ) =>
+			isMatchingElementInnerText( element, locator.text )
+		);
+	}
+	return [];
+}
+
+export async function findElementIfVisible( driver, locator ) {
+	const element = ( await findElements( driver, locator ) )[ 0 ];
+	if ( ! element ) {
+		return null;
+	}
+	const isDisplayed = await element.isDisplayed();
+
+	return isDisplayed ? element : null;
+}
+
+export async function findElementIfClickable( driver, locator ) {
+	const element = ( await findElements( driver, locator ) )[ 0 ];
+	if ( ! element ) {
+		return null;
+	}
+	const isEnabled = await element.isEnabled();
+	const isAriaEnabled = await element.getAttribute( 'aria-disabled' ).then( ( v ) => v !== 'true' );
+
+	return isEnabled && isAriaEnabled ? element : null;
+}
+
+export async function findElementIfFocused( driver, locator ) {
+	const element = ( await findElements( driver, locator ) )[ 0 ];
+	if ( ! element ) {
+		return null;
+	}
+	const elementId = await element.getId();
+	const activeElementId = await driver.switchTo().activeElement().getId();
+	const isFocused = activeElementId === elementId;
+
+	return isFocused ? element : null;
+}
+
+export async function findFieldIfClearable( driver, locator ) {
+	const field = ( await findElements( driver, locator ) )[ 0 ];
+	if ( ! field ) {
+		return null;
+	}
+	await driver.executeScript( "arguments[0].value = '';", field );
+	await field.clear();
+	const value = await field.getAttribute( 'value' );
+
+	return value === '' ? field : null;
+}
+
+export async function findImageIfVisible( driver, locator ) {
+	const image = ( await findElements( driver, locator ) )[ 0 ];
+	if ( ! image ) {
+		return null;
+	}
+	const isVisible = await driver.executeScript( "arguments[0].value = '';", image );
+
+	return isVisible ? image : null;
+}
+
+function highlightElement() {}
+
+/**
  * Object containing an actual WebDriver locator and a text or a regular
  * expression to query the element by.
  *
@@ -64,73 +162,4 @@ export async function isMatchingElementInnerText( element, match ) {
 		return match.test( elementText );
 	}
 	throw new TypeError( 'Invalid argument; must be a string or a regular expression' );
-}
-
-/**
- * Finds an element via given locator.
- *
- * @param {WebDriver} driver The parent WebDriver instance
- * @param {By|TextLocator} locator The element's locator
- * @returns {Promise<WebElement>} A promise that will resolve with the located element
- */
-export async function findElement( driver, locator ) {
-	if ( ! isTextLocator( locator ) ) {
-		return driver.findElement( locator );
-	}
-	const elements = await findElements( driver, locator );
-
-	if ( ! elements[ 0 ] ) {
-		const locatorStr = getLocatorString( locator );
-		throw new NoSuchElementError( `Unable to locate element ${ locatorStr }` );
-	}
-	return elements[ 0 ];
-}
-
-/**
- * Finds elements via given locator.
- *
- * @param {WebDriver} driver The parent WebDriver instance
- * @param {By|TextLocator} locator The element's locator
- * @returns {Promise<WebElement>} A promise that will resolve with the located elements
- */
-export async function findElements( driver, locator ) {
-	if ( ! isTextLocator( locator ) ) {
-		return driver.findElements( locator );
-	}
-	const allElements = await driver.findElements( locator.locator );
-
-	if ( Array.isArray( allElements ) && allElements.length > 0 ) {
-		return webdriver.promise.filter( allElements, ( element ) =>
-			isMatchingElementInnerText( element, locator.text )
-		);
-	}
-	return [];
-}
-
-export async function findElementIfVisible( driver, locator ) {
-	const element = await findElement( driver, locator );
-	const isDisplayed = await element.isDisplayed();
-
-	return isDisplayed ? element : null;
-}
-
-export async function findElementIfClickable( driver, locator ) {
-	const element = await findElement( driver, locator );
-	const isEnabled = await element.isEnabled();
-	const isAriaEnabled = await element.getAttribute( 'aria-disabled' ).then( ( v ) => v !== 'true' );
-
-	return isEnabled && isAriaEnabled ? element : null;
-}
-
-export async function findElementIfFocused( driver, locator ) {
-	const element = await findElement( driver, locator );
-	const elementId = await element.getId();
-	const activeElementId = await driver.switchTo().activeElement().getId();
-	const isFocused = activeElementId === elementId;
-
-	return isFocused ? element : null;
-}
-
-export async function findLinkIfFollowable(driver, locator) {
-	const element = await
 }

@@ -585,6 +585,7 @@ export async function ensureMobileMenuOpen( driver ) {
 	}
 }
 
+//unused
 export function waitForInfiniteListLoad( driver, elementSelector, { numElements = 10 } = {} ) {
 	return driver.wait( function () {
 		return driver.findElements( elementSelector ).then( ( elements ) => {
@@ -709,109 +710,3 @@ export async function acceptAlertIfPresent( driver ) {
 export async function waitForAlertPresent( driver ) {
 	return await driver.wait( until.alertIsPresent(), this.explicitWaitMS, 'Alert is not present.' );
 }
-
-function getInnerTextMatcherFunction( match ) {
-	return async ( element ) => {
-		const elementText = await element.getText();
-		if ( typeof match === 'string' ) {
-			return elementText === match;
-		}
-		if ( match.test ) {
-			return match.test( elementText );
-		}
-		throw new Error( 'Unknown matcher type; must be a string or a regular expression' );
-	};
-}
-
-async function findVisibleElement( driver, locator ) {
-	const element = await findElement( driver, locator );
-	const isDisplayed = await element.isDisplayed();
-
-	return element && isDisplayed ? element : null;
-}
-
-async function findClickableElement( driver, locator ) {
-	const element = await findElement( driver, locator );
-	const isEnabled = await element.isEnabled();
-	const isAriaEnabled = await element.getAttribute( 'aria-disabled' ).then( ( v ) => v !== 'true' );
-
-	return isEnabled && isAriaEnabled ? element : null;
-}
-
-export const get = {
-	elementCount( driver, selector ) {
-		return findElements( driver, selector )
-			.then( ( elements ) => ( Array.isArray( elements ) ? elements.length : 0 ) )
-			.catch( () => 0 );
-	},
-};
-
-export const is = {
-	elementLocated( driver, locator ) {
-		return resolveToBool( findElement( driver, locator ) );
-	},
-	elementNotLocated( driver, locator ) {
-		return resolveToBool( findElement( driver, locator ) ).then( ( v ) => ! v );
-	},
-	elementLocatedAndVisible( driver, locator ) {
-		return resolveToBool( findVisibleElement( driver, locator ) );
-	},
-	elementClickable( driver, locator ) {
-		return resolveToBool( findClickableElement( driver, locator ) );
-	},
-	elementFocused() {
-		return null;
-	},
-	linkFollowable() {
-		return null;
-	},
-	fieldClearable() {
-		return null;
-	},
-	fieldSettable() {
-		return null;
-	},
-	imageVisible() {
-		return null;
-	},
-	lazyListLoaded() {
-		return null;
-	},
-	windowReady() {
-		return null;
-	},
-	popupClosed() {
-		return null;
-	},
-	alertDisplayed() {
-		return null;
-	},
-};
-
-const untilz = {
-	elementLocatedAndVisible( locator ) {
-		const locatorStr = getLocatorString( locator );
-		return new WebElementCondition(
-			`for element to be located and visible ${ locatorStr }`,
-			( driver ) => resolveToValue( findVisibleElement( driver, locator ) )
-		);
-	},
-};
-
-export const ensure = {
-	elementLocatedAndVisible( driver, locator, timeout ) {
-		return driver.wait( untilz.elementLocatedAndVisible( driver, locator ), timeout );
-	},
-};
-
-export const isEventually = {
-	elementLocatedAndVisible( driver, locator, timeout ) {
-		return resolveToBool( ensure.elementLocatedAndVisible( driver, locator, timeout ) );
-	},
-};
-
-export default {
-	is,
-	ensure,
-	isEventually,
-};
