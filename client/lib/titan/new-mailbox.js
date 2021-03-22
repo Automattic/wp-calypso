@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import emailValidator from 'email-validator';
 import PropTypes from 'prop-types';
 import { translate } from 'i18n-calypso';
 import { v4 as uuidv4 } from 'uuid';
@@ -115,43 +116,33 @@ const validateFullEmailAddress = ( { value, error }, allowEmpty = false ) => {
 	if ( allowEmpty && value === '' ) {
 		return { value, error };
 	}
-	const invalidEmailAddressError = translate( 'Please supply a valid email address.' );
-	const emailParts = value.split( '@' );
-	if ( emailParts.length !== 2 ) {
-		return {
-			value,
-			error: invalidEmailAddressError,
-		};
+	if ( emailValidator.validate( value ) ) {
+		return { value, error };
 	}
-
-	// TODO: improve this check to support internationalized SLDs and TLDs
-	const emailDomain = emailParts[ 1 ];
-	if ( ! /^[a-z0-9].*\.[a-z]{2,3}$/i.test( emailDomain ) ) {
-		return {
-			value,
-			error: invalidEmailAddressError,
-		};
-	}
-
-	const mailboxName = emailParts[ 0 ];
-	// Note that this expression allows + symbols in local names
-	if ( ! /^[0-9a-z_-](\.?[0-9a-z_+-])*$/i.test( mailboxName ) ) {
-		return {
-			value,
-			error: invalidEmailAddressError,
-		};
-	}
-
-	return { value, error };
+	return {
+		value,
+		error: translate( 'Please supply a valid email address.' ),
+	};
 };
 
-const validateMailboxName = ( { value, error } ) => ( {
-	value,
-	error:
-		! error && ! /^[0-9a-z_-](\.?[0-9a-z_-])*$/i.test( value )
-			? translate( 'Only numbers, letters, dashes, underscores, and periods are allowed.' )
-			: error,
-} );
+const validateMailboxName = ( { value, error }, { value: domainName, error: domainError } ) => {
+	if ( error ) {
+		return { value, error };
+	}
+	if ( ! /^[0-9a-z_-](\.?[0-9a-z_-])*$/i.test( value ) ) {
+		return {
+			value,
+			error: translate( 'Only numbers, letters, dashes, underscores, and periods are allowed.' ),
+		};
+	}
+	if ( ! domainError && domainName && ! emailValidator.validate( `${ value }@${ domainName }` ) ) {
+		return {
+			value,
+			error: translate( 'Please supply a valid email address.' ),
+		};
+	}
+	return { value, error };
+};
 
 const validateName = ( name ) => {
 	// TODO: validate the user's name
@@ -177,7 +168,7 @@ const validateMailbox = ( mailbox, optionalFields = [] ) => {
 		),
 		domain,
 		isAdmin: mailbox.isAdmin,
-		mailbox: validateMailboxName( mailboxName ),
+		mailbox: validateMailboxName( mailboxName, domain ),
 		name: validateName( name ),
 		password: validatePassword( password ),
 	};
