@@ -16,7 +16,6 @@ import {
 	submitApplePayPayment,
 	submitStripeCardTransaction,
 	submitEbanxCardTransaction,
-	submitFreePurchaseTransaction,
 } from './payment-method-helpers';
 import getPostalCode from './lib/get-postal-code';
 import getDomainDetails from './lib/get-domain-details';
@@ -124,22 +123,4 @@ export async function multiPartnerCardProcessor(
 		return ebanxCardProcessor( submitData, dataForProcessor );
 	}
 	throw new RangeError( 'Unrecognized card payment partner: "' + paymentPartner + '"' );
-}
-
-export async function freePurchaseProcessor(
-	submitData,
-	{ includeDomainDetails, includeGSuiteDetails, responseCart }
-) {
-	return submitFreePurchaseTransaction(
-		{
-			...submitData,
-			couponId: responseCart.coupon,
-			siteId: select( 'wpcom' )?.getSiteId?.(),
-			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
-			// this data is intentionally empty so we do not charge taxes
-			country: null,
-			postalCode: null,
-		},
-		submitWpcomTransaction
-	).then( makeSuccessResponse );
 }
