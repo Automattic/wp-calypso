@@ -1,7 +1,7 @@
 module.exports = {
 	overrides: [
 		{
-			files: [ '**/__test__/**/*' ],
+			files: [ '**/__tests__/**/*' ],
 			rules: {
 				'jest/no-mocks-import': 'off',
 			},
