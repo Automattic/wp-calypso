@@ -2,26 +2,35 @@
  * Internal dependencies
  */
 import { getPreference } from 'calypso/state/preferences/selectors';
-import PREFERENCE_NAME from './constants';
+import {
+	emptyPreference,
+	MAX_DISMISS_COUNT,
+	PREFERENCE_NAME,
+	PreferenceType,
+	TIME_BETWEEN_PROMPTS,
+} from './constants';
 
 /**
  * Type dependencies
  */
 import type { AppState } from 'calypso/types';
 
-const TWO_WEEKS_IN_MS = 1000 * 60 * 60 * 24 * 7 * 2;
+const getDismissCount = ( state: AppState ): number => {
+	const preference =
+		( getPreference( state, PREFERENCE_NAME ) as PreferenceType ) || emptyPreference;
+	return preference.dismissCount;
+};
 
 const getIsDismissed = ( state: AppState ): boolean => {
-	const prefValue = getPreference( state, PREFERENCE_NAME ) as number | 'permanent' | null;
-	if ( null === prefValue ) {
-		return false;
+	const { dismissCount, dismissedAt, reviewed } =
+		( getPreference( state, PREFERENCE_NAME ) as PreferenceType ) || emptyPreference;
+
+	if ( reviewed || MAX_DISMISS_COUNT >= dismissCount ) {
+		return true;
 	}
-	return 'number' === typeof prefValue ? Date.now() - prefValue < TWO_WEEKS_IN_MS : true;
+	return dismissCount > 0 && dismissedAt !== null
+		? Date.now() - dismissedAt > TIME_BETWEEN_PROMPTS
+		: false;
 };
 
-const getHasBeenDismissedOnce = ( state: AppState ): boolean => {
-	const prefValue = getPreference( state, PREFERENCE_NAME ) as number | 'permanent' | null;
-	return null !== prefValue;
-};
-
-export { getIsDismissed, getHasBeenDismissedOnce };
+export { getDismissCount, getIsDismissed };

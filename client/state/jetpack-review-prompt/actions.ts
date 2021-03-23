@@ -2,16 +2,24 @@
  * Internal dependencies
  */
 import { savePreference } from 'calypso/state/preferences/actions';
-import PREFERENCE_NAME from './constants';
+import { PREFERENCE_NAME, PreferenceType } from './constants';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-const dismissReviewPrompt = () => {
-	return savePreference( PREFERENCE_NAME, Date.now() );
+const dismiss = ( previousCount: number ) => {
+	return savePreference( PREFERENCE_NAME, {
+		dismissedAt: Date.now(),
+		dismissCount: previousCount + 1,
+		reviewed: false,
+	} as PreferenceType );
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-const dismissReviewPromptPermanently = () => {
-	return savePreference( PREFERENCE_NAME, 'permanent' );
+const dismissAsReviewed = ( previousCount: number ) => {
+	return savePreference( PREFERENCE_NAME, {
+		dismissedAt: Date.now(),
+		dismissCount: previousCount,
+		reviewed: true,
+	} as PreferenceType );
 };
 
-export { dismissReviewPrompt, dismissReviewPromptPermanently };
+export { dismiss, dismissAsReviewed };
