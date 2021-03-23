@@ -491,19 +491,33 @@ export function getGoogleApps( cart ) {
 	return filter( getAllCartItems( cart ), isGSuiteOrExtraLicenseOrGoogleWorkspace );
 }
 
+/**
+ * Creates a new shopping cart item for G Suite or Google Workspace.
+ *
+ * @param {object} properties - list of properties
+ * @returns {CartItemValue} the new item
+ */
 export function googleApps( properties ) {
+	const { domain, meta, product_slug, quantity, new_quantity, users } = properties;
+
+	const domainName = meta ?? domain;
+
 	const productSlug =
-		properties.product_slug ||
+		product_slug ||
 		( config.isEnabled( 'google-workspace-migration' )
 			? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
 			: GSUITE_BASIC_SLUG );
 
-	return assign( domainItem( productSlug, properties.meta ?? properties.domain ), {
-		extra: { google_apps_users: properties.users },
-		...( productSlug === GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
-			? { quantity: properties.quantity }
-			: {} ),
-	} );
+	const extra = {
+		google_apps_users: users,
+		...( new_quantity ? { new_quantity } : {} ),
+	};
+
+	return {
+		...domainItem( productSlug, domainName ),
+		...( quantity ? { quantity } : {} ),
+		extra,
+	};
 }
 
 export function googleAppsExtraLicenses( properties ) {

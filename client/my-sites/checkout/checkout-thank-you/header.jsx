@@ -22,6 +22,7 @@ import {
 	isSiteRedirect,
 	isTitanMail,
 } from 'calypso/lib/products-values';
+import { isGoogleWorkspaceExtraLicence } from 'calypso/lib/purchases';
 import {
 	isGSuiteExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
@@ -202,6 +203,15 @@ export class CheckoutThankYouHeader extends PureComponent {
 			);
 		}
 
+		if (
+			isGoogleWorkspaceExtraLicence( primaryPurchase ) ||
+			isGSuiteExtraLicenseProductSlug( primaryPurchase.productSlug )
+		) {
+			return preventWidows(
+				translate( 'You will receive an email confirmation shortly for your purchase.' )
+			);
+		}
+
 		if ( isGSuiteOrGoogleWorkspaceProductSlug( primaryPurchase.productSlug ) ) {
 			return preventWidows(
 				translate(
@@ -216,12 +226,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 							'%(productName)s can be either "G Suite" or "Google Workspace Business Starter"',
 					}
 				)
-			);
-		}
-
-		if ( isGSuiteExtraLicenseProductSlug( primaryPurchase.productSlug ) ) {
-			return preventWidows(
-				translate( 'You will receive an email confirmation shortly for your purchase.' )
 			);
 		}
 

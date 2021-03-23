@@ -19,6 +19,7 @@ import {
 	isDomainTransferProduct,
 	isDomainProduct,
 	isDotComPlan,
+	isGoogleWorkspaceExtraLicence,
 	isGSuiteOrGoogleWorkspace,
 	isTitanMail,
 } from 'calypso/lib/products-values';
@@ -201,9 +202,13 @@ function addRegistrationDataToGSuiteItem(
 	item: WPCOMCartItem,
 	contactDetails: DomainContactDetails | null
 ): WPCOMCartItem {
-	if ( ! isGSuiteOrGoogleWorkspaceProductSlug( item.wpcom_meta?.product_slug ) ) {
+	if (
+		! isGSuiteOrGoogleWorkspaceProductSlug( item.wpcom_meta?.product_slug ) ||
+		isGoogleWorkspaceExtraLicence( item.wpcom_meta )
+	) {
 		return item;
 	}
+
 	return {
 		...item,
 		wpcom_meta: {
