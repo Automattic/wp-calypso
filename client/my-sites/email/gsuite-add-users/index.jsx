@@ -88,13 +88,19 @@ class GSuiteAddUsers extends React.Component {
 		this.recordClickEvent( 'calypso_email_management_gsuite_add_users_continue_button_click' );
 
 		if ( canContinue ) {
+			// TODO: Determine product slug when adding new users based on actual product
+			let productSlug = GSUITE_BASIC_SLUG;
+
+			// Checks plan type only when a new account is being purchased (it is not provided when new users are added)
+			if ( planType !== undefined && planType === 'starter' ) {
+				productSlug = GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY;
+			}
+
 			this.props.shoppingCartManager
 				.addProductsToCart(
-					getItemsForCart(
-						domains,
-						'basic' === planType ? GSUITE_BASIC_SLUG : GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-						users
-					).map( ( item ) => fillInSingleCartItemAttributes( item, this.props.productsList ) )
+					getItemsForCart( domains, productSlug, users ).map( ( item ) =>
+						fillInSingleCartItemAttributes( item, this.props.productsList )
+					)
 				)
 				.then( () => {
 					this.isMounted && page( '/checkout/' + selectedSite.slug );
