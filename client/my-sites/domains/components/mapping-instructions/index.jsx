@@ -63,7 +63,7 @@ class DomainMappingInstructions extends React.Component {
 		);
 	}
 
-	renderNameServerMessage() {
+	renderNameServerInstructionsWithHeader() {
 		return (
 			<FoldableFAQ
 				id="advanced-mapping-setup-ns-records"
@@ -124,7 +124,7 @@ class DomainMappingInstructions extends React.Component {
 		);
 	}
 
-	renderCnameMessage() {
+	renderCnameInstructionsWithHeader() {
 		return (
 			<FoldableFAQ
 				id="advanced-mapping-setup-cname-record"
@@ -147,7 +147,7 @@ class DomainMappingInstructions extends React.Component {
 		);
 	}
 
-	renderARecordsMappingMessage() {
+	renderARecordsInstructionsWithHeader() {
 		const { translate } = this.props;
 
 		const advancedSetupUsingARecordsTitle = translate( 'Advanced setup using root A records' );
@@ -177,27 +177,27 @@ class DomainMappingInstructions extends React.Component {
 		);
 	}
 
-	renderAdvancedSetupMessages() {
+	renderAdvancedSetupInstructions() {
 		const { aRecordsRequiredForMapping, domainName, isAtomic } = this.props;
 
 		const advancedSetupMessages = [];
 
 		if ( isSubdomain( domainName ) ) {
 			if ( ! isAtomic ) {
-				advancedSetupMessages.push( this.renderNameServerMessage() );
+				advancedSetupMessages.push( this.renderNameServerInstructionsWithHeader() );
 			} else {
-				advancedSetupMessages.push( this.renderCnameMessage() );
+				advancedSetupMessages.push( this.renderCnameInstructionsWithHeader() );
 			}
 		}
 
 		if ( aRecordsRequiredForMapping ) {
-			advancedSetupMessages.push( this.renderARecordsMappingMessage() );
+			advancedSetupMessages.push( this.renderARecordsInstructionsWithHeader() );
 		}
 
 		return advancedSetupMessages;
 	}
 
-	renderRecommendedSetupMessage() {
+	renderRecommendedSetupInstructions() {
 		const { domainName, isAtomic, translate } = this.props;
 
 		let recommendedSetupInstructions = null;
@@ -241,8 +241,8 @@ class DomainMappingInstructions extends React.Component {
 
 		return (
 			<div className="mapping-instructions">
-				{ this.renderRecommendedSetupMessage() }
-				{ this.renderAdvancedSetupMessages() }
+				{ this.renderRecommendedSetupInstructions() }
+				{ this.renderAdvancedSetupInstructions() }
 			</div>
 		);
 	}
