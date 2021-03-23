@@ -21,12 +21,12 @@ import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetp
 import Main from 'calypso/components/main';
 import CardHeading from 'calypso/components/card-heading';
 import Spinner from 'calypso/components/spinner';
+import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 
 export default function SelectPartnerKey(): ReactElement | null {
 	const translate = useTranslate();
