@@ -20,6 +20,10 @@
 		border-width: 1px;
 		border-radius: calc( 2px * 4 );
 	}
+
+	p {
+		line-height: inherit;
+	}
 }
 
 .intro-pricing-banner__copy {

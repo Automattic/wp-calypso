@@ -180,15 +180,17 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 			</section>
 
 			<section className="product-grid__section product-grid__asterisk-items">
-				<h2 className="product-grid__asterisk-item">
-					{ translate( 'Special introductory pricing, all renewals are at full price.' ) }
-				</h2>
-				<h2 className="product-grid__asterisk-item">
-					{ translate( 'Monthly plans are 7-day money back guarantee.' ) }
-				</h2>
-				<h2 className="product-grid__asterisk-item">
-					{ translate( 'All plans include priority support' ) }
-				</h2>
+				<ul className="product-grid__asterisk-list">
+					<li className="product-grid__asterisk-item">
+						{ translate( 'Special introductory pricing, all renewals are at full price.' ) }
+					</li>
+					<li className="product-grid__asterisk-item">
+						{ translate( 'Monthly plans are 7-day money back guarantee.' ) }
+					</li>
+					<li className="product-grid__asterisk-item">
+						{ translate( 'All plans include priority support' ) }
+					</li>
+				</ul>
 			</section>
 
 			<section className="product-grid__section">
