@@ -23,11 +23,12 @@ class WebpackRTLPlugin {
 						Object.keys( assets )
 							.filter( ( asset ) => path.extname( asset ) === '.css' )
 							.map( async ( asset ) => {
-								const match = this.options.test
-									? new RegExp( this.options.test ).test( asset )
-									: true;
-
-								if ( ! match ) return;
+								if ( this.options.test ) {
+									const re = new RegExp( this.options.test );
+									if ( ! re.test( asset ) ) {
+										return;
+									}
+								}
 
 								// Extract RTL
 								const baseSource = assets[ asset ].source();
