@@ -14,8 +14,7 @@ open class PluginBaseBuild : Template({
 	val pluginSlug = "%plugin_slug%"
 	val workingDir = "apps/$pluginSlug"
 	val archiveDir = "%archive_dir%"
-	val releaseTag = if ("%release_tag%".length > 0) "%release_tag%" else "$pluginSlug-release-build"
-	val buildEnv = if ("%build_env%".length > 0) "%build_env%" else "production"
+	val releaseTag = "%release_tag%"
 
 	artifactRules = "$pluginSlug.zip"
 	buildNumberPattern = "%build.prefix%.%build.counter%"
@@ -70,7 +69,7 @@ open class PluginBaseBuild : Template({
 		bashNodeScript {
 			name = "Build artifacts"
 			scriptContent = """
-				export NODE_ENV="$buildEnv"
+				export NODE_ENV="%build_env%"
 				cd $workingDir
 				yarn build
 			"""
