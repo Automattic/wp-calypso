@@ -31,7 +31,7 @@ import SidebarSeparator from 'calypso/layout/sidebar/separator';
 import SidebarRegion from 'calypso/layout/sidebar/region';
 import 'calypso/state/admin-menu/init';
 import Spinner from 'calypso/components/spinner';
-import itemLinkMatches from './utils';
+import { itemLinkMatches } from './utils';
 import { getSidebarIsCollapsed, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import { isExternal } from 'calypso/lib/url';

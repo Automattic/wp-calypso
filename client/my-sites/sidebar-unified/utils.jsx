@@ -6,7 +6,7 @@ const pathIncludes = ( currentPath, position, term ) =>
 const fragmentIsEqual = ( currentPath, path, position ) =>
 	currentPath.split( /[/,?]/ )?.[ position ] === path.split( /[/,?]/ )?.[ position ];
 
-const itemLinkMatches = ( path, currentPath ) => {
+export const itemLinkMatches = ( path, currentPath ) => {
 	// Accounts for jetpack custom post types, eg portofolio, testimonials.
 	if ( pathIncludes( currentPath, 1, 'types' ) ) {
 		fragmentIsEqual( currentPath, path, 2 );
@@ -17,5 +17,3 @@ const itemLinkMatches = ( path, currentPath ) => {
 	}
 	return fragmentIsEqual( currentPath, path, 1 );
 };
-
-export default itemLinkMatches;
