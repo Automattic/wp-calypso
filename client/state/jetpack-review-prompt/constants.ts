@@ -13,5 +13,6 @@ export const emptyPreference: PreferenceType = {
 };
 
 const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
+
 export const TIME_BETWEEN_PROMPTS = 2 * WEEK_IN_MS;
 export const MAX_DISMISS_COUNT = 2;

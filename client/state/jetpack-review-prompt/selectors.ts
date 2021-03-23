@@ -25,11 +25,11 @@ const getIsDismissed = ( state: AppState ): boolean => {
 	const { dismissCount, dismissedAt, reviewed } =
 		( getPreference( state, PREFERENCE_NAME ) as PreferenceType ) || emptyPreference;
 
-	if ( reviewed || MAX_DISMISS_COUNT >= dismissCount ) {
+	if ( reviewed || MAX_DISMISS_COUNT <= dismissCount ) {
 		return true;
 	}
 	return dismissCount > 0 && dismissedAt !== null
-		? Date.now() - dismissedAt > TIME_BETWEEN_PROMPTS
+		? Date.now() - dismissedAt < TIME_BETWEEN_PROMPTS
 		: false;
 };
 
