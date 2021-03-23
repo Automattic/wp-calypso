@@ -8,7 +8,7 @@ import { render, fireEvent, screen } from '@testing-library/react';
  * Internal dependencies
  */
 // https://jestjs.io/docs/en/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
-import '../../../__mock__/matchMedia.mock';
+import '../../../__mocks__/matchMedia.mock';
 import SuggestionItem from '../suggestion-item';
 
 const testSuggestion = {

@@ -8,8 +8,8 @@ import { DataStatus } from '@automattic/data-stores/src/domain-suggestions';
 /**
  * Internal dependencies
  */
-import { MOCK_DOMAIN_SUGGESTION } from '../__mock__/';
-import '../__mock__/matchMedia.mock';
+import '../__mocks__/matchMedia.mock';
+import { MOCK_DOMAIN_SUGGESTION } from '../__mocks__';
 import DomainPicker from '../components';
 import { useDomainSuggestions } from '../hooks/use-domain-suggestions';
 
