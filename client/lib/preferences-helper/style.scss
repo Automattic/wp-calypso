@@ -13,7 +13,7 @@
 }
 
 .preferences-helper__unset {
-	color: var( --color-accent );
+	color: var(--color-accent);
 	cursor: pointer;
 }
 
@@ -31,12 +31,18 @@
 }
 
 .preferences-helper__save-pref-button {
-	 color: var( --color-accent );
-	 cursor: pointer;
-	 &:disabled {
-		 color: var( --color-neutral );
-	 }
- }
+	color: var(--color-accent);
+	cursor: pointer;
+	&:disabled {
+		color: var(--color-neutral);
+	}
+}
+
+.boolean-preference {
+	input {
+		appearance: checkbox;
+	}
+}
 
 .environment.is-prefs:hover .preferences-helper__current-preferences.card {
 	display: block;

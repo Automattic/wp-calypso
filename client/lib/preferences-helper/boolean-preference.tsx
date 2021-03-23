@@ -17,10 +17,10 @@ import { savePreference } from 'calypso/state/preferences/actions';
 
 interface Props {
 	name: string;
-	value: number;
+	value: boolean;
 }
 
-const NumberPreference: FunctionComponent<Props> = ({ name, value }) => {
+const BooleanPreference: FunctionComponent<Props> = ({ name, value }) => {
 	const dispatch = useDispatch();
 
 	const [localValue, setLocalValue] = useState(value);
@@ -30,14 +30,17 @@ const NumberPreference: FunctionComponent<Props> = ({ name, value }) => {
 	}, [dispatch, localValue, name]);
 
 	const handleLocalChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-		setLocalValue(parseInt(event.target.value));
+		setLocalValue(event.target.checked);
 	};
 
 	useEffect(() => setLocalValue(value), [value]);
 
+	console.log(`value: ${localValue}`);
+	console.log(`typeof value: ${typeof localValue}`);
+
 	return (
-		<div id={name} className="number-preference">
-			<input type="number" onChange={handleLocalChange} value={localValue} />
+		<div className="boolean-preference">
+			<input type="checkbox" onChange={handleLocalChange} checked={localValue} />{' '}
 			{value !== localValue && (
 				<button
 					className="preferences-helper__save-pref-button"
@@ -51,4 +54,4 @@ const NumberPreference: FunctionComponent<Props> = ({ name, value }) => {
 	);
 };
 
-export default NumberPreference;
+export default BooleanPreference;
