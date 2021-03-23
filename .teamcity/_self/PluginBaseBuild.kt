@@ -36,7 +36,7 @@ open class PluginBaseBuild : Template({
 
 	features {
 		pullRequests {
-			vcsRootExtId = Settings.WpCalypso.id
+			vcsRootExtId = "${Settings.WpCalypso.id}"
 			provider = github {
 				authType = token {
 					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
@@ -46,7 +46,7 @@ open class PluginBaseBuild : Template({
 		}
 
 		commitStatusPublisher {
-			vcsRootExtId = Settings.WpCalypso.id
+			vcsRootExtId = "${Settings.WpCalypso.id}"
 			publisher = github {
 				githubUrl = "https://api.github.com"
 				authType = personalToken {
