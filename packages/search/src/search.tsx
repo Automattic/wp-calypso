@@ -30,9 +30,6 @@ import './style.scss';
  * Internal variables
  */
 const SEARCH_DEBOUNCE_MS = 300;
-const noop = () => {
-	/* Default noop callback for some props */
-};
 
 type KeyboardOrMouseEvent =
 	| MouseEvent< HTMLButtonElement | HTMLInputElement >
@@ -114,19 +111,17 @@ type ImperativeHandle = {
 
 const InnerSearch = (
 	{
-		delaySearch,
-		disabled,
-		pinned,
+		delaySearch = false,
+		disabled = false,
+		pinned = false,
 		onSearchClose,
 		onSearchChange,
-		onSearch: onSearchProp = () => {
-			/* noop default */
-		},
+		onSearch,
 		onBlur: onBlurProp,
 		onKeyDown: onKeyDownProp,
 		onClick,
 		describedBy,
-		delayTimeout,
+		delayTimeout = SEARCH_DEBOUNCE_MS,
 		defaultValue = '',
 		defaultIsOpen = false,
 		autoFocus = false,
@@ -135,17 +130,17 @@ const InnerSearch = (
 		overlayStyling,
 		placeholder: placeholderProp,
 		inputLabel,
-		disableAutocorrect,
+		disableAutocorrect = false,
 		className,
 		dir,
-		fitsContainer,
-		searching,
-		compact,
-		hideOpenIcon,
-		openIconSide,
+		fitsContainer = false,
+		searching = false,
+		compact = false,
+		hideOpenIcon = false,
+		openIconSide = 'left',
 		minLength,
 		maxLength,
-		hideClose,
+		hideClose = false,
 	}: Props,
 	forwardedRef: Ref< ImperativeHandle >
 ) => {
@@ -175,14 +170,21 @@ const InnerSearch = (
 		[]
 	);
 
-	const doSearch: ( ( search: string ) => void ) & { cancel?: () => void } = React.useMemo(
-		() => ( delaySearch ? debounce( onSearchProp, delayTimeout ) : onSearchProp ),
-		[ onSearchProp, delayTimeout, delaySearch ]
-	);
+	const doSearch: ( ( search: string ) => void ) & { cancel?: () => void } = React.useMemo( () => {
+		if ( ! onSearch ) {
+			return () => {}; // eslint-disable-line @typescript-eslint/no-empty-function
+		}
+
+		if ( ! delaySearch ) {
+			return onSearch;
+		}
+
+		return debounce( onSearch, delayTimeout );
+	}, [ onSearch, delayTimeout, delaySearch ] );
 
 	useEffect( () => {
 		if ( keyword ) {
-			onSearchProp( keyword );
+			onSearch?.( keyword );
 		}
 		// Disable reason: This effect covers the case where a keyword was passed in as the default value and we only want to run it on first search; the useUpdateEffect below will handle the rest of the time that keyword updates
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -259,10 +261,7 @@ const InnerSearch = (
 	}, [ keyword, isOpen, hasFocus ] );
 
 	const onBlur = ( event: FocusEvent< HTMLInputElement > ) => {
-		if ( onBlurProp ) {
-			onBlurProp( event );
-		}
-
+		onBlurProp?.( event );
 		setHasFocus( false );
 	};
 
@@ -432,32 +431,7 @@ const InnerSearch = (
 	);
 };
 
-export const Search = React.forwardRef( InnerSearch );
-Search.defaultProps = {
-	autoFocus: false,
-	compact: false,
-	delaySearch: false,
-	delayTimeout: SEARCH_DEBOUNCE_MS,
-	describedBy: undefined,
-	dir: undefined,
-	disableAutocorrect: false,
-	disabled: false,
-	fitsContainer: false,
-	hideClose: false,
-	hideOpenIcon: false,
-	defaultIsOpen: false,
-	onClick: noop,
-	onKeyDown: noop,
-	onSearchChange: noop,
-	onSearchOpen: noop,
-	onSearchClose: noop,
-	openIconSide: 'left' as const,
-	//undefined value for overlayStyling is an optimization that will
-	//disable overlay scrolling calculation when no overlay is provided.
-	overlayStyling: undefined,
-	pinned: false,
-	recordEvent: noop,
-	searching: false,
-};
+const Search = React.forwardRef( InnerSearch );
+Search.displayName = 'Search';
 
 export default Search;
