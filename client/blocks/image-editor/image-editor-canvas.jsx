@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { startsWith } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -88,35 +87,24 @@ export class ImageEditorCanvas extends Component {
 		}
 	}
 
-	isBlobSrc( src ) {
-		return startsWith( src, 'blob' );
-	}
-
 	getImage( src ) {
-		const { onLoadError, mimeType } = this.props;
-
-		const req = new XMLHttpRequest();
-
-		if ( ! this.isBlobSrc( src ) ) {
+		if ( ! src.startsWith( 'blob' ) ) {
 			src = src + '?'; // Fix #7991 by forcing Safari to ignore cache and perform valid CORS request
 		}
 
-		req.open( 'GET', src, true );
-		req.responseType = 'arraybuffer';
-
-		req.onload = () => {
-			if ( ! this.isMounted ) {
-				return;
-			}
-
-			const objectURL = window.URL.createObjectURL(
-				new Blob( [ req.response ], { type: mimeType } )
-			);
-			this.initImage( objectURL );
-		};
-
-		req.onerror = ( error ) => onLoadError( error );
-		req.send();
+		window
+			.fetch( src )
+			.then( ( response ) => response.blob() )
+			.then( ( blob ) => {
+				if ( this.isMounted ) {
+					this.initImage( window.URL.createObjectURL( blob ) );
+				}
+			} )
+			.catch( ( error ) => {
+				if ( this.isMounted ) {
+					this.props.onLoadError( error );
+				}
+			} );
 	}
 
 	initImage( src ) {
