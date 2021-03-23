@@ -20,6 +20,7 @@ import {
 } from 'calypso/state/themes/actions';
 import {
 	getJetpackUpgradeUrlIfPremiumTheme,
+	getRecommendedThemes,
 	getThemeDetailsUrl,
 	getThemeHelpUrl,
 	getThemePurchaseUrl,
@@ -97,10 +98,17 @@ function getAllThemeOptions() {
 	const deleteTheme = {
 		label: translate( 'Delete' ),
 		action: confirmDelete,
-		hideForTheme: ( state, themeId, siteId, origin ) =>
-			! isJetpackSite( state, siteId ) ||
-			origin === 'wpcom' ||
-			isThemeActive( state, themeId, siteId ),
+		hideForTheme: ( state, themeId, siteId, origin ) => {
+			const recommendedThemes = getRecommendedThemes( state );
+			const isThemeRecommended = recommendedThemes.some( ( recTheme ) => recTheme.id === themeId );
+
+			return (
+				! isJetpackSite( state, siteId ) ||
+				origin === 'wpcom' ||
+				isThemeActive( state, themeId, siteId ) ||
+				isThemeRecommended
+			);
+		},
 	};
 
 	const customize = {
