@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import itemLinkMatches from '../utils';
+import { itemLinkMatches } from '../utils';
 
 describe( 'MySitesSidebar', () => {
 	describe( '#itemLinkMatches()', () => {
@@ -50,6 +50,24 @@ describe( 'MySitesSidebar', () => {
 			);
 
 			expect( isSelected ).to.be.false;
+		} );
+
+		test( 'clicking a marketing panel should not activate sharing-buttons in settings menu', () => {
+			const isSelected = itemLinkMatches(
+				'/marketing/sharing-buttons/example.wordpress.com',
+				'/marketing/traffic/cpapfree.wordpress.com'
+			);
+
+			expect( isSelected ).to.be.false;
+		} );
+
+		test( 'clicking a marketing panel should activate the marketing/tools menu', () => {
+			const isSelected = itemLinkMatches(
+				'/marketing/tools/example.wordpress.com',
+				'/marketing/traffic/cpapfree.wordpress.com'
+			);
+
+			expect( isSelected ).to.be.true;
 		} );
 	} );
 } );

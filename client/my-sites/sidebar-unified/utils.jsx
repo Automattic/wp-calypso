@@ -1,19 +1,18 @@
-// Checks if `currentPath` starts with the first fragment of `path`
-
-const pathIncludes = ( currentPath, position, term ) =>
+const pathIncludes = ( currentPath, term, position ) =>
 	currentPath.split( /[/,?]/ )?.[ position ].includes( term );
 
-const fragmentIsEqual = ( currentPath, path, position ) =>
+const fragmentIsEqual = ( path, currentPath, position ) =>
 	currentPath.split( /[/,?]/ )?.[ position ] === path.split( /[/,?]/ )?.[ position ];
 
+// Checks if `currentPath` starts with the first fragment of `path`
 export const itemLinkMatches = ( path, currentPath ) => {
 	// Accounts for jetpack custom post types, eg portofolio, testimonials.
-	if ( pathIncludes( currentPath, 1, 'types' ) ) {
-		fragmentIsEqual( currentPath, path, 2 );
+	if ( pathIncludes( currentPath, 'types', 1 ) ) {
+		return fragmentIsEqual( path, currentPath, 2 );
 	}
 	// Temp fix till we remove sharing buttons from 'Settings' menu.
-	if ( pathIncludes( currentPath, 1, 'marketing' ) ) {
-		return fragmentIsEqual( currentPath, path, 1 ) && fragmentIsEqual( currentPath, '//tools', 2 );
+	if ( pathIncludes( currentPath, 'marketing', 1 ) ) {
+		return fragmentIsEqual( path, currentPath, 1 ) && fragmentIsEqual( path, '//tools', 2 );
 	}
-	return fragmentIsEqual( currentPath, path, 1 );
+	return fragmentIsEqual( path, currentPath, 1 );
 };
