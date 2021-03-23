@@ -4,13 +4,13 @@ import './public-path';
 /**
  * External dependencies
  */
-import { useState } from 'react';
-import { registerPlugin } from '@wordpress/plugins';
+import { __ } from '@wordpress/i18n';
 import { Fill, MenuItem } from '@wordpress/components';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import WhatsNewGuide from '@automattic/whats-new';
+import { registerPlugin } from '@wordpress/plugins';
 import { useEffect } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { useState } from 'react';
+import WhatsNewGuide from '@automattic/whats-new';
 
 function WhatsNewMenuItem() {
 	const [ showGuide, setShowGuide ] = useState( false );

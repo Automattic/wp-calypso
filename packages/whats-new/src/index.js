@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState } from 'react';
 import { Guide } from '@wordpress/components';
+import proxyRequest from 'wpcom-proxy-request';
+import React, { useEffect, useState } from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { useLocale } from '@automattic/i18n-utils';
 import wpcom from 'wpcom';
-import proxyRequest from 'wpcom-proxy-request';
 
 /**
  * Internal dependencies
@@ -30,7 +30,9 @@ const WhatsNewGuide = ( { onClose } ) => {
 			} );
 	}, [ locale ] );
 
-	if ( ! whatsNewData ) return null;
+	if ( ! whatsNewData ) {
+		return null;
+	}
 
 	return (
 		<Guide
