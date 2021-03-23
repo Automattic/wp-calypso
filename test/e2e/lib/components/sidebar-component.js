@@ -9,6 +9,7 @@ import { By } from 'selenium-webdriver';
 import AsyncBaseContainer from '../async-base-container';
 // import DisconnectSurveyPage from '../pages/disconnect-survey-page.js';
 import * as driverHelper from '../driver-helper.js';
+import * as driverManager from "../driver-manager";
 
 export default class SidebarComponent extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -44,7 +45,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 
 	async selectThemes() {
 		await this.expandDrawerItem( 'Appearance' );
-		return await this._scrollToAndClickMenuItem( 'Themes' );
+		//return await this._scrollToAndClickMenuItem( 'Themes' );
 	}
 
 	async selectAllSitesThemes() {
@@ -60,7 +61,11 @@ export default class SidebarComponent extends AsyncBaseContainer {
 
 	async selectWPAdmin() {
 		//Wp-admin isn't in nav-unification. Workaround to get to wp-admin
-		return await this.expandDrawerItem( 'Feedback' );
+		await this.expandDrawerItem( 'Feedback' );
+
+		if ( driverManager.currentScreenSize() === 'mobile' ) {
+			return await this._scrollToAndClickMenuItem('Feedback');
+		}
 	}
 
 	async customizeTheme() {
@@ -152,7 +157,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async numberOfMenuItems() {
-		const elements = await this.driver.findElements( By.css( '.sidebar .sidebar__menu li' ) );
+		const elements = await this.driver.findElements( By.css( '.sidebar li.sidebar__menu-item-parent' ) );
 		return elements.length;
 	}
 
@@ -166,11 +171,6 @@ export default class SidebarComponent extends AsyncBaseContainer {
 
 	async _scrollToAndClickMenuItem( target, { clickButton = false } = {} ) {
 		const selector = SidebarComponent._getSidebarSelector( target, { getButton: clickButton } );
-
-		// if ( ! ( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector, 500 ) ) ) {
-		// 	const settingsSelector = SidebarComponent._getSidebarSelector( 'Settings' );
-		// 	await driverHelper.scrollIntoView( this.driver, settingsSelector );
-		// }
 
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
