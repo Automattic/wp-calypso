@@ -69,6 +69,7 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
+			paths.domainManagementAddGSuiteUsers( ':site', ':domain', ':productType' ),
 			paths.domainManagementAddGSuiteUsers( ':site', ':domain' ),
 			paths.domainManagementAddGSuiteUsers( ':site' ),
 		],

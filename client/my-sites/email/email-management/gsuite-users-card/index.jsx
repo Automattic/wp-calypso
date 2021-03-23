@@ -27,6 +27,7 @@ import {
 	getGoogleDriveUrl,
 	getGoogleSheetsUrl,
 	getGoogleSlidesUrl,
+	getProductType,
 	hasPendingGSuiteUsers,
 } from 'calypso/lib/gsuite';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -81,9 +82,8 @@ class GSuiteUsersCard extends React.Component {
 	renderDomainWithGSuite( domainName, users ) {
 		const { selectedSiteSlug, translate } = this.props;
 
-		// The product name is same for all users as product license is associated to domain
-		// Hence a snapshot of the product name from the first user is sufficient
-		const productName = users[ 0 ].product_name;
+		// Retrieves product information from the first user, which is fine as all users share exactly the same product data
+		const { product_name: productName, product_slug: productSlug } = users[ 0 ];
 
 		const header = (
 			<>
@@ -104,7 +104,11 @@ class GSuiteUsersCard extends React.Component {
 			<Button
 				primary
 				compact
-				href={ emailManagementAddGSuiteUsers( selectedSiteSlug, domainName ) }
+				href={ emailManagementAddGSuiteUsers(
+					selectedSiteSlug,
+					domainName,
+					getProductType( productSlug )
+				) }
 				onClick={ this.goToAddGoogleApps }
 			>
 				{ translate( 'Add New Users' ) }

@@ -34,9 +34,10 @@ export default function () {
 			paths.emailManagementAddGSuiteUsers(
 				':site',
 				':domain',
+				':productType',
 				paths.emailManagementAllSitesPrefix
 			),
-			paths.emailManagementAddGSuiteUsers( ':site', ':domain' ),
+			paths.emailManagementAddGSuiteUsers( ':site', ':domain', ':productType' ),
 			paths.emailManagementAddGSuiteUsers( ':site' ),
 		],
 		handlers: [
@@ -49,21 +50,13 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementAddGSuiteUsersLegacy( ':site', ':domain' ),
-			paths.emailManagementAddGSuiteUsersLegacy( ':site' ),
-		],
-		handlers: [ controller.emailManagementAddGSuiteUsersLegacyRedirect ],
-	} );
-
-	registerMultiPage( {
-		paths: [
 			paths.emailManagementNewGSuiteAccount(
 				':site',
 				':domain',
-				':planType',
+				':productType',
 				paths.emailManagementAllSitesPrefix
 			),
-			paths.emailManagementNewGSuiteAccount( ':site', ':domain', ':planType' ),
+			paths.emailManagementNewGSuiteAccount( ':site', ':domain', ':productType' ),
 		],
 		handlers: [
 			...commonHandlers,

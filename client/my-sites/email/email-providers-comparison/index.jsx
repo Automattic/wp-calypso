@@ -26,7 +26,13 @@ import {
 	GSUITE_BASIC_SLUG,
 } from 'calypso/lib/gsuite/constants';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
-import { getAnnualPrice, getGoogleMailServiceFamily, getMonthlyPrice } from 'calypso/lib/gsuite';
+import {
+	getAnnualPrice,
+	getGoogleMailServiceFamily,
+	getMonthlyPrice,
+	getProductType,
+	isGoogleWorkspaceProductSlug,
+} from 'calypso/lib/gsuite';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -70,14 +76,17 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	goToAddGSuite = () => {
-		const { domain, currentRoute, selectedSiteSlug } = this.props;
+		const { domain, currentRoute, gSuiteProduct, selectedSiteSlug } = this.props;
 
 		recordTracksEvent( 'calypso_email_providers_add_click', { provider: 'gsuite' } );
 
-		const planType = config.isEnabled( 'google-workspace-migration' ) ? 'starter' : 'basic';
-
 		page(
-			emailManagementNewGSuiteAccount( selectedSiteSlug, domain.name, planType, currentRoute )
+			emailManagementNewGSuiteAccount(
+				selectedSiteSlug,
+				domain.name,
+				getProductType( gSuiteProduct.product_slug ),
+				currentRoute
+			)
 		);
 	};
 
@@ -219,13 +228,15 @@ class EmailProvidersComparison extends React.Component {
 	renderGSuiteDetails( className ) {
 		const { currencyCode, gSuiteProduct, translate } = this.props;
 
-		const logo = config.isEnabled( 'google-workspace-migration' )
+		const logo = isGoogleWorkspaceProductSlug( gSuiteProduct.product_slug )
 			? googleWorkspaceIcon
 			: gSuiteLogo;
 
+		const googleMailServiceFamily = getGoogleMailServiceFamily( gSuiteProduct.product_slug );
+
 		return (
 			<EmailProviderDetails
-				title={ getGoogleMailServiceFamily() }
+				title={ googleMailServiceFamily }
 				description={ translate(
 					'Professional email integrated with Google Meet and other collaboration tools from Google.'
 				) }
@@ -255,7 +266,7 @@ class EmailProvidersComparison extends React.Component {
 				} ) }
 				buttonLabel={ translate( 'Add %(googleMailService)s', {
 					args: {
-						googleMailService: getGoogleMailServiceFamily(),
+						googleMailService: googleMailServiceFamily,
 					},
 					comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
 				} ) }
@@ -291,13 +302,13 @@ class EmailProvidersComparison extends React.Component {
 
 export default connect(
 	( state ) => {
-		const productSlug = config.isEnabled( 'google-workspace-migration' )
+		const gSuiteProductSlug = config.isEnabled( 'google-workspace-migration' )
 			? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
 			: GSUITE_BASIC_SLUG;
 
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
-			gSuiteProduct: getProductBySlug( state, productSlug ),
+			gSuiteProduct: getProductBySlug( state, gSuiteProductSlug ),
 			titanMailProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 			currentRoute: getCurrentRoute( state ),
 			selectedSiteSlug: getSelectedSiteSlug( state ),

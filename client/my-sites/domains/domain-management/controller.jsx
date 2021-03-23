@@ -215,7 +215,11 @@ export default {
 
 	domainManagementAddGSuiteUsersRedirect( pageContext ) {
 		page.redirect(
-			emailManagementAddGSuiteUsers( pageContext.params.site, pageContext.params.domain )
+			emailManagementAddGSuiteUsers(
+				pageContext.params.site,
+				pageContext.params.domain,
+				pageContext.params.productType
+			)
 		);
 	},
 
