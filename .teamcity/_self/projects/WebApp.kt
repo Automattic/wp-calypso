@@ -163,6 +163,22 @@ object RunCalypsoE2eDesktopTests : BuildType({
 		// TeamCity will mute a test if it fails and then succeeds within the same build. Otherwise TeamCity UI will not
 		// display a difference between real errors and retries, making it hard to understand what is actually failing.
 		supportTestRetry = true
+
+		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have
+		// been muted previously.
+		nonZeroExitCode = false
+
+		// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner
+		// crashes and no tests are run.
+		failOnMetricChange {
+			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
+			threshold = 50
+			units = BuildFailureOnMetric.MetricUnit.PERCENTS
+			comparison = BuildFailureOnMetric.MetricComparison.LESS
+			compareTo = build {
+				buildRule = lastSuccessful()
+			}
+		}
 	}
 
 	dependencies {
@@ -313,6 +329,22 @@ object RunCalypsoE2eMobileTests : BuildType({
 		// TeamCity will mute a test if it fails and then succeeds within the same build. Otherwise TeamCity UI will not
 		// display a difference between real errors and retries, making it hard to understand what is actually failing.
 		supportTestRetry = true
+
+		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have
+		// been muted previously.
+		nonZeroExitCode = false
+
+		// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner
+		// crashes and no tests are run.
+		failOnMetricChange {
+			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
+			threshold = 50
+			units = BuildFailureOnMetric.MetricUnit.PERCENTS
+			comparison = BuildFailureOnMetric.MetricComparison.LESS
+			compareTo = build {
+				buildRule = lastSuccessful()
+			}
+		}
 	}
 
 	dependencies {
