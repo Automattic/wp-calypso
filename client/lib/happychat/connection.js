@@ -2,7 +2,6 @@
  * External dependencies
  */
 import IO from 'socket.io-client';
-import { isString } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -26,7 +25,7 @@ import {
 const debug = debugFactory( 'calypso:happychat:connection' );
 
 const buildConnection = ( socket ) =>
-	isString( socket )
+	typeof socket === 'string'
 		? new IO( socket ) // If socket is an URL, connect to server.
 		: socket; // If socket is not an url, use it directly. Useful for testing.
 

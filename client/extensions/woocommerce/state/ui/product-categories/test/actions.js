@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { isObject, isString } from 'lodash';
+import { isObject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,7 +31,7 @@ describe( 'actions', () => {
 
 			expect( action.category ).to.exist;
 			expect( isObject( action.category.id ) ).to.be.true;
-			expect( isString( action.category.id.placeholder ) ).to.be.true;
+			expect( typeof action.category.id.placeholder === 'string' ).to.be.true;
 		} );
 
 		test( 'should not create a placeholder if category is passed in', () => {

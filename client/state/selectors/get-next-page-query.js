@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isString, isNumber } from 'lodash';
+import { isNumber } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,6 +12,7 @@ import getCurrentMediaQuery from 'calypso/state/selectors/get-current-media-quer
 import 'calypso/state/media/init';
 
 const DEFAULT_QUERY = Object.freeze( { number: 20 } );
+const isString = ( arg ) => typeof arg === 'string';
 
 /**
  * Returns a new query object to use to fetch the next page of media for a site

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import creditcards from 'creditcards';
-import { capitalize, compact, isEmpty, mergeWith, union, isString } from 'lodash';
+import { capitalize, compact, isEmpty, mergeWith, union } from 'lodash';
 import i18n from 'i18n-calypso';
 import { isValidPostalCode } from 'calypso/lib/postal-code';
 
@@ -295,7 +295,7 @@ validators.validIndiaPan = {
 
 validators.validIndonesiaNik = {
 	isValid( value ) {
-		const digitsOnly = isString( value ) ? value.replace( /[^0-9]/g, '' ) : '';
+		const digitsOnly = typeof value === 'string' ? value.replace( /[^0-9]/g, '' ) : '';
 		return digitsOnly.length === 16;
 	},
 	error: function ( description ) {
