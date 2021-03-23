@@ -48,7 +48,7 @@ import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { deserialize } from 'calypso/state/utils';
-import middlewareBuildTarget from '../middleware/build-target.js';
+
 import middlewareAssets from '../middleware/assets.js';
 import middlewareCache from '../middleware/cache.js';
 
@@ -120,8 +120,6 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		lang = request.context.lang;
 	}
 
-	const target = request.getTarget();
-
 	const oauthClientId = request.query.oauth2_client_id || request.query.client_id;
 	const isWCComConnect =
 		config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
@@ -152,8 +150,6 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		featuresHelper: !! config.isEnabled( 'dev/features-helper' ),
 		devDocsURL: '/devdocs',
 		store: reduxStore,
-		addEvergreenCheck: target === 'evergreen' && calypsoEnv !== 'development',
-		target: target || 'fallback',
 		useTranslationChunks:
 			config.isEnabled( 'use-translation-chunks' ) ||
 			flags.includes( 'use-translation-chunks' ) ||
@@ -216,16 +212,8 @@ const setupDefaultContext = ( entrypoint ) => ( req, res, next ) => {
 };
 
 function setUpLocalLanguageRevisions( req ) {
-	const targetFromRequest = req.getTarget();
-	const target = targetFromRequest === null ? 'fallback' : targetFromRequest;
 	const rootPath = path.join( __dirname, '..', '..', '..' );
-	const langRevisionsPath = path.join(
-		rootPath,
-		'public',
-		target,
-		'languages',
-		'lang-revisions.json'
-	);
+	const langRevisionsPath = path.join( rootPath, 'public', 'languages', 'lang-revisions.json' );
 	const langPromise = fs.promises
 		.readFile( langRevisionsPath, 'utf8' )
 		.then( ( languageRevisions ) => {
@@ -558,7 +546,6 @@ export default function pages() {
 
 	app.use( logSectionResponse );
 	app.use( cookieParser() );
-	app.use( middlewareBuildTarget( calypsoEnv ) );
 	app.use( middlewareAssets() );
 	app.use( middlewareCache() );
 	app.use( setupLoggedInContext );
