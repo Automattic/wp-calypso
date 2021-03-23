@@ -14,10 +14,6 @@ import orderNotes from './orders/notes';
 import orderRefunds from './orders/refunds';
 import orders from './orders';
 import paymentMethods from './payment-methods';
-import products from './products';
-import productVariations from './product-variations';
-import productCategories from './product-categories';
-import promotions from '../sites/promotions/handlers';
 import request from './request';
 import reviews from '../sites/reviews/handlers';
 import reviewReplies from '../sites/review-replies/handlers';
@@ -39,10 +35,6 @@ const handlers = mergeHandlers(
 	orderRefunds,
 	orders,
 	paymentMethods,
-	productCategories,
-	products,
-	productVariations,
-	promotions,
 	request,
 	reviews,
 	reviewReplies,
