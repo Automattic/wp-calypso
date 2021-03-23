@@ -6,7 +6,9 @@ import * as React from 'react';
 /**
  * Internal dependencies
  */
-import { SUGGESTION_ITEM_TYPE, SUGGESTION_ITEM_TYPE_BUTTON } from './suggestion-item';
+import { SUGGESTION_ITEM_TYPE_BUTTON } from './suggestion-item';
+
+import type { SUGGESTION_ITEM_TYPE } from './suggestion-item';
 
 // to avoid nesting buttons, wrap the item with a div instead of button in button mode
 // (button mode means there is a Select button, not the whole item being a button)
