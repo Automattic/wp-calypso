@@ -20,6 +20,7 @@ import {
 } from 'calypso/state/themes/actions';
 import {
 	getJetpackUpgradeUrlIfPremiumTheme,
+	getTheme,
 	getThemeDetailsUrl,
 	getThemeHelpUrl,
 	getThemePurchaseUrl,
@@ -100,6 +101,7 @@ function getAllThemeOptions() {
 		hideForTheme: ( state, themeId, siteId, origin ) =>
 			! isJetpackSite( state, siteId ) ||
 			origin === 'wpcom' ||
+			! getTheme( state, siteId, themeId ) ||
 			isThemeActive( state, themeId, siteId ),
 	};
 
