@@ -30,6 +30,7 @@ class DomainMappingInstructions extends React.Component {
 		areDomainDetailsLoaded: PropTypes.bool,
 		domainName: PropTypes.string,
 		isAtomic: PropTypes.bool,
+		wpcomDomainName: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -75,7 +76,7 @@ class DomainMappingInstructions extends React.Component {
 	}
 
 	renderCnameInstructions() {
-		const { translate } = this.props;
+		const { domainName, translate, wpcomDomainName } = this.props;
 
 		const cnameInstructionsMessage = translate(
 			'Please log into your account at your domain registrar and {{strong}}set the CNAME record{{/strong}} of your subdomain to match the following value, as detailed in {{link}}these instructions{{/link}}:',
@@ -87,15 +88,13 @@ class DomainMappingInstructions extends React.Component {
 			}
 		);
 
-		// TODO: Get these values dynamically
+		// TODO: Get this value dynamically
 		const subdomainPart = 'blog';
-		const subdomainName = subdomainPart + '.domain.com';
-		const canonicalName = 'domain.wordpress.com';
 
 		const additionalInstructions = translate(
-			'Some DNS managers will only require you to add the subdomain (i.e. "%(subdomainPart)s") in a field typically labeled "host", "name" or "@", and the canonical name part (i.e. "%(canonicalName)s") might be labeled as "points to" or "alias".',
+			'Some DNS managers will only require you to add the subdomain (i.e. "%(subdomainPart)s") in a field typically labeled "host", "name" or "@", and the canonical name part (i.e. "%(canonicalName)s") might be labeled as "points to" or "alias". Also notice the periods (".") after the URLs are important.',
 			{
-				args: { subdomainPart, canonicalName },
+				args: { subdomainPart, canonicalName: wpcomDomainName },
 			}
 		);
 
@@ -105,7 +104,7 @@ class DomainMappingInstructions extends React.Component {
 				<ul>
 					<li>
 						<code>
-							{ subdomainName }. IN CNAME { canonicalName }.
+							{ domainName }. IN CNAME { wpcomDomainName }.
 						</code>
 					</li>
 				</ul>

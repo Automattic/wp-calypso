@@ -16,6 +16,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import DomainMappingInstructions from 'calypso/my-sites/domains/components/mapping-instructions';
+import { getWpcomDomain } from 'calypso/lib/domains/get-wpcom-domain';
 
 const DomainMappingDetails = ( {
 	isAtomicSite,
@@ -24,6 +25,7 @@ const DomainMappingDetails = ( {
 	isRootDomainWithUs,
 	purchasedDomain,
 	siteId,
+	wpcomDomain,
 } ) => {
 	if ( isSubdomainMapping && isRootDomainWithUs ) {
 		return null;
@@ -35,6 +37,7 @@ const DomainMappingDetails = ( {
 			areDomainDetailsLoaded={ ! isRequestingDomainsDetails && !! purchasedDomain }
 			domainName={ purchasedDomain?.name }
 			isAtomic={ isAtomicSite }
+			wpcomDomainName={ wpcomDomain?.domain }
 		/>
 	);
 
@@ -57,6 +60,7 @@ const mapStateToProps = ( state, { domain: selectedDomainName } ) => {
 		purchasedDomain: getSelectedDomain( { domains, selectedDomainName } ),
 		selectedSiteDomain: selectedSite.domain,
 		siteId: selectedSite.ID,
+		wpcomDomain: getWpcomDomain( domains ),
 	};
 };
 
