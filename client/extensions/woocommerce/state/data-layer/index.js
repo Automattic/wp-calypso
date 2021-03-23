@@ -23,8 +23,6 @@ import reviews from '../sites/reviews/handlers';
 import reviewReplies from '../sites/review-replies/handlers';
 import sendInvoice from './orders/send-invoice';
 import settingsGeneral from '../sites/settings/general/handlers';
-import shippingZoneLocations from './shipping-zone-locations';
-import shippingClasses from './shipping-classes';
 import ui from './ui';
 import debugFactory from 'debug';
 
@@ -50,8 +48,6 @@ const handlers = mergeHandlers(
 	reviewReplies,
 	sendInvoice,
 	settingsGeneral,
-	shippingZoneLocations,
-	shippingClasses,
 	ui
 );
 
