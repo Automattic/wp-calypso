@@ -79,14 +79,6 @@ export function domainManagementEdit( siteName, domainName, relativeTo ) {
 	return domainManagementEditBase( siteName, domainName, 'edit', relativeTo );
 }
 
-export function domainManagementAddGSuiteUsers( siteName, domainName, productType ) {
-	if ( domainName ) {
-		return domainManagementEditBase( siteName, domainName, productType + '/add-users' );
-	}
-
-	return domainManagementRoot() + '/' + productType + '/add-users/' + siteName;
-}
-
 export function domainManagementContactsPrivacy( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'contacts-privacy', relativeTo );
 }

@@ -67,15 +67,6 @@ export default function () {
 		handlers: [ domainManagementController.domainManagementEmailRedirect ],
 	} );
 
-	registerMultiPage( {
-		paths: [
-			paths.domainManagementAddGSuiteUsers( ':site', ':domain', ':productType' ),
-			paths.domainManagementAddGSuiteUsers( ':site', ':domain' ),
-			paths.domainManagementAddGSuiteUsers( ':site' ),
-		],
-		handlers: [ domainManagementController.domainManagementAddGSuiteUsersRedirect ],
-	} );
-
 	page(
 		paths.domainManagementEmailForwarding( ':site', ':domain' ),
 		domainManagementController.domainManagementEmailForwardingRedirect
