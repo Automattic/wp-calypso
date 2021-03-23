@@ -57,6 +57,8 @@ object E2ETests : BuildType({
 		bashNodeScript {
 			name = "Build Calypso source"
 			scriptContent = """
+				export WEBPACK_OPTIONS='--progress=profile'
+
 				# Build desktop
 				yarn run build-desktop:source
 			"""
