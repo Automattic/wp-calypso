@@ -14,6 +14,7 @@ import { requestScanStatus } from 'calypso/state/jetpack-scan/actions';
 import { requestJetpackScanHistory } from 'calypso/state/jetpack-scan/history/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { showThreatFixedReviewPrompt } from 'calypso/state/ui/actions';
 
 const POLL_EVERY_MILLISECONDS = 1000;
 
@@ -60,6 +61,7 @@ export const success = ( action, fixer_state ) => {
 					duration: 4000,
 				}
 			),
+			showThreatFixedReviewPrompt(),
 			requestScanStatus( action.siteId ),
 			// Since we can fix threats from the History section, we need to update that
 			// information as well.

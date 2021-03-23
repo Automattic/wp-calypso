@@ -1,0 +1,21 @@
+.threat-fix-review-prompt {
+	margin: 1rem -1.5rem 0;
+	padding: 0 1.5rem;
+	border-top: 1px solid #ccc;
+}
+
+.threat-fix-review-prompt__header {
+	padding-top: 1.2rem;
+}
+
+.threat-fix-review-prompt__buttons {
+	display: flex;
+
+	:not( :first-child ) {
+		margin-left: 12px;
+	}
+}
+
+.threat-fix-review-prompt__buttons a.components-button.is-secondary {
+	color: var( --color-primary );
+}

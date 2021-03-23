@@ -38,6 +38,7 @@ import { triggerScanRun } from 'calypso/lib/jetpack/trigger-scan-run';
 import { withApplySiteOffset, applySiteOffsetType } from 'calypso/components/site-offset';
 import ScanNavigation from './navigation';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
+import ThreatFixReviewPrompt from './threat-fix-review-prompt';
 
 /**
  * Type dependencies
@@ -68,6 +69,10 @@ interface Props {
 	dispatchScanRun: ( arg0: number ) => null;
 	isAdmin: boolean;
 	siteSettingsUrl: string;
+	threatFixedReviewPrompt: {
+		isVisible: boolean;
+		fixDate: moment.Moment | null;
+	};
 }
 
 class ScanPage extends Component< Props > {
@@ -158,6 +163,7 @@ class ScanPage extends Component< Props > {
 						{ translate( 'Scan now' ) }
 					</Button>
 				) }
+				<ThreatFixReviewPrompt />
 			</>
 		);
 	}

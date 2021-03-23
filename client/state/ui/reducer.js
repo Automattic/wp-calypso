@@ -9,7 +9,7 @@ import {
 	SIDEBAR_TOGGLE_VISIBILITY,
 	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'calypso/state/action-types';
-import { combineReducers, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withoutPersistence, withPersistence } from 'calypso/state/utils';
 import actionLog from './action-log/reducer';
 import checkout from './checkout/reducer';
 import language from './language/reducer';
@@ -19,6 +19,7 @@ import mediaModal from './media-modal/reducer';
 import postTypeList from './post-type-list/reducer';
 import preview from './preview/reducer';
 import section from './section/reducer';
+import threatFixedReviewPrompt from './threat-fixed-review-prompt/reducer';
 
 /**
  * Tracks the currently selected site ID.
@@ -103,6 +104,7 @@ const reducer = combineReducers( {
 	language,
 	layoutFocus,
 	masterbarVisibility,
+	threatFixedReviewPrompt: withPersistence( threatFixedReviewPrompt ),
 	sidebarIsCollapsed,
 	mediaModal,
 	postTypeList,
