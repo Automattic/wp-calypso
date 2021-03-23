@@ -17,6 +17,9 @@ export const SUBSCRIPTION_ID_FIRST = '1111';
 export const SITE_ID_SECOND = 77203074;
 export const SUBSCRIPTION_ID_SECOND = null;
 
+export const DOMAIN_EXPIRED_ERROR_CODE = 'domain-expired';
+export const DOMAIN_EXPIRED_ERROR_MESSAGE = 'Domain expired message';
+
 // testing primary-domain
 export const DOMAIN_PRIMARY = {
 	aRecordsRequiredForMapping: undefined,
@@ -28,6 +31,7 @@ export const DOMAIN_PRIMARY = {
 	canSetAsPrimary: true,
 	contactInfoDisclosed: false,
 	contactInfoDisclosureAvailable: false,
+	currentUserCanAddEmail: true,
 	currentUserCanManage: true,
 	domain: 'retronevergiveup.me',
 	domainLockingAvailable: true,
@@ -172,6 +176,8 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	blog_id: SITE_ID_FIRST,
 	bundled_plan_subscription_id: null,
 	can_set_as_primary: true,
+	current_user_can_add_email: true,
+	current_user_cannot_add_email_reason: null,
 	domain: 'retronevergiveup.me',
 	domain_locking_available: true,
 	domainRegistrationAgreementUrl: null,
@@ -234,6 +240,15 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 	blog_id: SITE_ID_SECOND,
 	bundled_plan_subscription_id: null,
 	can_set_as_primary: true,
+	current_user_can_add_email: false,
+	current_user_cannot_add_email_reason: {
+		errors: {
+			[ DOMAIN_EXPIRED_ERROR_CODE ]: [
+				DOMAIN_EXPIRED_ERROR_MESSAGE,
+				'Extraneous ignorable error message',
+			],
+		},
+	},
 	domain: 'retronevergiveup.wordpress.me',
 	domain_locking_available: true,
 	domainRegistrationAgreementUrl: null,
