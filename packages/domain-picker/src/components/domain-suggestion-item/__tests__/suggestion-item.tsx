@@ -37,24 +37,30 @@ describe( 'traintracks events', () => {
 		it( 'should not send a render event when re-rendered with the same props', async () => {
 			const { rerender } = renderComponent();
 
+			MOCK_PROPS.onRender.mockClear();
 			rerender( <SuggestionItem { ...MOCK_PROPS } /> );
-			expect( MOCK_PROPS.onRender ).toHaveBeenCalledTimes( 1 );
+
+			expect( MOCK_PROPS.onRender ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should not send a render event when unrelated props change', async () => {
 			const { rerender } = renderComponent();
 			const updatedProps = { ...MOCK_PROPS, cost: '€11' };
+
+			MOCK_PROPS.onRender.mockClear();
 			rerender( <SuggestionItem { ...updatedProps } /> );
 
-			expect( updatedProps.onRender ).toHaveBeenCalledTimes( 1 );
+			expect( updatedProps.onRender ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should send a render event when domain name and railcarId changes', async () => {
 			const { rerender } = renderComponent();
 			const updatedProps = { ...MOCK_PROPS, domain: 'example1.com', railcarId: 'id1' };
+
+			MOCK_PROPS.onRender.mockClear();
 			rerender( <SuggestionItem { ...updatedProps } /> );
 
-			expect( updatedProps.onRender ).toHaveBeenCalledTimes( 2 );
+			expect( updatedProps.onRender ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 
@@ -69,7 +75,7 @@ describe( 'traintracks events', () => {
 	} );
 } );
 
-describe( 'check conditional elements render correctly', () => {
+describe( 'conditional elements', () => {
 	/**
 	 * TODO: Enable & Fix InfoTooltip tests when [#51175](https://github.com/Automattic/wp-calypso/issues/51175) is fixed
 	 */
@@ -119,7 +125,7 @@ describe( 'check conditional elements render correctly', () => {
 	/*eslint-enable*/
 
 	it( 'should render a recommendation badge if given prop isRecommended true', async () => {
-		renderComponent( { cost: '€12.00', isRecommended: true } );
+		renderComponent( { isRecommended: true } );
 
 		expect( screen.getByText( /Recommended/i ) ).toBeInTheDocument();
 	} );
@@ -144,15 +150,16 @@ describe( 'check conditional elements render correctly', () => {
 	} );
 } );
 
-describe( 'test that suggested items are rendered correctly based on availability', () => {
+describe( 'suggestion availability', () => {
 	it( 'should have the disabled UI state when provided an availabilityStatus of unavailable', () => {
 		renderComponent( { cost: '€12.00', isRecommended: true, isUnavailable: true } );
 
 		// we have to test for the domain and the TLD separately because they get split in the component
 
 		const [ domain, tld ] = MOCK_PROPS.domain.split( '.' );
+
 		expect( screen.getByText( new RegExp( domain, 'i' ) ) ).toBeInTheDocument();
-		expect( screen.getByText( new RegExp( tld, 'i' ) ) ).toBeInTheDocument();
+		expect( screen.getByText( new RegExp( `${ tld }$`, 'i' ) ) ).toBeInTheDocument();
 
 		expect( screen.getByText( /Unavailable/i ) ).toBeInTheDocument();
 		expect( screen.queryByText( /Recommended/i ) ).not.toBeInTheDocument();
