@@ -45,7 +45,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 
 	async selectThemes() {
 		await this.expandDrawerItem( 'Appearance' );
-		//return await this._scrollToAndClickMenuItem( 'Themes' );
+		return await this._scrollToAndClickMenuItem( 'Themes' );
 	}
 
 	async selectAllSitesThemes() {
