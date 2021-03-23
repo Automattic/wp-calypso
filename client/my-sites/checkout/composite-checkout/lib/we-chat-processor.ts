@@ -42,6 +42,7 @@ export default async function weChatProcessor(
 	const {
 		getThankYouUrl,
 		siteSlug,
+		siteId,
 		includeDomainDetails,
 		includeGSuiteDetails,
 		reduxDispatch,
@@ -93,7 +94,7 @@ export default async function weChatProcessor(
 			country: managedContactDetails?.countryCode?.value ?? '',
 			postalCode: getPostalCode(),
 			subdivisionCode: managedContactDetails?.state?.value,
-			siteId: select( 'wpcom' )?.getSiteId?.(),
+			siteId: siteId ? String( siteId ) : '',
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		},
 		options
