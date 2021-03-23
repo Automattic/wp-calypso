@@ -98,7 +98,7 @@
 		p {
 			margin-bottom: 1em;
 
-			@include break-mobile {
+			@include break-xlarge {
 				flex-grow: 7;
 				line-height: 40px;
 				margin-bottom: 0;
@@ -144,10 +144,21 @@
 			.titan-new-mailbox-list__actions {
 				justify-content: space-between;
 			}
+
+			.email-providers-stacked-comparison__gsuite-user-list-action-continue {
+				margin-top: 1em;
+				@include break-mobile {
+					margin-top: 0;
+				}
+			}
 		}
 
 		.email-providers-stacked-comparison__provider-features {
-			padding-left: 3.5em;
+			margin-bottom: 1em;
+			@include break-mobile {
+				margin-bottom: 0;
+				padding-left: 3.5em;
+			}
 
 			.email-provider-details__feature:first-child {
 				margin-top: 0;
@@ -171,6 +182,11 @@
 
 		.email-providers-stacked-comparison__provider-form-and-features {
 			display: flex;
+			flex-direction: column-reverse;
+
+			@include break-mobile {
+				flex-direction: row;
+			}
 		}
 	}
 }
