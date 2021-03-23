@@ -50,8 +50,8 @@ import {
 	applePayProcessor,
 	freePurchaseProcessor,
 	multiPartnerCardProcessor,
-	fullCreditsProcessor,
 } from './payment-method-processors';
+import fullCreditsProcessor from './lib/full-credits-processor';
 import weChatProcessor from './lib/we-chat-processor';
 import genericRedirectProcessor from './lib/generic-redirect-processor';
 import existingCardProcessor from './lib/existing-card-processor';
@@ -493,7 +493,7 @@ export default function CompositeCheckout( {
 			'ebanx-tef': ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'brazil-tef', transactionData, dataForProcessor ),
 			'full-credits': ( transactionData: unknown ) =>
-				fullCreditsProcessor( transactionData, dataForProcessor, transactionOptions ),
+				fullCreditsProcessor( transactionData, dataForProcessor ),
 			'existing-card': ( transactionData: unknown ) =>
 				existingCardProcessor(
 					mergeIfObjects( transactionData, {
