@@ -9,7 +9,6 @@ import productCategories from './product-categories/reducer';
 import promotions from './promotions/reducer';
 import reviews from './reviews/reducer';
 import reviewReplies from './review-replies/reducer';
-import shipping from './shipping/reducer';
 import { combineReducers } from 'calypso/state/utils';
 
 export default combineReducers( {
@@ -20,5 +19,4 @@ export default combineReducers( {
 	promotions,
 	reviews,
 	reviewReplies,
-	shipping,
 } );

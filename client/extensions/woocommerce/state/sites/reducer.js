@@ -16,9 +16,7 @@ import promotions from './promotions/reducer';
 import reviews from './reviews/reducer';
 import reviewReplies from './review-replies/reducer';
 import setupChoices from './setup-choices/reducer';
-import shippingMethods from './shipping-methods/reducer';
 import shippingZoneLocations from './shipping-zone-locations/reducer';
-import shippingZoneMethods from './shipping-zone-methods/reducer';
 import shippingZones from './shipping-zones/reducer';
 import settings from './settings/reducer';
 import status from './status/reducer';
@@ -40,9 +38,7 @@ const reducer = combineReducers( {
 	setupChoices,
 	settings,
 	shippingClasses,
-	shippingMethods,
 	shippingZoneLocations,
-	shippingZoneMethods,
 	shippingZones,
 	status,
 } );
