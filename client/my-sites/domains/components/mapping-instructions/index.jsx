@@ -42,7 +42,7 @@ class DomainMappingInstructions extends React.Component {
 		const { translate } = this.props;
 
 		const nameServerInstructionsMessage = translate(
-			'Please log into your account at your domain registrar and {{strong}}update the name servers{{/strong}} of your domain to use the following values, as detailed in {{link}}these instructions{{/link}}:',
+			'Please log into your domain name registrar account and {{strong}}update the name servers{{/strong}} of your domain to use the following values, as detailed in {{link}}these instructions{{/link}}:',
 			{
 				components: {
 					strong: <strong />,
@@ -79,7 +79,7 @@ class DomainMappingInstructions extends React.Component {
 		const { domainName, translate, wpcomDomainName } = this.props;
 
 		const cnameInstructionsMessage = translate(
-			'Please log into your account at your domain registrar and {{strong}}set the CNAME record{{/strong}} of your subdomain to match the following value, as detailed in {{link}}these instructions{{/link}}:',
+			'Please log into your domain name registrar account and set the following value for your {{strong}}CNAME record{{/strong}}, as detailed in {{link}}these instructions{{/link}}:',
 			{
 				components: {
 					strong: <strong />,
@@ -105,6 +105,9 @@ class DomainMappingInstructions extends React.Component {
 				}
 			),
 			translate( 'Remember to add the periods after the domain names.' ),
+			translate(
+				"If you're not sure how to do this, we recommend contacting your domain registrar for assistance."
+			),
 		];
 
 		return (
