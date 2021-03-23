@@ -35,6 +35,7 @@ export default async function genericRedirectProcessor(
 	const {
 		getThankYouUrl,
 		siteSlug,
+		siteId,
 		includeDomainDetails,
 		includeGSuiteDetails,
 		reduxDispatch,
@@ -90,7 +91,7 @@ export default async function genericRedirectProcessor(
 			country: managedContactDetails?.countryCode?.value ?? '',
 			postalCode: getPostalCode(),
 			subdivisionCode: managedContactDetails?.state?.value,
-			siteId: select( 'wpcom' )?.getSiteId?.(),
+			siteId: siteId ? String( siteId ) : '',
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		},
 		transactionOptions
