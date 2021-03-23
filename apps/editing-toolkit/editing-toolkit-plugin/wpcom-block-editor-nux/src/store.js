@@ -9,14 +9,7 @@ import { combineReducers, registerStore } from '@wordpress/data';
 const showWelcomeGuideReducer = ( state = undefined, action ) => {
 	switch ( action.type ) {
 		case 'WPCOM_WELCOME_GUIDE_FETCH_STATUS_SUCCESS':
-			if ( typeof action.response.show_welcome_guide !== 'undefined' ) {
-				return action.response.show_welcome_guide;
-			}
-
-			// This legacy rest param can be removed after we know the new
-			// PHP files have been deployed.
-			return action.response.is_nux_enabled;
-
+			return action.response.show_welcome_guide;
 		case 'WPCOM_WELCOME_GUIDE_SHOW_SET':
 			return action.show;
 		default:
@@ -50,14 +43,7 @@ const tourRatingReducer = ( state = undefined, action ) => {
 const welcomeGuideVariantReducer = ( state = 'tour', action ) => {
 	switch ( action.type ) {
 		case 'WPCOM_WELCOME_GUIDE_FETCH_STATUS_SUCCESS':
-			if ( typeof action.response.variant !== 'undefined' ) {
-				return action.response.variant;
-			}
-
-			// This legacy rest param can be removed after we know the new
-			// PHP files have been deployed.
-			return action.response.welcome_tour_show_variant ? 'tour' : 'modal';
-
+			return action.response.variant;
 		default:
 			return state;
 	}
@@ -83,13 +69,7 @@ const actions = {
 		apiFetch( {
 			path: '/wpcom/v2/block-editor/nux',
 			method: 'POST',
-			data: {
-				show_welcome_guide: show,
-
-				// This legacy rest param can be removed after we know the new
-				// PHP files have been deployed.
-				isNuxEnabled: show,
-			},
+			data: { show_welcome_guide: show },
 		} );
 
 		return {
