@@ -28,6 +28,7 @@ import {
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 import isTransientMediaId from 'calypso/lib/media/utils/is-transient-media-id';
+import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import MediaQueryManager from 'calypso/lib/query-manager/media';
 import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
 import { transformSite as transformSiteTransientItems } from 'calypso/state/media/utils/transientItems';
@@ -144,43 +145,24 @@ export const errors = ( state = {}, action ) => {
 	return state;
 };
 
-function applyToManager( state, siteId, method, createDefault, ...args ) {
-	if ( ! state[ siteId ] ) {
-		if ( ! createDefault ) {
-			return state;
-		}
-
-		return {
-			...state,
-			[ siteId ]: new MediaQueryManager()[ method ]( ...args ),
-		};
-	}
-
-	const nextManager = state[ siteId ][ method ]( ...args );
-
-	if ( nextManager === state[ siteId ] ) {
-		return state;
-	}
-
-	return {
-		...state,
-		[ siteId ]: nextManager,
-	};
-}
-
 export const queries = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case MEDIA_RECEIVE: {
 			const { siteId, media, found, query } = action;
-			return applyToManager( state, siteId, 'receive', true, media, { found, query } );
+			return withQueryManager(
+				state,
+				siteId,
+				( m ) => m.receive( media, { found, query } ),
+				() => new MediaQueryManager()
+			);
 		}
 		case MEDIA_DELETE: {
 			const { siteId, mediaIds } = action;
-			return applyToManager( state, siteId, 'removeItems', true, mediaIds );
+			return withQueryManager( state, siteId, ( m ) => m.removeItems( mediaIds ) );
 		}
 		case MEDIA_ITEM_EDIT: {
 			const { siteId, mediaItem } = action;
-			return applyToManager( state, siteId, 'receive', true, mediaItem, { patch: true } );
+			return withQueryManager( state, siteId, ( m ) => m.receive( mediaItem, { patch: true } ) );
 		}
 		case MEDIA_SOURCE_CHANGE:
 		case MEDIA_CLEAR_SITE: {

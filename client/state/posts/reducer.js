@@ -19,6 +19,7 @@ import {
 /**
  * Internal dependencies
  */
+import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import PostQueryManager from 'calypso/lib/query-manager/post';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import {
@@ -151,33 +152,6 @@ export function queryRequests( state = {}, action ) {
 	return state;
 }
 
-function applyToManager( state, siteId, method, createDefault, ...args ) {
-	if ( ! siteId ) {
-		return state;
-	}
-
-	if ( ! state[ siteId ] ) {
-		if ( ! createDefault ) {
-			return state;
-		}
-
-		return {
-			...state,
-			[ siteId ]: new PostQueryManager()[ method ]( ...args ),
-		};
-	}
-
-	const nextManager = state[ siteId ][ method ]( ...args );
-	if ( nextManager === state[ siteId ] ) {
-		return state;
-	}
-
-	return {
-		...state,
-		[ siteId ]: nextManager,
-	};
-}
-
 /**
  * Returns the updated post query state after an action has been dispatched.
  * The state reflects a mapping by site ID of serialized query key to an array
@@ -196,7 +170,12 @@ const queriesReducer = ( state = {}, action ) => {
 				return state;
 			}
 			const normalizedPosts = posts.map( normalizePostForState );
-			return applyToManager( state, siteId, 'receive', true, normalizedPosts, { query, found } );
+			return withQueryManager(
+				state,
+				siteId,
+				( m ) => m.receive( normalizedPosts, { query, found } ),
+				() => new PostQueryManager()
+			);
 		}
 		case POSTS_RECEIVE: {
 			const { posts } = action;
@@ -212,85 +191,49 @@ const queriesReducer = ( state = {}, action ) => {
 
 			return reduce(
 				postsBySiteId,
-				( memo, sitePosts, siteId ) => {
-					return applyToManager( memo, siteId, 'receive', true, sitePosts );
-				},
+				( memo, sitePosts, siteId ) =>
+					withQueryManager(
+						memo,
+						siteId,
+						( m ) => m.receive( sitePosts ),
+						() => new PostQueryManager()
+					),
 				state
 			);
 		}
 		case POST_RESTORE: {
 			const { siteId, postId } = action;
-			return applyToManager(
-				state,
-				siteId,
-				'receive',
-				false,
-				{
-					ID: postId,
-					status: '__RESTORE_PENDING',
-				},
-				{ patch: true }
+			return withQueryManager( state, siteId, ( m ) =>
+				m.receive( { ID: postId, status: '__RESTORE_PENDING' }, { patch: true } )
 			);
 		}
 		case POST_RESTORE_FAILURE: {
 			const { siteId, postId } = action;
-			return applyToManager(
-				state,
-				siteId,
-				'receive',
-				false,
-				{
-					ID: postId,
-					status: 'trash',
-				},
-				{ patch: true }
+			return withQueryManager( state, siteId, ( m ) =>
+				m.receive( { ID: postId, status: 'trash' }, { patch: true } )
 			);
 		}
 		case POST_SAVE: {
 			const { siteId, postId, post } = action;
-			return applyToManager(
-				state,
-				siteId,
-				'receive',
-				false,
-				{
-					ID: postId,
-					...post,
-				},
-				{ patch: true }
+			return withQueryManager( state, siteId, ( m ) =>
+				m.receive( { ID: postId, ...post }, { patch: true } )
 			);
 		}
 		case POST_DELETE: {
 			const { siteId, postId } = action;
-			return applyToManager(
-				state,
-				siteId,
-				'receive',
-				false,
-				{
-					ID: postId,
-					status: '__DELETE_PENDING',
-				},
-				{ patch: true }
+			return withQueryManager( state, siteId, ( m ) =>
+				m.receive( { ID: postId, status: '__DELETE_PENDING' }, { patch: true } )
 			);
 		}
 		case POST_DELETE_FAILURE: {
 			const { siteId, postId } = action;
-			return applyToManager(
-				state,
-				siteId,
-				'receive',
-				false,
-				{
-					ID: postId,
-					status: 'trash',
-				},
-				{ patch: true }
+			return withQueryManager( state, siteId, ( m ) =>
+				m.receive( { ID: postId, status: 'trash' }, { patch: true } )
 			);
 		}
 		case POST_DELETE_SUCCESS: {
 			const { siteId, postId } = action;
-			return applyToManager( state, siteId, 'removeItem', false, postId );
+			return withQueryManager( state, siteId, ( m ) => m.removeItem( postId ) );
 		}
 	}
 
