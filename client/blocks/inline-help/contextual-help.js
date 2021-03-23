@@ -684,15 +684,6 @@ const getContextLinksForSection = () => ( {
 			),
 		},
 		{
-			link: localizeUrl( 'https://wordpress.com/support/themes/mobile-themes/' ),
-			post_id: 4925,
-			title: translate( 'Mobile Themes' ),
-			description: translate(
-				'When a visitor browses to a WordPress.com site on a mobile device, we show ' +
-					'special themes designed to work on small screens focusing on fast load times.'
-			),
-		},
-		{
 			link: localizeUrl( 'https://wordpress.com/support/premium-themes/' ),
 			post_id: 12112,
 			title: translate( 'Premium Themes' ),
@@ -721,15 +712,6 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'A theme controls the general look and feel of your site including things like ' +
 					'page layout, widget locations, and default font.'
-			),
-		},
-		{
-			link: localizeUrl( 'https://wordpress.com/support/themes/mobile-themes/' ),
-			post_id: 4925,
-			title: translate( 'Mobile Themes' ),
-			description: translate(
-				'When a visitor browses to a WordPress.com site on a mobile device, we show ' +
-					'special themes designed to work on small screens focusing on fast load times.'
 			),
 		},
 		{
