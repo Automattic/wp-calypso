@@ -1,0 +1,1 @@
+// Design picker integration tests
