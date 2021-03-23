@@ -12,7 +12,7 @@ import { isSubdomain } from 'calypso/lib/domains';
 import {
 	MAP_DOMAIN_CHANGE_NAME_SERVERS,
 	MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS,
-	MAP_SUBDOMAIN,
+	MAP_SUBDOMAIN_WITH_CNAME_RECORDS,
 } from 'calypso/lib/url/support';
 import { WPCOM_DEFAULT_NAMESERVERS } from 'calypso/state/domains/nameservers/constants';
 import FoldableFAQ from 'calypso/components/foldable-faq';
@@ -83,7 +83,7 @@ class DomainMappingInstructions extends React.Component {
 			{
 				components: {
 					strong: <strong />,
-					link: <ExternalLink href={ MAP_SUBDOMAIN } target="_blank" />,
+					link: <ExternalLink href={ MAP_SUBDOMAIN_WITH_CNAME_RECORDS } target="_blank" />,
 				},
 			}
 		);
@@ -91,24 +91,35 @@ class DomainMappingInstructions extends React.Component {
 		// TODO: Get this value dynamically
 		const subdomainPart = 'blog';
 
-		const additionalInstructions = translate(
-			'Some DNS managers will only require you to add the subdomain (i.e. "%(subdomainPart)s") in a field typically labeled "host", "name" or "@", and the canonical name part (i.e. "%(canonicalName)s") might be labeled as "points to" or "alias". Also notice the periods (".") after the URLs are important.',
-			{
-				args: { subdomainPart, canonicalName: wpcomDomainName },
-			}
-		);
+		const additionalInstructions = [
+			translate(
+				'Some DNS managers will only require you to add the subdomain (i.e. "%(subdomainPart)s") in a field typically labeled "host", "name" or "@".',
+				{
+					args: { subdomainPart },
+				}
+			),
+			translate(
+				'Some DNS managers will have the canonical name part (i.e. "%(canonicalName)s") labeled as "points to" or "alias".',
+				{
+					args: { canonicalName: wpcomDomainName },
+				}
+			),
+			translate( 'Remember to add the periods after the domain names.' ),
+		];
 
 		return (
 			<React.Fragment>
 				<p>{ cnameInstructionsMessage }</p>
+				<p>
+					<code>
+						{ domainName }. IN CNAME { wpcomDomainName }.
+					</code>
+				</p>
 				<ul>
-					<li>
-						<code>
-							{ domainName }. IN CNAME { wpcomDomainName }.
-						</code>
-					</li>
+					{ additionalInstructions.map( ( instruction, i ) => (
+						<li key={ i }>{ instruction }</li>
+					) ) }
 				</ul>
-				<p>{ additionalInstructions }</p>
 			</React.Fragment>
 		);
 	}
