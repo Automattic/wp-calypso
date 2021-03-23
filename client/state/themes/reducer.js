@@ -333,15 +333,15 @@ const queriesReducer = ( state = {}, action ) => {
 			return withQueryManager(
 				state,
 				siteId,
-				() => new ThemeQueryManager( null, { itemKey: 'id' } ),
 				// Always 'patch' to avoid overwriting existing fields when receiving
 				// from a less rich endpoint such as /mine
-				( manager ) => manager.receive( map( themes, fromApi ), { query, found, patch: true } )
+				( m ) => m.receive( map( themes, fromApi ), { query, found, patch: true } ),
+				() => new ThemeQueryManager( null, { itemKey: 'id' } )
 			);
 		}
 		case THEME_DELETE_SUCCESS: {
 			const { siteId, themeId } = action;
-			return withQueryManager( state, siteId, false, ( manager ) => manager.removeItem( themeId ) );
+			return withQueryManager( state, siteId, ( m ) => m.removeItem( themeId ) );
 		}
 	}
 

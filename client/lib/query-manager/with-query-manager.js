@@ -7,11 +7,11 @@
  *
  * @param {object} state State object
  * @param {string} siteId State key
- * @param {Function | boolean} create Optional create callback
  * @param {Function} callback Transformation callback
+ * @param {Function} [create] Optional create callback
  * @returns {object} Updated state object
  */
-export default function withQueryManager( state, siteId, create, callback ) {
+export default function withQueryManager( state, siteId, callback, create ) {
 	if ( ! siteId ) {
 		return state;
 	}

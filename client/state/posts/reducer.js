@@ -173,8 +173,8 @@ const queriesReducer = ( state = {}, action ) => {
 			return withQueryManager(
 				state,
 				siteId,
-				() => new PostQueryManager(),
-				( manager ) => manager.receive( normalizedPosts, { query, found } )
+				( m ) => m.receive( normalizedPosts, { query, found } ),
+				() => new PostQueryManager()
 			);
 		}
 		case POSTS_RECEIVE: {
@@ -191,50 +191,49 @@ const queriesReducer = ( state = {}, action ) => {
 
 			return reduce(
 				postsBySiteId,
-				( memo, sitePosts, siteId ) => {
-					return withQueryManager(
+				( memo, sitePosts, siteId ) =>
+					withQueryManager(
 						memo,
 						siteId,
-						() => new PostQueryManager(),
-						( manager ) => manager.receive( sitePosts )
-					);
-				},
+						( m ) => m.receive( sitePosts ),
+						() => new PostQueryManager()
+					),
 				state
 			);
 		}
 		case POST_RESTORE: {
 			const { siteId, postId } = action;
-			return withQueryManager( state, siteId, false, ( manager ) =>
-				manager.receive( { ID: postId, status: '__RESTORE_PENDING' }, { patch: true } )
+			return withQueryManager( state, siteId, ( m ) =>
+				m.receive( { ID: postId, status: '__RESTORE_PENDING' }, { patch: true } )
 			);
 		}
 		case POST_RESTORE_FAILURE: {
 			const { siteId, postId } = action;
-			return withQueryManager( state, siteId, false, ( manager ) =>
-				manager.receive( { ID: postId, status: 'trash' }, { patch: true } )
+			return withQueryManager( state, siteId, ( m ) =>
+				m.receive( { ID: postId, status: 'trash' }, { patch: true } )
 			);
 		}
 		case POST_SAVE: {
 			const { siteId, postId, post } = action;
-			return withQueryManager( state, siteId, false, ( manager ) =>
-				manager.receive( { ID: postId, ...post }, { patch: true } )
+			return withQueryManager( state, siteId, ( m ) =>
+				m.receive( { ID: postId, ...post }, { patch: true } )
 			);
 		}
 		case POST_DELETE: {
 			const { siteId, postId } = action;
-			return withQueryManager( state, siteId, false, ( manager ) =>
-				manager.receive( { ID: postId, status: '__DELETE_PENDING' }, { patch: true } )
+			return withQueryManager( state, siteId, ( m ) =>
+				m.receive( { ID: postId, status: '__DELETE_PENDING' }, { patch: true } )
 			);
 		}
 		case POST_DELETE_FAILURE: {
 			const { siteId, postId } = action;
-			return withQueryManager( state, siteId, false, ( manager ) =>
-				manager.receive( { ID: postId, status: 'trash' }, { patch: true } )
+			return withQueryManager( state, siteId, ( m ) =>
+				m.receive( { ID: postId, status: 'trash' }, { patch: true } )
 			);
 		}
 		case POST_DELETE_SUCCESS: {
 			const { siteId, postId } = action;
-			return withQueryManager( state, siteId, false, ( manager ) => manager.removeItem( postId ) );
+			return withQueryManager( state, siteId, ( m ) => m.removeItem( postId ) );
 		}
 	}
 

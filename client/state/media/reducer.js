@@ -152,21 +152,17 @@ export const queries = ( state = {}, action ) => {
 			return withQueryManager(
 				state,
 				siteId,
-				() => new MediaQueryManager(),
-				( manager ) => manager.receive( media, { found, query } )
+				( m ) => m.receive( media, { found, query } ),
+				() => new MediaQueryManager()
 			);
 		}
 		case MEDIA_DELETE: {
 			const { siteId, mediaIds } = action;
-			return withQueryManager( state, siteId, false, ( manager ) =>
-				manager.removeItems( mediaIds )
-			);
+			return withQueryManager( state, siteId, ( m ) => m.removeItems( mediaIds ) );
 		}
 		case MEDIA_ITEM_EDIT: {
 			const { siteId, mediaItem } = action;
-			return withQueryManager( state, siteId, false, ( manager ) =>
-				manager.receive( mediaItem, { patch: true } )
-			);
+			return withQueryManager( state, siteId, ( m ) => m.receive( mediaItem, { patch: true } ) );
 		}
 		case MEDIA_SOURCE_CHANGE:
 		case MEDIA_CLEAR_SITE: {
