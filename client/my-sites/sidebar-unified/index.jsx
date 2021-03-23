@@ -31,7 +31,7 @@ import SidebarSeparator from 'calypso/layout/sidebar/separator';
 import SidebarRegion from 'calypso/layout/sidebar/region';
 import 'calypso/state/admin-menu/init';
 import Spinner from 'calypso/components/spinner';
-import { itemLinkMatches } from '../sidebar/utils';
+import { itemLinkMatches } from './utils';
 import { getSidebarIsCollapsed, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import { isExternal } from 'calypso/lib/url';
@@ -109,7 +109,7 @@ export const MySitesSidebarUnified = ( { path } ) => {
 					<CurrentSite forceAllSitesView={ isAllDomainsView } />
 				</SidebarRegion>
 				{ menuItems.map( ( item, i ) => {
-					const isSelected = item?.url && itemLinkMatches( item.url, path, true );
+					const isSelected = item?.url && itemLinkMatches( item.url, path );
 
 					if ( 'separator' === item?.type ) {
 						return <SidebarSeparator key={ i } />;

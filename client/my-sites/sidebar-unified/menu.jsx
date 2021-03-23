@@ -28,7 +28,7 @@ import MySitesSidebarUnifiedItem from './item';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import { isExternal } from 'calypso/lib/url';
 import { externalRedirect } from 'calypso/lib/route/path';
-import { itemLinkMatches } from '../sidebar/utils';
+import { itemLinkMatches } from './utils';
 
 export const MySitesSidebarUnifiedMenu = ( {
 	count,
@@ -51,7 +51,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 
 	const selectedMenuItem =
 		Array.isArray( children ) &&
-		children.find( ( menuItem ) => menuItem?.url && itemLinkMatches( menuItem.url, path, true ) );
+		children.find( ( menuItem ) => menuItem?.url && itemLinkMatches( menuItem.url, path ) );
 	const childIsSelected = !! selectedMenuItem;
 
 	/**
