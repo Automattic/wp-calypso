@@ -1,19 +1,28 @@
+declare global {
+	interface Window {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		_tkq: Array< Array< any > >;
+	}
+}
+
 // Ensure Tracks Library
 window._tkq = window._tkq || [];
 
-let tracksIdentity = null;
+interface Identity {
+	blogid: number;
+	userid: number;
+	username: string;
+}
+
+let tracksIdentity: Identity | null = null;
 
 /**
  * Populate `identity` on WPCOM and ATOMIC to enable tracking.
  * Always disabled for regular self-hosted installations.
  *
- * @param {object} identity Info about identity.
- * @param {number} identity.userid User ID.
- * @param {string} identity.username Username.
- * @param {number} identity.blogid Blog ID.
- * @returns {void}
+ * @param identity Info about identity.
  */
-export const initializeWithIdentity = ( identity ) => {
+export const initializeWithIdentity = ( identity: Identity ): void => {
 	tracksIdentity = identity;
 	window._tkq.push( [ 'identifyUser', identity.userid, identity.username ] );
 };
@@ -21,10 +30,9 @@ export const initializeWithIdentity = ( identity ) => {
 /**
  * Track a view of the layout selector.
  *
- * @param {string} source Source triggering the view.
- * @returns {void}
+ * @param source Source triggering the view.
  */
-export const trackView = ( source ) => {
+export const trackView = ( source: string ): void => {
 	if ( ! tracksIdentity ) {
 		return;
 	}
@@ -40,10 +48,8 @@ export const trackView = ( source ) => {
 
 /**
  * Track closing of the layout selector.
- *
- * @returns {void}
  */
-export const trackDismiss = () => {
+export const trackDismiss = (): void => {
 	if ( ! tracksIdentity ) {
 		return;
 	}
@@ -59,10 +65,9 @@ export const trackDismiss = () => {
 /**
  * Track layout selection.
  *
- * @param {string} template Template slug.
- * @returns {void}
+ * @param template Template slug.
  */
-export const trackSelection = ( template ) => {
+export const trackSelection = ( template: string ): void => {
 	if ( ! tracksIdentity ) {
 		return;
 	}

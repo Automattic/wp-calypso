@@ -2,10 +2,13 @@
  * Sorts the keys on the group object to have a preferred order.
  * If some groups exist without a preferred order, they will be included last
  *
- * @param {Array<string>} preferredGroupOrder the order of group slugs that we want
- * @param {object} groupsObject an object with all group information, with group names as keys
+ * @param preferredGroupOrder the order of group slugs that we want
+ * @param groupsObject an object with all group information, with group names as keys
  */
-export function sortGroupNames( preferredGroupOrder, groupsObject ) {
+export function sortGroupNames< T >(
+	preferredGroupOrder: string[],
+	groupsObject: Record< string, T >
+): Record< string, T > {
 	const groups = Object.keys( groupsObject );
 
 	const orderedGroups = preferredGroupOrder.filter( ( x ) => groups.includes( x ) );
@@ -15,5 +18,5 @@ export function sortGroupNames( preferredGroupOrder, groupsObject ) {
 	return allGroups.reduce( ( result, groupName ) => {
 		result[ groupName ] = groupsObject[ groupName ];
 		return result;
-	}, {} );
+	}, {} as Record< string, T > );
 }

@@ -1,5 +1,15 @@
-const TemplateSelectorItem = ( props ) => {
-	const { value, onSelect, title, description, theme, locale, templatePostID = null } = props;
+interface TemplateSelectorItemProps {
+	description?: string;
+	locale: string;
+	onSelect: ( value: string ) => void;
+	templatePostID: number | null;
+	title?: string;
+	theme: string;
+	value?: string;
+}
+
+const TemplateSelectorItem = ( props: TemplateSelectorItemProps ): JSX.Element | null => {
+	const { value, onSelect, title, description, theme, locale, templatePostID } = props;
 
 	if ( title == null || value == null ) {
 		return null;
@@ -11,15 +21,15 @@ const TemplateSelectorItem = ( props ) => {
 
 	const previewUrl = `${ designsEndpoint }${ encodeURIComponent( theme ) }/${ encodeURIComponent(
 		sourceSiteUrl
-	) }/?post_id=${ encodeURIComponent( templatePostID ) }&language=${ encodeURIComponent(
+	) }/?post_id=${ encodeURIComponent( templatePostID ?? '' ) }&language=${ encodeURIComponent(
 		locale
 	) }`;
 
 	const staticPreviewImg =
 		mshotsUrl + encodeURIComponent( previewUrl ) + '?vpw=1024&vph=1024&w=660&h=430';
 
-	const refreshSourceImg = ( e ) => {
-		const img = e.target;
+	const refreshSourceImg = ( e: React.SyntheticEvent< HTMLImageElement > ) => {
+		const img = e.currentTarget;
 
 		if ( -1 !== img.src.indexOf( 'reload=1' ) ) {
 			return;

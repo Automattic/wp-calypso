@@ -17,16 +17,26 @@ const KEY_MAP = {
 	Vertical: 'vertical',
 };
 
-const replacePlaceholders = ( pageContent, siteInformation = {} ) => {
+const replacePlaceholders = (
+	pageContent: string,
+	siteInformation: Record< string, string > = {}
+): string => {
 	if ( ! pageContent ) {
 		return '';
 	}
 
-	return pageContent.replace( /{{(\w+)}}/g, ( match, placeholder ) => {
-		const defaultValue = PLACEHOLDER_DEFAULTS[ placeholder ];
-		const key = KEY_MAP[ placeholder ];
+	return pageContent.replace( /{{(\w+)}}/g, ( _match, placeholder ) => {
+		const defaultValue = isObjKey( placeholder, PLACEHOLDER_DEFAULTS )
+			? PLACEHOLDER_DEFAULTS[ placeholder ]
+			: '';
+		const key = isObjKey( placeholder, KEY_MAP ) ? KEY_MAP[ placeholder ] : '';
 		return siteInformation[ key ] || defaultValue || placeholder;
 	} );
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function isObjKey< T >( key: any, obj: T ): key is keyof T {
+	return key in obj;
+}
 
 export default replacePlaceholders;

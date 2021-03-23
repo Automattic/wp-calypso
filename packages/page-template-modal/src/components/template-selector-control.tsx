@@ -3,16 +3,30 @@
  */
 import { BaseControl } from '@wordpress/components';
 import { memo } from '@wordpress/element';
+import { withInstanceId } from '@wordpress/compose';
 
 /**
  * Internal dependencies
  */
 import TemplateSelectorItem from './template-selector-item';
 import replacePlaceholders from '../utils/replace-placeholders';
+import type { LayoutDefinition } from '../layout-definition';
 
-const noop = () => {};
+const noop = () => undefined;
+
+interface TemplateSelectorControlProps {
+	instanceId: number;
+	label: string;
+	legendLabel?: string;
+	locale?: string;
+	onTemplateSelect: ( templateName: string ) => void;
+	siteInformation?: Record< string, string >;
+	templates?: LayoutDefinition[];
+	theme?: string;
+}
 
 export const TemplateSelectorControl = ( {
+	instanceId,
 	label,
 	legendLabel,
 	templates = [],
@@ -20,13 +34,17 @@ export const TemplateSelectorControl = ( {
 	locale = 'en',
 	onTemplateSelect = noop,
 	siteInformation = {},
-} ) => {
+}: TemplateSelectorControlProps ): JSX.Element | null => {
 	if ( ! Array.isArray( templates ) || ! templates.length ) {
 		return null;
 	}
 
 	return (
-		<BaseControl label={ label } className="template-selector-control">
+		<BaseControl
+			id={ `template-selector-control__${ instanceId }` }
+			label={ label }
+			className="template-selector-control"
+		>
 			<ul
 				className="template-selector-control__options"
 				data-testid="template-selector-control-options"
@@ -53,4 +71,4 @@ export const TemplateSelectorControl = ( {
 	);
 };
 
-export default memo( TemplateSelectorControl );
+export default memo( withInstanceId( TemplateSelectorControl ) );
