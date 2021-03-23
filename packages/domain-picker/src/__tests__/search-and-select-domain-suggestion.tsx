@@ -11,7 +11,7 @@ import { DataStatus } from '@automattic/data-stores/src/domain-suggestions';
 import '../__mocks__/matchMedia.mock';
 import { MOCK_DOMAIN_SUGGESTION } from '../__mocks__';
 import DomainPicker from '../components';
-import { useDomainSuggestions } from '../hooks/use-domain-suggestions';
+import type { useDomainSuggestions } from '../hooks/use-domain-suggestions';
 
 const mockUseDomainSuggestionsResult: ReturnType< typeof useDomainSuggestions > = {
 	allDomainSuggestions: [ MOCK_DOMAIN_SUGGESTION ],
