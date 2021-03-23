@@ -28,6 +28,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'calypso/state/sites/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 
 const noop = () => {};
 
@@ -87,15 +88,15 @@ export class EditorMediaModalDetailItem extends Component {
 	 * @returns {boolean} `true` if the image-editor can be enabled.
 	 */
 	shouldShowImageEditingButtons( item ) {
-		const { isSitePrivate } = this.props;
+		const { isSitePrivate, isSiteAtomic } = this.props;
 
 		// do not allow if, for some reason, there isn't a valid item yet
 		if ( ! item ) {
 			return false;
 		}
 
-		// do not allow for private sites
-		if ( isSitePrivate ) {
+		// do not allow for non-atomic private sites
+		if ( isSitePrivate && ! isSiteAtomic ) {
 			return false;
 		}
 
@@ -311,6 +312,7 @@ const connectComponent = connect( ( state ) => {
 		isVideoPressEnabled: getSiteOption( state, siteId, 'videopress_enabled' ),
 		isVideoPressModuleActive: isJetpackModuleActive( state, siteId, 'videopress' ),
 		isSitePrivate: isPrivateSite( state, siteId ),
+		isSiteAtomic: isSiteAutomatedTransfer( state, siteId ),
 		siteId,
 		canUserUploadFiles,
 	};
