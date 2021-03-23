@@ -24,15 +24,15 @@ Building translation chunks requires 3 main components - Calypso strings POT, JS
 
 #### JS Chunks Map
 
-We use [Webpack plugin](https://github.com/Automattic/wp-calypso/blob/HEAD/build-tools/webpack/generate-chunks-map-plugin.js) to generate basic chunks map as a JSON tree that contains all JS modules that every entry point or chunk includes. Generated chunks map is saved as `chunks-map.{BROWSERSLIST_ENV}.json` file in the root of the project.
+We use [Webpack plugin](https://github.com/Automattic/wp-calypso/blob/HEAD/build-tools/webpack/generate-chunks-map-plugin.js) to generate basic chunks map as a JSON tree that contains all JS modules that every entry point or chunk includes. Generated chunks map is saved as `chunks-map.json` file in the root of the project.
 
 #### Language Translations
 
-Build script downloads all language translations from <https://widgets.wp.com/languages/calypso/> and saves the files in `/public/{BROWSERSLIST_ENV}/languages`.
+Build script downloads all language translations from <https://widgets.wp.com/languages/calypso/> and saves the files in `/public/languages`.
 
 ### Build Script
 
-Build script can be run with `yarn run build-languages` and it will basically execute `bin/build-languages.js`, but it would only work if both `calypso-strings.pot` or `chunks-map.{BROWSERSLIST_ENV}.json` exist in the root of the project.
+Build script can be run with `yarn run build-languages` and it will basically execute `bin/build-languages.js`, but it would only work if both `calypso-strings.pot` or `chunks-map.json` exist in the root of the project.
 
 To ensure you have the required files, you need to build or run a development environment with either `BUILD_TRANSLATION_CHUNKS=true yarn run build` / `ENABLE_FEATURES=use-translation-chunks yarn run build` or `BUILD_TRANSLATION_CHUNKS=true yarn run start` / `ENABLE_FEATURES=use-translation-chunks yarn run start` respectively.
 
@@ -40,7 +40,7 @@ To ensure you have the required files, you need to build or run a development en
 
 1. Downloads language revisions from - <https://widgets.wp.com/languages/calypso/lang-revisions.json>. It's used later for cache busting purposes.
 2. Download language translations for all supported languages from <https://widgets.wp.com/languages/calypso/>.
-3. Use source code references from `calypso-strings.pot` together with `chunks-map.{BROWSERSLIST_ENV}.json` to map the original strings that are included in a chunk. Then use original strings map to build translation chunks for each downloaded language.
+3. Use source code references from `calypso-strings.pot` together with `chunks-map.json` to map the original strings that are included in a chunk. Then use original strings map to build translation chunks for each downloaded language.
 4. For each downloaded language, build a language manifest file that includes the locale data and a set of all translated chunks.
 
 Translation chunks and language manifest files are built as JSON, intended to be used when fetching in runtime, and JS, when loaded as script tag on the page.
@@ -55,13 +55,13 @@ When conditions are met, the server will load the JS format of the initially req
 
 #### Language manifest
 
-Language manifest file is resolved by either having `window.i18nLanguageManifest` when it's loaded by using a script tag and the `.js` format, or by fetching the `.json` file from `public/{BROWSERSLIST_ENV}/languages/{localeSlug}-language-manifest.json`.
+Language manifest file is resolved by either having `window.i18nLanguageManifest` when it's loaded by using a script tag and the `.js` format, or by fetching the `.json` file from `public/languages/{localeSlug}-language-manifest.json`.
 
 It contains the locale data and an array of translated chunks filenames. It is used to set the locale of Calypso with the initially required locale data.
 
 #### Translation chunk files
 
-Translation chunk file is resolved by either having `window.i18nTranslationChunks[chunk]` when it's loaded by using a script tag and the `.js` format, or by fetching the `.json` file from `public/{BROWSERSLIST_ENV}/languages/{localeSlug}-{chunk}.json`.
+Translation chunk file is resolved by either having `window.i18nTranslationChunks[chunk]` when it's loaded by using a script tag and the `.js` format, or by fetching the `.json` file from `public/languages/{localeSlug}-{chunk}.json`.
 
 It contains the translation strings that specific chunk includes and is used with `i18n.addTranslations` from `i18n-calypso` to extend translations in runtime.
 

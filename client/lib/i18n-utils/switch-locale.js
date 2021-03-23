@@ -48,11 +48,10 @@ export function getLanguageFilePathUrl() {
 /**
  * Get the base path for language related files that are served from within Calypso.
  *
- * @param {string} targetBuild The build target. e.g. fallback, evergreen, etc.
  * @returns {string} The internal base file path for language files.
  */
-export function getLanguagesInternalBasePath( targetBuild = 'evergreen' ) {
-	return `/calypso/${ targetBuild }/languages`;
+export function getLanguagesInternalBasePath() {
+	return `/calypso/languages`;
 }
 
 /**
@@ -129,18 +128,12 @@ export function getLanguageFile( targetLocaleSlug ) {
  * @param {string} options Funciton options object
  * @param {string} options.localeSlug A locale slug. e.g. fr, jp, zh-tw
  * @param {string} options.fileType The desired file type, js or json. Default to json.
- * @param {string} options.targetBuild The build target. e.g. fallback, evergreen, etc.
  * @param {string} options.hash Build hash string that will be used as cache buster.
  *
  * @returns {string} A language manifest file URL.
  */
 
-export function getLanguageManifestFileUrl( {
-	localeSlug,
-	fileType = 'json',
-	targetBuild = 'evergreen',
-	hash = null,
-} = {} ) {
+export function getLanguageManifestFileUrl( { localeSlug, fileType = 'json', hash = null } = {} ) {
 	if ( ! includes( [ 'js', 'json' ], fileType ) ) {
 		fileType = 'json';
 	}
@@ -149,7 +142,7 @@ export function getLanguageManifestFileUrl( {
 		hash = hash.toString();
 	}
 
-	const fileBasePath = getLanguagesInternalBasePath( targetBuild );
+	const fileBasePath = getLanguagesInternalBasePath();
 	const fileUrl = `${ fileBasePath }/${ localeSlug }-language-manifest.${ fileType }`;
 
 	return typeof hash === 'string' ? fileUrl + `?v=${ hash }` : fileUrl;
@@ -159,11 +152,10 @@ export function getLanguageManifestFileUrl( {
  * Get the language manifest file for the given locale.
  *
  * @param  {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
- * @param  {string} targetBuild The build target. e.g. fallback, evergreen, etc.
  *
  * @returns {Promise} Language manifest json content
  */
-export function getLanguageManifestFile( localeSlug, targetBuild = 'evergreen' ) {
+export function getLanguageManifestFile( localeSlug ) {
 	if (
 		window?.i18nLanguageManifest &&
 		window?.i18nLanguageManifest?.locale?.[ '' ]?.localeSlug === localeSlug
@@ -174,7 +166,6 @@ export function getLanguageManifestFile( localeSlug, targetBuild = 'evergreen' )
 	const url = getLanguageManifestFileUrl( {
 		localeSlug,
 		fileType: 'json',
-		targetBuild,
 		hash: window?.languageRevisions?.hashes?.[ localeSlug ] || null,
 	} );
 
@@ -189,7 +180,6 @@ export function getLanguageManifestFile( localeSlug, targetBuild = 'evergreen' )
  * @param {string} options.chunkId A chunk id. e.g. chunk-abc.min
  * @param {string} options.localeSlug A locale slug. e.g. fr, jp, zh-tw
  * @param {string} options.fileType The desired file type, js or json. Default to json.
- * @param {string} options.targetBuild The build target. e.g. fallback, evergreen, etc.
  * @param {string} options.hash Build hash string that will be used as cache buster.
  *
  * @returns {string} A translation chunk file URL.
@@ -198,7 +188,6 @@ export function getTranslationChunkFileUrl( {
 	chunkId,
 	localeSlug,
 	fileType = 'json',
-	targetBuild = 'evergreen',
 	hash = null,
 } = {} ) {
 	if ( ! includes( [ 'js', 'json' ], fileType ) ) {
@@ -209,7 +198,7 @@ export function getTranslationChunkFileUrl( {
 		hash = hash.toString();
 	}
 
-	const fileBasePath = getLanguagesInternalBasePath( targetBuild );
+	const fileBasePath = getLanguagesInternalBasePath();
 	const fileName = `${ localeSlug }-${ chunkId }.${ fileType }`;
 	const fileUrl = `${ fileBasePath }/${ fileName }`;
 
@@ -221,11 +210,10 @@ export function getTranslationChunkFileUrl( {
  *
  * @param {string} chunkId A chunk id. e.g. chunk-abc.min
  * @param {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
- * @param {string} targetBuild The build target. e.g. fallback, evergreen, etc.
  *
  * @returns {Promise} Translation chunk json content
  */
-export function getTranslationChunkFile( chunkId, localeSlug, targetBuild = 'evergreen' ) {
+export function getTranslationChunkFile( chunkId, localeSlug ) {
 	if (
 		window?.i18nLanguageManifest?.locale?.[ '' ]?.localeSlug === localeSlug &&
 		window?.i18nTranslationChunks?.[ chunkId ]
@@ -237,7 +225,6 @@ export function getTranslationChunkFile( chunkId, localeSlug, targetBuild = 'eve
 		chunkId,
 		localeSlug,
 		fileType: 'json',
-		targetBuild,
 		hash: window?.languageRevisions?.[ localeSlug ] || null,
 	} );
 
@@ -269,16 +256,11 @@ let lastRequireChunkTranslationsHandler = null;
  * Adds require chunk handler for fetching translations.
  *
  * @param {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
- * @param {string} targetBuild The build target. e.g. fallback, evergreen, etc.
  * @param {Object} options Handler additional options
  * @param {Array}  options.translatedChunks Array of chunk ids that have available translation for the given locale
  * @param {Object} options.userTranslations User translations data that will override chunk translations
  */
-function addRequireChunkTranslationsHandler(
-	localeSlug = i18n.getLocaleSlug(),
-	targetBuild = 'evergreen',
-	options = {}
-) {
+function addRequireChunkTranslationsHandler( localeSlug = i18n.getLocaleSlug(), options = {} ) {
 	const { translatedChunks = [], userTranslations = {} } = options;
 	const loadedTranslationChunks = {};
 
@@ -289,14 +271,12 @@ function addRequireChunkTranslationsHandler(
 			return;
 		}
 
-		const translationChunkPromise = getTranslationChunkFile(
-			chunkId,
-			localeSlug,
-			targetBuild
-		).then( ( translations ) => {
-			addTranslations( translations, userTranslations );
-			loadedTranslationChunks[ chunkId ] = true;
-		} );
+		const translationChunkPromise = getTranslationChunkFile( chunkId, localeSlug ).then(
+			( translations ) => {
+				addTranslations( translations, userTranslations );
+				loadedTranslationChunks[ chunkId ] = true;
+			}
+		);
 
 		promises.push( translationChunkPromise );
 	};
