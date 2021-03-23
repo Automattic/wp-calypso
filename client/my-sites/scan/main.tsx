@@ -69,10 +69,6 @@ interface Props {
 	dispatchScanRun: ( arg0: number ) => null;
 	isAdmin: boolean;
 	siteSettingsUrl: string;
-	threatFixedReviewPrompt: {
-		isVisible: boolean;
-		fixDate: moment.Moment | null;
-	};
 }
 
 class ScanPage extends Component< Props > {
