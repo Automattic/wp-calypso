@@ -54,16 +54,6 @@ export async function submitEbanxCardTransaction( transactionData, submit ) {
 	return submit( formattedTransactionData );
 }
 
-export function submitCreditsTransaction( transactionData, submit, transactionOptions ) {
-	debug( 'formatting full credits transaction', transactionData );
-	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
-		...transactionData,
-		paymentMethodType: 'WPCOM_Billing_WPCOM',
-	} );
-	debug( 'submitting full credits transaction', formattedTransactionData );
-	return submit( formattedTransactionData, transactionOptions );
-}
-
 export function submitFreePurchaseTransaction( transactionData, submit ) {
 	debug( 'formatting free transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
