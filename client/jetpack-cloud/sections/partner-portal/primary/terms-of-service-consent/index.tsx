@@ -1,13 +1,11 @@
 /**
  * External dependencies
  */
-import React, { ReactElement, useCallback, useEffect } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMutation } from 'react-query';
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { getQueryArg } from '@wordpress/url';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -17,18 +15,15 @@ import wpcom from 'calypso/lib/wp';
 import {
 	getCurrentPartner,
 	hasFetchedPartner,
-	isFetchingPartner,
 } from 'calypso/state/partner-portal/partner/selectors';
 import { receivePartner } from 'calypso/state/partner-portal/partner/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
-import {
-	ensurePartnerPortalReturnUrl,
-	formatApiPartner,
-} from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import { formatApiPartner } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import Main from 'calypso/components/main';
 import CardHeading from 'calypso/components/card-heading';
 import Spinner from 'calypso/components/spinner';
+import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 
 function mutationConsent( consent: boolean ): Promise< APIPartner > {
 	return wpcom.req.post( {
@@ -55,20 +50,12 @@ export default function TermsOfServiceConsent(): ReactElement | null {
 	const partner = useSelector( getCurrentPartner );
 	const hasConsented = partner?.tos || false;
 	const fetchedPartner = useSelector( hasFetchedPartner );
-	const fetchingPartner = useSelector( isFetchingPartner );
 
 	const acceptTOS = useCallback( () => {
 		consent.mutate( true );
 	}, [] );
 
-	useEffect( () => {
-		if ( hasConsented ) {
-			const returnQuery = getQueryArg( window.location.href, 'return' ) as string;
-			const returnUrl = ensurePartnerPortalReturnUrl( returnQuery );
-
-			page.redirect( returnUrl );
-		}
-	}, [ hasConsented ] );
+	useReturnUrl( hasConsented );
 
 	return (
 		<Main className="terms-of-service-consent">
@@ -87,7 +74,7 @@ export default function TermsOfServiceConsent(): ReactElement | null {
 					</div>
 
 					<div style={ { textAlign: 'right' } }>
-						<Button onClick={ acceptTOS } busy={ consent.isLoading || fetchingPartner } primary>
+						<Button onClick={ acceptTOS } busy={ consent.isLoading } primary>
 							{ translate( 'Accept' ) }
 						</Button>
 					</div>

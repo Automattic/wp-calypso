@@ -15,8 +15,10 @@ import * as controller from './controller';
 import './style.scss';
 
 export default function () {
+	// Load the partner for the current user.
 	page( `/partner-portal/partner`, controller.partnerContext, makeLayout, clientRender );
 
+	// Display the ToS, if necessary.
 	page(
 		`/partner-portal/terms-of-service`,
 		controller.requireAccessContext,
@@ -25,6 +27,7 @@ export default function () {
 		clientRender
 	);
 
+	// Display the list of partner keys for the user to select from.
 	page(
 		`/partner-portal/partner-key`,
 		controller.requireAccessContext,
@@ -34,6 +37,7 @@ export default function () {
 		clientRender
 	);
 
+	// List licenses.
 	page(
 		`/partner-portal/:filter(unassigned|assigned|revoked)?`,
 		controller.requireAccessContext,
@@ -44,6 +48,7 @@ export default function () {
 		clientRender
 	);
 
+	// Issue a license.
 	page(
 		`/partner-portal/issue-license`,
 		controller.requireAccessContext,
@@ -54,5 +59,6 @@ export default function () {
 		clientRender
 	);
 
+	// Redirect invalid URLs back to the main portal page.
 	page( `/partner-portal/*`, '/partner-portal' );
 }

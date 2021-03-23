@@ -1,12 +1,10 @@
 /**
  * External dependencies
  */
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { getQueryArg } from '@wordpress/url';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -17,11 +15,11 @@ import {
 	getCurrentPartner,
 	hasFetchedPartner,
 } from 'calypso/state/partner-portal/partner/selectors';
-import { ensurePartnerPortalReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import Main from 'calypso/components/main';
 import CardHeading from 'calypso/components/card-heading';
 import Spinner from 'calypso/components/spinner';
+import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 
 export default function PartnerAccess(): ReactElement | null {
 	const translate = useTranslate();
@@ -32,14 +30,7 @@ export default function PartnerAccess(): ReactElement | null {
 	const hasPartner = hasFetched && ! isFetching && keys.length > 0;
 	const showError = hasFetched && ! isFetching && keys.length === 0;
 
-	useEffect( () => {
-		if ( hasPartner ) {
-			const returnQuery = getQueryArg( window.location.href, 'return' ) as string;
-			const returnUrl = ensurePartnerPortalReturnUrl( returnQuery );
-
-			page.redirect( returnUrl );
-		}
-	}, [ hasPartner ] );
+	useReturnUrl( hasPartner );
 
 	return (
 		<Main className="partner-access">
