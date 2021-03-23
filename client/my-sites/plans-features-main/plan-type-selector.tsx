@@ -352,6 +352,12 @@ const StyledPopover = styled( Popover )`
 		}
 	}
 
+	.rtl &.is-bottom {
+		.popover__arrow {
+			border-right-color: transparent;
+		}
+	}
+
 	.popover__inner {
 		padding: 8px 10px;
 		max-width: 210px;
