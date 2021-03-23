@@ -5,19 +5,13 @@
 import { mergeHandlers } from 'calypso/state/action-watchers/utils';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import actionList from './action-list';
-import coupons from '../sites/coupons/handlers';
-import customers from './customers';
 import currencies from './data/currencies';
 import locations from './data/locations';
 import counts from './data/counts';
-import orderNotes from './orders/notes';
-import orderRefunds from './orders/refunds';
-import orders from './orders';
 import paymentMethods from './payment-methods';
 import request from './request';
 import reviews from '../sites/reviews/handlers';
 import reviewReplies from '../sites/review-replies/handlers';
-import sendInvoice from './orders/send-invoice';
 import settingsGeneral from '../sites/settings/general/handlers';
 import ui from './ui';
 import debugFactory from 'debug';
@@ -27,18 +21,12 @@ const debug = debugFactory( 'woocommerce:errors' );
 const handlers = mergeHandlers(
 	actionList,
 	counts,
-	coupons,
-	customers,
 	currencies,
 	locations,
-	orderNotes,
-	orderRefunds,
-	orders,
 	paymentMethods,
 	request,
 	reviews,
 	reviewReplies,
-	sendInvoice,
 	settingsGeneral,
 	ui
 );
