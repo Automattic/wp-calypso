@@ -33,7 +33,6 @@ private object EditingToolkit : BuildType({
 		param("build.prefix", "3")
 		param("plugin_slug", "editing-toolkit")
 		param("archive_dir", "./editing-toolkit-plugin/")
-		param("build_env", "production")
 		param("release_tag", "etk-release-build")
 		param("with_slack_notify", "true" )
 		param("normalize_files", "sed -i -e \"/^\\s\\* Version:/c\\ * Version: %build.number%\" -e \"/^define( 'A8C_ETK_PLUGIN_VERSION'/c\\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );\" full-site-editing-plugin.php && sed -i -e \"/^Stable tag:\\s/c\\Stable tag: %build.number%\" readme.txt\n")
@@ -80,44 +79,34 @@ private object WpcomBlockEditor : BuildType({
 	id("WPComPlugins_WpcomBlockEditor")
 	name = "Wpcom Block Editor"
 
-	artifactRules = "wpcom-block-editor.zip"
 	params {
 		param("build.prefix", "1")
 		param("plugin_slug", "wpcom-block-editor")
 		param("archive_dir", "./dist/")
 		param("build_env", "development")
-		param("release_tag", "wpcom-block-editor-release-build")
 	}
 })
 
 private object Notifications : BuildType({
-	val slug = "notifications"
 	templates(PluginBaseBuild())
 	id("WPComPlugins_Notifications")
 	name = "Notifications"
 
-	artifactRules = "$slug.zip"
 	params {
 		param("build.prefix", "1")
-		param("plugin_slug", slug)
+		param("plugin_slug", "notifications")
 		param("archive_dir", "./dist/")
-		param("build_env", "production")
-		param("release_tag", "$slug-release-build")
 	}
 })
 
 private object O2Blocks : BuildType({
-	val slug = "o2-blocks"
 	templates(PluginBaseBuild())
 	id("WPComPlugins_O2Blocks")
 	name = "O2 Blocks"
 
-	artifactRules = "wpcom-block-editor.zip"
 	params {
 		param("build.prefix", "1")
-		param("plugin_slug", slug)
+		param("plugin_slug", "o2-blocks")
 		param("archive_dir", "./dist/")
-		param("build_env", "development")
-		param("release_tag", "$slug-release-build")
 	}
 })

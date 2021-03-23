@@ -14,7 +14,8 @@ open class PluginBaseBuild : Template({
 	val pluginSlug = "%plugin_slug%"
 	val workingDir = "apps/$pluginSlug"
 	val archiveDir = "%archive_dir%"
-	val releaseTag = "%release_tag%"
+	val releaseTag = if ("%release_tag%".length > 0) "%release_tag%" else "$pluginSlug-release-build"
+	val buildEnv = if ("%build_env%".length > 0) "%build_env%" else "production"
 
 	artifactRules = "$pluginSlug.zip"
 	buildNumberPattern = "%build.prefix%.%build.counter%"
@@ -35,7 +36,7 @@ open class PluginBaseBuild : Template({
 
 	features {
 		pullRequests {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
+			vcsRootExtId = Settings.WpCalypso.id
 			provider = github {
 				authType = token {
 					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
@@ -45,7 +46,7 @@ open class PluginBaseBuild : Template({
 		}
 
 		commitStatusPublisher {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
+			vcsRootExtId = Settings.WpCalypso.id
 			publisher = github {
 				githubUrl = "https://api.github.com"
 				authType = personalToken {
@@ -69,7 +70,7 @@ open class PluginBaseBuild : Template({
 		bashNodeScript {
 			name = "Build artifacts"
 			scriptContent = """
-				export NODE_ENV="%build_env%"
+				export NODE_ENV="$buildEnv"
 				cd $workingDir
 				yarn build
 			"""
