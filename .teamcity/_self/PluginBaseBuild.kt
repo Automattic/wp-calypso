@@ -14,7 +14,6 @@ open class PluginBaseBuild : Template({
 	val pluginSlug = "%plugin_slug%"
 	val workingDir = "apps/$pluginSlug"
 	val archiveDir = "%archive_dir%"
-	val buildEnv = "%build_env%"
 	val releaseTag = "%release_tag%"
 
 	artifactRules = "$pluginSlug.zip"
@@ -70,15 +69,13 @@ open class PluginBaseBuild : Template({
 		bashNodeScript {
 			name = "Build artifacts"
 			scriptContent = """
-				export NODE_ENV="$buildEnv"
-				echo "changing to... $workingDir"
+				export NODE_ENV="%build_env%"
 				cd $workingDir
-				ls
 				yarn build
 			"""
 		}
 
-		// Build-specified steps will run here.
+		// Steps specified in builds which extend the Template will run here.
 		placeholder {  }
 
 		/**
@@ -104,7 +101,7 @@ open class PluginBaseBuild : Template({
 		bashNodeScript {
 			name = "Process Artifact"
 			scriptContent = """
-				# 1. Download and unzip current ETK release build.
+				# 1. Download and unzip current release build.
 				cd $workingDir
 				wget "%teamcity.serverUrl%/repository/download/%system.teamcity.buildType.id%/$releaseTag.tcbuildtag/$pluginSlug.zip?guest=1&branch=trunk" -O ./tmp-release-archive-download.zip
 
@@ -112,7 +109,7 @@ open class PluginBaseBuild : Template({
 				unzip ./tmp-release-archive-download.zip -d ./release-archive
 				echo "Diffing against current trunk release build (`grep build_number ./release-archive/build_meta.txt | sed s/build_number=//`).";
 
-				# 2. Change anything from the ETK release build which is "unstable", like the version number and build metadata.
+				# 2. Change anything from the release build which is "unstable", like the version number and build metadata.
 				# These operations restore idempotence between the two builds.
 				rm -f ./release-archive/build_meta.txt
 
