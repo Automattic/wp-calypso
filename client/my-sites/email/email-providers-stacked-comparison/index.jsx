@@ -127,7 +127,7 @@ class EmailProvidersStackedComparison extends React.Component {
 	onTitanConfirmNewMailboxes = () => {
 		const { titanMailboxes } = this.state;
 
-		const mailboxesAreValid = areAllMailboxesValid( titanMailboxes );
+		const mailboxesAreValid = areAllMailboxesValid( titanMailboxes, [ 'alternativeEmail' ] );
 
 		recordTracksEvent( 'calypso_email_providers_add_click', {
 			mailbox_count: titanMailboxes.length,
