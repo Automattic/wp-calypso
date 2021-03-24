@@ -100,3 +100,6 @@
 
 # Framework
 /packages/js-utils @Automattic/team-calypso-frameworks
+
+# Jetpack Search
+/client/my-sites/jetpack-search @Automattic/jetpack-search
