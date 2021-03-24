@@ -59,4 +59,13 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: false,
 	},
+	pricingPagePopularProducts: {
+		datestamp: '20210324',
+		variations: {
+			withComplete_control: 50,
+			withSecurityRT_test: 50,
+		},
+		defaultVariation: 'withComplete_control',
+		allowExistingUsers: true,
+	},
 };
