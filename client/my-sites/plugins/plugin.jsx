@@ -4,7 +4,7 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { includes, uniq } from 'lodash';
+import { includes } from 'lodash';
 import { isEnabled } from '@automattic/calypso-config';
 
 /**
@@ -314,7 +314,7 @@ export default connect(
 	( state, props ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 		const sites = getSelectedOrAllSitesWithPlugins( state );
-		const siteIds = uniq( siteObjectsToSiteIds( sites ) );
+		const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
 
 		return {
 			plugin: getPluginOnSites( state, siteIds, props.pluginSlug ),

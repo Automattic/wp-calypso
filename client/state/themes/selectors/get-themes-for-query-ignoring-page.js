@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { uniq, flatMap } from 'lodash';
+import { flatMap } from 'lodash';
 import { createSelector } from '@automattic/state-utils';
 
 /**
@@ -45,7 +45,7 @@ export const getThemesForQueryIgnoringPage = createSelector(
 
 		// FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
 		// over different pages) which we need to remove manually here for now.
-		return uniq( themesForQueryIgnoringPage );
+		return [ ...new Set( themesForQueryIgnoringPage ) ];
 	},
 	( state ) => state.themes.queries,
 	( state, siteId, query ) => getSerializedThemesQueryWithoutPage( query, siteId )

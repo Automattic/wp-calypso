@@ -4,7 +4,7 @@
 import page from 'page';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { get, some, startsWith, uniq } from 'lodash';
+import { get, some, startsWith } from 'lodash';
 import { removeQueryArgs } from '@wordpress/url';
 
 /**
@@ -282,7 +282,7 @@ export function updateRecentSitesPreferences( context ) {
 
 		if ( siteId && siteId !== recentSites[ 0 ] ) {
 			// Also filter recent sites if not available locally
-			const updatedRecentSites = uniq( [ siteId, ...recentSites ] )
+			const updatedRecentSites = [ ...new Set( [ siteId, ...recentSites ] ) ]
 				.slice( 0, 5 )
 				.filter( ( recentId ) => !! getSite( state, recentId ) );
 

@@ -7,7 +7,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
-import { defaults, get, identity, isEmpty, map, set, uniq } from 'lodash';
+import { defaults, get, identity, isEmpty, map, set } from 'lodash';
 
 /**
  * Internal dependencies
@@ -182,7 +182,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 				if ( registrantVatIdIsNotEmpty ) {
 					return validationErrors.registrantVatId === []
 						? null
-						: map( uniq( validationErrors.registrantVatId ), renderValidationError );
+						: map( [ ...new Set( validationErrors.registrantVatId ) ], renderValidationError );
 				}
 
 				return null;
@@ -221,7 +221,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 
 		const sirenSiretValidationMessage = () => {
 			if ( this.props.isManaged ) {
-				return map( uniq( validationErrors.sirenSiret ?? [] ), renderValidationError );
+				return map( [ ...new Set( validationErrors.sirenSiret ) ], renderValidationError );
 			}
 
 			if ( validationErrors.sirenSiret ) {
@@ -265,7 +265,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 
 		const trademarkNumberValidationMessage = () => {
 			if ( this.props.isManaged ) {
-				return map( uniq( validationErrors.trademarkNumber ?? [] ), ( error ) =>
+				return map( [ ...new Set( validationErrors.trademarkNumber ) ], ( error ) =>
 					renderValidationError( error )
 				);
 			}
