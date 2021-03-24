@@ -300,6 +300,7 @@ class EmailProvidersStackedComparison extends React.Component {
 						className="email-providers-stacked-comparison__gsuite-user-list-action-continue"
 						primary
 						busy={ this.state.addingToCart }
+						disabled={ ! canCurrentUserAddEmail( domain ) }
 						onClick={ this.onGoogleConfirmNewUsers }
 					>
 						{ translate( 'Add %(googleMailService)s', {
@@ -374,6 +375,7 @@ class EmailProvidersStackedComparison extends React.Component {
 					className="email-providers-stacked-comparison__titan-mailbox-action-continue"
 					primary
 					busy={ this.state.addingToCart }
+					disabled={ ! canCurrentUserAddEmail( domain ) }
 					onClick={ this.onTitanConfirmNewMailboxes }
 				>
 					{ translate( 'Add Email' ) }
