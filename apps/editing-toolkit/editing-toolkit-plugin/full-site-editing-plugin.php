@@ -259,7 +259,7 @@ function load_block_patterns_from_api( $current_screen ) {
 add_action( 'current_screen', __NAMESPACE__ . '\load_block_patterns_from_api' );
 
 /**
- * Load WPCOM Block Patterns Modifications
+ * Load WPCOM Block Patterns Modifications.
  *
  * This is responsible for modifying how block patterns behave in the editor,
  * including adding support for premium block patterns. The patterns themselves
