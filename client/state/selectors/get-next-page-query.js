@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { isNumber } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import getNextPageHandle from 'calypso/state/selectors/get-next-page-handle';
@@ -12,7 +7,6 @@ import getCurrentMediaQuery from 'calypso/state/selectors/get-current-media-quer
 import 'calypso/state/media/init';
 
 const DEFAULT_QUERY = Object.freeze( { number: 20 } );
-const isString = ( arg ) => typeof arg === 'string';
 
 /**
  * Returns a new query object to use to fetch the next page of media for a site
@@ -29,7 +23,7 @@ export default function getNextPageQuery( state, siteId ) {
 
 	const pageHandle = getNextPageHandle( state, siteId );
 
-	if ( [ isString, isNumber ].some( ( pred ) => pred( pageHandle ) ) ) {
+	if ( [ 'string', 'number' ].includes( typeof pageHandle ) ) {
 		return {
 			...DEFAULT_QUERY,
 			...currentQuery,
