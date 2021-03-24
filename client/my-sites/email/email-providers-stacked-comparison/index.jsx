@@ -127,22 +127,25 @@ class EmailProvidersStackedComparison extends React.Component {
 	};
 
 	onTitanConfirmNewMailboxes = () => {
+		const { domain } = this.props;
 		const { titanMailboxes } = this.state;
 
 		const mailboxesAreValid = areAllMailboxesValid( titanMailboxes, [ 'alternativeEmail' ] );
 		const mailboxesAreValid = areAllMailboxesValid( titanMailboxes );
+		const userCanAddEmail = canCurrentUserAddEmail( domain );
 
 		recordTracksEvent( 'calypso_email_providers_add_click', {
 			mailbox_count: titanMailboxes.length,
 			mailboxes_valid: mailboxesAreValid ? 1 : 0,
 			provider: 'titan',
+			user_can_add_email: userCanAddEmail,
 		} );
 
-		if ( ! mailboxesAreValid ) {
+		if ( ! mailboxesAreValid || ! userCanAddEmail ) {
 			return;
 		}
 
-		const { domain, productsList, selectedSiteSlug, shoppingCartManager } = this.props;
+		const { productsList, selectedSiteSlug, shoppingCartManager } = this.props;
 
 		const cartItem = titanMailMonthly( {
 			domain: domain.name,
@@ -181,21 +184,24 @@ class EmailProvidersStackedComparison extends React.Component {
 	};
 
 	onGoogleConfirmNewUsers = () => {
+		const { domain } = this.props;
 		const { googleUsers } = this.state;
 
 		const usersAreValid = areAllUsersValid( googleUsers );
+		const userCanAddEmail = canCurrentUserAddEmail( domain );
 
 		recordTracksEvent( 'calypso_email_providers_add_click', {
 			mailbox_count: googleUsers.length,
 			mailboxes_valid: usersAreValid ? 1 : 0,
 			provider: 'google',
+			user_can_add_email: userCanAddEmail ? 1 : 0,
 		} );
 
-		if ( ! usersAreValid ) {
+		if ( ! usersAreValid || ! userCanAddEmail ) {
 			return;
 		}
 
-		const { domain, productsList, selectedSiteSlug, shoppingCartManager } = this.props;
+		const { productsList, selectedSiteSlug, shoppingCartManager } = this.props;
 		const domains = [ domain ];
 		const googleProductSlug = config.isEnabled( 'google-workspace-migration' )
 			? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
