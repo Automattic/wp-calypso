@@ -42,7 +42,7 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import { emailManagementForwarding } from 'calypso/my-sites/email/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { Notice } from 'calypso/components/notice';
+import Notice from 'calypso/components/notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import Gridicon from 'calypso/components/gridicon';
@@ -131,7 +131,6 @@ class EmailProvidersStackedComparison extends React.Component {
 		const { titanMailboxes } = this.state;
 
 		const mailboxesAreValid = areAllMailboxesValid( titanMailboxes, [ 'alternativeEmail' ] );
-		const mailboxesAreValid = areAllMailboxesValid( titanMailboxes );
 		const userCanAddEmail = canCurrentUserAddEmail( domain );
 
 		recordTracksEvent( 'calypso_email_providers_add_click', {
@@ -466,8 +465,8 @@ class EmailProvidersStackedComparison extends React.Component {
 
 		return (
 			<>
-				{ this.renderDomainEligibilityNotice() }
 				{ this.renderHeaderSection() }
+				{ this.renderDomainEligibilityNotice() }
 				{ this.renderTitanCard() }
 				{ this.renderGoogleCard() }
 				{ this.renderEmailForwardingCard() }
