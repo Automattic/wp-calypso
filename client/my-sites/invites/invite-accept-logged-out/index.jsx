@@ -14,7 +14,7 @@ import { get } from 'lodash';
 import SignupForm from 'calypso/blocks/signup-form';
 import InviteFormHeader from 'calypso/my-sites/invites/invite-form-header';
 import { login } from 'calypso/lib/paths';
-import { createAccount, acceptInvite } from 'calypso/lib/invites/actions';
+import { createAccount, acceptInvite } from 'calypso/state/invites/actions';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';

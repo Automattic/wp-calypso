@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import { Card, Button } from '@automattic/components';
 import Gravatar from 'calypso/components/gravatar';
 import InviteFormHeader from 'calypso/my-sites/invites/invite-form-header';
-import { acceptInvite } from 'calypso/lib/invites/actions';
+import { acceptInvite } from 'calypso/state/invites/actions';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

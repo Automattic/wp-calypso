@@ -13,7 +13,7 @@ import i18n from 'i18n-calypso';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import InviteAccept from 'calypso/my-sites/invites/invite-accept';
 import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
-import { acceptInvite as acceptInviteAction } from 'calypso/lib/invites/actions';
+import { acceptInvite as acceptInviteAction } from 'calypso/state/invites/actions';
 import user from 'calypso/lib/user';
 import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
 
