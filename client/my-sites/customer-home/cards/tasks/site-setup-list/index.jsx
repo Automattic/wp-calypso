@@ -142,7 +142,6 @@ const SiteSetupList = ( {
 		if ( currentTask?.completeOnView && ! currentTask?.isCompleted ) {
 			dispatch( requestSiteChecklistTaskUpdate( siteId, currentTask.id ) );
 			setTaskIsManuallySelected( true ); // force selected even though complete
-			setCurrentTaskId( null ); // The current task may no longer be available after being updated on the server
 		}
 	}, [ currentTask, dispatch, siteId ] );
 
