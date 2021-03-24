@@ -1,15 +1,15 @@
-interface TemplateSelectorItemProps {
+interface PatternSelectorItemProps {
 	description?: string;
 	locale: string;
 	onSelect: ( value: string ) => void;
-	templatePostID: number | null;
+	patternPostID: number | null;
 	title?: string;
 	theme: string;
 	value?: string;
 }
 
-const TemplateSelectorItem = ( props: TemplateSelectorItemProps ): JSX.Element | null => {
-	const { value, onSelect, title, description, theme, locale, templatePostID } = props;
+const PatternSelectorItem = ( props: PatternSelectorItemProps ): JSX.Element | null => {
+	const { value, onSelect, title, description, theme, locale, patternPostID } = props;
 
 	if ( title == null || value == null ) {
 		return null;
@@ -21,7 +21,7 @@ const TemplateSelectorItem = ( props: TemplateSelectorItemProps ): JSX.Element |
 
 	const previewUrl = `${ designsEndpoint }${ encodeURIComponent( theme ) }/${ encodeURIComponent(
 		sourceSiteUrl
-	) }/?post_id=${ encodeURIComponent( templatePostID ?? '' ) }&language=${ encodeURIComponent(
+	) }/?post_id=${ encodeURIComponent( patternPostID ?? '' ) }&language=${ encodeURIComponent(
 		locale
 	) }`;
 
@@ -42,7 +42,7 @@ const TemplateSelectorItem = ( props: TemplateSelectorItemProps ): JSX.Element |
 
 	const innerPreview = (
 		<img
-			className="template-selector-item__media"
+			className="pattern-selector-item__media"
 			src={ staticPreviewImg }
 			alt={ title }
 			onLoad={ refreshSourceImg }
@@ -52,14 +52,14 @@ const TemplateSelectorItem = ( props: TemplateSelectorItemProps ): JSX.Element |
 	return (
 		<button
 			type="button"
-			className="template-selector-item__label"
+			className="pattern-selector-item__label"
 			value={ value }
 			onClick={ () => onSelect( value ) }
 		>
-			<span className="template-selector-item__preview-wrap">{ innerPreview }</span>
+			<span className="pattern-selector-item__preview-wrap">{ innerPreview }</span>
 			{ description }
 		</button>
 	);
 };
 
-export default TemplateSelectorItem;
+export default PatternSelectorItem;

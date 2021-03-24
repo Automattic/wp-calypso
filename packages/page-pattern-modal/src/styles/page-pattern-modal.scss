@@ -16,12 +16,12 @@
 	word-wrap: normal !important;
 }
 
-$template-selector-border-color: $studio-gray-5;
-$template-selector-hover-border-color: $studio-gray-50;
-$template-selector-empty-background: $studio-white;
-$template-selector-focus-color: var( --wp-admin-theme-color );
-$template-selector-link-text: $studio-gray-60;
-$template-selector-link-hover-text: var( --color-text );
+$pattern-selector-border-color: $studio-gray-5;
+$pattern-selector-hover-border-color: $studio-gray-50;
+$pattern-selector-empty-background: $studio-white;
+$pattern-selector-focus-color: var( --wp-admin-theme-color );
+$pattern-selector-link-text: $studio-gray-60;
+$pattern-selector-link-hover-text: var( --color-text );
 
 // Breakpoints
 $breakpoint-mobile: 600px;
@@ -32,7 +32,7 @@ $breakpoint-huge: 1648px;
 $sidebar-width: 324px;
 
 // Overrides of the Gutenberg modal component
-.page-template-modal {
+.page-pattern-modal {
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		width: 90%;
 		height: 90vh;
@@ -53,7 +53,7 @@ $sidebar-width: 324px;
 	}
 }
 
-.page-template-modal__heading {
+.page-pattern-modal__heading {
 	font-family: $brand-serif;
 	font-weight: 400;
 	letter-spacing: -0.4px;
@@ -73,20 +73,20 @@ $sidebar-width: 324px;
 	}
 }
 
-.page-template-modal__description {
+.page-pattern-modal__description {
 	color: $studio-gray-50;
 	margin: 0 0 24px;
 	font-size: 1rem;
 	line-height: 1.5;
 }
 
-.page-template-modal__inner {
+.page-pattern-modal__inner {
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		padding: 0 20px;
 	}
 }
 
-.template-selector-control {
+.pattern-selector-control {
 	margin-bottom: 20px;
 
 	.components-base-control__label {
@@ -94,7 +94,7 @@ $sidebar-width: 324px;
 	}
 }
 
-.template-selector-control__options {
+.pattern-selector-control__options {
 	display: grid;
 	grid-template-columns: 1fr;
 	column-gap: 1.5em;
@@ -109,7 +109,7 @@ $sidebar-width: 324px;
 	}
 }
 
-.template-selector-item__label {
+.pattern-selector-item__label {
 	display: block;
 	width: 100%;
 	text-align: center;
@@ -118,32 +118,32 @@ $sidebar-width: 324px;
 	appearance: none;
 	padding: 0;
 	overflow: hidden;
-	background-color: $template-selector-empty-background;
+	background-color: $pattern-selector-empty-background;
 	position: relative;
 	transform: translateZ( 0 ); // Fix for Safari rounded border overflow (1/2).
-	color: $template-selector-link-text;
+	color: $pattern-selector-link-text;
 
 	&:focus {
-		box-shadow: 0 0 0 1px $template-selector-empty-background,
-			0 0 0 3px $template-selector-focus-color;
+		box-shadow: 0 0 0 1px $pattern-selector-empty-background,
+			0 0 0 3px $pattern-selector-focus-color;
 		// Windows High Contrast mode will show this outline, but not the box-shadow.
 		outline: 2px solid transparent;
 	}
 
 	&:hover {
-		color: $template-selector-link-hover-text;
+		color: $pattern-selector-link-hover-text;
 
-		.template-selector-item__preview-wrap {
-			border: solid 1px $template-selector-hover-border-color;
+		.pattern-selector-item__preview-wrap {
+			border: solid 1px $pattern-selector-hover-border-color;
 		}
 	}
 }
 
-.template-selector-item__preview-wrap {
+.pattern-selector-item__preview-wrap {
 	width: 100%;
 	display: block;
 	margin: 0 auto;
-	background: $template-selector-empty-background;
+	background: $pattern-selector-empty-background;
 	border-radius: 0;
 	overflow: hidden;
 	height: 0;
@@ -153,7 +153,7 @@ $sidebar-width: 324px;
 	pointer-events: none;
 	opacity: 1;
 	transform: translateZ( 0 ); // Fix for Safari rounded border overflow (2/2).
-	border: solid 1px $template-selector-border-color;
+	border: solid 1px $pattern-selector-border-color;
 	margin-bottom: 1em;
 
 	&.is-rendering {
@@ -161,7 +161,7 @@ $sidebar-width: 324px;
 	}
 }
 
-.template-selector-item__media {
+.pattern-selector-item__media {
 	width: 100%;
 	height: 100%;
 	display: block;
@@ -171,7 +171,7 @@ $sidebar-width: 324px;
 	object-fit: cover;
 }
 
-.page-template-modal__sidebar {
+.page-pattern-modal__sidebar {
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		position: fixed;
 		width: calc( #{$sidebar-width} - 24px );
@@ -191,17 +191,17 @@ $sidebar-width: 324px;
 			pointer-events: auto;
 		}
 
-		.page-template-modal__category-list {
+		.page-pattern-modal__category-list {
 			pointer-events: none;
 
-			.page-template-modal__category-button {
+			.page-pattern-modal__category-button {
 				pointer-events: auto;
 			}
 		}
 	}
 }
 
-.page-template-modal__category-list {
+.page-pattern-modal__category-list {
 	display: none;
 	margin: 0;
 	padding-top: 35px;
@@ -214,7 +214,7 @@ $sidebar-width: 324px;
 		display: block;
 		width: auto;
 		height: auto;
-		color: $template-selector-link-text;
+		color: $pattern-selector-link-text;
 		font-size: 0.875rem;
 		margin-left: -12px;
 		padding: 6px 12px;
@@ -222,7 +222,7 @@ $sidebar-width: 324px;
 
 		&.is-tertiary:not( :disabled ):hover {
 			box-shadow: none;
-			color: $template-selector-link-hover-text !important;
+			color: $pattern-selector-link-hover-text !important;
 		}
 
 		&.is-tertiary:not( :disabled ):active {
@@ -230,26 +230,26 @@ $sidebar-width: 324px;
 		}
 
 		&.is-tertiary:not( :disabled ):focus {
-			box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) $template-selector-focus-color;
+			box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) $pattern-selector-focus-color;
 		}
 	}
 
-	.page-template-modal__category-item-selection-wrapper {
+	.page-pattern-modal__category-item-selection-wrapper {
 		border-bottom: 2px solid transparent;
 		padding-bottom: 2px;
 	}
 
 	.components-menu-item__button:not( :disabled )[aria-selected='true'] {
-		color: $template-selector-link-hover-text;
+		color: $pattern-selector-link-hover-text;
 		font-weight: 600;
 
-		.page-template-modal__category-item-selection-wrapper {
-			border-bottom-color: $template-selector-link-hover-text;
+		.page-pattern-modal__category-item-selection-wrapper {
+			border-bottom-color: $pattern-selector-link-hover-text;
 		}
 	}
 }
 
-.page-template-modal__button-container {
+.page-pattern-modal__button-container {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	column-gap: 8px;
@@ -260,9 +260,9 @@ $sidebar-width: 324px;
 	}
 }
 
-.components-button.page-template-modal__blank-button {
+.components-button.page-pattern-modal__blank-button {
 	min-height: 40px;
-	box-shadow: inset 0 0 0 1px $template-selector-border-color;
+	box-shadow: inset 0 0 0 1px $pattern-selector-border-color;
 	color: var( --color-text );
 
 	&:active {
@@ -270,30 +270,30 @@ $sidebar-width: 324px;
 	}
 
 	&.is-secondary:hover:not( :disabled ) {
-		box-shadow: inset 0 0 0 1px $template-selector-hover-border-color;
+		box-shadow: inset 0 0 0 1px $pattern-selector-hover-border-color;
 		color: var( --color-text );
 	}
 
 	&.is-secondary:focus:not( :disabled ) {
-		box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) $template-selector-focus-color;
+		box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) $pattern-selector-focus-color;
 	}
 
 	&.is-secondary:hover:focus:not( :disabled ) {
-		box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) $template-selector-focus-color;
+		box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) $pattern-selector-focus-color;
 		outline: 3px solid transparent;
 	}
 }
 
-.wp-core-ui select.page-template-modal__mobile-category-dropdown {
+.wp-core-ui select.page-pattern-modal__mobile-category-dropdown {
 	font-size: $default-font-size;
-	border-color: $template-selector-border-color;
+	border-color: $pattern-selector-border-color;
 
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		display: none;
 	}
 }
 
-.page-template-modal__template-list-container {
+.page-pattern-modal__pattern-list-container {
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		padding-left: $sidebar-width;
 	}

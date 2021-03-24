@@ -648,7 +648,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async dismissPageTemplateSelector() {
-		if ( await driverHelper.isElementPresent( this.driver, By.css( '.page-template-modal' ) ) ) {
+		if ( await driverHelper.isElementPresent( this.driver, By.css( '.page-pattern-modal' ) ) ) {
 			if ( driverManager.currentScreenSize() === 'mobile' ) {
 				// For some reason, when the screensize is set to mobile,
 				// the welcome guide modal is not closed when the template button
@@ -664,11 +664,11 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				);
 				await driverHelper.clickWhenClickable(
 					this.driver,
-					By.css( 'button.page-template-modal__blank-button' )
+					By.css( 'button.page-pattern-modal__blank-button' )
 				);
 			} else {
 				const useBlankButton = await this.driver.findElement(
-					By.css( 'button.page-template-modal__blank-button' )
+					By.css( 'button.page-pattern-modal__blank-button' )
 				);
 				await this.driver.executeScript( 'arguments[0].click()', useBlankButton );
 			}

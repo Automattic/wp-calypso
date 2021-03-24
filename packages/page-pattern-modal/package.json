@@ -1,7 +1,7 @@
 {
-	"name": "@automattic/page-template-modal",
+	"name": "@automattic/page-pattern-modal",
 	"version": "1.0.0-alpha.0",
-	"description": "Automattic Page Template Modal",
+	"description": "Automattic Page Pattern Modal",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
@@ -15,7 +15,7 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
-		"directory": "packages/page-template-modal"
+		"directory": "packages/page-pattern-modal"
 	},
 	"publishConfig": {
 		"access": "public"

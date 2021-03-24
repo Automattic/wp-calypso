@@ -22,7 +22,7 @@
 		{ "path": "./languages" },
 		{ "path": "./launch" },
 		{ "path": "./onboarding" },
-		{ "path": "./page-template-modal" },
+		{ "path": "./page-pattern-modal" },
 		{ "path": "./plans-grid" },
 		{ "path": "./react-i18n" },
 		{ "path": "./search" },
