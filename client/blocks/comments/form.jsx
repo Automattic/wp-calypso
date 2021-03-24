@@ -11,7 +11,9 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import AutoDirection from 'calypso/components/auto-direction';
+import { isEnabled } from '@automattic/calypso-config';
+import AutoresizingFormTextarea from './autoresizing-form-textarea';
+import AsyncLoad from 'calypso/components/async-load';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import Gravatar from 'calypso/components/gravatar';
@@ -20,7 +22,6 @@ import { writeComment, deleteComment, replyComment } from 'calypso/state/comment
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { isCommentableDiscoverPost } from 'calypso/blocks/comments/helper';
 import { ProtectFormGuard } from 'calypso/lib/protect-form';
-import PostCommentFormTextarea from './form-textarea';
 
 /**
  * Style dependencies
@@ -88,6 +89,10 @@ class PostCommentForm extends React.Component {
 		// Update the comment text in the container's state
 		this.props.onUpdateCommentText( commentText );
 	}
+
+	handleTextChangeEvent = ( event ) => {
+		this.handleTextChange( event.target.value );
+	};
 
 	resetCommentText() {
 		this.setState( { commentText: '' } );
@@ -179,6 +184,28 @@ class PostCommentForm extends React.Component {
 			'is-visible': this.state.haveFocus || this.hasCommentText(),
 		} );
 
+		const isReply = !! this.props.parentCommentId;
+
+		const formTextarea = isEnabled( 'reader/gutenberg-for-comments' ) ? (
+			<AsyncLoad
+				require="./block-editor"
+				onChange={ this.handleTextChange }
+				siteId={ this.props.post.site_ID }
+			/>
+		) : (
+			<AutoresizingFormTextarea
+				value={ this.state.commentText }
+				placeholder={ translate( 'Enter your comment here…' ) }
+				onKeyUp={ this.handleKeyUp }
+				onKeyDown={ this.handleKeyDown }
+				onFocus={ this.handleFocus }
+				onBlur={ this.handleBlur }
+				onChange={ this.handleTextChangeEvent }
+				siteId={ this.props.post.site_ID }
+				enableAutoFocus={ isReply }
+			/>
+		);
+
 		// How auto expand works for the textarea is covered in this article:
 		// http://alistapart.com/article/expanding-text-areas-made-elegant
 		return (
@@ -186,9 +213,7 @@ class PostCommentForm extends React.Component {
 				<ProtectFormGuard isChanged={ this.hasCommentText() } />
 				<FormFieldset>
 					<Gravatar user={ this.props.currentUser } />
-					<AutoDirection>
-						<PostCommentFormTextarea onChange={ this.handleTextChange } siteId={ post.site_ID } />
-					</AutoDirection>
+					{ formTextarea }
 					<Button
 						className={ buttonClasses }
 						disabled={ this.state.commentText.length === 0 }
