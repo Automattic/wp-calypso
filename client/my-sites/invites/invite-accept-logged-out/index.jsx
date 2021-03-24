@@ -68,7 +68,8 @@ class InviteAcceptLoggedOut extends React.Component {
 				debug( 'Create account bearerToken: ' + bearerToken );
 				this.setState( { bearerToken, userData } );
 			} )
-			.catch( () => {
+			.catch( ( error ) => {
+				debug( 'Create account error: ' + JSON.stringify( error ) );
 				store.remove( 'invite_accepted' );
 				this.setState( { submitting: false } );
 			} );
