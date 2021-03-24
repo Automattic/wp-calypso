@@ -54,6 +54,7 @@ const JetpackReviewPrompt: FunctionComponent = () => {
 
 	return (
 		<>
+			<hr />
 			<QueryPreferences />
 			{ hasReceivedRemotePreferences && ! isDismissed && (
 				<div className="jetpack-review-prompt">
