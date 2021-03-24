@@ -245,6 +245,7 @@ class EmailProvidersStackedComparison extends React.Component {
 				detailsExpanded={ this.state.expanded.forwarding }
 				onExpandedChange={ this.onExpandedStateChange }
 				buttonLabel={ buttonLabel }
+				buttonDisabled={ ! canCurrentUserAddEmail( domain ) }
 				expandButtonLabel={ translate( 'Add email forwarding' ) }
 				onButtonClick={ this.goToEmailForwarding }
 				features={ getEmailForwardingFeatures() }

@@ -29,6 +29,7 @@ function EmailProviderCard( {
 	onExpandedChange = noop,
 	formFields,
 	buttonLabel,
+	buttonDisabled = false,
 	onButtonClick,
 	expandButtonLabel,
 	features,
@@ -74,7 +75,7 @@ function EmailProviderCard( {
 				<div className="email-providers-stacked-comparison__provider-form">
 					{ formFields }
 					{ buttonLabel && (
-						<Button primary onClick={ onButtonClick }>
+						<Button primary disabled={ buttonDisabled } onClick={ onButtonClick }>
 							{ buttonLabel }
 						</Button>
 					) }
@@ -99,6 +100,7 @@ EmailProviderCard.propTypes = {
 	additionalPriceInformation: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
 	formFields: PropTypes.node,
 	buttonLabel: PropTypes.string,
+	buttonDisabled: PropTypes.bool,
 	onButtonClick: PropTypes.func,
 	expandButtonLabel: PropTypes.string,
 	features: PropTypes.arrayOf( PropTypes.string ),
