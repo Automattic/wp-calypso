@@ -213,7 +213,9 @@ const SiteSetupList = ( {
 	}
 
 	const advanceToNextIncompleteTask = () => {
-		setCurrentTaskId( firstIncompleteTask.id );
+		if ( firstIncompleteTask ) {
+			setCurrentTaskId( firstIncompleteTask.id );
+		}
 	};
 
 	return (
