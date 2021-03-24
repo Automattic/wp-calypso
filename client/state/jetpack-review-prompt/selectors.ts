@@ -33,4 +33,10 @@ const getIsDismissed = ( state: AppState ): boolean => {
 		: false;
 };
 
-export { getDismissCount, getIsDismissed };
+const getValidFrom = ( state: AppState ): number | null => {
+	const preference =
+		( getPreference( state, PREFERENCE_NAME ) as PreferenceType ) || emptyPreference;
+	return preference.validFrom;
+};
+
+export { getDismissCount, getIsDismissed, getValidFrom };

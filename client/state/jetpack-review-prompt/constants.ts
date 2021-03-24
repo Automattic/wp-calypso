@@ -4,12 +4,14 @@ export interface PreferenceType {
 	dismissCount: number;
 	dismissedAt: number | null;
 	reviewed: boolean;
+	validFrom: number | null;
 }
 
 export const emptyPreference: PreferenceType = {
 	dismissCount: 0,
 	dismissedAt: null,
 	reviewed: false,
+	validFrom: null,
 };
 
 const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;

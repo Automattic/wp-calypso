@@ -92,6 +92,7 @@ export const remoteValuesSchema = {
 				dismissedAt: { type: [ 'number', 'null' ] },
 				dismissedCount: { type: 'number', minimum: 0 },
 				reviewed: { type: 'number' },
+				validFrom: { type: [ 'number', 'null' ] },
 			},
 			required: [ 'dismissedAt', 'dismissedCount', 'reviewed' ],
 		},
