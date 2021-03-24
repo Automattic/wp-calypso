@@ -464,8 +464,7 @@ export default function CompositeCheckout( {
 		() => ( {
 			'apple-pay': ( transactionData: unknown ) =>
 				applePayProcessor( transactionData, dataForProcessor, transactionOptions ),
-			'free-purchase': ( transactionData: unknown ) =>
-				freePurchaseProcessor( transactionData, dataForProcessor ),
+			'free-purchase': () => freePurchaseProcessor( dataForProcessor ),
 			card: ( transactionData: unknown ) =>
 				multiPartnerCardProcessor( transactionData, dataForProcessor, transactionOptions ),
 			alipay: ( transactionData: unknown ) =>
@@ -489,8 +488,7 @@ export default function CompositeCheckout( {
 				genericRedirectProcessor( 'eps', transactionData, dataForProcessor ),
 			'ebanx-tef': ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'brazil-tef', transactionData, dataForProcessor ),
-			'full-credits': ( transactionData: unknown ) =>
-				fullCreditsProcessor( transactionData, dataForProcessor ),
+			'full-credits': () => fullCreditsProcessor( dataForProcessor ),
 			'existing-card': ( transactionData: unknown ) =>
 				existingCardProcessor(
 					mergeIfObjects( transactionData, {
