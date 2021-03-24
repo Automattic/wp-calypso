@@ -40,6 +40,7 @@ export const getDesignUrl = ( design: Design, locale: string ): string => {
 			site_title: design.title,
 			viewport_height: 700,
 			language: locale,
+			use_screenshot_overrides: true,
 		}
 	);
 };
