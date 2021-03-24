@@ -30,6 +30,7 @@ class DomainMappingInstructions extends React.Component {
 		areDomainDetailsLoaded: PropTypes.bool,
 		domainName: PropTypes.string,
 		isAtomic: PropTypes.bool,
+		subdomainPart: PropTypes.string,
 		wpcomDomainName: PropTypes.string,
 	};
 
@@ -76,7 +77,7 @@ class DomainMappingInstructions extends React.Component {
 	}
 
 	renderCnameInstructions() {
-		const { domainName, translate, wpcomDomainName } = this.props;
+		const { domainName, subdomainPart, translate, wpcomDomainName } = this.props;
 
 		const cnameInstructionsMessage = translate(
 			'Please log into your domain name registrar account and set the following value for your {{strong}}CNAME record{{/strong}}, as detailed in {{link}}these instructions{{/link}}:',
@@ -87,9 +88,6 @@ class DomainMappingInstructions extends React.Component {
 				},
 			}
 		);
-
-		// TODO: Get this value dynamically
-		const subdomainPart = 'blog';
 
 		const additionalInstructions = [
 			translate(

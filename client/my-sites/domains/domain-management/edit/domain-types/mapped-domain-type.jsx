@@ -86,6 +86,7 @@ class MappedDomainType extends React.Component {
 						areDomainDetailsLoaded={ true }
 						domainName={ domain.name }
 						isAtomic={ this.props.isSiteAutomatedTransfer }
+						subdomainPart={ domain.subdomainPart }
 						wpcomDomainName={ this.props.wpcomDomainName }
 					/>
 				</div>

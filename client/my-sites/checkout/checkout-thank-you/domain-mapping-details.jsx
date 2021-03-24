@@ -37,6 +37,7 @@ const DomainMappingDetails = ( {
 			areDomainDetailsLoaded={ ! isRequestingDomainsDetails && !! purchasedDomain }
 			domainName={ purchasedDomain?.name }
 			isAtomic={ isAtomicSite }
+			subdomainPart={ purchasedDomain?.subdomainPart }
 			wpcomDomainName={ wpcomDomain?.domain }
 		/>
 	);
