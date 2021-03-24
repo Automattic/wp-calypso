@@ -439,7 +439,10 @@ const DomainPicker: FunctionComponent< Props > = ( {
 			) }
 			{ showDomainSuggestionsEmpty && ! areDependenciesLoading && (
 				<div className="domain-picker__empty-state">
-					<p className="domain-picker__empty-state--text">
+					<p
+						className="domain-picker__empty-state--text"
+						data-e2e-string="A domain name is the site address people type in their browser to visit your site."
+					>
 						{ __(
 							'A domain name is the site address people type in their browser to visit your site.',
 							__i18n_text_domain__

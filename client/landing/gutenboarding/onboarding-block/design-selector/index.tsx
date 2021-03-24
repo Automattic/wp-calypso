@@ -51,8 +51,8 @@ const DesignSelector: React.FunctionComponent = () => {
 		<div className="gutenboarding-page design-selector">
 			<div className="design-selector__header">
 				<div className="design-selector__heading">
-					<Title>{ __( 'Choose a design' ) }</Title>
-					<SubTitle>
+					<Title data-e2e-string="Choose a design">{ __( 'Choose a design' ) }</Title>
+					<SubTitle data-e2e-string="Pick your favorite homepage layout. You can customize or change it later.">
 						{ isAnchorFmSignup
 							? __(
 									'Pick a homepage layout for your podcast site. You can customize or change it later.'

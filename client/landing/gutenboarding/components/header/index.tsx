@@ -55,7 +55,10 @@ const Header: React.FunctionComponent = () => {
 		return (
 			<div className="gutenboarding__header-section-item gutenboarding__header-section-item--right gutenboarding__header-language-section">
 				<Link to={ makePath( Step.LanguageModal ) }>
-					<span className="gutenboarding__header-site-language-label">
+					<span
+						className="gutenboarding__header-site-language-label"
+						data-e2e-string="Site Language"
+					>
 						{ __( 'Site Language' ) }
 					</span>
 					<span className="gutenboarding__header-site-language-badge">{ locale }</span>
@@ -79,7 +82,10 @@ const Header: React.FunctionComponent = () => {
 						</div>
 					</Button>
 				</div>
-				<div className="gutenboarding__header-section-item gutenboarding__header-site-title-section">
+				<div
+					className="gutenboarding__header-section-item gutenboarding__header-site-title-section"
+					data-e2e-string={ ! siteTitle && 'Start your website' }
+				>
 					<div className="gutenboarding__header-site-title">
 						{ siteTitle ? siteTitle : siteTitleDefault }
 					</div>

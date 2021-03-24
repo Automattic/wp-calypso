@@ -13,6 +13,7 @@ export default class AcquireIntentPage extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.acquire-intent' ) );
 		this.nextButtonSelector = By.css( '.action-buttons__next' );
+		this.skipButtonSelector = By.css( '.action-buttons__skip' );
 	}
 
 	async enterSiteTitle( siteTitle ) {
@@ -27,7 +28,6 @@ export default class AcquireIntentPage extends AsyncBaseContainer {
 	}
 
 	async skipStep() {
-		const skipButtonSelector = By.css( '.action-buttons__skip' );
-		return await driverHelper.clickWhenClickable( this.driver, skipButtonSelector );
+		return await driverHelper.clickWhenClickable( this.driver, this.skipButtonSelector );
 	}
 }
