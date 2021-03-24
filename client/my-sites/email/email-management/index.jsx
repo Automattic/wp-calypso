@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import config from '@automattic/calypso-config';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -10,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from '@automattic/calypso-config';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import Main from 'calypso/components/main';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
@@ -47,6 +48,7 @@ import { localizeUrl } from 'calypso/lib/i18n-utils';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import EmailProvidersComparison from '../email-providers-comparison';
+import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 
@@ -148,11 +150,20 @@ class EmailManagement extends React.Component {
 		}
 
 		const selectedDomain = validDomains[ 0 ];
+		const isGSuiteSupported = hasGSuiteSupportedDomain( [ selectedDomain ] );
+		if ( config.isEnabled( 'titan/provision-mailboxes' ) ) {
+			return (
+				<CalypsoShoppingCartProvider>
+					<EmailProvidersStackedComparison
+						domain={ selectedDomain }
+						isGSuiteSupported={ isGSuiteSupported }
+					/>
+				</CalypsoShoppingCartProvider>
+			);
+		}
+
 		return (
-			<EmailProvidersComparison
-				domain={ selectedDomain }
-				isGSuiteSupported={ hasGSuiteSupportedDomain( [ selectedDomain ] ) }
-			/>
+			<EmailProvidersComparison domain={ selectedDomain } isGSuiteSupported={ isGSuiteSupported } />
 		);
 	}
 
