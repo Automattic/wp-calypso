@@ -11,12 +11,14 @@ import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import getPostalCode from './get-postal-code';
 import getDomainDetails from './get-domain-details';
 import submitWpcomTransaction from './submit-wpcom-transaction';
-import { createTransactionEndpointRequestPayloadFromLineItems } from './translate-cart';
+import {
+	createTransactionEndpointRequestPayload,
+	createTransactionEndpointCartFromResponseCart,
+} from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { WPCOMCartItem } from '../types/checkout-cart';
 import type { ManagedContactDetails } from '../types/wpcom-store-state';
 import type {
-	TransactionRequestWithLineItems,
+	TransactionRequest,
 	WPCOMTransactionEndpointResponse,
 } from '../types/transaction-endpoint';
 
@@ -24,23 +26,14 @@ const { select } = defaultRegistry;
 
 const debug = debugFactory( 'calypso:composite-checkout:full-credits-processor' );
 
-type FullCreditsTransactionRequest = {
-	items: WPCOMCartItem[];
-};
-
 type SubmitFullCreditsTransactionData = Omit<
-	TransactionRequestWithLineItems,
-	'paymentMethodType' | 'paymentPartnerProcessorId'
+	TransactionRequest,
+	'paymentMethodType' | 'paymentPartnerProcessorId' | 'cart'
 >;
 
 export default async function fullCreditsProcessor(
-	submitData: unknown,
 	transactionOptions: PaymentProcessorOptions
 ): Promise< PaymentProcessorResponse > {
-	if ( ! isValidTransactionData( submitData ) ) {
-		throw new Error( 'Required purchase data is missing' );
-	}
-
 	const { siteId, responseCart, includeDomainDetails, includeGSuiteDetails } = transactionOptions;
 
 	const managedContactDetails: ManagedContactDetails | undefined = select(
@@ -49,7 +42,6 @@ export default async function fullCreditsProcessor(
 
 	return submitCreditsTransaction(
 		{
-			...submitData,
 			name: '',
 			couponId: responseCart.coupon,
 			siteId: siteId ? String( siteId ) : '',
@@ -67,20 +59,15 @@ async function submitCreditsTransaction(
 	transactionOptions: PaymentProcessorOptions
 ): Promise< WPCOMTransactionEndpointResponse > {
 	debug( 'formatting full credits transaction', transactionData );
-	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...transactionData,
+		cart: createTransactionEndpointCartFromResponseCart( {
+			siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
+			contactDetails: transactionData.domainDetails ?? null,
+			responseCart: transactionOptions.responseCart,
+		} ),
 		paymentMethodType: 'WPCOM_Billing_WPCOM',
 	} );
 	debug( 'submitting full credits transaction', formattedTransactionData );
 	return submitWpcomTransaction( formattedTransactionData, transactionOptions );
-}
-
-function isValidTransactionData(
-	submitData: unknown
-): submitData is FullCreditsTransactionRequest {
-	const data = submitData as FullCreditsTransactionRequest;
-	if ( ! ( data?.items?.length > 0 ) ) {
-		throw new Error( 'Transaction requires items and none were provided' );
-	}
-	return true;
 }
