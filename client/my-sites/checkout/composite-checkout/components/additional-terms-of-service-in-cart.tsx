@@ -3,7 +3,8 @@
  */
 import React from 'react';
 import { TermsOfServiceRecord, useShoppingCart } from '@automattic/shopping-cart';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
+import i18nCalypso, { useTranslate, TranslateResult } from 'i18n-calypso';
+import { useLocale } from '@automattic/i18n-utils';
 import { useSelector } from 'react-redux';
 import debugFactory from 'debug';
 
@@ -19,6 +20,7 @@ const debug = debugFactory( 'calypso:composite-checkout:additional-terms-of-serv
 
 export default function AdditionalTermsOfServiceInCart(): JSX.Element | null {
 	const translate = useTranslate();
+	const locale = useLocale();
 	const { responseCart } = useShoppingCart();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
@@ -28,10 +30,11 @@ export default function AdditionalTermsOfServiceInCart(): JSX.Element | null {
 
 	return (
 		<>
-			{ responseCart.terms_of_service.map( ( termsOfServiceRecord ) => {
+			{ responseCart.terms_of_service.map( ( termsOfServiceRecord, index ) => {
 				const message = getMessageForTermsOfServiceRecord(
 					termsOfServiceRecord,
 					translate,
+					locale,
 					siteSlug
 				);
 
@@ -40,7 +43,7 @@ export default function AdditionalTermsOfServiceInCart(): JSX.Element | null {
 				}
 
 				return (
-					<div className="checkout__titan-terms-of-service">
+					<div className="checkout__titan-terms-of-service" key={ index }>
 						<Gridicon icon="info-outline" size={ 18 } />
 						<p>{ message }</p>
 					</div>
@@ -53,10 +56,19 @@ export default function AdditionalTermsOfServiceInCart(): JSX.Element | null {
 function getMessageForTermsOfServiceRecord(
 	termsOfServiceRecord: TermsOfServiceRecord,
 	translate: ReturnType< typeof useTranslate >,
+	locale: string,
 	siteSlug: string | null
 ): TranslateResult {
 	switch ( termsOfServiceRecord.code ) {
 		case 'terms_for_bundled_trial_auto_renewal_paypal':
+			if (
+				locale !== 'en' &&
+				! i18nCalypso.hasTranslation(
+					'At the end of the promotional period we will begin charging your PayPal account (%(email)s) the normal %(productName)s subscription price of %(renewalPrice)s. You can update the payment method at any time {{link}}here{{/link}}'
+				)
+			) {
+				return '';
+			}
 			return translate(
 				'At the end of the promotional period we will begin charging your PayPal account (%(email)s) the normal %(productName)s subscription price of %(renewalPrice)s. You can update the payment method at any time {{link}}here{{/link}}',
 				{
@@ -77,6 +89,14 @@ function getMessageForTermsOfServiceRecord(
 				}
 			);
 		case 'terms_for_bundled_trial_auto_renewal_credit_card':
+			if (
+				locale !== 'en' &&
+				! i18nCalypso.hasTranslation(
+					'At the end of the promotional period we will begin charging your %(cardType)s card ending in %(cardLast4)s the normal %(productName)s subscription price of %(renewalPrice)s. You can update the payment method at any time {{link}}here{{/link}}'
+				)
+			) {
+				return '';
+			}
 			return translate(
 				'At the end of the promotional period we will begin charging your %(cardType)s card ending in %(cardLast4)s the normal %(productName)s subscription price of %(renewalPrice)s. You can update the payment method at any time {{link}}here{{/link}}',
 				{
