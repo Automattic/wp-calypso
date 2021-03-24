@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
-import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
 import { truncate } from 'lodash';
-const debug = debugFactory( 'calypso:invites-actions' );
 
 /**
  * Internal dependencies
@@ -63,7 +61,6 @@ export function requestSiteInvites( siteId ) {
 
 export function resendInvite( siteId, inviteId ) {
 	return ( dispatch ) => {
-		debug( 'resendInvite Action', siteId, inviteId );
 		dispatch( {
 			type: INVITE_RESEND_REQUEST,
 			siteId: siteId,
@@ -112,7 +109,6 @@ const deleteInvitesFailureNotice = ( siteId, inviteIds ) => ( dispatch, getState
 
 export function deleteInvites( siteId, inviteIds ) {
 	return ( dispatch ) => {
-		debug( 'deleteInvites Action', siteId, inviteIds );
 		dispatch( {
 			type: INVITES_DELETE_REQUEST,
 			siteId: siteId,

@@ -1,8 +1,6 @@
 /**
  * External dependencies
  */
-
-import Debug from 'debug';
 import { get } from 'lodash';
 
 /**
@@ -15,11 +13,6 @@ import { acceptedNotice } from 'calypso/my-sites/invites/utils';
 import { requestSites, receiveSites } from 'calypso/state/sites/actions';
 import { requestSiteInvites } from 'calypso/state/invites/actions';
 import { INVITE_ACCEPTED } from 'calypso/state/action-types';
-
-/**
- * Module variables
- */
-const debug = new Debug( 'calypso:invites-actions' );
 
 function inviteAccepted( invite ) {
 	return { type: INVITE_ACCEPTED, invite };
@@ -52,8 +45,6 @@ export function createAccount( userData, invite ) {
 }
 
 export function generateInviteLinks( siteId ) {
-	debug( 'generateInviteLinks', siteId );
-
 	return ( dispatch ) => {
 		wpcom
 			.undocumented()
@@ -66,8 +57,6 @@ export function generateInviteLinks( siteId ) {
 }
 
 export function disableInviteLinks( siteId ) {
-	debug( 'disableInviteLinks', siteId );
-
 	return ( dispatch ) => {
 		wpcom
 			.undocumented()
