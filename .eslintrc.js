@@ -284,8 +284,6 @@ module.exports = {
 			2,
 			{
 				paths: [
-					// Error if any module depends on the data-observe mixin, which is deprecated.
-					'lib/mixins/data-observe',
 					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
 					{
 						name: 'gridicons',
@@ -321,8 +319,6 @@ module.exports = {
 			2,
 			{
 				paths: [
-					// Error if any module depends on the data-observe mixin, which is deprecated.
-					'lib/mixins/data-observe',
 					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
 					{
 						name: 'gridicons',
