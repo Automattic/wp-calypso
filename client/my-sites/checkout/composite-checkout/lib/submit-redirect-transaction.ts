@@ -14,15 +14,15 @@ import {
 } from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
-	TransactionRequestWithLineItems,
+	TransactionRequest,
 	WPCOMTransactionEndpointResponse,
 } from '../types/transaction-endpoint';
 
 const debug = debugFactory( 'calypso:composite-checkout:submit-redirect-transaction' );
 
 type SubmitRedirectTransactionData = Omit<
-	TransactionRequestWithLineItems,
-	'paymentMethodType' | 'paymentPartnerProcessorId'
+	TransactionRequest,
+	'paymentMethodType' | 'paymentPartnerProcessorId' | 'cart'
 >;
 
 export default async function submitRedirectTransaction(
