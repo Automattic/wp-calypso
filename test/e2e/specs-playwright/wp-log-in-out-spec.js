@@ -43,4 +43,8 @@ describe( `Auth Screen @canary @parallel`, function () {
 			return await page.goto( url, { waitUntill: 'networkidle' } );
 		} );
 	} );
+
+	after( 'close browser', function () {
+		browserManager.quitBrowser();
+	} );
 } );

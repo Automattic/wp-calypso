@@ -6,12 +6,12 @@
 /**
  * External dependencies
  */
+import { Browser, BrowserContext, chromium } from 'playwright';
 import config from 'config';
-import playwright from 'playwright';
 
 const browserStartTimeoutMS = 2000;
 
-export let browser;
+export let browser: Browser;
 
 /**
  * Returns the target screen size for tests to run against.
@@ -21,7 +21,7 @@ export let browser;
  *
  * @returns {string} String representation of the target screen size.
  */
-export function targetScreenSize() {
+export function targetScreenSize(): string {
 	return ! process.env.BROWSERSIZE ? 'desktop' : process.env.BROWSERSIZE.toLowerCase();
 }
 
@@ -33,7 +33,7 @@ export function targetScreenSize() {
  *
  * @returns {string} String representation of the locale.
  */
-export function targetLocale() {
+export function targetLocale(): string {
 	return ! process.env.BROWSERLOCALE ? 'en' : process.env.BROWSERLOCALE.toLowerCase();
 }
 
@@ -43,9 +43,10 @@ export function targetLocale() {
  * This function takes the string output of `targetScreenSize` and returns an object
  * key/value mapping of the screen diemensions represented by the string.
  *
- * @returns {Number, Number} Object with key/value mapping of screen dimensions.
+ * @returns {number, number} Object with key/value mapping of screen dimensions.
+ * @throws {Error} If target screen size was not set.
  */
-export function getScreenDimension() {
+export function getScreenDimension(): { width: number; height: number } {
 	switch ( targetScreenSize() ) {
 		case 'mobile':
 			return { width: 400, height: 1000 };
@@ -68,9 +69,9 @@ export function getScreenDimension() {
  * BrowserContexts are cheap to create and incur low overhead costs while allowing
  * for parallelization of test suites.
  *
- * @returns {Promise<playwright.BrowserContext>} New BrowserContext instance.
+ * @returns {Promise<BrowserContext>} New BrowserContext instance.
  */
-export async function newBrowserContext() {
+export async function newBrowserContext(): Promise< BrowserContext > {
 	// If no existing instance of a Browser, then launch a new instance.
 	if ( ! browser ) {
 		browser = await launchBrowser();
@@ -88,14 +89,13 @@ export async function newBrowserContext() {
  * A Browser instance can be any one of the browser types supported by Playwright.
  * Considerable overhead and costs are incurred when launching a new Browser instance.
  *
- * @returns {Promise<playwright.Browser>} New Browser instance.
+ * @returns {Promise<Browser>} New Browser instance.
  */
-export async function launchBrowser() {
-	const isHeadless =
-		process.env.HEADLESS === 'true' || config.has( 'headless' ) === 'true' ? true : false;
+export async function launchBrowser(): Promise< Browser > {
+	const isHeadless = process.env.HEADLESS === 'true' || config.has( 'headless' );
 
 	const dimension = getScreenDimension();
-	return await playwright.chromium.launch( {
+	return await chromium.launch( {
 		headless: isHeadless,
 		args: [ '--window-position=0,0', `--window-size=${ dimension.width },${ dimension.height }` ],
 		timeout: browserStartTimeoutMS,
@@ -109,8 +109,8 @@ export async function launchBrowser() {
  * then call on the browser to terminate all instances of existing BrowserContexts.
  * Any open pages are also destroyed in this process.
  *
+ * @returns {void} No return value.
  */
-export function quitBrowser() {
+export function quitBrowser(): void {
 	browser.close();
-	browser = undefined;
 }

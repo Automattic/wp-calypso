@@ -799,6 +799,9 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 				# Decrypt config
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
+				# Compile TypeScript
+				yarn build
+
 				# Run the test
 				export BROWSERSIZE="mobile"
 				export BROWSERLOCALE="en"
