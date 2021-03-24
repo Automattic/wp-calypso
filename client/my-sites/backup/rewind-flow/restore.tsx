@@ -23,6 +23,7 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
+import JetpackReviewPrompt from './review-prompt';
 
 /**
  * Type dependencies
@@ -136,6 +137,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					"Don't want to wait? For your convenience, we'll email you when your site has been fully restored."
 				) }
 			/>
+			<JetpackReviewPrompt />
 		</>
 	);
 
@@ -166,6 +168,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			<Button primary href={ siteUrl } className="rewind-flow__primary-button">
 				{ translate( 'View your website' ) }
 			</Button>
+			<JetpackReviewPrompt />
 		</>
 	);
 
