@@ -3,7 +3,7 @@
  */
 import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 import { defaultRegistry, makeRedirectResponse } from '@automattic/composite-checkout';
-import type { LineItem, PaymentProcessorResponse } from '@automattic/composite-checkout';
+import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -15,7 +15,6 @@ import submitRedirectTransaction from './submit-redirect-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { WPCOMTransactionEndpointResponse } from '../types/transaction-endpoint';
 import type { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
-import type { WPCOMCartItem } from '../types/checkout-cart';
 import type { ManagedContactDetails } from '../types/wpcom-store-state';
 
 const { select } = defaultRegistry;
@@ -23,8 +22,6 @@ const { select } = defaultRegistry;
 type RedirectTransactionRequest = {
 	name: string | undefined;
 	email: string | undefined;
-	items: WPCOMCartItem[];
-	total: LineItem;
 };
 
 export default async function genericRedirectProcessor(
@@ -105,14 +102,8 @@ export default async function genericRedirectProcessor(
 
 function isValidTransactionData( submitData: unknown ): submitData is RedirectTransactionRequest {
 	const data = submitData as RedirectTransactionRequest;
-	if ( ! ( data?.items?.length > 0 ) ) {
-		throw new Error( 'Transaction requires items and none were provided' );
-	}
-	// Validate data required for this payment method type. Some other data may
-	// be required by the server but not required here since the server will give
-	// a better localized error message than we can provide.
-	if ( ! data.total ) {
-		throw new Error( 'Transaction requires total and none was provided' );
+	if ( ! data ) {
+		throw new Error( 'Transaction requires data and none was provided' );
 	}
 	return true;
 }
