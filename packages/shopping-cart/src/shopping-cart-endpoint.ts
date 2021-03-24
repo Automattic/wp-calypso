@@ -243,6 +243,7 @@ export type FrDomainContactExtraDetails = {
 };
 
 export interface TermsOfServiceRecord {
+	key: string;
 	code: string;
 	args?: Record< string, string >;
 }

@@ -30,7 +30,7 @@ export default function AdditionalTermsOfServiceInCart(): JSX.Element | null {
 
 	return (
 		<>
-			{ responseCart.terms_of_service.map( ( termsOfServiceRecord, index ) => {
+			{ responseCart.terms_of_service.map( ( termsOfServiceRecord ) => {
 				const message = getMessageForTermsOfServiceRecord(
 					termsOfServiceRecord,
 					translate,
@@ -43,7 +43,7 @@ export default function AdditionalTermsOfServiceInCart(): JSX.Element | null {
 				}
 
 				return (
-					<div className="checkout__titan-terms-of-service" key={ index }>
+					<div className="checkout__titan-terms-of-service" key={ termsOfServiceRecord.key }>
 						<Gridicon icon="info-outline" size={ 18 } />
 						<p>{ message }</p>
 					</div>
