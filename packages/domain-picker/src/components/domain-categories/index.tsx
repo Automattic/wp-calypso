@@ -12,7 +12,7 @@ import { useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { DOMAIN_SUGGESTIONS_STORE } from '../constants';
+import { DOMAIN_SUGGESTIONS_STORE } from '../../constants';
 
 /**
  * Style dependencies

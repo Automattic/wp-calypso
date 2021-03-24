@@ -1,3 +1,4 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -13,24 +14,26 @@ import type { DomainSuggestions } from '@automattic/data-stores';
 /**
  * Internal dependencies
  */
-import SuggestionItem from './suggestion-item';
-import SuggestionItemPlaceholder from './suggestion-item-placeholder';
-import UseYourDomainItem from './use-your-domain-item';
+import {
+	DomainSuggestionItem,
+	DomainSuggestionItemUseYourDomain,
+	DomainSuggestionItemPlaceholder,
+	SUGGESTION_ITEM_TYPE_RADIO,
+	SUGGESTION_ITEM_TYPE,
+} from './domain-suggestion-item';
+import DomainCategories from './domain-categories';
+import { DomainNameExplanationImage } from './domain-name-explanation';
 import {
 	useDomainSuggestions,
 	useDomainAvailabilities,
 	usePersistentSelectedDomain,
 } from '../hooks';
-import DomainCategories from '../domain-categories';
+import { getDomainSuggestionsVendor } from '../utils';
 import {
 	PAID_DOMAINS_TO_SHOW,
 	PAID_DOMAINS_TO_SHOW_EXPANDED,
 	domainIsAvailableStatus,
 } from '../constants';
-import { DomainNameExplanationImage } from '../domain-name-explanation/';
-import { ITEM_TYPE_RADIO } from './suggestion-item';
-import type { SUGGESTION_ITEM_TYPE } from './suggestion-item';
-import { getDomainSuggestionsVendor } from '../utils';
 
 /**
  * Style dependencies
@@ -135,7 +138,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	existingSubdomain,
 	segregateFreeAndPaid = false,
 	showSearchField = true,
-	itemType = ITEM_TYPE_RADIO,
+	itemType = SUGGESTION_ITEM_TYPE_RADIO,
 	locale,
 	areDependenciesLoading = false,
 	orderSubDomainsLast = false,
@@ -335,7 +338,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 										) }
 										<ItemGrouper key={ group } groupItems={ segregateFreeAndPaid }>
 											{ ( ! areDependenciesLoading && existingSubdomain && (
-												<SuggestionItem
+												<DomainSuggestionItem
 													key={ existingSubdomain?.domain_name }
 													domain={ existingSubdomain?.domain_name }
 													cost="Free"
@@ -356,7 +359,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 													} }
 													type={ itemType }
 												/>
-											) ) || <SuggestionItemPlaceholder type={ itemType } /> }
+											) ) || <DomainSuggestionItemPlaceholder type={ itemType } /> }
 										</ItemGrouper>
 									</Fragment>
 								) : (
@@ -378,7 +381,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 														? domainIsAvailableStatus?.indexOf( availabilityStatus ) > -1
 														: true;
 													return (
-														<SuggestionItem
+														<DomainSuggestionItem
 															ref={ ( ref ) => {
 																suggestionRefs.current[ index ] = ref;
 															} }
@@ -413,10 +416,10 @@ const DomainPicker: FunctionComponent< Props > = ( {
 													);
 												} ) ) ||
 												times( placeholdersCount, ( i ) => (
-													<SuggestionItemPlaceholder type={ itemType } key={ i } />
+													<DomainSuggestionItemPlaceholder type={ itemType } key={ i } />
 												) ) }
 											{ onUseYourDomainClick && !! domainSuggestions && (
-												<UseYourDomainItem onClick={ onUseYourDomainClick } />
+												<DomainSuggestionItemUseYourDomain onClick={ onUseYourDomainClick } />
 											) }
 										</ItemGrouper>
 									</Fragment>

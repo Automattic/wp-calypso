@@ -1,8 +1,4 @@
 /**
- * @jest-environment jsdom
- */
-
-/**
  * External dependencies
  */
 import * as React from 'react';
@@ -11,7 +7,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 /**
  * Internal dependencies
  */
-import UseYourDomainItem from '../src/domain-picker/use-your-domain-item';
+import UseYourDomainItem from '../use-your-domain-item';
 
 describe( '<UseYourDomainItem />', () => {
 	it( 'should render with correct messaging', () => {

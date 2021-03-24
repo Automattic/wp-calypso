@@ -6,7 +6,9 @@ import * as React from 'react';
 /**
  * Internal dependencies
  */
-import type { SUGGESTION_ITEM_TYPE } from 'src';
+import { SUGGESTION_ITEM_TYPE_BUTTON } from './suggestion-item';
+
+import type { SUGGESTION_ITEM_TYPE } from './suggestion-item';
 
 // to avoid nesting buttons, wrap the item with a div instead of button in button mode
 // (button mode means there is a Select button, not the whole item being a button)
@@ -20,7 +22,7 @@ type WrappingComponentProps = WrappingComponentAdditionalProps &
 
 const WrappingComponent = React.forwardRef< HTMLButtonElement, WrappingComponentProps >(
 	( { type, disabled, ...props }, ref ) => {
-		if ( type === 'button' ) {
+		if ( type === SUGGESTION_ITEM_TYPE_BUTTON ) {
 			return <div { ...( props as React.HTMLAttributes< HTMLDivElement > ) } />;
 		}
 		return (
