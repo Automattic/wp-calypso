@@ -37,6 +37,7 @@ const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500;
 const ERROR_CODE_MISSING_SITE_TITLE = 123; // Random number, we don't need it.
 const ERROR_CODE_MISSING_SITE = 321; // Random number, we don't need it.
 const ERROR_CODE_TAKEN_SITE = 1337; // Random number, we don't need it.
+const ERROR_CODE_FROM_LOCAL_STORAGE = 7331; // Random number, we don't need it.
 
 const SITE_TAKEN_ERROR_CODES = [
 	'blog_name_exists',
@@ -65,10 +66,16 @@ class P2Site extends React.Component {
 			initialState = props.step.form;
 
 			if ( ! isEmpty( props.step.errors ) ) {
+				const errorMessage = props.step.errors[ 0 ].message;
+
+				this.logValidationErrorToLogstash( ERROR_CODE_FROM_LOCAL_STORAGE, errorMessage );
+
 				initialState = formState.setFieldErrors(
 					formState.setFieldsValidating( initialState ),
 					{
-						site: props.step.errors[ 0 ].message,
+						site: {
+							[ ERROR_CODE_FROM_LOCAL_STORAGE ]: errorMessage,
+						},
 					},
 					true
 				);
