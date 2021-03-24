@@ -53,15 +53,16 @@ export default function SidebarItem( props ) {
 
 	useEffect( expandSectionIfSelected, [ props.selected ] );
 
+	const linkProps = showAsExternal ? { target: '_blank', rel: 'noreferrer' } : {};
+
 	return (
 		<li className={ classes } data-tip-target={ props.tipTarget } data-post-type={ props.postType }>
 			<a
 				className="sidebar__menu-link"
 				onClick={ props.onNavigate }
 				href={ url }
-				target={ showAsExternal ? '_blank' : null }
-				rel={ isExternalLink ? 'noopener noreferrer' : null }
 				onMouseEnter={ itemPreload }
+				{ ...linkProps }
 			>
 				{ icon && <Gridicon className={ 'sidebar__menu-icon' } icon={ icon } size={ 24 } /> }
 

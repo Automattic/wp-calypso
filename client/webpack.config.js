@@ -292,6 +292,7 @@ const webpackConfig = {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 			'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
 			'process.env.GUTENBERG_PHASE': JSON.stringify( 1 ),
+			'process.env.COMPONENT_SYSTEM_PHASE': JSON.stringify( 0 ),
 			'process.env.FORCE_REDUCED_MOTION': JSON.stringify(
 				!! process.env.FORCE_REDUCED_MOTION || false
 			),
