@@ -52,7 +52,7 @@ export default function isSiteChecklistComplete( state, siteId ) {
 			return true;
 		}
 
-		// Starting site setup autocompletes, so it shouldn't cause an incomplete status.
+		// Starting site setup autocompletes, so it shouldn't cause an incomplete checklist.
 		if ( CHECKLIST_KNOWN_TASKS.START_SITE_SETUP === task.id ) {
 			return true;
 		}
