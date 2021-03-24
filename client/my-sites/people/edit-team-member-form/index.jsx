@@ -19,10 +19,14 @@ import { fetchUser } from 'calypso/lib/users/actions';
 import { protectForm } from 'calypso/lib/protect-form';
 import DeleteUser from 'calypso/my-sites/people/delete-user';
 import PeopleNotices from 'calypso/my-sites/people/people-notices';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PeopleLogStore from 'calypso/lib/people/log-store';
-import { isJetpackSiteMultiSite, isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import EditUserForm from './edit-user-form';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -181,12 +185,13 @@ export class EditTeamMemberForm extends Component {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const site = getSelectedSite( state, siteId );
 
 		return {
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
 			isJetpack: isJetpackSite( state, siteId ),
-			isMultisite: isJetpackSiteMultiSite( state, siteId ),
+			isMultisite: site && site.is_multisite,
 			previousRoute: getPreviousRoute( state ),
 		};
 	},
