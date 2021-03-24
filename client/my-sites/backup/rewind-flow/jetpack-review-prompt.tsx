@@ -3,18 +3,19 @@
  */
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useCallback } from 'react';
+import React, { FunctionComponent, useCallback, useEffect } from 'react';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@wordpress/components';
+import { dismiss, dismissAsReviewed } from 'calypso/state/jetpack-review-prompt/actions';
+import { getIsDismissed, getDismissCount } from 'calypso/state/jetpack-review-prompt/selectors';
 import { hasReceivedRemotePreferences as getHasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import Gridicon from 'calypso/components/gridicon';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
-import { getIsDismissed, getDismissCount } from 'calypso/state/jetpack-review-prompt/selectors';
-import { dismiss, dismissAsReviewed } from 'calypso/state/jetpack-review-prompt/actions';
 
 const JetpackReviewPrompt: FunctionComponent = () => {
 	const translate = useTranslate();
@@ -28,12 +29,28 @@ const JetpackReviewPrompt: FunctionComponent = () => {
 	const dismissCount = useSelector( ( state ) => getDismissCount( state ) );
 
 	const dismissPrompt = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_review_prompt_dismiss', {
+				dismiss_count: dismissCount,
+				reviewed: false,
+			} )
+		);
 		dispatch( dismiss( dismissCount ) );
 	}, [ dispatch, dismissCount ] );
 
 	const dismissPromptAsReviewed = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_review_prompt_dismiss', {
+				dismiss_count: dismissCount,
+				reviewed: true,
+			} )
+		);
 		dispatch( dismissAsReviewed( dismissCount ) );
 	}, [ dispatch, dismissCount ] );
+
+	useEffect( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_review_prompt_view' ) );
+	}, [ dispatch ] );
 
 	return (
 		<>
