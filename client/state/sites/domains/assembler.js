@@ -21,6 +21,7 @@ function assembleCurrentUserCannotAddEmailReason( reason ) {
 	if ( ! reason || ! reason.errors ) {
 		return null;
 	}
+
 	const errorDetails = Object.entries( reason.errors ).map( ( entry ) => {
 		const [ errorCode, errorMessages ] = entry;
 		return {
@@ -28,6 +29,9 @@ function assembleCurrentUserCannotAddEmailReason( reason ) {
 			message: errorMessages[ 0 ],
 		};
 	} );
+	if ( ! errorDetails.length ) {
+		return null;
+	}
 	return errorDetails[ 0 ];
 }
 
