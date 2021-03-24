@@ -207,7 +207,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 
 	async selectSiteSwitcher() {
 		const siteSwitcherSelector = By.css( '.current-site__switch-sites button' );
-		//await this.ensureSidebarMenuVisible();
+		await this.ensureSidebarMenuVisible();
 		const present = await driverHelper.isEventuallyPresentAndDisplayed(
 			this.driver,
 			siteSwitcherSelector,

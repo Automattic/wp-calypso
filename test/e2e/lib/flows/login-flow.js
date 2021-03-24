@@ -219,7 +219,6 @@ export default class LoginFlow {
 
 		const sideBarComponent = await SidebarComponent.Expect( this.driver );
 		await sideBarComponent.selectStats();
-		await sideBarComponent.ensureSidebarMenuVisible();
 		await sideBarComponent.selectSiteSwitcher();
 		return await sideBarComponent.selectAllSites();
 	}
