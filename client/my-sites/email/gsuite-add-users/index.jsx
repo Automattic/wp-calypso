@@ -291,6 +291,7 @@ class GSuiteAddUsers extends React.Component {
 }
 
 GSuiteAddUsers.propTypes = {
+	currentRoute: PropTypes.string,
 	domains: PropTypes.array.isRequired,
 	gsuiteUsers: PropTypes.array,
 	isNewAccount: PropTypes.bool,

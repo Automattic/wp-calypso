@@ -30,6 +30,7 @@ import {
 	getProductType,
 	hasPendingGSuiteUsers,
 } from 'calypso/lib/gsuite';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -80,7 +81,7 @@ class GSuiteUsersCard extends React.Component {
 	};
 
 	renderDomainWithGSuite( domainName, users ) {
-		const { selectedSiteSlug, translate } = this.props;
+		const { currentRoute, selectedSiteSlug, translate } = this.props;
 
 		// Retrieves product information from the first user, which is fine as all users share exactly the same product data
 		const { product_name: productName, product_slug: productSlug } = users[ 0 ];
@@ -107,7 +108,8 @@ class GSuiteUsersCard extends React.Component {
 				href={ emailManagementAddGSuiteUsers(
 					selectedSiteSlug,
 					domainName,
-					getProductType( productSlug )
+					getProductType( productSlug ),
+					currentRoute
 				) }
 				onClick={ this.goToAddGoogleApps }
 			>
@@ -308,6 +310,7 @@ const manageClick = ( domainName, email ) =>
 	);
 
 GSuiteUsersCard.propTypes = {
+	currentRoute: PropTypes.string,
 	domains: PropTypes.array.isRequired,
 	gsuiteUsers: PropTypes.array.isRequired,
 	selectedDomainName: PropTypes.string,
@@ -321,6 +324,7 @@ export default connect(
 			? [ getSelectedDomain( ownProps ) ]
 			: ownProps.domains;
 		return {
+			currentRoute: getCurrentRoute( state ),
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			user: getCurrentUser( state ),
 			domainsAsList: domainsList,
