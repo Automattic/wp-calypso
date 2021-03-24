@@ -7,7 +7,7 @@ import {
 	makeManualResponse,
 } from '@automattic/composite-checkout';
 import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
-import type { LineItem, PaymentProcessorResponse } from '@automattic/composite-checkout';
+import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -18,7 +18,6 @@ import getDomainDetails from '../lib/get-domain-details';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import submitRedirectTransaction from '../lib/submit-redirect-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { WPCOMCartItem } from '../types/checkout-cart';
 import type { ManagedContactDetails } from '../types/wpcom-store-state';
 import type { WPCOMTransactionEndpointResponse } from '../types/transaction-endpoint';
 
@@ -27,8 +26,6 @@ const { select } = defaultRegistry;
 type WeChatTransactionRequest = {
 	name: string | undefined;
 	email: string | undefined;
-	items: WPCOMCartItem[];
-	total: LineItem;
 };
 
 export default async function weChatProcessor(
@@ -110,14 +107,8 @@ export default async function weChatProcessor(
 
 function isValidTransactionData( submitData: unknown ): submitData is WeChatTransactionRequest {
 	const data = submitData as WeChatTransactionRequest;
-	if ( ! ( data?.items?.length > 0 ) ) {
-		throw new Error( 'Transaction requires items and none were provided' );
-	}
-	// Validate data required for this payment method type. Some other data may
-	// be required by the server but not required here since the server will give
-	// a better localized error message than we can provide.
-	if ( ! data.total ) {
-		throw new Error( 'Transaction requires total and none was provided' );
+	if ( ! data ) {
+		throw new Error( 'Transaction requires data and none was provided' );
 	}
 	return true;
 }
