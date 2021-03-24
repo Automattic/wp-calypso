@@ -151,7 +151,7 @@ class EmailProvidersStackedComparison extends React.Component {
 
 		this.setState( { addingToCart: true } );
 		shoppingCartManager
-			.addProductsToCart( fillInSingleCartItemAttributes( cartItem, productsList ) )
+			.addProductsToCart( [ fillInSingleCartItemAttributes( cartItem, productsList ) ] )
 			.then( () => {
 				if ( this.isMounted ) {
 					this.setState( { addingToCart: false } );
