@@ -5,15 +5,15 @@ import * as React from 'react';
 import { addQueryArgs } from '@wordpress/url';
 import { useSelect } from '@wordpress/data';
 import { useLocale } from '@automattic/i18n-utils';
+import type { FontPair } from '@automattic/design-picker';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
-import type { Viewport } from './types';
 import { useFontPairings } from '../../fonts';
-import type { FontPair } from '../../constants';
 import { useAnchorFmParams } from '../../../gutenboarding/path';
+import type { Viewport } from './types';
 
 function getFontsLoadingHTML( effectiveFontPairings: readonly FontPair[] ) {
 	const baseURL = 'https://fonts.googleapis.com/css2';

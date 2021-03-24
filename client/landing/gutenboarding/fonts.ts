@@ -1,7 +1,11 @@
 /**
+ * External dependencies
+ */
+import { fontPairings, anchorFmFontPairings } from '@automattic/design-picker';
+
+/**
  * Internal dependencies
  */
-import { fontPairings, anchorFmFontPairings } from '../gutenboarding/constants';
 import { useIsAnchorFm } from '../gutenboarding/path';
 
 export function useFontPairings() {
