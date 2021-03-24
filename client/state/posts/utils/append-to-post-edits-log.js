@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, isString, last } from 'lodash';
+import { isEmpty, last } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,7 +25,7 @@ export function appendToPostEditsLog( postEditsLog, newPostEdits ) {
 
 	const lastEdits = last( postEditsLog );
 
-	if ( isString( lastEdits ) ) {
+	if ( typeof lastEdits === 'string' ) {
 		return [ ...postEditsLog, newPostEdits ];
 	}
 

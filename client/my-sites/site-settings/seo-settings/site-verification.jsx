@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { get, includes, isString, omit, partial, pickBy } from 'lodash';
+import { get, includes, omit, partial, pickBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -224,7 +224,7 @@ class SiteVerification extends Component {
 			yandex: this.state.yandexCode,
 		};
 
-		const filteredCodes = pickBy( verificationCodes, isString );
+		const filteredCodes = pickBy( verificationCodes, ( code ) => typeof code === 'string' );
 		const invalidCodes = Object.keys(
 			pickBy( filteredCodes, ( name, content ) => ! this.isValidCode( content, name ) )
 		);
