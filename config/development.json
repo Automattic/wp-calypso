@@ -179,6 +179,7 @@
 		"site-indicator": true,
 		"memberships": true,
 		"support-user": true,
+		"titan/free-trial": true,
 		"titan/iframe-control-panel": true,
 		"titan/phase-2": true,
 		"titan/provision-mailboxes": true,
