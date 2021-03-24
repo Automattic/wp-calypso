@@ -294,7 +294,7 @@ export async function ensureNotLoggedIn( driver ) {
 	process.env.FLAGS = 'nav-unification';
 
 	process.env.FLAGS &&
-	( await driver.manage().addCookie( { name: 'flags', value: process.env.FLAGS } ) );
+		( await driver.manage().addCookie( { name: 'flags', value: process.env.FLAGS } ) );
 
 	return driver.sleep( 500 );
 }

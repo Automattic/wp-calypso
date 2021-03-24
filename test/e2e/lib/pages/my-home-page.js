@@ -10,7 +10,7 @@ import { By } from 'selenium-webdriver';
 import * as driverHelper from '../driver-helper.js';
 
 import AsyncBaseContainer from '../async-base-container';
-import GuideComponent from "../components/guide-component";
+import GuideComponent from '../components/guide-component';
 
 export default class MyHomePage extends AsyncBaseContainer {
 	constructor( driver, url ) {
@@ -29,7 +29,7 @@ export default class MyHomePage extends AsyncBaseContainer {
 		);
 	}
 
-	async _postInit(){
+	async _postInit() {
 		if ( process.env.FLAGS === 'nav-unification' ) {
 			// Makes sure that the nav-unification welcome modal will be dismissed.
 			const guideComponent = new GuideComponent( this.driver );

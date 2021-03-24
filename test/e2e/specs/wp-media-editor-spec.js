@@ -8,8 +8,6 @@ import config from 'config';
  */
 import LoginFlow from '../lib/flows/login-flow.js';
 
-import assert from 'assert';
-
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper';
 import SideBarComponent from '../lib/components/sidebar-component';

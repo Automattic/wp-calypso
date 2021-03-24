@@ -9,7 +9,7 @@ import { By } from 'selenium-webdriver';
 import AsyncBaseContainer from '../async-base-container';
 // import DisconnectSurveyPage from '../pages/disconnect-survey-page.js';
 import * as driverHelper from '../driver-helper.js';
-import * as driverManager from "../driver-manager";
+import * as driverManager from '../driver-manager';
 
 export default class SidebarComponent extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -64,7 +64,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		await this.expandDrawerItem( 'Feedback' );
 
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
-			return await this._scrollToAndClickMenuItem('Feedback');
+			return await this._scrollToAndClickMenuItem( 'Feedback' );
 		}
 	}
 
@@ -157,16 +157,14 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async numberOfMenuItems() {
-		const elements = await this.driver.findElements( By.css( '.sidebar li.sidebar__menu-item-parent' ) );
+		const elements = await this.driver.findElements(
+			By.css( '.sidebar li.sidebar__menu-item-parent' )
+		);
 		return elements.length;
 	}
 
 	async _scrollToAndClickMenuItemByText( text ) {
-		await driverHelper.selectElementByText(
-			this.driver,
-			By.css( '.sidebar__heading' ),
-			text
-		);
+		await driverHelper.selectElementByText( this.driver, By.css( '.sidebar__heading' ), text );
 	}
 
 	async _scrollToAndClickMenuItem( target, { clickButton = false } = {} ) {
@@ -176,7 +174,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}
 
-	static _getSidebarSelector( target, { getButton = false } = {} ) {
+	static _getSidebarSelector( target ) {
 		return By.css( `.sidebar span[data-e2e-sidebar="${ target }"]` );
 	}
 
@@ -199,7 +197,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 				await driverHelper.clickWhenClickable(
 					this.driver,
 					By.css( 'a[data-tip-target="my-sites"]' )
-				)
+				);
 			}
 		}
 		return await driverHelper.waitTillPresentAndDisplayed( this.driver, sidebarSelector );

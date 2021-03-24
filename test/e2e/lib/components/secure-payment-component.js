@@ -21,9 +21,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 			null,
 			2 * config.get( 'explicitWaitMS' )
 		);
-		this.paymentButtonSelector = By.css(
-			'.composite-checkout .checkout-submit-button button'
-		);
+		this.paymentButtonSelector = By.css( '.composite-checkout .checkout-submit-button button' );
 		this.personalPlanSlug = getJetpackHost() === 'WPCOM' ? 'personal-bundle' : 'jetpack_personal';
 		this.premiumPlanSlug = getJetpackHost() === 'WPCOM' ? 'value_bundle' : 'jetpack_premium';
 		this.businessPlanSlug =

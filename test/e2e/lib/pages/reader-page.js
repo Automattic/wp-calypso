@@ -2,8 +2,6 @@
  * External dependencies
  */
 import { By as by } from 'selenium-webdriver';
-// eslint-disable-next-line no-restricted-imports
-import URL from 'url';
 
 /**
  * Internal dependencies
@@ -11,7 +9,6 @@ import URL from 'url';
 import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 import * as dataHelper from '../data-helper';
-import GuideComponent from "../components/guide-component";
 
 export default class ReaderPage extends AsyncBaseContainer {
 	constructor( driver, url ) {
@@ -25,7 +22,7 @@ export default class ReaderPage extends AsyncBaseContainer {
 		const href = await this.driver
 			.findElement( by.css( '.reader-visit-link' ) )
 			.getAttribute( 'href' );
-		return URL.parse( href ).host;
+		return new URL( href ).host;
 	}
 
 	async shareLatestPost() {
