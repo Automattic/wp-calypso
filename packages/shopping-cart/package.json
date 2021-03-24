@@ -45,6 +45,5 @@
 		"@testing-library/react": "^10.0.5",
 		"react": "^16.12.0",
 		"react-dom": "^16.12.0"
-	},
-	"private": true
+	}
 }
