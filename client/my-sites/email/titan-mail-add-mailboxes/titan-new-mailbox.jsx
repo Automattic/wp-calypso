@@ -33,7 +33,6 @@ const TitanNewMailbox = ( {
 		name: { value: name, error: nameError },
 		password: { value: password, error: passwordError },
 	},
-	showAlternativeEmail = false,
 } ) => {
 	const translate = useTranslate();
 
@@ -152,30 +151,28 @@ const TitanNewMailbox = ( {
 					) }
 				</div>
 
-				{ showAlternativeEmail && (
-					<FormFieldset>
-						<FormLabel>
-							{ translate( 'Password reset email address', {
-								comment: 'This is the email address we will send password reset emails to',
-							} ) }
-							<FormTextInput
-								placeholder={ translate( 'Email address' ) }
-								value={ alternativeEmail }
-								isError={ hasAlternativeEmailError }
-								onChange={ ( event ) => {
-									onMailboxValueChange( 'alternativeEmail', event.target.value );
-								} }
-								onBlur={ () => {
-									setAlternativeEmailFieldTouched( hasBeenValidated );
-								} }
-								onKeyUp={ onReturnKeyPress }
-							/>
-						</FormLabel>
-						{ hasAlternativeEmailError && (
-							<FormInputValidation text={ alternativeEmailError } isError />
-						) }
-					</FormFieldset>
-				) }
+				<FormFieldset>
+					<FormLabel>
+						{ translate( 'Password reset email address', {
+							comment: 'This is the email address we will send password reset emails to',
+						} ) }
+						<FormTextInput
+							placeholder={ translate( 'Email address' ) }
+							value={ alternativeEmail }
+							isError={ hasAlternativeEmailError }
+							onChange={ ( event ) => {
+								onMailboxValueChange( 'alternativeEmail', event.target.value );
+							} }
+							onBlur={ () => {
+								setAlternativeEmailFieldTouched( hasBeenValidated );
+							} }
+							onKeyUp={ onReturnKeyPress }
+						/>
+					</FormLabel>
+					{ hasAlternativeEmailError && (
+						<FormInputValidation text={ alternativeEmailError } isError />
+					) }
+				</FormFieldset>
 			</div>
 			<hr className="titan-mail-add-mailboxes__new-mailbox-separator" />
 		</>
@@ -187,7 +184,6 @@ TitanNewMailbox.propTypes = {
 	onMailboxValueChange: PropTypes.func.isRequired,
 	onReturnKeyPress: PropTypes.func.isRequired,
 	mailbox: getMailboxPropTypeShape(),
-	showAlternativeEmail: PropTypes.bool,
 };
 
 export default TitanNewMailbox;
