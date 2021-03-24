@@ -74,7 +74,7 @@ class ReauthRequired extends React.Component {
 	getFocusHandler = ( action ) => () =>
 		this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
 
-	getCodeMessage() {
+	renderCodeMessage() {
 		if ( this.props.twoStepAuthorization.isTwoStepSMSEnabled() ) {
 			return this.props.translate(
 				'Press the button below to request an SMS verification code. ' +
@@ -121,13 +121,11 @@ class ReauthRequired extends React.Component {
 		);
 	};
 
-	allowSMSRequests() {
-		this.setState( { smsRequestsAllowed: true } );
-	}
-
 	sendSMSCode() {
 		this.setState( { smsRequestsAllowed: false, smsCodeSent: true } );
-		this.codeRequestTimer = setTimeout( this.allowSMSRequests, 60000 );
+		this.codeRequestTimer = setTimeout( () => {
+			this.setState( { smsRequestsAllowed: true } );
+		}, 60000 );
 
 		this.props.twoStepAuthorization.sendSMSCode( ( error, data ) => {
 			if ( ! error && data.sent ) {
@@ -182,7 +180,7 @@ class ReauthRequired extends React.Component {
 		const method = this.props.twoStepAuthorization.isTwoStepSMSEnabled() ? 'sms' : 'app';
 		return (
 			<Card compact>
-				<p>{ this.getCodeMessage() }</p>
+				<p>{ this.renderCodeMessage() }</p>
 
 				<p>
 					<a
