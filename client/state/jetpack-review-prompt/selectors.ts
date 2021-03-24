@@ -8,6 +8,7 @@ import {
 	PREFERENCE_NAME,
 	PreferenceType,
 	TIME_BETWEEN_PROMPTS,
+	SinglePreferenceType,
 } from './constants';
 
 /**
@@ -15,15 +16,16 @@ import {
  */
 import type { AppState } from 'calypso/types';
 
-const getDismissCount = ( state: AppState ): number => {
-	const preference =
-		( getPreference( state, PREFERENCE_NAME ) as PreferenceType ) || emptyPreference;
-	return preference.dismissCount;
+const getExistingPreference = (
+	state: AppState,
+	type: 'scan' | 'restore'
+): SinglePreferenceType => {
+	const pref = ( getPreference( state, PREFERENCE_NAME ) as PreferenceType ) || {};
+	return pref[ type ] ?? emptyPreference;
 };
 
-const getIsDismissed = ( state: AppState ): boolean => {
-	const { dismissCount, dismissedAt, reviewed } =
-		( getPreference( state, PREFERENCE_NAME ) as PreferenceType ) || emptyPreference;
+const getIsDismissed = ( state: AppState, type: 'scan' | 'restore' ): boolean => {
+	const { dismissCount, dismissedAt, reviewed } = getExistingPreference( state, type );
 
 	if ( reviewed || MAX_DISMISS_COUNT <= dismissCount ) {
 		return true;
@@ -33,10 +35,9 @@ const getIsDismissed = ( state: AppState ): boolean => {
 		: false;
 };
 
-const getValidFrom = ( state: AppState ): number | null => {
-	const preference =
-		( getPreference( state, PREFERENCE_NAME ) as PreferenceType ) || emptyPreference;
-	return preference.validFrom;
+const getIsValid = ( state: AppState, type: 'scan' | 'restore' ): boolean => {
+	const { validFrom } = getExistingPreference( state, type );
+	return null !== validFrom ? validFrom < Date.now() : false;
 };
 
-export { getDismissCount, getIsDismissed, getValidFrom };
+export { getIsDismissed, getIsValid, getExistingPreference };

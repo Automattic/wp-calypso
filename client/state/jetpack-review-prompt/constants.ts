@@ -1,13 +1,18 @@
 export const PREFERENCE_NAME = 'jetpack-review-prompt';
 
-export interface PreferenceType {
+export interface SinglePreferenceType {
 	dismissCount: number;
 	dismissedAt: number | null;
 	reviewed: boolean;
 	validFrom: number | null;
 }
 
-export const emptyPreference: PreferenceType = {
+export interface PreferenceType {
+	scan?: SinglePreferenceType;
+	restore?: SinglePreferenceType;
+}
+
+export const emptyPreference: SinglePreferenceType = {
 	dismissCount: 0,
 	dismissedAt: null,
 	reviewed: false,
