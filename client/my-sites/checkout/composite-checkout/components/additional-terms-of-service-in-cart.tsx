@@ -59,8 +59,16 @@ function getMessageForTermsOfServiceRecord(
 	locale: string,
 	siteSlug: string | null
 ): TranslateResult {
+	const { args = {} } = termsOfServiceRecord;
 	switch ( termsOfServiceRecord.code ) {
 		case 'terms_for_bundled_trial_auto_renewal_paypal':
+			if ( ! args.email || ! args.product_name || ! args.renewal_price ) {
+				debug(
+					`Malformed terms of service args with code: ${ termsOfServiceRecord.code }`,
+					termsOfServiceRecord
+				);
+				return '';
+			}
 			if (
 				locale !== 'en' &&
 				! i18nCalypso.hasTranslation(
@@ -73,9 +81,9 @@ function getMessageForTermsOfServiceRecord(
 				'At the end of the promotional period we will begin charging your PayPal account (%(email)s) the normal %(productName)s subscription price of %(renewalPrice)s. You can update the payment method at any time {{link}}here{{/link}}',
 				{
 					args: {
-						email: termsOfServiceRecord.args?.email,
-						productName: termsOfServiceRecord.args?.product_name,
-						renewalPrice: termsOfServiceRecord.args?.renewal_price,
+						email: args.email,
+						productName: args.product_name,
+						renewalPrice: args.renewal_price,
 					},
 					components: {
 						link: (
@@ -89,6 +97,13 @@ function getMessageForTermsOfServiceRecord(
 				}
 			);
 		case 'terms_for_bundled_trial_auto_renewal_credit_card':
+			if ( ! args.card_type || ! args.card_last_4 || ! args.product_name || ! args.renewal_price ) {
+				debug(
+					`Malformed terms of service args with code: ${ termsOfServiceRecord.code }`,
+					termsOfServiceRecord
+				);
+				return '';
+			}
 			if (
 				locale !== 'en' &&
 				! i18nCalypso.hasTranslation(
@@ -101,10 +116,10 @@ function getMessageForTermsOfServiceRecord(
 				'At the end of the promotional period we will begin charging your %(cardType)s card ending in %(cardLast4)s the normal %(productName)s subscription price of %(renewalPrice)s. You can update the payment method at any time {{link}}here{{/link}}',
 				{
 					args: {
-						cardType: termsOfServiceRecord.args?.card_type,
-						cardLast4: termsOfServiceRecord.args?.card_last_4,
-						productName: termsOfServiceRecord.args?.product_name,
-						renewalPrice: termsOfServiceRecord.args?.renewal_price,
+						cardType: args.card_type,
+						cardLast4: args.card_last_4,
+						productName: args.product_name,
+						renewalPrice: args.renewal_price,
 					},
 					components: {
 						link: (
