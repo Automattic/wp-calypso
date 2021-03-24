@@ -18,6 +18,7 @@ import {
 } from 'calypso/lib/titan/new-mailbox';
 import { areAllUsersValid, getItemsForCart, newUsers } from 'calypso/lib/gsuite/new-users';
 import { Button } from '@automattic/components';
+import { canCurrentUserAddEmail, getCurrentUserCannotAddEmailReason } from 'calypso/lib/domains';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import EmailProviderCard from './email-provider-card';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
@@ -41,6 +42,7 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import { emailManagementForwarding } from 'calypso/my-sites/email/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { Notice } from 'calypso/components/notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import Gridicon from 'calypso/components/gridicon';
@@ -431,11 +433,32 @@ class EmailProvidersStackedComparison extends React.Component {
 		);
 	}
 
+	renderDomainEligibilityNotice() {
+		const { domain } = this.props;
+
+		const canUserAddEmail = canCurrentUserAddEmail( domain );
+		if ( canUserAddEmail ) {
+			return null;
+		}
+
+		const cannotAddEmailReason = getCurrentUserCannotAddEmailReason( domain );
+		if ( ! cannotAddEmailReason || ! cannotAddEmailReason.message ) {
+			return null;
+		}
+
+		return (
+			<Notice showDismiss={ false } status="is-error">
+				{ cannotAddEmailReason.message }
+			</Notice>
+		);
+	}
+
 	render() {
 		const { isGSuiteSupported } = this.props;
 
 		return (
 			<>
+				{ this.renderDomainEligibilityNotice() }
 				{ this.renderHeaderSection() }
 				{ this.renderTitanCard() }
 				{ this.renderGoogleCard() }
