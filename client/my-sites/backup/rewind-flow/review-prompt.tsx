@@ -13,28 +13,27 @@ import { hasReceivedRemotePreferences as getHasReceivedRemotePreferences } from 
 import Gridicon from 'calypso/components/gridicon';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
-import {
-	getIsDismissed,
-	getHasBeenDismissedOnce,
-} from 'calypso/state/jetpack-review-prompt/selectors';
-import {
-	dismissReviewPrompt,
-	dismissReviewPromptPermanently,
-} from 'calypso/state/jetpack-review-prompt/actions';
+import { getIsDismissed, getDismissCount } from 'calypso/state/jetpack-review-prompt/selectors';
+import { dismiss, dismissAsReviewed } from 'calypso/state/jetpack-review-prompt/actions';
 
 const JetpackReviewPrompt: FunctionComponent = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	// dismiss count is stored in a preference, make sure we have that before rendering
 	const hasReceivedRemotePreferences = useSelector( ( state ) =>
 		getHasReceivedRemotePreferences( state )
 	);
 	const isDismissed = useSelector( ( state ) => getIsDismissed( state ) );
-	const hasBeenDismissedOnce = useSelector( ( state ) => getHasBeenDismissedOnce( state ) );
+	const dismissCount = useSelector( ( state ) => getDismissCount( state ) );
 
-	const dismiss = useCallback( () => {
-		dispatch( hasBeenDismissedOnce ? dismissReviewPromptPermanently() : dismissReviewPrompt() );
-	}, [ dispatch, hasBeenDismissedOnce ] );
+	const dismissPrompt = useCallback( () => {
+		dispatch( dismiss( dismissCount ) );
+	}, [ dispatch, dismissCount ] );
+
+	const dismissPromptAsReviewed = useCallback( () => {
+		dispatch( dismissAsReviewed( dismissCount ) );
+	}, [ dispatch, dismissCount ] );
 
 	return (
 		<>
@@ -52,12 +51,12 @@ const JetpackReviewPrompt: FunctionComponent = () => {
 						<Button
 							href="https://wordpress.org/support/plugin/jetpack/reviews/#new-post"
 							target="_blank"
-							onClick={ dismiss }
+							onClick={ dismissPromptAsReviewed }
 						>
 							<Gridicon icon="external" />
 							{ translate( 'Leave Jetpack a review' ) }
 						</Button>
-						<Button onClick={ dismiss }>
+						<Button onClick={ dismissPrompt }>
 							<Gridicon icon="cross" />
 							{ translate( 'No thanks' ) }
 						</Button>
