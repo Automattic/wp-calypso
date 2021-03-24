@@ -17,3 +17,14 @@
 .mshots-image-hidden {
 	display: none;
 }
+
+.mshots-image__container {
+    background-size: 100%;
+    background-position: top;
+    height: 100%;
+    background-repeat: no-repeat;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    transition: background-position 2.5s ease-in-out;
+}

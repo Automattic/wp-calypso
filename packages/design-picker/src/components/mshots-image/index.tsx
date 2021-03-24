@@ -16,6 +16,7 @@ interface MShotsImageProps {
 	alt: string;
 	'aria-labelledby': string;
 	options: MShotsOptions;
+	scrollable?: boolean;
 }
 
 export type MShotsOptions = {
@@ -44,50 +45,51 @@ const MShotsImage = ( {
 	'aria-labelledby': labelledby,
 	alt,
 	options,
+	scrollable = false,
 }: MShotsImageProps ): JSX.Element => {
 	const [ count, setCount ] = React.useState( 1 );
-	const [ visible, setVisible ] = useState( false );
-	const [ opacity, setOpacity ] = useState( 0 );
+	const [ visible, setVisible ] = useState( true );
+	const [ opacity, setOpacity ] = useState( 1 );
 
 	const src = mshotsUrl( url, options, count );
 
 	// Hide the images while they're loading if src changes (e.g. when locale is switched)
-	useLayoutEffect( () => {
-		// Opacity is used for fade in on load
-		// Visible is used to hide the image quickly when swapping languages
-		setVisible( false );
-		setOpacity( 0 );
-	}, [ src, setVisible, setOpacity ] );
+	// useLayoutEffect( () => {
+	// 	// Opacity is used for fade in on load
+	// 	// Visible is used to hide the image quickly when swapping languages
+	// 	setVisible( false );
+	// 	setOpacity( 0 );
+	// }, [ src, setVisible, setOpacity ] );
 
 	return (
-		<div className="mshots-image__container">
+		<div className="mshots-image__container" style={ { backgroundImage: `url( ${ src } )` } }>
 			{ ! visible && <div className="mshots-image__loader"></div> }
-			<img
+			<div
 				className={ classnames(
 					'mshots-image',
 					visible ? 'mshots-image-visible' : 'mshots-image-hidden'
 				) }
-				style={ { opacity: opacity } }
-				alt={ alt }
+				style={ { opacity: opacity, backgroundImage: `url( ${ src } )` } }
+				// alt={ alt }
 				aria-labelledby={ labelledby }
-				src={ src }
-				onLoad={ ( e ) => {
-					// Test mshots h value matches the desired image
-					// The default image (https://s0.wp.com/mshots/v1/default) is around 400x300 px h
-					// but sometimes slightly off (e.g. h: 299.99)
-					if ( e.currentTarget.naturalWidth !== options.w ) {
-						// Only refresh 10 times
-						if ( count < MAXTRIES ) {
-							// Triggers a target.src change and image refresh @ 500ms, 1000ms, 1500ms...
-							setTimeout( () => setCount( count + 1 ), count * 500 );
-						}
-					} else {
-						// Show the image / hide loader
-						setVisible( true );
-						// Fade in
-						setOpacity( 1 );
-					}
-				} }
+				// src={ src }
+				// onLoad={ ( e ) => {
+				// 	// Test mshots h value matches the desired image
+				// 	// The default image (https://s0.wp.com/mshots/v1/default) is around 400x300 px h
+				// 	// but sometimes slightly off (e.g. h: 299.99)
+				// 	if ( e.currentTarget.naturalWidth !== options.w ) {
+				// 		// Only refresh 10 times
+				// 		if ( count < MAXTRIES ) {
+				// 			// Triggers a target.src change and image refresh @ 500ms, 1000ms, 1500ms...
+				// 			setTimeout( () => setCount( count + 1 ), count * 500 );
+				// 		}
+				// 	} else {
+				// 		// Show the image / hide loader
+				// 		setVisible( true );
+				// 		// Fade in
+				// 		setOpacity( 1 );
+				// 	}
+				// } }
 			/>
 		</div>
 	);

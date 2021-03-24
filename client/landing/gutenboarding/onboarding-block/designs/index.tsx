@@ -73,6 +73,7 @@ const Designs: React.FunctionComponent = () => {
 					// Update fonts to the design defaults
 					setFonts( design.fonts );
 
+<<<<<<< HEAD
 					goNext();
 				} }
 				premiumBadge={
@@ -82,6 +83,122 @@ const Designs: React.FunctionComponent = () => {
 					</Badge>
 				}
 			/>
+||||||| parent of 8a245dc543... TMP: hack in a new scroll
+									goNext();
+								} }
+							>
+								<span
+									className={ classnames(
+										'design-selector__image-frame',
+										isEnabled( 'gutenboarding/landscape-preview' )
+											? 'design-selector__landscape'
+											: 'design-selector__portrait',
+										design.preview === 'static'
+											? 'design-selector__static'
+											: 'design-selector__scrollable'
+									) }
+								>
+									{ isEnabled( 'gutenboarding/mshot-preview' ) ? (
+										<MShotsImage
+											url={ getDesignUrl( design, locale ) }
+											aria-labelledby={ makeOptionId( design ) }
+											alt=""
+											options={ mShotOptions() }
+										/>
+									) : (
+										<img
+											alt=""
+											aria-labelledby={ makeOptionId( design ) }
+											src={ getDesignImageUrl( design ) }
+										/>
+									) }
+								</span>
+								<span className="design-selector__option-overlay">
+									<span id={ makeOptionId( design ) } className="design-selector__option-meta">
+										<span className="design-selector__option-name">{ design.title }</span>
+										{ design.is_premium && (
+											<Tooltip
+												position="bottom center"
+												text={ __( 'Requires a Personal plan or above' ) }
+											>
+												<div className="design-selector__premium-container">
+													<Badge className="design-selector__premium-badge">
+														<JetpackLogo
+															className="design-selector__premium-badge-logo"
+															size={ 20 }
+														/>
+														<span className="design-selector__premium-badge-text">
+															{ __( 'Premium' ) }
+														</span>
+													</Badge>
+												</div>
+											</Tooltip>
+										) }
+									</span>
+								</span>
+							</button>
+						) ) }
+				</div>
+			</div>
+=======
+									goNext();
+								} }
+							>
+								<span
+									className={ classnames(
+										'design-selector__image-frame',
+										isEnabled( 'gutenboarding/landscape-preview' )
+											? 'design-selector__landscape'
+											: 'design-selector__portrait',
+										design.preview === 'static'
+											? 'design-selector__static'
+											: 'design-selector__scrollable'
+									) }
+								>
+									{ isEnabled( 'gutenboarding/mshot-preview' ) ? (
+										<MShotsImage
+											url={ getDesignUrl( design, locale ) }
+											aria-labelledby={ makeOptionId( design ) }
+											alt=""
+											options={ mShotOptions() }
+											scrollable={ design.preview !== 'static' }
+										/>
+									) : (
+										<img
+											alt=""
+											aria-labelledby={ makeOptionId( design ) }
+											src={ getDesignImageUrl( design ) }
+										/>
+									) }
+								</span>
+								<span className="design-selector__option-overlay">
+									<span id={ makeOptionId( design ) } className="design-selector__option-meta">
+										<span className="design-selector__option-name">{ design.title }</span>
+										{ design.is_premium && (
+											<Tooltip
+												position="bottom center"
+												text={ __( 'Requires a Personal plan or above' ) }
+											>
+												<div className="design-selector__premium-container">
+													<Badge className="design-selector__premium-badge">
+														<JetpackLogo
+															className="design-selector__premium-badge-logo"
+															size={ 20 }
+														/>
+														<span className="design-selector__premium-badge-text">
+															{ __( 'Premium' ) }
+														</span>
+													</Badge>
+												</div>
+											</Tooltip>
+										) }
+									</span>
+								</span>
+							</button>
+						) ) }
+				</div>
+			</div>
+>>>>>>> 8a245dc543... TMP: hack in a new scroll
 		</div>
 	);
 };
