@@ -41,34 +41,8 @@ export interface TransactionRequest {
 }
 
 // The data required by createTransactionEndpointRequestPayloadFromLineItems
-export interface TransactionRequestWithLineItems {
-	country: string;
-	postalCode: string;
+export interface TransactionRequestWithLineItems extends TransactionRequest {
 	items: WPCOMCartItem[];
-	paymentMethodType: string;
-	name: string;
-	siteId?: string | undefined;
-	couponId?: string | undefined;
-	state?: string | undefined;
-	subdivisionCode?: string | undefined;
-	city?: string | undefined;
-	address?: string | undefined;
-	streetNumber?: string | undefined;
-	phoneNumber?: string | undefined;
-	document?: string | undefined;
-	deviceId?: string | undefined;
-	domainDetails?: DomainContactDetails | undefined;
-	paymentMethodToken?: string | undefined;
-	paymentPartnerProcessorId?: string | undefined;
-	storedDetailsId?: string | undefined;
-	email?: string | undefined;
-	successUrl?: string | undefined;
-	cancelUrl?: string | undefined;
-	idealBank?: string | undefined;
-	tefBank?: string | undefined;
-	pan?: string | undefined;
-	gstin?: string | undefined;
-	nik?: string | undefined;
 }
 
 export type ExistingCardTransactionRequestWithLineItems = Partial< TransactionRequestWithLineItems > &
