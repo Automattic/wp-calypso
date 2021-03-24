@@ -90,7 +90,7 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	cart_generated_at_timestamp: number;
 	tax: ResponseCartTaxData;
 	next_domain_is_free: boolean;
-	terms_of_service: TermsOfServiceRecord[];
+	terms_of_service?: TermsOfServiceRecord[];
 }
 
 export interface ResponseCartTaxData {

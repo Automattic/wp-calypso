@@ -22,7 +22,7 @@ export default function AdditionalTermsOfServiceInCart(): JSX.Element | null {
 	const { responseCart } = useShoppingCart();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
-	if ( responseCart.terms_of_service.length === 0 ) {
+	if ( ! responseCart.terms_of_service || responseCart.terms_of_service.length === 0 ) {
 		return null;
 	}
 
