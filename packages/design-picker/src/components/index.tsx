@@ -4,26 +4,92 @@
  * External dependencies
  */
 import React from 'react';
+import classnames from 'classnames';
+import { Tooltip } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
  */
-import SubComponent from './sub-component';
+import MShotsImage from './mshots-image';
+import { getAvailableDesigns, getDesignImageUrl, getDesignUrl, mShotOptions } from '../utils';
+import type { Design } from '../constants';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const DesignPicker: React.FC = () => {
+const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;
+
+interface Props {
+	locale: string;
+	onSelect: ( design: Design ) => void;
+	designs: Design[];
+	premiumBadge?: React.ReactNode;
+	isGridMinimal?: boolean;
+}
+
+const DesignPicker: React.FC< Props > = ( {
+	locale,
+	onSelect,
+	designs = getAvailableDesigns().featured,
+	premiumBadge,
+	isGridMinimal,
+} ) => {
 	const { __ } = useI18n();
-	const label = __( 'Hello world, Design Picker', __i18n_text_domain__ );
 
 	return (
 		<div className="design-picker">
-			{ label }
-			<SubComponent />
+			<div className={ isGridMinimal ? 'design-picker__grid-minimal' : 'design-picker__grid' }>
+				{ designs.map( ( design ) => (
+					<button
+						key={ design.slug }
+						className="design-picker__design-option"
+						data-e2e-button={ design.is_premium ? 'paidOption' : 'freeOption' }
+						onClick={ () => onSelect( design ) }
+					>
+						<span
+							className={ classnames(
+								'design-picker__image-frame',
+								isEnabled( 'gutenboarding/landscape-preview' )
+									? 'design-picker__landscape'
+									: 'design-picker__portrait',
+								design.preview === 'static' ? 'design-picker__static' : 'design-picker__scrollable'
+							) }
+						>
+							{ isEnabled( 'gutenboarding/mshot-preview' ) ? (
+								<MShotsImage
+									url={ getDesignUrl( design, locale ) }
+									aria-labelledby={ makeOptionId( design ) }
+									alt=""
+									options={ mShotOptions() }
+								/>
+							) : (
+								<img
+									alt=""
+									aria-labelledby={ makeOptionId( design ) }
+									src={ getDesignImageUrl( design ) }
+								/>
+							) }
+						</span>
+						<span className="design-picker__option-overlay">
+							<span id={ makeOptionId( design ) } className="design-picker__option-meta">
+								<span className="design-picker__option-name">{ design.title }</span>
+								{ design.is_premium && premiumBadge && (
+									<Tooltip
+										position="bottom center"
+										text={ __( 'Requires a Personal plan or above' ) }
+									>
+										<div className="design-picker__premium-container">{ premiumBadge }</div>
+									</Tooltip>
+								) }
+							</span>
+						</span>
+					</button>
+				) ) }
+			</div>
 		</div>
 	);
 };

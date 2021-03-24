@@ -1,1 +1,1 @@
-// Design Picker utilities
+export * from './available-designs';

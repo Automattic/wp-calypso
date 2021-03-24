@@ -20,7 +20,7 @@
 
 		"moduleResolution": "node",
 		"esModuleInterop": true,
-
+		"resolveJsonModule": true,
 		"forceConsistentCasingInFileNames": true,
 
 		"typeRoots": [ "../../node_modules/@types" ],
@@ -30,13 +30,12 @@
 		"importHelpers": true,
 		"composite": true
 	},
-	"include": [ "src" ],
-	"exclude": [ "**/__test__/*" ],
+	"include": [ "src", "src/*.json" ],
+	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ],
 	"references": [
-		{ "path": "../data-stores" },
-		{ "path": "../calypso-analytics" },
 		{ "path": "../react-i18n" },
 		{ "path": "../i18n-utils" },
-		{ "path": "../onboarding" }
+		{ "path": "../onboarding" },
+		{ "path": "../calypso-config" }
 	]
 }
