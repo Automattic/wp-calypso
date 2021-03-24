@@ -54,6 +54,7 @@ export const MarketingTools: FunctionComponent = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const recordTracksEvent = ( event: string ) => dispatch( recordTracksEventAction( event ) );
+
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) ) || 0;
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( ( state ) =>
 		getSelectedSiteSlug( state )
