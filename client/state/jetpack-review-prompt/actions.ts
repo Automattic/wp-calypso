@@ -7,7 +7,7 @@ import { PREFERENCE_NAME } from './constants';
 import { savePreference } from 'calypso/state/preferences/actions';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-const dismiss = ( type: 'restore' | 'scan' ) => ( dispatch, getState ) => {
+const dismiss = ( type: 'restore' | 'scan', reviewed = false ) => ( dispatch, getState ) => {
 	const state = getState();
 	const fullPref = getPreference( state, PREFERENCE_NAME ) ?? {};
 	const previousPref = getExistingPreference( state, type );
@@ -17,26 +17,9 @@ const dismiss = ( type: 'restore' | 'scan' ) => ( dispatch, getState ) => {
 			...fullPref,
 			[ type ]: {
 				...previousPref,
-				dismissCount: previousPref.dismissCount + 1,
+				dismissCount: previousPref.dismissCount + ( reviewed ? 0 : 1 ),
 				dismissedAt: Date.now(),
-			},
-		} )
-	);
-};
-
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-const dismissAsReviewed = ( type: 'restore' | 'scan' ) => ( dispatch, getState ) => {
-	const state = getState();
-	const fullPref = getPreference( state, PREFERENCE_NAME ) ?? {};
-	const previousPref = getExistingPreference( state, type );
-
-	return dispatch(
-		savePreference( PREFERENCE_NAME, {
-			...fullPref,
-			[ type ]: {
-				...previousPref,
-				dismissedAt: Date.now(),
-				reviewed: true,
+				reviewed,
 			},
 		} )
 	);
@@ -62,4 +45,4 @@ const setValidFrom = ( type: 'restore' | 'scan', validFrom: number | null = null
 	);
 };
 
-export { dismiss, dismissAsReviewed, setValidFrom };
+export { dismiss, setValidFrom };
