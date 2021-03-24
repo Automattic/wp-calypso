@@ -54,32 +54,34 @@ const JetpackReviewPrompt: FunctionComponent = () => {
 
 	return (
 		<>
-			<hr />
 			<QueryPreferences />
 			{ hasReceivedRemotePreferences && ! isDismissed && (
-				<div className="jetpack-review-prompt">
-					<div className="jetpack-review-prompt__header">
-						<RewindFlowNotice
-							gridicon="star"
-							type={ RewindFlowNoticeLevel.REMINDER }
-							title={ translate( 'Had an easy restore experience?' ) }
-						/>
+				<>
+					<hr />
+					<div className="jetpack-review-prompt">
+						<div className="jetpack-review-prompt__header">
+							<RewindFlowNotice
+								gridicon="star"
+								type={ RewindFlowNoticeLevel.REMINDER }
+								title={ translate( 'Had an easy restore experience?' ) }
+							/>
+						</div>
+						<div className="jetpack-review-prompt__button-row">
+							<Button
+								href="https://wordpress.org/support/plugin/jetpack/reviews/#new-post"
+								target="_blank"
+								onClick={ dismissPromptAsReviewed }
+							>
+								<Gridicon icon="external" />
+								{ translate( 'Leave Jetpack a review' ) }
+							</Button>
+							<Button onClick={ dismissPrompt }>
+								<Gridicon icon="cross" />
+								{ translate( 'No thanks' ) }
+							</Button>
+						</div>
 					</div>
-					<div className="jetpack-review-prompt__button-row">
-						<Button
-							href="https://wordpress.org/support/plugin/jetpack/reviews/#new-post"
-							target="_blank"
-							onClick={ dismissPromptAsReviewed }
-						>
-							<Gridicon icon="external" />
-							{ translate( 'Leave Jetpack a review' ) }
-						</Button>
-						<Button onClick={ dismissPrompt }>
-							<Gridicon icon="cross" />
-							{ translate( 'No thanks' ) }
-						</Button>
-					</div>
-				</div>
+				</>
 			) }
 		</>
 	);
