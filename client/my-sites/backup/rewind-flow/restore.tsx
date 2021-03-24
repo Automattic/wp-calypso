@@ -23,7 +23,7 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
-import JetpackReviewPrompt from './review-prompt';
+import JetpackReviewPrompt from './jetpack-review-prompt';
 
 /**
  * Type dependencies
