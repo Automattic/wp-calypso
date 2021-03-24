@@ -8,7 +8,10 @@ import debugFactory from 'debug';
  */
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from './translate-payment-method-names';
-import { createTransactionEndpointRequestPayloadFromLineItems } from './translate-cart';
+import {
+	createTransactionEndpointRequestPayload,
+	createTransactionEndpointCartFromResponseCart,
+} from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
 	TransactionRequestWithLineItems,
@@ -31,8 +34,13 @@ export default async function submitRedirectTransaction(
 	if ( ! paymentMethodType ) {
 		throw new Error( `No payment method found for type: ${ paymentMethodId }` );
 	}
-	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...transactionData,
+		cart: createTransactionEndpointCartFromResponseCart( {
+			siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
+			contactDetails: transactionData.domainDetails ?? null,
+			responseCart: transactionOptions.responseCart,
+		} ),
 		paymentMethodType,
 		paymentPartnerProcessorId: transactionOptions.stripeConfiguration?.processor_id,
 	} );
