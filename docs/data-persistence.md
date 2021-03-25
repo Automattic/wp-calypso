@@ -96,7 +96,7 @@ const items = withPersistence(
 		serialize: state => state.toJS(),
 		deserialize: persisted => Immutable.fromJS( persisted ),
 	}
-} );
+);
 ```
 
 If your reducer state can be serialized by the browser without additional work (e.g. a plain object, string or boolean),
