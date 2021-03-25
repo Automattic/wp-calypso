@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { useSelect } from '@wordpress/data';
 import { Button } from '@wordpress/components';
 import { Icon, check, close } from '@wordpress/icons';

@@ -2,9 +2,9 @@
  * External dependencies
  */
 import * as React from 'react';
-import { setLocaleData, LocaleData } from '@wordpress/i18n';
+import { createI18n, setLocaleData, LocaleData } from '@wordpress/i18n';
 import { subscribe, select } from '@wordpress/data';
-import { I18nProvider } from '@automattic/react-i18n';
+import { I18nProvider } from '@wordpress/react-i18n';
 import {
 	getLanguageFile,
 	getLanguageManifestFile,
@@ -51,11 +51,14 @@ export const ChangeLocaleContextConsumer = ChangeLocaleContext.Consumer;
 export const LocaleContext: React.FunctionComponent = ( { children } ) => {
 	const [ contextLocaleData, setContextLocaleData ] = React.useState< LocaleData | undefined >();
 	const [ localeDataLoaded, setLocaleDataLoaded ] = React.useState( false );
+	const localeSlug = contextLocaleData?.[ '' ]?.localeSlug ?? DEFAULT_LOCALE_SLUG;
+	const wpI18n = React.useMemo( () => createI18n( contextLocaleData ), [ localeSlug ] );
 
 	const setLocale = ( newLocaleData: LocaleData | undefined ) => {
-		// Translations done within react are made using the localData passed to the <I18nProvider/>.
+		// Translations done within react are made using the `@wordpress/i18n` instance passed to the <I18nProvider/>.
 		// We must also set the locale for translations done outside of a react rendering cycle using setLocaleData.
 		setLocaleData( newLocaleData );
+		wpI18n.setLocaleData( newLocaleData );
 		setContextLocaleData( newLocaleData );
 		setLocaleDataLoaded( true );
 	};
@@ -92,9 +95,7 @@ export const LocaleContext: React.FunctionComponent = ( { children } ) => {
 	return (
 		<ChangeLocaleContext.Provider value={ changeLocale }>
 			<LocaleProvider localeSlug={ contextLocaleData?.[ '' ]?.localeSlug ?? DEFAULT_LOCALE_SLUG }>
-				<I18nProvider localeData={ contextLocaleData }>
-					{ localeDataLoaded ? children : null }
-				</I18nProvider>
+				<I18nProvider i18n={ wpI18n }>{ localeDataLoaded ? children : null }</I18nProvider>
 			</LocaleProvider>
 		</ChangeLocaleContext.Provider>
 	);

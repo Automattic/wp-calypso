@@ -32,10 +32,10 @@
 	},
 	"dependencies": {
 		"@automattic/data-stores": "^2.0.0",
-		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@wordpress/components": "^12.0.8",
 		"@wordpress/data": "^4.26.8",
 		"@wordpress/icons": "^2.9.1",
+		"@wordpress/react-i18n": "^1.0.0",
 		"classnames": "^2.2.6",
 		"react-router-dom": "^5.1.2"
 	},
@@ -49,7 +49,7 @@
 		"react-dom": "^16.12.0"
 	},
 	"peerDependencies": {
-		"@wordpress/i18n": "^3.18.0",
+		"@wordpress/i18n": "^3.19.0",
 		"react": "^16.8"
 	},
 	"private": true

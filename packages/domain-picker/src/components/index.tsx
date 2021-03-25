@@ -8,7 +8,7 @@ import { Button, TextControl, Notice } from '@wordpress/components';
 import { Icon, search } from '@wordpress/icons';
 import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
 /**

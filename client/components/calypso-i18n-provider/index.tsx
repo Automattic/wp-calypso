@@ -2,14 +2,15 @@
  * External dependencies
  */
 import * as React from 'react';
-import { setLocaleData as setWpI18nLocaleData } from '@wordpress/i18n';
-import { I18nProvider } from '@automattic/react-i18n';
+import { createI18n, setLocaleData as setWpI18nLocaleData } from '@wordpress/i18n';
+import { I18nProvider } from '@wordpress/react-i18n';
 import i18n from 'i18n-calypso';
 import { LocaleProvider, i18nDefaultLocaleSlug } from '@automattic/i18n-utils';
 
 const CalypsoI18nProvider: React.FunctionComponent = ( { children } ) => {
 	const [ localeData, setLocaleData ] = React.useState( i18n.getLocale() );
 	const [ localeSlug, setLocaleSlug ] = React.useState( i18n.getLocaleSlug() );
+	const wpI18n = React.useMemo( () => createI18n( localeData ), [ localeSlug ] );
 
 	React.useEffect( () => {
 		const onChange = () => {
@@ -17,6 +18,7 @@ const CalypsoI18nProvider: React.FunctionComponent = ( { children } ) => {
 			const nextLocaleData = Object.assign( {}, i18n.getLocale() );
 
 			setWpI18nLocaleData( nextLocaleData );
+			wpI18n.setLocaleData( nextLocaleData );
 			setLocaleData( nextLocaleData );
 			setLocaleSlug( i18n.getLocaleSlug() );
 		};
@@ -30,7 +32,7 @@ const CalypsoI18nProvider: React.FunctionComponent = ( { children } ) => {
 
 	return (
 		<LocaleProvider localeSlug={ localeSlug || i18nDefaultLocaleSlug }>
-			<I18nProvider localeData={ localeData }>{ children }</I18nProvider>
+			<I18nProvider i18n={ wpI18n }>{ children }</I18nProvider>
 		</LocaleProvider>
 	);
 };

@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import { useSelect } from '@wordpress/data';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import type { DomainSuggestions, WPCOMFeatures, Plans } from '@automattic/data-stores';
 import { Title } from '@automattic/onboarding';
 import debugFactory from 'debug';

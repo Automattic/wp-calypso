@@ -3,7 +3,7 @@
  * External dependencies
  */
 
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import React, { useEffect } from 'react';
 import type { Ref, ChangeEvent, FocusEvent, FormEvent, KeyboardEvent, MouseEvent } from 'react';

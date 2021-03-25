@@ -2,9 +2,9 @@
  * Internal dependencies
  */
 import { LanguageGroup } from './Language';
-import { I18nReact } from '@automattic/react-i18n';
+import { I18n } from '@wordpress/i18n';
 
-export const createLanguageGroups = ( __: I18nReact[ '__' ] ): LanguageGroup[] => [
+export const createLanguageGroups = ( __: I18n[ '__' ] ): LanguageGroup[] => [
 	{
 		id: 'popular',
 		name: () => __( 'Popular languages', __i18n_text_domain__ ),
