@@ -4,10 +4,10 @@
 .titan-mail-add-mailboxes__new-mailbox .form-label .form-text-input-with-affixes__suffix {
 	font-weight: normal;
 }
-.titan-mail-add-mailboxes__new-mailbox-password-and-is-admin,
-.titan-mail-add-mailboxes__new-mailbox-name-and-remove {
+.titan-mail-add-mailboxes__new-mailbox-email-and-password,
+.titan-mail-add-mailboxes__new-mailbox-password-and-is-admin {
 	display: flex;
-	flex-direction: column-reverse;
+	flex-direction: column;
 
 	@include break-mobile {
 		align-items: flex-start;
@@ -16,6 +16,34 @@
 
 		.form-fieldset:first-child {
 			flex-grow: 2;
+			margin-right: 1em;
+		}
+	}
+}
+
+.titan-mail-add-mailboxes__new-mailbox-name-and-remove {
+	display: flex;
+	flex-direction: column-reverse;
+
+	@include break-mobile {
+		flex-direction: row;
+
+		.form-fieldset:first-child {
+			flex-grow: 2;
+			margin-right: 1em;
+		}
+
+		.titan-mail-add-mailboxes__new-mailbox-remove-mailbox-button {
+			height: 40px;
+			width: 50px;
+
+			.gridicon {
+				margin-right: 0;
+			}
+
+			span {
+				display: none;
+			}
 		}
 	}
 
@@ -27,11 +55,6 @@
 
 		.components-toggle-control p {
 			margin-bottom: 0;
-		}
-
-		@include break-mobile {
-			margin-left: 1em;
-			margin-top: 1.5em;
 		}
 	}
 }

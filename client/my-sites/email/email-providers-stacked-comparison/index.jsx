@@ -362,6 +362,7 @@ class EmailProvidersStackedComparison extends React.Component {
 				mailboxes={ this.state.titanMailboxes }
 				domain={ domain.name }
 				onReturnKeyPress={ this.onTitanFormReturnKeyPress }
+				showLabels={ false }
 			>
 				<Button
 					className="email-providers-stacked-comparison__titan-mailbox-action-continue"

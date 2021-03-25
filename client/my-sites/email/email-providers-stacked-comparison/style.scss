@@ -23,7 +23,7 @@
 			max-width: 24px;
 		}
 
-			&.titan {
+		&.titan {
 			.promo-card__title-badge {
 				background: none;
 				padding: 0;
@@ -77,7 +77,12 @@
 	}
 
 	.promo-card__title-badge {
+		display: none;
+	}
+
+	&.is-expanded .promo-card__title-badge {
 		background: none;
+		display: inline-block;
 		padding: 0;
 
 		img {
@@ -141,6 +146,8 @@
 		margin-top: 1em;
 
 		.email-providers-stacked-comparison__provider-form {
+			flex-grow: 1;
+
 			.titan-new-mailbox-list__actions {
 				justify-content: space-between;
 			}
