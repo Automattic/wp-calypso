@@ -1,12 +1,20 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
-import { SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
+import { getInitialState } from '@automattic/state-utils';
 
 export function serialize( reducer, state ) {
-	return reducer( state, { type: SERIALIZE } );
+	if ( ! reducer.serialize ) {
+		return undefined;
+	}
+
+	return reducer.serialize( state );
 }
 
 export function deserialize( reducer, persisted ) {
-	return reducer( persisted, { type: DESERIALIZE } );
+	if ( ! reducer.deserialize ) {
+		return getInitialState( reducer );
+	}
+
+	return reducer.deserialize( persisted );
 }
