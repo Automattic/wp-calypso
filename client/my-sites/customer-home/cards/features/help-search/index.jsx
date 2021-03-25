@@ -5,7 +5,7 @@ import { Card } from '@automattic/components';
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { get, isUndefined, omitBy } from 'lodash';
+import { get, omitBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -54,7 +54,7 @@ const HelpSearch = ( { searchQuery, openDialog, track } ) => {
 				result_url: resultLink,
 				location: HELP_COMPONENT_LOCATION,
 			},
-			isUndefined
+			( prop ) => typeof prop === 'undefined'
 		);
 		track( `calypso_inlinehelp_${ type }_open`, tracksData );
 	};

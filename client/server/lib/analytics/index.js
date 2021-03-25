@@ -4,7 +4,7 @@
 
 import superagent from 'superagent';
 import { v4 as uuid } from 'uuid';
-import { isUndefined, omit, assign, get, has } from 'lodash';
+import { omit, assign, get, has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -90,7 +90,7 @@ const analytics = {
 
 			// Remove properties that have an undefined value
 			// This allows a caller to easily remove properties from the recorded set by setting them to undefined
-			eventProperties = omit( eventProperties, isUndefined );
+			eventProperties = omit( eventProperties, ( prop ) => typeof prop === 'undefined' );
 
 			const date = new Date();
 			const acceptLanguageHeader = req.get( 'Accept-Language' ) || '';

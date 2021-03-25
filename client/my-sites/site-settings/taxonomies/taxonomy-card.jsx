@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, isUndefined } from 'lodash';
+import { get } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
@@ -33,7 +33,7 @@ const TaxonomyCard = ( {
 	bumpStat: recordMCStat,
 } ) => {
 	const settingsLink = site ? `/settings/taxonomies/${ taxonomy }/${ site.slug }` : null;
-	const isLoading = ! labels.name || isUndefined( count );
+	const isLoading = ! labels.name || typeof count === 'undefined';
 	const classes = classNames( 'taxonomies__card-title', {
 		'is-loading': isLoading,
 	} );

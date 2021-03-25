@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import classNames from 'classnames';
-import { get, isUndefined, omitBy } from 'lodash';
+import { get, omitBy } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -68,7 +68,7 @@ class InlineHelpRichResult extends Component {
 				result_url: link,
 				location: 'inline-help-popover',
 			},
-			isUndefined
+			( data ) => typeof data === 'undefined'
 		);
 
 		this.props.recordTracksEvent( `calypso_inlinehelp_${ type }_open`, tracksData );
