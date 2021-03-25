@@ -36,6 +36,7 @@ private object EditingToolkit : BuildType({
 
 	templates(PluginBaseBuild())
 	params {
+		param("with_slack_notify", "true")
 		param("plugin_slug", "editing-toolkit")
 		param("archive_dir", "./editing-toolkit-plugin/")
 		param("release_tag", "etk-release-build")
