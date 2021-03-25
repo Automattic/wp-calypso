@@ -112,32 +112,6 @@ export function waitTillFocused( driver, selector, pollingOverride, waitOverride
 	);
 }
 
-export function followLinkWhenFollowable( driver, selector, waitOverride ) {
-	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
-	return driver.wait(
-		function () {
-			return driver.findElement( selector ).then(
-				function ( element ) {
-					return element.getAttribute( 'href' ).then(
-						function ( href ) {
-							driver.get( href );
-							return true;
-						},
-						function () {
-							return false;
-						}
-					);
-				},
-				function () {
-					return false;
-				}
-			);
-		},
-		timeoutWait,
-		`Timed out waiting for link with ${ selector.using } of '${ selector.value }' to be followable`
-	);
-}
-
 export function waitTillPresentAndDisplayed( driver, selector, waitOverride ) {
 	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
 
