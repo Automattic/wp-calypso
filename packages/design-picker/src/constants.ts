@@ -3,7 +3,7 @@
  */
 import type { Font } from './types';
 
-const fontTitles: Partial< Record< Font, string > > = {
+export const FONT_TITLES: Partial< Record< Font, string > > = {
 	'Playfair Display': 'Playfair',
 };
 
@@ -42,7 +42,7 @@ export const FONT_PAIRINGS = [
  * To get the name of the font for display, use `getFontTitle( fontName )`.
  * (defined in the utils/ folder).
  */
-export const anchorFmFontPairings = [
+export const ANCHORFM_FONT_PAIRINGS = [
 	{
 		headings: 'Roboto',
 		base: 'Roboto',

@@ -6,9 +6,9 @@ import type { ValuesType } from 'utility-types';
 /**
  * Internal dependencies
  */
-import type { fontPairings } from './constants';
+import type { FONT_PAIRINGS } from './constants';
 
-export type Font = ValuesType< ValuesType< typeof fontPairings > >;
+export type Font = ValuesType< ValuesType< typeof FONT_PAIRINGS > >;
 
 export interface FontPair {
 	headings: Font;
