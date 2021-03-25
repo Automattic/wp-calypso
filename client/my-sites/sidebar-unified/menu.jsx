@@ -29,6 +29,7 @@ import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import { isExternal } from 'calypso/lib/url';
 import { externalRedirect } from 'calypso/lib/route/path';
 import { itemLinkMatches } from '../sidebar/utils';
+import { trackMenuItemClick } from './utils';
 
 export const MySitesSidebarUnifiedMenu = ( {
 	count,
@@ -43,6 +44,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 	isHappychatSessionActive,
 	isJetpackNonAtomicSite,
 	continueInCalypso,
+	identifier,
 } ) => {
 	const hasAutoExpanded = useRef( false );
 	const reduxDispatch = useDispatch();
@@ -66,6 +68,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 	}, [ selected, childIsSelected, reduxDispatch, sectionId, sidebarCollapsed ] );
 
 	const onClick = () => {
+		trackMenuItemClick( identifier );
 		if ( isWithinBreakpoint( '>782px' ) ) {
 			if ( link ) {
 				if ( ! continueInCalypso( link ) ) {

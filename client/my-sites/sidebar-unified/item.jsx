@@ -23,6 +23,8 @@ import {
 	expandMySitesSidebarSection,
 } from 'calypso/state/my-sites/sidebar/actions';
 
+import { trackMenuItemClick } from './utils';
+
 export const MySitesSidebarUnifiedItem = ( {
 	count,
 	icon,
@@ -35,10 +37,17 @@ export const MySitesSidebarUnifiedItem = ( {
 	isHappychatSessionActive,
 	isJetpackNonAtomicSite,
 	continueInCalypso,
+	identifier,
 } ) => {
 	const reduxDispatch = useDispatch();
 
-	const onNavigate = () => {
+	const onNavigate = ( event ) => {
+		trackMenuItemClick( identifier );
+
+		if ( ! continueInCalypso( url, event ) ) {
+			return;
+		}
+
 		reduxDispatch( collapseAllMySitesSidebarSections() );
 		reduxDispatch( expandMySitesSidebarSection( sectionId ) );
 	};
@@ -48,7 +57,7 @@ export const MySitesSidebarUnifiedItem = ( {
 			count={ count }
 			label={ title }
 			link={ url }
-			onNavigate={ ( event ) => continueInCalypso( url, event ) && onNavigate() }
+			onNavigate={ ( event ) => onNavigate( event ) }
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
 			forceInternalLink={ ! isHappychatSessionActive && ! isJetpackNonAtomicSite }
@@ -69,6 +78,7 @@ MySitesSidebarUnifiedItem.propTypes = {
 	isHappychatSessionActive: PropTypes.bool.isRequired,
 	isJetpackNonAtomicSite: PropTypes.bool.isRequired,
 	continueInCalypso: PropTypes.func.isRequired,
+	identifier: PropTypes.string,
 };
 
 export default memo( MySitesSidebarUnifiedItem );
