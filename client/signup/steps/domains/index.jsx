@@ -56,7 +56,6 @@ import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/select
 import { getStepModuleName } from 'calypso/signup/config/step-components';
 import { getExternalBackUrl } from './utils';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import { isLoading } from 'calypso/state/experiments/selectors';
 
 /**
  * Style dependencies
@@ -685,10 +684,6 @@ class DomainsStep extends React.Component {
 			return null;
 		}
 
-		if ( this.props.isLoadingExperiment ) {
-			return null;
-		}
-
 		const { flowName, isAllDomains, translate, sites } = this.props;
 		const source = get( this.props, 'queryObject.source' );
 		const hasSite = Object.keys( sites ).length > 0;
@@ -805,7 +800,6 @@ export default connect(
 			isSitePreviewVisible: isSitePreviewVisible( state ),
 			sites: getSitesItems( state ),
 			isPlanStepSkipped: isPlanStepExistsAndSkipped( state ),
-			isLoadingExperiment: isLoading( state ),
 		};
 	},
 	{
