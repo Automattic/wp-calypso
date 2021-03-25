@@ -1,0 +1,26 @@
+{
+	"compilerOptions": {
+		"target": "es2020",
+		"lib": [ "DOM", "es2020" ],
+		"baseUrl": ".",
+		"module": "commonjs",
+		"allowJs": false,
+		"declaration": true,
+		"declarationDir": "types",
+		"outDir": "dist",
+		"rootDir": ".",
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"types": [ "node" ],
+		"noEmitHelpers": true,
+		"importHelpers": true,
+		"composite": true
+	},
+	"include": [ "lib" ]
+}

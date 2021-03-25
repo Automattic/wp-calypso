@@ -10,6 +10,8 @@
 	"main": "greetings.js",
 	"defaultTestArgs": "-g -s $BROWSERSIZE",
 	"scripts": {
+		"build": "tsc --build ./tsconfig.json",
+		"clean": "tsc --build ./tsconfig.json --clean && npx rimraf dist",
 		"lint": "eslint . --max-warnings=0",
 		"precommitlint": "LIST=`git diff-index --name-only HEAD | grep js$`; if [ \"$LIST\" ]; then eslint $LIST --max-warnings=0; fi",
 		"precommit": "node scripts/pre-commit-hook.js",
@@ -23,6 +25,7 @@
 		"@babel/preset-env": "^7.3.1",
 		"@babel/register": "^7.0.0",
 		"@babel/runtime": "^7.3.1",
+		"@types/config": "0.0.38",
 		"@xmpp/plugins": "^0.3.0",
 		"asana-phrase": "^0.0.8",
 		"cached-path-relative": ">=1.0.2",

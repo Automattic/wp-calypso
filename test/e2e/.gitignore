@@ -12,3 +12,6 @@
 
 # chromedriver logs
 chrome*.log
+
+# typescript output
+dist/
