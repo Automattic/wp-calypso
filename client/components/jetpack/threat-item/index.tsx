@@ -88,13 +88,24 @@ const ThreatItem: React.FC< Props > = ( {
 		if ( ! threat.fixable ) {
 			return (
 				<>
-					<p className="threat-description__section-text">
-						{ translate(
-							'Jetpack Scan cannot automatically fix this threat. We suggest that you resolve the threat manually: ' +
-								'ensure that WordPress, your theme, and all of your plugins are up to date, and remove ' +
-								'the offending code, theme, or plugin from your site.'
-						) }
-					</p>
+					{ ! threat.rows && (
+						<p className="threat-description__section-text">
+							{ translate(
+								'Jetpack Scan cannot automatically fix this threat. We suggest that you resolve the threat manually: ' +
+									'ensure that WordPress, your theme, and all of your plugins are up to date, and remove ' +
+									'the offending code, theme, or plugin from your site.'
+							) }
+						</p>
+					) }
+					{ threat.rows && (
+						<p className="threat-description__section-text">
+							{ translate(
+								'Jetpack Scan cannot automatically fix this threat. We suggest that you resolve the threat manually: ' +
+									'ensure that WordPress, your theme, and all of your plugins are up to date, and remove or edit ' +
+									'the offending post from your site.'
+							) }
+						</p>
+					) }
 					{ 'current' === threat.status && (
 						<p className="threat-description__section-text">
 							{ translate(
@@ -163,6 +174,8 @@ const ThreatItem: React.FC< Props > = ( {
 				problem={ threat.description }
 				context={ threat.context }
 				diff={ threat.diff }
+				rows={ threat.rows }
+				table={ threat.table }
 				filename={ threat.filename }
 				isFixable={ isFixable }
 			/>

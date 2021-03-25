@@ -36,6 +36,7 @@ export const formatScanThreat = ( threat ) => ( {
 	extension: threat.extension,
 	rows: threat.rows,
 	diff: threat.diff,
+	table: threat.table,
 	context: threat.context,
 } );
 
