@@ -93,8 +93,8 @@ const items = withPersistence(
 		}
 	},
 	{
-		serialize: state => state.toJS(),
-		deserialize: persisted => Immutable.fromJS( persisted ),
+		serialize: ( state ) => state.toJS(),
+		deserialize: ( persisted ) => Immutable.fromJS( persisted ),
 	}
 );
 ```
