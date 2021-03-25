@@ -12,7 +12,7 @@
  *
  * GENERATE THUMBNAILS:
  *
- * `node ./bin/generate-gutenboarding-design-thumbnails.js`
+ * `node ./bin/generate-gutenboarding-design-thumbnails.mjs`
  *
  * We should bump the version query param on the image src to cache bust the images too in client/landing/gutenboarding/available-designs.ts
  *
@@ -20,11 +20,16 @@
  *
  */
 
-const captureWebsite = require( 'capture-website' );
-const sharp = require( 'sharp' );
-const wpUrl = require( '@wordpress/url' );
-const designs = require( '../client/landing/gutenboarding/available-designs-config.json' );
-const screenshotsPath = './static/images/design-screenshots'; // Folder to store output images
+/**
+ * External dependencies
+ */
+import captureWebsite from 'capture-website';
+import sharp from 'sharp';
+import wpUrl from '@wordpress/url';
+import { availableDesignsConfig, DESIGN_IMAGE_FOLDER } from '@automattic/design-picker';
+
+// Path
+const screenshotsPath = `./static/${ DESIGN_IMAGE_FOLDER }`; // Folder to store output images
 
 // image output variables
 const captureMaxHeight = 2200; // Cap long pages to  this pixel height when capturing
@@ -50,18 +55,19 @@ const getDesignUrl = ( design ) => {
 
 async function run() {
 	if (
-		( typeof designs === 'object' && ! Array.isArray( designs.featured ) ) ||
-		! designs.featured
+		( typeof availableDesignsConfig === 'object' &&
+			! Array.isArray( availableDesignsConfig.featured ) ) ||
+		! availableDesignsConfig.featured
 	) {
 		console.error(
 			'Could not find any featured designs. Check the regex or the available-designs.ts file'
 		);
 		return;
 	}
-	console.log( `Processing ${ designs.featured.length } designs...` );
+	console.log( `Processing ${ availableDesignsConfig.featured.length } designs...` );
 
 	await Promise.all(
-		designs.featured.map( async ( design ) => {
+		availableDesignsConfig.featured.map( async ( design ) => {
 			const url = getDesignUrl( design );
 			const file = `${ screenshotsPath }/${ design.slug }_${ design.template }_${ design.theme }`;
 
