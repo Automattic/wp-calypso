@@ -14,7 +14,7 @@ import { isEnabled } from '@automattic/calypso-config';
  */
 import MShotsImage from './mshots-image';
 import { getAvailableDesigns, getDesignImageUrl, getDesignUrl, mShotOptions } from '../utils';
-import type { Design } from '../constants';
+import type { Design } from '../types';
 
 /**
  * Style dependencies

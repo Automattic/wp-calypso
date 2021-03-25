@@ -9,7 +9,7 @@ import { isEnabled } from '@automattic/calypso-config';
  */
 import availableDesignsConfig from '../available-designs-config.json';
 import type { MShotsOptions } from '../components/mshots-image';
-import type { Design } from '../constants';
+import type { Design } from '../types';
 
 interface AvailableDesigns {
 	featured: Design[];
