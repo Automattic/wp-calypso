@@ -1,0 +1,21 @@
+.threat-fixed-review-prompt {
+	margin: 1rem -1.5rem 0;
+	padding: 0 1.5rem;
+	border-top: 1px solid #ccc;
+}
+
+.threat-fixed-review-prompt__header {
+	padding-top: 1.2rem;
+}
+
+.threat-fixed-review-prompt__buttons {
+	display: flex;
+
+	:not( :first-child ) {
+		margin-left: 12px;
+	}
+}
+
+.threat-fixed-review-prompt__buttons a.components-button.is-secondary {
+	color: var( --color-primary );
+}
