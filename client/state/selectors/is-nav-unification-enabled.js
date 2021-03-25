@@ -13,7 +13,6 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import isNavUnificationNewUser from 'calypso/state/selectors/is-nav-unification-new-user';
-import { isE2ETest } from 'calypso/lib/e2e';
 
 // Gradual rollout (segment of existing users + all new users registered after March 5, 2021).
 const CURRENT_ROLLOUT_SEGMENT_PERCENTAGE = 100;
@@ -31,10 +30,6 @@ export default ( state ) => {
 	}
 
 	const userId = getCurrentUserId( state );
-	// Disable for Test Users.
-	if ( isE2ETest() ) {
-		//return false;
-	}
 
 	// Users belonging to the current segment OR New Users.
 	const userInCurrentRolloutSegment = userId % 100 < CURRENT_ROLLOUT_SEGMENT_PERCENTAGE;
