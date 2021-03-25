@@ -53,25 +53,22 @@ const ThreatFixedReviewPrompt: React.FC = () => {
 								strong: <strong />,
 							},
 						} ) }
-					</p>
-					<p>
+						<br />
 						{ translate(
 							'Are you happy with Jetpack Scan? Please leave a review and help us spread the word!'
 						) }
 					</p>
+					<Button onClick={ dismissPrompt }>
+						<Gridicon icon="cross" />
+					</Button>
 				</div>
 				<div className="threat-fixed-review-prompt__buttons">
 					<Button
 						href="https://wordpress.org/support/plugin/jetpack/reviews/#new-post"
 						target="_blank"
 						onClick={ dismissPrompt }
-						isSecondary
 					>
 						{ translate( 'Leave a review' ) } <Gridicon icon="external" />
-					</Button>
-					<Button onClick={ dismissPrompt } isSecondary>
-						{ translate( 'No thanks' ) }
-						<Gridicon icon="cross" />
 					</Button>
 				</div>
 			</div>
