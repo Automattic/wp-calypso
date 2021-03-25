@@ -6,7 +6,7 @@
  * See: bin/generate-gutenboarding-design-thumbnails.js
  * @Automattic/create
  */
-const { spawnSync, execSync } = require( 'child_process' );
+const spawnSync = require( 'child_process' ).spawnSync;
 const fs = require( 'fs' );
 
 // run a distclean to clean things up. just ci is not enough with the monorepo.
@@ -46,9 +46,3 @@ if ( installDependencies.status ) {
 
 const touchDate = new Date();
 fs.utimesSync( 'node_modules', touchDate, touchDate );
-
-// @TODO: error handling
-execSync( 'cd packages/design-picker && yarn build', {
-	shell: true,
-	stdio: 'inherit',
-} );
