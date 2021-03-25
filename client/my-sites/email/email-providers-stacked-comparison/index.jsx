@@ -146,6 +146,7 @@ class EmailProvidersStackedComparison extends React.Component {
 			quantity: titanMailboxes.length,
 			extra: {
 				email_users: titanMailboxes.map( transformMailboxForCart ),
+				new_quantity: titanMailboxes.length,
 			},
 		} );
 
