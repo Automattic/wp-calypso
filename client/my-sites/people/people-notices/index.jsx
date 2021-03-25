@@ -128,7 +128,7 @@ class PeopleNotices extends React.Component {
 						{
 							count: productNames.length,
 							args: {
-								domains: productNames.join( ', ' ),
+								productNames: productNames.join( ', ' ),
 								...translateArg( log ),
 							},
 							components: {
