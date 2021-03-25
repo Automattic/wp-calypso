@@ -146,6 +146,8 @@
 		margin-top: 1em;
 
 		.email-providers-stacked-comparison__provider-form {
+			flex-grow: 1;
+
 			.titan-new-mailbox-list__actions {
 				justify-content: space-between;
 			}
