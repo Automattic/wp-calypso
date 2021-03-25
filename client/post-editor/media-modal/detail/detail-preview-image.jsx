@@ -26,25 +26,18 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 		onLoad: noop,
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.onImagePreloaderLoad = this.onImagePreloaderLoad.bind( this );
-		this.state = { loading: false };
-	}
+	state = { loading: true };
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.item.URL === nextProps.item.URL ) {
-			return null;
+		if ( this.props.item.URL !== nextProps.item.URL ) {
+			this.setState( { loading: true } );
 		}
-
-		this.setState( { loading: true } );
 	}
 
-	onImagePreloaderLoad() {
+	onImagePreloaderLoad = () => {
 		this.setState( { loading: false } );
 		this.props.onLoad();
-	}
+	};
 
 	render() {
 		const src = url( this.props.item, {
