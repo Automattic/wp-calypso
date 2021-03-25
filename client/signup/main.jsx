@@ -92,8 +92,8 @@ import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import user from 'calypso/lib/user';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import { getVariationForUser, isLoading } from 'calypso/state/experiments/selectors';
 import { Experiment } from 'calypso/components/experiment';
+import { dangerouslyGetExperimentAssignment } from 'calypso/lib/explat';
 
 /**
  * Style dependencies
@@ -229,9 +229,7 @@ class Signup extends React.Component {
 			this.updateShouldShowLoadingScreen( progress );
 		}
 
-		if ( ! this.props.isLoadingExperiment ) {
-			! this.props.isReskinned && document.body.classList.remove( 'is-white-signup' );
-		}
+		! this.props.isReskinned && document.body.classList.remove( 'is-white-signup' );
 	}
 
 	componentWillUnmount() {
@@ -267,9 +265,7 @@ class Signup extends React.Component {
 			this.preloadNextStep();
 		}
 
-		if ( ! this.props.isLoadingExperiment ) {
-			! this.props.isReskinned && document.body.classList.remove( 'is-white-signup' );
-		}
+		! this.props.isReskinned && document.body.classList.remove( 'is-white-signup' );
 	}
 
 	/**
@@ -768,9 +764,15 @@ export default connect(
 			false
 		);
 
+		let experimentAssignment;
+		try {
+			experimentAssignment = dangerouslyGetExperimentAssignment( 'refined_reskin_v1' );
+		} catch ( e ) {
+			experimentAssignment = null;
+		}
+
 		const isReskinned =
-			'onboarding' === ownProps.flowName &&
-			'treatment' === getVariationForUser( state, 'refined_reskin_v1' );
+			'onboarding' === ownProps.flowName && 'treatment' === experimentAssignment?.variationName;
 
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )
@@ -791,7 +793,6 @@ export default connect(
 			isSitePreviewVisible: shouldStepShowSitePreview && isSitePreviewVisible( state ),
 			localeSlug: getCurrentLocaleSlug( state ),
 			isReskinned,
-			isLoadingExperiment: isLoading( state ),
 		};
 	},
 	{
