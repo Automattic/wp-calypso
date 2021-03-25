@@ -7,6 +7,8 @@
 
 namespace A8C\FSE;
 
+require_once __DIR__ . '/class-block-patterns-utils.php';
+
 /**
  * Class Block_Patterns_From_API
  */
@@ -31,35 +33,24 @@ class Block_Patterns_From_API {
 	/**
 	 * Block_Patterns constructor.
 	 *
-	 * @param array $patterns_sources A array of strings, each of which matches a valid source for retrieving patterns.
+	 * @param array                $patterns_sources A array of strings, each of which matches a valid source for retrieving patterns.
+	 * @param Block_Patterns_Utils                   A class dependency containing utils methods.
 	 */
-	private function __construct( $patterns_sources ) {
+	private function __construct( $patterns_sources, Block_Patterns_Utils $utils = null ) {
 		$patterns_sources = empty( $patterns_sources ) ? array( 'block_patterns' ) : $patterns_sources;
 
 		// Tells the backend which patterns source site to default to.
 		$this->patterns_sources = empty( array_diff( $patterns_sources, $this->valid_patterns_sources ) ) ? $patterns_sources : array( 'block_patterns' );
 
-		$this->register_patterns();
-	}
-
-	/**
-	 * Creates instance.
-	 *
-	 * @param  array $patterns_sources A array of strings, each of which matches a valid source for retrieving patterns.
-	 * @return \A8C\FSE\Block_Patterns
-	 */
-	public static function get_instance( $patterns_sources = array() ) {
-		if ( null === self::$instance ) {
-			self::$instance = new self( $patterns_sources );
-		}
-
-		return self::$instance;
+		$this->utils = empty( $utils ) ? new \A8C\FSE\Block_Patterns_Utils() : $utils;
 	}
 
 	/**
 	 * Register FSE block patterns and categories.
+	 *
+	 * @return array Results of pattern registration.
 	 */
-	private function register_patterns() {
+	public function register_patterns() {
 		if ( class_exists( 'WP_Block_Patterns_Registry' ) ) {
 			// Remove core patterns.
 			foreach ( \WP_Block_Patterns_Registry::get_instance()->get_all_registered() as $pattern ) {
@@ -69,18 +60,12 @@ class Block_Patterns_From_API {
 			}
 		}
 
+		// Used to track which patterns we successfully register.
+		$results = array();
+
 		// For every pattern source site, fetch the patterns.
 		foreach ( $this->patterns_sources as $patterns_source ) {
-			$patterns_cache_key = sha1(
-				implode(
-					'_',
-					array(
-						$patterns_source,
-						A8C_ETK_PLUGIN_VERSION,
-						$this->get_block_patterns_locale(),
-					)
-				)
-			);
+			$patterns_cache_key = $this->utils->get_patterns_cache_key( 'block_patterns' );
 
 			$pattern_categories = array();
 			$block_patterns     = $this->get_patterns( $patterns_cache_key, $patterns_source );
@@ -127,9 +112,10 @@ class Block_Patterns_From_API {
 					// default width of 1280 and ensure a safe minimum width of 320.
 					$viewport_width = isset( $pattern['pattern_meta']['viewport_width'] ) ? intval( $pattern['pattern_meta']['viewport_width'] ) : 1280;
 					$viewport_width = $viewport_width < 320 ? 320 : $viewport_width;
+					$pattern_name   = self::PATTERN_NAMESPACE . $pattern['name'];
 
-					register_block_pattern(
-						self::PATTERN_NAMESPACE . $pattern['name'],
+					$results[ $pattern_name ] = register_block_pattern(
+						$pattern_name,
 						array(
 							'title'         => $pattern['title'],
 							'description'   => $pattern['description'],
@@ -144,6 +130,7 @@ class Block_Patterns_From_API {
 				}
 			}
 		}
+		return $results;
 	}
 
 	/**
@@ -167,25 +154,14 @@ class Block_Patterns_From_API {
 						'tags'         => 'pattern',
 						'pattern_meta' => 'is_web',
 					),
-					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_block_patterns_locale()
+					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->utils->get_block_patterns_locale()
 				)
 			);
 
-			$args = array( 'timeout' => 20 );
-
-			if ( function_exists( 'wpcom_json_api_get' ) ) {
-				$response = wpcom_json_api_get( $request_url, $args );
-			} else {
-				$response = wp_remote_get( $request_url, $args );
-			}
-
-			if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
-				return array();
-			}
-			return json_decode( wp_remote_retrieve_body( $response ), true );
+			return $this->utils->remote_get( $request_url );
 		}
 
-		$block_patterns = wp_cache_get( $patterns_cache_key, 'ptk_patterns' );
+		$block_patterns = $this->utils->cache_get( $this->patterns_cache_key, 'ptk_patterns' );
 
 		// Load fresh data if we don't have any patterns.
 		if ( false === $block_patterns || ( defined( 'WP_DISABLE_PATTERN_CACHE' ) && WP_DISABLE_PATTERN_CACHE ) ) {
@@ -196,23 +172,12 @@ class Block_Patterns_From_API {
 						'pattern_meta'    => 'is_web',
 						'patterns_source' => $patterns_source,
 					),
-					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_block_patterns_locale()
+					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->utils->get_block_patterns_locale()
 				)
 			);
 
-			$args = array( 'timeout' => 20 );
-
-			if ( function_exists( 'wpcom_json_api_get' ) ) {
-				$response = wpcom_json_api_get( $request_url, $args );
-			} else {
-				$response = wp_remote_get( $request_url, $args );
-			}
-
-			if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
-				return array();
-			}
-			$block_patterns = json_decode( wp_remote_retrieve_body( $response ), true );
-			wp_cache_add( $patterns_cache_key, $block_patterns, 'ptk_patterns', DAY_IN_SECONDS );
+			$block_patterns = $this->utils->remote_get( $request_url );
+			$this->utils->cache_add( $this->patterns_cache_key, $block_patterns, 'ptk_patterns', DAY_IN_SECONDS );
 		}
 
 		return $block_patterns;

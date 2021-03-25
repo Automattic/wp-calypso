@@ -5,6 +5,7 @@
 	convertErrorsToExceptions="true"
 	convertNoticesToExceptions="true"
 	convertWarningsToExceptions="true"
+	beStrictAboutTestsThatDoNotTestAnything="false"
 	>
     <php>
         <const name="WP_TESTS_MULTISITE" value="1" />
@@ -18,6 +19,9 @@
 		</testsuite>
 		<testsuite name="coming-soon">
 			<directory suffix="-test.php">./coming-soon/test/</directory>
+		</testsuite>
+		<testsuite name="block-patterns">
+			<directory suffix="-test.php">./block-patterns/test/</directory>
 		</testsuite>
 	</testsuites>
 </phpunit>
