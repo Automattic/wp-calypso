@@ -33,8 +33,8 @@
 	"dependencies": {
 		"@automattic/calypso-config": "^1.0.0-alpha.0",
 		"@automattic/onboarding": "^1.0.0",
-		"@wordpress/components": "^12.0.1",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
+		"@wordpress/components": "^12.0.1",
 		"@wordpress/url": "^2.21.0",
 		"classnames": "^2.2.6",
 		"utility-types": "^3.10.0"

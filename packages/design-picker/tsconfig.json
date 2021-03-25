@@ -33,9 +33,8 @@
 	"include": [ "src", "src/*.json" ],
 	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ],
 	"references": [
-		{ "path": "../react-i18n" },
-		{ "path": "../i18n-utils" },
+		{ "path": "../calypso-config" },
 		{ "path": "../onboarding" },
-		{ "path": "../calypso-config" }
+		{ "path": "../react-i18n" }
 	]
 }
