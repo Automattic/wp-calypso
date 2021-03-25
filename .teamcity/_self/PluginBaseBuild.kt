@@ -103,7 +103,7 @@ open class PluginBaseBuild : Template({
 			scriptContent = """
 				# 1. Download and unzip current release build.
 				cd $workingDir
-				wget "%teamcity.serverUrl%/repository/download/%system.teamcity.buildType.id%/$releaseTag.tcbuildtag/$pluginSlug.zip?guest=1&branch=trunk" -O ./tmp-release-archive-download.zip
+				# wget "%teamcity.serverUrl%/repository/download/%system.teamcity.buildType.id%/$releaseTag.tcbuildtag/$pluginSlug.zip?guest=1&branch=trunk" -O ./tmp-release-archive-download.zip
 
 				mkdir ./release-archive
 				unzip ./tmp-release-archive-download.zip -d ./release-archive
