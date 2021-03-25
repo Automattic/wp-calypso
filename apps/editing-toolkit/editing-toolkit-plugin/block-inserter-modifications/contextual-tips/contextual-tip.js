@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, filter, deburr, lowerCase, includes, uniq } from 'lodash';
+import { get, filter, deburr, lowerCase, includes } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -30,7 +30,8 @@ function ContextualTip( { searchTerm, random = false, canUserCreate } ) {
 		tipsList,
 		( { keywords, permission } ) =>
 			canUserCreate( permission ) &&
-			filter( uniq( keywords ), ( keyword ) => includes( normalizedSearchTerm, keyword ) ).length
+			filter( [ ...new Set( keywords ) ], ( keyword ) => includes( normalizedSearchTerm, keyword ) )
+				.length
 	);
 
 	if ( ! foundTips.length ) {
