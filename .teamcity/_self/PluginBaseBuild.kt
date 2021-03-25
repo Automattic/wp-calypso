@@ -103,19 +103,19 @@ open class PluginBaseBuild : Template({
 			scriptContent = """
 				# 1. Download and unzip current release build.
 				cd $workingDir
-				wget "%teamcity.serverUrl%/repository/download/%system.teamcity.buildType.id%/$releaseTag.tcbuildtag/$pluginSlug.zip?guest=1&branch=trunk" -O ./tmp-release-archive-download.zip
-
 				mkdir ./release-archive
-				unzip ./tmp-release-archive-download.zip -d ./release-archive
-				echo "Diffing against current trunk release build (`grep build_number ./release-archive/build_meta.txt | sed s/build_number=//`).";
+
+				# wget "%teamcity.serverUrl%/repository/download/%system.teamcity.buildType.id%/$releaseTag.tcbuildtag/$pluginSlug.zip?guest=1&branch=trunk" -O ./tmp-release-archive-download.zip
+				#unzip ./tmp-release-archive-download.zip -d ./release-archive
+				#echo "Diffing against current trunk release build (`grep build_number ./release-archive/build_meta.txt | sed s/build_number=//`).";
 
 				# 2. Change anything from the release build which is "unstable", like the version number and build metadata.
 				# These operations restore idempotence between the two builds.
-				rm -f ./release-archive/build_meta.txt
+				#rm -f ./release-archive/build_meta.txt
 
-				cd ./release-archive
-				%normalize_files%
-				cd ..
+				#cd ./release-archive
+				#%normalize_files%
+				#cd ..
 
 				# 3. Check if the current build has changed, and if so, tag it for release.
 				# Note: we exclude asset changes because we only really care if the build files (JS/CSS) change. That file is basically just metadata.
