@@ -60,14 +60,16 @@ type SummaryStepProps = {
 	input: React.ReactNode;
 	commentary?: React.ReactNode;
 	highlighted: boolean;
+	className?: string;
 };
 
 const SummaryStep: React.FunctionComponent< SummaryStepProps > = ( {
 	input,
 	commentary,
 	highlighted,
+	className = '',
 } ) => (
-	<div className={ classNames( 'focused-launch-summary__step', { highlighted } ) }>
+	<div className={ classNames( 'focused-launch-summary__step', className, { highlighted } ) }>
 		<div className="focused-launch-summary__data-input">
 			<div className="focused-launch-summary__section">{ input }</div>
 		</div>
@@ -92,6 +94,7 @@ const SiteTitleStep: React.FunctionComponent< SiteTitleStepProps > = ( {
 } ) => {
 	return (
 		<SummaryStep
+			className="focused-launch-summary__name-step"
 			highlighted
 			input={
 				<TextControl
@@ -137,6 +140,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 
 	return (
 		<SummaryStep
+			className="focused-launch-summary__domain-step"
 			highlighted={ !! highlighted }
 			input={
 				hasPaidDomain ? (
@@ -214,7 +218,10 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							locale={ locale }
 							orderSubDomainsLast={ true }
 						/>
-						<Link to={ Route.DomainDetails } className="focused-launch-summary__details-link">
+						<Link
+							to={ Route.DomainDetails }
+							className="focused-launch-summary__details-link focused-launch-summary__view-all-domains-btn"
+						>
 							{ __( 'View all domains', __i18n_text_domain__ ) }
 						</Link>
 					</>
@@ -348,6 +355,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 
 	return (
 		<SummaryStep
+			className="focused-launch-summary__plan-step"
 			highlighted={ !! highlighted }
 			input={
 				hasPaidPlan ? (
@@ -426,6 +434,10 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 								return (
 									<FocusedLaunchSummaryItem
 										key={ plan.periodAgnosticSlug }
+										// TODO: Clean this up
+										className={ `is-${ planProduct.periodAgnosticSlug }-${
+											planProduct.billingPeriod === 'ANNUALLY' ? 'annual' : 'monthly'
+										}-plan` }
 										isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
 										onClick={ () =>
 											setPlanProductId( allAvailablePlansProducts[ index ]?.productId )
@@ -464,7 +476,10 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 								);
 							} ) }
 						</div>
-						<Link to={ Route.PlanDetails } className="focused-launch-summary__details-link">
+						<Link
+							to={ Route.PlanDetails }
+							className="focused-launch-summary__details-link focused-launch-summary_view-all-plans-btn"
+						>
 							{ __( 'View all plans', __i18n_text_domain__ ) }
 						</Link>
 					</>

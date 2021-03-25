@@ -48,6 +48,7 @@ export const TrailingContentSide: React.FunctionComponent< TrailingSideProps > =
 
 const FocusedLaunchSummaryItem: React.FunctionComponent<
 	{
+		className?: string;
 		isSelected?: boolean;
 		readOnly?: boolean;
 		isLoading?: boolean;
@@ -56,16 +57,20 @@ const FocusedLaunchSummaryItem: React.FunctionComponent<
 			ReturnType< typeof TrailingContentSide >
 		];
 	} & React.ButtonHTMLAttributes< HTMLButtonElement >
-> = ( { children, isSelected = false, readOnly = false, isLoading, ...rest } ) => {
+> = ( { className = '', children, isSelected = false, readOnly = false, isLoading, ...rest } ) => {
 	return (
 		<button
 			{ ...rest }
 			disabled={ readOnly }
-			className={ classnames( 'focused-launch-summary__item', {
-				'is-selected': isSelected,
-				'is-readonly': readOnly,
-				'is-loading': isLoading,
-			} ) }
+			className={ classnames(
+				'focused-launch-summary__item',
+				{
+					'is-selected': isSelected,
+					'is-readonly': readOnly,
+					'is-loading': isLoading,
+				},
+				className
+			) }
 		>
 			{ children?.[ 0 ] }
 			{ children?.[ 1 ] }

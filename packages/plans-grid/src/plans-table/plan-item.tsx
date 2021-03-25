@@ -204,7 +204,15 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 						<div className="plan-item__actions">
 							{ CTAVariation === 'NORMAL' ? (
 								<Button
-									className="plan-item__select-button"
+									className={ classNames(
+										'plan-item__select-button',
+										// TODO: Clean this up
+										planProduct
+											? `is-${ planProduct.periodAgnosticSlug }--${
+													planProduct.billingPeriod === 'ANNUALLY' ? 'annual' : 'monthly'
+											  }-plan`
+											: ''
+									) }
 									onClick={ () => {
 										onSelect( planProduct?.productId );
 									} }
@@ -215,10 +223,18 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 								</Button>
 							) : (
 								<Button
-									className={ classNames( 'plan-item__select-button full-width', {
-										'is-selected': isSelected,
-										'is-popular': isPopular,
-									} ) }
+									className={ classNames(
+										'plan-item__select-button full-width',
+										{
+											'is-selected': isSelected,
+											'is-popular': isPopular,
+										}, // TODO: Clean this up
+										planProduct
+											? `is-${ planProduct.periodAgnosticSlug }--${
+													planProduct.billingPeriod === 'ANNUALLY' ? 'annual' : 'monthly'
+											  }-plan`
+											: ''
+									) }
 									onClick={ () => {
 										onSelect( planProduct?.productId );
 									} }

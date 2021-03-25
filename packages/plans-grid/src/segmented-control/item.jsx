@@ -8,6 +8,8 @@ import classNames from 'classnames';
 
 class SegmentedControlItem extends React.Component {
 	static propTypes = {
+		// TODO: Bring this back to calypso version
+		className: PropTypes.string,
 		children: PropTypes.node.isRequired,
 		path: PropTypes.string,
 		selected: PropTypes.bool,
@@ -32,10 +34,14 @@ class SegmentedControlItem extends React.Component {
 	};
 
 	render() {
-		const itemClassName = classNames( {
-			'segmented-control__item': true,
-			'is-selected': this.props.selected,
-		} );
+		const itemClassName = classNames(
+			{
+				'segmented-control__item': true,
+				'is-selected': this.props.selected,
+			},
+			// TODO: Bring this back to calypso version
+			this.props.className
+		);
 
 		const linkClassName = classNames( 'segmented-control__link', {
 			[ `item-index-${ this.props.index }` ]: this.props.index != null,
