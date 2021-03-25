@@ -600,18 +600,14 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async schedulePost( publishDate ) {
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishHeaderSelector );
-		await driverHelper.verifyTextPresent(
+		await driverHelper.waitUntilElementWithTextLocated(
 			this.driver,
 			By.css( '.editor-post-publish-panel__link' ),
 			publishDate
 		);
 		await driverHelper.clickWhenClickable( this.driver, this.publishButtonSelector );
 		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
-		await driverHelper.waitTillPresentAndDisplayed(
-			this.driver,
-			By.css( '.post-publish-panel__postpublish-header' )
-		);
-		return await driverHelper.verifyTextPresent(
+		await driverHelper.waitUntilElementWithTextLocated(
 			this.driver,
 			By.css( '.post-publish-panel__postpublish-header' ),
 			'Scheduled'
