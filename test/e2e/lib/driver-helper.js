@@ -221,13 +221,20 @@ export function isEventuallyPresentAndDisplayed( driver, selector, waitOverride 
 		);
 }
 
+/**
+ * Clicks an element with given locator if it's located in DOM.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @returns {Promise<WebElement>} A promise that will resolve with the located element
+ */
 export async function clickIfPresent( driver, locator ) {
 	const element = ( await driver.findElements( locator ) )[ 0 ];
 	if ( ! element ) {
 		return null;
 	}
 
-	return clickWhenClickable( driver, element );
+	return clickWhenClickable( driver, locator );
 }
 
 export async function getElementCount( driver, selector ) {
