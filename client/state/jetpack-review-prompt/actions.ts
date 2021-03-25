@@ -1,25 +1,66 @@
 /**
  * Internal dependencies
  */
-import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import { getExistingPreference } from './selectors';
 import { PREFERENCE_NAME, PreferenceType } from './constants';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { AppState } from 'calypso/types';
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-const dismiss = ( previousCount: number ) => {
-	return savePreference( PREFERENCE_NAME, {
-		dismissedAt: Date.now(),
-		dismissCount: previousCount + 1,
-		reviewed: false,
-	} as PreferenceType );
+const combineDismissPreference = (
+	state: AppState,
+	type: 'restore' | 'scan',
+	dismissedAt: number,
+	reviewed: boolean
+): PreferenceType => {
+	const fullPref = getPreference( state, PREFERENCE_NAME ) ?? {};
+	const previousPref = getExistingPreference( state, type );
+
+	return {
+		...fullPref,
+		[ type ]: {
+			...previousPref,
+			dismissCount: previousPref.dismissCount + ( reviewed ? 0 : 1 ),
+			dismissedAt,
+			reviewed,
+		},
+	};
 };
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-const dismissAsReviewed = ( previousCount: number ) => {
-	return savePreference( PREFERENCE_NAME, {
-		dismissedAt: Date.now(),
-		dismissCount: previousCount,
-		reviewed: true,
-	} as PreferenceType );
+const dismiss = (
+	type: 'restore' | 'scan',
+	dismissedAt: number = Date.now(),
+	reviewed = false
+) => ( dispatch, getState ) =>
+	dispatch(
+		savePreference(
+			PREFERENCE_NAME,
+			combineDismissPreference( getState(), type, dismissedAt, reviewed )
+		)
+	);
+
+const combineValidPreference = (
+	state: AppState,
+	type: 'restore' | 'scan',
+	validFrom: number | null
+): PreferenceType => {
+	const fullPref = getPreference( state, PREFERENCE_NAME ) ?? {};
+	const previousPref = getExistingPreference( state, type );
+
+	return {
+		...fullPref,
+		[ type ]: {
+			...previousPref,
+			validFrom: validFrom ?? Date.now(),
+		},
+	};
 };
 
-export { dismiss, dismissAsReviewed };
+const setValidFrom = ( type: 'restore' | 'scan', validFrom: number | null = null ) => (
+	dispatch,
+	getState
+) =>
+	dispatch(
+		savePreference( PREFERENCE_NAME, combineValidPreference( getState(), type, validFrom ) )
+	);
+export { dismiss, setValidFrom, combineDismissPreference, combineValidPreference };
