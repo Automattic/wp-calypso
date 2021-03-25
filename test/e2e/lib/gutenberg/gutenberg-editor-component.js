@@ -610,7 +610,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await driverHelper.waitUntilElementWithTextLocated(
 			this.driver,
 			By.css( '.post-publish-panel__postpublish-header' ),
-			'Scheduled'
+			/scheduled/i
 		);
 	}
 
