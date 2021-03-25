@@ -15,43 +15,48 @@ function resolveRootPath( relativeTo ) {
 	if ( relativeTo === emailManagementAllSitesPrefix || relativeTo === domainManagementRoot() ) {
 		return emailManagementAllSitesPrefix;
 	}
+
 	if ( isUnderEmailManagementAll( relativeTo ) || isUnderDomainManagementAll( relativeTo ) ) {
 		return emailManagementAllSitesPrefix;
 	}
+
 	return emailManagementPrefix;
 }
 
-export function emailManagementAddGSuiteUsers( siteName, domainName, relativeTo = null ) {
-	let path;
-
+/**
+ * Retrieves the url of the Add New Users page either for G Suite or Google Workspace:
+ *
+ * https://wordpress.com/email/:domainName/google-workspace/add-users/:siteName
+ * https://wordpress.com/email/:domainName/gsuite/add-users/:siteName
+ * https://wordpress.com/email/google-workspace/add-users/:siteName
+ * https://wordpress.com/email/gsuite/add-users/:siteName
+ *
+ * @param {string} siteName - slug of the current site
+ * @param {string} domainName - domain name of the account to add users to
+ * @param {string} productType - type of account
+ * @param {string} relativeTo - optional path prefix
+ * @returns {string} the corresponding url
+ */
+export function emailManagementAddGSuiteUsers(
+	siteName,
+	domainName,
+	productType,
+	relativeTo = null
+) {
 	if ( domainName ) {
-		path = emailManagementEdit( siteName, domainName, 'gsuite/add-users', relativeTo );
-	} else {
-		path = '/email/gsuite/add-users/' + siteName;
+		return emailManagementEdit( siteName, domainName, productType + '/add-users', relativeTo );
 	}
 
-	return path;
-}
-
-export function emailManagementAddGSuiteUsersLegacy( siteName, domainName ) {
-	let path;
-
-	if ( domainName ) {
-		path = emailManagementEdit( siteName, domainName, 'add-gsuite-users' );
-	} else {
-		path = '/email/add-gsuite-users/' + siteName;
-	}
-
-	return path;
+	return '/email/' + productType + '/add-users/' + siteName;
 }
 
 export function emailManagementNewGSuiteAccount(
 	siteName,
 	domainName,
-	planType,
+	productType,
 	relativeTo = null
 ) {
-	return emailManagementEdit( siteName, domainName, 'gsuite/new/' + planType, relativeTo );
+	return emailManagementEdit( siteName, domainName, productType + '/new', relativeTo );
 }
 
 export function emailManagementManageTitanAccount(

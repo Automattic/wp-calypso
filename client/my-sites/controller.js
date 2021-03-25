@@ -189,20 +189,27 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		emailManagementTitanControlPanelRedirect,
 	];
 
+	// Builds a list of paths using a site slug plus any additional parameter that may be required
 	let domainManagementPaths = allPaths.map( ( pathFactory ) => {
-		if ( pathFactory === emailManagementNewGSuiteAccount ) {
-			// `emailManagementNewGSuiteAccount` takes `planType` from `context.params`, otherwise path comparisons won't work well.
-			return emailManagementNewGSuiteAccount( slug, slug, contextParams.planType );
+		if ( pathFactory === emailManagementAddGSuiteUsers ) {
+			return emailManagementAddGSuiteUsers( slug, slug, contextParams.productType );
 		}
+
+		if ( pathFactory === emailManagementNewGSuiteAccount ) {
+			return emailManagementNewGSuiteAccount( slug, slug, contextParams.productType );
+		}
+
 		return pathFactory( slug, slug );
 	} );
 
+	// Builds a list of paths using a site slug, and which are relative to the root of the domain management section
 	domainManagementPaths = domainManagementPaths.concat(
 		allPaths.map( ( pathFactory ) => {
 			return pathFactory( slug, slug, domainManagementRoot() );
 		} )
 	);
 
+	// Builds a list of paths using a site slug but also a primary domain - if they differ
 	if ( primaryDomain && slug !== primaryDomain.name ) {
 		domainManagementPaths = domainManagementPaths.concat(
 			allPaths.map( ( pathFactory ) => pathFactory( slug, primaryDomain.name ) )

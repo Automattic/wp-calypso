@@ -29,11 +29,7 @@ import {
 	domainManagementDomainConnectMapping,
 	domainManagementRoot,
 } from 'calypso/my-sites/domains/paths';
-import {
-	emailManagement,
-	emailManagementAddGSuiteUsers,
-	emailManagementForwarding,
-} from 'calypso/my-sites/email/paths';
+import { emailManagement, emailManagementForwarding } from 'calypso/my-sites/email/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
 
@@ -211,12 +207,6 @@ export default {
 			/>
 		);
 		next();
-	},
-
-	domainManagementAddGSuiteUsersRedirect( pageContext ) {
-		page.redirect(
-			emailManagementAddGSuiteUsers( pageContext.params.site, pageContext.params.domain )
-		);
 	},
 
 	domainManagementSecurity( pageContext, next ) {

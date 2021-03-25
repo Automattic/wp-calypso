@@ -67,14 +67,6 @@ export default function () {
 		handlers: [ domainManagementController.domainManagementEmailRedirect ],
 	} );
 
-	registerMultiPage( {
-		paths: [
-			paths.domainManagementAddGSuiteUsers( ':site', ':domain' ),
-			paths.domainManagementAddGSuiteUsers( ':site' ),
-		],
-		handlers: [ domainManagementController.domainManagementAddGSuiteUsersRedirect ],
-	} );
-
 	page(
 		paths.domainManagementEmailForwarding( ':site', ':domain' ),
 		domainManagementController.domainManagementEmailForwardingRedirect
@@ -240,15 +232,22 @@ export default function () {
 			domainsController.redirectToDomainSearchSuggestion
 		);
 
-		page(
-			'/domains/add/:registerDomain/google-apps/:domain',
-			siteSelection,
-			navigation,
-			domainsController.redirectIfNoSite( '/domains/add' ),
-			domainsController.jetpackNoDomainsWarning,
-			domainsController.googleAppsWithRegistration,
-			makeLayout,
-			clientRender
+		[
+			'/domains/add/:registerDomain/google-workspace/:domain',
+			'/domains/add/:registerDomain/gsuite/:domain',
+		].forEach( ( path ) =>
+			page(
+				path,
+				...[
+					siteSelection,
+					navigation,
+					domainsController.redirectIfNoSite( '/domains/add' ),
+					domainsController.jetpackNoDomainsWarning,
+					domainsController.googleAppsWithRegistration,
+					makeLayout,
+					clientRender,
+				]
+			)
 		);
 
 		page(
