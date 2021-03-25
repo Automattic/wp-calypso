@@ -10,11 +10,13 @@ import type { RenderResult } from '@testing-library/react';
  */
 // https://jestjs.io/docs/en/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
 import '../../../__mocks__/matchMedia.mock';
+import { MOCK_DOMAIN_SUGGESTION } from '../../../__mocks__/suggestions';
 import SuggestionItem from '../suggestion-item';
 
 const MOCK_PROPS = {
 	railcarId: 'id',
-	domain: 'example.com',
+	domain: MOCK_DOMAIN_SUGGESTION.domain_name,
+	cost: MOCK_DOMAIN_SUGGESTION.cost,
 	onSelect: jest.fn(),
 	onRender: jest.fn(),
 };
@@ -45,7 +47,7 @@ describe( 'traintracks events', () => {
 
 		it( 'should not send a render event when unrelated props change', async () => {
 			const { rerender } = renderComponent();
-			const updatedProps = { ...MOCK_PROPS, cost: '€11' };
+			const updatedProps = { ...MOCK_PROPS };
 
 			MOCK_PROPS.onRender.mockClear();
 			rerender( <SuggestionItem { ...updatedProps } /> );
@@ -131,20 +133,22 @@ describe( 'conditional elements', () => {
 	} );
 
 	it( 'should render the cost if given prop of cost with a value', async () => {
-		renderComponent( { cost: '€12.00' } );
+		renderComponent();
 
-		expect( screen.getByText( /Renews at: €12.00/i ) ).toBeInTheDocument();
+		expect(
+			screen.getByText( new RegExp( `Renews at: ${ MOCK_PROPS.cost }`, 'i' ) )
+		).toBeInTheDocument();
 	} );
 
 	it( 'should render the cost as free if given prop of isFree even though it has a cost prop', async () => {
-		renderComponent( { cost: '€12.00', isFree: true } );
+		renderComponent( { isFree: true } );
 
-		expect( screen.queryByText( /€12.00/i ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( new RegExp( MOCK_PROPS.cost, 'i' ) ) ).not.toBeInTheDocument();
 		expect( screen.getByText( /Free/i ) ).toBeInTheDocument();
 	} );
 
 	it( 'should not render the recommendation badge if is given prop isRecommended false', async () => {
-		renderComponent( { cost: '€12.00', isRecommended: false } );
+		renderComponent( { isRecommended: false } );
 
 		expect( screen.queryByText( /Recommended/i ) ).not.toBeInTheDocument();
 	} );
@@ -152,7 +156,7 @@ describe( 'conditional elements', () => {
 
 describe( 'suggestion availability', () => {
 	it( 'should have the disabled UI state when provided an availabilityStatus of unavailable', () => {
-		renderComponent( { cost: '€12.00', isRecommended: true, isUnavailable: true } );
+		renderComponent( { isRecommended: true, isUnavailable: true } );
 
 		// we have to test for the domain and the TLD separately because they get split in the component
 
@@ -167,7 +171,7 @@ describe( 'suggestion availability', () => {
 	} );
 
 	it( 'should have the enabled UI state when provided an availabilityStatus that is available', () => {
-		renderComponent( { cost: '€12.00', isRecommended: true, isUnavailable: false } );
+		renderComponent( { isRecommended: true, isUnavailable: false } );
 
 		// we have to test for the domain and the TLD separately because they get split in the component
 		const [ domain, tld ] = MOCK_PROPS.domain.split( '.' );
@@ -176,7 +180,9 @@ describe( 'suggestion availability', () => {
 		expect( screen.getByText( new RegExp( `${ tld }$`, 'i' ) ) ).toBeInTheDocument();
 
 		expect( screen.getByText( /Recommended/i ) ).toBeInTheDocument();
-		expect( screen.getByText( /Renews at: €12.00/i ) ).toBeInTheDocument();
+		expect(
+			screen.getByText( new RegExp( `Renews at: ${ MOCK_PROPS.cost }`, 'i' ) )
+		).toBeInTheDocument();
 		expect( screen.queryByText( /Unavailable/i ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button' ) ).not.toBeDisabled();
 	} );
