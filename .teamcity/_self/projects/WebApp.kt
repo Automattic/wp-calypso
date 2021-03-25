@@ -745,10 +745,6 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 
 				# Install modules
 				yarn install
-
-				# Compile TypeScript
-				yarn build
-
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
