@@ -3,6 +3,13 @@
  */
 import { By } from 'selenium-webdriver';
 
+export function resolveToBool( pendingPromise ) {
+	return pendingPromise.then(
+		( v ) => !! v,
+		() => false
+	);
+}
+
 /**
  * Stringifies the locator object. Useful for error reporting or logging.
  *
