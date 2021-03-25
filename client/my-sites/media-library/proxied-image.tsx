@@ -57,30 +57,29 @@ const ProxiedImage: React.FC< ProxiedImageProps > = function ProxiedImage( {
 	...rest
 } ) {
 	const [ imageObjectUrl, setImageObjectUrl ] = useState< string >( '' );
-	const requestId = `media-library-proxied-image-${ siteSlug }${ filePath }${ query }`;
 
 	useEffect( () => {
-		if ( ! imageObjectUrl ) {
-			if ( cache[ requestId ] ) {
-				const url = URL.createObjectURL( cache[ requestId ] );
-				setImageObjectUrl( url );
-				debug( 'set image from cache', { url } );
-			} else {
-				debug( 'requesting image from API', { requestId, imageObjectUrl } );
-				const options = { query };
-				if ( maxSize !== null ) {
-					options.maxSize = maxSize;
-				}
-				wpcom
-					.undocumented()
-					.getAtomicSiteMediaViaProxyRetry( siteSlug, filePath, options )
-					.then( ( data: Blob ) => {
-						cacheResponse( requestId, data );
-						setImageObjectUrl( URL.createObjectURL( data ) );
-						debug( 'got image from API', { requestId, imageObjectUrl, data } );
-					} )
-					.catch( onError );
+		const requestId = `media-library-proxied-image-${ siteSlug }${ filePath }${ query }`;
+
+		if ( cache[ requestId ] ) {
+			const url = URL.createObjectURL( cache[ requestId ] );
+			setImageObjectUrl( url );
+			debug( 'set image from cache', { url } );
+		} else {
+			debug( 'requesting image from API', { requestId, imageObjectUrl } );
+			const options = { query };
+			if ( maxSize !== null ) {
+				options.maxSize = maxSize;
 			}
+			wpcom
+				.undocumented()
+				.getAtomicSiteMediaViaProxyRetry( siteSlug, filePath, options )
+				.then( ( data: Blob ) => {
+					cacheResponse( requestId, data );
+					setImageObjectUrl( URL.createObjectURL( data ) );
+					debug( 'got image from API', { requestId, imageObjectUrl, data } );
+				} )
+				.catch( onError );
 		}
 
 		return () => {
@@ -89,7 +88,7 @@ const ProxiedImage: React.FC< ProxiedImageProps > = function ProxiedImage( {
 				URL.revokeObjectURL( imageObjectUrl );
 			}
 		};
-	}, [ filePath, requestId, siteSlug ] );
+	}, [ siteSlug, filePath, query ] );
 
 	if ( ! imageObjectUrl ) {
 		return placeholder as React.ReactElement;
