@@ -8,6 +8,7 @@ import { isEnabled } from '@automattic/calypso-config';
  * Internal dependencies
  */
 import rawAvailableDesignsConfig from '../available-designs-config.json';
+import { DESIGN_IMAGE_FOLDER } from '../constants';
 import type { MShotsOptions } from '../components/mshots-image';
 import type { Design } from '../types';
 
@@ -55,7 +56,7 @@ export const mShotOptions = (): MShotsOptions => {
 const canUseWebP = getCanUseWebP();
 
 export const getDesignImageUrl = ( design: Design ): string => {
-	return `/calypso/images/design-screenshots/${ design.slug }_${ design.template }_${
+	return `/calypso/${ DESIGN_IMAGE_FOLDER }/${ design.slug }_${ design.template }_${
 		design.theme
 	}.${ canUseWebP ? 'webp' : 'jpg' }?v=3`;
 };
