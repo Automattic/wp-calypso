@@ -23,7 +23,9 @@
 const captureWebsite = require( 'capture-website' );
 const sharp = require( 'sharp' );
 const wpUrl = require( '@wordpress/url' );
-const designs = require( '../client/landing/gutenboarding/available-designs-config.json' );
+const designs = require( '../packages/design-picker/src/available-designs-config.json' );
+
+// @TODO: should be using `DESIGN_IMAGE_FOLDER` from '@automattic/design-picker' package
 const screenshotsPath = './static/images/design-screenshots'; // Folder to store output images
 
 // image output variables
