@@ -159,8 +159,8 @@ The new reducer will automatically validate the persisted state when Calypso loa
 #### Example
 
 ```js
-const ageReducer = withPersistence(
-	( state = 0, action ) => ( GROW === action.type ? state + 1 : state )
+const ageReducer = withPersistence( ( state = 0, action ) =>
+	GROW === action.type ? state + 1 : state
 );
 
 const schema = { type: 'number', minimum: 0 };
