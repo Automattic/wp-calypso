@@ -94,27 +94,26 @@ const TitanNewMailbox = ( {
 					</Button>
 				</div>
 
-				<FormFieldset>
-					<FormLabel>
-						{ showLabels && translate( 'Email address' ) }
-						<FormTextInputWithAffixes
-							placeholder={ translate( 'Email' ) }
-							value={ mailbox }
-							isError={ hasMailboxError }
-							onChange={ ( event ) => {
-								onMailboxValueChange( 'mailbox', event.target.value.toLowerCase() );
-							} }
-							onBlur={ () => {
-								setMailboxFieldTouched( hasBeenValidated );
-							} }
-							onKeyUp={ onReturnKeyPress }
-							suffix={ `@${ domain }` }
-						/>
-					</FormLabel>
-					{ hasMailboxError && <FormInputValidation text={ mailboxError } isError /> }
-				</FormFieldset>
-
-				<div className="titan-mail-add-mailboxes__new-mailbox-password-and-is-admin">
+				<div className="titan-mail-add-mailboxes__new-mailbox-email-and-password">
+					<FormFieldset>
+						<FormLabel>
+							{ showLabels && translate( 'Email address' ) }
+							<FormTextInputWithAffixes
+								placeholder={ translate( 'Email' ) }
+								value={ mailbox }
+								isError={ hasMailboxError }
+								onChange={ ( event ) => {
+									onMailboxValueChange( 'mailbox', event.target.value.toLowerCase() );
+								} }
+								onBlur={ () => {
+									setMailboxFieldTouched( hasBeenValidated );
+								} }
+								onKeyUp={ onReturnKeyPress }
+								suffix={ `@${ domain }` }
+							/>
+						</FormLabel>
+						{ hasMailboxError && <FormInputValidation text={ mailboxError } isError /> }
+					</FormFieldset>
 					<FormFieldset>
 						<FormLabel>
 							{ showLabels && translate( 'Password' ) }
@@ -136,7 +135,9 @@ const TitanNewMailbox = ( {
 						</FormLabel>
 						{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
 					</FormFieldset>
+				</div>
 
+				<div className="titan-mail-add-mailboxes__new-mailbox-password-and-is-admin">
 					{ showIsAdminToggle && (
 						<FormFieldset>
 							<FormToggle
