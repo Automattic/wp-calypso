@@ -745,6 +745,10 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 
 				# Install modules
 				yarn install
+
+				# Compile TypeScript
+				yarn build
+
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
@@ -798,9 +802,6 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 
 				# Decrypt config
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
-
-				# Compile TypeScript
-				yarn build
 
 				# Run the test
 				export BROWSERSIZE="mobile"

@@ -1,22 +1,26 @@
 {
-	"extends": "@automattic/calypso-build/tsconfig",
 	"compilerOptions": {
-		"allowSyntheticDefaultImports": true,
-		// Target latest version of ECMAScript.
-		"target": "ESNext",
-		// Search under node_modules for non-relative imports.
-		"moduleResolution": "node",
-		// Process & infer types from .js files.
+		"target": "es2020",
+		"lib": [ "DOM", "es2020" ],
+		"baseUrl": ".",
+		"module": "commonjs",
 		"allowJs": false,
-		// Don't emit; allow Babel to transform files.
-		"noEmit": false,
-		// Enable strictest settings like strictNullChecks & noImplicitAny.
+		"declaration": true,
+		"declarationDir": "types",
+		"outDir": "dist",
+		"rootDir": ".",
 		"strict": true,
-		// Import non-ES modules as default imports.
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"moduleResolution": "node",
 		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"module": "CommonJS"
+		"forceConsistentCasingInFileNames": true,
+		"types": [ "node" ],
+		"noEmitHelpers": true,
+		"importHelpers": true,
+		"composite": true
 	},
-	"include": [ "lib" ],
-	"exclude": [ "node_modules", "specs**/" ]
+	"include": [ "lib" ]
 }

@@ -6,7 +6,7 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import * as browserManager from '../lib/browser-manager';
+import * as browserManager from '../dist/lib/browser-manager';
 
 import LoginPage from '../lib/pages/login-page';
 
