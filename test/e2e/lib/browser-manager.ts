@@ -9,6 +9,11 @@
 import { Browser, BrowserContext, chromium } from 'playwright';
 import config from 'config';
 
+/**
+ * Internal dependencies
+ */
+import type { screenSize, localeCode } from './types';
+
 const browserStartTimeoutMS = 2000;
 
 export let browser: Browser;
@@ -19,10 +24,12 @@ export let browser: Browser;
  * By default, this function will return 'desktop' as the target.
  * To specify another screen size, set the BROWSERSIZE environment variable.
  *
- * @returns {string} String representation of the target screen size.
+ * @returns {screenSize} Target screen size.
  */
-export function targetScreenSize(): string {
-	return ! process.env.BROWSERSIZE ? 'desktop' : process.env.BROWSERSIZE.toLowerCase();
+export function getTargetScreenSize(): screenSize {
+	return ! process.env.BROWSERSIZE
+		? 'desktop'
+		: ( process.env.BROWSERSIZE.toLowerCase() as screenSize );
 }
 
 /**
@@ -31,23 +38,24 @@ export function targetScreenSize(): string {
  * By default, this function will return 'en' as the locale.
  * To set the locale, set the BROWSERLOCALE environment variable.
  *
- * @returns {string} String representation of the locale.
+ * @returns {localeCode} Target locale code.
  */
-export function targetLocale(): string {
+export function getTargetLocale(): localeCode {
 	return ! process.env.BROWSERLOCALE ? 'en' : process.env.BROWSERLOCALE.toLowerCase();
 }
 
 /**
  * Returns a set of screen dimensions in numbers.
  *
- * This function takes the string output of `targetScreenSize` and returns an object
- * key/value mapping of the screen diemensions represented by the string.
+ * This function takes the output of `getTargetScreenSize` and returns an
+ * object key/value mapping of the screen diemensions represented by
+ * the output.
  *
  * @returns {number, number} Object with key/value mapping of screen dimensions.
  * @throws {Error} If target screen size was not set.
  */
 export function getScreenDimension(): { width: number; height: number } {
-	switch ( targetScreenSize() ) {
+	switch ( getTargetScreenSize() ) {
 		case 'mobile':
 			return { width: 400, height: 1000 };
 		case 'tablet':
