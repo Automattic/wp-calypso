@@ -7,15 +7,13 @@ import { isEnabled } from '@automattic/calypso-config';
 /**
  * Internal dependencies
  */
-import availableDesignsConfig from '../available-designs-config.json';
+import rawAvailableDesignsConfig from '../available-designs-config.json';
 import type { MShotsOptions } from '../components/mshots-image';
 import type { Design } from '../types';
 
 interface AvailableDesigns {
 	featured: Design[];
 }
-
-const availableDesigns = availableDesignsConfig as Readonly< AvailableDesigns >;
 
 function getCanUseWebP() {
 	if ( typeof window !== 'undefined' ) {
@@ -62,11 +60,13 @@ export const getDesignImageUrl = ( design: Design ): string => {
 	}.${ canUseWebP ? 'webp' : 'jpg' }?v=3`;
 };
 
+export const availableDesignsConfig = rawAvailableDesignsConfig as Readonly< AvailableDesigns >;
+
 export function getAvailableDesigns(
 	includeAlphaDesigns: boolean = isEnabled( 'gutenboarding/alpha-templates' ),
 	useFseDesigns: boolean = isEnabled( 'gutenboarding/site-editor' )
 ): AvailableDesigns {
-	let designs = availableDesigns;
+	let designs = availableDesignsConfig;
 
 	// We can tell different environments (via the config JSON) to show pre-prod "alpha" designs.
 	// Otherwise they'll be hidden by default.
@@ -89,3 +89,5 @@ export function getAvailableDesigns(
 
 	return designs;
 }
+
+export const availableDesigns = getAvailableDesigns();

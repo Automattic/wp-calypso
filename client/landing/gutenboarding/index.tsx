@@ -11,7 +11,7 @@ import { subscribe, select, dispatch } from '@wordpress/data';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import type { Site as SiteStore } from '@automattic/data-stores';
 import accessibleFocus from '@automattic/accessible-focus';
-import { getAvailableDesigns } from '@automattic/design-picker';
+import { availableDesigns } from '@automattic/design-picker';
 import type { Design } from '@automattic/design-picker';
 
 /**
@@ -139,7 +139,6 @@ function waitForSelectedSite(): Promise< Site | undefined > {
  */
 function ensureRandomizedDesignsAreUpToDate() {
 	const designsInStore = select( ONBOARD_STORE ).getRandomizedDesigns();
-	const availableDesigns = getAvailableDesigns();
 	if ( ! isDeepEqual( designsInStore.featured, availableDesigns.featured ) ) {
 		dispatch( ONBOARD_STORE ).setRandomizedDesigns( {
 			...availableDesigns,
