@@ -47,7 +47,8 @@ const AutoresizingFormTextarea = (
 					onBlur={ onBlur }
 					onChange={ onChange }
 					siteId={ siteId }
-					enableAutoFocus={ enableAutoFocus }
+					// eslint-disable-next-line jsx-a11y/no-autofocus
+					autoFocus={ enableAutoFocus }
 					forwardedRef={ forwardedRef }
 				/>
 			</AutoDirection>
