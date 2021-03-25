@@ -31,7 +31,7 @@
 		"composite": true
 	},
 	"include": [ "src" ],
-	"exclude": [ "**/__tests__/*" ],
+	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ],
 	"references": [
 		{ "path": "../data-stores" },
 		{ "path": "../calypso-analytics" },
