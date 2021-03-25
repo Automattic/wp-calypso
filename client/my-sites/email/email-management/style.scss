@@ -5,3 +5,53 @@
 		margin: 20px 0 40px;
 	}
 }
+
+.email-home__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+}
+
+.email-home__header-cart {
+	display: flex;
+
+	> div {
+		margin-top: auto;
+		margin-bottom: auto;
+	}
+
+	.popover-cart {
+		margin-right: 8px;
+	}
+
+	.popover-cart .header-button,
+	.popover-cart .header-button:hover {
+		min-height: initial;
+		background: none;
+		color: var( --color-text );
+	}
+
+	.cart__count-badge .count {
+		top: -7px;
+		right: -3px;
+	}
+}
+
+.email-list-active__items {
+	> .card {
+		display: flex;
+		align-items: center;
+	}
+}
+
+.email-list-active__item-icon {
+	> img, svg {
+		height: 36px;
+		width: 36px;
+		margin-right: 10px;
+	}
+}
+
+.email-list-inactive__items {
+	margin-top: 15px;
+}

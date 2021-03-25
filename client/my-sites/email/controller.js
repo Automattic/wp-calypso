@@ -15,6 +15,7 @@ import TitanMailQuantitySelection from 'calypso/my-sites/email/titan-mail-quanti
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import TitanControlPanelRedirect from 'calypso/my-sites/email/email-management/titan-control-panel-redirect';
 import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan-management-iframe';
+import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';
 
 export default {
 	emailManagementAddGSuiteUsers( pageContext, next ) {
@@ -88,7 +89,15 @@ export default {
 	},
 
 	emailManagement( pageContext, next ) {
-		pageContext.primary = <EmailManagement selectedDomainName={ pageContext.params.domain } />;
+		if ( isEnabled( 'email/centralized-home' ) ) {
+			pageContext.primary = (
+				<CalypsoShoppingCartProvider>
+					<EmailManagementHome selectedDomainName={ pageContext.params.domain } />
+				</CalypsoShoppingCartProvider>
+			);
+		} else {
+			pageContext.primary = <EmailManagement selectedDomainName={ pageContext.params.domain } />;
+		}
 
 		next();
 	},
