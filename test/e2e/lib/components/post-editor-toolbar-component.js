@@ -20,24 +20,10 @@ export default class PostEditorToolbarComponent extends AsyncBaseContainer {
 		this.publishButtonSelector = By.css( '.editor-publish-button' );
 	}
 
-	async ensureSaved( { clickSave = true } = {} ) {
-		const onMobile = driverManager.currentScreenSize() === 'mobile';
-
-		const mobileSaveSelector = By.css(
-			'div.post-editor__content .editor-ground-control__status button.editor-ground-control__save'
-		);
-		const desktopSaveSelector = By.css(
-			'div.card.editor-ground-control .editor-ground-control__status button.editor-ground-control__save'
-		);
-		const saveSelector = onMobile ? mobileSaveSelector : desktopSaveSelector;
-
+	async ensureSaved() {
 		const savedSelector = By.css(
 			'span.editor-ground-control__save-status[data-e2e-status="Saved"]'
 		);
-
-		if ( clickSave === true ) {
-			await driverHelper.clickIfPresent( this.driver, saveSelector, 3 );
-		}
 
 		return await driverHelper.waitTillPresentAndDisplayed( this.driver, savedSelector );
 	}

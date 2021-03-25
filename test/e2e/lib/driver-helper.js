@@ -221,28 +221,13 @@ export function isEventuallyPresentAndDisplayed( driver, selector, waitOverride 
 		);
 }
 
-export function clickIfPresent( driver, selector, attempts ) {
-	if ( attempts === undefined ) {
-		attempts = 1;
+export async function clickIfPresent( driver, locator ) {
+	const element = ( await driver.findElements( locator ) )[ 0 ];
+	if ( ! element ) {
+		return null;
 	}
-	for ( let x = 0; x < attempts; x++ ) {
-		driver.findElement( selector ).then(
-			async function ( element ) {
-				await highlightElement( driver, element );
-				element.click().then(
-					function () {
-						return true;
-					},
-					function () {
-						return true;
-					}
-				);
-			},
-			function () {
-				return true;
-			}
-		);
-	}
+
+	return clickWhenClickable( driver, element );
 }
 
 export async function getElementCount( driver, selector ) {
