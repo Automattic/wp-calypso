@@ -9,8 +9,8 @@ import React, { FunctionComponent, useCallback, useEffect } from 'react';
  * Internal dependencies
  */
 import { Button } from '@wordpress/components';
-import { dismiss, dismissAsReviewed } from 'calypso/state/jetpack-review-prompt/actions';
-import { getIsDismissed, getDismissCount } from 'calypso/state/jetpack-review-prompt/selectors';
+import { dismiss } from 'calypso/state/jetpack-review-prompt/actions';
+import { getIsDismissed } from 'calypso/state/jetpack-review-prompt/selectors';
 import { hasReceivedRemotePreferences as getHasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import Gridicon from 'calypso/components/gridicon';
@@ -25,28 +25,25 @@ const JetpackReviewPrompt: FunctionComponent = () => {
 	const hasReceivedRemotePreferences = useSelector( ( state ) =>
 		getHasReceivedRemotePreferences( state )
 	);
-	const isDismissed = useSelector( ( state ) => getIsDismissed( state ) );
-	const dismissCount = useSelector( ( state ) => getDismissCount( state ) );
+	const isDismissed = useSelector( ( state ) => getIsDismissed( state, 'restore' ) );
 
 	const dismissPrompt = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_backup_review_prompt_dismiss', {
-				dismiss_count: dismissCount,
 				reviewed: false,
 			} )
 		);
-		dispatch( dismiss( dismissCount ) );
-	}, [ dispatch, dismissCount ] );
+		dispatch( dismiss( 'restore', Date.now() ) );
+	}, [ dispatch ] );
 
 	const dismissPromptAsReviewed = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_backup_review_prompt_dismiss', {
-				dismiss_count: dismissCount,
 				reviewed: true,
 			} )
 		);
-		dispatch( dismissAsReviewed( dismissCount ) );
-	}, [ dispatch, dismissCount ] );
+		dispatch( dismiss( 'restore', Date.now(), true ) );
+	}, [ dispatch ] );
 
 	useEffect( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_review_prompt_view' ) );
