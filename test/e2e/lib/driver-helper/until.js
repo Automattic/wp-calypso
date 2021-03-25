@@ -55,6 +55,22 @@ export function elementClickable( locator ) {
 	);
 }
 
+export function elementSelected( locator ) {
+	const locatorStr = getLocatorString( locator );
+	return new WebElementCondition(
+		`for element to be selected ${ locatorStr }`,
+		async function ( driver ) {
+			const element = ( await driver.findElements( locator ) )[ 0 ];
+			if ( ! element ) {
+				return null;
+			}
+			const isSelected = await element.isSelected();
+
+			return isSelected ? element : null;
+		}
+	);
+}
+
 export function elementFocused( locator ) {
 	const locatorStr = getLocatorString( locator );
 	return new WebElementCondition(
@@ -92,6 +108,24 @@ export function imageVisible( locator ) {
 			);
 
 			return isVisible ? image : null;
+		}
+	);
+}
+
+export function fieldClearable( locator ) {
+	const locatorStr = getLocatorString( locator );
+	return new WebElementCondition(
+		`for field to be clearable ${ locatorStr }`,
+		async function ( driver ) {
+			const field = ( await driver.findElements( locator ) )[ 0 ];
+			if ( ! field ) {
+				return null;
+			}
+			await driver.executeScript( "arguments[0].value = '';", field );
+			await field.clear();
+			const isClearable = await field.getAttribute( 'value' ).then( ( v ) => v === '' );
+
+			return isClearable ? field : null;
 		}
 	);
 }
