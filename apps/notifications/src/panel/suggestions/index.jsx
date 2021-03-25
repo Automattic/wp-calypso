@@ -3,13 +3,14 @@
  */
 import React from 'react';
 import { escapeRegExp, find, findIndex } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import actions from '../state/actions';
+import getSiteSuggestions from '../state/selectors/get-site-suggestions';
 import Suggestion from './suggestion';
-
-const debug = require( 'debug' )( 'notifications:note' );
 
 const KEY_ENTER = 13;
 const KEY_ESC = 27;
@@ -41,13 +42,6 @@ const getOffsetTop = ( element ) => {
 	return element.offsetParent ? offset + getOffsetTop( element.offsetParent ) : offset;
 };
 
-const stopEvent = function ( event ) {
-	if ( this.state.suggestionsVisible ) {
-		event.stopPropagation();
-		event.preventDefault();
-	}
-};
-
 const getSuggestionIndexBySelectedId = function ( suggestions ) {
 	if ( ! this.state.selectedSuggestionId ) {
 		return 0;
@@ -58,43 +52,37 @@ const getSuggestionIndexBySelectedId = function ( suggestions ) {
 	return index > -1 ? index : null;
 };
 
-const getSuggestionById = function () {
-	if ( ! this.state.selectedSuggestionId && this.props.suggestions.length > 0 ) {
-		return this.props.suggestions[ 0 ];
-	}
-
-	return (
-		find( this.props.suggestions, ( { ID } ) => ID === this.state.selectedSuggestionId ) || null
-	);
-};
-
-export const SuggestionsMixin = {
-	componentWillUnmount() {
-		window.removeEventListener( 'keydown', this.handleSuggestionsKeyDown, false );
-		window.removeEventListener( 'keyup', this.handleSuggestionsKeyUp, false );
-		window.removeEventListener( 'blur', this.handleSuggestionBlur, true );
-	},
+class Suggestions extends React.Component {
+	suggestionList = React.createRef();
+	suggestionNodes = {};
+	state = {};
 
 	componentDidMount() {
 		window.addEventListener( 'keydown', this.handleSuggestionsKeyDown, false );
 		window.addEventListener( 'keyup', this.handleSuggestionsKeyUp, false );
 		window.addEventListener( 'blur', this.handleSuggestionBlur, true );
 
-		this.props.fetchSuggestions( this.props.note.meta.ids.site );
-	},
+		this.props.fetchSuggestions( this.props.site );
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'keydown', this.handleSuggestionsKeyDown, false );
+		window.removeEventListener( 'keyup', this.handleSuggestionsKeyUp, false );
+		window.removeEventListener( 'blur', this.handleSuggestionBlur, true );
+	}
 
 	componentDidUpdate() {
-		if ( ! this.suggestionsMixin_suggestionList ) {
+		if ( ! this.suggestionList.current ) {
 			return;
 		}
 
-		const suggestionList = this.suggestionsMixin_suggestionList;
+		const suggestionList = this.suggestionList.current;
 
 		if ( ! this.suggestionListMarginTop ) {
 			this.suggestionListMarginTop = window.getComputedStyle( suggestionList )[ 'margin-top' ];
 		}
 
-		const textArea = this.replyInput;
+		const textArea = this.props.getContextEl();
 		const textAreaClientRect = textArea.getBoundingClientRect();
 
 		this.suggestionsAbove =
@@ -110,22 +98,21 @@ export const SuggestionsMixin = {
 				'px';
 			suggestionList.style.marginTop = '0';
 		}
-	},
+	}
 
-	getCaretPosition: ( element ) => element.selectionStart,
-
-	setCaretPosition( element, position ) {
-		element.focus();
-
-		setTimeout( () => element.setSelectionRange( position, position ), 0 );
-	},
+	stopEvent( event ) {
+		if ( this.state.suggestionsVisible ) {
+			event.stopPropagation();
+			event.preventDefault();
+		}
+	}
 
 	getQueryText( element ) {
 		if ( ! element.value ) {
 			return null;
 		}
 
-		const textBeforeCaret = element.value.slice( 0, this.getCaretPosition( element ) );
+		const textBeforeCaret = element.value.slice( 0, element.selectionStart );
 
 		const match = suggestionMatcher.exec( textBeforeCaret );
 
@@ -136,35 +123,15 @@ export const SuggestionsMixin = {
 		const [ , suggestion ] = match;
 
 		return escapeRegExp( suggestion );
-	},
+	}
 
-	insertSuggestion( element, suggestion ) {
-		if ( ! suggestion ) {
-			return;
-		}
-
-		const caretPosition = this.getCaretPosition( element );
-		const startString = this.state.value.slice(
-			0,
-			Math.max( caretPosition - this.state.suggestionsQuery.length, 0 )
-		);
-		const endString = this.state.value.slice( caretPosition );
-
-		this.setState( {
-			value: startString + suggestion.user_login + ' ' + endString,
-			suggestionsVisible: false,
-		} );
-
-		this.setCaretPosition( element, startString.length + suggestion.user_login.length + 1 );
-	},
-
-	handleSuggestionsKeyDown( event ) {
+	handleSuggestionsKeyDown = ( event ) => {
 		if ( ! this.state.suggestionsVisible || this.props.suggestions.length === 0 ) {
 			return;
 		}
 
 		if ( KEY_ENTER === event.keyCode ) {
-			stopEvent.call( this, event );
+			this.stopEvent( event );
 			return;
 		}
 
@@ -172,7 +139,7 @@ export const SuggestionsMixin = {
 			return;
 		}
 
-		stopEvent.call( this, event );
+		this.stopEvent( event );
 
 		const { suggestions } = this.state;
 		const prevIndex = getSuggestionIndexBySelectedId.call( this, suggestions );
@@ -193,15 +160,25 @@ export const SuggestionsMixin = {
 			},
 			this.ensureSelectedSuggestionVisibility
 		);
-	},
+	};
 
-	handleSuggestionsKeyUp( { keyCode, target } ) {
+	getSuggestionById() {
+		if ( ! this.state.selectedSuggestionId && this.props.suggestions.length > 0 ) {
+			return this.props.suggestions[ 0 ];
+		}
+
+		return (
+			find( this.props.suggestions, ( { ID } ) => ID === this.state.selectedSuggestionId ) || null
+		);
+	}
+
+	handleSuggestionsKeyUp = ( { keyCode, target } ) => {
 		if ( KEY_ENTER === keyCode ) {
 			if ( ! this.state.suggestionsVisible || this.props.suggestions.length === 0 ) {
 				return;
 			}
 
-			this.insertSuggestion( target, getSuggestionById.call( this ) );
+			this.props.onInsertSuggestion( this.getSuggestionById(), this.state.suggestionsQuery );
 			return this.setState( { suggestionsVisible: false } );
 		}
 
@@ -225,28 +202,27 @@ export const SuggestionsMixin = {
 			selectedSuggestionId: suggestions.length > 0 ? suggestions[ 0 ].ID : null,
 			suggestions,
 		} );
-	},
+	};
 
-	handleSuggestionClick( suggestion ) {
-		this.insertSuggestion( this.replyInput, suggestion );
-	},
+	handleSuggestionClick = ( suggestion ) => {
+		this.props.onInsertSuggestion( suggestion, this.state.suggestionsQuery );
+		this.setState( { suggestionsVisible: false } );
+	};
 
-	handleSuggestionBlur() {
-		if ( this.suggestionsCancelBlur || ! this.isMounted() ) {
+	handleSuggestionBlur = () => {
+		if ( this.suggestionsCancelBlur ) {
 			return;
 		}
 
 		this.setState( { suggestionsVisible: false } );
-	},
+	};
 
-	ensureSelectedSuggestionVisibility() {
-		if ( this.suggestionsAbove || ! this.suggestionsMixin_suggestionNodes ) {
+	ensureSelectedSuggestionVisibility = () => {
+		if ( this.suggestionsAbove ) {
 			return;
 		}
 
-		const suggestionElement = this.suggestionsMixin_suggestionNodes[
-			this.state.selectedSuggestionId
-		];
+		const suggestionElement = this.suggestionNodes[ this.state.selectedSuggestionId ];
 
 		if ( ! suggestionElement ) {
 			return;
@@ -257,19 +233,19 @@ export const SuggestionsMixin = {
 		if ( offsetTop > window.innerHeight ) {
 			suggestionElement.scrollIntoView();
 		}
-	},
+	};
 
-	renderSuggestions() {
+	render() {
 		const { suggestions, suggestionsVisible, selectedSuggestionId } = this.state;
 
 		if ( ! suggestionsVisible || ! suggestions.length ) {
-			return;
+			return null;
 		}
 
 		return (
 			<div
 				className="wpnc__suggestions"
-				ref={ ( div ) => ( this.suggestionsMixin_suggestionList = div ) }
+				ref={ this.suggestionList }
 				onMouseEnter={ () => ( this.suggestionsCancelBlur = true ) }
 				onMouseLeave={ () => ( this.suggestionsCancelBlur = false ) }
 			>
@@ -277,18 +253,13 @@ export const SuggestionsMixin = {
 					{ suggestions.map( ( suggestion ) => (
 						<Suggestion
 							key={ 'user-suggestion-' + suggestion.ID }
-							getElement={ ( suggestionElement ) =>
-								( this.suggestionsMixin_suggestionNodes = {
-									...this.suggestionsMixin_suggestionNodes,
-									[ suggestion.ID ]: suggestionElement,
-								} )
-							}
-							onClick={ this.handleSuggestionClick.bind( this, suggestion ) }
-							onMouseEnter={ function ( suggestion ) {
-								this.setState( {
-									selectedSuggestionId: suggestion.ID,
-								} );
-							}.bind( this, suggestion ) }
+							getElement={ ( suggestionElement ) => {
+								this.suggestionNodes[ suggestion.ID ] = suggestionElement;
+							} }
+							onClick={ () => this.handleSuggestionClick( suggestion ) }
+							onMouseEnter={ () => {
+								this.setState( { selectedSuggestionId: suggestion.ID } );
+							} }
 							avatarUrl={ suggestion.image_URL }
 							username={ suggestion.user_login }
 							fullName={ suggestion.display_name }
@@ -299,7 +270,14 @@ export const SuggestionsMixin = {
 				</ul>
 			</div>
 		);
-	},
-};
+	}
+}
 
-export default SuggestionsMixin;
+export default connect(
+	( state, { site } ) => ( {
+		suggestions: getSiteSuggestions( state, site ),
+	} ),
+	{
+		fetchSuggestions: actions.suggestions.fetchSuggestions,
+	}
+)( Suggestions );
