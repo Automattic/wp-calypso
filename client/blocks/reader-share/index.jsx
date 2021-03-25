@@ -71,6 +71,7 @@ function buildQuerystringForPost( post ) {
 	args.title = `${ post.title } — ${ post.site_name }`;
 	args.text = post.excerpt;
 	args.url = post.URL;
+	args.is_post_share = true;
 
 	const params = new URLSearchParams( args );
 	return params.toString();
