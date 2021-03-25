@@ -27,7 +27,7 @@ import { withPersistence } from './with-persistence';
  * then this super-reducer will abort and return the
  * previous state.
  *
- * The keyed reducer handles the SERIALIZE and DESERIALIZE actions specially and makes sure
+ * The keyed reducer implements the `serialize` and `deserialize` methods and makes sure
  * that Calypso state persistence works as expected (ignoring empty and initial state,
  * serialization into multiple storage keys etc.)
  *
