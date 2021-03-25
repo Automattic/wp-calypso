@@ -50,23 +50,6 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementNewTitanAccount(
-				':site',
-				':domain',
-				paths.emailManagementAllSitesPrefix
-			),
-			paths.emailManagementNewTitanAccount( ':site', ':domain' ),
-		],
-		handlers: [
-			...commonHandlers,
-			controller.emailManagementNewTitanAccount,
-			makeLayout,
-			clientRender,
-		],
-	} );
-
-	registerMultiPage( {
-		paths: [
 			paths.emailManagementNewGSuiteAccount(
 				':site',
 				':domain',
@@ -95,6 +78,23 @@ export default function () {
 		handlers: [
 			...commonHandlers,
 			controller.emailManagementManageTitanAccount,
+			makeLayout,
+			clientRender,
+		],
+	} );
+
+	registerMultiPage( {
+		paths: [
+			paths.emailManagementNewTitanAccount(
+				':site',
+				':domain',
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementNewTitanAccount( ':site', ':domain' ),
+		],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementNewTitanAccount,
 			makeLayout,
 			clientRender,
 		],
