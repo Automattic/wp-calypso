@@ -281,7 +281,7 @@ function getFallbackDestination( {
 			if ( isJetpackCloud() ) {
 				if ( redirectCloudCheckoutToWpAdmin() && adminUrl ) {
 					debug( 'checkout is Jetpack Cloud, returning wp-admin url' );
-					return `${ adminUrl }admin.php?page=jetpack#/my-plan`;
+					return `${ adminUrl }admin.php?page=jetpack#/recommendations`;
 				}
 				debug( 'checkout is Jetpack Cloud, returning Jetpack Redirect API url' );
 				return `${ JETPACK_REDIRECT_URL }&site=${ siteSlug }&query=${ encodeURIComponent(
