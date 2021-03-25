@@ -26,6 +26,7 @@ const TitanNewMailboxList = ( {
 	mailboxes,
 	onMailboxesChange,
 	onReturnKeyPress = noop,
+	showLabels = true,
 } ) => {
 	const translate = useTranslate();
 
@@ -74,6 +75,7 @@ const TitanNewMailboxList = ( {
 					onMailboxValueChange={ onMailboxValueChange( mailbox.uuid ) }
 					mailbox={ mailbox }
 					onReturnKeyPress={ onReturnKeyPress }
+					showLabels={ showLabels }
 				/>
 			) ) }
 
@@ -95,6 +97,7 @@ TitanNewMailboxList.propTypes = {
 	mailboxes: PropTypes.arrayOf( getMailboxPropTypeShape() ).isRequired,
 	onMailboxesChange: PropTypes.func.isRequired,
 	onReturnKeyPress: PropTypes.func,
+	showLabels: PropTypes.bool,
 };
 
 export default TitanNewMailboxList;

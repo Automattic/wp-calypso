@@ -33,6 +33,7 @@ const TitanNewMailbox = ( {
 		name: { value: name, error: nameError },
 		password: { value: password, error: passwordError },
 	},
+	showLabels = true,
 } ) => {
 	const translate = useTranslate();
 
@@ -65,7 +66,7 @@ const TitanNewMailbox = ( {
 				<div className="titan-mail-add-mailboxes__new-mailbox-name-and-remove">
 					<FormFieldset>
 						<FormLabel>
-							{ translate( 'Full name' ) }
+							{ showLabels && translate( 'Full name' ) }
 							<FormTextInput
 								placeholder={ translate( 'Full name' ) }
 								value={ name }
@@ -95,7 +96,7 @@ const TitanNewMailbox = ( {
 
 				<FormFieldset>
 					<FormLabel>
-						{ translate( 'Email address' ) }
+						{ showLabels && translate( 'Email address' ) }
 						<FormTextInputWithAffixes
 							placeholder={ translate( 'Email' ) }
 							value={ mailbox }
@@ -116,7 +117,7 @@ const TitanNewMailbox = ( {
 				<div className="titan-mail-add-mailboxes__new-mailbox-password-and-is-admin">
 					<FormFieldset>
 						<FormLabel>
-							{ translate( 'Password' ) }
+							{ showLabels && translate( 'Password' ) }
 							<FormPasswordInput
 								autoCapitalize="off"
 								autoCorrect="off"
@@ -153,11 +154,18 @@ const TitanNewMailbox = ( {
 
 				<FormFieldset>
 					<FormLabel>
-						{ translate( 'Password reset email address', {
-							comment: 'This is the email address we will send password reset emails to',
-						} ) }
+						{ showLabels &&
+							translate( 'Password reset email address', {
+								comment: 'This is the email address we will send password reset emails to',
+							} ) }
 						<FormTextInput
-							placeholder={ translate( 'Email address' ) }
+							placeholder={
+								showLabels
+									? translate( 'Email address' )
+									: translate( 'Password reset email address', {
+											comment: 'This is the email address we will send password reset emails to',
+									  } )
+							}
 							value={ alternativeEmail }
 							isError={ hasAlternativeEmailError }
 							onChange={ ( event ) => {
@@ -184,6 +192,7 @@ TitanNewMailbox.propTypes = {
 	onMailboxValueChange: PropTypes.func.isRequired,
 	onReturnKeyPress: PropTypes.func.isRequired,
 	mailbox: getMailboxPropTypeShape(),
+	showLabels: PropTypes.bool.isRequired,
 };
 
 export default TitanNewMailbox;
