@@ -276,7 +276,7 @@ function load_wpcom_block_patterns_modifications() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_patterns_modifications' );
 
 /**
- * Load Block Inserter Modifications module
+ * Load Block Inserter Modifications module.
  */
 function load_block_inserter_modifications() {
 	require_once __DIR__ . '/block-inserter-modifications/index.php';
