@@ -663,16 +663,8 @@ class CalypsoifyIframe extends Component<
 	onIframeLoaded = async ( iframeUrl: string ) => {
 		clearTimeout( this.waitForIframeToLoad );
 		if ( ! this.successfulIframeLoad ) {
-			// Sometimes (like in IE) the WindowActions.Loaded message arrives after
-			// the onLoad event is fired. To deal with this case we'll wait for a tick
-			// and check `this.successfulIframeLoad` value again
-			const successfulIframeLoadFromNextTick = new Promise( ( resolve ) =>
-				setTimeout( () => resolve( this.successfulIframeLoad ), 0 )
-			);
-			if ( ! ( await successfulIframeLoadFromNextTick ) ) {
-				window.location.replace( iframeUrl );
-				return;
-			}
+			window.location.replace( iframeUrl );
+			return;
 		}
 		window.performance?.mark( 'iframe_loaded' );
 		this.setState( { isIframeLoaded: true, currentIFrameUrl: iframeUrl } );
