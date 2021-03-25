@@ -6,8 +6,9 @@
 /**
  * External dependencies
  */
-import { Browser, BrowserContext, chromium } from 'playwright';
+import { chromium } from 'playwright';
 import config from 'config';
+import type { Browser, BrowserContext } from 'playwright';
 
 /**
  * Internal dependencies
