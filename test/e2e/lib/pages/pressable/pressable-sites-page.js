@@ -50,13 +50,6 @@ export default class PressableSitesPage extends AsyncBaseContainer {
 		);
 	}
 
-	async gotoWPAdmin( siteName ) {
-		const siteSettingsButton = By.xpath(
-			`//div[@class='site-bottom-wrapper'][descendant::a[contains(.,'${ siteName }')]]//div[contains(@class, 'manage-settings')]`
-		);
-		return await driverHelper.clickWhenClickable( this.driver, siteSettingsButton );
-	}
-
 	async deleteFirstSite() {
 		const siteSettingsButton = By.xpath(
 			"//div[@class='site-bottom-wrapper'][descendant::a[contains(.,'e2eflowtesting')]]//div[contains(@class, 'manage-settings')]"
