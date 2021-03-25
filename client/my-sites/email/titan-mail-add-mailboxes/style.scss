@@ -17,6 +17,19 @@
 		.form-fieldset:first-child {
 			flex-grow: 2;
 		}
+
+		.titan-mail-add-mailboxes__new-mailbox-remove-mailbox-button {
+			height: 40px;
+			width: 50px;
+
+			.gridicon {
+				margin-right: 0;
+			}
+
+			span {
+				display: none;
+			}
+		}
 	}
 
 	.titan-mail-add-mailboxes__new-mailbox-remove-mailbox-button,
@@ -31,7 +44,7 @@
 
 		@include break-mobile {
 			margin-left: 1em;
-			margin-top: 1.5em;
+			margin-top: 20px;
 		}
 	}
 }
