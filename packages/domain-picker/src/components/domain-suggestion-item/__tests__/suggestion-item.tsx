@@ -10,19 +10,12 @@ import type { RenderResult } from '@testing-library/react';
  */
 // https://jestjs.io/docs/en/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
 import '../../../__mocks__/matchMedia.mock';
-import { MOCK_DOMAIN_SUGGESTION } from '../../../__mocks__/suggestions';
-import SuggestionItem from '../suggestion-item';
 
-const MOCK_PROPS = {
-	railcarId: 'id',
-	domain: MOCK_DOMAIN_SUGGESTION.domain_name,
-	cost: MOCK_DOMAIN_SUGGESTION.cost,
-	onSelect: jest.fn(),
-	onRender: jest.fn(),
-};
+import SuggestionItem from '../suggestion-item';
+import { MOCK_SUGGESTION_ITEM_PARTIAL_PROPS } from '../__mocks__';
 
 const renderComponent = ( props = {} ): RenderResult =>
-	render( <SuggestionItem { ...MOCK_PROPS } { ...props } /> );
+	render( <SuggestionItem { ...MOCK_SUGGESTION_ITEM_PARTIAL_PROPS } { ...props } /> );
 
 describe( 'traintracks events', () => {
 	afterEach( () => {
@@ -33,23 +26,23 @@ describe( 'traintracks events', () => {
 		it( 'should send render events when first rendered', async () => {
 			renderComponent();
 
-			expect( MOCK_PROPS.onRender ).toHaveBeenCalledTimes( 1 );
+			expect( MOCK_SUGGESTION_ITEM_PARTIAL_PROPS.onRender ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		it( 'should not send a render event when re-rendered with the same props', async () => {
 			const { rerender } = renderComponent();
 
-			MOCK_PROPS.onRender.mockClear();
-			rerender( <SuggestionItem { ...MOCK_PROPS } /> );
+			MOCK_SUGGESTION_ITEM_PARTIAL_PROPS.onRender.mockClear();
+			rerender( <SuggestionItem { ...MOCK_SUGGESTION_ITEM_PARTIAL_PROPS } /> );
 
-			expect( MOCK_PROPS.onRender ).not.toHaveBeenCalled();
+			expect( MOCK_SUGGESTION_ITEM_PARTIAL_PROPS.onRender ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should not send a render event when unrelated props change', async () => {
 			const { rerender } = renderComponent();
-			const updatedProps = { ...MOCK_PROPS };
+			const updatedProps = { ...MOCK_SUGGESTION_ITEM_PARTIAL_PROPS };
 
-			MOCK_PROPS.onRender.mockClear();
+			MOCK_SUGGESTION_ITEM_PARTIAL_PROPS.onRender.mockClear();
 			rerender( <SuggestionItem { ...updatedProps } /> );
 
 			expect( updatedProps.onRender ).not.toHaveBeenCalled();
@@ -57,9 +50,13 @@ describe( 'traintracks events', () => {
 
 		it( 'should send a render event when domain name and railcarId changes', async () => {
 			const { rerender } = renderComponent();
-			const updatedProps = { ...MOCK_PROPS, domain: 'example1.com', railcarId: 'id1' };
+			const updatedProps = {
+				...MOCK_SUGGESTION_ITEM_PARTIAL_PROPS,
+				domain: 'example1.com',
+				railcarId: 'id1',
+			};
 
-			MOCK_PROPS.onRender.mockClear();
+			MOCK_SUGGESTION_ITEM_PARTIAL_PROPS.onRender.mockClear();
 			rerender( <SuggestionItem { ...updatedProps } /> );
 
 			expect( updatedProps.onRender ).toHaveBeenCalledTimes( 1 );
@@ -72,7 +69,9 @@ describe( 'traintracks events', () => {
 
 			fireEvent.click( screen.getByRole( 'button' ) );
 
-			expect( MOCK_PROPS.onSelect ).toHaveBeenCalledWith( MOCK_PROPS.domain );
+			expect( MOCK_SUGGESTION_ITEM_PARTIAL_PROPS.onSelect ).toHaveBeenCalledWith(
+				MOCK_SUGGESTION_ITEM_PARTIAL_PROPS.domain
+			);
 		} );
 	} );
 } );
@@ -84,7 +83,7 @@ describe( 'conditional elements', () => {
 
 	/* eslint-disable jest/no-disabled-tests */
 	it.skip( 'renders info tooltip for domains that require HSTS', async () => {
-		render( <SuggestionItem { ...MOCK_PROPS } hstsRequired={ true } /> );
+		render( <SuggestionItem { ...MOCK_SUGGESTION_ITEM_PARTIAL_PROPS } hstsRequired={ true } /> );
 
 		expect( screen.getByTestId( 'info-tooltip' ) ).toBeInTheDocument();
 	} );
@@ -136,14 +135,18 @@ describe( 'conditional elements', () => {
 		renderComponent();
 
 		expect(
-			screen.getByText( new RegExp( `Renews at: ${ MOCK_PROPS.cost }`, 'i' ) )
+			screen.getByText(
+				new RegExp( `Renews at: ${ MOCK_SUGGESTION_ITEM_PARTIAL_PROPS.cost }`, 'i' )
+			)
 		).toBeInTheDocument();
 	} );
 
 	it( 'should render the cost as free if given prop of isFree even though it has a cost prop', async () => {
 		renderComponent( { isFree: true } );
 
-		expect( screen.queryByText( new RegExp( MOCK_PROPS.cost, 'i' ) ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByText( new RegExp( MOCK_SUGGESTION_ITEM_PARTIAL_PROPS.cost, 'i' ) )
+		).not.toBeInTheDocument();
 		expect( screen.getByText( /Free/i ) ).toBeInTheDocument();
 	} );
 
@@ -160,7 +163,7 @@ describe( 'suggestion availability', () => {
 
 		// we have to test for the domain and the TLD separately because they get split in the component
 
-		const [ domain, tld ] = MOCK_PROPS.domain.split( '.' );
+		const [ domain, tld ] = MOCK_SUGGESTION_ITEM_PARTIAL_PROPS.domain.split( '.' );
 
 		expect( screen.getByText( new RegExp( domain, 'i' ) ) ).toBeInTheDocument();
 		expect( screen.getByText( new RegExp( `${ tld }$`, 'i' ) ) ).toBeInTheDocument();
@@ -174,14 +177,16 @@ describe( 'suggestion availability', () => {
 		renderComponent( { isRecommended: true, isUnavailable: false } );
 
 		// we have to test for the domain and the TLD separately because they get split in the component
-		const [ domain, tld ] = MOCK_PROPS.domain.split( '.' );
+		const [ domain, tld ] = MOCK_SUGGESTION_ITEM_PARTIAL_PROPS.domain.split( '.' );
 
 		expect( screen.getByText( new RegExp( domain, 'i' ) ) ).toBeInTheDocument();
 		expect( screen.getByText( new RegExp( `${ tld }$`, 'i' ) ) ).toBeInTheDocument();
 
 		expect( screen.getByText( /Recommended/i ) ).toBeInTheDocument();
 		expect(
-			screen.getByText( new RegExp( `Renews at: ${ MOCK_PROPS.cost }`, 'i' ) )
+			screen.getByText(
+				new RegExp( `Renews at: ${ MOCK_SUGGESTION_ITEM_PARTIAL_PROPS.cost }`, 'i' )
+			)
 		).toBeInTheDocument();
 		expect( screen.queryByText( /Unavailable/i ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button' ) ).not.toBeDisabled();
