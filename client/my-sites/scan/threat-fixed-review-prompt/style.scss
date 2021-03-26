@@ -10,8 +10,8 @@
 		padding-top: 1.2rem;
 		line-height: 24px;
 	}
-	button {
-		margin-right: -10px;
+	button.components-button {
+		transform: translateX( 15px );
 	}
 }
 
