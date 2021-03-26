@@ -28,7 +28,7 @@ import playIconImage from 'calypso/assets/images/reader/play-icon.png';
 import './style.scss';
 
 const noop = () => {};
-const defaultSizingFunction = () => {};
+const defaultSizingFunction = () => ( {} );
 
 class ReaderFeaturedVideo extends React.Component {
 	static propTypes = {
