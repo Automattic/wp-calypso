@@ -50,6 +50,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { getShouldShowAppBanner, handleScroll } from './utils';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+import { useBreakpoint } from '@automattic/viewport-react';
 
 /**
  * Style dependencies
@@ -58,7 +59,30 @@ import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-
 import 'calypso/components/environment-badge/style.scss';
 import './style.scss';
 
-const scrollCallback = ( e ) => handleScroll( e );
+function SidebarScrollSynchronizer( { enabled } ) {
+	const isNarrow = useBreakpoint( '<660px' );
+	const active = enabled && ! isNarrow;
+
+	React.useEffect( () => {
+		if ( active ) {
+			window.addEventListener( 'scroll', handleScroll );
+			window.addEventListener( 'resize', handleScroll );
+		}
+
+		return () => {
+			if ( active ) {
+				window.removeEventListener( 'scroll', handleScroll );
+				window.removeEventListener( 'resize', handleScroll );
+
+				// remove style attributes added by `handleScroll`
+				document.getElementById( 'content' )?.removeAttribute( 'style' );
+				document.getElementById( 'secondary' )?.removeAttribute( 'style' );
+			}
+		};
+	}, [ active ] );
+
+	return null;
+}
 
 class Layout extends Component {
 	static propTypes = {
@@ -88,19 +112,7 @@ class Layout extends Component {
 		}
 	}
 
-	componentWillUnmount() {
-		if ( this.props.isNavUnificationEnabled ) {
-			window.removeEventListener( 'scroll', scrollCallback );
-			window.removeEventListener( 'resize', scrollCallback );
-		}
-	}
-
 	componentDidUpdate( prevProps ) {
-		// This code should be removed when the nav-unification project has been rolled out to 100% of the customers.
-		if ( this.props.isNavUnificationEnabled ) {
-			window.addEventListener( 'scroll', scrollCallback );
-			window.addEventListener( 'resize', scrollCallback );
-		}
 		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
 			return;
 		}
@@ -223,6 +235,7 @@ class Layout extends Component {
 			<div className={ sectionClass }>
 				<QueryExperiments />
 				<Experiment name="new_onboarding_existing_users_non_en_v5" />
+				<SidebarScrollSynchronizer enabled={ this.props.isNavUnificationEnabled } />
 				<BodySectionCssClass
 					group={ this.props.sectionGroup }
 					section={ this.props.sectionName }
