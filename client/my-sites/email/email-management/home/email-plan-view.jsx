@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { CompactCard } from '@automattic/components';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -23,6 +24,7 @@ import Badge from 'calypso/components/badge';
 import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
 import { getEmailForwards } from 'calypso/state/selectors/get-email-forwards';
 import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
+import { emailManagement } from 'calypso/my-sites/email/paths';
 
 class EmailPlanView extends React.Component {
 	state = {
@@ -113,13 +115,18 @@ class EmailPlanView extends React.Component {
 		);
 	}
 
+	handleBack = () => {
+		const { selectedSite } = this.props;
+		page( emailManagement( selectedSite.slug ) );
+	};
+
 	render() {
 		const { domain } = this.props;
 
 		return (
 			<React.Fragment>
 				{ domain && <QueryEmailForwards domainName={ domain.name } /> }
-				<HeaderCake>Email plan settings</HeaderCake>
+				<HeaderCake onClick={ this.handleBack }>Email plan settings</HeaderCake>
 				<CompactCard className="email-plan-view__general">
 					<span className="email-plan-view__general-icon">
 						<EmailTypeIcon domain={ domain } />
