@@ -34,6 +34,7 @@ import type {
 	WPCOMTransactionEndpointCart,
 	WPCOMTransactionEndpointRequestPayload,
 	TransactionRequestWithLineItems,
+	TransactionRequest,
 } from '../types/transaction-endpoint';
 import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
 
@@ -264,13 +265,11 @@ function addRegistrationDataToGSuiteCartProduct(
 	};
 }
 
-export function createTransactionEndpointRequestPayloadFromLineItems( {
-	siteId,
-	couponId,
+export function createTransactionEndpointRequestPayload( {
+	cart,
 	country,
 	state,
 	postalCode,
-	subdivisionCode,
 	city,
 	address,
 	streetNumber,
@@ -278,7 +277,6 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	document,
 	deviceId,
 	domainDetails,
-	items,
 	paymentMethodType,
 	paymentMethodToken,
 	paymentPartnerProcessorId,
@@ -292,17 +290,9 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	pan,
 	gstin,
 	nik,
-}: TransactionRequestWithLineItems ): WPCOMTransactionEndpointRequestPayload {
+}: TransactionRequest ): WPCOMTransactionEndpointRequestPayload {
 	return {
-		cart: createTransactionEndpointCartFromLineItems( {
-			siteId,
-			couponId,
-			country,
-			postalCode,
-			subdivisionCode,
-			items: items.filter( ( item ) => item.type !== 'tax' ),
-			contactDetails: domainDetails || {},
-		} ),
+		cart,
 		domainDetails,
 		payment: {
 			paymentMethod: paymentMethodType,
@@ -331,6 +321,23 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			nik,
 		},
 	};
+}
+
+export function createTransactionEndpointRequestPayloadFromLineItems(
+	args: TransactionRequestWithLineItems
+): WPCOMTransactionEndpointRequestPayload {
+	return createTransactionEndpointRequestPayload( {
+		...args,
+		cart: createTransactionEndpointCartFromLineItems( {
+			siteId: args.siteId,
+			couponId: args.couponId,
+			country: args.country,
+			postalCode: args.postalCode,
+			subdivisionCode: args.subdivisionCode,
+			items: args.items,
+			contactDetails: args.domainDetails || {},
+		} ),
+	} );
 }
 
 export function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.TranslateResult {

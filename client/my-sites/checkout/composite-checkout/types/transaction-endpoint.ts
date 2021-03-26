@@ -10,11 +10,10 @@ import type { WPCOMCartItem } from './checkout-cart';
 import type { Purchase } from './wpcom-store-state';
 import type { DomainContactDetails } from './backend/domain-contact-details-components';
 
-// The data required by createTransactionEndpointRequestPayloadFromLineItems
-export interface TransactionRequestWithLineItems {
+export interface TransactionRequest {
 	country: string;
 	postalCode: string;
-	items: WPCOMCartItem[];
+	cart: WPCOMTransactionEndpointCart;
 	paymentMethodType: string;
 	name: string;
 	siteId?: string | undefined;
@@ -39,6 +38,11 @@ export interface TransactionRequestWithLineItems {
 	pan?: string | undefined;
 	gstin?: string | undefined;
 	nik?: string | undefined;
+}
+
+// The data required by createTransactionEndpointRequestPayloadFromLineItems
+export interface TransactionRequestWithLineItems extends TransactionRequest {
+	items: WPCOMCartItem[];
 }
 
 export type ExistingCardTransactionRequestWithLineItems = Partial< TransactionRequestWithLineItems > &

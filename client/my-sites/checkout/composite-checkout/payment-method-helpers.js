@@ -10,7 +10,6 @@ import { createStripePaymentMethod } from '@automattic/calypso-stripe';
  * Internal dependencies
  */
 import wp from 'calypso/lib/wp';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from './lib/translate-payment-method-names';
 import { getSavedVariations } from 'calypso/lib/abtest';
 import { stringifyBody } from 'calypso/state/login/utils';
 import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
@@ -52,20 +51,6 @@ export async function submitEbanxCardTransaction( transactionData, submit ) {
 		paymentMethodType: 'WPCOM_Billing_Ebanx',
 	} );
 	debug( 'sending ebanx transaction', formattedTransactionData );
-	return submit( formattedTransactionData );
-}
-
-export async function submitRedirectTransaction( paymentMethodId, transactionData, submit ) {
-	const paymentMethodType = translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId );
-	if ( ! paymentMethodType ) {
-		throw new Error( `No payment method found for type: ${ paymentMethodId }` );
-	}
-	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
-		...transactionData,
-		paymentMethodType,
-		paymentPartnerProcessorId: transactionData.stripeConfiguration?.processor_id,
-	} );
-	debug( `sending redirect transaction for type: ${ paymentMethodId }`, formattedTransactionData );
 	return submit( formattedTransactionData );
 }
 
