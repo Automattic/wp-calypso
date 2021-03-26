@@ -6,7 +6,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { constant, times } from 'lodash';
+import { times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -233,7 +233,7 @@ describe( 'selectors', () => {
 			 * anymore.
 			 */
 			const state = makeState( {
-				actionLog: times( 50, constant( navigateToTest ) ),
+				actionLog: times( 50, () => navigateToTest ),
 				toursHistory: [ testTourSeen, themesTourSeen ],
 				queryArguments: { tour: 'themes', _timestamp: 0 },
 			} );

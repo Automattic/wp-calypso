@@ -1,18 +1,7 @@
 /**
  * External dependencies
  */
-import {
-	constant,
-	difference,
-	find,
-	findLast,
-	flatMap,
-	get,
-	includes,
-	map,
-	startsWith,
-	pick,
-} from 'lodash';
+import { difference, find, findLast, flatMap, get, includes, map, startsWith, pick } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -149,7 +138,7 @@ const findTriggeredTour = ( state ) => {
 
 	const newTours = difference( toursFromTriggers, toursToDismiss );
 	return find( newTours, ( tour ) => {
-		const { when = constant( true ) } = find( relevantFeatures, { tour } );
+		const { when = () => true } = find( relevantFeatures, { tour } );
 		return when( state );
 	} );
 };
