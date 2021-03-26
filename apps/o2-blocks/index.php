@@ -3,6 +3,7 @@
  * Plugin Name: A8C Blocks
  * Description: A8C Specific Blocks
  * Author: A8C
+ * Text Domain: full-site-editing
  *
  * @package o2-blocks
  *
@@ -52,14 +53,6 @@ function a8c_editor_assets() {
 		plugins_url( $style_file, __FILE__ ),
 		array( 'wp-edit-blocks' ),
 		$assets['version']
-	);
-
-	wp_enqueue_script(
-		'idioticon',
-		plugins_url( 'dist/idioticon.build.js', __FILE__ ),
-		array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-components' ),
-		filemtime( plugin_dir_path( __FILE__ ) . 'dist/idioticon.build.js' ),
-		true
 	);
 }
 
