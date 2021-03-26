@@ -55,6 +55,7 @@ export const mShotOptions = (): MShotsOptions => {
 
 const canUseWebP = getCanUseWebP();
 
+// Bump the version query param here to cache bust the images after running bin/generate-gutenboarding-design-thumbnails.js
 export const getDesignImageUrl = ( design: Design ): string => {
 	return `/calypso/${ DESIGN_IMAGE_FOLDER }/${ design.slug }_${ design.template }_${
 		design.theme
