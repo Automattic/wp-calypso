@@ -186,31 +186,6 @@ function getErrorMessage( { error, message } ) {
 	}
 }
 
-export async function wpcomTransaction( payload, transactionOptions ) {
-	if ( transactionOptions && transactionOptions.createUserAndSiteBeforeTransaction ) {
-		return createAccount().then( ( response ) => {
-			const siteIdFromResponse = response?.blog_details?.blogid;
-
-			// If the account is already created(as happens when we are reprocessing after a transaction error), then
-			// the create account response will not have a site ID, so we fetch from state.
-			const siteId = siteIdFromResponse || select( 'wpcom' )?.getSiteId();
-			const newPayload = {
-				...payload,
-				cart: {
-					...payload.cart,
-					blog_id: siteId || '0',
-					cart_key: siteId || 'no-site',
-					create_new_blog: false,
-				},
-			};
-
-			return wp.undocumented().transactions( newPayload );
-		} );
-	}
-
-	return wp.undocumented().transactions( payload );
-}
-
 export function createStripePaymentMethodToken( { stripe, name, country, postalCode } ) {
 	return createStripePaymentMethod( stripe, {
 		name,

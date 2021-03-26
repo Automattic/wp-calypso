@@ -20,6 +20,7 @@ import {
 } from './backend/domain-contact-validation-endpoint';
 import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
 import { SignupValidationResponse } from './backend/signup-validation-endpoint';
+import type { WPCOMTransactionEndpointResponse } from './transaction-endpoint';
 
 export type ManagedContactDetailsShape< T > = {
 	firstName?: T;
@@ -893,20 +894,9 @@ export type WpcomStoreState = {
 	siteId: string;
 	siteSlug: string;
 	recaptchaClientId: number;
-	transactionResult: TransactionResponse;
+	transactionResult?: WPCOMTransactionEndpointResponse | undefined;
 	contactDetails: ManagedContactDetails;
 };
-
-type PurchaseSiteId = number;
-
-export interface TransactionResponse {
-	failed_purchases?: Record< PurchaseSiteId, Purchase[] >;
-	purchases?: Record< PurchaseSiteId, Purchase[] >;
-	receipt_id?: number;
-	order_id?: number;
-	redirect_url?: string;
-	message?: { payment_intent_client_secret: string };
-}
 
 export interface FailedPurchase {
 	product_meta: string;
@@ -1011,7 +1001,7 @@ export function getInitialWpcomStoreState(
 		siteId: '',
 		siteSlug: '',
 		recaptchaClientId: -1,
-		transactionResult: {},
+		transactionResult: undefined,
 		contactDetails,
 	};
 }
