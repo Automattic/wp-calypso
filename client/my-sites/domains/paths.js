@@ -79,18 +79,6 @@ export function domainManagementEdit( siteName, domainName, relativeTo ) {
 	return domainManagementEditBase( siteName, domainName, 'edit', relativeTo );
 }
 
-export function domainManagementAddGSuiteUsers( siteName, domainName ) {
-	let path;
-
-	if ( domainName ) {
-		path = domainManagementEditBase( siteName, domainName, 'add-gsuite-users' );
-	} else {
-		path = domainManagementRoot() + '/add-gsuite-users/' + siteName;
-	}
-
-	return path;
-}
-
 export function domainManagementContactsPrivacy( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'contacts-privacy', relativeTo );
 }

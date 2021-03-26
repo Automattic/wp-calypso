@@ -46,7 +46,7 @@ const initialItems = [
 	},
 	{
 		label: 'Domain registration',
-		subLabel: 'example.com',
+		sublabel: 'example.com',
 		id: 'wpcom-domain',
 		type: 'domain',
 		amount: { currency: 'USD', value: 0, displayValue: '$0' },
@@ -365,6 +365,8 @@ function MyCheckout() {
 	);
 	paypalMethod.submitTransaction = makePayPalExpressRequest;
 
+	const paymentMethods = [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean );
+
 	return (
 		<CheckoutProvider
 			items={ items }
@@ -376,8 +378,9 @@ function MyCheckout() {
 			showSuccessMessage={ showSuccessMessage }
 			registry={ defaultRegistry }
 			isLoading={ isLoading }
-			paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
+			paymentMethods={ paymentMethods }
 			paymentProcessors={ { 'apple-pay': applePayProcessor, card: stripeCardProcessor } }
+			initiallySelectedPaymentMethodId={ paymentMethods[ 0 ]?.id }
 		>
 			<MyCheckoutBody />
 		</CheckoutProvider>

@@ -15,7 +15,7 @@ import StatsPagePlaceholder from 'calypso/my-sites/stats/stats-page-placeholder'
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import { getQueryDate, getQueries } from './utils';
 import { recordTrack } from 'woocommerce/lib/analytics';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 function isValidParameters( context ) {
 	const validParameters = {

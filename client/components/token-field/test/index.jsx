@@ -20,7 +20,7 @@ import TokenFieldWrapper from './lib/token-field-wrapper';
 /**
  * Module constants
  */
-jest.mock( 'components/tooltip', () => require( 'calypso/components/empty-component' ) );
+jest.mock( 'calypso/components/tooltip', () => require( 'calypso/components/empty-component' ) );
 
 /**
  * Module variables

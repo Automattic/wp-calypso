@@ -5,8 +5,8 @@ import { addMedia as addMediaThunk } from 'calypso/state/media/thunks/add-media'
 import { uploadMedia } from 'calypso/state/media/thunks/upload-media';
 import { getFileUploader } from 'calypso/lib/media/utils';
 
-jest.mock( 'lib/media/utils', () => ( { getFileUploader: jest.fn() } ) );
-jest.mock( 'state/media/thunks/upload-media', () => ( {
+jest.mock( 'calypso/lib/media/utils', () => ( { getFileUploader: jest.fn() } ) );
+jest.mock( 'calypso/state/media/thunks/upload-media', () => ( {
 	uploadMedia: jest.fn(),
 	uploadSingleMedia: jest.fn(),
 } ) );

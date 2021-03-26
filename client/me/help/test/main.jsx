@@ -29,18 +29,18 @@ import {
 } from 'calypso/lib/plans/constants';
 import { mapStateToProps } from '../main';
 
-jest.mock( 'lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'lib/user', () => jest.fn() );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'calypso/lib/user', () => jest.fn() );
 jest.mock( '../help-unverified-warning', () => 'HelpUnverifiedWarning' );
-jest.mock( 'components/main', () => 'Main' );
-jest.mock( 'components/section-header', () => 'SectionHeader' );
-jest.mock( 'me/sidebar-navigation', () => 'MeSidebarNavigation' );
-jest.mock( 'state/current-user/selectors', () => ( {
+jest.mock( 'calypso/components/main', () => 'Main' );
+jest.mock( 'calypso/components/section-header', () => 'SectionHeader' );
+jest.mock( 'calypso/me/sidebar-navigation', () => 'MeSidebarNavigation' );
+jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	getCurrentUserId: jest.fn( () => 12 ),
 	isCurrentUserEmailVerified: jest.fn( () => true ),
 } ) );
 
-jest.mock( 'state/purchases/selectors', () => ( {
+jest.mock( 'calypso/state/purchases/selectors', () => ( {
 	getUserPurchases: jest.fn(),
 	isFetchingUserPurchases: jest.fn( () => false ),
 } ) );

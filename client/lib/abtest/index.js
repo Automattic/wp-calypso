@@ -1,8 +1,13 @@
+/**************************************************************************************************/
+/* This library is deprecated! Please consider ExPlat for your next A/B experiment.               */
+/* See /client/components/experiment/readme.md for more info!
+/**************************************************************************************************/
+
 /**
  * External dependencies
  */
 import debugFactory from 'debug';
-import { every, includes, isArray, keys, reduce, some } from 'lodash';
+import { every, includes, keys, reduce, some } from 'lodash';
 import store from 'store';
 import { getLocaleSlug } from 'i18n-calypso';
 
@@ -33,6 +38,8 @@ function ABTest( name, geoLocation ) {
  * @param {string} name - The name of the A/B test
  * @param {string} geoLocation - Location of current user
  * @returns {string} - The user's variation
+ *
+ * @deprecated Use ExPlat. See message at top of file.
  */
 export const abtest = ( name, geoLocation = false ) =>
 	new ABTest( name, geoLocation ).getVariationAndSetAsNeeded();
@@ -42,6 +49,8 @@ export const abtest = ( name, geoLocation = false ) =>
  *
  * @param {string} name - The name of the A/B test
  * @returns {string} - The user's variation or null if the user is not a participant
+ *
+ * @deprecated Use ExPlat. See message at top of file.
  */
 export const getABTestVariation = ( name ) => new ABTest( name ).getVariation();
 
@@ -124,7 +133,7 @@ ABTest.prototype.init = function ( name, geoLocation ) {
 			// Allow any locales.
 			this.localeTargets = false;
 		} else if (
-			isArray( testConfig.localeTargets ) &&
+			Array.isArray( testConfig.localeTargets ) &&
 			every( testConfig.localeTargets, langSlugIsValid )
 		) {
 			// Allow specific locales.
@@ -139,7 +148,7 @@ ABTest.prototype.init = function ( name, geoLocation ) {
 	this.localeExceptions = false;
 	if (
 		testConfig.localeExceptions &&
-		isArray( testConfig.localeExceptions ) &&
+		Array.isArray( testConfig.localeExceptions ) &&
 		every( testConfig.localeExceptions, langSlugIsValid )
 	) {
 		this.localeExceptions = testConfig.localeExceptions;

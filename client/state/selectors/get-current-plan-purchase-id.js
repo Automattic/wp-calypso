@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { isNaN } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -24,7 +19,7 @@ export default function getCurrentPlanPurchaseId( state, siteId ) {
 	const result = getCurrentPlan( state, siteId )?.id ?? null;
 
 	// getCurrentPlan uses an "assembler" which may have NaN in the `id`.
-	if ( isNaN( result ) ) {
+	if ( Number.isNaN( result ) ) {
 		return null;
 	}
 

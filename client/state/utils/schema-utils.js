@@ -3,13 +3,18 @@
  */
 import validator from 'is-my-json-valid';
 import { forEach, get, isEmpty, isEqual } from 'lodash';
+import { getInitialState } from '@automattic/state-utils';
+
+/**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
 
 /**
  * Internal dependencies
  */
-import { DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
-import { getInitialState } from './get-initial-state';
-import warn from 'calypso/lib/warn';
+import { serialize, deserialize } from './serialize';
+import { withPersistence } from './with-persistence';
 
 export function isValidStateWithSchema( state, schema, debugInfo ) {
 	const validate = validator( schema, {
@@ -55,7 +60,7 @@ function isValidSerializedState( schema, reducer, state ) {
 	// Note that we need to serialize the initial state to make a correct check. For reducers
 	// with custom persistence, the initial state can be arbitrary non-serializable object. We
 	// need to compare two serialized objects.
-	const serializedInitialState = reducer( undefined, { type: SERIALIZE } );
+	const serializedInitialState = serialize( reducer, getInitialState( reducer ) );
 	if ( isEqual( state, serializedInitialState ) ) {
 		return true;
 	}
@@ -66,65 +71,55 @@ function isValidSerializedState( schema, reducer, state ) {
 /**
  * Creates a schema-validating reducer
  *
- * Use this to wrap simple reducers with a schema-based
- * validation check when loading the initial state from
- * persistent storage.
+ * Use this to wrap simple reducers with a schema-based validation check when loading
+ * the initial state from persistent storage.
  *
- * When this wraps a reducer with a known JSON schema,
- * it will intercept the DESERIALIZE action (on app boot)
- * and check if the persisted state is still valid state.
- * If so it will return the persisted state, otherwise
- * it will return the initial state computed from
- * passing the null action.
+ * The wrapped reducer implements the `deserialize` method and checks if the persisted state
+ * is a valid state. If yes, it returns the persisted state (and calls the inner reducer's
+ * `deserialize` method if defined). Otherwise it returns the initial state of the inner reducer.
  *
  * @example
- * const ageReducer = ( state = 0, action ) =>
- *     GROW === action.type
- *         ? state + 1
- *         : state
+ * ```js
+ * const ageReducer = ( state = 0, action ) => GROW === action.type ? state + 1 : state
  *
  * const schema = { type: 'number', minimum: 0 }
  *
- * export const age = withSchemaValidation( schema, ageReducer )
+ * export const age = withSchemaValidation( schema, ageReducer );
  *
- * ageReducer( -5, { type: DESERIALIZE } ) === -5
- * age( -5, { type: DESERIALIZE } ) === 0
- * age( 23, { type: DESERIALIZE } ) === 23
+ * expect( deserialize( ageReducer, -5 ) ).toBe( -5 ); // no schema check
+ * expect( deserialize( age, -5 ) ).toBe( 0 ); // schema check failed, return initial state
+ * expect( deserialize( age,  23 ) ).toBe( 23 ); // schema check passed
+ * ```
  *
  * @param {object} schema JSON-schema description of state
  * @param {Function} reducer normal reducer from ( state, action ) to new state
- * @returns {Function} wrapped reducer handling validation on DESERIALIZE
+ * @returns {Function} wrapped reducer handling validation on `.deserialize()`
  */
 export const withSchemaValidation = ( schema, reducer ) => {
 	if ( process.env.NODE_ENV !== 'production' && ! schema ) {
 		throw new Error( 'null schema passed to withSchemaValidation' );
 	}
 
-	const wrappedReducer = ( state, action ) => {
-		if ( action.type === DESERIALIZE ) {
-			if ( state === undefined ) {
+	// Add default identity-mapping persistence to the wrapped reducer. Prevent
+	// it to default to no-persistence.
+	const persistingReducer = withPersistence( reducer );
+
+	return withPersistence( persistingReducer, {
+		deserialize( persisted ) {
+			if ( persisted === undefined ) {
 				// If the state is not present in the stored data, initialize it with the
-				// initial state. Note that calling `reducer( undefined, DESERIALIZE )` here
-				// would be incorrect for reducers with custom deserialization. DESERIALIZE
-				// expects plain JS object on input, but in this case, it would be defaulted
-				// to the reducer's initial state. And that's a custom object, e.g.,
-				// `Immutable.Map` or `PostQueryManager`.
-				return getInitialState( reducer );
+				// initial state.
+				return getInitialState( persistingReducer );
 			}
 
 			// If the stored state fails JSON schema validation, treat it as if it was
 			// `undefined`, i.e., ignore it and replace with initial state.
-			if ( ! isValidSerializedState( schema, reducer, state ) ) {
-				return getInitialState( reducer );
+			if ( ! isValidSerializedState( schema, persistingReducer, persisted ) ) {
+				return getInitialState( persistingReducer );
 			}
-			// Otherwise, fall through to calling the regular reducer
-		}
 
-		return reducer( state, action );
-	};
-
-	//used to propagate actions properly when combined in combineReducersWithPersistence
-	wrappedReducer.hasCustomPersistence = true;
-
-	return wrappedReducer;
+			// Otherwise, if the state is valid, deserialize it with the inner reducer.
+			return deserialize( persistingReducer, persisted );
+		},
+	} );
 };

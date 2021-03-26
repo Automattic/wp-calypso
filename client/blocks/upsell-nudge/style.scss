@@ -1,11 +1,10 @@
 .upsell-nudge.banner.card.is-compact {
 	background-color: var( --color-neutral-80 );
-	border-left-color: var( --color-accent );
 	box-shadow: none;
-	border-left-width: 4px;
+	border: 0;
+	border-radius: 2px;
 	color: var( --color-text-inverted );
-	margin-top: -1px;
-	margin-bottom: -1px;
+	margin: -4px 8px 8px;
 
 	a,
 	button {

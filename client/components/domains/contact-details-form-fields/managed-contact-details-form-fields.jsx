@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { Component, createElement } from 'react';
 import { connect } from 'react-redux';
-import { camelCase } from 'lodash';
+import { camelCase, deburr } from 'lodash';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 
@@ -151,7 +151,7 @@ export class ManagedContactDetailsFormFields extends Component {
 			isError: !! form[ camelName ]?.errors?.length,
 			errorMessage: customErrorMessage || getFirstError( form[ camelName ] ),
 			onChange: this.handleFieldChangeEvent,
-			onBlur: this.handleBlur,
+			onBlur: this.handleBlur( name ),
 			value: form[ camelName ]?.value ?? '',
 			name,
 			eventFormName,
@@ -165,7 +165,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		} );
 	};
 
-	handleBlur = () => {
+	handleBlur = ( name ) => () => {
 		const form = getFormFromContactDetails(
 			this.props.contactDetails,
 			this.props.contactDetailsErrors
@@ -181,6 +181,10 @@ export class ManagedContactDetailsFormFields extends Component {
 				this.handleFieldChange( 'postal-code', formattedPostalCode );
 			}
 		} );
+
+		// Strip leading and trailing whitespace
+		const sanitizedValue = deburr( form[ camelCase( name ) ]?.value.trim() );
+		this.handleFieldChange( name, sanitizedValue );
 	};
 
 	renderContactDetailsEmailPhone() {

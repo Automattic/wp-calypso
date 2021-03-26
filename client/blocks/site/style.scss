@@ -15,13 +15,14 @@
 		pointer-events: none;
 
 		.site-icon {
-			animation: pulse-light 0.8s ease-in-out infinite;
+			animation: pulse-light 1.8s ease-in-out infinite;
+			background-color: var( --color-neutral-10 );
 		}
 
 		.site__title,
 		.site__domain {
-			animation: pulse-light 0.8s ease-in-out infinite;
-			background-color: var( --color-neutral-0 );
+			animation: pulse-light 1.8s ease-in-out infinite;
+			background-color: var( --color-neutral-10 );
 			color: transparent;
 			width: 95%;
 

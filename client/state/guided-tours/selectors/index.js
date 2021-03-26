@@ -11,7 +11,6 @@ import {
 	includes,
 	map,
 	startsWith,
-	uniq,
 	pick,
 } from 'lodash';
 import debugFactory from 'debug';
@@ -26,7 +25,7 @@ import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-
 import { getActionLog } from 'calypso/state/ui/action-log/selectors';
 import { preferencesLastFetchedTimestamp } from 'calypso/state/preferences/selectors';
 import GuidedToursConfig from 'calypso/layout/guided-tours/config';
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import findOngoingTour from './find-ongoing-tour';
 import getToursHistory from './get-tours-history';
 
@@ -56,8 +55,8 @@ const relevantFeatures = flatMap( GuidedToursConfig, ( tourMeta, key ) =>
  * tour.
  */
 const getToursFromFeaturesReached = createSelector(
-	( state ) =>
-		uniq(
+	( state ) => [
+		...new Set(
 			getActionLog( state )
 				.filter( ( { type } ) => type === ROUTE_SET )
 				.reduceRight( ( allTours, { path: triggerPath } ) => {
@@ -68,6 +67,7 @@ const getToursFromFeaturesReached = createSelector(
 					return newTours ? [ ...allTours, ...newTours ] : allTours;
 				}, [] )
 		),
+	],
 	[ getActionLog ]
 );
 
@@ -76,7 +76,7 @@ const getToursFromFeaturesReached = createSelector(
  * recently and in the past.
  */
 const getToursSeen = createSelector(
-	( state ) => uniq( map( getToursHistory( state ), 'tourName' ) ),
+	( state ) => [ ...new Set( map( getToursHistory( state ), 'tourName' ) ) ],
 	[ getToursHistory ]
 );
 
@@ -130,18 +130,22 @@ const findTriggeredTour = ( state ) => {
 		return;
 	}
 
-	const toursFromTriggers = uniq( [
-		...getToursFromFeaturesReached( state ),
-		// Right now, only one source from which to derive tours, but we may
-		// have more later. Examples:
-		// ...getToursFromPurchases( state ),
-		// ...getToursFromFirstActions( state ),
-	] );
+	const toursFromTriggers = [
+		...new Set( [
+			...getToursFromFeaturesReached( state ),
+			// Right now, only one source from which to derive tours, but we may
+			// have more later. Examples:
+			// ...getToursFromPurchases( state ),
+			// ...getToursFromFirstActions( state ),
+		] ),
+	];
 
-	const toursToDismiss = uniq( [
-		// Same idea here.
-		...getToursSeen( state ),
-	] );
+	const toursToDismiss = [
+		...new Set( [
+			// Same idea here.
+			...getToursSeen( state ),
+		] ),
+	];
 
 	const newTours = difference( toursFromTriggers, toursToDismiss );
 	return find( newTours, ( tour ) => {

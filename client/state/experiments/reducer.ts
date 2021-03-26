@@ -6,6 +6,7 @@ import { Action, Reducer } from 'redux';
 /**
  * Internal Dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import { EXPERIMENT_FETCH, EXPERIMENT_ASSIGN } from 'calypso/state/action-types';
 import { ExperimentState, ExperimentAssign } from 'calypso/state/experiments/types';
 import { tracksAnonymousUserId } from 'calypso/lib/analytics/ad-tracking';
@@ -66,4 +67,6 @@ const reducer: Reducer< ExperimentState, HandledActions > = (
 	}
 };
 
-export default withSchemaValidation( schema, reducer );
+const validatedReducer = withSchemaValidation( schema, reducer );
+
+export default withStorageKey( 'experiments', validatedReducer );

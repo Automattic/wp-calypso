@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, includes, mapValues, trimStart } from 'lodash';
+import { filter, includes, mapValues } from 'lodash';
 
 function validateAllFields( fieldValues, domainName ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
@@ -84,7 +84,7 @@ function getNormalizedData( record, selectedDomainName ) {
 	// The leading '_' in SRV's service field is a convention
 	// The record itself should not contain it
 	if ( record.service ) {
-		normalizedRecord.service = trimStart( record.service, '_' );
+		normalizedRecord.service = record.service.replace( /^_+/, '' );
 	}
 
 	return normalizedRecord;

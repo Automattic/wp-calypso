@@ -10,8 +10,8 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import notices from 'calypso/notices';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import { getPlan } from 'calypso/lib/plans';
 import { isMonthly as isMonthlyPlan } from 'calypso/lib/plans/constants';
@@ -20,14 +20,17 @@ import {
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
+	isGoogleWorkspace,
 	isJetpackPlan,
 	isMonthly as isMonthlyProduct,
 	isPlan,
 	isTheme,
+	isTitanMail,
 	isConciergeSession,
 } from 'calypso/lib/products-values';
 import { getJetpackProductsDisplayNames } from 'calypso/lib/products-values/translations';
 import { MembershipSubscription, MembershipSubscriptionsSite } from 'calypso/lib/purchases/types';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 const debug = debugFactory( 'calypso:purchases' );
 
@@ -99,7 +102,7 @@ function getSubscriptionsBySite( subscriptions ) {
 }
 
 function getName( purchase ) {
-	if ( isDomainRegistration( purchase ) ) {
+	if ( isDomainRegistration( purchase ) || isDomainMapping( purchase ) ) {
 		return purchase.meta;
 	}
 
@@ -132,9 +135,11 @@ function getSubscriptionEndDate( purchase ) {
  *
  * @param {object} purchase - the purchase to be renewed
  * @param {string} siteSlug - the site slug to renew the purchase for
- * @param {object} tracksProps - where was the renew button clicked from
+ * @param {object} [options] - optional information
+ * @param {string} [options.redirectTo] - Passed as redirect_to in checkout
+ * @param {object} [options.tracksProps] - where was the renew button clicked from
  */
-function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
+function handleRenewNowClick( purchase, siteSlug, options = {} ) {
 	const renewItem = getRenewalItemFromProduct( purchase, {
 		domain: purchase.meta,
 	} );
@@ -142,22 +147,25 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
 	// Track the renew now submit.
 	recordTracksEvent( 'calypso_purchases_renew_now_click', {
 		product_slug: purchase.productSlug,
-		...tracksProps,
+		...options.tracksProps,
 	} );
 
 	if ( ! renewItem.extra.purchaseId ) {
-		notices.error( 'Could not find purchase id for renewal.' );
+		reduxDispatch( errorNotice( 'Could not find purchase id for renewal.' ) );
 		throw new Error( 'Could not find purchase id for renewal.' );
 	}
 	if ( ! renewItem.product_slug ) {
-		notices.error( 'Could not find product slug for renewal.' );
+		reduxDispatch( errorNotice( 'Could not find product slug for renewal.' ) );
 		throw new Error( 'Could not find product slug for renewal.' );
 	}
 	const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( [ renewItem ] );
 
-	const renewalUrl = `/checkout/${ productSlugs[ 0 ] }/renew/${ purchaseIds[ 0 ] }/${
-		siteSlug || renewItem.extra.purchaseDomain || ''
+	let renewalUrl = `/checkout/${ productSlugs[ 0 ] }/renew/${ purchaseIds[ 0 ] }/${
+		siteSlug || ''
 	}`;
+	if ( options.redirectTo ) {
+		renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
+	}
 	debug( 'handling renewal click', purchase, siteSlug, renewItem, renewalUrl );
 
 	page( renewalUrl );
@@ -168,14 +176,16 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
  *
  * @param {Array} purchases - the purchases to be renewed
  * @param {string} siteSlug - the site slug to renew the purchase for
- * @param {object} tracksProps - where was the renew button clicked from
+ * @param {object} [options] - optional information
+ * @param {string} [options.redirectTo] - Passed as redirect_to in checkout
+ * @param {object} [options.tracksProps] - where was the renew button clicked from
  */
-function handleRenewMultiplePurchasesClick( purchases, siteSlug, tracksProps = {} ) {
+function handleRenewMultiplePurchasesClick( purchases, siteSlug, options = {} ) {
 	purchases.forEach( ( purchase ) => {
 		// Track the renew now submit.
 		recordTracksEvent( 'calypso_purchases_renew_multiple_click', {
 			product_slug: purchase.productSlug,
-			...tracksProps,
+			...options.tracksProps,
 		} );
 	} );
 
@@ -187,13 +197,16 @@ function handleRenewMultiplePurchasesClick( purchases, siteSlug, tracksProps = {
 	const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( renewItems );
 
 	if ( purchaseIds.length === 0 ) {
-		notices.error( 'Could not find product slug or purchase id for renewal.' );
+		reduxDispatch( errorNotice( 'Could not find product slug or purchase id for renewal.' ) );
 		throw new Error( 'Could not find product slug or purchase id for renewal.' );
 	}
 
-	const renewalUrl = `/checkout/${ productSlugs.join( ',' ) }/renew/${ purchaseIds.join( ',' ) }/${
-		siteSlug || renewItems[ 0 ].extra.purchaseDomain || ''
+	let renewalUrl = `/checkout/${ productSlugs.join( ',' ) }/renew/${ purchaseIds.join( ',' ) }/${
+		siteSlug || ''
 	}`;
+	if ( options.redirectTo ) {
+		renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
+	}
 	debug( 'handling renewal click', purchases, siteSlug, renewItems, renewalUrl );
 
 	page( renewalUrl );
@@ -449,7 +462,7 @@ function isRechargeable( purchase ) {
 
 /**
  * Checks if a purchase can be canceled and refunded via the WordPress.com API.
- * Purchases usually can be refunded up to 30 days after purchase.
+ * Purchases usually can be refunded up to 14 days after purchase.
  * Domains and domain mappings can be refunded up to 96 hours.
  * Purchases included with plan can't be refunded.
  *
@@ -593,6 +606,7 @@ function creditCardHasAlreadyExpired( purchase ) {
 	const creditCard = purchase?.payment?.creditCard;
 
 	return (
+		creditCard &&
 		isPaidWithCreditCard( purchase ) &&
 		hasCreditCardData( purchase ) &&
 		moment( creditCard.expiryDate, 'MM/YY' ).isBefore( moment.now(), 'months' )
@@ -660,6 +674,26 @@ function purchaseType( purchase ) {
 
 	if ( isDomainRegistration( purchase ) ) {
 		return purchase.productName;
+	}
+
+	if ( isDomainMapping( purchase ) ) {
+		return purchase.productName;
+	}
+
+	if ( isGoogleWorkspace( purchase ) ) {
+		return i18n.translate( 'Productivity and Collaboration Tools at %(domain)s', {
+			args: {
+				domain: purchase.meta,
+			},
+		} );
+	}
+
+	if ( isTitanMail( purchase ) ) {
+		return i18n.translate( 'Mailboxes at %(domain)s', {
+			args: {
+				domain: purchase.meta,
+			},
+		} );
 	}
 
 	if ( purchase.meta ) {
@@ -735,3 +769,5 @@ export {
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 	shouldRenderExpiringCreditCard,
 };
+
+export { isGoogleWorkspaceExtraLicence } from './is-google-workspace-extra-license';

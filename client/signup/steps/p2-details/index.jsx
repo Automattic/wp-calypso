@@ -78,7 +78,7 @@ function P2Details( {
 				</div>
 				<div className="p2-details__description">
 					{ translate(
-						'P2 is powered by WordPress.com: log in with your account (or create a new one) ' +
+						'P2 is powered by WordPress.com: log in to your account (or create a new one) ' +
 							'to continue.'
 					) }
 				</div>
@@ -94,7 +94,7 @@ function P2Details( {
 							page( getLoginLink( { flowName, locale } ) );
 						} }
 					>
-						{ translate( 'Log in with WordPress.com' ) }
+						{ translate( 'Log in to WordPress.com' ) }
 					</Button>
 					<Button
 						onClick={ () => {

@@ -25,6 +25,7 @@ import {
 	getPreviousStepName,
 	getStepUrl,
 } from 'calypso/signup/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -33,7 +34,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { WPCC } from 'calypso/lib/url/support';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import AsyncLoad from 'calypso/components/async-load';
 import WooCommerceConnectCartHeader from 'calypso/extensions/woocommerce/components/woocommerce-connect-cart-header';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
@@ -203,6 +204,21 @@ export class UserStep extends Component {
 		} );
 	};
 
+	isOauth2RedirectValid( oauth2Redirect ) {
+		// Allow Google sign-up to work.
+		// See: https://github.com/Automattic/wp-calypso/issues/49572
+		if ( oauth2Redirect === undefined ) {
+			return true;
+		}
+
+		try {
+			const url = new URL( oauth2Redirect );
+			return url.host === 'public-api.wordpress.com';
+		} catch {
+			return false;
+		}
+	}
+
 	submit = ( data ) => {
 		const { flowName, stepName, oauth2Signup } = this.props;
 		const dependencies = {};
@@ -276,6 +292,15 @@ export class UserStep extends Component {
 	 * @param {object} userData     (Optional) extra user information that can be used to create a new account
 	 */
 	handleSocialResponse = ( service, access_token, id_token = null, userData = null ) => {
+		const { translate } = this.props;
+
+		if ( ! this.isOauth2RedirectValid( this.props.initialContext.query.oauth2_redirect ) ) {
+			this.props.errorNotice(
+				translate( 'An unexpected error occurred. Please try again later.' )
+			);
+			return;
+		}
+
 		this.submit( {
 			service,
 			access_token,
@@ -353,7 +378,8 @@ export class UserStep extends Component {
 		if (
 			this.props.oauth2Signup &&
 			this.props.initialContext &&
-			this.props.initialContext.query.oauth2_redirect
+			this.props.initialContext.query.oauth2_redirect &&
+			this.isOauth2RedirectValid( this.props.initialContext.query.oauth2_redirect )
 		) {
 			return this.props.initialContext.query.oauth2_redirect;
 		}
@@ -361,7 +387,12 @@ export class UserStep extends Component {
 		const stepAfterRedirect =
 			getNextStepName( this.props.flowName, this.props.stepName ) ||
 			getPreviousStepName( this.props.flowName, this.props.stepName );
-		return this.originUrl() + getStepUrl( this.props.flowName, stepAfterRedirect );
+		const queryArgs = new URLSearchParams( this.props?.initialContext?.query );
+		const queryArgsString = queryArgs.toString() ? '?' + queryArgs.toString() : '';
+
+		return (
+			this.originUrl() + getStepUrl( this.props.flowName, stepAfterRedirect ) + queryArgsString
+		);
 	}
 
 	originUrl() {
@@ -459,6 +490,7 @@ export default connect(
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 	} ),
 	{
+		errorNotice,
 		recordTracksEvent,
 		fetchOAuth2ClientData,
 		saveSignupStep,

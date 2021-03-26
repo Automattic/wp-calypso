@@ -1,0 +1,31 @@
+@font-face {
+	font-display: swap;
+	font-family: 'Noto Sans SemiCondensed Bold';
+	font-weight: 700;
+	src:
+		url( 'https://s1.wp.com/i/fonts/notosans/NotoSans-SemiCondensedBold.woff2' ) format( 'woff2' ),
+		url( 'https://s1.wp.com/i/fonts/notosans/NotoSans-SemiCondensedBold.woff' ) format( 'woff' ),
+		url( 'https://s1.wp.com/i/fonts/notosans/NotoSans-SemiCondensedBold.ttf' ) format( 'truetype' );
+}
+
+.selector__main {
+	position: relative;
+}
+
+.jetpack-plans__heading {
+	padding: 1rem 0;
+}
+
+.jetpack-plans__pricing-header {
+	margin-top: 3rem;
+	padding: 0 1rem;
+	max-width: none;
+
+	text-align: center;
+	font-weight: 700;
+	font-size: $font-title-large;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		font-size: $font-headline-small;
+	}
+}

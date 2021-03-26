@@ -12,11 +12,13 @@ import {
 	PurchaseDetails,
 	PurchaseCancel,
 	PurchaseCancelDomain,
-	PurchaseAddPaymentMethod,
-	PurchaseEditPaymentMethod,
+	PurchaseChangePaymentMethod,
 } from 'calypso/my-sites/purchases/main';
 import { BillingHistory, ReceiptView } from 'calypso/my-sites/purchases/billing-history';
-import { PaymentMethods, AddNewPaymentMethod } from 'calypso/my-sites/purchases/payment-methods';
+import {
+	PaymentMethods,
+	SiteLevelAddNewPaymentMethod,
+} from 'calypso/my-sites/purchases/payment-methods';
 
 export function redirectToPurchases( context ) {
 	const siteDomain = context.params.site;
@@ -63,19 +65,9 @@ export const purchaseCancelDomain = ( context, next ) => {
 	next();
 };
 
-export const purchaseAddPaymentMethod = ( context, next ) => {
+export const purchaseChangePaymentMethod = ( context, next ) => {
 	context.primary = (
-		<PurchaseAddPaymentMethod
-			siteSlug={ context.params.site }
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-		/>
-	);
-	next();
-};
-
-export const purchaseEditPaymentMethod = ( context, next ) => {
-	context.primary = (
-		<PurchaseEditPaymentMethod
+		<PurchaseChangePaymentMethod
 			cardId={ context.params.cardId }
 			siteSlug={ context.params.site }
 			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
@@ -89,8 +81,8 @@ export const paymentMethods = ( context, next ) => {
 	next();
 };
 
-export const addCreditCard = ( context, next ) => {
-	context.primary = <AddNewPaymentMethod siteSlug={ context.params.site } />;
+export const addPaymentMethod = ( context, next ) => {
+	context.primary = <SiteLevelAddNewPaymentMethod siteSlug={ context.params.site } />;
 	next();
 };
 

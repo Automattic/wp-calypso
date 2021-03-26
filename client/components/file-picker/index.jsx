@@ -4,8 +4,10 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { assign, noop } from 'lodash';
+import { assign } from 'lodash';
 import pick from 'component-file-picker';
+
+const noop = () => {};
 
 export default class FilePicker extends React.Component {
 	constructor( props ) {

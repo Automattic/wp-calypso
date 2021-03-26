@@ -36,9 +36,15 @@ export { isEcommerce } from './is-ecommerce';
 export { isEnterprise } from './is-enterprise';
 export { isFreeJetpackPlan } from './is-free-jetpack-plan';
 export { isFreePlan } from './is-free-plan';
-export { isFreeTrial } from './is-free-trial';
 export { isFreeWordPressComDomain } from './is-free-wordpress-com-domain';
-export { isGoogleApps } from './is-google-apps';
+export {
+	isGoogleWorkspace,
+	isGoogleWorkspaceExtraLicence,
+	isGSuite,
+	isGSuiteOrExtraLicense,
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
+	isGSuiteOrGoogleWorkspace,
+} from './is-gsuite';
 export { isGuidedTransfer } from './is-guided-transfer';
 export { isJetpackAntiSpam } from './is-jetpack-anti-spam';
 export { isJetpackAntiSpamSlug } from './is-jetpack-anti-spam-slug';
@@ -66,8 +72,10 @@ export { isSpaceUpgrade } from './is-space-upgrade';
 export { isSecurityDaily } from './is-security-daily';
 export { isSecurityRealTime } from './is-security-realtime';
 export { isTheme } from './is-theme';
+export { isTitanMail } from './is-titan-mail';
 export { isUnlimitedSpace } from './is-unlimited-space';
 export { isUnlimitedThemes } from './is-unlimited-themes';
 export { isVideoPress } from './is-video-press';
 export { isVipPlan } from './is-vip-plan';
 export { isYearly } from './is-yearly';
+export { isTrafficGuide } from './is-traffic-guide';

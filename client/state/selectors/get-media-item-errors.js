@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/media/init';
+
+/**
  * Retrieves all media validation errors for a certain media item of a specified site.
  *
  * @param {object}   state   global state tree

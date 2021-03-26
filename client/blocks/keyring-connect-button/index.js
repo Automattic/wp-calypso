@@ -4,7 +4,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { find, last, noop, some } from 'lodash';
+import { find, last, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -22,6 +22,8 @@ import {
 	getKeyringConnectionsByName,
 	isKeyringConnectionsFetching,
 } from 'calypso/state/sharing/keyring/selectors';
+
+const noop = () => {};
 
 class KeyringConnectButton extends Component {
 	static propTypes = {

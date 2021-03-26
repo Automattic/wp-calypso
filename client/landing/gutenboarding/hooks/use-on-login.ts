@@ -12,13 +12,13 @@ import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
 import { useNewSiteVisibility } from './use-selected-plan';
-import { useNewQueryParam } from '../path';
+import { useNewQueryParam, useIsAnchorFm } from '../path';
 
 /**
  * After signup a site is automatically created using the username and bearerToken
  **/
 
-export default function useOnSignup() {
+export default function useOnLogin(): void {
 	const locale = useLocale();
 	const { createSite } = useDispatch( ONBOARD_STORE );
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
@@ -27,10 +27,25 @@ export default function useOnSignup() {
 
 	const shouldTriggerCreate = useNewQueryParam();
 	const visibility = useNewSiteVisibility();
+	const isAnchorFmSignup = useIsAnchorFm();
 
 	React.useEffect( () => {
-		if ( ! isCreatingSite && ! newSite && currentUser && shouldTriggerCreate ) {
-			createSite( currentUser.username, locale, undefined, visibility );
+		if (
+			! isCreatingSite &&
+			! newSite &&
+			currentUser &&
+			shouldTriggerCreate &&
+			! isAnchorFmSignup
+		) {
+			createSite( {
+				username: currentUser.username,
+				languageSlug: locale,
+				bearerToken: undefined,
+				visibility,
+				anchorFmPodcastId: null,
+				anchorFmEpisodeId: null,
+				anchorFmSpotifyUrl: null,
+			} );
 		}
 	}, [
 		createSite,
@@ -40,5 +55,6 @@ export default function useOnSignup() {
 		locale,
 		shouldTriggerCreate,
 		visibility,
+		isAnchorFmSignup,
 	] );
 }

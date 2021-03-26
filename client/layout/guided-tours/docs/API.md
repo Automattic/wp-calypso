@@ -9,7 +9,7 @@ Tour is a React component that declares the top-level of a tour. It consists of 
 There are three ways a tour can get triggered:
 
 1. If the user navigates to a path that matches the tour's `path` property and the tour's `when` property evaluates to true and there is no other tour that is either running or could also be triggered (in the case of multiple tours that could be triggered we just choose the first match). Every tour will be triggered only once for a user when using this mechanism.
-2. If the user navigates to a URL that contains the tour's name in the `tour` query argument -- e.g., `?tour=editorBasicsTour`. This will ignore the `path` and `when` props as well as the user's tour history.
+2. If the user navigates to a URL that contains the tour's name in the `tour` query argument -- e.g., `?tour=main`. This will ignore the `path` and `when` props as well as the user's tour history.
 3. We can dispatch the Redux action `requestGuidedTour( tour )` to trigger a tour as well. This will ignore the `path` and `when` props as well as the user's tour history.
 
 ### Props

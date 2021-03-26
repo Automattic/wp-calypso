@@ -5,7 +5,7 @@ import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
-import { findLast, noop, times } from 'lodash';
+import { findLast, times } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -45,7 +45,7 @@ import { keysAreEqual, keyToString, keyForPost } from 'calypso/reader/post-key';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
 import { reduxGetState } from 'calypso/lib/redux-bridge';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
-import { viewStream } from 'calypso/state/reader/watermarks/actions';
+import { viewStream } from 'calypso/state/reader-ui/actions';
 import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
 import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/data-layer/wpcom/read/streams';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -57,7 +57,7 @@ import './style.scss';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
-
+const noop = () => {};
 const pagesByKey = new Map();
 
 class ReaderStream extends React.Component {
@@ -105,7 +105,7 @@ class ReaderStream extends React.Component {
 	componentDidUpdate( { selectedPostKey, streamKey } ) {
 		if ( streamKey !== this.props.streamKey ) {
 			this.props.resetCardExpansions();
-			this.props.viewStream( { streamKey, path: window.location.pathname } );
+			this.props.viewStream( streamKey, window.location.pathname );
 			this.fetchNextPage( {} );
 		}
 
@@ -152,7 +152,7 @@ class ReaderStream extends React.Component {
 	componentDidMount() {
 		const { streamKey } = this.props;
 		this.props.resetCardExpansions();
-		this.props.viewStream( { streamKey, path: window.location.pathname } );
+		this.props.viewStream( streamKey, window.location.pathname );
 		this.fetchNextPage( {} );
 
 		KeyboardShortcuts.on( 'move-selection-down', this.selectNextItem );

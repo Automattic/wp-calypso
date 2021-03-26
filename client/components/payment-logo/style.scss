@@ -9,8 +9,8 @@
 	vertical-align: middle;
 	width: 35px;
 
-	$payment-types: 'alipay', 'apple-pay', 'bancontact', 'giropay', 'eps', 'ideal', 'netbanking', 'paypal', 'p24',
-					'brazil-tef', 'wechat', 'sofort';
+	$payment-types: 'alipay', 'apple-pay', 'bancontact', 'giropay', 'eps', 'ideal', 'netbanking',
+		'paypal', 'p24', 'brazil-tef', 'wechat', 'sofort';
 
 	@each $type in $payment-types {
 		&.is-#{$type} {
@@ -92,5 +92,9 @@
 		&.is-compact {
 			width: 16px;
 		}
+	}
+
+	&.disabled {
+		filter: grayscale( 100% );
 	}
 }

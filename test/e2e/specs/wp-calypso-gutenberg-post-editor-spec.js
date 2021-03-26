@@ -3,6 +3,7 @@
  */
 import assert from 'assert';
 import config from 'config';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -39,15 +40,14 @@ const host = dataHelper.getJetpackHost();
 const gutenbergUser =
 	process.env.GUTENBERG_EDGE === 'true' ? 'gutenbergSimpleSiteEdgeUser' : 'gutenbergSimpleSiteUser';
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
 
 	describe( 'Public Posts: Preview and Publish a Public Post @parallel', function () {
 		let fileDetails;
@@ -78,13 +78,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			const gEditorSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
 			await gEditorSidebarComponent.enterImageAltText( fileDetails );
 			await gEditorComponent.closeSidebar();
-
-			const errorShown = await gEditorComponent.errorDisplayed();
-			return assert.strictEqual(
-				errorShown,
-				false,
-				'There is an error shown on the Gutenberg editor page!'
-			);
 		} );
 
 		step( 'Expand Categories and Tags', async function () {
@@ -269,35 +262,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				await gEditorComponent.initEditor();
 				await gEditorComponent.enterTitle( blogPostTitle );
 				await gEditorComponent.enterText( blogPostQuote );
-
-				const errorShown = await gEditorComponent.errorDisplayed();
-				return assert.strictEqual(
-					errorShown,
-					false,
-					'There is an error shown on the Gutenberg editor page!'
-				);
-			} );
-
-			step( 'Can see the Earn blocks', async function () {
-				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-				await gEditorComponent.openBlockInserterAndSearch( 'earn' );
-				assert.strictEqual(
-					await gEditorComponent.isBlockCategoryPresent( 'Earn' ),
-					true,
-					'Earn (Jetpack) blocks are not present'
-				);
-				await gEditorComponent.closeBlockInserter();
-			} );
-
-			step( 'Can see the Grow blocks', async function () {
-				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-				await gEditorComponent.openBlockInserterAndSearch( 'grow' );
-				assert.strictEqual(
-					await gEditorComponent.isBlockCategoryPresent( 'Grow' ),
-					true,
-					'Grow (Jetpack) blocks are not present'
-				);
-				await gEditorComponent.closeBlockInserter();
 			} );
 
 			step( 'Can publish and view content', async function () {
@@ -317,7 +281,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 	} );
 
-	describe( 'Check Activity Log for Public Post @parallel', function () {
+	describe.skip( 'Check Activity Log for Public Post @parallel', function () {
 		const blogPostTitle = dataHelper.randomPhrase();
 		const blogPostQuote =
 			'“We are what we pretend to be, so we must be careful about what we pretend to be”\n- Kurt Vonnegut';
@@ -331,9 +295,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.enterTitle( blogPostTitle );
 			await gEditorComponent.enterText( blogPostQuote );
-
-			const errorShown = await gEditorComponent.errorDisplayed();
-			return assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 		} );
 
 		step( 'Can publish and view content', async function () {
@@ -380,13 +341,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 				await gEditorComponent.enterTitle( blogPostTitle );
 				await gEditorComponent.enterText( blogPostQuote );
-
-				const errorShown = await gEditorComponent.errorDisplayed();
-				return assert.strictEqual(
-					errorShown,
-					false,
-					'There is an error shown on the editor page!'
-				);
 			} );
 
 			step(
@@ -564,13 +518,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			step( 'Can enter post title and content and set to password protected', async function () {
 				let gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 				await gEditorComponent.enterTitle( blogPostTitle );
-
-				const errorShown = await gEditorComponent.errorDisplayed();
-				assert.strictEqual(
-					errorShown,
-					false,
-					'There is an error shown on the Gutenberg editor page!'
-				);
 
 				const gSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
 				await gSidebarComponent.chooseDocumentSettings();
@@ -873,12 +820,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 				await gEditorComponent.enterTitle( originalBlogPostTitle );
 				await gEditorComponent.enterText( blogPostQuote );
-				const errorShown = await gEditorComponent.errorDisplayed();
-				return assert.strictEqual(
-					errorShown,
-					false,
-					'There is an error shown on the editor page!'
-				);
 			} );
 
 			step( 'Can publish the post', async function () {
@@ -923,14 +864,38 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 					);
 				} );
 
+				step( 'Can see the Line Height setting for the paragraph', async function () {
+					const gSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
+
+					if ( driverManager.currentScreenSize() === 'mobile' )
+						await gSidebarComponent.hideComponentIfNecessary();
+
+					// Give focus to the first paragraph block found
+					await driverHelper.clickWhenClickable(
+						driver,
+						By.css( 'p.block-editor-rich-text__editable:first-of-type' )
+					);
+
+					await gSidebarComponent.displayComponentIfNecessary();
+					await gSidebarComponent.chooseBlockSettings();
+
+					const lineHeighSettingPresent = await driverHelper.isElementPresent(
+						driver,
+						By.css( '.block-editor-line-height-control' )
+					);
+
+					if ( driverManager.currentScreenSize() === 'mobile' )
+						await gSidebarComponent.hideComponentIfNecessary();
+
+					assert.ok( lineHeighSettingPresent, 'Line height setting not found' );
+				} );
+
 				step(
 					'Can set the new title and update it, and link to the updated post',
 					async function () {
 						const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-
 						await gEditorComponent.enterTitle( updatedBlogPostTitle );
-						const errorShown = await gEditorComponent.errorDisplayed();
-						assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
+
 						return await gEditorComponent.update( { visit: true } );
 					}
 				);
@@ -974,9 +939,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				await gEditorComponent.enterTitle( originalBlogPostTitle );
 				await gEditorComponent.insertContactForm( contactEmail, subject );
 				await gEditorComponent.ensureSaved();
-
-				const errorShown = await gEditorComponent.errorDisplayed();
-				assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 
 				const contactFormDisplayedInEditor = await gEditorComponent.contactFormDisplayedInEditor();
 				assert.strictEqual(
@@ -1031,9 +993,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			const gPaymentComponent = await SimplePaymentsBlockComponent.Expect( driver, blockId );
 			await gPaymentComponent.insertPaymentButtonDetails( paymentButtonDetails );
 
-			const errorShown = await gEditorComponent.errorDisplayed();
-			assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
-
 			await gEditorComponent.enterTitle( blogPostTitle );
 			await gEditorComponent.ensureSaved();
 			return await gPaymentComponent.ensurePaymentButtonDisplayedInEditor();
@@ -1041,7 +1000,9 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 		step( 'Can publish and view content', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			return await gEditorComponent.publish( { visit: true } );
+			// closePanel is set to false because the panel is forcibly dismissed after publishing.
+			// See https://github.com/Automattic/wp-calypso/issues/50302.
+			return await gEditorComponent.publish( { closePanel: false, visit: true } );
 		} );
 
 		step( 'Can see the payment button in our published post', async function () {
@@ -1125,13 +1086,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				const gHeaderComponent = await GutenbergEditorComponent.Expect( driver );
 				await gHeaderComponent.enterTitle( originalBlogPostTitle );
 				await gHeaderComponent.enterText( blogPostQuote );
-
-				const errorShown = await gHeaderComponent.errorDisplayed();
-				return assert.strictEqual(
-					errorShown,
-					false,
-					'There is an error shown on the Gutenberg editor page!'
-				);
 			} );
 
 			step( 'Can publish the post', async function () {
@@ -1161,38 +1115,38 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
-		step( 'Can insert Embeds block', async function () {
-			const blogPostTitle = dataHelper.randomPhrase();
+		step( 'Can start post', async function () {
+			const blogPostTitle = 'Embeds: ' + dataHelper.randomPhrase();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			await gEditorComponent.enterTitle( 'Embeds: ' + blogPostTitle );
+			await gEditorComponent.enterTitle( blogPostTitle );
+			const title = await gEditorComponent.titleShown();
+			assert.strictEqual( title, blogPostTitle );
+		} );
 
-			this.instagramEditorSelector =
-				'.wp-block-embed iframe[title="Embedded content from instagram.com"]';
-			const blockIdInstagram = await gEditorComponent.addBlock( 'Instagram' );
-			const gEmbedsComponentInstagram = await EmbedsBlockComponent.Expect(
-				driver,
-				blockIdInstagram
-			);
-			await gEmbedsComponentInstagram.embedUrl( 'https://www.instagram.com/p/BlDOZMil933/' );
-			await gEmbedsComponentInstagram.isEmbeddedInEditor( this.instagramEditorSelector );
-
-			this.twitterEditorSelector = '.wp-block-embed iframe[title="Embedded content from twitter"]';
-			const blockIdTwitter = await gEditorComponent.addBlock( 'Twitter' );
-			const gEmbedsComponentTwitter = await EmbedsBlockComponent.Expect( driver, blockIdTwitter );
-			await gEmbedsComponentTwitter.embedUrl(
-				'https://twitter.com/automattic/status/1067120832676327424'
-			);
-			await gEmbedsComponentTwitter.isEmbeddedInEditor( this.twitterEditorSelector );
-
-			this.youtubeEditorSelector =
-				'.wp-block-embed iframe[title="Embedded content from youtube.com"]';
-			const blockIdYouTube = await gEditorComponent.addBlock( 'YouTube' );
-			const gEmbedsComponentYouTube = await EmbedsBlockComponent.Expect( driver, blockIdYouTube );
-			await gEmbedsComponentYouTube.embedUrl( 'https://www.youtube.com/watch?v=xifhQyopjZM' );
-			await gEmbedsComponentYouTube.isEmbeddedInEditor( this.youtubeEditorSelector );
-
-			const errorShown = await gEditorComponent.errorDisplayed();
-			return assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
+		[
+			{
+				name: 'Instagram',
+				url: 'https://www.instagram.com/p/BlDOZMil933/',
+				selector: '.wp-block-embed iframe[title="Embedded content from instagram.com"]',
+			},
+			{
+				name: 'Twitter',
+				url: 'https://twitter.com/automattic/status/1067120832676327424',
+				selector: '.wp-block-embed iframe[title="Embedded content from twitter"]',
+			},
+			{
+				name: 'YouTube',
+				url: 'https://www.youtube.com/watch?v=xifhQyopjZM',
+				selector: '.wp-block-embed iframe[title="Embedded content from youtube.com"]',
+			},
+		].forEach( ( Block ) => {
+			step( `Can insert ${ Block.name } block`, async function () {
+				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+				const embedBlock = await gEditorComponent.addBlock( Block.name );
+				const gEmbedsComponent = await EmbedsBlockComponent.Expect( driver, embedBlock );
+				await gEmbedsComponent.embedUrl( Block.url );
+				await gEmbedsComponent.isEmbeddedInEditor( Block.selector );
+			} );
 		} );
 
 		step( 'Can publish and view content', async function () {

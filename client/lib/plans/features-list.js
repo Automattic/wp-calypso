@@ -13,7 +13,6 @@ import MaterialIcon from 'calypso/components/material-icon';
 import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 
 export const FEATURE_CATEGORIES = {
 	[ constants.FEATURE_CATEGORY_SECURITY ]: {
@@ -175,6 +174,15 @@ export const FEATURES_LIST = {
 			),
 	},
 
+	[ constants.FEATURE_HOSTING ]: {
+		getSlug: () => constants.FEATURE_HOSTING,
+		getTitle: () => i18n.translate( 'Best-in-class hosting' ),
+		getDescription: () =>
+			i18n.translate(
+				'Site hosting is included with your plan, eliminating additional cost and technical hassle.'
+			),
+	},
+
 	[ constants.FEATURE_PREMIUM_THEMES ]: {
 		getSlug: () => constants.FEATURE_PREMIUM_THEMES,
 		getTitle: () => i18n.translate( 'Unlimited premium themes' ),
@@ -191,6 +199,12 @@ export const FEATURES_LIST = {
 			i18n.translate(
 				'Add advertising to your site through our WordAds program and earn money from impressions.'
 			),
+	},
+
+	[ constants.FEATURE_EARN_AD ]: {
+		getSlug: () => constants.FEATURE_EARN_AD,
+		getTitle: () => i18n.translate( 'Earn ad revenue' ),
+		getDescription: () => {},
 	},
 
 	[ constants.FEATURE_UPLOAD_THEMES_PLUGINS ]: {
@@ -252,6 +266,12 @@ export const FEATURES_LIST = {
 			i18n.translate(
 				'Boost traffic to your site with tools that make your content more findable on search engines and social media.'
 			),
+	},
+
+	[ constants.FEATURE_ADVANCED_SEO_EXPANDED_ABBR ]: {
+		getSlug: () => constants.FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
+		getTitle: () => i18n.translate( 'Advanced SEO (Search Engine Optimisation) tools' ),
+		getDescription: () => {},
 	},
 
 	[ constants.FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED_SIGNUP ]: {
@@ -341,10 +361,17 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_CUSTOM_DOMAIN ]: {
 		getSlug: () => constants.FEATURE_CUSTOM_DOMAIN,
-		getTitle: () =>
-			i18n.translate( 'Free domain for one year', {
+		getTitle: ( domainName ) => {
+			if ( domainName ) {
+				return i18n.translate( 'The domain %(domainName)s is free for the first year', {
+					args: { domainName },
+				} );
+			}
+
+			return i18n.translate( 'Free domain for one year', {
 				context: 'title',
-			} ),
+			} );
+		},
 		getDescription: ( abtest, domainName ) => {
 			if ( domainName ) {
 				return i18n.translate( 'Your domain (%s) is included with this plan.', {
@@ -417,6 +444,12 @@ export const FEATURES_LIST = {
 					'using a fast, unbranded, customizable player with rich stats.'
 			),
 		getStoreSlug: () => 'videopress',
+	},
+
+	[ constants.FEATURE_UPLOAD_VIDEO ]: {
+		getSlug: () => constants.FEATURE_UPLOAD_VIDEO,
+		getTitle: () => i18n.translate( 'Upload videos' ),
+		getDescription: () => {},
 	},
 
 	[ constants.FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ]: {
@@ -540,6 +573,14 @@ export const FEATURES_LIST = {
 			i18n.translate(
 				'Plugins extend the functionality of your site and ' +
 					'open up endless possibilities for presenting your content and interacting with visitors.'
+			),
+	},
+
+	[ constants.FEATURE_INSTALL_PLUGINS ]: {
+		getSlug: () => constants.FEATURE_INSTALL_PLUGINS,
+		getTitle: () =>
+			i18n.translate(
+				'Access to more than 50,000 WordPress plugins to extend functionality for your site'
 			),
 	},
 
@@ -884,6 +925,12 @@ export const FEATURES_LIST = {
 		hideInfoPopover: true,
 	},
 
+	[ constants.FEATURE_SITE_BACKUPS_AND_RESTORE ]: {
+		getSlug: () => constants.FEATURE_SITE_BACKUPS_AND_RESTORE,
+		getTitle: () => i18n.translate( 'Automated site backups and one-click restore' ),
+		getDescription: () => {},
+	},
+
 	[ constants.FEATURE_SECURITY_SCANNING_JETPACK ]: {
 		getSlug: () => constants.FEATURE_SECURITY_SCANNING_JETPACK,
 		getTitle: () => i18n.translate( 'Advanced security' ),
@@ -914,12 +961,6 @@ export const FEATURES_LIST = {
 		hideInfoPopover: true,
 	},
 
-	[ constants.FEATURE_PRIORITY_SUPPORT_JETPACK ]: {
-		getSlug: () => constants.FEATURE_PRIORITY_SUPPORT_JETPACK,
-		getTitle: () => i18n.translate( 'Priority support' ),
-		getDescription: () => i18n.translate( 'Faster response times from our security experts.' ),
-		hideInfoPopover: true,
-	},
 	[ constants.FEATURE_TRAFFIC_TOOLS_JETPACK ]: {
 		getSlug: () => constants.FEATURE_TRAFFIC_TOOLS_JETPACK,
 		getTitle: () => i18n.translate( 'Advanced traffic tools' ),
@@ -1015,19 +1056,16 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_PREMIUM_CONTENT_BLOCK ]: {
 		getSlug: () => constants.FEATURE_PREMIUM_CONTENT_BLOCK,
 		getTitle: () => i18n.translate( 'Subscriber-only content' ),
-		getDescription: () => i18n.translate( 'Limit content to paying subscribers.' ),
+		getDescription: () =>
+			i18n.translate(
+				'Create additional, premium content that you can make available to paying subscribers only.'
+			),
 	},
 
 	[ constants.FEATURE_PLAN_SECURITY_DAILY ]: {
 		getSlug: () => constants.FEATURE_PLAN_SECURITY_DAILY,
 		getIcon: () => 'lock',
-		getTitle: () =>
-			i18n.translate( '{{strong}}All Security {{em}}Daily{{/em}}{{/strong}} features', {
-				components: {
-					em: <em />,
-					strong: <strong />,
-				},
-			} ),
+		getTitle: () => i18n.translate( 'All Security Daily features' ),
 		isPlan: true,
 	},
 
@@ -1073,15 +1111,12 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_BACKUP_DAILY_V2 ]: {
 		getSlug: () => constants.FEATURE_BACKUP_DAILY_V2,
-		getTitle: () => i18n.translate( 'Automated daily site backups' ),
+		getTitle: () => i18n.translate( 'Automated daily backups (off-site)' ),
 	},
 
 	[ constants.FEATURE_BACKUP_REALTIME_V2 ]: {
 		getSlug: () => constants.FEATURE_BACKUP_REALTIME_V2,
-		getTitle: () =>
-			( {
-				i5: i18n.translate( 'Automated real-time backups' ),
-			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'Automated real-time site backups' ) ),
+		getTitle: () => i18n.translate( 'Backup (real-time, off-site)' ),
 	},
 
 	[ constants.FEATURE_PRODUCT_BACKUP_V2 ]: {
@@ -1097,27 +1132,12 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: getJetpackCROActiveVersion() === 'v2',
 	},
 
 	[ constants.FEATURE_PRODUCT_BACKUP_DAILY_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
 		getIcon: () => 'cloud-upload',
-		getTitle: () =>
-			( {
-				v2: i18n.translate( 'Backup {{strong}}{{em}}Daily{{/em}}{{/strong}}', {
-					components: {
-						em: <em />,
-						strong: <strong />,
-					},
-				} ),
-				i5: i18n.translate( 'Backup Daily (off-site)' ),
-			}[ getJetpackCROActiveVersion() ] ||
-			i18n.translate( 'Backup {{em}}Daily{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) ),
+		getTitle: () => i18n.translate( 'All Backup Daily features' ),
 		getDescription: () =>
 			i18n.translate(
 				'Automatic daily backups of your entire site, with unlimited, WordPress-optimized secure storage. {{link}}Learn more{{/link}}.',
@@ -1127,29 +1147,12 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: getJetpackCROActiveVersion() === 'v2',
 	},
 
 	[ constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 		getIcon: () => 'cloud-upload',
-		getTitle: () =>
-			( {
-				v2: i18n.translate( 'Backup {{strong}}{{em}}Real{{nbh/}}time{{/em}}{{/strong}}', {
-					components: {
-						em: <em />,
-						strong: <strong />,
-						nbh: <>&#8209;</>,
-					},
-					comment: '{{nbh}} represents a non breakable hyphen',
-				} ),
-				i5: i18n.translate( 'Backup Real-time (off-site)' ),
-			}[ getJetpackCROActiveVersion() ] ||
-			i18n.translate( 'Backup {{em}}Real-time{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) ),
+		getTitle: () => i18n.translate( 'Backup Real-time (off-site)' ),
 		getDescription: () =>
 			i18n.translate(
 				'Real-time backups of your entire site and database with unlimited secure storage. {{link}}Learn more{{/link}}.',
@@ -1159,7 +1162,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: getJetpackCROActiveVersion() === 'v2',
 	},
 
 	[ constants.FEATURE_SCAN_V2 ]: {
@@ -1180,7 +1182,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: getJetpackCROActiveVersion() === 'v2',
 	},
 
 	/**
@@ -1200,7 +1201,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: getJetpackCROActiveVersion() === 'v2',
 	},
 
 	// * Scan Daily *
@@ -1210,15 +1210,7 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_PRODUCT_SCAN_DAILY_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_SCAN_DAILY_V2,
 		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
-		getTitle: () =>
-			( {
-				i5: i18n.translate( 'Scan Daily (automated)' ),
-			}[ getJetpackCROActiveVersion() ] ||
-			i18n.translate( 'Scan {{em}}Daily{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) ),
+		getTitle: () => i18n.translate( 'Scan (daily, automated)' ),
 		getDescription: () =>
 			i18n.translate(
 				'Automated daily scanning for security vulnerabilities or threats on your site. Includes instant notifications and automatic security fixes. {{link}}Learn more{{/link}}.',
@@ -1228,7 +1220,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: getJetpackCROActiveVersion() === 'v2',
 	},
 
 	// * Scan Real-time *
@@ -1238,15 +1229,7 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_PRODUCT_SCAN_REALTIME_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_SCAN_REALTIME_V2,
 		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
-		getTitle: () =>
-			( {
-				i5: i18n.translate( 'Real-time Scan (automated)' ),
-			}[ getJetpackCROActiveVersion() ] ||
-			i18n.translate( 'Scan {{em}}Real-time{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) ),
+		getTitle: () => i18n.translate( 'Scan (real-time, automated)' ),
 		getDescription: () =>
 			i18n.translate(
 				'Automated real-time scanning for security vulnerabilities or threats on your site. Includes instant notifications and automatic security fixes. {{link}}Learn more{{/link}}.',
@@ -1256,15 +1239,11 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: getJetpackCROActiveVersion() === 'v2',
 	},
 
 	[ constants.FEATURE_ANTISPAM_V2 ]: {
 		getSlug: () => constants.FEATURE_ANTISPAM_V2,
-		getTitle: () =>
-			( {
-				i5: i18n.translate( 'Always-on spam protection' ),
-			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'Automated spam protection' ) ),
+		getTitle: () => i18n.translate( 'Comment and form protection' ),
 	},
 
 	[ constants.FEATURE_PRODUCT_ANTISPAM_V2 ]: {
@@ -1280,7 +1259,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: getJetpackCROActiveVersion() === 'v2',
 	},
 
 	[ constants.FEATURE_ACTIVITY_LOG_V2 ]: {
@@ -1335,17 +1313,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_PRODUCT_SEARCH_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_SEARCH_V2,
-		getIcon: () => ( getJetpackCROActiveVersion() === 'v2' ? 'search' : null ),
-		getTitle: () =>
-			( {
-				v2: i18n.translate( 'Jetpack Search {{strong}}{{em}}Up to 100k records{{/em}}{{/strong}}', {
-					components: {
-						em: <em />,
-						strong: <strong />,
-					},
-				} ),
-				i5: i18n.translate( 'Site Search: up to 100k records' ),
-			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'Search: up to 100k records' ) ),
+		getTitle: () => i18n.translate( 'Site Search: up to 100k records' ),
 
 		getDescription: () =>
 			i18n.translate(
@@ -1356,7 +1324,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: getJetpackCROActiveVersion() === 'v2',
 	},
 
 	[ constants.FEATURE_VIDEO_HOSTING_V2 ]: {
@@ -1375,16 +1342,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_CRM_V2 ]: {
 		getSlug: () => constants.FEATURE_CRM_V2,
-		getIcon: () => ( getJetpackCROActiveVersion() === 'v2' ? 'multiple-users' : null ),
-		getTitle: () =>
-			getJetpackCROActiveVersion() === 'v2'
-				? i18n.translate( 'Jetpack CRM {{strong}}{{em}}Entrepreneur{{/em}}{{/strong}}', {
-						components: {
-							em: <em />,
-							strong: <strong />,
-						},
-				  } )
-				: i18n.translate( 'CRM: Entrepreneur bundle' ),
+		getTitle: () => i18n.translate( 'CRM: Entrepreneur bundle' ),
 		getDescription: () =>
 			i18n.translate(
 				'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits. {{link}}Learn more{{/link}}.',
@@ -1394,7 +1352,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: getJetpackCROActiveVersion() === 'v2',
 	},
 
 	[ constants.FEATURE_CRM_LEADS_AND_FUNNEL ]: {
@@ -1415,11 +1372,6 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_CRM_NO_CONTACT_LIMITS ]: {
 		getSlug: () => constants.FEATURE_CRM_NO_CONTACT_LIMITS,
 		getTitle: () => i18n.translate( 'No contact limits' ),
-	},
-
-	[ constants.FEATURE_CRM_PRIORITY_SUPPORT ]: {
-		getSlug: () => constants.FEATURE_CRM_PRIORITY_SUPPORT,
-		getTitle: () => i18n.translate( 'Priority support' ),
 	},
 
 	[ constants.FEATURE_SOCIAL_MEDIA_POSTING_V2 ]: {
@@ -1488,37 +1440,14 @@ export const FEATURES_LIST = {
 			),
 	},
 
-	[ constants.FEATURE_PRIORITY_SUPPORT_V2 ]: {
-		getSlug: () => constants.FEATURE_PRIORITY_SUPPORT_V2,
-		getTitle: () => i18n.translate( 'Priority support' ),
-		getDescription: () =>
-			i18n.translate(
-				'Get fast WordPress support from the WordPress experts. {{link}}Learn more{{/link}}.',
-				{
-					components: {
-						link: (
-							<ExternalLink
-								icon
-								href="https://jetpack.com/features/security/expert-priority-support/"
-							/>
-						),
-					},
-				}
-			),
-	},
-
 	[ constants.FEATURE_SECURE_STORAGE_V2 ]: {
 		getSlug: () => constants.FEATURE_SECURE_STORAGE_V2,
-		getTitle: () => i18n.translate( 'Unlimited secure storage' ),
+		getTitle: () => i18n.translate( 'Unlimited site storage' ),
 	},
 
 	[ constants.FEATURE_ONE_CLICK_RESTORE_V2 ]: {
 		getSlug: () => constants.FEATURE_ONE_CLICK_RESTORE_V2,
-		getTitle: () =>
-			( {
-				i5: i18n.translate( 'One-click restores' ),
-			}[ getJetpackCROActiveVersion() ] ||
-			i18n.translate( 'One-click restores from desktop or mobile' ) ),
+		getTitle: () => i18n.translate( 'One-click restores' ),
 	},
 
 	[ constants.FEATURE_ONE_CLICK_FIX_V2 ]: {
@@ -1559,6 +1488,125 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_SPELLING_CORRECTION_V2 ]: {
 		getSlug: () => constants.FEATURE_SPELLING_CORRECTION_V2,
 		getTitle: () => i18n.translate( 'Spelling correction' ),
+	},
+
+	[ constants.FEATURE_P2_3GB_STORAGE ]: {
+		getSlug: () => constants.FEATURE_P2_3GB_STORAGE,
+		getTitle: () =>
+			i18n.translate( '{{strong}}3GB{{/strong}} storage space', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
+		getDescription: () =>
+			i18n.translate( 'Upload images and documents and share them with your team.' ),
+	},
+
+	[ constants.FEATURE_P2_UNLIMITED_USERS ]: {
+		getSlug: () => constants.FEATURE_P2_UNLIMITED_USERS,
+		getTitle: () => i18n.translate( 'Unlimited users' ),
+		getDescription: () => i18n.translate( 'Invite as many people as you need to your P2.' ),
+	},
+
+	[ constants.FEATURE_P2_UNLIMITED_POSTS_PAGES ]: {
+		getSlug: () => constants.FEATURE_P2_UNLIMITED_POSTS_PAGES,
+		getTitle: () => i18n.translate( 'Unlimited posts and pages' ),
+		getDescription: () =>
+			i18n.translate( 'Communicate as often as you want, with full access to your archive.' ),
+	},
+
+	[ constants.FEATURE_P2_SIMPLE_SEARCH ]: {
+		getSlug: () => constants.FEATURE_P2_SIMPLE_SEARCH,
+		getTitle: () => i18n.translate( 'Simple search' ),
+		getDescription: () => i18n.translate( 'Easily find what you’re looking for.' ),
+	},
+
+	[ constants.FEATURE_P2_CUSTOMIZATION_OPTIONS ]: {
+		getSlug: () => constants.FEATURE_P2_CUSTOMIZATION_OPTIONS,
+		getTitle: () => i18n.translate( 'Customization options' ),
+		getDescription: () =>
+			i18n.translate( 'Make your team feel at home with some easy customization options.' ),
+	},
+
+	[ constants.FEATURE_P2_13GB_STORAGE ]: {
+		getSlug: () => constants.FEATURE_P2_13GB_STORAGE,
+		getTitle: () =>
+			i18n.translate( '{{strong}}13GB{{/strong}} storage space', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
+		getDescription: () => i18n.translate( 'Upload more files to your P2.' ),
+	},
+
+	[ constants.FEATURE_P2_ADVANCED_SEARCH ]: {
+		getSlug: () => constants.FEATURE_P2_ADVANCED_SEARCH,
+		getTitle: () => i18n.translate( 'Advanced search' ),
+		getDescription: () =>
+			i18n.translate(
+				'A faster and more powerful search engine to make finding what you’re looking for easier.'
+			),
+	},
+
+	[ constants.FEATURE_P2_VIDEO_SHARING ]: {
+		getSlug: () => constants.FEATURE_P2_VIDEO_SHARING,
+		getTitle: () => i18n.translate( 'Easy video sharing' ),
+		getDescription: () =>
+			i18n.translate(
+				'Upload videos directly to your P2 for your team to see, without depending on external services.'
+			),
+	},
+
+	[ constants.FEATURE_P2_MORE_FILE_TYPES ]: {
+		getSlug: () => constants.FEATURE_P2_MORE_FILE_TYPES,
+		getTitle: () => i18n.translate( 'More file types' ),
+		getDescription: () => i18n.translate( 'Upload videos, audio, .zip and .key files.' ),
+	},
+
+	[ constants.FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT ]: {
+		getSlug: () => constants.FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT,
+		getTitle: () => i18n.translate( 'Priority customer support' ),
+		getDescription: () =>
+			i18n.translate(
+				'Live chat is available 24 hours a day from Monday through Friday. You can also email us any day of the week for personalized support.'
+			),
+	},
+
+	[ constants.FEATURE_P2_ACTIVITY_OVERVIEW ]: {
+		getSlug: () => constants.FEATURE_P2_ACTIVITY_OVERVIEW,
+		getTitle: () => i18n.translate( 'Activity overview panel' ),
+		getDescription: () =>
+			i18n.translate( 'A complete record of everything that happens on your P2.' ),
+	},
+
+	[ constants.FEATURE_P2_CUSTOM_DOMAIN ]: {
+		getSlug: () => constants.FEATURE_P2_CUSTOM_DOMAIN,
+		getTitle: () => i18n.translate( 'Custom domain' ),
+		getDescription: () => i18n.translate( 'Make your P2 more memorable using your own domain.' ),
+	},
+
+	[ constants.FEATURE_SFTP_DATABASE ]: {
+		getSlug: () => constants.FEATURE_SFTP_DATABASE,
+		getTitle: () => i18n.translate( 'SFTP (SSH File Transfer Protocol) and Database Access' ),
+		getDescription: () => {},
+	},
+
+	[ constants.PREMIUM_DESIGN_FOR_STORES ]: {
+		getSlug: () => constants.PREMIUM_DESIGN_FOR_STORES,
+		getTitle: () => i18n.translate( 'Premium design options customized for online stores' ),
+		getDescription: () => {},
+	},
+
+	[ constants.FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS ]: {
+		getSlug: () => constants.FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+		getTitle: () => i18n.translate( 'Live chat support 24X5' ),
+		getDescription: () => {},
+	},
+
+	[ constants.FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS ]: {
+		getSlug: () => constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
+		getTitle: () => i18n.translate( 'Live chat support 24X7' ),
+		getDescription: () => {},
 	},
 };
 

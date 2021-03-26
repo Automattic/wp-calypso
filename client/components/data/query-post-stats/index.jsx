@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEqual, isUndefined } from 'lodash';
+import { isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,7 +30,7 @@ class QueryPostStats extends Component {
 
 	UNSAFE_componentWillMount() {
 		const { requestingPostStats, siteId, postId } = this.props;
-		if ( ! requestingPostStats && siteId && ! isUndefined( postId ) ) {
+		if ( ! requestingPostStats && siteId && typeof postId !== 'undefined' ) {
 			this.requestPostStats( this.props );
 		}
 	}
@@ -42,7 +42,7 @@ class QueryPostStats extends Component {
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { siteId, postId, fields, heartbeat } = this.props;
 		if (
-			! ( siteId && ! isUndefined( postId ) ) ||
+			! ( siteId && typeof postId !== 'undefined' ) ||
 			( siteId === nextProps.siteId &&
 				postId === nextProps.postId &&
 				isEqual( fields, nextProps.fields ) &&

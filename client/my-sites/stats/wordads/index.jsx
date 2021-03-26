@@ -150,8 +150,10 @@ class WordAds extends Component {
 				<PrivacyPolicyBanner />
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					className="wordads__section-header"
 					headerText={ translate( 'Stats and Insights' ) }
+					subHeaderText={ translate( 'See how ads are performing on your site.' ) }
 					align="left"
 				/>
 				{ ! canAccessAds && (

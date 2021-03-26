@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { get, has, isInteger, noop } from 'lodash';
+import { get, has, isInteger } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,7 +11,7 @@ import { isEligibleForGutenframe } from 'calypso/state/gutenberg-iframe-eligible
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoifyIframe from './calypsoify-iframe';
-import getGutenbergEditorUrl from 'calypso/state/selectors/get-gutenberg-editor-url';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import { requestSelectedEditor } from 'calypso/state/selected-editor/actions';
@@ -22,7 +22,7 @@ import {
 	isJetpackSite,
 	isSSOEnabled,
 } from 'calypso/state/sites/selectors';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { Placeholder } from './placeholder';
 
 import { makeLayout, render } from 'calypso/controller';
@@ -32,6 +32,8 @@ import { REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO } from 'calypso/state/desktop/
 import { notifyDesktopCannotOpenEditor } from 'calypso/state/desktop/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { stopEditingPost } from 'calypso/state/editor/actions';
+
+const noop = () => {};
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/post/' ) ) {
@@ -184,7 +186,7 @@ export const redirect = async ( context, next ) => {
 
 		const url =
 			postType || ! isSiteUsingCoreSiteEditor( state, siteId )
-				? getGutenbergEditorUrl( state, siteId, postId, postType )
+				? getEditorUrl( state, siteId, postId, postType )
 				: getSiteEditorUrl( state, siteId );
 		// pass along parameters, for example press-this
 		return window.location.replace( addQueryArgs( context.query, url ) );
@@ -196,6 +198,11 @@ export const redirect = async ( context, next ) => {
 function getPressThisData( query ) {
 	const { text, url, title, image, embed } = query;
 	return url ? { text, url, title, image, embed } : null;
+}
+
+function getAnchorFmData( query ) {
+	const { anchor_podcast, anchor_episode, spotify_url } = query;
+	return { anchor_podcast, anchor_episode, spotify_url };
 }
 
 export const post = ( context, next ) => {
@@ -211,6 +218,7 @@ export const post = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const pressThis = getPressThisData( context.query );
+	const anchorFmData = getAnchorFmData( context.query );
 	const fseParentPageId = parseInt( context.query.fse_parent_post, 10 ) || null;
 	const parentPostId = parseInt( context.query.parent_post, 10 ) || null;
 
@@ -227,6 +235,7 @@ export const post = ( context, next ) => {
 			postType={ postType }
 			duplicatePostId={ duplicatePostId }
 			pressThis={ pressThis }
+			anchorFmData={ anchorFmData }
 			fseParentPageId={ fseParentPageId }
 			parentPostId={ parentPostId }
 			creatingNewHomepage={ postType === 'page' && has( context, 'query.new-homepage' ) }

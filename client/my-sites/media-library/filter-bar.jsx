@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { identity, includes, noop, pull, union } from 'lodash';
+import { identity, includes, union } from 'lodash';
 import PropTypes from 'prop-types';
 
 /**
@@ -22,6 +22,8 @@ import DataSource from './data-source';
 // the site icon editor, where we want to disable them because the editor
 // can't handle the large images.
 const largeImageSources = [ 'pexels', 'google_photos' ];
+
+const noop = () => {};
 
 export class MediaLibraryFilterBar extends Component {
 	static propTypes = {
@@ -119,10 +121,10 @@ export class MediaLibraryFilterBar extends Component {
 	}
 
 	renderTabItems() {
-		const tabs = this.getFiltersForSource( this.props.source );
+		let tabs = this.getFiltersForSource( this.props.source );
 
 		if ( ! this.props.post ) {
-			pull( tabs, 'this-post' );
+			tabs = tabs.filter( ( tab ) => tab !== 'this-post' );
 		}
 
 		if ( tabs.length === 0 ) {

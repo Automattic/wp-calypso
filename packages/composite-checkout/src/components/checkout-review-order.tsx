@@ -31,9 +31,9 @@ export default function CheckoutReviewOrder( { className }: { className?: string
 	);
 }
 
-export function CheckoutReviewOrderTitle() {
+export function CheckoutReviewOrderTitle(): JSX.Element {
 	const { __ } = useI18n();
-	return __( 'Review your order' );
+	return <>{ __( 'Review your order' ) }</>;
 }
 
 CheckoutReviewOrder.propTypes = {

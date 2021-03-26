@@ -5,10 +5,11 @@ import '@automattic/calypso-polyfills';
 import * as React from 'react';
 import ReactDom from 'react-dom';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
-import config from '../../config';
+import config from '@automattic/calypso-config';
 import { subscribe, select, dispatch } from '@wordpress/data';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import type { Site as SiteStore } from '@automattic/data-stores';
+import accessibleFocus from '@automattic/accessible-focus';
 import { xorWith, isEqual, isEmpty, shuffle } from 'lodash';
 
 /**
@@ -17,7 +18,6 @@ import { xorWith, isEqual, isEmpty, shuffle } from 'lodash';
 import Gutenboard from './gutenboard';
 import { LocaleContext } from './components/locale-context';
 import { setupWpDataDebug } from './devtools';
-import accessibleFocus from 'calypso/lib/accessible-focus';
 import availableDesigns from './available-designs';
 import { Step, path } from './path';
 import { SITE_STORE } from './stores/site';
@@ -42,26 +42,13 @@ function generateGetSuperProps() {
 }
 
 type Site = SiteStore.SiteDetails;
-
 interface AppWindow extends Window {
 	BUILD_TARGET?: string;
 }
+
 declare const window: AppWindow;
 
-/**
- * Handle redirects from development phase
- * TODO: Remove after a few months. See section definition as well.
- */
-const DEVELOPMENT_BASENAME = '/gutenboarding';
-
 window.AppBoot = async () => {
-	if ( window.location.pathname.startsWith( DEVELOPMENT_BASENAME ) ) {
-		const url = new URL( window.location.href );
-		url.pathname = 'new' + url.pathname.substring( DEVELOPMENT_BASENAME.length );
-		window.location.replace( url.toString() );
-		return;
-	}
-
 	setupWpDataDebug();
 	// User is left undefined here because the user account will not be created
 	// until after the user has completed the gutenboarding flow.
@@ -71,9 +58,11 @@ window.AppBoot = async () => {
 	// Add accessible-focus listener.
 	accessibleFocus();
 
-	try {
-		checkAndRedirectIfSiteWasCreatedRecently();
-	} catch {}
+	// If site was recently created, redirect to customer site home.
+	const shouldRedirect = await checkAndRedirectIfSiteWasCreatedRecently();
+	if ( shouldRedirect ) {
+		return;
+	}
 
 	// Update list of randomized designs in the gutenboarding session store
 	ensureRandomizedDesignsAreUpToDate();
@@ -118,7 +107,7 @@ async function checkAndRedirectIfSiteWasCreatedRecently() {
 				const diffMinutes = diff / 1000 / 60;
 				if ( diffMinutes < 10 && diffMinutes >= 0 ) {
 					window.location.replace( `/home/${ selectedSiteDetails.ID }` );
-					return;
+					return true;
 				}
 			}
 		}
@@ -135,13 +124,10 @@ function waitForSelectedSite(): Promise< Site | undefined > {
 			return resolve( undefined );
 		}
 		unsubscribe = subscribe( () => {
-			const resolvedSelectedSite = select( SITE_STORE ).getSite( selectedSite );
-			if ( resolvedSelectedSite ) {
-				resolve( resolvedSelectedSite );
-			}
-
-			if ( ! select( 'core/data' ).isResolving( SITE_STORE, 'getSite', [ selectedSite ] ) ) {
-				resolve( undefined );
+			if (
+				select( 'core/data' ).hasFinishedResolution( SITE_STORE, 'getSite', [ selectedSite ] )
+			) {
+				resolve( select( SITE_STORE ).getSite( selectedSite ) );
 			}
 		} );
 		select( SITE_STORE ).getSite( selectedSite );

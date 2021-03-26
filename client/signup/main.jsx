@@ -12,7 +12,6 @@ import {
 	find,
 	get,
 	includes,
-	indexOf,
 	isEmpty,
 	isEqual,
 	kebabCase,
@@ -26,7 +25,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import {
 	isDomainRegistration,
@@ -34,7 +33,6 @@ import {
 	isDomainMapping,
 } from 'calypso/lib/products-values';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
-import { disableCart } from 'calypso/lib/cart/actions';
 import {
 	recordSignupStart,
 	recordSignupComplete,
@@ -95,7 +93,6 @@ import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-scree
 import user from 'calypso/lib/user';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { abtest } from 'calypso/lib/abtest';
-import { hasSecureYourBrandError } from 'calypso/state/secure-your-brand/selectors';
 
 /**
  * Style dependencies
@@ -161,11 +158,6 @@ class Signup extends React.Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		// Signup updates the cart through `SignupCart`. To prevent
-		// synchronization issues and unnecessary polling, the cart is disabled
-		// here.
-		disableCart();
-
 		const flow = flows.getFlow( this.props.flowName );
 		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
 
@@ -558,7 +550,7 @@ class Signup extends React.Component {
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToNextStep = ( nextFlowName = this.props.flowName ) => {
 		const flowSteps = flows.getFlow( nextFlowName ).steps;
-		const currentStepIndex = indexOf( flowSteps, this.props.stepName );
+		const currentStepIndex = flowSteps.indexOf( this.props.stepName );
 		const nextStepName = flowSteps[ currentStepIndex + 1 ];
 		const nextProgressItem = get( this.props.progress, nextStepName );
 		const nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
@@ -595,7 +587,7 @@ class Signup extends React.Component {
 
 	getPositionInFlow() {
 		const { flowName, stepName } = this.props;
-		return indexOf( flows.getFlow( flowName ).steps, stepName );
+		return flows.getFlow( flowName ).steps.indexOf( stepName );
 	}
 
 	getFlowLength() {
@@ -793,7 +785,6 @@ export default connect(
 			isSitePreviewVisible: shouldStepShowSitePreview && isSitePreviewVisible( state ),
 			localeSlug: getCurrentLocaleSlug( state ),
 			isReskinned,
-			skipSecureYourBrand: hasSecureYourBrandError( state ),
 		};
 	},
 	{

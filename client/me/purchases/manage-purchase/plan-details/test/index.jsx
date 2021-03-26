@@ -23,7 +23,7 @@ const props = {
 		expiryStatus: 'active',
 	},
 	hasLoadedSites: true,
-	hasLoadedUserPurchasesFromServer: true,
+	hasLoadedPurchasesFromServer: true,
 	pluginList: [
 		{
 			slug: 'vaultpress',

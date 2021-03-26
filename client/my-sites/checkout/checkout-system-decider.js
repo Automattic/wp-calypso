@@ -6,8 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import debugFactory from 'debug';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { ShoppingCartProvider } from '@automattic/shopping-cart';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { getEmptyResponseCart } from '@automattic/shopping-cart';
 
 /**
  * Internal Dependencies
@@ -16,19 +16,20 @@ import wp from 'calypso/lib/wp';
 import PrePurchaseNotices from './composite-checkout/components/prepurchase-notices';
 import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/state/logstash/actions';
 import Recaptcha from 'calypso/signup/recaptcha';
 import getCartKey from './get-cart-key';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-
-const debug = debugFactory( 'calypso:checkout-system-decider' );
+import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 
 // Aliasing wpcom functions explicitly bound to wpcom is required here;
 // otherwise we get `this is not defined` errors.
 const wpcom = wp.undocumented();
-const wpcomGetCart = ( ...args ) => wpcom.getCart( ...args );
-const wpcomSetCart = ( ...args ) => wpcom.setCart( ...args );
+
+const emptyCart = getEmptyResponseCart();
+
+const debug = debugFactory( 'calypso:checkout-system-decider' );
 
 export default function CheckoutSystemDecider( {
 	productAliasFromUrl,
@@ -41,7 +42,6 @@ export default function CheckoutSystemDecider( {
 	redirectTo,
 	isLoggedOutCart,
 	isNoSiteCart,
-	cart: otherCart,
 } ) {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
@@ -82,17 +82,14 @@ export default function CheckoutSystemDecider( {
 		[ reduxDispatch ]
 	);
 
-	const waitForOtherCartUpdates =
-		otherCart?.hasPendingServerUpdates || ! otherCart?.hasLoadedFromServer;
 	const cartKey = useMemo(
 		() =>
 			getCartKey( {
 				selectedSite,
 				isLoggedOutCart,
 				isNoSiteCart,
-				waitForOtherCartUpdates,
 			} ),
-		[ waitForOtherCartUpdates, selectedSite, isLoggedOutCart, isNoSiteCart ]
+		[ selectedSite, isLoggedOutCart, isNoSiteCart ]
 	);
 	debug( 'cartKey is', cartKey );
 
@@ -106,9 +103,9 @@ export default function CheckoutSystemDecider( {
 		}
 	}
 
-	const getCart =
-		isLoggedOutCart || isNoSiteCart ? () => Promise.resolve( otherCart ) : wpcomGetCart;
-	debug( 'getCart being controlled by', { isLoggedOutCart, isNoSiteCart, otherCart } );
+	// If we do not have a site or user, we cannot fetch the initial cart from
+	// the server, so we'll just mock it as an empty cart here.
+	const getCart = isLoggedOutCart || isNoSiteCart ? () => Promise.resolve( emptyCart ) : undefined;
 
 	return (
 		<>
@@ -116,7 +113,7 @@ export default function CheckoutSystemDecider( {
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logCheckoutError }
 			>
-				<ShoppingCartProvider cartKey={ cartKey } getCart={ getCart } setCart={ wpcomSetCart }>
+				<CalypsoShoppingCartProvider cartKey={ cartKey } getCart={ getCart }>
 					<StripeHookProvider
 						fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
 						locale={ locale }
@@ -136,7 +133,7 @@ export default function CheckoutSystemDecider( {
 							isNoSiteCart={ isNoSiteCart }
 						/>
 					</StripeHookProvider>
-				</ShoppingCartProvider>
+				</CalypsoShoppingCartProvider>
 			</CheckoutErrorBoundary>
 			{ isLoggedOutCart && <Recaptcha badgePosition="bottomright" /> }
 		</>

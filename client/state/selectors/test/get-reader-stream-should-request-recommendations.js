@@ -10,9 +10,9 @@ import { getDistanceBetweenRecs } from 'calypso/reader/stream/utils';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import { shouldRequestRecs } from 'calypso/state/reader/streams/selectors';
 
-jest.mock( 'lib/user/utils', () => ( { getLocaleSlug: () => 'en' } ) );
-jest.mock( 'reader/stream/utils' );
-jest.mock( 'state/reader/follows/selectors/get-reader-follows' );
+jest.mock( 'calypso/lib/user/utils', () => ( { getLocaleSlug: () => 'en' } ) );
+jest.mock( 'calypso/reader/stream/utils' );
+jest.mock( 'calypso/state/reader/follows/selectors/get-reader-follows' );
 
 describe( 'shouldRequestRecs', () => {
 	const generateState = ( { following, recs } ) => ( {

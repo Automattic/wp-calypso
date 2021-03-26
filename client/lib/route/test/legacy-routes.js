@@ -8,7 +8,7 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { isLegacyRoute } from '../legacy-routes';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 let features = [];
 

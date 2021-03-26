@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-
-import { get, has, includes, isFunction, overSome, takeRight } from 'lodash';
+import { get, has, includes, overSome } from 'lodash';
 
 /**
  * Internal dependencies
@@ -40,7 +39,7 @@ const hasRelevantAnalytics = ( action ) =>
 
 const isRelevantActionType = ( action ) =>
 	has( relevantTypes, action.type ) &&
-	( ! isFunction( relevantTypes[ action.type ] ) || relevantTypes[ action.type ]( action ) );
+	( typeof relevantTypes[ action.type ] !== 'function' || relevantTypes[ action.type ]( action ) );
 
 const isRelevantAction = overSome( [ isRelevantActionType, hasRelevantAnalytics ] );
 
@@ -49,7 +48,7 @@ const newAction = ( action ) => ( {
 	timestamp: Date.now(),
 } );
 
-const maybeAdd = ( state, action ) => ( action ? takeRight( [ ...state, action ], 50 ) : state );
+const maybeAdd = ( state, action ) => ( action ? [ ...state, action ].slice( -50 ) : state );
 
 export default ( state = [], action ) =>
 	isRelevantAction( action ) ? maybeAdd( state, newAction( action ) ) : state;

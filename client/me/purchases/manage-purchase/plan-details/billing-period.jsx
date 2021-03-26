@@ -7,19 +7,17 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import { Button } from '@automattic/components';
 
 /**
  * Internal Dependencies
  */
-import { Button } from '@automattic/components';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { isMonthly } from 'calypso/lib/plans/constants';
 import { getYearlyPlanByMonthly } from 'calypso/lib/plans';
-import { planItem } from 'calypso/lib/cart-values/cart-items';
-import { addItem } from 'calypso/lib/cart/actions';
 import {
 	isExpired,
 	isExpiring,
@@ -44,8 +42,7 @@ export class PlanBillingPeriod extends Component {
 			current_plan: purchase.productSlug,
 			upgrading_to: yearlyPlanSlug,
 		} );
-		addItem( planItem( yearlyPlanSlug ) );
-		page( '/checkout/' + purchase.domain );
+		page( '/checkout/' + purchase.domain + '/' + yearlyPlanSlug );
 	};
 
 	renderYearlyBillingInformation() {

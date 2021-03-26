@@ -34,6 +34,8 @@ import DomainDetailsPage from '../lib/pages/domain-details-page';
 import CancelPurchasePage from '../lib/pages/cancel-purchase-page';
 import CancelDomainPage from '../lib/pages/cancel-domain-page';
 import SettingsPage from '../lib/pages/settings-page';
+import NewPage from '../lib/pages/gutenboarding/new-page';
+import AccountSettingsPage from '../lib/pages/account/account-settings-page';
 
 import FindADomainComponent from '../lib/components/find-a-domain-component.js';
 import SecurePaymentComponent from '../lib/components/secure-payment-component.js';
@@ -50,6 +52,7 @@ import DeletePlanFlow from '../lib/flows/delete-plan-flow';
 import SignUpStep from '../lib/flows/sign-up-step';
 import LaunchSiteFlow from '../lib/flows/launch-site-flow.js';
 import ActivateAccountFlow from '../lib/flows/activate-account-flow';
+import GutenboardingFlow from '../lib/flows/gutenboarding-flow';
 
 import * as sharedSteps from '../lib/shared-steps/wp-signup-spec';
 import MyHomePage from '../lib/pages/my-home-page';
@@ -64,15 +67,14 @@ const locale = driverManager.currentLocale();
 const passwordForTestAccounts = config.get( 'passwordForNewTestSignUps' );
 const sandboxCookieValue = config.get( 'storeSandboxCookieValue' );
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	this.driver = driver = await driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		this.driver = driver = await driverManager.startBrowser();
+	} );
 
 	describe( 'Sign up for a free WordPress.com site from the Jetpack new site page, and log in via a magic link @signup @email', function () {
 		const blogName = dataHelper.getNewBlogName();
@@ -85,7 +87,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		step( 'Can create a new WordPress site', async function () {
-			await StartPage.Visit( this.driver, StartPage.getStartURL() );
+			await StartPage.Visit( driver, StartPage.getStartURL() );
 		} );
 
 		step( 'Can see the account page and enter account details', async function () {
@@ -477,18 +479,10 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can update the homepage', async function () {
-			const myHomePage = await MyHomePage.Expect( this.driver );
+			const myHomePage = await MyHomePage.Expect( driver );
 			await myHomePage.updateHomepageFromSiteSetup();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.initEditor();
-
-			const errorShown = await gEditorComponent.errorDisplayed();
-			assert.strictEqual(
-				errorShown,
-				false,
-				'There is a block editor error when editing the homepage'
-			);
-
 			const hasInvalidBlocks = await gEditorComponent.hasInvalidBlocks();
 			assert.strictEqual(
 				hasInvalidBlocks,
@@ -514,7 +508,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 	} );
 
-	describe( 'Sign up for a site on a premium paid plan coming in via /create as premium flow in JPY currency @signup', function () {
+	describe.skip( 'Sign up for a site on a premium paid plan coming in via /create as premium flow in JPY currency @signup', function () {
 		const blogName = dataHelper.getNewBlogName();
 		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
@@ -1106,17 +1100,10 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			if ( dataHelper.getTargetType() === 'IE11' ) {
 				return this.skip();
 			}
-			const myHomePage = await MyHomePage.Expect( this.driver );
+			const myHomePage = await MyHomePage.Expect( driver );
 			await myHomePage.updateHomepageFromSiteSetup();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.initEditor();
-
-			const errorShown = await gEditorComponent.errorDisplayed();
-			assert.strictEqual(
-				errorShown,
-				false,
-				'There is a block editor error when editing the homepage'
-			);
 
 			const hasInvalidBlocks = await gEditorComponent.hasInvalidBlocks();
 			assert.strictEqual(
@@ -1228,10 +1215,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 	} );
 
-	describe( 'Sign up for an account only (no site) then add a site @signup', function () {
+	describe( 'Sign up for an account only (no site) then add a site as an existing user @signup', function () {
 		const userName = dataHelper.getNewBlogName();
 		const blogName = dataHelper.getNewBlogName();
-		// const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 
 		before( async function () {
 			await driverManager.ensureNotLoggedIn( driver );
@@ -1276,38 +1262,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			}
 		);
 
-		step(
-			'Can then see the domains page, and Can search for a blog name, can see and select a free .wordpress address in the results',
-			async function () {
-				const findADomainComponent = await FindADomainComponent.Expect( driver );
-				await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
-				// See https://github.com/Automattic/wp-calypso/pull/38641/
-				// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
-				// 	expectedBlogAddresses,
-				// 	blogName
-				// );
-				// const actualAddress = await findADomainComponent.freeBlogAddress();
-				// assert(
-				// 	expectedBlogAddresses.indexOf( actualAddress ) > -1,
-				// 	`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
-				//);
-				return await findADomainComponent.selectFreeAddress();
-			}
-		);
-
-		step( 'Can see the plans page and pick the free plan', async function () {
-			const pickAPlanPage = await PickAPlanPage.Expect( driver );
-			return await pickAPlanPage.selectFreePlan();
+		step( 'We are creating the site using the New Onboarding (Gutenboarding)', async function () {
+			return await new GutenboardingFlow( driver ).createFreeSite();
 		} );
-
-		step(
-			'Can then see the sign up processing page which will finish automatically move along',
-			async function () {
-				return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
-			}
-		);
-
-		sharedSteps.canSeeTheOnboardingChecklist();
 
 		after( 'Can delete our newly created account', async function () {
 			return await new DeleteAccountFlow( driver ).deleteAccount( userName );
@@ -1363,6 +1320,29 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 
 		after( 'Can delete our newly created account', async function () {
 			return await new DeleteAccountFlow( driver ).deleteAccount( userName );
+		} );
+	} );
+
+	describe( 'Signup and create new site using the New Onboarding (Gutenboarding) @signup', function () {
+		const emailAddress = dataHelper.getEmailAddress( dataHelper.getNewBlogName(), signupInboxId );
+
+		before( async function () {
+			await driverManager.ensureNotLoggedIn( driver );
+		} );
+
+		step( 'Signup and create site using default options', async function () {
+			await NewPage.Visit( driver );
+
+			await new GutenboardingFlow( driver ).signupAndCreateFreeSite( { emailAddress } );
+		} );
+
+		after( 'Can delete our newly created account', async function () {
+			// Gutenboarding creates users with auto-generated usernames so we need
+			// to find the username before we can delete it.
+			const accountSettingsPage = await AccountSettingsPage.Visit( driver );
+			const username = await accountSettingsPage.getUsername();
+
+			return await new DeleteAccountFlow( driver ).deleteAccount( username );
 		} );
 	} );
 } );

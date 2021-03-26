@@ -7,7 +7,7 @@
  * @param {Function|Array} enhancers - either a single function or a list of functions that can be used to modify a Redux action
  * @returns {Function} enhanced action creator
  * @see client/state/analytics/actions/enhanceWithSiteType for an example
- * @see client/state/extendAction for a simpler alternative
+ * @see extendAction from @automattic/state-utils for a simpler alternative
  */
 export const withEnhancers = ( actionCreator, enhancers ) => ( ...args ) => (
 	dispatch,

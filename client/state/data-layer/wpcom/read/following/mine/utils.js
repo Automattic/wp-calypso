@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { isArray, isUndefined, map, omitBy } from 'lodash';
+import { map, omitBy } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -10,7 +10,7 @@ import { toValidId } from 'calypso/reader/id-helpers';
 
 export const isValidApiResponse = ( apiResponse ) => {
 	const hasSubscriptions =
-		apiResponse && apiResponse.subscriptions && isArray( apiResponse.subscriptions );
+		apiResponse && apiResponse.subscriptions && Array.isArray( apiResponse.subscriptions );
 	return hasSubscriptions;
 };
 
@@ -31,7 +31,7 @@ export const subscriptionFromApi = ( subscription ) =>
 			unseen_count: subscription.unseen_count,
 			site_icon: subscription.site_icon,
 		},
-		isUndefined
+		( prop ) => typeof prop === 'undefined'
 	);
 
 export const subscriptionsFromApi = ( apiResponse ) => {

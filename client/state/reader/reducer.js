@@ -1,7 +1,8 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withStorageKey } from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers } from 'calypso/state/utils';
 
 import conversations from './conversations/reducer';
 import feeds from './feeds/reducer';
@@ -16,9 +17,7 @@ import siteDismissals from './site-dismissals/reducer';
 import sites from './sites/reducer';
 import streams from './streams/reducer';
 import tags from './tags/reducer';
-import teams from './teams/reducer';
 import thumbnails from './thumbnails/reducer';
-import viewing from './viewing/reducer';
 import organizations from './organizations/reducer';
 
 const combinedReducer = combineReducers( {
@@ -35,9 +34,7 @@ const combinedReducer = combineReducers( {
 	sites,
 	streams,
 	tags,
-	teams,
 	thumbnails,
-	viewing,
 	organizations,
 } );
 const readerReducer = withStorageKey( 'reader', combinedReducer );

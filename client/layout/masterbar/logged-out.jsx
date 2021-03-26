@@ -10,7 +10,7 @@ import { get, includes, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import Masterbar from './masterbar';
 import Item from './item';
 import WordPressLogo from 'calypso/components/wordpress-logo';

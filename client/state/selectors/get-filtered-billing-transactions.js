@@ -2,13 +2,13 @@
  * External dependencies
  */
 import { getLocaleSlug } from 'i18n-calypso';
-import { compact, flatMap, omit, slice, some, values } from 'lodash';
+import { compact, flatMap, omit, some, values } from 'lodash';
 import moment from 'moment';
 
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import getBillingTransactionsByType from 'calypso/state/selectors/get-billing-transactions-by-type';
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
@@ -108,7 +108,7 @@ export default createSelector(
 		const total = results.length;
 
 		const pageIndex = page - 1;
-		results = slice( results, pageIndex * PAGE_SIZE, pageIndex * PAGE_SIZE + PAGE_SIZE );
+		results = results.slice( pageIndex * PAGE_SIZE, pageIndex * PAGE_SIZE + PAGE_SIZE );
 
 		return {
 			transactions: results,

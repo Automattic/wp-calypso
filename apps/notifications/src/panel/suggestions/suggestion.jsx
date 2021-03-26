@@ -5,8 +5,8 @@ import React from 'react';
 
 const getRegExpFor = function ( type, textToHighlight ) {
 	const expressions = {};
-	expressions[ 'username' ] = '(^' + textToHighlight + ')(\\w*)\\s*';
-	expressions[ 'fullname' ] = '(^.*?)(\\b' + textToHighlight + ')(.*)';
+	expressions.username = '(^' + textToHighlight + ')(\\w*)\\s*';
+	expressions.fullname = '(^.*?)(\\b' + textToHighlight + ')(.*)';
 
 	return new RegExp( expressions[ type ], 'ig' );
 };

@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/ui/init';
+
+/**
  * Returns whether a section is loading.
  *
  * @param  {object}  state Global state tree

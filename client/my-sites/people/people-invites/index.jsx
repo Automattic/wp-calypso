@@ -92,8 +92,10 @@ class PeopleInvites extends React.PureComponent {
 				{ siteId && <QuerySiteInvites siteId={ siteId } /> }
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					className="people-invites__page-heading"
 					headerText={ translate( 'People' ) }
+					subHeaderText={ translate( 'View and manage the invites to your site.' ) }
 					align="left"
 				/>
 				<PeopleSectionNav

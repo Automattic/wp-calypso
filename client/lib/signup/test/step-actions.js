@@ -10,15 +10,16 @@ import {
 	isPlanFulfilled,
 	isSiteTopicFulfilled,
 	isSiteTypeFulfilled,
+	isFreePlansDomainUpsellFulfilled,
 } from '../step-actions';
 import { useNock } from 'calypso/test-helpers/use-nock';
 import flows from 'calypso/signup/config/flows';
 import { isDomainStepSkippable } from 'calypso/signup/config/steps';
 import { getUserStub } from 'calypso/lib/user';
 
-jest.mock( 'lib/abtest', () => ( { abtest: () => '' } ) );
+jest.mock( 'calypso/lib/abtest', () => ( { abtest: () => '' } ) );
 
-jest.mock( 'lib/user', () => {
+jest.mock( 'calypso/lib/user', () => {
 	const getStub = jest.fn();
 
 	const user = () => ( {
@@ -29,9 +30,11 @@ jest.mock( 'lib/user', () => {
 	return user;
 } );
 
-jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
-jest.mock( 'signup/config/flows', () => require( './mocks/signup/config/flows' ) );
-jest.mock( 'signup/config/flows-pure', () => require( './mocks/signup/config/flows-pure' ) );
+jest.mock( 'calypso/signup/config/steps', () => require( './mocks/signup/config/steps' ) );
+jest.mock( 'calypso/signup/config/flows', () => require( './mocks/signup/config/flows' ) );
+jest.mock( 'calypso/signup/config/flows-pure', () =>
+	require( './mocks/signup/config/flows-pure' )
+);
 
 describe( 'createSiteWithCart()', () => {
 	// createSiteWithCart() function is not designed to be easy for test at the moment.
@@ -323,7 +326,7 @@ describe( 'isPlanFulfilled()', () => {
 			submitSignupStep,
 		};
 		const defaultDependencies = { cartItem: 'testPlan' };
-		const cartItem = { free_trial: false, product_slug: defaultDependencies.cartItem };
+		const cartItem = { product_slug: defaultDependencies.cartItem };
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 		expect( submitSignupStep ).not.toHaveBeenCalled();
@@ -510,5 +513,87 @@ describe( 'isSiteTopicFulfilled()', () => {
 		isSiteTopicFulfilled( stepName, undefined, nextProps );
 
 		expect( flows.excludeStep ).toHaveBeenCalledWith( 'site-topic-with-optional-survey-question' );
+	} );
+} );
+
+describe( 'isFreePlansDomainUpsellFulfilled()', () => {
+	const submitSignupStep = jest.fn();
+
+	beforeEach( () => {
+		flows.excludeStep.mockClear();
+		submitSignupStep.mockClear();
+	} );
+
+	test( 'should not call submitSignupStep() when no domain or cart item and site is on free plan', () => {
+		const stepName = 'domain-upsell';
+		const nextProps = {
+			submitSignupStep,
+			isPaidPlan: false,
+			signupDependencies: {
+				domainItem: undefined,
+				cartItem: undefined,
+			},
+		};
+
+		isFreePlansDomainUpsellFulfilled( stepName, null, nextProps );
+
+		expect( submitSignupStep ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should call submitSignupStep() when site is on a paid plan', () => {
+		const stepName = 'domain-upsell';
+		const nextProps = {
+			submitSignupStep,
+			isPaidPlan: true,
+			signupDependencies: {
+				domainItem: undefined,
+				cartItem: undefined,
+			},
+		};
+
+		isFreePlansDomainUpsellFulfilled( stepName, null, nextProps );
+
+		expect( submitSignupStep ).toHaveBeenCalledWith(
+			{ stepName, selectedDomainUpsellItem: null, wasSkipped: true },
+			{ selectedDomainUpsellItem: null }
+		);
+	} );
+
+	test( 'should call submitSignupStep() when a cartItem is passed', () => {
+		const stepName = 'domain-upsell';
+		const nextProps = {
+			submitSignupStep,
+			isPaidPlan: false,
+			signupDependencies: {
+				domainItem: undefined,
+				cartItem: {},
+			},
+		};
+
+		isFreePlansDomainUpsellFulfilled( stepName, null, nextProps );
+
+		expect( submitSignupStep ).toHaveBeenCalledWith(
+			{ stepName, selectedDomainUpsellItem: null, wasSkipped: true },
+			{ selectedDomainUpsellItem: null }
+		);
+	} );
+
+	test( 'should call submitSignupStep() when a domainItem is passed', () => {
+		const stepName = 'domain-upsell';
+		const nextProps = {
+			submitSignupStep,
+			isPaidPlan: false,
+			signupDependencies: {
+				domainItem: {},
+				cartItem: undefined,
+			},
+		};
+
+		isFreePlansDomainUpsellFulfilled( stepName, null, nextProps );
+
+		expect( submitSignupStep ).toHaveBeenCalledWith(
+			{ stepName, selectedDomainUpsellItem: null, wasSkipped: true },
+			{ selectedDomainUpsellItem: null }
+		);
 	} );
 } );

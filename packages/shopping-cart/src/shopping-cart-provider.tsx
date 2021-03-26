@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { RequestCart, ResponseCart } from './types';
+import type { RequestCart, ResponseCart } from './types';
 import useShoppingCartManager from './use-shopping-cart-manager';
 import ShoppingCartContext from './shopping-cart-context';
 
@@ -19,7 +19,7 @@ export default function ShoppingCartProvider( {
 	cartKey: string | number | null | undefined;
 	setCart: ( cartKey: string, requestCart: RequestCart ) => Promise< ResponseCart >;
 	getCart: ( cartKey: string ) => Promise< ResponseCart >;
-	children: JSX.Element;
+	children: React.ReactNode;
 } ): JSX.Element {
 	const shoppingCartManager = useShoppingCartManager( {
 		cartKey,

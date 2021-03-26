@@ -86,5 +86,24 @@ export const remoteValuesSchema = {
 				},
 			},
 		},
+		'jetpack-review-prompt': {
+			type: 'object',
+			properties: {
+				scan: { $ref: '#/definitions/dismissiblePrompt' },
+				restore: { $ref: '#/definitions/dismissiblePrompt' },
+			},
+		},
+	},
+	definitions: {
+		dismissiblePrompt: {
+			type: 'object',
+			properties: {
+				dismissedAt: { type: [ 'number', 'null' ] },
+				dismissedCount: { type: 'number', minimum: 0 },
+				reviewed: { type: 'number' },
+				validFrom: { type: [ 'number', 'null' ] },
+			},
+			required: [ 'dismissedAt', 'dismissedCount', 'reviewed', 'validFrom' ],
+		},
 	},
 };

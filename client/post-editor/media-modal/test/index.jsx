@@ -27,20 +27,22 @@ jest.mock(
 	} ),
 	{ virtual: true }
 );
-jest.mock( 'post-editor/media-modal/detail', () => ( {
+jest.mock( 'calypso/post-editor/media-modal/detail', () => ( {
 	default: require( 'calypso/components/empty-component' ),
 } ) );
-jest.mock( 'post-editor/media-modal/gallery', () =>
+jest.mock( 'calypso/post-editor/media-modal/gallery', () =>
 	require( 'calypso/components/empty-component' )
 );
-jest.mock( 'post-editor/media-modal/markup', () => ( {
+jest.mock( 'calypso/post-editor/media-modal/markup', () => ( {
 	get: ( x ) => x,
 } ) );
-jest.mock( 'post-editor/media-modal/secondary-actions', () =>
+jest.mock( 'calypso/post-editor/media-modal/secondary-actions', () =>
 	require( 'calypso/components/empty-component' )
 );
-jest.mock( 'lib/accept', () => require( 'sinon' ).stub().callsArgWithAsync( 1, true ) );
-jest.mock( 'my-sites/media-library', () => require( 'calypso/components/empty-component' ) );
+jest.mock( 'calypso/lib/accept', () => require( 'sinon' ).stub().callsArgWithAsync( 1, true ) );
+jest.mock( 'calypso/my-sites/media-library', () =>
+	require( 'calypso/components/empty-component' )
+);
 
 /**
  * Module variables
@@ -58,7 +60,7 @@ describe( 'EditorMediaModal', () => {
 	let spy;
 	let deleteMedia;
 	let onClose;
-	let setMediaLibrarySelectedItems;
+	let selectMediaItems;
 	let changeMediaSource;
 	let baseProps;
 
@@ -66,10 +68,10 @@ describe( 'EditorMediaModal', () => {
 		spy = sandbox.spy();
 		deleteMedia = sandbox.stub();
 		onClose = sandbox.stub();
-		setMediaLibrarySelectedItems = sandbox.stub();
+		selectMediaItems = sandbox.stub();
 		changeMediaSource = sandbox.stub();
 		baseProps = {
-			setMediaLibrarySelectedItems,
+			selectMediaItems,
 			site: DUMMY_SITE,
 			selectedItems: DUMMY_MEDIA,
 			translate,
@@ -85,7 +87,7 @@ describe( 'EditorMediaModal', () => {
 
 	test( 'When `single` selection screen chosen should initialise with no items selected', () => {
 		shallow( <EditorMediaModal { ...baseProps } single={ true } view={ null } /> ).instance();
-		expect( setMediaLibrarySelectedItems ).to.have.been.calledWith( DUMMY_SITE.ID, [] );
+		expect( selectMediaItems ).to.have.been.calledWith( DUMMY_SITE.ID, [] );
 	} );
 
 	test( 'should prompt to delete a single item from the list view', () => {

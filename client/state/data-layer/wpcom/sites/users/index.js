@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { get, isUndefined, map, noop, omit, omitBy } from 'lodash';
+import { get, map, omit, omitBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +13,8 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { receivePostRevisionAuthors } from 'calypso/state/posts/revisions/authors/actions';
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 export const DEFAULT_PER_PAGE = 10;
 
@@ -30,7 +32,7 @@ export const normalizeUser = ( user ) =>
 			display_name: user.name,
 			username: user.slug,
 		},
-		isUndefined
+		( prop ) => typeof prop === 'undefined'
 	);
 
 /**

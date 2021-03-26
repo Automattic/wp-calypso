@@ -23,10 +23,11 @@ export const launchSiteOrRedirectToLaunchSignupFlow = ( siteId ) => ( dispatch, 
 		return;
 	}
 
-	if (
-		isCurrentPlanPaid( getState(), siteId ) &&
-		getDomainsBySiteId( getState(), siteId ).length > 1
-	) {
+	const isAnchorPodcast = getSiteOption( getState(), siteId, 'anchor_podcast' );
+	const isPaidWithDomain =
+		isCurrentPlanPaid( getState(), siteId ) && getDomainsBySiteId( getState(), siteId ).length > 1;
+
+	if ( isPaidWithDomain || isAnchorPodcast ) {
 		dispatch( launchSite( siteId ) );
 		return;
 	}

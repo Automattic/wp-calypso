@@ -7,7 +7,6 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { loadScript } from '@automattic/load-script';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,6 +24,8 @@ let auth2InitDone = false;
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class GoogleLoginButton extends Component {
 	static propTypes = {

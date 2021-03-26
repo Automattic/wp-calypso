@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
  */
 import { login } from 'calypso/lib/paths';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import HelpComponent from './main';
 import CoursesComponent from './help-courses';
 import ContactComponent from './help-contact';
@@ -42,7 +42,7 @@ export function help( context, next ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Help', { textOnly: true } ) ) );
 
-	context.primary = <HelpComponent isCoursesEnabled={ config.isEnabled( 'help/courses' ) } />;
+	context.primary = <HelpComponent />;
 	next();
 }
 

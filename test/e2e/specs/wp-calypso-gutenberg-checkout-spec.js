@@ -28,16 +28,15 @@ const sandboxCookieValue = config.get( 'storeSandboxCookieValue' );
 
 const currencyValue = 'USD';
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
-describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) is interactive @parallel`, function () {
+describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) is interactive @parallel`, function () {
 	this.timeout( mochaTimeOut );
 	let editorUrl;
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
 
 	describe( 'Can trigger the checkout modal via post editor', function () {
 		step( 'Can log in', async function () {
@@ -130,7 +129,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) i
 		} );
 	} );
 
-	describe( 'Can add/remove coupons', async function () {
+	describe( 'Can add/remove coupons', function () {
 		step( 'Can Enter Coupon Code', async function () {
 			const enterCouponCodeButton = await driverHelper.isElementPresent(
 				driver,
@@ -239,7 +238,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) i
 		} );
 	} );
 
-	describe( 'Can delete the premium plan', async function () {
+	describe( 'Can delete the premium plan', function () {
 		step( 'Can log in', async function () {
 			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser' );
 			return await loginFlow.login();

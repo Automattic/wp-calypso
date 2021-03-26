@@ -10,9 +10,7 @@ import 'calypso/state/purchases/init';
  *
  * @param   {object} state       global state
  * @param   {number} purchaseId  the purchase id
- * @returns {object} the matching purchase if there is one
+ * @returns {import('calypso/lib/purchases/types').Purchase|undefined} the matching purchase if there is one
  */
 export const getByPurchaseId = ( state, purchaseId ) =>
-	getPurchases( state )
-		.filter( ( purchase ) => purchase.id === purchaseId )
-		.shift();
+	getPurchases( state ).find( ( purchase ) => purchase.id === purchaseId );

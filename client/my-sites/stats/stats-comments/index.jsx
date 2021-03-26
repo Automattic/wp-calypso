@@ -113,7 +113,6 @@ class StatsComments extends Component {
 		const { activeFilter } = this.state;
 		const {
 			commentsStatsData,
-			followList,
 			hasCommentsStatsQueryFailed: hasError,
 			requestingCommentsStats,
 			siteId,
@@ -160,7 +159,6 @@ class StatsComments extends Component {
 							value={ translate( 'Comments' ) }
 							label={ translate( 'Author' ) }
 							data={ commentsAuthors }
-							followList={ followList }
 							isActive={ 'top-authors' === activeFilter }
 						/>
 
@@ -169,7 +167,6 @@ class StatsComments extends Component {
 							value={ translate( 'Comments' ) }
 							label={ translate( 'Title' ) }
 							data={ commentsPosts }
-							followList={ followList }
 							isActive={ 'top-content' === activeFilter }
 						/>
 

@@ -7,7 +7,7 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { get, identity, includes, noop } from 'lodash';
+import { get, identity, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -57,6 +57,7 @@ import statsBannerImage from 'calypso/assets/images/illustrations/app-banner-sta
 
 const IOS_REGEX = /iPad|iPod|iPhone/i;
 const ANDROID_REGEX = /Android (\d+(\.\d+)?(\.\d+)?)/i;
+const noop = () => {};
 
 export class AppBanner extends Component {
 	static propTypes = {

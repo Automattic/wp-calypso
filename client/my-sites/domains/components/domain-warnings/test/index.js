@@ -18,7 +18,7 @@ import { DomainWarnings } from '../';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { MAP_EXISTING_DOMAIN_UPDATE_DNS, MAP_SUBDOMAIN } from 'calypso/lib/url/support';
 
-jest.mock( 'lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 
 describe( 'index', () => {
 	describe( 'rules', () => {

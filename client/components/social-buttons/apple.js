@@ -1,13 +1,12 @@
 /**
  * External dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 import { loadScript } from '@automattic/load-script';
 
 /**
@@ -26,6 +25,7 @@ const appleClientUrl =
 	'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js';
 const connectUrlPopupFLow =
 	'https://public-api.wordpress.com/connect/?magic=keyring&service=apple&action=request&for=connect';
+const noop = () => {};
 
 class AppleLoginButton extends Component {
 	static propTypes = {

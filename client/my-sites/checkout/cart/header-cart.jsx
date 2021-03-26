@@ -3,17 +3,17 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
 import { getAllCartItems } from 'calypso/lib/cart-values/cart-items';
 import PopoverCart from './popover-cart';
-import { reloadCart } from 'calypso/lib/cart/actions';
 
 class HeaderCart extends React.Component {
 	static propTypes = {
-		cart: PropTypes.object,
+		cart: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object.isRequired,
 		currentRoute: PropTypes.string,
 	};
@@ -31,7 +31,7 @@ class HeaderCart extends React.Component {
 	};
 
 	componentDidMount() {
-		reloadCart();
+		this.props.shoppingCartManager.reloadFromServer();
 	}
 
 	render() {
@@ -42,7 +42,6 @@ class HeaderCart extends React.Component {
 
 		return (
 			<PopoverCart
-				cart={ this.props.cart }
 				selectedSite={ this.props.selectedSite }
 				visible={ this.state.isPopoverCartVisible }
 				pinned={ false }
@@ -54,4 +53,4 @@ class HeaderCart extends React.Component {
 	}
 }
 
-export default HeaderCart;
+export default withShoppingCart( HeaderCart );

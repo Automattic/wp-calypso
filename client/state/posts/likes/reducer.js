@@ -120,10 +120,7 @@ export const itemReducer = withSchemaValidation(
 	}
 );
 
-const postIdReducer = keyedReducer( 'postId', itemReducer );
-postIdReducer.hasCustomPersistence = true;
-export const items = keyedReducer( 'siteId', postIdReducer );
-items.hasCustomPersistence = true;
+export const items = keyedReducer( 'siteId', keyedReducer( 'postId', itemReducer ) );
 
 export default combineReducers( {
 	items,

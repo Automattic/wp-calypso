@@ -15,8 +15,10 @@ module.exports = function () {
 			log.info( 'Crash reporter started' );
 
 			crashReporter.start( {
+				globalExtra: {
+					_companyName: Config.author,
+				},
 				productName: Config.description,
-				companyName: Config.author,
 				submitURL: Config.crash_reporter.url,
 				uploadToServer: true,
 			} );

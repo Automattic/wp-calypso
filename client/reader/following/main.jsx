@@ -4,9 +4,8 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { initial, flatMap, trim } from 'lodash';
+import { flatMap, trim } from 'lodash';
 import { connect, useDispatch } from 'react-redux';
-import config from 'calypso/config';
 
 /**
  * Internal dependencies
@@ -22,10 +21,12 @@ import FollowingIntro from './intro';
 import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
 import SectionHeader from 'calypso/components/section-header';
 import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { SECTION_FOLLOWING } from 'calypso/state/reader/seen-posts/constants';
 import { getReaderOrganizationFeedsInfo } from 'calypso/state/reader/organizations/selectors';
 import { NO_ORG_ID } from 'calypso/state/reader/organizations/constants';
-import FollowingVoteBanner from './vote-banner';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
+import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 
 /**
  * Style dependencies
@@ -45,25 +46,22 @@ function handleSearch( query ) {
 const FollowingStream = ( props ) => {
 	const suggestionList =
 		props.suggestions &&
-		initial(
-			flatMap( props.suggestions, ( query ) => [
-				<Suggestion suggestion={ query.text } source="following" railcar={ query.railcar } />,
-				', ',
-			] )
-		);
+		flatMap( props.suggestions, ( query ) => [
+			<Suggestion suggestion={ query.text } source="following" railcar={ query.railcar } />,
+			', ',
+		] ).slice( 0, -1 );
 	const placeholderText = getSearchPlaceholderText();
-	const { translate } = props;
+	const { translate, teams } = props;
 	const dispatch = useDispatch();
-	const voteBanner = <FollowingVoteBanner />;
 	const markAllAsSeen = ( feedsInfo ) => {
 		const { feedIds, feedUrls } = feedsInfo;
+		dispatch( recordReaderTracksEvent( 'calypso_reader_mark_all_as_seen_clicked' ) );
 		dispatch( requestMarkAllAsSeen( { identifier: SECTION_FOLLOWING, feedIds, feedUrls } ) );
 	};
-
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Stream { ...props }>
-			{ voteBanner ? voteBanner : <FollowingIntro /> }
+			<FollowingIntro />
 			<CompactCard className="following__search">
 				<SearchInput
 					onSearch={ handleSearch }
@@ -74,7 +72,7 @@ const FollowingStream = ( props ) => {
 			</CompactCard>
 			<BlankSuggestions suggestions={ suggestionList } />
 			<SectionHeader label={ translate( 'Followed Sites' ) }>
-				{ config.isEnabled( 'reader/seen-posts' ) && (
+				{ isEligibleForUnseen( { teams } ) && (
 					<Button
 						compact
 						onClick={ () => markAllAsSeen( props.feedsInfo ) }
@@ -93,5 +91,6 @@ const FollowingStream = ( props ) => {
 };
 
 export default connect( ( state ) => ( {
+	teams: getReaderTeams( state ),
 	feedsInfo: getReaderOrganizationFeedsInfo( state, NO_ORG_ID ),
 } ) )( SuggestionProvider( localize( FollowingStream ) ) );

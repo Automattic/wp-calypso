@@ -5,6 +5,7 @@ import React, { FunctionComponent, useMemo, useCallback, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import styled from '@emotion/styled';
+import type { RequestCartProduct } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -55,7 +56,7 @@ interface SelectedSite {
 
 interface Props {
 	cart: MockResponseCart;
-	addItemToCart: ( product: object ) => void;
+	addItemToCart: ( product: RequestCartProduct ) => void;
 }
 
 const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemToCart } ) => {

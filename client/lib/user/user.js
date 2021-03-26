@@ -4,7 +4,7 @@
 import { isEqual } from 'lodash';
 import store from 'store';
 import debugFactory from 'debug';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -229,9 +229,7 @@ User.prototype.clear = async function () {
 	 */
 	this.data = false;
 	store.clearAll();
-	if ( config.isEnabled( 'persist-redux' ) ) {
-		await clearStorage();
-	}
+	await clearStorage();
 };
 
 /**

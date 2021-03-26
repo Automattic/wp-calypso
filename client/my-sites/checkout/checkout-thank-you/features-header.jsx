@@ -14,8 +14,9 @@ import {
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
-	isGoogleApps,
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGuidedTransfer,
+	isTitanMail,
 } from 'calypso/lib/products-values';
 
 const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedPurchases } ) => {
@@ -33,11 +34,12 @@ const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedP
 
 	const shouldHideFeaturesHeading =
 		hasFailedPurchases ||
-		purchases.some( isGoogleApps ) ||
+		purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace ) ||
 		purchases.some( isDomainRegistration ) ||
 		purchases.some( isDomainMapping ) ||
 		purchases.some( isGuidedTransfer ) ||
-		purchases.some( isDomainTransfer );
+		purchases.some( isDomainTransfer ) ||
+		purchases.some( isTitanMail );
 
 	if ( shouldHideFeaturesHeading ) {
 		return <div />;

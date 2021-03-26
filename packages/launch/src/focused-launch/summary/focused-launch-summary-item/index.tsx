@@ -1,9 +1,11 @@
 /**
  * External dependencies
  */
-import React, { ReactNode } from 'react';
+import * as React from 'react';
 import classnames from 'classnames';
 import './style.scss';
+
+type ReactNode = React.ReactNode;
 
 interface LeadingSideProps {
 	label: ReactNode;
@@ -49,7 +51,10 @@ const FocusedLaunchSummaryItem: React.FunctionComponent<
 		isSelected?: boolean;
 		readOnly?: boolean;
 		isLoading?: boolean;
-		children: [ ReturnType< typeof LeadingContentSide >, ReturnType< typeof TrailingContentSide > ];
+		children?: [
+			ReturnType< typeof LeadingContentSide >,
+			ReturnType< typeof TrailingContentSide >
+		];
 	} & React.ButtonHTMLAttributes< HTMLButtonElement >
 > = ( { children, isSelected = false, readOnly = false, isLoading, ...rest } ) => {
 	return (
@@ -62,8 +67,8 @@ const FocusedLaunchSummaryItem: React.FunctionComponent<
 				'is-loading': isLoading,
 			} ) }
 		>
-			{ children[ 0 ] }
-			{ children[ 1 ] }
+			{ children?.[ 0 ] }
+			{ children?.[ 1 ] }
 		</button>
 	);
 };

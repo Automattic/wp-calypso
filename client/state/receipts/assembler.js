@@ -17,6 +17,7 @@ import { flatten } from 'lodash';
  * @property {string} product_type
  * @property {string} product_name
  * @property {string} product_name_short
+ * @property {number} new_quantity
  * @property {string} [registrar_support_url]
  * @property {boolean} [is_email_verified]
  * @property {boolean} [is_root_domain_with_us]
@@ -108,6 +109,7 @@ export function createReceiptObject( data ) {
 				productType: purchase.product_type,
 				productName: purchase.product_name,
 				productNameShort: purchase.product_name_short,
+				newQuantity: purchase.new_quantity,
 				registrarSupportUrl: purchase.registrar_support_url,
 				isEmailVerified: Boolean( purchase.is_email_verified ),
 				isRootDomainWithUs: Boolean( purchase.is_root_domain_with_us ),

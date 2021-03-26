@@ -8,8 +8,9 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
+import HandleEmailedLinkFormJetpackConnect from './magic-login/handle-emailed-link-form-jetpack-connect';
 import MagicLogin from './magic-login';
 import WPLogin from './wp-login';
 import { getUrlParts } from 'calypso/lib/url';
@@ -95,6 +96,13 @@ export function magicLogin( context, next ) {
 	next();
 }
 
+function getHandleEmailedLinkFormComponent( flow ) {
+	if ( flow === 'jetpack' && config.isEnabled( 'jetpack/magic-link-signup' ) ) {
+		return HandleEmailedLinkFormJetpackConnect;
+	}
+	return HandleEmailedLinkForm;
+}
+
 export function magicLoginUse( context, next ) {
 	/**
 	 * Pull the query arguments out of the URL & into the state.
@@ -108,10 +116,14 @@ export function magicLoginUse( context, next ) {
 
 	const previousQuery = context.state || {};
 
-	const { client_id, email, token } = previousQuery;
+	const { client_id, email, redirect_to, token } = previousQuery;
+
+	const flow = includes( redirect_to, 'jetpack/connect' ) ? 'jetpack' : null;
+
+	const PrimaryComponent = getHandleEmailedLinkFormComponent( flow );
 
 	context.primary = (
-		<HandleEmailedLinkForm clientId={ client_id } emailAddress={ email } token={ token } />
+		<PrimaryComponent clientId={ client_id } emailAddress={ email } token={ token } />
 	);
 
 	next();

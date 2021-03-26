@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { castArray, noop, zip } from 'lodash';
+import { zip } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +14,8 @@ import {
 import { requestMediaStorage } from 'calypso/state/sites/media-storage/actions';
 import { createTransientMediaItems } from 'calypso/state/media/thunks/create-transient-media-items';
 import { isFileList } from 'calypso/state/media/utils/is-file-list';
+
+const noop = () => {};
 
 /**
  * Add media items serially (one at a time) but dispatch creation
@@ -44,7 +46,11 @@ export const uploadMedia = (
 	onItemFailure = noop
 ) => async ( dispatch ) => {
 	// https://stackoverflow.com/questions/25333488/why-isnt-the-filelist-object-an-array
-	files = isFileList( files ) ? Array.from( files ) : castArray( files );
+	if ( isFileList( files ) ) {
+		files = Array.from( files );
+	} else if ( ! Array.isArray( files ) ) {
+		files = [ files ];
+	}
 	const uploadedItems = [];
 
 	const transientItems = dispatch( createTransientMediaItems( files, site ) );

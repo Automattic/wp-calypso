@@ -52,10 +52,10 @@ function showAppWindow() {
 	} );
 
 	mainWindow.webContents.on( 'did-finish-load', function () {
-		mainWindow.webContents.send( 'app-config', Config, Settings.isDebug(), System.getDetails() );
+		mainWindow.webContents.send( 'app-config', System.getDetails() );
 
 		ipc.on( 'mce-contextmenu', function ( ev ) {
-			mainWindow.send( 'mce-contextmenu', ev );
+			mainWindow.webContents.send( 'mce-contextmenu', ev );
 		} );
 	} );
 
@@ -92,8 +92,15 @@ function showAppWindow() {
 		callback( { cancel: false } );
 	} );
 
+	ipc.handle( 'get-config', () => {
+		return Config.toRenderer();
+	} );
+
+	ipc.handle( 'get-settings', () => {
+		return Settings.toRenderer();
+	} );
+
 	mainWindow.loadURL( appUrl );
-	// mainWindow.openDevTools();
 
 	mainWindow.on( 'close', function () {
 		const currentURL = mainWindow.webContents.getURL();

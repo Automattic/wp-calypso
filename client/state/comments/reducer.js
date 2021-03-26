@@ -3,7 +3,6 @@
  */
 import {
 	filter,
-	isUndefined,
 	orderBy,
 	has,
 	map,
@@ -13,7 +12,6 @@ import {
 	get,
 	zipObject,
 	includes,
-	isArray,
 	values,
 	omit,
 	startsWith,
@@ -23,6 +21,7 @@ import {
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	COMMENT_COUNTS_UPDATE,
 	COMMENTS_CHANGE_STATUS,
@@ -40,12 +39,7 @@ import {
 	COMMENTS_SET_ACTIVE_REPLY,
 } from 'calypso/state/action-types';
 import { READER_EXPAND_COMMENTS } from 'calypso/state/reader/action-types';
-import {
-	combineReducers,
-	keyedReducer,
-	withoutPersistence,
-	withStorageKey,
-} from 'calypso/state/utils';
+import { combineReducers, keyedReducer, withoutPersistence } from 'calypso/state/utils';
 import {
 	PLACEHOLDER_STATE,
 	NUMBER_OF_COMMENTS_PER_FETCH,
@@ -64,7 +58,8 @@ const updateComment = ( commentId, newProperties ) => ( comment ) => {
 	if ( comment.ID !== commentId ) {
 		return comment;
 	}
-	const updateLikeCount = has( newProperties, 'i_like' ) && isUndefined( newProperties.like_count );
+	const updateLikeCount =
+		has( newProperties, 'i_like' ) && typeof newProperties.like_count === 'undefined';
 
 	// Comment Management allows for modifying nested fields, such as `author.name` and `author.url`.
 	// Though, there is no direct match between the GET response (which feeds the state) and the POST request.
@@ -234,7 +229,7 @@ const isValidExpansionsAction = ( action ) => {
 	return (
 		siteId &&
 		postId &&
-		isArray( commentIds ) &&
+		Array.isArray( commentIds ) &&
 		includes( values( POST_COMMENT_DISPLAY_TYPES ), displayType )
 	);
 };

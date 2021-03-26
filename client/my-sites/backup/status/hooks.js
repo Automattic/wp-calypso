@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { useMemo } from 'react';
+
+/**
  * Internal dependencies
  */
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -116,6 +121,7 @@ export const useDailyBackupStatus = ( siteId, selectedDate ) => {
 		mostRecentBackupEver: mostRecentBackupEver.backupAttempt,
 		lastBackupBeforeDate: lastBackupBeforeDate.backupAttempt,
 		lastBackupAttemptOnDate: lastAttemptOnDate.backupAttempt,
+		lastSuccessfulBackupOnDate: successfulLastAttempt ? lastAttemptOnDate.backupAttempt : undefined,
 		deltas: backupDeltas.deltas,
 		rawDeltas: rawBackupDeltas.deltas,
 	};
@@ -138,14 +144,26 @@ export const useRealtimeBackupStatus = ( siteId, selectedDate ) => {
 		after: moment( selectedDate ).startOf( 'day' ).toISOString(),
 	} );
 
-	const backupAttemptsOnDate = activityLogs.filter(
-		( activity ) => isActivityBackup( activity ) || isSuccessfulRealtimeBackup( activity )
-	);
-	const lastBackupAttemptOnDate = backupAttemptsOnDate[ 0 ];
+	const {
+		backupAttemptsOnDate,
+		lastBackupAttemptOnDate,
+		lastSuccessfulBackupOnDate,
+		lastAttemptWasSuccessful,
+	} = useMemo( () => {
+		const attemptsOnDate = activityLogs.filter(
+			( a ) => isActivityBackup( a ) || isSuccessfulRealtimeBackup( a )
+		);
+
+		return {
+			backupAttemptsOnDate: attemptsOnDate,
+			lastBackupAttemptOnDate: attemptsOnDate[ 0 ],
+			lastSuccessfulBackupOnDate: attemptsOnDate.find( isSuccessfulRealtimeBackup ),
+			lastAttemptWasSuccessful:
+				attemptsOnDate[ 0 ] && isSuccessfulRealtimeBackup( attemptsOnDate[ 0 ] ),
+		};
+	}, [ activityLogs ] );
 
 	const hasPreviousBackup = ! lastBackupBeforeDate.isLoading && lastBackupBeforeDate.backupAttempt;
-	const successfulLastAttempt =
-		lastBackupAttemptOnDate && isSuccessfulRealtimeBackup( lastBackupAttemptOnDate );
 
 	const rawDeltas = useRawBackupDeltas(
 		siteId,
@@ -153,7 +171,7 @@ export const useRealtimeBackupStatus = ( siteId, selectedDate ) => {
 			before: moment( lastBackupAttemptOnDate?.activityTs ),
 			after: moment( lastBackupBeforeDate.backupAttempt?.activityTs ),
 		},
-		!! ( hasPreviousBackup && successfulLastAttempt )
+		!! ( hasPreviousBackup && lastAttemptWasSuccessful )
 	);
 
 	return {
@@ -164,8 +182,9 @@ export const useRealtimeBackupStatus = ( siteId, selectedDate ) => {
 			rawDeltas.isLoading,
 		mostRecentBackupEver: mostRecentBackupEver.backupAttempt,
 		lastBackupBeforeDate: lastBackupBeforeDate.backupAttempt,
-		lastBackupAttemptOnDate: backupAttemptsOnDate[ 0 ],
-		earlierBackupAttemptsOnDate: backupAttemptsOnDate?.slice?.( 1 ) || [],
+		lastBackupAttemptOnDate,
+		lastSuccessfulBackupOnDate,
+		backupAttemptsOnDate,
 		rawDeltas: rawDeltas.deltas,
 	};
 };

@@ -1,4 +1,11 @@
 /**
+ * DEPRECATED
+ *
+ * This code has been deprecated in favor of /client/lib/explat (New Experiment component).
+ * Note that the API has changed to use slots.
+ */
+
+/**
  * External Dependencies
  */
 import React, { FunctionComponent, useEffect, useState } from 'react';
@@ -18,9 +25,16 @@ export { default as DefaultVariation } from './default-variation';
 export { default as LoadingVariations } from './loading-variations';
 
 /**
+ * Type Dependencies
+ */
+import { LoadingProps } from './loading-props';
+
+/**
  * The experiment component to display the experiment variations
  *
  * @param props The properties that describe the experiment
+ *
+ * @deprecated Use /client/lib/explat (New Experiment component). Note that the API has changed to use slots.
  */
 export const Experiment: FunctionComponent< ExperimentProps > = ( props ) => {
 	const { isLoading: loading, variation, children, name: experimentName } = props;
@@ -42,8 +56,19 @@ export const Experiment: FunctionComponent< ExperimentProps > = ( props ) => {
 	return (
 		<>
 			<QueryExperiments />
-			{ React.Children.map( children, ( elem ) => {
-				return React.cloneElement( elem, { variation, isLoading: loading } );
+			{ React.Children.map( children as JSX.Element[], ( elem ) => {
+				if ( elem ) {
+					const props: LoadingProps = { variation };
+
+					// Unless element is a DOM element
+					if ( 'string' !== typeof elem.type ) {
+						props.isLoading = loading;
+					}
+
+					return React.cloneElement( elem, props );
+				}
+
+				return null;
 			} ) }
 		</>
 	);
@@ -63,9 +88,12 @@ function mapStateToProps( state: AppState, ownProps?: ExperimentProps ): Experim
 	const { name: experimentName } = ownProps;
 	return {
 		isLoading: isLoading( state ),
-		variation: getVariationForUser( state, experimentName ),
+		variation: getVariationForUser( state, experimentName ) ?? undefined,
 		...ownProps,
 	};
 }
 
+/**
+ * @deprecated Use /client/lib/explat (New Experiment component). Note that the API has changed to use slots.
+ */
 export default connect( mapStateToProps )( Experiment );

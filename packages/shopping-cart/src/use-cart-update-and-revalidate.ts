@@ -11,7 +11,7 @@ import {
 	convertResponseCartToRequestCart,
 	convertRawResponseCartToResponseCart,
 } from './cart-functions';
-import {
+import type {
 	TempResponseCart,
 	RequestCart,
 	ResponseCart,
@@ -28,6 +28,12 @@ export default function useCartUpdateAndRevalidate(
 	hookDispatch: ( arg0: ShoppingCartAction ) => void
 ): void {
 	const pendingResponseCart = useRef< TempResponseCart >( responseCart );
+	const isMounted = useRef< boolean >( true );
+	useEffect( () => {
+		return () => {
+			isMounted.current = false;
+		};
+	}, [] );
 
 	useEffect( () => {
 		if ( cacheStatus !== 'invalid' ) {
@@ -44,26 +50,27 @@ export default function useCartUpdateAndRevalidate(
 
 		hookDispatch( { type: 'REQUEST_UPDATED_RESPONSE_CART' } );
 
-		// We need to add is_update so that we don't add a plan automatically when the cart gets updated (DWPO).
-		setServerCart( { ...requestCart, is_update: true } )
+		setServerCart( requestCart )
 			.then( ( response ) => {
 				debug( 'update cart request complete', requestCart, '; updated cart is', response );
 				if ( responseCart !== pendingResponseCart.current ) {
 					debug( 'ignoring updated cart because there is a newer request pending' );
 					return;
 				}
-				hookDispatch( {
-					type: 'RECEIVE_UPDATED_RESPONSE_CART',
-					updatedResponseCart: convertRawResponseCartToResponseCart( response ),
-				} );
+				isMounted.current &&
+					hookDispatch( {
+						type: 'RECEIVE_UPDATED_RESPONSE_CART',
+						updatedResponseCart: convertRawResponseCartToResponseCart( response ),
+					} );
 			} )
 			.catch( ( error ) => {
 				debug( 'error while setting cart', error );
-				hookDispatch( {
-					type: 'RAISE_ERROR',
-					error: 'SET_SERVER_CART_ERROR',
-					message: error.message,
-				} );
+				isMounted.current &&
+					hookDispatch( {
+						type: 'RAISE_ERROR',
+						error: 'SET_SERVER_CART_ERROR',
+						message: error.message,
+					} );
 			} );
-	}, [ setServerCart, cacheStatus, responseCart, hookDispatch ] );
+	}, [ isMounted, setServerCart, cacheStatus, responseCart, hookDispatch ] );
 }

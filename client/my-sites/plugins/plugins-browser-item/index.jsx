@@ -11,12 +11,13 @@ import { flowRight as compose, includes } from 'lodash';
  * Internal dependencies
  */
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
-import PluginsStore from 'calypso/lib/plugins/store';
 import { Button } from '@automattic/components';
 import Rating from 'calypso/components/rating';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 
 /**
  * Style dependencies
@@ -42,13 +43,6 @@ class PluginsBrowserListElement extends Component {
 		return url;
 	}
 
-	getSites() {
-		if ( this.props.site && this.props.currentSites ) {
-			return PluginsStore.getSites( this.props.currentSites, this.props.plugin.slug );
-		}
-		return [];
-	}
-
 	trackPluginLinkClick = () => {
 		recordTracksEvent( 'calypso_plugin_browser_item_click', {
 			site: this.props.site,
@@ -70,8 +64,8 @@ class PluginsBrowserListElement extends Component {
 	}
 
 	renderInstalledIn() {
-		const sites = this.getSites();
-		if ( ( sites && sites.length > 0 ) || this.isWpcomPreinstalled() ) {
+		const { sitesWithPlugin } = this.props;
+		if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || this.isWpcomPreinstalled() ) {
 			return (
 				<div className="plugins-browser-item__installed">
 					<Gridicon icon="checkmark" size={ 18 } />
@@ -142,11 +136,17 @@ class PluginsBrowserListElement extends Component {
 }
 
 export default compose(
-	connect( ( state ) => {
+	connect( ( state, { currentSites, plugin, site } ) => {
 		const selectedSiteId = getSelectedSiteId( state );
+
+		const sitesWithPlugin =
+			site && currentSites
+				? getSitesWithPlugin( state, siteObjectsToSiteIds( currentSites ), plugin.slug )
+				: [];
 
 		return {
 			isJetpackSite: isJetpackSite( state, selectedSiteId ),
+			sitesWithPlugin,
 		};
 	} ),
 	localize

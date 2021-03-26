@@ -1,8 +1,6 @@
 /**
- * External dependencies
+ * Internal dependencies
  */
-import { get } from 'lodash';
+import 'calypso/state/atomic-transfer/init';
 
-export default ( state, siteId ) => {
-	return get( state, [ 'atomicTransfer', siteId, 'atomicTransfer' ], {} );
-};
+export default ( state, siteId ) => state.atomicTransfer?.[ siteId ] ?? {};

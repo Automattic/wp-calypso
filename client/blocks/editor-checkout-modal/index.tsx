@@ -3,11 +3,11 @@
  */
 import React, { useMemo, useEffect } from 'react';
 import { connect } from 'react-redux';
-import wp from 'calypso/lib/wp';
 import { Icon, wordpress } from '@wordpress/icons';
-import { ShoppingCartProvider, RequestCart } from '@automattic/shopping-cart';
 import { Modal } from '@wordpress/components';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { useTranslate } from 'i18n-calypso';
+import type { RequestCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -19,6 +19,8 @@ import getCartKey from 'calypso/my-sites/checkout/get-cart-key';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import userFactory from 'calypso/lib/user';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import wp from 'calypso/lib/wp';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 /**
  * Style dependencies
@@ -26,10 +28,6 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import './style.scss';
 
 const wpcom = wp.undocumented();
-
-const wpcomGetCart = ( cartKey: string ) => wpcom.getCart( cartKey );
-const wpcomSetCart = ( cartKey: string, requestCart: RequestCart ) =>
-	wpcom.setCart( cartKey, requestCart );
 
 function fetchStripeConfigurationWpcom( args: Record< string, unknown > ) {
 	return fetchStripeConfiguration( args, wpcom );
@@ -45,26 +43,26 @@ function removeHashFromUrl(): void {
 	} catch {}
 }
 
-const EditorCheckoutModal = ( props: Props ) => {
-	const { site, isOpen, onClose, cartData } = props;
-	const hasEmptyCart = ! cartData.products || cartData.products.length < 1;
+const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
+	const {
+		site,
+		isOpen,
+		onClose,
+		cartData,
+		redirectTo,
+		isFocusedLaunch,
+		checkoutOnSuccessCallback,
+	} = props;
+
+	const translate = useTranslate();
 
 	const user = userFactory();
 	const isLoggedOutCart = ! user?.get();
-	const waitForOtherCartUpdates = false;
-	// We can assume if they're accessing the checkout in an editor that they have a site.
-	const isNoSiteCart = false;
 
-	const cartKey = useMemo(
-		() =>
-			getCartKey( {
-				selectedSite: site,
-				isLoggedOutCart,
-				isNoSiteCart,
-				waitForOtherCartUpdates,
-			} ),
-		[ waitForOtherCartUpdates, site, isLoggedOutCart, isNoSiteCart ]
-	);
+	const cartKey = useMemo( () => getCartKey( { selectedSite: site, isLoggedOutCart } ), [
+		site,
+		isLoggedOutCart,
+	] );
 
 	useEffect( () => {
 		return () => {
@@ -77,49 +75,63 @@ const EditorCheckoutModal = ( props: Props ) => {
 	// We need to pass in a comma separated list of product
 	// slugs to be set in the cart otherwise we will be
 	// redirected to the plans page due to an empty cart
-	const productSlugs = hasEmptyCart
-		? null
-		: cartData.products.map( ( product ) => product.product_slug );
-	const commaSeparatedProductSlugs = productSlugs?.join( ',' ) || null;
+	const productSlugs =
+		// check if the cart is empty (i.e no products)
+		! cartData?.products || cartData.products.length < 1
+			? null
+			: cartData.products.map( ( product ) => product.product_slug );
+	const commaSeparatedProductSlugs = productSlugs?.join( ',' );
 
-	return hasEmptyCart ? null : (
+	const handleAfterPaymentComplete = () => {
+		checkoutOnSuccessCallback?.();
+	};
+
+	return isOpen ? (
 		<Modal
 			open={ isOpen }
 			overlayClassName="editor-checkout-modal"
 			onRequestClose={ onClose }
-			title=""
+			title={ String( translate( 'Checkout modal' ) ) }
 			shouldCloseOnClickOutside={ false }
 			icon={ <Icon icon={ wordpress } size={ 36 } /> }
 		>
-			<ShoppingCartProvider cartKey={ cartKey } getCart={ wpcomGetCart } setCart={ wpcomSetCart }>
+			<CalypsoShoppingCartProvider cartKey={ cartKey }>
 				<StripeHookProvider
 					fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
 					locale={ props.locale }
 				>
 					<CompositeCheckout
+						redirectTo={ redirectTo } // custom thank-you URL for payments that are processed after a redirect (eg: Paypal)
 						isInEditor
-						siteId={ site.ID }
-						siteSlug={ site.slug }
+						isFocusedLaunch={ isFocusedLaunch }
+						siteId={ site?.ID }
+						siteSlug={ site?.slug }
 						productAliasFromUrl={ commaSeparatedProductSlugs }
+						onAfterPaymentComplete={ handleAfterPaymentComplete }
 					/>
 				</StripeHookProvider>
-			</ShoppingCartProvider>
+			</CalypsoShoppingCartProvider>
 		</Modal>
-	);
+	) : null;
 };
 
-type Props = {
-	site: SiteData;
-	cartData: RequestCart;
+interface Props {
+	site: SiteData | null;
 	onClose: () => void;
 	isOpen: boolean;
 	locale: string | undefined;
-};
+	checkoutOnSuccessCallback?: () => void;
+	isFocusedLaunch?: boolean;
+	cartData?: RequestCart;
+	redirectTo?: string;
+}
 
 EditorCheckoutModal.defaultProps = {
+	site: null,
 	isOpen: false,
-	onClose: () => null,
-	cartData: {},
+	onClose: () => {
+		return;
+	},
 };
 
 export default connect( ( state ) => ( {

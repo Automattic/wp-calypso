@@ -14,13 +14,12 @@ import { localize } from 'i18n-calypso';
 import { Card, Dialog } from '@automattic/components';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
-import notices from 'calypso/notices';
 import {
 	domainManagementContactsPrivacy,
 	domainManagementEdit,
 } from 'calypso/my-sites/domains/paths';
 import wp from 'calypso/lib/wp';
-import { successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'calypso/lib/url/support';
 import { registrar as registrarNames } from 'calypso/lib/domains/constants';
 import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
@@ -369,7 +368,7 @@ class EditContactInfoFormCard extends React.Component {
 					'Please try again later or contact support.'
 			);
 
-		notices.error( message );
+		this.props.errorNotice( message );
 	};
 
 	handleSubmitButtonClick = ( newContactDetails ) => {
@@ -456,6 +455,7 @@ export default connect(
 		};
 	},
 	{
+		errorNotice,
 		fetchSiteDomains,
 		requestWhois,
 		saveWhois,

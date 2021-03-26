@@ -3,14 +3,22 @@
  */
 import React, { useState } from 'react';
 import { useSelect } from '@wordpress/data';
-import type { DomainSuggestions } from '@automattic/data-stores';
+
+import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
 import PlanItem from './plan-item';
-import { PLANS_STORE } from '../constants';
-import type { CTAVariation, PopularBadgeVariation, CustomTagLinesMap } from './types';
+import { useSupportedPlans } from '../hooks';
+import { PLANS_STORE } from '../stores';
+
+import type {
+	CTAVariation,
+	PopularBadgeVariation,
+	CustomTagLinesMap,
+	DisabledPlansMap,
+} from './types';
 
 /**
  * Style dependencies
@@ -18,60 +26,71 @@ import type { CTAVariation, PopularBadgeVariation, CustomTagLinesMap } from './t
 import './style.scss';
 
 export interface Props {
-	selectedPlanSlug: string;
-	onPlanSelect: ( planSlug: string ) => void;
+	selectedPlanProductId: number | undefined;
+	onPlanSelect: ( planProductId: number | undefined ) => void;
 	onPickDomainClick?: () => void;
 	currentDomain?: DomainSuggestions.DomainSuggestion;
-	disabledPlans?: { [ planSlug: string ]: string };
+	disabledPlans?: DisabledPlansMap;
 	locale: string;
 	showTaglines?: boolean;
 	CTAVariation?: CTAVariation;
 	popularBadgeVariation: PopularBadgeVariation;
 	customTagLines?: CustomTagLinesMap;
+	defaultAllPlansExpanded?: boolean;
+	billingPeriod: Plans.PlanBillingPeriod;
 }
 
 const PlansTable: React.FunctionComponent< Props > = ( {
-	selectedPlanSlug,
+	selectedPlanProductId,
 	onPlanSelect,
 	onPickDomainClick,
 	currentDomain,
 	disabledPlans,
 	locale,
+	billingPeriod,
 	showTaglines = false,
 	CTAVariation = 'NORMAL',
 	popularBadgeVariation = 'ON_TOP',
 	customTagLines,
+	defaultAllPlansExpanded = false,
 } ) => {
-	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
-	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices( locale ) );
-	const [ allPlansExpanded, setAllPlansExpanded ] = useState( false );
+	const { supportedPlans } = useSupportedPlans( locale, billingPeriod );
+
+	const [ allPlansExpanded, setAllPlansExpanded ] = useState( defaultAllPlansExpanded );
+
+	const getPlanProduct = useSelect( ( select ) => select( PLANS_STORE ).getPlanProduct );
 
 	return (
 		<div className="plans-table">
-			{ supportedPlans.map(
-				( plan ) =>
-					plan && (
-						<PlanItem
-							popularBadgeVariation={ popularBadgeVariation }
-							allPlansExpanded={ allPlansExpanded }
-							key={ plan.storeSlug }
-							slug={ plan.storeSlug }
-							domain={ currentDomain }
-							tagline={ ( showTaglines && customTagLines?.[ plan.storeSlug ] ) ?? plan.description }
-							CTAVariation={ CTAVariation }
-							features={ plan.features ?? [] }
-							isPopular={ plan.isPopular }
-							isFree={ plan.isFree }
-							price={ prices[ plan.storeSlug ] }
-							name={ plan?.title.toString() }
-							isSelected={ plan.storeSlug === selectedPlanSlug }
-							onSelect={ onPlanSelect }
-							onPickDomainClick={ onPickDomainClick }
-							onToggleExpandAll={ () => setAllPlansExpanded( ( expand ) => ! expand ) }
-							disabledLabel={ disabledPlans?.[ plan.storeSlug ] }
-						></PlanItem>
-					)
-			) }
+			{ supportedPlans
+				.filter( ( plan ) => !! plan )
+				.map( ( plan ) => (
+					<PlanItem
+						popularBadgeVariation={ popularBadgeVariation }
+						allPlansExpanded={ allPlansExpanded }
+						key={ plan.periodAgnosticSlug }
+						slug={ plan.periodAgnosticSlug }
+						domain={ currentDomain }
+						tagline={
+							( showTaglines && customTagLines?.[ plan.periodAgnosticSlug ] ) ?? plan.description
+						}
+						CTAVariation={ CTAVariation }
+						features={ plan.features ?? [] }
+						billingPeriod={ billingPeriod }
+						isPopular={ plan.isPopular }
+						isFree={ plan.isFree }
+						name={ plan?.title.toString() }
+						isSelected={
+							!! selectedPlanProductId &&
+							selectedPlanProductId ===
+								getPlanProduct( plan.periodAgnosticSlug, billingPeriod )?.productId
+						}
+						onSelect={ onPlanSelect }
+						onPickDomainClick={ onPickDomainClick }
+						onToggleExpandAll={ () => setAllPlansExpanded( ( expand ) => ! expand ) }
+						disabledLabel={ disabledPlans?.[ plan.periodAgnosticSlug ] }
+					></PlanItem>
+				) ) }
 		</div>
 	);
 };

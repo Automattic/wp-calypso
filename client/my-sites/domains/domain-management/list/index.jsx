@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { find, findIndex, get, identity, noop, times, isEmpty } from 'lodash';
+import { find, findIndex, get, identity, times, isEmpty } from 'lodash';
 import page from 'page';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import DomainOnly from './domain-only';
 import ListItemPlaceholder from './item-placeholder';
@@ -59,12 +59,13 @@ import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 import './style.scss';
 import 'calypso/my-sites/domains/style.scss';
 
+const noop = () => {};
+
 export class List extends React.Component {
 	static propTypes = {
 		selectedSite: PropTypes.object.isRequired,
 		domains: PropTypes.array.isRequired,
 		isRequestingDomains: PropTypes.bool,
-		cart: PropTypes.object,
 		context: PropTypes.object,
 		renderAllSites: PropTypes.bool,
 		hasSingleSite: PropTypes.bool,
@@ -150,11 +151,11 @@ export class List extends React.Component {
 						brandFont
 						className="domain-management__page-heading"
 						headerText={ this.props.translate( 'Site Domains' ) }
+						subHeaderText={ this.props.translate( 'Manage the domains connected to your site.' ) }
 						align="left"
 					/>
 					<div className="domains__header-buttons">
 						<HeaderCart
-							cart={ this.props.cart }
 							selectedSite={ this.props.selectedSite }
 							currentRoute={ this.props.currentRoute }
 						/>
@@ -434,6 +435,8 @@ export class List extends React.Component {
 			hasSingleSite,
 		} = this.props;
 
+		const { changePrimaryDomainModeEnabled, primaryDomainIndex, settingPrimaryDomain } = this.state;
+
 		const domains =
 			selectedSite.jetpack || ( renderAllSites && isDomainOnly )
 				? this.filterOutWpcomDomains( this.props.domains )
@@ -447,13 +450,14 @@ export class List extends React.Component {
 				domainDetails={ domain }
 				site={ selectedSite }
 				isManagingAllSites={ false }
-				onClick={ this.state.settingPrimaryDomain ? noop : this.goToEditDomainRoot }
-				isBusy={ this.state.settingPrimaryDomain && index === this.state.primaryDomainIndex }
+				onClick={ settingPrimaryDomain ? noop : this.goToEditDomainRoot }
+				isBusy={ settingPrimaryDomain && index === primaryDomainIndex }
+				isChecked={ changePrimaryDomainModeEnabled && index === primaryDomainIndex }
 				busyMessage={ this.props.translate( 'Setting Primary Domain…', {
 					context: 'Shows up when the primary domain is changing and the user is waiting',
 				} ) }
-				disabled={ this.state.settingPrimaryDomain || this.state.changePrimaryDomainModeEnabled }
-				enableSelection={ this.state.changePrimaryDomainModeEnabled && domain.canSetAsPrimary }
+				disabled={ settingPrimaryDomain || changePrimaryDomainModeEnabled }
+				enableSelection={ changePrimaryDomainModeEnabled && domain.canSetAsPrimary }
 				selectionIndex={ index }
 				onMakePrimaryClick={ this.handleUpdatePrimaryDomainOptionClick }
 				onSelect={ this.handleUpdatePrimaryDomain }

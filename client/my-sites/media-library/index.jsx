@@ -25,7 +25,7 @@ import {
 	getKeyringConnections,
 } from 'calypso/state/sharing/keyring/selectors';
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
-import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
+import { selectMediaItems } from 'calypso/state/media/actions';
 
 /**
  * Style dependencies
@@ -59,7 +59,6 @@ class MediaLibrary extends Component {
 		onSourceChange: PropTypes.func,
 		onSearch: PropTypes.func,
 		onScaleChange: PropTypes.func,
-		onEditItem: PropTypes.func,
 		fullScreenDropZone: PropTypes.bool,
 		containerWidth: PropTypes.number,
 		single: PropTypes.bool,
@@ -121,7 +120,7 @@ class MediaLibrary extends Component {
 		}
 
 		if ( ! isEqual( selectedItems, filteredItems ) ) {
-			this.props.setMediaLibrarySelectedItems( this.props.site.ID, filteredItems );
+			this.props.selectMediaItems( this.props.site.ID, filteredItems );
 		}
 
 		this.props.onAddMedia();
@@ -200,7 +199,6 @@ class MediaLibrary extends Component {
 					onMediaScaleChange={ this.props.onScaleChange }
 					onSourceChange={ this.props.onSourceChange }
 					onDeleteItem={ this.props.onDeleteItem }
-					onEditItem={ this.props.onEditItem }
 					onViewDetails={ this.props.onViewDetails }
 					postId={ this.props.postId }
 					mediaValidationErrors={ this.props.site ? this.props.mediaValidationErrors : undefined }
@@ -219,6 +217,6 @@ export default connect(
 	} ),
 	{
 		requestKeyringConnections,
-		setMediaLibrarySelectedItems,
+		selectMediaItems,
 	}
 )( MediaLibrary );

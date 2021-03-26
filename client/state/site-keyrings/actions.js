@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import wpcom from 'calypso/lib/wp';
 import {
 	SITE_KEYRINGS_REQUEST,
@@ -17,6 +16,8 @@ import {
 	SITE_KEYRINGS_UPDATE_SUCCESS,
 	SITE_KEYRINGS_UPDATE_FAILURE,
 } from 'calypso/state/action-types';
+
+import 'calypso/state/site-keyrings/init';
 
 /**
  * Returns an action thunk which, when invoked, triggers a network request to

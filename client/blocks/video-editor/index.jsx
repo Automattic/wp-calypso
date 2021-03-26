@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -24,6 +24,8 @@ import shouldShowVideoEditorError from 'calypso/state/selectors/should-show-vide
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class VideoEditor extends Component {
 	static propTypes = {

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, head, includes, isArray, reduce, split } from 'lodash';
+import { get, head, includes, reduce } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -21,9 +21,7 @@ export const mediaCalypsoToGutenberg = ( media ) => {
 		url: get( media, 'URL' ),
 		alt: get( media, 'alt' ),
 		// TODO: replace with `{ source: 'rich-text' }` after updating Gutenberg
-		caption: !! media.caption
-			? parseWithAttributeSchema( media.caption, { source: 'children' } )
-			: '',
+		caption: media.caption ? parseWithAttributeSchema( media.caption, { source: 'children' } ) : '',
 		description: get( media, 'description' ),
 		filename: get( media, 'file' ),
 		height: get( media, 'height' ),
@@ -43,7 +41,7 @@ export const mediaCalypsoToGutenberg = ( media ) => {
 			),
 		},
 		title: get( media, 'title' ),
-		type: head( split( get( media, 'mime_type', '' ), '/' ) ),
+		type: head( get( media, 'mime_type', '' ).split( '/' ) ),
 		width: get( media, 'width' ),
 	};
 };
@@ -54,7 +52,7 @@ export const getDisabledDataSources = ( allowedTypes ) => {
 	// its `allowedTypes` prop can be either undefined or an empty array.
 	if (
 		! allowedTypes ||
-		( isArray( allowedTypes ) && ! allowedTypes.length ) ||
+		( Array.isArray( allowedTypes ) && ! allowedTypes.length ) ||
 		includes( allowedTypes, 'image' )
 	) {
 		return [];
@@ -69,7 +67,7 @@ const enabledFiltersMap = {
 };
 
 export const getEnabledFilters = ( allowedTypes ) => {
-	return isArray( allowedTypes ) && allowedTypes.length
+	return Array.isArray( allowedTypes ) && allowedTypes.length
 		? allowedTypes.map( ( type ) => enabledFiltersMap[ type ] )
 		: undefined;
 };

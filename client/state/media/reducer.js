@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
+import { isEmpty, mapValues, omit, pickBy, without, merge, isEqual } from 'lodash';
 
-import { isEmpty, mapValues, omit, pickBy, without, isNil, merge, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	MEDIA_DELETE,
 	MEDIA_ERRORS_CLEAR,
 	MEDIA_ITEM_ERRORS_CLEAR,
 	MEDIA_ITEM_ERRORS_SET,
 	MEDIA_ITEM_CREATE,
-	MEDIA_ITEM_REQUEST,
 	MEDIA_ITEM_REQUEST_FAILURE,
 	MEDIA_ITEM_REQUEST_SUCCESS,
 	MEDIA_LIBRARY_SELECTED_ITEMS_UPDATE,
@@ -26,7 +26,9 @@ import {
 	MEDIA_CLEAR_SITE,
 	MEDIA_ITEM_EDIT,
 } from 'calypso/state/action-types';
-import { combineReducers, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
+import isTransientMediaId from 'calypso/lib/media/utils/is-transient-media-id';
+import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import MediaQueryManager from 'calypso/lib/query-manager/media';
 import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
 import { transformSite as transformSiteTransientItems } from 'calypso/state/media/utils/transientItems';
@@ -143,89 +145,37 @@ export const errors = ( state = {}, action ) => {
 	return state;
 };
 
-export const queries = ( () => {
-	function applyToManager( state, siteId, method, createDefault, ...args ) {
-		if ( ! state[ siteId ] ) {
-			if ( ! createDefault ) {
+export const queries = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case MEDIA_RECEIVE: {
+			const { siteId, media, found, query } = action;
+			return withQueryManager(
+				state,
+				siteId,
+				( m ) => m.receive( media, { found, query } ),
+				() => new MediaQueryManager()
+			);
+		}
+		case MEDIA_DELETE: {
+			const { siteId, mediaIds } = action;
+			return withQueryManager( state, siteId, ( m ) => m.removeItems( mediaIds ) );
+		}
+		case MEDIA_ITEM_EDIT: {
+			const { siteId, mediaItem } = action;
+			return withQueryManager( state, siteId, ( m ) => m.receive( mediaItem, { patch: true } ) );
+		}
+		case MEDIA_SOURCE_CHANGE:
+		case MEDIA_CLEAR_SITE: {
+			if ( ! action.siteId ) {
 				return state;
 			}
 
-			return {
-				...state,
-				[ siteId ]: new MediaQueryManager()[ method ]( ...args ),
-			};
-		}
-
-		const nextManager = state[ siteId ][ method ]( ...args );
-
-		if ( nextManager === state[ siteId ] ) {
-			return state;
-		}
-
-		return {
-			...state,
-			[ siteId ]: nextManager,
-		};
-	}
-
-	return withoutPersistence( ( state = {}, action ) => {
-		switch ( action.type ) {
-			case MEDIA_RECEIVE: {
-				const { siteId, media, found, query } = action;
-				return applyToManager( state, siteId, 'receive', true, media, { found, query } );
-			}
-			case MEDIA_DELETE: {
-				const { siteId, mediaIds } = action;
-				return applyToManager( state, siteId, 'removeItems', true, mediaIds );
-			}
-			case MEDIA_ITEM_EDIT: {
-				const { siteId, mediaItem } = action;
-				return applyToManager( state, siteId, 'receive', true, mediaItem, { patch: true } );
-			}
-			case MEDIA_SOURCE_CHANGE:
-			case MEDIA_CLEAR_SITE: {
-				if ( ! action.siteId ) {
-					return state;
-				}
-
-				return omit( state, action.siteId );
-			}
-		}
-
-		return state;
-	} );
-} )();
-
-export const queryRequests = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
-		case MEDIA_REQUEST: {
-			const { siteId, query } = action;
-			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ MediaQueryManager.QueryKey.stringify( query ) ]: true,
-				},
-			};
-		}
-		case MEDIA_REQUEST_SUCCESS: {
-			const { siteId, query } = action;
-			return {
-				...state,
-				[ siteId ]: omit( state[ siteId ], MediaQueryManager.QueryKey.stringify( query ) ),
-			};
-		}
-		case MEDIA_REQUEST_FAILURE: {
-			const { siteId, query } = action;
-			return {
-				...state,
-				[ siteId ]: omit( state[ siteId ], MediaQueryManager.QueryKey.stringify( query ) ),
-			};
+			return omit( state, action.siteId );
 		}
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the media library selected items state after an action has been
@@ -236,7 +186,7 @@ export const queryRequests = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action payload
  * @returns {object}       Updated state
  */
-export const selectedItems = withoutPersistence( ( state = {}, action ) => {
+export const selectedItems = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case MEDIA_SOURCE_CHANGE: {
 			const { siteId } = action;
@@ -290,6 +240,12 @@ export const selectedItems = withoutPersistence( ( state = {}, action ) => {
 		}
 		case MEDIA_ITEM_REQUEST_SUCCESS: {
 			const { mediaId: transientMediaId, siteId } = action;
+
+			// We only want to deselect if it is a transient media item
+			if ( ! isTransientMediaId( transientMediaId ) ) {
+				return state;
+			}
+
 			const media = state[ siteId ] ?? [];
 
 			return {
@@ -307,137 +263,133 @@ export const selectedItems = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export const transientItems = withoutPersistence(
-	/**
-	 * A reducer juggling transient media items. Transient media
-	 * items are created in two cases: when an item is being uploaded
-	 * and when an item is being updated.
-	 *
-	 * In each of those cases, an action is dispatched before a request
-	 * is made to the server with the transient media item that is being
-	 * POST/PUT to the server. These transient media items are first class
-	 * citizens until the server responds with the "actual" or "saved"
-	 * media item. Transient media items should be fully usable and their
-	 * IDs (which are generated client side and replaced on the server by
-	 * an actual database ID) must continue to be valid references to a single
-	 * media item, even after the item is fully saved on the server.
-	 *
-	 * This requirement means that when the server responds with a saved
-	 * media item, we need to create a mapping between the transient ID
-	 * and the actual ID of the item. This mapping allows anything still
-	 * using the transient ID to reference an already saved item to get back
-	 * the saved item rather than the trasient item.
-	 *
-	 * @param {object} state The previous state.
-	 * @param {object} action The action.
-	 * @returns {object} The next state.
-	 */
-	( state = {}, action ) => {
-		switch ( action.type ) {
-			case MEDIA_SOURCE_CHANGE: {
-				/**
-				 * Clear the media for the site.
-				 *
-				 * Dispatched when the media source changes (e.g., switching from uploaded media to
-				 * external media like Google Photos).
-				 */
-				return transformSiteTransientItems( state, action.siteId, () => ( {
-					transientItems: {},
-					transientIdsToServerIds: {},
-				} ) );
-			}
-
-			case MEDIA_ITEM_CREATE: {
-				/**
-				 * Save the transient media item.
-				 */
-				const {
-					site: { ID: siteId },
-					transientMedia,
-				} = action;
-
-				return transformSiteTransientItems(
-					state,
-					siteId,
-					( { transientItems: existingTransientItems, ...rest } ) => ( {
-						...rest,
-						transientItems: {
-							...existingTransientItems,
-							[ transientMedia.ID ]: transientMedia,
-						},
-					} )
-				);
-			}
-			case MEDIA_RECEIVE: {
-				/**
-				 * Remove the transient media item and create a mapping
-				 * between the transient ID and the saved ID.
-				 *
-				 * The `queries` reducer is responsible for saving the saved media
-				 * item into the `MediaQueryManager`.
-				 */
-				const { siteId, media: savedMedia } = action;
-
-				/**
-				 * The `transientId` property on media items is optional and when
-				 * present indicates a media item that was previously transient but
-				 * has now been persisted. Because we only care about transient media
-				 * in this reducer, if none of the received media were previously
-				 * transient, we can skip this work.
-				 */
-				const justSavedMedia = savedMedia.filter(
-					( mediaItem ) => ! isNil( mediaItem.transientId )
-				);
-
-				if ( justSavedMedia.length === 0 ) {
-					return state;
-				}
-
-				const transientItemIdsToExclude = justSavedMedia.map(
-					( mediaItem ) => mediaItem.transientId
-				);
-
-				const additionalTransientIdsToServerIds = justSavedMedia.reduce(
-					( acc, mediaItem ) => ( { ...acc, [ mediaItem.transientId ]: mediaItem.ID } ),
-					{}
-				);
-
-				return transformSiteTransientItems(
-					state,
-					siteId,
-					( { transientIdsToServerIds, transientItems: existingTransientItems } ) => ( {
-						transientIdsToServerIds: {
-							...transientIdsToServerIds,
-							...additionalTransientIdsToServerIds,
-						},
-						transientItems: omit( existingTransientItems, transientItemIdsToExclude ),
-					} )
-				);
-			}
-
-			case MEDIA_ITEM_REQUEST_FAILURE: {
-				/**
-				 * The request to create the media failed so we need
-				 * to remove the transient item.
-				 */
-				const { siteId, mediaId: transientId } = action;
-
-				return transformSiteTransientItems(
-					state,
-					siteId,
-					( { transientItems: existingTransientItems, ...rest } ) => ( {
-						...rest,
-						transientItems: omit( existingTransientItems, transientId ),
-					} )
-				);
-			}
+/**
+ * A reducer juggling transient media items. Transient media
+ * items are created in two cases: when an item is being uploaded
+ * and when an item is being updated.
+ *
+ * In each of those cases, an action is dispatched before a request
+ * is made to the server with the transient media item that is being
+ * POST/PUT to the server. These transient media items are first class
+ * citizens until the server responds with the "actual" or "saved"
+ * media item. Transient media items should be fully usable and their
+ * IDs (which are generated client side and replaced on the server by
+ * an actual database ID) must continue to be valid references to a single
+ * media item, even after the item is fully saved on the server.
+ *
+ * This requirement means that when the server responds with a saved
+ * media item, we need to create a mapping between the transient ID
+ * and the actual ID of the item. This mapping allows anything still
+ * using the transient ID to reference an already saved item to get back
+ * the saved item rather than the trasient item.
+ *
+ * @param {object} state The previous state.
+ * @param {object} action The action.
+ * @returns {object} The next state.
+ */
+export const transientItems = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case MEDIA_SOURCE_CHANGE: {
+			/**
+			 * Clear the media for the site.
+			 *
+			 * Dispatched when the media source changes (e.g., switching from uploaded media to
+			 * external media like Google Photos).
+			 */
+			return transformSiteTransientItems( state, action.siteId, () => ( {
+				transientItems: {},
+				transientIdsToServerIds: {},
+			} ) );
 		}
 
-		return state;
+		case MEDIA_ITEM_CREATE: {
+			/**
+			 * Save the transient media item.
+			 */
+			const {
+				site: { ID: siteId },
+				transientMedia,
+			} = action;
+
+			return transformSiteTransientItems(
+				state,
+				siteId,
+				( { transientItems: existingTransientItems, ...rest } ) => ( {
+					...rest,
+					transientItems: {
+						...existingTransientItems,
+						[ transientMedia.ID ]: transientMedia,
+					},
+				} )
+			);
+		}
+		case MEDIA_RECEIVE: {
+			/**
+			 * Remove the transient media item and create a mapping
+			 * between the transient ID and the saved ID.
+			 *
+			 * The `queries` reducer is responsible for saving the saved media
+			 * item into the `MediaQueryManager`.
+			 */
+			const { siteId, media: savedMedia } = action;
+
+			/**
+			 * The `transientId` property on media items is optional and when
+			 * present indicates a media item that was previously transient but
+			 * has now been persisted. Because we only care about transient media
+			 * in this reducer, if none of the received media were previously
+			 * transient, we can skip this work.
+			 */
+			const justSavedMedia = savedMedia.filter( ( mediaItem ) => mediaItem.transientId != null );
+
+			if ( justSavedMedia.length === 0 ) {
+				return state;
+			}
+
+			const transientItemIdsToExclude = justSavedMedia.map(
+				( mediaItem ) => mediaItem.transientId
+			);
+
+			const additionalTransientIdsToServerIds = justSavedMedia.reduce(
+				( acc, mediaItem ) => ( { ...acc, [ mediaItem.transientId ]: mediaItem.ID } ),
+				{}
+			);
+
+			return transformSiteTransientItems(
+				state,
+				siteId,
+				( { transientIdsToServerIds, transientItems: existingTransientItems } ) => ( {
+					transientIdsToServerIds: {
+						...transientIdsToServerIds,
+						...additionalTransientIdsToServerIds,
+					},
+					transientItems: omit( existingTransientItems, transientItemIdsToExclude ),
+				} )
+			);
+		}
+
+		case MEDIA_ITEM_REQUEST_FAILURE: {
+			/**
+			 * The request to create the media failed so we need
+			 * to remove the transient item.
+			 */
+			const { siteId, mediaId: transientId } = action;
+
+			return transformSiteTransientItems(
+				state,
+				siteId,
+				( { transientItems: existingTransientItems, ...rest } ) => ( {
+					...rest,
+					transientItems: omit( existingTransientItems, transientId ),
+				} )
+			);
+		}
 	}
-);
+
+	return state;
+};
 
 /**
  * Returns the updated site post requests state after an action has been
@@ -448,7 +400,7 @@ export const transientItems = withoutPersistence(
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const fetching = withoutPersistence( ( state = {}, action ) => {
+export const fetching = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case MEDIA_REQUEST: {
 			const siteId = action.siteId;
@@ -470,29 +422,6 @@ export const fetching = withoutPersistence( ( state = {}, action ) => {
 				[ siteId ]: Object.assign( {}, state[ siteId ], {
 					nextPage: false,
 				} ),
-			};
-		}
-
-		case MEDIA_ITEM_REQUEST: {
-			const { siteId, mediaId } = action;
-
-			return {
-				...state,
-				[ siteId ]: merge( {}, state[ siteId ], {
-					items: {
-						[ mediaId ]: true,
-					},
-				} ),
-			};
-		}
-
-		case MEDIA_ITEM_REQUEST_SUCCESS:
-		case MEDIA_ITEM_REQUEST_FAILURE: {
-			const { siteId, mediaId } = action;
-
-			return {
-				...state,
-				[ siteId ]: omit( state[ siteId ], [ `items[${ mediaId }]` ] ),
 			};
 		}
 
@@ -525,13 +454,14 @@ export const fetching = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	errors,
 	queries,
-	queryRequests,
 	selectedItems,
 	transientItems,
 	fetching,
 } );
+
+export default withStorageKey( 'media', combinedReducer );

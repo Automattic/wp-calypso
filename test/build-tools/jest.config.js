@@ -6,11 +6,11 @@ module.exports = {
 		'\\.[jt]sx?$': 'babel-jest',
 	},
 	transformIgnorePatterns: [
-		'node_modules[\\/\\\\](?!redux-form|draft-js|calypso)(?!.*\\.(?:gif|jpg|jpeg|png|svg|scss|sass|css))',
+		'node_modules[\\/\\\\](?!draft-js|calypso)(?!.*\\.(?:gif|jpg|jpeg|png|svg|scss|sass|css))',
 	],
 	moduleNameMapper: {
-		'^calypso/config$': 'calypso/server/config',
-		'^calypso/config/(.*)$': 'calypso/server/config/$1',
+		'^@automattic/calypso-config$': 'calypso/server/config',
+		'^@automattic/calypso-config/(.*)$': 'calypso/server/config/$1',
 	},
 	testMatch: [ '<rootDir>/**/test/*.[jt]s?(x)', '!**/.eslintrc.*' ],
 	timers: 'fake',

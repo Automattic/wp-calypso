@@ -12,26 +12,54 @@ import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { PLANS_STORE } from '../stores/plans';
 import { WPCOM_FEATURES_STORE } from '../stores/wpcom-features';
 import { usePlanRouteParam } from '../path';
-import { isEnabled } from 'calypso/config';
 
-export function usePlanFromPath() {
+import type { Plan } from '../stores/plans';
+
+/**
+ * A React hook that returns the WordPress.com plan from path.
+ *
+ * Exception: Free plan is not returned while features are selected
+ *
+ * @returns { Plan } An object describing a WordPress.com plan
+ */
+export function usePlanFromPath(): Plan | undefined {
 	const planPath = usePlanRouteParam();
-	return useSelect( ( select ) => select( PLANS_STORE ).getPlanByPath( planPath ) );
+	const locale = useLocale();
+
+	const [ isPlanFree, planFromPath, selectedFeatures ] = useSelect( ( select ) => [
+		select( PLANS_STORE ).isPlanFree,
+		select( PLANS_STORE ).getPlanByPath( planPath, locale ),
+		select( ONBOARD_STORE ).getSelectedFeatures(),
+	] );
+
+	// don't return Free plan if any feature is currently selected
+	if ( isPlanFree( planFromPath?.periodAgnosticSlug ) && selectedFeatures.length ) {
+		return;
+	}
+
+	return planFromPath;
 }
 
-export function useSelectedPlan() {
+export function useSelectedPlan(): Plan | undefined {
 	const locale = useLocale();
 	// Pre-load the plans details to ensure the plans are fetched early from the API endpoint.
-	useSelect( ( select ) => select( PLANS_STORE ).getPlansDetails( locale ) );
+	useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans( locale ) );
 
 	const selectedFeatures = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedFeatures() );
-	const selectedPlan = useSelect( ( select ) => select( ONBOARD_STORE ).getPlan() );
+	const selectedPlanProductId = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getPlanProductId()
+	);
 
 	const recommendedPlanSlug = useSelect( ( select ) =>
 		select( WPCOM_FEATURES_STORE ).getRecommendedPlanSlug( selectedFeatures )
 	);
+
 	const recommendedPlan = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlanBySlug( recommendedPlanSlug )
+		select( PLANS_STORE ).getPlanByPeriodAgnosticSlug( recommendedPlanSlug, locale )
+	);
+
+	const selectedPlan = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPlanByProductId( selectedPlanProductId, locale )
 	);
 
 	const planFromPath = usePlanFromPath();
@@ -45,30 +73,13 @@ export function useSelectedPlan() {
 	return selectedPlan || planFromPath || recommendedPlan;
 }
 
-export function useHasPaidPlanFromPath() {
-	const planFromPath = usePlanFromPath();
-	const isPlanFree = useSelect( ( select ) => select( PLANS_STORE ).isPlanFree );
-	return planFromPath && ! isPlanFree( planFromPath?.storeSlug );
-}
-
 export function useNewSiteVisibility(): Site.Visibility {
-	const currentSlug = useSelectedPlan()?.storeSlug;
-	const isEcommerce = useSelect( ( select ) =>
-		select( PLANS_STORE ).isPlanEcommerce( currentSlug )
-	);
-
-	if ( isEcommerce ) {
-		return Site.Visibility.PublicIndexed;
-	} else if ( isEnabled( 'coming-soon-v2' ) ) {
-		return Site.Visibility.PublicNotIndexed;
-	}
-
-	return Site.Visibility.Private;
+	return Site.Visibility.PublicNotIndexed;
 }
 
-export function useShouldRedirectToEditorAfterCheckout() {
+export function useShouldRedirectToEditorAfterCheckout(): boolean {
 	// The ecommerce plan follows another flow, so we shouldn't interrupt
 	// it by trying to redirect to the editor.
-	const currentSlug = useSelectedPlan()?.storeSlug;
+	const currentSlug = useSelectedPlan()?.periodAgnosticSlug;
 	return ! useSelect( ( select ) => select( PLANS_STORE ).isPlanEcommerce( currentSlug ) );
 }

@@ -17,27 +17,48 @@ export function getShouldShowAppBanner( site: any ): boolean {
 
 let lastScrollPosition = 0; // Used for calculating scroll direction.
 let sidebarTop = 0; // Current sidebar top position.
-let pinnedSidebarTop = true;
+let pinnedSidebarTop = true; // We pin sidebar to the top by default.
 let pinnedSidebarBottom = false;
 let ticking = false; // Used for Scroll event throttling.
 
 export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
-	// Do not run until next requestAnimationFrame
+	// Do not run until next requestAnimationFrame or if running out of browser context.
 	if ( ticking ) {
 		return;
 	}
-	const secondaryEl = document.getElementById( 'secondary' );
-	const windowHeight = window?.innerHeight;
+
+	const windowHeight = window.innerHeight;
+	const contentEl = document.getElementById( 'content' );
+	const contentHeight = contentEl?.scrollHeight;
+	const secondaryEl = document.getElementById( 'secondary' ); // Or referred as sidebar.
 	const secondaryElHeight = secondaryEl?.scrollHeight;
 	const masterbarHeight = document.getElementById( 'header' )?.getBoundingClientRect().height;
 
+	// Check whether we need to adjust content height so that scroll events are triggered.
+	// Sidebar has overflow: initial and position:fixed, so content is our only chance for scroll events.
+	if ( contentEl && contentHeight && masterbarHeight && secondaryElHeight ) {
+		if ( contentHeight < secondaryElHeight ) {
+			// Adjust the content height so that it matches the sidebar + masterbar vertical scroll estate.
+			contentEl.style.minHeight = secondaryElHeight + masterbarHeight + 'px';
+		}
+
+		if (
+			windowHeight >= secondaryElHeight + masterbarHeight &&
+			contentEl &&
+			secondaryEl &&
+			( contentEl.style.minHeight !== 'initial' || secondaryEl.style.position )
+		) {
+			// In case that window is taller than the sidebar we reinstate the content min-height. CSS code: client/layout/style.scss:30.
+			contentEl.style.minHeight = 'initial';
+			// In case that window is taller than the sidebar after resize we need to clean up any previously set inline styles
+			secondaryEl.removeAttribute( 'style' );
+		}
+	}
+
 	if (
-		typeof window !== undefined &&
-		secondaryEl !== undefined &&
-		secondaryEl !== null &&
+		secondaryEl &&
 		secondaryElHeight !== undefined &&
 		masterbarHeight !== undefined &&
-		window.innerWidth > 660 && // Do not run when sidebar is fullscreen
 		( secondaryElHeight + masterbarHeight > windowHeight || 'resize' === event.type ) // Only run when sidebar & masterbar are taller than window height OR we have a resize event
 	) {
 		// Throttle scroll event
@@ -108,6 +129,12 @@ export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
 
 					// Calculate new offset position.
 					sidebarTop = scrollY + masterbarHeight - maxScroll;
+					if ( contentHeight === secondaryElHeight + masterbarHeight ) {
+						// When content is originally shorter than the sidebar and
+						// we have already made it equal to the sidebar + masterbar
+						// the offset will always be the masterbar height (top position).
+						sidebarTop = masterbarHeight;
+					}
 
 					secondaryEl.style.position = 'absolute';
 					secondaryEl.style.top = `${ sidebarTop }px`;

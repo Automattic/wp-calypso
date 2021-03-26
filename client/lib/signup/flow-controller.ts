@@ -308,23 +308,6 @@ export default class SignupFlowController {
 			dependencies
 		);
 
-		/*
-			AB Test: passwordlessSignup
-
-			`isPasswordlessSignupForm` is set by the PasswordlessSignupForm.
-
-			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow.
-			For passwordless signups, the API call has already occurred in the PasswordlessSignupForm, so here it is skipped.
-		*/
-		if ( get( step, 'isPasswordlessSignupForm' ) ) {
-			this._processingSteps.delete( step.stepName );
-			recordTracksEvent( 'calypso_signup_actions_complete_step', {
-				step: step.stepName,
-			} );
-			this._reduxStore.dispatch( completeSignupStep( step, dependenciesFound ) );
-			return;
-		}
-
 		// deferred because a step can be processed as soon as it is submitted
 		defer( () => {
 			this._reduxStore.dispatch( processStep( step ) );

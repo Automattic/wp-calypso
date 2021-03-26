@@ -4,7 +4,7 @@
 
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
@@ -15,10 +15,11 @@ import classNames from 'classnames';
 import { Button } from '@automattic/components';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isMonthly } from 'calypso/lib/plans/constants';
+import { isMonthly, PLAN_P2_FREE } from 'calypso/lib/plans/constants';
 import { getPlanClass, planLevelsMatch } from 'calypso/lib/plans';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
+const noop = () => {};
 const PlanFeaturesActions = ( props ) => {
 	return (
 		<div className="plan-features__actions">
@@ -76,7 +77,7 @@ const PlanFeaturesActionsButton = ( {
 		onUpgradeClick();
 	};
 
-	if ( current && ! isInSignup ) {
+	if ( current && ! isInSignup && planType !== PLAN_P2_FREE ) {
 		return (
 			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
 				{ canPurchase ? translate( 'Manage plan' ) : translate( 'View plan' ) }

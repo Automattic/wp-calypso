@@ -4,7 +4,6 @@
 import React from 'react';
 import store from 'store';
 import page from 'page';
-import { get } from 'lodash';
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
 
@@ -14,7 +13,7 @@ import i18n from 'i18n-calypso';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import InviteAccept from 'calypso/my-sites/invites/invite-accept';
 import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
-import { acceptInvite as acceptInviteAction } from 'calypso/lib/invites/actions';
+import { acceptInvite as acceptInviteAction } from 'calypso/state/invites/actions';
 import user from 'calypso/lib/user';
 import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
 
@@ -43,22 +42,18 @@ export function acceptInvite( context, next ) {
 			user().set( { email_verified: true } );
 		}
 		store.remove( 'invite_accepted' );
-		const acceptInviteCallback = ( error ) => {
-			if ( error ) {
-				debug( 'Accept invite error: ' + JSON.stringify( error ) );
-				page( window.location.href );
-			} else if ( get( acceptedInvite, 'site.is_vip' ) ) {
-				debug( 'Accepted invite for VIP sites' );
-				window.location.href = getRedirectAfterAccept( acceptedInvite );
-			} else {
-				const redirect = getRedirectAfterAccept( acceptedInvite );
 
+		context.store
+			.dispatch( acceptInviteAction( acceptedInvite ) )
+			.then( () => {
+				const redirect = getRedirectAfterAccept( acceptedInvite );
 				debug( 'Accepted invite and redirecting to:  ' + redirect );
 				page( redirect );
-			}
-		};
-
-		acceptInviteAction( acceptedInvite, acceptInviteCallback )( context.store.dispatch );
+			} )
+			.catch( ( error ) => {
+				debug( 'Accept invite error: ' + JSON.stringify( error ) );
+				page( window.location.href );
+			} );
 		return;
 	}
 

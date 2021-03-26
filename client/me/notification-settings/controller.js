@@ -7,7 +7,6 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import userSettings from 'calypso/lib/user-settings';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import NotificationsComponent from 'calypso/me/notification-settings/main';
 import CommentSettingsComponent from 'calypso/me/notification-settings/comment-settings';
@@ -19,7 +18,6 @@ export function notifications( context, next ) {
 	context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) );
 
 	context.primary = React.createElement( NotificationsComponent, {
-		userSettings: userSettings,
 		path: context.path,
 	} );
 	next();
@@ -54,7 +52,6 @@ export function subscriptions( context, next ) {
 	context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) );
 
 	context.primary = React.createElement( NotificationSubscriptions, {
-		userSettings: userSettings,
 		path: context.path,
 	} );
 	next();

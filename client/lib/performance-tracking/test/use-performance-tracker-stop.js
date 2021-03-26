@@ -21,7 +21,7 @@ jest.mock( 'react-redux', () => ( {
 jest.mock( '../lib', () => ( {
 	stopPerformanceTracking: jest.fn(),
 } ) );
-jest.mock( 'state/ui/selectors', () => ( {
+jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSectionName: jest.fn(),
 } ) );
 

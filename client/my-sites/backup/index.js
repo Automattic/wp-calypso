@@ -11,13 +11,14 @@ import {
 	backupRestore,
 	backups,
 	showJetpackIsDisconnected,
+	showNotAuthorizedForNonAdmins,
 	showUpsellIfNoBackup,
 	showUnavailableForVaultPressSites,
 	showUnavailableForMultisites,
 } from 'calypso/my-sites/backup/controller';
 import { backupMainPath, backupRestorePath, backupDownloadPath } from './paths';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { notFound, makeLayout, render as clientRender } from 'calypso/controller';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -50,6 +51,7 @@ export default function () {
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
+		showNotAuthorizedForNonAdmins,
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
@@ -67,6 +69,7 @@ export default function () {
 			showUnavailableForVaultPressSites,
 			showJetpackIsDisconnected,
 			showUnavailableForMultisites,
+			showNotAuthorizedForNonAdmins,
 			notFoundIfNotEnabled,
 			makeLayout,
 			clientRender
@@ -85,6 +88,7 @@ export default function () {
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
+		showNotAuthorizedForNonAdmins,
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender

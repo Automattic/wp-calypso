@@ -35,7 +35,7 @@ import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 
 const StatsInsights = ( props ) => {
-	const { followList, isJetpack, siteId, siteSlug, translate } = props;
+	const { isJetpack, siteId, siteSlug, translate } = props;
 	const moduleStrings = statsStrings();
 
 	let tagsList;
@@ -60,6 +60,7 @@ const StatsInsights = ( props ) => {
 				brandFont
 				className="stats__section-header"
 				headerText={ translate( 'Stats and Insights' ) }
+				subHeaderText={ translate( "View your site's performance and learn from trends." ) }
 				align="left"
 			/>
 			<StatsNavigation selectedItem={ 'insights' } siteId={ siteId } slug={ siteSlug } />
@@ -84,11 +85,11 @@ const StatsInsights = ( props ) => {
 						</div>
 						<div className="stats__module-column">
 							<Reach />
-							<Followers path={ 'followers' } followList={ followList } />
+							<Followers path={ 'followers' } />
 						</div>
 						<div className="stats__module-column">
 							<AllTime />
-							<Comments path={ 'comments' } followList={ followList } />
+							<Comments path={ 'comments' } />
 							<StatsModule
 								path="publicize"
 								moduleStrings={ moduleStrings.publicize }
@@ -105,7 +106,6 @@ const StatsInsights = ( props ) => {
 };
 
 StatsInsights.propTypes = {
-	followList: PropTypes.object.isRequired,
 	translate: PropTypes.func,
 };
 

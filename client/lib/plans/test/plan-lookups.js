@@ -52,6 +52,7 @@ import {
 	TYPE_PREMIUM,
 	TYPE_FREE,
 	PLAN_P2_PLUS,
+	PLAN_P2_FREE,
 } from '../constants';
 import { PLANS_LIST } from '../plans-list';
 import {
@@ -681,6 +682,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_SECURITY_DAILY,
 			PLAN_JETPACK_SECURITY_REALTIME,
 			PLAN_JETPACK_COMPLETE,
+			PLAN_P2_FREE,
 		] );
 		expect( findPlansKeys( { term: TERM_MONTHLY } ) ).to.deep.equal( [
 			PLAN_PERSONAL_MONTHLY,
@@ -701,6 +703,7 @@ describe( 'findPlansKeys', () => {
 		expect( findPlansKeys( { type: TYPE_FREE } ) ).to.deep.equal( [
 			PLAN_FREE,
 			PLAN_JETPACK_FREE,
+			PLAN_P2_FREE,
 		] );
 		expect( findPlansKeys( { type: TYPE_BLOGGER } ) ).to.deep.equal( [
 			PLAN_BLOGGER,
@@ -747,6 +750,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_ECOMMERCE,
 			PLAN_ECOMMERCE_2_YEARS,
 			PLAN_P2_PLUS,
+			PLAN_P2_FREE,
 		] );
 		expect( findPlansKeys( { group: GROUP_JETPACK } ) ).to.deep.equal( [
 			PLAN_JETPACK_FREE,

@@ -4,7 +4,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { localize, useTranslate } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import { Card } from '@automattic/components';
 
 /**
@@ -124,7 +123,7 @@ const SettingsPage = () => {
 
 	const isInitialized =
 		backupState.state !== 'uninitialized' || scanState?.state !== 'provisioning';
-	const isConnected = ! isEmpty( credentials );
+	const isConnected = credentials && Object.keys( credentials ).length > 0;
 
 	const hasBackup = backupState?.state !== 'unavailable';
 	const hasScan = scanState?.state !== 'unavailable';

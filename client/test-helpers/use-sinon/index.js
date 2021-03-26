@@ -2,7 +2,8 @@
  * External dependencies
  */
 import sinon from 'sinon';
-import { isFunction, noop } from 'lodash';
+
+const noop = () => {};
 
 /**
  * Use sinon's fake time controls
@@ -21,7 +22,7 @@ import { isFunction, noop } from 'lodash';
 export function useFakeTimers( now = 0, clockCallback = noop ) {
 	let clock;
 
-	if ( isFunction( now ) && clockCallback === noop ) {
+	if ( typeof now === 'function' && clockCallback === noop ) {
 		clockCallback = now;
 		now = 0;
 	}
@@ -51,7 +52,7 @@ export function useFakeTimers( now = 0, clockCallback = noop ) {
 export function useSandbox( config, sandboxCallback = noop ) {
 	let sandbox;
 
-	if ( isFunction( config ) && sandboxCallback === noop ) {
+	if ( typeof config === 'function' && sandboxCallback === noop ) {
 		sandboxCallback = config;
 		config = undefined;
 	}

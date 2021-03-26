@@ -1,0 +1,83 @@
+.intro-pricing-banner {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+
+	margin-top: calc( 32px * 3 );
+	padding: 32px;
+
+	border-width: 1px 0;
+	border-style: solid;
+	border-color: rgba( var( --studio-gray-10-rgb ), 0.6 );
+
+	background-color: rgba( var( --studio-white-rgb ), 0.6 );
+
+	@include breakpoint-deprecated( '>660px' ) {
+		flex-direction: row;
+		margin-bottom: calc( 32px * 3 );
+
+		border-width: 1px;
+		border-radius: calc( 2px * 4 );
+	}
+
+	p {
+		line-height: inherit;
+	}
+}
+
+.intro-pricing-banner__copy {
+	order: 2;
+	min-width: 50%;
+	max-width: 30rem;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		order: initial;
+		margin-right: 16px;
+	}
+}
+
+.intro-pricing-banner__header {
+	margin-top: -8px;
+	margin-bottom: 8px;
+
+	text-align: center;
+	font-size: $font-title-small;
+	font-weight: 700;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		text-align: initial;
+		font-size: $font-title-medium;
+	}
+}
+
+.intro-pricing-banner__call-to-action {
+	margin-bottom: initial;
+
+	font-size: $font-body-small;
+	color: var( --studio-gray-60 );
+
+	@include breakpoint-deprecated( '>660px' ) {
+		font-size: $font-body;
+	}
+}
+
+.intro-pricing-banner__badge {
+	width: calc( 241px * 0.6 );
+	height: calc( 239px * 0.6 );
+
+	margin-top: calc( -32px * 3 );
+
+	// To center the alt-text until the image loads
+	line-height: 239px;
+	vertical-align: middle;
+	text-align: center;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		width: 241px;
+		height: 239px;
+
+		margin-bottom: calc( -32px * 3 );
+		margin-right: -32px;
+	}
+}

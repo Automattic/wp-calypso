@@ -10,7 +10,7 @@ import { has, identity, mapValues, pickBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import {
 	activate as activateAction,
 	tryAndCustomize as tryAndCustomizeAction,
@@ -20,6 +20,7 @@ import {
 } from 'calypso/state/themes/actions';
 import {
 	getJetpackUpgradeUrlIfPremiumTheme,
+	getTheme,
 	getThemeDetailsUrl,
 	getThemeHelpUrl,
 	getThemePurchaseUrl,
@@ -100,6 +101,7 @@ function getAllThemeOptions() {
 		hideForTheme: ( state, themeId, siteId, origin ) =>
 			! isJetpackSite( state, siteId ) ||
 			origin === 'wpcom' ||
+			! getTheme( state, siteId, themeId ) ||
 			isThemeActive( state, themeId, siteId ),
 	};
 

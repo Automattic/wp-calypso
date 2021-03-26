@@ -14,10 +14,11 @@ import JetpackHeader from 'calypso/components/jetpack-header';
 import DocumentHead from 'calypso/components/data/document-head';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
 
 import './style.scss';
 
-export default function StoreHeader() {
+export default function StoreHeader(): React.ReactElement {
 	const translate = useTranslate();
 	const partnerSlug = useSelector( ( state ) => getPartnerSlugFromQuery( state ) );
 	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
@@ -28,6 +29,7 @@ export default function StoreHeader() {
 	const headerClass = classNames( 'jetpack-connect__main-logo', {
 		'add-bottom-margin': ! isStoreLanding,
 	} );
+
 	return (
 		<>
 			<DocumentHead title={ translate( 'Jetpack Connect' ) } />
@@ -46,6 +48,8 @@ export default function StoreHeader() {
 					brandFont
 				/>
 			) }
+
+			<IntroPricingBanner />
 		</>
 	);
 }

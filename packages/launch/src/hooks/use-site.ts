@@ -12,15 +12,26 @@ import LaunchContext from '../context';
 
 export function useSite() {
 	const { siteId } = React.useContext( LaunchContext );
-	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
-	const launchStatus = useSelect( ( select ) => select( SITE_STORE ).isLaunched( siteId ) );
-	const isLoading = useSelect( ( select ) => select( SITE_STORE ).isFetchingSiteDetails() );
+
+	const [ site, isSiteLaunched, isSiteLaunching, isLoading ] = useSelect(
+		( select ) => {
+			const siteStore = select( SITE_STORE );
+
+			return [
+				siteStore.getSite( siteId ),
+				siteStore.isSiteLaunched( siteId ),
+				siteStore.isSiteLaunching( siteId ),
+				siteStore.isFetchingSiteDetails(),
+			];
+		},
+		[ siteId ]
+	);
 
 	return {
 		sitePlan: site?.plan,
-		isPaidPlan: site && ! site.plan?.is_free, // sometimes plan will not be available: https://github.com/Automattic/wp-calypso/pull/44895
-		launchStatus,
-		currentDomainName: site?.URL && new URL( site?.URL ).hostname,
+		hasPaidPlan: site && ! site.plan?.is_free, // sometimes plan will not be available: https://github.com/Automattic/wp-calypso/pull/44895
+		isSiteLaunched,
+		isSiteLaunching,
 		selectedFeatures: site?.options?.selected_features,
 		isLoadingSite: !! isLoading,
 	};

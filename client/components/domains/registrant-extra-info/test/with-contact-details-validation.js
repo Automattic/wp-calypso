@@ -15,7 +15,7 @@ import { difference, identity, set } from 'lodash';
  */
 import { ValidatedRegistrantExtraInfoUkForm, RegistrantExtraInfoUkForm } from '../uk-form';
 
-jest.mock( 'state/selectors/get-validation-schemas', () => () => ( {
+jest.mock( 'calypso/state/selectors/get-validation-schemas', () => () => ( {
 	uk: require( './uk-schema.json' ),
 } ) );
 

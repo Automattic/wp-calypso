@@ -309,7 +309,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 
 		const cartElement = await this.driver.findElement( this.getCartTotalSelector() );
 
-		const cartText = await cartElement.getText();
+		const cartText = await cartElement.getAttribute( 'innerText' );
 
 		// We need to remove the comma separator first, e.g. 1,024 or 2,048, so `match()` can parse out the whole number properly.
 		const amountMatches = cartText.replace( /,/g, '' ).match( /\d+\.?\d*/g );

@@ -15,6 +15,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import {
 	showJetpackIsDisconnected,
+	showNotAuthorizedForNonAdmins,
 	showUpsellIfNoScan,
 	showUpsellIfNoScanHistory,
 	showUnavailableForVaultPressSites,
@@ -51,6 +52,7 @@ export default function () {
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
+		showNotAuthorizedForNonAdmins,
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
@@ -67,6 +69,7 @@ export default function () {
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
+		showNotAuthorizedForNonAdmins,
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
@@ -83,6 +86,7 @@ export default function () {
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
+		showNotAuthorizedForNonAdmins,
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender

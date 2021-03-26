@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import { difference, get, has, includes, pick, values, isFunction } from 'lodash';
+import { difference, get, has, includes, pick, values } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { isFreeJetpackPlan } from 'calypso/lib/products-values/is-free-jetpack-plan';
 import { isJetpackPlan } from 'calypso/lib/products-values/is-jetpack-plan';
 import { isMonthly } from 'calypso/lib/products-values/is-monthly';
@@ -72,7 +72,7 @@ export function getPlanByPathSlug( pathSlug, group ) {
 	/** @type {Plan[]} */
 	let plans = Object.values( PLANS_LIST );
 	plans = plans.filter( ( p ) => ( group ? p.group === group : true ) );
-	return plans.find( ( p ) => isFunction( p.getPathSlug ) && p.getPathSlug() === pathSlug );
+	return plans.find( ( p ) => typeof p.getPathSlug === 'function' && p.getPathSlug() === pathSlug );
 }
 
 export function getPlanPath( plan ) {
@@ -330,6 +330,10 @@ export function isWpComFreePlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_FREE, group: GROUP_WPCOM } );
 }
 
+export function isWpComMonthlyPlan( planSlug ) {
+	return planMatches( planSlug, { term: TERM_MONTHLY, group: GROUP_WPCOM } );
+}
+
 export function isJetpackBusinessPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_JETPACK } );
 }
@@ -484,9 +488,12 @@ export function plansLink( url, siteSlug, intervalType, forceIntervalType = fals
 	return formatUrl( getUrlFromParts( resultUrl ), originalUrlType );
 }
 
-export function applyTestFiltersToPlansList( planName, abtest ) {
+export function applyTestFiltersToPlansList( planName, abtest, extraArgs = {} ) {
 	const filteredPlanConstantObj = { ...getPlan( planName ) };
-	const filteredPlanFeaturesConstantList = getPlan( planName ).getPlanCompareFeatures( abtest );
+	const filteredPlanFeaturesConstantList = getPlan( planName ).getPlanCompareFeatures(
+		abtest,
+		extraArgs
+	);
 
 	// these becomes no-ops when we removed some of the abtest overrides, but
 	// we're leaving the code in place for future tests

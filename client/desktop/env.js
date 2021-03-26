@@ -39,6 +39,17 @@ process.env.CALYPSO_ENV = config.calypso_config;
 // Set app config path
 app.setPath( 'userData', appData );
 
+// Default value of false deprecated in Electron v9
+app.allowRendererProcessReuse = true;
+
+// Fixes rendering bug on Linux when sandbox === true (Electron 11.0)
+if ( process.platform === 'linux' ) {
+	app.disableHardwareAcceleration();
+}
+
+// Force sandbox: true for all BrowserWindow instances
+app.enableSandbox();
+
 if ( Settings.isDebug() ) {
 	process.env.DEBUG = config.debug.namespace;
 }
@@ -73,9 +84,3 @@ if ( Settings.getSetting( 'proxy-type' ) === '' ) {
 		app.commandLine.appendSwitch( 'proxy-pac-url', Settings.getSetting( 'proxy-pac' ) );
 	}
 }
-
-// Define a global 'desktop' variable that can be used in browser windows to access config and settings
-global.desktop = {
-	config: config,
-	settings: Settings,
-};

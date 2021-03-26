@@ -37,10 +37,10 @@ export type Plan = {
 		| typeof constants.TERM_BIENNIALLY
 		| typeof constants.TERM_MONTHLY;
 	getBillingTimeFrame: () => TranslateResult;
-	getTitle: () => TranslateResult;
-	getDescription: () => TranslateResult;
-	getTagline?: ( features?: string[] ) => TranslateResult;
-	getButtonLabel?: () => TranslateResult;
+	getTitle: ( variation?: string ) => TranslateResult;
+	getDescription: ( variation?: string ) => TranslateResult;
+	getTagline?: ( featuresOrCROVariation?: string[] | string ) => TranslateResult;
+	getButtonLabel?: ( variation?: string ) => TranslateResult;
 	getAnnualSlug?: () => JetpackPlanSlugs | string;
 	getMonthlySlug?: () => JetpackPlanSlugs | string;
 	getAudience?: () => TranslateResult;
@@ -51,7 +51,9 @@ export type Plan = {
 	getStoreSlug: () => JetpackPlanSlugs | string;
 	getPathSlug?: () => string;
 	getPlanCompareFeatures?: () => string[];
-	getPlanCardFeatures?: () => JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection;
+	getPlanCardFeatures?: (
+		variation?: string
+	) => JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection;
 	getSignupFeatures?: () => string[];
 	getBlogSignupFeatures?: () => string[];
 	getPortfolioSignupFeatures?: () => string[];

@@ -1,18 +1,19 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React from 'react';
+import classnames from 'classnames';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Modal, Button } from '@wordpress/components';
 import { Icon, wordpress, close } from '@wordpress/icons';
-import classnames from 'classnames';
-import { useSite, useOnLaunch } from '@automattic/launch';
+import { LaunchContext, useOnLaunch } from '@automattic/launch';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
  */
-import { LAUNCH_STORE } from '../stores';
+import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../stores';
 import Launch from '../launch';
 import LaunchSidebar from '../launch-sidebar';
 import LaunchProgress from '../launch-progress';
@@ -21,26 +22,59 @@ import './styles.scss';
 
 interface Props {
 	onClose: () => void;
+	isLaunchImmediately?: boolean;
 }
 
-const LaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
+const LaunchModal: React.FunctionComponent< Props > = ( { onClose, isLaunchImmediately } ) => {
+	const { siteId } = React.useContext( LaunchContext );
+
 	const { step: currentStep, isSidebarFullscreen } = useSelect( ( select ) =>
 		select( LAUNCH_STORE ).getState()
 	);
-	const { launchSite } = useDispatch( LAUNCH_STORE );
-
 	const [ isLaunching, setIsLaunching ] = React.useState( false );
+	const [ isImmediateLaunchStarted, setIsImmediateLaunchStarted ] = React.useState( false );
 
-	const { isPaidPlan } = useSite();
+	const { launchSite } = useDispatch( SITE_STORE );
+	const { savePost } = useDispatch( 'core/editor' );
 
-	const handleLaunch = () => {
+	const locale = useLocale();
+	const { setPlanProductId } = useDispatch( LAUNCH_STORE );
+	const defaultFreePlan = useSelect( ( select ) =>
+		select( PLANS_STORE ).getDefaultFreePlan( locale )
+	);
+
+	const handleLaunch = React.useCallback( () => {
+		launchSite( siteId );
 		setIsLaunching( true );
-		launchSite();
-	};
+	}, [ launchSite, setIsLaunching, siteId ] );
 
-	if ( isPaidPlan && ! isLaunching ) {
-		handleLaunch();
-	}
+	// When isLaunchImmediately: Show the "Hooray! Launching your site..." screen as soon as possible.
+	React.useEffect( () => {
+		if ( isLaunchImmediately && ! isLaunching ) {
+			setIsLaunching( true );
+		}
+	}, [ isLaunching, isLaunchImmediately ] );
+
+	// When isLaunchImmediately: Begin the launch process after the free plan has loaded
+	// and if we haven't already started it (isImmediateLaunchStarted).
+	React.useEffect( () => {
+		const asyncSavePost = async () => {
+			await savePost();
+		};
+		if ( isLaunchImmediately && ! isImmediateLaunchStarted && defaultFreePlan?.productIds[ 0 ] ) {
+			setPlanProductId( defaultFreePlan?.productIds[ 0 ] );
+			setIsImmediateLaunchStarted( true );
+			asyncSavePost();
+			handleLaunch();
+		}
+	}, [
+		isLaunchImmediately,
+		isImmediateLaunchStarted,
+		handleLaunch,
+		savePost,
+		defaultFreePlan,
+		setPlanProductId,
+	] );
 
 	// handle redirects to checkout / my home after launch
 	useOnLaunch();

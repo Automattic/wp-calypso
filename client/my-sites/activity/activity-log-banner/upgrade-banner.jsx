@@ -13,9 +13,10 @@ import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	FEATURE_JETPACK_ESSENTIAL,
 	FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
+	FEATURE_ACTIVITY_LOG,
 	PLAN_PERSONAL,
 } from 'calypso/lib/plans/constants';
-import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans-v2/constants';
+import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 
 /**
  * Style dependencies
@@ -32,7 +33,7 @@ class UpgradeBanner extends Component {
 						callToAction={ translate( 'Learn more' ) }
 						event="activity_log_upgrade_click_jetpack"
 						feature={ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY }
-						href={ `/plans/${ OPTIONS_JETPACK_SECURITY }/annual/details/${ siteSlug }` }
+						href={ `/checkout/${ siteSlug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_ACTIVITY_LOG ] }` }
 						title={ translate( 'Unlock more activities now' ) }
 						description={ translate(
 							'With your free plan, you can monitor the 20 most ' +

@@ -27,6 +27,7 @@ The following items did not change:
 - `editing-toolkit-plugin/`: The root of the editing toolkit plugin.
   - `full-site-editing-plugin.php`: All initialization code should go here.
   - `block-patterns/`: Additional block patterns for Gutenberg.
+  - `coming-soon/`: Coming Soon page and associated functionality.
   - `common/`: General functionality which doesn't fit a specific feature and is always executed.
   - `dotcom-fse/`: (_deprecated_) An early experiment for a consistent site editing experience in Gutenberg. (Superceeded by the site-editor work in Gutenberg.)
   - `e2e-test-helpers/`: Functions to assist with e2e tests in Puppeteer.
@@ -76,7 +77,7 @@ The output is:
 
 ### Building Individual _Plugins_
 
-You can also build one of the Plugins separately by appending the plugin slug onto the `build` portion of the command. eg:
+You can also build one of the plugins separately by appending the plugin slug onto the `build` portion of the command. eg:
 
 ```sh
 # Builds the `posts-list-block` Plugin only
@@ -137,6 +138,14 @@ If you wish to "watch" and run tests on file change then run:
 yarn test:js:watch
 ```
 
+To run PHP units tests:
+
+```shell
+yarn run test:php
+```
+
+Making sure you add your test suite to `editing-toolkit-plugin/phpunit.xml.dist`
+
 ### Troubleshooting wp-env
 
 - Make sure you're using `npx <command>` to favour the local tools over global installs. There's no harm in running `npx some-command-not-in-node_modules/.bin`
@@ -155,7 +164,7 @@ yarn test:js:update-snapshots
 
 ### Writing Tests
 
-The tests make use of the 3rd party [React Testing Library](https://testing-library.com/docs/react-testing-library/). This library helps to promote healthy testing practices by encouraging testing of the component _interface_ rather than its internal APIs (ie: implementation details).
+The tests make use of the 3rd party [React Testing Library](https://testing-library.com/docs/react-testing-library/). This library promotes healthy testing practices by encouraging testing of the component _interface_ rather than its internal APIs (ie: implementation details).
 
 When writing tests try to approach them **from the perspective of how a user would interact with your component**. Approaching tests in this fashion provides greater confidence that tests will capture true component behaviors and avoids the need for costly refactoring should the component's implementation need to change.
 

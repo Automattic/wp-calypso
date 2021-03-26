@@ -51,7 +51,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checklist';
-import PlanRenewalMessage from 'calypso/my-sites/plans-v2/plan-renewal-message';
+import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
@@ -73,6 +73,10 @@ import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedu
 import './style.scss';
 
 class CurrentPlan extends Component {
+	state = {
+		hideThankYouModal: false,
+	};
+
 	static propTypes = {
 		selectedSiteId: PropTypes.number,
 		selectedSite: PropTypes.object,
@@ -104,6 +108,12 @@ class CurrentPlan extends Component {
 
 		return ! selectedSite || isRequestingPlans || null === scheduleId;
 	}
+
+	hideThankYouModalOnClose = () => {
+		this.setState( {
+			hideThankYouModal: true,
+		} );
+	};
 
 	renderThankYou() {
 		const { currentPlan, product, selectedSite } = this.props;
@@ -189,6 +199,9 @@ class CurrentPlan extends Component {
 					brandFont
 					className="current-plan__page-heading"
 					headerText={ translate( 'Plans' ) }
+					subHeaderText={ translate(
+						'Learn about the features included in your WordPress.com plan.'
+					) }
 					align="left"
 				/>
 				{ selectedSiteId && (
@@ -200,10 +213,11 @@ class CurrentPlan extends Component {
 				<QuerySitePurchases siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
-				{ showThankYou && (
+				{ showThankYou && ! this.state.hideThankYouModal && (
 					<Dialog
 						baseClassName="current-plan__dialog dialog__content dialog__backdrop"
 						isVisible={ showThankYou }
+						onClose={ this.hideThankYouModalOnClose }
 					>
 						{ this.renderThankYou() }
 					</Dialog>

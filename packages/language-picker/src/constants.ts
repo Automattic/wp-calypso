@@ -1,17 +1,17 @@
 /**
  * Internal dependencies
  */
-import { LanguageGroup } from './language-picker';
+import { LanguageGroup } from './Language';
 import { I18nReact } from '@automattic/react-i18n';
 
 export const createLanguageGroups = ( __: I18nReact[ '__' ] ): LanguageGroup[] => [
 	{
 		id: 'popular',
-		name: () => __( 'Popular languages' ),
+		name: () => __( 'Popular languages', __i18n_text_domain__ ),
 	},
 	{
 		id: 'africa-middle-east',
-		name: () => __( 'Africa and Middle East' ),
+		name: () => __( 'Africa and Middle East', __i18n_text_domain__ ),
 		subTerritories: [ '145', '002' ],
 		countries: [
 			'AE',
@@ -96,7 +96,7 @@ export const createLanguageGroups = ( __: I18nReact[ '__' ] ): LanguageGroup[] =
 	},
 	{
 		id: 'americas',
-		name: () => __( 'Americas' ),
+		name: () => __( 'Americas', __i18n_text_domain__ ),
 		subTerritories: [ '019' ],
 		countries: [
 			'AG',
@@ -159,7 +159,7 @@ export const createLanguageGroups = ( __: I18nReact[ '__' ] ): LanguageGroup[] =
 	{
 		id: 'asia-pacific',
 		default: true,
-		name: () => __( 'Asia-Pacific' ),
+		name: () => __( 'Asia-Pacific', __i18n_text_domain__ ),
 		subTerritories: [ '143', '009', '030', '034', '035' ],
 		countries: [
 			'AC',
@@ -238,13 +238,13 @@ export const createLanguageGroups = ( __: I18nReact[ '__' ] ): LanguageGroup[] =
 	},
 	{
 		id: 'eastern-europe',
-		name: () => __( 'Eastern Europe' ),
+		name: () => __( 'Eastern Europe', __i18n_text_domain__ ),
 		subTerritories: [ '151' ],
 		countries: [ 'BG', 'BY', 'CZ', 'HU', 'MD', 'PL', 'RO', 'RU', 'SK', 'UA' ],
 	},
 	{
 		id: 'western-europe',
-		name: () => __( 'Western Europe' ),
+		name: () => __( 'Western Europe', __i18n_text_domain__ ),
 		subTerritories: [ '154', '155', '039' ],
 		countries: [
 			'AD',

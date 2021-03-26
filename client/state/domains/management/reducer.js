@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, isArray, merge, omit, stubFalse, stubTrue } from 'lodash';
+import { get, merge, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,11 +42,10 @@ import { whoisType } from '../../../lib/domains/whois/constants';
 export const isRequestingContactDetailsCache = withoutPersistence( ( state = false, action ) => {
 	switch ( action.type ) {
 		case DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST:
-			return stubTrue( state, action );
+			return true;
 		case DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS:
-			return stubFalse( state, action );
 		case DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE:
-			return stubFalse( state, action );
+			return false;
 	}
 
 	return state;
@@ -57,11 +56,10 @@ export const isRequestingWhois = keyedReducer(
 	withoutPersistence( ( state = false, action ) => {
 		switch ( action.type ) {
 			case DOMAIN_MANAGEMENT_WHOIS_REQUEST:
-				return stubTrue( state, action );
+				return true;
 			case DOMAIN_MANAGEMENT_WHOIS_REQUEST_SUCCESS:
-				return stubFalse( state, action );
 			case DOMAIN_MANAGEMENT_WHOIS_REQUEST_FAILURE:
-				return stubFalse( state, action );
+				return false;
 		}
 
 		return state;
@@ -108,7 +106,7 @@ export const isSaving = withoutPersistence( ( state = {}, action ) => {
 } );
 
 function mergeDomainRegistrantContactDetails( domainState, registrantContactDetails ) {
-	return isArray( domainState )
+	return Array.isArray( domainState )
 		? domainState.map( ( item ) => {
 				if ( item.type === whoisType.REGISTRANT ) {
 					return {
@@ -201,5 +199,5 @@ export default combineReducers( {
  */
 function sanitizeExtra( data ) {
 	const path = data._contactDetailsCache ? [ '_contactDetailsCache', 'extra' ] : 'extra';
-	return data && isArray( get( data, path ) ) ? omit( data, path ) : data;
+	return data && Array.isArray( get( data, path ) ) ? omit( data, path ) : data;
 }

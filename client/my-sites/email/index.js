@@ -34,9 +34,10 @@ export default function () {
 			paths.emailManagementAddGSuiteUsers(
 				':site',
 				':domain',
+				':productType',
 				paths.emailManagementAllSitesPrefix
 			),
-			paths.emailManagementAddGSuiteUsers( ':site', ':domain' ),
+			paths.emailManagementAddGSuiteUsers( ':site', ':domain', ':productType' ),
 			paths.emailManagementAddGSuiteUsers( ':site' ),
 		],
 		handlers: [
@@ -49,10 +50,19 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementAddGSuiteUsersLegacy( ':site', ':domain' ),
-			paths.emailManagementAddGSuiteUsersLegacy( ':site' ),
+			paths.emailManagementNewTitanAccount(
+				':site',
+				':domain',
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementNewTitanAccount( ':site', ':domain' ),
 		],
-		handlers: [ controller.emailManagementAddGSuiteUsersLegacyRedirect ],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementNewTitanAccount,
+			makeLayout,
+			clientRender,
+		],
 	} );
 
 	registerMultiPage( {
@@ -60,10 +70,10 @@ export default function () {
 			paths.emailManagementNewGSuiteAccount(
 				':site',
 				':domain',
-				':planType',
+				':productType',
 				paths.emailManagementAllSitesPrefix
 			),
-			paths.emailManagementNewGSuiteAccount( ':site', ':domain', ':planType' ),
+			paths.emailManagementNewGSuiteAccount( ':site', ':domain', ':productType' ),
 		],
 		handlers: [
 			...commonHandlers,
@@ -71,6 +81,36 @@ export default function () {
 			makeLayout,
 			clientRender,
 		],
+	} );
+
+	registerMultiPage( {
+		paths: [
+			paths.emailManagementManageTitanAccount(
+				':site',
+				':domain',
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementManageTitanAccount( ':site', ':domain' ),
+		],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementManageTitanAccount,
+			makeLayout,
+			clientRender,
+		],
+	} );
+
+	registerMultiPage( {
+		paths: [
+			paths.emailManagementTitanControlPanelRedirect(
+				':site',
+				':domain',
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementTitanControlPanelRedirect( ':site', ':domain' ),
+		],
+		// Note that we don't have the commonHandlers here, as we want to avoid the nav bar etc
+		handlers: [ controller.emailManagementTitanControlPanelRedirect, makeLayout, clientRender ],
 	} );
 
 	registerMultiPage( {

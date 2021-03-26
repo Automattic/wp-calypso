@@ -5,6 +5,7 @@ import i18n from 'i18n-calypso';
 import React from 'react';
 import { get, isEmpty } from 'lodash';
 import page from 'page';
+import debugFactory from 'debug';
 
 /**
  * Internal Dependencies
@@ -13,22 +14,30 @@ import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/ac
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import GSuiteNudge from './gsuite-nudge';
-import CheckoutContainer from './checkout/checkout-container';
+import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
-import UpsellNudge from './upsell-nudge';
 import { canUserPurchaseGSuite } from 'calypso/lib/gsuite';
-import { getRememberedCoupon } from 'calypso/lib/cart/actions';
 import { setSectionMiddleware } from 'calypso/controller';
 import { sites } from 'calypso/my-sites/controller';
-import CartData from 'calypso/components/data/cart';
 import userFactory from 'calypso/lib/user';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	retrieveSignupDestination,
 	setSignupCheckoutPageUnloaded,
 } from 'calypso/signup/storageUtils';
+import UpsellNudge, {
+	PREMIUM_PLAN_UPGRADE_UPSELL,
+	BUSINESS_PLAN_UPGRADE_UPSELL,
+	CONCIERGE_SUPPORT_SESSION,
+	CONCIERGE_QUICKSTART_SESSION,
+	DIFM_UPSELL,
+} from './upsell-nudge';
+import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
+import { TRUENAME_COUPONS } from 'calypso/lib/domains';
+
+const debug = debugFactory( 'calypso:checkout-controller' );
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
@@ -87,20 +96,18 @@ export function checkout( context, next ) {
 	}
 
 	context.primary = (
-		<CartData>
-			<CheckoutSystemDecider
-				productAliasFromUrl={ product }
-				purchaseId={ purchaseId }
-				selectedFeature={ feature }
-				couponCode={ couponCode }
-				isComingFromUpsell={ !! context.query.upgrade }
-				plan={ plan }
-				selectedSite={ selectedSite }
-				redirectTo={ context.query.redirect_to }
-				isLoggedOutCart={ isLoggedOutCart }
-				isNoSiteCart={ isNoSiteCart }
-			/>
-		</CartData>
+		<CheckoutSystemDecider
+			productAliasFromUrl={ product }
+			purchaseId={ purchaseId }
+			selectedFeature={ feature }
+			couponCode={ couponCode }
+			isComingFromUpsell={ !! context.query.upgrade }
+			plan={ plan }
+			selectedSite={ selectedSite }
+			redirectTo={ context.query.redirect_to }
+			isLoggedOutCart={ isLoggedOutCart }
+			isNoSiteCart={ isNoSiteCart }
+		/>
 	);
 
 	next();
@@ -170,17 +177,13 @@ export function gsuiteNudge( context, next ) {
 	}
 
 	context.primary = (
-		<CheckoutContainer
-			shouldShowCart={ false }
-			clearTransaction={ true }
-			purchaseId={ Number( receiptId ) }
-		>
+		<CalypsoShoppingCartProvider>
 			<GSuiteNudge
 				domain={ domain }
 				receiptId={ Number( receiptId ) }
 				selectedSiteId={ selectedSite.ID }
 			/>
-		</CheckoutContainer>
+		</CalypsoShoppingCartProvider>
 	);
 
 	next();
@@ -193,31 +196,41 @@ export function upsellNudge( context, next ) {
 	let upgradeItem;
 
 	if ( context.path.includes( 'offer-quickstart-session' ) ) {
-		upsellType = 'concierge-quickstart-session';
+		upsellType = CONCIERGE_QUICKSTART_SESSION;
 		upgradeItem = 'concierge-session';
 	} else if ( context.path.match( /(add|offer)-support-session/ ) ) {
-		upsellType = 'concierge-support-session';
+		upsellType = CONCIERGE_SUPPORT_SESSION;
 		upgradeItem = 'concierge-session';
 	} else if ( context.path.includes( 'offer-plan-upgrade' ) ) {
-		upsellType = 'plan-upgrade-upsell';
 		upgradeItem = context.params.upgradeItem;
+
+		switch ( upgradeItem ) {
+			case 'business':
+				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
+				break;
+
+			case 'premium':
+				upsellType = PREMIUM_PLAN_UPGRADE_UPSELL;
+				break;
+
+			default:
+				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
+		}
+	} else if ( context.path.includes( 'offer-difm' ) ) {
+		upsellType = DIFM_UPSELL;
 	}
 
 	setSectionMiddleware( { name: upsellType } )( context );
 
 	context.primary = (
-		<CheckoutContainer
-			shouldShowCart={ false }
-			clearTransaction={ true }
-			purchaseId={ Number( receiptId ) }
-		>
+		<CalypsoShoppingCartProvider>
 			<UpsellNudge
 				siteSlugParam={ site }
 				receiptId={ Number( receiptId ) }
 				upsellType={ upsellType }
 				upgradeItem={ upgradeItem }
 			/>
-		</CheckoutContainer>
+		</CalypsoShoppingCartProvider>
 	);
 
 	next();
@@ -231,4 +244,68 @@ export function redirectToSupportSession( context ) {
 		page.redirect( `/checkout/offer-support-session/${ receiptId }/${ site }` );
 	}
 	page.redirect( `/checkout/offer-support-session/${ site }` );
+}
+
+function getRememberedCoupon() {
+	// read coupon list from localStorage, return early if it's not there
+	let coupons = null;
+	try {
+		const couponsJson = window.localStorage.getItem( MARKETING_COUPONS_KEY );
+		coupons = JSON.parse( couponsJson );
+	} catch ( err ) {}
+	if ( ! coupons ) {
+		debug( 'No coupons found in localStorage: ', coupons );
+		return null;
+	}
+	const ALLOWED_COUPON_CODE_LIST = [
+		'ALT',
+		'FBSAVE15',
+		'FIVERR',
+		'FLASHFB20OFF',
+		'FLASHFB50OFF',
+		'GENEA',
+		'KITVISA',
+		'LINKEDIN',
+		'PATREON',
+		'ROCKETLAWYER',
+		'RBC',
+		'SAFE',
+		'SBDC',
+		'TXAM',
+		...TRUENAME_COUPONS,
+	];
+	const THIRTY_DAYS_MILLISECONDS = 30 * 24 * 60 * 60 * 1000;
+	const now = Date.now();
+	debug( 'Found coupons in localStorage: ', coupons );
+
+	// delete coupons if they're older than thirty days; find the most recent one
+	let mostRecentTimestamp = 0;
+	let mostRecentCouponCode = null;
+	Object.keys( coupons ).forEach( ( key ) => {
+		if ( now > coupons[ key ] + THIRTY_DAYS_MILLISECONDS ) {
+			delete coupons[ key ];
+		} else if ( coupons[ key ] > mostRecentTimestamp ) {
+			mostRecentCouponCode = key;
+			mostRecentTimestamp = coupons[ key ];
+		}
+	} );
+
+	// write remembered coupons back to localStorage
+	try {
+		debug( 'Storing coupons in localStorage: ', coupons );
+		window.localStorage.setItem( MARKETING_COUPONS_KEY, JSON.stringify( coupons ) );
+	} catch ( err ) {}
+
+	if (
+		ALLOWED_COUPON_CODE_LIST.includes(
+			mostRecentCouponCode?.includes( '_' )
+				? mostRecentCouponCode.substring( 0, mostRecentCouponCode.indexOf( '_' ) )
+				: mostRecentCouponCode
+		)
+	) {
+		debug( 'returning coupon code:', mostRecentCouponCode );
+		return mostRecentCouponCode;
+	}
+	debug( 'not returning any coupon code.' );
+	return null;
 }

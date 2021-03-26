@@ -2,7 +2,7 @@
  * External dependencies
  */
 import mockFs from 'mock-fs';
-import parser from 'calypso/config/parser';
+import parser from '@automattic/calypso-config/parser';
 
 function setValidSecrets() {
 	mockFs( {

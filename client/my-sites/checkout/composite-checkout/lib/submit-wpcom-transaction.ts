@@ -1,0 +1,38 @@
+/**
+ * Internal dependencies
+ */
+import type { PaymentProcessorOptions } from '../types/payment-processors';
+import { createAccount } from '../payment-method-helpers';
+import wp from 'calypso/lib/wp';
+import type {
+	WPCOMTransactionEndpointRequestPayload,
+	WPCOMTransactionEndpointResponse,
+} from '../types/transaction-endpoint';
+
+export default async function submitWpcomTransaction(
+	payload: WPCOMTransactionEndpointRequestPayload,
+	transactionOptions: PaymentProcessorOptions
+): Promise< WPCOMTransactionEndpointResponse > {
+	if ( transactionOptions && transactionOptions.createUserAndSiteBeforeTransaction ) {
+		return createAccount().then( ( response ) => {
+			const siteIdFromResponse = response?.blog_details?.blogid;
+
+			// If the account is already created(as happens when we are reprocessing after a transaction error), then
+			// the create account response will not have a site ID, so we fetch from state.
+			const siteId = siteIdFromResponse || transactionOptions.siteId;
+			const newPayload = {
+				...payload,
+				cart: {
+					...payload.cart,
+					blog_id: siteId || '0',
+					cart_key: siteId || 'no-site',
+					create_new_blog: false,
+				},
+			};
+
+			return wp.undocumented().transactions( newPayload );
+		} );
+	}
+
+	return wp.undocumented().transactions( payload );
+}

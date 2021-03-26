@@ -23,7 +23,7 @@ State.prototype.login = async function ( { user, token } ) {
 
 	if ( user && token ) {
 		this.user = {
-			id: user.data.ID,
+			id: user.id,
 			token: `${ token }`,
 		};
 		keychain.setUserInfo( this.user );

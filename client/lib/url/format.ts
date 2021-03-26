@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { URL as URLString } from 'calypso/types';
+import type { URL as URLString } from 'calypso/types';
 
 /**
  * Internal dependencies

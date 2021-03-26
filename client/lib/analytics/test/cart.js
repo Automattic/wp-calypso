@@ -6,15 +6,15 @@ import { recordAddToCart } from 'calypso/lib/analytics/record-add-to-cart';
 import { getAllCartItems } from 'calypso/lib/cart-values/cart-items';
 import { recordEvents } from 'calypso/lib/analytics/cart';
 
-jest.mock( 'lib/analytics/tracks', () => ( {
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	__esModule: true,
 	recordTracksEvent: jest.fn(),
 } ) );
-jest.mock( 'lib/analytics/record-add-to-cart', () => ( {
+jest.mock( 'calypso/lib/analytics/record-add-to-cart', () => ( {
 	__esModule: true,
 	recordAddToCart: jest.fn(),
 } ) );
-jest.mock( 'lib/cart-values/cart-items', () => ( { getAllCartItems: jest.fn() } ) );
+jest.mock( 'calypso/lib/cart-values/cart-items', () => ( { getAllCartItems: jest.fn() } ) );
 
 const previousCart = {};
 const nextCart = {};

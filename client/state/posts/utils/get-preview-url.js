@@ -3,7 +3,7 @@
  */
 import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
 
-export function getPreviewURL( site, post, autosavePreviewUrl ) {
+export function getPreviewURL( site, post ) {
 	let urlParts;
 	let previewUrl;
 
@@ -11,9 +11,7 @@ export function getPreviewURL( site, post, autosavePreviewUrl ) {
 		return '';
 	}
 
-	if ( autosavePreviewUrl ) {
-		previewUrl = autosavePreviewUrl;
-	} else if ( post.status === 'publish' ) {
+	if ( post.status === 'publish' ) {
 		previewUrl = post.URL;
 	} else {
 		urlParts = getUrlParts( post.URL );

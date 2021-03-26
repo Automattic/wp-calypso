@@ -3,7 +3,6 @@
  */
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -33,8 +32,6 @@ const cardComponents = {
 };
 
 const ManageSite = ( { cards, trackCards } ) => {
-	const translate = useTranslate();
-
 	useEffect( () => {
 		if ( cards && cards.length ) {
 			trackCards( cards );
@@ -47,9 +44,6 @@ const ManageSite = ( { cards, trackCards } ) => {
 
 	return (
 		<>
-			<h2 className="manage-site__heading customer-home__section-heading">
-				{ translate( 'Manage your site' ) }
-			</h2>
 			{ cards.map(
 				( card, index ) =>
 					cardComponents[ card ] &&

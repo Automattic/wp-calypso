@@ -16,7 +16,7 @@ const debug = debugFactory( 'calypso:wpcom-undocumented:me' );
 /**
  * Internal dependencies.
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Create an UndocumentedMe instance

@@ -13,8 +13,12 @@ import PropTypes from 'prop-types';
 import getNetworkSites from 'calypso/state/selectors/get-network-sites';
 import isConnectedSecondaryNetworkSite from 'calypso/state/selectors/is-connected-secondary-network-site';
 import PluginSite from 'calypso/my-sites/plugins/plugin-site/plugin-site';
-import PluginsStore from 'calypso/lib/plugins/store';
 import SectionHeader from 'calypso/components/section-header';
+import {
+	getPluginOnSites,
+	getSiteObjectsWithPlugin,
+} from 'calypso/state/plugins/installed/selectors';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 
 /**
  * Style dependencies
@@ -23,7 +27,6 @@ import './style.scss';
 
 export class PluginSiteList extends Component {
 	static propTypes = {
-		notices: PropTypes.object,
 		plugin: PropTypes.object,
 		sites: PropTypes.array,
 		sitesWithSecondarySites: PropTypes.array,
@@ -31,9 +34,12 @@ export class PluginSiteList extends Component {
 	};
 
 	getSecondaryPluginSites( site, secondarySites ) {
-		const secondaryPluginSites = site.plugin
-			? PluginsStore.getSites( secondarySites, this.props.plugin.slug )
-			: secondarySites;
+		const pluginsOnSites = this.props.pluginsOnSites?.sites[ site.ID ];
+		const secondarySitesWithPlugin = this.props.sitesWithPlugin.filter(
+			( siteWithPlugin ) =>
+				secondarySites && secondarySites.some( ( secSite ) => secSite.ID === siteWithPlugin.ID )
+		);
+		const secondaryPluginSites = pluginsOnSites ? secondarySitesWithPlugin : secondarySites;
 		return compact( secondaryPluginSites );
 	}
 
@@ -45,7 +51,6 @@ export class PluginSiteList extends Component {
 				secondarySites={ this.getSecondaryPluginSites( site, secondarySites ) }
 				plugin={ this.props.plugin }
 				wporg={ this.props.wporg }
-				notices={ this.props.notices }
 			/>
 		);
 	}
@@ -76,6 +81,12 @@ function getSitesWithSecondarySites( state, sites ) {
 		} ) );
 }
 
-export default connect( ( state, props ) => ( {
-	sitesWithSecondarySites: getSitesWithSecondarySites( state, props.sites ),
-} ) )( PluginSiteList );
+export default connect( ( state, { plugin, sites } ) => {
+	const siteIds = siteObjectsToSiteIds( sites );
+
+	return {
+		sitesWithPlugin: getSiteObjectsWithPlugin( state, siteIds, plugin.slug ),
+		sitesWithSecondarySites: getSitesWithSecondarySites( state, sites ),
+		pluginsOnSites: getPluginOnSites( state, siteIds, plugin.slug ),
+	};
+} )( PluginSiteList );

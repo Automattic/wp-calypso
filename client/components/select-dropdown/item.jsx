@@ -15,7 +15,7 @@ import TranslatableString from 'calypso/components/translatable/proptype';
 
 class SelectDropdownItem extends Component {
 	static propTypes = {
-		children: TranslatableString.isRequired,
+		children: PropTypes.oneOfType( [ TranslatableString, PropTypes.node ] ).isRequired,
 		compactCount: PropTypes.bool,
 		path: PropTypes.string,
 		selected: PropTypes.bool,

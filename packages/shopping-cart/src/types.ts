@@ -1,12 +1,13 @@
 /**
  * Internal dependencies
  */
-import {
+import type {
 	TempResponseCart,
 	ResponseCart,
 	RequestCart,
 	RequestCartProduct,
 	CartLocation,
+	MinimalRequestCartProduct,
 } from './shopping-cart-endpoint';
 
 export * from './shopping-cart-endpoint';
@@ -37,21 +38,25 @@ export interface ShoppingCartManager {
 export type ReplaceProductInCart = (
 	uuidToReplace: string,
 	productPropertiesToChange: Partial< RequestCartProduct >
-) => void;
+) => Promise< ResponseCart >;
 
-export type ReloadCartFromServer = () => void;
+export type ReloadCartFromServer = () => Promise< ResponseCart >;
 
-export type ReplaceProductsInCart = ( products: RequestCartProduct[] ) => void;
+export type ReplaceProductsInCart = (
+	products: MinimalRequestCartProduct[]
+) => Promise< ResponseCart >;
 
-export type AddProductsToCart = ( products: RequestCartProduct[] ) => void;
+export type AddProductsToCart = (
+	products: MinimalRequestCartProduct[]
+) => Promise< ResponseCart >;
 
-export type RemoveCouponFromCart = () => void;
+export type RemoveCouponFromCart = () => Promise< ResponseCart >;
 
-export type ApplyCouponToCart = ( couponId: string ) => void;
+export type ApplyCouponToCart = ( couponId: string ) => Promise< ResponseCart >;
 
-export type RemoveProductFromCart = ( uuidToRemove: string ) => void;
+export type RemoveProductFromCart = ( uuidToRemove: string ) => Promise< ResponseCart >;
 
-export type UpdateTaxLocationInCart = ( location: CartLocation ) => void;
+export type UpdateTaxLocationInCart = ( location: CartLocation ) => Promise< ResponseCart >;
 
 /**
  * The custom hook keeps a cached version of the server cart, as well as a
@@ -107,3 +112,5 @@ export type ShoppingCartState = {
 	loadingErrorType?: ShoppingCartError;
 	queuedActions: ShoppingCartAction[];
 };
+
+export type CartValidCallback = ( cart: ResponseCart ) => void;

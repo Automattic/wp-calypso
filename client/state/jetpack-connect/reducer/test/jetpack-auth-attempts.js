@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { authAttempts, reducer } from '../jetpack-auth-attempts';
+import reducer, { authAttempts } from '../jetpack-auth-attempts';
 import {
 	JETPACK_CONNECT_COMPLETE_FLOW,
 	JETPACK_CONNECT_RETRY_AUTH,

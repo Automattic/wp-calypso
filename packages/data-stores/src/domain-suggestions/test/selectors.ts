@@ -49,7 +49,7 @@ const apiResponse = [
 ];
 
 beforeAll( () => {
-	store = register( { vendor: 'variation2_front' } );
+	store = register();
 } );
 
 beforeEach( () => {
@@ -75,6 +75,8 @@ describe( 'getDomainSuggestions', () => {
 
 		// First call returns undefined
 		expect( select( store ).getDomainSuggestions( query, options ) ).toEqual( undefined );
+
+		await listenForStateUpdate();
 
 		// Status should be pending while we wait for the response
 		expect( select( store ).getDomainState() ).toEqual( DataStatus.Pending );

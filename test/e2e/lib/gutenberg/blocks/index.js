@@ -16,3 +16,4 @@ export { default as EmbedsBlockComponent } from './embeds-block-component';
 export { default as GutenbergBlockComponent } from './gutenberg-block-component';
 export { default as MarkdownBlockComponent } from './markdown-block-component';
 export { default as SimplePaymentBlockComponent } from './payment-block-component';
+export { PremiumContentBlockComponent } from './premium-content-block-component';

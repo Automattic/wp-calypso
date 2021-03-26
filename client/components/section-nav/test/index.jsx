@@ -18,7 +18,7 @@ import ShallowRenderer from 'react-test-renderer/shallow';
 import SectionNav from '../';
 
 jest.mock( 'gridicons', () => require( 'calypso/components/empty-component' ) );
-jest.mock( 'lib/analytics/ga', () => ( {
+jest.mock( 'calypso/lib/analytics/ga', () => ( {
 	recordEvent: () => {},
 } ) );
 

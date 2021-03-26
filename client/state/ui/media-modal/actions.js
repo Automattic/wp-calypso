@@ -1,8 +1,9 @@
 /**
  * Internal dependencies
  */
-
 import { MEDIA_MODAL_VIEW_SET } from 'calypso/state/action-types';
+
+import 'calypso/state/ui/init';
 
 /**
  * Returns an action object used in signalling that the media modal current
@@ -10,7 +11,7 @@ import { MEDIA_MODAL_VIEW_SET } from 'calypso/state/action-types';
  *
  * @see ./constants.js (ModalViews)
  *
- * @param  {ModalViews} view Media view
+ * @param  {any} view Media view
  * @returns {object}          Action object
  */
 export function setMediaModalView( view ) {
@@ -26,7 +27,6 @@ export function setMediaModalView( view ) {
  *
  * @see ./constants.js (ModalViews)
  *
- * @param  {ModalViews} view Media view
  * @returns {object}          Action object
  */
 export function resetMediaModalView() {

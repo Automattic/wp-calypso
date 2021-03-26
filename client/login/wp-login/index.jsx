@@ -11,9 +11,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from '@automattic/calypso-config';
 import AutomatticLogo from 'calypso/components/automattic-logo';
 import DocumentHead from 'calypso/components/data/document-head';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import TranslatorInvite from 'calypso/components/translator-invite';
@@ -58,6 +61,16 @@ export class Login extends React.Component {
 
 	static defaultProps = { isJetpack: false, isGutenboarding: false, isLoginView: true };
 
+	state = {
+		usernameOrEmail: '',
+	};
+
+	constructor( props ) {
+		super();
+
+		this.state.usernameOrEmail = props.emailQueryParam ?? '';
+	}
+
 	componentDidMount() {
 		this.recordPageView( this.props );
 	}
@@ -96,6 +109,10 @@ export class Login extends React.Component {
 	recordBackToWpcomLinkClick = () => {
 		this.props.recordTracksEvent( 'calypso_login_back_to_wpcom_link_click' );
 	};
+
+	handleUsernameChange( usernameOrEmail ) {
+		this.setState( { usernameOrEmail } );
+	}
 
 	renderI18nSuggestions() {
 		const { locale, path, isLoginView } = this.props;
@@ -206,15 +223,21 @@ export class Login extends React.Component {
 			return <PrivateSite />;
 		}
 
+		const isJetpackMagicLinkSignUpFlow =
+			isJetpack && config.isEnabled( 'jetpack/magic-link-signup' );
+
+		const shouldRenderFooter = ! socialConnect && ! isJetpackMagicLinkSignUpFlow;
+
 		const footer = (
 			<>
-				{ ! socialConnect && (
+				{ shouldRenderFooter && (
 					<LoginLinks
 						locale={ locale }
 						privateSite={ privateSite }
 						twoFactorAuthType={ twoFactorAuthType }
 						isGutenboarding={ isGutenboarding }
 						signupUrl={ signupUrl }
+						usernameOrEmail={ this.state.usernameOrEmail }
 					/>
 				) }
 				{ isLoginView && <TranslatorInvite path={ path } /> }
@@ -236,6 +259,7 @@ export class Login extends React.Component {
 				fromSite={ fromSite }
 				footer={ footer }
 				locale={ locale }
+				handleUsernameChange={ this.handleUsernameChange.bind( this ) }
 			/>
 		);
 	}
@@ -269,6 +293,9 @@ export default connect(
 		locale: getCurrentLocaleSlug( state ),
 		oauth2Client: getCurrentOAuth2Client( state ),
 		isLoginView: ! props.twoFactorAuthType && ! props.socialConnect,
+		emailQueryParam:
+			getCurrentQueryArguments( state ).email_address ||
+			getInitialQueryArguments( state ).email_address,
 	} ),
 	{
 		recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),

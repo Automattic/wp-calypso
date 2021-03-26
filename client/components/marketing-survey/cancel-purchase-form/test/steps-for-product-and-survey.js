@@ -8,9 +8,7 @@ import { expect } from 'chai';
  */
 import * as steps from '../steps';
 import stepsForProductAndSurvey from '../steps-for-product-and-survey';
-import { abtest } from 'calypso/lib/abtest';
 import * as plans from 'calypso/lib/plans/constants';
-jest.mock( 'lib/abtest', () => ( { abtest: require( 'sinon' ).stub() } ) );
 
 const PLAN_SURVEY_STEPS = [ steps.INITIAL_STEP, steps.FINAL_STEP ];
 const DEFAULT_STEPS_WITH_UPGRADE_AT_STEP = [
@@ -204,35 +202,17 @@ describe( 'stepsForProductAndSurvey', () => {
 			);
 		} );
 
-		test( 'should include business AT step if product is personal plan and abtest variant is show', () => {
+		test( 'should include business AT step if product is personal plan', () => {
 			const product = { product_slug: plans.PLAN_BUSINESS };
-			abtest.withArgs( 'ATPromptOnCancel' ).returns( 'show' );
 			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal(
 				DEFAULT_STEPS_WITH_BUSINESS_AT_STEP
 			);
 		} );
 
-		test( 'should include business AT step if product is personal plan and abtest variant is show (2y)', () => {
+		test( 'should include business AT step if product is personal plan (2y)', () => {
 			const product = { product_slug: plans.PLAN_BUSINESS_2_YEARS };
-			abtest.withArgs( 'ATPromptOnCancel' ).returns( 'show' );
 			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal(
 				DEFAULT_STEPS_WITH_BUSINESS_AT_STEP
-			);
-		} );
-
-		test( 'should not include business AT step if product is business plan and abtest variant is hide', () => {
-			const product = { product_slug: plans.PLAN_BUSINESS };
-			abtest.withArgs( 'ATPromptOnCancel' ).returns( 'hide' );
-			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal(
-				PLAN_SURVEY_STEPS
-			);
-		} );
-
-		test( 'should not include business AT step if product is business plan and abtest variant is hide (2y)', () => {
-			const product = { product_slug: plans.PLAN_BUSINESS_2_YEARS };
-			abtest.withArgs( 'ATPromptOnCancel' ).returns( 'hide' );
-			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal(
-				PLAN_SURVEY_STEPS
 			);
 		} );
 	} );

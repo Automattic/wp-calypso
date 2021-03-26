@@ -4,7 +4,7 @@
 import { use, select } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 import { applyFilters } from '@wordpress/hooks';
-import { castArray, noop, find } from 'lodash';
+import { find } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -15,6 +15,8 @@ import delegateEventTracking from './tracking/delegate-event-tracking';
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
+
+const noop = () => {};
 
 /**
  * Global handler.
@@ -87,7 +89,7 @@ const ensureBlockObject = ( block ) => {
  * @returns {void}
  */
 function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parentBlock ) {
-	const castBlocks = castArray( blocks );
+	const castBlocks = Array.isArray( blocks ) ? blocks : [ blocks ];
 	if ( ! castBlocks || ! castBlocks.length ) {
 		return;
 	}
@@ -129,8 +131,10 @@ function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parent
  * @returns {Function} track handler
  */
 const getBlocksTracker = ( eventName ) => ( blockIds ) => {
+	const blockIdArray = Array.isArray( blockIds ) ? blockIds : [ blockIds ];
+
 	// track separately for each block
-	castArray( blockIds ).forEach( ( blockId ) => {
+	blockIdArray.forEach( ( blockId ) => {
 		tracksRecordEvent( eventName, { block_name: getTypeForBlockId( blockId ) } );
 	} );
 };
@@ -300,8 +304,9 @@ if (
 	// Intercept dispatch function and add tracking for actions that need it.
 	use( ( registry ) => ( {
 		dispatch: ( namespace ) => {
-			const actions = { ...registry.dispatch( namespace ) };
-			const trackers = REDUX_TRACKING[ namespace ];
+			const namespaceName = typeof namespace === 'object' ? namespace.name : namespace;
+			const actions = { ...registry.dispatch( namespaceName ) };
+			const trackers = REDUX_TRACKING[ namespaceName ];
 
 			if ( trackers ) {
 				Object.keys( trackers ).forEach( ( actionName ) => {

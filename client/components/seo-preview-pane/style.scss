@@ -133,7 +133,7 @@
 		.like-button__label-status,
 		.reader-share__button-label {
 			@include breakpoint-deprecated( '<960px' ) {
-				display: none;
+				@include screen-reader-text();
 			}
 		}
 

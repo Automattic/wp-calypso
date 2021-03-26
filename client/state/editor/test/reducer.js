@@ -8,17 +8,11 @@ describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
 		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual( [
 			'postId',
-			'loadingError',
-			'isLoading',
 			'isIframeLoaded',
 			'iframePort',
-			'isAutosaving',
-			'autosavePreviewUrl',
 			'imageEditor',
 			'videoEditor',
 			'lastDraft',
-			'saveBlockers',
-			'rawContent',
 		] );
 	} );
 

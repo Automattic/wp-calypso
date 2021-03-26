@@ -6,16 +6,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { getFaqComponent } from 'calypso/my-sites/plans-v2/iterations';
+import JetpackFAQ from 'calypso/my-sites/plans/jetpack-plans/faq';
 
-const StoreFooter: React.FC = () => {
-	const JetpackFAQComponent = getFaqComponent();
-
-	if ( JetpackFAQComponent ) {
-		return <JetpackFAQComponent />;
-	}
-
-	return null;
-};
+// We can use this later if more iterations of the FAQ component show up
+const StoreFooter: React.FC = () => <JetpackFAQ />;
 
 export default StoreFooter;

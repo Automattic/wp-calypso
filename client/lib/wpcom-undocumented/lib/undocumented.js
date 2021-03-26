@@ -11,7 +11,7 @@ import { stringify } from 'qs';
 import Site from './site';
 import Me from './me';
 import MailingList from './mailing-list';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 
@@ -775,18 +775,49 @@ Undocumented.prototype.getTitanOrderProvisioningURL = function ( domain, fn ) {
 	);
 };
 
+Undocumented.prototype.getTitanDetailsForIncomingRedirect = function ( mode, jwt, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/titan/redirect-info/${ encodeURIComponent( mode ) }`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ jwt },
+		fn
+	);
+};
+
 /**
  * Retrieves the auto login link to Titan's control panel.
  *
- * @param orderId the Titan order ID
+ * @param emailAccountId The email account ID
+ * @param context Optional context enum to launch into a specific part of the control panel
  * @param fn The callback function
  */
-Undocumented.prototype.getTitanControlPanelAutoLoginURL = function ( orderId, fn ) {
+Undocumented.prototype.getTitanControlPanelAutoLoginURL = function ( emailAccountId, context, fn ) {
 	return this.wpcom.req.get(
 		{
-			path: `/emails/titan/${ encodeURIComponent( orderId ) }/control-panel-auto-login-url`,
+			path: `/emails/titan/${ encodeURIComponent( emailAccountId ) }/control-panel-auto-login-url`,
 			apiNamespace: 'wpcom/v2',
 		},
+		{ context },
+		fn
+	);
+};
+
+/**
+ * Retrieves the URL to embed Titan's control panel in an iframe.
+ *
+ * @param emailAccountId The email account ID
+ * @param context Optional context enum to launch into a specific part of the control panel
+ * @param fn The callback function
+ */
+Undocumented.prototype.getTitanControlPanelIframeURL = function ( emailAccountId, context, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/emails/titan/${ encodeURIComponent( emailAccountId ) }/control-panel-iframe-url`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ context },
 		fn
 	);
 };
@@ -825,6 +856,22 @@ Undocumented.prototype.getSiteProducts = function ( siteDomain, fn ) {
 		{
 			path: '/sites/' + siteDomain + '/products',
 			method: 'get',
+		},
+		fn
+	);
+};
+
+/**
+ * Get the user's billing history
+ *
+ * @param {Function} fn The callback function
+ */
+Undocumented.prototype.billingHistory = function ( fn ) {
+	return this._sendRequest(
+		{
+			path: '/me/billing-history',
+			method: 'get',
+			apiVersion: '1.3',
 		},
 		fn
 	);
@@ -915,6 +962,58 @@ Undocumented.prototype.getStoredCards = function ( fn ) {
 Undocumented.prototype.getPaymentMethods = function ( query, fn ) {
 	debug( '/me/payment-methods query', { query } );
 	return this.wpcom.req.get( '/me/payment-methods', query, fn );
+};
+
+/**
+ * Get a list of the user's allowed payment methods
+ */
+Undocumented.prototype.getAllowedPaymentMethods = function () {
+	debug( '/me/allowed-payment-methods query' );
+	return this.wpcom.req.get( { path: '/me/allowed-payment-methods' } );
+};
+
+/**
+ * Assign a stored payment method to a subscription.
+ *
+ * @param {string} subscriptionId The subscription ID (a.k.a. purchase ID) to be assigned
+ * @param {string} stored_details_id The payment method ID to assign
+ * @param {Function} [fn] The callback function
+ */
+Undocumented.prototype.assignPaymentMethod = function ( subscriptionId, stored_details_id, fn ) {
+	debug( '/upgrades/assign-payment-method query', { subscriptionId, stored_details_id } );
+	return this.wpcom.req.post(
+		{
+			path: '/upgrades/' + subscriptionId + '/assign-payment-method',
+			body: { stored_details_id },
+			apiVersion: '1',
+		},
+		fn
+	);
+};
+
+/**
+ * Returns a PayPal Express URL to redirect to for confirming the creation of a billing agreement.
+ *
+ * @param {string} subscription_id The subscription ID (a.k.a. purchase ID) to assign the billing agreement to after it is created
+ * @param {string} success_url The URL to return the user to for a successful billing agreement creation
+ * @param {string} cancel_url The URL to return the user to if they cancel the billing agreement creation
+ * @param {Function} [fn] The callback function
+ */
+Undocumented.prototype.createPayPalAgreement = function (
+	subscription_id,
+	success_url,
+	cancel_url,
+	fn
+) {
+	debug( '/payment-methods/create-paypal-agreement', { subscription_id, success_url, cancel_url } );
+	return this.wpcom.req.post(
+		{
+			path: '/payment-methods/create-paypal-agreement',
+			body: { subscription_id, success_url, cancel_url },
+			apiVersion: '1',
+		},
+		fn
+	);
 };
 
 /**
@@ -1198,15 +1297,7 @@ Undocumented.prototype.transactions = function ( data, fn ) {
 };
 
 Undocumented.prototype.updateCreditCard = function ( params, fn ) {
-	const data = pick( params, [
-		'country',
-		'zip',
-		'month',
-		'year',
-		'name',
-		'payment_partner',
-		'paygate_token',
-	] );
+	const data = pick( params, [ 'payment_partner', 'paygate_token' ] );
 	return this.wpcom.req.post( '/upgrades/' + params.purchaseId + '/update-credit-card', data, fn );
 };
 
@@ -2410,17 +2501,17 @@ Undocumented.prototype.updateSiteAddress = function (
 };
 
 Undocumented.prototype.requestGdprConsentManagementLink = function ( domain, callback ) {
-	return this.wpcom.req.get( `/domains/${ domain }/request-gdpr-consent-management-link`, function (
-		error,
-		response
-	) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
+	return this.wpcom.req.get(
+		`/domains/${ domain }/request-gdpr-consent-management-link`,
+		function ( error, response ) {
+			if ( error ) {
+				callback( error );
+				return;
+			}
 
-		callback( null, response );
-	} );
+			callback( null, response );
+		}
+	);
 };
 
 Undocumented.prototype.getDomainConnectSyncUxUrl = function (
@@ -2533,6 +2624,77 @@ Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function (
 		} );
 
 	return request();
+};
+
+/**
+ * Look for a site belonging to the currently logged in user that matches the
+ * anchor parameters specified.
+ *
+ * @param anchorFmPodcastId {string | null}  Example: 22b6608
+ * @param anchorFmEpisodeId {string | null}  Example: e324a06c-3148-43a4-85d8-34c0d8222138
+ * @param anchorFmSpotifyUrl {string | null} Example: https%3A%2F%2Fopen.spotify.com%2Fshow%2F6HTZdaDHjqXKDE4acYffoD%3Fsi%3DEVfDYETjQCu7pasVG5D73Q
+ * @param anchorFmSite {string | null} Example: 181129564
+ * @param anchorFmPost {string | null} Example: 5
+ * @returns {Promise} A promise
+ *    The promise should resolve to a json object containing ".location" key as {string|false} type.
+ *    False - There were no matching sites detected, the user should create a new one.
+ *    String - The URL to redirect the user to, to edit a new or existing post on that site.
+ */
+Undocumented.prototype.getMatchingAnchorSite = function (
+	anchorFmPodcastId,
+	anchorFmEpisodeId,
+	anchorFmSpotifyUrl,
+	anchorFmSite,
+	anchorFmPost
+) {
+	const queryParts = {
+		podcast: anchorFmPodcastId,
+		episode: anchorFmEpisodeId,
+		spotify_url: anchorFmSpotifyUrl,
+		site: anchorFmSite,
+		post: anchorFmPost,
+	};
+	Object.keys( queryParts ).forEach( ( k ) => {
+		if ( queryParts[ k ] === null ) {
+			delete queryParts[ k ];
+		}
+	} );
+	return this.wpcom.req.get(
+		{
+			path: '/anchor',
+			method: 'GET',
+			apiNamespace: 'wpcom/v2',
+		},
+		queryParts
+	);
+};
+
+/**
+ * Records the interest of the user for the DIFM upsell offer if they click Accept on the offer page. Check pcbrnV-Y3-p2.
+ *
+ * @returns {Promise} A promise
+ */
+Undocumented.prototype.saveDifmInterestForUser = function () {
+	return this.wpcom.req.get( {
+		apiNamespace: 'wpcom/v2',
+		path: '/difm/interested',
+	} );
+};
+
+Undocumented.prototype.getAtomicSiteLogs = function ( siteIdOrSlug, start, end, scrollId ) {
+	return this.wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/logs`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{},
+		{
+			start,
+			end,
+			page_size: 10000,
+			scroll_id: scrollId,
+		}
+	);
 };
 
 export default Undocumented;

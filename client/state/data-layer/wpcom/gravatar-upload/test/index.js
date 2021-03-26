@@ -100,6 +100,6 @@ describe( '#announceFailure()', () => {
 	test( 'should dispatch an error notice', () => {
 		const result = announceFailure();
 
-		expect( result.type ).toEqual( GRAVATAR_UPLOAD_REQUEST_FAILURE );
+		expect( result[ 0 ].type ).toEqual( GRAVATAR_UPLOAD_REQUEST_FAILURE );
 	} );
 } );

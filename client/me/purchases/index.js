@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import page from 'page';
 
 /**
  * Internal Dependencies
  */
-import * as paymentMethodsController from 'calypso/me/payment-methods/controller';
-import * as billingController from 'calypso/me/billing-history/controller';
+import * as paymentMethodsController from 'calypso/me/purchases/payment-methods/controller';
+import * as billingController from 'calypso/me/purchases/billing-history/controller';
 import * as pendingController from 'calypso/me/pending-payments/controller';
 import * as membershipsController from 'calypso/me/memberships/controller';
 import * as controller from './controller';
@@ -26,10 +26,33 @@ export default ( router ) => {
 			makeLayout,
 			clientRender
 		);
-		router( paths.addCreditCard, sidebar, controller.addCreditCard, makeLayout, clientRender );
+
+		if ( config.isEnabled( 'purchases/new-payment-methods' ) ) {
+			router(
+				paths.addNewPaymentMethod,
+				sidebar,
+				controller.addNewPaymentMethod,
+				makeLayout,
+				clientRender
+			);
+		}
+
+		router(
+			paths.addCreditCard,
+			sidebar,
+			config.isEnabled( 'purchases/new-payment-methods' )
+				? controller.addNewPaymentMethod
+				: controller.addCreditCard,
+			makeLayout,
+			clientRender
+		);
 
 		// redirect legacy urls
-		router( '/payment-methods/add-credit-card', () => page.redirect( paths.addCreditCard ) );
+		router( '/payment-methods/add-credit-card', () => {
+			config.isEnabled( 'purchases/new-payment-methods' )
+				? page.redirect( paths.addCreditCard )
+				: page.redirect( paths.addNewPaymentMethod );
+		} );
 	}
 
 	router(
@@ -116,19 +139,19 @@ export default ( router ) => {
 	);
 
 	router(
-		paths.addCardDetails( ':site', ':purchaseId' ),
+		paths.addPaymentMethod( ':site', ':purchaseId' ),
 		sidebar,
 		siteSelection,
-		controller.addCardDetails,
+		controller.changePaymentMethod,
 		makeLayout,
 		clientRender
 	);
 
 	router(
-		paths.editCardDetails( ':site', ':purchaseId', ':cardId' ),
+		paths.changePaymentMethod( ':site', ':purchaseId', ':cardId' ),
 		sidebar,
 		siteSelection,
-		controller.editCardDetails,
+		controller.changePaymentMethod,
 		makeLayout,
 		clientRender
 	);

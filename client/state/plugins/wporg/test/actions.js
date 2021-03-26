@@ -12,7 +12,7 @@ import wporgReducer from '../reducer';
 import { combineReducers } from 'calypso/state/utils';
 import * as wporg from 'calypso/lib/wporg';
 
-jest.mock( 'lib/wporg', () => ( {
+jest.mock( 'calypso/lib/wporg', () => ( {
 	fetchPluginInformation: jest.fn( ( slug ) => Promise.resolve( { slug } ) ),
 } ) );
 

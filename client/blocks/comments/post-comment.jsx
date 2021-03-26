@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { get, noop, some, flatMap } from 'lodash';
+import { get, some, flatMap } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
@@ -12,16 +12,11 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import TimeSince from 'calypso/components/time-since';
 import Gravatar from 'calypso/components/gravatar';
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrack,
-	recordPermalinkClick,
-} from 'calypso/reader/stats';
+import { recordAction, recordGaEvent, recordPermalinkClick } from 'calypso/reader/stats';
 import { getStreamUrl } from 'calypso/reader/route';
 import PostCommentContent from './post-comment-content';
 import PostCommentForm from './form';
@@ -35,11 +30,14 @@ import Emojify from 'calypso/components/emojify';
 import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
 import withDimensions from 'calypso/lib/with-dimensions';
 import { expandComments } from 'calypso/state/comments/actions';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
  */
 import './post-comment.scss';
+
+const noop = () => {};
 
 /**
  * A PostComment is the visual representation for a comment within a tree of comments.
@@ -124,7 +122,7 @@ class PostComment extends React.PureComponent {
 	handleAuthorClick = ( event ) => {
 		recordAction( 'comment_author_click' );
 		recordGaEvent( 'Clicked Author Name' );
-		recordTrack( 'calypso_reader_comment_author_click', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_comment_author_click', {
 			blog_id: this.props.post.site_ID,
 			post_id: this.props.post.ID,
 			comment_id: this.props.commentId,
@@ -325,7 +323,7 @@ class PostComment extends React.PureComponent {
 			} );
 		recordAction( 'comment_read_more_click' );
 		recordGaEvent( 'Clicked Comment Read More' );
-		recordTrack( 'calypso_reader_comment_read_more_click', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_comment_read_more_click', {
 			blog_id: this.props.post.site_ID,
 			post_id: this.props.post.ID,
 			comment_id: this.props.commentId,
@@ -504,7 +502,7 @@ const ConnectedPostComment = connect(
 	( state ) => ( {
 		currentUser: getCurrentUser( state ),
 	} ),
-	{ expandComments }
+	{ expandComments, recordReaderTracksEvent }
 )( withDimensions( PostComment ) );
 
 export default ConnectedPostComment;

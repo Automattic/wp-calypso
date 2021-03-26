@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import { getSitePlanSlug } from 'calypso/state/sites/selectors';
 import { planHasFeature } from 'calypso/lib/plans';
 import { FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT } from 'calypso/lib/plans/constants';

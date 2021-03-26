@@ -1,15 +1,19 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React from 'react';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { hasQueryArg } from '@wordpress/url';
 import FocusedLaunchModal from '@automattic/launch';
 
 /**
  * Internal dependencies
  */
-import { LAUNCH_STORE } from './stores';
+import { inIframe } from '../../block-inserter-modifications/contextual-tips/utils';
+import { LAUNCH_STORE, SITE_STORE } from './stores';
+import { openCheckout, redirectToWpcomPath, getCurrentLaunchFlowUrl } from './utils';
+import { IMMEDIATE_LAUNCH_QUERY_ARG } from './constants';
 
 const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,27 +21,47 @@ const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > 
 
 registerPlugin( 'a8c-editor-editor-focused-launch', {
 	render: function LaunchSidebar() {
-		const isFocusedLaunchOpen = useSelect( ( select ) =>
-			select( LAUNCH_STORE ).isFocusedLaunchOpen()
+		const currentSiteId = window._currentSiteId;
+
+		const isSiteLaunched = useSelect(
+			( select ) => select( SITE_STORE ).isSiteLaunched( currentSiteId ),
+			[ currentSiteId ]
 		);
 
-		const { closeFocusedLaunch } = useDispatch( LAUNCH_STORE );
+		const { isFocusedLaunchOpen, isAnchorFm } = useSelect(
+			( select ) => select( LAUNCH_STORE ).getState(),
+			[]
+		);
 
-		if ( ! isFocusedLaunchOpen ) {
-			return null;
-		}
+		const { openFocusedLaunch } = useDispatch( LAUNCH_STORE );
 
-		return (
+		// Add a class to hide the Launch button from editor bar when site is launched
+		React.useEffect( () => {
+			if ( isSiteLaunched ) {
+				document.body.classList.add( 'is-focused-launch-complete' );
+			}
+		}, [ isSiteLaunched ] );
+
+		// '?should_launch' query arg is used when the mandatory checkout step
+		// is redirecting to an external payment processing page (eg: Paypal)
+		const shouldLaunch = hasQueryArg( getCurrentLaunchFlowUrl(), IMMEDIATE_LAUNCH_QUERY_ARG );
+
+		React.useEffect( () => {
+			if ( shouldLaunch && ! isSiteLaunched ) {
+				openFocusedLaunch();
+			}
+		}, [ shouldLaunch, isSiteLaunched, openFocusedLaunch ] );
+
+		return isFocusedLaunchOpen ? (
 			<FocusedLaunchModal
-				siteId={ window._currentSiteId }
-				onClose={ closeFocusedLaunch }
-				locale={ document.documentElement.lang }
-				redirectTo={ ( url: string ) => {
-					const origin = 'https://wordpress.com';
-					const path = url.startsWith( '/' ) ? url : `/${ url }`;
-					window.top.location.href = `${ origin }${ path }`;
-				} }
+				locale={ window.wpcomEditorSiteLaunch?.locale }
+				openCheckout={ openCheckout }
+				redirectTo={ redirectToWpcomPath }
+				siteId={ currentSiteId }
+				getCurrentLaunchFlowUrl={ getCurrentLaunchFlowUrl }
+				isInIframe={ inIframe() }
+				isLaunchImmediately={ shouldLaunch || isAnchorFm }
 			/>
-		);
+		) : null;
 	},
 } );

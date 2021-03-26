@@ -4,6 +4,8 @@
 import { EXPERIMENT_ASSIGN } from 'calypso/state/action-types';
 import { ExperimentResponse } from 'calypso/state/experiments/types';
 
+import 'calypso/state/experiments/init';
+
 /**
  * Assign the user to the specified experiments
  *

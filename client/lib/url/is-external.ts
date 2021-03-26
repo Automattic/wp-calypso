@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { URL as URLString } from 'calypso/types';
 
 /**

@@ -30,11 +30,7 @@ import accept from 'calypso/lib/accept';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import searchUrl from 'calypso/lib/search-url';
 import { editMedia, deleteMedia } from 'calypso/state/media/thunks';
-import {
-	setMediaLibrarySelectedItems,
-	changeMediaSource,
-	clearSite,
-} from 'calypso/state/media/actions';
+import { selectMediaItems, changeMediaSource, clearSite } from 'calypso/state/media/actions';
 
 /**
  * Style dependencies
@@ -81,7 +77,7 @@ class Media extends Component {
 		}
 
 		if ( this.props.selectedSite ) {
-			this.props.setMediaLibrarySelectedItems( this.props.selectedSite.ID, [] );
+			this.props.selectMediaItems( this.props.selectedSite.ID, [] );
 		}
 
 		if ( this.props.currentRoute !== redirect ) {
@@ -89,13 +85,6 @@ class Media extends Component {
 		}
 
 		page( redirect );
-	};
-
-	openDetailsModalForASingleImage = ( image ) => {
-		this.setState( {
-			currentDetail: 0,
-			selectedItems: [ image ],
-		} );
 	};
 
 	openDetailsModalForAllSelected = () => {
@@ -364,6 +353,9 @@ class Media extends Component {
 					brandFont
 					className="media__page-heading"
 					headerText={ translate( 'Media' ) }
+					subHeaderText={ translate(
+						'Manage all the media on your site, including images, video, and more.'
+					) }
 					align="left"
 				/>
 				{ this.showDialog() && (
@@ -414,7 +406,6 @@ class Media extends Component {
 						single={ false }
 						filter={ this.props.filter }
 						source={ this.state.source }
-						onEditItem={ this.openDetailsModalForASingleImage }
 						onViewDetails={ this.openDetailsModalForAllSelected }
 						onDeleteItem={ this.handleDeleteMediaEvent }
 						onSourceChange={ this.handleSourceChange }
@@ -442,7 +433,7 @@ const mapStateToProps = ( state, { mediaId } ) => {
 export default connect( mapStateToProps, {
 	editMedia,
 	deleteMedia,
-	setMediaLibrarySelectedItems,
+	selectMediaItems,
 	changeMediaSource,
 	clearSite,
 } )( localize( Media ) );

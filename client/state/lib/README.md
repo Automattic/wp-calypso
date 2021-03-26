@@ -1,9 +1,9 @@
 # Library Middleware
 
 With the deprecation of SitesList, our `client/lib` libraries no longer
-have easy access to the current user site. Since libraries are not react
+have easy access to the current user site. Since libraries are not React
 components there isn't an easy way to provide access to our global
-redux store data.
+Redux store data.
 
 When writing a library there are currently three ways around this:
 

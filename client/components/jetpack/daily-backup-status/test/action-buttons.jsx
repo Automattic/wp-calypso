@@ -17,10 +17,10 @@ import ActionButtons from '../action-buttons';
 /**
  * Mocked dependencies
  */
-jest.mock( 'state/ui/selectors' );
+jest.mock( 'calypso/state/ui/selectors' );
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-jest.mock( 'state/selectors/get-does-rewind-need-credentials' );
+jest.mock( 'calypso/state/selectors/get-does-rewind-need-credentials' );
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 
 import * as record from 'calypso/state/analytics/actions/record';

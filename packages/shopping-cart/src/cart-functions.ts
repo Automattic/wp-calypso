@@ -1,8 +1,13 @@
 /**
+ * External dependencies
+ */
+import debugFactory from 'debug';
+
+/**
  * Internal dependencies
  */
-import { emptyResponseCart } from './empty-carts';
-import { TempResponseCart } from './shopping-cart-endpoint';
+import { getEmptyResponseCart } from './empty-carts';
+import type { TempResponseCart } from './shopping-cart-endpoint';
 import type {
 	CartLocation,
 	RequestCart,
@@ -11,16 +16,19 @@ import type {
 	ResponseCartProduct,
 } from './types';
 
+const debug = debugFactory( 'shopping-cart:cart-functions' );
 let lastUUID = 100;
+const emptyResponseCart = getEmptyResponseCart();
 
 function convertResponseCartProductToRequestCartProduct(
 	product: ResponseCartProduct | RequestCartProduct
 ): RequestCartProduct {
-	const { product_slug, meta, product_id, extra, volume } = product;
+	const { product_slug, meta, product_id, extra, volume, quantity } = product;
 	return {
 		product_slug,
 		meta,
 		volume,
+		quantity,
 		product_id,
 		extra,
 	};
@@ -165,7 +173,7 @@ export function convertRawResponseCartToResponseCart(
 			display_taxes: rawResponseCart.tax?.display_taxes ?? false,
 		},
 		// Add uuid to products returned by the server
-		products: rawProducts.map( ( product ) => {
+		products: rawProducts.filter( isRealProduct ).map( ( product ) => {
 			return {
 				...product,
 				uuid: product.product_slug + lastUUID++,
@@ -174,10 +182,55 @@ export function convertRawResponseCartToResponseCart(
 	};
 }
 
+function isRealProduct( serverCartItem: ResponseCartProduct ): boolean {
+	// Credits are reported separately, so we do not need to include the pseudo-product in the line items.
+	if ( serverCartItem.product_slug === 'wordpress-com-credits' ) {
+		return false;
+	}
+	return true;
+}
+
+function shouldProductReplaceCart(
+	product: RequestCartProduct,
+	responseCart: TempResponseCart
+): boolean {
+	const doesCartHaveRenewals = responseCart.products.some(
+		( cartProduct ) => cartProduct.extra?.purchaseType === 'renewal'
+	);
+
+	if (
+		! doesCartHaveRenewals &&
+		product.extra?.purchaseType === 'renewal' &&
+		product.product_slug !== 'domain_redemption'
+	) {
+		// adding a renewal replaces the cart unless it is a privacy protection (comment copied from cartItemShouldReplaceCart; is domain_redemption really privacy protection?)
+		return true;
+	}
+
+	if ( doesCartHaveRenewals && product.extra?.purchaseType !== 'renewal' ) {
+		// all items should replace the cart if the cart contains a renewal
+		return true;
+	}
+
+	return false;
+}
+
+function shouldProductsReplaceCart(
+	products: RequestCartProduct[],
+	responseCart: TempResponseCart
+): boolean {
+	return products.some( ( product ) => shouldProductReplaceCart( product, responseCart ) );
+}
+
 export function addItemsToResponseCart(
 	responseCart: TempResponseCart,
 	products: RequestCartProduct[]
 ): TempResponseCart {
+	if ( shouldProductsReplaceCart( products, responseCart ) ) {
+		debug( 'items should replace response cart', products );
+		return replaceAllItemsInResponseCart( responseCart, products );
+	}
+	debug( 'items should not replace response cart', products );
 	return {
 		...responseCart,
 		products: [ ...responseCart.products, ...products ],

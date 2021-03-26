@@ -17,6 +17,11 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
  */
 import './style.scss';
 
+/**
+ * Image dependencies
+ */
+import supportIllustration from 'calypso/assets/images/illustrations/happiness-support.svg';
+
 export class ConciergeSupportSession extends PureComponent {
 	render() {
 		const { receiptId, translate } = this.props;
@@ -191,8 +196,8 @@ export class ConciergeSupportSession extends PureComponent {
 					<div className="concierge-support-session__column-doodle">
 						<img
 							className="concierge-support-session__doodle"
-							alt="Website expert offering a support session"
-							src="/calypso/images/illustrations/support.svg"
+							alt={ translate( 'Website expert offering a support session' ) }
+							src={ supportIllustration }
 						/>
 					</div>
 				</div>
@@ -205,6 +210,7 @@ export class ConciergeSupportSession extends PureComponent {
 		return (
 			<footer className="concierge-support-session__footer">
 				<Button
+					data-e2e-button="decline"
 					className="concierge-support-session__decline-offer-button"
 					onClick={ handleClickDecline }
 				>

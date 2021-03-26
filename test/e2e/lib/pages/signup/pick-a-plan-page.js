@@ -16,7 +16,7 @@ import { getJetpackHost } from '../../data-helper.js';
 export default class PickAPlanPage extends AsyncBaseContainer {
 	constructor( driver ) {
 		const host = getJetpackHost();
-		const plansCssHandle = host !== 'WPCOM' ? '.selector-alt__main' : '.plans-features-main__group';
+		const plansCssHandle = host !== 'WPCOM' ? '.selector__main' : '.plans-features-main__group';
 		super( driver, By.css( plansCssHandle ), null, config.get( 'explicitWaitMS' ) * 2 );
 		this.host = host;
 	}
@@ -27,7 +27,7 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 
 	// Explicitly select the free button on jetpack without needing `host` above.
 	async selectFreePlanJetpack() {
-		const freePlanButton = By.css( '.jetpack-free-card-alt__main a.button' );
+		const freePlanButton = By.css( '[data-e2e-product-slug="free"] a' );
 		await driverHelper.scrollIntoView( this.driver, freePlanButton );
 		return await driverHelper.clickWhenClickable( this.driver, freePlanButton );
 	}
@@ -48,7 +48,9 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 
 		if ( level === 'free' ) {
 			if ( ! ( await driverHelper.isElementPresent( this.driver, selector ) ) ) {
-				selector = By.css( '.plans-features-main__banner-content button' );
+				selector = By.css(
+					'.plans-features-main__banner-content button, .formatted-header__subtitle button'
+				);
 			}
 		}
 		await driverHelper.waitTillPresentAndDisplayed(

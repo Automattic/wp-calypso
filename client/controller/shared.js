@@ -2,16 +2,17 @@
  * External dependencies
  */
 import React from 'react';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { setSection } from 'calypso/state/ui/actions';
 import { setLocale } from 'calypso/state/ui/language/actions';
 import { isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
+
+const noop = () => {};
 
 export function makeLayoutMiddleware( LayoutComponent ) {
 	return ( context, next ) => {

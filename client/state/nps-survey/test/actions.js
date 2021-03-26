@@ -18,7 +18,7 @@ import {
 } from 'calypso/state/action-types';
 
 // mock modules
-jest.mock( 'lib/wp', () => ( {
+jest.mock( 'calypso/lib/wp', () => ( {
 	undocumented: () => ( {
 		// TODO: use mockResolvedValue instead when we update jest to 22.2 or later
 		submitNPSSurvey: jest.fn().mockReturnValue( Promise.resolve() ),
@@ -26,10 +26,10 @@ jest.mock( 'lib/wp', () => ( {
 		sendNPSSurveyFeedback: jest.fn().mockReturnValue( Promise.resolve() ),
 	} ),
 } ) );
-jest.mock( 'lib/analytics/tracks', () => ( {
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
-jest.mock( 'lib/analytics/mc', () => ( {
+jest.mock( 'calypso/lib/analytics/mc', () => ( {
 	bumpStat: jest.fn(),
 } ) );
 

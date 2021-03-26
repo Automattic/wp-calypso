@@ -81,7 +81,7 @@ cached-requests.json
 /desktop/client
 /desktop/config
 /desktop/public
-/desktop/release
+/desktop/release*
 /desktop/resource/certificates/mac.p12
 /desktop/resource/certificates/win.p12
 /client/desktop/config.json
@@ -92,3 +92,6 @@ cached-requests.json
 
 # Typescript
 *.tsbuildinfo
+
+# TeamCity Kotlin compilation
+.teamcity/target

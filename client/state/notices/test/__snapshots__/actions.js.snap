@@ -9,19 +9,7 @@ Object {
 }
 `;
 
-exports[`actions status helpers bound createNotice dispatches expected action 1`] = `
-Object {
-  "notice": Object {
-    "noticeId": "3",
-    "showDismiss": true,
-    "status": "is-success",
-    "text": "text",
-  },
-  "type": "NOTICE_CREATE",
-}
-`;
-
-exports[`actions status helpers bound createNotice dispatches expected action 2`] = `
+exports[`actions status helpers errorNotice dispatches expected action 1`] = `
 Object {
   "notice": Object {
     "noticeId": "4",
@@ -33,7 +21,7 @@ Object {
 }
 `;
 
-exports[`actions status helpers bound createNotice dispatches expected action 3`] = `
+exports[`actions status helpers infoNotice dispatches expected action 1`] = `
 Object {
   "notice": Object {
     "noticeId": "5",
@@ -45,24 +33,36 @@ Object {
 }
 `;
 
-exports[`actions status helpers bound createNotice dispatches expected action 4`] = `
+exports[`actions status helpers plainNotice dispatches expected action 1`] = `
 Object {
   "notice": Object {
-    "noticeId": "6",
+    "noticeId": "7",
     "showDismiss": true,
-    "status": "is-warning",
+    "status": "is-plain",
     "text": "text",
   },
   "type": "NOTICE_CREATE",
 }
 `;
 
-exports[`actions status helpers bound createNotice dispatches expected action 5`] = `
+exports[`actions status helpers successNotice dispatches expected action 1`] = `
 Object {
   "notice": Object {
-    "noticeId": "7",
+    "noticeId": "3",
     "showDismiss": true,
-    "status": "is-plain",
+    "status": "is-success",
+    "text": "text",
+  },
+  "type": "NOTICE_CREATE",
+}
+`;
+
+exports[`actions status helpers warningNotice dispatches expected action 1`] = `
+Object {
+  "notice": Object {
+    "noticeId": "6",
+    "showDismiss": true,
+    "status": "is-warning",
     "text": "text",
   },
   "type": "NOTICE_CREATE",

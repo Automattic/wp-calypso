@@ -23,12 +23,13 @@ export default function FoldableFAQExample() {
 
 ## Props
 
-| Name         | Type         | Default       | Description                                               |
-| ------------ | ------------ | ------------- | --------------------------------------------------------- |
-| `id`\*       | `string`     | ''            | Unique id for the FAQ. Used for accessibility purposes.   |
-| `className`  | `string`     | ''            | Custom class added to the root element of the component   |
-| `question`\* | `React.Node` | none          | The question appearing above the answer                   |
-| `children`\* | `React.Node` | none          | The answer                                                |
-| `icon`       | `string`     | chevron-right | Gridicon string                                           |
-| `iconSize`   | `number`     | 24            | Size of the icon                                          |
-| `expanded`   | `boolean`    | false         | Whether or not the the answer starts off expanded/showing |
+| Name         | Type         | Default       | Description                                                      |
+| ------------ | ------------ | ------------- | ---------------------------------------------------------------- |
+| `id`\*       | `string`     | ''            | Unique id for the FAQ. Used for accessibility purposes.          |
+| `className`  | `string`     | ''            | Custom class added to the root element of the component          |
+| `question`\* | `React.Node` | none          | The question appearing above the answer                          |
+| `children`\* | `React.Node` | none          | The answer                                                       |
+| `icon`       | `string`     | chevron-right | Gridicon string                                                  |
+| `iconSize`   | `number`     | 24            | Size of the icon                                                 |
+| `expanded`   | `boolean`    | false         | Whether or not the the answer starts off expanded/showing answer |
+| `onToggle`   | `function`   | none          | A callback function that fires every time the FAQ is toggled     |

@@ -3,9 +3,9 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { flowRight as compose, isEqual, uniqBy } from 'lodash';
+import { connect } from 'react-redux';
+import { uniqBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -18,27 +18,22 @@ import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggl
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import Count from 'calypso/components/count';
 import Notice from 'calypso/components/notice';
+import {
+	ACTIVATE_PLUGIN,
+	DEACTIVATE_PLUGIN,
+	DISABLE_AUTOUPDATE_PLUGIN,
+	ENABLE_AUTOUPDATE_PLUGIN,
+	REMOVE_PLUGIN,
+	UPDATE_PLUGIN,
+} from 'calypso/lib/plugins/constants';
+import { getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import PluginNotices from 'calypso/lib/plugins/notices';
-import { errorNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-function checkPropsChange( nextProps, propArr ) {
-	let i;
-
-	for ( i = 0; i < propArr.length; i++ ) {
-		const prop = propArr[ i ];
-
-		if ( ! isEqual( nextProps[ prop ], this.props[ prop ] ) ) {
-			return true;
-		}
-	}
-	return false;
-}
 
 class PluginItem extends Component {
 	static propTypes = {
@@ -54,12 +49,6 @@ class PluginItem extends Component {
 		} ),
 		isAutoManaged: PropTypes.bool,
 		progress: PropTypes.array,
-		notices: PropTypes.shape( {
-			completed: PropTypes.array,
-			errors: PropTypes.array,
-			inProgress: PropTypes.array,
-		} ),
-		hasUpdate: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -69,31 +58,7 @@ class PluginItem extends Component {
 		},
 		progress: [],
 		isAutoManaged: false,
-		hasUpdate: () => false,
 	};
-
-	shouldComponentUpdate( nextProps ) {
-		const propsToCheck = [
-			'plugin',
-			'sites',
-			'selectedSite',
-			'isMock',
-			'isSelectable',
-			'isSelected',
-		];
-		if ( checkPropsChange.call( this, nextProps, propsToCheck ) ) {
-			return true;
-		}
-
-		if (
-			this.props.notices &&
-			PluginNotices.shouldComponentUpdateNotices( this.props.notices, nextProps.notices )
-		) {
-			return true;
-		}
-
-		return false;
-	}
 
 	ago( date ) {
 		return this.props.moment.utc( date, 'YYYY-MM-DD hh:mma' ).fromNow();
@@ -103,7 +68,7 @@ class PluginItem extends Component {
 		const { translate, progress } = this.props;
 		const log = progress[ 0 ];
 		const uniqLogs = uniqBy( progress, function ( uniqLog ) {
-			return uniqLog.site.ID;
+			return uniqLog.siteId;
 		} );
 		const translationArgs = {
 			args: { count: uniqLogs.length },
@@ -112,7 +77,7 @@ class PluginItem extends Component {
 
 		let message;
 		switch ( log && log.action ) {
-			case 'UPDATE_PLUGIN':
+			case UPDATE_PLUGIN:
 				message = this.props.selectedSite
 					? translate( 'Updating', { context: 'plugin' } )
 					: translate(
@@ -122,7 +87,7 @@ class PluginItem extends Component {
 					  );
 				break;
 
-			case 'ACTIVATE_PLUGIN':
+			case ACTIVATE_PLUGIN:
 				message = this.props.selectedSite
 					? translate( 'Activating', { context: 'plugin' } )
 					: translate(
@@ -132,7 +97,7 @@ class PluginItem extends Component {
 					  );
 				break;
 
-			case 'DEACTIVATE_PLUGIN':
+			case DEACTIVATE_PLUGIN:
 				message = this.props.selectedSite
 					? translate( 'Deactivating', { context: 'plugin' } )
 					: translate(
@@ -142,7 +107,7 @@ class PluginItem extends Component {
 					  );
 				break;
 
-			case 'ENABLE_AUTOUPDATE_PLUGIN':
+			case ENABLE_AUTOUPDATE_PLUGIN:
 				message = this.props.selectedSite
 					? translate( 'Enabling autoupdates' )
 					: translate(
@@ -152,7 +117,7 @@ class PluginItem extends Component {
 					  );
 				break;
 
-			case 'DISABLE_AUTOUPDATE_PLUGIN':
+			case DISABLE_AUTOUPDATE_PLUGIN:
 				message = this.props.selectedSite
 					? translate( 'Disabling autoupdates' )
 					: translate(
@@ -162,7 +127,7 @@ class PluginItem extends Component {
 					  );
 
 				break;
-			case 'REMOVE_PLUGIN':
+			case REMOVE_PLUGIN:
 				message = this.props.selectedSite
 					? translate( 'Removing' )
 					: translate(
@@ -175,9 +140,10 @@ class PluginItem extends Component {
 	}
 
 	renderUpdateFlag() {
-		const { sites, translate } = this.props;
+		const { pluginsOnSites, sites, translate } = this.props;
 		const recentlyUpdated = sites.some( function ( site ) {
-			return site.plugin && site.plugin.update && site.plugin.update.recentlyUpdated;
+			const sitePlugin = pluginsOnSites?.sites[ site.ID ];
+			return sitePlugin?.update?.recentlyUpdated;
 		} );
 
 		if ( recentlyUpdated ) {
@@ -192,12 +158,10 @@ class PluginItem extends Component {
 			);
 		}
 
-		const updated_versions = this.props.plugin.sites
+		const updated_versions = sites
 			.map( ( site ) => {
-				if ( site.plugin.update && site.plugin.update.new_version ) {
-					return site.plugin.update.new_version;
-				}
-				return false;
+				const sitePlugin = pluginsOnSites?.sites[ site.ID ];
+				return sitePlugin?.update?.new_version;
 			} )
 			.filter( ( version ) => version );
 
@@ -211,6 +175,15 @@ class PluginItem extends Component {
 				} ) }
 			/>
 		);
+	}
+
+	hasUpdate() {
+		const { pluginsOnSites, sites } = this.props;
+
+		return sites.some( ( site ) => {
+			const sitePlugin = pluginsOnSites?.sites[ site.ID ];
+			return sitePlugin?.update && site.canUpdateFiles;
+		} );
 	}
 
 	pluginMeta( pluginData ) {
@@ -229,7 +202,7 @@ class PluginItem extends Component {
 			);
 		}
 
-		if ( this.props.hasUpdate( pluginData ) ) {
+		if ( this.hasUpdate() ) {
 			return this.renderUpdateFlag();
 		}
 
@@ -260,7 +233,6 @@ class PluginItem extends Component {
 						plugin={ this.props.plugin }
 						disabled={ this.props.isSelectable }
 						site={ this.props.selectedSite }
-						notices={ this.props.notices }
 					/>
 				) }
 				{ canToggleAutoupdate && (
@@ -269,7 +241,6 @@ class PluginItem extends Component {
 						plugin={ this.props.plugin }
 						disabled={ this.props.isSelectable }
 						site={ this.props.selectedSite }
-						notices={ this.props.notices }
 						wporg={ !! this.props.plugin.wporg }
 					/>
 				) }
@@ -357,8 +328,10 @@ class PluginItem extends Component {
 	}
 }
 
-export default compose(
-	connect( null, { errorNotice } ),
-	localize,
-	withLocalizedMoment
-)( PluginItem );
+export default connect( ( state, { plugin, sites } ) => {
+	const siteIds = siteObjectsToSiteIds( sites );
+
+	return {
+		pluginsOnSites: getPluginOnSites( state, siteIds, plugin?.slug ),
+	};
+} )( localize( withLocalizedMoment( PluginItem ) ) );

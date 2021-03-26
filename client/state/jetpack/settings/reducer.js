@@ -73,7 +73,6 @@ export const settingsReducer = keyedReducer(
 		return state;
 	} )
 );
-settingsReducer.hasCustomPersistence = true;
 
 export default combineReducers( {
 	settings: settingsReducer,

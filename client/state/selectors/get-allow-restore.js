@@ -6,7 +6,7 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 

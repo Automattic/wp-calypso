@@ -15,3 +15,17 @@ To start a plan checkout flow, use appropriate URLS:
 - <https://wordpress.com/checkout/site.jetpack.me/professional>
 
 Plan routes are sourced from `lib/plans/constants.js`
+
+## Diagrams
+
+A significant amount of the shopping cart workflow takes place through hooks in [@automattic/composite-checkout](../../../packages/composite-checkout/).
+
+These diagrams show how the WordPress APIs are connected to these workflows as well as the important interactions.
+
+### Get Cart
+
+![Display cart](docs/get-cart.svg)
+
+### Save Cart
+
+![Set cart](docs/set-cart.svg)

@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 
 class QueryUserSettings extends Component {
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		this.props.fetchUserSettings();
 	}
 

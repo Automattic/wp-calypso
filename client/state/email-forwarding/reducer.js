@@ -6,12 +6,12 @@ import { orderBy } from 'lodash';
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	combineReducers,
 	keyedReducer,
 	withoutPersistence,
 	withSchemaValidation,
-	withStorageKey,
 } from 'calypso/state/utils';
 import {
 	EMAIL_FORWARDING_REQUEST,

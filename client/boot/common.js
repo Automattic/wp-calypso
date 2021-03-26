@@ -8,18 +8,17 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import Modal from 'react-modal';
 import store from 'store';
+import accessibleFocus from '@automattic/accessible-focus';
 
 /**
  * Internal dependencies
  */
 import { setupLocale } from './locale';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { ProviderWrappedLayout } from 'calypso/controller';
-import notices from 'calypso/notices';
 import { getToken } from 'calypso/lib/oauth-token';
 import emailVerification from 'calypso/components/email-verification';
 import { getSavedVariations } from 'calypso/lib/abtest'; // used by error logger
-import accessibleFocus from 'calypso/lib/accessible-focus';
 import Logger from 'calypso/lib/catch-js-errors';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import { installPerfmonPageHandlers } from 'calypso/lib/perfmon';
@@ -127,6 +126,10 @@ const oauthTokenMiddleware = () => {
 			'/connect',
 		];
 
+		if ( config.isEnabled( 'jetpack-cloud/connect' ) ) {
+			loggedOutRoutes.push( '/jetpack/connect', '/plans' );
+		}
+
 		if ( isJetpackCloud() && config.isEnabled( 'jetpack/pricing-page' ) ) {
 			loggedOutRoutes.push( '/pricing' );
 			getLanguageSlugs().forEach( ( slug ) => loggedOutRoutes.push( `/${ slug }/pricing` ) );
@@ -151,7 +154,7 @@ const oauthTokenMiddleware = () => {
 				// the user back to it once the login flow is finished. We also set an expiration
 				// to this because we don't want to redirect by mistake a user with an old path
 				// stored in their session.
-				if ( isJetpackCloud && currentPath !== '/' ) {
+				if ( isJetpackCloud() && currentPath !== '/' ) {
 					const EXPIRATION_IN_SECONDS = 300;
 					const SESSION_STORAGE_PATH_KEY = 'jetpack_cloud_redirect_path';
 					const SESSION_STORAGE_PATH_KEY_EXPIRES_IN = 'jetpack_cloud_redirect_path_expires_in';
@@ -176,11 +179,6 @@ const setRouteMiddleware = () => {
 
 		next();
 	} );
-};
-
-const clearNoticesMiddleware = () => {
-	//TODO: remove this one when notices are reduxified - it is for old notices
-	page( '*', notices.clearNoticesOnNavigation );
 };
 
 const unsavedFormsMiddleware = () => {
@@ -218,7 +216,7 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 
 	if ( config.isEnabled( 'network-connection' ) ) {
-		asyncRequire( 'lib/network-connection', ( networkConnection ) =>
+		asyncRequire( 'calypso/lib/network-connection', ( networkConnection ) =>
 			networkConnection.init( reduxStore )
 		);
 	}
@@ -280,7 +278,6 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	oauthTokenMiddleware();
 	setupRoutes();
 	setRouteMiddleware();
-	clearNoticesMiddleware();
 	unsavedFormsMiddleware();
 
 	// The analytics module requires user (when logged in) and superProps objects. Inject these here.
@@ -344,7 +341,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		// Dead-end the sections the user can't access when logged out
 		page( '*', function ( context, next ) {
 			//see server/pages/index for prod redirect
-			if ( '/plans' === context.pathname ) {
+			if ( ! config.isEnabled( 'jetpack-cloud/connect' ) && '/plans' === context.pathname ) {
 				const queryFor = context.query && context.query.for;
 				if ( queryFor && 'jetpack' === queryFor ) {
 					window.location =
@@ -381,11 +378,16 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		require( 'calypso/lib/desktop' ).default.init();
 	}
 
+	// temp: test -- will revert
+	window.electron?.receive( 'ping', () => {
+		window.electron?.send( 'pong' );
+	} );
+
 	if (
 		config.isEnabled( 'dev/test-helper' ) &&
 		document.querySelector( '.environment.is-tests' )
 	) {
-		asyncRequire( 'lib/abtest/test-helper', ( testHelper ) => {
+		asyncRequire( 'calypso/lib/abtest/test-helper', ( testHelper ) => {
 			testHelper( document.querySelector( '.environment.is-tests' ) );
 		} );
 	}
@@ -393,7 +395,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		config.isEnabled( 'dev/preferences-helper' ) &&
 		document.querySelector( '.environment.is-prefs' )
 	) {
-		asyncRequire( 'lib/preferences-helper', ( prefHelper ) => {
+		asyncRequire( 'calypso/lib/preferences-helper', ( prefHelper ) => {
 			prefHelper( document.querySelector( '.environment.is-prefs' ), reduxStore );
 		} );
 	}
@@ -401,7 +403,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		config.isEnabled( 'dev/features-helper' ) &&
 		document.querySelector( '.environment.is-features' )
 	) {
-		asyncRequire( 'lib/features-helper', ( featureHelper ) => {
+		asyncRequire( 'calypso/lib/features-helper', ( featureHelper ) => {
 			featureHelper( document.querySelector( '.environment.is-features' ) );
 		} );
 	}
@@ -445,7 +447,6 @@ const boot = ( currentUser, registerRoutes ) => {
 function waitForCookieAuth( user ) {
 	const timeoutMs = 1500;
 	const loggedIn = user.get() !== false;
-	const ipc = require( 'electron' ).ipcRenderer;
 
 	const promiseTimeout = ( ms, promise ) => {
 		const timeout = new Promise( ( _, reject ) => {
@@ -462,12 +463,16 @@ function waitForCookieAuth( user ) {
 		return new Promise( function ( resolve ) {
 			const sendUserAuth = () => {
 				debug( 'Sending user info to desktop...' );
-				ipc.send( 'user-auth', user, getToken() );
+				window.electron.send(
+					'user-auth',
+					{ id: user.data.ID, username: user.data.username },
+					getToken()
+				);
 			};
 
 			if ( loggedIn ) {
 				debug( 'Desktop user logged in, waiting on cookie authentication...' );
-				ipc.on( 'cookie-auth-complete', function () {
+				window.electron.receive( 'cookie-auth-complete', function () {
 					debug( 'Desktop cookies set, rendering main layout...' );
 					resolve();
 				} );

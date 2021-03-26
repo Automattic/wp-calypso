@@ -7,12 +7,8 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import {
-	combineReducers,
-	withSchemaValidation,
-	withoutPersistence,
-	withStorageKey,
-} from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
 import {
 	INVITES_DELETE_REQUEST,
 	INVITES_DELETE_REQUEST_FAILURE,
@@ -108,7 +104,7 @@ export const links = withSchemaValidation( inviteLinksSchema, ( state = {}, acti
 		case INVITES_REQUEST_SUCCESS: {
 			let inviteLinks = {};
 			const currentDate = moment();
-			action.links.forEach( ( link ) => {
+			Object.values( action.links ).forEach( ( link ) => {
 				// Do not process expired links
 				if ( link.expiry && currentDate.isAfter( link.expiry * 1000 ) ) {
 					return;

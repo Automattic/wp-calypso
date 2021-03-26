@@ -6,7 +6,7 @@ import { values, sortBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import 'calypso/state/reader/init';
 import { NO_ORG_ID } from 'calypso/state/reader/organizations/constants';
 

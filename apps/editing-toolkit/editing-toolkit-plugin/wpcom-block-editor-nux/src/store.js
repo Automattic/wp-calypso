@@ -1,35 +1,100 @@
 /**
  * External dependencies
  */
+import 'a8c-fse-common-data-stores';
 import apiFetch from '@wordpress/api-fetch';
-import { registerStore } from '@wordpress/data';
+import { apiFetch as apiFetchControls, controls } from '@wordpress/data-controls';
+import { combineReducers, registerStore } from '@wordpress/data';
 
-const reducer = ( state = {}, { type, isNuxEnabled } ) =>
-	'WPCOM_BLOCK_EDITOR_NUX_SET_STATUS' === type ? { ...state, isNuxEnabled } : state;
+const showWelcomeGuideReducer = ( state = undefined, action ) => {
+	switch ( action.type ) {
+		case 'WPCOM_WELCOME_GUIDE_FETCH_STATUS_SUCCESS':
+			return action.response.show_welcome_guide;
+		case 'WPCOM_WELCOME_GUIDE_SHOW_SET':
+			return action.show;
+		default:
+			return state;
+	}
+};
+
+const welcomeGuideManuallyOpenedReducer = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'WPCOM_WELCOME_GUIDE_SHOW_SET':
+			if ( typeof action.openedManually !== 'undefined' ) {
+				return action.openedManually;
+			}
+			return state;
+
+		default:
+			return state;
+	}
+};
+
+// TODO: next PR convert file to Typescript to ensure control of tourRating values: null, 'thumbs-up' 'thumbs-down'
+const tourRatingReducer = ( state = undefined, action ) => {
+	switch ( action.type ) {
+		case 'WPCOM_WELCOME_GUIDE_TOUR_RATING_SET':
+			return action.tourRating;
+		default:
+			return state;
+	}
+};
+
+const welcomeGuideVariantReducer = ( state = 'tour', action ) => {
+	switch ( action.type ) {
+		case 'WPCOM_WELCOME_GUIDE_FETCH_STATUS_SUCCESS':
+			return action.response.variant;
+		default:
+			return state;
+	}
+};
+
+const reducer = combineReducers( {
+	welcomeGuideManuallyOpened: welcomeGuideManuallyOpenedReducer,
+	showWelcomeGuide: showWelcomeGuideReducer,
+	tourRating: tourRatingReducer,
+	welcomeGuideVariant: welcomeGuideVariantReducer,
+} );
 
 const actions = {
-	setWpcomNuxStatus: ( { isNuxEnabled, bypassApi } ) => {
-		if ( ! bypassApi ) {
-			apiFetch( {
-				path: '/wpcom/v2/block-editor/nux',
-				method: 'POST',
-				data: { isNuxEnabled },
-			} );
-		}
+	*fetchWelcomeGuideStatus() {
+		const response = yield apiFetchControls( { path: '/wpcom/v2/block-editor/nux' } );
+
 		return {
-			type: 'WPCOM_BLOCK_EDITOR_NUX_SET_STATUS',
-			isNuxEnabled,
+			type: 'WPCOM_WELCOME_GUIDE_FETCH_STATUS_SUCCESS',
+			response,
 		};
+	},
+	setShowWelcomeGuide: ( show, { openedManually } = {} ) => {
+		apiFetch( {
+			path: '/wpcom/v2/block-editor/nux',
+			method: 'POST',
+			data: { show_welcome_guide: show },
+		} );
+
+		return {
+			type: 'WPCOM_WELCOME_GUIDE_SHOW_SET',
+			show,
+			openedManually,
+		};
+	},
+	setTourRating: ( tourRating ) => {
+		return { type: 'WPCOM_WELCOME_GUIDE_TOUR_RATING_SET', tourRating };
 	},
 };
 
 const selectors = {
-	isWpcomNuxEnabled: ( state ) => state.isNuxEnabled,
+	isWelcomeGuideManuallyOpened: ( state ) => state.isTourManuallyOpened,
+	isWelcomeGuideShown: ( state ) => !! state.showWelcomeGuide,
+	isWelcomeGuideStatusLoaded: ( state ) => typeof state.showWelcomeGuide !== 'undefined',
+	getTourRating: ( state ) => state.tourRating,
+	getWelcomeGuideVariant: ( state ) => state.welcomeGuideVariant,
 };
 
-registerStore( 'automattic/nux', {
+registerStore( 'automattic/wpcom-welcome-guide', {
 	reducer,
 	actions,
 	selectors,
+	controls,
 	persist: true,
 } );

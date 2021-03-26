@@ -14,7 +14,7 @@ import React from 'react';
 import Select from '../select';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( '<Select />', () => {
 	const defaultProps = {

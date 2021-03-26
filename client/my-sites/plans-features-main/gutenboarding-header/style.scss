@@ -1,10 +1,29 @@
 .gutenboarding-header {
+
+	// START - exact styles from my-sites/plan-features/style.scss targeting .is-section-signup .plans-features-main__group.is-scrollable
+	width: 100vw;
+	margin-left: calc( 50% - 50vw );
+
+	@media ( min-width: 1600px ) {
+		max-width: 1600px;
+		margin-left: -280px;
+	}
+
+	@include breakpoint-deprecated( '<1040px' ) {
+		padding-top: 12px;
+	}
+	// END
+
 	display: flex;
 	flex-wrap: wrap;
-	margin: -12px 27px 50px;
 	justify-content: space-between;
 
+	body.is-section-signup .plans-features-main > & > header.formatted-header.is-left-align {
+		margin: 20px;
+	}
+
 	&__select-free-plan {
+		margin: 0 20px;
 		color: var( --color-neutral );
 		text-decoration: underline;
 		cursor: pointer;
@@ -12,7 +31,7 @@
 	}
 
 	@include breakpoint-deprecated( '>480px' ) {
-		margin-bottom: 80px;
+		margin-bottom: 40px;
 		margin-top: 0;
 	}
 }

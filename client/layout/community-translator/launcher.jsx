@@ -14,7 +14,7 @@ import { addQueryArgs } from '@wordpress/url';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import translator, { trackTranslatorStatus } from 'calypso/lib/translator-jumpstart';
 import localStorageHelper from 'store';
 import { Button, Dialog } from '@automattic/components';

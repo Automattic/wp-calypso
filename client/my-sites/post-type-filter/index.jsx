@@ -97,7 +97,7 @@ export class PostTypeFilter extends Component {
 				return memo.concat( {
 					key: `filter-${ status }`,
 					// Hide count in all sites mode; and in Jetpack mode for non-posts
-					count: ! siteId || ( jetpack && ! isPostOrPage ) ? null : count,
+					count: ! siteId || ( jetpack && query.type !== 'post' ) ? null : count,
 					path: compact( [
 						basePath,
 						isPostOrPage && query.author && 'my',

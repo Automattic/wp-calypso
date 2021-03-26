@@ -7,7 +7,14 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import type { NewSiteBlogDetails, NewSiteErrorResponse, SiteDetails, Domain } from './types';
+import {
+	NewSiteBlogDetails,
+	NewSiteErrorResponse,
+	SiteDetails,
+	Domain,
+	SiteLaunchState,
+	SiteLaunchStatus,
+} from './types';
 import type { Action } from './actions';
 
 export const newSiteData: Reducer< NewSiteBlogDetails | undefined, Action > = ( state, action ) => {
@@ -101,12 +108,30 @@ export const sitesDomains: Reducer< { [ key: number ]: Domain[] }, Action > = (
 	return state;
 };
 
-export const launchStatus: Reducer< { [ key: number ]: boolean }, Action > = (
+export const launchStatus: Reducer< { [ key: number ]: SiteLaunchState }, Action > = (
 	state = {},
 	action
 ) => {
-	if ( action.type === 'LAUNCHED_SITE' ) {
-		return { ...state, [ action.siteId ]: true };
+	if ( action.type === 'LAUNCH_SITE_START' ) {
+		return {
+			...state,
+			[ action.siteId ]: { status: SiteLaunchStatus.IN_PROGRESS, errorCode: undefined },
+		};
+	}
+	if ( action.type === 'LAUNCH_SITE_SUCCESS' ) {
+		return {
+			...state,
+			[ action.siteId ]: { status: SiteLaunchStatus.SUCCESS, errorCode: undefined },
+		};
+	}
+	if ( action.type === 'LAUNCH_SITE_FAILURE' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				status: SiteLaunchStatus.FAILURE,
+				errorCode: action.error,
+			},
+		};
 	}
 	return state;
 };

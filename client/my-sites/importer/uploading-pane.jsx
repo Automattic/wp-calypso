@@ -6,13 +6,13 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { defer, flow, includes, noop, truncate } from 'lodash';
+import { includes, truncate } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import { startMappingAuthors, startUpload } from 'calypso/lib/importer/actions';
+import { startMappingAuthors, startUpload } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import {
 	getUploadFilename,
@@ -27,6 +27,8 @@ import { ProgressBar } from '@automattic/components';
  * Style dependencies
  */
 import './uploading-pane.scss';
+
+const noop = () => {};
 
 class UploadingPane extends React.PureComponent {
 	static displayName = 'SiteSettingsUploadingPane';
@@ -50,15 +52,14 @@ class UploadingPane extends React.PureComponent {
 
 	componentDidUpdate( prevProps ) {
 		const { importerStatus } = this.props;
-		const { importerState, importerId } = importerStatus;
 		const { importerStatus: prevImporterStatus } = prevProps;
 
 		if (
 			( prevImporterStatus.importerState === appStates.UPLOADING ||
 				prevImporterStatus.importerState === appStates.UPLOAD_PROCESSING ) &&
-			importerState === appStates.UPLOAD_SUCCESS
+			importerStatus.importerState === appStates.UPLOAD_SUCCESS
 		) {
-			defer( () => startMappingAuthors( importerId ) );
+			this.props.startMappingAuthors( importerStatus.importerId );
 		}
 	}
 
@@ -129,7 +130,7 @@ class UploadingPane extends React.PureComponent {
 	};
 
 	startUpload = ( file ) => {
-		startUpload( this.props.importerStatus, file );
+		this.props.startUpload( this.props.importerStatus, file );
 	};
 
 	render() {
@@ -176,10 +177,10 @@ class UploadingPane extends React.PureComponent {
 	}
 }
 
-export default flow(
-	connect( ( state ) => ( {
+export default connect(
+	( state ) => ( {
 		filename: getUploadFilename( state ),
 		percentComplete: getUploadPercentComplete( state ),
-	} ) ),
-	localize
-)( UploadingPane );
+	} ),
+	{ startMappingAuthors, startUpload }
+)( localize( UploadingPane ) );

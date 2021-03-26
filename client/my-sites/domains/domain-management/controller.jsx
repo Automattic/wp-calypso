@@ -29,11 +29,7 @@ import {
 	domainManagementDomainConnectMapping,
 	domainManagementRoot,
 } from 'calypso/my-sites/domains/paths';
-import {
-	emailManagement,
-	emailManagementAddGSuiteUsers,
-	emailManagementForwarding,
-} from 'calypso/my-sites/email/paths';
+import { emailManagement, emailManagementForwarding } from 'calypso/my-sites/email/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
 
@@ -45,7 +41,6 @@ export default {
 				analyticsTitle="Domain Management"
 				component={ DomainManagement.List }
 				context={ pageContext }
-				needsCart
 				needsContactDetails
 				needsDomains
 				needsPlans
@@ -74,7 +69,6 @@ export default {
 				analyticsTitle="Domain Management > Edit"
 				component={ DomainManagement.Edit }
 				context={ pageContext }
-				needsCart
 				needsContactDetails
 				needsDomains
 				needsPlans
@@ -92,7 +86,6 @@ export default {
 				analyticsTitle="Domain Management > Edit"
 				component={ DomainManagement.SiteRedirect }
 				context={ pageContext }
-				needsCart
 				needsContactDetails
 				needsDomains
 				needsPlans
@@ -110,7 +103,6 @@ export default {
 				analyticsTitle="Domain Management > Edit"
 				component={ DomainManagement.TransferIn }
 				context={ pageContext }
-				needsCart
 				needsContactDetails
 				needsDomains
 				needsPlans
@@ -142,7 +134,6 @@ export default {
 				analyticsTitle="Domain Management > Contacts and Privacy > Manage Consent for Personal Data Use"
 				component={ DomainManagement.ManageConsent }
 				context={ pageContext }
-				needsCart
 				needsContactDetails
 				needsDomains
 				needsPlans
@@ -216,12 +207,6 @@ export default {
 			/>
 		);
 		next();
-	},
-
-	domainManagementAddGSuiteUsersRedirect( pageContext ) {
-		page.redirect(
-			emailManagementAddGSuiteUsers( pageContext.params.site, pageContext.params.domain )
-		);
 	},
 
 	domainManagementSecurity( pageContext, next ) {

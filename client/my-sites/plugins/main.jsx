@@ -4,9 +4,8 @@
 import React, { Component } from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
-import { capitalize, find, flow, isEmpty, some } from 'lodash';
+import { capitalize, find, flow, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
@@ -14,23 +13,25 @@ import Gridicon from 'calypso/components/gridicon';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
 import Search from 'calypso/components/search';
 import urlSearch from 'calypso/lib/url-search';
 import EmptyContent from 'calypso/components/empty-content';
-import PluginsStore from 'calypso/lib/plugins/store';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PluginsList from './plugins-list';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import PluginsBrowser from './plugins-browser';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import NoPermissionsError from './no-permissions-error';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
+import getUpdateableJetpackSites from 'calypso/state/selectors/get-updateable-jetpack-sites';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 import {
 	canJetpackSiteUpdateFiles,
@@ -42,8 +43,10 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import { getPlugins, isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 import { Button } from '@automattic/components';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
+import { getVisibleSites, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 
 /**
  * Style dependencies
@@ -51,14 +54,15 @@ import { isEnabled } from 'calypso/config';
 import './style.scss';
 
 export class PluginsMain extends Component {
-	state = this.getPluginsState( this.props );
+	componentDidUpdate() {
+		const { currentPlugins } = this.props;
 
-	componentDidMount() {
-		PluginsStore.on( 'change', this.refreshPlugins );
-	}
-
-	componentWillUnmount() {
-		PluginsStore.removeListener( 'change', this.refreshPlugins );
+		currentPlugins.map( ( plugin ) => {
+			const pluginData = this.props.wporgPlugins?.[ plugin.slug ];
+			if ( ! pluginData ) {
+				this.props.wporgFetchPluginData( plugin.slug );
+			}
+		} );
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -77,28 +81,18 @@ export class PluginsMain extends Component {
 				return;
 			}
 		}
-
-		this.refreshPlugins( nextProps );
 	}
 
-	getPluginsFromStore( nextProps, sites ) {
-		const props = nextProps || this.props;
-		let plugins = null;
-		if ( ! props.selectedSiteSlug ) {
-			plugins = PluginsStore.getPlugins(
-				sites.filter( ( site ) => site.visible ),
-				props.filter
-			);
-		} else {
-			plugins = PluginsStore.getPlugins( sites, props.filter );
-		}
+	getCurrentPlugins() {
+		const { currentPlugins, currentPluginsOnVisibleSites, search, selectedSiteSlug } = this.props;
+		let plugins = selectedSiteSlug ? currentPlugins : currentPluginsOnVisibleSites;
 
 		if ( ! plugins ) {
 			return plugins;
 		}
 
-		if ( props && props.search ) {
-			plugins = plugins.filter( this.matchSearchTerms.bind( this, props.search ) );
+		if ( search ) {
+			plugins = plugins.filter( this.matchSearchTerms.bind( this, search ) );
 		}
 
 		return this.addWporgDataToPlugins( plugins );
@@ -108,26 +102,9 @@ export class PluginsMain extends Component {
 	addWporgDataToPlugins( plugins ) {
 		return plugins.map( ( plugin ) => {
 			const pluginData = this.props.wporgPlugins?.[ plugin.slug ];
-			if ( ! pluginData ) {
-				this.props.wporgFetchPluginData( plugin.slug );
-			}
 			return Object.assign( {}, plugin, pluginData );
 		} );
 	}
-
-	getPluginsState( nextProps ) {
-		const sites = this.props.sites;
-		const pluginUpdate = PluginsStore.getPlugins( sites, 'updates' );
-		return {
-			plugins: this.getPluginsFromStore( nextProps, sites ),
-			pluginUpdateCount: pluginUpdate && pluginUpdate.length,
-			selectedAction: 'Actions',
-		};
-	}
-
-	refreshPlugins = ( nextProps ) => {
-		this.setState( this.getPluginsState( nextProps ) );
-	};
 
 	matchSearchTerms( search, plugin ) {
 		search = search.toLowerCase();
@@ -166,7 +143,7 @@ export class PluginsMain extends Component {
 	}
 
 	isFetchingPlugins() {
-		return this.props.sites.some( PluginsStore.isFetchingSite );
+		return this.props.requestingPluginsForSites;
 	}
 
 	getSelectedText() {
@@ -268,25 +245,17 @@ export class PluginsMain extends Component {
 	}
 
 	getUpdatesTabVisibility() {
-		const { selectedSite } = this.props;
+		const { selectedSite, updateableJetpackSites } = this.props;
 
 		if ( selectedSite ) {
 			return this.props.selectedSiteIsJetpack && this.props.canSelectedJetpackSiteUpdateFiles;
 		}
 
-		return some(
-			this.props.sites,
-			( site ) =>
-				site &&
-				this.props.isJetpackSite( site.ID ) &&
-				this.props.canJetpackSiteUpdateFiles( site.ID )
-		);
+		return updateableJetpackSites.length > 0;
 	}
 
 	shouldShowPluginListPlaceholders() {
-		const { plugins } = this.state;
-
-		return isEmpty( plugins ) && this.isFetchingPlugins();
+		return isEmpty( this.getCurrentPlugins() ) && this.isFetchingPlugins();
 	}
 
 	renderPageViewTracking() {
@@ -310,10 +279,10 @@ export class PluginsMain extends Component {
 	}
 
 	renderPluginsContent() {
-		const { plugins = [] } = this.state;
 		const { filter, search } = this.props;
 
-		const showInstalledPluginList = ! isEmpty( plugins ) || this.isFetchingPlugins();
+		const currentPlugins = this.getCurrentPlugins();
+		const showInstalledPluginList = ! isEmpty( currentPlugins ) || this.isFetchingPlugins();
 		const showSuggestedPluginsList = filter === 'all' || ( ! showInstalledPluginList && search );
 
 		if ( ! showInstalledPluginList && ! search ) {
@@ -333,8 +302,8 @@ export class PluginsMain extends Component {
 		const installedPluginsList = showInstalledPluginList && (
 			<PluginsList
 				header={ this.props.translate( 'Installed Plugins' ) }
-				plugins={ plugins }
-				pluginUpdateCount={ this.state.pluginUpdateCount }
+				plugins={ currentPlugins }
+				pluginUpdateCount={ this.props.pluginUpdateCount }
 				isPlaceholder={ this.shouldShowPluginListPlaceholders() }
 			/>
 		);
@@ -356,6 +325,7 @@ export class PluginsMain extends Component {
 		const suggestedPluginsList = showSuggestedPluginsList && (
 			<PluginsBrowser
 				hideSearchForm
+				hideHeader
 				path={ this.props.context.path }
 				search={ search }
 				searchTitle={ searchTitle }
@@ -383,12 +353,10 @@ export class PluginsMain extends Component {
 		return (
 			<Button
 				className="plugins__button"
-				compact
 				href={ browserUrl }
 				onClick={ this.handleAddPluginButtonClick }
 			>
-				<Gridicon icon="plus" />
-				<span className="plugins__button-text">{ translate( 'Add Plugin' ) }</span>
+				<span className="plugins__button-text">{ translate( 'Browse plugins' ) }</span>
 			</Button>
 		);
 	}
@@ -409,11 +377,9 @@ export class PluginsMain extends Component {
 		return (
 			<Button
 				className="plugins__button"
-				compact
 				href={ uploadUrl }
 				onClick={ this.handleUploadPluginButtonClick }
 			>
-				<Gridicon icon="cloud-upload" />
 				<span className="plugins__button-text">{ translate( 'Install plugin' ) }</span>
 			</Button>
 		);
@@ -436,7 +402,7 @@ export class PluginsMain extends Component {
 			};
 
 			if ( 'updates' === filterItem.id ) {
-				attr.count = this.state.pluginUpdateCount;
+				attr.count = this.props.pluginUpdateCount;
 			}
 			return <NavItem { ...attr }>{ filterItem.title }</NavItem>;
 		} );
@@ -444,9 +410,25 @@ export class PluginsMain extends Component {
 		return (
 			<Main wideLayout>
 				<DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />
+				<QueryJetpackPlugins siteIds={ this.props.siteIds } />
 				{ this.renderPageViewTracking() }
 				<SidebarNavigation />
 				<div className="plugins__main">
+					<div className="plugins__header">
+						<FormattedHeader
+							brandFont
+							className="plugins__page-heading"
+							headerText={ this.props.translate( 'Plugins' ) }
+							align="left"
+							subHeaderText={ this.props.translate(
+								'Add new functionality and integrations to your site with plugins.'
+							) }
+						/>
+						<div className="plugins__main-buttons">
+							{ this.renderAddPluginButton() }
+							{ this.renderUploadPluginButton() }
+						</div>
+					</div>
 					<div className="plugins__main-header">
 						<SectionNav selectedText={ this.getSelectedText() }>
 							<NavTabs>{ navItems }</NavTabs>
@@ -461,10 +443,6 @@ export class PluginsMain extends Component {
 							/>
 						</SectionNav>
 					</div>
-					<div className="plugins__main-buttons">
-						{ this.renderAddPluginButton() }
-						{ this.renderUploadPluginButton() }
-					</div>
 				</div>
 				{ this.renderPluginsContent() }
 			</Main>
@@ -476,26 +454,31 @@ export default flow(
 	localize,
 	urlSearch,
 	connect(
-		( state ) => {
+		( state, { filter } ) => {
+			const sites = getSelectedOrAllSitesWithPlugins( state );
 			const selectedSite = getSelectedSite( state );
 			const selectedSiteId = getSelectedSiteId( state );
+			const visibleSiteIds = siteObjectsToSiteIds( getVisibleSites( sites ) ) ?? [];
+			const siteIds = siteObjectsToSiteIds( sites ) ?? [];
+			const pluginsWithUpdates = getPlugins( state, siteIds, 'updates' );
 
 			return {
 				hasJetpackSites: hasJetpackSites( state ),
-				sites: getSelectedOrAllSitesWithPlugins( state ),
+				sites,
 				selectedSite,
 				selectedSiteId,
 				selectedSiteSlug: getSelectedSiteSlug( state ),
 				selectedSiteIsJetpack: selectedSite && isJetpackSite( state, selectedSiteId ),
+				siteIds,
 				canSelectedJetpackSiteUpdateFiles:
 					selectedSite && canJetpackSiteUpdateFiles( state, selectedSiteId ),
-				/* eslint-disable wpcalypso/redux-no-bound-selectors */
-				// @TODO: follow up with fixing these functions
-				canJetpackSiteUpdateFiles: ( siteId ) => canJetpackSiteUpdateFiles( state, siteId ),
-				isJetpackSite: ( siteId ) => isJetpackSite( state, siteId ),
-				/* eslint-enable wpcalypso/redux-no-bound-selectors */
 				wporgPlugins: getAllWporgPlugins( state ),
 				isRequestingSites: isRequestingSites( state ),
+				currentPlugins: getPlugins( state, siteIds, filter ),
+				currentPluginsOnVisibleSites: getPlugins( state, visibleSiteIds, filter ),
+				pluginUpdateCount: pluginsWithUpdates && pluginsWithUpdates.length,
+				requestingPluginsForSites: isRequestingForSites( state, siteIds ),
+				updateableJetpackSites: getUpdateableJetpackSites( state ),
 				userCanManagePlugins: selectedSiteId
 					? canCurrentUser( state, selectedSiteId, 'manage_options' )
 					: canCurrentUserManagePlugins( state ),

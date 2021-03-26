@@ -58,7 +58,21 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 	const handleFormChange: FormEventHandler< HTMLInputElement > = ( { currentTarget } ) => {
 		switch ( currentTarget.name ) {
 			case 'protocol':
-				onFormStateChange( { ...formState, protocol: currentTarget.value as 'ftp' | 'ssh' } );
+				onFormStateChange( {
+					...formState,
+					protocol: currentTarget.value as 'ftp' | 'ssh',
+					port: ( () => {
+						let port = parseInt( formState.port );
+
+						if ( formState.port === 22 && currentTarget.value === 'ftp' ) {
+							port = 21;
+						} else if ( formState.port === 21 && currentTarget.value === 'ssh' ) {
+							port = 22;
+						}
+
+						return port;
+					} )(),
+				} );
 				onModeChange( FormMode.Password );
 				break;
 			case 'host':

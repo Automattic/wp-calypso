@@ -26,6 +26,7 @@ import SupportCard from './support-card';
 import PhpVersionCard from './php-version-card';
 import SiteBackupCard from './site-backup-card';
 import MiscellaneousCard from './miscellaneous-card';
+import WebServerLogsCard from './web-server-logs-card';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import Notice from 'calypso/components/notice';
@@ -167,6 +168,7 @@ class Hosting extends Component {
 							<PhpMyAdminCard disabled={ isDisabled } />
 							<PhpVersionCard disabled={ isDisabled } />
 							<MiscellaneousCard disabled={ isDisabled } />
+							<WebServerLogsCard disabled={ isDisabled } />
 						</Column>
 						<Column type="sidebar">
 							<SiteBackupCard disabled={ isDisabled } />

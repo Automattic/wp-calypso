@@ -15,7 +15,6 @@ import Gridicon from 'calypso/components/gridicon';
 /**
  * Internal dependencies
  */
-import PluginsActions from 'calypso/lib/plugins/actions';
 import { Button } from '@automattic/components';
 import InfoPopover from 'calypso/components/info-popover';
 import ExternalLink from 'calypso/components/external-link';
@@ -26,6 +25,8 @@ import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { isCompatiblePlugin } from '../plugin-compatibility';
+import { installPlugin } from 'calypso/state/plugins/installed/actions';
+import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 
 /**
  * Style dependencies
@@ -36,7 +37,6 @@ export class PluginInstallButton extends Component {
 	installAction = () => {
 		const {
 			isEmbed,
-			selectedSite,
 			siteId,
 			isInstalling,
 			plugin,
@@ -48,8 +48,8 @@ export class PluginInstallButton extends Component {
 			return;
 		}
 
-		PluginsActions.removePluginsNotices( 'completed', 'error' );
-		PluginsActions.installPlugin( selectedSite, plugin );
+		this.props.removePluginStatuses( 'completed', 'error' );
+		this.props.installPlugin( siteId, plugin );
 
 		if ( isEmbed ) {
 			recordGAEvent( 'Plugins', 'Install with no selected site', 'Plugin Name', plugin.slug );
@@ -345,6 +345,8 @@ export default connect(
 		};
 	},
 	{
+		installPlugin,
+		removePluginStatuses,
 		recordGoogleEvent,
 		recordTracksEvent,
 	}

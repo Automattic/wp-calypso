@@ -7,7 +7,6 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
-import { trim, trimEnd } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +18,6 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
-import notices from 'calypso/notices';
 import {
 	domainManagementSiteRedirect,
 	domainManagementRedirectSettings,
@@ -98,7 +96,7 @@ class SiteRedirect extends React.Component {
 					page(
 						domainManagementRedirectSettings(
 							this.props.selectedSite.slug,
-							trim( trimEnd( this.state.redirectUrl, '/' ) ),
+							this.state.redirectUrl.replace( /\/+$/, '' ).trim(),
 							this.props.currentRoute
 						)
 					);
@@ -109,6 +107,16 @@ class SiteRedirect extends React.Component {
 	handleFocus = () => {
 		this.props.recordLocationFocus( this.props.selectedDomainName );
 	};
+
+	getNoticeStatus( notice ) {
+		if ( notice?.error ) {
+			return 'is-error';
+		}
+		if ( notice?.success ) {
+			return 'is-success';
+		}
+		return 'is-info';
+	}
 
 	render() {
 		const { location, translate } = this.props;
@@ -127,7 +135,7 @@ class SiteRedirect extends React.Component {
 					{ notice && (
 						<Notice
 							onDismissClick={ this.closeRedirectNotice }
-							status={ notices.getStatusHelper( notice ) }
+							status={ this.getNoticeStatus( notice ) }
 							text={ notice.text }
 						/>
 					) }

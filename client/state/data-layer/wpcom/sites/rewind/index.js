@@ -58,9 +58,9 @@ const setUnknownState = ( { siteId }, error ) => {
 	) {
 		return withAnalytics(
 			recordTracksEvent( 'calypso_rewind_state_bad_response', {
-				code: error.code,
-				message: error.message,
-				status: error.status,
+				error_code: error.code,
+				error_message: error.message,
+				error_status: error.status,
 			} ),
 			{
 				type: REWIND_STATE_UPDATE,

@@ -42,7 +42,10 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import RewindUnavailabilityNotice from './rewind-unavailability-notice';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { siteHasBackupProductPurchase } from 'calypso/state/purchases/selectors';
+import {
+	siteHasBackupProductPurchase,
+	siteHasScanProductPurchase,
+} from 'calypso/state/purchases/selectors';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, getSiteTitle, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
@@ -57,7 +60,6 @@ import {
 	rewindBackup,
 	updateFilter,
 } from 'calypso/state/activity-log/actions';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getBackupProgress from 'calypso/state/selectors/get-backup-progress';
 import getRequestedBackup from 'calypso/state/selectors/get-requested-backup';
@@ -523,20 +525,7 @@ class ActivityLog extends Component {
 	}
 
 	render() {
-		const { canViewActivityLog, siteId, translate } = this.props;
-
-		if ( ! canViewActivityLog ) {
-			return (
-				<Main>
-					<QuerySitePurchases siteId={ siteId } />
-					<SidebarNavigation />
-					<EmptyContent
-						title={ translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
-					/>
-				</Main>
-			);
-		}
+		const { siteId, translate } = this.props;
 
 		const { context, rewindState, siteSettingsUrl } = this.props;
 
@@ -579,11 +568,13 @@ export default connect(
 		const siteIsOnFreePlan =
 			isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) ) &&
 			! isVipSite( state, siteId );
-		const siteHasNoLog = siteIsOnFreePlan && ! siteHasBackupProductPurchase( state, siteId );
+		const siteHasNoLog =
+			siteIsOnFreePlan &&
+			! siteHasBackupProductPurchase( state, siteId ) &&
+			! siteHasScanProductPurchase( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
 
 		return {
-			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
 			gmtOffset,
 			enableRewind:
 				'active' === rewindState.state &&

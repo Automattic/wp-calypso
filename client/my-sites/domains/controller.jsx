@@ -4,7 +4,7 @@
 import page from 'page';
 import { translate } from 'i18n-calypso';
 import React from 'react';
-import { get, includes, map, noop } from 'lodash';
+import { get, includes, map } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -19,7 +19,6 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import CartData from 'calypso/components/data/cart';
 import DomainSearch from './domain-search';
 import SiteRedirect from './domain-search/site-redirect';
 import MapDomain from 'calypso/my-sites/domains/map-domain';
@@ -39,10 +38,9 @@ import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { canUserPurchaseGSuite } from 'calypso/lib/gsuite';
-import { addItem } from 'calypso/lib/cart/actions';
-import { planItem } from 'calypso/lib/cart-values/cart-items';
-import { PLAN_PERSONAL } from 'calypso/lib/plans/constants';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
+const noop = () => {};
 const domainsAddHeader = ( context, next ) => {
 	context.getSiteSelectionHeaderText = () => {
 		return translate( 'Select a site to add a domain' );
@@ -71,18 +69,13 @@ const domainSearch = ( context, next ) => {
 		window.scrollTo( 0, 0 );
 	}
 
-	if ( 'upgrade' === context.query.ref ) {
-		addItem( planItem( PLAN_PERSONAL, {} ) );
-		return page.replace( context.pathname );
-	}
-
 	context.primary = (
 		<Main wideLayout>
 			<PageViewTracker path="/domains/add/:site" title="Domain Search > Domain Registration" />
 			<DocumentHead title={ translate( 'Domain Search' ) } />
-			<CartData>
+			<CalypsoShoppingCartProvider>
 				<DomainSearch basePath={ sectionify( context.path ) } context={ context } />
-			</CartData>
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
@@ -96,9 +89,9 @@ const siteRedirect = ( context, next ) => {
 				title="Domain Search > Site Redirect"
 			/>
 			<DocumentHead title={ translate( 'Redirect a Site' ) } />
-			<CartData>
+			<CalypsoShoppingCartProvider>
 				<SiteRedirect />
-			</CartData>
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
@@ -109,9 +102,9 @@ const mapDomain = ( context, next ) => {
 		<Main wideLayout>
 			<PageViewTracker path={ domainMapping( ':site' ) } title="Domain Search > Domain Mapping" />
 			<DocumentHead title={ translate( 'Map a Domain' ) } />
-			<CartData>
+			<CalypsoShoppingCartProvider>
 				<MapDomain initialQuery={ context.query.initialQuery } />
-			</CartData>
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
@@ -128,13 +121,13 @@ const transferDomain = ( context, next ) => {
 				title="Domain Search > Domain Transfer"
 			/>
 			<DocumentHead title={ translate( 'Transfer a Domain' ) } />
-			<CartData>
+			<CalypsoShoppingCartProvider>
 				<TransferDomain
 					basePath={ sectionify( context.path ) }
 					initialQuery={ context.query.initialQuery }
 					useStandardBack={ useStandardBack }
 				/>
-			</CartData>
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
@@ -156,13 +149,13 @@ const useYourDomain = ( context, next ) => {
 				title="Domain Search > Use Your Own Domain"
 			/>
 			<DocumentHead title={ translate( 'Use Your Own Domain' ) } />
-			<CartData>
+			<CalypsoShoppingCartProvider>
 				<UseYourDomainStep
 					basePath={ sectionify( context.path ) }
 					initialQuery={ context.query.initialQuery }
 					goBack={ handleGoBack }
 				/>
-			</CartData>
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
@@ -182,7 +175,7 @@ const transferDomainPrecheck = ( context, next ) => {
 				path={ domainManagementTransferInPrecheck( ':site', ':domain' ) }
 				title="My Sites > Domains > Selected Domain"
 			/>
-			<CartData>
+			<CalypsoShoppingCartProvider>
 				<div>
 					<TransferDomainStep
 						forcePrecheck={ true }
@@ -190,7 +183,7 @@ const transferDomainPrecheck = ( context, next ) => {
 						goBack={ handleGoBack }
 					/>
 				</div>
-			</CartData>
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
@@ -209,9 +202,9 @@ const googleAppsWithRegistration = ( context, next ) => {
 						args: { domain: context.params.registerDomain },
 					} ) }
 				/>
-				<CartData>
+				<CalypsoShoppingCartProvider>
 					<GSuiteUpgrade domain={ context.params.registerDomain } />
-				</CartData>
+				</CalypsoShoppingCartProvider>
 			</Main>
 		);
 	}

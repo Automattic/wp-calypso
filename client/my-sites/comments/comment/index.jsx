@@ -7,12 +7,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import ReactDom from 'react-dom';
-import { debounce, get, isEqual, isUndefined } from 'lodash';
+import { debounce, get, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import CommentActions from 'calypso/my-sites/comments/comment/comment-actions';
 import CommentContent from 'calypso/my-sites/comments/comment/comment-content';
@@ -229,7 +229,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 		siteId,
 		postId: get( comment, 'post.ID' ),
 		commentIsPending: 'unapproved' === commentStatus,
-		isLoading: isUndefined( comment ),
+		isLoading: typeof comment === 'undefined',
 		minimumComment: getMinimumComment( comment ),
 	};
 };

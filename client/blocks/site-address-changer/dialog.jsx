@@ -4,7 +4,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -14,6 +13,8 @@ import { Dialog } from '@automattic/components';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+
+const noop = () => {};
 
 class SiteAddressChangerConfirmationDialog extends PureComponent {
 	static propTypes = {

@@ -42,7 +42,7 @@
 	font-weight: normal;
 
 	@include breakpoint-deprecated( '<480px' ) {
-		display: none;
+		@include screen-reader-text();
 	}
 }
 

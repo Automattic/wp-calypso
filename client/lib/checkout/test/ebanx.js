@@ -13,7 +13,6 @@ import {
 	isEbanxCreditCardProcessingEnabledForCountry,
 	isValidCPF,
 	isValidCNPJ,
-	shouldRenderAdditionalCountryFields,
 } from '../processor-specific';
 
 describe( 'Ebanx payment processing methods', () => {
@@ -47,16 +46,6 @@ describe( 'Ebanx payment processing methods', () => {
 		test( 'should return false for invalid CPF', () => {
 			expect( isValidCNPJ( '94065313000170' ) ).toEqual( false );
 			expect( isValidCNPJ( '94.065.313/0001-70' ) ).toEqual( false );
-		} );
-	} );
-
-	describe( 'shouldRenderAdditionalCountryFields', () => {
-		test( 'should return false for non-ebanx country', () => {
-			expect( shouldRenderAdditionalCountryFields( 'AU', cart ) ).toEqual( false );
-		} );
-		test( 'should return true for ebanx country that requires additional fields', () => {
-			expect( shouldRenderAdditionalCountryFields( 'BR', cart ) ).toEqual( true );
-			expect( shouldRenderAdditionalCountryFields( 'MX', cart ) ).toEqual( true );
 		} );
 	} );
 } );

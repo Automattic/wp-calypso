@@ -33,7 +33,7 @@ export class ReaderSidebarLists extends Component {
 	};
 
 	render() {
-		const { translate, isOpen, onClick, ...passedProps } = this.props;
+		const { translate, isOpen, onClick, path, ...passedProps } = this.props;
 		return (
 			<li>
 				<ExpandableSidebarMenu
@@ -41,9 +41,11 @@ export class ReaderSidebarLists extends Component {
 					title={ translate( 'Lists' ) }
 					onClick={ onClick }
 					materialIcon={ 'list' }
+					disableFlyout={ true }
+					className={ path.startsWith( '/read/list' ) && 'sidebar__menu--selected' }
 				>
 					<li>
-						<ReaderSidebarListsList { ...passedProps } />
+						<ReaderSidebarListsList path={ path } { ...passedProps } />
 					</li>
 				</ExpandableSidebarMenu>
 			</li>

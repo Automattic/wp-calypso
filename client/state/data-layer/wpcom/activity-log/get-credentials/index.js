@@ -38,8 +38,8 @@ export const getCredentialsFailed = ( { siteId }, error ) => [
 	),
 	{
 		type: JETPACK_CREDENTIALS_GET_FAILURE,
-		error,
 		siteId,
+		wpcomError: error,
 	},
 ];
 

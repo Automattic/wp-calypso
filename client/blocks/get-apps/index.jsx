@@ -10,7 +10,7 @@ import React from 'react';
 import GetAppsIllustration from './illustration.jsx';
 import DesktopDownloadCard from './desktop-download-card.jsx';
 import MobileDownloadCard from './mobile-download-card.jsx';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Style dependencies

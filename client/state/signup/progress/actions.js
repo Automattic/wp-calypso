@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { includes, isEmpty, reduce, snakeCase, toPairs } from 'lodash';
+import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -55,7 +56,7 @@ function recordSubmitStep( stepName, providedDependencies ) {
 			}
 
 			if (
-				( propName === 'cart_item' || propName === 'domain_item' ) &&
+				[ 'cart_item', 'domain_item', 'selected_domain_upsell_item' ].includes( propName ) &&
 				typeof propValue !== 'string'
 			) {
 				propValue = toPairs( propValue )
@@ -71,7 +72,9 @@ function recordSubmitStep( stepName, providedDependencies ) {
 		{}
 	);
 
+	const device = resolveDeviceTypeByViewPort();
 	return recordTracksEvent( 'calypso_signup_actions_submit_step', {
+		device,
 		step: stepName,
 		...inputs,
 	} );

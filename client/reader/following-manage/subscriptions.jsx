@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { sortBy, trimStart, isEmpty } from 'lodash';
+import { sortBy, isEmpty } from 'lodash';
 import page from 'page';
 import classnames from 'classnames';
 
@@ -44,7 +44,7 @@ class FollowingManageSubscriptions extends Component {
 				const feed = follow.feed;
 				const site = follow.site;
 				const displayUrl = formatUrlForDisplay( follow.URL );
-				return trimStart( getFeedTitle( site, feed, displayUrl ).toLowerCase() );
+				return getFeedTitle( site, feed, displayUrl ).toLowerCase().trimStart();
 			} );
 		}
 

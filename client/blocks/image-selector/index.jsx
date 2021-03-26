@@ -1,12 +1,10 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,12 +15,14 @@ import isDropZoneVisible from 'calypso/state/selectors/is-drop-zone-visible';
 import MediaModal from 'calypso/post-editor/media-modal';
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
+import { selectMediaItems } from 'calypso/state/media/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class ImageSelector extends Component {
 	static propTypes = {
@@ -40,7 +40,7 @@ export class ImageSelector extends Component {
 		showEditIcon: PropTypes.bool,
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
-		setMediaLibrarySelectedItems: PropTypes.func,
+		selectMediaItems: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -58,7 +58,7 @@ export class ImageSelector extends Component {
 		const { siteId, imageIds } = this.props;
 
 		if ( imageIds ) {
-			this.props.setMediaLibrarySelectedItems(
+			this.props.selectMediaItems(
 				siteId,
 				imageIds.map( ( ID ) => ( { ID } ) )
 			);
@@ -174,5 +174,5 @@ export default connect(
 		}
 		return props;
 	},
-	{ setMediaLibrarySelectedItems }
+	{ selectMediaItems }
 )( localize( ImageSelector ) );

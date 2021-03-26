@@ -51,12 +51,15 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 	}
 
 	/**
-	 * Check if NUX is enabled.
+	 * Should we show the wpcom welcome guide (i.e. welcome tour or nux modal)
 	 *
 	 * @param mixed $nux_status Can be "enabled", "dismissed", or undefined.
 	 * @return boolean
 	 */
-	public function is_nux_enabled( $nux_status ) {
+	public function show_wpcom_welcome_guide( $nux_status ) {
+		if ( defined( 'FORCE_SHOW_WPCOM_WELCOME_GUIDE' ) && FORCE_SHOW_WPCOM_WELCOME_GUIDE ) {
+			return true;
+		}
 		return 'enabled' === $nux_status;
 	}
 
@@ -66,6 +69,14 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 	 * @return WP_REST_Response
 	 */
 	public function get_nux_status() {
+
+		if ( wp_is_mobile() ) {
+			// Designs for welcome tour on mobile are in progress, until then do not show on mobile.
+			$variant = 'modal';
+		} else {
+			$variant = 'tour';
+		}
+
 		if ( has_filter( 'wpcom_block_editor_nux_get_status' ) ) {
 			$nux_status = apply_filters( 'wpcom_block_editor_nux_get_status', false );
 		} elseif ( ! metadata_exists( 'user', get_current_user_id(), 'wpcom_block_editor_nux_status' ) ) {
@@ -73,7 +84,15 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 		} else {
 			$nux_status = get_user_meta( get_current_user_id(), 'wpcom_block_editor_nux_status', true );
 		}
-		return rest_ensure_response( array( 'is_nux_enabled' => $this->is_nux_enabled( $nux_status ) ) );
+
+		$show_welcome_guide = $this->show_wpcom_welcome_guide( $nux_status );
+
+		return rest_ensure_response(
+			array(
+				'show_welcome_guide' => $show_welcome_guide,
+				'variant'            => $variant,
+			)
+		);
 	}
 
 	/**
@@ -84,11 +103,11 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 	 */
 	public function update_nux_status( $request ) {
 		$params     = $request->get_json_params();
-		$nux_status = $params['isNuxEnabled'] ? 'enabled' : 'dismissed';
+		$nux_status = $params['show_welcome_guide'] ? 'enabled' : 'dismissed';
 		if ( has_action( 'wpcom_block_editor_nux_update_status' ) ) {
 			do_action( 'wpcom_block_editor_nux_update_status', $nux_status );
 		}
 		update_user_meta( get_current_user_id(), 'wpcom_block_editor_nux_status', $nux_status );
-		return rest_ensure_response( array( 'is_nux_enabled' => $this->is_nux_enabled( $nux_status ) ) );
+		return rest_ensure_response( array( 'show_welcome_guide' => $this->show_wpcom_welcome_guide( $nux_status ) ) );
 	}
 }

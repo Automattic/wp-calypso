@@ -1,12 +1,12 @@
-jest.mock( 'signup/step-wrapper', () => 'step-wrapper' );
-jest.mock( 'my-sites/plan-features', () => 'plan-features' );
+jest.mock( 'calypso/signup/step-wrapper', () => 'step-wrapper' );
+jest.mock( 'calypso/my-sites/plan-features', () => 'plan-features' );
 
 /**
  * External dependencies
  */
 import { shallow } from 'enzyme';
 import React from 'react';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,6 +33,7 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'calypso/lib/plans/constants';
 
+const noop = () => {};
 const props = {
 	siteGoals: '',
 	stepName: 'Step name',

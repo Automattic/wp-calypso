@@ -213,5 +213,22 @@ function completePaymentMethodTransaction( { onSubmit, complete, paymentMethod, 
 }
 
 function getProcessorCountryFromStripeConfiguration( stripeConfiguration ) {
-	return stripeConfiguration && stripeConfiguration.processor_id === 'stripe_ie' ? 'IE' : 'US';
+	let countryCode = 'US';
+
+	if ( stripeConfiguration ) {
+		switch ( stripeConfiguration.processor_id ) {
+			case 'stripe_ie':
+				countryCode = 'IE';
+				break;
+			case 'stripe_au':
+				countryCode = 'AU';
+				break;
+			case 'stripe_ca':
+				countryCode = 'CA';
+				break;
+			default:
+				break;
+		}
+	}
+	return countryCode;
 }

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, join, flatMap } from 'lodash';
+import { get, flatMap } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,7 +27,7 @@ export const fetch = ( action ) =>
 		{
 			apiVersion: '1',
 			method: 'GET',
-			path: `/domains/validation-schemas/${ join( get( action, 'tlds', [] ), ',' ) }`,
+			path: `/domains/validation-schemas/${ get( action, 'tlds', [] ).join( ',' ) }`,
 		},
 		action
 	);
@@ -44,9 +44,10 @@ export const onSuccess = ( action, schemas ) => addValidationSchemas( schemas );
 /**
  * Create an error notice action when the request fails
  *
- * @param   {object} tlds   Originating action with the original list of requested tlds
- * @param   {object} error  Error information (query path, error message etc).
- * @returns {[Action]}      An array of mc and tracks analytics events, one each per tld
+ * @param   {object}      action Action object
+ * @param   {Array}  action.tlds Originating action with the original list of requested tlds
+ * @param   {object}       error Error information (query path, error message etc).
+ * @returns {[object]}             An array of mc and tracks analytics events, one each per tld
  */
 export const onError = ( { tlds }, error ) =>
 	composeAnalytics(

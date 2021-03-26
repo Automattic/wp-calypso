@@ -2,12 +2,37 @@
 @import '~@wordpress/base-styles/mixins';
 @import '~@automattic/onboarding/styles/mixins';
 @import '~@automattic/typography/styles/variables';
+@import '../variables';
+
+// Used to "counter" the negative margin set on the container, while allowing the
+// table to scroll horizontally in case it doesn't fit in the viewport.
+@mixin plans-grid-edge2edge-padding {
+	padding-left: $onboarding-block-margin-mobile;
+	padding-right: $onboarding-block-margin-mobile;
+
+	@include break-small {
+		padding-left: $onboarding-block-margin-small;
+		padding-right: $onboarding-block-margin-small;
+	}
+
+	@include break-medium {
+		padding-left: $onboarding-block-margin-medium;
+		padding-right: $onboarding-block-margin-medium;
+	}
+
+	@media ( min-width: $plans-grid-max-page-width ) {
+		padding-left: 0;
+		padding-right: 0;
+	}
+}
 
 .plans-grid__details-heading {
 	margin-bottom: 20px;
 }
 
 .plans-details__table {
+	@include plans-grid-edge2edge-padding;
+
 	width: 100%;
 	border-spacing: 0;
 
@@ -96,5 +121,27 @@
 	@include break-small {
 		height: 40px;
 		padding: 0 24px;
+	}
+}
+
+.plans-details__feature-annual-nudge {
+	display: block;
+	text-transform: uppercase;
+	font-size: 10px; /* stylelint-disable-line scales/font-size */
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	line-height: 1;
+	margin-bottom: 6px;
+
+	.plans-details__feature-row--enabled & {
+		color: var( --studio-green-60 );
+	}
+
+	.plans-details__feature-row--disabled & {
+		color: var( --studio-orange-40 );
+	}
+
+	.plans-details__feature-row--disabled & + span {
+		text-decoration: line-through;
 	}
 }

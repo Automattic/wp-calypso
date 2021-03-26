@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import PurchasesSite from 'calypso/me/purchases/purchases-site/index.jsx';
+import PurchasesSite from 'calypso/me/purchases/purchases-site';
 import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
@@ -18,8 +18,13 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import { CompactCard } from '@automattic/components';
 import EmptyContent from 'calypso/components/empty-content';
-import './style.scss';
 import { Purchase } from 'calypso/lib/purchases/types';
+import PurchasesListHeader from 'calypso/me/purchases/purchases-list/purchases-list-header';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 function SubscriptionsContent( {
 	isFetchingPurchases,
@@ -44,39 +49,49 @@ function SubscriptionsContent( {
 
 	// If there is a selected site but no site data, show the placeholder
 	if ( ! selectedSite?.ID ) {
-		return <PurchasesSite isPlaceholder />;
+		return (
+			<div className="subscriptions__list">
+				<PurchasesSite isPlaceholder />
+			</div>
+		);
 	}
 
 	// If there are purchases, show them
 	if ( purchases.length ) {
 		return (
-			<PurchasesSite
-				showHeader={ false }
-				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-				key={ selectedSite.ID }
-				siteId={ selectedSite.ID }
-				name={ selectedSite.name }
-				domain={ selectedSite.domain }
-				slug={ selectedSite.slug }
-				purchases={ purchases }
-			/>
+			<div className="subscriptions__list">
+				<PurchasesListHeader />
+
+				<PurchasesSite
+					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+					key={ selectedSite.ID }
+					siteId={ selectedSite.ID }
+					name={ selectedSite.name }
+					slug={ selectedSite.slug }
+					purchases={ purchases }
+				/>
+			</div>
 		);
 	}
 
 	// If we are loading purchases, show the placeholder
 	if ( ! hasLoadedPurchases || isFetchingPurchases ) {
-		return <PurchasesSite isPlaceholder />;
+		return (
+			<div className="subscriptions__list">
+				<PurchasesSite isPlaceholder />
+			</div>
+		);
 	}
 
 	// If there is selected site data but no purchases, show the "no purchases" page
 	return <NoPurchasesMessage />;
 }
 
-export default function SubscriptionsContentWrapper() {
-	const isFetchingPurchases = useSelector( ( state ) => isFetchingSitePurchases( state ) );
-	const hasLoadedPurchases = useSelector( ( state ) => hasLoadedSitePurchasesFromServer( state ) );
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
+export default function SubscriptionsContentWrapper(): JSX.Element {
+	const isFetchingPurchases = useSelector( isFetchingSitePurchases );
+	const hasLoadedPurchases = useSelector( hasLoadedSitePurchasesFromServer );
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const selectedSite = useSelector( getSelectedSite );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
 
 	return (
@@ -91,10 +106,10 @@ export default function SubscriptionsContentWrapper() {
 }
 
 function NoPurchasesMessage() {
-	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
+	const selectedSite = useSelector( getSelectedSite );
 	const translate = useTranslate();
 	return (
-		<CompactCard className="subscriptions__list--empty">
+		<CompactCard className="subscriptions__list">
 			<EmptyContent
 				title={ translate( 'Looking to upgrade?' ) }
 				line={ translate( 'You have made no purchases for this site.' ) }

@@ -24,4 +24,18 @@
 			border: none;
 		}
 	}
+
+	// @TODO: re-use onboarding-screen-reader-text()
+	// See https://github.com/Automattic/wp-calypso/pull/47601#discussion_r530570891
+	.components-modal__header-heading {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect( 0, 0, 0, 0 );
+		white-space: nowrap;
+		border-width: 0;
+	}
 }

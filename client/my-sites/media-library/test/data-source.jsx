@@ -7,7 +7,6 @@
  */
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 
@@ -16,15 +15,18 @@ import { Provider as ReduxProvider } from 'react-redux';
  */
 import MediaLibraryDataSource from 'calypso/my-sites/media-library/data-source';
 import { createReduxStore } from 'calypso/state';
+import { setStore } from 'calypso/state/redux-store';
+
+const noop = () => {};
 
 // we need to check the correct children are rendered, so this mocks the
 // PopoverMenu component with one that simply renders the children
-jest.mock( 'components/popover/menu', () => {
+jest.mock( 'calypso/components/popover/menu', () => {
 	return ( props ) => <div>{ props.children }</div>;
 } );
 // only enable the external-media options, enabling everything causes an
 // electron related build error
-jest.mock( 'config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	const config = () => 'development';
 	config.isEnabled = ( property ) => property.startsWith( 'external-media' );
 	return config;
@@ -34,6 +36,7 @@ describe( 'MediaLibraryDataSource', () => {
 	describe( 'render data sources', () => {
 		test( 'does not exclude any data sources by default', () => {
 			const store = createReduxStore();
+			setStore( store );
 			const wrapper = mount(
 				<ReduxProvider store={ store }>
 					<MediaLibraryDataSource
@@ -49,6 +52,7 @@ describe( 'MediaLibraryDataSource', () => {
 
 		test( 'excludes data sources listed in disabledSources', () => {
 			const store = createReduxStore();
+			setStore( store );
 			const wrapper = mount(
 				<ReduxProvider store={ store }>
 					<MediaLibraryDataSource

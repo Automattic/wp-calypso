@@ -1,12 +1,10 @@
-/* eslint-disable jsx-a11y/no-onchange */
-
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { debounce, get, flow, inRange, isEmpty } from 'lodash';
+import { debounce, get, flow, isEmpty } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 
@@ -107,7 +105,8 @@ export class SiteAddressChanger extends Component {
 		}
 
 		if (
-			! inRange( domainFieldValue.length, SUBDOMAIN_LENGTH_MINIMUM, SUBDOMAIN_LENGTH_MAXIMUM )
+			domainFieldValue.length < SUBDOMAIN_LENGTH_MINIMUM ||
+			domainFieldValue.length > SUBDOMAIN_LENGTH_MAXIMUM
 		) {
 			validationProperties = {
 				showValidationMessage: domainFieldValue.length > SUBDOMAIN_LENGTH_MAXIMUM,

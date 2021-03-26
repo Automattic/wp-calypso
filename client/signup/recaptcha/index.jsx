@@ -9,7 +9,7 @@ import { defaultRegistry } from '@automattic/composite-checkout';
  * Internal dependencies
  */
 import { initGoogleRecaptcha } from 'calypso/lib/analytics/recaptcha';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Style dependencies

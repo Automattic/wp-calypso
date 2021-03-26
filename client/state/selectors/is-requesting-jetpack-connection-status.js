@@ -17,5 +17,5 @@ import 'calypso/state/jetpack/init';
  * @returns {?boolean}          Whether the connection status is being requested
  */
 export default function isRequestingJetpackConnectionStatus( state, siteId ) {
-	return get( state.jetpack.connection.requests, [ siteId ], null );
+	return get( state.jetpack.connection.requests, [ siteId ], false );
 }

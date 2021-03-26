@@ -4,9 +4,10 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { get, invoke, noop } from 'lodash';
+import { get, invoke } from 'lodash';
 import classNames from 'classnames';
 import debug from 'debug';
+import wpcomProxyRequest from 'wpcom-proxy-request';
 
 /**
  * Internal dependencies
@@ -18,6 +19,7 @@ import { loadScript, removeScriptCallback } from '@automattic/load-script';
  */
 const log = debug( 'calypso:post-editor:videopress' );
 const videoPressUrl = 'https://wordpress.com/wp-content/plugins/video/assets/js/next/videopress.js';
+const noop = () => {};
 
 class EditorMediaModalDetailPreviewVideoPress extends Component {
 	static propTypes = {
@@ -69,6 +71,44 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		return false;
 	}
 
+	// Run requests through the rest proxy to support loading private videos.
+	requestProvider = ( observable ) => {
+		return () => {
+			return observable( ( set, reject, done ) => {
+				const { videopress_guid: guid } = this.props.item;
+
+				if ( ! guid ) {
+					return;
+				}
+
+				const getVideo = ( id ) => {
+					const data = { path: '/videos/' + id };
+
+					wpcomProxyRequest( data, function ( err, body, headers ) {
+						if ( err ) {
+							return;
+						}
+
+						// If an upload_date property is present, we have a valid response.
+						if ( body.upload_date != null ) {
+							done( body );
+						} else {
+							const error = new Error( body ? body.message : 'Unknown' );
+							error.code = body ? body.error : null;
+							error.errorMessage = body ? body.errorMessage : null;
+							error.status = headers.status;
+							reject( error );
+						}
+					} );
+				};
+
+				getVideo( guid );
+
+				return () => {};
+			} );
+		};
+	};
+
 	setVideoInstance = ( ref ) => ( this.video = ref );
 
 	loadInitializeScript() {
@@ -96,6 +136,7 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 				autoPlay: isPlaying,
 				height,
 				width,
+				requestProvider: this.requestProvider,
 			} );
 		}
 	};

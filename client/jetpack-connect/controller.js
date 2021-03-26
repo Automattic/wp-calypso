@@ -10,7 +10,7 @@ import { get, some } from 'lodash';
  * Internal Dependencies
  */
 import { recordPageView } from 'calypso/lib/analytics/page-view';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import InstallInstructions from './install-instructions';
 import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
@@ -20,7 +20,6 @@ import NoDirectAccessError from './no-direct-access-error';
 import OrgCredentialsForm from './remote-credentials';
 import SearchPurchase from './search';
 import StoreHeader from './store-header';
-import StoreFooter from './store-footer';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/actions';
@@ -34,9 +33,11 @@ import {
 import { login } from 'calypso/lib/paths';
 import { parseAuthorizationQuery } from './utils';
 import {
+	clearPlan,
 	isCalypsoStartedConnection,
 	persistMobileRedirect,
 	retrieveMobileRedirect,
+	retrievePlan,
 	storePlan,
 } from './persistence-utils';
 import { startAuthorizeStep } from 'calypso/state/jetpack-connect/actions';
@@ -47,6 +48,7 @@ import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors'
 import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
@@ -69,8 +71,6 @@ import {
 import { getProductFromSlug } from 'calypso/lib/products-values/get-product-from-slug';
 import { getJetpackProductDisplayName } from 'calypso/lib/products-values/get-jetpack-product-display-name';
 import { externalRedirect } from 'calypso/lib/route/path';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
-import { Iterations } from 'calypso/my-sites/plans-v2/iterations';
 
 /**
  * Module variables
@@ -111,7 +111,19 @@ export function offerResetRedirects( context, next ) {
 			'controller: offerResetRedirects -> redirecting to /plans since site has a plan or is not a Jetpack site',
 			context.params
 		);
-		return page.redirect( CALYPSO_PLANS_PAGE + selectedSite.slug );
+		return externalRedirect( CALYPSO_PLANS_PAGE + selectedSite.slug );
+	}
+
+	// If the user previously selected Jetpack Free, redirect them to their wp-admin page
+	const storedPlan = retrievePlan();
+	clearPlan();
+	if ( storedPlan === PLAN_JETPACK_FREE ) {
+		debug(
+			'controller: offerResetRedirects -> redirecting to wp-admin because the user got here by clicking Jetpack Free',
+			context.params
+		);
+		externalRedirect( context.query.redirect || selectedSite.options.admin_url );
+		return;
 	}
 
 	// If current user is not an admin (can't purchase plans), redirect the user to /posts if
@@ -139,11 +151,7 @@ export function offerResetRedirects( context, next ) {
 
 export function offerResetContext( context, next ) {
 	debug( 'controller: offerResetContext', context.params );
-	context.header = <StoreHeader />;
-
-	if ( getJetpackCROActiveVersion() !== Iterations.I5 ) {
-		context.footer = <StoreFooter />;
-	}
+	context.header = <StoreHeader urlQueryArgs={ context.query } />;
 
 	next();
 }
