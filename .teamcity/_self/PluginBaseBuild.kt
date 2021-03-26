@@ -64,7 +64,10 @@ open class PluginBaseBuild : Template({
 
 				# Load existing node_modules to reduce install time.
 				if [ -d /calypso/node_modules ] ; then
+					echo "Loading existing found node_modules..."
 					mv /calypso/node_modules ./node_modules
+				else
+					echo "No existing node_modules were found."
 				fi
 
 				# Install modules
