@@ -62,6 +62,11 @@ open class PluginBaseBuild : Template({
 				# Update composer
 				composer install
 
+				# Load existing node_modules to reduce install time.
+				if [ -d /calypso/node_modules ] ; then
+					mv /calypso/node_modules ./node_modules
+				fi
+
 				# Install modules
 				yarn install
 			"""
