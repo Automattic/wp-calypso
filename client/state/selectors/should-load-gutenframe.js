@@ -6,10 +6,12 @@ import { shouldCalypsoifyJetpack } from 'calypso/state/selectors/should-calypsoi
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 
-export const shouldLoadGutenframe = ( state, siteId ) =>
-	isEligibleForGutenframe( state, siteId ) &&
-	shouldCalypsoifyJetpack( state, siteId ) &&
-	( ! isNavUnificationEnabled( state ) ||
-		! getUserSettings( state )?.calypso_preferences?.linkDestination );
-
+export const shouldLoadGutenframe = ( state, siteId ) => {
+	return (
+		isEligibleForGutenframe( state, siteId ) &&
+		shouldCalypsoifyJetpack( state, siteId ) &&
+		( ! isNavUnificationEnabled( state ) ||
+			! getUserSettings( state )?.calypso_preferences?.linkDestination )
+	);
+};
 export default shouldLoadGutenframe;

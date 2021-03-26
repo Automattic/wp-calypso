@@ -17,3 +17,10 @@ export const isPendingPasswordChange = ( state ) => state.userSettings.updatingP
  * @param {state} state State object
  */
 export const isUpdatingUserSettings = ( state ) => state.userSettings.updating;
+
+/*
+ * Returns whether the previous request to save or retrieve the settings, failed.
+ *
+ * @param {state} state State object
+ */
+export const hasUserSettingsRequestFailed = ( state ) => state.userSettings.failed;
