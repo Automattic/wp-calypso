@@ -5,7 +5,7 @@ package _self
  */
 val yarn_install_cmd = """
 	# Load existing node_modules to reduce install time.
-	if [ -d /calypso/node_modules ] ; then
+	if [ -d /calypso/node_modules ] && [ "%use_cached_node_modules%" == "true" ] ; then
 		echo "Loading existing found node_modules..."
 		mv /calypso/node_modules ./node_modules
 	else
