@@ -255,15 +255,15 @@ function load_block_patterns_from_api( $current_screen ) {
 		return;
 	}
 
-	$pattern_sources = array( 'block_patterns' );
+	$patterns_sources = array( 'block_patterns' );
 
 	// While we're still testing the FSE patterns, limit activation via a filter.
 	if ( $is_site_editor && apply_filters( 'a8c_enable_fse_block_patterns_api', false ) ) {
-		$pattern_sources[] = 'fse_block_patterns';
+		$patterns_sources[] = 'fse_block_patterns';
 	}
 
 	require_once __DIR__ . '/block-patterns/class-block-patterns-from-api.php';
-	Block_Patterns_From_API::get_instance( $pattern_sources );
+	Block_Patterns_From_API::get_instance( $patterns_sources );
 }
 add_action( 'current_screen', __NAMESPACE__ . '\load_block_patterns_from_api' );
 
