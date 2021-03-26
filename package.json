@@ -162,7 +162,7 @@
 	"dependencies": {
 		"@automattic/babel-plugin-i18n-calypso": "^1.2.0",
 		"@automattic/babel-plugin-transform-wpcalypso-async": "^1.0.1",
-		"@automattic/calypso-build": "^7.0.0",
+		"@automattic/calypso-build": "^8.0.0",
 		"@automattic/calypso-color-schemes": "^2.1.1",
 		"@automattic/calypso-doctor": "^0.1.0",
 		"@automattic/calypso-polyfills": "^1.0.0",
