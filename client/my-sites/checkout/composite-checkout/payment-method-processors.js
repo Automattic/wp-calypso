@@ -16,8 +16,6 @@ import {
 	submitApplePayPayment,
 	submitStripeCardTransaction,
 	submitEbanxCardTransaction,
-	submitFreePurchaseTransaction,
-	submitCreditsTransaction,
 } from './payment-method-helpers';
 import getPostalCode from './lib/get-postal-code';
 import getDomainDetails from './lib/get-domain-details';
@@ -125,42 +123,4 @@ export async function multiPartnerCardProcessor(
 		return ebanxCardProcessor( submitData, dataForProcessor );
 	}
 	throw new RangeError( 'Unrecognized card payment partner: "' + paymentPartner + '"' );
-}
-
-export async function freePurchaseProcessor(
-	submitData,
-	{ includeDomainDetails, includeGSuiteDetails, responseCart }
-) {
-	return submitFreePurchaseTransaction(
-		{
-			...submitData,
-			couponId: responseCart.coupon,
-			siteId: select( 'wpcom' )?.getSiteId?.(),
-			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
-			// this data is intentionally empty so we do not charge taxes
-			country: null,
-			postalCode: null,
-		},
-		submitWpcomTransaction
-	).then( makeSuccessResponse );
-}
-
-export async function fullCreditsProcessor(
-	submitData,
-	{ includeDomainDetails, includeGSuiteDetails, responseCart },
-	transactionOptions
-) {
-	return submitCreditsTransaction(
-		{
-			...submitData,
-			couponId: responseCart.coupon,
-			siteId: select( 'wpcom' )?.getSiteId?.(),
-			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
-			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-			postalCode: submitData.postalCode || getPostalCode(),
-			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-		},
-		submitWpcomTransaction,
-		transactionOptions
-	).then( makeSuccessResponse );
 }

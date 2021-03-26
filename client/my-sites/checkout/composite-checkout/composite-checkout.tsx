@@ -46,12 +46,9 @@ import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-me
 import useStoredCards from './hooks/use-stored-cards';
 import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
 import useCreatePaymentMethods from './hooks/use-create-payment-methods';
-import {
-	applePayProcessor,
-	freePurchaseProcessor,
-	multiPartnerCardProcessor,
-	fullCreditsProcessor,
-} from './payment-method-processors';
+import { applePayProcessor, multiPartnerCardProcessor } from './payment-method-processors';
+import freePurchaseProcessor from './lib/free-purchase-processor';
+import fullCreditsProcessor from './lib/full-credits-processor';
 import weChatProcessor from './lib/we-chat-processor';
 import genericRedirectProcessor from './lib/generic-redirect-processor';
 import existingCardProcessor from './lib/existing-card-processor';
@@ -467,8 +464,7 @@ export default function CompositeCheckout( {
 		() => ( {
 			'apple-pay': ( transactionData: unknown ) =>
 				applePayProcessor( transactionData, dataForProcessor, transactionOptions ),
-			'free-purchase': ( transactionData: unknown ) =>
-				freePurchaseProcessor( transactionData, dataForProcessor ),
+			'free-purchase': () => freePurchaseProcessor( dataForProcessor ),
 			card: ( transactionData: unknown ) =>
 				multiPartnerCardProcessor( transactionData, dataForProcessor, transactionOptions ),
 			alipay: ( transactionData: unknown ) =>
@@ -492,8 +488,7 @@ export default function CompositeCheckout( {
 				genericRedirectProcessor( 'eps', transactionData, dataForProcessor ),
 			'ebanx-tef': ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'brazil-tef', transactionData, dataForProcessor ),
-			'full-credits': ( transactionData: unknown ) =>
-				fullCreditsProcessor( transactionData, dataForProcessor, transactionOptions ),
+			'full-credits': () => fullCreditsProcessor( dataForProcessor ),
 			'existing-card': ( transactionData: unknown ) =>
 				existingCardProcessor(
 					mergeIfObjects( transactionData, {
