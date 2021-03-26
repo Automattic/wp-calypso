@@ -70,7 +70,7 @@ open class PluginBaseBuild : Template({
 					echo "No existing node_modules were found."
 				fi
 
-				# Install modules
+				# Install modules.
 				yarn install
 			"""
 		}
