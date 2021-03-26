@@ -22,11 +22,6 @@ export default class PressableSiteSettingsPage extends AsyncBaseContainer {
 		return driverHelper.waitTillNotPresent( this.driver, loadingSelector, explicitWaitMS * 4 );
 	}
 
-	gotoWPAdmin() {
-		const buttonSelector = By.css( '.site-show-bar-wp-btn' );
-		return driverHelper.followLinkWhenFollowable( this.driver, buttonSelector );
-	}
-
 	async activateJetpackPremium() {
 		const activationLink = By.css( '.jetpack-activation-notice a[href*="/jetpack_partnership"]' );
 		await this.driver.sleep( 1000 ); // Button isn't clickable right away
