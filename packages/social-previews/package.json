@@ -48,7 +48,7 @@
 		"prop-types": "^15.7.2"
 	},
 	"devDependencies": {
-		"@automattic/calypso-build": "^7.0.0",
+		"@automattic/calypso-build": "^8.0.0",
 		"enzyme": "^3.11.0",
 		"jest": "^26.4.0",
 		"react": "^16.12.0",

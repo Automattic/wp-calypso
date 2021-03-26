@@ -22,7 +22,7 @@
 		"build": "BROWSERSLIST_ENV=wpcom calypso-build"
 	},
 	"dependencies": {
-		"@automattic/calypso-build": "^7.0.0",
+		"@automattic/calypso-build": "^8.0.0",
 		"@wordpress/api-fetch": "^3.21.5",
 		"@wordpress/base-styles": "^3.3.3",
 		"@wordpress/block-editor": "^5.2.10",
