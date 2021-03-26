@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import webdriver, { By, WebDriver, WebElement, WebElementCondition } from 'selenium-webdriver';
+import webdriver, { Key, By, WebDriver, WebElement, WebElementCondition } from 'selenium-webdriver';
 import config from 'config';
 import { forEach } from 'lodash';
 
@@ -254,7 +254,7 @@ export function setWhenSettable(
 ) {
 	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
 	let timeout = explicitWaitMS;
-	let errorMessage = `for field to be settable ${ locatorStr }`;
+	let errorMessage = `for element to be settable ${ locatorStr }`;
 
 	if ( ! secureValue ) {
 		errorMessage = `${ errorMessage } to "${ value }"`;
@@ -272,6 +272,12 @@ export function setWhenSettable(
 				return null;
 			}
 			await highlightElement( driver, element );
+			const currentValue = await element.getAttribute( 'value' );
+			if ( currentValue ) {
+				for ( let i = 0; i < currentValue.length; i++ ) {
+					await element.sendKeys( Key.BACK_SPACE );
+				}
+			}
 			if ( ! pauseBetweenKeysMS ) {
 				await element.sendKeys( value );
 			} else {
@@ -280,9 +286,9 @@ export function setWhenSettable(
 					await element.sendKeys( value[ i ] );
 				}
 			}
-			const currentValue = await element.getAttribute( 'value' );
+			const newValue = await element.getAttribute( 'value' );
 
-			return currentValue === value ? element : null;
+			return newValue === value ? element : null;
 		} ),
 		timeout
 	);
