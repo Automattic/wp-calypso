@@ -9,6 +9,7 @@ import { CompactCard } from '@automattic/components';
 /**
  * Internal dependencies
  */
+import wp from 'calypso/lib/wp';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
@@ -21,10 +22,71 @@ import MaterialIcon from 'calypso/components/material-icon';
 import Badge from 'calypso/components/badge';
 import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
 import { getEmailForwards } from 'calypso/state/selectors/get-email-forwards';
+import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 
 class EmailPlanView extends React.Component {
+	state = {
+		isLoadingTitanMailboxes: false,
+		errorLoadingTitanMailboxes: false,
+		loadedTitanMailboxes: false,
+		titanMailboxes: [],
+	};
+
+	componentDidMount() {
+		this.loadTitanMailboxes();
+	}
+
+	componentDidUpdate() {
+		this.loadTitanMailboxes();
+	}
+
+	loadTitanMailboxes() {
+		const { selectedSite } = this.props;
+
+		if ( this.state.isLoadingTitanMailboxes || this.state.loadedTitanMailboxes ) {
+			return;
+		}
+
+		this.setState( {
+			isLoadingTitanMailboxes: true,
+		} );
+
+		wp.undocumented()
+			.getTitanMailboxesForSite( selectedSite.ID )
+			.then(
+				( data ) => {
+					this.setState( {
+						isLoadingTitanMailboxes: false,
+						errorLoadingTitanMailboxes: false,
+						loadedTitanMailboxes: true,
+						titanMailboxes: data?.accounts || [],
+					} );
+				},
+				() => {
+					this.setState( {
+						isLoadingTitanMailboxes: false,
+						errorLoadingTitanMailboxes: true,
+						loadedTitanMailboxes: true,
+						titanMailboxes: [],
+					} );
+				}
+			);
+	}
+
+	getEmails() {
+		const { domain, emails } = this.props;
+
+		if ( hasTitanMailWithUs( domain ) ) {
+			return this.state.titanMailboxes;
+		}
+
+		return emails;
+	}
+
 	renderEmailsList() {
-		const { emails, translate } = this.props;
+		const { translate } = this.props;
+
+		const emails = this.getEmails();
 
 		if ( ! emails || emails.length < 1 ) {
 			return;
@@ -53,8 +115,10 @@ class EmailPlanView extends React.Component {
 
 	render() {
 		const { domain } = this.props;
+
 		return (
 			<React.Fragment>
+				{ domain && <QueryEmailForwards domainName={ domain.name } /> }
 				<HeaderCake>Email plan settings</HeaderCake>
 				<CompactCard className="email-plan-view__general">
 					<span className="email-plan-view__general-icon">

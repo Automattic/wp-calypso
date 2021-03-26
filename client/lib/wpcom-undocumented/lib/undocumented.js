@@ -759,6 +759,15 @@ Undocumented.prototype.validateGoogleAppsContactInformation = function (
 	return result.then?.( camelCaseKeys );
 };
 
+Undocumented.prototype.getTitanMailboxesForSite = function ( siteId, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/sites/${ encodeURIComponent( siteId ) }/titan-mailboxes`,
+		},
+		fn
+	);
+};
+
 /**
  * Retrieves the Titan order provisioning URL for a domain.
  *
