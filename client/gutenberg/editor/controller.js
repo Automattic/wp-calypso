@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { get, has, isInteger } from 'lodash';
+import { get, has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -213,7 +213,7 @@ export const post = ( context, next ) => {
 	const jetpackCopy = parseInt( get( context, 'query.jetpack-copy', null ) );
 
 	// Check if this value is an integer.
-	const duplicatePostId = isInteger( jetpackCopy ) ? jetpackCopy : null;
+	const duplicatePostId = Number.isInteger( jetpackCopy ) ? jetpackCopy : null;
 
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );

@@ -15,7 +15,6 @@ import {
 	values,
 	omit,
 	startsWith,
-	isInteger,
 } from 'lodash';
 
 /**
@@ -428,7 +427,7 @@ export const activeReplies = withoutPersistence( ( state = {}, action ) => {
 
 function updateCount( counts, rawStatus, value = 1 ) {
 	const status = rawStatus === 'unapproved' ? 'pending' : rawStatus;
-	if ( ! counts || ! isInteger( counts[ status ] ) ) {
+	if ( ! counts || ! Number.isInteger( counts[ status ] ) ) {
 		return undefined;
 	}
 	const newCounts = {
