@@ -107,10 +107,16 @@ function chooseTerserEcmaVersion( browsers ) {
  * @param {object} options Options
  * @param options.terserOptions Options for Terser plugin
  * @param options.cssMinimizerOptions Options for CSS Minimizer plugin
+ * @param options.extractComments Whether to extract comments into a separate LICENSE file (defaults to true)
  * @param options.parallel Whether to run minifiers in parallel (defaults to true)
  * @returns {object[]}     Terser plugin object to be used in Webpack minification.
  */
-module.exports = ( { terserOptions = {}, cssMinimizerOptions = {}, parallel = true } = {} ) => {
+module.exports = ( {
+	terserOptions = {},
+	cssMinimizerOptions = {},
+	parallel = true,
+	extractComments = true,
+} = {} ) => {
 	terserOptions = {
 		ecma: chooseTerserEcmaVersion( supportedBrowsers ),
 		ie8: false,
@@ -125,7 +131,7 @@ module.exports = ( { terserOptions = {}, cssMinimizerOptions = {}, parallel = tr
 	};
 
 	return [
-		new TerserPlugin( { parallel, terserOptions } ),
+		new TerserPlugin( { parallel, extractComments, terserOptions } ),
 		new CssMinimizerPlugin( { parallel, minimizerOptions: cssMinimizerOptions } ),
 	];
 };
