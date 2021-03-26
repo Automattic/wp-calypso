@@ -7,14 +7,11 @@ import { isEnabled } from '@automattic/calypso-config';
 /**
  * Internal dependencies
  */
-import rawAvailableDesignsConfig from '../available-designs-config.json';
+import { availableDesignsConfig } from './available-designs-config';
 import { DESIGN_IMAGE_FOLDER } from '../constants';
 import type { MShotsOptions } from '../components/mshots-image';
 import type { Design } from '../types';
-
-interface AvailableDesigns {
-	featured: Design[];
-}
+import type { AvailableDesigns } from './available-designs-config';
 
 function getCanUseWebP() {
 	if ( typeof window !== 'undefined' ) {
@@ -61,8 +58,6 @@ export const getDesignImageUrl = ( design: Design ): string => {
 		design.theme
 	}.${ canUseWebP ? 'webp' : 'jpg' }?v=3`;
 };
-
-export const availableDesignsConfig = rawAvailableDesignsConfig as Readonly< AvailableDesigns >;
 
 export function getAvailableDesigns(
 	includeAlphaDesigns: boolean = isEnabled( 'gutenboarding/alpha-templates' ),
