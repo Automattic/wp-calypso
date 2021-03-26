@@ -5,7 +5,7 @@
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"types": "dist/types/index.d.ts",
-	"calypso:src": "index.ts",
+	"calypso:src": "src/index.ts",
 	"sideEffects": false,
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
