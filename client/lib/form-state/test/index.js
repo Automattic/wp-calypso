@@ -9,8 +9,6 @@ import assert from 'assert';
  */
 import formState from '../';
 
-const getDefaultErrors = () => [];
-
 function checkNthState( n, callback ) {
 	let count = 0;
 
@@ -36,7 +34,7 @@ function testController( options ) {
 		},
 
 		validatorFunction: function ( fieldValues, onComplete ) {
-			const fieldErrors = mapValues( fieldValues, getDefaultErrors );
+			const fieldErrors = mapValues( fieldValues, () => [] );
 			onComplete( null, fieldErrors );
 		},
 
