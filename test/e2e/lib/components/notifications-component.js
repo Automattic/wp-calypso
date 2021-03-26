@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By as by, until } from 'selenium-webdriver';
+import { By as by } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -38,28 +38,10 @@ export default class NotificationsComponent extends AsyncBaseContainer {
 	}
 
 	async trashComment() {
-		const self = this;
-		const trashPostSelector = by.css( 'button[title="Trash comment"]' );
-		await this.driver.wait(
-			until.elementLocated( trashPostSelector ),
-			self.explicitWaitMS,
-			'Could not locate the trash comment button'
-		);
-		const trashPostElement = await self.driver.findElement( trashPostSelector );
-		await this.driver.wait(
-			until.elementIsVisible( trashPostElement ),
-			self.explicitWaitMS,
-			'The trash post comment is not visible'
-		);
-		await driverHelper.clickWhenClickable( self.driver, trashPostSelector );
-		return self.driver
-			.wait( until.elementLocated( by.css( '.wpnc__undo-item' ) ), this.explicitWaitMS )
-			.then(
-				() => {},
-				() => {
-					driverHelper.clickWhenClickable( self.driver, trashPostSelector );
-				}
-			);
+		const trashPostLocator = by.css( 'button[title="Trash comment"]' );
+
+		await this.driver.sleep( 400 ); // Wait for menu animation to complete
+		await driverHelper.clickWhenClickable( this.driver, trashPostLocator );
 	}
 
 	async waitForUndoMessage() {
