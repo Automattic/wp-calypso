@@ -210,7 +210,7 @@ object CheckCodeStyle : BuildType({
 				export NODE_ENV="test"
 
 				# Install modules
-				yarn install
+				${_self.yarn_install_cmd}
 			"""
 		}
 		bashNodeScript {

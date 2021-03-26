@@ -62,16 +62,7 @@ open class PluginBaseBuild : Template({
 				# Update composer
 				composer install
 
-				# Load existing node_modules to reduce install time.
-				if [ -d /calypso/node_modules ] ; then
-					echo "Loading existing found node_modules..."
-					mv /calypso/node_modules ./node_modules
-				else
-					echo "No existing node_modules were found."
-				fi
-
-				# Install modules.
-				yarn install
+				$yarn_install_cmd
 			"""
 		}
 		bashNodeScript {
@@ -111,7 +102,7 @@ open class PluginBaseBuild : Template({
 			scriptContent = """
 				# 1. Download and unzip current release build.
 				cd $workingDir
-				
+
 				mkdir ./release-archive
 				wget "%teamcity.serverUrl%/repository/download/%system.teamcity.buildType.id%/$releaseTag.tcbuildtag/$pluginSlug.zip?guest=1&branch=trunk" -O ./tmp-release-archive-download.zip
 				unzip ./tmp-release-archive-download.zip -d ./release-archive

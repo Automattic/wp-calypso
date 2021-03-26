@@ -48,7 +48,7 @@ object E2ETests : BuildType({
 				openssl aes-256-cbc -md md5 -d -in desktop/resource/calypso/secrets.json.enc -out config/secrets.json -k "%CALYPSO_SECRETS_ENCRYPTION_KEY%"
 
 				# Install modules
-				yarn install
+				${_self.yarn_install_cmd}
 				yarn run build-desktop:install-app-deps
 			"""
 			dockerImage = "%docker_image_desktop%"
