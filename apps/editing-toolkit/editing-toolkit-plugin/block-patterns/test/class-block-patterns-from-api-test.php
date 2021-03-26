@@ -65,15 +65,20 @@ class Block_Patterns_From_Api_Test extends TestCase {
 	public function createBlockPatternsUtilsMock( $pattern_mock_response, $cache_get = false, $cache_add = true, $get_patterns_cache_key = 'key-largo', $get_block_patterns_locale = 'fr' ) {
 		$mock = $this->createMock( Block_Patterns_Utils::class );
 
-		$mock->method( 'remote_get' )->willReturn( $pattern_mock_response );
+		$mock->method( 'remote_get' )
+			->willReturn( $pattern_mock_response );
 
-		$mock->method( 'cache_get' )->willReturn( $cache_get );
+		$mock->method( 'cache_get' )
+			->willReturn( $cache_get );
 
-		$mock->method( 'cache_add' )->willReturn( $cache_add );
+		$mock->method( 'cache_add' )
+			->willReturn( $cache_add );
 
-		$mock->method( 'get_patterns_cache_key' )->willReturn( $get_patterns_cache_key );
+		$mock->method( 'get_patterns_cache_key' )
+			->willReturn( $get_patterns_cache_key );
 
-		$mock->method( 'get_block_patterns_locale' )->willReturn( $get_block_patterns_locale );
+		$mock->method( 'get_block_patterns_locale' )
+			->willReturn( $get_block_patterns_locale );
 
 		return $mock;
 	}
@@ -85,15 +90,15 @@ class Block_Patterns_From_Api_Test extends TestCase {
 		$utils_mock              = $this->createBlockPatternsUtilsMock( array( $this->pattern_mock_object ) );
 		$block_patterns_from_api = new Block_Patterns_From_API( $utils_mock );
 
-		$utils_mock ->expects( $this->once() )
+		$utils_mock->expects( $this->once() )
 			->method( 'cache_get' )
 			->willReturn( false );
 
-		$utils_mock ->expects( $this->once() )
+		$utils_mock->expects( $this->once() )
 			->method( 'remote_get' )
 			->with( 'https://public-api.wordpress.com/rest/v1/ptk/patterns/fr?tags=pattern&pattern_meta=is_web' );
 
-		$utils_mock ->expects( $this->once() )
+		$utils_mock->expects( $this->once() )
 			->method( 'cache_add' )
 			->with( $this->stringContains( 'key-largo' ), array( $this->pattern_mock_object ), 'ptk_patterns', DAY_IN_SECONDS);
 
