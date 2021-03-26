@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 import { defaultRegistry } from '@automattic/composite-checkout';
 
@@ -12,21 +11,8 @@ import wp from 'calypso/lib/wp';
 import { getSavedVariations } from 'calypso/lib/abtest';
 import { stringifyBody } from 'calypso/state/login/utils';
 import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
-import { createTransactionEndpointRequestPayloadFromLineItems } from './lib/translate-cart';
 
-const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
 const { select } = defaultRegistry;
-
-export async function submitApplePayPayment( transactionData, submit, transactionOptions ) {
-	debug( 'formatting apple-pay transaction', transactionData );
-	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
-		...transactionData,
-		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
-		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
-	} );
-	debug( 'submitting apple-pay transaction', formattedTransactionData );
-	return submit( formattedTransactionData, transactionOptions );
-}
 
 export async function fetchStripeConfiguration( requestArgs, wpcom ) {
 	return wpcom.stripeConfiguration( requestArgs );
