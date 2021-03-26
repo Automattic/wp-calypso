@@ -235,48 +235,44 @@ export function elementIsNotPresent( driver, selector ) {
 	} );
 }
 
-export function waitForFieldClearable( driver, selector ) {
-	return driver.wait(
-		function () {
-			return driver.findElement( selector ).then(
-				async ( element ) => {
-					await driver.executeScript( "arguments[0].value = '';", element );
-					return element.clear().then(
-						function () {
-							return element.getAttribute( 'value' ).then( ( value ) => {
-								return value === '';
-							} );
-						},
-						function () {
-							return false;
-						}
-					);
-				},
-				function () {
-					return false;
-				}
-			);
-		},
-		explicitWaitMS,
-		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be clearable`
-	);
-}
-
+/**
+ * Types a key sequence on the DOM element.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @param {number|string} value The element's value to set
+ * @param {Object} options The options object
+ * @param {boolean} options.secureValue Whether the value should be displayed in case of an error
+ * @param {number} options.pauseBetweenKeysMS The time between keystrokes
+ * @returns {Promise<WebElement>} A promise that will resolve with the located element
+ */
 export function setWhenSettable(
 	driver,
-	selector,
+	locator,
 	value,
 	{ secureValue = false, pauseBetweenKeysMS = 0 } = {}
 ) {
-	const self = this;
-	const logValue = secureValue === true ? '*********' : value;
+	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
+	let timeout = explicitWaitMS;
+	let errorMessage = `for field to be settable ${ locatorStr }`;
+
+	if ( ! secureValue ) {
+		errorMessage = `${ errorMessage } to "${ value }"`;
+	}
+
+	if ( typeof pauseBetweenKeysMS === 'number' && pauseBetweenKeysMS > 0 ) {
+		// Make sure that typing time is accounted for
+		timeout = timeout + value.length * pauseBetweenKeysMS;
+	}
 
 	return driver.wait(
-		async function () {
-			await self.waitForFieldClearable( driver, selector );
-			const element = await driver.findElement( selector );
+		new WebElementCondition( errorMessage, async function () {
+			const element = ( await driver.findElements( locator ) )[ 0 ];
+			if ( ! element ) {
+				return null;
+			}
 			await highlightElement( driver, element );
-			if ( pauseBetweenKeysMS === 0 ) {
+			if ( ! pauseBetweenKeysMS ) {
 				await element.sendKeys( value );
 			} else {
 				for ( let i = 0; i < value.length; i++ ) {
@@ -284,12 +280,11 @@ export function setWhenSettable(
 					await element.sendKeys( value[ i ] );
 				}
 			}
-			const newElement = await driver.findElement( selector );
-			const actualValue = await newElement.getAttribute( 'value' );
-			return actualValue === value;
-		},
-		explicitWaitMS,
-		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be settable to: '${ logValue }'`
+			const currentValue = await element.getAttribute( 'value' );
+
+			return currentValue === value ? element : null;
+		} ),
+		timeout
 	);
 }
 
