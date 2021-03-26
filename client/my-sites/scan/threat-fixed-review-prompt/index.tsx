@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -11,6 +11,8 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
  */
 import { Button } from '@wordpress/components';
 import Gridicon from 'calypso/components/gridicon';
+import { preventWidows } from 'calypso/lib/formatting';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import { dismiss } from 'calypso/state/jetpack-review-prompt/actions';
 import {
@@ -28,18 +30,34 @@ const ThreatFixedReviewPrompt: React.FC = () => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
+
 	const isReviewPromptValid = useSelector( ( state ) => getIsValid( state, 'scan' ) );
 	const isReviewPromptDismissed = useSelector( ( state ) => getIsDismissed( state, 'scan' ) );
 	const lastThreatFixedDate = useSelector(
 		( state ) => getExistingPreference( state, 'scan' )?.validFrom
 	);
 
-	const dismissPrompt = useCallback(
-		( type = 'scan', dismissedAt = Date.now(), reviewed = false ) => {
-			dispatch( dismiss( type, dismissedAt, reviewed ) );
-		},
-		[ dispatch ]
-	);
+	useEffect( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_scan_review_prompt_view' ) );
+	}, [ dispatch ] );
+
+	const dismissPrompt = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_scan_review_prompt_dismiss', {
+				reviewed: false,
+			} )
+		);
+		dispatch( dismiss( 'scan', Date.now() ) );
+	}, [ dispatch ] );
+
+	const dismissPromptAsReviewed = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_scan_review_prompt_dismiss', {
+				reviewed: true,
+			} )
+		);
+		dispatch( dismiss( 'scan', Date.now(), true ) );
+	}, [ dispatch ] );
 
 	return isReviewPromptValid && ! isReviewPromptDismissed ? (
 		<>
@@ -54,8 +72,10 @@ const ThreatFixedReviewPrompt: React.FC = () => {
 							},
 						} ) }
 						<br />
-						{ translate(
-							'Are you happy with Jetpack Scan? Please leave a review and help us spread the word!'
+						{ preventWidows(
+							translate(
+								'Are you happy with Jetpack Scan? Please leave a review and help us spread the word!'
+							)
 						) }
 					</p>
 					<Button onClick={ dismissPrompt }>
@@ -66,7 +86,7 @@ const ThreatFixedReviewPrompt: React.FC = () => {
 					<Button
 						href="https://wordpress.org/support/plugin/jetpack/reviews/#new-post"
 						target="_blank"
-						onClick={ dismissPrompt }
+						onClick={ dismissPromptAsReviewed }
 					>
 						{ translate( 'Leave a review' ) } <Gridicon icon="external" />
 					</Button>
