@@ -8,6 +8,7 @@ export { getJetpackProductDescription } from './get-jetpack-product-description'
 export { getJetpackProductDisplayName } from './get-jetpack-product-display-name';
 export { getJetpackProductShortName } from './get-jetpack-product-short-name';
 export { getJetpackProductTagline } from './get-jetpack-product-tagline';
+export { getProductBillingTermLabel } from './get-product-billing-term-label';
 export { getProductClass } from './get-product-class';
 export { getProductTermVariants } from './get-product-term-variants';
 export { getProductYearlyVariant } from './get-product-yearly-variant';

@@ -4,7 +4,7 @@
 import { find, includes, isObject } from 'lodash';
 import moment from 'moment';
 import page from 'page';
-import i18n from 'i18n-calypso';
+import i18n, { translate } from 'i18n-calypso';
 import debugFactory from 'debug';
 
 /**
@@ -13,9 +13,10 @@ import debugFactory from 'debug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
-import { getPlan } from 'calypso/lib/plans';
+import { getPlan, getPlanBillingTermLabel } from 'calypso/lib/plans';
 import { isMonthly as isMonthlyPlan } from 'calypso/lib/plans/constants';
 import {
+	getProductBillingTermLabel,
 	getProductFromSlug,
 	isDomainMapping,
 	isDomainRegistration,
@@ -128,6 +129,20 @@ function getPartnerName( purchase ) {
 function getSubscriptionEndDate( purchase ) {
 	const localeSlug = i18n.getLocaleSlug();
 	return moment( purchase.expiryDate ).locale( localeSlug ).format( 'LL' );
+}
+
+/**
+ * Returns a purchase term label (i.e. "every month", "every year", "every two years").
+ *
+ * @param {object} purchase The purchase
+ * @returns {string|undefined} The purchase's term label
+ */
+function getPurchaseBillingTermLabel( purchase ) {
+	if ( isPlan( purchase ) ) {
+		return getPlanBillingTermLabel( purchase.productSlug, translate );
+	}
+
+	return getProductBillingTermLabel( purchase.productSlug );
 }
 
 /**
@@ -730,6 +745,7 @@ export {
 	getDisplayName,
 	getPartnerName,
 	getPurchasesBySite,
+	getPurchaseBillingTermLabel,
 	getRenewalPrice,
 	getSubscriptionEndDate,
 	getSubscriptionsBySite,

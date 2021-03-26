@@ -11,6 +11,7 @@ import { getJetpackProductsShortNames } from './translations';
 import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
+	TERM_BIENNIALLY,
 	PLAN_MONTHLY_PERIOD,
 	PLAN_ANNUAL_PERIOD,
 	FEATURE_BACKUP_DAILY_V2,
@@ -43,7 +44,7 @@ export type Product = {
 	product_name: string | TranslateResult;
 	product_slug: string;
 	type: string;
-	term: typeof TERM_ANNUALLY | typeof TERM_MONTHLY;
+	term: typeof TERM_ANNUALLY | typeof TERM_MONTHLY | typeof TERM_BIENNIALLY;
 	bill_period: typeof PLAN_ANNUAL_PERIOD | typeof PLAN_MONTHLY_PERIOD;
 	getFeatures?: ( variation: string ) => string[];
 };
