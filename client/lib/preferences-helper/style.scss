@@ -13,7 +13,7 @@
 }
 
 .preferences-helper__unset {
-	color: var(--color-accent);
+	color: var( --color-accent );
 	cursor: pointer;
 }
 
@@ -31,10 +31,18 @@
 }
 
 .preferences-helper__save-pref-button {
-	color: var(--color-accent);
+	color: var( --color-accent );
 	cursor: pointer;
 	&:disabled {
-		color: var(--color-neutral);
+		color: var( --color-neutral );
+	}
+}
+
+.preferences-helper__reset-pref-button {
+	color: var( --color-warning );
+	cursor: pointer;
+	&:disabled {
+		color: var( --color-neutral );
 	}
 }
 

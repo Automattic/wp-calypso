@@ -20,36 +20,46 @@ interface Props {
 	value: boolean;
 }
 
-const BooleanPreference: FunctionComponent<Props> = ({ name, value }) => {
+const BooleanPreference: FunctionComponent< Props > = ( { name, value } ) => {
 	const dispatch = useDispatch();
 
-	const [localValue, setLocalValue] = useState(value);
+	const [ localValue, setLocalValue ] = useState( value );
 
-	const savePreferenceChange = useCallback(() => {
-		dispatch(savePreference(name, localValue));
-	}, [dispatch, localValue, name]);
+	const savePreferenceChange = useCallback( () => {
+		dispatch( savePreference( name, localValue ) );
+	}, [ dispatch, localValue, name ] );
 
-	const handleLocalChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-		setLocalValue(event.target.checked);
+	const resetPreferenceChange = () => {
+		setLocalValue( value );
 	};
 
-	useEffect(() => setLocalValue(value), [value]);
+	const handleLocalChange: ChangeEventHandler< HTMLInputElement > = ( event ) => {
+		setLocalValue( event.target.checked );
+	};
 
-	console.log(`value: ${localValue}`);
-	console.log(`typeof value: ${typeof localValue}`);
+	useEffect( () => setLocalValue( value ), [ value ] );
 
 	return (
 		<div className="boolean-preference">
-			<input type="checkbox" onChange={handleLocalChange} checked={localValue} />{' '}
-			{value !== localValue && (
-				<button
-					className="preferences-helper__save-pref-button"
-					onClick={savePreferenceChange}
-					disabled={value === localValue}
-				>
-					{'save'}
-				</button>
-			)}
+			<input type="checkbox" onChange={ handleLocalChange } checked={ localValue } />{ ' ' }
+			{ value !== localValue && (
+				<>
+					<button
+						className="preferences-helper__save-pref-button"
+						onClick={ savePreferenceChange }
+						disabled={ value === localValue }
+					>
+						{ 'save' }
+					</button>{ ' ' }
+					<button
+						className="preferences-helper__reset-pref-button"
+						onClick={ resetPreferenceChange }
+						disabled={ value === localValue }
+					>
+						{ 'reset' }
+					</button>
+				</>
+			) }
 		</div>
 	);
 };
