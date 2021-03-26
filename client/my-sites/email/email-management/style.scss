@@ -6,6 +6,10 @@
 	}
 }
 
+/**
+ * New email home styles
+ */
+
 .email-home__header {
 	display: flex;
 	justify-content: space-between;
@@ -90,11 +94,11 @@
 	}
 }
 
-.email-plan-view__mailbox-list {
+.email-plan-mailboxes-list__mailbox-list {
 	margin-top: 15px;
 }
 
-.email-plan-view__mailbox-list-item {
+.email-plan-mailboxes-list__mailbox-list-item {
 	display: flex;
 	align-items: center;
 	> svg {
