@@ -525,12 +525,41 @@ export async function selectElementByText( driver, selector, text ) {
 	return await this.clickWhenClickable( driver, element );
 }
 
-export async function verifyTextPresent( driver, selector, text ) {
-	const element = async () => {
-		const allElements = await driver.findElements( selector );
-		return await webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
-	};
-	return await this.isElementPresent( driver, element );
+/**
+ * Waits until an element with given locator and inner text is located.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @param {string|RegExp} text The text the element should contain
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise<WebElement>} A promise that will resolve with the located element
+ */
+export async function waitUntilElementWithTextLocated(
+	driver,
+	locator,
+	text,
+	timeout = explicitWaitMS
+) {
+	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
+
+	return driver.wait(
+		new WebElementCondition(
+			`for element to be located ${ locatorStr } and contain text "${ text }"`,
+			async function () {
+				const locatedElements = await driver.findElements( locator );
+				if ( locatedElements.length === 0 ) {
+					return null;
+				}
+				const elementsWithText = await webdriver.promise.filter(
+					locatedElements,
+					getInnerTextMatcherFunction( text )
+				);
+
+				return elementsWithText[ 0 ];
+			}
+		),
+		timeout
+	);
 }
 
 export function getElementByText( driver, selector, text ) {
