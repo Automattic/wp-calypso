@@ -14,7 +14,8 @@
  *
  * `node ./bin/generate-gutenboarding-design-thumbnails.js`
  *
- * We should bump the version query param on the image src to cache bust the images too in client/landing/gutenboarding/available-designs.ts
+ * We should bump the version query param on the image src to cache bust the images too
+ * in `getDesignImageUrl()` in packages/design-picker/src/utils/available-designs.ts
  *
  * To check the results, take a look at http://calypso.localhost:3000/new/design and the output folder static/images
  *
