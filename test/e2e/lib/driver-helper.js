@@ -274,6 +274,7 @@ export function setWhenSettable(
 			await highlightElement( driver, element );
 			const currentValue = await element.getAttribute( 'value' );
 			if ( currentValue ) {
+				await element.sendKeys( Key.END );
 				for ( let i = 0; i < currentValue.length; i++ ) {
 					await element.sendKeys( Key.BACK_SPACE );
 				}
