@@ -1,0 +1,28 @@
+{
+	"name": "@automattic/calypso-e2e",
+	"version": "0.1.0",
+	"description": "Tools for e2e tests",
+	"main": "dist/cjs/index.js",
+	"author": "Automattic Inc.",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/calypso-e2e"
+	},
+	"keywords": [
+		"e2e",
+		"calypso"
+	],
+	"license": "GPL-2.0-or-later",
+	"dependencies": {
+		"config": "^1.28.0",
+		"playwright": "^1.9.1"
+	},
+	"devDependencies": {
+		"@types/config": "^0.0.38"
+	},
+	"scripts": {
+		"clean": "yarn build --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json"
+	}
+}

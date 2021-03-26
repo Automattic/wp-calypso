@@ -6,21 +6,27 @@
 		"module": "commonjs",
 		"allowJs": false,
 		"declaration": true,
-		"declarationDir": "types",
-		"outDir": "dist",
-		"rootDir": ".",
+		"declarationDir": "dist/types",
+		"outDir": "dist/cjs",
+		"rootDir": "src",
+
 		"strict": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"noImplicitReturns": true,
 		"noFallthroughCasesInSwitch": true,
+
 		"moduleResolution": "node",
 		"esModuleInterop": true,
+
 		"forceConsistentCasingInFileNames": true,
+
 		"types": [ "node" ],
+
 		"noEmitHelpers": true,
 		"importHelpers": true,
+
 		"composite": true
 	},
-	"include": [ "lib" ]
+	"include": [ "src" ],
 }
