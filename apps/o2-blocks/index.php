@@ -3,7 +3,6 @@
  * Plugin Name: A8C Blocks
  * Description: A8C Specific Blocks
  * Author: A8C
- * Text Domain: full-site-editing
  *
  * @package o2-blocks
  *
