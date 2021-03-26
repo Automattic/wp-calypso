@@ -106,7 +106,7 @@ async function run() {
 					.then( ( metadata ) => {
 						image = image
 							.extract( {
-								// Ensure we're not extracting taller area than screenshot actaully is
+								// Ensure we're not extracting taller area than screenshot actually is
 								height: Math.min( metadata.height, captureMaxHeight * viewportScaleFactor ),
 								left: 0,
 								top: 0,
