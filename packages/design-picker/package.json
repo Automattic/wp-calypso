@@ -41,7 +41,8 @@
 	},
 	"devDependencies": {
 		"@testing-library/jest-dom": "^5.11.6",
-		"@testing-library/react": "^10.0.5"
+		"@testing-library/react": "^10.0.5",
+		"jest-canvas-mock": "^2.3.0"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^4.26.8",
