@@ -31,7 +31,7 @@ function head_error_handler() {
 add_action( 'admin_print_scripts', __NAMESPACE__ . '\head_error_handler' );
 
 function add_crossorigin_to_script_els( $tag ) {
-	if ( preg_match( '/<script\s.*src.*>/', $tag ) ) {
+	if ( preg_match( '/<script\s.*src=.*s0\.wp\.com.*>/', $tag ) ) {
 		return str_replace( ' src', " crossorigin='anonymous' src", $tag );
 	};
 	return $tag;
