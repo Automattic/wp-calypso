@@ -163,10 +163,6 @@ $font-size: rem( 14px );
 			margin-right: 8px;
 		}
 
-		img.sidebar__menu-icon {
-			opacity: 0.6;
-		}
-
 		.selected .sidebar__menu-link {
 			background: var( --color-sidebar-menu-selected-background );
 			color: var( --color-sidebar-menu-selected-text );
@@ -207,7 +203,7 @@ $font-size: rem( 14px );
 					color: var( --color-sidebar-menu-hover-text );
 				}
 				img.sidebar__menu-icon {
-					opacity: 1;
+					filter: grayscale(60%);
 				}
 			}
 		}
