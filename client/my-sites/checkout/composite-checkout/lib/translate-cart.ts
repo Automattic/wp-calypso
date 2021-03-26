@@ -3,12 +3,13 @@
  */
 import { translate } from 'i18n-calypso';
 import { getTotalLineItemFromCart } from '@automattic/wpcom-checkout';
+import type { LineItem } from '@automattic/composite-checkout';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import { WPCOMCart, WPCOMCartItem } from '../types/checkout-cart';
+import { WPCOMCart } from '../types/checkout-cart';
 import {
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
@@ -52,51 +53,25 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		.map( translateWpcomPaymentMethodToCheckoutPaymentMethod );
 
 	return {
-		items: products.map( translateReponseCartProductToWPCOMCartItem ),
+		items: products.map( translateReponseCartProductToLineItem ),
 		total: totalItem,
 		allowedPaymentMethods,
 	};
 }
 
 // Convert a backend cart item to a checkout cart item
-function translateReponseCartProductToWPCOMCartItem(
-	serverCartItem: ResponseCartProduct
-): WPCOMCartItem {
+function translateReponseCartProductToLineItem( serverCartItem: ResponseCartProduct ): LineItem {
 	const {
-		product_id,
 		product_slug,
 		currency,
-		item_original_cost_display,
-		item_original_cost_integer,
-		item_subtotal_monthly_cost_display,
-		item_subtotal_monthly_cost_integer,
-		item_original_subtotal_display,
-		item_original_subtotal_integer,
-		related_monthly_plan_cost_display,
-		related_monthly_plan_cost_integer,
-		is_sale_coupon_applied,
-		months_per_bill_period,
 		item_subtotal_display,
 		item_subtotal_integer,
-		is_domain_registration,
-		is_bundled,
-		meta,
-		extra,
-		volume,
-		quantity,
 		uuid,
-		product_cost_integer,
-		product_cost_display,
 	} = serverCartItem;
 
 	const label = getLabel( serverCartItem );
 
 	const type = isPlan( serverCartItem ) ? 'plan' : product_slug;
-
-	// for displaying crossed-out original price
-	const itemOriginalCostDisplay = item_original_cost_display || '';
-	const itemOriginalSubtotalDisplay = item_original_subtotal_display || '';
-	const itemSubtotalMonthlyCostDisplay = item_subtotal_monthly_cost_display || '';
 
 	return {
 		id: uuid,
@@ -106,30 +81,6 @@ function translateReponseCartProductToWPCOMCartItem(
 			currency: currency || '',
 			value: item_subtotal_integer || 0,
 			displayValue: item_subtotal_display || '',
-		},
-		wpcom_response_cart_product: serverCartItem,
-		wpcom_meta: {
-			uuid: uuid,
-			meta,
-			product_id,
-			product_slug,
-			extra,
-			volume,
-			quantity,
-			is_domain_registration: is_domain_registration || false,
-			is_bundled: is_bundled || false,
-			item_original_cost_display: itemOriginalCostDisplay,
-			item_original_cost_integer: item_original_cost_integer || 0,
-			item_subtotal_monthly_cost_display: itemSubtotalMonthlyCostDisplay,
-			item_subtotal_monthly_cost_integer: item_subtotal_monthly_cost_integer || 0,
-			item_original_subtotal_display: itemOriginalSubtotalDisplay,
-			item_original_subtotal_integer: item_original_subtotal_integer || 0,
-			is_sale_coupon_applied: is_sale_coupon_applied || false,
-			months_per_bill_period,
-			product_cost_integer: product_cost_integer || 0,
-			product_cost_display: product_cost_display || '',
-			related_monthly_plan_cost_integer: related_monthly_plan_cost_integer || 0,
-			related_monthly_plan_cost_display: related_monthly_plan_cost_display || '',
 		},
 	};
 }
