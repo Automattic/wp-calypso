@@ -97,4 +97,10 @@
 .email-plan-view__mailbox-list-item {
 	display: flex;
 	align-items: center;
+	> svg {
+		margin-right: 10px;
+	}
+	> .badge {
+		margin-left: 10px;
+	}
 }
