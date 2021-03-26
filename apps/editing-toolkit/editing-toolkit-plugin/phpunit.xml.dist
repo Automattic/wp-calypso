@@ -5,7 +5,6 @@
 	convertErrorsToExceptions="true"
 	convertNoticesToExceptions="true"
 	convertWarningsToExceptions="true"
-	beStrictAboutTestsThatDoNotTestAnything="false"
 	>
     <php>
         <const name="WP_TESTS_MULTISITE" value="1" />
