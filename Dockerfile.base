@@ -58,6 +58,9 @@ COPY --from=cache --chown=$UID /calypso/.nvm /calypso/.nvm
 COPY --from=cache --chown=$UID /calypso/.cache /calypso/.cache
 COPY --from=cache --chown=$UID /calypso/.bashrc /calypso/.bashrc
 
+# Copy node_modules to reduce install time of future builds.
+COPY --from=cache --chown=$UID /calypso/node_modules /calypso/node_modules
+
 ENTRYPOINT [ "/bin/bash" ]
 
 #### ci-desktop image
