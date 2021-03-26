@@ -22,6 +22,10 @@
 		margin-bottom: 24px;
 	}
 
+	.gridicon {
+		fill: var( --color-neutral-80 );
+	}
+
 	// Success!
 	&.is-success {
 		.notice__icon-wrapper {
