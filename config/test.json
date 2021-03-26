@@ -85,7 +85,6 @@
 		"network-connection": true,
 		"perfmon": false,
 		"plans/personal-plan": true,
-		"post-editor/image-editor": true,
 		"press-this": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
