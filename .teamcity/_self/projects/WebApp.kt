@@ -745,6 +745,9 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 
 				# Install modules
 				yarn install
+
+				# Build package
+				yarn workspace @automattic/calypso-e2e build
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
