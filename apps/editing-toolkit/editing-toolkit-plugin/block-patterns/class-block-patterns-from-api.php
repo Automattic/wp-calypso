@@ -34,6 +34,8 @@ class Block_Patterns_From_API {
 	 * @param array $patterns_sources A array of strings, each of which matches a valid source for retrieving patterns.
 	 */
 	private function __construct( $patterns_sources ) {
+		$patterns_sources = empty( $patterns_sources ) ? array( 'block_patterns' ) : $patterns_sources;
+
 		// Tells the backend which patterns source site to default to.
 		$this->patterns_sources = empty( array_diff( $patterns_sources, $this->valid_patterns_sources ) ) ? $patterns_sources : array( 'block_patterns' );
 
@@ -46,7 +48,7 @@ class Block_Patterns_From_API {
 	 * @param  array $patterns_sources A array of strings, each of which matches a valid source for retrieving patterns.
 	 * @return \A8C\FSE\Block_Patterns
 	 */
-	public static function get_instance( $patterns_sources ) {
+	public static function get_instance( $patterns_sources = array() ) {
 		if ( null === self::$instance ) {
 			self::$instance = new self( $patterns_sources );
 		}
