@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { get, isUndefined, map, omit, omitBy } from 'lodash';
+import { get, map, omit, omitBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,7 +32,7 @@ export const normalizeUser = ( user ) =>
 			display_name: user.name,
 			username: user.slug,
 		},
-		isUndefined
+		( prop ) => typeof prop === 'undefined'
 	);
 
 /**

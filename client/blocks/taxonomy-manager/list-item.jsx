@@ -8,7 +8,7 @@ import page from 'page';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { get, isUndefined } from 'lodash';
+import { get } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -164,7 +164,7 @@ class TaxonomyManagerListItem extends Component {
 						<PodcastIndicator className="taxonomy-manager__podcast-indicator" />
 					) }
 				</span>
-				{ ! isUndefined( term.post_count ) && (
+				{ typeof term.post_count !== 'undefined' && (
 					<Count
 						ref="count"
 						count={ term.post_count }

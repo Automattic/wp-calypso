@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { isUndefined, map, omitBy } from 'lodash';
+import { map, omitBy } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -31,7 +31,7 @@ export const subscriptionFromApi = ( subscription ) =>
 			unseen_count: subscription.unseen_count,
 			site_icon: subscription.site_icon,
 		},
-		isUndefined
+		( prop ) => typeof prop === 'undefined'
 	);
 
 export const subscriptionsFromApi = ( apiResponse ) => {

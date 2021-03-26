@@ -6,7 +6,7 @@
  * External dependencies
  */
 import { assert } from 'chai';
-import { findIndex, isUndefined, some } from 'lodash';
+import { findIndex, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -202,7 +202,7 @@ describe( 'Users Store', () => {
 		test( 'There should be no undefined objects in user array after deleting a user', () => {
 			Dispatcher.handleServerAction( actions.deleteUser );
 			const users = UsersStore.getUsers( options );
-			const someUndefined = some( users, isUndefined );
+			const someUndefined = some( users, ( user ) => typeof user === 'undefined' );
 			assert.isFalse( someUndefined );
 		} );
 	} );

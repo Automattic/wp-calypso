@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, isUndefined } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -76,7 +76,7 @@ export function processItem( item ) {
 		item.stream_count && { streamCount: item.stream_count },
 		item.first_published && { firstPublishedDate: item.first_published },
 		item.last_published && { lastPublishedDate: item.last_published },
-		! isUndefined( item.streams_have_same_actor ) && {
+		typeof item.streams_have_same_actor !== 'undefined' && {
 			multipleActors: ! item.streams_have_same_actor,
 		}
 	);

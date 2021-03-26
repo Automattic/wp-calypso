@@ -5,7 +5,7 @@ import { isMobile } from '@automattic/viewport';
 import debugModule from 'debug';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { find, isUndefined } from 'lodash';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -152,7 +152,7 @@ const communityTranslatorJumpstart = {
 			return;
 		}
 
-		if ( ! isUndefined( isUserSettingsReady ) ) {
+		if ( typeof isUserSettingsReady !== 'undefined' ) {
 			_isUserSettingsReady = isUserSettingsReady;
 		}
 		if ( ! _isUserSettingsReady ) {

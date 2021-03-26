@@ -3,7 +3,6 @@
  */
 import {
 	filter,
-	isUndefined,
 	orderBy,
 	has,
 	map,
@@ -59,7 +58,8 @@ const updateComment = ( commentId, newProperties ) => ( comment ) => {
 	if ( comment.ID !== commentId ) {
 		return comment;
 	}
-	const updateLikeCount = has( newProperties, 'i_like' ) && isUndefined( newProperties.like_count );
+	const updateLikeCount =
+		has( newProperties, 'i_like' ) && typeof newProperties.like_count === 'undefined';
 
 	// Comment Management allows for modifying nested fields, such as `author.name` and `author.url`.
 	// Though, there is no direct match between the GET response (which feeds the state) and the POST request.
