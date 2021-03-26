@@ -9,12 +9,32 @@ import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 /**
  * Internal dependencies
  */
-import { createTransactionEndpointRequestPayloadFromLineItems } from './translate-cart';
+import {
+	createTransactionEndpointRequestPayload,
+	createTransactionEndpointCartFromResponseCart,
+} from './translate-cart';
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { ExistingCardTransactionRequestWithLineItems } from '../types/transaction-endpoint';
+import type { TransactionRequest } from '../types/transaction-endpoint';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
+
+type ExistingCardTransactionRequest = Omit<
+	Partial< TransactionRequest > &
+		Required<
+			Pick<
+				TransactionRequest,
+				| 'country'
+				| 'postalCode'
+				| 'name'
+				| 'storedDetailsId'
+				| 'siteId'
+				| 'paymentMethodToken'
+				| 'paymentPartnerProcessorId'
+			>
+		>,
+	'paymentMethodType'
+>;
 
 export default async function existingCardProcessor(
 	transactionData: unknown,
@@ -52,9 +72,13 @@ async function submitExistingCardPayment(
 	transactionOptions: PaymentProcessorOptions
 ) {
 	debug( 'formatting existing card transaction', transactionData );
-	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...transactionData,
-		couponId: transactionOptions.responseCart.coupon,
+		cart: createTransactionEndpointCartFromResponseCart( {
+			siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
+			contactDetails: transactionData.domainDetails ?? null,
+			responseCart: transactionOptions.responseCart,
+		} ),
 		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
 	} );
 	debug( 'submitting existing card transaction', formattedTransactionData );
@@ -62,18 +86,10 @@ async function submitExistingCardPayment(
 	return submitWpcomTransaction( formattedTransactionData, transactionOptions );
 }
 
-type ExistingCardTransactionRequest = Omit<
-	ExistingCardTransactionRequestWithLineItems,
-	'paymentMethodType'
->;
-
 function isValidTransactionData(
 	submitData: unknown
 ): submitData is ExistingCardTransactionRequest {
 	const data = submitData as ExistingCardTransactionRequest;
-	if ( ! ( data?.items?.length > 0 ) ) {
-		throw new Error( 'Transaction requires items and none were provided' );
-	}
 	// Validate data required for this payment method type. Some other data may
 	// be required by the server but not required here since the server will give
 	// a better localized error message than we can provide.
