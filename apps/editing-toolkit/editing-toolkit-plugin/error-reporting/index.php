@@ -24,14 +24,19 @@ function head_error_handler() {
 		window.addEventListener('error', window._headJsErrorHandler );
 
 		throw new Error('KABOOOOM');
-		throw new Error('KABOOOOM1');
-		throw new Error('KABOOOOM2');
-		throw new Error('KABOOOOM3');
-		throw new Error('KABOOOOM4');
-		throw new Error('KABOOOOM5');
-	</script><?php
+	</script>
+	<script crossorigin="anonymous" src="https://s0.wp.com/wp-content/plugins/corserror-head.js"></script>
+	<?php
 }
-add_action( "admin_print_scripts",  __NAMESPACE__ . '\head_error_handler');
+add_action( 'admin_print_scripts', __NAMESPACE__ . '\head_error_handler' );
+
+function add_crossorigin_to_script_els( $tag ) {
+	if ( preg_match( '/<script\s.*src.*>/', $tag ) ) {
+		return str_replace( ' src', " crossorigin='anonymous' src", $tag );
+	};
+	return $tag;
+}
+add_filter( 'script_loader_tag', __NAMESPACE__ . '\add_crossorigin_to_script_els', 99, 2 );
 
 /**
  * Enqueue assets
@@ -48,19 +53,14 @@ function enqueue_script() {
 		$script_version,
 		true
 	);
+
+	// Test cors error after the main handler loaded and the head handler has been deleted. Test code, delete later.
+	wp_enqueue_script(
+		'cors-script-test',
+		plugins_url( 'corserror-main.js' ),
+		array(),
+		'1',
+		true
+	);
 }
 add_action( 'init', __NAMESPACE__ . '\enqueue_script', -1000 );
-
-
-/*wp_register_script(
-	'a8c-fse-error-reporting-script',
-	plugins_url( 'dist/error-reporting.js', __FILE__ ),
-	$script_dependencies,
-	$script_version,
-	true
-);
-array_unshift(wp_scripts()->queue, 'a8c-fse-error-reporting-script');*/
-
-
-
-//add_action( 'admin_head', __NAMESPACE__ . '\enqueue_script', 0 );
