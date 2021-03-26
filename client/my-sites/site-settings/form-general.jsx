@@ -578,9 +578,9 @@ export class SiteSettingsFormGeneral extends Component {
 			handleSubmitForm,
 			isRequestingSettings,
 			isSavingSettings,
-			isUnlaunchedSite,
 			site,
 			siteIsJetpack,
+			siteIsUnlaunched,
 			siteIsVip,
 			siteSlug,
 			translate,
@@ -613,7 +613,7 @@ export class SiteSettingsFormGeneral extends Component {
 					</form>
 				</Card>
 
-				{ isUnlaunchedSite ? this.renderLaunchSite() : this.privacySettings() }
+				{ siteIsUnlaunched ? this.renderLaunchSite() : this.privacySettings() }
 
 				{ ! isWPForTeamsSite && ! siteIsJetpack && (
 					<div className="site-settings__footer-credit-container">
@@ -674,7 +674,7 @@ const connectComponent = connect(
 		const selectedSite = getSelectedSite( state );
 
 		return {
-			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
+			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 			isComingSoon: isSiteComingSoon( state, siteId ),
 			siteIsJetpack,
 			siteIsVip: isVipSite( state, siteId ),
