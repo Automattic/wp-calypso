@@ -241,17 +241,10 @@ function setFieldErrors( formState, fieldErrors, hideFieldErrorsOnChange ) {
 	);
 }
 
-function getDefaultFieldState() {
-	return {
-		isShowingErrors: true,
-	};
-}
-
 function showAllErrors( formState ) {
-	return updateFields(
-		initializeFields( formState, getAllFieldValues( formState ) ),
-		getDefaultFieldState
-	);
+	return updateFields( initializeFields( formState, getAllFieldValues( formState ) ), () => ( {
+		isShowingErrors: true,
+	} ) );
 }
 
 function hasErrors( formState ) {
