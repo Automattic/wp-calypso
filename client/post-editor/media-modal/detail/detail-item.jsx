@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { flowRight, get, includes } from 'lodash';
+import { flowRight, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import url from 'url';
 import Gridicon from 'calypso/components/gridicon';
@@ -23,13 +23,10 @@ import EditorMediaModalDetailPreviewAudio from './detail-preview-audio';
 import EditorMediaModalDetailPreviewDocument from './detail-preview-document';
 import { Button, ScreenReaderText } from '@automattic/components';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import versionCompare from 'calypso/lib/version-compare';
 import { getMimePrefix, isItemBeingUploaded, isVideoPressItem } from 'calypso/lib/media/utils';
-import config from '@automattic/calypso-config';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'calypso/state/sites/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
 
 const noop = () => {};
 
@@ -75,43 +72,6 @@ export class EditorMediaModalDetailItem extends Component {
 			}
 			// WP.com and VideoPress disabled
 		} else if ( ! isVideoPressEnabled ) {
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * This function returns true if the image editor can be
-	 * enabled/shown
-	 *
-	 * @param  {object} item - media item
-	 * @param  {object} site - current site
-	 * @returns {boolean} `true` if the image-editor can be enabled.
-	 */
-	shouldShowImageEditingButtons( item, site ) {
-		const { isSitePrivate } = this.props;
-
-		// do not allow if, for some reason, there isn't a valid item yet
-		if ( ! item ) {
-			return false;
-		}
-
-		// do not show if the feature flag isn't set
-		if ( ! config.isEnabled( 'post-editor/image-editor' ) ) {
-			return false;
-		}
-
-		// do not allow for private sites
-		if ( isSitePrivate ) {
-			return false;
-		}
-
-		// do not allow for Jetpack site with a non-valid version
-		if (
-			get( site, 'jetpack', false ) &&
-			versionCompare( get( site, 'options.jetpack_version', '0.0' ), '4.7-alpha', '<' )
-		) {
 			return false;
 		}
 
@@ -186,12 +146,6 @@ export class EditorMediaModalDetailItem extends Component {
 	}
 
 	renderImageEditorButtons( classname ) {
-		const { item, site } = this.props;
-
-		if ( ! this.shouldShowImageEditingButtons( item, site ) ) {
-			return null;
-		}
-
 		const classes = classNames( 'editor-media-modal-detail__edition-bar', classname );
 
 		return (
@@ -326,7 +280,6 @@ const connectComponent = connect( ( state ) => {
 		isJetpack: isJetpackSite( state, siteId ),
 		isVideoPressEnabled: getSiteOption( state, siteId, 'videopress_enabled' ),
 		isVideoPressModuleActive: isJetpackModuleActive( state, siteId, 'videopress' ),
-		isSitePrivate: isPrivateSite( state, siteId ),
 		siteId,
 		canUserUploadFiles,
 	};

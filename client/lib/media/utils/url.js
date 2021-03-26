@@ -1,21 +1,16 @@
 /**
- * External dependencies
- */
-import photon from 'photon';
-
-/**
  * Internal dependencies
  */
 import resize from 'calypso/lib/resize-image-url';
 
 /**
  * Given a media object, returns a URL string to that media. Accepts
- * optional options to specify photon usage or a maximum image width.
+ * optional options to specify resize spec or a maximum image width.
  *
  * @param  {object} media   Media object
- * @param  {object} options Optional options, accepting a `photon` boolean,
- *                          `maxWidth` pixel value, `resize` string, or `size`.
- * @returns {string}         URL to the media
+ * @param  {object} options Optional options, accepting a `maxWidth` pixel value,
+                            `resize` string, or `size`.
+ * @returns {string}        URL to the media
  */
 export function url( media, options ) {
 	if ( ! media ) {
@@ -33,17 +28,6 @@ export function url( media, options ) {
 	}
 
 	options = options || {};
-
-	if ( options.photon ) {
-		if ( options.maxWidth ) {
-			return photon( media.URL, { width: options.maxWidth } );
-		}
-		if ( options.resize ) {
-			return photon( media.URL, { resize: options.resize } );
-		}
-
-		return photon( media.URL );
-	}
 
 	if ( media.thumbnails && options.size in media.thumbnails ) {
 		return media.thumbnails[ options.size ];

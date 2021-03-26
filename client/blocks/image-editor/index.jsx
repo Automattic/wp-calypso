@@ -108,19 +108,13 @@ class ImageEditor extends React.Component {
 	};
 
 	updateFileInfo = ( media ) => {
-		const { site } = this.props;
-
 		let src;
 		let fileName = 'default';
 		let mimeType = 'image/png';
 		let title = 'default';
 
 		if ( media ) {
-			src =
-				media.src ||
-				url( media, {
-					photon: site && ! site.is_private,
-				} );
+			src = media.src || url( media );
 
 			fileName = media.file || path.basename( src );
 
@@ -216,11 +210,7 @@ class ImageEditor extends React.Component {
 		} );
 	};
 
-	renderNotice = () => {
-		if ( ! this.state.noticeText ) {
-			return null;
-		}
-
+	renderNotice() {
 		const showDismiss = this.state.noticeStatus === 'is-info';
 
 		return (
@@ -233,7 +223,7 @@ class ImageEditor extends React.Component {
 				className="image-editor__notice"
 			/>
 		);
-	};
+	}
 
 	onLoadCanvasError = () => {
 		const { translate } = this.props;
