@@ -52,7 +52,7 @@
 
 	&:hover,
 	&:focus {
-		background: var( --color-primary-0 );
+		background-color: var( --color-primary-0 );
 	}
 
 	&:active {
@@ -80,7 +80,7 @@
 
 	&:hover,
 	&:focus {
-		background: var( --color-primary-60 );
+		background-color: var( --color-primary-60 );
 		border-color: var( --color-primary-60 );
 	}
 
@@ -103,7 +103,7 @@
 
 	&:hover,
 	&:focus {
-		background: var( --color-scary-0 );
+		background-color: var( --color-scary-0 );
 	}
 
 	&:active {
@@ -126,7 +126,7 @@
 
 	&:hover,
 	&:focus {
-		background: var( --color-scary-40 );
+		background-color: var( --color-scary-40 );
 		border-color: var( --color-scary-40 );
 	}
 
