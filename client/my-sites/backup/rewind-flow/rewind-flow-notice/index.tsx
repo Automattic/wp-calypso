@@ -15,7 +15,7 @@ enum RewindFlowNoticeLevel {
 }
 
 interface Props {
-	gridicon: string;
+	gridicon?: string;
 	link?: string;
 	message?: i18nCalypso.TranslateResult;
 	title: i18nCalypso.TranslateResult;
@@ -43,14 +43,14 @@ const RewindFlowNotice: FunctionComponent< Props > = ( {
 
 	const renderLink = () => (
 		<a className={ getTitleClassName() } href={ link } target="_blank" rel="noopener noreferrer">
-			<Gridicon icon={ gridicon } />
+			{ gridicon && <Gridicon icon={ gridicon } /> }
 			{ title }
 		</a>
 	);
 
 	const renderNonLink = () => (
 		<div className={ getTitleClassName() }>
-			<Gridicon icon={ gridicon } />
+			{ gridicon && <Gridicon icon={ gridicon } /> }
 			<h4>{ title }</h4>
 		</div>
 	);

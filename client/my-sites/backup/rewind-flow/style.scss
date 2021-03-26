@@ -206,14 +206,19 @@ a.rewind-flow-notice__title-warning:visited {
 	}
 }
 
+.jetpack-review-prompt__header {
+	display: flex;
+	justify-content: space-between;
+}
+
 .jetpack-review-prompt__button-row {
 	display: flex;
 
 	.gridicon {
-		margin-right: 6px;
+		margin-left: 6px;
 	}
 
-	:not( :first-child ) {
-		margin-left: 12px;
+	:first-child {
+		padding-left: 0;
 	}
 }

@@ -58,10 +58,12 @@ const JetpackReviewPrompt: FunctionComponent = () => {
 					<div className="jetpack-review-prompt">
 						<div className="jetpack-review-prompt__header">
 							<RewindFlowNotice
-								gridicon="star"
 								type={ RewindFlowNoticeLevel.REMINDER }
-								title={ translate( 'Had an easy restore experience?' ) }
+								title={ translate(
+									'Was it easy to restore your site? Please leave a review and help us spread the word!'
+								) }
 							/>
+							<Gridicon icon="cross" size={ 24 } onClick={ dismissPrompt } />
 						</div>
 						<div className="jetpack-review-prompt__button-row">
 							<Button
@@ -69,12 +71,8 @@ const JetpackReviewPrompt: FunctionComponent = () => {
 								target="_blank"
 								onClick={ dismissPromptAsReviewed }
 							>
+								{ translate( 'Leave a review' ) }
 								<Gridicon icon="external" />
-								{ translate( 'Leave Jetpack a review' ) }
-							</Button>
-							<Button onClick={ dismissPrompt }>
-								<Gridicon icon="cross" />
-								{ translate( 'No thanks' ) }
 							</Button>
 						</div>
 					</div>
