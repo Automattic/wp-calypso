@@ -255,9 +255,10 @@ function load_block_patterns_from_api( $current_screen ) {
 		return;
 	}
 
-	$pattern_sources = [ 'block_patterns' ];
+	$pattern_sources = array( 'block_patterns' );
 
-	if ( $is_site_editor ) {
+	// While we're still testing the FSE patterns, limit activation via a filter.
+	if ( $is_site_editor && apply_filters( 'a8c_enable_fse_block_patterns_api', false ) ) {
 		$pattern_sources[] = 'fse_block_patterns';
 	}
 

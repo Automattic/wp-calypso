@@ -31,11 +31,11 @@ class Block_Patterns_From_API {
 	/**
 	 * Block_Patterns constructor.
 	 *
-	 * @param array $pattern_sources A array of strings, each of which matches a valid source for retrieving patterns.
+	 * @param array $patterns_sources A array of strings, each of which matches a valid source for retrieving patterns.
 	 */
 	private function __construct( $patterns_sources ) {
 		// Tells the backend which patterns source site to default to.
-		$this->patterns_sources = empty( array_diff( $patterns_sources, $this->valid_patterns_sources ) ) ? $patterns_sources : [ 'block_patterns' ];
+		$this->patterns_sources = empty( array_diff( $patterns_sources, $this->valid_patterns_sources ) ) ? $patterns_sources : array( 'block_patterns' );
 
 		$this->register_patterns();
 	}
@@ -43,7 +43,7 @@ class Block_Patterns_From_API {
 	/**
 	 * Creates instance.
 	 *
-	 * @param  array $pattern_sources    A array of strings, each of which matches a valid source for retrieving patterns.
+	 * @param  array $patterns_sources A array of strings, each of which matches a valid source for retrieving patterns.
 	 * @return \A8C\FSE\Block_Patterns
 	 */
 	public static function get_instance( $patterns_sources ) {
@@ -67,8 +67,8 @@ class Block_Patterns_From_API {
 			}
 		}
 
-		// For every pattern source site, fetch the patterns
-		foreach( $this->patterns_sources as $patterns_source ) {
+		// For every pattern source site, fetch the patterns.
+		foreach ( $this->patterns_sources as $patterns_source ) {
 			$patterns_cache_key = sha1(
 				implode(
 					'_',
@@ -146,8 +146,9 @@ class Block_Patterns_From_API {
 
 	/**
 	 * Returns a list of patterns.
-	 * @param  string $patterns_cache_key Key to store responses to and fetch responses from cache.
-	 * @param  string $patterns_source    Slug for valid patterns source site, e.g., `block_patterns`
+	 *
+	 * @param string $patterns_cache_key Key to store responses to and fetch responses from cache.
+	 * @param string $patterns_source    Slug for valid patterns source site, e.g., `block_patterns`.
 	 * @return array                      The list of translated patterns.
 	 */
 	private function get_patterns( $patterns_cache_key, $patterns_source ) {
