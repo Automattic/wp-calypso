@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { isInteger } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { MinimumImageDimensions } from 'calypso/state/editor/image-editor/constants';
@@ -13,8 +8,8 @@ import getImageEditorOriginalAspectRatio from 'calypso/state/selectors/get-image
  * Returns whether the original image size is greater than minimumImageDimensions values.
  *
  * @param  {object}  state Global state tree
- * @param   {Integer} minimumWidth the minimum width of the image
- * @param   {Integer} minimumHeight the minimum height of the image
+ * @param   {number} minimumWidth the minimum width of the image
+ * @param   {number} minimumHeight the minimum height of the image
  * @returns {boolean} whether dimensions of the image meet the minimum dimension requirements
  */
 export default function getImageEditorIsGreaterThanMinimumDimensions(
@@ -28,8 +23,8 @@ export default function getImageEditorIsGreaterThanMinimumDimensions(
 		const { width, height } = originalAspectRatio;
 
 		if (
-			isInteger( width ) &&
-			isInteger( height ) &&
+			Number.isInteger( width ) &&
+			Number.isInteger( height ) &&
 			width > minimumWidth &&
 			height > minimumHeight
 		) {
