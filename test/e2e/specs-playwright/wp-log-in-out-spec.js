@@ -2,14 +2,16 @@
  * External dependencies
  */
 import config from 'config';
+import { BrowserManager } from '@automattic/calypso-e2e';
 
 /**
  * Internal dependencies
  */
-import * as browserManager from '../dist/lib/browser-manager';
-
 import LoginPage from '../lib/pages/login-page';
 
+/**
+ * Constants
+ */
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 
 describe( `Auth Screen @canary @parallel`, function () {
@@ -22,7 +24,7 @@ describe( `Auth Screen @canary @parallel`, function () {
 	let page;
 
 	before( 'Start browser', async function () {
-		browserContext = await browserManager.newBrowserContext();
+		browserContext = await BrowserManager.newBrowserContext();
 	} );
 
 	beforeEach( 'Open new test tab', async function () {
@@ -35,7 +37,7 @@ describe( `Auth Screen @canary @parallel`, function () {
 	describe( 'Loading the log-in page', function () {
 		step( 'Can see the log in page', async function () {
 			const url = LoginPage.getLoginURL();
-			/* 
+			/*
 			Waits for network activity to cease.
 			Only as a proof of concept. In a production test, should check
 			for the presence of desired elements using a selector.
@@ -45,6 +47,6 @@ describe( `Auth Screen @canary @parallel`, function () {
 	} );
 
 	after( 'close browser', function () {
-		browserManager.quitBrowser();
+		BrowserManager.quitBrowser();
 	} );
 } );
