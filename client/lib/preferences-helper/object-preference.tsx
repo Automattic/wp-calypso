@@ -35,12 +35,13 @@ const ObjectPreference: FunctionComponent< Props > = ( { name, value } ) => {
 
 	return (
 		<ul className="preferences-helper__list">
-			{ Object.keys( value ).map( ( property ) => (
-				<li key={ property }>
-					<span>{ property }</span>
-					{ renderProperty( property, value[ property ] ) }
-				</li>
-			) ) }
+			{ value &&
+				Object.keys( value ).map( ( property ) => (
+					<li key={ property }>
+						<span>{ property }</span>
+						{ renderProperty( property, value[ property ] ) }
+					</li>
+				) ) }
 		</ul>
 	);
 };
