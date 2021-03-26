@@ -37,6 +37,7 @@ import SectionHeader from 'calypso/components/section-header';
 import { Card } from '@automattic/components';
 import EmailListActive from 'calypso/my-sites/email/email-management/home/email-list-active';
 import EmailListInactive from 'calypso/my-sites/email/email-management/home/email-list-inactive';
+import EmailPlanView from 'calypso/my-sites/email/email-management/home/email-plan-view';
 
 /**
  * Style dependencies
@@ -92,7 +93,9 @@ class EmailManagementHome extends React.Component {
 					/>
 				);
 			}
-			return this.renderContentWithHeader( <div>single domain email management</div> );
+			return this.renderContentWithHeader(
+				<EmailPlanView selectedSite={ selectedSite } domain={ selectedDomain } />
+			);
 		}
 
 		const domainsWithEmail = nonWpcomDomains.filter( domainHasEmail );

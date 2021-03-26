@@ -8,14 +8,12 @@ import { CompactCard } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
-import emailForwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { getGSuiteMailboxCount, hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
-import Gridicon from 'calypso/components/gridicon';
 import SectionHeader from 'calypso/components/section-header';
 import { emailManagement } from 'calypso/my-sites/email/paths';
+import EmailTypeIcon from 'calypso/my-sites/email/email-management/home/email-type-icon';
 
 class EmailListActive extends React.Component {
 	getMailboxCount( domain ) {
@@ -34,24 +32,6 @@ class EmailListActive extends React.Component {
 		return 0;
 	}
 
-	getHeaderImage( domain ) {
-		const { translate } = this.props;
-
-		if ( hasTitanMailWithUs( domain ) ) {
-			return <Gridicon icon="my-sites" size={ 36 } />;
-		}
-
-		if ( hasGSuiteWithUs( domain ) ) {
-			return <img src={ googleWorkspaceIcon } alt={ translate( 'Google Workspace icon' ) } />;
-		}
-
-		if ( hasEmailForwards( domain ) ) {
-			return <img src={ emailForwardingIcon } alt={ translate( 'Email Forwarding icon' ) } />;
-		}
-
-		return null;
-	}
-
 	render() {
 		const { selectedSiteSlug, currentRoute, domains, translate } = this.props;
 
@@ -67,10 +47,19 @@ class EmailListActive extends React.Component {
 					href={ emailManagement( selectedSiteSlug, domain.name, currentRoute ) }
 					key={ `${ domain.name }-row` }
 				>
-					<span className="email-list-active__item-icon">{ this.getHeaderImage( domain ) }</span>
+					<span className="email-list-active__item-icon">
+						<EmailTypeIcon domain={ domain } />
+					</span>
 					<div>
 						<h2>@{ domain.name }</h2>
-						<span>{ this.getMailboxCount( domain ) }</span>
+						<span>
+							{ translate( '%(count)d mailbox', '%(count)d mailboxes', {
+								count: this.getMailboxCount( domain ),
+								args: {
+									count: this.getMailboxCount( domain ),
+								},
+							} ) }
+						</span>
 					</div>
 				</CompactCard>
 			);

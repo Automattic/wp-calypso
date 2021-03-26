@@ -41,6 +41,14 @@
 	> .card {
 		display: flex;
 		align-items: center;
+		color: var( --color-text );
+		> div > span {
+			font-size: $font-body-small;
+			color: var( --color-text-subtle );
+		}
+	}
+	> .card.is-card-link:hover {
+		background-color: var( --color-neutral-0 );
 	}
 }
 
@@ -48,10 +56,38 @@
 	> img, svg {
 		height: 36px;
 		width: 36px;
-		margin-right: 10px;
+		margin-right: 20px;
+	}
+	> .gridicon.titan {
+		fill: var( --color-wordpress-com );
 	}
 }
 
 .email-list-inactive__items {
 	margin-top: 15px;
+}
+
+.email-plan-view__general {
+	display: flex;
+	align-items: center;
+	h2 {
+		font-size: $font-title-large;
+	}
+}
+
+.email-plan-view__general-icon {
+	> img, svg {
+		height: 36px;
+		width: 36px;
+		margin-right: 20px;
+	}
+}
+
+.email-plan-view__mailbox-list {
+	margin-top: 15px;
+}
+
+.email-plan-view__mailbox-list-item {
+	display: flex;
+	align-items: center;
 }
