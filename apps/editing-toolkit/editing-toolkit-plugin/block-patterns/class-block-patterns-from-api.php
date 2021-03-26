@@ -34,11 +34,9 @@ class Block_Patterns_From_API {
 	 * Block_Patterns constructor.
 	 *
 	 * @param array                $patterns_sources A array of strings, each of which matches a valid source for retrieving patterns.
-	 * @param Block_Patterns_Utils                   A class dependency containing utils methods.
+	 * @param Block_Patterns_Utils $utils            A class dependency containing utils methods.
 	 */
-	private function __construct( $patterns_sources, Block_Patterns_Utils $utils = null ) {
-		$patterns_sources = empty( $patterns_sources ) ? array( 'block_patterns' ) : $patterns_sources;
-
+	public function __construct( $patterns_sources = array(), Block_Patterns_Utils $utils = null ) {
 		// Tells the backend which patterns source site to default to.
 		$this->patterns_sources = empty( array_diff( $patterns_sources, $this->valid_patterns_sources ) ) ? $patterns_sources : array( 'block_patterns' );
 
