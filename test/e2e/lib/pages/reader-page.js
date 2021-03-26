@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { By as by } from 'selenium-webdriver';
+// eslint-disable-next-line no-restricted-imports
 import URL from 'url';
 
 /**
