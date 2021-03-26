@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
+import i18nCalypso, { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
 
@@ -55,7 +55,7 @@ class PurchaseItem extends Component {
 	}
 
 	getStatus() {
-		const { purchase, translate, moment, name, isJetpack, isDisconnectedSite } = this.props;
+		const { purchase, translate, locale, moment, name, isJetpack, isDisconnectedSite } = this.props;
 		const expiry = moment( purchase.expiryDate );
 
 		if ( purchase && isPartnerPurchase( purchase ) ) {
@@ -103,34 +103,50 @@ class PurchaseItem extends Component {
 		}
 
 		if ( isWithinIntroductoryOfferPeriod( purchase ) && isIntroductoryOfferFreeTrial( purchase ) ) {
-			if ( isRenewing( purchase ) ) {
-				return translate( 'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically', {
-					args: {
-						date: expiry.format( 'LL' ),
-					},
-					components: {
-						span: <span className="purchase-item__date" />,
-					},
-				} );
-			}
-			const expiryClass =
-				expiry < moment().add( 7, 'days' )
-					? 'purchase-item__is-error'
-					: 'purchase-item__is-warning';
-
-			return (
-				<span className={ expiryClass }>
-					{ translate( 'Free trial ends on {{span}}%(date)s{{/span}}', {
+			if (
+				isRenewing( purchase ) &&
+				( locale === 'en' ||
+					i18nCalypso.hasTranslation(
+						'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s'
+					) )
+			) {
+				return translate(
+					'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s',
+					{
 						args: {
 							date: expiry.format( 'LL' ),
+							amount: purchase.priceText,
 						},
 						components: {
 							span: <span className="purchase-item__date" />,
 						},
-					} ) }
-					{ this.trackImpression( 'purchase-expiring' ) }
-				</span>
-			);
+					}
+				);
+			}
+
+			if (
+				locale === 'en' ||
+				i18nCalypso.hasTranslation( 'Free trial ends on {{span}}%(date)s{{/span}}' )
+			) {
+				const expiryClass =
+					expiry < moment().add( 7, 'days' )
+						? 'purchase-item__is-error'
+						: 'purchase-item__is-warning';
+
+				return (
+					<span className={ expiryClass }>
+						{ translate( 'Free trial ends on {{span}}%(date)s{{/span}}', {
+							args: {
+								date: expiry.format( 'LL' ),
+							},
+							components: {
+								span: <span className="purchase-item__date" />,
+							},
+						} ) }
+						{ this.trackImpression( 'purchase-expiring' ) }
+					</span>
+				);
+			}
 		}
 
 		if ( isRenewing( purchase ) && purchase.renewDate ) {
