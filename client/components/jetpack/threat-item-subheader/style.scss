@@ -17,7 +17,7 @@
 		white-space: nowrap;
 
 		&.is-fixed {
-			color: var( --studio-jetpack-green-40 );
+			color: var( --color-success-50 );
 		}
 	}
 
@@ -46,7 +46,7 @@
 		color: #fff;
 
 		&.is-fixed {
-			background-color: var( --studio-jetpack-green-40 );
+			background-color: var( --color-success-50 );
 		}
 
 		&.is-ignored {
@@ -56,8 +56,8 @@
 		&.is-auto-fix {
 			margin-top: 0px;
 			margin-left: 4px;
-			color: var( --studio-jetpack-green-40 );
-			background-color: var( --studio-jetpack-green-0 );
+			color: var( --color-success-50 );
+			background-color: var( --color-success-0 );
 			position: relative;
 			top: -1px;
 		}

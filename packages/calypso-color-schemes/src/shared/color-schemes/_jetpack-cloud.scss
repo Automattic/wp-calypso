@@ -1,7 +1,7 @@
 .theme-jetpack-cloud,
 .color-scheme.is-jetpack-cloud {
 	/* Theme Properties */
-	--color-primary: var( --studio-jetpack-green );
+	--color-primary: var( --studio-jetpack-green-50 );
 	--color-primary-rgb: var( --studio-jetpack-green-rgb );
 	--color-primary-dark: var( --studio-jetpack-green-70 );
 	--color-primary-dark-rgb: var( --studio-jetpack-green-70-rgb );
@@ -67,10 +67,10 @@
 	/* Theme Properties */
 	--color-link: var( --studio-jetpack-green-50 );
 	--color-link-rgb: var( --studio-jetpack-green-50-rgb );
-	--color-link-dark: var( --studio-jetpack-green-60 );
-	--color-link-dark-rgb: var( --studio-jetpack-green-60-rgb );
-	--color-link-light: var( --studio-jetpack-green-20 );
-	--color-link-light-rgb: var( --studio-jetpack-green-20-rgb );
+	--color-link-dark: var( --studio-jetpack-green-70 );
+	--color-link-dark-rgb: var( --studio-jetpack-green-70-rgb );
+	--color-link-light: var( --studio-jetpack-green-30 );
+	--color-link-light-rgb: var( --studio-jetpack-green-30-rgb );
 	--color-link-0: var( --studio-jetpack-green-0 );
 	--color-link-0-rgb: var( --studio-jetpack-green-0-rgb );
 	--color-link-5: var( --studio-jetpack-green-5 );
