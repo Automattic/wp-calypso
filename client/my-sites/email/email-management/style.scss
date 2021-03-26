@@ -65,6 +65,13 @@
 
 .email-list-inactive__items {
 	margin-top: 15px;
+	> .card {
+		display: flex;
+		align-items: center;
+		> span {
+			flex: 1 1 auto;
+		}
+	}
 }
 
 .email-plan-view__general {
