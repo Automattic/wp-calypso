@@ -51,6 +51,7 @@ import { deserialize } from 'calypso/state/utils';
 import middlewareBuildTarget from '../middleware/build-target.js';
 import middlewareAssets from '../middleware/assets.js';
 import middlewareCache from '../middleware/cache.js';
+import { PRICING_NEW_SECTION_DEFINITION } from 'calypso/landing/pricing-new/section';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -719,6 +720,8 @@ export default function pages() {
 				section.load().default( serverRouter( app, setUpRoute, section ) );
 			}
 		} );
+
+	handleSectionPath( PRICING_NEW_SECTION_DEFINITION, '/pricing-new', 'entry-pricing-new' );
 
 	// Set up login routing.
 	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );

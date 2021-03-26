@@ -165,6 +165,7 @@ const webpackConfig = {
 		'entry-domains-landing': [ path.join( __dirname, 'landing', 'domains' ) ],
 		'entry-login': [ path.join( __dirname, 'landing', 'login' ) ],
 		'entry-gutenboarding': [ path.join( __dirname, 'landing', 'gutenboarding' ) ],
+		'entry-pricing-new': [ path.join( __dirname, 'landing', 'pricing-new' ) ],
 	} ),
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: process.env.SOURCEMAP || ( isDevelopment ? 'eval' : false ),
