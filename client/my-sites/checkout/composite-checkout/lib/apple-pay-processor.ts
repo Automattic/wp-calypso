@@ -2,7 +2,11 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { defaultRegistry, makeSuccessResponse } from '@automattic/composite-checkout';
+import {
+	defaultRegistry,
+	makeSuccessResponse,
+	makeErrorResponse,
+} from '@automattic/composite-checkout';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
 
@@ -18,10 +22,6 @@ import {
 } from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { ManagedContactDetails } from '../types/wpcom-store-state';
-import type {
-	TransactionRequest,
-	WPCOMTransactionEndpointResponse,
-} from '../types/transaction-endpoint';
 
 const { select } = defaultRegistry;
 const debug = debugFactory( 'calypso:composite-checkout:apple-pay-processor' );
@@ -32,11 +32,6 @@ type ApplePayTransactionRequest = {
 	paymentMethodToken: string;
 	name: string | undefined;
 };
-
-type ApplePaySubmitData = Omit<
-	TransactionRequest,
-	'paymentMethodType' | 'paymentPartnerProcessorId' | 'cart'
->;
 
 export default async function applePayProcessor(
 	submitData: unknown,
@@ -52,37 +47,26 @@ export default async function applePayProcessor(
 		'wpcom'
 	)?.getContactInfo();
 
-	return submitApplePayPayment(
-		{
-			...submitData,
-			couponId: responseCart.coupon,
-			name: submitData.name || '',
-			siteId: siteId ? String( siteId ) : undefined,
-			country: managedContactDetails?.countryCode?.value ?? '',
-			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
-			postalCode: getPostalCode(),
-		},
-		transactionOptions
-	).then( makeSuccessResponse );
-}
-
-async function submitApplePayPayment(
-	transactionData: ApplePaySubmitData,
-	transactionOptions: PaymentProcessorOptions
-): Promise< WPCOMTransactionEndpointResponse > {
-	debug( 'formatting apple-pay transaction', transactionData );
+	debug( 'formatting apple-pay transaction', submitData );
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
-		...transactionData,
+		...submitData,
+		couponId: responseCart.coupon,
+		name: submitData.name || '',
+		siteId: siteId ? String( siteId ) : undefined,
+		country: managedContactDetails?.countryCode?.value ?? '',
+		postalCode: getPostalCode(),
 		cart: createTransactionEndpointCartFromResponseCart( {
 			siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
-			contactDetails: transactionData.domainDetails ?? null,
+			contactDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ) ?? null,
 			responseCart: transactionOptions.responseCart,
 		} ),
 		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
 		paymentPartnerProcessorId: transactionOptions.stripeConfiguration?.processor_id,
 	} );
 	debug( 'submitting apple-pay transaction', formattedTransactionData );
-	return submitWpcomTransaction( formattedTransactionData, transactionOptions );
+	return submitWpcomTransaction( formattedTransactionData, transactionOptions )
+		.then( makeSuccessResponse )
+		.catch( ( error ) => makeErrorResponse( error.message ) );
 }
 
 function isValidApplePayTransactionData(
