@@ -263,6 +263,7 @@ const getPlanEcommerceDetails = () => ( {
 	getHiddenFeatures: () => [
 		constants.FEATURE_AUDIO_UPLOADS,
 		constants.FEATURE_GOOGLE_MY_BUSINESS,
+		constants.FEATURE_CLOUDFLARE_ANALYTICS,
 		constants.FEATURE_UPLOAD_THEMES_PLUGINS,
 		constants.FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 		constants.FEATURE_SEO_PREVIEW_TOOLS,
@@ -347,7 +348,10 @@ const getPlanPremiumDetails = () => ( {
 		constants.FEATURE_GOOGLE_ANALYTICS,
 	],
 	// Features not displayed but used for checking plan abilities
-	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
+	getHiddenFeatures: () => [
+		constants.FEATURE_AUDIO_UPLOADS,
+		constants.FEATURE_CLOUDFLARE_ANALYTICS,
+	],
 	getInferiorHiddenFeatures: () => [],
 } );
 
@@ -445,6 +449,7 @@ const getPlanBusinessDetails = () => ( {
 	getHiddenFeatures: () => [
 		constants.FEATURE_AUDIO_UPLOADS,
 		constants.FEATURE_GOOGLE_MY_BUSINESS,
+		constants.FEATURE_CLOUDFLARE_ANALYTICS,
 		constants.FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 		constants.FEATURE_SEO_PREVIEW_TOOLS,
 	],
