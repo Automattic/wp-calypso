@@ -74,6 +74,7 @@ async function stripeCardProcessor(
 		includeGSuiteDetails,
 		recordEvent: onEvent,
 		responseCart,
+		siteId,
 	} = transactionOptions;
 
 	const managedContactDetails: ManagedContactDetails | undefined = select(
@@ -88,16 +89,15 @@ async function stripeCardProcessor(
 
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...submitData,
-		couponId: responseCart.coupon,
 		country: managedContactDetails?.countryCode?.value ?? '',
 		postalCode: getPostalCode(),
 		subdivisionCode: managedContactDetails?.state?.value,
 		siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
 		paymentMethodToken,
 		cart: createTransactionEndpointCartFromResponseCart( {
-			siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
+			siteId: siteId ? String( siteId ) : undefined,
 			contactDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ) ?? null,
-			responseCart: transactionOptions.responseCart,
+			responseCart: responseCart,
 		} ),
 		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
 		paymentPartnerProcessorId: transactionOptions.stripeConfiguration?.processor_id,
