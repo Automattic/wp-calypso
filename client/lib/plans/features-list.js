@@ -220,7 +220,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_CLOUDFLARE_ANALYTICS ]: {
 		getSlug: () => constants.FEATURE_CLOUDFLARE_ANALYTICS,
-		getTitle: () => i18n.translate( 'Cloudflare Analytics' ),
+		getTitle: () => i18n.translate( 'Cloudflare Web Analytics' ),
 	},
 
 	[ constants.FEATURE_EMAIL_SUPPORT_SIGNUP ]: {
