@@ -5,6 +5,7 @@ import {
 	defaultRegistry,
 	makeSuccessResponse,
 	makeRedirectResponse,
+	makeErrorResponse,
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { confirmStripePaymentIntent, createStripePaymentMethod } from '@automattic/calypso-stripe';
@@ -24,10 +25,6 @@ import {
 } from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { ManagedContactDetails } from '../types/wpcom-store-state';
-import type {
-	TransactionRequest,
-	WPCOMTransactionEndpointResponse,
-} from '../types/transaction-endpoint';
 
 const { select } = defaultRegistry;
 const debug = debugFactory( 'calypso:composite-checkout:multi-partner-card-processor' );
@@ -59,11 +56,6 @@ type EbanxCardTransactionRequest = {
 	document: string;
 };
 
-type SubmitCardTransactionData = Omit<
-	TransactionRequest,
-	'paymentMethodType' | 'paymentPartnerProcessorId' | 'cart'
->;
-
 type EbanxToken = {
 	deviceId: string;
 	token: string;
@@ -94,19 +86,24 @@ async function stripeCardProcessor(
 		postalCode: getPostalCode(),
 	} );
 
-	return submitStripeCardTransaction(
-		{
-			...submitData,
-			couponId: responseCart.coupon,
-			country: managedContactDetails?.countryCode?.value ?? '',
-			postalCode: getPostalCode(),
-			subdivisionCode: managedContactDetails?.state?.value,
+	const formattedTransactionData = createTransactionEndpointRequestPayload( {
+		...submitData,
+		couponId: responseCart.coupon,
+		country: managedContactDetails?.countryCode?.value ?? '',
+		postalCode: getPostalCode(),
+		subdivisionCode: managedContactDetails?.state?.value,
+		siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
+		paymentMethodToken,
+		cart: createTransactionEndpointCartFromResponseCart( {
 			siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
-			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
-			paymentMethodToken,
-		},
-		transactionOptions
-	)
+			contactDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ) ?? null,
+			responseCart: transactionOptions.responseCart,
+		} ),
+		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
+		paymentPartnerProcessorId: transactionOptions.stripeConfiguration?.processor_id,
+	} );
+	debug( 'sending stripe transaction', formattedTransactionData );
+	return submitWpcomTransaction( formattedTransactionData, transactionOptions )
 		.then( ( stripeResponse ) => {
 			if ( stripeResponse?.message?.payment_intent_client_secret ) {
 				// 3DS authentication required
@@ -123,6 +120,12 @@ async function stripeCardProcessor(
 				return makeRedirectResponse( stripeResponse.redirect_url );
 			}
 			return makeSuccessResponse( stripeResponse );
+		} )
+		.catch( ( error ) => {
+			debug( 'transaction failed' );
+			// Errors here are "expected" errors, meaning that they (hopefully) come
+			// from the endpoint and not from some bug in the frontend code.
+			return makeErrorResponse( error.message );
 		} );
 }
 
@@ -143,18 +146,29 @@ async function ebanxCardProcessor(
 		'expiration-date': submitData[ 'expiration-date' ],
 	} );
 
-	return submitEbanxCardTransaction(
-		{
-			...submitData,
-			couponId: responseCart.coupon,
-			country: submitData.countryCode,
-			siteId: siteId ? String( siteId ) : undefined,
-			deviceId: paymentMethodToken?.deviceId,
-			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
-			paymentMethodToken: paymentMethodToken.token,
-		},
-		transactionOptions
-	).then( makeSuccessResponse );
+	const formattedTransactionData = createTransactionEndpointRequestPayload( {
+		...submitData,
+		couponId: responseCart.coupon,
+		country: submitData.countryCode,
+		siteId: siteId ? String( siteId ) : undefined,
+		deviceId: paymentMethodToken?.deviceId,
+		paymentMethodToken: paymentMethodToken.token,
+		cart: createTransactionEndpointCartFromResponseCart( {
+			siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
+			contactDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ) ?? null,
+			responseCart: transactionOptions.responseCart,
+		} ),
+		paymentMethodType: 'WPCOM_Billing_Ebanx',
+	} );
+	debug( 'sending ebanx transaction', formattedTransactionData );
+	return submitWpcomTransaction( formattedTransactionData, transactionOptions )
+		.then( makeSuccessResponse )
+		.catch( ( error ) => {
+			debug( 'transaction failed' );
+			// Errors here are "expected" errors, meaning that they (hopefully) come
+			// from the endpoint and not from some bug in the frontend code.
+			return makeErrorResponse( error.message );
+		} );
 }
 
 export default async function multiPartnerCardProcessor(
@@ -207,25 +221,6 @@ function isValidEbanxCardTransactionData(
 	return true;
 }
 
-async function submitStripeCardTransaction(
-	transactionData: SubmitCardTransactionData,
-	transactionOptions: PaymentProcessorOptions
-): Promise< WPCOMTransactionEndpointResponse > {
-	const formattedTransactionData = createTransactionEndpointRequestPayload( {
-		...transactionData,
-		cart: createTransactionEndpointCartFromResponseCart( {
-			siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
-			contactDetails: transactionData.domainDetails ?? null,
-			responseCart: transactionOptions.responseCart,
-		} ),
-		paymentMethodToken: transactionData.paymentMethodToken,
-		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
-		paymentPartnerProcessorId: transactionOptions.stripeConfiguration?.processor_id,
-	} );
-	debug( 'sending stripe transaction', formattedTransactionData );
-	return submitWpcomTransaction( formattedTransactionData, transactionOptions );
-}
-
 function createStripePaymentMethodToken( {
 	stripe,
 	name,
@@ -244,22 +239,4 @@ function createStripePaymentMethodToken( {
 			postal_code: postalCode,
 		},
 	} );
-}
-
-async function submitEbanxCardTransaction(
-	transactionData: SubmitCardTransactionData,
-	transactionOptions: PaymentProcessorOptions
-): Promise< WPCOMTransactionEndpointResponse > {
-	const formattedTransactionData = createTransactionEndpointRequestPayload( {
-		...transactionData,
-		cart: createTransactionEndpointCartFromResponseCart( {
-			siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
-			contactDetails: transactionData.domainDetails ?? null,
-			responseCart: transactionOptions.responseCart,
-		} ),
-		paymentMethodToken: transactionData.paymentMethodToken,
-		paymentMethodType: 'WPCOM_Billing_Ebanx',
-	} );
-	debug( 'sending ebanx transaction', formattedTransactionData );
-	return submitWpcomTransaction( formattedTransactionData, transactionOptions );
 }
