@@ -50,15 +50,14 @@ export default async function applePayProcessor(
 	debug( 'formatting apple-pay transaction', submitData );
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...submitData,
-		couponId: responseCart.coupon,
 		name: submitData.name || '',
 		siteId: siteId ? String( siteId ) : undefined,
 		country: managedContactDetails?.countryCode?.value ?? '',
 		postalCode: getPostalCode(),
 		cart: createTransactionEndpointCartFromResponseCart( {
-			siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
+			siteId: siteId ? String( siteId ) : undefined,
 			contactDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ) ?? null,
-			responseCart: transactionOptions.responseCart,
+			responseCart: responseCart,
 		} ),
 		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
 		paymentPartnerProcessorId: transactionOptions.stripeConfiguration?.processor_id,
