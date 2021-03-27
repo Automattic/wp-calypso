@@ -218,6 +218,11 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Google Analytics' ),
 	},
 
+	[ constants.FEATURE_CLOUDFLARE_ANALYTICS ]: {
+		getSlug: () => constants.FEATURE_CLOUDFLARE_ANALYTICS,
+		getTitle: () => i18n.translate( 'Cloudflare Analytics' ),
+	},
+
 	[ constants.FEATURE_EMAIL_SUPPORT_SIGNUP ]: {
 		getSlug: () => constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
 		getTitle: () => i18n.translate( 'Unlimited email support' ),
