@@ -111,6 +111,22 @@ private object O2Blocks : BuildType({
 
 	params {
 		param("plugin_slug", "o2-blocks")
-		param("archive_dir", "./dist/")
+		param("archive_dir", "./release-files/")
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Create release directory"
+			scriptContent = """
+				cd apps/o2-blocks
+
+				# Copy existing dist files to release directory
+				mkdir release-files
+				cp -r dist release-files/dist
+
+				# Add index.php file
+				cp index.php release-files
+			"""
+		}
 	}
 })
