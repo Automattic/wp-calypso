@@ -15,6 +15,7 @@ import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import Banner from 'calypso/components/banner';
+import { FEATURE_CLOUDFLARE_ANALYTICS, PLAN_PREMIUM } from 'calypso/lib/plans/constants';
 
 const Cloudflare = () => {
 	const translate = useTranslate();
@@ -53,7 +54,8 @@ const Cloudflare = () => {
 					description={ translate(
 						'Get deeper insights into your site traffic and performance with Cloudflare Analytics.'
 					) }
-					customerType="business"
+					plan={ PLAN_PREMIUM }
+					feature={ FEATURE_CLOUDFLARE_ANALYTICS }
 					tracksImpressionName="calypso_stats_cloudflare_upsell_view"
 					event="calypso_stats_cloudflare_analytics_upsell_nudge_click"
 					tracksClickProperties={ { plan: sitePlan } }
