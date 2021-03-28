@@ -49,7 +49,7 @@ class EmailPlanSubscription extends React.Component {
 				siteDomain={ selectedSite.domain }
 				purchase={ purchase }
 				withTextStatus={ true }
-				toggleSource="registered-domain-status"
+				toggleSource="email-plan-view"
 			/>
 		);
 	}
