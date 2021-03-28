@@ -108,3 +108,30 @@
 		margin-left: 10px;
 	}
 }
+
+.email-plan-subscription__card {
+	display: flex;
+	align-items: center;
+
+	> div:nth-last-child( 2 ) {
+		margin-left: 15px;
+		flex: 1 1 auto;
+	}
+	> div:last-child {
+		margin-left: 15px;
+		/* vertically aligns the auto-renew toggle - not sure if there's a better way... */
+		> div > div {
+			margin-top: auto;
+			margin-bottom: auto;
+		}
+	}
+}
+
+.email-plan-subscription__placeholder {
+	div {
+		@include placeholder( --color-neutral-5 );
+		margin: 0 auto;
+		width: 150px;
+		height: 28px;
+	}
+}

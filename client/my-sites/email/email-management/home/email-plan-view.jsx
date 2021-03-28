@@ -23,6 +23,13 @@ import { getEmailForwards } from 'calypso/state/selectors/get-email-forwards';
 import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import EmailPlanMailboxesList from 'calypso/my-sites/email/email-management/home/email-plan-mailboxes-list';
+import {
+	getByPurchaseId,
+	hasLoadedSitePurchasesFromServer,
+	isFetchingSitePurchases,
+} from 'calypso/state/purchases/selectors';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import EmailPlanSubscription from 'calypso/my-sites/email/email-management/home/email-plan-subscription';
 
 const normalizeTitanMailboxes = ( titanMailboxes ) => {
 	if ( ! titanMailboxes ) {
@@ -101,11 +108,20 @@ class EmailPlanView extends React.Component {
 	};
 
 	render() {
-		const { domain } = this.props;
+		const {
+			domain,
+			selectedSite,
+			hasEmailPlanSubscription,
+			purchase,
+			isLoadingPurchase,
+		} = this.props;
 
 		return (
 			<React.Fragment>
 				{ domain && <QueryEmailForwards domainName={ domain.name } /> }
+				{ selectedSite && hasEmailPlanSubscription && (
+					<QuerySitePurchases siteId={ selectedSite.ID } />
+				) }
 				<HeaderCake onClick={ this.handleBack }>Email plan settings</HeaderCake>
 				<CompactCard className="email-plan-view__general">
 					<span className="email-plan-view__general-icon">
@@ -116,7 +132,15 @@ class EmailPlanView extends React.Component {
 						<span>[ status_icon ] Status</span>
 					</div>
 				</CompactCard>
-				<CompactCard>Expires: date [renew now] [auto renew]</CompactCard>
+
+				{ hasEmailPlanSubscription && (
+					<EmailPlanSubscription
+						purchase={ purchase }
+						domain={ domain }
+						selectedSite={ selectedSite }
+						isLoadingPurchase={ isLoadingPurchase }
+					/>
+				) }
 
 				<EmailPlanMailboxesList emails={ this.getEmails() } />
 
@@ -159,8 +183,11 @@ function filterEmailListByDomain( emailList, domainName ) {
 export default connect( ( state, ownProps ) => {
 	const selectedSiteId = ownProps.selectedSite?.ID;
 
+	let subscriptionId = null;
 	let emails = [];
+
 	if ( hasGSuiteWithUs( ownProps.domain ) ) {
+		subscriptionId = ownProps.domain?.googleAppsSubscription?.subscriptionId;
 		const gsuiteUsersForSite = getGSuiteUsers( state, selectedSiteId ) ?? [];
 		const gsuiteUsers = filterEmailListByDomain( gsuiteUsersForSite, ownProps.domain?.name );
 
@@ -168,9 +195,17 @@ export default connect( ( state, ownProps ) => {
 	} else if ( hasEmailForwards( ownProps.domain ) ) {
 		const emailForwards = getEmailForwards( state, ownProps.domain?.name ) ?? [];
 		emails = normalizeEmailForwardingAddresses( emailForwards );
+	} else if ( hasTitanMailWithUs( ownProps.domain ) ) {
+		subscriptionId = ownProps.domain?.titanMailSubscription?.subscriptionId;
 	}
 
+	const purchase = subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null;
+
 	return {
+		isLoadingPurchase:
+			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 		emails,
+		purchase,
+		hasEmailPlanSubscription: !! subscriptionId,
 	};
 } )( localize( EmailPlanView ) );
