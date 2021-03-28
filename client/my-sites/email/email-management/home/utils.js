@@ -6,7 +6,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getGSuiteMailboxCount, hasGSuiteWithUs } from 'calypso/lib/gsuite';
+import { getGSuiteMailboxCount, hasGSuiteWithUs, hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
 import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 
@@ -41,4 +41,20 @@ export function getNumberOfMailboxesText( domain ) {
 		} );
 	}
 	return '';
+}
+
+export function resolveEmailPlanStatus( domain ) {
+	if ( hasPendingGSuiteUsers( domain ) ) {
+		return {
+			statusClass: 'warning',
+			icon: 'info',
+			text: translate( 'Action required' ),
+		};
+	}
+
+	return {
+		statusClass: 'success',
+		icon: 'check_circle',
+		text: translate( 'Active' ),
+	};
 }

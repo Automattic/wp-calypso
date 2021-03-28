@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { CompactCard } from '@automattic/components';
 import page from 'page';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -30,6 +31,8 @@ import {
 } from 'calypso/state/purchases/selectors';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmailPlanSubscription from 'calypso/my-sites/email/email-management/home/email-plan-subscription';
+import MaterialIcon from 'calypso/components/material-icon';
+import { resolveEmailPlanStatus } from 'calypso/my-sites/email/email-management/home/utils';
 
 const normalizeTitanMailboxes = ( titanMailboxes ) => {
 	if ( ! titanMailboxes ) {
@@ -116,6 +119,10 @@ class EmailPlanView extends React.Component {
 			isLoadingPurchase,
 		} = this.props;
 
+		const { statusClass, text, icon } = resolveEmailPlanStatus( domain );
+
+		const cardClasses = classnames( 'email-plan-view__general', statusClass );
+
 		return (
 			<React.Fragment>
 				{ domain && <QueryEmailForwards domainName={ domain.name } /> }
@@ -123,13 +130,15 @@ class EmailPlanView extends React.Component {
 					<QuerySitePurchases siteId={ selectedSite.ID } />
 				) }
 				<HeaderCake onClick={ this.handleBack }>Email plan settings</HeaderCake>
-				<CompactCard className="email-plan-view__general">
+				<CompactCard className={ cardClasses }>
 					<span className="email-plan-view__general-icon">
 						<EmailTypeIcon domain={ domain } />
 					</span>
 					<div>
 						<h2>@{ domain.name }</h2>
-						<span>[ status_icon ] Status</span>
+						<span className="email-plan-view__status">
+							<MaterialIcon icon={ icon } /> { text }
+						</span>
 					</div>
 				</CompactCard>
 
