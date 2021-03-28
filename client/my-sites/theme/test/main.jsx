@@ -25,6 +25,10 @@ jest.mock( 'calypso/my-sites/themes/theme-preview', () =>
 jest.mock( 'calypso/my-sites/themes/themes-site-selector-modal', () =>
 	require( 'calypso/components/empty-component' )
 );
+jest.mock( 'calypso/state/selectors/is-nav-unification-enabled', () => ( {
+	__esModule: true,
+	default: () => true,
+} ) );
 
 describe( 'main', () => {
 	describe( 'Calling renderToString() on Theme Info sheet', () => {

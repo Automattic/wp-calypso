@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * Internal dependencies
  */
 import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
