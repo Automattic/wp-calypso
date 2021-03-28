@@ -520,8 +520,7 @@ export class PlansFeaturesMain extends Component {
 
 		// If advertising plans for a certain feature, ensure user has pressed "View all plans" before they can see others
 		const hidePlanSelector =
-			this.getKindOfPlanTypeSelector( this.props ) === 'customer' &&
-			this.isDisplayingPlansNeededForFeature();
+			kindOfPlanTypeSelector === 'customer' && this.isDisplayingPlansNeededForFeature();
 
 		return (
 			<div className="plans-features-main">
