@@ -69,18 +69,25 @@ class EmailProvidersStackedComparison extends React.Component {
 		isGSuiteSupported: PropTypes.bool.isRequired,
 	};
 
-	state = {
-		googleUsers: [],
-		titanMailboxes: [ buildNewTitanMailbox( this.props.domain.name, false ) ],
-		expanded: {
-			forwarding: false,
-			google: false,
-			titan: true,
-		},
-		addingToCart: false,
-	};
-
 	isMounted = false;
+
+	constructor( props ) {
+		super( props );
+
+		const isDomainEligibleForEmail = this.isDomainEligibleForEmail( props.domain );
+		const hasEmailForwards = this.doesDomainHaveEmailForwards( props.domain );
+
+		this.state = {
+			googleUsers: [],
+			titanMailboxes: [ buildNewTitanMailbox( props.domain.name, false ) ],
+			expanded: {
+				forwarding: hasEmailForwards && ! isDomainEligibleForEmail,
+				google: false,
+				titan: isDomainEligibleForEmail,
+			},
+			addingToCart: false,
+		};
+	}
 
 	componentDidMount() {
 		this.isMounted = true;
@@ -229,10 +236,11 @@ class EmailProvidersStackedComparison extends React.Component {
 	renderEmailForwardingCard() {
 		const { domain, translate } = this.props;
 
-		const buttonLabel =
-			domain.emailForwardsCount > 0
-				? translate( 'Manage email forwarding' )
-				: translate( 'Add email forwarding' );
+		const showExpandButton =
+			this.doesDomainHaveEmailForwards( domain ) || this.isDomainEligibleForEmail( domain );
+		const buttonLabel = this.doesDomainHaveEmailForwards( domain )
+			? translate( 'Manage email forwarding' )
+			: translate( 'Add email forwarding' );
 
 		return (
 			<EmailProviderCard
@@ -245,7 +253,7 @@ class EmailProvidersStackedComparison extends React.Component {
 				detailsExpanded={ this.state.expanded.forwarding }
 				onExpandedChange={ this.onExpandedStateChange }
 				buttonLabel={ buttonLabel }
-				buttonDisabled={ ! canCurrentUserAddEmail( domain ) }
+				showExpandButton={ showExpandButton }
 				expandButtonLabel={ translate( 'Add email forwarding' ) }
 				onButtonClick={ this.goToEmailForwarding }
 				features={ getEmailForwardingFeatures() }
@@ -306,7 +314,6 @@ class EmailProvidersStackedComparison extends React.Component {
 						className="email-providers-stacked-comparison__gsuite-user-list-action-continue"
 						primary
 						busy={ this.state.addingToCart }
-						disabled={ ! canCurrentUserAddEmail( domain ) }
 						onClick={ this.onGoogleConfirmNewUsers }
 					>
 						{ translate( 'Add %(googleMailService)s', {
@@ -335,6 +342,7 @@ class EmailProvidersStackedComparison extends React.Component {
 				detailsExpanded={ this.state.expanded.google }
 				onExpandedChange={ this.onExpandedStateChange }
 				onButtonClick={ this.onGoogleConfirmNewUsers }
+				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
 				expandButtonLabel={ translate( 'Add %(googleMailService)s', {
 					args: {
 						googleMailService: getGoogleMailServiceFamily(),
@@ -381,7 +389,6 @@ class EmailProvidersStackedComparison extends React.Component {
 					className="email-providers-stacked-comparison__titan-mailbox-action-continue"
 					primary
 					busy={ this.state.addingToCart }
-					disabled={ ! canCurrentUserAddEmail( domain ) }
 					onClick={ this.onTitanConfirmNewMailboxes }
 				>
 					{ translate( 'Add Email' ) }
@@ -403,6 +410,7 @@ class EmailProvidersStackedComparison extends React.Component {
 				formattedPrice={ formattedPrice }
 				discount={ discount }
 				formFields={ formFields }
+				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
 				expandButtonLabel={ translate( 'Add Email' ) }
 				features={ getTitanFeatures() }
 			/>
@@ -441,11 +449,24 @@ class EmailProvidersStackedComparison extends React.Component {
 		);
 	}
 
+	doesDomainHaveEmailForwards( domain ) {
+		return domain.emailForwardsCount > 0;
+	}
+
+	isDomainEligibleForEmail( domain ) {
+		const canUserAddEmail = canCurrentUserAddEmail( domain );
+		if ( canUserAddEmail ) {
+			return true;
+		}
+
+		const cannotAddEmailReason = getCurrentUserCannotAddEmailReason( domain );
+		return ! cannotAddEmailReason || ! cannotAddEmailReason.message;
+	}
+
 	renderDomainEligibilityNotice() {
 		const { domain } = this.props;
 
-		const canUserAddEmail = canCurrentUserAddEmail( domain );
-		if ( canUserAddEmail ) {
+		if ( this.isDomainEligibleForEmail( domain ) ) {
 			return null;
 		}
 
@@ -455,9 +476,18 @@ class EmailProvidersStackedComparison extends React.Component {
 		}
 
 		return (
-			<Notice showDismiss={ false } status="is-error">
-				{ cannotAddEmailReason.message }
-			</Notice>
+			<>
+				<TrackComponentView
+					eventName="calypso_email_providers_comparison_page_domain_not_eligible_error_impression"
+					eventProperties={ {
+						domain: domain.name,
+						error_code: cannotAddEmailReason.code,
+					} }
+				/>
+				<Notice showDismiss={ false } status="is-error">
+					{ cannotAddEmailReason.message }
+				</Notice>
+			</>
 		);
 	}
 

@@ -29,8 +29,8 @@ function EmailProviderCard( {
 	onExpandedChange = noop,
 	formFields,
 	buttonLabel,
-	buttonDisabled = false,
 	onButtonClick,
+	showExpandButton = true,
 	expandButtonLabel,
 	features,
 } ) {
@@ -57,13 +57,15 @@ function EmailProviderCard( {
 		>
 			<div className="email-providers-stacked-comparison__provider-card-main-details">
 				<p>{ description }</p>
-				<Button
-					primary={ false }
-					onClick={ toggleVisibility }
-					className="email-providers-stacked-comparison__provider-expand-cta"
-				>
-					{ labelForExpandButton }
-				</Button>
+				{ showExpandButton && (
+					<Button
+						primary={ false }
+						onClick={ toggleVisibility }
+						className="email-providers-stacked-comparison__provider-expand-cta"
+					>
+						{ labelForExpandButton }
+					</Button>
+				) }
 			</div>
 			<PromoCardPrice formattedPrice={ formattedPrice } discount={ discount } />
 			{ additionalPriceInformation && (
@@ -75,7 +77,7 @@ function EmailProviderCard( {
 				<div className="email-providers-stacked-comparison__provider-form">
 					{ formFields }
 					{ buttonLabel && (
-						<Button primary disabled={ buttonDisabled } onClick={ onButtonClick }>
+						<Button primary onClick={ onButtonClick }>
 							{ buttonLabel }
 						</Button>
 					) }
@@ -100,8 +102,8 @@ EmailProviderCard.propTypes = {
 	additionalPriceInformation: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
 	formFields: PropTypes.node,
 	buttonLabel: PropTypes.string,
-	buttonDisabled: PropTypes.bool,
 	onButtonClick: PropTypes.func,
+	showExpandButton: PropTypes.bool,
 	expandButtonLabel: PropTypes.string,
 	features: PropTypes.arrayOf( PropTypes.string ),
 	onExpandedChange: PropTypes.func,
