@@ -721,6 +721,12 @@ export function generateSteps( {
 				cartItem: PLAN_ECOMMERCE_MONTHLY,
 			},
 		},
+
+		design: {
+			stepName: 'design-picker',
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'selectedDesign' ],
+		},
 	};
 }
 
