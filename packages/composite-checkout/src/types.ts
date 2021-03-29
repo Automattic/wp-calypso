@@ -135,6 +135,10 @@ export type PaymentCompleteCallbackArguments = {
 
 export type PaymentProcessorResponseData = unknown;
 
+export type PaymentProcessorError = {
+	type: PaymentProcessorResponseType.ERROR;
+	payload: string;
+};
 export type PaymentProcessorSuccess = {
 	type: PaymentProcessorResponseType.SUCCESS;
 	payload: PaymentProcessorResponseData;
@@ -149,6 +153,7 @@ export type PaymentProcessorManual = {
 };
 
 export type PaymentProcessorResponse =
+	| PaymentProcessorError
 	| PaymentProcessorSuccess
 	| PaymentProcessorRedirect
 	| PaymentProcessorManual;
@@ -163,6 +168,7 @@ export enum PaymentProcessorResponseType {
 	SUCCESS = 'SUCCESS',
 	REDIRECT = 'REDIRECT',
 	MANUAL = 'MANUAL',
+	ERROR = 'ERROR',
 }
 
 export enum TransactionStatus {

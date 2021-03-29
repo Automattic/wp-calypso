@@ -101,14 +101,14 @@ When a payment method is ready to submit its data, it can use an appropriate "pa
 
 Payment method components (probably the `submitButton`) can access these functions using the [usePaymentProcessor](#usePaymentProcessor) hook, passing the key used for that function in `paymentProcessors` as an argument. However, for convenience, the `submitButton` will be provided with an `onClick` handler that can do this automatically. The `onClick` function takes two arguments, a string which is the key of the payment processor to be used, and an object that contains the data needed by the payment processor.
 
-If you use the `onClick` function, the payment processor function's response will control what happens next. Each payment processor function must return a Promise that either resolves to one of three results on success (see [makeManualResponse](#makeManualResponse), [makeRedirectResponse](#makeRedirectResponse), or [makeSuccessResponse](#makeSuccessResponse)), or rejects on failure.
+If you use the `onClick` function, the payment processor function's response will control what happens next. Each payment processor function must return a Promise that either resolves to one of four results on success (see [makeManualResponse](#makeManualResponse), [makeRedirectResponse](#makeRedirectResponse), [makeSuccessResponse](#makeSuccessResponse)), or [makeErrorResponse](#makeErrorResponse) on failure.
 
 If not using the `onClick` function, when the `submitButton` component has been clicked, it should do the following (these are normally handled by `onClick`):
 
 1. Call `setTransactionPending()` from [useTransactionStatus](#useTransactionStatus). This will change the [form status](#useFormStatus) to [`.SUBMITTING`](#FormStatus) and disable the form.
 2. Call the payment processor function returned from [usePaymentProcessor](#usePaymentProcessor]), passing whatever data that function requires. Each payment processor will be different, so you'll need to know the API of that function explicitly.
 3. Payment processor functions return a `Promise`. When the `Promise` resolves, check its value (it will be one of [makeManualResponse](#makeManualResponse), [makeRedirectResponse](#makeRedirectResponse), or [makeSuccessResponse](#makeSuccessResponse)). Then call `setTransactionComplete(responseData: unknown)` from [useTransactionStatus](#useTransactionStatus) if the transaction was a success. If the transaction requires a redirect, call `setTransactionRedirecting(url: string)` instead.
-4. If the `Promise` rejects, call `setTransactionError(message: string)`.
+4. If the `Promise` resolves to [makeErrorResponse](#makeErrorResponse), call `setTransactionError(message: string)`.
 5. At this point the [CheckoutProvider](#CheckoutProvider) will automatically take action if the transaction status is [`.COMPLETE`](#TransactionStatus) (call [onPaymentComplete](#CheckoutProvider)), [`.ERROR`](#TransactionStatus) (display the error and re-enable the form), or [`.REDIRECTING`](#TransactionStatus) (redirect to the url). If for some reason the transaction should be cancelled, call `resetTransaction()`.
 
 ## Line Items
@@ -346,6 +346,7 @@ An enum that holds the values of the [payment processor function return value's 
 - `.SUCCESS` (the payload will be an `unknown` object that is the server response).
 - `.REDIRECT` (the payload will be a `string` that is the redirect URL).
 - `.MANUAL` (the payload will be an `unknown` object that is determined by the payment processor function).
+- `.ERROR` (the payload will be a `string` that is the error message).
 
 ### SubmitButtonWrapper
 
@@ -413,6 +414,10 @@ Returns a step object whose properties can be added to a [CheckoutStep](Checkout
 ### getDefaultPaymentMethodStep
 
 Returns a step object whose properties can be added to a [CheckoutStep](CheckoutStep) (and customized) to display a way to select a payment method. The payment methods displayed are those provided to the [CheckoutProvider](#checkoutprovider).
+
+### makeErrorResponse
+
+An action creator function to be used by a [payment processor function](#payment-methods) for a [ERROR](#PaymentProcessorResponseType) response. It takes one string argument and will record the string as the error.
 
 ### makeManualResponse
 

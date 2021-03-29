@@ -80,6 +80,7 @@ import {
 	makeManualResponse,
 	makeSuccessResponse,
 	makeRedirectResponse,
+	makeErrorResponse,
 } from './lib/payment-processors';
 import useProcessPayment from './components/use-process-payment';
 import RadioButton from './components/radio-button';
@@ -143,6 +144,7 @@ export {
 	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
+	makeErrorResponse,
 	makeManualResponse,
 	makeRedirectResponse,
 	makeSuccessResponse,
