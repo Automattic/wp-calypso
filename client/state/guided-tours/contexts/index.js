@@ -15,7 +15,6 @@ export { isAbTestInVariant } from './is-ab-test-in-variant';
 export { hasSelectedSiteDefaultSiteTitle } from './has-selected-site-defaults-site-title';
 export { isSelectedSitePlanPaid, isSelectedSitePlanFree } from './site-plan';
 export { isSelectedSiteJetpack, isSelectedSiteNotJetpack } from './jetpack';
-export { hasUserPastedFromGoogleDocs } from './has-user-pasted-from-google-docs';
 export { canUserEditSettingsOfSelectedSite } from './can-user-edit-settings-of-selected-site';
 
 /*

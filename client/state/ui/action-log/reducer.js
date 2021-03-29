@@ -7,8 +7,6 @@ import { get, has, includes, overSome } from 'lodash';
  * Internal dependencies
  */
 import {
-	EDITOR_PASTE_EVENT,
-	FIRST_VIEW_HIDE,
 	GUIDED_TOUR_UPDATE,
 	PREVIEW_IS_SHOWING,
 	ROUTE_SET,
@@ -23,8 +21,6 @@ const relevantTypes = {
 	// ACTION_TYPE,
 	// to catch actions of a type that match some criterion:
 	// ACTION_TYPE: ( action ) => isValid( action.data )
-	EDITOR_PASTE_EVENT,
-	FIRST_VIEW_HIDE,
 	GUIDED_TOUR_UPDATE,
 	THEMES_REQUEST_SUCCESS,
 	PREVIEW_IS_SHOWING,
