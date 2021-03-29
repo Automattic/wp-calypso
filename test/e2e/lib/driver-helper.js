@@ -112,6 +112,16 @@ export function waitTillFocused( driver, selector, pollingOverride, waitOverride
 	);
 }
 
+/**
+ * Waits until an element is located in DOM and visible. Throws an error after
+ * it times out.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise<WebElement>} A promise that will be resolved with
+ * the located element
+ */
 export function waitUntilLocatedAndVisible( driver, locator, timeout = explicitWaitMS ) {
 	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
 
@@ -129,32 +139,6 @@ export function waitUntilLocatedAndVisible( driver, locator, timeout = explicitW
 			}
 		),
 		timeout
-	);
-}
-
-export function waitUntilLocatedAndVisible( driver, selector, waitOverride ) {
-	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
-
-	return driver.wait(
-		function () {
-			return driver.findElement( selector ).then(
-				function ( element ) {
-					return element.isDisplayed().then(
-						function () {
-							return true;
-						},
-						function () {
-							return false;
-						}
-					);
-				},
-				function () {
-					return false;
-				}
-			);
-		},
-		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be present and displayed`
 	);
 }
 
