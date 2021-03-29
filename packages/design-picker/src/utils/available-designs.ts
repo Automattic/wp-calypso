@@ -2,20 +2,16 @@
  * External dependencies
  */
 import { addQueryArgs } from '@wordpress/url';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from '@automattic/calypso-config';
-import { mshotsUrl, MShotsOptions } from './components/mshots-image';
-import type { Design } from './stores/onboard/types';
-const availableDesignsConfig = require( './available-designs-config.json' );
-
-interface AvailableDesigns {
-	featured: Design[];
-}
-
-const availableDesigns: Readonly< AvailableDesigns > = availableDesignsConfig;
+import { availableDesignsConfig } from './available-designs-config';
+import { DESIGN_IMAGE_FOLDER } from '../constants';
+import type { MShotsOptions } from '../components/mshots-image';
+import type { Design } from '../types';
+import type { AvailableDesigns } from './available-designs-config';
 
 function getCanUseWebP() {
 	if ( typeof window !== 'undefined' ) {
@@ -56,32 +52,18 @@ export const mShotOptions = (): MShotsOptions => {
 
 const canUseWebP = getCanUseWebP();
 
+// Bump the version query param here to cache bust the images after running bin/generate-gutenboarding-design-thumbnails.js
 export const getDesignImageUrl = ( design: Design ): string => {
-	return `/calypso/images/design-screenshots/${ design.slug }_${ design.template }_${
+	return `/calypso/${ DESIGN_IMAGE_FOLDER }/${ design.slug }_${ design.template }_${
 		design.theme
 	}.${ canUseWebP ? 'webp' : 'jpg' }?v=3`;
 };
-
-// Asynchronously load available design images
-export function prefetchDesignThumbs( locale: string ): void {
-	if ( typeof window !== 'undefined' ) {
-		getAvailableDesigns().featured.forEach( ( design: Design ) => {
-			const href = mshotsUrl( getDesignUrl( design, locale ), mShotOptions() );
-			const link = document.createElement( 'link' );
-			link.rel = 'prefetch';
-			link.as = 'image';
-			link.href = href;
-			link.crossOrigin = 'anonymous';
-			document.head.appendChild( link );
-		} );
-	}
-}
 
 export function getAvailableDesigns(
 	includeAlphaDesigns: boolean = isEnabled( 'gutenboarding/alpha-templates' ),
 	useFseDesigns: boolean = isEnabled( 'gutenboarding/site-editor' )
 ): AvailableDesigns {
-	let designs = availableDesigns;
+	let designs = availableDesignsConfig;
 
 	// We can tell different environments (via the config JSON) to show pre-prod "alpha" designs.
 	// Otherwise they'll be hidden by default.
@@ -105,4 +87,4 @@ export function getAvailableDesigns(
 	return designs;
 }
 
-export default getAvailableDesigns();
+export const availableDesigns = getAvailableDesigns();

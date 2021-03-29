@@ -25,6 +25,7 @@
 		"@automattic/composite-checkout": "^1.0.0",
 		"@automattic/create-calypso-config": "^1.0.0-alpha.0",
 		"@automattic/data-stores": "^2.0.0",
+		"@automattic/design-picker": "^1.0.0",
 		"@automattic/domain-picker": "^1.0.0-alpha.0",
 		"@automattic/explat-client": "^0.0.1",
 		"@automattic/explat-client-react-helpers": "^0.0.1",

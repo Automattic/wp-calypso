@@ -1,35 +1,28 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
-import { Tooltip } from '@wordpress/components';
+import React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import { useLocale } from '@automattic/i18n-utils';
-import React from 'react';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
+import DesignPicker from '@automattic/design-picker';
+import type { Design } from '@automattic/design-picker';
 
 /**
  * Internal dependencies
  */
+import JetpackLogo from 'calypso/components/jetpack-logo'; // @TODO: extract to @automattic package
+import Badge from '../../components/badge';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-
 import { useTrackStep } from '../../hooks/use-track-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
-import Badge from '../../components/badge';
-import MShotsImage from '../../components/mshots-image';
-import { getDesignImageUrl, getDesignUrl, mShotOptions } from '../../available-designs';
-import JetpackLogo from 'calypso/components/jetpack-logo'; // @TODO: extract to @automattic package
-import type { Design } from '../../stores/onboard/types';
 import { useIsAnchorFm } from '../../path';
-import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-const makeOptionId = ( { slug }: Design ): string => `design-selector__option-name__${ slug }`;
 
 const DesignSelector: React.FunctionComponent = () => {
 	const { __ } = useI18n();
@@ -64,84 +57,30 @@ const DesignSelector: React.FunctionComponent = () => {
 					<BackButton onClick={ goBack } />
 				</ActionButtons>
 			</div>
-			<div className="design-selector__design-grid">
-				<div
-					className={ isAnchorFmSignup ? 'design-selector__grid-minimal' : 'design-selector__grid' }
-				>
-					{ getRandomizedDesigns()
-						.featured.filter(
-							( design ) =>
-								// TODO Add finalized design templates to client/landing/gutenboarding/available-designs-config.json
-								// along with is_anchorfm prop
-								isAnchorFmSignup === design.features.includes( 'anchorfm' )
-						)
-						.map( ( design ) => (
-							<button
-								key={ design.slug }
-								className="design-selector__design-option"
-								data-e2e-button={ design.is_premium ? 'paidOption' : 'freeOption' }
-								onClick={ () => {
-									setSelectedDesign( design );
+			<DesignPicker
+				designs={ getRandomizedDesigns().featured.filter(
+					( design ) =>
+						// TODO Add finalized design templates to available-designs-config.json
+						// along with is_anchorfm prop
+						isAnchorFmSignup === design.features.includes( 'anchorfm' )
+				) }
+				isGridMinimal={ isAnchorFmSignup }
+				locale={ locale }
+				onSelect={ ( design: Design ) => {
+					setSelectedDesign( design );
 
-									// Update fonts to the design defaults
-									setFonts( design.fonts );
+					// Update fonts to the design defaults
+					setFonts( design.fonts );
 
-									goNext();
-								} }
-							>
-								<span
-									className={ classnames(
-										'design-selector__image-frame',
-										isEnabled( 'gutenboarding/landscape-preview' )
-											? 'design-selector__landscape'
-											: 'design-selector__portrait',
-										design.preview === 'static'
-											? 'design-selector__static'
-											: 'design-selector__scrollable'
-									) }
-								>
-									{ isEnabled( 'gutenboarding/mshot-preview' ) ? (
-										<MShotsImage
-											url={ getDesignUrl( design, locale ) }
-											aria-labelledby={ makeOptionId( design ) }
-											alt=""
-											options={ mShotOptions() }
-										/>
-									) : (
-										<img
-											alt=""
-											aria-labelledby={ makeOptionId( design ) }
-											src={ getDesignImageUrl( design ) }
-										/>
-									) }
-								</span>
-								<span className="design-selector__option-overlay">
-									<span id={ makeOptionId( design ) } className="design-selector__option-meta">
-										<span className="design-selector__option-name">{ design.title }</span>
-										{ design.is_premium && (
-											<Tooltip
-												position="bottom center"
-												text={ __( 'Requires a Personal plan or above' ) }
-											>
-												<div className="design-selector__premium-container">
-													<Badge className="design-selector__premium-badge">
-														<JetpackLogo
-															className="design-selector__premium-badge-logo"
-															size={ 20 }
-														/>
-														<span className="design-selector__premium-badge-text">
-															{ __( 'Premium' ) }
-														</span>
-													</Badge>
-												</div>
-											</Tooltip>
-										) }
-									</span>
-								</span>
-							</button>
-						) ) }
-				</div>
-			</div>
+					goNext();
+				} }
+				premiumBadge={
+					<Badge className="design-selector__premium-badge">
+						<JetpackLogo className="design-selector__premium-badge-logo" size={ 20 } />
+						<span className="design-selector__premium-badge-text">{ __( 'Premium' ) }</span>
+					</Badge>
+				}
+			/>
 		</div>
 	);
 };

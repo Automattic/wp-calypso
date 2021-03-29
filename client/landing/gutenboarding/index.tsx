@@ -4,13 +4,15 @@
 import '@automattic/calypso-polyfills';
 import * as React from 'react';
 import ReactDom from 'react-dom';
+import { xorWith, isEqual, isEmpty, shuffle } from 'lodash';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import config from '@automattic/calypso-config';
 import { subscribe, select, dispatch } from '@wordpress/data';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import type { Site as SiteStore } from '@automattic/data-stores';
 import accessibleFocus from '@automattic/accessible-focus';
-import { xorWith, isEqual, isEmpty, shuffle } from 'lodash';
+import { availableDesigns } from '@automattic/design-picker';
+import type { Design } from '@automattic/design-picker';
 
 /**
  * Internal dependencies
@@ -18,13 +20,11 @@ import { xorWith, isEqual, isEmpty, shuffle } from 'lodash';
 import Gutenboard from './gutenboard';
 import { LocaleContext } from './components/locale-context';
 import { setupWpDataDebug } from './devtools';
-import availableDesigns from './available-designs';
 import { Step, path } from './path';
 import { SITE_STORE } from './stores/site';
 import { STORE_KEY as ONBOARD_STORE } from './stores/onboard';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import { WindowLocaleEffectManager } from './components/window-locale-effect-manager';
-import type { Design } from './stores/onboard/types';
 
 /**
  * Style dependencies
