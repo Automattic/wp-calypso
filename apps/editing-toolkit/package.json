@@ -155,6 +155,7 @@
 		"@types/wordpress__plugins": "^2.3.7",
 		"@wordpress/eslint-plugin": "^8.0.2",
 		"babel-jest": "^26.3.0",
+		"wait-for-expect": "^3.0.2",
 		"webpack": "^5.24.4"
 	}
 }

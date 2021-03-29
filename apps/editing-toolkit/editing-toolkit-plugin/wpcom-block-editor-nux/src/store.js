@@ -12,6 +12,8 @@ const showWelcomeGuideReducer = ( state = undefined, action ) => {
 			return action.response.show_welcome_guide;
 		case 'WPCOM_WELCOME_GUIDE_SHOW_SET':
 			return action.show;
+		case 'WPCOM_WELCOME_GUIDE_RESET_STORE':
+			return undefined;
 		default:
 			return state;
 	}
@@ -25,6 +27,9 @@ const welcomeGuideManuallyOpenedReducer = ( state = false, action ) => {
 			}
 			return state;
 
+		case 'WPCOM_WELCOME_GUIDE_RESET_STORE':
+			return false;
+
 		default:
 			return state;
 	}
@@ -35,6 +40,8 @@ const tourRatingReducer = ( state = undefined, action ) => {
 	switch ( action.type ) {
 		case 'WPCOM_WELCOME_GUIDE_TOUR_RATING_SET':
 			return action.tourRating;
+		case 'WPCOM_WELCOME_GUIDE_RESET_STORE':
+			return undefined;
 		default:
 			return state;
 	}
@@ -44,6 +51,8 @@ const welcomeGuideVariantReducer = ( state = 'tour', action ) => {
 	switch ( action.type ) {
 		case 'WPCOM_WELCOME_GUIDE_FETCH_STATUS_SUCCESS':
 			return action.response.variant;
+		case 'WPCOM_WELCOME_GUIDE_RESET_STORE':
+			return 'tour';
 		default:
 			return state;
 	}
@@ -81,6 +90,11 @@ const actions = {
 	setTourRating: ( tourRating ) => {
 		return { type: 'WPCOM_WELCOME_GUIDE_TOUR_RATING_SET', tourRating };
 	},
+	// The `resetStore` action is only used for testing to reset the
+	// store inbetween tests.
+	resetStore: () => ( {
+		type: 'WPCOM_WELCOME_GUIDE_RESET_STORE',
+	} ),
 };
 
 const selectors = {
@@ -91,10 +105,12 @@ const selectors = {
 	getWelcomeGuideVariant: ( state ) => state.welcomeGuideVariant,
 };
 
-registerStore( 'automattic/wpcom-welcome-guide', {
-	reducer,
-	actions,
-	selectors,
-	controls,
-	persist: true,
-} );
+export function register() {
+	return registerStore( 'automattic/wpcom-welcome-guide', {
+		reducer,
+		actions,
+		selectors,
+		controls,
+		persist: true,
+	} );
+}
