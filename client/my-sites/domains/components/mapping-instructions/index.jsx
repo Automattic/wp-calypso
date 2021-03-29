@@ -68,11 +68,10 @@ class DomainMappingInstructions extends React.Component {
 		const { domainName, translate } = this.props;
 
 		const nameServerInstructionsMessage = translate(
-			'Please log into your domain name registrar account and {{strong}}set NS records{{/strong}} for your subdomain to use the following values, as detailed in {{link}}these instructions{{/link}}:',
+			'Please log into your domain name registrar account and {{strong}}set NS records{{/strong}} for your subdomain to use the following values:',
 			{
 				components: {
 					strong: <strong />,
-					link: <ExternalLink href={ MAP_DOMAIN_CHANGE_NAME_SERVERS } target="_blank" />,
 				},
 			}
 		);
