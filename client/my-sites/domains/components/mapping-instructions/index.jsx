@@ -110,7 +110,7 @@ class DomainMappingInstructions extends React.Component {
 		const { domainName, isAtomic, subdomainPart, translate, wpcomDomainName } = this.props;
 
 		const cnameMappingWarning = translate(
-			'If you map a subdomain using CNAME records rather than NS records, the mapping might stop working if you downgrade your WordPress.com subscription plan in the future.'
+			'If you map a subdomain using CNAME records rather than NS records, the mapping might stop working if you change your WordPress.com subscription plan in the future.'
 		);
 
 		const cnameInstructionsMessage = translate(
