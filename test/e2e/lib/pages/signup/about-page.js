@@ -29,7 +29,6 @@ export default class AboutPage extends AsyncBaseContainer {
 		// The suggestion overlay of #siteTopic can prevent the site goals from getting clicked.
 		// To avoid that problem, we're going to input the site topic first.
 		await driverHelper.setWhenSettable( this.driver, By.css( '#siteTopic' ), siteTopic );
-		await driverHelper.waitForFieldClearable( this.driver, By.css( '#siteTitle' ) );
 		await driverHelper.setWhenSettable( this.driver, By.css( '#siteTitle' ), siteTitle );
 
 		if ( showcase === true ) {
@@ -46,32 +45,6 @@ export default class AboutPage extends AsyncBaseContainer {
 		}
 		if ( promote === true ) {
 			await driverHelper.setCheckbox( this.driver, By.css( '#promote' ) );
-		}
-	}
-
-	async unsetCheckBox( {
-		showcase = false,
-		share = false,
-		sell = false,
-		educate = false,
-		promote = false,
-	} ) {
-		// Wait before click and unset checkbox
-		await driverHelper.waitForFieldClearable( this.driver, By.css( '#siteTitle' ) );
-		if ( showcase === true ) {
-			await driverHelper.unsetCheckbox( this.driver, By.css( '#showcase' ) );
-		}
-		if ( share === true ) {
-			await driverHelper.unsetCheckbox( this.driver, By.css( '#share' ) );
-		}
-		if ( sell === true ) {
-			await driverHelper.unsetCheckbox( this.driver, By.css( '#sell' ) );
-		}
-		if ( educate === true ) {
-			await driverHelper.unsetCheckbox( this.driver, By.css( '#educate' ) );
-		}
-		if ( promote === true ) {
-			await driverHelper.unsetCheckbox( this.driver, By.css( '#promote' ) );
 		}
 	}
 }

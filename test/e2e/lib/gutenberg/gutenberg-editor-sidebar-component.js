@@ -143,8 +143,6 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		const driver = this.driver;
 
 		await driverHelper.clickWhenClickable( driver, addNewCategoryButtonSelector );
-		await driverHelper.waitForFieldClearable( driver, categoryNameInputSelector );
-
 		await driverHelper.setWhenSettable( driver, categoryNameInputSelector, category );
 		await driverHelper.clickWhenClickable( driver, saveCategoryButtonSelector );
 		return await driverHelper.waitTillPresentAndDisplayed(
@@ -158,10 +156,8 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, tagEntrySelector );
 		await driverHelper.scrollIntoView( this.driver, tagEntrySelector );
-		await driverHelper.waitForFieldClearable( this.driver, tagEntrySelector );
-		const tagEntryElement = await this.driver.findElement( tagEntrySelector );
-		await tagEntryElement.sendKeys( tag );
-		return await tagEntryElement.sendKeys( Key.ENTER );
+		const tagInput = await driverHelper.setWhenSettable( this.driver, tagEntrySelector, tag );
+		await tagInput.sendKeys( Key.ENTER );
 	}
 
 	async tagEventuallyDisplayed( tag ) {
