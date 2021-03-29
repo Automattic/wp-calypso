@@ -346,9 +346,7 @@ class EmailProvidersStackedComparison extends React.Component {
 			comment: '{{price/}} is the formatted price, e.g. $20',
 		} );
 
-		const isEligibleForFreeTrial =
-			config.isEnabled( 'titan/free-trial' ) &&
-			domain?.titanMailSubscription?.isEligibleForIntroductoryOffer;
+		const isEligibleForFreeTrial = domain?.titanMailSubscription?.isEligibleForIntroductoryOffer;
 		const discount = isEligibleForFreeTrial ? translate( '3 months free' ) : null;
 
 		const logo = (
