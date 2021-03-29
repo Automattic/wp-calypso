@@ -98,7 +98,7 @@ const actions = {
 };
 
 const selectors = {
-	isWelcomeGuideManuallyOpened: ( state ) => state.isTourManuallyOpened,
+	isWelcomeGuideManuallyOpened: ( state ) => state.welcomeGuideManuallyOpened,
 	isWelcomeGuideShown: ( state ) => !! state.showWelcomeGuide,
 	isWelcomeGuideStatusLoaded: ( state ) => typeof state.showWelcomeGuide !== 'undefined',
 	getTourRating: ( state ) => state.tourRating,
