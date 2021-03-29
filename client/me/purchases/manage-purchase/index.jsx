@@ -14,7 +14,7 @@ import React, { Component, Fragment } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { abtest } from 'calypso/lib/abtest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { applyTestFiltersToPlansList } from 'calypso/lib/plans';
+import { applyTestFiltersToPlansList, isWpComMonthlyPlan } from 'calypso/lib/plans';
 import { Button, Card, CompactCard, ProductIcon } from '@automattic/components';
 import config from '@automattic/calypso-config';
 import {
@@ -636,6 +636,19 @@ class ManagePurchase extends Component {
 		return ! hasLoadedDomains;
 	}
 
+	getProductDisplayName() {
+		const { purchase, plan, translate } = this.props;
+
+		if ( ! plan || ! isWpComMonthlyPlan( purchase.productSlug ) ) {
+			return getDisplayName( purchase );
+		}
+
+		return translate( '%s Monthly', {
+			args: getDisplayName( purchase ),
+			comment: '%s will be a dotcom plan name. e.g. WordPress.com Business Monthly',
+		} );
+	}
+
 	renderPurchaseDetail( preventRenewal ) {
 		if ( this.isDataLoading( this.props ) || this.isDomainsLoading( this.props ) ) {
 			return this.renderPlaceholder();
@@ -670,7 +683,7 @@ class ManagePurchase extends Component {
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
 						{ this.renderPurchaseIcon() }
-						<h2 className="manage-purchase__title">{ getDisplayName( purchase ) }</h2>
+						<h2 className="manage-purchase__title">{ this.getProductDisplayName() }</h2>
 						<div className="manage-purchase__description">{ purchaseType( purchase ) }</div>
 						<div className="manage-purchase__price">
 							{ isPartnerPurchase( purchase ) ? (
