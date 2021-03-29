@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { throttle, constant } from 'lodash';
+import { throttle } from 'lodash';
 import ReactDom from 'react-dom';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
@@ -28,6 +28,7 @@ import playIconImage from 'calypso/assets/images/reader/play-icon.png';
 import './style.scss';
 
 const noop = () => {};
+const defaultSizingFunction = () => ( {} );
 
 class ReaderFeaturedVideo extends React.Component {
 	static propTypes = {
@@ -50,7 +51,7 @@ class ReaderFeaturedVideo extends React.Component {
 	};
 
 	setVideoSizingStrategy = ( videoEmbed ) => {
-		let sizingFunction = constant( {} );
+		let sizingFunction = defaultSizingFunction;
 		if ( videoEmbed ) {
 			const maxWidth = ReactDom.findDOMNode( this ).parentNode.offsetWidth;
 			const embedSize = EmbedHelper.getEmbedSizingFunction( videoEmbed );

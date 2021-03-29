@@ -4,7 +4,6 @@
 import {
 	assign,
 	camelCase,
-	constant,
 	debounce,
 	every,
 	filter,
@@ -243,12 +242,9 @@ function setFieldErrors( formState, fieldErrors, hideFieldErrorsOnChange ) {
 }
 
 function showAllErrors( formState ) {
-	return updateFields(
-		initializeFields( formState, getAllFieldValues( formState ) ),
-		constant( {
-			isShowingErrors: true,
-		} )
-	);
+	return updateFields( initializeFields( formState, getAllFieldValues( formState ) ), () => ( {
+		isShowingErrors: true,
+	} ) );
 }
 
 function hasErrors( formState ) {
