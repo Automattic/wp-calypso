@@ -28,6 +28,7 @@ import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import getRecommendedPlugins from 'calypso/state/selectors/get-recommended-plugins';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -422,7 +423,7 @@ export class PluginsBrowser extends Component {
 			! this.props.selectedSiteId ||
 			! this.props.sitePlan ||
 			this.props.isVipSite ||
-			this.props.isJetpackSite ||
+			this.props.jetpackNonAtomic ||
 			this.props.hasBusinessPlan
 		) {
 			return null;
@@ -534,6 +535,8 @@ export default flow(
 				hasPremiumPlan,
 				hasBusinessPlan,
 				isJetpackSite: isJetpackSite( state, selectedSiteId ),
+				jetpackNonAtomic:
+					isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ),
 				isVipSite: isVipSite( state, selectedSiteId ),
 				hasJetpackSites: hasJetpackSites( state ),
 				isRequestingSites: isRequestingSites( state ),
