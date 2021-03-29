@@ -1,0 +1,30 @@
+.reskin-side-explainer {
+    width: 15vw;
+
+    .reskin-side-explainer__title {
+        font-size: 1.25rem;
+        letter-spacing: 0.2px;
+        line-height: 26px;
+    }
+
+    .reskin-side-explainer__subtitle {
+        color: var( --color-neutral-50 );
+        font-size: 0.875rem;
+        line-height: 20px;
+        letter-spacing: -0.16px;
+        padding-top: 12px;
+    }
+
+    .reskin-side-explainer__cta {
+        font-size: 0.875rem;
+        line-height: 20px;
+        padding-top: 12px;
+        color: #1d2327;
+        letter-spacing: -0.16px;
+
+        .cta-text {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    }
+}
