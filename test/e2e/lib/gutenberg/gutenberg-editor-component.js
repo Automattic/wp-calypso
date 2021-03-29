@@ -113,9 +113,8 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async enterTitle( title ) {
-		const titleElement = await this.driver.findElement( By.css( '.editor-post-title__input' ) );
-		await titleElement.clear();
-		return titleElement.sendKeys( title );
+		const titleSelector = By.css( '.editor-post-title__input' );
+		return driverHelper.setWhenSettable( this.driver, titleSelector, title );
 	}
 
 	async getTitle() {
@@ -129,9 +128,21 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const paragraphSelector = By.css( 'p.block-editor-rich-text__editable:first-of-type' );
 		await driverHelper.clickWhenClickable( this.driver, appenderSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, paragraphSelector );
-		const paragraphElement = this.driver.findElement( paragraphSelector );
-		await paragraphElement.clear();
-		return paragraphElement.sendKeys( text );
+		const paragraphElement = await this.clearText( paragraphSelector );
+		await paragraphElement.sendKeys( text );
+
+		return paragraphElement;
+	}
+
+	async clearText( selector ) {
+		const paragraphElement = await this.driver.findElement( selector );
+		const text = await paragraphElement.getText();
+		let i = text.length;
+		while ( i > 0 ) {
+			await paragraphElement.sendKeys( webdriver.Key.BACK_SPACE );
+			i--;
+		}
+		return paragraphElement;
 	}
 
 	async getContent() {
@@ -140,7 +151,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async replaceTextOnLastParagraph( text ) {
 		const paragraphSelector = By.css( 'p.block-editor-rich-text__editable:first-of-type' );
-		return await driverHelper.setWhenSettable( this.driver, paragraphSelector, text );
+		const paragraphElement = await this.clearText( paragraphSelector );
+		await paragraphElement.sendKeys( text );
+
+		return paragraphElement;
 	}
 
 	async insertShortcode( shortcode ) {
