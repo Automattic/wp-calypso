@@ -18,7 +18,7 @@ import {
 	withSchemaValidation,
 	withPersistence,
 } from 'calypso/state/utils';
-import { activePartnerKeySchema, currentPartnerSchema } from './schema';
+import { activePartnerKeySchema } from './schema';
 
 export const initialState = {
 	hasFetched: false,
@@ -69,7 +69,7 @@ export const activePartnerKey = withSchemaValidation(
 	withPersistence( activePartnerKeyReducer )
 );
 
-const currentPartnerReducer = ( state = initialState.current, action: AnyAction ) => {
+const current = withoutPersistence( ( state = initialState.current, action: AnyAction ) => {
 	switch ( action.type ) {
 		case JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE:
 			if ( action.partner.keys.length === 0 ) {
@@ -81,12 +81,7 @@ const currentPartnerReducer = ( state = initialState.current, action: AnyAction 
 	}
 
 	return state;
-};
-
-export const current = withSchemaValidation(
-	currentPartnerSchema,
-	withPersistence( currentPartnerReducer )
-);
+} );
 
 export const error = withoutPersistence( ( state = initialState.error, action: AnyAction ) => {
 	switch ( action.type ) {
