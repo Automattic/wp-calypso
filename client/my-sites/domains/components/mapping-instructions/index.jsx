@@ -64,14 +64,45 @@ class DomainMappingInstructions extends React.Component {
 		);
 	}
 
-	renderNameServerInstructionsWithHeader() {
+	renderNsRecordsInstructions() {
+		const { domainName, translate } = this.props;
+
+		const nameServerInstructionsMessage = translate(
+			'Please log into your domain name registrar account and {{strong}}set NS records{{/strong}} for your subdomain to use the following values, as detailed in {{link}}these instructions{{/link}}:',
+			{
+				components: {
+					strong: <strong />,
+					link: <ExternalLink href={ MAP_DOMAIN_CHANGE_NAME_SERVERS } target="_blank" />,
+				},
+			}
+		);
+
+		return (
+			<React.Fragment>
+				<p>{ nameServerInstructionsMessage }</p>
+				<ul>
+					{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
+						return (
+							<li key={ nameServer }>
+								<code>
+									{ domainName }. IN NS { nameServer }.
+								</code>
+							</li>
+						);
+					} ) }
+				</ul>
+			</React.Fragment>
+		);
+	}
+
+	renderNsRecordsInstructionsWithHeader() {
 		return (
 			<FoldableFAQ
 				id="advanced-mapping-setup-ns-records"
 				key="advanced-mapping-setup-ns-records"
 				question={ this.props.translate( 'Advanced setup using NS records' ) }
 			>
-				{ this.renderNameServerInstructions() }
+				{ this.renderNsRecordsInstructions() }
 			</FoldableFAQ>
 		);
 	}
@@ -185,7 +216,7 @@ class DomainMappingInstructions extends React.Component {
 
 		if ( isSubdomain( domainName ) ) {
 			if ( ! isAtomic ) {
-				advancedSetupMessages.push( this.renderNameServerInstructionsWithHeader() );
+				advancedSetupMessages.push( this.renderNsRecordsInstructionsWithHeader() );
 			} else {
 				advancedSetupMessages.push( this.renderCnameInstructionsWithHeader() );
 			}
@@ -202,8 +233,12 @@ class DomainMappingInstructions extends React.Component {
 		const { domainName, isAtomic, translate } = this.props;
 
 		let recommendedSetupInstructions = null;
-		if ( ! isAtomic && isSubdomain( domainName ) ) {
-			recommendedSetupInstructions = this.renderCnameInstructions();
+		if ( isSubdomain( domainName ) ) {
+			if ( isAtomic ) {
+				recommendedSetupInstructions = this.renderNsRecordsInstructions();
+			} else {
+				recommendedSetupInstructions = this.renderCnameInstructions();
+			}
 		} else {
 			recommendedSetupInstructions = this.renderNameServerInstructions();
 		}
