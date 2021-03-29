@@ -34,7 +34,7 @@ const screenSize = driverManager.currentScreenSize();
 const domainsInboxId = config.get( 'domainsInboxId' );
 const host = dataHelper.getJetpackHost();
 
-describe( `[${ host }] Managing Domains: (${ screenSize })`, function () {
+describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
 	let driver;
 
@@ -43,7 +43,7 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function () {
 		driver = await driverManager.startBrowser();
 	} );
 
-	describe( 'Adding a domain to an existing site @parallel', function () {
+	describe( 'Adding a domain to an existing site', function () {
 		const blogName = dataHelper.getNewBlogName();
 		const domainEmailAddress = dataHelper.getEmailAddress( blogName, domainsInboxId );
 		const expectedDomainName = blogName + '.com';
@@ -118,7 +118,7 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function () {
 		} );
 	} );
 
-	describe( 'Map a domain to an existing site @parallel', function () {
+	describe( 'Map a domain to an existing site', function () {
 		const blogName = 'nature.com';
 
 		before( async function () {
