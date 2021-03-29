@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity } from 'lodash';
+import DesignPicker from '@automattic/design-picker';
 
 /**
  * Internal dependencies
@@ -13,7 +14,6 @@ import { identity } from 'lodash';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-import DesignGrid from 'calypso/landing/gutenboarding/onboarding-block/design-selector/design-grid';
 
 /**
  * Style dependencies
@@ -53,7 +53,7 @@ class DesignPickerStep extends Component {
 	};
 
 	renderDesignPicker() {
-		return <DesignGrid locale="en" onSelect={ this.pickDesign } />;
+		return <DesignPicker locale="en" onSelect={ this.pickDesign } />;
 	}
 
 	headerText() {
