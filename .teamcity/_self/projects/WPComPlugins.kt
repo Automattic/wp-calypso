@@ -85,6 +85,8 @@ private object EditingToolkit : BuildType({
 				# Add Gutenberg to wp-env:
 				echo '{ "plugins": [ "./editing-toolkit-plugin", "https://downloads.wordpress.org/plugin/gutenberg.latest-stable.zip" ], "themes": [] }' > .wp-env.override.json
 
+				# For debugging
+				docker-compose --version
 				yarn wp-env start
 				yarn test:php
 			"""
