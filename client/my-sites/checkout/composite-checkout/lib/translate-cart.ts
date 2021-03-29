@@ -253,7 +253,10 @@ function addRegistrationDataToGSuiteCartProduct(
 	item: ResponseCartProduct,
 	contactDetails: DomainContactDetails | null
 ): ResponseCartProduct {
-	if ( ! isGSuiteOrGoogleWorkspaceProductSlug( item.product_slug ) ) {
+	if (
+		! isGSuiteOrGoogleWorkspaceProductSlug( item.product_slug ) ||
+		isGoogleWorkspaceExtraLicence( item )
+	) {
 		return item;
 	}
 	return {
