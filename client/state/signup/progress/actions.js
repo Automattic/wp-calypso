@@ -64,6 +64,10 @@ function recordSubmitStep( stepName, providedDependencies ) {
 					.join( ',' );
 			}
 
+			if ( includes( [ 'selected_design' ], propName ) ) {
+				propValue = propValue.slug;
+			}
+
 			return {
 				...props,
 				[ propName ]: propValue,

@@ -437,6 +437,14 @@ export function generateFlows( {
 		showRecaptcha: true,
 	};
 
+	flows[ 'with-design-picker' ] = {
+		steps: [ 'user', 'domains', 'plans', 'design' ],
+		destination: getSignupDestination,
+		description: 'Default onboarding experience with design picker as the last step',
+		lastModified: '2021-03-19',
+		showRecaptcha: true,
+	};
+
 	return flows;
 }
 
