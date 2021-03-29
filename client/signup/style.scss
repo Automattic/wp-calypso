@@ -5,7 +5,7 @@ body.is-section-signup {
 	background: var( --color-wordpress-com );
 
 	&.is-white-signup {
-		background: var( --studio-white );
+		background: #fdfdfd;
 
 		.layout:not( .dops ) .wpcom-site__logo {
 			fill: var( --color-neutral-10 );
