@@ -61,10 +61,6 @@ export const remoteValuesSchema = {
 				'sunset',
 			],
 		},
-		'store-dashboardStatsWidgetUnit': {
-			type: 'string',
-			enum: [ 'day', 'week', 'month' ],
-		},
 		'upwork-dismissible-banner': {
 			type: 'object',
 			'^[a-z-]+$': {
