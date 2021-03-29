@@ -174,6 +174,24 @@ function getNewSiteParams( {
 	// when segment and vertical values are not sent. Check pbAok1-p2#comment-834.
 	const shouldUseDefaultAnnotationAsFallback = true;
 
+	// If there's a selected design, use similar new site options to what used
+	// in gutenboarding (see `client/landing/gutenboarding/stores/onboard/actions.ts`)
+	const selectedDesign = get( signupDependencies, 'selectedDesign', false );
+	const withDesignOptions = {
+		theme: `pub/${ selectedDesign?.theme || themeSlugWithRepo }`,
+		...( selectedDesign?.template && {
+			template: selectedDesign.template,
+		} ),
+		...( selectedDesign?.fonts && {
+			font_base: selectedDesign?.fonts.base,
+			font_headings: selectedDesign?.fonts.headings,
+		} ),
+		use_patterns: true,
+		// TODO: needs same value to be supported in the backend
+		//(see https://github.com/Automattic/wp-calypso/issues/51231)
+		site_creation_flow: 'onboarding-with-design',
+	};
+
 	const newSiteParams = {
 		blog_title: siteTitle,
 		public: Visibility.PublicNotIndexed,
@@ -193,6 +211,7 @@ function getNewSiteParams( {
 			site_creation_flow: flowToCheck,
 			timezone_string: guessTimezone(),
 			wpcom_public_coming_soon: 1,
+			...( selectedDesign && withDesignOptions ),
 		},
 		validate: false,
 	};
