@@ -501,7 +501,7 @@ class RegisterDomainStep extends React.Component {
 			! Array.isArray( this.state.searchResults ) &&
 			! this.state.loadingResults &&
 			! this.props.showExampleSuggestions;
-		const showFilters = isKrackenUi && ! isRenderingInitialSuggestions;
+		const showFilters = isKrackenUi && ! isRenderingInitialSuggestions && ! this.props.isReskinned;
 		return (
 			showFilters && (
 				<DropdownFilters
@@ -1232,13 +1232,30 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	renderExampleSuggestions() {
+		const {
+			isReskinned,
+			translate,
+			domainsWithPlansOnly,
+			offerUnavailableOption,
+			products,
+			path,
+		} = this.props;
+
+		if ( isReskinned ) {
+			return (
+				<div className="register-domain-step__example-prompt">
+					{ translate( 'The best names are short and memorable' ) }
+				</div>
+			);
+		}
+
 		return (
 			<ExampleDomainSuggestions
-				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-				offerUnavailableOption={ this.props.offerUnavailableOption }
+				domainsWithPlansOnly={ domainsWithPlansOnly }
+				offerUnavailableOption={ offerUnavailableOption }
 				onClickExampleSuggestion={ this.handleClickExampleSuggestion }
-				path={ this.props.path }
-				products={ this.props.products }
+				path={ path }
+				products={ products }
 				url={ this.getUseYourDomainUrl() }
 			/>
 		);
