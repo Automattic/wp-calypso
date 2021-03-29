@@ -42,7 +42,6 @@ export default class LoginPage extends AsyncBaseContainer {
 
 		if ( emailSSO === false ) {
 			await driverHelper.waitTillPresentAndDisplayed( driver, passwordSelector );
-			await driverHelper.waitTillFocused( driver, passwordSelector );
 			await driverHelper.setWhenSettable( driver, passwordSelector, password, {
 				secureValue: true,
 			} );
