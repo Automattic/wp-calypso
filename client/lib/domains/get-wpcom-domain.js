@@ -23,6 +23,6 @@ function isWpcomDomain( domainObject ) {
 	return domainObject.type === domainTypes.WPCOM;
 }
 
-function isWpcomStagingDomain( domainObject ) {
-	return domainObject.domain.endsWith( '.wpcomstaging.com' );
+function isWpcomStagingDomain( { domain = '' } ) {
+	return domain.endsWith( '.wpcomstaging.com' );
 }
