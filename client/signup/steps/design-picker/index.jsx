@@ -25,6 +25,7 @@ class DesignPickerStep extends Component {
 		goToNextStep: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object.isRequired,
 		stepName: PropTypes.string.isRequired,
+		locale: PropTypes.string.isRequired,
 		translate: PropTypes.func,
 	};
 
@@ -53,7 +54,8 @@ class DesignPickerStep extends Component {
 	};
 
 	renderDesignPicker() {
-		return <DesignPicker locale="en" onSelect={ this.pickDesign } />;
+		// props.locale obtained via `localize` HoC
+		return <DesignPicker locale={ this.props.locale } onSelect={ this.pickDesign } />;
 	}
 
 	headerText() {
