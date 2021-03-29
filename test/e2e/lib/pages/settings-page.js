@@ -7,6 +7,7 @@ import { By } from 'selenium-webdriver';
  * Internal dependencies
  */
 import AsyncBaseContainer from '../async-base-container';
+import SectionNavComponent from '../components/section-nav-component';
 import DisconnectSurveyPage from './disconnect-survey-page.js';
 
 import * as DriverHelper from '../driver-helper.js';
@@ -18,7 +19,8 @@ export default class SettingsPage extends AsyncBaseContainer {
 	}
 
 	async selectWriting() {
-		await DriverHelper.ensureMobileMenuOpen( this.driver );
+		const sectionNav = await SectionNavComponent.Expect( this.driver );
+		sectionNav.ensureMobileMenuOpen();
 		return await DriverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.section-nav-tabs__list a[href*=writing]' )
@@ -26,7 +28,8 @@ export default class SettingsPage extends AsyncBaseContainer {
 	}
 
 	async selectPerformance() {
-		await DriverHelper.ensureMobileMenuOpen( this.driver );
+		const sectionNav = await SectionNavComponent.Expect( this.driver );
+		sectionNav.ensureMobileMenuOpen();
 		return await DriverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.section-nav-tabs__list a[href*=performance]' )

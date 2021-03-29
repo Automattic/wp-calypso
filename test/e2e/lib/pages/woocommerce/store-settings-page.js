@@ -8,6 +8,7 @@ import webdriver from 'selenium-webdriver';
  */
 import * as driverHelper from '../../driver-helper';
 import AsyncBaseContainer from '../../async-base-container';
+import SectionNavComponent from '../components/section-nav-component';
 
 const by = webdriver.By;
 
@@ -17,7 +18,8 @@ export default class StoreSettingsPage extends AsyncBaseContainer {
 	}
 
 	async selectPaymentsTab() {
-		driverHelper.ensureMobileMenuOpen( this.driver );
+		const sectionNav = await SectionNavComponent.Expect( this.driver );
+		sectionNav.ensureMobileMenuOpen();
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			by.css( '.woocommerce .section-nav__panel a[href*=payments]' )
@@ -32,7 +34,8 @@ export default class StoreSettingsPage extends AsyncBaseContainer {
 	}
 
 	async selectShippingTab() {
-		driverHelper.ensureMobileMenuOpen( this.driver );
+		const sectionNav = await SectionNavComponent.Expect( this.driver );
+		sectionNav.ensureMobileMenuOpen();
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			by.css( '.woocommerce .section-nav__panel a[href*=shipping]' )
@@ -47,7 +50,8 @@ export default class StoreSettingsPage extends AsyncBaseContainer {
 	}
 
 	async selectTaxesTab() {
-		driverHelper.ensureMobileMenuOpen( this.driver );
+		const sectionNav = await SectionNavComponent.Expect( this.driver );
+		sectionNav.ensureMobileMenuOpen();
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			by.css( '.woocommerce .section-nav__panel a[href*=taxes]' )
