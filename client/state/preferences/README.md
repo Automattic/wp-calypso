@@ -12,18 +12,18 @@ They are persisted in `calypso_preferences` key of `/me/settings`.
    export default connect(
    	( state ) => {
    		return {
-   			editorModePreference: getPreference( state, 'editor-mode' ),
+   			recentSites: getPreference( state, 'recentSites' ),
    		};
    	},
    	( dispatch ) => {
    		return bindActionCreators(
    			{
-   				saveEditorModePreference: savePreference.bind( null, 'editor-mode' ),
+   				saveRecentSitesPreference: savePreference.bind( null, 'recentSites' ),
    			},
    			dispatch
    		);
    	}
-   )( PostEditor );
+   )( MyExampleComponent );
    ```
 
 ## Adding new preference key

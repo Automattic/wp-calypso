@@ -9,10 +9,6 @@ export const remoteValuesSchema = {
 		},
 	},
 	properties: {
-		'editor-mode': {
-			type: 'string',
-			enum: [ 'html', 'tinymce' ],
-		},
 		mediaModalGalleryInstructionsDismissed: {
 			type: 'boolean',
 		},
