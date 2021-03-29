@@ -247,7 +247,7 @@ class EmailProvidersStackedComparison extends React.Component {
 	renderGoogleCard() {
 		const { currencyCode, domain, gSuiteProduct, isGSuiteSupported, translate } = this.props;
 
-		// TODO: Improve handling of
+		// TODO: Improve handling of this case
 		if ( ! isGSuiteSupported ) {
 			return null;
 		}
@@ -345,8 +345,10 @@ class EmailProvidersStackedComparison extends React.Component {
 			},
 			comment: '{{price/}} is the formatted price, e.g. $20',
 		} );
-		// TODO: calculate whether a discount/trial applies for the current domain
-		const discount = null; //translate( '3 months free' );
+
+		const isEligibleForFreeTrial = domain?.titanMailSubscription?.isEligibleForIntroductoryOffer;
+		const discount = isEligibleForFreeTrial ? translate( '3 months free' ) : null;
+
 		const logo = (
 			<Gridicon
 				className="email-providers-stacked-comparison__providers-wordpress-com-email"
