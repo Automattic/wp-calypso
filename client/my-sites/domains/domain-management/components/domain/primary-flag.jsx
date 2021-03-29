@@ -1,11 +1,9 @@
 /**
  * External dependencies
  */
-
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { flow } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,9 +26,6 @@ DomainPrimaryFlag.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default flow(
-	localize,
-	connect( ( state ) => ( {
-		isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) ),
-	} ) )
-)( DomainPrimaryFlag );
+export default connect( ( state ) => ( {
+	isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) ),
+} ) )( localize( DomainPrimaryFlag ) );

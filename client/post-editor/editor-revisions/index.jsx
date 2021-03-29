@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, get } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -86,28 +86,25 @@ EditorRevisions.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default flow(
-	localize,
-	connect(
-		( state ) => {
-			const postId = getEditorPostId( state );
-			const siteId = getSelectedSiteId( state );
+export default connect(
+	( state ) => {
+		const postId = getEditorPostId( state );
+		const siteId = getSelectedSiteId( state );
 
-			const revisions = getPostRevisions( state, siteId, postId );
-			const selectedRevisionId = getPostRevisionsSelectedRevisionId( state );
-			const comparisons = getPostRevisionsComparisons( state, siteId, postId );
-			const selectedDiff = get( comparisons, [ selectedRevisionId, 'diff' ], {} );
+		const revisions = getPostRevisions( state, siteId, postId );
+		const selectedRevisionId = getPostRevisionsSelectedRevisionId( state );
+		const comparisons = getPostRevisionsComparisons( state, siteId, postId );
+		const selectedDiff = get( comparisons, [ selectedRevisionId, 'diff' ], {} );
 
-			return {
-				authorsIds: getPostRevisionsAuthorsId( state, siteId, postId ),
-				comparisons,
-				postId,
-				revisions,
-				selectedDiff,
-				selectedRevisionId,
-				siteId,
-			};
-		},
-		{ recordTracksEvent }
-	)
-)( EditorRevisions );
+		return {
+			authorsIds: getPostRevisionsAuthorsId( state, siteId, postId ),
+			comparisons,
+			postId,
+			revisions,
+			selectedDiff,
+			selectedRevisionId,
+			siteId,
+		};
+	},
+	{ recordTracksEvent }
+)( localize( EditorRevisions ) );

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import pageRouter from 'page';
 import { connect } from 'react-redux';
-import { flow, get, includes, partial } from 'lodash';
+import { get, includes, partial } from 'lodash';
 import { saveAs } from 'browser-filesaver';
 import classNames from 'classnames';
 
@@ -797,4 +797,4 @@ const mapDispatch = {
 	updateSiteFrontPage,
 };
 
-export default flow( localize, connect( mapState, mapDispatch ) )( Page );
+export default connect( mapState, mapDispatch )( localize( Page ) );
