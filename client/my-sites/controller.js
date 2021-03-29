@@ -230,7 +230,7 @@ function onSelectedSiteAvailable( context, basePath ) {
 	const selectedSite = getSelectedSite( state );
 
 	const isAtomicSite = isSiteAutomatedTransfer( state, selectedSite.ID );
-	const userCanManagePlugins = canCurrentUser( state, selectedSite.ID, 'manage_options' );
+	const userCanManagePlugins = canCurrentUser( state, selectedSite.ID, 'activate_plugins' );
 	const calypsoify = isAtomicSite && config.isEnabled( 'calypsoify/plugins' );
 
 	// If migration is in progress, only /migrate paths should be loaded for the site
