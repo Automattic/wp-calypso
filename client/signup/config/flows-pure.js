@@ -441,7 +441,7 @@ export function generateFlows( {
 		steps: [ 'user', 'domains', 'plans', 'design' ],
 		destination: getSignupDestination,
 		description: 'Default onboarding experience with design picker as the last step',
-		lastModified: '2021-03-19',
+		lastModified: '2021-03-29',
 		showRecaptcha: true,
 	};
 
