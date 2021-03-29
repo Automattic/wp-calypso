@@ -8,7 +8,7 @@ import React, { FunctionComponent, useCallback, useState } from 'react';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { defaultRewindConfig, RewindConfig } from './types';
 import { rewindRestore } from 'calypso/state/activity-log/actions';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
@@ -215,7 +215,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			{ restoreId && 'running' === inProgressRewindStatus && (
 				<QueryRewindRestoreStatus siteId={ siteId } restoreId={ restoreId } />
 			) }
-			{ render() }
+			<Card>{ render() }</Card>
 		</>
 	);
 };
