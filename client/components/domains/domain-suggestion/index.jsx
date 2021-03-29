@@ -98,9 +98,11 @@ class DomainSuggestion extends React.Component {
 					{ children }
 					{ this.renderPrice() }
 				</div>
-				<Button className="domain-suggestion__action" { ...this.props.buttonStyles }>
-					{ this.props.buttonContent }
-				</Button>
+				<div>
+					<Button className="domain-suggestion__action" { ...this.props.buttonStyles }>
+						{ this.props.buttonContent }
+					</Button>
+				</div>
 				{ this.props.showChevron && (
 					<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
 				) }

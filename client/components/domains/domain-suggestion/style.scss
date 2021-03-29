@@ -260,15 +260,26 @@
 
 body.is-section-signup.is-white-signup {
 	.featured-domain-suggestions {
+		.domain-registration-suggestion__title-wrapper {
+			flex-wrap: nowrap;
+		}
+
 		.domain-registration-suggestion__title {
 			font-size: $font-title-medium;
 		}
 	}
 
+	.featured-domain-suggestion {
+		flex-direction: row;
+	}
+
 	.domain-registration-suggestion__progress-bar {
+		align-self: center;
+		margin-left: 12px;
+		margin-top: 0;
+		
 		.badge {
-			background-color: var( --color-neutral-100 );
-			border-radius: 2px;
+			border-radius: 4px;
 		}
 	}
 

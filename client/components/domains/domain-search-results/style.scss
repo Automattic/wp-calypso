@@ -48,3 +48,16 @@
 		}
 	}
 }
+
+body.is-section-signup.is-white-signup {
+	.domain-search-results__domain-suggestions {
+		.card {
+			box-shadow: none;
+		}
+
+		.search-filters__buttons {
+			padding: 0;
+		}
+	}
+	
+}

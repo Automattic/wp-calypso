@@ -245,6 +245,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		}
 
 		let title = isAvailable ? translate( '%s is available!', { args: domain } ) : domain;
+		console.log( isReskinned );
 		if ( isReskinned ) {
 			title = this.renderDomainParts( domain );
 		}
@@ -263,6 +264,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		return (
 			<div className={ titleWrapperClassName }>
 				<h3 className="domain-registration-suggestion__title">{ title }</h3>
+				{ this.renderProgressBar() }
 				{ isPremium && (
 					<PremiumBadge restrictedPremium={ premiumDomain?.is_price_limit_exceeded } />
 				) }
@@ -308,6 +310,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			translate,
 			isFeatured,
 			showStrikedOutPrice,
+			isReskinned,
 		} = this.props;
 
 		if ( ! isFeatured ) {
@@ -322,6 +325,11 @@ class DomainRegistrationSuggestion extends React.Component {
 		let progressBarProps;
 		if ( isRecommended ) {
 			title = showStrikedOutPrice ? translate( 'Our Recommendation' ) : translate( 'Best Match' );
+
+			if ( isReskinned ) {
+				title = translate( 'Recommended' );
+			}
+
 			progressBarProps = {
 				color: NOTICE_GREEN,
 				title,
@@ -340,8 +348,10 @@ class DomainRegistrationSuggestion extends React.Component {
 		if ( title ) {
 			if ( showStrikedOutPrice ) {
 				const badgeClassName = classNames( '', {
-					success: isRecommended,
-					'info-blue': isBestAlternative,
+					success: isRecommended && ! isReskinned,
+					'info-blue': isBestAlternative && ! isReskinned,
+					'info-green': isRecommended && isReskinned,
+					'info-purple': isBestAlternative && isReskinned,
 				} );
 
 				return (
@@ -397,6 +407,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			productSaleCost,
 			premiumDomain,
 			showStrikedOutPrice,
+			isReskinned,
 		} = this.props;
 
 		const isUnavailableDomain = this.isUnavailableDomain( domain );
@@ -419,9 +430,10 @@ class DomainRegistrationSuggestion extends React.Component {
 				{ ...this.getButtonProps() }
 				isFeatured={ isFeatured }
 				showStrikedOutPrice={ showStrikedOutPrice }
+				isReskinned={ isReskinned }
 			>
 				{ this.renderDomain() }
-				{ this.renderProgressBar() }
+				{ ! isReskinned && this.renderProgressBar() }
 				{ this.renderMatchReason() }
 			</DomainSuggestion>
 		);

@@ -27,6 +27,16 @@
 	color: var( --color-text-inverted );
 }
 
+.badge--info-green {
+	color: var( --studio-green-80 );
+	background-color: var( --studio-green-5 );
+}
+
+.badge--info-purple {
+	color: var( --studio-woocommerce-purple-80 );
+	background-color: var( --studio-woocommerce-purple-5 );
+}
+
 .badge--error {
 	background-color: var( --color-error );
 	color: var( --color-text-inverted );

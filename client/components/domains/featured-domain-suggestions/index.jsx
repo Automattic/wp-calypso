@@ -123,6 +123,7 @@ export class FeaturedDomainSuggestions extends Component {
 						premiumDomain={ this.props.premiumDomains[ primarySuggestion.domain_name ] }
 						fetchAlgo={ this.getFetchAlgorithm( primarySuggestion ) }
 						buttonStyles={ { primary: true } }
+						isReskinned={ this.props.isReskinned }
 						{ ...childProps }
 					/>
 				) }
@@ -135,6 +136,7 @@ export class FeaturedDomainSuggestions extends Component {
 						uiPosition={ 1 }
 						premiumDomain={ this.props.premiumDomains[ secondarySuggestion.domain_name ] }
 						fetchAlgo={ this.getFetchAlgorithm( secondarySuggestion ) }
+						isReskinned={ this.props.isReskinned }
 						{ ...childProps }
 					/>
 				) }

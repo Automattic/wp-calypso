@@ -227,10 +227,17 @@ body.is-section-signup.is-white-signup {
 		}
 	}
 	.search-filters__popover-button {
+		order: 7;
+		margin-left: 1em;
+
 		&.is-active {
 			background: initial;
 			color: $accent-blue;
 			border-color: $accent-blue;
 		}
+	}
+
+	.search-filters__tld-button-first {
+		margin-left: 0;
 	}
 }

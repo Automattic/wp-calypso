@@ -25,6 +25,10 @@
 			flex-direction: row;
 		}
 	}
+
+	.is-section-signup.is-white-signup & {
+		display: block;
+	}
 }
 
 .featured-domain-suggestion {
