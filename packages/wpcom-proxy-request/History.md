@@ -1,6 +1,8 @@
 # History
 
-## 6.0.0 / TBD
+## Next / TBD
+
+## 6.0.0 / 2021-03-19
 
 - Add "support" for streamed responses and `onStreamRecord`. Doesn't implement, just tolerates the callback.
 - Breaking: Return Promise (rather than `XMLHttpRequest` instance) if no callback argument is provided.
