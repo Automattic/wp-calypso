@@ -113,8 +113,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async enterTitle( title ) {
-		const titleFieldSelector = By.css( '.editor-post-title__input' );
-		return await driverHelper.setWhenSettable( this.driver, titleFieldSelector, title );
+		const titleElement = await this.driver.findElement( By.css( '.editor-post-title__input' ) );
+		await titleElement.clear();
+		return titleElement.sendKeys( title );
 	}
 
 	async getTitle() {
@@ -127,7 +128,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const appenderSelector = By.css( '.block-editor-default-block-appender' );
 		const paragraphSelector = By.css( 'p.block-editor-rich-text__editable:first-of-type' );
 		await driverHelper.clickWhenClickable( this.driver, appenderSelector );
-		return await driverHelper.setWhenSettable( this.driver, paragraphSelector, text );
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, paragraphSelector );
+		const paragraphElement = this.driver.findElement( paragraphSelector );
+		await paragraphElement.clear();
+		return paragraphElement.sendKeys( text );
 	}
 
 	async getContent() {
