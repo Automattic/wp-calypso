@@ -6,6 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import controller from './controller';
 import * as paths from './paths';
@@ -29,16 +30,17 @@ export default function () {
 		handlers: [ ...commonHandlers, controller.emailManagement, makeLayout, clientRender ],
 	} );
 
+	const productType = `:productType(${ GOOGLE_WORKSPACE_PRODUCT_TYPE }|${ GSUITE_PRODUCT_TYPE })`;
+
 	registerMultiPage( {
 		paths: [
 			paths.emailManagementAddGSuiteUsers(
 				':site',
 				':domain',
-				':productType',
+				productType,
 				paths.emailManagementAllSitesPrefix
 			),
-			paths.emailManagementAddGSuiteUsers( ':site', ':domain', ':productType' ),
-			paths.emailManagementAddGSuiteUsers( ':site' ),
+			paths.emailManagementAddGSuiteUsers( ':site', ':domain', productType ),
 		],
 		handlers: [
 			...commonHandlers,
@@ -50,30 +52,13 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementNewTitanAccount(
-				':site',
-				':domain',
-				paths.emailManagementAllSitesPrefix
-			),
-			paths.emailManagementNewTitanAccount( ':site', ':domain' ),
-		],
-		handlers: [
-			...commonHandlers,
-			controller.emailManagementNewTitanAccount,
-			makeLayout,
-			clientRender,
-		],
-	} );
-
-	registerMultiPage( {
-		paths: [
 			paths.emailManagementNewGSuiteAccount(
 				':site',
 				':domain',
-				':productType',
+				productType,
 				paths.emailManagementAllSitesPrefix
 			),
-			paths.emailManagementNewGSuiteAccount( ':site', ':domain', ':productType' ),
+			paths.emailManagementNewGSuiteAccount( ':site', ':domain', productType ),
 		],
 		handlers: [
 			...commonHandlers,
@@ -95,6 +80,23 @@ export default function () {
 		handlers: [
 			...commonHandlers,
 			controller.emailManagementManageTitanAccount,
+			makeLayout,
+			clientRender,
+		],
+	} );
+
+	registerMultiPage( {
+		paths: [
+			paths.emailManagementNewTitanAccount(
+				':site',
+				':domain',
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementNewTitanAccount( ':site', ':domain' ),
+		],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementNewTitanAccount,
 			makeLayout,
 			clientRender,
 		],
