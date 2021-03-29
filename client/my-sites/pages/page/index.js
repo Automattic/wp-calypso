@@ -22,7 +22,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import SiteIcon from 'calypso/blocks/site-icon';
 import { statsLinkForPage } from '../helpers';
-import * as utils from 'calypso/state/posts/utils';
+import { getPreviewURL, userCan } from 'calypso/state/posts/utils';
 import MenuSeparator from 'calypso/components/popover/menu-separator';
 import PageCardInfo from '../page-card-info';
 import InfoPopover from 'calypso/components/info-popover';
@@ -152,9 +152,7 @@ class Page extends Component {
 
 		// This is technically if you can edit the current page, not the parent.
 		// Capabilities are not exposed on the parent page.
-		const parentHref = utils.userCan( 'edit_post', this.props.page )
-			? parentEditorUrl
-			: page.parent.URL;
+		const parentHref = userCan( 'edit_post', this.props.page ) ? parentEditorUrl : page.parent.URL;
 		const parentLink = <a href={ parentHref }>{ parentTitle }</a>;
 
 		return (
@@ -183,7 +181,7 @@ class Page extends Component {
 	getPublishItem() {
 		if (
 			this.props.page.status === 'publish' ||
-			! utils.userCan( 'publish_post', this.props.page ) ||
+			! userCan( 'publish_post', this.props.page ) ||
 			this.props.page.status === 'trash'
 		) {
 			return null;
@@ -202,7 +200,7 @@ class Page extends Component {
 			return null;
 		}
 
-		if ( ! utils.userCan( 'edit_post', this.props.page ) ) {
+		if ( ! userCan( 'edit_post', this.props.page ) ) {
 			return null;
 		}
 
@@ -295,7 +293,7 @@ class Page extends Component {
 			return null;
 		}
 
-		if ( ! utils.userCan( 'delete_post', this.props.page ) ) {
+		if ( ! userCan( 'delete_post', this.props.page ) ) {
 			return null;
 		}
 
@@ -322,7 +320,7 @@ class Page extends Component {
 		const { copyPagesModuleDisabled, wpAdminGutenberg, page: post, duplicateUrl } = this.props;
 		if (
 			! includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], post.status ) ||
-			! utils.userCan( 'edit_post', post ) ||
+			! userCan( 'edit_post', post ) ||
 			wpAdminGutenberg ||
 			copyPagesModuleDisabled
 		) {
@@ -363,7 +361,7 @@ class Page extends Component {
 	}
 
 	getRestoreItem() {
-		if ( this.props.page.status !== 'trash' || ! utils.userCan( 'delete_post', this.props.page ) ) {
+		if ( this.props.page.status !== 'trash' || ! userCan( 'delete_post', this.props.page ) ) {
 			return null;
 		}
 
@@ -458,7 +456,7 @@ class Page extends Component {
 			isPostsPage: latestPostsPage,
 		} = this.props;
 		const title = page.title || translate( 'Untitled' );
-		const canEdit = utils.userCan( 'edit_post', page ) && ! latestPostsPage;
+		const canEdit = userCan( 'edit_post', page ) && ! latestPostsPage;
 		const depthIndicator = ! this.props.hierarchical && page.parent && '— ';
 		const viewItem = this.getViewItem();
 		const publishItem = this.getPublishItem();
@@ -764,7 +762,7 @@ const mapState = ( state, props ) => {
 		isFrontPage: isFrontPage( state, pageSiteId, props.page.ID ),
 		isPostsPage: isPostsPage( state, pageSiteId, props.page.ID ),
 		isPreviewable,
-		previewURL: utils.getPreviewURL( site, props.page ),
+		previewURL: getPreviewURL( site, props.page ),
 		site,
 		siteId: pageSiteId,
 		siteSlugOrId,
