@@ -118,6 +118,7 @@ class StepWrapper extends Component {
 			isLargeSkipLayout,
 			isWideLayout,
 			isTopButtons,
+			align,
 		} = this.props;
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-wide-layout': isWideLayout,
@@ -134,6 +135,7 @@ class StepWrapper extends Component {
 							id={ 'step-header' }
 							headerText={ this.headerText() }
 							subHeaderText={ this.subHeaderText() }
+							align={ align }
 						>
 							{ headerButton }
 						</FormattedHeader>

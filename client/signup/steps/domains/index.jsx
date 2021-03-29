@@ -602,10 +602,14 @@ class DomainsStep extends React.Component {
 	};
 
 	getSubHeaderText() {
-		const { flowName, isAllDomains, siteType, translate } = this.props;
+		const { flowName, isAllDomains, siteType, isReskinned, translate } = this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Find the domain that defines you' );
+		}
+
+		if ( isReskinned ) {
+			return translate( "Enter your site's name or some descriptive keywords to get started" );
 		}
 
 		const subHeaderPropertyName = 'signUpFlowDomainsStepSubheader';
@@ -624,10 +628,14 @@ class DomainsStep extends React.Component {
 	}
 
 	getHeaderText() {
-		const { headerText, isAllDomains, siteType, translate } = this.props;
+		const { headerText, isAllDomains, siteType, isReskinned, translate } = this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Your next big idea starts here' );
+		}
+
+		if ( isReskinned ) {
+			return translate( 'Choose a domain' );
 		}
 
 		const headerPropertyName = 'signUpFlowDomainsStepHeader';
@@ -684,7 +692,7 @@ class DomainsStep extends React.Component {
 			return null;
 		}
 
-		const { flowName, isAllDomains, translate, sites } = this.props;
+		const { flowName, isAllDomains, translate, sites, isReskinned } = this.props;
 		const source = get( this.props, 'queryObject.source' );
 		const hasSite = Object.keys( sites ).length > 0;
 		let backUrl;
@@ -747,6 +755,7 @@ class DomainsStep extends React.Component {
 				goToNextStep={ this.handleSkip }
 				skipHeadingText={ translate( 'Not sure yet?' ) }
 				skipLabelText={ translate( 'Choose a domain later' ) }
+				align={ isReskinned ? 'left' : 'center' }
 			/>
 		);
 	}
