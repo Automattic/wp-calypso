@@ -36,9 +36,6 @@ export const remoteValuesSchema = {
 			minimum: 0,
 			maximum: 1,
 		},
-		editorAdvancedVisible: {
-			type: 'boolean',
-		},
 		editorConfirmationDisabledSites: {
 			type: 'array',
 			items: { type: 'number' },
