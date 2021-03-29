@@ -91,6 +91,10 @@ function WelcomeTourCard( {
 }
 
 function CardNavigation( { cardIndex, lastCardIndex, onDismiss, setCurrentCardIndex } ) {
+	// These are defined on their own lines because of a minification issue.
+	// __('translations') do not always work correctly when used inside of ternary statements.
+	const startTourLabel = __( 'Start Tour', 'full-site-editing' );
+	const nextLabel = __( 'Next', 'full-site-editing' );
 	return (
 		<>
 			<PaginationControl
@@ -114,9 +118,7 @@ function CardNavigation( { cardIndex, lastCardIndex, onDismiss, setCurrentCardIn
 					isPrimary={ true }
 					onClick={ () => setCurrentCardIndex( cardIndex + 1 ) }
 				>
-					{ cardIndex === 0
-						? __( 'Start Tour', 'full-site-editing' )
-						: __( 'Next', 'full-site-editing' ) }
+					{ cardIndex === 0 ? startTourLabel : nextLabel }
 				</Button>
 			</div>
 		</>
