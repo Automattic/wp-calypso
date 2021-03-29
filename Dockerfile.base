@@ -86,6 +86,7 @@ RUN apt update \
 		libatk-bridge2.0-0 \
 		libatspi2.0-0 \
 		libgtk-3-0 \
+		libgbm-dev \
 		libnspr4 \
 		libnss3 \
 		libnss3 \
