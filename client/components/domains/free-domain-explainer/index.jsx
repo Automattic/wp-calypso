@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,40 +15,18 @@ import Banner from 'calypso/components/banner';
 import './style.scss';
 
 class FreeDomainExplainer extends React.Component {
-	constructor( props ) {
-		super( props );
-		this.TextWrapper = this.TextWrapper.bind( this );
-	}
-
 	handleClick = () => {
 		const hideFreePlan = true;
 
 		this.props.onSkip( undefined, hideFreePlan );
 	};
 
-	/**
-	 * Wraps content in a <span> if the user is assigned the
-	 * `reskinned` group of the `reskinSignupFlow` a/b test.
-	 * If not, renders the content in a <p> as the default.
-	 *
-	 * @param {*} props Props passed to the <p> or <span>
-	 */
-	TextWrapper( props ) {
-		const { isReskinned } = props;
-		props = omit( props, 'isReskinned' );
-		return isReskinned ? (
-			<span { ...props }>{ props.children }</span>
-		) : (
-			<p { ...props }>{ props.children }</p>
-		);
-	}
-
 	getDescription() {
 		const { translate, locale } = this.props;
-		const { TextWrapper } = this;
+
 		return (
 			<>
-				<TextWrapper className="free-domain-explainer__subtitle">
+				<p className="free-domain-explainer__subtitle">
 					{ locale === 'en'
 						? translate(
 								"We'll pay the registration fees for your new domain when you choose an annual plan during the next step."
@@ -57,10 +34,10 @@ class FreeDomainExplainer extends React.Component {
 						: translate(
 								"We'll pay the registration fees for your new domain when you choose a paid plan during the next step."
 						  ) }
-				</TextWrapper>
-				<TextWrapper className="free-domain-explainer__subtitle">
+				</p>
+				<p className="free-domain-explainer__subtitle">
 					{ translate( "You can claim your free custom domain later if you aren't ready yet." ) }
-				</TextWrapper>
+				</p>
 			</>
 		);
 	}
