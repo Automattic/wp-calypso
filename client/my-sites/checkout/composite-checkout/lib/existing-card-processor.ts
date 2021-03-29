@@ -23,22 +23,19 @@ import type { TransactionRequest } from '../types/transaction-endpoint';
 
 const debug = debugFactory( 'calypso:composite-checkout:existing-card-processor' );
 
-type ExistingCardTransactionRequest = Omit<
-	Partial< TransactionRequest > &
-		Required<
-			Pick<
-				TransactionRequest,
-				| 'country'
-				| 'postalCode'
-				| 'name'
-				| 'storedDetailsId'
-				| 'siteId'
-				| 'paymentMethodToken'
-				| 'paymentPartnerProcessorId'
-			>
-		>,
-	'paymentMethodType'
->;
+type ExistingCardTransactionRequest = Partial< Omit< TransactionRequest, 'paymentMethodType' > > &
+	Required<
+		Pick<
+			TransactionRequest,
+			| 'country'
+			| 'postalCode'
+			| 'name'
+			| 'storedDetailsId'
+			| 'siteId'
+			| 'paymentMethodToken'
+			| 'paymentPartnerProcessorId'
+		>
+	>;
 
 export default async function existingCardProcessor(
 	transactionData: unknown,
