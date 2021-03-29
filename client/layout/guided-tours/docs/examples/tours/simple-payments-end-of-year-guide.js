@@ -4,12 +4,12 @@
  */
 import { isDesktop } from '@automattic/viewport';
 import React, { Fragment } from 'react';
-import { overEvery as and } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'calypso/components/gridicon';
+import { and } from 'calypso/layout/guided-tours/utils';
 import {
 	makeTour,
 	Continue,
