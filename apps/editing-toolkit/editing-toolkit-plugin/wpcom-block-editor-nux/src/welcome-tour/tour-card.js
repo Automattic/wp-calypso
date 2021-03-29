@@ -69,7 +69,7 @@ function WelcomeTourCard( {
 							isTertiary
 							onClick={ () => setCurrentCardIndex( 0 ) }
 						>
-							Restart tour
+							{ __( 'Restart tour', 'full-site-editing' ) }
 						</Button>
 					) : null }
 				</p>
@@ -179,7 +179,9 @@ function TourRating() {
 
 	return (
 		<>
-			<p className="welcome-tour__end-text">Did you find this guide helpful?</p>
+			<p className="welcome-tour__end-text">
+				{ __( 'Did you find this guide helpful?', 'full-site-editing' ) }
+			</p>
 			<div>
 				<Button
 					aria-label={ __( 'Rate thumbs up', 'full-site-editing' ) }
