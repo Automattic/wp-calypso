@@ -44,7 +44,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				export NODE_ENV="test"
 
 				# Install modules
-				yarn install
+				${_self.yarn_install_cmd}
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
@@ -211,7 +211,7 @@ object RunCalypsoE2eMobileTests : BuildType({
 				export NODE_ENV="test"
 
 				# Install modules
-				yarn install
+				${_self.yarn_install_cmd}
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
@@ -440,7 +440,7 @@ object RunAllUnitTests : BuildType({
 				export NODE_ENV="test"
 
 				# Install modules
-				yarn install
+				${_self.yarn_install_cmd}
 			"""
 		}
 		bashNodeScript {
@@ -653,7 +653,7 @@ object CheckCodeStyleBranch : BuildType({
 				export NODE_ENV="test"
 
 				# Install modules
-				yarn install
+				${_self.yarn_install_cmd}
 			"""
 		}
 		bashNodeScript {
@@ -746,7 +746,7 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 				export PLAYWRIGHT_BROWSERS_PATH=0
 
 				# Install modules
-				yarn install
+				${_self.yarn_install_cmd}
 
 				# Build package
 				yarn workspace @automattic/calypso-e2e build
