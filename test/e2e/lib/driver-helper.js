@@ -265,7 +265,13 @@ export function setWhenSettable(
 			}
 			await highlightElement( driver, element );
 			const currentValue = await element.getAttribute( 'value' );
+			if ( currentValue === value ) {
+				// Do nothing if given value is already set
+				return element;
+			}
+
 			if ( currentValue ) {
+				// Clear the input if it has some value
 				await element.sendKeys( Key.END );
 				for ( let i = 0; i < currentValue.length; i++ ) {
 					await element.sendKeys( Key.BACK_SPACE );
