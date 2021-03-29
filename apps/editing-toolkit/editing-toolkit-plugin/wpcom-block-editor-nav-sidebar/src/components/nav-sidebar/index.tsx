@@ -11,7 +11,7 @@ import {
 	IsolatedEventContainer,
 	withConstrainedTabbing,
 } from '@wordpress/components';
-import { chevronLeft, wordpress } from '@wordpress/icons';
+import { Icon, chevronLeft, wordpress } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 import { applyFilters, doAction, hasAction } from '@wordpress/hooks';
 import { get, isEmpty, partition } from 'lodash';
@@ -62,6 +62,33 @@ function WpcomBlockEditorNavSidebar() {
 			getSite()?.title,
 		];
 	} );
+
+	const { isRequestingSiteIcon, siteIconUrl } = useSelect( ( select ) => {
+		const { isResolving } = select( 'core/data' );
+		const { getEntityRecord } = select( 'core' );
+		const siteData = getEntityRecord( 'root', '__unstableBase', undefined ) || {};
+
+		return {
+			isRequestingSiteIcon: isResolving( 'core', 'getEntityRecord', [
+				'root',
+				'__unstableBase',
+				undefined,
+			] ),
+			siteIconUrl: siteData.site_icon_url,
+		};
+	}, [] );
+
+	let closeIcon = <Icon size={ 36 } icon={ wordpress } />;
+
+	if ( siteIconUrl ) {
+		closeIcon = (
+			<img
+				className="wpcom-block-editor-nav-sidebar-nav-sidebar__close-icon"
+				alt={ __( 'Site Icon', 'full-site-editing' ) }
+				src={ siteIconUrl }
+			/>
+		);
+	}
 
 	const { current: currentPost, drafts: draftPosts, recent: recentPosts } = useNavItems();
 	const statusLabels = usePostStatusLabels();
@@ -206,10 +233,10 @@ function WpcomBlockEditorNavSidebar() {
 							'edit-post-fullscreen-mode-close',
 							'wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button'
 						) }
-						icon={ wordpress }
-						iconSize={ 36 }
 						onClick={ dismissSidebar }
-					/>
+					>
+						{ closeIcon }
+					</Button>
 					<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__site-title">
 						<h2>{ siteTitle ? decodeEntities( siteTitle ) : '' }</h2>
 					</div>

@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { Button as OriginalButton } from '@wordpress/components';
-import { wordpress } from '@wordpress/icons';
+import { Icon, wordpress } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { __ } from '@wordpress/i18n';
@@ -26,6 +26,32 @@ export default function ToggleSidebarButton(): JSX.Element {
 	const { toggleSidebar } = useDispatch( STORE_KEY );
 	const isSidebarOpen = useSelect( ( select ) => select( STORE_KEY ).isSidebarOpened() );
 	const isSidebarClosing = useSelect( ( select ) => select( STORE_KEY ).isSidebarClosing() );
+	const { isRequestingSiteIcon, siteIconUrl } = useSelect( ( select ) => {
+		const { isResolving } = select( 'core/data' );
+		const { getEntityRecord } = select( 'core' );
+		const siteData = getEntityRecord( 'root', '__unstableBase', undefined ) || {};
+
+		return {
+			isRequestingSiteIcon: isResolving( 'core', 'getEntityRecord', [
+				'root',
+				'__unstableBase',
+				undefined,
+			] ),
+			siteIconUrl: siteData.site_icon_url,
+		};
+	}, [] );
+
+	let closeIcon = <Icon size={ 36 } icon={ wordpress } />;
+
+	if ( siteIconUrl ) {
+		closeIcon = (
+			<img
+				className="wpcom-block-editor-nav-sidebar-nav-sidebar__close-icon"
+				alt={ __( 'Site Icon', 'full-site-editing' ) }
+				src={ siteIconUrl }
+			/>
+		);
+	}
 
 	const handleClick = () => {
 		recordTracksEvent( `calypso_editor_sidebar_open` );
@@ -41,13 +67,14 @@ export default function ToggleSidebarButton(): JSX.Element {
 				'wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button',
 				{
 					'is-hidden': isSidebarOpen || isSidebarClosing,
+					'has-icon': siteIconUrl,
 				}
 			) }
-			icon={ wordpress }
-			iconSize={ 36 }
 			onClick={ handleClick }
 			aria-haspopup="dialog"
 			aria-expanded={ isSidebarOpen }
-		/>
+		>
+			{ closeIcon }
+		</Button>
 	);
 }

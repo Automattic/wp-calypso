@@ -108,6 +108,15 @@ $sidebar-button-text-color: #a2aab2; // former $light-gray-900
 	left: 0;
 	height: $header-height !important;
 	background-color: $sidebar-nav-header-background-color !important;
+	color: $white;
+
+	&:hover {
+		color: $white;
+	}
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__close-icon {
+	width: 36px;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__home-button {
