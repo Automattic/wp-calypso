@@ -28,7 +28,6 @@ export default class CancelPurchasePage extends AsyncBaseContainer {
 	}
 
 	async clickCancelPurchase() {
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.cancelButtonSelector );
 		return await driverHelper.clickWhenClickable( this.driver, this.cancelButtonSelector );
 	}
 

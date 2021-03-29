@@ -53,7 +53,7 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 				);
 			}
 		}
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css(
 				'.plan-features__mobile button.is-business-plan, .plan-features__table button.is-business-plan'

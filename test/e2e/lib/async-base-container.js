@@ -63,7 +63,7 @@ export default class AsyncBaseContainer {
 	}
 
 	async waitForPage() {
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			this.expectedElementSelector,
 			this.explicitWaitMS

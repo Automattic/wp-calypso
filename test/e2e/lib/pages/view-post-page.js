@@ -39,7 +39,7 @@ export default class ViewPostPage extends AsyncBaseContainer {
 	}
 
 	async tagDisplayed() {
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( 'a[rel=tag]' ) );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, By.css( 'a[rel=tag]' ) );
 		return await this.driver.findElement( By.css( 'a[rel=tag]' ) ).getText();
 	}
 

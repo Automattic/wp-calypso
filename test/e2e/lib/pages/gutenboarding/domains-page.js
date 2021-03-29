@@ -31,8 +31,10 @@ export default class DomainsPage extends AsyncBaseContainer {
 		const freeDomainNameSelector = By.css(
 			'.domain-picker__suggestion-item.is-free .domain-picker__suggestion-item-name'
 		);
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, freeDomainNameSelector );
-		const domainNameElement = await this.driver.findElement( freeDomainNameSelector );
+		const domainNameElement = await driverHelper.waitUntilLocatedAndVisible(
+			this.driver,
+			freeDomainNameSelector
+		);
 		const domainName = await domainNameElement.getText();
 		await driverHelper.clickWhenClickable( this.driver, freeDomainButtonSelector );
 		return domainName;

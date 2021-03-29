@@ -34,10 +34,7 @@ export default class CheckOutPage extends AsyncBaseContainer {
 	} ) {
 		const isCompositeCheckout = await this.isCompositeCheckout();
 		if ( isCompositeCheckout ) {
-			await driverHelper.waitTillPresentAndDisplayed(
-				this.driver,
-				By.css( '.checkout-line-item' )
-			);
+			await driverHelper.waitUntilLocatedAndVisible( this.driver, By.css( '.checkout-line-item' ) );
 			const contactDetailsEditButtons = await this.driver.findElements(
 				By.css( 'button[aria-label="Edit the contact details"]' )
 			);

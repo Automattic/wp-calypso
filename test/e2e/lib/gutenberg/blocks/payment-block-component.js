@@ -18,7 +18,7 @@ export default class SimplePaymentsBlockComponent extends GutenbergBlockComponen
 		allowQuantity = true,
 		email = 'test@wordpress.com',
 	} = {} ) {
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.wp-block-jetpack-simple-payments' )
 		);
@@ -57,7 +57,7 @@ export default class SimplePaymentsBlockComponent extends GutenbergBlockComponen
 	}
 
 	async ensurePaymentButtonDisplayedInEditor() {
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.jetpack-simple-payments-button' )
 		);

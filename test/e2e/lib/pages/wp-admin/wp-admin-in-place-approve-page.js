@@ -21,7 +21,6 @@ export default class WPAdminInPlaceApprovePage extends AsyncBaseContainer {
 			this.explicitWaitMS,
 			'Could not locate the payment button iFrame.'
 		);
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, approveButtonSelector );
 		await driverHelper.clickWhenClickable( this.driver, approveButtonSelector );
 		return await this.driver.switchTo().defaultContent();
 	}

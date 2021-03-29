@@ -69,7 +69,7 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		);
 
 		await this.runInCanvas( async () => {
-			await driverHelper.waitTillPresentAndDisplayed(
+			await driverHelper.waitUntilLocatedAndVisible(
 				this.driver,
 				By.css( '.edit-site-block-editor__block-list' )
 			);

@@ -68,7 +68,7 @@ export default class NavBarComponent extends AsyncBaseContainer {
 		await driver.sleep( 400 ); // Wait for menu animation to complete
 	}
 	async openNotificationsShortcut() {
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			by.css( '.masterbar__notifications' )
 		);

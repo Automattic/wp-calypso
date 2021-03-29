@@ -25,7 +25,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 			By.css( '.sidebar__heading' ),
 			itemName
 		);
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, selector );
 		const itemSelector = await this.driver.findElement( selector );
 		const isExpanded = await itemSelector.getAttribute( 'aria-expanded' );
 		if ( isExpanded === 'false' ) {
@@ -166,7 +166,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 
 	async _scrollToAndClickMenuItem( target, { clickButton = false } = {} ) {
 		const selector = SidebarComponent._getSidebarSelector( target, { getButton: clickButton } );
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.current-site__notices' )
 		);
@@ -176,7 +176,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 			await driverHelper.scrollIntoView( this.driver, settingsSelector );
 		}
 
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, selector );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}
 
@@ -203,7 +203,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 				console.log( 'All sites button did not click' );
 			}
 		}
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, sidebarSelector );
+		return await driverHelper.waitUntilLocatedAndVisible( this.driver, sidebarSelector );
 	}
 
 	async selectSiteSwitcher() {
@@ -286,10 +286,10 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		}
 
 		const countSelector = By.css( '.count' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, countSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, countSelector );
 		const count = await this.driver.findElement( countSelector ).getText();
 
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, brokenSiteButton );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, brokenSiteButton );
 		const buttons = await this.driver.findElements( brokenSiteButton );
 		if ( buttons.length > 1 ) {
 			await buttons[ 1 ].click();
@@ -297,7 +297,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 			await driverHelper.clickWhenClickable( this.driver, brokenSiteButton );
 		}
 
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, disconnectJetpackButton );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, disconnectJetpackButton );
 		await driverHelper.clickWhenClickable( this.driver, disconnectJetpackButton );
 		await driverHelper.clickWhenClickable(
 			this.driver,

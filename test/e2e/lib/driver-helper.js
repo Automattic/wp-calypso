@@ -112,7 +112,27 @@ export function waitTillFocused( driver, selector, pollingOverride, waitOverride
 	);
 }
 
-export function waitTillPresentAndDisplayed( driver, selector, waitOverride ) {
+export function waitUntilLocatedAndVisible( driver, locator, timeout = explicitWaitMS ) {
+	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
+
+	return driver.wait(
+		new WebElementCondition(
+			`for the element to become located and visible ${ locatorStr }`,
+			async function () {
+				const element = ( await driver.findElements( locator ) )[ 0 ];
+				if ( ! element ) {
+					return null;
+				}
+				const isDisplayed = await element.isDisplayed();
+
+				return isDisplayed ? element : null;
+			}
+		),
+		timeout
+	);
+}
+
+export function waitUntilLocatedAndVisible( driver, selector, waitOverride ) {
 	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
 
 	return driver.wait(
@@ -406,7 +426,7 @@ export async function ensureMobileMenuOpen( driver ) {
 	const menuLocator = by.css( '.section-nav' );
 	const openMenuLocator = by.css( '.section-nav.is-open' );
 
-	await waitTillPresentAndDisplayed( driver, menuLocator );
+	await waitUntilLocatedAndVisible( driver, menuLocator );
 	const menuElement = await driver.findElement( menuLocator );
 	const isMenuOpen = await menuElement
 		.getAttribute( 'class' )
@@ -414,7 +434,7 @@ export async function ensureMobileMenuOpen( driver ) {
 
 	if ( ! isMenuOpen ) {
 		await clickWhenClickable( driver, mobileHeaderLocator );
-		await waitTillPresentAndDisplayed( driver, openMenuLocator );
+		await waitUntilLocatedAndVisible( driver, openMenuLocator );
 	}
 }
 

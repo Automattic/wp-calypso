@@ -28,14 +28,14 @@ export default class EditorPage extends AsyncBaseContainer {
 	async _postInit() {
 		const contentSelector = by.css( 'div.is-section-post-editor' );
 		const cogSelector = by.css( 'button.editor-ground-control__toggle-sidebar' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, contentSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, contentSelector );
 		const contentElement = await this.driver.findElement( contentSelector );
 		const classes = await contentElement.getAttribute( 'class' );
 		if ( classes.indexOf( 'focus-content' ) < 0 ) {
 			await driverHelper.clickWhenClickable( this.driver, cogSelector );
 		}
 		await this.waitForPage();
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, this.editorFrameName );
+		return await driverHelper.waitUntilLocatedAndVisible( this.driver, this.editorFrameName );
 	}
 
 	async enterTitle( blogPostTitle ) {
@@ -58,7 +58,7 @@ export default class EditorPage extends AsyncBaseContainer {
 
 	async chooseInsertMediaOption() {
 		await driverHelper.clickWhenClickable( this.driver, by.css( '.mce-wpcom-insert-menu button' ) );
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			by.css( 'span[data-e2e-insert-type="media"]' )
 		);
@@ -82,7 +82,7 @@ export default class EditorPage extends AsyncBaseContainer {
 		);
 		const driver = this.driver;
 
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			driver,
 			by.className( 'media-library__upload-button' )
 		);
@@ -96,7 +96,7 @@ export default class EditorPage extends AsyncBaseContainer {
 		if ( errorShown ) {
 			throw new Error( 'There is an error shown on the editor page!' );
 		}
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			driver,
 			by.css( '.media-library__list-item.is-selected' )
 		);
@@ -106,7 +106,7 @@ export default class EditorPage extends AsyncBaseContainer {
 		const driver = this.driver;
 
 		const imageUploadedSelector = webdriver.By.css( 'img[alt="' + fileName + '"]' );
-		await driverHelper.waitTillPresentAndDisplayed( driver, imageUploadedSelector );
+		await driverHelper.waitUntilLocatedAndVisible( driver, imageUploadedSelector );
 		return await driverHelper.clickWhenClickable(
 			driver,
 			by.css( 'button[data-e2e-button="confirm"]' )
@@ -115,7 +115,7 @@ export default class EditorPage extends AsyncBaseContainer {
 
 	async openImageDetails() {
 		const editSelector = by.css( 'button[data-e2e-button="edit"]:not([disabled])' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, editSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, editSelector );
 		return await driverHelper.clickWhenClickable( this.driver, editSelector );
 	}
 
@@ -124,7 +124,7 @@ export default class EditorPage extends AsyncBaseContainer {
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
 			editSelector = by.css( '.is-mobile .editor-media-modal-detail__edit:not([disabled])' );
 		}
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, editSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, editSelector );
 		return await driverHelper.clickWhenClickable( this.driver, editSelector );
 	}
 
@@ -137,13 +137,13 @@ export default class EditorPage extends AsyncBaseContainer {
 
 	async dismissImageEditor() {
 		const cancelSelector = by.css( 'button[data-e2e-button="cancel"]:not([disabled])' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, cancelSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, cancelSelector );
 		return await driverHelper.clickWhenClickable( this.driver, cancelSelector );
 	}
 
 	async dismissImageDetails() {
 		const backSelector = by.css( '.editor-media-modal-detail .header-cake__back:not([disabled])' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, backSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, backSelector );
 		return await driverHelper.clickWhenClickable( this.driver, backSelector );
 	}
 
@@ -230,7 +230,7 @@ export default class EditorPage extends AsyncBaseContainer {
 		await this.chooseInsertMediaOption();
 		await this.sendFile( newFile );
 		const imageUploadedSelector = webdriver.By.css( 'img[alt="' + newImageName + '"]' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, imageUploadedSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, imageUploadedSelector );
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			by.css( 'button[data-e2e-button="confirm"]' )
@@ -263,7 +263,7 @@ export default class EditorPage extends AsyncBaseContainer {
 			this.explicitWaitMS,
 			'Could not locate the editor iFrame.'
 		);
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			by.css( 'img[alt="' + newImageName + '"]' )
 		);
@@ -273,11 +273,11 @@ export default class EditorPage extends AsyncBaseContainer {
 	async waitUntilFeaturedImageInserted() {
 		const driver = this.driver;
 
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			driver,
 			by.css( '.post-editor__inner-content .editor-featured-image__preview' )
 		);
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			driver,
 			by.css( '[data-e2e-title="featured-image"] .editor-featured-image__preview img' )
 		);
@@ -295,7 +295,7 @@ export default class EditorPage extends AsyncBaseContainer {
 			this.explicitWaitMS,
 			'Could not locate the editor iFrame.'
 		);
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			by.css( '.wpview-type-contact-form' )
 		);
@@ -308,7 +308,7 @@ export default class EditorPage extends AsyncBaseContainer {
 			this.explicitWaitMS,
 			'Could not locate the editor iFrame.'
 		);
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			by.css( '.wpview-type-simple-payments' )
 		);
@@ -324,7 +324,7 @@ export default class EditorPage extends AsyncBaseContainer {
 
 	async titleShown() {
 		const titleSelector = by.css( '.editor-title__input' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, titleSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, titleSelector );
 		const element = await this.driver.findElement( titleSelector );
 		return await element.getAttribute( 'value' );
 	}

@@ -24,8 +24,6 @@ export default class CloseAccountPage extends AsyncBaseContainer {
 		const confirmDialogSelector = by.css( '.account-close__confirm-dialog' );
 		const pauseBetweenClickAttemptsMS = 100;
 
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, buttonSelector );
-
 		// Click doesn't always fire even if the button is already displayed.
 		// We can safely attempt to click the button until the confirmation dialog pop-up window is present.
 		for ( let i = 0; i < explicitWaitMS / pauseBetweenClickAttemptsMS; i++ ) {

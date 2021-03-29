@@ -17,7 +17,7 @@ export default class ViewBlogPage extends AsyncBaseContainer {
 	}
 
 	async waitForTrampolineWelcomeMessage() {
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, this.trampolineSelector );
+		return await driverHelper.waitUntilLocatedAndVisible( this.driver, this.trampolineSelector );
 	}
 
 	async isTrampolineWelcomeDisplayed() {

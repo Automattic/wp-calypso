@@ -20,7 +20,7 @@ export default class StatsPage extends AsyncBaseContainer {
 	async openInsights() {
 		await this._expandNavIfMobile();
 		await driverHelper.clickWhenClickable( this.driver, By.css( '.stats-navigation__insights' ) );
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.stats__section-header' )
 		);

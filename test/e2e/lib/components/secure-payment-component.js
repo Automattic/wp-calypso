@@ -37,7 +37,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 
 	async _postInit() {
 		// This is to wait for products to settle down during sign up see - https://github.com/Automattic/wp-calypso/issues/24579
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			this.paymentButtonSelector,
 			this.explicitWaitMS
@@ -305,7 +305,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		if ( currentScreenSize() === 'mobile' ) {
 			await driverHelper.scrollIntoView( this.driver, this.getCartTotalSelector() );
 		}
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.getCartTotalSelector() );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, this.getCartTotalSelector() );
 
 		const cartElement = await this.driver.findElement( this.getCartTotalSelector() );
 
@@ -355,12 +355,12 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	async waitForCouponToBeApplied() {
 		const isCompositeCheckout = await this.isCompositeCheckout();
 		if ( isCompositeCheckout ) {
-			return driverHelper.waitTillPresentAndDisplayed(
+			return driverHelper.waitUntilLocatedAndVisible(
 				this.driver,
 				By.css( '#checkout-line-item-coupon-line-item' )
 			);
 		}
-		return driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( '.cart__remove-link' ) );
+		return driverHelper.waitUntilLocatedAndVisible( this.driver, By.css( '.cart__remove-link' ) );
 	}
 
 	async waitForCouponToBeRemoved() {
@@ -431,18 +431,18 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async cartTotalDisplayed() {
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.getCartTotalSelector() );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, this.getCartTotalSelector() );
 		return await this.driver.findElement( this.getCartTotalSelector() ).getText();
 	}
 
 	async paymentButtonText() {
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.paymentButtonSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, this.paymentButtonSelector );
 		await driverHelper.scrollIntoView( this.driver, this.paymentButtonSelector );
 		return await this.driver.findElement( this.paymentButtonSelector ).getText();
 	}
 
 	async _cartContainsProduct( productSlug, expectedQuantity = 1 ) {
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.product-name,.checkout-line-item' )
 		);

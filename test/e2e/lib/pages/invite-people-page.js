@@ -26,7 +26,6 @@ export default class InvitePeoplePage extends AsyncBaseContainer {
 		const roleSelector = By.css( `fieldset#role input[value=${ role }]` );
 
 		await DriverHelper.setWhenSettable( this.driver, By.css( 'input.token-field__input' ), email );
-		await DriverHelper.waitTillPresentAndDisplayed( this.driver, roleSelector );
 		await DriverHelper.clickWhenClickable( this.driver, roleSelector );
 		await DriverHelper.setCheckbox( this.driver, roleSelector );
 		await DriverHelper.setWhenSettable( this.driver, By.css( '#message' ), message );

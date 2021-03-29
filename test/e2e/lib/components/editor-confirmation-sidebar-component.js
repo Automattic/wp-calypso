@@ -16,7 +16,7 @@ export default class EditorConfirmationSidebarComponent extends AsyncBaseContain
 	}
 
 	async confirmAndPublish() {
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			by.css( '.editor-confirmation-sidebar__action button.button' )
 		);
@@ -30,7 +30,7 @@ export default class EditorConfirmationSidebarComponent extends AsyncBaseContain
 		const dateSelector = by.css(
 			'.editor-confirmation-sidebar .editor-publish-date__header-chrono'
 		);
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, dateSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, dateSelector );
 		return await this.driver.findElement( dateSelector ).getText();
 	}
 }

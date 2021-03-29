@@ -11,7 +11,7 @@ import GutenbergBlockComponent from './gutenberg-block-component';
 
 export class FileBlockComponent extends GutenbergBlockComponent {
 	async uploadFile( fileDetails ) {
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.components-form-file-upload ' )
 		);
