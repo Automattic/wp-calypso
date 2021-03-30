@@ -98,9 +98,6 @@ export default class WPAdminSidebar extends AsyncBaseContainer {
 		if ( ! classes.includes( 'wp-menu-open' ) && ! classes.includes( 'wp-has-current-submenu' ) ) {
 			await driverHelper.clickWhenClickable( this.driver, menuSelector );
 		}
-		if ( driverManager.currentScreenSize() === 'mobile' ) {
-			return await driverHelper.clickWhenClickable( this.driver, menuItemSelector );
-		}
 		return await driverHelper.clickWhenClickable( this.driver, menuItemSelector );
 	}
 
