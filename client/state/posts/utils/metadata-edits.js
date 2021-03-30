@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { every, filter, find } from 'lodash';
+import { filter, find } from 'lodash';
 
 function isUnappliedMetadataEdit( edit, savedMetadata ) {
 	const savedRecord = find( savedMetadata, { key: edit.key } );
@@ -26,8 +26,4 @@ function isUnappliedMetadataEdit( edit, savedMetadata ) {
  */
 export function getUnappliedMetadataEdits( edits, savedMetadata ) {
 	return filter( edits, ( edit ) => isUnappliedMetadataEdit( edit, savedMetadata ) );
-}
-
-export function areAllMetadataEditsApplied( edits, savedMetadata ) {
-	return every( edits, ( edit ) => ! isUnappliedMetadataEdit( edit, savedMetadata ) );
 }
