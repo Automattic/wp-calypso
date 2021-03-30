@@ -18,11 +18,15 @@ class WebpackRTLPlugin {
 		compiler.hooks.thisCompilation.tap( pluginName, ( compilation ) => {
 			compilation.hooks.processAssets.tapPromise(
 				{ name: pluginName, stage: compilation.PROCESS_ASSETS_STAGE_DERIVED },
-				async ( assets ) =>
-					Promise.all(
-						Object.keys( assets )
-							.filter( ( asset ) => path.extname( asset ) === '.css' )
-							.map( async ( asset ) => {
+				async ( assets ) => {
+					return Promise.all(
+						Array.from( compilation.chunks )
+							.flatMap( ( chunk ) =>
+								// Collect all files form all chunks, and generate an array of {chunk, file} objects
+								Array.from( chunk.files ).map( ( asset ) => ( { chunk, asset } ) )
+							)
+							.filter( ( { asset } ) => path.extname( asset ) === '.css' )
+							.map( async ( { chunk, asset } ) => {
 								if ( this.options.test ) {
 									const re = new RegExp( this.options.test );
 									if ( ! re.test( asset ) ) {
@@ -47,8 +51,10 @@ class WebpackRTLPlugin {
 
 								// Save the asset
 								assets[ filename ] = new ConcatSource( rtlSource );
+								chunk.files.add( filename );
 							} )
-					)
+					);
+				}
 			);
 		} );
 	}
