@@ -18,8 +18,6 @@ import store from 'store';
  */
 import './style.scss';
 
-const WP_AUTHORIZE_ENDPOINT = 'https://public-api.wordpress.com/oauth2/authorize';
-
 export default {
 	oauthLogin: function ( context, next ) {
 		if ( ! config.isEnabled( 'oauth' ) || getToken() ) {
@@ -37,10 +35,7 @@ export default {
 		let authUrl;
 
 		if ( config( 'oauth_client_id' ) ) {
-			const protocol = config( 'protocol' );
-			const host = config( 'hostname' );
-			const port = config( 'port' );
-			const redirectUri = `${ protocol }://${ host }:${ port }/api/oauth/token`;
+			const redirectUri = `${ window.location.origin }/api/oauth/token`;
 
 			const params = new URLSearchParams( {
 				response_type: 'token',
@@ -50,7 +45,7 @@ export default {
 				blog_id: 0,
 			} );
 
-			authUrl = `${ WP_AUTHORIZE_ENDPOINT }?${ params.toString() }`;
+			authUrl = `https://public-api.wordpress.com/oauth2/authorize?${ params.toString() }`;
 		}
 
 		context.primary = <ConnectComponent authUrl={ authUrl } />;
