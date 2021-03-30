@@ -74,6 +74,7 @@ import InputChrono from 'calypso/components/input-chrono/docs/example';
 import JetpackColophonExample from 'calypso/components/jetpack-colophon/docs/example';
 import JetpackHeaderExample from 'calypso/components/jetpack-header/docs/example';
 import JetpackLogoExample from 'calypso/components/jetpack-logo/docs/example';
+import JetpackReviewPromptExample from 'calypso/components/jetpack/jetpack-review-prompt/docs/example';
 import LanguagePicker from 'calypso/components/language-picker/docs/example';
 import LayoutExample from 'calypso/components/layout/docs/example';
 import LineChart from 'calypso/components/line-chart/docs/example';
@@ -231,6 +232,7 @@ export default class DesignAssets extends React.Component {
 					<JetpackColophonExample readmeFilePath="jetpack-colophon" />
 					<JetpackHeaderExample readmeFilePath="jetpack-header" />
 					<JetpackLogoExample readmeFilePath="jetpack-logo" />
+					<JetpackReviewPromptExample readmeFilePath="jetpack/jetpack-review-prompt" />
 					<LanguagePicker readmeFilePath="language-picker" />
 					<LayoutExample readmeFilePath="layout" />
 					<LineChart readmeFilePath="line-chart" />
