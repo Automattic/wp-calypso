@@ -43,7 +43,6 @@ class DesignPickerStep extends Component {
 		this.props.submitSignupStep(
 			{
 				stepName: this.props.stepName,
-				selectedDesign,
 			},
 			{
 				selectedDesign,
