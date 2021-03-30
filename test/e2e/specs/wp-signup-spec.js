@@ -1322,7 +1322,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 	} );
 
-	describe.only( 'Signup and create new site using the New Onboarding (Gutenboarding) @signup', function () {
+	describe( 'Signup and create new site using the New Onboarding (Gutenboarding) @signup', function () {
 		const emailAddress = dataHelper.getEmailAddress( dataHelper.getNewBlogName(), signupInboxId );
 
 		before( async function () {
