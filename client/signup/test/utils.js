@@ -4,6 +4,7 @@
 /**
  * External dependencies
  */
+import { createExPlatClient } from '@automattic/explat-client';
 
 /**
  * Internal dependencies
@@ -16,6 +17,7 @@ import {
 	getStepName,
 	getFlowName,
 	getFilteredSteps,
+	loadExplatExperimentVariation,
 } from '../utils';
 import flows from 'calypso/signup/config/flows';
 
@@ -28,6 +30,10 @@ jest.mock( 'calypso/lib/user', () => () => ( {
 
 jest.mock( 'calypso/signup/config/flows-pure', () => ( {
 	generateFlows: () => require( './fixtures/flows' ).default,
+} ) );
+
+jest.mock( '@automattic/explat-client', () => ( {
+	createExPlatClient: jest.fn(),
 } ) );
 
 describe( 'utils', () => {
@@ -281,6 +287,30 @@ describe( 'utils', () => {
 			const canResume = canResumeFlow( 'onboarding', signupProgress );
 
 			expect( canResume ).toBe( false );
+		} );
+	} );
+
+	describe( 'Explat Client', () => {
+		afterEach( () => {
+			jest.resetAllMocks();
+		} );
+
+		test( 'should return falsy when the user is not assigned to a treatment group', async () => {
+			createExPlatClient.mockImplementation( () => ( {
+				loadExperimentAssignment: jest.fn( () => ( {
+					variationName: null,
+				} ) ),
+			} ) );
+			expect( await loadExplatExperimentVariation( 'mocked-experiment-id' ) ).toBeFalsy();
+		} );
+
+		test( 'should return truthy when the user is assigned to a treatment group', async () => {
+			createExPlatClient.mockImplementation( () => ( {
+				loadExperimentAssignment: jest.fn( () => ( {
+					variationName: 'treatment',
+				} ) ),
+			} ) );
+			expect( await loadExplatExperimentVariation( 'mocked-experiment-id' ) ).toBeTruthy();
 		} );
 	} );
 } );

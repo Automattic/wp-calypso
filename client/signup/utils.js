@@ -3,6 +3,7 @@
  */
 import { filter, find, includes, isEmpty, pick, sortBy } from 'lodash';
 import { translate } from 'i18n-calypso';
+import { createExPlatClient } from '@automattic/explat-client';
 
 /**
  * Internal dependencies
@@ -215,3 +216,8 @@ export const shouldForceLogin = ( flowName ) => {
 	const flow = flows.getFlow( flowName );
 	return !! flow && flow.forceLogin;
 };
+
+export async function loadExplatExperimentVariation( name ) {
+	const { variationName } = await createExPlatClient().loadExperimentAssignment( name );
+	return !! variationName;
+}
