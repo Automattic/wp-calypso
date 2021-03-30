@@ -97,6 +97,10 @@
 		margin: 0;
 		justify-content: flex-start;
 
+		body.is-section-signup.is-white-signup & {
+			margin-top: 12px;
+		}
+
 		&.is-free-domain,
 		&.is-sale-domain {
 			small {
@@ -152,7 +156,7 @@
 .is-section-signup.is-white-signup .featured-domain-suggestion {
 	box-sizing: border-box;
 	border: 1px solid #e2e4e7;
-	border-radius: 4px; // eslint-disable-line
+	border-radius: 4px; /* stylelint-disable-line */
 	margin-bottom: 12px;
 }
 

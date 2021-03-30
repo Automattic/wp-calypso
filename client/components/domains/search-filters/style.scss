@@ -215,6 +215,7 @@
 
 body.is-section-signup.is-white-signup {
 	$accent-blue: #117ac9;
+
 	.search-filters-extensions__popover {
 		@include break-medium {
 			transform: translateX( 65px );
@@ -241,5 +242,16 @@ body.is-section-signup.is-white-signup {
 	}
 	.search-filters__tld-button-first {
 		margin-left: 0;
+	}
+
+	.search-filters__tld-button {
+		background: #fdfdfd;
+		border-radius: 4px; /* stylelint-disable-line */
+		border-color: #e2e4e7;
+
+		&.is-active {
+			background: var( --studio-white );
+			border: 1px solid #646970;
+		}
 	}
 }
