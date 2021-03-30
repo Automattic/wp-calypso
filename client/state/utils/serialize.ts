@@ -2,9 +2,9 @@
  * External dependencies
  */
 import { getInitialState } from '@automattic/state-utils';
-import type { Reducer, AnyAction } from 'redux';
+import type { Reducer, AnyAction, Action } from 'redux';
 
-export type SerializableReducer< TState, TAction extends AnyAction > = Reducer<
+export type SerializableReducer< TState, TAction extends AnyAction = Action > = Reducer<
 	TState,
 	TAction
 > & {
@@ -12,10 +12,7 @@ export type SerializableReducer< TState, TAction extends AnyAction > = Reducer<
 	deserialize?: ( persisted: any ) => TState;
 };
 
-export function serialize< TState, TAction extends AnyAction >(
-	reducer: SerializableReducer< TState, TAction >,
-	state: TState
-): any {
+export function serialize< TState >( reducer: SerializableReducer< TState >, state: TState ): any {
 	if ( ! reducer.serialize ) {
 		return undefined;
 	}
@@ -23,8 +20,8 @@ export function serialize< TState, TAction extends AnyAction >(
 	return reducer.serialize( state );
 }
 
-export function deserialize< TState, TAction extends AnyAction >(
-	reducer: SerializableReducer< TState, TAction >,
+export function deserialize< TState >(
+	reducer: SerializableReducer< TState >,
 	persisted: any
 ): TState {
 	if ( ! reducer.deserialize ) {
