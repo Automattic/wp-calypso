@@ -232,17 +232,12 @@ function getNewSiteParams( {
 		// If there's a selected design, use similar new site options to what used
 		// in gutenboarding (see `client/landing/gutenboarding/stores/onboard/actions.ts`)
 		// `Design` type defined in `packages/design-picker/src/types.ts`
+		// Note: the site_creation_flow is not overridden
 		newSiteParams.options.theme = `pub/${ selectedDesign.theme }`;
 		newSiteParams.options.template = selectedDesign.template;
 		newSiteParams.options.font_base = selectedDesign.fonts.base;
 		newSiteParams.options.font_headings = selectedDesign.fonts.headings;
 		newSiteParams.options.use_patterns = true;
-
-		// TODO: needs same value to be supported in the backend
-		//(see https://github.com/Automattic/wp-calypso/issues/51231)
-		// Is this override necessary? Before overriding, the site_creation_flow
-		// is "with-design-picker"
-		newSiteParams.options.site_creation_flow = 'onboarding-with-design';
 	}
 
 	return newSiteParams;
