@@ -29,7 +29,7 @@ describe( `[${ host }] Media: Edit Media (${ screenSize }) @parallel @jetpack`, 
 
 	describe( 'Edit Existing Media:', function () {
 		before( 'Can login and select my site', async function () {
-			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			const loginFlow = new LoginFlow( driver );
 			await loginFlow.loginAndSelectMySite();
 		} );
 

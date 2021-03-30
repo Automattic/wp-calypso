@@ -10,6 +10,9 @@ import AsyncBaseContainer from '../async-base-container';
 // import DisconnectSurveyPage from '../pages/disconnect-survey-page.js';
 import * as driverHelper from '../driver-helper.js';
 import * as driverManager from '../driver-manager';
+import * as dataHelper from '../data-helper';
+
+let host = dataHelper.getJetpackHost();
 
 export default class SidebarComponent extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -39,6 +42,11 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectPeople() {
+		if( host !== 'WPCOM' ) {
+			await this.expandDrawerItem( 'Manage' );
+			return await this._scrollToAndClickMenuItem( 'People' );
+		}
+
 		await this.expandDrawerItem( 'Users' );
 		return await this._scrollToAndClickMenuItem( 'All Users' );
 	}
@@ -102,11 +110,16 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectViewThisSite() {
-		return await this._scrollToAndClickMenuItemByText( 'sitePreview' );
+		return await this._scrollToAndClickMenuItem( 'sitePreview' );
 	}
 
 	async selectPlugins() {
-		return await this._scrollToAndClickMenuItemByText( 'Plugins' );
+		return await this._scrollToAndClickMenuItem( 'Plugins' );
+	}
+
+	async selectPluginsJetpackConnected() {
+		await this.expandDrawerItem( 'Tools' );
+		return await this._scrollToAndClickMenuItem( 'Plugins' );
 	}
 
 	async selectSettings() {
@@ -115,6 +128,9 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectMedia() {
+		if( host !== 'WPCOM' ) {
+			await this.expandDrawerItem( 'Site' );
+		}
 		return await this._scrollToAndClickMenuItem( 'Media' );
 	}
 

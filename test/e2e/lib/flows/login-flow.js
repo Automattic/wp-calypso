@@ -228,18 +228,18 @@ export default class LoginFlow {
 		return await sideBarComponent.selectThemes();
 	}
 
-	async loginAndSelectManagePlugins() {
-		await this.loginAndSelectPlugins();
+	async loginAndSelectManagePluginsJetpack() {
+		await this.loginAndSelectPluginsJetpack();
 
 		const pluginsBrowserPage = await PluginsBrowserPage.Expect( this.driver );
 		return await pluginsBrowserPage.selectManagePlugins();
 	}
 
-	async loginAndSelectPlugins() {
+	async loginAndSelectPluginsJetpack() {
 		await this.loginAndSelectMySite();
 
 		const sideBarComponent = await SidebarComponent.Expect( this.driver );
-		return await sideBarComponent.selectPlugins();
+		return await sideBarComponent.selectPluginsJetpackConnected();
 	}
 
 	async loginAndSelectSettings() {

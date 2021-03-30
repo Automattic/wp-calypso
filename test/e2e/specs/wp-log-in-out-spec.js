@@ -16,6 +16,7 @@ import EmailClient from '../lib/email-client.js';
 import { listenForSMS } from '../lib/xmpp-client';
 import { subscribeToPush, approvePushToken } from '../lib/push-client';
 import ReaderPage from '../lib/pages/reader-page';
+import StatsPage from '../lib/pages/stats-page';
 import ProfilePage from '../lib/pages/profile-page';
 import WPHomePage from '../lib/pages/wp-home-page';
 import MagicLoginPage from '../lib/pages/magic-login-page';
@@ -69,8 +70,8 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 				await loginFlow.login( { useFreshLogin: true } );
 			} );
 
-			step( 'Can see Reader Page after logging in', async function () {
-				return await ReaderPage.Expect( driver );
+			step( 'Can see Stats Page after logging in', async function () {
+				return await StatsPage.Expect( driver );
 			} );
 		} );
 
