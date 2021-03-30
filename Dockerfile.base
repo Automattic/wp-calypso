@@ -139,7 +139,7 @@ RUN apt update &&\
 	apt update &&\
 	apt-get install -y php7.4-cli php7.4-xml php7.4-mbstring &&\
 	composer install &&\
-	sudo curl -L --fail https://github.com/docker/compose/releases/download/1.28.6/run.sh -o /usr/local/bin/docker-compose &&\
-	sudo chmod +x /usr/local/bin/docker-compose
+	curl -L --fail https://github.com/docker/compose/releases/download/1.28.6/run.sh -o /usr/local/bin/docker-compose &&\
+	chmod +x /usr/local/bin/docker-compose
 
 ENTRYPOINT [ "/bin/bash" ]
