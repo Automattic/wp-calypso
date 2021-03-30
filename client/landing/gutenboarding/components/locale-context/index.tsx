@@ -94,7 +94,7 @@ export const LocaleContext: React.FunctionComponent = ( { children } ) => {
 
 	return (
 		<ChangeLocaleContext.Provider value={ changeLocale }>
-			<LocaleProvider localeSlug={ contextLocaleData?.[ '' ]?.localeSlug ?? DEFAULT_LOCALE_SLUG }>
+			<LocaleProvider localeSlug={ localeSlug }>
 				<I18nProvider i18n={ wpI18n }>{ localeDataLoaded ? children : null }</I18nProvider>
 			</LocaleProvider>
 		</ChangeLocaleContext.Provider>
