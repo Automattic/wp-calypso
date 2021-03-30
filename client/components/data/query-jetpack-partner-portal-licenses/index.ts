@@ -34,7 +34,7 @@ export default function QueryJetpackPartnerPortalLicenses( {
 	const activeKeyId = useSelector( getActivePartnerKeyId );
 
 	useEffect( () => {
-		// Key switching for requests is already done for us - we use keyId just to re-trigger the request.
+		// Key switching for requests is already done for us - we use activeKeyId just to re-trigger the request.
 		dispatch( fetchLicenses( filter, search, sortField, sortDirection, page ) );
 	}, [ dispatch, activeKeyId, filter, search, sortField, sortDirection, page ] );
 

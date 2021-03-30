@@ -3,6 +3,11 @@
  */
 import { Action, AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
+import {
+	LicenseFilter,
+	LicenseSortDirection,
+	LicenseSortField,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
 /**
  * Utility.
@@ -31,10 +36,37 @@ export interface PaginatedItems< T > {
 	totalPages: number;
 }
 
+export interface LicenseListContext {
+	currentPage: number;
+	search: string;
+	filter: LicenseFilter;
+	sortField: LicenseSortField;
+	sortDirection: LicenseSortDirection;
+}
+
 export interface APIError {
 	status: number;
 	code: string | null;
 	message: string;
+}
+
+// The API-returned license object is not quite consistent right now so we only define the properties we actively rely on.
+export interface APILicense {
+	license_key: string;
+	issued_at: string;
+	revoked_at: string | null;
+}
+
+export interface APIProductFamilyProduct {
+	name: string;
+	slug: string;
+	product_id: number;
+}
+
+export interface APIProductFamily {
+	name: string;
+	slug: string;
+	products: APIProductFamilyProduct[];
 }
 
 /**

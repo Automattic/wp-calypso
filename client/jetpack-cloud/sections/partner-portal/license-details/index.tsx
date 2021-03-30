@@ -7,7 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import { getLicenseState, noop } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { Card } from '@automattic/components';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -28,9 +28,6 @@ interface Props {
 	revokedAt: string | null;
 	onCopyLicense?: () => void;
 }
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {};
 
 export default function LicenseDetails( {
 	licenseKey,
