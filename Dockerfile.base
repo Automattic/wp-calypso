@@ -1,7 +1,7 @@
 #### cache image
 #### This image is not pushed to any repository and it shouldn't be used as base image for any other docker build.
 #### Its main goal is to create a `/calypso/.cache` that can be copied over other images that can benefit from a warm cache.
-FROM node:14.16.0 as cache
+FROM node:14.16.0-buster as cache
 
 ARG node_memory=8192
 WORKDIR /calypso
@@ -34,7 +34,7 @@ ENTRYPOINT [ "/bin/bash" ]
 
 #### base image
 #### This image can be used as a base image for other builds, or to uni test and build calypso.
-FROM node:14.16.0 as base
+FROM node:14.16.0-buster as base
 
 ARG node_memory=8192
 ARG UID=1003
@@ -86,6 +86,7 @@ RUN apt update \
 		libatk-bridge2.0-0 \
 		libatspi2.0-0 \
 		libgtk-3-0 \
+		libgbm-dev \
 		libnspr4 \
 		libnss3 \
 		libnss3 \
@@ -134,9 +135,9 @@ COPY --from=cache --chown=$UID /calypso/composer.* /calypso/
 RUN apt update &&\
 	apt-get install -y apt-transport-https zip &&\
 	wget https://packages.sury.org/php/apt.gpg -O /etc/apt/trusted.gpg.d/php-sury.gpg &&\
-	echo "deb https://packages.sury.org/php/ stretch main" > /etc/apt/sources.list.d/php-sury.list &&\
+	echo "deb https://packages.sury.org/php/ buster main" > /etc/apt/sources.list.d/php-sury.list &&\
 	apt update &&\
-	apt-get install -y php7.4-cli php7.4-xml php7.4-mbstring &&\
+	apt-get install -y php7.4-cli php7.4-xml php7.4-mbstring docker-compose &&\
 	composer install
 
 ENTRYPOINT [ "/bin/bash" ]

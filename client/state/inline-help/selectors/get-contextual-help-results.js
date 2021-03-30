@@ -20,7 +20,7 @@ import 'calypso/state/inline-help/init';
  */
 export default flow(
 	getLastRouteAction,
-	( x ) => x.path,
+	( x ) => x?.path,
 	pathToSection,
 	getContextResults,
 	( x = [] ) => x

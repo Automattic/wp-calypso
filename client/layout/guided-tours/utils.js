@@ -1,8 +1,10 @@
 /**
  * External dependencies
  */
-import { overEvery as and, negate as not } from 'lodash';
+import { negate as not } from 'lodash';
 
 const noop = () => {};
+
+const and = ( ...conditions ) => () => conditions.every( ( cond ) => cond() );
 
 export { and, not, noop };

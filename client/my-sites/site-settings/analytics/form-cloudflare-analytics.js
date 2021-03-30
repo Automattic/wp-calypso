@@ -184,7 +184,7 @@ export function CloudflareAnalyticsSettings( {
 					{ isCloudflareEnabled && (
 						<FormFieldset>
 							<FormLabel htmlFor="cloudflareCode">
-								{ translate( 'Tracking ID', { context: 'site setting' } ) }
+								{ translate( 'Site Tag', { context: 'site setting' } ) }
 							</FormLabel>
 							<FormTextInput
 								name="cloudflareCode"

@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-
-import { filter, find, flow, forEach, map, take } from 'lodash';
+import { filter, find, forEach, map, take } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -42,8 +41,6 @@ function promiseForImage( image ) {
 		image.onerror = () => reject( image );
 	} );
 }
-
-const promiseForURL = flow( imageForURL, promiseForImage );
 
 export default function waitForImagesToLoad( post ) {
 	return new Promise( ( resolve ) => {
@@ -126,7 +123,7 @@ export default function waitForImagesToLoad( post ) {
 			if ( imageUrl in knownImages ) {
 				return Promise.resolve( knownImages[ imageUrl ] );
 			}
-			return promiseForURL( imageUrl );
+			return promiseForImage( imageForURL( imageUrl ) );
 		} );
 
 		forEach( promises, ( promise ) => {

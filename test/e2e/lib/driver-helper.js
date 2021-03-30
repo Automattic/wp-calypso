@@ -83,35 +83,6 @@ export async function clickWhenClickable( driver, locator, timeout = explicitWai
 	return element;
 }
 
-export function waitTillFocused( driver, selector, pollingOverride, waitOverride ) {
-	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
-	const timeoutPolling = pollingOverride ? pollingOverride : explicitWaitMS;
-
-	return driver.wait(
-		function () {
-			return driver.findElement( selector ).then(
-				async function ( element ) {
-					// Poll if element is active every 100 ms until focused or until timeoutPolling is reached
-					for ( let i = 0; i < timeoutPolling / 100; i++ ) {
-						const isFocused =
-							( await driver.switchTo().activeElement().getId() ) === ( await element.getId() );
-						if ( isFocused ) {
-							return true;
-						}
-						await driver.sleep( 100 );
-					}
-					return false;
-				},
-				function () {
-					return false;
-				}
-			);
-		},
-		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be focused`
-	);
-}
-
 /**
  * Waits until an element is located in DOM and visible. Throws an error after
  * it times out.
@@ -139,32 +110,6 @@ export function waitUntilLocatedAndVisible( driver, locator, timeout = explicitW
 			}
 		),
 		timeout
-	);
-}
-
-export function waitTillSelected( driver, selector, waitOverride ) {
-	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
-
-	return driver.wait(
-		function () {
-			return driver.findElement( selector ).then(
-				function ( element ) {
-					return element.isSelected().then(
-						function () {
-							return true;
-						},
-						function () {
-							return false;
-						}
-					);
-				},
-				function () {
-					return false;
-				}
-			);
-		},
-		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be selected`
 	);
 }
 
@@ -269,7 +214,13 @@ export function setWhenSettable(
 			}
 			await highlightElement( driver, element );
 			const currentValue = await element.getAttribute( 'value' );
+			if ( currentValue === value ) {
+				// Do nothing if given value is already set
+				return element;
+			}
+
 			if ( currentValue ) {
+				// Clear the input if it has some value
 				await element.sendKeys( Key.END );
 				for ( let i = 0; i < currentValue.length; i++ ) {
 					await element.sendKeys( Key.BACK_SPACE );

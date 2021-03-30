@@ -19,6 +19,7 @@ import {
 	SetTransactionComplete,
 	SetTransactionRedirecting,
 	ProcessPayment,
+	SetTransactionError,
 } from '../types';
 
 const debug = debugFactory( 'composite-checkout:use-create-payment-processor-on-click' );
@@ -70,6 +71,7 @@ function useHandlePaymentProcessorResponse() {
 					handlePaymentProcessorResponse( response, paymentProcessorId, redirectErrorMessage, {
 						setTransactionRedirecting,
 						setTransactionComplete,
+						setTransactionError,
 					} )
 				)
 				.catch( ( error: Error ) => {
@@ -88,9 +90,11 @@ async function handlePaymentProcessorResponse(
 	{
 		setTransactionRedirecting,
 		setTransactionComplete,
+		setTransactionError,
 	}: {
 		setTransactionRedirecting: SetTransactionRedirecting;
 		setTransactionComplete: SetTransactionComplete;
+		setTransactionError: SetTransactionError;
 	}
 ): Promise< PaymentProcessorResponse > {
 	debug( 'payment processor function response', rawResponse );
@@ -99,6 +103,13 @@ async function handlePaymentProcessorResponse(
 		throw new InvalidPaymentProcessorResponseError( paymentProcessorId );
 	}
 	const processorResponse = rawResponse as PaymentProcessorResponse;
+	if ( processorResponse.type === PaymentProcessorResponseType.ERROR ) {
+		if ( ! processorResponse.payload ) {
+			processorResponse.payload = 'Unknown transaction failure';
+		}
+		setTransactionError( processorResponse.payload );
+		return processorResponse;
+	}
 	if ( processorResponse.type === PaymentProcessorResponseType.REDIRECT ) {
 		if ( ! processorResponse.payload ) {
 			throw new Error( redirectErrorMessage );
