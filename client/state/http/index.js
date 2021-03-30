@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { identity, toPairs } from 'lodash';
+import { identity } from 'lodash';
 import { extendAction } from '@automattic/state-utils';
 
 /**
@@ -68,7 +68,7 @@ export const httpHandler = async ( { dispatch }, action ) => {
 	let serialize;
 
 	if ( contentType === 'application/x-www-form-urlencoded' ) {
-		serialize = ( data ) => encodeQueryParameters( toPairs( data ) );
+		serialize = ( data ) => encodeQueryParameters( Object.entries( data ) );
 	} else if ( typeof body !== 'string' ) {
 		serialize = JSON.stringify.bind( JSON );
 	} else {
