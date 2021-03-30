@@ -238,6 +238,9 @@ function getNewSiteParams( {
 		newSiteParams.options.font_base = selectedDesign.fonts.base;
 		newSiteParams.options.font_headings = selectedDesign.fonts.headings;
 		newSiteParams.options.use_patterns = true;
+		// @TODO: remove next line when working on
+		// https://github.com/Automattic/wp-calypso/issues/51231
+		newSiteParams.options.site_creation_flow = 'gutenboarding';
 	}
 
 	return newSiteParams;
