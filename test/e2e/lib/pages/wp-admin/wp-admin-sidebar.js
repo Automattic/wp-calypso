@@ -38,7 +38,7 @@ export default class WPAdminSidebar extends AsyncBaseContainer {
 	async selectJetpack() {
 		const jetpackMenuSelector = by.css( '#toplevel_page_jetpack' );
 		const menuItemSelector = by.css(
-			'#toplevel_page_jetpack a[href$="jetpack#/dashboard"], #toplevel_page_jetpack a[href$="jetpack"]'
+			'#toplevel_page_jetpack li a[href$="jetpack#/dashboard"]'
 		);
 
 		return await this._selectMenuItem( jetpackMenuSelector, menuItemSelector );
@@ -94,12 +94,11 @@ export default class WPAdminSidebar extends AsyncBaseContainer {
 	}
 
 	async _selectMenuItem( menuSelector, menuItemSelector ) {
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, menuSelector );
 		const classes = await this.driver.findElement( menuSelector ).getAttribute( 'class' );
 		if ( ! classes.includes( 'wp-menu-open' ) && ! classes.includes( 'wp-has-current-submenu' ) ) {
 			await driverHelper.clickWhenClickable( this.driver, menuSelector );
-		}
-		if ( driverManager.currentScreenSize() === 'mobile' ) {
-			return await driverHelper.clickWhenClickable( this.driver, menuItemSelector );
+			await driverHelper.waitTillPresentAndDisplayed( this.driver, menuItemSelector );
 		}
 		return await driverHelper.clickWhenClickable( this.driver, menuItemSelector );
 	}
