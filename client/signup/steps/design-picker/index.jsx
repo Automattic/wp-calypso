@@ -66,9 +66,7 @@ class DesignPickerStep extends Component {
 	subHeaderText() {
 		const { translate } = this.props;
 
-		return translate( 'Pick your favorite homepage layout. You can customize or change it later.', {
-			context: 'Design picker step subheader in Signup',
-		} );
+		return translate( 'Pick your favorite homepage layout. You can customize or change it later.' );
 	}
 
 	render() {
