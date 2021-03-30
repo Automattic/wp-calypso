@@ -268,10 +268,13 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	async clickCouponButton() {
 		const isCompositeCheckout = await this.isCompositeCheckout();
 		if ( isCompositeCheckout ) {
+			const selector = getJetpackHost() === 'WPCOM' ?
+				'.checkout-steps__step-complete-content .wp-checkout-order-review__show-coupon-field-button' :
+				'.checkout-steps__step-content .wp-checkout-order-review__show-coupon-field-button';
 			return await driverHelper.clickWhenClickable(
 				this.driver,
 				By.css(
-					'.checkout-steps__step-content .wp-checkout-order-review__show-coupon-field-button'
+					selector
 				)
 			);
 		}
@@ -319,7 +322,8 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css(
-				'button[data-e2e-type="apply-coupon"],.checkout-steps__step-content .coupon button'
+				'button[data-e2e-type="apply-coupon"],.checkout-steps__step-content .coupon button,' +
+				'.checkout-steps__step-complete-content .coupon button'
 			)
 		);
 		const noticesComponent = await NoticesComponent.Expect( this.driver );
@@ -332,7 +336,8 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		await driverHelper.setWhenSettable(
 			this.driver,
 			By.css(
-				'input[data-e2e-type="coupon-code"],.checkout-steps__step-content .coupon input'
+				'input[data-e2e-type="coupon-code"],.checkout-steps__step-content .coupon input,' +
+				'.checkout-steps__step-complete-content .coupon input'
 			),
 			couponCode
 		);
