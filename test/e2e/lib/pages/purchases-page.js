@@ -47,8 +47,7 @@ export default class PurchasesPage extends AsyncBaseContainer {
 	async dismissGuidedTour() {
 		return await driverHelper.clickIfPresent(
 			this.driver,
-			by.css( '.guided-tours__choice-button-row button:not(.is-primary)' ),
-			1
+			by.css( '.guided-tours__choice-button-row button:not(.is-primary)' )
 		);
 	}
 

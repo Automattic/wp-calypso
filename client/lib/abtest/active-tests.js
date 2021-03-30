@@ -59,13 +59,13 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: false,
 	},
-	jetpackSocialProofHeader: {
-		datestamp: '20210310',
+	pricingPagePopularProducts: {
+		datestamp: '20210324',
 		variations: {
-			withoutSocialProof_control: 50,
-			withSocialProof_test: 50,
+			withComplete_control: 50,
+			withSecurityRT_test: 50,
 		},
-		defaultVariation: 'withoutSocialProof_control',
+		defaultVariation: 'withComplete_control',
 		allowExistingUsers: true,
 	},
 };

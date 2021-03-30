@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { uniq } from 'lodash';
 import classNames from 'classnames';
 import page from 'page';
 
@@ -78,7 +77,7 @@ export class MediaLibraryUploadButton extends React.Component {
 		}
 		const allowedFileTypesForSite = getAllowedFileTypesForSite( this.props.site );
 
-		return uniq( allowedFileTypesForSite.concat( VideoPressFileTypes ) )
+		return [ ...new Set( allowedFileTypesForSite.concat( VideoPressFileTypes ) ) ]
 			.map( ( type ) => `.${ type }` )
 			.join();
 	};

@@ -209,7 +209,8 @@ export default connect(
 		return {
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
-			isDisabled: ! isSiteAutomatedTransfer( state, siteId ),
+			isDisabled:
+				! isSiteOnAtomicPlan( state, siteId ) || ! isSiteAutomatedTransfer( state, siteId ),
 			isOnAtomicPlan: isSiteOnAtomicPlan( state, siteId ),
 			canViewAtomicHosting: canSiteViewAtomicHosting( state ),
 			siteSlug: getSelectedSiteSlug( state ),

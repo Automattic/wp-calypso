@@ -1,19 +1,7 @@
 /**
  * External dependencies
  */
-import {
-	constant,
-	difference,
-	find,
-	findLast,
-	flatMap,
-	get,
-	includes,
-	map,
-	startsWith,
-	uniq,
-	pick,
-} from 'lodash';
+import { difference, find, findLast, flatMap, get, includes, map, startsWith, pick } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -56,8 +44,8 @@ const relevantFeatures = flatMap( GuidedToursConfig, ( tourMeta, key ) =>
  * tour.
  */
 const getToursFromFeaturesReached = createSelector(
-	( state ) =>
-		uniq(
+	( state ) => [
+		...new Set(
 			getActionLog( state )
 				.filter( ( { type } ) => type === ROUTE_SET )
 				.reduceRight( ( allTours, { path: triggerPath } ) => {
@@ -68,6 +56,7 @@ const getToursFromFeaturesReached = createSelector(
 					return newTours ? [ ...allTours, ...newTours ] : allTours;
 				}, [] )
 		),
+	],
 	[ getActionLog ]
 );
 
@@ -76,7 +65,7 @@ const getToursFromFeaturesReached = createSelector(
  * recently and in the past.
  */
 const getToursSeen = createSelector(
-	( state ) => uniq( map( getToursHistory( state ), 'tourName' ) ),
+	( state ) => [ ...new Set( map( getToursHistory( state ), 'tourName' ) ) ],
 	[ getToursHistory ]
 );
 
@@ -130,22 +119,26 @@ const findTriggeredTour = ( state ) => {
 		return;
 	}
 
-	const toursFromTriggers = uniq( [
-		...getToursFromFeaturesReached( state ),
-		// Right now, only one source from which to derive tours, but we may
-		// have more later. Examples:
-		// ...getToursFromPurchases( state ),
-		// ...getToursFromFirstActions( state ),
-	] );
+	const toursFromTriggers = [
+		...new Set( [
+			...getToursFromFeaturesReached( state ),
+			// Right now, only one source from which to derive tours, but we may
+			// have more later. Examples:
+			// ...getToursFromPurchases( state ),
+			// ...getToursFromFirstActions( state ),
+		] ),
+	];
 
-	const toursToDismiss = uniq( [
-		// Same idea here.
-		...getToursSeen( state ),
-	] );
+	const toursToDismiss = [
+		...new Set( [
+			// Same idea here.
+			...getToursSeen( state ),
+		] ),
+	];
 
 	const newTours = difference( toursFromTriggers, toursToDismiss );
 	return find( newTours, ( tour ) => {
-		const { when = constant( true ) } = find( relevantFeatures, { tour } );
+		const { when = () => true } = find( relevantFeatures, { tour } );
 		return when( state );
 	} );
 };

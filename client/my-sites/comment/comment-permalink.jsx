@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, isUndefined } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -37,7 +37,7 @@ const mapStateToProps = ( state, { siteId, commentId } ) => {
 	const comment = getSiteComment( state, siteId, commentId );
 
 	return {
-		isLoading: isUndefined( comment ),
+		isLoading: typeof comment === 'undefined',
 		permaLink: get( comment, 'URL', '' ),
 	};
 };

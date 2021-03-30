@@ -11,9 +11,10 @@ import config from '@automattic/calypso-config';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
+import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { hasTrafficGuidePurchase } from 'calypso/my-sites/marketing/ultimate-traffic-guide';
 import MarketingToolsFeature from './feature';
 import MarketingToolsHeader from './header';
@@ -24,6 +25,7 @@ import {
 } from 'calypso/my-sites/marketing/paths';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 
 /**
@@ -52,11 +54,17 @@ export const MarketingTools: FunctionComponent = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const recordTracksEvent = ( event: string ) => dispatch( recordTracksEventAction( event ) );
+
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) ) || 0;
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( ( state ) =>
 		getSelectedSiteSlug( state )
 	);
 	const purchases = useSelector( ( state ) => getUserPurchases( state, userId ) );
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || 0;
+	const sitePlan = useSelector( ( state ) => getSitePlanSlug( state, siteId ) ) || '';
+	const showFacebookUpsell = [ 'value_bundle', 'personal-bundle', 'free_plan' ].includes(
+		sitePlan
+	);
 
 	const handleBusinessToolsClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_business_tools_button_click' );
@@ -111,6 +119,7 @@ export const MarketingTools: FunctionComponent = () => {
 	return (
 		<Fragment>
 			{ ! purchases && <QueryUserPurchases userId={ userId } /> }
+			{ ! sitePlan && <QuerySitePlans siteId={ siteId } /> }
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 
 			<MarketingToolsHeader handleButtonClick={ handleBusinessToolsClick } />
@@ -157,13 +166,23 @@ export const MarketingTools: FunctionComponent = () => {
 						) }
 						imagePath={ facebookLogo }
 					>
-						<Button
-							onClick={ handleFacebookClick }
-							href="https://wordpress.com/plugins/official-facebook-pixel"
-							target="_blank"
-						>
-							{ translate( 'Add Facebook for WordPress.com' ) }
-						</Button>
+						{ ! showFacebookUpsell && (
+							<Button
+								onClick={ handleFacebookClick }
+								href="https://wordpress.com/plugins/official-facebook-pixel"
+								target="_blank"
+							>
+								{ translate( 'Add Facebook for WordPress.com' ) }
+							</Button>
+						) }
+						{ showFacebookUpsell && (
+							<Button
+								onClick={ handleFacebookClick }
+								href={ `/plans/${ selectedSiteSlug }?customerType=business` }
+							>
+								{ translate( 'Unlock this feature' ) }
+							</Button>
+						) }
 					</MarketingToolsFeature>
 				) }
 

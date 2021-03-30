@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
-import { get, includes, isEqual, isUndefined } from 'lodash';
+import { get, includes, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -60,7 +60,7 @@ export class CommentActions extends Component {
 
 	delete = () => {
 		if (
-			isUndefined( window ) ||
+			typeof window === 'undefined' ||
 			window.confirm( this.props.translate( 'Delete this comment permanently?' ) )
 		) {
 			this.props.deletePermanently();

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, isString, map, pickBy, includes } from 'lodash';
+import { find, map, pickBy, includes } from 'lodash';
 import i18n, { getLocaleSlug } from 'i18n-calypso';
 import { localizeUrl as _localizeUrl } from '@automattic/i18n-utils';
 
@@ -44,15 +44,15 @@ export function isDefaultLocale( locale ) {
  * @returns {boolean} true when the locale has a parentLangSlug
  */
 export function isLocaleVariant( locale ) {
-	if ( ! isString( locale ) ) {
+	if ( typeof locale !== 'string' ) {
 		return false;
 	}
 	const language = getLanguage( locale );
-	return !! language && isString( language.parentLangSlug );
+	return !! language && typeof language.parentLangSlug === 'string';
 }
 
 export function isLocaleRtl( locale ) {
-	if ( ! isString( locale ) ) {
+	if ( typeof locale !== 'string' ) {
 		return null;
 	}
 	const language = getLanguage( locale );

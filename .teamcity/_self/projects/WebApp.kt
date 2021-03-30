@@ -6,6 +6,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
+import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
 object WebApp : Project({
@@ -43,7 +44,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				export NODE_ENV="test"
 
 				# Install modules
-				yarn install
+				${_self.yarn_install_cmd}
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
@@ -59,6 +60,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				export LIVEBRANCHES=true
 				export NODE_CONFIG_ENV=test
 				export TEST_VIDEO=true
+				export HIGHLIGHT_ELEMENT=true
 
 				# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
 				# mocha-teamcity-reporter to work.
@@ -116,7 +118,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				set -x
 
 				mkdir -p screenshots
-				find test/e2e/temp -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+				find test/e2e -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
 
 				mkdir -p logs
 				find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
@@ -163,6 +165,22 @@ object RunCalypsoE2eDesktopTests : BuildType({
 		// TeamCity will mute a test if it fails and then succeeds within the same build. Otherwise TeamCity UI will not
 		// display a difference between real errors and retries, making it hard to understand what is actually failing.
 		supportTestRetry = true
+
+		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have
+		// been muted previously.
+		nonZeroExitCode = false
+
+		// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner
+		// crashes and no tests are run.
+		failOnMetricChange {
+			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
+			threshold = 50
+			units = BuildFailureOnMetric.MetricUnit.PERCENTS
+			comparison = BuildFailureOnMetric.MetricComparison.LESS
+			compareTo = build {
+				buildRule = lastSuccessful()
+			}
+		}
 	}
 
 	dependencies {
@@ -193,7 +211,7 @@ object RunCalypsoE2eMobileTests : BuildType({
 				export NODE_ENV="test"
 
 				# Install modules
-				yarn install
+				${_self.yarn_install_cmd}
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
@@ -209,6 +227,7 @@ object RunCalypsoE2eMobileTests : BuildType({
 				export LIVEBRANCHES=true
 				export NODE_CONFIG_ENV=test
 				export TEST_VIDEO=true
+				export HIGHLIGHT_ELEMENT=true
 
 				# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
 				# mocha-teamcity-reporter to work.
@@ -266,7 +285,7 @@ object RunCalypsoE2eMobileTests : BuildType({
 				set -x
 
 				mkdir -p screenshots
-				find test/e2e/temp -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+				find test/e2e -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
 
 				mkdir -p logs
 				find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
@@ -313,6 +332,22 @@ object RunCalypsoE2eMobileTests : BuildType({
 		// TeamCity will mute a test if it fails and then succeeds within the same build. Otherwise TeamCity UI will not
 		// display a difference between real errors and retries, making it hard to understand what is actually failing.
 		supportTestRetry = true
+
+		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have
+		// been muted previously.
+		nonZeroExitCode = false
+
+		// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner
+		// crashes and no tests are run.
+		failOnMetricChange {
+			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
+			threshold = 50
+			units = BuildFailureOnMetric.MetricUnit.PERCENTS
+			comparison = BuildFailureOnMetric.MetricComparison.LESS
+			compareTo = build {
+				buildRule = lastSuccessful()
+			}
+		}
 	}
 
 	dependencies {
@@ -405,7 +440,7 @@ object RunAllUnitTests : BuildType({
 				export NODE_ENV="test"
 
 				# Install modules
-				yarn install
+				${_self.yarn_install_cmd}
 			"""
 		}
 		bashNodeScript {
@@ -618,7 +653,7 @@ object CheckCodeStyleBranch : BuildType({
 				export NODE_ENV="test"
 
 				# Install modules
-				yarn install
+				${_self.yarn_install_cmd}
 			"""
 		}
 		bashNodeScript {
@@ -711,7 +746,10 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 				export PLAYWRIGHT_BROWSERS_PATH=0
 
 				# Install modules
-				yarn install
+				${_self.yarn_install_cmd}
+
+				# Build package
+				yarn workspace @automattic/calypso-e2e build
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}

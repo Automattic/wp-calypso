@@ -14,9 +14,6 @@ import Notice from 'calypso/components/notice';
 const baseProps = deepFreeze( {
 	storeNotices: [],
 	removeNotice: jest.fn(),
-
-	// Stub event-emmiter notice store so data-observe doesn't break
-	notices: { on() {}, off() {} },
 } );
 
 beforeEach( jest.clearAllMocks );

@@ -108,7 +108,6 @@
 		"perfmon": false,
 		"plans/personal-plan": true,
 		"post-editor/html-toolbar": true,
-		"post-editor/image-editor": true,
 		"post-editor/revisions": true,
 		"press-this": true,
 		"privacy-policy": true,
@@ -158,6 +157,7 @@
 		"woocommerce/extension-wcservices": true,
 		"woocommerce/extension-wcservices/international-labels": true,
 		"woocommerce/store-on-non-atomic-sites": true,
-		"wpcom-user-bootstrap": false
+		"wpcom-user-bootstrap": false,
+		"wordpress-action-search": false
 	}
 }

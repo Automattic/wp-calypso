@@ -10,7 +10,6 @@ import { createStripePaymentMethod } from '@automattic/calypso-stripe';
  * Internal dependencies
  */
 import wp from 'calypso/lib/wp';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from './lib/translate-payment-method-names';
 import { getSavedVariations } from 'calypso/lib/abtest';
 import { stringifyBody } from 'calypso/state/login/utils';
 import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
@@ -52,40 +51,6 @@ export async function submitEbanxCardTransaction( transactionData, submit ) {
 		paymentMethodType: 'WPCOM_Billing_Ebanx',
 	} );
 	debug( 'sending ebanx transaction', formattedTransactionData );
-	return submit( formattedTransactionData );
-}
-
-export async function submitRedirectTransaction( paymentMethodId, transactionData, submit ) {
-	const paymentMethodType = translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId );
-	if ( ! paymentMethodType ) {
-		throw new Error( `No payment method found for type: ${ paymentMethodId }` );
-	}
-	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
-		...transactionData,
-		paymentMethodType,
-		paymentPartnerProcessorId: transactionData.stripeConfiguration?.processor_id,
-	} );
-	debug( `sending redirect transaction for type: ${ paymentMethodId }`, formattedTransactionData );
-	return submit( formattedTransactionData );
-}
-
-export function submitCreditsTransaction( transactionData, submit, transactionOptions ) {
-	debug( 'formatting full credits transaction', transactionData );
-	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
-		...transactionData,
-		paymentMethodType: 'WPCOM_Billing_WPCOM',
-	} );
-	debug( 'submitting full credits transaction', formattedTransactionData );
-	return submit( formattedTransactionData, transactionOptions );
-}
-
-export function submitFreePurchaseTransaction( transactionData, submit ) {
-	debug( 'formatting free transaction', transactionData );
-	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
-		...transactionData,
-		paymentMethodType: 'WPCOM_Billing_WPCOM',
-	} );
-	debug( 'submitting free transaction', formattedTransactionData );
 	return submit( formattedTransactionData );
 }
 
@@ -184,31 +149,6 @@ function getErrorMessage( { error, message } ) {
 		default:
 			return message;
 	}
-}
-
-export async function wpcomTransaction( payload, transactionOptions ) {
-	if ( transactionOptions && transactionOptions.createUserAndSiteBeforeTransaction ) {
-		return createAccount().then( ( response ) => {
-			const siteIdFromResponse = response?.blog_details?.blogid;
-
-			// If the account is already created(as happens when we are reprocessing after a transaction error), then
-			// the create account response will not have a site ID, so we fetch from state.
-			const siteId = siteIdFromResponse || select( 'wpcom' )?.getSiteId();
-			const newPayload = {
-				...payload,
-				cart: {
-					...payload.cart,
-					blog_id: siteId || '0',
-					cart_key: siteId || 'no-site',
-					create_new_blog: false,
-				},
-			};
-
-			return wp.undocumented().transactions( newPayload );
-		} );
-	}
-
-	return wp.undocumented().transactions( payload );
 }
 
 export function createStripePaymentMethodToken( { stripe, name, country, postalCode } ) {

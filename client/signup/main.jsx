@@ -92,7 +92,6 @@ import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import user from 'calypso/lib/user';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import { Experiment } from 'calypso/components/experiment';
 import { dangerouslyGetExperimentAssignment } from 'calypso/lib/explat';
 
 /**

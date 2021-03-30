@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { hasRenewableSubscription } from 'calypso/lib/cart-values/cart-items';
+import AdditionalTermsOfServiceInCart from './additional-terms-of-service-in-cart';
 import TermsOfService from './terms-of-service';
 import DomainRefundPolicy from './domain-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
@@ -38,6 +39,7 @@ class CheckoutTerms extends React.Component {
 				<ConciergeRefundPolicy cart={ cart } />
 				<BundledDomainNotice cart={ cart } />
 				<TitanTermsOfService cart={ cart } />
+				<AdditionalTermsOfServiceInCart />
 			</Fragment>
 		);
 	}
