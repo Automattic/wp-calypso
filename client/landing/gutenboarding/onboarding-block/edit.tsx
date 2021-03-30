@@ -112,6 +112,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		if ( newSiteError ) {
 			// Temporarily capture error related to new site creation to E2E
 			if ( isE2ETest() ) {
+				document.body.innerHTML = JSON.stringify( newSiteError );
 				throw new Error( `onboarding-debug ${ JSON.stringify( newSiteError ) }` );
 			}
 
