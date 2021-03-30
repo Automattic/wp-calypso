@@ -45,21 +45,6 @@ export interface TransactionRequestWithLineItems extends TransactionRequest {
 	items: WPCOMCartItem[];
 }
 
-export type ExistingCardTransactionRequestWithLineItems = Partial< TransactionRequestWithLineItems > &
-	Required<
-		Pick<
-			TransactionRequestWithLineItems,
-			| 'country'
-			| 'postalCode'
-			| 'items'
-			| 'name'
-			| 'storedDetailsId'
-			| 'siteId'
-			| 'paymentMethodToken'
-			| 'paymentPartnerProcessorId'
-		>
-	>;
-
 export type WPCOMTransactionEndpoint = (
 	_: WPCOMTransactionEndpointRequestPayload
 ) => Promise< WPCOMTransactionEndpointResponse >;
