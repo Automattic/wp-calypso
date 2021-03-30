@@ -137,7 +137,6 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					"Don't want to wait? For your convenience, we'll email you when your site has been fully restored."
 				) }
 			/>
-			<JetpackReviewPrompt />
 		</>
 	);
 
@@ -168,7 +167,6 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			<Button primary href={ siteUrl } className="rewind-flow__primary-button">
 				{ translate( 'View your website' ) }
 			</Button>
-			<JetpackReviewPrompt />
 		</>
 	);
 
@@ -193,17 +191,19 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		</Error>
 	);
 
+	const isInProgress =
+		( ! inProgressRewindStatus && userHasRequestedRestore ) ||
+		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) );
+	const isFinished = inProgressRewindStatus !== null && inProgressRewindStatus === 'finished';
+
 	const render = () => {
 		if ( loading ) {
 			return <Loading />;
 		} else if ( ! inProgressRewindStatus && ! userHasRequestedRestore ) {
 			return renderConfirm();
-		} else if (
-			( ! inProgressRewindStatus && userHasRequestedRestore ) ||
-			( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) )
-		) {
+		} else if ( isInProgress ) {
 			return renderInProgress();
-		} else if ( inProgressRewindStatus !== null && inProgressRewindStatus === 'finished' ) {
+		} else if ( isFinished ) {
 			return renderFinished();
 		}
 		return renderError();
@@ -216,6 +216,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				<QueryRewindRestoreStatus siteId={ siteId } restoreId={ restoreId } />
 			) }
 			<Card>{ render() }</Card>
+			{ ( isInProgress || isFinished ) && <JetpackReviewPrompt /> }
 		</>
 	);
 };

@@ -8,7 +8,7 @@ import React, { FunctionComponent, useCallback, useEffect } from 'react';
 /**
  * Internal dependencies
  */
-import { Button } from '@wordpress/components';
+import { Button, Card } from '@wordpress/components';
 import { dismiss } from 'calypso/state/jetpack-review-prompt/actions';
 import { getIsDismissed } from 'calypso/state/jetpack-review-prompt/selectors';
 import { hasReceivedRemotePreferences as getHasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
@@ -53,30 +53,27 @@ const JetpackReviewPrompt: FunctionComponent = () => {
 		<>
 			<QueryPreferences />
 			{ hasReceivedRemotePreferences && ! isDismissed && (
-				<>
-					<hr />
-					<div className="jetpack-review-prompt">
-						<div className="jetpack-review-prompt__header">
-							<RewindFlowNotice
-								type={ RewindFlowNoticeLevel.REMINDER }
-								title={ translate(
-									'Was it easy to restore your site? Please leave a review and help us spread the word!'
-								) }
-							/>
-							<Gridicon icon="cross" size={ 24 } onClick={ dismissPrompt } />
-						</div>
-						<div className="jetpack-review-prompt__button-row">
-							<Button
-								href="https://wordpress.org/support/plugin/jetpack/reviews/#new-post"
-								target="_blank"
-								onClick={ dismissPromptAsReviewed }
-							>
-								{ translate( 'Leave a review' ) }
-								<Gridicon icon="external" />
-							</Button>
-						</div>
+				<Card className="jetpack-review-prompt">
+					<div className="jetpack-review-prompt__header">
+						<RewindFlowNotice
+							type={ RewindFlowNoticeLevel.REMINDER }
+							title={ translate(
+								'Was it easy to restore your site? Please leave a review and help us spread the word!'
+							) }
+						/>
+						<Gridicon icon="cross" size={ 24 } onClick={ dismissPrompt } />
 					</div>
-				</>
+					<div className="jetpack-review-prompt__button-row">
+						<Button
+							href="https://wordpress.org/support/plugin/jetpack/reviews/#new-post"
+							target="_blank"
+							onClick={ dismissPromptAsReviewed }
+						>
+							{ translate( 'Leave a review' ) }
+							<Gridicon icon="external" />
+						</Button>
+					</div>
+				</Card>
 			) }
 		</>
 	);
