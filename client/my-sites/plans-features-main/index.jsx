@@ -127,7 +127,8 @@ export class PlansFeaturesMain extends Component {
 			isValidFeatureKey( selectedFeature ) &&
 			getPlan( selectedPlan ) &&
 			! isPersonalPlan( selectedPlan ) &&
-			! previousRoute.startsWith( '/plans/' )
+			( this.getKindOfPlanTypeSelector( this.props ) === 'interval' ||
+				! previousRoute.startsWith( '/plans/' ) )
 		) {
 			return true;
 		}
@@ -515,6 +516,11 @@ export class PlansFeaturesMain extends Component {
 		const { siteId, customHeader, shouldShowPlansRedesign } = this.props;
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+		const kindOfPlanTypeSelector = this.getKindOfPlanTypeSelector( this.props );
+
+		// If advertising plans for a certain feature, ensure user has pressed "View all plans" before they can see others
+		const hidePlanSelector =
+			kindOfPlanTypeSelector === 'customer' && this.isDisplayingPlansNeededForFeature();
 
 		return (
 			<div className="plans-features-main">
@@ -525,11 +531,13 @@ export class PlansFeaturesMain extends Component {
 				<div className="plans-features-main__notice" />
 
 				{ customHeader }
-				<PlanTypeSelector
-					{ ...this.props }
-					kind={ this.getKindOfPlanTypeSelector( this.props ) }
-					plans={ visiblePlans }
-				/>
+				{ ! hidePlanSelector && (
+					<PlanTypeSelector
+						{ ...this.props }
+						kind={ kindOfPlanTypeSelector }
+						plans={ visiblePlans }
+					/>
+				) }
 				{ shouldShowPlansRedesign ? this.showFeatureComparison() : this.getPlanFeatures() }
 				{ this.renderProductsSelector() }
 				{ this.mayRenderFAQ() }
