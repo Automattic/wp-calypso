@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import JetpackReviewPrompt from 'calypso/components/jetpack/jetpack-review-prompt';
+import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 
 const JetpackReviewPromptExample = () => <JetpackReviewPrompt type="restore" />;
 

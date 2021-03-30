@@ -45,7 +45,6 @@ export { default as InputChrono } from 'calypso/components/input-chrono/docs/exa
 export { default as JetpackColophonExample } from 'calypso/components/jetpack-colophon/docs/example';
 export { default as JetpackHeaderExample } from 'calypso/components/jetpack-header/docs/example';
 export { default as JetpackLogoExample } from 'calypso/components/jetpack-logo/docs/example';
-export { default as JetpackReviewPromptExample } from 'calypso/components/jetpack/jetpack-review-prompt/docs/example';
 export { default as LanguagePicker } from 'calypso/components/language-picker/docs/example';
 export { default as LayoutExample } from 'calypso/components/layout/docs/example';
 export { default as LineChart } from 'calypso/components/line-chart/docs/example';
