@@ -2,7 +2,11 @@
  * External dependencies
  */
 import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
-import { defaultRegistry, makeRedirectResponse } from '@automattic/composite-checkout';
+import {
+	defaultRegistry,
+	makeRedirectResponse,
+	makeErrorResponse,
+} from '@automattic/composite-checkout';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 
 /**
@@ -95,14 +99,14 @@ export default async function genericRedirectProcessor(
 		transactionOptions
 	);
 
-	return submitWpcomTransaction( formattedTransactionData, transactionOptions ).then(
-		( response?: WPCOMTransactionEndpointResponse ) => {
+	return submitWpcomTransaction( formattedTransactionData, transactionOptions )
+		.then( ( response?: WPCOMTransactionEndpointResponse ) => {
 			if ( ! response?.redirect_url ) {
 				throw new Error( 'Error during transaction' );
 			}
 			return makeRedirectResponse( response?.redirect_url );
-		}
-	);
+		} )
+		.catch( ( error ) => makeErrorResponse( error.message ) );
 }
 
 function isValidTransactionData( submitData: unknown ): submitData is RedirectTransactionRequest {
