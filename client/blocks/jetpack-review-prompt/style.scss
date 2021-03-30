@@ -1,0 +1,19 @@
+.jetpack-review-prompt {
+	align-content: center;
+
+	&__left {
+		align-content: flex-start;
+
+		h4 {
+			text-align: center;
+			font-size: $font-title-small;
+			font-weight: 600;
+			padding-bottom: 32px;
+		}
+	}
+}
+
+.jetpack-review-prompt__header {
+	display: flex;
+	justify-content: space-between;
+}

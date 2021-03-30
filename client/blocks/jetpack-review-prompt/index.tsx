@@ -8,7 +8,7 @@ import React, { FunctionComponent, useCallback, useEffect } from 'react';
 /**
  * Internal dependencies
  */
-import { Button, Card } from '@wordpress/components';
+import { Button, Card } from '@automattic/components';
 import { dismiss } from 'calypso/state/jetpack-review-prompt/actions';
 import { getIsDismissed } from 'calypso/state/jetpack-review-prompt/selectors';
 import { hasReceivedRemotePreferences as getHasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
@@ -101,9 +101,10 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 					</div>
 					<p>{ text() }</p>
 					<Button
+						borderless
 						href="https://wordpress.org/support/plugin/jetpack/reviews/#new-post"
-						target="_blank"
 						onClick={ dismissPromptAsReviewed }
+						target="_blank"
 					>
 						{ translate( 'Leave a review' ) }
 						<Gridicon icon="external" />
