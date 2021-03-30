@@ -30,6 +30,7 @@ function EmailProviderCard( {
 	formFields,
 	buttonLabel,
 	onButtonClick,
+	showExpandButton = true,
 	expandButtonLabel,
 	features,
 } ) {
@@ -56,13 +57,15 @@ function EmailProviderCard( {
 		>
 			<div className="email-providers-stacked-comparison__provider-card-main-details">
 				<p>{ description }</p>
-				<Button
-					primary={ false }
-					onClick={ toggleVisibility }
-					className="email-providers-stacked-comparison__provider-expand-cta"
-				>
-					{ labelForExpandButton }
-				</Button>
+				{ showExpandButton && (
+					<Button
+						primary={ false }
+						onClick={ toggleVisibility }
+						className="email-providers-stacked-comparison__provider-expand-cta"
+					>
+						{ labelForExpandButton }
+					</Button>
+				) }
 			</div>
 			<PromoCardPrice formattedPrice={ formattedPrice } discount={ discount } />
 			{ additionalPriceInformation && (
@@ -100,6 +103,7 @@ EmailProviderCard.propTypes = {
 	formFields: PropTypes.node,
 	buttonLabel: PropTypes.string,
 	onButtonClick: PropTypes.func,
+	showExpandButton: PropTypes.bool,
 	expandButtonLabel: PropTypes.string,
 	features: PropTypes.arrayOf( PropTypes.string ),
 	onExpandedChange: PropTypes.func,

@@ -18,6 +18,7 @@ import {
 } from 'calypso/lib/titan/new-mailbox';
 import { areAllUsersValid, getItemsForCart, newUsers } from 'calypso/lib/gsuite/new-users';
 import { Button } from '@automattic/components';
+import { canCurrentUserAddEmail, getCurrentUserCannotAddEmailReason } from 'calypso/lib/domains';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import EmailProviderCard from './email-provider-card';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
@@ -41,6 +42,7 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import { emailManagementForwarding } from 'calypso/my-sites/email/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
+import Notice from 'calypso/components/notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import Gridicon from 'calypso/components/gridicon';
@@ -67,18 +69,25 @@ class EmailProvidersStackedComparison extends React.Component {
 		isGSuiteSupported: PropTypes.bool.isRequired,
 	};
 
-	state = {
-		googleUsers: [],
-		titanMailboxes: [ buildNewTitanMailbox( this.props.domain.name, false ) ],
-		expanded: {
-			forwarding: false,
-			google: false,
-			titan: true,
-		},
-		addingToCart: false,
-	};
-
 	isMounted = false;
+
+	constructor( props ) {
+		super( props );
+
+		const isDomainEligibleForEmail = this.isDomainEligibleForEmail( props.domain );
+		const hasEmailForwards = this.doesDomainHaveEmailForwards( props.domain );
+
+		this.state = {
+			googleUsers: [],
+			titanMailboxes: [ buildNewTitanMailbox( props.domain.name, false ) ],
+			expanded: {
+				forwarding: hasEmailForwards && ! isDomainEligibleForEmail,
+				google: false,
+				titan: isDomainEligibleForEmail,
+			},
+			addingToCart: false,
+		};
+	}
 
 	componentDidMount() {
 		this.isMounted = true;
@@ -125,21 +134,24 @@ class EmailProvidersStackedComparison extends React.Component {
 	};
 
 	onTitanConfirmNewMailboxes = () => {
+		const { domain } = this.props;
 		const { titanMailboxes } = this.state;
 
 		const mailboxesAreValid = areAllMailboxesValid( titanMailboxes, [ 'alternativeEmail' ] );
+		const userCanAddEmail = canCurrentUserAddEmail( domain );
 
 		recordTracksEvent( 'calypso_email_providers_add_click', {
 			mailbox_count: titanMailboxes.length,
 			mailboxes_valid: mailboxesAreValid ? 1 : 0,
 			provider: 'titan',
+			user_can_add_email: userCanAddEmail,
 		} );
 
-		if ( ! mailboxesAreValid ) {
+		if ( ! mailboxesAreValid || ! userCanAddEmail ) {
 			return;
 		}
 
-		const { domain, productsList, selectedSiteSlug, shoppingCartManager } = this.props;
+		const { productsList, selectedSiteSlug, shoppingCartManager } = this.props;
 
 		const cartItem = titanMailMonthly( {
 			domain: domain.name,
@@ -178,21 +190,24 @@ class EmailProvidersStackedComparison extends React.Component {
 	};
 
 	onGoogleConfirmNewUsers = () => {
+		const { domain } = this.props;
 		const { googleUsers } = this.state;
 
 		const usersAreValid = areAllUsersValid( googleUsers );
+		const userCanAddEmail = canCurrentUserAddEmail( domain );
 
 		recordTracksEvent( 'calypso_email_providers_add_click', {
 			mailbox_count: googleUsers.length,
 			mailboxes_valid: usersAreValid ? 1 : 0,
 			provider: 'google',
+			user_can_add_email: userCanAddEmail ? 1 : 0,
 		} );
 
-		if ( ! usersAreValid ) {
+		if ( ! usersAreValid || ! userCanAddEmail ) {
 			return;
 		}
 
-		const { domain, productsList, selectedSiteSlug, shoppingCartManager } = this.props;
+		const { productsList, selectedSiteSlug, shoppingCartManager } = this.props;
 		const domains = [ domain ];
 		const googleProductSlug = config.isEnabled( 'google-workspace-migration' )
 			? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
@@ -221,10 +236,11 @@ class EmailProvidersStackedComparison extends React.Component {
 	renderEmailForwardingCard() {
 		const { domain, translate } = this.props;
 
-		const buttonLabel =
-			domain.emailForwardsCount > 0
-				? translate( 'Manage email forwarding' )
-				: translate( 'Add email forwarding' );
+		const showExpandButton =
+			this.doesDomainHaveEmailForwards( domain ) || this.isDomainEligibleForEmail( domain );
+		const buttonLabel = this.doesDomainHaveEmailForwards( domain )
+			? translate( 'Manage email forwarding' )
+			: translate( 'Add email forwarding' );
 
 		return (
 			<EmailProviderCard
@@ -237,6 +253,7 @@ class EmailProvidersStackedComparison extends React.Component {
 				detailsExpanded={ this.state.expanded.forwarding }
 				onExpandedChange={ this.onExpandedStateChange }
 				buttonLabel={ buttonLabel }
+				showExpandButton={ showExpandButton }
 				expandButtonLabel={ translate( 'Add email forwarding' ) }
 				onButtonClick={ this.goToEmailForwarding }
 				features={ getEmailForwardingFeatures() }
@@ -325,6 +342,7 @@ class EmailProvidersStackedComparison extends React.Component {
 				detailsExpanded={ this.state.expanded.google }
 				onExpandedChange={ this.onExpandedStateChange }
 				onButtonClick={ this.onGoogleConfirmNewUsers }
+				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
 				expandButtonLabel={ translate( 'Add %(googleMailService)s', {
 					args: {
 						googleMailService: getGoogleMailServiceFamily(),
@@ -392,6 +410,7 @@ class EmailProvidersStackedComparison extends React.Component {
 				formattedPrice={ formattedPrice }
 				discount={ discount }
 				formFields={ formFields }
+				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
 				expandButtonLabel={ translate( 'Add Email' ) }
 				features={ getTitanFeatures() }
 			/>
@@ -430,12 +449,55 @@ class EmailProvidersStackedComparison extends React.Component {
 		);
 	}
 
+	doesDomainHaveEmailForwards( domain ) {
+		return domain.emailForwardsCount > 0;
+	}
+
+	isDomainEligibleForEmail( domain ) {
+		const canUserAddEmail = canCurrentUserAddEmail( domain );
+		if ( canUserAddEmail ) {
+			return true;
+		}
+
+		const cannotAddEmailReason = getCurrentUserCannotAddEmailReason( domain );
+		return ! cannotAddEmailReason || ! cannotAddEmailReason.message;
+	}
+
+	renderDomainEligibilityNotice() {
+		const { domain } = this.props;
+
+		if ( this.isDomainEligibleForEmail( domain ) ) {
+			return null;
+		}
+
+		const cannotAddEmailReason = getCurrentUserCannotAddEmailReason( domain );
+		if ( ! cannotAddEmailReason || ! cannotAddEmailReason.message ) {
+			return null;
+		}
+
+		return (
+			<>
+				<TrackComponentView
+					eventName="calypso_email_providers_comparison_page_domain_not_eligible_error_impression"
+					eventProperties={ {
+						domain: domain.name,
+						error_code: cannotAddEmailReason.code,
+					} }
+				/>
+				<Notice showDismiss={ false } status="is-error">
+					{ cannotAddEmailReason.message }
+				</Notice>
+			</>
+		);
+	}
+
 	render() {
 		const { isGSuiteSupported } = this.props;
 
 		return (
 			<>
 				{ this.renderHeaderSection() }
+				{ this.renderDomainEligibilityNotice() }
 				{ this.renderTitanCard() }
 				{ this.renderGoogleCard() }
 				{ this.renderEmailForwardingCard() }
