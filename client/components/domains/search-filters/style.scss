@@ -236,7 +236,9 @@ body.is-section-signup.is-white-signup {
 			border-color: $accent-blue;
 		}
 	}
-
+	.search-filters__buttons {
+		margin-bottom: 40px;
+	}
 	.search-filters__tld-button-first {
 		margin-left: 0;
 	}

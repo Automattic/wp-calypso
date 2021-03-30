@@ -116,6 +116,12 @@
 			width: 25%;
 			margin-right: 1em;
 		}
+
+		body.is-section-signup.is-white-signup & {
+			.badge {
+				font-size: 0.75rem;
+			}
+		}
 	}
 
 	.domain-registration-suggestion__match-reasons {
@@ -141,6 +147,13 @@
 			display: none;
 		}
 	}
+}
+
+.is-section-signup.is-white-signup .featured-domain-suggestion {
+	box-sizing: border-box;
+	border: 1px solid #e2e4e7;
+	border-radius: 4px; // eslint-disable-line
+	margin-bottom: 12px;
 }
 
 @include breakpoint-deprecated( '<660px' ) {

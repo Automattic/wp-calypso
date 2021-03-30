@@ -1,4 +1,3 @@
-
 .register-domain-step__search {
 	padding-bottom: 12px;
 
@@ -95,5 +94,12 @@
 .register-domain-step {
 	.button.is-active {
 		background: var( --color-neutral-0 );
+	}
+}
+
+body.is-section-signup.is-white-signup {
+	.register-domain-step__next-page {
+		background: none;
+		box-shadow: none;
 	}
 }

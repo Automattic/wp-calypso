@@ -279,7 +279,7 @@ body.is-section-signup.is-white-signup {
 		margin-top: 0;
 		
 		.badge {
-			border-radius: 4px;
+			border-radius: 4px; // eslint-disable-line
 		}
 	}
 
@@ -305,6 +305,8 @@ body.is-section-signup.is-white-signup {
 		}
 
 		&:not( .featured-domain-suggestion ) {
+			background: none;
+
 			.domain-registration-suggestion__domain-title {
 				line-height: 3rem;
 				.domain-registration-suggestion__domain-title-tld {
