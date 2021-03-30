@@ -22,7 +22,11 @@
 			font-size: 0.8125rem;
 
 			&:focus {
-				box-shadow: 0 0 1px var(--color-neutral-20);
+				box-shadow: 0 0 1px var(--color-sidebar-text);
+			}
+
+			&::placeholder {
+				color: rgba( var( --color-sidebar-text-rgb ), 0.4 );
 			}
 		}
 	}
