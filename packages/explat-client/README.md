@@ -1,3 +1,10 @@
+
+⚠️ **You probably shouldn't be using this package directly.**
+
+Search for `createExPlatClient` within your codebase to find your platform's implementation.
+
+
+
 # ExPlat Client
 
 This is a standalone client for Automattic's ExPlat, allowing use of ExPlat in any Javascript context.
