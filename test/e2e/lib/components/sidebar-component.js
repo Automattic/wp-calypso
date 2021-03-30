@@ -148,6 +148,10 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectPages() {
+		if( host !== 'WPCOM' ) {
+			await this.expandDrawerItem( 'Site' );
+			return await this._scrollToAndClickMenuItem( 'Pages' );
+		}
 		await this.expandDrawerItem( 'Pages' );
 		return await this._scrollToAndClickMenuItem( 'All Pages' );
 	}
