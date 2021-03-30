@@ -1,32 +1,34 @@
 /**
- * External dependencies
- */
-import page from 'page';
-import React from 'react';
-
-/**
  * Internal dependencies
  */
-import { render as clientRender } from 'calypso/controller';
+import 'calypso/boot/polyfills';
+import { bootApp } from 'calypso/boot/common';
+import userFactory from 'calypso/lib/user';
+import { siteSelection } from 'calypso/my-sites/controller';
+import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
+import { jetpackPricingContext } from 'calypso/jetpack-cloud/sections/pricing/controller';
 
-const oHai = ( context, next ) => {
-	context.layout = (
-		<>
-			<span>o hai</span>
-		</>
-	);
-
-	next();
-};
+/**
+ * Style dependencies
+ */
+import 'calypso/assets/stylesheets/style.scss';
+import 'calypso/assets/stylesheets/_calypso-color-scheme-jetpack-cloud.scss';
+import 'calypso/jetpack-cloud/style.scss';
+import 'calypso/jetpack-cloud/sections/pricing/style.scss';
 
 const registerRoutes = () => {
-	const BASE = '/pricing-new';
+	const user = userFactory();
+	const isLoggedOut = ! user.get();
 
-	page( `${ BASE }/`, oHai, clientRender );
+	jetpackPlans( `/:locale/pricing-new`, jetpackPricingContext );
 
-	page.start( { decodeURLComponents: false } );
+	if ( isLoggedOut ) {
+		jetpackPlans( `/pricing-new`, jetpackPricingContext );
+	} else {
+		jetpackPlans( `/pricing-new/:site?`, siteSelection, jetpackPricingContext );
+	}
 };
 
-window.AppBoot = () => {
-	registerRoutes();
+window.AppBoot = async () => {
+	bootApp( 'Jetpack.com Pricing (New)', registerRoutes );
 };

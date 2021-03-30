@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import classNames from 'classnames';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -19,26 +19,31 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import './style.scss';
 
 const JETPACK_COM_BASE_URL = 'https://jetpack.com';
-const MENU_ITEMS = [
-	{
-		title: translate( 'Security' ),
-		path: 'features/security',
-	},
-	{
-		title: translate( 'Pricing' ),
-		path: 'pricing',
-	},
-	{
-		title: translate( 'Support' ),
-		path: 'support',
-	},
-	{
-		title: translate( 'Blog' ),
-		path: 'blog',
-	},
-];
 
 const JetpackComMasterbar: React.FC = () => {
+	const translate = useTranslate();
+	const menuItems = useMemo(
+		() => [
+			{
+				title: translate( 'Security' ),
+				path: 'features/security',
+			},
+			{
+				title: translate( 'Pricing' ),
+				path: 'pricing',
+			},
+			{
+				title: translate( 'Support' ),
+				path: 'support',
+			},
+			{
+				title: translate( 'Blog' ),
+				path: 'blog',
+			},
+		],
+		[ translate ]
+	);
+
 	const [ isMenuOpen, setIsMenuOpen ] = useState( false );
 
 	const toggleMenu = () => {
@@ -73,7 +78,7 @@ const JetpackComMasterbar: React.FC = () => {
 				</Button>
 
 				<ul className={ classNames( 'jpcom-masterbar__nav', { 'is-open': isMenuOpen } ) }>
-					{ MENU_ITEMS.map( ( { title, path }, index ) => (
+					{ menuItems.map( ( { title, path }, index ) => (
 						<li className="jpcom-masterbar__nav-item" key={ index }>
 							<a
 								className={ path === 'pricing' ? 'current' : '' }

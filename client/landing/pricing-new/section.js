@@ -1,5 +1,5 @@
 export const PRICING_NEW_SECTION_DEFINITION = {
-	name: 'pricing-new',
+	name: 'jetpack-cloud-pricing',
 	paths: [ '/pricing-new' ],
 	module: 'calypso/landing/pricing-new',
 	group: 'jetpack-cloud',
