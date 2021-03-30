@@ -52,6 +52,10 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectThemes() {
+		if( host !== 'WPCOM' ) {
+			await this.expandDrawerItem( 'Design' );
+			return await this._scrollToAndClickMenuItem( 'Themes' );
+		}
 		await this.expandDrawerItem( 'Appearance' );
 		return await this._scrollToAndClickMenuItem( 'Themes' );
 	}
@@ -123,6 +127,10 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectSettings() {
+		if( host !== 'WPCOM' ) {
+			await this.expandDrawerItem( 'Manage' );
+			return await this._scrollToAndClickMenuItem( 'Settings' );
+		}
 		await this.expandDrawerItem( 'Settings' );
 		return await this._scrollToAndClickMenuItem( 'General' );
 	}
