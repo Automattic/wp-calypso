@@ -357,7 +357,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		if ( isCompositeCheckout ) {
 			return driverHelper.waitUntilLocatedAndVisible(
 				this.driver,
-				By.css( '#checkout-line-item-coupon-line-item' )
+				By.css( '.checkout-review-order.is-summary #checkout-line-item-coupon-line-item' )
 			);
 		}
 		return driverHelper.waitUntilLocatedAndVisible( this.driver, By.css( '.cart__remove-link' ) );
@@ -442,15 +442,15 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async _cartContainsProduct( productSlug, expectedQuantity = 1 ) {
-		await driverHelper.waitUntilLocatedAndVisible(
+		const orderSummary = await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
-			By.css( '.product-name,.checkout-line-item' )
+			By.css( '.checkout-review-order.is-summary' )
 		);
-		const elements = await this.driver.findElements(
+		const summaryItems = await orderSummary.findElements(
 			By.css(
-				`.product-name[data-e2e-product-slug="${ productSlug }"],.checkout-steps__step-complete-content .checkout-line-item[data-e2e-product-slug="${ productSlug }"]`
+				`.product-name[data-e2e-product-slug="${ productSlug }"], .checkout-steps__step-complete-content .checkout-line-item[data-e2e-product-slug="${ productSlug }"]`
 			)
 		);
-		return elements.length === expectedQuantity;
+		return summaryItems.length === expectedQuantity;
 	}
 }
