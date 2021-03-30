@@ -97,9 +97,9 @@ class DomainMappingInstructions extends React.Component {
 	renderNsRecordsInstructionsWithHeader() {
 		return (
 			<FoldableFAQ
-				id="advanced-mapping-setup-ns-records"
-				key="advanced-mapping-setup-ns-records"
-				question={ this.props.translate( 'Advanced setup using NS records' ) }
+				id="alternative-mapping-setup-ns-records"
+				key="alternative-mapping-setup-ns-records"
+				question={ this.props.translate( 'Alternative setup using NS records' ) }
 			>
 				{ this.renderNsRecordsInstructions() }
 			</FoldableFAQ>
@@ -168,9 +168,9 @@ class DomainMappingInstructions extends React.Component {
 	renderCnameInstructionsWithHeader() {
 		return (
 			<FoldableFAQ
-				id="advanced-mapping-setup-cname-record"
-				key="advanced-mapping-setup-cname-record"
-				question={ this.props.translate( 'Advanced setup using CNAME records' ) }
+				id="alternative-mapping-setup-cname-record"
+				key="alternative-mapping-setup-cname-record"
+				question={ this.props.translate( 'Alternative setup using CNAME records' ) }
 			>
 				{ this.renderCnameInstructions() }
 			</FoldableFAQ>
@@ -191,7 +191,7 @@ class DomainMappingInstructions extends React.Component {
 	renderARecordsInstructionsWithHeader() {
 		const { translate } = this.props;
 
-		const advancedSetupUsingARecordsTitle = translate( 'Advanced setup using root A records' );
+		const advancedSetupUsingARecordsTitle = translate( 'Alternative setup using root A records' );
 		const aRecordMappingWarning = translate(
 			'If you map a domain using A records rather than WordPress.com name servers, you will need to manage your domain’s DNS records yourself for any other services you are using with your domain, including email forwarding or email hosting (i.e. with Google Workspace or Titan)'
 		);
@@ -205,8 +205,8 @@ class DomainMappingInstructions extends React.Component {
 		);
 		return (
 			<FoldableFAQ
-				id="advanced-mapping-setup-a-records"
-				key="advanced-mapping-setup-a-records"
+				id="alternative-mapping-setup-a-records"
+				key="alternative-mapping-setup-a-records"
 				question={ advancedSetupUsingARecordsTitle }
 			>
 				<Notice status="is-warning" showDismiss={ false } translate={ this.props.translate }>
