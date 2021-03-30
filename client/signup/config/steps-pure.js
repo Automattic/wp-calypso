@@ -726,6 +726,7 @@ export function generateSteps( {
 			stepName: 'design-picker',
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'selectedDesign' ],
+			optionalDependencies: [ 'selectedDesign' ],
 		},
 	};
 }
