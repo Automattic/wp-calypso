@@ -660,7 +660,7 @@ class CalypsoifyIframe extends Component<
 			: `Block Editor > ${ postTypeText } > New`;
 	};
 
-	onIframeLoaded = async ( iframeUrl: string ) => {
+	onIframeLoaded = ( iframeUrl: string ) => {
 		clearTimeout( this.waitForIframeToLoad );
 		if ( ! this.successfulIframeLoad ) {
 			window.location.replace( iframeUrl );
