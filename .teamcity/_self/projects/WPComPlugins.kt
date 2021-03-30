@@ -96,7 +96,7 @@ private object EditingToolkit : BuildType({
 				yarn wp-env start
 				yarn test:php
 			"""
-			dockerRunParameters = "-u %env.UID% -v /var/run/docker.sock:/var/run/docker.sock"
+			dockerRunParameters = "-v /var/run/docker.sock:/var/run/docker.sock"
 		}
 	}
 })
