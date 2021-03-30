@@ -728,6 +728,11 @@ class CalypsoifyIframe extends Component<
 							onLoad={ () => {
 								this.onIframeLoaded( iframeUrl );
 							} }
+							// when 3rd party cookies are disabled
+							// the iframe shows an error page that flashes for a moment
+							// before the user is the redirected to wp-admin.
+							// This styling hides the iframe until it loads or the redirect is executed
+							style={ ( ! isIframeLoaded && { clip: 'rect(0, 0, 0, 0)' } ) || {} }
 						/>
 					) }
 				</div>
