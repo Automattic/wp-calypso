@@ -11,7 +11,8 @@ import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import getPostalCode from './get-postal-code';
 import getDomainDetails from './get-domain-details';
 import { recordTransactionBeginAnalytics } from './analytics';
-import submitRedirectTransaction from './submit-redirect-transaction';
+import submitWpcomTransaction from './submit-wpcom-transaction';
+import prepareRedirectTransaction from '../lib/prepare-redirect-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { WPCOMTransactionEndpointResponse } from '../types/transaction-endpoint';
 import type { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
@@ -77,7 +78,7 @@ export default async function genericRedirectProcessor(
 		'wpcom'
 	)?.getContactInfo();
 
-	return submitRedirectTransaction(
+	const formattedTransactionData = prepareRedirectTransaction(
 		paymentMethodId,
 		{
 			...submitData,
@@ -92,12 +93,16 @@ export default async function genericRedirectProcessor(
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		},
 		transactionOptions
-	).then( ( response?: WPCOMTransactionEndpointResponse ) => {
-		if ( ! response?.redirect_url ) {
-			throw new Error( 'Error during transaction' );
+	);
+
+	return submitWpcomTransaction( formattedTransactionData, transactionOptions ).then(
+		( response?: WPCOMTransactionEndpointResponse ) => {
+			if ( ! response?.redirect_url ) {
+				throw new Error( 'Error during transaction' );
+			}
+			return makeRedirectResponse( response?.redirect_url );
 		}
-		return makeRedirectResponse( response?.redirect_url );
-	} );
+	);
 }
 
 function isValidTransactionData( submitData: unknown ): submitData is RedirectTransactionRequest {
