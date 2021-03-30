@@ -16,6 +16,7 @@ import { requestSite } from 'calypso/state/sites/actions';
 import {
 	getSite,
 	getSiteAdminUrl,
+	getSitePlan,
 	getSiteSlug,
 	isJetpackModuleActive,
 	isJetpackSite,
@@ -35,6 +36,7 @@ import {
 import config from '@automattic/calypso-config';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { isBusiness, isEcommerce, isEnterprise } from 'calypso/lib/products-values';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
@@ -230,8 +232,14 @@ function onSelectedSiteAvailable( context, basePath ) {
 	const selectedSite = getSelectedSite( state );
 
 	const isAtomicSite = isSiteAutomatedTransfer( state, selectedSite.ID );
-	const userCanManagePlugins = canCurrentUser( state, selectedSite.ID, 'activate_plugins' );
+	const userCanManageOptions = canCurrentUser( state, selectedSite.ID, 'manage_options' );
 	const calypsoify = isAtomicSite && config.isEnabled( 'calypsoify/plugins' );
+
+	const sitePlan = getSitePlan( state, selectedSite.ID );
+	const hasBusinessPlan =
+		sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) || isEcommerce( sitePlan ) );
+
+	const userCanManagePlugins = userCanManageOptions && isAtomicSite && hasBusinessPlan;
 
 	// If migration is in progress, only /migrate paths should be loaded for the site
 	const isMigrationInProgress = isSiteMigrationInProgress( state, selectedSite.ID );
@@ -241,17 +249,20 @@ function onSelectedSiteAvailable( context, basePath ) {
 		return false;
 	}
 
-	if ( userCanManagePlugins && calypsoify && /^\/plugins/.test( basePath ) ) {
-		const plugin = get( context, 'params.plugin' );
+	if ( userCanManagePlugins && calypsoify && /^\/plugins*/.test( basePath ) ) {
 		let pluginString = '';
-		if ( plugin ) {
-			pluginString = [
-				'tab=search',
-				`s=${ plugin }`,
-				'type=term',
-				'modal-mode=true',
-				`plugin=${ plugin }`,
-			].join( '&' );
+		if ( /^\/plugins\//.test( basePath ) ) {
+			// Set the plugin query parameter if on a plugin page.
+			const plugin = get( context, 'params.plugin' );
+			if ( plugin ) {
+				pluginString = [
+					'tab=search',
+					`s=${ plugin }`,
+					'type=term',
+					'modal-mode=true',
+					`plugin=${ plugin }`,
+				].join( '&' );
+			}
 		}
 
 		const pluginInstallURL = 'plugin-install.php?calypsoify=1' + `&${ pluginString }`;
