@@ -1204,7 +1204,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 
 		step( 'Can delete site', async function () {
 			const sidebarComponent = await SidebarComponent.Expect( driver );
-			await sidebarComponent.ensureSidebarMenuVisible();
 			await sidebarComponent.selectSettings();
 			const settingsPage = await SettingsPage.Expect( driver );
 			return await settingsPage.deleteSite( expectedDomainName );
@@ -1323,7 +1322,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 	} );
 
-	describe( 'Signup and create new site using the New Onboarding (Gutenboarding) @signup', function () {
+	describe.only( 'Signup and create new site using the New Onboarding (Gutenboarding) @signup', function () {
 		const emailAddress = dataHelper.getEmailAddress( dataHelper.getNewBlogName(), signupInboxId );
 
 		before( async function () {
