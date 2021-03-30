@@ -593,6 +593,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			this.driver,
 			By.css( '.components-snackbar__content a' )
 		);
+		await this.driver.switchTo().defaultContent();
 	}
 
 	async schedulePost( publishDate ) {
