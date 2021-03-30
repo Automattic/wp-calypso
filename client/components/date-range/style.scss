@@ -209,12 +209,14 @@
 		padding: 0.25em; // fix and allow target area
 		width: 24px; // fix and allow target area
 		height: 24px; // fix and allow target area
+	}
 
-
+	.DayPicker-Day {
 		.date-picker__day {
 			&:hover,
 			&:focus {
-				color: var( --color-primary );
+				color: var( --color-text-inverted );
+				background-color: var( --color-primary );
 			}
 		}
 	}
@@ -232,6 +234,17 @@
 	.DayPicker-Day--start:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ),
 	.DayPicker-Day--end:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) {
 		background-color: var( --color-primary );
+	}
+
+	.DayPicker-Day--range:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ),
+	.DayPicker-Day--start:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ),
+	.DayPicker-Day--end:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) {
+		.date-picker__day {
+			&:hover,
+			&:focus {
+				background-color: var( --color-primary-light );
+			}
+		}
 	}
 
 	.DayPicker-Day--start,
