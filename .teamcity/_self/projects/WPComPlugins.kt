@@ -87,10 +87,7 @@ private object EditingToolkit : BuildType({
 				# Add Gutenberg to wp-env:
 				echo '{ "plugins": [ "./editing-toolkit-plugin", "https://downloads.wordpress.org/plugin/gutenberg.latest-stable.zip" ], "themes": [] }' > .wp-env.override.json
 
-				uname -m
-				uname -s
-
-				curl -L --fail https://github.com/docker/compose/releases/download/1.28.6/docker-compose-$(uname -s)-$(uname -m)-o /usr/local/bin/docker-compose &&\
+				curl -L --fail https://github.com/docker/compose/releases/download/1.28.6/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose &&\
 				chmod +x /usr/local/bin/docker-compose
 
 				# For debugging
