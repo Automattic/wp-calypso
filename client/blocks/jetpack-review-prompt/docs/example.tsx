@@ -8,11 +8,13 @@ import { useSelector, useDispatch } from 'react-redux';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
+import { getIsDismissed, getValidFromDate } from 'calypso/state/jetpack-review-prompt/selectors';
+import { PREFERENCE_NAME } from 'calypso/state/jetpack-review-prompt/constants';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
+import CardHeading from 'calypso/components/card-heading';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import SegmentedControl from 'calypso/components/segmented-control';
-import CardHeading from 'calypso/components/card-heading';
-import { getIsDismissed, getValidFromDate } from 'calypso/state/jetpack-review-prompt/selectors';
-import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 
 const JetpackReviewPromptExample: FunctionComponent = () => {
 	const dispatch = useDispatch();
@@ -21,9 +23,10 @@ const JetpackReviewPromptExample: FunctionComponent = () => {
 	const [ align, setAlign ] = useState< 'center' | 'left' >( 'center' );
 
 	const validFrom = useSelector( ( state ) => getValidFromDate( state, type ) );
-	const isDimissed = useSelector( ( state ) => getIsDismissed( state, type ) );
+	const isDismissed = useSelector( ( state ) => getIsDismissed( state, type ) );
 
 	const handleMakeValid = () => dispatch( setValidFrom( type ) );
+	const handleClearDismiss = () => dispatch( savePreference( PREFERENCE_NAME, null ) );
 
 	return (
 		<div>
@@ -31,12 +34,16 @@ const JetpackReviewPromptExample: FunctionComponent = () => {
 			{ null === validFrom && (
 				<Card>
 					<p>{ 'No `validFrom` Date Set' }</p>
-					<Button
-						disabled={ null !== validFrom && validFrom < Date.now() }
-						onClick={ handleMakeValid }
-						primary
-					>
+					<Button onClick={ handleMakeValid } primary>
 						{ 'Set `validFrom` to now' }
+					</Button>
+				</Card>
+			) }
+			{ isDismissed && (
+				<Card>
+					<p>{ 'Review Prompt is dismissed' }</p>
+					<Button onClick={ handleClearDismiss } primary>
+						{ 'Clear Dismissal' }
 					</Button>
 				</Card>
 			) }
