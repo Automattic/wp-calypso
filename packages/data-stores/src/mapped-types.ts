@@ -22,6 +22,7 @@ import type { FunctionKeys } from 'utility-types';
  *
  * @template S Selector map, usually from `import * as selectors from './my-store/selectors';`
  */
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type SelectFromMap< S extends object > = {
 	[ selector in FunctionKeys< S > ]: (
 		...args: TailParameters< S[ selector ] >
@@ -47,6 +48,7 @@ export type DispatchFromMap< A extends Record< string, ( ...args: any[] ) => any
  * This is useful for typing some @wordpres/data functions that make a leading
  * `state` argument implicit.
  */
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type TailParameters< F extends Function > = F extends ( head: any, ...tail: infer T ) => any
 	? T
 	: never;
