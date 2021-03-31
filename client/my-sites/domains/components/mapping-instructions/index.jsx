@@ -178,31 +178,37 @@ class DomainMappingInstructions extends React.Component {
 	}
 
 	renderARecordsList() {
-		const { aRecordsRequiredForMapping } = this.props;
+		const { aRecordsRequiredForMapping, domainName } = this.props;
 		return (
 			<ul className="mapping-instructions__dns-records-list">
 				{ aRecordsRequiredForMapping.map( ( aRecord ) => {
-					return <li key={ aRecord }>{ aRecord }</li>;
+					return (
+						<li key={ aRecord }>
+							<code>
+								{ domainName }. IN A { aRecord }
+							</code>
+						</li>
+					);
 				} ) }
 			</ul>
 		);
 	}
 
 	renderARecordsInstructionsWithHeader() {
-		const { translate } = this.props;
+		const { domainName, translate } = this.props;
 
-		const advancedSetupUsingARecordsTitle = translate( 'Alternative setup using root A records' );
-		const aRecordMappingWarning = translate(
-			'If you map a domain using A records rather than WordPress.com name servers, you will need to manage your domain’s DNS records yourself for any other services you are using with your domain, including email forwarding or email hosting (i.e. with Google Workspace or Titan)'
-		);
-		const aRecordsSetupMessage = translate(
-			'Please set the following IP addresses as root A records using {{link}}these instructions{{/link}}:',
-			{
-				components: {
-					link: <ExternalLink href={ MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS } target="_blank" />,
-				},
-			}
-		);
+		const advancedSetupUsingARecordsTitle = isSubdomain( domainName )
+			? translate( 'Alternative setup using root A records' )
+			: translate( 'Alternative setup using A records' );
+		const aRecordMappingWarning = isSubdomain( domainName )
+			? translate(
+					'If you map a subdomain using A records rather than WordPress.com name servers, you will need to manage your subdomain’s DNS records yourself for any other services you are using with your subdomain, including email forwarding or email hosting (i.e. with Google Workspace or Titan)'
+			  )
+			: translate(
+					'If you map a domain using A records rather than WordPress.com name servers, you will need to manage your domain’s DNS records yourself for any other services you are using with your domain, including email forwarding or email hosting (i.e. with Google Workspace or Titan)'
+			  );
+		const aRecordsSetupMessage = this.getARecordsSetupMessage();
+
 		return (
 			<FoldableFAQ
 				id="alternative-mapping-setup-a-records"
@@ -215,6 +221,31 @@ class DomainMappingInstructions extends React.Component {
 				<p>{ aRecordsSetupMessage }</p>
 				{ this.renderARecordsList() }
 			</FoldableFAQ>
+		);
+	}
+
+	getARecordsSetupMessage() {
+		const { domainName, translate } = this.props;
+
+		if ( isSubdomain( domainName ) ) {
+			return translate(
+				'Please set the following IP addresses as A records for %(subdomain)s using {{link}}these instructions{{/link}}:',
+				{
+					args: { subdomain: domainName },
+					components: {
+						link: <ExternalLink href={ MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS } target="_blank" />,
+					},
+				}
+			);
+		}
+
+		return translate(
+			'Please set the following IP addresses as root A records using {{link}}these instructions{{/link}}:',
+			{
+				components: {
+					link: <ExternalLink href={ MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS } target="_blank" />,
+				},
+			}
 		);
 	}
 
