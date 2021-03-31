@@ -18,6 +18,7 @@ export function mockDomainSuggestion(
 		product_slug: '',
 		raw_price: 0,
 		currency_code: '',
+		unavailable: false,
 	};
 }
 

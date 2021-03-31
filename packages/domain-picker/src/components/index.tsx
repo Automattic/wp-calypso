@@ -160,9 +160,14 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		retryRequest: retryDomainSuggestionRequest,
 	} = useDomainSuggestions( domainSearch.trim(), quantityExpanded, domainCategory, locale ) || {};
 
-	const domainSuggestions = allDomainSuggestions?.slice(
-		existingSubdomain ? 1 : 0,
-		isExpanded ? quantityExpanded : quantity
+	// don't list the already existing free domain as part of the suggestions
+	const domainSuggestions = allDomainSuggestions
+		?.filter( ( suggestion ) => suggestion.domain_name !== existingSubdomain?.domain_name )
+		.slice( 0, isExpanded ? quantityExpanded : quantity );
+
+	// we need this index because it refers to the recommended (most relevant) paid domain
+	const firstPaidDomainIndex = domainSuggestions?.findIndex(
+		( suggestion ) => ! suggestion.is_free && ! suggestion.unavailable
 	);
 
 	const persistentSelectedDomain = usePersistentSelectedDomain(
@@ -373,7 +378,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 											{ ( ! areDependenciesLoading &&
 												domainSuggestions?.map( ( suggestion, i ) => {
 													const index = existingSubdomain?.domain_name ? i + 1 : i;
-													const isRecommended = index === 1;
+													const isRecommended = i === firstPaidDomainIndex;
 													const availabilityStatus =
 														domainAvailabilities[ suggestion?.domain_name ]?.status;
 													// should availabilityStatus be falsy then we assume it is available as we have not checked yet.
@@ -386,9 +391,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 																suggestionRefs.current[ index ] = ref;
 															} }
 															key={ suggestion.domain_name }
-															isUnavailable={ ! isAvailable }
 															domain={ suggestion.domain_name }
 															cost={ suggestion.cost }
+															isUnavailable={ ! isAvailable || suggestion?.unavailable }
 															isLoading={
 																currentDomain?.domain_name === suggestion.domain_name &&
 																isCheckingDomainAvailability

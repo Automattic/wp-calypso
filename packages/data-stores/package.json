@@ -44,7 +44,7 @@
 		"redux": "^4.0.5",
 		"tslib": "^2.1.0",
 		"utility-types": "^3.10.0",
-		"wpcom-proxy-request": "^6.0.0"
+		"validator": "^13.5.2"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^4",
@@ -53,6 +53,8 @@
 	"devDependencies": {
 		"jest-fetch-mock": "^2.1.2",
 		"nock": "^12.0.3",
-		"wait-for-expect": "^3.0.2"
+		"wait-for-expect": "^3.0.2",
+		"wpcom-proxy-request": "^6.0.0",
+		"@types/validator": "^13.1.3"
 	}
 }
