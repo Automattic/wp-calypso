@@ -113,7 +113,7 @@ export default function getThankYouPageUrl( {
 		debug( 'ignorning redirectTo', redirectTo );
 	}
 
-	// If there's a redirect URL set on a product in the cart, use the first one we find.
+	// If there's a redirect URL set on a product in the cart, use the most recent one.
 	const urlFromCart = cart ? getRedirectUrlFromCart( cart ) : null;
 	if ( urlFromCart ) {
 		debug( 'returning url from cart', urlFromCart );
@@ -530,12 +530,20 @@ function getThankYouPageUrlForTrafficGuide( {
 }
 
 function getRedirectUrlFromCart( cart: ResponseCart ): string | null {
-	const firstProductWithUrl = cart.products.find( ( product ) => {
-		if ( product.extra?.afterPurchaseUrl ) {
-			return true;
-		}
-		return false;
-	} );
+	const firstProductWithUrl = cart.products.reduce(
+		( mostRecent: ResponseCartProduct | null, product: ResponseCartProduct ) => {
+			if ( product.extra?.afterPurchaseUrl ) {
+				if ( ! mostRecent ) {
+					return product;
+				}
+				if ( product.time_added_to_cart > mostRecent.time_added_to_cart ) {
+					return product;
+				}
+			}
+			return mostRecent;
+		},
+		null
+	);
 	debug(
 		'looking for redirect url in cart products found',
 		firstProductWithUrl?.extra.afterPurchaseUrl
