@@ -3,38 +3,10 @@
  */
 import * as React from 'react';
 
-import {
-	createI18n,
-	I18n,
-	LocaleData,
-	__,
-	_n,
-	_nx,
-	_x,
-	isRTL,
-	setLocaleData,
-	getLocaleData,
-	hasTranslation,
-	subscribe,
-} from '@wordpress/i18n';
+import { createI18n, defaultI18n, I18n, LocaleData } from '@wordpress/i18n';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { createHooks } from '@wordpress/hooks';
 import type { addFilter, removeFilter, hasFilter, applyFilters } from '@wordpress/hooks';
-
-/**
- * Default i18n instance.
- */
-const defaultI18n: I18n = {
-	__,
-	_n,
-	_nx,
-	_x,
-	isRTL,
-	setLocaleData,
-	getLocaleData,
-	hasTranslation,
-	subscribe,
-};
 
 export interface I18nReact {
 	__: I18n[ '__' ];
