@@ -100,8 +100,7 @@ export default class LoginPage extends AsyncBaseContainer {
 
 	async requestMagicLink( emailAddress ) {
 		/**
-		 * Wait for the form to become enabled so the magic link button is
-		 * clickable.
+		 * Wait for the form to become enabled so the magic link is clickable.
 		 *
 		 * @see {@link https://github.com/Automattic/wp-calypso/pull/50999}
 		 */
