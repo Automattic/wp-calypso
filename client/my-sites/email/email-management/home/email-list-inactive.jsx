@@ -20,8 +20,6 @@ class EmailListInactive extends React.Component {
 			return null;
 		}
 
-		const headerCard = <SectionHeader label={ translate( 'Other domains' ) } />;
-
 		const emailListItems = domains.map( ( domain ) => {
 			return (
 				<CompactCard key={ `${ domain.name }-row` }>
@@ -37,7 +35,7 @@ class EmailListInactive extends React.Component {
 
 		return (
 			<div className="email-list-inactive__items">
-				{ headerCard }
+				<SectionHeader label={ translate( 'Other domains' ) } />
 				{ emailListItems }
 			</div>
 		);

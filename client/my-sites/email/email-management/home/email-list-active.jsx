@@ -21,8 +21,6 @@ class EmailListActive extends React.Component {
 			return null;
 		}
 
-		const headerCard = <SectionHeader label={ translate( 'Active email plans' ) } />;
-
 		const emailListItems = domains.map( ( domain ) => {
 			return (
 				<CompactCard
@@ -42,7 +40,7 @@ class EmailListActive extends React.Component {
 
 		return (
 			<div className="email-list-active__items">
-				{ headerCard }
+				<SectionHeader label={ translate( 'Domains with active email' ) } />
 				{ emailListItems }
 			</div>
 		);
