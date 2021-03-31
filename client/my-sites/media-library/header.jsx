@@ -134,7 +134,6 @@ class MediaLibraryHeader extends React.Component {
 					onViewDetails={ this.props.onViewDetails }
 					onDelete={ this.props.onDeleteItem }
 					site={ this.props.site }
-					view={ 'LIST' }
 				/>
 				<MediaLibraryScale onChange={ this.props.onMediaScaleChange } />
 			</Card>
