@@ -14,6 +14,7 @@ import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { productSelect } from 'calypso/my-sites/plans/jetpack-plans/controller';
 import setJetpackPlansHeader from 'calypso/my-sites/plans/jetpack-plans/plans-header';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 function showJetpackPlans( context ) {
 	const getState = context.store.getState();
@@ -32,16 +33,18 @@ export function plans( context, next ) {
 	}
 
 	context.primary = (
-		<Plans
-			context={ context }
-			intervalType={ context.params.intervalType }
-			customerType={ context.query.customerType }
-			selectedFeature={ context.query.feature }
-			selectedPlan={ context.query.plan }
-			withDiscount={ context.query.discount }
-			discountEndDate={ context.query.ts }
-			redirectTo={ context.query.redirect_to }
-		/>
+		<CalypsoShoppingCartProvider>
+			<Plans
+				context={ context }
+				intervalType={ context.params.intervalType }
+				customerType={ context.query.customerType }
+				selectedFeature={ context.query.feature }
+				selectedPlan={ context.query.plan }
+				withDiscount={ context.query.discount }
+				discountEndDate={ context.query.ts }
+				redirectTo={ context.query.redirect_to }
+			/>
+		</CalypsoShoppingCartProvider>
 	);
 	next();
 }
