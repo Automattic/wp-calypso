@@ -4,9 +4,12 @@
 		margin-bottom: 8px;
 	}
 
-	.form-text-input-with-action,
-	.form-text-input-with-action:hover,
-	.form-text-input-with-action:focus {
+
+	// Apply custom style to the `Add new tag` mini form.
+	.reader-sidebar-tags__text-input:hover,
+	.reader-sidebar-tags__text-input:focus,
+	.reader-sidebar-tags__text-input.is-focused,
+	.reader-sidebar-tags__text-input {
 		background-color: transparent;
 		border: 0;
 		padding-left: 8px;
