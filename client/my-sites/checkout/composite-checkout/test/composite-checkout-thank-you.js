@@ -427,7 +427,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/plans/my-plan/foo.bar?thank-you=true&install=all' );
 	} );
 
-	it( 'redirects to the afterPurchaseUrl from the first cart item if set', () => {
+	it( 'redirects to the afterPurchaseUrl from a cart item if set', () => {
 		const cart = {
 			products: [ { extra: { afterPurchaseUrl: '/after/purchase/url' } } ],
 		};
@@ -437,6 +437,29 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 		} );
 		expect( url ).toBe( '/after/purchase/url' );
+	} );
+
+	it( 'redirects to the afterPurchaseUrl from the most recent cart item if multiple are set', () => {
+		const cart = {
+			products: [
+				{
+					product_slug: 'older_product',
+					time_added_to_cart: 1617228489,
+					extra: { afterPurchaseUrl: '/older/purchase/url' },
+				},
+				{
+					product_slug: 'newer_product',
+					time_added_to_cart: 1617228689,
+					extra: { afterPurchaseUrl: '/newer/purchase/url' },
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			cart,
+			siteSlug: 'foo.bar',
+		} );
+		expect( url ).toBe( '/newer/purchase/url' );
 	} );
 
 	it( 'redirects to internal redirectTo url if set', () => {
