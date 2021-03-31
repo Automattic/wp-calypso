@@ -218,6 +218,7 @@ class RegistrantVerificationPage extends Component {
 				break;
 
 			case 'KS_RAM_error':
+			case 'KS_RSP_error':
 				errorState = this.getKeySystemsErrorState( error.message );
 				break;
 
