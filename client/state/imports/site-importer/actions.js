@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { stringify } from 'qs';
-import { every, get } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -93,9 +93,8 @@ export const startMappingSiteImporterAuthors = ( { importerStatus, site, targetS
 
 		// Check if all authors are mapped before starting the import.
 		const newState = getImporterStatus( getState(), importerId );
-		const areAllAuthorsMapped = every(
-			get( newState, 'customData.sourceAuthors', [] ),
-			'mappedTo'
+		const areAllAuthorsMapped = get( newState, 'customData.sourceAuthors', [] ).every(
+			( { mappedTo } ) => mappedTo
 		);
 
 		if ( areAllAuthorsMapped ) {

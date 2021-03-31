@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
-import { map, fromPairs } from 'lodash-es';
 
 /**
  * Internal dependencies
@@ -163,13 +162,13 @@ export default connect( ( state ) => {
 	const sitesItems = getSitesItems( state );
 
 	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-	const siteSlugPairs = map( sitesItems, ( site ) => {
+	const siteSlugPairs = Object.values( sitesItems ).map( ( site ) => {
 		return [ site.ID, getSiteSlug( state, site.ID ) ];
 	} );
 
 	return {
 		isLoggedIn: isUserLoggedIn( state ),
-		siteSlugs: fromPairs( siteSlugPairs ),
+		siteSlugs: Object.fromEntries( siteSlugPairs ),
 		currentQuery: getCurrentQueryArguments( state ),
 		currentRoute: getCurrentRoute( state ),
 		hasAllSitesLoaded: hasAllSitesList( state ),
