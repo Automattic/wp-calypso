@@ -78,7 +78,7 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 					<p>
 						{ preventWidows(
 							translate(
-								'Was it easy to restore your site? Leave us a review and help spread the word'
+								'Was it easy to restore your site? Leave us a review and help spread the word.'
 							)
 						) }
 					</p>
@@ -98,7 +98,7 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 
 						{ preventWidows(
 							translate(
-								'Are you happy with Jetpack Scan? Leave us a review and help spread the word'
+								'Are you happy with Jetpack Scan? Leave us a review and help spread the word.'
 							)
 						) }
 					</p>
