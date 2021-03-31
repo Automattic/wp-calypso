@@ -229,8 +229,6 @@ class Signup extends React.Component {
 		if ( ! this.state.controllerHasReset && ! isEqual( this.props.progress, progress ) ) {
 			this.updateShouldShowLoadingScreen( progress );
 		}
-
-		// ! this.props.isReskinned && document.body.classList.remove( 'is-white-signup' );
 	}
 
 	componentWillUnmount() {
