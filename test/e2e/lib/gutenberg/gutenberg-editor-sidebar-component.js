@@ -241,8 +241,10 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 			this.driver,
 			By.css( '.edit-post-post-schedule__toggle' )
 		);
+		await this.driver.sleep( 400 ); // Wait for the calendar popup animation
 		// schedulePost post for the first day of the next month
 		await driverHelper.clickWhenClickable( this.driver, nextMonthSelector );
+		await this.driver.sleep( 400 ); // Wait for the month slide animation
 		await driverHelper.selectElementByText( this.driver, firstDay, '1' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, publishDateSelector );
 		const publishDate = await this.driver.findElement( publishDateSelector ).getText();
