@@ -47,8 +47,8 @@
 		"uuid": "^7.0.2"
 	},
 	"devDependencies": {
-		"@testing-library/jest-dom": "^5.11.6",
-		"@testing-library/react": "^10.0.5",
+		"@testing-library/jest-dom": "^5.11.10",
+		"@testing-library/react": "^11.2.6",
 		"react": "^16.12.0",
 		"react-dom": "^16.12.0"
 	},
