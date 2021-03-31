@@ -120,7 +120,7 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 				await plansPage.selectFreePlan();
 
 				// Redirect console messages that starts with "onboarding-debug" to E2E log.
-				driver
+				await driver
 					.manage()
 					.logs()
 					.get( 'browser' )
