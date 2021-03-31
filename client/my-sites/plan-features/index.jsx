@@ -10,6 +10,7 @@ import { compact, get, findIndex, last, map, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import formatCurrency from '@automattic/format-currency';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -80,6 +81,8 @@ import {
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import PlanFeaturesScroller from './scroller';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 
 /**
  * Style dependencies
@@ -89,6 +92,16 @@ import './style.scss';
 const noop = () => {};
 
 export class PlanFeatures extends Component {
+	isMounted = false;
+
+	componentWillUnmount() {
+		this.isMounted = false;
+	}
+
+	componentDidMount() {
+		this.isMounted = true;
+	}
+
 	render() {
 		const { isInSignup, planProperties, plans, selectedPlan, withScroll, translate } = this.props;
 		const tableClasses = classNames(
@@ -517,6 +530,9 @@ export class PlanFeatures extends Component {
 			displayJetpackPlans,
 			withDiscount,
 			selectedSiteSlug,
+			shoppingCartManager,
+			redirectToAddDomainFlow,
+			productsList,
 		} = this.props;
 
 		const {
@@ -524,6 +540,7 @@ export class PlanFeatures extends Component {
 			cartItemForPlan,
 			siteIsPrivateAndGoingAtomic,
 			planName,
+			productSlug,
 		} = singlePlanProperties;
 
 		if ( ownPropsOnUpgradeClick && ownPropsOnUpgradeClick !== noop && cartItemForPlan ) {
@@ -537,6 +554,32 @@ export class PlanFeatures extends Component {
 
 		if ( siteIsPrivateAndGoingAtomic && isInSignup ) {
 			// Let signup do its thing
+			return;
+		}
+
+		if ( redirectToAddDomainFlow ) {
+			// In this flow, we add the product to the cart directly and then
+			// redirect to the "add a domain" page.
+			shoppingCartManager
+				.addProductsToCart( [
+					fillInSingleCartItemAttributes(
+						{
+							product_slug: productSlug,
+							extra: {
+								afterPurchaseUrl: redirectTo ?? undefined,
+							},
+						},
+						productsList
+					),
+				] )
+				.then( () => {
+					if ( ! displayJetpackPlans && withDiscount && this.isMounted ) {
+						return shoppingCartManager.applyCoupon( withDiscount );
+					}
+				} )
+				.then( () => {
+					this.isMounted && page( `/domains/add/${ selectedSiteSlug }` );
+				} );
 			return;
 		}
 
@@ -791,6 +834,7 @@ export class PlanFeatures extends Component {
 }
 
 PlanFeatures.propTypes = {
+	redirectToAddDomainFlow: PropTypes.bool,
 	basePlansPath: PropTypes.string,
 	canPurchase: PropTypes.bool.isRequired,
 	disableBloggerPlanWithNonBlogDomain: PropTypes.bool,
@@ -1020,6 +1064,7 @@ export default connect(
 		const purchaseId = getCurrentPlanPurchaseId( state, siteId );
 
 		return {
+			productsList: getProductsList( state ),
 			canPurchase,
 			isJetpack,
 			planProperties,
@@ -1042,6 +1087,6 @@ export default connect(
 	{
 		recordTracksEvent,
 	}
-)( localize( PlanFeatures ) );
+)( withShoppingCart( localize( PlanFeatures ) ) );
 
 /* eslint-enable wpcalypso/redux-no-bound-selectors */
