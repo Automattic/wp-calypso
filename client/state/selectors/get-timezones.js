@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, map, toPairs } from 'lodash';
+import { get, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,13 +26,13 @@ import 'calypso/state/timezones/init';
  * @returns {Array} Timezones arrays
  */
 export default function getTimezones( state ) {
-	const continents = toPairs( get( state, 'timezones.byContinents', null ) );
+	const continents = get( state, 'timezones.byContinents', null );
 
 	if ( ! continents ) {
 		return null;
 	}
 
-	return map( continents, ( zones ) => [
+	return map( Object.entries( continents ), ( zones ) => [
 		zones[ 0 ],
 		map( zones[ 1 ], ( value ) => [ value, getTimezonesLabel( state, value ) ] ),
 	] );
