@@ -102,6 +102,14 @@ private object Notifications : BuildType({
 		param("plugin_slug", "notifications")
 		param("archive_dir", "./dist/")
 		param("build_env", "development")
+		param("normalize_files", """
+			style_ref=$(grep '<link rel="stylesheet" href="build.min.css' ./dist/index.html) &&\
+			sed -i "" "s~.*<link rel=\"stylesheet\" href=\"build.min.*~$style_ref~" ./dist_2/index.html &&\
+			script_ref=$(grep '<script charset="UTF-8" src="build.min.js' ./dist/index.html) &&\
+			sed -i "" "s~.*<script charset=\"UTF-8\" src=\"build.min.*~$script_ref~" ./dist_2/index.html ./dist_2/rtl.html &&\
+			style_ref=$(grep '<link rel="stylesheet" href="build.min.rtl.css' ./dist/rtl.html) &&\
+			sed -i "" "s~.*<link rel=\"stylesheet\" href=\"build.min.rtl.css.*~$style_ref~" ./dist_2/rtl.html
+		""".trimIndent())
 	}
 })
 
