@@ -11,7 +11,7 @@ import { Button, Card } from '@automattic/components';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import SegmentedControl from 'calypso/components/segmented-control';
 import CardHeading from 'calypso/components/card-heading';
-import { getValidFromDate } from 'calypso/state/jetpack-review-prompt/selectors';
+import { getIsDismissed, getValidFromDate } from 'calypso/state/jetpack-review-prompt/selectors';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 
 const JetpackReviewPromptExample: FunctionComponent = () => {
@@ -21,12 +21,25 @@ const JetpackReviewPromptExample: FunctionComponent = () => {
 	const [ align, setAlign ] = useState< 'center' | 'left' >( 'center' );
 
 	const validFrom = useSelector( ( state ) => getValidFromDate( state, type ) );
+	const isDimissed = useSelector( ( state ) => getIsDismissed( state, type ) );
 
 	const handleMakeValid = () => dispatch( setValidFrom( type ) );
 
 	return (
 		<div>
 			<JetpackReviewPrompt align={ align } type={ type } />
+			{ null === validFrom && (
+				<Card>
+					<p>{ 'No `validFrom` Date Set' }</p>
+					<Button
+						disabled={ null !== validFrom && validFrom < Date.now() }
+						onClick={ handleMakeValid }
+						primary
+					>
+						{ 'Set `validFrom` to now' }
+					</Button>
+				</Card>
+			) }
 			<Card>
 				<CardHeading>{ 'Type' }</CardHeading>
 				<SegmentedControl primary>
@@ -52,13 +65,6 @@ const JetpackReviewPromptExample: FunctionComponent = () => {
 						{ 'Left Align' }
 					</SegmentedControl.Item>
 				</SegmentedControl>
-				<CardHeading>{ 'Preference Controls' }</CardHeading>
-				<Button
-					onClick={ handleMakeValid }
-					disabled={ null !== validFrom && validFrom < Date.now() }
-				>
-					{ 'Make Valid ( set date to display )' }
-				</Button>
 			</Card>
 		</div>
 	);
