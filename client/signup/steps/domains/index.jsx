@@ -602,14 +602,24 @@ class DomainsStep extends React.Component {
 	};
 
 	getSubHeaderText() {
-		const { flowName, isAllDomains, siteType, isReskinned, translate } = this.props;
+		const {
+			flowName,
+			isAllDomains,
+			siteType,
+			stepSectionName,
+			isReskinned,
+			translate,
+		} = this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Find the domain that defines you' );
 		}
 
 		if ( isReskinned ) {
-			return translate( "Enter your site's name or some descriptive keywords to get started" );
+			return (
+				! stepSectionName &&
+				translate( "Enter your site's name or some descriptive keywords to get started" )
+			);
 		}
 
 		const subHeaderPropertyName = 'signUpFlowDomainsStepSubheader';
@@ -628,14 +638,21 @@ class DomainsStep extends React.Component {
 	}
 
 	getHeaderText() {
-		const { headerText, isAllDomains, siteType, isReskinned, translate } = this.props;
+		const {
+			headerText,
+			isAllDomains,
+			siteType,
+			isReskinned,
+			stepSectionName,
+			translate,
+		} = this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Your next big idea starts here' );
 		}
 
 		if ( isReskinned ) {
-			return translate( 'Choose a domain' );
+			return ! stepSectionName && translate( 'Choose a domain' );
 		}
 
 		const headerPropertyName = 'signUpFlowDomainsStepHeader';
