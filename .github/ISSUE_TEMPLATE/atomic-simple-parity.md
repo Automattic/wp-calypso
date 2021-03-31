@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
+### What plan tier is the site on?
+
 ### Where are you seeing the issue?
 
 1. Go to '...'
@@ -18,8 +20,6 @@ assignees: ''
 #### What I expected on the Atomic site
 
 #### What actually happened
-
-### What plan tier?
 
 #### Is this specific to the applied theme? Which one?
 
