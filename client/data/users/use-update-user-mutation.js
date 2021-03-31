@@ -17,7 +17,7 @@ function useUpdateUserMutation( siteId ) {
 		{
 			onSuccess( data ) {
 				const { login } = data;
-				queryClient.setQueryData( cacheKey( siteId, login ), data );
+				queryClient.invalidateQueries( cacheKey( siteId, login ) );
 			},
 		}
 	);

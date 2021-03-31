@@ -149,7 +149,7 @@ class EditUserForm extends React.Component {
 	isExternalRole = ( role ) =>
 		[ 'administrator', 'editor', 'author', 'contributor' ].includes( role );
 
-	renderField = ( fieldId ) => {
+	renderField = ( fieldId, isDisabled ) => {
 		let returnField = null;
 		switch ( fieldId ) {
 			case 'roles':
@@ -162,6 +162,7 @@ class EditUserForm extends React.Component {
 							value={ this.state.roles }
 							onChange={ this.handleChange }
 							onFocus={ this.recordFieldFocus( 'roles' ) }
+							disabled={ isDisabled }
 						/>
 						{ ! this.props.isVip &&
 							! this.props.isWPForTeamsSite &&
@@ -169,6 +170,7 @@ class EditUserForm extends React.Component {
 								<ContractorSelect
 									onChange={ this.handleExternalChange }
 									checked={ this.state.isExternalContributor }
+									disabled={ isDisabled }
 								/>
 							) }
 					</Fragment>
@@ -188,6 +190,7 @@ class EditUserForm extends React.Component {
 							value={ this.state.first_name }
 							onChange={ this.handleChange }
 							onFocus={ this.recordFieldFocus( 'first_name' ) }
+							disabled={ isDisabled }
 						/>
 					</FormFieldset>
 				);
@@ -206,6 +209,7 @@ class EditUserForm extends React.Component {
 							value={ this.state.last_name }
 							onChange={ this.handleChange }
 							onFocus={ this.recordFieldFocus( 'last_name' ) }
+							disabled={ isDisabled }
 						/>
 					</FormFieldset>
 				);
@@ -224,6 +228,7 @@ class EditUserForm extends React.Component {
 							value={ this.state.name }
 							onChange={ this.handleChange }
 							onFocus={ this.recordFieldFocus( 'name' ) }
+							disabled={ isDisabled }
 						/>
 					</FormFieldset>
 				);
@@ -251,9 +256,9 @@ class EditUserForm extends React.Component {
 				onSubmit={ this.updateUser }
 				onChange={ this.props.markChanged }
 			>
-				{ editableFields.map( this.renderField ) }
+				{ editableFields.map( ( fieldId ) => this.renderField( fieldId, this.props.isUpdating ) ) }
 				<FormButtonsBar>
-					<FormButton disabled={ ! this.hasUnsavedSettings() }>
+					<FormButton disabled={ ! this.hasUnsavedSettings() || this.props.isUpdating }>
 						{ this.props.translate( 'Save changes', {
 							context: 'Button label that prompts user to save form',
 						} ) }

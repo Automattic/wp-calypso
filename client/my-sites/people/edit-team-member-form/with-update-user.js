@@ -73,7 +73,7 @@ const withUpdateUser = ( Component ) => ( props ) => {
 	useErrorNotice( error, user );
 	usePendingNotice( isLoading, user );
 
-	return <Component { ...props } updateUser={ updateUser } />;
+	return <Component { ...props } updateUser={ updateUser } isUpdating={ isLoading } />;
 };
 
 export default withUpdateUser;
