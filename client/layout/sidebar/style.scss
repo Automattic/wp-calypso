@@ -148,6 +148,10 @@
 		}
 	}
 
+	&:focus {
+		outline: none;
+	}
+
 	.badge {
 		margin: -7px 0 -8px;
 	}
