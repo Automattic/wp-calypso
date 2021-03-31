@@ -162,31 +162,42 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 			}
 		},
 		dangerouslyGetExperimentAssignment: ( experimentName: string ): ExperimentAssignment => {
-			if ( ! Validation.isName( experimentName ) ) {
-				throw new Error( `Invalid experimentName: ${ experimentName }` );
-			}
+			try {
+				if ( ! Validation.isName( experimentName ) ) {
+					throw new Error( `Invalid experimentName: ${ experimentName }` );
+				}
 
-			const storedExperimentAssignment = experimentAssignmentStore.retrieve( experimentName );
-			if ( ! storedExperimentAssignment ) {
-				throw new MissingExperimentAssignmentError(
-					`Trying to dangerously get an ExperimentAssignment that hasn't loaded.`
-				);
-			}
-
-			// We want to be loud in development mode to help pick up any issues:
-			if ( config.isDevelopmentMode ) {
-				// Highlight when we dangerously get an experiment too soon to when we load one:
-				if (
-					storedExperimentAssignment &&
-					Timing.monotonicNow() - storedExperimentAssignment.retrievedTimestamp < 1000
-				) {
+				const storedExperimentAssignment = experimentAssignmentStore.retrieve( experimentName );
+				if ( ! storedExperimentAssignment ) {
 					throw new Error(
-						`Warning: Trying to dangerously get an ExperimentAssignment too soon after loading it.`
+						`Trying to dangerously get an ExperimentAssignment that hasn't loaded.`
 					);
 				}
-			}
 
-			return storedExperimentAssignment;
+				// We want to be loud in development mode to help pick up any issues:
+				if ( config.isDevelopmentMode ) {
+					// Highlight when we dangerously get an experiment too soon to when we load one:
+					if (
+						storedExperimentAssignment &&
+						Timing.monotonicNow() - storedExperimentAssignment.retrievedTimestamp < 1000
+					) {
+						safeLogError( {
+							message: `Warning: Trying to dangerously get an ExperimentAssignment too soon after loading it.`,
+							experimentName,
+							source: 'dangerouslyGetExperimentAssignment',
+						} );
+					}
+				}
+
+				return storedExperimentAssignment;
+			} catch ( error ) {
+				safeLogError( {
+					message: error.message,
+					experimentName,
+					source: 'dangerouslyGetExperimentAssignment-error',
+				} );
+				return createFallbackExperimentAssignment( experimentName );
+			}
 		},
 		config,
 	};

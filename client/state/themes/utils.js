@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-
-import { every, get, includes, map, mapKeys, omit, omitBy, some, startsWith } from 'lodash';
+import { get, includes, map, mapKeys, omit, omitBy, some, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -196,7 +195,7 @@ export function getSerializedThemesQueryWithoutPage( query, siteId ) {
  */
 export function isThemeMatchingQuery( query, theme ) {
 	const queryWithDefaults = { ...DEFAULT_THEME_QUERY, ...query };
-	return every( queryWithDefaults, ( value, key ) => {
+	return Object.entries( queryWithDefaults ).every( ( [ key, value ] ) => {
 		switch ( key ) {
 			case 'search': {
 				if ( ! value ) {
@@ -231,7 +230,7 @@ export function isThemeMatchingQuery( query, theme ) {
 				// TODO: Change filters object shape to be more like post's terms, i.e.
 				// { color: 'blue,red', feature: 'post-slider' }
 				const filters = value.split( ',' );
-				return every( filters, ( f ) =>
+				return filters.every( ( f ) =>
 					some( theme.taxonomies, ( terms ) => some( terms, { slug: f } ) )
 				);
 			}

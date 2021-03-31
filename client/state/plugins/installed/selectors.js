@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { every, filter, find, get, pick, reduce, some, sortBy, values } from 'lodash';
+import { filter, find, get, pick, reduce, some, sortBy, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -148,7 +148,7 @@ export function getSitesWithoutPlugin( state, siteIds, pluginSlug ) {
 			return false;
 		}
 
-		return every( installedOnSiteIds, function ( installedOnSiteId ) {
+		return installedOnSiteIds.every( function ( installedOnSiteId ) {
 			return installedOnSiteId !== siteId;
 		} );
 	} );
