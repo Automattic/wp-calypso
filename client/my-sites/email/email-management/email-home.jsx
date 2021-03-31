@@ -188,16 +188,16 @@ export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	return {
-		currentRoute: getCurrentRoute( state ),
 		canManageSite: canCurrentUser( state, selectedSiteId, 'manage_options' ),
+		currentRoute: getCurrentRoute( state ),
 		domains: getDomainsBySiteId( state, selectedSiteId ),
 		gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
 		hasGSuiteUsersLoaded: hasLoadedGSuiteUsers( state, selectedSiteId ),
 		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, selectedSiteId ),
+		hasSitesLoaded: hasLoadedSites( state ),
 		previousRoute: getPreviousRoute( state ),
+		selectedSite: getSelectedSite( state ),
 		selectedSiteId,
 		selectedSiteSlug: getSelectedSiteSlug( state ),
-		selectedSite: getSelectedSite( state ),
-		hasSitesLoaded: hasLoadedSites( state ),
 	};
 } )( localize( EmailManagementHome ) );
