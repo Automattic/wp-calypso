@@ -86,7 +86,7 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 				return 'jetpack-review-prompt__left';
 			default:
 			case 'center':
-				return 'jetpack-review-prompt';
+				return 'jetpack-review-prompt__center';
 		}
 	};
 
@@ -95,9 +95,14 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 			<QueryPreferences />
 			{ hasReceivedRemotePreferences && ! isDismissed && (
 				<Card className={ topClass() }>
+					<Gridicon
+						className="jetpack-review-prompt__close-icon"
+						icon="cross"
+						onClick={ dismissPrompt }
+					/>
 					<div className="jetpack-review-prompt__header">
-						<h4>{ translate( 'How did we do?' ) }</h4>
-						<Gridicon icon="cross" size={ 24 } onClick={ dismissPrompt } />
+						<Gridicon icon="status" size={ 48 } />
+						<h3 className="jetpack-review-prompt__title">{ translate( 'How did we do?' ) }</h3>
 					</div>
 					<p>{ text() }</p>
 					<Button

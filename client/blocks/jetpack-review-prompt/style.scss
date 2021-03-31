@@ -1,19 +1,34 @@
 .jetpack-review-prompt {
-	align-content: center;
-
 	&__left {
-		align-content: flex-start;
-
-		h4 {
-			text-align: center;
-			font-size: $font-title-small;
-			font-weight: 600;
-			padding-bottom: 32px;
+		.jetpack-review-prompt__header {
+			align-items: flex-start;
 		}
 	}
-}
 
-.jetpack-review-prompt__header {
-	display: flex;
-	justify-content: space-between;
+	&__center {
+		.jetpack-review-prompt__header {
+			align-items: center;
+		}
+	}
+
+	&__title {
+		font-size: $font-title-small;
+		font-weight: 600;
+		padding-bottom: 32px;
+	}
+
+	&__header {
+		display: flex;
+		flex-direction: column;
+		padding-bottom: 16px;
+		padding-top: 32px;
+	}
+
+	&__close-icon {
+		position: absolute;
+		top: 16px;
+		right: 16px;
+		color: var( --color-text-subtle );
+		cursor: pointer;
+	}
 }
