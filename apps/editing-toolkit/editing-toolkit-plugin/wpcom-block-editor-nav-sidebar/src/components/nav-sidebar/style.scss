@@ -70,10 +70,11 @@ $sidebar-button-text-color: #a2aab2; // former $light-gray-900
 .wpcom-block-editor-nav-sidebar-nav-sidebar__header {
 	box-sizing: content-box;
 	background-color: $sidebar-nav-header-background-color;
+	display: flex;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__site-title {
-	margin: 0 0 0 74px;
+	margin-left: $grid-unit-10;
 	align-items: center;
 	display: flex;
 	min-height: 60px;
@@ -113,10 +114,6 @@ $sidebar-button-text-color: #a2aab2; // former $light-gray-900
 	&:hover {
 		color: $white;
 	}
-}
-
-.wpcom-block-editor-nav-sidebar-nav-sidebar__close-icon {
-	width: 36px;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__home-button {

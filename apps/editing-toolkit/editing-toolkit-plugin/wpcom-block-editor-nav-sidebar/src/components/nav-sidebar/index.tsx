@@ -11,7 +11,7 @@ import {
 	IsolatedEventContainer,
 	withConstrainedTabbing,
 } from '@wordpress/components';
-import { Icon, chevronLeft, wordpress } from '@wordpress/icons';
+import { chevronLeft } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 import { applyFilters, doAction, hasAction } from '@wordpress/hooks';
 import { get, isEmpty, partition } from 'lodash';
@@ -26,6 +26,7 @@ import { compose } from '@wordpress/compose';
 import { STORE_KEY, POST_IDS_TO_EXCLUDE } from '../../constants';
 import CreatePage from '../create-page';
 import NavItem from '../nav-item';
+import SiteIcon from '../site-icon';
 import { Post } from '../../types';
 import './style.scss';
 
@@ -62,33 +63,6 @@ function WpcomBlockEditorNavSidebar() {
 			getSite()?.title,
 		];
 	} );
-
-	const { isRequestingSiteIcon, siteIconUrl } = useSelect( ( select ) => {
-		const { isResolving } = select( 'core/data' );
-		const { getEntityRecord } = select( 'core' );
-		const siteData = getEntityRecord( 'root', '__unstableBase', undefined ) || {};
-
-		return {
-			isRequestingSiteIcon: isResolving( 'core', 'getEntityRecord', [
-				'root',
-				'__unstableBase',
-				undefined,
-			] ),
-			siteIconUrl: siteData.site_icon_url,
-		};
-	}, [] );
-
-	let closeIcon = <Icon size={ 36 } icon={ wordpress } />;
-
-	if ( siteIconUrl ) {
-		closeIcon = (
-			<img
-				className="wpcom-block-editor-nav-sidebar-nav-sidebar__close-icon"
-				alt={ __( 'Site Icon', 'full-site-editing' ) }
-				src={ siteIconUrl }
-			/>
-		);
-	}
 
 	const { current: currentPost, drafts: draftPosts, recent: recentPosts } = useNavItems();
 	const statusLabels = usePostStatusLabels();
@@ -231,11 +205,12 @@ function WpcomBlockEditorNavSidebar() {
 						ref={ dismissButtonMount }
 						className={ classNames(
 							'edit-post-fullscreen-mode-close',
-							'wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button'
+							'wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button',
+							'has-icon'
 						) }
 						onClick={ dismissSidebar }
 					>
-						{ closeIcon }
+						<SiteIcon />
 					</Button>
 					<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__site-title">
 						<h2>{ siteTitle ? decodeEntities( siteTitle ) : '' }</h2>
