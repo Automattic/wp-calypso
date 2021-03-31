@@ -1,10 +1,5 @@
 @import '~@automattic/onboarding/styles/mixins';
 
-.mshots-image {
-	opacity: 0;
-	transition: 0.3s opacity;
-}
-
 .mshots-image__loader {
 	@include onboarding-placeholder();
 	position: absolute;
@@ -19,12 +14,15 @@
 }
 
 .mshots-image__container {
+    height: 100%;
     background-size: 100%;
     background-position: top;
-    height: 100%;
     background-repeat: no-repeat;
-    height: 100%;
     margin-left: auto;
     margin-right: auto;
-    transition: background-position 2.5s ease-in-out;
+    transition: all 1s;
+
+    &:hover {
+		background-position: bottom;
+    }
 }

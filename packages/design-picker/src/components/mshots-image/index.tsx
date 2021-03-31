@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import classnames from 'classnames';
 import { addQueryArgs } from '@wordpress/url';
 
@@ -40,6 +40,31 @@ export function mshotsUrl( url: string, options: MShotsOptions, count = 0 ): str
 
 const MAXTRIES = 10;
 
+// https://stackoverflow.com/a/60458593
+const useMshotsUrl = ( src: string, options: MShotsOptions ) => {
+	const [ loadedSrc, setLoadedSrc ] = useState( '' );
+	const [ count, setCount ] = useState( 0 );
+
+	useEffect( () => {
+		const img = new Image();
+		const srcUrl = mshotsUrl( src, options, count );
+		img.src = srcUrl;
+		img.onload = () => {
+			// Detect default image (Don't request a 400x300 image).
+			if ( img.naturalWidth !== 400 || img.naturalHeight !== 300 ) {
+				setLoadedSrc( srcUrl );
+			} else {
+				// Only refresh 10 times
+				count < MAXTRIES &&
+					// Triggers a target.src change with increasing timeouts
+					setTimeout( () => setCount( count + 1 ), count * 500 );
+			}
+		};
+	}, [ src, count ] );
+
+	return loadedSrc;
+};
+
 const MShotsImage = ( {
 	url,
 	'aria-labelledby': labelledby,
@@ -47,52 +72,32 @@ const MShotsImage = ( {
 	options,
 	scrollable = false,
 }: MShotsImageProps ): JSX.Element => {
-	const [ count, setCount ] = React.useState( 1 );
 	const [ visible, setVisible ] = useState( true );
-	const [ opacity, setOpacity ] = useState( 1 );
+	const [ opacity, setOpacity ] = useState( 0 );
 
-	const src = mshotsUrl( url, options, count );
+	const src = useMshotsUrl( url, options );
+	const backgroundImage = src && `url( ${ src } )`;
 
 	// Hide the images while they're loading if src changes (e.g. when locale is switched)
-	// useLayoutEffect( () => {
-	// 	// Opacity is used for fade in on load
-	// 	// Visible is used to hide the image quickly when swapping languages
-	// 	setVisible( false );
-	// 	setOpacity( 0 );
-	// }, [ src, setVisible, setOpacity ] );
+	useLayoutEffect( () => {
+		// Opacity is used for fade in on load
+		// Visible is used to hide the image quickly when swapping languages
+		setVisible( !! src );
+		setOpacity( src ? 1 : 0 );
+	}, [ src ] );
 
-	return (
-		<div className="mshots-image__container" style={ { backgroundImage: `url( ${ src } )` } }>
-			{ ! visible && <div className="mshots-image__loader"></div> }
-			<div
-				className={ classnames(
-					'mshots-image',
-					visible ? 'mshots-image-visible' : 'mshots-image-hidden'
-				) }
-				style={ { opacity: opacity, backgroundImage: `url( ${ src } )` } }
-				// alt={ alt }
-				aria-labelledby={ labelledby }
-				// src={ src }
-				// onLoad={ ( e ) => {
-				// 	// Test mshots h value matches the desired image
-				// 	// The default image (https://s0.wp.com/mshots/v1/default) is around 400x300 px h
-				// 	// but sometimes slightly off (e.g. h: 299.99)
-				// 	if ( e.currentTarget.naturalWidth !== options.w ) {
-				// 		// Only refresh 10 times
-				// 		if ( count < MAXTRIES ) {
-				// 			// Triggers a target.src change and image refresh @ 500ms, 1000ms, 1500ms...
-				// 			setTimeout( () => setCount( count + 1 ), count * 500 );
-				// 		}
-				// 	} else {
-				// 		// Show the image / hide loader
-				// 		setVisible( true );
-				// 		// Fade in
-				// 		setOpacity( 1 );
-				// 	}
-				// } }
-			/>
-		</div>
+	const style = {
+		opacity,
+		backgroundImage,
+	};
+
+	const className = classnames(
+		'mshots-image__container',
+		visible ? 'mshots-image-visible' : 'mshots-image__loader',
+		{ scrollable }
 	);
+
+	return <div className={ className } style={ style } aria-labelledby={ labelledby } />;
 };
 
 export default MShotsImage;
