@@ -58,7 +58,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 		driver = await driverManager.startBrowser();
 	} );
 
-	describe( 'Logging In and Out: @jetpack', function () {
+	describe( 'Logging In and Out:', function () {
 		before( async function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
@@ -76,7 +76,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 
 		// Test Jetpack SSO
 		if ( host !== 'WPCOM' ) {
-			describe( 'Can Log via Jetpack SSO', function () {
+			describe( 'Can Log via Jetpack SSO: @jetpack', function () {
 				step( 'Can log into site via Jetpack SSO', async function () {
 					const loginPage = await WPAdminLogonPage.Visit( driver, dataHelper.getJetpackSiteName() );
 					return await loginPage.logonSSO();

@@ -401,7 +401,13 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 				By.css( '.checkout-modal .checkout-button.is-status-primary' )
 			);
 			// Make sure the coupon item is removed
-			return this.waitForCouponToBeRemoved();
+			await this.waitForCouponToBeRemoved();
+
+			// Save Order
+			return await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.checkout-steps__step-content .checkout-button.is-status-primary' )
+			);
 		}
 
 		// Old checkout - desktop
@@ -422,6 +428,12 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 
 	async removeBusinessPlan() {
 		const productSlug = this.businessPlanSlug;
+		// Open review step for editing
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.wp-checkout__review-order-step .checkout-step__edit-button' )
+		);
+
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css(
