@@ -11,6 +11,16 @@ import {
 } from 'calypso/my-sites/controller';
 
 describe( 'redirectToJetpack', () => {
+	let origin;
+	beforeEach( () => {
+		origin = window.origin;
+		window.origin = '';
+	} );
+
+	afterEach( () => {
+		window.origin = origin;
+	} );
+
 	test( 'redirect needed', () => {
 		const context = { query: { unlinked: '1' } };
 		const response = { site: { URL: 'https://example.org' } };

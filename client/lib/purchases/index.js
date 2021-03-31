@@ -555,6 +555,14 @@ function isRenewing( purchase ) {
 	return includes( [ 'active', 'autoRenewing' ], purchase.expiryStatus );
 }
 
+function isWithinIntroductoryOfferPeriod( purchase ) {
+	return purchase.introductoryOffer?.isWithinPeriod;
+}
+
+function isIntroductoryOfferFreeTrial( purchase ) {
+	return purchase.introductoryOffer?.costPerInterval === 0;
+}
+
 function isSubscription( purchase ) {
 	const nonSubscriptionFunctions = [ isDomainRegistration, isOneTimePurchase ];
 
@@ -759,6 +767,8 @@ export {
 	isRenewal,
 	isRenewing,
 	isSubscription,
+	isWithinIntroductoryOfferPeriod,
+	isIntroductoryOfferFreeTrial,
 	maybeWithinRefundPeriod,
 	needsToRenewSoon,
 	paymentLogoType,

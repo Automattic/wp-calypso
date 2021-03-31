@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { flow } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -229,18 +228,13 @@ class MeSidebar extends React.Component {
 	}
 }
 
-const enhance = flow(
-	localize,
-	connect(
-		( state ) => ( {
-			currentUser: getCurrentUser( state ),
-		} ),
-		{
-			logoutUser,
-			recordGoogleEvent,
-			setNextLayoutFocus,
-		}
-	)
-);
-
-export default enhance( MeSidebar );
+export default connect(
+	( state ) => ( {
+		currentUser: getCurrentUser( state ),
+	} ),
+	{
+		logoutUser,
+		recordGoogleEvent,
+		setNextLayoutFocus,
+	}
+)( localize( MeSidebar ) );

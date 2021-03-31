@@ -1,7 +1,26 @@
 /**
  * External dependencies
  */
-import { cloneDeep, map, reduce, unset } from 'lodash';
+import { cloneDeep, map, reduce } from 'lodash';
+
+/**
+ * Recursively unset a value in an object by its path, represented by an array.
+ * Intentionally mutates `object` to mirror native `delete` operator's behavior.
+ *
+ * @param {object} object Object to remove a property from
+ * @param {Array}  path   Path to the property to remove
+ */
+const recursiveUnset = ( object, path ) => {
+	if ( path.length > 1 ) {
+		const [ , ...remainingPath ] = path;
+		recursiveUnset( object[ path[ 0 ] ], remainingPath );
+		return;
+	}
+
+	if ( object && object.hasOwnProperty( path[ 0 ] ) ) {
+		delete object[ path[ 0 ] ];
+	}
+};
 
 /**
  * Given a post object, returns a normalized post object prepared for storing
@@ -26,7 +45,7 @@ export function normalizePostForState( post ) {
 			...map( post.attachments, ( attachment, id ) => [ 'attachments', id ] ),
 		],
 		( memo, path ) => {
-			unset( memo, path.concat( 'meta', 'links' ) );
+			recursiveUnset( memo, path.concat( 'meta', 'links' ) );
 			return memo;
 		},
 		normalizedPost

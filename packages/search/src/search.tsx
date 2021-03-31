@@ -200,11 +200,12 @@ const InnerSearch = (
 				doSearch.cancel?.();
 			}
 
-			doSearch( keyword );
+			// call the callback directly without debouncing
+			onSearch?.( keyword );
 		}
 
 		onSearchChange?.( keyword );
-	}, [ doSearch, keyword, onSearchChange ] );
+	}, [ keyword ] );
 
 	const openSearch = ( event: KeyboardOrMouseEvent ) => {
 		event.preventDefault();

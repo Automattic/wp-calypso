@@ -73,6 +73,7 @@ import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-chang
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { savePreference } from 'calypso/state/preferences/actions';
 
 export const noticeId = 'me-settings-notice';
 const noticeOptions = {
@@ -712,6 +713,14 @@ class Account extends React.Component {
 			this.props.markSaved();
 		}
 
+		// In order to keep the app preference in-sync,
+		// we'd like to save the color scheme property
+		// once the user settings was successfuly saved.
+		// https://github.com/Automattic/wp-calypso/issues/48220
+		if ( this.shouldUpdateColorSchemePreference ) {
+			this.props.saveColorSchemePreference( this.shouldUpdateColorSchemePreference );
+		}
+
 		if ( this.state.redirect ) {
 			user()
 				.clear()
@@ -754,6 +763,10 @@ class Account extends React.Component {
 		} );
 
 		try {
+			// Store in a class property if the color scheme should be saved
+			// once the user settings save successfully.
+			this.shouldUpdateColorSchemePreference = this.props.unsavedUserSettings.calypso_preferences?.colorScheme;
+
 			const response = await this.props.saveUnsavedUserSettings( fields );
 			this.handleSubmitSuccess( response, formName );
 		} catch ( error ) {
@@ -1146,6 +1159,8 @@ export default compose(
 			saveUnsavedUserSettings,
 			setUserSetting,
 			successNotice,
+			saveColorSchemePreference: ( newColorScheme ) =>
+				savePreference( 'colorScheme', newColorScheme ),
 		}
 	),
 	localize,

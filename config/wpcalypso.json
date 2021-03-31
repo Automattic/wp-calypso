@@ -119,7 +119,6 @@
 		"plans/personal-plan": true,
 		"post-editor/checkout-overlay": true,
 		"post-editor/html-toolbar": true,
-		"post-editor/image-editor": true,
 		"post-editor/preview-scroll-to-content": true,
 		"press-this": true,
 		"privacy-policy": true,
@@ -151,6 +150,7 @@
 		"site-indicator": true,
 		"support-user": true,
 		"titan/phase-2": true,
+		"titan/provision-mailboxes": true,
 		"tools/migrate": true,
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,
@@ -183,7 +183,8 @@
 		"woocommerce/extension-wcservices/international-labels": true,
 		"woocommerce/onboarding-oauth": true,
 		"woocommerce/store-on-non-atomic-sites": true,
-		"wpcom-user-bootstrap": true
+		"wpcom-user-bootstrap": true,
+		"wordpress-action-search": false
 	},
 	"siftscience_key": "e00e878351",
 	"wpcom_signup_id": "39911",

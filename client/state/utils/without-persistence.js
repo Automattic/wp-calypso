@@ -1,44 +1,11 @@
 /**
- * External dependencies
+ * Disable persistence for a reducer by removing the `serialize` and `deserialize` methods
+ * from the reducer.
+ *
+ * @param {Function} reducer Reducer to remove persistence from
+ * @returns {Function} Reducer with disabled persistence
  */
-import { getInitialState } from '@automattic/state-utils';
-
-/**
- * Internal dependencies
- */
-import { DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
-
-/**
- * Wraps a reducer such that it won't persist any state to the browser's local storage
- *
- * @example prevent a simple reducer from persisting
- * const age = ( state = 0, { type } ) =>
- *   GROW === type
- *     ? state + 1
- *     : state
- *
- * export default combineReducers( {
- *   age: withoutPersistence( age )
- * } )
- *
- * @example preventing a large reducer from persisting
- * const posts = withoutPersistence( keyedReducer( 'postId', post ) )
- *
- * @param {Function} reducer original reducer
- * @returns {Function} wrapped reducer
- */
-export const withoutPersistence = ( reducer ) => {
-	const wrappedReducer = ( state, action ) => {
-		switch ( action.type ) {
-			case SERIALIZE:
-				return undefined;
-			case DESERIALIZE:
-				return getInitialState( reducer );
-			default:
-				return reducer( state, action );
-		}
-	};
-	wrappedReducer.hasCustomPersistence = true;
-
-	return wrappedReducer;
-};
+export function withoutPersistence( reducer ) {
+	// disable by re-binding the reducer function
+	return reducer.bind( null );
+}

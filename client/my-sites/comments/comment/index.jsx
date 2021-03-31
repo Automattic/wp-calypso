@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import ReactDom from 'react-dom';
-import { debounce, get, isEqual, isUndefined } from 'lodash';
+import { debounce, get, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -229,7 +229,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 		siteId,
 		postId: get( comment, 'post.ID' ),
 		commentIsPending: 'unapproved' === commentStatus,
-		isLoading: isUndefined( comment ),
+		isLoading: typeof comment === 'undefined',
 		minimumComment: getMinimumComment( comment ),
 	};
 };

@@ -12,7 +12,7 @@ describe( 'Full Site Editing Back Button', () => {
 		await activateTheme( 'maywood' );
 		// Creates a new page and uses the blank page layout.
 		await createNewPost( { postType: 'page', title: 'New e2e Page!' } );
-		await page.click( '.page-template-modal__buttons .components-button.is-primary.is-large' );
+		await page.click( '.page-pattern-modal__buttons .components-button.is-primary.is-large' );
 	} );
 
 	it( 'Should have an overriden button', async () => {

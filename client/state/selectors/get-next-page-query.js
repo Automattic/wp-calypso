@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { isString, isNumber } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import getNextPageHandle from 'calypso/state/selectors/get-next-page-handle';
@@ -28,7 +23,7 @@ export default function getNextPageQuery( state, siteId ) {
 
 	const pageHandle = getNextPageHandle( state, siteId );
 
-	if ( [ isString, isNumber ].some( ( pred ) => pred( pageHandle ) ) ) {
+	if ( [ 'string', 'number' ].includes( typeof pageHandle ) ) {
 		return {
 			...DEFAULT_QUERY,
 			...currentQuery,

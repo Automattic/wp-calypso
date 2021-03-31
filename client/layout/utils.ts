@@ -22,47 +22,41 @@ let pinnedSidebarBottom = false;
 let ticking = false; // Used for Scroll event throttling.
 
 export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
-	// Run only in browser context and for desktop viewports.
-	if ( typeof window === undefined || window.innerWidth <= 660 ) {
-		return;
-	}
-
 	// Do not run until next requestAnimationFrame or if running out of browser context.
 	if ( ticking ) {
 		return;
 	}
 
 	const windowHeight = window.innerHeight;
-	const content = document.getElementById( 'content' );
-	const contentHeight = document.getElementById( 'content' )?.scrollHeight;
+	const contentEl = document.getElementById( 'content' );
+	const contentHeight = contentEl?.scrollHeight;
 	const secondaryEl = document.getElementById( 'secondary' ); // Or referred as sidebar.
 	const secondaryElHeight = secondaryEl?.scrollHeight;
 	const masterbarHeight = document.getElementById( 'header' )?.getBoundingClientRect().height;
 
 	// Check whether we need to adjust content height so that scroll events are triggered.
 	// Sidebar has overflow: initial and position:fixed, so content is our only chance for scroll events.
-	if ( content && contentHeight && masterbarHeight && secondaryElHeight ) {
+	if ( contentEl && contentHeight && masterbarHeight && secondaryElHeight ) {
 		if ( contentHeight < secondaryElHeight ) {
 			// Adjust the content height so that it matches the sidebar + masterbar vertical scroll estate.
-			content.style.minHeight = secondaryElHeight + masterbarHeight + 'px';
+			contentEl.style.minHeight = secondaryElHeight + masterbarHeight + 'px';
 		}
 
 		if (
 			windowHeight >= secondaryElHeight + masterbarHeight &&
-			content !== null &&
-			secondaryEl !== null &&
-			( content.style.minHeight !== 'initial' || secondaryEl.style.position )
+			contentEl &&
+			secondaryEl &&
+			( contentEl.style.minHeight !== 'initial' || secondaryEl.style.position )
 		) {
 			// In case that window is taller than the sidebar we reinstate the content min-height. CSS code: client/layout/style.scss:30.
-			content.style.minHeight = 'initial';
+			contentEl.style.minHeight = 'initial';
 			// In case that window is taller than the sidebar after resize we need to clean up any previously set inline styles
 			secondaryEl.removeAttribute( 'style' );
 		}
 	}
 
 	if (
-		secondaryEl !== undefined &&
-		secondaryEl !== null &&
+		secondaryEl &&
 		secondaryElHeight !== undefined &&
 		masterbarHeight !== undefined &&
 		( secondaryElHeight + masterbarHeight > windowHeight || 'resize' === event.type ) // Only run when sidebar & masterbar are taller than window height OR we have a resize event

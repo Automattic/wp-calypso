@@ -3,7 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { clone, difference, each, forEach, identity, last, map, some, take, uniq } from 'lodash';
+import { clone, difference, each, forEach, identity, last, map, some, take } from 'lodash';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 
@@ -490,12 +490,14 @@ class TokenField extends PureComponent {
 	};
 
 	_addNewTokens = ( tokens ) => {
-		const tokensToAdd = uniq(
-			tokens
-				.map( this.props.saveTransform )
-				.filter( Boolean )
-				.filter( ( token ) => ! this._valueContainsToken( token ) )
-		);
+		const tokensToAdd = [
+			...new Set(
+				tokens
+					.map( this.props.saveTransform )
+					.filter( Boolean )
+					.filter( ( token ) => ! this._valueContainsToken( token ) )
+			),
+		];
 		debug( '_addNewTokens: tokensToAdd', tokensToAdd );
 
 		if ( tokensToAdd.length > 0 ) {

@@ -4,14 +4,14 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { startsWith } from 'lodash';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
+import wpcom from 'calypso/lib/wp';
 import ImageEditorCrop from './image-editor-crop';
-import { canvasToBlob } from 'calypso/lib/media/utils';
+import { mediaURLToProxyConfig, canvasToBlob } from 'calypso/lib/media/utils';
 import {
 	getImageEditorTransform,
 	getImageEditorFileInfo,
@@ -23,6 +23,10 @@ import {
 	setImageEditorImageHasLoaded,
 } from 'calypso/state/editor/image-editor/actions';
 import getImageEditorIsGreaterThanMinimumDimensions from 'calypso/state/selectors/get-image-editor-is-greater-than-minimum-dimensions';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 
 const noop = () => {};
 
@@ -88,35 +92,34 @@ export class ImageEditorCanvas extends Component {
 		}
 	}
 
-	isBlobSrc( src ) {
-		return startsWith( src, 'blob' );
-	}
+	fetchImageBlob( src ) {
+		const { siteSlug, isPrivateAtomic } = this.props;
+		const { filePath, query, isRelativeToSiteRoot } = mediaURLToProxyConfig( src, siteSlug );
+		const useProxy = isPrivateAtomic && filePath && isRelativeToSiteRoot;
 
-	getImage( src ) {
-		const { onLoadError, mimeType } = this.props;
+		if ( useProxy ) {
+			return wpcom.undocumented().getAtomicSiteMediaViaProxyRetry( siteSlug, filePath, { query } );
+		}
 
-		const req = new XMLHttpRequest();
-
-		if ( ! this.isBlobSrc( src ) ) {
+		if ( ! src.startsWith( 'blob' ) ) {
 			src = src + '?'; // Fix #7991 by forcing Safari to ignore cache and perform valid CORS request
 		}
 
-		req.open( 'GET', src, true );
-		req.responseType = 'arraybuffer';
+		return window.fetch( src ).then( ( response ) => response.blob() );
+	}
 
-		req.onload = () => {
-			if ( ! this.isMounted ) {
-				return;
-			}
-
-			const objectURL = window.URL.createObjectURL(
-				new Blob( [ req.response ], { type: mimeType } )
-			);
-			this.initImage( objectURL );
-		};
-
-		req.onerror = ( error ) => onLoadError( error );
-		req.send();
+	getImage( src ) {
+		this.fetchImageBlob( src )
+			.then( ( blob ) => {
+				if ( this.isMounted ) {
+					this.initImage( window.URL.createObjectURL( blob ) );
+				}
+			} )
+			.catch( ( error ) => {
+				if ( this.isMounted ) {
+					this.props.onLoadError( error );
+				}
+			} );
 	}
 
 	initImage( src ) {
@@ -288,6 +291,11 @@ export class ImageEditorCanvas extends Component {
 
 export default connect(
 	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSelectedSiteSlug( state );
+		const isPrivateAtomic =
+			isPrivateSite( state, siteId ) && isSiteAutomatedTransfer( state, siteId );
+
 		const transform = getImageEditorTransform( state );
 		const { src, mimeType } = getImageEditorFileInfo( state );
 		const crop = getImageEditorCrop( state );
@@ -295,6 +303,8 @@ export default connect(
 		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions( state );
 
 		return {
+			siteSlug,
+			isPrivateAtomic,
 			src,
 			mimeType,
 			transform,

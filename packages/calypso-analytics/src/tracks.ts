@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { assign, includes, isObjectLike, isUndefined, omitBy, times } from 'lodash';
+import { assign, includes, isObjectLike, omitBy, times } from 'lodash';
 import cookie from 'cookie';
 import { EventEmitter } from 'events';
 import { loadScript } from '@automattic/load-script';
@@ -236,7 +236,7 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 
 	// Remove properties that have an undefined value
 	// This allows a caller to easily remove properties from the recorded set by setting them to undefined
-	eventProperties = omitBy( eventProperties, isUndefined );
+	eventProperties = omitBy( eventProperties, ( prop ) => typeof prop === 'undefined' );
 
 	debug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
 

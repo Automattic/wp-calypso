@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, isEqual, isUndefined, map } from 'lodash';
+import { find, get, isEqual, map } from 'lodash';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import CSSTransition from 'react-transition-group/CSSTransition';
 
@@ -238,7 +238,7 @@ const mapStateToProps = ( state, { order, page, postId, siteId, status } ) => {
 	const comments = getCommentsPage( state, siteId, { order, page, postId, status } );
 	const counts = getSiteCommentCounts( state, siteId, postId );
 	const commentsCount = get( counts, 'unapproved' === status ? 'pending' : status );
-	const isLoading = isUndefined( comments );
+	const isLoading = typeof comments === 'undefined';
 	const isPostView = !! postId;
 
 	return {

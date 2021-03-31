@@ -5,7 +5,6 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
@@ -58,7 +57,7 @@ class ErrorBanner extends PureComponent {
 	};
 
 	handleDismiss = () =>
-		isUndefined( this.props.downloadId )
+		typeof this.props.downloadId === 'undefined'
 			? this.props.closeDialog( 'restore' )
 			: this.props.dismissDownloadError( this.props.siteId, this.props.downloadId );
 
@@ -72,15 +71,16 @@ class ErrorBanner extends PureComponent {
 			trackHappyChatBackup,
 			trackHappyChatRestore,
 		} = this.props;
-		const strings = isUndefined( downloadId )
-			? {
-					title: translate( 'Problem restoring your site' ),
-					details: translate( 'We came across a problem while trying to restore your site.' ),
-			  }
-			: {
-					title: translate( 'Problem preparing your file' ),
-					details: translate( 'There was a problem preparing your backup for downloading.' ),
-			  };
+		const strings =
+			typeof downloadId === 'undefined'
+				? {
+						title: translate( 'Problem restoring your site' ),
+						details: translate( 'We came across a problem while trying to restore your site.' ),
+				  }
+				: {
+						title: translate( 'Problem preparing your file' ),
+						details: translate( 'There was a problem preparing your backup for downloading.' ),
+				  };
 
 		return (
 			<ActivityLogBanner
@@ -92,7 +92,7 @@ class ErrorBanner extends PureComponent {
 				<TrackComponentView
 					eventName="calypso_activitylog_errorbanner_impression"
 					eventProperties={
-						isUndefined( downloadId )
+						typeof downloadId === 'undefined'
 							? {
 									error_code: errorCode,
 									failure_reason: failureReason,
@@ -111,7 +111,9 @@ class ErrorBanner extends PureComponent {
 				</Button>
 				<HappychatButton
 					className="activity-log-banner__happychat-button"
-					onClick={ isUndefined( downloadId ) ? trackHappyChatRestore : trackHappyChatBackup }
+					onClick={
+						typeof downloadId === 'undefined' ? trackHappyChatRestore : trackHappyChatBackup
+					}
 				>
 					<Gridicon icon="chat" />
 					<span>{ translate( 'Get help' ) }</span>

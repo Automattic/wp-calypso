@@ -109,7 +109,6 @@
 		"post-editor/checkout-overlay": true,
 		"post-editor/author-selector": true,
 		"post-editor/html-toolbar": true,
-		"post-editor/image-editor": true,
 		"press-this": true,
 		"privacy-policy": true,
 		"publicize-preview": true,
@@ -137,6 +136,7 @@
 		"ssr/sample-log-cache-misses": true,
 		"support-user": true,
 		"titan/phase-2": true,
+		"titan/provision-mailboxes": true,
 		"tools/migrate": true,
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,
@@ -169,7 +169,8 @@
 		"woocommerce/extension-wcservices": true,
 		"woocommerce/extension-wcservices/international-labels": true,
 		"woocommerce/onboarding-oauth": true,
-		"wpcom-user-bootstrap": true
+		"wpcom-user-bootstrap": true,
+		"wordpress-action-search": false
 	},
 	"rtl": false,
 	"siftscience_key": "a4f69f6759",

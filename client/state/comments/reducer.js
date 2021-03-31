@@ -3,7 +3,6 @@
  */
 import {
 	filter,
-	isUndefined,
 	orderBy,
 	has,
 	map,
@@ -16,7 +15,6 @@ import {
 	values,
 	omit,
 	startsWith,
-	isInteger,
 } from 'lodash';
 
 /**
@@ -59,7 +57,8 @@ const updateComment = ( commentId, newProperties ) => ( comment ) => {
 	if ( comment.ID !== commentId ) {
 		return comment;
 	}
-	const updateLikeCount = has( newProperties, 'i_like' ) && isUndefined( newProperties.like_count );
+	const updateLikeCount =
+		has( newProperties, 'i_like' ) && typeof newProperties.like_count === 'undefined';
 
 	// Comment Management allows for modifying nested fields, such as `author.name` and `author.url`.
 	// Though, there is no direct match between the GET response (which feeds the state) and the POST request.
@@ -428,7 +427,7 @@ export const activeReplies = withoutPersistence( ( state = {}, action ) => {
 
 function updateCount( counts, rawStatus, value = 1 ) {
 	const status = rawStatus === 'unapproved' ? 'pending' : rawStatus;
-	if ( ! counts || ! isInteger( counts[ status ] ) ) {
+	if ( ! counts || ! Number.isInteger( counts[ status ] ) ) {
 		return undefined;
 	}
 	const newCounts = {

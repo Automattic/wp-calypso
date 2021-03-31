@@ -6,7 +6,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { debounce, filter, first, flow, get, has, last, map, throttle } from 'lodash';
+import { debounce, filter, first, get, has, last, map, throttle } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 
@@ -239,13 +239,10 @@ class EditorDiffViewer extends PureComponent {
 	}
 }
 
-export default flow(
-	localize,
-	connect(
-		( state, { siteId, postId, selectedRevisionId } ) => ( {
-			revision: getPostRevision( state, siteId, postId, selectedRevisionId, 'display' ),
-			diffView: getPostRevisionsDiffView( state ),
-		} ),
-		{ recordTracksEvent }
-	)
-)( EditorDiffViewer );
+export default connect(
+	( state, { siteId, postId, selectedRevisionId } ) => ( {
+		revision: getPostRevision( state, siteId, postId, selectedRevisionId, 'display' ),
+		diffView: getPostRevisionsDiffView( state ),
+	} ),
+	{ recordTracksEvent }
+)( localize( EditorDiffViewer ) );

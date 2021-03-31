@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, includes, isUndefined, map, without, has } from 'lodash';
+import { get, includes, map, without, has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -93,7 +93,7 @@ export const queries = ( state = {}, action ) => {
 			return deepUpdateComments( state, without( comments, action.commentId ), query );
 		}
 		case COMMENTS_QUERY_UPDATE:
-			return isUndefined( get( action, 'query.page' ) )
+			return typeof get( action, 'query.page' ) === 'undefined'
 				? state
 				: deepUpdateComments( state, map( action.comments, 'ID' ), action.query );
 		default:

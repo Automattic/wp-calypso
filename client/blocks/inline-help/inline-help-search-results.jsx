@@ -207,10 +207,22 @@ function HelpSearchResults( {
 			.filter( ( type, index, arr ) => arr.indexOf( type ) === index );
 
 		return searchResultTypes.map( ( resultType ) => {
+			let displayedResults = results;
+			switch ( resultType ) {
+				case SUPPORT_TYPE_CONTEXTUAL_HELP:
+					displayedResults = results.filter( ( r ) => r.support_type === resultType ).slice( 0, 6 );
+					break;
+				case SUPPORT_TYPE_API_HELP:
+					displayedResults = results.filter( ( r ) => r.support_type === resultType ).slice( 0, 5 );
+					break;
+				case SUPPORT_TYPE_ADMIN_SECTION:
+					displayedResults = results.filter( ( r ) => r.support_type === resultType ).slice( 0, 3 );
+					break;
+			}
 			return renderSearchResultsSection(
 				`inline-search--${ resultType }`,
 				getTitleBySectionType( resultType, query ),
-				results.filter( ( r ) => r.support_type === resultType )
+				displayedResults
 			);
 		} );
 	};
