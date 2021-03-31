@@ -33,5 +33,5 @@
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ],
-	"references": [ { "path": "../react-i18n" } ]
+	"references": []
 }
