@@ -495,7 +495,7 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 		    Object {
 		      "experimentName": "",
 		      "message": "Invalid experimentName: ",
-		      "source": "dangerouslyGetExperimentAssignment",
+		      "source": "dangerouslyGetExperimentAssignment-error",
 		    },
 		  ],
 		]
@@ -520,7 +520,7 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 		    Object {
 		      "experimentName": "experiment_name_a",
 		      "message": "Trying to dangerously get an ExperimentAssignment that hasn't loaded.",
-		      "source": "dangerouslyGetExperimentAssignment",
+		      "source": "dangerouslyGetExperimentAssignment-error",
 		    },
 		  ],
 		]
@@ -549,7 +549,7 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 		    Object {
 		      "experimentName": "experiment_name_a",
 		      "message": "Trying to dangerously get an ExperimentAssignment that hasn't loaded.",
-		      "source": "dangerouslyGetExperimentAssignment",
+		      "source": "dangerouslyGetExperimentAssignment-error",
 		    },
 		  ],
 		]

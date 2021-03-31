@@ -164,22 +164,14 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 		dangerouslyGetExperimentAssignment: ( experimentName: string ): ExperimentAssignment => {
 			try {
 				if ( ! Validation.isName( experimentName ) ) {
-					safeLogError( {
-						message: `Invalid experimentName: ${ experimentName }`,
-						experimentName,
-						source: 'dangerouslyGetExperimentAssignment',
-					} );
-					return createFallbackExperimentAssignment( experimentName );
+					throw new Error( `Invalid experimentName: ${ experimentName }` );
 				}
 
 				const storedExperimentAssignment = experimentAssignmentStore.retrieve( experimentName );
 				if ( ! storedExperimentAssignment ) {
-					safeLogError( {
-						message: `Trying to dangerously get an ExperimentAssignment that hasn't loaded.`,
-						experimentName,
-						source: 'dangerouslyGetExperimentAssignment',
-					} );
-					return createFallbackExperimentAssignment( experimentName );
+					throw new Error(
+						`Trying to dangerously get an ExperimentAssignment that hasn't loaded.`
+					);
 				}
 
 				// We want to be loud in development mode to help pick up any issues:
