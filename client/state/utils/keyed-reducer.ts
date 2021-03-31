@@ -3,7 +3,7 @@
  */
 import { get, isEqual, mapValues, omit, omitBy, reduce } from 'lodash';
 import type { PropertyPath } from 'lodash';
-import type { Reducer, Action, AnyAction } from 'redux';
+import type { Action, AnyAction } from 'redux';
 
 /**
  * Internal dependencies
@@ -69,7 +69,7 @@ export type KeyedReducerAction< TAction extends Action > = TAction | CalypsoInit
  */
 export const keyedReducer = < TState, TAction extends AnyAction = Action >(
 	keyPath: PropertyPath,
-	reducer: Reducer< TState, KeyedReducerAction< TAction > >
+	reducer: SerializableReducer< TState, KeyedReducerAction< TAction > >
 ): SerializableReducer< Record< string | number, TState >, TAction > => {
 	// some keys are invalid
 	if ( 'string' !== typeof keyPath ) {
