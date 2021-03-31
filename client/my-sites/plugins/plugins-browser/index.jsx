@@ -355,7 +355,7 @@ export class PluginsBrowser extends Component {
 	}
 
 	shouldShowManageButton() {
-		if ( this.props.isJetpackSite ) {
+		if ( this.props.jetpackNonAtomic || this.props.hasBusinessPlan ) {
 			return true;
 		}
 		return ! this.props.selectedSiteId && this.props.hasJetpackSites;
