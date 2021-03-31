@@ -75,8 +75,6 @@ class EmailManagementHome extends React.Component {
 			return this.renderNoAccess();
 		}
 
-		const nonWpcomDomains = domains.filter( ( domain ) => ! domain.isWPCOMDomain );
-
 		const domainHasEmail = ( domain ) =>
 			hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain ) || hasEmailForwards( domain );
 
@@ -98,19 +96,21 @@ class EmailManagementHome extends React.Component {
 			);
 		}
 
-		const domainsWithEmail = nonWpcomDomains.filter( domainHasEmail );
-		const domainsWithNoEmail = nonWpcomDomains.filter( ( domain ) => ! domainHasEmail( domain ) );
+		const nonWpcomDomains = domains.filter( ( domain ) => ! domain.isWPCOMDomain );
 
 		if ( nonWpcomDomains.length < 1 ) {
 			return this.renderContentWithHeader( <div>no domains</div> );
 		}
 
+		const domainsWithEmail = nonWpcomDomains.filter( domainHasEmail );
+		const domainsWithNoEmail = nonWpcomDomains.filter( ( domain ) => ! domainHasEmail( domain ) );
+
 		if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
-			const selectedDomain = domainsWithNoEmail[ 0 ];
+			const firstDomainWithNoEmail = domainsWithNoEmail[ 0 ];
 			return this.renderContentWithHeader(
 				<EmailProvidersComparison
-					domain={ selectedDomain }
-					isGSuiteSupported={ hasGSuiteSupportedDomain( [ selectedDomain ] ) }
+					domain={ firstDomainWithNoEmail }
+					isGSuiteSupported={ hasGSuiteSupportedDomain( [ firstDomainWithNoEmail ] ) }
 				/>
 			);
 		}
