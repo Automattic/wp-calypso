@@ -186,6 +186,7 @@ export interface ResponseCartProductExtra {
 	google_apps_registration_data?: DomainContactDetails;
 	purchaseType?: string;
 	privacy?: boolean;
+	afterPurchaseUrl?: string;
 }
 
 export interface RequestCartProductExtra extends ResponseCartProductExtra {
