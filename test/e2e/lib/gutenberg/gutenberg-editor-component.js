@@ -22,7 +22,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		super( driver, By.css( '.edit-post-header' ), url );
 		this.editorType = editorType;
 
-		this.editoriFrameSelector = By.css( '.calypsoify.is-iframe iframe' );
+		this.editoriFrameSelector = By.css( '.calypsoify.is-iframe iframe.is-loaded' );
 		this.publishHeaderSelector = By.css( '.editor-post-publish-panel__header' );
 		this.prePublishButtonSelector = By.css(
 			'.editor-post-publish-panel__toggle[aria-disabled="false"]'
