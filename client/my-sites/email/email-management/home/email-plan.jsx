@@ -46,7 +46,7 @@ const normalizeTitanMailboxes = ( titanMailboxes ) => {
 	} );
 };
 
-class EmailPlanView extends React.Component {
+class EmailPlan extends React.Component {
 	state = {
 		isLoadingTitanMailboxes: false,
 		errorLoadingTitanMailboxes: false,
@@ -217,4 +217,4 @@ export default connect( ( state, ownProps ) => {
 		purchase,
 		hasEmailPlanSubscription: !! subscriptionId,
 	};
-} )( localize( EmailPlanView ) );
+} )( localize( EmailPlan ) );

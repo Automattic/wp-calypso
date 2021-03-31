@@ -78,6 +78,7 @@ class EmailPlanSubscription extends React.Component {
 						args: {
 							expiryDate: moment.utc( purchase.expiryDate ).format( 'LL' ),
 						},
+						comment: 'Shows the expiry date of the email subscription',
 					} ) }
 				</div>
 				<div>{ this.renderDefaultRenewButton() }</div>

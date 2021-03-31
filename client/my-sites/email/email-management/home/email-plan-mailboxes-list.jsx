@@ -28,7 +28,13 @@ class EmailPlanMailboxesList extends React.Component {
 				>
 					<MaterialIcon icon="email" />
 					<span>{ email.email }</span>
-					{ email.isAdmin && <Badge type="info">{ translate( 'Admin' ) }</Badge> }
+					{ email.isAdmin && (
+						<Badge type="info">
+							{ translate( 'Admin', {
+								comment: 'Email user role displayed as a badge',
+							} ) }
+						</Badge>
+					) }
 				</CompactCard>
 			);
 		} );
