@@ -222,6 +222,7 @@ export class PlansFeaturesMain extends Component {
 			plansWithScroll,
 			isReskinned,
 			isInVerticalScrollingPlansExperiment,
+			redirectToAddDomainFlow,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -241,6 +242,7 @@ export class PlansFeaturesMain extends Component {
 			>
 				{ this.renderSecondaryFormattedHeader() }
 				<PlanFeatures
+					redirectToAddDomainFlow={ redirectToAddDomainFlow }
 					basePlansPath={ basePlansPath }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					displayJetpackPlans={ displayJetpackPlans }
@@ -559,6 +561,7 @@ export class PlansFeaturesMain extends Component {
 }
 
 PlansFeaturesMain.propTypes = {
+	redirectToAddDomainFlow: PropTypes.bool,
 	basePlansPath: PropTypes.string,
 	displayJetpackPlans: PropTypes.bool.isRequired,
 	hideFreePlan: PropTypes.bool,
