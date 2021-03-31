@@ -80,7 +80,7 @@
 
 @mixin email_status_color( $color ) {
 	border-top: 5px solid $color;
-	.email-plan-view__status {
+	.email-plan__status {
 		color: $color;
 		> svg {
 			fill: $color;
@@ -88,7 +88,7 @@
 	}
 }
 
-.email-plan-view__status {
+.email-plan__status {
 	display: flex;
 	align-items: center;
 	> svg {
@@ -96,7 +96,7 @@
 	}
 }
 
-.email-plan-view__general {
+.email-plan__general {
 	display: flex;
 	align-items: center;
 	h2 {
@@ -114,7 +114,7 @@
 	}
 }
 
-.email-plan-view__general-icon {
+.email-plan__general-icon {
 	> img, svg {
 		height: 36px;
 		width: 36px;

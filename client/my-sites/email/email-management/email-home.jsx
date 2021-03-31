@@ -37,7 +37,7 @@ import SectionHeader from 'calypso/components/section-header';
 import { Card } from '@automattic/components';
 import EmailListActive from 'calypso/my-sites/email/email-management/home/email-list-active';
 import EmailListInactive from 'calypso/my-sites/email/email-management/home/email-list-inactive';
-import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan-view';
+import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
 
 /**
  * Style dependencies
@@ -116,7 +116,7 @@ class EmailManagementHome extends React.Component {
 		}
 
 		return this.renderContentWithHeader(
-			<React.Fragment>
+			<>
 				<EmailListActive
 					domains={ domainsWithEmail }
 					selectedSiteSlug={ selectedSite.slug }
@@ -127,7 +127,7 @@ class EmailManagementHome extends React.Component {
 					selectedSiteSlug={ selectedSite.slug }
 					currentRoute={ currentRoute }
 				/>
-			</React.Fragment>
+			</>
 		);
 	}
 
@@ -135,21 +135,21 @@ class EmailManagementHome extends React.Component {
 		const { translate } = this.props;
 
 		return this.renderContentWithHeader(
-			<React.Fragment>
+			<>
 				<EmptyContent
 					title={ translate( 'You are not authorized to view this page' ) }
 					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
 				/>
-			</React.Fragment>
+			</>
 		);
 	}
 
 	renderLoadingPlaceholder() {
 		return this.renderContentWithHeader(
-			<React.Fragment>
+			<>
 				<SectionHeader className="email-home__section-placeholder is-placeholder" />
 				<Card className="email-home__content-placeholder is-placeholder" />
-			</React.Fragment>
+			</>
 		);
 	}
 

@@ -121,22 +121,22 @@ class EmailPlan extends React.Component {
 
 		const { statusClass, text, icon } = resolveEmailPlanStatus( domain );
 
-		const cardClasses = classnames( 'email-plan-view__general', statusClass );
+		const cardClasses = classnames( 'email-plan__general', statusClass );
 
 		return (
-			<React.Fragment>
+			<>
 				{ domain && <QueryEmailForwards domainName={ domain.name } /> }
 				{ selectedSite && hasEmailPlanSubscription && (
 					<QuerySitePurchases siteId={ selectedSite.ID } />
 				) }
 				<HeaderCake onClick={ this.handleBack }>Email plan settings</HeaderCake>
 				<CompactCard className={ cardClasses }>
-					<span className="email-plan-view__general-icon">
+					<span className="email-plan__general-icon">
 						<EmailTypeIcon domain={ domain } />
 					</span>
 					<div>
 						<h2>@{ domain.name }</h2>
-						<span className="email-plan-view__status">
+						<span className="email-plan__status">
 							<MaterialIcon icon={ icon } /> { text }
 						</span>
 					</div>
@@ -156,7 +156,7 @@ class EmailPlan extends React.Component {
 				<VerticalNav>
 					<VerticalNavItem path="a">Add new mailbox</VerticalNavItem>
 				</VerticalNav>
-			</React.Fragment>
+			</>
 		);
 	}
 }
