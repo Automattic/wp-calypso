@@ -107,11 +107,12 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 					<p>{ text() }</p>
 					<Button
 						borderless
+						className="jetpack-review-prompt__review-link"
 						href="https://wordpress.org/support/plugin/jetpack/reviews/#new-post"
 						onClick={ dismissPromptAsReviewed }
 						target="_blank"
 					>
-						{ translate( 'Leave a review' ) }
+						<span>{ translate( 'Leave a review' ) }</span>
 						<Gridicon icon="external" />
 					</Button>
 				</Card>

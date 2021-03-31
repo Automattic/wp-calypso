@@ -31,4 +31,12 @@
 		color: var( --color-text-subtle );
 		cursor: pointer;
 	}
+	&__review-link,
+	&__review-link:visited {
+		color: var( --color-link );
+
+		.gridicon {
+			margin-left: 4px;
+		}
+	}
 }
