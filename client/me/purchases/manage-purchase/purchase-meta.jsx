@@ -23,6 +23,8 @@ import {
 	isSubscription,
 	isCloseToExpiration,
 	isRenewable,
+	isWithinIntroductoryOfferPeriod,
+	isIntroductoryOfferFreeTrial,
 } from 'calypso/lib/purchases';
 import {
 	isDomainRegistration,
@@ -46,6 +48,7 @@ import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/sel
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import PaymentInfoBlock from './payment-info-block';
+import { getIntroductoryOfferIntervalDisplay } from 'calypso/lib/purchases/utils';
 
 export default function PurchaseMeta( {
 	purchaseId = false,
@@ -77,6 +80,7 @@ export default function PurchaseMeta( {
 					<em className="manage-purchase__detail-label">{ translate( 'Price' ) }</em>
 					<span className="manage-purchase__detail">
 						<PurchaseMetaPrice purchase={ purchase } />
+						<PurchaseMetaIntroductoryOfferDetail purchase={ purchase } />
 					</span>
 				</li>
 				<PurchaseMetaExpiration
@@ -256,6 +260,28 @@ function PurchaseMetaPrice( { purchase } ) {
 			period: <span className="manage-purchase__time-period" />,
 		},
 	} );
+}
+
+function PurchaseMetaIntroductoryOfferDetail( { purchase } ) {
+	const translate = useTranslate();
+
+	if ( ! isWithinIntroductoryOfferPeriod( purchase ) ) {
+		return null;
+	}
+
+	const text = getIntroductoryOfferIntervalDisplay(
+		translate,
+		purchase.introductoryOffer.intervalUnit,
+		purchase.introductoryOffer.intervalCount,
+		isIntroductoryOfferFreeTrial( purchase )
+	);
+
+	return (
+		<>
+			<br />
+			<small> { text } </small>
+		</>
+	);
 }
 
 function PurchaseMetaPaymentDetails( { purchase, getChangePaymentMethodUrlFor, siteSlug, site } ) {

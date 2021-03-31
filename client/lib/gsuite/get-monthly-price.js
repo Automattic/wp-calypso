@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isNumber, isString } from 'lodash';
+import { isNumber } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,7 +17,7 @@ import { formatPrice } from 'calypso/lib/gsuite/utils/format-price';
  * @returns {string} - the monthly price rounded to the nearest tenth (e.g. '$8.40'), otherwise the default value
  */
 export function getMonthlyPrice( cost, currencyCode, defaultValue = '-' ) {
-	if ( ! isNumber( cost ) && ! isString( currencyCode ) ) {
+	if ( ! isNumber( cost ) && typeof currencyCode !== 'string' ) {
 		return defaultValue;
 	}
 

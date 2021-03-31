@@ -13,6 +13,7 @@ import {
 	PaymentProcessorSuccess,
 	PaymentProcessorRedirect,
 	PaymentProcessorManual,
+	PaymentProcessorError,
 	PaymentProcessorResponseType,
 } from '../types';
 
@@ -27,6 +28,10 @@ export function usePaymentProcessor( key: string ): PaymentProcessorFunction {
 export function usePaymentProcessors(): Record< string, PaymentProcessorFunction > {
 	const { paymentProcessors } = useContext( CheckoutContext );
 	return paymentProcessors;
+}
+
+export function makeErrorResponse( url: string ): PaymentProcessorError {
+	return { type: PaymentProcessorResponseType.ERROR, payload: url };
 }
 
 export function makeSuccessResponse(

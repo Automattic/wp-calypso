@@ -6,6 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import controller from './controller';
 import * as paths from './paths';
@@ -29,15 +30,17 @@ export default function () {
 		handlers: [ ...commonHandlers, controller.emailManagement, makeLayout, clientRender ],
 	} );
 
+	const productType = `:productType(${ GOOGLE_WORKSPACE_PRODUCT_TYPE }|${ GSUITE_PRODUCT_TYPE })`;
+
 	registerMultiPage( {
 		paths: [
 			paths.emailManagementAddGSuiteUsers(
 				':site',
 				':domain',
+				productType,
 				paths.emailManagementAllSitesPrefix
 			),
-			paths.emailManagementAddGSuiteUsers( ':site', ':domain' ),
-			paths.emailManagementAddGSuiteUsers( ':site' ),
+			paths.emailManagementAddGSuiteUsers( ':site', ':domain', productType ),
 		],
 		handlers: [
 			...commonHandlers,
@@ -49,21 +52,13 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementAddGSuiteUsersLegacy( ':site', ':domain' ),
-			paths.emailManagementAddGSuiteUsersLegacy( ':site' ),
-		],
-		handlers: [ controller.emailManagementAddGSuiteUsersLegacyRedirect ],
-	} );
-
-	registerMultiPage( {
-		paths: [
 			paths.emailManagementNewGSuiteAccount(
 				':site',
 				':domain',
-				':planType',
+				productType,
 				paths.emailManagementAllSitesPrefix
 			),
-			paths.emailManagementNewGSuiteAccount( ':site', ':domain', ':planType' ),
+			paths.emailManagementNewGSuiteAccount( ':site', ':domain', productType ),
 		],
 		handlers: [
 			...commonHandlers,

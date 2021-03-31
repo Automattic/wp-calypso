@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { filter, get, isEmpty, isInteger, keyBy, omit } from 'lodash';
+import { filter, get, isEmpty, keyBy, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,7 +24,7 @@ export function diffs( state = {}, { diffs: diffsFromServer, postId, revisions, 
 	if ( type !== POST_REVISIONS_RECEIVE ) {
 		return state;
 	}
-	if ( ! isInteger( siteId ) || siteId <= 0 ) {
+	if ( ! Number.isInteger( siteId ) || siteId <= 0 ) {
 		return state;
 	}
 
@@ -35,11 +35,11 @@ export function diffs( state = {}, { diffs: diffsFromServer, postId, revisions, 
 	};
 
 	const filteredDiffs = filter( diffsFromServer, ( { diff, from, to } ) => {
-		if ( ! isInteger( from ) || from < 0 ) {
+		if ( ! Number.isInteger( from ) || from < 0 ) {
 			// `from` can be zero
 			return false;
 		}
-		if ( ! isInteger( to ) || to < 1 ) {
+		if ( ! Number.isInteger( to ) || to < 1 ) {
 			// `to` cannot be zero
 			return false;
 		}

@@ -88,9 +88,8 @@ describe( 'reducer', () => {
 			};
 			deepFreeze( initialState );
 
-			const action = { type: 'SERIALIZE' };
 			const expectedState = initialState;
-			const newState = rawOffsets( initialState, action );
+			const newState = serialize( rawOffsets, initialState );
 
 			expect( newState ).to.eql( expectedState );
 		} );
@@ -184,9 +183,8 @@ describe( 'reducer', () => {
 			};
 			deepFreeze( initialState );
 
-			const action = { type: 'SERIALIZE' };
 			const expectedState = initialState;
-			const newState = labels( initialState, action );
+			const newState = serialize( labels, initialState );
 
 			expect( newState ).to.eql( expectedState );
 		} );

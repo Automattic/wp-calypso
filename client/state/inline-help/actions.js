@@ -65,7 +65,14 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 			getContextualHelpResults( state ),
 			SUPPORT_TYPE_CONTEXTUAL_HELP
 		);
-		const helpAdminResults = getAdminHelpResults( state, searchQuery, 3 );
+
+		//Return help_admin results immediately to be shown in action search
+		const helpAdminResults = getAdminHelpResults( state, searchQuery, 25 );
+		dispatch( {
+			type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
+			searchQuery,
+			searchResults: helpAdminResults,
+		} );
 
 		// Ensure empty strings are removed as valid searches.
 		searchQuery = searchQuery.trim();

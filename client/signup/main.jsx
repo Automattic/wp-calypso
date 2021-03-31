@@ -92,7 +92,6 @@ import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import user from 'calypso/lib/user';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import { Experiment } from 'calypso/components/experiment';
 import { dangerouslyGetExperimentAssignment } from 'calypso/lib/explat';
 
 /**
@@ -724,33 +723,30 @@ class Signup extends React.Component {
 		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
 
 		return (
-			<>
-				<Experiment name="refined_reskin_v1" />
-				<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
-					<DocumentHead title={ this.props.pageTitle } />
-					{ ! isWPForTeamsFlow( this.props.flowName ) && (
-						<SignupHeader
-							positionInFlow={ this.getPositionInFlow() }
-							flowLength={ this.getFlowLength() }
-							flowName={ this.props.flowName }
-							showProgressIndicator={ showProgressIndicator }
-							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
-							isReskinned={ this.props.isReskinned }
-						/>
-					) }
-					<div className="signup__steps">{ this.renderCurrentStep() }</div>
-					{ ! this.state.shouldShowLoadingScreen && this.props.isSitePreviewVisible && (
-						<SiteMockups stepName={ this.props.stepName } />
-					) }
-					{ this.state.bearerToken && (
-						<WpcomLoginForm
-							authorization={ 'Bearer ' + this.state.bearerToken }
-							log={ this.state.username }
-							redirectTo={ this.state.redirectTo }
-						/>
-					) }
-				</div>
-			</>
+			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
+				<DocumentHead title={ this.props.pageTitle } />
+				{ ! isWPForTeamsFlow( this.props.flowName ) && (
+					<SignupHeader
+						positionInFlow={ this.getPositionInFlow() }
+						flowLength={ this.getFlowLength() }
+						flowName={ this.props.flowName }
+						showProgressIndicator={ showProgressIndicator }
+						shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
+						isReskinned={ this.props.isReskinned }
+					/>
+				) }
+				<div className="signup__steps">{ this.renderCurrentStep() }</div>
+				{ ! this.state.shouldShowLoadingScreen && this.props.isSitePreviewVisible && (
+					<SiteMockups stepName={ this.props.stepName } />
+				) }
+				{ this.state.bearerToken && (
+					<WpcomLoginForm
+						authorization={ 'Bearer ' + this.state.bearerToken }
+						log={ this.state.username }
+						redirectTo={ this.state.redirectTo }
+					/>
+				) }
+			</div>
 		);
 	}
 }

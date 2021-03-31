@@ -2,8 +2,12 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import { getTotalLineItemFromCart } from '@automattic/wpcom-checkout';
+import type {
+	ResponseCart,
+	ResponseCartProduct,
+	RequestCartProduct,
+} from '@automattic/shopping-cart';
 import debugFactory from 'debug';
 
 /**
@@ -28,9 +32,9 @@ import doesValueExist from './does-value-exist';
 import type { DomainContactDetails } from '../types/backend/domain-contact-details-components';
 import type {
 	WPCOMTransactionEndpointCart,
-	WPCOMTransactionEndpointCartItem,
 	WPCOMTransactionEndpointRequestPayload,
 	TransactionRequestWithLineItems,
+	TransactionRequest,
 } from '../types/transaction-endpoint';
 import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
 
@@ -140,6 +144,32 @@ function translateReponseCartProductToWPCOMCartItem(
 
 // Create cart object as required by the WPCOM transactions endpoint
 // '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
+export function createTransactionEndpointCartFromResponseCart( {
+	siteId,
+	contactDetails,
+	responseCart,
+}: {
+	siteId: string | undefined;
+	contactDetails: DomainContactDetails | null;
+	responseCart: ResponseCart;
+} ): WPCOMTransactionEndpointCart {
+	return {
+		blog_id: siteId || '0',
+		cart_key: siteId || 'no-site',
+		create_new_blog: siteId ? false : true,
+		coupon: responseCart.coupon || '',
+		currency: responseCart.currency,
+		temporary: false,
+		extra: [],
+		products: responseCart.products.map( ( item ) =>
+			addRegistrationDataToGSuiteCartProduct( item, contactDetails )
+		),
+		tax: responseCart.tax,
+	};
+}
+
+// Create cart object as required by the WPCOM transactions endpoint
+// '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
 export function createTransactionEndpointCartFromLineItems( {
 	siteId,
 	couponId,
@@ -185,13 +215,11 @@ export function createTransactionEndpointCartFromLineItems( {
 	};
 }
 
-function createTransactionEndpointCartItemFromLineItem(
-	item: WPCOMCartItem
-): WPCOMTransactionEndpointCartItem {
+function createTransactionEndpointCartItemFromLineItem( item: WPCOMCartItem ): RequestCartProduct {
 	return {
+		product_slug: item.wpcom_meta?.product_slug,
 		product_id: item.wpcom_meta?.product_id,
-		meta: item.wpcom_meta?.meta,
-		currency: item.amount.currency,
+		meta: item.wpcom_meta?.meta ?? '',
 		volume: item.wpcom_meta?.volume ?? 1,
 		quantity: item.wpcom_meta?.quantity ?? null,
 		extra: item.wpcom_meta?.extra,
@@ -221,13 +249,30 @@ function addRegistrationDataToGSuiteItem(
 	};
 }
 
-export function createTransactionEndpointRequestPayloadFromLineItems( {
-	siteId,
-	couponId,
+function addRegistrationDataToGSuiteCartProduct(
+	item: ResponseCartProduct,
+	contactDetails: DomainContactDetails | null
+): ResponseCartProduct {
+	if (
+		! isGSuiteOrGoogleWorkspaceProductSlug( item.product_slug ) ||
+		isGoogleWorkspaceExtraLicence( item )
+	) {
+		return item;
+	}
+	return {
+		...item,
+		extra: {
+			...item.extra,
+			google_apps_registration_data: contactDetails || undefined,
+		},
+	};
+}
+
+export function createTransactionEndpointRequestPayload( {
+	cart,
 	country,
 	state,
 	postalCode,
-	subdivisionCode,
 	city,
 	address,
 	streetNumber,
@@ -235,7 +280,6 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	document,
 	deviceId,
 	domainDetails,
-	items,
 	paymentMethodType,
 	paymentMethodToken,
 	paymentPartnerProcessorId,
@@ -249,17 +293,9 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	pan,
 	gstin,
 	nik,
-}: TransactionRequestWithLineItems ): WPCOMTransactionEndpointRequestPayload {
+}: TransactionRequest ): WPCOMTransactionEndpointRequestPayload {
 	return {
-		cart: createTransactionEndpointCartFromLineItems( {
-			siteId,
-			couponId,
-			country,
-			postalCode,
-			subdivisionCode,
-			items: items.filter( ( item ) => item.type !== 'tax' ),
-			contactDetails: domainDetails || {},
-		} ),
+		cart,
 		domainDetails,
 		payment: {
 			paymentMethod: paymentMethodType,
@@ -288,6 +324,23 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			nik,
 		},
 	};
+}
+
+export function createTransactionEndpointRequestPayloadFromLineItems(
+	args: TransactionRequestWithLineItems
+): WPCOMTransactionEndpointRequestPayload {
+	return createTransactionEndpointRequestPayload( {
+		...args,
+		cart: createTransactionEndpointCartFromLineItems( {
+			siteId: args.siteId,
+			couponId: args.couponId,
+			country: args.country,
+			postalCode: args.postalCode,
+			subdivisionCode: args.subdivisionCode,
+			items: args.items,
+			contactDetails: args.domainDetails || {},
+		} ),
+	} );
 }
 
 export function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.TranslateResult {
@@ -326,7 +379,7 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.
 	}
 
 	if ( ! isRenewalItem && serverCartItem.months_per_bill_period === 1 ) {
-		return translate( 'Monthly subscription' );
+		return translate( 'Billed monthly' );
 	}
 
 	if ( isRenewalItem ) {

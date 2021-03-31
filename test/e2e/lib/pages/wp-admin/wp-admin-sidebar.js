@@ -99,7 +99,7 @@ export default class WPAdminSidebar extends AsyncBaseContainer {
 			await driverHelper.clickWhenClickable( this.driver, menuSelector );
 		}
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
-			return await driverHelper.followLinkWhenFollowable( this.driver, menuItemSelector );
+			return await driverHelper.clickWhenClickable( this.driver, menuItemSelector );
 		}
 		return await driverHelper.clickWhenClickable( this.driver, menuItemSelector );
 	}

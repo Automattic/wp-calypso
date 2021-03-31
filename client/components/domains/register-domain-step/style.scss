@@ -6,6 +6,10 @@
 
 		@include breakpoint-deprecated( '>660px' ) {
 			padding-top: 18px;
+
+			.is-white-signup & {
+				padding-top: 10px;
+			}
 		}
 	}
 

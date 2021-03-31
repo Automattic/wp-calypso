@@ -54,8 +54,10 @@ const PALETTE_APP_COLORS = _.pickBy( PALETTE.colors, ( colorValue, colorName ) =
 
 // Making sure both sets contain only unique color values
 // (the palette defines aliases for some colors)
-const PALETTE_ILLUSTRATION_COLOR_VALUES = _.uniq( Object.values( PALETTE_ILLUSTRATION_COLORS ) );
-const PALETTE_APP_COLOR_VALUES = _.uniq( Object.values( PALETTE_APP_COLORS ) );
+const PALETTE_ILLUSTRATION_COLOR_VALUES = [
+	...new Set( Object.values( PALETTE_ILLUSTRATION_COLORS ) ),
+];
+const PALETTE_APP_COLOR_VALUES = [ ...new Set( Object.values( PALETTE_APP_COLORS ) ) ];
 
 /**
  * SVG image rules
@@ -143,7 +145,7 @@ SVG_FILES_TO_PROCESS.forEach( ( imagePath ) => {
 	const matchedColorValues = matchColorValues( imageContent );
 	const colorValuesToReplace = [];
 
-	_.uniq( matchedColorValues ).forEach( ( value ) => {
+	[ ...new Set( matchedColorValues ) ].forEach( ( value ) => {
 		if ( SVG_IGNORE_VALUES.includes( value ) ) {
 			return;
 		}

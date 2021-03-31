@@ -30,7 +30,8 @@ export interface BaseThreat {
 	fixerStatus?: string;
 	filename?: string;
 	extension?: Extension;
-	rows?: number;
+	rows?: Record< string, unknown >;
+	table?: string;
 	diff?: string;
 	context?: object;
 }

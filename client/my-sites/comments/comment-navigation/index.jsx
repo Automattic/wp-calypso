@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
-import { each, get, includes, isEqual, isUndefined, map } from 'lodash';
+import { each, get, includes, isEqual, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -66,7 +66,7 @@ export class CommentNavigation extends Component {
 	bulkDeletePermanently = () => {
 		const { translate } = this.props;
 		if (
-			isUndefined( window ) ||
+			typeof window === 'undefined' ||
 			window.confirm( translate( 'Delete these comments permanently?' ) )
 		) {
 			this.setBulkStatus( 'delete' )();
