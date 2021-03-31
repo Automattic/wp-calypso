@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
  * Internal dependencies
  */
 import useUpdateUserMutation from 'calypso/data/users/use-update-user-mutation';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice, plainNotice } from 'calypso/state/notices/actions';
 import { useTranslate } from 'i18n-calypso';
 
 const useSuccessNotice = ( isSuccess, user ) => {
@@ -47,12 +47,31 @@ const useErrorNotice = ( error, user ) => {
 	}, [ error, translate, dispatch, user ] );
 };
 
+const usePendingNotice = ( isPending, user ) => {
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+
+	React.useEffect( () => {
+		isPending &&
+			dispatch(
+				plainNotice(
+					translate( 'Updating @%(user)s', {
+						args: { user: user?.login },
+						context: 'In progress message while a site is performing actions on users.',
+					} ),
+					{ id: 'update-user-notice' }
+				)
+			);
+	}, [ isPending, translate, dispatch, user ] );
+};
+
 const withUpdateUser = ( Component ) => ( props ) => {
 	const { siteId, user } = props;
-	const { updateUser, isSuccess, error } = useUpdateUserMutation( siteId, user?.login );
+	const { updateUser, isSuccess, error, isLoading } = useUpdateUserMutation( siteId );
 
 	useSuccessNotice( isSuccess, user );
 	useErrorNotice( error, user );
+	usePendingNotice( isLoading, user );
 
 	return <Component { ...props } updateUser={ updateUser } />;
 };
