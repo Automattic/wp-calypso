@@ -510,13 +510,20 @@ export class PlanFeatures extends Component {
 	}
 
 	handleUpgradeClick( singlePlanProperties ) {
-		const { isInSignup, onUpgradeClick: ownPropsOnUpgradeClick, redirectTo } = this.props;
+		const {
+			isInSignup,
+			onUpgradeClick: ownPropsOnUpgradeClick,
+			redirectTo,
+			displayJetpackPlans,
+			withDiscount,
+			selectedSiteSlug,
+		} = this.props;
 
 		const {
 			availableForPurchase,
 			cartItemForPlan,
-			checkoutUrl,
 			siteIsPrivateAndGoingAtomic,
+			planName,
 		} = singlePlanProperties;
 
 		if ( ownPropsOnUpgradeClick && ownPropsOnUpgradeClick !== noop && cartItemForPlan ) {
@@ -528,16 +535,24 @@ export class PlanFeatures extends Component {
 			return;
 		}
 
-		const checkoutUrlWithArgs = addQueryArgs( { redirect_to: redirectTo }, checkoutUrl );
-
-		if ( siteIsPrivateAndGoingAtomic ) {
-			if ( isInSignup ) {
-				// Let signup do its thing
-				return;
-			}
-			page( checkoutUrlWithArgs );
+		if ( siteIsPrivateAndGoingAtomic && isInSignup ) {
+			// Let signup do its thing
 			return;
 		}
+
+		const planPath = getPlanPath( planName ) || '';
+		const checkoutUrlArgs = {};
+		// Auto-apply the coupon code to the cart for WPCOM sites
+		if ( ! displayJetpackPlans && withDiscount ) {
+			checkoutUrlArgs.coupon = withDiscount;
+		}
+		if ( redirectTo ) {
+			checkoutUrlArgs.redirect_to = redirectTo;
+		}
+		const checkoutUrlWithArgs = addQueryArgs(
+			checkoutUrlArgs,
+			`/checkout/${ selectedSiteSlug }/${ planPath }`
+		);
 
 		page( checkoutUrlWithArgs );
 	}
@@ -849,7 +864,6 @@ export default connect(
 			displayJetpackPlans,
 			visiblePlans,
 			popularPlanSpec,
-			withDiscount,
 			kindOfPlanTypeSelector,
 		} = ownProps;
 		const selectedSiteId = siteId;
@@ -887,18 +901,7 @@ export default connect(
 				const newPlan = isNew( plan ) && ! isPaid;
 				const bestValue = isBestValue( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
-				const planPath = getPlanPath( plan ) || '';
 				const isMonthlyPlan = isMonthly( plan );
-
-				const checkoutUrlArgs = {};
-				// Auto-apply the coupon code to the cart for WPCOM sites
-				if ( ! displayJetpackPlans && withDiscount ) {
-					checkoutUrlArgs.coupon = withDiscount;
-				}
-				const checkoutUrl = addQueryArgs(
-					checkoutUrlArgs,
-					`/checkout/${ selectedSiteSlug }/${ planPath }`
-				);
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = ! isJetpack || isSiteAT || ( ! relatedMonthlyPlan && showMonthly );
@@ -978,7 +981,6 @@ export default connect(
 				return {
 					availableForPurchase,
 					cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ),
-					checkoutUrl,
 					currencyCode: getCurrentUserCurrencyCode( state ),
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
 					discountPrice,
