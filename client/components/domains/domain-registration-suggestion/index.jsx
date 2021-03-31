@@ -245,7 +245,6 @@ class DomainRegistrationSuggestion extends React.Component {
 		}
 
 		let title = isAvailable ? translate( '%s is available!', { args: domain } ) : domain;
-		console.log( isReskinned );
 		if ( isReskinned ) {
 			title = this.renderDomainParts( domain );
 		}
@@ -264,7 +263,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		return (
 			<div className={ titleWrapperClassName }>
 				<h3 className="domain-registration-suggestion__title">{ title }</h3>
-				{ this.renderProgressBar() }
+				{ isReskinned && this.renderProgressBar() }
 				{ isPremium && (
 					<PremiumBadge restrictedPremium={ premiumDomain?.is_price_limit_exceeded } />
 				) }
