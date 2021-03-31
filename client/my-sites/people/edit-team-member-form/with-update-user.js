@@ -26,15 +26,18 @@ const useSuccessNotice = ( isSuccess, user ) => {
 					{ id: 'update-user-notice' }
 				)
 			);
-	}, [ isSuccess, translate, dispatch, user ] );
+		// Note: We only want to run this effect in case `isSuccess`
+		// changes and ignore changes to other deps like `user`.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ isSuccess ] );
 };
 
-const useErrorNotice = ( error, user ) => {
+const useErrorNotice = ( isError, user ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	React.useEffect( () => {
-		error &&
+		isError &&
 			dispatch(
 				errorNotice(
 					translate( 'There was an error updating @%(user)s', {
@@ -44,7 +47,10 @@ const useErrorNotice = ( error, user ) => {
 					{ id: 'update-user-notice' }
 				)
 			);
-	}, [ error, translate, dispatch, user ] );
+		// Note: We only want to run this effect in case `isError`
+		// changes and ignore changes to other deps like `user`.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ isError ] );
 };
 
 const usePendingNotice = ( isPending, user ) => {
@@ -62,15 +68,18 @@ const usePendingNotice = ( isPending, user ) => {
 					{ id: 'update-user-notice' }
 				)
 			);
-	}, [ isPending, translate, dispatch, user ] );
+		// Note: We only want to run this effect in case `isError`
+		// changes and ignore changes to other deps like `user`.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ isPending ] );
 };
 
 const withUpdateUser = ( Component ) => ( props ) => {
 	const { siteId, user } = props;
-	const { updateUser, isSuccess, error, isLoading } = useUpdateUserMutation( siteId );
+	const { updateUser, isSuccess, isError, isLoading } = useUpdateUserMutation( siteId );
 
 	useSuccessNotice( isSuccess, user );
-	useErrorNotice( error, user );
+	useErrorNotice( isError, user );
 	usePendingNotice( isLoading, user );
 
 	return <Component { ...props } updateUser={ updateUser } isUpdating={ isLoading } />;
