@@ -146,9 +146,9 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 
 	describe( 'Visit Gutenboarding page as a logged in user', function () {
 		step( 'Can log in as user', async function () {
-			this.loginFlow = new LoginFlow( driver );
-			this.loginFlow.login();
+			await new LoginFlow( driver ).login();
 		} );
+
 		step( 'Can visit Gutenboarding', async function () {
 			await NewPage.Visit( driver );
 		} );
