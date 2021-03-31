@@ -80,6 +80,7 @@ import UserMentions from 'calypso/blocks/user-mentions/docs/example';
 import SupportArticleDialog from 'calypso/blocks/support-article-dialog/docs/example';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning/docs/example';
 import UpsellNudge from 'calypso/blocks/upsell-nudge/docs/example';
+import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt/docs/example'
 
 export default class AppComponents extends React.Component {
 	static displayName = 'AppComponents';
@@ -189,6 +190,7 @@ export default class AppComponents extends React.Component {
 					<ImageSelector readmeFilePath="image-selector" />
 					<TimeMismatchWarning readmeFilePath="time-mismatch-warning" />
 					<UpsellNudge />
+					<JetpackReviewPrompt readmeFilePath="jetpack-review-prompt" />
 				</Collection>
 			</Main>
 		);
