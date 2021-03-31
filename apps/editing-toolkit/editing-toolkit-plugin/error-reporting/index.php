@@ -22,7 +22,9 @@ function head_error_handler() {
 		}
 		window.addEventListener('error', window._headJsErrorHandler );
 
-		throw new Error('Error from the top-level document');
+		throw new Error('Error 1 from the top-level document');
+		throw new Error('Error 2 from the top-level document');
+		throw new Error('Error 3 from the top-level document');
 	</script>
 	<script crossorigin="anonymous" src="https://s0.wp.com/wp-content/plugins/corserror-head.js"></script>
 	<?php
