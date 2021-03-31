@@ -198,8 +198,8 @@ class DomainMappingInstructions extends React.Component {
 		const { domainName, translate } = this.props;
 
 		const advancedSetupUsingARecordsTitle = isSubdomain( domainName )
-			? translate( 'Alternative setup using root A records' )
-			: translate( 'Alternative setup using A records' );
+			? translate( 'Alternative setup using A records' )
+			: translate( 'Alternative setup using root A records' );
 		const aRecordMappingWarning = isSubdomain( domainName )
 			? translate(
 					'If you map a subdomain using A records rather than WordPress.com name servers, you will need to manage your subdomain’s DNS records yourself for any other services you are using with your subdomain, including email forwarding or email hosting (i.e. with Google Workspace or Titan)'
