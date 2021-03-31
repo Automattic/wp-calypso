@@ -56,7 +56,6 @@ body.is-section-signup.is-white-signup {
 	}
 
 	.domains__step-content {
-		width: 70vw;
 		display: flex;
 
 		.search.is-open.has-focus {
@@ -70,6 +69,7 @@ body.is-section-signup.is-white-signup {
 		.domain-side-content-container {
 			display: flex;
 			flex-direction: column;
+			width: 20vw;
 		}
 
 		.domain-side-content {
@@ -88,7 +88,7 @@ body.is-section-signup.is-white-signup {
 		}
 
 		.register-domain-step {
-			width: 68%;
+			width: 48vw;
 		}
 
 		.register-domain-step__search-card {
