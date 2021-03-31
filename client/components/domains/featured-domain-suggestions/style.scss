@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .featured-domain-suggestions {
 	display: flex;
 	flex-direction: column;
@@ -162,6 +165,12 @@
 
 	.button.domain-suggestion__action {
 		margin-top: 0;
+		padding: 12px 24px;
+		border-radius: 4px; /* stylelint-disable-line */
+
+		@include break-mobile {
+			padding: 0.7em 3em;
+		}
 	}
 }
 

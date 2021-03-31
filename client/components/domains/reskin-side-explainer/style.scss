@@ -2,11 +2,7 @@
 @import '~@wordpress/base-styles/mixins';
 
 .reskin-side-explainer {
-    width: 100vw;
-
-    @include break-mobile {
-        width: 15vw;
-    }
+    width: 100%;
 
     .reskin-side-explainer__title {
         font-size: 1.25rem;

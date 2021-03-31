@@ -262,6 +262,11 @@ body.is-section-signup.is-white-signup {
 	.featured-domain-suggestions {
 		.domain-registration-suggestion__title-wrapper {
 			flex-wrap: nowrap;
+			flex-direction: column-reverse;
+
+			@include break-mobile {
+				flex-direction: row;
+			}
 		}
 
 		.domain-registration-suggestion__title {
@@ -275,11 +280,16 @@ body.is-section-signup.is-white-signup {
 
 	.domain-registration-suggestion__progress-bar {
 		align-self: center;
-		margin-left: 12px;
+		margin-left: 0;
 		margin-top: 0;
+		margin-bottom: 10px;
 		
 		.badge {
 			border-radius: 4px; /* stylelint-disable-line */
+		}
+
+		@include break-mobile {
+			margin-left: 12px;
 		}
 	}
 
