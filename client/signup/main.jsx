@@ -263,8 +263,6 @@ class Signup extends React.Component {
 			this.maybeShowSitePreview();
 			this.preloadNextStep();
 		}
-
-		! this.props.isReskinned && document.body.classList.remove( 'is-white-signup' );
 	}
 
 	/**
