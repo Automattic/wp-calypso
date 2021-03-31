@@ -37,7 +37,8 @@ export default class WPAdminSidebar extends AsyncBaseContainer {
 
 	async selectJetpack() {
 		const jetpackMenuSelector = by.css( '#toplevel_page_jetpack' );
-		const menuItemSelector = by.css( '#toplevel_page_jetpack li a[href$="jetpack#/dashboard"]' );
+		const menuItemSelector = by.css( '#toplevel_page_jetpack li a[href$="jetpack#/dashboard"], ' +
+			'#toplevel_page_jetpack li a[href$="jetpack"]' );
 
 		return await this._selectMenuItem( jetpackMenuSelector, menuItemSelector );
 	}
