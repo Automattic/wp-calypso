@@ -323,6 +323,8 @@ body.is-section-signup.is-white-signup {
 
 		&:not( .featured-domain-suggestion ) {
 			background: none;
+			padding-left: 0;
+			padding-right: 0;
 
 			.domain-registration-suggestion__domain-title {
 				line-height: 3rem;

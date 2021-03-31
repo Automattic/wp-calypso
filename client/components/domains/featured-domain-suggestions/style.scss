@@ -158,6 +158,11 @@
 	border: 1px solid #e2e4e7;
 	border-radius: 4px; /* stylelint-disable-line */
 	margin-bottom: 12px;
+	align-items: center;
+
+	.button.domain-suggestion__action {
+		margin-top: 0;
+	}
 }
 
 @include breakpoint-deprecated( '<660px' ) {
