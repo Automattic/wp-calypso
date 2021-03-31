@@ -75,6 +75,7 @@ import JetpackColophonExample from 'calypso/components/jetpack-colophon/docs/exa
 import JetpackHeaderExample from 'calypso/components/jetpack-header/docs/example';
 import JetpackLogoExample from 'calypso/components/jetpack-logo/docs/example';
 import LanguagePicker from 'calypso/components/language-picker/docs/example';
+import JetpackReviewPromptExample from 'calypso/blocks/jetpack-review-prompt/docs/example';
 import LayoutExample from 'calypso/components/layout/docs/example';
 import LineChart from 'calypso/components/line-chart/docs/example';
 import ListEnd from 'calypso/components/list-end/docs/example';
