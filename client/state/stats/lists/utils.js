@@ -1,7 +1,18 @@
 /**
  * External dependencies
  */
-import { sortBy, camelCase, mapKeys, isNumber, get, filter, map, concat, flatten } from 'lodash';
+import {
+	sortBy,
+	toPairs,
+	camelCase,
+	mapKeys,
+	isNumber,
+	get,
+	filter,
+	map,
+	concat,
+	flatten,
+} from 'lodash';
 import { translate, getLocaleSlug } from 'i18n-calypso';
 import moment from 'moment';
 
@@ -127,7 +138,7 @@ export function buildExportArray( data, parent = null ) {
  * @returns {string}          Serialized stats query
  */
 export function getSerializedStatsQuery( query = {} ) {
-	return JSON.stringify( sortBy( Object.entries( query ), ( pair ) => pair[ 0 ] ) );
+	return JSON.stringify( sortBy( toPairs( query ), ( pair ) => pair[ 0 ] ) );
 }
 
 /**
