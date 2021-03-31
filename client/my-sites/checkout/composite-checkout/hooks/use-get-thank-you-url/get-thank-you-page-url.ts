@@ -113,6 +113,13 @@ export default function getThankYouPageUrl( {
 		debug( 'ignorning redirectTo', redirectTo );
 	}
 
+	// If there's a redirect URL set on a product in the cart, use the first one we find.
+	const urlFromCart = cart ? getRedirectUrlFromCart( cart ) : null;
+	if ( urlFromCart ) {
+		debug( 'returning url from cart', urlFromCart );
+		return urlFromCart;
+	}
+
 	// Note: this function is called early on for redirect-type payment methods, when the receipt isn't set yet.
 	// The `:receiptId` string is filled in by our pending page after the PayPal checkout
 	const pendingOrReceiptId = getPendingOrReceiptId( receiptId, orderId, purchaseId );
@@ -520,4 +527,18 @@ function getThankYouPageUrlForTrafficGuide( {
 	if ( hasTrafficGuide( cart ) ) {
 		return `/checkout/thank-you/${ siteSlug }/${ pendingOrReceiptId }`;
 	}
+}
+
+function getRedirectUrlFromCart( cart: ResponseCart ): string | null {
+	const firstProductWithUrl = cart.products.find( ( product ) => {
+		if ( product.extra?.afterPurchaseUrl ) {
+			return true;
+		}
+		return false;
+	} );
+	debug(
+		'looking for redirect url in cart products found',
+		firstProductWithUrl?.extra.afterPurchaseUrl
+	);
+	return firstProductWithUrl?.extra.afterPurchaseUrl ?? null;
 }
