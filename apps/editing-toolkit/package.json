@@ -103,8 +103,6 @@
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@automattic/typography": "^1.0.0",
 		"@babel/core": "^7.13.10",
-		"@testing-library/jest-dom": "^5.9.0",
-		"@testing-library/react": "^10.0.5",
 		"@wordpress/a11y": "^2.14.3",
 		"@wordpress/api-fetch": "^3.21.5",
 		"@wordpress/base-styles": "^3.3.3",
@@ -152,6 +150,8 @@
 	},
 	"devDependencies": {
 		"@babel/preset-typescript": "^7.13.0",
+		"@testing-library/jest-dom": "^5.11.10",
+		"@testing-library/react": "^11.2.6",
 		"@types/wordpress__plugins": "^2.3.7",
 		"@wordpress/eslint-plugin": "^8.0.2",
 		"babel-jest": "^26.3.0",

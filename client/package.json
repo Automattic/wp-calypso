@@ -59,8 +59,6 @@
 		"@emotion/core": "^10.0.27",
 		"@emotion/styled": "^10.0.27",
 		"@github/webauthn-json": "^0.4.1",
-		"@testing-library/jest-dom": "^5.9.0",
-		"@testing-library/react": "^10.0.5",
 		"@wordpress/a11y": "^2.14.3",
 		"@wordpress/api-fetch": "^3.21.5",
 		"@wordpress/base-styles": "^3.3.3",
@@ -192,7 +190,6 @@
 		"react-router-dom": "^5.1.2",
 		"react-spring": "^8.0.27",
 		"react-stripe-elements": "^4.0.2",
-		"react-test-renderer": "^16.12.0",
 		"react-transition-group": "^4.3.0",
 		"reakit": "^1.2.3",
 		"redux": "^4.0.5",
@@ -234,10 +231,13 @@
 		"yamlparser": "^0.0.2"
 	},
 	"devDependencies": {
-		"@testing-library/react": "^11.2.5",
+		"@testing-library/jest-dom": "^5.11.10",
+		"@testing-library/react": "^11.2.6",
+		"@testing-library/react-hooks": "5.1.1",
 		"autoprefixer": "^9.7.3",
 		"component-event": "^0.1.4",
 		"component-query": "^0.0.3",
+		"react-test-renderer": "^16.12.0",
 		"pkg-dir": "^5.0.0",
 		"postcss-custom-properties": "^11.0.0",
 		"redux-mock-store": "^1.5.4"
