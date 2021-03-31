@@ -112,4 +112,6 @@ const reducer = combineReducers( {
 	siteSelectionInitialized,
 } );
 
+export { reducer };
+
 export default withStorageKey( 'ui', reducer );

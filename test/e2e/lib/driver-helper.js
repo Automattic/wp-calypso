@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import webdriver, { until } from 'selenium-webdriver';
+import webdriver, { Key, By, WebDriver, WebElement, WebElementCondition } from 'selenium-webdriver';
 import config from 'config';
 import { forEach } from 'lodash';
 
@@ -24,100 +24,63 @@ export async function highlightElement( driver, element ) {
 	}
 }
 
-export function clickWhenClickable(
-	driver,
-	selector,
-	waitOverride = null,
-	extraErrorString = null
-) {
-	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
-	const extraErrorStringAppend = extraErrorString ? ' ' + extraErrorString : '';
+const until = {
+	...webdriver.until,
+	/**
+	 * Creates a condition that will loop until element is clickable. A clickable
+	 * element must be located and not (aria-)disabled.
+	 *
+	 * @param {By} locator The element's locator
+	 * @returns {WebElementCondition} The new condition
+	 */
+	elementIsClickable( locator ) {
+		const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
 
-	return driver.wait(
-		function () {
-			return driver.findElement( selector ).then(
-				async function ( element ) {
-					await highlightElement( driver, element );
-					return element.click().then(
-						function () {
-							return true;
-						},
-						function () {
-							// Flaky response back from IE, so assume success and hope for the best
-							if ( global.browserName === 'Internet Explorer' ) {
-								console.log(
-									"WARNING: IE claims the click action failed, but we're proceeding anyway!"
-								);
-								return true;
-							}
+		return new WebElementCondition(
+			`for element to be clickable ${ locatorStr }`,
+			async function ( driver ) {
+				try {
+					const element = await driver.findElement( locator );
+					const isEnabled = await element.isEnabled();
+					const isAriaEnabled = await element
+						.getAttribute( 'aria-disabled' )
+						.then( ( v ) => v !== 'true' );
 
-							return false;
-						}
-					);
-				},
-				function () {
-					return false;
+					return isEnabled && isAriaEnabled ? element : null;
+				} catch {
+					return null;
 				}
-			);
-		},
-		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be clickable${ extraErrorStringAppend }`
-	);
-}
+			}
+		);
+	},
+};
 
-export function waitTillFocused( driver, selector, pollingOverride, waitOverride ) {
-	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
-	const timeoutPolling = pollingOverride ? pollingOverride : explicitWaitMS;
+/**
+ * Clicks an element when it becomes clickable. Throws an error after it
+ * times out.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise<WebElement>} A promise that will be resolved with
+ * the clicked element
+ */
+export async function clickWhenClickable( driver, locator, timeout = explicitWaitMS ) {
+	const element = await driver.wait( until.elementIsClickable( locator ), timeout );
 
-	return driver.wait(
-		function () {
-			return driver.findElement( selector ).then(
-				async function ( element ) {
-					// Poll if element is active every 100 ms until focused or until timeoutPolling is reached
-					for ( let i = 0; i < timeoutPolling / 100; i++ ) {
-						const isFocused =
-							( await driver.switchTo().activeElement().getId() ) === ( await element.getId() );
-						if ( isFocused ) {
-							return true;
-						}
-						await driver.sleep( 100 );
-					}
-					return false;
-				},
-				function () {
-					return false;
-				}
-			);
-		},
-		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be focused`
-	);
-}
+	try {
+		await highlightElement( driver, element );
+		await element.click();
+	} catch ( error ) {
+		// Flaky response back from IE, so assume success and hope for the best
+		if ( global.browserName === 'Internet Explorer' ) {
+			console.log( "WARNING: IE claims the click action failed, but we're proceeding anyway!" );
+		} else {
+			throw error;
+		}
+	}
 
-export function followLinkWhenFollowable( driver, selector, waitOverride ) {
-	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
-	return driver.wait(
-		function () {
-			return driver.findElement( selector ).then(
-				function ( element ) {
-					return element.getAttribute( 'href' ).then(
-						function ( href ) {
-							driver.get( href );
-							return true;
-						},
-						function () {
-							return false;
-						}
-					);
-				},
-				function () {
-					return false;
-				}
-			);
-		},
-		timeoutWait,
-		`Timed out waiting for link with ${ selector.using } of '${ selector.value }' to be followable`
-	);
+	return element;
 }
 
 export function waitTillPresentAndDisplayed( driver, selector, waitOverride ) {
@@ -143,32 +106,6 @@ export function waitTillPresentAndDisplayed( driver, selector, waitOverride ) {
 		},
 		timeoutWait,
 		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be present and displayed`
-	);
-}
-
-export function waitTillSelected( driver, selector, waitOverride ) {
-	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
-
-	return driver.wait(
-		function () {
-			return driver.findElement( selector ).then(
-				function ( element ) {
-					return element.isSelected().then(
-						function () {
-							return true;
-						},
-						function () {
-							return false;
-						}
-					);
-				},
-				function () {
-					return false;
-				}
-			);
-		},
-		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be selected`
 	);
 }
 
@@ -203,28 +140,20 @@ export function isEventuallyPresentAndDisplayed( driver, selector, waitOverride 
 		);
 }
 
-export function clickIfPresent( driver, selector, attempts ) {
-	if ( attempts === undefined ) {
-		attempts = 1;
+/**
+ * Clicks an element with given locator if it's located in DOM.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @returns {Promise<WebElement>} A promise that will resolve with the located element
+ */
+export async function clickIfPresent( driver, locator ) {
+	const element = ( await driver.findElements( locator ) )[ 0 ];
+	if ( ! element ) {
+		return null;
 	}
-	for ( let x = 0; x < attempts; x++ ) {
-		driver.findElement( selector ).then(
-			async function ( element ) {
-				await highlightElement( driver, element );
-				element.click().then(
-					function () {
-						return true;
-					},
-					function () {
-						return true;
-					}
-				);
-			},
-			function () {
-				return true;
-			}
-		);
-	}
+
+	return clickWhenClickable( driver, locator );
 }
 
 export async function getElementCount( driver, selector ) {
@@ -243,48 +172,57 @@ export function elementIsNotPresent( driver, selector ) {
 	} );
 }
 
-export function waitForFieldClearable( driver, selector ) {
-	return driver.wait(
-		function () {
-			return driver.findElement( selector ).then(
-				async ( element ) => {
-					await driver.executeScript( "arguments[0].value = '';", element );
-					return element.clear().then(
-						function () {
-							return element.getAttribute( 'value' ).then( ( value ) => {
-								return value === '';
-							} );
-						},
-						function () {
-							return false;
-						}
-					);
-				},
-				function () {
-					return false;
-				}
-			);
-		},
-		explicitWaitMS,
-		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be clearable`
-	);
-}
-
+/**
+ * Types a key sequence on the DOM element.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @param {number|string} value The element's value to set
+ * @param {Object} options The options object
+ * @param {boolean} options.secureValue Whether the value should be displayed in case of an error
+ * @param {number} options.pauseBetweenKeysMS The time between keystrokes
+ * @returns {Promise<WebElement>} A promise that will resolve with the located element
+ */
 export function setWhenSettable(
 	driver,
-	selector,
+	locator,
 	value,
 	{ secureValue = false, pauseBetweenKeysMS = 0 } = {}
 ) {
-	const self = this;
-	const logValue = secureValue === true ? '*********' : value;
+	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
+	let timeout = explicitWaitMS;
+	let errorMessage = `for element to be settable ${ locatorStr }`;
+
+	if ( ! secureValue ) {
+		errorMessage = `${ errorMessage } to "${ value }"`;
+	}
+
+	if ( typeof pauseBetweenKeysMS === 'number' && pauseBetweenKeysMS > 0 ) {
+		// Make sure that typing time is accounted for
+		timeout = timeout + value.length * pauseBetweenKeysMS;
+	}
 
 	return driver.wait(
-		async function () {
-			await self.waitForFieldClearable( driver, selector );
-			const element = await driver.findElement( selector );
+		new WebElementCondition( errorMessage, async function () {
+			const element = ( await driver.findElements( locator ) )[ 0 ];
+			if ( ! element ) {
+				return null;
+			}
 			await highlightElement( driver, element );
-			if ( pauseBetweenKeysMS === 0 ) {
+			const currentValue = await element.getAttribute( 'value' );
+			if ( currentValue === value ) {
+				// Do nothing if given value is already set
+				return element;
+			}
+
+			if ( currentValue ) {
+				// Clear the input if it has some value
+				await element.sendKeys( Key.END );
+				for ( let i = 0; i < currentValue.length; i++ ) {
+					await element.sendKeys( Key.BACK_SPACE );
+				}
+			}
+			if ( ! pauseBetweenKeysMS ) {
 				await element.sendKeys( value );
 			} else {
 				for ( let i = 0; i < value.length; i++ ) {
@@ -292,12 +230,11 @@ export function setWhenSettable(
 					await element.sendKeys( value[ i ] );
 				}
 			}
-			const newElement = await driver.findElement( selector );
-			const actualValue = await newElement.getAttribute( 'value' );
-			return actualValue === value;
-		},
-		explicitWaitMS,
-		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be settable to: '${ logValue }'`
+			const newValue = await element.getAttribute( 'value' );
+
+			return newValue === value ? element : null;
+		} ),
+		timeout
 	);
 }
 
@@ -412,24 +349,24 @@ export function logPerformance( driver ) {
 }
 
 export async function ensureMobileMenuOpen( driver ) {
-	const self = this;
-	const mobileHeaderSelector = by.css( '.section-nav__mobile-header' );
-	await waitTillPresentAndDisplayed( driver, mobileHeaderSelector );
-	return driver
-		.findElement( mobileHeaderSelector )
-		.isDisplayed()
-		.then( ( mobileDisplayed ) => {
-			if ( mobileDisplayed ) {
-				driver
-					.findElement( by.css( '.section-nav' ) )
-					.getAttribute( 'class' )
-					.then( ( classNames ) => {
-						if ( classNames.includes( 'is-open' ) === false ) {
-							self.clickWhenClickable( driver, mobileHeaderSelector );
-						}
-					} );
-			}
-		} );
+	if ( process.env.BROWSERSIZE !== 'mobile' ) {
+		return null;
+	}
+
+	const mobileHeaderLocator = by.css( '.section-nav__mobile-header' );
+	const menuLocator = by.css( '.section-nav' );
+	const openMenuLocator = by.css( '.section-nav.is-open' );
+
+	await waitTillPresentAndDisplayed( driver, menuLocator );
+	const menuElement = await driver.findElement( menuLocator );
+	const isMenuOpen = await menuElement
+		.getAttribute( 'class' )
+		.then( ( classNames ) => classNames.includes( 'is-open' ) );
+
+	if ( ! isMenuOpen ) {
+		await clickWhenClickable( driver, mobileHeaderLocator );
+		await waitTillPresentAndDisplayed( driver, openMenuLocator );
+	}
 }
 
 export function waitForInfiniteListLoad( driver, elementSelector, { numElements = 10 } = {} ) {
@@ -530,15 +467,44 @@ export async function selectElementByText( driver, selector, text ) {
 		const allElements = await driver.findElements( selector );
 		return await webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
 	};
-	return await this.clickWhenClickable( driver, element, null, `while looking for '${ text }'` );
+	return await this.clickWhenClickable( driver, element );
 }
 
-export async function verifyTextPresent( driver, selector, text ) {
-	const element = async () => {
-		const allElements = await driver.findElements( selector );
-		return await webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
-	};
-	return await this.isElementPresent( driver, element );
+/**
+ * Waits until an element with given locator and inner text is located.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @param {string|RegExp} text The text the element should contain
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise<WebElement>} A promise that will resolve with the located element
+ */
+export async function waitUntilElementWithTextLocated(
+	driver,
+	locator,
+	text,
+	timeout = explicitWaitMS
+) {
+	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
+
+	return driver.wait(
+		new WebElementCondition(
+			`for element to be located ${ locatorStr } and contain text "${ text }"`,
+			async function () {
+				const locatedElements = await driver.findElements( locator );
+				if ( locatedElements.length === 0 ) {
+					return null;
+				}
+				const elementsWithText = await webdriver.promise.filter(
+					locatedElements,
+					getInnerTextMatcherFunction( text )
+				);
+
+				return elementsWithText[ 0 ];
+			}
+		),
+		timeout
+	);
 }
 
 export function getElementByText( driver, selector, text ) {

@@ -99,14 +99,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 		it( 'has an array of allowed payment methods', function () {
 			expect( clientCart.allowedPaymentMethods ).toBeDefined();
 		} );
-		it( 'has the expected credits', function () {
-			expect( clientCart.credits.amount.value ).toBe( 10000 );
-			expect( clientCart.credits.amount.currency ).toBe( 'BRL' );
-			expect( clientCart.credits.amount.displayValue ).toBe( '- R$100' );
-		} );
-		it( 'has the expected coupon', function () {
-			expect( clientCart.couponCode ).toBe( 'fakecoupon' );
-		} );
 
 		describe( 'first cart item (plan)', function () {
 			it( 'has an id', function () {
@@ -126,27 +118,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			} );
 			it( 'has the expected display value', function () {
 				expect( clientCart.items[ 0 ].amount.displayValue ).toBe( 'R$144' );
-			} );
-		} );
-
-		describe( 'taxes', function () {
-			it( 'has an id', function () {
-				expect( clientCart.tax.id ).toBeDefined();
-			} );
-			it( 'has the expected label', function () {
-				expect( clientCart.tax.label ).toBe( 'Tax' );
-			} );
-			it( 'has the expected type', function () {
-				expect( clientCart.tax.type ).toBe( 'tax' );
-			} );
-			it( 'has the expected currency', function () {
-				expect( clientCart.tax.amount.currency ).toBe( 'BRL' );
-			} );
-			it( 'has the expected value', function () {
-				expect( clientCart.tax.amount.value ).toBe( 500 );
-			} );
-			it( 'has the expected display value', function () {
-				expect( clientCart.tax.amount.displayValue ).toBe( 'R$5' );
 			} );
 		} );
 
@@ -337,27 +308,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			} );
 			it( 'has the expected volume', function () {
 				expect( clientCart.items[ 1 ].wpcom_meta?.volume ).toBe( 1 );
-			} );
-		} );
-
-		describe( 'taxes', function () {
-			it( 'has an id', function () {
-				expect( clientCart.tax.id ).toBeDefined();
-			} );
-			it( 'has the expected label', function () {
-				expect( clientCart.tax.label ).toBe( 'Tax' );
-			} );
-			it( 'has the expected type', function () {
-				expect( clientCart.tax.type ).toBe( 'tax' );
-			} );
-			it( 'has the expected currency', function () {
-				expect( clientCart.tax.amount.currency ).toBe( 'BRL' );
-			} );
-			it( 'has the expected value', function () {
-				expect( clientCart.tax.amount.value ).toBe( 500 );
-			} );
-			it( 'has the expected display value', function () {
-				expect( clientCart.tax.amount.displayValue ).toBe( 'R$5' );
 			} );
 		} );
 
@@ -588,27 +538,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			} );
 		} );
 
-		describe( 'taxes', function () {
-			it( 'has an id', function () {
-				expect( clientCart.tax.id ).toBeDefined();
-			} );
-			it( 'has the expected label', function () {
-				expect( clientCart.tax.label ).toBe( 'Tax' );
-			} );
-			it( 'has the expected type', function () {
-				expect( clientCart.tax.type ).toBe( 'tax' );
-			} );
-			it( 'has the expected currency', function () {
-				expect( clientCart.tax.amount.currency ).toBe( 'USD' );
-			} );
-			it( 'has the expected value', function () {
-				expect( clientCart.tax.amount.value ).toBe( 500 );
-			} );
-			it( 'has the expected display value', function () {
-				expect( clientCart.tax.amount.displayValue ).toBe( '$5' );
-			} );
-		} );
-
 		describe( 'allowed payment methods', function () {
 			it( 'contains the expected slugs', function () {
 				expect( clientCart.allowedPaymentMethods ).toStrictEqual( [
@@ -718,14 +647,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 		it( 'has an array of allowed payment methods', function () {
 			expect( clientCart.allowedPaymentMethods ).toBeDefined();
 		} );
-		it( 'has the expected credits', function () {
-			expect( clientCart.credits.amount.value ).toBe( 10000 );
-			expect( clientCart.credits.amount.currency ).toBe( 'USD' );
-			expect( clientCart.credits.amount.displayValue ).toBe( '- $100' );
-		} );
-		it( 'has the expected coupon', function () {
-			expect( clientCart.couponCode ).toBe( 'fakecoupon' );
-		} );
 
 		describe( 'first cart item (plan)', function () {
 			it( 'has an id', function () {
@@ -760,48 +681,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			} );
 			it( 'has the expected display value', function () {
 				expect( clientCart.items[ 0 ].amount.displayValue ).toBe( '$127' );
-			} );
-		} );
-
-		describe( 'taxes', function () {
-			it( 'has an id', function () {
-				expect( clientCart.tax.id ).toBeDefined();
-			} );
-			it( 'has the expected label', function () {
-				expect( clientCart.tax.label ).toBe( 'Tax' );
-			} );
-			it( 'has the expected type', function () {
-				expect( clientCart.tax.type ).toBe( 'tax' );
-			} );
-			it( 'has the expected currency', function () {
-				expect( clientCart.tax.amount.currency ).toBe( 'USD' );
-			} );
-			it( 'has the expected value', function () {
-				expect( clientCart.tax.amount.value ).toBe( 500 );
-			} );
-			it( 'has the expected display value', function () {
-				expect( clientCart.tax.amount.displayValue ).toBe( '$5' );
-			} );
-		} );
-
-		describe( 'coupon', function () {
-			it( 'has an id', function () {
-				expect( clientCart.coupon.id ).toBeDefined();
-			} );
-			it( 'has the expected label', function () {
-				expect( clientCart.coupon.label ).toBe( 'Coupon: fakecoupon' );
-			} );
-			it( 'has the expected type', function () {
-				expect( clientCart.coupon.type ).toBe( 'coupon' );
-			} );
-			it( 'has the expected currency', function () {
-				expect( clientCart.coupon.amount.currency ).toBe( 'USD' );
-			} );
-			it( 'has the expected value', function () {
-				expect( clientCart.coupon.amount.value ).toBe( 1700 );
-			} );
-			it( 'has the expected display value', function () {
-				expect( clientCart.coupon.amount.displayValue ).toBe( '- $17' );
 			} );
 		} );
 

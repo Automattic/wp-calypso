@@ -57,7 +57,7 @@ export default class CancelPurchasePage extends AsyncBaseContainer {
 		);
 		await driverHelper.clickWhenClickable( this.driver, nextButtonSelector );
 		// Happychat Support can sometimes appear
-		await driverHelper.clickIfPresent( this.driver, nextButtonSelector, 1 );
+		await driverHelper.clickIfPresent( this.driver, nextButtonSelector );
 		await driverHelper.setWhenSettable(
 			this.driver,
 			by.css( `${ dialogClass } textarea[name="improvementInput"]` ),

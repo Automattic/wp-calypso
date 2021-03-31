@@ -74,7 +74,9 @@ export function CloudflareAnalyticsSettings( {
 	};
 
 	const recordSupportLinkClick = () => {
-		trackTracksEvent( 'calypso_traffic_settings_cloudflare_support_click' );
+		trackTracksEvent( 'calypso_traffic_settings_cloudflare_support_click', {
+			plan: site.plan.product_slug,
+		} );
 	};
 
 	const handleCodeChange = ( event ) => {
@@ -109,8 +111,14 @@ export function CloudflareAnalyticsSettings( {
 			handleFieldChange( '', () => {
 				handleSubmitForm();
 			} );
+			trackTracksEvent( 'calypso_traffic_settings_cloudflare_disable_cloudflare', {
+				plan: site.plan.product_slug,
+			} );
 		} else {
 			setIsCloudflareEnabled( true );
+			trackTracksEvent( 'calypso_traffic_settings_cloudflare_enable_cloudflare', {
+				plan: site.plan.product_slug,
+			} );
 		}
 	};
 
@@ -129,6 +137,7 @@ export function CloudflareAnalyticsSettings( {
 					'Choose an additional analytics tool to connect and get unique insights about your site traffic.'
 				) }
 				event={ 'jetpack_cloudflare_analytics_settings' }
+				tracksClickProperties={ { plan: site.plan.product_slug } }
 				feature={ FEATURE_CLOUDFLARE_ANALYTICS }
 				plan={ plan }
 				href={ null }
@@ -153,7 +162,7 @@ export function CloudflareAnalyticsSettings( {
 						</div>
 						<div className="analytics site-settings__analytics-text">
 							<p className="analytics site-settings__analytics-title">
-								{ translate( 'Cloudflare Analytics' ) }
+								{ translate( 'Cloudflare Web Analytics' ) }
 							</p>
 							<p>
 								{ translate(
@@ -175,7 +184,7 @@ export function CloudflareAnalyticsSettings( {
 					{ isCloudflareEnabled && (
 						<FormFieldset>
 							<FormLabel htmlFor="cloudflareCode">
-								{ translate( 'Tracking ID', { context: 'site setting' } ) }
+								{ translate( 'Site Tag', { context: 'site setting' } ) }
 							</FormLabel>
 							<FormTextInput
 								name="cloudflareCode"

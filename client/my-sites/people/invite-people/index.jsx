@@ -20,7 +20,7 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import { generateInviteLinks, disableInviteLinks } from 'calypso/lib/invites/actions';
+import { generateInviteLinks, disableInviteLinks } from 'calypso/state/invites/actions';
 import { Card, Button } from '@automattic/components';
 import Main from 'calypso/components/main';
 import HeaderCake from 'calypso/components/header-cake';

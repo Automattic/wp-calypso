@@ -8,6 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import Main from 'calypso/components/main';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -76,6 +77,9 @@ export default function Licenses( {
 						compact
 					/>
 				) }
+				<Button href="/partner-portal/issue-license" primary style={ { marginLeft: 'auto' } }>
+					{ translate( 'Issue New License' ) }
+				</Button>
 			</div>
 
 			<LicenseStateFilter filter={ filter } search={ search } />

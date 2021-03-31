@@ -1,4 +1,10 @@
 /**
+ * DEPRECATED
+ *
+ * This code has been deprecated in favor of /client/lib/explat
+ */
+
+/**
  * External Dependencies
  */
 
@@ -32,6 +38,9 @@ const mapStateToProps = ( state: AppState ) => ( {
 	updateAfter: nextRefresh( state ),
 } );
 
+/**
+ * @deprecated Use /client/lib/explat
+ */
 export default connect( mapStateToProps, { doFetchExperiments: fetchExperiments } )(
 	QueryExperiments
 );

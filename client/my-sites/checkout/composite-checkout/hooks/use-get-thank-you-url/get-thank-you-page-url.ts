@@ -3,7 +3,7 @@
  */
 import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 import debugFactory from 'debug';
-import type { ResponseCart } from '@automattic/shopping-cart';
+import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' );
 
@@ -151,19 +151,18 @@ export default function getThankYouPageUrl( {
 	const urlFromCookie = getUrlFromCookie();
 	debug( 'cookie url is', urlFromCookie );
 
-	if ( cart && hasRenewalItem( cart ) ) {
-		const renewalItem = getRenewalItems( cart )[ 0 ];
-		const managePurchaseUrl = managePurchase(
-			renewalItem.extra.purchaseDomain,
-			renewalItem.extra.purchaseId
-		);
-		debug(
-			'renewal item in cart',
-			renewalItem,
-			'so returning managePurchaseUrl',
-			managePurchaseUrl
-		);
-		return managePurchaseUrl;
+	if ( cart && hasRenewalItem( cart ) && siteSlug ) {
+		const renewalItem: ResponseCartProduct = getRenewalItems( cart )[ 0 ];
+		if ( renewalItem && renewalItem.subscription_id ) {
+			const managePurchaseUrl = managePurchase( siteSlug, renewalItem.subscription_id );
+			debug(
+				'renewal item in cart',
+				renewalItem,
+				'so returning managePurchaseUrl',
+				managePurchaseUrl
+			);
+			return managePurchaseUrl;
+		}
 	}
 
 	// Domain only flow

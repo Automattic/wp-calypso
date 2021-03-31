@@ -78,9 +78,10 @@ Object.assign( AssetsWriter.prototype, {
 				).map( ( asset ) => fixupPath( asset.name ) ),
 			} ) );
 
-			statsToOutput.assetsByChunkName = _.mapValues( stats.assetsByChunkName, ( asset ) =>
-				_.castArray( asset ).map( fixupPath )
-			);
+			statsToOutput.assetsByChunkName = _.mapValues( stats.assetsByChunkName, ( asset ) => {
+				const assets = Array.isArray( asset ) ? asset : [ asset ];
+				return assets.map( fixupPath );
+			} );
 
 			statsToOutput.chunks = stats.chunks.map( ( chunk ) =>
 				Object.assign( {}, chunk, {

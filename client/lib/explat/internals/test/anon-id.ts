@@ -11,9 +11,9 @@ import userUtils from 'calypso/lib/user/utils';
 
 import * as AnonId from '../anon-id';
 
-const mockLogErrorOrThrowInDevelopmentMode = jest.fn();
+const mockLogError = jest.fn();
 jest.mock( '../log-error', () => ( {
-	logErrorOrThrowInDevelopmentMode: ( ...args ) => mockLogErrorOrThrowInDevelopmentMode( ...args ),
+	logError: ( ...args ) => mockLogError( ...args ),
 } ) );
 
 jest.mock( 'calypso/lib/wp' );
@@ -48,10 +48,12 @@ describe( 'initializeAnonId', () => {
 	it( 'should return null and log error when run under SSR', async () => {
 		setSsrContext();
 		await expect( AnonId.initializeAnonId() ).resolves.toBe( null );
-		expect( mockLogErrorOrThrowInDevelopmentMode.mock.calls ).toMatchInlineSnapshot( `
+		expect( mockLogError.mock.calls ).toMatchInlineSnapshot( `
 		Array [
 		  Array [
-		    "Trying to initialize anonId outside of a browser context.",
+		    Object {
+		      "message": "Trying to initialize anonId outside of a browser context.",
+		    },
 		  ],
 		]
 	` );
@@ -153,10 +155,12 @@ describe( 'getAnonId', () => {
 	it( 'should return null and log in SSR', async () => {
 		setSsrContext();
 		expect( await AnonId.getAnonId() ).toBeNull();
-		expect( mockLogErrorOrThrowInDevelopmentMode.mock.calls ).toMatchInlineSnapshot( `
+		expect( mockLogError.mock.calls ).toMatchInlineSnapshot( `
 		Array [
 		  Array [
-		    "Trying to getAnonId in non browser context.",
+		    Object {
+		      "message": "Trying to getAnonId in non browser context.",
+		    },
 		  ],
 		]
 	` );

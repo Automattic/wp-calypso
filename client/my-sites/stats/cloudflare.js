@@ -23,43 +23,43 @@ const Cloudflare = () => {
 	const sitePlan = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
 	const showUpsell = [ 'personal-bundle', 'free_plan' ].includes( sitePlan );
 
+	if ( ! showCloudflare ) return null;
+
 	return (
 		<>
-			{ showCloudflare && (
-				<>
-					{ ! sitePlan && <QuerySitePlans siteId={ siteId } /> }
-					{ sitePlan && ! showUpsell && (
-						<Banner
-							title={ translate( 'Discover more stats with Cloudflare Analytics' ) }
-							description={ translate(
-								'Cloudflare Analytics give you deeper insights into your site traffic and performance.'
-							) }
-							callToAction={ translate( 'Learn more' ) }
-							disableCircle={ true }
-							dismissPreferenceName="cloudflare-banner"
-							event="calypso_stats_cloudflare_analytics_learn_more_click"
-							highlight="info"
-							horizontal={ true }
-							href="https://www.cloudflare.com/pg-lp/cloudflare-for-wordpress-dot-com?utm_source=wordpress.com&utm_medium=affiliate&utm_campaign=paygo_2021-02_a8_pilot&utm_content=stats"
-							iconPath={ cloudflareIllustration }
-							showIcon={ true }
-							tracksImpressionName="calypso_stats_cloudflare_banner_view"
-						/>
+			{ ! sitePlan && <QuerySitePlans siteId={ siteId } /> }
+			{ !! sitePlan && ! showUpsell && (
+				<Banner
+					title={ translate( 'Discover more stats with Cloudflare Analytics' ) }
+					description={ translate(
+						'Cloudflare Analytics give you deeper insights into your site traffic and performance.'
 					) }
-					{ sitePlan && showUpsell && (
-						<UpsellNudge
-							title={ translate( 'Upgrade your plan for even more stats' ) }
-							description={ translate(
-								'Get deeper insights into your site traffic and performance with Cloudflare Analytics.'
-							) }
-							customerType="business"
-							tracksImpressionName="calypso_stats_cloudflare_upsell_view"
-							event="calypso_stats_cloudflare_analytics_upsell_nudge_click"
-							showIcon={ true }
-							callToAction={ translate( 'Upgrade' ) }
-						/>
+					callToAction={ translate( 'Learn more' ) }
+					disableCircle={ true }
+					dismissPreferenceName="cloudflare-banner"
+					event="calypso_stats_cloudflare_analytics_learn_more_click"
+					highlight="info"
+					horizontal={ true }
+					href="https://www.cloudflare.com/pg-lp/cloudflare-for-wordpress-dot-com?utm_source=wordpress.com&utm_medium=affiliate&utm_campaign=paygo_2021-02_a8_pilot&utm_content=stats"
+					iconPath={ cloudflareIllustration }
+					showIcon={ true }
+					tracksImpressionName="calypso_stats_cloudflare_banner_view"
+					tracksClickProperties={ { plan: sitePlan } }
+				/>
+			) }
+			{ !! sitePlan && showUpsell && (
+				<UpsellNudge
+					title={ translate( 'Upgrade your plan for even more stats' ) }
+					description={ translate(
+						'Get deeper insights into your site traffic and performance with Cloudflare Analytics.'
 					) }
-				</>
+					customerType="business"
+					tracksImpressionName="calypso_stats_cloudflare_upsell_view"
+					event="calypso_stats_cloudflare_analytics_upsell_nudge_click"
+					tracksClickProperties={ { plan: sitePlan } }
+					showIcon={ true }
+					callToAction={ translate( 'Upgrade' ) }
+				/>
 			) }
 		</>
 	);

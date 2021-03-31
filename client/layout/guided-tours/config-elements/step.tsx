@@ -3,7 +3,7 @@
  */
 import React, { Component, CSSProperties, FunctionComponent } from 'react';
 import classNames from 'classnames';
-import { defer, isFunction } from 'lodash';
+import { defer } from 'lodash';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
 
@@ -163,7 +163,7 @@ export default class Step extends Component< Props, State > {
 	}
 
 	async wait( props: Props, context ) {
-		if ( isFunction( props.wait ) ) {
+		if ( typeof props.wait === 'function' ) {
 			await context.dispatch( props.wait() );
 		}
 	}

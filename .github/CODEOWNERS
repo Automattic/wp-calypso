@@ -67,6 +67,7 @@
 /packages/composite-checkout/ @Automattic/shilling
 /packages/calypso-stripe/ @Automattic/shilling
 /packages/shopping-cart/ @Automattic/shilling
+/packages/wpcom-checkout/ @Automattic/shilling
 
 # Reader
 /client/reader @Automattic/reader
@@ -99,3 +100,6 @@
 
 # Framework
 /packages/js-utils @Automattic/team-calypso-frameworks
+
+# Jetpack Search
+/client/my-sites/jetpack-search @Automattic/jetpack-search

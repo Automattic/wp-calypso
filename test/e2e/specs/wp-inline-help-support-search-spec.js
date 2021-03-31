@@ -81,7 +81,7 @@ describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, function () {
 
 		step( 'Displays contextual search results by default', async function () {
 			const resultsCount = await supportSearchComponent.getDefaultResultsCount();
-			assert.equal( resultsCount, 6, 'There are no contextual results displayed' );
+			assert.equal( resultsCount, 6, 'There are no 6 contextual results displayed' );
 		} );
 
 		step( 'Returns search results for valid search query', async function () {

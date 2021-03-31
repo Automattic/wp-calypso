@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-
-import { every, get, includes, map, mapKeys, omit, omitBy, some, startsWith } from 'lodash';
+import { get, includes, map, mapKeys, omit, omitBy, some, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -188,23 +187,6 @@ export function getSerializedThemesQueryWithoutPage( query, siteId ) {
 }
 
 /**
- * Check if theme is a wpcom theme.
- *
- * For wpcom theme zips, the theme_uri field is
- * set in style.css by the bundling script.
- *
- * For AT themes, the wpcomsh plugin sets the theme_uri
- * field to contain 'wordpress.com' for Jetpack API
- * requests.
- *
- * @param  {object} theme Theme object
- * @returns {boolean}      Whether theme is a wpcom theme
- */
-export function isThemeFromWpcom( theme ) {
-	return includes( theme.theme_uri, 'wordpress.com' );
-}
-
-/**
  * Returns true if the theme matches the given query, or false otherwise.
  *
  * @param  {object}  query Query object
@@ -213,7 +195,7 @@ export function isThemeFromWpcom( theme ) {
  */
 export function isThemeMatchingQuery( query, theme ) {
 	const queryWithDefaults = { ...DEFAULT_THEME_QUERY, ...query };
-	return every( queryWithDefaults, ( value, key ) => {
+	return Object.entries( queryWithDefaults ).every( ( [ key, value ] ) => {
 		switch ( key ) {
 			case 'search': {
 				if ( ! value ) {
@@ -248,7 +230,7 @@ export function isThemeMatchingQuery( query, theme ) {
 				// TODO: Change filters object shape to be more like post's terms, i.e.
 				// { color: 'blue,red', feature: 'post-slider' }
 				const filters = value.split( ',' );
-				return every( filters, ( f ) =>
+				return filters.every( ( f ) =>
 					some( theme.taxonomies, ( terms ) => some( terms, { slug: f } ) )
 				);
 			}

@@ -2,11 +2,12 @@
  * External dependencies
  */
 import React, { useState, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { CheckoutProvider } from '@automattic/composite-checkout';
 import { useStripe } from '@automattic/calypso-stripe';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -18,6 +19,7 @@ import Placeholder from './placeholder';
 import useCreatePaymentCompleteCallback from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-complete-callback';
 import existingCardProcessor from 'calypso/my-sites/checkout/composite-checkout/lib/existing-card-processor';
 import getContactDetailsType from 'calypso/my-sites/checkout/composite-checkout/lib/get-contact-details-type';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 /**
  * Style dependencies
@@ -59,20 +61,34 @@ export default function PurchaseModalWrapper( props ) {
 	} );
 	const { stripeConfiguration } = useStripe();
 	const reduxDispatch = useDispatch();
+	const { responseCart } = useShoppingCart();
+	const selectedSite = useSelector( getSelectedSite );
 
 	const contactDetailsType = getContactDetailsType( props.cart );
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
+	// NOTE: dataForProcessor must satisfy the PaymentProcessorOptions type
 	const dataForProcessor = useMemo(
 		() => ( {
+			createUserAndSiteBeforeTransaction: false,
+			getThankYouUrl: () => '/plans',
 			includeDomainDetails,
 			includeGSuiteDetails,
 			recordEvent: noop,
-			stripeConfiguration,
-			createUserAndSiteBeforeTransaction: false,
 			reduxDispatch,
+			responseCart,
+			siteSlug: selectedSite?.slug ?? '',
+			siteId: selectedSite?.ID ?? '',
+			stripeConfiguration,
 		} ),
-		[ includeDomainDetails, includeGSuiteDetails, stripeConfiguration, reduxDispatch ]
+		[
+			includeDomainDetails,
+			includeGSuiteDetails,
+			stripeConfiguration,
+			reduxDispatch,
+			selectedSite,
+			responseCart,
+		]
 	);
 
 	return (

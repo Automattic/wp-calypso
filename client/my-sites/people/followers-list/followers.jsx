@@ -4,8 +4,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import deterministicStringify from 'fast-json-stable-stringify';
-import { omit } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -20,18 +18,10 @@ import InfiniteList from 'calypso/components/infinite-list';
 import NoResults from 'calypso/my-sites/no-results';
 import EmptyContent from 'calypso/components/empty-content';
 import accept from 'calypso/lib/accept';
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import ListEnd from 'calypso/components/list-end';
 import { preventWidows } from 'calypso/lib/formatting';
-import {
-	getFollowersForQuery,
-	isFetchingFollowersForQuery,
-	getTotalFollowersForQuery,
-} from 'calypso/state/followers/selectors';
-import { requestRemoveFollower } from 'calypso/state/followers/actions';
 import { addQueryArgs } from 'calypso/lib/url';
-
-const MAX_FOLLOWERS = 1000;
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 class Followers extends Component {
 	infiniteList = React.createRef();
@@ -46,13 +36,17 @@ class Followers extends Component {
 				? 'Fetched more email followers with infinite list'
 				: 'Fetched more followers with infinite list';
 
-		this.props.incrementPage();
-		gaRecordEvent( 'People', analyticsAction, 'page', this.props.currentPage + 1 );
+		this.props.fetchNextPage();
+		this.props.recordGoogleEvent( 'People', analyticsAction, 'page', this.props.currentPage + 1 );
 	};
 
 	removeFollower( follower ) {
+		const { site, type } = this.props;
 		const listType = 'email' === this.props.type ? 'Email Follower' : 'Follower';
-		gaRecordEvent( 'People', 'Clicked Remove Follower Button On' + listType + ' list' );
+		this.props.recordGoogleEvent(
+			'People',
+			'Clicked Remove Follower Button On' + listType + ' list'
+		);
 		accept(
 			<div>
 				<p>
@@ -63,13 +57,13 @@ class Followers extends Component {
 			</div>,
 			( accepted ) => {
 				if ( accepted ) {
-					gaRecordEvent(
+					this.props.recordGoogleEvent(
 						'People',
 						'Clicked Remove Button In Remove ' + listType + ' Confirmation'
 					);
-					this.props.requestRemoveFollower( this.props.site.ID, follower, this.props.type );
+					this.props.removeFollower( site.ID, type, follower.ID );
 				} else {
-					gaRecordEvent(
+					this.props.recordGoogleEvent(
 						'People',
 						'Clicked Cancel Button In Remove ' + listType + ' Confirmation'
 					);
@@ -96,16 +90,12 @@ class Followers extends Component {
 	};
 
 	noFollowerSearchResults() {
-		return (
-			this.props.fetchInitialized &&
-			this.props.query.search &&
-			! this.props.followers.length &&
-			! this.props.fetching
-		);
+		return this.props.search && this.siteHasNoFollowers();
 	}
 
 	siteHasNoFollowers() {
-		return ! this.props.followers.length && ! this.props.fetching;
+		const { followers, isFetching } = this.props;
+		return ! followers.length && ! isFetching;
 	}
 
 	renderInviteFollowersAction( isPrimary = true ) {
@@ -119,22 +109,13 @@ class Followers extends Component {
 		);
 	}
 
-	isLastPage() {
-		return (
-			this.props.totalFollowers <= this.props.followers.length ||
-			MAX_FOLLOWERS <= this.props.followers.length
-		);
-	}
-
 	render() {
-		const key = deterministicStringify( omit( this.props.query, [ 'max', 'page' ] ) );
-
 		if ( this.noFollowerSearchResults() ) {
 			return (
 				<NoResults
 					image="/calypso/images/people/mystery-person.svg"
 					text={ this.props.translate( 'No results found for {{em}}%(searchTerm)s{{/em}}', {
-						args: { searchTerm: this.props.query.search },
+						args: { searchTerm: this.props.search },
 						components: { em: <em /> },
 					} ) }
 				/>
@@ -143,7 +124,7 @@ class Followers extends Component {
 
 		let emptyTitle;
 		if ( this.siteHasNoFollowers() ) {
-			if ( this.props.query && 'email' === this.props.query.type ) {
+			if ( 'email' === this.props.type ) {
 				emptyTitle = preventWidows(
 					this.props.translate( 'No one is following you by email yet.' )
 				);
@@ -178,7 +159,7 @@ class Followers extends Component {
 
 		let followers;
 		if ( this.props.followers.length ) {
-			if ( this.props.query.search && this.props.totalFollowers ) {
+			if ( this.props.search && this.props.totalFollowers ) {
 				headerText = this.props.translate(
 					'%(numberPeople)d Follower Matching {{em}}"%(searchTerm)s"{{/em}}',
 					'%(numberPeople)d Followers Matching {{em}}"%(searchTerm)s"{{/em}}',
@@ -186,7 +167,7 @@ class Followers extends Component {
 						count: this.props.followers.length,
 						args: {
 							numberPeople: this.props.totalFollowers,
-							searchTerm: this.props.query.search,
+							searchTerm: this.props.search,
 						},
 						components: {
 							em: <em />,
@@ -195,19 +176,15 @@ class Followers extends Component {
 				);
 			}
 
-			const infiniteListConditionals = {
-				fetchingNextPage: this.props.fetching,
-				lastPage: this.isLastPage(),
-			};
-
 			followers = (
 				<InfiniteList
-					{ ...infiniteListConditionals }
-					key={ key }
+					key={ this.props.listKey }
 					items={ this.props.followers }
 					className="followers-list__infinite is-people"
 					ref={ this.infiniteList }
 					fetchNextPage={ this.fetchNextPage }
+					fetchingNextPage={ this.props.isFetchingNextPage }
+					lastPage={ ! this.props.hasNextPage }
 					getItemRef={ this.getFollowerRef }
 					renderLoadingPlaceholders={ this.renderPlaceholders }
 					renderItem={ this.renderFollower }
@@ -218,7 +195,7 @@ class Followers extends Component {
 			followers = this.renderPlaceholders();
 		}
 
-		const canDownloadCsv = this.props.query.type === 'email' && !! this.props.site;
+		const canDownloadCsv = this.props.type === 'email' && !! this.props.site;
 		const downloadListLink = canDownloadCsv
 			? addQueryArgs(
 					{ page: 'stats', blog: this.props.site.ID, blog_subscribers: 'csv', type: 'email' },
@@ -230,7 +207,7 @@ class Followers extends Component {
 			<>
 				<PeopleListSectionHeader
 					isFollower
-					isPlaceholder={ this.props.fetching || this.props.query.search }
+					isPlaceholder={ this.props.isFetching || this.props.search }
 					label={ headerText }
 					site={ this.props.site }
 				>
@@ -241,16 +218,10 @@ class Followers extends Component {
 					) }
 				</PeopleListSectionHeader>
 				<Card className="people-invites__invites-list">{ followers }</Card>
-				{ this.isLastPage() && <ListEnd /> }
+				{ ! this.props.hasNextPage && <ListEnd /> }
 			</>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { query } ) => ( {
-	followers: getFollowersForQuery( state, query ),
-	fetching: isFetchingFollowersForQuery( state, query ),
-	totalFollowers: getTotalFollowersForQuery( state, query ),
-} );
-
-export default connect( mapStateToProps, { requestRemoveFollower } )( localize( Followers ) );
+export default connect( null, { recordGoogleEvent } )( localize( Followers ) );

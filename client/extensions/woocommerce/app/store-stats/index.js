@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -16,6 +17,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import Chart from './store-stats-orders-chart';
 import StatsPeriodNavigation from 'calypso/my-sites/stats/stats-period-navigation';
 import DatePicker from 'calypso/my-sites/stats/stats-date-picker';
+import FormattedHeader from 'calypso/components/formatted-header';
 import Module from './store-stats-module';
 import List from './store-stats-list';
 import WidgetList from './store-stats-widget-list';
@@ -46,7 +48,7 @@ class StoreStats extends Component {
 	};
 
 	render() {
-		const { queryDate, selectedDate, siteId, slug, unit, queryParams } = this.props;
+		const { queryDate, selectedDate, siteId, slug, unit, queryParams, translate } = this.props;
 		const endSelectedDate = getEndPeriod( selectedDate, unit );
 		const { orderQuery, referrerQuery } = getQueries( unit, queryDate );
 		const { topListQuery } = getQueries( unit, selectedDate );
@@ -63,6 +65,15 @@ class StoreStats extends Component {
 					<QuerySiteStats statType="statsOrders" siteId={ siteId } query={ orderQuery } />
 				) }
 				<SidebarNavigation />
+				<FormattedHeader
+					brandFont
+					className="store-stats__section-header"
+					headerText={ translate( 'Stats and Insights' ) }
+					align="left"
+					subHeaderText={ translate(
+						'Learn valuable insights about the purchases made on your store.'
+					) }
+				/>
 				<StatsNavigation
 					selectedItem={ 'store' }
 					siteId={ siteId }
@@ -188,4 +199,4 @@ class StoreStats extends Component {
 export default connect( ( state ) => ( {
 	slug: getSelectedSiteSlug( state ),
 	siteId: getSelectedSiteId( state ),
-} ) )( StoreStats );
+} ) )( localize( StoreStats ) );

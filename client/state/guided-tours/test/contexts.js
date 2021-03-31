@@ -11,17 +11,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import {
-	hasAnalyticsEventFired,
-	hasUserPastedFromGoogleDocs,
-	hasUserRegisteredBefore,
-	isUserNewerThan,
-} from '../contexts';
-import {
-	SOURCE_GOOGLE_DOCS,
-	SOURCE_UNKNOWN,
-} from 'calypso/components/tinymce/plugins/wpcom-track-paste/sources';
-import { EDITOR_PASTE_EVENT } from 'calypso/state/action-types';
+import { hasAnalyticsEventFired, hasUserRegisteredBefore, isUserNewerThan } from '../contexts';
 
 jest.mock( 'calypso/layout/guided-tours/config', () => {
 	return require( 'calypso/state/guided-tours/test/fixtures/config' );
@@ -84,50 +74,6 @@ describe( 'selectors', () => {
 
 		test( 'should return false for users registered after the cut-off date', () => {
 			expect( hasUserRegisteredBefore( cutoff )( newUser ) ).to.be.false;
-		} );
-	} );
-
-	describe( '#hasUserPastedContentFromGoogleDocs', () => {
-		test( 'should return false when no actions', () => {
-			const state = {
-				ui: {
-					actionLog: [],
-				},
-			};
-			expect( hasUserPastedFromGoogleDocs( state ) ).to.be.false;
-		} );
-
-		test( 'should return false when last action is not the paste event', () => {
-			const state = {
-				ui: {
-					actionLog: [ { type: EDITOR_PASTE_EVENT }, { type: 'NO_PASTE_EVENT' } ],
-				},
-			};
-			expect( hasUserPastedFromGoogleDocs( state ) ).to.be.false;
-		} );
-
-		test( 'should return true when last action is the paste event & the source is Google Docs', () => {
-			const state = {
-				ui: {
-					actionLog: [
-						{ type: 'NO_PASTE_EVENT' },
-						{ type: EDITOR_PASTE_EVENT, source: SOURCE_GOOGLE_DOCS },
-					],
-				},
-			};
-			expect( hasUserPastedFromGoogleDocs( state ) ).to.be.true;
-		} );
-
-		test( 'should return false when last action is the paste event & the source is not Google Docs', () => {
-			const state = {
-				ui: {
-					actionLog: [
-						{ type: 'NO_PASTE_EVENT' },
-						{ type: EDITOR_PASTE_EVENT, source: SOURCE_UNKNOWN },
-					],
-				},
-			};
-			expect( hasUserPastedFromGoogleDocs( state ) ).to.be.false;
 		} );
 	} );
 

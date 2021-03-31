@@ -49,6 +49,7 @@ import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import Banner from 'calypso/components/banner';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 
 function updateQueryString( query = {} ) {
 	return {
@@ -158,6 +159,7 @@ class StatsSite extends Component {
 			slug,
 			isAdmin,
 			isJetpack,
+			isAtomic,
 			isVip,
 		} = this.props;
 
@@ -165,6 +167,7 @@ class StatsSite extends Component {
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
 		let fileDownloadList;
+		const isJetpackNonAtomic = isJetpack && ! isAtomic;
 
 		const query = memoizedQuery( period, endOf );
 
@@ -203,7 +206,8 @@ class StatsSite extends Component {
 					siteId={ siteId }
 					slug={ slug }
 				/>
-				{ ! isVip && isAdmin && ! hasWordAds && <Cloudflare /> }
+
+				{ ! isVip && isAdmin && ! hasWordAds && ! isJetpackNonAtomic && <Cloudflare /> }
 
 				<div id="my-stats-content">
 					<ChartTabs
@@ -377,11 +381,13 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isVip = isVipSite( state, siteId );
+		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		const showEnableStatsModule =
 			siteId && isJetpack && isJetpackModuleActive( state, siteId, 'stats' ) === false;
 		return {
 			isAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 			isJetpack,
+			isAtomic,
 			hasWordAds: getSiteOption( state, siteId, 'wordads' ),
 			siteId,
 			isVip,

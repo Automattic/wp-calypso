@@ -6,8 +6,9 @@ import { get, isEqual, mapValues, omit, omitBy, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import { DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
+import { serialize, deserialize } from './serialize';
 import { SerializationResult } from 'calypso/state/serialization-result';
+import { withPersistence } from './with-persistence';
 
 /**
  * Creates a super-reducer as a map of reducers over keyed objects
@@ -26,7 +27,7 @@ import { SerializationResult } from 'calypso/state/serialization-result';
  * then this super-reducer will abort and return the
  * previous state.
  *
- * The keyed reducer handles the SERIALIZE and DESERIALIZE actions specially and makes sure
+ * The keyed reducer implements the `serialize` and `deserialize` methods and makes sure
  * that Calypso state persistence works as expected (ignoring empty and initial state,
  * serialization into multiple storage keys etc.)
  *
@@ -83,33 +84,7 @@ export const keyedReducer = ( keyPath, reducer ) => {
 
 	const initialState = reducer( undefined, { type: '@@calypso/INIT' } );
 
-	return ( state = {}, action ) => {
-		if ( action.type === SERIALIZE ) {
-			const serialized = reduce(
-				state,
-				( result, itemValue, itemKey ) => {
-					const serializedValue = reducer( itemValue, action );
-					if ( serializedValue !== undefined && ! isEqual( serializedValue, initialState ) ) {
-						if ( ! result ) {
-							// instantiate the result object only when it's going to have at least one property
-							result = new SerializationResult();
-						}
-						result.addRootResult( itemKey, serializedValue );
-					}
-					return result;
-				},
-				undefined
-			);
-			return serialized;
-		}
-
-		if ( action.type === DESERIALIZE ) {
-			return omitBy(
-				mapValues( state, ( item ) => reducer( item, action ) ),
-				( a ) => a === undefined || isEqual( a, initialState )
-			);
-		}
-
+	const combinedReducer = ( state = {}, action ) => {
 		// don't allow coercion of key name: null => 0
 		const itemKey = get( action, keyPath, undefined );
 
@@ -142,4 +117,28 @@ export const keyedReducer = ( keyPath, reducer ) => {
 			[ itemKey ]: newItemState,
 		};
 	};
+
+	return withPersistence( combinedReducer, {
+		serialize: ( state ) =>
+			reduce(
+				state,
+				( result, itemValue, itemKey ) => {
+					const serializedValue = serialize( reducer, itemValue );
+					if ( serializedValue !== undefined && ! isEqual( serializedValue, initialState ) ) {
+						if ( ! result ) {
+							// instantiate the result object only when it's going to have at least one property
+							result = new SerializationResult();
+						}
+						result.addRootResult( itemKey, serializedValue );
+					}
+					return result;
+				},
+				undefined
+			),
+		deserialize: ( persisted ) =>
+			omitBy(
+				mapValues( persisted, ( item ) => deserialize( reducer, item ) ),
+				( a ) => a === undefined || isEqual( a, initialState )
+			),
+	} );
 };

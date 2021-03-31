@@ -14,7 +14,6 @@ import Gridicon from 'calypso/components/gridicon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { canRemoveFromCart } from 'calypso/lib/cart-values';
-import { getIncludedDomain } from 'calypso/lib/cart-values/cart-items';
 import {
 	isCredits,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
@@ -192,8 +191,6 @@ export class CartItem extends React.Component {
 			) );
 		} else if ( isCredits( cartItem ) ) {
 			info = null;
-		} else if ( getIncludedDomain( cartItem ) ) {
-			info = getIncludedDomain( cartItem );
 		} else if ( isTheme( cartItem ) ) {
 			info = selectedSite && selectedSite.domain;
 		} else {

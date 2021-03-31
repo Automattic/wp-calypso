@@ -5,7 +5,6 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
-import { isFunction } from 'lodash';
 
 /**
  * Internal dependencies
@@ -47,12 +46,14 @@ export default function SidebarItem( props ) {
 	const expandSectionIfSelected = () => {
 		const { expandSection, selected } = props;
 
-		if ( selected && isFunction( expandSection ) ) {
+		if ( selected && typeof expandSection === 'function' ) {
 			expandSection();
 		}
 	};
 
 	useEffect( expandSectionIfSelected, [ props.selected ] );
+
+	const linkProps = showAsExternal ? { target: '_blank', rel: 'noreferrer' } : {};
 
 	return (
 		<li className={ classes } data-tip-target={ props.tipTarget } data-post-type={ props.postType }>
@@ -60,9 +61,8 @@ export default function SidebarItem( props ) {
 				className="sidebar__menu-link"
 				onClick={ props.onNavigate }
 				href={ url }
-				target={ showAsExternal ? '_blank' : null }
-				rel={ isExternalLink ? 'noopener noreferrer' : null }
 				onMouseEnter={ itemPreload }
+				{ ...linkProps }
 			>
 				{ icon && <Gridicon className={ 'sidebar__menu-icon' } icon={ icon } size={ 24 } /> }
 

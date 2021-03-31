@@ -20,6 +20,11 @@ import type {
 	ResponseCartProduct,
 	RemoveCouponFromCart,
 } from '@automattic/shopping-cart';
+import {
+	getCouponLineItemFromCart,
+	getTaxLineItemFromCart,
+	getCreditsLineItemFromCart,
+} from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -35,19 +40,14 @@ import { isWpComPlan } from 'calypso/lib/plans';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
-import {
-	getSublabel,
-	getLabel,
-	getCouponLineItem,
-	getTaxLineItem,
-	getCreditsLineItem,
-} from '../lib/translate-cart';
+import { getSublabel, getLabel } from '../lib/translate-cart';
 import { isPlan, isMonthly, isYearly, isBiennially } from 'calypso/lib/products-values';
 import type {
 	WPCOMProductSlug,
 	WPCOMProductVariant,
 	OnChangeItemVariant,
 } from './item-variation-picker';
+import { getIntroductoryOfferIntervalDisplay } from 'calypso/lib/purchases/utils';
 
 const WPOrderReviewList = styled.ul< { theme?: Theme } >`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
@@ -350,9 +350,9 @@ export function WPOrderReviewLineItems( {
 	createUserAndSiteBeforeTransaction?: boolean;
 } ): JSX.Element {
 	const { responseCart } = useShoppingCart();
-	const taxLineItem = getTaxLineItem( responseCart );
-	const creditsLineItem = getCreditsLineItem( responseCart );
-	const couponLineItem = getCouponLineItem( responseCart );
+	const taxLineItem = getTaxLineItemFromCart( responseCart );
+	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
+	const couponLineItem = getCouponLineItemFromCart( responseCart );
 
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
@@ -638,6 +638,25 @@ function FirstTermDiscountCallout( {
 	return null;
 }
 
+function IntroductoryOfferCallout( {
+	product,
+}: {
+	product: ResponseCartProduct;
+} ): JSX.Element | null {
+	const translate = useTranslate();
+	if ( ! product.introductory_offer_terms?.enabled ) {
+		return null;
+	}
+	const isFreeTrial = product.item_subtotal_integer === 0;
+	const text = getIntroductoryOfferIntervalDisplay(
+		translate,
+		product.introductory_offer_terms.interval_unit,
+		product.introductory_offer_terms.interval_count,
+		isFreeTrial
+	);
+	return <DiscountCallout>{ text }</DiscountCallout>;
+}
+
 function DomainDiscountCallout( {
 	product,
 }: {
@@ -735,7 +754,7 @@ function WPLineItem( {
 	const onEvent = useEvents();
 	const isDisabled = formStatus !== FormStatus.READY;
 
-	const isRenewal = !! product?.extra?.purchaseId;
+	const isRenewal = product?.extra?.purchaseType === 'renewal';
 	// Show the variation picker when this is not a renewal
 	const shouldShowVariantSelector = getItemVariants && product && ! isRenewal;
 
@@ -781,6 +800,7 @@ function WPLineItem( {
 					<DomainDiscountCallout product={ product } />
 					<FirstTermDiscountCallout product={ product } />
 					<CouponDiscountCallout product={ product } />
+					<IntroductoryOfferCallout product={ product } />
 				</LineItemMeta>
 			) }
 			{ isGSuite && <GSuiteUsersList product={ product } /> }

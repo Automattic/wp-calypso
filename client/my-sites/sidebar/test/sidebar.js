@@ -24,7 +24,6 @@ jest.mock( 'calypso/lib/abtest', () => ( {
 		return 'sidebarUpsells';
 	} ),
 } ) );
-jest.mock( 'calypso/lib/cart/store/index', () => null );
 jest.mock( 'calypso/lib/analytics/track-component-view', () => 'TrackComponentView' );
 jest.mock( 'calypso/my-sites/sidebar/utils', () => ( {
 	itemLinkMatches: jest.fn( () => true ),

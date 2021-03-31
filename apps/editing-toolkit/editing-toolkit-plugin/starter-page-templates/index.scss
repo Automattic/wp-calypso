@@ -1,11 +1,11 @@
-@import '~@automattic/page-template-modal/src/styles/page-template-modal';
+@import '~@automattic/page-pattern-modal/src/styles/page-pattern-modal';
 
 .sidebar-modal-opener {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	.template-selector-item__label {
+	.pattern-selector-item__label {
 		max-width: 300px;
 	}
 }

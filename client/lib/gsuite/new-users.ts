@@ -10,9 +10,13 @@ import { v4 as uuidv4 } from 'uuid';
  * Internal dependencies
  */
 import { CartItemValue } from 'calypso/lib/cart-values/types';
-import config from '@automattic/calypso-config';
 import { googleApps, googleAppsExtraLicenses } from 'calypso/lib/cart-values/cart-items';
-import { hasGSuiteWithUs } from './has-gsuite-with-us';
+import {
+	getGSuiteMailboxCount,
+	hasGSuiteWithUs,
+	isGoogleWorkspaceProductSlug,
+	isGSuiteProductSlug,
+} from 'calypso/lib/gsuite';
 
 // exporting these in the big export below causes trouble
 export interface GSuiteNewUserField {
@@ -188,11 +192,16 @@ const validateNewUsersAreUnique = ( users: GSuiteNewUser[] ): GSuiteNewUser[] =>
  *
  * @see https://support.google.com/accounts/answer/32040 for requirements
  */
-const validatePasswordField = ( { value, error }: GSuiteNewUserField ): GSuiteNewUserField => {
-	if ( ! error && 12 > value.length ) {
+const validatePasswordField = (
+	{ value, error }: GSuiteNewUserField,
+	minimumLength = 12
+): GSuiteNewUserField => {
+	if ( ! error && minimumLength > value.length ) {
 		return {
 			value,
-			error: translate( "This field can't be shorter than %s characters.", { args: '12' } ),
+			error: translate( "This field can't be shorter than %s characters.", {
+				args: String( minimumLength ),
+			} ),
 		};
 	}
 
@@ -344,16 +353,23 @@ const getItemsForCart = (
 		( groupedUsers ) => groupedUsers.map( transformUserForCart )
 	);
 
-	return map( usersGroupedByDomain, ( groupedUsers: GSuiteProductUser[], domain: string ) => {
-		const domainInfo = find( domains, [ 'name', domain ] );
+	return map( usersGroupedByDomain, ( groupedUsers: GSuiteProductUser[], domainName: string ) => {
+		const properties = { domain: domainName, users: groupedUsers };
 
-		const properties = { domain, users: groupedUsers };
+		const domain = find( domains, [ 'name', domainName ] );
 
-		if ( domainInfo && hasGSuiteWithUs( domainInfo ) ) {
+		const isExtraLicense = domain && hasGSuiteWithUs( domain );
+
+		if ( isGSuiteProductSlug( productSlug ) && isExtraLicense ) {
 			return googleAppsExtraLicenses( properties );
 		}
 
-		if ( config.isEnabled( 'google-workspace-migration' ) ) {
+		if ( isGoogleWorkspaceProductSlug( productSlug ) && isExtraLicense ) {
+			properties[ 'new_quantity' ] = groupedUsers.length;
+			properties[ 'quantity' ] = getGSuiteMailboxCount( domain ) + groupedUsers.length;
+		}
+
+		if ( isGoogleWorkspaceProductSlug( productSlug ) && ! isExtraLicense ) {
 			properties[ 'quantity' ] = groupedUsers.length;
 		}
 
@@ -373,6 +389,7 @@ export {
 	sanitizeEmail,
 	validateAgainstExistingUsers,
 	validateNewUsersAreUnique,
+	validatePasswordField,
 	validateUser,
 	validateUsers,
 };

@@ -4,7 +4,7 @@
 import page from 'page';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { get, some, startsWith, uniq } from 'lodash';
+import { get, some, startsWith } from 'lodash';
 import { removeQueryArgs } from '@wordpress/url';
 
 /**
@@ -63,6 +63,9 @@ import {
 	emailManagementForwarding,
 	emailManagementAddGSuiteUsers,
 	emailManagementNewGSuiteAccount,
+	emailManagementManageTitanAccount,
+	emailManagementNewTitanAccount,
+	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import SitesComponent from 'calypso/my-sites/sites';
 import { successNotice, warningNotice } from 'calypso/state/notices/actions';
@@ -149,6 +152,7 @@ export function renderNoVisibleSites( context ) {
 		actionURL: '//dashboard.wordpress.com/wp-admin/index.php?page=my-blogs',
 		secondaryAction: i18n.translate( 'Create New Site' ),
 		secondaryActionURL: `${ onboardingUrl }?ref=calypso-nosites`,
+		className: 'no-visible-sites-message',
 	} );
 
 	makeLayout( context, noop );
@@ -180,22 +184,32 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		emailManagementAddGSuiteUsers,
 		emailManagementNewGSuiteAccount,
 		emailManagementForwarding,
+		emailManagementManageTitanAccount,
+		emailManagementNewTitanAccount,
+		emailManagementTitanControlPanelRedirect,
 	];
 
+	// Builds a list of paths using a site slug plus any additional parameter that may be required
 	let domainManagementPaths = allPaths.map( ( pathFactory ) => {
-		if ( pathFactory === emailManagementNewGSuiteAccount ) {
-			// `emailManagementNewGSuiteAccount` takes `planType` from `context.params`, otherwise path comparisons won't work well.
-			return emailManagementNewGSuiteAccount( slug, slug, contextParams.planType );
+		if ( pathFactory === emailManagementAddGSuiteUsers ) {
+			return emailManagementAddGSuiteUsers( slug, slug, contextParams.productType );
 		}
+
+		if ( pathFactory === emailManagementNewGSuiteAccount ) {
+			return emailManagementNewGSuiteAccount( slug, slug, contextParams.productType );
+		}
+
 		return pathFactory( slug, slug );
 	} );
 
+	// Builds a list of paths using a site slug, and which are relative to the root of the domain management section
 	domainManagementPaths = domainManagementPaths.concat(
 		allPaths.map( ( pathFactory ) => {
 			return pathFactory( slug, slug, domainManagementRoot() );
 		} )
 	);
 
+	// Builds a list of paths using a site slug but also a primary domain - if they differ
 	if ( primaryDomain && slug !== primaryDomain.name ) {
 		domainManagementPaths = domainManagementPaths.concat(
 			allPaths.map( ( pathFactory ) => pathFactory( slug, primaryDomain.name ) )
@@ -216,7 +230,7 @@ function onSelectedSiteAvailable( context, basePath ) {
 	const selectedSite = getSelectedSite( state );
 
 	const isAtomicSite = isSiteAutomatedTransfer( state, selectedSite.ID );
-	const userCanManagePlugins = canCurrentUser( state, selectedSite.ID, 'manage_options' );
+	const userCanManagePlugins = canCurrentUser( state, selectedSite.ID, 'activate_plugins' );
 	const calypsoify = isAtomicSite && config.isEnabled( 'calypsoify/plugins' );
 
 	// If migration is in progress, only /migrate paths should be loaded for the site
@@ -275,7 +289,7 @@ export function updateRecentSitesPreferences( context ) {
 
 		if ( siteId && siteId !== recentSites[ 0 ] ) {
 			// Also filter recent sites if not available locally
-			const updatedRecentSites = uniq( [ siteId, ...recentSites ] )
+			const updatedRecentSites = [ ...new Set( [ siteId, ...recentSites ] ) ]
 				.slice( 0, 5 )
 				.filter( ( recentId ) => !! getSite( state, recentId ) );
 

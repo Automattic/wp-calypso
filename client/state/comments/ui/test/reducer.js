@@ -195,7 +195,7 @@ describe( 'reducer', () => {
 				siteId,
 				commentId: 4,
 				status: 'unapproved',
-				meta: { comment: { commentsListQuery: { page: 1, status: 'approved', order: 'ASC' } } },
+				refreshCommentListQuery: { page: 1, status: 'approved', order: 'ASC' },
 			} );
 			expect( query ).toEqual( { site: { 'approved?order=ASC': { 1: [ 1, 3, 5 ] } } } );
 		} );

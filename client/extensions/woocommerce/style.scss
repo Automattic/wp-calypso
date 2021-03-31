@@ -1,7 +1,5 @@
 .woocommerce {
 	@import 'app/dashboard/style';
-	@import 'app/dashboard/widgets/inventory-widget/style';
-	@import 'app/dashboard/setup/style';
 	@import 'app/store-stats/store-stats-chart/style';
 	@import 'app/store-stats/store-stats-orders-chart/style';
 	@import 'app/store-stats/store-stats-module/style';
@@ -14,35 +12,12 @@
 	@import 'app/store-stats/style';
 
 	@import 'components/action-header/style';
-	@import 'components/address-view/style';
-	@import 'components/bulk-select/style';
-	@import 'components/compact-tinymce/style';
 	@import 'components/d3/base/style';
 	@import 'components/d3/horizontal-bar/style';
 	@import 'components/d3/sparkline/style';
-	@import 'components/dashboard-widget/style';
 	@import 'components/delta/style';
-	@import 'components/extended-header/style';
-	@import 'components/filtered-list/style';
-	@import 'components/form-click-to-edit-input/style';
-	@import 'components/form-dimensions-input/style';
-	@import 'components/image-thumb/style';
-	@import 'components/list/style';
-	@import 'components/location-flag/style';
-	@import 'components/order-status/style';
-	@import 'components/price-input/style';
-	@import 'components/product-image-uploader/style';
-	@import 'components/product-reviews-widget/style';
-	@import 'components/product-search/style';
-	@import 'components/reading-widget/style';
-	@import 'components/share-widget/style';
-	@import 'components/store-address/style';
 	@import 'components/table/style';
 	@import 'components/woocommerce-colophon/style';
-
-	@import 'app/dashboard/widgets/stats-widget/style';
-
-	@import 'woocommerce-services/style';
 
 	.main {
 		padding-top: 72px;

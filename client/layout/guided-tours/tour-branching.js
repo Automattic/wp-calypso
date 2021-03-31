@@ -3,14 +3,14 @@
  */
 
 import { Children } from 'react';
-import { flatMap, identity, isFunction } from 'lodash';
+import { flatMap, identity } from 'lodash';
 
 /*
  * Transforms a React `Children` object into an array. The children of a `Step` are
  * a render prop and we need to call the function to get the children array.
  */
 const childrenToArray = ( children ) => {
-	if ( isFunction( children ) ) {
+	if ( typeof children === 'function' ) {
 		children = children( { translate: identity } );
 	}
 

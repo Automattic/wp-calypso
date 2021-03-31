@@ -6,16 +6,7 @@
 import { useI18n } from '@automattic/react-i18n';
 import classNames from 'classnames';
 import React, { useEffect } from 'react';
-import type {
-	Ref,
-	RefObject,
-	MutableRefObject,
-	ChangeEvent,
-	FocusEvent,
-	FormEvent,
-	KeyboardEvent,
-	MouseEvent,
-} from 'react';
+import type { Ref, ChangeEvent, FocusEvent, FormEvent, KeyboardEvent, MouseEvent } from 'react';
 import { debounce } from 'lodash';
 
 /**
@@ -39,8 +30,6 @@ import './style.scss';
  * Internal variables
  */
 const SEARCH_DEBOUNCE_MS = 300;
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = (): void => {};
 
 type KeyboardOrMouseEvent =
 	| MouseEvent< HTMLButtonElement | HTMLInputElement >
@@ -122,19 +111,17 @@ type ImperativeHandle = {
 
 const InnerSearch = (
 	{
-		delaySearch,
-		disabled,
-		pinned,
+		delaySearch = false,
+		disabled = false,
+		pinned = false,
 		onSearchClose,
 		onSearchChange,
-		onSearch: onSearchProp = () => {
-			/* noop default */
-		},
+		onSearch,
 		onBlur: onBlurProp,
 		onKeyDown: onKeyDownProp,
 		onClick,
 		describedBy,
-		delayTimeout,
+		delayTimeout = SEARCH_DEBOUNCE_MS,
 		defaultValue = '',
 		defaultIsOpen = false,
 		autoFocus = false,
@@ -143,58 +130,61 @@ const InnerSearch = (
 		overlayStyling,
 		placeholder: placeholderProp,
 		inputLabel,
-		disableAutocorrect,
+		disableAutocorrect = false,
 		className,
 		dir,
-		fitsContainer,
-		searching,
-		compact,
-		hideOpenIcon,
-		openIconSide,
+		fitsContainer = false,
+		searching = false,
+		compact = false,
+		hideOpenIcon = false,
+		openIconSide = 'left',
 		minLength,
 		maxLength,
-		hideClose,
+		hideClose = false,
 	}: Props,
 	forwardedRef: Ref< ImperativeHandle >
-): JSX.Element => {
+) => {
 	const { __ } = useI18n();
 	const [ keyword, setKeyword ] = React.useState( defaultValue );
 	const [ isOpen, setIsOpen ] = React.useState( defaultIsOpen );
 	const [ hasFocus, setHasFocus ] = React.useState( autoFocus );
 
 	const instanceId = useInstanceId( InnerSearch, 'search' );
-	const searchInput: MutableRefObject< HTMLInputElement | null > = React.useRef( null );
-	const openIcon: RefObject< HTMLButtonElement | null > = React.useRef( null );
-	const overlay: RefObject< HTMLDivElement | null > = React.useRef( null );
-
-	const focus = React.useCallback( () => {
-		// if we call focus before the element has been entirely synced up with the DOM, we stand a decent chance of
-		// causing the browser to scroll somewhere odd. Instead, defer the focus until a future turn of the event loop.
-		setTimeout( () => searchInput.current?.focus(), 0 );
-	}, [] );
-
-	const blur = React.useCallback( () => searchInput.current?.blur(), [] );
-
-	const clear = React.useCallback( (): void => setKeyword( '' ), [] );
+	const searchInput = React.useRef< HTMLInputElement >( null );
+	const openIcon = React.useRef< HTMLButtonElement >( null );
+	const overlay = React.useRef< HTMLDivElement >( null );
 
 	React.useImperativeHandle(
 		forwardedRef,
 		() => ( {
-			focus,
-			blur,
-			clear,
+			focus() {
+				searchInput.current?.focus();
+			},
+			blur() {
+				searchInput.current?.blur();
+			},
+			clear() {
+				setKeyword( '' );
+			},
 		} ),
-		[ focus, blur, clear ]
+		[]
 	);
 
-	const doSearch: ( ( search: string ) => void ) & { cancel?: () => void } = React.useMemo(
-		() => ( delaySearch ? debounce( onSearchProp, delayTimeout ) : onSearchProp ),
-		[ onSearchProp, delayTimeout, delaySearch ]
-	);
+	const doSearch: ( ( search: string ) => void ) & { cancel?: () => void } = React.useMemo( () => {
+		if ( ! onSearch ) {
+			return () => {}; // eslint-disable-line @typescript-eslint/no-empty-function
+		}
+
+		if ( ! delaySearch ) {
+			return onSearch;
+		}
+
+		return debounce( onSearch, delayTimeout );
+	}, [ onSearch, delayTimeout, delaySearch ] );
 
 	useEffect( () => {
 		if ( keyword ) {
-			onSearchProp( keyword );
+			onSearch?.( keyword );
 		}
 		// Disable reason: This effect covers the case where a keyword was passed in as the default value and we only want to run it on first search; the useUpdateEffect below will handle the rest of the time that keyword updates
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -210,26 +200,27 @@ const InnerSearch = (
 				doSearch.cancel?.();
 			}
 
-			doSearch( keyword );
+			// call the callback directly without debouncing
+			onSearch?.( keyword );
 		}
 
 		onSearchChange?.( keyword );
-	}, [ doSearch, keyword, onSearchChange ] );
+	}, [ keyword ] );
 
-	const openSearch = ( event: KeyboardOrMouseEvent ): void => {
+	const openSearch = ( event: KeyboardOrMouseEvent ) => {
 		event.preventDefault();
 
 		setKeyword( '' );
 		setIsOpen( true );
 
-		focus();
+		searchInput.current?.focus();
 		// no need to call `onSearchOpen` as it will be called by `onFocus` once the searcbox is focused
 		// prevent outlines around the open icon after being clicked
 		openIcon.current?.blur();
 		recordEvent?.( 'Clicked Open Search' );
 	};
 
-	const closeSearch = ( event: KeyboardOrMouseEvent ): void => {
+	const closeSearch = ( event: KeyboardOrMouseEvent ) => {
 		event.preventDefault();
 
 		if ( disabled ) {
@@ -258,7 +249,7 @@ const InnerSearch = (
 	const closeListener = keyListener( closeSearch );
 	const openListener = keyListener( openSearch );
 
-	const scrollOverlay = (): void => {
+	const scrollOverlay = () => {
 		window.requestAnimationFrame( () => {
 			if ( overlay.current && searchInput.current ) {
 				overlay.current.scrollLeft = getScrollLeft( searchInput.current );
@@ -270,19 +261,16 @@ const InnerSearch = (
 		scrollOverlay();
 	}, [ keyword, isOpen, hasFocus ] );
 
-	const onBlur = ( event: FocusEvent< HTMLInputElement > ): void => {
-		if ( onBlurProp ) {
-			onBlurProp( event );
-		}
-
+	const onBlur = ( event: FocusEvent< HTMLInputElement > ) => {
+		onBlurProp?.( event );
 		setHasFocus( false );
 	};
 
-	const onChange = ( event: ChangeEvent< HTMLInputElement > ): void => {
+	const onChange = ( event: ChangeEvent< HTMLInputElement > ) => {
 		setKeyword( event.target.value );
 	};
 
-	const onKeyUp = ( event: KeyboardEvent< HTMLInputElement > ): void => {
+	const onKeyUp = ( event: KeyboardEvent< HTMLInputElement > ) => {
 		if ( event.key === 'Enter' && window.innerWidth < 480 ) {
 			//dismiss soft keyboards
 			blur();
@@ -298,13 +286,13 @@ const InnerSearch = (
 		scrollOverlay();
 	};
 
-	const onKeyDown = ( event: KeyboardEvent< HTMLInputElement > ): void => {
+	const onKeyDown = ( event: KeyboardEvent< HTMLInputElement > ) => {
 		scrollOverlay();
 
 		if (
 			event.key === 'Escape' &&
 			// currentTarget will be the input element, rather than target which can be anything
-			event.currentTarget?.value === ''
+			event.currentTarget.value === ''
 		) {
 			closeListener( event );
 		}
@@ -314,7 +302,7 @@ const InnerSearch = (
 
 	// Puts the cursor at end of the text when starting
 	// with `defaultValue` set.
-	const onFocus = (): void => {
+	const onFocus = () => {
 		setHasFocus( true );
 		onSearchOpen?.();
 
@@ -330,7 +318,7 @@ const InnerSearch = (
 		}
 	};
 
-	const handleSubmit = ( event: FormEvent ): void => {
+	const handleSubmit = ( event: FormEvent ) => {
 		event.preventDefault();
 		event.stopPropagation();
 	};
@@ -362,10 +350,7 @@ const InnerSearch = (
 	const renderStylingDiv = () => {
 		if ( typeof overlayStyling === 'function' ) {
 			return (
-				<div
-					className="search-component__text-overlay"
-					ref={ overlay as RefObject< HTMLDivElement > }
-				>
+				<div className="search-component__text-overlay" ref={ overlay }>
 					{ overlayStyling( keyword ) }
 				</div>
 			);
@@ -379,7 +364,7 @@ const InnerSearch = (
 		return (
 			<Button
 				className="search-component__icon-navigation"
-				ref={ openIcon as RefObject< HTMLButtonElement > }
+				ref={ openIcon }
 				onClick={ enableOpenIcon ? openSearch : focus }
 				tabIndex={ enableOpenIcon ? 0 : undefined }
 				onKeyDown={ enableOpenIcon ? openListener : undefined }
@@ -447,32 +432,7 @@ const InnerSearch = (
 	);
 };
 
-export const Search = React.forwardRef( InnerSearch );
-Search.defaultProps = {
-	autoFocus: false,
-	compact: false,
-	delaySearch: false,
-	delayTimeout: SEARCH_DEBOUNCE_MS,
-	describedBy: undefined,
-	dir: undefined,
-	disableAutocorrect: false,
-	disabled: false,
-	fitsContainer: false,
-	hideClose: false,
-	hideOpenIcon: false,
-	defaultIsOpen: false,
-	onClick: noop,
-	onKeyDown: noop,
-	onSearchChange: noop,
-	onSearchOpen: noop,
-	onSearchClose: noop,
-	openIconSide: 'left' as const,
-	//undefined value for overlayStyling is an optimization that will
-	//disable overlay scrolling calculation when no overlay is provided.
-	overlayStyling: undefined,
-	pinned: false,
-	recordEvent: noop,
-	searching: false,
-};
+const Search = React.forwardRef( InnerSearch );
+Search.displayName = 'Search';
 
 export default Search;

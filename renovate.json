@@ -59,6 +59,7 @@
 		"enabled": true,
 		"schedule": "every weekday"
 	},
+	"postUpdateOptions": "yarnDedupeHighest",
 	"prConcurrentLimit": 10,
 	"prHourlyLimit": 6,
 	"semanticCommits": true,

@@ -7,7 +7,12 @@ import { keyBy } from 'lodash';
  * Internal dependencies
  */
 import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
+import {
+	combineReducers,
+	keyedReducer,
+	withSchemaValidation,
+	withPersistence,
+} from 'calypso/state/utils';
 import { items as itemsSchema } from './schema';
 import taxonomies from './taxonomies/reducer';
 import { POST_TYPES_RECEIVE } from 'calypso/state/action-types';
@@ -23,14 +28,17 @@ import { POST_TYPES_RECEIVE } from 'calypso/state/action-types';
  */
 export const items = withSchemaValidation(
 	itemsSchema,
-	keyedReducer( 'siteId', ( state = null, action ) => {
-		switch ( action.type ) {
-			case POST_TYPES_RECEIVE:
-				return keyBy( action.types, 'name' );
-			default:
-				return state;
-		}
-	} )
+	keyedReducer(
+		'siteId',
+		withPersistence( ( state = null, action ) => {
+			switch ( action.type ) {
+				case POST_TYPES_RECEIVE:
+					return keyBy( action.types, 'name' );
+				default:
+					return state;
+			}
+		} )
+	)
 );
 
 const combinedReducer = combineReducers( {

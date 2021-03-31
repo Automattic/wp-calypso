@@ -24,7 +24,7 @@ export default class StoreProductsPage extends AsyncBaseContainer {
 	}
 
 	async productDisplayed( productTitle ) {
-		return await driverHelper.verifyTextPresent(
+		return await driverHelper.waitUntilElementWithTextLocated(
 			this.driver,
 			by.css( '.products__list-name' ),
 			productTitle

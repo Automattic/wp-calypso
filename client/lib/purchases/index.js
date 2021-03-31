@@ -161,7 +161,7 @@ function handleRenewNowClick( purchase, siteSlug, options = {} ) {
 	const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( [ renewItem ] );
 
 	let renewalUrl = `/checkout/${ productSlugs[ 0 ] }/renew/${ purchaseIds[ 0 ] }/${
-		siteSlug || renewItem.extra.purchaseDomain || ''
+		siteSlug || ''
 	}`;
 	if ( options.redirectTo ) {
 		renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
@@ -202,7 +202,7 @@ function handleRenewMultiplePurchasesClick( purchases, siteSlug, options = {} ) 
 	}
 
 	let renewalUrl = `/checkout/${ productSlugs.join( ',' ) }/renew/${ purchaseIds.join( ',' ) }/${
-		siteSlug || renewItems[ 0 ].extra.purchaseDomain || ''
+		siteSlug || ''
 	}`;
 	if ( options.redirectTo ) {
 		renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
@@ -555,6 +555,14 @@ function isRenewing( purchase ) {
 	return includes( [ 'active', 'autoRenewing' ], purchase.expiryStatus );
 }
 
+function isWithinIntroductoryOfferPeriod( purchase ) {
+	return purchase.introductoryOffer?.isWithinPeriod;
+}
+
+function isIntroductoryOfferFreeTrial( purchase ) {
+	return purchase.introductoryOffer?.costPerInterval === 0;
+}
+
 function isSubscription( purchase ) {
 	const nonSubscriptionFunctions = [ isDomainRegistration, isOneTimePurchase ];
 
@@ -759,6 +767,8 @@ export {
 	isRenewal,
 	isRenewing,
 	isSubscription,
+	isWithinIntroductoryOfferPeriod,
+	isIntroductoryOfferFreeTrial,
 	maybeWithinRefundPeriod,
 	needsToRenewSoon,
 	paymentLogoType,
@@ -769,3 +779,5 @@ export {
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 	shouldRenderExpiringCreditCard,
 };
+
+export { isGoogleWorkspaceExtraLicence } from './is-google-workspace-extra-license';

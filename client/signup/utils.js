@@ -31,6 +31,11 @@ export function getStepName( parameters ) {
 	return find( pick( parameters, [ 'flowName', 'stepName' ] ), isStepName );
 }
 
+export function isFirstStepInFlow( flowName, stepName ) {
+	const { steps: stepsBelongingToFlow } = flows.getFlow( flowName );
+	return stepsBelongingToFlow.indexOf( stepName ) === 0;
+}
+
 function isStepName( pathFragment ) {
 	return ! isEmpty( steps[ pathFragment ] );
 }

@@ -23,9 +23,7 @@ const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > 
 
 registerPlugin( 'a8c-editor-site-launch', {
 	render: function LaunchSidebar() {
-		const { isSidebarOpen, isAnchorFm } = useSelect( ( select ) =>
-			select( LAUNCH_STORE ).getState()
-		);
+		const { isSidebarOpen } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 		const { closeSidebar, setSidebarFullscreen, unsetSidebarFullscreen } = useDispatch(
 			LAUNCH_STORE
 		);
@@ -58,7 +56,7 @@ registerPlugin( 'a8c-editor-site-launch', {
 						isInIframe: inIframe(),
 					} }
 				>
-					<LaunchModal onClose={ closeSidebar } isLaunchImmediately={ isAnchorFm } />
+					<LaunchModal onClose={ closeSidebar } />
 				</LaunchContext.Provider>
 			</LocaleProvider>
 		);

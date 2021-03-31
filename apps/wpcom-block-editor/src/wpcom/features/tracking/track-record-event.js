@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isObjectLike, isUndefined, omit } from 'lodash';
+import { isObjectLike, omit } from 'lodash';
 import debug from 'debug';
 
 /**
@@ -67,7 +67,7 @@ export default ( eventName, eventProperties ) => {
 
 	// Remove properties that have an undefined value
 	// This allows a caller to easily remove properties from the recorded set by setting them to undefined
-	eventProperties = omit( eventProperties, isUndefined );
+	eventProperties = omit( eventProperties, ( prop ) => typeof prop === 'undefined' );
 
 	// Populate custom properties.
 	eventProperties = { ...eventProperties, ...customProperties };

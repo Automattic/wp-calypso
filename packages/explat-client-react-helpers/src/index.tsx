@@ -23,7 +23,21 @@ interface ExPlatClientReactHelpers {
 	 */
 	Experiment: ( props: {
 		name: string;
-		children: { default: React.ReactNode; treatment: React.ReactNode; loading: React.ReactNode };
+		defaultExperience: React.ReactNode;
+		treatmentExperience: React.ReactNode;
+		loadingExperience: React.ReactNode;
+	} ) => JSX.Element;
+
+	/**
+	 * Inject experiment data into a child component.
+	 * Use when hooks aren't available.
+	 */
+	ProvideExperimentData: ( props: {
+		children: (
+			isLoading: boolean,
+			experimentAssignment: ExperimentAssignment | null
+		) => JSX.Element;
+		name: string;
 	} ) => JSX.Element;
 }
 
@@ -32,18 +46,16 @@ export default function createExPlatClientReactHelpers(
 ): ExPlatClientReactHelpers {
 	const useExperiment = ( experimentName: string ): [ boolean, ExperimentAssignment | null ] => {
 		const [ previousExperimentName ] = useState( experimentName );
-		const [ isLoading, setIsLoading ] = useState< boolean >( true );
-		const [
-			experimentAssignment,
-			setExperimentAssignment,
-		] = useState< ExperimentAssignment | null >( null );
+		const [ state, setState ] = useState< [ boolean, ExperimentAssignment | null ] >( [
+			true,
+			null,
+		] );
 
 		useEffect( () => {
 			let isSubscribed = true;
 			exPlatClient.loadExperimentAssignment( experimentName ).then( ( experimentAssignment ) => {
 				if ( isSubscribed ) {
-					setExperimentAssignment( experimentAssignment );
-					setIsLoading( false );
+					setState( [ false, experimentAssignment ] );
 				}
 			} );
 			return () => {
@@ -57,34 +69,51 @@ export default function createExPlatClientReactHelpers(
 			experimentName !== previousExperimentName &&
 			! previousExperimentName.startsWith( 'explat_test' )
 		) {
-			const message = '[ExPlat] useExperiment: experimentName should never change between renders!';
-			if ( exPlatClient.config.isDevelopmentMode ) {
-				throw new Error( message );
-			}
-			exPlatClient.config.logError( { message } );
+			exPlatClient.config.logError( {
+				message: '[ExPlat] useExperiment: experimentName should never change between renders!',
+			} );
 		}
 
-		return [ isLoading, experimentAssignment ];
+		return state;
 	};
 
 	const Experiment = ( {
-		children,
+		defaultExperience,
+		treatmentExperience,
+		loadingExperience,
 		name: experimentName,
 	}: {
-		children: { default: React.ReactNode; treatment: React.ReactNode; loading: React.ReactNode };
+		defaultExperience: React.ReactNode;
+		treatmentExperience: React.ReactNode;
+		loadingExperience: React.ReactNode;
 		name: string;
 	} ): JSX.Element => {
 		const [ isLoading, experimentAssignment ] = useExperiment( experimentName );
 		if ( isLoading ) {
-			return <>{ children.loading }</>;
+			return <>{ loadingExperience }</>;
 		} else if ( ! experimentAssignment?.variationName ) {
-			return <>{ children.default }</>;
+			return <>{ defaultExperience }</>;
 		}
-		return <>{ children.treatment }</>;
+		return <>{ treatmentExperience }</>;
+	};
+
+	const ProvideExperimentData = ( {
+		children,
+		name: experimentName,
+	}: {
+		children: (
+			isLoading: boolean,
+			experimentAssignment: ExperimentAssignment | null
+		) => JSX.Element;
+		name: string;
+	} ): JSX.Element => {
+		const [ isLoading, experimentAssignment ] = useExperiment( experimentName );
+		return children( isLoading, experimentAssignment );
 	};
 
 	return {
 		useExperiment,
 		Experiment,
+		ProvideExperimentData,
 	};
 }

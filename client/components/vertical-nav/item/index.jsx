@@ -47,21 +47,21 @@ class VerticalNavItem extends Component {
 	};
 
 	render() {
-		if ( this.props.isPlaceholder ) {
+		const { isPlaceHolder, external, onClick, path, className, children } = this.props;
+
+		if ( isPlaceHolder ) {
 			return this.placeholder();
 		}
 
-		const compactCardClassNames = classNames( 'vertical-nav-item', this.props.className );
+		const compactCardClassNames = classNames( 'vertical-nav-item', className );
+
+		const linkProps = external ? { target: '_blank', rel: 'noreferrer' } : {};
 
 		return (
-			<a
-				href={ this.props.path }
-				onClick={ this.props.onClick }
-				target={ this.props.external ? '_blank' : null }
-			>
+			<a href={ path } onClick={ onClick } { ...linkProps }>
 				<CompactCard className={ compactCardClassNames }>
 					{ this.getIcon() }
-					<span>{ this.props.children }</span>
+					<span>{ children }</span>
 				</CompactCard>
 			</a>
 		);

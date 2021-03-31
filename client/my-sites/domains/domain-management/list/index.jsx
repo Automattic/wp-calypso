@@ -151,6 +151,7 @@ export class List extends React.Component {
 						brandFont
 						className="domain-management__page-heading"
 						headerText={ this.props.translate( 'Site Domains' ) }
+						subHeaderText={ this.props.translate( 'Manage the domains connected to your site.' ) }
 						align="left"
 					/>
 					<div className="domains__header-buttons">

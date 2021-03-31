@@ -85,6 +85,13 @@
 	margin-bottom: initial;
 }
 
+.product-grid__asterisk-list {
+	margin: 0;
+	padding: 0;
+
+	list-style-type: none;
+}
+
 .product-grid__asterisk-item {
 	&::before {
 		content: '*';

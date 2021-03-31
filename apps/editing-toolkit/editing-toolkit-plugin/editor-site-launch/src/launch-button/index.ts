@@ -55,7 +55,7 @@ domReady( () => {
 				is_in_iframe: inIframe(),
 			} );
 
-			// Enable anchor-flavoured gutenboarding features (the launch button works immediately).
+			// Enable anchor-flavoured features (the launch button works immediately).
 			const isAnchorFm = !! anchorFmPodcastId;
 			if ( isAnchorFm ) {
 				dispatch( 'automattic/launch' ).enableAnchorFm();
@@ -66,6 +66,11 @@ domReady( () => {
 
 			switch ( launchFlow ) {
 				case GUTENBOARDING_LAUNCH_FLOW:
+					// @TODO: remove this temporary solution once backend returns correct launch flow value
+					if ( isAnchorFm ) {
+						dispatch( 'automattic/launch' ).openFocusedLaunch();
+						break;
+					}
 					// Save post in the background while step-by-step flow opens
 					dispatch( 'automattic/launch' ).openSidebar();
 					delayedSavePost();

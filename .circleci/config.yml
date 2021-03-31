@@ -8,7 +8,7 @@ references:
   defaults: &defaults
     working_directory: ~/wp-calypso
     docker:
-      - image: cimg/node:12.21.0
+      - image: cimg/node:14.16.0
     environment:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
@@ -544,31 +544,6 @@ jobs:
               curl --silent "https://hash-$CIRCLE_SHA1.calypso.live"
             fi
 
-  # Wait for calypso.live to be ready
-  #
-  # Expected usage:
-  #   - After main tests have passed (test-client, test-server)
-  #   - Before e2e tests run
-  #
-  wait-calypso-live:
-    docker:
-      - image: buildpack-deps
-    working_directory: ~/wp-calypso
-    steps:
-      - run:
-          name: Check external author
-          command: |
-            if [[ ! -z $CIRCLE_PR_USERNAME ]]; then
-              echo 'PRs from external authors cannot run on calypso.live'
-              exit 1
-            fi
-      - restore_cache: *restore-git-cache
-      - checkout
-      # Don't bother updating the git cache here, it would be the second time in the workflow
-      - run:
-          name: Wait for calypso.live build
-          command: ./test/e2e/scripts/wait-for-running-branch.sh
-
   test-e2e:
     <<: *defaults
     working_directory: ~/wp-calypso/test/e2e
@@ -791,7 +766,7 @@ jobs:
           name: Persist Mac Executable
           command: |
             # If this isn't a full artifact build, ensure to persist the built application for inspection
-            if ls desktop/release/*.zip &>/dev/null
+            if ! ls desktop/release/*.zip &>/dev/null
             then
               ditto -ck --rsrc --sequesterRsrc desktop/release/mac desktop/release/mac.app.zip
             fi
@@ -820,7 +795,7 @@ jobs:
 
   wp-desktop-linux:
     docker:
-      - image: circleci/node:12.21.0-browsers
+      - image: circleci/node:14.16.0-browsers
     <<: *desktop_defaults
     shell: /bin/bash --login
     steps:
@@ -1077,32 +1052,6 @@ workflows:
               only:
                 # Only run for fork pull requets.
                 - /pull\/[0-9]+/
-      - wait-calypso-live:
-          requires:
-            - setup
-          filters:
-            branches:
-              ignore:
-                # Do not spin up calypso.live for `trunk`
-                - trunk
-                # Do not spin up calypso.live for fork pull requests. Calypso.live will not build them.
-                - /pull\/[0-9]+/
-      #      - test-e2e-canary:
-      #          requires:
-      #            - wait-calypso-live
-      #          test-flags: '-C -S $CIRCLE_SHA1'
-      # - test-e2e-canary:
-      #     name: test-e2e-canary-ie
-      #     requires:
-      #       - wait-calypso-live
-      #     test-flags: '-z -S $CIRCLE_SHA1'
-      #     test-target: 'IE11'
-      #     slack-webhook: '$SLACK_IE'
-      - test-e2e-canary:
-          name: test-e2e-canary-safari
-          requires:
-            - wait-calypso-live
-          test-flags: '-y -S $CIRCLE_SHA1'
   wp-desktop:
     jobs:
       - wp-desktop-source:

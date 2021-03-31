@@ -27,7 +27,7 @@ import {
 	receiveMedia,
 	setMediaItemErrors,
 	setNextPageHandle,
-	setMediaLibrarySelectedItems,
+	selectMediaItems,
 	successMediaItemRequest,
 } from '../actions';
 import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
@@ -437,6 +437,7 @@ describe( 'reducer', () => {
 		};
 		const anotherSiteId = 87654321;
 		const mediaId = 42;
+		const transientMediaId = 'media-32';
 		const mediaItem = {
 			ID: [ mediaId ],
 		};
@@ -467,7 +468,7 @@ describe( 'reducer', () => {
 			};
 			const result = selectedItems(
 				deepFreeze( state ),
-				setMediaLibrarySelectedItems( siteId, [ mediaItem ] )
+				selectMediaItems( siteId, [ mediaItem ] )
 			);
 
 			expect( result ).to.deep.eql( {
@@ -511,11 +512,11 @@ describe( 'reducer', () => {
 
 		test( 'should deselect any transient media item after its corresponding media was successfully uploaded', () => {
 			const state = {
-				[ site.ID ]: [ 1, mediaId, 2 ],
+				[ site.ID ]: [ 1, transientMediaId, 2 ],
 			};
 			const result = selectedItems(
 				deepFreeze( state ),
-				successMediaItemRequest( siteId, mediaId )
+				successMediaItemRequest( siteId, transientMediaId )
 			);
 
 			expect( result ).to.deep.eql( {

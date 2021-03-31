@@ -19,6 +19,7 @@
 		"decryptconfig": "openssl enc -md sha1 -aes-256-cbc -d -pass env:CONFIG_KEY -in ./config/encrypted.enc -out ./config/local-$NODE_CONFIG_ENV.json"
 	},
 	"dependencies": {
+		"@automattic/calypso-e2e": "^0.1.0",
 		"@babel/core": "^7.2.2",
 		"@babel/preset-env": "^7.3.1",
 		"@babel/register": "^7.0.0",
@@ -26,7 +27,7 @@
 		"@xmpp/plugins": "^0.3.0",
 		"asana-phrase": "^0.0.8",
 		"cached-path-relative": ">=1.0.2",
-		"chromedriver": "^87.0.5",
+		"chromedriver": "^89.0.0",
 		"concurrently": "^3.6.1",
 		"config": "^1.28.0",
 		"cryptiles": ">=4.1.2",

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
-import { get, size, takeRight, delay } from 'lodash';
+import { get, size, delay } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -343,7 +343,7 @@ class PostCommentList extends React.Component {
 			return null;
 		}
 
-		const displayedComments = takeRight( commentIds, numberToTake );
+		const displayedComments = numberToTake ? commentIds.slice( numberToTake * -1 ) : [];
 
 		return {
 			displayedComments,

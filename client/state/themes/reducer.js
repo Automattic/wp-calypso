@@ -7,6 +7,7 @@ import { mapValues, omit, map } from 'lodash';
  * Internal dependencies
  */
 import { withStorageKey } from '@automattic/state-utils';
+import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import {
@@ -304,29 +305,6 @@ export const queryRequestErrors = ( state = {}, action ) => {
 	return state;
 };
 
-function applyToManager( state, siteId, method, createDefault, ...args ) {
-	if ( ! state[ siteId ] ) {
-		if ( ! createDefault ) {
-			return state;
-		}
-
-		return {
-			...state,
-			[ siteId ]: new ThemeQueryManager( null, { itemKey: 'id' } )[ method ]( ...args ),
-		};
-	}
-
-	const nextManager = state[ siteId ][ method ]( ...args );
-	if ( nextManager === state[ siteId ] ) {
-		return state;
-	}
-
-	return {
-		...state,
-		[ siteId ]: nextManager,
-	};
-}
-
 function fromApi( theme ) {
 	if ( ! theme || ! theme.description ) {
 		return theme;
@@ -352,20 +330,18 @@ const queriesReducer = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case THEMES_REQUEST_SUCCESS: {
 			const { siteId, query, themes, found } = action;
-			return applyToManager(
-				// Always 'patch' to avoid overwriting existing fields when receiving
-				// from a less rich endpoint such as /mine
+			return withQueryManager(
 				state,
 				siteId,
-				'receive',
-				true,
-				map( themes, fromApi ),
-				{ query, found, patch: true }
+				// Always 'patch' to avoid overwriting existing fields when receiving
+				// from a less rich endpoint such as /mine
+				( m ) => m.receive( map( themes, fromApi ), { query, found, patch: true } ),
+				() => new ThemeQueryManager( null, { itemKey: 'id' } )
 			);
 		}
 		case THEME_DELETE_SUCCESS: {
 			const { siteId, themeId } = action;
-			return applyToManager( state, siteId, 'removeItem', false, themeId );
+			return withQueryManager( state, siteId, ( m ) => m.removeItem( themeId ) );
 		}
 	}
 

@@ -13,6 +13,11 @@ import {
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import {
+	getCouponLineItemFromCart,
+	getTaxLineItemFromCart,
+	getTotalLineItemFromCart,
+} from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -24,7 +29,6 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import Gridicon from 'calypso/components/gridicon';
 import getPlanFeatures from '../lib/get-plan-features';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
-import { getCouponLineItem, getTaxLineItem, getTotalLineItem } from '../lib/translate-cart';
 import { isPlan } from 'calypso/lib/products-values';
 
 export default function WPCheckoutOrderSummary( {
@@ -35,9 +39,9 @@ export default function WPCheckoutOrderSummary( {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
 	const { responseCart } = useShoppingCart();
-	const couponLineItem = getCouponLineItem( responseCart );
-	const taxLineItem = getTaxLineItem( responseCart );
-	const totalLineItem = getTotalLineItem( responseCart );
+	const couponLineItem = getCouponLineItemFromCart( responseCart );
+	const taxLineItem = getTaxLineItemFromCart( responseCart );
+	const totalLineItem = getTotalLineItemFromCart( responseCart );
 
 	const hasRenewalInCart = responseCart.products.some(
 		( product ) => product.extra.purchaseType === 'renewal'
@@ -189,21 +193,11 @@ function CheckoutSummaryFeaturesList( props ) {
 	);
 }
 
-function SupportText( { hasPlanInCart, isJetpackNotAtomic, hasMonthlyPlan } ) {
+function SupportText( { hasPlanInCart, isJetpackNotAtomic } ) {
 	const translate = useTranslate();
-	const { responseCart } = useShoppingCart();
-	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
 
 	if ( hasPlanInCart && ! isJetpackNotAtomic ) {
-		if ( hasMonthlyPlan ) {
-			return null;
-		}
-
-		if ( 'personal-bundle' === plan?.product_slug || 'personal-bundle-2y' === plan?.product_slug ) {
-			return <span>{ translate( 'Access unlimited email support' ) }</span>;
-		}
-
-		return <span>{ translate( 'Email and live chat support' ) }</span>;
+		return <span>{ translate( 'Unlimited email support' ) }</span>;
 	}
 
 	return <span>{ translate( 'Email support' ) }</span>;

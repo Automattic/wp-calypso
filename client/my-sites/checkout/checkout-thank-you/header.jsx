@@ -22,6 +22,7 @@ import {
 	isSiteRedirect,
 	isTitanMail,
 } from 'calypso/lib/products-values';
+import { isGoogleWorkspaceExtraLicence } from 'calypso/lib/purchases';
 import {
 	isGSuiteExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
@@ -202,6 +203,15 @@ export class CheckoutThankYouHeader extends PureComponent {
 			);
 		}
 
+		if (
+			isGoogleWorkspaceExtraLicence( primaryPurchase ) ||
+			isGSuiteExtraLicenseProductSlug( primaryPurchase.productSlug )
+		) {
+			return preventWidows(
+				translate( 'You will receive an email confirmation shortly for your purchase.' )
+			);
+		}
+
 		if ( isGSuiteOrGoogleWorkspaceProductSlug( primaryPurchase.productSlug ) ) {
 			return preventWidows(
 				translate(
@@ -216,12 +226,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 							'%(productName)s can be either "G Suite" or "Google Workspace Business Starter"',
 					}
 				)
-			);
-		}
-
-		if ( isGSuiteExtraLicenseProductSlug( primaryPurchase.productSlug ) ) {
-			return preventWidows(
-				translate( 'You will receive an email confirmation shortly for your purchase.' )
 			);
 		}
 
@@ -614,8 +618,8 @@ export class CheckoutThankYouHeader extends PureComponent {
 		const CHECKMARK_SIZE = 24;
 		return (
 			<ul className="checkout-thank-you__success-messages">
-				{ messages.map( ( message ) => (
-					<li className="checkout-thank-you__success-message-item">
+				{ messages.map( ( message, i ) => (
+					<li key={ i } className="checkout-thank-you__success-message-item">
 						<Gridicon icon="checkmark-circle" size={ CHECKMARK_SIZE } />
 						<div>{ preventWidows( message ) }</div>
 					</li>

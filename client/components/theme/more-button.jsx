@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { isFunction, map } from 'lodash';
+import { map } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -41,7 +41,7 @@ class ThemeMoreButton extends Component {
 
 	closePopover = ( action ) => {
 		this.setState( { showPopover: false } );
-		if ( isFunction( action ) ) {
+		if ( typeof action === 'function' ) {
 			action();
 		}
 	};

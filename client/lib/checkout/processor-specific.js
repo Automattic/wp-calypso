@@ -3,7 +3,7 @@
  *
  */
 import i18n from 'i18n-calypso';
-import { isUndefined, pick } from 'lodash';
+import { pick } from 'lodash';
 import { CPF, CNPJ } from 'cpf_cnpj';
 
 /**
@@ -22,7 +22,7 @@ import { translateWpcomPaymentMethodToCheckoutPaymentMethod } from 'calypso/my-s
  */
 export function isEbanxCreditCardProcessingEnabledForCountry( countryCode, cart ) {
 	return (
-		! isUndefined( PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ countryCode ] ) &&
+		typeof PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ countryCode ] !== 'undefined' &&
 		isPaymentMethodEnabled(
 			'ebanx',
 			cart.allowed_payment_methods?.map( translateWpcomPaymentMethodToCheckoutPaymentMethod )

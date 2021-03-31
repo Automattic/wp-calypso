@@ -4,13 +4,10 @@
 import {
 	assign,
 	camelCase,
-	constant,
 	debounce,
-	every,
 	filter,
 	flatten,
 	isEmpty,
-	isUndefined,
 	map,
 	mapValues,
 	pickBy,
@@ -45,13 +42,14 @@ function Controller( options ) {
 	this._pendingValidation = null;
 	this._onValidationComplete = null;
 
-	const debounceWait = isUndefined( options.debounceWait ) ? 1000 : options.debounceWait;
+	const debounceWait = typeof options.debounceWait === 'undefined' ? 1000 : options.debounceWait;
 	this._debouncedSanitize = debounce( this.sanitize, debounceWait );
 	this._debouncedValidate = debounce( this.validate, debounceWait );
 
-	this._hideFieldErrorsOnChange = isUndefined( options.hideFieldErrorsOnChange )
-		? false
-		: options.hideFieldErrorsOnChange;
+	this._hideFieldErrorsOnChange =
+		typeof options.hideFieldErrorsOnChange === 'undefined'
+			? false
+			: options.hideFieldErrorsOnChange;
 
 	if ( this._loadFunction ) {
 		this._loadFieldValues();
@@ -243,12 +241,9 @@ function setFieldErrors( formState, fieldErrors, hideFieldErrorsOnChange ) {
 }
 
 function showAllErrors( formState ) {
-	return updateFields(
-		initializeFields( formState, getAllFieldValues( formState ) ),
-		constant( {
-			isShowingErrors: true,
-		} )
-	);
+	return updateFields( initializeFields( formState, getAllFieldValues( formState ) ), () => ( {
+		isShowingErrors: true,
+	} ) );
 }
 
 function hasErrors( formState ) {
@@ -308,7 +303,7 @@ function isInitialized( field ) {
 }
 
 function isEveryFieldInitialized( formState ) {
-	return every( formState, isInitialized );
+	return Object.values( formState ).every( isInitialized );
 }
 
 function isFieldInvalid( formState, fieldName ) {
@@ -341,7 +336,7 @@ function getErrorMessages( formState ) {
 }
 
 function isSubmitButtonDisabled( formState ) {
-	return ! every( formState, isInitialized );
+	return ! Object.values( formState ).every( isInitialized );
 }
 
 function isFieldDisabled( formState, fieldName ) {

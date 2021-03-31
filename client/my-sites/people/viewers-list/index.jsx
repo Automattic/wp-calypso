@@ -9,13 +9,31 @@ import { useDispatch } from 'react-redux';
  * Internal dependencies
  */
 import Viewers from './viewers';
-import useViewers from 'calypso/data/viewers/use-viewers';
+import useViewersQuery from 'calypso/data/viewers/use-viewers-query';
 import useRemoveViewer from 'calypso/data/viewers/remove-viewer';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 
-const ViewersList = ( { site, label } ) => {
+const useErrorNotice = ( error, refetch ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+
+	useEffect( () => {
+		if ( error ) {
+			dispatch(
+				errorNotice( translate( 'There was an error retrieving viewers' ), {
+					id: 'site-viewers-notice',
+					button: translate( 'Try again' ),
+					onClick: () => {
+						dispatch( removeNotice( 'site-viewers-notice' ) );
+						refetch();
+					},
+				} )
+			);
+		}
+	}, [ dispatch, error, refetch, translate ] );
+};
+
+const ViewersList = ( { site, label } ) => {
 	const {
 		data,
 		isLoading,
@@ -24,25 +42,10 @@ const ViewersList = ( { site, label } ) => {
 		hasNextPage,
 		error,
 		refetch,
-	} = useViewers( {
-		siteId: site.ID,
-	} );
+	} = useViewersQuery( site.ID );
 	const { removeViewer } = useRemoveViewer();
 
-	useEffect( () => {
-		if ( error ) {
-			dispatch(
-				errorNotice( 'There was an error retrieving viewer', {
-					id: 'site-viewers-notice',
-					button: 'Try again',
-					onClick: () => {
-						removeNotice( 'site-viewers-notice' );
-						refetch();
-					},
-				} )
-			);
-		}
-	}, [ dispatch, error, refetch, translate ] );
+	useErrorNotice( error, refetch );
 
 	return (
 		<Viewers

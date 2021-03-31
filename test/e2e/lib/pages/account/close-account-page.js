@@ -55,8 +55,8 @@ export default class CloseAccountPage extends AsyncBaseContainer {
 		);
 	}
 
-	async ConfirmAccountHasBeenClosed() {
-		await driverHelper.verifyTextPresent(
+	async confirmAccountHasBeenClosed() {
+		await driverHelper.waitUntilElementWithTextLocated(
 			this.driver,
 			by.css( '.empty-content__title' ),
 			'Your account has been closed'

@@ -9,7 +9,10 @@ import { ActionButtons, NextButton, SubTitle, Title } from '@automattic/onboardi
 import { __, sprintf } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { TextControl, SVG, Path, Tooltip, Circle, Rect, Button } from '@wordpress/components';
-import DomainPicker, { mockDomainSuggestion } from '@automattic/domain-picker';
+import DomainPicker, {
+	mockDomainSuggestion,
+	SUGGESTION_ITEM_TYPE_INDIVIDUAL,
+} from '@automattic/domain-picker';
 import classNames from 'classnames';
 import { Icon, check } from '@wordpress/icons';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -207,7 +210,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							analyticsUiAlgo="summary_domain_step"
 							quantity={ 3 }
 							quantityExpanded={ 3 }
-							itemType="individual-item"
+							itemType={ SUGGESTION_ITEM_TYPE_INDIVIDUAL }
 							locale={ locale }
 							orderSubDomainsLast={ true }
 						/>

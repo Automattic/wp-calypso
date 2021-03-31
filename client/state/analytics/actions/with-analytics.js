@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { curry, get, isFunction, merge } from 'lodash';
+import { curry, get, merge } from 'lodash';
 
 const mergedMetaData = ( a, b ) => [
 	...get( a, 'meta.analytics', [] ),
@@ -9,7 +9,7 @@ const mergedMetaData = ( a, b ) => [
 ];
 
 const joinAnalytics = ( analytics, action ) =>
-	isFunction( action )
+	typeof action === 'function'
 		? ( dispatch ) => {
 				dispatch( analytics );
 				dispatch( action );

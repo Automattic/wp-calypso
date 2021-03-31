@@ -600,21 +600,17 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async schedulePost( publishDate ) {
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishHeaderSelector );
-		await driverHelper.verifyTextPresent(
+		await driverHelper.waitUntilElementWithTextLocated(
 			this.driver,
 			By.css( '.editor-post-publish-panel__link' ),
 			publishDate
 		);
 		await driverHelper.clickWhenClickable( this.driver, this.publishButtonSelector );
 		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
-		await driverHelper.waitTillPresentAndDisplayed(
-			this.driver,
-			By.css( '.post-publish-panel__postpublish-header' )
-		);
-		return await driverHelper.verifyTextPresent(
+		await driverHelper.waitUntilElementWithTextLocated(
 			this.driver,
 			By.css( '.post-publish-panel__postpublish-header' ),
-			'Scheduled'
+			/scheduled/i
 		);
 	}
 
@@ -648,7 +644,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async dismissPageTemplateSelector() {
-		if ( await driverHelper.isElementPresent( this.driver, By.css( '.page-template-modal' ) ) ) {
+		if ( await driverHelper.isElementPresent( this.driver, By.css( '.page-pattern-modal' ) ) ) {
 			if ( driverManager.currentScreenSize() === 'mobile' ) {
 				// For some reason, when the screensize is set to mobile,
 				// the welcome guide modal is not closed when the template button
@@ -664,11 +660,11 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				);
 				await driverHelper.clickWhenClickable(
 					this.driver,
-					By.css( 'button.template-selector-item__label[value="blank"]' )
+					By.css( 'button.page-pattern-modal__blank-button' )
 				);
 			} else {
 				const useBlankButton = await this.driver.findElement(
-					By.css( '.page-template-modal__buttons .components-button.is-primary' )
+					By.css( 'button.page-pattern-modal__blank-button' )
 				);
 				await this.driver.executeScript( 'arguments[0].click()', useBlankButton );
 			}

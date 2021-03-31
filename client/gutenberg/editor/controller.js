@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { get, has, isInteger } from 'lodash';
+import { get, has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,7 +11,7 @@ import { isEligibleForGutenframe } from 'calypso/state/gutenberg-iframe-eligible
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoifyIframe from './calypsoify-iframe';
-import getGutenbergEditorUrl from 'calypso/state/selectors/get-gutenberg-editor-url';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import { requestSelectedEditor } from 'calypso/state/selected-editor/actions';
@@ -186,7 +186,7 @@ export const redirect = async ( context, next ) => {
 
 		const url =
 			postType || ! isSiteUsingCoreSiteEditor( state, siteId )
-				? getGutenbergEditorUrl( state, siteId, postId, postType )
+				? getEditorUrl( state, siteId, postId, postType )
 				: getSiteEditorUrl( state, siteId );
 		// pass along parameters, for example press-this
 		return window.location.replace( addQueryArgs( context.query, url ) );
@@ -213,7 +213,7 @@ export const post = ( context, next ) => {
 	const jetpackCopy = parseInt( get( context, 'query.jetpack-copy', null ) );
 
 	// Check if this value is an integer.
-	const duplicatePostId = isInteger( jetpackCopy ) ? jetpackCopy : null;
+	const duplicatePostId = Number.isInteger( jetpackCopy ) ? jetpackCopy : null;
 
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );

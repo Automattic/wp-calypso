@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate, TranslateResult, numberFormat } from 'i18n-calypso';
-import { compact, isObject, isFunction } from 'lodash';
+import { compact, isObject } from 'lodash';
 import page from 'page';
 import React, { createElement, Fragment } from 'react';
 import formatCurrency from '@automattic/format-currency';
@@ -604,7 +604,7 @@ export function buildCardFeaturesFromItem(
 		if ( features ) {
 			return buildCardFeaturesFromFeatureKeys( features, options, variation );
 		}
-	} else if ( isFunction( item.getFeatures ) ) {
+	} else if ( typeof item.getFeatures === 'function' ) {
 		const features = getForCurrentCROIteration( item.getFeatures );
 
 		if ( features ) {

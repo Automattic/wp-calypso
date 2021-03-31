@@ -1,8 +1,8 @@
 ARG use_cache=false
-ARG node_version=12.21.0
+ARG node_version=14.16.0
 
 ###################
-FROM node:${node_version} as builder-cache-false
+FROM node:${node_version}-buster as builder-cache-false
 
 
 ###################
@@ -20,7 +20,7 @@ ARG commit_sha="(unknown)"
 ARG workers=4
 ARG node_memory=8192
 ENV CONTAINER 'docker'
-ENV PROGRESS true
+ENV WEBPACK_OPTIONS '--progress=profile'
 ENV COMMIT_SHA $commit_sha
 ENV CALYPSO_ENV production
 ENV NODE_ENV production
@@ -28,6 +28,7 @@ ENV WORKERS $workers
 ENV BUILD_TRANSLATION_CHUNKS true
 ENV CHROMEDRIVER_SKIP_DOWNLOAD true
 ENV PUPPETEER_SKIP_DOWNLOAD true
+ENV PLAYWRIGHT_SKIP_DOWNLOAD true
 ENV NODE_OPTIONS --max-old-space-size=$node_memory
 WORKDIR /calypso
 

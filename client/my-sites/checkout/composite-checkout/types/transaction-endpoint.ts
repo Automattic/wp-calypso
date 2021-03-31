@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import type { ResponseCartProductExtra } from '@automattic/shopping-cart';
+import type { RequestCartProduct, ResponseCartTaxData } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -10,11 +10,10 @@ import type { WPCOMCartItem } from './checkout-cart';
 import type { Purchase } from './wpcom-store-state';
 import type { DomainContactDetails } from './backend/domain-contact-details-components';
 
-// The data required by createTransactionEndpointRequestPayloadFromLineItems
-export interface TransactionRequestWithLineItems {
+export interface TransactionRequest {
 	country: string;
 	postalCode: string;
-	items: WPCOMCartItem[];
+	cart: WPCOMTransactionEndpointCart;
 	paymentMethodType: string;
 	name: string;
 	siteId?: string | undefined;
@@ -41,20 +40,10 @@ export interface TransactionRequestWithLineItems {
 	nik?: string | undefined;
 }
 
-export type ExistingCardTransactionRequestWithLineItems = Partial< TransactionRequestWithLineItems > &
-	Required<
-		Pick<
-			TransactionRequestWithLineItems,
-			| 'country'
-			| 'postalCode'
-			| 'items'
-			| 'name'
-			| 'storedDetailsId'
-			| 'siteId'
-			| 'paymentMethodToken'
-			| 'paymentPartnerProcessorId'
-		>
-	>;
+// The data required by createTransactionEndpointRequestPayloadFromLineItems
+export interface TransactionRequestWithLineItems extends TransactionRequest {
+	items: WPCOMCartItem[];
+}
 
 export type WPCOMTransactionEndpoint = (
 	_: WPCOMTransactionEndpointRequestPayload
@@ -103,28 +92,20 @@ export type WPCOMTransactionEndpointCart = {
 	currency: string;
 	temporary: false;
 	extra: string[];
-	products: WPCOMTransactionEndpointCartItem[];
-	tax: {
-		location: {
-			country_code: string;
-			postal_code?: string;
-			subdivision_code?: string;
-		};
-	};
+	products: RequestCartProduct[];
+	tax: Omit< ResponseCartTaxData, 'display_taxes' >;
 };
 
-export type WPCOMTransactionEndpointCartItem = {
-	product_id: number;
-	meta?: string;
-	currency: string;
-	volume: number;
-	extra?: ResponseCartProductExtra;
-};
+type PurchaseSiteId = number;
 
 export type WPCOMTransactionEndpointResponse = {
 	success: boolean;
 	error_code: string;
 	error_message: string;
-	receipt_id: number;
-	purchases: Record< number, Purchase >;
+	failed_purchases?: Record< PurchaseSiteId, Purchase[] >;
+	purchases?: Record< PurchaseSiteId, Purchase[] >;
+	receipt_id?: number;
+	order_id?: number;
+	redirect_url?: string;
+	message?: { payment_intent_client_secret: string };
 };

@@ -8,8 +8,7 @@ import { filter } from 'lodash';
  */
 import { THEMES_REQUEST_SUCCESS } from 'calypso/state/themes/action-types';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { shouldFilterWpcomThemes } from 'calypso/state/themes/selectors';
-import { isThemeFromWpcom, isThemeMatchingQuery } from 'calypso/state/themes/utils';
+import { isThemeMatchingQuery } from 'calypso/state/themes/utils';
 
 import 'calypso/state/themes/init';
 
@@ -30,16 +29,11 @@ export function receiveThemes( themes, siteId, query, foundCount ) {
 
 		if ( isJetpackSite( getState(), siteId ) ) {
 			/*
-			 * We need to do client-side filtering for Jetpack sites because:
-			 * 1) Jetpack theme API does not support search queries
-			 * 2) We need to filter out all wpcom themes to show an 'Uploaded' list
+			 * We need to do client-side filtering for Jetpack sites
+			 * because Jetpack theme API does not support search queries
 			 */
-			const filterWpcom = shouldFilterWpcomThemes( getState(), siteId );
-			filteredThemes = filter(
-				themes,
-				( theme ) =>
-					isThemeMatchingQuery( query, theme ) && ! ( filterWpcom && isThemeFromWpcom( theme ) )
-			);
+			filteredThemes = filter( themes, ( theme ) => isThemeMatchingQuery( query, theme ) );
+
 			// Jetpack API returns all themes in one response (no paging)
 			found = filteredThemes.length;
 		}

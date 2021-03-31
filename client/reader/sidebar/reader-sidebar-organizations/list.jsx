@@ -81,7 +81,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 	}
 
 	render() {
-		const { organization } = this.props;
+		const { organization, path, sites } = this.props;
 
 		if ( ! organization.sites_count ) {
 			return null;
@@ -93,6 +93,11 @@ export class ReaderSidebarOrganizationsList extends Component {
 				onClick={ this.handleClick }
 				customIcon={ this.renderIcon() }
 				disableFlyout={ true }
+				className={
+					( '/read/' + organization.slug === path ||
+						sites.some( ( site ) => `/read/feeds/${ site.feed_ID }` === path ) ) &&
+					'sidebar__menu--selected'
+				}
 			>
 				{ this.renderAll() }
 				{ this.renderSites() }

@@ -11,12 +11,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { requestSite } from 'calypso/state/sites/actions';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import {
-	fetchAtomicTransfer,
-	setAtomicTransfer,
-	atomicTransferFetchingFailure,
-	atomicTransferComplete,
-} from 'calypso/state/atomic-transfer/actions';
+import { fetchAtomicTransfer, setAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
@@ -46,21 +41,17 @@ export const receiveTransfer = ( { siteId }, transfer ) => ( dispatch ) => {
 			} )
 		);
 
-		dispatch( atomicTransferComplete( siteId ) );
 		// Update the now-atomic site to ensure plugin page displays correctly.
 		dispatch( requestSite( siteId ) );
 	}
 };
-
-export const requestingTransferFailure = ( action ) =>
-	atomicTransferFetchingFailure( action.siteId );
 
 registerHandlers( 'state/data-layer/wpcom/sites/atomic/transfer/index.js', {
 	[ ATOMIC_TRANSFER_REQUEST ]: [
 		dispatchRequest( {
 			fetch: requestTransfer,
 			onSuccess: receiveTransfer,
-			onError: requestingTransferFailure,
+			onError: () => {},
 		} ),
 	],
 } );

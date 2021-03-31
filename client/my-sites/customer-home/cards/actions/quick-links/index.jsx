@@ -34,7 +34,7 @@ import { expandHomeQuickLinks, collapseHomeQuickLinks } from 'calypso/state/home
 /**
  * Image dependencies
  */
-import fiverrLogoIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
+import logotronIcon from 'calypso/assets/images/customer-home/logotron-logo-grey.svg';
 import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';
 
 /**
@@ -144,9 +144,9 @@ export const QuickLinks = ( {
 				href="https://wp.me/logo-maker"
 				onClick={ trackDesignLogoAction }
 				target="_blank"
-				label={ translate( 'Create a logo with Fiverr' ) }
+				label={ translate( 'Create a logo' ) }
 				external
-				iconSrc={ fiverrLogoIcon }
+				iconSrc={ logotronIcon }
 			/>
 			<ActionBox
 				href="https://anchor.fm/wordpressdotcom"
@@ -257,7 +257,7 @@ const trackAnchorPodcastAction = ( isStaticHomePage ) =>
 		recordTracksEvent( 'calypso_customer_home_my_site_anchor_podcast_click', {
 			is_static_home_page: isStaticHomePage,
 		} ),
-		bumpStat( 'calypso_customer_home', 'my_site_design_logo' )
+		bumpStat( 'calypso_customer_home', 'my_site_anchor_podcast' )
 	);
 
 const addEmailAction = ( siteSlug, isStaticHomePage ) =>

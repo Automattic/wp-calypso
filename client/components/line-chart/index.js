@@ -8,7 +8,7 @@ import { line as d3Line, area as d3Area, curveMonotoneX as d3MonotoneXCurve } fr
 import { scaleLinear as d3ScaleLinear, scaleTime as d3TimeScale } from 'd3-scale';
 import { axisBottom as d3AxisBottom, axisRight as d3AxisRight } from 'd3-axis';
 import { select as d3Select, mouse as d3Mouse } from 'd3-selection';
-import { concat, first, last, throttle, uniq } from 'lodash';
+import { concat, first, last, throttle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -444,7 +444,7 @@ class LineChart extends Component {
 	};
 
 	getTooltipPositionMap = ( values ) => {
-		const sortedUniqValues = uniq( values ).sort(
+		const sortedUniqValues = [ ...new Set( values ) ].sort(
 			( leftValue, rightValue ) => leftValue - rightValue
 		);
 

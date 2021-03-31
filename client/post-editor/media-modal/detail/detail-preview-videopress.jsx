@@ -18,8 +18,7 @@ import { loadScript, removeScriptCallback } from '@automattic/load-script';
  * Module variables
  */
 const log = debug( 'calypso:post-editor:videopress' );
-const videoPressUrl =
-	'https://wordpress.com/wp-content/plugins/video/assets/js/videojs/videopress.js';
+const videoPressUrl = 'https://wordpress.com/wp-content/plugins/video/assets/js/next/videopress.js';
 const noop = () => {};
 
 class EditorMediaModalDetailPreviewVideoPress extends Component {
@@ -73,27 +72,41 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 	}
 
 	// Run requests through the rest proxy to support loading private videos.
-	getVideoInfo = ( callback ) => {
-		const { videopress_guid: guid } = this.props.item;
-		const data = { path: '/videos/' + guid };
+	requestProvider = ( observable ) => {
+		return () => {
+			return observable( ( set, reject, done ) => {
+				const { videopress_guid: guid } = this.props.item;
 
-		wpcomProxyRequest( data, function ( err, body, headers ) {
-			if ( err ) {
-				callback( 400, err );
-				return;
-			}
+				if ( ! guid ) {
+					return;
+				}
 
-			// If an upload_date property is present, we have a valid response.
-			if ( body.upload_date != null ) {
-				callback( 200, body );
-			} else {
-				const error = new Error( body ? body.message : 'Unknown' );
-				error.code = body ? body.error : null;
-				error.errorMessage = body ? body.errorMessage : null;
-				error.status = headers.status;
-				callback( 400, error );
-			}
-		} );
+				const getVideo = ( id ) => {
+					const data = { path: '/videos/' + id };
+
+					wpcomProxyRequest( data, function ( err, body, headers ) {
+						if ( err ) {
+							return;
+						}
+
+						// If an upload_date property is present, we have a valid response.
+						if ( body.upload_date != null ) {
+							done( body );
+						} else {
+							const error = new Error( body ? body.message : 'Unknown' );
+							error.code = body ? body.error : null;
+							error.errorMessage = body ? body.errorMessage : null;
+							error.status = headers.status;
+							reject( error );
+						}
+					} );
+				};
+
+				getVideo( guid );
+
+				return () => {};
+			} );
+		};
 	};
 
 	setVideoInstance = ( ref ) => ( this.video = ref );
@@ -121,10 +134,9 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		if ( typeof window !== 'undefined' && window.videopress ) {
 			this.player = window.videopress( videopress_guid, this.video, {
 				autoPlay: isPlaying,
-				fill: true,
-				getVideoInfo: this.getVideoInfo,
 				height,
 				width,
+				requestProvider: this.requestProvider,
 			} );
 		}
 	};

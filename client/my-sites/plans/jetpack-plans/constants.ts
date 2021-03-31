@@ -256,7 +256,7 @@ export const EXTERNAL_PRODUCT_CRM_FREE: ( variation: Iterations ) => SelectorPro
 	isFree: true,
 	costProductSlug: PRODUCT_JETPACK_CRM_FREE,
 	monthlyProductSlug: PRODUCT_JETPACK_CRM_FREE_MONTHLY,
-	belowPriceText: translate( 'from %(minPrice)s - %(maxPrice)s (Entrepreneur bundle)', {
+	belowPriceText: translate( 'from %(minPrice)s - %(maxPrice)s', {
 		args: { minPrice: '$0', maxPrice: '$17' },
 	} ),
 	iconSlug: 'jetpack_crm',

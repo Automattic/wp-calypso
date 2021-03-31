@@ -452,9 +452,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to manage purchase page if there is a renewal', () => {
 		const cart = {
-			products: [
-				{ extra: { purchaseType: 'renewal', purchaseDomain: 'foo.bar', purchaseId: '123abc' } },
-			],
+			products: [ { subscription_id: '123abc', extra: { purchaseType: 'renewal' } } ],
 		};
 		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', cart } );
 		expect( url ).toBe( '/me/purchases/foo.bar/123abc' );

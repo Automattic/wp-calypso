@@ -212,7 +212,7 @@ class TransferDomainStep extends React.Component {
 			);
 		} else if ( domainsWithPlansOnlyButNoPlan ) {
 			domainProductPriceText = translate(
-				'One additional year of domain registration included in paid plans.'
+				'One additional year of domain registration included in annual paid plans.'
 			);
 		} else if ( domainProductSalePrice ) {
 			domainProductPriceText = translate( 'Sale price is %(cost)s', {

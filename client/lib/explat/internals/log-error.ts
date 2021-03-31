@@ -15,9 +15,7 @@ declare const window: undefined | ( Window & typeof globalThis );
  *
  * @param error Error to save
  */
-export const logError = (
-	error: Record< string, string > & { message: string; properties?: Record< string, unknown > }
-): void => {
+export const logError = ( error: Record< string, string > & { message: string } ): void => {
 	const onError = ( e: unknown ) => {
 		if ( isDevelopmentMode ) {
 			// eslint-disable-next-line no-console
@@ -26,21 +24,25 @@ export const logError = (
 	};
 
 	try {
-		error[ 'properties' ] = {
-			...( error?.[ 'properties' ] || {} ),
-			context: 'explat',
-			explat_client: 'calypso',
+		const { message, ...properties } = error;
+		const logStashError = {
+			message,
+			properties: {
+				...properties,
+				context: 'explat',
+				explat_client: 'calypso',
+			},
 		};
 
 		if ( typeof window === 'undefined' ) {
 			// Bunyan logger will log to the console in development mode.
-			getLogger().error( error );
+			getLogger().error( logStashError );
 		} else if ( isDevelopmentMode ) {
 			// eslint-disable-next-line no-console
 			console.error( '[ExPlat] ', error.message, error );
 		} else {
 			const body = new window.FormData();
-			body.append( 'error', JSON.stringify( error ) );
+			body.append( 'error', JSON.stringify( logStashError ) );
 			window
 				.fetch( 'https://public-api.wordpress.com/rest/v1.1/js-error', {
 					method: 'POST',
@@ -50,13 +52,5 @@ export const logError = (
 		}
 	} catch ( e ) {
 		onError( e );
-	}
-};
-
-export const logErrorOrThrowInDevelopmentMode = ( message: string ): void => {
-	if ( isDevelopmentMode ) {
-		throw new Error( message );
-	} else {
-		logError( { message } );
 	}
 };

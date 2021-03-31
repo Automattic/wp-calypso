@@ -202,6 +202,7 @@ class EarningsMain extends Component {
 					brandFont
 					className="earn__page-header"
 					headerText={ translate( 'Earn' ) }
+					subHeaderText={ translate( 'Explore tools to earn money with your site.' ) }
 					align="left"
 				/>
 				{ this.getHeaderCake() }

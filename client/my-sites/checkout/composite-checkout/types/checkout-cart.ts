@@ -2,7 +2,7 @@
  * External dependencies
  */
 import type { ResponseCartProductExtra, ResponseCartProduct } from '@automattic/shopping-cart';
-import type { LineItem, LineItemAmount } from '@automattic/composite-checkout';
+import type { LineItem } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -43,90 +43,8 @@ export type WPCOMCartItem = LineItem & {
 	};
 };
 
-export type WPCOMCartCouponItem = LineItem & {
-	wpcom_meta: {
-		couponCode: string;
-	};
-};
-
-export type WPCOMCartCreditsItem = LineItem & {
-	wpcom_meta: {
-		credits_integer: number;
-		credits_display: string;
-	};
-};
-
 export interface WPCOMCart {
 	items: WPCOMCartItem[];
-	tax: LineItem | null;
 	total: LineItem;
-	savings: LineItem | null;
-	subtotal: LineItem;
-	coupon: WPCOMCartCouponItem | null;
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
-	credits: LineItem | null;
-	couponCode: string | null;
 }
-
-export const emptyWPCOMCart = {
-	items: [] as WPCOMCartItem[],
-	tax: {
-		id: 'tax-line-item',
-		label: 'Tax',
-		type: 'tax',
-		amount: {
-			value: 0,
-			currency: '',
-			displayValue: '',
-		} as LineItemAmount,
-	} as LineItem,
-	coupon: {
-		id: 'coupon',
-		label: 'Coupon',
-		type: 'coupon',
-		amount: {
-			value: 0,
-			currency: '',
-			displayValue: '',
-		} as LineItemAmount,
-		wpcom_meta: {
-			couponCode: '',
-		},
-	} as WPCOMCartCouponItem,
-	total: {
-		id: 'total',
-		label: 'Total',
-		amount: {
-			value: 0,
-			currency: '',
-			displayValue: '',
-		} as LineItemAmount,
-	} as LineItem,
-	savings: {
-		id: 'savings',
-		label: 'Savings',
-		type: 'savings',
-		amount: {
-			value: 0,
-			currency: '',
-			displayValue: '',
-		} as LineItemAmount,
-	} as LineItem,
-	subtotal: {
-		id: 'subtotal',
-		label: 'Subtotal',
-		amount: {
-			value: 0,
-			currency: '',
-			displayValue: '',
-		} as LineItemAmount,
-	} as LineItem,
-	allowedPaymentMethods: [],
-	credits: {
-		id: 'Credits',
-		label: 'Credits',
-		type: 'credits',
-		amount: { value: 0, currency: 'USD', displayValue: '0' } as LineItemAmount,
-	} as LineItem,
-	couponCode: null,
-} as WPCOMCart;

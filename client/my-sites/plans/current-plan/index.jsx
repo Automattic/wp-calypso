@@ -199,6 +199,9 @@ class CurrentPlan extends Component {
 					brandFont
 					className="current-plan__page-heading"
 					headerText={ translate( 'Plans' ) }
+					subHeaderText={ translate(
+						'Learn about the features included in your WordPress.com plan.'
+					) }
 					align="left"
 				/>
 				{ selectedSiteId && (

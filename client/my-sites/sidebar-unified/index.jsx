@@ -22,6 +22,7 @@ import CurrentSite from 'calypso/my-sites/current-site';
 import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
 import CollapseSidebar from './collapse-sidebar';
+import AddNewSite from './add-new-site';
 import useSiteMenuItems from './use-site-menu-items';
 import useDomainsViewStatus from './use-domains-view-status';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
@@ -141,6 +142,11 @@ export const MySitesSidebarUnified = ( { path } ) => {
 						/>
 					);
 				} ) }
+				<AddNewSite
+					key="add-new-site"
+					title={ translate( 'Add new site' ) }
+					icon="dashicons-plus-alt"
+				/>
 				<CollapseSidebar
 					key="collapse"
 					title={ translate( 'Collapse menu' ) }

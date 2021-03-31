@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
-import { includes } from 'lodash';
+import { useSelector } from 'react-redux';
 import page from 'page';
 import React, { useEffect } from 'react';
 
 /**
  * Internal dependencies
  */
+import { AppState } from 'calypso/types';
 import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
@@ -17,31 +17,38 @@ import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 
-type Props = {
-	siteIsEligible: boolean | null;
-	siteCapabilities: string[];
-	siteId: number | null;
-	siteSlug: string | null;
-};
+const siteIsEligible = ( state: AppState, siteId: number | null ) =>
+	siteId
+		? isJetpackSite( state, siteId ) &&
+		  ! isSiteAtomic( state, siteId ) &&
+		  ! isJetpackSiteMultiSite( state, siteId )
+		: null;
 
-function Landing( props: Props ) {
-	const { siteIsEligible, siteSlug, siteCapabilities, siteId } = props;
+const Landing: React.FC = () => {
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( getSelectedSiteSlug );
+
+	const isEligible = useSelector( ( state ) => siteIsEligible( state, siteId ) );
+	const capabilities = useSelector( ( state ) => getRewindCapabilities( state, siteId ) );
 
 	useEffect( () => {
 		// early return while we wait to retrieve information
-		if ( siteIsEligible === null || siteCapabilities === undefined ) {
+		if ( isEligible === null || capabilities === undefined ) {
 			return;
 		}
 
 		// Send sites that aren't Cloud-eligible back to the home page
-		if ( ! siteIsEligible ) {
+		if ( ! isEligible ) {
 			return page.redirect( '/' );
 		}
+
+		const hasBackup = capabilities.includes( 'backup' );
+		const hasScan = capabilities.includes( 'scan' );
 
 		const redirectUrl = new URL( window.location.href );
 
 		// For sites with Scan but not Backup, redirect to Scan
-		if ( includes( siteCapabilities, 'scan' ) && ! includes( siteCapabilities, 'backup' ) ) {
+		if ( hasScan && ! hasBackup ) {
 			redirectUrl.pathname = `/scan/${ siteSlug ?? '' }`;
 			return page.redirect( redirectUrl.toString() );
 		}
@@ -50,24 +57,9 @@ function Landing( props: Props ) {
 		// for sites with neither Backup nor Scan, show the Backup upsell page
 		redirectUrl.pathname = `/backup/${ siteSlug ?? '' }`;
 		page.redirect( redirectUrl.toString() );
-	}, [ siteIsEligible, siteSlug, siteCapabilities ] );
+	}, [ isEligible, siteSlug, capabilities ] );
 
 	return <QueryRewindCapabilities siteId={ siteId } />;
-}
+};
 
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-
-	const siteIsEligible = siteId
-		? isJetpackSite( state, siteId ) &&
-		  ! isSiteAtomic( state, siteId ) &&
-		  ! isJetpackSiteMultiSite( state, siteId )
-		: null;
-
-	return {
-		siteIsEligible,
-		siteCapabilities: siteIsEligible ? getRewindCapabilities( state, siteId ) : null,
-		siteId: siteIsEligible === false ? null : siteId,
-		siteSlug: getSelectedSiteSlug( state ),
-	};
-} )( Landing );
+export default Landing;

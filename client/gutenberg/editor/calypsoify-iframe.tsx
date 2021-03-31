@@ -30,7 +30,7 @@ import { clearLastNonEditorRoute, setRoute } from 'calypso/state/route/actions';
 import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPostTypeTrashUrl from 'calypso/state/selectors/get-post-type-trash-url';
-import getGutenbergEditorUrl from 'calypso/state/selectors/get-gutenberg-editor-url';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
 import wpcom from 'calypso/lib/wp';
@@ -45,6 +45,7 @@ import WebPreview from 'calypso/components/web-preview';
 import { editPost, trashPost } from 'calypso/state/posts/actions';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'calypso/lib/protect-form';
+import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor.js';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -56,7 +57,7 @@ import {
 	PerformanceTrackProps,
 } from 'calypso/lib/performance-tracking';
 import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'calypso/state/desktop/window-events';
-import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
+import { selectMediaItems } from 'calypso/state/media/actions';
 import { fetchMediaItem, getMediaItem } from 'calypso/state/media/thunks';
 import Iframe from './iframe';
 
@@ -242,7 +243,7 @@ class CalypsoifyIframe extends Component<
 		if ( WindowActions.ClassicBlockOpenMediaModel === action ) {
 			if ( data.imageId ) {
 				const { siteId } = this.props;
-				this.props.setMediaLibrarySelectedItems( siteId, [ { ID: data.imageId } ] );
+				this.props.selectMediaItems( siteId, [ { ID: data.imageId } ] );
 			}
 
 			this.setState( {
@@ -291,9 +292,9 @@ class CalypsoifyIframe extends Component<
 					};
 				} );
 
-				this.props.setMediaLibrarySelectedItems( siteId, selectedItems );
+				this.props.selectMediaItems( siteId, selectedItems );
 			} else {
-				this.props.setMediaLibrarySelectedItems( siteId, [] );
+				this.props.selectMediaItems( siteId, [] );
 			}
 
 			this.setState( { isMediaModalVisible: true, allowedTypes, gallery, multiple } );
@@ -659,32 +660,11 @@ class CalypsoifyIframe extends Component<
 			: `Block Editor > ${ postTypeText } > New`;
 	};
 
-	onIframeLoaded = async ( iframeUrl: string ) => {
+	onIframeLoaded = ( iframeUrl: string ) => {
 		clearTimeout( this.waitForIframeToLoad );
 		if ( ! this.successfulIframeLoad ) {
-			// Sometimes (like in IE) the WindowActions.Loaded message arrives after
-			// the onLoad event is fired. To deal with this case we'll poll
-			// `this.successfulIframeLoad` for a while before redirecting.
-
-			// Checks to see if the iFrame has loaded every 200ms. If it has
-			// loaded, then resolve the promise.
-			let pendingIsLoadedInterval;
-			const pollForLoadedFlag = new Promise( ( resolve ) => {
-				pendingIsLoadedInterval = setInterval(
-					() => this.successfulIframeLoad && resolve( 'iframe-loaded' ),
-					200
-				);
-			} );
-
-			const fiveSeconds = new Promise( ( resolve ) => setTimeout( resolve, 5000, 'timeout' ) );
-
-			const finishCondition = await Promise.race( [ pollForLoadedFlag, fiveSeconds ] );
-			clearInterval( pendingIsLoadedInterval );
-
-			if ( finishCondition === 'timeout' ) {
-				window.location.replace( iframeUrl );
-				return;
-			}
+			window.location.replace( iframeUrl );
+			return;
 		}
 		window.performance?.mark( 'iframe_loaded' );
 		this.setState( { isIframeLoaded: true, currentIFrameUrl: iframeUrl } );
@@ -840,10 +820,19 @@ const mapStateToProps = (
 		queryArgs[ 'in-editor-deprecation-group' ] = 1;
 	}
 
-	const siteAdminUrl =
+	let siteAdminUrl =
 		editorType === 'site'
 			? getSiteAdminUrl( state, siteId, 'admin.php?page=gutenberg-edit-site' )
 			: getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
+
+	// Use the site editor to edit already-published pages if site editor is enabled
+	if ( postId && postType === 'page' && isSiteUsingCoreSiteEditor( state, siteId ) ) {
+		siteAdminUrl = getSiteAdminUrl(
+			state,
+			siteId,
+			`admin.php?page=gutenberg-edit-site&postId=${ postId }&postType=page`
+		);
+	}
 
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
 
@@ -874,7 +863,7 @@ const mapStateToProps = (
 		customizerUrl: getCustomizerUrl( state, siteId ),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		getTemplateEditorUrl: partial(
-			getGutenbergEditorUrl,
+			getEditorUrl,
 			state,
 			siteId,
 			partial.placeholder,
@@ -900,7 +889,7 @@ const mapDispatchToProps = {
 	trashPost,
 	updateSiteFrontPage,
 	notifyDesktopCannotOpenEditor,
-	setMediaLibrarySelectedItems,
+	selectMediaItems,
 	fetchMediaItem,
 	getMediaItem,
 	clearLastNonEditorRoute,

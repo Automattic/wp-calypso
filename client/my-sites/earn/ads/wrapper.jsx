@@ -142,7 +142,7 @@ class AdsWrapper extends Component {
 						classname="ads__activate-notice"
 						status="is-warning"
 						showDismiss={ false }
-						text={ translate( 'Your site cannot participate in WordAds program.' ) }
+						text={ translate( 'Your site cannot participate in the WordAds program.' ) }
 					/>
 				) }
 

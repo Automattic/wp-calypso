@@ -14,10 +14,7 @@ export { isDiscussionEqual } from 'calypso/state/posts/utils/is-discussion-equal
 export { isStatusEqual } from 'calypso/state/posts/utils/is-state-equal';
 export { isTermsEqual } from 'calypso/state/posts/utils/is-terms-equal';
 export { mergePostEdits } from 'calypso/state/posts/utils/merge-post-edits';
-export {
-	areAllMetadataEditsApplied,
-	getUnappliedMetadataEdits,
-} from 'calypso/state/posts/utils/metadata-edits';
+export { getUnappliedMetadataEdits } from 'calypso/state/posts/utils/metadata-edits';
 export { normalizePostForApi } from 'calypso/state/posts/utils/normalize-post-for-api';
 export { normalizePostForDisplay } from 'calypso/state/posts/utils/normalize-post-for-display';
 export { normalizePostForEditing } from 'calypso/state/posts/utils/normalize-post-for-editing';

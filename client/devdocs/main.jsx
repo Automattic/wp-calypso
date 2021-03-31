@@ -5,7 +5,6 @@
 import debug from 'debug';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { isFunction } from 'lodash';
 
 /**
  * Internal dependencies
@@ -90,7 +89,7 @@ export default class Devdocs extends React.Component {
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
-		if ( isFunction( this.props.onSearchChange ) && prevState.term !== this.state.term ) {
+		if ( typeof this.props.onSearchChange === 'function' && prevState.term !== this.state.term ) {
 			this.props.onSearchChange( this.state.term );
 		}
 	}

@@ -23,4 +23,4 @@ const exPlatClient = createExPlatClient( {
 
 export const { loadExperimentAssignment, dangerouslyGetExperimentAssignment } = exPlatClient;
 const exPlatClientReactHelpers = createExPlatClientReactHelpers( exPlatClient );
-export const { useExperiment, Experiment } = exPlatClientReactHelpers;
+export const { useExperiment, Experiment, ProvideExperimentData } = exPlatClientReactHelpers;

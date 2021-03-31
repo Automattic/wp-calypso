@@ -134,7 +134,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		test( 'should only SERIALIZE followed items with an ID', () => {
+		test( 'should only serialize followed items with an ID', () => {
 			const original = deepFreeze( {
 				'discover.wordpress.com': {
 					ID: 1,

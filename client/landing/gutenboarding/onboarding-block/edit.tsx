@@ -5,6 +5,7 @@ import * as React from 'react';
 import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
 import type { BlockEditProps } from '@wordpress/blocks';
+import { isE2ETest } from 'calypso/lib/e2e';
 
 /**
  * Internal dependencies
@@ -109,6 +110,11 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 
 	function createSiteOrError() {
 		if ( newSiteError ) {
+			// Temporarily capture error related to new site creation to E2E
+			if ( isE2ETest() ) {
+				throw new Error( `onboarding-debug ${ JSON.stringify( newSiteError ) }` );
+			}
+
 			return <CreateSiteError linkTo={ getLatestStepPath() } />;
 		} else if ( canUseCreateSiteStep() ) {
 			return <CreateSite />;

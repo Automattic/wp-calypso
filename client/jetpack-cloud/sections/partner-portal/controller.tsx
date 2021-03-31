@@ -14,12 +14,14 @@ import {
 	publicToInternalLicenseFilter,
 	publicToInternalLicenseSortField,
 	valueToEnum,
+	ensurePartnerPortalReturnUrl,
 } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import Header from './header';
 import JetpackComFooter from 'calypso/jetpack-cloud/sections/pricing/jpcom-footer';
 import PartnerPortalSidebar from 'calypso/jetpack-cloud/sections/partner-portal/sidebar';
 import SelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/select-partner-key';
 import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/licenses';
+import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
 import {
 	LicenseFilter,
 	LicenseSortDirection,
@@ -60,19 +62,30 @@ export function partnerPortalContext( context: PageJS.Context, next: () => void 
 	next();
 }
 
+export function issueLicenseContext( context: PageJS.Context, next: () => void ): void {
+	context.header = <Header />;
+	context.secondary = <PartnerPortalSidebar path={ context.path } />;
+	context.primary = <IssueLicense />;
+	context.footer = <JetpackComFooter />;
+	next();
+}
+
 export function requirePartnerKeyContext( context: PageJS.Context, next: () => void ): void {
 	const state = context.store.getState();
 	const hasKey = getActivePartnerKey( state );
+	const { pathname, search } = window.location;
 
 	if ( hasKey ) {
 		next();
 		return;
 	}
 
+	const returnUrl = ensurePartnerPortalReturnUrl( pathname + search );
+
 	page.redirect(
 		addQueryArgs(
 			{
-				return: window.location.pathname + window.location.search,
+				return: returnUrl,
 			},
 			'/partner-portal/partner-key'
 		)

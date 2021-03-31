@@ -53,20 +53,8 @@ module.exports = {
 			files: [ 'packages/**/*' ],
 			rules: {
 				// These two rules are to ensure packages don't import from calypso by accident to avoid circular deps.
-				'no-restricted-imports': [
-					'error',
-					{
-						patterns: [ 'calypso/*' ],
-						message: "Packages shouldn't import from calypso",
-					},
-				],
-				'no-restricted-modules': [
-					'error',
-					{
-						patterns: [ 'calypso/*' ],
-						message: "Packages shouldn't import from calypso",
-					},
-				],
+				'no-restricted-imports': [ 'error', { patterns: [ 'calypso/*' ] } ],
+				'no-restricted-modules': [ 'error', { patterns: [ 'calypso/*' ] } ],
 			},
 		},
 		{
@@ -284,8 +272,6 @@ module.exports = {
 			2,
 			{
 				paths: [
-					// Error if any module depends on the data-observe mixin, which is deprecated.
-					'lib/mixins/data-observe',
 					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
 					{
 						name: 'gridicons',
@@ -321,8 +307,6 @@ module.exports = {
 			2,
 			{
 				paths: [
-					// Error if any module depends on the data-observe mixin, which is deprecated.
-					'lib/mixins/data-observe',
 					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
 					{
 						name: 'gridicons',
@@ -406,6 +390,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/all': 'error',
 		'you-dont-need-lodash-underscore/any': 'error',
 		'you-dont-need-lodash-underscore/bind': 'error',
+		'you-dont-need-lodash-underscore/cast-array': 'error',
 		'you-dont-need-lodash-underscore/collect': 'error',
 		'you-dont-need-lodash-underscore/contains': 'error',
 		'you-dont-need-lodash-underscore/detect': 'error',
@@ -413,6 +398,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/drop-right': 'error',
 		'you-dont-need-lodash-underscore/ends-with': 'error',
 		'you-dont-need-lodash-underscore/entries': 'error',
+		'you-dont-need-lodash-underscore/every': 'error',
 		'you-dont-need-lodash-underscore/extend-own': 'error',
 		'you-dont-need-lodash-underscore/fill': 'error',
 		'you-dont-need-lodash-underscore/foldl': 'error',
@@ -421,9 +407,13 @@ module.exports = {
 		'you-dont-need-lodash-underscore/inject': 'error',
 		'you-dont-need-lodash-underscore/is-array': 'error',
 		'you-dont-need-lodash-underscore/is-finite': 'error',
+		'you-dont-need-lodash-underscore/is-function': 'error',
+		'you-dont-need-lodash-underscore/is-integer': 'error',
 		'you-dont-need-lodash-underscore/is-nan': 'error',
 		'you-dont-need-lodash-underscore/is-nil': 'error',
 		'you-dont-need-lodash-underscore/is-null': 'error',
+		'you-dont-need-lodash-underscore/is-string': 'error',
+		'you-dont-need-lodash-underscore/is-undefined': 'error',
 		'you-dont-need-lodash-underscore/join': 'error',
 		'you-dont-need-lodash-underscore/last-index-of': 'error',
 		'you-dont-need-lodash-underscore/pad-end': 'error',
@@ -432,8 +422,11 @@ module.exports = {
 		'you-dont-need-lodash-underscore/repeat': 'error',
 		'you-dont-need-lodash-underscore/reverse': 'error',
 		'you-dont-need-lodash-underscore/select': 'error',
+		'you-dont-need-lodash-underscore/slice': 'error',
 		'you-dont-need-lodash-underscore/split': 'error',
+		'you-dont-need-lodash-underscore/take-right': 'error',
 		'you-dont-need-lodash-underscore/to-lower': 'error',
 		'you-dont-need-lodash-underscore/to-upper': 'error',
+		'you-dont-need-lodash-underscore/uniq': 'error',
 	},
 };

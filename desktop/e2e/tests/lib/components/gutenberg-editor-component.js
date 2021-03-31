@@ -75,9 +75,9 @@ class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async dismissPageTemplateSelector() {
-		if ( await driverHelper.isElementPresent( this.driver, By.css( '.page-template-modal' ) ) ) {
+		if ( await driverHelper.isElementPresent( this.driver, By.css( '.page-pattern-modal' ) ) ) {
 			const useBlankButton = await this.driver.findElement(
-				By.css( '.page-template-modal__buttons .components-button.is-primary' )
+				By.css( '.page-pattern-modal__buttons .components-button.is-primary' )
 			);
 			await this.driver.executeScript( 'arguments[0].click()', useBlankButton );
 		}

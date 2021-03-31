@@ -30,11 +30,7 @@ import accept from 'calypso/lib/accept';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import searchUrl from 'calypso/lib/search-url';
 import { editMedia, deleteMedia } from 'calypso/state/media/thunks';
-import {
-	setMediaLibrarySelectedItems,
-	changeMediaSource,
-	clearSite,
-} from 'calypso/state/media/actions';
+import { selectMediaItems, changeMediaSource, clearSite } from 'calypso/state/media/actions';
 
 /**
  * Style dependencies
@@ -81,7 +77,7 @@ class Media extends Component {
 		}
 
 		if ( this.props.selectedSite ) {
-			this.props.setMediaLibrarySelectedItems( this.props.selectedSite.ID, [] );
+			this.props.selectMediaItems( this.props.selectedSite.ID, [] );
 		}
 
 		if ( this.props.currentRoute !== redirect ) {
@@ -437,7 +433,7 @@ const mapStateToProps = ( state, { mediaId } ) => {
 export default connect( mapStateToProps, {
 	editMedia,
 	deleteMedia,
-	setMediaLibrarySelectedItems,
+	selectMediaItems,
 	changeMediaSource,
 	clearSite,
 } )( localize( Media ) );

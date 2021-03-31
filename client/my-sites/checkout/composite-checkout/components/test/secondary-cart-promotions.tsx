@@ -147,7 +147,6 @@ describe( 'SecondaryCartPromotions', () => {
 				expect( mockAddItemToCart ).toHaveBeenCalledTimes( 1 );
 				expect( mockAddItemToCart ).toHaveBeenCalledWith( {
 					product_slug: 'personal-bundle',
-					free_trial: false,
 				} );
 			} );
 		} );

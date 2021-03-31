@@ -92,6 +92,8 @@
 .jetpack-product-card__description {
 	color: var( --studio-gray-60 );
 
+	font-size: inherit;
+
 	@include breakpoint-deprecated( '>660px' ) {
 		min-height: 108px;
 	}

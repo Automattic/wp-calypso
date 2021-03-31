@@ -134,7 +134,7 @@ $font-size: rem( 14px );
 
 			.sidebar__menu-link {
 				padding: 5px 12px;
-				/* stylelint-disable-next-line scales/font-size */
+				/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 				font-size: rem( 13px );
 				line-height: 1.4;
 				font-weight: 400;
@@ -228,7 +228,7 @@ $font-size: rem( 14px );
 		}
 
 		// Is toggled open
-		.sidebar__menu.is-toggle-open {
+		.sidebar__menu.sidebar__menu--selected {
 			.sidebar__heading {
 				background: var( --color-sidebar-menu-hover-background );
 
@@ -266,12 +266,12 @@ $font-size: rem( 14px );
 			}
 		}
 
-		.sidebar__menu.is-togglable.is-toggle-open .sidebar__expandable-arrow {
+		.sidebar__menu.is-togglable .sidebar__expandable-arrow {
 			margin-right: 10px;
 		}
 
 		.notice {
-			/* stylelint-disable-next-line scales/font-weight */
+			/* stylelint-disable-next-line scales/font-weights */
 			font-weight: 300;
 
 			&.is-compact {
@@ -289,6 +289,7 @@ $font-size: rem( 14px );
 					left: calc( 50% - 9px );
 					width: 18px;
 					height: 18px;
+					/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 					border-radius: 50%;
 				}
 			}
@@ -332,6 +333,10 @@ $font-size: rem( 14px );
 	.upsell-nudge.banner.card.is-compact .banner__action {
 		top: 0;
 		margin-left: 0;
+	}
+
+	.upsell-nudge.banner.card.is-compact .dismissible-card__close-icon {
+		fill: var( --color-text );
 	}
 
 	// client/my-sites/current-site/style.scss
@@ -400,11 +405,12 @@ $font-size: rem( 14px );
 		.current-site__notices > a::before {
 			content: '\f534';
 			font-family: 'dashicons';
-			/* stylelint-disable-next-line scales/font-size */
+			/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 			font-size: 20px;
 			line-height: 20px;
 			background-color: #a7aaad;
 			color: white;
+			/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 			border-radius: 50%;
 			margin: 3px 0 3px 1px;
 		}
@@ -457,7 +463,7 @@ $font-size: rem( 14px );
 		.sidebar__menu-link {
 			cursor: pointer;
 			color: var( --color-sidebar-text-alternative );
-			/* stylelint-disable-next-line scales/font-size */
+			/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 			font-size: rem( 13px );
 
 			&:hover,
@@ -502,7 +508,7 @@ $font-size: rem( 14px );
 			border-color: var( --color-sidebar-submenu-selected-text );
 		}
 
-		.sidebar__menu.is-toggle-open {
+		.sidebar__menu.sidebar__menu--selected {
 			.sidebar__heading {
 				background: var( --color-sidebar-menu-selected-background );
 				color: var( --color-sidebar-menu-selected-text );

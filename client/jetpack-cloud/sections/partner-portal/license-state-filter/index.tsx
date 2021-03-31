@@ -4,7 +4,6 @@
 import React, { ReactElement } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -63,7 +62,7 @@ function LicenseStateFilter( { filter, search, doSearch }: Props ): ReactElement
 		children: navItem.label,
 	} ) );
 
-	const selectedItem = find( navItems, 'selected' ) || navItems[ 0 ];
+	const selectedItem = navItems.find( ( i ) => i.selected ) || navItems[ 0 ];
 
 	return (
 		<SectionNav

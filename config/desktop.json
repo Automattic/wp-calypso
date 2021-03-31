@@ -17,7 +17,7 @@
 		"async-payments": false,
 		"blogger-plan": false,
 		"catch-js-errors": false,
-		"cloudflare": false,
+		"cloudflare": true,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
 		"current-site/stale-cart-notice": true,
@@ -83,7 +83,6 @@
 		"plans/personal-plan": true,
 		"post-editor/author-selector": true,
 		"post-editor/html-toolbar": true,
-		"post-editor/image-editor": true,
 		"press-this": false,
 		"purchases/new-payment-methods": true,
 		"reader": true,
@@ -125,7 +124,8 @@
 		"woocommerce/extension-wcservices": false,
 		"woocommerce/extension-wcservices/international-labels": false,
 		"woocommerce/store-on-non-atomic-sites": false,
-		"wpcom-user-bootstrap": false
+		"wpcom-user-bootstrap": false,
+		"wordpress-action-search": false
 	},
 	"readerFollowingSource": "desktop",
 	"rtl": false,

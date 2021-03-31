@@ -4,6 +4,8 @@
 
 - Breaking: Drop option `postCssConfig` for Sass loader. The property `postCssOptions` will be passed as is
   to `postcss-loader`. See the doc in <https://github.com/webpack-contrib/postcss-loader#postcssoptions>
+- Breaking: `calypso-build`, `transpile` and `webpack/minify` won't set `defaults` as browserslist environment anymore.
+  Instead they will fallback to the [default resolution methods from browserslist](https://github.com/browserslist/browserslist#queries)
 - Added: peer dependency postcss ^8.2.6
 - Updated dependencies:
   - postcss-custom-properties to ^11.0.0

@@ -18,33 +18,33 @@ import previewImage from './images/preview.svg';
 import privateImage from './images/private.svg';
 
 function WpcomNux() {
-	const { isWpcomNuxEnabled, isSPTOpen, isTourManuallyOpened } = useSelect( ( select ) => ( {
-		isWpcomNuxEnabled: select( 'automattic/nux' ).isWpcomNuxEnabled(),
-		isSPTOpen:
+	const { show, isNewPageLayoutModalOpen, isManuallyOpened } = useSelect( ( select ) => ( {
+		show: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideShown(),
+		isNewPageLayoutModalOpen:
 			select( 'automattic/starter-page-layouts' ) && // Handle the case where SPT is not initalized.
 			select( 'automattic/starter-page-layouts' ).isOpen(),
-		isTourManuallyOpened: select( 'automattic/nux' ).isTourManuallyOpened(),
+		isManuallyOpened: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideManuallyOpened(),
 	} ) );
 
 	const { closeGeneralSidebar } = useDispatch( 'core/edit-post' );
-	const { setWpcomNuxStatus, setTourOpenStatus } = useDispatch( 'automattic/nux' );
+	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
 
 	// Hide editor sidebar first time users sees the editor
 	useEffect( () => {
-		isWpcomNuxEnabled && closeGeneralSidebar();
-	}, [ closeGeneralSidebar, isWpcomNuxEnabled ] );
+		show && closeGeneralSidebar();
+	}, [ closeGeneralSidebar, show ] );
 
-	// Track opening of the NUX Guide
+	// Track opening of the welcome guide
 	useEffect( () => {
-		if ( isWpcomNuxEnabled && ! isSPTOpen ) {
+		if ( show && ! isNewPageLayoutModalOpen ) {
 			recordTracksEvent( 'calypso_editor_wpcom_nux_open', {
 				is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
-				is_manually_opened: isTourManuallyOpened,
+				is_manually_opened: isManuallyOpened,
 			} );
 		}
-	}, [ isWpcomNuxEnabled, isSPTOpen, isTourManuallyOpened ] );
+	}, [ isManuallyOpened, isNewPageLayoutModalOpen, show ] );
 
-	if ( ! isWpcomNuxEnabled || isSPTOpen ) {
+	if ( ! show || isNewPageLayoutModalOpen ) {
 		return null;
 	}
 
@@ -52,8 +52,7 @@ function WpcomNux() {
 		recordTracksEvent( 'calypso_editor_wpcom_nux_dismiss', {
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
 		} );
-		setWpcomNuxStatus( { isNuxEnabled: false } );
-		setTourOpenStatus( { isTourManuallyOpened: false } );
+		setShowWelcomeGuide( false, { openedManually: false } );
 	};
 
 	const nuxPages = getWpcomNuxPages();

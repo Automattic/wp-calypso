@@ -25,5 +25,13 @@ export default function () {
 		clientRender
 	);
 
+	page(
+		`/partner-portal/issue-license`,
+		controller.requirePartnerKeyContext,
+		controller.issueLicenseContext,
+		makeLayout,
+		clientRender
+	);
+
 	page( `/partner-portal/*`, '/partner-portal' );
 }

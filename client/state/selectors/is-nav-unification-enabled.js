@@ -16,7 +16,7 @@ import isNavUnificationNewUser from 'calypso/state/selectors/is-nav-unification-
 import { isE2ETest } from 'calypso/lib/e2e';
 
 // Gradual rollout (segment of existing users + all new users registered after March 5, 2021).
-const CURRENT_ROLLOUT_SEGMENT_PERCENTAGE = 5;
+const CURRENT_ROLLOUT_SEGMENT_PERCENTAGE = 100;
 
 export default ( state ) => {
 	// Disable if explicitly requested by the `?disable-nav-unification` query param.

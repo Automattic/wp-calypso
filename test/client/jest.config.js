@@ -10,6 +10,7 @@ module.exports = {
 		),
 	},
 	modulePaths: [ '<rootDir>/extensions' ],
+	moduleDirectories: [ 'node_modules', '<rootDir>/test-helpers/' ],
 	rootDir: '../../client',
 	resolver: '<rootDir>../test/module-resolver.js',
 	testEnvironment: 'node',

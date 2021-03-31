@@ -3,7 +3,6 @@
  */
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { isNumber } from 'lodash';
 import React, { createElement, ReactNode } from 'react';
 import { Button, ProductIcon } from '@automattic/components';
 
@@ -191,8 +190,8 @@ const JetpackProductCard: React.FC< Props > = ( {
 	aboveButtonText = null,
 }: Props ) => {
 	const translate = useTranslate();
-	const parsedHeadingLevel = isNumber( headingLevel )
-		? Math.min( Math.max( Math.floor( headingLevel ), 1 ), 6 )
+	const parsedHeadingLevel = Number.isFinite( headingLevel )
+		? Math.min( Math.max( Math.floor( headingLevel as number ), 1 ), 6 )
 		: 2;
 
 	return (
