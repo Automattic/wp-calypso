@@ -1,3 +1,8 @@
+/**
+ * Internal dependencies
+ */
+import { getEmailForwardsCount } from 'calypso/lib/domains/email-forwarding/get-email-forwards-count';
+
 export function hasEmailForwards( domain ) {
-	return domain?.emailForwardsCount > 0;
+	return getEmailForwardsCount( domain ) > 0;
 }
