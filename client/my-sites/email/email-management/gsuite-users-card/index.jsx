@@ -27,8 +27,10 @@ import {
 	getGoogleDriveUrl,
 	getGoogleSheetsUrl,
 	getGoogleSlidesUrl,
+	getProductType,
 	hasPendingGSuiteUsers,
 } from 'calypso/lib/gsuite';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -79,11 +81,10 @@ class GSuiteUsersCard extends React.Component {
 	};
 
 	renderDomainWithGSuite( domainName, users ) {
-		const { selectedSiteSlug, translate } = this.props;
+		const { currentRoute, selectedSiteSlug, translate } = this.props;
 
-		// The product name is same for all users as product license is associated to domain
-		// Hence a snapshot of the product name from the first user is sufficient
-		const productName = users[ 0 ].product_name;
+		// Retrieves product information from the first user, which is fine as all users share exactly the same product data
+		const { product_name: productName, product_slug: productSlug } = users[ 0 ];
 
 		const header = (
 			<>
@@ -104,7 +105,12 @@ class GSuiteUsersCard extends React.Component {
 			<Button
 				primary
 				compact
-				href={ emailManagementAddGSuiteUsers( selectedSiteSlug, domainName ) }
+				href={ emailManagementAddGSuiteUsers(
+					selectedSiteSlug,
+					domainName,
+					getProductType( productSlug ),
+					currentRoute
+				) }
 				onClick={ this.goToAddGoogleApps }
 			>
 				{ translate( 'Add New Users' ) }
@@ -304,6 +310,7 @@ const manageClick = ( domainName, email ) =>
 	);
 
 GSuiteUsersCard.propTypes = {
+	currentRoute: PropTypes.string,
 	domains: PropTypes.array.isRequired,
 	gsuiteUsers: PropTypes.array.isRequired,
 	selectedDomainName: PropTypes.string,
@@ -317,6 +324,7 @@ export default connect(
 			? [ getSelectedDomain( ownProps ) ]
 			: ownProps.domains;
 		return {
+			currentRoute: getCurrentRoute( state ),
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			user: getCurrentUser( state ),
 			domainsAsList: domainsList,

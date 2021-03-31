@@ -158,14 +158,16 @@ export class EditTeamMemberForm extends Component {
 				{ this.renderNotices() }
 				<Card className="edit-team-member-form__user-profile">
 					<PeopleProfile siteId={ this.props.siteId } user={ this.state.user } />
-					<EditUserForm
-						user={ this.state.user }
-						disabled={ this.state.removingUser }
-						siteId={ this.props.siteId }
-						isJetpack={ this.props.isJetpack }
-						markChanged={ this.props.markChanged }
-						markSaved={ this.props.markSaved }
-					/>
+					{ this.state.user && (
+						<EditUserForm
+							user={ this.state.user }
+							disabled={ this.state.removingUser }
+							siteId={ this.props.siteId }
+							isJetpack={ this.props.isJetpack }
+							markChanged={ this.props.markChanged }
+							markSaved={ this.props.markSaved }
+						/>
+					) }
 				</Card>
 				{ this.state.user && (
 					<DeleteUser

@@ -2,19 +2,40 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { makeSuccessResponse, makeRedirectResponse } from '@automattic/composite-checkout';
+import {
+	makeSuccessResponse,
+	makeRedirectResponse,
+	makeErrorResponse,
+} from '@automattic/composite-checkout';
 import { confirmStripePaymentIntent } from '@automattic/calypso-stripe';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
-import { createTransactionEndpointRequestPayloadFromLineItems } from './translate-cart';
-import { wpcomTransaction } from '../payment-method-helpers';
+import {
+	createTransactionEndpointRequestPayload,
+	createTransactionEndpointCartFromResponseCart,
+} from './translate-cart';
+import submitWpcomTransaction from './submit-wpcom-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { ExistingCardTransactionRequestWithLineItems } from '../types/transaction-endpoint';
+import type { TransactionRequest } from '../types/transaction-endpoint';
 
-const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
+const debug = debugFactory( 'calypso:composite-checkout:existing-card-processor' );
+
+type ExistingCardTransactionRequest = Partial< Omit< TransactionRequest, 'paymentMethodType' > > &
+	Required<
+		Pick<
+			TransactionRequest,
+			| 'country'
+			| 'postalCode'
+			| 'name'
+			| 'storedDetailsId'
+			| 'siteId'
+			| 'paymentMethodToken'
+			| 'paymentPartnerProcessorId'
+		>
+	>;
 
 export default async function existingCardProcessor(
 	transactionData: unknown,
@@ -27,9 +48,23 @@ export default async function existingCardProcessor(
 	if ( ! stripeConfiguration ) {
 		throw new Error( 'Stripe configuration is required' );
 	}
-	return submitExistingCardPayment( transactionData, dataForProcessor )
+
+	debug( 'formatting existing card transaction', transactionData );
+	const formattedTransactionData = createTransactionEndpointRequestPayload( {
+		...transactionData,
+		cart: createTransactionEndpointCartFromResponseCart( {
+			siteId: dataForProcessor.siteId ? String( dataForProcessor.siteId ) : undefined,
+			contactDetails: transactionData.domainDetails ?? null,
+			responseCart: dataForProcessor.responseCart,
+		} ),
+		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
+	} );
+	debug( 'submitting existing card transaction', formattedTransactionData );
+
+	return submitWpcomTransaction( formattedTransactionData, dataForProcessor )
 		.then( ( stripeResponse ) => {
 			if ( stripeResponse?.message?.payment_intent_client_secret ) {
+				debug( 'transaction requires authentication' );
 				// 3DS authentication required
 				recordEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
 				return confirmStripePaymentIntent(
@@ -41,39 +76,24 @@ export default async function existingCardProcessor(
 		} )
 		.then( ( stripeResponse ) => {
 			if ( stripeResponse?.redirect_url ) {
+				debug( 'transaction requires redirect' );
 				return makeRedirectResponse( stripeResponse.redirect_url );
 			}
+			debug( 'transaction was successful' );
 			return makeSuccessResponse( stripeResponse );
+		} )
+		.catch( ( error ) => {
+			debug( 'transaction failed' );
+			// Errors here are "expected" errors, meaning that they (hopefully) come
+			// from the endpoint and not from some bug in the frontend code.
+			return makeErrorResponse( error.message );
 		} );
 }
-
-async function submitExistingCardPayment(
-	transactionData: ExistingCardTransactionRequest,
-	transactionOptions: PaymentProcessorOptions
-) {
-	debug( 'formatting existing card transaction', transactionData );
-	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
-		...transactionData,
-		couponId: transactionOptions.responseCart.coupon,
-		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
-	} );
-	debug( 'submitting existing card transaction', formattedTransactionData );
-
-	return wpcomTransaction( formattedTransactionData, transactionOptions );
-}
-
-type ExistingCardTransactionRequest = Omit<
-	ExistingCardTransactionRequestWithLineItems,
-	'paymentMethodType'
->;
 
 function isValidTransactionData(
 	submitData: unknown
 ): submitData is ExistingCardTransactionRequest {
 	const data = submitData as ExistingCardTransactionRequest;
-	if ( ! ( data?.items?.length > 0 ) ) {
-		throw new Error( 'Transaction requires items and none were provided' );
-	}
 	// Validate data required for this payment method type. Some other data may
 	// be required by the server but not required here since the server will give
 	// a better localized error message than we can provide.

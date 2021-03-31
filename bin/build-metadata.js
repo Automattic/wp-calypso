@@ -180,7 +180,7 @@ function processNumberFormat( format ) {
 function deepRemoveUndefinedKeysFromObject( obj ) {
 	for ( const key in obj ) {
 		if ( obj.hasOwnProperty( key ) ) {
-			if ( _.isUndefined( obj[ key ] ) ) {
+			if ( typeof obj[ key ] === 'undefined' ) {
 				delete obj[ key ];
 			} else if ( _.isObject( obj[ key ] ) ) {
 				deepRemoveUndefinedKeysFromObject( obj[ key ] );
@@ -196,7 +196,7 @@ function generateDeepRemoveEmptyArraysFromObject( allowedKeys ) {
 			if ( obj.hasOwnProperty( key ) ) {
 				if (
 					_.includes( allowedKeys, key ) &&
-					_.isArray( obj[ key ] ) &&
+					Array.isArray( obj[ key ] ) &&
 					obj[ key ].length === 0
 				) {
 					delete obj[ key ];

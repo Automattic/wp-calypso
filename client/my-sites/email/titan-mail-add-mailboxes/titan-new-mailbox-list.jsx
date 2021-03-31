@@ -26,11 +26,9 @@ const TitanNewMailboxList = ( {
 	mailboxes,
 	onMailboxesChange,
 	onReturnKeyPress = noop,
-	showAlternativeEmail = false,
+	showLabels = true,
 } ) => {
 	const translate = useTranslate();
-
-	const optionalMailboxFields = showAlternativeEmail ? [] : [ 'alternativeEmail' ];
 
 	const onMailboxValueChange = ( uuid ) => ( fieldName, fieldValue, mailboxFieldTouched ) => {
 		const updatedMailboxes = mailboxes.map( ( mailbox ) => {
@@ -50,7 +48,7 @@ const TitanNewMailboxList = ( {
 			return updatedMailbox;
 		} );
 
-		onMailboxesChange( validateMailboxes( updatedMailboxes, optionalMailboxFields ) );
+		onMailboxesChange( validateMailboxes( updatedMailboxes ) );
 	};
 
 	const onMailboxAdd = () => {
@@ -77,7 +75,7 @@ const TitanNewMailboxList = ( {
 					onMailboxValueChange={ onMailboxValueChange( mailbox.uuid ) }
 					mailbox={ mailbox }
 					onReturnKeyPress={ onReturnKeyPress }
-					showAlternativeEmail={ showAlternativeEmail }
+					showLabels={ showLabels }
 				/>
 			) ) }
 
@@ -99,7 +97,7 @@ TitanNewMailboxList.propTypes = {
 	mailboxes: PropTypes.arrayOf( getMailboxPropTypeShape() ).isRequired,
 	onMailboxesChange: PropTypes.func.isRequired,
 	onReturnKeyPress: PropTypes.func,
-	showAlternativeEmail: PropTypes.bool,
+	showLabels: PropTypes.bool,
 };
 
 export default TitanNewMailboxList;

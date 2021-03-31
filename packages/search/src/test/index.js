@@ -158,4 +158,45 @@ describe( 'search', () => {
 		expect( onSearch ).toHaveBeenCalledWith( defaultValue );
 		expect( onSearchChange ).not.toHaveBeenCalled();
 	} );
+
+	it( 'should call onSearch without debouncing when reverting to empty keyword', () => {
+		const onSearch = jest.fn();
+		render( <Search onSearch={ onSearch } defaultValue="a" delaySearch delayTimeout={ 1000 } /> );
+
+		// check that `onSearch` has been called with the default value on mount
+		expect( onSearch ).toHaveBeenCalledWith( 'a' );
+
+		// type backspace into the search box, making its value empty
+		userEvent.type( screen.getByRole( 'searchbox' ), '{backspace}' );
+
+		// check that `onSearch` has been called immediately, without debouncing
+		expect( onSearch ).toHaveBeenCalledWith( '' );
+	} );
+
+	it( 'should not call onSearch with current value when the prop changes', () => {
+		function SearchWithHistory() {
+			const [ history, push ] = React.useReducer( ( list, item ) => [ ...list, item ], [] );
+			return (
+				<div>
+					<Search defaultValue="start" onSearch={ ( keyword ) => push( keyword ) } />
+					<ul>
+						{ history.map( ( h, i ) => (
+							<li key={ i }>{ h }</li>
+						) ) }
+					</ul>
+				</div>
+			);
+		}
+
+		render( <SearchWithHistory /> );
+
+		// check that the default value is in history
+		expect( document.querySelectorAll( 'li' ) ).toHaveLength( 1 );
+
+		// type one letter into the search box
+		userEvent.type( screen.getByRole( 'searchbox' ), 's' );
+
+		// check that a second item was added to history
+		expect( document.querySelectorAll( 'li' ) ).toHaveLength( 2 );
+	} );
 } );

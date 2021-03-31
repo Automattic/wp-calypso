@@ -12,7 +12,6 @@ import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import PromoCard from 'calypso/components/promo-section/promo-card';
-import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 
 /**
@@ -47,8 +46,6 @@ export default function JetpackSearchPlaceholder( { siteId }: Props ): ReactElem
 				<p className="jetpack-search__placeholder-description">Placeholder</p>
 				<button className="jetpack-search__placeholder-button">Placeholder</button>
 			</PromoCard>
-
-			<WhatIsJetpack />
 		</Main>
 	);
 }

@@ -249,17 +249,26 @@ function load_block_patterns_from_api( $current_screen ) {
 		return;
 	}
 
-	if ( ! $current_screen->is_block_editor ) {
+	$is_site_editor = ( function_exists( 'gutenberg_is_edit_site_page' ) && gutenberg_is_edit_site_page( $current_screen->id ) );
+
+	if ( ! $current_screen->is_block_editor && ! $is_site_editor ) {
 		return;
 	}
 
+	$patterns_sources = array( 'block_patterns' );
+
+	// While we're still testing the FSE patterns, limit activation via a filter.
+	if ( $is_site_editor && apply_filters( 'a8c_enable_fse_block_patterns_api', false ) ) {
+		$patterns_sources[] = 'fse_block_patterns';
+	}
+
 	require_once __DIR__ . '/block-patterns/class-block-patterns-from-api.php';
-	Block_Patterns_From_API::get_instance();
+	Block_Patterns_From_API::get_instance( $patterns_sources );
 }
 add_action( 'current_screen', __NAMESPACE__ . '\load_block_patterns_from_api' );
 
 /**
- * Load WPCOM Block Patterns Modifications
+ * Load WPCOM Block Patterns Modifications.
  *
  * This is responsible for modifying how block patterns behave in the editor,
  * including adding support for premium block patterns. The patterns themselves
@@ -276,7 +285,7 @@ function load_wpcom_block_patterns_modifications() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_patterns_modifications' );
 
 /**
- * Load Block Inserter Modifications module
+ * Load Block Inserter Modifications module.
  */
 function load_block_inserter_modifications() {
 	require_once __DIR__ . '/block-inserter-modifications/index.php';

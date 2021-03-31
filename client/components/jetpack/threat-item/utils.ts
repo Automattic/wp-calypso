@@ -55,7 +55,7 @@ export const getThreatVulnerability = ( threat: Threat ): string | i18nCalypso.T
 			return translate( 'Vulnerability found in theme' );
 
 		case 'database':
-			return '';
+			return 'Vulnerability found in database table';
 
 		case 'none':
 		default:

@@ -2,16 +2,7 @@
  * Internal dependencies
  */
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { CHECKOUT_TOGGLE_CART_ON_MOBILE, SECTION_SET } from 'calypso/state/action-types';
-
-export function isShowingCartOnMobile( state = false, action ) {
-	switch ( action.type ) {
-		case CHECKOUT_TOGGLE_CART_ON_MOBILE:
-			return ! state;
-		default:
-			return state;
-	}
-}
+import { SECTION_SET } from 'calypso/state/action-types';
 
 export const upgradeIntent = withSchemaValidation( { type: 'string' }, ( state = '', action ) => {
 	if ( action.type !== SECTION_SET ) {
@@ -37,6 +28,5 @@ export const upgradeIntent = withSchemaValidation( { type: 'string' }, ( state =
 } );
 
 export default combineReducers( {
-	isShowingCartOnMobile,
 	upgradeIntent,
 } );

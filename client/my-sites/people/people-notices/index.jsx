@@ -105,14 +105,30 @@ class PeopleNotices extends React.Component {
 				} );
 			case 'RECEIVE_DELETE_SITE_USER_FAILURE':
 				if ( 'user_owns_domain_subscription' === log.error.error ) {
-					const numDomains = log.error.message.split( ',' ).length;
+					const domains = log.error.data ?? log.error.message.split( ',' );
 					return i18n.translate(
 						'@%(user)s owns following domain used on this site: {{strong}}%(domains)s{{/strong}}. This domain will have to be transferred to a different site, transferred to a different registrar, or canceled before removing or deleting @%(user)s.',
 						'@%(user)s owns following domains used on this site: {{strong}}%(domains)s{{/strong}}. These domains will have to be transferred to a different site, transferred to a different registrar, or canceled before removing or deleting @%(user)s.',
 						{
-							count: numDomains,
+							count: domains.length,
 							args: {
-								domains: log.error.message,
+								domains: domains.join( ', ' ),
+								...translateArg( log ),
+							},
+							components: {
+								strong: <strong />,
+							},
+						}
+					);
+				} else if ( 'user_has_active_subscriptions' === log.error.error ) {
+					const productNames = log.error.data ?? [];
+					return i18n.translate(
+						'@%(user)s owns following product used on this site: {{strong}}%(productNames)s{{/strong}}. This product will have to be transferred to a different site, user, or canceled before removing or deleting @%(user)s.',
+						'@%(user)s owns following products used on this site: {{strong}}%(productNames)s{{/strong}}. These products will have to be transferred to a different site, user, or canceled before removing or deleting @%(user)s.',
+						{
+							count: productNames.length,
+							args: {
+								productNames: productNames.join( ', ' ),
 								...translateArg( log ),
 							},
 							components: {
@@ -121,6 +137,7 @@ class PeopleNotices extends React.Component {
 						}
 					);
 				}
+
 				if ( isMultisite( this.props.site ) ) {
 					return i18n.translate( 'There was an error removing @%(user)s', {
 						args: translateArg( log ),

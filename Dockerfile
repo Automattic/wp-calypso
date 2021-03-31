@@ -2,7 +2,7 @@ ARG use_cache=false
 ARG node_version=14.16.0
 
 ###################
-FROM node:${node_version} as builder-cache-false
+FROM node:${node_version}-buster as builder-cache-false
 
 
 ###################
@@ -20,7 +20,7 @@ ARG commit_sha="(unknown)"
 ARG workers=4
 ARG node_memory=8192
 ENV CONTAINER 'docker'
-ENV PROGRESS true
+ENV WEBPACK_OPTIONS '--progress=profile'
 ENV COMMIT_SHA $commit_sha
 ENV CALYPSO_ENV production
 ENV NODE_ENV production

@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { getLineItemsFromCart } from '../index';
 import {
+	getLineItemsFromCart,
 	getCreditsLineItemFromCart,
 	getTaxLineItemFromCart,
 	getSubtotalLineItemFromCart,

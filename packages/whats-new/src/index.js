@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState } from 'react';
 import { Guide } from '@wordpress/components';
+import proxyRequest from 'wpcom-proxy-request';
+import React, { useEffect, useState } from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { useLocale } from '@automattic/i18n-utils';
 import wpcom from 'wpcom';
-import proxyRequest from 'wpcom-proxy-request';
 
 /**
  * Internal dependencies
@@ -14,8 +14,7 @@ import proxyRequest from 'wpcom-proxy-request';
 import './style.scss';
 import WhatsNewPage from './whats-new-page';
 
-const WhatsNewGuide = () => {
-	const [ showGuide, setShowGuide ] = useState( true );
+const WhatsNewGuide = ( { onClose } ) => {
 	const [ whatsNewData, setWhatsNewData ] = useState( null );
 	const __ = useI18n().__;
 	const locale = useLocale();
@@ -31,9 +30,9 @@ const WhatsNewGuide = () => {
 			} );
 	}, [ locale ] );
 
-	const toggleWhatsNew = () => setShowGuide( false );
-
-	if ( ! ( whatsNewData && showGuide ) ) return null;
+	if ( ! whatsNewData ) {
+		return null;
+	}
 
 	return (
 		<Guide
@@ -41,7 +40,7 @@ const WhatsNewGuide = () => {
 			className="whats-new-guide__main"
 			contentLabel={ __( "What's New at WordPress.com", __i18n_text_domain__ ) }
 			finishButtonText={ __( 'Close', __i18n_text_domain__ ) }
-			onFinish={ toggleWhatsNew }
+			onFinish={ onClose }
 		>
 			{ whatsNewData.map( ( page, index ) => (
 				<WhatsNewPage

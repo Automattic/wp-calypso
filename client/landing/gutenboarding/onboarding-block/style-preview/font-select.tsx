@@ -8,13 +8,13 @@ import classnames from 'classnames';
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
-import { useFontPairings } from '../../fonts';
+import { getFontTitle, FontPair } from '@automattic/design-picker';
 
 /**
  * Internal dependencies
  */
-import { getFontTitle, FontPair } from '../../constants';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { useFontPairings } from '../../fonts';
 
 const FontSelect: React.FunctionComponent = () => {
 	const { __ } = useI18n();
