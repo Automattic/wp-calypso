@@ -56,8 +56,14 @@ body.is-section-signup.is-white-signup {
 	}
 
 	.domains__step-content {
-		width: 70vw;
 		display: flex;
+		flex-direction: column;
+		width: 100vw;
+
+		@include break-mobile {
+			flex-direction: row;
+			width: 70vw;
+		}
 
 		.search.is-open.has-focus {
 			box-shadow: 0 0 0 2px var( --color-accent );
@@ -75,8 +81,13 @@ body.is-section-signup.is-white-signup {
 		.domain-side-content {
 			border-bottom: 1px solid;
 			border-bottom-color: var( --studio-gray-5 );
-			padding: 30px 0;
-			margin-left: 80px;
+			padding: 20px;
+			margin-left: 0;
+
+			@include break-mobile {
+				margin-left: 80px;
+				padding: 30px 0;
+			}
 		}
 
 		.domain-side-content:first-of-type {

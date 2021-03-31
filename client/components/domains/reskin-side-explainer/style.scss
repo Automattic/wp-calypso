@@ -1,5 +1,12 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .reskin-side-explainer {
-    width: 15vw;
+    width: 100vw;
+
+    @include break-mobile {
+        width: 15vw;
+    }
 
     .reskin-side-explainer__title {
         font-size: 1.25rem;
