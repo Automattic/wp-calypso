@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { every, isPlainObject, map, toArray, xor } from 'lodash';
+import { isPlainObject, map, toArray, xor } from 'lodash';
 
 /**
  * Returns truthy if local terms object is the same as the API response
@@ -11,7 +11,7 @@ import { every, isPlainObject, map, toArray, xor } from 'lodash';
  * @returns {boolean}                are there differences in local edits vs saved terms
  */
 export function isTermsEqual( localTermEdits, savedTerms ) {
-	return every( localTermEdits, ( terms, taxonomy ) => {
+	return Object.entries( localTermEdits ).every( ( [ taxonomy, terms ] ) => {
 		const termsArray = toArray( terms );
 		const isHierarchical = isPlainObject( termsArray[ 0 ] );
 		const normalizedEditedTerms = isHierarchical ? map( termsArray, 'ID' ) : termsArray;
