@@ -26,6 +26,7 @@ import { stringify } from 'qs';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { Icon } from '@wordpress/icons';
 
 /**
  * Internal dependencies
@@ -93,6 +94,7 @@ import { isBlogger } from 'calypso/lib/products-values';
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
 import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
+import tip from './tip';
 
 /**
  * Style dependencies
@@ -1244,6 +1246,7 @@ class RegisterDomainStep extends React.Component {
 		if ( isReskinned ) {
 			return (
 				<div className="register-domain-step__example-prompt">
+					<Icon icon={ tip } size={ 18 } />
 					{ translate( 'The best names are short and memorable' ) }
 				</div>
 			);
