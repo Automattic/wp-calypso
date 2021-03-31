@@ -41,7 +41,7 @@
 	}
 }
 
-.email-list-active__items {
+.email-list-active {
 	> .card {
 		display: flex;
 		align-items: center;
@@ -67,7 +67,7 @@
 	}
 }
 
-.email-list-inactive__items {
+.email-list-inactive {
 	margin-top: 15px;
 	> .card {
 		display: flex;

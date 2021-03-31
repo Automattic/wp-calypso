@@ -34,7 +34,7 @@ class EmailListInactive extends React.Component {
 		} );
 
 		return (
-			<div className="email-list-inactive__items">
+			<div className="email-list-inactive">
 				<SectionHeader label={ translate( 'Other domains' ) } />
 				{ emailListItems }
 			</div>

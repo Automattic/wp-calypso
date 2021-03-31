@@ -39,7 +39,7 @@ class EmailListActive extends React.Component {
 		} );
 
 		return (
-			<div className="email-list-active__items">
+			<div className="email-list-active">
 				<SectionHeader label={ translate( 'Domains with emails' ) } />
 				{ emailListItems }
 			</div>
