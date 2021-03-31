@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { difference, flatten, groupBy, sortBy, toPairs } from 'lodash';
+import { difference, flatten, groupBy, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -40,7 +40,7 @@ function sortProducts( products ) {
 
 	domainItems = difference( products, includedItems );
 	domainItems = domainItems.filter( isDomainProduct );
-	domainItems = toPairs( groupBy( domainItems, 'meta' ) );
+	domainItems = Object.entries( groupBy( domainItems, 'meta' ) );
 	domainItems = sortBy( domainItems, function ( pair ) {
 		if ( pair[ 1 ][ 0 ] && pair[ 1 ][ 0 ].cost === 0 ) {
 			return -1;

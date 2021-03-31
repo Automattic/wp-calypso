@@ -426,6 +426,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/split': 'error',
 		'you-dont-need-lodash-underscore/take-right': 'error',
 		'you-dont-need-lodash-underscore/to-lower': 'error',
+		'you-dont-need-lodash-underscore/to-pairs': 'error',
 		'you-dont-need-lodash-underscore/to-upper': 'error',
 		'you-dont-need-lodash-underscore/uniq': 'error',
 	},

@@ -4,7 +4,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { map, toPairs, pick, flowRight } from 'lodash';
+import { map, pick, flowRight } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -154,7 +154,7 @@ class PodcastingDetails extends Component {
 				disabled={ isRequestingSettings || ! isPodcastingEnabled }
 			>
 				<option value="0">None</option>
-				{ map( toPairs( podcastingTopics ), ( [ topic, subtopics ] ) => {
+				{ map( Object.entries( podcastingTopics ), ( [ topic, subtopics ] ) => {
 					// The keys for podcasting in Apple Podcasts use &amp;
 					const topicKey = topic.replace( '&', '&amp;' );
 					return [
