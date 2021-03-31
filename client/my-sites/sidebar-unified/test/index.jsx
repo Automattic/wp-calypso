@@ -51,7 +51,9 @@ describe( 'MySitesSidebar', () => {
 
 			expect( isSelected ).to.be.false;
 		} );
+	} );
 
+	describe( '#itemLinkMatches() edge cases', () => {
 		test( 'clicking a marketing panel should not activate sharing-buttons in settings menu', () => {
 			const isSelected = itemLinkMatches(
 				'/marketing/sharing-buttons/example.wordpress.com',
