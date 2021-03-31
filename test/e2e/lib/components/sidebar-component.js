@@ -12,7 +12,7 @@ import * as driverHelper from '../driver-helper.js';
 import * as driverManager from '../driver-manager';
 import * as dataHelper from '../data-helper';
 
-let host = dataHelper.getJetpackHost();
+const host = dataHelper.getJetpackHost();
 
 export default class SidebarComponent extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -42,7 +42,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectPeople() {
-		if( host !== 'WPCOM' ) {
+		if ( host !== 'WPCOM' ) {
 			await this.expandDrawerItem( 'Manage' );
 			return await this._scrollToAndClickMenuItem( 'People' );
 		}
@@ -52,7 +52,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectThemes() {
-		if( host !== 'WPCOM' ) {
+		if ( host !== 'WPCOM' ) {
 			await this.expandDrawerItem( 'Design' );
 			return await this._scrollToAndClickMenuItem( 'Themes' );
 		}
@@ -127,7 +127,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectSettings() {
-		if( host !== 'WPCOM' ) {
+		if ( host !== 'WPCOM' ) {
 			await this.expandDrawerItem( 'Manage' );
 			return await this._scrollToAndClickMenuItem( 'Settings' );
 		}
@@ -136,7 +136,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectMedia() {
-		if( host !== 'WPCOM' ) {
+		if ( host !== 'WPCOM' ) {
 			await this.expandDrawerItem( 'Site' );
 		}
 		return await this._scrollToAndClickMenuItem( 'Media' );
@@ -148,7 +148,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectPages() {
-		if( host !== 'WPCOM' ) {
+		if ( host !== 'WPCOM' ) {
 			await this.expandDrawerItem( 'Site' );
 			return await this._scrollToAndClickMenuItem( 'Pages' );
 		}

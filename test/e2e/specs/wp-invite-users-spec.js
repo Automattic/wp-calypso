@@ -141,7 +141,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 		} );
 
 		step( 'As the invited user, I am no longer an editor on the site', async function () {
-			if( 'WPCOM' !== dataHelper.getJetpackHost() ) return this.skip();
+			if ( 'WPCOM' !== dataHelper.getJetpackHost() ) return this.skip();
 			const loginPage = await LoginPage.Visit( driver );
 			await loginPage.login( newUserName, password );
 			await ReaderPage.Expect( driver );

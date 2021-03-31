@@ -38,7 +38,7 @@ describe( `[${ host }] Editor: Media Upload (${ screenSize }) @parallel @jetpack
 			let editorType = 'iframe';
 			const loginFlow = new LoginFlow( driver );
 			await loginFlow.loginAndStartNewPage( null, true );
-			if( host !== 'WPCOM' ) {
+			if ( host !== 'WPCOM' ) {
 				editorType = 'wpadmin';
 			}
 			gutenbergEditor = await GutenbergEditorComponent.Expect( driver, editorType );
