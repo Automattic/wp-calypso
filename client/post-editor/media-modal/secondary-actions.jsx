@@ -89,7 +89,7 @@ class MediaModalSecondaryActions extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => ( {
+export default connect( ( state, { site } ) => ( {
 	user: getCurrentUser( state ),
-	hideButton: ! canCurrentUser( state, ownProps.site.ID, 'publish_posts' ),
+	hideButton: ! canCurrentUser( state, site.ID, 'publish_posts' ),
 } ) )( localize( MediaModalSecondaryActions ) );
