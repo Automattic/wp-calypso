@@ -25,7 +25,7 @@ class EmailListActive extends React.Component {
 			return (
 				<CompactCard
 					href={ emailManagement( selectedSiteSlug, domain.name, currentRoute ) }
-					key={ `${ domain.name }-row` }
+					key={ domain.name }
 				>
 					<span className="email-list-active__item-icon">
 						<EmailTypeIcon domain={ domain } />
