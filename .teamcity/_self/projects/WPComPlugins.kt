@@ -122,10 +122,10 @@ private object O2Blocks : BuildType({
 
 				# Copy existing dist files to release directory
 				mkdir release-files
-				cp -r dist release-files/dist
+				cp -r dist release-files/dist/
 
 				# Add index.php file
-				cp index.php release-files
+				cp index.php release-files/
 			"""
 		}
 	}
