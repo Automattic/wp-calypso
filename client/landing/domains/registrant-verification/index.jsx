@@ -14,6 +14,7 @@ import DomainsLandingContentCard from '../content-card';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wp from 'calypso/lib/wp';
 import { getMaintenanceMessageFromError } from '../utils';
+import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 
 const wpcom = wp.undocumented();
 
@@ -80,7 +81,14 @@ class RegistrantVerificationPage extends Component {
 			),
 			actionTitle: null,
 			actionCallback: null,
-			footer: translate( 'All done. You can close this window now.' ),
+			footer: translate(
+				'All done. You can close this window now or {{domainsManagementLink}}manage your domains{{/domainsManagementLink}}.',
+				{
+					components: {
+						domainsManagementLink: <a href={ domainManagementRoot() } />,
+					},
+				}
+			),
 			isLoading: false,
 		};
 	};
@@ -143,7 +151,14 @@ class RegistrantVerificationPage extends Component {
 						},
 					}
 				),
-				footer: translate( 'All done. You can close this window now.' ),
+				footer: translate(
+					'All done. You can close this window now or {{domainsManagementLink}}manage your domains{{/domainsManagementLink}}.',
+					{
+						components: {
+							domainsManagementLink: <a href={ domainManagementRoot() } />,
+						},
+					}
+				),
 			};
 		}
 	};
