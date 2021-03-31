@@ -9,6 +9,10 @@ import { LocaleProvider, i18nDefaultLocaleSlug } from '@automattic/i18n-utils';
 
 const CalypsoI18nProvider: React.FunctionComponent = ( { children } ) => {
 	const [ localeSlug, setLocaleSlug ] = React.useState( i18n.getLocaleSlug() );
+
+	// Create a new @wordpress/i18n instance when the locale changes,
+	// as `setLocaleData` doesn't replace the entire locale data, but rather merges it with the existing one,
+	// which may lead to residue translations from previous locales to remain causing displaying mixed up translations.
 	const wpI18n = React.useMemo( () => createI18n( i18n.getLocale() ), [ localeSlug ] );
 
 	React.useEffect( () => {

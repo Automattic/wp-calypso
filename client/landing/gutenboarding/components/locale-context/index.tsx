@@ -52,6 +52,10 @@ export const LocaleContext: React.FunctionComponent = ( { children } ) => {
 	const [ contextLocaleData, setContextLocaleData ] = React.useState< LocaleData | undefined >();
 	const [ localeDataLoaded, setLocaleDataLoaded ] = React.useState( false );
 	const localeSlug = contextLocaleData?.[ '' ]?.localeSlug ?? DEFAULT_LOCALE_SLUG;
+
+	// Create a new @wordpress/i18n instance when the locale changes,
+	// as `setLocaleData` doesn't replace the entire locale data, but rather merges it with the existing one,
+	// which may lead to residue translations from previous locales to remain causing displaying mixed up translations.
 	const wpI18n = React.useMemo( () => createI18n( contextLocaleData ), [ localeSlug ] );
 
 	const setLocale = ( newLocaleData: LocaleData | undefined ) => {
