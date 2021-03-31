@@ -73,7 +73,7 @@ const useMshotsUrl = ( src: string, options: MShotsOptions ) => {
 const MShotsImage = ( {
 	url,
 	'aria-labelledby': labelledby,
-	alt,
+	// alt,
 	options,
 	scrollable = false,
 }: MShotsImageProps ): JSX.Element => {
