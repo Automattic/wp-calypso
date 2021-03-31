@@ -10,7 +10,7 @@ type Json = any;
  * Accumulates the state tree for "root" and any number of custom "storage keys"
  * Each storage key is then saved as a separate record in IndexedDB
  */
-export default class SerializationResult {
+export class SerializationResult {
 	results: Record< string, Json >;
 	constructor( results: Record< string, Json > = {} ) {
 		this.results = results;
