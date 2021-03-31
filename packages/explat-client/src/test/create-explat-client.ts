@@ -477,38 +477,86 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 } );
 
 describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
-	it( 'should throw when given an invalid name', () => {
+	it( 'should log and return fallback when given an invalid name', () => {
 		const mockedConfig = createMockedConfig();
 		const client = createExPlatClient( mockedConfig );
-		expect( () =>
-			client.dangerouslyGetExperimentAssignment( 'the-invalid-name' )
-		).toThrowErrorMatchingInlineSnapshot(
-			`"Trying to dangerously get an ExperimentAssignment that hasn't loaded."`
-		);
+		const firstNow = Date.now();
+		spiedMonotonicNow.mockImplementationOnce( () => firstNow );
+		expect( client.dangerouslyGetExperimentAssignment( '' ) ).toEqual( {
+			experimentName: '',
+			retrievedTimestamp: firstNow,
+			ttl: 60,
+			variationName: null,
+			isFallbackExperimentAssignment: true,
+		} );
+		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
+		Array [
+		  Array [
+		    Object {
+		      "experimentName": "",
+		      "message": "Invalid experimentName: ",
+		      "source": "dangerouslyGetExperimentAssignment-error",
+		    },
+		  ],
+		]
+	` );
 	} );
 
-	it( `should throw when the matching experiment hasn't loaded yet`, () => {
+	it( `should log and return fallback when the matching experiment hasn't loaded yet`, () => {
 		const mockedConfig = createMockedConfig();
 		const client = createExPlatClient( mockedConfig );
-		expect( () =>
-			client.dangerouslyGetExperimentAssignment( 'experiment_name_a' )
-		).toThrowErrorMatchingInlineSnapshot(
-			`"Trying to dangerously get an ExperimentAssignment that hasn't loaded."`
-		);
+		const firstNow = Date.now();
+		spiedMonotonicNow.mockImplementationOnce( () => firstNow );
+		expect( client.dangerouslyGetExperimentAssignment( 'experiment_name_a' ) ).toEqual( {
+			experimentName: 'experiment_name_a',
+			retrievedTimestamp: firstNow,
+			ttl: 60,
+			variationName: null,
+			isFallbackExperimentAssignment: true,
+		} );
+		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
+		Array [
+		  Array [
+		    Object {
+		      "experimentName": "experiment_name_a",
+		      "message": "Trying to dangerously get an ExperimentAssignment that hasn't loaded.",
+		      "source": "dangerouslyGetExperimentAssignment-error",
+		    },
+		  ],
+		]
+	` );
 	} );
 
-	it( `should throw when the matching experiment hasn't loaded yet but is currently loading`, () => {
+	it( `should log and return fallback when the matching experiment hasn't loaded yet but is currently loading`, async () => {
+		jest.useFakeTimers();
 		const mockedConfig = createMockedConfig();
 		const client = createExPlatClient( mockedConfig );
-		mockFetchExperimentAssignmentToMatchExperimentAssignment(
-			mockedConfig,
-			validExperimentAssignment
-		);
-		expect( () =>
-			client.dangerouslyGetExperimentAssignment( 'experiment_name_a' )
-		).toThrowErrorMatchingInlineSnapshot(
-			`"Trying to dangerously get an ExperimentAssignment that hasn't loaded."`
-		);
+		const firstNow = Date.now();
+		spiedMonotonicNow.mockImplementationOnce( () => firstNow );
+		const secondNow = Date.now();
+		spiedMonotonicNow.mockImplementationOnce( () => secondNow );
+		const promise = client.loadExperimentAssignment( 'experiment_name_a' );
+		expect( client.dangerouslyGetExperimentAssignment( 'experiment_name_a' ) ).toEqual( {
+			experimentName: 'experiment_name_a',
+			retrievedTimestamp: secondNow,
+			ttl: 60,
+			variationName: null,
+			isFallbackExperimentAssignment: true,
+		} );
+		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
+		Array [
+		  Array [
+		    Object {
+		      "experimentName": "experiment_name_a",
+		      "message": "Trying to dangerously get an ExperimentAssignment that hasn't loaded.",
+		      "source": "dangerouslyGetExperimentAssignment-error",
+		    },
+		  ],
+		]
+	` );
+		jest.runAllTimers();
+		await promise;
+		jest.useRealTimers();
 	} );
 
 	it( `should return a loaded ExperimentAssignment`, async () => {
@@ -527,7 +575,7 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 		).toEqual( validExperimentAssignment );
 	} );
 
-	it( `[developerMode] should throw when run too soon after loading an ExperimentAssignment`, async () => {
+	it( `[developerMode] should log error when run too soon after loading an ExperimentAssignment`, async () => {
 		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
 		const client = createExPlatClient( mockedConfig );
 		mockFetchExperimentAssignmentToMatchExperimentAssignment(
@@ -541,29 +589,17 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 			() => validExperimentAssignment.retrievedTimestamp + 1
 		);
 		await client.loadExperimentAssignment( validExperimentAssignment.experimentName );
-		expect( () =>
-			client.dangerouslyGetExperimentAssignment( validExperimentAssignment.experimentName )
-		).toThrowErrorMatchingInlineSnapshot(
-			`"Warning: Trying to dangerously get an ExperimentAssignment too soon after loading it."`
-		);
-	} );
-
-	it( `[developmentMode] should return a loaded ExperimentAssignment when not run too soon after`, async () => {
-		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
-		const client = createExPlatClient( mockedConfig );
-		mockFetchExperimentAssignmentToMatchExperimentAssignment(
-			mockedConfig,
-			validExperimentAssignment
-		);
-		spiedMonotonicNow.mockImplementationOnce(
-			() => validExperimentAssignment.retrievedTimestamp + 1
-		);
-		spiedMonotonicNow.mockImplementationOnce(
-			() => validExperimentAssignment.retrievedTimestamp + 1000
-		);
-		await client.loadExperimentAssignment( validExperimentAssignment.experimentName );
-		expect(
-			client.dangerouslyGetExperimentAssignment( validExperimentAssignment.experimentName )
-		).toEqual( validExperimentAssignment );
+		client.dangerouslyGetExperimentAssignment( validExperimentAssignment.experimentName );
+		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
+		Array [
+		  Array [
+		    Object {
+		      "experimentName": "experiment_name_a",
+		      "message": "Warning: Trying to dangerously get an ExperimentAssignment too soon after loading it.",
+		      "source": "dangerouslyGetExperimentAssignment",
+		    },
+		  ],
+		]
+	` );
 	} );
 } );

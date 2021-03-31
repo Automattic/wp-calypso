@@ -40,6 +40,10 @@
 		z-index: z-index( '.search', '.search .search__open-icon' );
 		color: var( --color-primary );
 		cursor: pointer;
+
+		.is-white-signup & {
+			fill: #a7aaad;
+		}
 	}
 
 	.search__open-icon:hover {

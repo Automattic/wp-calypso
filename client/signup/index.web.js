@@ -11,10 +11,10 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 
-export default async function () {
+export default function () {
 	const lang = getLanguageRouteParam();
 
-	await loadExperimentAssignment( 'refined_reskin_v1' );
+	loadExperimentAssignment( 'refined_reskin_v1' );
 
 	page(
 		[

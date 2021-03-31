@@ -398,6 +398,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/drop-right': 'error',
 		'you-dont-need-lodash-underscore/ends-with': 'error',
 		'you-dont-need-lodash-underscore/entries': 'error',
+		'you-dont-need-lodash-underscore/every': 'error',
 		'you-dont-need-lodash-underscore/extend-own': 'error',
 		'you-dont-need-lodash-underscore/fill': 'error',
 		'you-dont-need-lodash-underscore/foldl': 'error',
