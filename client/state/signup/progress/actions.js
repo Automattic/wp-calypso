@@ -59,7 +59,7 @@ function recordSubmitStep( stepName, providedDependencies ) {
 				[ 'cart_item', 'domain_item', 'selected_domain_upsell_item' ].includes( propName ) &&
 				typeof propValue !== 'string'
 			) {
-				propValue = Object.entries( propValue )
+				propValue = Object.entries( propValue || {} )
 					.map( ( pair ) => pair.join( ':' ) )
 					.join( ',' );
 			}
