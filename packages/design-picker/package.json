@@ -40,8 +40,8 @@
 		"utility-types": "^3.10.0"
 	},
 	"devDependencies": {
-		"@testing-library/jest-dom": "^5.11.6",
-		"@testing-library/react": "^10.0.5",
+		"@testing-library/jest-dom": "^5.11.10",
+		"@testing-library/react": "^11.2.6",
 		"jest-canvas-mock": "^2.3.0"
 	},
 	"peerDependencies": {

@@ -38,7 +38,7 @@
 		"lodash": "^4.17.21"
 	},
 	"devDependencies": {
-		"@testing-library/react": "^10.0.5",
+		"@testing-library/react": "^11.2.6",
 		"jest": "^26.4.0",
 		"react": "^16.12.0",
 		"react-dom": "^16.12.0"

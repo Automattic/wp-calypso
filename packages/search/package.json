@@ -44,7 +44,7 @@
 	},
 	"devDependencies": {
 		"@storybook/addon-actions": "^6.1.10",
-		"@testing-library/react": "^11.2.5",
+		"@testing-library/react": "^11.2.6",
 		"@testing-library/user-event": "^12.8.1"
 	},
 	"scripts": {
