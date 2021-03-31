@@ -48,7 +48,6 @@ class MediaModalSecondaryActions extends Component {
 		const canDeleteItems =
 			selectedItems.length &&
 			selectedItems.every( ( item ) => canUserDeleteItem( item, user, site ) );
-
 		if ( canDeleteItems ) {
 			const isButtonDisabled = selectedItems.some( ( item ) => item.transient );
 			buttons.push( {
