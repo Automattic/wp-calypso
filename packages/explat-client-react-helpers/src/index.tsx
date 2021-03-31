@@ -10,13 +10,14 @@ import type { ExPlatClient, ExperimentAssignment } from '@automattic/explat-clie
 
 interface UseExperimentOptions {
 	/**
-	 * Only loads the experimentAssignment if isEligible is true.
-	 * Only returns the experimentAssignment if isEligible is true.
+	 * Determines whether a participant is currenlty eligible for an assignment.
+	 * - Only loads the experimentAssignment if isEligible is true.
+	 * - Only returns the experimentAssignment if isEligible is true.
 	 */
-	isEligible?: boolean;
+	isEligible: boolean;
 }
 
-const defaultUseExperimentOptions = {
+const defaultUseExperimentOptions: UseExperimentOptions = {
 	isEligible: true,
 };
 
@@ -30,7 +31,7 @@ interface ExPlatClientReactHelpers {
 	 */
 	useExperiment: (
 		experimentName: string,
-		options?: UseExperimentOptions
+		options?: Partial< UseExperimentOptions >
 	) => [ boolean, ExperimentAssignment | null ];
 
 	/**
@@ -41,6 +42,7 @@ interface ExPlatClientReactHelpers {
 		defaultExperience: React.ReactNode;
 		treatmentExperience: React.ReactNode;
 		loadingExperience: React.ReactNode;
+		options?: Partial< UseExperimentOptions >;
 	} ) => JSX.Element;
 
 	/**
@@ -53,6 +55,7 @@ interface ExPlatClientReactHelpers {
 			experimentAssignment: ExperimentAssignment | null
 		) => JSX.Element;
 		name: string;
+		options?: Partial< UseExperimentOptions >;
 	} ) => JSX.Element;
 }
 
@@ -61,9 +64,9 @@ export default function createExPlatClientReactHelpers(
 ): ExPlatClientReactHelpers {
 	const useExperiment = (
 		experimentName: string,
-		providedOptions: UseExperimentOptions = defaultUseExperimentOptions
+		providedOptions: Partial< UseExperimentOptions > = {}
 	): [ boolean, ExperimentAssignment | null ] => {
-		const options = { ...defaultUseExperimentOptions, ...providedOptions };
+		const options: UseExperimentOptions = { ...defaultUseExperimentOptions, ...providedOptions };
 
 		const [ previousExperimentName ] = useState( experimentName );
 		const [ state, setState ] = useState< [ boolean, ExperimentAssignment | null ] >( [
@@ -115,7 +118,7 @@ export default function createExPlatClientReactHelpers(
 		treatmentExperience: React.ReactNode;
 		loadingExperience: React.ReactNode;
 		name: string;
-		options?: UseExperimentOptions;
+		options?: Partial< UseExperimentOptions >;
 	} ): JSX.Element => {
 		const [ isLoading, experimentAssignment ] = useExperiment( experimentName, options );
 		if ( isLoading ) {
@@ -136,7 +139,7 @@ export default function createExPlatClientReactHelpers(
 			experimentAssignment: ExperimentAssignment | null
 		) => JSX.Element;
 		name: string;
-		options?: UseExperimentOptions;
+		options?: Partial< UseExperimentOptions >;
 	} ): JSX.Element => {
 		const [ isLoading, experimentAssignment ] = useExperiment( experimentName, options );
 		return children( isLoading, experimentAssignment );
