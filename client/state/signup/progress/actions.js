@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { includes, isEmpty, reduce, snakeCase } from 'lodash';
+import { includes, isEmpty, reduce, snakeCase, toPairs } from 'lodash';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 
 /**
@@ -59,7 +59,7 @@ function recordSubmitStep( stepName, providedDependencies ) {
 				[ 'cart_item', 'domain_item', 'selected_domain_upsell_item' ].includes( propName ) &&
 				typeof propValue !== 'string'
 			) {
-				propValue = Object.entries( propValue )
+				propValue = toPairs( propValue )
 					.map( ( pair ) => pair.join( ':' ) )
 					.join( ',' );
 			}
