@@ -250,7 +250,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		try {
 			await this.submitPaymentDetails();
 		} catch {
-			const noticeSelector = By.css( '.notice button.notice_dismiss');
+			const noticeSelector = By.css( '.notice button.notice_dismiss' );
 			if ( await driverHelper.isElementPresent( this.driver, noticeSelector ) ) {
 				await driverHelper.clickWhenClickable( this.driver, noticeSelector );
 				await this.submitPaymentDetails();
