@@ -66,9 +66,10 @@ export default function createExPlatClientReactHelpers(
 		const options = { ...defaultUseExperimentOptions, ...providedOptions };
 
 		const [ previousExperimentName ] = useState( experimentName );
-		const [ [ isLoading, experimentAssignment ], setState ] = useState<
-			[ boolean, ExperimentAssignment | null ]
-		>( [ true, null ] );
+		const [ state, setState ] = useState< [ boolean, ExperimentAssignment | null ] >( [
+			true,
+			null,
+		] );
 		const hasStartedLoadingRef = useRef< boolean >( false );
 
 		useEffect( () => {
@@ -96,10 +97,11 @@ export default function createExPlatClientReactHelpers(
 			} );
 		}
 
-		if ( options.isEligible ) {
-			return [ isLoading, experimentAssignment ];
+		if ( ! options.isEligible ) {
+			return [ false, null ];
 		}
-		return [ false, null ];
+
+		return state;
 	};
 
 	const Experiment = ( {

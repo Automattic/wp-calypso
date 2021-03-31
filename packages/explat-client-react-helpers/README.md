@@ -59,6 +59,7 @@ Use this to add an in-code eligibility check to whether you want to load an expe
 It is up to you to ensure that the eligibility checks are consistent, the first eligible experiment will cause an assignment. This parameter can intuitively vary as expected for a hook or component argument, meaning that you can have the `isEligible` check be dynamic.
 
 Example usage:
+
 ```
 const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment( 'experiment_name', { isEligible: flow === 'launch-site' } );
 ```
