@@ -93,7 +93,7 @@ object E2ETests : BuildType({
 			dockerImage = "%docker_image_desktop%"
 			// See https://stackoverflow.com/a/53975412 and https://blog.jessfraz.com/post/how-to-use-new-docker-seccomp-profiles/
 			// TDLR: Chrome needs access to some kernel level operations to create a sandbox, this option unblocks them.
-			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json"
+			dockerRunParameters = "--security-opt seccomp=.teamcity/docker-seccomp.json"
 		}
 
 		bashNodeScript {

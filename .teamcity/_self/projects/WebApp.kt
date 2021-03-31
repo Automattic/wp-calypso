@@ -109,7 +109,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				yarn magellan --config=magellan.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
+			dockerRunParameters = "--security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
 		}
 		bashNodeScript {
 			name = "Collect results"
@@ -276,7 +276,7 @@ object RunCalypsoE2eMobileTests : BuildType({
 				yarn magellan --config=magellan.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
+			dockerRunParameters = "--security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
 		}
 		bashNodeScript {
 			name = "Collect results"
@@ -813,7 +813,7 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 				xvfb-run yarn magellan --config=magellan-playwright.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
+			dockerRunParameters = "--security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
 		}
 		bashNodeScript {
 			name = "Collect results"
