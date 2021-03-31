@@ -427,9 +427,34 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/plans/my-plan/foo.bar?thank-you=true&install=all' );
 	} );
 
+	it( 'redirects to the afterPurchaseUrl from the first cart item if set', () => {
+		const cart = {
+			products: [ { extra: { afterPurchaseUrl: '/after/purchase/url' } } ],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			cart,
+			siteSlug: 'foo.bar',
+		} );
+		expect( url ).toBe( '/after/purchase/url' );
+	} );
+
 	it( 'redirects to internal redirectTo url if set', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
+			siteSlug: 'foo.bar',
+			redirectTo: '/foo/bar',
+		} );
+		expect( url ).toBe( '/foo/bar' );
+	} );
+
+	it( 'redirects to internal redirectTo url if set even if afterPurchaseUrl exists on a cart item', () => {
+		const cart = {
+			products: [ { extra: { afterPurchaseUrl: '/after/purchase/url' } } ],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			cart,
 			siteSlug: 'foo.bar',
 			redirectTo: '/foo/bar',
 		} );
@@ -487,6 +512,21 @@ describe( 'getThankYouPageUrl', () => {
 			isEligibleForSignupDestinationResult: false,
 		} );
 		expect( url ).toBe( '/' );
+	} );
+
+	it( 'redirects to afterPurchaseUrl if set even if there is a url from a cookie', () => {
+		const getUrlFromCookie = jest.fn( () => '/cookie' );
+		const cart = {
+			products: [ { product_slug: 'foo', extra: { afterPurchaseUrl: '/after/purchase/url' } } ],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			getUrlFromCookie,
+			isEligibleForSignupDestinationResult: true,
+		} );
+		expect( url ).toBe( '/after/purchase/url' );
 	} );
 
 	it( 'redirects to url from cookie with notice type set to "purchase-success" if isEligibleForSignupDestination is set', () => {
