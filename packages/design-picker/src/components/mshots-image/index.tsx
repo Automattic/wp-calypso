@@ -27,11 +27,16 @@ export type MShotsOptions = {
 	screen_height?: number;
 };
 
+const cacheBuster = isEnabled( 'gutenboarding/bust-mshots-cache' )
+	? `&cache_buster=${ Date.now() }`
+	: '';
+
 export function mshotsUrl( url: string, options: MShotsOptions, count = 0 ): string {
 	const mshotsUrl = isEnabled( 'gutenboarding/local-mshots' )
 		? 'http://127.0.0.1:8000/mshots/v1/'
 		: 'https://s0.wp.com/mshots/v1/';
-	const mshotsRequest = addQueryArgs( mshotsUrl + encodeURIComponent( url ), {
+
+	const mshotsRequest = addQueryArgs( mshotsUrl + encodeURIComponent( url + cacheBuster ), {
 		...options,
 		count,
 	} );
