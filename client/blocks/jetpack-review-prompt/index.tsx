@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent, useCallback, useEffect } from 'react';
@@ -10,8 +11,9 @@ import React, { FunctionComponent, useCallback, useEffect } from 'react';
  */
 import { Button, Card } from '@automattic/components';
 import { dismiss } from 'calypso/state/jetpack-review-prompt/actions';
-import { getIsDismissed } from 'calypso/state/jetpack-review-prompt/selectors';
+import { getIsDismissed, getValidFromDate } from 'calypso/state/jetpack-review-prompt/selectors';
 import { hasReceivedRemotePreferences as getHasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import Gridicon from 'calypso/components/gridicon';
 import QueryPreferences from 'calypso/components/data/query-preferences';
@@ -29,6 +31,7 @@ interface Props {
 const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', type } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const moment = useLocalizedMoment();
 
 	// dismiss count is stored in a preference, make sure we have that before rendering
 	const hasReceivedRemotePreferences = useSelector( ( state ) =>
@@ -36,7 +39,9 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 	);
 
 	const isDismissed = useSelector( ( state ) => getIsDismissed( state, type ) );
-	// const isValidFrom
+	const validFrom = useSelector( ( state ) => getValidFromDate( state, type ) );
+
+	const isValid = null !== validFrom && validFrom < Date.now();
 
 	const dismissPrompt = useCallback( () => {
 		dispatch(
@@ -66,16 +71,37 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 		);
 	}, [ dispatch, type ] );
 
-	const text = () => {
+	const body = () => {
 		switch ( type ) {
 			case 'restore':
-				return translate(
-					'Was it easy to restore your site? Leave us a review and help spread the word'
+				return (
+					<p>
+						{ preventWidows(
+							translate(
+								'Was it easy to restore your site? Leave us a review and help spread the word'
+							)
+						) }
+					</p>
 				);
 			case 'scan':
 			default:
-				return translate(
-					'Are you happy with Jetpack Scan? Leave us a review and help spread the word'
+				return (
+					<p>
+						{ translate( 'Scan fixed all threats {{strong}}%s{{/strong}}. Your site looks great!', {
+							args: [ moment.utc( validFrom ).fromNow() ],
+							components: {
+								strong: <strong />,
+							},
+						} ) }
+
+						<br />
+
+						{ preventWidows(
+							translate(
+								'Are you happy with Jetpack Scan? Leave us a review and help spread the word'
+							)
+						) }
+					</p>
 				);
 		}
 	};
@@ -93,7 +119,7 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 	return (
 		<>
 			<QueryPreferences />
-			{ hasReceivedRemotePreferences && ! isDismissed && (
+			{ hasReceivedRemotePreferences && ! isDismissed && isValid && (
 				<Card className={ topClass() }>
 					<Gridicon
 						className="jetpack-review-prompt__close-icon"
@@ -104,7 +130,7 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 						<Gridicon icon="status" size={ 48 } />
 						<h3 className="jetpack-review-prompt__title">{ translate( 'How did we do?' ) }</h3>
 					</div>
-					<p>{ text() }</p>
+					{ body() }
 					<Button
 						borderless
 						className="jetpack-review-prompt__review-link"

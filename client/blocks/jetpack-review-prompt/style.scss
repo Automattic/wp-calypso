@@ -2,19 +2,20 @@
 	&__left {
 		.jetpack-review-prompt__header {
 			align-items: flex-start;
+			padding-bottom: 16px;
 		}
 	}
 
 	&__center {
 		.jetpack-review-prompt__header {
 			align-items: center;
+			padding-bottom: 32px;
 		}
 	}
 
 	&__title {
 		font-size: $font-title-small;
 		font-weight: 600;
-		padding-bottom: 32px;
 	}
 
 	&__header {
@@ -22,6 +23,10 @@
 		flex-direction: column;
 		padding-bottom: 16px;
 		padding-top: 32px;
+
+		.gridicon {
+			margin-bottom: 4px;
+		}
 	}
 
 	&__close-icon {
@@ -37,6 +42,10 @@
 
 		.gridicon {
 			margin-left: 4px;
+		}
+
+		&:hover {
+			color: var( --color-link-dark );
 		}
 	}
 }
