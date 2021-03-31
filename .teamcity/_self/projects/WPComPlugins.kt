@@ -101,6 +101,7 @@ private object Notifications : BuildType({
 	params {
 		param("plugin_slug", "notifications")
 		param("archive_dir", "./dist/")
+		param("build_env", "development")
 	}
 })
 
