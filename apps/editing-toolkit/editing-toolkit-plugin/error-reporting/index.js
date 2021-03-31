@@ -61,12 +61,15 @@ delete window._headJsErrorHandler;
 
 // We still need to report the head errors, if any. Since we know we might have more then
 // one error at once here, we send them to the API endpoint one at a time after REPORT_INTERVAL has passed
-// between each call.
+// between each call. The first error is sent immediately once the snippet below is exeucted, and then we
+// wait the REPORT_INTERVAL for the others.
 headErrors
-	.map( ( e ) => () => reportError( e ) )
+	.map( ( error ) => () => reportError( error ) )
 	.reduce(
-		( p, fn ) =>
-			p.then( () => new Promise( ( r ) => setTimeout( r, REPORT_INTERVAL ) ).then( fn ) ),
+		( promise, reportErrorFn ) =>
+			promise
+				.then( reportErrorFn )
+				.then( () => new Promise( ( resolve ) => setTimeout( resolve, REPORT_INTERVAL ) ) ),
 		Promise.resolve()
 	)
 	.then( () => delete window._jsErr );
