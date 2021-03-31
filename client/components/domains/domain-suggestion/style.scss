@@ -352,6 +352,10 @@ body.is-section-signup.is-white-signup {
 				}
 			}
 
+			.domain-suggestion__action-container {
+				flex: 0 0 auto;
+			}
+
 			.domain-suggestion__action:not( .is-borderless ) {
 				border-radius: 2px;
 				line-height: 17px;

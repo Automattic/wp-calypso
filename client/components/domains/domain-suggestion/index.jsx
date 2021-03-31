@@ -100,7 +100,7 @@ class DomainSuggestion extends React.Component {
 					{ children }
 					{ this.renderPrice() }
 				</div>
-				<div>
+				<div className="domain-suggestion__action-container">
 					<Button className="domain-suggestion__action" { ...this.props.buttonStyles }>
 						{ this.props.buttonContent }
 					</Button>
