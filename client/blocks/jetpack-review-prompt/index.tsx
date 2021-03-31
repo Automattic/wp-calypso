@@ -45,7 +45,7 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 
 	const dismissPrompt = useCallback( () => {
 		dispatch(
-			recordTracksEvent( 'calypso_jetpack_backup_review_prompt_dismiss', {
+			recordTracksEvent( 'calypso_jetpack_review_prompt_dismiss', {
 				reviewed: false,
 				type,
 			} )
@@ -55,7 +55,7 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 
 	const dismissPromptAsReviewed = useCallback( () => {
 		dispatch(
-			recordTracksEvent( 'calypso_jetpack_backup_review_prompt_dismiss', {
+			recordTracksEvent( 'calypso_jetpack_review_prompt_dismiss', {
 				reviewed: true,
 				type,
 			} )
@@ -65,7 +65,7 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 
 	useEffect( () => {
 		dispatch(
-			recordTracksEvent( 'calypso_jetpack_backup_review_prompt_view', {
+			recordTracksEvent( 'calypso_jetpack_review_prompt_view', {
 				type,
 			} )
 		);
