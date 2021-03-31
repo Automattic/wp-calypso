@@ -36,6 +36,7 @@
 		"external-media/free-photo-library": true,
 		"gdpr-banner": true,
 		"google-my-business": false,
+		"google-workspace-migration": true,
 		"help": true,
 		"inline-help": true,
 		"ive/use-external-assignment": false,
