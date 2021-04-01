@@ -27,6 +27,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { Icon } from '@wordpress/icons';
+import { isMobile } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -95,6 +96,7 @@ import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-n
 import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
 import tip from './tip';
+import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 
 /**
  * Style dependencies
@@ -1414,6 +1416,19 @@ class RegisterDomainStep extends React.Component {
 						showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
 						isReskinned={ this.props.isReskinned }
 					/>
+				) }
+				{ this.props.isReskinned && isMobile() && ! this.state.loadingResults && (
+					<div className="domain-side-content-container">
+						<div className="domain-side-content">
+							<ReskinSideExplainer
+								onClick={ this.props.hideFreePlan }
+								type={ 'free-domain-explainer' }
+							/>
+						</div>
+						<div className="domain-side-content">
+							<ReskinSideExplainer onClick={ useYourDomainFunction } type={ 'use-your-domain' } />
+						</div>
+					</div>
 				) }
 			</DomainSearchResults>
 		);

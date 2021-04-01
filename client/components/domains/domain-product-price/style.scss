@@ -20,6 +20,12 @@
 		}
 	}
 
+	@include breakpoint-deprecated( '<660px' ) {
+		flex-direction: column-reverse;
+		font-size: $font-body-small;
+		text-align: left;
+	}
+
 	.is-section-signup &:not( .domain-product-price__domain-step-signup-flow ) {
 		@include breakpoint-deprecated( '>660px' ) {
 			padding-left: 1em;
@@ -34,11 +40,7 @@
 		}
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
-		display: inline-block;
-		font-size: $font-body-small;
-		text-align: left;
-	}
+	
 
 	small {
 		color: var( --color-text-subtle );

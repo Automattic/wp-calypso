@@ -290,10 +290,18 @@ body.is-section-signup.is-white-signup {
 
 		@include break-mobile {
 			margin-left: 12px;
+			margin-bottom: 0;
 		}
 	}
 
 	.domain-suggestion {
+		margin: 0 20px;
+		flex-direction: row;
+
+		@include break-mobile {
+			margin: 0;
+		}
+
 		& .domain-suggestion__content-domain {
 			justify-content: space-between;
 			margin-right: 40px;
@@ -337,7 +345,9 @@ body.is-section-signup.is-white-signup {
 			padding-right: 0;
 
 			.domain-registration-suggestion__domain-title {
-				line-height: 3rem;
+				@include break-mobile {
+					line-height: 3rem;
+				}
 
 				.domain-registration-suggestion__domain-title-name {
 					color: var( --studio-gray-60 );
@@ -371,8 +381,12 @@ body.is-section-signup.is-white-signup {
 			.domain-suggestion__action:not( .is-borderless ) {
 				border-radius: 2px;
 				line-height: 17px;
-				padding-top: 11px;
-				padding-bottom: 10px;
+				padding: 12px 24px;
+
+				@include break-mobile {
+					padding-top: 11px;
+					padding-bottom: 10px;
+				}
 			}
 
 			&.domain-transfer-suggestion {

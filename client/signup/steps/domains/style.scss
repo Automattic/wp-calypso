@@ -53,6 +53,14 @@ body.is-section-signup.is-white-signup {
 
 	.signup__step.is-domains .formatted-header {
 		margin-bottom: 30px;
+
+		.formatted-header__title {
+			font-size: 2.25rem;
+
+			@include break-mobile {
+				font-size: 2.6rem;
+			}
+		}
 	}
 
 	.domains__step-content {
