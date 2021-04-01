@@ -455,14 +455,14 @@ class DomainsStep extends React.Component {
 
 	getSideContent = () => {
 		return (
-			<div className="domain-side-content-container">
-				<div className="domain-side-content">
+			<div className="domains__domain-side-content-container">
+				<div className="domains__domain-side-content">
 					<ReskinSideExplainer
 						onClick={ this.handleDomainExplainerClick }
 						type={ 'free-domain-explainer' }
 					/>
 				</div>
-				<div className="domain-side-content">
+				<div className="domains__domain-side-content">
 					<ReskinSideExplainer
 						onClick={ this.handleUseYourDomainClick }
 						type={ 'use-your-domain' }
@@ -698,7 +698,8 @@ class DomainsStep extends React.Component {
 	}
 
 	renderContent() {
-		let content, sideContent;
+		let content;
+		let sideContent;
 
 		if ( 'mapping' === this.props.stepSectionName ) {
 			content = this.mappingForm();

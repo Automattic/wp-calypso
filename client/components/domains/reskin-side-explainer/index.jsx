@@ -13,7 +13,9 @@ class ReskinSideExplainer extends React.Component {
 	getStrings() {
 		const { type, translate } = this.props;
 
-		let title, subtitle, ctaText;
+		let title;
+		let subtitle;
+		let ctaText;
 
 		switch ( type ) {
 			case 'free-domain-explainer':

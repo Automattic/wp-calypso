@@ -79,7 +79,7 @@ body.is-section-signup.is-white-signup {
 			}
 		}
 
-		.domain-side-content-container {
+		.domains__domain-side-content-container {
 			display: flex;
 			flex-direction: column;
 			width: 100vw;
@@ -91,7 +91,7 @@ body.is-section-signup.is-white-signup {
 			}
 		}
 
-		.domain-side-content {
+		.domains__domain-side-content {
 			border-bottom: 1px solid;
 			border-bottom-color: var( --studio-gray-5 );
 			padding: 20px;
@@ -103,11 +103,11 @@ body.is-section-signup.is-white-signup {
 			}
 		}
 
-		.domain-side-content:first-of-type {
+		.domains__domain-side-content:first-of-type {
 			padding-top: 0;
 		}
 
-		.domain-side-content:last-of-type {
+		.domains__domain-side-content:last-of-type {
 			border-bottom: none;
 		}
 
