@@ -8,7 +8,7 @@ import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stri
 import { LeftColumn, RightColumn } from '../styled-components/ie-fallback';
 import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 
 /**
  * Internal dependencies

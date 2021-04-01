@@ -11,7 +11,7 @@ import { Button, Tip } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import { useSiteDomains, useDomainSuggestion, useDomainSearch, useTitle } from '@automattic/launch';
 import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 import {
 	CheckoutStepBody,

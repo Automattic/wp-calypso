@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import { createInterpolateElement } from '@wordpress/element';
 import { Button } from '@wordpress/components';
 import { Icon, check, close } from '@wordpress/icons';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 
 /**

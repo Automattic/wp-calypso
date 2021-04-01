@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { keyframes } from '@emotion/core';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 
 /**
  * Internal dependencies
