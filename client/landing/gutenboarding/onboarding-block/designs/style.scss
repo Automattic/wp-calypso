@@ -3,12 +3,12 @@
 @import '../../mixins';
 @import '../../variables.scss';
 
-.design-selector {
+.designs {
 	background-color: var( --contrastColor );
 	color: var( --mainColor );
 	padding-bottom: $onboarding-footer-height;
 
-	.design-selector__header {
+	.designs__header {
 		@include onboarding-heading-padding;
 
 		display: flex;
@@ -16,11 +16,11 @@
 		align-items: center;
 	}
 
-	.design-selector__heading {
+	.designs__heading {
 		flex-grow: 1;
 	}
 
-	.design-selector__premium-badge {
+	.designs__premium-badge {
 		background-color: var( --studio-gray-80 );
 		/* stylelint-disable-next-line */
 		border-radius: 1em;
@@ -30,7 +30,7 @@
 		white-space: nowrap;
 	}
 
-	.design-selector__premium-badge-logo {
+	.designs__premium-badge-logo {
 		height: auto;
 		margin-left: -4px;
 		width: 14px;
@@ -44,7 +44,7 @@
 		}
 	}
 
-	.design-selector__premium-badge-text {
+	.designs__premium-badge-text {
 		display: inline-block;
 		margin-top: -0.05em;
 		text-transform: uppercase;
