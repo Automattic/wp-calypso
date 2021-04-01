@@ -13,20 +13,21 @@
  */
 import React from 'react';
 
-const SidebarCustomIcon = ( { alt, className, icon, ...rest } ) => {
+const SidebarCustomIcon = ( { icon, ...rest } ) => {
 	if ( ! icon ) {
 		return null;
 	}
 
 	if ( icon.indexOf( 'data:image' ) === 0 || icon.indexOf( 'http' ) === 0 ) {
+		const imgStyle = `url("${ icon }")`;
+		const imgStyles = { backgroundImage: imgStyle, maskImage: imgStyle };
+
 		return (
-			<img
-				alt={ alt || '' }
-				className={ 'sidebar__menu-icon ' + ( className || '' ) }
-				src={ icon }
-				width="20"
+			<span
+				className={ 'sidebar__menu-icon dashicons sidebar__menu-icon-img' }
+				style={ imgStyles }
 				{ ...rest }
-			/>
+			></span>
 		);
 	}
 

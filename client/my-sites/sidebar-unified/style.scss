@@ -698,3 +698,10 @@ $font-size: rem( 14px );
 		}
 	}
 }
+
+@supports ( mask-image: none ) or ( -webkit-mask-image: none ) {
+	.sidebar__menu-icon-img {
+		background-image: none !important;
+		background-color: currentColor;
+	}
+}
