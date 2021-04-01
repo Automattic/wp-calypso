@@ -183,7 +183,14 @@
 	color: var( --color-sidebar-menu-hover-text );
 }
 
-.layout__secondary .site__home {
-	background: var( --color-sidebar-menu-selected-background );
-	color: var( --color-sidebar-menu-selected-text );
+.layout__secondary {
+	.site__home {
+		background: var( --color-sidebar-menu-selected-background );
+		color: var( --color-sidebar-menu-selected-text );
+	}
+
+	.site__badge {
+		background: var(--color-sidebar-menu-hover-background);
+    	color: var(--color-sidebar-menu-hover-text);
+	}
 }
