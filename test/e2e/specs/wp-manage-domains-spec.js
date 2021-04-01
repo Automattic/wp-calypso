@@ -114,7 +114,7 @@ describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function 
 			await sidebarComponent.selectDomains();
 			await DomainsPage.Expect( driver );
 			try {
-				const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect(driver);
+				const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( driver );
 				await shoppingCartWidgetComponent.empty();
 			} catch {
 				console.log( 'Cart already empty' );
@@ -200,7 +200,7 @@ describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function 
 			await sideBarComponent.selectDomains();
 			await DomainsPage.Expect( driver );
 			try {
-				const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect(driver);
+				const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( driver );
 				await shoppingCartWidgetComponent.empty();
 			} catch {
 				console.log( 'Cart already empty' );
