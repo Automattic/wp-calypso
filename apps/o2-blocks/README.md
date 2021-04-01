@@ -1,6 +1,6 @@
 # Gutenberg extensions for o2 theme
 
-This code is developed in the calypso monorepo at https://github.com/Automattic/wp-calypso/tree/trunk/apps/o2-blocks.
+This code is developed in the calypso monorepo at <https://github.com/Automattic/wp-calypso/tree/trunk/apps/o2-blocks>.
 
 Your extension should follow this structure:
 
