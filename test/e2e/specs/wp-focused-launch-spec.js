@@ -20,23 +20,16 @@ import NavBarComponent from '../lib/components/nav-bar-component.js';
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 import { step } from 'mocha-steps';
 
-const host = dataHelper.getJetpackHost();
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
-const screenSize = driverManager.currentScreenSize();
-
-const tempSkipSiteCreation = false; // Not working it seems
-const tempSiteName = tempSkipSiteCreation ? 'e2eflowtesting1616683846106940' : undefined;
+const tempSkipSiteCreation = true; // Not working it seems
+const tempSiteName = tempSkipSiteCreation ? 'e2eflowtesting1617114046090258' : undefined;
 const tempSkipLaunch = true;
 const tempSkipDeleteSite = true;
 
-describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () {
-	this.timeout( mochaTimeOut );
+describe( `Focused launch flow`, function () {
 	let driver;
 	let selectedSubdomain;
 
 	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
 		driver = await driverManager.startBrowser();
 	} );
 
@@ -57,11 +50,15 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 
 		step( 'Can open block editor', async function () {
 			if ( tempSkipSiteCreation ) {
-				// Not working.
 				await driver
 					.navigate()
-					.to( `http://calypso.localhost:3000/post/${ tempSiteName }.wordpress.com/home` );
-				// .to( `http://calypso.localhost:3000/home/${ tempSiteName }.wordpress.com` );
+					.to( `https://wordpress.com/post/${ tempSiteName }.wordpress.com/home` );
+
+				// Local Calypso (Will not work due to cross-site issues)
+				// .to( `http://calypso.localhost:3000/post/${ tempSiteName }.wordpress.com/home` );
+
+				// WP-Admin
+				// `https://${ tempSiteName }.wordpress.com/wp-admin/post.php?post=5&action=edit`
 			} else {
 				await MyHomePage.Expect( driver );
 
@@ -71,8 +68,14 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 				await navbarComponent.clickCreateNewPost();
 			}
 
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			await gEditorComponent.initEditor();
+			// Do not call initEditor() as it seems to do things we don't want it to.
+			// if ( ! tempSkipSiteCreation ) {
+			// const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			// await gEditorComponent.initEditor();
+			// }
+
+			// This will switch the driver to the iframe
+			return await GutenbergEditorComponent.Expect( driver );
 		} );
 
 		step( 'Can open focused launch modal', async function () {
@@ -89,34 +92,49 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 		} );
 
 		step( 'Can see updated list of domains when changing site title', async function () {
-			// Change site title
+			// Get the site title input
 			const siteTitleInputSelector = By.css( '.focused-launch-summary__input input[type=text]' );
-			const siteTitle = 'randomString123456XXXABC'; // TODO: Make it truly random.
 
+			const isSiteTitleInputPresent = await driverHelper.isElementPresent(
+				driver,
+				siteTitleInputSelector
+			);
+
+			// Site title step is not displayed when it has been set by user.
+			// Site title is not set during `/start` flow, site title is can be set during `/new` flow.
+			// If the site title input is not rendered, skip this step.
+			if ( ! isSiteTitleInputPresent ) {
+				return true;
+				// return this.skip();
+			}
+
+			// Set a site title
+			const siteTitle = dataHelper.randomPhrase();
 			await driverHelper.setWhenSettable( driver, siteTitleInputSelector, siteTitle, {
 				pauseBetweenKeysMS: 10,
 			} );
 
-			// TODO: Maybe need to set a delay before checking
+			// Wait for the new suggestion items to be rendered,
+			// and get the first domain suggestion item.
 			const firstDomainSuggestionItemSelector = By.css(
 				'.domain-picker__suggestion-item:first-child'
 			);
 			await driverHelper.waitTillPresentAndDisplayed( driver, firstDomainSuggestionItemSelector );
 
+			// Get the text from the first domain suggestion item,
+			// and see if it contains the site title entered by user.
 			const firstDomainSuggestionItem = await driver.findElement(
 				firstDomainSuggestionItemSelector
 			);
+
 			const firstDomainSuggestionItemText = await firstDomainSuggestionItem.getText();
 
-			// TODO: Not sure this is a good approach, how about test if domain suggestion list is updated?
-			const normalizedSiteTitle = siteTitle.replace( / /g, '' );
+			// Remove the spaces and make everything lowercase to match with the suggested domain.
+			const normalizedSiteTitle = siteTitle.toLowerCase().replace( / /g, '' );
 			const domainIncludesUserEnteredSiteTitle =
 				firstDomainSuggestionItemText.indexOf( normalizedSiteTitle ) > -1;
 
-			// TODO: Fix this
-			return true;
-
-			assert(
+			return assert(
 				domainIncludesUserEnteredSiteTitle,
 				'Domain suggestions did not include user entered site title.'
 			);
@@ -154,9 +172,14 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 
 		step( 'Can open detailed plans view', async function () {
 			// const viewAllDomainsButton = By.css('.focused-launch-summary__view-all-domains-btn');
-			const viewAllPlansButton = By.css( '.focused-launch-summary__view-all-plans-btn' );
+			// .focused-launch-summary__view-all-plans-btn
+			const viewAllPlansButtonSelector = By.css(
+				'.focused-launch-summary__step:last-child .focused-launch-summary__details-link'
+			);
 
-			await driverHelper.clickWhenClickable( driver, viewAllPlansButton );
+			await driverHelper.clickWhenClickable( driver, viewAllPlansButtonSelector );
+
+			debugger;
 
 			const plansGridInDetailedViewSelector = By.css( '.focused-launch-details__body .plans-grid' );
 
