@@ -115,7 +115,6 @@ private object Notifications : BuildType({
 			new_hash=`get_hash dist/index.html`
 			old_hash=`get_hash release-archive/index.html`
 
-
 			# All scripts and styles use the same "hash" version, so replace any
 			# instances of the hash in the *old* files with the newest version.
 			sed -i "s~${'$'}old_hash~${'$'}new_hash~g" release-archive/index.html release-archive/rtl.html
