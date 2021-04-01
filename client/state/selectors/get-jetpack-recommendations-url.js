@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -12,7 +7,7 @@ import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
 export default function getJetpackRecommendationsUrl( state ) {
 	const site = getSelectedSite( state );
 
-	const adminUrl = get( site, 'options.admin_url' );
+	const adminUrl = site?.options?.admin_url;
 	return adminUrl
 		? getUrlFromParts( {
 				...getUrlParts( adminUrl + 'admin.php' ),
