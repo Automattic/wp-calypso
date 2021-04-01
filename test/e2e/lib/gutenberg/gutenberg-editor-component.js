@@ -71,7 +71,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async publish( { visit = false, closePanel = true } = {} ) {
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
 		await driverHelper.clickWhenClickable( this.driver, this.publishButtonSelector );
-		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
+		// Let's give publishing request enough time to finish. Sometimes it takes
+		// way more than the default 20 seconds, and the cost of waiting a bit
+		// longer is definitely lower than the cost of repeating the whole spec.
+		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector, 60000 );
 
 		if ( closePanel ) {
 			try {
