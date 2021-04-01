@@ -98,7 +98,7 @@ class AuthorSwitcherShell extends React.Component {
 							placeholder={ this.props.translate( 'Find Author…', { context: 'search label' } ) }
 							delaySearch={ true }
 							// eslint-disable-next-line jsx-a11y/no-autofocus
-							autoFocus={ this.props.users.length > 10 && ! hasTouch() }
+							autoFocus={ ! hasTouch() }
 						/>
 					) }
 					{ this.props.fetchInitialized &&
