@@ -9,6 +9,10 @@ import { By } from 'selenium-webdriver';
 import AsyncBaseContainer from '../async-base-container';
 // import DisconnectSurveyPage from '../pages/disconnect-survey-page.js';
 import * as driverHelper from '../driver-helper.js';
+import * as driverManager from '../driver-manager';
+import * as dataHelper from '../data-helper';
+
+const host = dataHelper.getJetpackHost();
 
 export default class SidebarComponent extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -38,60 +42,75 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectPeople() {
-		await this.expandDrawerItem( 'Manage' );
-		return await this._scrollToAndClickMenuItem( 'people' );
+		if ( host !== 'WPCOM' ) {
+			await this.expandDrawerItem( 'Manage' );
+			return await this._scrollToAndClickMenuItem( 'People' );
+		}
+
+		await this.expandDrawerItem( 'Users' );
+		return await this._scrollToAndClickMenuItem( 'All Users' );
 	}
 
 	async selectThemes() {
-		await this.expandDrawerItem( 'Design' );
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '.menu-link-text[data-e2e-sidebar="Themes"]' )
-		); // TODO: data-tip-target target is missing
+		if ( host !== 'WPCOM' ) {
+			await this.expandDrawerItem( 'Design' );
+			return await this._scrollToAndClickMenuItem( 'Themes' );
+		}
+		await this.expandDrawerItem( 'Appearance' );
+		return await this._scrollToAndClickMenuItem( 'Themes' );
+	}
+
+	async selectAllSitesThemes() {
+		return await this._scrollToAndClickMenuItem( 'Themes' );
 	}
 
 	async selectSiteEditor() {
-		await this.expandDrawerItem( 'Design' );
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.menu-link-text[data-e2e-sidebar="Site Editor (beta)"]' )
+			By.css( '.menu-link-text[data-e2e-sidebar*="Site Editor"]' )
 		);
 	}
 
 	async selectWPAdmin() {
-		return await this._scrollToAndClickMenuItem( 'wpadmin' );
+		//Wp-admin isn't in nav-unification. Workaround to get to wp-admin
+		await this.expandDrawerItem( 'Feedback' );
+
+		if ( driverManager.currentScreenSize() === 'mobile' ) {
+			return await this._scrollToAndClickMenuItem( 'Feedback' );
+		}
 	}
 
 	async customizeTheme() {
-		return await this._scrollToAndClickMenuItem( 'themes' );
+		await this.expandDrawerItem( 'Appearance' );
+		return await this._scrollToAndClickMenuItem( 'Customize' );
 	}
 
 	async selectPlans() {
 		await this.expandDrawerItem( 'Upgrades' );
-		return await this._scrollToAndClickMenuItem( 'plans' );
+		return await this._scrollToAndClickMenuItem( 'Plans' );
 	}
 
 	async selectDomains() {
 		await this.expandDrawerItem( 'Upgrades' );
-		return await this._scrollToAndClickMenuItem( 'domains' );
+		return await this._scrollToAndClickMenuItem( 'Domains' );
 	}
 
 	async selectMyHome() {
-		return await this._scrollToAndClickMenuItem( 'myhome' );
+		return await this._scrollToAndClickMenuItem( 'My Home' );
 	}
 
 	async selectStats() {
-		return await this._scrollToAndClickMenuItem( 'stats' );
+		return await this._scrollToAndClickMenuItem( 'Stats' );
 	}
 
 	async selectActivity() {
 		await this.expandDrawerItem( 'Jetpack' );
-		return await this._scrollToAndClickMenuItem( 'activity' );
+		return await this._scrollToAndClickMenuItem( 'Activity Log' );
 	}
 
 	async selectMarketing() {
 		await this.expandDrawerItem( 'Tools' );
-		return await this._scrollToAndClickMenuItem( 'marketing' );
+		return await this._scrollToAndClickMenuItem( 'Marketing' );
 	}
 
 	async selectViewThisSite() {
@@ -99,38 +118,51 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectPlugins() {
+		return await this._scrollToAndClickMenuItem( 'Plugins' );
+	}
+
+	async selectPluginsJetpackConnected() {
 		await this.expandDrawerItem( 'Tools' );
-		return await this._scrollToAndClickMenuItem( 'side-menu-plugins' );
+		return await this._scrollToAndClickMenuItem( 'Plugins' );
 	}
 
 	async selectSettings() {
-		await this.expandDrawerItem( 'Manage' );
-		return await this._scrollToAndClickMenuItem( 'settings' );
+		if ( host !== 'WPCOM' ) {
+			await this.expandDrawerItem( 'Manage' );
+			return await this._scrollToAndClickMenuItem( 'Settings' );
+		}
+		await this.expandDrawerItem( 'Settings' );
+		return await this._scrollToAndClickMenuItem( 'General' );
 	}
 
 	async selectMedia() {
-		await this.expandDrawerItem( 'Site' );
-		return await this._scrollToAndClickMenuItem( 'side-menu-media' );
+		if ( host !== 'WPCOM' ) {
+			await this.expandDrawerItem( 'Site' );
+		}
+		return await this._scrollToAndClickMenuItem( 'Media' );
 	}
 
 	async selectImport() {
 		await this.expandDrawerItem( 'Tools' );
-		return await this._scrollToAndClickMenuItem( 'side-menu-import' );
+		return await this._scrollToAndClickMenuItem( 'Import' );
 	}
 
 	async selectPages() {
-		await this.expandDrawerItem( 'Site' );
-		return await this._scrollToAndClickMenuItem( 'side-menu-page' );
+		if ( host !== 'WPCOM' ) {
+			await this.expandDrawerItem( 'Site' );
+			return await this._scrollToAndClickMenuItem( 'Pages' );
+		}
+		await this.expandDrawerItem( 'Pages' );
+		return await this._scrollToAndClickMenuItem( 'All Pages' );
 	}
 
 	async selectPosts() {
-		await this.expandDrawerItem( 'Site' );
-		return await this._scrollToAndClickMenuItem( 'side-menu-post' );
+		await this.expandDrawerItem( 'Posts' );
+		return await this._scrollToAndClickMenuItem( 'All Posts' );
 	}
 
 	async selectComments() {
-		await this.expandDrawerItem( 'Site' );
-		return await this._scrollToAndClickMenuItem( 'side-menu-comments' );
+		return await this._scrollToAndClickMenuItem( 'Comments' );
 	}
 
 	async selectStoreOption() {
@@ -144,45 +176,30 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	async settingsOptionExists( click = false ) {
 		const isDisplayed = await driverHelper.isElementPresent(
 			this.driver,
-			SidebarComponent._getSidebarSelector( 'settings' )
+			SidebarComponent._getSidebarSelector( 'Settings' )
 		);
 		if ( click ) {
-			await this._scrollToAndClickMenuItem( 'settings' );
+			await this._scrollToAndClickMenuItem( 'Settings' );
 		}
 		return isDisplayed;
 	}
 
-	async mediaOptionExists() {
-		return await driverHelper.isElementPresent(
-			this.driver,
-			SidebarComponent._getSidebarSelector( 'side-menu-media' )
-		);
-	}
-
 	async numberOfMenuItems() {
-		const elements = await this.driver.findElements( By.css( '.sidebar .sidebar__menu li' ) );
+		const elements = await this.driver.findElements(
+			By.css( '.sidebar li.sidebar__menu-item-parent' )
+		);
 		return elements.length;
 	}
 
 	async _scrollToAndClickMenuItem( target, { clickButton = false } = {} ) {
 		const selector = SidebarComponent._getSidebarSelector( target, { getButton: clickButton } );
-		await driverHelper.waitTillPresentAndDisplayed(
-			this.driver,
-			By.css( '.current-site__notices' )
-		);
-
-		if ( ! ( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector, 500 ) ) ) {
-			const settingsSelector = SidebarComponent._getSidebarSelector( 'settings' );
-			await driverHelper.scrollIntoView( this.driver, settingsSelector );
-		}
 
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}
 
-	static _getSidebarSelector( target, { getButton = false } = {} ) {
-		const linkSelector = getButton ? 'a.sidebar__button' : 'a:not(.sidebar__button)';
-		return By.css( `.sidebar li[data-tip-target="${ target }"] ${ linkSelector }` );
+	static _getSidebarSelector( target ) {
+		return By.css( `.sidebar span[data-e2e-sidebar="${ target }"]` );
 	}
 
 	async ensureSidebarMenuVisible() {
@@ -201,13 +218,17 @@ export default class SidebarComponent extends AsyncBaseContainer {
 				);
 			} catch ( e ) {
 				console.log( 'All sites button did not click' );
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css( 'a[data-tip-target="my-sites"]' )
+				);
 			}
 		}
 		return await driverHelper.waitTillPresentAndDisplayed( this.driver, sidebarSelector );
 	}
 
 	async selectSiteSwitcher() {
-		const siteSwitcherSelector = By.css( '.current-site__switch-sites' );
+		const siteSwitcherSelector = By.css( '.current-site__switch-sites button' );
 		await this.ensureSidebarMenuVisible();
 		const present = await driverHelper.isEventuallyPresentAndDisplayed(
 			this.driver,
