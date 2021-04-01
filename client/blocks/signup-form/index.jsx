@@ -864,19 +864,21 @@ class SignupForm extends Component {
 
 		return (
 			<>
-				<LoggedOutFormLinks>
-					<LoggedOutFormLinkItem href={ logInUrl }>
-						{ flowName === 'onboarding'
-							? translate( 'Log in to create a site for your existing account.' )
-							: translate( 'Already have a WordPress.com account?' ) }
-					</LoggedOutFormLinkItem>
-					{ this.props.oauth2Client && (
-						<LoggedOutFormBackLink
-							oauth2Client={ this.props.oauth2Client }
-							recordClick={ this.recordBackLinkClick }
-						/>
-					) }
-				</LoggedOutFormLinks>
+				{ ! this.props.isReskinned && (
+					<LoggedOutFormLinks>
+						<LoggedOutFormLinkItem href={ logInUrl }>
+							{ flowName === 'onboarding'
+								? translate( 'Log in to create a site for your existing account.' )
+								: translate( 'Already have a WordPress.com account?' ) }
+						</LoggedOutFormLinkItem>
+						{ this.props.oauth2Client && (
+							<LoggedOutFormBackLink
+								oauth2Client={ this.props.oauth2Client }
+								recordClick={ this.recordBackLinkClick }
+							/>
+						) }
+					</LoggedOutFormLinks>
+				) }
 				{ showRecaptchaToS && (
 					<div className="signup-form__recaptcha-tos">
 						<LoggedOutFormLinks>
@@ -993,11 +995,7 @@ class SignupForm extends Component {
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
 
-				{ this.props.horizontal && (
-					<div className="signup-form__separator">
-						<span className="signup-form__separator-text">{ this.props.translate( 'or' ) }</span>
-					</div>
-				) }
+				{ this.props.horizontal && <div className="signup-form__separator"></div> }
 
 				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 					<SocialSignupForm

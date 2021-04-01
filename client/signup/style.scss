@@ -518,6 +518,57 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 		}
 	}
 
+	.signup__step.is-user .formatted-header {
+		.formatted-header__title {
+			@include break-small {
+				max-width: inherit;
+				text-align: center;
+			}
+		}
+
+		.formatted-header__subtitle {
+			a {
+				color: var( --studio-gray-90 );
+				text-decoration: underline;
+				cursor: pointer;
+			}
+			@include break-small {
+				max-width: inherit;
+				text-align: center;
+			}
+		}
+	}
+
+	.signup-form__social {
+		margin: 0;
+	}
+
+	.social-buttons__button {
+		text-align: left;
+		padding-bottom: 0;
+	}
+
+	.signup-form__social-buttons-tos {
+		text-align: left;
+		padding-left: 0;
+	}
+
+	.signup-form__recaptcha-tos {
+		margin-top: 40px;
+	}
+
+	.signup-form.is-horizontal {
+		.logged-out-form,
+		.signup-form__social {
+			@include break-small {
+				max-width: 350px;
+			}
+			@include break-medium {
+				max-width: 408px;
+			}
+		}
+	}
+
 	button.is-primary {
 		box-shadow: none;
 		border: 0;
