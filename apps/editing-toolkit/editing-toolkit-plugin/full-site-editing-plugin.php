@@ -333,3 +333,11 @@ function load_whats_new() {
 	require_once __DIR__ . '/whats-new/class-whats-new.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_whats_new' );
+
+/**
+ * Load FSE Theme browsing
+ */
+function load_fse_themes() {
+	require_once __DIR__ . '/fse-themes/fse-themes.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_fse_themes', 9 );
