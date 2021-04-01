@@ -99,11 +99,19 @@ export default class LoginPage extends AsyncBaseContainer {
 	}
 
 	async requestMagicLink( emailAddress ) {
+		/**
+		 * Wait for the form to become enabled so the magic link is clickable.
+		 *
+		 * @see {@link https://github.com/Automattic/wp-calypso/pull/50999}
+		 */
+		await driverHelper.waitTillPresentAndDisplayed(
+			this.driver,
+			By.css( '.login__form-action button:not(:disabled)' )
+		);
 		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '[data-e2e-link="magic-login-link"]' )
 		);
-		await this.driver.sleep( 500 );
 		await driverHelper.setWhenSettable(
 			this.driver,
 			By.css( '.magic-login__email-fields input[name="usernameOrEmail"]' ),
