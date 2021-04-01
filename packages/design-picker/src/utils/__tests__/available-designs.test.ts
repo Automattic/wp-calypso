@@ -13,7 +13,9 @@ import { availableDesignsConfig } from '../available-designs-config';
 import type { Design } from '../../types';
 
 jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: () => true,
+	// Useful because the getAvailableDesigns function uses feature flags for
+	// arguments default values
+	isEnabled: () => false,
 } ) );
 
 jest.mock( '../available-designs-config', () => {
@@ -94,6 +96,7 @@ describe( 'Design Picker design utils', () => {
 			);
 		} );
 	} );
+
 	describe( 'getDesignImageUrl', () => {
 		it( 'should compose the correct design API URL', () => {
 			const mockDesign = availableDesignsConfig.featured[ 0 ];
@@ -103,10 +106,11 @@ describe( 'Design Picker design utils', () => {
 			);
 		} );
 	} );
+
 	describe( 'getAvailableDesigns', () => {
 		it( 'should get FSE and alpha designs', () => {
 			const mockDesignFSE = availableDesignsConfig.featured[ 2 ];
-			expect( getAvailableDesigns( true, true ) ).toEqual( {
+			expect( getAvailableDesigns( { includeAlphaDesigns: true, useFseDesigns: true } ) ).toEqual( {
 				featured: [ mockDesignFSE ],
 			} );
 		} );
@@ -115,24 +119,62 @@ describe( 'Design Picker design utils', () => {
 			const mockDesign = availableDesignsConfig.featured[ 0 ];
 			const mockDesignPremium = availableDesignsConfig.featured[ 1 ];
 			const mockDesignAlpha = availableDesignsConfig.featured[ 3 ];
-			expect( getAvailableDesigns( true, false ) ).toEqual( {
-				featured: [ mockDesign, mockDesignPremium, mockDesignAlpha ],
-			} );
+			expect( getAvailableDesigns( { includeAlphaDesigns: true, useFseDesigns: false } ) ).toEqual(
+				{
+					featured: [ mockDesign, mockDesignPremium, mockDesignAlpha ],
+				}
+			);
 		} );
 
 		it( 'should get only FSE, non-alpha designs', () => {
 			const mockDesignFSE = availableDesignsConfig.featured[ 2 ];
-			expect( getAvailableDesigns( false, true ) ).toEqual( {
-				featured: [ mockDesignFSE ],
-			} );
+			expect( getAvailableDesigns( { includeAlphaDesigns: false, useFseDesigns: true } ) ).toEqual(
+				{
+					featured: [ mockDesignFSE ],
+				}
+			);
 		} );
 
 		it( 'should get all non-alpha, non-FSE designs', () => {
 			const mockDesign = availableDesignsConfig.featured[ 0 ];
 			const mockDesignPremium = availableDesignsConfig.featured[ 1 ];
-			expect( getAvailableDesigns( false, false ) ).toEqual( {
-				featured: [ mockDesign, mockDesignPremium ],
-			} );
+			expect( getAvailableDesigns( { includeAlphaDesigns: false, useFseDesigns: false } ) ).toEqual(
+				{
+					featured: [ mockDesign, mockDesignPremium ],
+				}
+			);
+		} );
+
+		it( 'should randomize the results order when the randomize flag is specified', () => {
+			// Randomization is checked by comparing randomized and non-randomized
+			// return values, and checking that these values are normally different,
+			// but that they are equal after being sorted.
+			// Testing randomness is hard! Since the results of a random shuffle can be the same
+			// as the non-shuffled version, this check is repeated `maxRepetitions` times
+			// before marking a failed test.
+
+			const sortDesignsBySlug = ( a: Design, b: Design ) => a.slug.localeCompare( b.slug );
+
+			const maxRepetitions = 10;
+
+			const designs = getAvailableDesigns( { randomize: false } ).featured;
+			let designsRandom: Design[] = [];
+
+			let isOrderDifferent = false;
+			let i = 0;
+			while ( i < maxRepetitions && ! isOrderDifferent ) {
+				designsRandom = getAvailableDesigns( { randomize: true } ).featured;
+
+				const differentContent = JSON.stringify( designs ) !== JSON.stringify( designsRandom );
+				const sameContentWhenSorted =
+					JSON.stringify( [ ...designs ].sort( sortDesignsBySlug ) ) ===
+					JSON.stringify( [ ...designsRandom ].sort( sortDesignsBySlug ) );
+
+				isOrderDifferent = differentContent && sameContentWhenSorted;
+				i += 1;
+			}
+
+			expect( isOrderDifferent ).toBeTruthy();
 		} );
 	} );
 } );

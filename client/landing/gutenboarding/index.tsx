@@ -4,14 +4,14 @@
 import '@automattic/calypso-polyfills';
 import * as React from 'react';
 import ReactDom from 'react-dom';
-import { xorWith, isEqual, isEmpty, shuffle } from 'lodash';
+import { xorWith, isEqual, isEmpty } from 'lodash';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import config from '@automattic/calypso-config';
 import { subscribe, select, dispatch } from '@wordpress/data';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import type { Site as SiteStore } from '@automattic/data-stores';
 import accessibleFocus from '@automattic/accessible-focus';
-import { availableDesigns } from '@automattic/design-picker';
+import { getAvailableDesigns } from '@automattic/design-picker';
 import type { Design } from '@automattic/design-picker';
 
 /**
@@ -139,11 +139,9 @@ function waitForSelectedSite(): Promise< Site | undefined > {
  */
 function ensureRandomizedDesignsAreUpToDate() {
 	const designsInStore = select( ONBOARD_STORE ).getRandomizedDesigns();
+	const availableDesigns = getAvailableDesigns();
 	if ( ! isDeepEqual( designsInStore.featured, availableDesigns.featured ) ) {
-		dispatch( ONBOARD_STORE ).setRandomizedDesigns( {
-			...availableDesigns,
-			featured: shuffle( availableDesigns.featured ),
-		} );
+		dispatch( ONBOARD_STORE ).setRandomizedDesigns( getAvailableDesigns( { randomize: true } ) );
 	}
 }
 

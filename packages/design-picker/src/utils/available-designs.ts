@@ -59,11 +59,17 @@ export const getDesignImageUrl = ( design: Design ): string => {
 	}.${ canUseWebP ? 'webp' : 'jpg' }?v=3`;
 };
 
-export function getAvailableDesigns(
-	includeAlphaDesigns: boolean = isEnabled( 'gutenboarding/alpha-templates' ),
-	useFseDesigns: boolean = isEnabled( 'gutenboarding/site-editor' )
-): AvailableDesigns {
-	let designs = availableDesignsConfig;
+interface AvailableDesignsOptions {
+	includeAlphaDesigns?: boolean;
+	useFseDesigns?: boolean;
+	randomize?: boolean;
+}
+export function getAvailableDesigns( {
+	includeAlphaDesigns = isEnabled( 'gutenboarding/alpha-templates' ),
+	useFseDesigns = isEnabled( 'gutenboarding/site-editor' ),
+	randomize = false,
+}: AvailableDesignsOptions = {} ): AvailableDesigns {
+	let designs = { ...availableDesignsConfig };
 
 	// We can tell different environments (via the config JSON) to show pre-prod "alpha" designs.
 	// Otherwise they'll be hidden by default.
@@ -84,7 +90,16 @@ export function getAvailableDesigns(
 		),
 	};
 
+	if ( randomize ) {
+		// Fisher-Yates algorithm https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
+		for ( let i = designs.featured.length - 1; i > 0; i-- ) {
+			const j = Math.floor( Math.random() * ( i + 1 ) );
+			[ designs.featured[ i ], designs.featured[ j ] ] = [
+				designs.featured[ j ],
+				designs.featured[ i ],
+			];
+		}
+	}
+
 	return designs;
 }
-
-export const availableDesigns = getAvailableDesigns();
