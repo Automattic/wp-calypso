@@ -146,7 +146,7 @@ export default class LoginFlow {
 	async loginAndStartNewPage(
 		site = null,
 		usingGutenberg = false,
-		{ useFreshLogin = false, dismissPageTemplateSelector = true } = {}
+		{ useFreshLogin = false, dismissPageTemplateSelector = true, editorType = 'iframe' } = {}
 	) {
 		if ( site || ( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' ) ) {
 			site = site || dataHelper.getJetpackSiteName();
@@ -161,7 +161,7 @@ export default class LoginFlow {
 		await pagesPage.selectAddNewPage();
 
 		if ( usingGutenberg ) {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver, editorType );
 			await gEditorComponent.initEditor( { dismissPageTemplateSelector } );
 		}
 

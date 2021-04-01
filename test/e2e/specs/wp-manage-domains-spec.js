@@ -113,8 +113,12 @@ describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function 
 			const sidebarComponent = await SidebarComponent.Expect( driver );
 			await sidebarComponent.selectDomains();
 			await DomainsPage.Expect( driver );
-			const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( driver );
-			return await shoppingCartWidgetComponent.empty();
+			try {
+				const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect(driver);
+				await shoppingCartWidgetComponent.empty();
+			} catch {
+				console.log( 'Cart already empty' );
+			}
 		} );
 	} );
 
@@ -195,8 +199,12 @@ describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function 
 			const sideBarComponent = await SidebarComponent.Expect( driver );
 			await sideBarComponent.selectDomains();
 			await DomainsPage.Expect( driver );
-			const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( driver );
-			return await shoppingCartWidgetComponent.empty();
+			try {
+				const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect(driver);
+				await shoppingCartWidgetComponent.empty();
+			} catch {
+				console.log( 'Cart already empty' );
+			}
 		} );
 	} );
 } );
