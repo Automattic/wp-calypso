@@ -88,7 +88,7 @@ class Block_Patterns_From_Api_Test extends TestCase {
 	 */
 	public function test_patterns_request_succeeds_with_empty_cache() {
 		$utils_mock              = $this->createBlockPatternsUtilsMock( array( $this->pattern_mock_object ) );
-		$block_patterns_from_api = new Block_Patterns_From_API( $utils_mock );
+		$block_patterns_from_api = new Block_Patterns_From_API( array(), $utils_mock );
 
 		$utils_mock->expects( $this->once() )
 			->method( 'cache_get' )
@@ -96,7 +96,7 @@ class Block_Patterns_From_Api_Test extends TestCase {
 
 		$utils_mock->expects( $this->once() )
 			->method( 'remote_get' )
-			->with( 'https://public-api.wordpress.com/rest/v1/ptk/patterns/fr?tags=pattern&pattern_meta=is_web' );
+			->with( 'https://public-api.wordpress.com/rest/v1/ptk/patterns/fr?tags=pattern&pattern_meta=is_web&patterns_source=block_patterns' );
 
 		$utils_mock->expects( $this->once() )
 			->method( 'cache_add' )
@@ -110,7 +110,7 @@ class Block_Patterns_From_Api_Test extends TestCase {
 	 */
 	public function test_patterns_request_succeeds_with_set_cache() {
 		$utils_mock              = $this->createBlockPatternsUtilsMock( array( $this->pattern_mock_object ), array( $this->pattern_mock_object ) );
-		$block_patterns_from_api = new Block_Patterns_From_API( $utils_mock );
+		$block_patterns_from_api = new Block_Patterns_From_API( array(), $utils_mock );
 
 		$utils_mock->expects( $this->once() )
 			->method( 'cache_get' )
@@ -135,7 +135,7 @@ class Block_Patterns_From_Api_Test extends TestCase {
 
 		add_filter( 'a8c_override_patterns_source_site', $example_site );
 		$utils_mock              = $this->createBlockPatternsUtilsMock( array( $this->pattern_mock_object ) );
-		$block_patterns_from_api = new Block_Patterns_From_API( $utils_mock );
+		$block_patterns_from_api = new Block_Patterns_From_API( array(), $utils_mock );
 
 		$utils_mock->expects( $this->never() )
 			->method( 'cache_get' );

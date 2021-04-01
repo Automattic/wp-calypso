@@ -31,16 +31,29 @@ class Block_Patterns_From_API {
 	private $valid_patterns_sources = array( 'block_patterns', 'fse_block_patterns' );
 
 	/**
+	 * Patterns source sites.
+	 *
+	 * @var array
+	 */
+	private $patterns_sources;
+
+	/**
+	 * A collection of utility methods.
+	 *
+	 * @var Block_Patterns_Utils
+	 */
+	private $utils;
+
+	/**
 	 * Block_Patterns constructor.
 	 *
 	 * @param array                $patterns_sources A array of strings, each of which matches a valid source for retrieving patterns.
 	 * @param Block_Patterns_Utils $utils            A class dependency containing utils methods.
 	 */
-	public function __construct( $patterns_sources = array(), Block_Patterns_Utils $utils = null ) {
-		// Tells the backend which patterns source site to default to.
+	public function __construct( $patterns_sources, Block_Patterns_Utils $utils = null ) {
+		$patterns_sources       = empty( $patterns_sources ) ? array( 'block_patterns' ) : $patterns_sources;
 		$this->patterns_sources = empty( array_diff( $patterns_sources, $this->valid_patterns_sources ) ) ? $patterns_sources : array( 'block_patterns' );
-
-		$this->utils = empty( $utils ) ? new \A8C\FSE\Block_Patterns_Utils() : $utils;
+		$this->utils            = empty( $utils ) ? new \A8C\FSE\Block_Patterns_Utils() : $utils;
 	}
 
 	/**
@@ -159,7 +172,7 @@ class Block_Patterns_From_API {
 			return $this->utils->remote_get( $request_url );
 		}
 
-		$block_patterns = $this->utils->cache_get( $this->patterns_cache_key, 'ptk_patterns' );
+		$block_patterns = $this->utils->cache_get( $patterns_cache_key, 'ptk_patterns' );
 
 		// Load fresh data if we don't have any patterns.
 		if ( false === $block_patterns || ( defined( 'WP_DISABLE_PATTERN_CACHE' ) && WP_DISABLE_PATTERN_CACHE ) ) {
@@ -175,7 +188,7 @@ class Block_Patterns_From_API {
 			);
 
 			$block_patterns = $this->utils->remote_get( $request_url );
-			$this->utils->cache_add( $this->patterns_cache_key, $block_patterns, 'ptk_patterns', DAY_IN_SECONDS );
+			$this->utils->cache_add( $patterns_cache_key, $block_patterns, 'ptk_patterns', DAY_IN_SECONDS );
 		}
 
 		return $block_patterns;
