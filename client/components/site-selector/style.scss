@@ -195,6 +195,10 @@
 
 	.site-selector__manage-hidden-sites {
 		text-decoration: underline;
+
+		&:hover {
+			text-decoration: none;
+		}
 	}
 }
 
