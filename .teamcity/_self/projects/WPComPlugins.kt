@@ -107,7 +107,7 @@ private object Notifications : BuildType({
 			}
 			new_hash=`get_hash dist/index.html`
 			old_hash=`get_hash release-archive/index.html`
-			
+			echo "The old hash was ${'$'}old_hash"
 			sed -i "s/${'$'}old_hash/${'$'}new_hash/g" release-archive/index.html release-archive/rtl.html
 		""".trimIndent())
 	}
