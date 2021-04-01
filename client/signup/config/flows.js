@@ -32,7 +32,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 					redirect_to: `/home/${ dependencies.siteSlug }`,
 				} ),
 			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
-			...( 'domain' === flowName && { isDomainOnly: 1 } ),
+			...( [ 'domain', 'add-domain' ].includes( flowName ) && { isDomainOnly: 1 } ),
 		},
 		checkoutURL
 	);
