@@ -47,7 +47,7 @@ function a8c_editor_assets() {
 		true
 	);
 
-	$style_file = 'dist/editor' . is_rtl() ? '.rtl.css' : '.css';
+	$style_file = 'dist/editor' . ( is_rtl() ? '.rtl.css' : '.css' );
 	wp_enqueue_style(
 		'a8c-blocks-block-editor-css',
 		plugins_url( $style_file, __FILE__ ),
