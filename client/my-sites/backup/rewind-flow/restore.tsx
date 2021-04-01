@@ -11,19 +11,20 @@ import React, { FunctionComponent, useCallback, useState } from 'react';
 import { Button, Card } from '@automattic/components';
 import { defaultRewindConfig, RewindConfig } from './types';
 import { rewindRestore } from 'calypso/state/activity-log/actions';
+import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import Error from './error';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import Gridicon from 'calypso/components/gridicon';
+import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import Loading from './loading';
 import ProgressBar from './progress-bar';
-import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
-import JetpackReviewPrompt from './jetpack-review-prompt';
 
 /**
  * Type dependencies
@@ -63,9 +64,10 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		[ dispatch, rewindConfig, rewindId, siteId ]
 	);
 	const onConfirm = useCallback( () => {
+		dispatch( setValidFrom( 'restore', Date.now() ) );
 		setUserHasRequestedRestore( true );
 		requestRestore();
-	}, [ setUserHasRequestedRestore, requestRestore ] );
+	}, [ dispatch, setUserHasRequestedRestore, requestRestore ] );
 
 	const loading = rewindState.state === 'uninitialized';
 	const { restoreId } = rewindState.rewind || {};
@@ -216,7 +218,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				<QueryRewindRestoreStatus siteId={ siteId } restoreId={ restoreId } />
 			) }
 			<Card>{ render() }</Card>
-			{ ( isInProgress || isFinished ) && <JetpackReviewPrompt /> }
+			{ ( isInProgress || isFinished ) && <JetpackReviewPrompt align="center" type="restore" /> }
 		</>
 	);
 };
