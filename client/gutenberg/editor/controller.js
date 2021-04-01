@@ -7,7 +7,9 @@ import { get, has } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isEligibleForGutenframe } from 'calypso/state/gutenberg-iframe-eligible/is-eligible-for-gutenframe';
+import shouldLoadGutenframe from 'calypso/state/selectors/should-load-gutenframe';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import { hasUserSettingsRequestFailed } from 'calypso/state/user-settings/selectors';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoifyIframe from './calypsoify-iframe';
@@ -15,6 +17,7 @@ import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import { requestSelectedEditor } from 'calypso/state/selected-editor/actions';
+import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 import {
 	getSiteUrl,
 	getSiteOption,
@@ -82,6 +85,24 @@ function waitForSiteIdAndSelectedEditor( context ) {
 		context.store.dispatch(
 			requestSelectedEditor( getSelectedSiteId( context.store.getState() ) )
 		);
+	} );
+}
+
+function areCalypsoPreferencesAvailable( state ) {
+	return 'undefined' !== typeof getUserSettings( state )?.calypso_preferences;
+}
+
+function waitForCalypsoPreferences( context ) {
+	return new Promise( ( resolve ) => {
+		const unsubscribe = context.store.subscribe( () => {
+			const state = context.store.getState();
+			if ( ! areCalypsoPreferencesAvailable( state ) && ! hasUserSettingsRequestFailed( state ) ) {
+				return;
+			}
+			unsubscribe();
+			resolve();
+		} );
+		context.store.dispatch( fetchUserSettings() );
 	} );
 }
 
@@ -171,16 +192,21 @@ export const redirect = async ( context, next ) => {
 	const {
 		store: { getState },
 	} = context;
-	const tmpState = getState();
+	const tmpState = await getState();
 	const selectedEditor = getSelectedEditor( tmpState, getSelectedSiteId( tmpState ) );
+	const checkPromises = [];
 	if ( ! selectedEditor ) {
-		await waitForSiteIdAndSelectedEditor( context );
+		checkPromises.push( waitForSiteIdAndSelectedEditor( context ) );
 	}
+	if ( ! areCalypsoPreferencesAvailable( tmpState ) ) {
+		checkPromises.push( waitForCalypsoPreferences( context ) );
+	}
+	await Promise.all( checkPromises );
 
 	const state = getState();
 	const siteId = getSelectedSiteId( state );
 
-	if ( ! isEligibleForGutenframe( state, siteId ) ) {
+	if ( ! shouldLoadGutenframe( state, siteId ) ) {
 		const postType = determinePostType( context );
 		const postId = getPostID( context );
 

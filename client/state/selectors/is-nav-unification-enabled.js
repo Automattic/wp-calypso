@@ -19,8 +19,10 @@ import { isE2ETest } from 'calypso/lib/e2e';
 const CURRENT_ROLLOUT_SEGMENT_PERCENTAGE = 100;
 
 export default ( state ) => {
+	const hasDocument = 'undefined' !== typeof document;
+
 	// Disable if explicitly requested by the `?disable-nav-unification` query param.
-	if ( new URL( document.location ).searchParams.has( 'disable-nav-unification' ) ) {
+	if ( hasDocument && new URL( document.location ).searchParams.has( 'disable-nav-unification' ) ) {
 		return false;
 	}
 
@@ -45,6 +47,11 @@ export default ( state ) => {
 	// Enable nav-unification for all a12s.
 	if ( isAutomatticTeamMember( getReaderTeams( state ) ) ) {
 		return true;
+	}
+
+	// By this point we're checking the cookies which can't be done on the server.
+	if ( ! hasDocument ) {
+		return false;
 	}
 
 	// Enable for E2E tests checking Nav Unification.
