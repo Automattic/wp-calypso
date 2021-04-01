@@ -38,6 +38,7 @@ module.exports = {
 							// Disabled because they don't make a lot of sense or they are buggy
 							[ 'lint-maximum-heading-length', false ],
 							[ 'lint-no-duplicate-headings', false ],
+							[ 'no-literal-urls', false ],
 
 							// Rules we would like to enable eventually. Violations needs to be fixed manually before enabling the rule.
 							[ 'lint-fenced-code-flag', false ],
