@@ -41,7 +41,7 @@ private object EditingToolkit : BuildType({
 		param("archive_dir", "./editing-toolkit-plugin/")
 		param("release_tag", "etk-release-build")
 		param("build.prefix", "3")
-		param("normalize_files", "sed -i -e \"/^\\s\\* Version:/c\\ * Version: %build.number%\" -e \"/^define( 'A8C_ETK_PLUGIN_VERSION'/c\\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );\" full-site-editing-plugin.php && sed -i -e \"/^Stable tag:\\s/c\\Stable tag: %build.number%\" readme.txt\n")
+		param("normalize_files", "sed -i -e \"/^\\s\\* Version:/c\\ * Version: %build.number%\" -e \"/^define( 'A8C_ETK_PLUGIN_VERSION'/c\\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );\" ./release-archive/full-site-editing-plugin.php && sed -i -e \"/^Stable tag:\\s/c\\Stable tag: %build.number%\" ./release-archive/readme.txt\n")
 
 	}
 
@@ -111,6 +111,22 @@ private object O2Blocks : BuildType({
 
 	params {
 		param("plugin_slug", "o2-blocks")
-		param("archive_dir", "./dist/")
+		param("archive_dir", "./release-files/")
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Create release directory"
+			scriptContent = """
+				cd apps/o2-blocks
+
+				# Copy existing dist files to release directory
+				mkdir release-files
+				cp -r dist release-files/dist/
+
+				# Add index.php file
+				cp index.php release-files/
+			"""
+		}
 	}
 })

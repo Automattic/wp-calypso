@@ -112,9 +112,7 @@ open class PluginBaseBuild : Template({
 				# These operations restore idempotence between the two builds.
 				rm -f ./release-archive/build_meta.txt
 
-				cd ./release-archive
 				%normalize_files%
-				cd ..
 
 				# 3. Check if the current build has changed, and if so, tag it for release.
 				# Note: we exclude asset changes because we only really care if the build files (JS/CSS) change. That file is basically just metadata.
