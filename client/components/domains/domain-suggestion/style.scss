@@ -264,7 +264,7 @@ body.is-section-signup.is-white-signup {
 			flex-wrap: nowrap;
 			flex-direction: column-reverse;
 
-			@include break-large {
+			@include break-xlarge {
 				flex-direction: row;
 			}
 		}
@@ -345,7 +345,7 @@ body.is-section-signup.is-white-signup {
 			padding-right: 0;
 
 			.domain-registration-suggestion__domain-title {
-				@include break-mobile {
+				@include break-xlarge {
 					line-height: 3rem;
 				}
 

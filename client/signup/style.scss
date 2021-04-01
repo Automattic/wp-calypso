@@ -1,4 +1,7 @@
 @import '~@automattic/onboarding/styles/mixins';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 
 body.is-section-signup {
 	// Use WordPress.com’s brand color for the signup background
@@ -484,30 +487,33 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 
 	.formatted-header {
 		margin-top: 48px;
+		margin-bottom: 30px;
+		
 		.formatted-header__title {
 			@include onboarding-font-recoleta;
 			color: $gray-100;
 			letter-spacing: 0.2px;
-			font-size: 2.6rem; /* stylelint-disable-line */
-
-			@media screen and ( max-width: $breakpoint-mobile ) {
-				max-width: 328px;
-				font-size: 1.6rem; /* stylelint-disable-line */
+			
+			max-width: 328px;
+				font-size: 2.25rem; /* stylelint-disable-line */
 				text-align: left;
-				padding: 0 16px;
-				margin: 0 auto;
+				padding: 0 20px;
+
+				@include break-xlarge {
+				font-size: 2.6rem; /* stylelint-disable-line */
+				padding: 0;
 			}
 		}
 
 		.formatted-header__subtitle {
 			color: $gray-60;
+			max-width: 328px;
+			font-size: 1rem;
+			text-align: left;
+			padding: 0 20px;
 
-			@media screen and ( max-width: $breakpoint-mobile ) {
-				max-width: 328px;
-				font-size: 0.875rem;
-				text-align: left;
-				padding: 0 16px;
-				margin: 0 auto;
+			@include break-xlarge {
+				padding: 0;
 			}
 		}
 	}
@@ -515,5 +521,10 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 	button.is-primary {
 		box-shadow: none;
 		border: 0;
+	}
+
+	.logged-out-form {
+		width: 100%;
+		margin: 0;
 	}
 }
