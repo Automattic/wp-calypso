@@ -100,9 +100,10 @@ open class PluginBaseBuild : Template({
 		bashNodeScript {
 			name = "Process Artifact"
 			scriptContent = """
-				# 1. Download and unzip current release build.
 				cd $workingDir
+				cp README.md $archiveDir
 
+				# 1. Download and unzip current release build.
 				mkdir ./release-archive
 				wget "%teamcity.serverUrl%/repository/download/%system.teamcity.buildType.id%/$releaseTag.tcbuildtag/$pluginSlug.zip?guest=1&branch=trunk" -O ./tmp-release-archive-download.zip
 				unzip ./tmp-release-archive-download.zip -d ./release-archive
