@@ -264,7 +264,7 @@ body.is-section-signup.is-white-signup {
 			flex-wrap: nowrap;
 			flex-direction: column-reverse;
 
-			@include break-mobile {
+			@include break-large {
 				flex-direction: row;
 			}
 		}
@@ -288,7 +288,7 @@ body.is-section-signup.is-white-signup {
 			border-radius: 4px; /* stylelint-disable-line */
 		}
 
-		@include break-mobile {
+		@include break-large {
 			margin-left: 12px;
 			margin-bottom: 0;
 		}
@@ -298,7 +298,7 @@ body.is-section-signup.is-white-signup {
 		margin: 0 20px;
 		flex-direction: row;
 
-		@include break-mobile {
+		@include break-large {
 			margin: 0;
 		}
 

@@ -27,7 +27,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { Icon } from '@wordpress/icons';
-import { isMobile } from '@automattic/viewport';
+import { isDesktop } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -1417,15 +1417,15 @@ class RegisterDomainStep extends React.Component {
 						isReskinned={ this.props.isReskinned }
 					/>
 				) }
-				{ this.props.isReskinned && isMobile() && ! this.state.loadingResults && (
-					<div className="domain-side-content-container">
-						<div className="domain-side-content">
+				{ this.props.isReskinned && ! isDesktop() && ! this.state.loadingResults && (
+					<div className="domains__domain-side-content-container">
+						<div className="domains__domain-side-content">
 							<ReskinSideExplainer
 								onClick={ this.props.hideFreePlan }
 								type={ 'free-domain-explainer' }
 							/>
 						</div>
-						<div className="domain-side-content">
+						<div className="domains__domain-side-content">
 							<ReskinSideExplainer onClick={ useYourDomainFunction } type={ 'use-your-domain' } />
 						</div>
 					</div>

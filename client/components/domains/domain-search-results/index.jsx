@@ -313,7 +313,11 @@ class DomainSearchResults extends React.Component {
 				);
 			} );
 
-			if ( this.props.offerUnavailableOption && this.props.siteDesignType !== DESIGN_TYPE_STORE ) {
+			if (
+				this.props.offerUnavailableOption &&
+				this.props.siteDesignType !== DESIGN_TYPE_STORE &&
+				! this.props.isReskinned
+			) {
 				unavailableOffer = (
 					<DomainTransferSuggestion
 						onButtonClick={ this.props.onClickUseYourDomain }

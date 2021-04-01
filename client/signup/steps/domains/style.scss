@@ -65,11 +65,6 @@ body.is-section-signup.is-white-signup {
 
 	.domains__step-content {
 		display: flex;
-		flex-direction: column;
-
-		@include break-mobile {
-			flex-direction: row;
-		}
 
 		.search.is-open.has-focus {
 			box-shadow: 0 0 0 2px var( --color-accent );
@@ -85,7 +80,7 @@ body.is-section-signup.is-white-signup {
 			width: 100vw;
 			margin-top: 40px;
 
-			@include break-mobile {
+			@include break-large {
 				width: 20vw;
 				margin-top: 0;
 			}
@@ -94,11 +89,11 @@ body.is-section-signup.is-white-signup {
 		.domains__domain-side-content {
 			border-bottom: 1px solid;
 			border-bottom-color: var( --studio-gray-5 );
-			padding: 20px;
-			margin-left: 0;
+			padding: 20px 0;
+			margin: 0 20px;
 
-			@include break-mobile {
-				margin-left: 80px;
+			@include break-large {
+				margin: 0 0 0 80px;
 				padding: 30px 0;
 			}
 		}
@@ -114,7 +109,7 @@ body.is-section-signup.is-white-signup {
 		.register-domain-step {
 			width: 100vw;
 
-			@include break-mobile {
+			@include break-large {
 				width: 48vw;
 			}
 		}
