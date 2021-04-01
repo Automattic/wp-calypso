@@ -16,6 +16,7 @@ import GuideComponent from '../components/guide-component.js';
 
 import * as dataHelper from '../data-helper';
 import * as driverManager from '../driver-manager';
+import * as driverHelper from '../driver-helper';
 import * as loginCookieHelper from '../login-cookie-helper';
 import PagesPage from '../pages/pages-page';
 
@@ -255,6 +256,23 @@ export default class LoginFlow {
 			this.account.email || this.account.username,
 			this.account.password
 		);
+	}
+
+	async loginUsingPopup() {
+		await driverHelper.waitForNumberOfWindows( this.driver, 2 );
+		await driverHelper.switchToWindowByIndex( this.driver, 1 );
+
+		const loginPage = await LoginPage.Expect( this.driver );
+
+		await loginPage.login(
+			this.account.email || this.account.username,
+			this.account.password,
+			false,
+			{ retry: false }
+		);
+
+		// Switch back to post window
+		await driverHelper.switchToWindowByIndex( this.driver, 0 );
 	}
 
 	async loginAndOpenWooStore() {
