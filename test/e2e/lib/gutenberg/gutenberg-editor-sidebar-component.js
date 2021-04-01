@@ -246,11 +246,6 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		await driverHelper.clickWhenClickable( this.driver, nextMonthSelector );
 		await this.driver.sleep( 400 ); // Wait for the month slide animation
 		await driverHelper.selectElementByText( this.driver, firstDay, '1' );
-		// Add another click so the calendar modal disappears and makes space for
-		// the follow-up clicks. This is because of a bug reported in
-		// https://github.com/WordPress/gutenberg/issues/30415 and can be reverted
-		// once an upstream fix is in.
-		await driverHelper.selectElementByText( this.driver, firstDay, '1' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, publishDateSelector );
 		const publishDate = await this.driver.findElement( publishDateSelector ).getText();
 
