@@ -118,12 +118,12 @@ private object Notifications : BuildType({
 
 			# All scripts and styles use the same "hash" version, so replace any
 			# instances of the hash in the *old* files with the newest version.
-			sed -i "s/${'$'}old_hash/${'$'}new_hash/g" release-archive/index.html release-archive/rtl.html
+			sed -i "s~${'$'}old_hash~${'$'}new_hash~g" release-archive/index.html release-archive/rtl.html
 
 			# Replace the old cache buster with the new one in the previous release html files.
 			new_cache_buster=`cat dist/cache-buster.txt`
 			old_cache_buster=`cat release-archive/cache-buster.txt`
-			sed -i "s/${'$'}old_cache_buster/${'$'}new_cache_buster/g" release-archive/index.html release-archive/rtl.html
+			sed -i "s~${'$'}old_cache_buster~${'$'}new_cache_buster~g" release-archive/index.html release-archive/rtl.html
 		""".trimIndent())
 	}
 })
