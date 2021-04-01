@@ -104,16 +104,8 @@ $sidebar-button-text-color: #a2aab2; // former $light-gray-900
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button {
-	position: fixed;
-	top: 0;
-	left: 0;
 	height: $header-height !important;
 	background-color: $sidebar-nav-header-background-color !important;
-	color: $white;
-
-	&:hover {
-		color: $white;
-	}
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__home-button {
