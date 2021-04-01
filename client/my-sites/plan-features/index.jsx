@@ -291,6 +291,7 @@ export class PlanFeatures extends Component {
 
 	renderMobileView() {
 		const {
+			redirectToAddDomainFlow,
 			basePlansPath,
 			canPurchase,
 			isInSignup,
@@ -316,6 +317,12 @@ export class PlanFeatures extends Component {
 
 		if ( freePlanProperties ) {
 			reorderedPlans.push( freePlanProperties );
+		}
+
+		let buttonText = null;
+
+		if ( redirectToAddDomainFlow ) {
+			buttonText = translate( 'Add to Cart' );
 		}
 
 		return map( reorderedPlans, ( properties ) => {
@@ -368,6 +375,7 @@ export class PlanFeatures extends Component {
 					<p className="plan-features__description">{ planDescription }</p>
 					<PlanFeaturesActions
 						availableForPurchase={ availableForPurchase }
+						buttonText={ buttonText }
 						canPurchase={ canPurchase }
 						className={ getPlanClass( planName ) }
 						current={ current }
@@ -634,6 +642,10 @@ export class PlanFeatures extends Component {
 			let forceDisplayButton = false;
 			let buttonText = null;
 
+			if ( this.props.redirectToAddDomainFlow ) {
+				buttonText = translate( 'Add to Cart' );
+			}
+
 			if ( disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0 ) {
 				if ( planMatches( planName, { type: TYPE_BLOGGER } ) ) {
 					availableForPurchase = false;
@@ -798,10 +810,17 @@ export class PlanFeatures extends Component {
 				}
 			}
 
+			let buttonText;
+
+			if ( this.props.redirectToAddDomainFlow ) {
+				buttonText = this.props.translate( 'Add to Cart' );
+			}
+
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesActions
 						availableForPurchase={ availableForPurchase }
+						buttonText={ buttonText }
 						canPurchase={ canPurchase }
 						className={ getPlanClass( planName ) }
 						current={ current }
