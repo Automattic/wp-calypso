@@ -82,7 +82,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 
 	async customizeTheme() {
 		await this.expandDrawerItem( 'Appearance' );
-		return await this._scrollToAndClickMenuItemByText( 'Customize' );
+		return await this._scrollToAndClickMenuItem( 'Customize' );
 	}
 
 	async selectPlans() {
@@ -105,7 +105,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 
 	async selectActivity() {
 		await this.expandDrawerItem( 'Jetpack' );
-		return await this._scrollToAndClickMenuItemByText( 'Activity Log' );
+		return await this._scrollToAndClickMenuItem( 'Activity Log' );
 	}
 
 	async selectMarketing() {
@@ -189,10 +189,6 @@ export default class SidebarComponent extends AsyncBaseContainer {
 			By.css( '.sidebar li.sidebar__menu-item-parent' )
 		);
 		return elements.length;
-	}
-
-	async _scrollToAndClickMenuItemByText( text ) {
-		await driverHelper.selectElementByText( this.driver, By.css( '.sidebar__heading' ), text );
 	}
 
 	async _scrollToAndClickMenuItem( target, { clickButton = false } = {} ) {
