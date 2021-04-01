@@ -608,8 +608,11 @@ export default connect(
 		const siteId = get( props.site, [ 'ID' ] );
 		const currentPlan = getSitePlan( state, siteId );
 		const sitePlanSlug = currentPlan?.product_slug;
-		const eligibleForWpcomMonthlyPlans =
-			isWpComFreePlan( sitePlanSlug ) || isWpComMonthlyPlan( sitePlanSlug );
+		// In the "purchase a plan and free domain" flow we do not want to show
+		// monthly plans because monthly plans do not come with a free domain.
+		const eligibleForWpcomMonthlyPlans = props.redirectToAddDomainFlow
+			? false
+			: isWpComFreePlan( sitePlanSlug ) || isWpComMonthlyPlan( sitePlanSlug );
 
 		const customerType = chooseDefaultCustomerType( {
 			currentCustomerType: props.customerType,
