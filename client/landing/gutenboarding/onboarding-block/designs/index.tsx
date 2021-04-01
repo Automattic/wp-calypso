@@ -60,8 +60,9 @@ const Designs: React.FunctionComponent = () => {
 			<DesignPicker
 				designs={ getRandomizedDesigns().featured.filter(
 					( design ) =>
-						// TODO Add finalized design templates to available-designs-config.json
-						// along with is_anchorfm prop
+						// TODO Add finalized design templates to available designs config
+						// along with `is_anchorfm` prop (config is stored in the
+						// `@automattic/design-picker` package)
 						isAnchorFmSignup === design.features.includes( 'anchorfm' )
 				) }
 				isGridMinimal={ isAnchorFmSignup }
