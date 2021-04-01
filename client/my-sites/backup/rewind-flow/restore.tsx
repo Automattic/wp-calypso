@@ -8,7 +8,7 @@ import React, { FunctionComponent, useCallback, useState } from 'react';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { defaultRewindConfig, RewindConfig } from './types';
 import { rewindRestore } from 'calypso/state/activity-log/actions';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
@@ -23,6 +23,7 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
+import JetpackReviewPrompt from './jetpack-review-prompt';
 
 /**
  * Type dependencies
@@ -190,17 +191,19 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		</Error>
 	);
 
+	const isInProgress =
+		( ! inProgressRewindStatus && userHasRequestedRestore ) ||
+		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) );
+	const isFinished = inProgressRewindStatus !== null && inProgressRewindStatus === 'finished';
+
 	const render = () => {
 		if ( loading ) {
 			return <Loading />;
 		} else if ( ! inProgressRewindStatus && ! userHasRequestedRestore ) {
 			return renderConfirm();
-		} else if (
-			( ! inProgressRewindStatus && userHasRequestedRestore ) ||
-			( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) )
-		) {
+		} else if ( isInProgress ) {
 			return renderInProgress();
-		} else if ( inProgressRewindStatus !== null && inProgressRewindStatus === 'finished' ) {
+		} else if ( isFinished ) {
 			return renderFinished();
 		}
 		return renderError();
@@ -212,7 +215,8 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			{ restoreId && 'running' === inProgressRewindStatus && (
 				<QueryRewindRestoreStatus siteId={ siteId } restoreId={ restoreId } />
 			) }
-			{ render() }
+			<Card>{ render() }</Card>
+			{ ( isInProgress || isFinished ) && <JetpackReviewPrompt /> }
 		</>
 	);
 };

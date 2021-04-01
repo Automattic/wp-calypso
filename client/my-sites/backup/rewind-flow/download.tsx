@@ -8,7 +8,7 @@ import React, { FunctionComponent, useCallback, useState } from 'react';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { defaultRewindConfig, RewindConfig } from './types';
 import { getRewindBackupProgress, rewindBackup } from 'calypso/state/activity-log/actions';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
@@ -266,7 +266,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 				downloadId={ downloadProgress !== undefined ? downloadId : undefined }
 				siteId={ siteId }
 			/>
-			{ render() }
+			<Card>{ render() }</Card>
 		</>
 	);
 };
