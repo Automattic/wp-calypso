@@ -177,30 +177,13 @@
 	padding: 1px 10px;
 }
 
-.notouch .site-selector.is-hover-enabled .site:hover .site__badge {
-	background: var( --color-sidebar-background );
-	color: var( --color-sidebar-text );
-}
-
 .current-site .site:hover .site__badge,
 .purchases-site .site:hover .site__badge {
 	background: var( --color-sidebar-menu-hover-background );
 	color: var( --color-sidebar-menu-hover-text );
 }
 
-// Secondary Layout: sites selector, sidebar, etc.
-.layout__secondary {
-	.site__home {
-		background: var( --color-sidebar-menu-selected-background );
-		color: var( --color-sidebar-menu-selected-text );
-	}
-}
-
-// Secondary Layout. Site selector.
-.layout__secondary,
-.site-selector {
-	.site__badge {
-		background: var( --color-sidebar-menu-hover-background );
-		color: var( --color-sidebar-menu-hover-text );
-	}
+.layout__secondary .site__home {
+	background: var( --color-sidebar-menu-selected-background );
+	color: var( --color-sidebar-menu-selected-text );
 }
