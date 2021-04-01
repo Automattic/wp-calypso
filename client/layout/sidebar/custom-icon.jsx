@@ -20,7 +20,7 @@ const SidebarCustomIcon = ( { icon, ...rest } ) => {
 
 	if ( icon.indexOf( 'data:image' ) === 0 || icon.indexOf( 'http' ) === 0 ) {
 		const imgStyle = `url("${ icon }")`;
-		const imgStyles = { backgroundImage: imgStyle, maskImage: imgStyle };
+		const imgStyles = { backgroundImage: imgStyle, maskImage: imgStyle, WebkitMaskImage: imgStyle };
 
 		return (
 			<span
