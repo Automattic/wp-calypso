@@ -14,7 +14,6 @@ import { injectGuestSandboxTicketHandler } from './handlers/guest-sandbox-ticket
 import * as oauthToken from 'calypso/lib/oauth-token';
 import wpcomXhrWrapper from 'calypso/lib/wpcom-xhr-wrapper';
 import wpcomProxyRequest from 'wpcom-proxy-request';
-import wpcomXhrRequest from 'wpcom-xhr-request';
 import { inJetpackCloudOAuthOverride } from 'calypso/lib/jetpack/oauth-override';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
@@ -67,4 +66,4 @@ export default wpcom;
 /**
  * Expose `wpcomJetpackLicensing` which uses a different auth token than wpcom.
  */
-export const wpcomJetpackLicensing = wpcomUndocumented( wpcomXhrRequest );
+export const wpcomJetpackLicensing = wpcomUndocumented( wpcomXhrWrapper );
