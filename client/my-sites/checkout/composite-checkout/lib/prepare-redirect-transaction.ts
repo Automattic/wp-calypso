@@ -24,7 +24,7 @@ type SubmitRedirectTransactionData = Omit<
 	'paymentMethodType' | 'paymentPartnerProcessorId' | 'cart'
 >;
 
-export default async function prepareRedirectTransaction(
+export default function prepareRedirectTransaction(
 	paymentMethodId: string,
 	transactionData: SubmitRedirectTransactionData,
 	transactionOptions: PaymentProcessorOptions
