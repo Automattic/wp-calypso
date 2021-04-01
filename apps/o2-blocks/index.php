@@ -63,7 +63,7 @@ function a8c_view_assets() {
 	if ( ! is_admin() ) {
 		$assets = require plugin_dir_path( __FILE__ ) . 'dist/view.asset.php';
 
-		$style_file = 'dist/view' . is_rtl() ? '.rtl.css' : '.css';
+		$style_file = 'dist/view' . ( is_rtl() ? '.rtl.css' : '.css' );
 		wp_enqueue_style(
 			'a8c-blocks-block-view-css',
 			plugins_url( $style_file, __FILE__ ),
