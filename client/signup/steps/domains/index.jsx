@@ -453,36 +453,18 @@ class DomainsStep extends React.Component {
 	}
 
 	getSideContent = () => {
-		const { translate } = this.props;
-		const freeDomainExplainerTitle = translate(
-			'Get a {{b}}free{{/b}} one-year domain registration with any paid annual plan.',
-			{
-				components: { b: <strong /> },
-			}
-		);
-		const freeDomainExplainerSubtitle = translate(
-			"You can claim your free custom domain later if you aren't ready yet."
-		);
-		const freeDomainExplainerCtaText = translate( 'View plans' );
-
 		return (
-			<div className="domain-side-content-container">
-				<div className="domain-side-content">
+			<div className="domains__domain-side-content-container">
+				<div className="domains__domain-side-content">
 					<ReskinSideExplainer
 						onClick={ this.handleDomainExplainerClick }
-						title={ freeDomainExplainerTitle }
-						subtitle={ freeDomainExplainerSubtitle }
-						ctaText={ freeDomainExplainerCtaText }
+						type={ 'free-domain-explainer' }
 					/>
 				</div>
-				<div className="domain-side-content">
+				<div className="domains__domain-side-content">
 					<ReskinSideExplainer
 						onClick={ this.handleUseYourDomainClick }
-						title={ translate( 'Already own a domain?' ) }
-						subtitle={ translate(
-							'Connect your domain purchased elsewhere to your WordPress.com site through mapping or transfer.'
-						) }
-						ctaText={ translate( 'Use a domain I own' ) }
+						type={ 'use-your-domain' }
 					/>
 				</div>
 			</div>
@@ -715,7 +697,8 @@ class DomainsStep extends React.Component {
 	}
 
 	renderContent() {
-		let content, sideContent;
+		let content;
+		let sideContent;
 
 		if ( 'mapping' === this.props.stepSectionName ) {
 			content = this.mappingForm();
@@ -731,10 +714,10 @@ class DomainsStep extends React.Component {
 
 		if ( ! this.props.stepSectionName || this.props.isDomainOnly ) {
 			content = this.domainForm();
+		}
 
-			if ( ! this.props.stepSectionName && this.props.isReskinned ) {
-				sideContent = this.getSideContent();
-			}
+		if ( ! this.props.stepSectionName && this.props.isReskinned ) {
+			sideContent = this.getSideContent();
 		}
 
 		if ( this.props.step && 'invalid' === this.props.step.status ) {

@@ -29,7 +29,7 @@
 	}
 
 	.search-filters__dropdown-filters {
-		border-radius: 0 3px 3px 0;
+		border-radius: 0 3px 3px 0; /* stylelint-disable-line */
 	}
 
 	.search-filters__dropdown-filters.search-filters__dropdown-filters--is-open {
@@ -66,24 +66,24 @@ body.is-section-signup.is-white-signup {
 			}
 		}
 
-		.domain-side-content-container {
+		.domains__domain-side-content-container {
 			display: flex;
 			flex-direction: column;
 			width: 20vw;
 		}
 
-		.domain-side-content {
+		.domains__domain-side-content {
 			border-bottom: 1px solid;
 			border-bottom-color: var( --studio-gray-5 );
 			padding: 30px 0;
 			margin-left: 80px;
 		}
 
-		.domain-side-content:first-of-type {
+		.domains__domain-side-content:first-of-type {
 			padding-top: 0;
 		}
 
-		.domain-side-content:last-of-type {
+		.domains__domain-side-content:last-of-type {
 			border-bottom: none;
 		}
 
