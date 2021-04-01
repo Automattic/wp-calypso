@@ -61,11 +61,13 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 		requestActivity( siteId, rewindId );
 	}, [ siteId, rewindId ] );
 
+	const wrapWithCard = ( content ) => <Card>{ content }</Card>;
+
 	const render = () => {
 		if ( null === applySiteOffset || loadingActivity ) {
-			return <Loading />;
+			return wrapWithCard( <Loading /> );
 		} else if ( activityRequestError?.code === 'no_activity_for_site_and_rewind_id' ) {
-			return (
+			return wrapWithCard(
 				<Error
 					siteUrl={ siteUrl }
 					errorText={ translate( 'The activity referenced by %(rewindId)s does not exist.', {
@@ -74,7 +76,7 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 				/>
 			);
 		} else if ( activityIsRewindable === false ) {
-			return (
+			return wrapWithCard(
 				<Error
 					siteUrl={ siteUrl }
 					errorText={ translate( 'The activity referenced by %(rewindId)s is not rewindable.', {
@@ -83,7 +85,7 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 				/>
 			);
 		} else if ( DataState.Success !== activityRequestState ) {
-			return (
+			return wrapWithCard(
 				<Error
 					siteUrl={ siteUrl }
 					errorText={ translate( 'An error occurred while trying to retrieve the activity' ) }
@@ -125,9 +127,7 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 				}
 			/>
 			<SidebarNavigation />
-			<div className="rewind-flow__content">
-				<Card>{ render() }</Card>
-			</div>
+			<div className="rewind-flow__content">{ render() }</div>
 		</Main>
 	);
 };
