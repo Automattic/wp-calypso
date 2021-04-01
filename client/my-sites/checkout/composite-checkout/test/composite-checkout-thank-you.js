@@ -327,7 +327,7 @@ describe( 'getThankYouPageUrl', () => {
 			},
 			adminUrl,
 		} );
-		expect( url ).toBe( `https://my.site/wp-admin/admin.php?page=jetpack#/my-plan` );
+		expect( url ).toBe( `https://my.site/wp-admin/admin.php?page=jetpack#/recommendations` );
 	} );
 
 	it( 'redirects to the plans page with thank-you query string if there is a non-atomic jetpack product', () => {
