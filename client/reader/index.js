@@ -7,6 +7,7 @@ import {
 	feedDiscovery,
 	feedListing,
 	following,
+	unreadFollowing,
 	incompleteUrlRedirects,
 	legacyRedirects,
 	prettyRedirects,
@@ -38,6 +39,14 @@ export default async function () {
 
 	if ( config.isEnabled( 'reader' ) ) {
 		page( '/read', updateLastRoute, sidebar, following, makeLayout, clientRender );
+		page(
+			'/read/following/unread',
+			updateLastRoute,
+			sidebar,
+			unreadFollowing,
+			makeLayout,
+			clientRender
+		);
 
 		// Old and incomplete paths that should be redirected to /
 		page( '/read/following', '/read' );

@@ -107,7 +107,7 @@ export function unmountSidebar( context, next ) {
 	next();
 }
 
-export function following( context, next ) {
+export function following( context, next, includeSeenPosts = false ) {
 	const basePath = sectionify( context.path );
 	const fullAnalyticsPageTitle = analyticsPageTitle + ' > Following';
 	const mcKey = 'following';
@@ -152,6 +152,7 @@ export function following( context, next ) {
 			mcKey
 		),
 		onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
+		includeSeenPosts,
 	} );
 	next();
 }
@@ -318,3 +319,5 @@ export function readFollowingP2( context, next ) {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 	next();
 }
+
+export const unreadFollowing = ( context, next ) => following( context, next, false );

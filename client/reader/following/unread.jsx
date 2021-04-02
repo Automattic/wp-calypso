@@ -1,8 +1,14 @@
+/**
+ * External dependencies
+ */
 import { CompactCard, Button } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
-import { trim } from 'lodash';
+import { localize } from 'i18n-calypso';
+import { flatMap, trim } from 'lodash';
 import page from 'page';
-import { useDispatch, useSelector } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
+/**
+ * Internal dependencies
+ */
 import SearchInput from 'calypso/components/search';
 import SectionHeader from 'calypso/components/section-header';
 import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
@@ -19,6 +25,10 @@ import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
 import { SECTION_FOLLOWING } from 'calypso/state/reader/seen-posts/constants';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import FollowingIntro from './intro';
+
+/**
+ * Style dependencies
+ */
 import './style.scss';
 
 function handleSearch( query ) {
@@ -31,31 +41,24 @@ function handleSearch( query ) {
 	}
 }
 
-function FollowingStream( { suggestions, ...props } ) {
-	const translate = useTranslate();
+const FollowingStream = ( props ) => {
+	const suggestionList =
+		props.suggestions &&
+		flatMap( props.suggestions, ( query ) => [
+			<Suggestion suggestion={ query.text } source="following" railcar={ query.railcar } />,
+			', ',
+		] ).slice( 0, -1 );
+	const placeholderText = getSearchPlaceholderText();
+	const { translate, teams } = props;
 	const dispatch = useDispatch();
-	const teams = useSelector( getReaderTeams );
-	const feedsInfo = useSelector( ( state ) => getReaderOrganizationFeedsInfo( state, NO_ORG_ID ) );
-
-	const markAllAsSeen = () => {
+	const markAllAsSeen = ( feedsInfo ) => {
 		const { feedIds, feedUrls } = feedsInfo;
 		dispatch( recordReaderTracksEvent( 'calypso_reader_mark_all_as_seen_clicked' ) );
 		dispatch( requestMarkAllAsSeen( { identifier: SECTION_FOLLOWING, feedIds, feedUrls } ) );
 	};
-
-	const suggestionList =
-		suggestions &&
-		suggestions
-			.flatMap( ( query ) => [
-				<Suggestion suggestion={ query.text } source="following" railcar={ query.railcar } />,
-				', ',
-			] )
-			.slice( 0, -1 );
-	const placeholderText = getSearchPlaceholderText();
-
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<Stream { ...props }>
+		<Stream { ...props } includeSeenPosts={ false }>
 			<FollowingIntro />
 			<CompactCard className="following__search">
 				<SearchInput
@@ -68,7 +71,11 @@ function FollowingStream( { suggestions, ...props } ) {
 			<BlankSuggestions suggestions={ suggestionList } />
 			<SectionHeader label={ translate( 'Followed Sites' ) }>
 				{ isEligibleForUnseen( { teams } ) && (
-					<Button compact onClick={ markAllAsSeen } disabled={ ! feedsInfo.unseenCount }>
+					<Button
+						compact
+						onClick={ () => markAllAsSeen( props.feedsInfo ) }
+						disabled={ ! props.feedsInfo.unseenCount }
+					>
 						{ translate( 'Mark all as seen' ) }
 					</Button>
 				) }
@@ -79,6 +86,9 @@ function FollowingStream( { suggestions, ...props } ) {
 		</Stream>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
-}
+};
 
-export default SuggestionProvider( FollowingStream );
+export default connect( ( state ) => ( {
+	teams: getReaderTeams( state ),
+	feedsInfo: getReaderOrganizationFeedsInfo( state, NO_ORG_ID ),
+} ) )( SuggestionProvider( localize( FollowingStream ) ) );
