@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import type { LineItem } from '@automattic/composite-checkout';
 import type {
 	RequestCartProduct,
 	ResponseCartTaxData,
@@ -195,3 +196,30 @@ export type PayPalExpressEndpointRequestPayload = {
 };
 
 export type PayPalExpressEndpointResponse = unknown;
+
+export interface WPCOMCart {
+	items: LineItem[];
+	total: LineItem;
+	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
+}
+
+export type CheckoutPaymentMethodSlug =
+	| 'alipay'
+	| 'apple-pay'
+	| 'bancontact'
+	| 'card'
+	| 'ebanx'
+	| 'brazil-tef'
+	| 'netbanking'
+	| 'id_wallet'
+	| 'eps'
+	| 'giropay'
+	| 'ideal'
+	| 'p24'
+	| 'paypal'
+	| 'paypal-direct'
+	| 'sofort'
+	| 'free-purchase'
+	| 'full-credits'
+	| 'stripe-three-d-secure'
+	| 'wechat';
