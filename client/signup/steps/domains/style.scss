@@ -88,12 +88,15 @@ body.is-section-signup.is-white-signup {
 
 				.domains__domain-side-content {
 					padding-top: 0;
+					border-bottom: none;
 				}
 			}
 
 			@include break-large {
 				display: none;
 			}
+
+
 		}
 
 		.domains__domain-side-content {
