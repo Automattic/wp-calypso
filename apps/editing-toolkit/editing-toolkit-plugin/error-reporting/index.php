@@ -17,14 +17,20 @@ function head_error_handler() {
 	// The window.onerror handler can only catch events caused by the current origin, thus, it must be in the main document, or a script loaded from that origin
 	?><script type="text/javascript">
 	  window._headJsErrorHandler = function( errEvent ) {
+			console.log(errEvent);
 			window._jsErr = window._jsErr || [];
 			window._jsErr.push(errEvent);
 		}
-		window.addEventListener('error', window._headJsErrorHandler );
+		window.addEventListener( 'error', window._headJsErrorHandler );
 
-		throw new Error('Error 1 from the top-level document');
-		throw new Error('Error 2 from the top-level document');
-		throw new Error('Error 3 from the top-level document');
+		// Test code, will be removed later. Simulate several errors happening at about the same time.
+		let count = 0;
+		let intervalId;
+		intervalId = setInterval(() => {
+			count = count + 1;
+			if ( count >= 3 ) clearInterval( intervalId );
+			throw new Error( `Error ${count} from the top-level document`);
+		}, 0 );
 	</script>
 	<script crossorigin="anonymous" src="https://s0.wp.com/wp-content/plugins/corserror-head.js"></script>
 	<?php
