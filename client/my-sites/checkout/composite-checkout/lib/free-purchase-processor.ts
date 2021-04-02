@@ -4,6 +4,10 @@
 import debugFactory from 'debug';
 import { makeSuccessResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
+import type {
+	TransactionRequest,
+	WPCOMTransactionEndpointResponse,
+} from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -15,7 +19,6 @@ import {
 	createTransactionEndpointCartFromResponseCart,
 } from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { TransactionRequest } from '../types/transaction-endpoint';
 
 const debug = debugFactory( 'calypso:composite-checkout:free-purchase-processor' );
 
