@@ -1,22 +1,24 @@
 /**
  * External dependencies
  */
-import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
+import type {
+	DomainContactDetails,
+	CaDomainContactExtraDetails,
+	UkDomainContactExtraDetails,
+	FrDomainContactExtraDetails,
+} from '@automattic/shopping-cart';
+import type {
+	WPCOMTransactionEndpointResponse,
+	PossiblyCompleteDomainContactDetails,
+	DomainContactDetailsErrors,
+	CaDomainContactExtraDetailsErrors,
+	UkDomainContactExtraDetailsErrors,
+	FrDomainContactExtraDetailsErrors,
+} from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
-import {
-	DomainContactDetails,
-	PossiblyCompleteDomainContactDetails,
-	DomainContactDetailsErrors,
-	CaDomainContactExtraDetails,
-	CaDomainContactExtraDetailsErrors,
-	UkDomainContactExtraDetails,
-	UkDomainContactExtraDetailsErrors,
-	FrDomainContactExtraDetails,
-	FrDomainContactExtraDetailsErrors,
-} from './backend/domain-contact-details-components';
 import {
 	DomainContactValidationRequest,
 	GSuiteContactValidationRequest,
