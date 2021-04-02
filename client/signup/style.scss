@@ -494,12 +494,11 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 			color: $gray-100;
 			letter-spacing: 0.2px;
 			
-			max-width: 328px;
-				font-size: 2.25rem; /* stylelint-disable-line */
-				text-align: left;
-				padding: 0 20px;
+			font-size: 2.25rem; /* stylelint-disable-line */
+			text-align: center;
+			padding: 0 20px;
 
-				@include break-xlarge {
+			@include break-xlarge {
 				font-size: 2.6rem; /* stylelint-disable-line */
 				padding: 0;
 			}
@@ -508,11 +507,23 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 		.formatted-header__subtitle {
 			color: $gray-60;
 			font-size: 1rem;
-			text-align: left;
+			text-align: center;
 			padding: 0 20px;
 
 			@include break-xlarge {
 				padding: 0;
+			}
+		}
+	}
+
+	.signup__step.is-domains {
+		.formatted-header {
+			.formatted-header__title {
+				text-align: left;
+			}
+
+			.formatted-header__subtitle {
+				text-align: left;
 			}
 		}
 	}
