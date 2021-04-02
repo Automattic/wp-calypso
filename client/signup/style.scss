@@ -493,13 +493,11 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 			@include onboarding-font-recoleta;
 			color: $gray-100;
 			letter-spacing: 0.2px;
-			
-			max-width: 328px;
-				font-size: 2.25rem; /* stylelint-disable-line */
-				text-align: left;
-				padding: 0 20px;
+			font-size: 2.25rem; /* stylelint-disable-line */
+			text-align: center;
+			padding: 0 20px;
 
-				@include break-xlarge {
+			@include break-xlarge {
 				font-size: 2.6rem; /* stylelint-disable-line */
 				padding: 0;
 			}
@@ -508,7 +506,7 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 		.formatted-header__subtitle {
 			color: $gray-60;
 			font-size: 1rem;
-			text-align: left;
+			text-align: center;
 			padding: 0 20px;
 
 			@include break-xlarge {
@@ -520,6 +518,8 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 	.signup__step.is-user {
 		.formatted-header {
 			.formatted-header__title {
+				text-align: left;
+
 				@include break-small {
 					max-width: inherit;
 					text-align: center;
@@ -527,6 +527,8 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 			}
 
 			.formatted-header__subtitle {
+				text-align: left;
+
 				a {
 					color: var( --studio-gray-90 );
 					text-decoration: underline;
@@ -544,6 +546,18 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 		button.signup-form__submit.disabled {
 			background-color: var( --studio-gray-20 );
 			color: var( --color-surface );
+		}
+	}
+
+	.signup__step.is-domains {
+		.formatted-header {
+			.formatted-header__title {
+				text-align: left;
+			}
+
+			.formatted-header__subtitle {
+				text-align: left;
+			}
 		}
 	}
 
