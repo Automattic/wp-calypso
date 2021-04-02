@@ -9,13 +9,13 @@ import { __ } from '@wordpress/i18n';
 export default function SiteIcon(): JSX.Element {
 	const currentSiteId: number = window._currentSiteId;
 
-	// The site icon url should probably be available from /wp/v2/settings or similar in the future,
+	// The site icon url should be available from /wp/v2/settings or similar in the future,
 	// but for now it's accessible at the index endpoint.
 	// https://github.com/WordPress/gutenberg/blob/68c3978be352c6d3982f73bcf8c80744608c53c8/lib/init.php#L160
 	const siteIconUrl = useSelect(
 		( select ) => {
 			const { getEntityRecord } = select( 'core' );
-			const siteData = getEntityRecord( 'root', '__unstableBase', 0 ) || {};
+			const siteData = getEntityRecord( 'root', '__unstableBase', undefined ) || {};
 			return siteData.site_icon_url;
 		},
 		[ currentSiteId ]
@@ -23,14 +23,11 @@ export default function SiteIcon(): JSX.Element {
 
 	if ( siteIconUrl ) {
 		return (
-			<>
-				{ /* <span></span> */ }
-				<img
-					className="edit-post-fullscreen-mode-close_site-icon"
-					alt={ __( 'Site Icon', 'full-site-editing' ) }
-					src={ siteIconUrl }
-				/>
-			</>
+			<img
+				className="edit-post-fullscreen-mode-close_site-icon"
+				alt={ __( 'Site Icon', 'full-site-editing' ) }
+				src={ siteIconUrl }
+			/>
 		);
 	}
 
