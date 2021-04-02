@@ -125,7 +125,9 @@ open class PluginBaseBuild : Template({
 					# Ping commit merger in Slack if we're on the main branch and the build has changed.
 					if [ "%teamcity.build.branch.is_default%" == "true" ] && [ "%with_slack_notify%" == "true" ] ; then
 						echo "Posting slack reminder."
-						ping_response=`curl -s -d "commit=%build.vcs.number%&plugin=$pluginSlug" -X POST %mc-post-root%?plugin-deploy-reminder`
+						payload="commit=%build.vcs.number%&plugin=$pluginSlug"
+						signature=`echo -n "${'$'}payload" | openssl sha256 -hmac "%mc_auth_secret%"`
+						ping_response=`curl -s -d "${'$'}payload" -X POST -H "TEAMCITY_SIGNATURE: ${'$'}signature" %mc_post_root%?plugin-deploy-reminder`
 						echo -e "Slack ping status: ${'$'}ping_response\n"
 					fi
 				fi
