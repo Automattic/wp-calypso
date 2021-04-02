@@ -9,6 +9,7 @@ import {
 } from '@automattic/composite-checkout';
 import { confirmStripePaymentIntent } from '@automattic/calypso-stripe';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
+import type { TransactionRequest } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -19,7 +20,6 @@ import {
 } from './translate-cart';
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { TransactionRequest } from '../types/transaction-endpoint';
 import getDomainDetails from './get-domain-details';
 
 const debug = debugFactory( 'calypso:composite-checkout:existing-card-processor' );
