@@ -5,6 +5,7 @@ import {
 	defaultRegistry,
 	makeRedirectResponse,
 	makeManualResponse,
+	makeErrorResponse,
 } from '@automattic/composite-checkout';
 import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
@@ -16,7 +17,8 @@ import userAgent from 'calypso/lib/user-agent';
 import getPostalCode from '../lib/get-postal-code';
 import getDomainDetails from '../lib/get-domain-details';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
-import submitRedirectTransaction from '../lib/submit-redirect-transaction';
+import prepareRedirectTransaction from '../lib/prepare-redirect-transaction';
+import submitWpcomTransaction from './submit-wpcom-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { ManagedContactDetails } from '../types/wpcom-store-state';
 import type { WPCOMTransactionEndpointResponse } from '../types/transaction-endpoint';
@@ -80,7 +82,7 @@ export default async function weChatProcessor(
 		'wpcom'
 	)?.getContactInfo();
 
-	return submitRedirectTransaction(
+	const formattedTransactionData = prepareRedirectTransaction(
 		paymentMethodId,
 		{
 			...submitData,
@@ -95,14 +97,18 @@ export default async function weChatProcessor(
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		},
 		options
-	).then( ( response?: WPCOMTransactionEndpointResponse ) => {
-		// The WeChat payment type should only redirect when on mobile as redirect urls
-		// are mobile app urls: e.g. weixin://wxpay/bizpayurl?pr=RaXzhu4
-		if ( userAgent.isMobile && response?.redirect_url ) {
-			return makeRedirectResponse( response?.redirect_url );
-		}
-		return makeManualResponse( response );
-	} );
+	);
+
+	return submitWpcomTransaction( formattedTransactionData, options )
+		.then( ( response?: WPCOMTransactionEndpointResponse ) => {
+			// The WeChat payment type should only redirect when on mobile as redirect urls
+			// are mobile app urls: e.g. weixin://wxpay/bizpayurl?pr=RaXzhu4
+			if ( userAgent.isMobile && response?.redirect_url ) {
+				return makeRedirectResponse( response?.redirect_url );
+			}
+			return makeManualResponse( response );
+		} )
+		.catch( ( error ) => makeErrorResponse( error.message ) );
 }
 
 function isValidTransactionData( submitData: unknown ): submitData is WeChatTransactionRequest {
