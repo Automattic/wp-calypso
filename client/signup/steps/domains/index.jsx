@@ -557,6 +557,7 @@ class DomainsStep extends React.Component {
 						this.props.forceHideFreeDomainExplainerAndStrikeoutUi
 					}
 					isReskinned={ this.props.isReskinned }
+					reskinSideContent={ this.getSideContent() }
 				/>
 			</CalypsoShoppingCartProvider>
 		);

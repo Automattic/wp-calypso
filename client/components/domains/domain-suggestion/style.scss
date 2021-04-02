@@ -288,7 +288,7 @@ body.is-section-signup.is-white-signup {
 			border-radius: 4px; /* stylelint-disable-line */
 		}
 
-		@include break-large {
+		@include break-xlarge {
 			margin-left: 12px;
 			margin-bottom: 0;
 		}
@@ -344,6 +344,12 @@ body.is-section-signup.is-white-signup {
 			padding-left: 0;
 			padding-right: 0;
 
+			
+			@include break-mobile {
+				padding-left: 5px;
+				padding-right: 5px;
+			}
+
 			.domain-registration-suggestion__domain-title {
 				@include break-xlarge {
 					line-height: 3rem;
@@ -384,8 +390,7 @@ body.is-section-signup.is-white-signup {
 				padding: 12px 24px;
 
 				@include break-mobile {
-					padding-top: 11px;
-					padding-bottom: 10px;
+					padding: 11px 40px;
 				}
 			}
 
