@@ -14,34 +14,28 @@ namespace A8C\FSE\ErrorReporting;
  * in the main handler. See `./index.js`.
  */
 function head_error_handler() {
-	// The window.onerror handler can only catch events caused by the current origin, thus, it must be in the main document, or a script loaded from that origin
 	?><script type="text/javascript">
-	  window._headJsErrorHandler = function( errEvent ) {
+		window._headJsErrorHandler = function( errEvent ) {
 			console.log(errEvent);
 			window._jsErr = window._jsErr || [];
 			window._jsErr.push(errEvent);
 		}
 		window.addEventListener( 'error', window._headJsErrorHandler );
-
-		// Test code, will be removed later. Simulate several errors happening at about the same time.
-		let count = 0;
-		let intervalId;
-		intervalId = setInterval(() => {
-			count = count + 1;
-			if ( count >= 3 ) clearInterval( intervalId );
-			throw new Error( `Error ${count} from the top-level document`);
-		}, 0 );
 	</script>
-	<script crossorigin="anonymous" src="https://s0.wp.com/wp-content/plugins/corserror-head.js"></script>
 	<?php
 }
 add_action( 'admin_print_scripts', __NAMESPACE__ . '\head_error_handler' );
 
+/**
+ * Limit the attribute to script els that point to scripts served from s0.wp.com.
+ * We might want to add stats.wp.com and widgets.wp.com here, too. See: https://wp.me/pMz3w-cCq#comment-86959.
+ * "Staticized" (aka minified or concatenaded) scripts don't go through this pipeline, so they are not processed
+ * by this filter. The attribute is added to those directly in jsconcat, see D57238-code.
+ *
+ * @param {string} $tag string containing the def of a script tag.
+ */
 function add_crossorigin_to_script_els( $tag ) {
-	// Limit the attribute to script els that point to scripts served from s0.wp.com.
-	// We might want to add stats.wp.com and widgets.wp.com here, too. See: https://wp.me/pMz3w-cCq#comment-86959.
-	// "Staticized" (aka minified or concatenaded) scripts don't go through this pipeline, so they are not processed
-	// by this filter. The attribute is added to those directly in jsconcat, see D57238-code.
+	// phpcs:disable WordPress.WP.EnqueuedResources.NonEnqueuedScript
 	if ( preg_match( '/<script\s.*src=.*s0\.wp\.com.*>/', $tag ) ) {
 		return str_replace( ' src', " crossorigin='anonymous' src", $tag );
 	};
