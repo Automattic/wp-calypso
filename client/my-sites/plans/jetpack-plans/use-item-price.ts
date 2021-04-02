@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { clone } from 'lodash';
 
@@ -9,8 +10,13 @@ import { clone } from 'lodash';
  */
 import { isProductsListFetching } from 'calypso/state/products-list/selectors/is-products-list-fetching';
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
-import getProductPriceTiers, {
+import {
+	getProductPriceTiers,
+	getProductPriceTierList,
+} from 'calypso/state/products-list/selectors/get-product-price-tiers';
+import type {
 	PriceTiers,
+	PriceTierEntry,
 } from 'calypso/state/products-list/selectors/get-product-price-tiers';
 import { TERM_MONTHLY } from 'calypso/lib/plans/constants';
 import {
@@ -31,14 +37,22 @@ interface ItemPrices {
 	isFetching: boolean | null;
 	originalPrice: number;
 	discountedPrice?: number;
+	/**
+	 * @deprecated use priceTierList
+	 **/
 	priceTiers: PriceTiers | null;
+	priceTierList: PriceTierEntry[];
 }
 
 interface ItemRawPrices {
 	isFetching: boolean | null;
 	itemCost: number | null;
 	monthlyItemCost: number | null;
+	/**
+	 * @deprecated use priceTierList
+	 **/
 	priceTiers: PriceTiers | null;
+	priceTierList: PriceTierEntry[];
 }
 
 const useProductListItemPrices = (
@@ -46,14 +60,14 @@ const useProductListItemPrices = (
 	monthlyItemSlug = ''
 ): ItemRawPrices => {
 	const isFetching = useSelector( ( state ) => !! isProductsListFetching( state ) );
+	const productSlug = item?.costProductSlug || item?.productSlug;
 	const itemCost =
-		useSelector(
-			( state ) => item && getProductCost( state, item.costProductSlug || item.productSlug )
-		) || null;
+		useSelector( ( state ) => productSlug && getProductCost( state, productSlug ) ) || null;
 	const monthlyItemCost =
 		useSelector( ( state ) => getProductCost( state, monthlyItemSlug ) ) || null;
-	const priceTiers = useSelector( ( state ) =>
-		getProductPriceTiers( state, item?.costProductSlug || item?.productSlug )
+	const priceTiers = useSelector( ( state ) => getProductPriceTiers( state, productSlug ) );
+	const priceTierList = useSelector( ( state ) =>
+		productSlug ? getProductPriceTierList( state, productSlug ) : []
 	);
 
 	return {
@@ -61,6 +75,7 @@ const useProductListItemPrices = (
 		itemCost,
 		monthlyItemCost,
 		priceTiers,
+		priceTierList,
 	};
 };
 
@@ -71,19 +86,19 @@ const useSiteAvailableProductPrices = (
 ): ItemRawPrices => {
 	const isFetching =
 		useSelector( ( state ) => siteId && !! isRequestingSiteProducts( state, siteId ) ) || null;
+	const productSlug = item?.costProductSlug || item?.productSlug;
 	const itemCost =
 		useSelector(
 			( state ) =>
-				siteId &&
-				item &&
-				getSiteAvailableProductCost( state, siteId, item.costProductSlug || item.productSlug )
+				siteId && productSlug && getSiteAvailableProductCost( state, siteId, productSlug )
 		) || null;
 	const monthlyItemCost =
 		useSelector(
 			( state ) => siteId && getSiteAvailableProductCost( state, siteId, monthlyItemSlug )
 		) || null;
-	const priceTiers = useSelector( ( state ) =>
-		getProductPriceTiers( state, item?.costProductSlug || item?.productSlug )
+	const priceTiers = useSelector( ( state ) => getProductPriceTiers( state, productSlug ) );
+	const priceTierList = useSelector( ( state ) =>
+		productSlug ? getProductPriceTierList( state, productSlug ) : []
 	);
 
 	return {
@@ -91,6 +106,7 @@ const useSiteAvailableProductPrices = (
 		itemCost,
 		monthlyItemCost,
 		priceTiers,
+		priceTierList,
 	};
 };
 
@@ -107,11 +123,17 @@ const useItemPrice = (
 	const monthlyItemCost = siteId ? sitePrices.monthlyItemCost : listPrices.monthlyItemCost;
 	const rawPriceTiers = siteId ? sitePrices.priceTiers : listPrices.priceTiers;
 
+	const priceTierList = useMemo(
+		() => ( siteId ? sitePrices.priceTierList : listPrices.priceTierList ),
+		[ siteId, sitePrices.priceTierList, listPrices.priceTierList ]
+	);
+
 	if ( isFetching ) {
 		return {
 			isFetching,
 			originalPrice: 0,
 			priceTiers: null,
+			priceTierList: [],
 		};
 	}
 
@@ -150,6 +172,7 @@ const useItemPrice = (
 		originalPrice,
 		discountedPrice,
 		priceTiers,
+		priceTierList,
 	};
 };
 
