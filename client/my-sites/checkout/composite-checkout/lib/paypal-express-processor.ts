@@ -5,6 +5,7 @@ import debugFactory from 'debug';
 import { makeRedirectResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { ResponseCart, DomainContactDetails } from '@automattic/shopping-cart';
+import type { PayPalExpressEndpointRequestPayload } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -12,7 +13,6 @@ import type { ResponseCart, DomainContactDetails } from '@automattic/shopping-ca
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import getDomainDetails from '../lib/get-domain-details';
-import type { PayPalExpressEndpointRequestPayload } from '../types/paypal-express';
 import { createAccount } from '../payment-method-helpers';
 import wp from 'calypso/lib/wp';
 import { createTransactionEndpointCartFromResponseCart } from '../lib/translate-cart';
