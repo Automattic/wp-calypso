@@ -1,4 +1,6 @@
 @import 'woocommerce/components/text-control/style.scss';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
 
 .signup-form .signup-form__input.form-text-input {
 	margin-bottom: 20px;
@@ -105,18 +107,23 @@
 	$separator-style: 1px solid #eaeaeb;
 
 	display: flex;
+	flex-direction: column;
 	flex-wrap: wrap;
 	margin-top: 50px;
 
+	@include break-small {
+		flex-direction: row;
+	}
+
 	.logged-out-form,
 	.signup-form__social {
-		width: calc( 50% - 30px );
+		width: unset;
 		max-width: 408px;
 		padding: 0 16px;
 		box-shadow: none;
 
-		@media screen and ( max-width: $breakpoint-mobile ) {
-			width: unset;
+		@include break-small {
+			width: calc( 50% - 30px );
 		}
 	}
 
