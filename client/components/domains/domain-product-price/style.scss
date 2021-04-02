@@ -19,11 +19,17 @@
 			align-items: flex-start;
 		}
 	}
-
+	
 	@include breakpoint-deprecated( '<660px' ) {
-		flex-direction: column-reverse;
+		display: inline-block;
 		font-size: $font-body-small;
 		text-align: left;
+
+		.is-white-signup & {
+			display: flex;
+			flex-direction: column-reverse;
+			margin-top: 5px;
+		}
 	}
 
 	.is-section-signup &:not( .domain-product-price__domain-step-signup-flow ) {
@@ -39,8 +45,6 @@
 			padding-right: 2em;
 		}
 	}
-
-	
 
 	small {
 		color: var( --color-text-subtle );

@@ -27,7 +27,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { Icon } from '@wordpress/icons';
-import { isDesktop } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -1251,7 +1250,7 @@ class RegisterDomainStep extends React.Component {
 						<Icon icon={ tip } size={ 18 } />
 						{ translate( 'The best names are short and memorable' ) }
 					</div>
-					{ ! isDesktop() && this.props.reskinSideContent }
+					{ this.props.reskinSideContent }
 				</>
 			);
 		}
@@ -1419,10 +1418,7 @@ class RegisterDomainStep extends React.Component {
 						isReskinned={ this.props.isReskinned }
 					/>
 				) }
-				{ this.props.isReskinned &&
-					! isDesktop() &&
-					! this.state.loadingResults &&
-					this.props.reskinSideContent }
+				{ this.props.isReskinned && ! this.state.loadingResults && this.props.reskinSideContent }
 			</DomainSearchResults>
 		);
 	}
