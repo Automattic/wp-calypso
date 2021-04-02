@@ -51,8 +51,7 @@ export default function DomainUpsellStep( props ) {
 		'domain_upsell_emphasize_free_v3'
 	);
 
-	const isInDomainUpsellEmphasizeFreeTest =
-		experimentAssignment && 'treatment' === experimentAssignment.variationName;
+	const isInDomainUpsellEmphasizeFreeTest = 'treatment' === experimentAssignment?.variationName;
 
 	return (
 		<div
