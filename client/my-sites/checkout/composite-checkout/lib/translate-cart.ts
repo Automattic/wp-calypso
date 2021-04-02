@@ -13,12 +13,12 @@ import type {
 	WPCOMTransactionEndpointCart,
 	WPCOMTransactionEndpointRequestPayload,
 	TransactionRequest,
+	WPCOMCart,
 } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
-import { WPCOMCart } from '../types/checkout-cart';
 import {
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,

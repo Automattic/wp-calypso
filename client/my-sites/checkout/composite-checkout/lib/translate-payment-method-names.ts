@@ -2,11 +2,11 @@
  * External dependencies
  */
 import { snakeCase } from 'lodash';
+import type { CheckoutPaymentMethodSlug } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
-import { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
 import { WPCOMPaymentMethod } from '../types/backend/payment-method';
 
 /**

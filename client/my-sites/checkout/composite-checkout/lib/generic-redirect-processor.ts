@@ -4,7 +4,10 @@
 import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 import { makeRedirectResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
-import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
+import type {
+	WPCOMTransactionEndpointResponse,
+	CheckoutPaymentMethodSlug,
+} from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -15,7 +18,6 @@ import { recordTransactionBeginAnalytics } from './analytics';
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import prepareRedirectTransaction from '../lib/prepare-redirect-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
 
 type RedirectTransactionRequest = {
 	name: string | undefined;
