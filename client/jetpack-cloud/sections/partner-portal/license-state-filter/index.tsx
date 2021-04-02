@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useContext } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 
@@ -16,9 +16,9 @@ import NavItem from 'calypso/components/section-nav/item';
 import Count from 'calypso/components/count';
 import Search from 'calypso/components/search';
 import UrlSearch from 'calypso/lib/url-search';
-import QueryJetpackPartnerPortalLicenseCounts from 'calypso/components/data/query-jetpack-partner-portal-license-counts';
 import { getLicenseCounts } from 'calypso/state/partner-portal/licenses/selectors';
 import { internalToPublicLicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 
 /**
  * Style dependencies
@@ -26,14 +26,13 @@ import { internalToPublicLicenseFilter } from 'calypso/jetpack-cloud/sections/pa
 import './style.scss';
 
 interface Props {
-	filter: LicenseFilter;
-	search: string;
 	doSearch: ( query: string ) => void;
 	getSearchOpen: () => boolean;
 }
 
-function LicenseStateFilter( { filter, search, doSearch }: Props ): ReactElement {
+function LicenseStateFilter( { doSearch }: Props ): ReactElement {
 	const translate = useTranslate();
+	const { filter, search } = useContext( LicenseListContext );
 	const counts = useSelector( getLicenseCounts );
 	const basePath = '/partner-portal/';
 
@@ -75,8 +74,6 @@ function LicenseStateFilter( { filter, search, doSearch }: Props ): ReactElement
 			selectedCount={ selectedItem.count }
 			className="license-state-filter"
 		>
-			<QueryJetpackPartnerPortalLicenseCounts />
-
 			<NavTabs
 				label={ translate( 'State' ) }
 				selectedText={ selectedItem.label }

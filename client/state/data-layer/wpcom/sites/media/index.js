@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { toPairs, isEqual, omit } from 'lodash';
+import { isEqual, omit } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -79,7 +79,7 @@ export const editMedia = ( action ) => {
 				method: 'POST',
 				path: `/sites/${ siteId }/media/${ mediaId }/edit`,
 				apiVersion: '1.1',
-				formData: toPairs( rest ),
+				formData: Object.entries( rest ),
 			},
 			action
 		),

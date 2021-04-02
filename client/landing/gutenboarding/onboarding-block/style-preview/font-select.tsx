@@ -7,7 +7,7 @@ import { Icon, chevronDown } from '@wordpress/icons';
 import classnames from 'classnames';
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { getFontTitle, FontPair } from '@automattic/design-picker';
 
 /**

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { useSelect } from '@wordpress/data';
 import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automattic/onboarding';
 

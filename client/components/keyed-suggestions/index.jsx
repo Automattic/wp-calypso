@@ -8,7 +8,6 @@ import {
 	pick,
 	pickBy,
 	without,
-	negate,
 	isEmpty,
 	take,
 	filter,
@@ -154,7 +153,7 @@ class KeyedSuggestions extends React.Component {
 	};
 
 	removeEmptySuggestions = ( suggestions ) => {
-		return pickBy( suggestions, negate( isEmpty ) );
+		return pickBy( suggestions, ( suggestion ) => ! isEmpty( suggestion ) );
 	};
 
 	/**

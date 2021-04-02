@@ -24,26 +24,34 @@ jest.mock( 'calypso/state/partner-portal/partner/selectors', () => ( {
 
 describe( 'actions', () => {
 	describe( '#fetchLicenses()', () => {
-		test( 'should dispatch a request action when called', () => {
+		test( 'should return a thunk which dispatches 2 actions when called', () => {
 			const { fetchLicenses } = actions;
+			const dispatch = jest.fn();
 
-			expect(
-				fetchLicenses(
-					LicenseState.Detached,
-					'bar',
-					LicenseSortField.IssuedAt,
-					LicenseSortDirection.Descending,
-					2
-				)
-			).toEqual( {
+			const thunk = fetchLicenses(
+				LicenseState.Detached,
+				'bar',
+				LicenseSortField.IssuedAt,
+				LicenseSortDirection.Descending,
+				2
+			);
+
+			thunk( dispatch );
+
+			expect( dispatch.mock.calls[ 0 ][ 0 ] ).toEqual( {
 				type: JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
 				filter: LicenseState.Detached,
 				search: 'bar',
-				fetcher: 'wpcomJetpackLicensing',
 				sortField: LicenseSortField.IssuedAt,
 				sortDirection: LicenseSortDirection.Descending,
 				page: 2,
 				perPage: LICENSES_PER_PAGE,
+				fetcher: 'wpcomJetpackLicensing',
+			} );
+
+			expect( dispatch.mock.calls[ 1 ][ 0 ] ).toEqual( {
+				type: JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_REQUEST,
+				fetcher: 'wpcomJetpackLicensing',
 			} );
 		} );
 	} );

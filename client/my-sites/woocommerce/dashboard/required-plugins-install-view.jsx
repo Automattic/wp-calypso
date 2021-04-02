@@ -30,6 +30,7 @@ import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pe
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getSelectedSiteWithFallback, getSiteWoocommerceUrl } from 'calypso/state/sites/selectors';
+import { logToLogstash } from 'calypso/state/logstash/actions';
 import { recordTrack } from '../lib/analytics';
 
 // Time in seconds to complete various steps.
@@ -37,8 +38,8 @@ const TIME_TO_TRANSFER_ACTIVE = 5;
 const TIME_TO_TRANSFER_UPLOADING = 5;
 const TIME_TO_TRANSFER_BACKFILLING = 25;
 const TIME_TO_TRANSFER_COMPLETE = 6;
-const TIME_TO_PLUGIN_INSTALLATION = 15;
-const TIME_TO_PLUGIN_ACTIVATION = 15;
+const TIME_TO_PLUGIN_INSTALLATION = 30;
+const TIME_TO_PLUGIN_ACTIVATION = 30;
 
 const transferStatusesToTimes = {};
 
@@ -161,10 +162,29 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	timeoutElapsed = () => {
+		const { sitePlugins, pluginsStatus, automatedTransferStatus } = this.props;
 		// These status means store setup is finished, not stalled.
 		if ( [ 'IDLE', 'DONESUCCESS', 'DONEFAILURE' ].includes( this.state.engineState ) ) {
 			return;
 		}
+
+		const plugins = Array.isArray( sitePlugins )
+			? sitePlugins.flatMap( ( plugin ) => ( {
+					id: plugin.id,
+					active: plugin.active,
+			  } ) )
+			: sitePlugins;
+
+		this.props.logToLogstash( {
+			feature: 'calypso_client',
+			message: 'woocommerce setup timeout',
+			extra: {
+				state: this.state,
+				automatedTransferStatus,
+				plugins,
+				pluginsStatus,
+			},
+		} );
 
 		recordTrack( 'calypso_woocommerce_setup_timeout', {
 			engine_state: this.state.engineState,
@@ -172,6 +192,7 @@ class RequiredPluginsInstallView extends Component {
 			to_install: this.state.toInstall.join( ',' ),
 			working_on: this.state.workingOn,
 			progress: this.state.progress,
+			transfer_status: automatedTransferStatus,
 		} );
 
 		this.setState( {
@@ -613,6 +634,7 @@ function mapDispatchToProps( dispatch ) {
 			fetchPluginData,
 			installAndActivatePlugin,
 			fetchPlugins,
+			logToLogstash,
 		},
 		dispatch
 	);

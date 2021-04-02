@@ -35,7 +35,7 @@ describe( `[${ host }] Jetpack Plugins - Activating a plugin: (${ screenSize }) 
 		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 
 		const loginFlow = new LoginFlow( driver );
-		await loginFlow.loginAndSelectManagePlugins();
+		await loginFlow.loginAndSelectManagePluginsJetpack();
 	} );
 
 	step( 'Can ensure Hello Dolly is deactivated', async function () {
@@ -81,7 +81,7 @@ describe( `[${ host }] Jetpack Plugins - Searching a plugin: (${ screenSize }) @
 		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 
 		const loginFlow = new LoginFlow( driver );
-		await loginFlow.loginAndSelectPlugins();
+		await loginFlow.loginAndSelectPluginsJetpack();
 	} );
 
 	step(

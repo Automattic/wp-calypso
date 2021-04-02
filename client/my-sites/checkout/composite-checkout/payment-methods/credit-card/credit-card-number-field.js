@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { CardNumberElement } from 'react-stripe-elements';
 import { FormStatus, useFormStatus, useSelect, PaymentLogo } from '@automattic/composite-checkout';
 

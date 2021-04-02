@@ -45,7 +45,7 @@ describe( `[${ host }] Themes: All sites (${ screenSize })`, function () {
 			await this.loginFlow.loginAndSelectAllSites();
 
 			this.sidebarComponent = await SidebarComponent.Expect( driver );
-			await this.sidebarComponent.selectThemes();
+			await this.sidebarComponent.selectAllSitesThemes();
 		} );
 
 		step( 'can search for free themes', async function () {
@@ -110,7 +110,7 @@ describe( `[${ host }] Themes: All sites (${ screenSize })`, function () {
 			await this.loginFlow.loginAndSelectAllSites();
 
 			this.sidebarComponent = await SidebarComponent.Expect( driver );
-			await this.sidebarComponent.selectThemes();
+			await this.sidebarComponent.selectAllSitesThemes();
 		} );
 
 		step( 'can search for free themes', async function () {
