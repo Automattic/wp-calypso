@@ -2,12 +2,7 @@
  * External dependencies
  */
 import { snakeCase } from 'lodash';
-import type { CheckoutPaymentMethodSlug } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import { WPCOMPaymentMethod } from '../types/backend/payment-method';
+import type { CheckoutPaymentMethodSlug, WPCOMPaymentMethod } from '@automattic/wpcom-checkout';
 
 /**
  * Convert a WPCOM payment method class name to a checkout payment method slug
