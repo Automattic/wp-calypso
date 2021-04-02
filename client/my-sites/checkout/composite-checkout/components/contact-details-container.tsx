@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import { useSelect, useDispatch } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import type { ContactDetailsType } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -18,7 +19,6 @@ import {
 } from '../types/wpcom-store-state';
 import type { CountryListItem } from '../types/country-list-item';
 import type { ManagedContactDetails } from '../types/wpcom-store-state';
-import type { ContactDetailsType } from '../types/contact-details';
 import TaxFields from './tax-fields';
 import DomainContactDetails from './domain-contact-details';
 import { isDomainProduct, isDomainTransfer, getDomain } from 'calypso/lib/products-values';
