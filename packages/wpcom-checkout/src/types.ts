@@ -248,3 +248,5 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_Stripe_Source_Three_D_Secure'
 	| 'WPCOM_Billing_Stripe_Source_Wechat'
 	| 'WPCOM_Billing_Web_Payment';
+
+export type ContactDetailsType = 'gsuite' | 'tax' | 'domain' | 'none';
