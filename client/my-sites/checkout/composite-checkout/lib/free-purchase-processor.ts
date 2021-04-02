@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { makeSuccessResponse } from '@automattic/composite-checkout';
+import { makeSuccessResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 
 /**
@@ -15,10 +15,7 @@ import {
 	createTransactionEndpointCartFromResponseCart,
 } from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type {
-	TransactionRequest,
-	WPCOMTransactionEndpointResponse,
-} from '../types/transaction-endpoint';
+import type { TransactionRequest } from '../types/transaction-endpoint';
 
 const debug = debugFactory( 'calypso:composite-checkout:free-purchase-processor' );
 
@@ -32,7 +29,7 @@ export default async function freePurchaseProcessor(
 ): Promise< PaymentProcessorResponse > {
 	const { siteId, responseCart, includeDomainDetails, includeGSuiteDetails } = transactionOptions;
 
-	return submitFreePurchaseTransaction(
+	const formattedTransactionData = prepareFreePurchaseTransaction(
 		{
 			name: '',
 			couponId: responseCart.coupon,
@@ -43,13 +40,17 @@ export default async function freePurchaseProcessor(
 			postalCode: '',
 		},
 		transactionOptions
-	).then( makeSuccessResponse );
+	);
+
+	return submitWpcomTransaction( formattedTransactionData, transactionOptions )
+		.then( makeSuccessResponse )
+		.catch( ( error ) => makeErrorResponse( error.message ) );
 }
 
-async function submitFreePurchaseTransaction(
+function prepareFreePurchaseTransaction(
 	transactionData: SubmitFreePurchaseTransactionData,
 	transactionOptions: PaymentProcessorOptions
-): Promise< WPCOMTransactionEndpointResponse > {
+) {
 	debug( 'formatting free transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...transactionData,
@@ -61,5 +62,5 @@ async function submitFreePurchaseTransaction(
 		paymentMethodType: 'WPCOM_Billing_WPCOM',
 	} );
 	debug( 'submitting free transaction', formattedTransactionData );
-	return submitWpcomTransaction( formattedTransactionData, transactionOptions );
+	return formattedTransactionData;
 }

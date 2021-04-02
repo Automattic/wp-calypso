@@ -11,6 +11,7 @@ import {
 	PURCHASES_SITE_FETCH,
 	PURCHASES_SITE_FETCH_COMPLETED,
 	PURCHASES_SITE_FETCH_FAILED,
+	PURCHASES_SITE_RESET_STATE,
 	PURCHASES_USER_FETCH,
 	PURCHASES_USER_FETCH_COMPLETED,
 	PURCHASES_USER_FETCH_FAILED,
@@ -105,3 +106,6 @@ export const removePurchase = ( purchaseId, userId ) => ( dispatch ) => {
 			} );
 		} );
 };
+
+export const resetSiteState = () => ( dispatch ) =>
+	dispatch( { type: PURCHASES_SITE_RESET_STATE } );

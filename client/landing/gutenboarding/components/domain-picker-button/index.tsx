@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import { useSelect } from '@wordpress/data';
 import { Icon, chevronDown } from '@wordpress/icons';
 import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { useLocale } from '@automattic/i18n-utils';
 
 /**

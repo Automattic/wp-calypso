@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { compact, get, head, isEqual, sortBy, toPairs, unionWith } from 'lodash';
+import { compact, get, head, isEqual, sortBy, unionWith } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:data-layer:remove-duplicate-gets' );
 
@@ -44,14 +44,15 @@ const isGetRequest = ( request ) => 'GET' === get( request, 'method', '' ).toUpp
 /**
  * Generate a deterministic key for comparing request descriptions
  *
- * @param {string} path API endpoint path
- * @param {string} apiNamespace used for endpoint versioning
- * @param {string} apiVersion used for endpoint versioning
- * @param {object<string, *>} query GET query string
+ * @param {object}            requestOptions              Request options
+ * @param {string}            requestOptions.path         API endpoint path
+ * @param {string}            requestOptions.apiNamespace used for endpoint versioning
+ * @param {string}            requestOptions.apiVersion   used for endpoint versioning
+ * @param {object<string, *>} requestOptions.query        GET query string
  * @returns {string} unique key up to duplicate request descriptions
  */
-export const buildKey = ( { path, apiNamespace, apiVersion, query } ) =>
-	JSON.stringify( [ path, apiNamespace, apiVersion, sortBy( toPairs( query ), head ) ] );
+export const buildKey = ( { path, apiNamespace, apiVersion, query = {} } ) =>
+	JSON.stringify( [ path, apiNamespace, apiVersion, sortBy( Object.entries( query ), head ) ] );
 
 /**
  * Joins a responder action into a unique list of responder actions
@@ -71,8 +72,8 @@ export const addResponder = ( list, item ) => ( {
  *
  * @see applyDuplicateHandlers
  *
- * @param {OutboundData} outboundData request info
- * @returns {OutboundData} filtered request info
+ * @param {object} outboundData request info
+ * @returns {object} filtered request info
  */
 export const removeDuplicateGets = ( outboundData ) => {
 	const { nextRequest } = outboundData;
@@ -102,8 +103,8 @@ export const removeDuplicateGets = ( outboundData ) => {
  *
  * @see removeDuplicateGets
  *
- * @param {InboundData} inboundData request info
- * @returns {InboundData} processed request info
+ * @param {object} inboundData request info
+ * @returns {object} processed request info
  */
 export const applyDuplicatesHandlers = ( inboundData ) => {
 	const { originalRequest } = inboundData;

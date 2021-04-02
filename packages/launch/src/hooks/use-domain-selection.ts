@@ -76,6 +76,7 @@ export function useDomainSuggestionFromCart(): DomainSuggestions.DomainSuggestio
 				domainProductFromCart.cost,
 				domainProductFromCart.currency
 			),
+			unavailable: false,
 		};
 	}
 

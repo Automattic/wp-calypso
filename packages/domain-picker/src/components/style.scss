@@ -149,6 +149,7 @@ $accent-blue: #117ac9;
 
 	&.is-unavailable {
 		color: var( --studio-gray-40 );
+		cursor: default;
 	}
 
 	// animate the added domains after you click expand

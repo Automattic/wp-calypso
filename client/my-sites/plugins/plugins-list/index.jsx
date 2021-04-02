@@ -7,7 +7,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { find, get, includes, isEmpty, isEqual, negate, range, reduce, sortBy } from 'lodash';
+import { find, get, includes, isEmpty, isEqual, range, reduce, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -237,7 +237,7 @@ export class PluginsList extends React.Component {
 		this.removePluginStatuses();
 		this.props.plugins
 			.filter( this.isSelected ) // only use selected sites
-			.filter( negate( isDeactivatingAndJetpackSelected ) ) // ignore sites that are deactiving or activating jetpack
+			.filter( ( plugin ) => ! isDeactivatingAndJetpackSelected( plugin ) ) // ignore sites that are deactiving or activating jetpack
 			.map( ( p ) => {
 				return Object.keys( p.sites ).map( ( siteId ) => {
 					const site = this.props.allSites.find( ( s ) => s.ID === parseInt( siteId ) );
