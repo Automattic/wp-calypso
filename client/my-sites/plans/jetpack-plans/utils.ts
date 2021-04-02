@@ -89,7 +89,7 @@ import type {
 import type { JetpackProductSlug } from 'calypso/lib/products-values/types';
 import type { SitePlan } from 'calypso/state/sites/selectors/get-site-plan';
 import ExternalLink from 'calypso/components/external-link';
-import { PriceTiers } from 'calypso/state/products-list/selectors/get-product-price-tiers';
+import type { PriceTierEntry } from 'calypso/state/products-list/selectors/get-product-price-tiers';
 
 /**
  * Duration utils.
@@ -248,23 +248,31 @@ export function slugIsFeaturedProduct( productSlug: string ): boolean {
  * Gets a price in a set of price tiers.
  *
  * @param tiers A range of tiered pricing.
- * @param tierKey A key in the tiered pricing object.
- * @param units Optional. Number of units to use when dealing with variable pricing.
+ * @param units Number of units to use when dealing with variable pricing.
  * @returns {number|null} The amount it costs or null.
  */
-export function getPriceTier(
-	tiers: PriceTiers,
-	tierKey: keyof PriceTiers,
-	units = 1
-): number | null {
-	if ( ! ( tierKey in tiers ) ) {
+function getPriceForUnitsInTier( tiers: PriceTierEntry[], units: number ): number | null {
+	const firstUnboundedTier = tiers.find( ( tier ) => ! tier.maximum_units );
+	let matchingTier = tiers.find( ( tier ) => {
+		if ( ! tier.maximum_units ) {
+			return false;
+		}
+		if ( units >= tier.minimum_units && units <= tier.maximum_units ) {
+			return true;
+		}
+		return false;
+	} );
+	if ( ! matchingTier && firstUnboundedTier && units >= firstUnboundedTier.minimum_units ) {
+		matchingTier = firstUnboundedTier;
+	}
+
+	if ( ! matchingTier ) {
 		return null;
 	}
-	const tier = tiers[ tierKey ];
-	if ( 'flat_price' in tier ) {
-		return tier.flat_price;
+	if ( matchingTier.flat_fee ) {
+		return matchingTier.flat_fee;
 	}
-	return tier.variable_price_per_unit * units;
+	return matchingTier.per_unit_fee * units;
 }
 
 /**
@@ -275,7 +283,7 @@ export function getPriceTier(
  */
 export function productTooltip(
 	product: SelectorProduct,
-	tiers: PriceTiers
+	tiers: PriceTierEntry[]
 ): null | TranslateResult {
 	const currency = product.displayCurrency || 'USD';
 	if ( JETPACK_SEARCH_PRODUCTS.includes( product.productSlug ) ) {
@@ -286,10 +294,10 @@ export function productTooltip(
 				'{{Info}}More info{{/Info}}',
 			{
 				args: {
-					price100: formatCurrency( getPriceTier( tiers, 'up_to_100_records' ) || 50, currency, {
+					price100: formatCurrency( getPriceForUnitsInTier( tiers, 1 ) || 50, currency, {
 						stripZeros: true,
 					} ),
-					price1000: formatCurrency( getPriceTier( tiers, 'up_to_1k_records' ) || 100, currency, {
+					price1000: formatCurrency( getPriceForUnitsInTier( tiers, 101 ) || 100, currency, {
 						stripZeros: true,
 					} ),
 				},
