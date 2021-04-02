@@ -79,12 +79,6 @@ export interface SiteDetailsPlan {
 	is_free: boolean;
 }
 
-export interface SiteIcon {
-	img: string;
-	ico: string;
-	media_id: number;
-}
-
 export interface SiteDetails {
 	ID: number;
 	name: string | undefined;
@@ -96,7 +90,6 @@ export interface SiteDetails {
 		selected_features?: FeatureId[];
 	};
 	plan?: SiteDetailsPlan;
-	icon?: SiteIcon;
 }
 
 export interface SiteError {

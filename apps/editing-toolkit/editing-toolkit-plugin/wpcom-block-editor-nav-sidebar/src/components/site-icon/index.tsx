@@ -6,26 +6,17 @@ import { useSelect } from '@wordpress/data';
 import { Icon, wordpress } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 
-/**
- * Internal dependencies
- */
-import 'a8c-fse-common-data-stores';
-
-const SITE_STORE = 'automattic/site';
-
 export default function SiteIcon(): JSX.Element {
 	const currentSiteId: number = window._currentSiteId;
 
-	/**
-	 * The site icon should be available from the `core` data store in the future,
-	 * via the /wp/v2/settings endpoint, so we can avoid the additional wpcom API call.
-	 *
-	 * @see https://github.com/WordPress/gutenberg/pull/19967
-	 */
+	// The site icon url should probably be available from /wp/v2/settings or similar in the future,
+	// but for now it's accessible at the index endpoint.
+	// https://github.com/WordPress/gutenberg/blob/68c3978be352c6d3982f73bcf8c80744608c53c8/lib/init.php#L160
 	const siteIconUrl = useSelect(
 		( select ) => {
-			const siteDetails = select( SITE_STORE ).getSite( currentSiteId );
-			return siteDetails?.icon?.img;
+			const { getEntityRecord } = select( 'core' );
+			const siteData = getEntityRecord( 'root', '__unstableBase', 0 ) || {};
+			return siteData.site_icon_url;
 		},
 		[ currentSiteId ]
 	);
