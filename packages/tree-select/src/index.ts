@@ -12,11 +12,11 @@ const defaultGetCacheKey: GenerateCacheKey< unknown[] > = ( ...args: unknown[] )
 	args.join();
 
 const isFunction = ( fn: unknown ): fn is ( ...args: unknown[] ) => unknown => {
-	return fn && typeof fn === 'function';
+	return !! fn && typeof fn === 'function';
 };
 
 const isObject = ( o: unknown ): o is Record< string, unknown > => {
-	return o && typeof o === 'object';
+	return !! o && typeof o === 'object';
 };
 
 type WeakMapKey = object; // eslint-disable-line @typescript-eslint/ban-types
@@ -39,7 +39,7 @@ interface CachedSelector< S, A extends unknown[], R = unknown > {
  * @param selector      A standard selector for calculating cached result.
  * @param options       Options bag with additional arguments.
  *
- * @returns {Function}  Cached selector
+ * @returns Cached selector
  */
 export default function treeSelect<
 	State = unknown,
