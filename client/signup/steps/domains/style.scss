@@ -71,10 +71,21 @@ body.is-section-signup.is-white-signup {
 			@include break-large {
 				width: 30vw;
 				margin-top: 0;
+				flex-direction: column;
 			}
 
 			@include break-wide {
 				width: 20vw;
+			}
+		}
+
+		.register-domain-step .domains__domain-side-content-container {
+			@include break-small {
+				flex-direction: row;
+
+				.domains__domain-side-content {
+					padding-top: 0;
+				}
 			}
 		}
 

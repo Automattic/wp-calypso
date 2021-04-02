@@ -96,7 +96,6 @@ import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-n
 import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
 import tip from './tip';
-import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 
 /**
  * Style dependencies
@@ -1247,10 +1246,13 @@ class RegisterDomainStep extends React.Component {
 
 		if ( isReskinned ) {
 			return (
-				<div className="register-domain-step__example-prompt">
-					<Icon icon={ tip } size={ 18 } />
-					{ translate( 'The best names are short and memorable' ) }
-				</div>
+				<>
+					<div className="register-domain-step__example-prompt">
+						<Icon icon={ tip } size={ 18 } />
+						{ translate( 'The best names are short and memorable' ) }
+					</div>
+					{ ! isDesktop() && this.props.reskinSideContent }
+				</>
 			);
 		}
 
@@ -1417,19 +1419,10 @@ class RegisterDomainStep extends React.Component {
 						isReskinned={ this.props.isReskinned }
 					/>
 				) }
-				{ this.props.isReskinned && ! isDesktop() && ! this.state.loadingResults && (
-					<div className="domains__domain-side-content-container">
-						<div className="domains__domain-side-content">
-							<ReskinSideExplainer
-								onClick={ this.props.hideFreePlan }
-								type={ 'free-domain-explainer' }
-							/>
-						</div>
-						<div className="domains__domain-side-content">
-							<ReskinSideExplainer onClick={ useYourDomainFunction } type={ 'use-your-domain' } />
-						</div>
-					</div>
-				) }
+				{ this.props.isReskinned &&
+					! isDesktop() &&
+					! this.state.loadingResults &&
+					this.props.reskinSideContent }
 			</DomainSearchResults>
 		);
 	}

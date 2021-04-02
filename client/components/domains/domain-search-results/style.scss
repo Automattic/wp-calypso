@@ -56,13 +56,6 @@ body.is-section-signup.is-white-signup {
 	.domain-search-results__domain-suggestions {
 		.card {
 			box-shadow: none;
-			margin-left: 20px;
-			margin-right: 20px;
-
-			@include break-xlarge {
-				margin-left: 0;
-				margin-right: 0;
-			}
 
 			&:not( .search-filters__buttons ) {
 				border-bottom: 1px solid rgba( 220, 220, 222, 0.64 );
@@ -75,6 +68,18 @@ body.is-section-signup.is-white-signup {
 
 		.featured-domain-suggestion .domain-registration-suggestion__domain-title {
 			font-size: 1.625rem; /* stylelint-disable-line */
+		}
+	}
+
+	.domain-search-results {
+		@include break-medium {
+			margin-left: 20px;
+			margin-right: 20px;
+		}
+
+		@include break-xlarge {
+			margin-left: 0;
+			margin-right: 0;
 		}
 	}
 	
