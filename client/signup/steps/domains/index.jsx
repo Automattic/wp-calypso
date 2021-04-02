@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import { defer, get, includes, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import page from 'page';
-import { isDesktop } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -718,7 +717,7 @@ class DomainsStep extends React.Component {
 			content = this.domainForm();
 		}
 
-		if ( ! this.props.stepSectionName && this.props.isReskinned && isDesktop() ) {
+		if ( ! this.props.stepSectionName && this.props.isReskinned ) {
 			sideContent = this.getSideContent();
 		}
 

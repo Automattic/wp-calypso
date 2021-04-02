@@ -63,15 +63,16 @@ body.is-section-signup.is-white-signup {
 		}
 
 		.domains__domain-side-content-container {
-			display: flex;
 			flex-direction: column;
 			width: 100vw;
 			margin-top: 40px;
+			display: none;
 
 			@include break-large {
 				width: 30vw;
 				margin-top: 0;
 				flex-direction: column;
+				display: flex;
 			}
 
 			@include break-wide {
@@ -80,12 +81,18 @@ body.is-section-signup.is-white-signup {
 		}
 
 		.register-domain-step .domains__domain-side-content-container {
+			display: flex;
+
 			@include break-small {
 				flex-direction: row;
 
 				.domains__domain-side-content {
 					padding-top: 0;
 				}
+			}
+
+			@include break-large {
+				display: none;
 			}
 		}
 
