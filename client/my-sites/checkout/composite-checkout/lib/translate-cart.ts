@@ -9,6 +9,11 @@ import type {
 	ResponseCartProduct,
 	DomainContactDetails,
 } from '@automattic/shopping-cart';
+import type {
+	WPCOMTransactionEndpointCart,
+	WPCOMTransactionEndpointRequestPayload,
+	TransactionRequest,
+} from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -29,11 +34,6 @@ import {
 } from 'calypso/lib/products-values';
 import { isRenewal } from 'calypso/lib/cart-values/cart-items';
 import doesValueExist from './does-value-exist';
-import type {
-	WPCOMTransactionEndpointCart,
-	WPCOMTransactionEndpointRequestPayload,
-	TransactionRequest,
-} from '../types/transaction-endpoint';
 import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
 
 /**

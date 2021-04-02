@@ -2,11 +2,7 @@
  * External dependencies
  */
 import type { DomainContactDetails } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import { WPCOMTransactionEndpointCart } from './transaction-endpoint';
+import type { WPCOMTransactionEndpointCart } from '@automattic/wpcom-checkout';
 
 export type PayPalExpressEndpoint = (
 	_: PayPalExpressEndpointRequestPayload
