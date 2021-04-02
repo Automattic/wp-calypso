@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { useDispatch } from '@wordpress/data';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { useLocale } from '@automattic/i18n-utils';
 import DomainPicker, { mockDomainSuggestion } from '@automattic/domain-picker';
 import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automattic/onboarding';

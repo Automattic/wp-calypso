@@ -179,6 +179,8 @@ export default function LicensePreview( {
 			{ isOpen && (
 				<LicenseDetails
 					licenseKey={ licenseKey }
+					product={ product }
+					domain={ domain }
 					username={ username }
 					blogId={ blogId }
 					issuedAt={ issuedAt }

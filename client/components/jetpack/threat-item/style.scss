@@ -33,7 +33,7 @@
 	}
 
 	&.is-fixed {
-		border-left: 3px solid var( --studio-jetpack-green-40 );
+		border-left: 3px solid var( --color-success-50 );
 	}
 
 	&.is-ignored {
@@ -43,7 +43,6 @@
 	&__buttons {
 		display: flex;
 		justify-content: flex-end;
-
 	}
 
 	.foldable-card__action.foldable-card__expand {

@@ -609,21 +609,27 @@ class HelpContact extends React.Component {
 				{ isUserAffectedByLiveChatClosure && (
 					<>
 						<ChatHolidayClosureNotice
-							holidayName="Easter"
+							holidayName={ translate( 'Easter', {
+								context: 'Holiday name',
+							} ) }
 							compact={ compact }
 							displayAt="2021-03-28 00:00Z"
 							closesAt="2021-04-04 00:00Z"
 							reopensAt="2021-04-05 06:00Z"
 						/>
 						<ChatHolidayClosureNotice
-							holidayName="Christmas"
+							holidayName={ translate( 'Christmas', {
+								context: 'Holiday name',
+							} ) }
 							compact={ compact }
 							displayAt="2021-12-17 00:00Z"
 							closesAt="2021-12-24 00:00Z"
 							reopensAt="2021-12-26 07:00Z"
 						/>
 						<ChatHolidayClosureNotice
-							holidayName="New Year's Day"
+							holidayName={ translate( "New Year's Day", {
+								context: 'Holiday name',
+							} ) }
 							compact={ compact }
 							displayAt="2021-12-26 07:00Z"
 							closesAt="2021-12-31 00:00Z"

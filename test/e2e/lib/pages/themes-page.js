@@ -78,7 +78,6 @@ export default class ThemesPage extends AsyncBaseContainer {
 		const searchToggleSelector = by.css( '.themes-magic-search-card div.search' );
 		const searchFieldSelector = by.css( '.themes-magic-search-card input.search__input' );
 		await driverHelper.clickWhenClickable( this.driver, searchToggleSelector, this.explicitWaitMS );
-		await driverHelper.clearTextArea( this.driver, searchFieldSelector );
 		await driverHelper.setWhenSettable( this.driver, searchFieldSelector, phrase );
 		await this.driver.findElement( searchFieldSelector ).sendKeys( ' ' );
 		return await this.waitUntilThemesLoaded();

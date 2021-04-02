@@ -14,14 +14,6 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 const DATE_FORMAT = 'LLL';
 
-export const easterHolidayName = translate( 'Easter', {
-	context: 'Holiday name',
-} );
-
-export const xmasHolidayName = translate( 'Christmas', {
-	context: 'Holiday name',
-} );
-
 const ChatHolidayClosureNotice = ( { closesAt, compact, displayAt, holidayName, reopensAt } ) => {
 	const moment = useLocalizedMoment();
 

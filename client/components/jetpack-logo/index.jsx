@@ -15,7 +15,7 @@ import useAriaProps from 'calypso/lib/a11y/use-aria-props';
  * Module constants
  */
 const PALETTE = colorStudio.colors;
-const COLOR_JETPACK = PALETTE[ 'Jetpack Green' ];
+const COLOR_JETPACK = PALETTE[ 'Jetpack Green 50' ];
 const COLOR_WHITE = PALETTE[ 'White' ]; // eslint-disable-line dot-notation
 
 const LogoPathSize32 = ( { monochrome = false } ) => {

@@ -4,7 +4,7 @@
 import { Button, GuidePage } from '@wordpress/components';
 import React, { useEffect } from 'react';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 
 function WhatsNewPage( { description, heading, imageSrc, isLastPage, link, pageNumber } ) {
 	const __ = useI18n().__;
