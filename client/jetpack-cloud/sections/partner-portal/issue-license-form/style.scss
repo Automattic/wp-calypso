@@ -24,21 +24,4 @@
 			margin: 0 10px;
 		}
 	}
-
-	&__issue-button {
-		&--is-loading {
-			position: relative;
-
-			span {
-				opacity: 0;
-			}
-
-			.spinner {
-				position: absolute;
-				left: 50%;
-				top: 50%;
-				transform: translate( -50%, -50% );
-			}
-		}
-	}
 }
