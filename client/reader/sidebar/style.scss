@@ -1,6 +1,39 @@
 /* Overide very specific css on an attribute */
-.sidebar ul.reader-sidebar-tags__list {
-	margin-bottom: 20px;
+.sidebar {
+	li.reader-sidebar-tags__list {
+		margin-bottom: 8px;
+	}
+
+
+	// Apply custom style to the `Add new tag` mini form.
+	.reader-sidebar-tags__text-input:hover,
+	.reader-sidebar-tags__text-input:focus,
+	.reader-sidebar-tags__text-input.is-focused,
+	.reader-sidebar-tags__text-input.is-focused:hover,
+	.reader-sidebar-tags__text-input {
+		background-color: transparent;
+		border: 0;
+		padding-left: 8px;
+		padding-right: 8px;
+		box-shadow: none;
+
+		.form-text-input {
+			color: var(--color-sidebar-text);
+			box-shadow: 0 0 1px var(--color-neutral-10);
+			background-color: transparent;
+			padding: 0 8px;
+			margin: 4px 4px 4px 0;
+			font-size: 0.8125rem;
+
+			&:focus {
+				box-shadow: 0 0 0 2px var(--color-primary-10);
+			}
+
+			&::placeholder {
+				color: rgba( var( --color-sidebar-text-rgb ), 0.4 );
+			}
+		}
+	}
 }
 
 .is-section-reader {

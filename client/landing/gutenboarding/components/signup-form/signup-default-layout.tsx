@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { Button, TextControl, Modal, Notice } from '@wordpress/components';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import type { WPElement } from '@wordpress/element';
 
 /**

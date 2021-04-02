@@ -155,7 +155,7 @@
 .is_jetpackcom {
 	.backup__restore-banner {
 		&.banner.card {
-			@include banner-color( var( --color-primary-40 ) );
+			@include banner-color( var( --color-accent ) );
 		}
 	}
 }

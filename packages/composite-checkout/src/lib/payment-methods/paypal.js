@@ -4,7 +4,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 
 /**
  * Internal dependencies

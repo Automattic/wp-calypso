@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { dropRightWhile, negate, identity } from 'lodash';
+import { dropRightWhile } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -58,7 +58,7 @@ class CustomNameserversForm extends React.PureComponent {
 	rows() {
 		// Remove the empty values from the end, and add one empty one
 		const { translate } = this.props;
-		const nameservers = dropRightWhile( this.props.nameservers, negate( identity ) );
+		const nameservers = dropRightWhile( this.props.nameservers, ( nameserver ) => ! nameserver );
 
 		if ( nameservers.length < MAX_NAMESERVER_LENGTH ) {
 			nameservers.push( '' );

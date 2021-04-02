@@ -1,18 +1,7 @@
 /**
  * External dependencies
  */
-import {
-	filter,
-	find,
-	findIndex,
-	matches,
-	negate,
-	pick,
-	reject,
-	some,
-	startsWith,
-	without,
-} from 'lodash';
+import { filter, find, findIndex, matches, pick, reject, some, startsWith, without } from 'lodash';
 import update from 'immutability-helper';
 
 /**
@@ -46,7 +35,7 @@ function isNsRecord( domain ) {
 function removeDuplicateWpcomRecords( domain, records ) {
 	const rootARecords = filter( records, isRootARecord( domain ) );
 	const wpcomARecord = find( rootARecords, isWpcomRecord );
-	const customARecord = find( rootARecords, negate( isWpcomRecord ) );
+	const customARecord = find( rootARecords, ( record ) => ! isWpcomRecord( record ) );
 
 	if ( wpcomARecord && customARecord ) {
 		return without( records, wpcomARecord );

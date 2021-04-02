@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { makeRedirectResponse } from '@automattic/composite-checkout';
+import { makeRedirectResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import { format as formatUrl, parse as parseUrl, resolve as resolveUrl } from 'url'; // eslint-disable-line no-restricted-imports
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
@@ -58,9 +58,9 @@ export default async function payPalProcessor(
 		domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ) || null,
 	} );
 	debug( 'sending paypal transaction', formattedTransactionData );
-	return wpcomPayPalExpress( formattedTransactionData, transactionOptions ).then(
-		makeRedirectResponse
-	);
+	return wpcomPayPalExpress( formattedTransactionData, transactionOptions )
+		.then( makeRedirectResponse )
+		.catch( ( error ) => makeErrorResponse( error.message ) );
 }
 
 async function wpcomPayPalExpress(

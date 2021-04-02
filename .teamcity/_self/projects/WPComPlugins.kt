@@ -41,7 +41,7 @@ private object EditingToolkit : BuildType({
 		param("archive_dir", "./editing-toolkit-plugin/")
 		param("release_tag", "etk-release-build")
 		param("build.prefix", "3")
-		param("normalize_files", "sed -i -e \"/^\\s\\* Version:/c\\ * Version: %build.number%\" -e \"/^define( 'A8C_ETK_PLUGIN_VERSION'/c\\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );\" full-site-editing-plugin.php && sed -i -e \"/^Stable tag:\\s/c\\Stable tag: %build.number%\" readme.txt\n")
+		param("normalize_files", "sed -i -e \"/^\\s\\* Version:/c\\ * Version: %build.number%\" -e \"/^define( 'A8C_ETK_PLUGIN_VERSION'/c\\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );\" ./release-archive/full-site-editing-plugin.php && sed -i -e \"/^Stable tag:\\s/c\\Stable tag: %build.number%\" ./release-archive/readme.txt\n")
 
 	}
 
@@ -101,6 +101,29 @@ private object Notifications : BuildType({
 	params {
 		param("plugin_slug", "notifications")
 		param("archive_dir", "./dist/")
+		// This param is executed in bash right before the build script compares
+		// the build with the previous release version. The purpose of this code
+		// is to remove sources of randomness so that the diff operation only
+		// compares legitimate changes.
+		param("normalize_files", """
+			function get_hash {
+				# If the stylesheet in the HTML file is pointing at "build.min.css?foobar123",
+				# this will just return the "foobar123" portion of the file. This
+				# is a source of randomness which needs to be eliminated.
+				echo `sed -nE 's~.*<link rel="stylesheet" href="build.min.css\?([a-zA-Z0-9]+)">.*~\1~p' ${'$'}1`
+			}
+			new_hash=`get_hash dist/index.html`
+			old_hash=`get_hash release-archive/index.html`
+
+			# All scripts and styles use the same "hash" version, so replace any
+			# instances of the hash in the *old* files with the newest version.
+			sed -i "s~${'$'}old_hash~${'$'}new_hash~g" release-archive/index.html release-archive/rtl.html
+
+			# Replace the old cache buster with the new one in the previous release html files.
+			new_cache_buster=`cat dist/cache-buster.txt`
+			old_cache_buster=`cat release-archive/cache-buster.txt`
+			sed -i "s~${'$'}old_cache_buster~${'$'}new_cache_buster~g" release-archive/index.html release-archive/rtl.html
+		""".trimIndent())
 	}
 })
 
@@ -111,6 +134,22 @@ private object O2Blocks : BuildType({
 
 	params {
 		param("plugin_slug", "o2-blocks")
-		param("archive_dir", "./dist/")
+		param("archive_dir", "./release-files/")
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Create release directory"
+			scriptContent = """
+				cd apps/o2-blocks
+
+				# Copy existing dist files to release directory
+				mkdir release-files
+				cp -r dist release-files/dist/
+
+				# Add index.php file
+				cp index.php release-files/
+			"""
+		}
 	}
 })
