@@ -100,9 +100,10 @@ open class PluginBaseBuild : Template({
 		bashNodeScript {
 			name = "Process Artifact"
 			scriptContent = """
-				# 1. Download and unzip current release build.
 				cd $workingDir
+				cp README.md $archiveDir
 
+				# 1. Download and unzip current release build.
 				mkdir ./release-archive
 				wget "%teamcity.serverUrl%/repository/download/%system.teamcity.buildType.id%/$releaseTag.tcbuildtag/$pluginSlug.zip?guest=1&branch=trunk" -O ./tmp-release-archive-download.zip
 				unzip ./tmp-release-archive-download.zip -d ./release-archive
@@ -112,13 +113,11 @@ open class PluginBaseBuild : Template({
 				# These operations restore idempotence between the two builds.
 				rm -f ./release-archive/build_meta.txt
 
-				cd ./release-archive
 				%normalize_files%
-				cd ..
 
 				# 3. Check if the current build has changed, and if so, tag it for release.
 				# Note: we exclude asset changes because we only really care if the build files (JS/CSS) change. That file is basically just metadata.
-				if ! diff -rq --exclude="*.asset.php" $archiveDir ./release-archive/ ; then
+				if ! diff -rq --exclude="*.asset.php" --exclude="cache-buster.txt" --exclude="README.md" $archiveDir ./release-archive/ ; then
 					echo "The build is different from the last release build. Therefore, this can be tagged as a release build."
 					tag_response=`curl -s -X POST -H "Content-Type: text/plain" --data "$releaseTag" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" %teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/`
 					echo -e "Build tagging status: ${'$'}tag_response\n"

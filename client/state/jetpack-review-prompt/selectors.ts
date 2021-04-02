@@ -40,4 +40,9 @@ const getIsValid = ( state: AppState, type: 'scan' | 'restore' ): boolean => {
 	return null !== validFrom ? validFrom < Date.now() : false;
 };
 
-export { getIsDismissed, getIsValid, getExistingPreference };
+const getValidFromDate = ( state: AppState, type: 'scan' | 'restore' ): number | null => {
+	const { validFrom } = getExistingPreference( state, type );
+	return validFrom;
+};
+
+export { getIsDismissed, getIsValid, getExistingPreference, getValidFromDate };

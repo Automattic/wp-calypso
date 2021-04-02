@@ -101,7 +101,7 @@ export default class MediaPage extends AsyncBaseContainer {
 		);
 	}
 
-	async deleteMedia( file ) {
+	async deleteMedia() {
 		if (
 			await driverHelper.elementIsNotPresent(
 				this.driver,

@@ -38,6 +38,7 @@ import { triggerScanRun } from 'calypso/lib/jetpack/trigger-scan-run';
 import { withApplySiteOffset, applySiteOffsetType } from 'calypso/components/site-offset';
 import ScanNavigation from './navigation';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
+import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 
 /**
  * Type dependencies
@@ -71,6 +72,9 @@ interface Props {
 }
 
 class ScanPage extends Component< Props > {
+	state = {
+		showJetpackReviewPrompt: false,
+	};
 	renderProvisioning() {
 		return (
 			<>
@@ -268,6 +272,23 @@ class ScanPage extends Component< Props > {
 		return this.renderScanOkay();
 	}
 
+	renderJetpackReviewPrompt() {
+		const { scanState, isRequestingScan } = this.props;
+		if ( ! scanState ) {
+			return;
+		}
+		const { threats, mostRecent } = scanState;
+
+		const threatsFound = threats?.length;
+		const errorFound = !! mostRecent?.error;
+
+		// Only render JetpackReviewPrompt after this.renderScanOkay() is called.
+		if ( isRequestingScan || threatsFound || errorFound || scanState?.state !== 'idle' ) {
+			return;
+		}
+		return <JetpackReviewPrompt type="scan" align="left" />;
+	}
+
 	render() {
 		const { siteId, siteSettingsUrl } = this.props;
 		const isJetpackPlatform = isJetpackCloud();
@@ -295,6 +316,7 @@ class ScanPage extends Component< Props > {
 				<Card>
 					<div className="scan__content">{ this.renderScanState() }</div>
 				</Card>
+				{ this.renderJetpackReviewPrompt() }
 			</Main>
 		);
 	}

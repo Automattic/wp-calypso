@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import debugFactory from 'debug';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { registerStore, useSelect, PaymentLogo } from '@automattic/composite-checkout';
 
 /**

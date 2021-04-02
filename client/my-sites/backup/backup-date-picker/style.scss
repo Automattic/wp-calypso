@@ -8,7 +8,6 @@
 	@include breakpoint-deprecated( '>660px' ) {
 		background: transparent;
 	}
-
 }
 
 .backup-date-picker__select-date {
@@ -120,7 +119,7 @@
 }
 
 .backup-date-picker__search-icon.gridicon {
-	fill: var( --studio-jetpack-green-40 );
+	fill: currentColor;
 }
 
 /* WordPress.com-only styles */

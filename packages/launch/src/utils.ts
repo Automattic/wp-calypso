@@ -44,6 +44,9 @@ export const getDomainProduct = (
 	domain: DomainSuggestions.DomainSuggestion,
 	flow: string
 ): DomainProduct | undefined => {
+	if ( domain.unavailable ) {
+		return;
+	}
 	if ( ! domain?.product_id ) {
 		return;
 	}

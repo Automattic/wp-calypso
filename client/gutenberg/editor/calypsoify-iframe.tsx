@@ -720,6 +720,7 @@ class CalypsoifyIframe extends Component<
 					{ ! isIframeLoaded && <Placeholder /> }
 					{ ( shouldLoadIframe || isIframeLoaded ) && (
 						<Iframe
+							className={ isIframeLoaded ? 'is-loaded' : '' }
 							ref={ this.iframeRef }
 							src={ isIframeLoaded ? currentIFrameUrl : iframeUrl }
 							// Iframe url needs to be kept in state to prevent editor reloading if frame_nonce changes

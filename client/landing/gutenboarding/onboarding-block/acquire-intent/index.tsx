@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useViewportMatch } from '@wordpress/compose';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { SkipButton, NextButton } from '@automattic/onboarding';
 import config from '@automattic/calypso-config';
 

@@ -45,19 +45,19 @@
 }
 
 .button {
-	color: var( --color-primary-60 );
+	color: var( --color-accent );
 	background: var( --studio-white );
-	border: 1px solid var( --color-primary-40 );
+	border: 1px solid var( --color-accent );
 	border-radius: var( --jetpack-corners-soft );
 
 	&:hover,
 	&:focus {
-		background-color: var( --color-primary-0 );
+		background-color: var( --color-accent-0 );
 	}
 
 	&:active {
-		background: var( --color-primary-5 );
-		border-color: var( --color-primary-40 );
+		background: var( --color-accent-5 );
+		border-color: var( --color-accent-40 );
 		border-width: 1px;
 	}
 
@@ -74,19 +74,15 @@
 }
 
 .button.is-primary {
-	color: var( --studio-white );
-	background: var( --color-primary-40 );
-	border-color: var( --color-primary-40 );
-
 	&:hover,
 	&:focus {
-		background-color: var( --color-primary-60 );
-		border-color: var( --color-primary-60 );
+		background-color: var( --color-accent-light );
+		border-color: var( --color-accent-light );
 	}
 
 	&:active {
-		background: var( --color-primary-40 );
-		border-color: var( --color-primary-40 );
+		background: var( --color-accent-dark );
+		border-color: var( --color-accent-dark );
 	}
 
 	&[disabled],
@@ -168,15 +164,15 @@
 }
 
 .button.is-borderless.is-primary {
-	color: var( --color-primary-40 );
+	color: var( --color-accent );
 
 	&:hover,
 	&:focus {
-		color: var( --color-primary-30 );
+		color: var( --color-accent-30 );
 	}
 
 	&:active {
-		color: var( --color-primary-50 );
+		color: var( --color-accent-50 );
 	}
 
 	&[disabled],
