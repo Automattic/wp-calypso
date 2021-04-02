@@ -11,15 +11,6 @@ const headErrors = window._jsErr || [];
 const headErrorHandler = window._headJsErrorHandler;
 
 const reportError = ( { error } ) => {
-	// This is debug code and will be removed later.
-	console.log( `reportError()`, error );
-	if ( ! error ) {
-		console.log(
-			'Ooopsie, we just got a sanitized "Script Error.". I hope you were expecting it! :)'
-		);
-		return;
-	}
-
 	const data = {
 		message: error.message,
 		trace: error.stack,
@@ -34,7 +25,6 @@ const reportError = ( { error } ) => {
 			method: 'POST',
 			data: { error: JSON.stringify( data ) },
 		} )
-			.then( () => console.log( 'Reported Error!', error.message ) )
 			// eslint-disable-next-line no-console
 			.catch( () => console.error( 'Error: Unable to record the error in Logstash.' ) )
 	);
