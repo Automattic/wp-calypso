@@ -1,7 +1,11 @@
 /**
+ * External dependencies
+ */
+import type { DomainContactDetails } from '@automattic/shopping-cart';
+
+/**
  * Internal dependencies
  */
-import type { DomainContactDetails } from 'calypso/my-sites/checkout/composite-checkout/types/backend/domain-contact-details-components';
 import { WPCOMTransactionEndpointCart } from './transaction-endpoint';
 
 export type PayPalExpressEndpoint = (

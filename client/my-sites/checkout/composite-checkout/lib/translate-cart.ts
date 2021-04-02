@@ -4,7 +4,11 @@
 import { translate } from 'i18n-calypso';
 import { getTotalLineItemFromCart } from '@automattic/wpcom-checkout';
 import type { LineItem } from '@automattic/composite-checkout';
-import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import type {
+	ResponseCart,
+	ResponseCartProduct,
+	DomainContactDetails,
+} from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -25,7 +29,6 @@ import {
 } from 'calypso/lib/products-values';
 import { isRenewal } from 'calypso/lib/cart-values/cart-items';
 import doesValueExist from './does-value-exist';
-import type { DomainContactDetails } from '../types/backend/domain-contact-details-components';
 import type {
 	WPCOMTransactionEndpointCart,
 	WPCOMTransactionEndpointRequestPayload,
