@@ -180,3 +180,18 @@ export type FrDomainContactExtraDetailsErrors = {
 	trademarkNumber?: string[];
 	sirenSiret?: string[];
 };
+
+export type PayPalExpressEndpoint = (
+	_: PayPalExpressEndpointRequestPayload
+) => Promise< PayPalExpressEndpointResponse >;
+
+export type PayPalExpressEndpointRequestPayload = {
+	successUrl: string;
+	cancelUrl: string;
+	cart: WPCOMTransactionEndpointCart;
+	domainDetails: DomainContactDetails | null;
+	country: string;
+	postalCode: string;
+};
+
+export type PayPalExpressEndpointResponse = unknown;
