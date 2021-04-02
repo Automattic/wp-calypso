@@ -60,6 +60,33 @@ export class ReaderSidebarOrganizationsList extends Component {
 		);
 	}
 
+	renderUnread() {
+		const { translate, organization, path, sites } = this.props;
+		// have a selector
+		const sum = sites.reduce( ( acc, item ) => {
+			acc = acc + item.unseen_count;
+			return acc;
+		}, 0 );
+		return (
+			<>
+				<SidebarItem
+					link={ '/read/' + organization.slug + '/unread' }
+					key={ translate( 'Unread' ) }
+					label={ translate( 'Unread' ) }
+					className={ ReaderSidebarHelper.itemLinkClass(
+						'/read/' + organization.slug + '/unread',
+						path,
+						{
+							'sidebar-streams__unread': true,
+						}
+					) }
+				>
+					{ sum > 0 && <Count count={ sum } compact /> }
+				</SidebarItem>
+			</>
+		);
+	}
+
 	renderSites() {
 		const { sites, path } = this.props;
 		return map(
@@ -89,6 +116,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 				}
 			>
 				{ this.renderAll() }
+				{ this.renderUnread() }
 				{ this.renderSites() }
 			</ExpandableSidebarMenu>
 		);

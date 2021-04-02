@@ -249,7 +249,7 @@ export function blogListing( context, next ) {
 	next();
 }
 
-export function readA8C( context, next ) {
+export function readA8C( context, next, includeSeenPosts = true ) {
 	const basePath = sectionify( context.path );
 	const fullAnalyticsPageTitle = analyticsPageTitle + ' > A8C';
 	const mcKey = 'a8c';
@@ -279,13 +279,14 @@ export function readA8C( context, next ) {
 			showPrimaryFollowButtonOnCards={ false }
 			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 			placeholder={ null }
+			includeSeenPosts={ includeSeenPosts }
 		/>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 	next();
 }
 
-export function readFollowingP2( context, next ) {
+export function readFollowingP2( context, next, includeSeenPosts = true ) {
 	const basePath = sectionify( context.path );
 	const fullAnalyticsPageTitle = analyticsPageTitle + ' > P2';
 	const mcKey = 'p2';
@@ -314,6 +315,7 @@ export function readFollowingP2( context, next ) {
 			showPrimaryFollowButtonOnCards={ false }
 			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 			placeholder={ null }
+			includeSeenPosts={ includeSeenPosts }
 		/>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -321,3 +323,5 @@ export function readFollowingP2( context, next ) {
 }
 
 export const unreadFollowing = ( context, next ) => following( context, next, false );
+export const unreadA8C = ( context, next ) => readA8C( context, next, false );
+export const unreadFollowingP2 = ( context, next ) => readFollowingP2( context, next, false );
