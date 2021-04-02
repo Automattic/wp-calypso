@@ -16,7 +16,7 @@ exports[`GSuiteLearnMore it renders GSuiteLearnMore with no props 1`] = `
       rel="noopener noreferrer"
       target="_blank"
     >
-      Learn more about integrating G Suite with your site.
+      Learn more about integrating Google Workspace with your site.
     </a>
   </p>
 </div>

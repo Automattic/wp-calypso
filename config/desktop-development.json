@@ -41,6 +41,7 @@
 		"external-media": true,
 		"external-media/google-photos": true,
 		"external-media/free-photo-library": true,
+		"google-workspace-migration": true,
 		"gdpr-banner": false,
 		"help": true,
 		"inline-help": true,

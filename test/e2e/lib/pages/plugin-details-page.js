@@ -15,7 +15,7 @@ export default class PluginDetailsPage extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, by.css( '.plugin__page' ) );
 		this.successNoticeSelector = by.css( '.notice.is-success.is-dismissable' );
-		this.activatePluginSelector = by.css( '.plugin-activate-toggle .form-toggle__switch' );
+		this.activatePluginSelector = by.css( '.plugin-activate-toggle .components-form-toggle' );
 	}
 
 	async clickActivateToggleForPlugin() {
@@ -42,8 +42,8 @@ export default class PluginDetailsPage extends AsyncBaseContainer {
 
 	async ensureDeactivated() {
 		const element = await this.driver.findElement( this.activatePluginSelector );
-		const active = await element.getAttribute( 'aria-checked' );
-		if ( active === 'true' ) {
+		const active = await element.isDisplayed( by.css( '.is-checked' ) );
+		if ( active === true ) {
 			await driverHelper.clickWhenClickable( this.driver, this.activatePluginSelector );
 			await this.waitForSuccessNotice();
 		}

@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { useLocale } from '@automattic/i18n-utils';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 import DesignPicker from '@automattic/design-picker';

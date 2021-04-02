@@ -6,7 +6,7 @@ import { ExternalLink } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 
 /**

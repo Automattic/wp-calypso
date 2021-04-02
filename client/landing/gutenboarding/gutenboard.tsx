@@ -6,7 +6,7 @@ import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
 import { Popover, DropZoneProvider } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import '@wordpress/format-library';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { FontPair, getFontTitle } from '@automattic/design-picker';
 
 // Uncomment and remove the redundant sass import from `./style.css` when a release after @wordpress/components@8.5.0 is published.

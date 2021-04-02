@@ -169,6 +169,7 @@ export interface Domain {
 	pending_whois_update: boolean;
 	tld_maintenance_end_time?: any;
 	ssl_status?: any;
+	subdomain_part?: string;
 	supports_gdpr_consent_management: boolean;
 	supports_transfer_approval: boolean;
 	domain_registration_agreement_url: string;

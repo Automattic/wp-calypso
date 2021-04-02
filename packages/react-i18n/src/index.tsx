@@ -3,25 +3,10 @@
  */
 import * as React from 'react';
 
-import {
-	createI18n,
-	I18n,
-	LocaleData,
-	__,
-	_n,
-	_nx,
-	_x,
-	isRTL,
-	setLocaleData,
-} from '@wordpress/i18n';
+import { createI18n, defaultI18n, I18n, LocaleData } from '@wordpress/i18n';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { createHooks } from '@wordpress/hooks';
 import type { addFilter, removeFilter, hasFilter, applyFilters } from '@wordpress/hooks';
-
-/**
- * Default i18n instance.
- */
-const defaultI18n: I18n = { __, _n, _nx, _x, isRTL, setLocaleData };
 
 export interface I18nReact {
 	__: I18n[ '__' ];
@@ -160,7 +145,7 @@ const CONTEXT_DELIMETER = '\u0004';
  * @param singular Translation singular string
  * @param context Gettext context
  */
-function hasTranslation( localeData: LocaleData, singular: string, context?: string ): boolean {
+function doHasTranslation( localeData: LocaleData, singular: string, context?: string ): boolean {
 	const key =
 		typeof context === 'string' ? ''.concat( context, CONTEXT_DELIMETER, singular ) : singular;
 
@@ -178,7 +163,7 @@ function hasTranslation( localeData: LocaleData, singular: string, context?: str
 function makeContextValue( localeData?: LocaleData, filters?: I18nFilters ): I18nReact {
 	const i18n = localeData ? createI18n( localeData ) : defaultI18n;
 	const boundHasTranslation = localeData
-		? ( singular: string, context?: string ) => hasTranslation( localeData, singular, context )
+		? ( singular: string, context?: string ) => doHasTranslation( localeData, singular, context )
 		: undefined;
 
 	const { addFilter, removeFilter, hasFilter, applyFilters } = filters ?? createHooks();

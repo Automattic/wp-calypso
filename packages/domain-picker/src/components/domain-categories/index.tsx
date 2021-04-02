@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Button } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
 import classNames from 'classnames';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 

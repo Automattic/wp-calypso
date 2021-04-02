@@ -286,9 +286,32 @@ export default function WPCheckout( {
 		return isCompleteAndValid( contactInfo );
 	};
 
+	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
+	// and before the first step at mobile (smaller) widths. At smaller widths it
+	// starts collapsed and can be expanded; at wider widths (as a sidebar) it is
+	// always visible. It is not a step and its visibility is managed manually.
 	const [ isSummaryVisible, setIsSummaryVisible ] = useState( false );
 
-	const [ isOrderReviewActive, setIsOrderReviewActive ] = useState( false );
+	// The "Order review" step is not managed by Composite Checkout and is shown/hidden manually.
+	// If the page includes a 'order-review=true' query string, then start with
+	// the order review step visible.
+	const [ isOrderReviewActive, setIsOrderReviewActive ] = useState( () => {
+		try {
+			const shouldInitOrderReviewStepActive =
+				window?.location?.search.includes( 'order-review=true' ) ?? false;
+			if ( shouldInitOrderReviewStepActive ) {
+				return true;
+			}
+		} catch ( error ) {
+			// If there's a problem loading the query string, just default to false.
+			debug(
+				'Error loading query string to determine if we should see the order review step at load',
+				error
+			);
+		}
+		return false;
+	} );
+
 	const { formStatus } = useFormStatus();
 
 	// Copy siteId to the store so it can be more easily accessed during payment submission

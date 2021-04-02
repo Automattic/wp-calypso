@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropsWithChildren, ReactElement, useCallback } from 'react';
+import React, { PropsWithChildren, ReactElement, useCallback, useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -34,6 +34,7 @@ import Gridicon from 'calypso/components/gridicon';
 import Pagination from 'calypso/components/pagination';
 import { addQueryArgs } from 'calypso/lib/route';
 import { internalToPublicLicenseSortField } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 
 /**
  * Style dependencies
@@ -107,22 +108,11 @@ function SortButton( {
 	);
 }
 
-interface Props {
-	filter: LicenseFilter;
-	search: string;
-	currentPage: number;
-	sortField: LicenseSortField;
-	sortDirection: LicenseSortDirection;
-}
-
-export default function LicenseList( {
-	filter,
-	search,
-	currentPage,
-	sortField,
-	sortDirection,
-}: Props ): ReactElement {
+export default function LicenseList(): ReactElement {
 	const translate = useTranslate();
+	const { filter, search, sortField, sortDirection, currentPage } = useContext(
+		LicenseListContext
+	);
 	const hasFetched = useSelector( hasFetchedLicenses );
 	const isFetching = useSelector( isFetchingLicenses );
 	const licenses = useSelector( getPaginatedLicenses ) as PaginatedItems< License >;
@@ -207,6 +197,7 @@ export default function LicenseList( {
 						</Card>
 					</LicenseTransition>
 				) }
+
 				{ showPagination && (
 					<LicenseTransition>
 						<Pagination

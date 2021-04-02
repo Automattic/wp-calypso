@@ -4,7 +4,7 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import debugFactory from 'debug';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { sprintf } from '@wordpress/i18n';
 
 /**

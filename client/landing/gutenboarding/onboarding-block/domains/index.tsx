@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import DomainPicker, { getDomainSuggestionsVendor } from '@automattic/domain-picker';
 import type { DomainSuggestions } from '@automattic/data-stores';
 import {
