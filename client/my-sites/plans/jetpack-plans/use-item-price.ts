@@ -3,21 +3,14 @@
  */
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { clone } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { isProductsListFetching } from 'calypso/state/products-list/selectors/is-products-list-fetching';
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
-import {
-	getProductPriceTiers,
-	getProductPriceTierList,
-} from 'calypso/state/products-list/selectors/get-product-price-tiers';
-import type {
-	PriceTiers,
-	PriceTierEntry,
-} from 'calypso/state/products-list/selectors/get-product-price-tiers';
+import { getProductPriceTierList } from 'calypso/state/products-list/selectors/get-product-price-tiers';
+import type { PriceTierEntry } from 'calypso/state/products-list/selectors/get-product-price-tiers';
 import { TERM_MONTHLY } from 'calypso/lib/plans/constants';
 import {
 	getSiteAvailableProductCost,
@@ -37,10 +30,6 @@ interface ItemPrices {
 	isFetching: boolean | null;
 	originalPrice: number;
 	discountedPrice?: number;
-	/**
-	 * @deprecated use priceTierList
-	 **/
-	priceTiers: PriceTiers | null;
 	priceTierList: PriceTierEntry[];
 }
 
@@ -48,10 +37,6 @@ interface ItemRawPrices {
 	isFetching: boolean | null;
 	itemCost: number | null;
 	monthlyItemCost: number | null;
-	/**
-	 * @deprecated use priceTierList
-	 **/
-	priceTiers: PriceTiers | null;
 	priceTierList: PriceTierEntry[];
 }
 
@@ -65,7 +50,6 @@ const useProductListItemPrices = (
 		useSelector( ( state ) => productSlug && getProductCost( state, productSlug ) ) || null;
 	const monthlyItemCost =
 		useSelector( ( state ) => getProductCost( state, monthlyItemSlug ) ) || null;
-	const priceTiers = useSelector( ( state ) => getProductPriceTiers( state, productSlug ) );
 	const priceTierList = useSelector( ( state ) =>
 		productSlug ? getProductPriceTierList( state, productSlug ) : []
 	);
@@ -74,7 +58,6 @@ const useProductListItemPrices = (
 		isFetching,
 		itemCost,
 		monthlyItemCost,
-		priceTiers,
 		priceTierList,
 	};
 };
@@ -96,7 +79,6 @@ const useSiteAvailableProductPrices = (
 		useSelector(
 			( state ) => siteId && getSiteAvailableProductCost( state, siteId, monthlyItemSlug )
 		) || null;
-	const priceTiers = useSelector( ( state ) => getProductPriceTiers( state, productSlug ) );
 	const priceTierList = useSelector( ( state ) =>
 		productSlug ? getProductPriceTierList( state, productSlug ) : []
 	);
@@ -105,7 +87,6 @@ const useSiteAvailableProductPrices = (
 		isFetching,
 		itemCost,
 		monthlyItemCost,
-		priceTiers,
 		priceTierList,
 	};
 };
@@ -121,7 +102,6 @@ const useItemPrice = (
 	const isFetching = siteId ? sitePrices.isFetching : listPrices.isFetching;
 	const itemCost = siteId ? sitePrices.itemCost : listPrices.itemCost;
 	const monthlyItemCost = siteId ? sitePrices.monthlyItemCost : listPrices.monthlyItemCost;
-	const rawPriceTiers = siteId ? sitePrices.priceTiers : listPrices.priceTiers;
 
 	const priceTierList = useMemo(
 		() => ( siteId ? sitePrices.priceTierList : listPrices.priceTierList ),
@@ -132,32 +112,17 @@ const useItemPrice = (
 		return {
 			isFetching,
 			originalPrice: 0,
-			priceTiers: null,
 			priceTierList: [],
 		};
 	}
 
 	let originalPrice = 0;
 	let discountedPrice = undefined;
-	let priceTiers: PriceTiers | null = rawPriceTiers;
 	if ( item && itemCost ) {
 		originalPrice = itemCost;
 		if ( monthlyItemCost && item.term !== TERM_MONTHLY ) {
 			originalPrice = monthlyItemCost;
 			discountedPrice = itemCost / 12;
-
-			if ( rawPriceTiers ) {
-				priceTiers = {};
-				for ( const tierKey in rawPriceTiers ) {
-					const tier = clone( rawPriceTiers[ tierKey ] );
-					if ( 'flat_price' in tier ) {
-						tier.flat_price = tier.flat_price / 12;
-					} else if ( 'variable_price_per_unit' in tier ) {
-						tier.variable_price_per_unit = tier.variable_price_per_unit / 12;
-					}
-					priceTiers[ tierKey ] = tier;
-				}
-			}
 		}
 	}
 
@@ -171,7 +136,6 @@ const useItemPrice = (
 		isFetching,
 		originalPrice,
 		discountedPrice,
-		priceTiers,
 		priceTierList,
 	};
 };

@@ -7,10 +7,6 @@ import 'calypso/state/products-list/init';
 import type { AppState } from 'calypso/types';
 
 type Product = {
-	/**
-	 * @deprecated use price_tier_list
-	 */
-	price_tiers: PriceTiers;
 	price_tier_list: PriceTierEntry[];
 };
 
@@ -27,11 +23,6 @@ export interface PriceTierEntry {
 /**
  * @deprecated use PriceTierEntry
  */
-export type PriceTiers = Record< string, PriceTier >;
-
-/**
- * @deprecated use PriceTierEntry
- */
 export type PriceTier =
 	| {
 			flat_price: number;
@@ -40,30 +31,6 @@ export type PriceTier =
 			variable_price_per_unit: number;
 			unit: number;
 	  };
-
-/**
- * Returns the price tiers of the specified product.
- *
- * @deprecated Use getProductPriceTierList
- *
- * @param {object} state - global state tree
- * @param {string} productSlug - internal product slug, eg 'jetpack_premium'
- * @returns {PriceTiers|null} The price tiers or null. See PriceTiers for format.
- */
-export function getProductPriceTiers( state: AppState, productSlug?: string ): PriceTiers | null {
-	if ( ! productSlug ) {
-		return null;
-	}
-	const product = getProductBySlug( state, productSlug ) as Product;
-
-	if ( ! product || ! product.price_tiers || ! Object.keys( product.price_tiers ).length ) {
-		return null;
-	}
-
-	return product.price_tiers;
-}
-
-export default getProductPriceTiers;
 
 /**
  * Returns the price tiers of the specified product.
