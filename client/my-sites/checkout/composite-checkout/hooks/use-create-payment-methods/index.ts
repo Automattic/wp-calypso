@@ -18,7 +18,6 @@ import {
 	createSofortPaymentMethodStore,
 	createEpsMethod,
 	createEpsPaymentMethodStore,
-	createApplePayMethod,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import type { StripeConfiguration, Stripe, StripeLoadingError } from '@automattic/calypso-stripe';
@@ -28,6 +27,7 @@ import type { PaymentMethod } from '@automattic/composite-checkout';
  * Internal dependencies
  */
 import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
+import { createApplePayMethod } from '../../payment-methods/apple-pay';
 import {
 	createCreditCardPaymentMethodStore,
 	createCreditCardMethod,
