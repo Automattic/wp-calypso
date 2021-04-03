@@ -4,13 +4,13 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import debugFactory from 'debug';
 import { useI18n } from '@wordpress/react-i18n';
+import { useLineItems, useEvents } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
-import { useLineItems, useEvents } from '../../public-api';
-import PaymentRequestButton from '../../components/payment-request-button';
-import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
+import PaymentRequestButton from '../components/payment-request-button';
+import { PaymentMethodLogos } from '../components/payment-method-logos';
 
 const debug = debugFactory( 'composite-checkout:apple-pay-payment-method' );
 

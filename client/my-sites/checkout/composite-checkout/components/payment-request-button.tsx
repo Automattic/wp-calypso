@@ -4,14 +4,12 @@
 import PropTypes from 'prop-types';
 import React, { MouseEvent } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
+import { Button, useFormStatus, FormStatus } from '@automattic/composite-checkout';
+import styled from '@emotion/styled';
+import type { StripePaymentRequest } from '@automattic/composite-checkout';
 
-/**
- * Internal dependencies
- */
-import styled from '../lib/styled';
-import Button from './button';
-import { useFormStatus } from '../lib/form-status';
-import { FormStatus, StripePaymentRequest } from '../types';
+// Disabling this rule to make migrating this to calypso easier with fewer changes
+/* eslint-disable @typescript-eslint/no-use-before-define */
 
 // The react-stripe-elements PaymentRequestButtonElement cannot have its
 // paymentRequest updated once it has been rendered, so this is a custom one.
@@ -21,7 +19,7 @@ export default function PaymentRequestButton( {
 	paymentType,
 	disabled,
 	disabledReason,
-}: PaymentRequestButtonProps ) {
+}: PaymentRequestButtonProps ): JSX.Element {
 	const { __ } = useI18n();
 	const { formStatus, setFormReady, setFormSubmitting } = useFormStatus();
 	const onClick = ( event: MouseEvent ) => {
