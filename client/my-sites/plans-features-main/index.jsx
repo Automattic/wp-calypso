@@ -503,7 +503,12 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getKindOfPlanTypeSelector( props ) {
-		if ( props.displayJetpackPlans || props.isInSignup || props.eligibleForWpcomMonthlyPlans ) {
+		if (
+			props.displayJetpackPlans ||
+			props.isInSignup ||
+			props.eligibleForWpcomMonthlyPlans ||
+			props.redirectToAddDomainFlow
+		) {
 			return 'interval';
 		}
 
@@ -515,14 +520,20 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const { siteId, customHeader, shouldShowPlansRedesign } = this.props;
+		const { siteId, customHeader, shouldShowPlansRedesign, redirectToAddDomainFlow } = this.props;
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
 		const kindOfPlanTypeSelector = this.getKindOfPlanTypeSelector( this.props );
 
 		// If advertising plans for a certain feature, ensure user has pressed "View all plans" before they can see others
-		const hidePlanSelector =
+		let hidePlanSelector =
 			kindOfPlanTypeSelector === 'customer' && this.isDisplayingPlansNeededForFeature();
+
+		// In the "purchase a plan and free domain" flow we do not want to show
+		// monthly plans because monthly plans do not come with a free domain.
+		if ( redirectToAddDomainFlow ) {
+			hidePlanSelector = true;
+		}
 
 		return (
 			<div className="plans-features-main">
@@ -608,11 +619,8 @@ export default connect(
 		const siteId = get( props.site, [ 'ID' ] );
 		const currentPlan = getSitePlan( state, siteId );
 		const sitePlanSlug = currentPlan?.product_slug;
-		// In the "purchase a plan and free domain" flow we do not want to show
-		// monthly plans because monthly plans do not come with a free domain.
-		const eligibleForWpcomMonthlyPlans = props.redirectToAddDomainFlow
-			? false
-			: isWpComFreePlan( sitePlanSlug ) || isWpComMonthlyPlan( sitePlanSlug );
+		const eligibleForWpcomMonthlyPlans =
+			isWpComFreePlan( sitePlanSlug ) || isWpComMonthlyPlan( sitePlanSlug );
 
 		const customerType = chooseDefaultCustomerType( {
 			currentCustomerType: props.customerType,
