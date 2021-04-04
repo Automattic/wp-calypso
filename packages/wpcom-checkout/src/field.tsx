@@ -2,9 +2,16 @@
  * External dependencies
  */
 import React from 'react';
-import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 import { Button } from '@automattic/composite-checkout';
+
+/**
+ * Internal dependencies
+ */
+import styled from './styled';
+
+// Disabling this to make migrating files easier
+/* eslint-disable @typescript-eslint/no-use-before-define */
 
 export default function Field( {
 	type,
@@ -24,8 +31,26 @@ export default function Field( {
 	errorMessage,
 	autoComplete,
 	disabled,
-} ) {
-	const fieldOnChange = ( event ) => {
+}: {
+	type?: string;
+	id: string;
+	className?: string;
+	inputClassName?: string;
+	isError?: boolean;
+	onChange: ( value: string ) => void;
+	label: string;
+	value: string;
+	icon?: React.ReactNode;
+	iconAction?: () => void;
+	isIconVisible?: boolean;
+	placeholder?: string;
+	tabIndex?: number;
+	description: string;
+	errorMessage?: string;
+	autoComplete?: string;
+	disabled?: boolean;
+} ): JSX.Element {
+	const fieldOnChange = ( event: { target: { value: string } } ) => {
 		if ( onChange ) {
 			onChange( event.target.value );
 		}
@@ -91,7 +116,7 @@ Field.propTypes = {
 	disabled: PropTypes.bool,
 };
 
-const Label = styled.label`
+const Label = styled.label< { disabled?: boolean } >`
 	display: block;
 	color: ${ ( props ) => props.theme.colors.textColor };
 	font-weight: ${ ( props ) => props.theme.weights.bold };
@@ -103,7 +128,7 @@ const Label = styled.label`
 	}
 `;
 
-const Input = styled.input`
+const Input = styled.input< { isError?: boolean; icon?: React.ReactNode } >`
 	display: block;
 	width: 100%;
 	box-sizing: border-box;
@@ -184,7 +209,7 @@ const ButtonIcon = styled.div`
 	}
 `;
 
-const Description = styled.p`
+const Description = styled.p< { isError?: boolean } >`
 	margin: 8px 0 0;
 	color: ${ ( props ) =>
 		props.isError ? props.theme.colors.error : props.theme.colors.textColorLight };
@@ -192,7 +217,15 @@ const Description = styled.p`
 	font-size: 14px;
 `;
 
-function RenderedIcon( { icon, iconAction, isIconVisible } ) {
+function RenderedIcon( {
+	icon,
+	iconAction,
+	isIconVisible,
+}: {
+	icon?: React.ReactNode;
+	iconAction?: () => void;
+	isIconVisible?: boolean;
+} ) {
 	if ( ! isIconVisible ) {
 		return null;
 	}
@@ -212,7 +245,15 @@ function RenderedIcon( { icon, iconAction, isIconVisible } ) {
 	return null;
 }
 
-function RenderedDescription( { description, isError, errorMessage } ) {
+function RenderedDescription( {
+	description,
+	isError,
+	errorMessage,
+}: {
+	description?: string;
+	isError?: boolean;
+	errorMessage?: string;
+} ) {
 	if ( description || isError ) {
 		return <Description isError={ isError }>{ isError ? errorMessage : description }</Description>;
 	}
