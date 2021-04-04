@@ -16,8 +16,8 @@ import type {
 /**
  * Internal dependencies
  */
-import PaymentRequestButton from '../components/payment-request-button';
-import { PaymentMethodLogos } from '../components/payment-method-logos';
+import PaymentRequestButton from '../payment-request-button';
+import { PaymentMethodLogos } from '../payment-method-logos';
 
 const debug = debugFactory( 'composite-checkout:apple-pay-payment-method' );
 
@@ -56,7 +56,7 @@ export function ApplePaySubmitButton( {
 	stripeConfiguration,
 }: {
 	disabled?: boolean;
-	onClick: ProcessPayment;
+	onClick?: ProcessPayment;
 	stripe: Stripe;
 	stripeConfiguration: StripeConfiguration;
 } ): JSX.Element {
@@ -67,6 +67,11 @@ export function ApplePaySubmitButton( {
 	const onSubmit = useCallback(
 		( { name, paymentMethodToken } ) => {
 			debug( 'submitting stripe payment with key', paymentMethodToken );
+			if ( ! onClick ) {
+				throw new Error(
+					'Missing onClick prop; ApplePaySubmitButton must be used as a payment button in CheckoutSubmitButton'
+				);
+			}
 			onEvent( { type: 'APPLE_PAY_TRANSACTION_BEGIN' } );
 			onClick( 'apple-pay', {
 				stripe,
