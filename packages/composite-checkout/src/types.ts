@@ -260,22 +260,3 @@ export interface LineItemsProviderProps {
 	items: LineItem[];
 	total: LineItem;
 }
-
-export interface StripePaymentRequest {
-	on: ( event: string, handler: StripePaymentRequestHandler ) => void;
-	show: () => void;
-}
-
-export type StripePaymentRequestHandler = ( event: StripePaymentRequestHandlerEvent ) => void;
-
-export interface StripePaymentRequestHandlerEvent {
-	token?: {
-		id: string;
-		object: 'token';
-	};
-	paymentMethod?: {
-		id: string;
-		object: 'payment_method';
-	};
-	complete: () => void;
-}
