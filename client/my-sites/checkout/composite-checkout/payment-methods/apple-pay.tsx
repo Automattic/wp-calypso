@@ -4,7 +4,14 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import debugFactory from 'debug';
 import { useI18n } from '@wordpress/react-i18n';
-import { useLineItems, useEvents } from '@automattic/composite-checkout';
+import { useLineItems, useEvents, ProcessPayment } from '@automattic/composite-checkout';
+import type { PaymentMethod, LineItem } from '@automattic/composite-checkout';
+import type {
+	Stripe,
+	StripeConfiguration,
+	StripePaymentRequest,
+	PaymentRequestOptions,
+} from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
@@ -14,7 +21,10 @@ import { PaymentMethodLogos } from '../components/payment-method-logos';
 
 const debug = debugFactory( 'composite-checkout:apple-pay-payment-method' );
 
-export function createApplePayMethod( stripe, stripeConfiguration ) {
+export function createApplePayMethod(
+	stripe: Stripe,
+	stripeConfiguration: StripeConfiguration
+): PaymentMethod {
 	return {
 		id: 'apple-pay',
 		label: <ApplePayLabel />,
@@ -26,7 +36,7 @@ export function createApplePayMethod( stripe, stripeConfiguration ) {
 	};
 }
 
-export function ApplePayLabel() {
+export function ApplePayLabel(): JSX.Element {
 	const { __ } = useI18n();
 
 	return (
@@ -39,7 +49,17 @@ export function ApplePayLabel() {
 	);
 }
 
-export function ApplePaySubmitButton( { disabled, onClick, stripe, stripeConfiguration } ) {
+export function ApplePaySubmitButton( {
+	disabled,
+	onClick,
+	stripe,
+	stripeConfiguration,
+}: {
+	disabled?: boolean;
+	onClick: ProcessPayment;
+	stripe: Stripe;
+	stripeConfiguration: StripeConfiguration;
+} ): JSX.Element {
 	const { __ } = useI18n();
 	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration );
 	const [ items, total ] = useLineItems();
@@ -87,12 +107,12 @@ export function ApplePaySubmitButton( { disabled, onClick, stripe, stripeConfigu
 	);
 }
 
-export function ApplePaySummary() {
+export function ApplePaySummary(): JSX.Element {
 	const { __ } = useI18n();
 	return <React.Fragment>{ __( 'Apple Pay' ) }</React.Fragment>;
 }
 
-function ApplePayIcon( { fill, className } ) {
+function ApplePayIcon( { fill }: { fill: string } ): JSX.Element {
 	return (
 		<svg
 			width="38"
@@ -102,7 +122,6 @@ function ApplePayIcon( { fill, className } ) {
 			xmlns="http://www.w3.org/2000/svg"
 			aria-hidden="true"
 			focusable="false"
-			className={ className }
 		>
 			<path
 				d="M7.41541 2.16874C7.85525 1.626 8.15372 0.897268 8.075 0.152588C7.43114 0.184172 6.64544 0.571647 6.19055 1.11481C5.78212 1.57994 5.42062 2.33919 5.51486 3.05265C6.23762 3.1145 6.95971 2.69625 7.41541 2.16874Z"
@@ -127,6 +146,15 @@ function ApplePayIcon( { fill, className } ) {
 		</svg>
 	);
 }
+
+type SubmitCompletePaymentMethodTransaction = ( {
+	paymentMethodToken,
+	name,
+}: {
+	paymentMethodToken: string;
+	name: string;
+} ) => void;
+
 const PAYMENT_REQUEST_OPTIONS = {
 	requestPayerName: true,
 	requestPayerPhone: false,
@@ -134,11 +162,13 @@ const PAYMENT_REQUEST_OPTIONS = {
 	requestShipping: false,
 };
 
-function usePaymentRequestOptions( stripeConfiguration ) {
+function usePaymentRequestOptions(
+	stripeConfiguration: StripeConfiguration
+): PaymentRequestOptions | null {
 	const [ items, total ] = useLineItems();
 	const country = getProcessorCountryFromStripeConfiguration( stripeConfiguration );
 	const currency = items.reduce(
-		( firstCurrency, item ) => firstCurrency || item.amount.currency,
+		( firstCurrency: string | null, item: LineItem ) => firstCurrency || item.amount.currency,
 		null
 	);
 	const paymentRequestOptions = useMemo( () => {
@@ -156,9 +186,17 @@ function usePaymentRequestOptions( stripeConfiguration ) {
 	return paymentRequestOptions;
 }
 
-function useStripePaymentRequest( { paymentRequestOptions, onSubmit, stripe } ) {
-	const [ canMakePayment, setCanMakePayment ] = useState( 'loading' );
-	const [ paymentRequest, setPaymentRequest ] = useState();
+function useStripePaymentRequest( {
+	paymentRequestOptions,
+	onSubmit,
+	stripe,
+}: {
+	paymentRequestOptions: PaymentRequestOptions | null;
+	stripe: Stripe;
+	onSubmit: SubmitCompletePaymentMethodTransaction;
+} ) {
+	const [ canMakePayment, setCanMakePayment ] = useState< boolean | string >( 'loading' );
+	const [ paymentRequest, setPaymentRequest ] = useState< StripePaymentRequest | undefined >();
 
 	// We have to memoize this to prevent re-creating the paymentRequest
 	const callback = useCallback(
@@ -183,7 +221,9 @@ function useStripePaymentRequest( { paymentRequestOptions, onSubmit, stripe } ) 
 		} );
 		request.on( 'paymentmethod', callback );
 		setPaymentRequest( request );
-		return () => ( isSubscribed = false );
+		return () => {
+			isSubscribed = false;
+		};
 	}, [ stripe, paymentRequestOptions, callback ] );
 
 	return {
@@ -193,26 +233,36 @@ function useStripePaymentRequest( { paymentRequestOptions, onSubmit, stripe } ) 
 	};
 }
 
-function getDisplayItemsForLineItems( items ) {
+function getDisplayItemsForLineItems( items: LineItem[] ) {
 	return items.map( ( { label, amount } ) => ( {
 		label,
 		amount: amount.value,
 	} ) );
 }
 
-function getPaymentRequestTotalFromTotal( total ) {
+function getPaymentRequestTotalFromTotal( total: LineItem ) {
 	return {
 		label: total.label,
 		amount: total.amount.value,
 	};
 }
 
-function completePaymentMethodTransaction( { onSubmit, complete, paymentMethod, payerName } ) {
+function completePaymentMethodTransaction( {
+	onSubmit,
+	complete,
+	paymentMethod,
+	payerName,
+}: {
+	onSubmit: SubmitCompletePaymentMethodTransaction;
+	complete: ( message: string ) => void;
+	paymentMethod: { id: string };
+	payerName: string;
+} ) {
 	onSubmit( { paymentMethodToken: paymentMethod.id, name: payerName } );
 	complete( 'success' );
 }
 
-function getProcessorCountryFromStripeConfiguration( stripeConfiguration ) {
+function getProcessorCountryFromStripeConfiguration( stripeConfiguration: StripeConfiguration ) {
 	let countryCode = 'US';
 
 	if ( stripeConfiguration ) {
