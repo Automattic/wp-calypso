@@ -7,6 +7,7 @@ import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import type { RemoveProductFromCart, CouponStatus } from '@automattic/shopping-cart';
+import { styled } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -15,7 +16,6 @@ import joinClasses from './join-classes';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import { isDomainRegistration, isDomainTransfer } from 'calypso/lib/products-values';
-import styled from '../lib/styled';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { GetProductVariants } from '../hooks/product-variants';
 import type { OnChangeItemVariant } from './item-variation-picker';
