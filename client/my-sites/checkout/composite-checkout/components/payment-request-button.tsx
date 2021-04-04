@@ -6,7 +6,7 @@ import React, { MouseEvent } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { Button, useFormStatus, FormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
-import type { StripePaymentRequest } from '@automattic/composite-checkout';
+import type { StripePaymentRequest } from '@automattic/calypso-stripe';
 
 // Disabling this rule to make migrating this to calypso easier with fewer changes
 /* eslint-disable @typescript-eslint/no-use-before-define */
