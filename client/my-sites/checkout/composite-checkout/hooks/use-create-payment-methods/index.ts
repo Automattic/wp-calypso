@@ -374,7 +374,9 @@ function useCreateApplePay( {
 	const shouldCreateApplePayMethod = isStripeReady && ! isApplePayLoading && isApplePayAvailable;
 
 	const applePayMethod = useMemo( () => {
-		return shouldCreateApplePayMethod ? createApplePayMethod( stripe, stripeConfiguration ) : null;
+		return shouldCreateApplePayMethod && stripe && stripeConfiguration
+			? createApplePayMethod( stripe, stripeConfiguration )
+			: null;
 	}, [ shouldCreateApplePayMethod, stripe, stripeConfiguration ] );
 
 	return applePayMethod;
