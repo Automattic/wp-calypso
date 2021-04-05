@@ -301,7 +301,7 @@ function load_mailerlite() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_mailerlite' );
 
 /**
- * Load WPCOM block editor nav sidebar
+ * Load WPCOM block editor nav sidebar.
  */
 function load_wpcom_block_editor_sidebar() {
 	if (
