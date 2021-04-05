@@ -823,6 +823,24 @@ Undocumented.prototype.getTitanControlPanelIframeURL = function ( emailAccountId
 };
 
 /**
+ * Checks the availability of an email address
+ *
+ * @param emailAddress The ful email address
+ * @param fn The callback function
+ */
+Undocumented.prototype.getTitanEmailAddressAvailability = function ( emailAddress, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/emails/titan/${ encodeURIComponent(
+				emailAddress
+			) }/check-email-address-availability`,
+			apiNamespace: 'wpcom/v2',
+		},
+		fn
+	);
+};
+
+/**
  * Get a list of WordPress.com products
  *
  * @param {Function} fn The callback function

@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import emailValidator from 'email-validator';
 import PropTypes from 'prop-types';
 import { translate } from 'i18n-calypso';
@@ -125,6 +126,30 @@ const validateFullEmailAddress = ( { value, error }, allowEmpty = false ) => {
 	};
 };
 
+const validateAlternativeEmailAddress = ( { value, error }, domainName, allowEmpty = false ) => {
+	if ( ! error && value && domainName ) {
+		const parts = `${ value }`.split( '@' );
+		if ( parts.length > 1 && parts[ 1 ].toLowerCase() === domainName.toLowerCase() ) {
+			return {
+				value,
+				error: translate(
+					'Please supply an email address on a different domain than {{strong}}%(domain)s{{/strong}}',
+					{
+						args: {
+							domain: domainName,
+						},
+						components: {
+							strong: <strong />,
+						},
+					}
+				),
+			};
+		}
+	}
+
+	return validateFullEmailAddress( { value, error }, allowEmpty );
+};
+
 const validateMailboxName = ( { value, error }, { value: domainName, error: domainError } ) => {
 	if ( error ) {
 		return { value, error };
@@ -162,8 +187,9 @@ const validateMailbox = ( mailbox, optionalFields = [] ) => {
 
 	return {
 		uuid: mailbox.uuid,
-		alternativeEmail: validateFullEmailAddress(
+		alternativeEmail: validateAlternativeEmailAddress(
 			alternativeEmail,
+			domain.value,
 			optionalFields.includes( 'alternativeEmail' )
 		),
 		domain,

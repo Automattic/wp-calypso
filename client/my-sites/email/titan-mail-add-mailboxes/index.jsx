@@ -56,6 +56,7 @@ import TitanNewMailboxList from 'calypso/my-sites/email/titan-mail-add-mailboxes
 import TitanUnusedMailboxesNotice from 'calypso/my-sites/email/titan-mail-add-mailboxes/titan-unused-mailbox-notice';
 
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import wp from 'calypso/lib/wp';
 
 /**
  * Style dependencies
@@ -125,6 +126,11 @@ class TitanMailAddMailboxes extends React.Component {
 		} );
 	};
 
+	checkEmailAvailability = async ( emailAddress ) => {
+		const result = await wp.undocumented().getTitanEmailAddressAvailability( emailAddress );
+		return !! result;
+	};
+
 	handleContinue = () => {
 		const { selectedSite } = this.props;
 		const { mailboxes } = this.state;
@@ -134,6 +140,8 @@ class TitanMailAddMailboxes extends React.Component {
 			can_continue: canContinue,
 			mailbox_count: mailboxes.length,
 		} );
+
+		this.checkEmailAvailability( 'fi@sleazy.com' );
 
 		if ( canContinue ) {
 			this.setState( { isAddingToCart: true } );
