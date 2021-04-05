@@ -320,9 +320,11 @@ export class PlanFeatures extends Component {
 		}
 
 		let buttonText = null;
+		let forceDisplayButton = false;
 
 		if ( redirectToAddDomainFlow ) {
 			buttonText = translate( 'Add to Cart' );
+			forceDisplayButton = true;
 		}
 
 		return map( reorderedPlans, ( properties ) => {
@@ -375,6 +377,7 @@ export class PlanFeatures extends Component {
 					<p className="plan-features__description">{ planDescription }</p>
 					<PlanFeaturesActions
 						availableForPurchase={ availableForPurchase }
+						forceDisplayButton={ forceDisplayButton }
 						buttonText={ buttonText }
 						canPurchase={ canPurchase }
 						className={ getPlanClass( planName ) }
@@ -644,6 +647,7 @@ export class PlanFeatures extends Component {
 
 			if ( this.props.redirectToAddDomainFlow ) {
 				buttonText = translate( 'Add to Cart' );
+				forceDisplayButton = true;
 			}
 
 			if ( disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0 ) {
@@ -811,15 +815,18 @@ export class PlanFeatures extends Component {
 			}
 
 			let buttonText;
+			let forceDisplayButton = false;
 
 			if ( this.props.redirectToAddDomainFlow ) {
 				buttonText = this.props.translate( 'Add to Cart' );
+				forceDisplayButton = true;
 			}
 
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesActions
 						availableForPurchase={ availableForPurchase }
+						forceDisplayButton={ forceDisplayButton }
 						buttonText={ buttonText }
 						canPurchase={ canPurchase }
 						className={ getPlanClass( planName ) }
