@@ -8,6 +8,11 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
+ * Internal dependencies
+ */
+import { TimerHandle } from 'calypso/types';
+
+/**
  * Style dependencies
  */
 import './style.scss';
@@ -41,12 +46,12 @@ enum Status {
 export interface Props {
 	className: string;
 	duration: number;
-	icon?: string;
+	icon?: string | null;
 	isCompact?: boolean;
 	isLoading?: boolean;
 	onDismissClick: () => void;
 	showDismiss?: boolean;
-	status: Status;
+	status: Status | null;
 	text?: string | React.ReactNode;
 	translate: ( x: string ) => string;
 	children: React.ReactNode;
@@ -78,22 +83,22 @@ const getIcon = ( status: Status ): string => {
 
 const Notice = ( props: Props ) => {
 	const {
-		className,
-		duration,
-		icon,
-		isCompact,
-		isLoading,
+		className = '',
+		duration = 0,
+		icon = null,
+		isCompact = false,
+		isLoading = false,
 		onDismissClick,
-		showDismiss,
-		status,
-		text,
+		showDismiss = ! isCompact,
+		status = null,
+		text = null,
 		translate,
 		children,
 	} = props;
 
-	let dismissTimeout: () => void;
-
 	useEffect( () => {
+		let dismissTimeout: TimerHandle | undefined = undefined;
+
 		if ( dismissTimeout ) {
 			clearTimeout( dismissTimeout );
 		}
@@ -107,7 +112,7 @@ const Notice = ( props: Props ) => {
 				clearTimeout( dismissTimeout );
 			}
 		};
-	}, [ duration ] );
+	}, [ duration, onDismissClick ] );
 
 	// showDismiss = ! isCompact, // by default, show on normal notices, don't show on compact ones
 
@@ -115,7 +120,6 @@ const Notice = ( props: Props ) => {
 		'is-compact': isCompact,
 		'is-loading': isLoading,
 		'is-dismissable': showDismiss,
-		test: true,
 	} );
 
 	const iconName = icon || getIcon( status );
