@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { max, throttle, values } from 'lodash';
+import { throttle, values } from 'lodash';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 
@@ -124,7 +124,7 @@ class PostTrends extends React.Component {
 	getMonthComponents = () => {
 		const { streakData } = this.props;
 		// Compute maximum per-day post count from the streakData. It's used to scale the chart.
-		const maxPosts = max( values( streakData ) );
+		const maxPosts = Math.max( ...values( streakData ) );
 		const months = [];
 
 		for ( let i = 11; i >= 0; i-- ) {
