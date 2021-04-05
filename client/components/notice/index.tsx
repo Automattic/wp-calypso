@@ -43,7 +43,7 @@ enum Status {
 	Plain = 'is-plain',
 }
 
-export interface Props {
+interface Props {
 	className: string;
 	duration: number;
 	icon?: string | null;
