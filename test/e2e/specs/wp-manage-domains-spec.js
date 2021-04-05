@@ -66,7 +66,9 @@ describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function 
 		step( 'Can see the Domains page and choose add a domain', async function () {
 			const domainsPage = await DomainsPage.Expect( driver );
 			await domainsPage.setABTestControlGroupsInLocalStorage();
-			return await domainsPage.clickAddDomain();
+			await domainsPage.clickAddDomain();
+			await domainsPage.popOverMenuDisplayed();
+			return await domainsPage.clickPopoverItem( 'to this site' );
 		} );
 
 		step( 'Can see the domain search component', async function () {
@@ -142,7 +144,9 @@ describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function 
 		step( 'Can see the Domains page and choose add a domain', async function () {
 			const domainsPage = await DomainsPage.Expect( driver );
 			await domainsPage.setABTestControlGroupsInLocalStorage();
-			return await domainsPage.clickAddDomain();
+			await domainsPage.clickAddDomain();
+			await domainsPage.popOverMenuDisplayed();
+			return await domainsPage.clickPopoverItem( 'to this site' );
 		} );
 
 		step( 'Can see the domain search component', async function () {
