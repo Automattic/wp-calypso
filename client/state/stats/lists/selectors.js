@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, map, flatten, round } from 'lodash';
+import { get, map, flatten } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -201,15 +201,18 @@ export function getSiteStatsViewSummary( state, siteId ) {
 		viewSummary[ years ][ months ].data.push( item );
 		const average =
 			viewSummary[ years ][ months ].total / viewSummary[ years ][ months ].daysInMonth;
-		viewSummary[ years ][ months ].average = round( average, 0 );
+		viewSummary[ years ][ months ].average = Math.round( average );
 	} );
 
 	// With the current month, calculate the average based on the days passed so far in the month
-	const thisMonth = viewSummary[ moment().year() ][ moment().month() ];
+	const momentTime = moment();
+	const thisMonth = viewSummary[ momentTime.year() ][ momentTime.month() ];
+
 	if ( thisMonth ) {
 		const daysSinceStartOfMonth =
-			moment( new Date() ).diff( moment().startOf( 'month' ), 'days' ) + 1;
-		thisMonth.average = round( thisMonth.total / daysSinceStartOfMonth, 0 );
+			moment( new Date() ).diff( momentTime.startOf( 'month' ), 'days' ) + 1;
+		thisMonth.daysInMonth = daysSinceStartOfMonth;
+		thisMonth.average = Math.round( thisMonth.total / thisMonth.daysInMonth );
 	}
 
 	return viewSummary;
