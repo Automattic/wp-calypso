@@ -229,18 +229,12 @@ function getNewSiteParams( {
 	}
 
 	if ( selectedDesign ) {
-		// If there's a selected design, use similar new site options to what used
-		// in gutenboarding (see `client/landing/gutenboarding/stores/onboard/actions.ts`)
-		// `Design` type defined in `packages/design-picker/src/types.ts`
-		// Note: the site_creation_flow is not overridden
+		// If there's a selected design, it means we're in "with_design_picker" flow.
 		newSiteParams.options.theme = `pub/${ selectedDesign.theme }`;
 		newSiteParams.options.template = selectedDesign.template;
 		newSiteParams.options.font_base = selectedDesign.fonts.base;
 		newSiteParams.options.font_headings = selectedDesign.fonts.headings;
 		newSiteParams.options.use_patterns = true;
-		// @TODO: remove next line when working on
-		// https://github.com/Automattic/wp-calypso/issues/51231
-		newSiteParams.options.site_creation_flow = 'gutenboarding';
 	}
 
 	return newSiteParams;
