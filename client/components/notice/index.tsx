@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, FunctionComponent } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
@@ -44,21 +44,21 @@ enum Status {
 }
 
 interface Props {
-	className: string;
-	duration: number;
+	className?: string;
+	duration?: number;
+	onDismissClick: () => void;
+	translate: ( x: string ) => string;
+	children: React.ReactNode;
+	status?: Status;
 	icon?: string | null;
 	isCompact?: boolean;
 	isLoading?: boolean;
-	onDismissClick: () => void;
 	showDismiss?: boolean;
-	status: Status | null;
 	text?: string | React.ReactNode;
-	translate: ( x: string ) => string;
-	children: React.ReactNode;
 }
 
 const getIcon = ( status: Status ): string => {
-	let icon;
+	let icon: string;
 
 	switch ( status ) {
 		case Status.Info:
@@ -81,21 +81,19 @@ const getIcon = ( status: Status ): string => {
 	return icon;
 };
 
-const Notice = ( props: Props ) => {
-	const {
-		className = '',
-		duration = 0,
-		icon = null,
-		isCompact = false,
-		isLoading = false,
-		onDismissClick,
-		showDismiss = ! isCompact,
-		status = null,
-		text = null,
-		translate,
-		children,
-	} = props;
-
+const Notice: FunctionComponent< Props > = ( {
+	className = '',
+	duration = 0,
+	onDismissClick,
+	translate,
+	children,
+	status = null,
+	icon = null,
+	isCompact = false,
+	isLoading = false,
+	showDismiss = ! isCompact,
+	text = null,
+} ) => {
 	useEffect( () => {
 		let dismissTimeout: TimerHandle | undefined = undefined;
 
