@@ -380,7 +380,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 	} );
 
-	describe.only( 'Private Posts: @parallel', function () {
+	describe( 'Private Posts: @parallel', function () {
 		describe( 'Publish a Private Post', function () {
 			const blogPostTitle = dataHelper.randomPhrase();
 			const blogPostQuote =
