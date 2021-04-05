@@ -83,7 +83,7 @@ object E2ETests : BuildType({
 				export E2EGUTENBERGUSER="%E2EGUTENBERGUSER%"
 				export E2EPASSWORD="%E2EPASSWORD%"
 				export CI=true
-				export CRHOMEVERSION="87.0.4280.141-1"
+				export CHROME_VERSION="87.0.4280.141-1"
 
 				# Start framebuffer
 				Xvfb ${'$'}{DISPLAY} -screen 0 1280x1024x24 &
