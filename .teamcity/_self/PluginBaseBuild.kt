@@ -124,6 +124,7 @@ open class PluginBaseBuild : Template({
 
 					# Ping commit merger in Slack if we're on the main branch and the build has changed.
 					if [ "%teamcity.build.branch.is_default%" == "true" ] && [ "%with_slack_notify%" == "true" ] ; then
+						echo "test."
 					fi
 
 					echo "Posting slack reminder."
