@@ -272,14 +272,8 @@ export class PlanFeaturesComparisonHeader extends Component {
 	}
 
 	renderPriceGroup( fullPrice ) {
-		const {
-			currencyCode,
-			isInSignup,
-			plansWithScroll,
-			isInVerticalScrollingPlansExperiment,
-		} = this.props;
-		const displayFlatPrice =
-			isInSignup && ! plansWithScroll && ! isInVerticalScrollingPlansExperiment;
+		const { currencyCode, isInSignup } = this.props;
+		const displayFlatPrice = false;
 
 		// TODO: If the experiment wins, then we need to plan on how to show the 1st year promotional price for INR and MX
 		return (

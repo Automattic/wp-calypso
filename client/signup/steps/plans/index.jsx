@@ -37,16 +37,15 @@ import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import './style.scss';
 import { Experiment } from 'calypso/components/experiment';
 import { getVariationForUser, isLoading } from 'calypso/state/experiments/selectors';
-import PulsingDot from 'calypso/components/pulsing-dot';
 import { isTabletResolution } from '@automattic/viewport';
 
 export class PlansStep extends Component {
 	state = {
-		plansWithScroll: ! isTabletResolution(),
+		isDesktopResolution: ! isTabletResolution(),
 	};
 
 	windowResize = () => {
-		this.setState( { plansWithScroll: ! isTabletResolution() } );
+		this.setState( { isDesktopResolution: ! isTabletResolution() } );
 	};
 
 	componentWillUnmount() {
@@ -163,45 +162,34 @@ export class PlansStep extends Component {
 			planTypes,
 			flowName,
 			showTreatmentPlansReorderTest,
-			isLoadingExperiment,
-			isInVerticalScrollingPlansExperiment,
 			isTreatmentPlansRedesign,
 		} = this.props;
 
-		const shouldShowPlansRedesign = isTreatmentPlansRedesign && this.state.plansWithScroll;
+		const shouldShowPlansRedesign = isTreatmentPlansRedesign && this.state.isDesktopResolution;
 
 		return (
 			<div>
 				<QueryPlans />
-				{ isLoadingExperiment ? (
-					<div className="plans__loading-container">
-						<PulsingDot delay={ 400 } active />
-					</div>
-				) : (
-					<PlansFeaturesMain
-						site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-						hideFreePlan={ hideFreePlan }
-						isInSignup={ true }
-						isLaunchPage={ isLaunchPage }
-						intervalType={ this.getIntervalType() }
-						onUpgradeClick={ this.onSelectPlan }
-						showFAQ={ false }
-						displayJetpackPlans={ false }
-						domainName={ this.getDomainName() }
-						customerType={ this.getCustomerType() }
-						disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-						plansWithScroll={
-							isInVerticalScrollingPlansExperiment ? this.state.plansWithScroll : true
-						}
-						planTypes={ planTypes }
-						flowName={ flowName }
-						customHeader={ this.getGutenboardingHeader() }
-						showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
-						isAllPaidPlansShown={ true }
-						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-						shouldShowPlansRedesign={ shouldShowPlansRedesign }
-					/>
-				) }
+				<PlansFeaturesMain
+					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+					hideFreePlan={ hideFreePlan }
+					isInSignup={ true }
+					isLaunchPage={ isLaunchPage }
+					intervalType={ this.getIntervalType() }
+					onUpgradeClick={ this.onSelectPlan }
+					showFAQ={ false }
+					displayJetpackPlans={ false }
+					domainName={ this.getDomainName() }
+					customerType={ this.getCustomerType() }
+					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+					plansWithScroll={ this.state.isDesktopResolution }
+					planTypes={ planTypes }
+					flowName={ flowName }
+					customHeader={ this.getGutenboardingHeader() }
+					showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
+					isAllPaidPlansShown={ true }
+					shouldShowPlansRedesign={ shouldShowPlansRedesign }
+				/>
 			</div>
 		);
 	}
@@ -213,7 +201,7 @@ export class PlansStep extends Component {
 			return '';
 		}
 
-		const shouldShowPlansRedesign = isTreatmentPlansRedesign && this.state.plansWithScroll;
+		const shouldShowPlansRedesign = isTreatmentPlansRedesign && this.state.isDesktopResolution;
 		if ( shouldShowPlansRedesign ) {
 			return translate( 'Choose a plan' );
 		}
@@ -229,7 +217,7 @@ export class PlansStep extends Component {
 			isLoadingExperiment,
 			translate,
 		} = this.props;
-		const shouldShowPlansRedesign = isTreatmentPlansRedesign && this.state.plansWithScroll;
+		const shouldShowPlansRedesign = isTreatmentPlansRedesign && this.state.isDesktopResolution;
 
 		if ( isLoadingExperiment ) {
 			return '';
@@ -308,9 +296,9 @@ export class PlansStep extends Component {
 
 	render() {
 		const shouldShowPlansRedesign =
-			this.props.isTreatmentPlansRedesign && this.state.plansWithScroll;
+			this.props.isTreatmentPlansRedesign && this.state.isDesktopResolution;
 		const classes = classNames( 'plans plans-step', {
-			'in-vertically-scrolled-plans-experiment': this.props.isInVerticalScrollingPlansExperiment,
+			'in-vertically-scrolled-plans-experiment': true, // To be removed
 			'in-plans-redesign-experiment': shouldShowPlansRedesign,
 			'has-no-sidebar': true,
 			'is-wide-layout': true,
@@ -370,8 +358,6 @@ export default connect(
 		showTreatmentPlansReorderTest:
 			'treatment' === plans_reorder_abtest_variation || isTreatmentPlansReorderTest( state ),
 		isLoadingExperiment: isLoading( state ),
-		isInVerticalScrollingPlansExperiment:
-			'treatment' === getVariationForUser( state, 'vertical_plan_listing_v2' ),
 		isTreatmentPlansRedesign:
 			flowName === 'onboarding' &&
 			'treatment' === getVariationForUser( state, 'signup_plans_step_redesign_v1' ),

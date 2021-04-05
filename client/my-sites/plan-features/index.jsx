@@ -288,7 +288,6 @@ export class PlanFeatures extends Component {
 			translate,
 			showPlanCreditsApplied,
 			isLaunchPage,
-			isInVerticalScrollingPlansExperiment,
 		} = this.props;
 
 		// move any free plan to last place in mobile view
@@ -322,9 +321,8 @@ export class PlanFeatures extends Component {
 				hideMonthly,
 			} = properties;
 			const { rawPrice, discountPrice, isMonthlyPlan } = properties;
-			const planDescription = isInVerticalScrollingPlansExperiment
-				? planConstantObj.getShortDescription( abtest )
-				: planConstantObj.getDescription( abtest );
+			const planDescription = planConstantObj.getShortDescription( abtest );
+
 			return (
 				<div className="plan-features__mobile-plan" key={ planName }>
 					<PlanFeaturesHeader
@@ -345,11 +343,11 @@ export class PlanFeatures extends Component {
 						basePlansPath={ basePlansPath }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 						displayPerMonthNotation={ isInSignup }
+						isInSignup={ isInSignup }
 						selectedPlan={ selectedPlan }
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
 						isMonthlyPlan={ isMonthlyPlan }
 						audience={ planConstantObj.getAudience() }
-						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 						isLoggedInMonthlyPricing={ this.props.isLoggedInMonthlyPricing }
 					/>
 					<p className="plan-features__description">{ planDescription }</p>
@@ -396,7 +394,6 @@ export class PlanFeatures extends Component {
 			siteType,
 			showPlanCreditsApplied,
 			withScroll,
-			isInVerticalScrollingPlansExperiment,
 		} = this.props;
 
 		return map( planProperties, ( properties ) => {
@@ -471,7 +468,6 @@ export class PlanFeatures extends Component {
 						title={ planConstantObj.getTitle() }
 						plansWithScroll={ withScroll }
 						isMonthlyPlan={ isMonthlyPlan }
-						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 						isLoggedInMonthlyPricing={
 							! isInSignup && ! isJetpack && this.props.kindOfPlanTypeSelector === 'interval'
 						}
