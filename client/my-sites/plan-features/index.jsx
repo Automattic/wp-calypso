@@ -83,6 +83,7 @@ import PlanFeaturesScroller from './scroller';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 /**
  * Style dependencies
@@ -923,7 +924,7 @@ const hasPlaceholders = ( planProperties ) =>
 	planProperties.filter( ( planProps ) => planProps.isPlaceholder ).length > 0;
 
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
-export default connect(
+const ConnectedPlanFeatures = connect(
 	( state, ownProps ) => {
 		const {
 			isInSignup,
@@ -1115,4 +1116,12 @@ export default connect(
 	}
 )( withShoppingCart( localize( PlanFeatures ) ) );
 
-/* eslint-enable wpcalypso/redux-no-bound-selectors */
+/* eslint-enable */
+
+export default function PlanFeaturesWrapper( props ) {
+	return (
+		<CalypsoShoppingCartProvider>
+			<ConnectedPlanFeatures { ...props } />
+		</CalypsoShoppingCartProvider>
+	);
+}
