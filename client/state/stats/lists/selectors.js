@@ -206,9 +206,11 @@ export function getSiteStatsViewSummary( state, siteId ) {
 
 	// With the current month, calculate the average based on the days passed so far in the month
 	const thisMonth = viewSummary[ moment().year() ][ moment().month() ];
-	const daysSinceStartOfMonth =
-		moment( new Date() ).diff( moment().startOf( 'month' ), 'days' ) + 1;
-	thisMonth.average = round( thisMonth.total / daysSinceStartOfMonth, 0 );
+	if ( thisMonth ) {
+		const daysSinceStartOfMonth =
+			moment( new Date() ).diff( moment().startOf( 'month' ), 'days' ) + 1;
+		thisMonth.average = round( thisMonth.total / daysSinceStartOfMonth, 0 );
+	}
 
 	return viewSummary;
 }
