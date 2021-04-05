@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map, zipObject, size, filter, get, compact, partition, min } from 'lodash';
+import { map, zipObject, size, filter, get, compact, partition } from 'lodash';
 
 /**
  * Internal dependencies
@@ -172,7 +172,7 @@ export class ConversationCommentList extends React.Component {
 	getCommentsToShow = () => {
 		const { commentIds, expansions, commentsTree, sortedComments } = this.props;
 
-		const minId = min( commentIds );
+		const minId = Math.min( ...commentIds );
 		const startingCommentIds = ( sortedComments || [] )
 			.filter( ( comment ) => {
 				return comment.ID >= minId || comment.isPlaceholder;
