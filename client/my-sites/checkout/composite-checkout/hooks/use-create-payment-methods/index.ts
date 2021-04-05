@@ -6,8 +6,6 @@ import {
 	createPayPalMethod,
 	createAlipayMethod,
 	createAlipayPaymentMethodStore,
-	createBancontactMethod,
-	createBancontactPaymentMethodStore,
 	createGiropayMethod,
 	createGiropayPaymentMethodStore,
 	createP24Method,
@@ -19,7 +17,11 @@ import {
 	createEpsMethod,
 	createEpsPaymentMethodStore,
 } from '@automattic/composite-checkout';
-import { createApplePayMethod } from '@automattic/wpcom-checkout';
+import {
+	createApplePayMethod,
+	createBancontactMethod,
+	createBancontactPaymentMethodStore,
+} from '@automattic/wpcom-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import type { StripeConfiguration, Stripe, StripeLoadingError } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
