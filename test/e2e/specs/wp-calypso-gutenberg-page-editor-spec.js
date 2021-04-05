@@ -201,8 +201,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			await gSidebarComponent.chooseDocumentSettings();
 			await gSidebarComponent.setVisibilityToPrivate();
 			return await gSidebarComponent.hideComponentIfNecessary();
-			//const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			//return await gEditorComponent.waitForSuccessViewPostNotice();
 		} );
 
 		step( 'Can view content', async function () {
