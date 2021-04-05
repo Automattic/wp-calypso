@@ -111,7 +111,7 @@ RUN wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-
 # Add user calypso with 1002, give it sudo permissions
 RUN adduser --uid 1002 --disabled-password calypso \
 	&& echo "calypso ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/calypso \
-    && chmod 0440 /etc/sudoers.d/calypso
+	&& chmod 0440 /etc/sudoers.d/calypso
 
 ENTRYPOINT [ "/bin/bash" ]
 
