@@ -83,9 +83,15 @@ object E2ETests : BuildType({
 				export E2EGUTENBERGUSER="%E2EGUTENBERGUSER%"
 				export E2EPASSWORD="%E2EPASSWORD%"
 				export CI=true
+				export CRHOMEVERSION="87.0.4280.141-1"
 
 				# Start framebuffer
 				Xvfb ${'$'}{DISPLAY} -screen 0 1280x1024x24 &
+
+				# Update Chrome
+				wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${'$'}{CHROME_VERSION}_amd64.deb
+				apt-get install -y ./google-chrome-stable_${'$'}{CHROME_VERSION}_amd64.deb
+				rm ./google-chrome-stable_${'$'}{CHROME_VERSION}_amd64.deb
 
 				# Run tests
 				yarn run test-desktop:e2e

@@ -14,6 +14,7 @@ const PROJECT_DIR = path.join( __dirname, '../' );
 const E2E_DIR = path.join( PROJECT_DIR, 'e2e' );
 
 const APP_ARGS = [
+	'--no-sandbox',
 	'--disable-renderer-backgrounding',
 	'--disable-http-cache',
 	'--start-maximized',

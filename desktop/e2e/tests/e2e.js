@@ -2,7 +2,6 @@ require( 'mocha' );
 const { step } = require( 'mocha-steps' );
 const { assert } = require( 'chai' );
 const webdriver = require( 'selenium-webdriver' );
-const chrome = require( 'selenium-webdriver/chrome' );
 const LoginPage = require( './lib/pages/login-page' );
 const NavBarComponent = require( './lib/components/nav-bar-component' );
 const ProfilePage = require( './lib/pages/profile-page' );
@@ -11,22 +10,21 @@ const PostPreviewComponent = require( './lib/components/post-preview-component' 
 const GutenbergEditorComponent = require( './lib/components/gutenberg-editor-component' );
 
 const dataHelper = require( './lib/data-helper' );
-const options = new chrome.Options();
-options.addArguments(
-	'user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.128 Electron/8.3.0 Safari/537.36'
-);
+
 const driverConfig = new webdriver.Builder()
 	.usingServer( 'http://localhost:9515' )
-	.setChromeOptions( options )
 	.withCapabilities( {
-		chromeOptions: {
-			// Here is the path to your Electron binary.
-			binary: process.env.BINARY_PATH,
-			args: [ '--disable-renderer-backgrounding', '--disable-http-cache', '--start-maximized' ],
-			debuggerAddress: '127.0.0.1:9222',
+		'goog:chromeOptions': {
+			args: [
+				'--user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.128 Electron/8.3.0 Safari/537.36',
+				'--no-sandbox',
+				'--disable-renderer-backgrounding',
+				'--disable-http-cache',
+				'--start-maximized',
+			],
 		},
 	} )
-	.forBrowser( 'electron' );
+	.forBrowser( 'chrome' );
 
 let loggedInUrl;
 let driver;
