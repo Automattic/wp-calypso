@@ -29,6 +29,7 @@ import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form'
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 
 /**
  * Style dependencies
@@ -42,6 +43,7 @@ const SiteSettingsTraffic = ( {
 	handleSubmitForm,
 	isAdmin,
 	isJetpackAdmin,
+	isAtomic,
 	isRequestingSettings,
 	isSavingSettings,
 	onChangeField,
@@ -59,7 +61,7 @@ const SiteSettingsTraffic = ( {
 		) }
 		<JetpackDevModeNotice />
 
-		{ isJetpackAdmin && (
+		{ isJetpackAdmin && ! isAtomic && (
 			<JetpackAds
 				handleAutosavingToggle={ handleAutosavingToggle }
 				isSavingSettings={ isSavingSettings }
@@ -116,12 +118,14 @@ const SiteSettingsTraffic = ( {
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isAdmin = canCurrentUser( state, siteId, 'manage_options' );
+	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isJetpackAdmin = isJetpack && isAdmin;
 
 	return {
 		isAdmin,
 		isJetpackAdmin,
+		isAtomic,
 	};
 } );
 
