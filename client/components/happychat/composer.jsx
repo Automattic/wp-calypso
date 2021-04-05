@@ -3,7 +3,6 @@
  */
 import classNames from 'classnames';
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import { get, isEmpty, throttle } from 'lodash';
 
@@ -11,8 +10,8 @@ import { get, isEmpty, throttle } from 'lodash';
  * Internal dependencies
  */
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import scrollbleed from './scrollbleed';
 import { Button } from '@automattic/components';
+import withScrollbleed from './with-scrollbleed';
 
 /**
  * Style dependencies
@@ -30,45 +29,46 @@ const sendThrottledTyping = throttle(
 /*
  * Renders a textarea to be used to comopose a message for the chat.
  */
-// eslint-disable-next-line react/prefer-es6-class
-export const Composer = createReactClass( {
-	displayName: 'Composer',
-	mixins: [ scrollbleed ],
+class ComposerComponent extends React.Component {
+	static displayName = 'Composer';
 
-	propTypes: {
+	static propTypes = {
 		disabled: PropTypes.bool,
 		message: PropTypes.string,
 		onFocus: PropTypes.func,
 		onSendMessage: PropTypes.func,
-		onSendTyping: PropTypes.func,
 		onSendNotTyping: PropTypes.func,
+		onSendTyping: PropTypes.func,
 		onSetCurrentMessage: PropTypes.func,
+		scrollbleedLock: PropTypes.func,
+		scrollbleedUnlock: PropTypes.func,
+		setScrollbleedTarget: PropTypes.func,
 		translate: PropTypes.func, // localize HOC
-	},
+	};
 
-	onChange( event ) {
+	onChange = ( event ) => {
 		const { onSendTyping, onSendNotTyping, onSetCurrentMessage } = this.props;
 
 		const msg = get( event, 'target.value' );
 		onSetCurrentMessage( msg );
 		isEmpty( msg ) ? onSendNotTyping() : sendThrottledTyping( onSendTyping, msg );
-	},
+	};
 
-	onKeyDown( event ) {
+	onKeyDown = ( event ) => {
 		const RETURN_KEYCODE = 13;
 		if ( get( event, 'which' ) === RETURN_KEYCODE ) {
 			event.preventDefault();
 			this.sendMessage();
 		}
-	},
+	};
 
-	sendMessage() {
+	sendMessage = () => {
 		const { message, onSendMessage, onSendNotTyping } = this.props;
 		if ( ! isEmpty( message ) ) {
 			onSendMessage( message );
 			onSendNotTyping();
 		}
-	},
+	};
 
 	render() {
 		const { disabled, message, onFocus, translate } = this.props;
@@ -78,13 +78,13 @@ export const Composer = createReactClass( {
 		return (
 			<div
 				className={ composerClasses }
-				onMouseEnter={ this.scrollbleedLock }
-				onMouseLeave={ this.scrollbleedUnlock }
+				onMouseEnter={ this.props.scrollbleedLock }
+				onMouseLeave={ this.props.scrollbleedUnlock }
 			>
 				<div className="happychat__message">
 					<FormTextarea
 						aria-label="Enter your support request"
-						forwardedRef={ this.setScrollbleedTarget }
+						forwardedRef={ this.props.setScrollbleedTarget }
 						onFocus={ onFocus }
 						placeholder={ translate( 'Type a message…' ) }
 						onChange={ this.onChange }
@@ -105,5 +105,7 @@ export const Composer = createReactClass( {
 				</Button>
 			</div>
 		);
-	},
-} );
+	}
+}
+
+export const Composer = withScrollbleed( ComposerComponent );
