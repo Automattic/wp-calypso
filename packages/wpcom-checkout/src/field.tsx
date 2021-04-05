@@ -45,7 +45,7 @@ export default function Field( {
 	isIconVisible?: boolean;
 	placeholder?: string;
 	tabIndex?: number;
-	description: string;
+	description?: string;
 	errorMessage?: string;
 	autoComplete?: string;
 	disabled?: boolean;
