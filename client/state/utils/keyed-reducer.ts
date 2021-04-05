@@ -2,13 +2,18 @@
  * External dependencies
  */
 import { get, isEqual, mapValues, omit, omitBy, reduce } from 'lodash';
+import type { PropertyPath } from 'lodash';
+import type { Action, AnyAction } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { serialize, deserialize } from './serialize';
+import { serialize, deserialize, SerializableReducer } from './serialize';
 import { SerializationResult } from 'calypso/state/serialization-result';
 import { withPersistence } from './with-persistence';
+
+type CalypsoInitAction = Action< '@@calypso/INIT' >;
+export type KeyedReducerAction< TAction extends Action > = TAction | CalypsoInitAction;
 
 /**
  * Creates a super-reducer as a map of reducers over keyed objects
@@ -62,11 +67,14 @@ import { withPersistence } from './with-persistence';
  * @param {Function} reducer applied to referenced item in state map
  * @returns {Function} super-reducer applying reducer over map of keyed items
  */
-export const keyedReducer = ( keyPath, reducer ) => {
+export const keyedReducer = < TState, TAction extends AnyAction = Action >(
+	keyPath: PropertyPath,
+	reducer: SerializableReducer< TState, KeyedReducerAction< TAction > >
+): SerializableReducer< Record< string | number, TState >, TAction > => {
 	// some keys are invalid
 	if ( 'string' !== typeof keyPath ) {
 		throw new TypeError(
-			`Key name passed into \`keyedReducer\` must be a string but I detected a ${ typeof keyName }`
+			`Key name passed into \`keyedReducer\` must be a string but I detected a ${ typeof keyPath }`
 		);
 	}
 
@@ -84,7 +92,10 @@ export const keyedReducer = ( keyPath, reducer ) => {
 
 	const initialState = reducer( undefined, { type: '@@calypso/INIT' } );
 
-	const combinedReducer = ( state = {}, action ) => {
+	const combinedReducer = (
+		state: Record< string | number, TState > = {},
+		action: KeyedReducerAction< TAction >
+	) => {
 		// don't allow coercion of key name: null => 0
 		const itemKey = get( action, keyPath, undefined );
 
@@ -133,7 +144,7 @@ export const keyedReducer = ( keyPath, reducer ) => {
 					}
 					return result;
 				},
-				undefined
+				undefined as SerializationResult | undefined
 			),
 		deserialize: ( persisted ) =>
 			omitBy(
