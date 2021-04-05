@@ -2,34 +2,68 @@
  * External dependencies
  */
 import React from 'react';
-import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import {
+	Button,
+	FormStatus,
+	useLineItems,
+	useFormStatus,
+	registerStore,
+	useSelect,
+	useDispatch,
+} from '@automattic/composite-checkout';
+import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
+import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
-import Field from '../../components/field';
-import Button from '../../components/button';
-import { FormStatus, useLineItems } from '../../public-api';
-import { useFormStatus } from '../form-status';
-import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
-import { registerStore, useSelect, useDispatch } from '../../lib/registry';
-import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
+import styled from '../styled';
+import Field from '../field';
+import { SummaryLine, SummaryDetails } from '../summary-details';
+import { PaymentMethodLogos } from '../payment-method-logos';
 
 const debug = debugFactory( 'composite-checkout:bancontact-payment-method' );
 
-export function createBancontactPaymentMethodStore() {
+// Disabling this to make migration easier
+/* eslint-disable @typescript-eslint/no-use-before-define */
+
+interface StoreStateValue {
+	value: string;
+	isTouched: boolean;
+}
+
+interface StoreState {
+	customerName: StoreStateValue;
+}
+
+type StoreAction = { type: string; payload: string };
+
+interface StoreActions {
+	changeCustomerName: ( payload: string ) => StoreAction;
+}
+
+interface StoreSelectors {
+	getCustomerName: ( state: StoreState ) => StoreStateValue;
+}
+
+interface BancontactStore extends ReturnType< typeof registerStore > {
+	actions: StoreActions;
+	selectors: StoreSelectors;
+}
+
+export function createBancontactPaymentMethodStore(): BancontactStore {
 	debug( 'creating a new bancontact payment method store' );
 	const actions = {
-		changeCustomerName( payload ) {
+		changeCustomerName( payload: string ) {
 			return { type: 'CUSTOMER_NAME_SET', payload };
 		},
 	};
 
 	const selectors = {
-		getCustomerName( state ) {
+		getCustomerName( state: StoreState ) {
 			return state.customerName || '';
 		},
 	};
@@ -54,13 +88,19 @@ export function createBancontactPaymentMethodStore() {
 	return { ...store, actions, selectors };
 }
 
-export function createBancontactMethod( { store, stripe, stripeConfiguration } ) {
+export function createBancontactMethod( {
+	store,
+	stripe,
+	stripeConfiguration,
+}: {
+	store: BancontactStore;
+	stripe: Stripe;
+	stripeConfiguration: StripeConfiguration;
+} ): PaymentMethod {
 	return {
 		id: 'bancontact',
 		label: <BancontactLabel />,
-		activeContent: (
-			<BancontactFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
-		),
+		activeContent: <BancontactFields />,
 		inactiveContent: <BancontactSummary />,
 		submitButton: (
 			<BancontactPayButton
@@ -76,7 +116,9 @@ export function createBancontactMethod( { store, stripe, stripeConfiguration } )
 function BancontactFields() {
 	const { __ } = useI18n();
 
-	const customerName = useSelect( ( select ) => select( 'bancontact' ).getCustomerName() );
+	const customerName = useSelect( ( select ) => select( 'bancontact' ).getCustomerName() ) as
+		| StoreStateValue
+		| undefined;
 	const { changeCustomerName } = useDispatch( 'bancontact' );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
@@ -127,10 +169,29 @@ const BancontactField = styled( Field )`
 	}
 `;
 
-function BancontactPayButton( { disabled, onClick, store, stripe, stripeConfiguration } ) {
+function BancontactPayButton( {
+	disabled,
+	onClick,
+	store,
+	stripe,
+	stripeConfiguration,
+}: {
+	disabled?: boolean;
+	onClick?: ProcessPayment;
+	store: BancontactStore;
+	stripe: Stripe;
+	stripeConfiguration: StripeConfiguration;
+} ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const customerName = useSelect( ( select ) => select( 'bancontact' ).getCustomerName() );
+	const customerName = useSelect( ( select ) => select( 'bancontact' ).getCustomerName() ) as
+		| StoreStateValue
+		| undefined;
+	if ( ! onClick ) {
+		throw new Error(
+			'Missing onClick prop; BancontactPayButton must be used as a payment button in CheckoutSubmitButton'
+		);
+	}
 
 	return (
 		<Button
@@ -156,20 +217,20 @@ function BancontactPayButton( { disabled, onClick, store, stripe, stripeConfigur
 	);
 }
 
-function ButtonContents( { formStatus, total } ) {
+function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total: LineItem } ) {
 	const { __ } = useI18n();
 	if ( formStatus === FormStatus.SUBMITTING ) {
-		return __( 'Processing…' );
+		return <>{ __( 'Processing…' ) }</>;
 	}
 	if ( formStatus === FormStatus.READY ) {
 		/* translators: %s is the total to be paid in localized currency */
-		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
+		return <>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
 	}
-	return __( 'Please wait…' );
+	return <>{ __( 'Please wait…' ) }</>;
 }
 
-function isFormValid( store ) {
-	const customerName = store.selectors.getCustomerName( store.getState() );
+function isFormValid( store: BancontactStore ) {
+	const customerName = store.selectors.getCustomerName( store.getState() as StoreState );
 
 	if ( ! customerName?.value.length ) {
 		// Touch the field so it displays a validation error
@@ -210,7 +271,9 @@ function BancontactLogo() {
 }
 
 function BancontactSummary() {
-	const customerName = useSelect( ( select ) => select( 'bancontact' ).getCustomerName() );
+	const customerName = useSelect( ( select ) => select( 'bancontact' ).getCustomerName() ) as
+		| StoreStateValue
+		| undefined;
 
 	return (
 		<SummaryDetails>
