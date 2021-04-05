@@ -130,8 +130,9 @@ open class PluginBaseBuild : Template({
 					echo "Posting slack reminder."
 					payload="commit=%build.vcs.number%&plugin=$pluginSlug"
 					signature=`echo -n "${'$'}payload" | openssl sha256 -hmac "%mc_auth_secret%"`
-					ping_response=`curl -s -d "${'$'}payload" -X POST -H "TEAMCITY_SIGNATURE: ${'$'}signature" %mc_post_root%?plugin-deploy-reminder`
-					echo -e "Slack ping status: ${'$'}ping_response\n"
+					echo -e "Sig: ${'$'}signature\n"
+					curl -d "${'$'}payload" -X POST -H "TEAMCITY_SIGNATURE: ${'$'}signature" %mc_post_root%?plugin-deploy-reminder
+					#echo -e "Slack ping status: ${'$'}ping_response\n"
 				fi
 
 				# 4. Create metadata file with info for the download script.
