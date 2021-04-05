@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { assign, isEmpty } from 'lodash';
@@ -11,10 +10,10 @@ import { assign, isEmpty } from 'lodash';
  * Internal dependencies
  */
 import { first, when, forEach } from './functional';
-import autoscroll from './autoscroll';
 import Emojify from 'calypso/components/emojify';
-import scrollbleed from './scrollbleed';
 import { addSchemeIfMissing, setUrlScheme } from './url';
+import withAutoScroll from './with-autoscroll';
+import withScrollbleed from './with-scrollbleed';
 
 /**
  * Style dependencies
@@ -194,39 +193,36 @@ const renderTimeline = ( {
 
 const chatTimeline = when( timelineHasContent, renderTimeline, welcomeMessage );
 
-export const Timeline = createReactClass( {
-	displayName: 'Timeline',
-	mixins: [ autoscroll, scrollbleed ],
+const TimelineComponent = ( props ) =>
+	chatTimeline(
+		assign( {}, props, {
+			onScrollContainer: forEach(
+				props.setupAutoscroll,
+				props.onScrollContainer,
+				props.setScrollbleedTarget
+			),
+		} )
+	);
 
-	propTypes: {
-		currentUserEmail: PropTypes.string,
-		isCurrentUser: PropTypes.func,
-		isExternalUrl: PropTypes.func,
-		onScrollContainer: PropTypes.func,
-		timeline: PropTypes.array,
-		translate: PropTypes.func,
-		twemojiUrl: PropTypes.string,
-	},
+TimelineComponent.displayName = 'Timeline';
 
-	getDefaultProps() {
-		return {
-			onScrollContainer: () => {},
-			isExternalUrl: () => true,
-		};
-	},
+TimelineComponent.propTypes = {
+	currentUserEmail: PropTypes.string,
+	isCurrentUser: PropTypes.func,
+	isExternalUrl: PropTypes.func,
+	onScrollContainer: PropTypes.func,
+	scrollbleedLock: PropTypes.func,
+	scrollbleedUnlock: PropTypes.func,
+	setScrollbleedTarget: PropTypes.func,
+	setupAutoscroll: PropTypes.func,
+	timeline: PropTypes.array,
+	translate: PropTypes.func,
+	twemojiUrl: PropTypes.string,
+};
 
-	render() {
-		const { onScrollContainer } = this.props;
-		return chatTimeline(
-			assign( {}, this.props, {
-				onScrollContainer: forEach(
-					this.setupAutoscroll,
-					onScrollContainer,
-					this.setScrollbleedTarget
-				),
-				scrollbleedLock: this.scrollbleedLock,
-				scrollbleedUnlock: this.scrollbleedUnlock,
-			} )
-		);
-	},
-} );
+TimelineComponent.defaultProps = {
+	onScrollContainer: () => {},
+	isExternalUrl: () => true,
+};
+
+export const Timeline = withAutoScroll( withScrollbleed( TimelineComponent ) );
