@@ -427,9 +427,57 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/plans/my-plan/foo.bar?thank-you=true&install=all' );
 	} );
 
+	it( 'redirects to the afterPurchaseUrl from a cart item if set', () => {
+		const cart = {
+			products: [ { extra: { afterPurchaseUrl: '/after/purchase/url' } } ],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			cart,
+			siteSlug: 'foo.bar',
+		} );
+		expect( url ).toBe( '/after/purchase/url' );
+	} );
+
+	it( 'redirects to the afterPurchaseUrl from the most recent cart item if multiple are set', () => {
+		const cart = {
+			products: [
+				{
+					product_slug: 'older_product',
+					time_added_to_cart: 1617228489,
+					extra: { afterPurchaseUrl: '/older/purchase/url' },
+				},
+				{
+					product_slug: 'newer_product',
+					time_added_to_cart: 1617228689,
+					extra: { afterPurchaseUrl: '/newer/purchase/url' },
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			cart,
+			siteSlug: 'foo.bar',
+		} );
+		expect( url ).toBe( '/newer/purchase/url' );
+	} );
+
 	it( 'redirects to internal redirectTo url if set', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
+			siteSlug: 'foo.bar',
+			redirectTo: '/foo/bar',
+		} );
+		expect( url ).toBe( '/foo/bar' );
+	} );
+
+	it( 'redirects to internal redirectTo url if set even if afterPurchaseUrl exists on a cart item', () => {
+		const cart = {
+			products: [ { extra: { afterPurchaseUrl: '/after/purchase/url' } } ],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			cart,
 			siteSlug: 'foo.bar',
 			redirectTo: '/foo/bar',
 		} );
@@ -487,6 +535,21 @@ describe( 'getThankYouPageUrl', () => {
 			isEligibleForSignupDestinationResult: false,
 		} );
 		expect( url ).toBe( '/' );
+	} );
+
+	it( 'redirects to afterPurchaseUrl if set even if there is a url from a cookie', () => {
+		const getUrlFromCookie = jest.fn( () => '/cookie' );
+		const cart = {
+			products: [ { product_slug: 'foo', extra: { afterPurchaseUrl: '/after/purchase/url' } } ],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			getUrlFromCookie,
+			isEligibleForSignupDestinationResult: true,
+		} );
+		expect( url ).toBe( '/after/purchase/url' );
 	} );
 
 	it( 'redirects to url from cookie with notice type set to "purchase-success" if isEligibleForSignupDestination is set', () => {
