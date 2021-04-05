@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { isEqual, pick } from 'lodash';
+import { withLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -31,11 +32,12 @@ class QueryPostTypes extends Component {
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { siteSettings, siteId, themeSlug } = this.props;
+		const { siteSettings, siteId, themeSlug, locale } = this.props;
 		const {
 			siteSettings: nextSiteSettings,
 			siteId: nextSiteId,
 			themeSlug: nextThemeSlug,
+			locale: nextLocale,
 		} = nextProps;
 
 		const hasThemeChanged = themeSlug && nextThemeSlug && themeSlug !== nextThemeSlug;
@@ -43,8 +45,15 @@ class QueryPostTypes extends Component {
 			pick( siteSettings, POST_TYPE_SETTINGS ),
 			pick( nextSiteSettings, POST_TYPE_SETTINGS )
 		);
+		const hasLocaleChanged = locale && nextLocale && locale !== nextLocale;
+		// console.log( { locale, nextLocale, hasLocaleChanged } );
 
-		if ( siteId !== nextSiteId || hasThemeChanged || hasPostTypeSettingChanged ) {
+		if (
+			siteId !== nextSiteId ||
+			hasThemeChanged ||
+			hasPostTypeSettingChanged ||
+			hasLocaleChanged
+		) {
 			this.request( nextProps );
 		}
 	}
@@ -64,4 +73,4 @@ export default connect(
 		themeSlug: getSiteOption( state, siteId, 'theme_slug' ),
 	} ),
 	{ requestPostTypes }
-)( QueryPostTypes );
+)( withLocale( QueryPostTypes ) );
