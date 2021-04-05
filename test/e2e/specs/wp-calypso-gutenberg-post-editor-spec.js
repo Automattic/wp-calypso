@@ -380,7 +380,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 	} );
 
-	describe( 'Private Posts: @parallel', function () {
+	describe.only( 'Private Posts: @parallel', function () {
 		describe( 'Publish a Private Post', function () {
 			const blogPostTitle = dataHelper.randomPhrase();
 			const blogPostQuote =
@@ -427,9 +427,9 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 					await gSidebarComponent.chooseDocumentSettings();
 					await gSidebarComponent.expandStatusAndVisibility();
 					await gSidebarComponent.setVisibilityToPrivate();
-					await gSidebarComponent.hideComponentIfNecessary();
-					const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-					return await gEditorComponent.waitForSuccessViewPostNotice();
+					return await gSidebarComponent.hideComponentIfNecessary();
+					//const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+					//return await gEditorComponent.waitForSuccessViewPostNotice();
 				}
 			);
 

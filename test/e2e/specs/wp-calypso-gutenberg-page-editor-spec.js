@@ -179,7 +179,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		} );
 	} );
 
-	describe( 'Private Pages: @parallel', function () {
+	describe.only( 'Private Pages: @parallel', function () {
 		const pageTitle = dataHelper.randomPhrase();
 		const pageQuote =
 			'Few people know how to take a walk. The qualifications are endurance, plain clothes, old shoes, an eye for nature, good humor, vast curiosity, good speech, good silence and nothing too much.\n— Ralph Waldo Emerson';
@@ -200,9 +200,9 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			const gSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
 			await gSidebarComponent.chooseDocumentSettings();
 			await gSidebarComponent.setVisibilityToPrivate();
-			await gSidebarComponent.hideComponentIfNecessary();
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			return await gEditorComponent.waitForSuccessViewPostNotice();
+			return await gSidebarComponent.hideComponentIfNecessary();
+			//const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			//return await gEditorComponent.waitForSuccessViewPostNotice();
 		} );
 
 		step( 'Can view content', async function () {
