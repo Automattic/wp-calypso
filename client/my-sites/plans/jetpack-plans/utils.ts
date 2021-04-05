@@ -5,7 +5,6 @@ import { translate, TranslateResult, numberFormat } from 'i18n-calypso';
 import { compact, isObject } from 'lodash';
 import page from 'page';
 import React, { createElement, Fragment } from 'react';
-import formatCurrency from '@automattic/format-currency';
 import { createSelector } from '@automattic/state-utils';
 
 /**
@@ -245,13 +244,13 @@ export function slugIsFeaturedProduct( productSlug: string ): boolean {
 }
 
 /**
- * Gets a price in a set of price tiers.
+ * Gets a starting price in a set of price tiers.
  *
  * @param tiers A range of tiered pricing.
  * @param units Number of units to use when dealing with variable pricing.
- * @returns {number|null} The amount it costs or null.
+ * @returns {string|null} The amount it costs or null if there is no matching tier.
  */
-function getPriceForUnitsInTier( tiers: PriceTierEntry[], units: number ): number | null {
+function getPriceForUnitsInTier( tiers: PriceTierEntry[], units: number ): string | null {
 	const firstUnboundedTier = tiers.find( ( tier ) => ! tier.maximum_units );
 	let matchingTier = tiers.find( ( tier ) => {
 		if ( ! tier.maximum_units ) {
@@ -270,9 +269,9 @@ function getPriceForUnitsInTier( tiers: PriceTierEntry[], units: number ): numbe
 		return null;
 	}
 	if ( matchingTier.flat_fee ) {
-		return matchingTier.flat_fee;
+		return matchingTier.flat_fee_monthly_display;
 	}
-	return matchingTier.per_unit_fee * units;
+	return matchingTier.per_unit_fee_monthly_display;
 }
 
 /**
@@ -285,7 +284,6 @@ export function productTooltip(
 	product: SelectorProduct,
 	tiers: PriceTierEntry[]
 ): null | TranslateResult {
-	const currency = product.displayCurrency || 'USD';
 	if ( JETPACK_SEARCH_PRODUCTS.includes( product.productSlug ) ) {
 		return translate(
 			'{{p}}{{strong}}Pay only for what you need.{{/strong}}{{/p}}' +
@@ -294,12 +292,8 @@ export function productTooltip(
 				'{{Info}}More info{{/Info}}',
 			{
 				args: {
-					price100: formatCurrency( getPriceForUnitsInTier( tiers, 1 ) || 50, currency, {
-						stripZeros: true,
-					} ),
-					price1000: formatCurrency( getPriceForUnitsInTier( tiers, 101 ) || 100, currency, {
-						stripZeros: true,
-					} ),
+					price100: getPriceForUnitsInTier( tiers, 1 ),
+					price1000: getPriceForUnitsInTier( tiers, 101 ),
 				},
 				comment:
 					'price100 = formatted price per 100 records, price1000 = formatted price per 1000 records. See https://jetpack.com/upgrade/search/.',
