@@ -135,7 +135,7 @@ $sidebar-button-text-color: #a2aab2; // former $light-gray-900
 .wpcom-block-editor-nav-sidebar-nav-sidebar__list-heading,
 .wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading {
 	padding: $grid-unit-05 $grid-unit-20;
-	/* stylelint-disable-next-line scales/font-size */
+	/* stylelint-disable-next-line scales/font-size, declaration-property-unit-allowed-list */
 	font-size: 18px;
 	color: $white;
 	margin: 0 0 8px;

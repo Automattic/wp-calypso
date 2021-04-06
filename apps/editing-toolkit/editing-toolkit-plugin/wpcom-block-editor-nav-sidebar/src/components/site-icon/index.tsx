@@ -7,19 +7,17 @@ import { Icon, wordpress } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 
 export default function SiteIcon(): JSX.Element {
-	const currentSiteId: number = window._currentSiteId;
-
 	// The site icon url should be available from /wp/v2/settings or similar in the future,
 	// but for now it's accessible at the index endpoint.
 	// https://github.com/WordPress/gutenberg/blob/68c3978be352c6d3982f73bcf8c80744608c53c8/lib/init.php#L160
-	const siteIconUrl = useSelect(
-		( select ) => {
-			const { getEntityRecord } = select( 'core' );
-			const siteData = getEntityRecord( 'root', '__unstableBase', undefined ) || {};
-			return siteData.site_icon_url;
-		},
-		[ currentSiteId ]
-	);
+	const siteIconUrl: string | undefined = useSelect( ( select ) => {
+		const { getEntityRecord } = select( 'core' );
+		// getEntityRecord usually takes a key to get a specific entity, but here we pass undefined to get the "root" entity.
+		// While this works, the function isn't typed this way, so casting undefined as number to prevent compiler errors.
+		const siteData =
+			getEntityRecord( 'root', '__unstableBase', ( undefined as unknown ) as number ) || {};
+		return siteData.site_icon_url;
+	}, [] );
 
 	if ( siteIconUrl ) {
 		return (

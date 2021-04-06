@@ -25,7 +25,6 @@ const Button = ( {
 export default function ToggleSidebarButton(): JSX.Element {
 	const { toggleSidebar } = useDispatch( STORE_KEY );
 	const isSidebarOpen = useSelect( ( select ) => select( STORE_KEY ).isSidebarOpened() );
-	const isSidebarClosing = useSelect( ( select ) => select( STORE_KEY ).isSidebarClosing() );
 
 	const handleClick = () => {
 		recordTracksEvent( `calypso_editor_sidebar_open` );
@@ -41,7 +40,7 @@ export default function ToggleSidebarButton(): JSX.Element {
 				'wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button',
 				'has-icon',
 				{
-					'is-hidden': isSidebarOpen || isSidebarClosing,
+					'is-hidden': isSidebarOpen,
 				}
 			) }
 			onClick={ handleClick }
