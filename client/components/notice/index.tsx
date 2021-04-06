@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import React, { useEffect, FunctionComponent } from 'react';
+import React, { useEffect, FunctionComponent, useRef } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
@@ -11,7 +11,6 @@ import Gridicon from 'calypso/components/gridicon';
  * Internal dependencies
  */
 import { TimerHandle } from 'calypso/types';
-
 /**
  * Style dependencies
  */
@@ -94,20 +93,20 @@ const Notice: FunctionComponent< Props > = ( {
 	showDismiss = ! isCompact, // by default, show on normal notices, don't show on compact ones
 	text,
 } ) => {
-	useEffect( () => {
-		let dismissTimeout: TimerHandle | undefined = undefined;
+	const dismissTimeout = useRef< TimerHandle | null >( null );
 
-		if ( dismissTimeout ) {
-			clearTimeout( dismissTimeout );
+	useEffect( () => {
+		if ( dismissTimeout.current ) {
+			clearTimeout( dismissTimeout.current );
 		}
 
 		if ( duration > 0 ) {
-			dismissTimeout = setTimeout( onDismissClick, duration );
+			dismissTimeout.current = setTimeout( onDismissClick, duration );
 		}
 
 		return () => {
-			if ( dismissTimeout ) {
-				clearTimeout( dismissTimeout );
+			if ( dismissTimeout.current ) {
+				clearTimeout( dismissTimeout.current );
 			}
 		};
 	}, [ duration, onDismissClick ] );
