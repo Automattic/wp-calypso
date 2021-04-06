@@ -67,7 +67,6 @@ class DomainSearch extends Component {
 		basePath: PropTypes.string.isRequired,
 		context: PropTypes.object.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
-		hasPlanInCart: PropTypes.bool,
 		isSiteUpgradeable: PropTypes.bool,
 		productsList: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object,
@@ -222,7 +221,7 @@ class DomainSearch extends Component {
 	}
 
 	render() {
-		const { selectedSite, selectedSiteSlug, translate, isManagingAllDomains } = this.props;
+		const { selectedSite, selectedSiteSlug, translate, isManagingAllDomains, cart } = this.props;
 
 		if ( ! selectedSite ) {
 			return null;
@@ -232,6 +231,8 @@ class DomainSearch extends Component {
 			'domain-search-page-wrapper': this.state.domainRegistrationAvailable,
 		} );
 		const { domainRegistrationMaintenanceEndTime } = this.state;
+
+		const hasPlanInCart = hasPlan( cart );
 
 		let content;
 
@@ -283,7 +284,7 @@ class DomainSearch extends Component {
 							noticeText={ translate( 'You must verify your email to register new domains.' ) }
 							noticeStatus="is-info"
 						>
-							{ ! this.props.hasPlanInCart && <NewDomainsRedirectionNoticeUpsell /> }
+							{ ! hasPlanInCart && <NewDomainsRedirectionNoticeUpsell /> }
 							<RegisterDomainStep
 								suggestion={ this.getInitialSuggestion() }
 								domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
@@ -316,7 +317,7 @@ class DomainSearch extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
@@ -327,7 +328,6 @@ export default connect(
 			domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 			isSiteUpgradeable: isSiteUpgradeable( state, siteId ),
 			productsList: getProductsList( state ),
-			hasPlanInCart: hasPlan( ownProps.cart ),
 		};
 	},
 	{
