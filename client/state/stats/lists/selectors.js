@@ -205,14 +205,16 @@ export function getSiteStatsViewSummary( state, siteId ) {
 	} );
 
 	// With the current month, calculate the average based on the days passed so far in the month
-	const momentTime = moment();
-	const thisMonth = viewSummary[ momentTime.year() ][ momentTime.month() ];
+	if ( viewData.data.length ) {
+		const momentTime = moment();
+		const thisMonth = viewSummary[ momentTime.year() ][ momentTime.month() ];
 
-	if ( thisMonth ) {
-		const daysSinceStartOfMonth =
-			moment( new Date() ).diff( momentTime.startOf( 'month' ), 'days' ) + 1;
-		thisMonth.daysInMonth = daysSinceStartOfMonth;
-		thisMonth.average = Math.round( thisMonth.total / thisMonth.daysInMonth );
+		if ( thisMonth ) {
+			const daysSinceStartOfMonth =
+				moment( new Date() ).diff( momentTime.startOf( 'month' ), 'days' ) + 1;
+			thisMonth.daysInMonth = daysSinceStartOfMonth;
+			thisMonth.average = Math.round( thisMonth.total / thisMonth.daysInMonth );
+		}
 	}
 
 	return viewSummary;
