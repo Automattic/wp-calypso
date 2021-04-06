@@ -19,11 +19,7 @@
 	$nav-unification-primary: #23282d;
 	$nav-unification-secondary: #101517;
 	$nav-unification-masterbar-font-size: 13px;
-
-	// breakpoint used in wp-admin
-	@media only screen and ( max-width: 782px ) {
-		$nav-unification-masterbar-font-size: 14px;
-	}
+	$nav-unification-masterbar-mobile-font-size: 14px;
 
 	// packages/calypso-color-schemes/src/shared/color-schemes/_default.scss
 	--color-masterbar-background: #101517;
@@ -61,6 +57,7 @@
 	// breakpoint used in wp-admin
 	@media only screen and ( max-width: 782px ) {
 		.masterbar__item {
+			font-size: $nav-unification-masterbar-mobile-font-size;
 			padding: 0 15px;
 		}
 	}
