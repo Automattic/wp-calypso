@@ -90,7 +90,7 @@ object E2ETests : BuildType({
 
 				# Update Chrome
 				wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${'$'}{CHROME_VERSION}_amd64.deb
-				apt-get install -y ./google-chrome-stable_${'$'}{CHROME_VERSION}_amd64.deb
+				sudo apt-get install -y ./google-chrome-stable_${'$'}{CHROME_VERSION}_amd64.deb
 				rm ./google-chrome-stable_${'$'}{CHROME_VERSION}_amd64.deb
 
 				# Run tests
