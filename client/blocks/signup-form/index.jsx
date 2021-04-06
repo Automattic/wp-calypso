@@ -562,7 +562,11 @@ class SignupForm extends Component {
 					</>
 				) }
 
-				<FormLabel htmlFor="email">{ this.props.translate( 'Your email address' ) }</FormLabel>
+				<FormLabel htmlFor="email">
+					{ this.props.isReskinned
+						? this.props.translate( 'Email address' )
+						: this.props.translate( 'Your email address' ) }
+				</FormLabel>
 				<FormTextInput
 					autoCapitalize="off"
 					autoCorrect="off"
@@ -588,7 +592,9 @@ class SignupForm extends Component {
 				{ this.props.displayUsernameInput && (
 					<>
 						<FormLabel htmlFor="username">
-							{ this.props.translate( 'Choose a username' ) }
+							{ this.props.isReskinned
+								? this.props.translate( 'Username' )
+								: this.props.translate( 'Choose a username' ) }
 						</FormLabel>
 						<FormTextInput
 							autoCapitalize="off"
@@ -610,7 +616,11 @@ class SignupForm extends Component {
 					</>
 				) }
 
-				<FormLabel htmlFor="password">{ this.props.translate( 'Choose a password' ) }</FormLabel>
+				<FormLabel htmlFor="password">
+					{ this.props.isReskinned
+						? this.props.translate( 'Password' )
+						: this.props.translate( 'Choose a password' ) }
+				</FormLabel>
 				<FormPasswordInput
 					className="signup-form__input"
 					disabled={ this.state.submitting || this.props.disabled }

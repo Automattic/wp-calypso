@@ -523,11 +523,13 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 				@include break-small {
 					max-width: inherit;
 					text-align: center;
+					font-size: 3.25rem; /* stylelint-disable-line */
 				}
 			}
 
 			.formatted-header__subtitle {
 				text-align: left;
+				color: #646970;
 
 				a {
 					color: var( --studio-gray-90 );
@@ -537,6 +539,7 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 				@include break-small {
 					max-width: inherit;
 					text-align: center;
+					font-size: 1.125rem; /* stylelint-disable-line */
 				}
 			}
 		}
@@ -546,6 +549,186 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 		button.signup-form__submit.disabled {
 			background-color: var( --studio-gray-20 );
 			color: var( --color-surface );
+		}
+
+		.signup-form__social {
+			margin: 0;
+		}
+
+		.signup-form__social-buttons {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+			justify-content: center;
+		}
+	
+		.social-buttons__button {
+			text-align: left;
+			padding-left: 0;
+			padding-bottom: 0;
+			border: 0;
+			box-shadow: none;
+			
+			@media screen and ( max-width: $breakpoint-mobile ) {
+				text-align: center;
+				margin-bottom: 5px;
+			}
+
+			> svg {
+				border: 1px solid #e2e4e7;
+				padding: 12px;
+				border-radius: 24px; /* stylelint-disable-line scales/radii */
+			}
+		}
+	
+		.signup-form__social-buttons-tos {
+			text-align: left;
+			padding-left: 0;
+		}
+
+		.signup-form__terms-of-service-link {
+			text-align: left;
+			font-size: 0.875rem;
+		}
+	
+		.signup-form.is-horizontal {
+			$breakpoint-mobile: 660px;
+			$separator-style: 1px solid #eaeaeb;
+
+			display: flex;
+			flex-direction: column;
+			flex-wrap: wrap;
+			margin-top: 50px;
+			justify-content: center;
+
+			@include break-small {
+				flex-direction: row;
+			}
+	
+			.logged-out-form,
+			.signup-form__social {
+				background-color: #fdfdfd;
+				width: unset;
+				max-width: 408px;
+				padding: 0 16px;
+				box-shadow: none;
+
+				@include break-small {
+					max-width: 350px;
+				}
+				@include break-medium {
+					max-width: 408px;
+				}
+			}
+
+			.logged-out-form {
+				width: 100%;
+				margin: 0;
+			}
+
+			> .logged-out-form__links {
+				max-width: 100%;
+				margin-top: 30px;
+		
+				@media screen and ( max-width: $breakpoint-mobile ) {
+					margin-top: 0;
+		
+					&::before, &::after {
+						content: '';
+						display: block;
+						margin: 40px auto 24px;
+						border: 0;
+						padding: 0;
+						border-top: $separator-style;
+						width: 90px;
+					}
+				}
+			}
+
+			.logged-out-form__footer {
+				margin-top: 0;
+			}
+
+			.signup-form__recaptcha-tos {
+				padding: 0 16px;
+				margin: 0 auto;
+		
+				.logged-out-form__links {
+					&::before {
+						content: none;
+					}
+				}
+			}
+
+			.signup-form__input.form-text-input {
+				margin-bottom: 16px;
+			}
+
+			.signup-form__social p {
+				text-align: left;
+			}
+
+			.signup-form__social > p {
+				display: none;
+			}
+
+			.signup-form__separator {
+				position: relative;
+				display: flex;
+				width: 60px;
+				align-items: center;
+				justify-content: center;
+
+				@media screen and ( max-width: $breakpoint-mobile ) {
+					width: calc( 100% - 32px );
+					margin: 20px auto;
+				}
+
+				&::before {
+					position: absolute;
+					content: '';
+					border-left: $separator-style;
+					top: 0;
+					left: 50%;
+					height: 100%;
+
+					@media screen and ( max-width: $breakpoint-mobile ) {
+						border-left: 0;
+						border-top: $separator-style;
+						top: 50%;
+						left: 0;
+						height: 0;
+						width: 100%;
+					}
+				}
+			}
+
+			.signup-form__separator-text {
+			background: var( --studio-white );
+			text-transform: uppercase;
+			text-align: center;
+			padding: 24px 0;
+			font-size: 0.75rem;
+			z-index: 1;
+
+			@media screen and ( max-width: $breakpoint-mobile ) {
+				padding: 0 24px;
+			}
+			}
+
+			.social-buttons__service-name {
+			margin-left: 12px;
+			}
+
+			p.signup-form__social-buttons-tos {
+			font-size: 0.75rem;
+
+			@media screen and ( max-width: $breakpoint-mobile ) {
+				max-width: 408px;
+				text-align: center;
+				padding: 0 16px;
+			}
+			}
 		}
 	}
 
@@ -561,43 +744,8 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 		}
 	}
 
-	.signup-form__social {
-		margin: 0;
-	}
-
-	.social-buttons__button {
-		text-align: left;
-		padding-bottom: 0;
-	}
-
-	.signup-form__social-buttons-tos {
-		text-align: left;
-		padding-left: 0;
-	}
-
-	.signup-form__recaptcha-tos {
-		margin-top: 40px;
-	}
-
-	.signup-form.is-horizontal {
-		.logged-out-form,
-		.signup-form__social {
-			@include break-small {
-				max-width: 350px;
-			}
-			@include break-medium {
-				max-width: 408px;
-			}
-		}
-	}
-
 	button.is-primary {
 		box-shadow: none;
 		border: 0;
-	}
-
-	.logged-out-form {
-		width: 100%;
-		margin: 0;
 	}
 }
