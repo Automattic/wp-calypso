@@ -87,12 +87,12 @@ const Notice: FunctionComponent< Props > = ( {
 	onDismissClick,
 	translate,
 	children,
-	status = null,
-	icon = null,
+	status,
+	icon,
 	isCompact = false,
 	isLoading = false,
 	showDismiss = ! isCompact, // by default, show on normal notices, don't show on compact ones
-	text = null,
+	text,
 } ) => {
 	useEffect( () => {
 		let dismissTimeout: TimerHandle | undefined = undefined;
