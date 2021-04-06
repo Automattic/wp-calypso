@@ -13,6 +13,8 @@ import { shallow } from 'enzyme';
  * Internal dependencies
  */
 import { AuthFormHeader } from '../auth-form-header';
+import FormattedHeader from 'calypso/components/formatted-header';
+import wooDnaConfig from '../woo-dna-config';
 
 const CLIENT_ID = 98765;
 const SITE_SLUG = 'an.example.site';
@@ -43,5 +45,28 @@ describe( 'AuthFormHeader', () => {
 		const wrapper = shallow( <AuthFormHeader { ...DEFAULT_PROPS } /> );
 
 		expect( wrapper ).toMatchSnapshot();
+	} );
+
+	test( 'should render WC Payments specific sub header copy', () => {
+		const authQuery = {
+			...DEFAULT_PROPS.authQuery,
+			from: 'woocommerce-payments',
+			woodna_service_name: 'WooCommerce Payments',
+		};
+		const props = {
+			...DEFAULT_PROPS,
+			authQuery,
+			wooDnaConfig: wooDnaConfig( authQuery ),
+		};
+
+		// Notice we have \xa0. This is needed when we compare translated text.
+		// Please refer to https://stackoverflow.com/questions/54242039/intl-numberformat-space-character-does-not-match
+		const expectedText =
+			'Approve your connection. Your account will enable you to start using the features and benefits offered by WooCommerce\xa0Payments';
+		const wrapper = shallow( <AuthFormHeader { ...props } /> )
+			.find( FormattedHeader )
+			.render();
+
+		expect( wrapper.find( '.formatted-header__subtitle' ).text() ).toEqual( expectedText );
 	} );
 } );

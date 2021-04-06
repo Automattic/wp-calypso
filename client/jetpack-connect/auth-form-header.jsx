@@ -125,21 +125,16 @@ export class AuthFormHeader extends Component {
 		}
 
 		if ( wooDnaConfig && wooDnaConfig.isWooDnaFlow() ) {
-			if (
-				currentState === 'logged-in' &&
-				wooDnaConfig.getFlowName() === 'woodna:woocommerce-payments'
-			) {
-				return translate(
-					'Approve your connection. Your account will enable you to start using the features and benefits offered by WooCommerce Payments'
-				);
-			}
-
 			switch ( currentState ) {
 				case 'logged-in-success':
 				case 'auth-in-progress':
 					return translate( 'Connecting your store' );
-				case 'logged-in':
 				default:
+					if ( wooDnaConfig.getFlowName() === 'woodna:woocommerce-payments' ) {
+						return translate(
+							'Approve your connection. Your account will enable you to start using the features and benefits offered by WooCommerce Payments'
+						);
+					}
 					return translate( 'Approve your connection' );
 			}
 		}
