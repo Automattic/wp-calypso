@@ -52,6 +52,10 @@
 		.masterbar__item .gridicon + .masterbar__item-content {
 			padding-left: 8px;
 		}
+
+		.masterbar__reader .gridicon + .masterbar__item-content {
+			padding-left: 6px;
+		}
 	}
 
 	// breakpoint used in wp-admin
@@ -133,11 +137,20 @@
 	// breakpoint used in wp-admin
 	@media only screen and ( max-width: 782px ) {
 		.masterbar__item-me {
-			padding: 0 15px;
+			padding: 0 13px 0 15px;
 
 			.gravatar {
 				width: 22px;
 				height: 22px;
+			}
+		}
+	}
+
+	@include breakpoint-deprecated( '<480px' ) {
+		.masterbar__item-me {
+			.gravatar {
+				width: 19px;
+				height: 19px;
 			}
 		}
 	}
@@ -153,9 +166,23 @@
 	// breakpoint used in wp-admin
 	@media only screen and ( max-width: 782px ) {
 		.masterbar__item-notifications {
+			margin-right: 10px;
 			padding: 0 15px;
+			width: 26px;
+
+			.gridicon {
+				flex-shrink: 0;
+			}
 		}
 	}
+
+	@include breakpoint-deprecated( '<480px' ) {
+		.masterbar__item-notifications {
+			margin-left: auto;
+			margin-right: auto;
+		}
+	}
+	
 
 	// client/layout/masterbar/style.scss
 	.masterbar__item-notifications .masterbar__notifications-bubble {
@@ -186,8 +213,17 @@
 		// client/layout/masterbar/style.scss
 		.masterbar__item-new,
 		.masterbar__toggle-drafts.button.is-borderless {
-			height: 36px;
-			margin-top: 5px;
+			height: 34px;
+			margin-top: 6px;
+		}
+
+		// breakpoint used in wp-admin
+		@media screen and ( max-width: 782px ) {
+			.masterbar__item-new,
+			.masterbar__toggle-drafts.button.is-borderless {
+				margin-right: 9px;
+				padding: 0 16px 0 14px;
+			}
 		}
 
 		// client/layout/masterbar/style.scss
