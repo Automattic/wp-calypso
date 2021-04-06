@@ -1,9 +1,13 @@
 @import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/mixins';
+@import '../nav-sidebar/style.scss';
 
 .wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button {
 	height: $header-height !important;
 
 	&.is-hidden {
 		visibility: hidden;
+		animation: visibility $sidebar-transition-period linear;
+		@include reduce-motion( 'animation' );
 	}
 }
