@@ -23,17 +23,15 @@ import type {
 	ManagedContactDetailsRequiredMask,
 	WpcomStoreState,
 	SignupValidationResponse,
+	DomainContactValidationRequest,
+	GSuiteContactValidationRequest,
+	DomainContactValidationRequestExtraFields,
+	DomainContactValidationResponse,
 } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
-import {
-	DomainContactValidationRequest,
-	GSuiteContactValidationRequest,
-	DomainContactValidationRequestExtraFields,
-	DomainContactValidationResponse,
-} from './backend/domain-contact-validation-endpoint';
 import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
 
 /*
