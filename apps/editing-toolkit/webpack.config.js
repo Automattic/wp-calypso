@@ -71,7 +71,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 			filename: '[name].js', // dynamic filename
 			// Don't output a global variable to access plugin js, as this isn't a library
 			// Also the calypso-build default value of `window` can cause errors in JS loaded by Core
-			// See https://github.com/Automattic/wp-calypso/pull/51699
+			// See https://github.com/Automattic/wp-calypso/pull/51700
 			library: undefined,
 		},
 		optimization: {
