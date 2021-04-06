@@ -303,7 +303,6 @@ export {
 	areAllMailboxesAvailable,
 	areAllMailboxesValid,
 	buildNewTitanMailbox,
-	checkEmailAvailability,
 	getMailboxPropTypeShape,
 	sanitizeEmailSuggestion,
 	transformMailboxForCart,
