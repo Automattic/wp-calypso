@@ -6,7 +6,7 @@
 	height: $header-height !important;
 
 	// Match this animation with the nav-sidebar, so that the button is not hidden
-	// before the sidebar menu finished sliding out.
+	// before the sidebar menu finishes sliding out.
 	&.is-hidden {
 		visibility: hidden;
 		animation: visibility $sidebar-transition-period linear;
