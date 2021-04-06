@@ -387,6 +387,14 @@ $font-size: rem( 14px );
 
 		.site__content {
 			padding: 10px 2px;
+
+			.count {
+				margin: 0;
+			}
+
+			.site__title::after {
+				display: none;
+			}
 		}
 
 		.site__home {
