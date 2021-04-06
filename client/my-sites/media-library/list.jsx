@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRtl } from 'i18n-calypso';
-import { clone, filter, findIndex, min } from 'lodash';
+import { clone, filter, findIndex } from 'lodash';
 import ReactDom from 'react-dom';
 import React from 'react';
 
@@ -152,7 +152,7 @@ export class MediaLibraryList extends React.Component {
 	};
 
 	getItemGroup = ( item ) =>
-		min( [ item.date.slice( 0, 10 ), this.props.moment( new Date() ).format( 'YYYY-MM-DD' ) ] );
+		Math.min( item.date.slice( 0, 10 ), this.props.moment( new Date() ).format( 'YYYY-MM-DD' ) );
 
 	renderItem = ( item ) => {
 		const index = findIndex( this.props.media, { ID: item.ID } );
