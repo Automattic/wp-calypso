@@ -427,9 +427,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 					await gSidebarComponent.chooseDocumentSettings();
 					await gSidebarComponent.expandStatusAndVisibility();
 					await gSidebarComponent.setVisibilityToPrivate();
-					await gSidebarComponent.hideComponentIfNecessary();
-					const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-					return await gEditorComponent.waitForSuccessViewPostNotice();
+					return await gSidebarComponent.hideComponentIfNecessary();
 				}
 			);
 
