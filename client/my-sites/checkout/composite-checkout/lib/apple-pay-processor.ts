@@ -8,6 +8,7 @@ import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
 import type {
 	TransactionRequest,
 	WPCOMTransactionEndpointResponse,
+	ManagedContactDetails,
 } from '@automattic/wpcom-checkout';
 
 /**

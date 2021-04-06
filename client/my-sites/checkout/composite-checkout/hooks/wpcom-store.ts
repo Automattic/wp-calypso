@@ -4,16 +4,18 @@
 import { useRef } from 'react';
 import type { StoreConfig } from '@wordpress/data';
 import type { DomainContactDetails } from '@automattic/shopping-cart';
-import type { PossiblyCompleteDomainContactDetails } from '@automattic/wpcom-checkout';
+import type {
+	PossiblyCompleteDomainContactDetails,
+	WpcomStoreState,
+	ManagedContactDetails,
+	ManagedContactDetailsErrors,
+} from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
 import {
-	WpcomStoreState,
 	getInitialWpcomStoreState,
-	ManagedContactDetails,
-	ManagedContactDetailsErrors,
 	managedContactDetailsUpdaters as updaters,
 } from '../types/wpcom-store-state';
 

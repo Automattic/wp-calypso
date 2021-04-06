@@ -7,6 +7,7 @@ import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type {
 	WPCOMTransactionEndpointResponse,
 	CheckoutPaymentMethodSlug,
+	ManagedContactDetails,
 } from '@automattic/wpcom-checkout';
 
 /**
