@@ -49,20 +49,10 @@ function createScrollbleed() {
 			scrollbleedNode = node;
 		},
 		lock() {
-			if ( window.addEventListener ) {
-				// older FF
-				window.addEventListener( 'DOMMouseScroll', handleScroll, false );
-			}
-			window.onwheel = handleScroll;
-			window.onmousewheel = document.onmousewheel = handleScroll;
+			window.addEventListener( 'wheel', handleScroll, { passive: false } );
 		},
 		unlock() {
-			if ( window.removeEventListener ) {
-				// older FF
-				window.removeEventListener( 'DOMMouseScroll', handleScroll, false );
-			}
-			window.onwheel = null;
-			window.onmousewheel = document.onmousewheel = null;
+			window.removeEventListener( 'wheel', handleScroll );
 		},
 	};
 }
