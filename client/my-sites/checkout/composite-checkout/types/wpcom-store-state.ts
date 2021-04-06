@@ -22,6 +22,7 @@ import type {
 	ManagedContactDetailsUpdaters,
 	ManagedContactDetailsRequiredMask,
 	WpcomStoreState,
+	SignupValidationResponse,
 } from '@automattic/wpcom-checkout';
 
 /**
@@ -34,7 +35,6 @@ import {
 	DomainContactValidationResponse,
 } from './backend/domain-contact-validation-endpoint';
 import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
-import { SignupValidationResponse } from './backend/signup-validation-endpoint';
 
 /*
  * Asymmetrically combine two ManagedContactDetailsShape<T> objects 'update' and 'data'
