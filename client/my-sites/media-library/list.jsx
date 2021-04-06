@@ -151,8 +151,13 @@ export class MediaLibraryList extends React.Component {
 		return this.props.moment( date ).format( 'LL' );
 	};
 
-	getItemGroup = ( item ) =>
-		Math.min( item.date.slice( 0, 10 ), this.props.moment( new Date() ).format( 'YYYY-MM-DD' ) );
+	getItemGroup = ( item ) => {
+		const minDate = Math.min(
+			new Date( item.date.slice( 0, 10 ) ).getTime(),
+			new Date().getTime()
+		);
+		return this.props.moment( minDate ).format( 'YYYY-MM-DD' );
+	};
 
 	renderItem = ( item ) => {
 		const index = findIndex( this.props.media, { ID: item.ID } );
