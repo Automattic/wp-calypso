@@ -10,6 +10,7 @@ import Gridicon from 'calypso/components/gridicon';
  * Internal dependencies
  */
 import { TimerHandle } from 'calypso/types';
+
 /**
  * Style dependencies
  */
