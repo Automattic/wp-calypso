@@ -20,6 +20,11 @@
 	$nav-unification-secondary: #101517;
 	$nav-unification-masterbar-font-size: 13px;
 
+	// breakpoint used in wp-admin
+	@media only screen and ( max-width: 782px ) {
+		$nav-unification-masterbar-font-size: 14px;
+	}
+
 	// packages/calypso-color-schemes/src/shared/color-schemes/_default.scss
 	--color-masterbar-background: #101517;
 	--color-masterbar-border: #333;
@@ -43,6 +48,20 @@
 	}
 
 	// client/layout/masterbar/style.scss
+	@media only screen and ( max-width: 782px ) {
+		.masterbar__item .gridicon + .masterbar__item-content {
+			padding-left: 8px;
+		}
+	}
+
+	// breakpoint used in wp-admin
+	@media only screen and ( max-width: 782px ) {
+		.masterbar__item {
+			padding: 0 15px;
+		}
+	}
+
+	// client/layout/masterbar/style.scss
 	.masterbar__item-bubble {
 		top: calc( 50% - 14px );
 		left: -7px;
@@ -52,13 +71,15 @@
 	.masterbar__item-new,
 	.masterbar__toggle-drafts.button.is-borderless {
 		height: 24px;
-		margin: 4px 8px;
+		margin: 4px 6px 4px 8px;
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 5px;
 	}
 
 	.masterbar__item-new {
 		padding: 0 10px;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		font-size: 13px; /* visual parity with front-end top bar */
 
 		&:hover {
 			background: #e9e9ea;
@@ -78,6 +99,13 @@
 		}
 	}
 
+	// breakpoint used in wp-admin
+	@media only screen and ( max-width: 782px ) {
+		.masterbar__item-new {
+			padding: 0 15px;
+		}
+	}
+
 	.masterbar__toggle-drafts.button.is-borderless {
 		margin-left: -20px;
 
@@ -93,13 +121,24 @@
 
 	// client/layout/masterbar/style.scss
 	.masterbar__item-me {
-		padding-right: 8px;
+		padding-right: 10px;
 		padding-left: 8px;
 
 		.gravatar {
 			top: 50%;
 			left: 50%;
 			transform: translate( -50%, -50% );
+		}
+	}
+	// breakpoint used in wp-admin
+	@media only screen and ( max-width: 782px ) {
+		.masterbar__item-me {
+			padding: 0 15px;
+
+			.gravatar {
+				width: 22px;
+				height: 22px;
+			}
 		}
 	}
 
@@ -109,6 +148,12 @@
 
 		.gridicon {
 			margin-top: 1px;
+		}
+	}
+	// breakpoint used in wp-admin
+	@media only screen and ( max-width: 782px ) {
+		.masterbar__item-notifications {
+			padding: 0 15px;
 		}
 	}
 
