@@ -16,8 +16,8 @@ This is the React Interface for the standalone client for Automattic's ExPlat. T
 	defaultExperience={ <DefaultComponent /> }
 	treatmentExperience={ <TreatmentComponent /> }
 	loadingExperience={ <LoadingComponent /> }
-	// Optional: See useExperimentOptions
-	options={useExperimentOptions}
+	// Optional: See ExperimentOptions
+	options={experimentOptions}
 />;
 ```
 
@@ -48,9 +48,9 @@ if ( isLoadingExperimentAssignment ) {
 - Won't obey TTL - will retain the same experience for the life of the component.
 - Tip: Can use `loadExperiment('experiment_name')` to prefetch an experiment.
 
-### UseExperimentOptions
+### ExperimentOptions
 
-`useExperiment` as a second argument takes an optional options object:
+`useExperiment`, `<Experiment>` and `<ProvideExperimentData>` also takes an options object:
 
 > `options.isEligible: Boolean = true`
 
@@ -75,8 +75,8 @@ const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment( '
 ```
 <ProvideExperimentData
     name="experiment_name"
-	// Optional: See useExperimentOptions
-	options={useExperimentOptions}
+	// Optional: See ExperimentOptions
+	options={experimentOptions}
     >
     {(isLoading, experimentAssignment) => /* Your code here */}
 </ProvideExperimentData>
