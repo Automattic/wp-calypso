@@ -112,8 +112,6 @@ const Notice: FunctionComponent< Props > = ( {
 		};
 	}, [ duration, onDismissClick ] );
 
-	// showDismiss = ! isCompact, // by default, show on normal notices, don't show on compact ones
-
 	const classes = classnames( 'notice', status, className, {
 		'is-compact': isCompact,
 		'is-loading': isLoading,
