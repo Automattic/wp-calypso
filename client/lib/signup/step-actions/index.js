@@ -229,7 +229,7 @@ function getNewSiteParams( {
 	}
 
 	if ( selectedDesign ) {
-		// If there's a selected design, it means we're in "with_design_picker" flow.
+		// If there's a selected design, it means that the current flow contains the "design" step.
 		newSiteParams.options.theme = `pub/${ selectedDesign.theme }`;
 		newSiteParams.options.template = selectedDesign.template;
 		newSiteParams.options.font_base = selectedDesign.fonts.base;
