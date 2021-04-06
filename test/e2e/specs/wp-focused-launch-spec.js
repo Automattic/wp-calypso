@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import config from 'config';
-import { By } from 'selenium-webdriver';
+import { By, until } from 'selenium-webdriver';
 import assert from 'assert';
 
 /**
@@ -20,10 +19,10 @@ import NavBarComponent from '../lib/components/nav-bar-component.js';
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 import { step } from 'mocha-steps';
 
-const tempSkipSiteCreation = true; // Not working it seems
-const tempSiteName = tempSkipSiteCreation ? 'e2eflowtesting1617114046090258' : undefined;
-const tempSkipLaunch = true;
-const tempSkipDeleteSite = true;
+// const tempSkipSiteCreation = false;
+// const tempSiteName = tempSkipSiteCreation ? 'e2elaunchtestflow1209347' : undefined;
+// const tempSkipLaunch = false;
+// const tempSkipDeleteSite = true;
 
 describe( `Focused launch flow`, function () {
 	let driver;
@@ -34,7 +33,8 @@ describe( `Focused launch flow`, function () {
 	} );
 
 	describe( 'Launch a free site', function () {
-		const siteName = tempSiteName || dataHelper.getNewBlogName();
+		// const siteName = tempSiteName || dataHelper.getNewBlogName();
+		const siteName = dataHelper.getNewBlogName();
 
 		before( 'Can log in', async function () {
 			const loginFlow = new LoginFlow( driver );
@@ -42,40 +42,39 @@ describe( `Focused launch flow`, function () {
 		} );
 
 		step( 'Can create a free site', async function () {
-			if ( tempSkipSiteCreation ) {
-				return true;
-			}
-			return await new CreateSiteFlow( driver, siteName ).createFreeSite();
+			// if ( tempSkipSiteCreation ) {
+			// 	return true;
+			// }
+
+			await new CreateSiteFlow( driver, siteName ).createFreeSite();
 		} );
 
 		step( 'Can open block editor', async function () {
-			if ( tempSkipSiteCreation ) {
-				await driver
-					.navigate()
-					.to( `https://wordpress.com/post/${ tempSiteName }.wordpress.com/home` );
+			// if ( tempSkipSiteCreation ) {
+			// 	await driver
+			// 		.navigate()
+			// 		.to( `https://wordpress.com/post/${ tempSiteName }.wordpress.com/home` );
 
-				// Local Calypso (Will not work due to cross-site issues)
-				// .to( `http://calypso.localhost:3000/post/${ tempSiteName }.wordpress.com/home` );
+			// 	// Local Calypso
+			// 	// .to( `http://calypso.localhost:3000/post/${ tempSiteName }.wordpress.com/home` );
 
-				// WP-Admin
-				// `https://${ tempSiteName }.wordpress.com/wp-admin/post.php?post=5&action=edit`
-			} else {
-				await MyHomePage.Expect( driver );
+			// 	// WP-Admin
+			// 	// `https://${ tempSiteName }.wordpress.com/wp-admin/post.php?post=5&action=edit`
+			// } else {
+			await MyHomePage.Expect( driver );
 
-				await NavBarComponent.Expect( driver );
+			await NavBarComponent.Expect( driver );
 
-				const navbarComponent = await NavBarComponent.Expect( driver );
-				await navbarComponent.clickCreateNewPost();
-			}
-
-			// Do not call initEditor() as it seems to do things we don't want it to.
-			// if ( ! tempSkipSiteCreation ) {
-			// const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			// await gEditorComponent.initEditor();
+			const navbarComponent = await NavBarComponent.Expect( driver );
+			await navbarComponent.clickCreateNewPost();
 			// }
 
-			// This will switch the driver to the iframe
-			return await GutenbergEditorComponent.Expect( driver );
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+
+			// if ( ! tempSkipSiteCreation ) {
+			// Those popups only happen on new site i think.
+			await gEditorComponent.initEditor();
+			// }
 		} );
 
 		step( 'Can open focused launch modal', async function () {
@@ -88,7 +87,7 @@ describe( `Focused launch flow`, function () {
 				focusedLaunchModalSelector
 			);
 
-			return assert( isFocusedLaunchModalPresent, 'Focused launch modal did not open.' );
+			assert( isFocusedLaunchModalPresent, 'Focused launch modal did not open.' );
 		} );
 
 		step( 'Can see updated list of domains when changing site title', async function () {
@@ -114,6 +113,10 @@ describe( `Focused launch flow`, function () {
 				pauseBetweenKeysMS: 10,
 			} );
 
+			// Wait for domain suggestions to reload.
+			// Prevent the driver from picking up the previously displayed suggestion.
+			await driver.sleep( 2000 );
+
 			// Wait for the new suggestion items to be rendered,
 			// and get the first domain suggestion item.
 			const firstDomainSuggestionItemSelector = By.css(
@@ -121,30 +124,33 @@ describe( `Focused launch flow`, function () {
 			);
 			await driverHelper.waitTillPresentAndDisplayed( driver, firstDomainSuggestionItemSelector );
 
-			// Get the text from the first domain suggestion item,
-			// and see if it contains the site title entered by user.
-			const firstDomainSuggestionItem = await driver.findElement(
-				firstDomainSuggestionItemSelector
+			// Remove the spaces and make everything lowercase to match with the suggested domains, e.g.
+			// "Proud Elephants Wriggle Honestly" becomes "proudelephantswrigglehonestly"
+			const normalizedSiteTitle = siteTitle.toLowerCase().replace( / /g, '' );
+
+			// Check if there are domain suggestions that contains user entered site title
+			const domainSuggestionsContainUserEnteredSiteTitleSelector = By.xpath(
+				`//span[@class="domain-picker__domain-sub-domain" and .="${ normalizedSiteTitle }"]`
 			);
 
-			const firstDomainSuggestionItemText = await firstDomainSuggestionItem.getText();
+			const domainSuggestionsContainUserEnteredSiteTitle = await driverHelper.isElementPresent(
+				driver,
+				domainSuggestionsContainUserEnteredSiteTitleSelector
+			);
 
-			// Remove the spaces and make everything lowercase to match with the suggested domain.
-			const normalizedSiteTitle = siteTitle.toLowerCase().replace( / /g, '' );
-			const domainIncludesUserEnteredSiteTitle =
-				firstDomainSuggestionItemText.indexOf( normalizedSiteTitle ) > -1;
-
-			return assert(
-				domainIncludesUserEnteredSiteTitle,
+			assert(
+				domainSuggestionsContainUserEnteredSiteTitle,
 				'Domain suggestions did not include user entered site title.'
 			);
 		} );
 
 		step( 'Can select free domain suggestion item', async function () {
+			// Click on the free domain suggestion item
 			const freeDomainButtonSelector = By.css( '.domain-picker__suggestion-item.is-free' );
 
 			await driverHelper.clickWhenClickable( driver, freeDomainButtonSelector );
 
+			// Check if the free domain suggestion item is now selected
 			const selectedFreeDomainSuggestionItemSelector = By.css(
 				'.domain-picker__suggestion-item.is-free.is-selected'
 			);
@@ -154,33 +160,32 @@ describe( `Focused launch flow`, function () {
 				selectedFreeDomainSuggestionItemSelector
 			);
 
+			// Get the domain name from the free domain suggestion item
+			// This is to check for persistence in the later step
 			const selectedFreeDomainSuggestionItemNameSelector = By.css(
 				'.domain-picker__suggestion-item.is-free.is-selected .domain-picker__suggestion-item-name'
 			);
 
-			// Remember this to check for persistence in the later step
 			const selectedFreeDomainSuggestionItemName = await driver.findElement(
 				selectedFreeDomainSuggestionItemNameSelector
 			);
 			selectedSubdomain = await selectedFreeDomainSuggestionItemName.getText();
 
-			return assert(
+			assert(
 				isSelectedFreeDomainSuggestionItemPresent,
 				'Free domain suggestion item was not selected.'
 			);
 		} );
 
-		step( 'Can open detailed plans view', async function () {
-			// const viewAllDomainsButton = By.css('.focused-launch-summary__view-all-domains-btn');
-			// .focused-launch-summary__view-all-plans-btn
-			const viewAllPlansButtonSelector = By.css(
-				'.focused-launch-summary__step:last-child .focused-launch-summary__details-link'
+		step( 'Can open detailed plans grid', async function () {
+			// Click on "View All Plans" button
+			const viewAllPlansButtonSelector = By.xpath(
+				'//a[contains(@class, "focused-launch-summary__details-link") and .="View all plans"]'
 			);
 
 			await driverHelper.clickWhenClickable( driver, viewAllPlansButtonSelector );
 
-			debugger;
-
+			// Check if detailed plans grid is displayed
 			const plansGridInDetailedViewSelector = By.css( '.focused-launch-details__body .plans-grid' );
 
 			const isPlansGridInDetailedViewPresent = await driverHelper.isElementPresent(
@@ -188,77 +193,94 @@ describe( `Focused launch flow`, function () {
 				plansGridInDetailedViewSelector
 			);
 
-			return assert(
+			assert(
 				isPlansGridInDetailedViewPresent,
 				'Focused launch plans grid detailed view did not open.'
 			);
 		} );
 
-		step( 'Can select Personal monthly plan', async function () {
-			// Click monthly toggle
-			const monthlyButtonSelector = By.css( '.plans-interval-toggle__monthly-btn' );
+		step( 'Can switch to monthly plans view', async function () {
+			// Click "Monthly" toggle button
+			const monthlyButtonSelector = By.xpath(
+				'//span[@class="plans-interval-toggle__label" and .="Monthly"]'
+			);
+
 			await driverHelper.clickWhenClickable( driver, monthlyButtonSelector );
 
-			// Click personal plan
-			const personalMonthlyPlanButtonSelector = By.css(
-				'.plan-item__select-button.is-personal-monthly-plan'
+			// Check if plans grid is really switched over to monthly view
+			// by checking if the price note "per month, billed monthly" exists.
+			const perMonthBilledMonthlyPriceNoteSelector = By.xpath(
+				'//div[@class="plan-item__price-note" and .="per month, billed monthly"]'
 			);
-			await driverHelper.clickWhenClickable( driver, personalMonthlyPlanButtonSelector );
 
-			// Check that the monthly plan item is selected in the summary view
-			const selectedPersonalMonthlyPlanItemSelector = By.css(
-				'.focused-launch-summary__item.is-selected.is-personal-monthly-plan'
-			);
-			const isSelectedPersonalMonthlyPlanItemPresent = await driverHelper.isElementPresent(
+			const isPerMonthBilledMonthlyPricePresent = await driverHelper.isElementPresent(
 				driver,
-				selectedPersonalMonthlyPlanItemSelector
+				perMonthBilledMonthlyPriceNoteSelector
 			);
 
-			return assert(
-				isSelectedPersonalMonthlyPlanItemPresent,
-				'The personal monthly plan was not selected.'
+			assert(
+				isPerMonthBilledMonthlyPricePresent,
+				'Focused launch plans grid was unable to switch over to monthly view.'
 			);
 		} );
 
-		step( 'Can open detailed domains view', async function () {
-			const domainPickerInDetailedViewSelector = By.css(
-				'.focused-launch-details__body .domain-picker'
+		step( 'Can select Personal monthly plan', async function () {
+			// Click "Select Personal" button
+			const selectPersonalPlanButtonSelector = By.xpath(
+				'//button[contains(@class, "plan-item__select-button") and .="Select Personal"]'
 			);
 
-			const isDomainPickerInDetailedViewPresent = await driverHelper.isElementPresent(
+			await driverHelper.clickWhenClickable( driver, selectPersonalPlanButtonSelector );
+
+			// When the detailed plans grid is closed and user returns to the summary view,
+			// check if the selected monthly plan item is "Personal Plan".
+			const selectedPlanIsPersonalMonthlyPlanSelector = By.xpath(
+				'//button[contains(@class, "focused-launch-summary__item") and contains(@class,"is-selected")]//span[@class="focused-launch-summary-item__leading-side-label" and .="Personal Plan"]'
+			);
+
+			const selectedPlanIsPersonalMonthlyPlan = await driverHelper.isElementPresent(
 				driver,
-				domainPickerInDetailedViewSelector
+				selectedPlanIsPersonalMonthlyPlanSelector
 			);
 
-			return assert(
-				isDomainPickerInDetailedViewPresent,
-				'Focused launch domain picker detailed view did not open.'
-			);
+			assert( selectedPlanIsPersonalMonthlyPlan, 'The personal monthly plan was not selected.' );
 		} );
-
-		// TODO: Suggestion: We probably need a test for testing if back button is working.
-		// step( 'Can go back to focused summary view from detailed plans view', async function () {
-		// 	const backButtonSelector = By.css( '.go-back-button__focused-launch' );
-		// } );
 
 		step( 'Can reload block editor and reopen focused launch', async function () {
-			/// TODO: What's the best approach?
 			// Reload block editor
-			// await driver.navigate().refresh();
-			// Probably repeat the process of going to customer site home and going to the editor again
-			const blockEditorUrl = await driver.getCurrentUrl();
-			await driver.navigate().to( blockEditorUrl );
+			await driver.navigate().refresh();
 
+			// Press "Reload" on confirmation dialog when block editor asks if user really wants to navigate away.
+			try {
+				await driver.wait( until.alertIsPresent(), 4000 );
+				const alert = await driver.switchTo().alert();
+				await alert.accept();
+			} catch ( e ) {
+				// This doesn't happen when autosave hasn't kicked in so
+				// if driver.wait throws and error we catch it here to allow
+				// the step to continue running.
+			}
+
+			// Wait for block editor to load and switch frame context to block editor
+			await GutenbergEditorComponent.Expect( driver );
+
+			// TODO: Double check if this is still needed on 2nd refresh
+			// if ( ! tempSkipSiteCreation ) {
+			// await gEditorComponent.initEditor();
+			// }
+
+			// Click on the launch button
 			const launchButtonSelector = By.css( '.editor-gutenberg-launch__launch-button' );
 			await driverHelper.clickWhenClickable( driver, launchButtonSelector );
 
+			// See if focused launch modal can be reopened
 			const focusedLaunchModalSelector = By.css( '.launch__focused-modal' );
 			const isFocusedLaunchModalPresent = await driverHelper.isElementPresent(
 				driver,
 				focusedLaunchModalSelector
 			);
 
-			return assert( isFocusedLaunchModalPresent, 'Focused launch modal did not open.' );
+			assert( isFocusedLaunchModalPresent, 'Focused launch modal did not open.' );
 		} );
 
 		step( 'Can persist previously selected domain in focused launch', async function () {
@@ -272,9 +294,6 @@ describe( `Focused launch flow`, function () {
 
 			const selectedSubdomainAfterRefresh = await selectedDomainSuggestionItemName.getText();
 
-			// TODO: Fix this
-			return true;
-
 			assert.strictEqual(
 				selectedSubdomainAfterRefresh,
 				selectedSubdomain,
@@ -283,51 +302,76 @@ describe( `Focused launch flow`, function () {
 		} );
 
 		step( 'Can persist previously selected plan in focused launch', async function () {
-			// Check that the monthly plan item is selected in the summary view
-			const selectedPersonalMonthlyPlanItemSelector = By.css(
-				'.focused-launch-summary__item.is-selected.is-personal-monthly-plan'
-			);
-			const isSelectedPersonalMonthlyPlanItemPresent = await driverHelper.isElementPresent(
-				driver,
-				selectedPersonalMonthlyPlanItemSelector
+			// Check if the selected monthly plan item is "Personal Plan".
+			const selectedPlanIsPersonalMonthlyPlanSelector = By.xpath(
+				'//button[contains(@class, "focused-launch-summary__item") and contains(@class, "is-selected")]//span[@class="focused-launch-summary-item__leading-side-label" and .="Personal Plan"]'
 			);
 
-			return assert(
-				isSelectedPersonalMonthlyPlanItemPresent,
+			const selectedPlanIsPersonalMonthlyPlan = await driverHelper.isElementPresent(
+				driver,
+				selectedPlanIsPersonalMonthlyPlanSelector
+			);
+
+			assert(
+				selectedPlanIsPersonalMonthlyPlan,
 				'Selected plan should be persisted after reloading block editor and reopening focused launch'
 			);
 		} );
 
-		// User picks the free subdomain and the free plan, and clicks the "Launch" button
-		// The site is launched and the Focused Launch's Success View is displayed
+		step( 'Can select Free plan', async function () {
+			// Click "Free Plan" button
+			const freePlanSelector = By.xpath(
+				'//span[@class="focused-launch-summary-item__leading-side-label" and .="Free Plan"]'
+			);
+
+			await driverHelper.clickWhenClickable( driver, freePlanSelector );
+
+			// When the detailed plans grid is closed and user returns to the summary view,
+			// check if the selected monthly plan item is "Personal Plan".
+			const selectedPlanIsFreePlanSelector = By.xpath(
+				'//button[contains(@class, "focused-launch-summary__item") and contains(@class, "is-selected")]//span[@class="focused-launch-summary-item__leading-side-label" and .="Free Plan"]'
+			);
+
+			const selectedPlanIsFreePlan = await driverHelper.isElementPresent(
+				driver,
+				selectedPlanIsFreePlanSelector
+			);
+
+			assert( selectedPlanIsFreePlan, 'The free plan was not selected.' );
+		} );
+
 		step( 'Can launch site with Free plan.', async function () {
-			if ( tempSkipLaunch ) {
-				return true;
-			}
-
+			// Click on the launch button
 			const siteLaunchButtonSelector = By.css( '.focused-launch-summary__launch-button' );
-
 			await driverHelper.clickWhenClickable( driver, siteLaunchButtonSelector );
 
-			const focusedLaunchSuccessViewSelector = By.css( '. focused-launch-success__wrapper' );
+			// Switch to Calypso parent window
+			await driver.switchTo().defaultContent();
+
+			// Click on the complete checkout button
+			const completeCheckoutButtonSelector = By.css( '.checkout-submit-button .checkout-button' );
+			await driverHelper.clickWhenClickable( driver, completeCheckoutButtonSelector );
+
+			// Switch back to the iframed block editor.
+			await GutenbergEditorComponent.Expect( driver );
+
+			// Wait for the focused launch success view to show up
+			const focusedLaunchSuccessViewSelector = By.css( '.focused-launch-success__wrapper' );
 
 			const isFocusedLaunchSuccessViewPresent = await driverHelper.isElementPresent(
 				driver,
 				focusedLaunchSuccessViewSelector
 			);
 
-			return assert(
-				isFocusedLaunchSuccessViewPresent,
-				'Focused launch success view did not open.'
-			);
+			assert( isFocusedLaunchSuccessViewPresent, 'Focused launch success view did not open.' );
 		} );
 
 		after( 'Delete the newly created site', async function () {
-			if ( tempSkipDeleteSite ) {
-				return true;
-			}
+			// if ( tempSkipDeleteSite ) {
+			// 	return true;
+			// }
 			const deleteSite = new DeleteSiteFlow( driver );
-			return await deleteSite.deleteSite( siteName + '.wordpress.com' );
+			await deleteSite.deleteSite( siteName + '.wordpress.com' );
 		} );
 	} );
 } );

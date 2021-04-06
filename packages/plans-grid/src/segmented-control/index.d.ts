@@ -10,7 +10,6 @@ interface SegmentedControlProps {
 }
 
 interface SegmentedControlItemProps {
-	className?: string;
 	children: React.ReactNode;
 	selected: boolean;
 	onClick: () => void;

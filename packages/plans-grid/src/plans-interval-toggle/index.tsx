@@ -82,7 +82,6 @@ const PlansIntervalToggle: React.FunctionComponent< PlansIntervalToggleProps > =
 		>
 			<SegmentedControl>
 				<SegmentedControl.Item
-					className="plans-interval-toggle__monthly-btn"
 					selected={ intervalType === 'MONTHLY' }
 					onClick={ () => onChange( 'MONTHLY' ) }
 				>
@@ -90,7 +89,6 @@ const PlansIntervalToggle: React.FunctionComponent< PlansIntervalToggleProps > =
 				</SegmentedControl.Item>
 
 				<SegmentedControl.Item
-					className="plans-interval-toggle__annual-btn"
 					selected={ intervalType === 'ANNUALLY' }
 					onClick={ () => onChange( 'ANNUALLY' ) }
 				>

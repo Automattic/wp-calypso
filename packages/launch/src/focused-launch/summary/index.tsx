@@ -218,10 +218,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							locale={ locale }
 							orderSubDomainsLast={ true }
 						/>
-						<Link
-							to={ Route.DomainDetails }
-							className="focused-launch-summary__details-link focused-launch-summary__view-all-domains-btn"
-						>
+						<Link to={ Route.DomainDetails } className="focused-launch-summary__details-link">
 							{ __( 'View all domains', __i18n_text_domain__ ) }
 						</Link>
 					</>
@@ -476,10 +473,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 								);
 							} ) }
 						</div>
-						<Link
-							to={ Route.PlanDetails }
-							className="focused-launch-summary__details-link focused-launch-summary_view-all-plans-btn"
-						>
+						<Link to={ Route.PlanDetails } className="focused-launch-summary__details-link">
 							{ __( 'View all plans', __i18n_text_domain__ ) }
 						</Link>
 					</>

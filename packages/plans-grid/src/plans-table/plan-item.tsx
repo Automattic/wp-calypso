@@ -204,42 +204,30 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 						<div className="plan-item__actions">
 							{ CTAVariation === 'NORMAL' ? (
 								<Button
-									className={ classNames(
-										'plan-item__select-button',
-										// TODO: Clean this up
-										planProduct
-											? `is-${ planProduct.periodAgnosticSlug }--${
-													planProduct.billingPeriod === 'ANNUALLY' ? 'annual' : 'monthly'
-											  }-plan`
-											: ''
-									) }
+									className="plan-item__select-button"
 									onClick={ () => {
 										onSelect( planProduct?.productId );
 									} }
 									isPrimary
 									disabled={ !! disabledLabel }
+									data-e2e-plan-slug={ planProduct?.periodAgnosticSlug }
+									data-e2e-billing-period={ planProduct?.billingPeriod }
 								>
 									<span>{ disabledLabel ?? normalCtaLabelFallback }</span>
 								</Button>
 							) : (
 								<Button
-									className={ classNames(
-										'plan-item__select-button full-width',
-										{
-											'is-selected': isSelected,
-											'is-popular': isPopular,
-										}, // TODO: Clean this up
-										planProduct
-											? `is-${ planProduct.periodAgnosticSlug }--${
-													planProduct.billingPeriod === 'ANNUALLY' ? 'annual' : 'monthly'
-											  }-plan`
-											: ''
-									) }
+									className={ classNames( 'plan-item__select-button full-width', {
+										'is-selected': isSelected,
+										'is-popular': isPopular,
+									} ) }
 									onClick={ () => {
 										onSelect( planProduct?.productId );
 									} }
 									isPrimary={ isPopular }
 									disabled={ !! disabledLabel }
+									data-e2e-plan-slug={ planProduct?.periodAgnosticSlug }
+									data-e2e-billing-period={ planProduct?.billingPeriod }
 								>
 									<span>
 										{ disabledLabel ?? (
