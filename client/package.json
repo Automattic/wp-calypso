@@ -74,6 +74,7 @@
 		"@wordpress/editor": "^9.25.10",
 		"@wordpress/element": "^2.19.1",
 		"@wordpress/format-library": "^1.26.10",
+		"@wordpress/hooks": "^2.12.1",
 		"@wordpress/i18n": "^3.19.0",
 		"@wordpress/icons": "^2.9.1",
 		"@wordpress/interface": "^1.0.6",

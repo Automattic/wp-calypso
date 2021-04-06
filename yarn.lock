@@ -5148,12 +5148,12 @@
     "@wordpress/url" "^2.21.2"
     lodash "^4.17.19"
 
-"@wordpress/hooks@^2.11.1", "@wordpress/hooks@^2.12.0", "@wordpress/hooks@^2.6.0":
-  version "2.12.0"
-  resolved "https://registry.yarnpkg.com/@wordpress/hooks/-/hooks-2.12.0.tgz#d82d79f001266b5a16879998cafb8de44567e311"
-  integrity sha512-BXQw5ZKupKbwlczHFJcDPG8cNi8MmiRgLI42Dwl181+1w9UOHGAjbsRmgYreAIU8vXEx2Gr1QW0HroVpZxixoA==
+"@wordpress/hooks@^2.11.1", "@wordpress/hooks@^2.12.0", "@wordpress/hooks@^2.12.1", "@wordpress/hooks@^2.6.0":
+  version "2.12.1"
+  resolved "https://registry.yarnpkg.com/@wordpress/hooks/-/hooks-2.12.1.tgz#3785da02dcbf9053d1e4e8e953be97820f4a8214"
+  integrity sha512-Ubnz9V8mrlCCkZ8RwKKHIljZcuroM/uVHR9q1JIqEXs/iJtzWMutf3qla2+HsZ+3W+AaiEOEatbyVUkgsRvouA==
   dependencies:
-    "@babel/runtime" "^7.12.5"
+    "@babel/runtime" "^7.13.10"
 
 "@wordpress/html-entities@^2.10.1", "@wordpress/html-entities@^2.5.0":
   version "2.10.1"
@@ -5162,7 +5162,7 @@
   dependencies:
     "@babel/runtime" "^7.12.5"
 
-"@wordpress/i18n@^3.17.1-next.1+c95ee08bb", "@wordpress/i18n@^3.18.0", "@wordpress/i18n@^3.19.0", "@wordpress/i18n@^3.7.0":
+"@wordpress/i18n@^3.18.0", "@wordpress/i18n@^3.19.0", "@wordpress/i18n@^3.7.0":
   version "3.19.0"
   resolved "https://registry.yarnpkg.com/@wordpress/i18n/-/i18n-3.19.0.tgz#63e6be761598b1840a8314d9781d7ce8f543f1a8"
   integrity sha512-dACJKGzcaTS8AufH6HpHYm3v9zB6uRPK6DQg6F+oL8EhvENs1o+oSfwP3RDYmaI7BHSg/JYID+vIGm/nZDMx6A==
