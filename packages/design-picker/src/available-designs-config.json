@@ -1,20 +1,6 @@
 {
 	"featured": [
 		{
-			"title": "Seedlet",
-			"slug": "seedlet-blocks",
-			"template": "seedlet-blocks",
-			"theme": "seedlet-blocks",
-			"fonts": {
-				"headings": "Playfair Display",
-				"base": "Fira Sans"
-			},
-			"categories": [ "featured" ],
-			"is_premium": false,
-			"is_fse": true,
-			"features": []
-		},
-		{
 			"title": "Twenty Twenty One",
 			"slug": "tt1-blocks",
 			"template": "tt1-blocks",
