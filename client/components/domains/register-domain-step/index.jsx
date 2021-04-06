@@ -44,7 +44,7 @@ import {
 } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
-import Search from 'calypso/components/search';
+import Search from '@automattic/search';
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
 import DomainTransferSuggestion from 'calypso/components/domains/domain-transfer-suggestion';
 import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggestion';
@@ -445,7 +445,7 @@ class RegisterDomainStep extends React.Component {
 				<StickyPanel className={ searchBoxClassName }>
 					<CompactCard className="register-domain-step__search-card">
 						<Search
-							additionalClasses={ this.state.clickedExampleSuggestion ? 'is-refocused' : undefined }
+							className={ this.state.clickedExampleSuggestion ? 'is-refocused' : undefined }
 							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 							delaySearch={ true }
 							delayTimeout={ 1000 }
