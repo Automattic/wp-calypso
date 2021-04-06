@@ -520,7 +520,12 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const { siteId, customHeader, shouldShowPlansRedesign, redirectToAddDomainFlow } = this.props;
+		const {
+			siteId,
+			customHeader,
+			redirectToAddDomainFlow,
+			shouldShowPlansFeatureComparison,
+		} = this.props;
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
 		const kindOfPlanTypeSelector = this.getKindOfPlanTypeSelector( this.props );
@@ -551,7 +556,7 @@ export class PlansFeaturesMain extends Component {
 						plans={ visiblePlans }
 					/>
 				) }
-				{ shouldShowPlansRedesign ? this.showFeatureComparison() : this.getPlanFeatures() }
+				{ shouldShowPlansFeatureComparison ? this.showFeatureComparison() : this.getPlanFeatures() }
 				{ this.renderProductsSelector() }
 				{ this.mayRenderFAQ() }
 			</div>

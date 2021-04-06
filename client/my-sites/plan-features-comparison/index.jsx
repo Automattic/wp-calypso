@@ -69,14 +69,7 @@ import {
 	isNew,
 	PLAN_FREE,
 	TERM_MONTHLY,
-	TYPE_BLOGGER,
-	TYPE_PERSONAL,
-	TYPE_PREMIUM,
-	TYPE_BUSINESS,
-	GROUP_WPCOM,
 	FEATURE_BUSINESS_ONBOARDING,
-	TYPE_P2_PLUS,
-	TYPE_FREE,
 } from 'calypso/lib/plans/constants';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
@@ -179,17 +172,7 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	renderPlanHeaders() {
-		const {
-			basePlansPath,
-			displayJetpackPlans,
-			isInSignup,
-			isJetpack,
-			planProperties,
-			selectedPlan,
-			siteType,
-			showPlanCreditsApplied,
-			withScroll,
-		} = this.props;
+		const { basePlansPath, planProperties } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -210,25 +193,8 @@ export class PlanFeaturesComparison extends Component {
 			} = properties;
 			const { discountPrice } = properties;
 			const classes = classNames( 'plan-features-comparison__table-item', 'has-border-top' );
-			let audience = planConstantObj.getAudience();
+			const audience = planConstantObj.getAudience();
 			const billingTimeFrame = planConstantObj.getBillingTimeFrame();
-
-			if ( isInSignup && ! displayJetpackPlans ) {
-				switch ( siteType ) {
-					case 'blog':
-						audience = planConstantObj.getBlogAudience();
-						break;
-					case 'grid':
-						audience = planConstantObj.getPortfolioAudience();
-						break;
-					case 'store':
-						audience = planConstantObj.getStoreAudience();
-						break;
-					default:
-						audience = planConstantObj.getAudience();
-				}
-			}
-
 			const { annualPricePerMonth, isMonthlyPlan } = properties;
 
 			return (
@@ -242,8 +208,6 @@ export class PlanFeaturesComparison extends Component {
 						currencyCode={ currencyCode }
 						discountPrice={ discountPrice }
 						hideMonthly={ hideMonthly }
-						isInSignup={ isInSignup }
-						isJetpack={ isJetpack }
 						isPlaceholder={ isPlaceholder }
 						newPlan={ newPlan }
 						bestValue={ bestValue }
@@ -253,10 +217,7 @@ export class PlanFeaturesComparison extends Component {
 						rawPriceAnnual={ rawPriceAnnual }
 						rawPriceForMonthlyPlan={ rawPriceForMonthlyPlan }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
-						selectedPlan={ selectedPlan }
-						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
 						title={ planConstantObj.getTitle() }
-						plansWithScroll={ withScroll }
 						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
 					/>
@@ -266,54 +227,23 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	handleUpgradeClick( singlePlanProperties ) {
-		const { isInSignup, onUpgradeClick: ownPropsOnUpgradeClick, redirectTo } = this.props;
-
-		const {
-			availableForPurchase,
-			cartItemForPlan,
-			checkoutUrl,
-			siteIsPrivateAndGoingAtomic,
-		} = singlePlanProperties;
+		const { onUpgradeClick: ownPropsOnUpgradeClick, redirectTo } = this.props;
+		const { cartItemForPlan, checkoutUrl } = singlePlanProperties;
 
 		if ( ownPropsOnUpgradeClick && ownPropsOnUpgradeClick !== noop && cartItemForPlan ) {
 			ownPropsOnUpgradeClick( cartItemForPlan );
 			return;
 		}
 
-		if ( ! availableForPurchase ) {
-			return;
-		}
-
 		const checkoutUrlWithArgs = addQueryArgs( { redirect_to: redirectTo }, checkoutUrl );
-
-		if ( siteIsPrivateAndGoingAtomic ) {
-			if ( isInSignup ) {
-				// Let signup do its thing
-				return;
-			}
-			page( checkoutUrlWithArgs );
-			return;
-		}
-
 		page( checkoutUrlWithArgs );
 	}
 
 	renderTopButtons() {
-		const {
-			canPurchase,
-			disableBloggerPlanWithNonBlogDomain,
-			isInSignup,
-			isLandingPage,
-			isLaunchPage,
-			planProperties,
-			selectedPlan,
-			selectedSiteSlug,
-			purchaseId,
-			translate,
-		} = this.props;
+		const { isInSignup, isLaunchPage, planProperties, selectedSiteSlug, purchaseId } = this.props;
 
 		return map( planProperties, ( properties ) => {
-			let { availableForPurchase } = properties;
+			const { availableForPurchase } = properties;
 			const {
 				current,
 				planName,
@@ -329,31 +259,16 @@ export class PlanFeaturesComparison extends Component {
 				'is-top-buttons'
 			);
 
-			let forceDisplayButton = false;
-			let buttonText = null;
-
-			if ( disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0 ) {
-				if ( planMatches( planName, { type: TYPE_BLOGGER } ) ) {
-					availableForPurchase = false;
-					forceDisplayButton = true;
-					buttonText = translate( 'Only with .blog domains' );
-				}
-			}
-
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesComparisonActions
 						availableForPurchase={ availableForPurchase }
-						buttonText={ buttonText }
-						canPurchase={ canPurchase }
 						className={ getPlanClass( planName ) }
 						current={ current }
 						freePlan={ isFreePlan( planName ) }
-						forceDisplayButton={ forceDisplayButton }
 						isPlaceholder={ isPlaceholder }
 						isPopular={ popular }
 						isInSignup={ isInSignup }
-						isLandingPage={ isLandingPage }
 						isLaunchPage={ isLaunchPage }
 						manageHref={
 							purchaseId
@@ -364,7 +279,6 @@ export class PlanFeaturesComparison extends Component {
 						planName={ planConstantObj.getTitle() }
 						planType={ planName }
 						primaryUpgrade={ primaryUpgrade }
-						selectedPlan={ selectedPlan }
 					/>
 				</td>
 			);
@@ -486,7 +400,6 @@ PlanFeaturesComparison.propTypes = {
 	visiblePlans: PropTypes.array,
 	planProperties: PropTypes.array,
 	selectedFeature: PropTypes.string,
-	selectedPlan: PropTypes.string,
 	selectedSiteSlug: PropTypes.string,
 	purchaseId: PropTypes.number,
 	siteId: PropTypes.number,
@@ -502,16 +415,6 @@ PlanFeaturesComparison.defaultProps = {
 	siteId: null,
 	onUpgradeClick: noop,
 };
-
-export const isPrimaryUpgradeByPlanDelta = ( currentPlan, plan ) =>
-	( planMatches( currentPlan, { type: TYPE_BLOGGER, group: GROUP_WPCOM } ) &&
-		planMatches( plan, { type: TYPE_PERSONAL, group: GROUP_WPCOM } ) ) ||
-	( planMatches( currentPlan, { type: TYPE_PERSONAL, group: GROUP_WPCOM } ) &&
-		planMatches( plan, { type: TYPE_PREMIUM, group: GROUP_WPCOM } ) ) ||
-	( planMatches( currentPlan, { type: TYPE_PREMIUM, group: GROUP_WPCOM } ) &&
-		planMatches( plan, { type: TYPE_BUSINESS, group: GROUP_WPCOM } ) ) ||
-	( planMatches( currentPlan, { type: TYPE_FREE, group: GROUP_WPCOM } ) &&
-		planMatches( plan, { type: TYPE_P2_PLUS, group: GROUP_WPCOM } ) );
 
 export const calculatePlanCredits = ( state, siteId, planProperties ) =>
 	planProperties
@@ -603,31 +506,10 @@ export default connect(
 					isPlaceholder = true;
 				}
 
-				if ( isInSignup ) {
-					switch ( siteType ) {
-						case 'blog':
-							if ( planConstantObj.getBlogSignupFeatures ) {
-								planFeatures = getPlanFeaturesObject(
-									planConstantObj.getBlogSignupFeatures( abtest )
-								);
-							}
-
-							break;
-						case 'grid':
-							if ( planConstantObj.getPortfolioSignupFeatures ) {
-								planFeatures = getPlanFeaturesObject(
-									planConstantObj.getPortfolioSignupFeatures( abtest )
-								);
-							}
-
-							break;
-						default:
-							if ( planConstantObj.getSignupCompareAvailableFeatures ) {
-								planFeatures = getPlanFeaturesObject(
-									planConstantObj.getSignupCompareAvailableFeatures( currentPlan )
-								);
-							}
-					}
+				if ( planConstantObj.getSignupCompareAvailableFeatures ) {
+					planFeatures = getPlanFeaturesObject(
+						planConstantObj.getSignupCompareAvailableFeatures( currentPlan )
+					);
 				}
 
 				if ( displayJetpackPlans ) {
@@ -709,12 +591,7 @@ export default connect(
 					newPlan: newPlan,
 					bestValue: bestValue,
 					hideMonthly: false,
-					primaryUpgrade:
-						isPrimaryUpgradeByPlanDelta( currentPlan, plan ) ||
-						popular ||
-						newPlan ||
-						bestValue ||
-						plans.length === 1,
+					primaryUpgrade: popular || newPlan || bestValue || plans.length === 1,
 					rawPrice,
 					rawPriceAnnual: getPlanRawPrice( state, planProductId, false ),
 					rawPriceForMonthlyPlan,

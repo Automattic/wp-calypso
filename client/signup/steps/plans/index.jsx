@@ -38,11 +38,11 @@ import './style.scss';
 import { Experiment } from 'calypso/components/experiment';
 import { getVariationForUser, isLoading } from 'calypso/state/experiments/selectors';
 import PulsingDot from 'calypso/components/pulsing-dot';
-import { isTabletResolution } from '@automattic/viewport';
+import { isTabletResolution, isDesktop } from '@automattic/viewport';
 
 export class PlansStep extends Component {
 	state = {
-		plansWithScroll: ! isTabletResolution(),
+		isDesktop: ! isTabletResolution(),
 	};
 
 	windowResize = () => {
@@ -165,10 +165,7 @@ export class PlansStep extends Component {
 			showTreatmentPlansReorderTest,
 			isLoadingExperiment,
 			isInVerticalScrollingPlansExperiment,
-			isTreatmentPlansRedesign,
 		} = this.props;
-
-		const shouldShowPlansRedesign = isTreatmentPlansRedesign && this.state.plansWithScroll;
 
 		return (
 			<div>
@@ -199,7 +196,7 @@ export class PlansStep extends Component {
 						showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
 						isAllPaidPlansShown={ true }
 						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-						shouldShowPlansRedesign={ shouldShowPlansRedesign }
+						shouldShowPlansFeatureComparison={ isDesktop() } // Show feature comparison layout in signup flow and desktop resolutions
 					/>
 				) }
 			</div>
@@ -207,14 +204,9 @@ export class PlansStep extends Component {
 	}
 
 	getHeaderText() {
-		const { isLoadingExperiment, isTreatmentPlansRedesign, headerText, translate } = this.props;
+		const { headerText, translate } = this.props;
 
-		if ( isLoadingExperiment ) {
-			return '';
-		}
-
-		const shouldShowPlansRedesign = isTreatmentPlansRedesign && this.state.plansWithScroll;
-		if ( shouldShowPlansRedesign ) {
+		if ( isDesktop() ) {
 			return translate( 'Choose a plan' );
 		}
 
@@ -222,21 +214,10 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const {
-			hideFreePlan,
-			subHeaderText,
-			isTreatmentPlansRedesign,
-			isLoadingExperiment,
-			translate,
-		} = this.props;
-		const shouldShowPlansRedesign = isTreatmentPlansRedesign && this.state.plansWithScroll;
-
-		if ( isLoadingExperiment ) {
-			return '';
-		}
+		const { hideFreePlan, subHeaderText, translate } = this.props;
 
 		if ( ! hideFreePlan ) {
-			if ( shouldShowPlansRedesign ) {
+			if ( isDesktop() ) {
 				return translate(
 					"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
 					{
@@ -254,7 +235,7 @@ export class PlansStep extends Component {
 			} );
 		}
 
-		if ( shouldShowPlansRedesign ) {
+		if ( isDesktop() ) {
 			return translate( "Pick one that's right for you and unlock features that help you grow." );
 		}
 
@@ -286,7 +267,6 @@ export class PlansStep extends Component {
 		return (
 			<>
 				<Experiment name="vertical_plan_listing_v2" />
-				<Experiment name="signup_plans_step_redesign_v1" />
 				<StepWrapper
 					flowName={ flowName }
 					stepName={ stepName }
@@ -307,8 +287,7 @@ export class PlansStep extends Component {
 	}
 
 	render() {
-		const shouldShowPlansRedesign =
-			this.props.isTreatmentPlansRedesign && this.state.plansWithScroll;
+		const shouldShowPlansRedesign = isDesktop();
 		const classes = classNames( 'plans plans-step', {
 			'in-vertically-scrolled-plans-experiment': this.props.isInVerticalScrollingPlansExperiment,
 			'in-plans-redesign-experiment': shouldShowPlansRedesign,
@@ -354,7 +333,7 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 export default connect(
 	(
 		state,
-		{ path, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation }, flowName }
+		{ path, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation } }
 	) => ( {
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 		disableBloggerPlanWithNonBlogDomain:
@@ -372,9 +351,6 @@ export default connect(
 		isLoadingExperiment: isLoading( state ),
 		isInVerticalScrollingPlansExperiment:
 			'treatment' === getVariationForUser( state, 'vertical_plan_listing_v2' ),
-		isTreatmentPlansRedesign:
-			flowName === 'onboarding' &&
-			'treatment' === getVariationForUser( state, 'signup_plans_step_redesign_v1' ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );
