@@ -37,6 +37,7 @@ ENTRYPOINT [ "/bin/bash" ]
 FROM node:14.16.0-buster as base
 
 ARG node_memory=8192
+ARG user=calypso
 ARG UID=1003
 
 WORKDIR /calypso
@@ -48,7 +49,15 @@ ENV HOME=/calypso
 ENV CHROMEDRIVER_SKIP_DOWNLOAD=true
 ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
-RUN chown $UID /calypso
+
+# Add user calypso with uid 1003, give it sudo permissions
+RUN apt-get update \
+	&& apt-get install -y sudo \
+	&& adduser --uid $UID --disabled-password $user \
+	&& echo "$user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$user \
+	&& chmod 0440 /etc/sudoers.d/$user \
+	&& chown $UID /calypso \
+	&& rm -rf /var/lib/apt/lists/*
 
 # Set bash as the default shell
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
@@ -101,17 +110,11 @@ RUN apt update \
 		xfonts-base \
 		xfonts-cyrillic \
 		xfonts-scalable \
-		xvfb \
-		sudo
+		xvfb
 
 RUN wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
 	&& apt-get install -y ./google-chrome-stable_${CHROME_VERSION}_amd64.deb \
 	&& rm ./google-chrome-stable_${CHROME_VERSION}_amd64.deb
-
-# Add user calypso with 1002, give it sudo permissions
-RUN adduser --uid 1002 --disabled-password calypso \
-	&& echo "calypso ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/calypso \
-	&& chmod 0440 /etc/sudoers.d/calypso
 
 ENTRYPOINT [ "/bin/bash" ]
 
