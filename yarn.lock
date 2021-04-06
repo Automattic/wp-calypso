@@ -4814,7 +4814,7 @@
     tinycolor2 "^1.4.2"
     uuid "^8.3.0"
 
-"@wordpress/compose@1.x.x - 3.x.x", "@wordpress/compose@^3.24.5", "@wordpress/compose@^3.9.0":
+"@wordpress/compose@^3.24.5", "@wordpress/compose@^3.9.0":
   version "3.24.5"
   resolved "https://registry.yarnpkg.com/@wordpress/compose/-/compose-3.24.5.tgz#054b2dae1eeca14be39e4a23376095d71e637c17"
   integrity sha512-mzYh9WVV6dC/XrNEExzo9782B1qkgeKrWZuT5IZYQs/a/0DS229AYepa4kynYfOu5qpXbvAp+6WGNIVSm8pw0g==

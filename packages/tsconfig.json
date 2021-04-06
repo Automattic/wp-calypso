@@ -25,7 +25,6 @@
 		{ "path": "./onboarding" },
 		{ "path": "./page-pattern-modal" },
 		{ "path": "./plans-grid" },
-		{ "path": "./react-i18n" },
 		{ "path": "./search" },
 		{ "path": "./shopping-cart" },
 		{ "path": "./wpcom-checkout" }
