@@ -78,7 +78,12 @@ export default function SidebarItem( props ) {
 
 				{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 				<span className="sidebar__menu-link-text menu-link-text" data-e2e-sidebar={ props.label }>
-					{ stripHTML( decodeEntities( props.label ) ) }
+					{
+						// String labels should be sanitized, whereas React components should be rendered as is
+						'string' === typeof props.label
+							? stripHTML( decodeEntities( props.label ) )
+							: props.label
+					}
 					{ !! count && <Count count={ count } /> }
 				</span>
 				{ showAsExternal && <Gridicon icon="external" size={ 24 } /> }
