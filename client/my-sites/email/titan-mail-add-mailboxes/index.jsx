@@ -14,6 +14,7 @@ import { withShoppingCart } from '@automattic/shopping-cart';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
 import {
 	areAllMailboxesValid,
+	areAllMailboxesAvailable,
 	buildNewTitanMailbox,
 	transformMailboxForCart,
 } from 'calypso/lib/titan/new-mailbox';
@@ -56,7 +57,6 @@ import TitanNewMailboxList from 'calypso/my-sites/email/titan-mail-add-mailboxes
 import TitanUnusedMailboxesNotice from 'calypso/my-sites/email/titan-mail-add-mailboxes/titan-unused-mailbox-notice';
 
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import wp from 'calypso/lib/wp';
 
 /**
  * Style dependencies
@@ -126,22 +126,17 @@ class TitanMailAddMailboxes extends React.Component {
 		} );
 	};
 
-	checkEmailAvailability = async ( emailAddress ) => {
-		const result = await wp.undocumented().getTitanEmailAddressAvailability( emailAddress );
-		return !! result;
-	};
-
-	handleContinue = () => {
+	handleContinue = async () => {
 		const { selectedSite } = this.props;
 		const { mailboxes } = this.state;
-		const canContinue = areAllMailboxesValid( mailboxes, [ 'alternativeEmail' ] );
+		const canContinue =
+			areAllMailboxesValid( mailboxes, [ 'alternativeEmail' ] ) &&
+			( await areAllMailboxesAvailable( mailboxes, this.onMailboxesChange ) );
 
 		this.recordClickEvent( 'calypso_email_management_titan_add_mailboxes_continue_button_click', {
 			can_continue: canContinue,
 			mailbox_count: mailboxes.length,
 		} );
-
-		this.checkEmailAvailability( 'fi@sleazy.com' );
 
 		if ( canContinue ) {
 			this.setState( { isAddingToCart: true } );

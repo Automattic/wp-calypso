@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
  * Internal dependencies
  */
 import { validatePasswordField } from 'calypso/lib/gsuite/new-users';
+import wp from 'calypso/lib/wp';
 
 const valueIsBoolean = ( value ) => typeof value === 'boolean';
 const valueIsNonEmpty = ( value ) => value !== '';
@@ -31,10 +32,10 @@ const getMailboxRequiredBooleanValue = () =>
 		error: PropTypes.string,
 	} );
 
-const getMailboxOptionalStringValue = () =>
+const getMailboxOptionalStringOrArrayValue = () =>
 	PropTypes.shape( {
 		value: PropTypes.string.isRequired,
-		error: PropTypes.string,
+		error: PropTypes.oneOfType( PropTypes.string, PropTypes.array ),
 	} );
 
 const getMailboxRequiredStringValue = () =>
@@ -43,13 +44,19 @@ const getMailboxRequiredStringValue = () =>
 		error: PropTypes.string,
 	} ).isRequired;
 
+const getMailboxRequiredStringOrArrayValue = () =>
+	PropTypes.shape( {
+		value: PropTypes.string.isRequired,
+		error: PropTypes.oneOfType( PropTypes.string, PropTypes.array ),
+	} ).isRequired;
+
 const getMailboxPropTypeShape = () =>
 	PropTypes.shape( {
 		uuid: PropTypes.string.isRequired,
-		alternativeEmail: getMailboxOptionalStringValue(),
+		alternativeEmail: getMailboxOptionalStringOrArrayValue(),
 		domain: getMailboxRequiredStringValue(),
 		isAdmin: getMailboxRequiredBooleanValue(),
-		mailbox: getMailboxRequiredStringValue(),
+		mailbox: getMailboxRequiredStringOrArrayValue(),
 		name: getMailboxRequiredStringValue(),
 		password: getMailboxRequiredStringValue(),
 	} );
@@ -252,9 +259,51 @@ const transformMailboxForCart = ( {
 	password,
 } );
 
+const checkEmailAvailability = async ( emailAddress ) => {
+	try {
+		const result = await wp.undocumented().getTitanEmailAddressAvailability( emailAddress );
+		return result?.message === 'OK';
+	} catch ( e ) {
+		return false;
+	}
+};
+
+const decorateMailboxWithExistenceError = ( mailbox ) => {
+	mailbox.mailbox.error = translate( '{{strong}}%(email)s{{/strong}} already exists.', {
+		args: {
+			email: mailbox.mailbox.value,
+		},
+		components: {
+			strong: <strong />,
+		},
+	} );
+	return mailbox;
+};
+
+const areAllMailboxesAvailable = async ( mailboxes, onMailboxesChange ) => {
+	const promisified_checks = Promise.all(
+		mailboxes.map( ( mailbox ) => {
+			const email = `${ mailbox.mailbox.value }@${ mailbox.domain.value }`;
+			return checkEmailAvailability( email );
+		} )
+	);
+	const checks = await promisified_checks;
+	checks
+		.map( ( check, index ) => [ check, index ] )
+		.filter( ( check_index ) => ! check_index[ 0 ] )
+		.forEach( ( check_index ) =>
+			decorateMailboxWithExistenceError( mailboxes[ check_index[ 1 ] ] )
+		);
+	const result = checks.every( ( check ) => check );
+	! result && onMailboxesChange && onMailboxesChange( mailboxes );
+	return result;
+};
+
 export {
+	areAllMailboxesAvailable,
 	areAllMailboxesValid,
 	buildNewTitanMailbox,
+	checkEmailAvailability,
 	getMailboxPropTypeShape,
 	sanitizeEmailSuggestion,
 	transformMailboxForCart,
