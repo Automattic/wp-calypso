@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 
 /**
  * WordPress dependencies
@@ -73,12 +73,10 @@ export default function createExPlatClientReactHelpers(
 			true,
 			null,
 		] );
-		const hasStartedLoadingRef = useRef< boolean >( false );
 
 		useEffect( () => {
 			let isSubscribed = true;
-			if ( hasStartedLoadingRef.current === false && options.isEligible ) {
-				hasStartedLoadingRef.current = true;
+			if ( options.isEligible ) {
 				exPlatClient.loadExperimentAssignment( experimentName ).then( ( experimentAssignment ) => {
 					if ( isSubscribed ) {
 						setState( [ false, experimentAssignment ] );
@@ -88,7 +86,6 @@ export default function createExPlatClientReactHelpers(
 			return () => {
 				isSubscribed = false;
 			};
-			// We don't expect experimentName to ever change and if it does we want to assignment to stay constant.
 		}, [ experimentName, options.isEligible ] );
 
 		if (
