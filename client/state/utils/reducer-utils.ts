@@ -22,10 +22,10 @@ interface CombinedReducer extends SerializableReducer {
 /**
  * Create a new reducer from original `reducers` by adding a new `reducer` at `keyPath`
  *
- * @param {Function} origReducer Original reducer to copy `storageKey` and other flags from
- * @param {object} reducers Object with reducer names as keys and reducer functions as values that
+ * @param origReducer Original reducer to copy `storageKey` and other flags from
+ * @param reducers Object with reducer names as keys and reducer functions as values that
  *   is used as parameter to `combineReducers` (the original Redux one and our extension, too).
- * @returns {Function} The function to be attached as `addReducer` method to the
+ * @returns The function to be attached as `addReducer` method to the
  *   result of `combineReducers`.
  */
 export function addReducer(
@@ -147,8 +147,8 @@ export function addReducer(
  * combinedReducer( { date: new Date( 6 ), height: 123 } ), { type: GROW } ); // { date: new Date( 7 ), height: 124 };
  * ```
  *
- * @param {object} reducers - object containing the reducers to merge
- * @returns {Function} - Returns the combined reducer function
+ * @param reducers - object containing the reducers to merge
+ * @returns - Returns the combined reducer function
  */
 export function combineReducers( reducers: Record< string, Reducer > ): CombinedReducer {
 	const combined = combine( reducers );
