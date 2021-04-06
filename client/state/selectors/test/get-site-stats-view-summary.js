@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -9,6 +10,9 @@ import { expect } from 'chai';
 import { getSiteStatsViewSummary } from 'calypso/state/stats/lists/selectors';
 
 describe( 'getSiteStatsViewSummary()', () => {
+	const today = moment();
+	const daysSinceStartOfMonth = moment( new Date() ).diff( today.startOf( 'month' ), 'days' ) + 1;
+
 	test( 'should return null if no data exists', () => {
 		const data = getSiteStatsViewSummary(
 			{
@@ -63,6 +67,7 @@ describe( 'getSiteStatsViewSummary()', () => {
 											[ '2014-01-02', 4 ],
 											[ '2014-01-03', 23 ],
 											[ '2015-01-01', 10 ],
+											[ today.format( 'YYYY-MM-DD' ), 12 ],
 										],
 										fields: [ 'period', 'views' ],
 										unit: 'day',
@@ -97,6 +102,44 @@ describe( 'getSiteStatsViewSummary()', () => {
 					data: [ [ '2015-01-01', 10 ] ],
 				},
 			},
+			[ today.year() ]: {
+				[ today.month() ]: {
+					total: 12,
+					average: Math.round( 12 / daysSinceStartOfMonth ),
+					daysInMonth: daysSinceStartOfMonth,
+					data: [ [ today.format( 'YYYY-MM-DD' ), 12 ] ],
+				},
+			},
+		} );
+	} );
+
+	test( 'should calculate the average based on the days so far in the current month', () => {
+		const data = getSiteStatsViewSummary(
+			{
+				stats: {
+					lists: {
+						items: {
+							2916284: {
+								statsVisits: {
+									'[["quantity",-1],["stat_fields","views"]]': {
+										data: [ [ today.format( 'YYYY-MM-DD' ), 96 ] ],
+										fields: [ 'period', 'views' ],
+										unit: 'day',
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			2916284
+		);
+
+		expect( data[ today.year() ][ today.month() ] ).to.eql( {
+			total: 96,
+			average: Math.round( 96 / daysSinceStartOfMonth ),
+			daysInMonth: daysSinceStartOfMonth,
+			data: [ [ today.format( 'YYYY-MM-DD' ), 96 ] ],
 		} );
 	} );
 } );
