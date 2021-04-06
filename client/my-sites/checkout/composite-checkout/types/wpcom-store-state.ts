@@ -8,12 +8,20 @@ import type {
 	FrDomainContactExtraDetails,
 } from '@automattic/shopping-cart';
 import type {
-	WPCOMTransactionEndpointResponse,
 	PossiblyCompleteDomainContactDetails,
 	DomainContactDetailsErrors,
 	CaDomainContactExtraDetailsErrors,
 	UkDomainContactExtraDetailsErrors,
 	FrDomainContactExtraDetailsErrors,
+	ManagedContactDetailsShape,
+	ManagedContactDetailsTldExtraFieldsShape,
+	ManagedValue,
+	ManagedContactDetails,
+	ManagedContactDetailsErrors,
+	ManagedContactDetailsUpdate,
+	ManagedContactDetailsUpdaters,
+	ManagedContactDetailsRequiredMask,
+	WpcomStoreState,
 } from '@automattic/wpcom-checkout';
 
 /**
@@ -27,43 +35,6 @@ import {
 } from './backend/domain-contact-validation-endpoint';
 import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
 import { SignupValidationResponse } from './backend/signup-validation-endpoint';
-
-export type ManagedContactDetailsShape< T > = {
-	firstName?: T;
-	lastName?: T;
-	organization?: T;
-	email?: T;
-	alternateEmail?: T;
-	phone?: T;
-	phoneNumberCountry?: T;
-	address1?: T;
-	address2?: T;
-	city?: T;
-	state?: T;
-	postalCode?: T;
-	countryCode?: T;
-	fax?: T;
-	vatId?: T;
-	tldExtraFields?: ManagedContactDetailsTldExtraFieldsShape< T >;
-};
-
-export type ManagedContactDetailsTldExtraFieldsShape< T > = {
-	ca?: {
-		lang?: T;
-		legalType?: T;
-		ciraAgreementAccepted?: T;
-	};
-	uk?: {
-		registrantType?: T;
-		registrationNumber?: T;
-		tradingName?: T;
-	};
-	fr?: {
-		registrantType?: T;
-		trademarkNumber?: T;
-		sirenSiret?: T;
-	};
-};
 
 /*
  * Asymmetrically combine two ManagedContactDetailsShape<T> objects 'update' and 'data'
@@ -271,40 +242,6 @@ export function flattenManagedContactDetailsShape< A, B >(
 			: [];
 
 	return values.concat( caValues, ukValues, frValues );
-}
-
-/*
- * The wpcom store hook stores an object with all the contact info
- * which is used to share state across fields where appropriate.
- * Each value keeps track of whether it has been edited and validated.
- */
-export type ManagedContactDetails = ManagedContactDetailsShape< ManagedValue >;
-
-export type ManagedContactDetailsErrors = ManagedContactDetailsShape< undefined | string[] >;
-
-/*
- * Intermediate type used to represent update payloads
- */
-type ManagedContactDetailsUpdate = ManagedContactDetailsShape< string >;
-
-/*
- * Different subsets of the details are mandatory depending on what is
- * in the cart. This type lets us define these subsets declaratively.
- */
-type ManagedContactDetailsRequiredMask = ManagedContactDetailsShape< boolean >;
-
-/*
- * All child components in composite checkout are controlled -- they accept
- * data from their parents and evaluate callbacks when edited, rather than
- * managing their own state. Hooks providing this data in turn need some extra
- * data on each field: specifically whether it has been edited by the user
- * or passed validation. We wrap this extra data into an object type.
- */
-interface ManagedValue {
-	value: string;
-	isTouched: boolean; // Has value been edited by the user?
-	errors: string[]; // Has value passed validation?
-	isRequired: boolean; // Is this field required?
 }
 
 export function isValid( arg: ManagedValue ): boolean {
@@ -759,37 +696,6 @@ function applyDomainContactDetailsUpdate(
 	);
 }
 
-/*
- * Helper type which bundles the field updaters in a single object
- * to help keep import lists under control. All updaters should
- * assume input came from the user.
- */
-export type ManagedContactDetailsUpdaters = {
-	updatePhone: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
-	updatePhoneNumberCountry: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
-	updatePostalCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
-	updateEmail: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
-	updateCountryCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
-	updateDomainContactFields: (
-		arg0: ManagedContactDetails,
-		arg1: DomainContactDetails
-	) => ManagedContactDetails;
-	touchContactFields: ( arg0: ManagedContactDetails ) => ManagedContactDetails;
-	updateVatId: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
-	setErrorMessages: (
-		arg0: ManagedContactDetails,
-		arg1: ManagedContactDetailsErrors
-	) => ManagedContactDetails;
-	populateCountryCodeFromGeoIP: (
-		arg0: ManagedContactDetails,
-		arg1: string
-	) => ManagedContactDetails;
-	populateDomainFieldsFromCache: (
-		arg0: ManagedContactDetails,
-		arg1: PossiblyCompleteDomainContactDetails
-	) => ManagedContactDetails;
-};
-
 export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 	updatePhone: ( oldDetails: ManagedContactDetails, newPhone: string ): ManagedContactDetails => {
 		return {
@@ -895,22 +801,6 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 		};
 	},
 };
-
-export type WpcomStoreState = {
-	siteId: string;
-	siteSlug: string;
-	recaptchaClientId: number;
-	transactionResult?: WPCOMTransactionEndpointResponse | undefined;
-	contactDetails: ManagedContactDetails;
-};
-
-export interface FailedPurchase {
-	product_meta: string;
-	product_id: string | number;
-	product_slug: string;
-	product_cost: string | number;
-	product_name: string;
-}
 
 export const emptyManagedContactDetails: ManagedContactDetails = {
 	firstName: getInitialManagedValue(),
