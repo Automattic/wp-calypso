@@ -135,6 +135,8 @@
 			border-radius: 12px;
 
 			.twitter-preview__card-summary {
+				display: grid;
+
 				&.twitter-preview__card-has-image {
 					height: 125px;
 					display: grid;
