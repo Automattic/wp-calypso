@@ -50,7 +50,7 @@ if ( isLoadingExperimentAssignment ) {
 
 ### UseExperimentOptions
 
-`useExperiment` as a second argument takes an optionional options object:
+`useExperiment` as a second argument takes an optional options object:
 
 > `options.isEligible: Boolean = true`
 
