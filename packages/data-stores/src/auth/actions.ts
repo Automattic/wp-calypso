@@ -242,7 +242,7 @@ export function createActions( {
 
 	type WpLoginAction = 'two-step-authentication-endpoint' | 'login-endpoint';
 
-	function* wpLogin( action: WpLoginAction, body: any ) {
+	function* wpLogin( action: WpLoginAction, body: Record< string, unknown > ) {
 		const response: { body: WpLoginResponse } = yield fetchAndParse(
 			// TODO Wrap this in `localizeUrl` from lib/i18n-utils
 			'https://wordpress.com/wp-login.php?action=' + encodeURIComponent( action ),
