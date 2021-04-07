@@ -3773,10 +3773,10 @@
   resolved "https://registry.yarnpkg.com/@types/overlayscrollbars/-/overlayscrollbars-1.12.0.tgz#98456caceca8ad73bd5bb572632a585074e70764"
   integrity sha512-h/pScHNKi4mb+TrJGDon8Yb06ujFG0mSg12wIO0sWMUF3dQIe2ExRRdNRviaNt9IjxIiOfnRr7FsQAdHwK4sMg==
 
-"@types/page@^1.11.1":
-  version "1.11.1"
-  resolved "https://registry.yarnpkg.com/@types/page/-/page-1.11.1.tgz#3b329a62843d4b9e47b494ebeab4a240be65a0a1"
-  integrity sha512-BpOTA/w+PgZeQ1iJqy0le9VSXOKV7qcoX/+m/obCtzENwPOrtVybdAaOAFD6xwAdieAq+GimObGJjWTCIBz4nA==
+"@types/page@^1.11.2":
+  version "1.11.2"
+  resolved "https://registry.yarnpkg.com/@types/page/-/page-1.11.2.tgz#597cd30101a7834dd08fa07756167336fd53ab79"
+  integrity sha512-Ik+hUhEolItI3aOXMz+dCHAU5yt3+NX8TfSW70pVxDItyNMwIrVc3gRL8H/ODDoiN7hL9nFHicMrWiGB7FBuUw==
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
@@ -4001,10 +4001,10 @@
     "@types/webpack-sources" "*"
     source-map "^0.6.0"
 
-"@types/wordpress__api-fetch@*", "@types/wordpress__api-fetch@^3.2.3":
-  version "3.2.3"
-  resolved "https://registry.yarnpkg.com/@types/wordpress__api-fetch/-/wordpress__api-fetch-3.2.3.tgz#ce76c593902fe40357b04c8dbc8e339049429af8"
-  integrity sha512-DsbGPr5lB/8ITClw0wt4JBDVff1X2XgkAyFvei2w6s+2HYpEB5GaTqJI4wY/Jn0rWqpFsX68sO5Kl2vKkgyMuw==
+"@types/wordpress__api-fetch@*", "@types/wordpress__api-fetch@^3.2.4":
+  version "3.2.4"
+  resolved "https://registry.yarnpkg.com/@types/wordpress__api-fetch/-/wordpress__api-fetch-3.2.4.tgz#cdfcea6aad176ae2c12f418874d3b6abd48f6c8e"
+  integrity sha512-vGS91UAQBA1PPIP5ubI2td9XUROjMwH3ytyspJUEdWpcEgRUXkEybTEL26OrFFhtY1eiELmNVGuVS1MeF0xhAA==
 
 "@types/wordpress__block-editor@*", "@types/wordpress__block-editor@^2.2.9":
   version "2.2.9"
@@ -4081,13 +4081,12 @@
     "@types/react" "*"
     redux "^4.0.1"
 
-"@types/wordpress__editor@^9.4.5":
-  version "9.4.5"
-  resolved "https://registry.yarnpkg.com/@types/wordpress__editor/-/wordpress__editor-9.4.5.tgz#423bfc911312ad8c25f46d60d20ae0652936a201"
-  integrity sha512-Xl4IpJ+O3VhVK5ZHLXvdiXgGytZu8pLoZ25kRH8bAADkvxtl/lvuaGNP0uT1GNS79tXlxVzpNoGmElD1p8xt0A==
+"@types/wordpress__editor@^9.4.6":
+  version "9.4.6"
+  resolved "https://registry.yarnpkg.com/@types/wordpress__editor/-/wordpress__editor-9.4.6.tgz#cc2da5fa94c7d8d26304957b71abaa5e93126133"
+  integrity sha512-RgVTF9Min3NGmE+MkDFv3We4TXLYGZaCFJPbEPNdhd80C0ohoQKMWhs1hxRoJ2ctwYF2emHIXDHQX9nhqtvOwA==
   dependencies:
     "@types/react" "*"
-    "@types/wordpress__api-fetch" "*"
     "@types/wordpress__block-editor" "*"
     "@types/wordpress__blocks" "*"
     "@types/wordpress__components" "*"
