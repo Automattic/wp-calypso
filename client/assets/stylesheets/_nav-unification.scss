@@ -140,6 +140,11 @@
 			height: 36px;
 			margin-top: 5px;
 			width: auto;
+			padding: 0 8px;
+		}
+
+		.masterbar__toggle-drafts.button.is-borderless {
+			margin-left: -18px;
 		}
 	}
 
@@ -164,6 +169,8 @@
 			// fix for profile picture currently hidden in production
 			.masterbar__item-content {
 				display: block;
+				position: relative;
+				left: 4px;
 			}
 
 			.gravatar {
