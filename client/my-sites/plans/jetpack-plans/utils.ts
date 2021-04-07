@@ -296,8 +296,8 @@ export function productTooltip(
 			'{{Info}}More info{{/Info}}',
 		{
 			args: {
-				price100: priceTier100.flat_fee_monthly_display,
-				price1000: priceTier1000.flat_fee_monthly_display,
+				price100: priceTier100.minimum_price_monthly_display,
+				price1000: priceTier1000.minimum_price_monthly_display,
 			},
 			comment:
 				'price100 = formatted price per 100 records, price1000 = formatted price per 1000 records. See https://jetpack.com/upgrade/search/.',

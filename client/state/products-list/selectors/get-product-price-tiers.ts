@@ -13,15 +13,10 @@ type Product = {
 export interface PriceTierEntry {
 	minimum_units: number;
 	maximum_units?: undefined | null | number;
-	per_unit_fee: number;
-	per_unit_fee_display: string;
-	per_unit_fee_monthly_display: string;
-	flat_fee: number;
-	flat_fee_display: string;
-	flat_fee_monthly_display: string;
-	undiscounted_per_unit_fee?: undefined | null | number;
-	transform_quantity_divide_by?: undefined | null | number;
-	transform_quantity_round?: undefined | null | 'up' | 'down';
+	minimum_price_display: string;
+	minimum_price_monthly_display: string;
+	maximum_price_display?: string | null | undefined;
+	maximum_price_monthly_display?: string | null | undefined;
 }
 
 /**
