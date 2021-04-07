@@ -79,8 +79,7 @@
 
 	.masterbar__item-new {
 		padding: 0 10px;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 13px; /* visual parity with front-end top bar */
+		font-size: $nav-unification-masterbar-font-size;
 
 		&:hover {
 			background: #e9e9ea;
@@ -104,6 +103,13 @@
 	@media only screen and ( max-width: 782px ) {
 		.masterbar__item-new {
 			padding: 0 15px;
+		}
+	}
+
+	@include breakpoint-deprecated( '<480px' ) {
+		.masterbar__item-new {
+			height: 36px;
+			margin-top: 5px;
 		}
 	}
 
