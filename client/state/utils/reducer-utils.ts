@@ -13,7 +13,7 @@ import type { SerializableReducer } from './serialize';
 import { APPLY_STORED_STATE } from 'calypso/state/action-types';
 import { SerializationResult } from 'calypso/state/serialization-result';
 
-interface CombinedReducer extends SerializableReducer {
+export interface CombinedReducer extends SerializableReducer {
 	storageKey?: string;
 	addReducer?: ( keyPath: string[], reducer: Reducer ) => CombinedReducer;
 	getStorageKeys?: () => Generator< string | { storageKey: string; reducer: Reducer } >;
