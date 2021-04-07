@@ -451,7 +451,7 @@ class RegisterDomainStep extends React.Component {
 							delayTimeout={ 1000 }
 							describedBy={ 'step-header' }
 							dir="ltr"
-							initialValue={ this.state.lastQuery }
+							defaultValue={ this.state.lastQuery }
 							value={ this.state.lastQuery }
 							inputLabel={ this.props.translate( 'What would you like your domain name to be?' ) }
 							minLength={ MIN_QUERY_LENGTH }
