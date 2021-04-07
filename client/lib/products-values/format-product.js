@@ -1,10 +1,5 @@
-/**
- * External dependencies
- */
-import { assign } from 'lodash';
-
 export function formatProduct( product ) {
-	return assign( {}, product, {
+	return Object.assign( {}, product, {
 		product_slug: product.product_slug || product.productSlug,
 		product_type: product.product_type || product.productType,
 		included_domain_purchase_amount:
