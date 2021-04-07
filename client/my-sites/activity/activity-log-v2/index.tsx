@@ -76,6 +76,7 @@ const ActivityLogV2: FunctionComponent = () => {
 			onClick={ () =>
 				dispatch( recordTracksEvent( 'calypso_jetpack_activity_log_upgrade_click' ) )
 			}
+			openButtonLinkOnNewTab={ false }
 		/>
 	) : (
 		<div className="activity-log-v2__header">
