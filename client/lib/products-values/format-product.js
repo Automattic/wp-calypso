@@ -13,6 +13,5 @@ export function formatProduct( product ) {
 			product.is_domain_registration !== undefined
 				? product.is_domain_registration
 				: product.isDomainRegistration,
-		free_trial: product.free_trial || product.freeTrial,
 	} );
 }
