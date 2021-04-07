@@ -27,6 +27,7 @@
 		{ "path": "./plans-grid" },
 		{ "path": "./search" },
 		{ "path": "./shopping-cart" },
+		{ "path": "./tree-select" },
 		{ "path": "./wpcom-checkout" }
 	]
 }
