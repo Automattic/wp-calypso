@@ -62,12 +62,63 @@ describe( 'useExperiment', () => {
 		);
 
 		expect( result.current ).toEqual( [ true, null ] );
+		expect(
+			( exPlatClient.loadExperimentAssignment as jest.MockedFunction<
+				typeof exPlatClient.loadExperimentAssignment
+			> ).mock.calls.length
+		).toBe( 1 );
 		actReactHooks( () => controllablePromise1.resolve( validExperimentAssignment ) );
 		expect( result.current ).toEqual( [ true, null ] );
 		await waitForNextUpdate();
 		expect( result.current ).toEqual( [ false, validExperimentAssignment ] );
 		rerender();
 		expect( result.current ).toEqual( [ false, validExperimentAssignment ] );
+	} );
+
+	it( 'should correctly load an experiment assignment respecting eligibility', async () => {
+		const exPlatClient = createMockExPlatClient();
+		const { useExperiment } = createExPlatClientReactHelpers( exPlatClient );
+
+		const controllablePromise1 = createControllablePromise< ExperimentAssignment >();
+		( exPlatClient.loadExperimentAssignment as jest.MockedFunction<
+			typeof exPlatClient.loadExperimentAssignment
+		> ).mockImplementationOnce( () => controllablePromise1.promise );
+
+		let isEligible = false;
+		const { result, rerender, waitForNextUpdate } = renderHook( () =>
+			useExperiment( 'experiment_a', { isEligible } )
+		);
+
+		expect( result.current ).toEqual( [ false, null ] );
+		expect(
+			( exPlatClient.loadExperimentAssignment as jest.MockedFunction<
+				typeof exPlatClient.loadExperimentAssignment
+			> ).mock.calls.length
+		).toBe( 0 );
+
+		isEligible = true;
+		rerender();
+		expect( result.current ).toEqual( [ true, null ] );
+		expect(
+			( exPlatClient.loadExperimentAssignment as jest.MockedFunction<
+				typeof exPlatClient.loadExperimentAssignment
+			> ).mock.calls.length
+		).toBe( 1 );
+		actReactHooks( () => controllablePromise1.resolve( validExperimentAssignment ) );
+		expect( result.current ).toEqual( [ true, null ] );
+		await waitForNextUpdate();
+		expect( result.current ).toEqual( [ false, validExperimentAssignment ] );
+		rerender();
+		expect( result.current ).toEqual( [ false, validExperimentAssignment ] );
+
+		isEligible = false;
+		rerender();
+		expect( result.current ).toEqual( [ false, null ] );
+		expect(
+			( exPlatClient.loadExperimentAssignment as jest.MockedFunction<
+				typeof exPlatClient.loadExperimentAssignment
+			> ).mock.calls.length
+		).toBe( 1 );
 	} );
 } );
 
