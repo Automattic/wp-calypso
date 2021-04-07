@@ -66,13 +66,13 @@ export function* __internalGetDomainSuggestions( queryObject: DomainSuggestionQu
 	yield fetchDomainSuggestions();
 
 	try {
-		const suggestions: string | DomainSuggestion[] = yield wpcomRequest( {
+		const suggestions: DomainSuggestion[] = yield wpcomRequest( {
 			apiVersion: '1.1',
 			path: '/domains/suggestions',
 			query: stringify( queryObject ),
 		} );
 
-		if ( typeof suggestions === 'string' || ! suggestions ) {
+		if ( ! Array.isArray( suggestions ) ) {
 			// Other internal server errors
 			return receiveDomainSuggestionsError(
 				translate( 'Invalid response from the server' ) as string
