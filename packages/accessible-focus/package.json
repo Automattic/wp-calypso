@@ -30,14 +30,5 @@
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
-	},
-	"dependencies": {
-		"@wordpress/compose": "1.x.x - 3.x.x",
-		"@wordpress/hooks": "^2.11.0",
-		"@wordpress/i18n": "^3.17.0"
-	},
-	"peerDependencies": {
-		"react": "^16.8"
-	},
-	"private": true
+	}
 }
