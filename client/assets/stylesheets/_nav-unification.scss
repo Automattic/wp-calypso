@@ -169,6 +169,9 @@
 			// fix for profile picture currently hidden in production
 			.masterbar__item-content {
 				display: block;
+			}
+
+			.gridicon {
 				position: relative;
 				left: 4px;
 			}
@@ -182,7 +185,7 @@
 
 	@include breakpoint-deprecated( '<480px' ) {
 		.masterbar__item-me {
-			padding: 0 15px;
+			padding: 0 11px;
 
 			.gravatar {
 				width: 19px;
@@ -227,6 +230,7 @@
 
 	@include breakpoint-deprecated( '<480px' ) {
 		.masterbar__item-notifications {
+			margin-top: 0;
 			margin-left: auto;
 			margin-right: auto;
 			padding: 0 8px;
