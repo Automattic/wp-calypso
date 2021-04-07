@@ -25,7 +25,7 @@ import Pagination from 'calypso/components/pagination';
 import QueryJetpackPartnerPortalLicenses from 'calypso/components/data/query-jetpack-partner-portal-licenses';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import LicenseListHeader from 'calypso/jetpack-cloud/sections/partner-portal/license-list/header';
-import LicenseListEmpty from 'calypso/jetpack-cloud/sections/partner-portal/license-list/empty-list';
+import LicenseListEmpty from 'calypso/jetpack-cloud/sections/partner-portal/license-list/empty';
 
 /**
  * Style dependencies

@@ -25,17 +25,18 @@ export default function LicenseListEmpty(): ReactElement {
 	const hasAssignedLicenses = counts[ LicenseFilter.Attached ] > 0;
 
 	const licenseFilterStatusMap = {
-		[ LicenseFilter.NotRevoked ]: translate( 'active' ),
-		[ LicenseFilter.Attached ]: translate( 'assigned' ),
-		[ LicenseFilter.Detached ]: translate( 'unassigned' ),
-		[ LicenseFilter.Revoked ]: translate( 'revoked' ),
+		[ LicenseFilter.NotRevoked ]: translate( 'Active' ),
+		[ LicenseFilter.Attached ]: translate( 'Assigned' ),
+		[ LicenseFilter.Detached ]: translate( 'Unassigned' ),
+		[ LicenseFilter.Revoked ]: translate( 'Revoked' ),
 	};
 
-	const licenseFilterStatus = licenseFilterStatusMap[ filter ];
+	const licenseFilterStatus = licenseFilterStatusMap[ filter ] as string;
 
 	// translators: %(status)s is the current "status" of a license. One of active, assigned, unassigned, or revoked.
 	const titleText = translate( 'No %(status)s licenses.', {
-		args: { status: licenseFilterStatus },
+		// Using `toLowerCase` to reuse the strings above and avoid retranslation
+		args: { status: licenseFilterStatus.toLowerCase() },
 	} );
 
 	return (
