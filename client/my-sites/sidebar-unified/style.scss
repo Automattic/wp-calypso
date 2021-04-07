@@ -410,17 +410,23 @@ $font-size: rem( 14px );
 			margin: 8px 3px 7px;
 		}
 
-		.current-site__notices > a::before {
-			content: '\f534';
-			font-family: 'dashicons';
-			/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
-			font-size: 20px;
-			line-height: 20px;
-			background-color: #a7aaad;
-			color: white;
-			/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
-			border-radius: 50%;
-			margin: 3px 0 3px 1px;
+		.current-site__notices > .banner {
+			&::before {
+				content: '\f534';
+				font-family: 'dashicons';
+				/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
+				font-size: 20px;
+				line-height: 20px;
+				background-color: #a7aaad;
+				color: white;
+				/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
+				border-radius: 50%;
+				margin: 3px 0 3px 1px;
+			}
+
+			&.is-dismissible .gridicon {
+				display: none;
+			}
 		}
 
 		.upsell-nudge.banner.card.is-compact .banner__content {
