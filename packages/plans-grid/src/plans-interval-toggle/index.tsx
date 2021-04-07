@@ -2,9 +2,8 @@
  * External dependencies
  */
 import * as React from 'react';
-import { useI18n } from '@wordpress/react-i18n';
 import { useLocale } from '@automattic/i18n-utils';
-import { sprintf } from '@wordpress/i18n';
+import { __, _x, hasTranslation, sprintf } from '@wordpress/i18n';
 import { Popover } from '@wordpress/components';
 import classNames from 'classnames';
 import type { Plans } from '@automattic/data-stores';
@@ -57,7 +56,6 @@ const PlansIntervalToggle: React.FunctionComponent< PlansIntervalToggleProps > =
 	maxMonthlyDiscountPercentage,
 	className = '',
 } ) => {
-	const { __, _x, hasTranslation } = useI18n();
 	const locale = useLocale();
 
 	const fallbackMonthlyLabel = __( 'Pay monthly', __i18n_text_domain__ );
