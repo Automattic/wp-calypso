@@ -3,7 +3,6 @@
  */
 import React, { PropsWithChildren, ReactElement, useContext } from 'react';
 import { useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import CSSTransition from 'react-transition-group/CSSTransition';
@@ -13,7 +12,6 @@ import CSSTransition from 'react-transition-group/CSSTransition';
  */
 import { LICENSES_PER_PAGE } from 'calypso/state/partner-portal/licenses/constants';
 import { addQueryArgs } from 'calypso/lib/route';
-import { Card } from '@automattic/components';
 import { License, PaginatedItems } from 'calypso/state/partner-portal/types';
 import {
 	getPaginatedLicenses,
@@ -27,6 +25,7 @@ import Pagination from 'calypso/components/pagination';
 import QueryJetpackPartnerPortalLicenses from 'calypso/components/data/query-jetpack-partner-portal-licenses';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import LicenseListHeader from 'calypso/jetpack-cloud/sections/partner-portal/license-list/header';
+import LicenseListEmpty from 'calypso/jetpack-cloud/sections/partner-portal/license-list/empty-list';
 
 /**
  * Style dependencies
@@ -49,7 +48,6 @@ const LicenseTransition = ( props: PropsWithChildren< LicenseTransitionProps > )
 );
 
 export default function LicenseList(): ReactElement {
-	const translate = useTranslate();
 	const { filter, search, sortField, sortDirection, currentPage } = useContext(
 		LicenseListContext
 	);
@@ -70,7 +68,9 @@ export default function LicenseList(): ReactElement {
 				page={ currentPage }
 			/>
 
-			<LicenseListHeader />
+			{ ! showNoResults && <LicenseListHeader /> }
+
+			{ showNoResults && <LicenseListEmpty /> }
 
 			<TransitionGroup className="license-list__transition-group">
 				{ showLicenses &&
@@ -93,14 +93,6 @@ export default function LicenseList(): ReactElement {
 				{ isFetching && (
 					<LicenseTransition>
 						<LicensePreviewPlaceholder />
-					</LicenseTransition>
-				) }
-
-				{ showNoResults && (
-					<LicenseTransition>
-						<Card className="license-list__message" compact>
-							<p>{ translate( 'No licenses found.' ) }</p>
-						</Card>
 					</LicenseTransition>
 				) }
 
