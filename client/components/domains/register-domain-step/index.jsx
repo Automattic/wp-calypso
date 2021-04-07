@@ -26,6 +26,7 @@ import { stringify } from 'qs';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import Search from '@automattic/search';
 
 /**
  * Internal dependencies
@@ -44,7 +45,6 @@ import {
 } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
-import Search from '@automattic/search';
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
 import DomainTransferSuggestion from 'calypso/components/domains/domain-transfer-suggestion';
 import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggestion';
