@@ -134,7 +134,7 @@ function waitForSelectedSite(): Promise< Site | undefined > {
 	} ).finally( unsubscribe );
 }
 /**
- * If the list of available designs (stored in the `@automattic/domain-picker` package)
+ * If the list of available designs (stored in the `@automattic/design-picker` package)
  * has been updated, replace the cached list of designs with the updated designs.
  */
 function ensureRandomizedDesignsAreUpToDate() {
@@ -148,10 +148,10 @@ function ensureRandomizedDesignsAreUpToDate() {
 /**
  *
  * Compare cached designs in the ONBOARD_STORE to the source of designs defined
- * in the `@automattic/domain-picker` package
+ * in the `@automattic/design-picker` package
  *
  * @param stored randomizedDesigns cached in WP_ONBOARD
- * @param available designs sourced from the `@automattic/domain-picker` package
+ * @param available designs sourced from the `@automattic/design-picker` package
  */
 function isDeepEqual( stored: Design[], available: Design[] ): boolean {
 	return isEmpty( xorWith( stored, available, isEqual ) );
