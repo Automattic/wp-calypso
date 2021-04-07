@@ -13,7 +13,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { useSiteDomains, useWillRedirectAfterSuccess } from '../../hooks';
+import { useSiteDomains, useHasEcommercePlan } from '../../hooks';
 import Confetti from './confetti';
 import LaunchContext from '../../context';
 import { LAUNCH_STORE, SITE_STORE } from '../../stores';
@@ -23,7 +23,9 @@ import './style.scss';
 // Success is shown when the site is launched but also while the site is still launching.
 // This view is technically going to be the selected view in the modal even while the user goes through the checkout flow (which is rendered on top of this view).
 const Success: React.FunctionComponent = () => {
-	const { redirectTo, siteId, getCurrentLaunchFlowUrl } = React.useContext( LaunchContext );
+	const { redirectTo, siteId, getCurrentLaunchFlowUrl, isInIframe } = React.useContext(
+		LaunchContext
+	);
 
 	const isSiteLaunching = useSelect(
 		( select ) => select( SITE_STORE ).isSiteLaunching( siteId ),
@@ -58,7 +60,7 @@ const Success: React.FunctionComponent = () => {
 
 	// if the user has an ecommerce plan or they're using focused launch from wp-admin
 	// they will be automatically redirected to /checkout, in which case the CTAs are not needed
-	const willUserBeRedirectedAutomatically = useWillRedirectAfterSuccess();
+	const shouldShowCTAs = ! useHasEcommercePlan() && ! isInIframe;
 
 	React.useEffect( () => {
 		setDisplayedSiteUrl( `https://${ sitePrimaryDomain?.domain }` );
@@ -105,7 +107,7 @@ const Success: React.FunctionComponent = () => {
 			<SubTitle tagName="h3">
 				{ isLaunchComplete ? subtitleTextLaunched : subtitleTextLaunching }
 			</SubTitle>
-			{ ! willUserBeRedirectedAutomatically && isLaunchComplete && (
+			{ shouldShowCTAs && isLaunchComplete && (
 				<>
 					<div className="focused-launch-success__url-wrapper">
 						<span className="focused-launch-success__url-field">{ displayedSiteUrl }</span>
