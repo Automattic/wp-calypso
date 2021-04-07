@@ -39,21 +39,19 @@ const BlockEditor = ( { onChange, suggestions } ) => {
 	}, [ suggestions ] );
 
 	return (
-		<>
-			<IsolatedBlockEditor
-				onSaveContent={ ( html ) => onChange( html ) }
-				// eslint-disable-next-line no-console
-				onError={ console.error }
-				settings={ {
-					iso: {
-						moreMenu: false,
-						blocks: {
-							allowBlocks: allowedBlocks,
-						},
+		<IsolatedBlockEditor
+			onSaveContent={ ( html ) => onChange( html ) }
+			// eslint-disable-next-line no-console
+			onError={ console.error }
+			settings={ {
+				iso: {
+					moreMenu: false,
+					blocks: {
+						allowBlocks: allowedBlocks,
 					},
-				} }
-			/>
-		</>
+				},
+			} }
+		/>
 	);
 };
 
