@@ -32,6 +32,7 @@
 		border-right: none;
 	}
 
+	// General Top bar styles
 	// client/layout/masterbar/style.scss
 	.masterbar {
 		font-size: $nav-unification-masterbar-font-size;
@@ -44,13 +45,15 @@
 	}
 
 	// client/layout/masterbar/style.scss
-	@media only screen and ( max-width: 782px ) {
-		.masterbar__item .gridicon + .masterbar__item-content {
-			padding-left: 8px;
-		}
+	.masterbar__item-bubble {
+		top: calc( 50% - 14px );
+		left: -7px;
+	}
 
-		.masterbar__reader .gridicon + .masterbar__item-content {
-			padding-left: 6px;
+	// client/layout/masterbar/style.scss
+	@include breakpoint-deprecated( '<480px' ) {
+		.masterbar__item-bubble {
+			left: calc( 50% - 14px );
 		}
 	}
 
@@ -60,14 +63,17 @@
 			font-size: $nav-unification-masterbar-mobile-font-size;
 			padding: 0 15px;
 		}
+
+		.masterbar__item .gridicon + .masterbar__item-content {
+			padding-left: 8px;
+		}
+
+		.masterbar__reader .gridicon + .masterbar__item-content {
+			padding-left: 6px;
+		}
 	}
 
-	// client/layout/masterbar/style.scss
-	.masterbar__item-bubble {
-		top: calc( 50% - 14px );
-		left: -7px;
-	}
-
+	// New post button
 	.masterbar__item-new {
 		padding: 0 10px;
 		font-size: $nav-unification-masterbar-font-size;
@@ -133,8 +139,11 @@
 		.masterbar__toggle-drafts.button.is-borderless {
 			height: 36px;
 			margin-top: 5px;
+			width: auto;
 		}
 	}
+
+	// Account button
 
 	// client/layout/masterbar/style.scss
 	.masterbar__item-me {
@@ -166,6 +175,8 @@
 
 	@include breakpoint-deprecated( '<480px' ) {
 		.masterbar__item-me {
+			padding: 0 15px;
+
 			.gravatar {
 				width: 19px;
 				height: 19px;
@@ -173,6 +184,7 @@
 		}
 	}
 
+	// Notifications button
 	.masterbar__item-notifications {
 		padding-right: 5px;
 		padding-left: 5px;
@@ -181,6 +193,13 @@
 			margin-top: 1px;
 		}
 	}
+
+	// client/layout/masterbar/style.scss
+	.masterbar__item-notifications .masterbar__notifications-bubble {
+		top: 3px;
+		transform: translateX( 1px );
+	}
+
 	// breakpoint used in wp-admin
 	@media only screen and ( max-width: 782px ) {
 		.masterbar__item-notifications {
@@ -192,25 +211,19 @@
 				flex-shrink: 0;
 			}
 		}
+
+		// client/layout/masterbar/style.scss
+		.masterbar__item-notifications .masterbar__notifications-bubble {
+			top: 10px;
+		}
 	}
 
 	@include breakpoint-deprecated( '<480px' ) {
 		.masterbar__item-notifications {
 			margin-left: auto;
 			margin-right: auto;
-		}
-	}
-
-	// client/layout/masterbar/style.scss
-	.masterbar__item-notifications .masterbar__notifications-bubble {
-		top: 3px;
-		transform: translateX( 1px );
-	}
-
-	// client/layout/masterbar/style.scss
-	@include breakpoint-deprecated( '>960px' ) {
-		.masterbar__toggle-drafts.button.is-borderless {
-			margin-left: -23px;
+			padding: 0 8px;
+			width: auto;
 		}
 	}
 
@@ -225,18 +238,6 @@
 		.layout.focus-sites:not( .is-section-post-editor ) .layout__primary .main,
 		.layout.focus-sidebar:not( .is-section-post-editor ) .layout__primary .main {
 			transform: translateX( 100% );
-		}
-
-		// client/layout/masterbar/style.scss
-		.masterbar__item-notifications .masterbar__notifications-bubble {
-			top: 10px;
-		}
-	}
-
-	// client/layout/masterbar/style.scss
-	@include breakpoint-deprecated( '<480px' ) {
-		.masterbar__item-bubble {
-			left: calc( 50% - 14px );
 		}
 	}
 }
