@@ -4,7 +4,7 @@
 import '@automattic/calypso-polyfills';
 import * as React from 'react';
 import ReactDom from 'react-dom';
-import { xorWith, isEqual, isEmpty } from 'lodash';
+import { isEqual } from 'lodash';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import config from '@automattic/calypso-config';
 import { subscribe, select, dispatch } from '@wordpress/data';
@@ -140,7 +140,7 @@ function waitForSelectedSite(): Promise< Site | undefined > {
 function ensureRandomizedDesignsAreUpToDate() {
 	const designsInStore = select( ONBOARD_STORE ).getRandomizedDesigns();
 	const availableDesigns = getAvailableDesigns();
-	if ( ! isDeepEqual( designsInStore.featured, availableDesigns.featured ) ) {
+	if ( areCachedDesignsOutOfDate( designsInStore.featured, availableDesigns.featured ) ) {
 		dispatch( ONBOARD_STORE ).setRandomizedDesigns( getAvailableDesigns( { randomize: true } ) );
 	}
 }
@@ -148,11 +148,26 @@ function ensureRandomizedDesignsAreUpToDate() {
 /**
  *
  * Compare cached designs in the ONBOARD_STORE to the source of designs defined
- * in the `@automattic/design-picker` package
+ * in the `@automattic/design-picker` package, in order to check if the two lists
+ * contains exactly the same designs.
  *
  * @param stored randomizedDesigns cached in WP_ONBOARD
  * @param available designs sourced from the `@automattic/design-picker` package
  */
-function isDeepEqual( stored: Design[], available: Design[] ): boolean {
-	return isEmpty( xorWith( stored, available, isEqual ) );
+function areCachedDesignsOutOfDate( stored: Design[], available: Design[] ): boolean {
+	const keyDesignsBySlug = (
+		designsByKey: Record< string, Design >,
+		currentDesign: Design
+	): Record< string, Design > => ( {
+		...designsByKey,
+		[ currentDesign.slug ]: currentDesign,
+	} );
+
+	// Transform the lists of designs in a dictionary where the key is a design's slug
+	const storedBySlug = stored.reduce( keyDesignsBySlug, {} );
+	const availableBySlug = available.reduce( keyDesignsBySlug, {} );
+
+	// If the two design maps are not deeply equal, it means that the
+	// cached designs are out of date.
+	return ! isEqual( storedBySlug, availableBySlug );
 }
