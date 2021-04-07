@@ -60,12 +60,12 @@ const Success: React.FunctionComponent = () => {
 	const [ hasCopied, setHasCopied ] = React.useState( false );
 
 	// Show CTA buttons needed to dismiss the success view only if the user is not going to be redirected to /checkout after launch.
-	// Conditions to show the CTA buttons:
-	// 1. If the selected plan isn't Ecommerce.
-	// 2. In wp-admin, for the free flow (no selected custom domain or paid plan).
+	// When we display the CTA buttons?
+	// 1. All the time for the free flow (no selected custom domain or paid plan).
+	// 2. If the selected plan isn't Ecommerce and we are in the iframed editor (conditions when we display Checkout Modal).
 	const isEcommerce = useHasEcommercePlan();
 	const isFreeFlow = ! selectedDomain && ! isSelectedPlanPaid;
-	const shouldShowCTAs = ! isEcommerce && ( isInIframe || isFreeFlow );
+	const shouldShowCTAs = isFreeFlow || ( ! isEcommerce && isInIframe );
 
 	React.useEffect( () => {
 		setDisplayedSiteUrl( `https://${ sitePrimaryDomain?.domain }` );
