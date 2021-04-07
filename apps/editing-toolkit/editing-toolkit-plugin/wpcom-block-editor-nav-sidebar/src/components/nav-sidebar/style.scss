@@ -106,6 +106,8 @@ $sidebar-button-text-color: #a2aab2; // former $light-gray-900
 .wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button {
 	height: $header-height !important;
 	background-color: $sidebar-nav-header-background-color !important;
+	// Prevents the icon button from shrinking when the site title goes on 2+ lines
+	flex-shrink: 0;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__home-button {
