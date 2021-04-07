@@ -4,8 +4,7 @@
 		{
 			"extends": "monorepo:wordpress",
 			"separateMajorMinor": false,
-			"prPriority": 2,
-			"reviewers": [ "team:@Automattic/cylon", "team:@Automattic/ganon", "team:@Automattic/luna" ]
+			"prPriority": 2
 		},
 		{
 			"extends": "monorepo:babel",
@@ -43,12 +42,6 @@
 		{
 			"extends": "monorepo:storybook",
 			"prPriority": 1
-		},
-		{
-			"paths": [ "apps/editing-toolkit/package.json" ],
-			"packageName": "newspack-blocks",
-			"reviewers": [ "team:@Automattic/create", "team:@Automattic/ajax" ],
-			"groupName": "Newspack Blog Posts Block Update"
 		}
 	],
 	"statusCheckVerify": true,
@@ -65,5 +58,6 @@
 	"semanticCommits": true,
 	"semanticCommitType": "chore",
 	"masterIssue": true,
-	"masterIssueTitle": "Renovate Dependency Updates"
+	"masterIssueTitle": "Renovate Dependency Updates",
+	"reviewers": [ "team:@Automattic/team-calypso" ]
 }
