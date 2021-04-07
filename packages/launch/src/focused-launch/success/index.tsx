@@ -32,10 +32,11 @@ const Success: React.FunctionComponent = () => {
 		[]
 	);
 
-	const isSelectedPlanPaid = useSelect(
-		( select ) => select( LAUNCH_STORE ).isSelectedPlanPaid(),
-		[]
-	);
+	const [ isSelectedPlanPaid, selectedDomain ] = useSelect( ( select ) => {
+		const launchStore = select( LAUNCH_STORE );
+
+		return [ launchStore.isSelectedPlanPaid(), launchStore.getSelectedDomain() ];
+	}, [] );
 
 	// Save the post before displaying the action buttons and launch succes message
 	const [ isPostSaved, setIsPostSaved ] = React.useState( false );
@@ -58,9 +59,13 @@ const Success: React.FunctionComponent = () => {
 	const [ displayedSiteUrl, setDisplayedSiteUrl ] = React.useState( '' );
 	const [ hasCopied, setHasCopied ] = React.useState( false );
 
-	// if the user has an ecommerce plan or they're using focused launch from wp-admin
-	// they will be automatically redirected to /checkout, in which case the CTAs are not needed
-	const shouldShowCTAs = ! useHasEcommercePlan() && ! isInIframe;
+	// Show CTA buttons needed to dismiss the success view only if the user is not going to be redirected to /checkout after launch.
+	// Conditions to show the CTA buttons:
+	// 1. If the selected plan isn't Ecommerce.
+	// 2. In wp-admin, for the free flow (no selected custom domain or paid plan).
+	const isEcommerce = useHasEcommercePlan();
+	const isFreeFlow = ! selectedDomain && ! isSelectedPlanPaid;
+	const shouldShowCTAs = ! isEcommerce && ( isInIframe || isFreeFlow );
 
 	React.useEffect( () => {
 		setDisplayedSiteUrl( `https://${ sitePrimaryDomain?.domain }` );
