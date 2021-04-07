@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -10,8 +9,9 @@ import moment from 'moment';
 import { getSiteStatsViewSummary } from 'calypso/state/stats/lists/selectors';
 
 describe( 'getSiteStatsViewSummary()', () => {
-	const today = moment();
-	const daysSinceStartOfMonth = moment( new Date() ).diff( today.startOf( 'month' ), 'days' ) + 1;
+	const today = new Date();
+	const todayFormatted = today.toISOString().slice( 0, 10 );
+	const daysSinceStartOfMonth = today.getDate();
 
 	test( 'should return null if no data exists', () => {
 		const data = getSiteStatsViewSummary(
@@ -67,7 +67,7 @@ describe( 'getSiteStatsViewSummary()', () => {
 											[ '2014-01-02', 4 ],
 											[ '2014-01-03', 23 ],
 											[ '2015-01-01', 10 ],
-											[ today.format( 'YYYY-MM-DD' ), 12 ],
+											[ todayFormatted, 12 ],
 										],
 										fields: [ 'period', 'views' ],
 										unit: 'day',
@@ -102,12 +102,12 @@ describe( 'getSiteStatsViewSummary()', () => {
 					data: [ [ '2015-01-01', 10 ] ],
 				},
 			},
-			[ today.year() ]: {
-				[ today.month() ]: {
+			[ today.getFullYear() ]: {
+				[ today.getMonth() ]: {
 					total: 12,
 					average: Math.round( 12 / daysSinceStartOfMonth ),
 					daysInMonth: daysSinceStartOfMonth,
-					data: [ [ today.format( 'YYYY-MM-DD' ), 12 ] ],
+					data: [ [ todayFormatted, 12 ] ],
 				},
 			},
 		} );
@@ -122,7 +122,7 @@ describe( 'getSiteStatsViewSummary()', () => {
 							2916284: {
 								statsVisits: {
 									'[["quantity",-1],["stat_fields","views"]]': {
-										data: [ [ today.format( 'YYYY-MM-DD' ), 96 ] ],
+										data: [ [ todayFormatted, 96 ] ],
 										fields: [ 'period', 'views' ],
 										unit: 'day',
 									},
@@ -135,11 +135,11 @@ describe( 'getSiteStatsViewSummary()', () => {
 			2916284
 		);
 
-		expect( data[ today.year() ][ today.month() ] ).to.eql( {
+		expect( data[ today.getFullYear() ][ today.getMonth() ] ).to.eql( {
 			total: 96,
 			average: Math.round( 96 / daysSinceStartOfMonth ),
 			daysInMonth: daysSinceStartOfMonth,
-			data: [ [ today.format( 'YYYY-MM-DD' ), 96 ] ],
+			data: [ [ todayFormatted, 96 ] ],
 		} );
 	} );
 } );
