@@ -534,7 +534,12 @@ const Summary: React.FunctionComponent = () => {
 		const launchStore = select( LAUNCH_STORE );
 		const { isSiteTitleStepVisible, domain, planProductId } = launchStore.getState();
 
-		return [ launchStore.hasSelectedDomain(), isSiteTitleStepVisible, domain, planProductId ];
+		return [
+			launchStore.hasSelectedDomainOrSubdomain(),
+			isSiteTitleStepVisible,
+			domain,
+			planProductId,
+		];
 	}, [] );
 
 	const isSelectedPlanPaid = useSelect(
@@ -632,7 +637,7 @@ const Summary: React.FunctionComponent = () => {
 		<PlanStep
 			highlighted={ isPlansStepHighlighted }
 			hasPaidPlan={ hasPaidPlan }
-			selectedPaidDomain={ selectedDomain && ! selectedDomain.is_free }
+			selectedPaidDomain={ selectedDomain && ! selectedDomain.is_free } // @TODO: check if selectedDomain can ever be free
 			hasPaidDomain={ hasPaidDomain }
 			stepIndex={ forwardStepIndex ? stepIndex : undefined }
 			key={ stepIndex }
