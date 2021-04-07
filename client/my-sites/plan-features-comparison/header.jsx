@@ -20,7 +20,6 @@ import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getPlanBySlug } from 'calypso/state/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { planLevelsMatch } from 'calypso/lib/plans/index';
 
 export class PlanFeaturesComparisonHeader extends Component {
 	render() {
@@ -28,16 +27,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 	}
 
 	renderPlansHeaderNoTabs() {
-		const {
-			newPlan,
-			bestValue,
-			planType,
-			popular,
-			selectedPlan,
-			title,
-			translate,
-			rawPrice,
-		} = this.props;
+		const { planType, popular, selectedPlan, title, translate, rawPrice } = this.props;
 
 		const headerClasses = classNames(
 			'plan-features-comparison__header',
@@ -53,15 +43,6 @@ export class PlanFeaturesComparisonHeader extends Component {
 				</div>
 				<header className={ headerClasses }>
 					<h4 className="plan-features-comparison__header-title">{ title }</h4>
-					{ planLevelsMatch( selectedPlan, planType ) && (
-						<PlanPill isInSignup={ true }>{ translate( 'Suggested' ) }</PlanPill>
-					) }
-					{ newPlan && ! selectedPlan && (
-						<PlanPill isInSignup={ true }>{ translate( 'New' ) }</PlanPill>
-					) }
-					{ bestValue && ! selectedPlan && (
-						<PlanPill isInSignup={ true }>{ translate( 'Best Value' ) }</PlanPill>
-					) }
 				</header>
 				<div className="plan-features-comparison__pricing">
 					{ this.renderPriceGroup( rawPrice ) }

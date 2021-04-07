@@ -2,7 +2,6 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { compact, get, map, reduce } from 'lodash';
@@ -29,17 +28,12 @@ import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
-import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
-import { addQueryArgs } from 'calypso/lib/url';
 import {
 	planMatches,
 	applyTestFiltersToPlansList,
 	getMonthlyPlanByYearly,
 	getYearlyPlanByMonthly,
-	getPlanPath,
-	isWpComEcommercePlan,
-	isWpComBusinessPlan,
 	findPlansKeys,
 	getPlan as getPlanFromKey,
 	getPlanClass,
@@ -48,28 +42,9 @@ import {
 import {
 	getPlanDiscountedRawPrice,
 	getSitePlanRawPrice,
-	getPlansBySiteId,
-	isCurrentUserCurrentPlanOwner,
 } from 'calypso/state/sites/plans/selectors';
-import {
-	getSitePlan,
-	getSiteSlug,
-	isCurrentPlanPaid,
-	isCurrentSitePlan,
-	isJetpackSite,
-} from 'calypso/state/sites/selectors';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import {
-	isBestValue,
-	isMonthly,
-	isNew,
-	PLAN_FREE,
-	TERM_MONTHLY,
-	FEATURE_BUSINESS_ONBOARDING,
-} from 'calypso/lib/plans/constants';
+import { isMonthly, TERM_MONTHLY } from 'calypso/lib/plans/constants';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
-import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 
 /**
  * Style dependencies
@@ -126,8 +101,6 @@ export class PlanFeaturesComparison extends Component {
 				planConstantObj,
 				planName,
 				popular,
-				newPlan,
-				bestValue,
 				relatedMonthlyPlan,
 				isPlaceholder,
 				hideMonthly,
@@ -153,8 +126,6 @@ export class PlanFeaturesComparison extends Component {
 						discountPrice={ discountPrice }
 						hideMonthly={ hideMonthly }
 						isPlaceholder={ isPlaceholder }
-						newPlan={ newPlan }
-						bestValue={ bestValue }
 						planType={ planName }
 						popular={ popular }
 						rawPrice={ rawPrice }
@@ -171,20 +142,19 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	handleUpgradeClick( singlePlanProperties ) {
-		const { onUpgradeClick: ownPropsOnUpgradeClick, redirectTo } = this.props;
-		const { cartItemForPlan, checkoutUrl } = singlePlanProperties;
+		const { onUpgradeClick: ownPropsOnUpgradeClick } = this.props;
+		const { cartItemForPlan } = singlePlanProperties;
 
 		if ( ownPropsOnUpgradeClick && ownPropsOnUpgradeClick !== noop && cartItemForPlan ) {
 			ownPropsOnUpgradeClick( cartItemForPlan );
 			return;
 		}
 
-		const checkoutUrlWithArgs = addQueryArgs( { redirect_to: redirectTo }, checkoutUrl );
-		page( checkoutUrlWithArgs );
+		return `/checkout`;
 	}
 
 	renderTopButtons() {
-		const { isInSignup, isLaunchPage, planProperties, selectedSiteSlug, purchaseId } = this.props;
+		const { isInSignup, isLaunchPage, planProperties } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const { availableForPurchase } = properties;
@@ -210,11 +180,6 @@ export class PlanFeaturesComparison extends Component {
 						isPopular={ popular }
 						isInSignup={ isInSignup }
 						isLaunchPage={ isLaunchPage }
-						manageHref={
-							purchaseId
-								? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
-								: `/plans/my-plan/${ selectedSiteSlug }`
-						}
 						onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
 						planName={ planConstantObj.getTitle() }
 						planType={ planName }
@@ -327,10 +292,8 @@ export class PlanFeaturesComparison extends Component {
 
 PlanFeaturesComparison.propTypes = {
 	basePlansPath: PropTypes.string,
-	canPurchase: PropTypes.bool.isRequired,
 	displayJetpackPlans: PropTypes.bool,
 	isInSignup: PropTypes.bool,
-	isJetpack: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	// either you specify the plans prop or isPlaceholder prop
 	plans: PropTypes.array,
@@ -338,18 +301,14 @@ PlanFeaturesComparison.propTypes = {
 	visiblePlans: PropTypes.array,
 	planProperties: PropTypes.array,
 	selectedFeature: PropTypes.string,
-	selectedSiteSlug: PropTypes.string,
 	purchaseId: PropTypes.number,
 	siteId: PropTypes.number,
-	sitePlan: PropTypes.object,
 };
 
 PlanFeaturesComparison.defaultProps = {
 	basePlansPath: null,
 	displayJetpackPlans: false,
-	isInSignup: false,
-	isJetpack: false,
-	selectedSiteSlug: '',
+	isInSignup: true,
 	siteId: null,
 	onUpgradeClick: noop,
 };
@@ -382,23 +341,11 @@ export default connect(
 			plans,
 			isLandingPage,
 			siteId,
-			displayJetpackPlans,
 			visiblePlans,
 			popularPlanSpec,
-			withDiscount,
 		} = ownProps;
-		const selectedSiteId = siteId;
-		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
-		// If no site is selected, fall back to use the `displayJetpackPlans` prop's value
-		const isJetpack = selectedSiteId ? isJetpackSite( state, selectedSiteId ) : displayJetpackPlans;
-		const isSiteAT = selectedSiteId ? isSiteAutomatedTransfer( state, selectedSiteId ) : false;
-		const siteIsPrivate = isPrivateSite( state, selectedSiteId );
-		const sitePlan = getSitePlan( state, selectedSiteId );
-		const sitePlans = getPlansBySiteId( state, selectedSiteId );
-		const isPaid = isCurrentPlanPaid( state, selectedSiteId );
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
-		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
 
 		let planProperties = compact(
 			map( plans, ( plan ) => {
@@ -406,62 +353,29 @@ export default connect(
 				const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
 				const planProductId = planConstantObj.getProductId();
 				const planObject = getPlan( state, planProductId );
-				const isLoadingSitePlans = selectedSiteId && ! sitePlans.hasLoadedFromServer;
 				const showMonthly = ! isMonthly( plan );
-				const availableForPurchase = isInSignup
-					? true
-					: canUpgradeToPlan( state, selectedSiteId, plan ) && canPurchase;
+				const availableForPurchase = true;
 				const relatedMonthlyPlan = showMonthly
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;
 				const popular = popularPlanSpec && planMatches( plan, popularPlanSpec );
-				const newPlan = isNew( plan ) && ! isPaid;
-				const bestValue = isBestValue( plan ) && ! isPaid;
-				const currentPlan = sitePlan && sitePlan.product_slug;
-				const planPath = getPlanPath( plan ) || '';
-
-				const checkoutUrlArgs = {};
-				// Auto-apply the coupon code to the cart for WPCOM sites
-				if ( ! displayJetpackPlans && withDiscount ) {
-					checkoutUrlArgs.coupon = withDiscount;
-				}
-				const checkoutUrl = addQueryArgs(
-					checkoutUrlArgs,
-					`/checkout/${ selectedSiteSlug }/${ planPath }`
-				);
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
-				const showMonthlyPrice = ! isJetpack || isSiteAT || ( ! relatedMonthlyPlan && showMonthly );
-				let features = planConstantObj.getPlanCompareFeatures( abtest );
-
-				// TODO: remove this once Quick Start sessions have been removed from Business Plan
-				if ( isWpComBusinessPlan( plan ) ) {
-					features = features.filter( ( feature ) => feature !== FEATURE_BUSINESS_ONBOARDING );
-				}
-
+				const showMonthlyPrice = true;
+				const features = planConstantObj.getPlanCompareFeatures( abtest );
 				let planFeatures = getPlanFeaturesObject( features );
-				if ( placeholder || ! planObject || isLoadingSitePlans ) {
+				if ( placeholder || ! planObject ) {
 					isPlaceholder = true;
 				}
 
 				if ( planConstantObj.getSignupCompareAvailableFeatures ) {
 					planFeatures = getPlanFeaturesObject(
-						planConstantObj.getSignupCompareAvailableFeatures( currentPlan )
+						planConstantObj.getSignupCompareAvailableFeatures()
 					);
 				}
 
-				if ( displayJetpackPlans ) {
-					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( currentPlan ) );
-				}
-				const siteIsPrivateAndGoingAtomic = siteIsPrivate && isWpComEcommercePlan( plan );
-				const isMonthlyObj = { isMonthly: showMonthlyPrice };
-				const rawPrice = siteId
-					? getSitePlanRawPrice( state, selectedSiteId, plan, isMonthlyObj )
-					: getPlanRawPrice( state, planProductId, showMonthlyPrice );
-
-				const discountPrice = siteId
-					? getPlanDiscountedRawPrice( state, selectedSiteId, plan, isMonthlyObj )
-					: getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
+				const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
+				const discountPrice = getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
 
 				let annualPricePerMonth = rawPrice;
 				const isMonthlyPlan = isMonthly( plan );
@@ -469,26 +383,18 @@ export default connect(
 					// Get annual price per month for comparison
 					const yearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( plan ) );
 					if ( yearlyPlan ) {
-						annualPricePerMonth = siteId
-							? getSitePlanRawPrice( state, selectedSiteId, plan, { isMonthly: true } )
-							: getPlanRawPrice( state, yearlyPlan.product_id, true );
+						annualPricePerMonth = getPlanRawPrice( state, yearlyPlan.product_id, true );
 					}
 				}
 
-				let rawPriceForMonthlyPlan; // This is the per month price of a monthly plan. E.g. $14 for Premium monthly.
-				if ( isInSignup && ! displayJetpackPlans ) {
-					const monthlyPlanKey = findPlansKeys( {
-						group: planConstantObj.group,
-						term: TERM_MONTHLY,
-						type: planConstantObj.type,
-					} )[ 0 ];
-					const monthlyPlanProductId = getPlanFromKey( monthlyPlanKey )?.getProductId();
-
-					rawPriceForMonthlyPlan = siteId
-						? getSitePlanRawPrice( state, selectedSiteId, plan, true )
-						: getPlanRawPrice( state, monthlyPlanProductId, true );
-				}
-
+				const monthlyPlanKey = findPlansKeys( {
+					group: planConstantObj.group,
+					term: TERM_MONTHLY,
+					type: planConstantObj.type,
+				} )[ 0 ];
+				const monthlyPlanProductId = getPlanFromKey( monthlyPlanKey )?.getProductId();
+				// This is the per month price of a monthly plan. E.g. $14 for Premium monthly.
+				const rawPriceForMonthlyPlan = getPlanRawPrice( state, monthlyPlanProductId, true );
 				const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
 				if ( annualPlansOnlyFeatures.length > 0 ) {
 					planFeatures = planFeatures.map( ( feature ) => {
@@ -514,9 +420,7 @@ export default connect(
 				return {
 					availableForPurchase,
 					cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ),
-					checkoutUrl,
 					currencyCode: getCurrentUserCurrencyCode( state ),
-					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
 					discountPrice,
 					features: planFeatures,
 					isLandingPage,
@@ -526,48 +430,29 @@ export default connect(
 					planObject: planObject,
 					popular: popular,
 					productSlug: get( planObject, 'product_slug' ),
-					newPlan: newPlan,
-					bestValue: bestValue,
 					hideMonthly: false,
-					primaryUpgrade: popular || newPlan || bestValue || plans.length === 1,
+					primaryUpgrade: popular || plans.length === 1,
 					rawPrice,
 					rawPriceAnnual: getPlanRawPrice( state, planProductId, false ),
 					rawPriceForMonthlyPlan,
 					relatedMonthlyPlan,
-					siteIsPrivateAndGoingAtomic,
 					annualPricePerMonth,
 					isMonthlyPlan,
 				};
 			} )
 		);
 
-		const planCredits = calculatePlanCredits( state, siteId, planProperties );
-
 		if ( Array.isArray( visiblePlans ) ) {
 			planProperties = planProperties.filter( ( p ) => visiblePlans.indexOf( p.planName ) !== -1 );
 		}
 
-		const isJetpackNotAtomic = isJetpack && ! isSiteAT;
-
 		const purchaseId = getCurrentPlanPurchaseId( state, siteId );
 
 		return {
-			canPurchase,
-			isJetpack,
 			planProperties,
-			selectedSiteSlug,
 			purchaseId,
-			siteIsPrivate,
-			sitePlan,
 			siteType,
-			planCredits,
 			hasPlaceholders: hasPlaceholders( planProperties ),
-			showPlanCreditsApplied:
-				sitePlan &&
-				sitePlan.product_slug !== PLAN_FREE &&
-				planCredits &&
-				! isJetpackNotAtomic &&
-				! isInSignup,
 		};
 	},
 	{
