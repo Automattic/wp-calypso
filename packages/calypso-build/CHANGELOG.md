@@ -10,6 +10,7 @@
   Instead they will fallback to the [default resolution methods from browserslist](https://github.com/browserslist/browserslist#queries)
 - Breaking: `webpack/minify` API has changed. Now it only accepts 4 options: `terserOptions`, `cssMinimizerOptions`, `parallel` and `extractComments`.
 - Added: `webpack/minify` will use CssMinimizerWebpackPlugin to minimize CSS files.
+- Added: option `cacheCompression` to toggle babel cache compression
 - Added dependencies:
   - css-minimizer-webpack-plugin ^1.3.0
   - postcss ^8.2.6 (peer dependency)
