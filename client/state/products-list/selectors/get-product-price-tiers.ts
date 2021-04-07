@@ -25,18 +25,6 @@ export interface PriceTierEntry {
 }
 
 /**
- * @deprecated use PriceTierEntry
- */
-export type PriceTier =
-	| {
-			flat_price: number;
-	  }
-	| {
-			variable_price_per_unit: number;
-			unit: number;
-	  };
-
-/**
  * Returns the price tiers of the specified product.
  *
  * @param {object} state - global state tree
