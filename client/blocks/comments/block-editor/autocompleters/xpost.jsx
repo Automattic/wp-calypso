@@ -13,24 +13,17 @@ export default async () => ( {
 	name: 'xpost',
 	className: 'autocompleters__xpost',
 	triggerPrefix: '+',
-	options: await new Promise( ( resolve, reject ) => {
-		wpcom.req.get(
-			{
-				path: '/internal/P2s',
-				apiVersion: '1.1',
-			},
-			( error, result ) => {
-				if ( error ) return reject( error );
-
-				return resolve(
-					Object.entries( result.list ).map( ( [ subdomain, p2 ] ) => ( {
-						...p2,
-						subdomain,
-					} ) )
-				);
-			}
-		);
-	} ),
+	options: await wpcom.req
+		.get( {
+			path: '/internal/P2s',
+			apiVersion: '1.1',
+		} )
+		.then( ( result ) =>
+			Object.entries( result.list ).map( ( [ subdomain, p2 ] ) => ( {
+				...p2,
+				subdomain,
+			} ) )
+		),
 	getOptionKeywords( p2 ) {
 		return [ p2.title, p2.subdomain ];
 	},

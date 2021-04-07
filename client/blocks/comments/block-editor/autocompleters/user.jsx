@@ -4,56 +4,37 @@
  */
 import React from 'react';
 
-/**
- * Internal dependencies
- */
-import wpcom from 'calypso/lib/wp';
-
-export default async () => ( {
-	name: 'xpost',
-	className: 'autocompleters__xpost',
-	triggerPrefix: '+',
-	options: await new Promise( ( resolve, reject ) => {
-		wpcom.req.get(
-			{
-				path: '/internal/P2s',
-				apiVersion: '1.1',
-			},
-			( error, result ) => {
-				if ( error ) return reject( error );
-
-				return resolve(
-					Object.entries( result.list ).map( ( [ subdomain, p2 ] ) => ( {
-						...p2,
-						subdomain,
-					} ) )
-				);
-			}
-		);
-	} ),
-	getOptionKeywords( p2 ) {
-		return [ p2.title, p2.subdomain ];
+export default ( suggestions ) => ( {
+	name: 'users',
+	className: 'editor-autocompleters__user',
+	triggerPrefix: '@',
+	options: suggestions,
+	getOptionKeywords( user ) {
+		return [ user.user_login, user.display_name ];
 	},
-	getOptionLabel( site ) {
-		const { subdomain, title, blavatar } = site;
-		const url = blavatar.replace( /.*?src=["'](.*?)["'].*/, '$1' );
+	getOptionLabel( user ) {
+		const avatar = user.image_URL ? (
+			<img
+				key="avatar"
+				alt=""
+				className="editor-autocompleters__user-avatar"
+				src={ user.image_URL }
+			/>
+		) : (
+			<span key="avatar" className="editor-autocompleters__no-avatar"></span>
+		);
 
 		return [
-			<span key="slug" className="editor-autocompleters__site-slug">
-				+{ subdomain }
+			avatar,
+			<span key="name" className="editor-autocompleters__user-name">
+				{ user.display_name }
 			</span>,
-			<span key="name" className="editor-autocompleters__site-name">
-				{ title }{ ' ' }
-				<img
-					key="blavatar"
-					className="editor-autocompleters__site-blavatar"
-					alt={ title }
-					src={ url }
-				/>
+			<span key="slug" className="editor-autocompleters__user-slug">
+				{ user.user_login }
 			</span>,
 		];
 	},
-	getOptionCompletion( site ) {
-		return `+${ site.subdomain }`;
+	getOptionCompletion( user ) {
+		return `@${ user.user_login }`;
 	},
 } );
