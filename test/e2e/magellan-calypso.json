@@ -1,5 +1,5 @@
 {
-	"mocha_tests": [ "specs", "specs-gutenberg" ],
+	"mocha_tests": [ "specs" ],
 	"mocha_args": "-R spec-junit-reporter",
 	"max_test_attempts": 3,
 	"max_workers": 6,
