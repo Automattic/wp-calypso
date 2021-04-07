@@ -197,11 +197,7 @@ export class PlanFeaturesComparison extends Component {
 				popular,
 			} = properties;
 
-			const classes = classNames(
-				'plan-features-comparison__table-item',
-				'has-border-bottom',
-				'is-top-buttons'
-			);
+			const classes = classNames( 'plan-features-comparison__table-item', 'is-top-buttons' );
 
 			return (
 				<td key={ planName } className={ classes }>

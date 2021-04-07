@@ -1,104 +1,17 @@
 $plan-features-header-banner-height: 20px;
 $plan-features-sidebar-width: 272px;
 
-/******************************************/
-/*       Plans step redesign Experiment       */
-/*  	       pau2Xa-2yE-p2                  */
-/******************************************/
-
-.in-plans-redesign-experiment {
-	.plan-features--signup {
-		.plan-features-comparison__table {
-			width: 80%;
-			@media ( min-width: 1040px ) {
-				border-spacing: 0;
-			}
-		}
-	}
-
-	.plan-pill.is-in-signup {
-		right: 52%;
-		transform: translate( 50% );
-		border-radius: 4px; /* stylelint-disable-line */
-		background-color: var( --studio-green-5 );
-		color: var( --studio-gray-80 );
-		font-size: $font-body-small;
-	}
-
-	.plan-features__actions-button {
-		border-radius: 4px; /* stylelint-disable-line */
-	}
-
-	.plan-features-comparison__table-item.is-bold {
-		font-weight: bold;
-	}
-
-	.notouch & .segmented-control.price-toggle {
-		background-color: var( --studio-gray-5 );
-		border-color: var( --studio-gray-5 );
-		border-radius: 6px; /* stylelint-disable-line */
-		color: var( --color-text );
-
-		.segmented-control__item {
-			border: 1px solid;
-			border-radius: 6px; /* stylelint-disable-line */
-			border-color: var( --studio-gray-5 );
-			
-			&.is-selected {
-				padding: 1px 0 0 1px;
-			}
-
-			&:hover:not( .is-selected ) {
-				border-color: var( --studio-gray-30 );
-			}
-
-			&:first-child {
-				margin-right: 5px;
-			}
-
-			& .segmented-control__link {
-				color: var( --color-text );
-				padding: 10px 20px;
-
-				&:hover {
-					background-color: unset;
-				}
-			}
-
-			&.is-selected .segmented-control__link {
-				border-radius: 5px; /* stylelint-disable-line */
-				background-color: var( --studio-white );
-				border-color: var( --studio-white );
-				box-shadow: 0 4px 4px rgba( 0, 0, 0, 0.25 ), 0 3px 8px rgba( 0, 0, 0, 0.12 ), inset 0 0 0 rgba( 0, 0, 0, 0.2 );
-				border: 0.5px solid rgba( 0, 0, 0, 0.07 );
-				padding: 11px 20px;
-				color: var( --color-text );
-
-				&:hover {
-					background-color: var( --studio-white );
-				}
-			}
-		}
-	}
-	
-	.plan-features-comparison__row:last-of-type  .plan-features-comparison__table-item.is-last-feature {
-		.plan-features-comparison__item-info {
-			padding-bottom: 30px;
-		}
-	}
+.plan-pill.is-in-signup {
+	right: 52%;
+	transform: translate( 50% );
+	border-radius: 4px; /* stylelint-disable-line */
+	background-color: var( --studio-green-5 );
+	color: var( --studio-gray-80 );
+	font-size: $font-body-small;
 }
 
 .plan-features--loading-container {
 	margin-top: 300px;
-}
-
-/******************************************/
-
-/* Breakpoints 1150px, */
-
-.plan-features-comparison__content {
-	margin: -16px -16px 0;
-	padding-top: $plan-features-header-banner-height;
 }
 
 .plan-features-comparison__table.has-2-cols {
@@ -114,78 +27,8 @@ $plan-features-sidebar-width: 272px;
 	max-width: 337px;
 }
 
-.is-section-plans .plan-features-comparison__table {
-	display: none;
-	@media ( min-width: $plan-features-sidebar-width + 480px ) {
-		display: table;
-	}
-}
-
-.plan-features-comparison__table {
-	font-size: $font-body-small;
-	color: var( --color-text-subtle );
-	border-spacing: 16px 0;
-	margin-top: -16px;
-	display: none;
-	table-layout: fixed;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		display: table;
-	}
-
-	@include breakpoint-deprecated( '<1040px' ) {
-		border-spacing: 0;
-		margin-left: 15px;
-		margin-right: 15px;
-		width: calc( 100% - 30px );
-	}
-}
-
-.plan-features-comparison__table-item {
-	border-right: solid 1px var( --color-neutral-5 );
-	border-left: solid 1px var( --color-neutral-5 );
-	background-color: var( --color-surface );
-	position: relative;
-
-	&.is-highlighted {
-		border: 1px solid var( --color-primary );
-		background-color: rgba( var( --color-primary-rgb ), 0.1 );
-		position: relative;
-		top: -1px;
-
-		.plan-features-comparison__item-checkmark {
-			fill: var( --color-primary );
-		}
-
-		&.has-partial-border::after {
-			display: none;
-		}
-	}
-
-	&.is-selected {
-		display: table-cell;
-	}
-}
-
-.plan-features-comparison__table-item.has-border-bottom {
-	border-bottom: solid 1px var( --color-neutral-5 );
-}
-
 .plan-features-comparison__table-item.has-border-top {
 	border-top: solid 1px var( --color-neutral-5 );
-}
-
-.plan-features-comparison__table-item.is-placeholder {
-	.spinner-line {
-		margin: 0;
-		position: absolute;
-		top: -3px;
-		width: 100%;
-	}
-}
-
-.plan-features-comparison__table-item.is-bottom-buttons {
-	padding-top: 33px;
 }
 
 .plan-features-comparison__table-item.is-top-buttons {
@@ -208,40 +51,9 @@ $plan-features-sidebar-width: 272px;
 	padding: 6px 0 0;
 }
 
-.plan-features-comparison__item-title {
-	flex: 1 0 0;
-	width: 100%;
-}
-
-.plan-features-comparison__item-checkmark {
-	flex: 0 1 auto;
-	fill: var( --color-primary );
-	margin-right: 10px;
-}
-
-.plan-features-comparison__item-tip-info {
-	flex: 0 1 auto;
-}
-
-.plan-features-comparison__actions {
-	padding: 0 24px 24px;
-
-	@include breakpoint-deprecated( '<1040px' ) {
-		padding: 0 12px 12px;
-	}
-
-	@include breakpoint-deprecated( '<660px' ) {
-		padding: 0 20px 20px;
-		border-bottom: solid 1px var( --color-neutral-0 );
-	}
-}
-
 .plan-features-comparison__actions-buttons {
 	text-align: center;
 }
-
-/*= Plans in Signup
-========================================*/
 
 .plans-features-main__group.is-wpcom {
 	padding-top: 19px;
@@ -267,22 +79,30 @@ $plan-features-sidebar-width: 272px;
 
 	.plan-features-comparison__table {
 		display: none;
+		font-size: $font-body-small;
+		color: var( --color-text-subtle );
+		border-spacing: 16px 0;
+		margin-top: -16px;
+		table-layout: fixed;
+		width: 80%;
 
 		@include breakpoint-deprecated( '>660px' ) {
 			display: table;
-			width: 100%;
 			margin: 0 auto;
 			padding: 0 16px;
 		}
 
+		@include breakpoint-deprecated( '<1040px' ) {
+			border-spacing: 0;
+			margin-left: 15px;
+			margin-right: 15px;
+			width: calc( 100% - 30px );
+		}
+
 		@include breakpoint-deprecated( '>1040px' ) {
-			border-spacing: 15px 0;
+			border-spacing: 0;
 			padding: 0;
 		}
-	}
-
-	.plan-features-comparison__content {
-		margin: -16px 0 0;
 	}
 
 	.plan-features-comparison__header-title {
@@ -290,7 +110,7 @@ $plan-features-sidebar-width: 272px;
 		font-size: $font-title-small;
 		line-height: 0.7;
 		color: var( --studio-gray-80 );
-			font-weight: 400;
+		font-weight: 400;
 	}
 
 	.is-premium-plan .plan-features-comparison__header-title {
@@ -301,10 +121,14 @@ $plan-features-sidebar-width: 272px;
 	.plan-features-comparison__table-item {
 		text-align: center;
 		transition: opacity 0.05s;
-	}
+		border-right: solid 1px var( --color-neutral-5 );
+		border-left: solid 1px var( --color-neutral-5 );
+		background-color: var( --color-surface );
+		position: relative;
 
-	.plan-features-comparison__table-item.has-border-bottom {
-		border-bottom: 0;
+		&.is-bold {
+			font-weight: bold;
+		}
 	}
 
 	.plan-features-comparison__pricing,
@@ -359,12 +183,6 @@ $plan-features-sidebar-width: 272px;
 		margin: 5px auto;
 	}
 
-	.plan-features-comparison__item {
-		margin: 0 15px;
-		text-align: left;
-		padding: 0.5rem;
-	}
-
 	.plan-features-comparison__item-info {
 		padding: 0 5px;
 		display: flex;
@@ -375,6 +193,9 @@ $plan-features-sidebar-width: 272px;
 		.plan-features-comparison__item-title {
 			line-height: 18px;
 			overflow-wrap: break-word;
+			margin: 0;
+			flex: 1 0 0;
+			width: 100%;
 		}
 
 		&:not( .is-available ) {
@@ -387,12 +208,17 @@ $plan-features-sidebar-width: 272px;
 		}
 	}
 
-	.plan-features-comparison__item-title {
-		margin: 0;
-	}
-
 	.plan-features-comparison__actions {
 		padding: 0 15px 15px;
+
+		@include breakpoint-deprecated( '<1040px' ) {
+			padding: 0 12px 12px;
+		}
+	
+		@include breakpoint-deprecated( '<660px' ) {
+			padding: 0 20px 20px;
+			border-bottom: solid 1px var( --color-neutral-0 );
+		}
 	}
 
 	.plan-features-comparison__actions-button {
@@ -422,10 +248,18 @@ $plan-features-sidebar-width: 272px;
 
 	.plan-features-comparison__row:last-of-type .plan-features-comparison__table-item {
 		border-bottom: solid 1px var( --color-neutral-5 );
+
+		&.is-last-feature {
+			.plan-features-comparison__item-info {
+				padding-bottom: 30px;
+			}
+		}
 	}
 
 	.plan-features-comparison__item {
 		padding: 0.5rem;
+		margin: 0 15px;
+		text-align: left;
 
 		&.plan-features-comparison__item-available {
 			display: flex;
@@ -461,13 +295,6 @@ $plan-features-sidebar-width: 272px;
 			margin-right: 0;
 			flex: 0 0 auto;
 		}
-
-		.plan-features-comparison__item-cross {
-			fill: var( --studio-gray-20 );
-			width: 16px;
-			height: 16px;
-			margin-right: 0;
-		}
 	}
 }
 
@@ -493,7 +320,59 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plan-features-comparison__content {
-		margin-left: 0;
-		margin-right: 0;
+		margin: -16px 0 0;
+		padding-top: $plan-features-header-banner-height;
 	}
+}
+
+.notouch .signup__step .segmented-control.price-toggle {
+	background-color: var( --studio-gray-5 );
+	border-color: var( --studio-gray-5 );
+	border-radius: 6px; /* stylelint-disable-line */
+	color: var( --color-text );
+
+	.segmented-control__item {
+		border: 1px solid;
+		border-radius: 6px; /* stylelint-disable-line */
+		border-color: var( --studio-gray-5 );
+		
+		&.is-selected {
+			padding: 1px 0 0 1px;
+		}
+
+		&:hover:not( .is-selected ) {
+			border-color: var( --studio-gray-30 );
+		}
+
+		&:first-child {
+			margin-right: 5px;
+		}
+
+		& .segmented-control__link {
+			color: var( --color-text );
+			padding: 10px 20px;
+
+			&:hover {
+				background-color: unset;
+			}
+		}
+
+		&.is-selected .segmented-control__link {
+			border-radius: 5px; /* stylelint-disable-line */
+			background-color: var( --studio-white );
+			border-color: var( --studio-white );
+			box-shadow: 0 4px 4px rgba( 0, 0, 0, 0.25 ), 0 3px 8px rgba( 0, 0, 0, 0.12 ), inset 0 0 0 rgba( 0, 0, 0, 0.2 );
+			border: 0.5px solid rgba( 0, 0, 0, 0.07 );
+			padding: 11px 20px;
+			color: var( --color-text );
+
+			&:hover {
+				background-color: var( --studio-white );
+			}
+		}
+	}
+}
+
+.plan-features__actions-button {
+	border-radius: 4px; /* stylelint-disable-line */
 }
