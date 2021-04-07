@@ -539,22 +539,6 @@ object RunAllUnitTests : BuildType({
 			"""
 		}
 		bashNodeScript {
-			name = "Build artifacts"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				export NODE_ENV="production"
-
-				# Build o2-blocks
-				(cd apps/o2-blocks/ && yarn build --output-path="../../artifacts/o2-blocks")
-
-				# Build wpcom-block-editor
-				(cd apps/wpcom-block-editor/ &&  NODE_ENV=development yarn build --output-path="../../artifacts/wpcom-block-editor")
-
-				# Build notifications
-				(cd apps/notifications/ && yarn build --output-path="../../artifacts/notifications")
-			"""
-		}
-		bashNodeScript {
 			name = "Build components storybook"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
