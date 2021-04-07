@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import { compact, get, map, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -13,7 +12,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Notice from 'calypso/components/notice';
 import PlanFeaturesComparisonActions from './actions';
 import PlanFeaturesComparisonHeader from './header';
 import { PlanFeaturesAvailableItem } from './item';
@@ -33,7 +31,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
-import { getDiscountByName } from 'calypso/lib/discounts';
 import { addQueryArgs } from 'calypso/lib/url';
 import {
 	planMatches,
@@ -99,7 +96,6 @@ export class PlanFeaturesComparison extends Component {
 			<div className={ planWrapperClasses }>
 				<QueryActivePromotions />
 				<div className={ planClasses }>
-					{ this.renderNotice() }
 					<div ref={ this.contentRef } className="plan-features-comparison__content">
 						<div>
 							<table className={ tableClasses }>
@@ -117,58 +113,6 @@ export class PlanFeaturesComparison extends Component {
 				</div>
 			</div>
 		);
-	}
-
-	renderNotice() {
-		return this.renderDiscountNotice();
-	}
-
-	renderDiscountNotice() {
-		if ( ! this.hasDiscountNotice() ) {
-			return false;
-		}
-
-		const bannerContainer = this.getBannerContainer();
-		if ( ! bannerContainer ) {
-			return false;
-		}
-		const activeDiscount = getDiscountByName( this.props.withDiscount, this.props.discountEndDate );
-		return ReactDOM.createPortal(
-			<Notice
-				className="plan-features-comparison__notice-credits"
-				showDismiss={ false }
-				icon="info-outline"
-				status="is-success"
-			>
-				{ activeDiscount.plansPageNoticeTextTitle && (
-					<strong>
-						{ activeDiscount.plansPageNoticeTextTitle }
-						{ <br /> }
-					</strong>
-				) }
-				{ activeDiscount.plansPageNoticeText }
-			</Notice>,
-			bannerContainer
-		);
-	}
-
-	hasDiscountNotice() {
-		const { canPurchase, hasPlaceholders, withDiscount, discountEndDate } = this.props;
-		const bannerContainer = this.getBannerContainer();
-		if ( ! bannerContainer ) {
-			return false;
-		}
-
-		const activeDiscount = getDiscountByName( withDiscount, discountEndDate );
-		if ( ! activeDiscount || hasPlaceholders || ! canPurchase ) {
-			return false;
-		}
-
-		return true;
-	}
-
-	getBannerContainer() {
-		return document.querySelector( '.plans-features-main__notice' );
 	}
 
 	renderPlanHeaders() {
@@ -350,7 +294,7 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	renderPlanFeatureColumns( rowIndex ) {
-		const { planProperties, selectedFeature, withScroll } = this.props;
+		const { planProperties, selectedFeature } = this.props;
 
 		return map( planProperties, ( properties, mapIndex ) => {
 			const { features, planName } = properties;
@@ -362,7 +306,6 @@ export class PlanFeaturesComparison extends Component {
 				'plan-features-comparison__table-item',
 				getPlanClass( planName ),
 				{
-					'has-partial-border': ! withScroll && rowIndex + 1 < featureKeys.length,
 					'is-last-feature': rowIndex + 1 === featureKeys.length,
 					'is-highlighted':
 						selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
@@ -389,7 +332,6 @@ export class PlanFeaturesComparison extends Component {
 PlanFeaturesComparison.propTypes = {
 	basePlansPath: PropTypes.string,
 	canPurchase: PropTypes.bool.isRequired,
-	disableBloggerPlanWithNonBlogDomain: PropTypes.bool,
 	displayJetpackPlans: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	isJetpack: PropTypes.bool,

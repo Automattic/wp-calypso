@@ -138,7 +138,6 @@ export class PlansFeaturesMain extends Component {
 		const {
 			basePlansPath,
 			customerType,
-			disableBloggerPlanWithNonBlogDomain,
 			displayJetpackPlans,
 			domainName,
 			isInSignup,
@@ -173,10 +172,8 @@ export class PlansFeaturesMain extends Component {
 			>
 				<PlanFeaturesComparison
 					basePlansPath={ basePlansPath }
-					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					displayJetpackPlans={ displayJetpackPlans }
 					domainName={ domainName }
-					nonDotBlogDomains={ this.filterDotBlogDomains() }
 					isInSignup={ isInSignup }
 					isLandingPage={ isLandingPage }
 					isLaunchPage={ isLaunchPage }
