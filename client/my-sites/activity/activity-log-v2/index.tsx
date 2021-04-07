@@ -67,7 +67,7 @@ const ActivityLogV2: FunctionComponent = () => {
 
 	const jetpackCloudHeader = showUpgrade ? (
 		<Upsell
-			headerText={ translate( 'Welcome to your site’s activity' ) }
+			headerText={ translate( 'Activity Log' ) }
 			bodyText={ translate(
 				'With your free plan, you can monitor the 20 most recent events. A paid plan unlocks more powerful features. You can access all site activity for the last 30 days and filter events by type and date range to quickly find the information you need. '
 			) }
