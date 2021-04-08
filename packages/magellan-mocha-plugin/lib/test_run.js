@@ -1,15 +1,12 @@
-/* eslint no-invalid-this: 0, no-irregular-whitespace: 0, global-require: 0 */
-'use strict';
-
 //
 // Provide Mocha support for:
 //   - Non-browser testing, or regular node.js mocha tests
 //
 
-var _ = require( 'lodash' );
-var mochaSettings = require( './settings' );
+const _ = require( 'lodash' );
+const mochaSettings = require( './settings' );
 
-var MochaTestRun = function ( options ) {
+const MochaTestRun = function ( options ) {
 	// Share assets directory with mocha tests
 	process.env.TEMP_ASSET_PATH = options.tempAssetPath;
 
@@ -27,14 +24,14 @@ MochaTestRun.prototype.getEnvironment = function ( env ) {
 };
 
 MochaTestRun.prototype.getArguments = function () {
-	var grepString = this.locator.name;
+	let grepString = this.locator.name;
 
-	var escapees = '\\^$[]+*.()"';
+	const escapees = '\\^$[]+*.()"';
 	escapees.split( '' ).forEach( function ( ch ) {
 		grepString = grepString.split( ch ).join( '\\' + ch );
 	} );
 
-	var args = [ '--mocking_port=' + this.mockingPort, '--worker=1', '-g', grepString ];
+	let args = [ '--mocking_port=' + this.mockingPort, '--worker=1', '-g', grepString ];
 
 	if ( mochaSettings.mochaOpts ) {
 		args.push( '--opts', mochaSettings.mochaOpts );

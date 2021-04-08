@@ -1,10 +1,6 @@
-/* eslint no-undef: 0, no-unused-expressions: 0, filenames/filenames: 0,
-  no-magic-numbers: 0, camelcase: 0 */
-'use strict';
-
-var chai = require( 'chai' );
-var expect = chai.expect;
-var amendNodeConfig = require( '../lib/amend_node_config' );
+const chai = require( 'chai' );
+const expect = chai.expect;
+const amendNodeConfig = require( '../lib/amend_node_config' );
 
 describe( 'amendNodeConfig', function () {
 	it( 'should look for node config', function () {

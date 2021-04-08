@@ -1,9 +1,6 @@
-/* eslint no-undef: 0, no-unused-expressions: 0, filenames/filenames: 0, camelcase: 0 */
-'use strict';
-
-var chai = require( 'chai' );
-var expect = chai.expect;
-var testFramework = require( '../index' );
+const chai = require( 'chai' );
+const expect = chai.expect;
+const testFramework = require( '../index' );
 
 describe( 'settings', function () {
 	it( 'stores paths to tests and mocha.opts', function () {

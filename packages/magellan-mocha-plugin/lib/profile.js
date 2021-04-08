@@ -1,15 +1,11 @@
-'use strict';
-
 module.exports = {
 	getProfiles: function ( browsers ) {
 		if ( browsers.length > 0 ) {
 			return [ { id: 'mocha' } ];
-		} else {
-			return [];
 		}
+		return [];
 	},
-	/* eslint-disable no-unused-vars */
-	getCapabilities: function ( profile ) {
+	getCapabilities: function () {
 		return { id: 'mocha' };
 	},
 

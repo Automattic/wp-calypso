@@ -1,8 +1,7 @@
-'use strict';
-var _ = require( 'lodash' );
+const _ = require( 'lodash' );
 
 module.exports = function ( env, nodeConfigAdditions ) {
-	var nodeConfig = env.NODE_CONFIG;
+	let nodeConfig = env.NODE_CONFIG;
 
 	if ( typeof nodeConfig === 'string' ) {
 		try {

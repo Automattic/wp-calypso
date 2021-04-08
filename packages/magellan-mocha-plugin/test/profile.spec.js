@@ -1,9 +1,6 @@
-/* eslint no-undef: 0, no-unused-expressions: 0, filenames/filenames: 0 */
-'use strict';
-
-var chai = require( 'chai' );
-var expect = chai.expect;
-var profile = require( '../lib/profile' );
+const chai = require( 'chai' );
+const expect = chai.expect;
+const profile = require( '../lib/profile' );
 
 describe( 'profile', function () {
 	it( 'no browser is passed', function () {

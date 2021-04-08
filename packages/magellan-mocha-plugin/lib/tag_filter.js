@@ -1,8 +1,5 @@
-/* eslint no-magic-numbers: 0 */
-'use strict';
-
-var _ = require( 'lodash' );
-var logger = require( 'testarmada-logger' );
+const _ = require( 'lodash' );
+const logger = require( 'testarmada-logger' );
 
 module.exports = function ( tests, tags ) {
 	logger.prefix = 'Mocha Plugin';
@@ -12,7 +9,7 @@ module.exports = function ( tests, tags ) {
 	}
 
 	// If tags are empty or malformed, ignore them
-	if ( ! _.isArray( tags ) || tags.length === 0 ) {
+	if ( ! Array.isArray( tags ) || tags.length === 0 ) {
 		logger.log( 'Mocha tag filter input tags are empty, returning all tests.' );
 		return tests;
 	}

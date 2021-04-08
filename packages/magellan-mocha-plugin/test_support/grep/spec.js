@@ -1,5 +1,5 @@
 describe( '', function () {
-	var noop = function () {};
+	const noop = function () {};
 	it( 'A', noop );
 	it( 'B @match', noop );
 	it( 'C', noop );

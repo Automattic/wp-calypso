@@ -1,17 +1,14 @@
-/* eslint no-undef: 0, no-unused-expressions: 0, filenames/filenames: 0 */
-'use strict';
-
-var path = require( 'path' );
-var sinon = require( 'sinon' );
-var chai = require( 'chai' );
-var expect = chai.expect;
-var testFramework = require( '../index' );
-var filters = testFramework.filters;
-var tests = [];
+const path = require( 'path' );
+const sinon = require( 'sinon' );
+const chai = require( 'chai' );
+const expect = chai.expect;
+const testFramework = require( '../index' );
+const filters = testFramework.filters;
+const tests = [];
 
 'a b c'.split( ' ' ).forEach( function ( f ) {
 	// create two tests per file
-	for ( var i = 0; i < 2; i++ ) {
+	for ( let i = 0; i < 2; i++ ) {
 		tests.push( { filename: 'path/to/' + f + '.js' } );
 	}
 } );
@@ -28,7 +25,7 @@ describe( 'single test filter', function () {
 	} );
 
 	it( 'returns the tests matching the given file', function () {
-		var filtered = filters.test( tests, 'path/to/b.js' );
+		const filtered = filters.test( tests, 'path/to/b.js' );
 		expect( filtered ).to.have.length( 2 );
 		expect( filtered[ 0 ] ).to.have.property( 'filename' ).that.equals( 'path/to/b.js' );
 	} );
