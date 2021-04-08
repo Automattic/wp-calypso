@@ -1,0 +1,11 @@
+---
+extends:
+  - "eslint-config-defaults/configurations/walmart/es5-node"
+rules:
+  "no-console": 0
+  "filenames/filenames": [2, "^[a-z_]+$"]
+  "operator-assignment": 0
+  "func-style": 0
+  "no-extra-bind": 0
+  "max-params": [2, 7]
+  "max-statements": 0

@@ -1,0 +1,37 @@
+{
+	"name": "testarmada-magellan-mocha-plugin",
+	"version": "9.0.1",
+	"description": "Magellan plugin to provide Mocha support",
+	"main": "index.js",
+	"scripts": {
+		"test": "mocha --slow 400 && npm run coverage && npm run check-coverage",
+		"lint": "eslint lib/** test/**",
+		"coverage": "istanbul cover _mocha",
+		"check-coverage": "istanbul check-coverage --statement 95 --function 95 --branch 90"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/TestArmada/magellan-mocha-plugin.git"
+	},
+	"author": "",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/TestArmada/magellan-mocha-plugin/issues"
+	},
+	"homepage": "https://github.com/TestArmada/magellan-mocha-plugin#readme",
+	"dependencies": {
+		"cli-color": "^1.2.0",
+		"lodash": "^4.17.2",
+		"testarmada-logger": "1.1.1"
+	},
+	"devDependencies": {
+		"chai": "^3.4.1",
+		"coffee-script": "^1.10.0",
+		"eslint": "^4.18.2",
+		"eslint-config-defaults": "^8.0.2",
+		"eslint-plugin-filenames": "^0.2.0",
+		"istanbul": "^0.4.5",
+		"mocha": "^3.2.0",
+		"sinon": "^1.17.3"
+	}
+}
