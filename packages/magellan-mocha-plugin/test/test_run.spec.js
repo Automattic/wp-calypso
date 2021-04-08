@@ -39,7 +39,6 @@ describe( 'TestRun class', function () {
 			mocha_config: 'path/to/.mocharc.js',
 		} );
 
-		debugger;
 		const localRun = new TestRun( {
 			locator: {
 				name: 'The full name of the test to run',
