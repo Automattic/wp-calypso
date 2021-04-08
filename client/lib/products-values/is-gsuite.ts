@@ -7,13 +7,11 @@ import {
 	isGSuiteOrExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 } from 'calypso/lib/gsuite';
-import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
 import { formatProduct } from 'calypso/lib/products-values/format-product';
+import type { FormattedProduct, CamelCaseProduct } from './types';
 
-export function isGoogleWorkspace( product ) {
+export function isGoogleWorkspace( product: FormattedProduct | CamelCaseProduct ): boolean {
 	product = formatProduct( product );
-	assertValidProduct( product );
-
 	return isGoogleWorkspaceProductSlug( product.product_slug );
 }
 
@@ -24,10 +22,10 @@ export function isGoogleWorkspace( product ) {
  * @returns {boolean} - true if this product is for extra licenses, false otherwise
  * @see isGoogleWorkspaceExtraLicence() in client/lib/purchases for a function that works on a purchase object
  */
-export function isGoogleWorkspaceExtraLicence( product ) {
+export function isGoogleWorkspaceExtraLicence(
+	product: FormattedProduct | CamelCaseProduct
+): boolean {
 	product = formatProduct( product );
-	assertValidProduct( product );
-
 	if ( ! isGoogleWorkspaceProductSlug( product.product_slug ) ) {
 		return false;
 	}
@@ -36,33 +34,27 @@ export function isGoogleWorkspaceExtraLicence( product ) {
 	return product?.extra?.new_quantity !== undefined;
 }
 
-export function isGSuite( product ) {
+export function isGSuite( product: FormattedProduct | CamelCaseProduct ): boolean {
 	product = formatProduct( product );
-	assertValidProduct( product );
-
 	return isGSuiteProductSlug( product.product_slug );
 }
 
-export function isGSuiteOrExtraLicense( product ) {
+export function isGSuiteOrExtraLicense( product: FormattedProduct | CamelCaseProduct ): boolean {
 	product = formatProduct( product );
-	assertValidProduct( product );
-
 	return isGSuiteOrExtraLicenseProductSlug( product.product_slug );
 }
 
-export function isGSuiteOrExtraLicenseOrGoogleWorkspace( product ) {
+export function isGSuiteOrExtraLicenseOrGoogleWorkspace(
+	product: FormattedProduct | CamelCaseProduct
+): boolean {
 	product = formatProduct( product );
-	assertValidProduct( product );
-
 	return (
 		isGSuiteOrExtraLicenseProductSlug( product.product_slug ) ||
 		isGoogleWorkspaceProductSlug( product.product_slug )
 	);
 }
 
-export function isGSuiteOrGoogleWorkspace( product ) {
+export function isGSuiteOrGoogleWorkspace( product: FormattedProduct | CamelCaseProduct ): boolean {
 	product = formatProduct( product );
-	assertValidProduct( product );
-
 	return isGSuiteOrGoogleWorkspaceProductSlug( product.product_slug );
 }
