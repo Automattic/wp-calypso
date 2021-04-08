@@ -1,11 +1,10 @@
 /**
  * Internal dependencies
  */
-import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
 import { formatProduct } from 'calypso/lib/products-values/format-product';
+import type { FormattedProduct, CamelCaseProduct } from './types';
 
-export function isFreeWordPressComDomain( product ) {
+export function isFreeWordPressComDomain( product: FormattedProduct | CamelCaseProduct ): boolean {
 	product = formatProduct( product );
-	assertValidProduct( product );
 	return product.is_free === true;
 }
