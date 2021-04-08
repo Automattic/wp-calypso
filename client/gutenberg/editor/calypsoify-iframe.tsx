@@ -732,6 +732,7 @@ class CalypsoifyIframe extends Component<
 							// the iframe shows an error page that flashes for a moment
 							// before the user is the redirected to wp-admin.
 							// This styling hides the iframe until it loads or the redirect is executed
+							style={ isIframeLoaded ? undefined : { clipPath: 'inset(50%)' } }
 						/>
 					) }
 				</div>
