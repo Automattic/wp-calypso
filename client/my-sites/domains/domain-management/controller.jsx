@@ -251,7 +251,6 @@ export default {
 				component={ DomainManagement.Transfer }
 				context={ pageContext }
 				needsDomains
-				needsUsers
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
@@ -266,7 +265,6 @@ export default {
 				component={ DomainManagement.TransferToOtherSite }
 				context={ pageContext }
 				needsDomains
-				needsUsers
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
@@ -296,7 +294,6 @@ export default {
 				component={ DomainManagement.TransferOut }
 				context={ pageContext }
 				needsDomains
-				needsUsers
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
