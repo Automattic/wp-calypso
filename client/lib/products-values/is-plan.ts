@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
 import { formatProduct } from 'calypso/lib/products-values/format-product';
 import { isBlogger } from 'calypso/lib/products-values/is-blogger';
 import { isBusiness } from 'calypso/lib/products-values/is-business';
@@ -12,10 +11,10 @@ import { isJpphpBundle } from 'calypso/lib/products-values/is-jpphp-bundle';
 import { isPersonal } from 'calypso/lib/products-values/is-personal';
 import { isPremium } from 'calypso/lib/products-values/is-premium';
 import { isP2Plus } from 'calypso/lib/products-values/is-p2-plus';
+import type { FormattedProduct, CamelCaseProduct } from './types';
 
-export function isPlan( product ) {
+export function isPlan( product: FormattedProduct | CamelCaseProduct ): boolean {
 	product = formatProduct( product );
-	assertValidProduct( product );
 
 	return (
 		isBlogger( product ) ||
