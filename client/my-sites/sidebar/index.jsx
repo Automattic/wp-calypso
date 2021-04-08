@@ -945,10 +945,7 @@ export class MySitesSidebar extends Component {
 		}
 
 		// `from` param is used by WP Admin on Atomic sites for disabling Nav Unification in that context. Can be removed after rolling Nav Unification out to 100% of users.
-		let adminUrl = addQueryArgs(
-			{ from: 'calypso-old-menu', calypsoify: 0 },
-			site.options.admin_url
-		);
+		let adminUrl = addQueryArgs( { calypsoify: 0 }, site.options.admin_url );
 
 		if ( this.props.isJetpack && ! this.props.isAtomicSite && ! this.props.isVip ) {
 			const urlParts = getUrlParts( site.options.admin_url + 'admin.php' );
