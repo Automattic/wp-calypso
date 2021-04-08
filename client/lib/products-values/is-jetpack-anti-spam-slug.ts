@@ -3,6 +3,6 @@
  */
 import { JETPACK_ANTI_SPAM_PRODUCTS } from 'calypso/lib/products-values/constants';
 
-export function isJetpackAntiSpamSlug( productSlug ) {
+export function isJetpackAntiSpamSlug( productSlug: string ): boolean {
 	return JETPACK_ANTI_SPAM_PRODUCTS.includes( productSlug );
 }
