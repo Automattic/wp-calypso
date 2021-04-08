@@ -266,94 +266,186 @@ export function planLevelsMatch( planSlugA, planSlugB ) {
 	return planA && planB && planA.type === planB.type && planA.group === planB.group;
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isEcommercePlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_ECOMMERCE } );
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isBusinessPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_BUSINESS } );
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isPremiumPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_PREMIUM } );
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isPersonalPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_PERSONAL } );
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isBloggerPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_BLOGGER } );
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isFreePlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_FREE } );
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isSecurityDailyPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_SECURITY_DAILY } );
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isSecurityRealTimePlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_SECURITY_REALTIME } );
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isCompletePlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_ALL } );
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isWpComPlan( planSlug ) {
 	return planMatches( planSlug, { group: GROUP_WPCOM } );
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isWpComBusinessPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_WPCOM } );
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isWpComEcommercePlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_ECOMMERCE, group: GROUP_WPCOM } );
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isWpComPremiumPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_PREMIUM, group: GROUP_WPCOM } );
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isWpComPersonalPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_PERSONAL, group: GROUP_WPCOM } );
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isWpComBloggerPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_BLOGGER, group: GROUP_WPCOM } );
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isWpComFreePlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_FREE, group: GROUP_WPCOM } );
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isWpComMonthlyPlan( planSlug ) {
 	return planMatches( planSlug, { term: TERM_MONTHLY, group: GROUP_WPCOM } );
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isJetpackBusinessPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_JETPACK } );
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isJetpackPremiumPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_PREMIUM, group: GROUP_JETPACK } );
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isJetpackPersonalPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_PERSONAL, group: GROUP_JETPACK } );
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isJetpackFreePlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_FREE, group: GROUP_JETPACK } );
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isJetpackOfferResetPlan( planSlug ) {
 	return JETPACK_RESET_PLANS.includes( planSlug );
 }
 
+/**
+ * @param {string} planSlug The plan slug
+ * @returns {boolean} True if it is a matching plan
+ */
 export function isP2PlusPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_P2_PLUS } );
 }
