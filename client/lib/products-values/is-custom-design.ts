@@ -1,12 +1,10 @@
 /**
  * Internal dependencies
  */
-import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
 import { formatProduct } from 'calypso/lib/products-values/format-product';
+import type { FormattedProduct, CamelCaseProduct } from './types';
 
-export function isCustomDesign( product ) {
+export function isCustomDesign( product: FormattedProduct | CamelCaseProduct ): boolean {
 	product = formatProduct( product );
-	assertValidProduct( product );
-
 	return 'custom-design' === product.product_slug;
 }
