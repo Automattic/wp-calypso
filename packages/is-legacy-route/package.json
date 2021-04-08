@@ -1,0 +1,47 @@
+{
+	"name": "@automattic/is-legacy-route",
+	"version": "1.0.0",
+	"description": "Determines if a path is a legacy route, and should be ignored by Calypso",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"types": "dist/types/index.d.ts",
+	"calypso:src": "src/index.ts",
+	"sideEffects": false,
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"keywords": [
+		"checkout",
+		"payments",
+		"automattic"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/is-legacy-route"
+	},
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/is-legacy-route#readme",
+	"dependencies": {
+		"@automattic/calypso-config": "^1.0.0-alpha.0"
+	},
+	"devDependencies": {
+		"chai": "^4.2.0",
+		"sinon": "^9.0.2"
+	},
+	"private": true
+}
