@@ -6,10 +6,6 @@ import { difference, get, has, includes, pick, values } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isEnabled } from '@automattic/calypso-config';
-import { isFreeJetpackPlan } from 'calypso/lib/products-values/is-free-jetpack-plan';
-import { isJetpackPlan } from 'calypso/lib/products-values/is-jetpack-plan';
-import { isMonthly } from 'calypso/lib/products-values/is-monthly';
 import {
 	format as formatUrl,
 	getUrlParts,
@@ -17,8 +13,6 @@ import {
 	determineUrlType,
 } from 'calypso/lib/url';
 import {
-	PLAN_FREE,
-	PLAN_PERSONAL,
 	TERM_MONTHLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
@@ -167,44 +161,6 @@ export function planHasSuperiorFeature( plan, feature ) {
 
 export function shouldFetchSitePlans( sitePlans, selectedSite ) {
 	return ! sitePlans.hasLoadedFromServer && ! sitePlans.isRequesting && selectedSite;
-}
-
-export function filterPlansBySiteAndProps(
-	plans,
-	site,
-	hideFreePlan,
-	intervalType,
-	showJetpackFreePlan
-) {
-	const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
-	const hasPersonalPlan = site && site.plan.product_slug === PLAN_PERSONAL;
-
-	return plans.filter( function ( plan ) {
-		if ( site && site.jetpack ) {
-			if ( 'monthly' === intervalType ) {
-				if ( showJetpackFreePlan ) {
-					return isJetpackPlan( plan ) && isMonthly( plan );
-				}
-				return isJetpackPlan( plan ) && ! isFreeJetpackPlan( plan ) && isMonthly( plan );
-			}
-
-			if ( showJetpackFreePlan ) {
-				return isJetpackPlan( plan ) && ! isMonthly( plan );
-			}
-
-			return isJetpackPlan( plan ) && ! isFreeJetpackPlan( plan ) && ! isMonthly( plan );
-		}
-
-		if ( hideFreePlan && PLAN_FREE === plan.product_slug ) {
-			return false;
-		}
-
-		if ( plan.product_slug === PLAN_PERSONAL && ! ( hasPersonalPlan || isPersonalPlanEnabled ) ) {
-			return false;
-		}
-
-		return ! isJetpackPlan( plan );
-	} );
 }
 
 /**
