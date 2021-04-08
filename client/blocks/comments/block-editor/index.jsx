@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import IsolatedBlockEditor from 'isolated-block-editor';
 
 /**
@@ -28,15 +28,26 @@ const allowedBlocks = [
 ];
 
 const BlockEditor = ( { onChange, suggestions } ) => {
+	const [ isLoaded, setIsLoaded ] = useState( false );
+
 	useEffect( () => {
-		getAddAutocompleters( suggestions ).then( ( addAutoCompleters ) => {
-			addFilter(
-				'editor.Autocomplete.completers',
-				'readerComments/autocompleters',
-				addAutoCompleters
-			);
-		} );
+		// ensure that the addAutoCompleters filter is added before the IsolatedBlockEditor is loaded
+		// so that the filters are definitely run
+		new Promise( ( resolve ) => {
+			getAddAutocompleters( suggestions ).then( ( addAutoCompleters ) => {
+				addFilter(
+					'editor.Autocomplete.completers',
+					'readerComments/autocompleters',
+					addAutoCompleters
+				);
+				resolve();
+			} );
+		} ).then( () => setIsLoaded( true ) );
 	}, [ suggestions ] );
+
+	if ( ! isLoaded ) {
+		return null;
+	}
 
 	return (
 		<IsolatedBlockEditor
