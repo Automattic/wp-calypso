@@ -1,8 +1,10 @@
 const path = require( 'path' );
 const Locator = require( '../lib/locator' );
 const testFramework = require( '../index' );
+const fs = require( 'fs' ).promises;
+const os = require( 'os' );
 
-function getTestsFrom( specs ) {
+async function getTestsFrom( specs ) {
 	if ( ! Array.isArray( specs ) ) {
 		specs = [ specs ];
 	}
@@ -11,14 +13,15 @@ function getTestsFrom( specs ) {
 		mocha_config: path.join( specs[ 0 ], '.mocharc.js' ),
 		suiteTag: 'suite;multiple',
 	} );
-	return testFramework.iterator( { tempDir: path.resolve( '.' ) } );
+	const tempDir = await fs.mkdtemp( path.join( os.tmpdir(), 'magellan-mocha-plugin' ) );
+	return testFramework.iterator( { tempDir } );
 }
 
 describe( 'suite iterator', function () {
 	let suites;
 
-	beforeEach( function () {
-		suites = getTestsFrom( path.join( __dirname, '../test_support/suite' ) );
+	beforeAll( async function () {
+		suites = await getTestsFrom( path.join( __dirname, '../test_support/suite' ) );
 	} );
 
 	it( 'finds suites', function () {

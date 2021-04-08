@@ -1,8 +1,10 @@
 const path = require( 'path' );
 const Locator = require( '../lib/locator' );
 const testFramework = require( '../index' );
+const fs = require( 'fs' ).promises;
+const os = require( 'os' );
 
-function getTestsFrom( specs ) {
+async function getTestsFrom( specs ) {
 	if ( ! Array.isArray( specs ) ) {
 		specs = [ specs ];
 	}
@@ -10,14 +12,15 @@ function getTestsFrom( specs ) {
 		mocha_tests: specs,
 		mocha_config: path.join( specs[ 0 ], '.mocharc.js' ),
 	} );
-	return testFramework.iterator( { tempDir: path.resolve( '.' ) } );
+	const tempDir = await fs.mkdtemp( path.join( os.tmpdir(), 'magellan-mocha-plugin' ) );
+	return testFramework.iterator( { tempDir } );
 }
 
 describe( 'test iterator', function () {
 	let tests;
 
-	beforeAll( function () {
-		tests = getTestsFrom( path.join( __dirname, '../test_support/basic' ) );
+	beforeAll( async function () {
+		tests = await getTestsFrom( path.join( __dirname, '../test_support/basic' ) );
 	} );
 
 	it( 'finds tests', function () {
@@ -45,19 +48,19 @@ describe( 'test iterator', function () {
 	} );
 } );
 
-describe( 'test iterator plus mocha.opts', function () {
-	it( 'supports coffeescript', function () {
-		const tests = getTestsFrom( path.join( __dirname, '../test_support/coffee' ) );
+describe( 'test iterator plus .mocharc.js', function () {
+	it( 'supports coffeescript', async function () {
+		const tests = await getTestsFrom( path.join( __dirname, '../test_support/coffee' ) );
 		expect( tests ).toHaveLength( 2 );
 	} );
 
-	it( 'respects grep option and ignores non-matching', function () {
-		const tests = getTestsFrom( path.join( __dirname, '../test_support/grep' ) );
+	it( 'respects grep option and ignores non-matching', async function () {
+		const tests = await getTestsFrom( path.join( __dirname, '../test_support/grep' ) );
 		expect( tests ).toHaveLength( 3 );
 	} );
 
-	it( 'supports recursive collection', function () {
-		const tests = getTestsFrom( path.join( __dirname, '../test_support/recursive' ) );
+	it( 'supports recursive collection', async function () {
+		const tests = await getTestsFrom( path.join( __dirname, '../test_support/recursive' ) );
 		expect( tests ).toHaveLength( 4 );
 	} );
 } );
