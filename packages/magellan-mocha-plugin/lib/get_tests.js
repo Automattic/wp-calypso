@@ -6,6 +6,7 @@ const spawnSync = require( 'child_process' ).spawnSync;
 const Locator = require( './locator' );
 const mochaSettings = require( './settings' );
 const logger = require( 'testarmada-logger' );
+const pkgUp = require( 'pkg-up' );
 
 module.exports = function ( settings ) {
 	logger.prefix = 'Mocha Plugin';
@@ -16,7 +17,10 @@ module.exports = function ( settings ) {
 		fs.mkdirSync( settings.tempDir );
 	}
 
-	const cmd = path.resolve( require.resolve( 'mocha' ), '../bin/mocha' );
+	const mochaDir = path.dirname(
+		pkgUp.sync( { cwd: path.dirname( require.resolve( 'mocha' ) ) } )
+	);
+	const cmd = path.join( mochaDir, './bin/mocha' );
 	let args = [];
 
 	if ( mochaSettings.suiteTag !== undefined ) {
