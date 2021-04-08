@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
 import { formatProduct } from 'calypso/lib/products-values/format-product';
 import { getDomain } from 'calypso/lib/products-values/get-domain';
 import { isDomainMapping } from 'calypso/lib/products-values/is-domain-mapping';
@@ -16,8 +15,11 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
 } from 'calypso/lib/plans/constants';
+import type { FormattedProduct, CamelCaseProduct } from './types';
 
-const productDependencies = {
+type ProductDependencies = Record< string, boolean >;
+
+const productDependencies: Record< string, ProductDependencies > = {
 	domain: {
 		domain_redemption: true,
 		gapps: true,
@@ -47,11 +49,14 @@ const productDependencies = {
 	},
 };
 
-export function isDependentProduct( product, dependentProduct, domainsWithPlansOnly ) {
+export function isDependentProduct(
+	product: FormattedProduct | CamelCaseProduct,
+	dependentProduct: FormattedProduct,
+	domainsWithPlansOnly: boolean
+): boolean {
 	let isPlansOnlyDependent = false;
 
 	product = formatProduct( product );
-	assertValidProduct( product );
 
 	const slug = isDomainRegistration( product ) ? 'domain' : product.product_slug;
 	const dependentSlug = isDomainRegistration( dependentProduct )
