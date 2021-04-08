@@ -22,6 +22,7 @@
 		"testarmada-logger": "1.1.1"
 	},
 	"devDependencies": {
-		"coffee-script": "^1.10.0"
+		"coffee-script": "^1.10.0",
+		"mocha": "^3.2.0"
 	}
 }
