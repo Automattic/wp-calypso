@@ -69,4 +69,5 @@ export interface FormattedProduct {
 	is_domain_registration?: boolean | undefined;
 	term?: string | undefined;
 	bill_period?: number | undefined;
+	is_bundled?: boolean | undefined;
 }
