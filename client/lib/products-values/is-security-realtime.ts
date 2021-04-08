@@ -2,12 +2,10 @@
  * Internal dependencies
  */
 import { isSecurityRealTimePlan } from 'calypso/lib/plans';
-import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
 import { formatProduct } from 'calypso/lib/products-values/format-product';
+import type { FormattedProduct, CamelCaseProduct } from './types';
 
-export function isSecurityRealTime( product ) {
+export function isSecurityRealTime( product: FormattedProduct | CamelCaseProduct ): boolean {
 	product = formatProduct( product );
-	assertValidProduct( product );
-
 	return isSecurityRealTimePlan( product.product_slug );
 }
