@@ -2,12 +2,10 @@
  * Internal dependencies
  */
 import { isSecurityDailyPlan } from 'calypso/lib/plans';
-import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
 import { formatProduct } from 'calypso/lib/products-values/format-product';
+import type { FormattedProduct, CamelCaseProduct } from './types';
 
-export function isSecurityDaily( product ) {
+export function isSecurityDaily( product: FormattedProduct | CamelCaseProduct ): boolean {
 	product = formatProduct( product );
-	assertValidProduct( product );
-
 	return isSecurityDailyPlan( product.product_slug );
 }
