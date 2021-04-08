@@ -4,6 +4,7 @@
  */
 import type { TranslateResult } from 'i18n-calypso';
 import type * as constants from './constants';
+import type { ResponseCartProductExtra } from '@automattic/shopping-cart';
 
 export type JetpackProductSlug =
 	| typeof constants.PRODUCT_JETPACK_BACKUP_DAILY
@@ -71,6 +72,7 @@ export interface FormattedProduct {
 	bill_period?: number | undefined;
 	is_bundled?: boolean | undefined;
 	is_free?: boolean | undefined;
+	extra?: ResponseCartProductExtra;
 }
 
 export type DelayedDomainTransferProduct = ( FormattedProduct | CamelCaseProduct ) & {
