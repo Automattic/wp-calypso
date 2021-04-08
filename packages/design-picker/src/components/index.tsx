@@ -26,7 +26,7 @@ const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name
 interface Props {
 	locale: string;
 	onSelect: ( design: Design ) => void;
-	designs: Design[];
+	designs?: Design[];
 	premiumBadge?: React.ReactNode;
 	isGridMinimal?: boolean;
 }
