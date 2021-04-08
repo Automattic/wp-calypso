@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
  * Internal dependencies
  */
 import useUpdateUserMutation from 'calypso/data/users/use-update-user-mutation';
-import { errorNotice, successNotice, plainNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { useTranslate } from 'i18n-calypso';
 
 const useSuccessNotice = ( isSuccess, user ) => {
@@ -53,34 +53,12 @@ const useErrorNotice = ( isError, user ) => {
 	}, [ isError ] );
 };
 
-const usePendingNotice = ( isPending, user ) => {
-	const dispatch = useDispatch();
-	const translate = useTranslate();
-
-	React.useEffect( () => {
-		isPending &&
-			dispatch(
-				plainNotice(
-					translate( 'Updating @%(user)s', {
-						args: { user: user?.login },
-						context: 'In progress message while a site is performing actions on users.',
-					} ),
-					{ id: 'update-user-notice' }
-				)
-			);
-		// Note: We only want to run this effect in case `isError`
-		// changes and ignore changes to other deps like `user`.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ isPending ] );
-};
-
 const withUpdateUser = ( Component ) => ( props ) => {
 	const { siteId, user } = props;
 	const { updateUser, isSuccess, isError, isLoading } = useUpdateUserMutation( siteId );
 
 	useSuccessNotice( isSuccess, user );
 	useErrorNotice( isError, user );
-	usePendingNotice( isLoading, user );
 
 	return <Component { ...props } updateUser={ updateUser } isUpdating={ isLoading } />;
 };
