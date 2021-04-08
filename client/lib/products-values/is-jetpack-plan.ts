@@ -1,13 +1,11 @@
 /**
  * Internal dependencies
  */
-import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
 import { formatProduct } from 'calypso/lib/products-values/format-product';
 import { isJetpackPlanSlug } from 'calypso/lib/products-values/is-jetpack-plan-slug';
+import type { FormattedProduct, CamelCaseProduct } from './types';
 
-export function isJetpackPlan( product ) {
+export function isJetpackPlan( product: FormattedProduct | CamelCaseProduct ): boolean {
 	product = formatProduct( product );
-	assertValidProduct( product );
-
 	return isJetpackPlanSlug( product.product_slug );
 }
