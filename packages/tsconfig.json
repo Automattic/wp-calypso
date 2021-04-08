@@ -18,6 +18,7 @@
 		{ "path": "./design-picker" },
 		{ "path": "./domain-picker" },
 		{ "path": "./i18n-utils" },
+		{ "path": "./is-legacy-route" },
 		{ "path": "./js-utils" },
 		{ "path": "./language-picker" },
 		{ "path": "./languages" },

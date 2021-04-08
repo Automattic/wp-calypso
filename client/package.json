@@ -31,6 +31,7 @@
 		"@automattic/explat-client-react-helpers": "^0.0.1",
 		"@automattic/format-currency": "^1.0.0-alpha.0",
 		"@automattic/i18n-utils": "^1.0.0",
+		"@automattic/is-legacy-route": "^1.0.0",
 		"@automattic/js-utils": "^0.1.0",
 		"@automattic/language-picker": "^1.0.0",
 		"@automattic/languages": "^1.0.0",
