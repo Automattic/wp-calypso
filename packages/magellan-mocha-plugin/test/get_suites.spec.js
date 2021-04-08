@@ -1,6 +1,4 @@
 const path = require( 'path' );
-const chai = require( 'chai' );
-const expect = chai.expect;
 const Locator = require( '../lib/locator' );
 const testFramework = require( '../index' );
 
@@ -19,21 +17,21 @@ function getTestsFrom( specs ) {
 describe( 'suite iterator', function () {
 	let suites;
 
-	before( function () {
-		suites = getTestsFrom( './test_support/suite' );
+	beforeEach( function () {
+		suites = getTestsFrom( path.join( __dirname, '../test_support/suite' ) );
 	} );
 
 	it( 'finds suites', function () {
-		expect( suites ).to.have.length( 3 );
+		expect( suites ).toHaveLength( 3 );
 	} );
 
 	it( 'instantiates tests as Locators', function () {
-		expect( suites[ 0 ] ).to.be.an.instanceOf( Locator );
+		expect( suites[ 0 ] ).toBeInstanceOf( Locator );
 	} );
 
 	it( 'collects details of a test', function () {
 		const suite = suites[ 0 ];
-		expect( suite.name ).to.equal( 'Suite @suite' );
-		expect( suites[ 0 ].filename ).to.contain( 'test_support/suite/spec.js' );
+		expect( suite.name ).toBe( 'Suite @suite' );
+		expect( suites[ 0 ].filename ).toEqual( expect.stringMatching( 'test_support/suite/spec.js' ) );
 	} );
 } );

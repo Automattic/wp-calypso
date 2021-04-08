@@ -1,5 +1,3 @@
-const chai = require( 'chai' );
-const expect = chai.expect;
 const testFramework = require( '../index' );
 
 describe( 'settings', function () {
@@ -8,7 +6,7 @@ describe( 'settings', function () {
 			mocha_tests: [ './test_support/basic' ],
 			mocha_opts: './test_support/basic/mocha.opts',
 		} );
-		expect( testFramework.settings.mochaTestFolders ).to.deep.equal( [ './test_support/basic' ] );
-		expect( testFramework.settings.mochaOpts ).to.equal( './test_support/basic/mocha.opts' );
+		expect( testFramework.settings.mochaTestFolders ).toEqual( [ './test_support/basic' ] );
+		expect( testFramework.settings.mochaOpts ).toBe( './test_support/basic/mocha.opts' );
 	} );
 } );

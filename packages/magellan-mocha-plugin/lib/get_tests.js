@@ -16,7 +16,7 @@ module.exports = function ( settings ) {
 		fs.mkdirSync( settings.tempDir );
 	}
 
-	const cmd = './node_modules/.bin/mocha';
+	const cmd = path.resolve( require.resolve( 'mocha' ), '../bin/mocha' );
 	let args = [];
 
 	if ( mochaSettings.suiteTag !== undefined ) {

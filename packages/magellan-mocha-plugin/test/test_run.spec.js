@@ -1,5 +1,3 @@
-const chai = require( 'chai' );
-const expect = chai.expect;
 const testFramework = require( '../index' );
 const TestRun = testFramework.TestRun;
 
@@ -16,12 +14,12 @@ describe( 'TestRun class', function () {
 	} );
 
 	it( 'instantiates', function () {
-		expect( run.locator.name ).to.equal( 'The full name of the test to run' );
-		expect( run.mockingPort ).to.equal( 10 );
+		expect( run.locator.name ).toBe( 'The full name of the test to run' );
+		expect( run.mockingPort ).toBe( 10 );
 	} );
 
 	it( 'returns path to mocha', function () {
-		expect( run.getCommand() ).to.equal( './node_modules/.bin/mocha' );
+		expect( run.getCommand() ).toBe( './node_modules/.bin/mocha' );
 	} );
 
 	it( 'returns the environment for a run', function () {
@@ -30,7 +28,7 @@ describe( 'TestRun class', function () {
 		} );
 
 		// these values are super important, to be used by the testing tools in the worker processes
-		expect( env ).to.deep.equal( {
+		expect( env ).toEqual( {
 			NODE_CONFIG: { foo: 'bar' },
 		} );
 	} );
@@ -49,7 +47,7 @@ describe( 'TestRun class', function () {
 		} );
 
 		const args = localRun.getArguments();
-		expect( args ).to.deep.equal( [
+		expect( args ).toEqual( [
 			'--mocking_port=10',
 			'--worker=1',
 			'-g',
