@@ -77,7 +77,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		return false;
 	}, [ item.productSlug, sitePlan, siteProducts ] );
 	// Calculate the product price.
-	const { originalPrice, discountedPrice, priceTiers } = useItemPrice(
+	const { originalPrice, discountedPrice, priceTierList } = useItemPrice(
 		siteId,
 		item,
 		item?.monthlyProductSlug || ''
@@ -147,9 +147,9 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			isDeprecated={ item.legacy }
 			isAligned={ isAligned }
 			features={ item.features }
-			displayFrom={ ! siteId && priceTiers !== null }
+			displayFrom={ ! siteId && priceTierList.length > 0 }
 			belowPriceText={ item.belowPriceText }
-			tooltipText={ priceTiers && productTooltip( item, priceTiers ) }
+			tooltipText={ priceTierList.length > 0 && productTooltip( item, priceTierList ) }
 			aboveButtonText={ productAboveButtonText( item, siteProduct, isOwned, isItemPlanFeature ) }
 			isDisabled={ isDisabled }
 			disabledMessage={ disabledMessage }
