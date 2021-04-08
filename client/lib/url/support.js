@@ -1,9 +1,11 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { getLocaleSlug } from 'i18n-calypso';
 
-const root = localizeUrl( 'https://wordpress.com/support/' ).replace( /\/$/, '' );
+const localeSlug = typeof getLocaleSlug === 'function' ? getLocaleSlug() : 'en';
+const root = localizeUrl( 'https://wordpress.com/support/', localeSlug ).replace( /\/$/, '' );
 
 export const ACCOUNT_RECOVERY = `${ root }/account-recovery`;
 export const ADDING_GSUITE_TO_YOUR_SITE = `${ root }/add-email/adding-g-suite-to-your-site/`;
