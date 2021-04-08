@@ -46,7 +46,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			return;
 		}
 		await this.driver.switchTo().defaultContent();
-		//await driverHelper.waitTillPresentAndDisplayed( this.driver, this.editoriFrameSelector );
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.editoriFrameSelector );
 		await this.driver.wait(
 			until.ableToSwitchToFrame( this.editoriFrameSelector ),
 			this.explicitWaitMS,
