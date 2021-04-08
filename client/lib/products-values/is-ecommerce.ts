@@ -2,12 +2,10 @@
  * Internal dependencies
  */
 import { isEcommercePlan } from 'calypso/lib/plans';
-import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
 import { formatProduct } from 'calypso/lib/products-values/format-product';
+import type { FormattedProduct, CamelCaseProduct } from './types';
 
-export function isEcommerce( product ) {
+export function isEcommerce( product: FormattedProduct | CamelCaseProduct ): boolean {
 	product = formatProduct( product );
-	assertValidProduct( product );
-
 	return isEcommercePlan( product.product_slug );
 }
