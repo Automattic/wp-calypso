@@ -47,6 +47,12 @@ export interface LicenseListContext {
 /**
  * API schemas.
  */
+export enum ToSConsent {
+	NotConsented = 'not_consented',
+	Consented = 'consented',
+	Host = 'host',
+}
+
 export interface APIPartnerKey {
 	id: number;
 	name: string;
@@ -59,7 +65,7 @@ export interface APIPartner {
 	slug: string;
 	name: string;
 	keys: APIPartnerKey[];
-	tos: boolean;
+	tos: string;
 }
 
 // The API-returned license object is not quite consistent right now so we only define the properties we actively rely on.
@@ -102,7 +108,7 @@ export interface Partner {
 	slug: string;
 	name: string;
 	keys: PartnerKey[];
-	tos: boolean;
+	tos: string;
 }
 
 export interface PartnerStore {

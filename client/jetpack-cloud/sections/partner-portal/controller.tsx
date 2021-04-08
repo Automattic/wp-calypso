@@ -32,6 +32,7 @@ import {
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import { ToSConsent } from 'calypso/state/partner-portal/types';
 
 export function partnerContext( context: PageJS.Context, next: () => void ): void {
 	context.header = <Header />;
@@ -131,7 +132,7 @@ export function requireTermsOfServiceConsentContext(
 	const state = context.store.getState();
 	const partner = getCurrentPartner( state );
 
-	if ( partner && partner.tos ) {
+	if ( partner && partner.tos !== ToSConsent.NotConsented ) {
 		next();
 		return;
 	}

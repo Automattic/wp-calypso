@@ -3,15 +3,12 @@
  */
 import React, { ReactElement, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useMutation } from 'react-query';
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { APIPartner } from 'calypso/state/partner-portal/types';
-import wpcom from 'calypso/lib/wp';
 import {
 	getCurrentPartner,
 	hasFetchedPartner,
@@ -24,20 +21,13 @@ import Main from 'calypso/components/main';
 import CardHeading from 'calypso/components/card-heading';
 import Spinner from 'calypso/components/spinner';
 import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
-
-function mutationConsent( consent: boolean ): Promise< APIPartner > {
-	return wpcom.req.post( {
-		method: 'PUT',
-		apiNamespace: 'wpcom/v2',
-		path: '/jetpack-licensing/partner',
-		body: { tos: consent },
-	} );
-}
+import useTOSConsentMutation from 'calypso/state/partner-portal/licenses/hooks/use-tos-consent-mutation';
+import { ToSConsent } from 'calypso/state/partner-portal/types';
 
 export default function TermsOfServiceConsent(): ReactElement | null {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const consent = useMutation( mutationConsent, {
+	const consent = useTOSConsentMutation( {
 		onSuccess: ( partner ) => {
 			dispatch( receivePartner( formatApiPartner( partner ) ) );
 		},
@@ -48,11 +38,11 @@ export default function TermsOfServiceConsent(): ReactElement | null {
 		},
 	} );
 	const partner = useSelector( getCurrentPartner );
-	const hasConsented = partner?.tos || false;
+	const hasConsented = ( partner?.tos || ToSConsent.NotConsented ) !== ToSConsent.NotConsented;
 	const fetchedPartner = useSelector( hasFetchedPartner );
 
 	const acceptTOS = useCallback( () => {
-		consent.mutate( true );
+		consent.mutate();
 	}, [] );
 
 	useReturnUrl( hasConsented );
