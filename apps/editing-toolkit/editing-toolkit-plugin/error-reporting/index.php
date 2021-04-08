@@ -24,7 +24,6 @@ function head_error_handler() {
 	</script>
 	<?php
 }
-add_action( 'admin_print_scripts', __NAMESPACE__ . '\head_error_handler' );
 
 /**
  * Limit the attribute to script els that point to scripts served from s0.wp.com.
@@ -41,7 +40,6 @@ function add_crossorigin_to_script_els( $tag ) {
 	};
 	return $tag;
 }
-add_filter( 'script_loader_tag', __NAMESPACE__ . '\add_crossorigin_to_script_els', 99, 2 );
 
 /**
  * Enqueue assets
@@ -68,4 +66,39 @@ function enqueue_script() {
 		true
 	);
 }
-add_action( 'init', __NAMESPACE__ . '\enqueue_script', -1000 );
+
+/**
+ * Effectivelly activates the error reporting module by setting the necessary hooks.
+ */
+function activate_error_reporting() {
+	add_action( 'admin_print_scripts', __NAMESPACE__ . '\head_error_handler' );
+	add_filter( 'script_loader_tag', __NAMESPACE__ . '\add_crossorigin_to_script_els', 99, 2 );
+	add_action( 'init', __NAMESPACE__ . '\enqueue_script', -1000 );
+}
+
+/**
+ * Temporary function to feature flag by segment. We'll be gradually testing
+ * it on production simple-sites, observing how it works and and gradually
+ * increase the segment until we reach 100 and eventually just remove this logic.
+ */
+function rollout_gradually() {
+	$current_segment = 10; // segment of existing users that will get this feature.
+	$user_id         = get_current_user_id();
+	$user_segment    = $user_id % 100;
+
+	l( "ErrorReporting#gradual_rollout(): user_id = $user_id" );
+	l( "ErrorReporting#gradual_rollout(): user_segment = $user_segment" );
+
+	// We get the last two digits of the user id and that will be used to decide in what
+	// segment the user is. i.e if current_segment is 10, then only ids that end in < 10
+	// will be considered part of the segment.
+	if ( $user_segment < $current_segment ) {
+		l( 'ErrorReporting#gradual_rollout(): error reporting will be activated!' );
+		activate_error_reporting();
+	}
+}
+
+// We don't want to activate this module in AT just yet. See https://wp.me/p4TIVU-9DI#comment-10922.
+if ( ! jetpack_is_atomic_site() ) {
+	rollout_gradually();
+}
