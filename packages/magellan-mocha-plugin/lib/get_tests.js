@@ -30,16 +30,14 @@ module.exports = function ( settings ) {
 
 	args.push( '--reporter', reporter );
 
-	/* istanbul ignore else */
-	if ( mochaSettings.mochaOpts ) {
-		args.push( '--opts', mochaSettings.mochaOpts );
+	if ( mochaSettings.mochaConfig ) {
+		args.push( '--config', mochaSettings.mochaConfig );
 	}
 
 	args = args.concat( mochaSettings.mochaTestFolders );
 	const env = _.extend( {}, process.env, { MOCHA_CAPTURE_PATH: OUTPUT_PATH } );
 	const capture = spawnSync( cmd, args, { env: env } );
 
-	/* istanbul ignore next */
 	if ( capture.status !== 0 ) {
 		logger.err(
 			'Could not capture mocha tests. To debug, run the following command:\n' +

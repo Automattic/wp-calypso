@@ -36,9 +36,10 @@ describe( 'TestRun class', function () {
 	it( 'returns the arguments for a run', function () {
 		testFramework.initialize( {
 			mocha_tests: [ 'path/to/specs', 'another/path/to/specs' ],
-			mocha_opts: 'path/to/mocha.opts',
+			mocha_config: 'path/to/.mocharc.js',
 		} );
 
+		debugger;
 		const localRun = new TestRun( {
 			locator: {
 				name: 'The full name of the test to run',
@@ -52,8 +53,8 @@ describe( 'TestRun class', function () {
 			'--worker=1',
 			'-g',
 			'The full name of the test to run',
-			'--opts',
-			'path/to/mocha.opts',
+			'--config',
+			'path/to/.mocharc.js',
 			'path/to/specs',
 			'another/path/to/specs',
 		] );

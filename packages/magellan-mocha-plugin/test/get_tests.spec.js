@@ -8,7 +8,7 @@ function getTestsFrom( specs ) {
 	}
 	testFramework.initialize( {
 		mocha_tests: specs,
-		mocha_opts: path.join( specs[ 0 ], 'mocha.opts' ),
+		mocha_config: path.join( specs[ 0 ], '.mocharc.js' ),
 	} );
 	return testFramework.iterator( { tempDir: path.resolve( '.' ) } );
 }
