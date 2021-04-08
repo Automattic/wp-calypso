@@ -1,8 +1,5 @@
-'use strict';
-
 module.exports = {
 	mocha_args: {
-		// eslint-disable-line camelcase
 		example: "'-R reporter'",
 		description: 'Append runtime command line arguments onto mocha',
 	},
@@ -13,7 +10,7 @@ module.exports = {
 	suiteTag: {
 		example: 'tag1;tag2',
 		description:
-			'Run all test suites (not ind. tests) that match a list of semi-colon delimited tags', // eslint-disable-line max-len
+			'Run all test suites (not ind. tests) that match a list of semi-colon delimited tags',
 	},
 	group: {
 		example: 'prefix/path',

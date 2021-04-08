@@ -1,14 +1,13 @@
-/* eslint valid-jsdoc: 0 */
-'use strict';
-
-var fs = require( 'fs' );
+const fs = require( 'fs' );
 
 /**
  * Recursive function, takes a mocha test suite and returns a flattened list of
  * test found within
+ *
+ * @param suite The suite to run
  */
 function getTests( suite ) {
-	var tests = [];
+	let tests = [];
 
 	suite.tests.forEach( function ( t ) {
 		tests.push( {
@@ -28,9 +27,12 @@ function getTests( suite ) {
 
 /**
  * Used as a mocha repoter for the test capturing phase
+ *
+ * @param runner The runner
+ * @param options Options passed to the runner
  */
 module.exports = function ( runner, options ) {
-	var outputPath = process.env.MOCHA_CAPTURE_PATH;
+	const outputPath = process.env.MOCHA_CAPTURE_PATH;
 	if ( ! outputPath ) {
 		throw new Error( 'Environment variable MOCHA_CAPTURE_PATH must be defined' );
 	}
@@ -41,7 +43,7 @@ module.exports = function ( runner, options ) {
 	};
 
 	// traverse suite structure and flattened list of tests
-	var tests = getTests( runner.suite );
+	let tests = getTests( runner.suite );
 
 	// process .only greps
 	if ( options.grep ) {

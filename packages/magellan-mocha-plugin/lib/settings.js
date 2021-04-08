@@ -1,6 +1,4 @@
-'use strict';
-
-var settings = {
+const settings = {
 	mochaOpts: undefined, // --mocha_opts opts_file
 	mochaArgs: undefined, // --mocha_args command line arguments
 	mochaTestFolders: undefined, // --mocha_tests location (or array in magellan.json)

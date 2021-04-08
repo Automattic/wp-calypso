@@ -1,12 +1,8 @@
-/* eslint no-undef: 0, no-unused-expressions: 0, filenames/filenames: 0,
-  no-magic-numbers: 0, camelcase: 0 */
-'use strict';
-
-var path = require( 'path' );
-var chai = require( 'chai' );
-var expect = chai.expect;
-var Locator = require( '../lib/locator' );
-var testFramework = require( '../index' );
+const path = require( 'path' );
+const chai = require( 'chai' );
+const expect = chai.expect;
+const Locator = require( '../lib/locator' );
+const testFramework = require( '../index' );
 
 function getTestsFrom( specs ) {
 	if ( ! Array.isArray( specs ) ) {
@@ -21,7 +17,7 @@ function getTestsFrom( specs ) {
 }
 
 describe( 'suite iterator', function () {
-	var suites;
+	let suites;
 
 	before( function () {
 		suites = getTestsFrom( './test_support/suite' );
@@ -36,7 +32,7 @@ describe( 'suite iterator', function () {
 	} );
 
 	it( 'collects details of a test', function () {
-		var suite = suites[ 0 ];
+		const suite = suites[ 0 ];
 		expect( suite.name ).to.equal( 'Suite @suite' );
 		expect( suites[ 0 ].filename ).to.contain( 'test_support/suite/spec.js' );
 	} );

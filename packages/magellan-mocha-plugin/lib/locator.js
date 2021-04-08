@@ -1,7 +1,4 @@
-/* eslint no-invalid-this: 0 */
-'use strict';
-
-var Locator = function ( name, filename, pending, title ) {
+const Locator = function ( name, filename, pending, title ) {
 	this.name = name;
 	this.filename = filename;
 	this.pending = pending;

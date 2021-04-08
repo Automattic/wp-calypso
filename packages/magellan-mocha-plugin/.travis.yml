@@ -1,6 +1,0 @@
-language: node_js
-node_js:
-  - v14
-  - v12
-  - v10
-sudo: false

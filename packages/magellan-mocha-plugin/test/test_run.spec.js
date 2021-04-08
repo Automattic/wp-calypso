@@ -1,14 +1,10 @@
-/* eslint no-undef: 0, no-unused-expressions: 0, filenames/filenames: 0 */
-'use strict';
+const chai = require( 'chai' );
+const expect = chai.expect;
+const testFramework = require( '../index' );
+const TestRun = testFramework.TestRun;
 
-var chai = require( 'chai' );
-var expect = chai.expect;
-var testFramework = require( '../index' );
-var TestRun = testFramework.TestRun;
-
-/*eslint-disable no-magic-numbers*/
 describe( 'TestRun class', function () {
-	var run;
+	let run;
 
 	beforeEach( function () {
 		run = new TestRun( {
@@ -29,7 +25,7 @@ describe( 'TestRun class', function () {
 	} );
 
 	it( 'returns the environment for a run', function () {
-		var env = run.getEnvironment( {
+		const env = run.getEnvironment( {
 			NODE_CONFIG: { foo: 'bar' },
 		} );
 
@@ -45,14 +41,14 @@ describe( 'TestRun class', function () {
 			mocha_opts: 'path/to/mocha.opts',
 		} );
 
-		var localRun = new TestRun( {
+		const localRun = new TestRun( {
 			locator: {
 				name: 'The full name of the test to run',
 			},
 			mockingPort: 10,
 		} );
 
-		var args = localRun.getArguments();
+		const args = localRun.getArguments();
 		expect( args ).to.deep.equal( [
 			'--mocking_port=10',
 			'--worker=1',
