@@ -14,3 +14,4 @@ export { decodeURIIfValid, decodeURIComponentIfValid } from './decode-utils';
 export { default as format } from './format';
 export { getUrlParts, getUrlFromParts } from './url-parts';
 export { default as resolveRelativePath } from './resolve-relative-path';
+export * from './types';

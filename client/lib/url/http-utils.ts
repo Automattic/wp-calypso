@@ -1,13 +1,14 @@
 /**
  * Internal dependencies
  */
-import { URL as TypedURL, SiteSlug } from 'calypso/types';
+import { URL as TypedURL, SiteSlug } from './types';
 import { Falsy } from 'utility-types';
 
 const urlWithoutHttpRegex = /^https?:\/\//;
 
 /**
  * Returns the supplied URL without the initial http(s).
+ *
  * @param  url The URL to remove http(s) from
  * @returns     URL without the initial http(s)
  */

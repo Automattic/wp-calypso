@@ -7,7 +7,7 @@ import type { Primitive } from 'utility-types';
 /**
  * Internal dependencies
  */
-import type { URL as URLString } from 'calypso/types';
+import type { URL as URLString } from './types';
 import { determineUrlType, URL_TYPE } from './url-type';
 import format from './format';
 
