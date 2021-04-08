@@ -1,13 +1,11 @@
 /**
  * Internal dependencies
  */
-import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
 import { formatProduct } from 'calypso/lib/products-values/format-product';
+import type { FormattedProduct, CamelCaseProduct } from './types';
 
-export function isSpaceUpgrade( product ) {
+export function isSpaceUpgrade( product: FormattedProduct | CamelCaseProduct ): boolean {
 	product = formatProduct( product );
-	assertValidProduct( product );
-
 	return (
 		'1gb_space_upgrade' === product.product_slug ||
 		'5gb_space_upgrade' === product.product_slug ||
