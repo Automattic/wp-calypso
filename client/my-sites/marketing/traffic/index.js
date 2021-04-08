@@ -21,7 +21,6 @@ import AnalyticsSettings from 'calypso/my-sites/site-settings/analytics/form-goo
 import CloudflareAnalyticsSettings from 'calypso/my-sites/site-settings/analytics/form-cloudflare-analytics';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
 import JetpackSiteStats from 'calypso/my-sites/site-settings/jetpack-site-stats';
-import JetpackAds from 'calypso/my-sites/site-settings/jetpack-ads';
 import RelatedPosts from 'calypso/my-sites/site-settings/related-posts';
 import Sitemaps from 'calypso/my-sites/site-settings/sitemaps';
 import Shortlinks from 'calypso/my-sites/site-settings/shortlinks';
@@ -29,7 +28,6 @@ import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form'
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 
 /**
  * Style dependencies
@@ -43,10 +41,8 @@ const SiteSettingsTraffic = ( {
 	handleSubmitForm,
 	isAdmin,
 	isJetpackAdmin,
-	isAtomic,
 	isRequestingSettings,
 	isSavingSettings,
-	onChangeField,
 	setFieldValue,
 	translate,
 } ) => (
@@ -61,16 +57,6 @@ const SiteSettingsTraffic = ( {
 		) }
 		<JetpackDevModeNotice />
 
-		{ isJetpackAdmin && ! isAtomic && (
-			<JetpackAds
-				handleAutosavingToggle={ handleAutosavingToggle }
-				isSavingSettings={ isSavingSettings }
-				isRequestingSettings={ isRequestingSettings }
-				fields={ fields }
-				onSubmitForm={ handleSubmitForm }
-				onChangeField={ onChangeField }
-			/>
-		) }
 		{ isAdmin && <SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } /> }
 		{ isAdmin && <SeoSettingsMain /> }
 		{ isAdmin && (
@@ -118,14 +104,12 @@ const SiteSettingsTraffic = ( {
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isAdmin = canCurrentUser( state, siteId, 'manage_options' );
-	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isJetpackAdmin = isJetpack && isAdmin;
 
 	return {
 		isAdmin,
 		isJetpackAdmin,
-		isAtomic,
 	};
 } );
 

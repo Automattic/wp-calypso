@@ -33,7 +33,6 @@ import { dismissWordAdsSuccess } from 'calypso/state/wordads/approve/actions';
 import { protectForm } from 'calypso/lib/protect-form';
 import { saveWordadsSettings } from 'calypso/state/wordads/settings/actions';
 import SupportInfo from 'calypso/components/support-info';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 
 class AdsFormSettings extends Component {
 	static propTypes = {
@@ -147,13 +146,13 @@ class AdsFormSettings extends Component {
 	}
 
 	jetpackPlacementControls() {
-		const { translate, site, siteAdminUrl, isAtomic } = this.props;
-		let linkHref = '/marketing/traffic/' + site?.slug;
-		if ( isAtomic ) {
-			linkHref = `${ siteAdminUrl }admin.php?page=jetpack#/traffic`;
-		}
+		const { translate, siteAdminUrl } = this.props;
 
-		return <Card href={ linkHref }>{ translate( 'Manage ad placements' ) }</Card>;
+		return (
+			<Card href={ `${ siteAdminUrl }admin.php?page=jetpack#/traffic` }>
+				{ translate( 'Manage ad placements' ) }
+			</Card>
+		);
 	}
 
 	showAdsToOptions() {
@@ -623,7 +622,6 @@ export default compose(
 				wordadsSettings,
 				widgetsUrl: getCustomizerUrl( state, siteId, 'widgets' ),
 				siteAdminUrl: getSiteAdminUrl( state, siteId ),
-				isAtomic: isSiteAutomatedTransfer( state, siteId ),
 			};
 		},
 		{ dismissWordAdsSuccess, saveWordadsSettings }
