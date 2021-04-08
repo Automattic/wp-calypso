@@ -11,12 +11,15 @@ import { isProductsListFetching } from 'calypso/state/products-list/selectors/is
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
 import { getProductPriceTierList } from 'calypso/state/products-list/selectors/get-product-price-tiers';
 import type { PriceTierEntry } from 'calypso/state/products-list/selectors/get-product-price-tiers';
-import { TERM_MONTHLY } from 'calypso/lib/plans/constants';
 import {
 	getSiteAvailableProductCost,
 	isRequestingSiteProducts,
 } from 'calypso/state/sites/products/selectors';
-import { PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY } from 'calypso/lib/plans/constants';
+import {
+	TERM_MONTHLY,
+	PRODUCT_JETPACK_CRM,
+	PRODUCT_JETPACK_CRM_MONTHLY,
+} from 'calypso/lib/plans/constants';
 
 /**
  * Type dependencies
