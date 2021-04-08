@@ -1,11 +1,9 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -45,6 +43,4 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	shouldRequestThumbnail: ! getThumbnailForIframe( state, ownProps.embedUrl ),
 } );
 
-const mapDispatchToProps = ( dispatch ) => bindActionCreators( { requestThumbnail }, dispatch );
-
-export default connect( mapStateToProps, mapDispatchToProps )( QueryReaderThumbnails );
+export default connect( mapStateToProps, { requestThumbnail } )( QueryReaderThumbnails );
