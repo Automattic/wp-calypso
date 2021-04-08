@@ -69,7 +69,7 @@ export interface FormattedProduct {
 	included_domain_purchase_amount?: number | undefined;
 	is_domain_registration?: boolean | undefined;
 	term?: string | undefined;
-	bill_period?: number | undefined;
+	bill_period?: number | undefined | string;
 	is_bundled?: boolean | undefined;
 	is_free?: boolean | undefined;
 	extra?: ResponseCartProductExtra;
