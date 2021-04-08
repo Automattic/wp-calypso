@@ -19,7 +19,7 @@ import {
 	PRODUCT_JETPACK_CRM_MONTHLY,
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
-} from 'calypso/lib/products-values/constants';
+} from 'calypso/lib/plans/constants';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';

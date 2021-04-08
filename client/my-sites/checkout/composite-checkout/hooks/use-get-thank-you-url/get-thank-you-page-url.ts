@@ -29,7 +29,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
-import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
+import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/plans/constants';
 import {
 	JETPACK_RESET_PLANS,
 	JETPACK_REDIRECT_URL,

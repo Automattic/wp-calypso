@@ -45,7 +45,7 @@ import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCT_PRICE_MATRIX,
 	JETPACK_PRODUCTS_BY_TERM,
-} from 'calypso/lib/products-values/constants';
+} from 'calypso/lib/plans/constants';
 import {
 	Product,
 	JETPACK_PRODUCTS_LIST,

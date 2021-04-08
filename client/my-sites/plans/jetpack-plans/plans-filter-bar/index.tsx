@@ -11,7 +11,7 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 /**
  * Internal dependencies
  */
-import { JETPACK_PRODUCTS_BY_TERM } from 'calypso/lib/products-values/constants';
+import { JETPACK_PRODUCTS_BY_TERM } from 'calypso/lib/plans/constants';
 import { JETPACK_RESET_PLANS_BY_TERM } from 'calypso/lib/plans/constants';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';

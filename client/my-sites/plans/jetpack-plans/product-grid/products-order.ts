@@ -17,7 +17,7 @@ import {
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-} from 'calypso/lib/products-values/constants';
+} from 'calypso/lib/plans/constants';
 
 /**
  * Type dependencies

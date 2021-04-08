@@ -16,10 +16,7 @@ import {
 	getSiteAvailableProductCost,
 	isRequestingSiteProducts,
 } from 'calypso/state/sites/products/selectors';
-import {
-	PRODUCT_JETPACK_CRM,
-	PRODUCT_JETPACK_CRM_MONTHLY,
-} from 'calypso/lib/products-values/constants';
+import { PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY } from 'calypso/lib/plans/constants';
 
 /**
  * Type dependencies

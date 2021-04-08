@@ -17,7 +17,7 @@ import {
 	PRODUCT_JETPACK_CRM_MONTHLY,
 	PRODUCT_JETPACK_CRM_FREE,
 	PRODUCT_JETPACK_CRM_FREE_MONTHLY,
-} from 'calypso/lib/products-values/constants';
+} from 'calypso/lib/plans/constants';
 import {
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,

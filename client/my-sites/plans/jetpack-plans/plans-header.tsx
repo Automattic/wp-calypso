@@ -16,7 +16,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
-import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
+import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/plans/constants';
 import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
 
 const StandardPlansHeader = () => (

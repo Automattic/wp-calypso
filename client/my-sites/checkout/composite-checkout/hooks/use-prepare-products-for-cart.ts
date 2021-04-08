@@ -18,7 +18,7 @@ import {
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
-} from 'calypso/lib/products-values/constants';
+} from 'calypso/lib/plans/constants';
 import { getPlanByPathSlug } from 'calypso/lib/plans';
 import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
 import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
