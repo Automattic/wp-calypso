@@ -6,7 +6,7 @@ import {
 	JETPACK_SCAN_PRODUCTS,
 } from 'calypso/lib/products-values/constants';
 
-export function isJetpackCloudProductSlug( productSlug ) {
+export function isJetpackCloudProductSlug( productSlug: string ): boolean {
 	return (
 		JETPACK_SCAN_PRODUCTS.includes( productSlug ) || JETPACK_BACKUP_PRODUCTS.includes( productSlug )
 	);
