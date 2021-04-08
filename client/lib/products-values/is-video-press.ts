@@ -1,12 +1,10 @@
 /**
  * Internal dependencies
  */
-import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
 import { formatProduct } from 'calypso/lib/products-values/format-product';
+import type { FormattedProduct, CamelCaseProduct } from './types';
 
-export function isVideoPress( product ) {
+export function isVideoPress( product: FormattedProduct | CamelCaseProduct ): boolean {
 	product = formatProduct( product );
-	assertValidProduct( product );
-
 	return 'videopress' === product.product_slug;
 }
