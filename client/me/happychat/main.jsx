@@ -4,7 +4,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -24,9 +23,9 @@ import getHappychatTimeline from 'calypso/state/happychat/selectors/get-happycha
 import isHappychatServerReachable from 'calypso/state/happychat/selectors/is-happychat-server-reachable';
 // UI components
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
-import { Composer } from 'calypso/components/happychat/composer';
-import { Notices } from 'calypso/components/happychat/notices';
-import { Timeline } from 'calypso/components/happychat/timeline';
+import Composer from 'calypso/components/happychat/composer';
+import Notices from 'calypso/components/happychat/notices';
+import Timeline from 'calypso/components/happychat/timeline';
 
 /**
  * Style dependencies
@@ -60,7 +59,6 @@ export class HappychatPage extends Component {
 			onSendTyping,
 			onSetCurrentMessage,
 			timeline,
-			translate,
 			twemojiUrl,
 		} = this.props;
 
@@ -72,14 +70,12 @@ export class HappychatPage extends Component {
 					isCurrentUser={ isCurrentUser }
 					isExternalUrl={ isExternalUrl }
 					timeline={ timeline }
-					translate={ translate }
 					twemojiUrl={ twemojiUrl }
 				/>
 				<Notices
 					chatStatus={ chatStatus }
 					connectionStatus={ connectionStatus }
 					isServerReachable={ isServerReachable }
-					translate={ translate }
 				/>
 				<Composer
 					disabled={ disabled }
@@ -88,7 +84,6 @@ export class HappychatPage extends Component {
 					onSendNotTyping={ onSendNotTyping }
 					onSendTyping={ onSendTyping }
 					onSetCurrentMessage={ onSetCurrentMessage }
-					translate={ translate }
 				/>
 			</div>
 		);
@@ -111,7 +106,6 @@ HappychatPage.propTypes = {
 	setBlurred: PropTypes.func,
 	setFocused: PropTypes.func,
 	timeline: PropTypes.array,
-	translate: PropTypes.func,
 	twemojiUrl: PropTypes.string,
 };
 
@@ -144,4 +138,4 @@ const mapDispatch = {
 	setFocused: focus,
 };
 
-export default connect( mapState, mapDispatch )( localize( HappychatPage ) );
+export default connect( mapState, mapDispatch )( HappychatPage );

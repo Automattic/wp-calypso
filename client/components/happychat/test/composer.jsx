@@ -11,7 +11,7 @@ import { mount } from 'enzyme';
 /**
  * Internal dependencies
  */
-import { Composer } from '../composer';
+import Composer from '../composer';
 
 const noop = () => {};
 

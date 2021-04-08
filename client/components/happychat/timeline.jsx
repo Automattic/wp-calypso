@@ -2,18 +2,18 @@
  * External dependencies
  */
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { assign, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { first, when, forEach } from './functional';
-import autoscroll from './autoscroll';
+import { first, when } from './functional';
+import { useAutoscroll } from './autoscroll';
 import Emojify from 'calypso/components/emojify';
-import scrollbleed from './scrollbleed';
+import { useScrollbleed } from './scrollbleed';
 import { addSchemeIfMissing, setUrlScheme } from './url';
 
 /**
@@ -171,15 +171,14 @@ const renderTimeline = ( {
 	isCurrentUser,
 	isExternalUrl,
 	onScrollContainer,
-	scrollbleedLock,
-	scrollbleedUnlock,
+	scrollbleed,
 	twemojiUrl,
 } ) => (
 	<div
 		className="happychat__conversation"
 		ref={ onScrollContainer }
-		onMouseEnter={ scrollbleedLock }
-		onMouseLeave={ scrollbleedUnlock }
+		onMouseEnter={ scrollbleed.lock }
+		onMouseLeave={ scrollbleed.unlock }
 	>
 		{ groupMessages( timeline ).map( ( item ) =>
 			renderGroupedTimelineItem( {
@@ -194,39 +193,35 @@ const renderTimeline = ( {
 
 const chatTimeline = when( timelineHasContent, renderTimeline, welcomeMessage );
 
-export const Timeline = createReactClass( {
-	displayName: 'Timeline',
-	mixins: [ autoscroll, scrollbleed ],
+function Timeline( props ) {
+	const translate = useTranslate();
+	const autoscroll = useAutoscroll();
+	const scrollbleed = useScrollbleed();
 
-	propTypes: {
-		currentUserEmail: PropTypes.string,
-		isCurrentUser: PropTypes.func,
-		isExternalUrl: PropTypes.func,
-		onScrollContainer: PropTypes.func,
-		timeline: PropTypes.array,
-		translate: PropTypes.func,
-		twemojiUrl: PropTypes.string,
-	},
+	function onScrollContainer( el ) {
+		autoscroll.setTarget( el );
+		scrollbleed.setTarget( el );
+	}
 
-	getDefaultProps() {
-		return {
-			onScrollContainer: () => {},
-			isExternalUrl: () => true,
-		};
-	},
+	return chatTimeline( {
+		...props,
+		translate,
+		autoscroll,
+		scrollbleed,
+		onScrollContainer,
+	} );
+}
 
-	render() {
-		const { onScrollContainer } = this.props;
-		return chatTimeline(
-			assign( {}, this.props, {
-				onScrollContainer: forEach(
-					this.setupAutoscroll,
-					onScrollContainer,
-					this.setScrollbleedTarget
-				),
-				scrollbleedLock: this.scrollbleedLock,
-				scrollbleedUnlock: this.scrollbleedUnlock,
-			} )
-		);
-	},
-} );
+Timeline.propTypes = {
+	currentUserEmail: PropTypes.string,
+	isCurrentUser: PropTypes.func,
+	isExternalUrl: PropTypes.func,
+	timeline: PropTypes.array,
+	twemojiUrl: PropTypes.string,
+};
+
+Timeline.defaultProps = {
+	isExternalUrl: () => true,
+};
+
+export default Timeline;
