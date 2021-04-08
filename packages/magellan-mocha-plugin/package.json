@@ -16,12 +16,6 @@
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"license": "MIT",
-	"scripts": {
-		"test": "mocha --slow 400 && npm run coverage && npm run check-coverage",
-		"lint": "eslint lib/** test/**",
-		"coverage": "istanbul cover _mocha",
-		"check-coverage": "istanbul check-coverage --statement 95 --function 95 --branch 90"
-	},
 	"dependencies": {
 		"cli-color": "^1.2.0",
 		"lodash": "^4.17.21",
