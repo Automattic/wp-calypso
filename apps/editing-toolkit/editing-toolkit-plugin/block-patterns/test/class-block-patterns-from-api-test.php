@@ -100,7 +100,7 @@ class Block_Patterns_From_Api_Test extends TestCase {
 
 		$utils_mock->expects( $this->once() )
 			->method( 'cache_add' )
-			->with( $this->stringContains( 'key-largo' ), array( $this->pattern_mock_object ), 'ptk_patterns', DAY_IN_SECONDS);
+			->with( $this->stringContains( 'key-largo' ), array( $this->pattern_mock_object ), 'ptk_patterns', DAY_IN_SECONDS );
 
 		$this->assertEquals( array( 'a8c/' . $this->pattern_mock_object['name'] => true ), $block_patterns_from_api->register_patterns() );
 	}
