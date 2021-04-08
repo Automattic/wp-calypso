@@ -2,12 +2,10 @@
  * Internal dependencies
  */
 import { isPremiumPlan } from 'calypso/lib/plans';
-import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
 import { formatProduct } from 'calypso/lib/products-values/format-product';
+import type { FormattedProduct, CamelCaseProduct } from './types';
 
-export function isPremium( product ) {
+export function isPremium( product: FormattedProduct | CamelCaseProduct ): boolean {
 	product = formatProduct( product );
-	assertValidProduct( product );
-
 	return isPremiumPlan( product.product_slug );
 }
