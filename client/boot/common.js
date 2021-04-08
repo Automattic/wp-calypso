@@ -9,6 +9,7 @@ import ReactDom from 'react-dom';
 import Modal from 'react-modal';
 import store from 'store';
 import accessibleFocus from '@automattic/accessible-focus';
+import isLegacyRoute from '@automattic/is-legacy-route';
 
 /**
  * Internal dependencies
@@ -32,7 +33,6 @@ import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import getSuperProps from 'calypso/lib/analytics/super-props';
 import { getSiteFragment, normalize } from 'calypso/lib/route';
-import { isLegacyRoute } from 'calypso/lib/route/legacy-routes';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { initConnection as initHappychatConnection } from 'calypso/state/happychat/connection/actions';

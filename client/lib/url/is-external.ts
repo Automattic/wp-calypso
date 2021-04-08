@@ -2,11 +2,11 @@
  * External dependencies
  */
 import config from '@automattic/calypso-config';
+import isLegacyRoute from '@automattic/is-legacy-route';
 
 /**
  * Internal dependencies
  */
-import { isLegacyRoute } from 'calypso/lib/route/legacy-routes';
 import { URL as URLString } from './types';
 
 // Base URL used for URL parsing. The WHATWG URL API doesn't support relative
