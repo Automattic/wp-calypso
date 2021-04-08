@@ -76,7 +76,7 @@ const PlansHeader = ( { context }: { context: PageJS.Context } ) => {
 	);
 };
 
-export default function setJetpackHeader( context: PageJS.Context ) {
+export default function setJetpackHeader( context: PageJS.Context ): void {
 	context.header = (
 		<>
 			<PlansHeader context={ context } />
