@@ -71,3 +71,7 @@ export interface FormattedProduct {
 	bill_period?: number | undefined;
 	is_bundled?: boolean | undefined;
 }
+
+export type DelayedDomainTransferProduct = ( FormattedProduct | CamelCaseProduct ) & {
+	delayedProvisioning?: boolean;
+};
