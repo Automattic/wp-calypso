@@ -26,7 +26,7 @@ const FocusedLaunch: React.FunctionComponent = () => {
 	const [ hasSelectedDomain, selectedPlanProductId ] = useSelect( ( select ) => {
 		const { planProductId } = select( LAUNCH_STORE ).getState();
 
-		return [ select( LAUNCH_STORE ).hasSelectedDomain(), planProductId ];
+		return [ select( LAUNCH_STORE ).hasSelectedDomainOrSubdomain(), planProductId ];
 	} );
 
 	// @TODO: extract to some hook for reusability (Eg: use-products-from-cart)
