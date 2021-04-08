@@ -70,6 +70,7 @@ export interface FormattedProduct {
 	term?: string | undefined;
 	bill_period?: number | undefined;
 	is_bundled?: boolean | undefined;
+	is_free?: boolean | undefined;
 }
 
 export type DelayedDomainTransferProduct = ( FormattedProduct | CamelCaseProduct ) & {
