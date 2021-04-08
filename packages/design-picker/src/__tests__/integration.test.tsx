@@ -3,8 +3,7 @@
  */
 import * as React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { isEnabled } from '@automattic/calypso-config';
+import '@automattic/calypso-config';
 
 /**
  * Internal dependencies
