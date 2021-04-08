@@ -3,6 +3,6 @@
  */
 import { JETPACK_SCAN_PRODUCTS } from 'calypso/lib/products-values/constants';
 
-export function isJetpackScanSlug( productSlug ) {
+export function isJetpackScanSlug( productSlug: string ): boolean {
 	return JETPACK_SCAN_PRODUCTS.includes( productSlug );
 }
