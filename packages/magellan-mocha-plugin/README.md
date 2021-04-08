@@ -1,8 +1,12 @@
-# :warning::warning: DEPRECATED :warning::warning:
-
-This project, and it's related TestArmada projects, will no longer be supported. No further work from the owners will be done, and no PRs will be reviewed.
-
 # magellan-mocha-plugin
+
+Originally forked from <https://github.com/TestArmada/magellan-mocha-plugin>, commit 717179026651241c99b0a8bf65d85064e062d0de. It also incorporates the changes from the previous fork in <https://github.com/Automattic/magellan-mocha-plugin>, commit d8cf5b4e3db9c78f0f33848d492ab70613e52926
+
+This plugin contains Automattic changes to the original `testarmada-magellan-mocha-plugin` and is released as `@automattic/testarmada-magellan-mocha-plugin`
+
+Following there is the original README file:
+
+--
 
 [![Build Status](https://travis-ci.org/TestArmada/magellan-mocha-plugin.svg?branch=master)](https://travis-ci.org/TestArmada/magellan-mocha-plugin)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
