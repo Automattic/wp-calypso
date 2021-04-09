@@ -41,6 +41,7 @@ function setPage( pageNumber: number ): void {
 
 interface LicenseTransitionProps {
 	key?: string;
+	exit?: boolean;
 }
 
 const LicenseTransition = ( props: PropsWithChildren< LicenseTransitionProps > ) => (
@@ -68,11 +69,13 @@ export default function LicenseList(): ReactElement {
 				page={ currentPage }
 			/>
 
-			{ ! showNoResults && <LicenseListHeader /> }
-
-			{ showNoResults && <LicenseListEmpty /> }
-
 			<TransitionGroup className="license-list__transition-group">
+				{ ! showNoResults && (
+					<LicenseTransition>
+						<LicenseListHeader />
+					</LicenseTransition>
+				) }
+
 				{ showLicenses &&
 					licenses.items.map( ( license ) => (
 						<LicenseTransition key={ license.licenseKey }>
@@ -105,6 +108,12 @@ export default function LicenseList(): ReactElement {
 							total={ licenses.totalItems }
 							pageClick={ setPage }
 						/>
+					</LicenseTransition>
+				) }
+
+				{ showNoResults && (
+					<LicenseTransition key={ filter } exit={ false }>
+						<LicenseListEmpty filter={ filter } />
 					</LicenseTransition>
 				) }
 			</TransitionGroup>
