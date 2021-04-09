@@ -21,7 +21,7 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import InfoPopover from 'calypso/components/info-popover';
-import { GUIDED_TRANSFER } from 'calypso/lib/url/support';
+import { GUIDED_TRANSFER } from '@automattic/calypso-url';
 
 /**
  * Style dependencies

@@ -21,7 +21,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { CALYPSO_CONTACT } from '@automattic/calypso-url';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import GoogleMyBusinessLocation from 'calypso/my-sites/google-my-business/location';

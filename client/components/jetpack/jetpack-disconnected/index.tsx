@@ -12,7 +12,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ExternalLink from 'calypso/components/external-link';
 import Upsell from 'calypso/components/jetpack/upsell';
 import { preventWidows } from 'calypso/lib/formatting';
-import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
+import { JETPACK_SUPPORT } from '@automattic/calypso-url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**

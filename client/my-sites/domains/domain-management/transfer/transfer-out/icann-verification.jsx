@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import { Card, Button } from '@automattic/components';
 import { resendIcannVerification } from 'calypso/lib/domains';
-import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
+import { TRANSFER_DOMAIN_REGISTRATION } from '@automattic/calypso-url';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 class IcannVerification extends React.Component {

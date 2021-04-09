@@ -7,7 +7,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { CONTACT, GSUITE_LEARNING_CENTER } from 'calypso/lib/url/support';
+import { CONTACT, GSUITE_LEARNING_CENTER } from '@automattic/calypso-url';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import { useSelector } from 'react-redux';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';

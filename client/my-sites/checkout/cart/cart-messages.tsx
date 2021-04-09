@@ -13,7 +13,7 @@ import type { ResponseCart, ResponseCartMessage } from '@automattic/shopping-car
  */
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
+import { JETPACK_SUPPORT } from '@automattic/calypso-url';
 
 export type CalypsoCartMessage = {
 	code: string;

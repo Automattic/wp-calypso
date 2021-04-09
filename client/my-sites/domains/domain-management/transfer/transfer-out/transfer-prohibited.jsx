@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
+import { TRANSFER_DOMAIN_REGISTRATION } from '@automattic/calypso-url';
 
 const TransferProhibited = ( { translate } ) => (
 	<div>

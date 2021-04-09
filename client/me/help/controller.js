@@ -14,7 +14,7 @@ import config from '@automattic/calypso-config';
 import HelpComponent from './main';
 import CoursesComponent from './help-courses';
 import ContactComponent from './help-contact';
-import { CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
+import { CONTACT, SUPPORT_ROOT } from '@automattic/calypso-url';
 import userUtils from 'calypso/lib/user/utils';
 
 export function loggedOut( context, next ) {

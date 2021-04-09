@@ -11,7 +11,7 @@ import ClosureNotice from '../shared/closure-notice';
 import FormattedHeader from 'calypso/components/formatted-header';
 import ExternalLink from 'calypso/components/external-link';
 import { localize } from 'i18n-calypso';
-import { CONCIERGE_SUPPORT } from 'calypso/lib/url/support';
+import { CONCIERGE_SUPPORT } from '@automattic/calypso-url';
 
 class PrimaryHeader extends Component {
 	render() {

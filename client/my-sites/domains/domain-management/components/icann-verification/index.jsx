@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { EMAIL_VALIDATION_AND_VERIFICATION } from 'calypso/lib/url/support';
+import { EMAIL_VALIDATION_AND_VERIFICATION } from '@automattic/calypso-url';
 import { resendIcannVerification } from 'calypso/lib/domains';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { domainManagementEditContactInfo } from 'calypso/my-sites/domains/paths';

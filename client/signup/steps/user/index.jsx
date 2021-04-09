@@ -32,7 +32,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { WPCC } from 'calypso/lib/url/support';
+import { WPCC } from '@automattic/calypso-url';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 import config from '@automattic/calypso-config';
 import AsyncLoad from 'calypso/components/async-load';

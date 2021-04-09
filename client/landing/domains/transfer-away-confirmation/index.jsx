@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import DomainsLandingHeader from '../header';
 import DomainsLandingContentCard from '../content-card';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { CALYPSO_CONTACT } from '@automattic/calypso-url';
 import wp from 'calypso/lib/wp';
 import { getMaintenanceMessageFromError } from '../utils';
 

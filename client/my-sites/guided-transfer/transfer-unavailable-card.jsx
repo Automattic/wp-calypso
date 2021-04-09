@@ -13,7 +13,7 @@ import Gridicon from 'calypso/components/gridicon';
 import { getGuidedTransferIssue } from 'calypso/state/sites/guided-transfer/selectors';
 import { Card } from '@automattic/components';
 import Notice from 'calypso/components/notice';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { CALYPSO_CONTACT } from '@automattic/calypso-url';
 
 const Issue = ( props ) => (
 	<li className="guided-transfer__issue">

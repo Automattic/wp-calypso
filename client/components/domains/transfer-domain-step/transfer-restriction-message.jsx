@@ -12,7 +12,7 @@ import page from 'page';
 import { Button, Card } from '@automattic/components';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
+import { MAP_EXISTING_DOMAIN } from '@automattic/calypso-url';
 
 class TransferRestrictionMessage extends React.PureComponent {
 	static propTypes = {

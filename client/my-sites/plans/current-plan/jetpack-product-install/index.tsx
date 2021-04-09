@@ -14,7 +14,7 @@ import getJetpackProductInstallStatus from 'calypso/state/selectors/get-jetpack-
 import { Interval, EVERY_SECOND, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { JETPACK_CONTACT_SUPPORT } from 'calypso/lib/url/support';
+import { JETPACK_CONTACT_SUPPORT } from '@automattic/calypso-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	requestJetpackProductInstallStatus,

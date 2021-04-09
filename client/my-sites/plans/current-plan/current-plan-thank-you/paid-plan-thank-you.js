@@ -12,7 +12,7 @@ import React, { Component, Fragment } from 'react';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { preventWidows } from 'calypso/lib/formatting';
-import { SETTING_UP_PREMIUM_SERVICES } from 'calypso/lib/url/support';
+import { SETTING_UP_PREMIUM_SERVICES } from '@automattic/calypso-url';
 import { Button, ProgressBar } from '@automattic/components';
 import getJetpackProductInstallProgress from 'calypso/state/selectors/get-jetpack-product-install-progress';
 import ThankYou from './thank-you';

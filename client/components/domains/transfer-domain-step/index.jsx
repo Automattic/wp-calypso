@@ -40,7 +40,7 @@ import {
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import TransferDomainPrecheck from './transfer-domain-precheck';
-import { INCOMING_DOMAIN_TRANSFER } from 'calypso/lib/url/support';
+import { INCOMING_DOMAIN_TRANSFER } from '@automattic/calypso-url';
 import HeaderCake from 'calypso/components/header-cake';
 import { Button } from '@automattic/components';
 import TransferRestrictionMessage from 'calypso/components/domains/transfer-domain-step/transfer-restriction-message';

@@ -20,7 +20,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import wp from 'calypso/lib/wp';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'calypso/lib/url/support';
+import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from '@automattic/calypso-url';
 import { registrar as registrarNames } from 'calypso/lib/domains/constants';
 import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';

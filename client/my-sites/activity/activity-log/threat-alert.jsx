@@ -15,7 +15,7 @@ import ActivityIcon from '../activity-log-item/activity-icon';
 import { Button, Card } from '@automattic/components';
 import DiffViewer from 'calypso/components/diff-viewer';
 import FoldableCard from 'calypso/components/foldable-card';
-import { JETPACK_CONTACT_SUPPORT } from 'calypso/lib/url/support';
+import { JETPACK_CONTACT_SUPPORT } from '@automattic/calypso-url';
 import InfoPopover from 'calypso/components/info-popover';
 import MarkedLines from 'calypso/components/marked-lines';
 import TimeSince from 'calypso/components/time-since';

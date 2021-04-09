@@ -11,7 +11,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { Button, CompactCard } from '@automattic/components';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { CALYPSO_CONTACT } from '@automattic/calypso-url';
 import {
 	composeAnalytics,
 	recordGoogleEvent,

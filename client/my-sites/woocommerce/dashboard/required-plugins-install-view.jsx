@@ -17,7 +17,7 @@ import {
 	fetchPlugins,
 } from 'calypso/state/plugins/installed/actions';
 import { Button, ProgressBar } from '@automattic/components';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { CALYPSO_CONTACT } from '@automattic/calypso-url';
 import { fetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
 import {

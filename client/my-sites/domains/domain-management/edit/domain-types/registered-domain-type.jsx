@@ -19,7 +19,7 @@ import {
 	DOMAIN_EXPIRATION,
 	DOMAIN_EXPIRATION_REDEMPTION,
 	DOMAIN_RECENTLY_REGISTERED,
-} from 'calypso/lib/url/support';
+} from '@automattic/calypso-url';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';

@@ -34,7 +34,7 @@ import SiteIcon from 'calypso/blocks/site-icon';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getPaymentMethodImageURL } from 'calypso/lib/checkout/payment-methods';
 import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { CALYPSO_CONTACT } from '@automattic/calypso-url';
 import Gridicon from 'calypso/components/gridicon';
 
 /**

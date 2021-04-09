@@ -9,7 +9,7 @@ import React from 'react';
  */
 import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'calypso/components/purchase-detail';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { CALYPSO_CONTACT } from '@automattic/calypso-url';
 
 const FailedPurchaseDetails = ( { failedPurchases, purchases, translate } ) => {
 	const successfulPurchases = purchases.length > 0 && (

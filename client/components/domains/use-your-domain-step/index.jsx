@@ -27,7 +27,7 @@ import {
 	CALYPSO_CONTACT,
 	INCOMING_DOMAIN_TRANSFER,
 	MAP_EXISTING_DOMAIN,
-} from 'calypso/lib/url/support';
+} from '@automattic/calypso-url';
 import HeaderCake from 'calypso/components/header-cake';
 import { errorNotice } from 'calypso/state/notices/actions';
 import QueryProducts from 'calypso/components/data/query-products-list';

@@ -34,7 +34,7 @@ import { getProductsList } from 'calypso/state/products-list/selectors';
 import Badge from 'calypso/components/badge';
 import PremiumBadge from '../premium-badge';
 import InfoPopover from 'calypso/components/info-popover';
-import { HTTPS_SSL } from 'calypso/lib/url/support';
+import { HTTPS_SSL } from '@automattic/calypso-url';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 
 const NOTICE_GREEN = '#4ab866';

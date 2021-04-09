@@ -11,7 +11,7 @@ import { get } from 'lodash';
  */
 import DomainsLandingHeader from '../header';
 import DomainsLandingContentCard from '../content-card';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { CALYPSO_CONTACT } from '@automattic/calypso-url';
 import wp from 'calypso/lib/wp';
 import { getMaintenanceMessageFromError } from '../utils';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';

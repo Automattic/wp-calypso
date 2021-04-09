@@ -11,7 +11,7 @@ import '@testing-library/jest-dom/extend-expect';
 /**
  * Internal dependencies
  */
-import { JETPACK_PRICING_PAGE } from 'calypso/lib/url/support';
+import { JETPACK_PRICING_PAGE } from '@automattic/calypso-url';
 import { render } from 'config/testing-library';
 import NoSitePurchasesMessage from '../empty-content';
 

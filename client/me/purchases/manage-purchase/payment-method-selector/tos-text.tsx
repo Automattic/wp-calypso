@@ -11,7 +11,7 @@ import { localizeUrl } from 'calypso/lib/i18n-utils';
 import {
 	MANAGE_PURCHASES_AUTOMATIC_RENEWAL,
 	MANAGE_PURCHASES_FAQ_CANCELLING,
-} from 'calypso/lib/url/support';
+} from '@automattic/calypso-url';
 
 export default function TosText(): JSX.Element {
 	const translate = useTranslate();

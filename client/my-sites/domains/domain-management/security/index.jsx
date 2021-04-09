@@ -28,7 +28,7 @@ import { sslStatuses } from 'calypso/lib/domains/constants';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import VerticalNav from 'calypso/components/vertical-nav';
-import { ECOMMERCE, FORMS } from 'calypso/lib/url/support';
+import { ECOMMERCE, FORMS } from '@automattic/calypso-url';
 import { showInlineHelpPopover } from 'calypso/state/inline-help/actions';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';

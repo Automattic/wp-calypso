@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import { preventWidows } from 'calypso/lib/formatting';
-import { JETPACK_PRICING_PAGE } from 'calypso/lib/url/support';
+import { JETPACK_PRICING_PAGE } from '@automattic/calypso-url';
 
 const NoSitePurchasesMessage: React.FC = () => {
 	const translate = useTranslate();

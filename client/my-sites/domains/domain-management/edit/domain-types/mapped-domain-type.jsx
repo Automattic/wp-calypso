@@ -16,7 +16,7 @@ import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { isSubdomain, resolveDomainStatus } from 'calypso/lib/domains';
-import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
+import { MAP_EXISTING_DOMAIN } from '@automattic/calypso-url';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';

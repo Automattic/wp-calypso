@@ -16,7 +16,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getPlan, getBillingMonthsForTerm } from 'calypso/lib/plans';
 import { isMonthly } from 'calypso/lib/plans/constants';
-import { REGISTER_DOMAIN } from 'calypso/lib/url/support';
+import { REGISTER_DOMAIN } from '@automattic/calypso-url';
 import { translationExists } from 'calypso/lib/i18n-utils';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */

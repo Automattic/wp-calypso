@@ -11,7 +11,7 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import {
 	MANAGE_PURCHASES_AUTOMATIC_RENEWAL,
 	MANAGE_PURCHASES_FAQ_CANCELLING,
-} from 'calypso/lib/url/support';
+} from '@automattic/calypso-url';
 import Gridicon from 'calypso/components/gridicon';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 

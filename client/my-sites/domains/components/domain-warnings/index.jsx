@@ -32,7 +32,7 @@ import {
 	MAP_SUBDOMAIN,
 	SETTING_PRIMARY_DOMAIN,
 	MAP_DOMAIN_CHANGE_NAME_SERVERS,
-} from 'calypso/lib/url/support';
+} from '@automattic/calypso-url';
 import {
 	domainManagementEdit,
 	domainManagementList,

@@ -35,7 +35,7 @@ import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
 import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
 import NoticeErrorMessage from 'calypso/my-sites/checkout/checkout/notice-error-message';
 import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { CALYPSO_CONTACT } from '@automattic/calypso-url';
 import getCountries from 'calypso/state/selectors/get-countries';
 import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
 import {

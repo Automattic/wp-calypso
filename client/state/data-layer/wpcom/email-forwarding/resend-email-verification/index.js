@@ -7,7 +7,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { CALYPSO_CONTACT } from '@automattic/calypso-url';
 import { EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST } from 'calypso/state/action-types';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';

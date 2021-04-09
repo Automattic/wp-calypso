@@ -29,7 +29,7 @@ import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import { getDomainNameFromReceiptOrCart } from 'calypso/lib/domains/cart-utils';
-import { AUTO_RENEWAL } from 'calypso/lib/url/support';
+import { AUTO_RENEWAL } from '@automattic/calypso-url';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import {

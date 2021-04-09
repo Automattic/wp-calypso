@@ -11,7 +11,7 @@ import { isEmpty, merge, reduce } from 'lodash';
  */
 import Gridicon from 'calypso/components/gridicon';
 import { getDomainRegistrations, getDomainTransfers } from 'calypso/lib/cart-values/cart-items';
-import { HTTPS_SSL } from 'calypso/lib/url/support';
+import { HTTPS_SSL } from '@automattic/calypso-url';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getTld, isHstsRequired } from 'calypso/lib/domains';
 

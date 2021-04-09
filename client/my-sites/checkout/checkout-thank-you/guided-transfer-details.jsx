@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { GUIDED_TRANSFER } from 'calypso/lib/url/support';
+import { GUIDED_TRANSFER } from '@automattic/calypso-url';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 
 const GuidedTransferDetails = ( { translate } ) => (

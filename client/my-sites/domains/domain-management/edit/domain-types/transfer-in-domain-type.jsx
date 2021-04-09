@@ -20,7 +20,7 @@ import {
 } from 'calypso/state/purchases/selectors';
 import { transferStatus } from 'calypso/lib/domains/constants';
 import { domainManagementTransferInPrecheck } from 'calypso/my-sites/domains/paths';
-import { INCOMING_DOMAIN_TRANSFER_STATUSES } from 'calypso/lib/url/support';
+import { INCOMING_DOMAIN_TRANSFER_STATUSES } from '@automattic/calypso-url';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 import { resolveDomainStatus } from 'calypso/lib/domains';
 

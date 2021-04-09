@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { Card } from '@automattic/components';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'calypso/lib/url/support';
+import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from '@automattic/calypso-url';
 import { getSelectedDomain } from 'calypso/lib/domains';
 
 const TransferLock = ( props ) => {

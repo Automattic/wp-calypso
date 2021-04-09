@@ -12,7 +12,7 @@ import {
 	domainManagementEditContactInfo,
 	domainManagementNameServers,
 } from 'calypso/my-sites/domains/paths';
-import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
+import { TRANSFER_DOMAIN_REGISTRATION } from '@automattic/calypso-url';
 
 export default function TransferOutWarning( { domainName, selectedSiteSlug } ) {
 	return (

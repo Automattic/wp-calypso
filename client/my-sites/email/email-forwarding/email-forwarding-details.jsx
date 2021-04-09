@@ -14,7 +14,7 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import { EMAIL_FORWARDING } from 'calypso/lib/url/support';
+import { EMAIL_FORWARDING } from '@automattic/calypso-url';
 
 class EmailForwardingDetails extends React.Component {
 	static propTypes = {

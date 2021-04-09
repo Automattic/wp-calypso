@@ -21,7 +21,7 @@ import {
 	INCOMING_DOMAIN_TRANSFER_AUTH_CODE_INVALID,
 	INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE,
 	INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK,
-} from 'calypso/lib/url/support';
+} from '@automattic/calypso-url';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import { isSupportSession as hasEnteredSupportSession } from 'calypso/state/support/selectors';

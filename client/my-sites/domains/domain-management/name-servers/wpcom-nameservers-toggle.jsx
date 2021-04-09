@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import { Card } from '@automattic/components';
 import FormToggle from 'calypso/components/forms/form-toggle';
-import { CHANGE_NAME_SERVERS } from 'calypso/lib/url/support';
+import { CHANGE_NAME_SERVERS } from '@automattic/calypso-url';
 import {
 	composeAnalytics,
 	recordGoogleEvent,

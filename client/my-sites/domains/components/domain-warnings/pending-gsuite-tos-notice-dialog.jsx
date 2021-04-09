@@ -11,7 +11,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal Dependencies
  */
 import { Button, Dialog } from '@automattic/components';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { CALYPSO_CONTACT } from '@automattic/calypso-url';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import {
 	composeAnalytics,

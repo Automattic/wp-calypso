@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { JETPACK_CONTACT_SUPPORT } from 'calypso/lib/url/support';
+import { JETPACK_CONTACT_SUPPORT } from '@automattic/calypso-url';
 import { addQueryArgs } from 'calypso/lib/url';
 
 /**

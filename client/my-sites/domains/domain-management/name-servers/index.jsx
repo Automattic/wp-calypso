@@ -33,7 +33,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import FetchError from './fetch-error';
 import Notice from 'calypso/components/notice';
-import { CHANGE_NAME_SERVERS } from 'calypso/lib/url/support';
+import { CHANGE_NAME_SERVERS } from '@automattic/calypso-url';
 import {
 	composeAnalytics,
 	recordGoogleEvent,

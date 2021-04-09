@@ -13,7 +13,7 @@ import {
 	MAP_DOMAIN_CHANGE_NAME_SERVERS,
 	MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS,
 	MAP_SUBDOMAIN_WITH_CNAME_RECORDS,
-} from 'calypso/lib/url/support';
+} from '@automattic/calypso-url';
 import { WPCOM_DEFAULT_NAMESERVERS } from 'calypso/state/domains/nameservers/constants';
 import FoldableFAQ from 'calypso/components/foldable-faq';
 import { Notice } from 'calypso/components/notice';

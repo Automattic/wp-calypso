@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { Card } from '@automattic/components';
 import Notice from 'calypso/components/notice';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { CALYPSO_CONTACT } from '@automattic/calypso-url';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**

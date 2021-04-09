@@ -16,7 +16,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import { MOVE_DOMAIN } from 'calypso/lib/url/support';
+import { MOVE_DOMAIN } from '@automattic/calypso-url';
 import { getName } from 'calypso/lib/purchases';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedDomain } from 'calypso/lib/domains';

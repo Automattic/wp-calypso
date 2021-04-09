@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { DOMAIN_CANCEL, REFUNDS } from 'calypso/lib/url/support';
+import { DOMAIN_CANCEL, REFUNDS } from '@automattic/calypso-url';
 import Gridicon from 'calypso/components/gridicon';
 import {
 	hasDomainBeingUsedForPlan,

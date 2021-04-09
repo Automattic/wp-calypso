@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { ADDING_GSUITE_TO_YOUR_SITE } from 'calypso/lib/url/support';
+import { ADDING_GSUITE_TO_YOUR_SITE } from '@automattic/calypso-url';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 
 /**

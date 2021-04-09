@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  */
 import DomainsLandingHeader from '../header';
 import DomainsLandingContentCard from '../content-card';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { CALYPSO_CONTACT } from '@automattic/calypso-url';
 
 class InvalidActionPage extends Component {
 	render() {

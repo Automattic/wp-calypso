@@ -24,7 +24,7 @@ import {
 	isRenewing,
 	showCreditCardExpiringWarning,
 } from 'calypso/lib/purchases';
-import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
+import { JETPACK_SUPPORT } from '@automattic/calypso-url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export class PlanBillingPeriod extends Component {

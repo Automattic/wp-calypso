@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import { Card } from '@automattic/components';
 import FormButton from 'calypso/components/forms/form-button';
 import CustomNameserversRow from './custom-nameservers-row';
-import { CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from 'calypso/lib/url/support';
+import { CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from '@automattic/calypso-url';
 import {
 	composeAnalytics,
 	recordGoogleEvent,

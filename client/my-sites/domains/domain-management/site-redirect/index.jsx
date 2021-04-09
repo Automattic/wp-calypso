@@ -38,7 +38,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getSiteRedirectLocation } from 'calypso/state/domains/site-redirect/selectors';
 import { withoutHttp } from 'calypso/lib/url';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { SITE_REDIRECT } from 'calypso/lib/url/support';
+import { SITE_REDIRECT } from '@automattic/calypso-url';
 
 /**
  * Style dependencies

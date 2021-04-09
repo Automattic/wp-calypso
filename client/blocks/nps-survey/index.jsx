@@ -25,7 +25,7 @@ import {
 	hasAnsweredNpsSurvey,
 	isAvailableForConciergeSession,
 } from 'calypso/state/nps-survey/selectors';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { CALYPSO_CONTACT } from '@automattic/calypso-url';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import RecommendationSelect from './recommendation-select';

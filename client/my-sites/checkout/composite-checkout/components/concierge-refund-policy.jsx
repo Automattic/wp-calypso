@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { REFUNDS } from 'calypso/lib/url/support';
+import { REFUNDS } from '@automattic/calypso-url';
 import Gridicon from 'calypso/components/gridicon';
 import { hasConciergeSession } from 'calypso/lib/cart-values/cart-items';
 

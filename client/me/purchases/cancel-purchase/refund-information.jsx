@@ -19,7 +19,7 @@ import {
 } from 'calypso/lib/purchases';
 import { isDomainRegistration, isDomainMapping } from 'calypso/lib/products-values';
 import { getIncludedDomainPurchase } from 'calypso/state/purchases/selectors';
-import { CALYPSO_CONTACT, UPDATE_NAMESERVERS } from 'calypso/lib/url/support';
+import { CALYPSO_CONTACT, UPDATE_NAMESERVERS } from '@automattic/calypso-url';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';

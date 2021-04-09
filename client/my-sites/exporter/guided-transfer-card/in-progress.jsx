@@ -10,7 +10,7 @@ import Gridicon from 'calypso/components/gridicon';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import { GUIDED_TRANSFER } from 'calypso/lib/url/support';
+import { GUIDED_TRANSFER } from '@automattic/calypso-url';
 
 const GuidedTransferInProgress = ( { translate } ) => (
 	<Card className="guided-transfer-card__in-progress">

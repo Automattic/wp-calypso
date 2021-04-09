@@ -21,7 +21,7 @@ import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import SectionHeader from 'calypso/components/section-header';
-import { SETTING_PRIMARY_DOMAIN } from 'calypso/lib/url/support';
+import { SETTING_PRIMARY_DOMAIN } from '@automattic/calypso-url';
 import {
 	composeAnalytics,
 	recordGoogleEvent,

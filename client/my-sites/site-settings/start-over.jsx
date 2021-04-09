@@ -17,7 +17,7 @@ import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFigure from 'calypso/components/action-panel/figure';
 import ActionPanelFooter from 'calypso/components/action-panel/footer';
 import { Button } from '@automattic/components';
-import { EMPTY_SITE } from 'calypso/lib/url/support';
+import { EMPTY_SITE } from '@automattic/calypso-url';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const StartOver = ( { translate, selectedSiteSlug } ) => {

@@ -16,7 +16,7 @@ import ReactDom from 'react-dom';
  */
 import { DomainWarnings } from '../';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
-import { MAP_EXISTING_DOMAIN_UPDATE_DNS, MAP_SUBDOMAIN } from 'calypso/lib/url/support';
+import { MAP_EXISTING_DOMAIN_UPDATE_DNS, MAP_SUBDOMAIN } from '@automattic/calypso-url';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 

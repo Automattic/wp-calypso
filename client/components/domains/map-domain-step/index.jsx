@@ -21,7 +21,7 @@ import DomainRegistrationSuggestion from 'calypso/components/domains/domain-regi
 import DomainProductPrice from 'calypso/components/domains/domain-product-price';
 import { getCurrentUser, currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { MAP_EXISTING_DOMAIN, INCOMING_DOMAIN_TRANSFER } from 'calypso/lib/url/support';
+import { MAP_EXISTING_DOMAIN, INCOMING_DOMAIN_TRANSFER } from '@automattic/calypso-url';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import {
 	recordAddDomainButtonClickInMapDomain,

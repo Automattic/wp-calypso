@@ -11,7 +11,7 @@ import { Button } from '@automattic/components';
  */
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { preventWidows } from 'calypso/lib/formatting';
-import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
+import { JETPACK_SUPPORT } from '@automattic/calypso-url';
 import ExternalLink from 'calypso/components/external-link';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';

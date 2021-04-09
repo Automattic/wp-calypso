@@ -17,7 +17,7 @@ import {
 	JETPACK_CONTACT_SUPPORT,
 	JETPACK_SUPPORT,
 	SUPPORT_ROOT,
-} from 'calypso/lib/url/support';
+} from '@automattic/calypso-url';
 
 const noop = () => {};
 

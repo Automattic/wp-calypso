@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
  */
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { CALYPSO_CONTACT } from '@automattic/calypso-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getGuidedTransferError } from 'calypso/state/sites/guided-transfer/selectors';
 

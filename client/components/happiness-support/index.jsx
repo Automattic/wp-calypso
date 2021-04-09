@@ -19,7 +19,7 @@ import {
 	JETPACK_CONTACT_SUPPORT,
 	JETPACK_SUPPORT,
 	SUPPORT_ROOT,
-} from 'calypso/lib/url/support';
+} from '@automattic/calypso-url';
 import HappychatButton from 'calypso/components/happychat/button';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

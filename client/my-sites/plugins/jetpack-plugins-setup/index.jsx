@@ -27,7 +27,7 @@ import {
 	JETPACK_SERVICE_AKISMET,
 	JETPACK_SERVICE_VAULTPRESS,
 	JETPACK_SUPPORT,
-} from 'calypso/lib/url/support';
+} from '@automattic/calypso-url';
 import { getSiteFileModDisableReason } from 'calypso/lib/site/utils';
 
 /**

@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 import Security2faBackupCodesList from 'calypso/me/security-2fa-backup-codes-list';
 import Security2faProgress from 'calypso/me/security-2fa-progress';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { CALYPSO_CONTACT } from '@automattic/calypso-url';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 

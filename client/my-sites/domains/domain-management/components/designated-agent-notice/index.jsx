@@ -9,7 +9,7 @@ import Gridicon from 'calypso/components/gridicon';
 /**
  * Internal Dependencies
  */
-import { DESIGNATED_AGENT, DOMAIN_REGISTRATION_AGREEMENTS } from 'calypso/lib/url/support';
+import { DESIGNATED_AGENT, DOMAIN_REGISTRATION_AGREEMENTS } from '@automattic/calypso-url';
 
 /**
  * Style dependencies

@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 import CompletePurchaseNotice from './guided-transfer-card/complete-purchase-notice';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { CALYPSO_CONTACT } from '@automattic/calypso-url';
 import { getExportingState, getDownloadUrl } from 'calypso/state/exporter/selectors';
 import { isGuidedTransferAwaitingPurchase } from 'calypso/state/sites/guided-transfer/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

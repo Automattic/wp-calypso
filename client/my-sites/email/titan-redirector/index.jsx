@@ -16,7 +16,7 @@ import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { emailManagementNewTitanAccount } from 'calypso/my-sites/email/paths';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { getSiteSlug, hasAllSitesList } from 'calypso/state/sites/selectors';
-import { SUPPORT_ROOT } from 'calypso/lib/url/support';
+import { SUPPORT_ROOT } from '@automattic/calypso-url';
 import { addQueryArgs } from 'calypso/lib/route';
 import { login } from 'calypso/lib/paths';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
