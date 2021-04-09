@@ -62,11 +62,7 @@ describe( 'useExperiment', () => {
 		);
 
 		expect( result.current ).toEqual( [ true, null ] );
-		expect(
-			( exPlatClient.loadExperimentAssignment as jest.MockedFunction<
-				typeof exPlatClient.loadExperimentAssignment
-			> ).mock.calls.length
-		).toBe( 1 );
+		expect( exPlatClient.loadExperimentAssignment ).toHaveBeenCalledTimes( 1 );
 		actReactHooks( () => controllablePromise1.resolve( validExperimentAssignment ) );
 		expect( result.current ).toEqual( [ true, null ] );
 		await waitForNextUpdate();
@@ -90,20 +86,12 @@ describe( 'useExperiment', () => {
 		);
 
 		expect( result.current ).toEqual( [ false, null ] );
-		expect(
-			( exPlatClient.loadExperimentAssignment as jest.MockedFunction<
-				typeof exPlatClient.loadExperimentAssignment
-			> ).mock.calls.length
-		).toBe( 0 );
+		expect( exPlatClient.loadExperimentAssignment ).toHaveBeenCalledTimes( 0 );
 
 		isEligible = true;
 		rerender();
 		expect( result.current ).toEqual( [ true, null ] );
-		expect(
-			( exPlatClient.loadExperimentAssignment as jest.MockedFunction<
-				typeof exPlatClient.loadExperimentAssignment
-			> ).mock.calls.length
-		).toBe( 1 );
+		expect( exPlatClient.loadExperimentAssignment ).toHaveBeenCalledTimes( 1 );
 		actReactHooks( () => controllablePromise1.resolve( validExperimentAssignment ) );
 		expect( result.current ).toEqual( [ true, null ] );
 		await waitForNextUpdate();
@@ -114,11 +102,7 @@ describe( 'useExperiment', () => {
 		isEligible = false;
 		rerender();
 		expect( result.current ).toEqual( [ false, null ] );
-		expect(
-			( exPlatClient.loadExperimentAssignment as jest.MockedFunction<
-				typeof exPlatClient.loadExperimentAssignment
-			> ).mock.calls.length
-		).toBe( 1 );
+		expect( exPlatClient.loadExperimentAssignment ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
 
@@ -215,17 +199,14 @@ describe( 'ProvideExperimentData', () => {
 				) }
 			</ProvideExperimentData>
 		);
-		expect( capture.mock.calls.length ).toBe( 1 );
-		expect( capture.mock.calls[ capture.mock.calls.length - 1 ] ).toEqual( [ true, null ] );
+		expect( capture ).toHaveBeenCalledTimes( 1 );
+		expect( capture.mock.calls[ 0 ] ).toEqual( [ true, null ] );
 		capture.mockReset();
 		const experimentAssignment = { ...validExperimentAssignment, variationName: null };
 		await actReact( async () => controllablePromise1.resolve( experimentAssignment ) );
 		await waitFor( () => {
-			expect( capture.mock.calls.length ).toBe( 1 );
+			expect( capture ).toHaveBeenCalledTimes( 1 );
 		} );
-		expect( capture.mock.calls[ capture.mock.calls.length - 1 ] ).toEqual( [
-			false,
-			experimentAssignment,
-		] );
+		expect( capture.mock.calls[ 0 ] ).toEqual( [ false, experimentAssignment ] );
 	} );
 } );
