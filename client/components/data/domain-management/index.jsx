@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { fetchUsers } from 'calypso/lib/users/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getPlansBySite } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -25,7 +24,6 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import StoreConnection from 'calypso/components/data/store-connection';
-import UsersStore from 'calypso/lib/users/store';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 function getStateFromStores( props ) {
@@ -39,7 +37,6 @@ function getStateFromStores( props ) {
 		selectedSite: props.selectedSite,
 		sitePlans: props.sitePlans,
 		user: props.currentUser,
-		users: UsersStore.getUsers( { siteId: get( props.selectedSite, 'ID' ) } ),
 	};
 }
 
@@ -55,31 +52,11 @@ class DomainManagementData extends React.Component {
 		needsDomains: PropTypes.bool,
 		needsPlans: PropTypes.bool,
 		needsProductsList: PropTypes.bool,
-		needsUsers: PropTypes.bool,
 		productsList: PropTypes.object,
 		selectedDomainName: PropTypes.string,
 		selectedSite: PropTypes.object,
 		sitePlans: PropTypes.object,
 	};
-
-	componentDidMount() {
-		this.loadData( {} );
-	}
-
-	componentDidUpdate( prevProps ) {
-		this.loadData( prevProps );
-	}
-
-	loadData( prevProps ) {
-		const { needsUsers, selectedSite } = this.props;
-
-		if (
-			needsUsers &&
-			( prevProps.needsUsers !== needsUsers || prevProps.selectedSite !== selectedSite )
-		) {
-			fetchUsers( { siteId: selectedSite.ID, number: 1000 } );
-		}
-	}
 
 	render() {
 		const {
@@ -87,14 +64,8 @@ class DomainManagementData extends React.Component {
 			needsDomains,
 			needsPlans,
 			needsProductsList,
-			needsUsers,
 			selectedSite,
 		} = this.props;
-
-		const stores = [];
-		if ( needsUsers ) {
-			stores.push( UsersStore );
-		}
 
 		return (
 			<div>
@@ -117,7 +88,6 @@ class DomainManagementData extends React.Component {
 						selectedDomainName={ this.props.selectedDomainName }
 						selectedSite={ selectedSite }
 						sitePlans={ this.props.sitePlans }
-						stores={ stores }
 					/>
 				</CalypsoShoppingCartProvider>
 			</div>
