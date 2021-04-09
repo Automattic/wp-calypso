@@ -4058,12 +4058,9 @@
     "@wordpress/element" "^2.14.0"
 
 "@types/wordpress__core-data@*":
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/@types/wordpress__core-data/-/wordpress__core-data-2.4.3.tgz#e689a97b0676c668e1b6850ea34b36b591df0bf3"
-  integrity sha512-ADQ7+7c5Eok2nYAr0dWVuUYgE3KOzZHPf/u0TPZpNCo/98wZ6QaebnDQotuRmsiAyNBO3LsSSyASQcHNhAVjnw==
-  dependencies:
-    "@types/wordpress__api-fetch" "*"
-    "@types/wordpress__data" "*"
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/@types/wordpress__core-data/-/wordpress__core-data-2.4.4.tgz#a1695d236bd66fe7356e97c23e3da56c5f1793d9"
+  integrity sha512-oTaJJnphzDviulmUnSiaaTZM+7LDL4dquUH75A90gjsLFKPRylmxNLRbavau3HospkVftGTho3p4ojw3LPEnpw==
 
 "@types/wordpress__data-controls@^1.0.4":
   version "1.0.4"
@@ -4101,12 +4098,12 @@
   integrity sha512-CUZv3WdPvWqnEwojbc4yEttwZlvsMGI8YurgB9CHVJXx6nQ4U2RU6PB0Mv7nxATufduFDMKq8TNpCHBenZqEjQ==
 
 "@types/wordpress__media-utils@*":
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/@types/wordpress__media-utils/-/wordpress__media-utils-0.2.3.tgz#b0cf9545bc7ec895dcb0bfc0e49970873f5b618c"
-  integrity sha512-1Qxj1DQXEW5Ew2PJ9aU2YzqhO2TIti4WHHh6890ONRp8LeU5odoNGAlKCZJfFz/DLwxEnvqkHEwDh6fTm5ZcVg==
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/@types/wordpress__media-utils/-/wordpress__media-utils-0.2.4.tgz#41fc6282911478cfc10038e0530a7c06fb16af34"
+  integrity sha512-DedrNca3f3hpZa61pgGbwkUuk3dDPW/KNhnD+VrFVSrE29wTsp1lBLnRmVCR3TQMXnKiS8E5TCKiA+JX1567Cg==
   dependencies:
-    "@types/wordpress__api-fetch" "*"
     "@types/wordpress__block-editor" "*"
+    "@types/wordpress__core-data" "*"
     "@wordpress/element" "^2.14.0"
 
 "@types/wordpress__notices@*":
