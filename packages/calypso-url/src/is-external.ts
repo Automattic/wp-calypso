@@ -22,7 +22,7 @@ export default function isExternal( url: URLString ): boolean {
 	}
 
 	// The url passed in might be of form `wordpress.com/support`,
-	// so for this function we'll append double-slashes to fake it.
+	// so for this function we'll prepend double-slashes to fake it.
 	// If it is a relative URL the hostname will be the base hostname.
 	if (
 		! url.startsWith( 'http://' ) &&
@@ -49,9 +49,9 @@ export default function isExternal( url: URLString ): boolean {
 
 	if ( typeof window !== 'undefined' ) {
 		if ( hostname === window.location.hostname ) {
-			// even if hostname matches, the url might be outside calypso
-			// outside calypso should be considered external
-			// double separators are valid paths - but not handled correctly
+			// Even if hostname matches, the url might be outside calypso and outside
+			// calypso should be considered external. Double separators are valid
+			// paths, but not handled correctly so we strip them here.
 			if ( pathname && isLegacyRoute( pathname.replace( '//', '/' ) ) ) {
 				return true;
 			}
