@@ -70,10 +70,16 @@ const useMshotsUrl = ( src: string, options: MShotsOptions ) => {
 	return loadedSrc;
 };
 
+// For hover-scroll, we use a div with a background image (rather than an img element)
+// in order to use transitions between `top` and `bottom` on the
+// `background-position` property.
+// The "normal" top & bottom properties are problematic individually because we
+// don't know how big the images will be, and using both gets the
+// right positions but with no transition (as they're different properties).
 const MShotsImage = ( {
 	url,
 	'aria-labelledby': labelledby,
-	// alt,
+	alt,
 	options,
 	scrollable = false,
 }: MShotsImageProps ): JSX.Element => {
@@ -93,16 +99,23 @@ const MShotsImage = ( {
 
 	const style = {
 		opacity,
-		backgroundImage,
+		...( scrollable ? { backgroundImage } : {} ),
 	};
 
 	const className = classnames(
 		'mshots-image__container',
-		visible ? 'mshots-image-visible' : 'mshots-image__loader',
-		{ scrollable }
+		scrollable && 'hover-scroll',
+		visible ? 'mshots-image-visible' : 'mshots-image__loader'
 	);
 
-	return <div className={ className } style={ style } aria-labelledby={ labelledby } />;
+	// The "! visible" here is only to dodge a particularly specific css
+	// rule effecting the placeholder while loading static images:
+	// '.design-picker .design-picker__image-frame img { ..., height: auto }'
+	return scrollable || ! visible ? (
+		<div className={ className } style={ style } aria-labelledby={ labelledby } />
+	) : (
+		<img { ...{ className, style, src, alt } } aria-labelledby={ labelledby } alt={ alt } />
+	);
 };
 
 export default MShotsImage;

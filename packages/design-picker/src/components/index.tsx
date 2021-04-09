@@ -65,6 +65,7 @@ const DesignPicker: React.FC< Props > = ( {
 									aria-labelledby={ makeOptionId( design ) }
 									alt=""
 									options={ mShotOptions() }
+									scrollable={ design.preview !== 'static' }
 								/>
 							) : (
 								<img

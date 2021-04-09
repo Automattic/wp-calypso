@@ -15,14 +15,18 @@
 
 .mshots-image__container {
     height: 100%;
+}
+
+.hover-scroll {
     background-size: 100%;
     background-position: top;
     background-repeat: no-repeat;
     margin-left: auto;
     margin-right: auto;
+
     transition: all 1s;
 
     &:hover {
-		background-position: bottom;
+        background-position: bottom;
     }
 }

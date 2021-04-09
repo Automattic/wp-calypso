@@ -121,22 +121,22 @@
 	}
 
 	.design-picker__landscape {
-		// padding-top: 65%;
-
 		height: 350px;
+	}
+
+	.design-picker__portrait {
+		height: 480px;
+	}
+
+	.design-picker__scrollable {
+		padding-top: 0;
 
 		img {
 			transition: all 1s;
 		}
 
-		&.design-picker__scrollable img:hover {
-			// margin-top: -100px;
-		}
 	}
 
-	.design-picker__portrait {
-		padding-top: 360px / 480px * 200%;
-	}
 
 	.design-picker__option-meta {
 		align-items: center;
