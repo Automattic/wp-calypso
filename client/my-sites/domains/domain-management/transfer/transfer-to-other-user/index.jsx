@@ -28,6 +28,7 @@ import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/co
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import withUsers from 'calypso/data/users/with-users';
 
 /**
  * Style dependencies
@@ -44,6 +45,7 @@ class TransferOtherUser extends React.Component {
 		isRequestingSiteDomains: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		// From `withUsers` HoC
 		users: PropTypes.array.isRequired,
 	};
 
@@ -362,4 +364,4 @@ export default connect(
 		successNotice,
 		errorNotice,
 	}
-)( localize( TransferOtherUser ) );
+)( localize( withUsers( TransferOtherUser ) ) );
