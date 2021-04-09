@@ -107,11 +107,14 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		if ( visit ) {
 			await this.waitForSuccessViewPostNotice();
+			// Wait for the snackbar animation
 			await this.driver.sleep( 1000 );
-			return await driverHelper.clickWhenClickable(
+			await driverHelper.clickWhenClickable(
 				this.driver,
 				By.css( '.components-snackbar__content a' )
 			);
+			// Wait for the new page's content
+			await this.driver.switchTo().defaultContent();
 		}
 	}
 
