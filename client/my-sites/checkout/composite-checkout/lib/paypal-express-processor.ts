@@ -45,7 +45,7 @@ export default async function payPalProcessor(
 	} catch ( error ) {
 		currentUrl = `https://wordpress.com/checkout/${ siteSlug }`;
 	}
-	const currentUrlWithoutQuery = currentUrl.split( '?' )[ 0 ];
+	const currentUrlWithoutQuery = currentUrl.split( /\?|#/ )[ 0 ];
 	const successUrl = thankYouUrl.startsWith( 'http' )
 		? thankYouUrl
 		: currentUrlWithoutQuery + thankYouUrl;
