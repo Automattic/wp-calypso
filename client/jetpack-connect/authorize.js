@@ -623,18 +623,24 @@ export class JetpackAuthorize extends Component {
 	getUserText() {
 		const { translate } = this.props;
 		const { authorizeSuccess } = this.props.authorizationData;
-		// translators: %(user) is user's Display Name (Eg Connecting as John Doe)
-		let text = translate( 'Connecting as {{strong}}%(user)s{{/strong}}', {
-			args: { user: this.props.user.display_name },
-			components: { strong: <strong /> },
-		} );
+		// translators: %(user) is user's Display Name (Eg Connecting as John Doe) and %(email) is the user's email address
+		let text = translate(
+			'Connecting as {{strong}}%(user)s{{/strong}} ({{strong}}%(email)s{{/strong}})',
+			{
+				args: { email: this.props.user.email, user: this.props.user.display_name },
+				components: { strong: <strong /> },
+			}
+		);
 
 		if ( authorizeSuccess || this.props.isAlreadyOnSitesList ) {
-			// translators: %(user) is user's Display Name (Eg Connected as John Doe)
-			text = translate( 'Connected as {{strong}}%(user)s{{/strong}}', {
-				args: { user: this.props.user.display_name },
-				components: { strong: <strong /> },
-			} );
+			// translators: %(user) is user's Display Name (Eg Connecting as John Doe) and %(email) is the user's email address
+			text = translate(
+				'Connected as {{strong}}%(user)s{{/strong}} ({{strong}}%(email)s{{/strong}})',
+				{
+					args: { email: this.props.user.email, user: this.props.user.display_name },
+					components: { strong: <strong /> },
+				}
+			);
 		}
 
 		return text;
