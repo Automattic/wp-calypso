@@ -8,6 +8,7 @@
 		{ "path": "./calypso-analytics" },
 		{ "path": "./calypso-config" },
 		{ "path": "./calypso-stripe" },
+		{ "path": "./calypso-url" },
 		{ "path": "./components" },
 		{ "path": "./composite-checkout" },
 		{ "path": "./create-calypso-config" },
