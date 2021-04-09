@@ -160,10 +160,11 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		retryRequest: retryDomainSuggestionRequest,
 	} = useDomainSuggestions( domainSearch.trim(), quantityExpanded, domainCategory, locale ) || {};
 
-	// don't list the already existing free domain as part of the suggestions
-	const domainSuggestions = allDomainSuggestions
-		?.filter( ( suggestion ) => suggestion.domain_name !== existingSubdomain?.domain_name )
-		.slice( 0, isExpanded ? quantityExpanded : quantity );
+	// filter out the free sub-domain from suggestions (1st position in the suggestions Array) when existingSubdomain prop has value
+	const domainSuggestions = allDomainSuggestions?.slice(
+		existingSubdomain ? 1 : 0,
+		isExpanded ? quantityExpanded : quantity
+	);
 
 	// we need this index because it refers to the recommended (most relevant) paid domain
 	const firstPaidDomainIndex = domainSuggestions?.findIndex(
