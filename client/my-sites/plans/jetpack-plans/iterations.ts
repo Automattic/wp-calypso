@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getUrlParts } from 'calypso/lib/url/url-parts';
+import { getUrlParts } from '@automattic/calypso-url';
 
 /**
  * Iterations
