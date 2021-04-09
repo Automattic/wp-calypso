@@ -170,7 +170,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async storeOptionDisplayed() {
-		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, this.storeSelector );
+		return await driverHelper.isEventuallyLocatedAndVisible( this.driver, this.storeSelector );
 	}
 
 	async settingsOptionExists( click = false ) {
@@ -230,7 +230,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	async selectSiteSwitcher() {
 		const siteSwitcherSelector = By.css( '.current-site__switch-sites button' );
 		await this.ensureSidebarMenuVisible();
-		const present = await driverHelper.isEventuallyPresentAndDisplayed(
+		const present = await driverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			siteSwitcherSelector,
 			3000
@@ -284,7 +284,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		const clearSearchButton = By.css( '.search__close-icon' );
 
 		await this.ensureSidebarMenuVisible();
-		const foundSwitcher = await driverHelper.isEventuallyPresentAndDisplayed(
+		const foundSwitcher = await driverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			siteSwitcherSelector
 		);
@@ -297,7 +297,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		if ( clearSearch ) {
 			await driverHelper.clickWhenClickable( this.driver, clearSearchButton );
 		}
-		const foundBroken = await driverHelper.isEventuallyPresentAndDisplayed(
+		const foundBroken = await driverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			brokenSiteButton
 		);

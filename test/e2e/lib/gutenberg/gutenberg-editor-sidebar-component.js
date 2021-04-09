@@ -162,7 +162,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 
 	async tagEventuallyDisplayed( tag ) {
 		const selector = By.xpath( `//span[text()='${ tag }']` );
-		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
+		return await driverHelper.isEventuallyLocatedAndVisible( this.driver, selector );
 	}
 
 	async _postInit() {

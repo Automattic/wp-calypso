@@ -72,7 +72,7 @@ export default class NavBarComponent extends AsyncBaseContainer {
 	}
 	async confirmNotificationsOpen() {
 		const selector = by.css( '.wpnt-open' );
-		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
+		return await driverHelper.isEventuallyLocatedAndVisible( this.driver, selector );
 	}
 	async dismissGuidedTours() {
 		const self = this;

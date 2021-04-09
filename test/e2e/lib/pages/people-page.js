@@ -73,7 +73,7 @@ export default class PeoplePage extends AsyncBaseContainer {
 
 		let displayed;
 		for ( let i = 0; i <= retries; i++ ) {
-			displayed = await DriverHelper.isEventuallyPresentAndDisplayed(
+			displayed = await DriverHelper.isEventuallyLocatedAndVisible(
 				this.driver,
 				By.css( `.people-profile__login[data-e2e-login="${ username }"]` ),
 				500

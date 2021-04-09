@@ -30,7 +30,7 @@ export default class GoogleSearchPage extends AsyncBaseContainer {
 	}
 
 	async adExists() {
-		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, this.adLinkselector );
+		return await driverHelper.isEventuallyLocatedAndVisible( this.driver, this.adLinkselector );
 	}
 
 	async getAdUrl() {

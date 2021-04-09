@@ -34,7 +34,7 @@ export default class PostsPage extends AsyncBaseContainer {
 	}
 
 	async isPostDisplayed( title ) {
-		return await driverHelper.isEventuallyPresentAndDisplayed(
+		return await driverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			PostsPage.getPostTitleSelector( title )
 		);
@@ -78,7 +78,7 @@ export default class PostsPage extends AsyncBaseContainer {
 	}
 
 	async isPostPending() {
-		return await driverHelper.isEventuallyPresentAndDisplayed(
+		return await driverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( '.post-status.is-pending' )
 		);

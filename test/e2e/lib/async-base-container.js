@@ -71,7 +71,7 @@ export default class AsyncBaseContainer {
 	}
 
 	async displayed() {
-		return await driverHelper.isEventuallyPresentAndDisplayed(
+		return await driverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			this.expectedElementSelector,
 			this.explicitWaitMS

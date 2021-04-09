@@ -113,35 +113,22 @@ export function waitUntilLocatedAndVisible( driver, locator, timeout = explicitW
 	);
 }
 
-export function isEventuallyPresentAndDisplayed( driver, selector, waitOverride ) {
-	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
-
-	return driver
-		.wait( function () {
-			return driver.findElement( selector ).then(
-				function ( element ) {
-					return element.isDisplayed().then(
-						function () {
-							return true;
-						},
-						function () {
-							return false;
-						}
-					);
-				},
-				function () {
-					return false;
-				}
-			);
-		}, timeoutWait )
-		.then(
-			( shown ) => {
-				return shown;
-			},
-			() => {
-				return false;
-			}
-		);
+/**
+ * Checks whether an element is eventually located in DOM and visible.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise<WebElement>} A promise that will be resolved with whether
+ * the element is located and visible
+ */
+export async function isEventuallyLocatedAndVisible( driver, locator, timeout = explicitWaitMS ) {
+	try {
+		await waitUntilLocatedAndVisible( driver, locator, timeout );
+		return true;
+	} catch {
+		return false;
+	}
 }
 
 /**
@@ -435,7 +422,7 @@ export async function refreshIfJNError( driver, timeout = 2000 ) {
 	const jnDBError = by.xpath( '//h1[.="Error establishing a database connection"]' );
 
 	const refreshIfNeeded = async () => {
-		const jnErrorDisplayed = await isEventuallyPresentAndDisplayed( driver, jnSiteError, timeout );
+		const jnErrorDisplayed = await isEventuallyLocatedAndVisible( driver, jnSiteError, timeout );
 		const jnDBErrorDisplayed = await isElementPresent( driver, jnDBError );
 		if ( jnErrorDisplayed || jnDBErrorDisplayed ) {
 			console.log( 'JN Error! Refreshing the page' );

@@ -41,7 +41,7 @@ export default class MarkdownBlockComponent extends GutenbergBlockComponent {
 
 	async _switchMode( expectedSelector ) {
 		await this.revealToolbar();
-		const isVisible = await driverHelper.isEventuallyPresentAndDisplayed(
+		const isVisible = await driverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			expectedSelector,
 			1000

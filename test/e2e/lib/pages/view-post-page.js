@@ -100,12 +100,12 @@ export default class ViewPostPage extends AsyncBaseContainer {
 
 	async commentEventuallyShown( comment ) {
 		const commentSelector = By.xpath( `//p[text() = "${ comment }"]` );
-		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, commentSelector );
+		return await driverHelper.isEventuallyLocatedAndVisible( this.driver, commentSelector );
 	}
 
 	async embedContentDisplayed( selector ) {
 		const element = By.css( `${ selector }` );
-		const displayed = await driverHelper.isEventuallyPresentAndDisplayed( this.driver, element );
+		const displayed = await driverHelper.isEventuallyLocatedAndVisible( this.driver, element );
 		return assert.strictEqual(
 			displayed,
 			true,

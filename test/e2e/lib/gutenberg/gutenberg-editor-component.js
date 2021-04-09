@@ -232,7 +232,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	blockDisplayedInEditor( dataTypeSelectorVal ) {
-		return driverHelper.isEventuallyPresentAndDisplayed(
+		return driverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( `[data-type="${ dataTypeSelectorVal }"]` )
 		);
@@ -243,7 +243,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async errorDisplayed() {
-		return driverHelper.isEventuallyPresentAndDisplayed(
+		return driverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( '.editor-error-boundary' )
 		);
@@ -481,7 +481,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async removeBlock( blockID ) {
 		const blockSelector = By.css( `.wp-block[id="${ blockID }"]` );
-		await driverHelper.isEventuallyPresentAndDisplayed(
+		await driverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			blockSelector,
 			this.explicitWaitMS / 5
@@ -491,7 +491,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			this.driver,
 			By.css( '.block-editor-block-settings-menu' )
 		);
-		await driverHelper.isEventuallyPresentAndDisplayed(
+		await driverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( '.components-menu-group' ),
 			this.explicitWaitMS / 5

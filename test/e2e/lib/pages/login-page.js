@@ -27,7 +27,7 @@ export default class LoginPage extends AsyncBaseContainer {
 		const changeAccountSelector = By.css( '#loginAsAnotherUser' );
 		const alreadyLoggedInSelector = By.css( '.continue-as-user' );
 
-		const isDisplayed = await driverHelper.isEventuallyPresentAndDisplayed(
+		const isDisplayed = await driverHelper.isEventuallyLocatedAndVisible(
 			driver,
 			alreadyLoggedInSelector,
 			2000

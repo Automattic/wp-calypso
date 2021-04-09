@@ -71,7 +71,7 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 
 		step( 'Can view checkout modal', async function () {
 			editorUrl = await driver.executeScript( 'return window.location.href' );
-			const compositeCheckoutIsPresent = await driverHelper.isEventuallyPresentAndDisplayed(
+			const compositeCheckoutIsPresent = await driverHelper.isEventuallyLocatedAndVisible(
 				driver,
 				By.css( '.editor-checkout-modal' )
 			);

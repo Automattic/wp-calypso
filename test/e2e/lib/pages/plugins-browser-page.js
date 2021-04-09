@@ -40,7 +40,7 @@ export default class PluginsBrowserPage extends AsyncBaseContainer {
 				async ( e ) => ( await e.getText() ) === pluginTitle
 			);
 		};
-		const shown = await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
+		const shown = await driverHelper.isEventuallyLocatedAndVisible( this.driver, selector );
 		if ( shown === true ) {
 			return shown;
 		}
@@ -49,7 +49,7 @@ export default class PluginsBrowserPage extends AsyncBaseContainer {
 		);
 		await driverHelper.clickWhenClickable( this.driver, by.css( '.search__close-icon' ) );
 		await this.searchForPlugin( searchTerm );
-		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
+		return await driverHelper.isEventuallyLocatedAndVisible( this.driver, selector );
 	}
 
 	async selectManagePlugins() {

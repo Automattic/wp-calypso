@@ -62,13 +62,13 @@ export default class PlansPage extends AsyncBaseContainer {
 			selector = by.css( `.is-${ planName }-plan` );
 		}
 
-		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
+		return await driverHelper.isEventuallyLocatedAndVisible( this.driver, selector );
 	}
 
 	async planTypesShown( planType ) {
 		const plansCssHandle =
 			planType === 'jetpack' ? '.selector__main' : `[data-e2e-plans="${ planType }"]`;
-		return await driverHelper.isEventuallyPresentAndDisplayed(
+		return await driverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			by.css( plansCssHandle )
 		);

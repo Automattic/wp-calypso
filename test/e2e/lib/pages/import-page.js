@@ -22,7 +22,7 @@ export default class ImportPage extends AsyncBaseContainer {
 			By.css( '.site-importer__site-preview' )
 		);
 
-		const isSitePreviewShowing = await driverHelper.isEventuallyPresentAndDisplayed(
+		const isSitePreviewShowing = await driverHelper.isEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( '.site-importer__site-preview-column-container' )
 		);
