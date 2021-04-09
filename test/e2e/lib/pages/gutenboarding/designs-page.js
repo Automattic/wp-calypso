@@ -11,7 +11,7 @@ import * as dataHelper from '../../data-helper';
 
 export default class DesignSelectorPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, By.css( '.design-selector' ) );
+		super( driver, By.css( '.designs' ) );
 		this.freeOptionSelector = By.css( 'button[data-e2e-button="freeOption"]' );
 		this.paidOptionSelector = By.css( 'button[data-e2e-button="paidOption"]' );
 	}

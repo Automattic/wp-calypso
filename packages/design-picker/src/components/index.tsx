@@ -13,7 +13,7 @@ import { isEnabled } from '@automattic/calypso-config';
  * Internal dependencies
  */
 import MShotsImage from './mshots-image';
-import { availableDesigns, getDesignImageUrl, getDesignUrl, mShotOptions } from '../utils';
+import { getAvailableDesigns, getDesignImageUrl, getDesignUrl, mShotOptions } from '../utils';
 import type { Design } from '../types';
 
 /**
@@ -34,7 +34,7 @@ interface Props {
 const DesignPicker: React.FC< Props > = ( {
 	locale,
 	onSelect,
-	designs = availableDesigns.featured,
+	designs = getAvailableDesigns().featured,
 	premiumBadge,
 	isGridMinimal,
 } ) => {
