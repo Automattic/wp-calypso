@@ -32,16 +32,3 @@ export const fetchTitanIframeURL = ( emailAccountId, context ) => {
 			} );
 	} );
 };
-
-export const checkTitanEmailAddressAvailability = ( emailAddress ) => {
-	return new Promise( ( resolve ) => {
-		wpcom
-			.undocumented()
-			.getTitanEmailAddressAvailability( emailAddress, ( serverError, result ) => {
-				resolve( {
-					error: serverError?.message,
-					available: serverError ? false : result.message === 'OK',
-				} );
-			} );
-	} );
-};
