@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By as by } from 'selenium-webdriver';
+import { By, Condition } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -9,26 +9,31 @@ import { By as by } from 'selenium-webdriver';
 import * as driverHelper from '../../driver-helper.js';
 import * as dataHelper from '../../data-helper';
 import AsyncBaseContainer from '../../async-base-container';
-import SidebarComponent from '../../components/sidebar-component';
 
 export default class AccountSettingsPage extends AsyncBaseContainer {
 	constructor( driver, url = dataHelper.getCalypsoURL( 'me/account' ) ) {
-		super( driver, by.css( '.account.main' ), url );
+		super( driver, By.css( '.account.main' ), url );
 	}
 
 	async chooseCloseYourAccount() {
-		const closeAccountSelector = by.css( '.account__settings-close' );
+		const closeAccountSelector = By.css( '.account__settings-close' );
 		await driverHelper.scrollIntoView( this.driver, closeAccountSelector, 'end' );
 		return await driverHelper.clickWhenClickable( this.driver, closeAccountSelector );
 	}
 
-	async getUsername() {
-		await SidebarComponent.Expect( this.driver );
-		const displayName = await driverHelper.waitUntilLocatedAndVisible(
-			this.driver,
-			by.css( '.profile-gravatar__user-display-name' )
-		);
+	getUsername() {
+		return this.driver.wait(
+			new Condition( 'for username to be available', async () => {
+				try {
+					const element = await this.driver.findElement( By.css( 'input#user_login' ) );
+					const username = await element.getAttribute( 'value' );
 
-		return displayName.getText();
+					return username ? username : null;
+				} catch {
+					return null;
+				}
+			} ),
+			2000
+		);
 	}
 }
