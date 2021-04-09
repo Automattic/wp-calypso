@@ -1,5 +1,5 @@
 export * from './path';
-export { default as addQueryArgs } from 'calypso/lib/url/add-query-args';
+export { addQueryArgs } from '@automattic/calypso-url';
 export { default as normalize } from './normalize';
 export { default as trailingslashit } from './trailingslashit';
 export { default as untrailingslashit } from './untrailingslashit';
