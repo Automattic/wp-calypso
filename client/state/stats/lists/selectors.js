@@ -182,8 +182,9 @@ export function getSiteStatsViewSummary( state, siteId ) {
 
 	viewData.data.forEach( ( item ) => {
 		const [ date, value ] = item;
-		const momentDate = moment( date );
-		const { years, months } = momentDate.toObject();
+		const newDate = new Date( date );
+		const years = newDate.getFullYear();
+		const months = newDate.getMonth();
 
 		if ( ! viewSummary[ years ] ) {
 			viewSummary[ years ] = {};
@@ -194,7 +195,7 @@ export function getSiteStatsViewSummary( state, siteId ) {
 				total: 0,
 				data: [],
 				average: 0,
-				daysInMonth: momentDate.daysInMonth(),
+				daysInMonth: new Date( years, months + 1, 0 ).getDate(),
 			};
 		}
 		viewSummary[ years ][ months ].total += value;
