@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-import resolveRelativePath from '../resolve-relative-path';
+import { resolveRelativePath } from '../src';
 
 describe( 'resolveRelativePath()', () => {
 	test( 'should return `/` when both parameters are omitted', () => {

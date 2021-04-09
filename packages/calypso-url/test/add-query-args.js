@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import addQueryArgs from '../add-query-args';
+import { addQueryArgs } from '../src';
 
 describe( '#addQueryArgs()', () => {
 	test( 'should error when args is not an object', () => {

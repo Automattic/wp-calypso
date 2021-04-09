@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { decodeURIIfValid, decodeURIComponentIfValid } from '../decode-utils';
+import { decodeURIIfValid, decodeURIComponentIfValid } from '../src';
 
 describe( 'decodeURIIfValid', () => {
 	test( 'should return an empty string when null is provided', () => {

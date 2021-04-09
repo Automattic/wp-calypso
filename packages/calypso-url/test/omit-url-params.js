@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-import omitUrlParams from '../omit-url-params';
+import { omitUrlParams } from '../src';
 
 describe( 'omitUrlParams()', () => {
 	describe( 'when no URL is supplied', () => {

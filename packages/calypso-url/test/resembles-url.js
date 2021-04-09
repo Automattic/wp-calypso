@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-import resemblesUrl from '../resembles-url';
+import { resemblesUrl } from '../src';
 
 describe( 'resemblesUrl()', () => {
 	test( 'should detect a URL', () => {

@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-import { withoutHttp, urlToSlug, urlToDomainAndPath } from '../http-utils';
+import { withoutHttp, urlToSlug, urlToDomainAndPath } from '../src';
 
 describe( 'withoutHttp', () => {
 	test( 'should return null if URL is not provided', () => {

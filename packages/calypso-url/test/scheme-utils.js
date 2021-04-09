@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-import { addSchemeIfMissing, setUrlScheme } from '../scheme-utils';
+import { addSchemeIfMissing, setUrlScheme } from '../src';
 
 describe( 'addSchemeIfMissing()', () => {
 	test( 'should add scheme if missing', () => {

@@ -1,13 +1,51 @@
 /**
  * @jest-environment jsdom
  */
+/**
+ * External dependencies
+ */
+import config from '@automattic/calypso-config';
+
+jest.mock( '@automattic/calypso-config' );
 
 /**
  * Internal dependencies
  */
-import isOutsideCalypso from '../is-outside-calypso';
+import { isOutsideCalypso } from '../src';
+
+// keep a copy of the window object to restore
+// it at the end of the tests
+const oldWindowLocation = window.location;
 
 describe( 'isOutsideCalypso', () => {
+	beforeAll( () => {
+		config.mockImplementation( ( flag ) => {
+			if ( flag === 'hostname' ) {
+				return 'calypso.localhost';
+			}
+		} );
+		config.isEnabled.mockImplementation( ( flag ) => {
+			if ( flag === 'reader' || flag === 'me/my-profile' ) {
+				return true;
+			}
+			return false;
+		} );
+
+		delete window.location;
+		window.location = {
+			hostname: 'example.com',
+		};
+	} );
+
+	afterAll( () => {
+		config.isEnabled.restore();
+		config.restore();
+
+		// restore `window.location` to the original `jsdom`
+		// `Location` object
+		window.location = oldWindowLocation;
+	} );
+
 	test( 'should return true for support site without trailing slash', () => {
 		const source = 'https://example.com/support';
 		const actual = isOutsideCalypso( source );

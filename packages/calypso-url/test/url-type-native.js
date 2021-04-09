@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-import { determineUrlType } from '../url-type';
+import { determineUrlType } from '../src';
 import runTests from './common/url-type.skip';
 
 describe( 'determineUrlType', () => {
