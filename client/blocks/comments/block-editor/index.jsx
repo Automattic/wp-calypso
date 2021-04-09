@@ -33,16 +33,14 @@ const BlockEditor = ( { onChange, suggestions } ) => {
 	useEffect( () => {
 		// ensure that the addAutoCompleters filter is added before the IsolatedBlockEditor is loaded
 		// so that the filters are definitely run
-		new Promise( ( resolve ) => {
-			getAddAutocompleters( suggestions ).then( ( addAutoCompleters ) => {
-				addFilter(
-					'editor.Autocomplete.completers',
-					'readerComments/autocompleters',
-					addAutoCompleters
-				);
-				resolve();
-			} );
-		} ).then( () => setIsLoaded( true ) );
+		getAddAutocompleters( suggestions ).then( ( addAutoCompleters ) => {
+			addFilter(
+				'editor.Autocomplete.completers',
+				'readerComments/autocompleters',
+				addAutoCompleters
+			);
+			setIsLoaded( true );
+		} );
 	}, [ suggestions ] );
 
 	if ( ! isLoaded ) {
