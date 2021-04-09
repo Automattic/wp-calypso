@@ -20,3 +20,6 @@ export const DOMAIN_SEARCH_DEBOUNCE_INTERVAL = 300;
 export const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
 export const domainIsAvailableStatus = [ 'available', 'available_premium' ];
+
+// number of free subdomain suggestions returned by the API
+export const FREE_DOMAIN_SUGGESTIONS_COUNT = 1;

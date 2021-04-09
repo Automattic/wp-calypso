@@ -32,6 +32,7 @@ import { getDomainSuggestionsVendor } from '../utils';
 import {
 	PAID_DOMAINS_TO_SHOW,
 	PAID_DOMAINS_TO_SHOW_EXPANDED,
+	FREE_DOMAIN_SUGGESTIONS_COUNT,
 	domainIsAvailableStatus,
 } from '../constants';
 
@@ -160,11 +161,17 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		retryRequest: retryDomainSuggestionRequest,
 	} = useDomainSuggestions( domainSearch.trim(), quantityExpanded, domainCategory, locale ) || {};
 
-	// filter out the free sub-domain from suggestions (1st position in the suggestions Array) when existingSubdomain prop has value
-	const domainSuggestions = allDomainSuggestions?.slice(
-		existingSubdomain ? 1 : 0,
-		isExpanded ? quantityExpanded : quantity
-	);
+	// filter out the free sub-domain suggestion when existingSubdomain prop has value
+	const domainSuggestions = existingSubdomain
+		? allDomainSuggestions
+				?.filter( ( suggestion ) => ! suggestion.is_free )
+				.slice(
+					0,
+					isExpanded
+						? quantityExpanded - FREE_DOMAIN_SUGGESTIONS_COUNT
+						: quantity - FREE_DOMAIN_SUGGESTIONS_COUNT
+				)
+		: allDomainSuggestions?.slice( 0, isExpanded ? quantityExpanded : quantity );
 
 	// we need this index because it refers to the recommended (most relevant) paid domain
 	const firstPaidDomainIndex = domainSuggestions?.findIndex(
