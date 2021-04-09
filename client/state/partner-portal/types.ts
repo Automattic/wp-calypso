@@ -50,7 +50,6 @@ export interface LicenseListContext {
 export enum ToSConsent {
 	NotConsented = 'not_consented',
 	Consented = 'consented',
-	Host = 'host',
 }
 
 export interface APIPartnerKey {
