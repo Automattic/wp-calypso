@@ -6,7 +6,6 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import submitWpcomTransaction from './submit-wpcom-transaction';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from './translate-payment-method-names';
 import {
 	createTransactionEndpointRequestPayload,
@@ -15,7 +14,7 @@ import {
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
 	TransactionRequest,
-	WPCOMTransactionEndpointResponse,
+	WPCOMTransactionEndpointRequestPayload,
 } from '../types/transaction-endpoint';
 
 const debug = debugFactory( 'calypso:composite-checkout:submit-redirect-transaction' );
@@ -25,11 +24,11 @@ type SubmitRedirectTransactionData = Omit<
 	'paymentMethodType' | 'paymentPartnerProcessorId' | 'cart'
 >;
 
-export default async function submitRedirectTransaction(
+export default function prepareRedirectTransaction(
 	paymentMethodId: string,
 	transactionData: SubmitRedirectTransactionData,
 	transactionOptions: PaymentProcessorOptions
-): Promise< WPCOMTransactionEndpointResponse > {
+): WPCOMTransactionEndpointRequestPayload {
 	const paymentMethodType = translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId );
 	if ( ! paymentMethodType ) {
 		throw new Error( `No payment method found for type: ${ paymentMethodId }` );
@@ -45,5 +44,5 @@ export default async function submitRedirectTransaction(
 		paymentPartnerProcessorId: transactionOptions.stripeConfiguration?.processor_id,
 	} );
 	debug( `sending redirect transaction for type: ${ paymentMethodId }`, formattedTransactionData );
-	return submitWpcomTransaction( formattedTransactionData, transactionOptions );
+	return formattedTransactionData;
 }

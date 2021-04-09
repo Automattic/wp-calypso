@@ -23,7 +23,7 @@ const TEMPLATES = {
 const PASSWORD_ELEMENT = By.css( '#jurassic_password' );
 const USERNAME_ELEMENT = By.css( '#jurassic_username' );
 const URL_ELEMENT = By.css( '#jurassic_url' );
-const CONTINUE_LINK = By.linkText( 'The new WP is ready to go, visit it!' );
+const CONTINUE_LINK = By.linkText( 'The new WordPress is ready to go, visit it!' );
 
 export default class WporgCreatorPage extends AsyncBaseContainer {
 	constructor( driver, url ) {

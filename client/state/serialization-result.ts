@@ -3,33 +3,40 @@
  */
 import { forEach } from 'lodash';
 
+type Json = any;
+
 /**
  * Helper class for holding results of state serialization
  * Accumulates the state tree for "root" and any number of custom "storage keys"
  * Each storage key is then saved as a separate record in IndexedDB
  */
 export class SerializationResult {
-	constructor( results = {} ) {
+	results: Record< string, Json >;
+	constructor( results: Record< string, Json > = {} ) {
 		this.results = results;
 	}
 
-	get() {
+	get(): Record< string, Json > {
 		return this.results;
 	}
 
-	root() {
+	root(): Json | SerializationResult {
 		return this.results.root;
 	}
 
-	addRootResult( reducerKey, result ) {
+	addRootResult( reducerKey: string, result: Json | SerializationResult ): void {
 		return this.addResult( 'root', reducerKey, result );
 	}
 
-	addKeyResult( storageKey, result ) {
+	addKeyResult( storageKey: string, result: Json | SerializationResult ): void {
 		return this.addResult( storageKey, null, result );
 	}
 
-	addResult( storageKey, reducerKey, result ) {
+	addResult(
+		storageKey: string,
+		reducerKey: string | null,
+		result: Json | SerializationResult
+	): void {
 		if ( result instanceof SerializationResult ) {
 			forEach( result.results, ( resultState, resultKey ) => {
 				if ( resultKey === 'root' ) {

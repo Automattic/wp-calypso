@@ -5,7 +5,6 @@ import LoginPage from '../pages/login-page.js';
 import EditorPage from '../pages/editor-page';
 import WPAdminLoginPage from '../pages/wp-admin/wp-admin-logon-page';
 import ReaderPage from '../pages/reader-page.js';
-import StatsPage from '../pages/stats-page';
 import StoreDashboardPage from '../pages/woocommerce/store-dashboard-page';
 import PluginsBrowserPage from '../pages/plugins-browser-page';
 import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
@@ -54,8 +53,6 @@ export default class LoginFlow {
 
 	async login( { emailSSO = false, jetpackSSO = false } = {} ) {
 		await driverManager.ensureNotLoggedIn( this.driver );
-		process.env.FLAGS &&
-			( await this.driver.manage().addCookie( { name: 'flags', value: process.env.FLAGS } ) );
 
 		// Disabling re-use of cookies as latest versions of Chrome don't currently support it.
 		// We can check later to see if we can find a different way to support it.
@@ -149,7 +146,7 @@ export default class LoginFlow {
 	async loginAndStartNewPage(
 		site = null,
 		usingGutenberg = false,
-		{ useFreshLogin = false, dismissPageTemplateSelector = true } = {}
+		{ useFreshLogin = false, dismissPageTemplateSelector = true, editorType = 'iframe' } = {}
 	) {
 		if ( site || ( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' ) ) {
 			site = site || dataHelper.getJetpackSiteName();
@@ -164,7 +161,7 @@ export default class LoginFlow {
 		await pagesPage.selectAddNewPage();
 
 		if ( usingGutenberg ) {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver, editorType );
 			await gEditorComponent.initEditor( { dismissPageTemplateSelector } );
 		}
 
@@ -219,10 +216,8 @@ export default class LoginFlow {
 	async loginAndSelectAllSites() {
 		await this.loginAndSelectMySite();
 
-		// visit stats, as home does not have an all sites option
-		await StatsPage.Visit( this.driver );
-
 		const sideBarComponent = await SidebarComponent.Expect( this.driver );
+		await sideBarComponent.selectStats();
 		await sideBarComponent.selectSiteSwitcher();
 		return await sideBarComponent.selectAllSites();
 	}
@@ -233,18 +228,18 @@ export default class LoginFlow {
 		return await sideBarComponent.selectThemes();
 	}
 
-	async loginAndSelectManagePlugins() {
-		await this.loginAndSelectPlugins();
+	async loginAndSelectManagePluginsJetpack() {
+		await this.loginAndSelectPluginsJetpack();
 
 		const pluginsBrowserPage = await PluginsBrowserPage.Expect( this.driver );
 		return await pluginsBrowserPage.selectManagePlugins();
 	}
 
-	async loginAndSelectPlugins() {
+	async loginAndSelectPluginsJetpack() {
 		await this.loginAndSelectMySite();
 
 		const sideBarComponent = await SidebarComponent.Expect( this.driver );
-		return await sideBarComponent.selectPlugins();
+		return await sideBarComponent.selectPluginsJetpackConnected();
 	}
 
 	async loginAndSelectSettings() {

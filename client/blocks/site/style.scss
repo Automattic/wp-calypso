@@ -138,8 +138,6 @@
 }
 
 .site__home {
-	background: var( --color-sidebar-menu-selected-background );
-	color: var( --color-sidebar-menu-selected-text );
 	display: block;
 	width: 32px;
 	height: 32px;
@@ -168,8 +166,8 @@
 }
 
 .site__badge {
-	background: var( --color-sidebar-menu-hover-background );
-	color: var( --color-sidebar-menu-hover-text );
+	color: var( --color-neutral-60 );
+	background-color: var( --color-neutral-5 );
 	font-size: $font-body-extra-small;
 	border-radius: 12px;
 	clear: both;
@@ -179,13 +177,20 @@
 	padding: 1px 10px;
 }
 
-.notouch .site-selector.is-hover-enabled .site:hover .site__badge {
-	background: var( --color-sidebar-background );
-	color: var( --color-sidebar-text );
-}
-
 .current-site .site:hover .site__badge,
 .purchases-site .site:hover .site__badge {
 	background: var( --color-sidebar-menu-hover-background );
 	color: var( --color-sidebar-menu-hover-text );
+}
+
+.layout__secondary {
+	.site__home {
+		background: var( --color-sidebar-menu-selected-background );
+		color: var( --color-sidebar-menu-selected-text );
+	}
+
+	.site__badge {
+		background: var(--color-sidebar-menu-hover-background);
+    	color: var(--color-sidebar-menu-hover-text);
+	}
 }

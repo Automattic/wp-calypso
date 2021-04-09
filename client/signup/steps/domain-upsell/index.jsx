@@ -18,14 +18,10 @@ import formatCurrency from '@automattic/format-currency';
 import QuerySecureYourBrand from 'calypso/components/data/query-secure-your-brand';
 import Badge from 'calypso/components/badge';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
-import {
-	getVariationForUser,
-	isLoading as isExperimentLoadingSelector,
-} from 'calypso/state/experiments/selectors';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormLabel from 'calypso/components/forms/form-label';
-import Experiment from 'calypso/components/experiment';
+import { useExperiment } from 'calypso/lib/explat';
 
 /**
  * Style dependencies
@@ -51,9 +47,11 @@ export default function DomainUpsellStep( props ) {
 		}
 	);
 
-	const isInDomainUpsellEmphasizeFreeTest =
-		'treatment' ===
-		useSelector( ( state ) => getVariationForUser( state, 'domain_upsell_emphasize_free_v2' ) );
+	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
+		'domain_upsell_emphasize_free_v3'
+	);
+
+	const isInDomainUpsellEmphasizeFreeTest = 'treatment' === experimentAssignment?.variationName;
 
 	return (
 		<div
@@ -61,7 +59,6 @@ export default function DomainUpsellStep( props ) {
 				is_in_domain_upsell_emphasize_free_test: isInDomainUpsellEmphasizeFreeTest,
 			} ) }
 		>
-			<Experiment name="domain_upsell_emphasize_free_v2" />
 			<StepWrapper
 				flowName={ flowName }
 				stepName={ stepName }
@@ -71,7 +68,11 @@ export default function DomainUpsellStep( props ) {
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
 				isWideLayout={ false }
-				stepContent={ RecommendedDomains( { ...props, isInDomainUpsellEmphasizeFreeTest } ) }
+				stepContent={ RecommendedDomains( {
+					...props,
+					isInDomainUpsellEmphasizeFreeTest,
+					isLoadingExperimentAssignment,
+				} ) }
 			/>
 		</div>
 	);
@@ -113,20 +114,20 @@ function RecommendedDomains( props ) {
 		submitSignupStep,
 		goToNextStep,
 		isInDomainUpsellEmphasizeFreeTest,
+		isLoadingExperimentAssignment,
 	} = props;
 	const translate = useTranslate();
 	const [ selectedDomain, setSelectedDomain ] = useState( null );
 	const selectDomain = ( event ) => setSelectedDomain( event.target.value );
 	const secureYourBrand = useSelector( ( state ) => getSecureYourBrand( state ) );
 	const isSecureYourBrandLoading = useSelector( ( state ) => isRequestingSecureYourBrand( state ) );
-	const isExperimentLoading = useSelector( ( state ) => isExperimentLoadingSelector( state ) );
 	const hasError = useSelector( ( state ) => hasSecureYourBrandError( state ) );
 	const productData = secureYourBrand.product_data;
 	const selectedProduct = productData?.filter(
 		( product ) => product.domain === selectedDomain
 	)[ 0 ];
 
-	const isLoading = isSecureYourBrandLoading || isExperimentLoading;
+	const isLoading = isSecureYourBrandLoading || isLoadingExperimentAssignment;
 
 	const upgradeCtaText = isInDomainUpsellEmphasizeFreeTest
 		? translate( 'Use %(selectedDomain)s (%(originalCost)s)', {
@@ -216,7 +217,7 @@ function RecommendedDomains( props ) {
 					) }
 				</div>
 			</Card>
-			{ ! isInDomainUpsellEmphasizeFreeTest && (
+			{ ! isInDomainUpsellEmphasizeFreeTest && ! isLoading && (
 				<div className="domain-upsell__continue-link">
 					<Button compact borderless plain onClick={ handleSkipButtonClick }>
 						{ translate( `No thanks, I'll stick with %s`, {

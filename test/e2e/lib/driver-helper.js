@@ -518,16 +518,6 @@ export function getElementByText( driver, selector, text ) {
 	};
 }
 
-export async function clearTextArea( driver, selector ) {
-	const textArea = await driver.findElement( selector );
-	const textValue = await textArea.getText();
-	let i = textValue.length;
-	while ( i > 0 ) {
-		await textArea.sendKeys( webdriver.Key.BACK_SPACE );
-		i--;
-	}
-}
-
 export async function dismissAlertIfPresent( driver ) {
 	try {
 		await driver.switchTo().alert().dismiss();

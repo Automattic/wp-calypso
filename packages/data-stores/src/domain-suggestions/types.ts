@@ -140,8 +140,12 @@ export interface DomainSuggestion {
 	 * Whether the domain requires HSTS
 	 */
 	hsts_required?: boolean;
-}
 
+	/**
+	 * Whether the domain is unavailable
+	 */
+	unavailable: boolean;
+}
 export interface DomainCategory {
 	/**
 	 * The domain category title

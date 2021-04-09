@@ -5,7 +5,6 @@ import {
 	assign,
 	camelCase,
 	debounce,
-	every,
 	filter,
 	flatten,
 	isEmpty,
@@ -304,7 +303,7 @@ function isInitialized( field ) {
 }
 
 function isEveryFieldInitialized( formState ) {
-	return every( formState, isInitialized );
+	return Object.values( formState ).every( isInitialized );
 }
 
 function isFieldInvalid( formState, fieldName ) {
@@ -337,7 +336,7 @@ function getErrorMessages( formState ) {
 }
 
 function isSubmitButtonDisabled( formState ) {
-	return ! every( formState, isInitialized );
+	return ! Object.values( formState ).every( isInitialized );
 }
 
 function isFieldDisabled( formState, fieldName ) {

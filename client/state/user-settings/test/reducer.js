@@ -22,7 +22,7 @@ import {
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
 		expect( Object.keys( reducer( undefined, {} ) ).sort() ).toEqual(
-			[ 'fetching', 'settings', 'unsavedSettings', 'updatingPassword', 'updating' ].sort()
+			[ 'failed', 'fetching', 'settings', 'unsavedSettings', 'updatingPassword', 'updating' ].sort()
 		);
 	} );
 

@@ -43,14 +43,14 @@ export default class SettingsPage extends AsyncBaseContainer {
 	async photonToggleDisplayed() {
 		return await DriverHelper.isEventuallyPresentAndDisplayed(
 			this.driver,
-			By.css( '[id*=photon-toggle]' )
+			By.css( '.jetpack-module-toggle .components-form-toggle__input' )
 		);
 	}
 
 	async carouselToggleDisplayed() {
 		return await DriverHelper.isEventuallyPresentAndDisplayed(
 			this.driver,
-			By.css( '[id*=carousel-toggle]' )
+			By.css( '.jetpack-module-toggle .components-form-toggle__input' )
 		);
 	}
 

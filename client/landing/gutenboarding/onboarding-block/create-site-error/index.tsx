@@ -5,7 +5,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { ExternalLink } from '@wordpress/components';
 import React, { FunctionComponent, useEffect } from 'react';
 import { useDispatch } from '@wordpress/data';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import type { LocationDescriptor } from 'history';
 
 /**

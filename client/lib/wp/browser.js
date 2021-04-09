@@ -66,4 +66,4 @@ export default wpcom;
 /**
  * Expose `wpcomJetpackLicensing` which uses a different auth token than wpcom.
  */
-export const wpcomJetpackLicensing = wpcomUndocumented( wpcomProxyRequest );
+export const wpcomJetpackLicensing = wpcomUndocumented( wpcomXhrWrapper );

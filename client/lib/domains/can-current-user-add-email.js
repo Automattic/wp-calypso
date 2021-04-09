@@ -1,3 +1,3 @@
 export function canCurrentUserAddEmail( domain ) {
-	return !! domain?.canCurrentUserAddEmail;
+	return !! domain?.currentUserCanAddEmail;
 }

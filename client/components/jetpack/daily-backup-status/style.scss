@@ -15,7 +15,7 @@
 
 .daily-backup-status__download-button {
 	margin: 24px 0 1rem;
-	color: var( --studio-jetpack-green-60 );
+	color: var( --color-accent );
 }
 
 .daily-backup-status__credentials-warning {
@@ -46,19 +46,6 @@
 
 	@include breakpoint-deprecated( '>660px' ) {
 		display: inline;
-	}
-}
-
-.button.daily-backup-status__activate-restores-button,
-.button.daily-backup-status__activate-restores-button:visited {
-	float: none;
-	width: 100%;
-	margin: 1rem 0 3rem;
-	text-align: center;
-	color: var( --studio-jetpack-green-60 );
-
-	@include breakpoint-deprecated( '>660px' ) {
-		width: 330px;
 	}
 }
 

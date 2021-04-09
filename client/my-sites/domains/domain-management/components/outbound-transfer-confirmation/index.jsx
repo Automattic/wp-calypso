@@ -44,10 +44,9 @@ class OutboundTransferConfirmation extends React.PureComponent {
 
 	onCancelTransferClick = () => {
 		const { domain, siteId } = this.props;
-		this.props.cancelDomainTransferRequest( {
-			domainName: domain.name,
-			siteId: siteId,
+		this.props.cancelDomainTransferRequest( domain.name, {
 			declineTransfer: true,
+			siteId,
 		} );
 		this.props.recordTracksEvent( 'calypso_outbound_transfer_cancel_click' );
 	};

@@ -70,6 +70,7 @@ export class ReaderSidebarTags extends Component {
 					<ReaderSidebarTagsList { ...this.props } />
 
 					<FormTextInputWithAction
+						className="reader-sidebar-tags__text-input"
 						key={ this.state.addTagCounter }
 						action={ translate( 'Add' ) }
 						placeholder={ translate( 'Add a tag' ) }

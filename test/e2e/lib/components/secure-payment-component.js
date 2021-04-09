@@ -21,9 +21,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 			null,
 			2 * config.get( 'explicitWaitMS' )
 		);
-		this.paymentButtonSelector = By.css(
-			'.credit-card-payment-box button.is-primary:not([disabled]),.composite-checkout .checkout-submit-button button'
-		);
+		this.paymentButtonSelector = By.css( '.composite-checkout .checkout-submit-button button' );
 		this.personalPlanSlug = getJetpackHost() === 'WPCOM' ? 'personal-bundle' : 'jetpack_personal';
 		this.premiumPlanSlug = getJetpackHost() === 'WPCOM' ? 'value_bundle' : 'jetpack_premium';
 		this.businessPlanSlug =
@@ -249,7 +247,17 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 			await this.enterTestCreditCardDetails( cardCredentials );
 		}
 
-		return await this.submitPaymentDetails();
+		try {
+			await this.submitPaymentDetails();
+		} catch {
+			const noticeSelector = By.css(
+				'.notice button.notice_dismiss, .notice button.notice__dismiss'
+			);
+			if ( await driverHelper.isElementPresent( this.driver, noticeSelector ) ) {
+				await driverHelper.clickWhenClickable( this.driver, noticeSelector );
+				await this.submitPaymentDetails();
+			}
+		}
 	}
 
 	async toggleCartSummary() {
@@ -270,12 +278,11 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	async clickCouponButton() {
 		const isCompositeCheckout = await this.isCompositeCheckout();
 		if ( isCompositeCheckout ) {
-			return await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css(
-					'.checkout-steps__step-complete-content .wp-checkout-order-review__show-coupon-field-button'
-				)
-			);
+			const selector =
+				getJetpackHost() === 'WPCOM'
+					? '.checkout-steps__step-complete-content .wp-checkout-order-review__show-coupon-field-button'
+					: '.checkout-steps__step-content .wp-checkout-order-review__show-coupon-field-button';
+			return await driverHelper.clickWhenClickable( this.driver, By.css( selector ) );
 		}
 
 		// If we're on desktop
@@ -321,7 +328,8 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css(
-				'button[data-e2e-type="apply-coupon"],.checkout-steps__step-complete-content .coupon button'
+				'button[data-e2e-type="apply-coupon"],.checkout-steps__step-content .coupon button,' +
+					'.checkout-steps__step-complete-content .coupon button'
 			)
 		);
 		const noticesComponent = await NoticesComponent.Expect( this.driver );
@@ -334,7 +342,8 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		await driverHelper.setWhenSettable(
 			this.driver,
 			By.css(
-				'input[data-e2e-type="coupon-code"],.checkout-steps__step-complete-content .coupon input'
+				'input[data-e2e-type="coupon-code"],.checkout-steps__step-content .coupon input,' +
+					'.checkout-steps__step-complete-content .coupon input'
 			),
 			couponCode
 		);
@@ -384,10 +393,20 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 
 		if ( isCompositeCheckout ) {
 			// Open review step for editing
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( '.wp-checkout__review-order-step .checkout-step__edit-button' )
-			);
+			try {
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css( '.wp-checkout__review-order-step .checkout-step__edit-button' )
+				);
+			} catch {
+				await driverHelper.isElementPresent(
+					this.driver,
+					By.css(
+						'.checkout-steps__step-content .checkout-line-item[data-product-type="coupon"] button'
+					)
+				);
+			}
+
 			// Click delete button on coupon line item
 			await driverHelper.clickWhenClickable(
 				this.driver,

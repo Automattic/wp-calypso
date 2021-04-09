@@ -11,13 +11,6 @@
 	margin-bottom: 32px;
 }
 
-.settings__connected .gridicon {
-	display: inline-block;
-	fill: var( --studio-jetpack-green-40 );
-	width: 4rem;
-	height: 4rem;
-}
-
 .settings__status-uninitialized {
 	height: 90px;
 	margin-bottom: 8px;
@@ -74,4 +67,18 @@
 .settings__details-head {
 	font-weight: 600;
 	margin-bottom: 0.3rem;
+}
+
+.is-section-jetpack-cloud-settings {
+	.empty-content__illustration {
+		filter: none;
+
+		min-height: 114px;
+	}
+
+	.empty-content__title,
+	.empty-content__line {
+		font-weight: 400;
+		line-height: inherit;
+	}
 }

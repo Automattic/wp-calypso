@@ -2,7 +2,11 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { defaultRegistry, makeSuccessResponse } from '@automattic/composite-checkout';
+import {
+	defaultRegistry,
+	makeSuccessResponse,
+	makeErrorResponse,
+} from '@automattic/composite-checkout';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 
 /**
@@ -17,10 +21,7 @@ import {
 } from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { ManagedContactDetails } from '../types/wpcom-store-state';
-import type {
-	TransactionRequest,
-	WPCOMTransactionEndpointResponse,
-} from '../types/transaction-endpoint';
+import type { TransactionRequest } from '../types/transaction-endpoint';
 
 const { select } = defaultRegistry;
 
@@ -40,7 +41,7 @@ export default async function fullCreditsProcessor(
 		'wpcom'
 	)?.getContactInfo();
 
-	return submitCreditsTransaction(
+	const formattedTransactionData = prepareCreditsTransaction(
 		{
 			name: '',
 			couponId: responseCart.coupon,
@@ -51,13 +52,17 @@ export default async function fullCreditsProcessor(
 			subdivisionCode: managedContactDetails?.state?.value,
 		},
 		transactionOptions
-	).then( makeSuccessResponse );
+	);
+
+	return submitWpcomTransaction( formattedTransactionData, transactionOptions )
+		.then( makeSuccessResponse )
+		.catch( ( error ) => makeErrorResponse( error.message ) );
 }
 
-async function submitCreditsTransaction(
+function prepareCreditsTransaction(
 	transactionData: SubmitFullCreditsTransactionData,
 	transactionOptions: PaymentProcessorOptions
-): Promise< WPCOMTransactionEndpointResponse > {
+) {
 	debug( 'formatting full credits transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...transactionData,
@@ -69,5 +74,5 @@ async function submitCreditsTransaction(
 		paymentMethodType: 'WPCOM_Billing_WPCOM',
 	} );
 	debug( 'submitting full credits transaction', formattedTransactionData );
-	return submitWpcomTransaction( formattedTransactionData, transactionOptions );
+	return formattedTransactionData;
 }

@@ -20,7 +20,7 @@ export default class PluginsBrowserPage extends AsyncBaseContainer {
 	async searchForPlugin( searchTerm ) {
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( '.plugins-browser__main-header .search' )
+			by.css( '.plugins-browser__main-header .search-component__icon-navigation' )
 		);
 		return await driverHelper.setWhenSettable(
 			this.driver,
@@ -53,7 +53,7 @@ export default class PluginsBrowserPage extends AsyncBaseContainer {
 	}
 
 	async selectManagePlugins() {
-		const manageButtonSelector = by.css( ".plugins-browser__main a[href*='manage']" );
+		const manageButtonSelector = by.css( ".plugins-browser__main-buttons a[href*='manage']" );
 		return await driverHelper.clickWhenClickable( this.driver, manageButtonSelector );
 	}
 }

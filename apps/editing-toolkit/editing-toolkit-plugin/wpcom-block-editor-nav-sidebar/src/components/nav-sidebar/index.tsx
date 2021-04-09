@@ -11,7 +11,7 @@ import {
 	IsolatedEventContainer,
 	withConstrainedTabbing,
 } from '@wordpress/components';
-import { chevronLeft, wordpress } from '@wordpress/icons';
+import { chevronLeft } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 import { applyFilters, doAction, hasAction } from '@wordpress/hooks';
 import { get, isEmpty, partition } from 'lodash';
@@ -26,6 +26,7 @@ import { compose } from '@wordpress/compose';
 import { STORE_KEY, POST_IDS_TO_EXCLUDE } from '../../constants';
 import CreatePage from '../create-page';
 import NavItem from '../nav-item';
+import SiteIcon from '../site-icon';
 import { Post } from '../../types';
 import './style.scss';
 
@@ -204,12 +205,13 @@ function WpcomBlockEditorNavSidebar() {
 						ref={ dismissButtonMount }
 						className={ classNames(
 							'edit-post-fullscreen-mode-close',
-							'wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button'
+							'wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button',
+							'has-icon'
 						) }
-						icon={ wordpress }
-						iconSize={ 36 }
 						onClick={ dismissSidebar }
-					/>
+					>
+						<SiteIcon />
+					</Button>
 					<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__site-title">
 						<h2>{ siteTitle ? decodeEntities( siteTitle ) : '' }</h2>
 					</div>

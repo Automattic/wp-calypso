@@ -22,7 +22,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		super( driver, By.css( '.edit-post-header' ), url );
 		this.editorType = editorType;
 
-		this.editoriFrameSelector = By.css( '.calypsoify.is-iframe iframe' );
+		this.editoriFrameSelector = By.css( '.calypsoify.is-iframe iframe.is-loaded' );
 		this.publishHeaderSelector = By.css( '.editor-post-publish-panel__header' );
 		this.prePublishButtonSelector = By.css(
 			'.editor-post-publish-panel__toggle[aria-disabled="false"]'
@@ -71,7 +71,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async publish( { visit = false, closePanel = true } = {} ) {
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
 		await driverHelper.clickWhenClickable( this.driver, this.publishButtonSelector );
-		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
+		// Let's give publishing request enough time to finish. Sometimes it takes
+		// way more than the default 20 seconds, and the cost of waiting a bit
+		// longer is definitely lower than the cost of repeating the whole spec.
+		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector, 60000 );
 
 		if ( closePanel ) {
 			try {
@@ -113,9 +116,8 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async enterTitle( title ) {
-		const titleFieldSelector = By.css( '.editor-post-title__input' );
-		await driverHelper.clearTextArea( this.driver, titleFieldSelector );
-		return await this.driver.findElement( titleFieldSelector ).sendKeys( title );
+		const titleSelector = By.css( '.editor-post-title__input' );
+		return driverHelper.setWhenSettable( this.driver, titleSelector, title );
 	}
 
 	async getTitle() {
@@ -129,7 +131,21 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const paragraphSelector = By.css( 'p.block-editor-rich-text__editable:first-of-type' );
 		await driverHelper.clickWhenClickable( this.driver, appenderSelector );
 		await driverHelper.waitUntilLocatedAndVisible( this.driver, paragraphSelector );
-		return await this.driver.findElement( paragraphSelector ).sendKeys( text );
+		const paragraphElement = await this.clearText( paragraphSelector );
+		await paragraphElement.sendKeys( text );
+
+		return paragraphElement;
+	}
+
+	async clearText( selector ) {
+		const paragraphElement = await this.driver.findElement( selector );
+		const text = await paragraphElement.getText();
+		let i = text.length;
+		while ( i > 0 ) {
+			await paragraphElement.sendKeys( webdriver.Key.BACK_SPACE );
+			i--;
+		}
+		return paragraphElement;
 	}
 
 	async getContent() {
@@ -138,8 +154,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async replaceTextOnLastParagraph( text ) {
 		const paragraphSelector = By.css( 'p.block-editor-rich-text__editable:first-of-type' );
-		await driverHelper.clearTextArea( this.driver, paragraphSelector );
-		return await this.driver.findElement( paragraphSelector ).sendKeys( text );
+		const paragraphElement = await this.clearText( paragraphSelector );
+		await paragraphElement.sendKeys( text );
+
+		return paragraphElement;
 	}
 
 	async insertShortcode( shortcode ) {

@@ -32,9 +32,5 @@
 	},
 	"include": [ "src", "src/*.json" ],
 	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ],
-	"references": [
-		{ "path": "../calypso-config" },
-		{ "path": "../onboarding" },
-		{ "path": "../react-i18n" }
-	]
+	"references": [ { "path": "../calypso-config" }, { "path": "../onboarding" } ]
 }
