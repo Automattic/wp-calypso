@@ -13,7 +13,7 @@ const by = webdriver.By;
 
 export default class PurchasesPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, by.css( 'a[href="/me/purchases"][aria-current="true"]' ) );
+		super( driver, by.css( 'main.purchases-list' ) );
 	}
 
 	async _postInit() {
