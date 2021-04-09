@@ -2,14 +2,13 @@
  * Internal dependencies
  */
 import makeUserCompleter from './user';
-import makeXPostCompleter from './xpost';
+import xPostCompleter from './xpost';
 
 import './style.scss';
 
-export default async function addAutocompleters( userSuggestions ) {
-	const xpostCompleter = await makeXPostCompleter();
+export default function addAutocompleters( userSuggestions ) {
 	return ( completers = [] ) => {
-		completers.push( xpostCompleter );
+		completers.push( xPostCompleter );
 		// Override the standard user completer with a custom one
 		const userCompleterPos = completers.findIndex( ( item ) => item.name === 'users' );
 

@@ -9,21 +9,42 @@ import React from 'react';
  */
 import wpcom from 'calypso/lib/wp';
 
-export default async () => ( {
+let results;
+let request;
+
+export default {
 	name: 'xpost',
 	className: 'autocompleters__xpost',
 	triggerPrefix: '+',
-	options: await wpcom.req
-		.get( {
-			path: '/internal/P2s',
-			apiVersion: '1.1',
-		} )
-		.then( ( result ) =>
-			Object.entries( result.list ).map( ( [ subdomain, p2 ] ) => ( {
-				...p2,
-				subdomain,
-			} ) )
-		),
+	async options() {
+		if ( results ) {
+			// if we've already gotten results, use them instead of requesting new ones
+			return results;
+		}
+
+		if ( request ) {
+			// if a request is already underway, use the results from that
+			return await request;
+		}
+
+		// otherwise make a new request
+		request = wpcom.req
+			.get( {
+				path: '/internal/P2s',
+				apiVersion: '1.1',
+			} )
+			.then( ( result ) =>
+				Object.entries( result.list ).map( ( [ subdomain, p2 ] ) => ( {
+					...p2,
+					subdomain,
+				} ) )
+			);
+
+		// cache the results
+		results = await request;
+
+		return results;
+	},
 	getOptionKeywords( p2 ) {
 		return [ p2.title, p2.subdomain ];
 	},
@@ -49,4 +70,4 @@ export default async () => ( {
 	getOptionCompletion( site ) {
 		return `+${ site.subdomain }`;
 	},
-} );
+};
