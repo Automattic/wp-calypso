@@ -30,9 +30,8 @@ import {
 } from '../hooks';
 import { getDomainSuggestionsVendor } from '../utils';
 import {
-	PAID_DOMAINS_TO_SHOW,
-	PAID_DOMAINS_TO_SHOW_EXPANDED,
-	FREE_DOMAIN_SUGGESTIONS_COUNT,
+	DOMAIN_SUGGESTIONS_TO_SHOW,
+	DOMAIN_SUGGESTIONS_TO_SHOW_EXPANDED,
 	domainIsAvailableStatus,
 } from '../constants';
 
@@ -71,10 +70,10 @@ export interface Props {
 
 	onExistingSubdomainSelect?: ( existingSubdomain: string ) => void;
 
-	/** Paid domain suggestions to show when the picker isn't expanded */
+	/** Total number of domain suggestions to show when the picker isn't expanded */
 	quantity?: number;
 
-	/** Domain suggestions to show when the picker is expanded */
+	/** Total number of suggestions to show when the picker is expanded */
 	quantityExpanded?: number;
 
 	/** Called when the user leaves the search box */
@@ -127,8 +126,8 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	showDomainCategories,
 	onDomainSelect,
 	onExistingSubdomainSelect,
-	quantity = PAID_DOMAINS_TO_SHOW,
-	quantityExpanded = PAID_DOMAINS_TO_SHOW_EXPANDED,
+	quantity = DOMAIN_SUGGESTIONS_TO_SHOW,
+	quantityExpanded = DOMAIN_SUGGESTIONS_TO_SHOW_EXPANDED,
 	onDomainSearchBlur,
 	analyticsFlowId,
 	analyticsUiAlgo,
@@ -162,16 +161,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	} = useDomainSuggestions( domainSearch.trim(), quantityExpanded, domainCategory, locale ) || {};
 
 	// filter out the free sub-domain suggestion when existingSubdomain prop has value
-	const domainSuggestions = existingSubdomain
-		? allDomainSuggestions
-				?.filter( ( suggestion ) => ! suggestion.is_free )
-				.slice(
-					0,
-					isExpanded
-						? quantityExpanded - FREE_DOMAIN_SUGGESTIONS_COUNT
-						: quantity - FREE_DOMAIN_SUGGESTIONS_COUNT
-				)
-		: allDomainSuggestions?.slice( 0, isExpanded ? quantityExpanded : quantity );
+	const domainSuggestions = allDomainSuggestions
+		?.filter( ( suggestion ) => ! ( existingSubdomain && suggestion.is_free ) )
+		.slice( 0, isExpanded ? quantityExpanded - 1 : quantity - 1 );
 
 	// we need this index because it refers to the recommended (most relevant) paid domain
 	const firstPaidDomainIndex = domainSuggestions?.findIndex(
