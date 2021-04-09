@@ -12,44 +12,17 @@ class StoreConnection extends React.Component {
 		getStateFromStores: PropTypes.func.isRequired,
 		isDataLoading: PropTypes.func,
 		loadingPlaceholder: PropTypes.func,
-		stores: PropTypes.array.isRequired,
 	};
 
 	state = this.props.getStateFromStores( this.props );
-
-	componentDidMount() {
-		this.addStoreListeners( this.props.stores );
-	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const nextState = nextProps.getStateFromStores( nextProps );
 
 		if ( ! isEqual( this.state, nextState ) ) {
-			this.removeStoreListeners( this.props.stores );
-			this.addStoreListeners( nextProps.stores );
 			this.setState( nextState );
 		}
 	}
-
-	componentWillUnmount() {
-		this.removeStoreListeners( this.props.stores );
-	}
-
-	addStoreListeners = ( stores ) => {
-		stores.forEach( function ( store ) {
-			store.on( 'change', this.handleStoresChanged );
-		}, this );
-	};
-
-	removeStoreListeners = ( stores ) => {
-		stores.forEach( function ( store ) {
-			store.off( 'change', this.handleStoresChanged );
-		}, this );
-	};
-
-	handleStoresChanged = () => {
-		this.setState( this.props.getStateFromStores( this.props ) );
-	};
 
 	isDataLoading = () => {
 		if ( ! this.props.loadingPlaceholder || ! this.props.isDataLoading ) {

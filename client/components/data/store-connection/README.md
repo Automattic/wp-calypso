@@ -8,7 +8,6 @@ It will handle the data itself thus helping us to decouple concerns: i.e. fetchi
 ```js
 <StoreConnection
 	component={ MyComponent }
-	stores={ stores }
 	getStateFromStores={ getStateFromStores }
 />;
 ```
