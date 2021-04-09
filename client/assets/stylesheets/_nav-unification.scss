@@ -16,6 +16,12 @@
 		// client/assets/stylesheets/shared/_variables.scss
 		--masterbar-height: 32px;
 	}
+
+	&.is-sidebar-collapsed:not( .is-section-reader ):not( .is-section-me ) {
+		--sidebar-width-max: 36px;
+		--sidebar-width-min: 36px;
+	}
+
 	$nav-unification-primary: #23282d;
 	$nav-unification-secondary: #101517;
 	$nav-unification-masterbar-font-size: 13px;

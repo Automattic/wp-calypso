@@ -24,7 +24,7 @@ import { useIsAnchorFm } from '../../path';
  */
 import './style.scss';
 
-const DesignSelector: React.FunctionComponent = () => {
+const Designs: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const { goBack, goNext } = useStepNavigation();
@@ -41,9 +41,9 @@ const DesignSelector: React.FunctionComponent = () => {
 	} ) );
 
 	return (
-		<div className="gutenboarding-page design-selector">
-			<div className="design-selector__header">
-				<div className="design-selector__heading">
+		<div className="gutenboarding-page designs">
+			<div className="designs__header">
+				<div className="designs__heading">
 					<Title>{ __( 'Choose a design' ) }</Title>
 					<SubTitle>
 						{ isAnchorFmSignup
@@ -60,8 +60,9 @@ const DesignSelector: React.FunctionComponent = () => {
 			<DesignPicker
 				designs={ getRandomizedDesigns().featured.filter(
 					( design ) =>
-						// TODO Add finalized design templates to available-designs-config.json
-						// along with is_anchorfm prop
+						// TODO Add finalized design templates to available designs config
+						// along with `is_anchorfm` prop (config is stored in the
+						// `@automattic/design-picker` package)
 						isAnchorFmSignup === design.features.includes( 'anchorfm' )
 				) }
 				isGridMinimal={ isAnchorFmSignup }
@@ -75,9 +76,9 @@ const DesignSelector: React.FunctionComponent = () => {
 					goNext();
 				} }
 				premiumBadge={
-					<Badge className="design-selector__premium-badge">
-						<JetpackLogo className="design-selector__premium-badge-logo" size={ 20 } />
-						<span className="design-selector__premium-badge-text">{ __( 'Premium' ) }</span>
+					<Badge className="designs__premium-badge">
+						<JetpackLogo className="designs__premium-badge-logo" size={ 20 } />
+						<span className="designs__premium-badge-text">{ __( 'Premium' ) }</span>
 					</Badge>
 				}
 			/>
@@ -85,4 +86,4 @@ const DesignSelector: React.FunctionComponent = () => {
 	);
 };
 
-export default DesignSelector;
+export default Designs;

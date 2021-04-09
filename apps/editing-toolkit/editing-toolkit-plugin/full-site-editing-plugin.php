@@ -263,7 +263,8 @@ function load_block_patterns_from_api( $current_screen ) {
 	}
 
 	require_once __DIR__ . '/block-patterns/class-block-patterns-from-api.php';
-	Block_Patterns_From_API::get_instance( $patterns_sources );
+	$block_patterns_from_api = new Block_Patterns_From_API( $patterns_sources );
+	$block_patterns_from_api->register_patterns();
 }
 add_action( 'current_screen', __NAMESPACE__ . '\load_block_patterns_from_api' );
 

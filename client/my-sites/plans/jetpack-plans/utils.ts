@@ -5,7 +5,6 @@ import { translate, TranslateResult, numberFormat } from 'i18n-calypso';
 import { compact, isObject } from 'lodash';
 import page from 'page';
 import React, { createElement, Fragment } from 'react';
-import formatCurrency from '@automattic/format-currency';
 import { createSelector } from '@automattic/state-utils';
 
 /**
@@ -89,7 +88,7 @@ import type {
 import type { JetpackProductSlug } from 'calypso/lib/products-values/types';
 import type { SitePlan } from 'calypso/state/sites/selectors/get-site-plan';
 import ExternalLink from 'calypso/components/external-link';
-import { PriceTiers } from 'calypso/state/products-list/selectors/get-product-price-tiers';
+import type { PriceTierEntry } from 'calypso/state/products-list/selectors/get-product-price-tiers';
 
 /**
  * Duration utils.
@@ -244,27 +243,25 @@ export function slugIsFeaturedProduct( productSlug: string ): boolean {
 	return FEATURED_PRODUCTS.includes( productSlug );
 }
 
-/**
- * Gets a price in a set of price tiers.
- *
- * @param tiers A range of tiered pricing.
- * @param tierKey A key in the tiered pricing object.
- * @param units Optional. Number of units to use when dealing with variable pricing.
- * @returns {number|null} The amount it costs or null.
- */
-export function getPriceTier(
-	tiers: PriceTiers,
-	tierKey: keyof PriceTiers,
-	units = 1
-): number | null {
-	if ( ! ( tierKey in tiers ) ) {
+function getPriceTierForUnits( tiers: PriceTierEntry[], units: number ): PriceTierEntry | null {
+	const firstUnboundedTier = tiers.find( ( tier ) => ! tier.maximum_units );
+	let matchingTier = tiers.find( ( tier ) => {
+		if ( ! tier.maximum_units ) {
+			return false;
+		}
+		if ( units >= tier.minimum_units && units <= tier.maximum_units ) {
+			return true;
+		}
+		return false;
+	} );
+	if ( ! matchingTier && firstUnboundedTier && units >= firstUnboundedTier.minimum_units ) {
+		matchingTier = firstUnboundedTier;
+	}
+
+	if ( ! matchingTier ) {
 		return null;
 	}
-	const tier = tiers[ tierKey ];
-	if ( 'flat_price' in tier ) {
-		return tier.flat_price;
-	}
-	return tier.variable_price_per_unit * units;
+	return matchingTier;
 }
 
 /**
@@ -275,39 +272,46 @@ export function getPriceTier(
  */
 export function productTooltip(
 	product: SelectorProduct,
-	tiers: PriceTiers
+	tiers: PriceTierEntry[]
 ): null | TranslateResult {
-	const currency = product.displayCurrency || 'USD';
-	if ( JETPACK_SEARCH_PRODUCTS.includes( product.productSlug ) ) {
-		return translate(
-			'{{p}}{{strong}}Pay only for what you need.{{/strong}}{{/p}}' +
-				'{{p}}Up to 100 records %(price100)s{{br/}}' +
-				'Up to 1,000 records %(price1000)s{{/p}}' +
-				'{{Info}}More info{{/Info}}',
-			{
-				args: {
-					price100: formatCurrency( getPriceTier( tiers, 'up_to_100_records' ) || 50, currency, {
-						stripZeros: true,
-					} ),
-					price1000: formatCurrency( getPriceTier( tiers, 'up_to_1k_records' ) || 100, currency, {
-						stripZeros: true,
-					} ),
-				},
-				comment:
-					'price100 = formatted price per 100 records, price1000 = formatted price per 1000 records. See https://jetpack.com/upgrade/search/.',
-				components: {
-					strong: createElement( 'strong' ),
-					p: createElement( 'p' ),
-					br: createElement( 'br' ),
-					Info: createElement( ExternalLink, {
-						icon: true,
-						href: 'https://jetpack.com/upgrade/search/',
-					} ),
-				},
-			}
-		);
+	if ( ! JETPACK_SEARCH_PRODUCTS.includes( product.productSlug ) ) {
+		return null;
 	}
-	return null;
+
+	if ( tiers.length < 1 ) {
+		return null;
+	}
+
+	const priceTier100 = getPriceTierForUnits( tiers, 1 );
+	const priceTier1000 = getPriceTierForUnits( tiers, 101 );
+
+	if ( ! priceTier100 || ! priceTier1000 ) {
+		return null;
+	}
+
+	return translate(
+		'{{p}}{{strong}}Pay only for what you need.{{/strong}}{{/p}}' +
+			'{{p}}Up to 100 records %(price100)s{{br/}}' +
+			'Up to 1,000 records %(price1000)s{{/p}}' +
+			'{{Info}}More info{{/Info}}',
+		{
+			args: {
+				price100: priceTier100.minimum_price_monthly_display,
+				price1000: priceTier1000.minimum_price_monthly_display,
+			},
+			comment:
+				'price100 = formatted price per 100 records, price1000 = formatted price per 1000 records. See https://jetpack.com/upgrade/search/.',
+			components: {
+				strong: createElement( 'strong' ),
+				p: createElement( 'p' ),
+				br: createElement( 'br' ),
+				Info: createElement( ExternalLink, {
+					icon: true,
+					href: 'https://jetpack.com/upgrade/search/',
+				} ),
+			},
+		}
+	);
 }
 
 export function productAboveButtonText(

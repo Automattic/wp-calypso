@@ -1,11 +1,9 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -53,7 +51,6 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	isRequesting: isRequestingGuidedTransferStatus( state, ownProps.siteId ),
 } );
 
-const mapDispatchToProps = ( dispatch ) =>
-	bindActionCreators( { requestGuidedTransferStatus }, dispatch );
-
-export default connect( mapStateToProps, mapDispatchToProps )( QuerySiteGuidedTransfer );
+export default connect( mapStateToProps, { requestGuidedTransferStatus } )(
+	QuerySiteGuidedTransfer
+);

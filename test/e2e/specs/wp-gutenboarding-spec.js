@@ -11,7 +11,7 @@ import LoginFlow from '../lib/flows/login-flow.js';
 import DeleteSiteFlow from '../lib/flows/delete-site-flow.js';
 import NewPage from '../lib/pages/gutenboarding/new-page.js';
 import AcquireIntentPage from '../lib/pages/gutenboarding/acquire-intent-page.js';
-import DesignSelectorPage from '../lib/pages/gutenboarding/design-selector-page.js';
+import DesignSelectorPage from '../lib/pages/gutenboarding/designs-page.js';
 import StylePreviewPage from '../lib/pages/gutenboarding/style-preview-page.js';
 import PlansPage from '../lib/pages/gutenboarding/plans-page.js';
 import DomainsPage from '../lib/pages/gutenboarding/domains-page.js';

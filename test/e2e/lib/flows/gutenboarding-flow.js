@@ -7,7 +7,7 @@ import config from 'config';
  * Internal dependencies
  */
 import AcquireIntentPage from '../pages/gutenboarding/acquire-intent-page.js';
-import DesignSelectorPage from '../pages/gutenboarding/design-selector-page.js';
+import DesignSelectorPage from '../pages/gutenboarding/designs-page.js';
 import StylePreviewPage from '../pages/gutenboarding/style-preview-page.js';
 import PlansPage from '../pages/gutenboarding/plans-page.js';
 import DomainsPage from '../pages/gutenboarding/domains-page.js';

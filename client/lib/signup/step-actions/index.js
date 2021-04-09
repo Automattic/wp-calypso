@@ -806,6 +806,8 @@ export function isFreePlansDomainUpsellFulfilled( stepName, defaultDependencies,
 			{ selectedDomainUpsellItem }
 		);
 		flows.excludeStep( stepName );
+	} else {
+		flows.resetExcludedStep( stepName );
 	}
 }
 

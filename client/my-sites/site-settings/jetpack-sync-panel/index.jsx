@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import debugModule from 'debug';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -209,5 +208,5 @@ export default connect(
 			syncProgress: syncSelectors.getSyncProgressPercentage( state, siteId ),
 		};
 	},
-	( dispatch ) => bindActionCreators( { getSyncStatus, scheduleJetpackFullysync }, dispatch )
+	{ getSyncStatus, scheduleJetpackFullysync }
 )( localize( withLocalizedMoment( JetpackSyncPanel ) ) );
