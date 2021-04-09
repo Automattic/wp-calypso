@@ -41,7 +41,7 @@ import { JPC_PATH_PLANS, REMOTE_PATH_AUTH } from './constants';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
 import { login } from 'calypso/lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
-import { urlToSlug } from 'calypso/lib/url';
+import { urlToSlug } from '@automattic/calypso-url';
 import {
 	ALREADY_CONNECTED,
 	ALREADY_CONNECTED_BY_OTHER_USER,

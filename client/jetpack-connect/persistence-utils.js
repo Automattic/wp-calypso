@@ -7,7 +7,7 @@ import cookie from 'cookie';
  * Internal dependencies
  */
 import { JETPACK_CONNECT_TTL_SECONDS } from 'calypso/state/jetpack-connect/constants';
-import { urlToSlug } from 'calypso/lib/url';
+import { urlToSlug } from '@automattic/calypso-url';
 
 export const SESSION_STORAGE_SELECTED_PLAN = 'jetpack_connect_selected_plan';
 

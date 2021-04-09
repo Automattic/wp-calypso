@@ -39,7 +39,7 @@ import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/ac
 import { isCancelable } from 'calypso/lib/purchases';
 import { cancelPurchase } from 'calypso/me/purchases/paths';
 import { getUnmappedUrl } from 'calypso/lib/site/utils';
-import { withoutHttp } from 'calypso/lib/url';
+import { withoutHttp } from '@automattic/calypso-url';
 import RemovePurchase from 'calypso/me/purchases/remove-purchase';
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';

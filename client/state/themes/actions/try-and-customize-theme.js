@@ -6,7 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { isExternal } from 'calypso/lib/url';
+import { isExternal } from '@automattic/calypso-url';
 import { getThemeCustomizeUrl } from 'calypso/state/themes/selectors';
 
 import 'calypso/state/themes/init';

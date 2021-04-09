@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { withoutHttp } from 'calypso/lib/url';
+import { withoutHttp } from '@automattic/calypso-url';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSiteOptions from 'calypso/state/selectors/get-site-options';

@@ -23,7 +23,7 @@ import {
 	isEcommercePlan,
 } from 'calypso/lib/plans';
 import { GROUP_JETPACK, GROUP_WPCOM } from 'calypso/lib/plans/constants';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs } from '@automattic/calypso-url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';

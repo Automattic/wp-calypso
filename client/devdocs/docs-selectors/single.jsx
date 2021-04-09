@@ -10,7 +10,7 @@ import { stringify } from 'qs';
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs } from '@automattic/calypso-url';
 import HeaderCake from 'calypso/components/header-cake';
 import DocsSelectorsResult from './result';
 

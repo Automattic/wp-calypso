@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs } from '@automattic/calypso-url';
 import { addLocaleToPath, localizeUrl } from 'calypso/lib/i18n-utils';
 import config, { isEnabled } from '@automattic/calypso-config';
 

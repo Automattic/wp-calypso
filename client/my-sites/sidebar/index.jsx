@@ -90,7 +90,7 @@ import { isUnderEmailManagementAll } from 'calypso/my-sites/email/paths';
 import JetpackSidebarMenuItems from 'calypso/components/jetpack/sidebar/menu-items/calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
-import { getUrlParts, getUrlFromParts, addQueryArgs } from 'calypso/lib/url';
+import { getUrlParts, getUrlFromParts, addQueryArgs } from '@automattic/calypso-url';
 import { isP2PlusPlan } from 'calypso/lib/plans';
 
 /**

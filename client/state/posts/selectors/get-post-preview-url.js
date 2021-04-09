@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs } from '@automattic/calypso-url';
 import { getSitePost } from 'calypso/state/posts/selectors/get-site-post';
 import { getSite } from 'calypso/state/sites/selectors';
 

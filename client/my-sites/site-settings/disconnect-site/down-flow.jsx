@@ -13,7 +13,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Gridicon from 'calypso/components/gridicon';
 import Main from 'calypso/components/main';
 import NavigationLink from 'calypso/components/wizard/navigation-link';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs } from '@automattic/calypso-url';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useTranslate } from 'i18n-calypso';

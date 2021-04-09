@@ -10,7 +10,7 @@ import { flowRight, get, isEmpty, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isHttps } from 'calypso/lib/url';
+import { isHttps } from '@automattic/calypso-url';
 import { Button, Card } from '@automattic/components';
 import Notice from 'calypso/components/notice';
 import FormFieldset from 'calypso/components/forms/form-fieldset';

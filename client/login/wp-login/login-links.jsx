@@ -21,7 +21,7 @@ import {
 	isJetpackCloudOAuth2Client,
 	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import { addQueryArgs, getUrlParts } from 'calypso/lib/url';
+import { addQueryArgs, getUrlParts } from '@automattic/calypso-url';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';

@@ -34,7 +34,7 @@ import Spinner from 'calypso/components/spinner';
 import { itemLinkMatches } from './utils';
 import { getSidebarIsCollapsed, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
-import { isExternal } from 'calypso/lib/url';
+import { isExternal } from '@automattic/calypso-url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';

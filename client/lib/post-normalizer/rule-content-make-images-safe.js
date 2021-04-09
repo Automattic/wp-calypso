@@ -8,7 +8,7 @@ import { forEach, startsWith, some, includes, filter } from 'lodash';
  */
 import safeImageURL from 'calypso/lib/safe-image-url';
 import { maxWidthPhotonishURL } from './utils';
-import { getUrlParts, getUrlFromParts, resolveRelativePath } from 'calypso/lib/url';
+import { getUrlParts, getUrlFromParts, resolveRelativePath } from '@automattic/calypso-url';
 
 const TRANSPARENT_GIF =
 	'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';

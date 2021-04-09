@@ -20,7 +20,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import accept from 'calypso/lib/accept';
 import ListEnd from 'calypso/components/list-end';
 import { preventWidows } from 'calypso/lib/formatting';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs } from '@automattic/calypso-url';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 class Followers extends Component {

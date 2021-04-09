@@ -42,7 +42,12 @@ import {
 	READER_FOLLOWING_MANAGE_URL_INPUT,
 	READER_FOLLOWING_MANAGE_RECOMMENDATION,
 } from 'calypso/reader/follow-sources';
-import { resemblesUrl, withoutHttp, addSchemeIfMissing, addQueryArgs } from 'calypso/lib/url';
+import {
+	resemblesUrl,
+	withoutHttp,
+	addSchemeIfMissing,
+	addQueryArgs,
+} from '@automattic/calypso-url';
 import { recordAction } from 'calypso/reader/stats';
 import { SORT_BY_RELEVANCE } from 'calypso/state/reader/feed-searches/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';

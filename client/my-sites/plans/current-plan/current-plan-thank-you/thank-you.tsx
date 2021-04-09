@@ -15,7 +15,7 @@ import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
 import { Button } from '@automattic/components';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs } from '@automattic/calypso-url';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';

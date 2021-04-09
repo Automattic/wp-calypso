@@ -30,7 +30,7 @@ import {
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'calypso/lib/cart-values/cart-items';
-import { getUrlParts } from 'calypso/lib/url';
+import { getUrlParts } from '@automattic/calypso-url';
 
 // State actions and selectors
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';

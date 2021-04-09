@@ -11,7 +11,7 @@ import stepConfig from './steps';
 import user from 'calypso/lib/user';
 import { isEcommercePlan } from 'calypso/lib/plans';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs } from '@automattic/calypso-url';
 
 function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;

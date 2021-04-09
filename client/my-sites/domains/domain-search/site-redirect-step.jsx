@@ -20,7 +20,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { canRedirect } from 'calypso/lib/domains';
 import DomainProductPrice from 'calypso/components/domains/domain-product-price';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { withoutHttp } from 'calypso/lib/url';
+import { withoutHttp } from '@automattic/calypso-url';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 
 /**

@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from '@automattic/calypso-config';
-import { isOutsideCalypso } from 'calypso/lib/url';
+import { isOutsideCalypso } from '@automattic/calypso-url';
 // actions
 import { sendMessage, sendNotTyping, sendTyping } from 'calypso/state/happychat/connection/actions';
 import { blur, focus, setCurrentMessage } from 'calypso/state/happychat/ui/actions';

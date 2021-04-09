@@ -13,7 +13,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
 import { addQueryArgs } from 'calypso/lib/route';
-import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
+import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 import getJetpackRecommendationsUrl from 'calypso/state/selectors/get-jetpack-recommendations-url';
 
 /**

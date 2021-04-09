@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import { Button } from '@automattic/components';
 import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { withoutHttp } from 'calypso/lib/url';
+import { withoutHttp } from '@automattic/calypso-url';
 
 /**
  * Style dependencies

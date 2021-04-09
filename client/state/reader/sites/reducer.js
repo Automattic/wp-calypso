@@ -15,7 +15,7 @@ import {
 } from 'calypso/state/reader/action-types';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { readerSitesSchema } from './schema';
-import { withoutHttp } from 'calypso/lib/url';
+import { withoutHttp } from '@automattic/calypso-url';
 import { decodeEntities } from 'calypso/lib/formatting';
 
 function handleRequestFailure( state, action ) {

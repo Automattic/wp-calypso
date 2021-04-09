@@ -34,7 +34,7 @@ import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { getDiscountByName } from 'calypso/lib/discounts';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs } from '@automattic/calypso-url';
 import {
 	planMatches,
 	applyTestFiltersToPlansList,

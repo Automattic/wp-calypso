@@ -11,7 +11,7 @@ import Gridicon from 'calypso/components/gridicon';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import { isExternal } from 'calypso/lib/url';
+import { isExternal } from '@automattic/calypso-url';
 import FollowButton from 'calypso/blocks/follow-button/button';
 
 const ListStreamHeader = ( {

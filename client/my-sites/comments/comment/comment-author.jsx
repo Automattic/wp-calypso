@@ -19,7 +19,7 @@ import Gravatar from 'calypso/components/gravatar';
 import Tooltip from 'calypso/components/tooltip';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { urlToDomainAndPath } from 'calypso/lib/url';
+import { urlToDomainAndPath } from '@automattic/calypso-url';
 import { getSiteComment } from 'calypso/state/comments/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 

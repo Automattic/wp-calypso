@@ -11,7 +11,7 @@ import page from 'page';
  */
 import { APIProductFamily } from 'calypso/state/partner-portal/types';
 import { Button, Card } from '@automattic/components';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs } from '@automattic/calypso-url';
 import { errorNotice } from 'calypso/state/notices/actions';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';

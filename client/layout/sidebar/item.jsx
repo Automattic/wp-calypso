@@ -9,7 +9,7 @@ import Gridicon from 'calypso/components/gridicon';
 /**
  * Internal dependencies
  */
-import { addQueryArgs, isExternal, getUrlParts } from 'calypso/lib/url';
+import { addQueryArgs, isExternal, getUrlParts } from '@automattic/calypso-url';
 import MaterialIcon from 'calypso/components/material-icon';
 import Count from 'calypso/components/count';
 import { preload } from 'calypso/sections-helper';

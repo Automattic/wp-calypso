@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
 import { getPlan } from 'calypso/lib/plans';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';

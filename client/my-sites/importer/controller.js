@@ -8,7 +8,7 @@ import page from 'page';
  * Internal Dependencies
  */
 import SectionImport from 'calypso/my-sites/importer/section-import';
-import { decodeURIComponentIfValid } from 'calypso/lib/url';
+import { decodeURIComponentIfValid } from '@automattic/calypso-url';
 
 export function importSite( context, next ) {
 	const engine = context.query?.engine;

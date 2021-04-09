@@ -51,7 +51,7 @@ import { getSignupUrl } from 'calypso/lib/login';
 import { isRegularAccount } from 'calypso/state/login/utils';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { preventWidows } from 'calypso/lib/formatting';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs } from '@automattic/calypso-url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
 

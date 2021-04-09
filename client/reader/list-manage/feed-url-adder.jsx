@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
  * Internal Dependencies
  */
 import FollowButton from 'calypso/blocks/follow-button/button';
-import { addSchemeIfMissing, withoutHttp } from 'calypso/lib/url';
+import { addSchemeIfMissing, withoutHttp } from '@automattic/calypso-url';
 import { addReaderListFeedByUrl, deleteReaderListFeed } from 'calypso/state/reader/lists/actions';
 import { getMatchingItem } from 'calypso/state/reader/lists/selectors';
 

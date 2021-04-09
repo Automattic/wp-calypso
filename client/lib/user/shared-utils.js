@@ -3,7 +3,7 @@
  */
 import { decodeEntities } from 'calypso/lib/formatting/decode-entities';
 import { getLanguage } from 'calypso/lib/i18n-utils/utils';
-import { withoutHttp } from 'calypso/lib/url';
+import { withoutHttp } from '@automattic/calypso-url';
 
 function getSiteSlug( url ) {
 	const slug = withoutHttp( url );

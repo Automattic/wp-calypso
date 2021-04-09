@@ -19,7 +19,7 @@ import {
 } from 'calypso/lib/plans';
 import Banner from 'calypso/components/banner';
 import { GROUP_JETPACK, GROUP_WPCOM, FEATURE_NO_ADS } from 'calypso/lib/plans/constants';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs } from '@automattic/calypso-url';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import { isFreePlan } from 'calypso/lib/products-values';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';

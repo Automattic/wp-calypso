@@ -55,7 +55,7 @@ import {
 	isTheme,
 	isTitanMail,
 } from 'calypso/lib/products-values';
-import { isExternal } from 'calypso/lib/url';
+import { isExternal } from '@automattic/calypso-url';
 import JetpackPlanDetails from './jetpack-plan-details';
 import Main from 'calypso/components/main';
 import BloggerPlanDetails from './blogger-plan-details';

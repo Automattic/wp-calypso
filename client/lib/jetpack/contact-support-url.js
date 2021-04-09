@@ -1,8 +1,7 @@
 /**
  * Internal dependencies
  */
-import { JETPACK_CONTACT_SUPPORT } from '@automattic/calypso-url';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs, JETPACK_CONTACT_SUPPORT } from '@automattic/calypso-url';
 
 /**
  * Creates a URL that refers to the Jetpack 'Contact Support' page,

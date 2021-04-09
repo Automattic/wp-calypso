@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isHttps } from 'calypso/lib/url';
+import { isHttps } from '@automattic/calypso-url';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSiteOption from './get-site-option';
 import { isSectionNameEnabled } from 'calypso/sections-filter';

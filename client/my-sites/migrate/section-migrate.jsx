@@ -33,7 +33,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { urlToSlug } from 'calypso/lib/url';
+import { urlToSlug } from '@automattic/calypso-url';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

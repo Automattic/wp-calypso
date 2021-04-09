@@ -21,7 +21,12 @@ import { recordAction } from 'calypso/reader/stats';
 import SiteResults from './site-results';
 import PostResults from './post-results';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { addQueryArgs, resemblesUrl, withoutHttp, addSchemeIfMissing } from 'calypso/lib/url';
+import {
+	addQueryArgs,
+	resemblesUrl,
+	withoutHttp,
+	addSchemeIfMissing,
+} from '@automattic/calypso-url';
 import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
 import {
 	SORT_BY_RELEVANCE,

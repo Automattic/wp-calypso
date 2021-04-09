@@ -12,7 +12,7 @@ import {
 	UPGRADE_INTENT_THEMES,
 	UPGRADE_INTENT_INSTALL_THEME,
 } from 'calypso/lib/checkout/constants';
-import { decodeURIComponentIfValid, isExternal } from 'calypso/lib/url';
+import { decodeURIComponentIfValid, isExternal } from '@automattic/calypso-url';
 
 const isValidValue = ( url ) => typeof url === 'string' && url;
 

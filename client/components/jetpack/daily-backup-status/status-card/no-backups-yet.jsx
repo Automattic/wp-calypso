@@ -9,9 +9,8 @@ import { useSelector, useDispatch } from 'react-redux';
  * Internal dependencies
  */
 import ExternalLink from 'calypso/components/external-link';
-import { JETPACK_CONTACT_SUPPORT, CALYPSO_CONTACT } from '@automattic/calypso-url';
+import { addQueryArgs, JETPACK_CONTACT_SUPPORT, CALYPSO_CONTACT } from '@automattic/calypso-url';
 import { selectSiteId } from 'calypso/state/help/actions';
-import { addQueryArgs } from 'calypso/lib/url';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';

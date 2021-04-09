@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { withoutHttp } from 'calypso/lib/url';
+import { withoutHttp } from '@automattic/calypso-url';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSiteOption from './get-site-option';
 import getSiteSlug from './get-site-slug';

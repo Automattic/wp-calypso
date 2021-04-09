@@ -17,7 +17,7 @@ import { getPostPreviewUrl } from 'calypso/state/posts/selectors';
 import { isSitePreviewable } from 'calypso/state/sites/selectors';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
-import { setUrlScheme } from 'calypso/lib/url';
+import { setUrlScheme } from '@automattic/calypso-url';
 
 class PostCard extends Component {
 	static propTypes = {

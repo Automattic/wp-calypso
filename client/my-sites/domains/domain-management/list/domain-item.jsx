@@ -19,7 +19,7 @@ import DomainNotice from 'calypso/my-sites/domains/domain-management/components/
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
-import { withoutHttp } from 'calypso/lib/url';
+import { withoutHttp } from '@automattic/calypso-url';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { handleRenewNowClick } from 'calypso/lib/purchases';
 import {

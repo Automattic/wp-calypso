@@ -25,7 +25,7 @@ import { filterFollowsByQuery } from 'calypso/reader/follow-helpers';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import { formatUrlForDisplay, getFeedTitle } from 'calypso/reader/lib/feed-display-helper';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs } from '@automattic/calypso-url';
 import { READER_SUBSCRIPTIONS } from 'calypso/reader/follow-sources';
 import { READER_EXPORT_TYPE_SUBSCRIPTIONS } from 'calypso/blocks/reader-export-button/constants';
 

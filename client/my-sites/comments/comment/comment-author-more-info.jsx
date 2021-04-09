@@ -16,7 +16,7 @@ import Emojify from 'calypso/components/emojify';
 import ExternalLink from 'calypso/components/external-link';
 import Popover from 'calypso/components/popover';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { urlToDomainAndPath } from 'calypso/lib/url';
+import { urlToDomainAndPath } from '@automattic/calypso-url';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { getSiteComment } from 'calypso/state/comments/selectors';
 import getSiteSetting from 'calypso/state/selectors/get-site-setting';

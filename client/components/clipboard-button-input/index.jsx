@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { withoutHttp } from 'calypso/lib/url';
+import { withoutHttp } from '@automattic/calypso-url';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

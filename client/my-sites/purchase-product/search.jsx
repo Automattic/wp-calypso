@@ -27,7 +27,7 @@ import getSites from 'calypso/state/selectors/get-sites';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { persistSession, retrieveMobileRedirect } from '../../jetpack-connect/persistence-utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { urlToSlug } from 'calypso/lib/url';
+import { urlToSlug } from '@automattic/calypso-url';
 import searchSites from 'calypso/components/search-sites';
 import jetpackConnection from '../../jetpack-connect/jetpack-connection';
 import { IS_DOT_COM_GET_SEARCH, JPC_PATH_REMOTE_INSTALL } from '../../jetpack-connect/constants';

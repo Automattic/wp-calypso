@@ -12,7 +12,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { getUrlParts } from 'calypso/lib/url';
+import { getUrlParts } from '@automattic/calypso-url';
 import { infoNotice } from 'calypso/state/notices/actions';
 import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { LicenseState, LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';

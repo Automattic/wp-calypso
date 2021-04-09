@@ -12,7 +12,7 @@ import { Card } from '@automattic/components';
 import QueryReaderFeedsSearch from 'calypso/components/data/query-reader-feeds-search';
 import SyncReaderFollows from 'calypso/components/data/sync-reader-follows';
 import SearchInput from 'calypso/components/search';
-import { resemblesUrl } from 'calypso/lib/url';
+import { resemblesUrl } from '@automattic/calypso-url';
 import { filterFollowsByQuery } from 'calypso/reader/follow-helpers';
 import { getReaderFeedsForQuery } from 'calypso/state/reader/feed-searches/selectors';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';

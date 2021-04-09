@@ -22,7 +22,7 @@ import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-valu
 import { Button } from '@automattic/components';
 import { getActivityLogFilter } from 'calypso/state/selectors/get-activity-log-filter';
 import { filterStateToQuery } from 'calypso/state/activity-log/utils';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs } from '@automattic/calypso-url';
 import ActivityActor from './activity-actor';
 import ActivityMedia from './activity-media';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

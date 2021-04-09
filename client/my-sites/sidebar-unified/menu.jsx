@@ -26,7 +26,7 @@ import {
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import MySitesSidebarUnifiedItem from './item';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
-import { isExternal } from 'calypso/lib/url';
+import { isExternal } from '@automattic/calypso-url';
 import { externalRedirect } from 'calypso/lib/route/path';
 import { itemLinkMatches } from './utils';
 

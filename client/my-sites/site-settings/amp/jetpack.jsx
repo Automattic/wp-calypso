@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { CompactCard } from '@automattic/components';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs } from '@automattic/calypso-url';
 import { getCustomizerUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequesting, getPluginOnSite } from 'calypso/state/plugins/installed/selectors';

@@ -7,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs } from '@automattic/calypso-url';
 import {
 	ACTIVITY_LOG_FILTER_SET,
 	ACTIVITY_LOG_FILTER_UPDATE,

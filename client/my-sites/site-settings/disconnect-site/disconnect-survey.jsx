@@ -13,7 +13,7 @@ import { CompactCard } from '@automattic/components';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs } from '@automattic/calypso-url';
 import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 

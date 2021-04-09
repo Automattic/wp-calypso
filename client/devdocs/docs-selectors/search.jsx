@@ -12,7 +12,7 @@ import { stringify } from 'qs';
  */
 import EmptyContent from 'calypso/components/empty-content';
 import SearchCard from 'calypso/components/search-card';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs } from '@automattic/calypso-url';
 import DocsSelectorsResult from './result';
 
 export default class DocsSelectorsSearch extends Component {

@@ -48,7 +48,7 @@ import initialReducer from 'calypso/state/reducer';
 import { getInitialState, persistOnChange, loadAllState } from 'calypso/state/initial-state';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import userFactory from 'calypso/lib/user';
-import { getUrlParts, isOutsideCalypso } from 'calypso/lib/url';
+import { getUrlParts, isOutsideCalypso } from '@automattic/calypso-url';
 import { setStore } from 'calypso/state/redux-store';
 import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';

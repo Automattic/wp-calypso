@@ -7,7 +7,7 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { ADMIN_MENU_REQUEST } from 'calypso/state/action-types';
 import { receiveAdminMenu } from 'calypso/state/admin-menu/actions';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs } from '@automattic/calypso-url';
 
 export const requestFetchAdminMenu = ( action ) =>
 	http(

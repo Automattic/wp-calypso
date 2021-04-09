@@ -6,7 +6,7 @@ import { filter, find, has, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { withoutHttp } from 'calypso/lib/url';
+import { withoutHttp } from '@automattic/calypso-url';
 import { createSelector } from '@automattic/state-utils';
 import getCurrentIntlCollator from 'calypso/state/selectors/get-current-intl-collator';
 import 'calypso/state/reader/init';

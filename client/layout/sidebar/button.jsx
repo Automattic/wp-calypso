@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { isExternal } from 'calypso/lib/url';
+import { isExternal } from '@automattic/calypso-url';
 import { preload } from 'calypso/sections-helper';
 
 class SidebarButton extends React.Component {
