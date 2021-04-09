@@ -6,10 +6,7 @@ It will handle the data itself thus helping us to decouple concerns: i.e. fetchi
 ## Usage
 
 ```js
-<StoreConnection
-	component={ MyComponent }
-	getStateFromStores={ getStateFromStores }
-/>;
+<StoreConnection component={ MyComponent } getStateFromStores={ getStateFromStores } />;
 ```
 
 ### Loading placeholder

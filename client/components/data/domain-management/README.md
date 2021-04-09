@@ -14,17 +14,9 @@ import MyChildComponent from 'calypso/components/my-child-component';
 
 // initialize rest of the variables
 
-class MyComponent extends React.Component {
-	render() {
-		return (
-			<DomainManagementData
-				component={ MyChildComponent }
-				context={ context }
-				needsDomains
-			/>
-		);
-	}
-}
+const MyComponent = () => (
+	<DomainManagementData component={ MyChildComponent } context={ context } needsDomains />
+);
 
 export default MyComponent;
 ```
