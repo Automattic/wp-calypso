@@ -39,16 +39,12 @@ export default class NavBarComponent extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable( this.driver, profileSelector );
 	}
 	async clickMySites() {
-		const mySitesSelector = by.css( 'header.masterbar a.masterbar__item' );
+		const mySitesSelector = by.css( 'header.masterbar a.masterbar__item:first-child' );
 		await driverHelper.clickWhenClickable( this.driver, mySitesSelector );
-		await driverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			by.css( '.sidebar__menu-wrapper' )
-		);
-		return await driverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			by.css( '.is-group-sites' )
-		);
+		if ( this.screenSize === 'MOBILE' ) {
+			// Wait for the SideNav animation to finish
+			await this.driver.sleep( 600 );
+		}
 	}
 	hasUnreadNotifications() {
 		return this.driver
