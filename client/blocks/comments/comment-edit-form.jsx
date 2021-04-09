@@ -1,12 +1,10 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -201,6 +199,4 @@ PostCommentForm.defaultProps = {
 	onCommentSubmit: noop,
 };
 
-const mapDispatchToProps = ( dispatch ) => bindActionCreators( { editComment }, dispatch );
-
-export default connect( null, mapDispatchToProps )( PostCommentForm );
+export default connect( null, { editComment } )( PostCommentForm );

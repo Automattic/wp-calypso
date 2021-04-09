@@ -4,7 +4,6 @@
 import { Component } from 'react';
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import debug from 'debug';
 
 /**
@@ -72,14 +71,9 @@ export default connect(
 			requestingPosts: isRequestingPostsForQuery( state, siteId, query ),
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators(
-			{
-				requestSitePosts,
-				requestAllSitesPosts,
-				requestSitePost,
-			},
-			dispatch
-		);
+	{
+		requestSitePosts,
+		requestAllSitesPosts,
+		requestSitePost,
 	}
 )( QueryPosts );
