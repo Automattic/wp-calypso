@@ -93,6 +93,7 @@ async function stripeCardProcessor(
 		postalCode: getPostalCode(),
 		subdivisionCode: managedContactDetails?.state?.value,
 		siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
+		domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		paymentMethodToken,
 		cart: createTransactionEndpointCartFromResponseCart( {
 			siteId: siteId ? String( siteId ) : undefined,
