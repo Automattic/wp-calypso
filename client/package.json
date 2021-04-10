@@ -20,6 +20,7 @@
 		"@automattic/calypso-config": "^1.0.0-alpha.0",
 		"@automattic/calypso-polyfills": "^1.0.0",
 		"@automattic/calypso-stripe": "^1.0.0",
+		"@automattic/calypso-url": "^1.0.0",
 		"@automattic/color-studio": "2.5.0",
 		"@automattic/components": "^1.0.0-alpha.1",
 		"@automattic/composite-checkout": "^1.0.0",

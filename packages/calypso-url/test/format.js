@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-import format from '../format';
+import format from '../src';
 
 describe( 'getUrlType', () => {
 	test( 'should format absolute URLs as absolute URLs', () => {
