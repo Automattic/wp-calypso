@@ -391,6 +391,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	async removeCoupon() {
 		const isCompositeCheckout = await this.isCompositeCheckout();
 
+		// New checkout
 		if ( isCompositeCheckout ) {
 			// Open review step for editing
 			try {
@@ -420,7 +421,13 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 				By.css( '.checkout-modal .checkout-button.is-status-primary' )
 			);
 			// Make sure the coupon item is removed
-			return this.waitForCouponToBeRemoved();
+			await this.waitForCouponToBeRemoved();
+			// Close editing review step
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.wp-checkout__review-order-step button.is-status-primary' )
+			);
+			return;
 		}
 
 		// Old checkout - desktop
@@ -441,6 +448,53 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 
 	async removeBusinessPlan() {
 		const productSlug = this.businessPlanSlug;
+		const isCompositeCheckout = await this.isCompositeCheckout();
+
+		// New checkout
+		if ( isCompositeCheckout ) {
+			// Open review step for editing
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.wp-checkout__review-order-step .checkout-step__edit-button' )
+			);
+			const lineItemCount = await driverHelper.getElementCount(
+				this.driver,
+				By.css( '.checkout-line-item button.checkout-line-item__remove-product' )
+			);
+			// Click delete button on line item
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css(
+					`.checkout-line-item[data-e2e-product-slug="${ productSlug }"] button.checkout-line-item__remove-product`
+				)
+			);
+			// Dismiss confirmation modal
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.checkout-modal .checkout-button.is-status-primary' )
+			);
+			// Make sure the item is removed
+			await driverHelper.waitTillNotPresent(
+				this.driver,
+				By.css( '[data-e2e-cart-is-loading="true"]' )
+			);
+			await driverHelper.waitTillNotPresent(
+				this.driver,
+				By.css( `.checkout-line-item[data-e2e-product-slug="${ productSlug }"]` )
+			);
+			// If the plan is the last item in the cart, then removing it will cause
+			// a redirect, so we won't try to close the review step.
+			if ( lineItemCount > 1 ) {
+				// Close editing review step
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css( '.wp-checkout__review-order-step button.is-status-primary' )
+				);
+			}
+			return;
+		}
+
+		// Old checkout
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css(
@@ -455,6 +509,8 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async paymentButtonText() {
+		const loadingPaymentButton = By.xpath( "//*[contains(text(), 'Please wait…')]" );
+		await driverHelper.waitTillNotPresent( this.driver, loadingPaymentButton );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.paymentButtonSelector );
 		await driverHelper.scrollIntoView( this.driver, this.paymentButtonSelector );
 		return await this.driver.findElement( this.paymentButtonSelector ).getText();
