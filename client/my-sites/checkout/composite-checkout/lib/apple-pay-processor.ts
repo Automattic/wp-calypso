@@ -54,6 +54,7 @@ export default async function applePayProcessor(
 		siteId: siteId ? String( siteId ) : undefined,
 		country: managedContactDetails?.countryCode?.value ?? '',
 		postalCode: getPostalCode(),
+		domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		cart: createTransactionEndpointCartFromResponseCart( {
 			siteId: siteId ? String( siteId ) : undefined,
 			contactDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ) ?? null,

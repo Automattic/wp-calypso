@@ -93,6 +93,7 @@ async function stripeCardProcessor(
 		postalCode: getPostalCode(),
 		subdivisionCode: managedContactDetails?.state?.value,
 		siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
+		domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		paymentMethodToken,
 		cart: createTransactionEndpointCartFromResponseCart( {
 			siteId: siteId ? String( siteId ) : undefined,
@@ -152,6 +153,7 @@ async function ebanxCardProcessor(
 		country: submitData.countryCode,
 		siteId: siteId ? String( siteId ) : undefined,
 		deviceId: paymentMethodToken?.deviceId,
+		domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		paymentMethodToken: paymentMethodToken.token,
 		cart: createTransactionEndpointCartFromResponseCart( {
 			siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
