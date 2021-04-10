@@ -10,7 +10,7 @@ import { localizeUrl as _localizeUrl } from '@automattic/i18n-utils';
  */
 import config from '@automattic/calypso-config';
 import languages from '@automattic/languages';
-import { getUrlParts } from 'calypso/lib/url/url-parts';
+import { getUrlParts } from '@automattic/calypso-url';
 
 /**
  * a locale can consist of three component

@@ -7,8 +7,8 @@ import { Falsy } from 'utility-types';
 /**
  * Internal dependencies
  */
-import { determineUrlType, URL_TYPE } from './url-type';
-import format from './format';
+import { determineUrlType, URL_TYPE } from '@automattic/calypso-url';
+import { format } from '@automattic/calypso-url';
 
 const BASE_URL = 'http://__domain__.invalid';
 
