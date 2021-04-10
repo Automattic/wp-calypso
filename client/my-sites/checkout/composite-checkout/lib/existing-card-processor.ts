@@ -45,13 +45,17 @@ export default async function existingCardProcessor(
 	if ( ! isValidTransactionData( transactionData ) ) {
 		throw new Error( 'Required purchase data is missing' );
 	}
-	const { stripeConfiguration, recordEvent } = dataForProcessor;
+	const {
+		stripeConfiguration,
+		recordEvent,
+		includeDomainDetails,
+		includeGSuiteDetails,
+	} = dataForProcessor;
 	if ( ! stripeConfiguration ) {
 		throw new Error( 'Stripe configuration is required' );
 	}
 
 	debug( 'formatting existing card transaction', transactionData );
-	const { includeDomainDetails, includeGSuiteDetails } = dataForProcessor;
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...transactionData,
 		domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
