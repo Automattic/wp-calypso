@@ -20,6 +20,7 @@ import {
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { TransactionRequest } from '../types/transaction-endpoint';
+import getDomainDetails from './get-domain-details';
 
 const debug = debugFactory( 'calypso:composite-checkout:existing-card-processor' );
 
@@ -50,8 +51,10 @@ export default async function existingCardProcessor(
 	}
 
 	debug( 'formatting existing card transaction', transactionData );
+	const { includeDomainDetails, includeGSuiteDetails } = dataForProcessor;
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...transactionData,
+		domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		cart: createTransactionEndpointCartFromResponseCart( {
 			siteId: dataForProcessor.siteId ? String( dataForProcessor.siteId ) : undefined,
 			contactDetails: transactionData.domainDetails ?? null,
