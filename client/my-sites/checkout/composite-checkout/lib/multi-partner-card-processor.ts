@@ -153,6 +153,7 @@ async function ebanxCardProcessor(
 		country: submitData.countryCode,
 		siteId: siteId ? String( siteId ) : undefined,
 		deviceId: paymentMethodToken?.deviceId,
+		domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		paymentMethodToken: paymentMethodToken.token,
 		cart: createTransactionEndpointCartFromResponseCart( {
 			siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
