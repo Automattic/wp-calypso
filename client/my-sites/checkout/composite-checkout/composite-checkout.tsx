@@ -367,9 +367,9 @@ export default function CompositeCheckout( {
 		// Only wait for apple pay to load if we are using apple pay
 		( allowedPaymentMethods.includes( 'apple-pay' ) && isApplePayLoading );
 
-	const contactInfo: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
-	const countryCode: string = contactInfo?.countryCode?.value ?? '';
-	const subdivisionCode: string = contactInfo?.state?.value ?? '';
+	const contactDetails: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
+	const countryCode: string = contactDetails?.countryCode?.value ?? '';
+	const subdivisionCode: string = contactDetails?.state?.value ?? '';
 
 	const paymentMethods = arePaymentMethodsLoading
 		? []
@@ -439,8 +439,10 @@ export default function CompositeCheckout( {
 			siteId,
 			siteSlug,
 			stripeConfiguration,
+			contactDetails,
 		} ),
 		[
+			contactDetails,
 			createUserAndSiteBeforeTransaction,
 			getThankYouUrl,
 			includeDomainDetails,
