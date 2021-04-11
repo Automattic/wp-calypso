@@ -2,7 +2,6 @@
  * External dependencies
  */
 import {
-	defaultRegistry,
 	makeSuccessResponse,
 	makeRedirectResponse,
 	makeErrorResponse,
@@ -24,9 +23,7 @@ import {
 	createTransactionEndpointCartFromResponseCart,
 } from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { ManagedContactDetails } from '../types/wpcom-store-state';
 
-const { select } = defaultRegistry;
 const debug = debugFactory( 'calypso:composite-checkout:multi-partner-card-processor' );
 
 type CardTransactionRequest = {
@@ -75,23 +72,20 @@ async function stripeCardProcessor(
 		recordEvent: onEvent,
 		responseCart,
 		siteId,
+		contactDetails,
 	} = transactionOptions;
-
-	const managedContactDetails: ManagedContactDetails | undefined = select(
-		'wpcom'
-	)?.getContactInfo();
 
 	const { id: paymentMethodToken } = await createStripePaymentMethodToken( {
 		...submitData,
-		country: managedContactDetails?.countryCode?.value,
-		postalCode: getPostalCode(),
+		country: contactDetails?.countryCode?.value,
+		postalCode: getPostalCode( contactDetails ),
 	} );
 
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...submitData,
-		country: managedContactDetails?.countryCode?.value ?? '',
-		postalCode: getPostalCode(),
-		subdivisionCode: managedContactDetails?.state?.value,
+		country: contactDetails?.countryCode?.value ?? '',
+		postalCode: getPostalCode( contactDetails ),
+		subdivisionCode: contactDetails?.state?.value,
 		siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
 		domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		paymentMethodToken,
@@ -137,7 +131,13 @@ async function ebanxCardProcessor(
 	if ( ! isValidEbanxCardTransactionData( submitData ) ) {
 		throw new Error( 'Required purchase data is missing' );
 	}
-	const { includeDomainDetails, includeGSuiteDetails, responseCart, siteId } = transactionOptions;
+	const {
+		includeDomainDetails,
+		includeGSuiteDetails,
+		responseCart,
+		siteId,
+		contactDetails,
+	} = transactionOptions;
 
 	const paymentMethodToken: EbanxToken = await createEbanxToken( 'new_purchase', {
 		country: submitData.countryCode,

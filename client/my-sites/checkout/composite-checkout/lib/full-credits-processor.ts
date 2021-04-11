@@ -2,11 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import {
-	defaultRegistry,
-	makeSuccessResponse,
-	makeErrorResponse,
-} from '@automattic/composite-checkout';
+import { makeSuccessResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 
 /**
@@ -20,10 +16,7 @@ import {
 	createTransactionEndpointCartFromResponseCart,
 } from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { ManagedContactDetails } from '../types/wpcom-store-state';
 import type { TransactionRequest } from '../types/transaction-endpoint';
-
-const { select } = defaultRegistry;
 
 const debug = debugFactory( 'calypso:composite-checkout:full-credits-processor' );
 
@@ -35,11 +28,13 @@ type SubmitFullCreditsTransactionData = Omit<
 export default async function fullCreditsProcessor(
 	transactionOptions: PaymentProcessorOptions
 ): Promise< PaymentProcessorResponse > {
-	const { siteId, responseCart, includeDomainDetails, includeGSuiteDetails } = transactionOptions;
-
-	const managedContactDetails: ManagedContactDetails | undefined = select(
-		'wpcom'
-	)?.getContactInfo();
+	const {
+		siteId,
+		responseCart,
+		includeDomainDetails,
+		includeGSuiteDetails,
+		contactDetails,
+	} = transactionOptions;
 
 	const formattedTransactionData = prepareCreditsTransaction(
 		{
@@ -47,9 +42,9 @@ export default async function fullCreditsProcessor(
 			couponId: responseCart.coupon,
 			siteId: siteId ? String( siteId ) : '',
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
-			country: managedContactDetails?.countryCode?.value ?? '',
-			postalCode: getPostalCode(),
-			subdivisionCode: managedContactDetails?.state?.value,
+			country: contactDetails?.countryCode?.value ?? '',
+			postalCode: getPostalCode( contactDetails ),
+			subdivisionCode: contactDetails?.state?.value,
 		},
 		transactionOptions
 	);

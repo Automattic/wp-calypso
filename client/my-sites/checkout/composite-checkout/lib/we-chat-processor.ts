@@ -2,7 +2,6 @@
  * External dependencies
  */
 import {
-	defaultRegistry,
 	makeRedirectResponse,
 	makeManualResponse,
 	makeErrorResponse,
@@ -20,10 +19,7 @@ import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import prepareRedirectTransaction from '../lib/prepare-redirect-transaction';
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { ManagedContactDetails } from '../types/wpcom-store-state';
 import type { WPCOMTransactionEndpointResponse } from '../types/transaction-endpoint';
-
-const { select } = defaultRegistry;
 
 type WeChatTransactionRequest = {
 	name: string | undefined;
@@ -46,6 +42,7 @@ export default async function weChatProcessor(
 		includeGSuiteDetails,
 		reduxDispatch,
 		responseCart,
+		contactDetails,
 	} = options;
 	const paymentMethodId = 'wechat';
 	recordTransactionBeginAnalytics( {
@@ -78,10 +75,6 @@ export default async function weChatProcessor(
 		query: cancelUrlQuery,
 	} );
 
-	const managedContactDetails: ManagedContactDetails | undefined = select(
-		'wpcom'
-	)?.getContactInfo();
-
 	const formattedTransactionData = prepareRedirectTransaction(
 		paymentMethodId,
 		{
@@ -90,9 +83,9 @@ export default async function weChatProcessor(
 			successUrl,
 			cancelUrl,
 			couponId: responseCart.coupon,
-			country: managedContactDetails?.countryCode?.value ?? '',
-			postalCode: getPostalCode(),
-			subdivisionCode: managedContactDetails?.state?.value,
+			country: contactDetails?.countryCode?.value ?? '',
+			postalCode: getPostalCode( contactDetails ),
+			subdivisionCode: contactDetails?.state?.value,
 			siteId: siteId ? String( siteId ) : '',
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		},

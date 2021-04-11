@@ -2,11 +2,7 @@
  * External dependencies
  */
 import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
-import {
-	defaultRegistry,
-	makeRedirectResponse,
-	makeErrorResponse,
-} from '@automattic/composite-checkout';
+import { makeRedirectResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 
 /**
@@ -20,9 +16,6 @@ import prepareRedirectTransaction from '../lib/prepare-redirect-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { WPCOMTransactionEndpointResponse } from '../types/transaction-endpoint';
 import type { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
-import type { ManagedContactDetails } from '../types/wpcom-store-state';
-
-const { select } = defaultRegistry;
 
 type RedirectTransactionRequest = {
 	name: string | undefined;
@@ -42,6 +35,7 @@ export default async function genericRedirectProcessor(
 		includeGSuiteDetails,
 		reduxDispatch,
 		responseCart,
+		contactDetails,
 	} = transactionOptions;
 	if ( ! isValidTransactionData( submitData ) ) {
 		throw new Error( 'Required purchase data is missing' );
@@ -78,10 +72,6 @@ export default async function genericRedirectProcessor(
 		reduxDispatch,
 	} );
 
-	const managedContactDetails: ManagedContactDetails | undefined = select(
-		'wpcom'
-	)?.getContactInfo();
-
 	const formattedTransactionData = prepareRedirectTransaction(
 		paymentMethodId,
 		{
@@ -90,9 +80,9 @@ export default async function genericRedirectProcessor(
 			successUrl,
 			cancelUrl,
 			couponId: responseCart.coupon,
-			country: managedContactDetails?.countryCode?.value ?? '',
-			postalCode: getPostalCode(),
-			subdivisionCode: managedContactDetails?.state?.value,
+			country: contactDetails?.countryCode?.value ?? '',
+			postalCode: getPostalCode( contactDetails ),
+			subdivisionCode: contactDetails?.state?.value,
 			siteId: siteId ? String( siteId ) : '',
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		},
