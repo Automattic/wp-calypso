@@ -27,14 +27,23 @@ type SubmitFreePurchaseTransactionData = Omit<
 export default async function freePurchaseProcessor(
 	transactionOptions: PaymentProcessorOptions
 ): Promise< PaymentProcessorResponse > {
-	const { siteId, responseCart, includeDomainDetails, includeGSuiteDetails } = transactionOptions;
+	const {
+		siteId,
+		responseCart,
+		includeDomainDetails,
+		includeGSuiteDetails,
+		contactDetails,
+	} = transactionOptions;
 
 	const formattedTransactionData = prepareFreePurchaseTransaction(
 		{
 			name: '',
 			couponId: responseCart.coupon,
 			siteId: siteId ? String( siteId ) : '',
-			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
+			domainDetails: getDomainDetails( contactDetails, {
+				includeDomainDetails,
+				includeGSuiteDetails,
+			} ),
 			// this data is intentionally empty so we do not charge taxes
 			country: '',
 			postalCode: '',

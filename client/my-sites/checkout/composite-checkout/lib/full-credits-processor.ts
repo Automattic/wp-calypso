@@ -41,7 +41,10 @@ export default async function fullCreditsProcessor(
 			name: '',
 			couponId: responseCart.coupon,
 			siteId: siteId ? String( siteId ) : '',
-			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
+			domainDetails: getDomainDetails( contactDetails, {
+				includeDomainDetails,
+				includeGSuiteDetails,
+			} ),
 			country: contactDetails?.countryCode?.value ?? '',
 			postalCode: getPostalCode( contactDetails ),
 			subdivisionCode: contactDetails?.state?.value,

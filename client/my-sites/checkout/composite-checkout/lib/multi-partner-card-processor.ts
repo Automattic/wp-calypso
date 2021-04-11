@@ -87,11 +87,15 @@ async function stripeCardProcessor(
 		postalCode: getPostalCode( contactDetails ),
 		subdivisionCode: contactDetails?.state?.value,
 		siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
-		domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
+		domainDetails: getDomainDetails( contactDetails, {
+			includeDomainDetails,
+			includeGSuiteDetails,
+		} ),
 		paymentMethodToken,
 		cart: createTransactionEndpointCartFromResponseCart( {
 			siteId: siteId ? String( siteId ) : undefined,
-			contactDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ) ?? null,
+			contactDetails:
+				getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) ?? null,
 			responseCart: responseCart,
 		} ),
 		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
@@ -153,11 +157,15 @@ async function ebanxCardProcessor(
 		country: submitData.countryCode,
 		siteId: siteId ? String( siteId ) : undefined,
 		deviceId: paymentMethodToken?.deviceId,
-		domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
+		domainDetails: getDomainDetails( contactDetails, {
+			includeDomainDetails,
+			includeGSuiteDetails,
+		} ),
 		paymentMethodToken: paymentMethodToken.token,
 		cart: createTransactionEndpointCartFromResponseCart( {
 			siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
-			contactDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ) ?? null,
+			contactDetails:
+				getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) ?? null,
 			responseCart: transactionOptions.responseCart,
 		} ),
 		paymentMethodType: 'WPCOM_Billing_Ebanx',

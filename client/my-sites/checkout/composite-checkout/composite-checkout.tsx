@@ -456,7 +456,7 @@ export default function CompositeCheckout( {
 		]
 	);
 
-	const domainDetails = getDomainDetails( {
+	const domainDetails = getDomainDetails( contactDetails, {
 		includeDomainDetails,
 		includeGSuiteDetails,
 	} );

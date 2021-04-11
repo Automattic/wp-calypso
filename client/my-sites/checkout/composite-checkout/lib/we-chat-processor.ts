@@ -87,7 +87,10 @@ export default async function weChatProcessor(
 			postalCode: getPostalCode( contactDetails ),
 			subdivisionCode: contactDetails?.state?.value,
 			siteId: siteId ? String( siteId ) : '',
-			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
+			domainDetails: getDomainDetails( contactDetails, {
+				includeDomainDetails,
+				includeGSuiteDetails,
+			} ),
 		},
 		options
 	);

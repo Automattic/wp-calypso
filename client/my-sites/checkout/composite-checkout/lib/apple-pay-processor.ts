@@ -50,10 +50,14 @@ export default async function applePayProcessor(
 		siteId: siteId ? String( siteId ) : undefined,
 		country: contactDetails?.countryCode?.value ?? '',
 		postalCode: getPostalCode( contactDetails ),
-		domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
+		domainDetails: getDomainDetails( contactDetails, {
+			includeDomainDetails,
+			includeGSuiteDetails,
+		} ),
 		cart: createTransactionEndpointCartFromResponseCart( {
 			siteId: siteId ? String( siteId ) : undefined,
-			contactDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ) ?? null,
+			contactDetails:
+				getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) ?? null,
 			responseCart: responseCart,
 		} ),
 		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',

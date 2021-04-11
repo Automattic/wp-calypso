@@ -32,6 +32,7 @@ export default async function payPalProcessor(
 		responseCart,
 		siteId,
 		siteSlug,
+		contactDetails,
 	} = transactionOptions;
 	recordTransactionBeginAnalytics( {
 		reduxDispatch,
@@ -59,7 +60,8 @@ export default async function payPalProcessor(
 		successUrl,
 		cancelUrl,
 		siteId,
-		domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ) || null,
+		domainDetails:
+			getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) || null,
 	} );
 	debug( 'sending paypal transaction', formattedTransactionData );
 	return wpcomPayPalExpress( formattedTransactionData, transactionOptions )

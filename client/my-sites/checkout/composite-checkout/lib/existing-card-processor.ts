@@ -50,6 +50,7 @@ export default async function existingCardProcessor(
 		recordEvent,
 		includeDomainDetails,
 		includeGSuiteDetails,
+		contactDetails,
 	} = dataForProcessor;
 	if ( ! stripeConfiguration ) {
 		throw new Error( 'Stripe configuration is required' );
@@ -58,7 +59,10 @@ export default async function existingCardProcessor(
 	debug( 'formatting existing card transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...transactionData,
-		domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
+		domainDetails: getDomainDetails( contactDetails, {
+			includeDomainDetails,
+			includeGSuiteDetails,
+		} ),
 		cart: createTransactionEndpointCartFromResponseCart( {
 			siteId: dataForProcessor.siteId ? String( dataForProcessor.siteId ) : undefined,
 			contactDetails: transactionData.domainDetails ?? null,
