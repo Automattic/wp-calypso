@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { defaultRegistry } from '@automattic/composite-checkout';
 import type { DomainContactDetails } from '@automattic/shopping-cart';
 
 /**
@@ -10,21 +9,19 @@ import type { DomainContactDetails } from '@automattic/shopping-cart';
 import { prepareDomainContactDetailsForTransaction } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import type { ManagedContactDetails } from '../types/wpcom-store-state';
 
-const { select } = defaultRegistry;
-
-export default function getDomainDetails( {
-	includeDomainDetails,
-	includeGSuiteDetails,
-}: {
-	includeDomainDetails: boolean;
-	includeGSuiteDetails: boolean;
-} ): DomainContactDetails | undefined {
-	const managedContactDetails: ManagedContactDetails | undefined = select(
-		'wpcom'
-	)?.getContactInfo();
-	if ( ! managedContactDetails ) {
+export default function getDomainDetails(
+	contactDetails: ManagedContactDetails | undefined,
+	{
+		includeDomainDetails,
+		includeGSuiteDetails,
+	}: {
+		includeDomainDetails: boolean;
+		includeGSuiteDetails: boolean;
+	}
+): DomainContactDetails | undefined {
+	if ( ! contactDetails ) {
 		return undefined;
 	}
-	const domainDetails = prepareDomainContactDetailsForTransaction( managedContactDetails );
+	const domainDetails = prepareDomainContactDetailsForTransaction( contactDetails );
 	return includeDomainDetails || includeGSuiteDetails ? domainDetails : undefined;
 }

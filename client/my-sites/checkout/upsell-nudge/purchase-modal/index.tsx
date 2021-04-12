@@ -98,6 +98,7 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ): JSX.E
 			siteSlug: selectedSite?.slug ?? '',
 			siteId: selectedSite?.ID,
 			stripeConfiguration,
+			contactDetails: undefined,
 		} ),
 		[
 			includeDomainDetails,

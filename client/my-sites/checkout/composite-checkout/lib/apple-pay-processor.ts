@@ -2,11 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import {
-	defaultRegistry,
-	makeSuccessResponse,
-	makeErrorResponse,
-} from '@automattic/composite-checkout';
+import { makeSuccessResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
 
@@ -21,9 +17,7 @@ import {
 	createTransactionEndpointCartFromResponseCart,
 } from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { ManagedContactDetails } from '../types/wpcom-store-state';
 
-const { select } = defaultRegistry;
 const debug = debugFactory( 'calypso:composite-checkout:apple-pay-processor' );
 
 type ApplePayTransactionRequest = {
@@ -41,23 +35,29 @@ export default async function applePayProcessor(
 		throw new Error( 'Required purchase data is missing' );
 	}
 
-	const { includeDomainDetails, includeGSuiteDetails, responseCart, siteId } = transactionOptions;
-
-	const managedContactDetails: ManagedContactDetails | undefined = select(
-		'wpcom'
-	)?.getContactInfo();
+	const {
+		includeDomainDetails,
+		includeGSuiteDetails,
+		responseCart,
+		siteId,
+		contactDetails,
+	} = transactionOptions;
 
 	debug( 'formatting apple-pay transaction', submitData );
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...submitData,
 		name: submitData.name || '',
 		siteId: siteId ? String( siteId ) : undefined,
-		country: managedContactDetails?.countryCode?.value ?? '',
-		postalCode: getPostalCode(),
-		domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
+		country: contactDetails?.countryCode?.value ?? '',
+		postalCode: getPostalCode( contactDetails ),
+		domainDetails: getDomainDetails( contactDetails, {
+			includeDomainDetails,
+			includeGSuiteDetails,
+		} ),
 		cart: createTransactionEndpointCartFromResponseCart( {
 			siteId: siteId ? String( siteId ) : undefined,
-			contactDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ) ?? null,
+			contactDetails:
+				getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) ?? null,
 			responseCart: responseCart,
 		} ),
 		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',

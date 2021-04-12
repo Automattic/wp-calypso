@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import type { ResponseCart } from './shopping-cart-endpoint';
+import type { ResponseCart, ResponseCartProduct } from './shopping-cart-endpoint';
 
 export function getEmptyResponseCart(): ResponseCart {
 	return {
@@ -35,5 +35,38 @@ export function getEmptyResponseCart(): ResponseCart {
 		tax: { location: {}, display_taxes: false },
 		is_signup: false,
 		next_domain_is_free: false,
+	};
+}
+
+export function getEmptyResponseCartProduct(): ResponseCartProduct {
+	return {
+		time_added_to_cart: Date.now(),
+		product_name: 'Replace me',
+		product_slug: 'replace-me',
+		currency: 'USD',
+		extra: {},
+		meta: '',
+		product_id: 1,
+		volume: 1,
+		quantity: null,
+		item_original_cost_integer: 0,
+		item_original_cost_display: '$0',
+		item_subtotal_integer: 0,
+		item_subtotal_display: '$0',
+		product_cost_integer: 0,
+		product_cost_display: '$0',
+		item_subtotal_monthly_cost_display: '$0',
+		item_subtotal_monthly_cost_integer: 0,
+		item_original_subtotal_integer: 0,
+		item_original_subtotal_display: '$0',
+		is_domain_registration: false,
+		is_bundled: false,
+		is_sale_coupon_applied: false,
+		months_per_bill_period: null,
+		uuid: 'product001',
+		cost: 0,
+		price: 0,
+		product_type: 'test',
+		included_domain_purchase_amount: 0,
 	};
 }

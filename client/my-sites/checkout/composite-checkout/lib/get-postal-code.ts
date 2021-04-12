@@ -1,24 +1,14 @@
 /**
- * External dependencies
- */
-import { defaultRegistry } from '@automattic/composite-checkout';
-
-/**
  * Internal dependencies
  */
 import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
 import type { ManagedContactDetails } from '../types/wpcom-store-state';
 
-const { select } = defaultRegistry;
-
-export default function getPostalCode(): string {
-	const managedContactDetails: ManagedContactDetails | undefined = select(
-		'wpcom'
-	)?.getContactInfo();
-	if ( ! managedContactDetails ) {
+export default function getPostalCode( contactDetails: ManagedContactDetails | undefined ): string {
+	if ( ! contactDetails ) {
 		return '';
 	}
-	const countryCode = managedContactDetails.countryCode?.value ?? '';
-	const postalCode = managedContactDetails.postalCode?.value ?? '';
+	const countryCode = contactDetails.countryCode?.value ?? '';
+	const postalCode = contactDetails.postalCode?.value ?? '';
 	return tryToGuessPostalCodeFormat( postalCode.toUpperCase(), countryCode );
 }
