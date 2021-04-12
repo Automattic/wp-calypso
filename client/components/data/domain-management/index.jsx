@@ -68,7 +68,7 @@ class DomainManagementData extends React.Component {
 						isRequestingSiteDomains: this.props.isRequestingSiteDomains,
 						products: this.props.products,
 						selectedDomainName: this.props.selectedDomainName,
-						selectedSite: selectedSite,
+						selectedSite,
 						sitePlans: this.props.sitePlans,
 						user: this.props.currentUser,
 					} ) }
