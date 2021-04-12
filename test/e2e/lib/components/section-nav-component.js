@@ -9,6 +9,12 @@ import { By } from 'selenium-webdriver';
 import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 
+/**
+ * A component used to display a particular section's navigation bar. Or more
+ * traditionally, the sub navigation most commonly seen near the top of a page.
+ *
+ *  @see {@link /client/components/section-nav/README.md}
+ */
 export default class SectionNavComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.section-nav' ) );
