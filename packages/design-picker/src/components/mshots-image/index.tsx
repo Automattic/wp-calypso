@@ -6,9 +6,13 @@ import classnames from 'classnames';
 import { addQueryArgs } from '@wordpress/url';
 
 /**
- * Style dependencies
+ * Internal dependencies
  */
 import { isEnabled } from '@automattic/calypso-config';
+
+/**
+ * Style dependencies
+ */
 import './style.scss';
 
 interface MShotsImageProps {
