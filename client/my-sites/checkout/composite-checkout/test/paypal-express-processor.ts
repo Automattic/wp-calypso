@@ -65,7 +65,7 @@ describe( 'payPalExpressProcessor', () => {
 		country: '',
 		domainDetails: null,
 		postalCode: '',
-		successUrl: 'https://example.com/',
+		successUrl: 'https://example.com',
 	};
 
 	const basicExpectedDomainDetails = {
