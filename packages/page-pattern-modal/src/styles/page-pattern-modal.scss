@@ -29,7 +29,8 @@ $breakpoint-tablet: 783px;
 $breakpoint-desktop: 961px;
 $breakpoint-huge: 1648px;
 
-$sidebar-width: 324px;
+$sidebar-width: 272px;
+$sidebar-width-desktop: 324px;
 
 // Overrides of the Gutenberg modal component
 .page-pattern-modal {
@@ -104,7 +105,7 @@ $sidebar-width: 324px;
 		margin-top: 0;
 		grid-template-columns: repeat(
 			auto-fill,
-			minmax( 260px, 1fr )
+			minmax( 280px, 1fr )
 		); // allow grid to take over number of cols on large screens
 	}
 }
@@ -174,8 +175,8 @@ $sidebar-width: 324px;
 .page-pattern-modal__sidebar {
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		position: fixed;
-		width: calc( #{$sidebar-width} - 24px );
-		padding-right: 44px;
+		width: $sidebar-width;
+		padding-right: 22px;
 
 		// Manually choosing when to enable/disable pointer events so that
 		// the scroll wheel behaviour feels natural when the mouse is over
@@ -198,6 +199,10 @@ $sidebar-width: 324px;
 				pointer-events: auto;
 			}
 		}
+	}
+	@media screen and ( min-width: $breakpoint-desktop ) {
+		width: $sidebar-width-desktop;
+		padding-right: 48px;
 	}
 }
 
@@ -296,5 +301,8 @@ $sidebar-width: 324px;
 .page-pattern-modal__pattern-list-container {
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		padding-left: $sidebar-width;
+	}
+	@media screen and ( min-width: $breakpoint-desktop ) {
+		padding-left: $sidebar-width-desktop;
 	}
 }
