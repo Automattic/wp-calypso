@@ -76,7 +76,7 @@ const useMshotsUrl = ( src: string, options: MShotsOptions ) => {
 			img.onload = null;
 			clearTimeout( timeoutId );
 		};
-	}, [ src, count ] );
+	}, [ src, count, options ] );
 
 	return loadedSrc;
 };
