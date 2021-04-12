@@ -24,10 +24,9 @@ const noop = () => {};
  * to get specific data and populate the record.
  *
  * @param {object} block - Block object data.
- * @param {object} parentBlock - Block object data.
  * @returns {object} Record properties object.
  */
-function globalEventPropsHandler( block, parentBlock ) {
+function globalEventPropsHandler( block ) {
 	if ( ! block?.name ) {
 		return {};
 	}
@@ -155,7 +154,7 @@ function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parent
 		block = ensureBlockObject( block );
 
 		const eventProperties = {
-			...globalEventPropsHandler( block, parentBlock ),
+			...globalEventPropsHandler( block ),
 			...propertiesHandler( block, parentBlock ),
 			inner_block: !! parentBlock,
 		};
