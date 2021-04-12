@@ -67,6 +67,7 @@ class TitanMailAddMailboxes extends React.Component {
 	state = {
 		mailboxes: [ buildNewTitanMailbox( this.props.selectedDomainName, false ) ],
 		isAddingToCart: false,
+		isCheckingAvailability: false,
 	};
 
 	isMounted = false;
@@ -129,9 +130,21 @@ class TitanMailAddMailboxes extends React.Component {
 	handleContinue = async () => {
 		const { selectedSite } = this.props;
 		const { mailboxes } = this.state;
-		const canContinue =
-			areAllMailboxesValid( mailboxes, [ 'alternativeEmail' ] ) &&
-			( await areAllMailboxesAvailable( mailboxes, this.onMailboxesChange ) );
+		const allMailboxesAreValid = areAllMailboxesValid( mailboxes, [ 'alternativeEmail' ] );
+
+		let allMailboxesAreAvailable = false;
+		if ( allMailboxesAreValid ) {
+			this.setState( { isCheckingAvailability: true } );
+			allMailboxesAreAvailable = await areAllMailboxesAvailable(
+				mailboxes,
+				this.onMailboxesChange
+			);
+			if ( this.isMounted ) {
+				this.setState( { isCheckingAvailability: false } );
+			}
+		}
+
+		const canContinue = allMailboxesAreValid && allMailboxesAreAvailable;
 
 		this.recordClickEvent( 'calypso_email_management_titan_add_mailboxes_continue_button_click', {
 			can_continue: canContinue,
@@ -221,7 +234,7 @@ class TitanMailAddMailboxes extends React.Component {
 						<Button
 							className="titan-mail-add-mailboxes__action-continue"
 							primary
-							busy={ this.state.isAddingToCart }
+							busy={ this.state.isAddingToCart || this.state.isCheckingAvailability }
 							onClick={ this.handleContinue }
 						>
 							{ translate( 'Continue' ) }
