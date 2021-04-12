@@ -15,7 +15,7 @@ export default class DomainsPage extends AsyncBaseContainer {
 	}
 
 	async isInEmptyState() {
-		return await driverHelper.isElementPresent(
+		return await driverHelper.isLocated(
 			this.driver,
 			By.css( '.domain-picker__empty-state' )
 		);

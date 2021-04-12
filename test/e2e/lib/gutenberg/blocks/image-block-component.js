@@ -19,7 +19,7 @@ export class ImageBlockComponent extends GutenbergBlockComponent {
 			By.css( '.components-form-file-upload input[type="file"]' )
 		);
 		await filePathInput.sendKeys( fileDetails.file );
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilNotLocated(
 			this.driver,
 			By.css( '.wp-block-image .components-spinner' )
 		); // Wait for upload spinner to complete
@@ -51,7 +51,7 @@ export class ImageBlockComponent extends GutenbergBlockComponent {
 			By.css( '.media-library__upload-button-input' )
 		);
 		await filePathInput.sendKeys( fileDetails.file );
-		await driverHelper.waitTillNotPresent(
+		await driverHelper.waitUntilNotLocated(
 			this.driver,
 			By.css( '.media-library__list-item.is-selected.is-transient' )
 		);

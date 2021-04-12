@@ -74,7 +74,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		// Let's give publishing request enough time to finish. Sometimes it takes
 		// way more than the default 20 seconds, and the cost of waiting a bit
 		// longer is definitely lower than the cost of repeating the whole spec.
-		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector, 60000 );
+		await driverHelper.waitUntilNotLocated( this.driver, this.publishingSpinnerSelector, 60000 );
 
 		if ( closePanel ) {
 			try {
@@ -250,7 +250,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async hasInvalidBlocks() {
-		return await driverHelper.isElementPresent( this.driver, By.css( '.block-editor-warning' ) );
+		return await driverHelper.isLocated( this.driver, By.css( '.block-editor-warning' ) );
 	}
 
 	async openBlockInserterAndSearch( searchTerm ) {
@@ -265,11 +265,11 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const inserterMenuSelector = By.css( '.block-editor-inserter__menu' );
 		const inserterSearchInputSelector = By.css( 'input.block-editor-inserter__search-input' );
 
-		if ( await driverHelper.elementIsNotPresent( this.driver, inserterMenuSelector ) ) {
+		if ( await driverHelper.isNotLocated( this.driver, inserterMenuSelector ) ) {
 			await driverHelper.clickWhenClickable( this.driver, inserterToggleSelector );
 			// "Click" twice - the first click seems to trigger a tooltip, the second opens the menu
 			// See https://github.com/Automattic/wp-calypso/issues/43179
-			if ( await driverHelper.elementIsNotPresent( this.driver, inserterMenuSelector ) ) {
+			if ( await driverHelper.isNotLocated( this.driver, inserterMenuSelector ) ) {
 				await driverHelper.clickWhenClickable( this.driver, inserterToggleSelector );
 			}
 
@@ -296,7 +296,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		);
 		const inserterMenuSelector = By.css( '.block-editor-inserter__menu' );
 		await driverHelper.clickWhenClickable( this.driver, inserterCloseSelector );
-		await driverHelper.waitTillNotPresent( this.driver, inserterMenuSelector );
+		await driverHelper.waitUntilNotLocated( this.driver, inserterMenuSelector );
 	}
 
 	/**
@@ -427,7 +427,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		await this.openBlockInserterAndSearch( title );
 
-		if ( await driverHelper.elementIsNotPresent( this.driver, inserterBlockItemSelector ) ) {
+		if ( await driverHelper.isNotLocated( this.driver, inserterBlockItemSelector ) ) {
 			await driverHelper.waitUntilLocatedAndVisible( this.driver, inserterBlockItemSelector );
 		}
 
@@ -514,7 +514,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async toggleSidebar( open = true ) {
 		const sidebarSelector = '.interface-complementary-area-header';
-		const sidebarOpen = await driverHelper.isElementPresent(
+		const sidebarOpen = await driverHelper.isLocated(
 			this.driver,
 			By.css( sidebarSelector )
 		);
@@ -591,18 +591,18 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			this.driver,
 			By.css( 'button.editor-post-publish-panel__toggle' )
 		);
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilNotLocated(
 			this.driver,
 			By.css( 'button.editor-post-switch-to-draft' )
 		);
 	}
 
 	async isDraft() {
-		const hasPublishButton = await driverHelper.isElementPresent(
+		const hasPublishButton = await driverHelper.isLocated(
 			this.driver,
 			By.css( 'button.editor-post-publish-panel__toggle' )
 		);
-		const hasRevertButton = await driverHelper.isElementPresent(
+		const hasRevertButton = await driverHelper.isLocated(
 			this.driver,
 			By.css( 'button.editor-post-switch-to-draft' )
 		);
@@ -626,7 +626,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			publishDate
 		);
 		await driverHelper.clickWhenClickable( this.driver, this.publishButtonSelector );
-		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
+		await driverHelper.waitUntilNotLocated( this.driver, this.publishingSpinnerSelector );
 		await driverHelper.waitUntilElementWithTextLocated(
 			this.driver,
 			By.css( '.post-publish-panel__postpublish-header' ),
@@ -664,7 +664,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async dismissPageTemplateSelector() {
-		if ( await driverHelper.isElementPresent( this.driver, By.css( '.page-pattern-modal' ) ) ) {
+		if ( await driverHelper.isLocated( this.driver, By.css( '.page-pattern-modal' ) ) ) {
 			if ( driverManager.currentScreenSize() === 'mobile' ) {
 				// For some reason, when the screensize is set to mobile,
 				// the welcome guide modal is not closed when the template button

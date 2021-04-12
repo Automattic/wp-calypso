@@ -18,7 +18,7 @@ export default class PostsPage extends AsyncBaseContainer {
 
 	async waitForPosts() {
 		const resultsLoadingSelector = By.css( '.posts__post-list .is-placeholder:not(.post)' );
-		return await driverHelper.waitTillNotPresent( this.driver, resultsLoadingSelector );
+		return await driverHelper.waitUntilNotLocated( this.driver, resultsLoadingSelector );
 	}
 
 	async addNewPost() {
@@ -49,7 +49,7 @@ export default class PostsPage extends AsyncBaseContainer {
 	}
 
 	async openSectionNav() {
-		const isOpen = await driverHelper.isElementPresent(
+		const isOpen = await driverHelper.isLocated(
 			this.driver,
 			By.css( '.post-type-filter .section-nav.is-open' )
 		);

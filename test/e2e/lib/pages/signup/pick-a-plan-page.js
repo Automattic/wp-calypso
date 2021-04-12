@@ -47,7 +47,7 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 		let selector = By.css( planSelector );
 
 		if ( level === 'free' ) {
-			if ( ! ( await driverHelper.isElementPresent( this.driver, selector ) ) ) {
+			if ( ! ( await driverHelper.isLocated( this.driver, selector ) ) ) {
 				selector = By.css(
 					'.plans-features-main__banner-content button, .formatted-header__subtitle button'
 				);
@@ -63,7 +63,7 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 
 		await driverHelper.clickWhenClickable( this.driver, selector );
 		try {
-			await driverHelper.waitTillNotPresent( this.driver, selector );
+			await driverHelper.waitUntilNotLocated( this.driver, selector );
 		} catch {
 			//If the first click doesn't take, try again
 			await driverHelper.clickWhenClickable( this.driver, selector );

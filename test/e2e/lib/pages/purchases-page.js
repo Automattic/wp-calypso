@@ -52,7 +52,7 @@ export default class PurchasesPage extends AsyncBaseContainer {
 	}
 
 	async _waitForPurchases() {
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilNotLocated(
 			this.driver,
 			by.css( '.is-placeholder' ),
 			this.explicitWaitMS * 3

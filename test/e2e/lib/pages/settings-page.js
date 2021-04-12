@@ -74,7 +74,7 @@ export default class SettingsPage extends AsyncBaseContainer {
 			By.css( '.manage-connection__disconnect-link a' )
 		);
 
-		const present = await DriverHelper.isElementPresent(
+		const present = await DriverHelper.isLocated(
 			this.driver,
 			By.css( '.is-primary.is-scary' )
 		);

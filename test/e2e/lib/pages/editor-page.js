@@ -88,7 +88,7 @@ export default class EditorPage extends AsyncBaseContainer {
 		);
 		const fileNameInput = await driver.findElement( fileNameInputSelector );
 		await fileNameInput.sendKeys( file );
-		await driverHelper.elementIsNotPresent(
+		await driverHelper.isNotLocated(
 			driver,
 			by.css( '.media-library__list-item.is-transient' )
 		);
@@ -129,7 +129,7 @@ export default class EditorPage extends AsyncBaseContainer {
 	}
 
 	async waitForImageEditor() {
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilNotLocated(
 			this.driver,
 			'.image-editor__canvas.is-placeholder'
 		);
@@ -216,7 +216,7 @@ export default class EditorPage extends AsyncBaseContainer {
 			this.driver,
 			by.css( '.editor-simple-payments-modal button.is-primary' )
 		);
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilNotLocated(
 			this.driver,
 			by.css( '.editor-simple-payments-modal' ),
 			this.explicitWaitMS * 7
@@ -250,7 +250,7 @@ export default class EditorPage extends AsyncBaseContainer {
 			this.driver,
 			by.css( 'button[data-e2e-button="cancel"]' )
 		);
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilNotLocated(
 			this.driver,
 			by.css( '.dialog__backdrop.is-full-screen' )
 		);
@@ -316,7 +316,7 @@ export default class EditorPage extends AsyncBaseContainer {
 	}
 
 	async waitForTitle() {
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilNotLocated(
 			this.driver,
 			by.css( '.editor-title.is-loading' )
 		);
@@ -330,14 +330,14 @@ export default class EditorPage extends AsyncBaseContainer {
 	}
 
 	async publishEnabled() {
-		return await driverHelper.isElementPresent(
+		return await driverHelper.isLocated(
 			this.driver,
 			by.css( '.editor-publish-button:not([disabled])' )
 		);
 	}
 
 	async postIsScheduled() {
-		return await driverHelper.isElementPresent(
+		return await driverHelper.isLocated(
 			this.driver,
 			by.css(
 				'.post-editor__inner .post-editor__content .editor-action-bar .editor-status-label.is-future'

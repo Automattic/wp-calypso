@@ -174,7 +174,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async settingsOptionExists( click = false ) {
-		const isDisplayed = await driverHelper.isElementPresent(
+		const isDisplayed = await driverHelper.isLocated(
 			this.driver,
 			SidebarComponent._getSidebarSelector( 'Settings' )
 		);
@@ -263,7 +263,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 
 		const sidebarNewSiteButton = By.css( '.my-sites-sidebar__add-new-site' );
 		const siteSwitcherNewSiteButton = By.css( '.site-selector__add-new-site .button svg' );
-		const present = await driverHelper.isElementPresent( this.driver, sidebarNewSiteButton );
+		const present = await driverHelper.isLocated( this.driver, sidebarNewSiteButton );
 		if ( present ) {
 			return await driverHelper.clickWhenClickable( this.driver, sidebarNewSiteButton );
 		}
@@ -293,7 +293,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 			return false;
 		}
 		await this.selectSiteSwitcher();
-		const clearSearch = await driverHelper.isElementPresent( this.driver, clearSearchButton );
+		const clearSearch = await driverHelper.isLocated( this.driver, clearSearchButton );
 		if ( clearSearch ) {
 			await driverHelper.clickWhenClickable( this.driver, clearSearchButton );
 		}
@@ -350,13 +350,13 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		const siteSwitcherSelector = By.css( '.current-site__switch-sites' );
 
 		await this.ensureSidebarMenuVisible();
-		const foundSwitcher = await driverHelper.isElementPresent( this.driver, siteSwitcherSelector );
+		const foundSwitcher = await driverHelper.isLocated( this.driver, siteSwitcherSelector );
 		if ( ! foundSwitcher ) {
 			// no site switcher, only one site
 			return false;
 		}
 		await this.selectSiteSwitcher();
-		const site = await driverHelper.isElementPresent( this.driver, siteSelector );
+		const site = await driverHelper.isLocated( this.driver, siteSelector );
 		if ( ! site ) {
 			// site is not in present in list
 			return false;

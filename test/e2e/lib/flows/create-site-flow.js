@@ -36,7 +36,7 @@ export default class CreateSiteFlow {
 			hoorayTitleLocator,
 			/your site will be ready shortly/i
 		);
-		await driverHelper.waitTillNotPresent( this.driver, hoorayTitleLocator, 60000 );
+		await driverHelper.waitUntilNotLocated( this.driver, hoorayTitleLocator, 60000 );
 
 		const myHomePage = await MyHomePage.Expect( this.driver );
 		return await myHomePage.siteSetupListExists();

@@ -46,7 +46,7 @@ export default class MediaPage extends AsyncBaseContainer {
 	}
 
 	async mediaEditorShowing() {
-		return await driverHelper.isElementPresent( this.driver, By.css( '.editor-media-modal' ) );
+		return await driverHelper.isLocated( this.driver, By.css( '.editor-media-modal' ) );
 	}
 
 	async imageShowingInEditor() {
@@ -91,7 +91,7 @@ export default class MediaPage extends AsyncBaseContainer {
 		);
 		const fileNameInput = await driver.findElement( fileNameInputSelector );
 		await fileNameInput.sendKeys( file );
-		await driverHelper.elementIsNotPresent(
+		await driverHelper.isNotLocated(
 			driver,
 			By.css( '.media-library__list-item.is-transient' )
 		);
@@ -103,7 +103,7 @@ export default class MediaPage extends AsyncBaseContainer {
 
 	async deleteMedia() {
 		if (
-			await driverHelper.elementIsNotPresent(
+			await driverHelper.isNotLocated(
 				this.driver,
 				By.css( '.media-library__list-item.is-selected' )
 			)

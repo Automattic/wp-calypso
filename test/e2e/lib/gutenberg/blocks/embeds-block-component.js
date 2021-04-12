@@ -21,7 +21,7 @@ export default class EmbedsBlockComponent extends GutenbergBlockComponent {
 			this.driver,
 			By.css( `${ this.blockID } .wp-block-embed .components-button` )
 		);
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilNotLocated(
 			this.driver,
 			By.css( `${ this.blockID } .wp-block-image .components-spinner` )
 		);

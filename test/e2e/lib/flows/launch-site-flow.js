@@ -29,7 +29,7 @@ export default class LaunchSiteFlow {
 
 		// Dismiss the domain upsell if present.
 		const dismissDomainUpsellSelector = By.css( ' .domain-upsell__continue-link button ' );
-		const domainUpsellPresent = await driverHelper.isElementPresent(
+		const domainUpsellPresent = await driverHelper.isLocated(
 			this.driver,
 			dismissDomainUpsellSelector
 		);

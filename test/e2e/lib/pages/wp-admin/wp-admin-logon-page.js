@@ -38,7 +38,7 @@ export default class WPAdminLogonPage extends AsyncBaseContainer {
 		} );
 		await driverHelper.clickWhenClickable( this.driver, submitSelector );
 
-		return await driverHelper.waitTillNotPresent( this.driver, userNameSelector );
+		return await driverHelper.waitUntilNotLocated( this.driver, userNameSelector );
 	}
 
 	async toggleSSOLogin() {

@@ -23,7 +23,7 @@ export default class ActivityPage extends AsyncBaseContainer {
 				driver,
 				By.css( '.activity-log-item:not(.is-loading)' )
 			);
-			return await driverHelper.isElementPresent(
+			return await driverHelper.isLocated(
 				driver,
 				// data-e2e-activity won't work since activity log has changed.
 				// By.css( `.activity-log-item__description-content[data-e2e-activity="${ postTitle }"]` )

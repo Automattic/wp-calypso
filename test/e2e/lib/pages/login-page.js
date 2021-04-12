@@ -52,7 +52,7 @@ export default class LoginPage extends AsyncBaseContainer {
 
 		if ( retry === true ) {
 			try {
-				await driverHelper.waitTillNotPresent( driver, userNameSelector, this.explicitWaitMS * 2 );
+				await driverHelper.waitUntilNotLocated( driver, userNameSelector, this.explicitWaitMS * 2 );
 			} catch ( e ) {
 				await SlackNotifier.warn( `The login didn't work as expected - retrying now: '${ e }'`, {
 					suppressDuplicateMessages: true,
@@ -61,7 +61,7 @@ export default class LoginPage extends AsyncBaseContainer {
 				return await this.login( username, password, { retry: false } );
 			}
 		}
-		return await driverHelper.waitTillNotPresent( driver, userNameSelector );
+		return await driverHelper.waitUntilNotLocated( driver, userNameSelector );
 	}
 
 	use2FAMethod( twoFAMethod ) {
@@ -77,7 +77,7 @@ export default class LoginPage extends AsyncBaseContainer {
 
 		if ( actionSelector ) {
 			return driverHelper
-				.isElementPresent( this.driver, actionSelector )
+				.isLocated( this.driver, actionSelector )
 				.then( ( actionAvailable ) => {
 					if ( actionAvailable ) {
 						return driverHelper.clickWhenClickable( this.driver, actionSelector );
@@ -93,7 +93,7 @@ export default class LoginPage extends AsyncBaseContainer {
 		await driverHelper.setWhenSettable( this.driver, twoStepCodeSelector, twoFACode );
 		await driverHelper.clickWhenClickable( this.driver, submitSelector );
 
-		return await driverHelper.waitTillNotPresent( this.driver, twoStepCodeSelector );
+		return await driverHelper.waitUntilNotLocated( this.driver, twoStepCodeSelector );
 	}
 
 	async requestMagicLink( emailAddress ) {

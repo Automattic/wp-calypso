@@ -21,11 +21,11 @@ export default class ViewPostPage extends AsyncBaseContainer {
 	}
 
 	async commentsVisible() {
-		return await driverHelper.isElementPresent( this.driver, By.css( '#respond' ) );
+		return await driverHelper.isLocated( this.driver, By.css( '#respond' ) );
 	}
 
 	async sharingButtonsVisible() {
-		return await driverHelper.isElementPresent( this.driver, By.css( 'div.sd-sharing' ) );
+		return await driverHelper.isLocated( this.driver, By.css( 'div.sd-sharing' ) );
 	}
 
 	async postContent() {
@@ -44,7 +44,7 @@ export default class ViewPostPage extends AsyncBaseContainer {
 	}
 
 	async contactFormDisplayed() {
-		return await driverHelper.isElementPresent( this.driver, By.css( '.contact-form' ) );
+		return await driverHelper.isLocated( this.driver, By.css( '.contact-form' ) );
 	}
 
 	async paymentButtonDisplayed( retries = 3 ) {
@@ -67,7 +67,7 @@ export default class ViewPostPage extends AsyncBaseContainer {
 	}
 
 	async isPasswordProtected() {
-		return await driverHelper.isElementPresent( this.driver, By.css( 'form.post-password-form' ) );
+		return await driverHelper.isLocated( this.driver, By.css( 'form.post-password-form' ) );
 	}
 
 	async enterPassword( password ) {
@@ -95,7 +95,7 @@ export default class ViewPostPage extends AsyncBaseContainer {
 		const commentSubmittingSelector = By.css( '#comment-form-submitting' );
 		await driverHelper.setWhenSettable( this.driver, By.css( '#comment' ), comment );
 		await driverHelper.clickWhenClickable( this.driver, commentButtonSelector );
-		return await driverHelper.waitTillNotPresent( this.driver, commentSubmittingSelector );
+		return await driverHelper.waitUntilNotLocated( this.driver, commentSubmittingSelector );
 	}
 
 	async commentEventuallyShown( comment ) {

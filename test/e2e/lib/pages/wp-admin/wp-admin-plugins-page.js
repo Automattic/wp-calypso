@@ -18,7 +18,7 @@ export default class WPAdminPluginsPage extends AsyncBaseContainer {
 		const activateSelector = by.css(
 			'tr[data-slug="jetpack"] .activate,tr[data-slug="jetpack"] .activate'
 		);
-		const located = await driverHelper.isElementPresent( this.driver, activateSelector );
+		const located = await driverHelper.isLocated( this.driver, activateSelector );
 		if ( located === true ) {
 			return await driverHelper.clickWhenClickable( this.driver, activateSelector );
 		}

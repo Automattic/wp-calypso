@@ -49,6 +49,6 @@ export default class NotificationsComponent extends AsyncBaseContainer {
 	}
 
 	async waitForUndoMessageToDisappear() {
-		return await driverHelper.waitTillNotPresent( this.driver, this.undoSelector );
+		return await driverHelper.waitUntilNotLocated( this.driver, this.undoSelector );
 	}
 }

@@ -27,7 +27,7 @@ export default class ProfilePage extends AsyncBaseContainer {
 	async clickSignOut() {
 		const buttonLocator = By.css( '.me-sidebar__signout-button,.sidebar__me-signout-button' );
 		await driverHelper.clickWhenClickable( this.driver, buttonLocator );
-		await driverHelper.waitTillNotPresent( this.driver, buttonLocator );
+		await driverHelper.waitUntilNotLocated( this.driver, buttonLocator );
 	}
 
 	chooseManagePurchases() {

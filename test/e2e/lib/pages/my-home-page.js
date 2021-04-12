@@ -39,7 +39,7 @@ export default class MyHomePage extends AsyncBaseContainer {
 
 	async closeCelebrateNotice() {
 		if (
-			await driverHelper.isElementPresent( this.driver, this.celebrateNoticeCloseButtonSelector )
+			await driverHelper.isLocated( this.driver, this.celebrateNoticeCloseButtonSelector )
 		) {
 			await this.driver.findElement( this.celebrateNoticeCloseButtonSelector ).click();
 		}
@@ -47,7 +47,7 @@ export default class MyHomePage extends AsyncBaseContainer {
 
 	async siteSetupListExists() {
 		await this.closeCelebrateNotice();
-		return await driverHelper.isElementPresent( this.driver, this.siteSetupListSelector );
+		return await driverHelper.isLocated( this.driver, this.siteSetupListSelector );
 	}
 
 	async isEmailVerified() {
@@ -60,7 +60,7 @@ export default class MyHomePage extends AsyncBaseContainer {
 
 	async isSiteLaunched() {
 		await this.closeCelebrateNotice();
-		return await driverHelper.isElementPresent( this.driver, this.launchSiteTaskCompleteSelector );
+		return await driverHelper.isLocated( this.driver, this.launchSiteTaskCompleteSelector );
 	}
 
 	async updateHomepageFromSiteSetup() {

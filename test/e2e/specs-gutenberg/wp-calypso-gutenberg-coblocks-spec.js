@@ -165,7 +165,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 				By.css( '.components-form-file-upload input[type="file"]' )
 			);
 			await filePathInput.sendKeys( fileDetails.file );
-			return await driverHelper.waitTillNotPresent(
+			return await driverHelper.waitUntilNotLocated(
 				driver,
 				By.css( '.wp-block-image .components-spinner' )
 			);

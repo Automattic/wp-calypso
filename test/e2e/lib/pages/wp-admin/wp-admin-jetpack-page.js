@@ -33,7 +33,7 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 
 		await driverHelper.waitUntilLocatedAndVisible( this.driver, spinnerSelector );
 
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilNotLocated(
 			this.driver,
 			spinnerSelector,
 			this.explicitWaitMS * 3
@@ -41,7 +41,7 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 	}
 
 	async atAGlanceDisplayed() {
-		return await driverHelper.isElementPresent( this.driver, By.css( '.jp-at-a-glance' ) );
+		return await driverHelper.isLocated( this.driver, By.css( '.jp-at-a-glance' ) );
 	}
 
 	async openPlansTab() {

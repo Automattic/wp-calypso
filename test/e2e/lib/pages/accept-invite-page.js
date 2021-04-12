@@ -29,7 +29,7 @@ export default class AcceptInvitePage extends AsyncBaseContainer {
 	}
 
 	async waitUntilNotVisible() {
-		return await DriverHelper.waitTillNotPresent(
+		return await DriverHelper.waitUntilNotLocated(
 			this.driver,
 			By.css( '#username' ),
 			this.explicitWaitMS * 2

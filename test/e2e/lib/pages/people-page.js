@@ -63,7 +63,7 @@ export default class PeoplePage extends AsyncBaseContainer {
 	async viewerDisplayed( username ) {
 		let retries = 0;
 		if (
-			await DriverHelper.isElementPresent( this.driver, By.css( '.section-header__label .count' ) )
+			await DriverHelper.isLocated( this.driver, By.css( '.section-header__label .count' ) )
 		) {
 			const noOfViewers = parseInt(
 				await this.driver.findElement( By.css( '.section-header__label .count' ) ).getText()
@@ -115,7 +115,7 @@ export default class PeoplePage extends AsyncBaseContainer {
 	}
 
 	async waitForSearchResults() {
-		return await DriverHelper.waitTillNotPresent( this.driver, this.searchResultsLoadingSelector );
+		return await DriverHelper.waitUntilNotLocated( this.driver, this.searchResultsLoadingSelector );
 	}
 
 	async numberSearchResults() {
@@ -143,7 +143,7 @@ export default class PeoplePage extends AsyncBaseContainer {
 				By.css( `.people-invites__pending .people-profile__username[title="${ emailAddress }"]` )
 			);
 
-			return await DriverHelper.isElementPresent(
+			return await DriverHelper.isLocated(
 				driver,
 				By.css( `.people-invites__pending .people-profile__username[title="${ emailAddress }"]` )
 			);

@@ -30,7 +30,7 @@ export default class NavBarComponent extends AsyncBaseContainer {
 		const popoverSelector = by.css( '.components-popover__content' );
 		const dismissPopoverSelector = by.css( '.nux-dot-tip__disable' );
 
-		if ( await driverHelper.isElementPresent( this.driver, popoverSelector ) ) {
+		if ( await driverHelper.isLocated( this.driver, popoverSelector ) ) {
 			await driverHelper.clickWhenClickable( dismissPopoverSelector );
 		}
 	}
@@ -80,7 +80,7 @@ export default class NavBarComponent extends AsyncBaseContainer {
 		const guidedToursDismissButtonSelector = by.css(
 			'div.guided-tours__step-first button:not(.is-primary)'
 		);
-		const present = await driverHelper.isElementPresent( self.driver, guidedToursDialogSelector );
+		const present = await driverHelper.isLocated( self.driver, guidedToursDialogSelector );
 		if ( present === true ) {
 			return await driverHelper.clickWhenClickable( self.driver, guidedToursDismissButtonSelector );
 		}

@@ -33,7 +33,7 @@ class SupportSearchComponent extends AsyncBaseContainer {
 			'.inline-help__results-placeholder, .help-search__results-placeholder'
 		);
 
-		return driverHelper.waitTillNotPresent(
+		return driverHelper.waitUntilNotLocated(
 			driver,
 			resultsLoadingSelector,
 			this.explicitWaitMS * 2
@@ -41,7 +41,7 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	}
 
 	async isRequestingSearchResults() {
-		return await driverHelper.isElementPresent(
+		return await driverHelper.isLocated(
 			this.driver,
 			By.css( '.inline-help__results-placeholder' )
 		);
@@ -57,7 +57,7 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	}
 
 	async waitForDefaultResultsNotToBePresent() {
-		return driverHelper.waitTillNotPresent( this.driver, defaultResultsSelectors );
+		return driverHelper.waitUntilNotLocated( this.driver, defaultResultsSelectors );
 	}
 
 	async getErrorResults() {
@@ -70,7 +70,7 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	}
 
 	async waitForErrorResultsNotToBePresent() {
-		return driverHelper.waitTillNotPresent( this.driver, errorResultsSelectors );
+		return driverHelper.waitUntilNotLocated( this.driver, errorResultsSelectors );
 	}
 
 	async getSearchResults() {
@@ -83,7 +83,7 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	}
 
 	async waitForSearchResultsNotToBePresent() {
-		return driverHelper.waitTillNotPresent( this.driver, searchResultsSelectors );
+		return driverHelper.waitUntilNotLocated( this.driver, searchResultsSelectors );
 	}
 
 	async getAdminSearchResults() {
@@ -96,7 +96,7 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	}
 
 	async waitForAdminResultsNotToBePresent() {
-		return driverHelper.waitTillNotPresent( this.driver, adminSearchResultsSelectors );
+		return driverHelper.waitUntilNotLocated( this.driver, adminSearchResultsSelectors );
 	}
 
 	async searchFor( query = '' ) {
@@ -122,7 +122,7 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	}
 
 	async hasNoResultsMessage() {
-		return await driverHelper.isElementPresent(
+		return await driverHelper.isLocated(
 			this.driver,
 			By.css( '.inline-help__empty-results, .help-search__empty-results' )
 		);

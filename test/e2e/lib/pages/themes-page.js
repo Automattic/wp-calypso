@@ -44,7 +44,7 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async waitUntilThemesLoaded() {
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilNotLocated(
 			this.driver,
 			by.css( '.themes-list .is-placeholder' )
 		);

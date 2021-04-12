@@ -15,7 +15,7 @@ export default class ManagePurchasePage extends AsyncBaseContainer {
 	}
 
 	async _postInit() {
-		return await driverHelper.waitTillNotPresent( this.driver, by.css( '.is-placeholder' ) );
+		return await driverHelper.waitUntilNotLocated( this.driver, by.css( '.is-placeholder' ) );
 	}
 
 	async domainDisplayed() {

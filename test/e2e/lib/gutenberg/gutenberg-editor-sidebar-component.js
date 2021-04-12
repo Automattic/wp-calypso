@@ -275,7 +275,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 
 		// wait for 'Move to trash' button to disappear
 		try {
-			return await driverHelper.waitTillNotPresent(
+			return await driverHelper.waitUntilNotLocated(
 				this.driver,
 				trashSelector,
 				this.explicitWaitMS * 3

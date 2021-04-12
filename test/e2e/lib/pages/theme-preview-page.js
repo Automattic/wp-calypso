@@ -23,7 +23,7 @@ export default class ThemePreviewPage extends AsyncBaseContainer {
 	}
 
 	async activateButtonVisible() {
-		return await driverHelper.isElementPresent( this.driver, this.activateSelector );
+		return await driverHelper.isLocated( this.driver, this.activateSelector );
 	}
 
 	async activate() {

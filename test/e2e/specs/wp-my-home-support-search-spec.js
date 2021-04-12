@@ -53,7 +53,7 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 		await driverHelper.scrollIntoView( driver, helpCardSelector );
 
 		// Verify it is there.
-		const isGetHelpCardPresent = await driverHelper.isElementPresent( driver, helpCardSelector );
+		const isGetHelpCardPresent = await driverHelper.isLocated( driver, helpCardSelector );
 		assert.equal(
 			isGetHelpCardPresent,
 			true,

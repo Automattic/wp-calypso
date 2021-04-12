@@ -30,7 +30,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async isCompositeCheckout() {
-		return driverHelper.isElementPresent( this.driver, By.css( '.composite-checkout' ) );
+		return driverHelper.isLocated( this.driver, By.css( '.composite-checkout' ) );
 	}
 
 	async _postInit() {
@@ -167,7 +167,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 			'.credit-card-payment-box button[disabled],.composite-checkout .checkout-submit-button button[disabled]'
 		);
 
-		await driverHelper.waitTillNotPresent( this.driver, disabledPaymentButton );
+		await driverHelper.waitUntilNotLocated( this.driver, disabledPaymentButton );
 		return await driverHelper.clickWhenClickable( this.driver, this.paymentButtonSelector );
 	}
 
@@ -175,13 +175,13 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		const isCompositeCheckout = await this.isCompositeCheckout();
 
 		if ( isCompositeCheckout ) {
-			return await driverHelper.waitTillNotPresent(
+			return await driverHelper.waitUntilNotLocated(
 				this.driver,
 				By.css( '.checkout-submit-button .checkout-button.is-busy' ),
 				this.explicitWaitMS * 5
 			);
 		}
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilNotLocated(
 			this.driver,
 			By.css( '.credit-card-payment-box__progress-bar' ),
 			this.explicitWaitMS * 5
@@ -189,7 +189,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async waitForPageToDisappear() {
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilNotLocated(
 			this.driver,
 			this.expectedElementSelector,
 			this.explicitWaitMS * 5
@@ -253,7 +253,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 			const noticeSelector = By.css(
 				'.notice button.notice_dismiss, .notice button.notice__dismiss'
 			);
-			if ( await driverHelper.isElementPresent( this.driver, noticeSelector ) ) {
+			if ( await driverHelper.isLocated( this.driver, noticeSelector ) ) {
 				await driverHelper.clickWhenClickable( this.driver, noticeSelector );
 				await this.submitPaymentDetails();
 			}
@@ -353,12 +353,12 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	async hasCouponApplied() {
 		const isCompositeCheckout = await this.isCompositeCheckout();
 		if ( isCompositeCheckout ) {
-			return driverHelper.isElementPresent(
+			return driverHelper.isLocated(
 				this.driver,
 				By.css( '#checkout-line-item-coupon-line-item' )
 			);
 		}
-		return driverHelper.isElementPresent( this.driver, By.css( '.cart__remove-link' ) );
+		return driverHelper.isLocated( this.driver, By.css( '.cart__remove-link' ) );
 	}
 
 	async waitForCouponToBeApplied() {
@@ -375,17 +375,17 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	async waitForCouponToBeRemoved() {
 		const isCompositeCheckout = await this.isCompositeCheckout();
 		if ( isCompositeCheckout ) {
-			await driverHelper.waitTillNotPresent(
+			await driverHelper.waitUntilNotLocated(
 				this.driver,
 				By.css( '[data-e2e-cart-is-loading="true"]' )
 			);
 
-			return await driverHelper.waitTillNotPresent(
+			return await driverHelper.waitUntilNotLocated(
 				this.driver,
 				By.css( '#checkout-line-item-coupon-line-item' )
 			);
 		}
-		return await driverHelper.waitTillNotPresent( this.driver, By.css( '.cart__remove-link' ) );
+		return await driverHelper.waitUntilNotLocated( this.driver, By.css( '.cart__remove-link' ) );
 	}
 
 	async removeCoupon() {
@@ -399,7 +399,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 					By.css( '.wp-checkout__review-order-step .checkout-step__edit-button' )
 				);
 			} catch {
-				await driverHelper.isElementPresent(
+				await driverHelper.isLocated(
 					this.driver,
 					By.css(
 						'.checkout-steps__step-content .checkout-line-item[data-product-type="coupon"] button'

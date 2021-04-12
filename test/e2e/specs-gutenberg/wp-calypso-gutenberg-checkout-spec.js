@@ -130,7 +130,7 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 
 	describe( 'Can add/remove coupons', function () {
 		step( 'Can Enter Coupon Code', async function () {
-			const enterCouponCodeButton = await driverHelper.isElementPresent(
+			const enterCouponCodeButton = await driverHelper.isLocated(
 				driver,
 				By.css( '.wp-checkout-order-review__show-coupon-field-button' )
 			);
@@ -144,7 +144,7 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 					Math.round( ( originalCartAmount * 0.99 + Number.EPSILON ) * 100 ) / 100;
 				assert.strictEqual( newCartAmount, expectedCartAmount, 'Coupon not applied properly' );
 			} else {
-				const existingCoupon = await driverHelper.isElementPresent(
+				const existingCoupon = await driverHelper.isLocated(
 					driver,
 					By.css( '.checkout-line-item[data-product-type="coupon"]' )
 				);
@@ -190,7 +190,7 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 		} );
 
 		step( 'Can select and fill out credit card payment method', async function () {
-			const existingCardIsPresent = await driverHelper.isElementPresent(
+			const existingCardIsPresent = await driverHelper.isLocated(
 				driver,
 				By.css( '[id*="existingCard-"]:checked' )
 			);
@@ -207,7 +207,7 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 			await securePaymentComponent.submitPaymentDetails();
 			await securePaymentComponent.waitForCreditCardPaymentProcessing();
-			const errorNoticeIsNotPresent = await driverHelper.elementIsNotPresent(
+			const errorNoticeIsNotPresent = await driverHelper.isNotLocated(
 				driver,
 				By.css( '.notice.is-error' )
 			);

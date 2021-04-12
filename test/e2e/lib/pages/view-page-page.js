@@ -25,11 +25,11 @@ export default class ViewPagePage extends AsyncBaseContainer {
 	}
 
 	async sharingButtonsVisible() {
-		return await driverHelper.isElementPresent( this.driver, By.css( 'div.sd-sharing' ) );
+		return await driverHelper.isLocated( this.driver, By.css( 'div.sd-sharing' ) );
 	}
 
 	async isPasswordProtected() {
-		return await driverHelper.isElementPresent( this.driver, By.css( 'form.post-password-form' ) );
+		return await driverHelper.isLocated( this.driver, By.css( 'form.post-password-form' ) );
 	}
 
 	async categoryDisplayed() {

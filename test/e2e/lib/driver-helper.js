@@ -84,6 +84,32 @@ export async function clickWhenClickable( driver, locator, timeout = explicitWai
 }
 
 /**
+ * Checks whether an element is located in DOM or not.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Boolean} Whether the element is located or not
+ */
+export async function isLocated( driver, locator ) {
+	const elements = await driver.findElements( locator );
+	return elements.length > 0;
+}
+
+/**
+ * An opposite to the isLocated helper.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Boolean} True if the element is not in DOM
+ */
+export async function isNotLocated( driver, locator ) {
+	const isLocated = await isLocated( driver, locator );
+	return ! isLocated;
+}
+
+/**
  * Waits until an element is located in DOM and visible. Throws an error after
  * it times out.
  *
@@ -108,6 +134,40 @@ export function waitUntilLocatedAndVisible( driver, locator, timeout = explicitW
 
 				return isDisplayed ? element : null;
 			}
+		),
+		timeout
+	);
+}
+
+/**
+ * Waits until an element is located in DOM. Throws an error after it times out.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise<WebElement>} A promise that will be resolved with
+ * the located element
+ */
+export function waitUntilLocated( driver, locator, timeout ) {
+	return driver.wait( until.elementLocated( locator ), timeout );
+}
+
+/**
+ * Waits until an element is NOT located in DOM. Throws an error after it times
+ * out.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise<WebElement>} A promise that will be resolved with true when
+ * the element becomes unavaialble
+ */
+export function waitUntilNotLocated( driver, locator, timeout ) {
+	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
+
+	return driver.wait(
+		new WebElementCondition( `for element to NOT be located ${ locatorStr }`, () =>
+			isNotLocated( driver, locator )
 		),
 		timeout
 	);
@@ -150,17 +210,6 @@ export async function clickIfPresent( driver, locator ) {
 export async function getElementCount( driver, selector ) {
 	const elements = await driver.findElements( selector );
 	return elements.length || 0;
-}
-
-export async function isElementPresent( driver, selector ) {
-	const elements = await driver.findElements( selector );
-	return !! elements.length;
-}
-
-export function elementIsNotPresent( driver, selector ) {
-	return this.isElementPresent( driver, selector ).then( function ( isPresent ) {
-		return ! isPresent;
-	} );
 }
 
 /**
@@ -247,21 +296,6 @@ export function unsetCheckbox( driver, selector ) {
 			}
 		} );
 	} );
-}
-
-export function waitTillNotPresent( driver, selector, waitOverride ) {
-	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
-	const self = this;
-
-	return driver.wait(
-		function () {
-			return self.isElementPresent( driver, selector ).then( function ( isPresent ) {
-				return ! isPresent;
-			} );
-		},
-		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to NOT be present`
-	);
 }
 
 /**
@@ -423,7 +457,7 @@ export async function refreshIfJNError( driver, timeout = 2000 ) {
 
 	const refreshIfNeeded = async () => {
 		const jnErrorDisplayed = await isEventuallyLocatedAndVisible( driver, jnSiteError, timeout );
-		const jnDBErrorDisplayed = await isElementPresent( driver, jnDBError );
+		const jnDBErrorDisplayed = await isLocated( driver, jnDBError );
 		if ( jnErrorDisplayed || jnDBErrorDisplayed ) {
 			console.log( 'JN Error! Refreshing the page' );
 			await driver.navigate().refresh();

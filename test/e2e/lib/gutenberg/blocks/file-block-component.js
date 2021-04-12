@@ -19,7 +19,7 @@ export class FileBlockComponent extends GutenbergBlockComponent {
 			By.css( '.components-form-file-upload input[type="file"]' )
 		);
 		await filePathInput.sendKeys( fileDetails.file );
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilNotLocated(
 			this.driver,
 			By.css( '.wp-block-image .components-spinner' )
 		); // Wait for upload spinner to complete

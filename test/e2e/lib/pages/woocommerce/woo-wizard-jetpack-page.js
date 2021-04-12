@@ -19,7 +19,7 @@ export default class WooWizardJetpackPage extends AsyncBaseContainer {
 		await driverHelper.waitUntilLocatedAndVisible( this.driver, buttonSelector );
 		await this.driver.sleep( 5000 );
 		await driverHelper.clickWhenClickable( this.driver, buttonSelector );
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilNotLocated(
 			this.driver,
 			buttonSelector,
 			this.explicitWaitMS * 20
