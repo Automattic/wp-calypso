@@ -26,7 +26,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		);
 		await driverHelper.scrollIntoView( this.driver, by );
 		await driverHelper.clickWhenClickable( this.driver, by );
-		return driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( '.components-panel' ) );
+		return driverHelper.waitUntilLocatedAndVisible( this.driver, By.css( '.components-panel' ) );
 	}
 
 	async selectDocumentTab() {
@@ -102,7 +102,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 			By.css( '.components-panel__body-toggle' ),
 			text
 		);
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, sectionSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, sectionSelector );
 		const sectionButton = await this.driver.findElement( sectionSelector );
 		const c = await sectionButton.getAttribute( 'aria-expanded' );
 		if ( expand && c === 'false' ) {
@@ -145,7 +145,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		await driverHelper.clickWhenClickable( driver, addNewCategoryButtonSelector );
 		await driverHelper.setWhenSettable( driver, categoryNameInputSelector, category );
 		await driverHelper.clickWhenClickable( driver, saveCategoryButtonSelector );
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			driver,
 			By.xpath( `//label[contains(text(), '${ category }')]` )
 		);
@@ -154,7 +154,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	async addNewTag( tag ) {
 		const tagEntrySelector = By.css( 'input.components-form-token-field__input' );
 
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, tagEntrySelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, tagEntrySelector );
 		await driverHelper.scrollIntoView( this.driver, tagEntrySelector );
 		const tagInput = await driverHelper.setWhenSettable( this.driver, tagEntrySelector, tag );
 		await tagInput.sendKeys( Key.ENTER );
@@ -251,7 +251,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		// https://github.com/WordPress/gutenberg/issues/30415 and can be reverted
 		// once an upstream fix is in.
 		await driverHelper.selectElementByText( this.driver, firstDay, '1' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, publishDateSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, publishDateSelector );
 		const publishDate = await this.driver.findElement( publishDateSelector ).getText();
 
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
@@ -262,7 +262,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 
 	async getSelectedPublishDate() {
 		const publishDateSelector = By.css( '.edit-post-post-schedule__toggle' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, publishDateSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, publishDateSelector );
 		return await this.driver.findElement( publishDateSelector ).getText();
 	}
 
@@ -270,7 +270,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		const trashSelector = By.css( 'button.editor-post-trash' );
 
 		await this.selectDocumentTab();
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, trashSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, trashSelector );
 		await driverHelper.clickWhenClickable( this.driver, trashSelector );
 
 		// wait for 'Move to trash' button to disappear
@@ -293,7 +293,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 
 	async enterImageAltText( fileDetails ) {
 		const altTextInputSelector = By.css( '.components-textarea-control__input' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, altTextInputSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, altTextInputSelector );
 		return await driverHelper.setWhenSettable(
 			this.driver,
 			altTextInputSelector,

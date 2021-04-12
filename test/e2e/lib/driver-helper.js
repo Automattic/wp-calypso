@@ -83,29 +83,33 @@ export async function clickWhenClickable( driver, locator, timeout = explicitWai
 	return element;
 }
 
-export function waitTillPresentAndDisplayed( driver, selector, waitOverride ) {
-	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
+/**
+ * Waits until an element is located in DOM and visible. Throws an error after
+ * it times out.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise<WebElement>} A promise that will be resolved with
+ * the located element
+ */
+export function waitUntilLocatedAndVisible( driver, locator, timeout = explicitWaitMS ) {
+	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
 
 	return driver.wait(
-		function () {
-			return driver.findElement( selector ).then(
-				function ( element ) {
-					return element.isDisplayed().then(
-						function () {
-							return true;
-						},
-						function () {
-							return false;
-						}
-					);
-				},
-				function () {
-					return false;
+		new WebElementCondition(
+			`for the element to become located and visible ${ locatorStr }`,
+			async function () {
+				const element = ( await driver.findElements( locator ) )[ 0 ];
+				if ( ! element ) {
+					return null;
 				}
-			);
-		},
-		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be present and displayed`
+				const isDisplayed = await element.isDisplayed();
+
+				return isDisplayed ? element : null;
+			}
+		),
+		timeout
 	);
 }
 
@@ -357,7 +361,7 @@ export async function ensureMobileMenuOpen( driver ) {
 	const menuLocator = by.css( '.section-nav' );
 	const openMenuLocator = by.css( '.section-nav.is-open' );
 
-	await waitTillPresentAndDisplayed( driver, menuLocator );
+	await waitUntilLocatedAndVisible( driver, menuLocator );
 	const menuElement = await driver.findElement( menuLocator );
 	const isMenuOpen = await menuElement
 		.getAttribute( 'class' )
@@ -365,7 +369,7 @@ export async function ensureMobileMenuOpen( driver ) {
 
 	if ( ! isMenuOpen ) {
 		await clickWhenClickable( driver, mobileHeaderLocator );
-		await waitTillPresentAndDisplayed( driver, openMenuLocator );
+		await waitUntilLocatedAndVisible( driver, openMenuLocator );
 	}
 }
 

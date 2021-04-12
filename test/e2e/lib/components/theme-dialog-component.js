@@ -15,7 +15,7 @@ export default class ThemeDialogComponent extends AsyncBaseContainer {
 	}
 
 	async _postInit() {
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.themes__thanks-modal h1' ),
 			this.explicitWaitMS * 2

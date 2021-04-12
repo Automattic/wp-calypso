@@ -16,7 +16,7 @@ export default class ThemePreviewPage extends AsyncBaseContainer {
 	}
 
 	async _postInit() {
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			by.css( '.web-preview.is-visible .web-preview__content' )
 		);
