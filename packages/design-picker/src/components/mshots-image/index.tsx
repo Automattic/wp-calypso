@@ -71,7 +71,7 @@ const useMshotsUrl = ( src: string, options: MShotsOptions ) => {
 				timeoutId = setTimeout( () => setCount( count + 1 ), count * 500 );
 			}
 		};
-		
+
 		return () => {
 			img.onload = null;
 			clearTimeout( timeoutId );
