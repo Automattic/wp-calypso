@@ -3,10 +3,11 @@
  */
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
-import { find, get, head, includes, omit } from 'lodash';
+import { connect, useSelector } from 'react-redux';
+import { find, get, head, omit } from 'lodash';
 import page from 'page';
 import { localize } from 'i18n-calypso';
+import { createHigherOrderComponent } from '@wordpress/compose';
 
 /**
  * Internal Dependencies
@@ -27,7 +28,9 @@ import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import useUsersQuery from 'calypso/data/users//use-users-query';
 
 /**
  * Style dependencies
@@ -44,6 +47,7 @@ class TransferOtherUser extends React.Component {
 		isRequestingSiteDomains: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		// From `withUsers` HoC
 		users: PropTypes.array.isRequired,
 	};
 
@@ -336,8 +340,7 @@ class TransferOtherUser extends React.Component {
 	filterAvailableUsers( users ) {
 		return users.filter(
 			( user ) =>
-				includes( user.roles, 'administrator' ) &&
-				this.getWpcomUserId( user ) !== this.props.currentUser.ID
+				! this.getWpcomUserId( user ) || this.getWpcomUserId( user ) !== this.props.currentUser.ID
 		);
 	}
 
@@ -345,6 +348,17 @@ class TransferOtherUser extends React.Component {
 		return this.props.hasSiteDomainsLoaded && ! this.props.isRequestingSiteDomains;
 	}
 }
+
+const withUsers = createHigherOrderComponent(
+	( Wrapped ) => ( props ) => {
+		const siteId = useSelector( getSelectedSiteId );
+		const usersQuery = useUsersQuery( siteId, { role: 'administrator' } );
+		const users = usersQuery.data?.users ?? [];
+
+		return <Wrapped { ...props } users={ users } />;
+	},
+	'WithUsers'
+);
 
 export default connect(
 	( state, ownProps ) => {
@@ -362,4 +376,4 @@ export default connect(
 		successNotice,
 		errorNotice,
 	}
-)( localize( TransferOtherUser ) );
+)( localize( withUsers( TransferOtherUser ) ) );
