@@ -3,25 +3,36 @@
  */
 import { get, mapValues, reduce } from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line no-restricted-imports
+import type { Reducer, AnyAction, Action } from 'redux';
 
 /**
  * Internal dependencies
  */
 import { serialize, deserialize } from './serialize';
+import type { SerializableReducer } from './serialize';
 import { APPLY_STORED_STATE } from 'calypso/state/action-types';
 import { SerializationResult } from 'calypso/state/serialization-result';
+
+export interface CombinedReducer extends SerializableReducer {
+	storageKey?: string;
+	addReducer?: ( keyPath: string[], reducer: Reducer ) => CombinedReducer;
+	getStorageKeys?: () => Generator< string | { storageKey: string; reducer: Reducer } >;
+}
 
 /**
  * Create a new reducer from original `reducers` by adding a new `reducer` at `keyPath`
  *
- * @param {Function} origReducer Original reducer to copy `storageKey` and other flags from
- * @param {object} reducers Object with reducer names as keys and reducer functions as values that
+ * @param origReducer Original reducer to copy `storageKey` and other flags from
+ * @param reducers Object with reducer names as keys and reducer functions as values that
  *   is used as parameter to `combineReducers` (the original Redux one and our extension, too).
- * @returns {Function} The function to be attached as `addReducer` method to the
+ * @returns The function to be attached as `addReducer` method to the
  *   result of `combineReducers`.
  */
-export function addReducer( origReducer, reducers ) {
-	return ( keyPath, reducer ) => {
+export function addReducer(
+	origReducer: CombinedReducer,
+	reducers: Record< string, CombinedReducer >
+) {
+	return ( keyPath: string[], reducer: CombinedReducer ): CombinedReducer => {
 		// extract the first key from keyPath and dive recursively into the reducer tree
 		const [ key, ...restKeys ] = keyPath;
 
@@ -61,7 +72,10 @@ export function addReducer( origReducer, reducers ) {
 			);
 		}
 
-		const newCombinedReducer = combineReducers( { ...reducers, [ key ]: newReducer } );
+		const newCombinedReducer: CombinedReducer = combineReducers( {
+			...reducers,
+			[ key ]: newReducer,
+		} );
 
 		// Preserve the storageKey of the updated reducer
 		newCombinedReducer.storageKey = origReducer.storageKey;
@@ -133,13 +147,13 @@ export function addReducer( origReducer, reducers ) {
  * combinedReducer( { date: new Date( 6 ), height: 123 } ), { type: GROW } ); // { date: new Date( 7 ), height: 124 };
  * ```
  *
- * @param {object} reducers - object containing the reducers to merge
- * @returns {Function} - Returns the combined reducer function
+ * @param reducers - object containing the reducers to merge
+ * @returns - Returns the combined reducer function
  */
-export function combineReducers( reducers ) {
+export function combineReducers( reducers: Record< string, Reducer > ): CombinedReducer {
 	const combined = combine( reducers );
 
-	const combinedReducer = ( state, action ) => {
+	const combinedReducer: CombinedReducer = ( state, action ) => {
 		switch ( action.type ) {
 			case APPLY_STORED_STATE:
 				return applyStoredState( reducers, state, action );
@@ -157,7 +171,11 @@ export function combineReducers( reducers ) {
 	return combinedReducer;
 }
 
-function applyStoredState( reducers, state, action ) {
+function applyStoredState< TState, TAction extends AnyAction = Action >(
+	reducers: Record< string, CombinedReducer >,
+	state: TState,
+	action: TAction
+) {
 	let hasChanged = false;
 	const nextState = mapValues( reducers, ( reducer, key ) => {
 		// Replace the value for the key we want to init with action.storedState.
@@ -177,7 +195,9 @@ function applyStoredState( reducers, state, action ) {
 	return hasChanged ? nextState : state;
 }
 
-function getStorageKeys( reducers ) {
+function getStorageKeys(
+	reducers: Record< string, CombinedReducer >
+): () => Generator< string | { storageKey: string; reducer: Reducer } > {
 	return function* () {
 		for ( const reducer of Object.values( reducers ) ) {
 			if ( reducer.storageKey ) {
@@ -201,7 +221,10 @@ function getStorageKeys( reducers ) {
 //   `undefined` rather than an empty object.
 // - if the state to serialize is `undefined` (happens when some key in state is missing)
 //   the serialized value is `undefined` and there's no need to reduce anything.
-function serializeState( reducers, state ) {
+function serializeState< TState = any >(
+	reducers: Record< string, CombinedReducer >,
+	state: Record< keyof typeof reducers, TState >
+): SerializationResult | undefined {
 	if ( state === undefined ) {
 		return undefined;
 	}
@@ -223,11 +246,14 @@ function serializeState( reducers, state ) {
 			}
 			return result;
 		},
-		undefined
+		undefined as SerializationResult | undefined
 	);
 }
 
-function deserializeState( reducers, persisted ) {
+function deserializeState(
+	reducers: Record< string, SerializableReducer >,
+	persisted: Record< string, any >
+) {
 	return mapValues( reducers, ( reducer, reducerKey ) =>
 		deserialize( reducer, persisted?.[ reducerKey ] )
 	);
