@@ -5,7 +5,6 @@ import debugFactory from 'debug';
 import { makeSuccessResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
-import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
