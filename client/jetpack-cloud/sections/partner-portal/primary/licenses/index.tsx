@@ -25,6 +25,7 @@ import {
 	getCurrentPartner,
 } from 'calypso/state/partner-portal/partner/selectors';
 import { setActivePartnerKey } from 'calypso/state/partner-portal/partner/actions';
+import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 
 /**
  * Style dependencies
@@ -50,9 +51,12 @@ export default function Licenses( {
 	const dispatch = useDispatch();
 	const partner = useSelector( getCurrentPartner );
 	const activeKeyId = useSelector( getActivePartnerKeyId );
-	const onKeySelect = useCallback( ( option ) => {
-		dispatch( setActivePartnerKey( parseInt( option.value ) ) );
-	}, [] );
+	const onKeySelect = useCallback(
+		( option ) => {
+			dispatch( setActivePartnerKey( parseInt( option.value ) ) );
+		},
+		[ dispatch ]
+	);
 
 	const options =
 		partner &&
@@ -62,6 +66,14 @@ export default function Licenses( {
 		} ) );
 
 	options?.unshift( { label: translate( 'Partner Key' ) as string, value: '', isLabel: true } );
+
+	const context = {
+		filter,
+		search,
+		currentPage,
+		sortDirection,
+		sortField,
+	};
 
 	return (
 		<Main wideLayout={ true } className="licenses">
@@ -82,15 +94,11 @@ export default function Licenses( {
 				</Button>
 			</div>
 
-			<LicenseStateFilter filter={ filter } search={ search } />
+			<LicenseListContext.Provider value={ context }>
+				<LicenseStateFilter />
 
-			<LicenseList
-				filter={ filter }
-				search={ search }
-				currentPage={ currentPage }
-				sortDirection={ sortDirection }
-				sortField={ sortField }
-			/>
+				<LicenseList />
+			</LicenseListContext.Provider>
 		</Main>
 	);
 }

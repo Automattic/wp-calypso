@@ -113,6 +113,13 @@ export default function getThankYouPageUrl( {
 		debug( 'ignorning redirectTo', redirectTo );
 	}
 
+	// If there's a redirect URL set on a product in the cart, use the most recent one.
+	const urlFromCart = cart ? getRedirectUrlFromCart( cart ) : null;
+	if ( urlFromCart ) {
+		debug( 'returning url from cart', urlFromCart );
+		return urlFromCart;
+	}
+
 	// Note: this function is called early on for redirect-type payment methods, when the receipt isn't set yet.
 	// The `:receiptId` string is filled in by our pending page after the PayPal checkout
 	const pendingOrReceiptId = getPendingOrReceiptId( receiptId, orderId, purchaseId );
@@ -281,7 +288,7 @@ function getFallbackDestination( {
 			if ( isJetpackCloud() ) {
 				if ( redirectCloudCheckoutToWpAdmin() && adminUrl ) {
 					debug( 'checkout is Jetpack Cloud, returning wp-admin url' );
-					return `${ adminUrl }admin.php?page=jetpack#/my-plan`;
+					return `${ adminUrl }admin.php?page=jetpack#/recommendations`;
 				}
 				debug( 'checkout is Jetpack Cloud, returning Jetpack Redirect API url' );
 				return `${ JETPACK_REDIRECT_URL }&site=${ siteSlug }&query=${ encodeURIComponent(
@@ -520,4 +527,26 @@ function getThankYouPageUrlForTrafficGuide( {
 	if ( hasTrafficGuide( cart ) ) {
 		return `/checkout/thank-you/${ siteSlug }/${ pendingOrReceiptId }`;
 	}
+}
+
+function getRedirectUrlFromCart( cart: ResponseCart ): string | null {
+	const firstProductWithUrl = cart.products.reduce(
+		( mostRecent: ResponseCartProduct | null, product: ResponseCartProduct ) => {
+			if ( product.extra?.afterPurchaseUrl ) {
+				if ( ! mostRecent ) {
+					return product;
+				}
+				if ( product.time_added_to_cart > mostRecent.time_added_to_cart ) {
+					return product;
+				}
+			}
+			return mostRecent;
+		},
+		null
+	);
+	debug(
+		'looking for redirect url in cart products found',
+		firstProductWithUrl?.extra.afterPurchaseUrl
+	);
+	return firstProductWithUrl?.extra.afterPurchaseUrl ?? null;
 }

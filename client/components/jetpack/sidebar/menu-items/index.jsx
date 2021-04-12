@@ -66,7 +66,9 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 				<SidebarItem
 					materialIcon={ showIcons ? 'backup' : undefined }
 					materialIconStyle="filled"
-					label="Backup"
+					label={ translate( 'Backup', {
+						comment: 'Jetpack sidebar menu item',
+					} ) }
 					link={ backupPath( siteSlug ) }
 					onNavigate={ onNavigate( tracksEventNames.backupClicked ) }
 					selected={ currentPathMatches( backupPath( siteSlug ) ) }
@@ -77,7 +79,9 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 				<SidebarItem
 					materialIcon={ showIcons ? 'security' : undefined }
 					materialIconStyle="filled"
-					label="Scan"
+					label={ translate( 'Scan', {
+						comment: 'Jetpack sidebar menu item',
+					} ) }
 					link={ scanPath( siteSlug ) }
 					onNavigate={ onNavigate( tracksEventNames.scanClicked ) }
 					selected={ currentPathMatches( scanPath( siteSlug ) ) }

@@ -8,7 +8,7 @@ references:
   defaults: &defaults
     working_directory: ~/wp-calypso
     docker:
-      - image: cimg/node:14.16.0
+      - image: cimg/node:14.16.1
     environment:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
@@ -795,7 +795,7 @@ jobs:
 
   wp-desktop-linux:
     docker:
-      - image: circleci/node:14.16.0-browsers
+      - image: circleci/node:14.16.1-browsers
     <<: *desktop_defaults
     shell: /bin/bash --login
     steps:

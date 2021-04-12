@@ -14,14 +14,23 @@
 		}
 	}
 
-	&__message {
+	&__empty-list {
+		text-align: center;
+
+		h2 {
+			margin-top: 3rem;
+			margin-bottom: 1rem;
+			font-size: $font-title-medium;
+		}
 		p {
-			margin: 0;
-			padding: 0;
-			font-size: 0.875rem;
-			font-style: italic;
-			font-weight: normal;
-			color: var( --color-neutral-light );
+			margin-bottom: 1rem;
+			font-size: $font-body;
+		}
+
+		.button {
+			margin-top: 1.75rem;
+			margin-bottom: 1.75rem;
+			color: var( --color-accent );
 		}
 	}
 

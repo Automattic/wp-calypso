@@ -20,6 +20,7 @@ import {
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { TransactionRequest } from '../types/transaction-endpoint';
+import getDomainDetails from './get-domain-details';
 
 const debug = debugFactory( 'calypso:composite-checkout:existing-card-processor' );
 
@@ -44,7 +45,12 @@ export default async function existingCardProcessor(
 	if ( ! isValidTransactionData( transactionData ) ) {
 		throw new Error( 'Required purchase data is missing' );
 	}
-	const { stripeConfiguration, recordEvent } = dataForProcessor;
+	const {
+		stripeConfiguration,
+		recordEvent,
+		includeDomainDetails,
+		includeGSuiteDetails,
+	} = dataForProcessor;
 	if ( ! stripeConfiguration ) {
 		throw new Error( 'Stripe configuration is required' );
 	}
@@ -52,6 +58,7 @@ export default async function existingCardProcessor(
 	debug( 'formatting existing card transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...transactionData,
+		domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		cart: createTransactionEndpointCartFromResponseCart( {
 			siteId: dataForProcessor.siteId ? String( dataForProcessor.siteId ) : undefined,
 			contactDetails: transactionData.domainDetails ?? null,

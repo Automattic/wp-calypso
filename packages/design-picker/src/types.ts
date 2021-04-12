@@ -32,7 +32,8 @@ export interface Design {
 
 	/**
 	 * Quickly hide a design from the picker without having to remove
-	 * it from the available-designs-config.json file.
+	 * it from the list of available design configs (stored in the
+	 * `@automattic/design-picker` package)
 	 */
 	hide?: boolean;
 }

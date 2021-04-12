@@ -90,7 +90,7 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
-		"@automattic/calypso-build": "^7.0.0",
+		"@automattic/calypso-build": "^8.0.0",
 		"@automattic/composite-checkout": "^1.0.0",
 		"@automattic/data-stores": "^2.0.0",
 		"@automattic/domain-picker": "^1.0.0-alpha.0",
@@ -155,6 +155,7 @@
 		"@types/wordpress__plugins": "^2.3.7",
 		"@wordpress/eslint-plugin": "^8.0.2",
 		"babel-jest": "^26.3.0",
-		"webpack": "^5.24.4"
+		"wait-for-expect": "^3.0.2",
+		"webpack": "^5.30.0"
 	}
 }

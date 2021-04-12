@@ -14,7 +14,7 @@ import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
-import getJetpackWpAdminUrl from 'calypso/state/selectors/get-jetpack-wp-admin-url';
+import getJetpackRecommendationsUrl from 'calypso/state/selectors/get-jetpack-recommendations-url';
 
 /**
  * Type dependencies
@@ -52,7 +52,7 @@ const buildHref = (
 			jetpackAdminUrlFromQuery = getUrlFromParts( {
 				...getUrlParts( wpAdminUrlFromQuery.href ),
 				search: '?page=jetpack',
-				hash: '/my-plan',
+				hash: '/recommendations',
 			} ).href;
 		}
 	}
@@ -76,7 +76,7 @@ export default function useJetpackFreeButtonProps(
 	siteId: SiteId,
 	urlQueryArgs: QueryArgs = {}
 ): Props {
-	const wpAdminUrl = useSelector( getJetpackWpAdminUrl );
+	const recommendationsUrl = useSelector( getJetpackRecommendationsUrl );
 	const trackCallback = useTrackCallback( undefined, 'calypso_product_jpfree_click', {
 		site_id: siteId || undefined,
 	} );
@@ -84,8 +84,8 @@ export default function useJetpackFreeButtonProps(
 		storePlan( PLAN_JETPACK_FREE );
 		trackCallback();
 	}, [ trackCallback ] );
-	const href = useMemo( () => buildHref( wpAdminUrl, siteId, urlQueryArgs ), [
-		wpAdminUrl,
+	const href = useMemo( () => buildHref( recommendationsUrl, siteId, urlQueryArgs ), [
+		recommendationsUrl,
 		siteId,
 		urlQueryArgs,
 	] );

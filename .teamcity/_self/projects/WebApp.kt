@@ -106,7 +106,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 				export TEST_FILES=${'$'}(join ',' ${'$'}(find specs*/**/*spec.js -type f -not -path specs-playwright/*))
 
-				yarn magellan --config=magellan.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
+				yarn magellan --config=magellan-calypso.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
@@ -273,7 +273,7 @@ object RunCalypsoE2eMobileTests : BuildType({
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 				export TEST_FILES=${'$'}(join ',' ${'$'}(find specs*/**/*spec.js -type f -not -path specs-playwright/*))
 
-				yarn magellan --config=magellan.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
+				yarn magellan --config=magellan-calypso.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
@@ -536,22 +536,6 @@ object RunAllUnitTests : BuildType({
 
 				# Run build-tools tests
 				JEST_JUNIT_OUTPUT_DIR="./test_results/build-tools" yarn test-build-tools --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
-			"""
-		}
-		bashNodeScript {
-			name = "Build artifacts"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				export NODE_ENV="production"
-
-				# Build o2-blocks
-				(cd apps/o2-blocks/ && yarn build --output-path="../../artifacts/o2-blocks")
-
-				# Build wpcom-block-editor
-				(cd apps/wpcom-block-editor/ &&  NODE_ENV=development yarn build --output-path="../../artifacts/wpcom-block-editor")
-
-				# Build notifications
-				(cd apps/notifications/ && yarn build --output-path="../../artifacts/notifications")
 			"""
 		}
 		bashNodeScript {

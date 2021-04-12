@@ -42,7 +42,6 @@
 		"i18n-calypso": "^5.0.0",
 		"qs": "^6.9.1",
 		"redux": "^4.0.5",
-		"tslib": "^2.1.0",
 		"utility-types": "^3.10.0",
 		"validator": "^13.5.2"
 	},

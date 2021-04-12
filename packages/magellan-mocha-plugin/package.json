@@ -1,0 +1,40 @@
+{
+	"name": "@automattic/testarmada-magellan-mocha-plugin",
+	"version": "10.0.0",
+	"description": "Magellan plugin to provide Mocha support",
+	"main": "index.js",
+	"author": "Automattic Inc.",
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/magellan-mocha-plugin"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"license": "MIT",
+	"scripts": {
+		"test": "mocha --slow 400 && npm run coverage && npm run check-coverage",
+		"lint": "eslint lib/** test/**",
+		"coverage": "istanbul cover _mocha",
+		"check-coverage": "istanbul check-coverage --statement 95 --function 95 --branch 90"
+	},
+	"dependencies": {
+		"cli-color": "^1.2.0",
+		"lodash": "^4.17.2",
+		"testarmada-logger": "1.1.1"
+	},
+	"devDependencies": {
+		"chai": "^3.4.1",
+		"coffee-script": "^1.10.0",
+		"eslint": "^4.18.2",
+		"eslint-config-defaults": "^8.0.2",
+		"eslint-plugin-filenames": "^0.2.0",
+		"istanbul": "^0.4.5",
+		"mocha": "^3.2.0",
+		"sinon": "^1.17.3"
+	}
+}

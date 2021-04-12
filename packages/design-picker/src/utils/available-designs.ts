@@ -41,9 +41,9 @@ export const getDesignUrl = ( design: Design, locale: string ): string => {
 	);
 };
 
-// Used for prefetching design screenshots and the real loading in the design-selector
+// Used for both prefetching and loading design screenshots
 export const mShotOptions = (): MShotsOptions => {
-	// Take care changing these values as animation css in design-selector expect these height values
+	// Take care changing these values, as the design-picker CSS animations are written for these values (see the *__landscape and *__portrait classes)
 	if ( isEnabled( 'gutenboarding/landscape-preview' ) ) {
 		return { vpw: 1600, vph: 1600, w: 600, h: 600 };
 	}
@@ -59,11 +59,17 @@ export const getDesignImageUrl = ( design: Design ): string => {
 	}.${ canUseWebP ? 'webp' : 'jpg' }?v=3`;
 };
 
-export function getAvailableDesigns(
-	includeAlphaDesigns: boolean = isEnabled( 'gutenboarding/alpha-templates' ),
-	useFseDesigns: boolean = isEnabled( 'gutenboarding/site-editor' )
-): AvailableDesigns {
-	let designs = availableDesignsConfig;
+interface AvailableDesignsOptions {
+	includeAlphaDesigns?: boolean;
+	useFseDesigns?: boolean;
+	randomize?: boolean;
+}
+export function getAvailableDesigns( {
+	includeAlphaDesigns = isEnabled( 'gutenboarding/alpha-templates' ),
+	useFseDesigns = isEnabled( 'gutenboarding/site-editor' ),
+	randomize = false,
+}: AvailableDesignsOptions = {} ): AvailableDesigns {
+	let designs = { ...availableDesignsConfig };
 
 	// We can tell different environments (via the config JSON) to show pre-prod "alpha" designs.
 	// Otherwise they'll be hidden by default.
@@ -84,7 +90,16 @@ export function getAvailableDesigns(
 		),
 	};
 
+	if ( randomize ) {
+		// Durstenfeld algorithm https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+		for ( let i = designs.featured.length - 1; i > 0; i-- ) {
+			const j = Math.floor( Math.random() * ( i + 1 ) );
+			[ designs.featured[ i ], designs.featured[ j ] ] = [
+				designs.featured[ j ],
+				designs.featured[ i ],
+			];
+		}
+	}
+
 	return designs;
 }
-
-export const availableDesigns = getAvailableDesigns();

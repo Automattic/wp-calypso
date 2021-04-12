@@ -64,6 +64,7 @@ export const IMPORT = `${ root }/import`;
 export const INSTAGRAM_WIDGET = `${ root }/instagram/instagram-widget`;
 export const JETPACK_SUPPORT = 'https://jetpack.com/support/';
 export const JETPACK_CONTACT_SUPPORT = 'https://jetpack.com/contact-support/?rel=support';
+export const JETPACK_PRICING_PAGE = 'https://jetpack.com/pricing/';
 export const JETPACK_SERVICE_VAULTPRESS = 'https://help.vaultpress.com/install-vaultpress/';
 export const JETPACK_SERVICE_AKISMET = 'https://akismet.com/support/';
 export const JETPACK_SERVICE_CROWDSIGNAL = 'https://crowdsignal.com/support/';
