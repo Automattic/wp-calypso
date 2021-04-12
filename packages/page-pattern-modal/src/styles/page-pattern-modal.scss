@@ -40,6 +40,9 @@ $sidebar-width-desktop: 324px;
 		// prevents a 1px strip of content being visible after scrolling
 		overflow-y: hidden;
 		padding-bottom: 24px;
+		.components-modal__content {
+			padding: 0 32px 24px;
+		}
 	}
 
 	.components-modal__content {
@@ -47,6 +50,7 @@ $sidebar-width-desktop: 324px;
 		-webkit-overflow-scrolling: touch;
 		// prevents a 1px strip of content being visible after scrolling
 		margin-top: -1px;
+		padding: 0 16px 16px;
 	}
 
 	.components-modal__header {
