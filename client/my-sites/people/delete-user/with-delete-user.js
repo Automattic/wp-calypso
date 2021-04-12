@@ -35,7 +35,7 @@ const useSuccessNotice = ( isSuccess, user, isMultisite, siteSlug ) => {
 			);
 			page.redirect( `/people/team${ siteSlug ? `/${ siteSlug }` : '' }` );
 		};
-	} );
+	}, [ dispatch, isMultisite, siteSlug, translate, user.login ] );
 
 	React.useEffect( () => {
 		isSuccess && showNotice.current();
