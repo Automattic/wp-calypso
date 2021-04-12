@@ -8,10 +8,16 @@ export interface SiteData {
 	domain: string;
 	locale: string;
 	options?: SiteDataOptions;
+	plan?: Plan;
 	// TODO: fill out the rest of this
 }
 
 export interface SiteDataOptions {
 	admin_url: string | undefined;
+	// TODO: fill out the rest of this
+}
+
+export interface Plan {
+	product_slug: string | undefined;
 	// TODO: fill out the rest of this
 }
