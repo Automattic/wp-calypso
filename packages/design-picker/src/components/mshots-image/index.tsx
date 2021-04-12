@@ -53,17 +53,22 @@ const useMshotsUrl = ( src: string, options: MShotsOptions ) => {
 	useEffect( () => {
 		const img = new Image();
 		const srcUrl = mshotsUrl( src, options, count );
+		let timeoutId: number;
 		img.src = srcUrl;
 		img.onload = () => {
 			// Detect default image (Don't request a 400x300 image).
 			if ( img.naturalWidth !== 400 || img.naturalHeight !== 300 ) {
 				setLoadedSrc( srcUrl );
-			} else {
+			} else if ( count < MAXTRIES ) {
 				// Only refresh 10 times
-				count < MAXTRIES &&
-					// Triggers a target.src change with increasing timeouts
-					setTimeout( () => setCount( count + 1 ), count * 500 );
+				// Triggers a target.src change with increasing timeouts
+				timeoutId = setTimeout( () => setCount( count + 1 ), count * 500 );
 			}
+		};
+		
+		return () => {
+			img.onload = null;
+			clearTimeout( timeoutId );
 		};
 	}, [ src, count ] );
 
