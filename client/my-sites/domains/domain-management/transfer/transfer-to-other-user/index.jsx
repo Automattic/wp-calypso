@@ -338,7 +338,10 @@ class TransferOtherUser extends React.Component {
 	}
 
 	filterAvailableUsers( users ) {
-		return users.filter( ( user ) => this.getWpcomUserId( user ) !== this.props.currentUser.ID );
+		return users.filter(
+			( user ) =>
+				! this.getWpcomUserId( user ) || this.getWpcomUserId( user ) !== this.props.currentUser.ID
+		);
 	}
 
 	isDataReady() {
