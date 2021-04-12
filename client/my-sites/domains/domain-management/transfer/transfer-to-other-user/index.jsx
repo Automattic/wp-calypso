@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect, useSelector } from 'react-redux';
-import { find, get, head, omit } from 'lodash';
+import { find, head, omit } from 'lodash';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 import { createHigherOrderComponent } from '@wordpress/compose';
@@ -26,7 +26,6 @@ import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -67,13 +66,7 @@ class TransferOtherUser extends React.Component {
 		this.handleConfirmTransferDomain = this.handleConfirmTransferDomain.bind( this );
 	}
 
-	getWpcomUserId = ( user ) => {
-		if ( this.props.isAtomic ) {
-			return get( user, 'linked_user_ID', '' );
-		}
-
-		return user.ID;
-	};
+	getWpcomUserId = ( user ) => user.linked_user_ID ?? user.ID;
 
 	UNSAFE_componentWillUpdate( nextProps, nextState ) {
 		if ( nextState && ! nextState.selectedUserId ) {
@@ -366,7 +359,6 @@ export default connect(
 
 		return {
 			currentUser: getCurrentUser( state ),
-			isAtomic: isSiteAutomatedTransfer( state, ownProps.selectedSite.ID ),
 			isMapping: Boolean( domain ) && isMappedDomain( domain ),
 			hasSiteDomainsLoaded: hasLoadedSiteDomains( state, ownProps.selectedSite.ID ),
 			currentRoute: getCurrentRoute( state ),
