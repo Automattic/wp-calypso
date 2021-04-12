@@ -3,7 +3,6 @@
  */
 import debugFactory from 'debug';
 import { makeRedirectResponse, makeErrorResponse } from '@automattic/composite-checkout';
-import { format as formatUrl, parse as parseUrl, resolve as resolveUrl } from 'url'; // eslint-disable-line no-restricted-imports
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
@@ -32,23 +31,28 @@ export default async function payPalProcessor(
 		includeGSuiteDetails,
 		responseCart,
 		siteId,
+		siteSlug,
 	} = transactionOptions;
 	recordTransactionBeginAnalytics( {
 		reduxDispatch,
 		paymentMethodId: 'paypal',
 	} );
 
-	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
-
-	const successUrl = resolveUrl( window.location.href, getThankYouUrl() );
-
-	const cancelUrl = formatUrl( {
-		protocol,
-		hostname,
-		port,
-		pathname,
-		query: createUserAndSiteBeforeTransaction ? { cart: 'no-user' } : {},
-	} );
+	const thankYouUrl = getThankYouUrl();
+	let currentUrl;
+	let currentBaseUrl;
+	try {
+		currentUrl = window.location.href;
+		currentBaseUrl = window.location.origin;
+	} catch ( error ) {
+		currentUrl = `https://wordpress.com/checkout/${ siteSlug }`;
+		currentBaseUrl = 'https://wordpress.com';
+	}
+	const currentUrlWithoutQuery = currentUrl.split( /\?|#/ )[ 0 ];
+	const successUrl = thankYouUrl.startsWith( 'http' ) ? thankYouUrl : currentBaseUrl + thankYouUrl;
+	const cancelUrl = createUserAndSiteBeforeTransaction
+		? currentUrlWithoutQuery + '?cart=no-user'
+		: currentUrlWithoutQuery;
 
 	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		responseCart,
