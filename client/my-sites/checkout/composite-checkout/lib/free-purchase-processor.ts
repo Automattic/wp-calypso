@@ -4,10 +4,7 @@
 import debugFactory from 'debug';
 import { makeSuccessResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
-import type {
-	TransactionRequest,
-	WPCOMTransactionEndpointResponse,
-} from '@automattic/wpcom-checkout';
+import type { TransactionRequest } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies

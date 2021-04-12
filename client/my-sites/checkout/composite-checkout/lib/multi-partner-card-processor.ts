@@ -10,11 +10,7 @@ import debugFactory from 'debug';
 import { confirmStripePaymentIntent, createStripePaymentMethod } from '@automattic/calypso-stripe';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
-import type {
-	TransactionRequest,
-	WPCOMTransactionEndpointResponse,
-	ManagedContactDetails,
-} from '@automattic/wpcom-checkout';
+import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
