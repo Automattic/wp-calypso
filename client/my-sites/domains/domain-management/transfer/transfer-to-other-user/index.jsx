@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect, useSelector } from 'react-redux';
-import { find, omit } from 'lodash';
+import { find } from 'lodash';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 import { createHigherOrderComponent } from '@wordpress/compose';
@@ -223,7 +223,8 @@ class TransferOtherUser extends React.Component {
 		);
 
 		if ( ! currentUserCanManage ) {
-			return <NonOwnerCard { ...omit( this.props, [ 'children' ] ) } />;
+			const { domains, selectedDomainName } = this.props;
+			return <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
 		}
 
 		const { isMapping, translate, users } = this.props;
