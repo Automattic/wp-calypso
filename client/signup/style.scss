@@ -191,7 +191,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 	}
 
 	.formatted-header__subtitle {
-		margin: 0;
+		margin: 8px 0 0;
 		font-size: $font-body;
 		color: var( --color-text-inverted );
 	}
@@ -551,8 +551,18 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 			color: var( --color-surface );
 		}
 
-		.signup-form__social {
-			margin: 0;
+		button.signup-form__submit {
+			border-radius: 4px; /* stylelint-disable-line */
+			width: 335px;
+			height: 44px;
+
+			@include break-medium {
+				width: 296px;
+			}
+
+			@include break-large {
+				width: 360px;
+			}
 		}
 
 		.signup-form__social-buttons {
@@ -579,7 +589,7 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 			}
 
 			> svg {
-				border: 1px solid #e2e4e7;
+				border: 1px solid #d5d5d7;
 				padding: 12px;
 				border-radius: 24px; /* stylelint-disable-line scales/radii */
 			}
@@ -588,6 +598,11 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 		.signup-form__terms-of-service-link {
 			text-align: left;
 			font-size: 0.875rem;
+			margin-bottom: 32px;
+		}
+
+		.form-password-input .form-password-input__toggle-visibility {
+			right: 17px;
 		}
 	
 		.signup-form.is-horizontal {
@@ -611,6 +626,7 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 				max-width: 408px;
 				padding: 0 16px;
 				box-shadow: none;
+				margin: 0;
 
 				@include break-mobile {
 					max-width: 600px;
@@ -659,6 +675,7 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 
 			.signup-form__recaptcha-tos {
 				padding: 0 16px;
+				font-size: 0.75rem;
 
 				.logged-out-form__links {
 					margin: 0;
@@ -681,6 +698,30 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 
 			.signup-form__input.form-text-input {
 				margin-bottom: 16px;
+				height: 44px;
+				width: 335px;
+				border-radius: 4px; /* stylelint-disable-line */
+				border: 1px solid #d5d5d7;
+
+				@include break-medium {
+					width: 296px;
+				}
+
+				@include break-large {
+					width: 360px;
+				}
+			}
+
+			.form-password-input {
+				width: 335px;
+
+				@include break-medium {
+					width: 296px;
+				}
+
+				@include break-large {
+					width: 360px;
+				}
 			}
 
 			.signup-form__social p {
@@ -745,6 +786,7 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 				font-size: 0.75rem;
 				text-align: left;
 				padding-left: 0;
+				margin-top: 19px;
 
 				@include break-small {
 					text-align: center;
