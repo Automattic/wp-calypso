@@ -325,6 +325,32 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			assert( selectedPlanIsFreePlan, 'The free plan was not selected.' );
 		} );
 
+		step( 'Can launch site with Free plan.', async function () {
+			// Click on the launch button
+			const siteLaunchButtonSelector = By.css( '.focused-launch-summary__launch-button' );
+			await driverHelper.clickWhenClickable( driver, siteLaunchButtonSelector );
+
+			// Switch to Calypso parent window
+			await driver.switchTo().defaultContent();
+
+			// Click on the complete checkout button
+			const completeCheckoutButtonSelector = By.css( '.checkout-submit-button .checkout-button' );
+			await driverHelper.clickWhenClickable( driver, completeCheckoutButtonSelector );
+
+			// Switch back to the iframed block editor.
+			await GutenbergEditorComponent.Expect( driver );
+
+			// Wait for the focused launch success view to show up
+			const focusedLaunchSuccessViewSelector = By.css( '.focused-launch-success__wrapper' );
+
+			const isFocusedLaunchSuccessViewPresent = await driverHelper.isElementPresent(
+				driver,
+				focusedLaunchSuccessViewSelector
+			);
+
+			assert( isFocusedLaunchSuccessViewPresent, 'Focused launch success view did not open.' );
+		} );
+
 		after( 'Delete the newly created site', async function () {
 			const deleteSite = new DeleteSiteFlow( driver );
 			await deleteSite.deleteSite( siteName + '.wordpress.com' );
