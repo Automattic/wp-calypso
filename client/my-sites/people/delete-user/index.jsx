@@ -21,7 +21,6 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import User from 'calypso/components/user';
 import AuthorSelector from 'calypso/blocks/author-selector';
-import { deleteUser } from 'calypso/lib/users/actions';
 import accept from 'calypso/lib/accept';
 import Gravatar from 'calypso/components/gravatar';
 import { localize } from 'i18n-calypso';
@@ -32,6 +31,7 @@ import {
 	requestExternalContributorsRemoval,
 } from 'calypso/state/data-getters';
 import { httpData } from 'calypso/state/data-layer/http-data';
+import withDeleteUser from './with-delete-user';
 
 /**
  * Style dependencies
@@ -168,7 +168,7 @@ class DeleteUser extends React.Component {
 							user.linked_user_ID ? user.linked_user_ID : user.ID
 						);
 					}
-					deleteUser( siteId, user.ID );
+					this.props.deleteUser( user.ID );
 				} else {
 					this.props.recordGoogleEvent(
 						'People',
@@ -183,23 +183,28 @@ class DeleteUser extends React.Component {
 
 	deleteUser = ( event ) => {
 		event.preventDefault();
+
 		const { contributorType, siteId, user } = this.props;
+		const { reassignUser, radioOption } = this.state;
+
 		if ( ! user.ID ) {
 			return;
 		}
 
-		let reassignUserId;
-		if ( this.state.reassignUser && 'reassign' === this.state.radioOption ) {
-			reassignUserId = this.state.reassignUser.ID;
+		const variables = {};
+
+		if ( reassignUser && 'reassign' === radioOption ) {
+			variables.reassign = reassignUser.ID;
 		}
+
 		if ( 'external' === contributorType ) {
 			requestExternalContributorsRemoval(
 				siteId,
 				user.linked_user_ID ? user.linked_user_ID : user.ID
 			);
 		}
-		deleteUser( siteId, user.ID, reassignUserId );
 
+		this.props.deleteUser( user.ID, variables );
 		this.props.recordGoogleEvent( 'People', 'Clicked Remove User on Edit User Single Site' );
 	};
 
@@ -341,5 +346,5 @@ export default localize(
 			};
 		},
 		{ recordGoogleEvent }
-	)( DeleteUser )
+	)( withDeleteUser( DeleteUser ) )
 );
