@@ -141,8 +141,8 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			const selectedFreeDomainSuggestionItemName = await driver.findElement(
 				selectedFreeDomainSuggestionItemNameSelector
 			);
-			// Disable lint for this line to be removed in another PR.
-			// eslint-disable-next-line no-unused-vars
+
+			// This is used in later step to test for selected domain persistence
 			selectedSubdomain = await selectedFreeDomainSuggestionItemName.getText();
 
 			assert(
@@ -260,6 +260,24 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			);
 
 			assert( isFocusedLaunchModalPresent, 'Focused launch modal did not open.' );
+		} );
+
+		step( 'Can persist previously selected domain in focused launch', async function () {
+			const selectedDomainSuggestionItemNameSelector = By.css(
+				'.domain-picker__suggestion-item.is-selected .domain-picker__suggestion-item-name'
+			);
+
+			const selectedDomainSuggestionItemName = await driver.findElement(
+				selectedDomainSuggestionItemNameSelector
+			);
+
+			const selectedSubdomainAfterRefresh = await selectedDomainSuggestionItemName.getText();
+
+			assert.strictEqual(
+				selectedSubdomainAfterRefresh,
+				selectedSubdomain,
+				'Selected subdomain should be persisted after reloading block editor and reopening focused launch.'
+			);
 		} );
 
 		after( 'Delete the newly created site', async function () {
