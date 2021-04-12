@@ -150,6 +150,75 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			);
 		} );
 
+		step( 'Can open detailed plans grid', async function () {
+			// Click on "View All Plans" button
+			const viewAllPlansButtonSelector = By.xpath(
+				'//a[contains(@class, "focused-launch-summary__details-link") and .="View all plans"]'
+			);
+
+			await driverHelper.clickWhenClickable( driver, viewAllPlansButtonSelector );
+
+			// Check if detailed plans grid is displayed
+			const plansGridInDetailedViewSelector = By.css( '.focused-launch-details__body .plans-grid' );
+
+			const isPlansGridInDetailedViewPresent = await driverHelper.isElementPresent(
+				driver,
+				plansGridInDetailedViewSelector
+			);
+
+			assert(
+				isPlansGridInDetailedViewPresent,
+				'Focused launch plans grid detailed view did not open.'
+			);
+		} );
+
+		step( 'Can switch to monthly plans view', async function () {
+			// Click "Monthly" toggle button
+			const monthlyButtonSelector = By.xpath(
+				'//span[@class="plans-interval-toggle__label" and .="Monthly"]'
+			);
+
+			await driverHelper.clickWhenClickable( driver, monthlyButtonSelector );
+
+			// Check if plans grid is really switched over to monthly view
+			// by checking if the price note "per month, billed monthly" exists.
+			const perMonthBilledMonthlyPriceNoteSelector = By.xpath(
+				'//div[@class="plan-item__price-note" and .="per month, billed monthly"]'
+			);
+
+			const isPerMonthBilledMonthlyPricePresent = await driverHelper.isElementPresent(
+				driver,
+				perMonthBilledMonthlyPriceNoteSelector
+			);
+
+			assert(
+				isPerMonthBilledMonthlyPricePresent,
+				'Focused launch plans grid was unable to switch over to monthly view.'
+			);
+		} );
+
+		step( 'Can select Personal monthly plan', async function () {
+			// Click "Select Personal" button
+			const selectPersonalPlanButtonSelector = By.xpath(
+				'//button[contains(@class, "plan-item__select-button") and .="Select Personal"]'
+			);
+
+			await driverHelper.clickWhenClickable( driver, selectPersonalPlanButtonSelector );
+
+			// When the detailed plans grid is closed and user returns to the summary view,
+			// check if the selected monthly plan item is "Personal Plan".
+			const selectedPlanIsPersonalMonthlyPlanSelector = By.xpath(
+				'//button[contains(@class, "focused-launch-summary__item") and contains(@class,"is-selected")]//span[@class="focused-launch-summary-item__leading-side-label" and .="Personal Plan"]'
+			);
+
+			const selectedPlanIsPersonalMonthlyPlan = await driverHelper.isElementPresent(
+				driver,
+				selectedPlanIsPersonalMonthlyPlanSelector
+			);
+
+			assert( selectedPlanIsPersonalMonthlyPlan, 'The personal monthly plan was not selected.' );
+		} );
+
 		after( 'Delete the newly created site', async function () {
 			const deleteSite = new DeleteSiteFlow( driver );
 			await deleteSite.deleteSite( siteName + '.wordpress.com' );
