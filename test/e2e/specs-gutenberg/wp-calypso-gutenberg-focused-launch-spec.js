@@ -3,7 +3,7 @@
  */
 import assert from 'assert';
 import config from 'config';
-import { By } from 'selenium-webdriver';
+import { By, until } from 'selenium-webdriver';
 import { step } from 'mocha-steps';
 
 /**
@@ -227,6 +227,38 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			);
 
 			assert( selectedPlanIsPersonalMonthlyPlan, 'The personal monthly plan was not selected.' );
+		} );
+
+		step( 'Can reload block editor and reopen focused launch', async function () {
+			// Reload block editor
+			await driver.navigate().refresh();
+
+			// Press "Reload" on confirmation dialog when block editor asks if user really wants to navigate away.
+			try {
+				await driver.wait( until.alertIsPresent(), 4000 );
+				const alert = await driver.switchTo().alert();
+				await alert.accept();
+			} catch ( e ) {
+				// This doesn't happen when autosave hasn't kicked in so
+				// if driver.wait throws and error we catch it here to allow
+				// the step to continue running.
+			}
+
+			// Wait for block editor to load and switch frame context to block editor
+			await GutenbergEditorComponent.Expect( driver );
+
+			// Click on the launch button
+			const launchButtonSelector = By.css( '.editor-gutenberg-launch__launch-button' );
+			await driverHelper.clickWhenClickable( driver, launchButtonSelector );
+
+			// See if focused launch modal can be reopened
+			const focusedLaunchModalSelector = By.css( '.launch__focused-modal' );
+			const isFocusedLaunchModalPresent = await driverHelper.isElementPresent(
+				driver,
+				focusedLaunchModalSelector
+			);
+
+			assert( isFocusedLaunchModalPresent, 'Focused launch modal did not open.' );
 		} );
 
 		after( 'Delete the newly created site', async function () {
