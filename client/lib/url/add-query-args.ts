@@ -8,8 +8,7 @@ import type { Primitive } from 'utility-types';
  * Internal dependencies
  */
 import type { URL as URLString } from 'calypso/types';
-import { determineUrlType, URL_TYPE } from '@automattic/calypso-url';
-import { format } from '@automattic/calypso-url';
+import { format, determineUrlType, URL_TYPE } from '@automattic/calypso-url';
 
 const BASE_URL = 'http://__domain__.invalid';
 
