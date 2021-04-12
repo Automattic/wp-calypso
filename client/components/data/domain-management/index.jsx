@@ -23,22 +23,7 @@ import QueryContactDetailsCache from 'calypso/components/data/query-contact-deta
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import StoreConnection from 'calypso/components/data/store-connection';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-
-function getStateFromStores( props ) {
-	return {
-		context: props.context,
-		domains: props.selectedSite ? props.domains : null,
-		hasSiteDomainsLoaded: props.hasSiteDomainsLoaded,
-		isRequestingSiteDomains: props.isRequestingSiteDomains,
-		products: props.products,
-		selectedDomainName: props.selectedDomainName,
-		selectedSite: props.selectedSite,
-		sitePlans: props.sitePlans,
-		user: props.currentUser,
-	};
-}
 
 class DomainManagementData extends React.Component {
 	static propTypes = {
@@ -76,19 +61,17 @@ class DomainManagementData extends React.Component {
 				{ needsProductsList && <QueryProductsList /> }
 
 				<CalypsoShoppingCartProvider>
-					<StoreConnection
-						component={ this.props.component }
-						context={ this.props.context }
-						currentUser={ this.props.currentUser }
-						domains={ this.props.domains }
-						getStateFromStores={ getStateFromStores }
-						hasSiteDomainsLoaded={ this.props.hasSiteDomainsLoaded }
-						isRequestingSiteDomains={ this.props.isRequestingSiteDomains }
-						products={ this.props.productsList }
-						selectedDomainName={ this.props.selectedDomainName }
-						selectedSite={ selectedSite }
-						sitePlans={ this.props.sitePlans }
-					/>
+					{ React.createElement( this.props.component, {
+						context: this.props.context,
+						domains: this.props.selectedSite ? this.props.domains : null,
+						hasSiteDomainsLoaded: this.props.hasSiteDomainsLoaded,
+						isRequestingSiteDomains: this.props.isRequestingSiteDomains,
+						products: this.props.products,
+						selectedDomainName: this.props.selectedDomainName,
+						selectedSite: this.props.selectedSite,
+						sitePlans: this.props.sitePlans,
+						user: this.props.currentUser,
+					} ) }
 				</CalypsoShoppingCartProvider>
 			</div>
 		);
