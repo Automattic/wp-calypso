@@ -1,13 +1,17 @@
 /**
+ * External dependencies
+ */
+import type {
+	WPCOMTransactionEndpointRequestPayload,
+	WPCOMTransactionEndpointResponse,
+} from '@automattic/wpcom-checkout';
+
+/**
  * Internal dependencies
  */
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import { createAccount } from '../payment-method-helpers';
 import wp from 'calypso/lib/wp';
-import type {
-	WPCOMTransactionEndpointRequestPayload,
-	WPCOMTransactionEndpointResponse,
-} from '../types/transaction-endpoint';
 
 export default async function submitWpcomTransaction(
 	payload: WPCOMTransactionEndpointRequestPayload,
