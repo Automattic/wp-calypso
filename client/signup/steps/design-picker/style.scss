@@ -1,0 +1,14 @@
+@import '~@wordpress/base-styles/_breakpoints.scss';
+@import '~@wordpress/base-styles/_mixins.scss';
+
+.signup__step.is-design {
+	.step-wrapper {
+		padding-left: 24px;
+		padding-right: 24px;
+
+		@include break-xlarge {
+			padding-left: 0;
+			padding-right: 0;
+		}
+	}
+}

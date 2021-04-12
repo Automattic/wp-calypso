@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, map, flatten, round } from 'lodash';
+import { get, map, flatten } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -182,8 +182,9 @@ export function getSiteStatsViewSummary( state, siteId ) {
 
 	viewData.data.forEach( ( item ) => {
 		const [ date, value ] = item;
-		const momentDate = moment( date );
-		const { years, months } = momentDate.toObject();
+		const newDate = new Date( date );
+		const years = newDate.getFullYear();
+		const months = newDate.getMonth();
 
 		if ( ! viewSummary[ years ] ) {
 			viewSummary[ years ] = {};
@@ -194,15 +195,25 @@ export function getSiteStatsViewSummary( state, siteId ) {
 				total: 0,
 				data: [],
 				average: 0,
-				daysInMonth: momentDate.daysInMonth(),
+				daysInMonth: new Date( years, months + 1, 0 ).getDate(),
 			};
 		}
 		viewSummary[ years ][ months ].total += value;
 		viewSummary[ years ][ months ].data.push( item );
 		const average =
 			viewSummary[ years ][ months ].total / viewSummary[ years ][ months ].daysInMonth;
-		viewSummary[ years ][ months ].average = round( average, 0 );
+		viewSummary[ years ][ months ].average = Math.round( average );
 	} );
+
+	// With the current month, calculate the average based on the days passed so far in the month
+	const date = new Date();
+	const thisMonth =
+		viewSummary[ date.getFullYear() ] && viewSummary[ date.getFullYear() ][ date.getMonth() ];
+
+	if ( thisMonth ) {
+		thisMonth.daysInMonth = date.getDate();
+		thisMonth.average = Math.round( thisMonth.total / thisMonth.daysInMonth );
+	}
 
 	return viewSummary;
 }
