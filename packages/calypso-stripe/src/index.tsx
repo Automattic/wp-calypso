@@ -33,7 +33,7 @@ interface PaymentRequestOptionsItem {
 	amount: number;
 }
 
-interface PaymentRequestOptions {
+export interface PaymentRequestOptions {
 	requestPayerName: boolean;
 	requestPayerPhone: boolean;
 	requestPayerEmail: boolean;
@@ -42,10 +42,6 @@ interface PaymentRequestOptions {
 	currency: string;
 	displayItems: PaymentRequestOptionsItem[];
 	total: PaymentRequestOptionsItem;
-}
-
-interface StripePaymentRequestResponse {
-	canMakePayment: () => Promise< undefined | { applePay: boolean } >;
 }
 
 export type Stripe = {
@@ -61,7 +57,7 @@ export type Stripe = {
 		secret: string,
 		options: Record< string, string >
 	) => Promise< { paymentIntent: StripeAuthenticationResponse; error: StripeError } >;
-	paymentRequest: ( paymentRequestOptions: PaymentRequestOptions ) => StripePaymentRequestResponse;
+	paymentRequest: ( paymentRequestOptions: PaymentRequestOptions ) => StripePaymentRequest;
 };
 
 export interface StripeConfiguration {
@@ -101,6 +97,26 @@ export type GetStripeConfigurationArgs = { country?: string; needs_intent?: bool
 export type GetStripeConfiguration = (
 	requestArgs: GetStripeConfigurationArgs
 ) => Promise< StripeConfiguration >;
+
+export interface StripePaymentRequest {
+	canMakePayment: () => Promise< undefined | { applePay: boolean } >;
+	on: ( event: string, handler: StripePaymentRequestHandler ) => void;
+	show: () => void;
+}
+
+export type StripePaymentRequestHandler = ( event: StripePaymentRequestHandlerEvent ) => void;
+
+export interface StripePaymentRequestHandlerEvent {
+	token?: {
+		id: string;
+		object: 'token';
+	};
+	paymentMethod?: {
+		id: string;
+		object: 'payment_method';
+	};
+	complete: () => void;
+}
 
 /**
  * An error for display by the payment form

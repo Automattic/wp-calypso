@@ -152,7 +152,7 @@ function verifyBlockInPublishedPage( Block ) {
 	 */
 	if ( ! [ YoutubeBlockComponent, SlideshowBlockComponent ].includes( Block ) ) {
 		step( 'Block is displayed in the published page', async function () {
-			await driverHelper.waitTillPresentAndDisplayed( driver, Block.blockFrontendSelector );
+			await driverHelper.waitUntilLocatedAndVisible( driver, Block.blockFrontendSelector );
 		} );
 	}
 }

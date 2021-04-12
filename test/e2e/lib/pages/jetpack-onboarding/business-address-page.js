@@ -16,18 +16,15 @@ export default class BusinessAddressPage extends AsyncBaseContainer {
 
 	async selectAddBusinessAddress() {
 		const businessAddressSelector = By.css( '.card[data-e2e-type="business-address"] button' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, businessAddressSelector );
 		return await driverHelper.clickWhenClickable( this.driver, businessAddressSelector );
 	}
 
 	async selectContinue() {
 		const continueSelector = By.css( '.card[data-e2e-type="continue"] button' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, continueSelector );
 		return await driverHelper.clickWhenClickable( this.driver, continueSelector );
 	}
 
 	async enterBusinessAddressAndSubmit( name, street, city, state, zip, country ) {
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( '#name' ) );
 		await driverHelper.setWhenSettable( this.driver, By.css( '#name' ), name );
 		await driverHelper.setWhenSettable( this.driver, By.css( '#street' ), street );
 		await driverHelper.setWhenSettable( this.driver, By.css( '#city' ), city );

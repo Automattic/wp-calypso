@@ -14,18 +14,9 @@ import MyChildComponent from 'calypso/components/my-child-component';
 
 // initialize rest of the variables
 
-class MyComponent extends React.Component {
-	render() {
-		return (
-			<DomainManagementData
-				component={ MyChildComponent }
-				context={ context }
-				needsDomains
-				needsUsers
-			/>
-		);
-	}
-}
+const MyComponent = () => (
+	<DomainManagementData component={ MyChildComponent } context={ context } needsDomains />
+);
 
 export default MyComponent;
 ```
@@ -36,6 +27,5 @@ Currently we have both Flux and Redux mixed. Props for loading data:
 - `needsDomains` - Loads domain for currently selected site (Redux)
 - `needsPlans` - Loads plans for given site (Redux)
 - `needsProductsList` - Loads products list (Redux)
-- `needsUsers` - Loads `UsersStore` (Flux)
 
 The child component should receive processed props defined in `getStateFromStores()`. It's updated whenever the data it needs changes.

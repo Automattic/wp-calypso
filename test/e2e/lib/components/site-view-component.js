@@ -59,7 +59,7 @@ export default class SiteViewComponent extends AsyncBaseContainer {
 		const iFrameSelector = by.css( '.web-preview__frame' );
 		const explicitWaitMS = config.get( 'explicitWaitMS' );
 		driver.switchTo().defaultContent();
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			driver,
 			by.css( '.web-preview__inner.is-loaded' )
 		);
