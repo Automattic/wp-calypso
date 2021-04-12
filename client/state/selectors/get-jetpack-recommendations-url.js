@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
+import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 
 export default function getJetpackRecommendationsUrl( state ) {
 	const site = getSelectedSite( state );

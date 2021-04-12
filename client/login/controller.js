@@ -13,7 +13,7 @@ import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import HandleEmailedLinkFormJetpackConnect from './magic-login/handle-emailed-link-form-jetpack-connect';
 import MagicLogin from './magic-login';
 import WPLogin from './wp-login';
-import { getUrlParts } from 'calypso/lib/url';
+import { getUrlParts } from '@automattic/calypso-url';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getCurrentUser, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 

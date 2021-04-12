@@ -15,7 +15,7 @@ import {
 	getUrlParts,
 	getUrlFromParts,
 	determineUrlType,
-} from 'calypso/lib/url';
+} from '@automattic/calypso-url';
 import {
 	PLAN_FREE,
 	PLAN_PERSONAL,
