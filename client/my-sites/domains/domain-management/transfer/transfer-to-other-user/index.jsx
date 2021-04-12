@@ -13,7 +13,7 @@ import { createHigherOrderComponent } from '@wordpress/compose';
  * Internal Dependencies
  */
 import { Card, Dialog } from '@automattic/components';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import Main from 'calypso/components/main';
 import { domainManagementEdit, domainManagementTransfer } from 'calypso/my-sites/domains/paths';
@@ -42,7 +42,7 @@ const getWpcomUserId = ( user ) => user.linked_user_ID ?? user.ID;
 
 class TransferOtherUser extends React.Component {
 	static propTypes = {
-		currentUser: PropTypes.object.isRequired,
+		currentUserId: PropTypes.number.isRequired,
 		domains: PropTypes.array.isRequired,
 		isRequestingSiteDomains: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
@@ -326,7 +326,7 @@ class TransferOtherUser extends React.Component {
 	filterAvailableUsers( users ) {
 		return users.filter(
 			( user ) =>
-				getWpcomUserId( user ) !== false && getWpcomUserId( user ) !== this.props.currentUser.ID
+				getWpcomUserId( user ) !== false && getWpcomUserId( user ) !== this.props.currentUserId
 		);
 	}
 
@@ -351,7 +351,7 @@ export default connect(
 		const domain = ! ownProps.isRequestingSiteDomains && getSelectedDomain( ownProps );
 
 		return {
-			currentUser: getCurrentUser( state ),
+			currentUserId: getCurrentUserId( state ),
 			isMapping: Boolean( domain ) && isMappedDomain( domain ),
 			hasSiteDomainsLoaded: hasLoadedSiteDomains( state, ownProps.selectedSite.ID ),
 			currentRoute: getCurrentRoute( state ),
