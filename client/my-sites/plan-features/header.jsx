@@ -388,14 +388,14 @@ export class PlanFeaturesHeader extends Component {
 							currencyCode={ currencyCode }
 							rawPrice={ fullPrice }
 							displayFlatPrice={ displayFlatPrice }
-							displayPerMonthNotation={ true }
+							displayPerMonthNotation={ false }
 							original
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ discountedPrice }
 							displayFlatPrice={ displayFlatPrice }
-							displayPerMonthNotation={ true }
+							displayPerMonthNotation={ false }
 							discounted
 						/>
 					</div>
