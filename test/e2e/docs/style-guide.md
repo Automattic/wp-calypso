@@ -28,9 +28,9 @@ Avoid doing:
 async function openModal() {
 	const modalButtonLocator = By.css( 'button.open-modal' );
 	const modalLocator = By.css( '.modal' );
-	await driverHelper.clickWhenClickable( this.driver, modalButtonLocator ).then( async function () {
-		await driverHelper.waitUntilLocatedAndVisible( modalLocator );
-	} );
+	await driverHelper
+		.clickWhenClickable( this.driver, modalButtonLocator )
+		.then( () => driverHelper.waitUntilLocatedAndVisible( modalLocator ) );
 }
 ```
 
