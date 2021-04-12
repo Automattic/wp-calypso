@@ -111,7 +111,6 @@ PlanFeaturesComparisonActions.propTypes = {
 	onUpgradeClick: PropTypes.func,
 	planType: PropTypes.string,
 	primaryUpgrade: PropTypes.bool,
-	selectedPlan: PropTypes.string,
 };
 
 export default localize( PlanFeaturesComparisonActions );
