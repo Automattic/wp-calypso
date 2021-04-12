@@ -245,7 +245,7 @@ class TransferOtherUser extends React.Component {
 						>
 							{ availableUsers.length ? (
 								<Fragment>
-									<option value="">{ translate( '-- Select user --' ) }</option>
+									<option value="">{ translate( '-- Select User --' ) }</option>
 									{ availableUsers.map( ( user ) => {
 										const userId = this.getWpcomUserId( user );
 
