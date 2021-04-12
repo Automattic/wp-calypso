@@ -299,6 +299,28 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			);
 		} );
 
+		step( 'Can select Free plan', async function () {
+			// Click "Free Plan" button
+			const freePlanSelector = By.xpath(
+				'//span[@class="focused-launch-summary-item__leading-side-label" and .="Free Plan"]'
+			);
+
+			await driverHelper.clickWhenClickable( driver, freePlanSelector );
+
+			// When the detailed plans grid is closed and user returns to the summary view,
+			// check if the selected monthly plan item is "Personal Plan".
+			const selectedPlanIsFreePlanSelector = By.xpath(
+				'//button[contains(@class, "focused-launch-summary__item") and contains(@class, "is-selected")]//span[@class="focused-launch-summary-item__leading-side-label" and .="Free Plan"]'
+			);
+
+			const selectedPlanIsFreePlan = await driverHelper.isElementPresent(
+				driver,
+				selectedPlanIsFreePlanSelector
+			);
+
+			assert( selectedPlanIsFreePlan, 'The free plan was not selected.' );
+		} );
+
 		after( 'Delete the newly created site', async function () {
 			const deleteSite = new DeleteSiteFlow( driver );
 			await deleteSite.deleteSite( siteName + '.wordpress.com' );
