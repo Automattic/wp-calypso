@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
 import { useSelect } from '@wordpress/data';
 import { useLocale } from '@automattic/i18n-utils';
 
@@ -9,18 +8,8 @@ import { useLocale } from '@automattic/i18n-utils';
  * Internal dependencies
  */
 import { LAUNCH_STORE, PLANS_STORE } from '../stores';
-import LaunchContext from '../context';
 
-/**
- * When the user has an ecommerce plan or they're using focused launch in wp-admin
- * they will be automatically redirected to /checkout after site launch.
- * This hook returns true when this is the case
- *
- * @returns boolean
- */
-export function useWillRedirectAfterSuccess(): boolean {
-	const { isInIframe } = React.useContext( LaunchContext );
-
+export function useHasEcommercePlan(): boolean {
 	const locale = useLocale();
 
 	const planProductId = useSelect(
@@ -37,5 +26,5 @@ export function useWillRedirectAfterSuccess(): boolean {
 		[ planProductId, locale ]
 	);
 
-	return ! isInIframe || isEcommercePlan;
+	return isEcommercePlan;
 }
