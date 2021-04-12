@@ -51,14 +51,30 @@ const useErrorNotice = ( isError, user, isMultisite, error ) => {
 		showNotice.current = ( errorObj ) => {
 			let message;
 			if ( 'user_owns_domain_subscription' === errorObj.error ) {
-				const numDomains = errorObj.message.split( ',' ).length;
+				const domains = errorObj.data ?? errorObj.message.split( ',' );
 				message = translate(
 					'@%(user)s owns following domain used on this site: {{strong}}%(domains)s{{/strong}}. This domain will have to be transferred to a different site, transferred to a different registrar, or canceled before removing or deleting @%(user)s.',
 					'@%(user)s owns following domains used on this site: {{strong}}%(domains)s{{/strong}}. These domains will have to be transferred to a different site, transferred to a different registrar, or canceled before removing or deleting @%(user)s.',
 					{
-						count: numDomains,
+						count: domains.length,
 						args: {
-							domains: errorObj.message,
+							domains: domains.join( ', ' ),
+							user: user.login,
+						},
+						components: {
+							strong: <strong />,
+						},
+					}
+				);
+			} else if ( 'user_has_active_subscriptions' === errorObj.error ) {
+				const productNames = errorObj.data ?? [];
+				message = translate(
+					'@%(user)s owns following product used on this site: {{strong}}%(productNames)s{{/strong}}. This product will have to be transferred to a different site, user, or canceled before removing or deleting @%(user)s.',
+					'@%(user)s owns following products used on this site: {{strong}}%(productNames)s{{/strong}}. These products will have to be transferred to a different site, user, or canceled before removing or deleting @%(user)s.',
+					{
+						count: productNames.length,
+						args: {
+							productNames: productNames.join( ', ' ),
 							user: user.login,
 						},
 						components: {
