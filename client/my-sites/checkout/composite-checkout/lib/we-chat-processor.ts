@@ -8,10 +8,7 @@ import {
 } from '@automattic/composite-checkout';
 import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
-import type {
-	ManagedContactDetails,
-	WPCOMTransactionEndpointResponse,
-} from '@automattic/wpcom-checkout';
+import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
