@@ -25,6 +25,7 @@ const screenSize = driverManager.currentScreenSize();
 describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 	let driver;
+	let selectedSubdomain;
 
 	before( 'Start browser', async function () {
 		this.timeout( startBrowserTimeoutMS );
@@ -111,6 +112,41 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			assert(
 				domainSuggestionsContainUserEnteredSiteTitle,
 				`Domain suggestions did not include user entered site title. Site title used was ${ siteTitle }.`
+			);
+		} );
+
+		step( 'Can select free domain suggestion item', async function () {
+			// Click on the free domain suggestion item
+			const freeDomainButtonSelector = By.css( '.domain-picker__suggestion-item.is-free' );
+
+			await driverHelper.clickWhenClickable( driver, freeDomainButtonSelector );
+
+			// Check if the free domain suggestion item is now selected
+			const selectedFreeDomainSuggestionItemSelector = By.css(
+				'.domain-picker__suggestion-item.is-free.is-selected'
+			);
+
+			const isSelectedFreeDomainSuggestionItemPresent = await driverHelper.isElementPresent(
+				driver,
+				selectedFreeDomainSuggestionItemSelector
+			);
+
+			// Get the domain name from the free domain suggestion item
+			// This is to check for persistence in the later step
+			const selectedFreeDomainSuggestionItemNameSelector = By.css(
+				'.domain-picker__suggestion-item.is-free.is-selected .domain-picker__suggestion-item-name'
+			);
+
+			const selectedFreeDomainSuggestionItemName = await driver.findElement(
+				selectedFreeDomainSuggestionItemNameSelector
+			);
+			// Disable lint for this line to be removed in another PR.
+			// eslint-disable-next-line no-unused-vars
+			selectedSubdomain = await selectedFreeDomainSuggestionItemName.getText();
+
+			assert(
+				isSelectedFreeDomainSuggestionItemPresent,
+				'Free domain suggestion item was not selected.'
 			);
 		} );
 
