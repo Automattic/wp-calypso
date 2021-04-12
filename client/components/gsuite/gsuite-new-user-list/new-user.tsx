@@ -3,7 +3,7 @@
  */
 import Gridicon from 'calypso/components/gridicon';
 import React, { ChangeEvent, Fragment, FunctionComponent, useState } from 'react';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -11,11 +11,30 @@ import { useTranslate } from 'i18n-calypso';
 import { Button } from '@automattic/components';
 import GSuiteDomainsSelect from './domains-select';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import { GSuiteNewUser as NewUser } from 'calypso/lib/gsuite/new-users';
+
+interface LabelWrapperProps {
+	label: TranslateResult;
+	showLabel: boolean;
+}
+
+const LabelWrapper: FunctionComponent< LabelWrapperProps > = ( { label, showLabel, children } ) => {
+	if ( ! showLabel ) {
+		return <>{ children }</>;
+	}
+
+	return (
+		<FormLabel>
+			{ label }
+			{ children }
+		</FormLabel>
+	);
+};
 
 interface Props {
 	autoFocus: boolean;
@@ -23,6 +42,7 @@ interface Props {
 	onUserRemove: () => void;
 	onUserValueChange: ( field: string, value: string ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
+	showLabels: boolean;
 	user: NewUser;
 }
 
@@ -39,6 +59,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 		domain: { value: domain, error: domainError },
 		password: { value: password, error: passwordError },
 	},
+	showLabels = false,
 } ) => {
 	const translate = useTranslate();
 
@@ -61,28 +82,31 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	const hasPasswordError = passwordFieldTouched && null !== passwordError;
 
 	const emailAddressPlaceholder = translate( 'Email' );
+	const emailAddressLabel = translate( 'Email address' );
 
 	const renderSingleDomain = () => {
 		return (
-			<FormTextInputWithAffixes
-				placeholder={ emailAddressPlaceholder }
-				value={ mailBox }
-				isError={ hasMailBoxError }
-				onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-					onUserValueChange( 'mailBox', event.target.value.toLowerCase() );
-				} }
-				onBlur={ () => {
-					setMailBoxFieldTouched( wasValidated );
-				} }
-				onKeyUp={ onReturnKeyPress }
-				suffix={ `@${ domain }` }
-			/>
+			<LabelWrapper label={ emailAddressLabel } showLabel={ showLabels }>
+				<FormTextInputWithAffixes
+					placeholder={ emailAddressPlaceholder }
+					value={ mailBox }
+					isError={ hasMailBoxError }
+					onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+						onUserValueChange( 'mailBox', event.target.value.toLowerCase() );
+					} }
+					onBlur={ () => {
+						setMailBoxFieldTouched( wasValidated );
+					} }
+					onKeyUp={ onReturnKeyPress }
+					suffix={ `@${ domain }` }
+				/>
+			</LabelWrapper>
 		);
 	};
 
 	const renderMultiDomain = () => {
 		return (
-			<Fragment>
+			<LabelWrapper label={ emailAddressLabel } showLabel={ showLabels }>
 				<FormTextInput
 					placeholder={ emailAddressPlaceholder }
 					value={ mailBox }
@@ -103,7 +127,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 					} }
 					value={ domain }
 				/>
-			</Fragment>
+			</LabelWrapper>
 		);
 	};
 
@@ -112,38 +136,42 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 			<FormFieldset>
 				<div className="gsuite-new-user-list__new-user-section">
 					<div className="gsuite-new-user-list__new-user-name-container">
-						<FormTextInput
-							autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
-							placeholder={ translate( 'First name' ) }
-							value={ firstName }
-							maxLength={ 60 }
-							isError={ hasFirstNameError }
-							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-								onUserValueChange( 'firstName', event.target.value, mailBoxFieldTouched );
-							} }
-							onBlur={ () => {
-								setFirstNameFieldTouched( wasValidated );
-							} }
-							onKeyUp={ onReturnKeyPress }
-						/>
+						<LabelWrapper label={ translate( 'First name' ) } showLabel={ showLabels }>
+							<FormTextInput
+								autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+								placeholder={ translate( 'First name' ) }
+								value={ firstName }
+								maxLength={ 60 }
+								isError={ hasFirstNameError }
+								onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+									onUserValueChange( 'firstName', event.target.value, mailBoxFieldTouched );
+								} }
+								onBlur={ () => {
+									setFirstNameFieldTouched( wasValidated );
+								} }
+								onKeyUp={ onReturnKeyPress }
+							/>
+						</LabelWrapper>
 
 						{ hasFirstNameError && <FormInputValidation text={ firstNameError } isError /> }
 					</div>
 
 					<div className="gsuite-new-user-list__new-user-name-container">
-						<FormTextInput
-							placeholder={ translate( 'Last name' ) }
-							value={ lastName }
-							maxLength={ 60 }
-							isError={ hasLastNameError }
-							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-								onUserValueChange( 'lastName', event.target.value );
-							} }
-							onBlur={ () => {
-								setLastNameFieldTouched( wasValidated );
-							} }
-							onKeyUp={ onReturnKeyPress }
-						/>
+						<LabelWrapper label={ translate( 'Last name' ) } showLabel={ showLabels }>
+							<FormTextInput
+								placeholder={ translate( 'Last name' ) }
+								value={ lastName }
+								maxLength={ 60 }
+								isError={ hasLastNameError }
+								onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+									onUserValueChange( 'lastName', event.target.value );
+								} }
+								onBlur={ () => {
+									setLastNameFieldTouched( wasValidated );
+								} }
+								onKeyUp={ onReturnKeyPress }
+							/>
+						</LabelWrapper>
 
 						{ hasLastNameError && <FormInputValidation text={ lastNameError } isError /> }
 					</div>
@@ -169,21 +197,23 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 					</div>
 
 					<div className="gsuite-new-user-list__new-user-password-container">
-						<FormPasswordInput
-							autoCapitalize="off"
-							autoCorrect="off"
-							placeholder={ translate( 'Password' ) }
-							value={ password }
-							maxLength={ 100 }
-							isError={ hasPasswordError }
-							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-								onUserValueChange( 'password', event.target.value );
-							} }
-							onBlur={ () => {
-								setPasswordFieldTouched( wasValidated );
-							} }
-							onKeyUp={ onReturnKeyPress }
-						/>
+						<LabelWrapper label={ translate( 'Password' ) } showLabel={ showLabels }>
+							<FormPasswordInput
+								autoCapitalize="off"
+								autoCorrect="off"
+								placeholder={ translate( 'Password' ) }
+								value={ password }
+								maxLength={ 100 }
+								isError={ hasPasswordError }
+								onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+									onUserValueChange( 'password', event.target.value );
+								} }
+								onBlur={ () => {
+									setPasswordFieldTouched( wasValidated );
+								} }
+								onKeyUp={ onReturnKeyPress }
+							/>
+						</LabelWrapper>
 
 						{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
 					</div>

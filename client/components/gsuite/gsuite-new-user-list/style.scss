@@ -57,12 +57,16 @@
 	margin-top: 1.5em;
 }
 
+.gsuite-new-user-list__new-user .form-fieldset .form-label {
+	margin-bottom: 0;
+}
+
 .gsuite-new-user-list__new-user-section {
 	@include breakpoint-deprecated( '>800px' ) {
 		display: flex;
 		justify-content: space-between;
 
-		& > *:not(:first-child) {
+		& > *:not( :first-child ) {
 			margin-left: 15px;
 		}
 	}
