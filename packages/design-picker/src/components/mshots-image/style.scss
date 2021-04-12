@@ -4,10 +4,6 @@
 	@include onboarding-placeholder();
 }
 
-.mshots-image-hidden {
-	display: none;
-}
-
 .mshots-image__container {
     height: 100%;
 }
@@ -23,5 +19,18 @@
 
     &:hover {
         background-position: bottom;
+    }
+}
+
+.mshots-image-visible {
+    animation: fadein 3s;
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
     }
 }

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import classnames from 'classnames';
 import { addQueryArgs } from '@wordpress/url';
 
@@ -56,6 +56,12 @@ const useMshotsUrl = ( src: string, options: MShotsOptions ) => {
 	const [ loadedSrc, setLoadedSrc ] = useState( '' );
 	const [ count, setCount ] = useState( 0 );
 
+	// Return '' while loading and reset the count for new image requests
+	useEffect( () => {
+		setLoadedSrc( '' );
+		setCount( 0 );
+	}, [ src, options ] );
+
 	useEffect( () => {
 		const img = new Image();
 		const srcUrl = mshotsUrl( src, options, count );
@@ -94,22 +100,11 @@ const MShotsImage = ( {
 	options,
 	scrollable = false,
 }: MShotsImageProps ): JSX.Element => {
-	const [ visible, setVisible ] = useState( true );
-	const [ opacity, setOpacity ] = useState( 0 );
-
 	const src = useMshotsUrl( url, options );
+	const visible = !! src;
 	const backgroundImage = src && `url( ${ src } )`;
 
-	// Hide the images while they're loading if src changes (e.g. when locale is switched)
-	useLayoutEffect( () => {
-		// Opacity is used for fade in on load
-		// Visible is used to hide the image quickly when swapping languages
-		setVisible( !! src );
-		setOpacity( src ? 1 : 0 );
-	}, [ src ] );
-
 	const style = {
-		opacity,
 		...( scrollable ? { backgroundImage } : {} ),
 	};
 
