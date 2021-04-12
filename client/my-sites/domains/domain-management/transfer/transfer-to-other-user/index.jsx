@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect, useSelector } from 'react-redux';
-import { find, get, head, includes, omit } from 'lodash';
+import { find, get, head, omit } from 'lodash';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 import { createHigherOrderComponent } from '@wordpress/compose';
@@ -338,11 +338,7 @@ class TransferOtherUser extends React.Component {
 	}
 
 	filterAvailableUsers( users ) {
-		return users.filter(
-			( user ) =>
-				includes( user.roles, 'administrator' ) &&
-				this.getWpcomUserId( user ) !== this.props.currentUser.ID
-		);
+		return users.filter( ( user ) => this.getWpcomUserId( user ) !== this.props.currentUser.ID );
 	}
 
 	isDataReady() {
