@@ -38,6 +38,8 @@ import './style.scss';
 
 const wpcom = wp.undocumented();
 
+const getWpcomUserId = ( user ) => user.linked_user_ID ?? user.ID;
+
 class TransferOtherUser extends React.Component {
 	static propTypes = {
 		currentUser: PropTypes.object.isRequired,
@@ -63,8 +65,6 @@ class TransferOtherUser extends React.Component {
 		this.handleDialogClose = this.handleDialogClose.bind( this );
 		this.handleConfirmTransferDomain = this.handleConfirmTransferDomain.bind( this );
 	}
-
-	getWpcomUserId = ( user ) => user.linked_user_ID ?? user.ID;
 
 	handleUserChange( event ) {
 		event.preventDefault();
@@ -127,7 +127,7 @@ class TransferOtherUser extends React.Component {
 	getSelectedUserDisplayName() {
 		const selectedUser = find(
 			this.props.users,
-			( user ) => this.getWpcomUserId( user ) === Number( this.state.selectedUserId )
+			( user ) => getWpcomUserId( user ) === Number( this.state.selectedUserId )
 		);
 
 		if ( ! selectedUser ) {
@@ -248,7 +248,7 @@ class TransferOtherUser extends React.Component {
 								<Fragment>
 									<option value="">{ translate( '-- Select User --' ) }</option>
 									{ availableUsers.map( ( user ) => {
-										const userId = this.getWpcomUserId( user );
+										const userId = getWpcomUserId( user );
 
 										return (
 											<option key={ userId } value={ userId }>
@@ -326,7 +326,7 @@ class TransferOtherUser extends React.Component {
 	filterAvailableUsers( users ) {
 		return users.filter(
 			( user ) =>
-				! this.getWpcomUserId( user ) || this.getWpcomUserId( user ) !== this.props.currentUser.ID
+				getWpcomUserId( user ) !== false && getWpcomUserId( user ) !== this.props.currentUser.ID
 		);
 	}
 
