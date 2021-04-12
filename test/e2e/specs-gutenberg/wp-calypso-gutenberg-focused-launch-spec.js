@@ -3,7 +3,7 @@
  */
 import assert from 'assert';
 import config from 'config';
-import { By, until } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 import { step } from 'mocha-steps';
 
 /**
@@ -28,7 +28,6 @@ const screenSize = driverManager.currentScreenSize();
 describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 	let driver;
-	let selectedSubdomain;
 
 	before( 'Start browser', async function () {
 		this.timeout( startBrowserTimeoutMS );
