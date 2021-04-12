@@ -46,7 +46,8 @@ import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-me
 import useStoredCards from './hooks/use-stored-cards';
 import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
 import useCreatePaymentMethods from './hooks/use-create-payment-methods';
-import { applePayProcessor, multiPartnerCardProcessor } from './payment-method-processors';
+import applePayProcessor from './lib/apple-pay-processor';
+import multiPartnerCardProcessor from './lib/multi-partner-card-processor';
 import freePurchaseProcessor from './lib/free-purchase-processor';
 import fullCreditsProcessor from './lib/full-credits-processor';
 import weChatProcessor from './lib/we-chat-processor';
@@ -426,7 +427,6 @@ export default function CompositeCheckout( {
 
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
-	const transactionOptions = { createUserAndSiteBeforeTransaction };
 	const dataForProcessor: PaymentProcessorOptions = useMemo(
 		() => ( {
 			createUserAndSiteBeforeTransaction,
@@ -463,10 +463,10 @@ export default function CompositeCheckout( {
 	const paymentProcessors = useMemo(
 		() => ( {
 			'apple-pay': ( transactionData: unknown ) =>
-				applePayProcessor( transactionData, dataForProcessor, transactionOptions ),
+				applePayProcessor( transactionData, dataForProcessor ),
 			'free-purchase': () => freePurchaseProcessor( dataForProcessor ),
 			card: ( transactionData: unknown ) =>
-				multiPartnerCardProcessor( transactionData, dataForProcessor, transactionOptions ),
+				multiPartnerCardProcessor( transactionData, dataForProcessor ),
 			alipay: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'alipay', transactionData, dataForProcessor ),
 			p24: ( transactionData: unknown ) =>
@@ -502,15 +502,7 @@ export default function CompositeCheckout( {
 				),
 			paypal: () => payPalProcessor( dataForProcessor ),
 		} ),
-		[
-			siteId,
-			dataForProcessor,
-			transactionOptions,
-			countryCode,
-			subdivisionCode,
-			postalCode,
-			domainDetails,
-		]
+		[ siteId, dataForProcessor, countryCode, subdivisionCode, postalCode, domainDetails ]
 	);
 
 	const jetpackColors = isJetpackNotAtomic

@@ -17,7 +17,7 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 
 	async connectWordPressCom() {
 		const selector = By.css( ".jp-connect-full__button-container a[href*='register']" );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, selector );
 		await this.driver.sleep( 1000 );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}
@@ -27,11 +27,11 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 		const spinnerSelector = By.css(
 			'.jp-connect-full__button-container:not([style="display: none;"]) .jp-spinner'
 		);
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, selector );
 		await this.driver.sleep( 1000 );
 		await driverHelper.clickWhenClickable( this.driver, selector );
 
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, spinnerSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, spinnerSelector );
 
 		return await driverHelper.waitTillNotPresent(
 			this.driver,
@@ -51,7 +51,7 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 
 	async clickUpgradeNudge() {
 		const selector = By.css( '.dops-banner a[href*="aag-search"]' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, selector );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}
 
@@ -64,7 +64,7 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable( this.driver, manageConnectionButton );
 		await driverHelper.clickWhenClickable( this.driver, disconnectButton );
 
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			successDisconnectNotice,
 			this.explicitWaitMS * 2

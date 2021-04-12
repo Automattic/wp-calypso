@@ -56,7 +56,7 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 		step( 'Can insert the premium block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.addBlock( 'Simple Payments' );
-			return await driverHelper.waitTillPresentAndDisplayed(
+			return await driverHelper.waitUntilLocatedAndVisible(
 				driver,
 				By.css( '.wp-block-jetpack-simple-payments' )
 			);
@@ -71,8 +71,7 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 
 		step( 'Can view checkout modal', async function () {
 			editorUrl = await driver.executeScript( 'return window.location.href' );
-			await driverHelper.waitTillPresentAndDisplayed( driver, By.css( '.editor-checkout-modal' ) );
-			const compositeCheckoutIsPresent = await driverHelper.isElementPresent(
+			const compositeCheckoutIsPresent = await driverHelper.isEventuallyPresentAndDisplayed(
 				driver,
 				By.css( '.editor-checkout-modal' )
 			);
@@ -98,7 +97,7 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 		step( 'Can change plan length', async function () {
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 			const originalCartAmount = await securePaymentComponent.cartTotalAmount();
-			await driverHelper.waitTillPresentAndDisplayed(
+			await driverHelper.waitUntilLocatedAndVisible(
 				driver,
 				By.css( '.wp-checkout__review-order-step .checkout-step__edit-button' )
 			);
@@ -112,7 +111,7 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 			await twoYearPlan.click();
 			// TODO: This seems flakey, need to think of a way around this.
 			await driver.sleep( 1500 );
-			await driverHelper.waitTillPresentAndDisplayed(
+			await driverHelper.waitUntilLocatedAndVisible(
 				driver,
 				By.css( '.wp-checkout__review-order-step .checkout-button.is-status-primary:not(.is-busy)' )
 			);

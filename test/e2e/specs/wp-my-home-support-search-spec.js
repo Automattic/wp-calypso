@@ -47,7 +47,7 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 
 	step( 'Verify "Get help" support card is displayed', async function () {
 		// Card can take a little while to display, so let's wait...
-		await driverHelper.waitTillPresentAndDisplayed( driver, helpCardSelector );
+		await driverHelper.waitUntilLocatedAndVisible( driver, helpCardSelector );
 
 		// For safety also scroll into viewport - also helps when visually verify test runs.
 		await driverHelper.scrollIntoView( driver, helpCardSelector );

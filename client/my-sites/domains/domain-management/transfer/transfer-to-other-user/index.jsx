@@ -3,10 +3,11 @@
  */
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
-import { find, get, head, includes, omit } from 'lodash';
+import { connect, useSelector } from 'react-redux';
+import { find, omit } from 'lodash';
 import page from 'page';
 import { localize } from 'i18n-calypso';
+import { createHigherOrderComponent } from '@wordpress/compose';
 
 /**
  * Internal Dependencies
@@ -25,9 +26,10 @@ import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import useUsersQuery from 'calypso/data/users//use-users-query';
 
 /**
  * Style dependencies
@@ -40,19 +42,18 @@ class TransferOtherUser extends React.Component {
 	static propTypes = {
 		currentUser: PropTypes.object.isRequired,
 		domains: PropTypes.array.isRequired,
-		isAtomic: PropTypes.bool.isRequired,
 		isRequestingSiteDomains: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		// From `withUsers` HoC
 		users: PropTypes.array.isRequired,
 	};
 
 	constructor( props ) {
 		super( props );
 
-		const defaultUser = head( this.filterAvailableUsers( props.users ) );
 		this.state = {
-			selectedUserId: defaultUser ? this.getWpcomUserId( defaultUser ) : '',
+			selectedUserId: '',
 			showConfirmationDialog: false,
 			disableDialogButtons: false,
 		};
@@ -63,22 +64,7 @@ class TransferOtherUser extends React.Component {
 		this.handleConfirmTransferDomain = this.handleConfirmTransferDomain.bind( this );
 	}
 
-	getWpcomUserId = ( user ) => {
-		if ( this.props.isAtomic ) {
-			return get( user, 'linked_user_ID', '' );
-		}
-
-		return user.ID;
-	};
-
-	UNSAFE_componentWillUpdate( nextProps, nextState ) {
-		if ( nextState && ! nextState.selectedUserId ) {
-			const defaultUser = head( this.filterAvailableUsers( nextProps.users ) );
-			if ( defaultUser ) {
-				this.setState( { selectedUserId: this.getWpcomUserId( defaultUser ) } );
-			}
-		}
-	}
+	getWpcomUserId = ( user ) => user.linked_user_ID ?? user.ID;
 
 	handleUserChange( event ) {
 		event.preventDefault();
@@ -258,15 +244,18 @@ class TransferOtherUser extends React.Component {
 							value={ this.state.selectedUserId }
 						>
 							{ availableUsers.length ? (
-								availableUsers.map( ( user ) => {
-									const userId = this.getWpcomUserId( user );
+								<Fragment>
+									<option value="">{ translate( '-- Select User --' ) }</option>
+									{ availableUsers.map( ( user ) => {
+										const userId = this.getWpcomUserId( user );
 
-									return (
-										<option key={ userId } value={ userId }>
-											{ this.getUserDisplayName( user ) }
-										</option>
-									);
-								} )
+										return (
+											<option key={ userId } value={ userId }>
+												{ this.getUserDisplayName( user ) }
+											</option>
+										);
+									} ) }
+								</Fragment>
 							) : (
 								<option value="">{ translate( '-- Site has no other administrators --' ) }</option>
 							) }
@@ -336,8 +325,7 @@ class TransferOtherUser extends React.Component {
 	filterAvailableUsers( users ) {
 		return users.filter(
 			( user ) =>
-				includes( user.roles, 'administrator' ) &&
-				this.getWpcomUserId( user ) !== this.props.currentUser.ID
+				! this.getWpcomUserId( user ) || this.getWpcomUserId( user ) !== this.props.currentUser.ID
 		);
 	}
 
@@ -346,13 +334,23 @@ class TransferOtherUser extends React.Component {
 	}
 }
 
+const withUsers = createHigherOrderComponent(
+	( Wrapped ) => ( props ) => {
+		const siteId = useSelector( getSelectedSiteId );
+		const usersQuery = useUsersQuery( siteId, { role: 'administrator' } );
+		const users = usersQuery.data?.users ?? [];
+
+		return <Wrapped { ...props } users={ users } />;
+	},
+	'WithUsers'
+);
+
 export default connect(
 	( state, ownProps ) => {
 		const domain = ! ownProps.isRequestingSiteDomains && getSelectedDomain( ownProps );
 
 		return {
 			currentUser: getCurrentUser( state ),
-			isAtomic: isSiteAutomatedTransfer( state, ownProps.selectedSite.ID ),
 			isMapping: Boolean( domain ) && isMappedDomain( domain ),
 			hasSiteDomainsLoaded: hasLoadedSiteDomains( state, ownProps.selectedSite.ID ),
 			currentRoute: getCurrentRoute( state ),
@@ -362,4 +360,4 @@ export default connect(
 		successNotice,
 		errorNotice,
 	}
-)( localize( TransferOtherUser ) );
+)( localize( withUsers( TransferOtherUser ) ) );

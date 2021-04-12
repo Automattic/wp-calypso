@@ -6,7 +6,6 @@ import type { RequestCartProduct, ResponseCartTaxData } from '@automattic/shoppi
 /**
  * Internal dependencies
  */
-import type { WPCOMCartItem } from './checkout-cart';
 import type { Purchase } from './wpcom-store-state';
 import type { DomainContactDetails } from './backend/domain-contact-details-components';
 
@@ -38,11 +37,6 @@ export interface TransactionRequest {
 	pan?: string | undefined;
 	gstin?: string | undefined;
 	nik?: string | undefined;
-}
-
-// The data required by createTransactionEndpointRequestPayloadFromLineItems
-export interface TransactionRequestWithLineItems extends TransactionRequest {
-	items: WPCOMCartItem[];
 }
 
 export type WPCOMTransactionEndpoint = (
