@@ -98,7 +98,15 @@ function rollout_gradually() {
 	}
 }
 
+/**
+ * Returns whether or not the site loading ETK is in the WoA env
+ * which means it's an AT site.
+ */
+function is_atomic() {
+	return defined( 'IS_ATOMIC' ) && IS_ATOMIC;
+}
+
 // We don't want to activate this module in AT just yet. See https://wp.me/p4TIVU-9DI#comment-10922.
-if ( ! jetpack_is_atomic_site() ) {
+if ( ! is_atomic() ) {
 	rollout_gradually();
 }
