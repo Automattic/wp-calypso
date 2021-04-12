@@ -116,7 +116,7 @@ const Modal = () => {
 							}
 							heading={ translate( 'Do even more' ) }
 							content={ translate(
-								'Advanced admin features have a new home! You can find it in your account settings'
+								'Advanced admin features have a new home! You can find it in your Account Settings.'
 							) }
 						/>
 					),
@@ -135,7 +135,7 @@ const Modal = () => {
 							}
 							heading={ translate( 'Create in color' ) }
 							content={ translate(
-								'Now you can choose a new color for your dashboard in {{a}}account settings{{/a}}.',
+								'Now you can choose a new color for your dashboard in {{a}}Account Settings{{/a}}.',
 								{
 									components: {
 										a: <a href="/me/account" />,
