@@ -58,6 +58,60 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			assert( isFocusedLaunchModalPresent, 'Focused launch modal did not open.' );
 		} );
 
+		step( 'Can see updated list of domains when changing site title', async function () {
+			// Get the site title input
+			const siteTitleInputSelector = By.css( '.focused-launch-summary__input input[type=text]' );
+
+			// Site title step is not displayed when it has been set by user.
+			// Site title is not set during `/start` flow, site title is can be set during `/new` flow.
+			// If the site title input is not rendered, skip this step.
+			// Note: This is currently parked here but unused as we are using the `/start` flow.
+			const isSiteTitleInputPresent = await driverHelper.isElementPresent(
+				driver,
+				siteTitleInputSelector
+			);
+
+			if ( ! isSiteTitleInputPresent ) {
+				return true;
+			}
+
+			// Set a site title
+			const siteTitle = dataHelper.randomPhrase();
+			await driverHelper.setWhenSettable( driver, siteTitleInputSelector, siteTitle, {
+				pauseBetweenKeysMS: 10,
+			} );
+
+			// Wait for domain suggestions to reload.
+			// Prevent the driver from picking up the previously displayed suggestion.
+			await driver.sleep( 2000 );
+
+			// Wait for the new suggestion items to be rendered,
+			// and get the first domain suggestion item.
+			const firstDomainSuggestionItemSelector = By.css(
+				'.domain-picker__suggestion-item:first-child'
+			);
+			await driverHelper.waitTillPresentAndDisplayed( driver, firstDomainSuggestionItemSelector );
+
+			// Remove the spaces and make everything lowercase to match with the suggested domains, e.g.
+			// "Proud Elephants Wriggle Honestly" becomes "proudelephantswrigglehonestly"
+			const normalizedSiteTitle = siteTitle.toLowerCase().replace( / /g, '' );
+
+			// Check if there are domain suggestions that contains user entered site title
+			const domainSuggestionsContainUserEnteredSiteTitleSelector = By.xpath(
+				`//span[@class="domain-picker__domain-sub-domain" and .="${ normalizedSiteTitle }"]`
+			);
+
+			const domainSuggestionsContainUserEnteredSiteTitle = await driverHelper.isElementPresent(
+				driver,
+				domainSuggestionsContainUserEnteredSiteTitleSelector
+			);
+
+			assert(
+				domainSuggestionsContainUserEnteredSiteTitle,
+				'Domain suggestions did not include user entered site title.'
+			);
+		} );
+
 		after( 'Delete the newly created site', async function () {
 			const deleteSite = new DeleteSiteFlow( driver );
 			await deleteSite.deleteSite( siteName + '.wordpress.com' );
