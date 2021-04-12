@@ -63,12 +63,12 @@ class DomainManagementData extends React.Component {
 				<CalypsoShoppingCartProvider>
 					{ React.createElement( this.props.component, {
 						context: this.props.context,
-						domains: this.props.selectedSite ? this.props.domains : null,
+						domains: selectedSite ? this.props.domains : null,
 						hasSiteDomainsLoaded: this.props.hasSiteDomainsLoaded,
 						isRequestingSiteDomains: this.props.isRequestingSiteDomains,
 						products: this.props.products,
 						selectedDomainName: this.props.selectedDomainName,
-						selectedSite: this.props.selectedSite,
+						selectedSite: selectedSite,
 						sitePlans: this.props.sitePlans,
 						user: this.props.currentUser,
 					} ) }
