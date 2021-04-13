@@ -55,6 +55,7 @@ const edit = ( { attributes, setAttributes, className } ) => {
 							onClick={ onToggle }
 							aria-expanded={ isOpen }
 							aria-live="polite"
+							isSecondary
 						>
 							{ label }
 						</Button>
