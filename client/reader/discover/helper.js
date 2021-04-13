@@ -8,7 +8,7 @@ import config from '@automattic/calypso-config';
  * Internal dependencies
  */
 import { getSiteUrl as readerRouteGetSiteUrl } from 'calypso/reader/route';
-import { getUrlParts } from 'calypso/lib/url';
+import { getUrlParts } from '@automattic/calypso-url';
 
 function hasDiscoverSlug( post, searchSlug ) {
 	const metaData = get( post, 'discover_metadata.discover_fp_post_formats' );

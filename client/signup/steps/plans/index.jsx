@@ -28,7 +28,7 @@ import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
-import { getUrlParts } from 'calypso/lib/url/url-parts';
+import { getUrlParts } from '@automattic/calypso-url';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 
 /**

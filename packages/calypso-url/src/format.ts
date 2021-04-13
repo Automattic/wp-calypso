@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import type { URL as URLString } from 'calypso/types';
-
-/**
  * Internal dependencies
  */
 import { determineUrlType, URL_TYPE } from './url-type';
@@ -21,9 +16,9 @@ const BASE_URL = 'http://__domain__.invalid/';
  * @returns The formatted URL.
  */
 export default function format(
-	url: URLString | URL,
+	url: string | URL,
 	urlType?: Exclude< URL_TYPE, URL_TYPE.INVALID | URL_TYPE.PATH_RELATIVE >
-): URLString {
+): string {
 	let parsed: URL;
 	let originalType: URL_TYPE;
 
@@ -46,7 +41,7 @@ export default function format(
 			throw new Error( 'Cannot format path-relative URLs.' );
 		}
 
-		parsed = new URL( url as URLString, BASE_URL );
+		parsed = new URL( url as string, BASE_URL );
 	}
 
 	if ( urlType === undefined ) {

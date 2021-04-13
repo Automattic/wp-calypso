@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import type { URL as URLString } from 'calypso/types';
-
-/**
  * Internal dependencies
  */
 import { determineUrlType, URL_TYPE } from './url-type';
@@ -76,7 +71,7 @@ function pickUrlParts(
  *
  * @returns   the URL parts
  */
-export function getUrlParts( url: URLString | URL ): UrlParts {
+export function getUrlParts( url: string | URL ): UrlParts {
 	const urlType = determineUrlType( url );
 
 	// Invalid URL; return empty URL parts.
@@ -109,7 +104,7 @@ export function getUrlParts( url: URLString | URL ): UrlParts {
 	// with a base, losing the traversal into the parent directory.
 	// We need to handle these with string functions instead.
 	if ( urlType === URL_TYPE.PATH_RELATIVE ) {
-		pathParts.pathname = ( url as URLString ).split( /[?#]/, 1 )[ 0 ];
+		pathParts.pathname = ( url as string ).split( /[?#]/, 1 )[ 0 ];
 	}
 
 	return pathParts;

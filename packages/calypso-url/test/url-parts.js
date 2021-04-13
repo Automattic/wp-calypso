@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-import { getUrlParts, getUrlFromParts } from '../url-parts';
+import { getUrlParts, getUrlFromParts } from '../src';
 
 function convertParamsToObject( searchParams ) {
 	const result = {};
