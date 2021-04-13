@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { createRef } from 'react';
+import React, { Component, createRef } from 'react';
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -16,19 +16,16 @@ import Popover from 'calypso/components/popover';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import UserItem from 'calypso/components/user';
 import InfiniteList from 'calypso/components/infinite-list';
-import { fetchUsers } from 'calypso/lib/users/actions';
 import { hasTouch } from 'calypso/lib/touch-detect';
 
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:author-selector' );
-let instance = 0;
 
-class AuthorSwitcherShell extends React.Component {
+class AuthorSwitcherShell extends Component {
 	static propTypes = {
 		users: PropTypes.array,
-		fetchingUsers: PropTypes.bool,
 		numUsersFetched: PropTypes.number,
 		totalUsers: PropTypes.number,
 		usersCurrentOffset: PropTypes.number,
@@ -46,23 +43,14 @@ class AuthorSwitcherShell extends React.Component {
 	authorSelectorToggleRef = createRef();
 	authorSelectorChevronRef = createRef();
 
-	UNSAFE_componentWillMount() {
-		this.instance = instance;
-		instance++;
-	}
-
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if (
-			! nextProps.fetchOptions.siteId ||
-			nextProps.fetchOptions.siteId !== this.props.fetchOptions.siteId
-		) {
+		if ( ! nextProps.siteId || nextProps.siteId !== this.props.siteId ) {
 			this.props.updateSearch( false );
 		}
 	}
 
 	render() {
-		const { users, fetchNameSpace } = this.props;
-		const infiniteListKey = fetchNameSpace + this.instance;
+		const { users } = this.props;
 
 		if ( ! this.userCanSelectAuthor() ) {
 			return <span>{ this.props.children }</span>;
@@ -90,33 +78,30 @@ class AuthorSwitcherShell extends React.Component {
 					className="author-selector__popover popover"
 					ignoreContext={ this.props.ignoreContext }
 				>
-					{ ( this.props.fetchOptions.search || users.length > 10 ) && (
+					{ ( this.props.search || users.length > 10 ) && (
 						<AsyncLoad
 							require="@automattic/search"
 							compact
-							onSearch={ this.onSearch }
+							onSearch={ this.props.updateSearch }
 							placeholder={ this.props.translate( 'Find Author…', { context: 'search label' } ) }
 							delaySearch={ true }
 							// eslint-disable-next-line jsx-a11y/no-autofocus
 							autoFocus={ ! hasTouch() }
 						/>
 					) }
-					{ this.props.fetchInitialized &&
-					! users.length &&
-					this.props.fetchOptions.search &&
-					! this.props.fetchingUsers ? (
+					{ ! users.length && this.props.search && ! this.props.isLoading ? (
 						this.noUsersFound()
 					) : (
 						<InfiniteList
 							items={ users }
-							key={ infiniteListKey }
+							key={ this.props.listKey }
 							className="author-selector__infinite-list"
 							ref={ this.setListContext }
 							context={ this.state.listContext }
-							fetchingNextPage={ this.props.fetchingUsers }
+							fetchingNextPage={ this.props.isFetchingNextPage }
 							guessedItemHeight={ 42 }
-							lastPage={ this.isLastPage() }
-							fetchNextPage={ this.fetchNextPage }
+							lastPage={ ! this.props.hasNextPage }
+							fetchNextPage={ this.props.fetchNextPage }
 							getItemRef={ this.getAuthorItemGUID }
 							renderLoadingPlaceholders={ this.renderLoadingAuthors }
 							renderItem={ this.renderAuthor }
@@ -125,15 +110,6 @@ class AuthorSwitcherShell extends React.Component {
 				</Popover>
 			</span>
 		);
-	}
-
-	isLastPage() {
-		let usersLength = this.props.users.length;
-		if ( this.props.exclude ) {
-			usersLength += this.props.excludedUsers.length;
-		}
-
-		return this.props.totalUsers <= usersLength;
 	}
 
 	setListContext = ( infiniteListInstance ) => {
@@ -145,7 +121,7 @@ class AuthorSwitcherShell extends React.Component {
 	userCanSelectAuthor() {
 		const { users } = this.props;
 
-		if ( this.props.fetchOptions.search ) {
+		if ( this.props.search ) {
 			return true;
 		}
 
@@ -213,14 +189,6 @@ class AuthorSwitcherShell extends React.Component {
 		this.props.updateSearch( false );
 	};
 
-	fetchNextPage = () => {
-		const fetchOptions = Object.assign( {}, this.props.fetchOptions, {
-			offset: this.props.users.length,
-		} );
-		debug( 'fetching next batch of authors' );
-		fetchUsers( fetchOptions );
-	};
-
 	getAuthorItemGUID = ( author ) => {
 		return 'author-item-' + author.ID;
 	};
@@ -231,10 +199,6 @@ class AuthorSwitcherShell extends React.Component {
 				<UserItem />
 			</PopoverMenuItem>
 		);
-	};
-
-	onSearch = ( searchTerm ) => {
-		this.props.updateSearch( searchTerm );
 	};
 }
 
