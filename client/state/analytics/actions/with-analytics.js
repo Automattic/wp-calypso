@@ -1,6 +1,6 @@
 const mergedMetaData = ( a, b ) => [
-	...( a?.meta?.analytics ?? [] ),
-	...( b?.meta?.analytics ?? [] ),
+	...( a.meta?.analytics ?? [] ),
+	...( b.meta?.analytics ?? [] ),
 ];
 
 const joinAnalytics = ( analytics, action ) =>
