@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect, useSelector } from 'react-redux';
-import { find, omit } from 'lodash';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 import { createHigherOrderComponent } from '@wordpress/compose';
@@ -13,7 +12,7 @@ import { createHigherOrderComponent } from '@wordpress/compose';
  * Internal Dependencies
  */
 import { Card, Dialog } from '@automattic/components';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import Main from 'calypso/components/main';
 import { domainManagementEdit, domainManagementTransfer } from 'calypso/my-sites/domains/paths';
@@ -38,9 +37,11 @@ import './style.scss';
 
 const wpcom = wp.undocumented();
 
+const getWpcomUserId = ( user ) => user.linked_user_ID ?? user.ID;
+
 class TransferOtherUser extends React.Component {
 	static propTypes = {
-		currentUser: PropTypes.object.isRequired,
+		currentUserId: PropTypes.number.isRequired,
 		domains: PropTypes.array.isRequired,
 		isRequestingSiteDomains: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
@@ -63,8 +64,6 @@ class TransferOtherUser extends React.Component {
 		this.handleDialogClose = this.handleDialogClose.bind( this );
 		this.handleConfirmTransferDomain = this.handleConfirmTransferDomain.bind( this );
 	}
-
-	getWpcomUserId = ( user ) => user.linked_user_ID ?? user.ID;
 
 	handleUserChange( event ) {
 		event.preventDefault();
@@ -125,9 +124,8 @@ class TransferOtherUser extends React.Component {
 	}
 
 	getSelectedUserDisplayName() {
-		const selectedUser = find(
-			this.props.users,
-			( user ) => this.getWpcomUserId( user ) === Number( this.state.selectedUserId )
+		const selectedUser = this.props.users.find(
+			( user ) => getWpcomUserId( user ) === Number( this.state.selectedUserId )
 		);
 
 		if ( ! selectedUser ) {
@@ -223,7 +221,8 @@ class TransferOtherUser extends React.Component {
 		);
 
 		if ( ! currentUserCanManage ) {
-			return <NonOwnerCard { ...omit( this.props, [ 'children' ] ) } />;
+			const { domains, selectedDomainName } = this.props;
+			return <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
 		}
 
 		const { isMapping, translate, users } = this.props;
@@ -247,7 +246,7 @@ class TransferOtherUser extends React.Component {
 								<Fragment>
 									<option value="">{ translate( '-- Select User --' ) }</option>
 									{ availableUsers.map( ( user ) => {
-										const userId = this.getWpcomUserId( user );
+										const userId = getWpcomUserId( user );
 
 										return (
 											<option key={ userId } value={ userId }>
@@ -325,7 +324,7 @@ class TransferOtherUser extends React.Component {
 	filterAvailableUsers( users ) {
 		return users.filter(
 			( user ) =>
-				! this.getWpcomUserId( user ) || this.getWpcomUserId( user ) !== this.props.currentUser.ID
+				getWpcomUserId( user ) !== false && getWpcomUserId( user ) !== this.props.currentUserId
 		);
 	}
 
@@ -350,7 +349,7 @@ export default connect(
 		const domain = ! ownProps.isRequestingSiteDomains && getSelectedDomain( ownProps );
 
 		return {
-			currentUser: getCurrentUser( state ),
+			currentUserId: getCurrentUserId( state ),
 			isMapping: Boolean( domain ) && isMappedDomain( domain ),
 			hasSiteDomainsLoaded: hasLoadedSiteDomains( state, ownProps.selectedSite.ID ),
 			currentRoute: getCurrentRoute( state ),
