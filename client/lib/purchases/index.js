@@ -228,7 +228,7 @@ function handleRenewMultiplePurchasesClick( purchases, siteSlug, options = {} ) 
 function handleRenewMonthlyClick( purchase, siteSlug, options = {} ) {
 	const relatedMonthlyPlanSlug = getMonthlyPlanByYearly( purchase?.productSlug );
 
-	// Track the renew now submit.
+	// Track the renew monthly submit.
 	recordTracksEvent( 'calypso_purchases_renew_monthly_click', {
 		product_slug: relatedMonthlyPlanSlug,
 		...options.tracksProps,
