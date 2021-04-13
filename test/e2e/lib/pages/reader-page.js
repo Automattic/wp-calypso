@@ -44,10 +44,6 @@ export default class ReaderPage extends AsyncBaseContainer {
 
 		const clickAndOpenShareModal = async () => {
 			await driverHelper.clickWhenClickable( this.driver, shareButtonSelector );
-			await driverHelper.waitTillPresentAndDisplayed(
-				this.driver,
-				by.css( '.site-selector__sites' )
-			);
 			return await driverHelper.clickWhenClickable(
 				this.driver,
 				by.css( '.site-selector__sites .site__content' )

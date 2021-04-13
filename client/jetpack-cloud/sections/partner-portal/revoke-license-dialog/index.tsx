@@ -94,7 +94,7 @@ export default function RevokeLicenseDialog( {
 
 			<p>
 				{ translate(
-					'A revoked license cannot be reused and the associated site will no longer have access to the provisioned product. You will stop being billing for this license immediately.'
+					'A revoked license cannot be reused, and the associated site will no longer have access to the provisioned product. You will stop being billed for this license immediately.'
 				) }
 			</p>
 

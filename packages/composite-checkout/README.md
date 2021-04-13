@@ -27,7 +27,6 @@ It's also possible to build an entirely custom form using the other components e
 
 Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the following functions:
 
-- [createApplePayMethod](#createApplePayMethod)
 - [createExistingCardMethod](#createExistingCardMethod)
 - [createPayPalMethod](#createpaypalmethod)
 - [createStripeMethod](#createStripeMethod)
@@ -365,13 +364,6 @@ An enum that holds the values of the [transaction status](#useTransactionStatus)
 ### checkoutTheme
 
 An [@emotion/styled](https://emotion.sh/docs/styled) theme object that can be merged with custom theme variables and passed to [CheckoutProvider](#checkout-provider) in order to customize the default Checkout design.
-
-### createApplePayMethod
-
-Creates a [Payment Method](#payment-methods) object. Requires passing an object with the following properties:
-
-- `stripe: object`. The configured stripe object.
-- `stripeConfiguration: object`. The stripe configuration object.
 
 ### createRegistry
 

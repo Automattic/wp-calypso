@@ -18,18 +18,18 @@ import type { Button, BaseButton } from './button-bar';
 import './style.scss';
 
 type Props = {
-	additionalClassNames: Parameters< typeof classnames >[ 0 ];
-	baseClassName: string;
-	buttons: Button[];
-	className: string;
+	additionalClassNames?: Parameters< typeof classnames >[ 0 ];
+	baseClassName?: string;
+	buttons?: Button[];
+	className?: string;
 	children: ReactNode;
-	isBackdropVisible: boolean;
-	isFullScreen: boolean;
+	isBackdropVisible?: boolean;
+	isFullScreen?: boolean;
 	isVisible: boolean;
-	label: string;
-	leaveTimeout: number;
+	label?: string;
+	leaveTimeout?: number;
 	onClose: ( action?: string ) => void;
-	shouldCloseOnEsc: boolean;
+	shouldCloseOnEsc?: boolean;
 };
 
 const Dialog = ( {

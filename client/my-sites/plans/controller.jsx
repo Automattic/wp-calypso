@@ -41,6 +41,7 @@ export function plans( context, next ) {
 			withDiscount={ context.query.discount }
 			discountEndDate={ context.query.ts }
 			redirectTo={ context.query.redirect_to }
+			redirectToAddDomainFlow={ context.query.addDomainFlow }
 		/>
 	);
 	next();

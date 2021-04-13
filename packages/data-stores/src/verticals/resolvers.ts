@@ -7,6 +7,7 @@ import { apiFetch } from '@wordpress/data-controls';
  * Internal dependencies
  */
 import { receiveVerticals } from './actions';
+import type { Vertical } from './types';
 
 /**
  * Fetch verticals from the verticals endpoint.
@@ -21,7 +22,7 @@ import { receiveVerticals } from './actions';
  */
 export function* getVerticals() {
 	const url = 'https://public-api.wordpress.com/wpcom/v2/verticals';
-	const verticals = yield apiFetch( { url } );
+	const verticals: Vertical[] = yield apiFetch( { url } );
 
 	// @TODO: validate and normalize verticals?
 

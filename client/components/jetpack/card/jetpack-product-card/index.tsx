@@ -119,8 +119,10 @@ const DisplayPrice = ( {
 		);
 	}
 
-	const couponOriginalPrice = discountedPrice ?? originalPrice;
-	const couponDiscountedPrice = ( discountedPrice ?? originalPrice ) * FRESHPACK_PERCENTAGE;
+	const couponOriginalPrice = parseFloat( ( discountedPrice ?? originalPrice ).toFixed( 2 ) );
+	const couponDiscountedPrice = parseFloat(
+		( ( discountedPrice ?? originalPrice ) * FRESHPACK_PERCENTAGE ).toFixed( 2 )
+	);
 
 	return (
 		<div className="jetpack-product-card__price">

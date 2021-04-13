@@ -93,7 +93,6 @@ describe( 'handlers', () => {
 		sanitizedMenu[ 1 ].children[ 0 ].url = addQueryArgs(
 			{
 				return: document.location.href,
-				from: 'calypso-unified-menu',
 			},
 			sanitizedMenu[ 1 ].children[ 0 ].url
 		);

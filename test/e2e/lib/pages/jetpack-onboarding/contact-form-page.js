@@ -24,7 +24,6 @@ export default class ContactFormPage extends AsyncBaseContainer {
 
 	async selectContinue() {
 		const continueSelector = By.css( '.card[data-e2e-type="continue"] button' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, continueSelector );
 		return await driverHelper.clickWhenClickable( this.driver, continueSelector );
 	}
 }

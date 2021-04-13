@@ -16,7 +16,6 @@ export default class JetpackPlansSalesPage extends AsyncBaseContainer {
 
 	async clickPurchaseButton() {
 		const selector = By.css( '.cta-install #btn-mast-getstarted' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}
 }

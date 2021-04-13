@@ -7,7 +7,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
+import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 
 export default function getJetpackWpAdminUrl( state ) {
 	const site = getSelectedSite( state );

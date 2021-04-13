@@ -46,7 +46,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	function* createAccount( params: CreateAccountParams ) {
 		yield fetchNewUser();
 		try {
-			const newUser = yield wpcomRequest( {
+			const newUser: NewUserSuccessResponse = yield wpcomRequest( {
 				body: {
 					// defaults
 					is_passwordless: true,

@@ -161,6 +161,9 @@ export default class ButtonExample extends React.PureComponent {
 					<Button primary busy>
 						Primary busy button
 					</Button>
+					<Button scary busy>
+						Scary busy button
+					</Button>
 					<Button primary scary busy>
 						<Gridicon icon="trash" />
 						<span>Primary scary busy button</span>

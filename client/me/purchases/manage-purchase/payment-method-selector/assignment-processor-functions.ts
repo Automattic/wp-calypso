@@ -3,7 +3,11 @@
  */
 import { createStripeSetupIntent } from '@automattic/calypso-stripe';
 import type { Stripe, StripeConfiguration, StripeSetupIntent } from '@automattic/calypso-stripe';
-import { makeRedirectResponse, makeSuccessResponse } from '@automattic/composite-checkout';
+import {
+	makeRedirectResponse,
+	makeSuccessResponse,
+	makeErrorResponse,
+} from '@automattic/composite-checkout';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -48,47 +52,51 @@ export async function assignNewCardProcessor(
 ): Promise< PaymentProcessorResponse > {
 	recordFormSubmitEvent( { reduxDispatch, purchase } );
 
-	if ( ! isNewCardDataValid( submitData ) ) {
-		throw new Error( 'Credit Card data is missing name, country, or postal code' );
-	}
-	if ( ! stripe || ! stripeConfiguration ) {
-		throw new Error( 'Cannot assign payment method if Stripe is not loaded' );
-	}
+	try {
+		if ( ! isNewCardDataValid( submitData ) ) {
+			throw new Error( 'Credit Card data is missing name, country, or postal code' );
+		}
+		if ( ! stripe || ! stripeConfiguration ) {
+			throw new Error( 'Cannot assign payment method if Stripe is not loaded' );
+		}
 
-	const { name, countryCode, postalCode } = submitData;
+		const { name, countryCode, postalCode } = submitData;
 
-	const formFieldValues = {
-		country: countryCode,
-		postal_code: postalCode,
-		name,
-	};
-	const tokenResponse = await createStripeSetupIntentAsync(
-		formFieldValues,
-		stripe,
-		stripeConfiguration
-	);
-	const token = tokenResponse.payment_method;
-	if ( ! token ) {
-		throw new Error( String( translate( 'Failed to add card.' ) ) );
-	}
+		const formFieldValues = {
+			country: countryCode,
+			postal_code: postalCode,
+			name,
+		};
+		const tokenResponse = await createStripeSetupIntentAsync(
+			formFieldValues,
+			stripe,
+			stripeConfiguration
+		);
+		const token = tokenResponse.payment_method;
+		if ( ! token ) {
+			throw new Error( String( translate( 'Failed to add card.' ) ) );
+		}
 
-	if ( purchase ) {
-		const result = await updateCreditCard( {
-			purchase,
+		if ( purchase ) {
+			const result = await updateCreditCard( {
+				purchase,
+				token,
+				stripeConfiguration,
+			} );
+
+			return makeSuccessResponse( result );
+		}
+
+		const result = await saveCreditCard( {
 			token,
 			stripeConfiguration,
+			useForAllSubscriptions: Boolean( useForAllSubscriptions ),
 		} );
 
 		return makeSuccessResponse( result );
+	} catch ( error ) {
+		return makeErrorResponse( error.message );
 	}
-
-	const result = await saveCreditCard( {
-		token,
-		stripeConfiguration,
-		useForAllSubscriptions,
-	} );
-
-	return makeSuccessResponse( result );
 }
 
 async function createStripeSetupIntentAsync(
@@ -131,17 +139,20 @@ export async function assignExistingCardProcessor(
 	submitData: unknown
 ): Promise< PaymentProcessorResponse > {
 	recordFormSubmitEvent( { reduxDispatch, purchase } );
-
-	if ( ! isValidExistingCardData( submitData ) ) {
-		throw new Error( 'Credit card data is missing stored details id' );
+	try {
+		if ( ! isValidExistingCardData( submitData ) ) {
+			throw new Error( 'Credit card data is missing stored details id' );
+		}
+		const { storedDetailsId } = submitData;
+		if ( ! purchase ) {
+			throw new Error( 'Cannot assign PayPal payment method without a purchase' );
+		}
+		return wpcomAssignPaymentMethod( String( purchase.id ), storedDetailsId ).then( ( data ) => {
+			return makeSuccessResponse( data );
+		} );
+	} catch ( error ) {
+		return makeErrorResponse( error.message );
 	}
-	const { storedDetailsId } = submitData;
-	if ( ! purchase ) {
-		throw new Error( 'Cannot assign PayPal payment method without a purchase' );
-	}
-	return wpcomAssignPaymentMethod( String( purchase.id ), storedDetailsId ).then( ( data ) => {
-		return makeSuccessResponse( data );
-	} );
 }
 
 function isValidExistingCardData( data: unknown ): data is ExistingCardSubmitData {
@@ -165,9 +176,11 @@ export async function assignPayPalProcessor(
 		String( purchase.id ),
 		addQueryArgs( window.location.href, { success: 'true' } ),
 		window.location.href
-	).then( ( data ) => {
-		return makeRedirectResponse( data );
-	} );
+	)
+		.then( ( data ) => {
+			return makeRedirectResponse( data );
+		} )
+		.catch( ( error ) => makeErrorResponse( error.message ) );
 }
 
 function recordFormSubmitEvent( {

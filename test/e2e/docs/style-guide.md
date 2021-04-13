@@ -25,21 +25,23 @@ We don't chain function calls together and avoid using `.then` calls.
 Avoid doing:
 
 ```
-async selectContinue() {
-	const continueSelector = By.css( '.card[data-e2e-type="continue"] button' );
-	return await driverHelper
-		.waitTillPresentAndDisplayed( this.driver, continueSelector )
-		.then( () => driverHelper.clickWhenClickable( this.driver, continueSelector ) );
-	}
+async function openModal() {
+	const modalButtonLocator = By.css( 'button.open-modal' );
+	const modalLocator = By.css( '.modal' );
+	await driverHelper
+		.clickWhenClickable( this.driver, modalButtonLocator )
+		.then( () => driverHelper.waitUntilLocatedAndVisible( modalLocator ) );
+}
 ```
 
 Instead use `await` for each function call:
 
 ```
-async selectContinue() {
-	const continueSelector = By.css( 'a.card[data-e2e-type="continue"] button' );
-	await driverHelper.waitTillPresentAndDisplayed( this.driver, continueSelector );
-	return await driverHelper.clickWhenClickable( this.driver, continueSelector );
+async function openModal() {
+	const modalButtonLocator = By.css( 'button.open-modal' );
+	const modalLocator = By.css( '.modal' );
+	await driverHelper.clickWhenClickable( this.driver, modalButtonLocator );
+	await driverHelper.waitUntilLocatedAndVisible( modalLocator );
 }
 ```
 

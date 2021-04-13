@@ -24,7 +24,7 @@ import {
 	useStepRouteParam,
 } from '../path';
 import { usePrevious } from '../hooks/use-previous';
-import DesignSelector from './design-selector';
+import Designs from './designs';
 import CreateSite from './create-site';
 import CreateSiteError from './create-site-error';
 import AcquireIntent from './acquire-intent';
@@ -156,7 +156,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				</Route>
 
 				<Route path={ makePath( Step.DesignSelection ) }>
-					<DesignSelector />
+					<Designs />
 				</Route>
 
 				<Route path={ makePath( Step.Style ) }>

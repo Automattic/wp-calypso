@@ -19,7 +19,7 @@ export default class ActivityPage extends AsyncBaseContainer {
 		return await driver.wait( async () => {
 			await driver.navigate().refresh();
 			// Sometimes activity log take a long time to load it's content. lets wait for it.
-			await driverHelper.waitTillPresentAndDisplayed(
+			await driverHelper.waitUntilLocatedAndVisible(
 				driver,
 				By.css( '.activity-log-item:not(.is-loading)' )
 			);
