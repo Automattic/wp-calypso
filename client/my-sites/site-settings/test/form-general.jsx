@@ -232,22 +232,6 @@ describe( 'SiteSettingsFormGeneral ', () => {
 
 			// We want to show the coming soon setting for existing coming soon v1 sites that have not migrated
 			describe( 'support existing coming soon v1 sites that have not migrated', () => {
-				test( 'Coming soon option should be selected when a site is private and unlaunched (coming soon mode v1 by default)', () => {
-					const newProps = {
-						...testProps,
-						fields: {
-							blog_public: -1,
-						},
-						isUnlaunchedSite: true,
-						// So renderLaunchSite() runs smoothly.
-						siteDomains: [ 'test.com' ],
-					};
-
-					const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...newProps } /> );
-					const radioButton = getByLabelText( 'Coming soon', { exact: false } );
-					expect( radioButton ).toBeChecked();
-				} );
-
 				test( 'Should check private option when site is private, but not in coming soon v1 and not private and unlaunched', () => {
 					const newProps = {
 						...testProps,
