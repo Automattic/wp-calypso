@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { get, map, flatten } from 'lodash';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -78,8 +77,9 @@ export const getSiteStatsPostStreakData = treeSelect(
 		// ensure streakData.data exists and it is not an array
 		if ( streakData && streakData.data && ! Array.isArray( streakData.data ) ) {
 			Object.keys( streakData.data ).forEach( ( timestamp ) => {
-				const postDay = moment.unix( timestamp );
-				const datestamp = postDay.utcOffset( gmtOffset ).format( 'YYYY-MM-DD' );
+				const time = new Date( timestamp * 1000 );
+				time.setUTCHours( time.getUTCHours() + gmtOffset );
+				const datestamp = time.toISOString().slice( 0, 10 );
 
 				if ( 'undefined' === typeof response[ datestamp ] ) {
 					response[ datestamp ] = 0;
