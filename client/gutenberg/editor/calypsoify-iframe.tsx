@@ -167,10 +167,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 	componentDidMount() {
 		window.addEventListener( 'message', this.onMessage, false );
 
-		// If the iframe itself fails to load for some reason, eg. an unexpected
-		// auth loop, we need to exit to wp-admin without the iFrame. Therefore,
-		// once we start loading the iFrame, we set the editor redirect timer to
-		// 25s. This timer is cleared when iFrame.onLoad is called.
+		// Redirect timer stage 1.
 		if ( this.props.shouldLoadIframe && ! this.editorRedirectTimer ) {
 			this.setEditorRedirectTimer( 25000 );
 		}
@@ -185,7 +182,8 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 	}
 
 	componentDidUpdate( { shouldLoadIframe }: ComponentProps ) {
-		// If shouldLoadIframe changed from false to true and the timer hasn't yet been set.
+		// Redirect timer stage 1. Starts when shouldLoadIframe turns to true if
+		// not already triggered in componentDidMount
 		if ( ! this.editorRedirectTimer && ! shouldLoadIframe && this.props.shouldLoadIframe ) {
 			this.setEditorRedirectTimer( 25000 );
 		}
@@ -198,11 +196,39 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 
 	/**
 	 * The editor redirect timer will attempt to perform a redirect if the editor
-	 * has not loaded after a certain time. There are currently two stages to the
-	 * timer. The first stage waits up to 25 seconds for the iframe to call `onLoad`.
-	 * We then wait a further 1s for the iframe-bridge-server to respond that the
-	 * editor itself is ready to go. We only consider Gutenframe to be ready after
-	 * the iframe-bridge-server has responded.
+	 * has not loaded after a certain time. The timer is always cancelled as soon
+	 * as the iframe sends us a message that the editor is ready to go via the
+	 * iframe bridge server. Given that we have redirect logic in our parent
+	 * components which detects things like lack of authentication, this timer
+	 * handles error conditions which we cannot detect. There are two stages:
+	 *
+	 * 1. The first stage waits up to 25 seconds for the iframe to call `onLoad`.
+	 * This is to handle rare error conditions such as redirects within the frame
+	 * which cause iframe.onload to never be called. It's 25 seconds to account
+	 * for slow network conditions. Thankfully, this timer should very rarely be
+	 * triggered as most failure conditions happen do not happen in this stage.
+	 * Most problems are detected before (such as auth) or after (such as the page
+	 * loading the wrong thing).
+	 *
+	 * 2. The second stage waits 1 second to ensure the iframe is responding as
+	 * we expect. After `iframe.onload` is called, we still don't know if the editor
+	 * has loaded because the browser could be displaying an error message (such
+	 * is the case with `X-Frame-Options: DENY`) in the document which has loaded.
+	 * As a result, we need to wait to make sure the iframe bridge server
+	 * is responding. It needs to be greater than 0 because we can't guarantee
+	 * that the iframe will have executed the script which sends the message by
+	 * the time iframe.onload is called. However, we do know that the script will
+	 * at least be downloaded and parsed (because that's what iframe.onload indicates),
+	 * so the timer doesn't have to be very long. Ideally, we would look into the
+	 * iframe to see if it is displaying an error, but the browser does not allow
+	 * this.
+	 *
+	 * Some historical work which has been combined into this timer:
+	 *
+	 * @see https://github.com/Automattic/wp-calypso/pull/43248
+	 * @see https://github.com/Automattic/wp-calypso/pull/36977
+	 * @see https://github.com/Automattic/wp-calypso/pull/41006
+	 * @see https://github.com/Automattic/wp-calypso/pull/44086
 	 */
 	editorRedirectTimer: ReturnType< typeof setTimeout > | undefined;
 	setEditorRedirectTimer = ( time: number ) => {
@@ -749,8 +775,11 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 							src={ isIframeLoaded ? currentIFrameUrl : iframeUrl }
 							// NOTE: Do not include any "editor load" events in
 							// this handler. It really only tracks if the document
-							// has loaded. Use the WindowActions.Loaded onMessage
-							// handler to detect when the editor has loaded.
+							// has loaded. That document could just be a 404 or
+							// a browser error page. Use the WindowActions.Loaded
+							// onMessage handler to handle when the editor iframe
+							// has loaded and started responding. This is the
+							// redirect timer stage 2.
 							onLoad={ () => this.setEditorRedirectTimer( 1000 ) }
 							// When 3rd party cookies are disabled, the iframe
 							// shows an error page that flashes for a moment
