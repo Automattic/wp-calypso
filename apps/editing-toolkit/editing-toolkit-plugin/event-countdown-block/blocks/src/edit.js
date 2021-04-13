@@ -50,13 +50,7 @@ const edit = ( { attributes, setAttributes, className } ) => {
 				<Dropdown
 					position="bottom left"
 					renderToggle={ ( { onToggle, isOpen } ) => (
-						<Button
-							className="button"
-							onClick={ onToggle }
-							aria-expanded={ isOpen }
-							aria-live="polite"
-							isSecondary
-						>
+						<Button onClick={ onToggle } aria-expanded={ isOpen } aria-live="polite" isSecondary>
 							{ label }
 						</Button>
 					) }
