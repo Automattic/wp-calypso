@@ -19,8 +19,10 @@ const joinAnalytics = ( analytics, action ) =>
 				},
 		  };
 
-export const withAnalytics = ( ...args ) => {
-	return args.length >= joinAnalytics.length
-		? joinAnalytics( ...args )
-		: ( ...args2 ) => withAnalytics( ...args.concat( args2 ) );
-};
+export function withAnalytics( analytics, action ) {
+	if ( typeof action === 'undefined' ) {
+		return ( a ) => joinAnalytics( analytics, a );
+	}
+
+	return joinAnalytics( analytics, action );
+}
