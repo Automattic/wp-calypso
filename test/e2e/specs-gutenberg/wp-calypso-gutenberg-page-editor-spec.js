@@ -88,7 +88,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 
 		step( 'Can see correct page title in preview', async function () {
 			const pagePreviewComponent = await PagePreviewComponent.Expect( driver );
-			await pagePreviewComponent.displayed();
 			const actualPageTitle = await pagePreviewComponent.pageTitle();
 			assert.strictEqual(
 				actualPageTitle.toUpperCase(),
