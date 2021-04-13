@@ -20,11 +20,14 @@ export const withEnhancers = ( actionCreator, enhancers ) => ( ...args ) => {
 		const enhanceAction = ( actionValue ) =>
 			enhancers.reduce( ( result, enhancer ) => enhancer( result, getState ), actionValue );
 		const enhancedDispatch = ( actionValue ) => dispatch( enhanceAction( actionValue ) );
+		const thunkDispatch = ( actionValue ) => {
+			if ( typeof actionValue === 'function' ) {
+				return actionValue( thunkDispatch, getState );
+			}
 
-		if ( typeof action === 'function' ) {
-			return action( enhancedDispatch, getState );
-		}
+			return enhancedDispatch( actionValue );
+		};
 
-		return enhancedDispatch( action );
+		return thunkDispatch( action );
 	};
 };
