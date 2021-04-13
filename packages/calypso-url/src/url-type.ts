@@ -1,8 +1,3 @@
-/**
- * Internal dependencies
- */
-import type { URL as URLString } from './types';
-
 // For complete definitions of these classifications, see:
 // https://url.spec.whatwg.org/#urls
 export enum URL_TYPE {
@@ -33,7 +28,7 @@ const BASE_URL = `http://${ BASE_HOSTNAME }`;
  *
  * @returns the type of the URL
  */
-export function determineUrlType( url: URLString | URL ): URL_TYPE {
+export function determineUrlType( url: string | URL ): URL_TYPE {
 	// Check for expected parameter types.
 	if ( ! ( url instanceof URL ) && typeof url !== 'string' ) {
 		return URL_TYPE.INVALID;
