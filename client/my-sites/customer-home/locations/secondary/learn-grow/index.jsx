@@ -18,8 +18,10 @@ import {
 	EDUCATION_FREE_PHOTO_LIBRARY,
 	EDUCATION_GUTENBERG,
 	EDUCATION_EARN,
+	EDUCATION_WPCOURSES,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { WpCourses } from 'calypso/my-sites/customer-home/cards/education/wpcourses';
 
 /**
  * Style dependencies
@@ -30,6 +32,7 @@ const cardComponents = {
 	[ EDUCATION_FREE_PHOTO_LIBRARY ]: FreePhotoLibrary,
 	[ EDUCATION_GUTENBERG ]: MasteringGutenberg,
 	[ EDUCATION_EARN ]: EducationEarn,
+	[ EDUCATION_WPCOURSES ]: WpCourses,
 };
 
 const LearnGrow = ( { cards, trackCards } ) => {
