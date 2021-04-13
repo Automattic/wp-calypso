@@ -107,8 +107,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		if ( visit ) {
 			await this.waitForSuccessViewPostNotice();
-			// Wait for the snackbar animation
-			await this.driver.sleep( 1000 );
 			await driverHelper.clickWhenClickable(
 				this.driver,
 				By.css( '.components-snackbar__content a' )
@@ -563,7 +561,8 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async waitForSuccessViewPostNotice() {
 		const noticeSelector = By.css( '.components-snackbar' );
-		return await driverHelper.waitUntilLocatedAndVisible( this.driver, noticeSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, noticeSelector );
+		await this.driver.sleep( 600 ); // Wait for the snackbar to slide-in
 	}
 
 	async dismissSuccessNotice() {
