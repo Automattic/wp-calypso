@@ -58,7 +58,7 @@ export default class PagePreviewComponent extends AsyncBaseContainer {
 		const iFrameSelector = By.css( '.web-preview__frame' );
 		const explicitWaitMS = config.get( 'explicitWaitMS' );
 		await driver.switchTo().defaultContent();
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			driver,
 			By.css( '.web-preview__inner.is-visible.is-loaded' )
 		);

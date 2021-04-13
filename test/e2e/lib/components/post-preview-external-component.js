@@ -52,7 +52,7 @@ export default class PostPreviewExternalComponent extends AsyncBaseContainer {
 	}
 
 	async isDisplayed() {
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.isEventuallyPresentAndDisplayed(
 			this.driver,
 			previewWindowMainSelector,
 			explicitWaitMS

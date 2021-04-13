@@ -15,7 +15,7 @@
 If running `git commit` shows the following:
 
 ```
-husky > pre-commit (node 14.16.0)
+husky > pre-commit (node 14.16.1)
 error Command "install-if-no-packages" not found.
 husky > pre-commit hook failed (add --no-verify to bypass)
 ```

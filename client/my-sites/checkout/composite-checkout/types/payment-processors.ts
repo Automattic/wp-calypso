@@ -10,6 +10,7 @@ import type { ResponseCart } from '@automattic/shopping-cart';
  */
 import type { ReactStandardAction } from '../types/analytics';
 import type { GetThankYouUrl } from '../hooks/use-get-thank-you-url';
+import type { ManagedContactDetails } from '../types/wpcom-store-state';
 
 export interface PaymentProcessorOptions {
 	includeDomainDetails: boolean;
@@ -22,4 +23,5 @@ export interface PaymentProcessorOptions {
 	getThankYouUrl: GetThankYouUrl;
 	siteSlug: string | undefined;
 	siteId: number | undefined;
+	contactDetails: ManagedContactDetails | undefined;
 }

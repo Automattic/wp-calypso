@@ -28,7 +28,6 @@ export default class PaymentButtonFrontEndComponent extends AsyncBaseContainer {
 			this.explicitWaitMS,
 			'Could not locate the payment button iFrame.'
 		);
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, payPalPayButtonSelector );
 		await driverHelper.clickWhenClickable( this.driver, payPalPayButtonSelector );
 		return await this.driver.switchTo().defaultContent();
 	}

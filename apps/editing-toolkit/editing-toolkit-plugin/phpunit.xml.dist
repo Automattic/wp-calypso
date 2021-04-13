@@ -19,5 +19,8 @@
 		<testsuite name="coming-soon">
 			<directory suffix="-test.php">./coming-soon/test/</directory>
 		</testsuite>
+		<testsuite name="block-patterns">
+			<directory suffix="-test.php">./block-patterns/test/</directory>
+		</testsuite>
 	</testsuites>
 </phpunit>

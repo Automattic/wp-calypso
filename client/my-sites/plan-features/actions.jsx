@@ -146,12 +146,18 @@ const PlanFeaturesActionsButton = ( {
 		);
 	}
 
+	let buttonText = freePlan
+		? translate( 'Select Free', { context: 'button' } )
+		: translate( 'Upgrade', { context: 'verb' } );
+
+	if ( props.buttonText ) {
+		buttonText = props.buttonText;
+	}
+
 	if ( availableForPurchase || isPlaceholder ) {
 		return (
 			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
-				{ props.buttonText || freePlan
-					? translate( 'Select Free', { context: 'button' } )
-					: translate( 'Upgrade', { context: 'verb' } ) }
+				{ buttonText }
 			</Button>
 		);
 	}

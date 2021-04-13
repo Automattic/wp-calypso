@@ -3,7 +3,8 @@
  */
 import { maxWidthPhotonishURL } from 'calypso/lib/post-normalizer/utils/max-width-photonish-url';
 import safeImageURL from 'calypso/lib/safe-image-url';
-import { getUrlParts, resolveRelativePath, getUrlFromParts } from 'calypso/lib/url';
+import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
+import { resolveRelativePath } from 'calypso/lib/url';
 
 export function makeImageURLSafe( object, propName, maxWidth, baseURL ) {
 	if ( object && object[ propName ] ) {

@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { Button as OriginalButton } from '@wordpress/components';
-import { wordpress } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { __ } from '@wordpress/i18n';
@@ -13,6 +12,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import { STORE_KEY } from '../../constants';
+import SiteIcon from '../site-icon';
 import './style.scss';
 
 const Button = ( {
@@ -25,7 +25,6 @@ const Button = ( {
 export default function ToggleSidebarButton(): JSX.Element {
 	const { toggleSidebar } = useDispatch( STORE_KEY );
 	const isSidebarOpen = useSelect( ( select ) => select( STORE_KEY ).isSidebarOpened() );
-	const isSidebarClosing = useSelect( ( select ) => select( STORE_KEY ).isSidebarClosing() );
 
 	const handleClick = () => {
 		recordTracksEvent( `calypso_editor_sidebar_open` );
@@ -39,15 +38,16 @@ export default function ToggleSidebarButton(): JSX.Element {
 			className={ classnames(
 				'edit-post-fullscreen-mode-close',
 				'wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button',
+				'has-icon',
 				{
-					'is-hidden': isSidebarOpen || isSidebarClosing,
+					'is-hidden': isSidebarOpen,
 				}
 			) }
-			icon={ wordpress }
-			iconSize={ 36 }
 			onClick={ handleClick }
 			aria-haspopup="dialog"
 			aria-expanded={ isSidebarOpen }
-		/>
+		>
+			<SiteIcon />
+		</Button>
 	);
 }

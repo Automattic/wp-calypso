@@ -21,7 +21,12 @@ import QueryPreferences from 'calypso/components/data/query-preferences';
 import QuerySites from 'calypso/components/data/query-sites';
 import QuerySiteSelectedEditor from 'calypso/components/data/query-site-selected-editor';
 import { isOffline } from 'calypso/state/application/selectors';
-import { getSelectedSiteId, masterbarIsVisible, getSelectedSite } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSiteId,
+	masterbarIsVisible,
+	getSelectedSite,
+	getSidebarIsCollapsed,
+} from 'calypso/state/ui/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
@@ -51,6 +56,7 @@ import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { getShouldShowAppBanner, handleScroll } from './utils';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { isWithinBreakpoint } from '@automattic/viewport';
 
 /**
  * Style dependencies
@@ -222,11 +228,15 @@ class Layout extends Component {
 			if ( this.props.isNavUnificationEnabled ) {
 				bodyClass.push( 'is-nav-unification' );
 			}
+
+			if ( this.props.sidebarIsCollapsed && isWithinBreakpoint( '>800px' ) ) {
+				bodyClass.push( 'is-sidebar-collapsed' );
+			}
+
 			return {
 				bodyClass,
 			};
 		};
-
 		const { shouldShowAppBanner } = this.props;
 
 		const loadInlineHelp = this.shouldLoadInlineHelp();
@@ -402,6 +412,7 @@ export default compose(
 			isNewLaunchFlow,
 			isCheckoutFromGutenboarding,
 			isNavUnificationEnabled: isNavUnificationEnabled( state ),
+			sidebarIsCollapsed: getSidebarIsCollapsed( state ),
 		};
 	} )
 )( Layout );

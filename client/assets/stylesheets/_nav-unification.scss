@@ -16,9 +16,16 @@
 		// client/assets/stylesheets/shared/_variables.scss
 		--masterbar-height: 32px;
 	}
+
+	&.is-sidebar-collapsed:not( .is-section-reader ):not( .is-section-me ) {
+		--sidebar-width-max: 36px;
+		--sidebar-width-min: 36px;
+	}
+
 	$nav-unification-primary: #23282d;
 	$nav-unification-secondary: #101517;
 	$nav-unification-masterbar-font-size: 13px;
+	$nav-unification-masterbar-mobile-font-size: 14px;
 
 	// packages/calypso-color-schemes/src/shared/color-schemes/_default.scss
 	--color-masterbar-background: #101517;
@@ -31,6 +38,7 @@
 		border-right: none;
 	}
 
+	// General Top bar styles
 	// client/layout/masterbar/style.scss
 	.masterbar {
 		font-size: $nav-unification-masterbar-font-size;
@@ -49,16 +57,32 @@
 	}
 
 	// client/layout/masterbar/style.scss
-	.masterbar__item-new,
-	.masterbar__toggle-drafts.button.is-borderless {
-		height: 24px;
-		margin: 4px 8px;
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 5px;
+	@include breakpoint-deprecated( '<480px' ) {
+		.masterbar__item-bubble {
+			left: calc( 50% - 14px );
+		}
 	}
 
+	// breakpoint used in wp-admin
+	@media only screen and ( max-width: 782px ) {
+		.masterbar__item {
+			font-size: $nav-unification-masterbar-mobile-font-size;
+			padding: 0 15px;
+		}
+
+		.masterbar__item .gridicon + .masterbar__item-content {
+			padding-left: 8px;
+		}
+
+		.masterbar__reader .gridicon + .masterbar__item-content {
+			padding-left: 6px;
+		}
+	}
+
+	// New post button
 	.masterbar__item-new {
 		padding: 0 10px;
+		font-size: $nav-unification-masterbar-font-size;
 
 		&:hover {
 			background: #e9e9ea;
@@ -78,6 +102,15 @@
 		}
 	}
 
+	// client/layout/masterbar/style.scss
+	.masterbar__item-new,
+	.masterbar__toggle-drafts.button.is-borderless {
+		height: 24px;
+		margin: 4px 8px;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 5px;
+	}
+
 	.masterbar__toggle-drafts.button.is-borderless {
 		margin-left: -20px;
 
@@ -91,9 +124,41 @@
 		}
 	}
 
+	// breakpoint used in wp-admin
+	@media only screen and ( max-width: 782px ) {
+		.masterbar__item-new,
+		.masterbar__toggle-drafts.button.is-borderless {
+			height: 34px;
+			margin-top: 6px;
+			margin-right: 9px;
+			padding: 0 16px 0 14px;
+		}
+
+		.masterbar__toggle-drafts.button.is-borderless {
+			padding: 0 14px 0 8px;
+			margin-left: -26px;
+		}
+	}
+
+	@include breakpoint-deprecated( '<480px' ) {
+		.masterbar__item-new,
+		.masterbar__toggle-drafts.button.is-borderless {
+			height: 36px;
+			margin-top: 5px;
+			width: auto;
+			padding: 0 8px;
+		}
+
+		.masterbar__toggle-drafts.button.is-borderless {
+			margin-left: -18px;
+		}
+	}
+
+	// Account button
+
 	// client/layout/masterbar/style.scss
 	.masterbar__item-me {
-		padding-right: 8px;
+		padding-right: 10px;
 		padding-left: 8px;
 
 		.gravatar {
@@ -102,7 +167,40 @@
 			transform: translate( -50%, -50% );
 		}
 	}
+	// breakpoint used in wp-admin
+	@media only screen and ( max-width: 782px ) {
+		.masterbar__item-me {
+			padding: 0 13px 0 15px;
 
+			// fix for profile picture currently hidden in production
+			.masterbar__item-content {
+				display: block;
+			}
+
+			.gridicon {
+				position: relative;
+				left: 4px;
+			}
+
+			.gravatar {
+				width: 22px;
+				height: 22px;
+			}
+		}
+	}
+
+	@include breakpoint-deprecated( '<480px' ) {
+		.masterbar__item-me {
+			padding: 0 11px;
+
+			.gravatar {
+				width: 19px;
+				height: 19px;
+			}
+		}
+	}
+
+	// Notifications button
 	.masterbar__item-notifications {
 		padding-right: 5px;
 		padding-left: 5px;
@@ -118,10 +216,31 @@
 		transform: translateX( 1px );
 	}
 
-	// client/layout/masterbar/style.scss
-	@include breakpoint-deprecated( '>960px' ) {
-		.masterbar__toggle-drafts.button.is-borderless {
-			margin-left: -23px;
+	// breakpoint used in wp-admin
+	@media only screen and ( max-width: 782px ) {
+		.masterbar__item-notifications {
+			margin-right: 10px;
+			padding: 0 15px;
+			width: 26px;
+
+			.gridicon {
+				flex-shrink: 0;
+			}
+		}
+
+		// client/layout/masterbar/style.scss
+		.masterbar__item-notifications .masterbar__notifications-bubble {
+			top: 10px;
+		}
+	}
+
+	@include breakpoint-deprecated( '<480px' ) {
+		.masterbar__item-notifications {
+			margin-top: 0;
+			margin-left: auto;
+			margin-right: auto;
+			padding: 0 8px;
+			width: auto;
 		}
 	}
 
@@ -136,33 +255,6 @@
 		.layout.focus-sites:not( .is-section-post-editor ) .layout__primary .main,
 		.layout.focus-sidebar:not( .is-section-post-editor ) .layout__primary .main {
 			transform: translateX( 100% );
-		}
-
-		// client/layout/masterbar/style.scss
-		.masterbar__item-new,
-		.masterbar__toggle-drafts.button.is-borderless {
-			height: 36px;
-			margin-top: 5px;
-		}
-
-		// client/layout/masterbar/style.scss
-		.masterbar__item-me {
-			// fix for profile picture currently hidden in production
-			.masterbar__item-content {
-				display: block;
-			}
-		}
-
-		// client/layout/masterbar/style.scss
-		.masterbar__item-notifications .masterbar__notifications-bubble {
-			top: 10px;
-		}
-	}
-
-	// client/layout/masterbar/style.scss
-	@include breakpoint-deprecated( '<480px' ) {
-		.masterbar__item-bubble {
-			left: calc( 50% - 14px );
 		}
 	}
 }

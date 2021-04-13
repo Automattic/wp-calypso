@@ -67,6 +67,7 @@
 			letter-spacing: -0.3px;
 			color: #787c82;
 			white-space: pre-wrap;
+			word-break: break-word;
 		}
 
 		.twitter-preview__media {
@@ -134,6 +135,8 @@
 			border-radius: 12px;
 
 			.twitter-preview__card-summary {
+				display: grid;
+
 				&.twitter-preview__card-has-image {
 					height: 125px;
 					display: grid;

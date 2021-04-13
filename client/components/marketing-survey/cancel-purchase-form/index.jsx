@@ -52,10 +52,9 @@ import { CANCEL_FLOW_TYPE } from './constants';
 import { getDowngradePlanRawPrice } from 'calypso/state/purchases/selectors';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
 import { DOWNGRADEABLE_PLANS_FROM_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { slugToSelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/utils';
-import { TERM_ANNUALLY } from 'calypso/lib/plans/constants';
+import { TERM_ANNUALLY, JETPACK_PRODUCTS_LIST } from 'calypso/lib/plans/constants';
 
 /**
  * Style dependencies

@@ -24,6 +24,7 @@ import {
 import debugFactory from 'debug';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import type { RemoveProductFromCart, RequestCartProduct } from '@automattic/shopping-cart';
+import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -60,7 +61,6 @@ import CheckoutHelpLink from './checkout-help-link';
 import styled from '../lib/styled';
 import type { CountryListItem } from '../types/country-list-item';
 import type { GetProductVariants } from '../hooks/product-variants';
-import type { ManagedContactDetails } from '../types/wpcom-store-state';
 import type { OnChangeItemVariant } from '../components/item-variation-picker';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );

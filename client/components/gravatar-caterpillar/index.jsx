@@ -51,7 +51,12 @@ class GravatarCaterpillar extends React.Component {
 					}
 
 					return (
-						<Gravatar className={ gravClasses } key={ user.email } user={ user } size={ 32 } />
+						<Gravatar
+							className={ gravClasses }
+							key={ user.email || user.avatar_URL }
+							user={ user }
+							size={ 32 }
+						/>
 					);
 				} ) }
 			</div>

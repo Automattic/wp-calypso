@@ -148,8 +148,13 @@ const WebServerLogsCard = ( props ) => {
 					scrollId = get( response, 'data.scroll_id', null );
 
 					if ( isEmpty( logs ) ) {
-						logs = [ Object.keys( newLogData[ 0 ] ).join( ',' ) + '\n' ];
-						totalLogs = get( response, 'data.total_results', 1 );
+						if ( isEmpty( newLogData ) ) {
+							downloadErrorNotice( translate( 'No logs available for this time range' ) );
+							isError = true;
+						} else {
+							logs = [ Object.keys( newLogData[ 0 ] ).join( ',' ) + '\n' ];
+							totalLogs = get( response, 'data.total_results', 1 );
+						}
 					}
 
 					logs = [

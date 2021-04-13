@@ -21,8 +21,8 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-codemods#readme",
 	"dependencies": {
-		"@babel/core": "^7.13.10",
-		"@babel/preset-env": "^7.13.10",
+		"@babel/core": "^7.13.14",
+		"@babel/preset-env": "^7.13.12",
 		"5to6-codemod": "^1.8.0",
 		"jscodeshift": "^0.9.0",
 		"lodash": "^4.17.21",
