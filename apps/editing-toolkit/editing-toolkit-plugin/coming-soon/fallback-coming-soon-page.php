@@ -150,6 +150,9 @@ nocache_headers();
 				margin-right: 16px;
 				margin-bottom: 0;
 			}
+			.wpcom-coming-soon-wplogo a {
+				border: none;
+			}
 			.wpcom-coming-soon-marketing-copy-text {
 				line-height: 1.4;
 				margin: 0;
