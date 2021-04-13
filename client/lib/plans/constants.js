@@ -104,14 +104,6 @@ export const JETPACK_PRODUCTS_LIST = [
 	...JETPACK_SEARCH_PRODUCTS,
 ];
 
-// Jetpack Search tiers
-export const JETPACK_SEARCH_TIER_UP_TO_100_RECORDS = 'up_to_100_records';
-export const JETPACK_SEARCH_TIER_UP_TO_1K_RECORDS = 'up_to_1k_records';
-export const JETPACK_SEARCH_TIER_UP_TO_10K_RECORDS = 'up_to_10k_records';
-export const JETPACK_SEARCH_TIER_UP_TO_100K_RECORDS = 'up_to_100k_records';
-export const JETPACK_SEARCH_TIER_UP_TO_1M_RECORDS = 'up_to_1m_records';
-export const JETPACK_SEARCH_TIER_MORE_THAN_1M_RECORDS = 'more_than_1m_records';
-
 export const JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/backup/';
 export const JETPACK_SEARCH_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/search/';
 export const JETPACK_SCAN_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/scan/';
