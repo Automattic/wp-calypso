@@ -9,6 +9,7 @@ import {
 	useFormStatus,
 	useIsStepActive,
 } from '@automattic/composite-checkout';
+import type { ContactDetailsType, ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -17,8 +18,6 @@ import useSkipToLastStepIfFormComplete from '../hooks/use-skip-to-last-step-if-f
 import useIsCachedContactFormValid from '../hooks/use-is-cached-contact-form-valid';
 import ContactDetailsContainer from './contact-details-container';
 import type { CountryListItem } from '../types/country-list-item';
-import type { ManagedContactDetails } from '../types/wpcom-store-state';
-import type { ContactDetailsType } from '../types/contact-details';
 
 const BillingFormFields = styled.div`
 	margin-bottom: 16px;

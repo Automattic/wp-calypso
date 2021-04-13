@@ -30,7 +30,7 @@ import Search from 'calypso/components/search';
 import SiteSelectorAddSite from './add-site';
 import searchSites from 'calypso/components/search-sites';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
-import { getUrlParts, getUrlFromParts, determineUrlType, format } from 'calypso/lib/url';
+import { getUrlParts, getUrlFromParts, determineUrlType, format } from '@automattic/calypso-url';
 
 /**
  * Style dependencies

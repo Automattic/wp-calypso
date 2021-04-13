@@ -11,7 +11,7 @@ import {
 	getTranslationChunkFile,
 } from '../../../../lib/i18n-utils/switch-locale';
 import { getLanguageSlugs } from '../../../../lib/i18n-utils';
-import { getUrlParts } from '../../../../lib/url/url-parts';
+import { getUrlParts } from '@automattic/calypso-url';
 import config from '@automattic/calypso-config';
 import type { User } from '@automattic/data-stores';
 import { LocaleProvider } from '@automattic/i18n-utils';

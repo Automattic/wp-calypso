@@ -1,11 +1,9 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -54,12 +52,7 @@ export default connect(
 			isRequestingList: isRequestingList( state, owner, slug ),
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators(
-			{
-				requestList,
-			},
-			dispatch
-		);
+	{
+		requestList,
 	}
 )( QueryReaderList );

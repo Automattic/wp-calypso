@@ -26,11 +26,6 @@
 	--color-sidebar-submenu-hover-text: #00b9eb;
 	--color-sidebar-submenu-selected-background: transparent;
 	--color-sidebar-submenu-selected-text: white;
-
-	&.is-sidebar-collapsed:not( .is-section-reader ):not( .is-section-me ) {
-		--sidebar-width-max: 36px;
-		--sidebar-width-min: 36px;
-	}
 }
 
 // Local Vars
@@ -387,6 +382,14 @@ $font-size: rem( 14px );
 
 		.site__content {
 			padding: 10px 2px;
+
+			.count {
+				margin: 0;
+			}
+
+			.site__title::after {
+				display: none;
+			}
 		}
 
 		.site__home {
@@ -402,17 +405,23 @@ $font-size: rem( 14px );
 			margin: 8px 3px 7px;
 		}
 
-		.current-site__notices > a::before {
-			content: '\f534';
-			font-family: 'dashicons';
-			/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
-			font-size: 20px;
-			line-height: 20px;
-			background-color: #a7aaad;
-			color: white;
-			/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
-			border-radius: 50%;
-			margin: 3px 0 3px 1px;
+		.current-site__notices > .banner {
+			&::before {
+				content: '\f534';
+				font-family: 'dashicons';
+				/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
+				font-size: 20px;
+				line-height: 20px;
+				background-color: #a7aaad;
+				color: white;
+				/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
+				border-radius: 50%;
+				margin: 3px 0 3px 1px;
+			}
+
+			&.is-dismissible .gridicon {
+				display: none;
+			}
 		}
 
 		.upsell-nudge.banner.card.is-compact .banner__content {

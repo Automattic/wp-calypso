@@ -2,7 +2,7 @@
 name: Happiness Bug report
 about: Create a report to help us improve
 title: ''
-labels: Involves Happiness, [Type] Bug
+labels: User Report, [Type] Bug
 assignees: ''
 
 ---

@@ -1,8 +1,8 @@
 // custom properties for Jetpack
 :root {
 	// border-radius
-	--jetpack-corners-sharp: 0px;
-	--jetpack-corners-soft: 3px;
+	--jetpack-corners-sharp: 0;
+	--jetpack-corners-soft: 4px;
 }
 
 .theme-jetpack-cloud,
@@ -233,11 +233,10 @@ html {
 .theme-jetpack-cloud .ReactModalPortal {
 	.dialog.card {
 		box-shadow: 0 0 0 1px var( --color-border-subtle ), 0 4px 12px var( --color-neutral-10 );
-		border-radius: 2px;
 	}
 
 	.dialog__action-buttons {
-		border-radius: 0 0 3px 3px;
+		border-radius: 0 0 var( --jetpack-corners-soft ) var( --jetpack-corners-soft );
 	}
 }
 

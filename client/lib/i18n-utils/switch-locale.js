@@ -10,7 +10,7 @@ import { forEach, includes, throttle } from 'lodash';
  */
 import config from '@automattic/calypso-config';
 import { isDefaultLocale, getLanguage } from './utils';
-import { getUrlFromParts, getUrlParts } from 'calypso/lib/url/url-parts';
+import { getUrlFromParts, getUrlParts } from '@automattic/calypso-url';
 
 const debug = debugFactory( 'calypso:i18n' );
 

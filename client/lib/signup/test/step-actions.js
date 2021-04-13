@@ -521,6 +521,7 @@ describe( 'isFreePlansDomainUpsellFulfilled()', () => {
 
 	beforeEach( () => {
 		flows.excludeStep.mockClear();
+		flows.resetExcludedStep.mockClear();
 		submitSignupStep.mockClear();
 	} );
 
@@ -538,6 +539,8 @@ describe( 'isFreePlansDomainUpsellFulfilled()', () => {
 		isFreePlansDomainUpsellFulfilled( stepName, null, nextProps );
 
 		expect( submitSignupStep ).not.toHaveBeenCalled();
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+		expect( flows.resetExcludedStep ).toHaveBeenCalledWith( stepName );
 	} );
 
 	test( 'should call submitSignupStep() when site is on a paid plan', () => {
@@ -557,6 +560,8 @@ describe( 'isFreePlansDomainUpsellFulfilled()', () => {
 			{ stepName, selectedDomainUpsellItem: null, wasSkipped: true },
 			{ selectedDomainUpsellItem: null }
 		);
+		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
+		expect( flows.resetExcludedStep ).not.toHaveBeenCalled();
 	} );
 
 	test( 'should call submitSignupStep() when a cartItem is passed', () => {
@@ -576,6 +581,8 @@ describe( 'isFreePlansDomainUpsellFulfilled()', () => {
 			{ stepName, selectedDomainUpsellItem: null, wasSkipped: true },
 			{ selectedDomainUpsellItem: null }
 		);
+		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
+		expect( flows.resetExcludedStep ).not.toHaveBeenCalled();
 	} );
 
 	test( 'should call submitSignupStep() when a domainItem is passed', () => {
@@ -595,5 +602,7 @@ describe( 'isFreePlansDomainUpsellFulfilled()', () => {
 			{ stepName, selectedDomainUpsellItem: null, wasSkipped: true },
 			{ selectedDomainUpsellItem: null }
 		);
+		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
+		expect( flows.resetExcludedStep ).not.toHaveBeenCalled();
 	} );
 } );

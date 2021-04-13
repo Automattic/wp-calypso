@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { useDispatch } from 'react-redux';
+import type { CheckoutPaymentMethodSlug } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -13,7 +14,6 @@ import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	isRedirectPaymentMethod,
 } from '../lib/translate-payment-method-names';
-import type { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
 
 export function logStashLoadErrorEventAction(
 	errorType: string,

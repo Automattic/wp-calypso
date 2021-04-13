@@ -6,10 +6,9 @@
 /**
  * External dependencies
  */
-import React, { useLayoutEffect } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { isWithinBreakpoint } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -23,22 +22,6 @@ import TranslatableString from 'calypso/components/translatable/proptype';
 export const CollapseSidebar = ( { title, icon } ) => {
 	const reduxDispatch = useDispatch();
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
-	const collapsed = sidebarIsCollapsed && isWithinBreakpoint( '>800px' );
-
-	useLayoutEffect( () => {
-		// Adding / removing clear-secondary-layout-transitions is a workaround to avoid site-selector being transitioning while expanding the sidebar (client/my-sites/sidebar-unified/style.scss).
-		collapsed
-			? document.body.classList.add( 'is-sidebar-collapsed', 'clear-secondary-layout-transitions' )
-			: document.body.classList.remove( 'is-sidebar-collapsed' );
-
-		// Needs to be queued for removal after is-sidebar-collapsed is removed
-		if ( ! collapsed ) {
-			const timer = setTimeout( () => {
-				document.body.classList.remove( 'clear-secondary-layout-transitions' );
-			} );
-			return () => clearTimeout( timer );
-		}
-	}, [ collapsed ] );
 
 	return (
 		<SidebarItem

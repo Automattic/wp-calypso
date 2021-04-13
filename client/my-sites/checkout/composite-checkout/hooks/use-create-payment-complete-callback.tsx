@@ -13,6 +13,7 @@ import type {
 } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
+import type { WPCOMTransactionEndpointResponse, Purchase } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -36,8 +37,6 @@ import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
-import type { Purchase } from '../types/wpcom-store-state';
-import type { WPCOMTransactionEndpointResponse } from '../types/transaction-endpoint';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';

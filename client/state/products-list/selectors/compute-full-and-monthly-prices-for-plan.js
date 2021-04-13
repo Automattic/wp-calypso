@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { max } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { getPlan, getMonthlyPlanByYearly, getBillingMonthsForTerm } from 'calypso/lib/plans';
@@ -37,10 +32,10 @@ export const computeFullAndMonthlyPricesForPlan = (
 	return {
 		priceFullBeforeDiscount: getPlanRawPrice( state, planObject.getProductId(), false ),
 		priceFull: getPlanPrice( state, siteId, planObject, false ),
-		priceFinal: max( [
+		priceFinal: Math.max(
 			getPlanPrice( state, siteId, planObject, false ) - credits - couponDiscount,
-			0,
-		] ),
+			0
+		),
 	};
 };
 

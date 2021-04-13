@@ -39,6 +39,7 @@ import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 class Plans extends React.Component {
 	static propTypes = {
 		context: PropTypes.object.isRequired,
+		redirectToAddDomainFlow: PropTypes.bool,
 		displayJetpackPlans: PropTypes.bool,
 		intervalType: PropTypes.string,
 		customerType: PropTypes.string,
@@ -153,6 +154,7 @@ class Plans extends React.Component {
 									/>
 								) : (
 									<PlansFeaturesMain
+										redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
 										displayJetpackPlans={ displayJetpackPlans }
 										hideFreePlan={ true }
 										customerType={ customerType }

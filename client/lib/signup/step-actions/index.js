@@ -30,7 +30,7 @@ import {
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'calypso/lib/cart-values/cart-items';
-import { getUrlParts } from 'calypso/lib/url';
+import { getUrlParts } from '@automattic/calypso-url';
 
 // State actions and selectors
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
@@ -155,6 +155,7 @@ function getNewSiteParams( {
 	const siteStyle = getSiteStyle( state ).trim();
 	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
 	const siteTypeTheme = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
+	const selectedDesign = get( signupDependencies, 'selectedDesign', false );
 
 	const shouldSkipDomainStep = ! siteUrl && isDomainStepSkippable( flowToCheck );
 	const shouldHideFreePlan = get( getSignupDependencyStore( state ), 'shouldHideFreePlan', false );
@@ -225,6 +226,15 @@ function getNewSiteParams( {
 
 	if ( isEligibleForPageBuilder( siteSegment, flowToCheck ) && shouldEnterPageBuilder() ) {
 		newSiteParams.options.in_page_builder = true;
+	}
+
+	if ( selectedDesign ) {
+		// If there's a selected design, it means that the current flow contains the "design" step.
+		newSiteParams.options.theme = `pub/${ selectedDesign.theme }`;
+		newSiteParams.options.template = selectedDesign.template;
+		newSiteParams.options.font_base = selectedDesign.fonts.base;
+		newSiteParams.options.font_headings = selectedDesign.fonts.headings;
+		newSiteParams.options.use_patterns = true;
 	}
 
 	return newSiteParams;
@@ -806,6 +816,8 @@ export function isFreePlansDomainUpsellFulfilled( stepName, defaultDependencies,
 			{ selectedDomainUpsellItem }
 		);
 		flows.excludeStep( stepName );
+	} else {
+		flows.resetExcludedStep( stepName );
 	}
 }
 
