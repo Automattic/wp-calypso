@@ -19,9 +19,10 @@ import {
 	getJetpackProductDisplayName,
 	getJetpackProductTagline,
 } from '..';
-import { JETPACK_BACKUP_PRODUCTS, JETPACK_PRODUCTS_LIST } from '../constants';
 import { getJetpackProductsDisplayNames, getJetpackProductsTaglines } from '../translations';
 import {
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_PRODUCTS_LIST,
 	JETPACK_PLANS,
 	PLAN_FREE,
 	PLAN_PERSONAL,

@@ -34,11 +34,9 @@ import {
 	GROUP_WPCOM,
 	GROUP_JETPACK,
 	PLAN_PERSONAL,
-} from 'calypso/lib/plans/constants';
-import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_PRODUCT_PRICE_MATRIX,
-} from 'calypso/lib/products-values/constants';
+} from 'calypso/lib/plans/constants';
 import { getJetpackProducts } from 'calypso/lib/products-values/translations';
 import JetpackFAQ from './jetpack-faq';
 import PlansFeaturesMainProductsHeader from './products-header';

@@ -19,7 +19,7 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { isTrafficGuide } from 'calypso/lib/products-values';
-import { WPCOM_TRAFFIC_GUIDE } from 'calypso/lib/products-values/constants';
+import { WPCOM_TRAFFIC_GUIDE } from 'calypso/lib/plans/constants';
 
 /**
  * Style dependencies

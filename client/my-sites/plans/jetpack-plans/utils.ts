@@ -34,6 +34,9 @@ import {
 	JETPACK_RESET_PLANS,
 	JETPACK_SECURITY_PLANS,
 	JETPACK_PLANS_BY_TERM,
+	JETPACK_SEARCH_PRODUCTS,
+	JETPACK_PRODUCT_PRICE_MATRIX,
+	JETPACK_PRODUCTS_BY_TERM,
 } from 'calypso/lib/plans/constants';
 import {
 	getPlan,
@@ -41,11 +44,6 @@ import {
 	getYearlyPlanByMonthly,
 	planHasFeature,
 } from 'calypso/lib/plans';
-import {
-	JETPACK_SEARCH_PRODUCTS,
-	JETPACK_PRODUCT_PRICE_MATRIX,
-	JETPACK_PRODUCTS_BY_TERM,
-} from 'calypso/lib/products-values/constants';
 import {
 	Product,
 	JETPACK_PRODUCTS_LIST,

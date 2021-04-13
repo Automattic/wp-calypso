@@ -11,13 +11,12 @@ import { localize } from 'i18n-calypso';
  */
 import FormattedHeader from 'calypso/components/formatted-header';
 import { getPlan } from 'calypso/lib/plans';
-import { JETPACK_RESET_PLANS } from 'calypso/lib/plans/constants';
+import { JETPACK_RESET_PLANS, JETPACK_PRODUCTS_LIST } from 'calypso/lib/plans/constants';
 import {
 	getJetpackProductShortName,
 	getJetpackProductDescription,
 } from 'calypso/lib/products-values';
 import { PRODUCTS_LIST } from 'calypso/lib/products-values/products-list';
-import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
 import { FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
 import { retrievePlan } from './persistence-utils';
 
