@@ -1,8 +1,3 @@
-/**
- * External dependencies
- */
-import { merge } from 'lodash';
-
 const mergedMetaData = ( a, b ) => [
 	...( a?.meta?.analytics ?? [] ),
 	...( b?.meta?.analytics ?? [] ),
@@ -14,7 +9,15 @@ const joinAnalytics = ( analytics, action ) =>
 				dispatch( analytics );
 				dispatch( action );
 		  }
-		: merge( {}, action, { meta: { analytics: mergedMetaData( analytics, action ) } } );
+		: {
+				...action,
+				...{
+					meta: {
+						...action?.meta,
+						analytics: mergedMetaData( analytics, action ),
+					},
+				},
+		  };
 
 export const withAnalytics = ( ...args ) => {
 	return args.length >= joinAnalytics.length
