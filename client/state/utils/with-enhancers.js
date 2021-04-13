@@ -9,23 +9,22 @@
  * @see client/state/analytics/actions/enhanceWithSiteType for an example
  * @see extendAction from @automattic/state-utils for a simpler alternative
  */
-export const withEnhancers = ( actionCreator, enhancers ) => ( ...args ) => (
-	dispatch,
-	getState
-) => {
+export const withEnhancers = ( actionCreator, enhancers ) => ( ...args ) => {
 	const action = actionCreator( ...args );
 
 	if ( ! Array.isArray( enhancers ) ) {
 		enhancers = [ enhancers ];
 	}
 
-	const enhanceAction = ( actionValue ) =>
-		enhancers.reduce( ( result, enhancer ) => enhancer( result, getState ), actionValue );
-	const enhancedDispatch = ( actionValue ) => dispatch( enhanceAction( actionValue ) );
+	return ( dispatch, getState ) => {
+		const enhanceAction = ( actionValue ) =>
+			enhancers.reduce( ( result, enhancer ) => enhancer( result, getState ), actionValue );
+		const enhancedDispatch = ( actionValue ) => dispatch( enhanceAction( actionValue ) );
 
-	if ( typeof action === 'function' ) {
-		return action( enhancedDispatch, getState );
-	}
+		if ( typeof action === 'function' ) {
+			return action( enhancedDispatch, getState );
+		}
 
-	return enhancedDispatch( action );
+		return enhancedDispatch( action );
+	};
 };
