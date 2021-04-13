@@ -77,4 +77,33 @@ describe( '#withEnhancers', () => {
 			type: 'HELLO',
 		} );
 	} );
+
+	it( 'should enhance nested thunk actions', () => {
+		// plain action
+		const actionCreator = () => ( { type: 'HELLO' } );
+		// thunk action that dispatches the plain action
+		const thunkCreator = () => ( dispatch ) => dispatch( actionCreator() );
+		// nested thunk action that dispatches the thunk action that dispatches the plain action
+		const thunkThunkCreator = () => ( dispatch ) => dispatch( thunkCreator() );
+		// enhancer that's supposed to enhance the deeply nested plain action
+		const enhancer = ( action ) => ( { ...action, name: 'test' } );
+		// apply the enhancer to the nested thunk creator
+		const enhancedThunkThunkCreator = withEnhancers( thunkThunkCreator, enhancer );
+
+		// mocks the base Redux dispatch function that handles plain actions
+		const dispatch = jest.fn();
+		// mock the Redux Thunk enhanced dispatch function that handles thunks, too
+		const thunkDispatch = ( action ) => {
+			if ( typeof action === 'function' ) {
+				return action( thunkDispatch );
+			}
+			return dispatch( action );
+		};
+
+		// dispatch the nested thunk action with the enhancer
+		thunkDispatch( enhancedThunkThunkCreator() );
+		// verify that the enhancer reached to the bottom of the thunk nesting and enhanced
+		// the plain action at the bottom
+		expect( dispatch ).toHaveBeenCalledWith( { type: 'HELLO', name: 'test' } );
+	} );
 } );
