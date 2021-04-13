@@ -53,9 +53,6 @@ import {
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
-} from 'calypso/lib/plans/constants';
-
-import {
 	JETPACK_SEARCH_PRODUCTS,
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
@@ -67,7 +64,7 @@ import {
 	PRODUCT_JETPACK_SCAN_MONTHLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
-} from 'calypso/lib/products-values/constants';
+} from 'calypso/lib/plans/constants';
 import { getProductFromSlug } from 'calypso/lib/products-values/get-product-from-slug';
 import { getJetpackProductDisplayName } from 'calypso/lib/products-values/get-jetpack-product-display-name';
 import { externalRedirect } from 'calypso/lib/route/path';

@@ -68,7 +68,11 @@ module.exports = {
 		},
 		{
 			plugins: [ 'mocha' ],
-			files: [ 'test/e2e/**/*' ],
+			files: [
+				'test/e2e/**/*',
+				'packages/magellan-mocha-plugin/test/**/*',
+				'packages/magellan-mocha-plugin/test_support/**/*',
+			],
 			rules: {
 				'import/no-nodejs-modules': 'off',
 				'mocha/no-exclusive-tests': 'error',

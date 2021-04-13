@@ -32,7 +32,6 @@ export default class WPAdminLogonPage extends AsyncBaseContainer {
 		if ( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, ssoButton, 2000 ) ) {
 			await this.toggleSSOLogin();
 		}
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, userNameSelector );
 		await driverHelper.setWhenSettable( this.driver, userNameSelector, username );
 		await driverHelper.setWhenSettable( this.driver, passwordSelector, password, {
 			secureValue: true,

@@ -19,7 +19,7 @@ import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_CRM_FREE_PRODUCTS,
-} from 'calypso/lib/products-values/constants';
+} from 'calypso/lib/plans/constants';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { slugToSelectorProduct } from './utils';

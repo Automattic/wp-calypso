@@ -20,11 +20,11 @@ export default class MediaPage extends AsyncBaseContainer {
 	}
 
 	async selectFirstImage() {
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.media-library__upload-button' )
 		);
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.media-library__list-item:not(.is-placeholder)' )
 		);
@@ -32,7 +32,7 @@ export default class MediaPage extends AsyncBaseContainer {
 			this.driver,
 			By.css( '.media-library__list-item .is-image' )
 		);
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.media-library__list-item.is-selected' )
 		);
@@ -50,7 +50,7 @@ export default class MediaPage extends AsyncBaseContainer {
 	}
 
 	async imageShowingInEditor() {
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.image-editor__crop' )
 		);
@@ -71,7 +71,7 @@ export default class MediaPage extends AsyncBaseContainer {
 	}
 
 	async selectInsertImage() {
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.media-library__list-item.is-selected' )
 		);
@@ -85,7 +85,7 @@ export default class MediaPage extends AsyncBaseContainer {
 		const fileNameInputSelector = By.css( '.media-library__upload-button input[type="file"]' );
 		const driver = this.driver;
 
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			driver,
 			By.className( 'media-library__upload-button' )
 		);
@@ -95,7 +95,7 @@ export default class MediaPage extends AsyncBaseContainer {
 			driver,
 			By.css( '.media-library__list-item.is-transient' )
 		);
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			driver,
 			By.css( '.media-library__list-item.is-selected' )
 		);

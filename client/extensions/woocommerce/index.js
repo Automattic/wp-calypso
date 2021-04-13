@@ -20,6 +20,7 @@ import StoreSidebar from './store-sidebar';
 import { tracksStore, bumpStat } from './lib/analytics';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { getSelectedSiteWithFallback, getSiteOption } from 'calypso/state/sites/selectors';
+import isSiteStore from 'calypso/state/selectors/is-site-store';
 
 /**
  * Style dependencies
@@ -162,6 +163,12 @@ function redirectIfWooCommerceNotInstalled( context, next ) {
 	const state = context.store.getState();
 	const site = getSelectedSiteWithFallback( state );
 	const siteId = site ? site.ID : null;
+	const isStore = isSiteStore( state, siteId );
+
+	if ( isStore ) {
+		next();
+		return;
+	}
 	const isSiteWpcomStore = getSiteOption( state, siteId, 'is_wpcom_store' );
 
 	if ( ! isSiteWpcomStore ) {

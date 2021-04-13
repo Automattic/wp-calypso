@@ -22,7 +22,7 @@ export default class StartPage extends AsyncBaseContainer {
 			await this.setABTestControlGroupsInLocalStorage();
 			await this.driver.get( this.startURL ); // this is the actual calculated start URL
 		}
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( '.step-wrapper' ) );
+		return await driverHelper.waitUntilLocatedAndVisible( this.driver, By.css( '.step-wrapper' ) );
 	}
 
 	static getStartURL( { culture = 'en', flow = 'domains', query = '' } = {} ) {

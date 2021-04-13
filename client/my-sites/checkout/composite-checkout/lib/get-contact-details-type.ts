@@ -3,11 +3,11 @@
  */
 import { doesPurchaseHaveFullCredits } from '@automattic/wpcom-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
+import type { ContactDetailsType } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
-import type { ContactDetailsType } from '../types/contact-details';
 import {
 	hasDomainRegistration,
 	hasTransferProduct,

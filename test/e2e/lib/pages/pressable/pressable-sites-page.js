@@ -29,7 +29,7 @@ export default class PressableSitesPage extends AsyncBaseContainer {
 		}
 		await driverHelper.setWhenSettable( this.driver, siteNameInput, siteName );
 		await driverHelper.clickWhenClickable( this.driver, addNewSiteButton );
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			wpAdminSiteButton,
 			this.explicitWaitMS * 12

@@ -11,7 +11,7 @@
 	"license": "GPL-2.0-or-later",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
-	"calypso:src": "src/index.js",
+	"calypso:src": "src/index.ts",
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
@@ -28,9 +28,14 @@
 		"dist",
 		"src"
 	],
+	"types": "dist/types",
 	"scripts": {
-		"clean": "npx rimraf dist",
-		"build": "transpile",
-		"prepack": "yarn run clean && yarn run build"
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"dependencies": {
+		"tslib": "^1.10.0"
 	}
 }

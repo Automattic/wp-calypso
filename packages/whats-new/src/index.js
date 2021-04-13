@@ -24,7 +24,7 @@ const WhatsNewGuide = ( { onClose } ) => {
 		const proxiedWpcom = wpcom();
 		proxiedWpcom.request = proxyRequest;
 		proxiedWpcom.req
-			.get( { path: `/whats-new/list?locale=${ locale }`, apiNamespace: 'wpcom/v2' } )
+			.get( { path: `/whats-new/list?_locale=${ locale }`, apiNamespace: 'wpcom/v2' } )
 			.then( ( returnedList ) => {
 				setWhatsNewData( returnedList );
 			} );

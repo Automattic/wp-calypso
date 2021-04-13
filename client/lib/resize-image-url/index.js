@@ -8,7 +8,7 @@ import { mapValues } from 'lodash';
  * Internal dependencies
  */
 import safeImageUrl from 'calypso/lib/safe-image-url';
-import { getUrlParts, getUrlFromParts } from 'calypso/lib/url/url-parts';
+import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 
 /**
  * Pattern matching valid http(s) URLs

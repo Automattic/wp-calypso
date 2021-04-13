@@ -26,7 +26,7 @@ const siteId = 1;
 const siteFragment = 'bored-sheep.jurassic.ninja';
 const siteUrl = `https://${ siteFragment }`;
 const adminUrl = `${ siteUrl }/wp-admin/`;
-const jetpackAdminUrl = `${ adminUrl }admin.php?page=jetpack#/my-plan`;
+const jetpackAdminUrl = `${ adminUrl }admin.php?page=jetpack#/recommendations`;
 
 const getLink = () => screen.getByRole( 'link' );
 const getHref = () => getLink().getAttribute( 'href' );
