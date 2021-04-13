@@ -29,6 +29,9 @@ import {
 	isTitanMail,
 	isConciergeSession,
 	getJetpackProductsDisplayNames,
+	getMonthlyPlanByYearly,
+	isWpComPlan,
+	TERM_ANNUALLY,
 } from '@automattic/calypso-products';
 import { MembershipSubscription, MembershipSubscriptionsSite } from 'calypso/lib/purchases/types';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -209,6 +212,38 @@ function handleRenewMultiplePurchasesClick( purchases, siteSlug, options = {} ) 
 		renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
 	}
 	debug( 'handling renewal click', purchases, siteSlug, renewItems, renewalUrl );
+
+	page( renewalUrl );
+}
+
+/**
+ * Adds a purchase renewal to the cart and redirects to checkout.
+ *
+ * @param {object} purchase - the purchase to be renewed
+ * @param {string} siteSlug - the site slug to renew the purchase for
+ * @param {object} [options] - optional information
+ * @param {string} [options.redirectTo] - Passed as redirect_to in checkout
+ * @param {object} [options.tracksProps] - where was the renew button clicked from
+ */
+function handleRenewMonthlyClick( purchase, siteSlug, options = {} ) {
+	const relatedMonthlyPlanSlug = getMonthlyPlanByYearly( purchase?.productSlug );
+
+	// Track the renew now submit.
+	recordTracksEvent( 'calypso_purchases_renew_monthly_click', {
+		product_slug: relatedMonthlyPlanSlug,
+		...options.tracksProps,
+	} );
+
+	if ( ! relatedMonthlyPlanSlug ) {
+		reduxDispatch( errorNotice( 'Could not find product slug for renewal.' ) );
+		throw new Error( 'Could not find product slug for renewal.' );
+	}
+
+	let renewalUrl = `/checkout/${ relatedMonthlyPlanSlug }/${ siteSlug || '' }`;
+	if ( options.redirectTo ) {
+		renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
+	}
+	debug( 'handling renew monthly click', purchase, siteSlug, relatedMonthlyPlanSlug, renewalUrl );
 
 	page( renewalUrl );
 }
@@ -733,6 +768,32 @@ function getDomainRegistrationAgreementUrl( purchase ) {
 	return purchase.domainRegistrationAgreementUrl;
 }
 
+function shouldRenderMonthlyRenewalOption( purchase ) {
+	if ( ! purchase || ! purchase.expiryDate ) {
+		return false;
+	}
+
+	const isWpCom = isWpComPlan( purchase.productSlug );
+	const plan = getPlan( purchase.productSlug );
+	const isAnnualPlan = TERM_ANNUALLY === plan.term;
+	const isAutorenewalEnabled = ! isExpiring( purchase );
+	const daysTillExpiry = moment( purchase.expiryDate ).diff( Date.now(), 'days' );
+
+	if ( isWpCom && isAnnualPlan ) {
+		// Auto renew is off and their plan will expire in the next <90 days
+		if ( ! isAutorenewalEnabled && daysTillExpiry < 90 ) {
+			return true;
+		}
+
+		// We attempted to bill them <30 days prior to their annual renewal and
+		// we weren’t able to do so for any other reason besides having auto renew off.
+		if ( isAutorenewalEnabled && daysTillExpiry < 30 ) {
+			return true;
+		}
+	}
+	return false;
+}
+
 export {
 	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
@@ -748,6 +809,7 @@ export {
 	getSubscriptionsBySite,
 	handleRenewMultiplePurchasesClick,
 	handleRenewNowClick,
+	handleRenewMonthlyClick,
 	hasAmountAvailableToRefund,
 	hasIncludedDomain,
 	isAutoRenewing,
@@ -783,6 +845,7 @@ export {
 	subscribedWithinPastWeek,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 	shouldRenderExpiringCreditCard,
+	shouldRenderMonthlyRenewalOption,
 };
 
 export { isGoogleWorkspaceExtraLicence } from './is-google-workspace-extra-license';
