@@ -19,15 +19,13 @@ export const withEnhancers = ( actionCreator, enhancers ) => ( ...args ) => (
 		enhancers = [ enhancers ];
 	}
 
+	const enhanceAction = ( actionValue ) =>
+		enhancers.reduce( ( result, enhancer ) => enhancer( result, getState ), actionValue );
+
 	if ( typeof action === 'function' ) {
-		const newDispatch = ( actionValue ) =>
-			dispatch(
-				enhancers.reduce( ( result, enhancer ) => enhancer( result, getState ), actionValue )
-			);
+		const newDispatch = ( actionValue ) => dispatch( enhanceAction( actionValue ) );
 		return action( newDispatch, getState );
 	}
 
-	return dispatch(
-		enhancers.reduce( ( result, enhancer ) => enhancer( result, getState ), action )
-	);
+	return dispatch( enhanceAction( action ) );
 };
