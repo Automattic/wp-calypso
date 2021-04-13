@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import { get, merge } from 'lodash';
+import { merge } from 'lodash';
 
 const mergedMetaData = ( a, b ) => [
-	...get( a, 'meta.analytics', [] ),
-	...get( b, 'meta.analytics', [] ),
+	...( a?.meta?.analytics ?? [] ),
+	...( b?.meta?.analytics ?? [] ),
 ];
 
 const joinAnalytics = ( analytics, action ) =>
