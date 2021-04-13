@@ -7,6 +7,7 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import type { RequestCartProduct } from '@automattic/shopping-cart';
 import { createRequestCartProduct } from '@automattic/shopping-cart';
+import { decodeProductFromUrl } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -267,14 +268,9 @@ function useAddRenewalItems( {
 				if ( ! productSlug ) {
 					return null;
 				}
-				let [ slug ] = productSlug.split( ':' );
-
-				// See https://github.com/Automattic/wp-calypso/pull/15043 for explanation of
-				// the no-ads alias (seems a little strange to me that the product slug is a
-				// php file).
-				slug = slug === 'no-ads' ? 'no-adverts/no-adverts.php' : slug;
-
-				const product = products[ slug ];
+				const [ encodedSlug ] = productSlug.split( ':' );
+				const decodedSlug = decodeProductFromUrl( encodedSlug );
+				const product = products[ decodedSlug ];
 				if ( ! product ) {
 					debug( 'no renewal product found with slug', productSlug );
 					dispatch( {
@@ -426,21 +422,21 @@ function useAddProductFromSlug( {
 
 // Transform a fake slug like 'theme:ovation' into a real slug like 'premium_theme'
 function getProductSlugFromAlias( productAlias: string ): string {
-	if ( productAlias.startsWith( 'domain-mapping:' ) ) {
+	const [ encodedAlias ] = productAlias.split( ':' );
+	// Some product slugs contain slashes, so we decode them
+	const decodedAlias = decodeProductFromUrl( encodedAlias );
+	if ( decodedAlias === 'domain-mapping' ) {
 		return 'domain_map';
 	}
-	if ( productAlias.startsWith( 'theme:' ) ) {
+	if ( decodedAlias === 'theme' ) {
 		return 'premium_theme';
 	}
-	if ( productAlias === 'no-ads' ) {
-		return 'no-adverts/no-adverts.php';
-	}
-	const plan = getPlanByPathSlug( productAlias );
+	const plan = getPlanByPathSlug( decodedAlias );
 	const planSlug = plan?.getStoreSlug();
 	if ( planSlug ) {
 		return planSlug;
 	}
-	return productAlias;
+	return decodedAlias;
 }
 
 function createRenewalItemToAddToCart(
@@ -449,10 +445,8 @@ function createRenewalItemToAddToCart(
 	purchaseId: string | number | undefined | null
 ): RequestCartProduct | null {
 	const [ slug, meta ] = productAlias.split( ':' );
-	// See https://github.com/Automattic/wp-calypso/pull/15043 for explanation of
-	// the no-ads alias (seems a little strange to me that the product slug is a
-	// php file).
-	const productSlug = slug === 'no-ads' ? 'no-adverts/no-adverts.php' : slug;
+	// Some product slugs contain slashes, so we decode them
+	const productSlug = decodeProductFromUrl( slug );
 
 	if ( ! purchaseId ) {
 		return null;
@@ -463,7 +457,8 @@ function createRenewalItemToAddToCart(
 		purchaseType: 'renewal',
 	};
 	return {
-		meta,
+		// Some meta values include slashes, so we decode them
+		meta: meta ? decodeProductFromUrl( meta ) : '',
 		quantity: null,
 		volume: 1,
 		product_slug: productSlug,
@@ -504,10 +499,12 @@ function createItemToAddToCart( {
 	productAlias: string;
 } ): RequestCartProduct {
 	debug( 'creating product with', productSlug, productAlias, productId );
+	const [ , meta ] = productAlias.split( ':' );
+	// Some meta values contain slashes, so we decode them
+	const cartMeta = meta ? decodeProductFromUrl( meta ) : '';
 
 	if ( productAlias.startsWith( 'theme:' ) ) {
 		debug( 'creating theme product' );
-		const cartMeta = productAlias.split( ':' )[ 1 ];
 		return addContextToProduct(
 			createRequestCartProduct( {
 				product_id: productId,
@@ -519,7 +516,6 @@ function createItemToAddToCart( {
 
 	if ( productAlias.startsWith( 'domain-mapping:' ) ) {
 		debug( 'creating domain mapping product' );
-		const cartMeta = productAlias.split( ':' )[ 1 ];
 		return addContextToProduct(
 			createRequestCartProduct( {
 				product_id: productId,
