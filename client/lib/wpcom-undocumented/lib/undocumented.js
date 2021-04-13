@@ -825,7 +825,7 @@ Undocumented.prototype.getTitanControlPanelIframeURL = function ( emailAccountId
 /**
  * Checks the availability of an email address
  *
- * @param emailAddress The ful email address
+ * @param emailAddress The full email address
  * @param fn The callback function
  */
 Undocumented.prototype.getTitanEmailAddressAvailability = function ( emailAddress, fn ) {

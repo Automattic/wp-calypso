@@ -140,7 +140,7 @@ const validateAlternativeEmailAddress = ( { value, error }, domainName, allowEmp
 			return {
 				value,
 				error: translate(
-					'Please supply an email address on a different domain than {{strong}}%(domain)s{{/strong}}',
+					'This email address must be on a different domain than {{strong}}%(domain)s{{/strong}}. Please use a different email address.',
 					{
 						args: {
 							domain: domainName,
@@ -261,39 +261,49 @@ const transformMailboxForCart = ( {
 
 const checkEmailAvailability = async ( emailAddress ) => {
 	try {
-		await wp.undocumented().getTitanEmailAddressAvailability( emailAddress );
-		return true;
+		const response = await wp.undocumented().getTitanEmailAddressAvailability( emailAddress );
+		return { message: response.message, status: 200 };
 	} catch ( e ) {
-		return e.statusCode !== 409;
+		return { message: e.message, status: e.statusCode };
 	}
 };
 
-const decorateMailboxWithExistenceError = ( mailbox ) => {
-	mailbox.mailbox.error = translate( '{{strong}}%(email)s{{/strong}} already exists.', {
-		args: {
-			email: mailbox.mailbox.value,
-		},
-		components: {
-			strong: <strong />,
-		},
-	} );
+const decorateMailboxWithExistenceError = ( mailbox, message ) => {
+	mailbox.mailbox.error = translate(
+		'{{strong}}%(mailbox)s{{/strong}} is not available: %(message)s',
+		{
+			comment:
+				'%(mailbox)s is the local part of an email address. %(message)s is a message that gives context to why the mailbox is not available',
+			args: {
+				mailbox: mailbox.mailbox.value,
+				message,
+			},
+			components: {
+				strong: <strong />,
+			},
+		}
+	);
 	return mailbox;
 };
 
 const areAllMailboxesAvailable = async ( mailboxes, onMailboxesChange ) => {
-	const promisified_checks = Promise.all(
+	const promisified_responses = Promise.all(
 		mailboxes.map( ( mailbox ) => {
 			const email = `${ mailbox.mailbox.value }@${ mailbox.domain.value }`;
 			return checkEmailAvailability( email );
 		} )
 	);
-	const checks = await promisified_checks;
+	const responses = await promisified_responses;
+	const checks = responses.map( ( { message, status }, index ) => {
+		return { available: status === 200 && message === 'OK', message, mailbox: mailboxes[ index ] };
+	} );
 	checks
-		.map( ( check, index ) => ( { check, mailbox: mailboxes[ index ] } ) )
-		.filter( ( { check } ) => ! check )
-		.forEach( ( { mailbox } ) => decorateMailboxWithExistenceError( mailbox ) );
-	const result = checks.every( ( check ) => check );
-	! result && onMailboxesChange && onMailboxesChange( mailboxes );
+		.filter( ( { available } ) => ! available )
+		.forEach( ( { mailbox, message } ) => decorateMailboxWithExistenceError( mailbox, message ) );
+	const result = checks.every( ( { available } ) => available );
+	if ( ! result && onMailboxesChange ) {
+		onMailboxesChange( mailboxes );
+	}
 	return result;
 };
 
