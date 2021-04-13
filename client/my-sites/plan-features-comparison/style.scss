@@ -176,6 +176,19 @@ $plan-features-sidebar-width: 272px;
 		.plan-features-comparison__header-annual-discount {
 			color: var( --studio-green-60 );
 		}
+
+		.plan-price.is-original {
+			color: var( --color-neutral-light );
+
+			&::before {
+				border-color: var( --color-success );
+			}
+
+			.plan-price__currency-symbol,
+			.plan-price__tax-amount {
+				color: var( --color-text-subtle );
+			}
+		}
 	}
 
 	.is-placeholder {
@@ -234,17 +247,6 @@ $plan-features-sidebar-width: 272px;
 			color: var( --color-neutral-light );
 		}
 	}
-
-	.plan-price.is-original::before {
-		border-color: var( --color-success );
-	}
-
-	/* TODO: If the plans-redesign experiment wins, this may need to be included depending on whether we want to show the promotional pricing for INR, MX*/
-
-	// .plan-price,
-	// .plan-price.is-original {
-	// 	font-size: $font-body;
-	// }
 
 	.plan-features-comparison__row:last-of-type .plan-features-comparison__table-item {
 		border-bottom: solid 1px var( --color-neutral-5 );
@@ -375,4 +377,17 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__actions-button {
 	border-radius: 4px; /* stylelint-disable-line */
+}
+
+.plan-features-comparison__header-price-group {
+	display: inline;
+	width: calc( 100% + 20px );
+
+	@include breakpoint-deprecated( '<960px' ) {
+		width: calc( 100% + 10px );
+	}
+}
+
+.plan-features-comparison__header-price-group-prices {
+	display: inline-block;
 }
