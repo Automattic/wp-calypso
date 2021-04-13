@@ -58,7 +58,6 @@ import {
 	createStripeMethod,
 	createStripePaymentMethodStore,
 } from './lib/payment-methods/stripe-credit-card-fields';
-import { createApplePayMethod } from './lib/payment-methods/apple-pay';
 import { createPayPalMethod } from './lib/payment-methods/paypal';
 import { createExistingCardMethod } from './lib/payment-methods/existing-credit-card';
 import CheckoutOrderSummaryStep, {
@@ -121,7 +120,6 @@ export {
 	checkoutTheme,
 	createAlipayMethod,
 	createAlipayPaymentMethodStore,
-	createApplePayMethod,
 	createBancontactMethod,
 	createBancontactPaymentMethodStore,
 	createEpsMethod,

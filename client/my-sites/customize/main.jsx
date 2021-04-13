@@ -27,7 +27,7 @@ import { getCustomizerUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
 import wpcom from 'calypso/lib/wp';
 import { trackClick } from 'calypso/my-sites/themes/helpers';
-import { getUrlParts } from 'calypso/lib/url';
+import { getUrlParts } from '@automattic/calypso-url';
 
 /**
  * Style dependencies

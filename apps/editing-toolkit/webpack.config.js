@@ -69,6 +69,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 			...webpackConfig.output,
 			path: outputPath,
 			filename: '[name].js', // dynamic filename
+			library: 'EditingToolkit',
 		},
 		optimization: {
 			...webpackConfig.optimization,

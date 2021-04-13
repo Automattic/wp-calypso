@@ -4,7 +4,7 @@
 import { getInitialState } from '@automattic/state-utils';
 import type { Reducer, AnyAction, Action } from 'redux';
 
-export type SerializableReducer< TState, TAction extends AnyAction = Action > = Reducer<
+export type SerializableReducer< TState = any, TAction extends AnyAction = Action > = Reducer<
 	TState,
 	TAction
 > & {

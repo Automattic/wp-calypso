@@ -90,7 +90,7 @@ import { isUnderEmailManagementAll } from 'calypso/my-sites/email/paths';
 import JetpackSidebarMenuItems from 'calypso/components/jetpack/sidebar/menu-items/calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
-import { getUrlParts, getUrlFromParts, addQueryArgs } from 'calypso/lib/url';
+import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 import { isP2PlusPlan } from 'calypso/lib/plans';
 
 /**
@@ -944,11 +944,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		// `from` param is used by WP Admin on Atomic sites for disabling Nav Unification in that context. Can be removed after rolling Nav Unification out to 100% of users.
-		let adminUrl = addQueryArgs(
-			{ from: 'calypso-old-menu', calypsoify: 0 },
-			site.options.admin_url
-		);
+		let adminUrl = site.options.admin_url;
 
 		if ( this.props.isJetpack && ! this.props.isAtomicSite && ! this.props.isVip ) {
 			const urlParts = getUrlParts( site.options.admin_url + 'admin.php' );

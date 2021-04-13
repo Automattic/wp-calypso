@@ -5,7 +5,7 @@
 	"max_workers": 3,
 	"suiteTag": "canary",
 	"sauce": false,
-	"framework": "testarmada-magellan-mocha-plugin",
+	"framework": "@automattic/testarmada-magellan-mocha-plugin",
 	"reporters": [ "./lib/reporter/magellan-reporter.js" ],
 	"executors": [ "testarmada-magellan-local-executor" ],
 	"bail_time": 450000

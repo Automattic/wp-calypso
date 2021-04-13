@@ -7,13 +7,11 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
-} from 'calypso/lib/plans/constants';
-import {
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-} from 'calypso/lib/products-values/constants';
+} from 'calypso/lib/plans/constants';
 
 describe( 'siteSupportsRealtimeBackup()', () => {
 	test( 'should return false when no data is available', () => {

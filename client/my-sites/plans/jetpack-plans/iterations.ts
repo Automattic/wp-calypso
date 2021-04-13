@@ -1,16 +1,13 @@
 /**
  * Internal dependencies
  */
-import { abtest } from 'calypso/lib/abtest';
-import { getUrlParts } from 'calypso/lib/url/url-parts';
+import { getUrlParts } from '@automattic/calypso-url';
 
 /**
  * Iterations
  */
 
-export enum Iterations {
-	SECURITY = 'securityPopularProducts',
-}
+export enum Iterations {}
 
 const iterationNames: string[] = Object.values( Iterations );
 
@@ -41,9 +38,7 @@ const getCurrentCROIterationName = (): Iterations | null => {
 		}
 	}
 
-	return abtest( 'pricingPagePopularProducts' ) === 'withSecurityRT_test'
-		? Iterations.SECURITY
-		: null;
+	return null;
 };
 
 type IterationValueFunction< T > = ( key: Iterations | null ) => T | undefined;

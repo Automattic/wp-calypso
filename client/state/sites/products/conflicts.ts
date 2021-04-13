@@ -20,13 +20,11 @@ import {
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
-} from 'calypso/lib/plans/constants';
-import {
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-} from 'calypso/lib/products-values/constants';
+} from 'calypso/lib/plans/constants';
 import { hasSiteProduct, getSitePlanSlug } from 'calypso/state/sites/selectors';
 
 /**

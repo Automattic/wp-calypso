@@ -113,6 +113,7 @@ const webpackConfig = {
 				configFile: path.resolve( 'babel.config.js' ),
 				cacheDirectory,
 				cacheIdentifier,
+				cacheCompression: false,
 				exclude: /node_modules\//,
 			} ),
 			TranspileConfig.loader( {
@@ -120,6 +121,7 @@ const webpackConfig = {
 				presets: [ require.resolve( '@automattic/calypso-build/babel/dependencies' ) ],
 				cacheDirectory,
 				cacheIdentifier,
+				cacheCompression: false,
 				include: shouldTranspileDependency,
 			} ),
 			fileLoader,

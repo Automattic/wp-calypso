@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -627,20 +626,10 @@ function mapStateToProps( state ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
-	return bindActionCreators(
-		{
-			activatePlugin,
-			fetchPluginData,
-			installAndActivatePlugin,
-			fetchPlugins,
-			logToLogstash,
-		},
-		dispatch
-	);
-}
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( RequiredPluginsInstallView ) );
+export default connect( mapStateToProps, {
+	activatePlugin,
+	fetchPluginData,
+	installAndActivatePlugin,
+	fetchPlugins,
+	logToLogstash,
+} )( localize( RequiredPluginsInstallView ) );

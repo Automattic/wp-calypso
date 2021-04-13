@@ -35,8 +35,7 @@
 		"@wordpress/icons": "^2.9.1",
 		"@wordpress/react-i18n": "^1.0.0",
 		"classnames": "^2.2.6",
-		"lodash": "^4.17.21",
-		"tslib": "^1.10.0"
+		"lodash": "^4.17.21"
 	},
 	"peerDependencies": {
 		"react": "^16.8",

@@ -46,17 +46,12 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			return;
 		}
 		await this.driver.switchTo().defaultContent();
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.editoriFrameSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, this.editoriFrameSelector );
 		await this.driver.wait(
 			until.ableToSwitchToFrame( this.editoriFrameSelector ),
 			this.explicitWaitMS,
 			'Could not locate the editor iFrame.'
 		);
-		await this.driver.sleep( 2000 );
-	}
-
-	async _postInit() {
-		await this.driver.sleep( 2000 );
 	}
 
 	async initEditor( { dismissPageTemplateSelector = false } = {} ) {
@@ -130,7 +125,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const appenderSelector = By.css( '.block-editor-default-block-appender' );
 		const paragraphSelector = By.css( 'p.block-editor-rich-text__editable:first-of-type' );
 		await driverHelper.clickWhenClickable( this.driver, appenderSelector );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, paragraphSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, paragraphSelector );
 		const paragraphElement = await this.clearText( paragraphSelector );
 		await paragraphElement.sendKeys( text );
 
@@ -182,7 +177,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			By.css( ".edit-post-more-menu button[aria-label='Options']" )
 		);
 
-		// This sleep is needed for the Options menu to be accessible. I've tried `waitTillPresentAndDisplayed`
+		// This sleep is needed for the Options menu to be accessible. I've tried `waitUntilLocatedAndVisible`
 		// but it doesn't seem to work consistently, but this is pending improvement as this adds up on total time.
 		await this.driver.sleep( 2000 );
 	}
@@ -199,7 +194,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		// Wait for the code editor element.
 		const textAreaSelector = By.css( 'textarea.editor-post-text-editor' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, textAreaSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, textAreaSelector );
 
 		// Close the menu.
 		await this.toggleOptionsMenu();
@@ -263,8 +258,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const inserterSearchInputSelector = By.css( 'input.block-editor-inserter__search-input' );
 
 		if ( await driverHelper.elementIsNotPresent( this.driver, inserterMenuSelector ) ) {
-			await driverHelper.waitTillPresentAndDisplayed( this.driver, inserterToggleSelector );
-
 			await driverHelper.clickWhenClickable( this.driver, inserterToggleSelector );
 			// "Click" twice - the first click seems to trigger a tooltip, the second opens the menu
 			// See https://github.com/Automattic/wp-calypso/issues/43179
@@ -272,7 +265,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				await driverHelper.clickWhenClickable( this.driver, inserterToggleSelector );
 			}
 
-			await driverHelper.waitTillPresentAndDisplayed( this.driver, inserterMenuSelector );
+			await driverHelper.waitUntilLocatedAndVisible( this.driver, inserterMenuSelector );
 		}
 		await driverHelper.setWhenSettable( this.driver, inserterSearchInputSelector, searchTerm );
 	}
@@ -427,13 +420,13 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await this.openBlockInserterAndSearch( title );
 
 		if ( await driverHelper.elementIsNotPresent( this.driver, inserterBlockItemSelector ) ) {
-			await driverHelper.waitTillPresentAndDisplayed( this.driver, inserterBlockItemSelector );
+			await driverHelper.waitUntilLocatedAndVisible( this.driver, inserterBlockItemSelector );
 		}
 
 		// The normal click is needed to avoid hovering the element, which seems
 		// to cause the element to become stale.
 		await driverHelper.clickWhenClickable( this.driver, inserterBlockItemSelector );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, insertedBlockSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, insertedBlockSelector );
 
 		return this.driver.findElement( insertedBlockSelector ).getAttribute( 'id' );
 	}
@@ -455,7 +448,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async titleShown() {
 		const titleSelector = By.css( '.editor-post-title__input' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, titleSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, titleSelector );
 		const element = await this.driver.findElement( titleSelector );
 		return await element.getAttribute( 'value' );
 	}
@@ -557,12 +550,12 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable( this.driver, By.css( '.editor-post-save-draft' ) );
 		const savedSelector = By.css( 'span.is-saved' );
 
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, savedSelector );
+		return await driverHelper.waitUntilLocatedAndVisible( this.driver, savedSelector );
 	}
 
 	async waitForSuccessViewPostNotice() {
 		const noticeSelector = By.css( '.components-snackbar' );
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, noticeSelector );
+		return await driverHelper.waitUntilLocatedAndVisible( this.driver, noticeSelector );
 	}
 
 	async dismissSuccessNotice() {
@@ -586,7 +579,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const revertAlert = await this.driver.switchTo().alert();
 		await revertAlert.accept();
 		await this.waitForSuccessViewPostNotice();
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( 'button.editor-post-publish-panel__toggle' )
 		);
@@ -609,15 +602,16 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async viewPublishedPostOrPage() {
-		const viewPostLink = await this.driver.findElement(
+		await driverHelper.clickWhenClickable(
+			this.driver,
 			By.css( '.components-snackbar__content a' )
 		);
-		await this.driver.executeScript( 'arguments[0].click()', viewPostLink );
+		await this.driver.switchTo().defaultContent();
 	}
 
 	async schedulePost( publishDate ) {
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishHeaderSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, this.publishHeaderSelector );
 		await driverHelper.waitUntilElementWithTextLocated(
 			this.driver,
 			By.css( '.editor-post-publish-panel__link' ),
@@ -641,7 +635,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async submitForReview() {
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishHeaderSelector );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, this.publishHeaderSelector );
 		return await driverHelper.clickWhenClickable( this.driver, this.publishButtonSelector );
 	}
 
@@ -690,7 +684,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async clickUpgradeOnPremiumBlock() {
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css(
 				'.jetpack-upgrade-plan-banner__wrapper .is-primary:not(.jetpack-upgrade-plan__hidden)'

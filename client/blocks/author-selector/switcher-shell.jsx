@@ -60,16 +60,6 @@ class AuthorSwitcherShell extends React.Component {
 		}
 	}
 
-	componentDidUpdate( prevProps, prevState ) {
-		if ( ! this.state.showAuthorMenu ) {
-			return;
-		}
-
-		if ( ! prevState.showAuthorMenu && this.props.users.length > 10 && ! hasTouch() ) {
-			setTimeout( () => this.authorSelectorSearchRef.current?.focus(), 0 );
-		}
-	}
-
 	render() {
 		const { users, fetchNameSpace } = this.props;
 		const infiniteListKey = fetchNameSpace + this.instance;
@@ -107,7 +97,8 @@ class AuthorSwitcherShell extends React.Component {
 							onSearch={ this.onSearch }
 							placeholder={ this.props.translate( 'Find Author…', { context: 'search label' } ) }
 							delaySearch={ true }
-							ref={ this.authorSelectorSearchRef }
+							// eslint-disable-next-line jsx-a11y/no-autofocus
+							autoFocus={ ! hasTouch() }
 						/>
 					) }
 					{ this.props.fetchInitialized &&

@@ -9,7 +9,7 @@ import { get } from 'lodash';
 import 'calypso/state/domains/init';
 
 /**
- * @typedef {import('calypso/my-sites/checkout/composite-checkout/types/backend/domain-contact-details-components').PossiblyCompleteDomainContactDetails} PossiblyCompleteDomainContactDetails
+ * @typedef {import('@automattic/wpcom-checkout').PossiblyCompleteDomainContactDetails} PossiblyCompleteDomainContactDetails
  */
 
 /**

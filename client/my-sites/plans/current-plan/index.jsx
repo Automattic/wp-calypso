@@ -34,13 +34,11 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
-} from 'calypso/lib/plans/constants';
-import {
 	JETPACK_ANTI_SPAM_PRODUCTS,
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
-} from 'calypso/lib/products-values/constants';
+} from 'calypso/lib/plans/constants';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';

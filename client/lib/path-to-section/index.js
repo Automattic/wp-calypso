@@ -1,14 +1,14 @@
 /**
  * Internal dependencies
  */
-import { filter, get, max, maxBy, startsWith } from 'lodash';
+import { filter, get, maxBy, startsWith } from 'lodash';
 import { getSections } from 'calypso/sections-helper';
 
 export default function pathToSection( path ) {
 	// rank matches by the number of characters that match so e.g. /media won't map to /me
 	const bestMatch = maxBy( getSections(), ( section ) =>
-		max(
-			section.paths.map( ( sectionPath ) =>
+		Math.max(
+			...section.paths.map( ( sectionPath ) =>
 				startsWith( path, sectionPath ) ? sectionPath.length : 0
 			)
 		)

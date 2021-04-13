@@ -17,7 +17,7 @@ import {
 	determineUrlType,
 	URL_TYPE,
 	format as formatUrl,
-} from 'calypso/lib/url';
+} from '@automattic/calypso-url';
 import { getUserTempGravatar } from 'calypso/state/current-user/gravatar-status/selectors';
 
 /**

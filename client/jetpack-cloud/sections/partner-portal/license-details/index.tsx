@@ -32,6 +32,8 @@ interface Props {
 	onCopyLicense?: () => void;
 }
 
+const DETAILS_DATE_FORMAT = 'YYYY-MM-DD h:mm:ss A';
+
 export default function LicenseDetails( {
 	licenseKey,
 	product,
@@ -69,13 +71,13 @@ export default function LicenseDetails( {
 
 				<li className="license-details__list-item">
 					<h4 className="license-details__label">{ translate( 'Issued on' ) }</h4>
-					<FormattedDate date={ issuedAt } format="LLL" />
+					<FormattedDate date={ issuedAt } format={ DETAILS_DATE_FORMAT } />
 				</li>
 
 				{ licenseState === LicenseState.Attached && (
 					<li className="license-details__list-item">
 						<h4 className="license-details__label">{ translate( 'Assigned on' ) }</h4>
-						<FormattedDate date={ attachedAt } format="LLL" />
+						<FormattedDate date={ attachedAt } format={ DETAILS_DATE_FORMAT } />
 					</li>
 				) }
 
@@ -89,7 +91,7 @@ export default function LicenseDetails( {
 				{ licenseState === LicenseState.Revoked && (
 					<li className="license-details__list-item">
 						<h4 className="license-details__label">{ translate( 'Revoked on' ) }</h4>
-						<FormattedDate date={ revokedAt } format="LLL" />
+						<FormattedDate date={ revokedAt } format={ DETAILS_DATE_FORMAT } />
 					</li>
 				) }
 

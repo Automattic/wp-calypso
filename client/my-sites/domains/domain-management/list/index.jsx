@@ -52,6 +52,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import InfoPopover from 'calypso/components/info-popover';
 import ExternalLink from 'calypso/components/external-link';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
+import AddDomainButton from 'calypso/my-sites/domains/domain-management/list/add-domain-button';
 
 /**
  * Style dependencies
@@ -82,6 +83,7 @@ export class List extends React.Component {
 		settingPrimaryDomain: false,
 		changePrimaryDomainModeEnabled: false,
 		primaryDomainIndex: -1,
+		addMenuVisible: false,
 	};
 
 	isLoading() {
@@ -270,18 +272,7 @@ export class List extends React.Component {
 			return null;
 		}
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		return (
-			<Button
-				primary
-				compact
-				className="domain-management-list__add-a-domain"
-				onClick={ this.clickAddDomain }
-			>
-				{ this.props.translate( 'Add a domain to this site' ) }
-			</Button>
-		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
+		return <AddDomainButton />;
 	}
 
 	setPrimaryDomain( domainName ) {
