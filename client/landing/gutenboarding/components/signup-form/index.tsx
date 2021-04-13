@@ -64,16 +64,14 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const localizeUrl = useLocalizeUrl();
 
 	useEffect( () => {
-		initGoogleRecaptcha(
-			'g-recaptcha',
-			'calypso/signup/pageLoad',
-			config( 'google_recaptcha_site_key' )
-		).then( ( result ) => {
-			if ( ! result ) {
-				return;
+		initGoogleRecaptcha( 'g-recaptcha', config( 'google_recaptcha_site_key' ) ).then(
+			( clientId ) => {
+				if ( clientId === null ) {
+					return;
+				}
+				setRecaptchaClientId( clientId );
 			}
-			setRecaptchaClientId( result.clientId );
-		} );
+		);
 	}, [ setRecaptchaClientId ] );
 
 	const handleSignUp = async ( event: React.FormEvent< HTMLFormElement > ) => {
