@@ -302,7 +302,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 		step( 'Can select Free plan', async function () {
 			// Click "Free Plan" button
 			const freePlanSelector = By.xpath(
-				'//span[@class="focused-launch-summary-item__leading-side-label" and .="Free Plan"]'
+				'//text()[contains(., "Free Plan")]/ancestor::button[contains(@class, "focused-launch")]'
 			);
 
 			await driverHelper.clickWhenClickable( driver, freePlanSelector );
@@ -310,7 +310,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			// When the detailed plans grid is closed and user returns to the summary view,
 			// check if the selected monthly plan item is "Personal Plan".
 			const selectedPlanIsFreePlanSelector = By.xpath(
-				'//button[contains(@class, "focused-launch-summary__item") and contains(@class, "is-selected")]//span[@class="focused-launch-summary-item__leading-side-label" and .="Free Plan"]'
+				'//text()[contains(., "Free Plan")]/ancestor::button[contains(@class, "is-selected")]'
 			);
 
 			const selectedPlanIsFreePlan = await driverHelper.isElementPresent(
