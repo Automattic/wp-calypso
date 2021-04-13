@@ -1,12 +1,10 @@
 /**
  * External dependencies
  */
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { getQueryArg } from '@wordpress/url';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -19,11 +17,11 @@ import {
 	hasActivePartnerKey,
 	hasFetchedPartner,
 } from 'calypso/state/partner-portal/partner/selectors';
-import { ensurePartnerPortalReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import Main from 'calypso/components/main';
 import CardHeading from 'calypso/components/card-heading';
 import Spinner from 'calypso/components/spinner';
+import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 
 /**
  * Style dependencies
@@ -39,16 +37,8 @@ export default function SelectPartnerKey(): ReactElement | null {
 	const partner = useSelector( getCurrentPartner );
 	const keys = ( partner?.keys || [] ) as PartnerKey[];
 	const showKeys = hasFetched && ! isFetching && keys.length > 0;
-	const showError = hasFetched && ! isFetching && keys.length === 0;
 
-	useEffect( () => {
-		if ( hasKey ) {
-			const returnQuery = getQueryArg( window.location.href, 'return' ) as string;
-			const returnUrl = ensurePartnerPortalReturnUrl( returnQuery );
-
-			page.redirect( returnUrl );
-		}
-	}, [ hasKey ] );
+	useReturnUrl( hasKey );
 
 	return (
 		<Main className="select-partner-key">
@@ -57,16 +47,6 @@ export default function SelectPartnerKey(): ReactElement | null {
 			<CardHeading size={ 36 }>{ translate( 'Partner Portal' ) }</CardHeading>
 
 			{ isFetching && <Spinner /> }
-
-			{ showError && (
-				<div className="select-partner-key__error">
-					<p>{ translate( 'Your account is not registered as a partner account.' ) }</p>
-
-					<Button href="/" primary>
-						{ translate( 'Manage Sites' ) }
-					</Button>
-				</div>
-			) }
 
 			{ showKeys && (
 				<div>
