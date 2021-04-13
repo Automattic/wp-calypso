@@ -32,7 +32,7 @@ const getMailboxRequiredBooleanValue = () =>
 		error: PropTypes.string,
 	} );
 
-const getMailboxOptionalStringOrArrayValue = () =>
+const getMailboxOptionalStringValueWithTranslatedError = () =>
 	PropTypes.shape( {
 		value: PropTypes.string.isRequired,
 		error: PropTypes.oneOfType( PropTypes.string, PropTypes.array ),
@@ -44,7 +44,7 @@ const getMailboxRequiredStringValue = () =>
 		error: PropTypes.string,
 	} ).isRequired;
 
-const getMailboxRequiredStringOrArrayValue = () =>
+const getMailboxRequiredStringValueWithTranslatedError = () =>
 	PropTypes.shape( {
 		value: PropTypes.string.isRequired,
 		error: PropTypes.oneOfType( PropTypes.string, PropTypes.array ),
@@ -53,10 +53,10 @@ const getMailboxRequiredStringOrArrayValue = () =>
 const getMailboxPropTypeShape = () =>
 	PropTypes.shape( {
 		uuid: PropTypes.string.isRequired,
-		alternativeEmail: getMailboxOptionalStringOrArrayValue(),
+		alternativeEmail: getMailboxOptionalStringValueWithTranslatedError(),
 		domain: getMailboxRequiredStringValue(),
 		isAdmin: getMailboxRequiredBooleanValue(),
-		mailbox: getMailboxRequiredStringOrArrayValue(),
+		mailbox: getMailboxRequiredStringValueWithTranslatedError(),
 		name: getMailboxRequiredStringValue(),
 		password: getMailboxRequiredStringValue(),
 	} );
@@ -140,7 +140,7 @@ const validateAlternativeEmailAddress = ( { value, error }, domainName, allowEmp
 			return {
 				value,
 				error: translate(
-					'This email address must be on a different domain than {{strong}}%(domain)s{{/strong}}. Please use a different email address.',
+					'This email address must have a different domain than {{strong}}%(domain)s{{/strong}}. Please use a different email address.',
 					{
 						args: {
 							domain: domainName,
@@ -268,12 +268,12 @@ const checkMailboxAvailability = async ( domain, mailbox ) => {
 	}
 };
 
-const decorateMailboxWithExistenceError = ( mailbox, message ) => {
+const decorateMailboxWithAvailabilityError = ( mailbox, message ) => {
 	mailbox.mailbox.error = translate(
 		'{{strong}}%(mailbox)s{{/strong}} is not available: %(message)s',
 		{
 			comment:
-				'%(mailbox)s is the local part of an email address. %(message)s is a message that gives context to why the mailbox is not available',
+				'%(mailbox)s is the local part of an email address. %(message)s is a translated message that gives context to why the mailbox is not available',
 			args: {
 				mailbox: mailbox.mailbox.value,
 				message,
@@ -287,18 +287,20 @@ const decorateMailboxWithExistenceError = ( mailbox, message ) => {
 };
 
 const areAllMailboxesAvailable = async ( mailboxes, onMailboxesChange ) => {
-	const promisified_responses = Promise.all(
+	const promisifiedResponses = Promise.all(
 		mailboxes.map( ( mailbox ) =>
 			checkMailboxAvailability( mailbox.domain.value, mailbox.mailbox.value )
 		)
 	);
-	const responses = await promisified_responses;
+	const responses = await promisifiedResponses;
 	const checks = responses.map( ( { message, status }, index ) => {
-		return { available: status === 200 && message === 'OK', message, mailbox: mailboxes[ index ] };
+		return { available: status === 200, message, mailbox: mailboxes[ index ] };
 	} );
 	checks
 		.filter( ( { available } ) => ! available )
-		.forEach( ( { mailbox, message } ) => decorateMailboxWithExistenceError( mailbox, message ) );
+		.forEach( ( { mailbox, message } ) =>
+			decorateMailboxWithAvailabilityError( mailbox, message )
+		);
 	const result = checks.every( ( { available } ) => available );
 	if ( ! result && onMailboxesChange ) {
 		onMailboxesChange( mailboxes );
