@@ -13,7 +13,7 @@ const joinAnalytics = ( analytics, action ) =>
 				...action,
 				...{
 					meta: {
-						...action?.meta,
+						...action.meta,
 						analytics: mergedMetaData( analytics, action ),
 					},
 				},
