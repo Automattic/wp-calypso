@@ -21,7 +21,7 @@ import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-s
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
-import { expandSidebar } from 'calypso/state/ui/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 
@@ -39,13 +39,12 @@ class CurrentSite extends Component {
 		anySiteSelected: PropTypes.array,
 		forceAllSitesView: PropTypes.bool,
 		sidebarIsCollapsed: PropTypes.bool,
-		expandSidebar: PropTypes.func.isRequired,
 		isNavUnificationEnabled: PropTypes.bool.isRequired,
 	};
 
 	switchSites = ( event ) => {
 		if ( this.props.isNavUnificationEnabled && this.props.sidebarIsCollapsed ) {
-			this.props.expandSidebar();
+			this.props.savePreference( 'sidebarCollapsed', false );
 		}
 		event.preventDefault();
 		event.stopPropagation();
@@ -81,7 +80,7 @@ class CurrentSite extends Component {
 					aria-hidden="true"
 					onClick={ () => {
 						return this.props.isNavUnificationEnabled && this.props.sidebarIsCollapsed
-							? this.props.expandSidebar()
+							? this.props.savePreference( 'sidebarCollapsed', false )
 							: null;
 					} }
 				>
@@ -147,6 +146,6 @@ export default connect(
 	{
 		recordGoogleEvent,
 		setLayoutFocus,
-		expandSidebar,
+		savePreference,
 	}
 )( localize( CurrentSite ) );
