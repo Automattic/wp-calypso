@@ -11,6 +11,7 @@
 - Breaking: `webpack/minify` API has changed. Now it only accepts 4 options: `terserOptions`, `cssMinimizerOptions`, `parallel` and `extractComments`.
 - Added: `webpack/minify` will use CssMinimizerWebpackPlugin to minimize CSS files.
 - Added: option `cacheCompression` to toggle babel cache compression
+- Added: option `bugfixes` for `calypso-build/babel/default` preset to toggle <https://babeljs.io/docs/en/babel-preset-env#bugfixes>
 - Added dependencies:
   - css-minimizer-webpack-plugin ^1.3.0
   - postcss ^8.2.6 (peer dependency)
