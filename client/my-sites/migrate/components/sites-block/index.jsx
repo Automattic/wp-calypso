@@ -15,7 +15,7 @@ import Gridicon from 'calypso/components/gridicon';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormLabel from 'calypso/components/forms/form-label';
 import Badge from 'calypso/components/badge';
-import { getUrlParts } from 'calypso/lib/url';
+import { getUrlParts } from '@automattic/calypso-url';
 import Spinner from 'calypso/components/spinner';
 
 class SitesBlock extends Component {

@@ -35,13 +35,11 @@ export default class LoginPage extends AsyncBaseContainer {
 		if ( isDisplayed ) {
 			await driverHelper.clickWhenClickable( driver, changeAccountSelector );
 		}
-		await driverHelper.waitTillPresentAndDisplayed( driver, userNameSelector );
 		await driverHelper.setWhenSettable( driver, userNameSelector, username );
 		await this.driver.sleep( 1000 );
 		await driver.findElement( userNameSelector ).sendKeys( Key.ENTER );
 
 		if ( emailSSO === false ) {
-			await driverHelper.waitTillPresentAndDisplayed( driver, passwordSelector );
 			await driverHelper.setWhenSettable( driver, passwordSelector, password, {
 				secureValue: true,
 			} );
@@ -104,7 +102,7 @@ export default class LoginPage extends AsyncBaseContainer {
 		 *
 		 * @see {@link https://github.com/Automattic/wp-calypso/pull/50999}
 		 */
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.login__form-action button:not(:disabled)' )
 		);
@@ -122,7 +120,7 @@ export default class LoginPage extends AsyncBaseContainer {
 			this.driver,
 			By.css( '.magic-login__form-action button.is-primary' )
 		);
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '.magic-login__check-email-image' )
 		);

@@ -75,6 +75,7 @@ function ScanUpsellBody() {
 			) }
 			buttonLink={ `https://wordpress.com/checkout/jetpack_scan/${ selectedSiteSlug }` }
 			onClick={ () => dispatch( recordTracksEvent( 'calypso_jetpack_scan_upsell_click' ) ) }
+			openButtonLinkOnNewTab={ false }
 			iconComponent={
 				<div className="scan-upsell__icon">
 					<SecurityIcon icon="info" />

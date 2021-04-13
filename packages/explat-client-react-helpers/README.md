@@ -16,6 +16,8 @@ This is the React Interface for the standalone client for Automattic's ExPlat. T
 	defaultExperience={ <DefaultComponent /> }
 	treatmentExperience={ <TreatmentComponent /> }
 	loadingExperience={ <LoadingComponent /> }
+	// Optional: See ExperimentOptions
+	options={experimentOptions}
 />;
 ```
 
@@ -35,7 +37,7 @@ const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment( '
 
 if ( isLoadingExperimentAssignment ) {
 	// Show loading experience
-} else if ( experimentAssignment.variationName === 'treatment' ) {
+} else if ( experimentAssignment?.variationName === 'treatment' ) {
 	// Provide treatment experience
 } else {
 	// Provide default experience
@@ -46,6 +48,22 @@ if ( isLoadingExperimentAssignment ) {
 - Won't obey TTL - will retain the same experience for the life of the component.
 - Tip: Can use `loadExperiment('experiment_name')` to prefetch an experiment.
 
+### ExperimentOptions
+
+`useExperiment`, `<Experiment>` and `<ProvideExperimentData>` also takes an options object:
+
+> `options.isEligible: Boolean = true`
+
+Use this to add an in-code eligibility check to whether you want to load an experiment, if false it will return `isLoading = false && experimentAssignment = null` which (if you use the above example if-statement or the `<Experiment>` or `<ProvideExperimentData>` components) should cause the default/fallback experience to show.
+
+It is up to you to ensure that the eligibility checks are consistent, the first eligible experiment will cause an assignment. This parameter can intuitively vary as expected for a hook or component argument, meaning that you can have the `isEligible` check be dynamic.
+
+Example usage:
+
+```
+const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment( 'experiment_name', { isEligible: flow === 'launch-site' } );
+```
+
 ## API: `<ProvideExperimentData>`
 
 ### Type signature
@@ -55,8 +73,10 @@ if ( isLoadingExperimentAssignment ) {
 ### Usage
 
 ```
-<ProvideExperimentData 
+<ProvideExperimentData
     name="experiment_name"
+	// Optional: See ExperimentOptions
+	options={experimentOptions}
     >
     {(isLoading, experimentAssignment) => /* Your code here */}
 </ProvideExperimentData>

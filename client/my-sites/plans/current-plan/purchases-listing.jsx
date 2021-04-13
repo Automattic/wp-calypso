@@ -30,7 +30,6 @@ import ProductExpiration from 'calypso/components/product-expiration';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { getPlan, planHasFeature } from 'calypso/lib/plans';
-import { TERM_MONTHLY } from 'calypso/lib/plans/constants';
 import {
 	isExpiring,
 	isPartnerPurchase,
@@ -49,7 +48,8 @@ import {
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
-} from 'calypso/lib/products-values/constants';
+	TERM_MONTHLY,
+} from 'calypso/lib/plans/constants';
 import Gridicon from 'calypso/components/gridicon';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';

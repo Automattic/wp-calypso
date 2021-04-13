@@ -79,8 +79,11 @@ import {
 	isTitanMail,
 } from 'calypso/lib/products-values';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
-import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
-import { JETPACK_PLANS, JETPACK_LEGACY_PLANS } from 'calypso/lib/plans/constants';
+import {
+	JETPACK_PLANS,
+	JETPACK_LEGACY_PLANS,
+	JETPACK_PRODUCTS_LIST,
+} from 'calypso/lib/plans/constants';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import ProductLink from 'calypso/me/purchases/product-link';
 import PurchaseMeta from './purchase-meta';

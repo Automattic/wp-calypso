@@ -24,6 +24,7 @@
 	},
 	"dependencies": {
 		"@wordpress/compose": "^3.24.5",
+		"@wordpress/i18n": "^3.19.0",
 		"react": "^16.12.0"
 	},
 	"devDependencies": {

@@ -21,7 +21,7 @@ export default class NotificationsComponent extends AsyncBaseContainer {
 			this.driver,
 			by.css( 'li[data-filter-name="comments"]' )
 		);
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			by.css( 'li.wpnc__comment' )
 		);
@@ -45,7 +45,7 @@ export default class NotificationsComponent extends AsyncBaseContainer {
 	}
 
 	async waitForUndoMessage() {
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, this.undoSelector );
+		return await driverHelper.waitUntilLocatedAndVisible( this.driver, this.undoSelector );
 	}
 
 	async waitForUndoMessageToDisappear() {

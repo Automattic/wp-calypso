@@ -17,20 +17,7 @@ import { receivePartnerError } from 'calypso/state/partner-portal/partner/action
 import { dispatchRequest as vanillaDispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { receivePartner } from 'calypso/state/partner-portal/partner/actions';
-
-export interface APIPartnerKey {
-	id: number;
-	name: string;
-	oauth2_token: string;
-	disabled_on: string | null;
-}
-
-export interface APIPartner {
-	id: number;
-	slug: string;
-	name: string;
-	keys: APIPartnerKey[];
-}
+import { formatApiPartner } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 
 export function fetchPartnerHandler( action: AnyAction ): AnyAction {
 	return http(
@@ -57,18 +44,6 @@ export function receivePartnerErrorHandler(
 	return receivePartnerError( error );
 }
 
-function formatPartner( partner: APIPartner ): Partner {
-	return {
-		...partner,
-		keys: partner.keys.map( ( key: APIPartnerKey ) => ( {
-			id: key.id,
-			name: key.name,
-			oAuth2Token: key.oauth2_token,
-			disabledOn: key.disabled_on,
-		} ) ),
-	};
-}
-
 // Avoid TypeScript warnings and be explicit about the type of dispatchRequest being mostly unknown.
 const dispatchRequest = vanillaDispatchRequest as DispatchRequest;
 
@@ -78,7 +53,7 @@ export default {
 			fetch: fetchPartnerHandler,
 			onSuccess: receivePartnerHandler,
 			onError: receivePartnerErrorHandler,
-			fromApi: ( partner: APIPartner ) => formatPartner( partner ),
+			fromApi: formatApiPartner,
 		} ),
 	],
 };

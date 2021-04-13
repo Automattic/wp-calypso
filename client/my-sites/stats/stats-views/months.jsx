@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import { map, range, flatten, max, keys, zipObject, times, size, concat, merge } from 'lodash';
+import { map, range, flatten, keys, zipObject, times, size, concat, merge } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 
@@ -107,7 +107,7 @@ const StatsViewsMonths = ( props ) => {
 		} )
 	);
 
-	const highestMonth = max( allMonths );
+	const highestMonth = Math.max( ...allMonths );
 	const yearsObject = zipObject(
 		keys( data ),
 		times( size( data ), () => {

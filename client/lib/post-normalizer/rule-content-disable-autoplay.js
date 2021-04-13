@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
+import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 
 function stripAutoPlays( searchParams ) {
 	const returnVal = new URLSearchParams( searchParams );

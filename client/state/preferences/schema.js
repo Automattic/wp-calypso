@@ -79,7 +79,12 @@ export const remoteValuesSchema = {
 		'jetpack-review-prompt': {
 			type: 'object',
 			properties: {
-				scan: { $ref: '#/definitions/dismissiblePrompt' },
+				scan: {
+					type: 'object',
+					properties: {
+						'/[0-9]+/': { $ref: '#/definitions/dismissiblePrompt' },
+					},
+				},
 				restore: { $ref: '#/definitions/dismissiblePrompt' },
 			},
 		},

@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import page from 'page';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { filter, get, range } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -581,5 +580,5 @@ export default connect(
 			siteId,
 		};
 	},
-	( dispatch ) => bindActionCreators( { requestSites, fetchPluginData, installPlugin }, dispatch )
+	{ requestSites, fetchPluginData, installPlugin }
 )( localize( PlansSetup ) );

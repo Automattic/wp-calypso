@@ -5,6 +5,7 @@ import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import debugFactory from 'debug';
 import type { ResponseCart } from '@automattic/shopping-cart';
+import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -12,7 +13,6 @@ import type { ResponseCart } from '@automattic/shopping-cart';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 import getThankYouPageUrl from './get-thank-you-page-url';
-import type { WPCOMTransactionEndpointResponse } from '../../types/transaction-endpoint';
 import {
 	isTreatmentOneClickTest,
 	isTreatmentDifmUpsellTest,

@@ -9,7 +9,7 @@ import Gridicon from 'calypso/components/gridicon';
 /**
  * Internal dependencies
  */
-import { addQueryArgs, isExternal, getUrlParts } from 'calypso/lib/url';
+import { isExternal } from 'calypso/lib/url';
 import MaterialIcon from 'calypso/components/material-icon';
 import Count from 'calypso/components/count';
 import { preload } from 'calypso/sections-helper';
@@ -24,15 +24,6 @@ export default function SidebarItem( props ) {
 		'has-unseen': props.hasUnseen,
 	} );
 	const { materialIcon, materialIconStyle, icon, customIcon, count } = props;
-
-	let url = props.link;
-	if ( isExternalLink ) {
-		const { search } = getUrlParts( url );
-		if ( ! search.includes( 'from=' ) ) {
-			// `from` param is used by WP Admin on Atomic sites for disabling Nav Unification in that context. Can be removed after rolling Nav Unification out to 100% of users.
-			url = addQueryArgs( { from: 'calypso-old-menu', calypsoify: 0 }, url );
-		}
-	}
 
 	let _preloaded = false;
 
@@ -60,7 +51,7 @@ export default function SidebarItem( props ) {
 			<a
 				className="sidebar__menu-link"
 				onClick={ props.onNavigate }
-				href={ url }
+				href={ props.link }
 				onMouseEnter={ itemPreload }
 				{ ...linkProps }
 			>
@@ -78,7 +69,12 @@ export default function SidebarItem( props ) {
 
 				{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 				<span className="sidebar__menu-link-text menu-link-text" data-e2e-sidebar={ props.label }>
-					{ stripHTML( decodeEntities( props.label ) ) }
+					{
+						// String labels should be sanitized, whereas React components should be rendered as is
+						'string' === typeof props.label
+							? stripHTML( decodeEntities( props.label ) )
+							: props.label
+					}
 					{ !! count && <Count count={ count } /> }
 				</span>
 				{ showAsExternal && <Gridicon icon="external" size={ 24 } /> }

@@ -102,7 +102,7 @@ export default class SettingsPage extends AsyncBaseContainer {
 			this.driver,
 			By.className( 'button is-primary is-scary' )
 		);
-		return await DriverHelper.waitTillPresentAndDisplayed(
+		return await DriverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css( '#notices .is-success' )
 		);

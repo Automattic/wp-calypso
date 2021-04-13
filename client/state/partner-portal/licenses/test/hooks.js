@@ -22,6 +22,7 @@ import useRefreshLicenseList from 'calypso/state/partner-portal/licenses/hooks/u
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
 import useRevokeLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-revoke-license-mutation';
+import useTOSConsentMutation from 'calypso/state/partner-portal/licenses/hooks/use-tos-consent-mutation';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import {
 	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_REQUEST,
@@ -166,6 +167,34 @@ describe( 'useRevokeLicenseMutation', () => {
 		} );
 
 		await act( async () => result.current.mutateAsync( { licenseKey: 'jetpack-scan_foobarbaz' } ) );
+
+		expect( result.current.data ).toEqual( stub );
+	} );
+} );
+
+describe( 'useTOSConsentMutation', () => {
+	it( 'returns successful request data', async () => {
+		const queryClient = new QueryClient();
+		const wrapper = ( { children } ) => (
+			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+		);
+		const stub = {
+			id: 1,
+			slug: 'tos-partner',
+			name: 'TOS Partner',
+			keys: [],
+			tos: 'consented',
+		};
+
+		nock( 'https://public-api.wordpress.com' )
+			.put( '/wpcom/v2/jetpack-licensing/partner', '{"tos":"consented"}' )
+			.reply( 200, stub );
+
+		const { result } = renderHook( () => useTOSConsentMutation(), {
+			wrapper,
+		} );
+
+		await act( async () => result.current.mutateAsync() );
 
 		expect( result.current.data ).toEqual( stub );
 	} );

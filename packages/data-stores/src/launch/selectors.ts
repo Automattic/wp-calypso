@@ -22,7 +22,7 @@ export const hasPaidDomain = ( state: State ): boolean => {
 	if ( ! state.domain ) {
 		return false;
 	}
-	return ! state.domain.is_free;
+	return ! state.domain.is_free; // @TODO: check if we are ever storing a paid domain
 };
 export const getSelectedDomain = ( state: State ): DomainSuggestions.DomainSuggestion | undefined =>
 	state.domain;
@@ -50,7 +50,7 @@ export const isSelectedPlanPaid = ( state: State ): boolean =>
  *
  * @param state State
  */
-export const hasSelectedDomain = ( state: State ): boolean =>
+export const hasSelectedDomainOrSubdomain = ( state: State ): boolean =>
 	!! getSelectedDomain( state ) || state.confirmedDomainSelection;
 
 // Completion status of steps is derived from the state of the launch flow
@@ -68,7 +68,7 @@ export const isStepCompleted = ( state: State, step: LaunchStepType ): boolean =
 		return !! site?.title;
 	}
 	if ( step === LaunchStep.Domain ) {
-		return select( LAUNCH_STORE ).hasSelectedDomain();
+		return select( LAUNCH_STORE ).hasSelectedDomainOrSubdomain();
 	}
 	return false;
 };

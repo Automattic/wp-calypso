@@ -34,11 +34,9 @@ import {
 	GROUP_WPCOM,
 	GROUP_JETPACK,
 	PLAN_PERSONAL,
-} from 'calypso/lib/plans/constants';
-import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_PRODUCT_PRICE_MATRIX,
-} from 'calypso/lib/products-values/constants';
+} from 'calypso/lib/plans/constants';
 import { getJetpackProducts } from 'calypso/lib/products-values/translations';
 import JetpackFAQ from './jetpack-faq';
 import PlansFeaturesMainProductsHeader from './products-header';
@@ -138,7 +136,6 @@ export class PlansFeaturesMain extends Component {
 		const {
 			basePlansPath,
 			customerType,
-			disableBloggerPlanWithNonBlogDomain,
 			displayJetpackPlans,
 			domainName,
 			isInSignup,
@@ -173,10 +170,8 @@ export class PlansFeaturesMain extends Component {
 			>
 				<PlanFeaturesComparison
 					basePlansPath={ basePlansPath }
-					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					displayJetpackPlans={ displayJetpackPlans }
 					domainName={ domainName }
-					nonDotBlogDomains={ this.filterDotBlogDomains() }
 					isInSignup={ isInSignup }
 					isLandingPage={ isLandingPage }
 					isLaunchPage={ isLaunchPage }
@@ -222,6 +217,7 @@ export class PlansFeaturesMain extends Component {
 			plansWithScroll,
 			isReskinned,
 			isInVerticalScrollingPlansExperiment,
+			redirectToAddDomainFlow,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -241,6 +237,7 @@ export class PlansFeaturesMain extends Component {
 			>
 				{ this.renderSecondaryFormattedHeader() }
 				<PlanFeatures
+					redirectToAddDomainFlow={ redirectToAddDomainFlow }
 					basePlansPath={ basePlansPath }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					displayJetpackPlans={ displayJetpackPlans }
@@ -501,7 +498,12 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getKindOfPlanTypeSelector( props ) {
-		if ( props.displayJetpackPlans || props.isInSignup || props.eligibleForWpcomMonthlyPlans ) {
+		if (
+			props.displayJetpackPlans ||
+			props.isInSignup ||
+			props.eligibleForWpcomMonthlyPlans ||
+			props.redirectToAddDomainFlow
+		) {
 			return 'interval';
 		}
 
@@ -513,14 +515,25 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const { siteId, customHeader, shouldShowPlansRedesign } = this.props;
+		const {
+			siteId,
+			customHeader,
+			redirectToAddDomainFlow,
+			shouldShowPlansFeatureComparison,
+		} = this.props;
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
 		const kindOfPlanTypeSelector = this.getKindOfPlanTypeSelector( this.props );
 
 		// If advertising plans for a certain feature, ensure user has pressed "View all plans" before they can see others
-		const hidePlanSelector =
+		let hidePlanSelector =
 			kindOfPlanTypeSelector === 'customer' && this.isDisplayingPlansNeededForFeature();
+
+		// In the "purchase a plan and free domain" flow we do not want to show
+		// monthly plans because monthly plans do not come with a free domain.
+		if ( redirectToAddDomainFlow ) {
+			hidePlanSelector = true;
+		}
 
 		return (
 			<div className="plans-features-main">
@@ -538,7 +551,7 @@ export class PlansFeaturesMain extends Component {
 						plans={ visiblePlans }
 					/>
 				) }
-				{ shouldShowPlansRedesign ? this.showFeatureComparison() : this.getPlanFeatures() }
+				{ shouldShowPlansFeatureComparison ? this.showFeatureComparison() : this.getPlanFeatures() }
 				{ this.renderProductsSelector() }
 				{ this.mayRenderFAQ() }
 			</div>
@@ -559,6 +572,7 @@ export class PlansFeaturesMain extends Component {
 }
 
 PlansFeaturesMain.propTypes = {
+	redirectToAddDomainFlow: PropTypes.bool,
 	basePlansPath: PropTypes.string,
 	displayJetpackPlans: PropTypes.bool.isRequired,
 	hideFreePlan: PropTypes.bool,

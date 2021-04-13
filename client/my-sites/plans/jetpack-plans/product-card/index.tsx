@@ -19,7 +19,7 @@ import {
 	PRODUCT_JETPACK_CRM_MONTHLY,
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
-} from 'calypso/lib/products-values/constants';
+} from 'calypso/lib/plans/constants';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -77,7 +77,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		return false;
 	}, [ item.productSlug, sitePlan, siteProducts ] );
 	// Calculate the product price.
-	const { originalPrice, discountedPrice, priceTiers } = useItemPrice(
+	const { originalPrice, discountedPrice, priceTierList } = useItemPrice(
 		siteId,
 		item,
 		item?.monthlyProductSlug || ''
@@ -147,9 +147,9 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			isDeprecated={ item.legacy }
 			isAligned={ isAligned }
 			features={ item.features }
-			displayFrom={ ! siteId && priceTiers !== null }
+			displayFrom={ ! siteId && priceTierList.length > 0 }
 			belowPriceText={ item.belowPriceText }
-			tooltipText={ priceTiers && productTooltip( item, priceTiers ) }
+			tooltipText={ priceTierList.length > 0 && productTooltip( item, priceTierList ) }
 			aboveButtonText={ productAboveButtonText( item, siteProduct, isOwned, isItemPlanFeature ) }
 			isDisabled={ isDisabled }
 			disabledMessage={ disabledMessage }

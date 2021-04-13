@@ -8,6 +8,7 @@ import { dispatch } from '@wordpress/data';
  */
 import { wpcomRequest } from '../wpcom-request-controls';
 import { STORE_KEY } from './constants';
+import type { SiteDetails, Domain } from './types';
 
 /**
  * Attempt to find a site based on its id, and if not return undefined.
@@ -20,7 +21,7 @@ import { STORE_KEY } from './constants';
 export function* getSite( siteId: number ) {
 	yield dispatch( STORE_KEY ).fetchSite();
 	try {
-		const existingSite = yield wpcomRequest( {
+		const existingSite: SiteDetails | undefined = yield wpcomRequest( {
 			path: '/sites/' + encodeURIComponent( siteId ),
 			apiVersion: '1.1',
 		} );
@@ -37,7 +38,7 @@ export function* getSite( siteId: number ) {
  */
 export function* getSiteDomains( siteId: number ) {
 	try {
-		const result = yield wpcomRequest( {
+		const result: { domains: Domain[] } = yield wpcomRequest( {
 			path: '/sites/' + encodeURIComponent( siteId ) + '/domains',
 			apiVersion: '1.2',
 		} );
