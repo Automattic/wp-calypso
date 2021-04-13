@@ -41,8 +41,8 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 		// one visible and one hidden in control and only one button in the test variation.
 		const planSelector =
 			driverManager.currentScreenSize() === 'mobile'
-				? `.plan-features__mobile button.is-${ level }-plan, .plan-features-comparison__table button.is-${ level }-plan`
-				: `.plan-features-comparison__table button.is-${ level }-plan`;
+				? `.plan-features__mobile button.is-${ level }-plan, .plan-features-comparison__table button.is-${ level }-plan, .plan-features__table button.is-${ level }-plan`
+				: `.plan-features-comparison__table button.is-${ level }-plan, .plan-features__table button.is-${ level }-plan`;
 
 		let selector = By.css( planSelector );
 
@@ -56,7 +56,7 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
 			By.css(
-				'.plan-features__mobile button.is-business-plan, .plan-features-comparison__table button.is-business-plan'
+				'.plan-features__mobile button.is-business-plan, .plan-features-comparison__table button.is-business-plan, .plan-features__table button.is-business-plan'
 			)
 		);
 		await this.scrollPlanInToView( level );
