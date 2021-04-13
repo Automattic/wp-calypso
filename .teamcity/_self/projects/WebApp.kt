@@ -154,7 +154,6 @@ object RunCalypsoE2eDesktopTests : BuildType({
 		vcs {
 			branchFilter = """
 				+:*
-				-:trunk
 				-:pull*
 			""".trimIndent()
 		}
@@ -321,7 +320,6 @@ object RunCalypsoE2eMobileTests : BuildType({
 		vcs {
 			branchFilter = """
 				+:*
-				-:trunk
 				-:pull*
 			""".trimIndent()
 		}
