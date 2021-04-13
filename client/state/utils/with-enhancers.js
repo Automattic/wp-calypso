@@ -21,11 +21,11 @@ export const withEnhancers = ( actionCreator, enhancers ) => ( ...args ) => (
 
 	const enhanceAction = ( actionValue ) =>
 		enhancers.reduce( ( result, enhancer ) => enhancer( result, getState ), actionValue );
+	const enhancedDispatch = ( actionValue ) => dispatch( enhanceAction( actionValue ) );
 
 	if ( typeof action === 'function' ) {
-		const newDispatch = ( actionValue ) => dispatch( enhanceAction( actionValue ) );
-		return action( newDispatch, getState );
+		return action( enhancedDispatch, getState );
 	}
 
-	return dispatch( enhanceAction( action ) );
+	return enhancedDispatch( action );
 };
