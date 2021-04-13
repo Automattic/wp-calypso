@@ -290,6 +290,20 @@ describe( 'SiteSettingsFormGeneral ', () => {
 			} );
 		} );
 
+		describe( 'unlaunched site', () => {
+			it( 'Should not show the site settings UI', () => {
+				testProps = {
+					...testProps,
+					isUnlaunchedSite: true,
+					siteDomains: [ 'example.wordpress.com' ],
+				};
+
+				const { container } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
+
+				expect( container.querySelectorAll( '#site-privacy-settings' ) ).toHaveLength( 0 );
+			} );
+		} );
+
 		describe( 'Coming soon plugin availability', () => {
 			test( 'Should hide Coming Soon form element when the site is not atomic or the editing toolkit plugin is not disabled', () => {
 				const newProps = {
