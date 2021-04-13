@@ -259,9 +259,9 @@ const transformMailboxForCart = ( {
 	password,
 } );
 
-const checkEmailAvailability = async ( emailAddress ) => {
+const checkMailboxAvailability = async ( domain, mailbox ) => {
 	try {
-		const response = await wp.undocumented().getTitanEmailAddressAvailability( emailAddress );
+		const response = await wp.undocumented().getTitanMailboxAvailability( domain, mailbox );
 		return { message: response.message, status: 200 };
 	} catch ( e ) {
 		return { message: e.message, status: e.statusCode };
@@ -288,10 +288,9 @@ const decorateMailboxWithExistenceError = ( mailbox, message ) => {
 
 const areAllMailboxesAvailable = async ( mailboxes, onMailboxesChange ) => {
 	const promisified_responses = Promise.all(
-		mailboxes.map( ( mailbox ) => {
-			const email = `${ mailbox.mailbox.value }@${ mailbox.domain.value }`;
-			return checkEmailAvailability( email );
-		} )
+		mailboxes.map( ( mailbox ) =>
+			checkMailboxAvailability( mailbox.domain.value, mailbox.mailbox.value )
+		)
 	);
 	const responses = await promisified_responses;
 	const checks = responses.map( ( { message, status }, index ) => {

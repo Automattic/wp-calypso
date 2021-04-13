@@ -823,17 +823,18 @@ Undocumented.prototype.getTitanControlPanelIframeURL = function ( emailAccountId
 };
 
 /**
- * Checks the availability of an email address
+ * Checks the availability of a mailbox
  *
- * @param emailAddress The full email address
+ * @param domain The domain name to check the mailbox name against
+ * @param mailbox The mailbox to check for availability
  * @param fn The callback function
  */
-Undocumented.prototype.getTitanEmailAddressAvailability = function ( emailAddress, fn ) {
+Undocumented.prototype.getTitanMailboxAvailability = function ( domain, mailbox, fn ) {
 	return this.wpcom.req.get(
 		{
 			path: `/emails/titan/${ encodeURIComponent(
-				emailAddress
-			) }/check-email-address-availability`,
+				domain
+			) }/check-mailbox-availability/${ encodeURIComponent( mailbox ) }`,
 			apiNamespace: 'wpcom/v2',
 		},
 		fn
