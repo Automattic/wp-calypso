@@ -646,6 +646,9 @@ class CancelPurchaseForm extends React.Component {
 	surveyContent() {
 		const { translate, isImport, showSurvey, purchase } = this.props;
 		const { surveyStep } = this.state;
+		const isJetpack =
+			isJetpackProductSlug( purchase.productSlug ) || isJetpackPlanSlug( purchase.productSlug );
+		const productName = isJetpack ? translate( 'Jetpack' ) : translate( 'WordPress.com' );
 
 		if ( showSurvey ) {
 			if ( surveyStep === steps.INITIAL_STEP ) {
@@ -654,7 +657,10 @@ class CancelPurchaseForm extends React.Component {
 						<FormSectionHeading>{ translate( 'Your thoughts are needed.' ) }</FormSectionHeading>
 						<p>
 							{ translate(
-								'Before you go, please answer a few quick questions to help us improve WordPress.com.'
+								'Before you go, please answer a few quick questions to help us improve %(productName)s.',
+								{
+									args: { productName },
+								}
 							) }
 						</p>
 						{ this.renderQuestionOne() }
