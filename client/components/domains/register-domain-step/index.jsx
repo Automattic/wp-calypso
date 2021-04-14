@@ -1246,7 +1246,7 @@ class RegisterDomainStep extends React.Component {
 		if ( isReskinned ) {
 			return (
 				<div className="register-domain-step__example-prompt">
-					<Icon icon={ tip } size={ 18 } />
+					<Icon icon={ tip } size={ 20 } />
 					{ translate( 'The best names are short and memorable' ) }
 				</div>
 			);
