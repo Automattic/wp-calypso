@@ -282,8 +282,10 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 
 		step( 'Can persist previously selected plan in focused launch', async function () {
 			// Check if the selected monthly plan item is "Personal Plan".
-			const selectedPlanIsPersonalMonthlyPlanSelector = By.xpath(
-				'//button[contains(@class, "focused-launch-summary__item") and contains(@class, "is-selected")]//span[@class="focused-launch-summary-item__leading-side-label" and .="Personal Plan"]'
+			const selectedPlanIsPersonalMonthlyPlanSelector = driverHelper.getElementByText(
+				driver,
+				By.css( `.focused-launch-summary__item.is-selected` ),
+				/Personal Plan/
 			);
 
 			const selectedPlanIsPersonalMonthlyPlan = await driverHelper.isElementPresent(
