@@ -214,6 +214,17 @@ class RequiredPluginsInstallView extends Component {
 		this.timeoutTimer = window.setTimeout( this.timeoutElapsed, durationInSeconds * 1000 );
 	};
 
+	/**
+	 * Sends a track for user contacting support.
+	 *
+	 * @param {string} reason Reason on why user would contact. Values can be 'failure' or 'timeout'.
+	 */
+	trackContactSupport = ( reason ) => {
+		recordTrack( 'calypso_woocommerce_setup_contact_support', {
+			reason,
+		} );
+	};
+
 	doInitialization = () => {
 		const { fixMode, site, sitePlugins, wporgPlugins } = this.props;
 		const { workingOn } = this.state;
@@ -536,7 +547,13 @@ class RequiredPluginsInstallView extends Component {
 						title={ translate( "We can't update your store" ) }
 						subtitle={ subtitle }
 					>
-						<Button primary href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer">
+						<Button
+							onClick={ this.trackContactSupport( 'failure' ) }
+							primary
+							href={ CALYPSO_CONTACT }
+							target="_blank"
+							rel="noopener noreferrer"
+						>
 							{ this.props.translate( 'Get in touch' ) }
 						</Button>
 					</SetupHeader>
@@ -563,7 +580,13 @@ class RequiredPluginsInstallView extends Component {
 						title={ translate( 'We were unable to set up your store.' ) }
 						subtitle={ subtitle }
 					>
-						<Button primary href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer">
+						<Button
+							onClick={ this.trackContactSupport( 'timeout' ) }
+							primary
+							href={ CALYPSO_CONTACT }
+							target="_blank"
+							rel="noopener noreferrer"
+						>
 							{ translate( 'Get in touch' ) }
 						</Button>
 					</SetupHeader>
