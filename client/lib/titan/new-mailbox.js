@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import emailValidator from 'email-validator';
 import PropTypes from 'prop-types';
 import { translate } from 'i18n-calypso';
@@ -10,6 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
  * Internal dependencies
  */
 import { validatePasswordField } from 'calypso/lib/gsuite/new-users';
+import wp from 'calypso/lib/wp';
 
 const valueIsBoolean = ( value ) => typeof value === 'boolean';
 const valueIsNonEmpty = ( value ) => value !== '';
@@ -30,10 +32,10 @@ const getMailboxRequiredBooleanValue = () =>
 		error: PropTypes.string,
 	} );
 
-const getMailboxOptionalStringValue = () =>
+const getMailboxOptionalStringValueWithTranslatedError = () =>
 	PropTypes.shape( {
 		value: PropTypes.string.isRequired,
-		error: PropTypes.string,
+		error: PropTypes.oneOfType( PropTypes.string, PropTypes.array ),
 	} );
 
 const getMailboxRequiredStringValue = () =>
@@ -42,13 +44,19 @@ const getMailboxRequiredStringValue = () =>
 		error: PropTypes.string,
 	} ).isRequired;
 
+const getMailboxRequiredStringValueWithTranslatedError = () =>
+	PropTypes.shape( {
+		value: PropTypes.string.isRequired,
+		error: PropTypes.oneOfType( PropTypes.string, PropTypes.array ),
+	} ).isRequired;
+
 const getMailboxPropTypeShape = () =>
 	PropTypes.shape( {
 		uuid: PropTypes.string.isRequired,
-		alternativeEmail: getMailboxOptionalStringValue(),
+		alternativeEmail: getMailboxOptionalStringValueWithTranslatedError(),
 		domain: getMailboxRequiredStringValue(),
 		isAdmin: getMailboxRequiredBooleanValue(),
-		mailbox: getMailboxRequiredStringValue(),
+		mailbox: getMailboxRequiredStringValueWithTranslatedError(),
 		name: getMailboxRequiredStringValue(),
 		password: getMailboxRequiredStringValue(),
 	} );
@@ -125,6 +133,30 @@ const validateFullEmailAddress = ( { value, error }, allowEmpty = false ) => {
 	};
 };
 
+const validateAlternativeEmailAddress = ( { value, error }, domainName, allowEmpty = false ) => {
+	if ( ! error && value && domainName ) {
+		const parts = `${ value }`.split( '@' );
+		if ( parts.length > 1 && parts[ 1 ].toLowerCase() === domainName.toLowerCase() ) {
+			return {
+				value,
+				error: translate(
+					'This email address must have a different domain than {{strong}}%(domain)s{{/strong}}. Please use a different email address.',
+					{
+						args: {
+							domain: domainName,
+						},
+						components: {
+							strong: <strong />,
+						},
+					}
+				),
+			};
+		}
+	}
+
+	return validateFullEmailAddress( { value, error }, allowEmpty );
+};
+
 const validateMailboxName = ( { value, error }, { value: domainName, error: domainError } ) => {
 	if ( error ) {
 		return { value, error };
@@ -162,8 +194,9 @@ const validateMailbox = ( mailbox, optionalFields = [] ) => {
 
 	return {
 		uuid: mailbox.uuid,
-		alternativeEmail: validateFullEmailAddress(
+		alternativeEmail: validateAlternativeEmailAddress(
 			alternativeEmail,
+			domain.value,
 			optionalFields.includes( 'alternativeEmail' )
 		),
 		domain,
@@ -226,7 +259,57 @@ const transformMailboxForCart = ( {
 	password,
 } );
 
+const checkMailboxAvailability = async ( domain, mailbox ) => {
+	try {
+		const response = await wp.undocumented().getTitanMailboxAvailability( domain, mailbox );
+		return { message: response.message, status: 200 };
+	} catch ( e ) {
+		return { message: e.message, status: e.statusCode };
+	}
+};
+
+const decorateMailboxWithAvailabilityError = ( mailbox, message ) => {
+	mailbox.mailbox.error = translate(
+		'{{strong}}%(mailbox)s{{/strong}} is not available: %(message)s',
+		{
+			comment:
+				'%(mailbox)s is the local part of an email address. %(message)s is a translated message that gives context to why the mailbox is not available',
+			args: {
+				mailbox: mailbox.mailbox.value,
+				message,
+			},
+			components: {
+				strong: <strong />,
+			},
+		}
+	);
+	return mailbox;
+};
+
+const areAllMailboxesAvailable = async ( mailboxes, onMailboxesChange ) => {
+	const promisifiedResponses = Promise.all(
+		mailboxes.map( ( mailbox ) =>
+			checkMailboxAvailability( mailbox.domain.value, mailbox.mailbox.value )
+		)
+	);
+	const responses = await promisifiedResponses;
+	const checks = responses.map( ( { message, status }, index ) => {
+		return { available: status === 200, message, mailbox: mailboxes[ index ] };
+	} );
+	checks
+		.filter( ( { available } ) => ! available )
+		.forEach( ( { mailbox, message } ) =>
+			decorateMailboxWithAvailabilityError( mailbox, message )
+		);
+	const result = checks.every( ( { available } ) => available );
+	if ( ! result && onMailboxesChange ) {
+		onMailboxesChange( mailboxes );
+	}
+	return result;
+};
+
 export {
+	areAllMailboxesAvailable,
 	areAllMailboxesValid,
 	buildNewTitanMailbox,
 	getMailboxPropTypeShape,
