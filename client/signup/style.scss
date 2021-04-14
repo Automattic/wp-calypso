@@ -484,11 +484,14 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 
 	.formatted-header {
 		margin-top: 48px;
+
 		.formatted-header__title {
 			@include onboarding-font-recoleta;
 			color: $gray-100;
 			letter-spacing: 0.2px;
 			font-size: 2.6rem; /* stylelint-disable-line */
+			line-height: 48px;
+			margin: 0 0 8px;
 
 			@media screen and ( max-width: $breakpoint-mobile ) {
 				max-width: 328px;
@@ -501,6 +504,8 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 
 		.formatted-header__subtitle {
 			color: $gray-60;
+			line-height: 24px;
+			letter-spacing: 0.24px;
 
 			@media screen and ( max-width: $breakpoint-mobile ) {
 				max-width: 328px;
@@ -509,6 +514,16 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 				padding: 0 16px;
 				margin: 0 auto;
 			}
+		}
+	}
+
+	.signup__step.is-domains {
+		.is-wide-layout {
+			max-width: 1200px;
+		}
+
+		.formatted-header__title {
+			font-size: 2.75rem; /* stylelint-disable-line */
 		}
 	}
 

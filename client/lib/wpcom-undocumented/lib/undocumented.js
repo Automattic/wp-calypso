@@ -823,6 +823,25 @@ Undocumented.prototype.getTitanControlPanelIframeURL = function ( emailAccountId
 };
 
 /**
+ * Checks the availability of a mailbox
+ *
+ * @param domain The domain name to check the mailbox name against
+ * @param mailbox The mailbox to check for availability
+ * @param fn The callback function
+ */
+Undocumented.prototype.getTitanMailboxAvailability = function ( domain, mailbox, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/emails/titan/${ encodeURIComponent(
+				domain
+			) }/check-mailbox-availability/${ encodeURIComponent( mailbox ) }`,
+			apiNamespace: 'wpcom/v2',
+		},
+		fn
+	);
+};
+
+/**
  * Get a list of WordPress.com products
  *
  * @param {Function} fn The callback function

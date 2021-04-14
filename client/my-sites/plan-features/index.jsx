@@ -374,6 +374,7 @@ export class PlanFeatures extends Component {
 						audience={ planConstantObj.getAudience() }
 						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 						isLoggedInMonthlyPricing={ this.props.isLoggedInMonthlyPricing }
+						isInSignup={ isInSignup }
 					/>
 					<p className="plan-features__description">{ planDescription }</p>
 					<PlanFeaturesActions
