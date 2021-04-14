@@ -97,8 +97,10 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			const normalizedSiteTitle = siteTitle.toLowerCase().replace( / /g, '' );
 
 			// Check if there are domain suggestions that contains user entered site title
-			const domainSuggestionsContainUserEnteredSiteTitleSelector = By.xpath(
-				`//span[@class="domain-picker__domain-sub-domain" and .="${ normalizedSiteTitle }"]`
+			const domainSuggestionsContainUserEnteredSiteTitleSelector = driverHelper.getElementByText(
+				driver,
+				By.css( `.domain-picker__domain-sub-domain` ),
+				normalizedSiteTitle
 			);
 
 			const domainSuggestionsContainUserEnteredSiteTitle = await driverHelper.isElementPresent(
