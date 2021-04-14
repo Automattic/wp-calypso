@@ -79,20 +79,28 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 			await acquireIntentPage.goToNextStep();
 		} );
 
-		step( 'Can see Domains Page and pick a free domain and continue', async function () {
-			const domainsPage = await DomainsPage.Expect( driver );
-			await domainsPage.enterDomainQuery( domainQuery );
+		step(
+			'Can see Domains Page, search for domains, pick a free domain, and continue',
+			async function () {
+				const domainsPage = await DomainsPage.Expect( driver );
+				await domainsPage.enterDomainQuery( domainQuery );
 
-			// Wait for domain suggestions to reload.
-			// This fixes the "stale element reference: element is not attached to the page document" error
-			// because selectFreeDomain() might be clicking on the free suggestion item too quickly
-			// before the list of domain suggestions are reloaded, causing the driver to target the
-			// element that has already been removed from DOM.
-			await driver.sleep( 2000 );
+				try {
+					await domainsPage.waitForDomainSuggestionsToLoad();
+				} catch ( e ) {
+					console.log( 'Domain suggestions not loaded. Retrying' ); // eslint-disable-line no-console
 
-			newSiteDomain = await domainsPage.selectFreeDomain();
-			await domainsPage.continueToNextStep();
-		} );
+					const newDomainQuery = dataHelper.randomPhrase();
+					await domainsPage.enterDomainQuery( newDomainQuery );
+					await domainsPage.waitForDomainSuggestionsToLoad();
+				}
+
+				newSiteDomain = await domainsPage.getFreeDomainName();
+
+				await domainsPage.selectFreeDomain();
+				await domainsPage.continueToNextStep();
+			}
+		);
 
 		step( 'Can see Design Selector and select a random free design', async function () {
 			const designSelectorPage = await DesignSelectorPage.Expect( driver );
