@@ -59,6 +59,21 @@
 	}
 }
 
+.titan-mail-add-mailboxes__new-mailbox.show-labels {
+	.form-fieldset .form-label {
+		color: var( --color-text );
+
+		> div, > input {
+			margin-top: 5px;
+		}
+	}
+
+	.titan-mail-add-mailboxes__new-mailbox-remove-mailbox-button {
+		margin-top: calc( 1.5em + 5px );
+	}
+
+}
+
 .titan-mail-add-mailboxes__new-mailbox-separator {
 	margin-top: 1.5em;
 }

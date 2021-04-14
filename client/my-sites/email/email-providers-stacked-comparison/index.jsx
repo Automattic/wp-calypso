@@ -309,6 +309,7 @@ class EmailProvidersStackedComparison extends React.Component {
 					selectedDomainName={ domain.name }
 					users={ googleUsers }
 					onReturnKeyPress={ this.onGoogleFormReturnKeyPress }
+					showLabels={ true }
 				>
 					<Button
 						className="email-providers-stacked-comparison__gsuite-user-list-action-continue"
@@ -383,7 +384,7 @@ class EmailProvidersStackedComparison extends React.Component {
 				mailboxes={ this.state.titanMailboxes }
 				domain={ domain.name }
 				onReturnKeyPress={ this.onTitanFormReturnKeyPress }
-				showLabels={ false }
+				showLabels={ true }
 			>
 				<Button
 					className="email-providers-stacked-comparison__titan-mailbox-action-continue"
