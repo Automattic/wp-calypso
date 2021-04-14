@@ -68,15 +68,17 @@ const sanitizeEmailSuggestion = ( emailSuggestion ) =>
 
 const validateMailboxesAreUnique = ( mailboxes ) => {
 	const mailboxNameCounts = mailboxes.reduce( ( nameCount, mailbox ) => {
-		nameCount[ mailbox.mailbox ] = 1 + nameCount[ mailbox.mailbox ] ?? 0;
+		const mailboxName = mailbox.mailbox.value;
+		nameCount[ mailboxName ] = 1 + ( nameCount[ mailboxName ] ?? 0 );
 		return nameCount;
 	}, {} );
 
 	return mailboxes.map( ( mailbox ) => {
-		if ( mailboxNameCounts[ mailbox.mailbox ] > 1 ) {
+		const mailboxName = mailbox.mailbox.value;
+		if ( mailboxNameCounts[ mailboxName ] > 1 ) {
 			return {
 				...mailbox,
-				[ mailbox ]: { value: mailbox.mailbox, error: translate( 'Please use unique mailboxes' ) },
+				[ 'mailbox' ]: { value: mailboxName, error: translate( 'Please use unique mailboxes' ) },
 			};
 		}
 		return mailbox;
