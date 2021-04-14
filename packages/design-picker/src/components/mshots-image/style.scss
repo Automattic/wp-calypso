@@ -2,11 +2,6 @@
 
 .mshots-image__loader {
 	@include onboarding-placeholder();
-	position: absolute;
-	left: 0;
-	top: 0;
-	width: 100%;
-	height: 100%;
 }
 
 .mshots-image-hidden {
@@ -24,7 +19,7 @@
     margin-left: auto;
     margin-right: auto;
 
-    transition: all 1s;
+    transition: background-position 1.5s;
 
     &:hover {
         background-position: bottom;
