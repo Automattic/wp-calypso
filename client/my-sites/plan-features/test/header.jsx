@@ -453,7 +453,7 @@ describe( 'PlanFeaturesHeader.renderPriceGroup()', () => {
 		expect( props1.discounted ).toBe( false );
 		expect( props1.original ).toBe( true );
 		expect( props1.currencyCode ).toBe( 'USD' );
-		expect( props1.displayPerMonthNotation ).toBe( false );
+		expect( props1.displayPerMonthNotation ).toBe( true );
 
 		// We need the dive() here to pick up defaultProps
 		const props2 = wrapper.find( PlanPrice ).at( 1 ).dive().props();
@@ -461,7 +461,7 @@ describe( 'PlanFeaturesHeader.renderPriceGroup()', () => {
 		expect( props2.discounted ).toBe( true );
 		expect( props2.original ).toBe( false );
 		expect( props2.currencyCode ).toBe( 'USD' );
-		expect( props2.displayPerMonthNotation ).toBe( false );
+		expect( props2.displayPerMonthNotation ).toBe( true );
 	} );
 } );
 
