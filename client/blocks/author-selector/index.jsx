@@ -86,7 +86,6 @@ AuthorSelector.propTypes = {
 
 AuthorSelector.defaultProps = {
 	allowSingleUser: false,
-	onClose: function () {},
 	popoverPosition: 'bottom left',
 	showAuthorMenu: false,
 };
