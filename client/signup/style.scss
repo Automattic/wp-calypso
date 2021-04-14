@@ -512,6 +512,12 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 		}
 	}
 
+	.signup__step.is-domains {
+		.is-wide-layout {
+			max-width: 1200px;
+		}
+	}
+
 	button.is-primary {
 		box-shadow: none;
 		border: 0;
