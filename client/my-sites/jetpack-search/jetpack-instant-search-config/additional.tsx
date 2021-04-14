@@ -22,9 +22,9 @@ export default function JetpackSearchInstantSearchAdditionalConfig(): ReactEleme
 			/>
 			<Card>
 				<FormFieldset className="jetpack-instant-search-config__additional">
-					<FormToggle>{ translate( 'Show sort selector.' ) }</FormToggle>
-					<FormToggle>{ translate( 'Enable infinite scrolling.' ) }</FormToggle>
-					<FormToggle>{ translate( 'Display "Powered by Jetpack".' ) }</FormToggle>
+					<FormToggle checked>{ translate( 'Show sort selector.' ) }</FormToggle>
+					<FormToggle checked>{ translate( 'Enable infinite scrolling.' ) }</FormToggle>
+					<FormToggle checked>{ translate( 'Display "Powered by Jetpack".' ) }</FormToggle>
 				</FormFieldset>
 			</Card>
 		</Fragment>

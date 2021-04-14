@@ -30,7 +30,7 @@ export default function JetpackSearchInstantSearchBehavioralConfig(): ReactEleme
 		( state ) => getPostTypes( state, siteId ) as Record< string, PostType >
 	);
 	const publicPostTypes: PostType[] =
-		typeof postTypes !== 'object'
+		postTypes === null || typeof postTypes !== 'object'
 			? []
 			: Object.keys( postTypes )
 					.map( ( key ) => postTypes[ key ] )
