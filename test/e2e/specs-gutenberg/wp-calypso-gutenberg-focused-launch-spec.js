@@ -110,7 +110,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 
 			assert(
 				domainSuggestionsContainUserEnteredSiteTitle,
-				'Domain suggestions did not include user entered site title.'
+				`Domain suggestions did not include user entered site title. Site title used was ${ siteTitle }.`
 			);
 		} );
 
