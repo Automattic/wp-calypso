@@ -41,7 +41,6 @@ import QueryContactDetailsCache from 'calypso/components/data/query-contact-deta
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProducts from 'calypso/components/data/query-products-list';
-import QueryExperiments from 'calypso/components/data/query-experiments';
 import useIsApplePayAvailable from './hooks/use-is-apple-pay-available';
 import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-methods';
 import useStoredCards from './hooks/use-stored-cards';
@@ -606,7 +605,6 @@ export default function CompositeCheckout( {
 			<QuerySitePlans siteId={ siteId } />
 			<QuerySitePurchases siteId={ siteId } />
 			<QueryPlans />
-			<QueryExperiments />
 			<QueryProducts />
 			<QueryContactDetailsCache />
 			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
