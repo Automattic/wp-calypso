@@ -28,7 +28,7 @@ const AuthorSelector = ( {
 	const [ search, setSearch ] = React.useState( '' );
 
 	const fetchOptions = { number: 50 };
-	const trimmedSearch = search.trim();
+	const trimmedSearch = search.trim?.();
 
 	if ( trimmedSearch ) {
 		fetchOptions.number = 20; // make search a little faster

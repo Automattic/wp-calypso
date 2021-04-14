@@ -42,7 +42,7 @@ class AuthorSwitcherShell extends Component {
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.siteId || nextProps.siteId !== this.props.siteId ) {
-			this.props.updateSearch( false );
+			this.props.updateSearch( '' );
 		}
 	}
 
@@ -146,7 +146,7 @@ class AuthorSwitcherShell extends Component {
 		this.setState( {
 			showAuthorMenu: false,
 		} );
-		this.props.updateSearch( false );
+		this.props.updateSearch( '' );
 	};
 
 	renderAuthor = ( rawAuthor ) => {
@@ -183,7 +183,7 @@ class AuthorSwitcherShell extends Component {
 		this.setState( {
 			showAuthorMenu: false,
 		} );
-		this.props.updateSearch( false );
+		this.props.updateSearch( '' );
 	};
 
 	getAuthorItemGUID = ( author ) => {
