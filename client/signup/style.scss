@@ -492,8 +492,7 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 		.formatted-header__title {
 			@include onboarding-font-recoleta;
 			color: $gray-100;
-			letter-spacing: 0.2px;
-			
+			letter-spacing: 0.2px;		
 			font-size: 2.25rem; /* stylelint-disable-line */
 			text-align: center;
 			padding: 0 20px;
@@ -517,9 +516,14 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 	}
 
 	.signup__step.is-domains {
+		.is-wide-layout {
+			max-width: 1200px;
+		}
+
 		.formatted-header {
 			.formatted-header__title {
 				text-align: left;
+				font-size: 2.75rem; /* stylelint-disable-line */
 			}
 
 			.formatted-header__subtitle {

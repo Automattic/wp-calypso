@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslate } from 'i18n-calypso';
@@ -62,7 +63,11 @@ const TitanNewMailbox = ( {
 
 	return (
 		<>
-			<div className="titan-mail-add-mailboxes__new-mailbox">
+			<div
+				className={ classNames( 'titan-mail-add-mailboxes__new-mailbox', {
+					'show-labels': showLabels,
+				} ) }
+			>
 				<div className="titan-mail-add-mailboxes__new-mailbox-name-and-remove">
 					<FormFieldset>
 						<FormLabel>
