@@ -16,12 +16,12 @@ import useUsersQuery from 'calypso/data/users/use-users-query';
 import './style.scss';
 
 const AuthorSelector = ( {
-	allowSingleUser,
+	allowSingleUser = false,
 	children,
 	exclude,
 	ignoreContext,
 	onSelect,
-	popoverPosition,
+	popoverPosition = 'bottom left',
 	siteId,
 	transformAuthor,
 } ) => {
@@ -82,12 +82,6 @@ AuthorSelector.propTypes = {
 	popoverPosition: PropTypes.string,
 	siteId: PropTypes.number.isRequired,
 	transformAuthor: PropTypes.func,
-};
-
-AuthorSelector.defaultProps = {
-	allowSingleUser: false,
-	popoverPosition: 'bottom left',
-	showAuthorMenu: false,
 };
 
 export default AuthorSelector;
