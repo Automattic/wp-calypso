@@ -203,22 +203,19 @@ export class UserStep extends Component {
 	}
 
 	initGoogleRecaptcha() {
-		initGoogleRecaptcha(
-			'g-recaptcha',
-			'calypso/signup/pageLoad',
-			config( 'google_recaptcha_site_key' )
-		).then( ( result ) => {
-			if ( ! result ) {
-				return;
+		initGoogleRecaptcha( 'g-recaptcha', config( 'google_recaptcha_site_key' ) ).then(
+			( clientId ) => {
+				if ( clientId === null ) {
+					return;
+				}
+
+				this.setState( { recaptchaClientId: clientId } );
+
+				this.props.saveSignupStep( {
+					stepName: this.props.stepName,
+				} );
 			}
-
-			this.setState( { recaptchaClientId: result.clientId } );
-
-			this.props.saveSignupStep( {
-				stepName: this.props.stepName,
-				recaptchaToken: typeof result.token === 'string' ? result.token : undefined,
-			} );
-		} );
+		);
 	}
 
 	save = ( form ) => {

@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { debounce, uniqueId } from 'lodash';
 import i18n from 'i18n-calypso';
+import { Icon } from '@wordpress/icons';
 
 /**
  * Internal dependencies
@@ -16,6 +17,7 @@ import Gridicon from 'calypso/components/gridicon';
 import Spinner from 'calypso/components/spinner';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import searchIcon from './search-icon';
 
 /**
  * Style dependencies
@@ -348,7 +350,9 @@ class Search extends Component {
 					aria-controls={ 'search-component-' + this.instanceId }
 					aria-label={ i18n.translate( 'Open Search', { context: 'button label' } ) }
 				>
-					{ ! this.props.hideOpenIcon && <Gridicon icon="search" className="search__open-icon" /> }
+					{ ! this.props.hideOpenIcon && (
+						<Icon icon={ searchIcon } size={ 32 } className="search__icon-search" />
+					) }
 				</div>
 				<div className={ fadeDivClass }>
 					<FormTextInput
