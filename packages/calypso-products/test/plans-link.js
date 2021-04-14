@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { plansLink } from '..';
+import { plansLink } from '../src';
 
 describe( 'plansLink', () => {
 	test( 'should return url unchanged for yearly no-site', () => {

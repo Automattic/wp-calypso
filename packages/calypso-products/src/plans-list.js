@@ -598,7 +598,7 @@ const getPlanJetpackCompleteDetails = () => ( {
 	],
 } );
 
-// DO NOT import. Use `getPlan` from `lib/plans` instead.
+// DO NOT import. Use `getPlan` instead.
 export const PLANS_LIST = {
 	[ constants.PLAN_FREE ]: {
 		group: constants.GROUP_WPCOM,

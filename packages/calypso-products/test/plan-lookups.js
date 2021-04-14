@@ -53,8 +53,8 @@ import {
 	TYPE_FREE,
 	PLAN_P2_PLUS,
 	PLAN_P2_FREE,
-} from '../constants';
-import { PLANS_LIST } from '../plans-list';
+} from '../src/constants';
+import { PLANS_LIST } from '../src/plans-list';
 import {
 	getPlan,
 	getPlanClass,
@@ -80,7 +80,7 @@ import {
 	getYearlyPlanByMonthly,
 	planHasFeature,
 	planHasSuperiorFeature,
-} from '../index';
+} from '../src/index';
 
 describe( 'isFreePlan', () => {
 	test( 'should return true for free plans', () => {

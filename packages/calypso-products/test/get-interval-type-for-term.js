@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 
-import getIntervalTypeFromTerm from '../get-interval-type-for-term';
-import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'calypso/lib/plans/constants';
+import getIntervalTypeFromTerm from '../src/get-interval-type-for-term';
+import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from '../src/constants';
 
 describe( 'getIntervalTypeFromTerm', () => {
 	test( 'should return 2-year intervalType if current plan is a 2-year plan', () => {

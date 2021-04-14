@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { planLevelsMatch } from '..';
+import { planLevelsMatch } from '../src';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
@@ -27,7 +27,7 @@ import {
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
-} from '../constants';
+} from '../src/constants';
 
 describe( 'planLevelsMatch', () => {
 	const testPlansArrayIndependentOfOrder = ( plansArray, result ) =>
