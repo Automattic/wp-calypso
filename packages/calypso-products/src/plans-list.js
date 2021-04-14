@@ -1523,16 +1523,3 @@ PLANS_LIST[ constants.PLAN_P2_FREE ] = {
 		constants.FEATURE_P2_CUSTOMIZATION_OPTIONS,
 	],
 };
-
-export const PLANS_CONSTANTS_LIST = Object.keys( PLANS_LIST );
-
-export const getPlanObject = ( planName ) => {
-	const plan = PLANS_LIST[ planName ];
-	const objectPlan = {};
-	Object.keys( plan ).forEach( ( key ) => {
-		const objectKey = key.substr( 3 ).charAt( 0 ).toLowerCase() + key.slice( 4 );
-		objectPlan[ objectKey ] = plan[ key ]();
-	} );
-
-	return objectPlan;
-};
