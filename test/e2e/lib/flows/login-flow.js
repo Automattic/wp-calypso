@@ -264,14 +264,21 @@ export default class LoginFlow {
 
 		const loginPage = await LoginPage.Expect( this.driver );
 
-		await loginPage.login(
-			this.account.email || this.account.username,
-			this.account.password,
-			false,
-			{ retry: false }
-		);
+		try {
+			await loginPage.login(
+				this.account.email || this.account.username,
+				this.account.password,
+				false,
+				{ retry: false }
+			);
+		} catch ( error ) {
+			// Popup login window closes itself so let's handle WebDriver complaints
+			if ( 'NoSuchWindowError' !== error.name ) {
+				throw error;
+			}
+		}
 
-		// Switch back to post window
+		// Make sure we've switched back to the post window
 		await driverHelper.switchToWindowByIndex( this.driver, 0 );
 	}
 
