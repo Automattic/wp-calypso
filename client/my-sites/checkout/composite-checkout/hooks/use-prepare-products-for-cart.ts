@@ -51,6 +51,7 @@ export default function usePrepareProductsForCart( {
 	siteSlug,
 	isLoggedOutCart,
 	isNoSiteCart,
+	isJetpackCheckout,
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
@@ -60,6 +61,7 @@ export default function usePrepareProductsForCart( {
 	siteSlug: string | undefined;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
+	isJetpackCheckout?: boolean;
 } ): PreparedProductsForCart {
 	const [ state, dispatch ] = useReducer( preparedProductsReducer, initialPreparedProductsState );
 
@@ -71,7 +73,9 @@ export default function usePrepareProductsForCart( {
 		'and isLoggedOutCart',
 		isLoggedOutCart,
 		'and isNoSiteCart',
-		isNoSiteCart
+		isNoSiteCart,
+		'and isJetpackCheckout',
+		isJetpackCheckout,
 	);
 
 	useFetchProductsIfNotLoaded();
@@ -82,6 +86,7 @@ export default function usePrepareProductsForCart( {
 		productAliasFromUrl,
 		isLoggedOutCart,
 		isNoSiteCart,
+		isJetpackCheckout,
 	} );
 	debug( 'isLoading', state.isLoading );
 	debug( 'handler is', addHandler );
@@ -149,13 +154,19 @@ function chooseAddHandler( {
 	productAliasFromUrl,
 	isLoggedOutCart,
 	isNoSiteCart,
+	isJetpackCheckout,
 }: {
 	isLoading: boolean;
 	originalPurchaseId: string | number | null | undefined;
 	productAliasFromUrl: string | null | undefined;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
+	isJetpackCheckout?: boolean;
 } ): AddHandler {
+	if ( isJetpackCheckout ) {
+		return 'addProductFromSlug';
+	}
+
 	if ( ! isLoading ) {
 		return 'doNotAdd';
 	}

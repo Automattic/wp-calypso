@@ -42,6 +42,7 @@ export default function CheckoutSystemDecider( {
 	redirectTo,
 	isLoggedOutCart,
 	isNoSiteCart,
+	isJetpackCheckout,
 } ) {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
@@ -131,6 +132,7 @@ export default function CheckoutSystemDecider( {
 							infoMessage={ prepurchaseNotices }
 							isLoggedOutCart={ isLoggedOutCart }
 							isNoSiteCart={ isNoSiteCart }
+							isJetpackCheckout={ isJetpackCheckout }
 						/>
 					</StripeHookProvider>
 				</CalypsoShoppingCartProvider>
