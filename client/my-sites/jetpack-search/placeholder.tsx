@@ -25,7 +25,7 @@ import './style.scss';
 import JetpackSearchSVG from 'calypso/assets/images/illustrations/jetpack-search.svg';
 
 interface Props {
-	siteId: number;
+	siteId: number | null;
 }
 
 export default function JetpackSearchPlaceholder( { siteId }: Props ): ReactElement {
