@@ -42,16 +42,24 @@
 	margin-top: 1.5em;
 }
 
-.gsuite-new-user-list__new-user .form-fieldset .form-label {
-	color: var( --color-text );
-	margin-bottom: 0;
+.gsuite-new-user-list__new-user {
+	.form-fieldset .form-label {
+		color: var( --color-text );
+		margin-bottom: 0;
 
-	.form-text-input-with-affixes__suffix {
-		font-weight: normal;
+		.form-text-input-with-affixes__suffix {
+			font-weight: normal;
+		}
+
+		> div, > input {
+			margin-top: 5px;
+		}
 	}
 
-	> div, > input {
-		margin-top: 5px;
+	&.show-labels .gsuite-new-user-list__new-user-remove-user-button {
+		@include breakpoint-deprecated( '>800px' ) {
+			margin-top: calc( 1.5em + 5px );
+		}
 	}
 }
 
@@ -76,14 +84,6 @@
 
 			span {
 				display: none;
-			}
-		}
-	}
-
-	&.show-labels {
-		.gsuite-new-user-list__new-user-remove-user-button {
-			@include breakpoint-deprecated( '>800px' ) {
-				margin-top: calc( 1.5em + 5px );
 			}
 		}
 	}
