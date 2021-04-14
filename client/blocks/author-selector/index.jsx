@@ -50,7 +50,7 @@ const AuthorSelector = ( {
 			}
 			return true;
 		} ) ?? [];
-	const listKey = [ 'followers', siteId, search ].join( '-' );
+	const listKey = [ 'authors', siteId, search ].join( '-' );
 
 	return (
 		<SwitcherShell
