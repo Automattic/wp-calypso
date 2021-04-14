@@ -1,8 +1,8 @@
 ---
 name: Simple/Atomic Feature Parity
-about: Did you find something inconsistent or unexpected between the two platforms? 
+about: Did you find something inconsistent or unexpected between the two platforms?
 title: ''
-labels: "Simple/Atomic Parity"
+labels: Simple/Atomic Parity
 assignees: ''
 
 ---
