@@ -45,7 +45,8 @@
 		},
 		{
 			"groupName": "eslint packages",
-			"matchPackagePatterns": [ "^eslint" ]
+			"matchPackagePatterns": [ "^eslint" ],
+			"prPriority": 1
 		}
 	],
 	"statusCheckVerify": true,
