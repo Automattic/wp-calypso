@@ -72,6 +72,7 @@
 		"gutenboarding/show-vertical-input": false,
 		"gutenboarding/mshot-preview": true,
 		"gutenboarding/landscape-preview": true,
+		"gutenboarding/long-previews": true,
 		"help": true,
 		"home/layout-dev": true,
 		"inline-help": true,
