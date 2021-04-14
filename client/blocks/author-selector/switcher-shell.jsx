@@ -26,9 +26,6 @@ const debug = debugModule( 'calypso:author-selector' );
 class AuthorSwitcherShell extends Component {
 	static propTypes = {
 		users: PropTypes.array,
-		numUsersFetched: PropTypes.number,
-		totalUsers: PropTypes.number,
-		usersCurrentOffset: PropTypes.number,
 		allowSingleUser: PropTypes.bool,
 		popoverPosition: PropTypes.string,
 		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.func } ),

@@ -15,7 +15,16 @@ import useUsersQuery from 'calypso/data/users/use-users-query';
  */
 import './style.scss';
 
-const AuthorSelector = ( { siteId, exclude, ...rest } ) => {
+const AuthorSelector = ( {
+	allowSingleUser,
+	children,
+	exclude,
+	ignoreContext,
+	onSelect,
+	popoverPosition,
+	siteId,
+	transformAuthor,
+} ) => {
 	const [ search, setSearch ] = React.useState( '' );
 
 	const fetchOptions = { number: 50 };
@@ -45,35 +54,40 @@ const AuthorSelector = ( { siteId, exclude, ...rest } ) => {
 
 	return (
 		<SwitcherShell
-			users={ users }
-			totalUsers={ data?.total }
-			siteId={ siteId }
-			search={ search }
-			updateSearch={ setSearch }
+			allowSingleUser={ allowSingleUser }
 			fetchNextPage={ fetchNextPage }
 			hasNextPage={ hasNextPage }
-			isLoading={ isLoading }
+			ignoreContext={ ignoreContext }
 			isFetchingNextPage={ isFetchingNextPage }
+			isLoading={ isLoading }
 			listKey={ listKey }
-			{ ...rest }
-		/>
+			onSelect={ onSelect }
+			popoverPosition={ popoverPosition }
+			search={ search }
+			siteId={ siteId }
+			transformAuthor={ transformAuthor }
+			updateSearch={ setSearch }
+			users={ users }
+		>
+			{ children }
+		</SwitcherShell>
 	);
 };
 
 AuthorSelector.propTypes = {
-	siteId: PropTypes.number.isRequired,
-	onSelect: PropTypes.func,
-	exclude: PropTypes.oneOfType( [ PropTypes.arrayOf( PropTypes.number ), PropTypes.func ] ),
 	allowSingleUser: PropTypes.bool,
+	exclude: PropTypes.oneOfType( [ PropTypes.arrayOf( PropTypes.number ), PropTypes.func ] ),
+	onSelect: PropTypes.func,
 	popoverPosition: PropTypes.string,
+	siteId: PropTypes.number.isRequired,
 	transformAuthor: PropTypes.func,
 };
 
 AuthorSelector.defaultProps = {
-	showAuthorMenu: false,
-	onClose: function () {},
 	allowSingleUser: false,
+	onClose: function () {},
 	popoverPosition: 'bottom left',
+	showAuthorMenu: false,
 };
 
 export default AuthorSelector;
