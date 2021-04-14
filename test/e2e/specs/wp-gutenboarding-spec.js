@@ -84,19 +84,8 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 			async function () {
 				const domainsPage = await DomainsPage.Expect( driver );
 				await domainsPage.enterDomainQuery( domainQuery );
-
-				try {
-					await domainsPage.waitForDomainSuggestionsToLoad();
-				} catch ( e ) {
-					console.log( 'Domain suggestions not loaded. Retrying' ); // eslint-disable-line no-console
-
-					const newDomainQuery = dataHelper.randomPhrase();
-					await domainsPage.enterDomainQuery( newDomainQuery );
-					await domainsPage.waitForDomainSuggestionsToLoad();
-				}
-
+				await domainsPage.waitForDomainSuggestionsToLoad();
 				newSiteDomain = await domainsPage.getFreeDomainName();
-
 				await domainsPage.selectFreeDomain();
 				await domainsPage.continueToNextStep();
 			}
