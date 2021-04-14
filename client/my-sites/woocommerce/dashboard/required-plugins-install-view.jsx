@@ -348,6 +348,7 @@ class RequiredPluginsInstallView extends Component {
 		// Otherwise, if we are working on something presently, see if it has appeared in state yet
 		const pluginFound = find( sitePlugins, { slug: this.state.workingOn } );
 		if ( pluginFound ) {
+			this.destroyTimeoutTimer();
 			this.setState( {
 				workingOn: '',
 				progress: this.state.progress + this.getPluginInstallationTime(),
