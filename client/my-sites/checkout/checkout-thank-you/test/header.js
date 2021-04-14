@@ -13,8 +13,8 @@ jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.unmock( 'calypso/lib/plans' );
-const plans = require( 'calypso/lib/plans' );
+jest.unmock( '@automattic/calypso-products' );
+const plans = require( '@automattic/calypso-products' );
 plans.getFeatureByKey = () => null;
 plans.shouldFetchSitePlans = () => false;
 

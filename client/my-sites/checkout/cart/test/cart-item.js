@@ -28,9 +28,9 @@ import {
 	PLAN_PERSONAL,
 	PLAN_BLOGGER,
 	PLAN_PREMIUM,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 
-const plansModule = require( 'calypso/lib/plans' );
+const plansModule = require( '@automattic/calypso-products' );
 const originalPlansModuleFunctions = pick( plansModule, [
 	'calculateMonthlyPriceForPlan',
 	'getBillingMonthsForPlan',

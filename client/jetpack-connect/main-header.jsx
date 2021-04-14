@@ -10,8 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FormattedHeader from 'calypso/components/formatted-header';
-import { getPlan } from 'calypso/lib/plans';
-import { JETPACK_RESET_PLANS, JETPACK_PRODUCTS_LIST } from 'calypso/lib/plans/constants';
+import { getPlan, JETPACK_RESET_PLANS, JETPACK_PRODUCTS_LIST } from '@automattic/calypso-products';
 import {
 	getJetpackProductShortName,
 	getJetpackProductDescription,

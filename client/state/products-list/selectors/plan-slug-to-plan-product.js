@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { abtest } from 'calypso/lib/abtest';
-import { getPlan, applyTestFiltersToPlansList } from 'calypso/lib/plans';
+import { getPlan, applyTestFiltersToPlansList } from '@automattic/calypso-products';
 
 /**
  * Computes a plan object and a related product object based on plan slug/constant

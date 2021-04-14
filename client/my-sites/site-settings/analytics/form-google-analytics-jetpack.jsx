@@ -18,7 +18,7 @@ import FormAnalyticsStores from '../form-analytics-stores';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
-import { FEATURE_GOOGLE_ANALYTICS } from 'calypso/lib/plans/constants';
+import { FEATURE_GOOGLE_ANALYTICS } from '@automattic/calypso-products';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { localizeUrl } from 'calypso/lib/i18n-utils';

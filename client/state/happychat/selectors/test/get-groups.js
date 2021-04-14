@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { isEnabled } from '@automattic/calypso-config';
-import { PLAN_BUSINESS, PLAN_ECOMMERCE } from 'calypso/lib/plans/constants';
+import { PLAN_BUSINESS, PLAN_ECOMMERCE } from '@automattic/calypso-products';
 import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from 'calypso/state/happychat/constants';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import getGroups from '../get-groups';

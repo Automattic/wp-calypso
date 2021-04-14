@@ -14,7 +14,7 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
 import { getHighestAnnualDiscount } from 'calypso/my-sites/plans/jetpack-plans/utils';
 

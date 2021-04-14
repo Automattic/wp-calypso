@@ -26,7 +26,7 @@ import {
 } from 'calypso/lib/domains';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { domainAvailability } from 'calypso/lib/domains/constants';
-import { PLAN_PERSONAL } from 'calypso/lib/plans/constants';
+import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
 import { getCurrentUser, getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';

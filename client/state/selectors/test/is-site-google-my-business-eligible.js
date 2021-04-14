@@ -15,7 +15,7 @@ import {
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import selectors from 'calypso/state/sites/selectors';
 
 jest.mock( 'calypso/state/sites/selectors', () => ( {

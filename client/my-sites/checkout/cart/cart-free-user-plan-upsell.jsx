@@ -23,10 +23,9 @@ import {
 	planItem,
 } from 'calypso/lib/cart-values/cart-items';
 import SectionHeader from 'calypso/components/section-header';
-import { PLAN_PERSONAL } from 'calypso/lib/plans/constants';
 import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { isRequestingPlans } from 'calypso/state/plans/selectors';
-import { getPlan } from 'calypso/lib/plans';
+import { getPlan, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { getPlanPrice } from 'calypso/state/products-list/selectors';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

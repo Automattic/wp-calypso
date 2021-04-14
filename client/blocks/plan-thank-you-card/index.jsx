@@ -16,7 +16,7 @@ import getRawSite from 'calypso/state/selectors/get-raw-site';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import QuerySites from 'calypso/components/data/query-sites';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import { getPlan, getPlanClass } from 'calypso/lib/plans';
+import { getPlan, getPlanClass } from '@automattic/calypso-products';
 import ThankYouCard from 'calypso/components/thank-you-card';
 
 /**

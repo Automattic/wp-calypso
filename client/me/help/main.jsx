@@ -27,8 +27,7 @@ import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedu
 import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { getUserPurchases, isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
-import { planHasFeature } from 'calypso/lib/plans';
-import { FEATURE_BUSINESS_ONBOARDING } from 'calypso/lib/plans/constants';
+import { planHasFeature, FEATURE_BUSINESS_ONBOARDING } from '@automattic/calypso-products';
 
 /**
  * Style dependencies

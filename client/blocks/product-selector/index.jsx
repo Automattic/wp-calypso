@@ -34,10 +34,9 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSitePlanSlug, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { getPlan, planHasFeature } from 'calypso/lib/plans';
+import { getPlan, planHasFeature, TERM_ANNUALLY, TERM_MONTHLY } from '@automattic/calypso-products';
 import { isExpiring } from 'calypso/lib/purchases';
 import { isRequestingPlans } from 'calypso/state/plans/selectors';
-import { TERM_ANNUALLY, TERM_MONTHLY } from 'calypso/lib/plans/constants';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { managePurchase } from 'calypso/me/purchases/paths';
 

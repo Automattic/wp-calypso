@@ -37,13 +37,13 @@ import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCT_PRICE_MATRIX,
 	JETPACK_PRODUCTS_BY_TERM,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import {
 	getPlan,
 	getMonthlyPlanByYearly,
 	getYearlyPlanByMonthly,
 	planHasFeature,
-} from 'calypso/lib/plans';
+} from '@automattic/calypso-products';
 import {
 	Product,
 	JETPACK_PRODUCTS_LIST,
@@ -82,7 +82,7 @@ import type {
 	Plan,
 	JetpackPlanCardFeature,
 	JetpackPlanCardFeatureSection,
-} from 'calypso/lib/plans/types';
+} from '@automattic/calypso-products';
 import type { JetpackProductSlug } from 'calypso/lib/products-values/types';
 import type { SitePlan } from 'calypso/state/sites/selectors/get-site-plan';
 import ExternalLink from 'calypso/components/external-link';

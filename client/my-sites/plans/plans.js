@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
  * Internal Dependencies
  */
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import getIntervalTypeForTerm from 'calypso/lib/plans/get-interval-type-for-term';
+import { getIntervalTypeForTerm } from '@automattic/calypso-products';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import Plans from 'calypso/my-sites/plans/main';
 

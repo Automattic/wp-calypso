@@ -30,7 +30,7 @@ import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
-import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from 'calypso/lib/plans/constants';
+import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from '@automattic/calypso-products';
 
 /**
  * Style dependencies

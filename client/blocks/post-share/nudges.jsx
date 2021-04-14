@@ -9,8 +9,7 @@ import formatCurrency from '@automattic/format-currency';
  * Internal dependencies
  */
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { TYPE_PREMIUM, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
-import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
+import { findFirstSimilarPlanKey, TYPE_PREMIUM, TERM_ANNUALLY } from '@automattic/calypso-products';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
