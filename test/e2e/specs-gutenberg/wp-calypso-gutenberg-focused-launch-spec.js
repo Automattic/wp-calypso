@@ -310,7 +310,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			await driverHelper.clickWhenClickable( driver, freePlanSelector );
 
 			// When the detailed plans grid is closed and user returns to the summary view,
-			// check if the selected monthly plan item is "Personal Plan".
+			// check if the selected monthly plan item is "Free Plan".
 			const selectedPlanIsFreePlanSelector = driverHelper.getElementByText(
 				driver,
 				By.css( '.focused-launch-summary__item.is-selected' ),
