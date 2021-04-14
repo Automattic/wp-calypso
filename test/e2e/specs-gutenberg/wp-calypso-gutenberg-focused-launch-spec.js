@@ -152,8 +152,10 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 
 		step( 'Can open detailed plans grid', async function () {
 			// Click on "View All Plans" button
-			const viewAllPlansButtonSelector = By.xpath(
-				'//a[contains(@class, "focused-launch-summary__details-link") and .="View all plans"]'
+			const viewAllPlansButtonSelector = driverHelper.getElementByText(
+				driver,
+				By.css( `.focused-launch-summary__details-link` ),
+				'View all plans'
 			);
 
 			await driverHelper.clickWhenClickable( driver, viewAllPlansButtonSelector );
@@ -174,16 +176,20 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 
 		step( 'Can switch to monthly plans view', async function () {
 			// Click "Monthly" toggle button
-			const monthlyButtonSelector = By.xpath(
-				'//span[@class="plans-interval-toggle__label" and .="Monthly"]'
+			const monthlyButtonSelector = driverHelper.getElementByText(
+				driver,
+				By.css( `.plans-interval-toggle__label` ),
+				'Monthly'
 			);
 
 			await driverHelper.clickWhenClickable( driver, monthlyButtonSelector );
 
 			// Check if plans grid is really switched over to monthly view
 			// by checking if the price note "per month, billed monthly" exists.
-			const perMonthBilledMonthlyPriceNoteSelector = By.xpath(
-				'//div[@class="plan-item__price-note" and .="per month, billed monthly"]'
+			const perMonthBilledMonthlyPriceNoteSelector = driverHelper.getElementByText(
+				driver,
+				By.css( `.plan-item__price-note` ),
+				'per month, billed monthly'
 			);
 
 			const isPerMonthBilledMonthlyPricePresent = await driverHelper.isElementPresent(
@@ -199,16 +205,20 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 
 		step( 'Can select Personal monthly plan', async function () {
 			// Click "Select Personal" button
-			const selectPersonalPlanButtonSelector = By.xpath(
-				'//button[contains(@class, "plan-item__select-button") and .="Select Personal"]'
+			const selectPersonalPlanButtonSelector = driverHelper.getElementByText(
+				driver,
+				By.css( `.plan-item__select-button` ),
+				'Select Personal'
 			);
 
 			await driverHelper.clickWhenClickable( driver, selectPersonalPlanButtonSelector );
 
 			// When the detailed plans grid is closed and user returns to the summary view,
 			// check if the selected monthly plan item is "Personal Plan".
-			const selectedPlanIsPersonalMonthlyPlanSelector = By.xpath(
-				'//button[contains(@class, "focused-launch-summary__item") and contains(@class,"is-selected")]//span[@class="focused-launch-summary-item__leading-side-label" and .="Personal Plan"]'
+			const selectedPlanIsPersonalMonthlyPlanSelector = driverHelper.getElementByText(
+				driver,
+				By.css( '.focused-launch-summary__item.is-selected' ),
+				/Personal Plan/
 			);
 
 			const selectedPlanIsPersonalMonthlyPlan = await driverHelper.isElementPresent(
