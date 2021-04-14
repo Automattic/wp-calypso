@@ -15,6 +15,7 @@ import * as driverHelper from '../lib/driver-helper';
 import LoginFlow from '../lib/flows/login-flow.js';
 import DeleteSiteFlow from '../lib/flows/delete-site-flow.js';
 import GutenboardingFlow from '../lib/flows/gutenboarding-flow.js';
+import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
