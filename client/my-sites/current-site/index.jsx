@@ -42,10 +42,14 @@ class CurrentSite extends Component {
 		isNavUnificationEnabled: PropTypes.bool.isRequired,
 	};
 
-	switchSites = ( event ) => {
+	expandUnifiedNavSidebar = () => {
 		if ( this.props.isNavUnificationEnabled && this.props.sidebarIsCollapsed ) {
 			this.props.savePreference( 'sidebarCollapsed', false );
 		}
+	};
+
+	switchSites = ( event ) => {
+		this.expandUnifiedNavSidebar();
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.setLayoutFocus( 'sites' );
@@ -74,16 +78,7 @@ class CurrentSite extends Component {
 
 		return (
 			<Card className="current-site">
-				<div
-					role="button"
-					tabIndex="0"
-					aria-hidden="true"
-					onClick={ () => {
-						return this.props.isNavUnificationEnabled && this.props.sidebarIsCollapsed
-							? this.props.savePreference( 'sidebarCollapsed', false )
-							: null;
-					} }
-				>
+				<div role="button" tabIndex="0" aria-hidden="true" onClick={ this.expandUnifiedNavSidebar }>
 					{ this.props.siteCount > 1 && (
 						<span className="current-site__switch-sites">
 							<Button borderless onClick={ this.switchSites }>

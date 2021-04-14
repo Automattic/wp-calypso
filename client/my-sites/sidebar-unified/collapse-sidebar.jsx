@@ -32,7 +32,7 @@ export const CollapseSidebar = ( { title, icon } ) => {
 	return (
 		<SidebarItem
 			className="collapse-sidebar__toggle"
-			onNavigate={ () => onNavigate() }
+			onNavigate={ onNavigate }
 			label={ title }
 			link={ '' }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
