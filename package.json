@@ -174,7 +174,7 @@
 		"@automattic/typography": "^1.0.0",
 		"@automattic/viewport": "^1.0.0",
 		"@automattic/wp-babel-makepot": "^1.0.0",
-		"@babel/core": "^7.13.14",
+		"@babel/core": "^7.13.15",
 		"@babel/eslint-parser": "^7.13.14",
 		"@babel/register": "^7.13.14",
 		"@babel/runtime": "^7.13.10",
