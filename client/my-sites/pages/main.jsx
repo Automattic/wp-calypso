@@ -99,7 +99,11 @@ class PagesMain extends React.Component {
 					brandFont
 					className="pages__page-heading"
 					headerText={ translate( 'Pages' ) }
-					subHeaderText={ translate( 'Create, edit, and manage the pages on your site.' ) }
+					subHeaderText={
+						siteId
+							? translate( 'Create, edit, and manage the pages on your site.' )
+							: translate( 'Create, edit, and manage the pages on your sites.' )
+					}
 					align="left"
 				/>
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ status } />
