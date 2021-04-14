@@ -9,42 +9,27 @@ import React from 'react';
  */
 import wpcom from 'calypso/lib/wp';
 
-let results;
-let request;
-
 export default {
 	name: 'xpost',
 	className: 'autocompleters__xpost',
 	triggerPrefix: '+',
-	async options() {
-		if ( results ) {
-			// if we've already gotten results, use them instead of requesting new ones
-			return results;
-		}
-
-		if ( request ) {
-			// if a request is already underway, use the results from that
-			return await request;
-		}
-
-		// otherwise make a new request
-		request = wpcom.req
-			.get( {
-				path: '/internal/P2s',
-				apiVersion: '1.1',
-			} )
-			.then( ( result ) =>
-				Object.entries( result.list ).map( ( [ subdomain, p2 ] ) => ( {
-					...p2,
-					subdomain,
-				} ) )
-			);
-
-		// cache the results
-		results = await request;
-
-		return results;
-	},
+	/**
+	 * The autocompleter will pass `options` to `Promise.resolve` so we can safely assign this to a promise that
+	 * will eventually resolve and can just be used over and over again, instead of caching the result manually
+	 *
+	 * @see https://github.com/WordPress/gutenberg/blob/a947375ea7df8e2257fecedeea5f323ebffa38f6/packages/components/src/autocomplete/index.js#L171
+	 */
+	options: wpcom.req
+		.get( {
+			path: '/internal/P2s',
+			apiVersion: '1.1',
+		} )
+		.then( ( result ) =>
+			Object.entries( result.list ).map( ( [ subdomain, p2 ] ) => ( {
+				...p2,
+				subdomain,
+			} ) )
+		),
 	getOptionKeywords( p2 ) {
 		return [ p2.title, p2.subdomain ];
 	},
