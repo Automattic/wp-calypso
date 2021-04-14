@@ -263,19 +263,19 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 		} );
 
 		step( 'Can persist previously selected domain in focused launch', async function () {
-			const selectedDomainSuggestionItemNameSelector = By.css(
-				'.domain-picker__suggestion-item.is-selected .domain-picker__suggestion-item-name'
+			const selectedDomainSuggestionContainingPreviouslySelectedSubdomainSelector = await driverHelper.getElementByText(
+				driver,
+				By.css( '.domain-picker__suggestion-item.is-selected' ),
+				new RegExp( selectedSubdomain )
 			);
 
-			const selectedDomainSuggestionItemName = await driver.findElement(
-				selectedDomainSuggestionItemNameSelector
+			const selectedDomainSuggestionIsPreviouslySelectedSubdomain = await driverHelper.isElementPresent(
+				driver,
+				selectedDomainSuggestionContainingPreviouslySelectedSubdomainSelector
 			);
 
-			const selectedSubdomainAfterRefresh = await selectedDomainSuggestionItemName.getText();
-
-			assert.strictEqual(
-				selectedSubdomainAfterRefresh,
-				selectedSubdomain,
+			assert(
+				selectedDomainSuggestionIsPreviouslySelectedSubdomain,
 				'Selected subdomain should be persisted after reloading block editor and reopening focused launch.'
 			);
 		} );
