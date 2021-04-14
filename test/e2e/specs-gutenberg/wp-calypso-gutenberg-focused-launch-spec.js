@@ -63,7 +63,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			const siteTitleInputSelector = By.css( '.focused-launch-summary__input input[type=text]' );
 
 			// Site title step is not displayed when it has been set by user.
-			// Site title is not set during `/start` flow, site title is can be set during `/new` flow.
+			// Site title is not set during `/start` flow, site title can be set during `/new` flow.
 			// If the site title input is not rendered, skip this step.
 			// Note: This is currently parked here but unused as we are using the `/start` flow.
 			const isSiteTitleInputPresent = await driverHelper.isElementPresent(
