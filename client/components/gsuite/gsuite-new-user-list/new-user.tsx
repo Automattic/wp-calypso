@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
+import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 import React, { ChangeEvent, Fragment, FunctionComponent, useState } from 'react';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
@@ -133,14 +133,11 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	};
 
 	return (
-		<div className="gsuite-new-user-list__new-user">
+		<div
+			className={ classNames( 'gsuite-new-user-list__new-user', { 'show-labels': showLabels } ) }
+		>
 			<FormFieldset>
-				<div
-					className={ classnames(
-						'gsuite-new-user-list__new-user-section',
-						showLabels ? 'show-labels' : null
-					) }
-				>
+				<div className="gsuite-new-user-list__new-user-section">
 					<div className="gsuite-new-user-list__new-user-name-container">
 						<LabelWrapper label={ translate( 'First name' ) } showLabel={ showLabels }>
 							<FormTextInput
