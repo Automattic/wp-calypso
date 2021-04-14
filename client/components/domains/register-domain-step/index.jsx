@@ -463,6 +463,7 @@ class RegisterDomainStep extends React.Component {
 							onSearchChange={ this.onSearchChange }
 							placeholder={ this.getPlaceholderText() }
 							ref={ this.bindSearchCardReference }
+							isReskinned={ this.props.isReskinned }
 						>
 							{ this.renderSearchFilters() }
 						</Search>
