@@ -114,13 +114,13 @@ export class PlanFeaturesComparisonHeader extends Component {
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ rawPrice }
-							displayPerMonthNotation={ false }
+							displayPerMonthNotation={ true }
 							original
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ discountPrice }
-							displayPerMonthNotation={ false }
+							displayPerMonthNotation={ true }
 							discounted
 						/>
 					</div>

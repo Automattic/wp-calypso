@@ -150,6 +150,9 @@ nocache_headers();
 				margin-right: 16px;
 				margin-bottom: 0;
 			}
+			.wpcom-coming-soon-wplogo a {
+				border: none;
+			}
 			.wpcom-coming-soon-marketing-copy-text {
 				line-height: 1.4;
 				margin: 0;
@@ -278,7 +281,7 @@ nocache_headers();
 					</div>
 					<div class="wpcom-coming-soon-marketing-buttons">
 						<p><a class="button button-secondary" href="<?php echo esc_url( get_login_url() ); ?>"><?php esc_html_e( 'Log in', 'full-site-editing' ); ?></a></p>
-						<p><a class="button button-primary " href="<?php echo esc_url( get_onboarding_url() ); ?>"><?php esc_html_e( 'Start your website', 'full-site-editing' ); ?></a></p>
+						<p><a class="button button-primary has-background" href="<?php echo esc_url( get_onboarding_url() ); ?>"><?php esc_html_e( 'Start your website', 'full-site-editing' ); ?></a></p>
 					</div>
 				<?php endif; ?>
 			</div>

@@ -207,7 +207,7 @@ export class PlanFeaturesHeader extends Component {
 		const price = formatCurrency( rawPrice, currencyCode );
 		const isDiscounted = !! discountPrice;
 
-		if ( planMatches( currentSitePlan.productSlug, { type: TYPE_FREE } ) ) {
+		if ( planMatches( currentSitePlan?.productSlug, { type: TYPE_FREE } ) ) {
 			return isDiscounted
 				? translate(
 						"You'll receive a discount for the first year. The plan will renew at %(price)s.",
@@ -388,14 +388,14 @@ export class PlanFeaturesHeader extends Component {
 							currencyCode={ currencyCode }
 							rawPrice={ fullPrice }
 							displayFlatPrice={ displayFlatPrice }
-							displayPerMonthNotation={ false }
+							displayPerMonthNotation={ true }
 							original
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ discountedPrice }
 							displayFlatPrice={ displayFlatPrice }
-							displayPerMonthNotation={ false }
+							displayPerMonthNotation={ true }
 							discounted
 						/>
 					</div>
