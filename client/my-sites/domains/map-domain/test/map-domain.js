@@ -103,7 +103,7 @@ describe( 'MapDomain component', () => {
 		expect( wrapper.find( { status: 'is-error' } ) ).to.have.length( 0 );
 	} );
 
-	test( 'render a notice by when there is an errorMessage in the state ', () => {
+	test( 'render a notice by when there is an errorMessage in the state', () => {
 		const wrapper = shallow( <MapDomain { ...defaultProps } /> );
 		// we match the notice by props, because enzyme isn't matching the Notice type for some reason
 		wrapper.setState( { errorMessage: 'baba' } );

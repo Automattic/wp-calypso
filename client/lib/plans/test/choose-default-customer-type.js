@@ -19,7 +19,7 @@ describe( 'chooseDefaultCustomerType', () => {
 		expect( customerType ).toBe( 'business' );
 	} );
 
-	test( 'chooses "personal" either if site is on a free plan or on the Personal plan ', () => {
+	test( 'chooses "personal" either if site is on a free plan or on the Personal plan', () => {
 		const currentPlan = {
 			product_slug: PLAN_FREE,
 		};

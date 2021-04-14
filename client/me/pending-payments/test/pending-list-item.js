@@ -25,7 +25,7 @@ describe( 'PendingListItem', () => {
 
 	const wrapper = shallow( <PendingListItem { ...defaultProps } /> );
 
-	const assertions = [
+	test.each( [
 		// Check nesting
 		'Memo(Card).pending-payments__list-item .pending-payments__list-item-wrapper .pending-payments__list-item-details',
 		'.pending-payments__list-item-details .pending-payments__list-item-title',
@@ -33,11 +33,7 @@ describe( 'PendingListItem', () => {
 		'.pending-payments__list-item-details .pending-payments__list-item-payment',
 		'.pending-payments__list-item-details .pending-payments__list-item-actions',
 		'.pending-payments__list-item-actions ForwardRef(Button)[href="/help/contact"]',
-	];
-
-	assertions.forEach( ( rule ) => {
-		test( rule, () => {
-			expect( wrapper.find( rule ) ).toHaveLength( 1 );
-		} );
+	] )( '%s', ( rule ) => {
+		expect( wrapper.find( rule ) ).toHaveLength( 1 );
 	} );
 } );

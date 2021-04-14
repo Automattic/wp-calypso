@@ -93,7 +93,7 @@ const props = {
 	moment,
 };
 
-describe( 'SiteSettingsFormGeneral ', () => {
+describe( 'SiteSettingsFormGeneral', () => {
 	test( 'should not blow up and have proper CSS class', () => {
 		const comp = shallow( <SiteSettingsFormGeneral { ...props } /> );
 		expect( comp.find( '.site-settings__site-options' ).length ).toBe( 1 );

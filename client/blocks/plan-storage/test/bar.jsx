@@ -50,7 +50,7 @@ describe( 'PlanStorageBar basic tests', () => {
 		sitePlanSlug: PLAN_FREE,
 	};
 
-	test( 'should not blow up and have class .plan-storage-bar ', () => {
+	test( 'should not blow up and have class .plan-storage-bar', () => {
 		const bar = shallow( <PlanStorageBar { ...props } /> );
 		assert.lengthOf( bar.find( '.plan-storage__bar' ), 1 );
 	} );
