@@ -14,7 +14,6 @@ module.exports = {
 		'plugin:jsx-a11y/recommended',
 		'plugin:jest/recommended',
 		'plugin:prettier/recommended',
-		'prettier/react',
 		'plugin:md/prettier',
 		'plugin:@wordpress/eslint-plugin/i18n',
 	],
@@ -106,7 +105,7 @@ module.exports = {
 					.overrides[ 0 ].rules,
 			},
 			// Prettier rules config
-			require( 'eslint-config-prettier/@typescript-eslint' ),
+			require( 'eslint-config-prettier' ),
 			// Our own overrides
 			{
 				files: [ '**/*.ts', '**/*.tsx' ],

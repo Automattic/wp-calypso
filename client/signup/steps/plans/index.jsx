@@ -36,7 +36,7 @@ import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
  */
 import './style.scss';
 import { Experiment } from 'calypso/components/experiment';
-import { getVariationForUser, isLoading } from 'calypso/state/experiments/selectors';
+import { isLoading } from 'calypso/state/experiments/selectors';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import { isTabletResolution, isDesktop } from '@automattic/viewport';
 
@@ -187,9 +187,7 @@ export class PlansStep extends Component {
 						domainName={ this.getDomainName() }
 						customerType={ this.getCustomerType() }
 						disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-						plansWithScroll={
-							isInVerticalScrollingPlansExperiment ? this.state.plansWithScroll : true
-						}
+						plansWithScroll={ isDesktop() }
 						planTypes={ planTypes }
 						flowName={ flowName }
 						customHeader={ this.getGutenboardingHeader() }
@@ -349,8 +347,10 @@ export default connect(
 		showTreatmentPlansReorderTest:
 			'treatment' === plans_reorder_abtest_variation || isTreatmentPlansReorderTest( state ),
 		isLoadingExperiment: isLoading( state ),
-		isInVerticalScrollingPlansExperiment:
-			'treatment' === getVariationForUser( state, 'vertical_plan_listing_v2' ),
+		// IMPORTANT NOTE: The following is always set to true. It's a hack to resolve the bug reported
+		// in https://github.com/Automattic/wp-calypso/issues/50896, till a proper cleanup and deploy of
+		// treatment for the `vertical_plan_listing_v2` experiment is implemented.
+		isInVerticalScrollingPlansExperiment: true,
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );

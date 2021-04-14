@@ -44,6 +44,9 @@ export const getDesignUrl = ( design: Design, locale: string ): string => {
 // Used for both prefetching and loading design screenshots
 export const mShotOptions = (): MShotsOptions => {
 	// Take care changing these values, as the design-picker CSS animations are written for these values (see the *__landscape and *__portrait classes)
+	if ( isEnabled( 'gutenboarding/long-previews' ) ) {
+		return { vpw: 1600, vph: 1600, w: 600, screen_height: 3600 };
+	}
 	if ( isEnabled( 'gutenboarding/landscape-preview' ) ) {
 		return { vpw: 1600, vph: 1600, w: 600, h: 600 };
 	}
