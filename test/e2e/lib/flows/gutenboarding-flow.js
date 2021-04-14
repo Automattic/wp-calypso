@@ -23,12 +23,9 @@ export default class CreateSiteFlow {
 
 	async skipAllSteps( name ) {
 		const acquireIntentPage = await AcquireIntentPage.Expect( this.driver );
-		if ( name ) {
-			await acquireIntentPage.enterSiteTitle( name );
-			await acquireIntentPage.goToNextStep();
-		} else {
-			await acquireIntentPage.skipStep();
-		}
+
+		await acquireIntentPage.enterSiteTitle( name || dataHelper.getNewBlogName() );
+		await acquireIntentPage.goToNextStep();
 
 		const domainsPage = await DomainsPage.Expect( this.driver );
 		await domainsPage.skipStep();
