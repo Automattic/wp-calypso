@@ -42,6 +42,11 @@
 		{
 			"extends": "monorepo:storybook",
 			"prPriority": 1
+		},
+		{
+			"groupName": "eslint packages",
+			"matchPackagePatterns": [ "^eslint" ],
+			"prPriority": 1
 		}
 	],
 	"statusCheckVerify": true,

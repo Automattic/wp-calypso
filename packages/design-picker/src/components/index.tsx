@@ -57,25 +57,28 @@ const DesignPicker: React.FC< Props > = ( {
 							className={ classnames(
 								'design-picker__image-frame',
 								isEnabled( 'gutenboarding/landscape-preview' )
-									? 'design-picker__landscape'
-									: 'design-picker__portrait',
+									? 'design-picker__image-frame-landscape'
+									: 'design-picker__image-frame-portrait',
 								design.preview === 'static' ? 'design-picker__static' : 'design-picker__scrollable'
 							) }
 						>
-							{ isEnabled( 'gutenboarding/mshot-preview' ) ? (
-								<MShotsImage
-									url={ getDesignUrl( design, locale ) }
-									aria-labelledby={ makeOptionId( design ) }
-									alt=""
-									options={ mShotOptions() }
-								/>
-							) : (
-								<img
-									alt=""
-									aria-labelledby={ makeOptionId( design ) }
-									src={ getDesignImageUrl( design ) }
-								/>
-							) }
+							<div className="design-picker__image-frame-inside">
+								{ isEnabled( 'gutenboarding/mshot-preview' ) ? (
+									<MShotsImage
+										url={ getDesignUrl( design, locale ) }
+										aria-labelledby={ makeOptionId( design ) }
+										alt=""
+										options={ mShotOptions() }
+										scrollable={ design.preview !== 'static' }
+									/>
+								) : (
+									<img
+										alt=""
+										aria-labelledby={ makeOptionId( design ) }
+										src={ getDesignImageUrl( design ) }
+									/>
+								) }
+							</div>
 						</span>
 						<span className="design-picker__option-overlay">
 							<span id={ makeOptionId( design ) } className="design-picker__option-meta">
