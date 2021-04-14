@@ -8,6 +8,7 @@ import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import pageSpy from 'page';
 import React from 'react';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -19,12 +20,9 @@ import { domainManagementList } from 'calypso/my-sites/domains/paths';
 
 jest.mock( 'calypso/lib/user', () => () => {} );
 jest.mock( 'page', () => {
-	const { spy } = require( 'sinon' );
-	const pageSpy = spy();
-
-	pageSpy.redirect = spy();
-
-	return pageSpy;
+	const spy = sinon.spy();
+	spy.redirect = sinon.spy();
+	return spy;
 } );
 
 describe( 'MapDomain component', () => {
