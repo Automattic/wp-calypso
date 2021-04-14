@@ -26,8 +26,8 @@ export default class DomainsPage extends AsyncBaseContainer {
 		await driverHelper.setWhenSettable( this.driver, searchFieldSelector, query );
 		// After typing the new query value, wait for domain suggestions to reload.
 		// The sleep value should be higher than the DOMAIN_SEARCH_DEBOUNCE_INTERVAL defined in domain-picker.
-		//https://github.com/Automattic/wp-calypso/blob/trunk/packages/domain-picker/src/constants.ts#L18
-		await this.driver.sleep( 500 );
+		// https://github.com/Automattic/wp-calypso/blob/trunk/packages/domain-picker/src/constants.ts#L18
+		await this.driver.sleep( 400 );
 	}
 
 	async waitForDomainSuggestionsToLoad() {
