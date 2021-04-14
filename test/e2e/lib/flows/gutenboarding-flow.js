@@ -30,14 +30,14 @@ export default class CreateSiteFlow {
 			await acquireIntentPage.skipStep();
 		}
 
+		const domainsPage = await DomainsPage.Expect( this.driver );
+		await domainsPage.skipStep();
+
 		const designSelectorPage = await DesignSelectorPage.Expect( this.driver );
 		await designSelectorPage.selectFreeDesign();
 
 		const stylePreviewPage = await StylePreviewPage.Expect( this.driver );
 		await stylePreviewPage.continue();
-
-		const domainsPage = await DomainsPage.Expect( this.driver );
-		await domainsPage.skipStep();
 
 		const featuresPage = await FeaturesPage.Expect( this.driver );
 		await featuresPage.skipStep();
