@@ -548,7 +548,9 @@ class RequiredPluginsInstallView extends Component {
 						subtitle={ subtitle }
 					>
 						<Button
-							onClick={ this.trackContactSupport( 'failure' ) }
+							onClick={ () => {
+								this.trackContactSupport( 'failure' );
+							} }
 							primary
 							href={ CALYPSO_CONTACT }
 							target="_blank"
@@ -581,7 +583,9 @@ class RequiredPluginsInstallView extends Component {
 						subtitle={ subtitle }
 					>
 						<Button
-							onClick={ this.trackContactSupport( 'timeout' ) }
+							onClick={ () => {
+								this.trackContactSupport( 'timeout' );
+							} }
 							primary
 							href={ CALYPSO_CONTACT }
 							target="_blank"
