@@ -28,11 +28,7 @@ import type {
 	DomainContactValidationRequestExtraFields,
 	DomainContactValidationResponse,
 } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
+import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 
 /*
  * Asymmetrically combine two ManagedContactDetailsShape<T> objects 'update' and 'data'
