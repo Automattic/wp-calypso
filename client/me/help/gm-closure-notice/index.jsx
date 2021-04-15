@@ -11,7 +11,7 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isEcommercePlan, isBusinessPlan, isPremiumPlan, isPersonalPlan } from 'calypso/lib/plans';
+import { isEcommercePlan, isBusinessPlan, isPremiumPlan, isPersonalPlan } from '@automattic/calypso-products';
 import FoldableCard from 'calypso/components/foldable-card';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';

@@ -21,7 +21,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
@@ -33,7 +33,7 @@ import StoreFooter from 'calypso/jetpack-connect/store-footer';
  */
 import type { ProductsGridProps, SelectorProduct } from '../types';
 import type { JetpackProductSlug } from 'calypso/lib/products-values/types';
-import type { JetpackPlanSlugs } from 'calypso/lib/plans/types';
+import type { JetpackPlanSlugs } from '@automattic/calypso-products';
 
 /**
  * Style dependencies

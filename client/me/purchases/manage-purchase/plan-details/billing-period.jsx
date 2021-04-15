@@ -16,8 +16,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { isMonthly } from 'calypso/lib/plans/constants';
-import { getYearlyPlanByMonthly } from 'calypso/lib/plans';
+import { isMonthly, getYearlyPlanByMonthly } from '@automattic/calypso-products';
 import {
 	isExpired,
 	isExpiring,

@@ -8,7 +8,7 @@ import {
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 
 const simplePaymentsNoticeTextWPCOM =
 	'Upgrade to a Premium or Business plan today and start collecting payments with the Pay with PayPal button!';

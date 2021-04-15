@@ -14,7 +14,7 @@ import {
 	PLAN_ECOMMERCE,
 	JETPACK_REDIRECT_URL,
 	redirectCloudCheckoutToWpAdmin,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 let mockGSuiteCountryIsValid = true;
@@ -25,8 +25,8 @@ jest.mock( 'calypso/lib/user', () =>
 );
 
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => jest.fn() );
-jest.mock( 'calypso/lib/plans/constants', () => ( {
-	...jest.requireActual( 'calypso/lib/plans/constants' ),
+jest.mock( '@automattic/calypso-products', () => ( {
+	...jest.requireActual( '@automattic/calypso-products' ),
 	redirectCloudCheckoutToWpAdmin: jest.fn(),
 } ) );
 

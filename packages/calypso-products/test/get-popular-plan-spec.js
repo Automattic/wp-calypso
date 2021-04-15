@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { getPopularPlanSpec } from '..';
-import { GROUP_WPCOM, TYPE_BUSINESS, TYPE_PREMIUM } from '../constants';
+import { getPopularPlanSpec } from '../src';
+import { GROUP_WPCOM, TYPE_BUSINESS, TYPE_PREMIUM } from '../src/constants';
 
 describe( 'getPopularPlanSpec()', () => {
 	const availablePlans = [

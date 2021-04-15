@@ -29,7 +29,7 @@ import {
 	FEATURE_SIMPLE_PAYMENTS,
 	PLAN_PREMIUM,
 	PLAN_JETPACK_SECURITY_DAILY,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
@@ -44,7 +44,7 @@ import {
 	isSecurityDailyPlan,
 	isSecurityRealTimePlan,
 	isCompletePlan,
-} from 'calypso/lib/plans';
+} from '@automattic/calypso-products';
 
 /**
  * Image dependencies

@@ -57,8 +57,8 @@ import {
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
-} from 'calypso/lib/plans/constants';
-import { getPlan } from 'calypso/lib/plans';
+	getPlan,
+} from '@automattic/calypso-products';
 import PlanPrice from 'calypso/my-sites/plan-price/';
 
 const props = {

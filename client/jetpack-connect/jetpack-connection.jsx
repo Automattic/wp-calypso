@@ -15,7 +15,7 @@ import config from '@automattic/calypso-config';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import { JETPACK_ADMIN_PATH } from 'calypso/jetpack-connect/constants';
-import { PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
+import { PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import versionCompare from 'calypso/lib/version-compare';
 import { addQueryArgs, externalRedirect } from 'calypso/lib/route';
 import { checkUrl, dismissUrl } from 'calypso/state/jetpack-connect/actions';

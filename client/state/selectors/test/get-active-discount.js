@@ -12,7 +12,7 @@ import {
 	TYPE_PREMIUM,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 
 jest.mock( 'calypso/state/active-promotions/selectors', () => ( {
 	hasActivePromotion: jest.fn( () => null ),

@@ -598,7 +598,7 @@ const getPlanJetpackCompleteDetails = () => ( {
 	],
 } );
 
-// DO NOT import. Use `getPlan` from `lib/plans` instead.
+// DO NOT import. Use `getPlan` instead.
 export const PLANS_LIST = {
 	[ constants.PLAN_FREE ]: {
 		group: constants.GROUP_WPCOM,
@@ -1522,17 +1522,4 @@ PLANS_LIST[ constants.PLAN_P2_FREE ] = {
 		constants.FEATURE_P2_SIMPLE_SEARCH,
 		constants.FEATURE_P2_CUSTOMIZATION_OPTIONS,
 	],
-};
-
-export const PLANS_CONSTANTS_LIST = Object.keys( PLANS_LIST );
-
-export const getPlanObject = ( planName ) => {
-	const plan = PLANS_LIST[ planName ];
-	const objectPlan = {};
-	Object.keys( plan ).forEach( ( key ) => {
-		const objectKey = key.substr( 3 ).charAt( 0 ).toLowerCase() + key.slice( 4 );
-		objectPlan[ objectKey ] = plan[ key ]();
-	} );
-
-	return objectPlan;
 };

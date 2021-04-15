@@ -27,7 +27,7 @@ import Timezone from 'calypso/components/timezone';
 import SiteIconSetting from './site-icon-setting';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { isBusiness } from 'calypso/lib/products-values';
-import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'calypso/lib/plans/constants';
+import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from '@automattic/calypso-products';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import { isJetpackSite, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';

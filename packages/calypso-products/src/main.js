@@ -34,10 +34,6 @@ import {
 } from './constants';
 import { PLANS_LIST } from './plans-list';
 
-/**
- * @typedef { import('./types').Plan } Plan
- */
-
 export function getPlans() {
 	return PLANS_LIST;
 }
@@ -60,10 +56,10 @@ export function getPlan( planKey ) {
  *
  * @param {string} pathSlug Path slug
  * @param {string} [group] Group to search in
- * @returns {Plan|undefined} The plan
+ * @returns {import('./types').Plan|undefined} The plan
  */
 export function getPlanByPathSlug( pathSlug, group ) {
-	/** @type {Plan[]} */
+	/** @type {import('./types').Plan[]} */
 	let plans = Object.values( PLANS_LIST );
 	plans = plans.filter( ( p ) => ( group ? p.group === group : true ) );
 	return plans.find( ( p ) => typeof p.getPathSlug === 'function' && p.getPathSlug() === pathSlug );

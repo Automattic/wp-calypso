@@ -5,7 +5,7 @@ import config from '@automattic/calypso-config';
 import canCurrentUserUseAnyWooCommerceBasedStore from 'calypso/state/sites/selectors/can-current-user-use-any-woocommerce-based-store';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { STORE_DEPRECATION_START_DATE } from 'calypso/lib/plans/constants';
+import { STORE_DEPRECATION_START_DATE } from '@automattic/calypso-products';
 
 /**
  * Returns true if current user can see and use the Calypso-based Store option in menu

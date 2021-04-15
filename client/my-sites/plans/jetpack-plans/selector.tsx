@@ -12,9 +12,9 @@ import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/con
 import { checkout, manageSitePurchase } from 'calypso/my-sites/plans/jetpack-plans/utils';
 import QueryProducts from 'calypso/my-sites/plans/jetpack-plans/query-products';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getYearlyPlanByMonthly } from 'calypso/lib/plans';
+import { getYearlyPlanByMonthly } from '@automattic/calypso-products';
 import { getProductYearlyVariant, isJetpackPlan } from 'calypso/lib/products-values';
-import { TERM_ANNUALLY } from 'calypso/lib/plans/constants';
+import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Main from 'calypso/components/main';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
