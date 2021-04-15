@@ -13,7 +13,7 @@ const languages = require( '@automattic/languages' );
 const LANGUAGES_BASE_URL = 'https://widgets.wp.com/languages/calypso';
 const LANGUAGES_REVISIONS_FILENAME = 'lang-revisions.json';
 const CALYPSO_STRINGS = './calypso-strings.pot';
-const CHUNKS_MAP_PATTERN = './chunks-map.*.json';
+const CHUNKS_MAP_PATTERN = './chunks-map.json';
 const LANGUAGE_MANIFEST_FILENAME = 'language-manifest.json';
 
 const langSlugs = languages.default.map( ( { langSlug } ) => langSlug );
@@ -21,16 +21,9 @@ const langSlugs = languages.default.map( ( { langSlug } ) => langSlug );
 const chunksMaps = glob.sync( CHUNKS_MAP_PATTERN );
 const languagesPaths = chunksMaps
 	.map( ( chunksMapPath ) => {
-		const [ , extraPath ] = path.basename( chunksMapPath ).match( /.+\.(\w+)\.json/, '' );
-
-		if ( ! extraPath ) {
-			return;
-		}
-
 		return {
 			chunksMapPath,
-			extraPath,
-			publicPath: `./public/${ extraPath }/languages`,
+			publicPath: `./public/languages`,
 		};
 	} )
 	.filter( Boolean );
@@ -206,7 +199,7 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 
 		const languageRevisionsHashes = {};
 
-		languagesPaths.map( ( { chunksMapPath, extraPath, publicPath } ) => {
+		languagesPaths.map( ( { chunksMapPath, publicPath } ) => {
 			const chunksMap = require( path.join( '..', chunksMapPath ) );
 
 			const chunks = _.mapValues( chunksMap, ( modules ) => {
@@ -228,8 +221,6 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 
 				return [ ...strings ];
 			} );
-
-			languageRevisionsHashes[ extraPath ] = {};
 
 			successfullyDownloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
 				const languageChunks = _.chain( chunks )
@@ -253,7 +244,7 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 					.digest( 'hex' );
 
 				// Trim hash in language revisions to 5 characters to reduce file size
-				languageRevisionsHashes[ extraPath ][ langSlug ] = manifestJsonDataRaw.hash.substr( 0, 5 );
+				languageRevisionsHashes[ langSlug ] = manifestJsonDataRaw.hash.substr( 0, 5 );
 
 				const manifestJsonData = JSON.stringify( manifestJsonDataRaw );
 				const manifestFilepathJson = path.join(
@@ -294,12 +285,12 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 
 		logUpdate( 'Updating language revisions...\n' );
 
-		languagesPaths.forEach( ( { extraPath, publicPath } ) => {
+		languagesPaths.forEach( ( { publicPath } ) => {
 			return fs.writeFileSync(
 				`${ publicPath }/${ LANGUAGES_REVISIONS_FILENAME }`,
 				JSON.stringify( {
 					...languageRevisions,
-					hashes: languageRevisionsHashes[ extraPath ],
+					hashes: languageRevisionsHashes,
 				} )
 			);
 		} );

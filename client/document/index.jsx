@@ -56,10 +56,8 @@ class Document extends React.Component {
 			isSupportSession,
 			isWCComConnect,
 			isWooDna,
-			addEvergreenCheck,
 			requestFrom,
 			useTranslationChunks,
-			target,
 			featuresHelper,
 		} = this.props;
 
@@ -70,7 +68,6 @@ class Document extends React.Component {
 		const inlineScript =
 			`var COMMIT_SHA = ${ jsonStringifyForHtml( commitSha ) };\n` +
 			`var BUILD_TIMESTAMP = ${ jsonStringifyForHtml( buildTimestamp ) };\n` +
-			`var BUILD_TARGET = ${ jsonStringifyForHtml( target ) };\n` +
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
 			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
@@ -172,39 +169,13 @@ class Document extends React.Component {
 						} }
 					/>
 
-					{
-						// Use <script nomodule> to redirect browsers with no ES module
-						// support to the fallback build. ES module support is a convenient
-						// test to determine that a browser is modern enough to handle
-						// the evergreen bundle.
-						addEvergreenCheck && (
-							<script
-								nonce={ inlineScriptNonce }
-								noModule
-								dangerouslySetInnerHTML={ {
-									__html: `
-							(function() {
-								var url = window.location.href;
-
-								if ( url.indexOf( 'forceFallback=1' ) === -1 ) {
-									url += ( url.indexOf( '?' ) !== -1 ? '&' : '?' );
-									url += 'forceFallback=1';
-									window.location.href = url;
-								}
-							})();
-							`,
-								} }
-							/>
-						)
-					}
-
 					{ i18nLocaleScript && ! useTranslationChunks && <script src={ i18nLocaleScript } /> }
 					{ /*
 					 * inline manifest in production, but reference by url for development.
 					 * this lets us have the performance benefit in prod, without breaking HMR in dev
 					 * since the manifest needs to be updated on each save
 					 */ }
-					{ env === 'development' && <script src={ `/calypso/${ target }/runtime.js` } /> }
+					{ env === 'development' && <script src={ `/calypso/app/runtime.js` } /> }
 					{ env !== 'development' &&
 						manifests.map( ( manifest ) => (
 							<script

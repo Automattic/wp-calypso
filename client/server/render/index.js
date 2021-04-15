@@ -179,7 +179,6 @@ export function attachI18n( context ) {
 			context.entrypoint.language.manifest = getLanguageManifestFileUrl( {
 				localeSlug: localeSlug,
 				fileType: 'js',
-				targetBuild: context.target,
 				hash: context?.languageRevisions?.hashes?.[ localeSlug ],
 			} );
 
@@ -192,7 +191,6 @@ export function attachI18n( context ) {
 						chunkId,
 						localeSlug: localeSlug,
 						fileType: 'js',
-						targetBuild: context.target,
 						hash: context?.languageRevisions?.[ localeSlug ],
 					} )
 				);

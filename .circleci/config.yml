@@ -226,7 +226,7 @@ references:
     name: Save Calypso build cache
     key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}-{{ .Revision }}
     paths:
-      - .cache/evergreen/css-loader
+      - .cache/css-loader
   desktop-notify-github-success: &desktop-notify-github-success
     name: Notify Github Success
     when: on_success

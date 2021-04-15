@@ -69,8 +69,7 @@ describe( 'getLanguageFileUrl()', () => {
 
 describe( 'getLanguagesInternalBasePath()', () => {
 	test( 'should return base path for languages.', () => {
-		expect( getLanguagesInternalBasePath() ).toEqual( '/calypso/evergreen/languages' );
-		expect( getLanguagesInternalBasePath( 'fallback' ) ).toEqual( '/calypso/fallback/languages' );
+		expect( getLanguagesInternalBasePath() ).toEqual( '/calypso/languages' );
 	} );
 } );
 
@@ -79,13 +78,6 @@ describe( 'getLanguageManifestFileUrl()', () => {
 		const expected = getLanguagesInternalBasePath() + '/ja-language-manifest.json';
 
 		expect( getLanguageManifestFileUrl( { localeSlug: 'ja' } ) ).toEqual( expected );
-	} );
-
-	test( 'should return language manifest url for a given locale and target build.', () => {
-		const targetBuild = 'fallback';
-		const expected = getLanguagesInternalBasePath( targetBuild ) + '/ja-language-manifest.json';
-
-		expect( getLanguageManifestFileUrl( { localeSlug: 'ja', targetBuild } ) ).toEqual( expected );
 	} );
 
 	test( 'should append a revision cache buster.', () => {
@@ -111,19 +103,6 @@ describe( 'getTranslationChunkFileUrl()', () => {
 		const expected = `${ getLanguagesInternalBasePath() }/${ localeSlug }-${ chunkId }.json`;
 
 		expect( getTranslationChunkFileUrl( { chunkId, localeSlug } ) ).toEqual( expected );
-	} );
-
-	test( 'should return translation chunk url for a given locale and target build.', () => {
-		const targetBuild = 'fallback';
-		const localeSlug = 'ja';
-		const chunkId = 'chunk-abc.min';
-		const expected = `${ getLanguagesInternalBasePath(
-			targetBuild
-		) }/${ localeSlug }-${ chunkId }.json`;
-
-		expect( getTranslationChunkFileUrl( { chunkId, localeSlug, targetBuild } ) ).toEqual(
-			expected
-		);
 	} );
 
 	test( 'should append a revision cache buster.', () => {

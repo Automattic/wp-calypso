@@ -29,14 +29,13 @@ const { packagesInMonorepo } = require( '../build-tools/lib/monorepo' );
  * Internal variables
  */
 const isDevelopment = bundleEnv === 'development';
-const devTarget = process.env.DEV_TARGET || 'evergreen';
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
 const cacheDirectory = path.resolve( '.cache', 'babel-server' );
 
 const fileLoader = FileConfig.loader( {
-	publicPath: isDevelopment ? `/calypso/${ devTarget }/images/` : '/calypso/images/',
+	publicPath: '/calypso/images/',
 	emitFile: false, // On the server side, don't actually copy files
 } );
 

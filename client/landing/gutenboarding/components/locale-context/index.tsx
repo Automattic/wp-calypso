@@ -135,12 +135,10 @@ async function setupTranslationChunks( localeSlug: string, translatedChunks: str
 			return;
 		}
 
-		return getTranslationChunkFile( chunkId, localeSlug, window.BUILD_TARGET ).then(
-			( translations ) => {
-				loadedTranslationChunks[ chunkId ] = true;
-				return translations;
-			}
-		);
+		return getTranslationChunkFile( chunkId, localeSlug ).then( ( translations ) => {
+			loadedTranslationChunks[ chunkId ] = true;
+			return translations;
+		} );
 	};
 
 	const installedChunks = new Set(
@@ -198,7 +196,7 @@ async function getLocaleData( locale: string ) {
 	}
 
 	if ( USE_TRANSLATION_CHUNKS ) {
-		const manifest = await getLanguageManifestFile( locale, window.BUILD_TARGET );
+		const manifest = await getLanguageManifestFile( locale );
 		const localeData = {
 			...manifest.locale,
 			translatedChunks: manifest.translatedChunks,

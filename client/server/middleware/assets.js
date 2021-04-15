@@ -8,8 +8,7 @@ import { defaults, groupBy, flatten } from 'lodash';
 const ASSETS_PATH = path.resolve( __dirname, '../../../build' );
 const EMPTY_ASSETS = { js: [], 'css.ltr': [], 'css.rtl': [] };
 
-const getAssetsPath = ( target ) =>
-	path.join( ASSETS_PATH, `assets-${ target || 'fallback' }.json` );
+const getAssetsPath = () => path.join( ASSETS_PATH, `assets.json` );
 
 const getAssetType = ( asset ) => {
 	if ( asset.endsWith( '.rtl.css' ) ) {
@@ -32,8 +31,7 @@ const groupAssetsByType = ( assets ) => defaults( groupBy( assets, getAssetType 
 export default () => {
 	return ( req, res, next ) => {
 		req.getAssets = () => {
-			const target = req.getTarget();
-			return JSON.parse( fs.readFileSync( getAssetsPath( target ), 'utf8' ) );
+			return JSON.parse( fs.readFileSync( getAssetsPath(), 'utf8' ) );
 		};
 
 		req.getFilesForEntrypoint = ( name ) => {

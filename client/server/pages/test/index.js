@@ -203,13 +203,13 @@ const buildApp = ( environment ) => {
 		},
 		withMockFilesystem() {
 			const assets = [
-				'/calypso/evergreen/entry-main.1.min.js',
-				'/calypso/evergreen/entry-main.2.min.js',
-				'/calypso/evergreen/entry-main.3.min.css',
-				'/calypso/evergreen/entry-main.4.min.rtl.css',
+				'/calypso/app/entry-main.1.min.js',
+				'/calypso/app/entry-main.2.min.js',
+				'/calypso/app/entry-main.3.min.css',
+				'/calypso/app/entry-main.4.min.rtl.css',
 			];
-			const assetsFallback = {
-				manifests: [ '/* webpack manifest for fallback */', '/* webpack runtime for fallback */' ],
+			const assetsJson = {
+				manifests: [ '/* webpack manifest */', '/* webpack runtime */' ],
 				entrypoints: {
 					'entry-main': {
 						assets: [ ...assets ],
@@ -229,34 +229,19 @@ const buildApp = ( environment ) => {
 					...sections.map( ( section ) => ( {
 						names: [ section.name ],
 						files: [
-							`/calypso/fallback/${ section.name }.js`,
-							`/calypso/fallback/${ section.name }.css`,
-							`/calypso/fallback/${ section.name }.rtl.css`,
+							`/calypso/app/${ section.name }.js`,
+							`/calypso/app/${ section.name }.css`,
+							`/calypso/app/${ section.name }.rtl.css`,
 						],
 						siblings: [],
 					} ) ),
 				],
 			};
 			mockFs( {
-				'./build/assets-fallback.json': JSON.stringify( assetsFallback ),
-				'./build/assets-evergreen.json': JSON.stringify( assetsFallback ).replace(
-					/fallback/g,
-					'evergreen'
-				),
-				'./public/fallback/languages/lang-revisions.json': JSON.stringify( { en: 1234 } ),
-				'./public/evergreen/languages/lang-revisions.json': JSON.stringify( { es: 1234 } ),
+				'./build/assets.json': JSON.stringify( assetsJson ),
+				'./public/languages/lang-revisions.json': JSON.stringify( { es: 1234 } ),
 			} );
 			tearDown.push( () => mockFs.restore() );
-		},
-		withEvergreenBrowser() {
-			mocks.matchesUA.mockImplementation( () => true );
-			tearDown.push( () => mocks.matchesUA.mockReset() );
-			return this;
-		},
-		withNonEvergreenBrowser() {
-			mocks.matchesUA.mockImplementation( () => false );
-			tearDown.push( () => mocks.matchesUA.mockReset() );
-			return this;
 		},
 		withConfigEnabled( enabledOptions ) {
 			mocks.config.isEnabled.mockImplementation( ( key ) => {
@@ -442,28 +427,18 @@ const assertDefaultContext = ( { url, entry } ) => {
 		it( 'sets the entrypoint', async () => {
 			const { request } = await app.run();
 			expect( request.context.entrypoint ).toEqual( {
-				js: [ `/calypso/evergreen/${ entry }.1.min.js`, `/calypso/evergreen/${ entry }.2.min.js` ],
-				'css.ltr': [ `/calypso/evergreen/${ entry }.3.min.css` ],
-				'css.rtl': [ `/calypso/evergreen/${ entry }.4.min.rtl.css` ],
+				js: [ `/calypso/app/${ entry }.1.min.js`, `/calypso/app/${ entry }.2.min.js` ],
+				'css.ltr': [ `/calypso/app/${ entry }.3.min.css` ],
+				'css.rtl': [ `/calypso/app/${ entry }.4.min.rtl.css` ],
 			} );
 		} );
 	}
 
-	it( 'sets the manifest for evergreen browsers', async () => {
-		app.withEvergreenBrowser();
+	it( 'sets the manifest', async () => {
 		const { request } = await app.run();
 		expect( request.context.manifests ).toEqual( [
-			'/* webpack manifest for evergreen */',
-			'/* webpack runtime for evergreen */',
-		] );
-	} );
-
-	it( 'sets the manifest for non-evergreen browsers', async () => {
-		app.withNonEvergreenBrowser();
-		const { request } = await app.run();
-		expect( request.context.manifests ).toEqual( [
-			'/* webpack manifest for fallback */',
-			'/* webpack runtime for fallback */',
+			'/* webpack manifest */',
+			'/* webpack runtime */',
 		] );
 	} );
 
@@ -503,78 +478,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		const { request } = await app.run();
 
 		expect( request.context.store ).toEqual( theStore );
-	} );
-
-	it( 'sets the evergreen for evergreen browsers check', async () => {
-		app.withEvergreenBrowser();
-		const { request } = await app.run();
-		expect( request.context.addEvergreenCheck ).toEqual( true );
-	} );
-
-	describe( 'sets the target in development mode', () => {
-		beforeEach( () => {
-			app.withMockedVariable( process.env, 'NODE_ENV', 'development' );
-		} );
-
-		it( 'uses the value from DEV_TARGET ', async () => {
-			app.withMockedVariable( process.env, 'DEV_TARGET', 'fallback' );
-			const { request } = await app.run();
-			expect( request.context.target ).toEqual( 'fallback' );
-		} );
-
-		it( 'defaults to evergreen when DEV_TARGET is not set', async () => {
-			const { request } = await app.run();
-			expect( request.context.target ).toEqual( 'evergreen' );
-		} );
-	} );
-
-	describe( 'sets the target in production mode', () => {
-		beforeEach( () => {
-			app.withMockedVariable( process.env, 'NODE_ENV', 'production' );
-		} );
-
-		it( 'uses fallback if forceFallback is provided as query', async () => {
-			const { request } = await app.run( {
-				request: { query: { forceFallback: true } },
-			} );
-			expect( request.context.target ).toEqual( 'fallback' );
-		} );
-
-		it( 'serves evergreen for evergreen browsers', async () => {
-			app.withEvergreenBrowser();
-			const { request } = await app.run();
-			expect( request.context.target ).toEqual( 'evergreen' );
-		} );
-
-		it( 'serves fallback if the browser is not evergreen', async () => {
-			app.withNonEvergreenBrowser();
-			const { request } = await app.run();
-			expect( request.context.target ).toEqual( 'fallback' );
-		} );
-	} );
-
-	describe( 'sets the target in desktop mode', () => {
-		it( 'defaults to evergreen in desktop mode', async () => {
-			const customApp = buildApp( 'desktop' );
-			customApp.withServerRender( '' );
-			customApp.withMockFilesystem();
-
-			const { request } = await customApp.run( { customApp } );
-
-			expect( request.context.target ).toEqual( 'evergreen' );
-			expect( request.context.env ).toEqual( 'desktop' );
-		} );
-
-		it( 'defaults to evergreen in desktop-development mode', async () => {
-			const customApp = buildApp( 'desktop-development' );
-			customApp.withServerRender( '' );
-			customApp.withMockFilesystem();
-
-			const { request } = await customApp.run( { customApp } );
-
-			expect( request.context.target ).toEqual( 'evergreen' );
-			expect( request.context.env ).toEqual( 'desktop-development' );
-		} );
 	} );
 
 	it( 'translations chunks can be disabled', async () => {
@@ -883,16 +786,8 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 	} );
 
 	if ( entry ) {
-		it( 'do not set chunkFiles for sections with associated entrypoints for evergreen browsers', async () => {
-			const { request } = await app.withEvergreenBrowser().run();
-			expect( request.context.chunkFiles ).toEqual( {
-				'css.ltr': [],
-				'css.rtl': [],
-				js: [],
-			} );
-		} );
-		it( 'do not set chunkFiles for sections with associated entrypoints for non-evergreen browsers', async () => {
-			const { request } = await app.withNonEvergreenBrowser().run();
+		it( 'do not set chunkFiles for sections with associated entrypoints', async () => {
+			const { request } = await app.run();
 			expect( request.context.chunkFiles ).toEqual( {
 				'css.ltr': [],
 				'css.rtl': [],
@@ -900,20 +795,12 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 			} );
 		} );
 	} else {
-		it( 'sets chunkFiles for evergreen browsers', async () => {
-			const { request } = await app.withEvergreenBrowser().run();
+		it( 'sets chunkFiles', async () => {
+			const { request } = await app.run();
 			expect( request.context.chunkFiles ).toEqual( {
-				'css.ltr': [ `/calypso/evergreen/${ sectionName }.css` ],
-				'css.rtl': [ `/calypso/evergreen/${ sectionName }.rtl.css` ],
-				js: [ `/calypso/evergreen/${ sectionName }.js` ],
-			} );
-		} );
-		it( 'sets chunkFiles for non-evergreen browsers', async () => {
-			const { request } = await app.withNonEvergreenBrowser().run();
-			expect( request.context.chunkFiles ).toEqual( {
-				'css.ltr': [ `/calypso/fallback/${ sectionName }.css` ],
-				'css.rtl': [ `/calypso/fallback/${ sectionName }.rtl.css` ],
-				js: [ `/calypso/fallback/${ sectionName }.js` ],
+				'css.ltr': [ `/calypso/app/${ sectionName }.css` ],
+				'css.rtl': [ `/calypso/app/${ sectionName }.rtl.css` ],
+				js: [ `/calypso/app/${ sectionName }.js` ],
 			} );
 		} );
 	}
@@ -954,19 +841,12 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 			expect( response.setHeader ).toHaveBeenCalledWith( 'X-Frame-Options', 'SAMEORIGIN' );
 		} );
 
-		it( 'sets language revisions for evergreen browsers', async () => {
-			app.withEvergreenBrowser();
+		it( 'sets language revisions', async () => {
 			const { request } = await app.run();
 			expect( request.context.languageRevisions ).toEqual( { es: 1234 } );
 		} );
 
-		it( 'sets language revisions for non-evergreen browsers', async () => {
-			app.withNonEvergreenBrowser();
-			const { request } = await app.run();
-			expect( request.context.languageRevisions ).toEqual( { en: 1234 } );
-		} );
-
-		it( 'gets the redirect url for https requestss', async () => {
+		it( 'gets the redirect url for https requests', async () => {
 			await app.run( {
 				request: {
 					get: jest.fn( ( header ) => ( header === 'X-Forwarded-Proto' ? 'https' : undefined ) ),
@@ -1049,16 +929,9 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 			expect( response.setHeader ).toHaveBeenCalledWith( 'X-Frame-Options', 'SAMEORIGIN' );
 		} );
 
-		it( 'sets language revisions for evergreen browsers', async () => {
-			app.withEvergreenBrowser();
+		it( 'sets language revisions', async () => {
 			const { request } = await app.run();
 			expect( request.context.languageRevisions ).toEqual( { es: 1234 } );
-		} );
-
-		it( 'sets language revisions for non-evergreen browsers', async () => {
-			app.withNonEvergreenBrowser();
-			const { request } = await app.run();
-			expect( request.context.languageRevisions ).toEqual( { en: 1234 } );
 		} );
 	} );
 
@@ -1633,12 +1506,9 @@ describe( 'main app', () => {
 			expect( response.statusCode ).toBe( 404 );
 			expect( app.getMocks().renderJsx ).toHaveBeenCalledWith( '404', {
 				entrypoint: {
-					'css.ltr': [ '/calypso/evergreen/entry-main.3.min.css' ],
-					'css.rtl': [ '/calypso/evergreen/entry-main.4.min.rtl.css' ],
-					js: [
-						'/calypso/evergreen/entry-main.1.min.js',
-						'/calypso/evergreen/entry-main.2.min.js',
-					],
+					'css.ltr': [ '/calypso/app/entry-main.3.min.css' ],
+					'css.rtl': [ '/calypso/app/entry-main.4.min.rtl.css' ],
+					js: [ '/calypso/app/entry-main.1.min.js', '/calypso/app/entry-main.2.min.js' ],
 				},
 			} );
 		} );
@@ -1677,12 +1547,9 @@ describe( 'main app', () => {
 			expect( response.statusCode ).toBe( 500 );
 			expect( app.getMocks().renderJsx ).toHaveBeenCalledWith( '500', {
 				entrypoint: {
-					'css.ltr': [ '/calypso/evergreen/entry-main.3.min.css' ],
-					'css.rtl': [ '/calypso/evergreen/entry-main.4.min.rtl.css' ],
-					js: [
-						'/calypso/evergreen/entry-main.1.min.js',
-						'/calypso/evergreen/entry-main.2.min.js',
-					],
+					'css.ltr': [ '/calypso/app/entry-main.3.min.css' ],
+					'css.rtl': [ '/calypso/app/entry-main.4.min.rtl.css' ],
+					js: [ '/calypso/app/entry-main.1.min.js', '/calypso/app/entry-main.2.min.js' ],
 				},
 			} );
 		} );
