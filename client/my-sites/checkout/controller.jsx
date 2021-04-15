@@ -65,11 +65,9 @@ export function checkout( context, next ) {
 		return;
 	}
 
-	const product = getDomainOrProductFromContext( context );
-
-	if ( isJetpackCheckout ) {
-		product = context.params.productSlug;
-	}
+	const product = isJetpackCheckout
+		? context.params.productSlug
+		: getDomainOrProductFromContext( context );
 
 	if ( 'thank-you' === product ) {
 		return;
@@ -83,12 +81,13 @@ export function checkout( context, next ) {
 	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
 	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
 
-	const isLoggedOutCart = isJetpackCheckout || ( isLoggedOut && context.pathname.includes( '/checkout/no-site' ) );
+	const isLoggedOutCart =
+		isJetpackCheckout || ( isLoggedOut && context.pathname.includes( '/checkout/no-site' ) );
 	const isNoSiteCart =
-		isJetpackCheckout || (
-		! isLoggedOut &&
-		context.pathname.includes( '/checkout/no-site' ) &&
-		'no-user' === context.query.cart );
+		isJetpackCheckout ||
+		( ! isLoggedOut &&
+			context.pathname.includes( '/checkout/no-site' ) &&
+			'no-user' === context.query.cart );
 
 	const searchParams = new URLSearchParams( window.location.search );
 	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
