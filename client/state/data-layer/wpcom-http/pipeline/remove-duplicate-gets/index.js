@@ -49,9 +49,7 @@ const isGetRequest = ( request ) => 'GET' === get( request, 'method', '' ).toUpp
  * @returns {Array} Array of elements that exist in at least one of the arrays
  */
 const unionWith = ( a = [], b = [] ) =>
-	Array.from(
-		new Set( [ ...a, ...b.filter( ( x ) => a.findIndex( ( y ) => isEqual( x, y ) ) === -1 ) ] )
-	);
+	Array.from( [ ...a, ...b.filter( ( x ) => a.findIndex( ( y ) => isEqual( x, y ) ) === -1 ) ] );
 
 /**
  * Generate a deterministic key for comparing request descriptions
