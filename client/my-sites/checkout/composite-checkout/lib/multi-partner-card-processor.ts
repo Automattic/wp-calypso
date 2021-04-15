@@ -75,11 +75,20 @@ async function stripeCardProcessor(
 		contactDetails,
 	} = transactionOptions;
 
-	const { id: paymentMethodToken } = await createStripePaymentMethodToken( {
-		...submitData,
-		country: contactDetails?.countryCode?.value,
-		postalCode: getPostalCode( contactDetails ),
-	} );
+	let paymentMethodToken;
+	try {
+		const tokenResponse = await createStripePaymentMethodToken( {
+			...submitData,
+			country: contactDetails?.countryCode?.value,
+			postalCode: getPostalCode( contactDetails ),
+		} );
+		paymentMethodToken = tokenResponse.id;
+	} catch ( error ) {
+		debug( 'transaction failed' );
+		// Errors here are "expected" errors, meaning that they (hopefully) come
+		// from stripe and not from some bug in the frontend code.
+		return makeErrorResponse( error.message );
+	}
 
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...submitData,
