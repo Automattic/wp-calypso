@@ -35,8 +35,6 @@ import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
  * Style dependencies
  */
 import './style.scss';
-import { Experiment } from 'calypso/components/experiment';
-import { isLoading } from 'calypso/state/experiments/selectors';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import { isTabletResolution, isDesktop } from '@automattic/viewport';
 
@@ -264,7 +262,6 @@ export class PlansStep extends Component {
 
 		return (
 			<>
-				<Experiment name="vertical_plan_listing_v2" />
 				<StepWrapper
 					flowName={ flowName }
 					stepName={ stepName }
@@ -346,7 +343,7 @@ export default connect(
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 		showTreatmentPlansReorderTest:
 			'treatment' === plans_reorder_abtest_variation || isTreatmentPlansReorderTest( state ),
-		isLoadingExperiment: isLoading( state ),
+		isLoadingExperiment: false,
 		// IMPORTANT NOTE: The following is always set to true. It's a hack to resolve the bug reported
 		// in https://github.com/Automattic/wp-calypso/issues/50896, till a proper cleanup and deploy of
 		// treatment for the `vertical_plan_listing_v2` experiment is implemented.
