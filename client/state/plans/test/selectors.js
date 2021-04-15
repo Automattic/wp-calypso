@@ -1,4 +1,5 @@
 jest.mock( '@automattic/calypso-products', () => ( {
+	...jest.requireActual( '@automattic/calypso-products' ),
 	GROUP_WPCOM: 'GROUP_WPCOM',
 	GROUP_JETPACK: 'GROUP_JETPACK',
 
@@ -11,9 +12,6 @@ jest.mock( '@automattic/calypso-products', () => ( {
 	TYPE_PREMIUM: 'TYPE_PREMIUM',
 	TYPE_BUSINESS: 'TYPE_BUSINESS',
 	TYPE_ECOMMERCE: 'TYPE_ECOMMERCE',
-} ) );
-
-jest.mock( '@automattic/calypso-products', () => ( {
 	getPlans: () => ( {
 		jetpack_premium_monthly: {
 			term: 'TERM_MONTHLY',

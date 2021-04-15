@@ -6,7 +6,7 @@
  * External dependencies
  */
 import { shallow } from 'enzyme';
-import { pick, identity } from 'lodash';
+import { identity } from 'lodash';
 import React from 'react';
 
 /**
@@ -23,23 +23,15 @@ import {
 	isDomainProduct,
 } from 'calypso/lib/products-values';
 import {
-	PLAN_BUSINESS_2_YEARS,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_PERSONAL,
-	PLAN_BLOGGER,
-	PLAN_PREMIUM,
+	calculateMonthlyPriceForPlan,
+	getBillingMonthsForPlan,
 } from '@automattic/calypso-products';
 
-const plansModule = require( '@automattic/calypso-products' );
-const originalPlansModuleFunctions = pick( plansModule, [
-	'calculateMonthlyPriceForPlan',
-	'getBillingMonthsForPlan',
-] );
-const mockPlansModule = () => {
-	plansModule.calculateMonthlyPriceForPlan = jest.fn( () => 120 );
-	plansModule.getBillingMonthsForPlan = jest.fn( () => 10 );
-};
-mockPlansModule();
+jest.mock( '@automattic/calypso-products', () => ( {
+	...jest.requireActual( '@automattic/calypso-products' ),
+	calculateMonthlyPriceForPlan: jest.fn( () => 120 ),
+	getBillingMonthsForPlan: jest.fn( () => 10 ),
+} ) );
 
 jest.mock( '@automattic/calypso-config', () => {
 	const fn = () => {};
@@ -181,7 +173,6 @@ describe( 'cart-item', () => {
 	} );
 
 	describe( 'calcMonthlyBillingDetails - mocks', () => {
-		const { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } = plansModule;
 		beforeEach( () => {
 			calculateMonthlyPriceForPlan.mockReset();
 			calculateMonthlyPriceForPlan.mockImplementation( () => 299 );
@@ -207,66 +198,6 @@ describe( 'cart-item', () => {
 				monthlyPrice: 299,
 				months: 36,
 			} );
-		} );
-	} );
-
-	describe( 'calcMonthlyBillingDetails - real callbacks', () => {
-		beforeAll( () => {
-			// restore original functions
-			for ( const key in originalPlansModuleFunctions ) {
-				plansModule[ key ] = originalPlansModuleFunctions[ key ];
-			}
-		} );
-
-		afterAll( () => {
-			mockPlansModule();
-		} );
-
-		const expectations = [
-			[
-				{ product_slug: PLAN_BLOGGER, cost: 60 },
-				{ months: 12, monthlyPrice: 5 },
-			],
-			[
-				{ product_slug: PLAN_PERSONAL, cost: 120 },
-				{ months: 12, monthlyPrice: 10 },
-			],
-			[
-				{ product_slug: PLAN_PREMIUM, cost: 180 },
-				{ months: 12, monthlyPrice: 15 },
-			],
-			[
-				{ product_slug: PLAN_BUSINESS_2_YEARS, cost: 480 },
-				{ months: 24, monthlyPrice: 20 },
-			],
-			[
-				{ product_slug: PLAN_JETPACK_PERSONAL, cost: 288 },
-				{ months: 12, monthlyPrice: 24 },
-			],
-		];
-
-		expectations.forEach( ( [ input, output ] ) => {
-			test( `Returns correct values for annual plan ${ input.product_slug }`, () => {
-				const instance = new CartItem( {
-					...props,
-					cartItem: {
-						...cartItem,
-						...input,
-					},
-				} );
-				expect( instance.calcMonthlyBillingDetails() ).toEqual( output );
-			} );
-		} );
-
-		test( 'Throws an error for an unknown plan', () => {
-			const instance = new CartItem( {
-				...props,
-				cartItem: {
-					...cartItem,
-					product_slug: 'fake',
-				},
-			} );
-			expect( () => instance.calcMonthlyBillingDetails() ).toThrow();
 		} );
 	} );
 

@@ -22,8 +22,7 @@ import { GSUITE_BASIC_SLUG } from 'calypso/lib/gsuite/constants';
 jest.mock( 'calypso/lib/user', () => () => {} );
 
 const cartItems = require( '../cart-items' );
-const { getPlan } = require( '@automattic/calypso-products' );
-const { getTermDuration } = require( '@automattic/calypso-products' );
+const { getPlan, getTermDuration } = require( '@automattic/calypso-products' );
 const {
 	planItem,
 	isNextDomainFree,
