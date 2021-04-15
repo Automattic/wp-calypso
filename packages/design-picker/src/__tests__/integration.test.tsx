@@ -9,7 +9,7 @@ import '@automattic/calypso-config';
  * Internal dependencies
  */
 import DesignPicker from '../components';
-import { availableDesigns } from '../utils';
+import { getAvailableDesigns } from '../utils';
 import type { Design } from '../types';
 
 jest.mock( `@automattic/calypso-config`, () => ( {
@@ -40,7 +40,9 @@ describe( '<DesignPicker /> integration', () => {
 		fireEvent.click( screen.getByLabelText( new RegExp( MOCK_DESIGN_TITLE, 'i' ) ) );
 
 		expect( mockedOnSelectCallback ).toHaveBeenCalledWith(
-			availableDesigns.featured.find( ( design: Design ) => design.title === MOCK_DESIGN_TITLE )
+			getAvailableDesigns().featured.find(
+				( design: Design ) => design.title === MOCK_DESIGN_TITLE
+			)
 		);
 	} );
 } );
