@@ -249,7 +249,11 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			await GutenbergEditorComponent.Expect( driver );
 
 			// Click on the launch button
-			const launchButtonSelector = By.css( '.editor-gutenberg-launch__launch-button' );
+			const launchButtonSelector = await driverHelper.getElementByText(
+				driver,
+				By.css( '.editor-gutenberg-launch__launch-button' ),
+				'Launch'
+			);
 			await driverHelper.clickWhenClickable( driver, launchButtonSelector );
 
 			// See if focused launch modal can be reopened
