@@ -29,8 +29,6 @@ const allowedBlocks = [
 
 const BlockEditor = ( { onChange, suggestions } ) => {
 	useEffect( () => {
-		// ensure that the addAutoCompleters filter is added before the IsolatedBlockEditor is loaded
-		// so that the filters are definitely run
 		const addAutoCompleters = getAddAutocompleters( suggestions );
 		addFilter(
 			'editor.Autocomplete.completers',

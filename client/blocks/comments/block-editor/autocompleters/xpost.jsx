@@ -9,7 +9,7 @@ import React from 'react';
  */
 import wpcom from 'calypso/lib/wp';
 
-export default {
+export default () => ( {
 	name: 'xpost',
 	className: 'autocompleters__xpost',
 	triggerPrefix: '+',
@@ -55,4 +55,4 @@ export default {
 	getOptionCompletion( site ) {
 		return `+${ site.subdomain }`;
 	},
-};
+} );
