@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { compact, get, isDate, startsWith, pickBy, map } from 'lodash';
+import { compact, get, startsWith, pickBy, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,6 +27,8 @@ import {
 } from 'calypso/state/comments/selectors';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const isDate = ( date ) => date instanceof Date && ! isNaN( date );
 
 export const commentsFromApi = ( comments ) =>
 	map( comments, ( comment ) =>
