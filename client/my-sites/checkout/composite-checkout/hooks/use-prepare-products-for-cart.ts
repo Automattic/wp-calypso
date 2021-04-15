@@ -75,7 +75,7 @@ export default function usePrepareProductsForCart( {
 		'and isNoSiteCart',
 		isNoSiteCart,
 		'and isJetpackCheckout',
-		isJetpackCheckout,
+		isJetpackCheckout
 	);
 
 	useFetchProductsIfNotLoaded();
@@ -431,6 +431,7 @@ function useAddProductFromSlug( {
 		isJetpackNotAtomic,
 		productAliasFromUrl,
 		validProducts,
+		isJetpackCheckout,
 		dispatch,
 	] );
 }
@@ -546,11 +547,15 @@ function createItemToAddToCart( {
 		createRequestCartProduct( {
 			product_id: productId,
 			product_slug: productSlug,
-		} ), { isJetpackCheckout }
+		} ),
+		{ isJetpackCheckout }
 	);
 }
 
-function addContextToProduct( product: RequestCartProduct, options?: Object ): RequestCartProduct {
+function addContextToProduct(
+	product: RequestCartProduct,
+	options?: Record< string, unknown >
+): RequestCartProduct {
 	return {
 		...product,
 		extra: Object.assign( { ...product.extra, context: 'calypstore' }, options ),
