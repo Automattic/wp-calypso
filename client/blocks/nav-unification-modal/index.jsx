@@ -116,7 +116,7 @@ const Modal = () => {
 							}
 							heading={ translate( 'Do even more' ) }
 							content={ translate(
-								'Advanced admin features have a new home! You can find it in your {{a}}Account Settings{{/a}}.',
+								'Advanced admin features have a new home! You can find them in your {{a}}Account Settings{{/a}}.',
 								{
 									components: {
 										a: <a href="/me/account" target="_blank" rel="noopener noreferrer" />,
