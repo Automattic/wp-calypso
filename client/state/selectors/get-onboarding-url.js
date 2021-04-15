@@ -31,10 +31,5 @@ export default function getOnboardingUrl( state ) {
 		return config( 'gutenboarding_url' );
 	}
 
-	const existingUsersOnboardingVariant = null;
-	if ( existingUsersOnboardingVariant === 'treatment' ) {
-		return config( 'gutenboarding_url' );
-	}
-
 	return config( 'signup_url' );
 }
