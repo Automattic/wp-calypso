@@ -8200,7 +8200,7 @@ chai-enzyme@^1.0.0-beta.1:
   dependencies:
     html "^1.0.0"
 
-chai@^3.4.1:
+chai@^3.5.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/chai/-/chai-3.5.0.tgz#4d02637b067fe958bdbfdd3a40ec56fef7373247"
   integrity sha1-TQJjewZ/6Vi9v906QOxW/vc3Mkc=
