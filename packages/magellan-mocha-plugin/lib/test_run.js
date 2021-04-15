@@ -33,8 +33,8 @@ MochaTestRun.prototype.getArguments = function () {
 
 	let args = [ '--mocking_port=' + this.mockingPort, '--worker=1', '-g', grepString ];
 
-	if ( mochaSettings.mochaOpts ) {
-		args.push( '--opts', mochaSettings.mochaOpts );
+	if ( mochaSettings.mochaConfig ) {
+		args.push( '--config', mochaSettings.mochaConfig );
 	}
 
 	if ( mochaSettings.mochaArgs !== undefined ) {
