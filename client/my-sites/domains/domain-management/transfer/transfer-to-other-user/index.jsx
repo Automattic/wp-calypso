@@ -28,7 +28,7 @@ import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/co
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import useUsersQuery from 'calypso/data/users//use-users-query';
+import useUsersQuery from 'calypso/data/users/use-users-query';
 
 /**
  * Style dependencies
