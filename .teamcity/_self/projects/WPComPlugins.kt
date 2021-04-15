@@ -205,9 +205,10 @@ private object Gutenberg : BuildType({
 				export TEST_VIDEO=true
 				export HIGHLIGHT_ELEMENT=true
 				export GUTENBERG_EDGE=%GUTENBERG_EDGE%
+				export URL=%URL%
 				export BROWSERSIZE=desktop
 				export BROWSERLOCALE=en
-				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{%URL%}\"}"
+				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL}\"}"
 
 				# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
 				# mocha-teamcity-reporter to work.
