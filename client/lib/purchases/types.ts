@@ -2,6 +2,7 @@
 export interface Purchase {
 	id: number;
 	saleAmount?: number;
+	active: boolean;
 	amount: number;
 	meta?: string;
 	isRechargeable: boolean;

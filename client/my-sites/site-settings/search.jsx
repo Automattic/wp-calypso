@@ -10,6 +10,7 @@ import { overSome } from 'lodash';
 /**
  * Internal dependencies
  */
+import config from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -45,6 +46,7 @@ import {
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
 } from 'calypso/lib/plans/constants';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 class Search extends Component {
 	static defaultProps = {
@@ -134,6 +136,8 @@ class Search extends Component {
 		);
 	}
 
+	onSettingsClick = () => this.props.recordTracksEvent( 'calypso_jetpack_search_page' );
+
 	renderSettingsCard() {
 		const {
 			activatingSearchModule,
@@ -200,6 +204,20 @@ class Search extends Component {
 		);
 	}
 
+	renderNewSettingsCard() {
+		const { siteSlug, translate } = this.props;
+		return (
+			<Fragment>
+				<CompactCard className="search__card site-settings__traffic-settings">
+					{ translate( 'Your visitors are getting our fastest search experience.' ) }
+				</CompactCard>
+				<CompactCard href={ `/jetpack-search/${ siteSlug }` } onClick={ this.onSettingsClick }>
+					{ translate( 'Configure Jetpack Search' ) }
+				</CompactCard>
+			</Fragment>
+		);
+	}
+
 	render() {
 		return (
 			<div className="site-settings__search-block">
@@ -213,7 +231,9 @@ class Search extends Component {
 					) }
 				</SettingsSectionHeader>
 				{ ( this.props.hasSearchProduct || this.props.isSearchEligible ) &&
-					this.renderSettingsCard() }
+				config.isEnabled( 'jetpack/search-config' )
+					? this.renderNewSettingsCard()
+					: this.renderSettingsCard() }
 				{ ! this.props.hasSearchProduct && this.renderUpgradeNotice() }
 			</div>
 		);
@@ -223,33 +243,36 @@ class Search extends Component {
 const hasBusinessPlan = overSome( isJetpackBusiness, isBusiness, isEnterprise, isEcommerce );
 const checkForSearchProduct = ( purchase ) =>
 	purchase.active && ( isJetpackSearch( purchase ) || isP2Plus( purchase ) );
-export default connect( ( state, { isRequestingSettings } ) => {
-	const site = getSelectedSite( state );
-	const siteId = getSelectedSiteId( state );
-	const hasSearchProduct =
-		getSitePurchases( state, siteId ).find( checkForSearchProduct ) ||
-		planHasJetpackSearch( site.plan?.product_slug );
-	const isSearchEligible =
-		( site && site.plan && ( hasBusinessPlan( site.plan ) || isVipPlan( site.plan ) ) ) ||
-		!! hasSearchProduct;
-	const upgradeLink =
-		'/checkout/' +
-		getSelectedSiteSlug( state ) +
-		'/jetpack_search_monthly?utm_campaign=site-settings&utm_source=calypso';
+export default connect(
+	( state, { isRequestingSettings } ) => {
+		const site = getSelectedSite( state );
+		const siteId = getSelectedSiteId( state );
+		const hasSearchProduct =
+			getSitePurchases( state, siteId ).find( checkForSearchProduct ) ||
+			planHasJetpackSearch( site.plan?.product_slug );
+		const isSearchEligible =
+			( site && site.plan && ( hasBusinessPlan( site.plan ) || isVipPlan( site.plan ) ) ) ||
+			!! hasSearchProduct;
+		const upgradeLink =
+			'/checkout/' +
+			getSelectedSiteSlug( state ) +
+			'/jetpack_search_monthly?utm_campaign=site-settings&utm_source=calypso';
 
-	return {
-		activatingSearchModule:
-			!! isActivatingJetpackModule( state, siteId, 'search' ) ||
-			!! isDeactivatingJetpackModule( state, siteId, 'search' ),
-		customizerUrl: getCustomizerUrl( state, siteId, 'jetpack_search' ),
-		hasSearchProduct,
-		isSearchEligible,
-		isSearchModuleActive: !! isJetpackModuleActive( state, siteId, 'search' ),
-		isLoading: isRequestingSettings || isFetchingSitePurchases( state ),
-		site: getSelectedSite( state ),
-		siteId,
-		siteSlug: getSelectedSiteSlug( state ),
-		siteIsJetpack: isJetpackSite( state, siteId ),
-		upgradeLink,
-	};
-} )( localize( Search ) );
+		return {
+			activatingSearchModule:
+				!! isActivatingJetpackModule( state, siteId, 'search' ) ||
+				!! isDeactivatingJetpackModule( state, siteId, 'search' ),
+			customizerUrl: getCustomizerUrl( state, siteId, 'jetpack_search' ),
+			hasSearchProduct,
+			isSearchEligible,
+			isSearchModuleActive: !! isJetpackModuleActive( state, siteId, 'search' ),
+			isLoading: isRequestingSettings || isFetchingSitePurchases( state ),
+			site: getSelectedSite( state ),
+			siteId,
+			siteSlug: getSelectedSiteSlug( state ),
+			siteIsJetpack: isJetpackSite( state, siteId ),
+			upgradeLink,
+		};
+	},
+	{ recordTracksEvent }
+)( localize( Search ) );

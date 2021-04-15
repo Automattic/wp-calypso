@@ -554,7 +554,7 @@ export const chooseDefaultCustomerType = ( { currentCustomerType, selectedPlan, 
 /**
  * Determines if a plan includes Jetpack Search by looking at the plan's features.
  *
- * @param   {string}  planSlug  Slug of the plan.
+ * @param   {string|undefined}  planSlug  Slug of the plan.
  * @returns {boolean}           Whether the specified plan includes Jetpack Search.
  */
 export const planHasJetpackSearch = ( planSlug ) =>

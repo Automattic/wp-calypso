@@ -90,6 +90,7 @@
 		"jetpack/features-section/simple": true,
 		"jetpack/features-section/atomic": true,
 		"jetpack/features-section/jetpack": true,
+		"jetpack/search-config": true,
 		"jetpack/scan-product": true,
 		"jetpack/anti-spam-product": true,
 		"jetpack/backups-restore": true,

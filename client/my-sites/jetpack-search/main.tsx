@@ -1,36 +1,40 @@
 /**
  * External dependencies
  */
-import React, { ReactElement } from 'react';
+import React, { ReactElement, Fragment } from 'react';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import config from '@automattic/calypso-config';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+
+/**
+ * Internal component dependencies
+ */
 import DocumentHead from 'calypso/components/data/document-head';
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import FormattedHeader from 'calypso/components/formatted-header';
+import JetpackSearchInstantSearchConfig from './jetpack-instant-search-config';
+import JetpackSearchModuleConfig from './module-config';
+import JetpackSearchPlaceholder from './placeholder';
+import JetpackSearchUpsell from './upsell';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
-import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
-import JetpackSearchUpsell from './upsell';
-import JetpackSearchPlaceholder from './placeholder';
-import { isJetpackSearch } from 'calypso/lib/products-values';
-import { planHasJetpackSearch } from 'calypso/lib/plans';
-import {
-	getSitePurchases,
-	hasLoadedSitePurchasesFromServer,
-} from 'calypso/state/purchases/selectors';
+
+/**
+ * Internal state dependencies
+ */
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSiteSettings } from 'calypso/state/site-settings/selectors';
+import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
+import hasSearchProductSelector from './hooks/has-search-product';
 
 /**
  * Asset dependencies
@@ -38,22 +42,22 @@ import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import JetpackSearchSVG from 'calypso/assets/images/illustrations/jetpack-search.svg';
 
 export default function JetpackSearchMain(): ReactElement {
-	const site = useSelector( getSelectedSite );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const siteId = useSelector( getSelectedSiteId );
-	const checkForSearchProduct = ( purchase ) => purchase.active && isJetpackSearch( purchase );
-	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
-	const hasSearchProduct =
-		sitePurchases.find( checkForSearchProduct ) || planHasJetpackSearch( site?.plan?.product_slug );
+	const siteId = useSelector( getSelectedSiteId ) as number;
+	const hasSearchProduct = useSelector( hasSearchProductSelector );
 	const hasLoadedSitePurchases = useSelector( hasLoadedSitePurchasesFromServer );
 	const onSettingsClick = useTrackCallback( undefined, 'calypso_jetpack_search_settings' );
 	const isWPCOM = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
+
+	const siteSettings = useSelector( ( state ) => getSiteSettings( state, siteId ) );
+	const isInstantSearchActive = siteSettings && siteSettings[ 'instant_search_enabled' ];
 
 	if ( ! hasLoadedSitePurchases ) {
 		return <JetpackSearchPlaceholder siteId={ siteId } />;
 	}
 
 	if ( ! hasSearchProduct ) {
+		// TODO: Allow toggling just the Search module if Business/Pro plan.
 		return <JetpackSearchUpsell />;
 	}
 
@@ -77,17 +81,26 @@ export default function JetpackSearchMain(): ReactElement {
 			>
 				<p>{ translate( 'Your visitors are getting our fastest search experience.' ) }</p>
 
-				<PromoCardCTA
-					cta={ {
-						text: translate( 'Settings' ),
-						action: {
-							url: `/settings/performance/${ siteSlug }`,
-							onClick: onSettingsClick,
-							selfTarget: true,
-						},
-					} }
-				/>
+				{ ! config.isEnabled( 'jetpack/search-config' ) && (
+					<PromoCardCTA
+						cta={ {
+							text: translate( 'Settings' ),
+							action: {
+								url: `/settings/performance/${ siteSlug }`,
+								onClick: onSettingsClick,
+								selfTarget: true,
+							},
+						} }
+					/>
+				) }
 			</PromoCard>
+
+			{ config.isEnabled( 'jetpack/search-config' ) && (
+				<Fragment>
+					<JetpackSearchModuleConfig />
+					{ isInstantSearchActive && <JetpackSearchInstantSearchConfig /> }
+				</Fragment>
+			) }
 
 			{ isWPCOM && <WhatIsJetpack /> }
 		</Main>
