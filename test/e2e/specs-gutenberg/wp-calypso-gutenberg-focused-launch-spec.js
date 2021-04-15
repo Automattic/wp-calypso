@@ -141,8 +141,8 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			const selectedFreeDomainSuggestionItemName = await driver.findElement(
 				selectedFreeDomainSuggestionItemNameSelector
 			);
-			// Disable lint for this line to be removed in another PR.
-			// eslint-disable-next-line no-unused-vars
+
+			// This is used in later step to test for selected domain persistence
 			selectedSubdomain = await selectedFreeDomainSuggestionItemName.getText();
 
 			assert(
@@ -260,6 +260,85 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			);
 
 			assert( isFocusedLaunchModalPresent, 'Focused launch modal did not open.' );
+		} );
+
+		step( 'Can persist previously selected domain in focused launch', async function () {
+			const selectedDomainSuggestionContainingPreviouslySelectedSubdomainSelector = await driverHelper.getElementByText(
+				driver,
+				By.css( '.domain-picker__suggestion-item.is-selected' ),
+				new RegExp( selectedSubdomain )
+			);
+
+			const selectedDomainSuggestionIsPreviouslySelectedSubdomain = await driverHelper.isElementPresent(
+				driver,
+				selectedDomainSuggestionContainingPreviouslySelectedSubdomainSelector
+			);
+
+			assert(
+				selectedDomainSuggestionIsPreviouslySelectedSubdomain,
+				'Selected subdomain should be persisted after reloading block editor and reopening focused launch.'
+			);
+		} );
+
+		step( 'Can persist previously selected plan in focused launch', async function () {
+			// Check if the selected monthly plan item is "Personal Plan".
+			const selectedPlanIsPersonalMonthlyPlanSelector = driverHelper.getElementByText(
+				driver,
+				By.css( `.focused-launch-summary__item.is-selected` ),
+				/Personal Plan/
+			);
+
+			const selectedPlanIsPersonalMonthlyPlan = await driverHelper.isElementPresent(
+				driver,
+				selectedPlanIsPersonalMonthlyPlanSelector
+			);
+
+			assert(
+				selectedPlanIsPersonalMonthlyPlan,
+				'Selected plan should be persisted after reloading block editor and reopening focused launch'
+			);
+		} );
+
+		step( 'Can select Free plan', async function () {
+			// Click "Free Plan" button
+			const freePlanSelector = driverHelper.getElementByText(
+				driver,
+				By.css( '.focused-launch-summary__item' ),
+				/Free Plan/
+			);
+
+			await driverHelper.clickWhenClickable( driver, freePlanSelector );
+
+			// When the detailed plans grid is closed and user returns to the summary view,
+			// check if the selected monthly plan item is "Free Plan".
+			const selectedPlanIsFreePlanSelector = driverHelper.getElementByText(
+				driver,
+				By.css( '.focused-launch-summary__item.is-selected' ),
+				/Free Plan/
+			);
+
+			const selectedPlanIsFreePlan = await driverHelper.isElementPresent(
+				driver,
+				selectedPlanIsFreePlanSelector
+			);
+
+			assert( selectedPlanIsFreePlan, 'The free plan was not selected.' );
+		} );
+
+		step( 'Can launch site with Free plan.', async function () {
+			// Click on the launch button
+			const siteLaunchButtonSelector = By.css( '.focused-launch-summary__launch-button' );
+			await driverHelper.clickWhenClickable( driver, siteLaunchButtonSelector );
+
+			// Wait for the focused launch success view to show up
+			const focusedLaunchSuccessViewSelector = By.css( '.focused-launch-success__wrapper' );
+
+			const isFocusedLaunchSuccessViewPresent = await driverHelper.isElementPresent(
+				driver,
+				focusedLaunchSuccessViewSelector
+			);
+
+			assert( isFocusedLaunchSuccessViewPresent, 'Focused launch success view did not open.' );
 		} );
 
 		after( 'Delete the newly created site', async function () {
