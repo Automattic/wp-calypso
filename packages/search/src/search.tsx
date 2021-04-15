@@ -6,7 +6,15 @@
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import React, { useEffect } from 'react';
-import type { Ref, ChangeEvent, FocusEvent, FormEvent, KeyboardEvent, MouseEvent } from 'react';
+import type {
+	ReactNode,
+	Ref,
+	ChangeEvent,
+	FocusEvent,
+	FormEvent,
+	KeyboardEvent,
+	MouseEvent,
+} from 'react';
 import { debounce } from 'lodash';
 
 /**
@@ -50,6 +58,7 @@ type Props = {
 	autoFocus?: boolean;
 	className?: string;
 	compact?: boolean;
+	children?: ReactNode;
 	defaultIsOpen?: boolean;
 	defaultValue?: string;
 	delaySearch?: boolean;
@@ -111,6 +120,7 @@ type ImperativeHandle = {
 
 const InnerSearch = (
 	{
+		children,
 		delaySearch = false,
 		disabled = false,
 		pinned = false,
@@ -428,6 +438,7 @@ const InnerSearch = (
 				{ renderStylingDiv() }
 			</form>
 			{ shouldRenderRightOpenIcon ? renderOpenIcon() : renderCloseButton() }
+			{ children }
 		</div>
 	);
 };
