@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isJetpackPlan, isJetpackProduct } from 'calypso/lib/products-values';
+import { isJetpackPlan, isJetpackProduct } from '@automattic/calypso-products';
 import {
 	costToUSD,
 	isAdTrackingAllowed,

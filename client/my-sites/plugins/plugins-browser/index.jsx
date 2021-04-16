@@ -38,8 +38,11 @@ import { getSitePlan, isJetpackSite, isRequestingSites } from 'calypso/state/sit
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import { Button } from '@automattic/components';
-import { isBusiness, isEcommerce, isEnterprise, isPremium } from 'calypso/lib/products-values';
 import {
+	isBusiness,
+	isEcommerce,
+	isEnterprise,
+	isPremium,
 	findFirstSimilarPlanKey,
 	FEATURE_UPLOAD_PLUGINS,
 	TYPE_BUSINESS,

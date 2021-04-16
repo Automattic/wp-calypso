@@ -24,7 +24,7 @@ import QuerySites from 'calypso/components/data/query-sites';
 import { getSiteSlug, getSiteTitle } from 'calypso/state/sites/selectors';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import isEligibleForDotcomChecklist from 'calypso/state/selectors/is-eligible-for-dotcom-checklist';
-import { isDotComPlan } from 'calypso/lib/products-values';
+import { isDotComPlan } from '@automattic/calypso-products';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';

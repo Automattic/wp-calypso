@@ -49,8 +49,8 @@ import {
 	PLAN_PERSONAL,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_PRODUCT_PRICE_MATRIX,
+	getJetpackProducts,
 } from '@automattic/calypso-products';
-import { getJetpackProducts } from 'calypso/lib/products-values/translations';
 import JetpackFAQ from './jetpack-faq';
 import PlansFeaturesMainProductsHeader from './products-header';
 import WpcomFAQ from './wpcom-faq';

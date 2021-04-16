@@ -26,7 +26,7 @@ import { getForCurrentCROIteration, Iterations } from '../iterations';
 /**
  * Type dependencies
  */
-import type { JetpackProductSlug } from 'calypso/lib/products-values/types';
+import type { JetpackPlanSlugs, JetpackProductSlug } from '@automattic/calypso-products';
 
 const setProductsInPosition = ( slugs: string[], position: number ) =>
 	slugs.reduce( ( map, slug ) => ( { ...map, [ slug ]: position } ), {} );

@@ -14,7 +14,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
 import { isEnabled } from '@automattic/calypso-config';
-import { isEcommerce, isGSuiteOrExtraLicenseOrGoogleWorkspace } from 'calypso/lib/products-values';
+import { isEcommerce, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 
 /**

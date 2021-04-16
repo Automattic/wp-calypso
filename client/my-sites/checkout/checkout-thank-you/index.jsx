@@ -54,7 +54,10 @@ import {
 	isSiteRedirect,
 	isTheme,
 	isTitanMail,
-} from 'calypso/lib/products-values';
+	isJetpackBusinessPlan,
+	isWpComBusinessPlan,
+	shouldFetchSitePlans,
+} from '@automattic/calypso-products';
 import { isExternal } from 'calypso/lib/url';
 import JetpackPlanDetails from './jetpack-plan-details';
 import Main from 'calypso/components/main';
@@ -66,11 +69,6 @@ import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
 import TransferPending from './transfer-pending';
 import PurchaseDetail from 'calypso/components/purchase-detail';
-import {
-	isJetpackBusinessPlan,
-	isWpComBusinessPlan,
-	shouldFetchSitePlans,
-} from '@automattic/calypso-products';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import RebrandCitiesThankYou from './rebrand-cities-thank-you';
 import SiteRedirectDetails from './site-redirect-details';

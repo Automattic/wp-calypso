@@ -6,7 +6,7 @@ import { camelCase } from 'lodash';
 /**
  * Internal dependencies
  */
-import sortProducts from 'calypso/lib/products-values/sort';
+import { sortProducts } from '@automattic/calypso-products';
 
 function createPurchaseObject( purchase ) {
 	const object = {

@@ -9,7 +9,7 @@ import {
 	isSecurityDaily,
 	isSecurityRealTime,
 	isComplete,
-} from 'calypso/lib/products-values';
+} from '@automattic/calypso-products';
 
 export function hasWordAdsPlan( site ) {
 	return (

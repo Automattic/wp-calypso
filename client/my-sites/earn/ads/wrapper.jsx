@@ -17,7 +17,6 @@ import {
 	canUpgradeToUseWordAds,
 	canAccessAds,
 } from 'calypso/lib/ads/utils';
-import { isPremium, isBusiness, isEcommerce, isSecurityDaily } from 'calypso/lib/products-values';
 import FeatureExample from 'calypso/components/feature-example';
 import FormButton from 'calypso/components/forms/form-button';
 import { Card } from '@automattic/components';
@@ -36,6 +35,10 @@ import {
 	PLAN_PREMIUM,
 	PLAN_JETPACK_SECURITY_DAILY,
 	FEATURE_WORDADS_INSTANT,
+	isPremium,
+	isBusiness,
+	isEcommerce,
+	isSecurityDaily,
 } from '@automattic/calypso-products';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { isSiteWordadsUnsafe } from 'calypso/state/wordads/status/selectors';

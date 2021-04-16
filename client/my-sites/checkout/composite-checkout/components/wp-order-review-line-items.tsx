@@ -47,7 +47,7 @@ import {
 	isYearly,
 	isBiennially,
 	isP2Plus,
-} from 'calypso/lib/products-values';
+} from '@automattic/calypso-products';
 import type {
 	WPCOMProductSlug,
 	WPCOMProductVariant,

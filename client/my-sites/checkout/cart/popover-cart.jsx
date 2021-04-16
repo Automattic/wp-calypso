@@ -21,7 +21,7 @@ import CartButtons from './cart-buttons';
 import Count from 'calypso/components/count';
 import Popover from 'calypso/components/popover';
 import CartEmpty from './cart-empty';
-import { isCredits } from 'calypso/lib/products-values';
+import { isCredits } from '@automattic/calypso-products';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 
 /**

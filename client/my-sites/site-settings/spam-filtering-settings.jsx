@@ -26,8 +26,8 @@ import {
 	FEATURE_JETPACK_ANTI_SPAM,
 	FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
+	isJetpackAntiSpam,
 } from '@automattic/calypso-products';
-import { isJetpackAntiSpam } from 'calypso/lib/products-values';
 import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
 import { getSiteProducts } from 'calypso/state/sites/selectors';

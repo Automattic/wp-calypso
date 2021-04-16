@@ -12,8 +12,12 @@ import React from 'react';
  */
 import AsyncLoad from 'calypso/components/async-load';
 import { getSite } from 'calypso/state/sites/selectors';
-import { isJetpackPlan, isJetpackProduct } from 'calypso/lib/products-values';
-import { JETPACK_PLANS, JETPACK_PRODUCTS_LIST } from '@automattic/calypso-products';
+import {
+	isJetpackPlan,
+	isJetpackProduct,
+	JETPACK_PLANS,
+	JETPACK_PRODUCTS_LIST,
+} from '@automattic/calypso-products';
 import QuerySites from 'calypso/components/data/query-sites';
 import PurchaseItem from '../purchase-item';
 import { managePurchase } from '../paths';

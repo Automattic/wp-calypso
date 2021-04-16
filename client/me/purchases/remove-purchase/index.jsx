@@ -30,7 +30,7 @@ import {
 	isPlan,
 	isJetpackSearch,
 	isTitanMail,
-} from 'calypso/lib/products-values';
+} from '@automattic/calypso-products';
 import { purchasesRoot } from '../paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getPurchasesError } from 'calypso/state/purchases/selectors';

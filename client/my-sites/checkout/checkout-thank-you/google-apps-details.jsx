@@ -12,7 +12,7 @@ import PurchaseDetail from 'calypso/components/purchase-detail';
 import { useSelector } from 'react-redux';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { isGoogleWorkspaceExtraLicence } from 'calypso/lib/purchases';
-import { isGSuiteOrExtraLicenseOrGoogleWorkspace } from 'calypso/lib/products-values';
+import { isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
 import { getGoogleMailServiceFamily, isGSuiteExtraLicenseProductSlug } from 'calypso/lib/gsuite';
 
 const GoogleAppsDetails = ( { purchases } ) => {

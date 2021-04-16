@@ -23,7 +23,7 @@ import {
 	isOneTimePurchase,
 	isSubscription,
 } from 'calypso/lib/purchases';
-import { isDomainRegistration } from 'calypso/lib/products-values';
+import { isDomainRegistration } from '@automattic/calypso-products';
 import { confirmCancelDomain, purchasesRoot } from 'calypso/me/purchases/paths';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';

@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 import HappychatButton from 'calypso/components/happychat/button';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { hasIncludedDomain } from 'calypso/lib/purchases';
-import { isDomainRegistration, isPlan } from 'calypso/lib/products-values';
+import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
 import './style.scss';
 
 class PrecancellationChatButton extends Component {

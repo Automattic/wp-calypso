@@ -17,9 +17,12 @@ import { getAvailableProductsList } from 'calypso/state/products-list/selectors'
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
-import { planHasFeature, planHasSuperiorFeature } from '@automattic/calypso-products';
+import {
+	isJetpackProduct,
+	planHasFeature,
+	planHasSuperiorFeature,
+} from '@automattic/calypso-products';
 import { managePurchase } from 'calypso/me/purchases/paths';
-import { isJetpackProduct } from 'calypso/lib/products-values';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';

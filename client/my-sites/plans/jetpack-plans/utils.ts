@@ -49,12 +49,12 @@ import {
 	JETPACK_PRODUCTS_LIST,
 	objectIsProduct,
 	PRODUCTS_LIST,
-} from 'calypso/lib/products-values/products-list';
-import { getJetpackProductDisplayName } from 'calypso/lib/products-values/get-jetpack-product-display-name';
-import { getJetpackProductTagline } from 'calypso/lib/products-values/get-jetpack-product-tagline';
-import { getJetpackProductCallToAction } from 'calypso/lib/products-values/get-jetpack-product-call-to-action';
-import { getJetpackProductDescription } from 'calypso/lib/products-values/get-jetpack-product-description';
-import { getJetpackProductShortName } from 'calypso/lib/products-values/get-jetpack-product-short-name';
+} from '@automattic/calypso-products';
+import { getJetpackProductDisplayName } from '@automattic/calypso-products';
+import { getJetpackProductTagline } from '@automattic/calypso-products';
+import { getJetpackProductCallToAction } from '@automattic/calypso-products';
+import { getJetpackProductDescription } from '@automattic/calypso-products';
+import { getJetpackProductShortName } from '@automattic/calypso-products';
 import config from '@automattic/calypso-config';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { getForCurrentCROIteration, Iterations } from './iterations';
@@ -83,7 +83,7 @@ import type {
 	JetpackPlanCardFeature,
 	JetpackPlanCardFeatureSection,
 } from '@automattic/calypso-products';
-import type { JetpackProductSlug } from 'calypso/lib/products-values/types';
+import type { JetpackProductSlug } from '@automattic/calypso-products';
 import type { SitePlan } from 'calypso/state/sites/selectors/get-site-plan';
 import ExternalLink from 'calypso/components/external-link';
 import type { PriceTierEntry } from 'calypso/state/products-list/selectors/get-product-price-tiers';
