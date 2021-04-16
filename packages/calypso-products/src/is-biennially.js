@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { PLAN_BIENNIAL_PERIOD } from '@automattic/calypso-products';
+import { PLAN_BIENNIAL_PERIOD } from './index';
 import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
 

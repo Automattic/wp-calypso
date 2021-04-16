@@ -15,7 +15,7 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
-} from '@automattic/calypso-products';
+} from './index';
 
 const productDependencies = {
 	domain: {

@@ -3,7 +3,7 @@
  * Type dependencies
  */
 import type { TranslateResult } from 'i18n-calypso';
-import type * as constants from '@automattic/calypso-products';
+import type * as constants from './index';
 
 export type JetpackProductSlug =
 	| typeof constants.PRODUCT_JETPACK_BACKUP_DAILY

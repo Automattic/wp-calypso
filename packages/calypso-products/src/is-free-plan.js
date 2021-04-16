@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { PLAN_FREE } from '@automattic/calypso-products';
+import { PLAN_FREE } from './index';
 import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
 

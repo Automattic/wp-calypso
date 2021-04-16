@@ -7,7 +7,7 @@ import { numberFormat, translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import * as CONSTANTS from '@automattic/calypso-products';
+import * as CONSTANTS from './index';
 
 // Translatable strings
 export const getJetpackProductsShortNames = () => {

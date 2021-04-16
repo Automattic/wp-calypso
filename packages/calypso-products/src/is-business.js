@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isBusinessPlan } from '@automattic/calypso-products';
+import { isBusinessPlan } from './index';
 import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
 
