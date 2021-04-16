@@ -17,7 +17,7 @@ import QueryDomainsSuggestions from 'calypso/components/data/query-domains-sugge
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { FEATURE_CUSTOM_DOMAIN } from '@automattic/calypso-products';
-import { isFreePlan } from 'calypso/lib/products-values';
+import { isFreePlanProduct } from 'calypso/lib/products-values';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 
 function getQueryObject( site, siteSlug, vendor ) {
@@ -112,14 +112,18 @@ const ConnectedDomainTip = connect( ( state, ownProps ) => {
 	const queryObject = getQueryObject( site, siteSlug, ownProps.vendor );
 	const domainsWithPlansOnly = currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY );
 	const isPaidWithoutDomainCredit =
-		site && siteSlug && ! isFreePlan( site.plan ) && ! hasDomainCredit( state, ownProps.siteId );
+		site &&
+		siteSlug &&
+		! isFreePlanProduct( site.plan ) &&
+		! hasDomainCredit( state, ownProps.siteId );
 	const isIneligible = ! site || ! siteSlug || site.jetpack || isPaidWithoutDomainCredit;
 
 	return {
 		hasDomainCredit: hasDomainCredit( state, ownProps.siteId ),
 		isIneligible,
 		queryObject,
-		shouldNudgePlanUpgrade: ! isIneligible && isFreePlan( site.plan ) && domainsWithPlansOnly,
+		shouldNudgePlanUpgrade:
+			! isIneligible && isFreePlanProduct( site.plan ) && domainsWithPlansOnly,
 		site,
 		siteSlug,
 		suggestions: queryObject && getDomainsSuggestions( state, queryObject ),
