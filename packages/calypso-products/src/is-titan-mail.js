@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
-import { formatProduct } from 'calypso/lib/products-values/format-product';
+import { assertValidProduct } from './utils/assert-valid-product';
+import { formatProduct } from './format-product';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 
 export function isTitanMail( product ) {

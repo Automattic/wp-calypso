@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import { isCompletePlan } from '@automattic/calypso-products';
-import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
-import { formatProduct } from 'calypso/lib/products-values/format-product';
+import { assertValidProduct } from './utils/assert-valid-product';
+import { formatProduct } from './format-product';
 
 export function isComplete( product ) {
 	product = formatProduct( product );

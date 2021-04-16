@@ -8,12 +8,7 @@ import { difference, flatten, groupBy, sortBy } from 'lodash';
  * Internal dependencies
  */
 import { isIncludedWithPlan } from 'calypso/lib/purchases';
-import {
-	getDomainProductRanking,
-	isCredits,
-	isDomainProduct,
-	isPlan,
-} from 'calypso/lib/products-values';
+import { getDomainProductRanking, isCredits, isDomainProduct, isPlan } from '.';
 
 /**
  * Sorts all products in the following order:
