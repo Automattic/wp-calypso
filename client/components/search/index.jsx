@@ -326,7 +326,7 @@ class Search extends Component {
 				</svg>
 			);
 
-			return <Icon icon={ searchIcon } size={ 32 } className="search__icon-search" />;
+			return <Icon icon={ searchIcon } size={ 32 } className="search-component__icon-search" />;
 		}
 
 		return <Gridicon icon="search" className="search__open-icon" />;

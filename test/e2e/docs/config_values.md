@@ -42,7 +42,6 @@ A full list of config values are:
 | testUserNameJetpack        | This is an existing test WordPress.com account for testing purposes **that has a single jetpack site**                                                                                                                                                   | testuser123                                                                                                                                                                 | Yes                             | **NO**         |
 | testUserNameMultiSite      | This is an existing test WordPress.com account for testing purposes **that has multiple sites**                                                                                                                                                          | testuser123                                                                                                                                                                 | Yes                             | **NO**         |
 
-
 <!-- When adding new rows, run the following command to sort the rows by alphabetical order:
 
 cd test/e2e/docs

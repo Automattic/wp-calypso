@@ -21,7 +21,7 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -32,10 +32,11 @@ jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.unmock( 'calypso/lib/plans' );
-const plans = require( 'calypso/lib/plans' );
-plans.getFeatureByKey = () => null;
-plans.shouldFetchSitePlans = () => false;
+jest.unmock( '@automattic/calypso-products' );
+jest.mock( '@automattic/calypso-products', () => ( {
+	...jest.requireActual( '@automattic/calypso-products' ),
+	shouldFetchSitePlans: () => false,
+} ) );
 
 jest.unmock( 'calypso/lib/products-values' );
 const productValues = require( 'calypso/lib/products-values' );

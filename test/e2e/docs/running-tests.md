@@ -5,19 +5,19 @@
 <!-- TOC -->
 
 - [Run tests](#run-tests)
-    - [Table of Contents](#table-of-contents)
-    - [Local Against Staging](#local-against-staging)
-        - [Run all tests default](#run-all-tests-default)
-        - [Run individual spec](#run-individual-spec)
-        - [Run individual case](#run-individual-case)
-        - [Headless](#headless)
-        - [Other options](#other-options)
-    - [Local Development Environment](#local-development-environment)
-    - [CircleCI](#circleci)
-        - [Canary](#canary)
-        - [Full suite](#full-suite)
-        - [Schedule](#schedule)
-    - [Sauce Labs](#sauce-labs)
+  - [Table of Contents](#table-of-contents)
+  - [Local Against Staging](#local-against-staging)
+    - [Run all tests default](#run-all-tests-default)
+    - [Run individual spec](#run-individual-spec)
+    - [Run individual case](#run-individual-case)
+    - [Headless](#headless)
+    - [Other options](#other-options)
+  - [Local Development Environment](#local-development-environment)
+  - [CircleCI](#circleci)
+    - [Canary](#canary)
+    - [Full suite](#full-suite)
+    - [Schedule](#schedule)
+  - [Sauce Labs](#sauce-labs)
 
 <!-- /TOC -->
 
@@ -59,7 +59,7 @@ eg.
 describe.only( 'Logging In and Out:', function() {
 ```
 
-**!NOTE**: ensure this syntax should be removed once the test is to be committed to the repository. 
+**!NOTE**: ensure this syntax should be removed once the test is to be committed to the repository.
 There is an eslint rule that will prevent committing tests with the `.only` syntax, but please also exercise due diligence.
 
 ### Run individual case
@@ -154,7 +154,6 @@ _All times are in UTC._
 | Jetpack               | Every 12 hours               | 01:00, 13:00               |
 | Jetpack Bleeding Edge | Every 12 hours               | 07:00, 19:00               |
 | WooCommerce           | Every 12 hours               | 11:00, 23:00               |
-
 
 ## Sauce Labs
 

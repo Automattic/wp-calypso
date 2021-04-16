@@ -74,7 +74,7 @@ describe( 'scroll-helper', () => {
 
 		helper.updatePlaceholderDimensions();
 
-		test( 'Placeholders height determined using their bounds ', () => {
+		test( 'Placeholders height determined using their bounds', () => {
 			assert.equal( helper.topPlaceholderHeight, 1000 );
 			assert.equal( helper.bottomPlaceholderHeight, 2000 );
 		} );

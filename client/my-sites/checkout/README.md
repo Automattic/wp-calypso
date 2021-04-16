@@ -14,7 +14,7 @@ To start a plan checkout flow, use appropriate URLS:
 - <https://wordpress.com/checkout/site.jetpack.me/premium>
 - <https://wordpress.com/checkout/site.jetpack.me/professional>
 
-Plan routes are sourced from `lib/plans/constants.js`
+Plan routes are sourced from `@automattic/calypso-products`
 
 ## Diagrams
 

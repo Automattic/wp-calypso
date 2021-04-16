@@ -39,12 +39,12 @@ import {
 	isJetpackSearch,
 } from 'calypso/lib/products-values';
 import { isP2Plus } from 'calypso/lib/products-values/is-p2-plus';
-import { planHasJetpackSearch } from 'calypso/lib/plans';
 import {
+	planHasJetpackSearch,
 	FEATURE_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 
 class Search extends Component {
 	static defaultProps = {

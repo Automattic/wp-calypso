@@ -47,8 +47,13 @@ import {
 import sortProducts from 'calypso/lib/products-values/sort';
 import { getTld } from 'calypso/lib/domains';
 import { domainProductSlugs } from 'calypso/lib/domains/constants';
-import { getPlan, isBloggerPlan, isWpComFreePlan, isWpComBloggerPlan } from 'calypso/lib/plans';
-import { getTermDuration } from 'calypso/lib/plans/constants';
+import {
+	getTermDuration,
+	getPlan,
+	isBloggerPlan,
+	isWpComFreePlan,
+	isWpComBloggerPlan,
+} from '@automattic/calypso-products';
 
 /**
  * @typedef { import("./types").CartItemValue} CartItemValue

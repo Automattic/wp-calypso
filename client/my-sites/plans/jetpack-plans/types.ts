@@ -4,7 +4,7 @@
  */
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactNode, ReactElement } from 'react';
-import type { TERM_ANNUALLY, TERM_MONTHLY } from 'calypso/lib/plans/constants';
+import type { TERM_ANNUALLY, TERM_MONTHLY } from '@automattic/calypso-products';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type {
 	ALL,

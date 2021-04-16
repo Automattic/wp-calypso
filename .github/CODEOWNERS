@@ -91,10 +91,6 @@
 
 # Experimentation platform legacy library and new client
 /client/lib/abtest @Automattic/experimentation-platform
-/client/components/data/query-experiments @Automattic/experimentation-platform
-/client/components/experiment @Automattic/experimentation-platform
-/client/state/data-layer/wpcom/experiments @Automattic/experimentation-platform
-/client/state/experiments @Automattic/experimentation-platform
 /client/lib/explat @Automattic/experimentation-platform
 /packages/explat-* @Automattic/experimentation-platform
 

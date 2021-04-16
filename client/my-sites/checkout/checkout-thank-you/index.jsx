@@ -70,7 +70,7 @@ import {
 	isJetpackBusinessPlan,
 	isWpComBusinessPlan,
 	shouldFetchSitePlans,
-} from 'calypso/lib/plans';
+} from '@automattic/calypso-products';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import RebrandCitiesThankYou from './rebrand-cities-thank-you';
 import SiteRedirectDetails from './site-redirect-details';

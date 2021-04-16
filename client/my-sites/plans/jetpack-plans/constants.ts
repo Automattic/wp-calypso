@@ -46,7 +46,7 @@ import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 	FEATURE_ACTIVITY_LOG,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import { Iterations } from './iterations';
 import { buildCardFeaturesFromItem } from './utils';
 
@@ -54,7 +54,7 @@ import { buildCardFeaturesFromItem } from './utils';
  * Type dependencies
  */
 import type { SelectorProduct, SelectorProductSlug } from './types';
-import type { JetpackPlanSlugs } from 'calypso/lib/plans/types';
+import type { JetpackPlanSlugs } from '@automattic/calypso-products';
 
 export const ALL = 'all';
 export const PERFORMANCE = 'performance';

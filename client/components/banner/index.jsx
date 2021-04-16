@@ -21,8 +21,9 @@ import {
 	isPremiumPlan,
 	isBusinessPlan,
 	isEcommercePlan,
-} from 'calypso/lib/plans';
-import { GROUP_JETPACK, GROUP_WPCOM } from 'calypso/lib/plans/constants';
+	GROUP_JETPACK,
+	GROUP_WPCOM,
+} from '@automattic/calypso-products';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';

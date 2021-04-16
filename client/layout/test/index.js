@@ -23,7 +23,7 @@ jest.mock( 'calypso/lib/user', () => () => {
 } );
 
 describe( 'index', () => {
-	describe( 'when trying to renderToString() LayoutLoggedOut ', () => {
+	describe( 'when trying to renderToString() LayoutLoggedOut', () => {
 		test( "doesn't throw an exception", () => {
 			expect( () => {
 				renderToString(
