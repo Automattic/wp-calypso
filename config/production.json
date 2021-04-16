@@ -67,6 +67,7 @@
 		"jetpack/backups-restore": true,
 		"jetpack/personal-plan": false,
 		"jetpack/magic-link-signup": true,
+		"jetpack/redirect-legacy-plans": false,
 		"jitms": true,
 		"lasagna": true,
 		"layout/app-banner": true,
