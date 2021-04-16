@@ -8,7 +8,7 @@ import { Button, CompactCard } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import { canAddEmailToDomain } from 'calypso/lib/domains';
+import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import SectionHeader from 'calypso/components/section-header';
 
@@ -24,7 +24,7 @@ class EmailListInactive extends React.Component {
 			return (
 				<CompactCard key={ domain.name }>
 					<span>@{ domain.name }</span>
-					{ canAddEmailToDomain( domain ) && (
+					{ canCurrentUserAddEmail( domain ) && (
 						<Button compact href={ emailManagement( selectedSiteSlug, domain.name, currentRoute ) }>
 							{ translate( 'Add Email' ) }
 						</Button>

@@ -34,4 +34,3 @@ export { resendIcannVerification } from './resend-icann-verification';
 export { resolveDomainStatus } from './resolve-domain-status';
 export { startInboundTransfer } from './start-inbound-transfer';
 export { TRUENAME_TLDS, TRUENAME_COUPONS } from './truename-promo';
-export { canAddEmailToDomain } from './can-add-email-to-domain';
