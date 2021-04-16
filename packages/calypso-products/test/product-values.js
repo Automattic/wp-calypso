@@ -8,7 +8,7 @@ import {
 	isJetpackProductSlug,
 	isJetpackBackup,
 	isJetpackBackupSlug,
-	isMonthly,
+	isMonthlyProduct,
 	isYearly,
 	isBiennially,
 	isPersonal,
@@ -18,9 +18,8 @@ import {
 	isPlan,
 	getJetpackProductDisplayName,
 	getJetpackProductTagline,
-} from '..';
-import { getJetpackProductsDisplayNames, getJetpackProductsTaglines } from '../translations';
-import {
+	getJetpackProductsDisplayNames,
+	getJetpackProductsTaglines,
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_PLANS,
@@ -39,7 +38,7 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from '@automattic/calypso-products';
+} from '../src';
 
 /**
  * Test helper to build a product object
@@ -277,14 +276,14 @@ describe( 'isEcommerce', () => {
 	} );
 } );
 
-describe( 'isMonthly', () => {
+describe( 'isMonthlyProduct', () => {
 	test( 'should return true for monthly products', () => {
-		expect( isMonthly( { bill_period: 31 } ) ).toBe( true );
+		expect( isMonthlyProduct( { bill_period: 31 } ) ).toBe( true );
 	} );
 	test( 'should return true for other products', () => {
-		expect( isMonthly( { bill_period: 30 } ) ).toBe( false );
-		expect( isMonthly( { bill_period: 32 } ) ).toBe( false );
-		expect( isMonthly( { bill_period: 365 } ) ).toBe( false );
+		expect( isMonthlyProduct( { bill_period: 30 } ) ).toBe( false );
+		expect( isMonthlyProduct( { bill_period: 32 } ) ).toBe( false );
+		expect( isMonthlyProduct( { bill_period: 365 } ) ).toBe( false );
 	} );
 } );
 
