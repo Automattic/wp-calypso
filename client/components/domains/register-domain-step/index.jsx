@@ -89,7 +89,7 @@ import {
 	enqueueSearchStatReport,
 } from 'calypso/components/domains/register-domain-step/analytics';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { isBlogger } from 'calypso/lib/products-values';
+import { isBlogger } from '@automattic/calypso-products';
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
 import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';

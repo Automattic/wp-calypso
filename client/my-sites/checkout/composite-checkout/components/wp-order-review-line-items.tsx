@@ -41,7 +41,7 @@ import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/s
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import { getSublabel, getLabel } from '../lib/translate-cart';
-import { isPlan, isMonthlyProduct, isYearly, isBiennially } from 'calypso/lib/products-values';
+import { isPlan, isMonthlyProduct, isYearly, isBiennially } from '@automattic/calypso-products';
 import type {
 	WPCOMProductSlug,
 	WPCOMProductVariant,

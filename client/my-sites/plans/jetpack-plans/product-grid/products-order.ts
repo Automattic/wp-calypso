@@ -20,7 +20,7 @@ import {
 /**
  * Type dependencies
  */
-import type { JetpackProductSlug } from 'calypso/lib/products-values/types';
+import type { JetpackProductSlug } from '@automattic/calypso-products';
 import type { JetpackPlanSlugs } from '@automattic/calypso-products';
 
 const setProductsInPosition = ( slugs: string[], position: number ) =>

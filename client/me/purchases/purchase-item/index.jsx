@@ -27,7 +27,7 @@ import {
 	isWithinIntroductoryOfferPeriod,
 	isIntroductoryOfferFreeTrial,
 } from 'calypso/lib/purchases';
-import { isDomainTransfer, isConciergeSession } from 'calypso/lib/products-values';
+import { isDomainTransfer, isConciergeSession } from '@automattic/calypso-products';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import SiteIcon from 'calypso/blocks/site-icon';

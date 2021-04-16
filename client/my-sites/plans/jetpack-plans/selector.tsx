@@ -13,7 +13,7 @@ import { checkout, manageSitePurchase } from 'calypso/my-sites/plans/jetpack-pla
 import QueryProducts from 'calypso/my-sites/plans/jetpack-plans/query-products';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getYearlyPlanByMonthly } from '@automattic/calypso-products';
-import { getProductYearlyVariant, isJetpackPlan } from 'calypso/lib/products-values';
+import { getProductYearlyVariant, isJetpackPlan } from '@automattic/calypso-products';
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Main from 'calypso/components/main';
@@ -31,7 +31,7 @@ import type {
 	SelectorProduct,
 	PurchaseCallback,
 } from 'calypso/my-sites/plans/jetpack-plans/types';
-import type { ProductSlug } from 'calypso/lib/products-values/types';
+import type { ProductSlug } from '@automattic/calypso-products';
 
 import './style.scss';
 

@@ -27,7 +27,7 @@ import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
-import { isJetpackPlanSlug } from 'calypso/lib/products-values/is-jetpack-plan-slug';
+import { isJetpackPlanSlug } from '@automattic/calypso-products';
 
 /**
  * Type dependencies

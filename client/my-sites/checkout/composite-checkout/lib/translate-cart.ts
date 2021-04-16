@@ -31,7 +31,7 @@ import {
 	isGoogleWorkspaceExtraLicence,
 	isGSuiteOrGoogleWorkspace,
 	isTitanMail,
-} from 'calypso/lib/products-values';
+} from '@automattic/calypso-products';
 import { isRenewal } from 'calypso/lib/cart-values/cart-items';
 import doesValueExist from './does-value-exist';
 import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';

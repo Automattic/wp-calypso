@@ -43,17 +43,15 @@ import {
 	isTrafficGuide,
 	isTitanMail,
 	isMonthly,
-} from 'calypso/lib/products-values';
-import { sortProducts } from 'calypso/lib/products-values/sort';
-import { getTld } from 'calypso/lib/domains';
-import { domainProductSlugs } from 'calypso/lib/domains/constants';
-import {
+	sortProducts,
 	getTermDuration,
 	getPlan,
 	isBloggerPlan,
 	isWpComFreePlan,
 	isWpComBloggerPlan,
 } from '@automattic/calypso-products';
+import { getTld } from 'calypso/lib/domains';
+import { domainProductSlugs } from 'calypso/lib/domains/constants';
 
 /**
  * @typedef { import("./types").CartItemValue} CartItemValue
