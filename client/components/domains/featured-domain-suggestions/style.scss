@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .featured-domain-suggestions {
 	display: flex;
 	flex-direction: column;
@@ -24,6 +27,10 @@
 		@include breakpoint-deprecated( '>800px' ) {
 			flex-direction: row;
 		}
+	}
+
+	.is-section-signup.is-white-signup & {
+		display: block;
 	}
 }
 
@@ -93,6 +100,10 @@
 		margin: 0;
 		justify-content: flex-start;
 
+		body.is-section-signup.is-white-signup & {
+			margin-top: 12px;
+		}
+
 		&.is-free-domain,
 		&.is-sale-domain {
 			small {
@@ -136,6 +147,38 @@
 		.domain-registration-suggestion__match-reasons {
 			display: none;
 		}
+	}
+}
+
+.is-section-signup.is-white-signup .domain-suggestion.featured-domain-suggestion {
+	border: none;
+	border-radius: 4px; /* stylelint-disable-line */
+	margin: 0;
+	align-items: center;
+	background: #fdfdfd;
+
+	@include break-mobile {
+		margin-bottom: 12px;
+		box-sizing: border-box;
+		border: 1px solid #e2e4e7;
+		background: var( --color-surface );
+	}
+
+	.button.domain-suggestion__action {
+		margin-top: 0;
+		font-weight: 500; /* stylelint-disable-line */
+		padding: 0.57em 1.3em;
+		border-radius: 4px; /* stylelint-disable-line */
+		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
+
+		@include break-mobile {
+			padding: 0.65em 2.8em;
+		}
+	}
+
+	.domain-registration-suggestion__domain-title {
+		font-size: 1.625rem; /* stylelint-disable-line */
+		line-height: 30px;
 	}
 }
 

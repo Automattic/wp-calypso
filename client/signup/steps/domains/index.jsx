@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { defer, get, includes, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -33,6 +34,7 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
+import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import Notice from 'calypso/components/notice';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
@@ -56,6 +58,7 @@ import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/select
 import { getStepModuleName } from 'calypso/signup/config/step-components';
 import { getExternalBackUrl } from './utils';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 
 /**
  * Style dependencies
@@ -272,6 +275,16 @@ class DomainsStep extends React.Component {
 		} );
 	};
 
+	handleDomainExplainerClick = () => {
+		const hideFreePlan = true;
+		this.handleSkip( undefined, hideFreePlan );
+	};
+
+	handleUseYourDomainClick = () => {
+		this.props.recordUseYourDomainButtonClick( this.getAnalyticsSection() );
+		page( this.getUseYourDomainUrl() );
+	};
+
 	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
@@ -439,6 +452,25 @@ class DomainsStep extends React.Component {
 		return typeof lastQuery === 'string' && lastQuery.includes( '.blog' );
 	}
 
+	getSideContent = () => {
+		return (
+			<div className="domains__domain-side-content-container">
+				<div className="domains__domain-side-content">
+					<ReskinSideExplainer
+						onClick={ this.handleDomainExplainerClick }
+						type={ 'free-domain-explainer' }
+					/>
+				</div>
+				<div className="domains__domain-side-content">
+					<ReskinSideExplainer
+						onClick={ this.handleUseYourDomainClick }
+						type={ 'use-your-domain' }
+					/>
+				</div>
+			</div>
+		);
+	};
+
 	domainForm = () => {
 		let initialState = {};
 		if ( this.state?.domainForm ) {
@@ -524,6 +556,7 @@ class DomainsStep extends React.Component {
 						this.props.forceHideFreeDomainExplainerAndStrikeoutUi
 					}
 					isReskinned={ this.props.isReskinned }
+					reskinSideContent={ this.getSideContent() }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -666,6 +699,7 @@ class DomainsStep extends React.Component {
 
 	renderContent() {
 		let content;
+		let sideContent;
 
 		if ( 'mapping' === this.props.stepSectionName ) {
 			content = this.mappingForm();
@@ -681,6 +715,10 @@ class DomainsStep extends React.Component {
 
 		if ( ! this.props.stepSectionName || this.props.isDomainOnly ) {
 			content = this.domainForm();
+		}
+
+		if ( ! this.props.stepSectionName && this.props.isReskinned ) {
+			sideContent = this.getSideContent();
 		}
 
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
@@ -700,6 +738,7 @@ class DomainsStep extends React.Component {
 				className="domains__step-content domains__step-content-domain-step"
 			>
 				{ content }
+				{ sideContent }
 			</div>
 		);
 	}
@@ -773,6 +812,7 @@ class DomainsStep extends React.Component {
 				skipHeadingText={ translate( 'Not sure yet?' ) }
 				skipLabelText={ translate( 'Choose a domain later' ) }
 				align={ isReskinned ? 'left' : 'center' }
+				isWideLayout={ isReskinned }
 			/>
 		);
 	}
@@ -833,6 +873,7 @@ export default connect(
 		recordAddDomainButtonClickInMapDomain,
 		recordAddDomainButtonClickInTransferDomain,
 		recordAddDomainButtonClickInUseYourDomain,
+		recordUseYourDomainButtonClick,
 		submitDomainStepSelection,
 		setDesignType,
 		saveSignupStep,

@@ -124,6 +124,7 @@ export class TldFilterBar extends Component {
 				<Button
 					className={ classNames( 'search-filters__tld-button', {
 						'is-active': includes( selectedTlds, tld ),
+						'search-filters__tld-button-first': index === 0,
 					} ) }
 					data-selected={ includes( selectedTlds, tld ) }
 					data-index={ index }
@@ -137,7 +138,13 @@ export class TldFilterBar extends Component {
 	}
 
 	renderPopoverButton() {
-		const { filters: { tlds = [] } = {}, translate } = this.props;
+		const { filters: { tlds = [] } = {}, translate, isReskinned } = this.props;
+		const popoverText = isReskinned
+			? translate( 'Show more' )
+			: translate( 'More Extensions', {
+					context: 'TLD filter button',
+					comment: 'Refers to top level domain name extension, such as ".com"',
+			  } );
 
 		return (
 			<Button
@@ -148,10 +155,7 @@ export class TldFilterBar extends Component {
 				ref={ this.bindButton }
 				key="popover-button"
 			>
-				{ translate( 'More Extensions', {
-					context: 'TLD filter button',
-					comment: 'Refers to top level domain name extension, such as ".com"',
-				} ) }
+				{ popoverText }
 				<Gridicon icon="chevron-down" size={ 24 } />
 			</Button>
 		);

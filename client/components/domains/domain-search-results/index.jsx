@@ -280,6 +280,7 @@ class DomainSearchResults extends React.Component {
 					selectedSite={ this.props.selectedSite }
 					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 					unavailableDomains={ this.props.unavailableDomains }
+					isReskinned={ this.props.isReskinned }
 				/>
 			);
 
@@ -307,11 +308,16 @@ class DomainSearchResults extends React.Component {
 						premiumDomain={ this.props.premiumDomains[ suggestion.domain_name ] }
 						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 						unavailableDomains={ this.props.unavailableDomains }
+						isReskinned={ this.props.isReskinned }
 					/>
 				);
 			} );
 
-			if ( this.props.offerUnavailableOption && this.props.siteDesignType !== DESIGN_TYPE_STORE ) {
+			if (
+				this.props.offerUnavailableOption &&
+				this.props.siteDesignType !== DESIGN_TYPE_STORE &&
+				! this.props.isReskinned
+			) {
 				unavailableOffer = (
 					<DomainTransferSuggestion
 						onButtonClick={ this.props.onClickUseYourDomain }
