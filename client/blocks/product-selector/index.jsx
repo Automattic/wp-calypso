@@ -559,9 +559,12 @@ export class ProductSelector extends Component {
 			const selectedSlug = this.state[ stateKey ];
 			const productObject = storeProducts[ selectedSlug ];
 
-			const linkUrl = selectedSiteSlug
-				? addQueryArgs( { site: selectedSiteSlug }, product.link.url )
-				: product.link.url;
+			let linkUrl;
+			if ( product.link ) {
+				linkUrl = selectedSiteSlug
+					? addQueryArgs( { site: selectedSiteSlug }, product.link.url )
+					: product.link.url;
+			}
 
 			let purchase;
 			let isCurrent;
