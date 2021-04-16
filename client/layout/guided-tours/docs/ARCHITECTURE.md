@@ -56,18 +56,22 @@ Let's break this down:
 
 ```js
 const findTriggeredTour = ( state ) => {
-	const toursFromTriggers = [ ...new Set( [
-		...getToursFromFeaturesReached( state ),
-		// Right now, only one source from which to derive tours, but we may
-		// have more later. Examples:
-		// ...getToursFromPurchases( state ),
-		// ...getToursFromFirstActions( state ),
-	] ) ];
+	const toursFromTriggers = [
+		...new Set( [
+			...getToursFromFeaturesReached( state ),
+			// Right now, only one source from which to derive tours, but we may
+			// have more later. Examples:
+			// ...getToursFromPurchases( state ),
+			// ...getToursFromFirstActions( state ),
+		] ),
+	];
 
-	const toursToDismiss = [ ...new Set( [
-		// Same idea here.
-		...getToursSeen( state ),
-	] ) ];
+	const toursToDismiss = [
+		...new Set( [
+			// Same idea here.
+			...getToursSeen( state ),
+		] ),
+	];
 
 	const newTours = difference( toursFromTriggers, toursToDismiss );
 	return find( newTours, ( tour ) => {

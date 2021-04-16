@@ -12,8 +12,9 @@ import { getCurrencyObject } from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import PlanPill from 'calypso/components/plans/plan-pill';
-import { PLANS_LIST } from 'calypso/lib/plans/plans-list';
-import { getPlanClass } from 'calypso/lib/plans';
+import { getPlans, getPlanClass } from '@automattic/calypso-products';
+
+const PLANS_LIST = getPlans();
 
 export class PlanFeaturesComparisonHeader extends Component {
 	render() {

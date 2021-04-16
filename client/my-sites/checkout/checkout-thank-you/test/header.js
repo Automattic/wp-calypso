@@ -13,10 +13,11 @@ jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.unmock( 'calypso/lib/plans' );
-const plans = require( 'calypso/lib/plans' );
-plans.getFeatureByKey = () => null;
-plans.shouldFetchSitePlans = () => false;
+jest.unmock( '@automattic/calypso-products' );
+jest.mock( '@automattic/calypso-products', () => ( {
+	...jest.requireActual( '@automattic/calypso-products' ),
+	shouldFetchSitePlans: () => false,
+} ) );
 
 jest.unmock( 'calypso/lib/products-values' );
 const isDotComPlan = require( 'calypso/lib/products-values/is-dot-com-plan' );

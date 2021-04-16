@@ -8,11 +8,11 @@ import { some } from 'lodash';
  */
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
-import { planHasFeature } from 'calypso/lib/plans';
 import {
+	planHasFeature,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 
 /**
  * Module variables

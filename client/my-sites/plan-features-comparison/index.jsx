@@ -38,12 +38,13 @@ import {
 	getPlan as getPlanFromKey,
 	getPlanClass,
 	isFreePlan,
-} from 'calypso/lib/plans';
+	isMonthly,
+	TERM_MONTHLY,
+} from '@automattic/calypso-products';
 import {
 	getPlanDiscountedRawPrice,
 	getSitePlanRawPrice,
 } from 'calypso/state/sites/plans/selectors';
-import { isMonthly, TERM_MONTHLY } from 'calypso/lib/plans/constants';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 
 /**

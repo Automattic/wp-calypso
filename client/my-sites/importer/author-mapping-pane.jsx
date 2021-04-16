@@ -10,12 +10,10 @@ import React from 'react';
  * Internal dependencies
  */
 import AuthorMapping from './author-mapping-item';
-import SiteUsersFetcher from 'calypso/components/site-users-fetcher';
-import UsersStore from 'calypso/lib/users/store';
-
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
+import useUsersQuery from 'calypso/data/users/use-users-query';
 
 /**
  * Style dependencies
@@ -122,13 +120,6 @@ class AuthorMappingPane extends React.PureComponent {
 		}
 	};
 
-	getUserCount = () => {
-		const fetchOptions = this.getFetchOptions( 50 );
-		const { totalUsers } = UsersStore.getPaginationData( fetchOptions );
-
-		return totalUsers;
-	};
-
 	render() {
 		const {
 			hasSingleAuthor,
@@ -141,19 +132,18 @@ class AuthorMappingPane extends React.PureComponent {
 			sourceType,
 			importerStatus,
 			site,
+			totalUsers,
 		} = this.props;
 		const canStartImport = hasSingleAuthor || sourceAuthors.some( ( author ) => author.mappedTo );
-		const targetUserCount = this.getUserCount();
 		const mappingDescription = this.getMappingDescription(
 			sourceAuthors.length,
-			targetUserCount,
+			totalUsers,
 			targetTitle,
 			sourceType
 		);
 
 		return (
 			<div className="importer__mapping-pane">
-				<SiteUsersFetcher fetchOptions={ this.getFetchOptions( { number: 50 } ) } />
 				<div className="importer__mapping-description">{ mappingDescription }</div>
 				<div className="importer__mapping-header">
 					<span className="importer__mapping-source-title">{ sourceTitle }</span>
@@ -181,4 +171,13 @@ class AuthorMappingPane extends React.PureComponent {
 	}
 }
 
-export default localize( AuthorMappingPane );
+const withTotalUsers = ( Component ) => ( props ) => {
+	const { siteId } = props;
+	const { data } = useUsersQuery( siteId, {}, { refetchOnWindowFocus: false } );
+
+	const totalUsers = data?.total ?? 0;
+
+	return <Component totalUsers={ totalUsers } { ...props } />;
+};
+
+export default localize( withTotalUsers( AuthorMappingPane ) );

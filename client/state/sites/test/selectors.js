@@ -56,7 +56,7 @@ import {
 } from '../selectors';
 import config from '@automattic/calypso-config';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
-import { PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_FREE } from 'calypso/lib/plans/constants';
+import { PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_FREE } from '@automattic/calypso-products';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const configMock = () => '';

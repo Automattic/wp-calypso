@@ -8,8 +8,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getPlan } from 'calypso/lib/plans';
 import {
+	getPlan,
 	GROUP_WPCOM,
 	GROUP_JETPACK,
 	TYPE_ECOMMERCE,
@@ -25,8 +25,8 @@ import {
 	TYPE_SECURITY_REALTIME,
 	TYPE_ALL,
 	TERM_MONTHLY,
-} from 'calypso/lib/plans/constants';
-import { PLANS_LIST } from 'calypso/lib/plans/plans-list';
+	getPlans,
+} from '@automattic/calypso-products';
 import FindNewTheme from './find-new-theme';
 import UploadPlugins from './upload-plugins';
 import AdvertisingRemoved from './advertising-removed';
@@ -56,6 +56,8 @@ import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedu
  * Style dependencies
  */
 import './style.scss';
+
+const PLANS_LIST = getPlans();
 
 export class ProductPurchaseFeaturesList extends Component {
 	static propTypes = {

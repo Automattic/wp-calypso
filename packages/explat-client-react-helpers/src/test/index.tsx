@@ -147,7 +147,7 @@ describe( 'Experiment', () => {
 		expect( container.textContent ).toBe( 'treatment-2' );
 	} );
 
-	it( 'should correctly show default after loading ', async () => {
+	it( 'should correctly show default after loading', async () => {
 		const exPlatClient = createMockExPlatClient();
 		const { Experiment } = createExPlatClientReactHelpers( exPlatClient );
 

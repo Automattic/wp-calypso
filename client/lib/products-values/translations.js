@@ -8,7 +8,7 @@ import { numberFormat, translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { isEnabled } from '@automattic/calypso-config';
-import * as CONSTANTS from 'calypso/lib/plans/constants';
+import * as CONSTANTS from '@automattic/calypso-products';
 
 // Translatable strings
 export const getJetpackProductsShortNames = () => {

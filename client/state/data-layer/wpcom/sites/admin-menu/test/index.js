@@ -35,7 +35,7 @@ describe( 'handlers', () => {
 		},
 	} );
 
-	test( 'should create correct success action on fetch success ', () => {
+	test( 'should create correct success action on fetch success', () => {
 		const dispatch = jest.fn();
 		const menuData = {};
 		const action = receiveAdminMenu( 73738, menuData );

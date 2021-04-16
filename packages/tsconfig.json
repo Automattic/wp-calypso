@@ -7,6 +7,7 @@
 		{ "path": "./browser-data-collector" },
 		{ "path": "./calypso-analytics" },
 		{ "path": "./calypso-config" },
+		{ "path": "./calypso-products" },
 		{ "path": "./calypso-stripe" },
 		{ "path": "./calypso-url" },
 		{ "path": "./components" },

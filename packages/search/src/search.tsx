@@ -6,7 +6,15 @@
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import React, { useEffect } from 'react';
-import type { Ref, ChangeEvent, FocusEvent, FormEvent, KeyboardEvent, MouseEvent } from 'react';
+import type {
+	ReactNode,
+	Ref,
+	ChangeEvent,
+	FocusEvent,
+	FormEvent,
+	KeyboardEvent,
+	MouseEvent,
+} from 'react';
 import { debounce } from 'lodash';
 
 /**
@@ -50,6 +58,7 @@ type Props = {
 	autoFocus?: boolean;
 	className?: string;
 	compact?: boolean;
+	children?: ReactNode;
 	defaultIsOpen?: boolean;
 	defaultValue?: string;
 	delaySearch?: boolean;
@@ -111,6 +120,7 @@ type ImperativeHandle = {
 
 const InnerSearch = (
 	{
+		children,
 		delaySearch = false,
 		disabled = false,
 		pinned = false,
@@ -141,6 +151,7 @@ const InnerSearch = (
 		minLength,
 		maxLength,
 		hideClose = false,
+		isReskinned = false,
 	}: Props,
 	forwardedRef: Ref< ImperativeHandle >
 ) => {
@@ -358,8 +369,31 @@ const InnerSearch = (
 		return null;
 	};
 
+	const renderReskinSearchIcon = () => {
+		const searchIcon = (
+			<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path
+					fillRule="evenodd"
+					clipRule="evenodd"
+					d="M13.8269 19.8984L8.49362 24.5651L7.50586 23.4362L12.8392 18.7695L13.8269 19.8984Z"
+				/>
+				<path
+					fillRule="evenodd"
+					clipRule="evenodd"
+					d="M17.9994 21.1667C21.221 21.1667 23.8327 18.555 23.8327 15.3333C23.8327 12.1117 21.221 9.5 17.9994 9.5C14.7777 9.5 12.166 12.1117 12.166 15.3333C12.166 18.555 14.7777 21.1667 17.9994 21.1667ZM17.9994 22.6667C22.0494 22.6667 25.3327 19.3834 25.3327 15.3333C25.3327 11.2832 22.0494 8 17.9994 8C13.9493 8 10.666 11.2832 10.666 15.3333C10.666 19.3834 13.9493 22.6667 17.9994 22.6667Z"
+				/>
+			</svg>
+		);
+
+		return <Icon icon={ searchIcon } size={ 32 } className="search-component__icon-search" />;
+	};
+
 	const renderOpenIcon = () => {
 		const enableOpenIcon = pinned && ! isOpen;
+
+		if ( isReskinned ) {
+			return renderReskinSearchIcon();
+		}
 
 		return (
 			<Button
@@ -428,6 +462,7 @@ const InnerSearch = (
 				{ renderStylingDiv() }
 			</form>
 			{ shouldRenderRightOpenIcon ? renderOpenIcon() : renderCloseButton() }
+			{ children }
 		</div>
 	);
 };

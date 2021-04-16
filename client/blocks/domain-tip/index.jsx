@@ -16,7 +16,7 @@ import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import QueryDomainsSuggestions from 'calypso/components/data/query-domains-suggestions';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { FEATURE_CUSTOM_DOMAIN } from 'calypso/lib/plans/constants';
+import { FEATURE_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 import { isFreePlan } from 'calypso/lib/products-values';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 

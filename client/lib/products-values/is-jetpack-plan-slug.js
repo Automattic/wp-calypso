@@ -1,8 +1,7 @@
 /**
  * Internal dependencies
  */
-import { GROUP_JETPACK } from 'calypso/lib/plans/constants';
-import { planMatches } from 'calypso/lib/plans';
+import { planMatches, GROUP_JETPACK } from '@automattic/calypso-products';
 
 export function isJetpackPlanSlug( productSlug ) {
 	return planMatches( productSlug, { group: GROUP_JETPACK } );

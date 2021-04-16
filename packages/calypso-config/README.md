@@ -34,6 +34,7 @@ import config from '@automattic/calypso-config';
 
 config.enable( 'myFeature' );
 ```
+
 ### config.disable( key )
 
 Disable a feature.

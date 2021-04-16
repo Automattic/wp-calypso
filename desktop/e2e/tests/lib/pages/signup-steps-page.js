@@ -38,7 +38,7 @@ class SignupStepsPage extends AsyncBaseContainer {
 	}
 
 	async selectDomain( domainName ) {
-		const searchDomainField = By.css( '.search__input' );
+		const searchDomainField = By.css( '.search-component__input' );
 
 		await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,

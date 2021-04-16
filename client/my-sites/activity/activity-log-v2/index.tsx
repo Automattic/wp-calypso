@@ -10,7 +10,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isFreePlan } from 'calypso/lib/plans';
+import { isFreePlan } from '@automattic/calypso-products';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getHttpData } from 'calypso/state/data-layer/http-data';
 import { requestActivityLogs, getRequestActivityLogsId } from 'calypso/state/data-getters';

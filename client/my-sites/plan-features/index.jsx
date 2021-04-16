@@ -40,16 +40,6 @@ import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-p
 import { getDiscountByName } from 'calypso/lib/discounts';
 import { addQueryArgs } from 'calypso/lib/url';
 import {
-	planMatches,
-	applyTestFiltersToPlansList,
-	getMonthlyPlanByYearly,
-	getPlanPath,
-	isFreePlan,
-	isWpComEcommercePlan,
-	isWpComBusinessPlan,
-	getPlanClass,
-} from 'calypso/lib/plans';
-import {
 	getPlanDiscountedRawPrice,
 	getSitePlanRawPrice,
 	getPlansBySiteId,
@@ -77,7 +67,15 @@ import {
 	FEATURE_BUSINESS_ONBOARDING,
 	TYPE_P2_PLUS,
 	TYPE_FREE,
-} from 'calypso/lib/plans/constants';
+	planMatches,
+	applyTestFiltersToPlansList,
+	getMonthlyPlanByYearly,
+	getPlanPath,
+	isFreePlan,
+	isWpComEcommercePlan,
+	isWpComBusinessPlan,
+	getPlanClass,
+} from '@automattic/calypso-products';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import PlanFeaturesScroller from './scroller';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';

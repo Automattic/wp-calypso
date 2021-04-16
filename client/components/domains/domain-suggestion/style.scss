@@ -271,6 +271,8 @@ body.is-section-signup.is-white-signup {
 
 		.domain-registration-suggestion__title {
 			font-size: $font-title-medium;
+			padding-right: 0;
+			margin-bottom: 0;
 		}
 	}
 
@@ -286,6 +288,8 @@ body.is-section-signup.is-white-signup {
 		
 		.badge {
 			border-radius: 4px; /* stylelint-disable-line */
+			font-size: 0.75rem;
+			font-weight: 500; /* stylelint-disable-line */
 		}
 
 		@include break-xlarge {
@@ -333,6 +337,10 @@ body.is-section-signup.is-white-signup {
 
 		& .domain-product-price__free-price {
 			font-size: $font-body;
+			font-weight: 500; /* stylelint-disable-line */
+			color: var( --studio-green-60 );
+			line-height: 20px;
+			letter-spacing: 0.2px;
 
 			@include break-mobile {
 				font-size: $font-body-small;
@@ -385,9 +393,13 @@ body.is-section-signup.is-white-signup {
 			}
 
 			.domain-suggestion__action:not( .is-borderless ) {
-				border-radius: 2px;
-				line-height: 17px;
-				padding: 12px 24px;
+				line-height: 20px;
+				padding: 0.66rem 2.4rem;
+				font-weight: 500; /* stylelint-disable-line */
+				border-radius: 4px;  /* stylelint-disable-line */
+				box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
+				border: 1px solid #c3c4c7;
+				letter-spacing: 0.32px;
 
 				@include break-mobile {
 					padding: 11px 40px;
