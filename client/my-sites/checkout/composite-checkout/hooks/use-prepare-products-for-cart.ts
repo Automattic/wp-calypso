@@ -555,16 +555,14 @@ function createItemToAddToCart( {
 		createRequestCartProduct( {
 			product_id: productId,
 			product_slug: productSlug,
-			extra: { isJetpackUserlessCheckout, jetpackSiteSlug }
+			extra: { isJetpackUserlessCheckout, jetpackSiteSlug },
 		} )
 	);
 }
 
-function addContextToProduct(
-	product: RequestCartProduct,
-): RequestCartProduct {
+function addContextToProduct( product: RequestCartProduct ): RequestCartProduct {
 	return {
 		...product,
-		extra: Object.assign( { ...product.extra, context: 'calypstore' } ),
+		extra: { ...product.extra, context: 'calypstore' },
 	};
 }
