@@ -23,4 +23,5 @@ export function getProductYearlyVariant( productSlug: ProductSlug ): string | un
 			.filter( ( { type } ) => type === product.type )
 			.find( ( { term } ) => TERM_ANNUALLY === term )?.product_slug;
 	}
+	return undefined;
 }
