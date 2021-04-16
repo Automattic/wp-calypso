@@ -28,6 +28,7 @@ $breakpoint-mobile: 600px;
 $breakpoint-tablet: 783px;
 $breakpoint-desktop: 961px;
 $breakpoint-huge: 1648px;
+$breakpoint-xhuge: 2000px;
 
 $sidebar-width: 230px;
 $sidebar-width-desktop: 324px;
@@ -122,6 +123,12 @@ $sidebar-width-desktop: 324px;
 		grid-template-columns: repeat(
 			auto-fill,
 			minmax( 350px, 1fr )
+		);
+	}
+	@media screen and ( min-width: $breakpoint-xhuge ) {
+		grid-template-columns: repeat(
+			auto-fill,
+			minmax( 500px, 1fr )
 		);
 	}
 }
