@@ -607,7 +607,12 @@ class RegisterDomainStep extends React.Component {
 		}
 
 		if ( this.props.showExampleSuggestions ) {
-			return this.renderExampleSuggestions();
+			return (
+				<>
+					{ this.renderExampleSuggestions() }
+					{ this.props.isReskinned && ! this.state.loadingResults && this.props.reskinSideContent }
+				</>
+			);
 		}
 
 		return this.renderInitialSuggestions( false );
@@ -1416,6 +1421,7 @@ class RegisterDomainStep extends React.Component {
 						isReskinned={ this.props.isReskinned }
 					/>
 				) }
+				{ this.props.isReskinned && ! this.state.loadingResults && this.props.reskinSideContent }
 			</DomainSearchResults>
 		);
 	}

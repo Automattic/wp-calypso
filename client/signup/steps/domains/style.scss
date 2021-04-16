@@ -51,10 +51,6 @@
 body.is-section-signup.is-white-signup {
 	$light-white: #f3f4f5;
 
-	.signup__step.is-domains .formatted-header {
-		margin-bottom: 30px;
-	}
-
 	.domains__step-content {
 		display: flex;
 
@@ -75,16 +71,52 @@ body.is-section-signup.is-white-signup {
 		}
 
 		.domains__domain-side-content-container {
-			display: flex;
 			flex-direction: column;
-			width: 20vw;
+			width: 100vw;
+			margin-top: 40px;
+			display: none;
+
+			@include break-large {
+				width: 30vw;
+				margin-top: 0;
+				flex-direction: column;
+				display: flex;
+			}
+
+			@include break-wide {
+				width: 20vw;
+			}
+		}
+
+		.register-domain-step .domains__domain-side-content-container {
+			display: flex;
+
+			@include break-small {
+				flex-direction: row;
+
+				.domains__domain-side-content {
+					padding-top: 0;
+					border-bottom: none;
+				}
+			}
+
+			@include break-large {
+				display: none;
+			}
+
+
 		}
 
 		.domains__domain-side-content {
 			border-bottom: 1px solid;
 			border-bottom-color: var( --studio-gray-5 );
-			padding: 30px 0;
-			margin-left: 80px;
+			padding: 20px 0;
+			margin: 0 20px;
+
+			@include break-large {
+				margin: 0 0 0 80px;
+				padding: 30px 0;
+			}
 		}
 
 		.domains__domain-side-content:first-of-type {
@@ -96,16 +128,24 @@ body.is-section-signup.is-white-signup {
 		}
 
 		.register-domain-step {
-			width: 47.7vw;
+			width: 100vw;
+
+			@include break-large {
+				width: 62vw;
+			}
+
+			@include break-wide {
+				width: 48vw;
+			}
 		}
 
 		.register-domain-step__search-card {
 			background: var( --color-surface );
 			box-shadow: none;
 			border-radius: 4px; /* stylelint-disable-line */
-			margin: 20px;
+			margin: 20px 0 20px 20px;
 
-			@include break-mobile {
+			@include break-wide {
 				margin: initial;
 			}
 		}
