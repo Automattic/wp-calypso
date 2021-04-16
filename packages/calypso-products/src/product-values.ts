@@ -79,3 +79,6 @@ export { isVideoPress } from './is-video-press';
 export { isVipPlan } from './is-vip-plan';
 export { isYearly } from './is-yearly';
 export { isTrafficGuide } from './is-traffic-guide';
+export * from './is-p2-plus';
+export * from './products-list';
+export { default as sortProducts } from './sort';
