@@ -28,6 +28,7 @@ jest.mock( '@automattic/format-currency', () => ( {
 	getCurrencyObject: ( price ) => ( { integer: price } ),
 } ) );
 jest.mock( '@automattic/calypso-products', () => ( {
+	...jest.requireActual( '@automattic/calypso-products' ),
 	isPlan: jest.fn( () => null ),
 	isTheme: jest.fn( () => null ),
 	isMonthly: jest.fn( () => null ),
