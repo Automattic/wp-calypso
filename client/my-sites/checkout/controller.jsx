@@ -69,7 +69,7 @@ export function checkout( context, next ) {
 		return;
 	}
 
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
 	setSectionMiddleware( { name: 'checkout' } )( context );
@@ -140,7 +140,7 @@ export function checkoutThankYou( context, next ) {
 
 	setSectionMiddleware( { name: 'checkout-thank-you' } )( context );
 
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) );
 
 	context.primary = (

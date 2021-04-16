@@ -14,7 +14,7 @@ import AccountComponent, { noticeId as meSettingsNoticeId } from 'calypso/me/acc
 import { successNotice } from 'calypso/state/notices/actions';
 
 export function account( context, next ) {
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( translate( 'Account Settings', { textOnly: true } ) ) );
 
 	// Update the url and show the notice after a redirect

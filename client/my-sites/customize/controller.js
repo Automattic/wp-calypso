@@ -11,7 +11,7 @@ import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/ac
 import CustomizeComponent from 'calypso/my-sites/customize/main';
 
 export function customize( context, next ) {
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Customizer', { textOnly: true } ) ) );
 
 	context.primary = React.createElement( CustomizeComponent, {
