@@ -25,4 +25,5 @@ export function getProductTermVariants( productSlug: ProductSlug ): string[] | u
 			.filter( ( { product_slug } ) => product_slug !== product.product_slug )
 			.map( ( { product_slug } ) => product_slug );
 	}
+	return undefined;
 }
