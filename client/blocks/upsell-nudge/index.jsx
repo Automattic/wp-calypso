@@ -23,7 +23,7 @@ import {
 import Banner from 'calypso/components/banner';
 import { addQueryArgs } from 'calypso/lib/url';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
-import { isFreePlan } from 'calypso/lib/products-values';
+import { isFreePlanProduct } from 'calypso/lib/products-values';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -81,7 +81,7 @@ export const UpsellNudge = ( {
 		typeof site !== 'object' ||
 		typeof site.jetpack !== 'boolean' ||
 		( feature && planHasFeature ) ||
-		( ! feature && ! isFreePlan( site.plan ) ) ||
+		( ! feature && ! isFreePlanProduct( site.plan ) ) ||
 		( feature === FEATURE_NO_ADS && site.options.wordads ) ||
 		( ! jetpack && site.jetpack ) ||
 		( jetpack && ! site.jetpack );

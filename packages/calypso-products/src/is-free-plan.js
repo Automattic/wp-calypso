@@ -5,7 +5,7 @@ import { PLAN_FREE } from './index';
 import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
 
-export function isFreePlan( product ) {
+export function isFreePlanProduct( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
