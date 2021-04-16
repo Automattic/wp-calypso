@@ -50,7 +50,7 @@ import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'calypso/lib/plans/constants';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES } from '@automattic/calypso-products';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import {
 	getEligibility,

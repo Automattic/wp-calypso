@@ -27,6 +27,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { Icon } from '@wordpress/icons';
+import Search from '@automattic/search';
 
 /**
  * Internal dependencies
@@ -45,7 +46,6 @@ import {
 } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
-import Search from 'calypso/components/search';
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
 import DomainTransferSuggestion from 'calypso/components/domains/domain-transfer-suggestion';
 import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggestion';
@@ -447,13 +447,13 @@ class RegisterDomainStep extends React.Component {
 				<StickyPanel className={ searchBoxClassName }>
 					<CompactCard className="register-domain-step__search-card">
 						<Search
-							additionalClasses={ this.state.clickedExampleSuggestion ? 'is-refocused' : undefined }
+							className={ this.state.clickedExampleSuggestion ? 'is-refocused' : undefined }
 							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 							delaySearch={ true }
 							delayTimeout={ 1000 }
 							describedBy={ 'step-header' }
 							dir="ltr"
-							initialValue={ this.state.lastQuery }
+							defaultValue={ this.state.lastQuery }
 							value={ this.state.lastQuery }
 							inputLabel={ this.props.translate( 'What would you like your domain name to be?' ) }
 							minLength={ MIN_QUERY_LENGTH }
@@ -463,6 +463,7 @@ class RegisterDomainStep extends React.Component {
 							onSearchChange={ this.onSearchChange }
 							placeholder={ this.getPlaceholderText() }
 							ref={ this.bindSearchCardReference }
+							isReskinned={ this.props.isReskinned }
 						>
 							{ this.renderSearchFilters() }
 						</Search>

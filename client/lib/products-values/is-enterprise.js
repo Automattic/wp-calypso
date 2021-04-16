@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { PLAN_WPCOM_ENTERPRISE } from 'calypso/lib/plans/constants';
+import { PLAN_WPCOM_ENTERPRISE } from '@automattic/calypso-products';
 import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
 import { formatProduct } from 'calypso/lib/products-values/format-product';
 

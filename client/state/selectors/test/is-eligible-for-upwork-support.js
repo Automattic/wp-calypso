@@ -6,7 +6,7 @@ import {
 	PLAN_ECOMMERCE,
 	PLAN_FREE,
 	PLAN_PREMIUM,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import isEligibleForUpworkSupport, {
 	UPWORK_LOCALES,
 } from 'calypso/state/selectors/is-eligible-for-upwork-support';

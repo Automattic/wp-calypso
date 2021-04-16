@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { calculateMonthlyPriceForPlan } from 'calypso/lib/plans';
+import { calculateMonthlyPriceForPlan } from '@automattic/calypso-products';
 import { getPlan } from './plan';
 
 import 'calypso/state/plans/init';

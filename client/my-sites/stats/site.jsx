@@ -31,7 +31,7 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { isJetpackSite, getSitePlanSlug, getSiteOption } from 'calypso/state/sites/selectors';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
-import { FEATURE_WORDADS_INSTANT } from 'calypso/lib/plans/constants';
+import { FEATURE_WORDADS_INSTANT } from '@automattic/calypso-products';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,

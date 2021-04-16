@@ -25,6 +25,7 @@ import PartnerPortalSidebar from 'calypso/jetpack-cloud/sections/partner-portal/
 import PartnerAccess from 'calypso/jetpack-cloud/sections/partner-portal/primary/partner-access';
 import TermsOfServiceConsent from 'calypso/jetpack-cloud/sections/partner-portal/primary/terms-of-service-consent';
 import SelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/primary/select-partner-key';
+import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/billing-dashboard';
 import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/licenses';
 import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
 import {
@@ -58,7 +59,15 @@ export function partnerKeyContext( context: PageJS.Context, next: () => void ): 
 	next();
 }
 
-export function partnerPortalContext( context: PageJS.Context, next: () => void ): void {
+export function billingDashboardContext( context: PageJS.Context, next: () => void ): void {
+	context.header = <Header />;
+	context.secondary = <PartnerPortalSidebar path={ context.path } />;
+	context.primary = <BillingDashboard />;
+	context.footer = <JetpackComFooter />;
+	next();
+}
+
+export function licensesContext( context: PageJS.Context, next: () => void ): void {
 	const { s: search, sort_field, sort_direction, page } = context.query;
 	const filter = publicToInternalLicenseFilter( context.params.filter, LicenseFilter.NotRevoked );
 	const currentPage = parseInt( page ) || 1;

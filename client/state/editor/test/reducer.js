@@ -62,7 +62,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( ' #iframePort', () => {
+	describe( '#iframePort', () => {
 		test( 'should default to null', () => {
 			const state = iframePort( undefined, {} );
 

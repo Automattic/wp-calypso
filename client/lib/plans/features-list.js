@@ -8,7 +8,7 @@ import { invoke } from 'lodash';
 /**
  * Internal dependencies
  */
-import * as constants from './constants';
+import * as constants from '@automattic/calypso-products';
 import MaterialIcon from 'calypso/components/material-icon';
 import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';

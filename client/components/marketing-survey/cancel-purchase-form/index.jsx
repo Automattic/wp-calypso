@@ -54,7 +54,7 @@ import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { DOWNGRADEABLE_PLANS_FROM_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { slugToSelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/utils';
-import { TERM_ANNUALLY, JETPACK_PRODUCTS_LIST } from 'calypso/lib/plans/constants';
+import { TERM_ANNUALLY, JETPACK_PRODUCTS_LIST } from '@automattic/calypso-products';
 
 /**
  * Style dependencies
@@ -646,6 +646,9 @@ class CancelPurchaseForm extends React.Component {
 	surveyContent() {
 		const { translate, isImport, showSurvey, purchase } = this.props;
 		const { surveyStep } = this.state;
+		const isJetpack =
+			isJetpackProductSlug( purchase.productSlug ) || isJetpackPlanSlug( purchase.productSlug );
+		const productName = isJetpack ? translate( 'Jetpack' ) : translate( 'WordPress.com' );
 
 		if ( showSurvey ) {
 			if ( surveyStep === steps.INITIAL_STEP ) {
@@ -654,7 +657,10 @@ class CancelPurchaseForm extends React.Component {
 						<FormSectionHeading>{ translate( 'Your thoughts are needed.' ) }</FormSectionHeading>
 						<p>
 							{ translate(
-								'Before you go, please answer a few quick questions to help us improve WordPress.com.'
+								'Before you go, please answer a few quick questions to help us improve %(productName)s.',
+								{
+									args: { productName },
+								}
 							) }
 						</p>
 						{ this.renderQuestionOne() }

@@ -36,7 +36,7 @@ import {
 	PLAN_PREMIUM,
 	PLAN_JETPACK_SECURITY_DAILY,
 	FEATURE_WORDADS_INSTANT,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { isSiteWordadsUnsafe } from 'calypso/state/wordads/status/selectors';
 import { wordadsUnsafeValues } from 'calypso/state/wordads/status/schema';

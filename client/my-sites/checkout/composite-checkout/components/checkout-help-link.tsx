@@ -33,7 +33,7 @@ import {
 	isWpComEcommercePlan,
 	isWpComPersonalPlan,
 	isWpComPremiumPlan,
-} from 'calypso/lib/plans';
+} from '@automattic/calypso-products';
 import { isPlan } from 'calypso/lib/products-values';
 
 type StyledProps = {

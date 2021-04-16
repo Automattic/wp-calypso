@@ -1,21 +1,19 @@
-const chai = require( 'chai' );
-const expect = chai.expect;
 const profile = require( '../lib/profile' );
 
 describe( 'profile', function () {
 	it( 'no browser is passed', function () {
-		expect( profile.getProfiles( [] ) ).to.eql( [] );
+		expect( profile.getProfiles( [] ) ).toEqual( [] );
 	} );
 
 	it( 'browser is passed', function () {
-		expect( profile.getProfiles( [ 'chrome' ] ) ).to.eql( [ { id: 'mocha' } ] );
+		expect( profile.getProfiles( [ 'chrome' ] ) ).toEqual( [ { id: 'mocha' } ] );
 	} );
 
 	it( 'getCapabilities', function () {
-		expect( profile.getCapabilities() ).to.eql( { id: 'mocha' } );
+		expect( profile.getCapabilities() ).toEqual( { id: 'mocha' } );
 	} );
 
 	it( 'listBrowsers', function () {
-		expect( profile.listBrowsers() ).to.eql( [ 'mocha' ] );
+		expect( profile.listBrowsers() ).toEqual( [ 'mocha' ] );
 	} );
 } );

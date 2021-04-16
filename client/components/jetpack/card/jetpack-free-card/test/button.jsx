@@ -14,7 +14,7 @@ import '@testing-library/jest-dom/extend-expect';
 import { render as rtlRender, screen, fireEvent } from 'config/testing-library';
 import JetpackFreeCardButton from '../button';
 import { JPC_PATH_BASE } from 'calypso/jetpack-connect/constants';
-import { PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
+import { PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import { SESSION_STORAGE_SELECTED_PLAN } from 'calypso/jetpack-connect/persistence-utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import * as analytics from 'calypso/state/analytics/actions/record';

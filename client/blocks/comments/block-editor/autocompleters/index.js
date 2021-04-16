@@ -6,10 +6,9 @@ import makeXPostCompleter from './xpost';
 
 import './style.scss';
 
-export default async function addAutocompleters( userSuggestions ) {
-	const xpostCompleter = await makeXPostCompleter();
+export default function addAutocompleters( userSuggestions ) {
 	return ( completers = [] ) => {
-		completers.push( xpostCompleter );
+		completers.push( makeXPostCompleter() );
 		// Override the standard user completer with a custom one
 		const userCompleterPos = completers.findIndex( ( item ) => item.name === 'users' );
 

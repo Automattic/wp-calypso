@@ -8,7 +8,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import { getPlanTermLabel } from 'calypso/lib/plans';
+import { getPlanTermLabel } from '@automattic/calypso-products';
 import { isGoogleWorkspace, isTitanMail } from 'calypso/lib/products-values';
 
 export const groupDomainProducts = ( originalItems, translate ) => {

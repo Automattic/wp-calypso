@@ -17,7 +17,7 @@ import {
 	FEATURE_PERFORMANCE,
 	FEATURE_UPLOAD_THEMES,
 	FEATURE_SFTP,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {

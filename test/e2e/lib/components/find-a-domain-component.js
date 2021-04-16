@@ -10,7 +10,7 @@ import AsyncBaseContainer from '../async-base-container';
 import * as slackNotifier from '../slack-notifier';
 import * as driverHelper from '../driver-helper.js';
 
-const searchInputSelector = By.className( 'search__input' );
+const searchInputSelector = By.className( 'search-component__input' );
 
 export default class FindADomainComponent extends AsyncBaseContainer {
 	constructor( driver ) {

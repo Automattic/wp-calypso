@@ -34,7 +34,7 @@ function LicenseStateFilter( { doSearch }: Props ): ReactElement {
 	const translate = useTranslate();
 	const { filter, search } = useContext( LicenseListContext );
 	const counts = useSelector( getLicenseCounts );
-	const basePath = '/partner-portal/';
+	const basePath = '/partner-portal/licenses/';
 
 	const navItems = [
 		{

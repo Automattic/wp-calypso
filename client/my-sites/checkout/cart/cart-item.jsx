@@ -31,7 +31,10 @@ import {
 	GSUITE_BASIC_SLUG,
 	GSUITE_BUSINESS_SLUG,
 } from 'calypso/lib/gsuite/constants';
-import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'calypso/lib/plans';
+import {
+	calculateMonthlyPriceForPlan,
+	getBillingMonthsForPlan,
+} from '@automattic/calypso-products';
 
 export class CartItem extends React.Component {
 	removeFromCart = ( event ) => {

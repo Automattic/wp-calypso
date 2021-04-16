@@ -6,9 +6,10 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { PLANS_LIST } from 'calypso/lib/plans/plans-list';
-import { getPlanPath } from 'calypso/lib/plans';
+import { getPlans, getPlanPath } from '@automattic/calypso-products';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
+
+const PLANS_LIST = getPlans();
 
 /**
  * Given a route (path) fragment used to indicate a plan, return the corresponding plan slug.

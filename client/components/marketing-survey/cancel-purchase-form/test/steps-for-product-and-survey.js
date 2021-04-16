@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import * as steps from '../steps';
 import stepsForProductAndSurvey from '../steps-for-product-and-survey';
-import * as plans from 'calypso/lib/plans/constants';
+import * as plans from '@automattic/calypso-products';
 
 const PLAN_SURVEY_STEPS = [ steps.INITIAL_STEP, steps.FINAL_STEP ];
 const DEFAULT_STEPS_WITH_UPGRADE_AT_STEP = [

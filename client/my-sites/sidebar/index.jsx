@@ -91,7 +91,7 @@ import JetpackSidebarMenuItems from 'calypso/components/jetpack/sidebar/menu-ite
 import InfoPopover from 'calypso/components/info-popover';
 import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
 import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
-import { isP2PlusPlan } from 'calypso/lib/plans';
+import { isP2PlusPlan } from '@automattic/calypso-products';
 
 /**
  * Style dependencies

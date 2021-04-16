@@ -34,8 +34,11 @@ import PluginAutomatedTransfer from 'calypso/my-sites/plugins/plugin-automated-t
 import { getExtensionSettingsPath, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { userCan } from 'calypso/lib/site/utils';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { FEATURE_UPLOAD_PLUGINS, TYPE_BUSINESS } from 'calypso/lib/plans/constants';
-import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
+import {
+	findFirstSimilarPlanKey,
+	FEATURE_UPLOAD_PLUGINS,
+	TYPE_BUSINESS,
+} from '@automattic/calypso-products';
 import { isBusiness, isEcommerce, isEnterprise } from 'calypso/lib/products-values';
 import { addSiteFragment } from 'calypso/lib/route';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
