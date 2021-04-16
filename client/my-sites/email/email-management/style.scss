@@ -92,6 +92,12 @@
 	}
 }
 
+.email-plan__actions .vertical-nav-item.card,
+.email-plan-mailboxes-list__mailbox-list-item.card {
+	padding-bottom: 24px;
+	padding-top: 24px;
+}
+
 .email-plan__status {
 	display: flex;
 	align-items: center;
@@ -137,6 +143,7 @@
 	display: flex;
 	align-items: center;
 	> svg {
+		fill: var( --studio-gray-50 );
 		margin-right: 10px;
 	}
 	> .badge {

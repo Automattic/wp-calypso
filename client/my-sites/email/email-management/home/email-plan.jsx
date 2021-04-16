@@ -219,12 +219,14 @@ class EmailPlan extends React.Component {
 
 				<EmailPlanMailboxesList emails={ this.getEmails() } />
 
-				<VerticalNav>
-					<VerticalNavItem { ...addMailboxProps }>
-						{ translate( 'Add new mailbox' ) }
-					</VerticalNavItem>
-					{ this.renderBillingNavItem() }
-				</VerticalNav>
+				<div className="email-plan__actions">
+					<VerticalNav>
+						<VerticalNavItem { ...addMailboxProps }>
+							{ translate( 'Add new mailbox' ) }
+						</VerticalNavItem>
+						{ this.renderBillingNavItem() }
+					</VerticalNav>
+				</div>
 			</>
 		);
 	}
