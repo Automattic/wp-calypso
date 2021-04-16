@@ -410,8 +410,9 @@ describe( 'multiPartnerCardProcessor', () => {
 				...ebanxCardTransactionRequest,
 				countryCode: undefined,
 			};
-			await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrowError(
-				/missing country/
+			const expected = { payload: 'ebanx error: missing country', type: 'ERROR' };
+			await expect( multiPartnerCardProcessor( submitData, options ) ).resolves.toStrictEqual(
+				expected
 			);
 		} );
 
@@ -421,8 +422,9 @@ describe( 'multiPartnerCardProcessor', () => {
 				...ebanxCardTransactionRequest,
 				name: undefined,
 			};
-			await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrowError(
-				/missing name/
+			const expected = { payload: 'ebanx error: missing name', type: 'ERROR' };
+			await expect( multiPartnerCardProcessor( submitData, options ) ).resolves.toStrictEqual(
+				expected
 			);
 		} );
 
@@ -432,8 +434,9 @@ describe( 'multiPartnerCardProcessor', () => {
 				...ebanxCardTransactionRequest,
 				number: undefined,
 			};
-			await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrowError(
-				/missing number/
+			const expected = { payload: 'ebanx error: missing number', type: 'ERROR' };
+			await expect( multiPartnerCardProcessor( submitData, options ) ).resolves.toStrictEqual(
+				expected
 			);
 		} );
 
@@ -443,8 +446,9 @@ describe( 'multiPartnerCardProcessor', () => {
 				...ebanxCardTransactionRequest,
 				cvv: undefined,
 			};
-			await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrowError(
-				/missing cvv/
+			const expected = { payload: 'ebanx error: missing cvv', type: 'ERROR' };
+			await expect( multiPartnerCardProcessor( submitData, options ) ).resolves.toStrictEqual(
+				expected
 			);
 		} );
 
@@ -454,8 +458,9 @@ describe( 'multiPartnerCardProcessor', () => {
 				...ebanxCardTransactionRequest,
 				'expiration-date': undefined,
 			};
-			await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrowError(
-				/missing expiration-date/
+			const expected = { payload: 'ebanx error: missing expiration-date', type: 'ERROR' };
+			await expect( multiPartnerCardProcessor( submitData, options ) ).resolves.toStrictEqual(
+				expected
 			);
 		} );
 
