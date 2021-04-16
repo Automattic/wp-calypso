@@ -61,7 +61,7 @@ export type Product = {
 	getFeatures?: ( variation: string ) => string[];
 };
 
-export const JETPACK_PRODUCTS_LIST: Record< JetpackProductSlug, Product > = {
+export const JETPACK_PRODUCTS_LIST_WITH_FEATURES: Record< JetpackProductSlug, Product > = {
 	[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
 		product_name: PRODUCT_SHORT_NAMES[ PRODUCT_JETPACK_BACKUP_DAILY ],
 		product_slug: PRODUCT_JETPACK_BACKUP_DAILY,
@@ -216,7 +216,7 @@ export const JETPACK_PRODUCTS_LIST: Record< JetpackProductSlug, Product > = {
 };
 
 export const PRODUCTS_LIST: Record< ProductSlug, Product > = {
-	...JETPACK_PRODUCTS_LIST,
+	...JETPACK_PRODUCTS_LIST_WITH_FEATURES,
 	[ PRODUCT_WPCOM_SEARCH ]: {
 		product_name: PRODUCT_SHORT_NAMES[ PRODUCT_WPCOM_SEARCH ],
 		product_slug: PRODUCT_WPCOM_SEARCH,

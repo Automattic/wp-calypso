@@ -43,18 +43,16 @@ import {
 	getMonthlyPlanByYearly,
 	getYearlyPlanByMonthly,
 	planHasFeature,
-} from '@automattic/calypso-products';
-import {
 	Product,
-	JETPACK_PRODUCTS_LIST,
+	JETPACK_PRODUCTS_LIST_WITH_FEATURES,
 	objectIsProduct,
 	PRODUCTS_LIST,
+	getJetpackProductDisplayName,
+	getJetpackProductTagline,
+	getJetpackProductCallToAction,
+	getJetpackProductDescription,
+	getJetpackProductShortName,
 } from '@automattic/calypso-products';
-import { getJetpackProductDisplayName } from '@automattic/calypso-products';
-import { getJetpackProductTagline } from '@automattic/calypso-products';
-import { getJetpackProductCallToAction } from '@automattic/calypso-products';
-import { getJetpackProductDescription } from '@automattic/calypso-products';
-import { getJetpackProductShortName } from '@automattic/calypso-products';
 import config from '@automattic/calypso-config';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { getForCurrentCROIteration, Iterations } from './iterations';
@@ -342,7 +340,7 @@ function slugIsSelectorProductSlug( slug: string ): slug is SelectorProductSlug 
 	return PRODUCTS_WITH_OPTIONS.includes( slug as typeof PRODUCTS_WITH_OPTIONS[ number ] );
 }
 function slugIsJetpackProductSlug( slug: string ): slug is JetpackProductSlug {
-	return slug in JETPACK_PRODUCTS_LIST;
+	return slug in JETPACK_PRODUCTS_LIST_WITH_FEATURES;
 }
 function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlugs {
 	return [ ...JETPACK_LEGACY_PLANS, ...JETPACK_RESET_PLANS ].includes( slug );
@@ -362,7 +360,7 @@ export function slugToItem( slug: string ): Plan | Product | SelectorProduct | n
 			EXTERNAL_PRODUCTS_SLUG_MAP[ slug ]( variation )
 		);
 	} else if ( slugIsJetpackProductSlug( slug ) ) {
-		return JETPACK_PRODUCTS_LIST[ slug ];
+		return JETPACK_PRODUCTS_LIST_WITH_FEATURES[ slug ];
 	} else if ( slugIsJetpackPlanSlug( slug ) ) {
 		return getPlan( slug ) as Plan;
 	}
