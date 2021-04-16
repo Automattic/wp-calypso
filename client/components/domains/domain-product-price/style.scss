@@ -25,10 +25,10 @@
 		font-size: $font-body-small;
 		text-align: left;
 
-		.is-white-signup & {
+		.is-white-signup &.domain-product-price__domain-step-signup-flow {
 			display: flex;
 			flex-direction: column-reverse;
-			margin-top: 5px;
+			margin-top: 4px;
 		}
 	}
 

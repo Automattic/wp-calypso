@@ -394,7 +394,7 @@ body.is-section-signup.is-white-signup {
 
 			.domain-suggestion__action:not( .is-borderless ) {
 				line-height: 20px;
-				padding: 0.66rem 2.4rem;
+				padding: 0.57em 1.3em;
 				font-weight: 500; /* stylelint-disable-line */
 				border-radius: 4px;  /* stylelint-disable-line */
 				box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
@@ -402,7 +402,7 @@ body.is-section-signup.is-white-signup {
 				letter-spacing: 0.32px;
 
 				@include break-mobile {
-					padding: 11px 40px;
+					padding: 0.65em 2.8em;
 				}
 			}
 
