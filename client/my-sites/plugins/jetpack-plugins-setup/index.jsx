@@ -169,9 +169,7 @@ class PlansSetup extends React.Component {
 
 		const getPluginFromStore = function () {
 			if ( ! sitePlugin && requestingInstalledPlugins ) {
-				// if the Plugins are still being fetched, we wait. We are not using flux
-				// store events because it would be more messy to handle the one-time-only
-				// callback with bound parameters than to do it this way.
+				// if the Plugins are still being fetched, we wait.
 				return setTimeout( getPluginFromStore, 500 );
 			}
 			// Merge any site-specific info into the plugin object, setting a default plugin ID if needed

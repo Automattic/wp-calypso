@@ -180,8 +180,6 @@ class Signup extends React.Component {
 			providedDependencies = { siteSlug: getSignupCompleteSlug(), isManageSiteFlow: true };
 		}
 
-		// Caution: any signup Flux actions should happen after this initialization.
-		// Otherwise, the redux adpatation layer won't work and the state can go off.
 		this.signupFlowController = new SignupFlowController( {
 			flowName: this.props.flowName,
 			providedDependencies,
