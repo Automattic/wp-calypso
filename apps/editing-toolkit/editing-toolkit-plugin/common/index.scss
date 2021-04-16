@@ -1,3 +1,9 @@
+body {
+	text-rendering: optimizeLegibility;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+}
+
 body.hide-homepage-title {
 
 	// Allow homepage title to be edited even when hidden

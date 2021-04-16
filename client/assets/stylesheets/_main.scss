@@ -52,7 +52,9 @@ body {
 	color: var( --color-text );
 	font-size: $font-body;
 	line-height: 1.5;
-
+	text-rendering: optimizeLegibility;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
 	-ms-overflow-style: scrollbar;
 
 	// This fixes an issue with the `click-outside` package not working on mobile.
