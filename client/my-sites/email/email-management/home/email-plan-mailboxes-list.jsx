@@ -11,6 +11,7 @@ import { CompactCard } from '@automattic/components';
 import MaterialIcon from 'calypso/components/material-icon';
 import SectionHeader from 'calypso/components/section-header';
 import Badge from 'calypso/components/badge';
+import { isEmailUserAdmin } from 'calypso/lib/emails';
 
 class EmailPlanMailboxesList extends React.Component {
 	render() {
@@ -23,12 +24,14 @@ class EmailPlanMailboxesList extends React.Component {
 		const emailsItems = emails.map( ( email ) => {
 			return (
 				<CompactCard
-					key={ `email-row-${ email.email }` }
+					key={ `email-row-${ email.mailbox }` }
 					className="email-plan-mailboxes-list__mailbox-list-item"
 				>
 					<MaterialIcon icon="email" />
-					<span>{ email.email }</span>
-					{ email.isAdmin && (
+					<span>
+						{ email.mailbox }@{ email.domain }
+					</span>
+					{ isEmailUserAdmin( email ) && (
 						<Badge type="info">
 							{ translate( 'Admin', {
 								comment: 'Email user role displayed as a badge',

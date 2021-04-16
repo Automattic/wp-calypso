@@ -759,10 +759,13 @@ Undocumented.prototype.validateGoogleAppsContactInformation = function (
 	return result.then?.( camelCaseKeys );
 };
 
-Undocumented.prototype.getTitanMailboxesForSite = function ( siteId, fn ) {
+Undocumented.prototype.getEmailAccountsForSiteAndDomain = function ( siteId, domain, fn ) {
 	return this.wpcom.req.get(
 		{
-			path: `/sites/${ encodeURIComponent( siteId ) }/titan-mailboxes`,
+			path: `/sites/${ encodeURIComponent( siteId ) }/emails/accounts/${ encodeURIComponent(
+				domain
+			) }/mailboxes`,
+			apiNamespace: 'wpcom/v2',
 		},
 		fn
 	);

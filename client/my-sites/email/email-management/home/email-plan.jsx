@@ -34,75 +34,60 @@ import EmailPlanSubscription from 'calypso/my-sites/email/email-management/home/
 import MaterialIcon from 'calypso/components/material-icon';
 import { resolveEmailPlanStatus } from 'calypso/my-sites/email/email-management/home/utils';
 
-const normalizeTitanMailboxes = ( titanMailboxes ) => {
-	if ( ! titanMailboxes ) {
-		return [];
-	}
-	return titanMailboxes.map( ( mailbox ) => {
-		return {
-			email: mailbox.email,
-			isAdmin: mailbox.is_admin,
-		};
-	} );
-};
-
 class EmailPlan extends React.Component {
 	state = {
-		isLoadingTitanMailboxes: false,
-		errorLoadingTitanMailboxes: false,
-		loadedTitanMailboxes: false,
-		titanMailboxes: [],
+		isLoadingEmailAccounts: false,
+		errorLoadingEmailAccounts: false,
+		loadedEmailAccounts: false,
+		emailAccounts: [],
 	};
 
 	componentDidMount() {
-		this.loadTitanMailboxes();
+		this.loadEmailAccounts();
 	}
 
 	componentDidUpdate() {
-		this.loadTitanMailboxes();
+		this.loadEmailAccounts();
 	}
 
-	loadTitanMailboxes() {
-		const { selectedSite } = this.props;
+	loadEmailAccounts() {
+		const { domain, selectedSite } = this.props;
 
-		if ( this.state.isLoadingTitanMailboxes || this.state.loadedTitanMailboxes ) {
+		if ( this.state.isLoadingEmailAccounts || this.state.loadedEmailAccounts ) {
 			return;
 		}
 
 		this.setState( {
-			isLoadingTitanMailboxes: true,
+			isLoadingEmailAccounts: true,
 		} );
 
 		wp.undocumented()
-			.getTitanMailboxesForSite( selectedSite.ID )
+			.getEmailAccountsForSiteAndDomain( selectedSite.ID, domain.name )
 			.then(
 				( data ) => {
 					this.setState( {
-						isLoadingTitanMailboxes: false,
-						errorLoadingTitanMailboxes: false,
-						loadedTitanMailboxes: true,
-						titanMailboxes: data?.accounts || [],
+						isLoadingEmailAccounts: false,
+						errorLoadingEmailAccounts: false,
+						loadedEmailAccounts: true,
+						emailAccounts: data?.accounts || [],
 					} );
 				},
 				() => {
 					this.setState( {
-						isLoadingTitanMailboxes: false,
-						errorLoadingTitanMailboxes: true,
-						loadedTitanMailboxes: true,
-						titanMailboxes: [],
+						isLoadingEmailAccounts: false,
+						errorLoadingEmailAccounts: true,
+						loadedEmailAccounts: true,
+						emailAccounts: [],
 					} );
 				}
 			);
 	}
 
 	getEmails() {
-		const { domain, emails } = this.props;
-
-		if ( hasTitanMailWithUs( domain ) ) {
-			return normalizeTitanMailboxes( this.state.titanMailboxes );
+		if ( this.state.emailAccounts[ 0 ] ) {
+			return this.state.emailAccounts[ 0 ].emails;
 		}
-
-		return emails;
+		return [];
 	}
 
 	handleBack = () => {
