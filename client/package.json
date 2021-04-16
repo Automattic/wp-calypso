@@ -238,7 +238,7 @@
 		"@testing-library/react": "^11.2.6",
 		"@testing-library/react-hooks": "5.1.1",
 		"autoprefixer": "^9.7.3",
-		"component-event": "^0.1.4",
+		"component-event": "^0.2.0",
 		"component-query": "^0.0.3",
 		"react-test-renderer": "^16.12.0",
 		"pkg-dir": "^5.0.0",

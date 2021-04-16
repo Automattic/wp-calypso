@@ -9010,10 +9010,15 @@ component-emitter@1.2.1, component-emitter@^1.2.0, component-emitter@^1.2.1:
   resolved "https://registry.yarnpkg.com/component-emitter/-/component-emitter-1.2.1.tgz#137918d6d78283f7df7a6b7c5a63e140e69425e6"
   integrity sha1-E3kY1teCg/ffemt8WmPhQOaUJeY=
 
-component-event@0.1.4, component-event@^0.1.4:
+component-event@0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/component-event/-/component-event-0.1.4.tgz#3de78fc28782381787e24bf2a7c536bf0142c9b4"
   integrity sha1-PeePwoeCOBeH4kvyp8U2vwFCybQ=
+
+component-event@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/component-event/-/component-event-0.2.0.tgz#8689a7c25a7dd0afe7e2e8408091d5b9e12ce196"
+  integrity sha1-homnwlp90K/n4uhAgJHVueEs4ZY=
 
 component-file-picker@^0.2.1:
   version "0.2.1"
