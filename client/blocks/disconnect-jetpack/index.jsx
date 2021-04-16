@@ -27,7 +27,7 @@ import {
 	infoNotice,
 	removeNotice,
 } from 'calypso/state/notices/actions';
-import { getPlanClass } from 'calypso/lib/plans';
+import { getPlanClass } from '@automattic/calypso-products';
 import { getSiteSlug, getSiteTitle, getSitePlanSlug } from 'calypso/state/sites/selectors';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 

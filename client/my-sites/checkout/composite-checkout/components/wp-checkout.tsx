@@ -55,7 +55,6 @@ import {
 	hasDomainRegistration,
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
-import QueryExperiments from 'calypso/components/data/query-experiments';
 import PaymentMethodStep from './payment-method-step';
 import CheckoutHelpLink from './checkout-help-link';
 import styled from '../lib/styled';
@@ -373,7 +372,6 @@ export default function WPCheckout( {
 
 	return (
 		<Checkout>
-			<QueryExperiments />
 			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
 				<CheckoutErrorBoundary
 					errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }

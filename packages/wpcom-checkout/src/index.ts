@@ -7,3 +7,4 @@ export * from './transformations';
 export * from './types';
 export { useDisplayCartMessages };
 export { createApplePayMethod } from './payment-methods/apple-pay';
+export * from './postal-code';

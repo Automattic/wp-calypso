@@ -21,7 +21,7 @@ import {
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans/jetpack-plans/constants';
 
 /**

@@ -361,7 +361,7 @@ describe( 'TokenField', () => {
 			firstSuggestion.simulate( 'click' );
 
 			// wait for setState call
-			jest.runTimersToTime( 10 );
+			jest.advanceTimersByTime( 10 );
 			expect( wrapper.find( '.is-active' ).length ).toBe( 1 );
 		} );
 

@@ -8,7 +8,7 @@ import React from 'react';
  */
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCta from 'calypso/components/promo-section/promo-card/cta';
-import { FEATURE_MEMBERSHIPS } from 'calypso/lib/plans/constants';
+import { FEATURE_MEMBERSHIPS } from '@automattic/calypso-products';
 
 /**
  * Image dependencies

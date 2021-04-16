@@ -50,18 +50,21 @@ describe( 'Webpack RTL Plugin', () => {
 		const cssBundlePath = path.join( __dirname, 'dist/style.css' );
 		const rtlCssBundlePath = path.join( __dirname, 'dist/style.rtl.css' );
 
-		beforeAll( ( done ) => {
-			webpack( baseConfig, ( err, stats ) => {
-				if ( err ) {
-					return done( err );
-				}
+		beforeAll(
+			() =>
+				new Promise( ( done ) => {
+					webpack( baseConfig, ( err, stats ) => {
+						if ( err ) {
+							return done( err );
+						}
 
-				if ( stats.hasErrors() ) {
-					return done( new Error( stats.toString() ) );
-				}
-				done();
-			} );
-		} );
+						if ( stats.hasErrors() ) {
+							return done( new Error( stats.toString() ) );
+						}
+						done();
+					} );
+				} )
+		);
 
 		it( 'should create a second bundle', () => {
 			expect( fs.existsSync( bundlePath ) ).toBe( true );
@@ -83,42 +86,45 @@ describe( 'Webpack RTL Plugin', () => {
 		let cssBundlePath;
 		let rtlCssBundlePath;
 
-		beforeAll( ( done ) => {
-			const config = {
-				...baseConfig,
-				entry: {
-					'js/main.js': path.join( __dirname, 'src/index.js' ),
-				},
-				output: {
-					path: path.resolve( __dirname, 'dist-test' ),
-					filename: '[name]',
-				},
-				plugins: [
-					new MiniCssExtractPlugin( {
-						filename: 'css/style.css',
-					} ),
-					new WebpackRTLPlugin( {
-						test: /css\//i,
-					} ),
-				],
-			};
+		beforeAll(
+			() =>
+				new Promise( ( done ) => {
+					const config = {
+						...baseConfig,
+						entry: {
+							'js/main.js': path.join( __dirname, 'src/index.js' ),
+						},
+						output: {
+							path: path.resolve( __dirname, 'dist-test' ),
+							filename: '[name]',
+						},
+						plugins: [
+							new MiniCssExtractPlugin( {
+								filename: 'css/style.css',
+							} ),
+							new WebpackRTLPlugin( {
+								test: /css\//i,
+							} ),
+						],
+					};
 
-			webpack( config, ( err, stats ) => {
-				if ( err ) {
-					return done( err );
-				}
+					webpack( config, ( err, stats ) => {
+						if ( err ) {
+							return done( err );
+						}
 
-				if ( stats.hasErrors() ) {
-					return done( new Error( stats.toString() ) );
-				}
+						if ( stats.hasErrors() ) {
+							return done( new Error( stats.toString() ) );
+						}
 
-				bundlePath = path.join( __dirname, 'dist-test/js/main.js' );
-				cssBundlePath = path.join( __dirname, 'dist-test/css/style.css' );
-				rtlCssBundlePath = path.join( __dirname, 'dist-test/css/style.rtl.css' );
+						bundlePath = path.join( __dirname, 'dist-test/js/main.js' );
+						cssBundlePath = path.join( __dirname, 'dist-test/css/style.css' );
+						rtlCssBundlePath = path.join( __dirname, 'dist-test/css/style.rtl.css' );
 
-				done();
-			} );
-		} );
+						done();
+					} );
+				} )
+		);
 
 		it( 'should create a two css bundles', () => {
 			expect( fs.existsSync( bundlePath ) ).toBe( true );
@@ -132,36 +138,39 @@ describe( 'Webpack RTL Plugin', () => {
 		let rtlCssBundlePath;
 		const cssPath = 'assets/css';
 
-		beforeAll( ( done ) => {
-			const config = {
-				...baseConfig,
-				output: {
-					path: path.resolve( __dirname, 'dist-path' ),
-					filename: 'bundle.js',
-				},
-				plugins: [
-					new MiniCssExtractPlugin( {
-						filename: path.join( cssPath, 'style.css' ),
-					} ),
-					new WebpackRTLPlugin(),
-				],
-			};
+		beforeAll(
+			() =>
+				new Promise( ( done ) => {
+					const config = {
+						...baseConfig,
+						output: {
+							path: path.resolve( __dirname, 'dist-path' ),
+							filename: 'bundle.js',
+						},
+						plugins: [
+							new MiniCssExtractPlugin( {
+								filename: path.join( cssPath, 'style.css' ),
+							} ),
+							new WebpackRTLPlugin(),
+						],
+					};
 
-			webpack( config, ( err, stats ) => {
-				if ( err ) {
-					return done( err );
-				}
+					webpack( config, ( err, stats ) => {
+						if ( err ) {
+							return done( err );
+						}
 
-				if ( stats.hasErrors() ) {
-					return done( new Error( stats.toString() ) );
-				}
+						if ( stats.hasErrors() ) {
+							return done( new Error( stats.toString() ) );
+						}
 
-				cssBundlePath = path.join( __dirname, 'dist-path', cssPath, 'style.css' );
-				rtlCssBundlePath = path.join( __dirname, 'dist-path', cssPath, 'style.rtl.css' );
+						cssBundlePath = path.join( __dirname, 'dist-path', cssPath, 'style.css' );
+						rtlCssBundlePath = path.join( __dirname, 'dist-path', cssPath, 'style.rtl.css' );
 
-				done();
-			} );
-		} );
+						done();
+					} );
+				} )
+		);
 
 		it( 'should create two css bundles with same path', () => {
 			expect( fs.existsSync( cssBundlePath ) ).toBe( true );
@@ -172,46 +181,49 @@ describe( 'Webpack RTL Plugin', () => {
 	describe( 'Rtlcss options', () => {
 		const rtlCssBundlePath = path.join( __dirname, 'dist-options/style.rtl.css' );
 
-		beforeAll( ( done ) => {
-			const config = {
-				...baseConfig,
-				output: {
-					path: path.resolve( __dirname, 'dist-options' ),
-					filename: 'bundle.js',
-				},
-				plugins: [
-					new MiniCssExtractPlugin( {
-						filename: 'style.css',
-					} ),
-					new WebpackRTLPlugin( {
-						options: {
-							autoRename: true,
-							stringMap: [
-								{
-									search: 'prev',
-									replace: 'next',
-									options: {
-										scope: '*',
-									},
-								},
-							],
+		beforeAll(
+			() =>
+				new Promise( ( done ) => {
+					const config = {
+						...baseConfig,
+						output: {
+							path: path.resolve( __dirname, 'dist-options' ),
+							filename: 'bundle.js',
 						},
-					} ),
-				],
-			};
+						plugins: [
+							new MiniCssExtractPlugin( {
+								filename: 'style.css',
+							} ),
+							new WebpackRTLPlugin( {
+								options: {
+									autoRename: true,
+									stringMap: [
+										{
+											search: 'prev',
+											replace: 'next',
+											options: {
+												scope: '*',
+											},
+										},
+									],
+								},
+							} ),
+						],
+					};
 
-			webpack( config, ( err, stats ) => {
-				if ( err ) {
-					return done( err );
-				}
+					webpack( config, ( err, stats ) => {
+						if ( err ) {
+							return done( err );
+						}
 
-				if ( stats.hasErrors() ) {
-					return done( new Error( stats.toString() ) );
-				}
+						if ( stats.hasErrors() ) {
+							return done( new Error( stats.toString() ) );
+						}
 
-				done();
-			} );
-		} );
+						done();
+					} );
+				} )
+		);
 
 		it( 'should follow the options given to rtlcss', () => {
 			const contentRrlCss = fs.readFileSync( rtlCssBundlePath, 'utf-8' );
@@ -222,47 +234,49 @@ describe( 'Webpack RTL Plugin', () => {
 	describe( 'Rtlcss plugins', () => {
 		const rtlCssBundlePath = path.join( __dirname, 'dist-options/style.rtl.css' );
 
-		beforeAll( ( done ) => {
-			const config = {
-				...baseConfig,
-				output: {
-					path: path.resolve( __dirname, 'dist-options' ),
-					filename: 'bundle.js',
-				},
-				plugins: [
-					new MiniCssExtractPlugin( {
-						filename: 'style.css',
-					} ),
-					new WebpackRTLPlugin( {
-						plugins: [
-							// Based on github.com/MohammadYounes/rtlcss/issues/86#issuecomment-261875443
-							{
-								name: 'Skip variables',
-								priority: 1,
-								directives: { control: {}, value: [] },
-								processors: [
-									{
-										name: '--',
-										expr: /^--/im,
-										action: ( prop, value ) => ( { prop, value } ),
-									},
-								],
-							},
-						],
-					} ),
-				],
-			};
+		beforeAll( () => {
+			return new Promise( function ( done ) {
+				const config = {
+					...baseConfig,
+					output: {
+						path: path.resolve( __dirname, 'dist-options' ),
+						filename: 'bundle.js',
+					},
+					plugins: [
+						new MiniCssExtractPlugin( {
+							filename: 'style.css',
+						} ),
+						new WebpackRTLPlugin( {
+							plugins: [
+								// Based on github.com/MohammadYounes/rtlcss/issues/86#issuecomment-261875443
+								{
+									name: 'Skip variables',
+									priority: 1,
+									directives: { control: {}, value: [] },
+									processors: [
+										{
+											name: '--',
+											expr: /^--/im,
+											action: ( prop, value ) => ( { prop, value } ),
+										},
+									],
+								},
+							],
+						} ),
+					],
+				};
 
-			webpack( config, ( err, stats ) => {
-				if ( err ) {
-					return done( err );
-				}
+				webpack( config, ( err, stats ) => {
+					if ( err ) {
+						return done( err );
+					}
 
-				if ( stats.hasErrors() ) {
-					return done( new Error( stats.toString() ) );
-				}
+					if ( stats.hasErrors() ) {
+						return done( new Error( stats.toString() ) );
+					}
 
-				done();
+					done();
+				} );
 			} );
 		} );
 
@@ -275,33 +289,35 @@ describe( 'Webpack RTL Plugin', () => {
 	describe( 'Diff', () => {
 		const rtlCssBundlePath = path.join( __dirname, 'dist-diff/style.rtl.css' );
 
-		beforeAll( ( done ) => {
-			const config = {
-				...baseConfig,
-				output: {
-					path: path.resolve( __dirname, 'dist-diff' ),
-					filename: 'bundle.js',
-				},
-				plugins: [
-					new MiniCssExtractPlugin( {
-						filename: 'style.css',
-					} ),
-					new WebpackRTLPlugin( {
-						diffOnly: true,
-					} ),
-				],
-			};
+		beforeAll( () => {
+			return new Promise( function ( done ) {
+				const config = {
+					...baseConfig,
+					output: {
+						path: path.resolve( __dirname, 'dist-diff' ),
+						filename: 'bundle.js',
+					},
+					plugins: [
+						new MiniCssExtractPlugin( {
+							filename: 'style.css',
+						} ),
+						new WebpackRTLPlugin( {
+							diffOnly: true,
+						} ),
+					],
+				};
 
-			webpack( config, ( err, stats ) => {
-				if ( err ) {
-					return done( err );
-				}
+				webpack( config, ( err, stats ) => {
+					if ( err ) {
+						return done( err );
+					}
 
-				if ( stats.hasErrors() ) {
-					return done( new Error( stats.toString() ) );
-				}
+					if ( stats.hasErrors() ) {
+						return done( new Error( stats.toString() ) );
+					}
 
-				done();
+					done();
+				} );
 			} );
 		} );
 

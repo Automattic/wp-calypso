@@ -23,14 +23,14 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import SiteUsersFetcher from 'calypso/components/site-users-fetcher';
+import useUsersQuery from 'calypso/data/users/use-users-query';
 
 const REBRAND_CITIES_ACCOUNT_USERNAME = 'rebrandcities';
 
 /**
  * The <AreUsersPresent /> component takes a set of users and an onChange callback. It
  * passes true or false into the callback whenever the count of users changes. This is
- * intended to be wrapped in a SiteUsersFetcher which will pass the users in.
+ * intended to be wrapped in a IsRebrandCitiesSite which will pass the users in.
  *
  * This is a helper component which isn't exported.
  */
@@ -38,7 +38,7 @@ class AreUsersPresent extends Component {
 	static propTypes = {
 		// onChange is passed in from the primary component
 		onChange: PropTypes.func.isRequired,
-		// users is passed from the SiteUsersFetcher
+		// users is passed from the `useUsersQuery` in <IsRebrandCitiesSite />
 		users: PropTypes.array,
 	};
 
@@ -70,30 +70,23 @@ class AreUsersPresent extends Component {
  * callback is executed with true or false depending on if the passed-in site ID is owned
  * by the Rebrand Cities account. This information can then be passed on when the concierge
  * session is booked by the implementing component.
+ *
+ * @param {object}   props Component props
+ * @param {Function} props.onChange  Callback to be executed on a change in the number of users
+ * @param {number}   props.siteId    ID of the site to fetch users from
  */
-class IsRebrandCitiesSite extends Component {
-	static propTypes = {
-		onChange: PropTypes.func.isRequired,
-		siteId: PropTypes.number.isRequired,
+const IsRebrandCitiesSite = ( { onChange, siteId } ) => {
+	const siteUsersFetchOptions = {
+		// By setting a search without * wildcards, we can ensure that only users
+		// on the site with an exactly-matching username will be passed through,
+		search: REBRAND_CITIES_ACCOUNT_USERNAME,
+		search_columns: [ 'display_name', 'user_login' ],
 	};
 
-	render() {
-		const { onChange, siteId } = this.props;
+	const usersQuery = useUsersQuery( siteId, siteUsersFetchOptions );
+	const users = usersQuery.data?.users ?? [];
 
-		const siteUsersFetchOptions = {
-			siteId,
-			// By setting a search without * wildcards, we can ensure that only users
-			// on the site with an exactly-matching username will be passed through,
-			search: REBRAND_CITIES_ACCOUNT_USERNAME,
-			search_columns: [ 'display_name', 'user_login' ],
-		};
-
-		return (
-			<SiteUsersFetcher fetchOptions={ siteUsersFetchOptions }>
-				<AreUsersPresent onChange={ onChange } />
-			</SiteUsersFetcher>
-		);
-	}
-}
+	return <AreUsersPresent users={ users } onChange={ onChange } />;
+};
 
 export default IsRebrandCitiesSite;

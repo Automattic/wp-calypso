@@ -1,3 +1,5 @@
+/* eslint-disable jest/valid-title */
+
 const evaluations = [
 	require( './evaluations/node-memory' ),
 	require( './evaluations/node-npm-cache' ),

@@ -44,7 +44,9 @@ export default function IssueLicenseForm(): ReactElement {
 	} );
 	const issueLicense = useIssueLicenseMutation( {
 		onSuccess: ( license ) => {
-			page.redirect( addQueryArgs( { highlight: license.license_key }, '/partner-portal' ) );
+			page.redirect(
+				addQueryArgs( { highlight: license.license_key }, '/partner-portal/licenses' )
+			);
 		},
 		onError: ( error: Error ) => {
 			dispatch( errorNotice( error.message ) );
@@ -86,7 +88,7 @@ export default function IssueLicenseForm(): ReactElement {
 			) }
 
 			<div className="issue-license-form__actions">
-				<Button href="/partner-portal" disabled={ issueLicense.isLoading }>
+				<Button href="/partner-portal/licenses" disabled={ issueLicense.isLoading }>
 					{ translate( 'Go back' ) }
 				</Button>
 

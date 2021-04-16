@@ -36,7 +36,7 @@ import {
 	isGSuiteOrExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 } from 'calypso/lib/gsuite';
-import { isWpComPlan } from 'calypso/lib/plans';
+import { isWpComPlan } from '@automattic/calypso-products';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';

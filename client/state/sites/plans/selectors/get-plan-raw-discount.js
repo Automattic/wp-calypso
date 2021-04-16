@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { calculateMonthlyPriceForPlan } from 'calypso/lib/plans';
+import { calculateMonthlyPriceForPlan } from '@automattic/calypso-products';
 import { getSitePlan } from 'calypso/state/sites/plans/selectors/get-site-plan';
 import { isSitePlanDiscounted } from 'calypso/state/sites/plans/selectors/is-site-plan-discounted';
 

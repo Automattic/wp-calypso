@@ -236,8 +236,12 @@ describe( 'multiPartnerCardProcessor', () => {
 
 		it( 'fails to create a token if the name and address are missing', async () => {
 			const submitData = { paymentPartner: 'stripe', stripe, stripeConfiguration };
-			await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrowError(
-				/billing_details.name/
+			const expected = {
+				payload: 'stripe error: missing billing_details.name',
+				type: 'ERROR',
+			};
+			await expect( multiPartnerCardProcessor( submitData, options ) ).resolves.toStrictEqual(
+				expected
 			);
 		} );
 
@@ -248,8 +252,12 @@ describe( 'multiPartnerCardProcessor', () => {
 				stripeConfiguration,
 				name: 'test name',
 			};
-			await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrowError(
-				/billing_details.address.country/
+			const expected = {
+				payload: 'stripe error: missing billing_details.address.country',
+				type: 'ERROR',
+			};
+			await expect( multiPartnerCardProcessor( submitData, options ) ).resolves.toStrictEqual(
+				expected
 			);
 		} );
 
@@ -260,12 +268,16 @@ describe( 'multiPartnerCardProcessor', () => {
 				stripeConfiguration,
 				name: 'test name',
 			};
+			const expected = {
+				payload: 'stripe error: missing billing_details.address.postal_code',
+				type: 'ERROR',
+			};
 			await expect(
 				multiPartnerCardProcessor( submitData, {
 					...options,
 					contactDetails: { countryCode },
 				} )
-			).rejects.toThrowError( /billing_details.address.postal_code/ );
+			).resolves.toStrictEqual( expected );
 		} );
 
 		it( 'sends the correct data to the endpoint with no site and one product', async () => {

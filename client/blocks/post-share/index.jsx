@@ -50,7 +50,7 @@ import {
 	hasFeature,
 	isRequestingSitePlans as siteIsRequestingPlans,
 } from 'calypso/state/sites/plans/selectors';
-import { FEATURE_REPUBLICIZE } from 'calypso/lib/plans/constants';
+import { FEATURE_REPUBLICIZE } from '@automattic/calypso-products';
 import { UpgradeToPremiumNudge } from './nudges';
 import SharingPreviewModal from './sharing-preview-modal';
 import ConnectionsList from './connections-list';

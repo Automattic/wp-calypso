@@ -7,7 +7,7 @@ This component renders a customizable banner.
 ## Usage
 
 ```jsx
-import { PLAN_BUSINESS, FEATURE_ADVANCED_SEO } from 'calypso/lib/plans/constants';
+import { PLAN_BUSINESS, FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
 import Banner from 'calypso/components/banner';
 
 function render() {
