@@ -137,7 +137,7 @@ function enqueue_script_and_style() {
 		filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
 	);
 }
-add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_script_and_style' );
+add_action( 'admin_init', __NAMESPACE__ . '\enqueue_script_and_style' );
 
 /**
  * Enable line-height settings for all themes with Gutenberg.
