@@ -175,6 +175,11 @@
 			padding: 0.65em 2.8em;
 		}
 	}
+
+	.domain-registration-suggestion__domain-title {
+		font-size: 1.625rem; /* stylelint-disable-line */
+		line-height: 30px;
+	}
 }
 
 @include breakpoint-deprecated( '<660px' ) {
