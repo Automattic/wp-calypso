@@ -31,7 +31,7 @@ class EmailListActive extends React.Component {
 						<EmailTypeIcon domain={ domain } />
 					</span>
 					<div>
-						<h2>@{ domain.name }</h2>
+						<h2>{ domain.name }</h2>
 						<span>{ getNumberOfMailboxesText( domain ) }</span>
 					</div>
 				</CompactCard>

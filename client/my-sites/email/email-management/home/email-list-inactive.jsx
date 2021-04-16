@@ -23,9 +23,9 @@ class EmailListInactive extends React.Component {
 		const emailListItems = domains.map( ( domain ) => {
 			return (
 				<CompactCard key={ domain.name }>
-					<span>@{ domain.name }</span>
+					<span>{ domain.name }</span>
 					{ canCurrentUserAddEmail( domain ) && (
-						<Button compact href={ emailManagement( selectedSiteSlug, domain.name, currentRoute ) }>
+						<Button href={ emailManagement( selectedSiteSlug, domain.name, currentRoute ) }>
 							{ translate( 'Add Email' ) }
 						</Button>
 					) }
