@@ -12,6 +12,8 @@ export {
 	getGoogleSlidesUrl,
 } from './get-services-urls';
 export { getGSuiteMailboxCount } from './get-gsuite-mailbox-count';
+export { getGoogleProductSlug } from './get-google-product-slug';
+export { getGSuiteSubscriptionId } from './get-gsuite-subscription-id';
 export { getLoginUrlWithTOSRedirect } from './get-login-url-with-tos-redirect';
 export { getMonthlyPrice } from './get-monthly-price';
 export {
