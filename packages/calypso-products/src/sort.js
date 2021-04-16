@@ -7,7 +7,6 @@ import { difference, flatten, groupBy, sortBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isIncludedWithPlan } from 'calypso/lib/purchases';
 import { getDomainProductRanking, isCredits, isDomainProduct, isPlan } from '.';
 
 /**
@@ -56,6 +55,10 @@ function sortProducts( products ) {
 		.concat( domainItems )
 		.concat( otherItems )
 		.concat( creditItems );
+}
+
+function isIncludedWithPlan( purchase ) {
+	return 'included' === purchase.expiryStatus;
 }
 
 export default sortProducts;
