@@ -19,6 +19,18 @@
 			align-items: flex-start;
 		}
 	}
+	
+	@include breakpoint-deprecated( '<660px' ) {
+		display: inline-block;
+		font-size: $font-body-small;
+		text-align: left;
+
+		.is-white-signup &.domain-product-price__domain-step-signup-flow {
+			display: flex;
+			flex-direction: column-reverse;
+			margin-top: 4px;
+		}
+	}
 
 	.is-section-signup &:not( .domain-product-price__domain-step-signup-flow ) {
 		@include breakpoint-deprecated( '>660px' ) {
@@ -32,12 +44,6 @@
 			padding-left: 1em;
 			padding-right: 2em;
 		}
-	}
-
-	@include breakpoint-deprecated( '<660px' ) {
-		display: inline-block;
-		font-size: $font-body-small;
-		text-align: left;
 	}
 
 	small {

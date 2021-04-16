@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .domain-search-results__transfer-card {
 	display: flex;
 	flex-direction: column;
@@ -45,6 +48,18 @@
 
 		a {
 			padding: 0;
+		}
+	}
+}
+
+body.is-section-signup.is-white-signup {
+	.domain-search-results {
+		@include break-medium {
+			margin-left: 20px;
+		}
+
+		@include break-xlarge {
+			margin-left: 0;
 		}
 	}
 }

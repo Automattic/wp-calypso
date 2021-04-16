@@ -26,6 +26,7 @@ import { stringify } from 'qs';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { Icon } from '@wordpress/icons';
 import Search from '@automattic/search';
 
 /**
@@ -93,6 +94,7 @@ import { isBlogger } from 'calypso/lib/products-values';
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
 import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
+import tip from './tip';
 
 /**
  * Style dependencies
@@ -461,6 +463,7 @@ class RegisterDomainStep extends React.Component {
 							onSearchChange={ this.onSearchChange }
 							placeholder={ this.getPlaceholderText() }
 							ref={ this.bindSearchCardReference }
+							isReskinned={ this.props.isReskinned }
 						>
 							{ this.renderSearchFilters() }
 						</Search>
@@ -501,7 +504,7 @@ class RegisterDomainStep extends React.Component {
 			! Array.isArray( this.state.searchResults ) &&
 			! this.state.loadingResults &&
 			! this.props.showExampleSuggestions;
-		const showFilters = isKrackenUi && ! isRenderingInitialSuggestions;
+		const showFilters = isKrackenUi && ! isRenderingInitialSuggestions && ! this.props.isReskinned;
 		return (
 			showFilters && (
 				<DropdownFilters
@@ -604,7 +607,12 @@ class RegisterDomainStep extends React.Component {
 		}
 
 		if ( this.props.showExampleSuggestions ) {
-			return this.renderExampleSuggestions();
+			return (
+				<>
+					{ this.renderExampleSuggestions() }
+					{ this.props.isReskinned && ! this.state.loadingResults && this.props.reskinSideContent }
+				</>
+			);
 		}
 
 		return this.renderInitialSuggestions( false );
@@ -1232,13 +1240,31 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	renderExampleSuggestions() {
+		const {
+			isReskinned,
+			translate,
+			domainsWithPlansOnly,
+			offerUnavailableOption,
+			products,
+			path,
+		} = this.props;
+
+		if ( isReskinned ) {
+			return (
+				<div className="register-domain-step__example-prompt">
+					<Icon icon={ tip } size={ 20 } />
+					{ translate( 'The best names are short and memorable' ) }
+				</div>
+			);
+		}
+
 		return (
 			<ExampleDomainSuggestions
-				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-				offerUnavailableOption={ this.props.offerUnavailableOption }
+				domainsWithPlansOnly={ domainsWithPlansOnly }
+				offerUnavailableOption={ offerUnavailableOption }
 				onClickExampleSuggestion={ this.handleClickExampleSuggestion }
-				path={ this.props.path }
-				products={ this.props.products }
+				path={ path }
+				products={ products }
 				url={ this.getUseYourDomainUrl() }
 			/>
 		);
@@ -1375,8 +1401,12 @@ class RegisterDomainStep extends React.Component {
 				unavailableDomains={ this.state.unavailableDomains }
 				onSkip={ this.props.onSkip }
 				showSkipButton={ this.props.showSkipButton }
+				isReskinned={ this.props.isReskinned }
 			>
-				{ hasResults && isFreeDomainExplainerVisible && this.renderFreeDomainExplainer() }
+				{ ! this.props.isReskinned &&
+					hasResults &&
+					isFreeDomainExplainerVisible &&
+					this.renderFreeDomainExplainer() }
 
 				{ showTldFilterBar && (
 					<TldFilterBar
@@ -1388,8 +1418,10 @@ class RegisterDomainStep extends React.Component {
 						onReset={ this.onFiltersReset }
 						onSubmit={ this.onFiltersSubmit }
 						showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
+						isReskinned={ this.props.isReskinned }
 					/>
 				) }
+				{ this.props.isReskinned && ! this.state.loadingResults && this.props.reskinSideContent }
 			</DomainSearchResults>
 		);
 	}
