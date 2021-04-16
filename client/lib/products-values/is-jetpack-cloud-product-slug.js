@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { JETPACK_BACKUP_PRODUCTS, JETPACK_SCAN_PRODUCTS } from 'calypso/lib/plans/constants';
+import { JETPACK_BACKUP_PRODUCTS, JETPACK_SCAN_PRODUCTS } from '@automattic/calypso-products';
 
 export function isJetpackCloudProductSlug( productSlug ) {
 	return (

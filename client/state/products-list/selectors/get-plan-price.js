@@ -9,7 +9,7 @@ import { getPlanRawPrice } from 'calypso/state/plans/selectors';
  *
  * @param {object} state Current redux state
  * @param {number} siteId Site ID to consider
- * @param {object} planObject Plan object returned by getPlan() from lib/plans
+ * @param {object} planObject Plan object returned by getPlan() from @automattic/calypso-products
  * @param {boolean} isMonthly Flag - should return a monthly price?
  * @returns {number} Requested price
  */

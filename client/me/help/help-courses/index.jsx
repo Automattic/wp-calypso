@@ -16,8 +16,7 @@ import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getHelpCourses } from 'calypso/state/help/courses/selectors';
 import { helpCourses } from './constants';
-import { planHasFeature } from 'calypso/lib/plans';
-import { FEATURE_BUSINESS_ONBOARDING } from 'calypso/lib/plans/constants';
+import { planHasFeature, FEATURE_BUSINESS_ONBOARDING } from '@automattic/calypso-products';
 import { receiveHelpCourses } from 'calypso/state/help/courses/actions';
 import {
 	getUserPurchases,

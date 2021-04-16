@@ -66,7 +66,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		test( 'should serialize and deserialize state ', () => {
+		test( 'should serialize and deserialize state', () => {
 			const state = deepFreeze( {
 				2916284: {
 					unsafe: 'mature',

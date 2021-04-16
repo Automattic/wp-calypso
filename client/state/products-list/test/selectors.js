@@ -17,8 +17,7 @@ import {
 
 import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
-import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
-const plans = require( 'calypso/lib/plans' );
+import { getPlan, TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
 
 jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
@@ -28,10 +27,11 @@ jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	getPlanDiscountedRawPrice: jest.fn(),
 } ) );
 
-plans.applyTestFiltersToPlansList = jest.fn( ( x ) => x );
-plans.getPlan = jest.fn();
-
-const { getPlan } = plans;
+jest.mock( '@automattic/calypso-products', () => ( {
+	...jest.requireActual( '@automattic/calypso-products' ),
+	applyTestFiltersToPlansList: jest.fn( ( x ) => x ),
+	getPlan: jest.fn(),
+} ) );
 
 jest.mock( 'calypso/state/plans/selectors', () => ( {
 	getPlanRawPrice: jest.fn(),

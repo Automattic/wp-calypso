@@ -6,7 +6,7 @@
  * Internal dependencies
  */
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { isFreePlan } from 'calypso/lib/plans';
+import { isFreePlan } from '@automattic/calypso-products';
 
 /**
  * Returns true if site is on a free plan, false if the site is not

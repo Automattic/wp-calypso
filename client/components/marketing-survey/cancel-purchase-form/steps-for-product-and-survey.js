@@ -8,8 +8,8 @@ import {
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
-} from 'calypso/lib/plans/constants';
-import { findPlansKeys } from 'calypso/lib/plans';
+	findPlansKeys,
+} from '@automattic/calypso-products';
 import { isPlan, includesProduct } from 'calypso/lib/products-values';
 import * as steps from './steps';
 

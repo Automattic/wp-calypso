@@ -8,13 +8,13 @@ import type { ResponseCartProduct } from '@automattic/shopping-cart';
 /**
  * Internal dependencies
  */
-import { isMonthly } from 'calypso/lib/plans/constants';
+import { isMonthly } from '@automattic/calypso-products';
 import {
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
 	isWpComPersonalPlan,
 	isWpComPremiumPlan,
-} from 'calypso/lib/plans';
+} from '@automattic/calypso-products';
 import doesValueExist from './does-value-exist';
 
 export default function getPlanFeatures(

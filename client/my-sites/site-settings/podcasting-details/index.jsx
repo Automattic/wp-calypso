@@ -10,7 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { PLAN_PERSONAL, FEATURE_AUDIO_UPLOADS } from 'calypso/lib/plans/constants';
+import { PLAN_PERSONAL, FEATURE_AUDIO_UPLOADS } from '@automattic/calypso-products';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
 import { decodeEntities } from 'calypso/lib/formatting';
 import scrollTo from 'calypso/lib/scroll-to';

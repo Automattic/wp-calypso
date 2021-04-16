@@ -19,6 +19,7 @@ import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
  * Style dependencies
  */
 import 'calypso/components/jetpack/sidebar/style.scss';
+import config from '@automattic/calypso-config';
 
 interface Props {
 	path: string;
@@ -41,15 +42,28 @@ class PartnerPortalSidebar extends Component< Props > {
 			<Sidebar className="sidebar__jetpack-cloud">
 				<SidebarRegion>
 					<SidebarMenu>
+						{ config.isEnabled( 'jetpack-cloud/partner-portal/billing-dashboard' ) && (
+							<SidebarItem
+								materialIcon="credit_card"
+								materialIconStyle="outline"
+								label={ translate( 'Billing', {
+									comment: 'Jetpack sidebar navigation item',
+								} ) }
+								link="/partner-portal"
+								onNavigate={ this.onNavigate( 'Jetpack Cloud / Partner Portal' ) }
+								selected={ path === '/partner-portal' }
+							/>
+						) }
+
 						<SidebarItem
 							materialIcon="vpn_key"
 							materialIconStyle="filled"
 							label={ translate( 'Licenses', {
 								comment: 'Jetpack sidebar navigation item',
 							} ) }
-							link="/partner-portal"
+							link="/partner-portal/licenses"
 							onNavigate={ this.onNavigate( 'Jetpack Cloud / Partner Portal / Licenses' ) }
-							selected={ itemLinkMatches( [ '/partner-portal' ], path ) }
+							selected={ itemLinkMatches( [ '/partner-portal/licenses' ], path ) }
 						/>
 					</SidebarMenu>
 				</SidebarRegion>

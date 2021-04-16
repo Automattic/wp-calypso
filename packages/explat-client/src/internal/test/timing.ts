@@ -48,21 +48,21 @@ describe( 'timeoutPromise', () => {
 } );
 
 describe( 'asyncOneAtATime', () => {
-	it( 'it should wrap an async function and behave the same', async () => {
+	it( 'should wrap an async function and behave the same', async () => {
 		const f = Timing.asyncOneAtATime( async () => delayedValue( 123, 0 ) );
 		const promise = f();
 		jest.advanceTimersByTime( 1 );
 		await expect( promise ).resolves.toBe( 123 );
 	} );
 
-	it( 'it should wrap an async function and behave the same (rejection)', async () => {
+	it( 'should wrap an async function and behave the same (rejection)', async () => {
 		const f = Timing.asyncOneAtATime( async () => {
 			throw new Error( 'error-123' );
 		} );
 		await expect( f() ).rejects.toThrowError( 'error-123' );
 	} );
 
-	it( 'it should return the same promise when called multiple times, only calling the original function once', async () => {
+	it( 'should return the same promise when called multiple times, only calling the original function once', async () => {
 		const origF = jest.fn( async () => delayedValue( 123, 1 ) );
 		const f = Timing.asyncOneAtATime( origF );
 		const a = f();
@@ -75,7 +75,7 @@ describe( 'asyncOneAtATime', () => {
 		expect( origF.mock.calls.length ).toBe( 1 );
 	} );
 
-	it( 'it should return the same promise when called multiple times (rejection), only calling the original function once', async () => {
+	it( 'should return the same promise when called multiple times (rejection), only calling the original function once', async () => {
 		const origF = jest.fn( async () => {
 			throw new Error( 'error-123' );
 		} );
@@ -89,7 +89,7 @@ describe( 'asyncOneAtATime', () => {
 		expect( origF.mock.calls.length ).toBe( 1 );
 	} );
 
-	it( 'it should return a different promise after the last has resolved, calling the orignal function twice', async () => {
+	it( 'should return a different promise after the last has resolved, calling the orignal function twice', async () => {
 		const origF = jest.fn( async () => delayedValue( 123, 3 ) );
 		const f = Timing.asyncOneAtATime( origF );
 		const a = f();
@@ -109,7 +109,7 @@ describe( 'asyncOneAtATime', () => {
 		expect( origF.mock.calls.length ).toBe( 2 );
 	} );
 
-	it( 'it should return a different promise after the last has resolved (rejection), calling the original function twice', async () => {
+	it( 'should return a different promise after the last has resolved (rejection), calling the original function twice', async () => {
 		let isReject = true;
 		const origF = jest.fn( async () => {
 			if ( isReject ) {

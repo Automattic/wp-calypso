@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, isDate, size } from 'lodash';
+import { filter, size } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,7 +21,7 @@ import 'calypso/state/comments/init';
  */
 export function getPostCommentsCountAtDate( state, siteId, postId, date ) {
 	// Check the provided date
-	if ( ! isDate( date ) ) {
+	if ( ! ( date instanceof Date && ! isNaN( date ) ) ) {
 		return 0;
 	}
 

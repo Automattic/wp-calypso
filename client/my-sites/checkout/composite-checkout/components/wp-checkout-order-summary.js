@@ -22,8 +22,7 @@ import {
 /**
  * Internal dependencies
  */
-import { getYearlyPlanByMonthly, getPlan } from 'calypso/lib/plans';
-import { isMonthly } from 'calypso/lib/plans/constants';
+import { isMonthly, getYearlyPlanByMonthly, getPlan } from '@automattic/calypso-products';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import Gridicon from 'calypso/components/gridicon';

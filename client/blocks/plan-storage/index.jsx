@@ -15,8 +15,12 @@ import { getMediaStorage } from 'calypso/state/sites/media-storage/selectors';
 import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import { planHasFeature, isBusinessPlan, isEcommercePlan } from 'calypso/lib/plans';
-import { FEATURE_UNLIMITED_STORAGE } from 'calypso/lib/plans/constants';
+import {
+	FEATURE_UNLIMITED_STORAGE,
+	planHasFeature,
+	isBusinessPlan,
+	isEcommercePlan,
+} from '@automattic/calypso-products';
 import PlanStorageBar from './bar';
 import Tooltip from './tooltip';
 

@@ -42,7 +42,7 @@ describe( 'Search for a domain and select a suggestion', () => {
 		expect( screen.getByText( '€15.00/year' ) ).toBeInTheDocument();
 	} );
 
-	it( 'should call the onDomainSelect callback when a button is clicked ', () => {
+	it( 'should call the onDomainSelect callback when a button is clicked', () => {
 		const onDomainSelectCallback = jest.fn();
 		render(
 			<DomainPicker

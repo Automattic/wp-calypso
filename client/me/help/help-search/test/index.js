@@ -39,12 +39,12 @@ const helpLinks = {
 const searchQuery = 'maplesyrup';
 
 describe( 'HelpSearch', () => {
-	test( 'should render ', () => {
+	test( 'should render', () => {
 		const wrapper = shallow( <HelpSearch { ...defaultProps } /> );
 		expect( wrapper ).toMatchSnapshot();
 	} );
 
-	test( 'should prioritize and pass localized forum search results if available ', () => {
+	test( 'should prioritize and pass localized forum search results if available', () => {
 		const wrapper = shallow( <HelpSearch { ...defaultProps } helpLinks={ helpLinks } /> );
 		wrapper.setState( { searchQuery } );
 		wrapper.update();

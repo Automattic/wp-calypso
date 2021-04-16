@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { PLAN_BUSINESS, PLAN_FREE } from 'calypso/lib/plans/constants';
+import { PLAN_BUSINESS, PLAN_FREE } from '@automattic/calypso-products';
 import userHasAnyPaidPlans from 'calypso/state/selectors/user-has-any-paid-plans';
 
 describe( 'userHasAnyPaidPlans()', () => {

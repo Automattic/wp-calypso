@@ -16,9 +16,11 @@ import {
 	isPremiumPlan,
 	isBusinessPlan,
 	isEcommercePlan,
-} from 'calypso/lib/plans';
+	GROUP_JETPACK,
+	GROUP_WPCOM,
+	FEATURE_NO_ADS,
+} from '@automattic/calypso-products';
 import Banner from 'calypso/components/banner';
-import { GROUP_JETPACK, GROUP_WPCOM, FEATURE_NO_ADS } from 'calypso/lib/plans/constants';
 import { addQueryArgs } from 'calypso/lib/url';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import { isFreePlan } from 'calypso/lib/products-values';

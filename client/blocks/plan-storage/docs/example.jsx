@@ -17,7 +17,7 @@ import {
 	PLAN_PREMIUM,
 	PLAN_PERSONAL,
 	PLAN_FREE,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 

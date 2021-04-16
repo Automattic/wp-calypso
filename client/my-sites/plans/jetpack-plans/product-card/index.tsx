@@ -13,13 +13,13 @@ import PlanRenewalMessage from '../plan-renewal-message';
 import useItemPrice from '../use-item-price';
 import { productAboveButtonText, productButtonLabel, productTooltip } from '../utils';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { planHasFeature } from 'calypso/lib/plans';
-import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
+import { planHasFeature } from '@automattic/calypso-products';
+import { TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
 import {
 	PRODUCT_JETPACK_CRM_MONTHLY,
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';

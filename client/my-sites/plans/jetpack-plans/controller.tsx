@@ -9,7 +9,7 @@ import React from 'react';
 import SelectorPage from './selector';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { TERM_ANNUALLY } from 'calypso/lib/plans/constants';
+import { TERM_ANNUALLY } from '@automattic/calypso-products';
 
 /**
  * Type dependencies

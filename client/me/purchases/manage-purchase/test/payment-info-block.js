@@ -1,6 +1,10 @@
 /**
  * @jest-environment jsdom
  */
+
+/* eslint-disable jest/no-conditional-expect */
+/* eslint-disable jest/valid-title */
+
 /**
  * External dependencies
  */

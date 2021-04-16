@@ -48,8 +48,6 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import LayoutLoader from './loader';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { withCurrentRoute } from 'calypso/components/route';
-import QueryExperiments from 'calypso/components/data/query-experiments';
-import Experiment from 'calypso/components/experiment';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
@@ -243,8 +241,6 @@ class Layout extends Component {
 
 		return (
 			<div className={ sectionClass }>
-				<QueryExperiments />
-				<Experiment name="new_onboarding_existing_users_non_en_v5" />
 				<SidebarScrollSynchronizer enabled={ this.props.isNavUnificationEnabled } />
 				<BodySectionCssClass
 					group={ this.props.sectionGroup }
