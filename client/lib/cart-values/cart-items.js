@@ -44,7 +44,7 @@ import {
 	isTitanMail,
 	isMonthly,
 } from 'calypso/lib/products-values';
-import sortProducts from 'calypso/lib/products-values/sort';
+import { sortProducts } from 'calypso/lib/products-values/sort';
 import { getTld } from 'calypso/lib/domains';
 import { domainProductSlugs } from 'calypso/lib/domains/constants';
 import {

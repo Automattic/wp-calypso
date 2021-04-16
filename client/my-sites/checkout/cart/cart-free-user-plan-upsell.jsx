@@ -25,12 +25,16 @@ import {
 import SectionHeader from 'calypso/components/section-header';
 import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { isRequestingPlans } from 'calypso/state/plans/selectors';
-import { getPlan, PLAN_PERSONAL } from '@automattic/calypso-products';
+import {
+	getPlan,
+	PLAN_PERSONAL,
+	isDomainRegistration,
+	isDomainTransfer,
+} from '@automattic/calypso-products';
 import { getPlanPrice } from 'calypso/state/products-list/selectors';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getAllCartItems } from '../../../lib/cart-values/cart-items';
-import { isDomainRegistration, isDomainTransfer } from '../../../lib/products-values';
 
 class CartFreeUserPlanUpsell extends React.Component {
 	static propTypes = {
