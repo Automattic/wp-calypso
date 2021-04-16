@@ -1,12 +1,12 @@
 /**
  * Internal dependencies
  */
-import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
-import { formatProduct } from 'calypso/lib/products-values/format-product';
-import { getDomain } from 'calypso/lib/products-values/get-domain';
-import { isDomainMapping } from 'calypso/lib/products-values/is-domain-mapping';
-import { isDomainRegistration } from 'calypso/lib/products-values/is-domain-registration';
-import { isPlan } from 'calypso/lib/products-values/is-plan';
+import { assertValidProduct } from './utils/assert-valid-product';
+import { formatProduct } from './format-product';
+import { getDomain } from './get-domain';
+import { isDomainMapping } from './is-domain-mapping';
+import { isDomainRegistration } from './is-domain-registration';
+import { isPlan } from './is-plan';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,

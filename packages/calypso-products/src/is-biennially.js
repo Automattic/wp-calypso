@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import { PLAN_BIENNIAL_PERIOD } from '@automattic/calypso-products';
-import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
-import { formatProduct } from 'calypso/lib/products-values/format-product';
+import { assertValidProduct } from './utils/assert-valid-product';
+import { formatProduct } from './format-product';
 
 export function isBiennially( rawProduct ) {
 	const product = formatProduct( rawProduct );

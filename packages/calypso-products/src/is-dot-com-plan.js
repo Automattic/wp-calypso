@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { isPlan } from 'calypso/lib/products-values/is-plan';
-import { isJetpackPlan } from 'calypso/lib/products-values/is-jetpack-plan';
+import { isPlan } from './is-plan';
+import { isJetpackPlan } from './is-jetpack-plan';
 
 export function isDotComPlan( product ) {
 	return isPlan( product ) && ! isJetpackPlan( product );

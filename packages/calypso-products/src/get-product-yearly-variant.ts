@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
-import { PRODUCTS_LIST } from 'calypso/lib/products-values/products-list';
+import { PRODUCTS_LIST } from './products-list';
 
 /**
  * Type dependencies

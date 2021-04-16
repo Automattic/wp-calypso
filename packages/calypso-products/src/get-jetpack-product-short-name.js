@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
-import { formatProduct } from 'calypso/lib/products-values/format-product';
-import { getJetpackProductsShortNames } from 'calypso/lib/products-values/translations';
+import { assertValidProduct } from './utils/assert-valid-product';
+import { formatProduct } from './format-product';
+import { getJetpackProductsShortNames } from './translations';
 
 /**
  * Get Jetpack product short name based on the product purchase object.

@@ -6,14 +6,14 @@ import { TranslateResult } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
-import { formatProduct } from 'calypso/lib/products-values/format-product';
-import { getJetpackProductsCallToAction } from 'calypso/lib/products-values/translations';
+import { assertValidProduct } from './utils/assert-valid-product';
+import { formatProduct } from './format-product';
+import { getJetpackProductsCallToAction } from './translations';
 
 /**
  * Type dependencies
  */
-import type { Product } from 'calypso/lib/products-values/products-list';
+import type { Product } from './products-list';
 
 /**
  * Get Jetpack product call-to-action based on the product purchase object.
