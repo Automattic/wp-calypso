@@ -10,6 +10,10 @@ import debugFactory from 'debug';
 /**
  * Internal Dependencies
  */
+import { getDomainOrProductFromContext } from './utils';
+import { JETPACK_LEGACY_PLANS } from '@automattic/calypso-products';
+import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -40,7 +44,7 @@ import { TRUENAME_COUPONS } from 'calypso/lib/domains';
 const debug = debugFactory( 'calypso:checkout-controller' );
 
 export function checkout( context, next ) {
-	const { feature, plan, domainOrProduct, purchaseId } = context.params;
+	const { feature, plan, purchaseId } = context.params;
 
 	const user = userFactory();
 	const isLoggedOut = ! user.get();
@@ -58,12 +62,7 @@ export function checkout( context, next ) {
 		return;
 	}
 
-	let product;
-	if ( selectedSite && selectedSite.slug !== domainOrProduct && domainOrProduct ) {
-		product = domainOrProduct;
-	} else {
-		product = context.params.product;
-	}
+	const product = getDomainOrProductFromContext( context );
 
 	if ( 'thank-you' === product ) {
 		return;
@@ -111,6 +110,17 @@ export function checkout( context, next ) {
 	);
 
 	next();
+}
+
+export function redirectJetpackLegacyPlans( context ) {
+	const product = getDomainOrProductFromContext( context );
+
+	if ( JETPACK_LEGACY_PLANS.includes( product ) ) {
+		const state = context.store.getState();
+		const selectedSite = getSelectedSite( state );
+
+		page( ( isJetpackCloud() ? '/pricing/' : CALYPSO_PLANS_PAGE ) + ( selectedSite?.slug || '' ) );
+	}
 }
 
 export function checkoutPending( context, next ) {
