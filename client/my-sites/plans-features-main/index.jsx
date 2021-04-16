@@ -20,6 +20,19 @@ import AsyncLoad from 'calypso/components/async-load';
 import PlanFeatures from 'calypso/my-sites/plan-features';
 import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
 import {
+	chooseDefaultCustomerType,
+	findPlansKeys,
+	getPlan,
+	getPopularPlanSpec,
+	isFreePlan,
+	isBloggerPlan,
+	isPersonalPlan,
+	isPremiumPlan,
+	isBusinessPlan,
+	isEcommercePlan,
+	isWpComFreePlan,
+	isWpComMonthlyPlan,
+	planMatches,
 	JETPACK_PLANS,
 	PLAN_JETPACK_PERSONAL,
 	TYPE_FREE,
@@ -36,7 +49,7 @@ import {
 	PLAN_PERSONAL,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_PRODUCT_PRICE_MATRIX,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import { getJetpackProducts } from 'calypso/lib/products-values/translations';
 import JetpackFAQ from './jetpack-faq';
 import PlansFeaturesMainProductsHeader from './products-header';
@@ -45,21 +58,6 @@ import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { isEnabled } from '@automattic/calypso-config';
-import {
-	chooseDefaultCustomerType,
-	findPlansKeys,
-	getPlan,
-	getPopularPlanSpec,
-	isFreePlan,
-	isBloggerPlan,
-	isPersonalPlan,
-	isPremiumPlan,
-	isBusinessPlan,
-	isEcommercePlan,
-	isWpComFreePlan,
-	isWpComMonthlyPlan,
-	planMatches,
-} from 'calypso/lib/plans';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { Button } from '@automattic/components';
 import ProductSelector from 'calypso/blocks/product-selector';

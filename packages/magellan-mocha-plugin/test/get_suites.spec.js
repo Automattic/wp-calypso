@@ -1,39 +1,40 @@
 const path = require( 'path' );
-const chai = require( 'chai' );
-const expect = chai.expect;
 const Locator = require( '../lib/locator' );
 const testFramework = require( '../index' );
+const fs = require( 'fs' ).promises;
+const os = require( 'os' );
 
-function getTestsFrom( specs ) {
+async function getTestsFrom( specs ) {
 	if ( ! Array.isArray( specs ) ) {
 		specs = [ specs ];
 	}
 	testFramework.initialize( {
 		mocha_tests: specs,
-		mocha_opts: path.join( specs[ 0 ], 'mocha.opts' ),
+		mocha_config: path.join( specs[ 0 ], '.mocharc.js' ),
 		suiteTag: 'suite;multiple',
 	} );
-	return testFramework.iterator( { tempDir: path.resolve( '.' ) } );
+	const tempDir = await fs.mkdtemp( path.join( os.tmpdir(), 'magellan-mocha-plugin' ) );
+	return testFramework.iterator( { tempDir } );
 }
 
 describe( 'suite iterator', function () {
 	let suites;
 
-	before( function () {
-		suites = getTestsFrom( './test_support/suite' );
+	beforeAll( async function () {
+		suites = await getTestsFrom( path.join( __dirname, '../test_support/suite' ) );
 	} );
 
 	it( 'finds suites', function () {
-		expect( suites ).to.have.length( 3 );
+		expect( suites ).toHaveLength( 3 );
 	} );
 
 	it( 'instantiates tests as Locators', function () {
-		expect( suites[ 0 ] ).to.be.an.instanceOf( Locator );
+		expect( suites[ 0 ] ).toBeInstanceOf( Locator );
 	} );
 
 	it( 'collects details of a test', function () {
 		const suite = suites[ 0 ];
-		expect( suite.name ).to.equal( 'Suite @suite' );
-		expect( suites[ 0 ].filename ).to.contain( 'test_support/suite/spec.js' );
+		expect( suite.name ).toBe( 'Suite @suite' );
+		expect( suites[ 0 ].filename ).toEqual( expect.stringMatching( 'test_support/suite/spec.js' ) );
 	} );
 } );

@@ -12,7 +12,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { isFreePlan } from 'calypso/lib/plans';
+import { isFreePlan } from '@automattic/calypso-products';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';

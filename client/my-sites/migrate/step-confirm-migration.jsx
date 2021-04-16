@@ -17,8 +17,7 @@ import Gridicon from 'calypso/components/gridicon';
 import HeaderCake from 'calypso/components/header-cake';
 import MigrateButton from './migrate-button.jsx';
 import SitesBlock from 'calypso/my-sites/migrate/components/sites-block';
-import { FEATURE_UPLOAD_THEMES_PLUGINS } from 'calypso/lib/plans/constants';
-import { planHasFeature } from 'calypso/lib/plans';
+import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**

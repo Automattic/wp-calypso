@@ -21,7 +21,7 @@ import {
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 
 const noop = () => {};
 

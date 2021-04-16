@@ -34,7 +34,7 @@ import {
 	JETPACK_RESET_PLANS,
 	JETPACK_REDIRECT_URL,
 	redirectCloudCheckoutToWpAdmin,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
 import { abtest } from 'calypso/lib/abtest';
 import { recordTracksEvent } from '@automattic/calypso-analytics';

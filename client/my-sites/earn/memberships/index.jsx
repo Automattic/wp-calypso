@@ -34,7 +34,7 @@ import {
 	FEATURE_MEMBERSHIPS,
 	PLAN_PERSONAL,
 	PLAN_JETPACK_PERSONAL,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import SectionHeader from 'calypso/components/section-header';

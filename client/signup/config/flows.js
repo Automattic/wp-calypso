@@ -9,7 +9,7 @@ import { assign, get, includes, reject } from 'lodash';
 import config from '@automattic/calypso-config';
 import stepConfig from './steps';
 import user from 'calypso/lib/user';
-import { isEcommercePlan } from 'calypso/lib/plans';
+import { isEcommercePlan } from '@automattic/calypso-products';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
 import { addQueryArgs } from 'calypso/lib/url';
 

@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 
+/* eslint-disable jest/no-conditional-expect */
+
 /**
  * External dependencies
  */
@@ -495,7 +497,7 @@ describe( 'Search previews', () => {
 	} );
 
 	describe( 'Title truncation', () => {
-		it( 'should display entire title if short enough ', () => {
+		it( 'should display entire title if short enough', () => {
 			const wrapper = shallow( <Search title="I am the very model of a modern Major-General" /> );
 
 			const titleEl = wrapper.find( '.search-preview__title' );
@@ -535,7 +537,7 @@ describe( 'Search previews', () => {
 	} );
 
 	describe( 'Description truncation', () => {
-		it( 'should display entire description if short enough ', () => {
+		it( 'should display entire description if short enough', () => {
 			const wrapper = shallow(
 				<Search description="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical." />
 			);
@@ -593,7 +595,7 @@ describe( 'Search previews', () => {
 		} );
 	} );
 
-	it( 'should display truncated url ', () => {
+	it( 'should display truncated url', () => {
 		const downArrowChar = '▾';
 		const wrapper = shallow(
 			<Search url="https://wordpress.com/alongpathnameheretoensuretruncationoccursbutitdoesneedtobequitelongtomakethathappen" />

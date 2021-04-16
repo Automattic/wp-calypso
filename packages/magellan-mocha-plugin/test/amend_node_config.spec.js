@@ -1,5 +1,3 @@
-const chai = require( 'chai' );
-const expect = chai.expect;
 const amendNodeConfig = require( '../lib/amend_node_config' );
 
 describe( 'amendNodeConfig', function () {
@@ -11,7 +9,7 @@ describe( 'amendNodeConfig', function () {
 				},
 				{ b: 2 }
 			)
-		).to.eql( { a: 2, b: 2 } );
+		).toEqual( { a: 2, b: 2 } );
 	} );
 
 	it( 'should look for node config with bad data', function () {
@@ -22,7 +20,7 @@ describe( 'amendNodeConfig', function () {
 				},
 				{ b: 2 }
 			)
-		).to.eql( { b: 2 } );
+		).toEqual( { b: 2 } );
 	} );
 
 	it( 'should look for node config with an object', function () {
@@ -33,7 +31,7 @@ describe( 'amendNodeConfig', function () {
 				},
 				{ b: 2 }
 			)
-		).to.eql( { a: 2, b: 2 } );
+		).toEqual( { a: 2, b: 2 } );
 	} );
 
 	it( 'should look for node config with a number', function () {
@@ -44,6 +42,6 @@ describe( 'amendNodeConfig', function () {
 				},
 				{ b: 2 }
 			)
-		).to.eql( { b: 2 } );
+		).toEqual( { b: 2 } );
 	} );
 } );

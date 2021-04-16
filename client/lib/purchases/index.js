@@ -13,8 +13,7 @@ import debugFactory from 'debug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
-import { getPlan } from 'calypso/lib/plans';
-import { isMonthly as isMonthlyPlan } from 'calypso/lib/plans/constants';
+import { getPlan, isMonthly as isMonthlyPlan } from '@automattic/calypso-products';
 import {
 	getProductFromSlug,
 	isDomainMapping,

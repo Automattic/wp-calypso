@@ -11,7 +11,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { addQueryArgs } from 'calypso/lib/url';
 import { Button } from '@automattic/components';
-import { getPlan } from 'calypso/lib/plans';
+import { getPlan } from '@automattic/calypso-products';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 

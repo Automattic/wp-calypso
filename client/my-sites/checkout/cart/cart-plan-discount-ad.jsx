@@ -17,7 +17,7 @@ import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { getPlansBySite } from 'calypso/state/sites/plans/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isPlan } from 'calypso/lib/products-values';
-import { shouldFetchSitePlans } from 'calypso/lib/plans';
+import { shouldFetchSitePlans } from '@automattic/calypso-products';
 
 export class CartPlanDiscountAd extends Component {
 	static propTypes = {

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { TERMS_LIST } from 'calypso/lib/plans/constants';
+import { TERMS_LIST } from '@automattic/calypso-products';
 import { PRODUCTS_LIST } from 'calypso/lib/products-values/products-list';
 
 /**

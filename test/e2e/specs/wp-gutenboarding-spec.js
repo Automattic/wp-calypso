@@ -79,12 +79,17 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 			await acquireIntentPage.goToNextStep();
 		} );
 
-		step( 'Can see Domains Page and pick a free domain and continue', async function () {
-			const domainsPage = await DomainsPage.Expect( driver );
-			await domainsPage.enterDomainQuery( domainQuery );
-			newSiteDomain = await domainsPage.selectFreeDomain();
-			await domainsPage.continueToNextStep();
-		} );
+		step(
+			'Can see Domains Page, search for domains, pick a free domain, and continue',
+			async function () {
+				const domainsPage = await DomainsPage.Expect( driver );
+				await domainsPage.enterDomainQuery( domainQuery );
+				await domainsPage.waitForDomainSuggestionsToLoad();
+				newSiteDomain = await domainsPage.getFreeDomainName();
+				await domainsPage.selectFreeDomain();
+				await domainsPage.continueToNextStep();
+			}
+		);
 
 		step( 'Can see Design Selector and select a random free design', async function () {
 			const designSelectorPage = await DesignSelectorPage.Expect( driver );

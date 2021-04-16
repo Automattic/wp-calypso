@@ -49,10 +49,7 @@ export const useActivityLogs = ( siteId, filter, shouldExecute = true ) => {
 	}, [ shouldExecute, siteId, memoizedFilter ] );
 
 	const requestId = getRequestActivityLogsId( siteId, memoizedFilter );
-	const response = useSelector( () => shouldExecute && getHttpData( requestId ), [
-		shouldExecute,
-		requestId,
-	] );
+	const response = useSelector( () => shouldExecute && getHttpData( requestId ) );
 
 	return {
 		isLoadingActivityLogs: !! ( shouldExecute && isLoading( response ) ),

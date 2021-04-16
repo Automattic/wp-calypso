@@ -27,7 +27,7 @@ import {
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from './custom-form-fieldsets/constants';
 import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
-import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
+import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 
 /**
  * Style dependencies

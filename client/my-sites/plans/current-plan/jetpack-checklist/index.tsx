@@ -38,10 +38,10 @@ import {
 	isPremiumPlan,
 	isJetpackOfferResetPlan,
 	planHasFeature,
-} from 'calypso/lib/plans';
-import { FEATURE_VIDEO_UPLOADS_JETPACK_PRO } from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
+import { FEATURE_VIDEO_UPLOADS_JETPACK_PRO } from '@automattic/calypso-products';
 import { isJetpackAntiSpam, isJetpackBackupSlug } from 'calypso/lib/products-values';
-import { JETPACK_BACKUP_PRODUCTS } from 'calypso/lib/plans/constants';
+import { JETPACK_BACKUP_PRODUCTS } from '@automattic/calypso-products';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { Button, Card } from '@automattic/components';
 import JetpackProductInstall from 'calypso/my-sites/plans/current-plan/jetpack-product-install';

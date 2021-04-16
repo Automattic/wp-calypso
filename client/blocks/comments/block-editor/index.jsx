@@ -29,13 +29,12 @@ const allowedBlocks = [
 
 const BlockEditor = ( { onChange, suggestions } ) => {
 	useEffect( () => {
-		getAddAutocompleters( suggestions ).then( ( addAutoCompleters ) => {
-			addFilter(
-				'editor.Autocomplete.completers',
-				'readerComments/autocompleters',
-				addAutoCompleters
-			);
-		} );
+		const addAutoCompleters = getAddAutocompleters( suggestions );
+		addFilter(
+			'editor.Autocomplete.completers',
+			'readerComments/autocompleters',
+			addAutoCompleters
+		);
 	}, [ suggestions ] );
 
 	return (

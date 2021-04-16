@@ -86,7 +86,6 @@ Then configure the rules you want to use under the rules section.
 - [`post-message-no-wildcard-targets`](docs/rules/post-message-no-wildcard-targets.md): Disallow using the wildcard '\*' in `postMessage`
 - [`redux-no-bound-selectors`](docs/rules/redux-no-bound-selectors.md): Disallow creation of selectors bound to Redux state
 
-
 ## Suggesting Changes
 
 Want to suggest a change to our style guide? [Edit the JavaScript Coding Guidelines on the Automattic/wp-calypso repository](https://github.com/Automattic/wp-calypso/edit/trunk/docs/coding-guidelines/javascript.md) and submit a pull request.

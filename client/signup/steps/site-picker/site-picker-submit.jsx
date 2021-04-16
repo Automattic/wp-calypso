@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isFreePlan } from 'calypso/lib/plans';
+import { isFreePlan } from '@automattic/calypso-products';
 import { getSite } from 'calypso/state/sites/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 

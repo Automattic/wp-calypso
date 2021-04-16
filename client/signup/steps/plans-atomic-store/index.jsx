@@ -22,15 +22,15 @@ import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-import { planHasFeature } from 'calypso/lib/plans';
 import {
+	planHasFeature,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	PLAN_FREE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 
 /**
  * Style dependencies

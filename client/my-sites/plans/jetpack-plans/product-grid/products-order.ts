@@ -15,13 +15,13 @@ import {
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 
 /**
  * Type dependencies
  */
 import type { JetpackProductSlug } from 'calypso/lib/products-values/types';
-import type { JetpackPlanSlugs } from 'calypso/lib/plans/types';
+import type { JetpackPlanSlugs } from '@automattic/calypso-products';
 
 const setProductsInPosition = ( slugs: string[], position: number ) =>
 	slugs.reduce( ( map, slug ) => ( { ...map, [ slug ]: position } ), {} );

@@ -29,7 +29,7 @@ import {
 	FEATURE_AUDIO_UPLOADS,
 	FEATURE_UNLIMITED_PREMIUM_THEMES,
 	FEATURE_BUSINESS_ONBOARDING,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {

@@ -7,18 +7,18 @@ This document will cover the environment setup process to run the `wp-calypso` e
 <!-- TOC -->
 
 - [Setup](#setup)
-    - [Table of contents](#table-of-contents)
-    - [Software Environment](#software-environment)
-        - [Required software](#required-software)
-        - [Steps](#steps)
-            - [Intel-based macOS](#intel-based-macos)
-            - [Apple Silicon-based macOS](#apple-silicon-based-macos)
-    - [Configuration File](#configuration-file)
-        - [Overview](#overview)
-        - [In-repo configuration](#in-repo-configuration)
-        - [Custom configurations optional](#custom-configurations-optional)
-    - [Environment Variables](#environment-variables)
-    - [Naming Branches](#naming-branches)
+  - [Table of contents](#table-of-contents)
+  - [Software Environment](#software-environment)
+    - [Required software](#required-software)
+    - [Steps](#steps)
+      - [Intel-based macOS](#intel-based-macos)
+      - [Apple Silicon-based macOS](#apple-silicon-based-macos)
+  - [Configuration File](#configuration-file)
+    - [Overview](#overview)
+    - [In-repo configuration](#in-repo-configuration)
+    - [Custom configurations optional](#custom-configurations-optional)
+  - [Environment Variables](#environment-variables)
+  - [Naming Branches](#naming-branches)
 
 <!-- /TOC -->
 
