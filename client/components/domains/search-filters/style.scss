@@ -245,16 +245,15 @@ body.is-section-signup.is-white-signup {
 	}
 	.search-filters__buttons {
 		margin: 0 20px 48px;
+		padding: 0;
+		box-shadow: none;
 
 		@include break-large {
 			margin-left: 0;
 			margin-right: 0;
 		}
 	}
-	.search-filters__tld-button-first {
-		margin-left: 0;
-	}
-
+	
 	.search-filters__tld-button {
 		background: #fdfdfd;
 		border-radius: 4px; /* stylelint-disable-line */
@@ -294,5 +293,9 @@ body.is-section-signup.is-white-signup {
 	
 	.search-filters__buttons .button {
 		margin-left: 0.5em;
+
+		&.search-filters__tld-button-first {
+			margin-left: 0;
+		}
 	}
 }

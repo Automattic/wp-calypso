@@ -143,7 +143,7 @@ body.is-section-signup.is-white-signup {
 			background: var( --color-surface );
 			box-shadow: none;
 			border-radius: 4px; /* stylelint-disable-line */
-			margin: 20px;
+			margin: 20px 0 20px 20px;
 
 			@include break-wide {
 				margin: initial;
