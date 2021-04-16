@@ -37,8 +37,8 @@
 		"@wordpress/react-i18n": "^1.0.0"
 	},
 	"peerDependencies": {
-		"react": "^16.8",
-		"react-dom": "^16.8"
+		"react": "^17.0",
+		"react-dom": "^17.0"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",

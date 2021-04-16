@@ -38,8 +38,8 @@
 		"utility-types": "^3.10.0"
 	},
 	"peerDependencies": {
-		"react": "^16.8",
-		"react-dom": "^16.8"
+		"react": "^17.0",
+		"react-dom": "^17.0"
 	},
 	"devDependencies": {
 		"@storybook/addon-actions": "^6.1.10",
