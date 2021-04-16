@@ -42,8 +42,8 @@ import {
 	isConciergeSession,
 	isTrafficGuide,
 	isTitanMail,
-	isMonthly,
 	isP2Plus,
+	isMonthlyProduct,
 	sortProducts,
 	getTermDuration,
 	getPlan,
@@ -212,7 +212,7 @@ export function hasDomainCredit( cart ) {
 }
 
 export function hasMonthlyCartItem( cart ) {
-	return some( getAllCartItems( cart ), isMonthly );
+	return some( getAllCartItems( cart ), isMonthlyProduct );
 }
 
 /**
