@@ -7,9 +7,6 @@ import type { ReactNode, ReactElement } from 'react';
 import type { TERM_ANNUALLY, TERM_MONTHLY } from '@automattic/calypso-products';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type {
-	ALL,
-	PERFORMANCE,
-	SECURITY,
 	PRODUCTS_WITH_OPTIONS,
 	ITEM_TYPE_PLAN,
 	ITEM_TYPE_BUNDLE,
@@ -18,7 +15,6 @@ import type {
 
 export type Duration = typeof TERM_ANNUALLY | typeof TERM_MONTHLY;
 export type DurationString = 'annual' | 'monthly';
-export type ProductType = typeof ALL | typeof PERFORMANCE | typeof SECURITY;
 export type ItemType = typeof ITEM_TYPE_PLAN | typeof ITEM_TYPE_BUNDLE | typeof ITEM_TYPE_PRODUCT;
 
 export interface QueryArgs {
