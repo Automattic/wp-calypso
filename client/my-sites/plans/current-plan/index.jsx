@@ -38,6 +38,8 @@ import {
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
+	isFreeJetpackPlan,
+	isFreePlanProduct,
 } from '@automattic/calypso-products';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
@@ -60,7 +62,6 @@ import SearchProductThankYou from './current-plan-thank-you/search-thank-you';
 import JetpackCompleteThankYou from './current-plan-thank-you/jetpack-complete';
 import JetpackSecurityDailyThankYou from './current-plan-thank-you/jetpack-security-daily';
 import JetpackSecurityRealtimeThankYou from './current-plan-thank-you/jetpack-security-realtime';
-import { isFreeJetpackPlan, isFreePlanProduct } from 'calypso/lib/products-values';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';

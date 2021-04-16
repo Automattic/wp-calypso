@@ -18,8 +18,7 @@ import { getCurrentUserCurrencyCode, getCurrentUserId } from 'calypso/state/curr
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { isTrafficGuide } from 'calypso/lib/products-values';
-import { WPCOM_TRAFFIC_GUIDE } from '@automattic/calypso-products';
+import { isTrafficGuide, WPCOM_TRAFFIC_GUIDE } from '@automattic/calypso-products';
 
 /**
  * Style dependencies

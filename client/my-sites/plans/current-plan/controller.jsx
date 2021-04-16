@@ -9,7 +9,7 @@ import page from 'page';
  */
 import CurrentPlan from './';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { isFreePlanProduct } from 'calypso/lib/products-values';
+import { isFreePlanProduct } from '@automattic/calypso-products';
 
 export function currentPlan( context, next ) {
 	const state = context.store.getState();

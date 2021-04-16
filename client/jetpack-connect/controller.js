@@ -64,9 +64,9 @@ import {
 	PRODUCT_JETPACK_SCAN_MONTHLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
+	getProductFromSlug,
+	getJetpackProductDisplayName,
 } from '@automattic/calypso-products';
-import { getProductFromSlug } from 'calypso/lib/products-values/get-product-from-slug';
-import { getJetpackProductDisplayName } from 'calypso/lib/products-values/get-jetpack-product-display-name';
 import { externalRedirect } from 'calypso/lib/route/path';
 
 /**

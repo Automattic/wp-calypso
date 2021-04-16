@@ -19,11 +19,11 @@ import {
 	GROUP_JETPACK,
 	GROUP_WPCOM,
 	FEATURE_NO_ADS,
+	isFreePlanProduct,
 } from '@automattic/calypso-products';
 import Banner from 'calypso/components/banner';
 import { addQueryArgs } from 'calypso/lib/url';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
-import { isFreePlanProduct } from 'calypso/lib/products-values';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';

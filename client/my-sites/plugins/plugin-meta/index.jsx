@@ -38,8 +38,10 @@ import {
 	findFirstSimilarPlanKey,
 	FEATURE_UPLOAD_PLUGINS,
 	TYPE_BUSINESS,
+	isBusiness,
+	isEcommerce,
+	isEnterprise,
 } from '@automattic/calypso-products';
-import { isBusiness, isEcommerce, isEnterprise } from 'calypso/lib/products-values';
 import { addSiteFragment } from 'calypso/lib/route';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';

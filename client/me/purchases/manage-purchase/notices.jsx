@@ -38,11 +38,11 @@ import {
 	isConciergeSession,
 	isPlan,
 	isDomainRegistration,
-} from 'calypso/lib/products-values';
+	isMonthly,
+} from '@automattic/calypso-products';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { isMonthly } from '@automattic/calypso-products';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
