@@ -299,10 +299,13 @@ body.is-section-signup.is-white-signup {
 	}
 
 	.domain-suggestion {
-		margin: 0 20px;
 		flex-direction: row;
 		box-shadow: none;
 
+		@include break-mobile {
+			margin: 0 20px;
+		}
+		
 		@include break-large {
 			margin: 0;
 		}
@@ -350,9 +353,6 @@ body.is-section-signup.is-white-signup {
 
 		&:not( .featured-domain-suggestion ) {
 			background: none;
-			padding-left: 5px;
-			padding-right: 5px;
-
 			
 			@include break-mobile {
 				padding-left: 5px;
