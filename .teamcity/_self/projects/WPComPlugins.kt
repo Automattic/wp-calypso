@@ -175,6 +175,9 @@ private object Gutenberg : BuildType({
 	params {
 		text(name="URL", value="https://wordpress.com", label = "Test URL", description = "URL to test against", allowEmpty = false)
 		checkbox(name="GUTENBERG_EDGE", value="true", label = "Use gutenberg-edge", description = "Use a blog with gutenberg-edge sticker", checked="true", unchecked = "false")
+
+		// Unused by this Build, but the Project expects it
+		param("plugin_slug", "")
 	}
 
 	steps {
@@ -202,9 +205,10 @@ private object Gutenberg : BuildType({
 				export TEST_VIDEO=true
 				export HIGHLIGHT_ELEMENT=true
 				export GUTENBERG_EDGE=%GUTENBERG_EDGE%
+				export URL=%URL%
 				export BROWSERSIZE=desktop
 				export BROWSERLOCALE=en
-				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{%URL%}\"}"
+				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL}\"}"
 
 				# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
 				# mocha-teamcity-reporter to work.
