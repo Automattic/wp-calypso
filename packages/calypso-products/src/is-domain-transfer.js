@@ -3,7 +3,7 @@
  */
 import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
-import { domainProductSlugs } from 'calypso/lib/domains/constants';
+import { domainProductSlugs } from './constants';
 
 export function isDomainTransfer( product ) {
 	product = formatProduct( product );
