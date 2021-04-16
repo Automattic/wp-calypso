@@ -6,7 +6,7 @@ import {
 	GSUITE_BASIC_SLUG,
 	GSUITE_BUSINESS_SLUG,
 	GSUITE_EXTRA_LICENSE_SLUG,
-} from 'calypso/lib/gsuite/constants';
+} from './constants';
 
 /**
  * Determines whether the specified product slug is for Google Workspace Business Starter.
