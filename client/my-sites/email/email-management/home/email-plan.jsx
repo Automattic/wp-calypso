@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import { CompactCard } from '@automattic/components';
 import page from 'page';
 import classnames from 'classnames';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -14,6 +15,7 @@ import classnames from 'classnames';
 import wp from 'calypso/lib/wp';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import {
+	getGoogleAdminUrl,
 	getGoogleMailServiceFamily,
 	getGoogleProductSlug,
 	getGSuiteSubscriptionId,
@@ -32,7 +34,9 @@ import {
 	emailManagement,
 	emailManagementAddGSuiteUsers,
 	emailManagementForwarding,
+	emailManagementManageTitanAccount,
 	emailManagementNewTitanAccount,
+	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import EmailPlanMailboxesList from 'calypso/my-sites/email/email-management/home/email-plan-mailboxes-list';
 import {
@@ -174,6 +178,61 @@ class EmailPlan extends React.Component {
 		);
 	}
 
+	getManageAllNavItemProps() {
+		const { currentRoute, domain, selectedSite } = this.props;
+
+		if ( hasGSuiteWithUs( domain ) ) {
+			return {
+				external: true,
+				path: getGoogleAdminUrl( domain.name ),
+			};
+		}
+
+		if ( hasTitanMailWithUs( domain ) ) {
+			if ( isEnabled( 'titan/iframe-control-panel' ) ) {
+				return {
+					path: emailManagementManageTitanAccount( selectedSite.slug, domain.name, currentRoute ),
+				};
+			}
+
+			return {
+				external: true,
+				path: emailManagementTitanControlPanelRedirect(
+					selectedSite.slug,
+					domain.name,
+					currentRoute
+				),
+			};
+		}
+
+		return {
+			path: emailManagementForwarding( selectedSite.slug, domain.name, currentRoute ),
+		};
+	}
+
+	renderManageAllNavItem() {
+		const { domain, translate } = this.props;
+
+		if ( ! domain ) {
+			return null;
+		}
+
+		if ( ! hasGSuiteWithUs( domain ) && ! hasTitanMailWithUs( domain ) ) {
+			return null;
+		}
+
+		const manageAllNavItemProps = this.getManageAllNavItemProps();
+
+		return (
+			<VerticalNavItem { ...manageAllNavItemProps }>
+				{ translate( 'Manage all mailboxes', {
+					comment:
+						'This is the text for a link to manage all email accounts/mailboxes for a subscription',
+				} ) }
+			</VerticalNavItem>
+		);
+	}
+
 	render() {
 		const {
 			domain,
@@ -224,6 +283,7 @@ class EmailPlan extends React.Component {
 						<VerticalNavItem { ...addMailboxProps }>
 							{ translate( 'Add new mailbox' ) }
 						</VerticalNavItem>
+						{ this.renderManageAllNavItem() }
 						{ this.renderBillingNavItem() }
 					</VerticalNav>
 				</div>
