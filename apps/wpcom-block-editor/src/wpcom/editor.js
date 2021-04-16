@@ -12,6 +12,7 @@ import './features/fix-block-invalidation-errors';
 import './features/reorder-block-categories';
 import './features/tracking';
 import './features/use-classic-block-guide';
+import './features/fix-featured-image-preview-size';
 
 /**
  * Style dependencies
