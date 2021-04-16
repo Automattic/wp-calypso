@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { useEffect, FunctionComponent, useRef } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
