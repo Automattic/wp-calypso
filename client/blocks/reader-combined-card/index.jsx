@@ -109,6 +109,9 @@ class ReaderCombinedCardComponent extends Component {
 		if ( ! includeSeenPosts ) {
 			posts = posts.filter( ( p ) => ! p.is_seen );
 		}
+		if ( ! posts || ! posts.length ) {
+			return null;
+		}
 
 		return (
 			<Card className="reader-combined-card">
