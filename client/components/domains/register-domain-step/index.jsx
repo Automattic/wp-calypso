@@ -607,7 +607,12 @@ class RegisterDomainStep extends React.Component {
 		}
 
 		if ( this.props.showExampleSuggestions ) {
-			return this.renderExampleSuggestions();
+			return (
+				<>
+					{ this.renderExampleSuggestions() }
+					{ this.props.isReskinned && ! this.state.loadingResults && this.props.reskinSideContent }
+				</>
+			);
 		}
 
 		return this.renderInitialSuggestions( false );
@@ -1396,8 +1401,12 @@ class RegisterDomainStep extends React.Component {
 				unavailableDomains={ this.state.unavailableDomains }
 				onSkip={ this.props.onSkip }
 				showSkipButton={ this.props.showSkipButton }
+				isReskinned={ this.props.isReskinned }
 			>
-				{ hasResults && isFreeDomainExplainerVisible && this.renderFreeDomainExplainer() }
+				{ ! this.props.isReskinned &&
+					hasResults &&
+					isFreeDomainExplainerVisible &&
+					this.renderFreeDomainExplainer() }
 
 				{ showTldFilterBar && (
 					<TldFilterBar
@@ -1409,8 +1418,10 @@ class RegisterDomainStep extends React.Component {
 						onReset={ this.onFiltersReset }
 						onSubmit={ this.onFiltersSubmit }
 						showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
+						isReskinned={ this.props.isReskinned }
 					/>
 				) }
+				{ this.props.isReskinned && ! this.state.loadingResults && this.props.reskinSideContent }
 			</DomainSearchResults>
 		);
 	}
