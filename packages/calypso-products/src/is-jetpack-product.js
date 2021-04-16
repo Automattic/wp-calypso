@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
-import { formatProduct } from 'calypso/lib/products-values/format-product';
-import { isJetpackProductSlug } from 'calypso/lib/products-values/is-jetpack-product-slug';
+import { assertValidProduct } from './utils/assert-valid-product';
+import { formatProduct } from './format-product';
+import { isJetpackProductSlug } from './is-jetpack-product-slug';
 
 export function isJetpackProduct( product ) {
 	product = formatProduct( product );

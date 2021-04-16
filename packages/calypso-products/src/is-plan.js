@@ -1,17 +1,17 @@
 /**
  * Internal dependencies
  */
-import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
-import { formatProduct } from 'calypso/lib/products-values/format-product';
-import { isBlogger } from 'calypso/lib/products-values/is-blogger';
-import { isBusiness } from 'calypso/lib/products-values/is-business';
-import { isEcommerce } from 'calypso/lib/products-values/is-ecommerce';
-import { isEnterprise } from 'calypso/lib/products-values/is-enterprise';
-import { isJetpackPlan } from 'calypso/lib/products-values/is-jetpack-plan';
-import { isJpphpBundle } from 'calypso/lib/products-values/is-jpphp-bundle';
-import { isPersonal } from 'calypso/lib/products-values/is-personal';
-import { isPremium } from 'calypso/lib/products-values/is-premium';
-import { isP2Plus } from 'calypso/lib/products-values/is-p2-plus';
+import { assertValidProduct } from './utils/assert-valid-product';
+import { formatProduct } from './format-product';
+import { isBlogger } from './is-blogger';
+import { isBusiness } from './is-business';
+import { isEcommerce } from './is-ecommerce';
+import { isEnterprise } from './is-enterprise';
+import { isJetpackPlan } from './is-jetpack-plan';
+import { isJpphpBundle } from './is-jpphp-bundle';
+import { isPersonal } from './is-personal';
+import { isPremium } from './is-premium';
+import { isP2Plus } from './is-p2-plus';
 
 export function isPlan( product ) {
 	product = formatProduct( product );

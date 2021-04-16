@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { formatProduct } from 'calypso/lib/products-values/format-product';
-import { PRODUCTS_LIST } from 'calypso/lib/products-values/products-list';
+import { formatProduct } from './format-product';
+import { PRODUCTS_LIST } from './products-list';
 
 export function getProductFromSlug( productSlug ) {
 	if ( PRODUCTS_LIST[ productSlug ] ) {
