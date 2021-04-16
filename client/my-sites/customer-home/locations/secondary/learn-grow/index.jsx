@@ -21,7 +21,7 @@ import {
 	EDUCATION_WPCOURSES,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { WpCourses } from 'calypso/my-sites/customer-home/cards/education/wpcourses';
+import WpCourses from 'calypso/my-sites/customer-home/cards/education/wpcourses';
 
 /**
  * Style dependencies
@@ -45,7 +45,7 @@ const LearnGrow = ( { cards, trackCards } ) => {
 	if ( ! cards || ! cards.length ) {
 		return null;
 	}
-
+	console.dir( cardComponents );
 	return (
 		<>
 			<Card className="learn-grow__content">
