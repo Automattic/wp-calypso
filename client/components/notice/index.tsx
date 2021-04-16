@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import { TimerHandle } from 'calypso/types';
 import Gridicon from 'calypso/components/gridicon';
+import { NoticeStatus } from './types';
 
 /**
  * Style dependencies
@@ -31,24 +32,13 @@ const GRIDICONS_WITH_DROP = [
 	'spam',
 ];
 
-/**
- * Constants
- */
-enum Status {
-	Error = 'is-error',
-	Info = 'is-info',
-	Plain = 'is-plain',
-	Success = 'is-success',
-	Warning = 'is-warning',
-}
-
 interface Props {
 	className?: string;
 	duration?: number;
 	onDismissClick: () => void;
 	translate: ( x: string ) => string;
 	children: React.ReactNode;
-	status?: Status;
+	status?: NoticeStatus;
 	icon?: string | null;
 	isCompact?: boolean;
 	isLoading?: boolean;
@@ -56,23 +46,23 @@ interface Props {
 	text?: string | React.ReactNode;
 }
 
-const getIcon = ( status: Status ): string => {
+const getIcon = ( status: NoticeStatus ): string => {
 	let icon: string;
 
 	switch ( status ) {
-		case Status.Info:
+		case 'is-info':
 			icon = 'info';
 			break;
-		case Status.Success:
+		case 'is-success':
 			icon = 'checkmark';
 			break;
-		case Status.Error:
+		case 'is-error':
 			icon = 'notice';
 			break;
-		case Status.Warning:
+		case 'is-warning':
 			icon = 'notice';
 			break;
-		default:
+		case 'is-plain':
 			icon = 'info';
 			break;
 	}
