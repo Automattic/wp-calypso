@@ -29,7 +29,7 @@ const NoticeAction: FunctionComponent< Props > = ( {
 	const attributes = {
 		'aria-label': ariaLabel,
 		className: 'notice__action',
-		href: href,
+		href,
 		onClick: onClick,
 	};
 
