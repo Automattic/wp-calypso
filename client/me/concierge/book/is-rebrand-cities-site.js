@@ -30,7 +30,7 @@ const REBRAND_CITIES_ACCOUNT_USERNAME = 'rebrandcities';
 /**
  * The <AreUsersPresent /> component takes a set of users and an onChange callback. It
  * passes true or false into the callback whenever the count of users changes. This is
- * intended to be wrapped in a SiteUsersFetcher which will pass the users in.
+ * intended to be wrapped in a IsRebrandCitiesSite which will pass the users in.
  *
  * This is a helper component which isn't exported.
  */
@@ -38,7 +38,7 @@ class AreUsersPresent extends Component {
 	static propTypes = {
 		// onChange is passed in from the primary component
 		onChange: PropTypes.func.isRequired,
-		// users is passed from the SiteUsersFetcher
+		// users is passed from the `useUsersQuery` in <IsRebrandCitiesSite />
 		users: PropTypes.array,
 	};
 
