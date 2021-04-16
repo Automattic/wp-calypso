@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { Button, CompactCard } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -22,14 +22,14 @@ class EmailListInactive extends React.Component {
 
 		const emailListItems = domains.map( ( domain ) => {
 			return (
-				<CompactCard key={ domain.name }>
+				<Card key={ domain.name }>
 					<span>{ domain.name }</span>
 					{ canCurrentUserAddEmail( domain ) && (
 						<Button href={ emailManagement( selectedSiteSlug, domain.name, currentRoute ) }>
 							{ translate( 'Add Email' ) }
 						</Button>
 					) }
-				</CompactCard>
+				</Card>
 			);
 		} );
 

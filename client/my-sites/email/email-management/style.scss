@@ -70,10 +70,14 @@
 .email-list-inactive {
 	margin-top: 15px;
 	> .card {
-		display: flex;
 		align-items: center;
+		display: flex;
+		margin-bottom: 0;
+		padding-bottom: 20px;
+		padding-top: 20px;
 		> span {
 			flex: 1 1 auto;
+			line-height: 40px;
 		}
 	}
 }
