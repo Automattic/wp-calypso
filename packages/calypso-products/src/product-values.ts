@@ -62,7 +62,7 @@ export { isJetpackScan } from './is-jetpack-scan';
 export { isJetpackScanSlug } from './is-jetpack-scan-slug';
 export { isJetpackSearch } from './is-jetpack-search';
 export { isJpphpBundle } from './is-jpphp-bundle';
-export { isMonthly } from './is-monthly';
+export { isMonthlyProduct } from './is-monthly';
 export { isNoAds } from './is-no-ads';
 export { isPersonal } from './is-personal';
 export { isPlan } from './is-plan';
