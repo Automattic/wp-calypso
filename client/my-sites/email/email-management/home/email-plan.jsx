@@ -13,8 +13,8 @@ import classnames from 'classnames';
  */
 import wp from 'calypso/lib/wp';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
-import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
-import { hasTitanMailWithUs } from 'calypso/lib/titan';
+import { getProductType, hasGSuiteWithUs } from 'calypso/lib/gsuite';
+import { getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
 import HeaderCake from 'calypso/components/header-cake';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
@@ -22,7 +22,12 @@ import EmailTypeIcon from 'calypso/my-sites/email/email-management/home/email-ty
 import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
 import { getEmailForwards } from 'calypso/state/selectors/get-email-forwards';
 import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import {
+	emailManagement,
+	emailManagementAddGSuiteUsers,
+	emailManagementForwarding,
+	emailManagementNewTitanAccount,
+} from 'calypso/my-sites/email/paths';
 import EmailPlanMailboxesList from 'calypso/my-sites/email/email-management/home/email-plan-mailboxes-list';
 import {
 	getByPurchaseId,
@@ -33,6 +38,8 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmailPlanSubscription from 'calypso/my-sites/email/email-management/home/email-plan-subscription';
 import MaterialIcon from 'calypso/components/material-icon';
 import { resolveEmailPlanStatus } from 'calypso/my-sites/email/email-management/home/utils';
+import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 class EmailPlan extends React.Component {
 	state = {
@@ -95,6 +102,52 @@ class EmailPlan extends React.Component {
 		page( emailManagement( selectedSite.slug ) );
 	};
 
+	getAddMailboxProps() {
+		const { currentRoute, domain, selectedSite } = this.props;
+
+		if ( hasGSuiteWithUs( domain ) ) {
+			return {
+				path: emailManagementAddGSuiteUsers(
+					selectedSite.slug,
+					domain.name,
+					getProductType( domain.googleAppsSubscription.productSlug ),
+					currentRoute
+				),
+			};
+		}
+
+		if ( hasTitanMailWithUs( domain ) ) {
+			const subscriptionId = getTitanSubscriptionId( domain );
+			return {
+				external: ! subscriptionId,
+				path: emailManagementNewTitanAccount( selectedSite.slug, domain.name, currentRoute ),
+			};
+		}
+
+		return {
+			path: emailManagementForwarding( selectedSite.slug, domain.name, currentRoute ),
+		};
+	}
+
+	renderBillingNavItem() {
+		const { hasEmailPlanSubscription, purchase, selectedSite, translate } = this.props;
+
+		if ( ! hasEmailPlanSubscription ) {
+			return null;
+		}
+
+		if ( ! selectedSite || ! purchase ) {
+			return <VerticalNavItem isPlaceHolder />;
+		}
+
+		const managePurchaseUrl = getManagePurchaseUrlFor( selectedSite.slug, purchase.id );
+		return (
+			<VerticalNavItem path={ managePurchaseUrl }>
+				{ translate( 'Billing and payment settings' ) }
+			</VerticalNavItem>
+		);
+	}
+
 	render() {
 		const {
 			domain,
@@ -102,11 +155,13 @@ class EmailPlan extends React.Component {
 			hasEmailPlanSubscription,
 			purchase,
 			isLoadingPurchase,
+			translate,
 		} = this.props;
 
 		const { statusClass, text, icon } = resolveEmailPlanStatus( domain );
 
 		const cardClasses = classnames( 'email-plan__general', statusClass );
+		const addMailboxProps = this.getAddMailboxProps();
 
 		return (
 			<>
@@ -120,7 +175,7 @@ class EmailPlan extends React.Component {
 						<EmailTypeIcon domain={ domain } />
 					</span>
 					<div>
-						<h2>@{ domain.name }</h2>
+						<h2>{ domain.name }</h2>
 						<span className="email-plan__status">
 							<MaterialIcon icon={ icon } /> { text }
 						</span>
@@ -139,7 +194,10 @@ class EmailPlan extends React.Component {
 				<EmailPlanMailboxesList emails={ this.getEmails() } />
 
 				<VerticalNav>
-					<VerticalNavItem path="a">Add new mailbox</VerticalNavItem>
+					<VerticalNavItem { ...addMailboxProps }>
+						{ translate( 'Add new mailbox' ) }
+					</VerticalNavItem>
+					{ this.renderBillingNavItem() }
 				</VerticalNav>
 			</>
 		);
@@ -190,12 +248,13 @@ export default connect( ( state, ownProps ) => {
 		const emailForwards = getEmailForwards( state, ownProps.domain?.name ) ?? [];
 		emails = normalizeEmailForwardingAddresses( emailForwards );
 	} else if ( hasTitanMailWithUs( ownProps.domain ) ) {
-		subscriptionId = ownProps.domain?.titanMailSubscription?.subscriptionId;
+		subscriptionId = getTitanSubscriptionId( ownProps.domain );
 	}
 
 	const purchase = subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null;
 
 	return {
+		currentRoute: getCurrentRoute( state ),
 		isLoadingPurchase:
 			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 		emails,
