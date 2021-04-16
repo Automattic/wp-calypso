@@ -2,18 +2,18 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { CompactCard } from '@automattic/components';
-import page from 'page';
 import classnames from 'classnames';
+import { CompactCard } from '@automattic/components';
+import { connect } from 'react-redux';
 import { isEnabled } from '@automattic/calypso-config';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
 import wp from 'calypso/lib/wp';
-import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import {
 	getGoogleAdminUrl,
 	getGoogleMailServiceFamily,
@@ -27,9 +27,6 @@ import HeaderCake from 'calypso/components/header-cake';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import EmailTypeIcon from 'calypso/my-sites/email/email-management/home/email-type-icon';
-import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
-import { getEmailForwards } from 'calypso/state/selectors/get-email-forwards';
-import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import {
 	emailManagement,
 	emailManagementAddGSuiteUsers,
@@ -52,6 +49,17 @@ import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 class EmailPlan extends React.Component {
+	static propTypes = {
+		domain: PropTypes.object.isRequired,
+		selectedSite: PropTypes.object.isRequired,
+
+		// Connected props
+		currentRoute: PropTypes.string,
+		hasEmailPlanSubscription: PropTypes.bool,
+		isLoadingPurchase: PropTypes.bool,
+		purchase: PropTypes.object,
+	};
+
 	state = {
 		isLoadingEmailAccounts: false,
 		errorLoadingEmailAccounts: false,
@@ -250,7 +258,6 @@ class EmailPlan extends React.Component {
 
 		return (
 			<>
-				{ domain && <QueryEmailForwards domainName={ domain.name } /> }
 				{ selectedSite && hasEmailPlanSubscription && (
 					<QuerySitePurchases siteId={ selectedSite.ID } />
 				) }
@@ -292,49 +299,10 @@ class EmailPlan extends React.Component {
 	}
 }
 
-const normalizeGsuiteUsers = ( gsuiteUsers ) => {
-	if ( ! gsuiteUsers || ! Array.isArray( gsuiteUsers ) ) {
-		return [];
-	}
-	return gsuiteUsers.map( ( gsuiteUser ) => {
-		return {
-			email: gsuiteUser.email,
-			isAdmin: gsuiteUser.is_admin,
-		};
-	} );
-};
-
-const normalizeEmailForwardingAddresses = ( emailForwards ) => {
-	if ( ! emailForwards || ! Array.isArray( emailForwards ) ) {
-		return [];
-	}
-	return emailForwards.map( ( emailForward ) => {
-		return {
-			email: emailForward.email,
-			isAdmin: false,
-		};
-	} );
-};
-
-function filterEmailListByDomain( emailList, domainName ) {
-	return emailList.filter( ( email ) => domainName === email.domain );
-}
-
 export default connect( ( state, ownProps ) => {
-	const selectedSiteId = ownProps.selectedSite?.ID;
-
 	let subscriptionId = null;
-	let emails = [];
-
 	if ( hasGSuiteWithUs( ownProps.domain ) ) {
 		subscriptionId = getGSuiteSubscriptionId( ownProps.domain );
-		const gsuiteUsersForSite = getGSuiteUsers( state, selectedSiteId ) ?? [];
-		const gsuiteUsers = filterEmailListByDomain( gsuiteUsersForSite, ownProps.domain?.name );
-
-		emails = normalizeGsuiteUsers( gsuiteUsers );
-	} else if ( hasEmailForwards( ownProps.domain ) ) {
-		const emailForwards = getEmailForwards( state, ownProps.domain?.name ) ?? [];
-		emails = normalizeEmailForwardingAddresses( emailForwards );
 	} else if ( hasTitanMailWithUs( ownProps.domain ) ) {
 		subscriptionId = getTitanSubscriptionId( ownProps.domain );
 	}
@@ -345,7 +313,6 @@ export default connect( ( state, ownProps ) => {
 		currentRoute: getCurrentRoute( state ),
 		isLoadingPurchase:
 			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
-		emails,
 		purchase,
 		hasEmailPlanSubscription: !! subscriptionId,
 	};
