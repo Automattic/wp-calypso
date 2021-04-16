@@ -75,6 +75,7 @@ import {
 	isWpComEcommercePlan,
 	isWpComBusinessPlan,
 	getPlanClass,
+	FEATURE_CUSTOM_DOMAIN,
 } from '@automattic/calypso-products';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import PlanFeaturesScroller from './scroller';
@@ -753,14 +754,18 @@ export class PlanFeatures extends Component {
 	}
 
 	renderPlanFeatureColumns( rowIndex ) {
-		const { planProperties, selectedFeature, withScroll } = this.props;
+		const { planProperties, selectedFeature, withScroll, hideCustomDomainFeature } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const { features, planName } = properties;
 
 			const featureKeys = Object.keys( features );
 			const key = featureKeys[ rowIndex ];
-			const currentFeature = features[ key ];
+			let currentFeature = features[ key ];
+
+			if ( hideCustomDomainFeature && FEATURE_CUSTOM_DOMAIN === currentFeature?.getSlug() ) {
+				currentFeature = null;
+			}
 
 			const classes = classNames( 'plan-features__table-item', getPlanClass( planName ), {
 				'has-partial-border': ! withScroll && rowIndex + 1 < featureKeys.length,
@@ -1089,6 +1094,8 @@ const ConnectedPlanFeatures = connect(
 
 		const purchaseId = getCurrentPlanPurchaseId( state, siteId );
 
+		const hideCustomDomainFeature = isPaid && ! isMonthly( sitePlan?.product_slug );
+
 		return {
 			productsList: getProductsList( state ),
 			canPurchase,
@@ -1108,6 +1115,7 @@ const ConnectedPlanFeatures = connect(
 				planCredits &&
 				! isJetpackNotAtomic &&
 				! isInSignup,
+			hideCustomDomainFeature,
 		};
 	},
 	{
