@@ -59,7 +59,7 @@
 		"domains/new-status-design": true,
 		"domains/premium-domain-purchases": true,
 		"email-accounts/enabled": true,
-		"email/centralized-home": false,
+		"email/centralized-home": true,
 		"external-media": true,
 		"external-media/google-photos": true,
 		"external-media/free-photo-library": true,
