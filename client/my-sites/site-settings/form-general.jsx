@@ -573,28 +573,6 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	disablePrivacySettings = ( e ) => {
-		e.target.blur();
-	};
-
-	privacySettingsWrapper() {
-		if ( this.props.isUnlaunchedSite ) {
-			return (
-				<>
-					{ this.renderLaunchSite() }
-					<div
-						className="site-settings__disable-privacy-settings"
-						onFocus={ this.disablePrivacySettings }
-					>
-						{ this.privacySettings() }
-					</div>
-				</>
-			);
-		}
-
-		return <>{ this.privacySettings() }</>;
-	}
-
 	render() {
 		const {
 			handleSubmitForm,
@@ -634,7 +612,7 @@ export class SiteSettingsFormGeneral extends Component {
 					</form>
 				</Card>
 
-				{ this.privacySettingsWrapper() }
+				{ this.props.isUnlaunchedSite ? this.renderLaunchSite() : this.privacySettings() }
 
 				{ ! isWPForTeamsSite && ! siteIsJetpack && (
 					<div className="site-settings__footer-credit-container">
