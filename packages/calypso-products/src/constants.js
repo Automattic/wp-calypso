@@ -5,6 +5,10 @@ import { isEnabled } from '@automattic/calypso-config';
 
 export const TITAN_MAIL_MONTHLY_SLUG = 'wp_titan_mail_monthly';
 
+export const domainProductSlugs = {
+	TRANSFER_IN: 'domain_transfer',
+};
+
 // Jetpack products constants
 export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
 export const PRODUCT_JETPACK_BACKUP_DAILY = 'jetpack_backup_daily';
