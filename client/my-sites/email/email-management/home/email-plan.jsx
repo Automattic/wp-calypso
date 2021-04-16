@@ -13,7 +13,13 @@ import classnames from 'classnames';
  */
 import wp from 'calypso/lib/wp';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
-import { getProductType, hasGSuiteWithUs } from 'calypso/lib/gsuite';
+import {
+	getGoogleMailServiceFamily,
+	getGoogleProductSlug,
+	getGSuiteSubscriptionId,
+	getProductType,
+	hasGSuiteWithUs,
+} from 'calypso/lib/gsuite';
 import { getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
 import HeaderCake from 'calypso/components/header-cake';
 import VerticalNav from 'calypso/components/vertical-nav';
@@ -110,7 +116,7 @@ class EmailPlan extends React.Component {
 				path: emailManagementAddGSuiteUsers(
 					selectedSite.slug,
 					domain.name,
-					getProductType( domain.googleAppsSubscription.productSlug ),
+					getProductType( getGoogleProductSlug( domain ) ),
 					currentRoute
 				),
 			};
@@ -127,6 +133,26 @@ class EmailPlan extends React.Component {
 		return {
 			path: emailManagementForwarding( selectedSite.slug, domain.name, currentRoute ),
 		};
+	}
+
+	getHeaderText() {
+		const { domain, translate } = this.props;
+
+		if ( hasGSuiteWithUs( domain ) ) {
+			const googleMailService = getGoogleMailServiceFamily( getGoogleProductSlug( domain ) );
+			return translate( '%(googleMailService)s settings', {
+				args: {
+					googleMailService,
+				},
+				comment: '%(googleMailService)s can be either "GSuite" or "Google Workspace"',
+			} );
+		}
+
+		if ( hasTitanMailWithUs( domain ) ) {
+			return translate( 'Email settings' );
+		}
+
+		return translate( 'Email forwarding settings' );
 	}
 
 	renderBillingNavItem() {
@@ -169,7 +195,7 @@ class EmailPlan extends React.Component {
 				{ selectedSite && hasEmailPlanSubscription && (
 					<QuerySitePurchases siteId={ selectedSite.ID } />
 				) }
-				<HeaderCake onClick={ this.handleBack }>Email plan settings</HeaderCake>
+				<HeaderCake onClick={ this.handleBack }>{ this.getHeaderText() }</HeaderCake>
 				<CompactCard className={ cardClasses }>
 					<span className="email-plan__general-icon">
 						<EmailTypeIcon domain={ domain } />
@@ -239,7 +265,7 @@ export default connect( ( state, ownProps ) => {
 	let emails = [];
 
 	if ( hasGSuiteWithUs( ownProps.domain ) ) {
-		subscriptionId = ownProps.domain?.googleAppsSubscription?.subscriptionId;
+		subscriptionId = getGSuiteSubscriptionId( ownProps.domain );
 		const gsuiteUsersForSite = getGSuiteUsers( state, selectedSiteId ) ?? [];
 		const gsuiteUsers = filterEmailListByDomain( gsuiteUsersForSite, ownProps.domain?.name );
 
