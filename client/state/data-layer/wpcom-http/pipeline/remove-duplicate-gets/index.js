@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { compact, get, head, isEqual, sortBy, unionWith } from 'lodash';
+import { compact, get, head, isEqual, sortBy } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:data-layer:remove-duplicate-gets' );
 
@@ -42,6 +42,18 @@ export const clearQueue = () => {
 const isGetRequest = ( request ) => 'GET' === get( request, 'method', '' ).toUpperCase();
 
 /**
+ * Returns all elements that exist in any of the two arrays at least once,
+ *
+ * @param {Array} a First array
+ * @param {Array} b Second array
+ * @returns {Array} Array of elements that exist in at least one of the arrays
+ */
+const unionWith = ( a = [], b = [] ) => [
+	...a,
+	...b.filter( ( x ) => a.findIndex( ( y ) => isEqual( x, y ) ) === -1 ),
+];
+
+/**
  * Generate a deterministic key for comparing request descriptions
  *
  * @param {object}            requestOptions              Request options
@@ -62,8 +74,8 @@ export const buildKey = ( { path, apiNamespace, apiVersion, query = {} } ) =>
  * @returns {object<string, object[]>} union of existing list and new item
  */
 export const addResponder = ( list, item ) => ( {
-	failures: unionWith( list.failures, compact( [ item.onFailure ] ), isEqual ),
-	successes: unionWith( list.successes, compact( [ item.onSuccess ] ), isEqual ),
+	failures: unionWith( list.failures, compact( [ item.onFailure ] ) ),
+	successes: unionWith( list.successes, compact( [ item.onSuccess ] ) ),
 } );
 
 /**
@@ -128,8 +140,8 @@ export const applyDuplicatesHandlers = ( inboundData ) => {
 	requestQueue.delete( key );
 
 	const responders = {
-		failures: unionWith( inboundData.failures || [], queued.failures, isEqual ),
-		successes: unionWith( inboundData.successes || [], queued.successes, isEqual ),
+		failures: unionWith( inboundData.failures || [], queued.failures ),
+		successes: unionWith( inboundData.successes || [], queued.successes ),
 	};
 
 	return { ...inboundData, ...responders };
