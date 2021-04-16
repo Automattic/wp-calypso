@@ -1,3 +1,5 @@
+export const TITAN_MAIL_MONTHLY_SLUG = 'wp_titan_mail_monthly';
+
 // Jetpack products constants
 export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
 export const PRODUCT_JETPACK_BACKUP_DAILY = 'jetpack_backup_daily';
