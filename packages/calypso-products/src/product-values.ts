@@ -35,7 +35,7 @@ export { isDotComPlan } from './is-dot-com-plan';
 export { isEcommerce } from './is-ecommerce';
 export { isEnterprise } from './is-enterprise';
 export { isFreeJetpackPlan } from './is-free-jetpack-plan';
-export { isFreePlan } from './is-free-plan';
+export { isFreePlanProduct } from './is-free-plan';
 export { isFreeWordPressComDomain } from './is-free-wordpress-com-domain';
 export {
 	isGoogleWorkspace,
