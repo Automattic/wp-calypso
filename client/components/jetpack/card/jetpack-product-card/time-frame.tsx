@@ -8,7 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { durationToText } from 'calypso/my-sites/plans/jetpack-plans/utils';
+import { useDurationText } from 'calypso/my-sites/plans/jetpack-plans/utils/ui';
 
 /**
  * Type dependencies
@@ -27,10 +27,12 @@ const JetpackProductCardTimeFrame: React.FC< Props > = ( { expiryDate, billingTe
 	const productExpiryDate =
 		moment.isMoment( expiryDate ) && expiryDate.isValid() ? expiryDate : null;
 
+	const durationText = useDurationText( billingTerm );
+
 	return productExpiryDate ? (
 		<time
 			className="jetpack-product-card__expiration-date"
-			dateTime={ productExpiryDate.format( 'YYYY-DD-YY' ) }
+			dateTime={ productExpiryDate.format( 'YYYY-MM-DD' ) }
 		>
 			{ translate( 'expires %(date)s', {
 				args: {
@@ -39,9 +41,7 @@ const JetpackProductCardTimeFrame: React.FC< Props > = ( { expiryDate, billingTe
 			} ) }
 		</time>
 	) : (
-		<span className="jetpack-product-card__billing-time-frame">
-			{ durationToText( billingTerm ) }
-		</span>
+		<span className="jetpack-product-card__billing-time-frame">{ durationText }</span>
 	);
 };
 

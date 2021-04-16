@@ -10,7 +10,8 @@ import { useDispatch, useSelector } from 'react-redux';
  */
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import useItemPrice from '../use-item-price';
-import { slugToSelectorProduct, durationToText } from '../utils';
+import { slugToSelectorProduct } from '../utils/product-parsing';
+import { useDurationText } from '../utils/ui';
 import InfoPopover from 'calypso/components/info-popover';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getJetpackProducts } from 'calypso/lib/products-values/translations';
@@ -59,6 +60,8 @@ const RecordsDetails: FunctionComponent< Props > = ( { productSlug } ) => {
 			),
 		[ dispatch, siteId ]
 	);
+
+	const durationText = useDurationText( selectorProduct?.term );
 
 	if ( ! selectorProduct || ! currencyCode || ! siteId || isFetching ) {
 		return null;
@@ -116,7 +119,7 @@ const RecordsDetails: FunctionComponent< Props > = ( { productSlug } ) => {
 						<PlanPrice rawPrice={ discountedPrice } discounted currencyCode={ currencyCode } />
 					) }
 				</div>
-				<p className="records-details__timeframe">{ durationToText( selectorProduct.term ) }</p>
+				<p className="records-details__timeframe">{ durationText }</p>
 			</div>
 		</div>
 	);

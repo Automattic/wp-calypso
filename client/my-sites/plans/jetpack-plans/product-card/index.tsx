@@ -11,7 +11,6 @@ import { useTranslate } from 'i18n-calypso';
 import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
 import PlanRenewalMessage from '../plan-renewal-message';
 import useItemPrice from '../use-item-price';
-import { productAboveButtonText, productButtonLabel, productTooltip } from '../utils';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { planHasFeature } from '@automattic/calypso-products';
 import { TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
@@ -28,6 +27,7 @@ import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import { isJetpackPlanSlug } from 'calypso/lib/products-values/is-jetpack-plan-slug';
+import { useProductAboveButtonText, useProductButtonLabel, useProductTooltip } from './hooks';
 
 /**
  * Type dependencies
@@ -126,6 +126,15 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		}
 	}
 
+	const buttonLabel = useProductButtonLabel( item, isOwned, isUpgradeableToYearly, sitePlan );
+	const tooltipText = useProductTooltip( item, priceTierList );
+	const aboveButtonText = useProductAboveButtonText(
+		item,
+		siteProduct,
+		isOwned,
+		isItemPlanFeature
+	);
+
 	return (
 		<JetpackProductCard
 			productSlug={ item.productSlug }
@@ -136,7 +145,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			originalPrice={ originalPrice }
 			discountedPrice={ discountedPrice }
 			billingTerm={ item.displayTerm || item.term }
-			buttonLabel={ productButtonLabel( item, isOwned, isUpgradeableToYearly, sitePlan ) }
+			buttonLabel={ buttonLabel }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
 			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
@@ -149,8 +158,8 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			features={ item.features }
 			displayFrom={ ! siteId && priceTierList.length > 0 }
 			belowPriceText={ item.belowPriceText }
-			tooltipText={ priceTierList.length > 0 && productTooltip( item, priceTierList ) }
-			aboveButtonText={ productAboveButtonText( item, siteProduct, isOwned, isItemPlanFeature ) }
+			tooltipText={ priceTierList.length > 0 && tooltipText }
+			aboveButtonText={ aboveButtonText }
 			isDisabled={ isDisabled }
 			disabledMessage={ disabledMessage }
 		/>

@@ -47,13 +47,13 @@ import {
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 	FEATURE_ACTIVITY_LOG,
 } from '@automattic/calypso-products';
-import { Iterations } from './iterations';
-import { buildCardFeaturesFromItem } from './utils';
+import { Iterations } from '../iterations';
+import { buildCardFeaturesFromItem } from './features';
 
 /**
  * Type dependencies
  */
-import type { SelectorProduct, SelectorProductSlug } from './types';
+import type { SelectorProduct, SelectorProductSlug } from '../types';
 import type { JetpackPlanSlugs } from '@automattic/calypso-products';
 
 export const ALL = 'all';

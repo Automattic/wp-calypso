@@ -1,20 +1,22 @@
 /**
  * External dependencies
  */
+import page from 'page';
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import { managePurchase } from 'calypso/me/purchases/paths';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import { checkout, manageSitePurchase } from 'calypso/my-sites/plans/jetpack-plans/utils';
+import { checkout } from 'calypso/my-sites/plans/jetpack-plans/utils/ui';
 import QueryProducts from 'calypso/my-sites/plans/jetpack-plans/query-products';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getYearlyPlanByMonthly } from '@automattic/calypso-products';
+import { getYearlyPlanByMonthly, TERM_ANNUALLY } from '@automattic/calypso-products';
 import { getProductYearlyVariant, isJetpackPlan } from 'calypso/lib/products-values';
-import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Main from 'calypso/components/main';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -34,6 +36,23 @@ import type {
 import type { ProductSlug } from 'calypso/lib/products-values/types';
 
 import './style.scss';
+
+/**
+ * Redirects users to the appropriate URL to manage a site purchase.
+ * On cloud.jetpack.com, the URL will point to wordpress.com. In any other case,
+ * it will point to a relative path to the site purchase.
+ *
+ * @param {string} siteSlug Selected site
+ * @param {number} purchaseId Id of a purchase
+ */
+function manageSitePurchase( siteSlug: string, purchaseId: number ): void {
+	const relativePath = managePurchase( siteSlug, purchaseId );
+	if ( isJetpackCloud() ) {
+		window.location.href = `https://wordpress.com${ relativePath }`;
+	} else {
+		page( relativePath );
+	}
+}
 
 const SelectorPage: React.FC< SelectorPageProps > = ( {
 	defaultDuration = TERM_ANNUALLY,

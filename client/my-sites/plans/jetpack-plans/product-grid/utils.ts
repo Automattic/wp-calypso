@@ -1,15 +1,48 @@
 /**
+ * External dependencies
+ */
+import { createElement } from 'react';
+import { translate, TranslateResult } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import { getMonthlyPlanByYearly, getYearlyPlanByMonthly } from '@automattic/calypso-products';
 import { JETPACK_RESET_PLANS } from '@automattic/calypso-products';
-import { SELECTOR_PLANS } from '../constants';
-import { getJetpackDescriptionWithOptions, slugToSelectorProduct } from '../utils';
+import { DAILY_PRODUCTS, REALTIME_PRODUCTS, SELECTOR_PLANS } from '../constants';
+import { slugToSelectorProduct } from '../utils/product-parsing';
 
 /**
  * Type dependencies
  */
 import type { Duration, SelectorProduct } from '../types';
+
+/**
+ * Append "Available Options: Real-time and Daily" to the product description.
+ *
+ * @param product SelectorProduct
+ *
+ * @returns ReactNode | TranslateResult
+ */
+const getJetpackDescriptionWithOptions = (
+	product: SelectorProduct
+): React.ReactNode | TranslateResult => {
+	const em = createElement( 'em', null, null );
+
+	// If the product has 'subtypes' (containing daily and real-time product slugs).
+	// then append "Available options: Real-time or Daily" to the product description.
+	return product.subtypes.some( ( subtype ) => DAILY_PRODUCTS.includes( subtype ) ) &&
+		product.subtypes.some( ( subtype ) => REALTIME_PRODUCTS.includes( subtype ) )
+		? translate( '%(productDescription)s {{em}}Available options: Real-time or Daily.{{/em}}', {
+				args: {
+					productDescription: product.description,
+				},
+				components: {
+					em,
+				},
+		  } )
+		: product.description;
+};
 
 // Map over all plan slugs and convert them to SelectorProduct types.
 export const getPlansToDisplay = ( {

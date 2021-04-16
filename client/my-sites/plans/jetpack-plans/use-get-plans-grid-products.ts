@@ -22,7 +22,7 @@ import {
 } from '@automattic/calypso-products';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
-import { slugToSelectorProduct } from './utils';
+import { slugToSelectorProduct } from './utils/product-parsing';
 
 /**
  * Type dependencies

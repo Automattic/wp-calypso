@@ -20,7 +20,7 @@ import {
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
 import useDetectWindowBoundary from '../use-detect-window-boundary';
-import { getHighestAnnualDiscount } from '../utils';
+import { getHighestAnnualDiscount } from '../utils/ui';
 
 /**
  * Type dependencies

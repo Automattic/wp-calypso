@@ -53,7 +53,7 @@ import { getDowngradePlanRawPrice } from 'calypso/state/purchases/selectors';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { DOWNGRADEABLE_PLANS_FROM_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import { slugToSelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/utils';
+import { slugToSelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/utils/product-parsing';
 import { TERM_ANNUALLY, JETPACK_PRODUCTS_LIST } from '@automattic/calypso-products';
 
 /**
