@@ -58,23 +58,23 @@ export function receivePartner( partner: Partner ): PartnerPortalThunkAction {
 			partner,
 		} );
 
-		// If we only get a single key, auto-select it for the user for simplicity.
 		// We check the active key otherwise.
+		const activePartnerKeyId = getActivePartnerKeyId( getState() );
 		const keys = partner.keys.map( ( key ) => key.id );
-		const numberOfKeys = keys.length;
-		const currentPartnerKeyId = getActivePartnerKeyId( getState() );
-		// If the current stored partner key id is disabled
-		const isPartnerKeyAvailable = keys.includes( currentPartnerKeyId );
+		let newKeyId = 0;
 
-		if ( ! isPartnerKeyAvailable ) {
-			// do something else
-			return;
+		if ( keys.length === 1 ) {
+			// If we only get a single key, auto-select it for the user for simplicity.
+			newKeyId = keys[ 0 ];
 		}
 
-		if ( numberOfKeys === 1 ) {
-			dispatch( setActivePartnerKey( keys[ 0 ] ) );
-		} else if ( numberOfKeys > 1 ) {
-			dispatch( setActivePartnerKey( currentPartnerKeyId ) );
+		if ( keys.includes( activePartnerKeyId ) ) {
+			// If the active key id is for a valid key, select it.
+			newKeyId = activePartnerKeyId;
+		}
+
+		if ( newKeyId ) {
+			dispatch( setActivePartnerKey( newKeyId ) );
 		}
 	};
 }

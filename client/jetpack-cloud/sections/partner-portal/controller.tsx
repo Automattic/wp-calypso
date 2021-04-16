@@ -11,7 +11,7 @@ import type PageJS from 'page';
 import { addQueryArgs } from 'calypso/lib/route';
 import {
 	getCurrentPartner,
-	getActivePartnerKeyId,
+	hasActivePartnerKey,
 } from 'calypso/state/partner-portal/partner/selectors';
 import {
 	publicToInternalLicenseFilter,
@@ -160,7 +160,7 @@ export function requireSelectedPartnerKeyContext(
 	next: () => void
 ): void {
 	const state = context.store.getState();
-	const hasKey = getActivePartnerKeyId( state );
+	const hasKey = hasActivePartnerKey( state );
 	const { pathname, search } = window.location;
 
 	if ( hasKey ) {
