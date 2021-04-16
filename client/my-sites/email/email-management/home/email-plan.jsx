@@ -175,7 +175,7 @@ class EmailPlan extends React.Component {
 		}
 
 		if ( ! selectedSite || ! purchase ) {
-			return <VerticalNavItem isPlaceHolder />;
+			return <VerticalNavItem isPlaceholder />;
 		}
 
 		const managePurchaseUrl = getManagePurchaseUrlFor( selectedSite.slug, purchase.id );
