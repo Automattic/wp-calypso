@@ -6,7 +6,7 @@ import {
 	isGSuiteProductSlug,
 	isGSuiteOrExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
-} from 'calypso/lib/gsuite';
+} from './index';
 import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
 
