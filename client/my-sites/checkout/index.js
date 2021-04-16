@@ -29,7 +29,9 @@ export default function () {
 	const isLoggedOut = ! user.get();
 
 	if ( isLoggedOut ) {
-		page( '/checkout/jetpack/:siteSlug/:productSlug', checkout, makeLayout, clientRender );
+		if ( config.isEnabled( 'jetpack/userless-checkout' ) ) {
+			page( '/checkout/jetpack/:siteSlug/:productSlug', checkout, makeLayout, clientRender );
+		}
 
 		page( '/checkout/offer-quickstart-session', upsellNudge, makeLayout, clientRender );
 
