@@ -288,6 +288,8 @@ body.is-section-signup.is-white-signup {
 	}
 
 	.domain-suggestion {
+		box-shadow: none;
+
 		& .domain-suggestion__content-domain {
 			justify-content: space-between;
 			margin-right: 40px;
@@ -331,8 +333,8 @@ body.is-section-signup.is-white-signup {
 
 		&:not( .featured-domain-suggestion ) {
 			background: none;
-			padding-left: 0;
-			padding-right: 0;
+			padding-left: 5px;
+			padding-right: 5px;
 
 			.domain-registration-suggestion__domain-title {
 				line-height: 3rem;
@@ -401,6 +403,11 @@ body.is-section-signup.is-white-signup {
 					margin-left: 0;
 				}
 			}
+		}
+
+		&:not( .search-filters__buttons ),
+		&:not( .featured-domain-suggestion ) {
+			border-bottom: 1px solid rgba( 220, 220, 222, 0.64 );
 		}
 	}
 }
