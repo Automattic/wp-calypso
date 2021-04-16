@@ -95,6 +95,10 @@ describe( `[${ host }] Likes: (${ screenSize })`, function () {
 			await loginFlow.loginUsingPopup();
 
 			await postLikes.expectLiked();
+
+			// And Unlike it
+			await postLikes.clickUnlike();
+			await postLikes.expectNotLiked();
 		} );
 	} );
 } );

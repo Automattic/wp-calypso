@@ -38,7 +38,11 @@ export default class CommentLikesComponent extends AsyncBaseContainer {
 		const commentLikeLink = By.xpath(
 			`//div[@class='comment-content']/p[.='${ this.comment }']/../p/a[@class='comment-like-link']`
 		);
+
+		// Scrolling 100px prevents the action bar from covering the like button on mobile
+		// causing test failures
 		await driverHelper.scrollIntoView( this.driver, commentLikeLink, 'end' );
+		await this.driver.executeScript( 'window.scrollBy(0, 100)' );
 		await driverHelper.clickWhenClickable( this.driver, commentLikeLink );
 	}
 	async expectLiked() {
@@ -51,6 +55,11 @@ export default class CommentLikesComponent extends AsyncBaseContainer {
 		const commentUnLikeLink = By.xpath(
 			`//div[@class='comment-content']/p[.='${ this.comment }']/../p[@class='comment-likes comment-liked']/a[@class='comment-like-link']`
 		);
+
+		// Scrolling 100px prevents the action bar from covering the like button on mobile
+		// causing test failures
+		await driverHelper.scrollIntoView( this.driver, commentUnLikeLink, 'end' );
+		await this.driver.executeScript( 'window.scrollBy(0, 100)' );
 		await driverHelper.clickWhenClickable( this.driver, commentUnLikeLink );
 	}
 	async expectNotLiked() {
