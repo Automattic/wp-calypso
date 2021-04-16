@@ -4,12 +4,12 @@
 import React, { useEffect, FunctionComponent, useRef } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { TimerHandle } from 'calypso/types';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies
@@ -37,9 +37,9 @@ const GRIDICONS_WITH_DROP = [
 enum Status {
 	Error = 'is-error',
 	Info = 'is-info',
+	Plain = 'is-plain',
 	Success = 'is-success',
 	Warning = 'is-warning',
-	Plain = 'is-plain',
 }
 
 interface Props {
