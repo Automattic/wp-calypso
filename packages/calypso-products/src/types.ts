@@ -5,6 +5,8 @@
 import type * as constants from './constants';
 import type { TranslateResult } from 'i18n-calypso';
 
+export * from './product-values-types';
+
 export type JetpackResetPlanSlugs =
 	| typeof constants.PLAN_JETPACK_SECURITY_DAILY
 	| typeof constants.PLAN_JETPACK_SECURITY_DAILY_MONTHLY
