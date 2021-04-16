@@ -53,6 +53,7 @@ body.is-section-signup.is-white-signup {
 	.domain-search-results__domain-suggestions {
 		.card {
 			box-shadow: none;
+			padding: 11px 24px;
 
 			&:not( .search-filters__buttons ) {
 				border-bottom: 1px solid rgba( 220, 220, 222, 0.64 );
@@ -65,6 +66,7 @@ body.is-section-signup.is-white-signup {
 
 		.featured-domain-suggestion .domain-registration-suggestion__domain-title {
 			font-size: 1.625rem; /* stylelint-disable-line */
+			line-height: 30px;
 		}
 	}
 	
