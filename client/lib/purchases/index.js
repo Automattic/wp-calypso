@@ -21,7 +21,7 @@ import {
 	isDomainTransfer,
 	isGoogleWorkspace,
 	isJetpackPlan,
-	isMonthly as isMonthlyProduct,
+	isMonthlyProduct,
 	isPlan,
 	isTheme,
 	isTitanMail,
