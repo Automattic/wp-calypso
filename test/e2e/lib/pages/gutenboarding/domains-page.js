@@ -21,13 +21,26 @@ export default class DomainsPage extends AsyncBaseContainer {
 		);
 	}
 
+	async enterDomainQuery( query ) {
+		const searchFieldSelector = By.css( '.domain-picker__search input[type="text"]' );
+		await driverHelper.setWhenSettable( this.driver, searchFieldSelector, query );
+		// After typing the new query value, wait for domain suggestions to reload.
+		// The sleep value should be higher than the DOMAIN_SEARCH_DEBOUNCE_INTERVAL defined in domain-picker.
+		// https://github.com/Automattic/wp-calypso/blob/trunk/packages/domain-picker/src/constants.ts#L18
+		await this.driver.sleep( 400 );
+	}
+
+	async waitForDomainSuggestionsToLoad() {
+		const placeholderSelector = By.css( '.domain-picker__suggestion-item.placeholder' );
+		await driverHelper.waitTillNotPresent( this.driver, placeholderSelector );
+	}
+
 	/**
-	 * Selects the free domain from the list of search results
+	 * Get the free domain name from the list of search results
 	 *
-	 * @returns {Promise<string>} The selected domain
+	 * @returns {Promise<string>} The free domain
 	 */
-	async selectFreeDomain() {
-		const freeDomainButtonSelector = By.css( '.domain-picker__suggestion-item.is-free' );
+	async getFreeDomainName() {
 		const freeDomainNameSelector = By.css(
 			'.domain-picker__suggestion-item.is-free .domain-picker__suggestion-item-name'
 		);
@@ -35,9 +48,12 @@ export default class DomainsPage extends AsyncBaseContainer {
 			this.driver,
 			freeDomainNameSelector
 		);
-		const domainName = await domainNameElement.getText();
+		return await domainNameElement.getText();
+	}
+
+	async selectFreeDomain() {
+		const freeDomainButtonSelector = By.css( '.domain-picker__suggestion-item.is-free' );
 		await driverHelper.clickWhenClickable( this.driver, freeDomainButtonSelector );
-		return domainName;
 	}
 
 	async continueToNextStep() {
@@ -48,10 +64,5 @@ export default class DomainsPage extends AsyncBaseContainer {
 	async skipStep() {
 		const skipButtonSelector = By.css( '.action-buttons__skip' );
 		return await driverHelper.clickWhenClickable( this.driver, skipButtonSelector );
-	}
-
-	async enterDomainQuery( query ) {
-		const searchFieldSelector = By.css( '.domain-picker__search input[type="text"]' );
-		return await driverHelper.setWhenSettable( this.driver, searchFieldSelector, query );
 	}
 }
