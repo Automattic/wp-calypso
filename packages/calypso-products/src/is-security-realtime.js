@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isSecurityRealTimePlan } from '@automattic/calypso-products';
+import { isSecurityRealTimePlan } from './index';
 import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
 

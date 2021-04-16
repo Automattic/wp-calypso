@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { JETPACK_BACKUP_PRODUCTS, JETPACK_SCAN_PRODUCTS } from '@automattic/calypso-products';
+import { JETPACK_BACKUP_PRODUCTS, JETPACK_SCAN_PRODUCTS } from './index';
 
 export function isJetpackCloudProductSlug( productSlug ) {
 	return (

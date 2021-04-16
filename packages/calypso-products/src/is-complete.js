@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isCompletePlan } from '@automattic/calypso-products';
+import { isCompletePlan } from './index';
 import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
 

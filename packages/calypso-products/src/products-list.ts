@@ -37,7 +37,7 @@ import {
 	PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
-} from '@automattic/calypso-products';
+} from './index';
 
 /**
  * Type dependencies

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { TERMS_LIST } from '@automattic/calypso-products';
+import { TERMS_LIST } from './index';
 import { PRODUCTS_LIST } from './products-list';
 
 /**

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { JETPACK_SEARCH_PRODUCTS } from '@automattic/calypso-products';
+import { JETPACK_SEARCH_PRODUCTS } from './index';
 import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
 
