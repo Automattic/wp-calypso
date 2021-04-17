@@ -2,29 +2,48 @@
 /**
  * Type dependencies
  */
-import type * as constants from './constants';
 import type { TranslateResult } from 'i18n-calypso';
+import type {
+	GROUP_JETPACK,
+	GROUP_WPCOM,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_COMPLETE,
+	PLAN_JETPACK_COMPLETE_MONTHLY,
+	PLAN_JETPACK_FREE,
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	PLAN_JETPACK_SECURITY_REALTIME,
+	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+	TERM_MONTHLY,
+} from './constants';
 
 export * from './product-values-types';
 
 export type JetpackResetPlanSlugs =
-	| typeof constants.PLAN_JETPACK_SECURITY_DAILY
-	| typeof constants.PLAN_JETPACK_SECURITY_DAILY_MONTHLY
-	| typeof constants.PLAN_JETPACK_SECURITY_REALTIME
-	| typeof constants.PLAN_JETPACK_SECURITY_REALTIME_MONTHLY
-	| typeof constants.PLAN_JETPACK_COMPLETE
-	| typeof constants.PLAN_JETPACK_COMPLETE_MONTHLY;
+	| typeof PLAN_JETPACK_SECURITY_DAILY
+	| typeof PLAN_JETPACK_SECURITY_DAILY_MONTHLY
+	| typeof PLAN_JETPACK_SECURITY_REALTIME
+	| typeof PLAN_JETPACK_SECURITY_REALTIME_MONTHLY
+	| typeof PLAN_JETPACK_COMPLETE
+	| typeof PLAN_JETPACK_COMPLETE_MONTHLY;
 
 export type JetpackLegacyPlanSlugs =
-	| typeof constants.PLAN_JETPACK_PERSONAL
-	| typeof constants.PLAN_JETPACK_PERSONAL_MONTHLY
-	| typeof constants.PLAN_JETPACK_PREMIUM
-	| typeof constants.PLAN_JETPACK_PREMIUM_MONTHLY
-	| typeof constants.PLAN_JETPACK_BUSINESS
-	| typeof constants.PLAN_JETPACK_BUSINESS_MONTHLY;
+	| typeof PLAN_JETPACK_PERSONAL
+	| typeof PLAN_JETPACK_PERSONAL_MONTHLY
+	| typeof PLAN_JETPACK_PREMIUM
+	| typeof PLAN_JETPACK_PREMIUM_MONTHLY
+	| typeof PLAN_JETPACK_BUSINESS
+	| typeof PLAN_JETPACK_BUSINESS_MONTHLY;
 
 export type JetpackPlanSlugs =
-	| typeof constants.PLAN_JETPACK_FREE
+	| typeof PLAN_JETPACK_FREE
 	| JetpackResetPlanSlugs
 	| JetpackLegacyPlanSlugs;
 
@@ -32,12 +51,9 @@ export type JetpackPlanCardFeature = symbol | [ symbol, symbol[] ];
 export type JetpackPlanCardFeatureSection = Record< symbol, JetpackPlanCardFeature[] >;
 
 export type Plan = {
-	group: typeof constants.GROUP_WPCOM | typeof constants.GROUP_JETPACK;
+	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK;
 	type: string;
-	term:
-		| typeof constants.TERM_ANNUALLY
-		| typeof constants.TERM_BIENNIALLY
-		| typeof constants.TERM_MONTHLY;
+	term: typeof TERM_ANNUALLY | typeof TERM_BIENNIALLY | typeof TERM_MONTHLY;
 	getBillingTimeFrame: () => TranslateResult;
 	getTitle: ( variation?: string ) => TranslateResult;
 	getDescription: ( variation?: string ) => TranslateResult;
@@ -64,9 +80,9 @@ export type Plan = {
 };
 
 export type JetpackDailyPlan =
-	| typeof constants.PLAN_JETPACK_SECURITY_DAILY
-	| typeof constants.PLAN_JETPACK_SECURITY_DAILY_MONTHLY;
+	| typeof PLAN_JETPACK_SECURITY_DAILY
+	| typeof PLAN_JETPACK_SECURITY_DAILY_MONTHLY;
 
 export type JetpackRealtimePlan =
-	| typeof constants.PLAN_JETPACK_SECURITY_REALTIME
-	| typeof constants.PLAN_JETPACK_SECURITY_REALTIME_MONTHLY;
+	| typeof PLAN_JETPACK_SECURITY_REALTIME
+	| typeof PLAN_JETPACK_SECURITY_REALTIME_MONTHLY;
