@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { difference, get, has, includes, pick, values } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import {
@@ -44,7 +39,7 @@ export function getPlansSlugs() {
 
 export function getPlan( planKey ) {
 	if ( Object.prototype.toString.apply( planKey ) === '[object Object]' ) {
-		if ( values( PLANS_LIST ).indexOf( planKey ) !== -1 ) {
+		if ( Object.values( PLANS_LIST ).includes( planKey ) ) {
 			return planKey;
 		}
 	}
@@ -133,13 +128,13 @@ export function planHasFeature( plan, feature ) {
 		'getHiddenFeatures',
 	].reduce(
 		( featuresArray, featureMethodName ) => [
-			...get( planConstantObj, featureMethodName, () => [] )(),
+			...( planConstantObj[ featureMethodName ]?.() ?? [] ),
 			...featuresArray,
 		],
 		[]
 	);
 
-	return includes( allFeatures, feature );
+	return allFeatures.includes( feature );
 }
 
 /**
@@ -152,7 +147,7 @@ export function planHasFeature( plan, feature ) {
 export function planHasSuperiorFeature( plan, feature ) {
 	const planConstantObj = getPlan( plan );
 
-	return includes( planConstantObj.getInferiorHiddenFeatures(), feature );
+	return planConstantObj.getInferiorHiddenFeatures().includes( feature );
 }
 
 export function shouldFetchSitePlans( sitePlans, selectedSite ) {
@@ -168,7 +163,7 @@ export function shouldFetchSitePlans( sitePlans, selectedSite ) {
  */
 export function getMonthlyPlanByYearly( planSlug ) {
 	const plan = getPlan( planSlug );
-	if ( has( plan, 'getMonthlySlug' ) ) {
+	if ( plan?.getMonthlySlug ) {
 		return plan.getMonthlySlug();
 	}
 	return findFirstSimilarPlanKey( planSlug, { term: TERM_MONTHLY } ) || '';
@@ -183,7 +178,7 @@ export function getMonthlyPlanByYearly( planSlug ) {
  */
 export function getYearlyPlanByMonthly( planSlug ) {
 	const plan = getPlan( planSlug );
-	if ( has( plan, 'getAnnualSlug' ) ) {
+	if ( plan?.getAnnualSlug ) {
 		return plan.getAnnualSlug();
 	}
 	return findFirstSimilarPlanKey( planSlug, { term: TERM_ANNUALLY } ) || '';
@@ -343,7 +338,9 @@ export function findSimilarPlansKeys( planKey, diff = {} ) {
 		return [];
 	}
 	return findPlansKeys( {
-		...pick( plan, 'type', 'group', 'term' ),
+		type: plan.type,
+		group: plan.group,
+		term: plan.term,
 		...diff,
 	} );
 }
@@ -382,7 +379,7 @@ export function findPlansKeys( query = {} ) {
  */
 export function planMatches( planKey, query = {} ) {
 	const acceptedKeys = [ 'type', 'group', 'term' ];
-	const unknownKeys = difference( Object.keys( query ), acceptedKeys );
+	const unknownKeys = Object.keys( query ).filter( ( key ) => ! acceptedKeys.includes( key ) );
 	if ( unknownKeys.length ) {
 		throw new Error(
 			`planMatches can only match against ${ acceptedKeys.join( ',' ) }, ` +

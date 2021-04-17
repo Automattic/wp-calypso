@@ -1,13 +1,14 @@
 /**
- * External dependencies
- */
-
-import { difference, flatten, groupBy, sortBy } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { getDomainProductRanking, isCredits, isDomainProduct, isPlan } from '.';
+
+// https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore
+const groupBy = ( items, key ) =>
+	items.reduce(
+		( r, v, i, a, k = v[ key ] ) => ( ( r[ k ] || ( r[ k ] = [] ) ).push( v ), r ),
+		{}
+	);
 
 /**
  * Sorts all products in the following order:
@@ -32,23 +33,26 @@ function sortProducts( products ) {
 
 	const includedItems = products.filter( isIncludedWithPlan );
 
-	domainItems = difference( products, includedItems );
+	domainItems = products.filter( ( product ) => ! includedItems.includes( product ) );
 	domainItems = domainItems.filter( isDomainProduct );
 	domainItems = Object.entries( groupBy( domainItems, 'meta' ) );
-	domainItems = sortBy( domainItems, function ( pair ) {
+	domainItems = domainItems.sort( function ( pair ) {
 		if ( pair[ 1 ][ 0 ] && pair[ 1 ][ 0 ].cost === 0 ) {
 			return -1;
 		}
 		return pair[ 0 ];
 	} );
 	domainItems = domainItems.map( function ( pair ) {
-		return sortBy( pair[ 1 ], getDomainProductRanking );
+		return pair[ 1 ].sort( getDomainProductRanking );
 	} );
-	domainItems = flatten( domainItems );
+	domainItems = domainItems.flat();
 
 	const creditItems = products.filter( isCredits );
 
-	const otherItems = difference( products, planItems, domainItems, includedItems, creditItems );
+	const otherItems = products.filter(
+		( product ) =>
+			! [ ...planItems, ...domainItems, ...includedItems, ...creditItems ].includes( product )
+	);
 
 	return planItems
 		.concat( includedItems )

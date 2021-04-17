@@ -1,13 +1,10 @@
-/**
- * External dependencies
- */
-import { pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import schema from './utils/schema.json';
-
 export function allowedProductAttributes( product ) {
-	return pick( product, Object.keys( schema.properties ) );
+	return {
+		product_id: product.product_id,
+		product_name: product.product_name,
+		product_slug: product.product_slug,
+		is_domain_registration: product.is_domain_registration,
+		term: product.term,
+		bill_period: product.bill_period,
+	};
 }
