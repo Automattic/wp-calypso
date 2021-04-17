@@ -6,7 +6,6 @@ import { TranslateResult } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
 import { getJetpackProductsCallToAction } from './translations';
 
@@ -23,7 +22,6 @@ import type { Product } from './products-list';
  */
 export function getJetpackProductCallToAction( product: object ): TranslateResult | undefined {
 	product = formatProduct( product );
-	assertValidProduct( product );
 	const jetpackProductsCallToActions = getJetpackProductsCallToAction() as Record<
 		string,
 		TranslateResult
