@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
 import { isBlogger } from './is-blogger';
 import { isBusiness } from './is-business';
@@ -15,7 +14,6 @@ import { isP2Plus } from './is-p2-plus';
 
 export function isPlan( product ) {
 	product = formatProduct( product );
-	assertValidProduct( product );
 
 	return (
 		isBlogger( product ) ||

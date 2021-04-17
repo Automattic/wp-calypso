@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
 import { getDomain } from './get-domain';
 import { isDomainMapping } from './is-domain-mapping';
@@ -51,7 +50,6 @@ export function isDependentProduct( product, dependentProduct, domainsWithPlansO
 	let isPlansOnlyDependent = false;
 
 	product = formatProduct( product );
-	assertValidProduct( product );
 
 	const slug = isDomainRegistration( product ) ? 'domain' : product.product_slug;
 	const dependentSlug = isDomainRegistration( dependentProduct )
