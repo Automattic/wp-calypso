@@ -128,7 +128,7 @@ export function planHasFeature( plan, feature ) {
 		'getHiddenFeatures',
 	].reduce(
 		( featuresArray, featureMethodName ) => [
-			...( planConstantObj[ featureMethodName ]?.() ?? [] ),
+			...( planConstantObj?.[ featureMethodName ]?.() ?? [] ),
 			...featuresArray,
 		],
 		[]
