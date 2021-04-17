@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
 import { getJetpackProductsShortNames } from './translations';
 
@@ -13,7 +12,6 @@ import { getJetpackProductsShortNames } from './translations';
  */
 export function getJetpackProductShortName( product ) {
 	product = formatProduct( product );
-	assertValidProduct( product );
 	const jetpackProductShortNames = getJetpackProductsShortNames();
 
 	return jetpackProductShortNames?.[ product.product_slug ];
