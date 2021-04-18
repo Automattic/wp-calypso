@@ -19,6 +19,7 @@ import type {
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
 } from './index';
+import type { ResponseCartProductExtra } from '@automattic/shopping-cart';
 
 export type JetpackProductSlug =
 	| typeof PRODUCT_JETPACK_BACKUP_DAILY
@@ -64,4 +65,31 @@ export type ProductTranslations = {
 	optionShortNamesCallback?: ( arg0: Record< string, unknown > ) => TranslateResult;
 	optionsLabelCallback?: ( arg0: Record< string, unknown > ) => TranslateResult;
 	optionsLabel: TranslateResult;
+};
+
+export interface CamelCaseProduct {
+	productSlug: string;
+	productType?: string | undefined;
+	includedDomainPurchaseAmount?: number | undefined;
+	isDomainRegistration?: boolean | undefined;
+}
+
+export interface FormattedProduct {
+	product_slug: string;
+	product_id?: number | undefined;
+	product_name?: string | undefined;
+	product_type?: string | undefined;
+	included_domain_purchase_amount?: number | undefined;
+	is_domain_registration?: boolean | undefined;
+	term?: string | undefined;
+	bill_period?: number | undefined | string;
+	is_bundled?: boolean | undefined;
+	is_free?: boolean | undefined;
+	extra?: ResponseCartProductExtra;
+}
+
+export type UnknownProduct = CamelCaseProduct | FormattedProduct;
+
+export type DelayedDomainTransferProduct = UnknownProduct & {
+	delayedProvisioning?: boolean;
 };

@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import {
 	GROUP_JETPACK,
 	JETPACK_ANTI_SPAM_PRODUCTS,
@@ -39,96 +42,69 @@ import {
 import { domainProductSlugs, TITAN_MAIL_MONTHLY_SLUG } from './constants';
 import { formatProduct } from './format-product';
 import { getDomain } from './get-domain';
+import type { DelayedDomainTransferProduct, FormattedProduct, UnknownProduct } from './types';
 
-export function isBiennially( rawProduct ) {
+export function isBiennially( rawProduct: UnknownProduct ): boolean {
 	const product = formatProduct( rawProduct );
 
-	return parseInt( product.bill_period, 10 ) === PLAN_BIENNIAL_PERIOD;
+	return parseInt( String( product.bill_period ), 10 ) === PLAN_BIENNIAL_PERIOD;
 }
-/**
- * Internal dependencies
- */
 
-export function isBlogger( product ) {
+export function isBlogger( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return isBloggerPlan( product.product_slug );
 }
-/**
- * Internal dependencies
- */
 
-export function isBundled( product ) {
+export function isBundled( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return !! product.is_bundled;
 }
-/**
- * Internal dependencies
- */
 
-export function isBusiness( product ) {
+export function isBusiness( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return isBusinessPlan( product.product_slug );
 }
-/**
- * Internal dependencies
- */
 
-export function isChargeback( product ) {
+export function isChargeback( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return product.product_slug === PLAN_CHARGEBACK;
 }
-/**
- * Internal dependencies
- */
 
-export function isComplete( product ) {
+export function isComplete( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return isCompletePlan( product.product_slug );
 }
-/**
- * Internal dependencies
- */
 
-export function isConciergeSession( product ) {
+export function isConciergeSession( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return 'concierge-session' === product.product_slug;
 }
-/**
- * Internal dependencies
- */
 
-export function isCredits( product ) {
+export function isCredits( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return 'wordpress-com-credits' === product.product_slug;
 }
-/**
- * Internal dependencies
- */
 
-export function isCustomDesign( product ) {
+export function isCustomDesign( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return 'custom-design' === product.product_slug;
 }
-/**
- * Internal dependencies
- */
 
-export function isDelayedDomainTransfer( product ) {
-	return isDomainTransfer( product ) && product.delayedProvisioning;
+export function isDelayedDomainTransfer( product: DelayedDomainTransferProduct ): boolean {
+	return isDomainTransfer( product ) && Boolean( product.delayedProvisioning );
 }
-/**
- * Internal dependencies
- */
 
-const productDependencies = {
+type ProductDependencies = Record< string, boolean >;
+
+const productDependencies: Record< string, ProductDependencies > = {
 	domain: {
 		domain_redemption: true,
 		gapps: true,
@@ -158,7 +134,11 @@ const productDependencies = {
 	},
 };
 
-export function isDependentProduct( product, dependentProduct, domainsWithPlansOnly ) {
+export function isDependentProduct(
+	product: UnknownProduct,
+	dependentProduct: FormattedProduct,
+	domainsWithPlansOnly: boolean
+): boolean {
 	let isPlansOnlyDependent = false;
 
 	product = formatProduct( product );
@@ -181,116 +161,77 @@ export function isDependentProduct( product, dependentProduct, domainsWithPlansO
 			getDomain( product ) === getDomain( dependentProduct ) )
 	);
 }
-/**
- * Internal dependencies
- */
 
-export function isDomainMapping( product ) {
+export function isDomainMapping( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return product.product_slug === 'domain_map';
 }
-/**
- * Internal dependencies
- */
 
-export function isDomainProduct( product ) {
+export function isDomainProduct( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return isDomainMapping( product ) || isDomainRegistration( product );
 }
-/**
- * Internal dependencies
- */
 
-export function isDomainRedemption( product ) {
+export function isDomainRedemption( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return product.product_slug === 'domain_redemption';
 }
-/**
- * Internal dependencies
- */
 
-export function isDomainRegistration( product ) {
+export function isDomainRegistration( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return !! product.is_domain_registration;
 }
-/**
- * Internal dependencies
- */
 
-export function isDomainTransferProduct( product ) {
+export function isDomainTransferProduct( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return isDomainTransfer( product );
 }
-/**
- * Internal dependencies
- */
 
-export function isDomainTransfer( product ) {
+export function isDomainTransfer( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return product.product_slug === domainProductSlugs.TRANSFER_IN;
 }
-/**
- * Internal dependencies
- */
 
-export function isDotComPlan( product ) {
+export function isDotComPlan( product: UnknownProduct ): boolean {
 	return isPlan( product ) && ! isJetpackPlan( product );
 }
-/**
- * Internal dependencies
- */
 
-export function isEcommerce( product ) {
+export function isEcommerce( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return isEcommercePlan( product.product_slug );
 }
-/**
- * Internal dependencies
- */
 
-export function isEnterprise( product ) {
+export function isEnterprise( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return product.product_slug === PLAN_WPCOM_ENTERPRISE;
 }
-/**
- * Internal dependencies
- */
 
-export function isFreeJetpackPlan( product ) {
+export function isFreeJetpackPlan( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return product.product_slug === PLAN_JETPACK_FREE;
 }
-/**
- * Internal dependencies
- */
 
-export function isFreePlanProduct( product ) {
+export function isFreePlanProduct( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return product.product_slug === PLAN_FREE;
 }
-/**
- * Internal dependencies
- */
 
-export function isFreeWordPressComDomain( product ) {
+export function isFreeWordPressComDomain( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 	return product.is_free === true;
 }
-/**
- * Internal dependencies
- */
 
-export function isGoogleWorkspace( product ) {
+export function isGoogleWorkspace( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return isGoogleWorkspaceProductSlug( product.product_slug );
@@ -303,7 +244,7 @@ export function isGoogleWorkspace( product ) {
  * @returns {boolean} - true if this product is for extra licenses, false otherwise
  * @see isGoogleWorkspaceExtraLicence() in client/lib/purchases for a function that works on a purchase object
  */
-export function isGoogleWorkspaceExtraLicence( product ) {
+export function isGoogleWorkspaceExtraLicence( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	if ( ! isGoogleWorkspaceProductSlug( product.product_slug ) ) {
@@ -314,19 +255,19 @@ export function isGoogleWorkspaceExtraLicence( product ) {
 	return product?.extra?.new_quantity !== undefined;
 }
 
-export function isGSuite( product ) {
+export function isGSuite( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return isGSuiteProductSlug( product.product_slug );
 }
 
-export function isGSuiteOrExtraLicense( product ) {
+export function isGSuiteOrExtraLicense( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return isGSuiteOrExtraLicenseProductSlug( product.product_slug );
 }
 
-export function isGSuiteOrExtraLicenseOrGoogleWorkspace( product ) {
+export function isGSuiteOrExtraLicenseOrGoogleWorkspace( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return (
@@ -335,193 +276,127 @@ export function isGSuiteOrExtraLicenseOrGoogleWorkspace( product ) {
 	);
 }
 
-export function isGSuiteOrGoogleWorkspace( product ) {
+export function isGSuiteOrGoogleWorkspace( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return isGSuiteOrGoogleWorkspaceProductSlug( product.product_slug );
 }
-/**
- * Internal dependencies
- */
 
-export function isGuidedTransfer( product ) {
+export function isGuidedTransfer( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return 'guided_transfer' === product.product_slug;
 }
-/**
- * External dependencies
- */
 
-export function isJetpackAntiSpamSlug( productSlug ) {
+export function isJetpackAntiSpamSlug( productSlug: string ): boolean {
 	return JETPACK_ANTI_SPAM_PRODUCTS.includes( productSlug );
 }
-/**
- * Internal dependencies
- */
 
-export function isJetpackAntiSpam( product ) {
+export function isJetpackAntiSpam( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return isJetpackAntiSpamSlug( product.product_slug );
 }
-/**
- * External dependencies
- */
 
-export function isJetpackBackupSlug( productSlug ) {
+export function isJetpackBackupSlug( productSlug: string ): boolean {
 	return JETPACK_BACKUP_PRODUCTS.includes( productSlug );
 }
-/**
- * Internal dependencies
- */
 
-export function isJetpackBackup( product ) {
+export function isJetpackBackup( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return isJetpackBackupSlug( product.product_slug );
 }
-/**
- * Internal dependencies
- */
 
-export function isJetpackBusiness( product ) {
+export function isJetpackBusiness( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return isBusiness( product ) && isJetpackPlan( product );
 }
-/**
- * External dependencies
- */
 
-export function isJetpackCloudProductSlug( productSlug ) {
+export function isJetpackCloudProductSlug( productSlug: string ): boolean {
 	return (
 		JETPACK_SCAN_PRODUCTS.includes( productSlug ) || JETPACK_BACKUP_PRODUCTS.includes( productSlug )
 	);
 }
-/**
- * Internal dependencies
- */
 
-export function isJetpackMonthlyPlan( product ) {
+export function isJetpackMonthlyPlan( product: UnknownProduct ): boolean {
 	return isMonthlyProduct( product ) && isJetpackPlan( product );
 }
-/**
- * Internal dependencies
- */
 
-export function isJetpackPlanSlug( productSlug ) {
+export function isJetpackPlanSlug( productSlug: string ): boolean {
 	return planMatches( productSlug, { group: GROUP_JETPACK } );
 }
-/**
- * Internal dependencies
- */
 
-export function isJetpackPlan( product ) {
+export function isJetpackPlan( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return isJetpackPlanSlug( product.product_slug );
 }
-/**
- * Internal dependencies
- */
 
-export function isJetpackPremium( product ) {
+export function isJetpackPremium( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return isPremium( product ) && isJetpackPlan( product );
 }
-/**
- * External dependencies
- */
 
-export function isJetpackProductSlug( productSlug ) {
+export function isJetpackProductSlug( productSlug: string ): boolean {
 	return JETPACK_PRODUCTS_LIST.includes( productSlug );
 }
-/**
- * Internal dependencies
- */
 
-export function isJetpackProduct( product ) {
+export function isJetpackProduct( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return isJetpackProductSlug( product.product_slug );
 }
-/**
- * External dependencies
- */
 
-export function isJetpackScanSlug( productSlug ) {
+export function isJetpackScanSlug( productSlug: string ): boolean {
 	return JETPACK_SCAN_PRODUCTS.includes( productSlug );
 }
-/**
- * Internal dependencies
- */
 
-export function isJetpackScan( product ) {
+export function isJetpackScan( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return isJetpackScanSlug( product.product_slug );
 }
-/**
- * Internal dependencies
- */
 
-export function isJetpackSearch( product ) {
+export function isJetpackSearch( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return JETPACK_SEARCH_PRODUCTS.includes( product.product_slug );
 }
-/**
- * Internal dependencies
- */
 
-export function isJpphpBundle( product ) {
+export function isJpphpBundle( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return product.product_slug === PLAN_HOST_BUNDLE;
 }
-/**
- * Internal dependencies
- */
 
-export function isMonthlyProduct( rawProduct ) {
+export function isMonthlyProduct( rawProduct: UnknownProduct ): boolean {
 	const product = formatProduct( rawProduct );
 
-	return parseInt( product.bill_period, 10 ) === PLAN_MONTHLY_PERIOD;
+	return parseInt( String( product.bill_period ), 10 ) === PLAN_MONTHLY_PERIOD;
 }
-/**
- * Internal dependencies
- */
 
-export function isNoAds( product ) {
+export function isNoAds( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return 'no-adverts/no-adverts.php' === product.product_slug;
 }
-/**
- * Internal dependencies
- */
 
-export function isP2Plus( product ) {
+export function isP2Plus( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return isP2PlusPlan( product.product_slug );
 }
-/**
- * Internal dependencies
- */
 
-export function isPersonal( product ) {
+export function isPersonal( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return isPersonalPlan( product.product_slug );
 }
-/**
- * Internal dependencies
- */
 
-export function isPlan( product ) {
+export function isPlan( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return (
@@ -536,47 +411,32 @@ export function isPlan( product ) {
 		isP2Plus( product )
 	);
 }
-/**
- * Internal dependencies
- */
 
-export function isPremium( product ) {
+export function isPremium( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return isPremiumPlan( product.product_slug );
 }
-/**
- * Internal dependencies
- */
 
-export function isSecurityDaily( product ) {
+export function isSecurityDaily( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return isSecurityDailyPlan( product.product_slug );
 }
-/**
- * Internal dependencies
- */
 
-export function isSecurityRealTime( product ) {
+export function isSecurityRealTime( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return isSecurityRealTimePlan( product.product_slug );
 }
-/**
- * Internal dependencies
- */
 
-export function isSiteRedirect( product ) {
+export function isSiteRedirect( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return product.product_slug === 'offsite_redirect';
 }
-/**
- * Internal dependencies
- */
 
-export function isSpaceUpgrade( product ) {
+export function isSpaceUpgrade( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return (
@@ -587,75 +447,51 @@ export function isSpaceUpgrade( product ) {
 		'100gb_space_upgrade' === product.product_slug
 	);
 }
-/**
- * Internal dependencies
- */
 
-export function isTheme( product ) {
+export function isTheme( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return 'premium_theme' === product.product_slug;
 }
-/**
- * Internal dependencies
- */
 
-export function isTitanMail( product ) {
+export function isTitanMail( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return product.product_slug === TITAN_MAIL_MONTHLY_SLUG;
 }
-/**
- * Internal dependencies
- */
 
-export function isTrafficGuide( product ) {
+export function isTrafficGuide( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return WPCOM_TRAFFIC_GUIDE === product.product_slug;
 }
-/**
- * Internal dependencies
- */
 
-export function isUnlimitedSpace( product ) {
+export function isUnlimitedSpace( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return 'unlimited_space' === product.product_slug;
 }
-/**
- * Internal dependencies
- */
 
-export function isUnlimitedThemes( product ) {
+export function isUnlimitedThemes( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return 'unlimited_themes' === product.product_slug;
 }
-/**
- * Internal dependencies
- */
 
-export function isVideoPress( product ) {
+export function isVideoPress( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return 'videopress' === product.product_slug;
 }
-/**
- * Internal dependencies
- */
 
-export function isVipPlan( product ) {
+export function isVipPlan( product: UnknownProduct ): boolean {
 	product = formatProduct( product );
 
 	return 'vip' === product.product_slug;
 }
-/**
- * Internal dependencies
- */
 
-export function isYearly( rawProduct ) {
+export function isYearly( rawProduct: UnknownProduct ): boolean {
 	const product = formatProduct( rawProduct );
 
-	return parseInt( product.bill_period, 10 ) === PLAN_ANNUAL_PERIOD;
+	return parseInt( String( product.bill_period ), 10 ) === PLAN_ANNUAL_PERIOD;
 }
