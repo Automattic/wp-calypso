@@ -16,7 +16,6 @@ import {
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
-import { createElement } from 'react';
 
 /**
  * Internal dependencies
@@ -43,7 +42,6 @@ import {
 	PRODUCTS_WITH_OPTIONS,
 } from '../constants';
 import { getForCurrentCROIteration, Iterations } from '../iterations';
-import RecordsDetails from '../records-details';
 import { buildCardFeaturesFromItem } from '../constants/features';
 import objectIsPlan from './object-is-plan';
 
@@ -161,9 +159,6 @@ function productToSelectorProduct( item: Product ): SelectorProduct {
 		shortName: getJetpackProductShortName( item ) || '',
 		tagline: getJetpackProductTagline( item ),
 		description: getJetpackProductDescription( item ),
-		children: JETPACK_SEARCH_PRODUCTS.includes( item.product_slug )
-			? createElement( RecordsDetails, { productSlug: item.product_slug } )
-			: undefined,
 		buttonLabel: getJetpackProductCallToAction( item ),
 		monthlyProductSlug,
 		term: item.term,
