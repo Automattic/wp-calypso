@@ -39,7 +39,6 @@
 	"dependencies": {
 		"@automattic/calypso-config": "^1.0.0-alpha.0",
 		"@automattic/calypso-url": "^1.0.0",
-		"@automattic/shopping-cart": "^1.0.0",
 		"i18n-calypso": "^5.0.0",
 		"react": "^16.12.0"
 	},

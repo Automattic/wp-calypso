@@ -19,7 +19,6 @@ import type {
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
 } from './index';
-import type { ResponseCartProductExtra } from '@automattic/shopping-cart';
 
 export type JetpackProductSlug =
 	| typeof PRODUCT_JETPACK_BACKUP_DAILY
@@ -85,7 +84,7 @@ export interface FormattedProduct {
 	bill_period?: number | undefined | string;
 	is_bundled?: boolean | undefined;
 	is_free?: boolean | undefined;
-	extra?: ResponseCartProductExtra;
+	extra?: Record< string, unknown >;
 }
 
 export type UnknownProduct = CamelCaseProduct | FormattedProduct;
