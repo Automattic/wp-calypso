@@ -57,17 +57,12 @@
 			margin: 0 0 30px;
 
 			@include break-mobile {
-				grid-template-columns: 1fr 1fr;
-				column-gap: 24px;
-			}
-
-			@include break-xlarge {
-				grid-template-columns: 1fr 1fr 1fr;
-				column-gap: 32px;
+				grid-template-columns: repeat( auto-fill, minmax( 300px, auto ) );
+				column-gap: 2%; // make gap size relative to the container
 			}
 
 			@include onboarding-break-gigantic {
-				grid-template-columns: 1fr 1fr 1fr 1fr;
+				column-gap: 32px; // keep it from ever-expanding with the container
 			}
 		}
 
