@@ -21,11 +21,11 @@ const MyComponent = () => (
 export default MyComponent;
 ```
 
-Currently we have both Flux and Redux mixed. Props for loading data:
+Currently we use Redux. Props for loading data:
 
-- `needsContactDetails` - Loads Contact Details for current user (Redux)
-- `needsDomains` - Loads domain for currently selected site (Redux)
-- `needsPlans` - Loads plans for given site (Redux)
-- `needsProductsList` - Loads products list (Redux)
+- `needsContactDetails` - Loads Contact Details for current user
+- `needsDomains` - Loads domain for currently selected site
+- `needsPlans` - Loads plans for given site
+- `needsProductsList` - Loads products list
 
 The child component should receive processed props defined in `getStateFromStores()`. It's updated whenever the data it needs changes.

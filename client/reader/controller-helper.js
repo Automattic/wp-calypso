@@ -50,7 +50,7 @@ export function trackUpdatesLoaded( key ) {
 }
 
 export function setPageTitle( context, title ) {
-	// @todo Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// @todo Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch(
 		setTitle(
 			i18n.translate( '%s ‹ Reader', {
