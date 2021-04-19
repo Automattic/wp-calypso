@@ -7,9 +7,9 @@ import page from 'page';
  * Internal dependencies
  */
 import { makeLayout, render as clientRender } from 'calypso/controller/index.web';
+import { productSelect } from './controller';
 
-export default async function ( rootUrl: string, ...rest: PageJS.Callback[] ): Promise< void > {
-	const { productSelect } = await import( './controller' );
+export default function ( rootUrl: string, ...rest: PageJS.Callback[] ): void {
 	page(
 		`${ rootUrl }/:duration?/:site?`,
 		...rest,
