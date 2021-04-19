@@ -7,12 +7,12 @@ import { keyframes } from '@emotion/core';
 import PropTypes from 'prop-types';
 import { useTranslate } from 'i18n-calypso';
 import { Button } from '@automattic/composite-checkout';
+import { Field } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
 import joinClasses from './join-classes';
-import Field from './field';
 
 export default function Coupon( { id, className, disabled, couponStatus, couponFieldStateProps } ) {
 	const translate = useTranslate();

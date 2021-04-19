@@ -23,6 +23,7 @@ import {
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { styled } from '@automattic/wpcom-checkout';
 import type { RemoveProductFromCart, RequestCartProduct } from '@automattic/shopping-cart';
 import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
@@ -57,7 +58,6 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import PaymentMethodStep from './payment-method-step';
 import CheckoutHelpLink from './checkout-help-link';
-import styled from '../lib/styled';
 import type { CountryListItem } from '../types/country-list-item';
 import type { GetProductVariants } from '../hooks/product-variants';
 import type { OnChangeItemVariant } from '../components/item-variation-picker';
