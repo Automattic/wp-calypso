@@ -147,6 +147,7 @@
 		width: 50%;
 	}
 	&.no-emails > span {
+		color: var( --color-text-subtle );
 		font-style: italic;
 	}
 	> svg {
