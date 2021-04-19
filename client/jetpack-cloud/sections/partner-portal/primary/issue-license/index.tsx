@@ -9,6 +9,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import Main from 'calypso/components/main';
 import CardHeading from 'calypso/components/card-heading';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import IssueLicenseForm from 'calypso/jetpack-cloud/sections/partner-portal/issue-license-form';
 
 export default function IssueLicense(): ReactElement {
@@ -27,6 +28,7 @@ export default function IssueLicense(): ReactElement {
 
 	return (
 		<Main className="issue-license">
+			<SidebarNavigation sectionTitle={ translate( 'Issue a new License' ) } />
 			<CardHeading size={ 36 }>{ translate( 'Issue a new License' ) }</CardHeading>
 
 			<IssueLicenseForm />

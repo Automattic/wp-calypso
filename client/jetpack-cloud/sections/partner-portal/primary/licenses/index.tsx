@@ -11,6 +11,7 @@ import { Button } from '@automattic/components';
 import Main from 'calypso/components/main';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import LicenseList from 'calypso/jetpack-cloud/sections/partner-portal/license-list';
 import {
 	LicenseFilter,
@@ -54,6 +55,7 @@ export default function Licenses( {
 	return (
 		<Main wideLayout={ true } className="licenses">
 			<DocumentHead title={ translate( 'Licenses' ) } />
+			<SidebarNavigation sectionTitle={ translate( 'Licenses' ) } />
 
 			<div className="licenses__header">
 				<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>
