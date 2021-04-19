@@ -47,27 +47,20 @@ interface Props {
 }
 
 const getIcon = ( status: NoticeStatus ): string => {
-	let icon: string;
-
 	switch ( status ) {
 		case 'is-info':
-			icon = 'info';
-			break;
+			return 'info';
 		case 'is-success':
-			icon = 'checkmark';
-			break;
+			return 'checkmark';
 		case 'is-error':
-			icon = 'notice';
-			break;
+			return 'notice';
 		case 'is-warning':
-			icon = 'notice';
-			break;
+			return 'notice';
 		case 'is-plain':
-			icon = 'info';
-			break;
+			return 'info';
+		default:
+			return 'info';
 	}
-
-	return icon;
 };
 
 const Notice: FunctionComponent< Props > = ( {
