@@ -10,6 +10,8 @@ import formatCurrency from '@automattic/format-currency';
  */
 import { Card } from '@automattic/components';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import useBillingDashboardQuery from 'calypso/state/partner-portal/licenses/hooks/use-billing-dashboard-query';
+import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 
 /**
  * Style dependencies
@@ -19,63 +21,7 @@ import './style.scss';
 export default function BillingDetails(): ReactElement {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
-	const billing = {
-		isSuccess: true,
-		data: {
-			date: '2021-03-01',
-			costs: {
-				total: 177916,
-				assigned: 176644,
-				unassigned: 1272,
-			},
-			products: [
-				{
-					productSlug: 'jetpack-backup-daily',
-					productName: 'Jetpack Backup Daily',
-					productCost: 17,
-					counts: {
-						assigned: 44,
-						unassigned: 8,
-						total: 52,
-					},
-					productTotalCost: 884,
-				},
-				{
-					productSlug: 'jetpack-backup-realtime',
-					productName: 'Jetpack Backup Real-time',
-					productCost: 47,
-					counts: {
-						assigned: 22,
-						unassigned: 4,
-						total: 26,
-					},
-					productTotalCost: 1222,
-				},
-				{
-					productSlug: 'jetpack-security-daily',
-					productName: 'Jetpack Security Daily',
-					productCost: 79,
-					counts: {
-						assigned: 0,
-						unassigned: 12,
-						total: 12,
-					},
-					productTotalCost: 948,
-				},
-				{
-					productSlug: 'jetpack-complete',
-					productName: 'Jetpack Complete',
-					productCost: 139,
-					counts: {
-						assigned: 1258,
-						unassigned: 0,
-						total: 1258,
-					},
-					productTotalCost: 174862,
-				},
-			],
-		},
-	};
+	const billing = useBillingDashboardQuery();
 
 	return (
 		<div className="billing-details">
@@ -130,6 +76,40 @@ export default function BillingDetails(): ReactElement {
 					</Card>
 				) ) }
 
+			{ ! billing.isSuccess && (
+				<Card compact>
+					<div className="billing-details__row">
+						<div className="billing-details__product">
+							<TextPlaceholder />
+							<span className="billing-details__line-item-meta">
+								<TextPlaceholder />
+							</span>
+						</div>
+
+						<div className="billing-details__assigned">
+							<TextPlaceholder />
+							<span className="billing-details__line-item-meta billing-details__line-item-meta--is-mobile">
+								<TextPlaceholder />
+							</span>
+						</div>
+
+						<div className="billing-details__unassigned">
+							<TextPlaceholder />
+							<span className="billing-details__line-item-meta billing-details__line-item-meta--is-mobile">
+								<TextPlaceholder />
+							</span>
+						</div>
+
+						<div className="billing-details__subtotal">
+							<TextPlaceholder />
+							<span className="billing-details__line-item-meta">
+								<TextPlaceholder />
+							</span>
+						</div>
+					</div>
+				</Card>
+			) }
+
 			<Card compact className="billing-details__footer">
 				<div className="billing-details__row billing-details__row--summary">
 					<span className="billing-details__total-label billing-details__cost-label">
@@ -138,9 +118,13 @@ export default function BillingDetails(): ReactElement {
 								components: { bold: <strong /> },
 								args: { date: moment( billing.data.date ).format( 'MMMM, YYYY' ) },
 							} ) }
+
+						{ ! billing.isSuccess && <TextPlaceholder /> }
 					</span>
 					<strong className="billing-details__cost-amount">
 						{ billing.isSuccess && formatCurrency( billing.data.costs.total, 'USD' ) }
+
+						{ ! billing.isSuccess && <TextPlaceholder /> }
 					</strong>
 
 					<span className="billing-details__total-label billing-details__line-item-meta">
@@ -148,6 +132,8 @@ export default function BillingDetails(): ReactElement {
 					</span>
 					<span className="billing-details__line-item-meta">
 						{ billing.isSuccess && formatCurrency( billing.data.costs.assigned, 'USD' ) }
+
+						{ ! billing.isSuccess && <TextPlaceholder /> }
 					</span>
 
 					<span className="billing-details__total-label billing-details__line-item-meta">
@@ -155,6 +141,8 @@ export default function BillingDetails(): ReactElement {
 					</span>
 					<span className="billing-details__line-item-meta">
 						{ billing.isSuccess && formatCurrency( billing.data.costs.unassigned, 'USD' ) }
+
+						{ ! billing.isSuccess && <TextPlaceholder /> }
 					</span>
 				</div>
 			</Card>

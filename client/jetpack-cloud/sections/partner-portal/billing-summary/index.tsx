@@ -12,6 +12,8 @@ import { Button, Card } from '@automattic/components';
 import Tooltip from 'calypso/components/tooltip';
 import Gridicon from 'calypso/components/gridicon';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import useBillingDashboardQuery from 'calypso/state/partner-portal/licenses/hooks/use-billing-dashboard-query';
+import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 
 /**
  * Style dependencies
@@ -63,20 +65,7 @@ function CostTooltip(): ReactElement {
 export default function BillingSummary(): ReactElement {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
-	const billing = {
-		isSuccess: true,
-		data: {
-			date: '2021-03-01',
-			licenses: {
-				total: 1348,
-				assigned: 1324,
-				unassigned: 24,
-			},
-			costs: {
-				total: 177916,
-			},
-		},
-	};
+	const billing = useBillingDashboardQuery();
 
 	return (
 		<Card className="billing-summary">
@@ -84,6 +73,8 @@ export default function BillingSummary(): ReactElement {
 				<span className="billing-summary__label">{ translate( 'Total licenses' ) }</span>
 				<strong className="billing-summary__value">
 					{ billing.isSuccess && numberFormat( billing.data.licenses.total, 0 ) }
+
+					{ ! billing.isSuccess && <TextPlaceholder /> }
 				</strong>
 			</div>
 
@@ -91,6 +82,8 @@ export default function BillingSummary(): ReactElement {
 				<span className="billing-summary__label">{ translate( 'Assigned licenses' ) }</span>
 				<strong className="billing-summary__value">
 					{ billing.isSuccess && numberFormat( billing.data.licenses.assigned, 0 ) }
+
+					{ ! billing.isSuccess && <TextPlaceholder /> }
 				</strong>
 			</div>
 
@@ -98,6 +91,8 @@ export default function BillingSummary(): ReactElement {
 				<span className="billing-summary__label">{ translate( 'Unassigned licenses' ) }</span>
 				<strong className="billing-summary__value">
 					{ billing.isSuccess && numberFormat( billing.data.licenses.unassigned, 0 ) }
+
+					{ ! billing.isSuccess && <TextPlaceholder /> }
 				</strong>
 			</div>
 
@@ -113,6 +108,8 @@ export default function BillingSummary(): ReactElement {
 				</span>
 				<strong className="billing-summary__value">
 					{ billing.isSuccess && formatCurrency( billing.data.costs.total, 'USD' ) }
+
+					{ ! billing.isSuccess && <TextPlaceholder /> }
 				</strong>
 			</div>
 		</Card>
