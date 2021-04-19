@@ -142,6 +142,13 @@
 .email-plan-mailboxes-list__mailbox-list-item {
 	display: flex;
 	align-items: center;
+	&.is-placeholder > span {
+		@include placeholder( --color-neutral-5 );
+		width: 50%;
+	}
+	&.no-emails > span {
+		font-style: italic;
+	}
 	> svg {
 		fill: var( --studio-gray-50 );
 		margin-right: 10px;
