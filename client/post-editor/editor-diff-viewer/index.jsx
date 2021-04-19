@@ -6,7 +6,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { debounce, filter, first, get, has, last, map, throttle } from 'lodash';
+import { debounce, filter, get, has, last, map, throttle } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 
@@ -163,7 +163,7 @@ class EditorDiffViewer extends PureComponent {
 	};
 
 	scrollBelow = () => {
-		this.centerScrollingOnOffset( first( this.changesBelowViewport ) );
+		this.centerScrollingOnOffset( [ ...this.changesBelowViewport ].shift() );
 		this.props.recordTracksEvent( 'calypso_editor_post_revisions_scroll_hint_used', {
 			direction: 'below',
 		} );

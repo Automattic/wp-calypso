@@ -8,7 +8,7 @@ import { line as d3Line, area as d3Area, curveMonotoneX as d3MonotoneXCurve } fr
 import { scaleLinear as d3ScaleLinear, scaleTime as d3TimeScale } from 'd3-scale';
 import { axisBottom as d3AxisBottom, axisRight as d3AxisRight } from 'd3-axis';
 import { select as d3Select, mouse as d3Mouse } from 'd3-selection';
-import { concat, first, last, throttle } from 'lodash';
+import { concat, last, throttle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -193,22 +193,21 @@ class LineChart extends Component {
 			const drawFullSeries = dataSeries.length < POINTS_MAX;
 			const colorNum = dataSeriesIndex % NUM_SERIES;
 
-			( drawFullSeries ? dataSeries : [ first( dataSeries ), last( dataSeries ) ] ).forEach(
-				( datum ) => {
-					svg
-						.append( 'circle' )
-						.attr(
-							'class',
-							`line-chart__line-point line-chart__line${
-								drawFullSeries ? '' : '-end'
-							}-point-color-${ colorNum }`
-						)
-						.attr( 'cx', xScale( datum.date ) )
-						.attr( 'cy', yScale( datum.value ) )
-						.attr( 'r', drawFullSeries ? POINTS_SIZE : POINTS_END_SIZE )
-						.datum( { ...datum, dataSeriesIndex } );
-				}
-			);
+			const firstDatum = [ ...dataSeries ].shift();
+			( drawFullSeries ? dataSeries : [ firstDatum, last( dataSeries ) ] ).forEach( ( datum ) => {
+				svg
+					.append( 'circle' )
+					.attr(
+						'class',
+						`line-chart__line-point line-chart__line${
+							drawFullSeries ? '' : '-end'
+						}-point-color-${ colorNum }`
+					)
+					.attr( 'cx', xScale( datum.date ) )
+					.attr( 'cy', yScale( datum.value ) )
+					.attr( 'r', drawFullSeries ? POINTS_SIZE : POINTS_END_SIZE )
+					.datum( { ...datum, dataSeriesIndex } );
+			} );
 		} );
 	};
 

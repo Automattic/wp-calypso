@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { pick, set, isEqual, first } from 'lodash';
+import { pick, set, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,7 +30,7 @@ const countsReducer = ( state = [], action ) => {
 			// See https://github.com/Automattic/wp-calypso/pull/41441#discussion_r415918092
 			if (
 				action.data.length !== state.length ||
-				! isEqual( first( action.data ).period, first( state ).period )
+				! isEqual( [ ...action.data ].shift().period, [ ...state ].shift().period )
 			) {
 				return action.data;
 			}
