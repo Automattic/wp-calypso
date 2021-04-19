@@ -10,7 +10,6 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { SWITCH_PLAN_SIDES_TREATMENT } from '../experiments';
 import PlansFilterBar from '../plans-filter-bar';
 import ProductCard from '../product-card';
 import { getProductPosition } from '../product-grid/products-order';
@@ -59,7 +58,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const currentPlanSlug =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
-	const exPlatVariation = null;
 
 	const { availableProducts, purchasedProducts, includedInPlanProducts } = useGetPlansGridProducts(
 		siteId
@@ -137,7 +135,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 						showDiscountMessage
 						onDurationChange={ onDurationChange }
 						duration={ duration }
-						withTreatmentVariant={ exPlatVariation === SWITCH_PLAN_SIDES_TREATMENT }
 					/>
 				</div>
 				<ul
