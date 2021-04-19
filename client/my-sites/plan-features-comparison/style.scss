@@ -450,6 +450,8 @@ body.is-section-signup.is-white-signup {
 
 .notouch body.is-section-signup.is-white-signup .signup__step .segmented-control.price-toggle {
 	background-color: #f2f2f2;
+	margin-top: 0;
+
 	.segmented-control__link {
 		padding: 6px 11px;
 	}
