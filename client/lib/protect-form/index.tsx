@@ -13,7 +13,7 @@ import { Subtract } from 'utility-types';
  */
 const debug = debugModule( 'calypso:protect-form' );
 
-type ComponentMarkedWithFormChanges = Component;
+type ComponentMarkedWithFormChanges = Component | string;
 
 let formsChanged: ComponentMarkedWithFormChanges[] = [];
 let listenerCount = 0;
@@ -142,4 +142,28 @@ export const checkFormHandler: PageJS.Callback = ( context, next ) => {
 			page.replace( currentPath, null, false, false );
 		}, 0 );
 	}
+};
+
+type ProtectForm = {
+	markChanged: () => void;
+	markSaved: () => void;
+};
+
+export const useProtectForm = ( id: string ): ProtectForm => {
+	const _markSaved = React.useCallback( () => markSaved( id ), [ id ] );
+	const _markChanged = React.useCallback( () => markChanged( id ), [ id ] );
+
+	React.useEffect( () => {
+		addBeforeUnloadListener();
+
+		return () => {
+			removeBeforeUnloadListener();
+			_markSaved();
+		};
+	}, [ _markSaved ] );
+
+	return {
+		markChanged: _markChanged,
+		markSaved: _markSaved,
+	};
 };

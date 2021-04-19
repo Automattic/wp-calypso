@@ -13,7 +13,7 @@ import Main from 'calypso/components/main';
 import HeaderCake from 'calypso/components/header-cake';
 import { Card } from '@automattic/components';
 import PeopleProfile from 'calypso/my-sites/people/people-profile';
-import { protectForm } from 'calypso/lib/protect-form';
+import { useProtectForm } from 'calypso/lib/protect-form';
 import DeleteUser from 'calypso/my-sites/people/delete-user';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -33,8 +33,6 @@ export const EditTeamMemberForm = ( {
 	userLogin,
 	isJetpack,
 	isMultisite,
-	markChanged,
-	markSaved,
 	previousRoute,
 	siteSlug,
 	recordGoogleEvent,
@@ -52,6 +50,7 @@ export const EditTeamMemberForm = ( {
 		page( '/people/team' );
 	};
 
+	const { markChanged, markSaved } = useProtectForm( `edit-${ siteId }-${ userLogin }` );
 	const { data: user, error, isLoading } = useUserQuery( siteId, userLogin, { retry: false } );
 
 	React.useEffect( () => {
@@ -101,4 +100,4 @@ export default connect(
 		};
 	},
 	{ recordGoogleEvent: recordGoogleEventAction }
-)( protectForm( EditTeamMemberForm ) );
+)( EditTeamMemberForm );
