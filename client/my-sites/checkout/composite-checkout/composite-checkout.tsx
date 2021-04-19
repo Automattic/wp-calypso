@@ -79,7 +79,6 @@ import { CountryListItem } from './types/country-list-item';
 import doesValueExist from './lib/does-value-exist';
 import EmptyCart from './components/empty-cart';
 import getContactDetailsType from './lib/get-contact-details-type';
-import getDomainDetails from './lib/get-domain-details';
 import mergeIfObjects from './lib/merge-if-objects';
 import type { ReactStandardAction } from './types/analytics';
 import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
@@ -453,11 +452,6 @@ export default function CompositeCheckout( {
 		]
 	);
 
-	const domainDetails = getDomainDetails( contactDetails, {
-		includeDomainDetails,
-		includeGSuiteDetails,
-	} );
-
 	const paymentProcessors = useMemo(
 		() => ( {
 			'apple-pay': ( transactionData: unknown ) =>
@@ -491,13 +485,12 @@ export default function CompositeCheckout( {
 				existingCardProcessor(
 					mergeIfObjects( transactionData, {
 						siteId: siteId ? String( siteId ) : undefined,
-						domainDetails,
 					} ),
 					dataForProcessor
 				),
 			paypal: () => payPalProcessor( dataForProcessor ),
 		} ),
-		[ siteId, dataForProcessor, domainDetails ]
+		[ siteId, dataForProcessor ]
 	);
 
 	const jetpackColors = isJetpackNotAtomic
