@@ -1,7 +1,14 @@
 /**
  * External dependencies
  */
-import webdriver, { Key, By, WebDriver, WebElement, WebElementCondition } from 'selenium-webdriver';
+import webdriver, {
+	Key,
+	By,
+	WebDriver,
+	WebElement,
+	WebElementCondition,
+	logging,
+} from 'selenium-webdriver';
 import config from 'config';
 import { forEach } from 'lodash';
 
@@ -320,36 +327,11 @@ export function checkForConsoleErrors( driver ) {
 	}
 }
 
-export function printConsole( driver ) {
-	if ( config.get( 'printConsoleLogs' ) === true ) {
-		driver
-			.manage()
-			.logs()
-			.get( 'browser' )
-			.then( ( logs ) => {
-				logs.forEach( ( log ) => console.log( log ) );
-			} );
-	}
+export function getBrowserLogs( driver ) {
+	return driver.manage().logs().get( logging.Type.BROWSER );
 }
-
-export function logPerformance( driver ) {
-	if ( config.get( 'logNetworkRequests' ) === true ) {
-		driver
-			.manage()
-			.logs()
-			.get( 'performance' )
-			.then( ( browserLogs ) => {
-				browserLogs.forEach( ( browserLog ) => {
-					const message = JSON.parse( browserLog.message ).message;
-					if (
-						message.method === 'Network.responseReceived' ||
-						message.method === 'Network.requestWillBeSent'
-					) {
-						console.log( JSON.stringify( message ) );
-					}
-				} );
-			} );
-	}
+export function getPerformanceLogs( driver ) {
+	return driver.manage().logs().get( logging.Type.PERFORMANCE );
 }
 
 export async function ensureMobileMenuOpen( driver ) {
