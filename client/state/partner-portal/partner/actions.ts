@@ -58,7 +58,6 @@ export function receivePartner( partner: Partner ): PartnerPortalThunkAction {
 			partner,
 		} );
 
-		// We check the active key otherwise.
 		const activePartnerKeyId = getActivePartnerKeyId( getState() );
 		const keys = partner.keys.map( ( key ) => key.id );
 		let newKeyId = 0;
