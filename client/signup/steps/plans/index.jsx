@@ -162,6 +162,7 @@ export class PlansStep extends Component {
 			showTreatmentPlansReorderTest,
 			isLoadingExperiment,
 			isInVerticalScrollingPlansExperiment,
+			isReskinned,
 		} = this.props;
 
 		return (
@@ -192,6 +193,7 @@ export class PlansStep extends Component {
 						isAllPaidPlansShown={ true }
 						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 						shouldShowPlansFeatureComparison={ isDesktop() } // Show feature comparison layout in signup flow and desktop resolutions
+						isReskinned={ isReskinned }
 					/>
 				) }
 			</div>

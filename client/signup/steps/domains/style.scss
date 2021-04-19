@@ -115,7 +115,7 @@ body.is-section-signup.is-white-signup {
 
 			@include break-large {
 				margin: 0 0 0 80px;
-				padding: 30px 0;
+				padding: 40px 0;
 			}
 		}
 
@@ -143,13 +143,19 @@ body.is-section-signup.is-white-signup {
 			background: var( --color-surface );
 			box-shadow: none;
 			border-radius: 4px; /* stylelint-disable-line */
-			margin: 20px 0 20px 20px;
+			margin: 20px 20px 0;
+
+			@include break-large {
+				margin: 20px 0 0 20px;
+			}
 
 			@include break-wide {
 				margin: initial;
 			}
 		}
 		.search-component__input {
+			border-radius: 4px; /* stylelint-disable-line */
+
 			&::placeholder {
 				color: var( --color-neutral-50 );
 			}
@@ -171,10 +177,6 @@ body.is-section-signup.is-white-signup {
 
 		.search-component .search-component__icon-navigation {
 			padding: 0 7px;
-		}
-
-		.search-component__input.form-text-input[type=search] {
-			border-radius: 4px; /* stylelint-disable-line */
 		}
 	}
 

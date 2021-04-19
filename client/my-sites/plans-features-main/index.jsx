@@ -213,7 +213,6 @@ export class PlansFeaturesMain extends Component {
 			redirectTo,
 			siteId,
 			plansWithScroll,
-			isReskinned,
 			isInVerticalScrollingPlansExperiment,
 			redirectToAddDomainFlow,
 		} = this.props;
@@ -259,7 +258,6 @@ export class PlansFeaturesMain extends Component {
 						availablePlans: visiblePlans,
 					} ) }
 					siteId={ siteId }
-					isReskinned={ isReskinned }
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					kindOfPlanTypeSelector={ this.getKindOfPlanTypeSelector( this.props ) }
 				/>
@@ -626,11 +624,6 @@ export default connect(
 			currentPlan,
 		} );
 
-		const isReskinned =
-			props.isInSignup &&
-			'onboarding' === props.flowName &&
-			'reskinned' === getABTestVariation( 'reskinSignupFlow' );
-
 		return {
 			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and
 			// during the signup, and we're going to remove the code soon after the test. Also, since this endpoint is
@@ -648,7 +641,6 @@ export default connect(
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
 			sitePlanSlug,
 			eligibleForWpcomMonthlyPlans,
-			isReskinned,
 		};
 	},
 	{

@@ -11,7 +11,7 @@
 			padding-top: 18px;
 
 			.is-white-signup & {
-				padding-top: 10px;
+				padding-top: 0;
 				padding-bottom: 20px;
 			}
 		}
@@ -122,5 +122,15 @@ body.is-section-signup.is-white-signup {
 	.register-domain-step__next-page {
 		background: none;
 		box-shadow: none;
+
+		button.register-domain-step__next-page-button {
+			border: none;
+			color: #1d2327;
+			font-size: 0.875rem;
+			text-decoration-line: underline;
+			letter-spacing: -0.16px;
+			font-weight: 500; /* stylelint-disable-line */
+			line-height: 1.25rem;
+		}
 	}
 }

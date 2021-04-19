@@ -1012,6 +1012,7 @@ class SignupForm extends Component {
 						handleResponse={ this.props.handleSocialResponse }
 						socialService={ this.props.socialService }
 						socialServiceResponse={ this.props.socialServiceResponse }
+						isReskinned={ this.props.isReskinned }
 					/>
 				) }
 

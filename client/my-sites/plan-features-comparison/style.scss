@@ -391,3 +391,44 @@ $plan-features-sidebar-width: 272px;
 .plan-features-comparison__header-price-group-prices {
 	display: inline-block;
 }
+
+body.is-section-signup.is-white-signup {
+	.plan-features-comparison__table-item {
+		border-left: none;
+
+		&:last-of-type {
+			border-right: none;
+		}
+	}
+
+	.plan-features-comparison__row:last-of-type .plan-features-comparison__table-item {
+		border-bottom: none;
+	}
+
+	.plan-features--signup .is-premium-plan .plan-features-comparison__header-title {
+		font-weight: 500; /* stylelint-disable-line */
+	}
+
+	.plan-features--signup .plan-features-comparison__pricing {
+		.plan-price {
+			font-weight: 500; /* stylelint-disable-line */
+
+			.plan-price__integer {
+				font-weight: 500; /* stylelint-disable-line */
+			}
+		}
+
+		.plan-features-comparison__header-billing-info {
+			font-weight: 500; /* stylelint-disable-line */
+		}
+	}
+
+
+	.plan-pill.is-in-signup {
+		font-size: 0.75rem;
+		font-weight: 500; /* stylelint-disable-line */
+		letter-spacing: 0.2px;
+		line-height: 1.25rem;
+		padding: 0 8px;
+	}
+}

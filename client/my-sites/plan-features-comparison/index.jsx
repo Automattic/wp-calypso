@@ -92,7 +92,7 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	renderPlanHeaders() {
-		const { basePlansPath, planProperties } = this.props;
+		const { basePlansPath, planProperties, isReskinned } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -110,7 +110,9 @@ export class PlanFeaturesComparison extends Component {
 				rawPriceForMonthlyPlan,
 			} = properties;
 			const { discountPrice } = properties;
-			const classes = classNames( 'plan-features-comparison__table-item', 'has-border-top' );
+			const classes = classNames( 'plan-features-comparison__table-item', {
+				'has-border-top': ! isReskinned,
+			} );
 			const audience = planConstantObj.getAudience();
 			const billingTimeFrame = planConstantObj.getBillingTimeFrame();
 			const { annualPricePerMonth, isMonthlyPlan } = properties;

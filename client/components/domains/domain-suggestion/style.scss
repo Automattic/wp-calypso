@@ -259,27 +259,6 @@
 }
 
 body.is-section-signup.is-white-signup {
-	.featured-domain-suggestions {
-		.domain-registration-suggestion__title-wrapper {
-			flex-wrap: nowrap;
-			flex-direction: column-reverse;
-
-			@include break-xlarge {
-				flex-direction: row;
-			}
-		}
-
-		.domain-registration-suggestion__title {
-			font-size: $font-title-medium;
-			padding-right: 0;
-			margin-bottom: 0;
-		}
-	}
-
-	.featured-domain-suggestion {
-		flex-direction: row;
-	}
-
 	.domain-registration-suggestion__progress-bar {
 		align-self: center;
 		margin-left: 0;
@@ -330,8 +309,16 @@ body.is-section-signup.is-white-signup {
 
 		&.is-clickable:hover {
 			@include break-mobile {
-				background: var( --color-primary-0 );
-				box-shadow: 0 0 0 1px var( --color-primary-40 );
+				border-top: 1px solid #646970;
+				border-bottom: 1px solid #646970;
+			}
+		}
+
+		.domain-registration-suggestion__title {
+			font-size: 0.875rem;
+
+			@include break-mobile {
+				font-size: 1rem;
 			}
 		}
 
@@ -340,14 +327,13 @@ body.is-section-signup.is-white-signup {
 		}
 
 		& .domain-product-price__free-price {
-			font-size: $font-body;
-			font-weight: 500; /* stylelint-disable-line */
+			font-size: $font-body-small;
 			color: var( --studio-green-60 );
 			line-height: 20px;
 			letter-spacing: 0.2px;
 
 			@include break-mobile {
-				font-size: $font-body-small;
+				font-weight: 500; /* stylelint-disable-line */
 			}
 		}
 
@@ -382,11 +368,7 @@ body.is-section-signup.is-white-signup {
 			}
 
 			.domain-product-price__price:not( .domain-product-price__free-price ) {
-				font-size: $font-body;
-
-				@include break-mobile {
-					font-size: $font-body-small;
-				}
+				font-size: $font-body-small;
 			}
 
 			.domain-suggestion__action-container {
@@ -395,12 +377,13 @@ body.is-section-signup.is-white-signup {
 
 			.domain-suggestion__action:not( .is-borderless ) {
 				line-height: 20px;
-				padding: 0.57em 1.3em;
+				padding: 0.57em 1.17em;
 				font-weight: 500; /* stylelint-disable-line */
 				border-radius: 4px;  /* stylelint-disable-line */
 				box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
 				border: 1px solid #c3c4c7;
 				letter-spacing: 0.32px;
+				font-size: 0.875rem;
 
 				@include break-mobile {
 					padding: 0.65em 2.8em;

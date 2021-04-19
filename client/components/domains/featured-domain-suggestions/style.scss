@@ -167,9 +167,10 @@
 	.button.domain-suggestion__action {
 		margin-top: 0;
 		font-weight: 500; /* stylelint-disable-line */
-		padding: 0.57em 1.3em;
+		padding: 0.57em 1.17em;
 		border-radius: 4px; /* stylelint-disable-line */
 		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
+		font-size: 0.875rem;
 
 		@include break-mobile {
 			padding: 0.65em 2.8em;
@@ -177,8 +178,33 @@
 	}
 
 	.domain-registration-suggestion__domain-title {
-		font-size: 1.625rem; /* stylelint-disable-line */
+		font-size: 1.375rem; /* stylelint-disable-line */
 		line-height: 30px;
+
+		@include break-mobile {
+			font-size: 1.625rem; /* stylelint-disable-line */
+		}
+	}
+
+	.domain-registration-suggestion__title-wrapper {
+		flex-wrap: nowrap;
+		flex-direction: column-reverse;
+
+		@include break-xlarge {
+			flex-direction: row;
+		}
+	}
+
+	.domain-registration-suggestion__title {
+		font-size: $font-title-medium;
+		padding-right: 0;
+		margin-bottom: 0;
+	}
+
+	&.is-clickable:hover {
+		@include break-mobile {
+			border: 1px solid #646970;
+		}
 	}
 }
 
