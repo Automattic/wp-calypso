@@ -447,3 +447,35 @@ body.is-section-signup.is-white-signup {
 		}
 	}
 }
+
+.notouch body.is-section-signup.is-white-signup .signup__step .segmented-control.price-toggle {
+	background-color: #f2f2f2;
+	.segmented-control__link {
+		padding: 6px 11px;
+	}
+
+	.segmented-control__item {
+		border: 6px;
+		padding: 2px;
+
+		& .segmented-control__link {
+			border: 1px solid #f2f2f2;
+			&:hover {
+				border: 1px solid var( --studio-gray-10 );
+				background-color: unset;
+				border-radius: 5px; /* stylelint-disable-line */
+			}
+		}
+
+		&.is-selected .segmented-control__link {
+			border: 0.5px solid rgba( 0, 0, 0, 0.04 );
+			box-shadow: 0 3px 8px rgba( 0, 0, 0, 0.12 ), 0 3px 1px rgba( 0, 0, 0, 0.04 );
+			border-radius: 5px; /* stylelint-disable-line */
+
+			&:hover {
+				background-color: #fff;
+				border-color: rgba( 0, 0, 0, 0.04 );
+			}
+		}
+	}
+}

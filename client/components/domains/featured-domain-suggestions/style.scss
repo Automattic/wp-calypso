@@ -150,12 +150,13 @@
 	}
 }
 
-body.is-section-signup.is-white-signup .featured-domain-suggestion {
+body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion.card {
 	border: none;
 	border-radius: 4px; /* stylelint-disable-line */
 	margin: 0;
 	align-items: center;
 	background: #fdfdfd;
+	border-bottom: 1px solid rgba( 220, 220, 222, 0.64 );
 
 	@include break-mobile {
 		margin-bottom: 12px;
@@ -207,10 +208,22 @@ body.is-section-signup.is-white-signup .featured-domain-suggestion {
 		}
 	}
 
-	&.card.featured-domain-suggestion--is-placeholder {
+	&.featured-domain-suggestion--is-placeholder {
 		margin-bottom: 12px;
 		margin-top: 40px;
 		border-radius: 4px; /* stylelint-disable-line */
+	}
+}
+
+body.is-section-signup.is-white-signup .featured-domain-suggestions {
+	margin: 0;
+
+	@include break-mobile {
+		margin: 0 20px;
+	}
+
+	@include break-large {
+		margin: 0;
 	}
 }
 
