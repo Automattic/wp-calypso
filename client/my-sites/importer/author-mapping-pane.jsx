@@ -5,6 +5,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import { createHigherOrderComponent } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -171,13 +172,16 @@ class AuthorMappingPane extends React.PureComponent {
 	}
 }
 
-const withTotalUsers = ( Component ) => ( props ) => {
-	const { siteId } = props;
-	const { data } = useUsersQuery( siteId, {}, { refetchOnWindowFocus: false } );
+const withTotalUsers = createHigherOrderComponent(
+	( Component ) => ( props ) => {
+		const { siteId } = props;
+		const { data } = useUsersQuery( siteId );
 
-	const totalUsers = data?.total ?? 0;
+		const totalUsers = data?.total ?? 0;
 
-	return <Component totalUsers={ totalUsers } { ...props } />;
-};
+		return <Component totalUsers={ totalUsers } { ...props } />;
+	},
+	'withTotalUsers'
+);
 
 export default localize( withTotalUsers( AuthorMappingPane ) );
