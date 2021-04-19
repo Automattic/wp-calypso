@@ -12,9 +12,13 @@ const fragmentIsEqual = ( path, currentPath, position ) =>
  * @returns {boolean} True if paths match, false otherwise.
  */
 export const itemLinkMatches = ( path, currentPath ) => {
-	// Accounts for jetpack custom post types, eg portofolio, testimonials.
+	// Accounts for jetpack custom post types, eg portfolio, testimonials.
 	if ( pathIncludes( currentPath, 'types', 1 ) ) {
 		return fragmentIsEqual( path, currentPath, 2 );
+	}
+	// Account for taxonomies, eg. tags, categories
+	if ( pathIncludes( currentPath, 'taxonomies', 2 ) ) {
+		return fragmentIsEqual( path, currentPath, 3 );
 	}
 	// Temp fix till we remove duplicate menu entry of sharing buttons from 'Settings' menu. See https://github.com/Automattic/wp-calypso/issues/49756.
 	if ( pathIncludes( currentPath, 'marketing', 1 ) ) {
