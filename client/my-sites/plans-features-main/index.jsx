@@ -76,7 +76,6 @@ import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getTld } from 'calypso/lib/domains';
 import { isDiscountActive } from 'calypso/state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
-import { getABTestVariation } from 'calypso/lib/abtest';
 import PlanTypeSelector from './plan-type-selector';
 
 /**
