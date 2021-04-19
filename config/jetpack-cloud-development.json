@@ -37,7 +37,6 @@
 		"ive/use-external-assignment": true,
 		"jetpack-cloud": true,
 		"jetpack-cloud/connect": true,
-		"jetpack-cloud/partner-portal/billing-dashboard": true,
 		"jetpack/backups-date-picker": true,
 		"jetpack/backups-restore": true,
 		"jetpack/scan-product": true,
