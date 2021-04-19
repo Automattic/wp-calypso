@@ -717,15 +717,16 @@ class Signup extends React.Component {
 		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
 
 		return (
-			<ProvideExperimentData name="refined_reskin_v1">
+			<ProvideExperimentData
+				name="refined_reskin_v1"
+				options={ { isEligible: 'onboarding' === this.props.flowName } }
+			>
 				{ ( isLoading, experimentAssignment ) => {
 					if ( isLoading ) {
 						return null;
 					}
 
-					const isReskinned =
-						'onboarding' === this.props.flowName &&
-						'treatment' === experimentAssignment?.variationName;
+					const isReskinned = 'treatment' === experimentAssignment?.variationName;
 					! isLoading && ! isReskinned && document.body.classList.remove( 'is-white-signup' );
 
 					return (

@@ -46,6 +46,7 @@ import user from 'calypso/lib/user';
 import getSiteId from 'calypso/state/selectors/get-site-id';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 
 /**
  * Constants
@@ -98,6 +99,7 @@ export const removeP2SignupClassName = function () {
 export default {
 	redirectTests( context, next ) {
 		const currentFlowName = getFlowName( context.params );
+		currentFlowName === 'onboarding' && loadExperimentAssignment( 'refined_reskin_v1' );
 		if ( context.pathname.indexOf( 'new-launch' ) >= 0 ) {
 			next();
 		} else if ( currentFlowName === 'onboarding' ) {
