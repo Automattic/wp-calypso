@@ -29,7 +29,7 @@ type ExistingCardTransactionRequest = Partial< Omit< TransactionRequest, 'paymen
 	Required<
 		Pick<
 			TransactionRequest,
-			'name' | 'storedDetailsId' | 'siteId' | 'paymentMethodToken' | 'paymentPartnerProcessorId'
+			'name' | 'storedDetailsId' | 'paymentMethodToken' | 'paymentPartnerProcessorId'
 		>
 	>;
 

@@ -79,7 +79,6 @@ import { CountryListItem } from './types/country-list-item';
 import doesValueExist from './lib/does-value-exist';
 import EmptyCart from './components/empty-cart';
 import getContactDetailsType from './lib/get-contact-details-type';
-import mergeIfObjects from './lib/merge-if-objects';
 import type { ReactStandardAction } from './types/analytics';
 import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
 import useMaybeJetpackIntroCouponCode from './hooks/use-maybe-jetpack-intro-coupon-code';
@@ -482,15 +481,10 @@ export default function CompositeCheckout( {
 				genericRedirectProcessor( 'brazil-tef', transactionData, dataForProcessor ),
 			'full-credits': () => fullCreditsProcessor( dataForProcessor ),
 			'existing-card': ( transactionData: unknown ) =>
-				existingCardProcessor(
-					mergeIfObjects( transactionData, {
-						siteId: siteId ? String( siteId ) : undefined,
-					} ),
-					dataForProcessor
-				),
+				existingCardProcessor( transactionData, dataForProcessor ),
 			paypal: () => payPalProcessor( dataForProcessor ),
 		} ),
-		[ siteId, dataForProcessor ]
+		[ dataForProcessor ]
 	);
 
 	const jetpackColors = isJetpackNotAtomic
