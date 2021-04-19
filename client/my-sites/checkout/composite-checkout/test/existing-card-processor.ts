@@ -118,20 +118,6 @@ describe( 'existingCardProcessor', () => {
 		transactionsEndpoint.mockReturnValue( Promise.resolve( 'success' ) );
 	} );
 
-	it( 'throws an error if there is no country passed', async () => {
-		const submitData = {};
-		await expect( existingCardProcessor( submitData, options ) ).rejects.toThrowError(
-			/requires country code and none was provided/
-		);
-	} );
-
-	it( 'throws an error if there is no postalCode passed', async () => {
-		const submitData = { country: 'US' };
-		await expect( existingCardProcessor( submitData, options ) ).rejects.toThrowError(
-			/requires postal code and none was provided/
-		);
-	} );
-
 	it( 'throws an error if there is no storedDetailsId passed', async () => {
 		const submitData = { country: 'US', postalCode: '10001' };
 		await expect( existingCardProcessor( submitData, options ) ).rejects.toThrowError(
