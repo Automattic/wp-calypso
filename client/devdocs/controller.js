@@ -19,7 +19,6 @@ import { login } from 'calypso/lib/paths';
 import SingleDocComponent from './doc';
 import DevWelcome from './welcome';
 import Sidebar from './sidebar';
-import FormStateExamplesComponent from './form-state-examples';
 import EmptyContent from 'calypso/components/empty-content';
 import WizardComponent from './wizard-component';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -136,13 +135,6 @@ const devdocs = {
 		context.primary = (
 			<AsyncLoad component={ context.params.component } require="./design/illustrations" />
 		);
-		next();
-	},
-
-	formStateExamples: function ( context, next ) {
-		context.primary = React.createElement( FormStateExamplesComponent, {
-			component: context.params.component,
-		} );
 		next();
 	},
 
