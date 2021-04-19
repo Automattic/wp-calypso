@@ -22,11 +22,7 @@ import {
 	verifyPasswordlessUser,
 } from 'calypso/lib/signup/step-actions/passwordless';
 import Notice from 'calypso/components/notice';
-import FormStateStore from 'calypso/lib/form-state';
-import createFormStore from 'calypso/lib/form-state/store';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-
-const { getFieldValue } = FormStateStore;
 
 export class PasswordlessStep extends Component {
 	static propTypes = {
@@ -39,6 +35,8 @@ export class PasswordlessStep extends Component {
 	};
 
 	state = {
+		code: '',
+		email: '',
 		errorMessages: null,
 		noticeMessage: '',
 		noticeStatus: '',
@@ -46,30 +44,17 @@ export class PasswordlessStep extends Component {
 		showVerificationCode: false,
 	};
 
-	UNSAFE_componentWillMount() {
-		this.formStore = createFormStore( {
-			syncInitialize: {
-				fieldNames: [ 'email', 'code' ],
-			},
-		} );
-	}
-
 	handleFieldChange = ( event ) => {
-		event.preventDefault();
-
+		const { name, value } = event.target;
 		this.setState( {
+			[ name ]: value,
 			errorMessages: null,
-		} );
-
-		this.formStore.handleFieldChange( {
-			name: event.target.name,
-			value: event.target.value,
 		} );
 	};
 
 	createUser = ( event ) => {
 		event.preventDefault();
-		const data = { email: getFieldValue( this.formStore.get(), 'email' ) };
+		const data = { email: this.state.email };
 
 		this.setState( {
 			submitting: true,
@@ -105,8 +90,8 @@ export class PasswordlessStep extends Component {
 		} );
 
 		verifyPasswordlessUser( this.handleUserVerificationRequest, {
-			email: getFieldValue( this.formStore.get(), 'email' ),
-			code: getFieldValue( this.formStore.get(), 'code' ),
+			email: this.state.email,
+			code: this.state.code,
 		} );
 	};
 
@@ -174,9 +159,10 @@ export class PasswordlessStep extends Component {
 				<ValidationFieldset errorMessages={ this.state.errorMessages }>
 					<FormLabel htmlFor="code">{ this.props.translate( 'Verification code' ) }</FormLabel>
 					<FormTextInput
-						autoCapitalize={ 'off' }
+						autoCapitalize="off"
 						className="passwordless__code"
 						name="code"
+						value={ this.state.code }
 						onChange={ this.handleFieldChange }
 						disabled={ this.state.submitting }
 					/>
@@ -202,18 +188,11 @@ export class PasswordlessStep extends Component {
 				<ValidationFieldset errorMessages={ this.state.errorMessages }>
 					<FormLabel htmlFor="email">{ this.props.translate( 'Email address' ) }</FormLabel>
 					<FormTextInput
-						autoCapitalize={ 'off' }
-						className="passwordless__code"
-						type="hidden"
-						name="code"
-						onChange={ this.handleFieldChange }
-						disabled={ this.state.submitting }
-					/>
-					<FormTextInput
-						autoCapitalize={ 'off' }
+						autoCapitalize="off"
 						className="passwordless__email"
 						type="email"
 						name="email"
+						value={ this.state.email }
 						onChange={ this.handleFieldChange }
 						disabled={ this.state.submitting }
 					/>
