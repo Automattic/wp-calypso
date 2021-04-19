@@ -14,6 +14,7 @@ import {
 	eligibility,
 	jetpackCanUpdate,
 	plugins,
+	renderDomainsPage,
 	resetHistory,
 	scrollTopIfNoHash,
 	setupPlugins,
@@ -98,6 +99,16 @@ export default function () {
 			siteSelection,
 			navigation,
 			plugins,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/plugins/domain/:site?',
+			scrollTopIfNoHash,
+			siteSelection,
+			navigation,
+			renderDomainsPage,
 			makeLayout,
 			clientRender
 		);

@@ -18,6 +18,7 @@ import PluginBrowser from './plugins-browser';
 import PluginUpload from './plugin-upload';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
+import MarketplaceDomainUpsell from './marketplace/marketplace-domain-upsell';
 
 /**
  * Module variables
@@ -202,5 +203,13 @@ export function scrollTopIfNoHash( context, next ) {
 	if ( typeof window !== 'undefined' && ! window.location.hash ) {
 		window.scrollTo( 0, 0 );
 	}
+	next();
+}
+
+export function renderDomainsPage( context, next ) {
+	context.primary = React.createElement( MarketplaceDomainUpsell, {
+		location: 'From render domains page',
+	} );
+
 	next();
 }
