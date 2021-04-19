@@ -69,6 +69,7 @@ type Props = {
 	disabled?: boolean;
 	fitsContainer?: boolean;
 	hideClose?: boolean;
+	isReskinned?: boolean;
 	hideOpenIcon?: boolean;
 	inputLabel?: string;
 	openIconSide?: 'left' | 'right';
