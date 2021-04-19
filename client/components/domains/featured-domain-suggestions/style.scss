@@ -150,7 +150,7 @@
 	}
 }
 
-.is-section-signup.is-white-signup .domain-suggestion.featured-domain-suggestion {
+body.is-section-signup.is-white-signup .featured-domain-suggestion {
 	border: none;
 	border-radius: 4px; /* stylelint-disable-line */
 	margin: 0;
@@ -201,10 +201,16 @@
 		margin-bottom: 0;
 	}
 
-	&.is-clickable:hover {
+	&.domain-suggestion.is-clickable:hover {
 		@include break-mobile {
 			border: 1px solid #646970;
 		}
+	}
+
+	&.card.featured-domain-suggestion--is-placeholder {
+		margin-bottom: 12px;
+		margin-top: 40px;
+		border-radius: 4px; /* stylelint-disable-line */
 	}
 }
 

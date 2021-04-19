@@ -277,6 +277,10 @@ body.is-section-signup.is-white-signup {
 		}
 	}
 
+	.featured-domain-suggestion--is-placeholder .domain-registration-suggestion__progress-bar {
+		margin-left: 0;
+	}
+
 	.domain-suggestion {
 		flex-direction: row;
 		box-shadow: none;
@@ -339,6 +343,8 @@ body.is-section-signup.is-white-signup {
 
 		&:not( .featured-domain-suggestion ) {
 			background: none;
+			border-bottom: 1px solid rgba( 220, 220, 222, 0.64 );
+			border-top: 1px solid #fff; //This white border is to prevent jumpiness while showing borders on hover
 			
 			@include break-mobile {
 				padding-left: 5px;
@@ -415,11 +421,6 @@ body.is-section-signup.is-white-signup {
 					margin-left: 0;
 				}
 			}
-		}
-
-		&:not( .search-filters__buttons ),
-		&:not( .featured-domain-suggestion ) {
-			border-bottom: 1px solid rgba( 220, 220, 222, 0.64 );
 		}
 	}
 }
