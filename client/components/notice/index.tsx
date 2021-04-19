@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import { TimerHandle } from 'calypso/types';
 import Gridicon from 'calypso/components/gridicon';
-import { NoticeStatus } from './types';
+import { NoticeStatus, NoticeText } from './types';
 
 /**
  * Style dependencies
@@ -43,7 +43,7 @@ interface Props {
 	isCompact?: boolean;
 	isLoading?: boolean;
 	showDismiss?: boolean;
-	text?: string | React.ReactNode;
+	text?: NoticeText;
 }
 
 const getIcon = ( status: NoticeStatus ): string => {
@@ -71,7 +71,7 @@ const getIcon = ( status: NoticeStatus ): string => {
 };
 
 const Notice: FunctionComponent< Props > = ( {
-	className = '',
+	className,
 	duration = 0,
 	onDismissClick,
 	translate,
