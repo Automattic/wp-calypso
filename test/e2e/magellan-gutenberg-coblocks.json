@@ -1,0 +1,13 @@
+{
+	"mocha_tests": [ "specs-gutenberg/wp-calypso-gutenberg-coblocks-spec.js" ],
+	"mocha_args": "-R spec-junit-reporter",
+	"max_test_attempts": 3,
+	"max_workers": 6,
+	"suiteTag": "parallel",
+	"sauce": false,
+	"framework": "@automattic/testarmada-magellan-mocha-plugin",
+	"reporters": [ "./lib/reporter/magellan-reporter.js" ],
+	"executors": [ "testarmada-magellan-local-executor" ],
+	"local_browser": "chrome",
+	"bail_time": 360000
+}
