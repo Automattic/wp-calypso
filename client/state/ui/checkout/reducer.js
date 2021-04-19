@@ -2,7 +2,11 @@
  * Internal dependencies
  */
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { SECTION_SET } from 'calypso/state/action-types';
+import {
+	CHECKOUT_REDIRECT_PRODUCT_SET,
+	CHECKOUT_REDIRECT_PRODUCT_RESET,
+	SECTION_SET,
+} from 'calypso/state/action-types';
 
 export const upgradeIntent = withSchemaValidation( { type: 'string' }, ( state = '', action ) => {
 	if ( action.type !== SECTION_SET ) {
@@ -27,6 +31,19 @@ export const upgradeIntent = withSchemaValidation( { type: 'string' }, ( state =
 	return '';
 } );
 
+export function redirectProduct( state = null, { type, product } ) {
+	if ( type === CHECKOUT_REDIRECT_PRODUCT_SET ) {
+		return product || null;
+	}
+
+	if ( type === CHECKOUT_REDIRECT_PRODUCT_RESET ) {
+		return null;
+	}
+
+	return state;
+}
+
 export default combineReducers( {
 	upgradeIntent,
+	redirectProduct,
 } );

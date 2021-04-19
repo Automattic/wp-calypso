@@ -181,6 +181,8 @@ export const PLAN_P2_FREE = 'p2_free_plan'; // Not a real plan; it's a renamed W
 export const PLAN_BUSINESS_ONBOARDING_EXPIRE = '2021-07-31T00:00:00+00:00';
 export const PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE = '2022-07-31T00:00:00+00:00';
 
+export const JETPACK_LEGACY_PLANS_MAX_PLUGIN_VERSION = '8.9.1';
+
 export const NEW_PLANS = [];
 export const BEST_VALUE_PLANS = [ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
 

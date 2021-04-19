@@ -29,6 +29,7 @@ type Props = {
 	label?: string;
 	leaveTimeout?: number;
 	onClose: ( action?: string ) => void;
+	onAfterClose?: () => void;
 	shouldCloseOnEsc?: boolean;
 };
 
@@ -44,9 +45,11 @@ const Dialog = ( {
 	label = '',
 	leaveTimeout = 200,
 	onClose,
+	onAfterClose,
 	shouldCloseOnEsc,
 }: Props ): JSX.Element => {
 	const close = React.useCallback( () => onClose?.(), [ onClose ] );
+	const afterClose = React.useCallback( () => onAfterClose?.(), [ onAfterClose ] );
 	const onButtonClick = React.useCallback(
 		( button: BaseButton ) => {
 			if ( button.onClick ) {
@@ -72,6 +75,7 @@ const Dialog = ( {
 		<Modal
 			isOpen={ isVisible }
 			onRequestClose={ close }
+			onAfterClose={ afterClose }
 			closeTimeoutMS={ leaveTimeout }
 			contentLabel={ label }
 			overlayClassName={ backdropClassName } // We use flex here which react-modal doesn't

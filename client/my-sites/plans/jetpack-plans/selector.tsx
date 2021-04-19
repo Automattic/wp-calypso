@@ -20,6 +20,7 @@ import Main from 'calypso/components/main';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import LegacyPlanDialog from './legacy-plan-dialog';
 import ProductGrid from './product-grid';
 
 /**
@@ -150,6 +151,8 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 			{ siteId && <QuerySites siteId={ siteId } /> }
 
 			{ footer }
+
+			<LegacyPlanDialog />
 		</Main>
 	);
 };

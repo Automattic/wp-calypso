@@ -40,6 +40,7 @@ import UpsellNudge, {
 } from './upsell-nudge';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { TRUENAME_COUPONS } from 'calypso/lib/domains';
+import { setCheckoutRedirectProduct } from 'calypso/state/ui/checkout/actions';
 
 const debug = debugFactory( 'calypso:checkout-controller' );
 
@@ -116,9 +117,11 @@ export function redirectJetpackLegacyPlans( context ) {
 	const product = getDomainOrProductFromContext( context );
 
 	if ( JETPACK_LEGACY_PLANS.includes( product ) ) {
-		const state = context.store.getState();
+		const { getState, dispatch } = context.store;
+		const state = getState();
 		const selectedSite = getSelectedSite( state );
 
+		dispatch( setCheckoutRedirectProduct( product ) );
 		page( ( isJetpackCloud() ? '/pricing/' : CALYPSO_PLANS_PAGE ) + ( selectedSite?.slug || '' ) );
 	}
 }
