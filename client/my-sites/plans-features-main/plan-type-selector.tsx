@@ -314,6 +314,16 @@ const StyledPopover = styled( Popover )`
 				border-right-color: var( --color-neutral-100 );
 			}
 		}
+
+		.notouch & {
+			.popover__arrow {
+				left: 6px;
+			}
+
+			.popover__inner {
+				left: 16px;
+			}
+		}
 	}
 
 	.rtl &.is-left {

@@ -436,4 +436,14 @@ body.is-section-signup.is-white-signup {
 		line-height: 1.25rem;
 		padding: 0 8px;
 	}
+
+	.plan-features-comparison__item-title {
+		color: var( --studio-gray-60 );
+	}
+
+	.plan-features-comparison__item.plan-features-comparison__item-available {
+		.plan-features-comparison__item-annual-plan-container .plan-features-comparison__item-annual-plan {
+			color: var( --studio-orange-40 );
+		}
+	}
 }
