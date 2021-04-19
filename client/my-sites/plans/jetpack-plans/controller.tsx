@@ -28,6 +28,7 @@ export const productSelect = ( rootUrl: string ): PageJS.Callback => ( context, 
 	context.primary = (
 		<AsyncLoad
 			require="./selector"
+			placeholder={ false }
 			defaultDuration={ duration }
 			rootUrl={ rootUrl }
 			siteSlug={ context.params.site || context.query.site }
