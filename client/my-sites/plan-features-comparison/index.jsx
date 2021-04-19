@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import PlanFeaturesComparisonActions from './actions';
 import PlanFeaturesComparisonHeader from './header';
-import { PlanFeaturesAvailableItem } from './item';
+import { PlanFeaturesItem } from './item';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import { abtest } from 'calypso/lib/abtest';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
@@ -243,16 +243,17 @@ export class PlanFeaturesComparison extends Component {
 
 		return (
 			<>
-				<PlanFeaturesAvailableItem
+				<PlanFeaturesItem
 					key={ index }
 					annualOnlyContent={ this.renderAnnualPlansFeatureNotice( feature ) }
+					isFeatureAvailable={ feature.availableForCurrentPlan }
 				>
 					<span className={ classes }>
 						<span className="plan-features-comparison__item-title">
 							{ feature.getTitle( this.props.domainName ) }
 						</span>
 					</span>
-				</PlanFeaturesAvailableItem>
+				</PlanFeaturesItem>
 			</>
 		);
 	}

@@ -290,12 +290,17 @@ $plan-features-sidebar-width: 272px;
 			}
 		}
 
-		.plan-features-comparison__item-checkmark {
+		.plan-features-comparison__item-checkmark,
+		.plan-features-comparison__item-cross {
 			fill: var( --studio-green-50 );
 			width: 16px;
 			height: 16px;
 			margin-right: 0;
 			flex: 0 0 auto;
+		}
+
+		.plan-features-comparison__item-cross {
+			fill: #a7aaad;
 		}
 	}
 }
