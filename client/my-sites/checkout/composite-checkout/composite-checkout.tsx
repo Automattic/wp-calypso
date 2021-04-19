@@ -80,7 +80,6 @@ import doesValueExist from './lib/does-value-exist';
 import EmptyCart from './components/empty-cart';
 import getContactDetailsType from './lib/get-contact-details-type';
 import getDomainDetails from './lib/get-domain-details';
-import getPostalCode from './lib/get-postal-code';
 import mergeIfObjects from './lib/merge-if-objects';
 import type { ReactStandardAction } from './types/analytics';
 import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
@@ -368,7 +367,6 @@ export default function CompositeCheckout( {
 
 	const contactDetails: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
 	const countryCode: string = contactDetails?.countryCode?.value ?? '';
-	const subdivisionCode: string = contactDetails?.state?.value ?? '';
 
 	const paymentMethods = arePaymentMethodsLoading
 		? []
@@ -459,7 +457,6 @@ export default function CompositeCheckout( {
 		includeDomainDetails,
 		includeGSuiteDetails,
 	} );
-	const postalCode = getPostalCode( contactDetails );
 
 	const paymentProcessors = useMemo(
 		() => ( {
@@ -493,9 +490,6 @@ export default function CompositeCheckout( {
 			'existing-card': ( transactionData: unknown ) =>
 				existingCardProcessor(
 					mergeIfObjects( transactionData, {
-						country: countryCode,
-						postalCode,
-						subdivisionCode,
 						siteId: siteId ? String( siteId ) : undefined,
 						domainDetails,
 					} ),
@@ -503,7 +497,7 @@ export default function CompositeCheckout( {
 				),
 			paypal: () => payPalProcessor( dataForProcessor ),
 		} ),
-		[ siteId, dataForProcessor, countryCode, subdivisionCode, postalCode, domainDetails ]
+		[ siteId, dataForProcessor, domainDetails ]
 	);
 
 	const jetpackColors = isJetpackNotAtomic
