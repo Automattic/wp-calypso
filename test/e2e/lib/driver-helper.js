@@ -571,3 +571,16 @@ export async function waitTillTextPresent( driver, selector, text, waitOverride 
 		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be present and displayed with text '${ text }'`
 	);
 }
+
+/**
+ * Waits until the input driver is able to switch to the designated frame.
+ * Upon successful resolution, the driver will be left focused on the new frame.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise<boolean>} A promise that will resolve with true if the switch was succesfull
+ */
+export function waitUntilAbleToSwitchToFrame( driver, locator, timeout = explicitWaitMS ) {
+	return driver.wait( until.ableToSwitchToFrame( locator ), timeout );
+}
