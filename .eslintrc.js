@@ -404,6 +404,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/every': 'error',
 		'you-dont-need-lodash-underscore/extend-own': 'error',
 		'you-dont-need-lodash-underscore/fill': 'error',
+		'you-dont-need-lodash-underscore/first': 'error',
 		'you-dont-need-lodash-underscore/foldl': 'error',
 		'you-dont-need-lodash-underscore/foldr': 'error',
 		'you-dont-need-lodash-underscore/index-of': 'error',
