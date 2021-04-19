@@ -313,6 +313,10 @@ export default {
 		const signupDependencies = getSignupDependencyStore( getState() );
 
 		const siteSlug = signupDependencies?.siteSlug || query?.siteSlug;
+		if ( ! siteSlug ) {
+			next();
+			return;
+		}
 		const siteId = getSiteId( getState(), siteSlug );
 		if ( siteId ) {
 			dispatch( setSelectedSiteId( siteId ) );
@@ -323,7 +327,7 @@ export default {
 				let freshSiteId = getSiteId( getState(), siteSlug );
 
 				if ( ! freshSiteId ) {
-					const wpcomStagingFragment = siteSlug.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
+					const wpcomStagingFragment = siteSlug.replace( /\.wordpress\.com$/, '.wpcomstaging.com' );
 					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
 				}
 
