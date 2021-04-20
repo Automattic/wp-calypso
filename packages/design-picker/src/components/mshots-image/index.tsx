@@ -92,6 +92,11 @@ const useMshotsUrl = ( src: string, options: MShotsOptions ) => {
 		let timeoutId: number;
 		img.onload = () => {
 			// Detect default image (Don't request a 400x300 image).
+			//
+			// If this turns out to be a problem, it might help to know that the
+			// http request status for the default is a 307. Unfortunately we
+			// don't get the request through an img element so we'd need to
+			// take a completely different approach using ajax.
 			if ( img.naturalWidth !== 400 || img.naturalHeight !== 300 ) {
 				setLoadedSrc( srcUrl );
 			} else if ( count < MAXTRIES ) {
