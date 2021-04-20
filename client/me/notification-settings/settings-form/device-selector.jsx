@@ -24,7 +24,7 @@ class NotificationSettingsFormDeviceSelector extends PureComponent {
 	render() {
 		const { devices } = this.props;
 		if ( size( devices ) === 1 ) {
-			return <StreamHeader title={ devices.shift().name } />;
+			return <StreamHeader title={ devices[ 0 ].name } />;
 		}
 
 		return (

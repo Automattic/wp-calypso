@@ -30,7 +30,7 @@ const countsReducer = ( state = [], action ) => {
 			// See https://github.com/Automattic/wp-calypso/pull/41441#discussion_r415918092
 			if (
 				action.data.length !== state.length ||
-				! isEqual( [ ...action.data ].shift().period, [ ...state ].shift().period )
+				! isEqual( action.data[ 0 ].period, state[ 0 ].period )
 			) {
 				return action.data;
 			}

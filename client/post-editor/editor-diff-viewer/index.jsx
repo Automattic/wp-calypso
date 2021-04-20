@@ -163,7 +163,7 @@ class EditorDiffViewer extends PureComponent {
 	};
 
 	scrollBelow = () => {
-		this.centerScrollingOnOffset( [ ...this.changesBelowViewport ].shift() );
+		this.centerScrollingOnOffset( this.changesBelowViewport[ 0 ] );
 		this.props.recordTracksEvent( 'calypso_editor_post_revisions_scroll_hint_used', {
 			direction: 'below',
 		} );

@@ -193,21 +193,22 @@ class LineChart extends Component {
 			const drawFullSeries = dataSeries.length < POINTS_MAX;
 			const colorNum = dataSeriesIndex % NUM_SERIES;
 
-			const firstDatum = [ ...dataSeries ].shift();
-			( drawFullSeries ? dataSeries : [ firstDatum, last( dataSeries ) ] ).forEach( ( datum ) => {
-				svg
-					.append( 'circle' )
-					.attr(
-						'class',
-						`line-chart__line-point line-chart__line${
-							drawFullSeries ? '' : '-end'
-						}-point-color-${ colorNum }`
-					)
-					.attr( 'cx', xScale( datum.date ) )
-					.attr( 'cy', yScale( datum.value ) )
-					.attr( 'r', drawFullSeries ? POINTS_SIZE : POINTS_END_SIZE )
-					.datum( { ...datum, dataSeriesIndex } );
-			} );
+			( drawFullSeries ? dataSeries : [ dataSeries[ 0 ], last( dataSeries ) ] ).forEach(
+				( datum ) => {
+					svg
+						.append( 'circle' )
+						.attr(
+							'class',
+							`line-chart__line-point line-chart__line${
+								drawFullSeries ? '' : '-end'
+							}-point-color-${ colorNum }`
+						)
+						.attr( 'cx', xScale( datum.date ) )
+						.attr( 'cy', yScale( datum.value ) )
+						.attr( 'r', drawFullSeries ? POINTS_SIZE : POINTS_END_SIZE )
+						.datum( { ...datum, dataSeriesIndex } );
+				}
+			);
 		} );
 	};
 

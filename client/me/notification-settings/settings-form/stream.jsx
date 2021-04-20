@@ -30,7 +30,7 @@ class NotificationSettingsFormStream extends PureComponent {
 		let { stream, settings } = this.props;
 
 		if ( this.props.devices && size( this.props.devices ) > 0 ) {
-			stream = parseInt( this.state.selectedDeviceId || [ ...this.props.devices ].shift().id, 10 );
+			stream = parseInt( this.state.selectedDeviceId || this.props.devices[ 0 ].id, 10 );
 			settings = find( this.props.settings, { device_id: stream } );
 		}
 
