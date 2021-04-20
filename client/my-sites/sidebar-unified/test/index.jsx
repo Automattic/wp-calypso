@@ -51,6 +51,11 @@ describe( 'MySitesSidebar', () => {
 
 			expect( isSelected ).to.be.false;
 		} );
+		test( '#itemLinkMatches() compares 2 part path with 1 part path without error', () => {
+			const isSelected = itemLinkMatches( '/stats/day', '/plugins' );
+
+			expect( isSelected ).to.be.false;
+		} );
 	} );
 
 	describe( '#itemLinkMatches() edge cases', () => {
