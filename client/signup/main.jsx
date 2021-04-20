@@ -207,6 +207,8 @@ class Signup extends React.Component {
 			this.setState( { resumingStep: destinationStep } );
 			return page.redirect( getStepUrl( this.props.flowName, destinationStep, this.props.locale ) );
 		}
+
+		this.isReskinned = false;
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -226,6 +228,10 @@ class Signup extends React.Component {
 
 		if ( ! this.state.controllerHasReset && ! isEqual( this.props.progress, progress ) ) {
 			this.updateShouldShowLoadingScreen( progress );
+		}
+
+		if ( ! this.isReskinned ) {
+			document.body.classList.remove( 'is-white-signup' );
 		}
 	}
 
@@ -726,8 +732,8 @@ class Signup extends React.Component {
 						return null;
 					}
 
-					const isReskinned = 'treatment' === experimentAssignment?.variationName;
-					! isLoading && ! isReskinned && document.body.classList.remove( 'is-white-signup' );
+					this.isReskinned = 'treatment' === experimentAssignment?.variationName;
+					! isLoading && ! this.isReskinned && document.body.classList.remove( 'is-white-signup' );
 
 					return (
 						<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
@@ -739,10 +745,10 @@ class Signup extends React.Component {
 									flowName={ this.props.flowName }
 									showProgressIndicator={ showProgressIndicator }
 									shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
-									isReskinned={ isReskinned }
+									isReskinned={ this.isReskinned }
 								/>
 							) }
-							<div className="signup__steps">{ this.renderCurrentStep( isReskinned ) }</div>
+							<div className="signup__steps">{ this.renderCurrentStep( this.isReskinned ) }</div>
 							{ ! this.state.shouldShowLoadingScreen && this.props.isSitePreviewVisible && (
 								<SiteMockups stepName={ this.props.stepName } />
 							) }
