@@ -168,7 +168,7 @@ describe( `[${ host }, ${ screenSize }] Test Gutenberg upgrade against most popu
 
 	before( 'Start browser', async function () {
 		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
+		driver = global.__BROWSER__ = await driverManager.startBrowser();
 	} );
 
 	after( async function () {

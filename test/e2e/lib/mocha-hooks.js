@@ -14,8 +14,8 @@ import * as slackNotifier from './slack-notifier';
 import * as mediaHelper from './media-helper';
 
 import * as driverManager from './driver-manager';
-import * as driverHelper from './driver-helper';
 import * as videoRecorder from '../lib/video-recorder';
+import { default as saveConsoleLog } from './hooks/save-console-log';
 
 const afterHookTimeoutMS = config.get( 'afterHookTimeoutMS' );
 let allPassed = true; // For SauceLabs status
@@ -122,19 +122,7 @@ afterEach( async function () {
 	}
 } );
 
-// Check for console errors
-afterEach( async function () {
-	this.timeout( afterHookTimeoutMS );
-	const driver = global.__BROWSER__;
-	await driverHelper.logPerformance( driver );
-	return await driverHelper.checkForConsoleErrors( driver );
-} );
-
-afterEach( async function () {
-	this.timeout( afterHookTimeoutMS );
-	const driver = global.__BROWSER__;
-	await driverHelper.printConsole( driver );
-} );
+saveConsoleLog();
 
 // Update Sauce Job Status locally
 afterEach( function () {

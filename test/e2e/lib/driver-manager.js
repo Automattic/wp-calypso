@@ -10,12 +10,12 @@ import proxy from 'selenium-webdriver/proxy';
 import SauceLabs from 'saucelabs';
 import { times } from 'lodash';
 import { readFileSync } from 'fs';
-
 import * as remote from 'selenium-webdriver/remote';
 
 /**
  * Internal dependencies
  */
+import { generatePath } from './test-utils';
 import * as dataHelper from './data-helper';
 
 const webDriverImplicitTimeOutMS = 2000;
@@ -83,8 +83,9 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 	const chromeVersion = await readFileSync( './.chromedriver_version', 'utf8' ).trim();
 	const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ chromeVersion } Safari/537.36`;
 	const pref = new webdriver.logging.Preferences();
-	pref.setLevel( 'browser', webdriver.logging.Level.ALL );
-	pref.setLevel( 'performance', webdriver.logging.Level.ALL );
+	pref.setLevel( webdriver.logging.Type.BROWSER, webdriver.logging.Level.ALL );
+	pref.setLevel( webdriver.logging.Type.PERFORMANCE, webdriver.logging.Level.ALL );
+
 	if ( config.has( 'sauce' ) && config.get( 'sauce' ) ) {
 		const sauceURL = 'http://ondemand.saucelabs.com:80/wd/hub';
 		const sauceConfig = config.get( 'sauceConfig' );
@@ -165,14 +166,11 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 
 				// eslint-disable-next-line no-case-declarations
 				const service = new chrome.ServiceBuilder( chromedriver.path )
-					.loggingTo( './chromedriver.' + process.pid + '.log' )
-					.enableVerboseLogging()
+					.loggingTo( generatePath( 'chromedriver.log' ) )
 					.build();
 				chrome.setDefaultService( service );
-				options.setChromeLogFile( './chrome.' + process.pid + '.log' );
+				options.setChromeLogFile( generatePath( './chrome.log' ) );
 				options.addArguments( '--enable-logging' );
-				options.addArguments( '--log-level 0' );
-				options.addArguments( '--log-net-log ./chrome.net.' + process.pid + '.log' );
 
 				builder = new webdriver.Builder();
 				builder.setChromeOptions( options );

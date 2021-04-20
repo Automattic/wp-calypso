@@ -35,7 +35,7 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 
 	before( 'Start browser', async function () {
 		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
+		driver = global.__BROWSER__ = await driverManager.startBrowser();
 	} );
 
 	describe( 'Can trigger the checkout modal via post editor', function () {
