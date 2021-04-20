@@ -10,9 +10,14 @@ import { localize, getLocaleSlug } from 'i18n-calypso';
 import { isNumber, trim } from 'lodash';
 
 /**
+ * WordPress dependencies
+ */
+import { VisuallyHidden } from '@wordpress/components';
+
+/**
  * Internal dependencies
  */
-import { Button, Card, ScreenReaderText } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import FormTextArea from 'calypso/components/forms/form-textarea';
 import {
 	submitNpsSurvey,
@@ -311,7 +316,7 @@ export class NpsSurvey extends PureComponent {
 					}
 				>
 					<Gridicon icon="cross" />
-					<ScreenReaderText>{ translate( 'Close' ) }</ScreenReaderText>
+					<VisuallyHidden>{ translate( 'Close' ) }</VisuallyHidden>
 				</Button>
 				<div className="nps-survey__question-screen">
 					{ this.state.currentForm === 'score' && this.renderScoreForm() }

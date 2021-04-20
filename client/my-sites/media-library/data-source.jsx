@@ -9,11 +9,12 @@ import Gridicon from 'calypso/components/gridicon';
 import { find, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import { VisuallyHidden } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import { Button, ScreenReaderText } from '@automattic/components';
+import { Button } from '@automattic/components';
 import PopoverMenu from 'calypso/components/popover/menu';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import GooglePhotosIcon from './google-photos-icon';
@@ -76,7 +77,7 @@ export class MediaLibraryDataSource extends Component {
 	};
 
 	renderScreenReader( selected ) {
-		return <ScreenReaderText>{ selected && selected.label }</ScreenReaderText>;
+		return <VisuallyHidden>{ selected && selected.label }</VisuallyHidden>;
 	}
 
 	renderMenuItems( sources ) {

@@ -5,11 +5,12 @@ import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { get, includes, invoke } from 'lodash';
+import { VisuallyHidden } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import { Button, ScreenReaderText } from '@automattic/components';
+import { Button } from '@automattic/components';
 import ExampleDomainBrowser from 'calypso/components/domains/example-domain-browser';
 import ExternalLink from 'calypso/components/external-link';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -212,9 +213,9 @@ class ImportURLStepComponent extends Component {
 			<Fragment>
 				<div className="import-url__wrapper">
 					<form className="import-url__form" onSubmit={ this.handleSubmit }>
-						<ScreenReaderText>
+						<VisuallyHidden>
 							<FormLabel htmlFor="url-input">Site URL</FormLabel>
-						</ScreenReaderText>
+						</VisuallyHidden>
 
 						<FormTextInput
 							id="url-input"

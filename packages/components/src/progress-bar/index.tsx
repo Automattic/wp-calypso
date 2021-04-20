@@ -3,11 +3,7 @@
  */
 import * as React from 'react';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import ScreenReaderText from '../screen-reader-text';
+import { VisuallyHidden } from '@wordpress/components';
 
 /**
  * Style dependencies
@@ -75,7 +71,7 @@ export default class ProgressBar extends React.PureComponent< Props, State > {
 				role="progressbar"
 				style={ styles }
 			>
-				{ title && <ScreenReaderText>{ title }</ScreenReaderText> }
+				{ title && <VisuallyHidden>{ title }</VisuallyHidden> }
 			</div>
 		);
 	}

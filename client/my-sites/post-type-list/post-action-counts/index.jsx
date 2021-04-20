@@ -6,6 +6,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import { VisuallyHidden } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -16,7 +17,6 @@ import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { getSiteSlug, isJetpackModuleActive, isJetpackSite } from 'calypso/state/sites/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getRecentViewsForPost } from 'calypso/state/stats/recent-post-views/selectors';
-import { ScreenReaderText } from '@automattic/components';
 
 /**
  * Style dependencies
@@ -105,7 +105,7 @@ class PostActionCounts extends PureComponent {
 				comment:
 					'text wrapped by "srText" is not visible on screen for brevity, but is read by screen readers to provide more context',
 				components: {
-					srText: <ScreenReaderText />,
+					srText: <VisuallyHidden />,
 				},
 			}
 		);

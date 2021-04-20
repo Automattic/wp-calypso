@@ -8,11 +8,12 @@ import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
+import { VisuallyHidden } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import { Card, Button, Dialog, ScreenReaderText } from '@automattic/components';
+import { Card, Button, Dialog } from '@automattic/components';
 import Notice from 'calypso/components/notice';
 import {
 	getStatus,
@@ -658,7 +659,7 @@ class PushNotificationSettings extends React.Component {
 					onClick={ this.props.toggleUnblockInstructions }
 				>
 					<Gridicon icon="cross" size={ 24 } />
-					<ScreenReaderText>{ this.props.translate( 'Dismiss' ) }</ScreenReaderText>
+					<VisuallyHidden>{ this.props.translate( 'Dismiss' ) }</VisuallyHidden>
 				</button>
 			</Dialog>
 			/* eslint-enable wpcalypso/jsx-classname-namespace */

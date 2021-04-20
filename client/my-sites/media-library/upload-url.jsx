@@ -8,13 +8,13 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
+import { VisuallyHidden } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { ScreenReaderText } from '@automattic/components';
 import { clearMediaItemErrors } from 'calypso/state/media/actions';
 import { addMedia } from 'calypso/state/media/thunks';
 
@@ -107,7 +107,7 @@ class MediaLibraryUploadUrl extends Component {
 					</button>
 
 					<button type="button" className="media-library__upload-url-cancel" onClick={ onClose }>
-						<ScreenReaderText>{ translate( 'Cancel' ) }</ScreenReaderText>
+						<VisuallyHidden>{ translate( 'Cancel' ) }</VisuallyHidden>
 						<Gridicon icon="cross" />
 					</button>
 				</div>

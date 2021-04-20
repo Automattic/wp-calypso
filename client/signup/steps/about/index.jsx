@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { includes } from 'lodash';
+import { VisuallyHidden } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -36,7 +37,7 @@ import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 //Form components
-import { Card, Button, ScreenReaderText } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import InfoPopover from 'calypso/components/info-popover';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -339,9 +340,9 @@ class AboutStep extends Component {
 							key={ options[ item ].key }
 						>
 							{ 0 === index && (
-								<ScreenReaderText>
+								<VisuallyHidden>
 									{ translate( 'What’s the primary goal you have for your site?' ) }
-								</ScreenReaderText>
+								</VisuallyHidden>
 							) }
 							<FormInputCheckbox
 								name="siteGoals"
@@ -384,10 +385,10 @@ class AboutStep extends Component {
 							selected={ this.state.userExperience === 1 }
 							onClick={ this.handleSegmentClick( 1 ) }
 						>
-							<ScreenReaderText>
+							<VisuallyHidden>
 								{ translate( 'How comfortable are you with creating a website?' ) }
-							</ScreenReaderText>
-							1<ScreenReaderText>{ translate( 'Beginner' ) }</ScreenReaderText>
+							</VisuallyHidden>
+							1<VisuallyHidden>{ translate( 'Beginner' ) }</VisuallyHidden>
 						</SegmentedControl.Item>
 
 						<SegmentedControl.Item
@@ -415,7 +416,7 @@ class AboutStep extends Component {
 							selected={ this.state.userExperience === 5 }
 							onClick={ this.handleSegmentClick( 5 ) }
 						>
-							5<ScreenReaderText>{ translate( 'Expert' ) }</ScreenReaderText>
+							5<VisuallyHidden>{ translate( 'Expert' ) }</VisuallyHidden>
 						</SegmentedControl.Item>
 					</SegmentedControl>
 					<span

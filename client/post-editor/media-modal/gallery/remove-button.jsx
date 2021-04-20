@@ -7,11 +7,11 @@ import { reject } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import { VisuallyHidden } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import { ScreenReaderText } from '@automattic/components';
 import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
 import { selectMediaItems } from 'calypso/state/media/actions';
 
@@ -43,7 +43,7 @@ class RemoveButton extends PureComponent {
 				onMouseDown={ ( event ) => event.stopPropagation() }
 				className="editor-media-modal-gallery__remove"
 			>
-				<ScreenReaderText>{ translate( 'Remove' ) }</ScreenReaderText>
+				<VisuallyHidden>{ translate( 'Remove' ) }</VisuallyHidden>
 				<Gridicon icon="cross" />
 			</button>
 		);

@@ -8,11 +8,11 @@ import { assign, findIndex } from 'lodash';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import Gridicon from 'calypso/components/gridicon';
+import { VisuallyHidden } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import { ScreenReaderText } from '@automattic/components';
 import { hasTouch } from 'calypso/lib/touch-detect';
 
 const noop = () => {};
@@ -344,7 +344,7 @@ class SortableList extends React.Component {
 					className="sortable-list__navigation-button is-previous"
 					disabled={ null === this.state.activeIndex || this.state.activeIndex === 0 }
 				>
-					<ScreenReaderText>{ this.props.translate( 'Move previous' ) }</ScreenReaderText>
+					<VisuallyHidden>{ this.props.translate( 'Move previous' ) }</VisuallyHidden>
 					<Gridicon icon="chevron-down" size={ 24 } />
 				</button>
 				<button
@@ -356,7 +356,7 @@ class SortableList extends React.Component {
 						this.state.activeIndex === this.props.children.length - 1
 					}
 				>
-					<ScreenReaderText>{ this.props.translate( 'Move next' ) }</ScreenReaderText>
+					<VisuallyHidden>{ this.props.translate( 'Move next' ) }</VisuallyHidden>
 					<Gridicon icon="chevron-up" size={ 24 } />
 				</button>
 			</div>
