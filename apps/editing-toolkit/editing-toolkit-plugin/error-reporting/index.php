@@ -56,15 +56,6 @@ function enqueue_script() {
 		$script_version,
 		true
 	);
-
-	// Debug snippet to test a (native) cors exception after the main handler loaded and the head handler has been deleted. Test code, delete later.
-	wp_enqueue_script(
-		'cors-script-test',
-		plugins_url( 'corserror-main.js' ),
-		array(),
-		'1',
-		true
-	);
 }
 
 /**
