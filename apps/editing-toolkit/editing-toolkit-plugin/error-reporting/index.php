@@ -73,7 +73,9 @@ function enqueue_script() {
 function activate_error_reporting() {
 	add_action( 'admin_print_scripts', __NAMESPACE__ . '\head_error_handler' );
 	add_filter( 'script_loader_tag', __NAMESPACE__ . '\add_crossorigin_to_script_els', 99, 2 );
-	add_action( 'init', __NAMESPACE__ . '\enqueue_script', -1000 );
+	// We load as last as possible for perf reasons. The head handler will
+	// capture errors until the main handler is loaded.
+	add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\enqueue_script', 99 );
 }
 
 /**
