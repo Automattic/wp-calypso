@@ -585,12 +585,12 @@ class Signup extends React.Component {
 		return flows.getFlow( this.props.flowName ).steps.length;
 	}
 
-	renderProcessingScreen() {
+	renderProcessingScreen( isReskinned ) {
 		if ( isWPForTeamsFlow( this.props.flowName ) ) {
 			return <P2SignupProcessingScreen />;
 		}
 
-		if ( this.props.isReskinned ) {
+		if ( isReskinned ) {
 			const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 			const hasPaidDomain = isDomainRegistration( domainItem );
 
@@ -644,7 +644,7 @@ class Signup extends React.Component {
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 					) }
 					{ this.state.shouldShowLoadingScreen ? (
-						this.renderProcessingScreen()
+						this.renderProcessingScreen( isReskinned )
 					) : (
 						<CurrentComponent
 							path={ this.props.path }
