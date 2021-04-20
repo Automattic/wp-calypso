@@ -424,6 +424,21 @@
 			"is_premium": false,
 			"is_fse": true,
 			"features": []
+		},
+		{
+			"title": "Start with an empty page",
+			"slug": "blank-canvas",
+			"template": "blank-canvas",
+			"theme": "blank-canvas",
+			"fonts": {
+				"headings": "Source Sans Pro",
+				"base": "Source Sans Pro"
+			},
+			"categories": [ "featured" ],
+			"is_premium": false,
+			"is_fse": false,
+			"is_alpha": true,
+			"features": []
 		}
 	]
 }
