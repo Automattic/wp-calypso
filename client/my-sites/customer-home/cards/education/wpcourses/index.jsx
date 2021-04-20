@@ -12,7 +12,7 @@ import { EDUCATION_WPCOURSES } from 'calypso/my-sites/customer-home/cards/consta
 /**
  * Image dependencies
  */
-import freePhotoLibraryVideoPrompt from 'calypso/assets/images/customer-home/illustration--secondary-free-photo-library.svg';
+import freePhotoLibraryVideoPrompt from 'calypso/assets/images/customer-home/illustration--secondary-wp-courses.svg';
 
 const WpCourses = () => {
 	return (
