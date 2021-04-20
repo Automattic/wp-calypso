@@ -13,10 +13,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import {
-	SITE_DELETE,
-	SITE_DELETE_FAILURE,
 	SITE_DELETE_RECEIVE,
-	SITE_DELETE_SUCCESS,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -187,11 +184,6 @@ export function deleteSite( siteId ) {
 	return ( dispatch, getState ) => {
 		const siteDomain = getSiteDomain( getState(), siteId );
 
-		dispatch( {
-			type: SITE_DELETE,
-			siteId,
-		} );
-
 		dispatch(
 			successNotice(
 				translate( '%(siteDomain)s is being deleted.', { args: { siteDomain } } ),
@@ -204,10 +196,6 @@ export function deleteSite( siteId ) {
 			.deleteSite( siteId )
 			.then( () => {
 				dispatch( receiveDeletedSite( siteId ) );
-				dispatch( {
-					type: SITE_DELETE_SUCCESS,
-					siteId,
-				} );
 				dispatch(
 					successNotice(
 						translate( '%(siteDomain)s has been deleted.', { args: { siteDomain } } ),
@@ -216,11 +204,6 @@ export function deleteSite( siteId ) {
 				);
 			} )
 			.catch( ( error ) => {
-				dispatch( {
-					type: SITE_DELETE_FAILURE,
-					siteId,
-					error,
-				} );
 				if ( error.error === 'active-subscriptions' ) {
 					dispatch(
 						errorNotice(
