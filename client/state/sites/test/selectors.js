@@ -51,7 +51,6 @@ import {
 	getSiteAdminUrl,
 	getCustomizerUrl,
 	getJetpackComputedAttributes,
-	hasDefaultSiteTitle,
 	getSiteComputedAttributes,
 } from '../selectors';
 import config from '@automattic/calypso-config';
@@ -3299,78 +3298,6 @@ describe( 'selectors', () => {
 
 				chaiExpect( customizerUrl ).to.equal( 'https://example.com/wp-admin/customize.php' );
 			} );
-		} );
-	} );
-
-	describe( 'hasDefaultSiteTitle()', () => {
-		test( 'should return null if the site is not known', () => {
-			const hasDefaultTitle = hasDefaultSiteTitle(
-				{
-					sites: {
-						items: {},
-					},
-				},
-				77203074
-			);
-
-			chaiExpect( hasDefaultTitle ).to.be.null;
-		} );
-
-		test( 'should return true if the site title is "Site Title"', () => {
-			const hasDefaultTitle = hasDefaultSiteTitle(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								URL: 'example.wordpress.com',
-								name: 'Site Title',
-							},
-						},
-					},
-				},
-				77203074
-			);
-
-			chaiExpect( hasDefaultTitle ).to.be.true;
-		} );
-
-		test( 'should return true if the site title is equal to the site slug', () => {
-			const hasDefaultTitle = hasDefaultSiteTitle(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								URL: 'example.wordpress.com',
-								name: 'example.wordpress.com',
-							},
-						},
-					},
-				},
-				77203074
-			);
-
-			chaiExpect( hasDefaultTitle ).to.be.true;
-		} );
-
-		test( 'should return false if the site title is any other title', () => {
-			const hasDefaultTitle = hasDefaultSiteTitle(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								URL: 'example.wordpress.com',
-								name: 'Example Site Name',
-							},
-						},
-					},
-				},
-				77203074
-			);
-
-			chaiExpect( hasDefaultTitle ).to.be.false;
 		} );
 	} );
 
