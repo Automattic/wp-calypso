@@ -12,14 +12,9 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - name: Extract branch name
-        run: |
-          echo ::set-output name=BRANCH::${{ github.event.pull_request.head.ref }}
-        id: extract_branch
-
       - name: Build Calypso.live link.
         run: |
-          echo '::set-output name=LINK::https://calypso.live/?branch=${{ steps.extract_branch.outputs.BRANCH }}'
+          echo '::set-output name=LINK::https://calypso.live/?branch=${{ github.event.pull_request.head.ref }}'
         id: build_link
 
       - name: Post comment on PR
