@@ -29,6 +29,7 @@ jobs:
               body: 'Test live: ${{ steps.build_link.outputs.LINK }}'
             })
 
+      # Load the page so the build process starts before the PR author even clicks on the link.
       - name: Fetch link
         uses: fjogeleit/http-request-action@v1.8.0
         id: fetch_link
