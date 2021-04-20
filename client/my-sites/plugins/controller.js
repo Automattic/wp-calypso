@@ -207,9 +207,6 @@ export function scrollTopIfNoHash( context, next ) {
 }
 
 export function renderDomainsPage( context, next ) {
-	context.primary = React.createElement( MarketplaceDomainUpsell, {
-		location: 'From render domains page',
-	} );
-
+	context.primary = <MarketplaceDomainUpsell />;
 	next();
 }

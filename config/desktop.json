@@ -124,7 +124,8 @@
 		"woocommerce/extension-wcservices/international-labels": false,
 		"woocommerce/store-on-non-atomic-sites": false,
 		"wpcom-user-bootstrap": false,
-		"wordpress-action-search": false
+		"wordpress-action-search": false,
+		"marketplace-yoast": true
 	},
 	"readerFollowingSource": "desktop",
 	"rtl": false,

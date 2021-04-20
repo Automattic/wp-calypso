@@ -1,0 +1,14 @@
+.marketplace-domain-upsell__root {
+	margin-left: 88px;
+	display: grid;
+	grid-template-columns: 56% 44%;
+
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+	.marketplace-domain-upsell__shopping-cart-container {
+		padding-left: 50px;
+	}
+}

@@ -93,15 +93,17 @@ export default function () {
 			clientRender
 		);
 
-		page(
-			'/plugins/manage/:site?',
-			scrollTopIfNoHash,
-			siteSelection,
-			navigation,
-			plugins,
-			makeLayout,
-			clientRender
-		);
+		if ( config.isEnabled( 'marketplace-yoast' ) ) {
+			page(
+				'/plugins/manage/:site?',
+				scrollTopIfNoHash,
+				siteSelection,
+				navigation,
+				plugins,
+				makeLayout,
+				clientRender
+			);
+		}
 
 		page(
 			'/plugins/domain/:site?',

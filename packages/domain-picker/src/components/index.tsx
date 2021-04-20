@@ -400,7 +400,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 															}
 															hstsRequired={ suggestion.hsts_required }
 															isFree={ suggestion.is_free }
-															isRecommended={ isRecommended }
+															isRecommended={ false && isRecommended }
 															railcarId={
 																baseRailcarId ? `${ baseRailcarId }${ index }` : undefined
 															}

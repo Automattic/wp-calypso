@@ -1,52 +1,103 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import DomainPicker from '@automattic/domain-picker';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import wp from 'calypso/lib/wp';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import { DomainSuggestions } from '@automattic/data-stores';
+import {
+	MARKETPLACE_FLOW_ID,
+	ANALYTICS_UI_LOCATON_MARKETPLACE_DOMAIN_SELECTION,
+} from 'calypso/my-sites/plugins/marketplace/constants';
+import { Button } from '@wordpress/components';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-// Aliasing wpcom functions explicitly bound to wpcom is required here;
-// otherwise we get `this is not defined` errors.
-const wpcom = wp.undocumented();
-const wpcomGetCart = ( cartKey: string ) => wpcom.getCart( cartKey );
+import './styles.scss';
 
-function DomainContainer( { selectedSite } ) {
+type DomainSuggestion = DomainSuggestions.DomainSuggestion;
+
+function Header() {
+	return (
+		<div>
+			<h1>Choose a domain</h1>
+			<p>Yoast SEO requires a top level domain to index your site and help you rank higher.</p>
+		</div>
+	);
+}
+
+function DomainPickerContainer( { onDomainSelect, selectedDomain } ) {
+	return (
+		<div className="marketplace-domain-upsell__domain-picker-container">
+			<DomainPicker
+				header={ <Header /> }
+				analyticsUiAlgo={ ANALYTICS_UI_LOCATON_MARKETPLACE_DOMAIN_SELECTION }
+				analyticsFlowId={ MARKETPLACE_FLOW_ID }
+				onDomainSelect={ onDomainSelect }
+				currentDomain={ selectedDomain }
+			/>
+		</div>
+	);
+}
+
+function MarketplaceShoppingCart( { onAddToCart, selectedDomain } ) {
+	return (
+		<div className="marketplace-domain-upsell__shopping-cart-container">
+			<h1>Your cart</h1>
+			<Button
+				onClick={ onAddToCart }
+				buttonType="primary"
+				isBusy={ false }
+				isPrimary
+				disabled={ selectedDomain === null }
+			>
+				Checkout
+			</Button>
+		</div>
+	);
+}
+
+function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
+	const [ selectedDomain, setDomain ] = useState( null );
 	const { addProductsToCart } = useShoppingCart();
-	const onDomainSelect = ( suggestion: any ) => {
-		const { product_slug, domain_name } = suggestion;
+	const selectedSite = useSelector( getSelectedSite );
+
+	const onAddToCart = () => {
+		const { product_slug, domain_name } = selectedDomain;
 		const domainProduct = {
 			...domainRegistration( {
 				productSlug: product_slug,
 				domain: domain_name,
 				source: 'Marketplace-Yoast-Domain-Upsell',
 			} ),
-			...suggestion,
+			...selectedDomain,
 		};
 		addProductsToCart( [ domainProduct ] );
+		window.location.href = window.location.origin + '/checkout/' + selectedSite.slug;
+	};
+
+	const onDomainSelect = ( suggestion: DomainSuggestion ): void => {
+		setDomain( suggestion );
 	};
 
 	return (
-		<div className="marketplace-domain-upsell__container">
-			<DomainPicker onDomainSelect={ onDomainSelect } selectedSite={ selectedSite } />
+		<div className="marketplace-domain-upsell__root">
+			<DomainPickerContainer onDomainSelect={ onDomainSelect } selectedDomain={ selectedDomain } />
+			<MarketplaceShoppingCart onAddToCart={ onAddToCart } selectedDomain={ selectedDomain } />
 		</div>
 	);
 }
 
-export default function MarketplaceDomainUpsell( { selectedSite } ): any {
+export default function MarketplaceDomainUpsell(): JSX.Element {
 	return (
-		<CalypsoShoppingCartProvider
-			cartKey={ selectedSite?.slug }
-			getCart={ wpcomGetCart }
-			callId="MarketplaceDomainUpsell"
-		>
-			<DomainContainer selectedSite={ selectedSite } />
+		<CalypsoShoppingCartProvider>
+			<CalypsoWrappedMarketplaceDomainUpsell />
 		</CalypsoShoppingCartProvider>
 	);
 }
