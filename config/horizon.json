@@ -65,6 +65,7 @@
 		"jetpack/on-demand-scan": true,
 		"jetpack/personal-plan": false,
 		"jetpack/magic-link-signup": true,
+		"jetpack/userless-checkout": false,
 		"jitms": true,
 		"keyboard-shortcuts": true,
 		"lasagna": true,
