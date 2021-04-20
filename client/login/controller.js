@@ -162,8 +162,8 @@ export function redirectJetpack( context, next ) {
 	const { redirect_to } = context.query;
 
 	/**
-	 * Send arrivals from the jetpack connect process (when site user email matches
-	 * a wpcom account) to the jetpack branded login.
+	 * Send arrivals from the jetpack connect process or jetpack's pricing page
+	 * (when site user email matches a wpcom account) to the jetpack branded login.
 	 *
 	 * A direct redirect to /log-in/jetpack is not currently done at jetpack.wordpress.com
 	 * because the iOS app relies on seeing a request to /log-in$ to show its
