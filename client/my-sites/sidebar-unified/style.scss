@@ -153,6 +153,15 @@ $font-size: rem( 14px );
 			}
 		}
 
+		.sidebar__inline-text {
+			position: absolute;
+			right: 0;
+			top: 50%;
+			transform: translateY( -50% );
+			margin-right: 20px;
+			opacity: 0.8;
+		}
+
 		.sidebar__menu-icon {
 			color: var( --color-sidebar-gridicon-fill );
 			margin-right: 8px;
