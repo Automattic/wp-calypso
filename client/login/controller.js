@@ -169,7 +169,10 @@ export function redirectJetpack( context, next ) {
 	 * because the iOS app relies on seeing a request to /log-in$ to show its
 	 * native credentials form.
 	 */
-	if ( isJetpack !== 'jetpack' && includes( redirect_to, 'jetpack/connect' ) ) {
+	if (
+		isJetpack !== 'jetpack' &&
+		( includes( redirect_to, 'jetpack/connect' ) || includes( redirect_to, 'source=jetpack' ) )
+	) {
 		return context.redirect( context.path.replace( 'log-in', 'log-in/jetpack' ) );
 	}
 	next();
