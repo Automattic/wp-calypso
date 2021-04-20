@@ -727,7 +727,7 @@ class Signup extends React.Component {
 					}
 
 					const isReskinned = 'treatment' === experimentAssignment?.variationName;
-					! isLoading && ! isReskinned && document.body.classList.remove( 'is-white-signup' );
+					! isLoading && isReskinned && this.addCssClassToBodyForReskinnedFlow();
 
 					return (
 						<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
