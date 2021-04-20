@@ -558,20 +558,12 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 
 		button.signup-form__submit {
 			border-radius: 4px; /* stylelint-disable-line */
-			width: 335px;
+			max-width: 408px;
 			height: 44px;
 			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
 			font-weight: 500; /* stylelint-disable-line */
 			letter-spacing: 0.32px;
 			line-height: 17px;
-
-			@include break-medium {
-				width: 296px;
-			}
-
-			@include break-large {
-				width: 360px;
-			}
 		}
 
 		.signup-form__social-buttons {
@@ -617,7 +609,6 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 		.signup-form.is-horizontal {
 			$breakpoint-mobile: 660px;
 			$separator-style: 1px solid #eaeaeb;
-
 			display: flex;
 			flex-direction: column;
 			flex-wrap: wrap;
@@ -712,29 +703,13 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 			.signup-form__input.form-text-input {
 				margin-bottom: 16px;
 				height: 44px;
-				width: 335px;
+				max-width: 408px;
 				border-radius: 4px; /* stylelint-disable-line */
 				border: 1px solid #d5d5d7;
-
-				@include break-medium {
-					width: 296px;
-				}
-
-				@include break-large {
-					width: 360px;
-				}
 			}
 
 			.form-password-input {
-				width: 335px;
-
-				@include break-medium {
-					width: 296px;
-				}
-
-				@include break-large {
-					width: 360px;
-				}
+				max-width: 408px;
 			}
 
 			.signup-form__social p {
@@ -844,6 +819,11 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 	.signup__step.is-plans {
 		.formatted-header__title {
 			font-weight: 500; /* stylelint-disable-line */
+		}
+
+		.formatted-header__subtitle button.is-borderless {
+			font-weight: 500; /* stylelint-disable-line */
+			color: var( --studio-gray-90 );
 		}
 	}
 
