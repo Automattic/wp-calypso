@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import classnames from 'classnames';
 import { addQueryArgs } from '@wordpress/url';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -31,6 +32,7 @@ export type MShotsOptions = {
 	screen_height?: number;
 };
 
+const debug = debugFactory( 'design-picker:mshots-image' );
 const cacheBuster = Date.now();
 
 export function mshotsUrl( url: string, options: MShotsOptions, count = 0 ): string {
@@ -64,6 +66,9 @@ const useMshotsUrl = ( src: string, options: MShotsOptions ) => {
 		// If there's been a "props" change we need to reset everything:
 		if ( options !== previousOptions || src !== previousSrc ) {
 			// Make sure an old image can't trigger a spurious state update
+			if ( options !== previousOptions ) {
+				debug( 'options changed\nfrom', previousOptions, '\nto', options );
+			}
 			previousImg?.onload && ( previousImg.onload = null );
 			setLoadedSrc( '' );
 			setCount( 0 );
