@@ -68,9 +68,26 @@ function enqueue_script() {
 }
 
 /**
+ * Returns whether the request that triggered this code originated from a public-api request.
+ */
+function is_public_api_request() {
+	if ( defined( 'REST_API_REQUEST' ) && REST_API_REQUEST ) {
+		return true;
+	}
+}
+
+/**
  * Effectivelly activates the error reporting module by setting the necessary hooks.
  */
 function activate_error_reporting() {
+	// We don't want to enqueue the assets if this request is a public-api request.
+	if ( is_public_api_request() ) {
+		l( 'this is a public api request, not activating the error reporting' );
+		return;
+	}
+
+	l( 'let us activate the error reporting!' );
+
 	add_action( 'admin_print_scripts', __NAMESPACE__ . '\head_error_handler' );
 	add_filter( 'script_loader_tag', __NAMESPACE__ . '\add_crossorigin_to_script_els', 99, 2 );
 	add_action( 'init', __NAMESPACE__ . '\enqueue_script', -1000 );
