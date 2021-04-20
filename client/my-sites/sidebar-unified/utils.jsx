@@ -1,5 +1,5 @@
 const pathIncludes = ( currentPath, term, position ) =>
-	currentPath.split( /[/,?]/ )?.[ position ].includes( term );
+	currentPath.split( /[/,?]/ )?.[ position ]?.includes( term );
 
 const fragmentIsEqual = ( path, currentPath, position ) =>
 	currentPath.split( /[/,?]/ )?.[ position ] === path.split( /[/,?]/ )?.[ position ];
