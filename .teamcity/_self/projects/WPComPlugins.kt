@@ -175,6 +175,7 @@ private object Gutenberg : BuildType({
 	params {
 		text(name="URL", value="https://wordpress.com", label = "Test URL", description = "URL to test against", allowEmpty = false)
 		checkbox(name="GUTENBERG_EDGE", value="true", label = "Use gutenberg-edge", description = "Use a blog with gutenberg-edge sticker", checked="true", unchecked = "false")
+		checkbox(name="COBLOCKS_EDGE", value="true", label = "Use coblocks-edge", description = "Use a blog with coblocks-edge sticker", checked="true", unchecked = "false")
 
 		// Unused by this Build, but the Project expects it
 		param("plugin_slug", "")
@@ -205,6 +206,7 @@ private object Gutenberg : BuildType({
 				export TEST_VIDEO=true
 				export HIGHLIGHT_ELEMENT=true
 				export GUTENBERG_EDGE=%GUTENBERG_EDGE%
+				export COBLOCKS_EDGE=%COBLOCKS_EDGE%
 				export URL=%URL%
 				export BROWSERSIZE=desktop
 				export BROWSERLOCALE=en
