@@ -62,14 +62,6 @@ class PlansNavigation extends React.Component {
 					onMobileNavPanelOpen={ this.onMobileNavPanelOpen }
 				>
 					<NavTabs label="Section" selectedText={ sectionTitle }>
-						<NavItem
-							path={ `/plans/${ site.slug }` }
-							selected={
-								path === '/plans' || path === '/plans/monthly' || path === '/plans/yearly'
-							}
-						>
-							{ translate( 'Plans' ) }
-						</NavItem>
 						{ shouldShowMyPlan && (
 							<NavItem
 								path={ `/plans/my-plan/${ site.slug }` }
@@ -78,6 +70,14 @@ class PlansNavigation extends React.Component {
 								{ translate( 'My Plan' ) }
 							</NavItem>
 						) }
+						<NavItem
+							path={ `/plans/${ site.slug }` }
+							selected={
+								path === '/plans' || path === '/plans/monthly' || path === '/plans/yearly'
+							}
+						>
+							{ translate( 'Plans' ) }
+						</NavItem>
 					</NavTabs>
 					<CartToggleButton
 						site={ this.props.site }
