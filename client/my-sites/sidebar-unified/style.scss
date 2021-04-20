@@ -155,10 +155,9 @@ $font-size: rem( 14px );
 
 		.sidebar__inline-text {
 			position: absolute;
-			right: 0;
+			right: 20px;
 			top: 50%;
 			transform: translateY( -50% );
-			margin-right: 20px;
 			opacity: 0.8;
 		}
 
