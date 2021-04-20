@@ -5,9 +5,7 @@
 
 		> * + * {
 			margin-left: 24px;
-
 		}
-
 	}
 }
 
@@ -15,13 +13,13 @@
 	.licenses__header {
 		flex-wrap: wrap;
 
-		> *, .select-dropdown__container {
+		> * {
 			width: 100%;
+			margin-bottom: 16px;
 		}
 
 		> * + * {
 			margin-left: 0;
-			margin-bottom: 16px;
 		}
 	}
 }

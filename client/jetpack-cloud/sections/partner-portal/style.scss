@@ -9,6 +9,7 @@
 }
 
 .current-section + .card-heading,
+.billing-dashboard__header .card-heading,
 .licenses__header .card-heading {
 	@include breakpoint-deprecated( '<660px' ) {
 		display: none;
