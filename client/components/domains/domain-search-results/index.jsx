@@ -6,7 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { get, includes, times, first } from 'lodash';
+import { get, includes, times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -273,10 +273,10 @@ class DomainSearchResults extends React.Component {
 					key="featured"
 					onButtonClick={ this.props.onClickResult }
 					premiumDomains={ this.props.premiumDomains }
-					primarySuggestion={ first( bestMatchSuggestions ) }
+					primarySuggestion={ bestMatchSuggestions[ 0 ] }
 					query={ this.props.lastDomainSearched }
 					railcarId={ this.props.railcarId }
-					secondarySuggestion={ first( bestAlternativeSuggestions ) }
+					secondarySuggestion={ bestAlternativeSuggestions[ 0 ] }
 					selectedSite={ this.props.selectedSite }
 					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 					unavailableDomains={ this.props.unavailableDomains }
