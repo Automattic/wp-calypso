@@ -11,6 +11,11 @@ import { useSelector } from 'react-redux';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import { getDocumentHeadTitle } from 'calypso/state/document-head/selectors/get-document-head-title';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default function PartnerPortalSidebarNavigation(): ReactElement {
 	const headerTitle = useSelector( getDocumentHeadTitle );
 
