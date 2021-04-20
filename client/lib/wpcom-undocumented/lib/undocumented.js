@@ -856,17 +856,18 @@ Undocumented.prototype.getTitanMailboxAvailability = function ( domain, mailbox,
 /**
  * Get a list of WordPress.com products
  *
- * @param {Function} fn The callback function
+ * @param {object}   query A list of query parameters to include in the request
+ * @param {Function} fn    The callback function
  */
-Undocumented.prototype.getProducts = function ( fn ) {
+Undocumented.prototype.getProducts = function ( query, fn ) {
 	debug( '/products query' );
-	return this._sendRequest(
-		{
-			path: '/products',
-			method: 'get',
-		},
-		fn
-	);
+
+	if ( 'undefined' === typeof fn && 'function' === typeof query ) {
+		fn = query;
+		query = {};
+	}
+
+	return this.wpcom.req.get( '/products', query, fn );
 };
 
 /**
