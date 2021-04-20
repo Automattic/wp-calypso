@@ -58,10 +58,10 @@ const useMshotsUrl = ( src: string, options: MShotsOptions ) => {
 	const [ loadedSrc, setLoadedSrc ] = useState( '' );
 	const [ count, setCount ] = useState( 0 );
 	const previousSrc = useRef( src );
-	const previousImg = useRef( null );
-	const previousOptions = useRef();
-	// Oddly, we need to assign to current to pass the equivalence check and
-	// avoid a spurious reset
+	const previousImg = useRef< HTMLImageElement >();
+	const previousOptions = useRef< MShotsOptions >();
+	// Oddly, we need to assign to current here after ref creation in order to
+	// pass the equivalence check and avoid a spurious reset
 	previousOptions.current = options;
 
 	// Note: Mshots doesn't care about the "count" param, but it is important
@@ -80,10 +80,10 @@ const useMshotsUrl = ( src: string, options: MShotsOptions ) => {
 			if ( options !== previousOptions.current ) {
 				debug( 'options changed\nfrom', previousOptions.current, '\nto', options );
 			}
-			previousImg.current?.onload && ( previousImg.current.onload = null );
+			previousImg.current && previousImg.current.onload && ( previousImg.current.onload = null );
+
 			setLoadedSrc( '' );
 			setCount( 0 );
-
 			previousImg.current = img;
 			previousOptions.current = options;
 			previousSrc.current = src;
