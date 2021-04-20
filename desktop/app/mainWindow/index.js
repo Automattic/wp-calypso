@@ -8,6 +8,7 @@ const { app, BrowserWindow, ipcMain: ipc } = require( 'electron' );
  */
 const Config = require( '../lib/config' );
 const Settings = require( '../lib/settings' );
+const settingConstants = require( '../lib/settings/constants' );
 const SessionManager = require( '../lib/session' );
 const appInstance = require( '../lib/app-instance' );
 const platform = require( '../lib/platform' );
@@ -22,12 +23,16 @@ let mainWindow = null;
 
 function showAppWindow() {
 	const preloadFile = getPath( 'preload.js' );
-	const appUrl = Config.loginURL;
+	let appUrl = Config.loginURL;
 	// TODO:
 	// - Use BrowserView
-	// - Restore last window location
 	// - Handle migration from prior relative path implementation
 	// - Developer mode with localhost webapp configuration
+
+	const lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
+	if ( lastLocation && lastLocation.startsWith( 'http' ) ) {
+		appUrl = lastLocation;
+	}
 	log.info( 'Loading app (' + appUrl + ') in mainWindow' );
 
 	const config = Settings.getSettingGroup( Config.mainWindow, 'window', [
@@ -97,7 +102,7 @@ function showAppWindow() {
 	mainWindow.on( 'close', function () {
 		const currentURL = mainWindow.webContents.getURL();
 		log.info( `Closing main window, last location: '${ currentURL }'` );
-		// TODO: Save last window location
+		Settings.saveSetting( settingConstants.LAST_LOCATION, currentURL );
 	} );
 
 	mainWindow.on( 'closed', function () {
