@@ -74,7 +74,6 @@ const useMshotsUrl = ( src: string, options: MShotsOptions ) => {
 		}
 		const srcUrl = mshotsUrl( src, options, count );
 		let timeoutId: number;
-		img.src = srcUrl;
 		img.onload = () => {
 			// Detect default image (Don't request a 400x300 image).
 			if ( img.naturalWidth !== 400 || img.naturalHeight !== 300 ) {
@@ -85,6 +84,7 @@ const useMshotsUrl = ( src: string, options: MShotsOptions ) => {
 				timeoutId = setTimeout( () => setCount( count + 1 ), count * 500 );
 			}
 		};
+		img.src = srcUrl;
 
 		return () => {
 			img.onload = null;
