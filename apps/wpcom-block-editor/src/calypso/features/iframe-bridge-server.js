@@ -668,7 +668,7 @@ function openLinksInParentFrame( calypsoPort ) {
 		'.post-publish-panel__postpublish .components-panel__body.is-opened a', // Post title link in publish panel
 		'.components-panel__body.is-opened .post-publish-panel__postpublish-buttons a.components-button', // View Post button in publish panel
 	].join( ',' );
-	$( '#editor' ).on( 'click', viewPostLinkSelectors, ( e ) => {
+	$( '#editor, #edit-site-editor' ).on( 'click', viewPostLinkSelectors, ( e ) => {
 		e.preventDefault();
 		calypsoPort.postMessage( {
 			action: 'viewPost',
@@ -681,7 +681,7 @@ function openLinksInParentFrame( calypsoPort ) {
 			'.block-editor-inserter__manage-reusable-blocks', // Link in the Blocks Inserter
 			'a.components-menu-item__button[href*="post_type=wp_block"]', // Link in the More Menu
 		].join( ',' );
-		$( '#editor' ).on( 'click', manageReusableBlocksLinkSelectors, ( e ) => {
+		$( '#editor, #edit-site-editor' ).on( 'click', manageReusableBlocksLinkSelectors, ( e ) => {
 			e.preventDefault();
 			window.open( calypsoifyGutenberg.manageReusableBlocksUrl, '_top' );
 		} );
