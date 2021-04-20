@@ -102,9 +102,6 @@ export default {
 		currentFlowName === 'onboarding' && loadExperimentAssignment( 'refined_reskin_v1' );
 		if ( context.pathname.indexOf( 'new-launch' ) >= 0 ) {
 			next();
-		} else if ( currentFlowName === 'onboarding' ) {
-			document.body.classList.add( 'is-white-signup' );
-			next();
 		} else if (
 			context.pathname.indexOf( 'domain' ) >= 0 ||
 			context.pathname.indexOf( 'plan' ) >= 0 ||
@@ -112,6 +109,7 @@ export default {
 			context.pathname.indexOf( 'wpcc' ) >= 0 ||
 			context.pathname.indexOf( 'launch-site' ) >= 0 ||
 			context.pathname.indexOf( 'launch-only' ) >= 0 ||
+			context.params.flowName === 'user' ||
 			context.params.flowName === 'account' ||
 			context.params.flowName === 'crowdsignal' ||
 			context.params.flowName === 'pressable-nux' ||
@@ -164,6 +162,7 @@ export default {
 						);
 						window.location = urlWithLocale;
 					} else {
+						removeWhiteBackground();
 						next();
 					}
 				} )
