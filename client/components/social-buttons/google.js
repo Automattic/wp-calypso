@@ -229,7 +229,11 @@ class GoogleLoginButton extends Component {
 						onBlur={ this.hideError }
 						onClick={ this.handleClick }
 					>
-						<GoogleIcon isDisabled={ isDisabled } />
+						<GoogleIcon
+							isDisabled={ isDisabled }
+							width={ this.props.isReskinned ? 19 : 20 }
+							height={ this.props.isReskinned ? 19 : 20 }
+						/>
 
 						<span className="social-buttons__service-name">
 							{ this.props.translate( 'Continue with %(service)s', {

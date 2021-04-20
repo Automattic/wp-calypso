@@ -290,12 +290,17 @@ $plan-features-sidebar-width: 272px;
 			}
 		}
 
-		.plan-features-comparison__item-checkmark {
+		.plan-features-comparison__item-checkmark,
+		.plan-features-comparison__item-cross {
 			fill: var( --studio-green-50 );
 			width: 16px;
 			height: 16px;
 			margin-right: 0;
 			flex: 0 0 auto;
+		}
+
+		.plan-features-comparison__item-cross {
+			fill: #a7aaad;
 		}
 	}
 }
@@ -390,4 +395,89 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features-comparison__header-price-group-prices {
 	display: inline-block;
+}
+
+body.is-section-signup.is-white-signup {
+	.plan-features-comparison__table-item {
+		border-left: none;
+
+		&:last-of-type {
+			border-right: none;
+		}
+	}
+
+	.plan-features-comparison__row:last-of-type .plan-features-comparison__table-item {
+		border-bottom: none;
+	}
+
+	.plan-features--signup .is-premium-plan .plan-features-comparison__header-title {
+		font-weight: 500; /* stylelint-disable-line */
+	}
+
+	.plan-features--signup .plan-features-comparison__pricing {
+		.plan-price {
+			font-weight: 500; /* stylelint-disable-line */
+
+			.plan-price__integer {
+				font-weight: 500; /* stylelint-disable-line */
+			}
+		}
+
+		.plan-features-comparison__header-billing-info {
+			font-weight: 500; /* stylelint-disable-line */
+		}
+	}
+
+
+	.plan-pill.is-in-signup {
+		font-size: 0.75rem;
+		font-weight: 500; /* stylelint-disable-line */
+		letter-spacing: 0.2px;
+		line-height: 1.25rem;
+		padding: 0 8px;
+	}
+
+	.plan-features-comparison__item-title {
+		color: var( --studio-gray-60 );
+	}
+
+	.plan-features-comparison__item.plan-features-comparison__item-available {
+		.plan-features-comparison__item-annual-plan-container .plan-features-comparison__item-annual-plan {
+			color: var( --studio-orange-40 );
+		}
+	}
+}
+
+.notouch body.is-section-signup.is-white-signup .signup__step .segmented-control.price-toggle {
+	background-color: #f2f2f2;
+	margin-top: 0;
+
+	.segmented-control__link {
+		padding: 6px 11px;
+	}
+
+	.segmented-control__item {
+		border: 6px;
+		padding: 2px;
+
+		& .segmented-control__link {
+			border: 1px solid #f2f2f2;
+			&:hover {
+				border: 1px solid var( --studio-gray-10 );
+				background-color: unset;
+				border-radius: 5px; /* stylelint-disable-line */
+			}
+		}
+
+		&.is-selected .segmented-control__link {
+			border: 0.5px solid rgba( 0, 0, 0, 0.04 );
+			box-shadow: 0 3px 8px rgba( 0, 0, 0, 0.12 ), 0 3px 1px rgba( 0, 0, 0, 0.04 );
+			border-radius: 5px; /* stylelint-disable-line */
+
+			&:hover {
+				background-color: #fff;
+				border-color: rgba( 0, 0, 0, 0.04 );
+			}
+		}
+	}
 }

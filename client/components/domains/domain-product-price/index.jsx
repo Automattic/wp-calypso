@@ -87,10 +87,49 @@ class DomainProductPrice extends React.Component {
 		return <div className="domain-product-price__price">{ priceText }</div>;
 	}
 
+	renderReskinFreeWithPlanText() {
+		const { isMappingProduct, translate } = this.props;
+
+		const domainPriceElement = ( message ) => (
+			<div className="domain-product-price__free-text">{ message }</div>
+		);
+
+		if ( isMappingProduct ) {
+			return domainPriceElement( translate( 'Included in paid plans' ) );
+		}
+
+		const message = translate( '{{span}}Free for the first year{{/span}}', {
+			components: { span: <span className="domain-product-price__free-price" /> },
+		} );
+
+		return domainPriceElement( message );
+	}
+
+	renderReskinDomainPrice() {
+		const priceText = this.props.translate( '%(cost)s/year', {
+			args: { cost: this.props.price },
+		} );
+
+		return (
+			<div className="domain-product-price__price">
+				<del>{ priceText }</del>
+			</div>
+		);
+	}
+
 	renderFreeWithPlan() {
 		const className = classnames( 'domain-product-price', 'is-free-domain', {
 			'domain-product-price__domain-step-signup-flow': this.props.showStrikedOutPrice,
 		} );
+
+		if ( this.props.isReskinned ) {
+			return (
+				<div className={ className }>
+					{ this.renderReskinFreeWithPlanText() }
+					{ this.renderReskinDomainPrice() }
+				</div>
+			);
+		}
 
 		return (
 			<div className={ className }>

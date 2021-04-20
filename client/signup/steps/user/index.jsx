@@ -38,8 +38,8 @@ import config from '@automattic/calypso-config';
 import AsyncLoad from 'calypso/components/async-load';
 import WooCommerceConnectCartHeader from 'calypso/extensions/woocommerce/components/woocommerce-connect-cart-header';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
-import { getABTestVariation } from 'calypso/lib/abtest';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import { login } from 'calypso/lib/paths';
 
 /**
  * Style dependencies
@@ -111,6 +111,20 @@ export class UserStep extends Component {
 		this.setSubHeaderText( this.props );
 	};
 
+	getLoginLink() {
+		// TODO: If Reskin signup experiment wins, then refactor to remove duplicate definition of this function
+		// in <SignupForm> component
+		return login( {
+			isJetpack: 'jetpack-connect' === this.props.sectionName,
+			from: this.props.from,
+			isNative: config.isEnabled( 'login/native-login-links' ),
+			redirectTo: this.getRedirectToAfterLoginUrl(),
+			locale: this.props.locale,
+			oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+			wccomFrom: this.props.wccomFrom,
+		} );
+	}
+
 	setSubHeaderText( props ) {
 		const { flowName, oauth2Client, positionInFlow, translate, wccomFrom } = props;
 
@@ -173,6 +187,16 @@ export class UserStep extends Component {
 
 		if ( positionInFlow === 0 && flowName === 'onboarding' ) {
 			subHeaderText = translate( 'First, create your WordPress.com account.' );
+
+			if ( this.props.isReskinned ) {
+				const loginUrl = this.getLoginLink();
+				subHeaderText = translate(
+					'Create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
+					{
+						components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
+					}
+				);
+			}
 		}
 
 		this.setState( { subHeaderText } );
@@ -416,7 +440,7 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, wccomFrom, flowName } = this.props;
+		const { oauth2Client, wccomFrom, isReskinned } = this.props;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
@@ -438,9 +462,6 @@ export class UserStep extends Component {
 			isSocialSignupEnabled = true;
 		}
 
-		const isReskinned =
-			'onboarding' === flowName && 'reskinned' === getABTestVariation( 'reskinSignupFlow' );
-
 		return (
 			<>
 				<SignupForm
@@ -459,6 +480,7 @@ export class UserStep extends Component {
 					recaptchaClientId={ this.state.recaptchaClientId }
 					showRecaptchaToS={ flows.getFlow( this.props.flowName )?.showRecaptcha }
 					horizontal={ isReskinned }
+					isReskinned={ isReskinned }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
@@ -485,6 +507,7 @@ export default connect(
 		oauth2Client: getCurrentOAuth2Client( state ),
 		suggestedUsername: getSuggestedUsername( state ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+		from: get( getCurrentQueryArguments( state ), 'from' ),
 	} ),
 	{
 		errorNotice,
