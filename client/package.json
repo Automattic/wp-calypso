@@ -98,7 +98,7 @@
 		"body-parser": "^1.19.0",
 		"browser-filesaver": "^1.1.1",
 		"browserslist-useragent": "^3.0.3",
-		"bunyan": "^1.8.14",
+		"bunyan": "^1.8.15",
 		"cache-loader": "^4.1.0",
 		"chai": "^4.2.0",
 		"chalk": "^4.0.0",
