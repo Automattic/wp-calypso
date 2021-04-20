@@ -21,6 +21,28 @@ const isWpLogin = ( url ) => url.pathname.includes( 'wp-login.php' );
 module.exports = function ( mainWindow ) {
 	const webContents = mainWindow.webContents;
 
+	mainWindow.webContents.on( 'new-window', function ( event, url ) {
+		const parsed = new URL( url );
+		log.info( `Navigating to URL: '${ parsed.href }'` );
+
+		// Should we open wordpres.com sites in the desktop app or open another desktop window
+		event.preventDefault();
+
+		if (
+			isWordPress( parsed ) ||
+			isJetpack( parsed ) ||
+			isWpAdmin( parsed ) ||
+			isWpLogin( parsed ) // Disable wp-login/self-hosted for now ?
+		) {
+			mainWindow.webContents.loadURL( url );
+			return;
+		}
+
+		log.info( `Opening URL '${ parsed.href }' in external browser...` );
+
+		openInBrowser( url );
+	} );
+
 	webContents.on( 'will-navigate', async function ( event, url ) {
 		const parsed = new URL( url );
 		log.info( `Navigating to URL: '${ parsed.href }'` );
