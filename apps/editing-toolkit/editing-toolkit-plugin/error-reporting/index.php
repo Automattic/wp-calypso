@@ -86,14 +86,10 @@ function rollout_gradually() {
 	$user_id         = get_current_user_id();
 	$user_segment    = $user_id % 100;
 
-	l( "ErrorReporting#gradual_rollout(): user_id = $user_id" );
-	l( "ErrorReporting#gradual_rollout(): user_segment = $user_segment" );
-
 	// We get the last two digits of the user id and that will be used to decide in what
 	// segment the user is. i.e if current_segment is 10, then only ids that end in < 10
 	// will be considered part of the segment.
 	if ( $user_segment < $current_segment ) {
-		l( 'ErrorReporting#gradual_rollout(): error reporting will be activated!' );
 		activate_error_reporting();
 	}
 }
