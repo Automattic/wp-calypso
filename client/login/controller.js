@@ -161,6 +161,9 @@ export function redirectJetpack( context, next ) {
 	const { isJetpack } = context.params;
 	const { redirect_to } = context.query;
 
+	const isUserComingFromPricingPage =
+		includes( redirect_to, 'source=jetpack-plans' ) ||
+		includes( redirect_to, 'source=jetpack-connect-plans' );
 	/**
 	 * Send arrivals from the jetpack connect process or jetpack's pricing page
 	 * (when site user email matches a wpcom account) to the jetpack branded login.
@@ -171,7 +174,7 @@ export function redirectJetpack( context, next ) {
 	 */
 	if (
 		isJetpack !== 'jetpack' &&
-		( includes( redirect_to, 'jetpack/connect' ) || includes( redirect_to, 'source=jetpack' ) )
+		( includes( redirect_to, 'jetpack/connect' ) || isUserComingFromPricingPage )
 	) {
 		return context.redirect( context.path.replace( 'log-in', 'log-in/jetpack' ) );
 	}
