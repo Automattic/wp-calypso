@@ -436,6 +436,10 @@ $font-size: rem( 14px );
 			display: none;
 		}
 
+		.sidebar__inline-text {
+			display: none;
+		}
+
 		.sidebar__heading,
 		.sidebar__menu-link,
 		.sidebar__menu.is-togglable .sidebar__heading {
