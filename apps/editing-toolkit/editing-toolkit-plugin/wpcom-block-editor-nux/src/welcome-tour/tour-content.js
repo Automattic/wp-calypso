@@ -2,6 +2,8 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { createInterpolateElement } from '@wordpress/element';
+import { ExternalLink } from '@wordpress/components';
 
 const addBlock = 'https://s0.wp.com/i/editor-welcome-tour/slide-add-block.gif';
 const allBlocks = 'https://s0.wp.com/i/editor-welcome-tour/slide-all-blocks.gif';
@@ -75,9 +77,21 @@ function getTourContent() {
 		},
 		{
 			heading: __( 'Congratulations!', 'full-site-editing' ),
-			description: __(
-				'You’ve now learned the basics. Remember, your site is always private until you decide to launch.',
-				'full-site-editing'
+			description: createInterpolateElement(
+				__(
+					'You’ve now learned the basics. Remember, your site is <link_to_launch_site_docs>always private until you decide to launch</link_to_launch_site_docs>. Check out the docs to <link_to_editor_docs>learn more about Block Editing</link_to_editor_docs>.',
+					'full-site-editing'
+				),
+				{
+					link_to_launch_site_docs: (
+						<ExternalLink
+							href={ 'https://wordpress.com/support/settings/privacy-settings/#launch-your-site' }
+						/>
+					),
+					link_to_editor_docs: (
+						<ExternalLink href={ 'https://wordpress.com/support/wordpress-editor/' } />
+					),
+				}
 			),
 			imgSrc: finish,
 			animation: 'block-inserter',
