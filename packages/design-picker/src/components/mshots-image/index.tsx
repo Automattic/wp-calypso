@@ -55,15 +55,23 @@ const MAXTRIES = 10;
 const useMshotsUrl = ( src: string, options: MShotsOptions ) => {
 	const [ loadedSrc, setLoadedSrc ] = useState( '' );
 	const [ count, setCount ] = useState( 0 );
-
-	// Return '' while loading and reset the count for new image requests
-	useEffect( () => {
-		setLoadedSrc( '' );
-		setCount( 0 );
-	}, [ src, options ] );
+	let previousSrc = src;
+	let previousOptions = options;
+	let previousImg: Image = null;
 
 	useEffect( () => {
 		const img = new Image();
+		// If there's been a "props" change we need to reset everything:
+		if ( options !== previousOptions || src !== previousSrc ) {
+			// Make sure an old image can't trigger a spurious state update
+			previousImg?.onload && ( previousImg.onload = null );
+			setLoadedSrc( '' );
+			setCount( 0 );
+
+			previousImg = img;
+			previousOptions = options;
+			previousSrc = src;
+		}
 		const srcUrl = mshotsUrl( src, options, count );
 		let timeoutId: number;
 		img.src = srcUrl;
