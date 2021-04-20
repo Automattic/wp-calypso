@@ -260,6 +260,12 @@ export default class LoginFlow {
 
 	async loginUsingPopup() {
 		await driverHelper.waitForNumberOfWindows( this.driver, 2 );
+
+		// waitForNumberOfWindows returns after the new window has been created but
+		// before the window is fully loaded. Switching to the new window is possible
+		// but our switchToWindowByIndex attempts a window resize which sometimes fails.
+		// A short sleep here is enough to alleviate this problem.
+		await this.driver.sleep( 100 );
 		await driverHelper.switchToWindowByIndex( this.driver, 1 );
 
 		const loginPage = await LoginPage.Expect( this.driver );
