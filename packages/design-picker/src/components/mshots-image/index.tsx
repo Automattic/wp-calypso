@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import classnames from 'classnames';
 import { addQueryArgs } from '@wordpress/url';
 import debugFactory from 'debug';
@@ -57,25 +57,36 @@ const MAXTRIES = 10;
 const useMshotsUrl = ( src: string, options: MShotsOptions ) => {
 	const [ loadedSrc, setLoadedSrc ] = useState( '' );
 	const [ count, setCount ] = useState( 0 );
-	let previousSrc = src;
-	let previousOptions = options;
-	let previousImg: Image = null;
+	const previousSrc = useRef( src );
+	const previousImg = useRef( null );
+	const previousOptions = useRef();
+	// Oddly, we need to assign to current to pass the equivalence check and
+	// avoid a spurious reset
+	previousOptions.current = options;
+
+	// Note: Mshots doesn't care about the "count" param, but it is important
+	// to browser caching. Getting this wrong looks like the url resolving
+	// before the image is ready.
 
 	useEffect( () => {
 		const img = new Image();
 		// If there's been a "props" change we need to reset everything:
-		if ( options !== previousOptions || src !== previousSrc ) {
+		if ( options !== previousOptions.current || src !== previousSrc.current ) {
 			// Make sure an old image can't trigger a spurious state update
-			if ( options !== previousOptions ) {
-				debug( 'options changed\nfrom', previousOptions, '\nto', options );
+			debug( 'resetting mShotsUrl request' );
+			if ( src !== previousSrc.current ) {
+				debug( 'src changed\nfrom', previousSrc.current, '\nto', src );
 			}
-			previousImg?.onload && ( previousImg.onload = null );
+			if ( options !== previousOptions.current ) {
+				debug( 'options changed\nfrom', previousOptions.current, '\nto', options );
+			}
+			previousImg.current?.onload && ( previousImg.current.onload = null );
 			setLoadedSrc( '' );
 			setCount( 0 );
 
-			previousImg = img;
-			previousOptions = options;
-			previousSrc = src;
+			previousImg.current = img;
+			previousOptions.current = options;
+			previousSrc.current = src;
 		}
 		const srcUrl = mshotsUrl( src, options, count );
 		let timeoutId: number;
