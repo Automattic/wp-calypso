@@ -29,6 +29,7 @@
 	"devDependencies": {
 		"@automattic/calypso-polyfills": "^1.0.0",
 		"@testing-library/react": "^11.2.6",
-		"@testing-library/react-hooks": "5.1.1"
+		"@testing-library/react-hooks": "5.1.1",
+		"react-dom": "^16.12.0"
 	}
 }
