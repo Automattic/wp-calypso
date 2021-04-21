@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { get, isEmpty, isObject } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,7 +21,7 @@ const getSetupChoices = ( state, siteId ) => {
  */
 export const areSetupChoicesLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const setupChoices = getSetupChoices( state, siteId );
-	return isObject( setupChoices ) && ! isEmpty( setupChoices );
+	return typeof setupChoices === 'object' && ! isEmpty( setupChoices );
 };
 
 /**
