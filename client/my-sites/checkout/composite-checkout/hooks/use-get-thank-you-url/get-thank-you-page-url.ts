@@ -10,7 +10,7 @@ const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' 
 /**
  * Internal dependencies
  */
-import {isExternal, resemblesUrl, urlToSlug} from 'calypso/lib/url';
+import { isExternal, resemblesUrl, urlToSlug } from 'calypso/lib/url';
 import config from '@automattic/calypso-config';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
