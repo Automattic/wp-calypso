@@ -28,7 +28,7 @@ import type { StepType } from '../path';
  */
 export default function useStepNavigation(): {
 	goBack: () => void;
-	goNext: ( excludedSteps: Array< StepType > ) => void;
+	goNext: ( excludedSteps?: Array< StepType > ) => void;
 } {
 	const history = useHistory();
 
