@@ -100,6 +100,14 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		return hasSelectedDesign;
 	}, [ hasSelectedDesign ] );
 
+	const canUseFeatureStep = React.useCallback( (): boolean => {
+		return hasSelectedDesign;
+	}, [ hasSelectedDesign ] );
+
+	const canUsePlanStep = React.useCallback( (): boolean => {
+		return hasSelectedDesign;
+	}, [ hasSelectedDesign ] );
+
 	const canUseCreateSiteStep = React.useCallback( (): boolean => {
 		return isCreatingSite || isRedirecting;
 	}, [ isCreatingSite, isRedirecting ] );
@@ -174,7 +182,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				</Route>
 
 				<Route path={ makePath( Step.Features ) }>
-					{ canUseStyleStep() ? <Features /> : redirectToLatestStep }
+					{ canUseFeatureStep() ? <Features /> : redirectToLatestStep }
 				</Route>
 
 				<Route path={ makePath( Step.Domains ) }>
@@ -186,7 +194,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				</Route>
 
 				<Route path={ makePath( Step.Plans ) }>
-					{ canUseStyleStep() ? <Plans /> : redirectToLatestStep }
+					{ canUsePlanStep() ? <Plans /> : redirectToLatestStep }
 				</Route>
 
 				<Route path={ makePath( Step.PlansModal ) }>
