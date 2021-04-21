@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { assign } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { updateMediaItem } from 'calypso/state/media/actions';
@@ -19,7 +14,7 @@ export const updateMedia = ( siteId, item ) => ( dispatch, getState ) => {
 	const mediaId = item.ID;
 
 	const originalMediaItem = getMediaItem( getState(), siteId, mediaId );
-	const updatedMediaItem = assign( {}, originalMediaItem, item );
+	const updatedMediaItem = { ...originalMediaItem, ...item };
 
 	dispatch( updateMediaItem( siteId, updatedMediaItem, originalMediaItem ) );
 };

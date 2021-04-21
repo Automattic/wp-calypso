@@ -4,7 +4,7 @@
 
 import superagent from 'superagent';
 import { v4 as uuid } from 'uuid';
-import { omit, assign, get, has } from 'lodash';
+import { omit, get, has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -95,22 +95,18 @@ const analytics = {
 			const date = new Date();
 			const acceptLanguageHeader = req.get( 'Accept-Language' ) || '';
 
-			this.createPixel(
-				assign(
-					{
-						_en: eventName,
-						_ts: date.getTime(),
-						_tz: date.getTimezoneOffset() / 60,
-						_dl: req.get( 'Referer' ),
-						_lg: acceptLanguageHeader.split( ',' )[ 0 ],
-						_pf: req.useragent.platform,
-						_via_ip: req.get( 'x-forwarded-for' ) || req.connection.remoteAddress,
-						_via_ua: req.useragent.source,
-					},
-					getUserFromRequest( req ),
-					eventProperties
-				)
-			);
+			this.createPixel( {
+				_en: eventName,
+				_ts: date.getTime(),
+				_tz: date.getTimezoneOffset() / 60,
+				_dl: req.get( 'Referer' ),
+				_lg: acceptLanguageHeader.split( ',' )[ 0 ],
+				_pf: req.useragent.platform,
+				_via_ip: req.get( 'x-forwarded-for' ) || req.connection.remoteAddress,
+				_via_ua: req.useragent.source,
+				...getUserFromRequest( req ),
+				...eventProperties,
+			} );
 		},
 	},
 };

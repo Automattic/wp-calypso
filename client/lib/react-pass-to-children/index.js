@@ -1,12 +1,10 @@
 /**
  * External dependencies
  */
-
-import { assign } from 'lodash';
 import React from 'react';
 
 export default function ( element, additionalProps ) {
-	const props = assign( {}, element.props, additionalProps );
+	const props = { ...element.props, ...additionalProps };
 	let childElements;
 
 	delete props.children;

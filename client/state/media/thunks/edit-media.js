@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { assign } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { createTransientMedia } from 'calypso/lib/media/utils';
@@ -25,10 +20,12 @@ export const editMedia = ( siteId, item ) => ( dispatch, getState ) => {
 
 	const mediaId = item.ID;
 	const originalMediaItem = getMediaItem( getState(), siteId, mediaId );
-	const editedMediaItem = assign( {}, originalMediaItem, transientMediaItem, {
+	const editedMediaItem = {
+		...originalMediaItem,
+		...transientMediaItem,
 		ID: mediaId,
 		isDirty: true,
-	} );
+	};
 
 	dispatch( editMediaItem( siteId, editedMediaItem, item, originalMediaItem ) );
 };
