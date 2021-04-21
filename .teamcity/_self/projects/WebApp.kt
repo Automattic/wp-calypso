@@ -372,7 +372,6 @@ object BuildDockerImage : BuildType({
 					path = "Dockerfile"
 				}
 				namesAndTags = """
-					registry.a8c.com/calypso/app:calypso-%build.number%
 					registry.a8c.com/calypso/app:build-%build.number%
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
 				""".trimIndent()
@@ -391,7 +390,6 @@ object BuildDockerImage : BuildType({
 		dockerCommand {
 			commandType = push {
 				namesAndTags = """
-					registry.a8c.com/calypso/app:calypso-%build.number%
 					registry.a8c.com/calypso/app:build-%build.number%
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
 				""".trimIndent()
