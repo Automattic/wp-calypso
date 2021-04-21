@@ -16,9 +16,6 @@ import {
 	requestSite,
 } from '../actions';
 import {
-	SITE_DELETE,
-	SITE_DELETE_FAILURE,
-	SITE_DELETE_SUCCESS,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -236,37 +233,9 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		test( 'should dispatch delete action when thunk triggered', () => {
-			deleteSite( 2916284 )( spy, getState );
-
-			expect( spy ).to.have.been.calledWith( {
-				type: SITE_DELETE,
-				siteId: 2916284,
-			} );
-		} );
-
 		test( 'should dispatch receive deleted site when request completes', () => {
 			return deleteSite( 2916284 )( spy, getState ).then( () => {
 				expect( spy ).to.have.been.calledWith( receiveDeletedSite( 2916284 ) );
-			} );
-		} );
-
-		test( 'should dispatch delete success action when request completes', () => {
-			return deleteSite( 2916284 )( spy, getState ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: SITE_DELETE_SUCCESS,
-					siteId: 2916284,
-				} );
-			} );
-		} );
-
-		test( 'should dispatch fail action when request for delete fails', () => {
-			return deleteSite( 77203074 )( spy, getState ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: SITE_DELETE_FAILURE,
-					siteId: 77203074,
-					error: match( { message: 'User cannot delete site.' } ),
-				} );
 			} );
 		} );
 	} );
