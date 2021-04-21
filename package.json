@@ -10,7 +10,8 @@
 			"apps/*",
 			"packages/*",
 			"test/e2e",
-			"test/e2e/lib/reporter"
+			"test/e2e/lib/reporter",
+			"test/visual"
 		],
 		"nohoist": [
 			"**/config",
@@ -146,6 +147,9 @@
 		"test-server:coverage": "yarn run -s test-server --coverage",
 		"test-server:watch": "yarn run -s test-server --watch",
 		"test-build-tools": "jest -c=test/build-tools/jest.config.js",
+		"test-visual": "backstop reference --config=./test/visual/pretest.config.js --docker && backstop test --config=./test/visual/backstop.config.js --docker",
+		"test-visual-approve": "backstop approve --config=./test/visual/backstop.config.js --docker",
+		"test-visual-reference": "backstop reference --config=./test/visual/pretest.config.js --docker && backstop reference --config=./test/visual/backstop.config.js --docker",
 		"translate": "npx rimraf build/strings && wp-babel-makepot './{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base './' --dir './build/strings' --output './calypso-strings.pot'",
 		"tsc": "NODE_OPTIONS='--max-old-space-size=4096' tsc",
 		"typecheck": "yarn run tsc --project client",
@@ -223,6 +227,7 @@
 		"babel-loader": "^8.2.2",
 		"babel-plugin-dynamic-import-node": "^2.3.0",
 		"babel-plugin-transform-react-remove-prop-types": "^0.4.24",
+		"backstopjs": "^5.3.0",
 		"browserslist": "^4.16.0",
 		"calypso": "^0.17.0",
 		"calypso-codemods": "^0.1.6",
