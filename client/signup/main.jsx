@@ -232,6 +232,7 @@ class Signup extends React.Component {
 
 		if ( ! this.isReskinned ) {
 			document.body.classList.remove( 'is-white-signup' );
+			debug( 'In componentWillReceiveProps, removed is-white-signup class' );
 		}
 	}
 
@@ -729,11 +730,13 @@ class Signup extends React.Component {
 			>
 				{ ( isLoading, experimentAssignment ) => {
 					if ( isLoading ) {
+						debug( 'Waiting for experiment status to load' );
 						return null;
 					}
 
 					this.isReskinned = 'treatment' === experimentAssignment?.variationName;
 					! isLoading && ! this.isReskinned && document.body.classList.remove( 'is-white-signup' );
+					debug( `isReskinned value is ${ this.isReskinned }` );
 
 					return (
 						<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
