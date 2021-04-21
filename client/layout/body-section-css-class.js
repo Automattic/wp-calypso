@@ -15,17 +15,19 @@ import React from 'react';
  */
 function useBodyClass( prefix, value ) {
 	React.useEffect( () => {
-		// remove any existing classes with the same prefix, coming from example from a
-		// server HTML markup.
+		// if value is empty-ish, don't add or remove any CSS classes
+		if ( ! value ) {
+			return;
+		}
+
+		// Remove any existing classes with the same prefix, coming from example from a
+		// server HTML markup. There should be max one class name with a gived `prefix`
+		// at any one time. We're removing existing classes only when `value` is not `null`,
+		// i.e., when we actually have a class name to add and want to prevent duplicate one.
 		for ( const className of document.body.classList ) {
 			if ( className.startsWith( prefix ) ) {
 				document.body.classList.remove( className );
 			}
-		}
-
-		// if value is empty-ish, don't add any CSS classes
-		if ( ! value ) {
-			return;
 		}
 
 		// convert the value (section or group name) to a CSS class name
