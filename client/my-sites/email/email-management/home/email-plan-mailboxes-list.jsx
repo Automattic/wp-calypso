@@ -13,7 +13,13 @@ import { useTranslate } from 'i18n-calypso';
 import MaterialIcon from 'calypso/components/material-icon';
 import SectionHeader from 'calypso/components/section-header';
 import Badge from 'calypso/components/badge';
-import { isEmailUserAdmin } from 'calypso/lib/emails';
+import {
+	getEmailForwardAddress,
+	isEmailForward,
+	isEmailForwardVerified,
+	isEmailUserAdmin,
+} from 'calypso/lib/emails';
+import Gridicon from 'calypso/components/gridicon';
 
 const MailboxListHeader = ( { children } ) => {
 	const translate = useTranslate();
@@ -36,6 +42,15 @@ const MailboxListItem = ( { children, isPlaceholder, hasNoEmails } ) => {
 
 function EmailPlanMailboxesList( { emails, isLoadingEmails } ) {
 	const translate = useTranslate();
+
+	const MailboxListItemWarning = ( { warningText } ) => {
+		return (
+			<div className="email-plan-mailboxes-list__mailbox-list-item-warning">
+				<Gridicon icon="info-outline" size={ 18 } />
+				<span>{ warningText }</span>
+			</div>
+		);
+	};
 
 	if ( isLoadingEmails ) {
 		return (
@@ -71,6 +86,15 @@ function EmailPlanMailboxesList( { emails, isLoadingEmails } ) {
 							comment: 'Email user role displayed as a badge',
 						} ) }
 					</Badge>
+				) }
+				{ isEmailForward( email ) && (
+					<>
+						<Gridicon icon="chevron-right" />
+						<span> { getEmailForwardAddress( email ) } </span>
+						{ ! isEmailForwardVerified( email ) && (
+							<MailboxListItemWarning warningText={ translate( 'Verification required' ) } />
+						) }
+					</>
 				) }
 			</MailboxListItem>
 		);

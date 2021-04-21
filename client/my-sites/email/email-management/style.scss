@@ -152,10 +152,28 @@
 	}
 	> svg {
 		fill: var( --studio-gray-50 );
-		margin-right: 10px;
+		margin-left: 8px;
+		margin-right: 8px;
+		&:first-child {
+			margin-left: 0;
+			margin-right: 10px;
+		}
 	}
 	> .badge {
 		margin-left: 10px;
+	}
+	.email-plan-mailboxes-list__mailbox-list-item-warning {
+		color: var( --color-error );
+		font-size: $font-body-small;
+		line-height: 24px;
+		margin-left: 16px;
+		> svg {
+			margin-right: 6px;
+			vertical-align: middle;
+		}
+		> span {
+			vertical-align: middle;
+		}
 	}
 }
 
