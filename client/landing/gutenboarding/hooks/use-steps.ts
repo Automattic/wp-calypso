@@ -71,5 +71,10 @@ export default function useSteps(): Array< StepType > {
 		steps = steps.filter( ( step ) => step !== Step.Plans );
 	}
 
+	// TEMPORARY fix: disable Style step when alpha templates are enabled for testing Blank Canvas site creation
+	if ( isEnabled( 'gutenboarding/alpha-templates' ) ) {
+		steps = steps.filter( ( step ) => step !== Step.Style );
+	}
+
 	return steps;
 }
