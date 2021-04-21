@@ -11,6 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 import Badge from 'calypso/components/badge';
 import { Button } from '@automattic/components';
 import ExternalLink from 'calypso/components/external-link';
+import { getGmailUrl, getGoogleAdminUrl } from 'calypso/lib/gsuite';
 import PendingGSuiteTosNoticeDialog from 'calypso/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice-dialog';
 
 /**
@@ -32,12 +33,6 @@ function GSuiteUserItem( props ) {
 		setDialogVisible( false );
 	};
 
-	const getLoginLink = () => {
-		const { email, domain } = props.user;
-
-		return `https://accounts.google.com/AccountChooser?Email=${ email }&service=CPanel&continue=https://admin.google.com/a/${ domain }`;
-	};
-
 	const renderBadge = () => {
 		if ( ! props.user.is_admin ) {
 			return;
@@ -50,23 +45,55 @@ function GSuiteUserItem( props ) {
 		);
 	};
 
+	const renderMailboxLink = () => {
+		const { isSubscriptionActive, onClick, user } = props;
+
+		if ( ! isSubscriptionActive ) {
+			return;
+		}
+
+		return (
+			<ExternalLink
+				icon
+				href={ getGmailUrl( user.email ) }
+				onClick={ onClick }
+				target="_blank"
+				rel="noopener noreferrer"
+				title={ translate( 'Go to Gmail to access your emails' ) }
+			>
+				Gmail
+			</ExternalLink>
+		);
+	};
+
 	const renderManageLink = () => {
+		const { isSubscriptionActive, onClick, user } = props;
+
+		if ( ! isSubscriptionActive || ! user.is_admin ) {
+			return;
+		}
+
 		return (
 			<ExternalLink
 				icon
 				className="gsuite-user-item__manage-link"
-				href={ getLoginLink() }
-				onClick={ props.onClick }
+				href={ getGoogleAdminUrl( user.email ) }
+				onClick={ onClick }
 				target="_blank"
 				rel="noopener noreferrer"
+				title={ translate( 'Go to Google Admin to manage your G Suite account' ) }
 			>
-				{ translate( 'Manage', { context: 'Login to G Suite Manage' } ) }
+				Google Admin
 			</ExternalLink>
 		);
 	};
 
 	const renderFinishSetupButton = () => {
-		const { siteSlug, user } = props;
+		const { isSubscriptionActive, siteSlug, user } = props;
+
+		if ( ! user.is_admin || user.agreed_to_terms ) {
+			return;
+		}
 
 		return (
 			<Fragment>
@@ -77,6 +104,7 @@ function GSuiteUserItem( props ) {
 				{ siteSlug && (
 					<PendingGSuiteTosNoticeDialog
 						domainName={ user.domain }
+						isSubscriptionActive={ isSubscriptionActive }
 						onClose={ onCloseClickHandler }
 						section={ 'gsuite-users-manage-user' }
 						siteSlug={ siteSlug }
@@ -96,12 +124,19 @@ function GSuiteUserItem( props ) {
 				{ renderBadge() }
 			</div>
 
-			{ props.user.agreed_to_terms ? renderManageLink() : renderFinishSetupButton() }
+			<div className="gsuite-user-item__actions">
+				{ renderFinishSetupButton() }
+
+				{ renderManageLink() }
+
+				{ renderMailboxLink() }
+			</div>
 		</li>
 	);
 }
 
 GSuiteUserItem.propTypes = {
+	isSubscriptionActive: PropTypes.bool.isRequired,
 	onClick: PropTypes.func,
 	siteSlug: PropTypes.string,
 	user: PropTypes.object.isRequired,
