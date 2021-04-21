@@ -182,7 +182,7 @@ export function PurchaseChangePaymentMethod( {
 
 	return (
 		<Main className="purchases is-wide-layout">
-			<DocumentHead title={ titles.editCardDetails } />
+			<DocumentHead title={ titles.changePaymentMethod } />
 			<FormattedHeader
 				brandFont
 				className="purchases__page-heading"
