@@ -103,7 +103,6 @@ export default {
 		if ( context.pathname.indexOf( 'new-launch' ) >= 0 ) {
 			next();
 		} else if ( currentFlowName === 'onboarding' ) {
-			document.body.classList.add( 'is-white-signup' );
 			next();
 		} else if (
 			context.pathname.indexOf( 'domain' ) >= 0 ||
