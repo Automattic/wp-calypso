@@ -63,7 +63,7 @@ class EmailPlan extends React.Component {
 	state = {
 		isLoadingEmailAccounts: false,
 		errorLoadingEmailAccounts: false,
-		loadedEmailAccounts: false,
+		hasLoadedEmailAccounts: false,
 		emailAccounts: [],
 	};
 
@@ -78,7 +78,7 @@ class EmailPlan extends React.Component {
 	loadEmailAccounts() {
 		const { domain, selectedSite } = this.props;
 
-		if ( this.state.isLoadingEmailAccounts || this.state.loadedEmailAccounts ) {
+		if ( this.state.isLoadingEmailAccounts || this.state.hasLoadedEmailAccounts ) {
 			return;
 		}
 
@@ -93,7 +93,7 @@ class EmailPlan extends React.Component {
 					this.setState( {
 						isLoadingEmailAccounts: false,
 						errorLoadingEmailAccounts: false,
-						loadedEmailAccounts: true,
+						hasLoadedEmailAccounts: true,
 						emailAccounts: data?.accounts || [],
 					} );
 				},
@@ -101,7 +101,7 @@ class EmailPlan extends React.Component {
 					this.setState( {
 						isLoadingEmailAccounts: false,
 						errorLoadingEmailAccounts: true,
-						loadedEmailAccounts: true,
+						hasLoadedEmailAccounts: true,
 						emailAccounts: [],
 					} );
 				}
