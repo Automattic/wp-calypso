@@ -118,6 +118,9 @@ export function waitUntilLocatedAndVisible( driver, locator, timeout = explicitW
 					// This can happen due to react re-rendering (or similar dom modification) between
 					// when we resolve `findElements` and check isDisplayed.
 					if ( error.name === 'StaleElementReferenceError' ) {
+						console.log(
+							`Ignoring StaleElementReferenceError in waitUntilLocatedAndVisible called with ${ locatorStr }`
+						);
 						return null;
 					}
 					throw error;
