@@ -165,7 +165,6 @@ class EmailManagementHome extends React.Component {
 				<div className="email-home__header">
 					<FormattedHeader
 						brandFont
-						className="email-management__page-heading"
 						headerText={ translate( 'Emails' ) }
 						subHeaderText={ translate(
 							'Your home base for accessing, setting up, and managing your emails.'
