@@ -14,6 +14,7 @@ namespace A8C\FSE\ErrorReporting;
  * in the main handler. See `./index.js`.
  */
 function head_error_handler() {
+	// phpcs:disable WordPress.WP.EnqueuedResources.NonEnqueuedScript
 	?><script type="text/javascript">
 		window._headJsErrorHandler = function( errEvent ) {
 			console.log(errEvent);
@@ -21,7 +22,16 @@ function head_error_handler() {
 			window._jsErr.push(errEvent);
 		}
 		window.addEventListener( 'error', window._headJsErrorHandler );
+		// Test code, will be removed later. Simulate several errors happening at about the same time.
+		let count = 0;
+		let intervalId;
+		intervalId = setInterval(() => {
+			count = count + 1;
+			if ( count >= 3 ) clearInterval( intervalId );
+			throw new Error( `Error ${count} from the top-level document`);
+		}, 0 );
 	</script>
+	<script crossorigin="anonymous" src="https://s0.wp.com/wp-content/plugins/corserror-head.js"></script>
 	<?php
 }
 
@@ -56,6 +66,15 @@ function enqueue_script() {
 		$script_version,
 		true
 	);
+
+	// Debug snippet to test a (native) cors exception after the main handler loaded and the head handler has been deleted. Test code, delete later.
+	wp_enqueue_script(
+		'cors-script-test',
+		plugins_url( 'corserror-main.js' ),
+		array(),
+		'1',
+		true
+	);
 }
 
 /**
@@ -86,6 +105,9 @@ function user_in_test_segment() {
 	$current_segment = 10; // segment of existing users that will get this feature.
 	$user_id         = get_current_user_id();
 	$user_segment    = $user_id % 100;
+
+	l( "ErrorReporting#gradual_rollout(): user_id = $user_id" );
+	l( "ErrorReporting#gradual_rollout(): user_segment = $user_segment" );
 
 	// We get the last two digits of the user id and that will be used to decide in what
 	// segment the user is. i.e if current_segment is 10, then only ids that end in < 10
