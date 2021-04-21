@@ -1071,6 +1071,7 @@ class Account extends React.Component {
 								<FormToggle
 									checked={ !! this.getUserSetting( linkDestinationKey ) }
 									onChange={ this.toggleLinkDestination }
+									disabled={ this.getDisabledState( INTERFACE_FORM_NAME ) }
 								>
 									{ translate(
 										'{{spanlead}}Show advanced dashboard pages.{{/spanlead}} {{spanextra}}Enabling this will replace your dashboard pages with more advanced wp-admin equivalents when possible.{{/spanextra}}',
@@ -1099,6 +1100,7 @@ class Account extends React.Component {
 									</FormLabel>
 									<ColorSchemePicker
 										temporarySelection
+										disabled={ this.getDisabledState( INTERFACE_FORM_NAME ) }
 										defaultSelection={
 											this.props.isNavUnificationEnabled ? 'classic-dark' : 'classic-bright'
 										}
