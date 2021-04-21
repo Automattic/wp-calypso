@@ -95,7 +95,7 @@ export default function getThankYouPageUrl( {
 			return redirectTo;
 		}
 		if ( ! isExternal( redirectTo ) ) {
-			debug( 'has external redirectTo, so returning that', redirectTo );
+			debug( 'has a redirectTo that is not external, so returning that', redirectTo );
 			return redirectTo;
 		}
 		// We cannot simply compare `hostname` to `siteSlug`, since the latter
