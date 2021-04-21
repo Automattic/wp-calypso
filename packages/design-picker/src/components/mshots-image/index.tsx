@@ -80,7 +80,9 @@ const useMshotsUrl = ( src: string, options: MShotsOptions ) => {
 			if ( options !== previousOptions.current ) {
 				debug( 'options changed\nfrom', previousOptions.current, '\nto', options );
 			}
-			previousImg.current && previousImg.current.onload && ( previousImg.current.onload = null );
+			if ( previousImg.current && previousImg.current.onload ) {
+				previousImg.current.onload = null;
+			}
 
 			setLoadedSrc( '' );
 			setCount( 0 );
