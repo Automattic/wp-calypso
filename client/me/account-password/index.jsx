@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { ProtectFormGuard } from 'calypso/lib/protect-form';
+import { protectForm } from 'calypso/lib/protect-form';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
@@ -22,7 +22,10 @@ import FormInputValidation from 'calypso/components/forms/form-input-validation'
 import { errorNotice } from 'calypso/state/notices/actions';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { saveUserSettings } from 'calypso/state/user-settings/actions';
-import { isPendingPasswordChange } from 'calypso/state/user-settings/selectors';
+import {
+	hasUserSettingsRequestFailed,
+	isPendingPasswordChange,
+} from 'calypso/state/user-settings/selectors';
 import { generatePassword } from 'calypso/lib/generate-password';
 import wp from 'calypso/lib/wp';
 
@@ -38,7 +41,6 @@ class AccountPassword extends React.Component {
 		password: '',
 		validation: null,
 		pendingValidation: true,
-		isUnsaved: false,
 	};
 
 	componentDidMount() {
@@ -46,9 +48,13 @@ class AccountPassword extends React.Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( prevProps.isPendingPasswordChange && ! this.props.isPendingPasswordChange ) {
-			// eslint-disable-next-line react/no-did-update-set-state
-			this.setState( { isUnsaved: false } );
+		if (
+			prevProps.isPendingPasswordChange &&
+			! this.props.isPendingPasswordChange &&
+			! this.props.hasUserSettingsRequestFailed
+		) {
+			this.props.markSaved();
+			window.location = window.location.pathname + '?updated=password';
 		}
 	}
 
@@ -56,8 +62,8 @@ class AccountPassword extends React.Component {
 		this.setState( {
 			password: generatePassword(),
 			pendingValidation: true,
-			isUnsaved: true,
 		} );
+		this.props.markChanged();
 		this.debouncedPasswordValidate();
 	};
 
@@ -82,11 +88,17 @@ class AccountPassword extends React.Component {
 	handlePasswordChange = ( event ) => {
 		const newPassword = event.currentTarget.value;
 		this.debouncedPasswordValidate();
+
 		this.setState( {
 			password: newPassword,
 			pendingValidation: true,
-			isUnsaved: '' !== newPassword,
 		} );
+
+		if ( '' !== newPassword ) {
+			this.props.markChanged();
+		} else {
+			this.props.markSaved();
+		}
 	};
 
 	handleSaveButtonClick = () => {
@@ -130,7 +142,6 @@ class AccountPassword extends React.Component {
 
 		return (
 			<form className="account-password" onSubmit={ this.submitForm }>
-				<ProtectFormGuard isChanged={ this.state.isUnsaved } />
 				<FormFieldset>
 					<FormLabel htmlFor="password">{ translate( 'New password' ) }</FormLabel>
 					<FormPasswordInput
@@ -182,8 +193,10 @@ export default compose(
 	connect(
 		( state ) => ( {
 			isPendingPasswordChange: isPendingPasswordChange( state ),
+			hasUserSettingsRequestFailed: hasUserSettingsRequestFailed( state ),
 		} ),
 		{ errorNotice, recordGoogleEvent, saveUserSettings }
 	),
-	localize
+	localize,
+	protectForm
 )( AccountPassword );
