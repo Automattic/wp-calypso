@@ -445,7 +445,8 @@ body.is-section-signup.is-new-launch-flow .layout:not( .dops ):not( .is-wccom-oa
 /**
  * Common styles for reskinSignupFlow a/b test
  */
-body.is-section-signup.is-white-signup .signup.is-onboarding {
+body.is-section-signup.is-white-signup .signup.is-onboarding,
+body.is-section-signup.is-white-signup .signup.is-with-design-picker {
 	$gray-100: #101517;
 	$gray-60: #50575e;
 	$gray-50: #646970;
@@ -489,7 +490,7 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 	.formatted-header {
 		margin-top: 48px;
 		margin-bottom: 40px;
-		
+
 		.formatted-header__title {
 			@include onboarding-font-recoleta;
 			color: $gray-100;
@@ -572,7 +573,7 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 			height: 100%;
 			justify-content: center;
 		}
-	
+
 		.social-buttons__button {
 			text-align: left;
 			padding-left: 0;
@@ -605,7 +606,7 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 		.form-password-input .form-password-input__toggle-visibility {
 			right: 17px;
 		}
-	
+
 		.signup-form.is-horizontal {
 			$breakpoint-mobile: 660px;
 			$separator-style: 1px solid #eaeaeb;
@@ -622,7 +623,7 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 			@include break-small {
 				flex-direction: row;
 			}
-	
+
 			.logged-out-form,
 			.signup-form__social {
 				background-color: #fdfdfd;
@@ -639,7 +640,7 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 				@include break-small {
 					max-width: 408px;
 				}
-				
+
 				@include break-medium {
 					max-width: 350px;
 				}
@@ -657,10 +658,10 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 			> .logged-out-form__links {
 				max-width: 100%;
 				margin-top: 30px;
-		
+
 				@media screen and ( max-width: $breakpoint-mobile ) {
 					margin-top: 0;
-		
+
 					&::before, &::after {
 						content: '';
 						display: block;
@@ -693,7 +694,7 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 					@include break-small {
 						text-align: center;
 					}
-	
+
 					@include break-medium {
 						text-align: left;
 					}

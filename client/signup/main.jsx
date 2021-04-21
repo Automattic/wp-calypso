@@ -718,7 +718,9 @@ class Signup extends React.Component {
 		return (
 			<ProvideExperimentData
 				name="refined_reskin_v1"
-				options={ { isEligible: 'onboarding' === this.props.flowName } }
+				options={ {
+					isEligible: [ 'with-design-picker', 'onboarding' ].includes( this.props.flowName ),
+				} }
 			>
 				{ ( isLoading, experimentAssignment ) => {
 					if ( isLoading ) {
