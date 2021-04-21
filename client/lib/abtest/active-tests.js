@@ -59,4 +59,16 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: false,
 	},
+	// Change the ordering of featured Jetpack products:
+	// least to most expensive (control) vs most to least expensive (test)
+	jetpackReverseFeaturedProducts: {
+		datestamp: '20210422',
+		variations: {
+			highToLow_test: 50,
+			lowToHigh_control: 50,
+		},
+		localeTargets: 'any',
+		defaultVariation: 'lowToHigh_control',
+		allowExistingUsers: true,
+	},
 };
