@@ -59,8 +59,17 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		},
 		[ STORE_KEY ]
 	);
-	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
-	const newSiteError = useSelect( ( select ) => select( SITE_STORE ).getNewSiteError() );
+	const { isCreatingSite, newSiteError } = useSelect(
+		( select ) => {
+			const { isFetchingSite, getNewSiteError } = select( SITE_STORE );
+
+			return {
+				isCreatingSite: isFetchingSite(),
+				newSiteError: getNewSiteError(),
+			};
+		},
+		[ SITE_STORE ]
+	);
 	const shouldTriggerCreate = useNewQueryParam();
 	const isAnchorFmSignup = useIsAnchorFm();
 	const { isAnchorFmPodcastIdError } = useAnchorFmParams();
