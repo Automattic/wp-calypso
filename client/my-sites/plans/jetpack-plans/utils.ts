@@ -19,6 +19,7 @@ import {
 	ITEM_TYPE_PRODUCT,
 	ITEM_TYPE_BUNDLE,
 	ITEM_TYPE_PLAN,
+	LEGACY_TO_NEW_PLAN_MATRIX,
 	OPTIONS_SLUG_MAP,
 	PRODUCTS_WITH_OPTIONS,
 	REALTIME_PRODUCTS,
@@ -748,3 +749,43 @@ export const getJetpackDescriptionWithOptions = (
 		  } )
 		: product.description;
 };
+
+/**
+ * Return the slug of a supported Jetpack plan from the slug of legacy one.
+ *
+ * @param {string} legacyPlanSlug the slug of a legacy Jetpack plan
+ *
+ * @returns {string} the slug of a supported Jetpack plan
+ */
+function getSupportedNewPlanFromLegacyPlanSlug( legacyPlanSlug: string ): string {
+	return LEGACY_TO_NEW_PLAN_MATRIX[ legacyPlanSlug ];
+}
+
+/**
+ * Return the slug of a highlighted product if the given slug is valid, otherwise
+ * return null.
+ *
+ * @param {string} productSlug the slug of a Jetpack product
+ *
+ * @returns {[string, string] | null} the monthly and yearly slug of a supported Jetpack product
+ */
+export function getHighlightedProduct( productSlug?: string ): [ string, string ] | null {
+	if ( ! productSlug ) {
+		return null;
+	}
+
+	const proposedProductSlug = JETPACK_LEGACY_PLANS.includes( productSlug )
+		? getSupportedNewPlanFromLegacyPlanSlug( productSlug )
+		: productSlug;
+
+	const yearlySlug = getYearlySlugFromMonthly( proposedProductSlug );
+	const monthlySlug = getMonthlySlugFromYearly( proposedProductSlug );
+
+	if ( monthlySlug ) {
+		return [ monthlySlug, proposedProductSlug ];
+	} else if ( yearlySlug ) {
+		return [ proposedProductSlug, yearlySlug ];
+	}
+
+	return null;
+}
