@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useLocale } from '@automattic/i18n-utils';
@@ -28,6 +28,7 @@ const Designs: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const { goBack, goNext } = useStepNavigation();
+	const { goNext: goNextBySkippingStyleStep } = useStepNavigation( [ Step.Style ] );
 
 	const { setSelectedDesign, setFonts } = useDispatch( ONBOARD_STORE );
 	const { getSelectedDesign, hasPaidDesign, getRandomizedDesigns } = useSelect( ( select ) =>
@@ -39,6 +40,15 @@ const Designs: React.FunctionComponent = () => {
 		selected_design: getSelectedDesign()?.slug,
 		is_selected_design_premium: hasPaidDesign(),
 	} ) );
+
+	const hasInitialized = React.useRef( false );
+	useEffect( () => {
+		// start by clearing design selection if blank-canvas design is selected
+		if ( ! hasInitialized.current && getSelectedDesign()?.slug === 'blank-canvas' ) {
+			setSelectedDesign( undefined );
+		}
+		hasInitialized.current = true;
+	}, [ getSelectedDesign, setSelectedDesign ] );
 
 	return (
 		<div className="gutenboarding-page designs">
@@ -73,7 +83,7 @@ const Designs: React.FunctionComponent = () => {
 					// Update fonts to the design defaults
 					setFonts( design.fonts );
 
-					goNext( design?.slug === 'blank-canvas' ? [ Step.Style ] : [] );
+					design?.slug === 'blank-canvas' ? goNextBySkippingStyleStep() : goNext();
 				} }
 				premiumBadge={
 					<Badge className="designs__premium-badge">
