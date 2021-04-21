@@ -99,8 +99,10 @@ class InlineSupportLink extends Component {
 				{ ...externalLinkProps }
 			>
 				{ shouldLazyLoadAlternates && <QuerySupportArticleAlternates postId={ supportPostId } /> }
-				{ showText && text }
-				{ supportPostId && showIcon && <Gridicon icon="help-outline" size={ iconSize } /> }
+				<span className="inline-support-link__nowrap">
+					{ showText && text }
+					{ supportPostId && showIcon && <Gridicon icon="help-outline" size={ iconSize } /> }
+				</span>
 			</LinkComponent>
 		);
 	}
