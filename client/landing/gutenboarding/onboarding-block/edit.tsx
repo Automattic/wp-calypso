@@ -41,13 +41,19 @@ import './colors.scss';
 import './style.scss';
 
 const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = () => {
-	const { hasSiteTitle, hasSelectedDesign, isRedirecting } = useSelect(
+	const {
+		hasSiteTitle,
+		hasSelectedDesign,
+		hasSelectedDesignWithoutFonts,
+		isRedirecting,
+	} = useSelect(
 		( select ) => {
 			const onboardSelect = select( STORE_KEY );
 
 			return {
 				hasSiteTitle: onboardSelect.hasSiteTitle(),
 				hasSelectedDesign: onboardSelect.hasSelectedDesign(),
+				hasSelectedDesignWithoutFonts: onboardSelect.hasSelectedDesignWithoutFonts(),
 				isRedirecting: onboardSelect.getIsRedirecting(),
 			};
 		},
@@ -100,6 +106,10 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		return hasSelectedDesign;
 	}, [ hasSelectedDesign ] );
 
+	const shouldSkipStyleStep = React.useCallback( (): boolean => {
+		return hasSelectedDesignWithoutFonts;
+	}, [ hasSelectedDesignWithoutFonts ] );
+
 	const canUseFeatureStep = React.useCallback( (): boolean => {
 		return hasSelectedDesign;
 	}, [ hasSelectedDesign ] );
@@ -124,7 +134,17 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		return makePathWithState( Step.IntentGathering );
 	};
 
+	const getDesignWithoutFontsPath = () => {
+		// This is the path the is used to redirect the user when a design
+		// with no 'fonts' is selected
+		if ( hasSiteTitle ) {
+			return makePathWithState( Step.Features );
+		}
+		return makePathWithState( Step.Domains );
+	};
+
 	const redirectToLatestStep = <Redirect to={ getLatestStepPath() } />;
+	const redirectToDesignWithoutFontsStep = <Redirect to={ getDesignWithoutFontsPath() } />;
 
 	function createSiteOrError() {
 		if ( newSiteError ) {
@@ -160,6 +180,12 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		}
 	}, [ location, step, setLastLocation ] );
 
+	const styleStepIfNotSkipped = shouldSkipStyleStep() ? (
+		redirectToDesignWithoutFontsStep
+	) : (
+		<StylePreview />
+	);
+
 	return (
 		<div className="onboarding-block">
 			{ isCreatingSite && (
@@ -178,7 +204,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				</Route>
 
 				<Route path={ makePath( Step.Style ) }>
-					{ canUseStyleStep() ? <StylePreview /> : redirectToLatestStep }
+					{ canUseStyleStep() ? styleStepIfNotSkipped : redirectToLatestStep }
 				</Route>
 
 				<Route path={ makePath( Step.Features ) }>
