@@ -41,6 +41,7 @@ export const MySitesSidebarUnifiedItem = ( {
 	const onNavigate = () => {
 		reduxDispatch( collapseAllMySitesSidebarSections() );
 		reduxDispatch( expandMySitesSidebarSection( sectionId ) );
+		window.scrollTo( 0, 0 );
 	};
 
 	return (

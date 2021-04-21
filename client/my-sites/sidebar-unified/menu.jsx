@@ -88,6 +88,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 			}
 		}
 
+		window.scrollTo( 0, 0 );
 		reduxDispatch( toggleSection( sectionId ) );
 	};
 
