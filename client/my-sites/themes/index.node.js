@@ -20,9 +20,9 @@ import {
 	redirectToThemeDetails,
 } from './controller';
 import { validateFilters, validateVertical } from './validate-filters';
-import { getLanguage, getLanguageRouteParam } from 'lib/i18n-utils';
+import { getLanguage, getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 import { bindState as bindWpLocaleState } from 'calypso/lib/wp/localization';
-import { setLocaleRawData } from 'state/ui/language/actions';
+import { setLocaleRawData } from 'calypso/state/ui/language/actions';
 
 const translationsCache = {};
 

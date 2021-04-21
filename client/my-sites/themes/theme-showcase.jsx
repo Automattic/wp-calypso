@@ -40,7 +40,7 @@ import {
 } from 'calypso/state/themes/selectors';
 import UpworkBanner from 'calypso/blocks/upwork-banner';
 import RecommendedThemes from './recommended-themes';
-import { isDefaultLocale } from 'lib/i18n-utils';
+import { isDefaultLocale } from 'calypso/lib/i18n-utils';
 
 /**
  * Style dependencies

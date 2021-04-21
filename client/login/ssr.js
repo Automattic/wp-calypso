@@ -6,7 +6,7 @@ import { intersection } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isDefaultLocale } from 'lib/i18n-utils';
+import { isDefaultLocale } from 'calypso/lib/i18n-utils';
 
 /**
  * A middleware that enables (or disables) server side rendering for the /log-in page.

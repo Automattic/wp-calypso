@@ -3,8 +3,8 @@
  */
 import { makeLayout } from 'calypso/controller';
 import { details, fetchThemeDetailsData, notFoundError } from './controller';
-import { setupLocale } from 'my-sites/themes';
-import { getLanguageRouteParam } from 'lib/i18n-utils';
+import { setupLocale } from 'calypso/my-sites/themes';
+import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 
 export default function ( router ) {
 	const langParam = getLanguageRouteParam();
