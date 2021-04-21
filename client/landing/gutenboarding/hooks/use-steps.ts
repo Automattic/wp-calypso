@@ -15,7 +15,7 @@ import { usePlanFromPath } from './use-selected-plan';
 
 export default function useSteps(): Array< StepType > {
 	const locale = useLocale();
-	const { hasSiteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { hasSiteTitle, getSelectedDesign } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const isAnchorFmSignup = useIsAnchorFm();
 
 	let steps: StepType[];
@@ -44,8 +44,13 @@ export default function useSteps(): Array< StepType > {
 		];
 	}
 
+	// This should come from a hook which updates as a design in the design step is selected
+	const selectedDesign = getSelectedDesign();
+	const selectedDesignHasNoFonts =
+		typeof selectedDesign !== 'undefined' && ! selectedDesign.hasOwnProperty( 'fonts' );
+
 	// Remove the Style (fonts) step from the Site Editor flow.
-	if ( isEnabled( 'gutenboarding/site-editor' ) ) {
+	if ( isEnabled( 'gutenboarding/site-editor' ) || selectedDesignHasNoFonts ) {
 		steps = steps.filter( ( step ) => step !== Step.Style );
 	}
 

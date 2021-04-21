@@ -29,16 +29,26 @@ const Designs: React.FunctionComponent = () => {
 	const locale = useLocale();
 	const { goBack, goNext } = useStepNavigation();
 
-	const { setSelectedDesign, setFonts } = useDispatch( ONBOARD_STORE );
+	const { setSelectedDesign, setFonts, resetFonts } = useDispatch( ONBOARD_STORE );
 	const { getSelectedDesign, hasPaidDesign, getRandomizedDesigns } = useSelect( ( select ) =>
 		select( ONBOARD_STORE )
 	);
 	const isAnchorFmSignup = useIsAnchorFm();
 
+	const selectedDesign = getSelectedDesign();
+
 	useTrackStep( 'DesignSelection', () => ( {
-		selected_design: getSelectedDesign()?.slug,
+		selected_design: selectedDesign?.slug,
 		is_selected_design_premium: hasPaidDesign(),
 	} ) );
+
+	const [ userHasSelectedDesign, setUserHasSelectedDesign ] = React.useState( false );
+
+	React.useEffect( () => {
+		if ( selectedDesign && userHasSelectedDesign ) {
+			goNext();
+		}
+	}, [ goNext, userHasSelectedDesign, selectedDesign ] );
 
 	return (
 		<div className="gutenboarding-page designs">
@@ -69,6 +79,7 @@ const Designs: React.FunctionComponent = () => {
 				locale={ locale }
 				onSelect={ ( design: Design ) => {
 					setSelectedDesign( design );
+					setUserHasSelectedDesign( true );
 
 					if ( design.fonts ) {
 						setFonts( design.fonts );
