@@ -24,6 +24,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"tslib": "^2.1.0",
 		"wpcom-proxy-request": "^6.0.0"
 	}
 }
