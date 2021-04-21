@@ -215,16 +215,33 @@ class Account extends React.Component {
 		// store any selected locale variant so we can test it against those with no GP translation sets
 		const localeVariantSelected = isLocaleVariant( value ) ? value : '';
 		this.setState( { redirect, localeVariantSelected } );
+		if ( languageHasChanged ) {
+			this.props.recordTracksEvent( 'calypso_user_language_switch', {
+				new_language: value,
+				previous_language:
+					this.getUserOriginalSetting( 'locale_variant' ) ||
+					this.getUserOriginalSetting( 'language' ),
+				country_code: this.props.countryCode,
+			} );
+			this.saveInterfaceSettings( event );
+		}
 	};
 
 	toggleLinkDestination = ( linkDestination ) => {
 		this.updateUserSetting( linkDestinationKey, linkDestination );
+		this.saveInterfaceSettings( {} );
 	};
 
 	updateColorScheme = ( colorScheme ) => {
 		this.props.recordTracksEvent( 'calypso_color_schemes_select', { color_scheme: colorScheme } );
 		this.props.recordGoogleEvent( 'Me', 'Selected Color Scheme', 'scheme', colorScheme );
 		this.updateUserSetting( colorSchemeKey, colorScheme );
+		this.props.recordTracksEvent( 'calypso_color_schemes_save', {
+			color_scheme: colorScheme,
+		} );
+		this.props.recordGoogleEvent( 'Me', 'Saved Color Scheme', 'scheme', colorScheme );
+		this.props.bumpStat( 'calypso_changed_color_scheme', colorScheme );
+		this.saveInterfaceSettings( {} );
 	};
 
 	getEmailAddress() {
@@ -389,29 +406,6 @@ class Account extends React.Component {
 	handleRadioChange = ( event ) => {
 		const { name, value } = event.currentTarget;
 		this.setState( { [ name ]: value } );
-	};
-
-	handleSubmitButtonClick = () => {
-		const { unsavedUserSettings } = this.props;
-		this.recordClickEvent( 'Save Account Settings Button' );
-		if ( this.hasUnsavedUserSetting( colorSchemeKey ) ) {
-			const colorScheme = get( unsavedUserSettings, colorSchemeKey );
-			this.props.recordTracksEvent( 'calypso_color_schemes_save', {
-				color_scheme: colorScheme,
-			} );
-			this.props.recordGoogleEvent( 'Me', 'Saved Color Scheme', 'scheme', colorScheme );
-			this.props.bumpStat( 'calypso_changed_color_scheme', colorScheme );
-		}
-
-		if ( this.hasUnsavedUserSetting( 'language' ) ) {
-			this.props.recordTracksEvent( 'calypso_user_language_switch', {
-				new_language: this.getUserSetting( 'language' ),
-				previous_language:
-					this.getUserOriginalSetting( 'locale_variant' ) ||
-					this.getUserOriginalSetting( 'language' ),
-				country_code: this.props.countryCode,
-			} );
-		}
 	};
 
 	/**
@@ -751,7 +745,7 @@ class Account extends React.Component {
 	}
 
 	async submitForm( event, fields, formName = '' ) {
-		event.preventDefault();
+		event?.preventDefault && event.preventDefault();
 		debug( 'Submitting form' );
 
 		this.setState( {
@@ -1112,16 +1106,6 @@ class Account extends React.Component {
 									/>
 								</FormFieldset>
 							) }
-
-						<FormButton
-							isSubmitting={ this.isSubmittingForm( INTERFACE_FORM_NAME ) }
-							disabled={ this.shouldDisableInterfaceSubmitButton() }
-							onClick={ this.handleSubmitButtonClick }
-						>
-							{ this.isSubmittingForm( INTERFACE_FORM_NAME )
-								? translate( 'Saving…' )
-								: translate( 'Save interface settings' ) }
-						</FormButton>
 					</form>
 				</Card>
 
