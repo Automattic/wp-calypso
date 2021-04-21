@@ -57,7 +57,7 @@ const StylePreview: React.FunctionComponent = () => {
 					<ViewportSelect selected={ selectedViewport } onSelect={ setSelectedViewport } />
 					<ActionButtons className="style-preview__actions">
 						<BackButton onClick={ goBack } />
-						<NextButton onClick={ goNext } />
+						<NextButton onClick={ () => goNext() } />
 					</ActionButtons>
 				</div>
 				<div className="style-preview__content">

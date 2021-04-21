@@ -79,9 +79,9 @@ const FeaturesStep: React.FunctionComponent = () => {
 				<ActionButtons>
 					<BackButton onClick={ goBack } />
 					{ hasSelectedFeatures ? (
-						<NextButton onClick={ goNext } />
+						<NextButton onClick={ () => goNext() } />
 					) : (
-						<SkipButton onClick={ goNext } />
+						<SkipButton onClick={ () => goNext() } />
 					) }
 				</ActionButtons>
 			</div>
