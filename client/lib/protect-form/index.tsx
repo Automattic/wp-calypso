@@ -12,7 +12,7 @@ import { Subtract } from 'utility-types';
  */
 const debug = debugModule( 'calypso:protect-form' );
 
-type FormId = Record< string, unknown >;
+type FormId = [  ];
 
 let formsChanged = new Set< FormId >();
 let listenerCount = 0;
@@ -42,9 +42,7 @@ function removeBeforeUnloadListener() {
 }
 
 function markChanged( formId: FormId ) {
-	if ( ! formsChanged.has( formId ) ) {
-		formsChanged.add( formId );
-	}
+	formsChanged.add( formId );
 }
 
 function markSaved( formId: FormId ) {
@@ -57,7 +55,7 @@ type ProtectForm = {
 };
 
 export const useProtectForm = (): ProtectForm => {
-	const formId = React.useRef< FormId >( {} );
+	const formId = React.useRef< FormId >( [] );
 	const _markSaved = React.useCallback( () => markSaved( formId.current ), [] );
 	const _markChanged = React.useCallback( () => markChanged( formId.current ), [] );
 
@@ -96,28 +94,18 @@ export const protectForm = < P extends ProtectedFormProps >(
 	);
 };
 
-interface ProtectFormGuardProps {
-	isChanged: boolean;
-}
-
 /*
  * Declarative variant that takes a 'isChanged' prop.
  */
-export const ProtectFormGuard = ( { isChanged }: ProtectFormGuardProps ): null => {
+export const ProtectFormGuard = ( { isChanged }: { isChanged: boolean } ): null => {
 	const { markChanged, markSaved } = useProtectForm();
 
 	React.useEffect( () => {
 		if ( isChanged ) {
 			markChanged();
-			return;
+			return () => markSaved();
 		}
-
-		markSaved();
-
-		() => {
-			markSaved();
-		};
-	}, [ isChanged, markSaved, markChanged ] );
+	}, [ isChanged, markChanged, markSaved ] );
 
 	return null;
 };

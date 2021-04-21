@@ -50,7 +50,7 @@ export const EditTeamMemberForm = ( {
 		page( '/people/team' );
 	};
 
-	const { markChanged, markSaved } = useProtectForm( `edit-${ siteId }-${ userLogin }` );
+	const { markChanged, markSaved } = useProtectForm();
 	const { data: user, error, isLoading } = useUserQuery( siteId, userLogin, { retry: false } );
 
 	React.useEffect( () => {
