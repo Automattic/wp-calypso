@@ -135,9 +135,9 @@ class EmailPlan extends React.Component {
 		}
 
 		if ( hasTitanMailWithUs( domain ) ) {
-			const subscriptionId = getTitanSubscriptionId( domain );
+			const hasSubscriptionId = !! getTitanSubscriptionId( domain );
 			return {
-				external: ! subscriptionId,
+				external: ! hasSubscriptionId,
 				path: emailManagementNewTitanAccount( selectedSite.slug, domain.name, currentRoute ),
 			};
 		}
