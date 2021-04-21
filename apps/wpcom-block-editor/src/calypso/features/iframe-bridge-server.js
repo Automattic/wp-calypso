@@ -667,7 +667,6 @@ function openLinksInParentFrame( calypsoPort ) {
 		'.components-snackbar-list .components-snackbar__content a', // View Post link in success snackbar, Gutenberg >=5.9
 		'.post-publish-panel__postpublish .components-panel__body.is-opened a', // Post title link in publish panel
 		'.components-panel__body.is-opened .post-publish-panel__postpublish-buttons a.components-button', // View Post button in publish panel
-		'.wp-block-query__create-new-link a', // Create a new post link in block settings sidebar for Query block
 	].join( ',' );
 	$( '#editor, #edit-site-editor' ).on( 'click', viewPostLinkSelectors, ( e ) => {
 		e.preventDefault();
@@ -675,6 +674,15 @@ function openLinksInParentFrame( calypsoPort ) {
 			action: 'viewPost',
 			payload: { postUrl: e.target.href },
 		} );
+	} );
+
+	// Create a new post link in block settings sidebar for Query block
+	$( '#editor, #edit-site-editor' ).on( 'click', '.wp-block-query__create-new-link a', ( e ) => {
+		e.preventDefault();
+		window.open(
+			calypsoifyGutenberg.currentCalypsoUrl.replace( '/site-editor/', '/post/' ),
+			'_top'
+		);
 	} );
 
 	if ( calypsoifyGutenberg.manageReusableBlocksUrl ) {
