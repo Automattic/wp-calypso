@@ -111,9 +111,17 @@ export function waitUntilLocatedAndVisible( driver, locator, timeout = explicitW
 				if ( ! element ) {
 					return null;
 				}
-				const isDisplayed = await element.isDisplayed();
-
-				return isDisplayed ? element : null;
+				try {
+					const isDisplayed = await element.isDisplayed();
+					return isDisplayed ? element : null;
+				} catch ( error ) {
+					// This can happen due to react re-rendering (or similar dom modification) between
+					// when we resolve `findElements` and check isDisplayed.
+					if ( error.name === 'StaleElementReferenceError' ) {
+						return null;
+					}
+					throw error;
+				}
 			}
 		),
 		timeout
