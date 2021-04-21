@@ -222,9 +222,12 @@ function getNewSiteParams( {
 		// If there's a selected design, it means that the current flow contains the "design" step.
 		newSiteParams.options.theme = `pub/${ selectedDesign.theme }`;
 		newSiteParams.options.template = selectedDesign.template;
-		newSiteParams.options.font_base = selectedDesign.fonts.base;
-		newSiteParams.options.font_headings = selectedDesign.fonts.headings;
 		newSiteParams.options.use_patterns = true;
+
+		if ( selectedDesign.fonts ) {
+			newSiteParams.options.font_base = selectedDesign.fonts.base;
+			newSiteParams.options.font_headings = selectedDesign.fonts.headings;
+		}
 	}
 
 	return newSiteParams;

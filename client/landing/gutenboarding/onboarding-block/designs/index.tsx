@@ -70,10 +70,12 @@ const Designs: React.FunctionComponent = () => {
 				onSelect={ ( design: Design ) => {
 					setSelectedDesign( design );
 
-					// Update fonts to the design defaults
-					setFonts( design.fonts );
-
-					goNext();
+					if ( design.fonts ) {
+						setFonts( design.fonts );
+					} else {
+						// Some designs may not specify font pairings
+						resetFonts();
+					}
 				} }
 				premiumBadge={
 					<Badge className="designs__premium-badge">
