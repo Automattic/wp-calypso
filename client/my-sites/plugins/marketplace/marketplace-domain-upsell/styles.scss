@@ -1,7 +1,10 @@
+//@import '~@automattic/marketplace/styles/mixins';
+
 .marketplace-domain-upsell__root {
-	margin-left: 88px;
+	margin-left: 34px;
 	display: grid;
-	grid-template-columns: 56% 44%;
+	grid-template-rows: 40px 100%;
+	grid-template-columns: 60% 40%;
 
 	*,
 	*::before,
@@ -10,5 +13,89 @@
 	}
 	.marketplace-domain-upsell__shopping-cart-container {
 		padding-left: 50px;
+	}
+	.marketplace-domain-upsell__header {
+		margin: 0 0 20px;
+		@media ( min-width: 782px ) {
+			margin: 0 0 20px;
+		}
+		@media ( min-width: 600px ) {
+			margin: 0 0 20px;
+		}
+	}
+	.marketplace-title {
+		font-family: var( --p2-font-inter );
+		letter-spacing: 0.4px;
+		line-height: 28px;
+		font-weight: 600;
+		font-size: 1.5rem;
+		margin: 0 0 30px;
+	}
+
+	.marketplace-subtitle {
+		font-family: var( --p2-font-inter );
+		font-style: normal;
+		font-weight: normal;
+		font-size: 0.875rem;
+		line-height: 16px;
+		color: #2c3338;
+		margin: 0 0 30px;
+	}
+	.marketplace-domain-upsell__back-button {
+		button {
+			font-family: var( --p2-font-inter );
+			font-style: normal;
+			letter-spacing: 0.4px;
+			color: #1d2327;
+			font-weight: 600;
+			font-size: 1rem;
+			line-height: 20px;
+			padding: 0;
+
+			span {
+				margin-left: 9px;
+			}
+		}
+
+		grid-column: span 3;
+	}
+
+	.marketplace-domain-upsell__shopping-cart-container {
+		button {
+			display: flex;
+			justify-content: center;
+			width: 100%;
+			background-color: #117ac9;
+			color: white;
+			border-radius: 2px;
+		}
+		button:hover:not( :disabled ) {
+			background-color: #1163a1;
+			color: white;
+		}
+		.basket-item {
+			display: flex;
+			justify-content: space-between;
+			width: 100%;
+			margin-bottom: 10px;
+			div {
+				font-size: 0.875rem;
+			}
+		}
+		.total {
+			display: flex;
+			justify-content: space-between;
+			width: 100%;
+			margin-bottom: 20px;
+			div {
+				font-weight: bold;
+				font-size: 1rem;
+				line-height: 19px;
+			}
+		}
+	}
+
+	hr {
+		margin-top: 20px;
 	}
 }

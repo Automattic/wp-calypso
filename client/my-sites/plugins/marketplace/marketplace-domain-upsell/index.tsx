@@ -25,41 +25,62 @@ type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 
 function Header() {
 	return (
-		<div>
-			<h1>Choose a domain</h1>
-			<p>Yoast SEO requires a top level domain to index your site and help you rank higher.</p>
+		<div className="marketplace-domain-upsell__header domains__header">
+			<h1 className="marketplace-domain-upsell__header marketplace-title">Choose a domain</h1>
+			<h2 className="marketplace-domain-upsell__header marketplace-subtitle">
+				Yoast SEO requires a top level domain to index your site and help you rank higher.
+			</h2>
 		</div>
 	);
 }
 
 function DomainPickerContainer( { onDomainSelect, selectedDomain } ) {
 	return (
-		<div className="marketplace-domain-upsell__domain-picker-container">
-			<DomainPicker
-				header={ <Header /> }
-				analyticsUiAlgo={ ANALYTICS_UI_LOCATON_MARKETPLACE_DOMAIN_SELECTION }
-				analyticsFlowId={ MARKETPLACE_FLOW_ID }
-				onDomainSelect={ onDomainSelect }
-				currentDomain={ selectedDomain }
-			/>
-		</div>
+		<DomainPicker
+			header={ <Header /> }
+			analyticsUiAlgo={ ANALYTICS_UI_LOCATON_MARKETPLACE_DOMAIN_SELECTION }
+			analyticsFlowId={ MARKETPLACE_FLOW_ID }
+			onDomainSelect={ onDomainSelect }
+			currentDomain={ selectedDomain }
+		/>
 	);
 }
 
 function MarketplaceShoppingCart( { onAddToCart, selectedDomain } ) {
+	const { responseCart } = useShoppingCart();
+	const { products, sub_total_display } = responseCart;
+
 	return (
-		<div className="marketplace-domain-upsell__shopping-cart-container">
-			<h1>Your cart</h1>
+		<>
+			<h1 className="marketplace-domain-upsell__shopping-cart marketplace-title">Your cart</h1>
+			<div className="marketplace-domain-upsell__shopping-cart basket-items">
+				{ products.map( ( product ) => {
+					return (
+						<div
+							key={ product.meta }
+							className="marketplace-domain-upsell__shopping-cart basket-item"
+						>
+							<div>{ product.meta }</div>
+							<div>{ product.item_subtotal_display }</div>
+						</div>
+					);
+				} ) }
+			</div>
+			<hr />
+			<h1 className="marketplace-domain-upsell__shopping-cart total">
+				<div> Total </div>
+				<div>{ sub_total_display }</div>
+			</h1>
+
 			<Button
 				onClick={ onAddToCart }
-				buttonType="primary"
 				isBusy={ false }
 				isPrimary
 				disabled={ selectedDomain === null }
 			>
 				Checkout
 			</Button>
-		</div>
+		</>
 	);
 }
 
@@ -88,8 +109,37 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 
 	return (
 		<div className="marketplace-domain-upsell__root">
-			<DomainPickerContainer onDomainSelect={ onDomainSelect } selectedDomain={ selectedDomain } />
-			<MarketplaceShoppingCart onAddToCart={ onAddToCart } selectedDomain={ selectedDomain } />
+			<div className="marketplace-domain-upsell__back-button">
+				<Button isBusy={ false } isLink>
+					<svg
+						width="17"
+						height="13"
+						viewBox="0 0 17 13"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path
+							d="M2 6.49999L7.25 0.749995M2 6.49999L17 6.5M2 6.49999L7.25 11.75"
+							stroke="#1D2327"
+							stroke-width="1.5"
+						/>
+					</svg>{ ' ' }
+					<span>Back</span>
+				</Button>
+			</div>
+			<div className="marketplace-domain-upsell__domain-picker-container">
+				<DomainPickerContainer
+					onDomainSelect={ onDomainSelect }
+					selectedDomain={ selectedDomain }
+				/>
+			</div>
+			<div className="marketplace-domain-upsell__shopping-cart-container">
+				<MarketplaceShoppingCart
+					onAddToCart={ onAddToCart }
+					selectedDomain={ selectedDomain }
+					siteUrl={ selectedSite.slug }
+				/>
+			</div>
 		</div>
 	);
 }
