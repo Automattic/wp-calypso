@@ -735,7 +735,9 @@ class Signup extends React.Component {
 					}
 
 					this.isReskinned = 'treatment' === experimentAssignment?.variationName;
-					! isLoading && ! this.isReskinned && document.body.classList.remove( 'is-white-signup' );
+					this.isReskinned
+						? document.body.classList.add( 'is-white-signup' )
+						: document.body.classList.remove( 'is-white-signup' );
 					debug( `isReskinned value is ${ this.isReskinned }` );
 
 					return (
