@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import React, { createElement, ReactNode } from 'react';
+import React, { createElement, ReactNode, useEffect, useRef } from 'react';
 import { Button, ProductIcon } from '@automattic/components';
 
 /**
@@ -21,7 +21,11 @@ import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpac
  * Type dependencies
  */
 import type { Moment } from 'moment';
-import type { Duration, PurchaseCallback } from 'calypso/my-sites/plans/jetpack-plans/types';
+import type {
+	Duration,
+	PurchaseCallback,
+	ScrollCardIntoViewCallback,
+} from 'calypso/my-sites/plans/jetpack-plans/types';
 
 /**
  * Style dependencies
@@ -38,12 +42,14 @@ type OwnProps = {
 	currencyCode?: string | null;
 	originalPrice: number;
 	discountedPrice?: number;
+	belowPriceText?: TranslateResult;
 	billingTerm: Duration;
 	buttonLabel: TranslateResult;
 	buttonPrimary: boolean;
 	onButtonClick: PurchaseCallback;
 	expiryDate?: Moment;
 	isFeatured?: boolean;
+	isFree?: boolean;
 	isOwned?: boolean;
 	isIncludedInPlan?: boolean;
 	isDeprecated?: boolean;
@@ -54,6 +60,7 @@ type OwnProps = {
 	tooltipText?: TranslateResult | ReactNode;
 	aboveButtonText?: TranslateResult | ReactNode;
 	hideSavingLabel?: boolean;
+	scrollCardIntoView?: ScrollCardIntoViewCallback;
 };
 
 export type Props = OwnProps & Partial< FeaturesProps >;
@@ -213,11 +220,20 @@ const JetpackProductCard: React.FC< Props > = ( {
 	tooltipText,
 	hideSavingLabel,
 	aboveButtonText = null,
+	scrollCardIntoView,
 }: Props ) => {
 	const translate = useTranslate();
 	const parsedHeadingLevel = Number.isFinite( headingLevel )
 		? Math.min( Math.max( Math.floor( headingLevel as number ), 1 ), 6 )
 		: 2;
+
+	const anchorRef = useRef< HTMLDivElement >( null );
+
+	useEffect( () => {
+		if ( anchorRef && anchorRef.current ) {
+			scrollCardIntoView && scrollCardIntoView( anchorRef.current, productSlug );
+		}
+	}, [] );
 
 	return (
 		<div
@@ -231,6 +247,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 			} ) }
 			data-e2e-product-slug={ productSlug }
 		>
+			<div className="jetpack-product-card__scroll-anchor" ref={ anchorRef }></div>
 			{ isFeatured && (
 				<div className="jetpack-product-card__header">
 					<img className="jetpack-product-card__header-icon" src={ starIcon } alt="" />

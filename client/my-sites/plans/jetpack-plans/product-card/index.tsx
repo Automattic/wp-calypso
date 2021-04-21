@@ -32,7 +32,13 @@ import { isJetpackPlanSlug } from '@automattic/calypso-products';
 /**
  * Type dependencies
  */
-import type { Duration, PurchaseCallback, SelectorProduct, SiteProduct } from '../types';
+import type {
+	Duration,
+	PurchaseCallback,
+	ScrollCardIntoViewCallback,
+	SelectorProduct,
+	SiteProduct,
+} from '../types';
 
 interface ProductCardProps {
 	item: SelectorProduct;
@@ -43,6 +49,7 @@ interface ProductCardProps {
 	isAligned?: boolean;
 	featuredPlans?: string[];
 	hideSavingLabel?: boolean;
+	scrollCardIntoView: ScrollCardIntoViewCallback;
 }
 
 const ProductCard: React.FC< ProductCardProps > = ( {
@@ -54,6 +61,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	isAligned,
 	featuredPlans,
 	hideSavingLabel,
+	scrollCardIntoView,
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -164,6 +172,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			isDisabled={ isDisabled }
 			disabledMessage={ disabledMessage }
 			hideSavingLabel={ hideSavingLabel }
+			scrollCardIntoView={ scrollCardIntoView }
 		/>
 	);
 };
