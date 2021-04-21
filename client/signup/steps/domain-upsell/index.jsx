@@ -50,6 +50,7 @@ export default function DomainUpsellStep( props ) {
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
 		'domain_upsell_emphasize_free_v3'
 	);
+	useExperiment( 'explat_test_aa_one_off_20210421' );
 
 	const isInDomainUpsellEmphasizeFreeTest = 'treatment' === experimentAssignment?.variationName;
 
