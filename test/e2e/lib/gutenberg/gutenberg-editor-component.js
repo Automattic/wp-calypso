@@ -66,6 +66,11 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async publish( { visit = false, closePanel = true } = {} ) {
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
 		await driverHelper.clickWhenClickable( this.driver, this.publishButtonSelector );
+
+		// Ensure the spinner is seen before we confirm it is no longer present.
+		// Without this check, we see "Publish panel already closed" errors when the above misfire occurs.
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, this.publishingSpinnerSelector );
+
 		// Let's give publishing request enough time to finish. Sometimes it takes
 		// way more than the default 20 seconds, and the cost of waiting a bit
 		// longer is definitely lower than the cost of repeating the whole spec.
