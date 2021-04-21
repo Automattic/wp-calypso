@@ -17,7 +17,7 @@ import wp from 'calypso/lib/wp';
 import {
 	getGoogleAdminUrl,
 	getGoogleMailServiceFamily,
-	getGoogleProductSlug,
+	getGSuiteProductSlug,
 	getGSuiteSubscriptionId,
 	getProductType,
 	hasGSuiteWithUs,
@@ -128,7 +128,7 @@ class EmailPlan extends React.Component {
 				path: emailManagementAddGSuiteUsers(
 					selectedSite.slug,
 					domain.name,
-					getProductType( getGoogleProductSlug( domain ) ),
+					getProductType( getGSuiteProductSlug( domain ) ),
 					currentRoute
 				),
 			};
@@ -151,7 +151,7 @@ class EmailPlan extends React.Component {
 		const { domain, translate } = this.props;
 
 		if ( hasGSuiteWithUs( domain ) ) {
-			const googleMailService = getGoogleMailServiceFamily( getGoogleProductSlug( domain ) );
+			const googleMailService = getGoogleMailServiceFamily( getGSuiteProductSlug( domain ) );
 			return translate( '%(googleMailService)s settings', {
 				args: {
 					googleMailService,
