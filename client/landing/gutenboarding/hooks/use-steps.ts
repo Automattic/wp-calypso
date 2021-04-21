@@ -8,13 +8,20 @@ import { isEnabled } from '@automattic/calypso-config';
 /**
  * Internal dependencies
  */
-import { Step, StepType, useIsAnchorFm } from '../path';
+import { Step, useIsAnchorFm, useCurrentStep, usePath } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { PLANS_STORE } from '../stores/plans';
 import { usePlanFromPath } from './use-selected-plan';
 
-export default function useSteps(): Array< StepType > {
+import type { StepType } from '../path';
+
+export default function useSteps(): {
+	getNextStepPath: ( excludedSteps?: StepType[] ) => string;
+	previousStepPath: string;
+	isLastStep: boolean;
+} {
 	const locale = useLocale();
+	const makePath = usePath();
 	const { hasSiteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const isAnchorFmSignup = useIsAnchorFm();
 
@@ -51,7 +58,7 @@ export default function useSteps(): Array< StepType > {
 
 	// Logic necessary to skip Domains or Plans steps
 	// General rule: if a step has been used already, don't remove it.
-	const { domain, hasUsedDomainsStep, hasUsedPlansStep } = useSelect( ( select ) =>
+	const { domain, hasUsedDomainsStep, hasUsedPlansStep, selectedDesign } = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).getState()
 	);
 	const planProductId = useSelect( ( select ) => select( ONBOARD_STORE ).getPlanProductId() );
@@ -71,5 +78,35 @@ export default function useSteps(): Array< StepType > {
 		steps = steps.filter( ( step ) => step !== Step.Plans );
 	}
 
-	return steps;
+	if ( selectedDesign?.slug === 'blank-canvas' ) {
+		steps = steps.filter( ( step ) => step !== Step.Style );
+	}
+
+	const currentStep = useCurrentStep();
+	const getCurrentStepIndex = ( steps: StepType[] ) =>
+		steps.findIndex( ( step ) => step === Step[ currentStep ] );
+
+	const getNextStepPath = ( excludedSteps?: StepType[] ) => {
+		// Filter out any step that is explicitly excluded
+		let actualSteps = steps;
+		if ( Array.isArray( excludedSteps ) ) {
+			actualSteps = actualSteps.filter( ( step ) => ! excludedSteps.includes( step ) );
+		}
+
+		const currentStepIndex = getCurrentStepIndex( actualSteps );
+
+		return currentStepIndex !== -1 && // check first if current step still exists
+			currentStepIndex < actualSteps.length - 1
+			? makePath( actualSteps[ currentStepIndex + 1 ] )
+			: '';
+	};
+
+	// we ignore this for now
+	const previousStepPath =
+		getCurrentStepIndex( steps ) > 0 ? makePath( steps[ getCurrentStepIndex( steps ) - 1 ] ) : '';
+
+	// ignore this as well
+	const isLastStep = getCurrentStepIndex( steps ) === steps.length - 1;
+
+	return { getNextStepPath, previousStepPath, isLastStep };
 }

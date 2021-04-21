@@ -17,7 +17,7 @@ import Badge from '../../components/badge';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { useTrackStep } from '../../hooks/use-track-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
-import { useIsAnchorFm } from '../../path';
+import { Step, useIsAnchorFm } from '../../path';
 
 /**
  * Style dependencies
@@ -73,7 +73,7 @@ const Designs: React.FunctionComponent = () => {
 					// Update fonts to the design defaults
 					setFonts( design.fonts );
 
-					goNext();
+					goNext( design?.slug === 'blank-canvas' ? [ Step.Style ] : [] );
 				} }
 				premiumBadge={
 					<Badge className="designs__premium-badge">
