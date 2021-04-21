@@ -10,7 +10,7 @@ const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' 
 /**
  * Internal dependencies
  */
-import { isExternal } from 'calypso/lib/url';
+import {isExternal, resemblesUrl, urlToSlug} from 'calypso/lib/url';
 import config from '@automattic/calypso-config';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
@@ -84,15 +84,20 @@ export default function getThankYouPageUrl( {
 	debug( 'starting getThankYouPageUrl' );
 
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
-	// (i.e. on WordPress.com), or a Jetpack or WP.com site's block editor (in wp-admin).
-	// This is required for Jetpack's (and WP.com's) paid blocks Upgrade Nudge.
-	if ( redirectTo && ! isExternal( redirectTo ) ) {
-		debug( 'has external redirectTo, so returning that', redirectTo );
-		return redirectTo;
-	}
+	// (i.e. on WordPress.com), the same site as the cart's site, or a Jetpack or WP.com
+	// site's block editor (in wp-admin). This is required for Jetpack's (and WP.com's)
+	// paid blocks Upgrade Nudge.
 	if ( redirectTo ) {
 		const { protocol, hostname, port, pathname, query } = parseUrl( redirectTo, true, true );
 
+		if ( resemblesUrl( redirectTo ) && hostname && urlToSlug( hostname ) === siteSlug ) {
+			debug( 'has same site redirectTo, so returning that', redirectTo );
+			return redirectTo;
+		}
+		if ( ! isExternal( redirectTo ) ) {
+			debug( 'has external redirectTo, so returning that', redirectTo );
+			return redirectTo;
+		}
 		// We cannot simply compare `hostname` to `siteSlug`, since the latter
 		// might contain a path in the case of Jetpack subdirectory installs.
 		if ( adminUrl && redirectTo.startsWith( `${ adminUrl }post.php?` ) ) {

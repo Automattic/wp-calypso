@@ -967,4 +967,14 @@ describe( 'getThankYouPageUrl', () => {
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=traffic-guide' );
 	} );
+
+	it( 'redirects to a url on the site we are checking out', () => {
+		const redirectTo = 'https://foo.bar/some-path?with-args=yes';
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			redirectTo,
+			siteSlug: 'foo.bar',
+		} );
+		expect( url ).toBe( redirectTo );
+	} );
 } );
