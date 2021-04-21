@@ -153,6 +153,14 @@ $font-size: rem( 14px );
 			}
 		}
 
+		.sidebar__inline-text {
+			position: absolute;
+			right: 20px;
+			top: 50%;
+			transform: translateY( -50% );
+			opacity: 0.8;
+		}
+
 		.sidebar__menu-icon {
 			color: var( --color-sidebar-gridicon-fill );
 			margin-right: 8px;
@@ -425,6 +433,10 @@ $font-size: rem( 14px );
 		}
 
 		.upsell-nudge.banner.card.is-compact .banner__content {
+			display: none;
+		}
+
+		.sidebar__inline-text {
 			display: none;
 		}
 

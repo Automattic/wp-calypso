@@ -43,6 +43,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 	isHappychatSessionActive,
 	isJetpackNonAtomicSite,
 	continueInCalypso,
+	...props
 } ) => {
 	const hasAutoExpanded = useRef( false );
 	const reduxDispatch = useDispatch();
@@ -101,6 +102,8 @@ export const MySitesSidebarUnifiedMenu = ( {
 				className={ ( selected || childIsSelected ) && 'sidebar__menu--selected' }
 				count={ count }
 				hideExpandableIcon={ true }
+				inlineText={ props.inlineText }
+				{ ...props }
 			>
 				{ children.map( ( item ) => {
 					const isSelected = selectedMenuItem?.url === item.url;
