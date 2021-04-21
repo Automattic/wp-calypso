@@ -13,7 +13,7 @@ import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-tog
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 class EmailPlanSubscription extends React.Component {
-	renderDefaultRenewButton() {
+	renderRenewButton() {
 		const { domain, purchase, selectedSite, isLoadingPurchase, translate } = this.props;
 
 		if ( ! domain.currentUserCanManage ) {
@@ -81,7 +81,7 @@ class EmailPlanSubscription extends React.Component {
 						comment: 'Shows the expiry date of the email subscription',
 					} ) }
 				</div>
-				<div>{ this.renderDefaultRenewButton() }</div>
+				<div>{ this.renderRenewButton() }</div>
 				<div>{ this.renderAutoRenewToggle() }</div>
 			</CompactCard>
 		);
