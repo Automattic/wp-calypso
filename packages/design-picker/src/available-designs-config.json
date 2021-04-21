@@ -5,10 +5,7 @@
 			"slug": "blank-canvas",
 			"template": "blank-canvas",
 			"theme": "blank-canvas",
-			"fonts": {
-				"headings": "Playfair Display",
-				"base": "Fira Sans"
-			},
+			"fonts": {},
 			"categories": [ "featured" ],
 			"is_premium": false,
 			"is_fse": false,
