@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import classnames from 'classnames';
 import { addQueryArgs } from '@wordpress/url';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -31,6 +32,7 @@ export type MShotsOptions = {
 	screen_height?: number;
 };
 
+const debug = debugFactory( 'design-picker:mshots-image' );
 const cacheBuster = Date.now();
 
 export function mshotsUrl( url: string, options: MShotsOptions, count = 0 ): string {
@@ -55,14 +57,48 @@ const MAXTRIES = 10;
 const useMshotsUrl = ( src: string, options: MShotsOptions ) => {
 	const [ loadedSrc, setLoadedSrc ] = useState( '' );
 	const [ count, setCount ] = useState( 0 );
+	const previousSrc = useRef( src );
+	const previousImg = useRef< HTMLImageElement >();
+	const previousOptions = useRef< MShotsOptions >();
+	// Oddly, we need to assign to current here after ref creation in order to
+	// pass the equivalence check and avoid a spurious reset
+	previousOptions.current = options;
+
+	// Note: Mshots doesn't care about the "count" param, but it is important
+	// to browser caching. Getting this wrong looks like the url resolving
+	// before the image is ready.
 
 	useEffect( () => {
 		const img = new Image();
+		// If there's been a "props" change we need to reset everything:
+		if ( options !== previousOptions.current || src !== previousSrc.current ) {
+			// Make sure an old image can't trigger a spurious state update
+			debug( 'resetting mShotsUrl request' );
+			if ( src !== previousSrc.current ) {
+				debug( 'src changed\nfrom', previousSrc.current, '\nto', src );
+			}
+			if ( options !== previousOptions.current ) {
+				debug( 'options changed\nfrom', previousOptions.current, '\nto', options );
+			}
+			if ( previousImg.current && previousImg.current.onload ) {
+				previousImg.current.onload = null;
+			}
+
+			setLoadedSrc( '' );
+			setCount( 0 );
+			previousImg.current = img;
+			previousOptions.current = options;
+			previousSrc.current = src;
+		}
 		const srcUrl = mshotsUrl( src, options, count );
 		let timeoutId: number;
-		img.src = srcUrl;
 		img.onload = () => {
 			// Detect default image (Don't request a 400x300 image).
+			//
+			// If this turns out to be a problem, it might help to know that the
+			// http request status for the default is a 307. Unfortunately we
+			// don't get the request through an img element so we'd need to
+			// take a completely different approach using ajax.
 			if ( img.naturalWidth !== 400 || img.naturalHeight !== 300 ) {
 				setLoadedSrc( srcUrl );
 			} else if ( count < MAXTRIES ) {
@@ -71,6 +107,7 @@ const useMshotsUrl = ( src: string, options: MShotsOptions ) => {
 				timeoutId = setTimeout( () => setCount( count + 1 ), count * 500 );
 			}
 		};
+		img.src = srcUrl;
 
 		return () => {
 			img.onload = null;
@@ -94,22 +131,11 @@ const MShotsImage = ( {
 	options,
 	scrollable = false,
 }: MShotsImageProps ): JSX.Element => {
-	const [ visible, setVisible ] = useState( true );
-	const [ opacity, setOpacity ] = useState( 0 );
-
 	const src = useMshotsUrl( url, options );
+	const visible = !! src;
 	const backgroundImage = src && `url( ${ src } )`;
 
-	// Hide the images while they're loading if src changes (e.g. when locale is switched)
-	useLayoutEffect( () => {
-		// Opacity is used for fade in on load
-		// Visible is used to hide the image quickly when swapping languages
-		setVisible( !! src );
-		setOpacity( src ? 1 : 0 );
-	}, [ src ] );
-
 	const style = {
-		opacity,
 		...( scrollable ? { backgroundImage } : {} ),
 	};
 
