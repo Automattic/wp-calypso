@@ -44,6 +44,7 @@
 		"gutenboarding/new-launch-mobile": true,
 		"gutenboarding/mshot-preview": true,
 		"gutenboarding/landscape-preview": true,
+		"gutenboarding/long-previews": true,
 		"help": true,
 		"inline-help": true,
 		"ive/use-external-assignment": true,
