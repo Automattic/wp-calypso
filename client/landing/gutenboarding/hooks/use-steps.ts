@@ -8,20 +8,13 @@ import { isEnabled } from '@automattic/calypso-config';
 /**
  * Internal dependencies
  */
-import { Step, useIsAnchorFm, useCurrentStep, usePath } from '../path';
+import { Step, StepType, useIsAnchorFm } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { PLANS_STORE } from '../stores/plans';
 import { usePlanFromPath } from './use-selected-plan';
 
-import type { StepType } from '../path';
-
-export default function useSteps(): {
-	getNextStepPath: ( excludedSteps?: StepType[] ) => string;
-	previousStepPath: string;
-	isLastStep: boolean;
-} {
+export default function useSteps(): Array< StepType > {
 	const locale = useLocale();
-	const makePath = usePath();
 	const { hasSiteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const isAnchorFmSignup = useIsAnchorFm();
 
@@ -51,11 +44,6 @@ export default function useSteps(): {
 		];
 	}
 
-	// Remove the Style (fonts) step from the Site Editor flow.
-	if ( isEnabled( 'gutenboarding/site-editor' ) ) {
-		steps = steps.filter( ( step ) => step !== Step.Style );
-	}
-
 	// Logic necessary to skip Domains or Plans steps
 	// General rule: if a step has been used already, don't remove it.
 	const { domain, hasUsedDomainsStep, hasUsedPlansStep, selectedDesign } = useSelect( ( select ) =>
@@ -66,6 +54,11 @@ export default function useSteps(): {
 		select( PLANS_STORE ).getPlanByProductId( planProductId, locale )
 	);
 	const hasPlanFromPath = !! usePlanFromPath();
+
+	// Remove the Style (fonts) step from the Site Editor flow.
+	if ( isEnabled( 'gutenboarding/site-editor' ) || selectedDesign?.slug === 'blank-canvas' ) {
+		steps = steps.filter( ( step ) => step !== Step.Style );
+	}
 
 	if ( domain && ! hasUsedDomainsStep ) {
 		steps = steps.filter( ( step ) => step !== Step.Domains );
@@ -78,35 +71,5 @@ export default function useSteps(): {
 		steps = steps.filter( ( step ) => step !== Step.Plans );
 	}
 
-	if ( selectedDesign?.slug === 'blank-canvas' ) {
-		steps = steps.filter( ( step ) => step !== Step.Style );
-	}
-
-	const currentStep = useCurrentStep();
-	const getCurrentStepIndex = ( steps: StepType[] ) =>
-		steps.findIndex( ( step ) => step === Step[ currentStep ] );
-
-	const getNextStepPath = ( excludedSteps?: StepType[] ) => {
-		// Filter out any step that is explicitly excluded
-		let actualSteps = steps;
-		if ( Array.isArray( excludedSteps ) ) {
-			actualSteps = actualSteps.filter( ( step ) => ! excludedSteps.includes( step ) );
-		}
-
-		const currentStepIndex = getCurrentStepIndex( actualSteps );
-
-		return currentStepIndex !== -1 && // check first if current step still exists
-			currentStepIndex < actualSteps.length - 1
-			? makePath( actualSteps[ currentStepIndex + 1 ] )
-			: '';
-	};
-
-	// we ignore this for now
-	const previousStepPath =
-		getCurrentStepIndex( steps ) > 0 ? makePath( steps[ getCurrentStepIndex( steps ) - 1 ] ) : '';
-
-	// ignore this as well
-	const isLastStep = getCurrentStepIndex( steps ) === steps.length - 1;
-
-	return { getNextStepPath, previousStepPath, isLastStep };
+	return steps;
 }
