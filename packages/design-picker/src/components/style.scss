@@ -120,7 +120,7 @@
 	// padding-top to set the size of the element and then reposition content
 	// over the padding
 	.design-picker__image-frame-landscape {
-		padding-top: 65%;  // Aspect ratio for the picker
+		padding-top: 65%; // Aspect ratio for the picker
 	}
 
 	.design-picker__image-frame-portrait {
@@ -170,5 +170,12 @@
 		.components-popover__content {
 			background-color: var( --studio-gray-80 );
 		}
+	}
+}
+
+/// dark theme styles
+.design-picker.theme-dark {
+	.design-picker__option-name {
+		color: var( --studio-white );
 	}
 }
