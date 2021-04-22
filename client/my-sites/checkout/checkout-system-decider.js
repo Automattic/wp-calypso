@@ -44,6 +44,7 @@ export default function CheckoutSystemDecider( {
 	isNoSiteCart,
 	isJetpackUserlessCheckout,
 	jetpackSiteSlug,
+	jetpackPurchaseToken,
 } ) {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
@@ -135,6 +136,7 @@ export default function CheckoutSystemDecider( {
 							isNoSiteCart={ isNoSiteCart }
 							isJetpackUserlessCheckout={ isJetpackUserlessCheckout }
 							jetpackSiteSlug={ jetpackSiteSlug }
+							jetpackPurchaseToken={ jetpackPurchaseToken }
 						/>
 					</StripeHookProvider>
 				</CalypsoShoppingCartProvider>
