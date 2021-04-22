@@ -48,6 +48,7 @@ import type {
 	OnChangeItemVariant,
 } from './item-variation-picker';
 import { getIntroductoryOfferIntervalDisplay } from 'calypso/lib/purchases/utils';
+import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 
 const WPOrderReviewList = styled.ul< { theme?: Theme } >`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
@@ -560,14 +561,15 @@ function LineItemSublabelAndPrice( {
 
 	const isGSuite =
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
+	// This is the price for one item for products with a quantity (eg. seats in a license).
+	const itemPrice = useSelector( ( state ) => getProductDisplayCost( state, productSlug ) );
 
 	if ( isPlan( product ) ) {
 		if ( isP2Plus( product ) ) {
 			const members = product?.current_quantity || 1;
 			const p2Options = {
 				args: {
-					itemPrice: product.product_cost_display,
-					subtotal: product.item_original_subtotal_display,
+					itemPrice: itemPrice,
 					members,
 				},
 				count: members,
@@ -575,13 +577,14 @@ function LineItemSublabelAndPrice( {
 			return (
 				<>
 					{ translate(
-						'Monthly subscription: %(itemPrice)s x %(members)s member = %(subtotal)s',
-						'Monthly subscription: %(itemPrice)s x %(members)s members = %(subtotal)s',
+						'Monthly subscription: %(itemPrice)s x %(members)s active member',
+						'Monthly subscription: %(itemPrice)s x %(members)s active members',
 						p2Options
 					) }
 				</>
 			);
 		}
+
 		const options = {
 			args: {
 				sublabel,
