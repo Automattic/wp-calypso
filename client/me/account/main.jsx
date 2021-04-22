@@ -206,17 +206,17 @@ class Account extends React.Component {
 		const originalLanguage = this.getUserOriginalSetting( 'language' );
 		const originalVariant = this.getUserOriginalSetting( 'locale_variant' );
 		const newLanguage = getLanguage( value );
+		const newLanguageIsBase = ! newLanguage.parentLangSlug;
+		const newLanguageIsVariant = newLanguage.parentLangSlug !== null;
 		const languageHasChanged =
-			// Same language, different variants
-			( newLanguage.parentLangSlug &&
-				newLanguage.parentLangSlug === originalLanguage &&
-				newLanguage.langSlug !== originalVariant ) ||
-			// Different language
-			( ! newLanguage.parentLangSlug && newLanguage.langSlug !== originalLanguage ) ||
-			// Empathy mode value has changed
+			( newLanguageIsBase &&
+				( newLanguage.langSlug !== originalLanguage ||
+					( newLanguage.langSlug === originalLanguage && originalVariant ) ) ) ||
+			( newLanguageIsVariant &&
+				( newLanguage.parentLangSlug !== originalLanguage ||
+					newLanguage.langSlug !== originalVariant ) ) ||
 			( typeof empathyMode !== 'undefined' &&
 				empathyMode !== this.getUserOriginalSetting( 'i18n_empathy_mode' ) );
-
 		if ( languageHasChanged ) {
 			this.props.markChanged();
 		}
