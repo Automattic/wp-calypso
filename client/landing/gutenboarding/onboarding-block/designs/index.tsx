@@ -46,6 +46,10 @@ const Designs: React.FunctionComponent = () => {
 
 	React.useEffect( () => {
 		if ( selectedDesign && userHasSelectedDesign ) {
+			// The `userHasSelectedDesign` local state variable is used to delay
+			// the call to `goNext()` by at least 1 re-render. This is to allow
+			// time for the `goNext()` function to update and correctly skip the
+			// `style` step when necessary
 			goNext();
 		}
 	}, [ goNext, userHasSelectedDesign, selectedDesign ] );
