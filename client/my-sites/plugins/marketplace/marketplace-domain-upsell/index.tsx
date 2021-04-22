@@ -44,6 +44,7 @@ function DomainPickerContainer( { onDomainSelect, selectedDomain } ) {
 			analyticsFlowId={ MARKETPLACE_FLOW_ID }
 			onDomainSelect={ onDomainSelect }
 			currentDomain={ selectedDomain }
+			hideRecommendationLabel={ true }
 		/>
 	);
 }

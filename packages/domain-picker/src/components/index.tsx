@@ -119,6 +119,9 @@ export interface Props {
 
 	/** Vendor string for domain suggestions */
 	vendor?: string;
+
+	/** Hides the recommendation label */
+	hideRecommendationLabel?: boolean;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
@@ -144,6 +147,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	orderSubDomainsLast = false,
 	onUseYourDomainClick,
 	vendor = getDomainSuggestionsVendor(),
+	hideRecommendationLabel = false,
 } ) => {
 	const { __ } = useI18n();
 	const label = __( 'Search for a domain', __i18n_text_domain__ );
@@ -400,7 +404,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 															}
 															hstsRequired={ suggestion.hsts_required }
 															isFree={ suggestion.is_free }
-															isRecommended={ false && isRecommended }
+															isRecommended={ hideRecommendationLabel ? false : isRecommended }
 															railcarId={
 																baseRailcarId ? `${ baseRailcarId }${ index }` : undefined
 															}

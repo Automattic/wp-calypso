@@ -226,8 +226,7 @@ export function addItemsToResponseCart(
 	responseCart: TempResponseCart,
 	products: RequestCartProduct[]
 ): TempResponseCart {
-	//FIXME: this should be removed before committing
-	if ( shouldProductsReplaceCart( products, responseCart ) && false ) {
+	if ( shouldProductsReplaceCart( products, responseCart ) ) {
 		debug( 'items should replace response cart', products );
 		return replaceAllItemsInResponseCart( responseCart, products );
 	}
