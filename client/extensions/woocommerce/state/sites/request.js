@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { omit, mapValues, isObject } from 'lodash';
+import { omit, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,7 +14,7 @@ const omitDeep = ( input, props ) => {
 		return input.map( ( elem ) => omitDeep( elem, props ) );
 	}
 
-	if ( isObject( input ) ) {
+	if ( input !== null && typeof input === 'object' ) {
 		return mapValues( omit( input, props ), ( value ) => omitDeep( value, props ) );
 	}
 

@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { isObject } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { getJetpackProductsShortNames } from './translations';
@@ -234,7 +229,7 @@ export const PRODUCTS_LIST: Record< ProductSlug, Product > = {
 };
 
 export function objectIsProduct( item: unknown ): item is Product {
-	if ( isObject( item ) ) {
+	if ( item !== null && typeof item === 'object' ) {
 		const requiredKeys = [ 'product_slug', 'product_name', 'term', 'bill_period' ];
 		return requiredKeys.every( ( k ) => k in item );
 	}

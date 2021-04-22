@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate, TranslateResult, numberFormat } from 'i18n-calypso';
-import { compact, isObject } from 'lodash';
+import { compact } from 'lodash';
 import page from 'page';
 import React, { createElement, Fragment } from 'react';
 import { createSelector } from '@automattic/state-utils';
@@ -564,7 +564,7 @@ export function buildCardFeaturesFromFeatureKeys(
 	}
 
 	// With sections (JetpackPlanCardFeatureSection)
-	if ( isObject( features ) ) {
+	if ( features !== null && typeof features === 'object' ) {
 		const result = [] as SelectorProductFeaturesSection[];
 
 		Object.getOwnPropertySymbols( features ).map( ( key ) => {

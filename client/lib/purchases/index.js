@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, includes, isObject } from 'lodash';
+import { find, includes } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import i18n from 'i18n-calypso';
@@ -306,6 +306,10 @@ function hasPaymentMethod( purchase ) {
 
 function isPendingTransfer( purchase ) {
 	return purchase.pendingTransfer;
+}
+
+function isObject( value ) {
+	return value !== null && typeof value === 'object';
 }
 
 /**

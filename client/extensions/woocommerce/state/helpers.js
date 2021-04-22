@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { isObject } from 'lodash';
-
-/**
  * Dispatch an action or function with additional properties.
  *
  * If the action is an object, it adds props as properties to the action.
@@ -21,7 +16,7 @@ export function dispatchWithProps( dispatch, getState, action, props ) {
 	if ( typeof action === 'function' ) {
 		const returnValue = action( dispatch, getState, props );
 		dispatchWithProps( dispatch, getState, returnValue, props );
-	} else if ( isObject( action ) ) {
+	} else if ( action !== null && typeof action === 'object' ) {
 		dispatch( { ...action, ...props } );
 	}
 }
