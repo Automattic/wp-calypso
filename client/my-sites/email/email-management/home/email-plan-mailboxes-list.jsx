@@ -15,31 +15,34 @@ import SectionHeader from 'calypso/components/section-header';
 import Badge from 'calypso/components/badge';
 import { isEmailUserAdmin } from 'calypso/lib/emails';
 
-function EmailPlanMailboxesList( { emails, isLoadingEmails } ) {
+const MailboxListHeader = ( { children } ) => {
 	const translate = useTranslate();
 
-	const MailboxListHeader = ( { children } ) => {
-		return (
-			<div className="email-plan-mailboxes-list__mailbox-list">
-				<SectionHeader label={ translate( 'Mailboxes' ) } />
-				{ children }
-			</div>
-		);
-	};
+	return (
+		<div className="email-plan-mailboxes-list__mailbox-list">
+			<SectionHeader label={ translate( 'Mailboxes' ) } />
+			{ children }
+		</div>
+	);
+};
 
-	const MailboxListItem = ( { children, isPlaceholder, noEmails } ) => {
-		const className = classNames( 'email-plan-mailboxes-list__mailbox-list-item', {
-			'is-placeholder': isPlaceholder,
-			'no-emails': noEmails,
-		} );
-		return <CompactCard className={ className }>{ children }</CompactCard>;
-	};
+const MailboxListItem = ( { children, isPlaceholder, hasNoEmails } ) => {
+	const className = classNames( 'email-plan-mailboxes-list__mailbox-list-item', {
+		'is-placeholder': isPlaceholder,
+		'no-emails': hasNoEmails,
+	} );
+	return <CompactCard className={ className }>{ children }</CompactCard>;
+};
+
+function EmailPlanMailboxesList( { emails, isLoadingEmails } ) {
+	const translate = useTranslate();
 
 	if ( isLoadingEmails ) {
 		return (
 			<MailboxListHeader>
 				<MailboxListItem isPlaceholder>
-					<span> </span>
+					<MaterialIcon icon="email" />
+					<span />
 				</MailboxListItem>
 			</MailboxListHeader>
 		);
@@ -48,7 +51,7 @@ function EmailPlanMailboxesList( { emails, isLoadingEmails } ) {
 	if ( ! emails || emails.length < 1 ) {
 		return (
 			<MailboxListHeader>
-				<MailboxListItem noEmails>
+				<MailboxListItem hasNoEmails>
 					<span>{ translate( 'No mailboxes' ) }</span>
 				</MailboxListItem>
 			</MailboxListHeader>
@@ -57,7 +60,7 @@ function EmailPlanMailboxesList( { emails, isLoadingEmails } ) {
 
 	const emailsItems = emails.map( ( email ) => {
 		return (
-			<MailboxListItem key={ `email-row-${ email.mailbox }` }>
+			<MailboxListItem key={ email.mailbox }>
 				<MaterialIcon icon="email" />
 				<span>
 					{ email.mailbox }@{ email.domain }
