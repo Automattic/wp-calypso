@@ -668,7 +668,7 @@ function openLinksInParentFrame( calypsoPort ) {
 		'.post-publish-panel__postpublish .components-panel__body.is-opened a', // Post title link in publish panel
 		'.components-panel__body.is-opened .post-publish-panel__postpublish-buttons a.components-button', // View Post button in publish panel
 	].join( ',' );
-	$( '#editor, #edit-site-editor' ).on( 'click', viewPostLinkSelectors, ( e ) => {
+	$( '#editor' ).on( 'click', viewPostLinkSelectors, ( e ) => {
 		e.preventDefault();
 		calypsoPort.postMessage( {
 			action: 'viewPost',
