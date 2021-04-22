@@ -46,13 +46,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_FREE,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
 	JETPACK_SEARCH_PRODUCTS,
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
@@ -162,9 +156,6 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 
 	const planSlugs = {
 		yearly: {
-			personal: PLAN_JETPACK_PERSONAL,
-			premium: PLAN_JETPACK_PREMIUM,
-			pro: PLAN_JETPACK_BUSINESS,
 			realtimebackup: PRODUCT_JETPACK_BACKUP_REALTIME,
 			backup: PRODUCT_JETPACK_BACKUP_DAILY,
 			jetpack_search: PRODUCT_JETPACK_SEARCH,
@@ -172,9 +163,6 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 			antispam: PRODUCT_JETPACK_ANTI_SPAM,
 		},
 		monthly: {
-			personal: PLAN_JETPACK_PERSONAL_MONTHLY,
-			premium: PLAN_JETPACK_PREMIUM_MONTHLY,
-			pro: PLAN_JETPACK_BUSINESS_MONTHLY,
 			realtimebackup: PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
 			backup: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 			jetpack_search: PRODUCT_JETPACK_SEARCH_MONTHLY,

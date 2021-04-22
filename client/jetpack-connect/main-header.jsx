@@ -17,7 +17,6 @@ import {
 } from 'calypso/lib/products-values';
 import { PRODUCTS_LIST } from 'calypso/lib/products-values/products-list';
 import { FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
-import { retrievePlan } from './persistence-utils';
 
 class JetpackConnectMainHeader extends Component {
 	static propTypes = {
@@ -26,49 +25,6 @@ class JetpackConnectMainHeader extends Component {
 
 	getTexts() {
 		const { translate, type } = this.props;
-		const selectedPlan = retrievePlan();
-
-		if (
-			type === 'pro' ||
-			selectedPlan === 'jetpack_business' ||
-			selectedPlan === 'jetpack_business_monthly'
-		) {
-			return {
-				title: translate( 'Get Jetpack Professional' ),
-				subtitle: translate(
-					'WordPress sites from start to finish: unlimited premium themes, ' +
-						'business class security, and marketing automation.'
-				),
-			};
-		}
-
-		if (
-			type === 'premium' ||
-			selectedPlan === 'jetpack_premium' ||
-			selectedPlan === 'jetpack_premium_monthly'
-		) {
-			return {
-				title: translate( 'Get Jetpack Premium' ),
-				subtitle: translate(
-					'Automated backups and malware scanning, expert priority support, ' +
-						'marketing automation, and more.'
-				),
-			};
-		}
-
-		if (
-			type === 'personal' ||
-			selectedPlan === 'jetpack_personal' ||
-			selectedPlan === 'jetpack_personal_monthly'
-		) {
-			return {
-				title: translate( 'Get Jetpack Personal' ),
-				subtitle: translate(
-					'Security essentials for your WordPress site ' +
-						'including automated backups and priority support.'
-				),
-			};
-		}
 
 		if ( type === 'install' ) {
 			return {
