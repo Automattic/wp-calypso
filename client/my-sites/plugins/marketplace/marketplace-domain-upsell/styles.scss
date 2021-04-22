@@ -11,9 +11,12 @@
 	*::after {
 		box-sizing: border-box;
 	}
+	
 	.marketplace-domain-upsell__shopping-cart-container {
 		padding-left: 50px;
+		max-width: 400px;
 	}
+
 	.marketplace-domain-upsell__header {
 		margin: 0 0 20px;
 		@media ( min-width: 782px ) {
