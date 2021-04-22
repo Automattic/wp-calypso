@@ -7,7 +7,7 @@ import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import { isNumber, trim } from 'lodash';
+import { trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -142,7 +142,7 @@ export class NpsSurvey extends PureComponent {
 		return (
 			[ 'en', 'en-gb' ].indexOf( getLocaleSlug() ) >= 0 &&
 			this.props.isBusinessUser &&
-			isNumber( this.state.score ) &&
+			typeof this.state.score === 'number' &&
 			this.state.score < 7
 		);
 	}
