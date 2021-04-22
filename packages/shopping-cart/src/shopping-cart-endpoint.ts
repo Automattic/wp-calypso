@@ -195,6 +195,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	purchaseId?: string;
 	isJetpackUserlessCheckout?: boolean;
 	jetpackSiteSlug?: string;
+	jetpackPurchaseToken?: string;
 }
 
 export interface GSuiteProductUser {

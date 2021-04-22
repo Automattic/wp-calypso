@@ -53,6 +53,7 @@ export default function usePrepareProductsForCart( {
 	isNoSiteCart,
 	isJetpackUserlessCheckout,
 	jetpackSiteSlug,
+	jetpackPurchaseToken,
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
@@ -64,6 +65,7 @@ export default function usePrepareProductsForCart( {
 	isNoSiteCart?: boolean;
 	isJetpackUserlessCheckout?: boolean;
 	jetpackSiteSlug?: string;
+	jetpackPurchaseToken?: string;
 } ): PreparedProductsForCart {
 	const [ state, dispatch ] = useReducer( preparedProductsReducer, initialPreparedProductsState );
 
@@ -77,7 +79,11 @@ export default function usePrepareProductsForCart( {
 		'and isNoSiteCart',
 		isNoSiteCart,
 		'and isJetpackUserlessCheckout',
-		isJetpackUserlessCheckout
+		isJetpackUserlessCheckout,
+		'and jetpackSiteSlug',
+		jetpackSiteSlug,
+		'and jetpackPurchaseToken',
+		jetpackPurchaseToken
 	);
 
 	useFetchProductsIfNotLoaded();
@@ -107,6 +113,7 @@ export default function usePrepareProductsForCart( {
 		addHandler,
 		isJetpackUserlessCheckout,
 		jetpackSiteSlug,
+		jetpackPurchaseToken,
 	} );
 	useAddRenewalItems( {
 		originalPurchaseId,
@@ -342,6 +349,7 @@ function useAddProductFromSlug( {
 	addHandler,
 	isJetpackUserlessCheckout,
 	jetpackSiteSlug,
+	jetpackPurchaseToken,
 }: {
 	productAliasFromUrl: string | undefined | null;
 	dispatch: ( action: PreparedProductsAction ) => void;
@@ -350,6 +358,7 @@ function useAddProductFromSlug( {
 	addHandler: AddHandler;
 	isJetpackUserlessCheckout?: boolean;
 	jetpackSiteSlug?: string;
+	jetpackPurchaseToken?: string;
 } ) {
 	const products: Record<
 		string,
@@ -402,6 +411,7 @@ function useAddProductFromSlug( {
 				productId: product.product_id,
 				isJetpackUserlessCheckout,
 				jetpackSiteSlug,
+				jetpackPurchaseToken,
 			} )
 		);
 
@@ -517,12 +527,14 @@ function createItemToAddToCart( {
 	productId,
 	isJetpackUserlessCheckout,
 	jetpackSiteSlug,
+	jetpackPurchaseToken,
 }: {
 	productSlug: string;
 	productId: number;
 	productAlias: string;
 	isJetpackUserlessCheckout?: boolean;
 	jetpackSiteSlug?: string;
+	jetpackPurchaseToken?: string;
 } ): RequestCartProduct {
 	debug( 'creating product with', productSlug, productAlias, productId );
 	const [ , meta ] = productAlias.split( ':' );
@@ -555,7 +567,7 @@ function createItemToAddToCart( {
 		createRequestCartProduct( {
 			product_id: productId,
 			product_slug: productSlug,
-			extra: { isJetpackUserlessCheckout, jetpackSiteSlug },
+			extra: { isJetpackUserlessCheckout, jetpackSiteSlug, jetpackPurchaseToken },
 		} )
 	);
 }

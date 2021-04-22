@@ -118,6 +118,7 @@ export default function CompositeCheckout( {
 	isFocusedLaunch,
 	isJetpackUserlessCheckout,
 	jetpackSiteSlug,
+	jetpackPurchaseToken,
 }: {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
@@ -138,6 +139,7 @@ export default function CompositeCheckout( {
 	isFocusedLaunch?: boolean;
 	isJetpackUserlessCheckout?: boolean;
 	jetpackSiteSlug?: string;
+	jetpackPurchaseToken?: string;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
@@ -211,6 +213,7 @@ export default function CompositeCheckout( {
 		isNoSiteCart,
 		isJetpackUserlessCheckout,
 		jetpackSiteSlug,
+		jetpackPurchaseToken,
 	} );
 
 	const {

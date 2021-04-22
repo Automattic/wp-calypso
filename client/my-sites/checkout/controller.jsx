@@ -57,7 +57,9 @@ export function checkout( context, next ) {
 	const isDisallowedForSitePicker =
 		context.pathname.includes( '/checkout/no-site' ) &&
 		( isLoggedOut || ! hasSite || isDomainOnlyFlow );
-	const isJetpackUserlessCheckout = context.pathname.includes( '/checkout/jetpack' ) && isLoggedOut;
+	const jetpackPurchaseToken = context.query.purchasetoken;
+	const isJetpackUserlessCheckout =
+		context.pathname.includes( '/checkout/jetpack' ) && isLoggedOut && !! jetpackPurchaseToken;
 	const jetpackSiteSlug = context.params.siteSlug;
 
 	if ( ! selectedSite && ! isDisallowedForSitePicker && ! isJetpackUserlessCheckout ) {
@@ -116,6 +118,7 @@ export function checkout( context, next ) {
 			isNoSiteCart={ isNoSiteCart }
 			isJetpackUserlessCheckout={ isJetpackUserlessCheckout }
 			jetpackSiteSlug={ jetpackSiteSlug }
+			jetpackPurchaseToken={ jetpackPurchaseToken }
 		/>
 	);
 
