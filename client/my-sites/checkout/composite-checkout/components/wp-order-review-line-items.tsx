@@ -41,7 +41,7 @@ import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/s
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import { getSublabel, getLabel } from '../lib/translate-cart';
-import { isPlan, isMonthly, isYearly, isBiennially } from 'calypso/lib/products-values';
+import { isPlan, isMonthly, isYearly, isBiennially, isP2Plus } from 'calypso/lib/products-values';
 import type {
 	WPCOMProductSlug,
 	WPCOMProductVariant,
@@ -562,6 +562,26 @@ function LineItemSublabelAndPrice( {
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
 
 	if ( isPlan( product ) ) {
+		if ( isP2Plus( product ) ) {
+			const members = product?.current_quantity || 1;
+			const p2Options = {
+				args: {
+					itemPrice: product.product_cost_display,
+					subtotal: product.item_original_subtotal_display,
+					members,
+				},
+				count: members,
+			};
+			return (
+				<>
+					{ translate(
+						'Monthly subscription: %(itemPrice)s x %(members)s member = %(subtotal)s',
+						'Monthly subscription: %(itemPrice)s x %(members)s members = %(subtotal)s',
+						p2Options
+					) }
+				</>
+			);
+		}
 		const options = {
 			args: {
 				sublabel,
