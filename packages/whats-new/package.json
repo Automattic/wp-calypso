@@ -43,10 +43,6 @@
 		"wpcom-proxy-request": "^6.0.0",
 		"wpcom": "^6.0.0"
 	},
-	"devDependencies": {
-		"@automattic/calypso-build": "^8.0.0",
-		"react": "^16.12.0"
-	},
 	"peerDependencies": {
 		"react": "^16.8"
 	}
