@@ -9,7 +9,6 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import type { RemoveProductFromCart, CouponStatus } from '@automattic/shopping-cart';
 import { styled } from '@automattic/wpcom-checkout';
 import { useSelector } from 'react-redux';
-import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 
 /**
  * Internal dependencies
@@ -22,6 +21,7 @@ import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { GetProductVariants } from '../hooks/product-variants';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
+import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 
 const SiteSummary = styled.div`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
