@@ -20,6 +20,14 @@ export const itemLinkMatches = ( path, currentPath ) => {
 	if ( pathIncludes( currentPath, 'taxonomies', 2 ) ) {
 		return fragmentIsEqual( path, currentPath, 3 );
 	}
+	/*
+	 * If the menu item URL contains 'taxonomies', ignore it when on Settings screens.
+	 * Taxonomies are located under the Posts parent menu; this prevents the Posts parent
+	 * from being highlighted when Settings screens are active.
+	 */
+	if ( pathIncludes( currentPath, 'settings', 1 ) && pathIncludes( path, 'taxonomies', 2 ) ) {
+		return false;
+	}
 	// Temp fix till we remove duplicate menu entry of sharing buttons from 'Settings' menu. See https://github.com/Automattic/wp-calypso/issues/49756.
 	if ( pathIncludes( currentPath, 'marketing', 1 ) ) {
 		return fragmentIsEqual( path, currentPath, 1 ) && fragmentIsEqual( path, '//tools', 2 );
