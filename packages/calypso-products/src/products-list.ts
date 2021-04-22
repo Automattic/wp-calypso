@@ -230,9 +230,15 @@ export const PRODUCTS_LIST: Record< ProductSlug, Product > = {
 
 export function objectIsProduct( item: unknown ): item is Product {
 	if ( item !== null && typeof item === 'object' ) {
-		const requiredKeys = [ 'product_slug', 'product_name', 'term', 'bill_period' ];
-		return requiredKeys.every( ( k ) => k in item );
+		const product = item as Product;
+		if (
+			! product.product_slug ||
+			! product.product_name ||
+			! product.term ||
+			! product.bill_period
+		) {
+			return false;
+		}
 	}
-
 	return false;
 }
