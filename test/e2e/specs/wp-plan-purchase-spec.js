@@ -46,6 +46,7 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 
 		step( 'Can Compare Plans', async function () {
 			const plansPage = await PlansPage.Expect( driver );
+			await plansPage.openPlansTab();
 			return await plansPage.waitForComparison();
 		} );
 
@@ -94,6 +95,7 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 
 		step( 'Can Compare Plans', async function () {
 			const plansPage = await PlansPage.Expect( driver );
+			await plansPage.openPlansTab();
 			if ( host === 'WPCOM' ) {
 				await plansPage.openAdvancedPlansSegment();
 			}
@@ -191,6 +193,7 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 			const sidebarComponent = await SidebarComponent.Expect( driver );
 			await sidebarComponent.selectPlans();
 			const plansPage = await PlansPage.Expect( driver );
+			await plansPage.openPlansTab();
 			return await plansPage.selectPaidPlan();
 		} );
 
