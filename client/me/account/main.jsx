@@ -201,9 +201,19 @@ class Account extends React.Component {
 			);
 		}
 
+		const localeVariantSelected = isLocaleVariant( value ) ? value : '';
+
+		const originalLanguage = this.getUserOriginalSetting( 'language' );
+		const originalVariant = this.getUserOriginalSetting( 'locale_variant' );
+		const newLanguage = getLanguage( value );
 		const languageHasChanged =
-			value !== this.getUserOriginalSetting( 'language' ) ||
-			value !== this.getUserOriginalSetting( 'locale_variant' ) ||
+			// Same language, different variants
+			( newLanguage.parentLangSlug &&
+				newLanguage.parentLangSlug === originalLanguage &&
+				newLanguage.langSlug !== originalVariant ) ||
+			// Different language
+			( ! newLanguage.parentLangSlug && newLanguage.langSlug !== originalLanguage ) ||
+			// Empathy mode value has changed
 			( typeof empathyMode !== 'undefined' &&
 				empathyMode !== this.getUserOriginalSetting( 'i18n_empathy_mode' ) );
 
@@ -213,8 +223,8 @@ class Account extends React.Component {
 
 		const redirect = languageHasChanged ? '/me/account' : false;
 		// store any selected locale variant so we can test it against those with no GP translation sets
-		const localeVariantSelected = isLocaleVariant( value ) ? value : '';
 		this.setState( { redirect, localeVariantSelected } );
+
 		if ( languageHasChanged ) {
 			this.props.recordTracksEvent( 'calypso_user_language_switch', {
 				new_language: value,
