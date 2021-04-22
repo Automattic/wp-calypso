@@ -856,18 +856,21 @@ Undocumented.prototype.getTitanMailboxAvailability = function ( domain, mailbox,
 /**
  * Get a list of WordPress.com products
  *
- * @param {object}   query A list of query parameters to include in the request
- * @param {Function} fn    The callback function
+ * @param {object|Function}	queryOrCallback
+ *   Either an object with query string parameters, or a callback function
  */
-Undocumented.prototype.getProducts = function ( query, fn ) {
+Undocumented.prototype.getProducts = function ( queryOrCallback ) {
 	debug( '/products query' );
 
-	if ( 'undefined' === typeof fn && 'function' === typeof query ) {
-		fn = query;
-		query = {};
+	if ( 'function' === typeof queryOrCallback ) {
+		// The passed-in argument is a callback;
+		// make sure to pass in a safe query param object
+		return this.wpcom.req.get( '/products', {}, queryOrCallback );
 	}
 
-	return this.wpcom.req.get( '/products', query, fn );
+	// At this point, `queryOrCallback` should either be falsy,
+	// or it should be a query param object
+	return this.wpcom.req.get( '/products', queryOrCallback || {} );
 };
 
 /**
