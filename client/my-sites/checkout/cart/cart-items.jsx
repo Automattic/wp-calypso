@@ -9,7 +9,7 @@ import React from 'react';
  * Internal dependencies
  */
 import CartItem from './cart-item';
-import { getAllCartItems, getAllCartItemsSorted } from 'calypso/lib/cart-values/cart-items';
+import { getAllCartItems } from 'calypso/lib/cart-values/cart-items';
 import { localize } from 'i18n-calypso';
 
 const COLLAPSED_ITEMS_COUNT = 2;
@@ -66,7 +66,7 @@ export class CartItems extends React.Component {
 			return;
 		}
 
-		let items = getAllCartItemsSorted( cart ).map( ( cartItem, index ) => {
+		let items = getAllCartItems( cart ).map( ( cartItem, index ) => {
 			return (
 				<CartItem
 					cart={ cart }
