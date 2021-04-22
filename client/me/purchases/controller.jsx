@@ -102,35 +102,6 @@ export function confirmCancelDomain( context, next ) {
 	next();
 }
 
-export function editCardDetails( context, next ) {
-	const state = context.store.getState();
-
-	if ( userHasNoSites( state ) ) {
-		return noSites( context, '/me/purchases/:site/:purchaseId/payment/edit/:cardId' );
-	}
-
-	const EditCardDetailsWrapper = localize( () => {
-		return (
-			<PurchasesWrapper title={ titles.editCardDetails }>
-				<Main className="purchases__change is-wide-layout">
-					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-					<ChangePaymentMethod
-						cardId={ context.params.cardId }
-						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-						siteSlug={ context.params.site }
-						getManagePurchaseUrlFor={ managePurchaseUrl }
-						purchaseListUrl={ purchasesRoot }
-						isFullWidth={ true }
-					/>
-				</Main>
-			</PurchasesWrapper>
-		);
-	} );
-
-	context.primary = <EditCardDetailsWrapper />;
-	next();
-}
-
 export function list( context, next ) {
 	const ListWrapper = localize( () => {
 		return (

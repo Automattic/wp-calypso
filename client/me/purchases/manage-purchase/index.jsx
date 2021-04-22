@@ -827,9 +827,7 @@ function addPaymentMethodLinkText( { purchase, translate } ) {
 	if ( hasPaymentMethod( purchase ) && ! isPaidWithCredits( purchase ) ) {
 		linkText = translate( 'Change Payment Method' );
 	} else {
-		linkText = config.isEnabled( 'purchases/new-payment-methods' )
-			? translate( 'Add Payment Method' )
-			: translate( 'Add Credit Card' );
+		linkText = translate( 'Add Payment Method' );
 	}
 	return linkText;
 }

@@ -46,6 +46,7 @@ export function confirmCancelDomain( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/confirm-cancel-domain';
 }
 
+// legacy path
 export function addCardDetails( siteName, purchaseId ) {
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if ( 'undefined' === typeof siteName || 'undefined' === typeof purchaseId ) {
@@ -55,6 +56,7 @@ export function addCardDetails( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/payment/add';
 }
 
+// legacy path
 export function editCardDetails( siteName, purchaseId, cardId ) {
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if (
