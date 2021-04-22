@@ -226,7 +226,9 @@ export function hasTransferProduct( cart ) {
  * @returns {import('@automattic/shopping-cart').ResponseCartProduct[]} the list of the corresponding items in the shopping cart as `ResponseCartProduct` objects
  */
 export function getDomainTransfers( cart ) {
-	return getAllCartItems( cart ).filter( { product_slug: domainProductSlugs.TRANSFER_IN } );
+	return getAllCartItems( cart ).filter(
+		( product ) => product.product_slug === domainProductSlugs.TRANSFER_IN
+	);
 }
 
 /**
@@ -538,7 +540,7 @@ export function jetpackProductItem( slug ) {
  * @returns {import('@automattic/shopping-cart').ResponseCartProduct[]} the list of the corresponding items in the shopping cart as `import('@automattic/shopping-cart').ResponseCartProduct` objects
  */
 export function getDomainRegistrations( cart ) {
-	return getAllCartItems( cart ).filter( { is_domain_registration: true } );
+	return getAllCartItems( cart ).filter( ( product ) => product.is_domain_registration === true );
 }
 
 /**
@@ -548,7 +550,7 @@ export function getDomainRegistrations( cart ) {
  * @returns {import('@automattic/shopping-cart').ResponseCartProduct[]} the list of the corresponding items in the shopping cart as `import('@automattic/shopping-cart').ResponseCartProduct` objects
  */
 export function getDomainMappings( cart ) {
-	return getAllCartItems( cart ).filter( { product_slug: 'domain_map' } );
+	return getAllCartItems( cart ).filter( ( product ) => product.product_slug === 'domain_map' );
 }
 
 /**
