@@ -45,7 +45,7 @@ const LearnGrow = ( { cards, trackCards } ) => {
 	if ( ! cards || ! cards.length ) {
 		return null;
 	}
-	console.dir( cardComponents );
+
 	return (
 		<>
 			<Card className="learn-grow__content">

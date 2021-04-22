@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React from 'react';
+import { getLocaleSlug } from 'i18n-calypso';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -15,6 +17,12 @@ import { EDUCATION_WPCOURSES } from 'calypso/my-sites/customer-home/cards/consta
 import freePhotoLibraryVideoPrompt from 'calypso/assets/images/customer-home/illustration--secondary-wp-courses.svg';
 
 const WpCourses = () => {
+	const isEnglish = config( 'english_locales' ).includes( getLocaleSlug() );
+
+	if ( ! isEnglish ) {
+		return null;
+	}
+
 	return (
 		<EducationalContent
 			title="The official WordPress.com blogging guide"
