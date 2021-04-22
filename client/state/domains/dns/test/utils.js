@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, values } from 'lodash';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +19,7 @@ describe( 'utils', () => {
 
 			const errors = validateAllFields( initialData );
 
-			expect( values( errors ).every( isEmpty ) ).toBe( true );
+			expect( Object.values( errors ).every( isEmpty ) ).toBe( true );
 		} );
 	} );
 } );
