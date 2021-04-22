@@ -1079,7 +1079,7 @@ class Account extends React.Component {
 									onChange={ this.toggleLinkDestination }
 								>
 									{ translate(
-										'{{spanlead}}Show advanced dashboard pages.{{/spanlead}} {{spanextra}}Enabling this will replace your dashboard pages with more advanced wp-admin equivalents when possible.{{/spanextra}}',
+										'{{spanlead}}Show wp-admin pages if available{{/spanlead}} {{spanextra}}Replace your dashboard pages with more advanced wp-admin equivalents.{{/spanextra}}',
 										{
 											components: {
 												spanlead: <strong className="account__link-destination-label-lead" />,
