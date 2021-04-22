@@ -4,6 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { ExternalLink } from '@wordpress/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 
 const addBlock = 'https://s0.wp.com/i/editor-welcome-tour/slide-add-block.gif';
 const allBlocks = 'https://s0.wp.com/i/editor-welcome-tour/slide-all-blocks.gif';
@@ -85,11 +86,15 @@ function getTourContent() {
 				{
 					link_to_launch_site_docs: (
 						<ExternalLink
-							href={ 'https://wordpress.com/support/settings/privacy-settings/#launch-your-site' }
+							href={ localizeUrl(
+								'https://wordpress.com/support/settings/privacy-settings/#launch-your-site'
+							) }
 						/>
 					),
 					link_to_editor_docs: (
-						<ExternalLink href={ 'https://wordpress.com/support/wordpress-editor/' } />
+						<ExternalLink
+							href={ localizeUrl( 'https://wordpress.com/support/wordpress-editor/' ) }
+						/>
 					),
 				}
 			),
