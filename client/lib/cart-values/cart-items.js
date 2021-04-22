@@ -639,7 +639,9 @@ export function getRenewalItemFromCartItem( cartItem, properties ) {
 }
 
 export function hasDomainInCart( cart, domain ) {
-	return getAllCartItems( cart ).some( { is_domain_registration: true, meta: domain } );
+	return getAllCartItems( cart ).some( ( product ) => {
+		return product.is_domain_registration === true && product.meta === domain;
+	} );
 }
 
 /**
