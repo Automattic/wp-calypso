@@ -34,6 +34,7 @@ export default function ContactDetailsContainer( {
 	shouldShowContactDetailsValidationErrors,
 	isDisabled,
 	isLoggedOutCart,
+	isJetpackUserlessCheckout,
 }: {
 	contactDetailsType: Exclude< ContactDetailsType, 'none' >;
 	contactInfo: ManagedContactDetails;
@@ -41,6 +42,7 @@ export default function ContactDetailsContainer( {
 	shouldShowContactDetailsValidationErrors: boolean;
 	isDisabled: boolean;
 	isLoggedOutCart: boolean;
+	isJetpackUserlessCheckout?: boolean;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const { responseCart } = useShoppingCart();
@@ -98,7 +100,7 @@ export default function ContactDetailsContainer( {
 						{ translate( 'Entering your billing information helps us prevent fraud.' ) }
 					</ContactDetailsFormDescription>
 
-					{ isLoggedOutCart && (
+					{ isLoggedOutCart && ! isJetpackUserlessCheckout && (
 						<Field
 							id="email"
 							type="email"

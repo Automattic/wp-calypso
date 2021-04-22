@@ -41,12 +41,14 @@ export default function WPContactForm( {
 	contactDetailsType,
 	contactValidationCallback,
 	isLoggedOutCart,
+	isJetpackUserlessCheckout,
 }: {
 	countriesList: CountryListItem[];
 	shouldShowContactDetailsValidationErrors: boolean;
 	contactDetailsType: Exclude< ContactDetailsType, 'none' >;
 	contactValidationCallback: () => Promise< boolean >;
 	isLoggedOutCart: boolean;
+	isJetpackUserlessCheckout?: boolean;
 } ): JSX.Element {
 	const contactInfo: ManagedContactDetails = useSelect( ( select ) =>
 		select( 'wpcom' ).getContactInfo()
@@ -67,6 +69,7 @@ export default function WPContactForm( {
 				shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
 				isDisabled={ isDisabled }
 				isLoggedOutCart={ isLoggedOutCart }
+				isJetpackUserlessCheckout={ isJetpackUserlessCheckout }
 			/>
 		</BillingFormFields>
 	);
