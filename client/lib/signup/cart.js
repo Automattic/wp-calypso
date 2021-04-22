@@ -4,7 +4,7 @@
 import wpcom from 'calypso/lib/wp';
 import productsListFactory from 'calypso/lib/products-list';
 const productsList = productsListFactory();
-import { preprocessCartForServer, fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 
 function addProductsToCart( cart, newCartItems ) {
 	const productsData = productsList.get();
@@ -27,7 +27,6 @@ export default {
 		};
 
 		newCart = addProductsToCart( newCart, newCartItems );
-		newCart = preprocessCartForServer( newCart );
 
 		wpcom.undocumented().setCart( cartKey, newCart, function ( postError ) {
 			callback( postError );
@@ -43,8 +42,7 @@ export default {
 				newCartItems = [ newCartItems ];
 			}
 
-			let newCart = addProductsToCart( data, newCartItems );
-			newCart = preprocessCartForServer( newCart );
+			const newCart = addProductsToCart( data, newCartItems );
 
 			wpcom.undocumented().setCart( cartKey, newCart, callback );
 		} );
