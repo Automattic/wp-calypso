@@ -42,7 +42,6 @@ import {
 	isTitanMail,
 	isP2Plus,
 	isMonthlyProduct,
-	sortProducts,
 	getTermDuration,
 	getPlan,
 	isBloggerPlan,
@@ -66,16 +65,6 @@ import { domainProductSlugs } from 'calypso/lib/domains/constants';
  */
 export function getAllCartItems( cart ) {
 	return ( cart && cart.products ) || [];
-}
-
-/**
- * Retrieves all the items in the shopping cart sorted
- *
- * @param {CartValue} cart - cart as `CartValue` object
- * @returns {object[]} the sorted list of items in the shopping cart
- */
-export function getAllCartItemsSorted( cart ) {
-	return sortProducts( getAllCartItems( cart ) );
 }
 
 /**
