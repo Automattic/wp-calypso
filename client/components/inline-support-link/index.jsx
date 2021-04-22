@@ -83,6 +83,21 @@ class InlineSupportLink extends Component {
 		};
 
 		const text = children ? children : translate( 'Learn more' );
+		let content = (
+			<>
+				{ showText && text }
+				{ supportPostId && showIcon && <Gridicon icon="help-outline" size={ iconSize } /> }
+			</>
+		);
+		/* Prevent widows, sometimes:
+			No  Text, No Icon  = Widow not possible
+			Yes Text, No Icon  = Widow possible
+			No  Text, Yes Icon = Widow not possible
+			Yes Text, Yes Icon = Widow possible
+		*/
+		if ( showText ) {
+			content = <span className="inline-support-link__nowrap">{ content }</span>;
+		}
 
 		return (
 			<LinkComponent
@@ -99,10 +114,7 @@ class InlineSupportLink extends Component {
 				{ ...externalLinkProps }
 			>
 				{ shouldLazyLoadAlternates && <QuerySupportArticleAlternates postId={ supportPostId } /> }
-				<span className="inline-support-link__nowrap">
-					{ showText && text }
-					{ supportPostId && showIcon && <Gridicon icon="help-outline" size={ iconSize } /> }
-				</span>
+				{ content }
 			</LinkComponent>
 		);
 	}
