@@ -13,7 +13,7 @@ import { abtest } from 'calypso/lib/abtest';
  */
 
 export enum Iterations {
-	REVERSE_FEATURED = 'jetpackReverseFeaturedProducts',
+	REVERSE_FEATURED = 'highToLow_test',
 }
 
 const iterationNames: string[] = Object.values( Iterations );
@@ -43,9 +43,15 @@ const getCurrentCROIterationName = (): Iterations | null => {
 		if ( iterationQuery && iterationNames.includes( iterationQuery ) ) {
 			return iterationQuery as Iterations;
 		}
+
+		// Allow for people to explicitly look at the control/default variation
+		if ( iterationQuery === 'default' ) {
+			return null;
+		}
 	}
 
-	const shouldReverseFeaturedProducts = abtest( Iterations.REVERSE_FEATURED ) === 'highToLow_test';
+	const shouldReverseFeaturedProducts =
+		abtest( 'jetpackReverseFeaturedProducts' ) === Iterations.REVERSE_FEATURED;
 
 	return shouldReverseFeaturedProducts ? Iterations.REVERSE_FEATURED : null;
 };
