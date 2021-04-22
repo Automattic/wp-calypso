@@ -2,7 +2,6 @@
  * External dependencies
  */
 import {
-	JetpackPlanSlugs,
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
