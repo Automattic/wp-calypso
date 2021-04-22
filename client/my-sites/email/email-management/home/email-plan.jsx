@@ -255,6 +255,7 @@ class EmailPlan extends React.Component {
 
 		const cardClasses = classnames( 'email-plan__general', statusClass );
 		const addMailboxProps = this.getAddMailboxProps();
+		const { isLoadingEmailAccounts } = this.state;
 
 		return (
 			<>
@@ -283,7 +284,10 @@ class EmailPlan extends React.Component {
 					/>
 				) }
 
-				<EmailPlanMailboxesList emails={ this.getEmails() } />
+				<EmailPlanMailboxesList
+					emails={ this.getEmails() }
+					isLoadingEmails={ isLoadingEmailAccounts }
+				/>
 
 				<div className="email-plan__actions">
 					<VerticalNav>
