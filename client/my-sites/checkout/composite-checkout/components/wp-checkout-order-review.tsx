@@ -17,10 +17,11 @@ import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import joinClasses from './join-classes';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
-import { isDomainRegistration, isDomainTransfer, isP2Plus } from 'calypso/lib/products-values';
+import { isDomainRegistration, isDomainTransfer } from 'calypso/lib/products-values';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { GetProductVariants } from '../hooks/product-variants';
 import type { OnChangeItemVariant } from './item-variation-picker';
+import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
 
 const SiteSummary = styled.div`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
@@ -100,7 +101,7 @@ export default function WPCheckoutOrderReview( {
 	};
 
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
-	const planIsP2Plus = isP2Plus( responseCart );
+	const planIsP2Plus = hasP2PlusPlan( responseCart );
 
 	return (
 		<div
