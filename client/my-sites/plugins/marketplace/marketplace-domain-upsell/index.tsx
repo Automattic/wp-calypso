@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 /**
@@ -20,8 +20,10 @@ import { Button } from '@wordpress/components';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './styles.scss';
+import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
 
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 
 function Header() {
 	return (
@@ -46,21 +48,23 @@ function DomainPickerContainer( { onDomainSelect, selectedDomain } ) {
 	);
 }
 
-function MarketplaceShoppingCart( { onAddToCart, selectedDomain } ) {
-	const { responseCart } = useShoppingCart();
+function MarketplaceShoppingCart( { onAddDomainToCart, selectedDomain } ) {
+	const { responseCart, isLoading } = useShoppingCart();
 	const { products, sub_total_display } = responseCart;
 
-	return (
+	return isLoading ? (
+		<div></div>
+	) : (
 		<>
 			<h1 className="marketplace-domain-upsell__shopping-cart marketplace-title">Your cart</h1>
 			<div className="marketplace-domain-upsell__shopping-cart basket-items">
 				{ products.map( ( product ) => {
 					return (
 						<div
-							key={ product.meta }
+							key={ product.product_name }
 							className="marketplace-domain-upsell__shopping-cart basket-item"
 						>
-							<div>{ product.meta }</div>
+							<div>{ product.product_name }</div>
 							<div>{ product.item_subtotal_display }</div>
 						</div>
 					);
@@ -73,7 +77,7 @@ function MarketplaceShoppingCart( { onAddToCart, selectedDomain } ) {
 			</h1>
 
 			<Button
-				onClick={ onAddToCart }
+				onClick={ onAddDomainToCart }
 				isBusy={ false }
 				isPrimary
 				disabled={ selectedDomain === null }
@@ -86,10 +90,23 @@ function MarketplaceShoppingCart( { onAddToCart, selectedDomain } ) {
 
 function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 	const [ selectedDomain, setDomain ] = useState( null );
-	const { addProductsToCart } = useShoppingCart();
+	const { addProductsToCart, replaceProductsInCart } = useShoppingCart();
+	const products = useSelector( getProductsList );
+	const isFetchingProducts = useSelector( isProductsListFetching );
 	const selectedSite = useSelector( getSelectedSite );
 
-	const onAddToCart = () => {
+	useEffect( () => {
+		//FIXME: This code segment simulates yoast premium already being added when arriving here. To be removed when plugins page is completed.
+		if ( ! isFetchingProducts && products[ 'yoast_premium' ] ) {
+			const yoastProduct = fillInSingleCartItemAttributes(
+				{ product_slug: 'yoast_premium' },
+				products
+			);
+			replaceProductsInCart( [ { ...yoastProduct } ] );
+		}
+	}, [ isFetchingProducts, products, replaceProductsInCart ] );
+
+	const onAddDomainToCart = () => {
 		const { product_slug, domain_name } = selectedDomain;
 		const domainProduct = {
 			...domainRegistration( {
@@ -121,9 +138,9 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 						<path
 							d="M2 6.49999L7.25 0.749995M2 6.49999L17 6.5M2 6.49999L7.25 11.75"
 							stroke="#1D2327"
-							stroke-width="1.5"
+							strokeWidth="1.5"
 						/>
-					</svg>{ ' ' }
+					</svg>
 					<span>Back</span>
 				</Button>
 			</div>
@@ -135,7 +152,7 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 			</div>
 			<div className="marketplace-domain-upsell__shopping-cart-container">
 				<MarketplaceShoppingCart
-					onAddToCart={ onAddToCart }
+					onAddDomainToCart={ onAddDomainToCart }
 					selectedDomain={ selectedDomain }
 					siteUrl={ selectedSite.slug }
 				/>

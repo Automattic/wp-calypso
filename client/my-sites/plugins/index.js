@@ -93,28 +93,27 @@ export default function () {
 			clientRender
 		);
 
-		if ( config.isEnabled( 'marketplace-yoast' ) ) {
-			page(
-				'/plugins/manage/:site?',
-				scrollTopIfNoHash,
-				siteSelection,
-				navigation,
-				plugins,
-				makeLayout,
-				clientRender
-			);
-		}
-
 		page(
-			'/plugins/domain/:site?',
+			'/plugins/manage/:site?',
 			scrollTopIfNoHash,
 			siteSelection,
 			navigation,
-			renderDomainsPage,
+			plugins,
 			makeLayout,
 			clientRender
 		);
 
+		if ( config.isEnabled( 'marketplace-yoast' ) ) {
+			page(
+				'/plugins/domain/:site?',
+				scrollTopIfNoHash,
+				siteSelection,
+				navigation,
+				renderDomainsPage,
+				makeLayout,
+				clientRender
+			);
+		}
 		page(
 			'/plugins/:pluginFilter(active|inactive|updates)/:site_id?',
 			scrollTopIfNoHash,
