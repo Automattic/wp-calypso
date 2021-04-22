@@ -22,6 +22,18 @@
 			padding-right: 96px;
 		}
 	}
+
+	.step-wrapper__content {
+		margin-top: 24px;
+
+		@include break-mobile {
+			margin-top: 32px;
+		}
+
+		@include break-medium {
+			margin-top: 48px;
+		}
+	}
 		}
 	}
 }
