@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import update from 'immutability-helper';
-import { filter, find, get, isEqual, merge, some } from 'lodash';
+import { filter, find, get, merge, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +18,6 @@ import {
 	isCustomDesign,
 	isDomainMapping,
 	isDomainProduct,
-	isDomainRedemption,
 	isDomainRegistration,
 	isDomainTransfer,
 	isEcommerce,
@@ -59,67 +57,6 @@ import { domainProductSlugs } from 'calypso/lib/domains/constants';
  * @typedef { import("./types").CartItemExtra} CartItemExtra
  * @typedef { import("./types").CartValue } CartValue
  */
-
-/**
- * Adds the specified item to a shopping cart.
- *
- * @param {CartItemValue} newCartItem - new item as `CartItemValue` object
- * @returns {Function} the function that adds the item to a shopping cart
- */
-export function addCartItem( newCartItem ) {
-	function appendItem( products ) {
-		products = products || [];
-
-		const isDuplicate = products.some( function ( existingCartItem ) {
-			return isEqual( newCartItem, existingCartItem );
-		} );
-
-		return isDuplicate ? products : products.concat( [ newCartItem ] );
-	}
-
-	return function ( cart ) {
-		if ( cartItemShouldReplaceCart( newCartItem, cart ) ) {
-			return update( cart, { products: { $set: [ newCartItem ] } } );
-		}
-
-		return update( cart, { products: { $apply: appendItem } } );
-	};
-}
-
-/**
- * Determines if the given cart item should replace the cart.
- * This can happen if the given item:
- * - will result in mixed renewals/non-renewals or multiple renewals (excluding privacy protection).
- *
- * @param {CartItemValue} cartItem - `CartItemValue` object
- * @param {object} cart - the existing shopping cart
- * @returns {boolean} whether or not the item should replace the cart
- */
-export function cartItemShouldReplaceCart( cartItem, cart ) {
-	if ( isRenewal( cartItem ) && ! isDomainRedemption( cartItem ) ) {
-		// adding a renewal replaces the cart unless it is a privacy protection
-		return true;
-	}
-
-	if ( ! isRenewal( cartItem ) && hasRenewalItem( cart ) ) {
-		// all items should replace the cart if the cart contains a renewal
-		return true;
-	}
-
-	if ( isJetpackPlan( cartItem ) ) {
-		// adding a jetpack bundle should replace the cart
-		return true;
-	}
-
-	if ( isJetpackProduct( cartItem ) ) {
-		// adding a Jetpack product should replace the cart
-
-		// Jetpack Offer Reset allows users to purchase multiple Jetpack products at the same time.
-		return false;
-	}
-
-	return false;
-}
 
 /**
  * Retrieves all the items in the specified shopping cart.
