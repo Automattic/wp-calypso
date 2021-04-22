@@ -77,7 +77,7 @@ function getTourContent() {
 			animation: 'undo-button',
 		},
 		{
-			heading: __( 'Congratulations!', 'full-site-editing' ),
+			heading: __( 'Congratulations!', 'full-site-editing' ).replace( '&nbsp;', ' ' ),
 			description: createInterpolateElement(
 				__(
 					'You’ve now learned the basics. Remember, your site is <link_to_launch_site_docs>always private until you decide to launch</link_to_launch_site_docs>. Check out the docs to <link_to_editor_docs>learn more about Block Editing</link_to_editor_docs>.',
