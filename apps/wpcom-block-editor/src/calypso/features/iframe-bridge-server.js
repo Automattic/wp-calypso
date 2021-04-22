@@ -679,10 +679,7 @@ function openLinksInParentFrame( calypsoPort ) {
 	// Create a new post link in block settings sidebar for Query block
 	$( '#editor, #edit-site-editor' ).on( 'click', '.wp-block-query__create-new-link a', ( e ) => {
 		e.preventDefault();
-		window.open(
-			calypsoifyGutenberg.currentCalypsoUrl.replace( '/site-editor/', '/post/' ),
-			'_top'
-		);
+		window.open( calypsoifyGutenberg.createNewPostUrl, '_top' );
 	} );
 
 	if ( calypsoifyGutenberg.manageReusableBlocksUrl ) {
