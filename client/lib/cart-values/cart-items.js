@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { filter, find, get, merge, some } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import config from '@automattic/calypso-config';
@@ -78,7 +73,7 @@ export function getRenewalItems( cart ) {
  * @returns {boolean} true if there is at least one plan, false otherwise
  */
 export function hasPlan( cart ) {
-	return cart && some( getAllCartItems( cart ), isPlan );
+	return cart && getAllCartItems( cart ).some( isPlan );
 }
 
 /**
@@ -88,17 +83,17 @@ export function hasPlan( cart ) {
  * @returns {boolean} true if there is at least one Jetpack plan, false otherwise
  */
 export function hasJetpackPlan( cart ) {
-	return some( getAllCartItems( cart ), isJetpackPlan );
+	return getAllCartItems( cart ).some( isJetpackPlan );
 }
 
 /**
  * Determines whether there is a P2+ plan in the shopping cart.
  *
- * @param {CartValue} cart - cart as `CartValue` object
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
  * @returns {boolean} true if there is at least one P2+ plan, false otherwise
  */
 export function hasP2PlusPlan( cart ) {
-	return some( getAllCartItems( cart ), isP2Plus );
+	return getAllCartItems( cart ).some( isP2Plus );
 }
 
 /**
@@ -108,23 +103,23 @@ export function hasP2PlusPlan( cart ) {
  * @returns {boolean} true if there is at least one plan, false otherwise
  */
 export function hasEcommercePlan( cart ) {
-	return cart && some( getAllCartItems( cart ), isEcommerce );
+	return cart && getAllCartItems( cart ).some( isEcommerce );
 }
 
 export function hasBloggerPlan( cart ) {
-	return some( getAllCartItems( cart ), isBlogger );
+	return getAllCartItems( cart ).some( isBlogger );
 }
 
 export function hasPersonalPlan( cart ) {
-	return some( getAllCartItems( cart ), isPersonal );
+	return getAllCartItems( cart ).some( isPersonal );
 }
 
 export function hasPremiumPlan( cart ) {
-	return some( getAllCartItems( cart ), isPremium );
+	return getAllCartItems( cart ).some( isPremium );
 }
 
 export function hasBusinessPlan( cart ) {
-	return some( getAllCartItems( cart ), isBusiness );
+	return getAllCartItems( cart ).some( isBusiness );
 }
 
 export function hasDomainCredit( cart ) {
@@ -132,7 +127,7 @@ export function hasDomainCredit( cart ) {
 }
 
 export function hasMonthlyCartItem( cart ) {
-	return some( getAllCartItems( cart ), isMonthlyProduct );
+	return getAllCartItems( cart ).some( isMonthlyProduct );
 }
 
 /**
@@ -155,7 +150,7 @@ export function hasProduct( cart, productSlug ) {
  * @returns {boolean} true if there is at least one domain registration item, false otherwise
  */
 export function hasDomainRegistration( cart ) {
-	return some( getAllCartItems( cart ), isDomainRegistration );
+	return getAllCartItems( cart ).some( isDomainRegistration );
 }
 
 /**
@@ -165,7 +160,7 @@ export function hasDomainRegistration( cart ) {
  * @returns {boolean} true if there is at least one new domain registration item, false otherwise
  */
 export function hasNewDomainRegistration( cart ) {
-	return some( getAllCartItems( cart ), isNewDomainRegistration );
+	return getAllCartItems( cart ).some( isNewDomainRegistration );
 }
 
 /**
@@ -175,7 +170,7 @@ export function hasNewDomainRegistration( cart ) {
  * @returns {boolean} true if there is at least one domain registration renewal item, false otherwise
  */
 export function hasDomainRenewal( cart ) {
-	return some( getAllCartItems( cart ), isDomainRenewal );
+	return getAllCartItems( cart ).some( isDomainRenewal );
 }
 
 /**
@@ -199,7 +194,7 @@ function isDomainRenewal( cartItem ) {
 }
 
 export function hasDomainBeingUsedForPlan( cart ) {
-	return some( getDomainRegistrations( cart ), ( registration ) =>
+	return getDomainRegistrations( cart ).some( ( registration ) =>
 		isDomainBeingUsedForPlan( cart, registration.meta )
 	);
 }
@@ -211,7 +206,7 @@ export function hasDomainBeingUsedForPlan( cart ) {
  * @returns {boolean} true if there is at least one renewal item, false otherwise
  */
 export function hasRenewalItem( cart ) {
-	return some( getAllCartItems( cart ), isRenewal );
+	return getAllCartItems( cart ).some( isRenewal );
 }
 
 /**
@@ -221,7 +216,7 @@ export function hasRenewalItem( cart ) {
  * @returns {boolean} true if there is at least one domain transfer item, false otherwise
  */
 export function hasTransferProduct( cart ) {
-	return some( getAllCartItems( cart ), isDomainTransfer );
+	return getAllCartItems( cart ).some( isDomainTransfer );
 }
 
 /**
@@ -231,7 +226,7 @@ export function hasTransferProduct( cart ) {
  * @returns {import('@automattic/shopping-cart').ResponseCartProduct[]} the list of the corresponding items in the shopping cart as `ResponseCartProduct` objects
  */
 export function getDomainTransfers( cart ) {
-	return filter( getAllCartItems( cart ), { product_slug: domainProductSlugs.TRANSFER_IN } );
+	return getAllCartItems( cart ).filter( { product_slug: domainProductSlugs.TRANSFER_IN } );
 }
 
 /**
@@ -253,7 +248,7 @@ export function hasOnlyRenewalItems( cart ) {
  * @returns {boolean} true if there is at least one concierge session item, false otherwise
  */
 export function hasConciergeSession( cart ) {
-	return some( getAllCartItems( cart ), isConciergeSession );
+	return getAllCartItems( cart ).some( isConciergeSession );
 }
 
 /**
@@ -263,7 +258,7 @@ export function hasConciergeSession( cart ) {
  * @returns {boolean} true if there is a traffic guide item, false otherwise
  */
 export function hasTrafficGuide( cart ) {
-	return some( getAllCartItems( cart ), isTrafficGuide );
+	return getAllCartItems( cart ).some( isTrafficGuide );
 }
 
 /**
@@ -293,7 +288,7 @@ export function getCartItemBillPeriod( cartItem ) {
 export function hasRenewableSubscription( cart ) {
 	return (
 		cart.products &&
-		some( getAllCartItems( cart ), ( cartItem ) => getCartItemBillPeriod( cartItem ) > 0 )
+		getAllCartItems( cart ).some( ( cartItem ) => getCartItemBillPeriod( cartItem ) > 0 )
 	);
 }
 
@@ -310,7 +305,7 @@ export function planItem( productSlug, properties ) {
 		return null;
 	}
 
-	const domainToBundle = get( properties, 'domainToBundle', '' );
+	const domainToBundle = properties?.domainToBundle ?? '';
 
 	return {
 		product_slug: productSlug,
@@ -326,8 +321,8 @@ export function planItem( productSlug, properties ) {
  * @returns {boolean} true if the domainItem supports privacy protection purchase
  */
 export function supportsPrivacyProtectionPurchase( productSlug, productsList ) {
-	const product = find( productsList, [ 'product_slug', productSlug ] ) || {};
-	return get( product, 'is_privacy_protection_product_purchase_allowed', false );
+	const product = productsList.find( ( item ) => item.product_slug === productSlug ) || {};
+	return product?.is_privacy_protection_product_purchase_allowed ?? false;
 }
 
 /**
@@ -421,7 +416,7 @@ export function domainTransfer( properties ) {
  * @returns {import('@automattic/shopping-cart').ResponseCartProduct[]} the list of the corresponding items in the shopping cart as `ResponseCartProduct` objects
  */
 export function getGoogleApps( cart ) {
-	return filter( getAllCartItems( cart ), isGSuiteOrExtraLicenseOrGoogleWorkspace );
+	return getAllCartItems( cart ).filter( isGSuiteOrExtraLicenseOrGoogleWorkspace );
 }
 
 /**
@@ -481,11 +476,11 @@ export function titanMailMonthly( properties ) {
 }
 
 export function hasGoogleApps( cart ) {
-	return some( getAllCartItems( cart ), isGSuiteOrExtraLicenseOrGoogleWorkspace );
+	return getAllCartItems( cart ).some( isGSuiteOrExtraLicenseOrGoogleWorkspace );
 }
 
 export function hasTitanMail( cart ) {
-	return some( getAllCartItems( cart ), isTitanMail );
+	return getAllCartItems( cart ).some( isTitanMail );
 }
 
 export function customDesignItem() {
@@ -543,7 +538,7 @@ export function jetpackProductItem( slug ) {
  * @returns {import('@automattic/shopping-cart').ResponseCartProduct[]} the list of the corresponding items in the shopping cart as `import('@automattic/shopping-cart').ResponseCartProduct` objects
  */
 export function getDomainRegistrations( cart ) {
-	return filter( getAllCartItems( cart ), { is_domain_registration: true } );
+	return getAllCartItems( cart ).filter( { is_domain_registration: true } );
 }
 
 /**
@@ -553,7 +548,7 @@ export function getDomainRegistrations( cart ) {
  * @returns {import('@automattic/shopping-cart').ResponseCartProduct[]} the list of the corresponding items in the shopping cart as `import('@automattic/shopping-cart').ResponseCartProduct` objects
  */
 export function getDomainMappings( cart ) {
-	return filter( getAllCartItems( cart ), { product_slug: 'domain_map' } );
+	return getAllCartItems( cart ).filter( { product_slug: 'domain_map' } );
 }
 
 /**
@@ -631,16 +626,18 @@ export function getRenewalItemFromProduct( product, properties ) {
  * @returns {import('@automattic/shopping-cart').ResponseCartProduct} a CartItem object
  */
 export function getRenewalItemFromCartItem( cartItem, properties ) {
-	return merge( {}, cartItem, {
+	return {
+		...cartItem,
 		extra: {
+			...cartItem.extra,
 			purchaseId: properties.id,
 			purchaseType: 'renewal',
 		},
-	} );
+	};
 }
 
 export function hasDomainInCart( cart, domain ) {
-	return some( getAllCartItems( cart ), { is_domain_registration: true, meta: domain } );
+	return getAllCartItems( cart ).some( { is_domain_registration: true, meta: domain } );
 }
 
 /**
@@ -652,11 +649,13 @@ export function hasDomainInCart( cart, domain ) {
  * @returns {import('@automattic/shopping-cart').ResponseCartProduct} the new ResponseCartProduct with added/removed privacy
  */
 export function updatePrivacyForDomain( item, value ) {
-	return merge( {}, item, {
+	return {
+		...item,
 		extra: {
+			...item.extra,
 			privacy: value,
 		},
-	} );
+	};
 }
 
 /**
@@ -701,8 +700,7 @@ export function isNextDomainFree( cart, domain = '' ) {
 }
 
 export function isDomainBundledWithPlan( cart, domain ) {
-	const bundledDomain = get( cart, 'bundled_domain', '' );
-
+	const bundledDomain = cart?.bundledDomain ?? '';
 	return '' !== bundledDomain && ( domain ?? '' ).toLowerCase() === bundledDomain.toLowerCase();
 }
 
@@ -870,7 +868,7 @@ export function getDomainPriceRule(
  * @returns {boolean} true if there is at least one cart item added more than X time ago, false otherwise
  */
 export function hasStaleItem( cart ) {
-	return some( getAllCartItems( cart ), function ( cartItem ) {
+	return getAllCartItems( cart ).some( function ( cartItem ) {
 		// time_added_to_cart is in seconds, Date.now() returns milliseconds
 		return (
 			cartItem.time_added_to_cart &&
