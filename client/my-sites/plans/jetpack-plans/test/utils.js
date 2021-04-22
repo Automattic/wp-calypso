@@ -113,10 +113,11 @@ describe( 'getHighestAnnualDiscount', () => {
 } );
 
 describe( 'getMonthlySlugFromYearly', () => {
-	const jetpackSlugs = [
+	const yearlySlugs = [
 		'jetpack_personal',
 		'jetpack_premium',
 		'jetpack_business',
+		'jetpack_anti_spam',
 		'jetpack_backup_daily',
 		'jetpack_backup_realtime',
 		'jetpack_scan',
@@ -126,7 +127,7 @@ describe( 'getMonthlySlugFromYearly', () => {
 		'jetpack_complete',
 	];
 
-	jetpackSlugs.forEach( ( slug ) => {
+	yearlySlugs.forEach( ( slug ) => {
 		test( `returns ${ slug } monthly version`, () => {
 			expect( getMonthlySlugFromYearly( slug ) ).toBe( `${ slug }_monthly` );
 		} );
@@ -142,10 +143,11 @@ describe( 'getMonthlySlugFromYearly', () => {
 } );
 
 describe( 'getYearlySlugFromMonthly', () => {
-	const jetpackSlugs = [
+	const monthlySlugs = [
 		'jetpack_personal_monthly',
 		'jetpack_premium_monthly',
 		'jetpack_business_monthly',
+		'jetpack_anti_spam_monthly',
 		'jetpack_backup_daily_monthly',
 		'jetpack_backup_realtime_monthly',
 		'jetpack_scan_monthly',
@@ -155,9 +157,11 @@ describe( 'getYearlySlugFromMonthly', () => {
 		'jetpack_complete_monthly',
 	];
 
-	jetpackSlugs.forEach( ( slug ) => {
+	monthlySlugs.forEach( ( slug ) => {
 		test( `returns ${ slug } yearly version`, () => {
+			// jetpack_scan_monthly => ['jetpack', 'scan', 'monthly']
 			const slugParts = slug.split( '_' );
+			// ['jetpack', 'scan', 'monthly'] => ['jetpack', 'scan'] => 'jetpack_scan'
 			const slugWithoutTerm = slugParts.slice( 0, slugParts.length - 1 ).join( '_' );
 			expect( getYearlySlugFromMonthly( slug ) ).toBe( slugWithoutTerm );
 		} );
