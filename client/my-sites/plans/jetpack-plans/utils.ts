@@ -762,8 +762,8 @@ function getSupportedNewPlanFromLegacyPlanSlug( legacyPlanSlug: string ): string
 }
 
 /**
- * Return the slug of a highlighted product if the given slug is valid, otherwise
- * return null.
+ * Return the slug of a highlighted product if the given slug is Jetpack product
+ * slug, otherwise, return null.
  *
  * @param {string} productSlug the slug of a Jetpack product
  *
@@ -778,6 +778,8 @@ export function getHighlightedProduct( productSlug?: string ): [ string, string 
 		? getSupportedNewPlanFromLegacyPlanSlug( productSlug )
 		: productSlug;
 
+	// If neither of these methods return a slug, it means that the `productSlug`
+	// is not really a Jetpack product slug.
 	const yearlySlug = getYearlySlugFromMonthly( proposedProductSlug );
 	const monthlySlug = getMonthlySlugFromYearly( proposedProductSlug );
 
