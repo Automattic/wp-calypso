@@ -134,21 +134,43 @@ export function getProductWithOptionDisplayName(
 	return slugToSelectorProduct( optionSlug )?.displayName || item.displayName;
 }
 
-// Takes any annual Jetpack product or plan slug and returns its corresponding monthly equivalent
-function getMonthlySlugFromYearly( yearlySlug: string | null ) {
+function getSlugInTerm( yearlySlug: string | null, slugTerm: Duration ) {
+	const mainTerm = slugTerm === TERM_MONTHLY ? 'monthly' : 'yearly';
+	const oppositeTerm = mainTerm === 'monthly' ? 'yearly' : 'monthly';
+
 	const matchingProduct = JETPACK_PRODUCTS_BY_TERM.find(
-		( product ) => product.yearly === yearlySlug
+		( product ) => product[ mainTerm ] === yearlySlug
 	);
 	if ( matchingProduct ) {
-		return matchingProduct.monthly;
+		return matchingProduct[ oppositeTerm ];
 	}
 
-	const matchingPlan = JETPACK_PLANS_BY_TERM.find( ( plan ) => plan.yearly === yearlySlug );
+	const matchingPlan = JETPACK_PLANS_BY_TERM.find( ( plan ) => plan[ mainTerm ] === yearlySlug );
 	if ( matchingPlan ) {
-		return matchingPlan.monthly;
+		return matchingPlan[ oppositeTerm ];
 	}
 
 	return null;
+}
+
+/**
+ * Get the monthly version of a product slug.
+ *
+ * @param {string} yearlySlug a yearly term product slug
+ * @returns {string} a monthly term product slug
+ */
+export function getMonthlySlugFromYearly( yearlySlug: string | null ): string | null {
+	return getSlugInTerm( yearlySlug, TERM_ANNUALLY );
+}
+
+/**
+ * Get the yearly version of a product slug.
+ *
+ * @param {string} monthlySlug a monthly term product slug
+ * @returns {string} a yearly term product slug
+ */
+export function getYearlySlugFromMonthly( monthlySlug: string | null ): string | null {
+	return getSlugInTerm( monthlySlug, TERM_MONTHLY );
 }
 
 /**
