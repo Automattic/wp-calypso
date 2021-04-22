@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { assign, forEach, groupBy, includes, map, reduce, sortBy } from 'lodash';
+import { forEach, groupBy, includes, map, reduce, sortBy } from 'lodash';
 
 // Helpers used by sortPagesHierarchically but not exposed externally
 const sortByMenuOrder = ( list ) => sortBy( list, 'menu_order' );
@@ -38,7 +38,7 @@ export const sortPagesHierarchically = ( pages ) => {
 		const children = pagesByParent[ pageId ] || [];
 
 		forEach( children, ( child ) => {
-			sortedPages.push( assign( {}, child, { indentLevel } ) );
+			sortedPages.push( { ...child, indentLevel } );
 			insertChildren( child.ID, indentLevel + 1 );
 		} );
 	};

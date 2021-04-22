@@ -2,17 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import {
-	assign,
-	defer,
-	difference,
-	get,
-	includes,
-	isEmpty,
-	omitBy,
-	pick,
-	startsWith,
-} from 'lodash';
+import { defer, difference, get, includes, isEmpty, omitBy, pick, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -572,13 +562,15 @@ export function createAccount(
 			type: signupType,
 		} );
 
-		const providedDependencies = assign(
-			{ username, marketing_price_group, plans_reorder_abtest_variation },
-			bearerToken
-		);
+		const providedDependencies = {
+			username,
+			marketing_price_group,
+			plans_reorder_abtest_variation,
+			...bearerToken,
+		};
 
 		if ( signupType === SIGNUP_TYPE_DEFAULT && oauth2Signup ) {
-			assign( providedDependencies, {
+			Object.assign( providedDependencies, {
 				oauth2_client_id: queryArgs.oauth2_client_id,
 				oauth2_redirect: get( response, 'oauth2_redirect', '' ).split( '@' )[ 1 ],
 			} );
@@ -601,7 +593,7 @@ export function createAccount(
 		);
 	} else {
 		wpcom.undocumented().usersNew(
-			assign(
+			Object.assign(
 				{},
 				userData,
 				{

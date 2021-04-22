@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { assign, includes, isObjectLike, omitBy, times } from 'lodash';
+import { includes, isObjectLike, omitBy, times } from 'lodash';
 import cookie from 'cookie';
 import { EventEmitter } from 'events';
 import { loadScript } from '@automattic/load-script';
@@ -255,12 +255,12 @@ export function recordTracksPageView( urlPath: string, params: any ) {
 	// Add calypso build timestamp if set
 	const build_timestamp = typeof window !== 'undefined' && window.BUILD_TIMESTAMP;
 	if ( build_timestamp ) {
-		eventProperties = assign( eventProperties, { build_timestamp } );
+		eventProperties = Object.assign( eventProperties, { build_timestamp } );
 	}
 
 	// add optional path params
 	if ( params ) {
-		eventProperties = assign( eventProperties, params );
+		eventProperties = Object.assign( eventProperties, params );
 	}
 
 	// Record all `utm` marketing parameters as event properties on the page view event
@@ -272,7 +272,7 @@ export function recordTracksPageView( urlPath: string, params: any ) {
 			Array.from( urlParams.entries() ).filter( ( [ key ] ) => key.startsWith( 'utm_' ) );
 		const utmParams = utmParamEntries ? Object.fromEntries( utmParamEntries ) : {};
 
-		eventProperties = assign( eventProperties, utmParams );
+		eventProperties = Object.assign( eventProperties, utmParams );
 	}
 
 	recordTracksEvent( 'calypso_page_view', eventProperties );

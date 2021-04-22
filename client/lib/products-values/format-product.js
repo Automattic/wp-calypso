@@ -1,10 +1,6 @@
-/**
- * External dependencies
- */
-import { assign } from 'lodash';
-
 export function formatProduct( product ) {
-	return assign( {}, product, {
+	return {
+		...product,
 		product_slug: product.product_slug || product.productSlug,
 		product_type: product.product_type || product.productType,
 		included_domain_purchase_amount:
@@ -14,5 +10,5 @@ export function formatProduct( product ) {
 				? product.is_domain_registration
 				: product.isDomainRegistration,
 		free_trial: product.free_trial || product.freeTrial,
-	} );
+	};
 }

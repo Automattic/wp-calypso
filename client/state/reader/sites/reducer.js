@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { assign, includes, keyBy, map, omit, omitBy, reduce, trim } from 'lodash';
+import { includes, keyBy, map, omit, omitBy, reduce, trim } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -26,13 +26,14 @@ function handleRequestFailure( state, action ) {
 		return state;
 	}
 
-	return assign( {}, state, {
+	return {
+		...state,
 		[ action.payload.ID ]: {
 			ID: action.payload.ID,
 			is_error: true,
 			error: action.error,
 		},
-	} );
+	};
 }
 
 function adaptSite( attributes ) {
@@ -67,14 +68,15 @@ function adaptSite( attributes ) {
 function handleRequestSuccess( state, action ) {
 	const site = adaptSite( action.payload );
 	// TODO do we need to normalize site entries somehow?
-	return assign( {}, state, {
+	return {
+		...state,
 		[ action.payload.ID ]: site,
-	} );
+	};
 }
 
 function handleSiteUpdate( state, action ) {
 	const sites = map( action.payload, adaptSite );
-	return assign( {}, state, keyBy( sites, 'ID' ) );
+	return { ...state, ...keyBy( sites, 'ID' ) };
 }
 
 const itemsReducer = ( state = {}, action ) => {
@@ -113,9 +115,10 @@ export const items = withSchemaValidation(
 export function queuedRequests( state = {}, action ) {
 	switch ( action.type ) {
 		case READER_SITE_REQUEST:
-			return assign( {}, state, {
+			return {
+				...state,
 				[ action.payload.ID ]: true,
-			} );
+			};
 		case READER_SITE_REQUEST_SUCCESS:
 		case READER_SITE_REQUEST_FAILURE:
 			return omit( state, action.payload.ID );
@@ -140,7 +143,7 @@ export const lastFetched = ( state = {}, action ) => {
 				},
 				{}
 			);
-			return assign( {}, state, updates );
+			return { ...state, ...updates };
 		}
 	}
 

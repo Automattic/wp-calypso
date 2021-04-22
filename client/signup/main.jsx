@@ -6,7 +6,6 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {
-	assign,
 	clone,
 	defer,
 	find,
@@ -616,11 +615,10 @@ class Signup extends React.Component {
 		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 		const currentStepProgress = find( this.props.progress, { stepName: this.props.stepName } );
 		const CurrentComponent = this.props.stepComponent;
-		const propsFromConfig = assign(
-			{},
-			omit( this.props, 'locale' ),
-			steps[ this.props.stepName ].props
-		);
+		const propsFromConfig = {
+			...omit( this.props, 'locale' ),
+			...steps[ this.props.stepName ].props,
+		};
 		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : this.props.stepName;
 		const flow = flows.getFlow( this.props.flowName );
 		const planWithDomain =
@@ -637,11 +635,12 @@ class Signup extends React.Component {
 
 		let propsForCurrentStep = propsFromConfig;
 		if ( this.enableManageSiteFlow ) {
-			propsForCurrentStep = assign( {}, propsFromConfig, {
+			propsForCurrentStep = {
+				...propsFromConfig,
 				showExampleSuggestions: false,
 				showSkipButton: true,
 				includeWordPressDotCom: false,
-			} );
+			};
 		}
 
 		return (

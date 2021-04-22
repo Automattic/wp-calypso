@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { assign, mapValues, zipObject } from 'lodash';
+import { mapValues, zipObject } from 'lodash';
 import assert from 'assert';
 
 /**
@@ -43,7 +43,7 @@ function testController( options ) {
 		debounceWait: 0,
 	};
 
-	return formState.Controller( assign( defaults, options ) );
+	return formState.Controller( { ...defaults, ...options } );
 }
 
 describe( 'index', () => {
