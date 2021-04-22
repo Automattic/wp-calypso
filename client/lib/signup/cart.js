@@ -1,28 +1,21 @@
 /**
- * External dependencies
- */
-import { forEach } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import wpcom from 'calypso/lib/wp';
 import productsListFactory from 'calypso/lib/products-list';
 const productsList = productsListFactory();
-import { preprocessCartForServer, fillInAllCartItemAttributes } from 'calypso/lib/cart-values';
-import { addCartItem } from 'calypso/lib/cart-values/cart-items';
+import { preprocessCartForServer, fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 
 function addProductsToCart( cart, newCartItems ) {
-	forEach( newCartItems, function ( cartItem ) {
-		cartItem.extra = Object.assign( cartItem.extra || {}, {
-			context: 'signup',
-		} );
-		const addFunction = addCartItem( cartItem );
-
-		cart = fillInAllCartItemAttributes( addFunction( cart ), productsList.get() );
+	const productsData = productsList.get();
+	const newProducts = newCartItems.map( function ( cartItem ) {
+		cartItem.extra = { ...cartItem.extra, context: 'signup' };
+		return fillInSingleCartItemAttributes( cartItem, productsData );
 	} );
-
-	return cart;
+	return {
+		...cart,
+		products: [ ...cart.products, newProducts ],
+	};
 }
 
 export default {
