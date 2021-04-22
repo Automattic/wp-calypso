@@ -136,6 +136,7 @@ export default function WPCheckout( {
 	isLoggedOutCart,
 	infoMessage,
 	createUserAndSiteBeforeTransaction,
+	isJetpackUserlessCheckout,
 }: {
 	removeProductFromCart: RemoveProductFromCart;
 	changePlanLength: OnChangeItemVariant;
@@ -148,6 +149,7 @@ export default function WPCheckout( {
 	isLoggedOutCart: boolean;
 	infoMessage?: JSX.Element;
 	createUserAndSiteBeforeTransaction: boolean;
+	isJetpackUserlessCheckout?: boolean;
 } ): JSX.Element {
 	const {
 		responseCart,
@@ -195,7 +197,7 @@ export default function WPCheckout( {
 
 	const validateContactDetailsAndDisplayErrors = async () => {
 		debug( 'validating contact details and reporting errors' );
-		if ( isLoggedOutCart ) {
+		if ( isLoggedOutCart && ! isJetpackUserlessCheckout ) {
 			const email = contactInfo.email?.value ?? '';
 			const validationResult = await getSignupEmailValidationResult(
 				email,
@@ -460,6 +462,7 @@ export default function WPCheckout( {
 									contactValidationCallback={ validateContactDetails }
 									contactDetailsType={ contactDetailsType }
 									isLoggedOutCart={ isLoggedOutCart }
+									isJetpackUserlessCheckout={ isJetpackUserlessCheckout }
 								/>
 							}
 							completeStepContent={

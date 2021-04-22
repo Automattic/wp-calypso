@@ -609,6 +609,12 @@ export default function CompositeCheckout( {
 		);
 	}
 
+	if ( isJetpackUserlessCheckout ) {
+		// This works, but is ugly, need to do it more better
+		siteId = parseInt( responseCart.blog_id );
+		siteSlug = responseCart.jetpack_site_slug;
+	}
+
 	return (
 		<React.Fragment>
 			<QuerySitePlans siteId={ siteId } />
@@ -645,6 +651,7 @@ export default function CompositeCheckout( {
 					isLoggedOutCart={ !! isLoggedOutCart }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					infoMessage={ infoMessage }
+					isJetpackUserlessCheckout={ isJetpackUserlessCheckout }
 				/>
 			</CheckoutProvider>
 		</React.Fragment>
