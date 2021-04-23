@@ -23,10 +23,9 @@ import {
 	GROUP_WPCOM,
 	GROUP_JETPACK,
 	JETPACK_RESET_PLANS,
-	FEATURE_JETPACK_SEARCH,
-	FEATURE_JETPACK_SEARCH_MONTHLY,
 	TYPE_P2_PLUS,
 } from './plans-constants';
+import { FEATURE_JETPACK_SEARCH, FEATURE_JETPACK_SEARCH_MONTHLY } from './jetpack-constants';
 import { PLANS_LIST } from './plans-list';
 
 export function getPlans() {

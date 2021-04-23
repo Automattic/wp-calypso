@@ -9,9 +9,10 @@ import {
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
+	calculateMonthlyPrice,
+	getBillingMonthsForTerm,
 	getTermDuration,
-} from '../src/plans-constants';
-import { calculateMonthlyPrice, getBillingMonthsForTerm } from '../src/index';
+} from '../src/index';
 
 describe( 'calculateMonthlyPrice', () => {
 	test( 'should return same number for monthly term', () => {
