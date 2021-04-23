@@ -17,7 +17,7 @@ import {
 	isOneTimePurchase,
 	maybeWithinRefundPeriod,
 } from 'calypso/lib/purchases';
-import { isDomainRegistration, isDomainMapping } from 'calypso/lib/products-values';
+import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
 import { getIncludedDomainPurchase } from 'calypso/state/purchases/selectors';
 import { CALYPSO_CONTACT, UPDATE_NAMESERVERS } from 'calypso/lib/url/support';
 import FormLabel from 'calypso/components/forms/form-label';

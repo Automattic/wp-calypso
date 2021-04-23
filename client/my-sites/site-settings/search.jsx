@@ -37,9 +37,7 @@ import {
 	isJetpackBusiness,
 	isEcommerce,
 	isJetpackSearch,
-} from 'calypso/lib/products-values';
-import { isP2Plus } from 'calypso/lib/products-values/is-p2-plus';
-import {
+	isP2Plus,
 	planHasJetpackSearch,
 	FEATURE_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,

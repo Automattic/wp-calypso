@@ -13,21 +13,22 @@ import debugFactory from 'debug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
-import { getPlan, isMonthly as isMonthlyPlan } from '@automattic/calypso-products';
 import {
+	getPlan,
+	isMonthly as isMonthlyPlan,
 	getProductFromSlug,
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
 	isGoogleWorkspace,
 	isJetpackPlan,
-	isMonthly as isMonthlyProduct,
+	isMonthlyProduct,
 	isPlan,
 	isTheme,
 	isTitanMail,
 	isConciergeSession,
-} from 'calypso/lib/products-values';
-import { getJetpackProductsDisplayNames } from 'calypso/lib/products-values/translations';
+	getJetpackProductsDisplayNames,
+} from '@automattic/calypso-products';
 import { MembershipSubscription, MembershipSubscriptionsSite } from 'calypso/lib/purchases/types';
 import { errorNotice } from 'calypso/state/notices/actions';
 

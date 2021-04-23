@@ -24,7 +24,7 @@ import {
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import JetpackSearchUpsell from './upsell';
 import JetpackSearchPlaceholder from './placeholder';
-import { isJetpackSearch } from 'calypso/lib/products-values';
+import { isJetpackSearch } from '@automattic/calypso-products';
 import { planHasJetpackSearch } from '@automattic/calypso-products';
 import {
 	getSitePurchases,

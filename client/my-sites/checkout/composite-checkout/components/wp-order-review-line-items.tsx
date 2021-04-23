@@ -41,7 +41,13 @@ import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/s
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import { getSublabel, getLabel } from '../lib/translate-cart';
-import { isPlan, isMonthly, isYearly, isBiennially, isP2Plus } from 'calypso/lib/products-values';
+import {
+	isPlan,
+	isMonthlyProduct,
+	isYearly,
+	isBiennially,
+	isP2Plus,
+} from '@automattic/calypso-products';
 import type {
 	WPCOMProductSlug,
 	WPCOMProductVariant,
@@ -592,7 +598,7 @@ function LineItemSublabelAndPrice( {
 			},
 		};
 
-		if ( isMonthly( product ) ) {
+		if ( isMonthlyProduct( product ) ) {
 			return <>{ translate( '%(sublabel)s: %(price)s per month', options ) }</>;
 		}
 
@@ -646,7 +652,7 @@ function FirstTermDiscountCallout( {
 		return null;
 	}
 
-	if ( isMonthly( product ) ) {
+	if ( isMonthlyProduct( product ) ) {
 		return <DiscountCallout>{ translate( 'Discount for first month' ) }</DiscountCallout>;
 	}
 

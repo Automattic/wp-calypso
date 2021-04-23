@@ -40,7 +40,7 @@ import {
 	planHasFeature,
 } from '@automattic/calypso-products';
 import { FEATURE_VIDEO_UPLOADS_JETPACK_PRO } from '@automattic/calypso-products';
-import { isJetpackAntiSpam, isJetpackBackupSlug } from 'calypso/lib/products-values';
+import { isJetpackAntiSpam, isJetpackBackupSlug } from '@automattic/calypso-products';
 import { JETPACK_BACKUP_PRODUCTS } from '@automattic/calypso-products';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { Button, Card } from '@automattic/components';

@@ -7,10 +7,10 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { cancellationEffectDetail, cancellationEffectHeadline } from '../cancellation-effect';
-import productsValues from 'calypso/lib/products-values';
+import productsValues from '@automattic/calypso-products';
 import purchases from 'calypso/lib/purchases';
 
-jest.mock( 'calypso/lib/products-values', () => ( {} ) );
+jest.mock( '@automattic/calypso-products', () => ( {} ) );
 jest.mock( 'calypso/lib/purchases', () => ( {} ) );
 
 describe( 'cancellation-effect', () => {

@@ -8,7 +8,7 @@ import {
 	isOneTimePurchase,
 	isPaidWithCreditCard,
 } from 'calypso/lib/purchases';
-import { isDomainTransfer } from 'calypso/lib/products-values';
+import { isDomainTransfer } from '@automattic/calypso-products';
 
 function isDataLoading( props ) {
 	return ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;

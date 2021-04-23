@@ -22,7 +22,7 @@ export {
 	isGSuiteOrExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 	isGSuiteProductSlug,
-} from './gsuite-product-slug';
+} from '@automattic/calypso-products';
 export { getGSuiteSupportedDomains, hasGSuiteSupportedDomain } from './gsuite-supported-domain';
 export { hasGSuiteWithAnotherProvider } from './has-gsuite-with-another-provider';
 export { hasGSuiteWithUs } from './has-gsuite-with-us';
