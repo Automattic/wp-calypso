@@ -203,29 +203,23 @@ class Account extends React.Component {
 
 		const localeVariantSelected = isLocaleVariant( value ) ? value : '';
 
-		const originalLanguage = this.getUserOriginalSetting( 'language' );
-		const originalVariant = this.getUserOriginalSetting( 'locale_variant' );
-		const newLanguage = getLanguage( value );
-		const newLanguageIsBase = ! newLanguage.parentLangSlug;
-		const newLanguageIsVariant = newLanguage.parentLangSlug !== null;
-		const languageHasChanged =
-			( newLanguageIsBase &&
-				( newLanguage.langSlug !== originalLanguage ||
-					( newLanguage.langSlug === originalLanguage && originalVariant ) ) ) ||
-			( newLanguageIsVariant &&
-				( newLanguage.parentLangSlug !== originalLanguage ||
-					newLanguage.langSlug !== originalVariant ) ) ||
-			( typeof empathyMode !== 'undefined' &&
-				empathyMode !== this.getUserOriginalSetting( 'i18n_empathy_mode' ) );
-		if ( languageHasChanged ) {
+		const originalSlug =
+			this.getUserSetting( 'locale_variant' ) || this.getUserSetting( 'language' ) || '';
+
+		const languageHasChanged = originalSlug !== value;
+		const empathyModeHasChanged =
+			typeof empathyMode !== 'undefined' &&
+			empathyMode !== this.getUserOriginalSetting( 'i18n_empathy_mode' );
+		const formHasChanged = languageHasChanged || empathyModeHasChanged;
+		if ( formHasChanged ) {
 			this.props.markChanged();
 		}
 
-		const redirect = languageHasChanged ? '/me/account' : false;
+		const redirect = formHasChanged ? '/me/account' : false;
 		// store any selected locale variant so we can test it against those with no GP translation sets
 		this.setState( { redirect, localeVariantSelected } );
 
-		if ( languageHasChanged ) {
+		if ( formHasChanged ) {
 			this.props.recordTracksEvent( 'calypso_user_language_switch', {
 				new_language: value,
 				previous_language:
