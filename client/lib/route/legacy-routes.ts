@@ -27,7 +27,7 @@ const legacyRoutes: LegacyRoute[] = [
 	{
 		match: /^\/me/,
 		noMatch: /^\/me\/(billing|next)/,
-		predicate: () => ! isEnabled( 'me/my-profile' ),
+		predicate: () => false,
 	},
 ];
 

@@ -10,7 +10,11 @@
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "/",
 	"rebrand_cities_prefix": "rebrandcitiessite",
-	"livechat_support_locales": [ "en", "es", "pt-br" ],
+	"livechat_support_locales": [
+		"en",
+		"es",
+		"pt-br"
+	],
 	"features": {
 		"ad-tracking": true,
 		"always_use_logout_url": true,
@@ -76,10 +80,7 @@
 		"manage/themes-jetpack": true,
 		"manage/themes/details": true,
 		"marketplace-yoast": false,
-		"me/account": true,
 		"me/account/color-scheme-picker": true,
-		"me/my-profile": true,
-		"me/notifications": true,
 		"oauth": true,
 		"p2/p2-plus": true,
 		"plans/personal-plan": true,

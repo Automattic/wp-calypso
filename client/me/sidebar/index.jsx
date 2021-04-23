@@ -94,9 +94,7 @@ class MeSidebar extends React.Component {
 
 						<SidebarItem
 							selected={ itemLinkMatches( '', path ) }
-							link={
-								config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile'
-							}
+							link={ '/me' }
 							label={ translate( 'My Profile' ) }
 							materialIcon="person"
 							onNavigate={ this.onNavigate }
@@ -104,9 +102,7 @@ class MeSidebar extends React.Component {
 
 						<SidebarItem
 							selected={ itemLinkMatches( '/account', path ) }
-							link={
-								config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account'
-							}
+							link={ '/me/account' }
 							label={ translate( 'Account Settings' ) }
 							materialIcon="settings"
 							onNavigate={ this.onNavigate }
@@ -148,11 +144,7 @@ class MeSidebar extends React.Component {
 
 						<SidebarItem
 							selected={ itemLinkMatches( '/notifications', path ) }
-							link={
-								config.isEnabled( 'me/notifications' )
-									? '/me/notifications'
-									: '//wordpress.com/me/notifications'
-							}
+							link={ '/me/notifications' }
 							label={ translate( 'Notification Settings' ) }
 							materialIcon="notifications"
 							onNavigate={ this.onNavigate }

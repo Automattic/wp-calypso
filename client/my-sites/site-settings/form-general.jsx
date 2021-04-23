@@ -284,7 +284,7 @@ export class SiteSettingsFormGeneral extends Component {
 				<FormSettingExplanation>
 					{ translate( "The site's primary language." ) }
 					&nbsp;
-					<a href={ config.isEnabled( 'me/account' ) ? '/me/account' : '/settings/account/' }>
+					<a href={ '/me/account' }>
 						{ translate( "You can also modify your interface's language in your profile." ) }
 					</a>
 				</FormSettingExplanation>
