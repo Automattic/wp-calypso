@@ -9,11 +9,13 @@ import { useDispatch, useSelector } from 'react-redux';
  */
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import { checkout, manageSitePurchase } from 'calypso/my-sites/plans/jetpack-plans/utils';
+import {
+	checkout,
+	getYearlySlugFromMonthly,
+	manageSitePurchase,
+} from 'calypso/my-sites/plans/jetpack-plans/utils';
 import QueryProducts from 'calypso/my-sites/plans/jetpack-plans/query-products';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getYearlyPlanByMonthly } from '@automattic/calypso-products';
-import { getProductYearlyVariant, isJetpackPlan } from 'calypso/lib/products-values';
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Main from 'calypso/components/main';
@@ -31,7 +33,6 @@ import type {
 	SelectorProduct,
 	PurchaseCallback,
 } from 'calypso/my-sites/plans/jetpack-plans/types';
-import type { ProductSlug } from 'calypso/lib/products-values/types';
 
 import './style.scss';
 
@@ -82,12 +83,10 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 			);
 
 			const { productSlug: slug } = product;
-			const yearlyItem = isJetpackPlan( slug )
-				? getYearlyPlanByMonthly( slug )
-				: getProductYearlyVariant( slug as ProductSlug );
+			const yearlySlug = getYearlySlugFromMonthly( slug );
 
-			if ( yearlyItem ) {
-				checkout( siteSlug, yearlyItem, urlQueryArgs );
+			if ( yearlySlug ) {
+				checkout( siteSlug, yearlySlug, urlQueryArgs );
 			}
 			return;
 		}
