@@ -18,7 +18,6 @@ jest.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: () => false,
 } ) );
 
-// TODO: add a mock / test for when fonts are undefined
 jest.mock( '../available-designs-config', () => {
 	const mockDesign: Design = {
 		title: 'Mock',
