@@ -12,7 +12,6 @@ import {
 	get,
 	zipObject,
 	includes,
-	values,
 	omit,
 	startsWith,
 } from 'lodash';
@@ -229,7 +228,7 @@ const isValidExpansionsAction = ( action ) => {
 		siteId &&
 		postId &&
 		Array.isArray( commentIds ) &&
-		includes( values( POST_COMMENT_DISPLAY_TYPES ), displayType )
+		includes( Object.values( POST_COMMENT_DISPLAY_TYPES ), displayType )
 	);
 };
 

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, values } from 'lodash';
+import { filter } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,7 +17,7 @@ import 'calypso/state/sharing/init';
  * @returns {Array}        Keyring connections, if known.
  */
 export function getKeyringConnections( state ) {
-	return values( state.sharing.keyring.items );
+	return Object.values( state.sharing.keyring.items );
 }
 
 /**
