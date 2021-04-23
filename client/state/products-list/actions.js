@@ -16,12 +16,11 @@ export function receiveProductsList( productsList ) {
 	// thus, we don't have any safety checks before this line.
 
 	// Create a completely new products list to avoid mutating the original
-	const sanitizedProductsList = Object.entries( productsList ).reduce(
-		( acc, [ slug, product ] ) => {
-			acc[ slug ] = ensureNumericCost( product );
-			return acc;
-		},
-		{}
+	const sanitizedProductsList = Object.fromEntries(
+		Object.entries( productsList ).map( ( [ slug, product ] ) => [
+			slug,
+			ensureNumericCost( product ),
+		] )
 	);
 
 	return {
