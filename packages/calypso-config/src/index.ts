@@ -13,6 +13,7 @@ import type { ConfigData } from '@automattic/create-calypso-config';
 declare global {
 	interface Window {
 		configData: ConfigData;
+		electron: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 	}
 }
 
@@ -27,7 +28,19 @@ if ( 'undefined' === typeof window || ! window.configData ) {
 	);
 }
 
-const configData = window.configData;
+const isDesktop = window.electron !== undefined;
+
+let configData: ConfigData;
+
+if ( isDesktop ) {
+	configData = Object.assign( window.configData, { env_id: 'desktop', client_slug: 'desktop' } );
+	if ( configData.features ) {
+		configData.features[ 'desktop' ] = true;
+		configData.features[ 'desktop-promo' ] = false;
+	}
+} else {
+	configData = window.configData;
+}
 
 // calypso.live matches
 // hash-abcd1234.calypso.live matches
