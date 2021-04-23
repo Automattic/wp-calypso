@@ -147,7 +147,6 @@ export const WPCOM_TRAFFIC_GUIDE = 'traffic-guide';
 export const JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN = true;
 export const JETPACK_REDIRECT_URL =
 	'https://jetpack.com/redirect/?source=jetpack-checkout-thankyou';
-export const redirectCloudCheckoutToWpAdmin = () => !! JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN;
 
 // Jetpack versions prior to this one are not fully compatible with new plans
 export const JETPACK_LEGACY_PLANS_MAX_PLUGIN_VERSION = '8.9.1';
@@ -482,38 +481,3 @@ export const TYPE_ALL = 'TYPE_ALL';
 export const TYPE_P2_PLUS = 'TYPE_P2_PLUS';
 
 export const STORE_DEPRECATION_START_DATE = new Date( '2021-01-19T19:30:00+00:00' );
-
-export function isMonthly( plan ) {
-	return WPCOM_MONTHLY_PLANS.includes( plan ) || JETPACK_MONTHLY_PLANS.includes( plan );
-}
-
-export function isNew( plan ) {
-	return NEW_PLANS.includes( plan );
-}
-
-export function isBestValue( plan ) {
-	return BEST_VALUE_PLANS.includes( plan );
-}
-
-/**
- * Return estimated duration of given PLAN_TERM in days
- *
- * @param {string} term TERM_ constant
- * @returns {number} Term duration
- */
-export function getTermDuration( term ) {
-	switch ( term ) {
-		case TERM_MONTHLY:
-			return PLAN_MONTHLY_PERIOD;
-
-		case TERM_ANNUALLY:
-			return PLAN_ANNUAL_PERIOD;
-
-		case TERM_BIENNIALLY:
-			return PLAN_BIENNIAL_PERIOD;
-	}
-
-	if ( process.env.NODE_ENV === 'development' ) {
-		console.error( `Unexpected argument ${ term }, expected one of TERM_ constants` ); // eslint-disable-line no-console
-	}
-}

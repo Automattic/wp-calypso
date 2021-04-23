@@ -64,7 +64,7 @@ export { isJetpackSearch } from './is-jetpack-search';
 export { isJpphpBundle } from './is-jpphp-bundle';
 export { default as isJetpackLegacyItem } from './is-jetpack-legacy-item';
 export { default as isJetpackPurchasableItem } from './is-jetpack-purchasable-item';
-export { isMonthlyProduct } from './is-monthly';
+export * from './is-monthly';
 export { isNoAds } from './is-no-ads';
 export { isPersonal } from './is-personal';
 export { isPlan } from './is-plan';
