@@ -1,7 +1,14 @@
-/**
- * Internal dependencies
- */
-import { isEnabled } from '@automattic/calypso-config';
+export const TITAN_MAIL_MONTHLY_SLUG = 'wp_titan_mail_monthly';
+
+export const domainProductSlugs = {
+	TRANSFER_IN: 'domain_transfer',
+};
+
+export const GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY =
+	'wp_google_workspace_business_starter_yearly';
+export const GSUITE_BASIC_SLUG = 'gapps';
+export const GSUITE_BUSINESS_SLUG = 'gapps_unlimited';
+export const GSUITE_EXTRA_LICENSE_SLUG = 'gapps_extra_license';
 
 // Jetpack products constants
 export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
@@ -99,8 +106,8 @@ export const JETPACK_ANTI_SPAM_PRODUCTS = [
 
 export const JETPACK_PRODUCTS_LIST = [
 	...JETPACK_BACKUP_PRODUCTS,
-	...( isEnabled( 'jetpack/scan-product' ) ? JETPACK_SCAN_PRODUCTS : [] ),
-	...( isEnabled( 'jetpack/anti-spam-product' ) ? JETPACK_ANTI_SPAM_PRODUCTS : [] ),
+	...JETPACK_SCAN_PRODUCTS,
+	...JETPACK_ANTI_SPAM_PRODUCTS,
 	...JETPACK_SEARCH_PRODUCTS,
 ];
 

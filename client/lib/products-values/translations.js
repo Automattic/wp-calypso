@@ -7,8 +7,7 @@ import { numberFormat, translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from '@automattic/calypso-config';
-import * as CONSTANTS from '@automattic/calypso-products';
+import * as CONSTANTS from './index';
 
 // Translatable strings
 export const getJetpackProductsShortNames = () => {
@@ -213,90 +212,85 @@ export const getJetpackProductsDescriptions = () => {
 	};
 };
 
-export const getJetpackProducts = () => {
-	const output = [
-		{
-			title: translate( 'Jetpack Backup' ),
-			description: translate(
-				'Always-on backups ensure you never lose your site. Choose from real-time or daily backups.'
-			),
-			hasPromo: true,
-			id: CONSTANTS.PRODUCT_JETPACK_BACKUP,
-			link: {
-				label: translate( 'Which backup option is best for me?' ),
-				props: {
-					location: 'product_jetpack_backup_description',
-					slug: 'which-one-do-i-need',
-				},
-				url: CONSTANTS.JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL,
+export const getJetpackProducts = () => [
+	{
+		title: translate( 'Jetpack Backup' ),
+		description: translate(
+			'Always-on backups ensure you never lose your site. Choose from real-time or daily backups.'
+		),
+		hasPromo: true,
+		id: CONSTANTS.PRODUCT_JETPACK_BACKUP,
+		link: {
+			label: translate( 'Which backup option is best for me?' ),
+			props: {
+				location: 'product_jetpack_backup_description',
+				slug: 'which-one-do-i-need',
 			},
-			options: {
-				yearly: CONSTANTS.JETPACK_BACKUP_PRODUCTS_YEARLY,
-				monthly: CONSTANTS.JETPACK_BACKUP_PRODUCTS_MONTHLY,
-			},
-			optionShortNames: getJetpackProductsShortNames(),
-			optionDisplayNames: getJetpackProductsDisplayNames(),
-			optionDescriptions: getJetpackProductsDescriptions(),
-			optionsLabel: translate( 'Select a backup option:' ),
-			slugs: CONSTANTS.JETPACK_BACKUP_PRODUCTS,
+			url: CONSTANTS.JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL,
 		},
-	];
-	isEnabled( 'jetpack/scan-product' ) &&
-		output.push( {
-			title: translate( 'Jetpack Scan' ),
-			description: getJetpackProductsDescriptions()[ CONSTANTS.PRODUCT_JETPACK_SCAN ],
-			// There is only one option per billing interval, but this
-			// component still needs the full display with radio buttons.
-			forceRadios: true,
-			hasPromo: false,
-			id: CONSTANTS.PRODUCT_JETPACK_SCAN,
-			link: {
-				label: translate( 'Learn more' ),
-				props: {
-					location: 'product_jetpack_scan_description',
-					slug: 'learn-more-scan',
-				},
-				url: CONSTANTS.JETPACK_SCAN_PRODUCT_LANDING_PAGE_URL,
+		options: {
+			yearly: CONSTANTS.JETPACK_BACKUP_PRODUCTS_YEARLY,
+			monthly: CONSTANTS.JETPACK_BACKUP_PRODUCTS_MONTHLY,
+		},
+		optionShortNames: getJetpackProductsShortNames(),
+		optionDisplayNames: getJetpackProductsDisplayNames(),
+		optionDescriptions: getJetpackProductsDescriptions(),
+		optionsLabel: translate( 'Select a backup option:' ),
+		slugs: CONSTANTS.JETPACK_BACKUP_PRODUCTS,
+	},
+	{
+		title: translate( 'Jetpack Scan' ),
+		description: getJetpackProductsDescriptions()[ CONSTANTS.PRODUCT_JETPACK_SCAN ],
+		// There is only one option per billing interval, but this
+		// component still needs the full display with radio buttons.
+		forceRadios: true,
+		hasPromo: false,
+		id: CONSTANTS.PRODUCT_JETPACK_SCAN,
+		link: {
+			label: translate( 'Learn more' ),
+			props: {
+				location: 'product_jetpack_scan_description',
+				slug: 'learn-more-scan',
 			},
-			options: {
-				yearly: [ CONSTANTS.PRODUCT_JETPACK_SCAN ],
-				monthly: [ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ],
+			url: CONSTANTS.JETPACK_SCAN_PRODUCT_LANDING_PAGE_URL,
+		},
+		options: {
+			yearly: [ CONSTANTS.PRODUCT_JETPACK_SCAN ],
+			monthly: [ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ],
+		},
+		optionShortNames: getJetpackProductsShortNames(),
+		optionDisplayNames: getJetpackProductsDisplayNames(),
+		optionDescriptions: getJetpackProductsDescriptions(),
+		optionsLabel: translate( 'Select a product option:' ),
+		slugs: CONSTANTS.JETPACK_SCAN_PRODUCTS,
+	},
+	{
+		title: translate( 'Jetpack Anti-spam' ),
+		description: getJetpackProductsDescriptions()[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ],
+		// There is only one option per billing interval, but this
+		// component still needs the full display with radio buttons.
+		forceRadios: true,
+		hasPromo: false,
+		id: CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM,
+		link: {
+			label: translate( 'Learn more' ),
+			props: {
+				location: 'product_jetpack_anti_spam_description',
+				slug: 'learn-more-anti-spam',
 			},
-			optionShortNames: getJetpackProductsShortNames(),
-			optionDisplayNames: getJetpackProductsDisplayNames(),
-			optionDescriptions: getJetpackProductsDescriptions(),
-			optionsLabel: translate( 'Select a product option:' ),
-			slugs: CONSTANTS.JETPACK_SCAN_PRODUCTS,
-		} );
-	isEnabled( 'jetpack/anti-spam-product' ) &&
-		output.push( {
-			title: translate( 'Jetpack Anti-spam' ),
-			description: getJetpackProductsDescriptions()[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ],
-			// There is only one option per billing interval, but this
-			// component still needs the full display with radio buttons.
-			forceRadios: true,
-			hasPromo: false,
-			id: CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM,
-			link: {
-				label: translate( 'Learn more' ),
-				props: {
-					location: 'product_jetpack_anti_spam_description',
-					slug: 'learn-more-anti-spam',
-				},
-				url: CONSTANTS.JETPACK_ANTI_SPAM_PRODUCT_LANDING_PAGE_URL,
-			},
-			options: {
-				yearly: [ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ],
-				monthly: [ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ],
-			},
-			optionShortNames: getJetpackProductsShortNames(),
-			optionDisplayNames: getJetpackProductsDisplayNames(),
-			optionDescriptions: getJetpackProductsDescriptions(),
-			optionsLabel: translate( 'Select a product option:' ),
-			slugs: CONSTANTS.JETPACK_ANTI_SPAM_PRODUCTS,
-		} );
-
-	output.push( {
+			url: CONSTANTS.JETPACK_ANTI_SPAM_PRODUCT_LANDING_PAGE_URL,
+		},
+		options: {
+			yearly: [ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ],
+			monthly: [ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ],
+		},
+		optionShortNames: getJetpackProductsShortNames(),
+		optionDisplayNames: getJetpackProductsDisplayNames(),
+		optionDescriptions: getJetpackProductsDescriptions(),
+		optionsLabel: translate( 'Select a product option:' ),
+		slugs: CONSTANTS.JETPACK_ANTI_SPAM_PRODUCTS,
+	},
+	{
 		title: translate( 'Jetpack Search' ),
 		description: getJetpackProductsDescriptions()[ CONSTANTS.PRODUCT_JETPACK_SEARCH ],
 		// There is only one option per billing interval, but this
@@ -366,7 +360,5 @@ export const getJetpackProducts = () => {
 			);
 		},
 		slugs: CONSTANTS.JETPACK_SEARCH_PRODUCTS,
-	} );
-
-	return output;
-};
+	},
+];
