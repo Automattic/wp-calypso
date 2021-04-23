@@ -63,7 +63,6 @@ export const SITE_REQUEST_OPTIONS = [
 	'unmapped_url',
 	'verification_services_codes',
 	'videopress_enabled',
-	'woocommerce_is_active',
 	'wordads',
 	'site_creation_flow',
 ].join();
