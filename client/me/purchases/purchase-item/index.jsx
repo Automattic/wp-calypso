@@ -223,24 +223,24 @@ class PurchaseItem extends Component {
 		}
 
 		if ( isExpired( purchase ) ) {
-			const expiredToday = moment().diff( expiry, 'hours' ) < 24;
-			const expiredText = expiredToday ? expiry.format( '[today]' ) : expiry.fromNow();
-
 			if ( isConciergeSession( purchase ) ) {
 				return translate( 'Session used on %s', {
 					args: expiry.format( 'LL' ),
 				} );
 			}
 
+			const isExpiredToday = moment().diff( expiry, 'hours' ) < 24;
+			const expiredTodayText = translate( 'Expired today' );
+			const expiredFromNowText = translate( 'Expired %(timeSinceExpiry)s', {
+				args: {
+					timeSinceExpiry: expiry.fromNow(),
+				},
+				context: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
+			} );
+
 			return (
 				<span className="purchase-item__is-error">
-					{ translate( 'Expired %(timeSinceExpiry)s', {
-						args: {
-							timeSinceExpiry: expiredText,
-						},
-						context:
-							'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
-					} ) }
+					{ isExpiredToday ? expiredTodayText : expiredFromNowText }
 					{ this.trackImpression( 'purchase-expired' ) }
 				</span>
 			);
