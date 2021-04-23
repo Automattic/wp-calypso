@@ -2,10 +2,10 @@
  * Internal dependencies
  */
 import { isBloggerPlan } from './main';
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 
 export function isBlogger( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	return isBloggerPlan( product.product_slug );
 }

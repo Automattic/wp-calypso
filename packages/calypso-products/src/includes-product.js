@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 
 export function includesProduct( products, product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	return products.indexOf( product.product_slug ) >= 0;
 }

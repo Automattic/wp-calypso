@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 
 export function isUnlimitedThemes( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	return 'unlimited_themes' === product.product_slug;
 }

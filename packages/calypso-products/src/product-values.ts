@@ -1,5 +1,5 @@
 export { allowedProductAttributes } from './allowed-product-attributes';
-export { formatProduct } from './format-product';
+export { snakeCase } from './snake-case';
 export { getDomain } from './get-domain';
 export { getDomainProductRanking } from './get-domain-product-ranking';
 export { getIncludedDomainPurchaseAmount } from './get-included-domain-purchase-amount';

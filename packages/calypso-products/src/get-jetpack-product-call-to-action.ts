@@ -6,7 +6,7 @@ import { TranslateResult } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 import { getJetpackProductsCallToAction } from './translations';
 
 /**
@@ -20,8 +20,8 @@ import type { Product } from './products-list';
  * @param {object} product Product purchase object
  * @returns {TranslateResult} Product display name
  */
-export function getJetpackProductCallToAction( product: object ): TranslateResult | undefined {
-	product = formatProduct( product );
+export function getJetpackProductCallToAction( product: unknown ): TranslateResult | undefined {
+	product = snakeCase( product );
 	const jetpackProductsCallToActions = getJetpackProductsCallToAction() as Record<
 		string,
 		TranslateResult

@@ -1,12 +1,12 @@
 /**
  * Internal dependencies
  */
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 import { PRODUCTS_LIST } from './products-list';
 
 export function getProductFromSlug( productSlug ) {
 	if ( PRODUCTS_LIST[ productSlug ] ) {
-		return formatProduct( PRODUCTS_LIST[ productSlug ] );
+		return snakeCase( PRODUCTS_LIST[ productSlug ] );
 	}
 	return productSlug; // Consistent behavior with `getPlan`.
 }

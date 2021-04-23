@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 
 export function getDomain( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	const domainToBundle = product.extra?.domain_to_bundle;
 	if ( domainToBundle ) {

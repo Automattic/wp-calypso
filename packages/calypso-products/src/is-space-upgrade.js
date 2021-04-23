@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 
 export function isSpaceUpgrade( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	return (
 		'1gb_space_upgrade' === product.product_slug ||

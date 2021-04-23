@@ -7,10 +7,10 @@ import {
 	isGSuiteOrExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 } from './gsuite-product-slug';
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 
 export function isGoogleWorkspace( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	return isGoogleWorkspaceProductSlug( product.product_slug );
 }
@@ -23,7 +23,7 @@ export function isGoogleWorkspace( product ) {
  * @see isGoogleWorkspaceExtraLicence() in client/lib/purchases for a function that works on a purchase object
  */
 export function isGoogleWorkspaceExtraLicence( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	if ( ! isGoogleWorkspaceProductSlug( product.product_slug ) ) {
 		return false;
@@ -34,19 +34,19 @@ export function isGoogleWorkspaceExtraLicence( product ) {
 }
 
 export function isGSuite( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	return isGSuiteProductSlug( product.product_slug );
 }
 
 export function isGSuiteOrExtraLicense( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	return isGSuiteOrExtraLicenseProductSlug( product.product_slug );
 }
 
 export function isGSuiteOrExtraLicenseOrGoogleWorkspace( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	return (
 		isGSuiteOrExtraLicenseProductSlug( product.product_slug ) ||
@@ -55,7 +55,7 @@ export function isGSuiteOrExtraLicenseOrGoogleWorkspace( product ) {
 }
 
 export function isGSuiteOrGoogleWorkspace( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	return isGSuiteOrGoogleWorkspaceProductSlug( product.product_slug );
 }

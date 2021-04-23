@@ -1,12 +1,12 @@
 /**
  * Internal dependencies
  */
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 import { isJetpackPlan } from './is-jetpack-plan';
 import { isBusiness } from './is-business';
 
 export function isJetpackBusiness( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	return isBusiness( product ) && isJetpackPlan( product );
 }

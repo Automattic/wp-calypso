@@ -2,10 +2,10 @@
  * Internal dependencies
  */
 import { isEcommercePlan } from './main';
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 
 export function isEcommerce( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	return isEcommercePlan( product.product_slug );
 }

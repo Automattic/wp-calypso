@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 import { getJetpackProductsDisplayNames } from './translations';
 
 /**
@@ -11,7 +11,7 @@ import { getJetpackProductsDisplayNames } from './translations';
  * @returns         {string|object} Product display name
  */
 export function getJetpackProductDisplayName( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames();
 
 	return jetpackProductsDisplayNames?.[ product.product_slug ];

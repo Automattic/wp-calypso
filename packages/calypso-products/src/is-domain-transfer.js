@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 import { domainProductSlugs } from './plans-constants';
 
 export function isDomainTransfer( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	return product.product_slug === domainProductSlugs.TRANSFER_IN;
 }

@@ -2,10 +2,10 @@
  * Internal dependencies
  */
 import { isSecurityDailyPlan } from './main';
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 
 export function isSecurityDaily( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	return isSecurityDailyPlan( product.product_slug );
 }

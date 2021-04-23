@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 import { isDomainTransfer } from './is-domain-transfer';
 
 export function isDomainTransferProduct( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	return isDomainTransfer( product );
 }

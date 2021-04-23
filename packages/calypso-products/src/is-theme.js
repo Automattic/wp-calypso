@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 
 export function isTheme( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	return 'premium_theme' === product.product_slug;
 }

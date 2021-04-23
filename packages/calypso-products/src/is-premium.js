@@ -2,10 +2,10 @@
  * Internal dependencies
  */
 import { isPremiumPlan } from './main';
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 
 export function isPremium( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	return isPremiumPlan( product.product_slug );
 }

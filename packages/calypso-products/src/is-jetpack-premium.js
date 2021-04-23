@@ -1,12 +1,12 @@
 /**
  * Internal dependencies
  */
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 import { isJetpackPlan } from './is-jetpack-plan';
 import { isPremium } from './is-premium';
 
 export function isJetpackPremium( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	return isPremium( product ) && isJetpackPlan( product );
 }

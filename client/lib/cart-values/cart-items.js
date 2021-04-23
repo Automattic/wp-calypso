@@ -15,7 +15,7 @@ import {
 } from 'calypso/lib/gsuite/constants';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import {
-	formatProduct,
+	snakeCase,
 	isCustomDesign,
 	isDomainMapping,
 	isDomainProduct,
@@ -644,7 +644,7 @@ export function getDomainMappings( cart ) {
  * @returns {CartItemValue} a CartItem object
  */
 export function getRenewalItemFromProduct( product, properties ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	let cartItem;
 

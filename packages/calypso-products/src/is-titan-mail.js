@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 import { TITAN_MAIL_MONTHLY_SLUG } from './plans-constants';
 
 export function isTitanMail( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	return product.product_slug === TITAN_MAIL_MONTHLY_SLUG;
 }

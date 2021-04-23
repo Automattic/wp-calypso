@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 import { getDomain } from './get-domain';
 import { isDomainMapping } from './is-domain-mapping';
 import { isDomainRegistration } from './is-domain-registration';
@@ -49,7 +49,7 @@ const productDependencies = {
 export function isDependentProduct( product, dependentProduct, domainsWithPlansOnly ) {
 	let isPlansOnlyDependent = false;
 
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	const slug = isDomainRegistration( product ) ? 'domain' : product.product_slug;
 	const dependentSlug = isDomainRegistration( dependentProduct )

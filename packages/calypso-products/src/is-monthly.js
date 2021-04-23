@@ -2,10 +2,10 @@
  * Internal dependencies
  */
 import { JETPACK_MONTHLY_PLANS, PLAN_MONTHLY_PERIOD, WPCOM_MONTHLY_PLANS } from './plans-constants';
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 
 export function isMonthlyProduct( rawProduct ) {
-	const product = formatProduct( rawProduct );
+	const product = snakeCase( rawProduct );
 
 	return parseInt( product.bill_period, 10 ) === PLAN_MONTHLY_PERIOD;
 }

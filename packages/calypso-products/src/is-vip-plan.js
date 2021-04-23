@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 
 export function isVipPlan( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	return 'vip' === product.product_slug;
 }

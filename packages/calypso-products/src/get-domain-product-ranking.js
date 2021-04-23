@@ -1,12 +1,12 @@
 /**
  * Internal dependencies
  */
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 import { isDomainRegistration } from './is-domain-registration';
 import { isDomainMapping } from './is-domain-mapping';
 
 export function getDomainProductRanking( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	if ( isDomainRegistration( product ) ) {
 		return 0;

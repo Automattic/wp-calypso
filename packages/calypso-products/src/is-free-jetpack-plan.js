@@ -2,10 +2,10 @@
  * Internal dependencies
  */
 import { PLAN_JETPACK_FREE } from './plans-constants';
-import { formatProduct } from './format-product';
+import { snakeCase } from './snake-case';
 
 export function isFreeJetpackPlan( product ) {
-	product = formatProduct( product );
+	product = snakeCase( product );
 
 	return product.product_slug === PLAN_JETPACK_FREE;
 }
