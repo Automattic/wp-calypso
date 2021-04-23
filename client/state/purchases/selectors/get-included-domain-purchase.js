@@ -11,7 +11,7 @@ import {
 	getIncludedDomainPurchaseAmount,
 	isDomainRegistration,
 	isDomainMapping,
-} from '@automattic/calypso-products';
+} from 'calypso/lib/products-values';
 import { getSitePurchases } from './get-site-purchases';
 
 import 'calypso/state/purchases/init';

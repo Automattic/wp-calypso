@@ -14,6 +14,13 @@ import React, { Component, Fragment } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { abtest } from 'calypso/lib/abtest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import {
+	applyTestFiltersToPlansList,
+	isWpComMonthlyPlan,
+	JETPACK_PLANS,
+	JETPACK_LEGACY_PLANS,
+	JETPACK_PRODUCTS_LIST,
+} from '@automattic/calypso-products';
 import { Button, Card, CompactCard, ProductIcon } from '@automattic/components';
 import config from '@automattic/calypso-config';
 import {
@@ -76,13 +83,7 @@ import {
 	isJetpackProduct,
 	isConciergeSession,
 	isTitanMail,
-	applyTestFiltersToPlansList,
-	isWpComMonthlyPlan,
-	JETPACK_PLANS,
-	JETPACK_LEGACY_PLANS,
-	JETPACK_PRODUCTS_LIST,
-	isP2Plus,
-} from '@automattic/calypso-products';
+} from 'calypso/lib/products-values';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import ProductLink from 'calypso/me/purchases/product-link';
@@ -115,6 +116,7 @@ import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dial
  * Style dependencies
  */
 import './style.scss';
+import { isP2Plus } from 'calypso/lib/products-values/is-p2-plus';
 
 class ManagePurchase extends Component {
 	static propTypes = {

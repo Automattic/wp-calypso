@@ -2,6 +2,7 @@
  * External dependencies
  */
 import {
+	JetpackPlanSlugs,
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
@@ -25,7 +26,7 @@ import { getForCurrentCROIteration, Iterations } from '../iterations';
 /**
  * Type dependencies
  */
-import type { JetpackPlanSlugs, JetpackProductSlug } from '@automattic/calypso-products';
+import type { JetpackProductSlug } from 'calypso/lib/products-values/types';
 
 const setProductsInPosition = ( slugs: string[], position: number ) =>
 	slugs.reduce( ( map, slug ) => ( { ...map, [ slug ]: position } ), {} );

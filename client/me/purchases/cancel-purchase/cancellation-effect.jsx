@@ -16,7 +16,7 @@ import {
 	isDotComPlan,
 	isPlan,
 	isTheme,
-} from '@automattic/calypso-products';
+} from 'calypso/lib/products-values';
 
 export function cancellationEffectHeadline( purchase, translate ) {
 	const { domain } = purchase;

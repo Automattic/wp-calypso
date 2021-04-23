@@ -10,14 +10,12 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FormattedHeader from 'calypso/components/formatted-header';
+import { getPlan, JETPACK_RESET_PLANS, JETPACK_PRODUCTS_LIST } from '@automattic/calypso-products';
 import {
-	getPlan,
-	JETPACK_RESET_PLANS,
-	JETPACK_PRODUCTS_LIST,
 	getJetpackProductShortName,
 	getJetpackProductDescription,
-	PRODUCTS_LIST,
-} from '@automattic/calypso-products';
+} from 'calypso/lib/products-values';
+import { PRODUCTS_LIST } from 'calypso/lib/products-values/products-list';
 import { FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
 import { retrievePlan } from './persistence-utils';
 

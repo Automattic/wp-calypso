@@ -9,7 +9,7 @@ import page from 'page';
  */
 import CurrentPlan from './';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { isFreePlanProduct } from '@automattic/calypso-products';
+import { isFreePlan } from 'calypso/lib/products-values';
 
 export function currentPlan( context, next ) {
 	const state = context.store.getState();
@@ -22,7 +22,7 @@ export function currentPlan( context, next ) {
 		return null;
 	}
 
-	if ( isFreePlanProduct( selectedSite.plan ) ) {
+	if ( isFreePlan( selectedSite.plan ) ) {
 		page.redirect( `/plans/${ selectedSite.slug }` );
 
 		return null;

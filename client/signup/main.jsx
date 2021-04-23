@@ -30,7 +30,7 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isDomainMapping,
-} from '@automattic/calypso-products';
+} from 'calypso/lib/products-values';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
 import {
 	recordSignupStart,

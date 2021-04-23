@@ -21,7 +21,7 @@ import {
 	isPlan,
 	isSiteRedirect,
 	isTitanMail,
-} from '@automattic/calypso-products';
+} from 'calypso/lib/products-values';
 import { isGoogleWorkspaceExtraLicence } from 'calypso/lib/purchases';
 import {
 	isGSuiteExtraLicenseProductSlug,

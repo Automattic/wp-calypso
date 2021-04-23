@@ -21,7 +21,7 @@ import {
 	isSiteRedirect,
 	isTheme,
 	isTitanMail,
-} from '@automattic/calypso-products';
+} from 'calypso/lib/products-values';
 
 const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 	let props = {};

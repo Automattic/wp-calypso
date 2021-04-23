@@ -42,17 +42,19 @@ import {
 	isConciergeSession,
 	isTrafficGuide,
 	isTitanMail,
+	isMonthly,
 	isP2Plus,
-	isMonthlyProduct,
-	sortProducts,
+} from 'calypso/lib/products-values';
+import sortProducts from 'calypso/lib/products-values/sort';
+import { getTld } from 'calypso/lib/domains';
+import { domainProductSlugs } from 'calypso/lib/domains/constants';
+import {
 	getTermDuration,
 	getPlan,
 	isBloggerPlan,
 	isWpComFreePlan,
 	isWpComBloggerPlan,
 } from '@automattic/calypso-products';
-import { getTld } from 'calypso/lib/domains';
-import { domainProductSlugs } from 'calypso/lib/domains/constants';
 
 /**
  * @typedef { import("./types").CartItemValue} CartItemValue
@@ -212,7 +214,7 @@ export function hasDomainCredit( cart ) {
 }
 
 export function hasMonthlyCartItem( cart ) {
-	return some( getAllCartItems( cart ), isMonthlyProduct );
+	return some( getAllCartItems( cart ), isMonthly );
 }
 
 /**
