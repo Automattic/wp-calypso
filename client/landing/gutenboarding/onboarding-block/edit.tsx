@@ -41,10 +41,35 @@ import './colors.scss';
 import './style.scss';
 
 const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = () => {
-	const { selectedDesign, siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
-	const isRedirecting = useSelect( ( select ) => select( STORE_KEY ).getIsRedirecting() );
-	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
-	const newSiteError = useSelect( ( select ) => select( SITE_STORE ).getNewSiteError() );
+	const {
+		hasSiteTitle,
+		hasSelectedDesign,
+		hasSelectedDesignWithoutFonts,
+		isRedirecting,
+	} = useSelect(
+		( select ) => {
+			const onboardSelect = select( STORE_KEY );
+
+			return {
+				hasSiteTitle: onboardSelect.hasSiteTitle(),
+				hasSelectedDesign: onboardSelect.hasSelectedDesign(),
+				hasSelectedDesignWithoutFonts: onboardSelect.hasSelectedDesignWithoutFonts(),
+				isRedirecting: onboardSelect.getIsRedirecting(),
+			};
+		},
+		[ STORE_KEY ]
+	);
+	const { isCreatingSite, newSiteError } = useSelect(
+		( select ) => {
+			const { isFetchingSite, getNewSiteError } = select( SITE_STORE );
+
+			return {
+				isCreatingSite: isFetchingSite(),
+				newSiteError: getNewSiteError(),
+			};
+		},
+		[ SITE_STORE ]
+	);
 	const shouldTriggerCreate = useNewQueryParam();
 	const isAnchorFmSignup = useIsAnchorFm();
 	const { isAnchorFmPodcastIdError } = useAnchorFmParams();
@@ -83,19 +108,31 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	);
 
 	const canUseDesignStep = React.useCallback( (): boolean => {
-		return !! siteTitle;
-	}, [ siteTitle ] );
+		return hasSiteTitle;
+	}, [ hasSiteTitle ] );
 
 	const canUseStyleStep = React.useCallback( (): boolean => {
-		return !! selectedDesign;
-	}, [ selectedDesign ] );
+		return hasSelectedDesign;
+	}, [ hasSelectedDesign ] );
+
+	const shouldSkipStyleStep = React.useCallback( (): boolean => {
+		return hasSelectedDesignWithoutFonts;
+	}, [ hasSelectedDesignWithoutFonts ] );
+
+	const canUseFeatureStep = React.useCallback( (): boolean => {
+		return hasSelectedDesign;
+	}, [ hasSelectedDesign ] );
+
+	const canUsePlanStep = React.useCallback( (): boolean => {
+		return hasSelectedDesign;
+	}, [ hasSelectedDesign ] );
 
 	const canUseCreateSiteStep = React.useCallback( (): boolean => {
 		return isCreatingSite || isRedirecting;
 	}, [ isCreatingSite, isRedirecting ] );
 
 	const getLatestStepPath = () => {
-		if ( canUseStyleStep() && ! isAnchorFmSignup ) {
+		if ( hasSelectedDesign && ! isAnchorFmSignup ) {
 			return makePathWithState( Step.Plans );
 		}
 
@@ -106,7 +143,17 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		return makePathWithState( Step.IntentGathering );
 	};
 
+	const getDesignWithoutFontsPath = () => {
+		// This is the path the is used to redirect the user when a design
+		// with no 'fonts' is selected
+		if ( hasSiteTitle ) {
+			return makePathWithState( Step.Features );
+		}
+		return makePathWithState( Step.Domains );
+	};
+
 	const redirectToLatestStep = <Redirect to={ getLatestStepPath() } />;
+	const redirectToDesignWithoutFontsStep = <Redirect to={ getDesignWithoutFontsPath() } />;
 
 	function createSiteOrError() {
 		if ( newSiteError ) {
@@ -142,6 +189,12 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		}
 	}, [ location, step, setLastLocation ] );
 
+	const styleStepIfNotSkipped = shouldSkipStyleStep() ? (
+		redirectToDesignWithoutFontsStep
+	) : (
+		<StylePreview />
+	);
+
 	return (
 		<div className="onboarding-block">
 			{ isCreatingSite && (
@@ -160,11 +213,11 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				</Route>
 
 				<Route path={ makePath( Step.Style ) }>
-					{ canUseStyleStep() ? <StylePreview /> : redirectToLatestStep }
+					{ canUseStyleStep() ? styleStepIfNotSkipped : redirectToLatestStep }
 				</Route>
 
 				<Route path={ makePath( Step.Features ) }>
-					{ canUseStyleStep() ? <Features /> : redirectToLatestStep }
+					{ canUseFeatureStep() ? <Features /> : redirectToLatestStep }
 				</Route>
 
 				<Route path={ makePath( Step.Domains ) }>
@@ -176,7 +229,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				</Route>
 
 				<Route path={ makePath( Step.Plans ) }>
-					{ canUseStyleStep() ? <Plans /> : redirectToLatestStep }
+					{ canUsePlanStep() ? <Plans /> : redirectToLatestStep }
 				</Route>
 
 				<Route path={ makePath( Step.PlansModal ) }>

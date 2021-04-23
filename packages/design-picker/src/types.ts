@@ -19,7 +19,7 @@ export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm
 
 export interface Design {
 	categories: Array< string >;
-	fonts: FontPair;
+	fonts?: FontPair;
 	is_alpha?: boolean;
 	is_fse?: boolean;
 	is_premium: boolean;
