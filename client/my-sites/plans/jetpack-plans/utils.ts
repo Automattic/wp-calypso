@@ -757,7 +757,7 @@ export const getJetpackDescriptionWithOptions = (
  *
  * @returns {string} the slug of a supported Jetpack plan
  */
-function getSupportedNewPlanFromLegacyPlanSlug( legacyPlanSlug: string ): string {
+export function getSupportedNewPlanFromLegacyPlanSlug( legacyPlanSlug: string ): string {
 	return LEGACY_TO_NEW_PLAN_MATRIX[ legacyPlanSlug ];
 }
 
@@ -774,19 +774,15 @@ export function getHighlightedProduct( productSlug?: string ): [ string, string 
 		return null;
 	}
 
-	const proposedProductSlug = JETPACK_LEGACY_PLANS.includes( productSlug )
-		? getSupportedNewPlanFromLegacyPlanSlug( productSlug )
-		: productSlug;
-
 	// If neither of these methods return a slug, it means that the `productSlug`
 	// is not really a Jetpack product slug.
-	const yearlySlug = getYearlySlugFromMonthly( proposedProductSlug );
-	const monthlySlug = getMonthlySlugFromYearly( proposedProductSlug );
+	const yearlySlug = getYearlySlugFromMonthly( productSlug );
+	const monthlySlug = getMonthlySlugFromYearly( productSlug );
 
 	if ( monthlySlug ) {
-		return [ monthlySlug, proposedProductSlug ];
+		return [ monthlySlug, productSlug ];
 	} else if ( yearlySlug ) {
-		return [ proposedProductSlug, yearlySlug ];
+		return [ productSlug, yearlySlug ];
 	}
 
 	return null;
