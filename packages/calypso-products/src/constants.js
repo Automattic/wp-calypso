@@ -1,3 +1,18 @@
+<<<<<<< HEAD
+=======
+export const TITAN_MAIL_MONTHLY_SLUG = 'wp_titan_mail_monthly';
+
+export const domainProductSlugs = {
+	TRANSFER_IN: 'domain_transfer',
+};
+
+export const GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY =
+	'wp_google_workspace_business_starter_yearly';
+export const GSUITE_BASIC_SLUG = 'gapps';
+export const GSUITE_BUSINESS_SLUG = 'gapps_unlimited';
+export const GSUITE_EXTRA_LICENSE_SLUG = 'gapps_extra_license';
+
+>>>>>>> Remove Jetpack products feature flags
 // Jetpack products constants
 export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
 export const PRODUCT_JETPACK_BACKUP_DAILY = 'jetpack_backup_daily';
