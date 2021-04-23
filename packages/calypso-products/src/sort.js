@@ -1,7 +1,10 @@
 /**
  * Internal dependencies
  */
-import { getDomainProductRanking, isCredits, isDomainProduct, isPlan } from '.';
+import { getDomainProductRanking } from './get-domain-product-ranking';
+import { isPlan } from './is-plan';
+import { isDomainProduct } from './is-domain-product';
+import { isCredits } from './is-credits';
 
 // https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore
 const groupBy = ( items, key ) =>

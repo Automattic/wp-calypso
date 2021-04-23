@@ -34,7 +34,7 @@ import {
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
-} from './index';
+} from './jetpack-constants';
 
 // Translatable strings
 export const getJetpackProductsShortNames = () => {

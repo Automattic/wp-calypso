@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { PLAN_CHARGEBACK } from './index';
+import { PLAN_CHARGEBACK } from './plans-constants';
 import { formatProduct } from './format-product';
 
 export function isChargeback( product ) {

@@ -7,6 +7,8 @@ import {
 	TERM_MONTHLY,
 	PLAN_MONTHLY_PERIOD,
 	PLAN_ANNUAL_PERIOD,
+} from './plans-constants';
+import {
 	FEATURE_BACKUP_DAILY_V2,
 	FEATURE_BACKUP_REALTIME_V2,
 	FEATURE_ONE_CLICK_RESTORE_V2,
@@ -37,7 +39,7 @@ import {
 	PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
-} from './index';
+} from './jetpack-constants';
 
 /**
  * Type dependencies

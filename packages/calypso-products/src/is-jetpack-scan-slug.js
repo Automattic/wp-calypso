@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { JETPACK_SCAN_PRODUCTS } from './index';
+import { JETPACK_SCAN_PRODUCTS } from './jetpack-constants';
 
 export function isJetpackScanSlug( productSlug ) {
 	return JETPACK_SCAN_PRODUCTS.includes( productSlug );

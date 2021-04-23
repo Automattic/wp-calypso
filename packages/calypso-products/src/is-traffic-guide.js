@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { formatProduct } from './format-product';
-import { WPCOM_TRAFFIC_GUIDE } from './index';
+import { WPCOM_TRAFFIC_GUIDE } from './plans-constants';
 
 export function isTrafficGuide( product ) {
 	product = formatProduct( product );

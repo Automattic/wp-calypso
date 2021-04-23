@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isPersonalPlan } from './index';
+import { isPersonalPlan } from './main';
 import { formatProduct } from './format-product';
 
 export function isPersonal( product ) {

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { TERM_ANNUALLY } from './index';
+import { TERM_ANNUALLY } from './plans-constants';
 import { PRODUCTS_LIST } from './products-list';
 
 /**

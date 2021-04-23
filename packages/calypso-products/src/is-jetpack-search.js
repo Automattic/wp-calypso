@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { JETPACK_SEARCH_PRODUCTS } from './index';
+import { JETPACK_SEARCH_PRODUCTS } from './jetpack-constants';
 import { formatProduct } from './format-product';
 
 export function isJetpackSearch( product ) {

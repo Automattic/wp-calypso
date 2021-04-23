@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { PLAN_FREE } from './index';
+import { PLAN_FREE } from './plans-constants';
 import { formatProduct } from './format-product';
 
 export function isFreePlanProduct( product ) {

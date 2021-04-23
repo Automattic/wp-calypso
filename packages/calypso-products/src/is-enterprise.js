@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { PLAN_WPCOM_ENTERPRISE } from './index';
+import { PLAN_WPCOM_ENTERPRISE } from './plans-constants';
 import { formatProduct } from './format-product';
 
 export function isEnterprise( product ) {
