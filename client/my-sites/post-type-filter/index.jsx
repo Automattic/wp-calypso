@@ -185,7 +185,7 @@ export class PostTypeFilter extends Component {
 							placeholder={
 								searchPagesPlaceholder
 									? `${ searchPagesPlaceholder }…`
-									: this.props.translate( 'Search…', { context: 'verb: imperative' } )
+									: this.props.translate( 'Search…' )
 							}
 							delaySearch={ true }
 						/>
