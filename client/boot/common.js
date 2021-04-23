@@ -464,7 +464,7 @@ function waitForCookieAuth( user ) {
 		return new Promise( function ( resolve ) {
 			const sendUserAuth = () => {
 				debug( 'Sending user info to desktop...' );
-				window.electron.send(
+				window.electron?.send(
 					'user-auth',
 					{ id: user.data.ID, username: user.data.username },
 					getToken()
@@ -473,7 +473,7 @@ function waitForCookieAuth( user ) {
 
 			if ( loggedIn ) {
 				debug( 'Desktop user logged in, waiting on cookie authentication...' );
-				window.electron.receive( 'cookie-auth-complete', function () {
+				window.electron?.receive( 'cookie-auth-complete', function () {
 					debug( 'Desktop cookies set, rendering main layout...' );
 					resolve();
 				} );
