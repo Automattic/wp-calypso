@@ -66,11 +66,7 @@ describe( `[${ host }] Likes: (${ screenSize })`, function () {
 
 			// commentArea.reply fails to find .comment-reply-link at times,
 			// as we're not concerned with the assertion just call postComment directly
-			await commentArea._postComment( {
-				comment: comment,
-				name: 'e2eTestName',
-				email: 'e2eTestName@test.com',
-			} );
+			await commentArea._postComment( comment );
 		} );
 
 		step( 'Like comment', async function () {
