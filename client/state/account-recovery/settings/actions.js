@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { replace } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import wpcom from 'calypso/lib/wp';
@@ -287,7 +282,7 @@ export const validateAccountRecoveryPhone = ( code ) => ( dispatch ) => {
 	return wpcom
 		.undocumented()
 		.me()
-		.validateAccountRecoveryPhone( replace( code, /\s/g, '' ) )
+		.validateAccountRecoveryPhone( code?.replace( /\s/g, '' ) )
 		.then( () => {
 			dispatch( validateAccountRecoveryPhoneSuccess() );
 			dispatch( onAccountRecoveryPhoneValidationSuccess() );
