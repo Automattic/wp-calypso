@@ -21,14 +21,11 @@ import {
 } from './controller';
 import { validateFilters, validateVertical } from './validate-filters';
 import { getLanguage, getLanguageRouteParam } from 'calypso/lib/i18n-utils';
-import { bindState as bindWpLocaleState } from 'calypso/lib/wp/localization';
 import { setLocaleRawData } from 'calypso/state/ui/language/actions';
 
 const translationsCache = {};
 
 export function setupLocale( context, next ) {
-	bindWpLocaleState( context.store );
-
 	if ( ! context.params.lang ) {
 		const localeDataPlaceholder = { '': {} };
 		context.store.dispatch( setLocaleRawData( localeDataPlaceholder ) ); // Reset to default locale
