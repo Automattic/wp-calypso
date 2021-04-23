@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { union, includes } from 'lodash';
+import { includes } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 import page from 'page';
@@ -188,7 +188,8 @@ function getProceedButtonText( holds: string[], translate: LocalizeProps[ 'trans
 
 function isProceedButtonDisabled( isEligible: boolean, holds: string[] ) {
 	const resolvableHolds = [ 'NO_BUSINESS_PLAN', 'SITE_UNLAUNCHED', 'SITE_NOT_PUBLIC' ];
-	const canHandleHoldsAutomatically = union( resolvableHolds, holds ).length === 3;
+	const canHandleHoldsAutomatically =
+		[ ...new Set( [].concat( resolvableHolds, holds ) ) ].length === 3;
 	return ! canHandleHoldsAutomatically && ! isEligible;
 }
 

@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { identity, includes, union } from 'lodash';
+import { identity, includes } from 'lodash';
 import PropTypes from 'prop-types';
 
 /**
@@ -192,7 +191,7 @@ export class MediaLibraryFilterBar extends Component {
 
 	render() {
 		const disabledSources = this.props.disableLargeImageSources
-			? union( this.props.disabledDataSources, largeImageSources )
+			? [ ...new Set( [].concat( this.props.disabledDataSources, largeImageSources ) ) ]
 			: this.props.disabledDataSources;
 
 		// Dropdown is disabled when viewing any external data source
