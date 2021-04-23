@@ -43,6 +43,7 @@ import {
 	isTrafficGuide,
 	isTitanMail,
 	isMonthly,
+	isP2Plus,
 } from 'calypso/lib/products-values';
 import sortProducts from 'calypso/lib/products-values/sort';
 import { getTld } from 'calypso/lib/domains';
@@ -170,6 +171,16 @@ export function hasPlan( cart ) {
  */
 export function hasJetpackPlan( cart ) {
 	return some( getAllCartItems( cart ), isJetpackPlan );
+}
+
+/**
+ * Determines whether there is a P2+ plan in the shopping cart.
+ *
+ * @param {CartValue} cart - cart as `CartValue` object
+ * @returns {boolean} true if there is at least one P2+ plan, false otherwise
+ */
+export function hasP2PlusPlan( cart ) {
+	return some( getAllCartItems( cart ), isP2Plus );
 }
 
 /**
