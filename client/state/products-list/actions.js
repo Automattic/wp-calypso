@@ -42,9 +42,8 @@ export function requestProductsList( query = {} ) {
 	return ( dispatch ) => {
 		dispatch( { type: PRODUCTS_LIST_REQUEST } );
 
-		return wpcom
-			.undocumented()
-			.getProducts( query )
+		return wpcom.req
+			.get( '/products', query )
 			.then( ( productsList ) => dispatch( receiveProductsList( productsList ) ) )
 			.catch( ( error ) =>
 				dispatch( {

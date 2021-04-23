@@ -854,26 +854,6 @@ Undocumented.prototype.getTitanMailboxAvailability = function ( domain, mailbox,
 };
 
 /**
- * Get a list of WordPress.com products
- *
- * @param {object|Function}	queryOrCallback
- *   Either an object with query string parameters, or a callback function
- */
-Undocumented.prototype.getProducts = function ( queryOrCallback ) {
-	debug( '/products query' );
-
-	if ( 'function' === typeof queryOrCallback ) {
-		// The passed-in argument is a callback;
-		// make sure to pass in a safe query param object
-		return this.wpcom.req.get( '/products', {}, queryOrCallback );
-	}
-
-	// At this point, `queryOrCallback` should either be falsy,
-	// or it should be a query param object
-	return this.wpcom.req.get( '/products', queryOrCallback || {} );
-};
-
-/**
  * Get site specific details for WordPress.com products
  *
  * @param {Function} siteDomain The site slug
