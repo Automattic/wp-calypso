@@ -37,9 +37,7 @@ import {
 	isGSuiteOrGoogleWorkspace,
 	isJetpackPlanSlug,
 	isJetpackProductSlug,
-	TERM_ANNUALLY,
-	JETPACK_PRODUCTS_LIST,
-} from '@automattic/calypso-products';
+} from 'calypso/lib/products-values';
 import { radioTextOption, radioSelectOption } from './radio-option';
 import {
 	cancellationOptionsForPurchase,
@@ -56,6 +54,7 @@ import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { DOWNGRADEABLE_PLANS_FROM_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { slugToSelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/utils';
+import { TERM_ANNUALLY, JETPACK_PRODUCTS_LIST } from '@automattic/calypso-products';
 
 /**
  * Style dependencies

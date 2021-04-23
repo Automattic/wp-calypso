@@ -20,7 +20,7 @@ import {
 import type { CountryListItem } from '../types/country-list-item';
 import TaxFields from './tax-fields';
 import DomainContactDetails from './domain-contact-details';
-import { isDomainProduct, isDomainTransfer, getDomain } from '@automattic/calypso-products';
+import { isDomainProduct, isDomainTransfer, getDomain } from 'calypso/lib/products-values';
 
 const ContactDetailsFormDescription = styled.p`
 	font-size: 14px;

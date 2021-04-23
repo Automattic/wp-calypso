@@ -13,7 +13,7 @@ import {
 	isCredits,
 	isDomainRedemption,
 	allowedProductAttributes,
-} from '@automattic/calypso-products';
+} from 'calypso/lib/products-values';
 
 // Auto-vivification from https://github.com/kolodny/immutability-helper#autovivification
 extendImmutabilityHelper( '$auto', function ( value, object ) {

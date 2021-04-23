@@ -18,7 +18,7 @@ import {
 	isPlan,
 	isFreePlan,
 	isDomainRegistration,
-} from '@automattic/calypso-products';
+} from 'calypso/lib/products-values';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import { EMAIL_VALIDATION_AND_VERIFICATION, DOMAIN_WAITING } from 'calypso/lib/url/support';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';

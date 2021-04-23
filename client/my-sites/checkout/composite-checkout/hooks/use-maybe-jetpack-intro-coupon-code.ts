@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 /**
  * Internal dependencies
  */
-import { isJetpackProductSlug, isJetpackPlanSlug } from '@automattic/calypso-products';
+import { isJetpackProductSlug, isJetpackPlanSlug } from 'calypso/lib/products-values';
 
 /**
  * Type dependencies

@@ -17,7 +17,7 @@ import {
 	isGSuiteOrGoogleWorkspace,
 	isPlan,
 	isTitanMail,
-} from '@automattic/calypso-products';
+} from 'calypso/lib/products-values';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSite } from 'calypso/state/sites/selectors';
 import './style.scss';

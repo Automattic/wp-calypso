@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isEnterprise } from '@automattic/calypso-products';
+import { isEnterprise } from 'calypso/lib/products-values';
 import { FEATURE_SEO_PREVIEW_TOOLS } from '@automattic/calypso-products';
 import { hasSiteFeature } from 'calypso/lib/site/utils';
 

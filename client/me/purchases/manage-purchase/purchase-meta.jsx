@@ -26,6 +26,14 @@ import {
 	isWithinIntroductoryOfferPeriod,
 	isIntroductoryOfferFreeTrial,
 } from 'calypso/lib/purchases';
+import {
+	isDomainRegistration,
+	isDomainTransfer,
+	isConciergeSession,
+	isJetpackPlan,
+	isJetpackProduct,
+	getProductFromSlug,
+} from 'calypso/lib/products-values';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
@@ -39,12 +47,6 @@ import {
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
 	JETPACK_LEGACY_PLANS,
-	isDomainRegistration,
-	isDomainTransfer,
-	isConciergeSession,
-	isJetpackPlan,
-	isJetpackProduct,
-	getProductFromSlug,
 } from '@automattic/calypso-products';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

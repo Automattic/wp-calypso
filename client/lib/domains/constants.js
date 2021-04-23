@@ -79,7 +79,9 @@ export const dnsTemplates = {
 	},
 };
 
-export { domainProductSlugs } from '@automattic/calypso-products';
+export const domainProductSlugs = {
+	TRANSFER_IN: 'domain_transfer',
+};
 
 export const gdprConsentStatus = {
 	NONE: 'NONE',

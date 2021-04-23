@@ -32,7 +32,7 @@ import {
 	isGSuiteOrGoogleWorkspace,
 	isTitanMail,
 	isP2Plus,
-} from '@automattic/calypso-products';
+} from 'calypso/lib/products-values';
 import { isRenewal } from 'calypso/lib/cart-values/cart-items';
 import doesValueExist from './does-value-exist';
 import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
