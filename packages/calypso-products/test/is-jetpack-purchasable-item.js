@@ -30,7 +30,7 @@ describe( 'isJetpackPurchasableItem', () => {
 	it( 'should return true if the item is a Jetpack legacy plan and the `includeLegacy` option is set', () => {
 		const options = { includeLegacy: true };
 
-		expect( isJetpackPurchasableItem( PLAN_JETPACK_PERSONAL_MONTHLY, options ) ).toEqual( true );
+		expect( isJetpackPurchasableItem( PLAN_JETPACK_PERSONAL, options ) ).toEqual( true );
 		expect( isJetpackPurchasableItem( PLAN_JETPACK_PERSONAL_MONTHLY, options ) ).toEqual( true );
 	} );
 } );
