@@ -1,5 +1,6 @@
 export * from './main';
 export * from './types';
+export * from './plans-utilities';
 export * from './constants';
 export * from './jetpack-constants';
 export * from './utils';

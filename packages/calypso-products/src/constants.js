@@ -241,34 +241,3 @@ export const TYPE_ALL = 'TYPE_ALL';
 export const TYPE_P2_PLUS = 'TYPE_P2_PLUS';
 
 export const STORE_DEPRECATION_START_DATE = new Date( '2021-01-19T19:30:00+00:00' );
-
-export function isNew( plan ) {
-	return NEW_PLANS.includes( plan );
-}
-
-export function isBestValue( plan ) {
-	return BEST_VALUE_PLANS.includes( plan );
-}
-
-/**
- * Return estimated duration of given PLAN_TERM in days
- *
- * @param {string} term TERM_ constant
- * @returns {number} Term duration
- */
-export function getTermDuration( term ) {
-	switch ( term ) {
-		case TERM_MONTHLY:
-			return PLAN_MONTHLY_PERIOD;
-
-		case TERM_ANNUALLY:
-			return PLAN_ANNUAL_PERIOD;
-
-		case TERM_BIENNIALLY:
-			return PLAN_BIENNIAL_PERIOD;
-	}
-
-	if ( process.env.NODE_ENV === 'development' ) {
-		console.error( `Unexpected argument ${ term }, expected one of TERM_ constants` ); // eslint-disable-line no-console
-	}
-}
