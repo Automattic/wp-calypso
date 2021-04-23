@@ -169,8 +169,7 @@
 		"woocommerce/extension-wcservices/international-labels": true,
 		"woocommerce/onboarding-oauth": true,
 		"wpcom-user-bootstrap": true,
-		"wordpress-action-search": false,
-		"marketplace-yoast": false
+		"wordpress-action-search": false
 	},
 	"rtl": false,
 	"siftscience_key": "a4f69f6759",

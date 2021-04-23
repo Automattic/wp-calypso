@@ -141,8 +141,7 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"use-translation-chunks": true,
 		"wpcom-user-bootstrap": true,
-		"wordpress-action-search": false,
-		"marketplace-yoast": false
+		"wordpress-action-search": false
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",
