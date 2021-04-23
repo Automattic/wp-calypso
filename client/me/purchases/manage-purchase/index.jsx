@@ -24,7 +24,6 @@ import {
 	getRenewalPrice,
 	handleRenewMultiplePurchasesClick,
 	handleRenewNowClick,
-	handleRenewMonthlyClick,
 	hasAmountAvailableToRefund,
 	hasPaymentMethod,
 	isPaidWithCredits,
@@ -115,6 +114,7 @@ import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import Badge from 'calypso/components/badge';
 import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
+import { addQueryArgs } from 'calypso/lib/url';
 
 /**
  * Style dependencies
@@ -192,9 +192,24 @@ class ManagePurchase extends Component {
 	};
 
 	handleRenewMonthly = () => {
-		const { purchase, siteSlug, redirectTo } = this.props;
+		const { relatedMonthlyPlanSlug, siteSlug, redirectTo } = this.props;
 		const options = redirectTo ? { redirectTo } : undefined;
-		handleRenewMonthlyClick( purchase, siteSlug, options );
+		// Track the Renew Monthly submit.
+		recordTracksEvent( 'calypso_purchases_renew_monthly_click', {
+			product_slug: relatedMonthlyPlanSlug,
+			...options.tracksProps,
+		} );
+
+		// Redirect to the checkout page with the monthly plan in cart
+		const checkoutUrlArgs = {};
+		if ( options.redirectTo ) {
+			checkoutUrlArgs.redirect_to = options.redirectTo;
+		}
+		const checkoutUrlWithArgs = addQueryArgs(
+			checkoutUrlArgs,
+			`/checkout/${ relatedMonthlyPlanSlug }/${ siteSlug || '' }`
+		);
+		page( checkoutUrlWithArgs );
 	};
 
 	handleRenewMultiplePurchases = ( purchases ) => {

@@ -216,38 +216,6 @@ function handleRenewMultiplePurchasesClick( purchases, siteSlug, options = {} ) 
 	page( renewalUrl );
 }
 
-/**
- * Adds a purchase renewal to the cart and redirects to checkout.
- *
- * @param {object} purchase - the purchase to be renewed
- * @param {string} siteSlug - the site slug to renew the purchase for
- * @param {object} [options] - optional information
- * @param {string} [options.redirectTo] - Passed as redirect_to in checkout
- * @param {object} [options.tracksProps] - where was the renew button clicked from
- */
-function handleRenewMonthlyClick( purchase, siteSlug, options = {} ) {
-	const relatedMonthlyPlanSlug = getMonthlyPlanByYearly( purchase?.productSlug );
-
-	// Track the renew monthly submit.
-	recordTracksEvent( 'calypso_purchases_renew_monthly_click', {
-		product_slug: relatedMonthlyPlanSlug,
-		...options.tracksProps,
-	} );
-
-	if ( ! relatedMonthlyPlanSlug ) {
-		reduxDispatch( errorNotice( 'Could not find product slug for renewal.' ) );
-		throw new Error( 'Could not find product slug for renewal.' );
-	}
-
-	let renewalUrl = `/checkout/${ relatedMonthlyPlanSlug }/${ siteSlug || '' }`;
-	if ( options.redirectTo ) {
-		renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
-	}
-	debug( 'handling renew monthly click', purchase, siteSlug, relatedMonthlyPlanSlug, renewalUrl );
-
-	page( renewalUrl );
-}
-
 function getProductSlugsAndPurchaseIds( renewItems ) {
 	const productSlugs = [];
 	const purchaseIds = [];
@@ -809,7 +777,6 @@ export {
 	getSubscriptionsBySite,
 	handleRenewMultiplePurchasesClick,
 	handleRenewNowClick,
-	handleRenewMonthlyClick,
 	hasAmountAvailableToRefund,
 	hasIncludedDomain,
 	isAutoRenewing,
