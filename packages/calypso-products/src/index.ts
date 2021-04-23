@@ -1,6 +1,7 @@
 export * from './main';
 export * from './types';
 export * from './constants';
+export * from './jetpack-constants';
 export * from './utils';
 export * from './product-values';
 export * from './get-interval-type-for-term';
