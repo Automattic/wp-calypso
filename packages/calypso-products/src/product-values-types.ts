@@ -18,7 +18,7 @@ import type {
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
-} from './index';
+} from './constants';
 
 export type JetpackProductSlug =
 	| typeof PRODUCT_JETPACK_BACKUP_DAILY
