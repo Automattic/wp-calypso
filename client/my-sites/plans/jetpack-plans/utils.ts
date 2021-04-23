@@ -139,15 +139,17 @@ function getSlugInTerm( yearlySlug: string | null, slugTerm: Duration ) {
 	const oppositeTerm = mainTerm === 'monthly' ? 'yearly' : 'monthly';
 
 	const matchingProduct = JETPACK_PRODUCTS_BY_TERM.find(
-		( product ) => product[ mainTerm ] === yearlySlug
+		( product ) => product[ oppositeTerm ] === yearlySlug
 	);
 	if ( matchingProduct ) {
-		return matchingProduct[ oppositeTerm ];
+		return matchingProduct[ mainTerm ];
 	}
 
-	const matchingPlan = JETPACK_PLANS_BY_TERM.find( ( plan ) => plan[ mainTerm ] === yearlySlug );
+	const matchingPlan = JETPACK_PLANS_BY_TERM.find(
+		( plan ) => plan[ oppositeTerm ] === yearlySlug
+	);
 	if ( matchingPlan ) {
-		return matchingPlan[ oppositeTerm ];
+		return matchingPlan[ mainTerm ];
 	}
 
 	return null;
@@ -160,7 +162,7 @@ function getSlugInTerm( yearlySlug: string | null, slugTerm: Duration ) {
  * @returns {string} a monthly term product slug
  */
 export function getMonthlySlugFromYearly( yearlySlug: string | null ): string | null {
-	return getSlugInTerm( yearlySlug, TERM_ANNUALLY );
+	return getSlugInTerm( yearlySlug, TERM_MONTHLY );
 }
 
 /**
@@ -170,7 +172,7 @@ export function getMonthlySlugFromYearly( yearlySlug: string | null ): string | 
  * @returns {string} a yearly term product slug
  */
 export function getYearlySlugFromMonthly( monthlySlug: string | null ): string | null {
-	return getSlugInTerm( monthlySlug, TERM_MONTHLY );
+	return getSlugInTerm( monthlySlug, TERM_ANNUALLY );
 }
 
 /**
