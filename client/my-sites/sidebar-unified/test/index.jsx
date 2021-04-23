@@ -59,10 +59,10 @@ describe( 'MySitesSidebar', () => {
 	} );
 
 	describe( '#itemLinkMatches() edge cases', () => {
-		test( 'clicking a marketing panel should not activate sharing-buttons in settings menu', () => {
+		test( 'clicking a settings panel should not activate the posts menu', () => {
 			const isSelected = itemLinkMatches(
-				'/marketing/sharing-buttons/example.wordpress.com',
-				'/marketing/traffic/cpapfree.wordpress.com'
+				'/settings/taxonomies/category/example.wordpress.com',
+				'/settings/discussion/cpapfree.wordpress.com'
 			);
 
 			expect( isSelected ).to.be.false;

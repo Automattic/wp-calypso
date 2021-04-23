@@ -28,9 +28,6 @@ export const itemLinkMatches = ( path, currentPath ) => {
 	if ( pathIncludes( currentPath, 'settings', 1 ) && pathIncludes( path, 'taxonomies', 2 ) ) {
 		return false;
 	}
-	// Temp fix till we remove duplicate menu entry of sharing buttons from 'Settings' menu. See https://github.com/Automattic/wp-calypso/issues/49756.
-	if ( pathIncludes( currentPath, 'marketing', 1 ) ) {
-		return fragmentIsEqual( path, currentPath, 1 ) && fragmentIsEqual( path, '//tools', 2 );
-	}
+
 	return fragmentIsEqual( path, currentPath, 1 );
 };
