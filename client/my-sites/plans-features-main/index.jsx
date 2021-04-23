@@ -521,14 +521,13 @@ export class PlansFeaturesMain extends Component {
 			customHeader,
 			redirectToAddDomainFlow,
 			shouldShowPlansFeatureComparison,
-			isLaunchPage,
-			isInSignup,
+			flowName,
 		} = this.props;
 
 		return (
 			<ProvideExperimentData
 				name="hide_ecommerce_launch_site"
-				options={ { isEligible: isLaunchPage && isInSignup } }
+				options={ { isEligible: 'launch-site' === flowName } }
 			>
 				{ ( isLoading, experimentAssignment ) => {
 					if ( isLoading ) {
