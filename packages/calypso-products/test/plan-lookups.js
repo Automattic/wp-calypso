@@ -54,9 +54,9 @@ import {
 	PLAN_P2_PLUS,
 	PLAN_P2_FREE,
 } from '../src/constants';
-import { PLANS_LIST } from '../src/plans-list';
 import {
 	getPlan,
+	getPlans,
 	getPlanClass,
 	isBusinessPlan,
 	isPersonalPlan,
@@ -81,6 +81,8 @@ import {
 	planHasFeature,
 	planHasSuperiorFeature,
 } from '../src/index';
+
+const PLANS_LIST = getPlans();
 
 describe( 'isFreePlan', () => {
 	test( 'should return true for free plans', () => {
