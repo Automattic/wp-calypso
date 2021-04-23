@@ -178,7 +178,7 @@ import {
 	TYPE_PREMIUM,
 	TYPE_SECURITY_DAILY,
 	TYPE_SECURITY_REALTIME,
-} from './constants';
+} from './plans-constants';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 function compact( elements ) {

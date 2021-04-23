@@ -26,7 +26,7 @@ import {
 	FEATURE_JETPACK_SEARCH,
 	FEATURE_JETPACK_SEARCH_MONTHLY,
 	TYPE_P2_PLUS,
-} from './constants';
+} from './plans-constants';
 import { PLANS_LIST } from './plans-list';
 
 export function getPlans() {

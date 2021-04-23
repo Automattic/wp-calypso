@@ -10,7 +10,7 @@ import {
 	PLAN_ANNUAL_PERIOD,
 	TERM_BIENNIALLY,
 	PLAN_BIENNIAL_PERIOD,
-} from './constants';
+} from './plans-constants';
 
 export function isNew( plan ) {
 	return NEW_PLANS.includes( plan );

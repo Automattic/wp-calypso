@@ -27,7 +27,7 @@ import {
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
-} from '../src/constants';
+} from '../src/plans-constants';
 
 describe( 'planLevelsMatch', () => {
 	const testPlansArrayIndependentOfOrder = ( plansArray, result ) =>

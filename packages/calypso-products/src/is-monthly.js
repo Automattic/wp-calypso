@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { PLAN_MONTHLY_PERIOD } from './index';
-import { WPCOM_MONTHLY_PLANS } from './constants';
+import { WPCOM_MONTHLY_PLANS } from './plans-constants';
 import { JETPACK_MONTHLY_PLANS } from './jetpack-constants';
 import { formatProduct } from './format-product';
 

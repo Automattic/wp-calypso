@@ -53,7 +53,7 @@ import {
 	TYPE_FREE,
 	PLAN_P2_PLUS,
 	PLAN_P2_FREE,
-} from '../src/constants';
+} from '../src/plans-constants';
 import { PLANS_LIST } from '../src/plans-list';
 import {
 	getPlan,

@@ -22,7 +22,7 @@ import type {
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
-} from './constants';
+} from './plans-constants';
 
 export * from './product-values-types';
 

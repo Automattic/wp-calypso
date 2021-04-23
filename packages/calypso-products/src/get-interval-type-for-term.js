@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from './constants';
+import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from './plans-constants';
 
 export function getIntervalTypeForTerm( term ) {
 	switch ( term ) {

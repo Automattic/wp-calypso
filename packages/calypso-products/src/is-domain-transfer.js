@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { formatProduct } from './format-product';
-import { domainProductSlugs } from './constants';
+import { domainProductSlugs } from './plans-constants';
 
 export function isDomainTransfer( product ) {
 	product = formatProduct( product );

@@ -2,7 +2,12 @@
  * Internal dependencies
  */
 import { chooseDefaultCustomerType } from '../src';
-import { PLAN_ECOMMERCE_2_YEARS, PLAN_PREMIUM, PLAN_FREE, PLAN_PERSONAL } from '../src/constants';
+import {
+	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_PREMIUM,
+	PLAN_FREE,
+	PLAN_PERSONAL,
+} from '../src/plans-constants';
 
 describe( 'chooseDefaultCustomerType', () => {
 	test( 'chooses "personal" if current site type is "personal"', () => {

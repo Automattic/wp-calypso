@@ -5,7 +5,12 @@
 /**
  * Internal dependencies
  */
-import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY, getTermDuration } from '../src/constants';
+import {
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+	TERM_MONTHLY,
+	getTermDuration,
+} from '../src/plans-constants';
 import { calculateMonthlyPrice, getBillingMonthsForTerm } from '../src/index';
 
 describe( 'calculateMonthlyPrice', () => {
