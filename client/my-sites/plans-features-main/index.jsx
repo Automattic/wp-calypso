@@ -78,6 +78,7 @@ import { isDiscountActive } from 'calypso/state/selectors/get-active-discount.js
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
 import PlanTypeSelector from './plan-type-selector';
 import { ProvideExperimentData } from 'calypso/lib/explat';
+import PulsingDot from 'calypso/components/pulsing-dot';
 
 /**
  * Style dependencies
@@ -130,7 +131,7 @@ export class PlansFeaturesMain extends Component {
 		}
 	}
 
-	showFeatureComparison( experimentVariation = null ) {
+	showFeatureComparison( experimentVariation ) {
 		const {
 			basePlansPath,
 			customerType,
@@ -275,7 +276,7 @@ export class PlansFeaturesMain extends Component {
 		return plans[ intervalType ] || defaultValue || TERM_ANNUALLY;
 	}
 
-	getPlansForPlanFeatures( experimentVariation = null ) {
+	getPlansForPlanFeatures( experimentVariation ) {
 		const {
 			displayJetpackPlans,
 			intervalType,
@@ -531,7 +532,12 @@ export class PlansFeaturesMain extends Component {
 			>
 				{ ( isLoading, experimentAssignment ) => {
 					if ( isLoading ) {
-						return null;
+						const loadingContainerClass = 'plans__loading-container';
+						return (
+							<div className={ loadingContainerClass }>
+								<PulsingDot delay={ 400 } active />
+							</div>
+						);
 					}
 
 					const experimentVariation = experimentAssignment?.variationName;
