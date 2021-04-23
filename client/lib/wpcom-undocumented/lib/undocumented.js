@@ -854,22 +854,6 @@ Undocumented.prototype.getTitanMailboxAvailability = function ( domain, mailbox,
 };
 
 /**
- * Get a list of WordPress.com products
- *
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getProducts = function ( fn ) {
-	debug( '/products query' );
-	return this._sendRequest(
-		{
-			path: '/products',
-			method: 'get',
-		},
-		fn
-	);
-};
-
-/**
  * Get site specific details for WordPress.com products
  *
  * @param {Function} siteDomain The site slug
