@@ -33,6 +33,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		this.publishingSpinnerSelector = By.css(
 			'.editor-post-publish-panel__content .components-spinner'
 		);
+		this.closePublishPanelButtonSelector = By.css(
+			'.editor-post-publish-panel__header button[aria-label="Close panel"]'
+		);
 	}
 
 	static async Expect( driver, editorType ) {
@@ -66,10 +69,14 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async publish( { visit = false, closePanel = true } = {} ) {
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
 		await driverHelper.clickWhenClickable( this.driver, this.publishButtonSelector );
-		// Let's give publishing request enough time to finish. Sometimes it takes
-		// way more than the default 20 seconds, and the cost of waiting a bit
-		// longer is definitely lower than the cost of repeating the whole spec.
-		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector, 60000 );
+
+		// When publishing request completes, the close button appears.
+		// We use the existence of the close button to determine that the publishing request is completed
+		// before moving on to the next step.
+		await driverHelper.waitUntilLocatedAndVisible(
+			this.driver,
+			this.closePublishPanelButtonSelector
+		);
 
 		if ( closePanel ) {
 			try {
@@ -542,7 +549,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async closePublishedPanel() {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.editor-post-publish-panel__header button[aria-label="Close panel"]' )
+			this.closePublishPanelButtonSelector
 		);
 	}
 
