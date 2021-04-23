@@ -182,7 +182,11 @@ export class PostTypeFilter extends Component {
 							initialValue={ query.search }
 							isOpen={ this.props.getSearchOpen() }
 							onSearch={ this.props.doSearch }
-							placeholder={ `${ searchPagesPlaceholder }…` }
+							placeholder={
+								searchPagesPlaceholder
+									? `${ searchPagesPlaceholder }…`
+									: this.props.translate( 'Search…', { context: 'verb: imperative' } )
+							}
 							delaySearch={ true }
 						/>
 					) }
