@@ -11,13 +11,7 @@ import { localize } from 'i18n-calypso';
 import { Button } from '@automattic/components';
 import config from '@automattic/calypso-config';
 import ProfileGravatar from 'calypso/me/profile-gravatar';
-import {
-	addCreditCard,
-	billingHistory,
-	pendingPayments,
-	purchasesRoot,
-	deprecated as deprecatedPaths,
-} from 'calypso/me/purchases/paths';
+import { purchasesRoot } from 'calypso/me/purchases/paths';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
 import SidebarHeading from 'calypso/layout/sidebar/heading';
@@ -30,6 +24,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { logoutUser } from 'calypso/state/logout/actions';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { itemLinkMatches } from 'calypso/my-sites/sidebar-unified/utils';
 
 /**
  * Style dependencies
@@ -74,41 +69,7 @@ class MeSidebar extends React.Component {
 
 	render() {
 		const { context, translate } = this.props;
-		const filterMap = {
-			'/me': 'profile',
-			'/me/security/account-recovery': 'security',
-			'/me/security/connected-applications': 'security',
-			'/me/security/password': 'security',
-			'/me/security/social-login': 'security',
-			'/me/security/two-step': 'security',
-			'me/privacy': 'privacy',
-			'/me/notifications/comments': 'notifications',
-			'/me/notifications/updates': 'notifications',
-			'/me/notifications/subscriptions': 'notifications',
-			'/help/contact': 'help',
-			[ purchasesRoot ]: 'purchases',
-			[ billingHistory ]: 'purchases',
-			[ addCreditCard ]: 'purchases',
-			[ deprecatedPaths.upcomingCharges ]: 'purchases',
-			[ pendingPayments ]: 'purchases',
-			[ deprecatedPaths.otherPurchases ]: 'purchases',
-			'/me/chat': 'happychat',
-			'/me/site-blocks': 'site-blocks',
-		};
-		const filteredPath = context.path.replace( /\/\d+$/, '' ); // Remove ID from end of path
-		let selected;
-
-		/*
-		 * Determine currently-active path to use for 'selected' menu highlight
-		 *
-		 * Most routes within /me follow the pattern of `/me/{selected}`. But, there are a few unique cases.
-		 * filterMap is an object that maps those special cases to the correct selected value.
-		 */
-		if ( filterMap[ filteredPath ] ) {
-			selected = filterMap[ filteredPath ];
-		} else {
-			selected = context.path.split( '/' ).pop();
-		}
+		const path = context.path.replace( '/me', '' ); // Remove base path.
 
 		return (
 			<Sidebar>
@@ -132,7 +93,7 @@ class MeSidebar extends React.Component {
 						</SidebarHeading>
 
 						<SidebarItem
-							selected={ selected === 'profile' }
+							selected={ itemLinkMatches( '', path ) }
 							link={
 								config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile'
 							}
@@ -142,7 +103,7 @@ class MeSidebar extends React.Component {
 						/>
 
 						<SidebarItem
-							selected={ selected === 'account' }
+							selected={ itemLinkMatches( '/account', path ) }
 							link={
 								config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account'
 							}
@@ -153,7 +114,7 @@ class MeSidebar extends React.Component {
 						/>
 
 						<SidebarItem
-							selected={ selected === 'purchases' }
+							selected={ itemLinkMatches( '/purchases', path ) }
 							link={ purchasesRoot }
 							label={ translate( 'Purchases' ) }
 							materialIcon="credit_card"
@@ -162,7 +123,7 @@ class MeSidebar extends React.Component {
 						/>
 
 						<SidebarItem
-							selected={ selected === 'security' }
+							selected={ itemLinkMatches( '/security', path ) }
 							link={ '/me/security' }
 							label={ translate( 'Security' ) }
 							materialIcon="lock"
@@ -171,7 +132,7 @@ class MeSidebar extends React.Component {
 						/>
 
 						<SidebarItem
-							selected={ selected === 'privacy' }
+							selected={ itemLinkMatches( '/privacy', path ) }
 							link={ '/me/privacy' }
 							label={ translate( 'Privacy' ) }
 							materialIcon="visibility"
@@ -186,7 +147,7 @@ class MeSidebar extends React.Component {
 						/>
 
 						<SidebarItem
-							selected={ selected === 'notifications' }
+							selected={ itemLinkMatches( '/notifications', path ) }
 							link={
 								config.isEnabled( 'me/notifications' )
 									? '/me/notifications'
@@ -199,7 +160,7 @@ class MeSidebar extends React.Component {
 						/>
 
 						<SidebarItem
-							selected={ selected === 'site-blocks' }
+							selected={ itemLinkMatches( '/site-blocks', path ) }
 							link={ '/me/site-blocks' }
 							label={ translate( 'Blocked Sites' ) }
 							materialIcon="block"
@@ -214,7 +175,7 @@ class MeSidebar extends React.Component {
 						</SidebarHeading>
 
 						<SidebarItem
-							selected={ selected === 'get-apps' }
+							selected={ itemLinkMatches( '/get-apps', path ) }
 							link={ '/me/get-apps' }
 							label={ translate( 'Get Apps' ) }
 							icon="my-sites"
