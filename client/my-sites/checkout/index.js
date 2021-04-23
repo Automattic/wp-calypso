@@ -42,6 +42,17 @@ export default function () {
 		return;
 	}
 
+	// Handle logged-in user visiting Jetpack checkout
+	if ( config.isEnabled( 'jetpack/userless-checkout' ) ) {
+		page(
+			'/checkout/jetpack/:product/:domainOrProduct',
+			siteSelection,
+			checkout,
+			makeLayout,
+			clientRender
+		);
+	}
+
 	// Show these paths only for logged in users
 	page(
 		'/checkout/thank-you/no-site/pending/:orderId',

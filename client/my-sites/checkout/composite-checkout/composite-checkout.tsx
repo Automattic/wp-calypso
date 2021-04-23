@@ -148,7 +148,8 @@ export default function CompositeCheckout( {
 		) || false;
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
-	const createUserAndSiteBeforeTransaction = Boolean( isLoggedOutCart || isNoSiteCart );
+	const createUserAndSiteBeforeTransaction =
+		Boolean( isLoggedOutCart || isNoSiteCart ) && ! isJetpackUserlessCheckout;
 	const reduxDispatch = useDispatch();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const recordEvent: ( action: ReactStandardAction ) => void = useCallback(
