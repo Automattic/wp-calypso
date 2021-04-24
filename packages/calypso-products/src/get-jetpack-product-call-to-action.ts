@@ -21,11 +21,12 @@ import type { Product } from './products-list';
  * @returns {TranslateResult} Product display name
  */
 export function getJetpackProductCallToAction( product: unknown ): TranslateResult | undefined {
-	product = snakeCase( product );
 	const jetpackProductsCallToActions = getJetpackProductsCallToAction() as Record<
 		string,
 		TranslateResult
 	>;
 
-	return jetpackProductsCallToActions?.[ ( product as Product ).product_slug ];
+	return jetpackProductsCallToActions?.[
+		( snakeCase( product as Record< string, unknown > ) as Product ).product_slug
+	];
 }

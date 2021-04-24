@@ -11,7 +11,6 @@ import { snakeCase } from './snake-case';
 
 export function isGoogleWorkspace( product ) {
 	product = snakeCase( product );
-
 	return isGoogleWorkspaceProductSlug( product.product_slug );
 }
 
@@ -35,19 +34,16 @@ export function isGoogleWorkspaceExtraLicence( product ) {
 
 export function isGSuite( product ) {
 	product = snakeCase( product );
-
 	return isGSuiteProductSlug( product.product_slug );
 }
 
 export function isGSuiteOrExtraLicense( product ) {
 	product = snakeCase( product );
-
 	return isGSuiteOrExtraLicenseProductSlug( product.product_slug );
 }
 
 export function isGSuiteOrExtraLicenseOrGoogleWorkspace( product ) {
 	product = snakeCase( product );
-
 	return (
 		isGSuiteOrExtraLicenseProductSlug( product.product_slug ) ||
 		isGoogleWorkspaceProductSlug( product.product_slug )
@@ -56,6 +52,5 @@ export function isGSuiteOrExtraLicenseOrGoogleWorkspace( product ) {
 
 export function isGSuiteOrGoogleWorkspace( product ) {
 	product = snakeCase( product );
-
 	return isGSuiteOrGoogleWorkspaceProductSlug( product.product_slug );
 }

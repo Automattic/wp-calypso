@@ -6,6 +6,5 @@ import { snakeCase } from './snake-case';
 
 export function isChargeback( product ) {
 	product = snakeCase( product );
-
 	return product.product_slug === PLAN_CHARGEBACK;
 }

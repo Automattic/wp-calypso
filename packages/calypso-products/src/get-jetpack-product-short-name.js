@@ -13,6 +13,5 @@ import { getJetpackProductsShortNames } from './translations';
 export function getJetpackProductShortName( product ) {
 	product = snakeCase( product );
 	const jetpackProductShortNames = getJetpackProductsShortNames();
-
 	return jetpackProductShortNames?.[ product.product_slug ];
 }

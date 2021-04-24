@@ -6,6 +6,5 @@ import { snakeCase } from './snake-case';
 
 export function isBusiness( product ) {
 	product = snakeCase( product );
-
 	return isBusinessPlan( product.product_slug );
 }

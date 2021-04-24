@@ -6,6 +6,5 @@ import { snakeCase } from './snake-case';
 
 export function isJetpackSearch( product ) {
 	product = snakeCase( product );
-
 	return JETPACK_SEARCH_PRODUCTS.includes( product.product_slug );
 }

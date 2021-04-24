@@ -6,6 +6,5 @@ import { snakeCase } from './snake-case';
 
 export function isSecurityRealTime( product ) {
 	product = snakeCase( product );
-
 	return isSecurityRealTimePlan( product.product_slug );
 }

@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { snakeCase } from './snake-case';
 import { isBlogger } from './is-blogger';
 import { isBusiness } from './is-business';
 import { isEcommerce } from './is-ecommerce';
@@ -13,8 +12,6 @@ import { isPremium } from './is-premium';
 import { isP2Plus } from './is-p2-plus';
 
 export function isPlan( product ) {
-	product = snakeCase( product );
-
 	return (
 		isBlogger( product ) ||
 		isPersonal( product ) ||
