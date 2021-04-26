@@ -58,11 +58,23 @@ const welcomeGuideVariantReducer = ( state = 'tour', action ) => {
 	}
 };
 
+const shouldOpenPatternsPanelReducer = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'WPCOM_WELCOME_GUIDE_FETCH_STATUS_SUCCESS':
+			return action.response.should_open_patterns_panel;
+		case 'WPCOM_WELCOME_GUIDE_RESET_STORE':
+			return false;
+		default:
+			return state;
+	}
+};
+
 const reducer = combineReducers( {
 	welcomeGuideManuallyOpened: welcomeGuideManuallyOpenedReducer,
 	showWelcomeGuide: showWelcomeGuideReducer,
 	tourRating: tourRatingReducer,
 	welcomeGuideVariant: welcomeGuideVariantReducer,
+	shouldOpenPatternsPanel: shouldOpenPatternsPanelReducer,
 } );
 
 const actions = {
@@ -103,6 +115,7 @@ const selectors = {
 	isWelcomeGuideStatusLoaded: ( state ) => typeof state.showWelcomeGuide !== 'undefined',
 	getTourRating: ( state ) => state.tourRating,
 	getWelcomeGuideVariant: ( state ) => state.welcomeGuideVariant,
+	shouldOpenPatternsPanel: ( state ) => state.shouldOpenPatternsPanel,
 };
 
 export function register() {

@@ -73,6 +73,11 @@ function WelcomeTourFrame() {
 
 	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
 
+	const { shouldOpenPatternsPanel, isManuallyOpened } = useSelect( ( select ) => ( {
+		shouldOpenPatternsPanel: select( 'automattic/wpcom-welcome-guide' ).shouldOpenPatternsPanel(),
+		isManuallyOpened: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideManuallyOpened(),
+	} ) );
+
 	const handleDismiss = ( source ) => {
 		recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
@@ -80,7 +85,12 @@ function WelcomeTourFrame() {
 			action: source,
 		} );
 		setShowWelcomeGuide( false, { openedManually: false } );
-		openPatternsPanel();
+
+		// Open patterns panel if necessary (e.g. when using Blank Canvas theme)
+		// but only when welcome guide is not manually opened.
+		if ( shouldOpenPatternsPanel && ! isManuallyOpened ) {
+			openPatternsPanel();
+		}
 	};
 
 	// Preload card images
