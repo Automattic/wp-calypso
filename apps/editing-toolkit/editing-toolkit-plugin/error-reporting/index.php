@@ -70,11 +70,19 @@ function activate_error_reporting() {
 }
 
 /**
+ * Returns whether or not the current site/blog has the 'has-error-reporting'
+ * sticker applied to it.
+ */
+function blog_has_error_reporting_sticker() {
+	return has_blog_sticker( 'has-error-reporting', get_current_blog_id() );
+}
+
+/**
  * Temporary function to feature flag by segment. We'll be gradually testing
  * it on production simple-sites, observing how it works and and gradually
  * increase the segment until we reach 100 and eventually just remove this logic.
  */
-function rollout_gradually() {
+function user_in_test_segment() {
 	$current_segment = 10; // segment of existing users that will get this feature.
 	$user_id         = get_current_user_id();
 	$user_segment    = $user_id % 100;
@@ -82,9 +90,7 @@ function rollout_gradually() {
 	// We get the last two digits of the user id and that will be used to decide in what
 	// segment the user is. i.e if current_segment is 10, then only ids that end in < 10
 	// will be considered part of the segment.
-	if ( $user_segment < $current_segment ) {
-		activate_error_reporting();
-	}
+	return $user_segment < $current_segment;
 }
 
 /**
@@ -97,5 +103,18 @@ function is_atomic() {
 
 // We don't want to activate this module in AT just yet. See https://wp.me/p4TIVU-9DI#comment-10922.
 if ( ! is_atomic() ) {
-	rollout_gradually();
+	/**
+	 * Error reporting is gated behind two feature flag(ish) guards.
+	 * 1. First we check to see if this blog has the `has-error-reporting` sitcker
+	 * applied. If `true`, it takes precedence over the next guard and this module
+	 * will be activated.
+	 * 2. If the aforementioned sticker is not present for this blog, then we
+	 * check if the user ID falls in the test segment (see the doc/comments for the
+	 * `user_in_test_segment` function above to understand how it's implemented)
+	 * and only if it is, we procedd to activate the module.
+	 */
+	if ( blog_has_error_reporting_sticker() || user_in_test_segment() ) {
+		l( 'let us activate error reporting!' );
+		activate_error_reporting();
+	}
 }
