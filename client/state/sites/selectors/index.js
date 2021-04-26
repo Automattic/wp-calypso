@@ -57,3 +57,4 @@ export { default as isSSOEnabled } from './is-sso-enabled';
 export { default as verifyJetpackModulesActive } from './verify-jetpack-modules-active';
 export { default as getSelectedSiteWithFallback } from './get-site-with-fallback';
 export { default as getSiteWoocommerceUrl } from './get-site-woocommerce-url';
+export { default as getSiteWoocommerceWizardUrl } from './get-site-woocommerce-wizard-url';
