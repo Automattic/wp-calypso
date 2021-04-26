@@ -11,7 +11,6 @@ interface Window {
 		isGutenboarding?: '1';
 		anchorFmPodcastId?: string;
 		locale?: string;
-		isBlankCanvas?: '1';
 	};
 	_currentSiteId: number;
 	calypsoifyGutenberg?: {
