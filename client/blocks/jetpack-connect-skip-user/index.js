@@ -38,8 +38,8 @@ class JetpackConnectSkipUser extends Component {
 					<a target="_blank" href="https://jetpack.com/support/features/" rel="noreferrer">
 						Some features
 					</a>
-					will not be available, but you'll be able to connect your user account at any point to
-					unlock them.
+					&nbsp;will not be available, but you'll be able to connect your user account at any point
+					to unlock them.
 				</p>
 
 				<a className="jetpack-connect-skip-user__continue-link" href={ this.getPlansURL() }>

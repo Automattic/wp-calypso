@@ -90,6 +90,7 @@ describe( 'parseAuthorizationQuery', () => {
 			site: 'https://yourjetpack.blog',
 			site_url: 'https://yourjetpack.blog',
 			state: '1',
+			skipUser: '1',
 		};
 		const result = parseAuthorizationQuery( data );
 		expect( result ).not.toBeNull();

@@ -668,10 +668,10 @@ export class LoginForm extends Component {
 					</Fragment>
 				) }
 
-				{ currentQuery.skip_user && (
+				{ currentQuery?.skip_user && (
 					<JetpackConnectSkipUser
-						homeUrl={ currentQuery.site }
-						redirectAfterAuth={ currentQuery.redirect_after_auth }
+						homeUrl={ currentQuery?.site }
+						redirectAfterAuth={ currentQuery?.redirect_after_auth }
 					/>
 				) }
 			</form>
