@@ -13,7 +13,7 @@ import {
 	isJetpackBackup,
 	isJetpackBackupSlug,
 	isJetpackPlanSlug,
-} from 'calypso/lib/products-values';
+} from '@automattic/calypso-products';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import {
 	getSitePlan,

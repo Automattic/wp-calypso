@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import getIntervalTypeForTerm from '../src/get-interval-type-for-term';
+import { getIntervalTypeForTerm } from '../src/get-interval-type-for-term';
 import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from '../src/constants';
 
 describe( 'getIntervalTypeForTerm', () => {

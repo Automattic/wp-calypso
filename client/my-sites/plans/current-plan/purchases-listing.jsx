@@ -42,8 +42,6 @@ import {
 	getJetpackProductTagline,
 	isJetpackBackup,
 	isJetpackScan,
-} from 'calypso/lib/products-values';
-import {
 	getPlan,
 	planHasFeature,
 	PRODUCT_JETPACK_BACKUP_DAILY,

@@ -21,17 +21,9 @@ import {
 	isBiennially,
 	isBundled,
 	isDomainProduct,
-} from 'calypso/lib/products-values';
-import {
 	calculateMonthlyPriceForPlan,
 	getBillingMonthsForPlan,
 } from '@automattic/calypso-products';
-
-jest.mock( '@automattic/calypso-products', () => ( {
-	...jest.requireActual( '@automattic/calypso-products' ),
-	calculateMonthlyPriceForPlan: jest.fn( () => 120 ),
-	getBillingMonthsForPlan: jest.fn( () => 10 ),
-} ) );
 
 jest.mock( '@automattic/calypso-config', () => {
 	const fn = () => {};
@@ -41,7 +33,10 @@ jest.mock( '@automattic/calypso-config', () => {
 jest.mock( '@automattic/format-currency', () => ( {
 	getCurrencyObject: ( price ) => ( { integer: price } ),
 } ) );
-jest.mock( 'calypso/lib/products-values', () => ( {
+jest.mock( '@automattic/calypso-products', () => ( {
+	...jest.requireActual( '@automattic/calypso-products' ),
+	calculateMonthlyPriceForPlan: jest.fn( () => 120 ),
+	getBillingMonthsForPlan: jest.fn( () => 10 ),
 	isPlan: jest.fn( () => null ),
 	isTheme: jest.fn( () => null ),
 	isMonthly: jest.fn( () => null ),
