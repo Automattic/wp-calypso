@@ -11,6 +11,7 @@ import '@automattic/calypso-config';
 import DesignPicker from '../components';
 import { getAvailableDesigns } from '../utils';
 import type { Design } from '../types';
+import type { DesignPickerProps } from '../components';
 
 jest.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: jest.fn().mockImplementation( ( feature: string ) => {
@@ -56,4 +57,17 @@ describe( '<DesignPicker /> integration', () => {
 		const firstDesignButton = screen.getAllByRole( 'button' )[ 0 ];
 		expect( firstDesignButton ).toHaveTextContent( /empty\spage/i );
 	} );
+	( [ 'light', 'dark' ] as DesignPickerProps[ 'theme' ][] ).forEach( ( theme ) =>
+		it( `Should have design-picker--theme-${ theme } titles when theme prop is set to ${ theme }`, async () => {
+			const mockedOnSelectCallback = jest.fn();
+
+			const renderedContainer = render(
+				<DesignPicker locale={ MOCK_LOCALE } theme={ theme } onSelect={ mockedOnSelectCallback } />
+			);
+
+			expect( renderedContainer.container.firstChild ).toHaveClass(
+				`design-picker design-picker--theme-${ theme }`
+			);
+		} )
+	);
 } );
