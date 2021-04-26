@@ -74,7 +74,7 @@ export function getProxyType() {
 export async function startBrowser( {
 	useCustomUA = true,
 	resizeBrowserWindow = true,
-	disableThirdPartyCookies = true,
+	disableThirdPartyCookies = false,
 } = {} ) {
 	if ( global.__BROWSER__ ) {
 		return global.__BROWSER__;
@@ -145,16 +145,18 @@ export async function startBrowser( {
 					enable_do_not_track: true,
 					credentials_enable_service: false,
 					intl: { accept_languages: locale },
+					profile: {
+						// 1 = allow all cookies (default), 2 = block all cookies
+						default_content_setting_values: { cookies: 1 },
+						block_third_party_cookies: false, // For chrome v84. (ci)
+						// 0 = allow 3pc, 1 = block 3pc, 2 = block 3pc in incognito (default)
+						cookie_controls_mode: 2, // For chrome v90.
+					},
 				};
 
 				if ( disableThirdPartyCookies ) {
-					prefs.profile = {
-						// 1 = allow all cookies (default), 2 = block all cookies
-						default_content_setting_values: { cookies: 1 },
-						// 0 = allow 3pc, 1 = block 3pc, 2 = block 3pc in incognito (default)
-						cookie_controls_mode: 1, // For chrome v90.
-						block_third_party_cookies: true, // For chrome v84. (ci)
-					};
+					prefs.profile.cookie_controls_mode = 1;
+					prefs.profile.block_third_party_cookies = true;
 				}
 
 				options.setUserPreferences( prefs );
