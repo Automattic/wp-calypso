@@ -392,6 +392,7 @@ module.exports = {
 		// Disable Lodash methods that we've already migrated away from, see p4TIVU-9Bf-p2 for more details.
 		'you-dont-need-lodash-underscore/all': 'error',
 		'you-dont-need-lodash-underscore/any': 'error',
+		'you-dont-need-lodash-underscore/assign': 'error',
 		'you-dont-need-lodash-underscore/bind': 'error',
 		'you-dont-need-lodash-underscore/cast-array': 'error',
 		'you-dont-need-lodash-underscore/collect': 'error',

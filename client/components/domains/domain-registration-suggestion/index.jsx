@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, isNumber, includes } from 'lodash';
+import { get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
@@ -84,7 +84,7 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	recordRender() {
-		if ( this.props.railcarId && isNumber( this.props.uiPosition ) ) {
+		if ( this.props.railcarId && typeof this.props.uiPosition === 'number' ) {
 			let resultSuffix = '';
 			if ( this.props.suggestion.isRecommended ) {
 				resultSuffix = '#recommended';

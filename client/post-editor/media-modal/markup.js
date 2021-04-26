@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { assign } from 'lodash';
 import ReactDomServer from 'react-dom/server';
 import React from 'react';
 import classNames from 'classnames';
@@ -129,14 +128,12 @@ const Markup = {
 		 * @returns {string}         An image markup string
 		 */
 		image: function ( site, media, options ) {
-			options = assign(
-				{
-					size: 'full',
-					align: 'none',
-					forceResize: false,
-				},
-				options
-			);
+			options = {
+				size: 'full',
+				align: 'none',
+				forceResize: false,
+				...options,
+			};
 
 			let width;
 			let height;

@@ -73,7 +73,8 @@ ProductsList.prototype.fetch = function () {
 
 	this.isFetching = true;
 
-	wpcom.undocumented().getProducts(
+	wpcom.req.get(
+		'/products',
 		function ( error, data ) {
 			if ( error ) {
 				debug( 'error fetching ProductsList from api', error );

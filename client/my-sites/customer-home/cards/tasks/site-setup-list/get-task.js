@@ -183,7 +183,7 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.SITE_MENU_UPDATED:
 			taskData = {
 				timing: 10,
-				title: translate( 'Create a site menu' ),
+				title: translate( 'Edit the site menu' ),
 				description: (
 					<>
 						{ translate(

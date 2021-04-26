@@ -36,3 +36,8 @@ export const getDomainSearch = ( state: State ) =>
 	state.domainSearch ||
 	( isGoodDefaultDomainQuery( getSelectedSiteTitle( state ) ) && getSelectedSiteTitle( state ) ) ||
 	getSelectedVertical( state )?.label;
+
+export const hasSelectedDesign = ( state: State ) => !! state.selectedDesign;
+
+export const hasSelectedDesignWithoutFonts = ( state: State ) =>
+	hasSelectedDesign( state ) && ! state.selectedFonts;

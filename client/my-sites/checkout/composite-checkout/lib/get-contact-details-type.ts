@@ -13,7 +13,7 @@ import {
 	hasTransferProduct,
 	hasOnlyRenewalItems,
 } from 'calypso/lib/cart-values/cart-items';
-import { isGoogleWorkspaceExtraLicence } from 'calypso/lib/products-values';
+import { isGoogleWorkspaceExtraLicence } from '@automattic/calypso-products';
 import { isGoogleWorkspaceProductSlug, isGSuiteProductSlug } from 'calypso/lib/gsuite';
 
 export default function getContactDetailsType( responseCart: ResponseCart ): ContactDetailsType {

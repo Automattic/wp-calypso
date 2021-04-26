@@ -138,6 +138,7 @@ class MasterbarLoggedIn extends React.Component {
 
 	clickMe = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_me_clicked' );
+		window.scrollTo( 0, 0 );
 		this.handleLayoutFocus( 'me' );
 	};
 

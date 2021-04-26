@@ -2,4 +2,6 @@ export * from './main';
 export * from './types';
 export * from './constants';
 export * from './utils';
-export { default as getIntervalTypeForTerm } from './get-interval-type-for-term';
+export * from './product-values';
+export * from './get-interval-type-for-term';
+export * from './gsuite-product-slug';

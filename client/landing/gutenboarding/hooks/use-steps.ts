@@ -15,7 +15,16 @@ import { usePlanFromPath } from './use-selected-plan';
 
 export default function useSteps(): Array< StepType > {
 	const locale = useLocale();
-	const { hasSiteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { hasSiteTitle, hasSelectedDesignWithoutFonts } = useSelect(
+		( select ) => {
+			const onboardSelect = select( ONBOARD_STORE );
+			return {
+				hasSiteTitle: onboardSelect.hasSiteTitle(),
+				hasSelectedDesignWithoutFonts: onboardSelect.hasSelectedDesignWithoutFonts(),
+			};
+		},
+		[ ONBOARD_STORE ]
+	);
 	const isAnchorFmSignup = useIsAnchorFm();
 
 	let steps: StepType[];
@@ -24,7 +33,7 @@ export default function useSteps(): Array< StepType > {
 	if ( isAnchorFmSignup ) {
 		steps = [ Step.IntentGathering, Step.DesignSelection, Step.Style ];
 		// If site title is skipped, we're showing Domains step before Features step. If not, we are showing Domains step next.
-	} else if ( hasSiteTitle() ) {
+	} else if ( hasSiteTitle ) {
 		steps = [
 			Step.IntentGathering,
 			Step.Domains,
@@ -45,7 +54,7 @@ export default function useSteps(): Array< StepType > {
 	}
 
 	// Remove the Style (fonts) step from the Site Editor flow.
-	if ( isEnabled( 'gutenboarding/site-editor' ) ) {
+	if ( isEnabled( 'gutenboarding/site-editor' ) || hasSelectedDesignWithoutFonts ) {
 		steps = steps.filter( ( step ) => step !== Step.Style );
 	}
 

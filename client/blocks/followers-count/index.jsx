@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, isNumber } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,7 +23,7 @@ class FollowersCount extends Component {
 		return (
 			<div className="followers-count">
 				{ siteId && <QuerySiteStats statType="stats" siteId={ siteId } /> }
-				{ isNumber( followers ) && (
+				{ typeof followers === 'number' && (
 					<Button
 						borderless
 						href={ '/people/followers/' + slug }

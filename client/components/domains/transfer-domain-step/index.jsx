@@ -26,7 +26,6 @@ import {
 } from 'calypso/lib/domains';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { domainAvailability } from 'calypso/lib/domains/constants';
-import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
 import { getCurrentUser, getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
@@ -49,7 +48,7 @@ import { domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import QueryPlans from 'calypso/components/data/query-plans';
-import { isPlan } from 'calypso/lib/products-values';
+import { PLAN_PERSONAL, isPlan } from '@automattic/calypso-products';
 import {
 	isDomainBundledWithPlan,
 	isNextDomainFree,

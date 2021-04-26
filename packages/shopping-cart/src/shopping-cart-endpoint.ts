@@ -145,6 +145,7 @@ export interface ResponseCartProduct {
 	months_per_bill_period: number | null;
 	volume: number;
 	quantity: number | null;
+	current_quantity: number | null;
 	extra: ResponseCartProductExtra;
 	uuid: string;
 	cost: number;

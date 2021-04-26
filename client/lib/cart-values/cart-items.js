@@ -2,7 +2,7 @@
  * External dependencies
  */
 import update from 'immutability-helper';
-import { assign, filter, find, get, isEqual, merge, some } from 'lodash';
+import { filter, find, get, isEqual, merge, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,18 +42,17 @@ import {
 	isConciergeSession,
 	isTrafficGuide,
 	isTitanMail,
-	isMonthly,
-} from 'calypso/lib/products-values';
-import sortProducts from 'calypso/lib/products-values/sort';
-import { getTld } from 'calypso/lib/domains';
-import { domainProductSlugs } from 'calypso/lib/domains/constants';
-import {
+	isP2Plus,
+	isMonthlyProduct,
+	sortProducts,
 	getTermDuration,
 	getPlan,
 	isBloggerPlan,
 	isWpComFreePlan,
 	isWpComBloggerPlan,
 } from '@automattic/calypso-products';
+import { getTld } from 'calypso/lib/domains';
+import { domainProductSlugs } from 'calypso/lib/domains/constants';
 
 /**
  * @typedef { import("./types").CartItemValue} CartItemValue
@@ -173,6 +172,16 @@ export function hasJetpackPlan( cart ) {
 }
 
 /**
+ * Determines whether there is a P2+ plan in the shopping cart.
+ *
+ * @param {CartValue} cart - cart as `CartValue` object
+ * @returns {boolean} true if there is at least one P2+ plan, false otherwise
+ */
+export function hasP2PlusPlan( cart ) {
+	return some( getAllCartItems( cart ), isP2Plus );
+}
+
+/**
  * Determines whether there is an ecommerce plan in the shopping cart.
  *
  * @param {CartValue} cart - cart as `CartValue` object
@@ -203,7 +212,7 @@ export function hasDomainCredit( cart ) {
 }
 
 export function hasMonthlyCartItem( cart ) {
-	return some( getAllCartItems( cart ), isMonthly );
+	return some( getAllCartItems( cart ), isMonthlyProduct );
 }
 
 /**
@@ -445,10 +454,11 @@ export function themeItem( themeSlug, source ) {
  * @returns {CartItemValue} the new item as `CartItemValue` object
  */
 export function domainRegistration( properties ) {
-	return assign( domainItem( properties.productSlug, properties.domain, properties.source ), {
+	return {
+		...domainItem( properties.productSlug, properties.domain, properties.source ),
 		is_domain_registration: true,
 		...( properties.extra ? { extra: properties.extra } : {} ),
-	} );
+	};
 }
 
 /**
@@ -478,12 +488,10 @@ export function siteRedirect( properties ) {
  * @returns {CartItemValue} the new item as `CartItemValue` object
  */
 export function domainTransfer( properties ) {
-	return assign(
-		domainItem( domainProductSlugs.TRANSFER_IN, properties.domain, properties.source ),
-		{
-			...( properties.extra ? { extra: properties.extra } : {} ),
-		}
-	);
+	return {
+		...domainItem( domainProductSlugs.TRANSFER_IN, properties.domain, properties.source ),
+		...( properties.extra ? { extra: properties.extra } : {} ),
+	};
 }
 
 /**
@@ -528,7 +536,10 @@ export function googleApps( properties ) {
 export function googleAppsExtraLicenses( properties ) {
 	const item = domainItem( GSUITE_EXTRA_LICENSE_SLUG, properties.domain, properties.source );
 
-	return assign( item, { extra: { google_apps_users: properties.users } } );
+	return {
+		...item,
+		extra: { google_apps_users: properties.users },
+	};
 }
 
 /**
@@ -538,13 +549,15 @@ export function googleAppsExtraLicenses( properties ) {
  * @returns {CartItemValue} the new item as `CartItemValue` object
  */
 export function titanMailMonthly( properties ) {
-	return assign(
-		domainItem( TITAN_MAIL_MONTHLY_SLUG, properties.meta ?? properties.domain, properties.source ),
-		{
-			quantity: properties.quantity,
-			extra: properties.extra,
-		}
-	);
+	return {
+		...domainItem(
+			TITAN_MAIL_MONTHLY_SLUG,
+			properties.meta ?? properties.domain,
+			properties.source
+		),
+		quantity: properties.quantity,
+		extra: properties.extra,
+	};
 }
 
 export function hasGoogleApps( cart ) {

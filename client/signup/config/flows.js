@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { assign, get, includes, reject } from 'lodash';
+import { get, includes, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -116,9 +116,10 @@ function removeUserStepFromFlow( flow ) {
 		return;
 	}
 
-	return assign( {}, flow, {
+	return {
+		...flow,
 		steps: reject( flow.steps, ( stepName ) => stepConfig[ stepName ].providesToken ),
-	} );
+	};
 }
 
 function removeP2DetailsStepFromFlow( flow ) {
@@ -126,9 +127,10 @@ function removeP2DetailsStepFromFlow( flow ) {
 		return;
 	}
 
-	return assign( {}, flow, {
+	return {
+		...flow,
 		steps: reject( flow.steps, ( stepName ) => stepName === 'p2-details' ),
-	} );
+	};
 }
 
 function filterDestination( destination, dependencies, flowName, localeSlug ) {
@@ -206,9 +208,10 @@ const Flows = {
 			return;
 		}
 
-		return assign( {}, flow, {
+		return {
+			...flow,
 			steps: reject( flow.steps, ( stepName ) => includes( Flows.excludedSteps, stepName ) ),
-		} );
+		};
 	},
 
 	resetExcludedSteps() {

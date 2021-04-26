@@ -41,13 +41,20 @@ import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/s
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import { getSublabel, getLabel } from '../lib/translate-cart';
-import { isPlan, isMonthly, isYearly, isBiennially } from 'calypso/lib/products-values';
+import {
+	isPlan,
+	isMonthlyProduct,
+	isYearly,
+	isBiennially,
+	isP2Plus,
+} from '@automattic/calypso-products';
 import type {
 	WPCOMProductSlug,
 	WPCOMProductVariant,
 	OnChangeItemVariant,
 } from './item-variation-picker';
 import { getIntroductoryOfferIntervalDisplay } from 'calypso/lib/purchases/utils';
+import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 
 const WPOrderReviewList = styled.ul< { theme?: Theme } >`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
@@ -560,8 +567,30 @@ function LineItemSublabelAndPrice( {
 
 	const isGSuite =
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
+	// This is the price for one item for products with a quantity (eg. seats in a license).
+	const itemPrice = useSelector( ( state ) => getProductDisplayCost( state, productSlug ) );
 
 	if ( isPlan( product ) ) {
+		if ( isP2Plus( product ) ) {
+			const members = product?.current_quantity || 1;
+			const p2Options = {
+				args: {
+					itemPrice: itemPrice,
+					members,
+				},
+				count: members,
+			};
+			return (
+				<>
+					{ translate(
+						'Monthly subscription: %(itemPrice)s x %(members)s active member',
+						'Monthly subscription: %(itemPrice)s x %(members)s active members',
+						p2Options
+					) }
+				</>
+			);
+		}
+
 		const options = {
 			args: {
 				sublabel,
@@ -569,7 +598,7 @@ function LineItemSublabelAndPrice( {
 			},
 		};
 
-		if ( isMonthly( product ) ) {
+		if ( isMonthlyProduct( product ) ) {
 			return <>{ translate( '%(sublabel)s: %(price)s per month', options ) }</>;
 		}
 
@@ -623,7 +652,7 @@ function FirstTermDiscountCallout( {
 		return null;
 	}
 
-	if ( isMonthly( product ) ) {
+	if ( isMonthlyProduct( product ) ) {
 		return <DiscountCallout>{ translate( 'Discount for first month' ) }</DiscountCallout>;
 	}
 

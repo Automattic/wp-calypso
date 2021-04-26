@@ -21,7 +21,7 @@ Here are few resources to get up to speed with “modern” JavaScript and ES6:
 Key concepts checklist:
 
 - [Module pattern with CommonJS](http://darrenderidder.github.io/talks/ModulePatterns/) and [npm](https://docs.npmjs.com)
-- [Scope](https://github.com/getify/You-Dont-Know-JS/tree/HEAD/scope%20%26%20closures), context, and [function binding](https://github.com/getify/You-Dont-Know-JS/tree/HEAD/this%20%26%20object%20prototypes)
+- [Scope](You-Dont-Know-JS/tree/2nd-ed/scope-closures), context, and [function binding](https://github.com/getify/You-Dont-Know-JS/blob/1st-ed/this%20&%20object%20prototypes/README.md#you-dont-know-js-this--object-prototypes)
 - [Basic prototypes – creating new objects, inheritance](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Inheritance_and_the_prototype_chain)
 - Higher-level functions – [`map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map), [`filter`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter), [`reduce`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce)
 - Async primitives – [callbacks](https://docs.nodejitsu.com/articles/getting-started/control-flow/what-are-callbacks), [promises](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise)

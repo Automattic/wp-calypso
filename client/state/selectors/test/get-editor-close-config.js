@@ -29,6 +29,7 @@ describe( 'getEditorCloseConfig()', () => {
 				},
 			},
 			ui: { selectedSiteId: siteId },
+			userSettings: { settings: {} },
 		};
 
 		expect( getEditorCloseConfig( state, siteId, postType ).url ).toEqual( customerHomeUrl );
@@ -47,6 +48,7 @@ describe( 'getEditorCloseConfig()', () => {
 			ui: {
 				selectedSiteId: siteId,
 			},
+			userSettings: { settings: {} },
 		};
 
 		const allPostsUrl = getPostTypeAllPostsUrl( state, postType );
@@ -80,6 +82,7 @@ describe( 'getEditorCloseConfig()', () => {
 				},
 			},
 			ui: { selectedSiteId: siteId },
+			userSettings: { settings: {} },
 		};
 
 		const parentPostEditorUrl = getEditorUrl( state, siteId, parentPostId, pagePostType );
@@ -102,6 +105,7 @@ describe( 'getEditorCloseConfig()', () => {
 			ui: {
 				selectedSiteId: siteId,
 			},
+			userSettings: { settings: {} },
 		};
 
 		expect( getEditorCloseConfig( state, siteId, postType, '' ).url ).toEqual( customerHomeUrl );
@@ -120,6 +124,7 @@ describe( 'getEditorCloseConfig()', () => {
 			ui: {
 				selectedSiteId: siteId,
 			},
+			userSettings: { settings: {} },
 		};
 
 		expect( getEditorCloseConfig( state, siteId, postType, '' ).url ).toEqual( customerHomeUrl );
@@ -138,6 +143,7 @@ describe( 'getEditorCloseConfig()', () => {
 			ui: {
 				selectedSiteId: siteId,
 			},
+			userSettings: { settings: {} },
 		};
 
 		expect( getEditorCloseConfig( state, siteId, siteEditorPostType ).url ).toEqual(
@@ -158,6 +164,7 @@ describe( 'getEditorCloseConfig()', () => {
 			ui: {
 				selectedSiteId: siteId,
 			},
+			userSettings: { settings: {} },
 		};
 
 		expect( getEditorCloseConfig( state, siteId, siteEditorPostType, '' ).url ).toEqual(

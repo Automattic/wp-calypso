@@ -31,7 +31,8 @@ import {
 	isGoogleWorkspaceExtraLicence,
 	isGSuiteOrGoogleWorkspace,
 	isTitanMail,
-} from 'calypso/lib/products-values';
+	isP2Plus,
+} from '@automattic/calypso-products';
 import { isRenewal } from 'calypso/lib/cart-values/cart-items';
 import doesValueExist from './does-value-exist';
 import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
@@ -202,6 +203,10 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.
 	}
 
 	if ( isPlan( serverCartItem ) ) {
+		if ( isP2Plus( serverCartItem ) ) {
+			return translate( 'Monthly subscription' );
+		}
+
 		return isRenewalItem ? translate( 'Plan Renewal' ) : translate( 'Plan Subscription' );
 	}
 

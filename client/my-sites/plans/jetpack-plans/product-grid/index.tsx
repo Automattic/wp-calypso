@@ -31,7 +31,7 @@ import StoreFooter from 'calypso/jetpack-connect/store-footer';
  * Type dependencies
  */
 import type { ProductsGridProps, SelectorProduct } from '../types';
-import type { JetpackProductSlug } from 'calypso/lib/products-values/types';
+import type { JetpackProductSlug } from '@automattic/calypso-products';
 import type { JetpackPlanSlugs } from '@automattic/calypso-products';
 
 /**

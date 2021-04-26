@@ -29,6 +29,8 @@ import Widgets from './widgets';
 import PublishingTools from './publishing-tools';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
 
 class SiteSettingsFormWriting extends Component {
 	isMobile() {
@@ -55,6 +57,7 @@ class SiteSettingsFormWriting extends Component {
 			siteIsJetpack,
 			translate,
 			updateFields,
+			showAdvancedDashboard,
 		} = this.props;
 
 		return (
@@ -63,13 +66,16 @@ class SiteSettingsFormWriting extends Component {
 				onSubmit={ handleSubmitForm }
 				className="site-settings__writing-settings"
 			>
-				{ config.isEnabled( 'manage/site-settings/categories' ) && (
-					<div className="site-settings__taxonomies">
-						<QueryTaxonomies siteId={ siteId } postType="post" />
-						<TaxonomyCard taxonomy="category" postType="post" />
-						<TaxonomyCard taxonomy="post_tag" postType="post" />
-					</div>
-				) }
+				{
+					// Only show taxonomy management for non-advanced dashboard user setting
+					config.isEnabled( 'manage/site-settings/categories' ) && ! showAdvancedDashboard && (
+						<div className="site-settings__taxonomies">
+							<QueryTaxonomies siteId={ siteId } postType="post" />
+							<TaxonomyCard taxonomy="category" postType="post" />
+							<TaxonomyCard taxonomy="post_tag" postType="post" />
+						</div>
+					)
+				}
 
 				<SettingsSectionHeader
 					disabled={ isRequestingSettings || isSavingSettings }
@@ -195,6 +201,9 @@ const connectComponent = connect(
 		const siteIsJetpack = isJetpackSite( state, siteId );
 		const siteIsAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
 		const isPodcastingSupported = ! siteIsJetpack || siteIsAutomatedTransfer;
+		const isNavUnification = isNavUnificationEnabled( state );
+		const showAdvancedDashboard =
+			isNavUnification && getUserSettings( state )?.calypso_preferences?.linkDestination;
 
 		return {
 			siteIsJetpack,
@@ -204,6 +213,7 @@ const connectComponent = connect(
 				// Masterbar can't be turned off on Atomic sites - don't show the toggle in that case
 				! siteIsAutomatedTransfer,
 			isPodcastingSupported,
+			showAdvancedDashboard,
 		};
 	},
 	{ requestPostTypes },

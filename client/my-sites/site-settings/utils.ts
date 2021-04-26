@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isEnterprise, isVipPlan } from 'calypso/lib/products-values';
+import { isEnterprise, isVipPlan } from '@automattic/calypso-products';
 import { FEATURE_GOOGLE_ANALYTICS } from '@automattic/calypso-products';
 import { hasSiteFeature } from 'calypso/lib/site/utils';
 

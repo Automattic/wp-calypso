@@ -14,13 +14,6 @@ import React, { Component, Fragment } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { abtest } from 'calypso/lib/abtest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import {
-	applyTestFiltersToPlansList,
-	isWpComMonthlyPlan,
-	JETPACK_PLANS,
-	JETPACK_LEGACY_PLANS,
-	JETPACK_PRODUCTS_LIST,
-} from '@automattic/calypso-products';
 import { Button, Card, CompactCard, ProductIcon } from '@automattic/components';
 import config from '@automattic/calypso-config';
 import {
@@ -83,7 +76,13 @@ import {
 	isJetpackProduct,
 	isConciergeSession,
 	isTitanMail,
-} from 'calypso/lib/products-values';
+	applyTestFiltersToPlansList,
+	isWpComMonthlyPlan,
+	JETPACK_PLANS,
+	JETPACK_LEGACY_PLANS,
+	JETPACK_PRODUCTS_LIST,
+	isP2Plus,
+} from '@automattic/calypso-products';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import ProductLink from 'calypso/me/purchases/product-link';
@@ -116,7 +115,6 @@ import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dial
  * Style dependencies
  */
 import './style.scss';
-import { isP2Plus } from 'calypso/lib/products-values/is-p2-plus';
 
 class ManagePurchase extends Component {
 	static propTypes = {
@@ -827,9 +825,7 @@ function addPaymentMethodLinkText( { purchase, translate } ) {
 	if ( hasPaymentMethod( purchase ) && ! isPaidWithCredits( purchase ) ) {
 		linkText = translate( 'Change Payment Method' );
 	} else {
-		linkText = config.isEnabled( 'purchases/new-payment-methods' )
-			? translate( 'Add Payment Method' )
-			: translate( 'Add Credit Card' );
+		linkText = translate( 'Add Payment Method' );
 	}
 	return linkText;
 }

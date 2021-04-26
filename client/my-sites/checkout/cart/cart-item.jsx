@@ -24,17 +24,15 @@ import {
 	isPlan,
 	isBundled,
 	isDomainProduct,
-} from 'calypso/lib/products-values';
+	calculateMonthlyPriceForPlan,
+	getBillingMonthsForPlan,
+} from '@automattic/calypso-products';
 import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
 import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GSUITE_BASIC_SLUG,
 	GSUITE_BUSINESS_SLUG,
 } from 'calypso/lib/gsuite/constants';
-import {
-	calculateMonthlyPriceForPlan,
-	getBillingMonthsForPlan,
-} from '@automattic/calypso-products';
 
 export class CartItem extends React.Component {
 	removeFromCart = ( event ) => {

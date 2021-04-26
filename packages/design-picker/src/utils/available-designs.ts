@@ -31,8 +31,8 @@ export const getDesignUrl = ( design: Design, locale: string ): string => {
 	return addQueryArgs(
 		`https://public-api.wordpress.com/rest/v1/template/demo/${ theme }/${ template }`,
 		{
-			font_headings: design.fonts.headings,
-			font_base: design.fonts.base,
+			font_headings: design.fonts?.headings,
+			font_base: design.fonts?.base,
 			site_title: design.title,
 			viewport_height: 700,
 			language: locale,

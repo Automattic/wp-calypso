@@ -21,7 +21,7 @@ import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-sit
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { isJetpackBackupSlug } from 'calypso/lib/products-values';
+import { isJetpackBackupSlug } from '@automattic/calypso-products';
 import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-disconnected-switch';
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';

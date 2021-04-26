@@ -20,7 +20,6 @@ import {
 	paymentMethods,
 	addPaymentMethod,
 } from './controller';
-import { isEnabled } from '@automattic/calypso-config';
 
 export default ( router ) => {
 	page( '/purchases', siteSelection, navigation, sites, makeLayout, clientRender );
@@ -72,61 +71,32 @@ export default ( router ) => {
 		clientRender
 	);
 
-	if ( isEnabled( 'purchases/new-payment-methods' ) ) {
-		page(
-			'/purchases/subscriptions/:site/:purchaseId/payment-method/add',
-			siteSelection,
-			navigation,
-			purchaseChangePaymentMethod,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/purchases/subscriptions/:site/:purchaseId/payment-method/add',
+		siteSelection,
+		navigation,
+		purchaseChangePaymentMethod,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/purchases/subscriptions/:site/:purchaseId/payment-method/change/:cardId',
-			siteSelection,
-			navigation,
-			purchaseChangePaymentMethod,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/purchases/subscriptions/:site/:purchaseId/payment-method/change/:cardId',
+		siteSelection,
+		navigation,
+		purchaseChangePaymentMethod,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/purchases/add-payment-method/:site',
-			siteSelection,
-			navigation,
-			addPaymentMethod,
-			makeLayout,
-			clientRender
-		);
-	} else {
-		page(
-			'/purchases/subscriptions/:site/:purchaseId/payment/add',
-			siteSelection,
-			navigation,
-			purchaseChangePaymentMethod,
-			makeLayout,
-			clientRender
-		);
-
-		page(
-			'/purchases/subscriptions/:site/:purchaseId/payment/edit/:cardId',
-			siteSelection,
-			navigation,
-			purchaseChangePaymentMethod,
-			makeLayout,
-			clientRender
-		);
-
-		page(
-			'/purchases/add-credit-card/:site',
-			siteSelection,
-			navigation,
-			addPaymentMethod,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		'/purchases/add-payment-method/:site',
+		siteSelection,
+		navigation,
+		addPaymentMethod,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/purchases/billing-history/:site',
@@ -172,21 +142,27 @@ export default ( router ) => {
 	router(
 		'/purchases/:siteName/:purchaseId/payment/add',
 		( { params: { siteName, purchaseId } } ) =>
-			isEnabled( 'purchases/new-payment-methods' )
-				? page.redirect(
-						`/purchases/subscriptions/${ siteName }/${ purchaseId }/payment-method/add`
-				  )
-				: page.redirect( `/purchases/subscriptions/${ siteName }/${ purchaseId }/payment/add` )
+			page.redirect( `/purchases/subscriptions/${ siteName }/${ purchaseId }/payment-method/add` )
 	);
 	router(
 		'/purchases/:siteName/:purchaseId/payment/edit/:cardId',
 		( { params: { siteName, purchaseId, cardId } } ) =>
-			isEnabled( 'purchases/new-payment-methods' )
-				? page.redirect(
-						`/purchases/subscriptions/${ siteName }/${ purchaseId }/payment-method/change/${ cardId }`
-				  )
-				: page.redirect(
-						`/purchases/subscriptions/${ siteName }/${ purchaseId }/payment/edit/${ cardId }`
-				  )
+			page.redirect(
+				`/purchases/subscriptions/${ siteName }/${ purchaseId }/payment-method/change/${ cardId }`
+			)
+	);
+	router(
+		'/purchases/subscriptions/:site/:purchaseId/payment/add',
+		( { params: { site, purchaseId } } ) =>
+			`/purchases/subscriptions/${ site }/${ purchaseId }/payment-method/add`
+	);
+	router(
+		'/purchases/subscriptions/:site/:purchaseId/payment/edit/:cardId',
+		( { params: { site, purchaseId, cardId } } ) =>
+			`/purchases/subscriptions/${ site }/${ purchaseId }/payment-method/change/${ cardId }`
+	);
+	router(
+		'/purchases/add-credit-card/:site',
+		( { params: { site } } ) => `/purchases/add-payment-method/${ site }`
 	);
 };

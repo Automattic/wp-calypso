@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { map, compact, concat, isObject } from 'lodash';
+import { map, compact, concat } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
 
 /**
@@ -24,7 +24,7 @@ export function fromApi( apiResponse ) {
 	const tags = compact(
 		concat(
 			[],
-			isObject( apiResponse.tag ) && apiResponse.tag,
+			typeof apiResponse.tag === 'object' && apiResponse.tag,
 			Array.isArray( apiResponse.tags ) && apiResponse.tags
 		)
 	);

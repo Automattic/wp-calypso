@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { assign, keyBy, map, omit, omitBy, reduce, merge, forEach } from 'lodash';
+import { keyBy, map, omit, omitBy, reduce, merge, forEach } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -22,15 +22,13 @@ import { safeLink } from 'calypso/lib/post-normalizer/utils';
 
 function handleRequestFailure( state, action ) {
 	// new object precedes current state to prevent new errors from overwriting existing values
-	return assign(
-		{
-			[ action.payload.feed_ID ]: {
-				feed_ID: action.payload.feed_ID,
-				is_error: true,
-			},
+	return {
+		[ action.payload.feed_ID ]: {
+			feed_ID: action.payload.feed_ID,
+			is_error: true,
 		},
-		state
-	);
+		...state,
+	};
 }
 
 function adaptFeed( feed ) {
@@ -52,14 +50,18 @@ function adaptFeed( feed ) {
 
 function handleRequestSuccess( state, action ) {
 	const feed = adaptFeed( action.payload );
-	return assign( {}, state, {
+	return {
+		...state,
 		[ feed.feed_ID ]: feed,
-	} );
+	};
 }
 
 function handleFeedUpdate( state, action ) {
 	const feeds = map( action.payload, adaptFeed );
-	return assign( {}, state, keyBy( feeds, 'feed_ID' ) );
+	return {
+		...state,
+		...keyBy( feeds, 'feed_ID' ),
+	};
 }
 
 const itemsReducer = ( state = {}, action ) => {
@@ -121,9 +123,10 @@ export const items = withSchemaValidation(
 export function queuedRequests( state = {}, action ) {
 	switch ( action.type ) {
 		case READER_FEED_REQUEST:
-			return assign( {}, state, {
+			return {
+				...state,
 				[ action.payload.feed_ID ]: true,
-			} );
+			};
 
 		case READER_FEED_REQUEST_SUCCESS:
 		case READER_FEED_REQUEST_FAILURE:
@@ -148,7 +151,7 @@ export const lastFetched = ( state = {}, action ) => {
 				},
 				{}
 			);
-			return assign( {}, state, updates );
+			return { ...state, ...updates };
 		}
 	}
 

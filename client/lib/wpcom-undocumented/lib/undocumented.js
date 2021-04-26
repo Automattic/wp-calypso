@@ -759,6 +759,18 @@ Undocumented.prototype.validateGoogleAppsContactInformation = function (
 	return result.then?.( camelCaseKeys );
 };
 
+Undocumented.prototype.getEmailAccountsForSiteAndDomain = function ( siteId, domain, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/sites/${ encodeURIComponent( siteId ) }/emails/accounts/${ encodeURIComponent(
+				domain
+			) }/mailboxes`,
+			apiNamespace: 'wpcom/v2',
+		},
+		fn
+	);
+};
+
 /**
  * Retrieves the Titan order provisioning URL for a domain.
  *
@@ -836,22 +848,6 @@ Undocumented.prototype.getTitanMailboxAvailability = function ( domain, mailbox,
 				domain
 			) }/check-mailbox-availability/${ encodeURIComponent( mailbox ) }`,
 			apiNamespace: 'wpcom/v2',
-		},
-		fn
-	);
-};
-
-/**
- * Get a list of WordPress.com products
- *
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getProducts = function ( fn ) {
-	debug( '/products query' );
-	return this._sendRequest(
-		{
-			path: '/products',
-			method: 'get',
 		},
 		fn
 	);

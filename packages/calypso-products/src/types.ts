@@ -5,6 +5,8 @@
 import type * as constants from './constants';
 import type { TranslateResult } from 'i18n-calypso';
 
+export * from './product-values-types';
+
 export type JetpackResetPlanSlugs =
 	| typeof constants.PLAN_JETPACK_SECURITY_DAILY
 	| typeof constants.PLAN_JETPACK_SECURITY_DAILY_MONTHLY
@@ -23,6 +25,25 @@ export type JetpackLegacyPlanSlugs =
 
 export type JetpackPlanSlugs =
 	| typeof constants.PLAN_JETPACK_FREE
+	| JetpackResetPlanSlugs
+	| JetpackLegacyPlanSlugs;
+
+export type JetpackProductSlug =
+	| typeof constants.PRODUCT_JETPACK_BACKUP_DAILY
+	| typeof constants.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY
+	| typeof constants.PRODUCT_JETPACK_BACKUP_REALTIME
+	| typeof constants.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY
+	| typeof constants.PRODUCT_JETPACK_SCAN
+	| typeof constants.PRODUCT_JETPACK_SCAN_MONTHLY
+	| typeof constants.PRODUCT_JETPACK_SCAN_REALTIME
+	| typeof constants.PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY
+	| typeof constants.PRODUCT_JETPACK_ANTI_SPAM
+	| typeof constants.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY
+	| typeof constants.PRODUCT_JETPACK_SEARCH
+	| typeof constants.PRODUCT_JETPACK_SEARCH_MONTHLY;
+
+export type JetpackPurchasableItem =
+	| JetpackProductSlug
 	| JetpackResetPlanSlugs
 	| JetpackLegacyPlanSlugs;
 

@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { Button, Card, ProgressBar } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
-import { isEnabled } from '@automattic/calypso-config';
 import classNames from 'classnames';
 
 /**
@@ -153,15 +152,13 @@ class ScanPage extends Component< Props > {
 						}
 					) }
 				</p>
-				{ isEnabled( 'jetpack/on-demand-scan' ) && (
-					<Button
-						primary
-						className="scan__button"
-						onClick={ () => siteId && dispatchScanRun( siteId ) }
-					>
-						{ translate( 'Scan now' ) }
-					</Button>
-				) }
+				<Button
+					primary
+					className="scan__button"
+					onClick={ () => siteId && dispatchScanRun( siteId ) }
+				>
+					{ translate( 'Scan now' ) }
+				</Button>
 			</>
 		);
 	}
@@ -210,14 +207,12 @@ class ScanPage extends Component< Props > {
 					) }
 				</p>
 				{ this.renderContactSupportButton() }
-				{ isEnabled( 'jetpack/on-demand-scan' ) && (
-					<Button
-						className="scan__button scan__retry-bottom"
-						onClick={ () => siteId && dispatchScanRun( siteId ) }
-					>
-						{ translate( 'Retry scan' ) }
-					</Button>
-				) }
+				<Button
+					className="scan__button scan__retry-bottom"
+					onClick={ () => siteId && dispatchScanRun( siteId ) }
+				>
+					{ translate( 'Retry scan' ) }
+				</Button>
 			</>
 		);
 	}

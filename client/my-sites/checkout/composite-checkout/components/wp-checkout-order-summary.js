@@ -22,13 +22,12 @@ import {
 /**
  * Internal dependencies
  */
-import { isMonthly, getYearlyPlanByMonthly, getPlan } from '@automattic/calypso-products';
+import { isPlan, isMonthly, getYearlyPlanByMonthly, getPlan } from '@automattic/calypso-products';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import Gridicon from 'calypso/components/gridicon';
 import getPlanFeatures from '../lib/get-plan-features';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
-import { isPlan } from 'calypso/lib/products-values';
 
 export default function WPCheckoutOrderSummary( {
 	siteId,
