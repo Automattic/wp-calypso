@@ -61,7 +61,7 @@ Consistent coding style makes the code so much easier to read. Here are ours:
   - [CSS/Sass](../docs/coding-guidelines/css.md)
   - [HTML](../docs/coding-guidelines/html.md)
   - [React Components](../docs/components.md)
-- [I18n Guidelines](https://github.com/Automattic/i18n-calypso/blob/HEAD/README.md)
+- [I18n Guidelines](../packages/i18n-calypso/README.md)
 - [A11y Checklist](../docs/accessibility-checklist.md)
 
 ### Lifecycle of a Pull Request
@@ -90,7 +90,7 @@ Once you know what the first small piece of your feature will be, follow this ge
    - Add unit tests, or at a minimum, provide helpful instructions for the reviewer so they can test your changes. This will help speed up the review process.
    - Ensure that your commit messages are [meaningful](http://robots.thoughtbot.com/5-useful-tips-for-a-better-commit-message).
 6. Mention that the PR is ready for review or if you have write access remove the **<span class="label status-in-progress">[Status] In Progress</span>** label from the pull request and add the **<span class="label status-needs-review">[Status] Needs Review</span>** label - someone will provide feedback on the latest unreviewed changes. The reviewer will also mark the pull request as **<span class="label status-needs-author-reply">[Status] Needs Author Reply</span>** if they think you need to change anything.
-7. If you get a 👍, 💥, 🚢, <img src="https://github.githubassets.com/images/icons/emoji/shipit.png" class="emoji" />, or a LGTM and the status has been changed to **<span class="label status-ready-to-merge">[Status] Ready to Merge</span>** – this is great – the pull request is ready to be merged into `trunk`.
+7. If you get a 👍, 💥, 🚢, <img src="https://github.githubassets.com/images/icons/emoji/shipit.png" class="emoji" height="14px" />, or a LGTM and the status has been changed to **<span class="label status-ready-to-merge">[Status] Ready to Merge</span>** – this is great – the pull request is ready to be merged into `trunk`.
 
 Whether somebody is reviewing your code or you are reviewing somebody else’s code, [a positive mindset towards code reviews](https://medium.com/medium-eng/the-code-review-mindset-3280a4af0a89) helps a ton. We’re building something together that is greater than the sum of its parts.
 
