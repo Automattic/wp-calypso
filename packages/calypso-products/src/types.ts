@@ -26,6 +26,25 @@ export type JetpackPlanSlugs =
 	| JetpackResetPlanSlugs
 	| JetpackLegacyPlanSlugs;
 
+export type JetpackProductSlug =
+	| typeof constants.PRODUCT_JETPACK_BACKUP_DAILY
+	| typeof constants.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY
+	| typeof constants.PRODUCT_JETPACK_BACKUP_REALTIME
+	| typeof constants.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY
+	| typeof constants.PRODUCT_JETPACK_SCAN
+	| typeof constants.PRODUCT_JETPACK_SCAN_MONTHLY
+	| typeof constants.PRODUCT_JETPACK_SCAN_REALTIME
+	| typeof constants.PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY
+	| typeof constants.PRODUCT_JETPACK_ANTI_SPAM
+	| typeof constants.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY
+	| typeof constants.PRODUCT_JETPACK_SEARCH
+	| typeof constants.PRODUCT_JETPACK_SEARCH_MONTHLY;
+
+export type JetpackPurchasableItem =
+	| JetpackProductSlug
+	| JetpackResetPlanSlugs
+	| JetpackLegacyPlanSlugs;
+
 export type JetpackPlanCardFeature = symbol | [ symbol, symbol[] ];
 export type JetpackPlanCardFeatureSection = Record< symbol, JetpackPlanCardFeature[] >;
 
