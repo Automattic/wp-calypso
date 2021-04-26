@@ -5,6 +5,7 @@ import WelcomeTourCard from './tour-card';
 import getTourContent from './tour-content';
 import maximize from './icons/maximize';
 import './style-tour.scss';
+import openPatternsPanel from './open-patterns-panel';
 
 /**
  * External dependencies
@@ -79,6 +80,7 @@ function WelcomeTourFrame() {
 			action: source,
 		} );
 		setShowWelcomeGuide( false, { openedManually: false } );
+		openPatternsPanel();
 	};
 
 	// Preload card images
