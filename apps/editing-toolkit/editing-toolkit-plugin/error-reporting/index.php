@@ -114,7 +114,6 @@ if ( ! is_atomic() ) {
 	 * and only if it is, we procedd to activate the module.
 	 */
 	if ( blog_has_error_reporting_sticker() || user_in_test_segment() ) {
-		l( 'let us activate error reporting!' );
 		activate_error_reporting();
 	}
 }
