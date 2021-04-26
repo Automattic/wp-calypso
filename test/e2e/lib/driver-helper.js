@@ -2,12 +2,13 @@
  * External dependencies
  */
 import webdriver, {
-	Key,
 	By,
+	Condition,
+	Key,
+	logging,
 	WebDriver,
 	WebElement,
 	WebElementCondition,
-	logging,
 } from 'selenium-webdriver';
 import config from 'config';
 import { forEach } from 'lodash';
@@ -563,10 +564,36 @@ export async function waitTillTextPresent( driver, selector, text, waitOverride 
  * Upon successful resolution, the driver will be left focused on the new frame.
  *
  * @param {WebDriver} driver The parent WebDriver instance
- * @param {By} locator The element's locator
+ * @param {By} locator The frame element's locator
  * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
- * @returns {Promise<boolean>} A promise that will resolve with true if the switch was succesfull
+ * @returns {Promise<boolean>} A promise that will resolve with true if the
+ * switch was succesfull
  */
 export function waitUntilAbleToSwitchToFrame( driver, locator, timeout = explicitWaitMS ) {
 	return driver.wait( until.ableToSwitchToFrame( locator ), timeout );
+}
+
+/**
+ * Waits until a window of a given index is ready to be switched to and switches
+ * to it.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {number} windowIndex The index of the window to switch to
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise<boolean>} A promise that will resolve with true if the
+ * switch was succesfull
+ */
+export function waitUntilAbleToSwitchToWindow( driver, windowIndex, timeout = explicitWaitMS ) {
+	return driver.wait(
+		new Condition( `to be able to switch to window #${ windowIndex }`, async function () {
+			try {
+				await switchToWindowByIndex( driver, windowIndex );
+			} catch {
+				return null;
+			}
+
+			return true;
+		} ),
+		timeout
+	);
 }
