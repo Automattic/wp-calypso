@@ -40,7 +40,6 @@ export default class NotificationsComponent extends AsyncBaseContainer {
 	async trashComment() {
 		const trashPostLocator = by.css( 'button[title="Trash comment"]' );
 
-		await this.driver.sleep( 400 ); // Wait for menu animation to complete
 		await driverHelper.clickWhenClickable( this.driver, trashPostLocator );
 	}
 
