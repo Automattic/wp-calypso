@@ -11,6 +11,8 @@ namespace A8C\FSE;
  * Class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller.
  */
 class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controller {
+	const NEW_SITE_AGE_SECONDS = 30 * 60;
+
 	/**
 	 * WP_REST_WPCOM_Block_Editor_NUX_Status_Controller constructor.
 	 */
@@ -61,7 +63,7 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 
 		if ( defined( 'FORCE_SHOW_WPCOM_WELCOME_GUIDE' ) && FORCE_SHOW_WPCOM_WELCOME_GUIDE ) {
 			return true;
-		} elseif ( $blog_age < 300 ) { // Always show the tour on newly created blogs.
+		} elseif ( $blog_age < self::NEW_SITE_AGE_SECONDS ) { // Always show the tour on newly created blogs.
 			return true;
 		}
 		return 'enabled' === $nux_status;
