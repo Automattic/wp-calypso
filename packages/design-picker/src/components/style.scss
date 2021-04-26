@@ -141,6 +141,10 @@
 		height: 100%;
 	}
 
+	.design-picker__image-frame-inside--blank {
+		background: var( --studio-white );
+	}
+
 	.design-picker__option-meta {
 		align-items: center;
 		display: inline-flex;

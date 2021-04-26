@@ -23,7 +23,9 @@ import './style.scss';
 
 const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;
 
-interface Props {
+// TODO: move to utils and add tests
+const isBlankCanvasDesign = ( design: Design ): boolean => /blank-canvas/i.test( design.slug );
+
 interface DesignPreviewImageProps {
 	design: Design;
 	locale: string;
@@ -57,6 +59,8 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 } ) => {
 	const { __ } = useI18n();
 
+	const isBlankCanvas = isBlankCanvasDesign( design );
+
 	return (
 		<button
 			key={ design.slug }
@@ -73,8 +77,13 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 					design.preview === 'static' ? 'design-picker__static' : 'design-picker__scrollable'
 				) }
 			>
-				<div className="design-picker__image-frame-inside" aria-hidden="true">
-					<DesignPreviewImage design={ design } locale={ locale } />
+				<div
+					className={ classnames( 'design-picker__image-frame-inside', {
+						'design-picker__image-frame-inside--blank': isBlankCanvas,
+					} ) }
+					aria-hidden="true"
+				>
+					{ ! isBlankCanvas && <DesignPreviewImage design={ design } locale={ locale } /> }
 				</div>
 			</span>
 			<span className="design-picker__option-overlay">
