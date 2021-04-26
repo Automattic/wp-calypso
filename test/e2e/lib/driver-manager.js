@@ -148,8 +148,14 @@ export async function startBrowser( {
 				};
 
 				if ( disableThirdPartyCookies ) {
-					prefs.default_content_settings = { cookies: 2 };
+					prefs.profile = {
+						// 1 = allow all cookies (default), 2 = block all cookies
+						default_content_setting_values: { cookies: 1 },
+						// 0 = allow 3pc, 1 = block 3pc, 2 = block 3pc in incognito (default)
+						cookie_controls_mode: 1,
+					};
 				}
+
 				options.setUserPreferences( prefs );
 				options.setProxy( getProxyType() );
 				options.addArguments( '--no-first-run' );
