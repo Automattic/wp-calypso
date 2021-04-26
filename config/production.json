@@ -69,6 +69,7 @@
 		"jetpack/personal-plan": false,
 		"jetpack/magic-link-signup": true,
 		"jetpack/userless-checkout": false,
+		"jetpack/redirect-legacy-plans": false,
 		"jitms": true,
 		"lasagna": true,
 		"layout/app-banner": true,
