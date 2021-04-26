@@ -48,7 +48,7 @@ const until = {
 			`for element to be clickable ${ locatorStr }`,
 			async function ( driver ) {
 				try {
-					const element = await driver.findElement( locator );
+					const element = await waitUntilElementStopsMoving( driver, locator );
 					const isEnabled = await element.isEnabled();
 					const isAriaEnabled = await element
 						.getAttribute( 'aria-disabled' )

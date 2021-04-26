@@ -68,8 +68,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async publish( { visit = false, closePanel = true } = {} ) {
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
-
-		await driverHelper.waitUntilElementStopsMoving( this.driver, this.publishButtonSelector );
 		await driverHelper.clickWhenClickable( this.driver, this.publishButtonSelector );
 
 		// When publishing request completes, the close button appears.
