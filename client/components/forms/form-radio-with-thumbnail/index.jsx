@@ -17,7 +17,7 @@ import TranslatableString from 'calypso/components/translatable/proptype';
  */
 import './style.scss';
 
-const FormRadioWithThumbnail = ( { label, thumbnail, ...otherProps } ) => {
+const FormRadioWithThumbnail = ( { label, thumbnail, disabled, ...otherProps } ) => {
 	const { cssClass, cssColor, imageUrl } = thumbnail;
 
 	return (
@@ -25,11 +25,11 @@ const FormRadioWithThumbnail = ( { label, thumbnail, ...otherProps } ) => {
 			<FormLabel>
 				<div
 					className={ classnames( 'form-radio-with-thumbnail__thumbnail', cssClass ) }
-					style={ { backgroundColor: cssColor } }
+					style={ { backgroundColor: cssColor, opacity: disabled ? 0.5 : 1 } }
 				>
 					{ imageUrl && <img src={ imageUrl } alt={ label } /> }
 				</div>
-				<FormRadio label={ label } { ...otherProps } />
+				<FormRadio label={ label } disabled={ disabled } { ...otherProps } />
 			</FormLabel>
 		</div>
 	);
