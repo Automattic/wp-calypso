@@ -13,7 +13,13 @@ import { isEnabled } from '@automattic/calypso-config';
  * Internal dependencies
  */
 import MShotsImage from './mshots-image';
-import { getAvailableDesigns, getDesignImageUrl, getDesignUrl, mShotOptions } from '../utils';
+import {
+	getAvailableDesigns,
+	getDesignImageUrl,
+	getDesignUrl,
+	mShotOptions,
+	isBlankCanvasDesign,
+} from '../utils';
 import type { Design } from '../types';
 
 /**
@@ -22,9 +28,6 @@ import type { Design } from '../types';
 import './style.scss';
 
 const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;
-
-// TODO: move to utils and add tests
-const isBlankCanvasDesign = ( design: Design ): boolean => /blank-canvas/i.test( design.slug );
 
 interface DesignPreviewImageProps {
 	design: Design;
@@ -127,8 +130,9 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	return (
 		<div className="design-picker">
 			<div className={ isGridMinimal ? 'design-picker__grid-minimal' : 'design-picker__grid' }>
-				{ designs.map( ( design ) => (
+				{ designs.map( ( design, index ) => (
 					<DesignButton
+						key={ `${ design.slug }--${ index }` }
 						design={ design }
 						locale={ locale }
 						onSelect={ onSelect }

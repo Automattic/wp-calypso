@@ -105,8 +105,8 @@ export function getAvailableDesigns( {
 	}
 
 	// Force blank canvas design to always be first in the list
-	const blankCanvasIndex = designs.featured.findIndex( ( { slug } ) =>
-		/blank-canvas/i.test( slug )
+	const blankCanvasIndex = designs.featured.findIndex( ( design ) =>
+		isBlankCanvasDesign( design )
 	);
 	if ( blankCanvasIndex > -1 ) {
 		designs = {
@@ -120,4 +120,8 @@ export function getAvailableDesigns( {
 	}
 
 	return designs;
+}
+
+export function isBlankCanvasDesign( design: Design ): boolean {
+	return /blank-canvas/i.test( design.slug );
 }
