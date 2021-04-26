@@ -9,6 +9,7 @@ import cookie from 'cookie';
 
 import createConfig from '@automattic/create-calypso-config';
 import type { ConfigData } from '@automattic/create-calypso-config';
+import desktopOverride from './desktop';
 
 declare global {
 	interface Window {
@@ -33,11 +34,7 @@ const isDesktop = window.electron !== undefined;
 let configData: ConfigData;
 
 if ( isDesktop ) {
-	configData = Object.assign( window.configData, { env_id: 'desktop', client_slug: 'desktop' } );
-	if ( configData.features ) {
-		configData.features[ 'desktop' ] = true;
-		configData.features[ 'desktop-promo' ] = false;
-	}
+	configData = desktopOverride( window.configData );
 } else {
 	configData = window.configData;
 }
