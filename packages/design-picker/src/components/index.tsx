@@ -73,7 +73,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 					design.preview === 'static' ? 'design-picker__static' : 'design-picker__scrollable'
 				) }
 			>
-				<div className="design-picker__image-frame-inside">
+				<div className="design-picker__image-frame-inside" aria-hidden="true">
 					<DesignPreviewImage design={ design } locale={ locale } />
 				</div>
 			</span>
