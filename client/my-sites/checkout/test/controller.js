@@ -39,37 +39,42 @@ describe( 'redirectJetpackLegacyPlans', () => {
 	} );
 
 	let spy;
+	let next;
 
 	beforeEach( () => {
 		spy = jest.spyOn( page, 'default' );
+		next = jest.fn();
 	} );
 
 	afterEach( () => {
 		spy.mockRestore();
+		next.mockRestore();
 	} );
 
 	it( 'should not redirect if the plan is not a Jetpack legacy plan', () => {
 		utils.getDomainOrProductFromContext.mockReturnValue( PRODUCT_JETPACK_BACKUP );
 
-		redirectJetpackLegacyPlans();
+		redirectJetpackLegacyPlans( {}, next );
 
 		expect( spy ).not.toHaveBeenCalled();
+		expect( next ).toHaveBeenCalled();
 	} );
 
 	it( 'should redirect if the plan is a Jetpack legacy plan', () => {
 		utils.getDomainOrProductFromContext.mockReturnValue( PLAN_JETPACK_PERSONAL );
 		isJetpackCloud.mockReturnValue( false );
 
-		redirectJetpackLegacyPlans( { store } );
+		redirectJetpackLegacyPlans( { store }, next );
 
 		expect( spy ).toHaveBeenCalledWith( `/plans/${ siteSlug }` );
+		expect( next ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should redirect to the pricing page in Jetpack cloud', () => {
 		utils.getDomainOrProductFromContext.mockReturnValue( PLAN_JETPACK_PERSONAL );
 		isJetpackCloud.mockReturnValue( true );
 
-		redirectJetpackLegacyPlans( { store } );
+		redirectJetpackLegacyPlans( { store }, next );
 
 		expect( spy ).toHaveBeenCalledWith( `/pricing/${ siteSlug }` );
 	} );

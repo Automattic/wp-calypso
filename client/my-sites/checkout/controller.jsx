@@ -112,7 +112,7 @@ export function checkout( context, next ) {
 	next();
 }
 
-export function redirectJetpackLegacyPlans( context ) {
+export function redirectJetpackLegacyPlans( context, next ) {
 	const product = getDomainOrProductFromContext( context );
 
 	if ( JETPACK_LEGACY_PLANS.includes( product ) ) {
@@ -120,7 +120,11 @@ export function redirectJetpackLegacyPlans( context ) {
 		const selectedSite = getSelectedSite( state );
 
 		page( ( isJetpackCloud() ? '/pricing/' : CALYPSO_PLANS_PAGE ) + ( selectedSite?.slug || '' ) );
+
+		return;
 	}
+
+	next();
 }
 
 export function checkoutPending( context, next ) {
