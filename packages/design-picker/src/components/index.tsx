@@ -62,8 +62,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	const isBlankCanvas = isBlankCanvasDesign( design );
 
 	const defaultTitle = design.title;
-	// TODO: add i18n_domain
-	const blankCanvasTitle = __( 'Start with an empty page' );
+	const blankCanvasTitle = __( 'Start with an empty page', __i18n_text_domain__ );
 	const designTitle = isBlankCanvas ? blankCanvasTitle : defaultTitle;
 
 	return (
@@ -95,7 +94,10 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 				<span id={ makeOptionId( design ) } className="design-picker__option-meta">
 					<span className="design-picker__option-name">{ designTitle }</span>
 					{ design.is_premium && premiumBadge && (
-						<Tooltip position="bottom center" text={ __( 'Requires a Personal plan or above' ) }>
+						<Tooltip
+							position="bottom center"
+							text={ __( 'Requires a Personal plan or above', __i18n_text_domain__ ) }
+						>
 							<div className="design-picker__premium-container">{ premiumBadge }</div>
 						</Tooltip>
 					) }
