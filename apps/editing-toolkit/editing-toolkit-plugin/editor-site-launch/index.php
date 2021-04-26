@@ -61,6 +61,11 @@ function enqueue_launch_button_script_and_style( $site_launch_options ) {
 		$options['anchorFmPodcastId'] = $anchor_podcast;
 	}
 
+	$is_blank_canvas = $site_launch_options['is_blank_canvas'];
+	if ( ! empty( $is_blank_canvas ) ) {
+		$options['isBlankCanvas'] = '1';
+	}
+
 	// Pass site launch options to client side here.
 	// This is accessible via window.wpcomEditorSiteLaunch.
 	wp_localize_script(
