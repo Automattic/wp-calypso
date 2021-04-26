@@ -74,9 +74,9 @@ jest.mock( '../available-designs-config', () => {
 
 	const mockDesignAlpha: Design = {
 		title: 'Mock',
-		slug: 'mock-premium-design-slug',
-		template: 'mock-premium-design-template',
-		theme: 'mock-premium-design-theme',
+		slug: 'mock-premium-design-alpha-slug',
+		template: 'mock-premium-design-alpha-template',
+		theme: 'mock-premium-design-alpha-theme',
 		fonts: {
 			headings: 'Arvo',
 			base: 'Cabin',
@@ -84,6 +84,16 @@ jest.mock( '../available-designs-config', () => {
 		categories: [ 'featured' ],
 		is_premium: false,
 		is_alpha: true,
+		features: [],
+	};
+
+	const mockDesignBlankCanvas: Design = {
+		title: 'Mock',
+		slug: 'mock-blank-canvas-design-slug',
+		template: 'mock-blank-canvas-design-template',
+		theme: 'mock-blank-canvas-design-theme',
+		categories: [ 'featured' ],
+		is_premium: false,
 		features: [],
 	};
 
@@ -95,6 +105,7 @@ jest.mock( '../available-designs-config', () => {
 				mockDesignPremium,
 				mockDesignFse,
 				mockDesignAlpha,
+				mockDesignBlankCanvas,
 			],
 		},
 	};
@@ -144,9 +155,17 @@ describe( 'Design Picker design utils', () => {
 			const mockDesignWithoutFonts = availableDesignsConfig.featured[ 1 ];
 			const mockDesignPremium = availableDesignsConfig.featured[ 2 ];
 			const mockDesignAlpha = availableDesignsConfig.featured[ 4 ];
+			const mockDesignBlankCanvas = availableDesignsConfig.featured[ 5 ];
 			expect( getAvailableDesigns( { includeAlphaDesigns: true, useFseDesigns: false } ) ).toEqual(
 				{
-					featured: [ mockDesign, mockDesignWithoutFonts, mockDesignPremium, mockDesignAlpha ],
+					featured: [
+						// Blank canvas is always in first position
+						mockDesignBlankCanvas,
+						mockDesign,
+						mockDesignWithoutFonts,
+						mockDesignPremium,
+						mockDesignAlpha,
+					],
 				}
 			);
 		} );
@@ -164,9 +183,16 @@ describe( 'Design Picker design utils', () => {
 			const mockDesign = availableDesignsConfig.featured[ 0 ];
 			const mockDesignWithoutFonts = availableDesignsConfig.featured[ 1 ];
 			const mockDesignPremium = availableDesignsConfig.featured[ 2 ];
+			const mockDesignBlankCanvas = availableDesignsConfig.featured[ 5 ];
 			expect( getAvailableDesigns( { includeAlphaDesigns: false, useFseDesigns: false } ) ).toEqual(
 				{
-					featured: [ mockDesign, mockDesignWithoutFonts, mockDesignPremium ],
+					featured: [
+						// Blank canvas is always in first position
+						mockDesignBlankCanvas,
+						mockDesign,
+						mockDesignWithoutFonts,
+						mockDesignPremium,
+					],
 				}
 			);
 		} );
