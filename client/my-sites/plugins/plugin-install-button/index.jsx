@@ -263,8 +263,9 @@ export class PluginInstallButton extends Component {
 	}
 
 	renderButton() {
-		const { translate, isInstalling, isEmbed, disabled } = this.props;
-		const label = isInstalling ? translate( 'Installing…' ) : translate( 'Install' );
+		const { translate, isInstalling, isTransferring, isEmbed, disabled } = this.props;
+		const label =
+			isInstalling || isTransferring ? translate( 'Installing…' ) : translate( 'Install' );
 
 		if ( isEmbed ) {
 			return (
@@ -287,7 +288,7 @@ export class PluginInstallButton extends Component {
 				<Button
 					onClick={ this.installAction }
 					primary={ true }
-					disabled={ isInstalling || disabled }
+					disabled={ isInstalling || isTransferring || disabled }
 				>
 					{ label }
 				</Button>
