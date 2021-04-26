@@ -563,7 +563,7 @@ function LineItemSublabelAndPrice( {
 	const isDomainRegistration = product.is_domain_registration;
 	const isDomainMap = product.product_slug === 'domain_map';
 	const productSlug = product.product_slug;
-	const sublabel = String( getSublabel( product ) );
+	const sublabel = getSublabel( product );
 
 	const isGSuite =
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
@@ -794,7 +794,7 @@ function WPLineItem( {
 
 	const isTitanMail = productSlug === TITAN_MAIL_MONTHLY_SLUG;
 
-	const sublabel = String( getSublabel( product ) );
+	const sublabel = getSublabel( product );
 	const label = getLabel( product );
 
 	const originalAmountDisplay = product.item_original_subtotal_display;
