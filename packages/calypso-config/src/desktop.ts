@@ -30,7 +30,7 @@ const features = {
 export default ( data: ConfigData ): ConfigData => {
 	data = Object.assign( data, config );
 	if ( data.features ) {
-		data.features = Object.assign( data, features );
+		data.features = Object.assign( data.features, features );
 	}
 
 	return data;
