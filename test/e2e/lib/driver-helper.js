@@ -107,13 +107,14 @@ export function waitUntilLocatedAndVisible( driver, locator, timeout = explicitW
 		new WebElementCondition(
 			`for the element to become located and visible ${ locatorStr }`,
 			async function () {
-				const element = ( await driver.findElements( locator ) )[ 0 ];
-				if ( ! element ) {
+				try {
+					const element = await driver.findElement( locator );
+					const isDisplayed = await element.isDisplayed();
+
+					return isDisplayed ? element : null;
+				} catch {
 					return null;
 				}
-				const isDisplayed = await element.isDisplayed();
-
-				return isDisplayed ? element : null;
 			}
 		),
 		timeout
