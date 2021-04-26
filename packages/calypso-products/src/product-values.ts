@@ -62,6 +62,8 @@ export { isJetpackScan } from './is-jetpack-scan';
 export { isJetpackScanSlug } from './is-jetpack-scan-slug';
 export { isJetpackSearch } from './is-jetpack-search';
 export { isJpphpBundle } from './is-jpphp-bundle';
+export { default as isJetpackLegacyItem } from './is-jetpack-legacy-item';
+export { default as isJetpackPurchasableItem } from './is-jetpack-purchasable-item';
 export { isMonthlyProduct } from './is-monthly';
 export { isNoAds } from './is-no-ads';
 export { isPersonal } from './is-personal';
