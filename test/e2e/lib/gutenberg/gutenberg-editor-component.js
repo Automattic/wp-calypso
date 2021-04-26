@@ -69,10 +69,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async publish( { visit = false, closePanel = true } = {} ) {
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
 
-		// Clicking publish too soon often fails, I suspect this is due to the slide out animation.
-		// A short sleep is enough to prevent these failures
-		await this.driver.sleep( 100 );
-
+		await driverHelper.waitUntilElementStopsMoving( this.driver, this.publishButtonSelector );
 		await driverHelper.clickWhenClickable( this.driver, this.publishButtonSelector );
 
 		// When publishing request completes, the close button appears.
