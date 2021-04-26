@@ -597,3 +597,42 @@ export function waitUntilAbleToSwitchToWindow( driver, windowIndex, timeout = ex
 		timeout
 	);
 }
+
+/**
+ * Waits until an element stops moving. Useful for interacting with animated
+ * elements.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise<WebElement>} A promise that will be resolved with
+ * the located element
+ */
+export function waitUntilElementStopsMoving( driver, locator, timeout = explicitWaitMS ) {
+	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
+	let elementX;
+	let elementY;
+
+	return driver.wait(
+		new Condition( `for an element to stop moving ${ locatorStr }`, async function () {
+			try {
+				const element = await driver.findElement( locator );
+				const elementRect = await driver.executeScript(
+					`return arguments[0].getBoundingClientRect()`,
+					element
+				);
+
+				if ( elementX !== elementRect.x || elementY !== elementRect.y ) {
+					elementX = elementRect.x;
+					elementY = elementRect.y;
+					return null;
+				}
+
+				return element;
+			} catch {
+				return null;
+			}
+		} ),
+		timeout
+	);
+}
