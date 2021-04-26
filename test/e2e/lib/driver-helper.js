@@ -367,9 +367,12 @@ export function waitForInfiniteListLoad( driver, elementSelector, { numElements 
 export async function switchToWindowByIndex( driver, index ) {
 	const currentScreenSize = driverManager.currentScreenSize();
 	const handles = await driver.getAllWindowHandles();
+
 	await driver.switchTo().window( handles[ index ] );
-	// Resize target window to ensure we stay in the same viewport size:
-	await driverManager.resizeBrowser( driver, currentScreenSize );
+	if ( currentScreenSize !== 'desktop' ) {
+		// Resize target window to ensure we stay in the same viewport size:
+		await driverManager.resizeBrowser( driver, currentScreenSize );
+	}
 }
 
 export async function numberOfOpenWindows( driver ) {
