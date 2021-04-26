@@ -282,9 +282,9 @@ export class PluginMeta extends Component {
 	}
 
 	isWpcomInstallDisabled() {
-		const { isTransfering, plugin } = this.props;
+		const { isTransferring, plugin } = this.props;
 
-		return ! this.hasBusinessPlan() || ! isCompatiblePlugin( plugin.slug ) || isTransfering;
+		return ! this.hasBusinessPlan() || ! isCompatiblePlugin( plugin.slug ) || isTransferring;
 	}
 
 	isJetpackInstallDisabled() {
