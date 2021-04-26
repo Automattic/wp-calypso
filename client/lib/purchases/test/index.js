@@ -17,6 +17,7 @@ import {
 	subscribedWithinPastWeek,
 	handleRenewNowClick,
 	handleRenewMultiplePurchasesClick,
+	shouldRenderMonthlyRenewalOption,
 } from '../index';
 
 import data from './data';
@@ -302,6 +303,85 @@ describe( 'index', () => {
 				expect( page ).toHaveBeenCalledWith(
 					'/checkout/dotlive_domain:personalsitetest1234.live/renew/2/my-site.wordpress.com'
 				);
+			} );
+		} );
+	} );
+
+	describe( '#shouldRenderMonthlyRenewalOption', () => {
+		const purchase = {
+			id: 1,
+			currencyCode: 'USD',
+			productSlug: 'personal-bundle',
+			productName: 'Personal Plan',
+			amount: 100,
+			expiryDate: '2021-04-26T00:00:00+00:00',
+		};
+
+		describe( 'should return false', () => {
+			test( 'when the purchase does not exist', () => {
+				expect( shouldRenderMonthlyRenewalOption( null ) ).toBe( false );
+			} );
+
+			test( 'when the expiry date does not exist', () => {
+				expect( shouldRenderMonthlyRenewalOption( { ...purchase, expiryDate: null } ) ).toBe(
+					false
+				);
+			} );
+
+			test( 'when the plan is not a WPCOM plan', () => {
+				expect(
+					shouldRenderMonthlyRenewalOption( {
+						...purchase,
+						...{ productSlug: 'security-daily', productName: 'Security Daily' },
+					} )
+				).toBe( false );
+			} );
+
+			test( 'when the plan is not an annual plan', () => {
+				expect(
+					shouldRenderMonthlyRenewalOption( {
+						...purchase,
+						...{ productSlug: 'personal-monthly', productName: 'Personal Plan' },
+					} )
+				).toBe( false );
+			} );
+
+			test( 'when auto renew is off and plan is more than 90 days away from expiry', () => {
+				expect(
+					shouldRenderMonthlyRenewalOption( {
+						...purchase,
+						...{ expiryStatus: 'expiring', expiryDate: moment().add( 91, 'days' ).format() },
+					} )
+				).toBe( false );
+			} );
+
+			test( 'when auto renew is on and plan is more than 30 days away from expiry', () => {
+				expect(
+					shouldRenderMonthlyRenewalOption( {
+						...purchase,
+						...{ expiryDate: moment().add( 31, 'days' ).format() },
+					} )
+				).toBe( false );
+			} );
+		} );
+
+		describe( 'should return true', () => {
+			test( 'when auto renew is off and plan is less than 90 days away from expiry', () => {
+				expect(
+					shouldRenderMonthlyRenewalOption( {
+						...purchase,
+						...{ expiryStatus: 'expiring', expiryDate: moment().add( 90, 'days' ).format() },
+					} )
+				).toBe( true );
+			} );
+
+			test( 'when auto renew is on and plan is more than 30 days away from expiry', () => {
+				expect(
+					shouldRenderMonthlyRenewalOption( {
+						...purchase,
+						...{ expiryDate: moment().add( 30, 'days' ).format() },
+					} )
+				).toBe( true );
 			} );
 		} );
 	} );

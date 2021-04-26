@@ -741,24 +741,30 @@ function shouldRenderMonthlyRenewalOption( purchase ) {
 		return false;
 	}
 
-	const isWpCom = isWpComPlan( purchase.productSlug );
+	if ( ! isWpComPlan( purchase.productSlug ) ) {
+		return false;
+	}
+
 	const plan = getPlan( purchase.productSlug );
-	const isAnnualPlan = TERM_ANNUALLY === plan.term;
+
+	if ( TERM_ANNUALLY !== plan.term ) {
+		return false;
+	}
+
 	const isAutorenewalEnabled = ! isExpiring( purchase );
 	const daysTillExpiry = moment( purchase.expiryDate ).diff( Date.now(), 'days' );
 
-	if ( isWpCom && isAnnualPlan ) {
-		// Auto renew is off and their plan will expire in the next <90 days
-		if ( ! isAutorenewalEnabled && daysTillExpiry < 90 ) {
-			return true;
-		}
-
-		// We attempted to bill them <30 days prior to their annual renewal and
-		// we weren’t able to do so for any other reason besides having auto renew off.
-		if ( isAutorenewalEnabled && daysTillExpiry < 30 ) {
-			return true;
-		}
+	// Auto renew is off and expiration is <90 days from now
+	if ( ! isAutorenewalEnabled && daysTillExpiry < 90 ) {
+		return true;
 	}
+
+	// We attempted to bill them <30 days prior to their annual renewal and
+	// we weren’t able to do so for any other reason besides having auto renew off.
+	if ( isAutorenewalEnabled && daysTillExpiry < 30 ) {
+		return true;
+	}
+
 	return false;
 }
 
