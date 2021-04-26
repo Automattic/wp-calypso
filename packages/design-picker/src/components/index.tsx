@@ -24,14 +24,81 @@ import './style.scss';
 const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;
 
 interface Props {
+interface DesignPreviewImageProps {
+	design: Design;
+	locale: string;
+}
+
+const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( { design, locale } ) =>
+	isEnabled( 'gutenboarding/mshot-preview' ) ? (
+		<MShotsImage
+			url={ getDesignUrl( design, locale ) }
+			aria-labelledby={ makeOptionId( design ) }
+			alt=""
+			options={ mShotOptions() }
+			scrollable={ design.preview !== 'static' }
+		/>
+	) : (
+		<img alt="" aria-labelledby={ makeOptionId( design ) } src={ getDesignImageUrl( design ) } />
+	);
+
+interface DesignButtonProps {
+	design: Design;
+	locale: string;
+	onSelect: ( design: Design ) => void;
+	premiumBadge?: React.ReactNode;
+}
+
+const DesignButton: React.FC< DesignButtonProps > = ( {
+	locale,
+	onSelect,
+	design,
+	premiumBadge,
+} ) => {
+	const { __ } = useI18n();
+
+	return (
+		<button
+			key={ design.slug }
+			className="design-picker__design-option"
+			data-e2e-button={ design.is_premium ? 'paidOption' : 'freeOption' }
+			onClick={ () => onSelect( design ) }
+		>
+			<span
+				className={ classnames(
+					'design-picker__image-frame',
+					isEnabled( 'gutenboarding/landscape-preview' )
+						? 'design-picker__image-frame-landscape'
+						: 'design-picker__image-frame-portrait',
+					design.preview === 'static' ? 'design-picker__static' : 'design-picker__scrollable'
+				) }
+			>
+				<div className="design-picker__image-frame-inside">
+					<DesignPreviewImage design={ design } locale={ locale } />
+				</div>
+			</span>
+			<span className="design-picker__option-overlay">
+				<span id={ makeOptionId( design ) } className="design-picker__option-meta">
+					<span className="design-picker__option-name">{ design.title }</span>
+					{ design.is_premium && premiumBadge && (
+						<Tooltip position="bottom center" text={ __( 'Requires a Personal plan or above' ) }>
+							<div className="design-picker__premium-container">{ premiumBadge }</div>
+						</Tooltip>
+					) }
+				</span>
+			</span>
+		</button>
+	);
+};
+
+interface DesignPickerProps {
 	locale: string;
 	onSelect: ( design: Design ) => void;
 	designs?: Design[];
 	premiumBadge?: React.ReactNode;
 	isGridMinimal?: boolean;
 }
-
-const DesignPicker: React.FC< Props > = ( {
+const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
 	onSelect,
 	designs = getAvailableDesigns().featured.filter(
@@ -41,59 +108,16 @@ const DesignPicker: React.FC< Props > = ( {
 	premiumBadge,
 	isGridMinimal,
 } ) => {
-	const { __ } = useI18n();
-
 	return (
 		<div className="design-picker">
 			<div className={ isGridMinimal ? 'design-picker__grid-minimal' : 'design-picker__grid' }>
 				{ designs.map( ( design ) => (
-					<button
-						key={ design.slug }
-						className="design-picker__design-option"
-						data-e2e-button={ design.is_premium ? 'paidOption' : 'freeOption' }
-						onClick={ () => onSelect( design ) }
-					>
-						<span
-							className={ classnames(
-								'design-picker__image-frame',
-								isEnabled( 'gutenboarding/landscape-preview' )
-									? 'design-picker__image-frame-landscape'
-									: 'design-picker__image-frame-portrait',
-								design.preview === 'static' ? 'design-picker__static' : 'design-picker__scrollable'
-							) }
-						>
-							<div className="design-picker__image-frame-inside">
-								{ isEnabled( 'gutenboarding/mshot-preview' ) ? (
-									<MShotsImage
-										url={ getDesignUrl( design, locale ) }
-										aria-labelledby={ makeOptionId( design ) }
-										alt=""
-										options={ mShotOptions() }
-										scrollable={ design.preview !== 'static' }
-									/>
-								) : (
-									<img
-										alt=""
-										aria-labelledby={ makeOptionId( design ) }
-										src={ getDesignImageUrl( design ) }
-									/>
-								) }
-							</div>
-						</span>
-						<span className="design-picker__option-overlay">
-							<span id={ makeOptionId( design ) } className="design-picker__option-meta">
-								<span className="design-picker__option-name">{ design.title }</span>
-								{ design.is_premium && premiumBadge && (
-									<Tooltip
-										position="bottom center"
-										text={ __( 'Requires a Personal plan or above' ) }
-									>
-										<div className="design-picker__premium-container">{ premiumBadge }</div>
-									</Tooltip>
-								) }
-							</span>
-						</span>
-					</button>
+					<DesignButton
+						design={ design }
+						locale={ locale }
+						onSelect={ onSelect }
+						premiumBadge={ premiumBadge }
+					/>
 				) ) }
 			</div>
 		</div>
