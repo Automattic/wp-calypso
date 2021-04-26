@@ -26,7 +26,11 @@
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"happychat_url": "https://happychat-io-staging.go-vip.co/customer",
 	"rebrand_cities_prefix": "rebrandcitiesdevelopmentsite",
-	"livechat_support_locales": [ "en", "es", "pt-br" ],
+	"livechat_support_locales": [
+		"en",
+		"es",
+		"pt-br"
+	],
 	"features": {
 		"ad-tracking": false,
 		"async-payments": false,
@@ -130,11 +134,8 @@
 		"manage/themes/details": true,
 		"manage/themes/logged-out": true,
 		"marketplace-yoast": true,
-		"me/account": true,
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,
-		"me/my-profile": true,
-		"me/notifications": true,
 		"my-sites/checkout/web-payment/apple-pay": true,
 		"my-sites/checkout/web-payment/basic-card": false,
 		"nps-survey/devdocs": true,
