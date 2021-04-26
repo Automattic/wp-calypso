@@ -1,13 +1,8 @@
-// This is required to fix the "regeneratorRuntime is not defined" error
-import '@automattic/calypso-polyfills';
-
 /**
  * External dependencies
  */
 import React, { useState, useEffect, useMemo } from 'react';
 import styled from '@emotion/styled';
-import ReactDOM from 'react-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {
 	Checkout,
 	CheckoutStepArea,
@@ -53,8 +48,7 @@ const initialItems = [
 ];
 
 const onPaymentComplete = () => {
-	const successRedirectUrl = '/complete.html';
-	window.location.href = successRedirectUrl;
+	window.alert( 'Your payment is complete!' );
 };
 const onEvent = ( event ) => window.console.log( 'Event', event );
 const showErrorMessage = ( error ) => {
@@ -205,7 +199,7 @@ const contactFormStep = {
 	completeStepContent: <ContactForm summary />,
 };
 
-function HostPage() {
+export function HostPage() {
 	return (
 		<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
 			<MyCheckout />
@@ -351,4 +345,7 @@ async function asyncTimeout( timeout ) {
 	return new Promise( ( resolve ) => setTimeout( resolve, timeout ) );
 }
 
-ReactDOM.render( <HostPage />, document.getElementById( 'root' ) );
+export default {
+	title: 'composite-checkout',
+	component: HostPage,
+};
