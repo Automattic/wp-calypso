@@ -315,16 +315,16 @@ describe( '#localizeUrl', () => {
 			'https://wordpress.com/refer-a-friend/'
 		);
 		expect( localizeUrl( 'https://wordpress.com/refer-a-friend', 'de' ) ).toEqual(
-			'https://de.wordpress.com/refer-a-friend'
+			'https://de.wordpress.com/refer-a-friend/'
 		);
 		expect( localizeUrl( 'https://wordpress.com/refer-a-friend', 'pt-br' ) ).toEqual(
-			'https://br.wordpress.com/refer-a-friend'
+			'https://br.wordpress.com/refer-a-friend/'
 		);
 		expect( localizeUrl( 'https://wordpress.com/refer-a-friend', 'zh-tw' ) ).toEqual(
-			'https://zh-tw.wordpress.com/refer-a-friend'
+			'https://zh-tw.wordpress.com/refer-a-friend/'
 		);
 		expect( localizeUrl( 'https://wordpress.com/refer-a-friend', 'pl' ) ).toEqual(
-			'https://wordpress.com/refer-a-friend'
+			'https://wordpress.com/refer-a-friend/'
 		);
 	} );
 
