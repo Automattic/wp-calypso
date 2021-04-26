@@ -184,6 +184,7 @@ class Account extends React.Component {
 		this.updateUserSetting( name, checked );
 		const redirect = '/me/account';
 		this.setState( { redirect } );
+		this.saveInterfaceSettings( event );
 	};
 
 	updateLanguage = ( event ) => {
@@ -207,10 +208,7 @@ class Account extends React.Component {
 			this.getUserSetting( 'locale_variant' ) || this.getUserSetting( 'language' ) || '';
 
 		const languageHasChanged = originalSlug !== value;
-		const empathyModeHasChanged =
-			typeof empathyMode !== 'undefined' &&
-			empathyMode !== this.getUserOriginalSetting( 'i18n_empathy_mode' );
-		const formHasChanged = languageHasChanged || empathyModeHasChanged;
+		const formHasChanged = languageHasChanged;
 		if ( formHasChanged ) {
 			this.props.markChanged();
 		}
