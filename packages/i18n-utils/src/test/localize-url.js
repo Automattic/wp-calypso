@@ -312,7 +312,7 @@ describe( '#localizeUrl', () => {
 
 	test( 'refer-a-friend', () => {
 		expect( localizeUrl( 'https://wordpress.com/refer-a-friend', 'en' ) ).toEqual(
-			'https://wordpress.com/refer-a-friend'
+			'https://wordpress.com/refer-a-friend/'
 		);
 		expect( localizeUrl( 'https://wordpress.com/refer-a-friend', 'de' ) ).toEqual(
 			'https://de.wordpress.com/refer-a-friend'
