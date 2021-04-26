@@ -35,7 +35,7 @@ export default {
 		let authUrl;
 
 		if ( config( 'oauth_client_id' ) ) {
-			// TODO: flags=oauth should be present only is dev-like environments
+			// TODO: flags=oauth should be present only in dev-like environments
 			// where we need to preserve the flag on full reloads and redirects
 			const redirectUri = `${ window.location.origin }/api/oauth/token?flags=oauth`;
 
@@ -64,7 +64,7 @@ export default {
 			store.set( 'wpcom_token_expires_in', context.hash.expires_in );
 		}
 
-		// TODO: flags=oauth should be present only is dev-like environments
+		// TODO: flags=oauth should be present only in dev-like environments
 		// where we need to preserve the flag on full reloads and redirects
 		document.location.replace( '/?flags=oauth' );
 	},
