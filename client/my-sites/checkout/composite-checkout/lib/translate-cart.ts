@@ -192,30 +192,32 @@ export function createTransactionEndpointRequestPayload( {
 	};
 }
 
-export function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.TranslateResult {
+export function getSublabel( serverCartItem: ResponseCartProduct ): string {
 	const isRenewalItem = isRenewal( serverCartItem );
 	const { meta, product_name: productName } = serverCartItem;
 
 	if ( isDotComPlan( serverCartItem ) || ( ! isRenewalItem && isTitanMail( serverCartItem ) ) ) {
 		if ( isRenewalItem ) {
-			return translate( 'Plan Renewal' );
+			return String( translate( 'Plan Renewal' ) );
 		}
 	}
 
 	if ( isPlan( serverCartItem ) ) {
 		if ( isP2Plus( serverCartItem ) ) {
-			return translate( 'Monthly subscription' );
+			return String( translate( 'Monthly subscription' ) );
 		}
 
-		return isRenewalItem ? translate( 'Plan Renewal' ) : translate( 'Plan Subscription' );
+		return isRenewalItem
+			? String( translate( 'Plan Renewal' ) )
+			: String( translate( 'Plan Subscription' ) );
 	}
 
 	if ( isGSuiteOrGoogleWorkspace( serverCartItem ) ) {
 		if ( isRenewalItem ) {
-			return translate( 'Productivity and Collaboration Tools Renewal' );
+			return String( translate( 'Productivity and Collaboration Tools Renewal' ) );
 		}
 
-		return translate( 'Productivity and Collaboration Tools' );
+		return String( translate( 'Productivity and Collaboration Tools' ) );
 	}
 
 	if (
@@ -227,16 +229,16 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.
 		}
 
 		if ( productName ) {
-			return translate( '%(productName)s Renewal', { args: { productName } } );
+			return String( translate( '%(productName)s Renewal', { args: { productName } } ) );
 		}
 	}
 
 	if ( ! isRenewalItem && serverCartItem.months_per_bill_period === 1 ) {
-		return translate( 'Billed monthly' );
+		return String( translate( 'Billed monthly' ) );
 	}
 
 	if ( isRenewalItem ) {
-		return translate( 'Renewal' );
+		return String( translate( 'Renewal' ) );
 	}
 
 	return '';
