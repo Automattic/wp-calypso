@@ -1,8 +1,3 @@
-/**
- * Internal dependencies
- */
-import { isEnabled } from '@automattic/calypso-config';
-
 // Jetpack products constants
 export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
 export const PRODUCT_JETPACK_BACKUP_DAILY = 'jetpack_backup_daily';
@@ -99,8 +94,8 @@ export const JETPACK_ANTI_SPAM_PRODUCTS = [
 
 export const JETPACK_PRODUCTS_LIST = [
 	...JETPACK_BACKUP_PRODUCTS,
-	...( isEnabled( 'jetpack/scan-product' ) ? JETPACK_SCAN_PRODUCTS : [] ),
-	...( isEnabled( 'jetpack/anti-spam-product' ) ? JETPACK_ANTI_SPAM_PRODUCTS : [] ),
+	...JETPACK_SCAN_PRODUCTS,
+	...JETPACK_ANTI_SPAM_PRODUCTS,
 	...JETPACK_SEARCH_PRODUCTS,
 ];
 
