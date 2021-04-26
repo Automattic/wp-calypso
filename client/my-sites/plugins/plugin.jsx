@@ -54,6 +54,8 @@ import {
 } from 'calypso/state/plugins/installed/selectors';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
 
 function goBack() {
 	window.history.back();
@@ -78,8 +80,9 @@ class SinglePlugin extends React.Component {
 		// WooCommerce plugin has just been installed. Redirect to Woo.
 		if (
 			this.props.pluginSlug === 'woocommerce' &&
-			nextProps.hasPluginJustBeenInstalled &&
-			this.props.woocommerceUrl
+			this.props.woocommerceUrl &&
+			( nextProps.hasPluginJustBeenInstalled ||
+				this.props.transferState === transferStates?.COMPLETE )
 		) {
 			window.location.href = this.props.woocommerceUrl;
 			return;
@@ -366,6 +369,7 @@ export default connect(
 			toursHistory: getToursHistory( state ),
 			navigated: hasNavigated( state ),
 			woocommerceUrl: getSiteWoocommerceUrl( state, selectedSiteId ),
+			transferState: getAutomatedTransferStatus( state, selectedSiteId ),
 		};
 	},
 	{
