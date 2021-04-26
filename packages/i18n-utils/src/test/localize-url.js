@@ -310,6 +310,24 @@ describe( '#localizeUrl', () => {
 		);
 	} );
 
+	test( 'refer-a-friend', () => {
+		expect( localizeUrl( 'https://wordpress.com/refer-a-friend', 'en' ) ).toEqual(
+			'https://wordpress.com/refer-a-friend'
+		);
+		expect( localizeUrl( 'https://wordpress.com/refer-a-friend', 'de' ) ).toEqual(
+			'https://de.wordpress.com/refer-a-friend'
+		);
+		expect( localizeUrl( 'https://wordpress.com/refer-a-friend', 'pt-br' ) ).toEqual(
+			'https://br.wordpress.com/refer-a-friend'
+		);
+		expect( localizeUrl( 'https://wordpress.com/refer-a-friend', 'zh-tw' ) ).toEqual(
+			'https://zh-tw.wordpress.com/refer-a-friend'
+		);
+		expect( localizeUrl( 'https://wordpress.com/refer-a-friend', 'pl' ) ).toEqual(
+			'https://wordpress.com/refer-a-friend'
+		);
+	} );
+
 	test( 'jetpack', () => {
 		expect( localizeUrl( 'https://jetpack.com/features/comparison/', 'en' ) ).toEqual(
 			'https://jetpack.com/features/comparison/'
