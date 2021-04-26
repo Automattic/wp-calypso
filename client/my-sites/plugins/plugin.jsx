@@ -34,7 +34,7 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import {
 	isJetpackSite,
 	isRequestingSites,
-	getSiteWoocommerceUrl,
+	getSiteWoocommerceWizardUrl,
 } from 'calypso/state/sites/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
@@ -80,11 +80,11 @@ class SinglePlugin extends React.Component {
 		// WooCommerce plugin has just been installed. Redirect to Woo.
 		if (
 			this.props.pluginSlug === 'woocommerce' &&
-			this.props.woocommerceUrl &&
+			this.props.woocommerceWizardUrl &&
 			( nextProps.hasPluginJustBeenInstalled ||
 				this.props.transferState === transferStates?.COMPLETE )
 		) {
-			window.location.href = this.props.woocommerceUrl;
+			window.location.href = this.props.woocommerceWizardUrl;
 			return;
 		}
 	}
@@ -368,7 +368,7 @@ export default connect(
 			sites,
 			toursHistory: getToursHistory( state ),
 			navigated: hasNavigated( state ),
-			woocommerceUrl: getSiteWoocommerceUrl( state, selectedSiteId ),
+			woocommerceWizardUrl: getSiteWoocommerceWizardUrl( state, selectedSiteId ),
 			transferState: getAutomatedTransferStatus( state, selectedSiteId ),
 		};
 	},
