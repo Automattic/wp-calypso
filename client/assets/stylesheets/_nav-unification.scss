@@ -17,7 +17,7 @@
 		--masterbar-height: 32px;
 	}
 
-	&.is-sidebar-collapsed:not( .is-section-reader ):not( .is-section-me ) {
+	&.is-group-sites.is-sidebar-collapsed {
 		--sidebar-width-max: 36px;
 		--sidebar-width-min: 36px;
 	}
