@@ -221,8 +221,8 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		`/me/purchases/${ slug }`,
 		`/purchases/add-payment-method/${ slug }`,
 		`/purchases/billing-history/${ slug }`,
-		`/purchases/subscriptions/${ slug }`,
 		`/purchases/payment-methods/${ slug }`,
+		`/purchases/subscriptions/${ slug }`,
 	];
 
 	if ( some( startsWithPaths, ( startsWithPath ) => startsWith( path, startsWithPath ) ) ) {
