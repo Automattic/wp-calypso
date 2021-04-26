@@ -17,10 +17,11 @@ import MapDomainStep from 'calypso/components/domains/map-domain-step';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import wp from 'calypso/lib/wp';
-import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import Notice from 'calypso/components/notice';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
+import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -39,6 +40,7 @@ export class MapDomain extends Component {
 		query: PropTypes.string,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		isSiteUpgradeable: PropTypes.bool,
+		isSiteOnPaidPlan: PropTypes.bool.isRequired,
 		productsList: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object,
 		selectedSiteId: PropTypes.number,
@@ -49,6 +51,7 @@ export class MapDomain extends Component {
 	isMounted = false;
 
 	state = {
+		isBusyMapping: false,
 		errorMessage: null,
 		suggestion: null,
 		showTrademarkClaimsNotice: false,
@@ -104,7 +107,10 @@ export class MapDomain extends Component {
 	handleMapDomain = ( domain ) => {
 		const { selectedSite, selectedSiteSlug } = this.props;
 
-		this.setState( { errorMessage: null } );
+		this.setState( {
+			errorMessage: null,
+			isBusyMapping: true,
+		} );
 
 		// For VIP sites we handle domain mappings differently
 		// We don't go through the usual checkout process
@@ -114,6 +120,21 @@ export class MapDomain extends Component {
 				() => page( domainManagementList( selectedSiteSlug ) ),
 				( error ) => this.setState( { errorMessage: error.message } )
 			);
+			return;
+		} else if ( this.props.isSiteOnPaidPlan ) {
+			wpcom
+				.addDomainMapping( selectedSite.ID, domain )
+				.then(
+					() => {
+						page( domainManagementEdit( selectedSiteSlug, domain ) );
+					},
+					( error ) => {
+						this.setState( { errorMessage: error.message } );
+					}
+				)
+				.finally( () => {
+					this.setState( { isBusyMapping: false } );
+				} );
 			return;
 		}
 
@@ -189,11 +210,12 @@ export class MapDomain extends Component {
 
 				<HeaderCake onClick={ this.goBack }>{ translate( 'Map a Domain' ) }</HeaderCake>
 
-				{ errorMessage && <Notice status="is-error" text={ errorMessage } /> }
+				{ errorMessage && <Notice status="is-error" text={ errorMessage } showDismiss={ false } /> }
 
 				<MapDomainStep
 					domainsWithPlansOnly={ domainsWithPlansOnly }
 					initialQuery={ initialQuery }
+					isBusyMapping={ this.state.isBusyMapping }
 					products={ productsList }
 					selectedSite={ selectedSite }
 					onRegisterDomain={ this.handleRegisterDomain }
@@ -205,11 +227,15 @@ export class MapDomain extends Component {
 	}
 }
 
-export default connect( ( state ) => ( {
-	selectedSite: getSelectedSite( state ),
-	selectedSiteId: getSelectedSiteId( state ),
-	selectedSiteSlug: getSelectedSiteSlug( state ),
-	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
-	isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
-	productsList: getProductsList( state ),
-} ) )( withShoppingCart( localize( MapDomain ) ) );
+export default connect( ( state ) => {
+	const selectedSiteId = getSelectedSiteId( state );
+	return {
+		selectedSite: getSelectedSite( state ),
+		selectedSiteId,
+		selectedSiteSlug: getSelectedSiteSlug( state ),
+		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
+		isSiteUpgradeable: isSiteUpgradeable( state, selectedSiteId ),
+		isSiteOnPaidPlan: isSiteOnPaidPlan( state, selectedSiteId ),
+		productsList: getProductsList( state ),
+	};
+} )( withShoppingCart( localize( MapDomain ) ) );
