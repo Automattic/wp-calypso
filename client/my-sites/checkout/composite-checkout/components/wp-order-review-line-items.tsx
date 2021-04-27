@@ -560,12 +560,7 @@ function canItemBeDeleted( item: ResponseCartProduct ): boolean {
 }
 
 function JetpackSearchMeta( { product }: { product: ResponseCartProduct } ): JSX.Element {
-	return (
-		<>
-			<ProductTier product={ product } />
-			<RenewalFrequency product={ product } />
-		</>
-	);
+	return <ProductTier product={ product } />;
 }
 
 function ProductTier( { product }: { product: ResponseCartProduct } ): JSX.Element | null {
@@ -592,22 +587,6 @@ function ProductTier( { product }: { product: ResponseCartProduct } ): JSX.Eleme
 				</LineItemMeta>
 			);
 		}
-	}
-	return null;
-}
-
-function RenewalFrequency( { product }: { product: ResponseCartProduct } ): JSX.Element | null {
-	const translate = useTranslate();
-	if ( isMonthlyProduct( product ) ) {
-		return <LineItemMeta>{ translate( 'Renews monthly' ) }</LineItemMeta>;
-	}
-
-	if ( isYearly( product ) ) {
-		return <LineItemMeta>{ translate( 'Renews annually' ) }</LineItemMeta>;
-	}
-
-	if ( isBiennially( product ) ) {
-		return <LineItemMeta>{ translate( 'Renews every two years' ) }</LineItemMeta>;
 	}
 	return null;
 }
