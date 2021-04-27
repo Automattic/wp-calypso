@@ -319,11 +319,12 @@ export function planItem( productSlug, properties ) {
  * Determines whether a domain Item supports purchasing a privacy subscription
  *
  * @param {string} productSlug - e.g. domain_reg, dotblog_domain
- * @param {Array} productsList - The list of products retrieved using getProductsList from state/products-list/selectors
+ * @param {object} productsList - The list of products retrieved using getProductsList from state/products-list/selectors
  * @returns {boolean} true if the domainItem supports privacy protection purchase
  */
 export function supportsPrivacyProtectionPurchase( productSlug, productsList ) {
-	const product = productsList.find( ( item ) => item.product_slug === productSlug ) || {};
+	const product =
+		Object.values( productsList ).find( ( item ) => item.product_slug === productSlug ) || {};
 	return product?.is_privacy_protection_product_purchase_allowed ?? false;
 }
 
