@@ -6,6 +6,7 @@ import store from 'store';
 import page from 'page';
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -48,7 +49,12 @@ export function acceptInvite( context, next ) {
 			.then( () => {
 				const redirect = getRedirectAfterAccept( acceptedInvite );
 				debug( 'Accepted invite and redirecting to:  ' + redirect );
-				page( redirect );
+
+				if ( get( acceptedInvite, 'site.is_wpforteams_site', false ) ) {
+					window.location.href = redirect;
+				} else {
+					page( redirect );
+				}
 			} )
 			.catch( ( error ) => {
 				debug( 'Accept invite error: ' + JSON.stringify( error ) );
