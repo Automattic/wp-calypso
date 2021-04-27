@@ -72,7 +72,7 @@ export function recordPlansViewInCriteo() {
 /**
  * Records that a user viewed the checkout page
  *
- * @param {object} cart - cart as `ResponseCart` object
+ * @param {object} cart - cart as `CartValue` object
  * @returns {void}
  */
 export function recordViewCheckoutInCriteo( cart ) {
@@ -99,7 +99,7 @@ export function recordViewCheckoutInCriteo( cart ) {
 /**
  * Converts the products in a cart to the format Criteo expects for its `items` property
  *
- * @param {object} cart - cart as `ResponseCart` object
+ * @param {object} cart - cart as `CartValue` object
  * @returns {Array} - An array of items to include in the Criteo tracking call
  */
 export function cartToCriteoItems( cart ) {
