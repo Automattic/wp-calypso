@@ -677,22 +677,26 @@ function openLinksInParentFrame( calypsoPort ) {
 	} );
 
 	// Create a new post link in block settings sidebar for Query block
-	if ( calypsoifyGutenberg.createNewPostUrl ) {
-		$( '#editor, #edit-site-editor' ).on( 'click', '.wp-block-query__create-new-link a', ( e ) => {
-			e.preventDefault();
-			window.open( calypsoifyGutenberg.createNewPostUrl, '_top' );
-		} );
-	}
+	if ( calypsoifyGutenberg.createNewPostUrl || calypsoifyGutenberg.manageReusableBlocksUrl ) {
+		const $editor = $( '#editor, #edit-site-editor' );
+		const replaceLink = () => {
+			if ( calypsoifyGutenberg.createNewPostUrl ) {
+				$( '.wp-block-query__create-new-link a', $editor )
+					.attr( 'href', calypsoifyGutenberg.createNewPostUrl )
+					.attr( 'target', '_top' );
+			}
 
-	if ( calypsoifyGutenberg.manageReusableBlocksUrl ) {
-		const manageReusableBlocksLinkSelectors = [
-			'.block-editor-inserter__manage-reusable-blocks', // Link in the Blocks Inserter
-			'a.components-menu-item__button[href*="post_type=wp_block"]', // Link in the More Menu
-		].join( ',' );
-		$( '#editor, #edit-site-editor' ).on( 'click', manageReusableBlocksLinkSelectors, ( e ) => {
-			e.preventDefault();
-			window.open( calypsoifyGutenberg.manageReusableBlocksUrl, '_top' );
-		} );
+			if ( calypsoifyGutenberg.manageReusableBlocksUrl ) {
+				const manageReusableBlocksLinkSelectors = [
+					'.block-editor-inserter__manage-reusable-blocks', // Link in the Blocks Inserter
+					'a.components-menu-item__button[href*="post_type=wp_block"]', // Link in the More Menu
+				].join( ',' );
+				$( manageReusableBlocksLinkSelectors, $editor )
+					.attr( 'href', calypsoifyGutenberg.manageReusableBlocksUrl )
+					.attr( 'target', '_top' );
+			}
+		};
+		setInterval( replaceLink, 50 );
 	}
 }
 
