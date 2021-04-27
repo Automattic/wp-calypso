@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { sortBy, sumBy } from 'lodash';
+import { sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,7 +36,7 @@ class PieChartLegend extends Component {
 		if ( nextProps.data !== prevState.data ) {
 			return {
 				data: nextProps.data,
-				dataTotal: sumBy( nextProps.data, ( datum ) => datum.value ),
+				dataTotal: nextProps.data.reduce( ( sum, datum ) => sum + datum.value, 0 ),
 				transformedData: transformData( nextProps.data ),
 			};
 		}

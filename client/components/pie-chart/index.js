@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { pie as d3Pie, arc as d3Arc } from 'd3-shape';
-import { sortBy, sumBy } from 'lodash';
+import { sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -60,7 +60,7 @@ class PieChart extends Component {
 		if ( nextProps.data !== prevState.data ) {
 			return {
 				data: nextProps.data,
-				dataTotal: sumBy( nextProps.data, ( datum ) => datum.value ),
+				dataTotal: nextProps.data.reduce( ( sum, datum ) => sum + datum.value, 0 ),
 				transformedData: transformData( nextProps.data ),
 			};
 		}
