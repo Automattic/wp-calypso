@@ -108,7 +108,6 @@ export default function () {
 				'/plugins/domain/:site?',
 				scrollTopIfNoHash,
 				siteSelection,
-				navigation,
 				renderDomainsPage,
 				makeLayout,
 				clientRender

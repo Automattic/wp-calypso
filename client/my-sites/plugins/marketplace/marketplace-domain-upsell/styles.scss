@@ -1,20 +1,54 @@
 //@import '~@automattic/marketplace/styles/mixins';
 
-.marketplace-domain-upsell__root {
-	margin-left: 34px;
-	display: grid;
-	grid-template-rows: 40px 100%;
-	grid-template-columns: 60% 40%;
+.layout__content {
+	background-color: #fff;
+	height: 100vh;
+	@media ( max-width: 782px ) {
+		background-color: #fff;
+		height: 100vh;
+		.layout__primary {
+			height: 100vh;
+			.marketplace-domain-upsell__root {
+				height: 90vh;
+			}
+		}
+	}
+}
 
+.marketplace-domain-upsell__root {
 	*,
 	*::before,
 	*::after {
 		box-sizing: border-box;
 	}
-	
-	.marketplace-domain-upsell__shopping-cart-container {
-		padding-left: 50px;
-		max-width: 400px;
+
+	// margin-top: 40px;
+	display: grid;
+	grid-template-rows: 40px 100%;
+	grid-template-columns: 60% 40%;
+	grid-template-areas:
+		'backnav backnav'
+		'domainpicker basket';
+
+	margin: 15px;
+	@media ( max-width: 782px ) {
+		grid-template-rows: 40px 1fr 226px;
+		grid-template-columns: 100%;
+		grid-template-areas:
+			'backnav'
+			'domainpicker'
+			'basket';
+
+		height: calc( 100vh - 135px );
+		margin: 35px 35px 0;
+		margin: 25px 0;
+	}
+
+	> div {
+		padding: 0 20px;
+		@media ( min-width: 600px ) {
+			padding: 0 45px;
+		}
 	}
 
 	.marketplace-domain-upsell__header {
@@ -44,6 +78,12 @@
 		color: #2c3338;
 		margin: 0 0 30px;
 	}
+
+	.marketplace-domain-upsell__domain-picker-container {
+		grid-area: domainpicker;
+		overflow: scroll;
+	}
+
 	.marketplace-domain-upsell__back-button {
 		button {
 			font-family: var( --p2-font-inter );
@@ -60,22 +100,18 @@
 			}
 		}
 
-		grid-column: span 3;
+		grid-area: backnav;
 	}
 
 	.marketplace-domain-upsell__shopping-cart-container {
+		grid-area: basket;
 		button {
 			display: flex;
 			justify-content: center;
 			width: 100%;
-			background-color: #117ac9;
-			color: white;
 			border-radius: 2px;
 		}
-		button:hover:not( :disabled ) {
-			background-color: #1163a1;
-			color: white;
-		}
+
 		.basket-item {
 			display: flex;
 			justify-content: space-between;
@@ -95,6 +131,11 @@
 				font-size: 1rem;
 				line-height: 19px;
 			}
+		}
+
+		@media ( max-width: 782px ) {
+			padding-top: 20px;
+			border-top: 1px solid #eee;
 		}
 	}
 

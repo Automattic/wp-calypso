@@ -18,12 +18,11 @@ import {
 } from 'calypso/my-sites/plugins/marketplace/constants';
 import { Button } from '@wordpress/components';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-
 import './styles.scss';
 import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
-
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import Gridicon from 'calypso/components/gridicon';
 
 function Header() {
 	return (
@@ -36,6 +35,11 @@ function Header() {
 	);
 }
 
+const redirectToUseDomainFlow = (): void => {
+	const useYourDomainUrl = `/start/new-launch/domains-launch/use-your-domain?siteSlug=${ siteSubdomain?.domain }&source=${ launchFlowUrl }`;
+	redirectTo( useYourDomainUrl );
+};
+
 function DomainPickerContainer( { onDomainSelect, selectedDomain } ) {
 	return (
 		<DomainPicker
@@ -45,6 +49,7 @@ function DomainPickerContainer( { onDomainSelect, selectedDomain } ) {
 			onDomainSelect={ onDomainSelect }
 			currentDomain={ selectedDomain }
 			hideRecommendationLabel={ true }
+			onUseYourDomainClick={ redirectToUseDomainFlow }
 		/>
 	);
 }
@@ -129,19 +134,7 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 		<div className="marketplace-domain-upsell__root">
 			<div className="marketplace-domain-upsell__back-button">
 				<Button isBusy={ false } isLink>
-					<svg
-						width="17"
-						height="13"
-						viewBox="0 0 17 13"
-						fill="none"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							d="M2 6.49999L7.25 0.749995M2 6.49999L17 6.5M2 6.49999L7.25 11.75"
-							stroke="#1D2327"
-							strokeWidth="1.5"
-						/>
-					</svg>
+					<Gridicon icon="arrow-left" size={ 18 } />
 					<span>Back</span>
 				</Button>
 			</div>
