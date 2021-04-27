@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import debugModule from 'debug';
 import React from 'react';
 import page from 'page';
 import { isEmpty } from 'lodash';
@@ -46,7 +47,9 @@ import user from 'calypso/lib/user';
 import getSiteId from 'calypso/state/selectors/get-site-id';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
+import { loadExperimentAssignment, ProvideExperimentData } from 'calypso/lib/explat';
+
+const debug = debugModule( 'calypso:signup' );
 
 /**
  * Constants
@@ -294,6 +297,45 @@ export default {
 
 		if ( ! [ 'launch-site', 'new-launch' ].includes( flowName ) ) {
 			context.store.dispatch( setSelectedSiteId( null ) );
+		}
+
+		if ( flowName === 'onboarding' ) {
+			context.primary = (
+				<ProvideExperimentData name="design_picker_after_onboarding">
+					{ ( isLoading, experimentAssignment ) => {
+						debug(
+							`design_picker_after_onboarding experiment variation: ${ experimentAssignment?.variationName }`
+						);
+
+						if ( isLoading ) {
+							debug( 'Waiting for design_picker_after_onboarding experiment status to load' );
+							return null;
+						}
+
+						const actualFlowName =
+							'treatment' === experimentAssignment?.variationName
+								? 'with-design-picker'
+								: 'onboarding';
+
+						return (
+							<SignupComponent
+								store={ context.store }
+								path={ context.path }
+								initialContext={ initialContext }
+								locale={ context.params.lang }
+								flowName={ actualFlowName }
+								queryObject={ query }
+								refParameter={ query && query.ref }
+								stepName={ stepName }
+								stepSectionName={ stepSectionName }
+								stepComponent={ stepComponent }
+								pageTitle={ getFlowPageTitle( actualFlowName ) }
+							/>
+						);
+					} }
+				</ProvideExperimentData>
+			);
+			next();
 		}
 
 		context.primary = React.createElement( SignupComponent, {
