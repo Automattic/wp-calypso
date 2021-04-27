@@ -240,7 +240,7 @@ function load_wpcom_block_editor_nux() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
 
 /**
- * Load editing toolkit block patterns from the API
+ * Load editing toolkit block patterns from the API.
  *
  * @param obj $current_screen The current screen object.
  */
