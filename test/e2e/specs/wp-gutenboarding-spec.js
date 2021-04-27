@@ -149,45 +149,13 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 		} );
 	} );
 
-	describe( 'Visit Gutenboarding page as a logged in user', function () {
+	describe( 'Visit Gutenboarding page as a logged in user @parallel', function () {
 		step( 'Can log in as user', async function () {
 			await new LoginFlow( driver ).login();
 		} );
 
 		step( 'Can visit Gutenboarding', async function () {
 			await NewPage.Visit( driver );
-		} );
-	} );
-
-	/**
-	 * Paid "premium" designs are temporarily disabled in the flow.
-	 * See https://github.com/Automattic/wp-calypso/pull/49251
-	 */
-	describe.skip( 'Skip first step in Gutenboarding, select paid design and see Domains page after Style preview @parallel', function () {
-		before( async function () {
-			await driverManager.ensureNotLoggedIn( driver );
-			await NewPage.Visit( driver );
-		} );
-
-		step( 'Can skip Acquire Intent step', async function () {
-			const acquireIntentPage = await AcquireIntentPage.Expect( driver );
-			await acquireIntentPage.skipStep();
-		} );
-
-		step( 'Can see Design Selector and select a random paid design', async function () {
-			const designSelectorPage = await DesignSelectorPage.Expect( driver );
-			await designSelectorPage.selectPaidDesign();
-		} );
-
-		step( 'Can see Style Preview and continue', async function () {
-			const stylePreviewPage = await StylePreviewPage.Expect( driver );
-			await stylePreviewPage.continue();
-		} );
-
-		step( 'Can see Domain Picker in an empty state', async function () {
-			const domainPickerPage = await DomainsPage.Expect( driver );
-			const isEmptyState = await domainPickerPage.isInEmptyState();
-			assert.strictEqual( isEmptyState, true, 'Domain picker should be in empty state' );
 		} );
 	} );
 } );
