@@ -381,7 +381,7 @@ class P2Site extends React.Component {
 					className="p2-site__validation-site-title"
 				>
 					<FormLabel htmlFor="site-title-input">
-						{ this.props.translate( 'Name your team or project' ) }
+						{ this.props.translate( 'Name your team' ) }
 					</FormLabel>
 					<FormTextInput
 						id="site-title-input"
@@ -402,7 +402,7 @@ class P2Site extends React.Component {
 					className="p2-site__validation-site"
 				>
 					<FormLabel htmlFor="site-address-input">
-						{ this.props.translate( 'Choose a site address' ) }
+						{ this.props.translate( 'Choose an address for your P2' ) }
 					</FormLabel>
 					<FormTextInput
 						id="site-address-input"
