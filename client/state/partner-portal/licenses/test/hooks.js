@@ -76,12 +76,40 @@ describe( 'useRefreshLicenseList', () => {
 } );
 
 describe( 'useProductsQuery', () => {
-	it( 'returns successful request data', async () => {
+	it( 'returns filtered list of products', async () => {
 		const queryClient = new QueryClient();
 		const wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
-		const stub = [
+		const unexpected = [
+			{
+				name: 'Jetpack Plans',
+				slug: 'jetpack-plans',
+				products: [
+					{
+						name: 'Free',
+						product_id: 0,
+						slug: 'free',
+					},
+					{
+						name: 'Personal',
+						product_id: 0,
+						slug: 'personal',
+					},
+					{
+						name: 'Premium',
+						product_id: 0,
+						slug: 'premium',
+					},
+					{
+						name: 'Professional',
+						product_id: 0,
+						slug: 'professional',
+					},
+				],
+			},
+		];
+		const expected = [
 			{
 				name: 'Jetpack Scan',
 				slug: 'jetpack-scan',
@@ -113,7 +141,7 @@ describe( 'useProductsQuery', () => {
 
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/jetpack-licensing/product-families' )
-			.reply( 200, stub );
+			.reply( 200, [ ...unexpected, ...expected ] );
 
 		const { result, waitFor } = renderHook( () => useProductsQuery(), {
 			wrapper,
@@ -121,7 +149,7 @@ describe( 'useProductsQuery', () => {
 
 		await waitFor( () => result.current.isSuccess );
 
-		expect( result.current.data ).toEqual( stub );
+		expect( result.current.data ).toEqual( expected );
 	} );
 } );
 
