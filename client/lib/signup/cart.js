@@ -14,7 +14,7 @@ function addProductsToCart( cart, newCartItems ) {
 	} );
 	return {
 		...cart,
-		products: [ ...cart.products, newProducts ],
+		products: [ ...cart.products, ...newProducts ],
 	};
 }
 
