@@ -39,7 +39,7 @@ import {
 	INSTALL_PLUGIN,
 	REMOVE_PLUGIN,
 } from 'calypso/lib/plugins/constants';
-import { getSite, getSiteWoocommerceUrl } from 'calypso/state/sites/selectors';
+import { getSite, getSiteWoocommerceWizardUrl } from 'calypso/state/sites/selectors';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { sitePluginUpdated } from 'calypso/state/sites/actions';
@@ -400,7 +400,7 @@ function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 			}
 
 			const state = getState();
-			const woocommerceUrl = getSiteWoocommerceUrl( state, data.siteId );
+			const woocommerceUrl = getSiteWoocommerceWizardUrl( state, data.siteId );
 
 			if ( ! woocommerceUrl ) {
 				return;
