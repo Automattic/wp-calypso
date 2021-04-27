@@ -4,15 +4,41 @@
 import type { ExperimentAssignment } from '../types';
 import * as Validations from './validations';
 
+const localStorageExperimentAssignmentsKey = 'explat-client-experiment-assignments';
+
+type ExperimentAssignments = Record< string, ExperimentAssignment | undefined >;
+
+function getLocalStorageExperimentAssignments(): ExperimentAssignments {
+	if ( typeof window === 'undefined' || ! window.localStorage ) {
+		return {};
+	}
+
+	const maybeData = localStorage.getItem( localStorageExperimentAssignmentsKey );
+	if ( maybeData === null ) {
+		return {};
+	}
+
+	// TODO: Validate?
+	return JSON.parse( maybeData ) as ExperimentAssignments;
+}
+
+function setLocalStorageExperimentAssignments(
+	experimentAssignments: ExperimentAssignments
+): void {
+	if ( typeof window === 'undefined' || ! window.localStorage ) {
+		return;
+	}
+
+	window.localStorage.setItem(
+		localStorageExperimentAssignmentsKey,
+		JSON.stringify( experimentAssignments )
+	);
+}
+
 /**
  * Class to store existing ExperimentAssignments in memory
  */
 export default class ExperimentAssignmentStore {
-	private experimentNameToExperimentAssignment: Record<
-		string,
-		ExperimentAssignment | undefined
-	> = {};
-
 	/**
 	 * Store an ExperimentAssignment.
 	 *
@@ -21,9 +47,10 @@ export default class ExperimentAssignmentStore {
 	store( experimentAssignment: ExperimentAssignment ): void {
 		Validations.validateExperimentAssignment( experimentAssignment );
 
-		const previousExperimentAssignment = this.experimentNameToExperimentAssignment[
-			experimentAssignment.experimentName
-		];
+		const localStorageExperimentAssignments = getLocalStorageExperimentAssignments();
+
+		const previousExperimentAssignment =
+			localStorageExperimentAssignments[ experimentAssignment.experimentName ];
 		if (
 			previousExperimentAssignment &&
 			experimentAssignment.retrievedTimestamp < previousExperimentAssignment.retrievedTimestamp
@@ -33,9 +60,10 @@ export default class ExperimentAssignmentStore {
 			);
 		}
 
-		this.experimentNameToExperimentAssignment[
-			experimentAssignment.experimentName
-		] = experimentAssignment;
+		setLocalStorageExperimentAssignments( {
+			...localStorageExperimentAssignments,
+			[ experimentAssignment.experimentName ]: experimentAssignment,
+		} );
 	}
 
 	/**
@@ -44,6 +72,11 @@ export default class ExperimentAssignmentStore {
 	 * @param experimentName The experiment name.
 	 */
 	retrieve( experimentName: string ): ExperimentAssignment | undefined {
-		return this.experimentNameToExperimentAssignment[ experimentName ];
+		const maybeExperimentAssignment = getLocalStorageExperimentAssignments()[ experimentName ];
+		if ( maybeExperimentAssignment === undefined ) {
+			return undefined;
+		}
+
+		return Validations.validateExperimentAssignment( maybeExperimentAssignment );
 	}
 }
