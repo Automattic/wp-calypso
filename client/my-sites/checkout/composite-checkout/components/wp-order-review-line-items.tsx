@@ -655,15 +655,8 @@ function LineItemSublabelAndPrice( {
 		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : null;
 		return (
 			<>
-				{ translate( '%(premiumLabel)s %(sublabel)s: %(interval)s', {
-					args: {
-						premiumLabel,
-						sublabel: sublabel,
-						interval: translate( 'billed annually' ),
-					},
-					comment:
-						'premium label, product type and billing interval, separated by a colon. ex: ".blog domain registration: billed annually" or "Premium .blog domain registration: billed annually"',
-				} ) }
+				<LineItemMeta>{ premiumLabel }</LineItemMeta>
+				<LineItemMeta>{ sublabel }</LineItemMeta>
 			</>
 		);
 	}
