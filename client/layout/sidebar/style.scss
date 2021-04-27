@@ -171,8 +171,8 @@
 
 		.count {
 			background-color: transparent;
-			border-color: var( --color-sidebar-menu-selected-text );
-			color: var( --color-sidebar-menu-selected-text );
+			border-color: var( --color-sidebar-submenu-selected-text );
+			color: var( --color-sidebar-submenu-selected-text );
 		}
 	}
 
@@ -235,8 +235,8 @@
 
 			.count {
 				background-color: transparent;
-				border-color: var( --color-sidebar-menu-selected-text );
-				color: var( --color-sidebar-menu-selected-text );
+				border-color: var( --color-sidebar-submenu-selected-text );
+				color: var( --color-sidebar-submenu-selected-text );
 			}
 		}
 	}
@@ -260,8 +260,8 @@
 		}
 		.count {
 			background-color: transparent;
-			border-color: var( --color-sidebar-menu-selected-text );
-			color: var( --color-sidebar-menu-selected-text );
+			border-color: var( --color-sidebar-submenu-selected-text );
+			color: var( --color-sidebar-submenu-selected-text );
 		}
 	}
 }
