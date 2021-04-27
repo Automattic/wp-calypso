@@ -1,0 +1,7 @@
+#themes-list .theme .theme-actions {
+	height: 30px;
+	padding: 6px 12px 12px;
+}
+.theme-actions .is-secondary {
+	margin-left: 9px;
+}
