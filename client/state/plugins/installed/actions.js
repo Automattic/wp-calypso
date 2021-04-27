@@ -39,7 +39,7 @@ import {
 	INSTALL_PLUGIN,
 	REMOVE_PLUGIN,
 } from 'calypso/lib/plugins/constants';
-import { getSite } from 'calypso/state/sites/selectors';
+import { getSite, getSiteWoocommerceUrl } from 'calypso/state/sites/selectors';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { sitePluginUpdated } from 'calypso/state/sites/actions';
@@ -355,7 +355,7 @@ function refreshNetworkSites( siteId ) {
 }
 
 function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
 		const pluginId = plugin.id || plugin.slug;
 		const defaultAction = {
 			action: INSTALL_PLUGIN,
@@ -391,6 +391,22 @@ function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 			dispatch( { ...defaultAction, type: PLUGIN_INSTALL_REQUEST_SUCCESS, data } );
 			recordInstallPluginEvent( 'RECEIVE_INSTALLED_PLUGIN' );
 			refreshNetworkSites( siteId );
+			return { ...data, siteId };
+		};
+
+		const shouldRedirectAfterInstall = ( data ) => {
+			if ( data.slug !== 'woocommerce' ) {
+				return;
+			}
+
+			const state = getState();
+			const woocommerceUrl = getSiteWoocommerceUrl( state, data.siteId );
+
+			if ( ! woocommerceUrl ) {
+				return;
+			}
+
+			window.location.href = woocommerceUrl;
 		};
 
 		const errorCallback = ( error ) => {
@@ -429,6 +445,7 @@ function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 			.then( doActivate )
 			.then( doAutoupdates )
 			.then( successCallback )
+			.then( shouldRedirectAfterInstall )
 			.catch( errorCallback );
 	};
 }
