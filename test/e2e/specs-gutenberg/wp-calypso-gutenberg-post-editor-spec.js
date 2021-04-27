@@ -998,9 +998,20 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 		step( 'Can publish and view content', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			// closePanel is set to false because the panel is forcibly dismissed after publishing.
-			// See https://github.com/Automattic/wp-calypso/issues/50302.
-			return await gEditorComponent.publish( { closePanel: false, visit: true } );
+			try {
+				await gEditorComponent.publish( { visit: true } );
+			} catch {
+				/**
+				 * Publish panel is forcibly dismissed after publishing post with a
+				 * Payment button. For some reason Gutenberg detects a change to the
+				 * content so we need to update it and then visit the published page.
+				 *
+				 * This fallback should be removed once the following is resolved:
+				 *
+				 * @see {@link https://github.com/Automattic/wp-calypso/issues/50302}
+				 */
+				await gEditorComponent.update( { visit: true } );
+			}
 		} );
 
 		step( 'Can see the payment button in our published post', async function () {
