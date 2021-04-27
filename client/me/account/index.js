@@ -8,9 +8,8 @@ import page from 'page';
  */
 import { account } from './controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { sidebar } from 'calypso/me/controller';
-import { siteSelection } from 'calypso/my-sites/controller';
+import { sidebar, siteSelectionQuery } from 'calypso/me/controller';
 
 export default function () {
-	page( '/me/account/:site?', sidebar, account, siteSelection, makeLayout, clientRender );
+	page( '/me/account', sidebar, account, siteSelectionQuery, makeLayout, clientRender );
 }
