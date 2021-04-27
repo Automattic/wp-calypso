@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { includes, filter, map, reduce, union } from 'lodash';
+import { includes, filter, map, reduce } from 'lodash';
 import { WindowScroller } from '@automattic/react-virtualized';
 
 /**
@@ -138,7 +138,7 @@ export class TaxonomyManagerList extends Component {
 
 	requestPages = ( pages ) => {
 		this.setState( {
-			requestedPages: union( this.state.requestedPages, pages ),
+			requestedPages: [ ...new Set( [].concat( this.state.requestedPages, pages ) ) ],
 		} );
 	};
 

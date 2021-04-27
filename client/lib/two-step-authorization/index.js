@@ -3,7 +3,6 @@
  */
 import debugFactory from 'debug';
 import { get as webauthn_auth } from '@github/webauthn-json';
-import { replace } from 'lodash';
 
 const debug = debugFactory( 'calypso:two-step-authorization' );
 
@@ -146,7 +145,7 @@ TwoStepAuthorization.prototype.validateCode = function ( args, callback ) {
 	wpcom.me().validateTwoStepCode(
 		{
 			...args,
-			code: replace( args.code, /\s/g, '' ),
+			code: args.code.replace( /\s/g, '' ),
 		},
 		function ( error, data ) {
 			if ( ! error && data.success ) {
@@ -236,7 +235,7 @@ TwoStepAuthorization.prototype.backupCodes = function ( callback ) {
  */
 TwoStepAuthorization.prototype.validateBackupCode = function ( code, callback ) {
 	const args = {
-		code: replace( code, /\s/g, '' ),
+		code: code.replace( /\s/g, '' ),
 		action: 'create-backup-receipt',
 	};
 

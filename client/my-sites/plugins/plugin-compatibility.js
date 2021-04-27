@@ -13,7 +13,6 @@ const incompatiblePlugins = new Set( [
 	'advanced-database-cleaner',
 	'advanced-reset-wp',
 	'advanced-wp-reset',
-	'autoptimize',
 	'backup',
 	'better-wp-security',
 	'cf7-pipedrive-integration',
