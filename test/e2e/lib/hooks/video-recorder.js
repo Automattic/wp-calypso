@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import * as videoRecorder from '../lib/video-recorder';
+import * as videoRecorder from '../video-recorder';
 
 export const startVideo = async function () {
 	await videoRecorder.startDisplay();
