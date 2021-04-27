@@ -282,7 +282,7 @@ export const validateAccountRecoveryPhone = ( code ) => ( dispatch ) => {
 	return wpcom
 		.undocumented()
 		.me()
-		.validateAccountRecoveryPhone( code?.replace( /\s/g, '' ) )
+		.validateAccountRecoveryPhone( code.replace( /\s/g, '' ) )
 		.then( () => {
 			dispatch( validateAccountRecoveryPhoneSuccess() );
 			dispatch( onAccountRecoveryPhoneValidationSuccess() );
