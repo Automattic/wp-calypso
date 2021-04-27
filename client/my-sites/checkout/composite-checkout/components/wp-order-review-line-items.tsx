@@ -575,12 +575,20 @@ function ProductTier( { product }: { product: ResponseCartProduct } ): JSX.Eleme
 	);
 
 	if ( isJetpackSearch( product ) && product.current_quantity ) {
-		const tierMaximum = getPriceTierForUnits( priceTierList, product.current_quantity )
-			?.maximum_units;
+		const tier = getPriceTierForUnits( priceTierList, product.current_quantity );
+		const tierMaximum = tier?.maximum_units;
+		const tierMinimum = tier?.minimum_units;
 		if ( tierMaximum ) {
 			return (
 				<LineItemMeta>
 					{ translate( 'Up to %(tierMaximum)s records', { args: { tierMaximum } } ) }
+				</LineItemMeta>
+			);
+		}
+		if ( tier && ! tierMaximum ) {
+			return (
+				<LineItemMeta>
+					{ translate( 'More than %(tierMinimum) records', { args: { tierMinimum } } ) }
 				</LineItemMeta>
 			);
 		}
