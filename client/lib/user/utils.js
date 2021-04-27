@@ -18,7 +18,7 @@ const debug = debugModule( 'calypso:user:utilities' );
 const userUtils = {
 	getLogoutUrl( redirect ) {
 		const userData = user().get();
-		let url = '/logout';
+		let url;
 		let subdomain = '';
 
 		// If logout_URL isn't set, then go ahead and return the logout URL
