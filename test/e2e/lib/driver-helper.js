@@ -2,12 +2,13 @@
  * External dependencies
  */
 import webdriver, {
-	Key,
 	By,
+	Condition,
+	Key,
+	logging,
 	WebDriver,
 	WebElement,
 	WebElementCondition,
-	logging,
 } from 'selenium-webdriver';
 import config from 'config';
 import { forEach } from 'lodash';
@@ -107,13 +108,14 @@ export function waitUntilLocatedAndVisible( driver, locator, timeout = explicitW
 		new WebElementCondition(
 			`for the element to become located and visible ${ locatorStr }`,
 			async function () {
-				const element = ( await driver.findElements( locator ) )[ 0 ];
-				if ( ! element ) {
+				try {
+					const element = await driver.findElement( locator );
+					const isDisplayed = await element.isDisplayed();
+
+					return isDisplayed ? element : null;
+				} catch {
 					return null;
 				}
-				const isDisplayed = await element.isDisplayed();
-
-				return isDisplayed ? element : null;
 			}
 		),
 		timeout
@@ -366,9 +368,12 @@ export function waitForInfiniteListLoad( driver, elementSelector, { numElements 
 export async function switchToWindowByIndex( driver, index ) {
 	const currentScreenSize = driverManager.currentScreenSize();
 	const handles = await driver.getAllWindowHandles();
+
 	await driver.switchTo().window( handles[ index ] );
-	// Resize target window to ensure we stay in the same viewport size:
-	await driverManager.resizeBrowser( driver, currentScreenSize );
+	if ( currentScreenSize !== 'desktop' ) {
+		// Resize target window to ensure we stay in the same viewport size:
+		await driverManager.resizeBrowser( driver, currentScreenSize );
+	}
 }
 
 export async function numberOfOpenWindows( driver ) {
@@ -559,10 +564,36 @@ export async function waitTillTextPresent( driver, selector, text, waitOverride 
  * Upon successful resolution, the driver will be left focused on the new frame.
  *
  * @param {WebDriver} driver The parent WebDriver instance
- * @param {By} locator The element's locator
+ * @param {By} locator The frame element's locator
  * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
- * @returns {Promise<boolean>} A promise that will resolve with true if the switch was succesfull
+ * @returns {Promise<boolean>} A promise that will resolve with true if the
+ * switch was succesfull
  */
 export function waitUntilAbleToSwitchToFrame( driver, locator, timeout = explicitWaitMS ) {
 	return driver.wait( until.ableToSwitchToFrame( locator ), timeout );
+}
+
+/**
+ * Waits until a window of a given index is ready to be switched to and switches
+ * to it.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {number} windowIndex The index of the window to switch to
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise<boolean>} A promise that will resolve with true if the
+ * switch was succesfull
+ */
+export function waitUntilAbleToSwitchToWindow( driver, windowIndex, timeout = explicitWaitMS ) {
+	return driver.wait(
+		new Condition( `to be able to switch to window #${ windowIndex }`, async function () {
+			try {
+				await switchToWindowByIndex( driver, windowIndex );
+			} catch {
+				return null;
+			}
+
+			return true;
+		} ),
+		timeout
+	);
 }
