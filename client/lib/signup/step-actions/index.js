@@ -447,7 +447,7 @@ function addPrivacyProtectionIfSupported( item, state ) {
 	const productsList = getProductsList( state );
 	if (
 		productSlug &&
-		productsList &&
+		productsList?.length &&
 		supportsPrivacyProtectionPurchase( productSlug, productsList )
 	) {
 		return updatePrivacyForDomain( item, true );
