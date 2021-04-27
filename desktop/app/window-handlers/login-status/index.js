@@ -38,5 +38,5 @@ function handleLogin( mainWindow ) {
 function handleLogout( mainWindow ) {
 	platform.setDockMenu( false );
 	menu.disableLoggedInItems( app, mainWindow );
-	mainWindow.webContents.loadURL( Config.loginURL );
+	mainWindow.webContents.loadURL( Config.loginURL() );
 }

@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const { app, BrowserWindow, ipcMain: ipc } = require( 'electron' );
+const { app, dialog, BrowserWindow, ipcMain: ipc } = require( 'electron' );
 
 /**
  * Internal dependencies
@@ -19,11 +19,12 @@ const { getPath } = require( '../lib/assets' );
 /**
  * Module variables
  */
+const USE_LOCALHOST = process.env.WP_DESKTOP_DEBUG_LOCALHOST !== undefined;
 let mainWindow = null;
 
 function showAppWindow() {
 	const preloadFile = getPath( 'preload.js' );
-	let appUrl = Config.loginURL;
+	let appUrl = Config.loginURL();
 	// TODO:
 	// - Use BrowserView
 	// - Handle migration from prior relative path implementation
@@ -44,6 +45,10 @@ function showAppWindow() {
 	config.webPreferences.spellcheck = Settings.getSetting( 'spellcheck-enabled' );
 	config.webPreferences.preload = preloadFile;
 
+	if ( USE_LOCALHOST ) {
+		config.webPreferences.allowRunningInsecureContent = true;
+	}
+
 	mainWindow = new BrowserWindow( config );
 
 	SessionManager.init( mainWindow );
@@ -58,9 +63,9 @@ function showAppWindow() {
 
 	mainWindow.webContents.session.webRequest.onBeforeRequest( function ( details, callback ) {
 		if (
+			! USE_LOCALHOST &&
 			details.resourceType === 'script' &&
-			details.url.startsWith( 'http://' ) &&
-			! details.url.startsWith( Config.server_url + ':' + Config.server_port + '/' )
+			details.url.startsWith( 'http://' )
 		) {
 			log.info(
 				'Redirecting http request ' + details.url + ' to ' + details.url.replace( 'http', 'https' )
@@ -95,6 +100,14 @@ function showAppWindow() {
 
 	ipc.handle( 'get-settings', () => {
 		return Settings.toRenderer();
+	} );
+
+	ipc.on( 'pong', () => {
+		dialog.showMessageBox( mainWindow, {
+			buttons: [ 'OK' ],
+			title: 'Pong!',
+			message: '👋🏼',
+		} );
 	} );
 
 	mainWindow.loadURL( appUrl );

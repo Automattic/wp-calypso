@@ -38,4 +38,9 @@ module.exports = {
 		log.info( 'signOut triggered' );
 		mainWindow.webContents.send( 'signout' );
 	},
+
+	ping: function ( mainWindow ) {
+		log.info( 'ping triggered' );
+		mainWindow.webContents.send( 'ping' );
+	},
 };
