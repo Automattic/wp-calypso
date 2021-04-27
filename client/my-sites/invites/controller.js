@@ -51,6 +51,8 @@ export function acceptInvite( context, next ) {
 				debug( 'Accepted invite and redirecting to:  ' + redirect );
 
 				if ( get( acceptedInvite, 'site.is_wpforteams_site', false ) ) {
+					// Using page() here will throw an error because P2 sites
+					// redirect to non-same origin.
 					window.location.href = redirect;
 				} else {
 					page( redirect );
