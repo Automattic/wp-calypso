@@ -59,6 +59,7 @@ export type Props = OwnProps & Partial< FeaturesProps >;
 const FRESHPACK_PERCENTAGE = 1 - 0.4; // 40% off
 
 const DisplayPrice = ( {
+	isDeprecated,
 	isOwned,
 	isIncludedInPlan,
 	isFree,
@@ -70,8 +71,24 @@ const DisplayPrice = ( {
 	expiryDate,
 	billingTerm,
 	tooltipText,
+	productName,
 } ) => {
 	const translate = useTranslate();
+
+	if ( isDeprecated ) {
+		return (
+			<div className="jetpack-product-card__price">
+				<p className="jetpack-product-card__price-deprecated">
+					{ translate( 'The %(productName)s plan is no longer available', {
+						args: {
+							productName,
+						},
+						comment: 'productName is the name of Jetpack plan such as Personal',
+					} ) }
+				</p>
+			</div>
+		);
+	}
 
 	if ( isOwned ) {
 		return (
@@ -223,6 +240,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 				) }
 
 				<DisplayPrice
+					isDeprecated={ isDeprecated }
 					isOwned={ isOwned }
 					isIncludedInPlan={ isIncludedInPlan }
 					isFree={ isFree }
@@ -234,6 +252,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 					expiryDate={ expiryDate }
 					billingTerm={ billingTerm }
 					tooltipText={ tooltipText }
+					productName={ productName }
 				/>
 
 				{ aboveButtonText && (
@@ -249,7 +268,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 						primary={ buttonPrimary }
 						className="jetpack-product-card__button"
 						onClick={ onButtonClick }
-						disabled={ isDisabled }
+						disabled={ isDisabled || isDeprecated }
 					>
 						{ buttonLabel }
 					</Button>
