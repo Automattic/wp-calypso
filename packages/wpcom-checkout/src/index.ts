@@ -13,3 +13,4 @@ export { default as Field } from './field';
 export { default as styled } from './styled';
 export * from './payment-methods/bancontact';
 export * from './use-is-web-payment-available';
+export * from './payment-methods/google-pay';
