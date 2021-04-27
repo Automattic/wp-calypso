@@ -675,7 +675,7 @@ function isPartialCredits( cartItem ) {
 /**
  * Determines whether a cart item is a renewal
  *
- * @param {{extra?: import('@automattic/shopping-cart').ResponseCartProductExtra}} cartItem - object with `CartItemExtra` `extra` property
+ * @param {{extra?: import('@automattic/shopping-cart').ResponseCartProductExtra}} cartItem - object with `extra` property
  * @returns {boolean} true if item is a renewal
  */
 export function isRenewal( cartItem ) {
