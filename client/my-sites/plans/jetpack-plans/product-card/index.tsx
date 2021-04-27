@@ -113,13 +113,15 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		return ! [ ...JETPACK_BACKUP_PRODUCTS, ...JETPACK_SCAN_PRODUCTS ].includes( item.productSlug );
 	}, [ item.productSlug ] );
 
+	const isDeprecated = Boolean( item.legacy );
+
 	// Disable the product card if it's an incompatible multisite product or CRM monthly product
 	// (CRM is not offered with "Monthly" billing. Only Yearly.)
 	const isDisabled = ( ( isMultisite && ! isMultisiteCompatible ) || isCrmMonthlyProduct ) ?? false;
 
 	let disabledMessage;
 	if ( isDisabled ) {
-		if ( ! isMultisiteCompatible ) {
+		if ( ! isMultisiteCompatible && ! isDeprecated ) {
 			disabledMessage = translate( 'Not available for multisite WordPress installs' );
 		} else if ( isCrmMonthlyProduct ) {
 			disabledMessage = translate( 'Only available in yearly billing' );
@@ -136,7 +138,13 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			originalPrice={ originalPrice }
 			discountedPrice={ discountedPrice }
 			billingTerm={ item.displayTerm || item.term }
-			buttonLabel={ productButtonLabel( item, isOwned, isUpgradeableToYearly, sitePlan ) }
+			buttonLabel={ productButtonLabel( {
+				product: item,
+				isOwned,
+				isUpgradeableToYearly,
+				isDeprecated,
+				currentPlan: sitePlan,
+			} ) }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
 			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
@@ -144,7 +152,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			isOwned={ isOwned }
 			isIncludedInPlan={ ! isOwned && isItemPlanFeature }
 			isFree={ item.isFree }
-			isDeprecated={ item.legacy }
+			isDeprecated={ isDeprecated }
 			isAligned={ isAligned }
 			features={ item.features }
 			displayFrom={ ! siteId && priceTierList.length > 0 }

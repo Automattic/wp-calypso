@@ -227,12 +227,25 @@ export const getHighestAnnualDiscount = createSelector(
  * Product UI utils.
  */
 
-export function productButtonLabel(
-	product: SelectorProduct,
-	isOwned: boolean,
-	isUpgradeableToYearly: boolean,
-	currentPlan?: SitePlan | null
-): TranslateResult {
+interface productButtonLabelProps {
+	product: SelectorProduct;
+	isOwned: boolean;
+	isUpgradeableToYearly: boolean;
+	isDeprecated: boolean;
+	currentPlan?: SitePlan | null;
+}
+
+export function productButtonLabel( {
+	product,
+	isOwned,
+	isUpgradeableToYearly,
+	isDeprecated,
+	currentPlan,
+}: productButtonLabelProps ): TranslateResult {
+	if ( isDeprecated ) {
+		return translate( 'No longer available' );
+	}
+
 	if ( isUpgradeableToYearly ) {
 		return translate( 'Upgrade to Yearly' );
 	}
