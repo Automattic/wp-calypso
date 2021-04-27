@@ -105,19 +105,9 @@ export function getAvailableDesigns( {
 	}
 
 	// Force blank canvas design to always be first in the list
-	const blankCanvasIndex = designs.featured.findIndex( ( design ) =>
-		isBlankCanvasDesign( design )
+	designs.featured = designs.featured.sort(
+		( a, b ) => Number( isBlankCanvasDesign( b ) ) - Number( isBlankCanvasDesign( a ) )
 	);
-	if ( blankCanvasIndex > -1 ) {
-		designs = {
-			...designs,
-			featured: [
-				designs.featured[ blankCanvasIndex ],
-				...designs.featured.slice( 0, blankCanvasIndex ),
-				...designs.featured.slice( blankCanvasIndex + 1 ),
-			],
-		};
-	}
 
 	return designs;
 }
