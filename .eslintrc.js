@@ -425,6 +425,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/pad-start': 'error',
 		'you-dont-need-lodash-underscore/reduce-right': 'error',
 		'you-dont-need-lodash-underscore/repeat': 'error',
+		'you-dont-need-lodash-underscore/replace': 'error',
 		'you-dont-need-lodash-underscore/reverse': 'error',
 		'you-dont-need-lodash-underscore/select': 'error',
 		'you-dont-need-lodash-underscore/slice': 'error',

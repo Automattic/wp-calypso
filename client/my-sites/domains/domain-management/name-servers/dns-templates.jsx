@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
-import { find, replace } from 'lodash';
+import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -58,7 +57,7 @@ class DnsTemplates extends React.Component {
 					dnsTemplateService: dnsTemplates.MICROSOFT_OFFICE365.SERVICE,
 					modifyVariables: ( variables ) =>
 						Object.assign( {}, variables, {
-							mxdata: replace( variables.domain, '.', '-' ) + '.mail.protection.outlook.com',
+							mxdata: variables.domain.replace( '.', '-' ) + '.mail.protection.outlook.com',
 						} ),
 				},
 				{
