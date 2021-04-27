@@ -19,17 +19,8 @@ import { getStepUrl } from 'calypso/signup/utils';
  */
 import './style.scss';
 
-function getOriginUrl() {
-	return (
-		window.location.protocol +
-		'//' +
-		window.location.hostname +
-		( window.location.port ? ':' + window.location.port : '' )
-	);
-}
-
 function getRedirectToAfterLoginUrl( { flowName } ) {
-	return getOriginUrl() + getStepUrl( flowName, 'p2-site' );
+	return window.location.origin + getStepUrl( flowName, 'p2-site' );
 }
 
 function getLoginLink( { flowName, locale } ) {

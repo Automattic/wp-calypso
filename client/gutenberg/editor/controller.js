@@ -163,10 +163,7 @@ export const authenticate = ( context, next ) => {
 	// We could use `window.location.href` to generate the return URL but there are some potential race conditions that
 	// can cause the browser to not update it before redirecting to WP Admin. To avoid that, we manually generate the
 	// URL from the relevant parts.
-	let origin = `${ window.location.protocol }//${ window.location.hostname }`;
-	if ( window.location.port ) {
-		origin += `:${ window.location.port }`;
-	}
+	const origin = window.location.origin;
 	const returnUrl = addQueryArgs(
 		{ ...context.query, authWpAdmin: true },
 		`${ origin }${ context.path }`
