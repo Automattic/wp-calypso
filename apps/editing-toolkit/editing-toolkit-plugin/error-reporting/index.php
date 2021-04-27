@@ -74,7 +74,7 @@ function activate_error_reporting() {
  * sticker applied to it.
  */
 function blog_has_error_reporting_sticker() {
-	return has_blog_sticker( 'has-error-reporting', get_current_blog_id() );
+	return \has_blog_sticker( 'has-error-reporting', get_current_blog_id() );
 }
 
 /**
