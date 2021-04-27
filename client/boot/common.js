@@ -15,6 +15,7 @@ import accessibleFocus from '@automattic/accessible-focus';
  */
 import { setupLocale } from './locale';
 import config from '@automattic/calypso-config';
+import Desktop from 'calypso/lib/desktop';
 import { ProviderWrappedLayout } from 'calypso/controller';
 import { getToken } from 'calypso/lib/oauth-token';
 import emailVerification from 'calypso/components/email-verification';
@@ -375,8 +376,8 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		setupGlobalKeyboardShortcuts();
 	}
 
-	if ( config.isEnabled( 'desktop' ) ) {
-		require( 'calypso/lib/desktop' ).default.init();
+	if ( window.electron ) {
+		Desktop.init( reduxStore );
 	}
 
 	// temp: test -- will revert

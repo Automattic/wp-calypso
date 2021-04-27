@@ -70,7 +70,7 @@ function showAppWindow() {
 			log.info(
 				'Redirecting http request ' + details.url + ' to ' + details.url.replace( 'http', 'https' )
 			);
-			callback( { redirectURL: details.url.replace( 'http', 'https' ) } );
+			callback( {} );
 		} else {
 			callback( {} );
 		}
