@@ -80,7 +80,7 @@ function getTourContent() {
 			heading: __( 'Congratulations!', 'full-site-editing' ).replace( '&nbsp;', ' ' ),
 			description: createInterpolateElement(
 				__(
-					'You’ve now learned the basics. Remember, your site is <link_to_launch_site_docs>always private until you decide to launch</link_to_launch_site_docs>. Check out the docs to <link_to_editor_docs>learn more about Block Editing</link_to_editor_docs>.',
+					"You've learned the basics. Remember, your site is private until you <link_to_launch_site_docs>decide to launch</link_to_launch_site_docs>. View the <link_to_editor_docs>block editing docs</link_to_editor_docs> to learn more.",
 					'full-site-editing'
 				),
 				{
