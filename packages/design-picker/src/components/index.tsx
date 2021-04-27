@@ -70,7 +70,6 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 
 	return (
 		<button
-			key={ design.slug }
 			className="design-picker__design-option"
 			data-e2e-button={ design.is_premium ? 'paidOption' : 'freeOption' }
 			onClick={ () => onSelect( design ) }
@@ -130,9 +129,9 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	return (
 		<div className="design-picker">
 			<div className={ isGridMinimal ? 'design-picker__grid-minimal' : 'design-picker__grid' }>
-				{ designs.map( ( design, index ) => (
+				{ designs.map( ( design ) => (
 					<DesignButton
-						key={ `${ design.slug }--${ index }` }
+						key={ design.slug }
 						design={ design }
 						locale={ locale }
 						onSelect={ onSelect }
