@@ -56,6 +56,7 @@ import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
+import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 
 function goBack() {
 	window.history.back();
@@ -77,12 +78,27 @@ class SinglePlugin extends React.Component {
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
+		// Jetpack site
 		// WooCommerce plugin has just been installed. Redirect to Woo.
 		if (
+			this.props.isJetpackSite &&
 			this.props.pluginSlug === 'woocommerce' &&
 			this.props.woocommerceWizardUrl &&
-			( nextProps.hasPluginJustBeenInstalled ||
-				this.props.transferState === transferStates?.COMPLETE )
+			nextProps.hasPluginJustBeenInstalled &&
+			nextProps.siteIsConnected
+		) {
+			window.location.href = this.props.woocommerceWizardUrl;
+			return;
+		}
+
+		// Atomic site
+		// WooCommerce plugin has just been installed. Redirect to Woo.
+		if (
+			this.props.isAtomicSite &&
+			this.props.pluginSlug === 'woocommerce' &&
+			this.props.woocommerceWizardUrl &&
+			this.props.transferState === transferStates?.COMPLETE &&
+			nextProps.siteIsConnected
 		) {
 			window.location.href = this.props.woocommerceWizardUrl;
 			return;
@@ -347,6 +363,7 @@ export default connect(
 			sitesWithoutPlugin: getSitesWithoutPlugin( state, siteIds, props.pluginSlug ),
 			isAtomicSite: isSiteAutomatedTransfer( state, selectedSiteId ),
 			isJetpackSite: selectedSiteId && isJetpackSite( state, selectedSiteId ),
+			siteIsConnected: getSiteConnectionStatus( state, selectedSiteId ),
 			isInstallingPlugin: isPluginActionInProgress(
 				state,
 				selectedSiteId,
