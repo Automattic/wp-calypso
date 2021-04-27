@@ -80,17 +80,15 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 					isEnabled( 'gutenboarding/landscape-preview' )
 						? 'design-picker__image-frame-landscape'
 						: 'design-picker__image-frame-portrait',
-					design.preview === 'static' ? 'design-picker__static' : 'design-picker__scrollable'
+					design.preview === 'static' ? 'design-picker__static' : 'design-picker__scrollable',
+					{ 'design-picker__image-frame-blank': isBlankCanvas }
 				) }
 			>
-				<div
-					className={ classnames( 'design-picker__image-frame-inside', {
-						'design-picker__image-frame-inside--blank': isBlankCanvas,
-					} ) }
-					aria-hidden="true"
-				>
-					{ ! isBlankCanvas && <DesignPreviewImage design={ design } locale={ locale } /> }
-				</div>
+				{ ! isBlankCanvas && (
+					<div className="design-picker__image-frame-inside">
+						<DesignPreviewImage design={ design } locale={ locale } />
+					</div>
+				) }
 			</span>
 			<span className="design-picker__option-overlay">
 				<span id={ makeOptionId( design ) } className="design-picker__option-meta">
