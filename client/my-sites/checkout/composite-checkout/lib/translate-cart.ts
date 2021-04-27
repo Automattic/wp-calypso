@@ -237,6 +237,14 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): string {
 		return String( translate( 'Billed monthly' ) );
 	}
 
+	if ( ! isRenewalItem && serverCartItem.months_per_bill_period === 12 ) {
+		return String( translate( 'Billed annually' ) );
+	}
+
+	if ( ! isRenewalItem && serverCartItem.months_per_bill_period === 24 ) {
+		return String( translate( 'Billed every two years' ) );
+	}
+
 	if ( isRenewalItem ) {
 		return String( translate( 'Renewal' ) );
 	}
