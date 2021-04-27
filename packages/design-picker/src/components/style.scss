@@ -29,13 +29,6 @@
 		width: 100%;
 		margin: 24px; // only applies in IE
 
-		&:hover,
-		&:focus {
-			.design-picker__image-frame {
-				border-color: var( --highlightColor );
-			}
-		}
-
 		@include break-mobile {
 			width: calc( 50% - 24px );
 		}
@@ -156,7 +149,6 @@
 
 	.design-picker__option-name {
 		align-items: center;
-		color: var( --studio-gray-40 );
 		display: inline-flex;
 		font-size: $font-body-small;
 		margin-top: -0.1em;
@@ -173,9 +165,35 @@
 	}
 }
 
-/// dark theme styles
+// dark theme styles
 .design-picker.design-picker--theme-dark {
 	.design-picker__option-name {
 		color: var( --studio-white );
+	}
+	.design-picker__design-option {
+		.design-picker__image-frame {
+			border-color: var( --studio-gray-40 );
+		}
+		&:hover,
+		&:focus {
+			.design-picker__image-frame {
+				border-color: var( --studio-white );
+			}
+		}
+	}
+}
+
+// light theme styles
+.design-picker.design-picker--theme-light {
+	.design-picker__option-name {
+		color: var( --studio-gray-40 );
+	}
+	.design-picker__design-option {
+		&:hover,
+		&:focus {
+			.design-picker__image-frame {
+				border-color: var( --studio-blue-20 );
+			}
+		}
 	}
 }

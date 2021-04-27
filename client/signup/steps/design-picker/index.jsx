@@ -27,7 +27,6 @@ class DesignPickerStep extends Component {
 		stepName: PropTypes.string.isRequired,
 		locale: PropTypes.string.isRequired,
 		translate: PropTypes.func,
-		isReskinned: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -54,11 +53,10 @@ class DesignPickerStep extends Component {
 	};
 
 	renderDesignPicker() {
-		const theme = this.props.isReskinned ? 'light' : 'dark';
 		// props.locale obtained via `localize` HoC
 		return (
 			<DesignPicker
-				theme={ theme }
+				theme="dark"
 				isGridMinimal
 				locale={ this.props.locale }
 				onSelect={ this.pickDesign }
