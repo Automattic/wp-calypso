@@ -59,13 +59,6 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 	 * @return boolean
 	 */
 	public function show_wpcom_welcome_guide( $nux_status ) {
-		$blog_age = time() - strtotime( get_blog_details()->registered );
-
-		if ( defined( 'FORCE_SHOW_WPCOM_WELCOME_GUIDE' ) && FORCE_SHOW_WPCOM_WELCOME_GUIDE ) {
-			return true;
-		} elseif ( $blog_age < self::NEW_SITE_AGE_SECONDS ) {
-			return true;
-		}
 		return 'enabled' === $nux_status;
 	}
 
@@ -83,7 +76,11 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 			$variant = 'tour';
 		}
 
-		if ( has_filter( 'wpcom_block_editor_nux_get_status' ) ) {
+		$blog_age = time() - strtotime( get_blog_details()->registered );
+
+		if ( $blog_age < self::NEW_SITE_AGE_SECONDS ) {
+			$nux_status = 'enabled';
+		} elseif ( has_filter( 'wpcom_block_editor_nux_get_status' ) ) {
 			$nux_status = apply_filters( 'wpcom_block_editor_nux_get_status', false );
 		} elseif ( ! metadata_exists( 'user', get_current_user_id(), 'wpcom_block_editor_nux_status' ) ) {
 			$nux_status = 'enabled';
