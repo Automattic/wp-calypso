@@ -52,7 +52,7 @@ export function receiveAccountCloseError( action, error ) {
 
 	if ( error.error === 'active-memberships' ) {
 		return errorNotice(
-			translate( 'This user account cannot be closed while it has active memberships.' )
+			translate( 'This user account cannot be closed while it has active purchases.' )
 		);
 	}
 
