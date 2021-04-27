@@ -2684,18 +2684,6 @@ Undocumented.prototype.getMatchingAnchorSite = function (
 	);
 };
 
-/**
- * Records the interest of the user for the DIFM upsell offer if they click Accept on the offer page. Check pcbrnV-Y3-p2.
- *
- * @returns {Promise} A promise
- */
-Undocumented.prototype.saveDifmInterestForUser = function () {
-	return this.wpcom.req.get( {
-		apiNamespace: 'wpcom/v2',
-		path: '/difm/interested',
-	} );
-};
-
 Undocumented.prototype.getAtomicSiteLogs = function ( siteIdOrSlug, start, end, scrollId ) {
 	return this.wpcom.req.post(
 		{

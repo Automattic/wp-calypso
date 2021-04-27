@@ -135,14 +135,6 @@ export default function () {
 	}
 
 	page(
-		'/checkout/:site/offer-difm/:receiptId?',
-		siteSelection,
-		upsellNudge,
-		makeLayout,
-		clientRender
-	);
-
-	page(
 		'/checkout/:domainOrProduct',
 		siteSelection,
 		isEnabled( 'jetpack/redirect-legacy-plans' ) ? redirectJetpackLegacyPlans : noop,

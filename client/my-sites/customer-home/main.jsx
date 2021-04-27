@@ -56,15 +56,6 @@ const Home = ( {
 			return;
 		}
 
-		if ( noticeType === 'difm-success' ) {
-			lastShownNotice.current = noticeType;
-			reduxDispatch( recordTracksEvent( 'calypso_difm_intake_submitted' ) );
-
-			const successMessage = translate( 'Your application has been sent!' );
-			reduxDispatch( successNotice( successMessage ) );
-			return;
-		}
-
 		if ( noticeType === 'purchase-success' ) {
 			lastShownNotice.current = noticeType;
 			const successMessage = translate( 'Your purchase has been completed!' );

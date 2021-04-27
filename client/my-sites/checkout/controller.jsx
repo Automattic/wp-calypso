@@ -36,7 +36,6 @@ import UpsellNudge, {
 	BUSINESS_PLAN_UPGRADE_UPSELL,
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
-	DIFM_UPSELL,
 } from './upsell-nudge';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { TRUENAME_COUPONS } from 'calypso/lib/domains';
@@ -230,8 +229,6 @@ export function upsellNudge( context, next ) {
 			default:
 				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
 		}
-	} else if ( context.path.includes( 'offer-difm' ) ) {
-		upsellType = DIFM_UPSELL;
 	}
 
 	setSectionMiddleware( { name: upsellType } )( context );
