@@ -15,14 +15,6 @@ import type {
 	TransactionRequest,
 	WPCOMCart,
 } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import {
-	readWPCOMPaymentMethodClass,
-	translateWpcomPaymentMethodToCheckoutPaymentMethod,
-} from './translate-payment-method-names';
 import {
 	isPlan,
 	isDomainTransferProduct,
@@ -32,7 +24,16 @@ import {
 	isGSuiteOrGoogleWorkspace,
 	isTitanMail,
 	isP2Plus,
+	isJetpackSearch,
 } from '@automattic/calypso-products';
+
+/**
+ * Internal dependencies
+ */
+import {
+	readWPCOMPaymentMethodClass,
+	translateWpcomPaymentMethodToCheckoutPaymentMethod,
+} from './translate-payment-method-names';
 import { isRenewal } from 'calypso/lib/cart-values/cart-items';
 import doesValueExist from './does-value-exist';
 import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
@@ -196,6 +197,11 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): string {
 	const isRenewalItem = isRenewal( serverCartItem );
 	const { meta, product_name: productName } = serverCartItem;
 
+	// Jetpack Search has its own special sublabel
+	if ( ! isRenewalItem && isJetpackSearch( serverCartItem ) ) {
+		return '';
+	}
+
 	if ( isDotComPlan( serverCartItem ) || ( ! isRenewalItem && isTitanMail( serverCartItem ) ) ) {
 		if ( isRenewalItem ) {
 			return String( translate( 'Plan Renewal' ) );
@@ -235,14 +241,6 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): string {
 
 	if ( ! isRenewalItem && serverCartItem.months_per_bill_period === 1 ) {
 		return String( translate( 'Billed monthly' ) );
-	}
-
-	if ( ! isRenewalItem && serverCartItem.months_per_bill_period === 12 ) {
-		return String( translate( 'Billed annually' ) );
-	}
-
-	if ( ! isRenewalItem && serverCartItem.months_per_bill_period === 24 ) {
-		return String( translate( 'Billed every two years' ) );
 	}
 
 	if ( isRenewalItem ) {
