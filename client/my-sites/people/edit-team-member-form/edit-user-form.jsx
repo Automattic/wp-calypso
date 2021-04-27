@@ -80,7 +80,7 @@ class EditUserForm extends React.Component {
 		const { currentUser, user, isJetpack } = this.props;
 		const allowedSettings = [];
 
-		if ( ! user?.ID ) {
+		if ( ! user.ID ) {
 			return allowedSettings;
 		}
 
@@ -239,7 +239,7 @@ class EditUserForm extends React.Component {
 	};
 
 	render() {
-		if ( ! this.props.user?.ID ) {
+		if ( ! this.props.user.ID ) {
 			return null;
 		}
 
@@ -273,9 +273,11 @@ export default localize(
 	connect(
 		( state, { siteId, user } ) => {
 			const externalContributors = ( siteId && requestExternalContributors( siteId ).data ) || [];
+			const userId = user.linked_user_ID || user.ID;
+
 			return {
 				currentUser: getCurrentUser( state ),
-				isExternalContributor: externalContributors.includes( user?.linked_user_ID ?? user?.ID ),
+				isExternalContributor: userId && externalContributors.includes( userId ),
 				isVip: isVipSite( state, siteId ),
 				isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			};
