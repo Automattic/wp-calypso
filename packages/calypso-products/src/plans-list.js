@@ -10,7 +10,6 @@ import i18n, { translate } from 'i18n-calypso';
 import { isEnabled } from '@automattic/calypso-config';
 import * as constants from './constants';
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 function compact( elements ) {
 	return elements.filter( Boolean );
 }
@@ -43,11 +42,13 @@ const getDotcomPlanDetails = () => ( {
 	],
 } );
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 const plansDescriptionHeadingComponent = {
 	components: {
 		strong: <strong className="plans__features plan-features__targeted-description-heading" />,
 	},
 };
+/* eslint-enable */
 
 const getPlanBloggerDetails = () => ( {
 	...getDotcomPlanDetails(),
