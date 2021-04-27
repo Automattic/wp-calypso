@@ -301,7 +301,7 @@ export default {
 			context.store.dispatch( setSelectedSiteId( null ) );
 		}
 
-		if ( flowName === 'onboarding' ) {
+		if ( flowName === 'onboarding' || flowName === 'with-design-picker' ) {
 			context.primary = (
 				<ProvideExperimentData name="design_picker_after_onboarding">
 					{ ( isLoading, experimentAssignment ) => {
