@@ -31,21 +31,6 @@ export function canRemoveFromCart( cart, cartItem ) {
 	return true;
 }
 
-export function fillInAllCartItemAttributes( cart, products ) {
-	return update( cart, {
-		products: {
-			$apply: function ( items ) {
-				return (
-					items &&
-					items.map( function ( cartItem ) {
-						return fillInSingleCartItemAttributes( cartItem, products );
-					} )
-				);
-			},
-		},
-	} );
-}
-
 export function fillInSingleCartItemAttributes( cartItem, products ) {
 	const product = products[ cartItem.product_slug ];
 	if ( ! product ) {
