@@ -1057,6 +1057,12 @@ export const PLANS_LIST = {
 				constants.FEATURE_ADVANCED_SEO,
 				constants.FEATURE_GOOGLE_ANALYTICS,
 			] ),
+		getPlanCardFeatures: () => [
+			constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
+			constants.FEATURE_PRODUCT_SCAN_DAILY_V2,
+			constants.FEATURE_ANTISPAM_V2,
+			constants.FEATURE_VIDEO_HOSTING_V2,
+		],
 		getSignupFeatures: ( currentPlan ) => {
 			const showPersonalPlan =
 				isEnabled( 'jetpack/personal-plan' ) || constants.PLAN_JETPACK_PERSONAL === currentPlan;
@@ -1134,6 +1140,12 @@ export const PLANS_LIST = {
 				constants.FEATURE_ADVANCED_SEO,
 				constants.FEATURE_GOOGLE_ANALYTICS,
 			] ),
+		getPlanCardFeatures: () => [
+			constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
+			constants.FEATURE_PRODUCT_SCAN_DAILY_V2,
+			constants.FEATURE_ANTISPAM_V2,
+			constants.FEATURE_VIDEO_HOSTING_V2,
+		],
 		getSignupFeatures: ( currentPlan ) => {
 			const showPersonalPlan =
 				isEnabled( 'jetpack/personal-plan' ) || constants.PLAN_JETPACK_PERSONAL === currentPlan;
@@ -1196,6 +1208,11 @@ export const PLANS_LIST = {
 			constants.FEATURE_EASY_SITE_MIGRATION,
 			constants.FEATURE_PREMIUM_SUPPORT,
 		],
+		getPlanCardFeatures: () => [
+			constants.FEATURE_BACKUP_DAILY_V2,
+			constants.FEATURE_ACTIVITY_LOG,
+			constants.FEATURE_PREMIUM_SUPPORT,
+		],
 		getSignupFeatures: () => [
 			constants.FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			constants.FEATURE_SPAM_AKISMET_PLUS,
@@ -1244,6 +1261,11 @@ export const PLANS_LIST = {
 			constants.FEATURE_AUTOMATED_RESTORES,
 			constants.FEATURE_SPAM_AKISMET_PLUS,
 			constants.FEATURE_EASY_SITE_MIGRATION,
+			constants.FEATURE_PREMIUM_SUPPORT,
+		],
+		getPlanCardFeatures: () => [
+			constants.FEATURE_BACKUP_DAILY_V2,
+			constants.FEATURE_ACTIVITY_LOG,
 			constants.FEATURE_PREMIUM_SUPPORT,
 		],
 		getSignupFeatures: () => [
@@ -1315,6 +1337,12 @@ export const PLANS_LIST = {
 				constants.FEATURE_GOOGLE_ANALYTICS,
 				constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 			] ),
+		getPlanCardFeatures: () => [
+			constants.FEATURE_PLAN_SECURITY_DAILY,
+			constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
+			constants.FEATURE_PRODUCT_SCAN_REALTIME_V2,
+			constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+		],
 		getSignupFeatures: () =>
 			compact( [
 				constants.FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -1387,6 +1415,12 @@ export const PLANS_LIST = {
 				constants.FEATURE_GOOGLE_ANALYTICS,
 				constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 			] ),
+		getPlanCardFeatures: () => [
+			constants.FEATURE_PLAN_SECURITY_DAILY,
+			constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
+			constants.FEATURE_PRODUCT_SCAN_REALTIME_V2,
+			constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+		],
 		getSignupFeatures: () =>
 			compact( [
 				constants.FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
