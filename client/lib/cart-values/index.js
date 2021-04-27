@@ -48,6 +48,9 @@ export function fillInAllCartItemAttributes( cart, products ) {
 
 export function fillInSingleCartItemAttributes( cartItem, products ) {
 	const product = products[ cartItem.product_slug ];
+	if ( ! product ) {
+		return cartItem;
+	}
 	const attributes = allowedProductAttributes( product );
 
 	return { ...cartItem, ...attributes };
