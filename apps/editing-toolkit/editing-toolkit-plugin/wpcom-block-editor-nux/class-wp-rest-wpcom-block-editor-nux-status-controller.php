@@ -63,7 +63,7 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 
 		if ( defined( 'FORCE_SHOW_WPCOM_WELCOME_GUIDE' ) && FORCE_SHOW_WPCOM_WELCOME_GUIDE ) {
 			return true;
-		} elseif ( $blog_age < self::NEW_SITE_AGE_SECONDS ) { // Always show the tour on newly created blogs.
+		} elseif ( $blog_age < self::NEW_SITE_AGE_SECONDS ) {
 			return true;
 		}
 		return 'enabled' === $nux_status;
