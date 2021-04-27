@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import update, { extend as extendImmutabilityHelper } from 'immutability-helper';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -13,11 +12,6 @@ import {
 	isDomainRedemption,
 	allowedProductAttributes,
 } from '@automattic/calypso-products';
-
-// Auto-vivification from https://github.com/kolodny/immutability-helper#autovivification
-extendImmutabilityHelper( '$auto', function ( value, object ) {
-	return object ? update( object, value ) : update( {}, value );
-} );
 
 export function canRemoveFromCart( cart, cartItem ) {
 	if ( isCredits( cartItem ) ) {
