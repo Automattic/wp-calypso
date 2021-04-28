@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
-import { identity, includes, isEmpty, omit, get } from 'lodash';
+import { includes, isEmpty, omit, get } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -57,8 +57,6 @@ export class UserStep extends Component {
 	};
 
 	static defaultProps = {
-		translate: identity,
-		suggestedUsername: identity,
 		isSocialSignupEnabled: false,
 	};
 

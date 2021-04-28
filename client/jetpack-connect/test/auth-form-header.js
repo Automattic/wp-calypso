@@ -6,7 +6,6 @@
  * External dependencies
  */
 import React from 'react';
-import { identity } from 'lodash';
 import { shallow } from 'enzyme';
 
 /**
@@ -35,7 +34,7 @@ const DEFAULT_PROPS = {
 		state: '1',
 		userEmail: `email@${ SITE_SLUG }`,
 	},
-	translate: identity,
+	translate: ( string ) => string,
 };
 
 describe( 'AuthFormHeader', () => {

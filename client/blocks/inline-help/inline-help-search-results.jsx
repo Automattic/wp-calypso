@@ -3,7 +3,7 @@
  */
 import React, { Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { debounce, identity, isEmpty } from 'lodash';
+import { debounce, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -61,7 +61,7 @@ function HelpSearchResults( {
 	sectionName,
 	selectedResultIndex = -1,
 	selectSearchResult,
-	translate = identity,
+	translate,
 	placeholderLines,
 	track,
 } ) {

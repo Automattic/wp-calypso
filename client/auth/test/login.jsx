@@ -8,7 +8,6 @@
 import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,7 +29,7 @@ jest.mock( 'calypso/lib/analytics/ga', () => ( {
 } ) );
 
 describe( 'LoginTest', () => {
-	const page = shallow( <Auth translate={ identity } /> );
+	const page = shallow( <Auth translate={ ( string ) => string } /> );
 
 	test( 'OTP is not present on first render', () => {
 		return new Promise( ( done ) => {

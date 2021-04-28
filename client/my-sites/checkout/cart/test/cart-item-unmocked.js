@@ -3,11 +3,6 @@
  */
 
 /**
- * External dependencies
- */
-import { identity } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { CartItem } from '../cart-item';
@@ -48,7 +43,7 @@ const cartItem = {
 	product_slug: 'plan_value_bundle',
 };
 
-const translate = jest.fn( identity );
+const translate = jest.fn( ( string ) => string );
 const props = {
 	cartItem,
 	translate,

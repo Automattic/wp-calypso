@@ -4,7 +4,7 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
-import { identity, omit } from 'lodash';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -69,7 +69,7 @@ Shortcode.propTypes = {
 };
 
 Shortcode.defaultProps = {
-	filterRenderResult: identity,
+	filterRenderResult: ( result ) => result,
 	allowSameOrigin: false,
 };
 

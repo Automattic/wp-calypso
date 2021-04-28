@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, identity, isEmpty, map } from 'lodash';
+import { get, isEmpty, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -56,7 +56,7 @@ export const eligibilityHoldsFromApi = ( { errors = [] }, options = {} ) =>
 			}
 			return get( statusMapping, code, '' );
 		} )
-		.filter( identity );
+		.filter( ( error ) => error );
 
 /**
  * Maps from API response the issues which trigger a confirmation for automated transfer

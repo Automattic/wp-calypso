@@ -4,7 +4,6 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -146,7 +145,6 @@ class SharingServiceDescription extends Component {
 			},
 		} ),
 		numberOfConnections: 0,
-		translate: identity,
 	};
 
 	render() {

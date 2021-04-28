@@ -4,7 +4,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { compact, find, get, identity } from 'lodash';
+import { compact, find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -72,7 +72,10 @@ const getSeoExcerptForPost = ( post ) => {
 	}
 
 	return formatExcerpt(
-		find( [ PostMetadata.metaDescription( post ), post.excerpt, post.content ], identity )
+		find(
+			[ PostMetadata.metaDescription( post ), post.excerpt, post.content ],
+			( content ) => content.length
+		)
 	);
 };
 
@@ -84,7 +87,7 @@ const getSeoExcerptForSite = ( site ) => {
 	return formatExcerpt(
 		find(
 			[ get( site, 'options.advanced_seo_front_page_description' ), site.description ],
-			identity
+			( content ) => content.length
 		)
 	);
 };

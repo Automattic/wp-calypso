@@ -6,7 +6,6 @@
  */
 import React from 'react';
 import { shallow } from 'enzyme';
-import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,7 +28,7 @@ const defaultProps = {
 	getFieldValue: jest.fn(),
 	handleFieldChange: jest.fn(),
 	fieldClassName: 'country-brazil',
-	translate: identity,
+	translate: ( string ) => string,
 };
 
 describe( '<CountrySpecificPaymentFields />', () => {
