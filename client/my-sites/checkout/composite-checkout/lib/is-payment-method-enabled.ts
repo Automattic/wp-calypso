@@ -24,7 +24,7 @@ export default function isPaymentMethodEnabled(
 	if ( slug === 'netbanking' && countryCode !== 'IN' ) {
 		return false;
 	}
-	if ( slug === 'ebanx-tef' && countryCode !== 'BR' ) {
+	if ( slug === 'brazil-tef' && countryCode !== 'BR' ) {
 		return false;
 	}
 
