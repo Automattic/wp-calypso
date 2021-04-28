@@ -3,26 +3,29 @@
  */
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Icon, arrowLeft } from '@wordpress/icons';
+import DomainPicker from '@automattic/domain-picker';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import { DomainSuggestions } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
-import DomainPicker from '@automattic/domain-picker';
-import { useShoppingCart } from '@automattic/shopping-cart';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
-import { DomainSuggestions } from '@automattic/data-stores';
 import {
 	MARKETPLACE_FLOW_ID,
 	ANALYTICS_UI_LOCATON_MARKETPLACE_DOMAIN_SELECTION,
 } from 'calypso/my-sites/plugins/marketplace/constants';
 import { Button } from '@wordpress/components';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import './styles.scss';
 import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
-type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
-import Gridicon from 'calypso/components/gridicon';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 function Header() {
 	return (
@@ -48,7 +51,7 @@ function DomainPickerContainer( { onDomainSelect, selectedDomain } ) {
 			analyticsFlowId={ MARKETPLACE_FLOW_ID }
 			onDomainSelect={ onDomainSelect }
 			currentDomain={ selectedDomain }
-			hideRecommendationLabel={ true }
+			hideRecommendationLabel
 			onUseYourDomainClick={ redirectToUseDomainFlow }
 		/>
 	);
@@ -58,9 +61,7 @@ function MarketplaceShoppingCart( { onAddDomainToCart, selectedDomain } ) {
 	const { responseCart, isLoading } = useShoppingCart();
 	const { products, sub_total_display } = responseCart;
 
-	return isLoading ? (
-		<div></div>
-	) : (
+	return isLoading ? null : (
 		<>
 			<h1 className="marketplace-domain-upsell__shopping-cart marketplace-title">Your cart</h1>
 			<div className="marketplace-domain-upsell__shopping-cart basket-items">
@@ -77,10 +78,10 @@ function MarketplaceShoppingCart( { onAddDomainToCart, selectedDomain } ) {
 				} ) }
 			</div>
 			<hr />
-			<h1 className="marketplace-domain-upsell__shopping-cart total">
+			<div className="marketplace-domain-upsell__shopping-cart total">
 				<div> Total </div>
 				<div>{ sub_total_display }</div>
-			</h1>
+			</div>
 
 			<Button
 				onClick={ onAddDomainToCart }
@@ -108,7 +109,7 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 				{ product_slug: 'yoast_premium' },
 				products
 			);
-			replaceProductsInCart( [ { ...yoastProduct } ] );
+			replaceProductsInCart( [ yoastProduct ] );
 		}
 	}, [ isFetchingProducts, products, replaceProductsInCart ] );
 
@@ -122,11 +123,12 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 			} ),
 			...selectedDomain,
 		};
-		addProductsToCart( [ domainProduct ] );
-		window.location.href = window.location.origin + '/checkout/' + selectedSite.slug;
+		addProductsToCart( [ domainProduct ] ).then( () => {
+			page( '/checkout/' + selectedSite.slug );
+		} );
 	};
 
-	const onDomainSelect = ( suggestion: DomainSuggestion ): void => {
+	const onDomainSelect = ( suggestion: DomainSuggestions.DomainSuggestion ): void => {
 		setDomain( suggestion );
 	};
 
@@ -134,7 +136,7 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 		<div className="marketplace-domain-upsell__root">
 			<div className="marketplace-domain-upsell__back-button">
 				<Button isBusy={ false } isLink>
-					<Gridicon icon="arrow-left" size={ 18 } />
+					<Icon icon={ arrowLeft } size={ 16 } />
 					<span>Back</span>
 				</Button>
 			</div>

@@ -1,10 +1,8 @@
-//@import '~@automattic/marketplace/styles/mixins';
-
 .layout__content {
-	background-color: #fff;
+	background-color: var( --studio-white );
 	height: 100vh;
 	@media ( max-width: 782px ) {
-		background-color: #fff;
+		background-color: var( --studio-white );
 		height: 100vh;
 		.layout__primary {
 			height: 100vh;
@@ -61,7 +59,6 @@
 		}
 	}
 	.marketplace-title {
-		font-family: var( --p2-font-inter );
 		letter-spacing: 0.4px;
 		line-height: 28px;
 		font-weight: 600;
@@ -70,12 +67,10 @@
 	}
 
 	.marketplace-subtitle {
-		font-family: var( --p2-font-inter );
 		font-style: normal;
 		font-weight: normal;
 		font-size: 0.875rem;
 		line-height: 16px;
-		color: #2c3338;
 		margin: 0 0 30px;
 	}
 
@@ -86,10 +81,8 @@
 
 	.marketplace-domain-upsell__back-button {
 		button {
-			font-family: var( --p2-font-inter );
 			font-style: normal;
 			letter-spacing: 0.4px;
-			color: #1d2327;
 			font-weight: 600;
 			font-size: 1rem;
 			line-height: 20px;
@@ -135,7 +128,7 @@
 
 		@media ( max-width: 782px ) {
 			padding-top: 20px;
-			border-top: 1px solid #eee;
+			border-top: 1px solid var( --studio-gray-0 );
 		}
 	}
 
