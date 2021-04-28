@@ -51,6 +51,7 @@ object RunThemeVisualRegressionTests : BuildType({
 				# Run the test
 				yarn test-visual
 			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
 		}
 		bashNodeScript {
 			name = "Collect results"
@@ -68,16 +69,24 @@ object RunThemeVisualRegressionTests : BuildType({
 	failureConditions {
     	executionTimeoutMin = 30
     }
+#	triggers {
+#		schedule {
+#			schedulingPolicy = daily {
+#				hour = 3
+#			}
+#			branchFilter = """
+#				+:trunk
+#			""".trimIndent()
+#			triggerBuild = always()
+#			withPendingChangesOnly = false
+#		}
+#	}
 	triggers {
-		schedule {
-			schedulingPolicy = daily {
-				hour = 3
-			}
+		vcs {
 			branchFilter = """
-				+:trunk
+				+:*
+				-:pull*
 			""".trimIndent()
-			triggerBuild = always()
-			withPendingChangesOnly = false
 		}
 	}
 })
