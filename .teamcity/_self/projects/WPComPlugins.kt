@@ -28,6 +28,7 @@ object WPComPlugins : Project({
 	buildType(Notifications)
 	buildType(O2Blocks)
 	buildType(Gutenberg)
+	buildType(PinReleaseBuild)
 
 	// For some reason, TeamCity needs this to reference the Template.
 	template(PluginBaseBuild())
