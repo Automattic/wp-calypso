@@ -365,8 +365,8 @@ export default function CompositeCheckout( {
 		isInitialCartLoading ||
 		// Only wait for stored cards to load if we are using cards
 		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards ) ||
-		// Only wait for apple pay to load if we are using apple pay
-		( allowedPaymentMethods.includes( 'apple-pay' ) && isWebPayLoading );
+		// Only wait for web pay to load if we are using web pay
+		( allowedPaymentMethods.includes( 'web-pay' ) && isWebPayLoading );
 
 	const contactDetails: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
 	const countryCode: string = contactDetails?.countryCode?.value ?? '';
