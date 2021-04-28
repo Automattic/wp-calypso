@@ -15,6 +15,7 @@ import JetpackProductCardTimeFrame from './time-frame';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
 import InfoPopover from 'calypso/components/info-popover';
+import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 
 /**
  * Type dependencies
@@ -168,7 +169,7 @@ const DisplayPrice = ( {
 					{ ! hideSavingLabel && (
 						<span className="jetpack-product-card__you-save">
 							{ translate( '* You Save %(percent)d%%', {
-								args: { percent: 40 },
+								args: { percent: INTRO_PRICING_DISCOUNT_PERCENTAGE },
 								comment: 'Asterisk clause describing the displayed price adjustment',
 							} ) }
 						</span>
