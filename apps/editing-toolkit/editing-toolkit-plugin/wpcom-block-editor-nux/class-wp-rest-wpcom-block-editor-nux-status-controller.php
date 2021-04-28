@@ -99,7 +99,7 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 
 		$show_welcome_guide = $this->show_wpcom_welcome_guide( $nux_status );
 
-		$should_open_patterns_panel = get_option( 'current_theme' ) === 'Blank Canvas';
+		$should_open_patterns_panel = (bool) get_option( 'is_blank_canvas' );
 
 		return rest_ensure_response(
 			array(
