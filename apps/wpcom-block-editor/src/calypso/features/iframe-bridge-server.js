@@ -661,7 +661,7 @@ function isNavSidebarPresent() {
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
-function openLinksInParentFrame( calypsoPort ) {
+async function openLinksInParentFrame( calypsoPort ) {
 	const viewPostLinkSelectors = [
 		'.components-notice-list .is-success .components-notice__action.is-link', // View Post link in success notice, Gutenberg <5.9
 		'.components-snackbar-list .components-snackbar__content a', // View Post link in success snackbar, Gutenberg >=5.9
@@ -677,26 +677,116 @@ function openLinksInParentFrame( calypsoPort ) {
 	} );
 
 	// Create a new post link in block settings sidebar for Query block
-	if ( calypsoifyGutenberg.createNewPostUrl || calypsoifyGutenberg.manageReusableBlocksUrl ) {
-		const $editor = $( '#editor, #edit-site-editor' );
-		const replaceLink = () => {
-			if ( calypsoifyGutenberg.createNewPostUrl ) {
-				$( '.wp-block-query__create-new-link a', $editor )
-					.attr( 'href', calypsoifyGutenberg.createNewPostUrl )
-					.attr( 'target', '_top' );
+	const { createNewPostUrl, manageReusableBlocksUrl } = calypsoifyGutenberg;
+	if ( ! createNewPostUrl && ! manageReusableBlocksUrl ) {
+		return;
+	}
+
+	await isEditorReadyWithBlocks();
+
+	const createNewPostLinkObserver = new window.MutationObserver( () => {
+		const hyperlink = document.querySelector( '.wp-block-query__create-new-link a' );
+		if ( hyperlink ) {
+			hyperlink.href = createNewPostUrl;
+			hyperlink.target = '_top';
+		}
+	} );
+
+	const inserterManageReusableBlocksObserver = new window.MutationObserver( ( mutations ) => {
+		const node = mutations[ 0 ].target;
+		if ( node.ariaSelected === 'true' ) {
+			const hyperlink = document.querySelector( 'a.block-editor-inserter__manage-reusable-blocks' );
+			if ( hyperlink ) {
+				hyperlink.href = manageReusableBlocksUrl;
+				hyperlink.target = '_top';
+			}
+		}
+	} );
+
+	const sidebarsObserver = new window.MutationObserver( ( mutations ) => {
+		for ( const record of mutations ) {
+			for ( const node of record.addedNodes ) {
+				if (
+					createNewPostUrl &&
+					( node.classList.contains( 'interface-interface-skeleton__sidebar' ) || // edit-site
+						node.classList.contains( 'edit-post-sidebar' ) ) // edit-post
+				) {
+					const componentsPanel = node.querySelector(
+						'.interface-interface-skeleton__sidebar .components-panel, .edit-post-sidebar .components-panel'
+					);
+					createNewPostLinkObserver.observe( componentsPanel, {
+						childList: true,
+						subtree: true,
+					} );
+				} else if (
+					manageReusableBlocksUrl &&
+					node.classList.contains( 'interface-interface-skeleton__secondary-sidebar' )
+				) {
+					const resuableTab = node.querySelector(
+						'.components-tab-panel__tabs-item[id*="reusable"]'
+					);
+					if ( resuableTab ) {
+						inserterManageReusableBlocksObserver.observe( resuableTab, {
+							attributeFilter: [ 'aria-selected' ],
+						} );
+					}
+				}
 			}
 
-			if ( calypsoifyGutenberg.manageReusableBlocksUrl ) {
-				const manageReusableBlocksLinkSelectors = [
-					'.block-editor-inserter__manage-reusable-blocks', // Link in the Blocks Inserter
-					'a.components-menu-item__button[href*="post_type=wp_block"]', // Link in the More Menu
-				].join( ',' );
-				$( manageReusableBlocksLinkSelectors, $editor )
-					.attr( 'href', calypsoifyGutenberg.manageReusableBlocksUrl )
-					.attr( 'target', '_top' );
+			for ( const node of record.removedNodes ) {
+				if (
+					createNewPostUrl &&
+					node.classList.contains( 'interface-interface-skeleton__sidebar' )
+				) {
+					createNewPostLinkObserver.disconnect();
+				} else if (
+					manageReusableBlocksUrl &&
+					node.classList.contains( 'interface-interface-skeleton__secondary-sidebar' )
+				) {
+					inserterManageReusableBlocksObserver.disconnect();
+				}
 			}
-		};
-		setInterval( replaceLink, 50 );
+		}
+	} );
+	// edit-site
+	sidebarsObserver.observe( document.querySelector( '.interface-interface-skeleton__body' ), {
+		childList: true,
+	} );
+	// edit-post
+	sidebarsObserver.observe( document.querySelector( '.interface-interface-skeleton__sidebar' ), {
+		childList: true,
+	} );
+
+	if ( manageReusableBlocksUrl ) {
+		const toggleButton = document.querySelector(
+			'.edit-post-more-menu button, .edit-site-more-menu button'
+		);
+		const moreMenuManageReusableBlocksObserver = new window.MutationObserver( () => {
+			const isExpanded = toggleButton.ariaExpanded === 'true';
+			if ( isExpanded ) {
+				const hyperlink = document.querySelector(
+					'a.components-menu-item__button[href*="post_type=wp_block"]'
+				);
+				hyperlink.href = manageReusableBlocksUrl;
+				hyperlink.target = '_top';
+			}
+		} );
+		moreMenuManageReusableBlocksObserver.observe( toggleButton, {
+			attributeFilter: [ 'aria-expanded' ],
+		} );
+	}
+
+	// Sidebar might already be open
+	if ( createNewPostUrl ) {
+		const sidebarComponentsPanel = document.querySelector(
+			'.interface-interface-skeleton__sidebar .components-panel'
+		);
+		if ( sidebarComponentsPanel ) {
+			createNewPostLinkObserver.observe( sidebarComponentsPanel, {
+				childList: true,
+				subtree: true,
+			} );
+		}
 	}
 }
 
