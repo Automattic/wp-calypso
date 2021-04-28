@@ -6,6 +6,7 @@ import { validateExperimentAssignment } from './validations';
 import { monotonicNow } from './timing';
 import { isObject } from './validations';
 import * as ExperimentAssignments from './experiment-assignments';
+import localStorage from './local-storage';
 
 interface FetchExperimentAssignmentResponse {
 	variations: Record< string, unknown >;
@@ -37,6 +38,30 @@ function validateFetchExperimentAssignmentResponse(
 	throw new Error( 'Invalid FetchExperimentAssignmentResponse' );
 }
 
+// As ExPlat prefers to assign based on anonId and things end up simplest if we can keep the same anonId
+// the whole time, we store the first anonId we see in LocalStorage and reuse it:
+const localStorageAnonIdKey = 'explat-first-anon-id';
+/**
+ * INTERNAL USE ONLY
+ * Runs the getAnonId provided memoized by LocalStorage, that is it returns the first anonId
+ * encountered without re-running getAnonId.
+ * Exported for testing.
+ *
+ * @param getAnonId The getAnonId function
+ */
+export const localStorageMemoizedGetAnonId = async ( getAnonId: Config[ 'getAnonId' ] ) => {
+	const maybeStoredAnonId = localStorage.getItem( localStorageAnonIdKey );
+	if ( maybeStoredAnonId ) {
+		return maybeStoredAnonId;
+	}
+
+	const anonId = await getAnonId();
+	if ( anonId ) {
+		localStorage.setItem( localStorageAnonIdKey, anonId );
+	}
+	return anonId;
+};
+
 /**
  * Fetch an ExperimentAssignment
  *
@@ -51,7 +76,7 @@ export async function fetchExperimentAssignment(
 
 	const { variations, ttl: responseTtl } = validateFetchExperimentAssignmentResponse(
 		await config.fetchExperimentAssignment( {
-			anonId: await config.getAnonId(),
+			anonId: await localStorageMemoizedGetAnonId( config.getAnonId ),
 			experimentName,
 		} )
 	);
