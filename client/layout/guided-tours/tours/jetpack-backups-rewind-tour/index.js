@@ -3,7 +3,6 @@
  */
 import React, { Fragment } from 'react';
 import Gridicon from 'calypso/components/gridicon';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -31,6 +30,10 @@ function whenWeCanAutoconfigure( state ) {
 	return canAutoconfigure || credentials.some( ( c ) => c.type === 'auto' );
 }
 
+function siteHasCredentials( state ) {
+	return getJetpackCredentialsUpdateStatus( state, getSelectedSiteId( state ) ) === 'success';
+}
+
 const JetpackBackupsRewindTourButtons = ( { backText, translate } ) => (
 	<Fragment>
 		<SiteLink isButton isPrimaryButton={ false } href="/plans/my-plan/:site">
@@ -39,20 +42,6 @@ const JetpackBackupsRewindTourButtons = ( { backText, translate } ) => (
 		<Quit>{ translate( 'No, thanks.' ) }</Quit>
 	</Fragment>
 );
-
-const ContinueToLastStep = ( { siteHasCredentials } ) => (
-	<Continue
-		target=".rewind-credentials-form .is-primary"
-		step="finish"
-		when={ () => siteHasCredentials }
-		click
-		hidden
-	/>
-);
-const ConnectedContinueToLastStep = connect( ( state ) => ( {
-	siteHasCredentials:
-		getJetpackCredentialsUpdateStatus( state, getSelectedSiteId( state ) ) === 'success',
-} ) )( ContinueToLastStep );
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const JetpackBackupsRewindTour = makeTour(
@@ -130,7 +119,15 @@ export const JetpackBackupsRewindTour = makeTour(
 				display: 'none',
 			} }
 		>
-			{ () => <ConnectedContinueToLastStep /> }
+			{ () => (
+				<Continue
+					target=".rewind-credentials-form .is-primary"
+					step="finish"
+					when={ siteHasCredentials }
+					click
+					hidden
+				/>
+			) }
 		</Step>
 
 		<Step name="finish" target=".credentials-configured" placement="right">
