@@ -15,6 +15,7 @@ import JetpackProductCardTimeFrame from './time-frame';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
 import InfoPopover from 'calypso/components/info-popover';
+import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 
 /**
  * Type dependencies
@@ -52,6 +53,7 @@ type OwnProps = {
 	displayFrom?: boolean;
 	tooltipText?: TranslateResult | ReactNode;
 	aboveButtonText?: TranslateResult | ReactNode;
+	hideSavingLabel?: boolean;
 };
 
 export type Props = OwnProps & Partial< FeaturesProps >;
@@ -72,6 +74,7 @@ const DisplayPrice = ( {
 	billingTerm,
 	tooltipText,
 	productName,
+	hideSavingLabel,
 } ) => {
 	const translate = useTranslate();
 
@@ -163,12 +166,14 @@ const DisplayPrice = ( {
 						</InfoPopover>
 					) }
 					<JetpackProductCardTimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
-					<span className="jetpack-product-card__you-save">
-						{ translate( '* You Save %(percent)d%%', {
-							args: { percent: 40 },
-							comment: 'Asterisk clause describing the displayed price adjustment',
-						} ) }
-					</span>
+					{ ! hideSavingLabel && (
+						<span className="jetpack-product-card__you-save">
+							{ translate( '* You Save %(percent)d%%', {
+								args: { percent: INTRO_PRICING_DISCOUNT_PERCENTAGE },
+								comment: 'Asterisk clause describing the displayed price adjustment',
+							} ) }
+						</span>
+					) }
 				</>
 			) : (
 				<>
@@ -206,6 +211,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 	displayFrom,
 	belowPriceText,
 	tooltipText,
+	hideSavingLabel,
 	aboveButtonText = null,
 }: Props ) => {
 	const translate = useTranslate();
@@ -253,6 +259,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 					billingTerm={ billingTerm }
 					tooltipText={ tooltipText }
 					productName={ productName }
+					hideSavingLabel={ hideSavingLabel }
 				/>
 
 				{ aboveButtonText && (

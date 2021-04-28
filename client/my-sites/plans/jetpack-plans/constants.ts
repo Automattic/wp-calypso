@@ -61,6 +61,8 @@ export const PERFORMANCE = 'performance';
 export const SECURITY = 'security';
 export const PLAN_COMPARISON_PAGE = 'https://jetpack.com/features/comparison/';
 
+export const INTRO_PRICING_DISCOUNT_PERCENTAGE = 40;
+
 /**
  * Link to plan comparison page.
  */

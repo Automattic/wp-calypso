@@ -10,7 +10,9 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
+import ProductGridSection from './section';
 import PlansFilterBar from '../plans-filter-bar';
+import PlanUpgradeSection from '../plan-upgrade';
 import ProductCard from '../product-card';
 import { getProductPosition } from '../product-grid/products-order';
 import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from './utils';
@@ -41,8 +43,9 @@ import './style.scss';
 
 const ProductGrid: React.FC< ProductsGridProps > = ( {
 	duration,
-	onSelectProduct,
 	urlQueryArgs,
+	planRecommendation,
+	onSelectProduct,
 	onDurationChange,
 } ) => {
 	const translate = useTranslate();
@@ -128,8 +131,14 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 
 	return (
 		<>
-			<section className="product-grid__section">
-				<h2 className="product-grid__section-title">{ translate( 'Most Popular' ) }</h2>
+			{ planRecommendation && (
+				<PlanUpgradeSection
+					planRecommendation={ planRecommendation }
+					duration={ duration }
+					onSelectProduct={ onSelectProduct }
+				/>
+			) }
+			<ProductGridSection title={ translate( 'Most Popular' ) }>
 				<div className="product-grid__filter-bar">
 					<PlansFilterBar
 						showDiscountMessage
@@ -171,8 +180,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 						onButtonClick={ scrollToComparison }
 					/>
 				</div>
-			</section>
-			<section className="product-grid__section product-grid__asterisk-items">
 				<ul className="product-grid__asterisk-list">
 					<li className="product-grid__asterisk-item">
 						{ translate( 'Special introductory pricing, all renewals are at full price.' ) }
@@ -184,9 +191,8 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 						{ translate( 'All plans include priority support' ) }
 					</li>
 				</ul>
-			</section>
-			<section className="product-grid__section">
-				<h2 className="product-grid__section-title">{ translate( 'More Products' ) }</h2>
+			</ProductGridSection>
+			<ProductGridSection title={ translate( 'More Products' ) }>
 				<ul className="product-grid__product-grid">
 					{ otherProducts.map( ( product ) => (
 						<li key={ product.iconSlug }>
@@ -205,7 +211,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 						<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
 					) }
 				</div>
-			</section>
+			</ProductGridSection>
 			<StoreFooter />
 		</>
 	);
