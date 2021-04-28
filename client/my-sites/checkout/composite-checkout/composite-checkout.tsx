@@ -15,6 +15,7 @@ import {
 	defaultRegistry,
 	Button,
 } from '@automattic/composite-checkout';
+import { useIsWebPayAvailable } from '@automattic/wpcom-checkout';
 import { ThemeProvider } from 'emotion-theming';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
@@ -41,7 +42,6 @@ import QueryContactDetailsCache from 'calypso/components/data/query-contact-deta
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProducts from 'calypso/components/data/query-products-list';
-import useIsApplePayAvailable from './hooks/use-is-apple-pay-available';
 import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-methods';
 import useStoredCards from './hooks/use-stored-cards';
 import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
@@ -333,10 +333,7 @@ export default function CompositeCheckout( {
 		);
 	} );
 
-	const {
-		canMakePayment: isApplePayAvailable,
-		isLoading: isApplePayLoading,
-	} = useIsApplePayAvailable(
+	const { isApplePayAvailable, isLoading: isApplePayLoading } = useIsWebPayAvailable(
 		stripe,
 		stripeConfiguration,
 		!! stripeLoadingError,
