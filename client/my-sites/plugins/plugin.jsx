@@ -49,6 +49,7 @@ import {
 } from 'calypso/state/plugins/installed/selectors';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import MarketplacePluginUpsell from 'calypso/my-sites/plugins/marketplace/marketplace-plugin-upsell';
 
 function goBack() {
 	window.history.back();
@@ -304,6 +305,8 @@ class SinglePlugin extends React.Component {
 						<PluginSectionsCustom plugin={ plugin } />
 					) }
 					{ this.renderSitesList( plugin ) }
+
+					<MarketplacePluginUpsell />
 				</div>
 			</MainComponent>
 		);

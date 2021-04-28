@@ -10,11 +10,52 @@ import {
 	PRODUCT_JETPACK_SCAN_MONTHLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
-	PRODUCT_JETPACK_SEARCH,
-	PRODUCT_JETPACK_SEARCH_MONTHLY,
-	PRODUCT_JETPACK_CRM,
-	PRODUCT_JETPACK_CRM_MONTHLY,
-} from './jetpack';
+];
+
+export const JETPACK_PRODUCTS_LIST = [
+	...JETPACK_BACKUP_PRODUCTS,
+	...JETPACK_SCAN_PRODUCTS,
+	...JETPACK_ANTI_SPAM_PRODUCTS,
+	...JETPACK_SEARCH_PRODUCTS,
+];
+
+export const JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/backup/';
+export const JETPACK_SEARCH_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/search/';
+export const JETPACK_SCAN_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/scan/';
+export const JETPACK_ANTI_SPAM_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/anti-spam/';
+
+export const JETPACK_PRODUCT_PRICE_MATRIX = {
+	[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
+		relatedProduct: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+		ratio: 12,
+	},
+	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: {
+		relatedProduct: PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+		ratio: 12,
+	},
+	[ PRODUCT_JETPACK_SEARCH ]: {
+		relatedProduct: PRODUCT_JETPACK_SEARCH_MONTHLY,
+		ratio: 12,
+	},
+	[ PRODUCT_JETPACK_SCAN ]: {
+		relatedProduct: PRODUCT_JETPACK_SCAN_MONTHLY,
+		ratio: 12,
+	},
+	[ PRODUCT_JETPACK_ANTI_SPAM ]: {
+		relatedProduct: PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
+		ratio: 12,
+	},
+};
+
+export const WPCOM_TRAFFIC_GUIDE = 'traffic-guide';
+
+// Marketplace products
+export const MARKETPLACE_YOAST = 'yoast_premium';
+
+// Marketplace product relationship
+export const MARKETPLACE_PRODUCTS = {
+	'wordpress-seo': MARKETPLACE_YOAST,
+};
 
 export const FEATURE_WP_SUBDOMAIN = 'wordpress-subdomain';
 export const FEATURE_BLOG_DOMAIN = 'blog-domain';
