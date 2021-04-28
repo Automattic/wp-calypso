@@ -23,6 +23,7 @@ class JetpackConnectSkipUser extends Component {
 			{
 				redirect: redirectAfterAuth,
 				site: slug,
+				unlinked: '1',
 			},
 			`https://cloud.jetpack.com/pricing/${ slug }`
 		);
