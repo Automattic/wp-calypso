@@ -84,6 +84,8 @@ const render = () => {
 			isVisible,
 			locale,
 			receiveMessage: sendMessage,
+			redirectPath: '/',
+			isStandalone: true,
 		} ),
 		document.getElementsByClassName( 'wpnc__main' )[ 0 ]
 	);
