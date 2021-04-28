@@ -29,6 +29,12 @@ const localStorageExperimentAssignmentKeyPrefix = 'explat-experiment-';
 const localStorageExperimentAssignmentKey = ( experimentName: string ): string =>
 	`${ localStorageExperimentAssignmentKeyPrefix }-${ experimentName }`;
 
+/**
+ * INTERNAL USE ONLY
+ *
+ * Clears all ExperimentAssignments.
+ * Useful for testing.
+ */
 export function clearAllExperimentAssignments(): void {
 	localStorage.clear();
 }
