@@ -333,7 +333,11 @@ export default function CompositeCheckout( {
 		);
 	} );
 
-	const { isApplePayAvailable, isLoading: isApplePayLoading } = useIsWebPayAvailable(
+	const {
+		isApplePayAvailable,
+		isGooglePayAvailable,
+		isLoading: isWebPayLoading,
+	} = useIsWebPayAvailable(
 		stripe,
 		stripeConfiguration,
 		!! stripeLoadingError,
@@ -346,7 +350,8 @@ export default function CompositeCheckout( {
 		stripeConfiguration,
 		stripe,
 		isApplePayAvailable,
-		isApplePayLoading,
+		isGooglePayAvailable,
+		isWebPayLoading,
 		storedCards,
 		siteSlug,
 	} );
@@ -361,7 +366,7 @@ export default function CompositeCheckout( {
 		// Only wait for stored cards to load if we are using cards
 		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards ) ||
 		// Only wait for apple pay to load if we are using apple pay
-		( allowedPaymentMethods.includes( 'apple-pay' ) && isApplePayLoading );
+		( allowedPaymentMethods.includes( 'apple-pay' ) && isWebPayLoading );
 
 	const contactDetails: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
 	const countryCode: string = contactDetails?.countryCode?.value ?? '';
