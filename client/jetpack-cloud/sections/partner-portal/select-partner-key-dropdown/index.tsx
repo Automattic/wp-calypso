@@ -34,11 +34,11 @@ export default function SelectPartnerKeyDropdown(): ReactElement | null {
 			label: key.name,
 		} ) );
 
-	options?.unshift( { label: translate( 'Partner Key' ) as string, value: '', isLabel: true } );
-
-	if ( ! options || options.length < 2 ) {
+	if ( ! options || options.length <= 1 ) {
 		return null;
 	}
+
+	options?.unshift( { label: translate( 'Partner Key' ) as string, value: '', isLabel: true } );
 
 	return (
 		<SelectDropdown
