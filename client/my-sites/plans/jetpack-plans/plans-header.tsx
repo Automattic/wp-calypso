@@ -9,6 +9,8 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getPlanRecommendationFromContext } from './plan-upgrade/utils';
+import { JETPACK_LEGACY_PLANS_MAX_PLUGIN_VERSION } from '@automattic/calypso-products/src/constants';
+import JetpackPluginUpdateWarning from 'calypso/blocks/jetpack-plugin-update-warning';
 import { preventWidows } from 'calypso/lib/formatting';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -24,10 +26,21 @@ type HeaderProps = {
 	shouldShowPlanRecommendation?: boolean;
 };
 
-const StandardPlansHeader = ( { shouldShowPlanRecommendation }: HeaderProps ) => (
+type StandardHeaderProps = {
+	shouldShowPlanRecommendation?: boolean;
+	siteId: number | null;
+};
+
+const StandardPlansHeader = ( { shouldShowPlanRecommendation, siteId }: StandardHeaderProps ) => (
 	<>
 		<FormattedHeader headerText={ translate( 'Plans' ) } align="left" brandFont />
 		<PlansNavigation path={ '/plans' } />
+		{ shouldShowPlanRecommendation && siteId && (
+			<JetpackPluginUpdateWarning
+				siteId={ siteId }
+				minJetpackVersion={ JETPACK_LEGACY_PLANS_MAX_PLUGIN_VERSION }
+			/>
+		) }
 		{ ! shouldShowPlanRecommendation && (
 			<h2 className="jetpack-plans__pricing-header">
 				{ preventWidows(
@@ -80,8 +93,8 @@ const PlansHeader = ( { context, shouldShowPlanRecommendation }: HeaderProps ) =
 		</>
 	) : (
 		<StandardPlansHeader
-			context={ context }
 			shouldShowPlanRecommendation={ shouldShowPlanRecommendation }
+			siteId={ siteId }
 		/>
 	);
 };

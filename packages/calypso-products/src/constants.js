@@ -149,6 +149,9 @@ export const JETPACK_REDIRECT_URL =
 	'https://jetpack.com/redirect/?source=jetpack-checkout-thankyou';
 export const redirectCloudCheckoutToWpAdmin = () => !! JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN;
 
+// Jetpack versions prior to this one are not fully compatible with new plans
+export const JETPACK_LEGACY_PLANS_MAX_PLUGIN_VERSION = '8.9.1';
+
 // plans constants
 export const PLAN_BUSINESS_MONTHLY = 'business-bundle-monthly';
 export const PLAN_BUSINESS = 'business-bundle';
