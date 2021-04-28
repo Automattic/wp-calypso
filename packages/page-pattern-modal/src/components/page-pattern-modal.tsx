@@ -32,6 +32,7 @@ interface PagePatternModalProps {
 	siteInformation?: Record< string, string >;
 	patterns: PatternDefinition[];
 	theme?: string;
+	title?: string;
 }
 
 interface PagePatternModalState {
@@ -313,7 +314,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 							id={ `page-pattern-modal__heading-${ instanceId }` }
 							className="page-pattern-modal__heading"
 						>
-							{ __( 'Add a page', __i18n_text_domain__ ) }
+							{ this.props.title || __( 'Add a page', __i18n_text_domain__ ) }
 						</h1>
 						<p
 							id={ `page-pattern-modal__description-${ instanceId }` }
