@@ -4,39 +4,37 @@
 import type { ExperimentAssignment } from '../types';
 import * as Validations from './validations';
 
-const localStorageExperimentAssignmentsKey = 'explat-client-experiment-assignments';
+const localStorage =
+	typeof window !== 'undefined' && window.localStorage
+		? window.localStorage
+		: // LocalStorage polyfill from https://gist.github.com/juliocesar/926500
+		  {
+				_data: {} as Record< string, string >,
+				setItem: function ( id: string, val: string ) {
+					return ( this._data[ id ] = String( val ) );
+				},
+				getItem: function ( id: string ) {
+					return this._data.hasOwnProperty( id ) ? this._data[ id ] : undefined;
+				},
+				removeItem: function ( id: string ) {
+					return delete this._data[ id ];
+				},
+				clear: function () {
+					return ( this._data = {} );
+				},
+		  };
 
-type ExperimentAssignments = Record< string, ExperimentAssignment | undefined >;
+const localStorageExperimentAssignmentKeyPrefix = 'explat-experiment-';
 
-function getLocalStorageExperimentAssignments(): ExperimentAssignments {
-	if ( typeof window === 'undefined' || ! window.localStorage ) {
-		return {};
-	}
+const localStorageExperimentAssignmentKey = ( experimentName: string ): string =>
+	`${ localStorageExperimentAssignmentKeyPrefix }-${ experimentName }`;
 
-	const maybeData = localStorage.getItem( localStorageExperimentAssignmentsKey );
-	if ( maybeData === null ) {
-		return {};
-	}
-
-	// TODO: Validate?
-	return JSON.parse( maybeData ) as ExperimentAssignments;
-}
-
-function setLocalStorageExperimentAssignments(
-	experimentAssignments: ExperimentAssignments
-): void {
-	if ( typeof window === 'undefined' || ! window.localStorage ) {
-		return;
-	}
-
-	window.localStorage.setItem(
-		localStorageExperimentAssignmentsKey,
-		JSON.stringify( experimentAssignments )
-	);
+export function clearAllExperimentAssignments(): void {
+	localStorage.clear();
 }
 
 /**
- * Class to store existing ExperimentAssignments in memory
+ * Class to store existing ExperimentAssignments in localStorage
  */
 export default class ExperimentAssignmentStore {
 	/**
@@ -47,10 +45,7 @@ export default class ExperimentAssignmentStore {
 	store( experimentAssignment: ExperimentAssignment ): void {
 		Validations.validateExperimentAssignment( experimentAssignment );
 
-		const localStorageExperimentAssignments = getLocalStorageExperimentAssignments();
-
-		const previousExperimentAssignment =
-			localStorageExperimentAssignments[ experimentAssignment.experimentName ];
+		const previousExperimentAssignment = this.retrieve( experimentAssignment.experimentName );
 		if (
 			previousExperimentAssignment &&
 			experimentAssignment.retrievedTimestamp < previousExperimentAssignment.retrievedTimestamp
@@ -60,10 +55,10 @@ export default class ExperimentAssignmentStore {
 			);
 		}
 
-		setLocalStorageExperimentAssignments( {
-			...localStorageExperimentAssignments,
-			[ experimentAssignment.experimentName ]: experimentAssignment,
-		} );
+		localStorage.setItem(
+			localStorageExperimentAssignmentKey( experimentAssignment.experimentName ),
+			JSON.stringify( experimentAssignment )
+		);
 	}
 
 	/**
@@ -72,11 +67,13 @@ export default class ExperimentAssignmentStore {
 	 * @param experimentName The experiment name.
 	 */
 	retrieve( experimentName: string ): ExperimentAssignment | undefined {
-		const maybeExperimentAssignment = getLocalStorageExperimentAssignments()[ experimentName ];
-		if ( maybeExperimentAssignment === undefined ) {
+		const maybeExperimentAssignmentJson = localStorage.getItem(
+			localStorageExperimentAssignmentKey( experimentName )
+		);
+		if ( ! maybeExperimentAssignmentJson ) {
 			return undefined;
 		}
 
-		return Validations.validateExperimentAssignment( maybeExperimentAssignment );
+		return Validations.validateExperimentAssignment( JSON.parse( maybeExperimentAssignmentJson ) );
 	}
 }
