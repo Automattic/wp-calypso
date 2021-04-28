@@ -36,7 +36,7 @@ class PieChartLegend extends Component {
 		if ( nextProps.data !== prevState.data ) {
 			return {
 				data: nextProps.data,
-				dataTotal: nextProps.data.reduce( ( sum, datum ) => sum + datum.value, 0 ),
+				dataTotal: nextProps.data.reduce( ( sum, { value } ) => sum + value, 0 ),
 				transformedData: transformData( nextProps.data ),
 			};
 		}

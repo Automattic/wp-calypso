@@ -237,7 +237,7 @@ class GoogleMyBusinessStatsChart extends Component {
 			return false;
 		}
 
-		return flatten( transformedData ).reduce( ( sum, datum ) => sum + datum.value, 0 ) === 0;
+		return flatten( transformedData ).reduce( ( sum, { value } ) => sum + value, 0 ) === 0;
 	}
 
 	renderChartNotice() {
