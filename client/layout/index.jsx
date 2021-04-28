@@ -87,6 +87,33 @@ function SidebarScrollSynchronizer( { enabled } ) {
 	return null;
 }
 
+function SidebarOverflowDelay( { layoutFocus } ) {
+	const setSidebarOverflowClass = ( overflow ) => {
+		const classList = document.querySelector( 'body' ).classList;
+		if ( overflow ) {
+			classList.add( 'is-sidebar-overflow' );
+		} else {
+			classList.remove( 'is-sidebar-overflow' );
+		}
+	};
+
+	React.useEffect( () => {
+		if ( layoutFocus !== 'sites' ) {
+			// Since `overflow` isn't an animated CSS property, we need to set it
+			// after the CSS transition of the layout elements finishes.
+			// @see https://github.com/Automattic/wp-calypso/blob/0c1176ddf16227307480fa4852e47cfe089bf181/client/layout/style.scss#L18
+			// @see https://github.com/Automattic/wp-calypso/issues/47019
+			setTimeout( () => {
+				setSidebarOverflowClass( true );
+			}, 500 );
+		} else {
+			setSidebarOverflowClass( false );
+		}
+	}, [ layoutFocus ] );
+
+	return null;
+}
+
 class Layout extends Component {
 	static propTypes = {
 		primary: PropTypes.element,
@@ -245,6 +272,7 @@ class Layout extends Component {
 		return (
 			<div className={ sectionClass }>
 				<SidebarScrollSynchronizer enabled={ this.props.isNavUnificationEnabled } />
+				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
 					group={ this.props.sectionGroup }
 					section={ this.props.sectionName }
