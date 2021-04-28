@@ -1,3 +1,4 @@
+import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useMemo, useEffect } from 'react';
 import { recordOnboardingComplete } from '../lib/analytics';
@@ -38,10 +39,11 @@ export default function useOnSiteCreation(): void {
 		() => ( {
 			isNewSite: !! newSite,
 			isNewUser: !! newUser,
+			isBlankCanvas: isBlankCanvasDesign( design ),
 			blogId: newSite?.blogid,
 			hasCartItems: false,
 		} ),
-		[ newSite, newUser ]
+		[ newSite, newUser, design ]
 	);
 
 	useEffect( () => {
