@@ -232,7 +232,6 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 							href={ settingsPath( siteSlug ) }
 							onClick={ this.handleTaskStart( {
 								taskId: CHECKLIST_KNOWN_TASKS.JETPACK_BACKUPS,
-								tourId: isRewindActive ? undefined : 'jetpackBackupsRewind',
 							} ) }
 						/>
 					) }
