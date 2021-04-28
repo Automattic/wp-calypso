@@ -523,27 +523,6 @@ jobs:
       - save_cache: *save-jest-cache
       - store-artifacts-and-test-results
 
-  # Prime calypso.live so it has a build ready
-  #
-  # We can send a request to calypso.live so that it gets a build ready.
-  # This saves time waiting later when waiting for the calypso.live
-  #
-  # Expected usage:
-  #   - After setup
-  #   - Only on branches (not the primary branch)
-  #
-  prime-calypso-live:
-    docker:
-      - image: buildpack-deps
-    working_directory: ~/wp-calypso
-    steps:
-      - run:
-          name: Prime calypso.live
-          command: |
-            if [[ -z $CIRCLE_PR_USERNAME ]]; then
-              curl --silent "https://hash-$CIRCLE_SHA1.calypso.live"
-            fi
-
   test-e2e:
     <<: *defaults
     working_directory: ~/wp-calypso/test/e2e
@@ -981,10 +960,6 @@ workflows:
   calypso:
     jobs:
       - setup
-      - prime-calypso-live:
-          filters:
-            branches:
-              ignore: trunk
       - build-notifications:
           requires:
             - setup

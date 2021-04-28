@@ -26,6 +26,7 @@ export default class CommentsAreaComponent extends AsyncBaseContainer {
 
 		await driverHelper.scrollIntoView( this.driver, submitButton );
 		await driverHelper.setWhenSettable( this.driver, commentField, comment );
+		await driverHelper.scrollIntoView( this.driver, submitButton );
 		await driverHelper.clickWhenClickable( this.driver, submitButton );
 	}
 

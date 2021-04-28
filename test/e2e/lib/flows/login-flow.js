@@ -259,9 +259,7 @@ export default class LoginFlow {
 	}
 
 	async loginUsingPopup() {
-		await driverHelper.waitForNumberOfWindows( this.driver, 2 );
-		await driverHelper.switchToWindowByIndex( this.driver, 1 );
-
+		await driverHelper.waitUntilAbleToSwitchToWindow( this.driver, 1 );
 		const loginPage = await LoginPage.Expect( this.driver );
 
 		try {
@@ -279,7 +277,7 @@ export default class LoginFlow {
 		}
 
 		// Make sure we've switched back to the post window
-		await driverHelper.switchToWindowByIndex( this.driver, 0 );
+		await driverHelper.waitUntilAbleToSwitchToWindow( this.driver, 0 );
 	}
 
 	async loginAndOpenWooStore() {

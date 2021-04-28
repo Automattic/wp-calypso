@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
-import { union } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,7 +30,10 @@ export default class AllSitesIcon extends React.Component {
 	}
 
 	getIcons() {
-		const sites = union( this.getSitesWithIcons(), this.getMaxSites() ).slice( 0, MAX_ICONS );
+		const sites = [ ...new Set( [].concat( this.getSitesWithIcons(), this.getMaxSites() ) ) ].slice(
+			0,
+			MAX_ICONS
+		);
 		return sites.map( ( site ) => <SiteIcon site={ site } key={ site.ID } size={ 14 } /> );
 	}
 

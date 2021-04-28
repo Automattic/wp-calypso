@@ -71,7 +71,11 @@ export function getProxyType() {
 	}
 }
 
-export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = true } = {} ) {
+export async function startBrowser( {
+	useCustomUA = true,
+	resizeBrowserWindow = true,
+	disableThirdPartyCookies = false,
+} = {} ) {
 	if ( global.__BROWSER__ ) {
 		return global.__BROWSER__;
 	}
@@ -136,11 +140,26 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 		switch ( browser.toLowerCase() ) {
 			case 'chrome':
 				options = new chrome.Options();
-				options.setUserPreferences( {
+				// eslint-disable-next-line no-case-declarations
+				const prefs = {
 					enable_do_not_track: true,
 					credentials_enable_service: false,
 					intl: { accept_languages: locale },
-				} );
+					profile: {
+						// 1 = allow all cookies (default), 2 = block all cookies
+						default_content_setting_values: { cookies: 1 },
+						block_third_party_cookies: false, // For chrome v84. (ci)
+						// 0 = allow 3pc, 1 = block 3pc, 2 = block 3pc in incognito (default)
+						cookie_controls_mode: 2, // For chrome v90.
+					},
+				};
+
+				if ( disableThirdPartyCookies ) {
+					prefs.profile.cookie_controls_mode = 1;
+					prefs.profile.block_third_party_cookies = true;
+				}
+
+				options.setUserPreferences( prefs );
 				options.setProxy( getProxyType() );
 				options.addArguments( '--no-first-run' );
 				options.addArguments( '--no-sandbox' );
@@ -187,12 +206,16 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 				profile.setPreference( 'browser.startup.homepage', 'about:blank' );
 				profile.setPreference( 'startup.homepage_welcome_url.additional', 'about:blank' );
 				profile.setPreference( 'intl.accept_languages', locale );
+				if ( disableThirdPartyCookies ) {
+					profile.setPreference( 'network.cookie.cookieBehavior', 2 );
+				}
 				if ( useCustomUA ) {
 					profile.setPreference(
 						'general.useragent.override',
 						'Mozilla/5.0 (wp-e2e-tests) Gecko/20100101 Firefox/46.0'
 					);
 				}
+
 				options = new firefox.Options().setProfile( profile );
 				options.setProxy( getProxyType() );
 				builder = new webdriver.Builder();
