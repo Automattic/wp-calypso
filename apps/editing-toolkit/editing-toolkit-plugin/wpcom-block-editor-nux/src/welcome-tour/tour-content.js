@@ -18,9 +18,10 @@ const welcome = 'https://s0.wp.com/i/editor-welcome-tour/slide-welcome.png';
 /**
  * This function returns a collection of NUX Tour slide data
  *
+ * @param { string } localeSlug the users locale
  * @returns { Array } a collection of <WelcomeTourCard /> props
  */
-function getTourContent() {
+function getTourContent( localeSlug ) {
 	return [
 		{
 			heading: __( 'Welcome to WordPress!', 'full-site-editing' ),
@@ -87,13 +88,14 @@ function getTourContent() {
 					link_to_launch_site_docs: (
 						<ExternalLink
 							href={ localizeUrl(
-								'https://wordpress.com/support/settings/privacy-settings/#launch-your-site'
+								'https://wordpress.com/support/settings/privacy-settings/#launch-your-site',
+								localeSlug
 							) }
 						/>
 					),
 					link_to_editor_docs: (
 						<ExternalLink
-							href={ localizeUrl( 'https://wordpress.com/support/wordpress-editor/' ) }
+							href={ localizeUrl( 'https://wordpress.com/support/wordpress-editor/', localeSlug ) }
 						/>
 					),
 				}
