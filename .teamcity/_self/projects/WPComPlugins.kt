@@ -181,17 +181,17 @@ private object PinReleaseBuild : BuildType({
 				name = "Pin $plugin release build"
 				scriptContent = """
 					# Get the currently pinned build.
-					current_pinned_build=${'$'}(curl -s -H "Accept: application/json" $baseBuildRequest/pinned:true,tag:$tag | jq ".id")
+					current_pinned_build=${'$'}(curl ${_self.curl_build}/pinned:true,tag:$tag | jq ".id")
 
 					# Get the current tagged build, regardless of pin status.
-					latest_release_id=${'$'}(curl -s -H "Accept: application/json" $baseBuildRequest/tag:$tag | jq ".id")
+					latest_release_id=${'$'}(curl ${_self.curl_build}/tag:$tag | jq ".id")
 
 					if [ "${'$'}current_pinned_build" != "${'$'}latest_release_id" ] ; then
 						# Pin the current build.
-						curl -s -X PUT $baseBuildRequest/id:${'$'}latest_release_id/pin/
+						curl -X PUT ${_self.curl_build}/id:${'$'}latest_release_id/pin/
 
 						# Delete the previous pinned build.
-						curl -s -X DELETE $baseBuildRequest/id:${'$'}current_pinned_build/pin/
+						curl -X DELETE ${_self.curl_build}/id:${'$'}current_pinned_build/pin/
 
 						echo "Successfully updated the pinned build to the latest release."
 					else

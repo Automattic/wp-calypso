@@ -121,7 +121,7 @@ open class PluginBaseBuild : Template({
 				# Note: we exclude asset changes because we only really care if the build files (JS/CSS) change. That file is basically just metadata.
 				if ! diff -rq --exclude="*.asset.php" --exclude="cache-buster.txt" --exclude="README.md" $archiveDir ./release-archive/ ; then
 					echo "The build is different from the last release build. Therefore, this can be tagged as a release build."
-					tag_response=`curl -s -X POST -H "Content-Type: text/plain" --data "$releaseTag" $baseBuildRequest/id:%teamcity.build.id%/tags/`
+					tag_response=`curl -X POST -H "Content-Type: text/plain" --data "$releaseTag" $curl_build/id:%teamcity.build.id%/tags/`
 					echo -e "Build tagging status: ${'$'}tag_response\n"
 
 					# Ping commit merger in Slack if we're on the main branch and the build has changed.

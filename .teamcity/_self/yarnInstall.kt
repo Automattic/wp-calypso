@@ -15,3 +15,8 @@ val yarn_install_cmd = """
 	# Install modules.
 	yarn install
 """.trimIndent()
+
+/**
+ * Used for curl. Example: `curl -X DELETE $baseBuildRequest/build:12345/pin`
+ */
+val curl_build = "-s -H 'Accept: application/json' -u '%system.teamcity.auth.userId%:%system.teamcity.auth.password%' %teamcity.serverUrl%/httpAuth/app/rest/builds"
