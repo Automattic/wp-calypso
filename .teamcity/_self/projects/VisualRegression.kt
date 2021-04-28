@@ -42,7 +42,6 @@ object RunThemeVisualRegressionTests : BuildType({
 		bashNodeScript {
 			name = "Run e2e tests (desktop)"
 			scriptContent = """
-				shopt -s globstar
 				set -x
 
 				# Decrypt config
@@ -50,6 +49,7 @@ object RunThemeVisualRegressionTests : BuildType({
 
 				# Run the test
 				yarn test-visual
+			""".trimIndent()
 		}
 		bashNodeScript {
 			name = "Collect results"
