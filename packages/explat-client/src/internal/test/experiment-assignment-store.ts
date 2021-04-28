@@ -10,9 +10,10 @@ import {
 	storeExperimentAssignment,
 } from '../experiment-assignment-store';
 import { validExperimentAssignment, validFallbackExperimentAssignment } from '../test-common';
+import localStorage from '../local-storage';
 
 beforeEach( () => {
-	window.localStorage.clear();
+	localStorage.clear();
 } );
 
 describe( 'experiment-assignment-store', () => {
