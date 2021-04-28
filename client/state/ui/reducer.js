@@ -5,7 +5,6 @@ import { withStorageKey } from '@automattic/state-utils';
 import {
 	SELECTED_SITE_SET,
 	SECTION_LOADING_SET,
-	PREVIEW_IS_SHOWING,
 	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
@@ -58,17 +57,6 @@ export function isSectionLoading( state = false, action ) {
 	return state;
 }
 
-export function isPreviewShowing( state = false, action ) {
-	switch ( action.type ) {
-		case PREVIEW_IS_SHOWING: {
-			const { isShowing } = action;
-			return isShowing !== undefined ? isShowing : state;
-		}
-	}
-
-	return state;
-}
-
 /**
  * Tracks if the notifications panel is open
  *
@@ -89,7 +77,6 @@ const reducer = combineReducers( {
 	checkout,
 	isSectionLoading,
 	isNotificationsOpen,
-	isPreviewShowing,
 	language,
 	layoutFocus,
 	masterbarVisibility,
