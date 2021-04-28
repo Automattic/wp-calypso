@@ -1,10 +1,60 @@
-var scenarios = [];
+let scenarios = [];
 
 const templates = [
 	'bowen',
 	'doyle',
 	'reynolds',
-	'rivington'
+	'rivington',
+	'blog',
+	'team',
+	'services-2',
+	'portfolio-3',
+	'portfolio',
+	'about-5',
+	'about-4',
+	'about-3',
+	'about-2',
+	'menu',
+	'about',
+	'edison',
+	'cassel',
+	'seedlet',
+	'blog-2',
+	'blog-3',
+	'blog-4',
+	'blog-5',
+	'blog-6',
+	'overton',
+	'maywood',
+	'easley',
+	'camdem',
+	'brice',
+	'barnsbury',
+	'vesta',
+	'stratford',
+	'rockfield',
+	'leven',
+	'gibbs',
+	'coutoire',
+	'balasana',
+	'alves',
+	'twenty-twenty',
+	'shawburn',
+	'exford',
+	'morden',
+	'stow',
+	'hever',
+	'portfolio-8',
+	'portfolio-7',
+	'portfolio-6',
+	'portfolio-5',
+	'portfolio-4',
+	'portfolio-2',
+	'services',
+	'contact-10',
+	'contact-9',
+	'contact-8',
+	'contact-6'
 ];
 
 for (var i = 0; i < templates.length; i++) {
@@ -14,14 +64,14 @@ for (var i = 0; i < templates.length; i++) {
 		"url": "https://wordpress.com/page/e2eflowtesting3.wordpress.com",
 		"referenceUrl": "",
 		"readyEvent": "",
-		"readySelector": "iframe.is-loaded",
+		"readySelector": ".edit-post-visual-editor",
 		"delay": 2000,
 		"hideSelectors": [],
 		"removeSelectors": [],
 		"hoverSelector": "",
 		"clickSelector": "",
 		"postInteractionWait": 0,
-		"selectors": [],
+		"selectors": [".edit-post-visual-editor"],
 		"selectorExpansion": true,
 		"expect": 0,
 		"misMatchThreshold": 0.1,
@@ -34,11 +84,6 @@ for (var i = 0; i < templates.length; i++) {
 module.exports = {
   "id": "backstop_default",
   "viewports": [
-//    {
-//      "label": "phone",
-//      "width": 320,
-//      "height": 1000
-//    },
    {
      "label": "desktop",
      "width": 1200,
@@ -58,8 +103,7 @@ module.exports = {
   "engineOptions": {
     "args": [
     	"--no-sandbox",
-		"--user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90 Safari/537.36",
-		"--app=https://www.wordpress.com"
+		"--user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36"
 	],
   },
   "asyncCaptureLimit": 5,

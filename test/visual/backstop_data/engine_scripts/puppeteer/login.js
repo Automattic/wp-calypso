@@ -1,6 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
+process.env.NODE_CONFIG_DIR = path.join(__dirname, '../../../config');
+const config = require('config');
+const account = config.get('visualRegressionUser');
+
 function createDir( dir ) {
 	dir = path.resolve( dir );
 	if ( fs.existsSync( dir ) ) return dir;
@@ -25,13 +29,12 @@ module.exports = async (page, scenario) => {
 	await page.goto( scenario.url + '/log-in' );
 
 	await page.waitForSelector( '.login__form-password.is-hidden' );
-	await page.type( 'input[name="usernameOrEmail"]', 'e2evisualregressions', { delay: 100 } );
+	await page.type( 'input[name="usernameOrEmail"]', account.username, { delay: 100 } );
 	await page.click( 'button.is-primary' );
 
 	await page.waitForTimeout(2000);
-	await page.screenshot( {path: 'login.png'} );
 	await page.waitForSelector( '.login__form-password:not(.is-hidden)' );
-	await page.type( 'input[name="password"]', 'wTSw9i2MA89LuPrYd3ZD', { delay: 100 } );
+	await page.type( 'input[name="password"]', account.password, { delay: 100 } );
 	let pageNavigation = page.waitForNavigation();
 	await page.click( 'button.is-primary' );
 	await pageNavigation;
