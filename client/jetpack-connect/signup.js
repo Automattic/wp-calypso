@@ -153,6 +153,7 @@ export class JetpackSignup extends Component {
 			locale: this.props.locale,
 			redirectTo: window.location.href,
 			skipUser: this.props.authQuery?.skipUser,
+			site: this.props.authQuery?.site,
 		} );
 	}
 
