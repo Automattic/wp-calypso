@@ -63,6 +63,7 @@ import {
 	ENABLE_AUTOUPDATE_PLUGIN,
 	REMOVE_PLUGIN,
 } from 'calypso/lib/plugins/constants';
+import withPluginRedirect from '../with-plugin-redirect';
 
 const activationPreventionActions = [
 	ENABLE_AUTOUPDATE_PLUGIN,
@@ -668,5 +669,5 @@ const mapStateToProps = ( state, { plugin, sites } ) => {
 };
 
 export default connect( mapStateToProps, { removePluginStatuses, updatePlugin } )(
-	localize( PluginMeta )
+	localize( withPluginRedirect( PluginMeta ) )
 );
