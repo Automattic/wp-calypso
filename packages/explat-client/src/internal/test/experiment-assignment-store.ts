@@ -1,8 +1,16 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * Internal dependencies
  */
 import ExperimentAssignmentStore from '../experiment-assignment-store';
 import { validExperimentAssignment, validFallbackExperimentAssignment } from '../test-common';
+
+beforeEach( () => {
+	window.localStorage.clear();
+} );
 
 describe( 'experiment-assignment-store', () => {
 	it( 'should save and retrieve valid ExperimentAssignments', () => {
@@ -29,7 +37,7 @@ describe( 'experiment-assignment-store', () => {
 		experimentAssignmentStore.store( validFallbackExperimentAssignment );
 		expect(
 			experimentAssignmentStore.retrieve( validFallbackExperimentAssignment.experimentName )
-		).toBe( validFallbackExperimentAssignment );
+		).toStrictEqual( validFallbackExperimentAssignment );
 		expect( () =>
 			experimentAssignmentStore.store( {
 				...validFallbackExperimentAssignment,

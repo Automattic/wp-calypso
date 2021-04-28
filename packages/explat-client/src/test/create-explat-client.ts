@@ -8,6 +8,7 @@ import '@automattic/calypso-polyfills';
  * Internal dependencies
  */
 import { createExPlatClient } from '../create-explat-client';
+import { clearAllExperimentAssignments } from '../internal/experiment-assignment-store';
 import {
 	delayedValue,
 	ONE_DELAY,
@@ -52,6 +53,7 @@ function mockFetchExperimentAssignmentToMatchExperimentAssignment(
 beforeEach( () => {
 	jest.resetAllMocks();
 	setBrowserContext();
+	clearAllExperimentAssignments();
 } );
 
 describe( 'createExPlatClient', () => {
@@ -366,6 +368,7 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 		} );
 
 		await runTest();
+		clearAllExperimentAssignments();
 		await runDevelopmentModeTest();
 	} );
 
