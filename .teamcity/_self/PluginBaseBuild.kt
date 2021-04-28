@@ -124,21 +124,6 @@ open class PluginBaseBuild : Template({
 					tag_response=`curl -s -X POST -H "Content-Type: text/plain" --data "$releaseTag" $baseBuildRequest/id:%teamcity.build.id%/tags/`
 					echo -e "Build tagging status: ${'$'}tag_response\n"
 
-					# This will be the new trunk build which other builds compare against.
-					# Therefore, we need to pin the build so it isn't deleted.
-					if [ "%teamcity.build.branch.is_default%" == "false" ] ; then
-						# Get the current pinned build before pinning another one.
-						current_pinned_build=${'$'}(curl -s -H "Accept: application/json" $baseBuildRequest/pinned:true,buildType:%system.teamcity.buildType.id% | jq ".id")
-
-						# Pin the current build.
-						pin_response=`curl -s -X PUT $baseBuildRequest/id:%teamcity.build.id%/pin/`
-						echo "Pin build response: ${'$'}pin_response"
-
-						# Delete the previous pinned build.
-						delete_pin_response=`curl -s -X DELETE $baseBuildRequest/id:${'$'}current_pinned_build/pin/`
-						echo "Delete pin response: ${'$'}delete_pin_response"
-					fi
-
 					# Ping commit merger in Slack if we're on the main branch and the build has changed.
 					if [ "%teamcity.build.branch.is_default%" == "true" ] && [ "%with_slack_notify%" == "true" ] ; then
 						echo "Posting slack reminder."

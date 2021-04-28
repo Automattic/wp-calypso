@@ -45,7 +45,6 @@ private object EditingToolkit : BuildType({
 		param("release_tag", "etk-release-build")
 		param("build.prefix", "3")
 		param("normalize_files", "sed -i -e \"/^\\s\\* Version:/c\\ * Version: %build.number%\" -e \"/^define( 'A8C_ETK_PLUGIN_VERSION'/c\\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );\" ./release-archive/full-site-editing-plugin.php && sed -i -e \"/^Stable tag:\\s/c\\Stable tag: %build.number%\" ./release-archive/readme.txt\n")
-
 	}
 
 	steps {
@@ -153,6 +152,52 @@ private object O2Blocks : BuildType({
 				# Add index.php file
 				cp index.php release-files/
 			"""
+		}
+	}
+})
+
+private object PinReleaseBuild : BuildType({
+	id("WPComPlugins_PinReleaseBuild")
+	name = "Pin Release Builds"
+
+	triggers {
+		schedule {
+			schedulingPolicy = daily {
+				hour = 0
+			}
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
+			triggerBuild = always()
+			withPendingChangesOnly = false
+		}
+	}
+
+	val pluginsToCheck = listOf( "etk", "notifications", "wpcom-block-editor", "o2-blocks" )
+	steps {
+		for ( plugin in pluginsToCheck ) {
+			val tag = "$plugin-release-build"
+			bashNodeScript {
+				name = "Pin $plugin release build"
+				scriptContent = """
+					# Get the currently pinned build.
+					current_pinned_build=${'$'}(curl -s -H "Accept: application/json" $baseBuildRequest/pinned:true,tag:$tag | jq ".id")
+
+					# Get the current tagged build, regardless of pin status.
+					latest_release_id=${'$'}(curl -s -H "Accept: application/json" $baseBuildRequest/tag:$tag | jq ".id")
+
+					if [ "${'$'}current_pinned_build" != "${'$'}latest_release_id" ] ; then
+						# Pin the current build.
+						curl -s -X PUT $baseBuildRequest/id:${'$'}latest_release_id/pin/
+
+						# Delete the previous pinned build.
+						curl -s -X DELETE $baseBuildRequest/id:${'$'}current_pinned_build/pin/
+
+						echo "Successfully updated the pinned build to the latest release."
+					else
+						echo "The latest release has not changed."
+					fi
+				"""
 		}
 	}
 })
