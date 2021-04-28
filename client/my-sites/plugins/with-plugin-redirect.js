@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,14 +16,20 @@ import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { successNotice, removeNotice } from 'calypso/state/notices/actions';
 
 const withPluginRedirect = ( Component ) => ( props ) => {
-	const { pluginSlug } = props;
+	const { plugin = {} } = props;
+	const pluginSlug = plugin?.slug;
+
 	if ( ! pluginSlug ) {
 		return <Component { ...props } />;
 	}
 
-	const redirectUrl = useSelector(
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const { redirect, url, hasSiteBeenTransferred } = useSelector(
 		( state ) => {
 			const site = getSelectedSite( state );
 			const isAtomic = isSiteAutomatedTransfer( state, site.ID );
@@ -37,6 +44,11 @@ const withPluginRedirect = ( Component ) => ( props ) => {
 			);
 
 			const isSiteConnected = getSiteConnectionStatus( state, site.ID );
+			const selectedData = {
+				redirect: false,
+				url: woocommerceWizardUrl,
+				hasSiteBeenTransferred: transferState === transferStates?.COMPLETE,
+			};
 
 			// Jetpack site.
 			if (
@@ -46,7 +58,7 @@ const withPluginRedirect = ( Component ) => ( props ) => {
 				hasPluginJustBeenInstalled &&
 				isSiteConnected
 			) {
-				return woocommerceWizardUrl;
+				return { ...selectedData, redirect: true };
 			}
 
 			// Atomic Site.
@@ -54,22 +66,58 @@ const withPluginRedirect = ( Component ) => ( props ) => {
 				isAtomic &&
 				pluginSlug === 'woocommerce' &&
 				woocommerceWizardUrl &&
-				transferState === transferStates?.COMPLETE &&
+				selectedData.hasSiteBeenTransferred &&
 				isSiteConnected
 			) {
-				return woocommerceWizardUrl;
+				return { ...selectedData, redirect: true };
 			}
+
+			return selectedData;
 		},
 		[ pluginSlug ]
 	);
 
+	const pluginName = plugin?.name;
+
 	useEffect( () => {
-		if ( ! redirectUrl ) {
+		if ( ! redirect || ! url || ! pluginName ) {
 			return;
 		}
 
-		window.location.href = redirectUrl;
-	}, [ redirectUrl ] );
+		const pluginInstalledNoticeTime = hasSiteBeenTransferred ? 0 : 3000;
+
+		let timerId = setTimeout( () => {
+			dispatch( removeNotice( 'plugin-notice' ) );
+
+			// re-use same timer ID.
+			timerId = setTimeout( () => {
+				window.location.href = url;
+			}, 5000 );
+
+			dispatch(
+				successNotice(
+					translate( 'Redirecting to the %(pluginName)s onborading page in five seconds.', {
+						args: {
+							pluginName,
+						},
+					} ),
+					{
+						duration: 5000,
+						button: translate( 'Cancel' ),
+						id: 'plugin-redirect-notice',
+						onClick: function () {
+							timerId && window.clearTimeout( timerId );
+							dispatch( removeNotice( 'plugin-redirect-notice' ) );
+						},
+					}
+				)
+			);
+		}, pluginInstalledNoticeTime );
+
+		return function () {
+			timerId && window.clearTimeout( timerId );
+		};
+	}, [ redirect, url, pluginName, dispatch, translate, hasSiteBeenTransferred ] );
 
 	return <Component { ...props } />;
 };
