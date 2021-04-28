@@ -8,6 +8,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 
 object WPComPlugins : Project({
 	id("WPComPlugins")
@@ -198,6 +199,7 @@ private object PinReleaseBuild : BuildType({
 						echo "The latest release has not changed."
 					fi
 				"""
+			}
 		}
 	}
 })

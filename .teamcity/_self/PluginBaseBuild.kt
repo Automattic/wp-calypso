@@ -16,8 +16,6 @@ open class PluginBaseBuild : Template({
 	val archiveDir = "%archive_dir%"
 	val releaseTag = "%release_tag%"
 
-	val baseBuildRequest = "-u '%system.teamcity.auth.userId%:%system.teamcity.auth.password%' %teamcity.serverUrl%/httpAuth/app/rest/builds"
-
 	artifactRules = "$pluginSlug.zip"
 	buildNumberPattern = "%build.prefix%.%build.counter%"
 
