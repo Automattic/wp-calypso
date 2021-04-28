@@ -18,11 +18,36 @@ import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/sel
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { successNotice, removeNotice } from 'calypso/state/notices/actions';
 
+// Plugins list that should perfomr a redirect
+// once it's installed.
+const redirectingPluginsList = {
+	woocommerce: getSiteWoocommerceWizardUrl,
+};
+
+/**
+ * Return the handler function to get the plugin redirect URL.
+ *
+ * @param {string} slug - Plugin slug.
+ * @returns {Function|boolean} Selector handler if the plugin should redirect. Otherwise, False.
+ */
+function getPluginRedirectUrl( slug ) {
+	if ( Object.keys( redirectingPluginsList ).indexOf( slug ) < 0 ) {
+		return false;
+	}
+
+	return redirectingPluginsList[ slug ];
+}
+
 const withPluginRedirect = ( Component ) => ( props ) => {
 	const { plugin = {} } = props;
 	const pluginSlug = plugin?.slug;
 
 	if ( ! pluginSlug ) {
+		return <Component { ...props } />;
+	}
+
+	const redirectUrlHandler = getPluginRedirectUrl( pluginSlug );
+	if ( ! redirectUrlHandler ) {
 		return <Component { ...props } />;
 	}
 
@@ -34,7 +59,7 @@ const withPluginRedirect = ( Component ) => ( props ) => {
 			const site = getSelectedSite( state );
 			const isAtomic = isSiteAutomatedTransfer( state, site.ID );
 			const isJetpack = isJetpackSite( state, site.ID );
-			const woocommerceWizardUrl = getSiteWoocommerceWizardUrl( state, site.ID );
+			const woocommerceWizardUrl = redirectUrlHandler( state, site.ID );
 			const transferState = getAutomatedTransferStatus( state, site.ID );
 			const hasPluginJustBeenInstalled = isPluginActionCompleted(
 				state,
@@ -89,10 +114,10 @@ const withPluginRedirect = ( Component ) => ( props ) => {
 		let timerId = setTimeout( () => {
 			dispatch( removeNotice( 'plugin-notice' ) );
 
-			// re-use same timer ID.
+			// re-use same timer ID to redirect the client.
 			timerId = setTimeout( () => {
 				window.location.href = url;
-			}, 5000 );
+			}, 5500 );
 
 			dispatch(
 				successNotice(
