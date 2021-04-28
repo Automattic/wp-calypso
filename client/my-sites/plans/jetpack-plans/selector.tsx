@@ -43,6 +43,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	urlQueryArgs,
 	header,
 	footer,
+	planRecommendation,
 }: SelectorPageProps ) => {
 	const dispatch = useDispatch();
 
@@ -138,8 +139,9 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 
 			<ProductGrid
 				duration={ currentDuration }
-				onSelectProduct={ selectProduct }
 				urlQueryArgs={ urlQueryArgs }
+				planRecommendation={ planRecommendation }
+				onSelectProduct={ selectProduct }
 				onDurationChange={ trackDurationChange }
 			/>
 

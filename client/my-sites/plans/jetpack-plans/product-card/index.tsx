@@ -42,6 +42,7 @@ interface ProductCardProps {
 	selectedTerm?: Duration;
 	isAligned?: boolean;
 	featuredPlans?: string[];
+	hideSavingLabel?: boolean;
 }
 
 const ProductCard: React.FC< ProductCardProps > = ( {
@@ -52,6 +53,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	selectedTerm,
 	isAligned,
 	featuredPlans,
+	hideSavingLabel,
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -161,6 +163,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			aboveButtonText={ productAboveButtonText( item, siteProduct, isOwned, isItemPlanFeature ) }
 			isDisabled={ isDisabled }
 			disabledMessage={ disabledMessage }
+			hideSavingLabel={ hideSavingLabel }
 		/>
 	);
 };
