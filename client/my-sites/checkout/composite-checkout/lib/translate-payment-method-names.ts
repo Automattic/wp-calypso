@@ -129,6 +129,9 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 }
 
 export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMethodSlug | null {
+	if ( slug.startsWith( 'existingCard-' ) ) {
+		slug = 'card';
+	}
 	switch ( slug ) {
 		case 'ebanx':
 		case 'brazil-tef':
