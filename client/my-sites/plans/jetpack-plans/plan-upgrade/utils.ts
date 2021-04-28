@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import isJetpackPurchsableItem from '@automattic/calypso-products/src/is-jetpack-purchasable-item';
+import isJetpackPurchasableItem from '@automattic/calypso-products/src/is-jetpack-purchasable-item';
 import isJetpackLegacyItem from '@automattic/calypso-products/src/is-jetpack-legacy-item';
 
 /**
@@ -24,7 +24,7 @@ export function getComparePlansFromContext( { query }: PageJS.Context ): Jetpack
 	const value = query[ COMPARE_PLANS_QUERY_PARAM ] ?? '';
 	const plans = value.split( ',' );
 
-	return plans.filter( ( p: string ) => isJetpackPurchsableItem( p, { includeLegacy: true } ) );
+	return plans.filter( ( p: string ) => isJetpackPurchasableItem( p, { includeLegacy: true } ) );
 }
 
 export function getPlanRecommendationFromContext(
@@ -45,7 +45,7 @@ export function getPlanRecommendationFromContext(
 	// Remove legacy plan
 	plans.shift();
 
-	const resetPlans = plans.filter( ( p: string ) => isJetpackPurchsableItem( p ) );
+	const resetPlans = plans.filter( ( p: string ) => isJetpackPurchasableItem( p ) );
 
 	if ( resetPlans.length === 0 ) {
 		return;
