@@ -9,7 +9,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 
-object WebApp : Project({
+object VisualRegression : Project({
 	id("VisualRegression")
 	name = "Visual Regression"
 
@@ -17,7 +17,6 @@ object WebApp : Project({
 })
 
 object RunThemeVisualRegressionTests : BuildType({
-	uuid = "52f38738-92b2-43cb-b7fb-19fce03cb67c"
 	name = "Theme Visual Regression Tests"
 	description = "Runs visual regression tests related to themes"
 
@@ -48,7 +47,7 @@ object RunThemeVisualRegressionTests : BuildType({
 				set -x
 
 				# Decrypt config
-				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+				openssl aes-256-cbc -md sha1 -d -in ./test/visual/config/encrypted.enc -out ./test/visual/config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 				# Run the test
 				yarn test-visual
