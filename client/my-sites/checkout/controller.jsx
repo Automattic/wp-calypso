@@ -11,9 +11,6 @@ import debugFactory from 'debug';
  * Internal Dependencies
  */
 import { getDomainOrProductFromContext } from './utils';
-import { JETPACK_LEGACY_PLANS } from '@automattic/calypso-products';
-import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -40,6 +37,7 @@ import UpsellNudge, {
 } from './upsell-nudge';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { TRUENAME_COUPONS } from 'calypso/lib/domains';
+import { COMPARE_PLANS_QUERY_PARAM } from 'calypso/my-sites/plans/jetpack-plans/plan-upgrade/constants';
 
 const debug = debugFactory( 'calypso:checkout-controller' );
 
@@ -112,19 +110,8 @@ export function checkout( context, next ) {
 	next();
 }
 
-export function redirectJetpackLegacyPlans( context, next ) {
-	const product = getDomainOrProductFromContext( context );
-
-	if ( JETPACK_LEGACY_PLANS.includes( product ) ) {
-		const state = context.store.getState();
-		const selectedSite = getSelectedSite( state );
-
-		page( ( isJetpackCloud() ? '/pricing/' : CALYPSO_PLANS_PAGE ) + ( selectedSite?.slug || '' ) );
-
-		return;
-	}
-
-	next();
+export function redirectJetpackLegacyPlans( context ) {
+	window.location = `https://cloud.jetpack.com/pricing/?${ COMPARE_PLANS_QUERY_PARAM }=${ context.params.product }`;
 }
 
 export function checkoutPending( context, next ) {

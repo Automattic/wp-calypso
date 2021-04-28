@@ -2,6 +2,8 @@
  * External dependencies
  */
 import page from 'page';
+import { isEnabled } from '@automattic/calypso-config';
+import { JETPACK_LEGACY_PLANS } from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -15,15 +17,25 @@ import {
 	redirectToSupportSession,
 	redirectJetpackLegacyPlans,
 } from './controller';
-import { noop } from './utils';
 import SiftScience from 'calypso/lib/siftscience';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
 import { noSite, siteSelection } from 'calypso/my-sites/controller';
-import { isEnabled } from '@automattic/calypso-config';
 import userFactory from 'calypso/lib/user';
 
 export default function () {
 	SiftScience.recordUser();
+
+	if ( isEnabled( 'jetpack/redirect-legacy-plans' ) ) {
+		page(
+			`/checkout/:product(${ JETPACK_LEGACY_PLANS.join( '|' ) })/:site`,
+			redirectJetpackLegacyPlans
+		);
+
+		page(
+			`/checkout/:site/:product(${ JETPACK_LEGACY_PLANS.join( '|' ) })`,
+			redirectJetpackLegacyPlans
+		);
+	}
 
 	const user = userFactory();
 	const isLoggedOut = ! user.get();
@@ -142,23 +154,9 @@ export default function () {
 		clientRender
 	);
 
-	page(
-		'/checkout/:domainOrProduct',
-		siteSelection,
-		isEnabled( 'jetpack/redirect-legacy-plans' ) ? redirectJetpackLegacyPlans : noop,
-		checkout,
-		makeLayout,
-		clientRender
-	);
+	page( '/checkout/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
 
-	page(
-		'/checkout/:product/:domainOrProduct',
-		siteSelection,
-		isEnabled( 'jetpack/redirect-legacy-plans' ) ? redirectJetpackLegacyPlans : noop,
-		checkout,
-		makeLayout,
-		clientRender
-	);
+	page( '/checkout/:product/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
 
 	// Visiting /renew without a domain is invalid and should be redirected to /me/purchases
 	page( '/checkout/:product/renew/:purchaseId', '/me/purchases' );

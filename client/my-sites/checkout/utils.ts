@@ -3,10 +3,6 @@
  */
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-export function noop( context: PageJS.Context, next: () => void ): void {
-	next();
-}
-
 export function getDomainOrProductFromContext( { params, store }: PageJS.Context ): string {
 	const { domainOrProduct, product } = params;
 	const state = store.getState();
