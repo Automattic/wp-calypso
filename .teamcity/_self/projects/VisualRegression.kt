@@ -69,18 +69,6 @@ object RunThemeVisualRegressionTests : BuildType({
 	failureConditions {
     	executionTimeoutMin = 30
     }
-#	triggers {
-#		schedule {
-#			schedulingPolicy = daily {
-#				hour = 3
-#			}
-#			branchFilter = """
-#				+:trunk
-#			""".trimIndent()
-#			triggerBuild = always()
-#			withPendingChangesOnly = false
-#		}
-#	}
 	triggers {
 		vcs {
 			branchFilter = """
