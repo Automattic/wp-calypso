@@ -5,7 +5,10 @@
 /**
  * Internal dependencies
  */
-import ExperimentAssignmentStore from '../experiment-assignment-store';
+import {
+	retrieveExperimentAssignment,
+	storeExperimentAssignment,
+} from '../experiment-assignment-store';
 import { validExperimentAssignment, validFallbackExperimentAssignment } from '../test-common';
 
 beforeEach( () => {
@@ -14,32 +17,30 @@ beforeEach( () => {
 
 describe( 'experiment-assignment-store', () => {
 	it( 'should save and retrieve valid ExperimentAssignments', () => {
-		const experimentAssignmentStore = new ExperimentAssignmentStore();
-		expect( experimentAssignmentStore.retrieve( validExperimentAssignment.experimentName ) ).toBe(
+		expect( retrieveExperimentAssignment( validExperimentAssignment.experimentName ) ).toBe(
 			undefined
 		);
-		experimentAssignmentStore.store( validExperimentAssignment );
-		expect(
-			experimentAssignmentStore.retrieve( validExperimentAssignment.experimentName )
-		).toEqual( validExperimentAssignment );
+		storeExperimentAssignment( validExperimentAssignment );
+		expect( retrieveExperimentAssignment( validExperimentAssignment.experimentName ) ).toEqual(
+			validExperimentAssignment
+		);
 
+		expect( retrieveExperimentAssignment( validFallbackExperimentAssignment.experimentName ) ).toBe(
+			undefined
+		);
+		storeExperimentAssignment( validFallbackExperimentAssignment );
 		expect(
-			experimentAssignmentStore.retrieve( validFallbackExperimentAssignment.experimentName )
-		).toBe( undefined );
-		experimentAssignmentStore.store( validFallbackExperimentAssignment );
-		expect(
-			experimentAssignmentStore.retrieve( validFallbackExperimentAssignment.experimentName )
+			retrieveExperimentAssignment( validFallbackExperimentAssignment.experimentName )
 		).toEqual( validFallbackExperimentAssignment );
 	} );
 
 	it( 'should throw for storing an ExperimentAssignment for a currently stored Experiment with an older date', () => {
-		const experimentAssignmentStore = new ExperimentAssignmentStore();
-		experimentAssignmentStore.store( validFallbackExperimentAssignment );
+		storeExperimentAssignment( validFallbackExperimentAssignment );
 		expect(
-			experimentAssignmentStore.retrieve( validFallbackExperimentAssignment.experimentName )
+			retrieveExperimentAssignment( validFallbackExperimentAssignment.experimentName )
 		).toStrictEqual( validFallbackExperimentAssignment );
 		expect( () =>
-			experimentAssignmentStore.store( {
+			storeExperimentAssignment( {
 				...validFallbackExperimentAssignment,
 				retrievedTimestamp: validFallbackExperimentAssignment.retrievedTimestamp - 1,
 			} )
@@ -49,9 +50,8 @@ describe( 'experiment-assignment-store', () => {
 	} );
 
 	it( 'should throw for storing an invalid ExperimentAssignment', () => {
-		const experimentAssignmentStore = new ExperimentAssignmentStore();
 		expect( () =>
-			experimentAssignmentStore.store( {
+			storeExperimentAssignment( {
 				...validFallbackExperimentAssignment,
 				experimentName: undefined,
 			} )
