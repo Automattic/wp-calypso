@@ -81,6 +81,12 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		if ( visit ) {
 			await driverHelper.clickWhenClickable( this.driver, publishedPostLinkSelector );
 			await driverHelper.waitUntilLocatedAndVisible( this.driver, By.css( '#page' ) );
+		} else {
+			// Close the panel if we're not visiting the published page
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( 'button[aria-label="Close panel"]' )
+			);
 		}
 
 		return publishedPostLinkUrl;
@@ -565,31 +571,15 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async revertToDraft() {
-		const revertDraftSelector = By.css( 'button.editor-post-switch-to-draft' );
-		await driverHelper.clickWhenClickable( this.driver, revertDraftSelector );
-		const revertAlert = await this.driver.switchTo().alert();
-		await revertAlert.accept();
-		await this.waitForSuccessViewPostNotice();
-		await driverHelper.waitUntilLocatedAndVisible(
-			this.driver,
-			By.css( 'button.editor-post-publish-panel__toggle' )
+		const revertToDraftButtonLocator = By.css( 'button.editor-post-switch-to-draft' );
+		const enabledPublishButtonLocator = By.css(
+			'button.editor-post-publish-button__button[aria-disabled="false"]'
 		);
-		return await driverHelper.waitTillNotPresent(
-			this.driver,
-			By.css( 'button.editor-post-switch-to-draft' )
-		);
-	}
 
-	async isDraft() {
-		const hasPublishButton = await driverHelper.isElementPresent(
-			this.driver,
-			By.css( 'button.editor-post-publish-panel__toggle' )
-		);
-		const hasRevertButton = await driverHelper.isElementPresent(
-			this.driver,
-			By.css( 'button.editor-post-switch-to-draft' )
-		);
-		return hasPublishButton && ! hasRevertButton;
+		await driverHelper.clickWhenClickable( this.driver, revertToDraftButtonLocator );
+		await driverHelper.acceptAlertIfPresent( this.driver );
+		await driverHelper.waitTillNotPresent( this.driver, revertToDraftButtonLocator );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, enabledPublishButtonLocator );
 	}
 
 	async viewPublishedPostOrPage() {

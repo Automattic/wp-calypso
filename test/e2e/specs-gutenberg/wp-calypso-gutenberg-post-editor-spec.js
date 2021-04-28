@@ -1108,8 +1108,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				const gHeaderComponent = await GutenbergEditorComponent.Expect( driver );
 				await gHeaderComponent.dismissSuccessNotice();
 				await gHeaderComponent.revertToDraft();
-				const isDraft = await gHeaderComponent.isDraft();
-				assert.strictEqual( isDraft, true, 'The post is not set as draft' );
 			} );
 		} );
 
