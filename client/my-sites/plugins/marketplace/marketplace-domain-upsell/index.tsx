@@ -3,10 +3,12 @@
  */
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import page from 'page';
 import { Icon, arrowLeft } from '@wordpress/icons';
 import DomainPicker from '@automattic/domain-picker';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { DomainSuggestions } from '@automattic/data-stores';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -30,9 +32,13 @@ import './style.scss';
 function Header() {
 	return (
 		<div className="marketplace-domain-upsell__header domains__header">
-			<h1 className="marketplace-domain-upsell__header marketplace-title">Choose a domain</h1>
+			<h1 className="marketplace-domain-upsell__header marketplace-title">
+				{ __( 'Choose a domain' ) }
+			</h1>
 			<h2 className="marketplace-domain-upsell__header marketplace-subtitle">
-				Yoast SEO requires a top level domain to index your site and help you rank higher.
+				{ __(
+					'Yoast SEO requires a top level domain to index your site and help you rank higher.'
+				) }
 			</h2>
 		</div>
 	);
@@ -137,7 +143,7 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 			<div className="marketplace-domain-upsell__back-button">
 				<Button isBusy={ false } isLink>
 					<Icon icon={ arrowLeft } size={ 16 } />
-					<span>Back</span>
+					<span>{ __( 'Back' ) }</span>
 				</Button>
 			</div>
 			<div className="marketplace-domain-upsell__domain-picker-container">
