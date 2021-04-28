@@ -17,30 +17,34 @@ import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner'
  */
 import './style.scss';
 
-const Header: React.FC< Props > = () => {
+const Header: React.FC< Props > = ( { hideTitle } ) => {
 	const translate = useTranslate();
 
 	return (
 		<>
 			<JetpackComMasterbar />
 
-			<div className="header">
-				<FormattedHeader
-					className="header__main-title"
-					headerText={ preventWidows(
-						translate( 'Security, performance, and marketing tools made for WordPress' )
-					) }
-					align="center"
-				/>
-			</div>
+			{ ! hideTitle && (
+				<>
+					<div className="header">
+						<FormattedHeader
+							className="header__main-title"
+							headerText={ preventWidows(
+								translate( 'Security, performance, and marketing tools made for WordPress' )
+							) }
+							align="center"
+						/>
+					</div>
 
-			<IntroPricingBanner />
+					<IntroPricingBanner />
+				</>
+			) }
 		</>
 	);
 };
 
 type Props = {
-	urlQueryArgs: { [ key: string ]: string };
+	hideTitle?: boolean;
 };
 
 export default Header;

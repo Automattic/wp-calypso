@@ -7,17 +7,19 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { hideMasterbar } from 'calypso/state/ui/actions';
 import Header from './header';
 import JetpackComFooter from './jpcom-footer';
-import { setLocale } from 'calypso/state/ui/language/actions';
 import { addQueryArgs } from 'calypso/lib/route';
+import { getPlanRecommendationFromContext } from 'calypso/my-sites/plans/jetpack-plans/plan-upgrade/utils';
+import { hideMasterbar } from 'calypso/state/ui/actions';
+import { setLocale } from 'calypso/state/ui/language/actions';
 
 export function jetpackPricingContext( context: PageJS.Context, next: () => void ): void {
 	const { pathname } = context;
 	const urlQueryArgs = context.query;
 	const { site: siteFromUrl } = urlQueryArgs;
 	const { locale } = context.params;
+	const planRecommendation = getPlanRecommendationFromContext( context );
 
 	if ( locale ) {
 		context.store.dispatch( setLocale( locale ) );
@@ -29,7 +31,7 @@ export function jetpackPricingContext( context: PageJS.Context, next: () => void
 	}
 
 	context.store.dispatch( hideMasterbar() );
-	context.header = <Header urlQueryArgs={ urlQueryArgs } />;
+	context.header = <Header hideTitle={ !! planRecommendation } />;
 	context.footer = <JetpackComFooter />;
 	next();
 }
