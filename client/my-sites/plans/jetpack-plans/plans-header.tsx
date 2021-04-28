@@ -19,11 +19,16 @@ import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { PLAN_JETPACK_FREE, JETPACK_PRODUCTS_LIST } from '@automattic/calypso-products';
 import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
 
-const StandardPlansHeader = ( { context }: { context: PageJS.Context } ) => (
+type HeaderProps = {
+	context: PageJS.Context;
+	shouldShowPlanRecommendation?: boolean;
+};
+
+const StandardPlansHeader = ( { shouldShowPlanRecommendation }: HeaderProps ) => (
 	<>
 		<FormattedHeader headerText={ translate( 'Plans' ) } align="left" brandFont />
 		<PlansNavigation path={ '/plans' } />
-		{ ! getPlanRecommendationFromContext( context ) && (
+		{ ! shouldShowPlanRecommendation && (
 			<h2 className="jetpack-plans__pricing-header">
 				{ preventWidows(
 					translate( 'Security, performance, and marketing tools made for WordPress' )
@@ -47,7 +52,7 @@ const ConnectFlowPlansHeader = () => (
 	</>
 );
 
-const PlansHeader = ( { context }: { context: PageJS.Context } ) => {
+const PlansHeader = ( { context, shouldShowPlanRecommendation }: HeaderProps ) => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	// Site plan
 	const currentPlan =
@@ -74,15 +79,24 @@ const PlansHeader = ( { context }: { context: PageJS.Context } ) => {
 			<ConnectFlowPlansHeader />
 		</>
 	) : (
-		<StandardPlansHeader context={ context } />
+		<StandardPlansHeader
+			context={ context }
+			shouldShowPlanRecommendation={ shouldShowPlanRecommendation }
+		/>
 	);
 };
 
 export default function setJetpackHeader( context: PageJS.Context ): void {
+	const planRecommendation = getPlanRecommendationFromContext( context );
+	const shouldShowPlanRecommendation = !! planRecommendation;
+
 	context.header = (
 		<>
-			<PlansHeader context={ context } />
-			{ ! getPlanRecommendationFromContext( context ) && <IntroPricingBanner /> }
+			<PlansHeader
+				context={ context }
+				shouldShowPlanRecommendation={ shouldShowPlanRecommendation }
+			/>
+			{ ! shouldShowPlanRecommendation && <IntroPricingBanner /> }
 		</>
 	);
 }
