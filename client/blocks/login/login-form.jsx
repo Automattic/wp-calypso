@@ -54,6 +54,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
+import JetpackConnectSkipUser from 'calypso/blocks/jetpack-connect-skip-user';
 
 export class LoginForm extends Component {
 	static propTypes = {
@@ -665,6 +666,13 @@ export class LoginForm extends Component {
 							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
 						/>
 					</Fragment>
+				) }
+
+				{ currentQuery?.skip_user && (
+					<JetpackConnectSkipUser
+						homeUrl={ currentQuery?.site }
+						redirectAfterAuth={ currentQuery?.redirect_after_auth }
+					/>
 				) }
 			</form>
 		);
