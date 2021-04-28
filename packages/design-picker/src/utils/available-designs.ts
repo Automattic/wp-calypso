@@ -104,5 +104,14 @@ export function getAvailableDesigns( {
 		}
 	}
 
+	// Force blank canvas design to always be first in the list
+	designs.featured = designs.featured.sort(
+		( a, b ) => Number( isBlankCanvasDesign( b ) ) - Number( isBlankCanvasDesign( a ) )
+	);
+
 	return designs;
+}
+
+export function isBlankCanvasDesign( design: Design ): boolean {
+	return /blank-canvas/i.test( design.slug );
 }

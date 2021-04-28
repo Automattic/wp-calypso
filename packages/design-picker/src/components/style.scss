@@ -127,6 +127,10 @@
 		padding-top: 360px / 480px * 200%; // Aspect ratio for the picker
 	}
 
+	.design-picker__image-frame-blank {
+		background: var( --studio-white );
+	}
+
 	.design-picker__image-frame-inside {
 		// Reposition frame content over padding used to maintain aspect ratio
 		position: absolute;
