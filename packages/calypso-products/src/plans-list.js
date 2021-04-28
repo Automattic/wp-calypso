@@ -9,6 +9,7 @@ import i18n, { translate } from 'i18n-calypso';
  */
 import { isEnabled } from '@automattic/calypso-config';
 import {
+	FEATURE_BACKUP_DAILY_V2,
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
 	FEATURE_3GB_STORAGE,
@@ -1174,10 +1175,10 @@ export const PLANS_LIST = {
 				FEATURE_GOOGLE_ANALYTICS,
 			] ),
 		getPlanCardFeatures: () => [
-			constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
-			constants.FEATURE_PRODUCT_SCAN_DAILY_V2,
-			constants.FEATURE_ANTISPAM_V2,
-			constants.FEATURE_VIDEO_HOSTING_V2,
+			FEATURE_PRODUCT_BACKUP_DAILY_V2,
+			FEATURE_PRODUCT_SCAN_DAILY_V2,
+			FEATURE_ANTISPAM_V2,
+			FEATURE_VIDEO_HOSTING_V2,
 		],
 		getSignupFeatures: ( currentPlan ) => {
 			const showPersonalPlan =
@@ -1250,10 +1251,10 @@ export const PLANS_LIST = {
 				FEATURE_GOOGLE_ANALYTICS,
 			] ),
 		getPlanCardFeatures: () => [
-			constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
-			constants.FEATURE_PRODUCT_SCAN_DAILY_V2,
-			constants.FEATURE_ANTISPAM_V2,
-			constants.FEATURE_VIDEO_HOSTING_V2,
+			FEATURE_PRODUCT_BACKUP_DAILY_V2,
+			FEATURE_PRODUCT_SCAN_DAILY_V2,
+			FEATURE_ANTISPAM_V2,
+			FEATURE_VIDEO_HOSTING_V2,
 		],
 		getSignupFeatures: ( currentPlan ) => {
 			const showPersonalPlan =
@@ -1317,9 +1318,9 @@ export const PLANS_LIST = {
 			FEATURE_PREMIUM_SUPPORT,
 		],
 		getPlanCardFeatures: () => [
-			constants.FEATURE_BACKUP_DAILY_V2,
-			constants.FEATURE_ACTIVITY_LOG,
-			constants.FEATURE_PREMIUM_SUPPORT,
+			FEATURE_BACKUP_DAILY_V2,
+			FEATURE_ACTIVITY_LOG,
+			FEATURE_PREMIUM_SUPPORT,
 		],
 		getSignupFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -1372,9 +1373,9 @@ export const PLANS_LIST = {
 			FEATURE_PREMIUM_SUPPORT,
 		],
 		getPlanCardFeatures: () => [
-			constants.FEATURE_BACKUP_DAILY_V2,
-			constants.FEATURE_ACTIVITY_LOG,
-			constants.FEATURE_PREMIUM_SUPPORT,
+			FEATURE_BACKUP_DAILY_V2,
+			FEATURE_ACTIVITY_LOG,
+			FEATURE_PREMIUM_SUPPORT,
 		],
 		getSignupFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -1443,10 +1444,10 @@ export const PLANS_LIST = {
 				FEATURE_UNLIMITED_PREMIUM_THEMES,
 			] ),
 		getPlanCardFeatures: () => [
-			constants.FEATURE_PLAN_SECURITY_DAILY,
-			constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
-			constants.FEATURE_PRODUCT_SCAN_REALTIME_V2,
-			constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+			FEATURE_PLAN_SECURITY_DAILY,
+			FEATURE_PRODUCT_BACKUP_REALTIME_V2,
+			FEATURE_PRODUCT_SCAN_REALTIME_V2,
+			FEATURE_ACTIVITY_LOG_1_YEAR_V2,
 		],
 		getSignupFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -1517,10 +1518,10 @@ export const PLANS_LIST = {
 				FEATURE_UNLIMITED_PREMIUM_THEMES,
 			] ),
 		getPlanCardFeatures: () => [
-			constants.FEATURE_PLAN_SECURITY_DAILY,
-			constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
-			constants.FEATURE_PRODUCT_SCAN_REALTIME_V2,
-			constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+			FEATURE_PLAN_SECURITY_DAILY,
+			FEATURE_PRODUCT_BACKUP_REALTIME_V2,
+			FEATURE_PRODUCT_SCAN_REALTIME_V2,
+			FEATURE_ACTIVITY_LOG_1_YEAR_V2,
 		],
 		getSignupFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
