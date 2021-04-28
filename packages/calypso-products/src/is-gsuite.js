@@ -7,12 +7,10 @@ import {
 	isGSuiteOrExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 } from './index';
-import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
 
 export function isGoogleWorkspace( product ) {
 	product = formatProduct( product );
-	assertValidProduct( product );
 
 	return isGoogleWorkspaceProductSlug( product.product_slug );
 }
@@ -26,7 +24,6 @@ export function isGoogleWorkspace( product ) {
  */
 export function isGoogleWorkspaceExtraLicence( product ) {
 	product = formatProduct( product );
-	assertValidProduct( product );
 
 	if ( ! isGoogleWorkspaceProductSlug( product.product_slug ) ) {
 		return false;
@@ -38,21 +35,18 @@ export function isGoogleWorkspaceExtraLicence( product ) {
 
 export function isGSuite( product ) {
 	product = formatProduct( product );
-	assertValidProduct( product );
 
 	return isGSuiteProductSlug( product.product_slug );
 }
 
 export function isGSuiteOrExtraLicense( product ) {
 	product = formatProduct( product );
-	assertValidProduct( product );
 
 	return isGSuiteOrExtraLicenseProductSlug( product.product_slug );
 }
 
 export function isGSuiteOrExtraLicenseOrGoogleWorkspace( product ) {
 	product = formatProduct( product );
-	assertValidProduct( product );
 
 	return (
 		isGSuiteOrExtraLicenseProductSlug( product.product_slug ) ||
@@ -62,7 +56,6 @@ export function isGSuiteOrExtraLicenseOrGoogleWorkspace( product ) {
 
 export function isGSuiteOrGoogleWorkspace( product ) {
 	product = formatProduct( product );
-	assertValidProduct( product );
 
 	return isGSuiteOrGoogleWorkspaceProductSlug( product.product_slug );
 }

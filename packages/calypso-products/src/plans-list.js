@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { compact, includes } from 'lodash';
 import i18n, { translate } from 'i18n-calypso';
 
 /**
@@ -10,6 +9,10 @@ import i18n, { translate } from 'i18n-calypso';
  */
 import { isEnabled } from '@automattic/calypso-config';
 import * as constants from './constants';
+
+function compact( elements ) {
+	return elements.filter( Boolean );
+}
 
 const WPComGetBillingTimeframe = () => i18n.translate( 'per month, billed annually' );
 const WPComGetBiennialBillingTimeframe = () => i18n.translate( '/month, billed every two years' );
@@ -28,23 +31,24 @@ const getMonthlyTimeframe = () => ( {
 
 const getDotcomPlanDetails = () => ( {
 	// Features only available for annual plans
-	getAnnualPlansOnlyFeatures: () =>
-		compact( [
-			constants.FEATURE_FREE_DOMAIN,
-			constants.FEATURE_CUSTOM_DOMAIN,
-			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-			constants.FEATURE_LIVE_CHAT_SUPPORT,
-			constants.FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-			constants.FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
-		] ),
+	getAnnualPlansOnlyFeatures: () => [
+		constants.FEATURE_FREE_DOMAIN,
+		constants.FEATURE_CUSTOM_DOMAIN,
+		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
+		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+		constants.FEATURE_LIVE_CHAT_SUPPORT,
+		constants.FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+		constants.FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
+	],
 } );
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 const plansDescriptionHeadingComponent = {
 	components: {
 		strong: <strong className="plans__features plan-features__targeted-description-heading" />,
 	},
 };
+/* eslint-enable */
 
 const getPlanBloggerDetails = () => ( {
 	...getDotcomPlanDetails(),
@@ -132,12 +136,11 @@ const getPlanPersonalDetails = () => ( {
 		constants.FEATURE_MEMBERSHIPS,
 		constants.FEATURE_PREMIUM_CONTENT_BLOCK,
 	],
-	getSignupFeatures: () =>
-		compact( [
-			constants.FEATURE_FREE_DOMAIN,
-			constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
-			constants.FEATURE_FREE_THEMES,
-		] ),
+	getSignupFeatures: () => [
+		constants.FEATURE_FREE_DOMAIN,
+		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
+		constants.FEATURE_FREE_THEMES,
+	],
 	getBlogSignupFeatures: () => [
 		constants.FEATURE_FREE_DOMAIN,
 		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
@@ -319,12 +322,11 @@ const getPlanPremiumDetails = () => ( {
 		constants.FEATURE_ADVANCED_DESIGN,
 		constants.FEATURE_13GB_STORAGE,
 	],
-	getSignupFeatures: () =>
-		compact( [
-			constants.FEATURE_LIVE_CHAT_SUPPORT,
-			constants.FEATURE_ADVANCED_CUSTOMIZATION,
-			constants.FEATURE_ALL_PERSONAL_FEATURES,
-		] ),
+	getSignupFeatures: () => [
+		constants.FEATURE_LIVE_CHAT_SUPPORT,
+		constants.FEATURE_ADVANCED_CUSTOMIZATION,
+		constants.FEATURE_ALL_PERSONAL_FEATURES,
+	],
 	getBlogSignupFeatures: () => [
 		constants.FEATURE_MONETISE,
 		constants.FEATURE_PREMIUM_THEMES,
@@ -650,7 +652,7 @@ export const PLANS_LIST = {
 		...getPlanBloggerDetails(),
 		term: constants.TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
-		availableFor: ( plan ) => includes( [ constants.PLAN_FREE ], plan ),
+		availableFor: ( plan ) => [ constants.PLAN_FREE ].includes( plan ),
 		getProductId: () => 1010,
 		getStoreSlug: () => constants.PLAN_BLOGGER,
 		getPathSlug: () => 'blogger',
@@ -660,7 +662,7 @@ export const PLANS_LIST = {
 		...getPlanBloggerDetails(),
 		term: constants.TERM_BIENNIALLY,
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
-		availableFor: ( plan ) => includes( [ constants.PLAN_FREE, constants.PLAN_BLOGGER ], plan ),
+		availableFor: ( plan ) => [ constants.PLAN_FREE, constants.PLAN_BLOGGER ].includes( plan ),
 		getProductId: () => 1030,
 		getStoreSlug: () => constants.PLAN_BLOGGER_2_YEARS,
 		getPathSlug: () => 'blogger-2-years',
@@ -670,8 +672,7 @@ export const PLANS_LIST = {
 		...getPlanPersonalDetails(),
 		...getMonthlyTimeframe(),
 		availableFor: ( plan ) =>
-			includes(
-				[ constants.PLAN_FREE, constants.PLAN_BLOGGER, constants.PLAN_BLOGGER_2_YEARS ],
+			[ constants.PLAN_FREE, constants.PLAN_BLOGGER, constants.PLAN_BLOGGER_2_YEARS ].includes(
 				plan
 			),
 		getProductId: () => 1019,
@@ -684,15 +685,12 @@ export const PLANS_LIST = {
 		term: constants.TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		availableFor: ( plan ) =>
-			includes(
-				[
-					constants.PLAN_FREE,
-					constants.PLAN_BLOGGER,
-					constants.PLAN_BLOGGER_2_YEARS,
-					constants.PLAN_PERSONAL_MONTHLY,
-				],
-				plan
-			),
+			[
+				constants.PLAN_FREE,
+				constants.PLAN_BLOGGER,
+				constants.PLAN_BLOGGER_2_YEARS,
+				constants.PLAN_PERSONAL_MONTHLY,
+			].includes( plan ),
 		getProductId: () => 1009,
 		getStoreSlug: () => constants.PLAN_PERSONAL,
 		getPathSlug: () => 'personal',
@@ -703,16 +701,13 @@ export const PLANS_LIST = {
 		term: constants.TERM_BIENNIALLY,
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
 		availableFor: ( plan ) =>
-			includes(
-				[
-					constants.PLAN_FREE,
-					constants.PLAN_BLOGGER,
-					constants.PLAN_BLOGGER_2_YEARS,
-					constants.PLAN_PERSONAL_MONTHLY,
-					constants.PLAN_PERSONAL,
-				],
-				plan
-			),
+			[
+				constants.PLAN_FREE,
+				constants.PLAN_BLOGGER,
+				constants.PLAN_BLOGGER_2_YEARS,
+				constants.PLAN_PERSONAL_MONTHLY,
+				constants.PLAN_PERSONAL,
+			].includes( plan ),
 		getProductId: () => 1029,
 		getStoreSlug: () => constants.PLAN_PERSONAL_2_YEARS,
 		getPathSlug: () => 'personal-2-years',
@@ -722,17 +717,14 @@ export const PLANS_LIST = {
 		...getPlanPremiumDetails(),
 		...getMonthlyTimeframe(),
 		availableFor: ( plan ) =>
-			includes(
-				[
-					constants.PLAN_FREE,
-					constants.PLAN_BLOGGER,
-					constants.PLAN_BLOGGER_2_YEARS,
-					constants.PLAN_PERSONAL_MONTHLY,
-					constants.PLAN_PERSONAL,
-					constants.PLAN_PERSONAL_2_YEARS,
-				],
-				plan
-			),
+			[
+				constants.PLAN_FREE,
+				constants.PLAN_BLOGGER,
+				constants.PLAN_BLOGGER_2_YEARS,
+				constants.PLAN_PERSONAL_MONTHLY,
+				constants.PLAN_PERSONAL,
+				constants.PLAN_PERSONAL_2_YEARS,
+			].includes( plan ),
 		getProductId: () => 1013,
 		getStoreSlug: () => constants.PLAN_PREMIUM_MONTHLY,
 		getPathSlug: () => 'premium-monthly',
@@ -743,18 +735,15 @@ export const PLANS_LIST = {
 		term: constants.TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		availableFor: ( plan ) =>
-			includes(
-				[
-					constants.PLAN_FREE,
-					constants.PLAN_BLOGGER,
-					constants.PLAN_BLOGGER_2_YEARS,
-					constants.PLAN_PERSONAL_MONTHLY,
-					constants.PLAN_PERSONAL,
-					constants.PLAN_PERSONAL_2_YEARS,
-					constants.PLAN_PREMIUM_MONTHLY,
-				],
-				plan
-			),
+			[
+				constants.PLAN_FREE,
+				constants.PLAN_BLOGGER,
+				constants.PLAN_BLOGGER_2_YEARS,
+				constants.PLAN_PERSONAL_MONTHLY,
+				constants.PLAN_PERSONAL,
+				constants.PLAN_PERSONAL_2_YEARS,
+				constants.PLAN_PREMIUM_MONTHLY,
+			].includes( plan ),
 		getProductId: () => 1003,
 		getStoreSlug: () => constants.PLAN_PREMIUM,
 		getPathSlug: () => 'premium',
@@ -765,19 +754,16 @@ export const PLANS_LIST = {
 		term: constants.TERM_BIENNIALLY,
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
 		availableFor: ( plan ) =>
-			includes(
-				[
-					constants.PLAN_FREE,
-					constants.PLAN_BLOGGER,
-					constants.PLAN_BLOGGER_2_YEARS,
-					constants.PLAN_PERSONAL_MONTHLY,
-					constants.PLAN_PERSONAL,
-					constants.PLAN_PERSONAL_2_YEARS,
-					constants.PLAN_PREMIUM_MONTHLY,
-					constants.PLAN_PREMIUM,
-				],
-				plan
-			),
+			[
+				constants.PLAN_FREE,
+				constants.PLAN_BLOGGER,
+				constants.PLAN_BLOGGER_2_YEARS,
+				constants.PLAN_PERSONAL_MONTHLY,
+				constants.PLAN_PERSONAL,
+				constants.PLAN_PERSONAL_2_YEARS,
+				constants.PLAN_PREMIUM_MONTHLY,
+				constants.PLAN_PREMIUM,
+			].includes( plan ),
 		getProductId: () => 1023,
 		getStoreSlug: () => constants.PLAN_PREMIUM_2_YEARS,
 		getPathSlug: () => 'premium-2-years',
@@ -788,20 +774,17 @@ export const PLANS_LIST = {
 		...getMonthlyTimeframe(),
 		availableFor: ( plan ) =>
 			isEnabled( 'upgrades/wpcom-monthly-plans' ) &&
-			includes(
-				[
-					constants.PLAN_FREE,
-					constants.PLAN_BLOGGER,
-					constants.PLAN_BLOGGER_2_YEARS,
-					constants.PLAN_PERSONAL_MONTHLY,
-					constants.PLAN_PERSONAL,
-					constants.PLAN_PERSONAL_2_YEARS,
-					constants.PLAN_PREMIUM_MONTHLY,
-					constants.PLAN_PREMIUM,
-					constants.PLAN_PREMIUM_2_YEARS,
-				],
-				plan
-			),
+			[
+				constants.PLAN_FREE,
+				constants.PLAN_BLOGGER,
+				constants.PLAN_BLOGGER_2_YEARS,
+				constants.PLAN_PERSONAL_MONTHLY,
+				constants.PLAN_PERSONAL,
+				constants.PLAN_PERSONAL_2_YEARS,
+				constants.PLAN_PREMIUM_MONTHLY,
+				constants.PLAN_PREMIUM,
+				constants.PLAN_PREMIUM_2_YEARS,
+			].includes( plan ),
 		getProductId: () => 1018,
 		getStoreSlug: () => constants.PLAN_BUSINESS_MONTHLY,
 		getPathSlug: () => 'business-monthly',
@@ -812,21 +795,18 @@ export const PLANS_LIST = {
 		term: constants.TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		availableFor: ( plan ) =>
-			includes(
-				[
-					constants.PLAN_FREE,
-					constants.PLAN_BLOGGER,
-					constants.PLAN_BLOGGER_2_YEARS,
-					constants.PLAN_PERSONAL_MONTHLY,
-					constants.PLAN_PERSONAL,
-					constants.PLAN_PERSONAL_2_YEARS,
-					constants.PLAN_PREMIUM_MONTHLY,
-					constants.PLAN_PREMIUM,
-					constants.PLAN_PREMIUM_2_YEARS,
-					constants.PLAN_BUSINESS_MONTHLY,
-				],
-				plan
-			),
+			[
+				constants.PLAN_FREE,
+				constants.PLAN_BLOGGER,
+				constants.PLAN_BLOGGER_2_YEARS,
+				constants.PLAN_PERSONAL_MONTHLY,
+				constants.PLAN_PERSONAL,
+				constants.PLAN_PERSONAL_2_YEARS,
+				constants.PLAN_PREMIUM_MONTHLY,
+				constants.PLAN_PREMIUM,
+				constants.PLAN_PREMIUM_2_YEARS,
+				constants.PLAN_BUSINESS_MONTHLY,
+			].includes( plan ),
 		getProductId: () => 1008,
 		getStoreSlug: () => constants.PLAN_BUSINESS,
 		getPathSlug: () => 'business',
@@ -837,22 +817,19 @@ export const PLANS_LIST = {
 		term: constants.TERM_BIENNIALLY,
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
 		availableFor: ( plan ) =>
-			includes(
-				[
-					constants.PLAN_FREE,
-					constants.PLAN_BLOGGER,
-					constants.PLAN_BLOGGER_2_YEARS,
-					constants.PLAN_PERSONAL_MONTHLY,
-					constants.PLAN_PERSONAL,
-					constants.PLAN_PERSONAL_2_YEARS,
-					constants.PLAN_PREMIUM_MONTHLY,
-					constants.PLAN_PREMIUM,
-					constants.PLAN_PREMIUM_2_YEARS,
-					constants.PLAN_BUSINESS,
-					constants.PLAN_BUSINESS_MONTHLY,
-				],
-				plan
-			),
+			[
+				constants.PLAN_FREE,
+				constants.PLAN_BLOGGER,
+				constants.PLAN_BLOGGER_2_YEARS,
+				constants.PLAN_PERSONAL_MONTHLY,
+				constants.PLAN_PERSONAL,
+				constants.PLAN_PERSONAL_2_YEARS,
+				constants.PLAN_PREMIUM_MONTHLY,
+				constants.PLAN_PREMIUM,
+				constants.PLAN_PREMIUM_2_YEARS,
+				constants.PLAN_BUSINESS,
+				constants.PLAN_BUSINESS_MONTHLY,
+			].includes( plan ),
 		getProductId: () => 1028,
 		getStoreSlug: () => constants.PLAN_BUSINESS_2_YEARS,
 		getPathSlug: () => 'business-2-years',
@@ -862,23 +839,20 @@ export const PLANS_LIST = {
 		...getPlanEcommerceDetails(),
 		...getMonthlyTimeframe(),
 		availableFor: ( plan ) =>
-			includes(
-				[
-					constants.PLAN_FREE,
-					constants.PLAN_BLOGGER,
-					constants.PLAN_BLOGGER_2_YEARS,
-					constants.PLAN_PERSONAL_MONTHLY,
-					constants.PLAN_PERSONAL,
-					constants.PLAN_PERSONAL_2_YEARS,
-					constants.PLAN_PREMIUM_MONTHLY,
-					constants.PLAN_PREMIUM,
-					constants.PLAN_PREMIUM_2_YEARS,
-					constants.PLAN_BUSINESS_MONTHLY,
-					constants.PLAN_BUSINESS,
-					constants.PLAN_BUSINESS_2_YEARS,
-				],
-				plan
-			),
+			[
+				constants.PLAN_FREE,
+				constants.PLAN_BLOGGER,
+				constants.PLAN_BLOGGER_2_YEARS,
+				constants.PLAN_PERSONAL_MONTHLY,
+				constants.PLAN_PERSONAL,
+				constants.PLAN_PERSONAL_2_YEARS,
+				constants.PLAN_PREMIUM_MONTHLY,
+				constants.PLAN_PREMIUM,
+				constants.PLAN_PREMIUM_2_YEARS,
+				constants.PLAN_BUSINESS_MONTHLY,
+				constants.PLAN_BUSINESS,
+				constants.PLAN_BUSINESS_2_YEARS,
+			].includes( plan ),
 		getProductId: () => 1021,
 		getStoreSlug: () => constants.PLAN_ECOMMERCE_MONTHLY,
 		getPathSlug: () => 'ecommerce-monthly',
@@ -889,24 +863,21 @@ export const PLANS_LIST = {
 		term: constants.TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		availableFor: ( plan ) =>
-			includes(
-				[
-					constants.PLAN_FREE,
-					constants.PLAN_BLOGGER,
-					constants.PLAN_BLOGGER_2_YEARS,
-					constants.PLAN_PERSONAL_MONTHLY,
-					constants.PLAN_PERSONAL,
-					constants.PLAN_PERSONAL_2_YEARS,
-					constants.PLAN_PREMIUM_MONTHLY,
-					constants.PLAN_PREMIUM,
-					constants.PLAN_PREMIUM_2_YEARS,
-					constants.PLAN_BUSINESS_MONTHLY,
-					constants.PLAN_BUSINESS,
-					constants.PLAN_BUSINESS_2_YEARS,
-					constants.PLAN_ECOMMERCE_MONTHLY,
-				],
-				plan
-			),
+			[
+				constants.PLAN_FREE,
+				constants.PLAN_BLOGGER,
+				constants.PLAN_BLOGGER_2_YEARS,
+				constants.PLAN_PERSONAL_MONTHLY,
+				constants.PLAN_PERSONAL,
+				constants.PLAN_PERSONAL_2_YEARS,
+				constants.PLAN_PREMIUM_MONTHLY,
+				constants.PLAN_PREMIUM,
+				constants.PLAN_PREMIUM_2_YEARS,
+				constants.PLAN_BUSINESS_MONTHLY,
+				constants.PLAN_BUSINESS,
+				constants.PLAN_BUSINESS_2_YEARS,
+				constants.PLAN_ECOMMERCE_MONTHLY,
+			].includes( plan ),
 		getProductId: () => 1011,
 		getStoreSlug: () => constants.PLAN_ECOMMERCE,
 		getPathSlug: () => 'ecommerce',
@@ -917,25 +888,22 @@ export const PLANS_LIST = {
 		term: constants.TERM_BIENNIALLY,
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
 		availableFor: ( plan ) =>
-			includes(
-				[
-					constants.PLAN_FREE,
-					constants.PLAN_BLOGGER,
-					constants.PLAN_BLOGGER_2_YEARS,
-					constants.PLAN_PERSONAL_MONTHLY,
-					constants.PLAN_PERSONAL,
-					constants.PLAN_PERSONAL_2_YEARS,
-					constants.PLAN_PREMIUM_MONTHLY,
-					constants.PLAN_PREMIUM,
-					constants.PLAN_PREMIUM_2_YEARS,
-					constants.PLAN_BUSINESS_MONTHLY,
-					constants.PLAN_BUSINESS,
-					constants.PLAN_BUSINESS_2_YEARS,
-					constants.PLAN_ECOMMERCE_MONTHLY,
-					constants.PLAN_ECOMMERCE,
-				],
-				plan
-			),
+			[
+				constants.PLAN_FREE,
+				constants.PLAN_BLOGGER,
+				constants.PLAN_BLOGGER_2_YEARS,
+				constants.PLAN_PERSONAL_MONTHLY,
+				constants.PLAN_PERSONAL,
+				constants.PLAN_PERSONAL_2_YEARS,
+				constants.PLAN_PREMIUM_MONTHLY,
+				constants.PLAN_PREMIUM,
+				constants.PLAN_PREMIUM_2_YEARS,
+				constants.PLAN_BUSINESS_MONTHLY,
+				constants.PLAN_BUSINESS,
+				constants.PLAN_BUSINESS_2_YEARS,
+				constants.PLAN_ECOMMERCE_MONTHLY,
+				constants.PLAN_ECOMMERCE,
+			].includes( plan ),
 		getProductId: () => 1031,
 		getStoreSlug: () => constants.PLAN_ECOMMERCE_2_YEARS,
 		getPathSlug: () => 'ecommerce-2-years',
@@ -1019,15 +987,12 @@ export const PLANS_LIST = {
 		getProductId: () => 2000,
 		getStoreSlug: () => constants.PLAN_JETPACK_PREMIUM,
 		availableFor: ( plan ) =>
-			includes(
-				[
-					constants.PLAN_JETPACK_FREE,
-					constants.PLAN_JETPACK_PERSONAL,
-					constants.PLAN_JETPACK_PERSONAL_MONTHLY,
-					constants.PLAN_JETPACK_PREMIUM_MONTHLY,
-				],
-				plan
-			),
+			[
+				constants.PLAN_JETPACK_FREE,
+				constants.PLAN_JETPACK_PERSONAL,
+				constants.PLAN_JETPACK_PERSONAL_MONTHLY,
+				constants.PLAN_JETPACK_PREMIUM_MONTHLY,
+			].includes( plan ),
 		getPathSlug: () => 'premium',
 		getDescription: () =>
 			i18n.translate(
@@ -1104,14 +1069,11 @@ export const PLANS_LIST = {
 		getStoreSlug: () => constants.PLAN_JETPACK_PREMIUM_MONTHLY,
 		getPathSlug: () => 'premium-monthly',
 		availableFor: ( plan ) =>
-			includes(
-				[
-					constants.PLAN_JETPACK_FREE,
-					constants.PLAN_JETPACK_PERSONAL,
-					constants.PLAN_JETPACK_PERSONAL_MONTHLY,
-				],
-				plan
-			),
+			[
+				constants.PLAN_JETPACK_FREE,
+				constants.PLAN_JETPACK_PERSONAL,
+				constants.PLAN_JETPACK_PERSONAL_MONTHLY,
+			].includes( plan ),
 		getDescription: () =>
 			i18n.translate(
 				'{{strong}}Best for small businesses:{{/strong}} Comprehensive, automated scanning for security vulnerabilities, ' +
@@ -1186,7 +1148,7 @@ export const PLANS_LIST = {
 		getProductId: () => 2005,
 		getStoreSlug: () => constants.PLAN_JETPACK_PERSONAL,
 		availableFor: ( plan ) =>
-			includes( [ constants.PLAN_JETPACK_FREE, constants.PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
+			[ constants.PLAN_JETPACK_FREE, constants.PLAN_JETPACK_PERSONAL_MONTHLY ].includes( plan ),
 		getPathSlug: () => 'jetpack-personal',
 		getDescription: () =>
 			i18n.translate(
@@ -1242,7 +1204,7 @@ export const PLANS_LIST = {
 		getStoreSlug: () => constants.PLAN_JETPACK_PERSONAL_MONTHLY,
 		getProductId: () => 2006,
 		getPathSlug: () => 'jetpack-personal-monthly',
-		availableFor: ( plan ) => includes( [ constants.PLAN_JETPACK_FREE ], plan ),
+		availableFor: ( plan ) => [ constants.PLAN_JETPACK_FREE ].includes( plan ),
 		getDescription: () =>
 			i18n.translate(
 				'{{strong}}Best for personal use:{{/strong}} Security essentials for your WordPress site, including ' +
@@ -1297,17 +1259,14 @@ export const PLANS_LIST = {
 		getStoreSlug: () => constants.PLAN_JETPACK_BUSINESS,
 		getProductId: () => 2001,
 		availableFor: ( plan ) =>
-			includes(
-				[
-					constants.PLAN_JETPACK_BUSINESS_MONTHLY,
-					constants.PLAN_JETPACK_FREE,
-					constants.PLAN_JETPACK_PREMIUM,
-					constants.PLAN_JETPACK_PREMIUM_MONTHLY,
-					constants.PLAN_JETPACK_PERSONAL,
-					constants.PLAN_JETPACK_PERSONAL_MONTHLY,
-				],
-				plan
-			),
+			[
+				constants.PLAN_JETPACK_BUSINESS_MONTHLY,
+				constants.PLAN_JETPACK_FREE,
+				constants.PLAN_JETPACK_PREMIUM,
+				constants.PLAN_JETPACK_PREMIUM_MONTHLY,
+				constants.PLAN_JETPACK_PERSONAL,
+				constants.PLAN_JETPACK_PERSONAL_MONTHLY,
+			].includes( plan ),
 		getPathSlug: () => 'professional',
 		getDescription: () =>
 			i18n.translate(
@@ -1343,12 +1302,11 @@ export const PLANS_LIST = {
 			constants.FEATURE_PRODUCT_SCAN_REALTIME_V2,
 			constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
 		],
-		getSignupFeatures: () =>
-			compact( [
-				constants.FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-				constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
-				constants.FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
-			] ),
+		getSignupFeatures: () => [
+			constants.FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
+			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
+			constants.FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
+		],
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getHiddenFeatures: () => [
@@ -1377,16 +1335,13 @@ export const PLANS_LIST = {
 		getStoreSlug: () => constants.PLAN_JETPACK_BUSINESS_MONTHLY,
 		getPathSlug: () => 'professional-monthly',
 		availableFor: ( plan ) =>
-			includes(
-				[
-					constants.PLAN_JETPACK_FREE,
-					constants.PLAN_JETPACK_PREMIUM,
-					constants.PLAN_JETPACK_PREMIUM_MONTHLY,
-					constants.PLAN_JETPACK_PERSONAL,
-					constants.PLAN_JETPACK_PERSONAL_MONTHLY,
-				],
-				plan
-			),
+			[
+				constants.PLAN_JETPACK_FREE,
+				constants.PLAN_JETPACK_PREMIUM,
+				constants.PLAN_JETPACK_PREMIUM_MONTHLY,
+				constants.PLAN_JETPACK_PERSONAL,
+				constants.PLAN_JETPACK_PERSONAL_MONTHLY,
+			].includes( plan ),
 		getDescription: () =>
 			i18n.translate(
 				'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites: real-time backups ' +
@@ -1421,12 +1376,11 @@ export const PLANS_LIST = {
 			constants.FEATURE_PRODUCT_SCAN_REALTIME_V2,
 			constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
 		],
-		getSignupFeatures: () =>
-			compact( [
-				constants.FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-				constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
-				constants.FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
-			] ),
+		getSignupFeatures: () => [
+			constants.FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
+			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
+			constants.FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
+		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
 		getHiddenFeatures: () => [
@@ -1532,7 +1486,7 @@ export const PLANS_LIST = {
 		getAudience: () => i18n.translate( 'Best for bloggers' ),
 
 		...getMonthlyTimeframe(),
-		availableFor: ( plan ) => includes( [ constants.PLAN_FREE ], plan ), //TODO: only for P2 sites.
+		availableFor: ( plan ) => [ constants.PLAN_FREE ].includes( plan ), //TODO: only for P2 sites.
 		getProductId: () => 1040,
 		getStoreSlug: () => constants.PLAN_P2_PLUS,
 		getPathSlug: () => 'p2-plus',
