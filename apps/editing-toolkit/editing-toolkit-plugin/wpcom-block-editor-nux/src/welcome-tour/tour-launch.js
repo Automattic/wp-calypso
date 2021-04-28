@@ -5,7 +5,6 @@ import WelcomeTourCard from './tour-card';
 import getTourContent from './tour-content';
 import maximize from './icons/maximize';
 import './style-tour.scss';
-import openPatternsPanel from './open-patterns-panel';
 
 /**
  * External dependencies
@@ -72,6 +71,7 @@ function WelcomeTourFrame() {
 	const [ justMaximized, setJustMaximized ] = useState( false );
 
 	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
+	const { setOpenState } = useDispatch( 'automattic/starter-page-layouts' );
 
 	const { shouldOpenPatternsPanel, isManuallyOpened } = useSelect( ( select ) => ( {
 		shouldOpenPatternsPanel: select( 'automattic/wpcom-welcome-guide' ).shouldOpenPatternsPanel(),
@@ -85,11 +85,10 @@ function WelcomeTourFrame() {
 			action: source,
 		} );
 		setShowWelcomeGuide( false, { openedManually: false } );
-
 		// Open patterns panel if necessary (e.g. when using Blank Canvas theme)
 		// but only when welcome guide is not manually opened.
 		if ( shouldOpenPatternsPanel && ! isManuallyOpened ) {
-			openPatternsPanel();
+			setOpenState( 'OPEN_FOR_BLANK_CANVAS' );
 		}
 	};
 
