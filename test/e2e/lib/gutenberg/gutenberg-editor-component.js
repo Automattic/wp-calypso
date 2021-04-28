@@ -16,7 +16,6 @@ import { ShortcodeBlockComponent } from './blocks/shortcode-block-component';
 import { ImageBlockComponent } from './blocks/image-block-component';
 import { FileBlockComponent } from './blocks/file-block-component';
 import GuideComponent from '../components/guide-component.js';
-import ViewPagePage from '../../lib/pages/view-page-page.js';
 
 export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	constructor( driver, url, editorType = 'iframe' ) {
