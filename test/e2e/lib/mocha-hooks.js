@@ -14,7 +14,6 @@ import * as slackNotifier from './slack-notifier';
 import * as mediaHelper from './media-helper';
 
 import * as driverManager from './driver-manager';
-import * as videoRecorder from '../lib/video-recorder';
 import { default as saveConsoleLog } from './hooks/save-console-log';
 
 const afterHookTimeoutMS = config.get( 'afterHookTimeoutMS' );
@@ -25,16 +24,6 @@ before( function () {
 		const isCalypsoLiveURL = config.get( 'calypsoBaseURL' ).includes( 'calypso.live' );
 		assert.strictEqual( isCalypsoLiveURL, true );
 	}
-} );
-
-// Start xvfb display and recording
-before( async function () {
-	await videoRecorder.startDisplay();
-} );
-
-// Start xvfb display and recording
-before( async function () {
-	await videoRecorder.startVideo();
 } );
 
 // Sauce Breakpoint
@@ -133,13 +122,6 @@ afterEach( function () {
 	}
 } );
 
-// Stop video recording if the test has failed
-afterEach( async function () {
-	if ( this.currentTest && this.currentTest.state === 'failed' ) {
-		await videoRecorder.stopVideo( this.currentTest );
-	}
-} );
-
 // Push SauceLabs job status update (if applicable)
 after( async function () {
 	await this.timeout( afterHookTimeoutMS );
@@ -167,14 +149,4 @@ after( function () {
 	) {
 		return driverManager.quitBrowser( driver );
 	}
-} );
-
-// Stop video
-after( async function () {
-	await videoRecorder.stopVideo();
-} );
-
-// Stop xvfb display
-after( async function () {
-	await videoRecorder.stopDisplay();
 } );
