@@ -107,7 +107,7 @@ export function* createSite( {
 			...( anchorFmSpotifyUrl && {
 				anchor_fm_spotify_url: anchorFmSpotifyUrl,
 			} ),
-			is_blank_canvas: isBlankCanvasDesign( selectedDesign ),
+			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	};
