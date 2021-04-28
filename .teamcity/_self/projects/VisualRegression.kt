@@ -1,7 +1,6 @@
 package _self.projects
 
 import _self.bashNodeScript
-import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
@@ -65,23 +64,19 @@ object RunThemeVisualRegressionTests : BuildType({
 			dockerImage = "%docker_image_e2e%"
 		}
 	}
-
-	#triggers {
-  	#	schedule {
-    #		schedulingPolicy = daily {
-    #			hour = 20
-    #		}
-    #	branchFilter = "trunk"
-    #	triggerBuild = always()
-	#	}
-	#}
-
+	failureConditions {
+    	executionTimeoutMin = 30
+    }
 	triggers {
-    	vcs {
-    		branchFilter = """
-    			+:*
-    			-:pull*
-    		""".trimIndent()
-    	}
-   	}
+		schedule {
+			schedulingPolicy = daily {
+				hour = 3
+			}
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
+			triggerBuild = always()
+			withPendingChangesOnly = false
+		}
+	}
 })
