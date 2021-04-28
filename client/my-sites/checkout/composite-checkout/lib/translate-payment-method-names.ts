@@ -49,7 +49,7 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 		case 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet':
 			return 'id_wallet';
 		case 'WPCOM_Billing_Web_Payment':
-			return 'apple-pay';
+			return 'web-pay';
 	}
 }
 
@@ -146,10 +146,12 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 		case 'sofort':
 		case 'stripe-three-d-secure':
 		case 'wechat':
-		case 'apple-pay':
 		case 'full-credits':
 		case 'free-purchase':
 			return slug;
+		case 'apple-pay':
+		case 'google-pay':
+			return 'web-pay';
 	}
 	return null;
 }
