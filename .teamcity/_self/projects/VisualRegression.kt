@@ -66,13 +66,22 @@ object RunThemeVisualRegressionTests : BuildType({
 		}
 	}
 
+	#triggers {
+  	#	schedule {
+    #		schedulingPolicy = daily {
+    #			hour = 20
+    #		}
+    #	branchFilter = "trunk"
+    #	triggerBuild = always()
+	#	}
+	#}
+
 	triggers {
-  		schedule {
-    		schedulingPolicy = daily {
-    			hour = 20
-    		}
-    	branchFilter = "trunk"
-    	triggerBuild = always()
-		}
-	}
+    	vcs {
+    		branchFilter = """
+    			+:*
+    			-:pull*
+    		""".trimIndent()
+    	}
+   	}
 })
