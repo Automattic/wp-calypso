@@ -16,7 +16,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import Site from 'calypso/blocks/site';
 import Gridicon from 'calypso/components/gridicon';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import { getSelectedSite, getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -38,18 +38,10 @@ class CurrentSite extends Component {
 		translate: PropTypes.func.isRequired,
 		anySiteSelected: PropTypes.array,
 		forceAllSitesView: PropTypes.bool,
-		sidebarIsCollapsed: PropTypes.bool,
 		isNavUnificationEnabled: PropTypes.bool.isRequired,
 	};
 
-	expandUnifiedNavSidebar = () => {
-		if ( this.props.isNavUnificationEnabled && this.props.sidebarIsCollapsed ) {
-			this.props.savePreference( 'sidebarCollapsed', false );
-		}
-	};
-
 	switchSites = ( event ) => {
-		this.expandUnifiedNavSidebar();
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.setLayoutFocus( 'sites' );
@@ -135,7 +127,6 @@ export default connect(
 		anySiteSelected: getSelectedOrAllSites( state ),
 		siteCount: getCurrentUserSiteCount( state ),
 		hasAllSitesList: hasAllSitesList( state ),
-		sidebarIsCollapsed: getSidebarIsCollapsed( state ),
 		isNavUnificationEnabled: isNavUnificationEnabled( state ),
 	} ),
 	{

@@ -226,7 +226,11 @@ class Layout extends Component {
 				bodyClass.push( 'is-nav-unification' );
 			}
 
-			if ( this.props.sidebarIsCollapsed && isWithinBreakpoint( '>800px' ) ) {
+			if (
+				this.props.currentLayoutFocus !== 'sites' &&
+				this.props.sidebarIsCollapsed &&
+				isWithinBreakpoint( '>800px' )
+			) {
 				bodyClass.push( 'is-sidebar-collapsed' );
 			}
 
