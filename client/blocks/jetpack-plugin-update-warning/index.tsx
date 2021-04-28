@@ -63,7 +63,7 @@ export const JetpackPluginUpdateWarning: FC< ExternalProps > = ( {
 	}
 
 	return (
-		<Notice onDismissClick={ dismissClick }>
+		<Notice onDismissClick={ dismissClick } status="is-warning">
 			{ preventWidows(
 				translate(
 					'Your Jetpack plugin is out of date. ' +
