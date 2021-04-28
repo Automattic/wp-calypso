@@ -7,52 +7,75 @@ import { numberFormat, translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import * as CONSTANTS from './index';
+import {
+	JETPACK_ANTI_SPAM_PRODUCTS,
+	JETPACK_ANTI_SPAM_PRODUCT_LANDING_PAGE_URL,
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_BACKUP_PRODUCTS_MONTHLY,
+	JETPACK_BACKUP_PRODUCTS_YEARLY,
+	JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL,
+	JETPACK_SCAN_PRODUCTS,
+	JETPACK_SCAN_PRODUCT_LANDING_PAGE_URL,
+	JETPACK_SEARCH_PRODUCTS,
+	JETPACK_SEARCH_PRODUCT_LANDING_PAGE_URL,
+	PRODUCT_JETPACK_ANTI_SPAM,
+	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
+	PRODUCT_JETPACK_BACKUP,
+	PRODUCT_JETPACK_BACKUP_DAILY,
+	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_REALTIME,
+	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+	PRODUCT_JETPACK_SCAN,
+	PRODUCT_JETPACK_SCAN_MONTHLY,
+	PRODUCT_JETPACK_SCAN_REALTIME,
+	PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY,
+	PRODUCT_JETPACK_SEARCH,
+	PRODUCT_JETPACK_SEARCH_MONTHLY,
+	PRODUCT_WPCOM_SEARCH,
+	PRODUCT_WPCOM_SEARCH_MONTHLY,
+} from './index';
 
 // Translatable strings
 export const getJetpackProductsShortNames = () => {
 	return {
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: translate( 'Backup {{em}}Daily{{/em}}', {
+		[ PRODUCT_JETPACK_BACKUP_DAILY ]: translate( 'Backup {{em}}Daily{{/em}}', {
 			components: {
 				em: createElement( 'em' ),
 			},
 		} ),
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: translate( 'Backup {{em}}Daily{{/em}}', {
+		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: translate( 'Backup {{em}}Daily{{/em}}', {
 			components: {
 				em: createElement( 'em' ),
 			},
 		} ),
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: translate( 'Backup {{em}}Real-time{{/em}}', {
+		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: translate( 'Backup {{em}}Real-time{{/em}}', {
 			components: {
 				em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
 			},
 		} ),
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate(
-			'Backup {{em}}Real-time{{/em}}',
-			{
-				components: {
-					em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
-				},
-			}
-		),
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN_REALTIME ]: translate( 'Scan {{em}}Real-time{{/em}}', {
+		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate( 'Backup {{em}}Real-time{{/em}}', {
 			components: {
 				em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
 			},
 		} ),
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: translate( 'Scan {{em}}Real-time{{/em}}', {
+		[ PRODUCT_JETPACK_SCAN_REALTIME ]: translate( 'Scan {{em}}Real-time{{/em}}', {
 			components: {
 				em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
 			},
 		} ),
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: translate( 'Scan' ),
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: translate( 'Scan' ),
-		[ CONSTANTS.PRODUCT_JETPACK_SEARCH ]: translate( 'Search' ),
-		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
-		[ CONSTANTS.PRODUCT_WPCOM_SEARCH ]: translate( 'Search' ),
-		[ CONSTANTS.PRODUCT_WPCOM_SEARCH_MONTHLY ]: translate( 'Search' ),
-		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Anti-spam' ),
-		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Anti-spam' ),
+		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: translate( 'Scan {{em}}Real-time{{/em}}', {
+			components: {
+				em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
+			},
+		} ),
+		[ PRODUCT_JETPACK_SCAN ]: translate( 'Scan' ),
+		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: translate( 'Scan' ),
+		[ PRODUCT_JETPACK_SEARCH ]: translate( 'Search' ),
+		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
+		[ PRODUCT_WPCOM_SEARCH ]: translate( 'Search' ),
+		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: translate( 'Search' ),
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Anti-spam' ),
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Anti-spam' ),
 	};
 };
 
@@ -85,20 +108,20 @@ export const getJetpackProductsDisplayNames = () => {
 	const antiSpam = translate( 'Anti-spam' );
 
 	return {
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtime,
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtime,
-		[ CONSTANTS.PRODUCT_JETPACK_SEARCH ]: search,
-		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
-		[ CONSTANTS.PRODUCT_WPCOM_SEARCH ]: search,
-		[ CONSTANTS.PRODUCT_WPCOM_SEARCH_MONTHLY ]: search,
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: scan,
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: scan,
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN_REALTIME ]: scanRealtime,
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanRealtime,
-		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
-		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
+		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
+		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtime,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtime,
+		[ PRODUCT_JETPACK_SEARCH ]: search,
+		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
+		[ PRODUCT_WPCOM_SEARCH ]: search,
+		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: search,
+		[ PRODUCT_JETPACK_SCAN ]: scan,
+		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scan,
+		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanRealtime,
+		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanRealtime,
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
 	};
 };
 
@@ -122,16 +145,16 @@ export const getJetpackProductsCallToAction = () => {
 	const antiSpam = translate( 'Get Anti-spam' );
 
 	return {
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtime,
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtime,
-		[ CONSTANTS.PRODUCT_JETPACK_SEARCH ]: search,
-		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: scan,
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: scan,
-		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
-		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
+		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
+		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtime,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtime,
+		[ PRODUCT_JETPACK_SEARCH ]: search,
+		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
+		[ PRODUCT_JETPACK_SCAN ]: scan,
+		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scan,
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
 	};
 };
 
@@ -145,36 +168,36 @@ export const getJetpackProductsTaglines = () => {
 	const antiSpamTagline = translate( 'Block spam automatically' );
 
 	return {
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: {
+		[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
 			default: backupDailyTagline,
 			owned: backupOwnedTagline,
 		},
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: {
+		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: {
 			default: backupDailyTagline,
 			owned: backupOwnedTagline,
 		},
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: {
+		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: {
 			default: backupRealtimeTagline,
 			owned: backupOwnedTagline,
 		},
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: {
+		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: {
 			default: backupRealtimeTagline,
 			owned: backupOwnedTagline,
 		},
-		[ CONSTANTS.PRODUCT_JETPACK_SEARCH ]: { default: searchTagline },
-		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: { default: searchTagline },
-		[ CONSTANTS.PRODUCT_WPCOM_SEARCH ]: { default: searchTagline },
-		[ CONSTANTS.PRODUCT_WPCOM_SEARCH_MONTHLY ]: { default: searchTagline },
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: {
+		[ PRODUCT_JETPACK_SEARCH ]: { default: searchTagline },
+		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: { default: searchTagline },
+		[ PRODUCT_WPCOM_SEARCH ]: { default: searchTagline },
+		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: { default: searchTagline },
+		[ PRODUCT_JETPACK_SCAN ]: {
 			default: scanTagline,
 			owned: scanOwnedTagline,
 		},
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: {
+		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: {
 			default: scanTagline,
 			owned: scanOwnedTagline,
 		},
-		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: { default: antiSpamTagline },
-		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: { default: antiSpamTagline },
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: { default: antiSpamTagline },
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: { default: antiSpamTagline },
 	};
 };
 
@@ -197,18 +220,18 @@ export const getJetpackProductsDescriptions = () => {
 	);
 
 	return {
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyDescription,
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyDescription,
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtimeDescription,
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtimeDescription,
-		[ CONSTANTS.PRODUCT_JETPACK_SEARCH ]: searchDescription,
-		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchDescription,
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: scanDescription,
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: scanDescription,
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN_REALTIME ]: scanDescription,
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanDescription,
-		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamDescription,
-		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamDescription,
+		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyDescription,
+		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyDescription,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtimeDescription,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtimeDescription,
+		[ PRODUCT_JETPACK_SEARCH ]: searchDescription,
+		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchDescription,
+		[ PRODUCT_JETPACK_SCAN ]: scanDescription,
+		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanDescription,
+		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanDescription,
+		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanDescription,
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamDescription,
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamDescription,
 	};
 };
 
@@ -219,96 +242,96 @@ export const getJetpackProducts = () => [
 			'Always-on backups ensure you never lose your site. Choose from real-time or daily backups.'
 		),
 		hasPromo: true,
-		id: CONSTANTS.PRODUCT_JETPACK_BACKUP,
+		id: PRODUCT_JETPACK_BACKUP,
 		link: {
 			label: translate( 'Which backup option is best for me?' ),
 			props: {
 				location: 'product_jetpack_backup_description',
 				slug: 'which-one-do-i-need',
 			},
-			url: CONSTANTS.JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL,
+			url: JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL,
 		},
 		options: {
-			yearly: CONSTANTS.JETPACK_BACKUP_PRODUCTS_YEARLY,
-			monthly: CONSTANTS.JETPACK_BACKUP_PRODUCTS_MONTHLY,
+			yearly: JETPACK_BACKUP_PRODUCTS_YEARLY,
+			monthly: JETPACK_BACKUP_PRODUCTS_MONTHLY,
 		},
 		optionShortNames: getJetpackProductsShortNames(),
 		optionDisplayNames: getJetpackProductsDisplayNames(),
 		optionDescriptions: getJetpackProductsDescriptions(),
 		optionsLabel: translate( 'Select a backup option:' ),
-		slugs: CONSTANTS.JETPACK_BACKUP_PRODUCTS,
+		slugs: JETPACK_BACKUP_PRODUCTS,
 	},
 	{
 		title: translate( 'Jetpack Scan' ),
-		description: getJetpackProductsDescriptions()[ CONSTANTS.PRODUCT_JETPACK_SCAN ],
+		description: getJetpackProductsDescriptions()[ PRODUCT_JETPACK_SCAN ],
 		// There is only one option per billing interval, but this
 		// component still needs the full display with radio buttons.
 		forceRadios: true,
 		hasPromo: false,
-		id: CONSTANTS.PRODUCT_JETPACK_SCAN,
+		id: PRODUCT_JETPACK_SCAN,
 		link: {
 			label: translate( 'Learn more' ),
 			props: {
 				location: 'product_jetpack_scan_description',
 				slug: 'learn-more-scan',
 			},
-			url: CONSTANTS.JETPACK_SCAN_PRODUCT_LANDING_PAGE_URL,
+			url: JETPACK_SCAN_PRODUCT_LANDING_PAGE_URL,
 		},
 		options: {
-			yearly: [ CONSTANTS.PRODUCT_JETPACK_SCAN ],
-			monthly: [ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ],
+			yearly: [ PRODUCT_JETPACK_SCAN ],
+			monthly: [ PRODUCT_JETPACK_SCAN_MONTHLY ],
 		},
 		optionShortNames: getJetpackProductsShortNames(),
 		optionDisplayNames: getJetpackProductsDisplayNames(),
 		optionDescriptions: getJetpackProductsDescriptions(),
 		optionsLabel: translate( 'Select a product option:' ),
-		slugs: CONSTANTS.JETPACK_SCAN_PRODUCTS,
+		slugs: JETPACK_SCAN_PRODUCTS,
 	},
 	{
 		title: translate( 'Jetpack Anti-spam' ),
-		description: getJetpackProductsDescriptions()[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ],
+		description: getJetpackProductsDescriptions()[ PRODUCT_JETPACK_ANTI_SPAM ],
 		// There is only one option per billing interval, but this
 		// component still needs the full display with radio buttons.
 		forceRadios: true,
 		hasPromo: false,
-		id: CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM,
+		id: PRODUCT_JETPACK_ANTI_SPAM,
 		link: {
 			label: translate( 'Learn more' ),
 			props: {
 				location: 'product_jetpack_anti_spam_description',
 				slug: 'learn-more-anti-spam',
 			},
-			url: CONSTANTS.JETPACK_ANTI_SPAM_PRODUCT_LANDING_PAGE_URL,
+			url: JETPACK_ANTI_SPAM_PRODUCT_LANDING_PAGE_URL,
 		},
 		options: {
-			yearly: [ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ],
-			monthly: [ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ],
+			yearly: [ PRODUCT_JETPACK_ANTI_SPAM ],
+			monthly: [ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ],
 		},
 		optionShortNames: getJetpackProductsShortNames(),
 		optionDisplayNames: getJetpackProductsDisplayNames(),
 		optionDescriptions: getJetpackProductsDescriptions(),
 		optionsLabel: translate( 'Select a product option:' ),
-		slugs: CONSTANTS.JETPACK_ANTI_SPAM_PRODUCTS,
+		slugs: JETPACK_ANTI_SPAM_PRODUCTS,
 	},
 	{
 		title: translate( 'Jetpack Search' ),
-		description: getJetpackProductsDescriptions()[ CONSTANTS.PRODUCT_JETPACK_SEARCH ],
+		description: getJetpackProductsDescriptions()[ PRODUCT_JETPACK_SEARCH ],
 		// There is only one option per billing interval, but this
 		// component still needs the full display with radio buttons.
 		forceRadios: true,
 		hasPromo: false,
-		id: CONSTANTS.PRODUCT_JETPACK_SEARCH,
+		id: PRODUCT_JETPACK_SEARCH,
 		link: {
 			label: translate( 'Learn more' ),
 			props: {
 				location: 'product_jetpack_search_description',
 				slug: 'learn-more-search',
 			},
-			url: CONSTANTS.JETPACK_SEARCH_PRODUCT_LANDING_PAGE_URL,
+			url: JETPACK_SEARCH_PRODUCT_LANDING_PAGE_URL,
 		},
 		options: {
-			yearly: [ CONSTANTS.PRODUCT_JETPACK_SEARCH ],
-			monthly: [ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ],
+			yearly: [ PRODUCT_JETPACK_SEARCH ],
+			monthly: [ PRODUCT_JETPACK_SEARCH_MONTHLY ],
 		},
 		optionShortNamesCallback: ( productObject ) => {
 			const quantity = productObject.price_tier_usage_quantity;
@@ -359,6 +382,6 @@ export const getJetpackProducts = () => [
 				}
 			);
 		},
-		slugs: CONSTANTS.JETPACK_SEARCH_PRODUCTS,
+		slugs: JETPACK_SEARCH_PRODUCTS,
 	},
 ];
