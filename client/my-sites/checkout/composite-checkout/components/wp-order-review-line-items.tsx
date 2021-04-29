@@ -114,7 +114,7 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	}
 `;
 
-const LineItem = styled( WPLineItem )< {
+export const LineItem = styled( WPLineItem )< {
 	theme?: Theme;
 } >`
 	display: flex;

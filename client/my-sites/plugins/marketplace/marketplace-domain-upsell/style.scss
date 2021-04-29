@@ -2,12 +2,13 @@
 	background-color: var( --studio-white );
 	height: 100vh;
 	@media ( max-width: 782px ) {
+		padding: 0;
 		background-color: var( --studio-white );
 		height: 100vh;
 		.layout__primary {
 			height: 100vh;
 			.marketplace-domain-upsell__root {
-				height: 90vh;
+				height: 85vh;
 			}
 		}
 	}
@@ -22,29 +23,25 @@
 
 	// margin-top: 40px;
 	display: grid;
-	grid-template-rows: 40px 100%;
+	grid-template-rows: 100%;
 	grid-template-columns: 60% 40%;
-	grid-template-areas:
-		'backnav backnav'
-		'domainpicker basket';
+	grid-template-areas: 'domainpicker basket';
 
 	margin: 15px;
 	@media ( max-width: 782px ) {
-		grid-template-rows: 40px 1fr 226px;
+		grid-template-rows: 1fr 226px;
 		grid-template-columns: 100%;
 		grid-template-areas:
-			'backnav'
 			'domainpicker'
 			'basket';
 
 		height: calc( 100vh - 135px );
-		margin: 35px 35px 0;
-		margin: 25px 0;
+		margin: 55px 0 0;
 	}
 
 	> div {
 		padding: 0 20px;
-		@media ( min-width: 600px ) {
+		@media ( max-width: 782px ) {
 			padding: 0 45px;
 		}
 	}
@@ -59,70 +56,42 @@
 		}
 	}
 	.marketplace-title {
-		letter-spacing: 0.4px;
-		line-height: 28px;
-		font-weight: 600;
-		font-size: 1.5rem;
-		margin: 0 0 30px;
+		font-size: $font-title-medium;
 	}
 
 	.marketplace-subtitle {
-		font-style: normal;
-		font-weight: normal;
-		font-size: 0.875rem;
-		line-height: 16px;
-		margin: 0 0 30px;
+		font-size: $font-body-small;
 	}
 
 	.marketplace-domain-upsell__domain-picker-container {
 		grid-area: domainpicker;
-		overflow: scroll;
-	}
 
-	.marketplace-domain-upsell__back-button {
-		button {
-			font-style: normal;
-			letter-spacing: 0.4px;
-			font-weight: 600;
-			font-size: 1rem;
-			line-height: 20px;
-			padding: 0;
-
-			span {
-				margin-left: 9px;
+		@media ( max-width: 782px ) {
+			padding-top: 20px;
+			border-top: 1px solid var( --studio-gray-0 );
+			overflow: scroll;
+			-ms-overflow-style: none; /* IE and Edge */
+			scrollbar-width: none;
+			&::-webkit-scrollbar {
+				display: none;
 			}
 		}
-
-		grid-area: backnav;
 	}
 
 	.marketplace-domain-upsell__shopping-cart-container {
 		grid-area: basket;
 		button {
-			display: flex;
 			justify-content: center;
 			width: 100%;
-			border-radius: 2px;
 		}
 
-		.basket-item {
-			display: flex;
-			justify-content: space-between;
-			width: 100%;
-			margin-bottom: 10px;
-			div {
-				font-size: 0.875rem;
-			}
-		}
 		.total {
 			display: flex;
 			justify-content: space-between;
 			width: 100%;
 			margin-bottom: 20px;
 			div {
-				font-weight: bold;
-				font-size: 1rem;
-				line-height: 19px;
+				font-size: $font-body;
 			}
 		}
 
@@ -130,9 +99,5 @@
 			padding-top: 20px;
 			border-top: 1px solid var( --studio-gray-0 );
 		}
-	}
-
-	hr {
-		margin-top: 20px;
 	}
 }
