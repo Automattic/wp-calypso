@@ -40,17 +40,17 @@ const MailboxListItem = ( { children, isPlaceholder, hasNoEmails } ) => {
 	return <CompactCard className={ className }>{ children }</CompactCard>;
 };
 
+const MailboxListItemWarning = ( { warningText } ) => {
+	return (
+		<div className="email-plan-mailboxes-list__mailbox-list-item-warning">
+			<Gridicon icon="info-outline" size={ 18 } />
+			<span>{ warningText }</span>
+		</div>
+	);
+};
+
 function EmailPlanMailboxesList( { emails, isLoadingEmails } ) {
 	const translate = useTranslate();
-
-	const MailboxListItemWarning = ( { warningText } ) => {
-		return (
-			<div className="email-plan-mailboxes-list__mailbox-list-item-warning">
-				<Gridicon icon="info-outline" size={ 18 } />
-				<span>{ warningText }</span>
-			</div>
-		);
-	};
 
 	if ( isLoadingEmails ) {
 		return (
