@@ -61,7 +61,7 @@ const withPluginRedirect = createHigherOrderComponent(
 			return <Component { ...props } />;
 		}
 
-		const wasInstallingPlugin = useRef();
+		const wasInstalling = useRef();
 		const [ redirectTo, setRedirectTo ] = useState( false );
 
 		const translate = useTranslate();
@@ -107,13 +107,18 @@ const withPluginRedirect = createHigherOrderComponent(
 			}
 
 			// Store the previous state of `isInstalling`.
-			if ( isInstallingPlugin ) {
-				wasInstallingPlugin.current = true;
+			if ( isJetpack && isInstallingPlugin ) {
+				wasInstalling.current = true;
+			}
+
+			// Store the previous state of `isInstalling`.
+			if ( isAtomic && hasSiteBeenTransferred ) {
+				wasInstalling.current = true;
 			}
 
 			if (
-				( isJetpack && ! isInstallingPlugin && wasInstallingPlugin.current ) || // <- Jetpack site.
-				( isAtomic && hasSiteBeenTransferred ) // <- Atomic site.
+				( isJetpack && ! isInstallingPlugin && wasInstalling.current ) || // <- Jetpack site.
+				( isAtomic && ! hasSiteBeenTransferred && wasInstalling.current ) // <- Atomic site.
 			) {
 				setRedirectTo( redirectUrl );
 			}
