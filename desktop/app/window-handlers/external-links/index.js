@@ -51,7 +51,7 @@ module.exports = function ( mainWindow ) {
 			event.preventDefault();
 			log.info( `Redirecting to 'wordpress.com/log-in'` );
 
-			mainWindow.webContents.loadURL( Config.loginURL );
+			mainWindow.webContents.loadURL( Config.loginURL() );
 			return;
 		}
 

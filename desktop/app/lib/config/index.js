@@ -6,7 +6,13 @@ config.name = pkg.productName;
 config.description = 'WordPress Desktop';
 config.version = pkg.version;
 config.author = pkg.author;
-config.loginURL = 'https://wordpress.com/log-in';
+
+config.loginURL = function () {
+	if ( process.env.WP_DESKTOP_DEBUG_LOCALHOST !== undefined ) {
+		return 'http://calypso.localhost:3000';
+	}
+	return 'https://wordpress.com/log-in';
+};
 
 config.isRelease = function () {
 	return this.build === 'release';
