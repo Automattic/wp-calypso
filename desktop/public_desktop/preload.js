@@ -3,8 +3,6 @@ const { ipcRenderer, contextBridge } = require( 'electron' );
 // Outgoing IPC message channels from Renderer to Main process.
 // Maintain this list in alphabetical order.
 const sendChannels = [
-	'cannot-use-editor',
-	'enable-site-option-response',
 	'get-config',
 	'get-settings',
 	'log',
@@ -25,7 +23,6 @@ const receiveChannels = [
 	'app-config',
 	'cookie-auth-complete',
 	'enable-notification-badge',
-	'enable-site-option',
 	'is-calypso',
 	'is-calypso-response',
 	'navigate',

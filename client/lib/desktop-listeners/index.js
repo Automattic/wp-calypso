@@ -12,20 +12,15 @@ import user from 'calypso/lib/user';
 import userUtilities from 'calypso/lib/user/utils';
 import * as oAuthToken from 'calypso/lib/oauth-token';
 import { getStatsPathForTab } from 'calypso/lib/route';
-import { getReduxStore } from 'calypso/lib/redux-bridge';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { toggleNotificationsPanel, navigate } from 'calypso/state/ui/actions';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import {
-	NOTIFY_DESKTOP_CANNOT_USE_EDITOR,
 	NOTIFY_DESKTOP_DID_REQUEST_SITE,
-	NOTIFY_DESKTOP_DID_ACTIVATE_JETPACK_MODULE,
 	NOTIFY_DESKTOP_SEND_TO_PRINTER,
 	NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_SET,
 	NOTIFY_DESKTOP_VIEW_POST_CLICKED,
 } from 'calypso/state/desktop/window-events';
-import { canCurrentUserManageSiteOptions } from 'calypso/state/sites/selectors';
-import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { setForceRefresh as forceNotificationsRefresh } from 'calypso/state/notifications-panel/actions';
 
@@ -34,13 +29,14 @@ import { setForceRefresh as forceNotificationsRefresh } from 'calypso/state/noti
  */
 const debug = debugFactory( 'calypso:desktop' );
 
-const Desktop = {
+const DesktopListeners = {
 	/**
 	 * Bootstraps network connection status change handler.
+	 *
+	 * @param {Object} reduxStore The redux store.
 	 */
-	init: async function () {
+	init: function ( reduxStore ) {
 		debug( 'Registering IPC listeners' );
-
 		// Register IPC listeners
 		window.electron.receive( 'page-my-sites', this.onShowMySites.bind( this ) );
 		window.electron.receive( 'page-reader', this.onShowReader.bind( this ) );
@@ -60,14 +56,8 @@ const Desktop = {
 		window.electron.receive( 'page-help', this.onShowHelp.bind( this ) );
 		window.electron.receive( 'navigate', this.onNavigate.bind( this ) );
 		window.electron.receive( 'request-site', this.onRequestSite.bind( this ) );
-		window.electron.receive( 'enable-site-option', this.onActivateJetpackSiteModule.bind( this ) );
 		window.electron.receive( 'enable-notification-badge', this.sendNotificationUnseenCount );
 		window.electron.receive( 'request-user-login-status', this.sendUserLoginStatus );
-
-		window.addEventListener(
-			NOTIFY_DESKTOP_CANNOT_USE_EDITOR,
-			this.onCannotOpenEditor.bind( this )
-		);
 
 		window.addEventListener(
 			NOTIFY_DESKTOP_VIEW_POST_CLICKED,
@@ -81,7 +71,7 @@ const Desktop = {
 
 		window.addEventListener( NOTIFY_DESKTOP_SEND_TO_PRINTER, this.onSendToPrinter.bind( this ) );
 
-		this.store = await getReduxStore();
+		this.store = reduxStore;
 
 		// Send some events immediately - this sets the app state
 		this.sendNotificationUnseenCount();
@@ -215,55 +205,11 @@ const Desktop = {
 	},
 
 	// window event
-	onCannotOpenEditor: function ( event ) {
-		const { site, reason, editorUrl, wpAdminLoginUrl } = event.detail;
-		debug( 'Received window event: unable to load editor for site: ', site.URL );
-
-		const siteId = site.ID;
-		const state = this.store.getState();
-		const canUserManageOptions = canCurrentUserManageSiteOptions( state, siteId );
-		const payload = {
-			siteId,
-			reason,
-			editorUrl,
-			wpAdminLoginUrl,
-			origin: site.URL,
-			canUserManageOptions,
-		};
-
-		window.electron.send( 'cannot-use-editor', payload );
-	},
-
-	// window event
 	onViewPostClicked: function ( event ) {
 		const { url } = event.detail;
 		debug( `Received window event: "View Post" clicked for URL: ${ url }` );
 
 		window.electron.send( 'view-post-clicked', url );
-	},
-
-	onActivateJetpackSiteModule: function ( info ) {
-		const { siteId, option } = info;
-		debug( `User enabling option '${ option }' for siteId ${ siteId }` );
-
-		const response = NOTIFY_DESKTOP_DID_ACTIVATE_JETPACK_MODULE;
-		function onDidActivateJetpackSiteModule( responseEvent ) {
-			debug( 'Received Jetpack module activation response for: ', responseEvent.detail );
-
-			window.removeEventListener( response, this );
-			const { status, siteId: responseSiteId } = responseEvent.detail;
-			let { error } = responseEvent.detail;
-			if ( Number( siteId ) !== Number( responseSiteId ) ) {
-				error = `Expected response for siteId: ${ siteId }, got: ${ responseSiteId }`;
-			}
-			window.electron.send( 'enable-site-option-response', { status, siteId, error } );
-		}
-		window.addEventListener(
-			response,
-			onDidActivateJetpackSiteModule.bind( onDidActivateJetpackSiteModule )
-		);
-
-		this.store.dispatch( activateModule( siteId, option ) );
 	},
 
 	onRequestSite: function ( siteId ) {
@@ -305,4 +251,4 @@ const Desktop = {
 	},
 };
 
-export default Desktop;
+export default DesktopListeners;

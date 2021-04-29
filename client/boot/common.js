@@ -55,6 +55,7 @@ import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions'
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { inJetpackCloudOAuthOverride } from 'calypso/lib/jetpack/oauth-override';
 import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
+import DesktopListeners from 'calypso/lib/desktop-listeners';
 
 const debug = debugFactory( 'calypso' );
 
@@ -375,8 +376,8 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		setupGlobalKeyboardShortcuts();
 	}
 
-	if ( config.isEnabled( 'desktop' ) ) {
-		require( 'calypso/lib/desktop' ).default.init();
+	if ( window.electron ) {
+		DesktopListeners.init( reduxStore );
 	}
 
 	// temp: test -- will revert
