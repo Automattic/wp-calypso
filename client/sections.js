@@ -91,12 +91,6 @@ const sections = [
 		group: 'me',
 	},
 	{
-		name: 'difm',
-		paths: [ '/me/difm-intake' ],
-		module: 'calypso/me/difm-intake',
-		group: 'me',
-	},
-	{
 		name: 'media',
 		paths: [ '/media' ],
 		module: 'calypso/my-sites/media',
