@@ -371,6 +371,13 @@ $font-size: rem( 14px );
 	}
 
 	&.is-sidebar-collapsed {
+		.layout__primary .main,
+		.layout__secondary,
+		.layout__secondary .sidebar,
+		.layout__secondary .site-selector {
+			transition: none;
+		}
+
 		.dashicons-admin-collapse::before {
 			transform: rotate( 180deg );
 		}
@@ -393,7 +400,7 @@ $font-size: rem( 14px );
 			display: none;
 		}
 
-		.site__content {
+		.sidebar .site__content {
 			padding: 10px 2px;
 
 			.count {
@@ -409,7 +416,7 @@ $font-size: rem( 14px );
 			left: 2px;
 		}
 
-		.site .site-icon {
+		.sidebar .site .site-icon {
 			margin-bottom: 4px;
 		}
 
@@ -559,12 +566,14 @@ $font-size: rem( 14px );
 		// TODO: For prototype only, this prevents the sidebar from being scrollable.
 		// In wp-admin there's custom JS to a) position the sidebar based on the scroll
 		// position and b) position the flyout menu based on available screen space.
-		.focus-content,
-		.focus-sidebar {
-			.sidebar,
-			.layout__secondary {
-				z-index: z-index( 'root', '.is-nav-unification .layout__secondary' );
-				overflow: initial;
+		&.is-sidebar-overflow {
+			.focus-content,
+			.focus-sidebar {
+				.sidebar,
+				.layout__secondary {
+					z-index: z-index( 'root', '.is-nav-unification .layout__secondary' );
+					overflow: initial;
+				}
 			}
 		}
 

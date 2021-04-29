@@ -18,8 +18,10 @@
 	}
 
 	&.is-group-sites.is-sidebar-collapsed {
-		--sidebar-width-max: 36px;
-		--sidebar-width-min: 36px;
+		.layout:not( .focus-sites ) {
+			--sidebar-width-max: 36px;
+			--sidebar-width-min: 36px;
+		}
 	}
 
 	$nav-unification-primary: #23282d;
