@@ -336,27 +336,6 @@ export function getPerformanceLogs( driver ) {
 	return driver.manage().logs().get( logging.Type.PERFORMANCE );
 }
 
-export async function ensureMobileMenuOpen( driver ) {
-	if ( process.env.BROWSERSIZE !== 'mobile' ) {
-		return null;
-	}
-
-	const mobileHeaderLocator = by.css( '.section-nav__mobile-header' );
-	const menuLocator = by.css( '.section-nav' );
-	const openMenuLocator = by.css( '.section-nav.is-open' );
-
-	await waitUntilLocatedAndVisible( driver, menuLocator );
-	const menuElement = await driver.findElement( menuLocator );
-	const isMenuOpen = await menuElement
-		.getAttribute( 'class' )
-		.then( ( classNames ) => classNames.includes( 'is-open' ) );
-
-	if ( ! isMenuOpen ) {
-		await clickWhenClickable( driver, mobileHeaderLocator );
-		await waitUntilLocatedAndVisible( driver, openMenuLocator );
-	}
-}
-
 export function waitForInfiniteListLoad( driver, elementSelector, { numElements = 10 } = {} ) {
 	return driver.wait( function () {
 		return driver.findElements( elementSelector ).then( ( elements ) => {
