@@ -15,10 +15,7 @@ export default class DomainsPage extends AsyncBaseContainer {
 	}
 
 	async isInEmptyState() {
-		return await driverHelper.isLocated(
-			this.driver,
-			By.css( '.domain-picker__empty-state' )
-		);
+		return await driverHelper.isLocated( this.driver, By.css( '.domain-picker__empty-state' ) );
 	}
 
 	async enterDomainQuery( query ) {
@@ -32,7 +29,7 @@ export default class DomainsPage extends AsyncBaseContainer {
 
 	async waitForDomainSuggestionsToLoad() {
 		const placeholderSelector = By.css( '.domain-picker__suggestion-item.placeholder' );
-		await driverHelper.waitTillNotPresent( this.driver, placeholderSelector );
+		await driverHelper.waitUntilNotLocated( this.driver, placeholderSelector );
 	}
 
 	/**

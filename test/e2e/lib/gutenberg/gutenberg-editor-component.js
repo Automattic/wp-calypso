@@ -578,7 +578,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		await driverHelper.clickWhenClickable( this.driver, revertToDraftButtonLocator );
 		await driverHelper.acceptAlertIfPresent( this.driver );
-		await driverHelper.waitTillNotPresent( this.driver, revertToDraftButtonLocator );
+		await driverHelper.waitUntilNotLocated( this.driver, revertToDraftButtonLocator );
 		await driverHelper.waitUntilLocatedAndVisible( this.driver, enabledPublishButtonLocator );
 	}
 
