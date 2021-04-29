@@ -42,7 +42,7 @@ function useRenderedShortcode( siteId, shortcode ) {
 }
 
 const Shortcode = ( props ) => {
-	const { siteId, className, children, filterRenderResult } = props;
+	const { siteId, className, children, filterRenderResult = ( result ) => result } = props;
 	const shortcode = useRenderedShortcode( siteId, children );
 
 	const classes = classNames( 'shortcode', className );
@@ -69,7 +69,6 @@ Shortcode.propTypes = {
 };
 
 Shortcode.defaultProps = {
-	filterRenderResult: ( result ) => result,
 	allowSameOrigin: false,
 };
 
