@@ -1,6 +1,5 @@
 package _self.projects
 
-import _self.PluginBaseBuild
 import _self.bashNodeScript
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
