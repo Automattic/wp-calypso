@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate, translate as __ } from 'i18n-calypso';
 
@@ -11,7 +11,10 @@ import { useTranslate, translate as __ } from 'i18n-calypso';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isJetpackSite, getSiteWoocommerceWizardUrl } from 'calypso/state/sites/selectors';
-import { isPluginActionCompleted } from 'calypso/state/plugins/installed/selectors';
+import {
+	isPluginActionCompleted,
+	isPluginActionInProgress,
+} from 'calypso/state/plugins/installed/selectors';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
@@ -44,74 +47,91 @@ function getPluginRedirect( slug ) {
 }
 
 const withPluginRedirect = ( Component ) => ( props ) => {
-	const { plugin = {} } = props;
-	const pluginSlug = props.pluginSlug || plugin?.slug;
+	const { plugin } = props;
 
-	if ( ! pluginSlug ) {
+	if ( ! plugin?.slug ) {
 		return <Component { ...props } />;
 	}
 
+	const pluginSlug = plugin.slug;
 	const redirectPlugin = getPluginRedirect( pluginSlug );
 	if ( ! redirectPlugin ) {
 		return <Component { ...props } />;
 	}
 
+	const wasInstallingPlugin = useRef();
+	const [ redirectTo, setRedirectTo ] = useState( false );
+
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { redirect, url, hasSiteBeenTransferred } = useSelector(
+	const {
+		hasSiteBeenTransferred,
+		hasPluginBeenInstalled,
+		isInstallingPlugin,
+		isJetpack,
+		isAtomic,
+		isSiteConnected,
+		redirectUrl,
+	} = useSelector(
 		( state ) => {
 			const site = getSelectedSite( state );
-			const isAtomic = isSiteAutomatedTransfer( state, site.ID );
-			const isJetpack = isJetpackSite( state, site.ID );
-			const woocommerceWizardUrl = redirectPlugin.handler( state, site.ID );
 			const transferState = getAutomatedTransferStatus( state, site.ID );
-			const hasPluginJustBeenInstalled = isPluginActionCompleted(
+
+			const isInstalling = isPluginActionInProgress( state, site.ID, pluginSlug, INSTALL_PLUGIN );
+			const hasBeenInstalled = isPluginActionCompleted(
 				state,
 				site.ID,
 				pluginSlug,
 				INSTALL_PLUGIN
 			);
 
-			const isSiteConnected = getSiteConnectionStatus( state, site.ID );
-			const selectedData = {
-				redirect: false,
-				url: woocommerceWizardUrl,
+			return {
 				hasSiteBeenTransferred: transferState === transferStates?.COMPLETE,
+				isInstallingPlugin: isInstalling,
+				hasPluginBeenInstalled: hasBeenInstalled,
+				isAtomic: isSiteAutomatedTransfer( state, site.ID ),
+				isJetpack: isJetpackSite( state, site.ID ),
+				isSiteConnected: getSiteConnectionStatus( state, site.ID ),
+				redirectUrl: redirectPlugin.handler( state, site.ID ),
 			};
-
-			// Jetpack site.
-			if (
-				isJetpack &&
-				pluginSlug === 'woocommerce' &&
-				woocommerceWizardUrl &&
-				hasPluginJustBeenInstalled &&
-				isSiteConnected
-			) {
-				return { ...selectedData, redirect: true };
-			}
-
-			// Atomic Site.
-			if (
-				isAtomic &&
-				pluginSlug === 'woocommerce' &&
-				woocommerceWizardUrl &&
-				selectedData.hasSiteBeenTransferred &&
-				isSiteConnected
-			) {
-				return { ...selectedData, redirect: true };
-			}
-
-			return selectedData;
 		},
 		[ pluginSlug ]
 	);
 
 	useEffect( () => {
-		if ( ! redirect || ! url ) {
+		if ( ! isSiteConnected ) {
 			return;
 		}
 
+		// Store the previous state of `isInstalling`.
+		if ( isInstallingPlugin ) {
+			wasInstallingPlugin.current = true;
+		}
+
+		if (
+			( isJetpack && ! isInstallingPlugin && wasInstallingPlugin.current ) || // <- Jetpack site.
+			( isAtomic && hasSiteBeenTransferred ) // <- Atomic site.
+		) {
+			setRedirectTo( redirectUrl );
+		}
+	}, [
+		isInstallingPlugin,
+		hasPluginBeenInstalled,
+		redirectUrl,
+		hasSiteBeenTransferred,
+		isJetpack,
+		isAtomic,
+		isSiteConnected,
+	] );
+
+	useEffect( () => {
+		if ( ! redirectTo ) {
+			return;
+		}
+
+		// For Atomic sites, we shoulnd't wait since
+		/// there is not a Notice.
 		const pluginInstalledNoticeTime = hasSiteBeenTransferred ? 0 : 3000;
 
 		let timerId = setTimeout( () => {
@@ -119,7 +139,7 @@ const withPluginRedirect = ( Component ) => ( props ) => {
 
 			// re-use same timer ID to redirect the client.
 			timerId = setTimeout( () => {
-				window.location.href = url;
+				window.location.href = redirectTo;
 			}, 5500 );
 
 			const redirectMessage =
@@ -146,7 +166,7 @@ const withPluginRedirect = ( Component ) => ( props ) => {
 		return function () {
 			timerId && window.clearTimeout( timerId );
 		};
-	}, [ redirect, url, redirectPlugin, dispatch, translate, hasSiteBeenTransferred ] );
+	}, [ redirectTo, redirectPlugin, dispatch, translate, hasSiteBeenTransferred ] );
 
 	return <Component { ...props } />;
 };
