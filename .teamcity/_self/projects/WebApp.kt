@@ -8,6 +8,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 
 object WebApp : Project({
 	id("WebApp")
@@ -888,11 +889,15 @@ object RunVisualRegressionTests : BuildType({
     	executionTimeoutMin = 30
     }
 	triggers {
-		vcs {
+		schedule {
+			schedulingPolicy = daily {
+				hour = 2
+			}
 			branchFilter = """
-				+:*
-				-:pull*
+				+:trunk
 			""".trimIndent()
+			triggerBuild = always()
+			withPendingChangesOnly = false
 		}
 	}
 })
