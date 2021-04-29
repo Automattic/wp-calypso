@@ -74,7 +74,7 @@ export function getProxyType() {
 export async function startBrowser( {
 	useCustomUA = true,
 	resizeBrowserWindow = true,
-	disableThirdPartyCookies = false,
+	disableThirdPartyCookies = true,
 } = {} ) {
 	if ( global.__BROWSER__ ) {
 		return global.__BROWSER__;
