@@ -42,6 +42,7 @@ export const INCOMING_DOMAIN_TRANSFER = `${ root }/incoming-domain-transfer/`;
 export const INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK = `${ root }/incoming-domain-transfer/prepare-domain-for-transfer/#unlock`;
 export const INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE = `${ root }/incoming-domain-transfer/prepare-domain-for-transfer/#auth-code`;
 export const INCOMING_DOMAIN_TRANSFER_AUTH_CODE_INVALID = `${ root }/incoming-domain-transfer/#auth-code-invalid`;
+export const EDIT_PAYMENT_DETAILS = `${ root }/payment/#edit-payment-details`;
 export const EMAIL_FORWARDING = `${ root }/email-forwarding`;
 export const EMAIL_VALIDATION_AND_VERIFICATION = `${ root }/domains/register-domain/#email-validation-and-verification`;
 export const EMPTY_SITE = `${ root }/empty-site/`;
