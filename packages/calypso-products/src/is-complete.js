@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isCompletePlan } from './index';
+import { isCompletePlan } from './main';
 import { formatProduct } from './format-product';
 
 export function isComplete( product ) {

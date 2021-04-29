@@ -14,7 +14,7 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
-} from './index';
+} from './constants';
 
 const productDependencies = {
 	domain: {
