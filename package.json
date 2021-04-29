@@ -10,8 +10,7 @@
 			"apps/*",
 			"packages/*",
 			"test/e2e",
-			"test/e2e/lib/reporter",
-			"test/visual"
+			"test/e2e/lib/reporter"
 		],
 		"nohoist": [
 			"**/config",

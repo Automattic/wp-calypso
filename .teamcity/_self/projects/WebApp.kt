@@ -20,6 +20,7 @@ object WebApp : Project({
 	buildType(CheckCodeStyleBranch)
 	buildType(BuildDockerImage)
 	buildType(RunCalypsoPlaywrightE2eTests)
+	buildType(RunVisualRegressionTests)
 })
 
 object RunCalypsoE2eDesktopTests : BuildType({
