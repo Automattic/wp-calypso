@@ -341,7 +341,8 @@ export default function CompositeCheckout( {
 		stripe,
 		stripeConfiguration,
 		!! stripeLoadingError,
-		responseCart.currency
+		responseCart.currency,
+		responseCart.total_cost_integer
 	);
 
 	const paymentMethodObjects = useCreatePaymentMethods( {

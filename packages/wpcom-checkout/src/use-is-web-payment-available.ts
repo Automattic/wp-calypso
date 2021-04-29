@@ -23,7 +23,8 @@ export function useIsWebPayAvailable(
 	stripe: Stripe | null,
 	stripeConfiguration: StripeConfiguration | null,
 	isStripeError: boolean,
-	currency: string | null
+	currency: string | null,
+	total: number | null
 ): CanMakePaymentState {
 	const [ canMakePayment, setCanMakePayment ] = useState< CanMakePaymentState >(
 		initialCanMakePaymentsState
@@ -81,11 +82,11 @@ export function useIsWebPayAvailable(
 			country: countryCode,
 			currency: currency ? currency.toLowerCase() : 'usd',
 			// This is just used here to determine if web pay is available, not for
-			// the actual payment, so we leave the purchase details blank
+			// the actual payment, so we leave most of the purchase details blank
 			displayItems: [],
 			total: {
 				label: 'Total',
-				amount: 0,
+				amount: total ?? 0,
 			},
 		};
 		const request = stripe.paymentRequest( paymentRequestOptions );
@@ -103,7 +104,7 @@ export function useIsWebPayAvailable(
 		} );
 
 		return unsubscribe;
-	}, [ canMakePayment, stripe, currency, stripeConfiguration, isStripeError ] );
+	}, [ canMakePayment, stripe, currency, total, stripeConfiguration, isStripeError ] );
 
 	debug( 'useIsWebPayAvailable', canMakePayment );
 	return canMakePayment;
