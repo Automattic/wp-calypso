@@ -72,10 +72,7 @@ const getSeoExcerptForPost = ( post ) => {
 	}
 
 	return formatExcerpt(
-		find(
-			[ PostMetadata.metaDescription( post ), post.excerpt, post.content ],
-			( content ) => content.length
-		)
+		find( [ PostMetadata.metaDescription( post ), post.excerpt, post.content ], Boolean )
 	);
 };
 
@@ -87,7 +84,7 @@ const getSeoExcerptForSite = ( site ) => {
 	return formatExcerpt(
 		find(
 			[ get( site, 'options.advanced_seo_front_page_description' ), site.description ],
-			( content ) => content.length
+			Boolean
 		)
 	);
 };

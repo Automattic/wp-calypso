@@ -48,10 +48,7 @@ export const getExcerptForPost = ( post ) => {
 	return trim(
 		striptags(
 			formatExcerpt(
-				find(
-					[ PostMetadata.metaDescription( post ), post.excerpt, post.content ],
-					( content ) => content.length
-				)
+				find( [ PostMetadata.metaDescription( post ), post.excerpt, post.content ], Boolean )
 			)
 		)
 	);

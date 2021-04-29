@@ -56,7 +56,7 @@ export const eligibilityHoldsFromApi = ( { errors = [] }, options = {} ) =>
 			}
 			return get( statusMapping, code, '' );
 		} )
-		.filter( ( error ) => error );
+		.filter( Boolean );
 
 /**
  * Maps from API response the issues which trigger a confirmation for automated transfer
