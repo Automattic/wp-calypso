@@ -155,7 +155,7 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 						analyticsFlowId={ MARKETPLACE_FLOW_ID }
 						onDomainSelect={ onDomainSelect }
 						currentDomain={ selectedDomain }
-						hideRecommendationLabel
+						showRecommendationLabel={ false }
 						onUseYourDomainClick={ redirectToUseDomainFlow }
 					/>
 				</div>
