@@ -246,7 +246,6 @@ class SinglePlugin extends React.Component {
 						isPlaceholder
 						isInstalledOnSite={ this.isPluginInstalledOnsite() }
 						plugin={ this.getPlugin() }
-						pluginSlug={ this.props.pluginSlug }
 						siteUrl={ this.props.siteUrl }
 						sites={ sitesWithPlugin }
 						selectedSite={ selectedSite }
@@ -291,7 +290,6 @@ class SinglePlugin extends React.Component {
 					{ this.displayHeader( calypsoify ) }
 					<PluginMeta
 						plugin={ plugin }
-						pluginSlug={ this.props.pluginSlug }
 						siteUrl={ this.props.siteUrl }
 						sites={ sitesWithPlugin }
 						selectedSite={ selectedSite }
