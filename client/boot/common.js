@@ -15,7 +15,6 @@ import accessibleFocus from '@automattic/accessible-focus';
  */
 import { setupLocale } from './locale';
 import config from '@automattic/calypso-config';
-import { desktop, foo } from 'calypso/lib/desktop';
 import { ProviderWrappedLayout } from 'calypso/controller';
 import { getToken } from 'calypso/lib/oauth-token';
 import emailVerification from 'calypso/components/email-verification';
@@ -56,6 +55,7 @@ import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions'
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { inJetpackCloudOAuthOverride } from 'calypso/lib/jetpack/oauth-override';
 import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
+import DesktopListeners from 'calypso/lib/desktop-listeners';
 
 const debug = debugFactory( 'calypso' );
 
@@ -377,8 +377,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	}
 
 	if ( window.electron ) {
-		foo();
-		desktop.init( reduxStore );
+		DesktopListeners.init( reduxStore );
 	}
 
 	// temp: test -- will revert
