@@ -207,7 +207,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 			return;
 		}
 		const openSidebarLocator = By.css( '.layout.focus-sidebar .sidebar' );
-		const isOpen = await driverHelper.isElementPresent( this.driver, openSidebarLocator );
+		const isOpen = await driverHelper.isLocated( this.driver, openSidebarLocator );
 
 		if ( ! isOpen ) {
 			const mySitesButtonLocator = By.css( 'a[data-tip-target="my-sites"]' );
