@@ -67,6 +67,7 @@ const SharingServicesGroup = ( { isFetching, services, title, expandedService } 
 			<ul className="sharing-services-group__services">
 				{ services.length
 					? services.map( ( service ) => {
+							// eslint-disable-next-line import/namespace
 							const Component = Components[ service.ID.replace( /-/g, '_' ) ] || Service;
 
 							if ( service.warnings ) {
