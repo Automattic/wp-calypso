@@ -1,5 +1,5 @@
-module.exports = async (page, scenario, vp) => {
-	if( vp.label === "phone" ) {
+module.exports = async ( page, scenario, vp ) => {
+	if ( vp.label === 'phone' ) {
 		await page.click( 'a.masterbar__item[data-tip-target="my-sites"]' );
 		await page.waitForSelector( 'div.focus-sidebar' );
 	}

@@ -1,14 +1,13 @@
-module.exports = async ( page, scenario, vp ) => {
-	//const elementHandle = await page.$('iframe.is-loaded');
-	//const frame = await elementHandle.contentFrame();
-
+module.exports = async ( page, scenario ) => {
 	await page.goto( 'https://wordpress.com/page/e2evisualregressions.wordpress.com' );
 	await page.waitForSelector( 'iframe.is-loaded' );
-	const editorURL = await page.evaluate( 'document.querySelector("iframe.is-loaded").getAttribute("src")' );
+	const editorURL = await page.evaluate(
+		'document.querySelector("iframe.is-loaded").getAttribute("src")'
+	);
 	await page.goto( editorURL );
 	await page.waitForSelector( '.components-modal__screen-overlay' );
 
-	switch(scenario.label) {
+	switch ( scenario.label ) {
 		case 'about':
 			await page.click( 'button[data-slug="about"]' );
 			break;
@@ -66,6 +65,6 @@ module.exports = async ( page, scenario, vp ) => {
 	}
 
 	await page.waitForTimeout( 1000 );
-	await page.click( `button[value="${scenario.label}"]` );
+	await page.click( `button[value="${ scenario.label }"]` );
 	await page.waitForTimeout( 10000 );
 };
