@@ -28,6 +28,7 @@ import {
  * Internal dependencies
  */
 import { CheckoutThankYou } from '../index';
+import { isRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
 
 jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
@@ -57,8 +58,6 @@ jest.mock( 'calypso/lib/rebrand-cities', () => ( {
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'calypso/lib/user', () => () => {} );
-
-import RebrandCities from 'calypso/lib/rebrand-cities';
 
 const translate = ( x ) => x;
 
@@ -142,12 +141,12 @@ describe( 'CheckoutThankYou', () => {
 
 	describe( 'Presence of <RebrandCitiesThankYou /> in render() output', () => {
 		afterAll( () => {
-			RebrandCities.isRebrandCitiesSiteUrl.mockImplementation( () => false );
+			isRebrandCitiesSiteUrl.mockImplementation( () => false );
 		} );
 
 		[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( ( product_slug ) => {
 			test( 'Should be there for a business plan', () => {
-				RebrandCities.isRebrandCitiesSiteUrl.mockImplementation( () => true );
+				isRebrandCitiesSiteUrl.mockImplementation( () => true );
 				const props = {
 					...defaultProps,
 					selectedSite: {
@@ -163,7 +162,7 @@ describe( 'CheckoutThankYou', () => {
 
 		[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( ( product_slug ) => {
 			test( 'Should not be there for a business plan if isRebrandCitiesSiteUrl is false', () => {
-				RebrandCities.isRebrandCitiesSiteUrl.mockImplementation( () => false );
+				isRebrandCitiesSiteUrl.mockImplementation( () => false );
 				const props = {
 					...defaultProps,
 					selectedSite: {
@@ -192,7 +191,7 @@ describe( 'CheckoutThankYou', () => {
 			PLAN_JETPACK_BUSINESS_MONTHLY,
 		].forEach( ( product_slug ) => {
 			test( 'Should not be there for any no-business plan', () => {
-				RebrandCities.isRebrandCitiesSiteUrl.mockImplementation( () => true );
+				isRebrandCitiesSiteUrl.mockImplementation( () => true );
 				const props = {
 					...defaultProps,
 					selectedSite: {

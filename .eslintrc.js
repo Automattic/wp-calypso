@@ -159,6 +159,7 @@ module.exports = {
 					'import/no-extraneous-dependencies': 'off',
 					'import/named': 'off',
 					'import/namespace': 'off',
+					'import/default': 'off',
 				},
 			}
 		),
@@ -382,6 +383,7 @@ module.exports = {
 		'import/no-extraneous-dependencies': 'error',
 		'import/named': 'error',
 		'import/namespace': 'error',
+		'import/default': 'error',
 
 		'wpcalypso/no-unsafe-wp-apis': [
 			'error',
