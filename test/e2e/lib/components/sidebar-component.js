@@ -203,28 +203,17 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async ensureSidebarMenuVisible() {
-		const allSitesSelector = By.css( '.current-section button' );
-		const sidebarSelector = By.css( '.sidebar .sidebar__region' );
-		const sidebar = await this.driver.findElement( sidebarSelector );
-		const sidebarRect = await sidebar.getRect();
-		const sidebarVisible = sidebar.isDisplayed() && sidebarRect.x >= -100;
-
-		if ( ! sidebarVisible ) {
-			try {
-				await driverHelper.clickWhenClickable(
-					this.driver,
-					allSitesSelector,
-					this.explicitWaitMS / 4
-				);
-			} catch ( e ) {
-				console.log( 'All sites button did not click' );
-				await driverHelper.clickWhenClickable(
-					this.driver,
-					By.css( 'a[data-tip-target="my-sites"]' )
-				);
-			}
+		if ( this.screenSize === 'desktop' ) {
+			return;
 		}
-		return await driverHelper.waitUntilLocatedAndVisible( this.driver, sidebarSelector );
+		const openSidebarLocator = By.css( '.layout.focus-sidebar .sidebar' );
+		const isOpen = await driverHelper.isElementPresent( this.driver, openSidebarLocator );
+
+		if ( ! isOpen ) {
+			const mySitesButtonLocator = By.css( 'a[data-tip-target="my-sites"]' );
+			await driverHelper.clickWhenClickable( this.driver, mySitesButtonLocator );
+			await driverHelper.waitUntilElementStopsMoving( this.driver, openSidebarLocator );
+		}
 	}
 
 	async selectSiteSwitcher() {

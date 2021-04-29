@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { identity, map } from 'lodash';
+import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -19,10 +19,6 @@ export class ReaderSidebarListsList extends React.Component {
 		currentListOwner: PropTypes.string,
 		currentListSlug: PropTypes.string,
 		translate: PropTypes.func,
-	};
-
-	static defaultProps = {
-		translate: identity,
 	};
 
 	renderItems() {

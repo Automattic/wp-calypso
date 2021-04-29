@@ -145,7 +145,6 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       getFieldProps={[Function]}
       hasCountryStates={false}
       shouldAutoFocusAddressField={false}
-      translate={[Function]}
     />
   </div>
   <div>

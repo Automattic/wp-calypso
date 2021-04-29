@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { identity, isEqual, find, some, get } from 'lodash';
+import { isEqual, find, some, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -96,7 +96,6 @@ export class SharingService extends Component {
 		removableConnections: [],
 		siteId: 0,
 		siteUserConnections: [],
-		translate: identity,
 		updateSiteConnection: () => {},
 		warningNotice: () => {},
 	};

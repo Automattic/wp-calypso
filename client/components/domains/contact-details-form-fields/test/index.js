@@ -53,6 +53,7 @@ describe( 'ContactDetailsFormFields', () => {
 			},
 		],
 		onSubmit: noop,
+		translate: ( string ) => string,
 	};
 
 	describe( 'default fields', () => {

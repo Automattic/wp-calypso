@@ -6,7 +6,6 @@ jest.mock( 'calypso/my-sites/plan-features', () => 'plan-features' );
  */
 import { shallow } from 'enzyme';
 import React from 'react';
-import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -43,7 +42,7 @@ const props = {
 	submitSignupStep: noop,
 	goToNextStep: noop,
 	recordTracksEvent: noop,
-	translate: identity,
+	translate: ( string ) => string,
 };
 
 describe( 'Plans basic tests', () => {

@@ -1,11 +1,9 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -136,7 +134,6 @@ SharingServiceAction.defaultProps = {
 	onAction: () => {},
 	removableConnections: [],
 	status: 'unknown',
-	translate: identity,
 };
 
 export default connect(

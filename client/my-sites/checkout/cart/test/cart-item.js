@@ -6,7 +6,6 @@
  * External dependencies
  */
 import { shallow } from 'enzyme';
-import { identity } from 'lodash';
 import React from 'react';
 
 /**
@@ -56,7 +55,7 @@ const cartItem = {
 	product_slug: 'plan_value_bundle',
 };
 
-const translate = jest.fn( identity );
+const translate = jest.fn( ( string ) => string );
 const props = {
 	cartItem,
 	translate,
@@ -72,7 +71,7 @@ describe( 'cart-item', () => {
 		let myTranslate;
 		let instance;
 		beforeEach( () => {
-			myTranslate = jest.fn( identity );
+			myTranslate = jest.fn( ( string ) => string );
 			instance = new CartItem( {
 				translate: myTranslate,
 				cartItem: {

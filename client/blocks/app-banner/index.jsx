@@ -7,7 +7,7 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { get, identity, includes } from 'lodash';
+import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -73,7 +73,6 @@ export class AppBanner extends Component {
 
 	static defaultProps = {
 		saveDismissTime: noop,
-		translate: identity,
 		recordAppBannerOpen: noop,
 		userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : '',
 	};

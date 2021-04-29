@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { identity, includes } from 'lodash';
+import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 
 /**
@@ -48,7 +48,6 @@ export class MediaLibraryFilterBar extends Component {
 		onFilterChange: noop,
 		onSourceChange: noop,
 		onSearch: noop,
-		translate: identity,
 		source: '',
 		post: false,
 		isConnected: true,
