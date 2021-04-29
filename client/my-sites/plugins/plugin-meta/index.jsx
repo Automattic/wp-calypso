@@ -305,6 +305,7 @@ export class PluginMeta extends Component {
 				<WpcomPluginInstallButton
 					disabled={ this.isWpcomInstallDisabled() }
 					plugin={ this.props.plugin }
+					isTransferring={ this.props.isTransferring }
 				/>
 			);
 		}
