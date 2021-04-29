@@ -8,7 +8,7 @@ import {
 	PREVIEW_IS_SHOWING,
 	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'calypso/state/action-types';
-import { combineReducers, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import actionLog from './action-log/reducer';
 import checkout from './checkout/reducer';
 import language from './language/reducer';
@@ -26,23 +26,29 @@ import section from './section/reducer';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function selectedSiteId( state = null, action ) {
-	switch ( action.type ) {
-		case SELECTED_SITE_SET:
-			return action.siteId || null;
+export const selectedSiteId = withSchemaValidation(
+	{ type: [ 'number', 'null' ] },
+	( state = null, action ) => {
+		switch ( action.type ) {
+			case SELECTED_SITE_SET:
+				return action.siteId || null;
+		}
+
+		return state;
 	}
+);
 
-	return state;
-}
+export const siteSelectionInitialized = withSchemaValidation(
+	{ type: 'boolean' },
+	( state = false, action ) => {
+		switch ( action.type ) {
+			case SELECTED_SITE_SET:
+				return true;
+		}
 
-export const siteSelectionInitialized = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
-		case SELECTED_SITE_SET:
-			return true;
+		return state;
 	}
-
-	return state;
-} );
+);
 
 export function isSectionLoading( state = false, action ) {
 	switch ( action.type ) {
@@ -52,7 +58,7 @@ export function isSectionLoading( state = false, action ) {
 	return state;
 }
 
-export const isPreviewShowing = withoutPersistence( ( state = false, action ) => {
+export function isPreviewShowing( state = false, action ) {
 	switch ( action.type ) {
 		case PREVIEW_IS_SHOWING: {
 			const { isShowing } = action;
@@ -61,7 +67,7 @@ export const isPreviewShowing = withoutPersistence( ( state = false, action ) =>
 	}
 
 	return state;
-} );
+}
 
 /**
  * Tracks if the notifications panel is open
@@ -71,12 +77,12 @@ export const isPreviewShowing = withoutPersistence( ( state = false, action ) =>
  * @param   {string} action.type The action type identifier. In this case it's looking for NOTIFICATIONS_PANEL_TOGGLE
  * @returns {object}             Updated state
  */
-export const isNotificationsOpen = function ( state = false, { type } ) {
+export function isNotificationsOpen( state = false, { type } ) {
 	if ( type === NOTIFICATIONS_PANEL_TOGGLE ) {
 		return ! state;
 	}
 	return state;
-};
+}
 
 const reducer = combineReducers( {
 	actionLog,
