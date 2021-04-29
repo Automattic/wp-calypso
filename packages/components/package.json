@@ -29,7 +29,7 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
-		"@babel/runtime": "^7.13.10",
+		"@babel/runtime": "^7.14.0",
 		"classnames": "^2.2.6",
 		"gridicons": "^3.3.1",
 		"lodash": "^4.17.21",
