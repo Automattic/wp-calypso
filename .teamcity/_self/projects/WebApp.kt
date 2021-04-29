@@ -413,11 +413,6 @@ object BuildDockerImage : BuildType({
 				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
 			}
 		}
-		vcsLabeling {
-			vcsRootId = "${Settings.WpCalypso.id}"
-			labelingPattern = "calypso-%build.number%"
-			successfulOnly = true
-		}
 	}
 })
 
