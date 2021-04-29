@@ -898,14 +898,20 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 					}
 				);
 
-				step( 'Can see correct post title', async function () {
-					const viewPostPage = await ViewPostPage.Expect( driver );
-					const postTitle = await viewPostPage.postTitle();
-					return assert.strictEqual(
-						postTitle.toLowerCase(),
-						updatedBlogPostTitle.toLowerCase(),
-						'The published blog post title is not correct'
-					);
+				describe( 'Can view the post with the new title', function () {
+					step( 'Can view the post', async function () {
+						return await ViewPostPage.Expect( driver );
+					} );
+
+					step( 'Can see correct post title', async function () {
+						const viewPostPage = await ViewPostPage.Expect( driver );
+						const postTitle = await viewPostPage.postTitle();
+						return assert.strictEqual(
+							postTitle.toLowerCase(),
+							updatedBlogPostTitle.toLowerCase(),
+							'The published blog post title is not correct'
+						);
+					} );
 				} );
 			} );
 		} );

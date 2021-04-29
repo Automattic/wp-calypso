@@ -28,10 +28,10 @@ describe( 'Stats: (' + screenSize + ') @parallel', function () {
 		driver = await driverManager.startBrowser();
 	} );
 
-	describe( 'Can navigate to the stats insights page', function () {
-		step( 'Can log in', async function () {
-			const loginFlow = new LoginFlow( driver );
-			await loginFlow.login();
+	describe( 'Log in as user', function () {
+		step( 'Can log in as user', async function () {
+			this.loginFlow = new LoginFlow( driver );
+			return await this.loginFlow.login();
 		} );
 
 		step( 'Can open the sidebar', async function () {
@@ -39,11 +39,18 @@ describe( 'Stats: (' + screenSize + ') @parallel', function () {
 			await navBarComponent.clickMySites();
 		} );
 
-		step( 'Can open the stats insights page', async function () {
-			const sidebarComponent = await SidebarComponent.Expect( driver );
-			await sidebarComponent.selectStats();
-			const statsPage = await StatsPage.Expect( driver );
-			await statsPage.openInsights();
+		describe( 'Can navigate to the stats insights page', function () {
+			let statsPage;
+
+			step( 'Can open the stats page', async function () {
+				const sidebarComponent = await SidebarComponent.Expect( driver );
+				await sidebarComponent.selectStats();
+				statsPage = await StatsPage.Expect( driver );
+			} );
+
+			step( 'Can open the stats insights page', async function () {
+				await statsPage.openInsights();
+			} );
 		} );
 	} );
 } );
