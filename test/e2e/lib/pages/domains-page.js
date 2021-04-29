@@ -26,6 +26,6 @@ export default class DomainsPage extends AsyncBaseContainer {
 
 	async popOverMenuDisplayed() {
 		const popOverMenuSelector = By.css( '.popover__menu' );
-		return await driverHelper.isEventuallyLocatedAndVisible( this.driver, popOverMenuSelector );
+		return await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, popOverMenuSelector );
 	}
 }

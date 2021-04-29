@@ -47,13 +47,13 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 		let selector = By.css( planSelector );
 
 		if ( level === 'free' ) {
-			if ( ! ( await driverHelper.isLocated( this.driver, selector ) ) ) {
+			if ( ! ( await driverHelper.isElementLocated( this.driver, selector ) ) ) {
 				selector = By.css(
 					'.plans-features-main__banner-content button, .formatted-header__subtitle button'
 				);
 			}
 		}
-		await driverHelper.waitUntilLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css(
 				'.plan-features__mobile button.is-business-plan, .plan-features-comparison__table button.is-business-plan, .plan-features__table button.is-business-plan'
@@ -63,7 +63,7 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 
 		await driverHelper.clickWhenClickable( this.driver, selector );
 		try {
-			await driverHelper.waitUntilNotLocated( this.driver, selector );
+			await driverHelper.waitUntilElementNotLocated( this.driver, selector );
 		} catch {
 			//If the first click doesn't take, try again
 			await driverHelper.clickWhenClickable( this.driver, selector );

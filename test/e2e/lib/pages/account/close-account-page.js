@@ -28,7 +28,7 @@ export default class CloseAccountPage extends AsyncBaseContainer {
 		// We can safely attempt to click the button until the confirmation dialog pop-up window is present.
 		for ( let i = 0; i < explicitWaitMS / pauseBetweenClickAttemptsMS; i++ ) {
 			await driverHelper.clickWhenClickable( this.driver, buttonSelector );
-			if ( await driverHelper.isLocated( this.driver, confirmDialogSelector ) ) {
+			if ( await driverHelper.isElementLocated( this.driver, confirmDialogSelector ) ) {
 				await driverHelper.clickWhenClickable( this.driver, confirmButtonSelector );
 				return true;
 			}
@@ -43,7 +43,7 @@ export default class CloseAccountPage extends AsyncBaseContainer {
 			by.css( '.account-close__confirm-dialog-confirm-input' ),
 			accountName
 		);
-		await driverHelper.waitUntilNotLocated(
+		await driverHelper.waitUntilElementNotLocated(
 			this.driver,
 			by.css( '.dialog button.is-scary[disabled]' )
 		);

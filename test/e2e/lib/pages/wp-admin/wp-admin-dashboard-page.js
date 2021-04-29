@@ -26,7 +26,7 @@ export default class WPAdminDashboardPage extends AsyncBaseContainer {
 	async isJITMessageDisplayed( type ) {
 		const jitmActionSelector = By.css( `.jitm-banner__action a[data-module="${ type }"]` );
 
-		return await driverHelper.isEventuallyLocatedAndVisible(
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			jitmActionSelector,
 			1000

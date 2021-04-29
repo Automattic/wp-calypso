@@ -26,11 +26,11 @@ export default class GoogleSearchPage extends AsyncBaseContainer {
 		this.adLinkselector = by.xpath(
 			'//li[@class="ads-ad"]//a[contains(@href, "' + referenceUrl + '")]'
 		);
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, this.adLinkselector );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.adLinkselector );
 	}
 
 	async adExists() {
-		return await driverHelper.isEventuallyLocatedAndVisible( this.driver, this.adLinkselector );
+		return await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, this.adLinkselector );
 	}
 
 	async getAdUrl() {

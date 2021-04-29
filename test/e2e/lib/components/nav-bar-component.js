@@ -30,7 +30,7 @@ export default class NavBarComponent extends AsyncBaseContainer {
 		const popoverSelector = by.css( '.components-popover__content' );
 		const dismissPopoverSelector = by.css( '.nux-dot-tip__disable' );
 
-		if ( await driverHelper.isLocated( this.driver, popoverSelector ) ) {
+		if ( await driverHelper.isElementLocated( this.driver, popoverSelector ) ) {
 			await driverHelper.clickWhenClickable( dismissPopoverSelector );
 		}
 	}
@@ -60,7 +60,7 @@ export default class NavBarComponent extends AsyncBaseContainer {
 		await driver.sleep( 400 ); // Wait for menu animation to complete
 	}
 	async openNotificationsShortcut() {
-		await driverHelper.waitUntilLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			by.css( '.masterbar__notifications' )
 		);
@@ -68,7 +68,7 @@ export default class NavBarComponent extends AsyncBaseContainer {
 	}
 	async confirmNotificationsOpen() {
 		const selector = by.css( '.wpnt-open' );
-		return await driverHelper.isEventuallyLocatedAndVisible( this.driver, selector );
+		return await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, selector );
 	}
 	async dismissGuidedTours() {
 		const self = this;
@@ -76,7 +76,7 @@ export default class NavBarComponent extends AsyncBaseContainer {
 		const guidedToursDismissButtonSelector = by.css(
 			'div.guided-tours__step-first button:not(.is-primary)'
 		);
-		const present = await driverHelper.isLocated( self.driver, guidedToursDialogSelector );
+		const present = await driverHelper.isElementLocated( self.driver, guidedToursDialogSelector );
 		if ( present === true ) {
 			return await driverHelper.clickWhenClickable( self.driver, guidedToursDismissButtonSelector );
 		}

@@ -44,7 +44,7 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async waitUntilThemesLoaded() {
-		return await driverHelper.waitUntilNotLocated(
+		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
 			by.css( '.themes-list .is-placeholder' )
 		);
@@ -52,7 +52,7 @@ export default class ThemesPage extends AsyncBaseContainer {
 
 	async waitForThemeStartingWith( phrase ) {
 		const selector = ThemesPage._getThemeSelectionXpath( phrase );
-		return await driverHelper.waitUntilLocatedAndVisible( this.driver, selector );
+		return await driverHelper.waitUntilElementLocatedAndVisible( this.driver, selector );
 	}
 
 	async clickNewThemeMoreButton() {
@@ -64,13 +64,13 @@ export default class ThemesPage extends AsyncBaseContainer {
 
 	async getFirstThemeName() {
 		const selector = by.css( '.theme-showcase__all-themes .is-actionable:not(.is-active) h2' );
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, selector );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, selector );
 		return await this.driver.findElement( selector ).getText();
 	}
 
 	async getActiveThemeName() {
 		const selector = by.css( '.is-actionable.is-active h2' );
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, selector );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, selector );
 		return await this.driver.findElement( selector ).getText();
 	}
 
@@ -90,7 +90,7 @@ export default class ThemesPage extends AsyncBaseContainer {
 
 	async popOverMenuDisplayed() {
 		const popOverMenuSelector = by.css( '.popover__menu' );
-		return await driverHelper.isEventuallyLocatedAndVisible( this.driver, popOverMenuSelector );
+		return await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, popOverMenuSelector );
 	}
 
 	static _getThemeSelectionXpath( phrase ) {

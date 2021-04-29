@@ -17,7 +17,7 @@ export default class GuideComponent extends AsyncBaseContainer {
 
 	async dismiss( waitOverride, selector = '.components-guide' ) {
 		if (
-			await driverHelper.isEventuallyLocatedAndVisible(
+			await driverHelper.isElementEventuallyLocatedAndVisible(
 				this.driver,
 				By.css( '.components-guide__container' ),
 				waitOverride

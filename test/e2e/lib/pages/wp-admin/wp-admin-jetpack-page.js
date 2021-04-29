@@ -17,7 +17,7 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 
 	async connectWordPressCom() {
 		const selector = By.css( ".jp-connect-full__button-container a[href*='register']" );
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, selector );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, selector );
 		await this.driver.sleep( 1000 );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}
@@ -27,13 +27,13 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 		const spinnerSelector = By.css(
 			'.jp-connect-full__button-container:not([style="display: none;"]) .jp-spinner'
 		);
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, selector );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, selector );
 		await this.driver.sleep( 1000 );
 		await driverHelper.clickWhenClickable( this.driver, selector );
 
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, spinnerSelector );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, spinnerSelector );
 
-		return await driverHelper.waitUntilNotLocated(
+		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
 			spinnerSelector,
 			this.explicitWaitMS * 3
@@ -41,7 +41,7 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 	}
 
 	async atAGlanceDisplayed() {
-		return await driverHelper.isLocated( this.driver, By.css( '.jp-at-a-glance' ) );
+		return await driverHelper.isElementLocated( this.driver, By.css( '.jp-at-a-glance' ) );
 	}
 
 	async openPlansTab() {
@@ -51,7 +51,7 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 
 	async clickUpgradeNudge() {
 		const selector = By.css( '.dops-banner a[href*="aag-search"]' );
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, selector );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, selector );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}
 
@@ -64,7 +64,7 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable( this.driver, manageConnectionButton );
 		await driverHelper.clickWhenClickable( this.driver, disconnectButton );
 
-		return await driverHelper.waitUntilLocatedAndVisible(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			successDisconnectNotice,
 			this.explicitWaitMS * 2

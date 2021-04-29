@@ -17,11 +17,11 @@ export default class ViewBlogPage extends AsyncBaseContainer {
 	}
 
 	async waitForTrampolineWelcomeMessage() {
-		return await driverHelper.waitUntilLocatedAndVisible( this.driver, this.trampolineSelector );
+		return await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.trampolineSelector );
 	}
 
 	async isTrampolineWelcomeDisplayed() {
-		return await driverHelper.isEventuallyLocatedAndVisible(
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			this.trampolineSelector
 		);

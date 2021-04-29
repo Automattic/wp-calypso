@@ -19,7 +19,7 @@ export default class SignupProcessingPage extends AsyncBaseContainer {
 
 	async waitForPage() {
 		try {
-			await driverHelper.isEventuallyLocatedAndVisible(
+			await driverHelper.isElementEventuallyLocatedAndVisible(
 				this.driver,
 				this.expectedElementSelector,
 				this.explicitWaitMS
@@ -32,7 +32,7 @@ export default class SignupProcessingPage extends AsyncBaseContainer {
 	async waitToDisappear( username, password ) {
 		const signupProcessingTimeout = this.explicitWaitMS * 7.5; // Wait 150s for signup processing
 		try {
-			await driverHelper.waitUntilNotLocated(
+			await driverHelper.waitUntilElementNotLocated(
 				this.driver,
 				this.expectedElementSelector,
 				signupProcessingTimeout

@@ -63,7 +63,7 @@ export default class PeoplePage extends AsyncBaseContainer {
 	async viewerDisplayed( username ) {
 		let retries = 0;
 		if (
-			await DriverHelper.isLocated( this.driver, By.css( '.section-header__label .count' ) )
+			await DriverHelper.isElementLocated( this.driver, By.css( '.section-header__label .count' ) )
 		) {
 			const noOfViewers = parseInt(
 				await this.driver.findElement( By.css( '.section-header__label .count' ) ).getText()
@@ -73,7 +73,7 @@ export default class PeoplePage extends AsyncBaseContainer {
 
 		let displayed;
 		for ( let i = 0; i <= retries; i++ ) {
-			displayed = await DriverHelper.isEventuallyLocatedAndVisible(
+			displayed = await DriverHelper.isElementEventuallyLocatedAndVisible(
 				this.driver,
 				By.css( `.people-profile__login[data-e2e-login="${ username }"]` ),
 				500
@@ -111,11 +111,11 @@ export default class PeoplePage extends AsyncBaseContainer {
 		if ( classNames.includes( 'is-open' ) === false ) {
 			await DriverHelper.clickWhenClickable( this.driver, this.searchButtonSelector );
 		}
-		return await DriverHelper.waitUntilLocatedAndVisible( this.driver, this.searchInputSelector );
+		return await DriverHelper.waitUntilElementLocatedAndVisible( this.driver, this.searchInputSelector );
 	}
 
 	async waitForSearchResults() {
-		return await DriverHelper.waitUntilNotLocated( this.driver, this.searchResultsLoadingSelector );
+		return await DriverHelper.waitUntilElementNotLocated( this.driver, this.searchResultsLoadingSelector );
 	}
 
 	async numberSearchResults() {
@@ -138,12 +138,12 @@ export default class PeoplePage extends AsyncBaseContainer {
 		const driver = this.driver;
 		return await driver.wait( async () => {
 			driver.navigate().refresh();
-			await DriverHelper.waitUntilLocatedAndVisible(
+			await DriverHelper.waitUntilElementLocatedAndVisible(
 				this.driver,
 				By.css( `.people-invites__pending .people-profile__username[title="${ emailAddress }"]` )
 			);
 
-			return await DriverHelper.isLocated(
+			return await DriverHelper.isElementLocated(
 				driver,
 				By.css( `.people-invites__pending .people-profile__username[title="${ emailAddress }"]` )
 			);

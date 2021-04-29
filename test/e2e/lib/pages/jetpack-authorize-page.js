@@ -31,12 +31,12 @@ export default class JetpackAuthorizePage extends AsyncBaseContainer {
 	async approveSSOConnection() {
 		const SSOAprroveSelector = by.css( '.jetpack-connect__sso-actions button' );
 		const loadingSelector = by.css( '.site.is-loading' );
-		await driverHelper.waitUntilNotLocated( this.driver, loadingSelector );
+		await driverHelper.waitUntilElementNotLocated( this.driver, loadingSelector );
 		return await driverHelper.clickWhenClickable( this.driver, SSOAprroveSelector );
 	}
 
 	async waitToDisappear() {
-		return await driverHelper.waitUntilNotLocated(
+		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
 			by.css( '.jetpack-connect__logged-in-form-loading' ),
 			this.explicitWaitMS * 2

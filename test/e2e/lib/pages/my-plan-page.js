@@ -23,7 +23,7 @@ export default class MyPlanPage extends AsyncBaseContainer {
 	}
 
 	async isSecurityPlan() {
-		return await driverHelper.isEventuallyLocatedAndVisible(
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( '[data-e2e-product-slug="jetpack_security_daily"]' )
 		);

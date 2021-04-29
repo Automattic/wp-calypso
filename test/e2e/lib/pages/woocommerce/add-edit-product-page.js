@@ -95,7 +95,7 @@ export default class AddEditProductPage extends AsyncBaseContainer {
 
 	async deleteProduct() {
 		const menuSelector = by.css( 'button.split-button__toggle' );
-		if ( await driverHelper.isLocated( this.driver, menuSelector ) ) {
+		if ( await driverHelper.isElementLocated( this.driver, menuSelector ) ) {
 			// open the menu on mobile screens
 			await driverHelper.clickWhenClickable( this.driver, menuSelector );
 			await driverHelper.clickWhenClickable(

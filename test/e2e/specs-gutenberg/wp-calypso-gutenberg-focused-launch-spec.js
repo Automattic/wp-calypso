@@ -56,7 +56,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			await driverHelper.clickWhenClickable( driver, launchButtonSelector );
 
 			const focusedLaunchModalSelector = By.css( '.launch__focused-modal' );
-			const isFocusedLaunchModalPresent = await driverHelper.isLocated(
+			const isFocusedLaunchModalPresent = await driverHelper.isElementLocated(
 				driver,
 				focusedLaunchModalSelector
 			);
@@ -72,7 +72,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			// Site title is not set during `/start` flow, site title can be set during `/new` flow.
 			// If the site title input is not rendered, skip this step.
 			// Note: This is currently parked here but unused as we are using the `/start` flow.
-			const isSiteTitleInputPresent = await driverHelper.isLocated(
+			const isSiteTitleInputPresent = await driverHelper.isElementLocated(
 				driver,
 				siteTitleInputSelector
 			);
@@ -96,7 +96,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			const firstDomainSuggestionItemSelector = By.css(
 				'.domain-picker__suggestion-item:first-child'
 			);
-			await driverHelper.waitUntilLocatedAndVisible( driver, firstDomainSuggestionItemSelector );
+			await driverHelper.waitUntilElementLocatedAndVisible( driver, firstDomainSuggestionItemSelector );
 
 			// Remove the spaces and make everything lowercase to match with the suggested domains, e.g.
 			// "Proud Elephants Wriggle Honestly" becomes "proudelephantswrigglehonestly"
@@ -109,7 +109,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 				normalizedSiteTitle
 			);
 
-			const domainSuggestionsContainUserEnteredSiteTitle = await driverHelper.isLocated(
+			const domainSuggestionsContainUserEnteredSiteTitle = await driverHelper.isElementLocated(
 				driver,
 				domainSuggestionsContainUserEnteredSiteTitleSelector
 			);
@@ -131,7 +131,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 				'.domain-picker__suggestion-item.is-free.is-selected'
 			);
 
-			const isSelectedFreeDomainSuggestionItemPresent = await driverHelper.isLocated(
+			const isSelectedFreeDomainSuggestionItemPresent = await driverHelper.isElementLocated(
 				driver,
 				selectedFreeDomainSuggestionItemSelector
 			);
@@ -168,7 +168,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			// Check if detailed plans grid is displayed
 			const plansGridInDetailedViewSelector = By.css( '.focused-launch-details__body .plans-grid' );
 
-			const isPlansGridInDetailedViewPresent = await driverHelper.isLocated(
+			const isPlansGridInDetailedViewPresent = await driverHelper.isElementLocated(
 				driver,
 				plansGridInDetailedViewSelector
 			);
@@ -197,7 +197,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 				'per month, billed monthly'
 			);
 
-			const isPerMonthBilledMonthlyPricePresent = await driverHelper.isLocated(
+			const isPerMonthBilledMonthlyPricePresent = await driverHelper.isElementLocated(
 				driver,
 				perMonthBilledMonthlyPriceNoteSelector
 			);
@@ -226,7 +226,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 				/Personal Plan/
 			);
 
-			const selectedPlanIsPersonalMonthlyPlan = await driverHelper.isLocated(
+			const selectedPlanIsPersonalMonthlyPlan = await driverHelper.isElementLocated(
 				driver,
 				selectedPlanIsPersonalMonthlyPlanSelector
 			);
@@ -262,7 +262,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 
 			// See if focused launch modal can be reopened
 			const focusedLaunchModalSelector = By.css( '.launch__focused-modal' );
-			const isFocusedLaunchModalPresent = await driverHelper.isLocated(
+			const isFocusedLaunchModalPresent = await driverHelper.isElementLocated(
 				driver,
 				focusedLaunchModalSelector
 			);
@@ -277,7 +277,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 				new RegExp( selectedSubdomain )
 			);
 
-			const selectedDomainSuggestionIsPreviouslySelectedSubdomain = await driverHelper.isLocated(
+			const selectedDomainSuggestionIsPreviouslySelectedSubdomain = await driverHelper.isElementLocated(
 				driver,
 				selectedDomainSuggestionContainingPreviouslySelectedSubdomainSelector
 			);
@@ -296,7 +296,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 				/Personal Plan/
 			);
 
-			const selectedPlanIsPersonalMonthlyPlan = await driverHelper.isLocated(
+			const selectedPlanIsPersonalMonthlyPlan = await driverHelper.isElementLocated(
 				driver,
 				selectedPlanIsPersonalMonthlyPlanSelector
 			);
@@ -325,7 +325,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 				/Free Plan/
 			);
 
-			const selectedPlanIsFreePlan = await driverHelper.isLocated(
+			const selectedPlanIsFreePlan = await driverHelper.isElementLocated(
 				driver,
 				selectedPlanIsFreePlanSelector
 			);
@@ -341,7 +341,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			// Wait for the focused launch success view to show up
 			const focusedLaunchSuccessViewSelector = By.css( '.focused-launch-success__wrapper' );
 
-			const isFocusedLaunchSuccessViewPresent = await driverHelper.isLocated(
+			const isFocusedLaunchSuccessViewPresent = await driverHelper.isElementLocated(
 				driver,
 				focusedLaunchSuccessViewSelector
 			);

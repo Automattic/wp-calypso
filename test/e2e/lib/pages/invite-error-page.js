@@ -16,6 +16,6 @@ export default class InviteErrorPage extends AsyncBaseContainer {
 	}
 
 	inviteErrorTitleDisplayed() {
-		return DriverHelper.isLocated( this.driver, By.css( '.empty-content__title' ) );
+		return DriverHelper.isElementLocated( this.driver, By.css( '.empty-content__title' ) );
 	}
 }

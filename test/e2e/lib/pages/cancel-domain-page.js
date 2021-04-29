@@ -40,7 +40,7 @@ export default class CancelDomainPage extends AsyncBaseContainer {
 	}
 
 	async waitToDisappear() {
-		return await driverHelper.waitUntilNotLocated(
+		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
 			this.confirmButtonSelector,
 			this.explicitWaitMS * 3

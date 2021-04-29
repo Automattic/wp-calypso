@@ -17,7 +17,7 @@ export default class StoreProductsPage extends AsyncBaseContainer {
 	}
 
 	async atLeastOneProductDisplayed() {
-		return await driverHelper.isEventuallyLocatedAndVisible(
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			by.css( '.products__list-wrapper tr.has-action' )
 		);

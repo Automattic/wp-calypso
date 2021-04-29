@@ -99,21 +99,21 @@ export async function clickWhenClickable( driver, locator, timeout = explicitWai
  * @returns {Promise<boolean>} A promise that will be resolved with whether the
  * element is located or not
  */
-export async function isLocated( driver, locator ) {
+export async function isElementLocated( driver, locator ) {
 	const elements = await driver.findElements( locator );
 	return elements.length > 0;
 }
 
 /**
- * An opposite to the isLocated helper.
+ * An opposite to the isElementLocated helper.
  *
  * @param {WebDriver} driver The parent WebDriver instance
  * @param {By} locator The element's locator
  * @returns {Promise<boolean>} A promise that will be resolved with true if the
  * element is not in DOM
  */
-export async function isNotLocated( driver, locator ) {
-	return ! ( await isLocated( driver, locator ) );
+export async function isElementNotLocated( driver, locator ) {
+	return ! ( await isElementLocated( driver, locator ) );
 }
 
 /**
@@ -126,7 +126,7 @@ export async function isNotLocated( driver, locator ) {
  * @returns {Promise<WebElement>} A promise that will be resolved with
  * the located element
  */
-export function waitUntilLocatedAndVisible( driver, locator, timeout = explicitWaitMS ) {
+export function waitUntilElementLocatedAndVisible( driver, locator, timeout = explicitWaitMS ) {
 	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
 
 	return driver.wait(
@@ -156,7 +156,7 @@ export function waitUntilLocatedAndVisible( driver, locator, timeout = explicitW
  * @returns {Promise<WebElement>} A promise that will be resolved with
  * the located element
  */
-export function waitUntilLocated( driver, locator, timeout ) {
+export function waitUntilElementLocated( driver, locator, timeout ) {
 	return driver.wait( until.elementLocated( locator ), timeout );
 }
 
@@ -170,12 +170,12 @@ export function waitUntilLocated( driver, locator, timeout ) {
  * @returns {Promise<WebElement>} A promise that will be resolved with true when
  * the element becomes unavaialble
  */
-export function waitUntilNotLocated( driver, locator, timeout ) {
+export function waitUntilElementNotLocated( driver, locator, timeout ) {
 	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
 
 	return driver.wait(
 		new Condition( `for element to NOT be located ${ locatorStr }`, function () {
-			return isNotLocated( driver, locator );
+			return isElementNotLocated( driver, locator );
 		} ),
 		timeout
 	);
@@ -190,9 +190,13 @@ export function waitUntilNotLocated( driver, locator, timeout ) {
  * @returns {Promise<WebElement>} A promise that will be resolved with whether
  * the element is located and visible
  */
-export async function isEventuallyLocatedAndVisible( driver, locator, timeout = explicitWaitMS ) {
+export async function isElementEventuallyLocatedAndVisible(
+	driver,
+	locator,
+	timeout = explicitWaitMS
+) {
 	try {
-		await waitUntilLocatedAndVisible( driver, locator, timeout );
+		await waitUntilElementLocatedAndVisible( driver, locator, timeout );
 		return true;
 	} catch {
 		return false;
@@ -365,7 +369,7 @@ export async function ensureMobileMenuOpen( driver ) {
 	const menuLocator = by.css( '.section-nav' );
 	const openMenuLocator = by.css( '.section-nav.is-open' );
 
-	await waitUntilLocatedAndVisible( driver, menuLocator );
+	await waitUntilElementLocatedAndVisible( driver, menuLocator );
 	const menuElement = await driver.findElement( menuLocator );
 	const isMenuOpen = await menuElement
 		.getAttribute( 'class' )
@@ -373,7 +377,7 @@ export async function ensureMobileMenuOpen( driver ) {
 
 	if ( ! isMenuOpen ) {
 		await clickWhenClickable( driver, mobileHeaderLocator );
-		await waitUntilLocatedAndVisible( driver, openMenuLocator );
+		await waitUntilElementLocatedAndVisible( driver, openMenuLocator );
 	}
 }
 
@@ -442,8 +446,12 @@ export async function refreshIfJNError( driver, timeout = 2000 ) {
 	const jnDBError = by.xpath( '//h1[.="Error establishing a database connection"]' );
 
 	const refreshIfNeeded = async () => {
-		const jnErrorDisplayed = await isEventuallyLocatedAndVisible( driver, jnSiteError, timeout );
-		const jnDBErrorDisplayed = await isLocated( driver, jnDBError );
+		const jnErrorDisplayed = await isElementEventuallyLocatedAndVisible(
+			driver,
+			jnSiteError,
+			timeout
+		);
+		const jnDBErrorDisplayed = await isElementLocated( driver, jnDBError );
 		if ( jnErrorDisplayed || jnDBErrorDisplayed ) {
 			console.log( 'JN Error! Refreshing the page' );
 			await driver.navigate().refresh();

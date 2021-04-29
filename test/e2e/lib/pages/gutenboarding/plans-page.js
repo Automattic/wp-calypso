@@ -15,7 +15,7 @@ export default class PlansPage extends AsyncBaseContainer {
 	}
 
 	async hasSelectedPlan() {
-		return await driverHelper.isLocated(
+		return await driverHelper.isElementLocated(
 			this.driver,
 			By.css( '.plan-item__select-button.is-selected' )
 		);

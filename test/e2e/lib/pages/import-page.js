@@ -17,12 +17,12 @@ export default class ImportPage extends AsyncBaseContainer {
 	}
 
 	async previewSiteToBeImported() {
-		await driverHelper.waitUntilLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.site-importer__site-preview' )
 		);
 
-		const isSitePreviewShowing = await driverHelper.isEventuallyLocatedAndVisible(
+		const isSitePreviewShowing = await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( '.site-importer__site-preview-column-container' )
 		);
@@ -31,14 +31,14 @@ export default class ImportPage extends AsyncBaseContainer {
 	}
 
 	async siteImporterInputPane() {
-		return await driverHelper.waitUntilLocatedAndVisible(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.site-importer__site-importer-pane' )
 		);
 	}
 
 	async siteImporterCanStartImport() {
-		await driverHelper.waitUntilLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.site-importer__site-preview-confirm-button' )
 		);

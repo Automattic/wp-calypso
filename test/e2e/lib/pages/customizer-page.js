@@ -36,7 +36,7 @@ export default class CustomizerPage extends AsyncBaseContainer {
 					slackNotifier.warn( message );
 					await self.driver
 						.wait( async function () {
-							return await driverHelper.isLocated(
+							return await driverHelper.isElementLocated(
 								self.driver,
 								self.reloadCustomizerSelector
 							);
@@ -74,7 +74,7 @@ export default class CustomizerPage extends AsyncBaseContainer {
 		const driver = this.driver;
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
 			await this._switchToMetaiFrame();
-			const previewDisplayed = await driverHelper.isLocated(
+			const previewDisplayed = await driverHelper.isElementLocated(
 				driver,
 				by.css( 'div.preview-desktop.preview-only' )
 			);

@@ -23,13 +23,13 @@ export default class PressableSitesPage extends AsyncBaseContainer {
 			`div.wp-admin-btn a[href="http://${ siteName }.mystagingwebsite.com/wp-admin"]`
 		);
 
-		const present = await driverHelper.isLocated( this.driver, formSelector );
+		const present = await driverHelper.isElementLocated( this.driver, formSelector );
 		if ( present ) {
 			await this.deleteFirstSite();
 		}
 		await driverHelper.setWhenSettable( this.driver, siteNameInput, siteName );
 		await driverHelper.clickWhenClickable( this.driver, addNewSiteButton );
-		await driverHelper.waitUntilLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			wpAdminSiteButton,
 			this.explicitWaitMS * 12
@@ -54,7 +54,7 @@ export default class PressableSitesPage extends AsyncBaseContainer {
 		const siteSettingsButton = By.xpath(
 			"//div[@class='site-bottom-wrapper'][descendant::a[contains(.,'e2eflowtesting')]]//div[contains(@class, 'manage-settings')]"
 		);
-		if ( ! ( await driverHelper.isLocated( this.driver, siteSettingsButton ) ) ) {
+		if ( ! ( await driverHelper.isElementLocated( this.driver, siteSettingsButton ) ) ) {
 			return; // no sites to delete
 		}
 		await this.gotoSettings( 'e2eflowtesting' );

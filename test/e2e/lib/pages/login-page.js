@@ -27,7 +27,7 @@ export default class LoginPage extends AsyncBaseContainer {
 		const changeAccountSelector = By.css( '#loginAsAnotherUser' );
 		const alreadyLoggedInSelector = By.css( '.continue-as-user' );
 
-		const isDisplayed = await driverHelper.isEventuallyLocatedAndVisible(
+		const isDisplayed = await driverHelper.isElementEventuallyLocatedAndVisible(
 			driver,
 			alreadyLoggedInSelector,
 			2000
@@ -52,7 +52,7 @@ export default class LoginPage extends AsyncBaseContainer {
 
 		if ( retry === true ) {
 			try {
-				await driverHelper.waitUntilNotLocated( driver, userNameSelector, this.explicitWaitMS * 2 );
+				await driverHelper.waitUntilElementNotLocated( driver, userNameSelector, this.explicitWaitMS * 2 );
 			} catch ( e ) {
 				await SlackNotifier.warn( `The login didn't work as expected - retrying now: '${ e }'`, {
 					suppressDuplicateMessages: true,
@@ -61,7 +61,7 @@ export default class LoginPage extends AsyncBaseContainer {
 				return await this.login( username, password, { retry: false } );
 			}
 		}
-		return await driverHelper.waitUntilNotLocated( driver, userNameSelector );
+		return await driverHelper.waitUntilElementNotLocated( driver, userNameSelector );
 	}
 
 	use2FAMethod( twoFAMethod ) {
@@ -77,7 +77,7 @@ export default class LoginPage extends AsyncBaseContainer {
 
 		if ( actionSelector ) {
 			return driverHelper
-				.isLocated( this.driver, actionSelector )
+				.isElementLocated( this.driver, actionSelector )
 				.then( ( actionAvailable ) => {
 					if ( actionAvailable ) {
 						return driverHelper.clickWhenClickable( this.driver, actionSelector );
@@ -93,7 +93,7 @@ export default class LoginPage extends AsyncBaseContainer {
 		await driverHelper.setWhenSettable( this.driver, twoStepCodeSelector, twoFACode );
 		await driverHelper.clickWhenClickable( this.driver, submitSelector );
 
-		return await driverHelper.waitUntilNotLocated( this.driver, twoStepCodeSelector );
+		return await driverHelper.waitUntilElementNotLocated( this.driver, twoStepCodeSelector );
 	}
 
 	async requestMagicLink( emailAddress ) {
@@ -102,7 +102,7 @@ export default class LoginPage extends AsyncBaseContainer {
 		 *
 		 * @see {@link https://github.com/Automattic/wp-calypso/pull/50999}
 		 */
-		await driverHelper.waitUntilLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.login__form-action button:not(:disabled)' )
 		);
@@ -120,7 +120,7 @@ export default class LoginPage extends AsyncBaseContainer {
 			this.driver,
 			By.css( '.magic-login__form-action button.is-primary' )
 		);
-		return await driverHelper.waitUntilLocatedAndVisible(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.magic-login__check-email-image' )
 		);

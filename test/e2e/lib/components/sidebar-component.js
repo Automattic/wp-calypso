@@ -29,7 +29,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 			By.css( '.sidebar__heading' ),
 			itemName
 		);
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, selector );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, selector );
 		const itemSelector = await this.driver.findElement( selector );
 		const isExpanded = await itemSelector.getAttribute( 'aria-expanded' );
 		if ( isExpanded === 'false' ) {
@@ -170,11 +170,11 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async storeOptionDisplayed() {
-		return await driverHelper.isEventuallyLocatedAndVisible( this.driver, this.storeSelector );
+		return await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, this.storeSelector );
 	}
 
 	async settingsOptionExists( click = false ) {
-		const isDisplayed = await driverHelper.isLocated(
+		const isDisplayed = await driverHelper.isElementLocated(
 			this.driver,
 			SidebarComponent._getSidebarSelector( 'Settings' )
 		);
@@ -194,7 +194,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	async _scrollToAndClickMenuItem( target, { clickButton = false } = {} ) {
 		const selector = SidebarComponent._getSidebarSelector( target, { getButton: clickButton } );
 
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, selector );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, selector );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}
 
@@ -207,7 +207,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 			return;
 		}
 		const openSidebarLocator = By.css( '.layout.focus-sidebar .sidebar' );
-		const isOpen = await driverHelper.isLocated( this.driver, openSidebarLocator );
+		const isOpen = await driverHelper.isElementLocated( this.driver, openSidebarLocator );
 
 		if ( ! isOpen ) {
 			const mySitesButtonLocator = By.css( 'a[data-tip-target="my-sites"]' );
@@ -219,7 +219,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	async selectSiteSwitcher() {
 		const siteSwitcherSelector = By.css( '.current-site__switch-sites button' );
 		await this.ensureSidebarMenuVisible();
-		const present = await driverHelper.isEventuallyLocatedAndVisible(
+		const present = await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			siteSwitcherSelector,
 			3000
@@ -252,7 +252,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 
 		const sidebarNewSiteButton = By.css( '.my-sites-sidebar__add-new-site' );
 		const siteSwitcherNewSiteButton = By.css( '.site-selector__add-new-site .button svg' );
-		const present = await driverHelper.isLocated( this.driver, sidebarNewSiteButton );
+		const present = await driverHelper.isElementLocated( this.driver, sidebarNewSiteButton );
 		if ( present ) {
 			return await driverHelper.clickWhenClickable( this.driver, sidebarNewSiteButton );
 		}
@@ -273,7 +273,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		const clearSearchButton = By.css( '.search__close-icon' );
 
 		await this.ensureSidebarMenuVisible();
-		const foundSwitcher = await driverHelper.isEventuallyLocatedAndVisible(
+		const foundSwitcher = await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			siteSwitcherSelector
 		);
@@ -282,11 +282,11 @@ export default class SidebarComponent extends AsyncBaseContainer {
 			return false;
 		}
 		await this.selectSiteSwitcher();
-		const clearSearch = await driverHelper.isLocated( this.driver, clearSearchButton );
+		const clearSearch = await driverHelper.isElementLocated( this.driver, clearSearchButton );
 		if ( clearSearch ) {
 			await driverHelper.clickWhenClickable( this.driver, clearSearchButton );
 		}
-		const foundBroken = await driverHelper.isEventuallyLocatedAndVisible(
+		const foundBroken = await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			brokenSiteButton
 		);
@@ -296,10 +296,10 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		}
 
 		const countSelector = By.css( '.count' );
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, countSelector );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, countSelector );
 		const count = await this.driver.findElement( countSelector ).getText();
 
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, brokenSiteButton );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, brokenSiteButton );
 		const buttons = await this.driver.findElements( brokenSiteButton );
 		if ( buttons.length > 1 ) {
 			await buttons[ 1 ].click();
@@ -307,7 +307,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 			await driverHelper.clickWhenClickable( this.driver, brokenSiteButton );
 		}
 
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, disconnectJetpackButton );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, disconnectJetpackButton );
 		await driverHelper.clickWhenClickable( this.driver, disconnectJetpackButton );
 		await driverHelper.clickWhenClickable(
 			this.driver,
@@ -339,13 +339,13 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		const siteSwitcherSelector = By.css( '.current-site__switch-sites' );
 
 		await this.ensureSidebarMenuVisible();
-		const foundSwitcher = await driverHelper.isLocated( this.driver, siteSwitcherSelector );
+		const foundSwitcher = await driverHelper.isElementLocated( this.driver, siteSwitcherSelector );
 		if ( ! foundSwitcher ) {
 			// no site switcher, only one site
 			return false;
 		}
 		await this.selectSiteSwitcher();
-		const site = await driverHelper.isLocated( this.driver, siteSelector );
+		const site = await driverHelper.isElementLocated( this.driver, siteSelector );
 		if ( ! site ) {
 			// site is not in present in list
 			return false;

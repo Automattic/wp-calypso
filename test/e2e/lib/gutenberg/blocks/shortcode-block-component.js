@@ -12,7 +12,7 @@ import GutenbergBlockComponent from './gutenberg-block-component';
 export class ShortcodeBlockComponent extends GutenbergBlockComponent {
 	async enterShortcode( shortcode ) {
 		const shortcodeSelector = By.css( 'textarea.editor-plain-text' );
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, shortcodeSelector );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, shortcodeSelector );
 		const shortcodeTextarea = await this.driver.findElement( shortcodeSelector );
 		return await shortcodeTextarea.sendKeys( shortcode );
 	}

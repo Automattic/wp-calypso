@@ -15,15 +15,15 @@ class InlineHelpPopoverComponent extends AsyncBaseContainer {
 	}
 
 	async waitForToggleNotToBePresent() {
-		return driverHelper.waitUntilNotLocated( this.driver, By.css( '.inline-help__button' ) );
+		return driverHelper.waitUntilElementNotLocated( this.driver, By.css( '.inline-help__button' ) );
 	}
 
 	async isToggleVisible() {
-		return await driverHelper.isLocated( this.driver, By.css( '.inline-help__button' ) );
+		return await driverHelper.isElementLocated( this.driver, By.css( '.inline-help__button' ) );
 	}
 
 	async isPopoverVisible() {
-		return await driverHelper.isLocated( this.driver, By.css( '.inline-help__popover' ) );
+		return await driverHelper.isElementLocated( this.driver, By.css( '.inline-help__popover' ) );
 	}
 
 	async toggleOpen() {

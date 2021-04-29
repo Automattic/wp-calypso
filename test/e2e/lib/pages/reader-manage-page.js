@@ -24,7 +24,7 @@ export default class ReaderManagePage extends AsyncBaseContainer {
 		const sitesLoadingSelector = by.css(
 			'.reader-subscription-list-item  .is-placeholder:not(.reader-subscription-list-item__site-title)'
 		);
-		return await driverHelper.waitUntilNotLocated( this.driver, sitesLoadingSelector );
+		return await driverHelper.waitUntilElementNotLocated( this.driver, sitesLoadingSelector );
 	}
 
 	static _getUrl() {

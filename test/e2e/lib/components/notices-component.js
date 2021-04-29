@@ -17,7 +17,7 @@ export default class NoticesComponent extends AsyncBaseContainer {
 	}
 
 	async _isNoticeDisplayed( selector, actionSelector, click = false ) {
-		const isDisplayed = await driverHelper.isEventuallyLocatedAndVisible( this.driver, selector );
+		const isDisplayed = await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, selector );
 		if ( click === true ) {
 			await driverHelper.clickWhenClickable( this.driver, actionSelector );
 		}
@@ -38,12 +38,12 @@ export default class NoticesComponent extends AsyncBaseContainer {
 
 	async isErrorNoticeDisplayed() {
 		const selector = By.css( '.notice.is-error' );
-		return await driverHelper.isEventuallyLocatedAndVisible( this.driver, selector );
+		return await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, selector );
 	}
 
 	async getNoticeContent() {
 		const selector = By.css( '.notice .notice__text' );
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, selector );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, selector );
 		return await this.driver.findElement( selector ).getText();
 	}
 
