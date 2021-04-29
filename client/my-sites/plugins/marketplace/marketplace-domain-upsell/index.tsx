@@ -9,7 +9,6 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { DomainSuggestions } from '@automattic/data-stores';
 import { __ } from '@wordpress/i18n';
 import { ThemeProvider } from 'emotion-theming';
-import { HorizontalRule } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -20,21 +19,20 @@ import {
 	MARKETPLACE_FLOW_ID,
 	ANALYTICS_UI_LOCATON_MARKETPLACE_DOMAIN_SELECTION,
 } from 'calypso/my-sites/plugins/marketplace/constants';
-import { Button } from '@wordpress/components';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import Item from 'calypso/layout/masterbar/item';
-import { LineItem } from 'calypso/my-sites/checkout/composite-checkout/components/wp-order-review-line-items';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import MarketplaceShoppingCart from '../components/marketplace-shopping-cart';
 
-function Header() {
+function MarketplaceDomainUpsellHeader() {
 	return (
 		<div className="marketplace-domain-upsell__header domains__header">
 			<h1 className="marketplace-domain-upsell__header marketplace-title">
@@ -49,49 +47,13 @@ function Header() {
 	);
 }
 
-function MarketplaceShoppingCart( { onAddDomainToCart, selectedDomain } ) {
-	const { responseCart, isLoading } = useShoppingCart();
-	const { products, sub_total_display } = responseCart;
-
-	return isLoading ? null : (
-		<>
-			<h1 className="marketplace-domain-upsell__shopping-cart marketplace-title">Your cart</h1>
-			<div className="marketplace-domain-upsell__shopping-cart basket-items">
-				{ products.map( ( product ) => {
-					return (
-						<LineItem
-							key={ product.uuid }
-							product={ product }
-							hasDeleteButton={ false }
-							isSummary={ true }
-						/>
-					);
-				} ) }
-			</div>
-			<HorizontalRule />
-			<div className="marketplace-domain-upsell__shopping-cart total">
-				<div> Total </div>
-				<div>{ sub_total_display }</div>
-			</div>
-
-			<Button
-				onClick={ onAddDomainToCart }
-				isBusy={ false }
-				isPrimary
-				disabled={ selectedDomain === null }
-			>
-				Checkout
-			</Button>
-		</>
-	);
-}
-
 function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
-	const [ selectedDomain, setDomain ] = useState( null );
+	const [ selectedDomain, setDomain ] = useState< DomainSuggestions.DomainSuggestion | null >(
+		null
+	);
 	const { addProductsToCart, replaceProductsInCart } = useShoppingCart();
 	const products = useSelector( getProductsList );
 	const previousPath = useSelector( getPreviousPath );
-
 	const isFetchingProducts = useSelector( isProductsListFetching );
 	const selectedSite = useSelector( getSelectedSite );
 
@@ -113,7 +75,7 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 	};
 
 	const onAddDomainToCart = () => {
-		const { product_slug, domain_name } = selectedDomain;
+		const { product_slug, domain_name } = selectedDomain as DomainSuggestions.DomainSuggestion;
 		const domainProduct = {
 			...domainRegistration( {
 				productSlug: product_slug,
@@ -150,11 +112,11 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 			<div className="marketplace-domain-upsell__root">
 				<div className="marketplace-domain-upsell__domain-picker-container">
 					<DomainPicker
-						header={ <Header /> }
+						header={ <MarketplaceDomainUpsellHeader /> }
 						analyticsUiAlgo={ ANALYTICS_UI_LOCATON_MARKETPLACE_DOMAIN_SELECTION }
 						analyticsFlowId={ MARKETPLACE_FLOW_ID }
 						onDomainSelect={ onDomainSelect }
-						currentDomain={ selectedDomain }
+						currentDomain={ selectedDomain as DomainSuggestions.DomainSuggestion }
 						showRecommendationLabel={ false }
 						onUseYourDomainClick={ redirectToUseDomainFlow }
 					/>
