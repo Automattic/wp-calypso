@@ -15,7 +15,7 @@ import type { Browser, BrowserContext } from 'playwright';
  */
 import type { screenSize, localeCode } from './types';
 
-const browserStartTimeoutMS = 2000;
+const browserStartTimeoutMS = 3000;
 
 export let browser: Browser;
 
@@ -109,17 +109,4 @@ export async function launchBrowser(): Promise< Browser > {
 		args: [ '--window-position=0,0', `--window-size=${ dimension.width },${ dimension.height }` ],
 		timeout: browserStartTimeoutMS,
 	} );
-}
-
-/**
- * Terminates an instance of the Browser.
- *
- * When called, this function will unset the reference to the browser instance,
- * then call on the browser to terminate all instances of existing BrowserContexts.
- * Any open pages are also destroyed in this process.
- *
- * @returns {void} No return value.
- */
-export function quitBrowser(): void {
-	browser.close();
 }
