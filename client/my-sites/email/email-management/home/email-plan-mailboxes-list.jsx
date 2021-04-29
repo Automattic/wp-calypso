@@ -3,8 +3,9 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import { CompactCard } from '@automattic/components';
+import { Button, CompactCard } from '@automattic/components';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -20,6 +21,8 @@ import {
 	isEmailUserAdmin,
 } from 'calypso/lib/emails';
 import Gridicon from 'calypso/components/gridicon';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { resendVerificationEmail } from 'calypso/state/email-forwarding/actions';
 
 const MailboxListHeader = ( { children } ) => {
 	const translate = useTranslate();
@@ -32,12 +35,16 @@ const MailboxListHeader = ( { children } ) => {
 	);
 };
 
-const MailboxListItem = ( { children, isPlaceholder, hasNoEmails } ) => {
+const MailboxListItem = ( { children, isError = false, isPlaceholder, hasNoEmails } ) => {
 	const className = classNames( 'email-plan-mailboxes-list__mailbox-list-item', {
 		'is-placeholder': isPlaceholder,
 		'no-emails': hasNoEmails,
 	} );
-	return <CompactCard className={ className }>{ children }</CompactCard>;
+	return (
+		<CompactCard className={ className } highlight={ isError ? 'error' : null }>
+			{ children }
+		</CompactCard>
+	);
 };
 
 const MailboxListItemSecondaryDetails = ( { children, className } ) => {
@@ -54,15 +61,41 @@ const MailboxListItemWarning = ( { warningText } ) => {
 	);
 };
 
-const getWarningForMailbox = ( mailbox, translate ) => {
+const resendEmailForwardVerification = ( mailbox, dispatch ) => {
+	const destination = getEmailForwardAddress( mailbox );
+	dispatch(
+		recordTracksEvent(
+			'calypso_email_management_email_forwarding_resend_verification_email_click',
+			{
+				destination,
+				domain_name: mailbox.domain,
+				mailbox: mailbox.mailbox,
+			}
+		)
+	);
+	dispatch( resendVerificationEmail( mailbox.domain, mailbox.mailbox, destination ) );
+};
+
+const getActionsForMailbox = ( mailbox, translate, dispatch ) => {
 	if ( isEmailForward( mailbox ) && ! isEmailForwardVerified( mailbox ) ) {
-		return <MailboxListItemWarning warningText={ translate( 'Verification required' ) } />;
+		return {
+			action: (
+				<Button compact onClick={ () => resendEmailForwardVerification( mailbox, dispatch ) }>
+					{ translate( 'Resend verification' ) }
+				</Button>
+			),
+			warning: <MailboxListItemWarning warningText={ translate( 'Verification required' ) } />,
+		};
 	}
 
-	return null;
+	return {
+		action: null,
+		warning: null,
+	};
 };
 
 function EmailPlanMailboxesList( { mailboxes, isLoadingEmails } ) {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	if ( isLoadingEmails ) {
@@ -87,11 +120,11 @@ function EmailPlanMailboxesList( { mailboxes, isLoadingEmails } ) {
 	}
 
 	const mailboxItems = mailboxes.map( ( mailbox ) => {
-		const warningForMailbox = getWarningForMailbox( mailbox, translate );
+		const { action, warning } = getActionsForMailbox( mailbox, translate, dispatch );
 
 		return (
-			<MailboxListItem key={ email.mailbox }>
-				<div class="email-plan-mailboxes-list__mailbox-list-item-main">
+			<MailboxListItem key={ email.mailbox } isError={ !! warning }>
+				<div className="email-plan-mailboxes-list__mailbox-list-item-main">
 					<div>
 						<MaterialIcon icon="email" />
 						<span>
@@ -112,7 +145,8 @@ function EmailPlanMailboxesList( { mailboxes, isLoadingEmails } ) {
 						} ) }
 					</Badge>
 				) }
-				{ warningForMailbox }
+				{ warning }
+				{ action }
 			</MailboxListItem>
 		);
 	} );
@@ -121,7 +155,7 @@ function EmailPlanMailboxesList( { mailboxes, isLoadingEmails } ) {
 }
 
 EmailPlanMailboxesList.propTypes = {
-	emails: PropTypes.array,
+	mailboxes: PropTypes.array,
 	isLoadingEmails: PropTypes.bool,
 };
 
