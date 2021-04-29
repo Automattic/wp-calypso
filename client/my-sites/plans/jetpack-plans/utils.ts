@@ -19,7 +19,6 @@ import {
 	ITEM_TYPE_PRODUCT,
 	ITEM_TYPE_BUNDLE,
 	ITEM_TYPE_PLAN,
-	LEGACY_TO_NEW_PLAN_MATRIX,
 	OPTIONS_SLUG_MAP,
 	PRODUCTS_WITH_OPTIONS,
 	REALTIME_PRODUCTS,
@@ -749,17 +748,6 @@ export const getJetpackDescriptionWithOptions = (
 		  } )
 		: product.description;
 };
-
-/**
- * Return the slug of a supported Jetpack plan from the slug of legacy one.
- *
- * @param {string} legacyPlanSlug the slug of a legacy Jetpack plan
- *
- * @returns {string} the slug of a supported Jetpack plan
- */
-export function getSupportedNewPlanFromLegacyPlanSlug( legacyPlanSlug: string ): string {
-	return LEGACY_TO_NEW_PLAN_MATRIX[ legacyPlanSlug ];
-}
 
 /**
  * Return the slug of a highlighted product if the given slug is Jetpack product
