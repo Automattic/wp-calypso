@@ -301,43 +301,12 @@ export default {
 			context.store.dispatch( setSelectedSiteId( null ) );
 		}
 
+      let actualFlowName = flowName
 		if ( flowName === 'onboarding' || flowName === 'with-design-picker' ) {
-			context.primary = (
-				<ProvideExperimentData name="design_picker_after_onboarding">
-					{ ( isLoading, experimentAssignment ) => {
-						debug(
-							`design_picker_after_onboarding experiment variation: ${ experimentAssignment?.variationName }`
-						);
-
-						if ( isLoading ) {
-							debug( 'Waiting for design_picker_after_onboarding experiment status to load' );
-							return null;
-						}
-
-						const actualFlowName =
-							'treatment' === experimentAssignment?.variationName
-								? 'with-design-picker'
-								: 'onboarding';
-
-						return (
-							<SignupComponent
-								store={ context.store }
-								path={ context.path }
-								initialContext={ initialContext }
-								locale={ context.params.lang }
-								flowName={ actualFlowName }
-								queryObject={ query }
-								refParameter={ query && query.ref }
-								stepName={ stepName }
-								stepSectionName={ stepSectionName }
-								stepComponent={ stepComponent }
-								pageTitle={ getFlowPageTitle( actualFlowName ) }
-							/>
-						);
-					} }
-				</ProvideExperimentData>
-			);
-			next();
+		    const experimentAssignment = await loadExperiment('design_picker_after_onboarding')
+		    if ('treatment' === experimentAssignment?.variationName) {
+		        actualFlowName = 'with-design-picker';
+		    }
 		}
 
 		context.primary = React.createElement( SignupComponent, {
