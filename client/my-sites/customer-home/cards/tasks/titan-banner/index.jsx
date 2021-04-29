@@ -14,6 +14,7 @@ import titanUpsellIllustration from 'calypso/assets/images/customer-home/illustr
 
 const TitanBanner = () => {
 	const translate = useTranslate();
+	/* Not sure if there  needs to be any such condition or based on a feature flag. */
 	const showTitanBanner = true;
 
 	return (
