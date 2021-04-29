@@ -82,6 +82,23 @@ private object EditingToolkit : BuildType({
 			"""
 		}
 	}
+
+	cleanup {
+		keepRule {
+			id = "keepReleaseBuilds"
+			keepAtLeast = allBuilds()
+			applyToBuilds {
+				inBranches {
+					branchFilter = patterns("+:<default>")
+				}
+				withStatus = successful()
+				withTags = anyOf("etk-release-build")
+			}
+			dataToKeep = everything()
+			applyPerEachBranch = true
+			preserveArtifactsDependencies = true
+		}
+	}
 })
 
 private object WpcomBlockEditor : BuildType({
@@ -93,6 +110,23 @@ private object WpcomBlockEditor : BuildType({
 		param("plugin_slug", "wpcom-block-editor")
 		param("archive_dir", "./dist/")
 		param("build_env", "development")
+	}
+
+	cleanup {
+		keepRule {
+			id = "keepReleaseBuilds"
+			keepAtLeast = allBuilds()
+			applyToBuilds {
+				inBranches {
+					branchFilter = patterns("+:<default>")
+				}
+				withStatus = successful()
+				withTags = anyOf("wpcom-block-editor-release-build")
+			}
+			dataToKeep = everything()
+			applyPerEachBranch = true
+			preserveArtifactsDependencies = true
+		}
 	}
 })
 
@@ -128,6 +162,23 @@ private object Notifications : BuildType({
 			sed -i "s~${'$'}old_cache_buster~${'$'}new_cache_buster~g" release-archive/index.html release-archive/rtl.html
 		""".trimIndent())
 	}
+
+	cleanup {
+		keepRule {
+			id = "keepReleaseBuilds"
+			keepAtLeast = allBuilds()
+			applyToBuilds {
+				inBranches {
+					branchFilter = patterns("+:<default>")
+				}
+				withStatus = successful()
+				withTags = anyOf("notifications-release-build")
+			}
+			dataToKeep = everything()
+			applyPerEachBranch = true
+			preserveArtifactsDependencies = true
+		}
+	}
 })
 
 private object O2Blocks : BuildType({
@@ -153,6 +204,23 @@ private object O2Blocks : BuildType({
 				# Add index.php file
 				cp index.php release-files/
 			"""
+		}
+	}
+
+	cleanup {
+		keepRule {
+			id = "keepReleaseBuilds"
+			keepAtLeast = allBuilds()
+			applyToBuilds {
+				inBranches {
+					branchFilter = patterns("+:<default>")
+				}
+				withStatus = successful()
+				withTags = anyOf("o2-blocks-release-build")
+			}
+			dataToKeep = everything()
+			applyPerEachBranch = true
+			preserveArtifactsDependencies = true
 		}
 	}
 })

@@ -147,20 +147,4 @@ open class PluginBaseBuild : Template({
 			"""
 		}
 	}
-
-	cleanup {
-		keepRule {
-			keepAtLeast = allBuilds()
-			applyToBuilds {
-				inBranches {
-					branchFilter = patterns("+:<default>")
-				}
-				withStatus = successful()
-				withTags = anyOf(releaseTag)
-			}
-			dataToKeep = everything()
-			applyPerEachBranch = true
-			preserveArtifactsDependencies = true
-		}
-	}
 })
