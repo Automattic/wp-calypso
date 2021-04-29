@@ -7,18 +7,21 @@
  */
 import * as page from 'page';
 import configureStore from 'redux-mock-store';
+import {
+	PLAN_JETPACK_PERSONAL,
+	PRODUCT_JETPACK_ANTI_SPAM,
+	PRODUCT_JETPACK_BACKUP_DAILY,
+} from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
  */
 import { redirectJetpackLegacyPlans } from '../controller';
 import * as utils from '../utils';
-import { PRODUCT_JETPACK_BACKUP, PLAN_JETPACK_PERSONAL } from '@automattic/calypso-products';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { COMPARE_PLANS_QUERY_PARAM } from '../../plans/jetpack-plans/plan-upgrade/constants';
 
 jest.mock( 'page' );
 jest.mock( '../utils' );
-jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
 
 const mockStore = configureStore();
 
@@ -52,7 +55,7 @@ describe( 'redirectJetpackLegacyPlans', () => {
 	} );
 
 	it( 'should not redirect if the plan is not a Jetpack legacy plan', () => {
-		utils.getDomainOrProductFromContext.mockReturnValue( PRODUCT_JETPACK_BACKUP );
+		utils.getDomainOrProductFromContext.mockReturnValue( PRODUCT_JETPACK_BACKUP_DAILY );
 
 		redirectJetpackLegacyPlans( {}, next );
 
@@ -62,20 +65,12 @@ describe( 'redirectJetpackLegacyPlans', () => {
 
 	it( 'should redirect if the plan is a Jetpack legacy plan', () => {
 		utils.getDomainOrProductFromContext.mockReturnValue( PLAN_JETPACK_PERSONAL );
-		isJetpackCloud.mockReturnValue( false );
 
 		redirectJetpackLegacyPlans( { store }, next );
 
-		expect( spy ).toHaveBeenCalledWith( `/plans/${ siteSlug }` );
+		const redirectUrl = `/plans/${ siteSlug }?${ COMPARE_PLANS_QUERY_PARAM }=${ PLAN_JETPACK_PERSONAL },${ PRODUCT_JETPACK_BACKUP_DAILY },${ PRODUCT_JETPACK_ANTI_SPAM }`;
+
+		expect( spy ).toHaveBeenCalledWith( redirectUrl );
 		expect( next ).not.toHaveBeenCalled();
-	} );
-
-	it( 'should redirect to the pricing page in Jetpack cloud', () => {
-		utils.getDomainOrProductFromContext.mockReturnValue( PLAN_JETPACK_PERSONAL );
-		isJetpackCloud.mockReturnValue( true );
-
-		redirectJetpackLegacyPlans( { store }, next );
-
-		expect( spy ).toHaveBeenCalledWith( `/pricing/${ siteSlug }` );
 	} );
 } );
