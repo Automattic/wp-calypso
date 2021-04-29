@@ -30,6 +30,23 @@ object WPComPlugins : Project({
 
 	// For some reason, TeamCity needs this to reference the Template.
 	template(PluginBaseBuild())
+
+	cleanup {
+		keepRule {
+			id = "keepReleaseBuilds"
+			keepAtLeast = allBuilds()
+			applyToBuilds {
+				inBranches {
+					branchFilter = patterns("+:<default>")
+				}
+				withStatus = successful()
+				withTags = anyOf("notifications-release-build", "etk-release-build", "wpcom-block-editor-release-build", "o2-blocks-release-build")
+			}
+			dataToKeep = everything()
+			applyPerEachBranch = true
+			preserveArtifactsDependencies = true
+		}
+	}
 })
 
 
