@@ -6,6 +6,7 @@ import moment from 'moment';
 import page from 'page';
 import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
+import { encodeProductForUrl } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -225,15 +226,15 @@ function getProductSlugsAndPurchaseIds( renewItems ) {
 			debug( 'Could not find product slug for renewal.', currentRenewItem );
 			return null;
 		}
-		// There is a product with this weird slug, but left to itself the slug will
-		// cause a routing error since it contains a slash, so we encode it here and
-		// then decode it in the checkout code before adding to the cart.
-		const productSlug =
-			currentRenewItem.product_slug === 'no-adverts/no-adverts.php'
-				? 'no-ads'
-				: currentRenewItem.product_slug;
+		// Some product slugs or meta contain slashes which will break the URL, so
+		// we encode them first. We cannot use encodeURIComponent because the
+		// calypso router seems to break if the trailing part of the URL contains
+		// an encoded slash.
+		const productSlug = encodeProductForUrl( currentRenewItem.product_slug );
 		productSlugs.push(
-			currentRenewItem.meta ? `${ productSlug }:${ currentRenewItem.meta }` : productSlug
+			currentRenewItem.meta
+				? `${ productSlug }:${ encodeProductForUrl( currentRenewItem.meta ) }`
+				: productSlug
 		);
 		purchaseIds.push( currentRenewItem.extra.purchaseId );
 	} );
