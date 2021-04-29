@@ -22,9 +22,9 @@ describe( 'experiment-assignment-store', () => {
 			undefined
 		);
 		storeExperimentAssignment( validExperimentAssignment );
-		expect( retrieveExperimentAssignment( validExperimentAssignment.experimentName ) ).toEqual(
-			validExperimentAssignment
-		);
+		expect(
+			retrieveExperimentAssignment( validExperimentAssignment.experimentName )
+		).toStrictEqual( validExperimentAssignment );
 
 		expect( retrieveExperimentAssignment( validFallbackExperimentAssignment.experimentName ) ).toBe(
 			undefined
@@ -32,7 +32,7 @@ describe( 'experiment-assignment-store', () => {
 		storeExperimentAssignment( validFallbackExperimentAssignment );
 		expect(
 			retrieveExperimentAssignment( validFallbackExperimentAssignment.experimentName )
-		).toEqual( validFallbackExperimentAssignment );
+		).toStrictEqual( validFallbackExperimentAssignment );
 	} );
 
 	it( 'should throw for storing an ExperimentAssignment for a currently stored Experiment with an older date', () => {
