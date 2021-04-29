@@ -18,8 +18,8 @@ import {
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
-} from 'calypso/lib/products-values/constants';
-import { getPlanByPathSlug } from 'calypso/lib/plans';
+} from '@automattic/calypso-products';
+import { getPlanByPathSlug } from '@automattic/calypso-products';
 import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
 import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
 import doesValueExist from '../lib/does-value-exist';

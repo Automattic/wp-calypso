@@ -8,7 +8,7 @@ import { withoutHttp } from 'calypso/lib/url';
 /**
  * Internal dependencies
  */
-import { planHasFeature } from 'calypso/lib/plans';
+import { planHasFeature } from '@automattic/calypso-products';
 
 export function userCan( capability, site ) {
 	return site && site.capabilities && site.capabilities[ capability ];

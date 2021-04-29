@@ -56,7 +56,6 @@ export default class AsyncBaseContainer {
 		}
 		await this.waitForPage();
 		await this.checkForUnknownABTestKeys();
-		await this.checkForConsoleErrors();
 		if ( typeof this._postInit === 'function' ) {
 			await this._postInit();
 		}
@@ -84,10 +83,6 @@ export default class AsyncBaseContainer {
 
 	async urlDisplayed() {
 		return await this.driver.getCurrentUrl();
-	}
-
-	async checkForConsoleErrors() {
-		return await driverHelper.checkForConsoleErrors( this.driver );
 	}
 
 	async checkForUnknownABTestKeys() {

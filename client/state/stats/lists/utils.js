@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { sortBy, camelCase, mapKeys, isNumber, get, filter, map, concat, flatten } from 'lodash';
+import { sortBy, camelCase, mapKeys, get, filter, map, concat, flatten } from 'lodash';
 import { translate, getLocaleSlug } from 'i18n-calypso';
 import moment from 'moment';
 
@@ -343,7 +343,7 @@ export const normalizers = {
 	 * @returns {object?}        Normalized stats data
 	 */
 	statsInsights: ( data ) => {
-		if ( ! data || ! isNumber( data.highest_day_of_week ) ) {
+		if ( ! data || typeof data.highest_day_of_week !== 'number' ) {
 			return {};
 		}
 

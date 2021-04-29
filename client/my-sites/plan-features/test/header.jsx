@@ -57,8 +57,8 @@ import {
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
-} from 'calypso/lib/plans/constants';
-import { getPlan } from 'calypso/lib/plans';
+	getPlan,
+} from '@automattic/calypso-products';
 import PlanPrice from 'calypso/my-sites/plan-price/';
 
 const props = {
@@ -453,7 +453,7 @@ describe( 'PlanFeaturesHeader.renderPriceGroup()', () => {
 		expect( props1.discounted ).toBe( false );
 		expect( props1.original ).toBe( true );
 		expect( props1.currencyCode ).toBe( 'USD' );
-		expect( props1.displayPerMonthNotation ).toBe( false );
+		expect( props1.displayPerMonthNotation ).toBe( true );
 
 		// We need the dive() here to pick up defaultProps
 		const props2 = wrapper.find( PlanPrice ).at( 1 ).dive().props();
@@ -461,7 +461,7 @@ describe( 'PlanFeaturesHeader.renderPriceGroup()', () => {
 		expect( props2.discounted ).toBe( true );
 		expect( props2.original ).toBe( false );
 		expect( props2.currencyCode ).toBe( 'USD' );
-		expect( props2.displayPerMonthNotation ).toBe( false );
+		expect( props2.displayPerMonthNotation ).toBe( true );
 	} );
 } );
 
@@ -731,7 +731,7 @@ describe( 'PlanFeaturesHeader.renderCreditLabel()', () => {
 		expect( instance.renderCreditLabel() ).toBe( null );
 	} );
 
-	test( 'Should display credit label for atomic site on Business plan ', () => {
+	test( 'Should display credit label for atomic site on Business plan', () => {
 		const instance = new PlanFeaturesHeader( {
 			...baseProps,
 			planType: PLAN_BUSINESS,
@@ -742,7 +742,7 @@ describe( 'PlanFeaturesHeader.renderCreditLabel()', () => {
 		expect( wrapper.find( '.plan-features__header-credit-label' ).length ).toBe( 1 );
 	} );
 
-	test( 'Should not display credit label for Jetpack site ', () => {
+	test( 'Should not display credit label for Jetpack site', () => {
 		const instance = new PlanFeaturesHeader( {
 			...baseProps,
 			planType: PLAN_JETPACK_PREMIUM,

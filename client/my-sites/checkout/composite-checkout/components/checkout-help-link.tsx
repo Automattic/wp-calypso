@@ -33,8 +33,8 @@ import {
 	isWpComEcommercePlan,
 	isWpComPersonalPlan,
 	isWpComPremiumPlan,
-} from 'calypso/lib/plans';
-import { isPlan } from 'calypso/lib/products-values';
+} from '@automattic/calypso-products';
+import { isPlan } from '@automattic/calypso-products';
 
 type StyledProps = {
 	theme?: Theme;

@@ -17,9 +17,6 @@ import mediaStorage from './media-storage/reducer';
 import blogStickers from './blog-stickers/reducer';
 import {
 	MEDIA_DELETE,
-	SITE_DELETE,
-	SITE_DELETE_FAILURE,
-	SITE_DELETE_SUCCESS,
 	SITE_DELETE_RECEIVE,
 	JETPACK_DISCONNECT_RECEIVE,
 	SITE_RECEIVE,
@@ -39,7 +36,7 @@ import {
 } from 'calypso/state/action-types';
 import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
 import { sitesSchema, hasAllSitesListSchema } from './schema';
-import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 
 /**
  * Tracks all known site objects, indexed by site ID.
@@ -331,26 +328,6 @@ export const requesting = ( state = {}, action ) => {
 };
 
 /**
- * Returns the updated deleting state after an action has been dispatched.
- * Deleting state tracks whether a network request is in progress for a site.
- *
- * @param  {object} state  Current state
- * @param  {object} action Action object
- * @returns {object}        Updated state
- */
-export const deleting = keyedReducer( 'siteId', ( state = {}, action ) => {
-	switch ( action.type ) {
-		case SITE_DELETE:
-			return true;
-		case SITE_DELETE_SUCCESS:
-		case SITE_DELETE_FAILURE:
-			return false;
-	}
-
-	return state;
-} );
-
-/**
  * Tracks whether all sites have been fetched.
  *
  * @param  {object} state  Current state
@@ -371,7 +348,6 @@ export const hasAllSitesList = withSchemaValidation(
 
 export default combineReducers( {
 	connection,
-	deleting,
 	domains,
 	requestingAll,
 	items,

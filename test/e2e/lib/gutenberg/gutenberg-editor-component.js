@@ -28,10 +28,13 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			'.editor-post-publish-panel__toggle[aria-disabled="false"]'
 		);
 		this.publishButtonSelector = By.css(
-			'.editor-post-publish-panel__header-publish-button button.editor-post-publish-button[aria-disabled="false"]'
+			'.editor-post-publish-panel__header-publish-button button.editor-post-publish-button'
 		);
 		this.publishingSpinnerSelector = By.css(
 			'.editor-post-publish-panel__content .components-spinner'
+		);
+		this.closePublishPanelButtonSelector = By.css(
+			'.editor-post-publish-panel__header button[aria-label="Close panel"]'
 		);
 	}
 
@@ -52,11 +55,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			this.explicitWaitMS,
 			'Could not locate the editor iFrame.'
 		);
-		await this.driver.sleep( 2000 );
-	}
-
-	async _postInit() {
-		await this.driver.sleep( 2000 );
 	}
 
 	async initEditor( { dismissPageTemplateSelector = false } = {} ) {
@@ -68,53 +66,44 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return await this.closeSidebar();
 	}
 
-	async publish( { visit = false, closePanel = true } = {} ) {
+	async publish( { visit = false } = {} ) {
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
 		await driverHelper.clickWhenClickable( this.driver, this.publishButtonSelector );
-		// Let's give publishing request enough time to finish. Sometimes it takes
-		// way more than the default 20 seconds, and the cost of waiting a bit
-		// longer is definitely lower than the cost of repeating the whole spec.
-		await driverHelper.waitUntilNotLocated( this.driver, this.publishingSpinnerSelector, 60000 );
 
-		if ( closePanel ) {
-			try {
-				await this.closePublishedPanel();
-			} catch ( e ) {
-				console.log( 'Publish panel already closed' );
-			}
-		}
+		const publishedPostLinkSelector = By.css( '.post-publish-panel__postpublish-header a' );
+		const publishedPostLinkElement = await driverHelper.waitUntilLocatedAndVisible(
+			this.driver,
+			publishedPostLinkSelector
+		);
 
-		await this.waitForSuccessViewPostNotice();
-
-		const snackBarNoticeLinkSelector = By.css( '.components-snackbar__content a' );
-		const url = await this.driver.findElement( snackBarNoticeLinkSelector ).getAttribute( 'href' );
+		const publishedPostLinkUrl = await publishedPostLinkElement.getAttribute( 'href' );
 
 		if ( visit ) {
-			await driverHelper.clickWhenClickable( this.driver, snackBarNoticeLinkSelector );
+			await driverHelper.clickWhenClickable( this.driver, publishedPostLinkSelector );
+			await driverHelper.waitUntilLocatedAndVisible( this.driver, By.css( '#page' ) );
+		} else {
+			// Close the panel if we're not visiting the published page
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( 'button[aria-label="Close panel"]' )
+			);
 		}
 
-		await this.driver.sleep( 1000 );
-		await driverHelper.acceptAlertIfPresent( this.driver );
-		return url;
+		return publishedPostLinkUrl;
 	}
 
 	async update( { visit = false } = {} ) {
-		await this.driver.sleep( 3000 );
 		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( 'button.editor-post-publish-button' )
 		);
 
 		if ( visit ) {
-			await this.waitForSuccessViewPostNotice();
-			// Wait for the snackbar animation
-			await this.driver.sleep( 1000 );
 			await driverHelper.clickWhenClickable(
 				this.driver,
 				By.css( '.components-snackbar__content a' )
 			);
-			// Wait for the new page's content
-			await this.driver.switchTo().defaultContent();
+			await driverHelper.waitUntilLocatedAndVisible( this.driver, By.css( '#page' ) );
 		}
 	}
 
@@ -550,7 +539,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async closePublishedPanel() {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.editor-post-publish-panel__header button[aria-label="Close panel"]' )
+			this.closePublishPanelButtonSelector
 		);
 	}
 
@@ -582,31 +571,15 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async revertToDraft() {
-		const revertDraftSelector = By.css( 'button.editor-post-switch-to-draft' );
-		await driverHelper.clickWhenClickable( this.driver, revertDraftSelector );
-		const revertAlert = await this.driver.switchTo().alert();
-		await revertAlert.accept();
-		await this.waitForSuccessViewPostNotice();
-		await driverHelper.waitUntilLocatedAndVisible(
-			this.driver,
-			By.css( 'button.editor-post-publish-panel__toggle' )
+		const revertToDraftButtonLocator = By.css( 'button.editor-post-switch-to-draft' );
+		const enabledPublishButtonLocator = By.css(
+			'button.editor-post-publish-button__button[aria-disabled="false"]'
 		);
-		return await driverHelper.waitUntilNotLocated(
-			this.driver,
-			By.css( 'button.editor-post-switch-to-draft' )
-		);
-	}
 
-	async isDraft() {
-		const hasPublishButton = await driverHelper.isLocated(
-			this.driver,
-			By.css( 'button.editor-post-publish-panel__toggle' )
-		);
-		const hasRevertButton = await driverHelper.isLocated(
-			this.driver,
-			By.css( 'button.editor-post-switch-to-draft' )
-		);
-		return hasPublishButton && ! hasRevertButton;
+		await driverHelper.clickWhenClickable( this.driver, revertToDraftButtonLocator );
+		await driverHelper.acceptAlertIfPresent( this.driver );
+		await driverHelper.waitTillNotPresent( this.driver, revertToDraftButtonLocator );
+		await driverHelper.waitUntilLocatedAndVisible( this.driver, enabledPublishButtonLocator );
 	}
 
 	async viewPublishedPostOrPage() {

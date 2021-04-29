@@ -46,7 +46,8 @@
 		"copyfiles": "^2.3.0",
 		"history": "^5.0.0",
 		"react": "^16.12.0",
-		"react-dom": "^16.12.0"
+		"react-dom": "^16.12.0",
+		"tslib": "^2.1.0"
 	},
 	"peerDependencies": {
 		"@wordpress/i18n": "^3.19.0",

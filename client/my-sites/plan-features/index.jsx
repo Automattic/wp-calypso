@@ -40,16 +40,6 @@ import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-p
 import { getDiscountByName } from 'calypso/lib/discounts';
 import { addQueryArgs } from 'calypso/lib/url';
 import {
-	planMatches,
-	applyTestFiltersToPlansList,
-	getMonthlyPlanByYearly,
-	getPlanPath,
-	isFreePlan,
-	isWpComEcommercePlan,
-	isWpComBusinessPlan,
-	getPlanClass,
-} from 'calypso/lib/plans';
-import {
 	getPlanDiscountedRawPrice,
 	getSitePlanRawPrice,
 	getPlansBySiteId,
@@ -77,7 +67,16 @@ import {
 	FEATURE_BUSINESS_ONBOARDING,
 	TYPE_P2_PLUS,
 	TYPE_FREE,
-} from 'calypso/lib/plans/constants';
+	planMatches,
+	applyTestFiltersToPlansList,
+	getMonthlyPlanByYearly,
+	getPlanPath,
+	isFreePlan,
+	isWpComEcommercePlan,
+	isWpComBusinessPlan,
+	getPlanClass,
+	FEATURE_CUSTOM_DOMAIN,
+} from '@automattic/calypso-products';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import PlanFeaturesScroller from './scroller';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
@@ -374,6 +373,7 @@ export class PlanFeatures extends Component {
 						audience={ planConstantObj.getAudience() }
 						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 						isLoggedInMonthlyPricing={ this.props.isLoggedInMonthlyPricing }
+						isInSignup={ isInSignup }
 					/>
 					<p className="plan-features__description">{ planDescription }</p>
 					<PlanFeaturesActions
@@ -1046,6 +1046,18 @@ const ConnectedPlanFeatures = connect(
 				if ( ! isLoggedInMonthlyPricing && ( ! isInSignup || isPlaceholder ) ) {
 					planFeatures = planFeatures.filter(
 						( { availableForCurrentPlan = true } ) => availableForCurrentPlan
+					);
+				}
+
+				// Strip the "Free domain for one year" feature out for the site's /plans page
+				// if the user is already on a paid annual plan
+				if (
+					isPaid &&
+					! isMonthly( sitePlan?.product_slug ) &&
+					( ! isInSignup || isPlaceholder )
+				) {
+					planFeatures = planFeatures.filter(
+						( feature ) => FEATURE_CUSTOM_DOMAIN !== feature.getSlug()
 					);
 				}
 

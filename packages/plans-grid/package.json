@@ -32,6 +32,7 @@
 	},
 	"dependencies": {
 		"@automattic/data-stores": "^2.0.0",
+		"@automattic/i18n-utils": "^1.0.0",
 		"@automattic/onboarding": "^1.0.0",
 		"@wordpress/components": "^12.0.8",
 		"@wordpress/compose": "^3.24.5",
@@ -39,9 +40,10 @@
 		"@wordpress/primitives": "^1.11.1",
 		"@wordpress/react-i18n": "^1.0.0",
 		"classnames": "^2.2.6",
+		"debug": "^4.1.1",
 		"lodash": "^4.17.21",
-		"uuid": "^7.0.2",
-		"debug": "^4.1.1"
+		"tslib": "^2.1.0",
+		"uuid": "^7.0.2"
 	},
 	"devDependencies": {
 		"@automattic/typography": "^1.0.0",

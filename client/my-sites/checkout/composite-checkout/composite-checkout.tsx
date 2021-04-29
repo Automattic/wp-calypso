@@ -21,6 +21,7 @@ import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-car
 import colorStudio from '@automattic/color-studio';
 import { useStripe } from '@automattic/calypso-stripe';
 import type { PaymentCompleteCallbackArguments } from '@automattic/composite-checkout';
+import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -31,7 +32,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import { getPlan } from 'calypso/lib/plans';
+import { getPlan } from '@automattic/calypso-products';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -40,13 +41,13 @@ import QueryContactDetailsCache from 'calypso/components/data/query-contact-deta
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProducts from 'calypso/components/data/query-products-list';
-import QueryExperiments from 'calypso/components/data/query-experiments';
 import useIsApplePayAvailable from './hooks/use-is-apple-pay-available';
 import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-methods';
 import useStoredCards from './hooks/use-stored-cards';
 import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
 import useCreatePaymentMethods from './hooks/use-create-payment-methods';
-import { applePayProcessor, multiPartnerCardProcessor } from './payment-method-processors';
+import applePayProcessor from './lib/apple-pay-processor';
+import multiPartnerCardProcessor from './lib/multi-partner-card-processor';
 import freePurchaseProcessor from './lib/free-purchase-processor';
 import fullCreditsProcessor from './lib/full-credits-processor';
 import weChatProcessor from './lib/we-chat-processor';
@@ -72,7 +73,6 @@ import {
 	applyContactDetailsRequiredMask,
 	domainRequiredContactDetails,
 	taxRequiredContactDetails,
-	ManagedContactDetails,
 } from './types/wpcom-store-state';
 import { StoredCard } from './types/stored-cards';
 import { CountryListItem } from './types/country-list-item';
@@ -366,9 +366,9 @@ export default function CompositeCheckout( {
 		// Only wait for apple pay to load if we are using apple pay
 		( allowedPaymentMethods.includes( 'apple-pay' ) && isApplePayLoading );
 
-	const contactInfo: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
-	const countryCode: string = contactInfo?.countryCode?.value ?? '';
-	const subdivisionCode: string = contactInfo?.state?.value ?? '';
+	const contactDetails: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
+	const countryCode: string = contactDetails?.countryCode?.value ?? '';
+	const subdivisionCode: string = contactDetails?.state?.value ?? '';
 
 	const paymentMethods = arePaymentMethodsLoading
 		? []
@@ -426,7 +426,6 @@ export default function CompositeCheckout( {
 
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
-	const transactionOptions = { createUserAndSiteBeforeTransaction };
 	const dataForProcessor: PaymentProcessorOptions = useMemo(
 		() => ( {
 			createUserAndSiteBeforeTransaction,
@@ -439,8 +438,10 @@ export default function CompositeCheckout( {
 			siteId,
 			siteSlug,
 			stripeConfiguration,
+			contactDetails,
 		} ),
 		[
+			contactDetails,
 			createUserAndSiteBeforeTransaction,
 			getThankYouUrl,
 			includeDomainDetails,
@@ -454,19 +455,19 @@ export default function CompositeCheckout( {
 		]
 	);
 
-	const domainDetails = getDomainDetails( {
+	const domainDetails = getDomainDetails( contactDetails, {
 		includeDomainDetails,
 		includeGSuiteDetails,
 	} );
-	const postalCode = getPostalCode();
+	const postalCode = getPostalCode( contactDetails );
 
 	const paymentProcessors = useMemo(
 		() => ( {
 			'apple-pay': ( transactionData: unknown ) =>
-				applePayProcessor( transactionData, dataForProcessor, transactionOptions ),
+				applePayProcessor( transactionData, dataForProcessor ),
 			'free-purchase': () => freePurchaseProcessor( dataForProcessor ),
 			card: ( transactionData: unknown ) =>
-				multiPartnerCardProcessor( transactionData, dataForProcessor, transactionOptions ),
+				multiPartnerCardProcessor( transactionData, dataForProcessor ),
 			alipay: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'alipay', transactionData, dataForProcessor ),
 			p24: ( transactionData: unknown ) =>
@@ -502,15 +503,7 @@ export default function CompositeCheckout( {
 				),
 			paypal: () => payPalProcessor( dataForProcessor ),
 		} ),
-		[
-			siteId,
-			dataForProcessor,
-			transactionOptions,
-			countryCode,
-			subdivisionCode,
-			postalCode,
-			domainDetails,
-		]
+		[ siteId, dataForProcessor, countryCode, subdivisionCode, postalCode, domainDetails ]
 	);
 
 	const jetpackColors = isJetpackNotAtomic
@@ -612,7 +605,6 @@ export default function CompositeCheckout( {
 			<QuerySitePlans siteId={ siteId } />
 			<QuerySitePurchases siteId={ siteId } />
 			<QueryPlans />
-			<QueryExperiments />
 			<QueryProducts />
 			<QueryContactDetailsCache />
 			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />

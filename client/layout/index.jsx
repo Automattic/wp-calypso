@@ -48,9 +48,6 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import LayoutLoader from './loader';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { withCurrentRoute } from 'calypso/components/route';
-import QueryExperiments from 'calypso/components/data/query-experiments';
-import Experiment from 'calypso/components/experiment';
-import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { getShouldShowAppBanner, handleScroll } from './utils';
@@ -86,6 +83,35 @@ function SidebarScrollSynchronizer( { enabled } ) {
 			}
 		};
 	}, [ active ] );
+
+	return null;
+}
+
+function SidebarOverflowDelay( { layoutFocus } ) {
+	const setSidebarOverflowClass = ( overflow ) => {
+		const classList = document.querySelector( 'body' ).classList;
+		if ( overflow ) {
+			classList.add( 'is-sidebar-overflow' );
+		} else {
+			classList.remove( 'is-sidebar-overflow' );
+		}
+	};
+
+	React.useEffect( () => {
+		if ( layoutFocus !== 'sites' ) {
+			// The sidebar menu uses a flyout design that requires the overflowing content
+			// to be visible. However, `overflow` isn't an animatable CSS property, so we
+			// need to set it after the sliding transition finishes. We wait for 150ms (the
+			// CSS transition time) + a grace period of 350ms (since the sidebar menu is
+			// rendered asynchronously).
+			// @see https://github.com/Automattic/wp-calypso/issues/47019
+			setTimeout( () => {
+				setSidebarOverflowClass( true );
+			}, 500 );
+		} else {
+			setSidebarOverflowClass( false );
+		}
+	}, [ layoutFocus ] );
 
 	return null;
 }
@@ -243,9 +269,8 @@ class Layout extends Component {
 
 		return (
 			<div className={ sectionClass }>
-				<QueryExperiments />
-				<Experiment name="new_onboarding_existing_users_non_en_v5" />
 				<SidebarScrollSynchronizer enabled={ this.props.isNavUnificationEnabled } />
+				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
 					group={ this.props.sectionGroup }
 					section={ this.props.sectionName }
@@ -338,7 +363,6 @@ class Layout extends Component {
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
 				) }
-				<QueryReaderTeams />
 			</div>
 		);
 	}

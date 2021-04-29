@@ -14,7 +14,6 @@ module.exports = {
 		'plugin:jsx-a11y/recommended',
 		'plugin:jest/recommended',
 		'plugin:prettier/recommended',
-		'prettier/react',
 		'plugin:md/prettier',
 		'plugin:@wordpress/eslint-plugin/i18n',
 	],
@@ -106,7 +105,7 @@ module.exports = {
 					.overrides[ 0 ].rules,
 			},
 			// Prettier rules config
-			require( 'eslint-config-prettier/@typescript-eslint' ),
+			require( 'eslint-config-prettier' ),
 			// Our own overrides
 			{
 				files: [ '**/*.ts', '**/*.tsx' ],
@@ -155,6 +154,9 @@ module.exports = {
 					'@typescript-eslint/no-var-requires': 'off',
 					// REST API objects include underscores
 					'@typescript-eslint/camelcase': 'off',
+
+					// TypeScript compiler already takes care of these errors
+					'import/named': 'off',
 				},
 			}
 		),
@@ -376,6 +378,7 @@ module.exports = {
 
 		// Force packages to declare their dependencies
 		'import/no-extraneous-dependencies': 'error',
+		'import/named': 'error',
 
 		'wpcalypso/no-unsafe-wp-apis': [
 			'error',
@@ -393,6 +396,7 @@ module.exports = {
 		// Disable Lodash methods that we've already migrated away from, see p4TIVU-9Bf-p2 for more details.
 		'you-dont-need-lodash-underscore/all': 'error',
 		'you-dont-need-lodash-underscore/any': 'error',
+		'you-dont-need-lodash-underscore/assign': 'error',
 		'you-dont-need-lodash-underscore/bind': 'error',
 		'you-dont-need-lodash-underscore/cast-array': 'error',
 		'you-dont-need-lodash-underscore/collect': 'error',
@@ -405,6 +409,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/every': 'error',
 		'you-dont-need-lodash-underscore/extend-own': 'error',
 		'you-dont-need-lodash-underscore/fill': 'error',
+		'you-dont-need-lodash-underscore/first': 'error',
 		'you-dont-need-lodash-underscore/foldl': 'error',
 		'you-dont-need-lodash-underscore/foldr': 'error',
 		'you-dont-need-lodash-underscore/index-of': 'error',
@@ -424,6 +429,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/pad-start': 'error',
 		'you-dont-need-lodash-underscore/reduce-right': 'error',
 		'you-dont-need-lodash-underscore/repeat': 'error',
+		'you-dont-need-lodash-underscore/replace': 'error',
 		'you-dont-need-lodash-underscore/reverse': 'error',
 		'you-dont-need-lodash-underscore/select': 'error',
 		'you-dont-need-lodash-underscore/slice': 'error',

@@ -2,9 +2,9 @@
  * External dependencies
  */
 import creditcards from 'creditcards';
-import { capitalize, compact, isEmpty, mergeWith, union } from 'lodash';
+import { capitalize, compact, isEmpty, mergeWith } from 'lodash';
 import i18n from 'i18n-calypso';
-import { isValidPostalCode } from 'calypso/lib/postal-code';
+import { isValidPostalCode } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -181,7 +181,9 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
  */
 export function mergeValidationRules( ...rulesets ) {
 	return mergeWith( {}, ...rulesets, ( objValue, srcValue ) =>
-		Array.isArray( objValue ) && Array.isArray( srcValue ) ? union( objValue, srcValue ) : undefined
+		Array.isArray( objValue ) && Array.isArray( srcValue )
+			? [ ...new Set( [].concat( objValue, srcValue ) ) ]
+			: undefined
 	);
 }
 

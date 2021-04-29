@@ -623,18 +623,31 @@ export class JetpackAuthorize extends Component {
 	getUserText() {
 		const { translate } = this.props;
 		const { authorizeSuccess } = this.props.authorizationData;
-		// translators: %(user) is user's Display Name (Eg Connecting as John Doe)
-		let text = translate( 'Connecting as {{strong}}%(user)s{{/strong}}', {
-			args: { user: this.props.user.display_name },
-			components: { strong: <strong /> },
-		} );
+
+		// Accounts created through the new Magic Link-based signup flow (enabled with the
+		// 'jetpack/magic-link-signup' feature flag) are created with a username based on the user's
+		// email address. For this reason, we want to display both the username and the email address
+		// so users can start making the connection between the two immediately. Otherwise, users might
+		// not recognize their username since they didn't created it.
+
+		// translators: %(user) is user's Display Name (Eg Connecting as John Doe) and %(email) is the user's email address
+		let text = translate(
+			'Connecting as {{strong}}%(user)s{{/strong}} ({{strong}}%(email)s{{/strong}})',
+			{
+				args: { email: this.props.user.email, user: this.props.user.display_name },
+				components: { strong: <strong /> },
+			}
+		);
 
 		if ( authorizeSuccess || this.props.isAlreadyOnSitesList ) {
-			// translators: %(user) is user's Display Name (Eg Connected as John Doe)
-			text = translate( 'Connected as {{strong}}%(user)s{{/strong}}', {
-				args: { user: this.props.user.display_name },
-				components: { strong: <strong /> },
-			} );
+			// translators: %(user) is user's Display Name (Eg Connecting as John Doe) and %(email) is the user's email address
+			text = translate(
+				'Connected as {{strong}}%(user)s{{/strong}} ({{strong}}%(email)s{{/strong}})',
+				{
+					args: { email: this.props.user.email, user: this.props.user.display_name },
+					components: { strong: <strong /> },
+				}
+			);
 		}
 
 		return text;

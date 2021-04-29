@@ -1,6 +1,20 @@
 {
 	"featured": [
 		{
+			"title": "Seedlet",
+			"slug": "seedlet-blocks",
+			"template": "seedlet-blocks",
+			"theme": "seedlet-blocks",
+			"fonts": {
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured" ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
 			"title": "Twenty Twenty One",
 			"slug": "tt1-blocks",
 			"template": "tt1-blocks",
@@ -409,6 +423,17 @@
 			"categories": [ "featured" ],
 			"is_premium": false,
 			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Start with an empty page",
+			"slug": "blank-canvas",
+			"template": "blank-canvas",
+			"theme": "blank-canvas",
+			"categories": [ "featured" ],
+			"is_premium": false,
+			"is_fse": false,
+			"is_alpha": true,
 			"features": []
 		}
 	]

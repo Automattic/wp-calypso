@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { assign } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -39,9 +38,10 @@ class ConversationFollowButtonContainer extends Component {
 	handleFollowToggle = ( isRequestingFollow ) => {
 		const { siteId, postId, post, followSource } = this.props;
 
-		const tracksProperties = assign( getTracksPropertiesForPost( post ), {
+		const tracksProperties = {
+			...getTracksPropertiesForPost( post ),
 			follow_source: followSource,
-		} );
+		};
 
 		if ( isRequestingFollow ) {
 			this.props.recordReaderTracksEvent(

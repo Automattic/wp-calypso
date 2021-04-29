@@ -43,7 +43,7 @@ describe( `[${ host }] Comments: (${ screenSize })`, function () {
 			await this.loginFlow.loginAndStartNewPost( null, true );
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.enterTitle( blogPostTitle );
-			return await gEditorComponent.enterText( blogPostQuote );
+			await gEditorComponent.enterText( blogPostQuote );
 		} );
 
 		step( 'Can publish and visit site', async function () {
@@ -53,23 +53,20 @@ describe( `[${ host }] Comments: (${ screenSize })`, function () {
 
 		step( 'Can post a comment', async function () {
 			const commentArea = await CommentsAreaComponent.Expect( driver );
-			return await commentArea._postComment( {
-				comment: dataHelper.randomPhrase(),
-				name: 'e2eTestName',
-				email: 'e2eTestName@test.com',
-			} );
+			const comment = dataHelper.randomPhrase();
+
+			await commentArea._postComment( comment );
+
+			await commentArea.verifyCommentIsVisible( comment );
 		} );
 
 		step( 'Can post a reply', async function () {
 			const commentArea = await CommentsAreaComponent.Expect( driver );
-			await commentArea.reply(
-				{
-					comment: dataHelper.randomPhrase(),
-					name: 'e2eTestName',
-					email: 'e2eTestName@test.com',
-				},
-				2
-			);
+			const comment = dataHelper.randomPhrase();
+
+			await commentArea.reply( comment );
+
+			await commentArea.verifyCommentIsVisible( comment, 2 );
 		} );
 	} );
 } );

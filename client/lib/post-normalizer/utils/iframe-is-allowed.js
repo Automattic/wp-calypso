@@ -6,7 +6,7 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getUrlParts } from 'calypso/lib/url';
+import { getUrlParts } from '@automattic/calypso-url';
 
 /**
  * Determines if an iframe is from a source we trust. We allow these to be the featured media and also give

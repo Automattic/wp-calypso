@@ -15,6 +15,7 @@ import SupportInfo from 'calypso/components/support-info';
 interface Props {
 	checked: boolean;
 	onChange: ( event ) => void;
+	disabled: boolean;
 }
 
 /**
@@ -22,7 +23,7 @@ interface Props {
  */
 import './style.scss';
 
-const ContractorSelect: FunctionComponent< Props > = ( { checked, onChange } ) => {
+const ContractorSelect: FunctionComponent< Props > = ( { checked, onChange, disabled } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -32,6 +33,7 @@ const ContractorSelect: FunctionComponent< Props > = ( { checked, onChange } ) =
 					className="contractor-select__checkbox"
 					onChange={ onChange }
 					checked={ checked }
+					disabled={ disabled }
 				/>
 				<span>
 					{ translate( 'This user is a contractor, freelancer, consultant, or agency.' ) }

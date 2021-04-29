@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, includes, isObject } from 'lodash';
+import { find, includes } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import i18n from 'i18n-calypso';
@@ -13,22 +13,22 @@ import debugFactory from 'debug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
-import { getPlan } from 'calypso/lib/plans';
-import { isMonthly as isMonthlyPlan } from 'calypso/lib/plans/constants';
 import {
+	getPlan,
+	isMonthly as isMonthlyPlan,
 	getProductFromSlug,
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
 	isGoogleWorkspace,
 	isJetpackPlan,
-	isMonthly as isMonthlyProduct,
+	isMonthlyProduct,
 	isPlan,
 	isTheme,
 	isTitanMail,
 	isConciergeSession,
-} from 'calypso/lib/products-values';
-import { getJetpackProductsDisplayNames } from 'calypso/lib/products-values/translations';
+	getJetpackProductsDisplayNames,
+} from '@automattic/calypso-products';
 import { MembershipSubscription, MembershipSubscriptionsSite } from 'calypso/lib/purchases/types';
 import { errorNotice } from 'calypso/state/notices/actions';
 
@@ -307,6 +307,10 @@ function hasPaymentMethod( purchase ) {
 
 function isPendingTransfer( purchase ) {
 	return purchase.pendingTransfer;
+}
+
+function isObject( value ) {
+	return value !== null && typeof value === 'object';
 }
 
 /**

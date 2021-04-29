@@ -1,7 +1,7 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
-import { WPCOMTransactionEndpointResponse } from '../types/transaction-endpoint';
+import { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
 
 const emptyResponse: WPCOMTransactionEndpointResponse = {
 	success: false,

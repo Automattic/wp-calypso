@@ -516,7 +516,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 			app.withMockedVariable( process.env, 'NODE_ENV', 'development' );
 		} );
 
-		it( 'uses the value from DEV_TARGET ', async () => {
+		it( 'uses the value from DEV_TARGET', async () => {
 			app.withMockedVariable( process.env, 'DEV_TARGET', 'fallback' );
 			const { request } = await app.run();
 			expect( request.context.target ).toEqual( 'fallback' );
@@ -1106,7 +1106,7 @@ describe( 'main app', () => {
 	} );
 
 	describe( 'Middleware localSubdomains', () => {
-		describe( 'sets locale info in the request context ', () => {
+		describe( 'sets locale info in the request context', () => {
 			it( 'rtl language', async () => {
 				const { request } = await app.run( {
 					request: {

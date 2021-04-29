@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { values } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import 'calypso/state/user-devices/init';
@@ -15,6 +10,6 @@ import 'calypso/state/user-devices/init';
  * @param  {object} options.userDevices user's devices slice of the state tree
  * @returns {Array}                     current user's devices
  */
-export const getUserDevices = ( { userDevices } ) => values( userDevices );
+export const getUserDevices = ( { userDevices } ) => Object.values( userDevices ?? {} );
 
 export default getUserDevices;

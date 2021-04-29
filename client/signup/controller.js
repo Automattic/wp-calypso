@@ -46,6 +46,7 @@ import user from 'calypso/lib/user';
 import getSiteId from 'calypso/state/selectors/get-site-id';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 
 /**
  * Constants
@@ -97,7 +98,12 @@ export const removeP2SignupClassName = function () {
 
 export default {
 	redirectTests( context, next ) {
+		const currentFlowName = getFlowName( context.params );
+		currentFlowName === 'onboarding' && loadExperimentAssignment( 'refined_reskin_v1' );
+		currentFlowName === 'launch-site' && loadExperimentAssignment( 'hide_ecommerce_launch_site' );
 		if ( context.pathname.indexOf( 'new-launch' ) >= 0 ) {
+			next();
+		} else if ( currentFlowName === 'onboarding' ) {
 			next();
 		} else if (
 			context.pathname.indexOf( 'domain' ) >= 0 ||
@@ -106,7 +112,6 @@ export default {
 			context.pathname.indexOf( 'wpcc' ) >= 0 ||
 			context.pathname.indexOf( 'launch-site' ) >= 0 ||
 			context.pathname.indexOf( 'launch-only' ) >= 0 ||
-			context.params.flowName === 'user' ||
 			context.params.flowName === 'account' ||
 			context.params.flowName === 'crowdsignal' ||
 			context.params.flowName === 'pressable-nux' ||
@@ -159,7 +164,6 @@ export default {
 						);
 						window.location = urlWithLocale;
 					} else {
-						removeWhiteBackground();
 						next();
 					}
 				} )
@@ -313,6 +317,10 @@ export default {
 		const signupDependencies = getSignupDependencyStore( getState() );
 
 		const siteSlug = signupDependencies?.siteSlug || query?.siteSlug;
+		if ( ! siteSlug ) {
+			next();
+			return;
+		}
 		const siteId = getSiteId( getState(), siteSlug );
 		if ( siteId ) {
 			dispatch( setSelectedSiteId( siteId ) );
@@ -323,7 +331,7 @@ export default {
 				let freshSiteId = getSiteId( getState(), siteSlug );
 
 				if ( ! freshSiteId ) {
-					const wpcomStagingFragment = siteSlug.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
+					const wpcomStagingFragment = siteSlug.replace( /\.wordpress\.com$/, '.wpcomstaging.com' );
 					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
 				}
 

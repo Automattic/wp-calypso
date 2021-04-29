@@ -83,7 +83,6 @@ export class List extends React.Component {
 		settingPrimaryDomain: false,
 		changePrimaryDomainModeEnabled: false,
 		primaryDomainIndex: -1,
-		addMenuVisible: false,
 	};
 
 	isLoading() {

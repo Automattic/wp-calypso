@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { first, last } from 'lodash';
+import { last } from 'lodash';
 
 /**
  * Internal dependencies
@@ -120,7 +120,7 @@ describe( 'immediate-login/utils', () => {
 
 		const messages = [
 			createImmediateLoginMessage( '', 'test@wordpress.com' ),
-			createImmediateLoginMessage( first( REASONS_FOR_MANUAL_RENEWAL ), 'test@wordpress.com' ),
+			createImmediateLoginMessage( REASONS_FOR_MANUAL_RENEWAL[ 0 ], 'test@wordpress.com' ),
 			createImmediateLoginMessage( last( REASONS_FOR_MANUAL_RENEWAL ), 'test@wordpress.com' ),
 		];
 		test( 'should put an email in every message', () => {

@@ -10,7 +10,7 @@ const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' 
 /**
  * Internal dependencies
  */
-import { isExternal } from 'calypso/lib/url';
+import { isExternal, resemblesUrl, urlToSlug } from 'calypso/lib/url';
 import config from '@automattic/calypso-config';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
@@ -29,15 +29,14 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
-import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
 import {
+	JETPACK_PRODUCTS_LIST,
 	JETPACK_RESET_PLANS,
 	JETPACK_REDIRECT_URL,
 	redirectCloudCheckoutToWpAdmin,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
 import { abtest } from 'calypso/lib/abtest';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 type SaveUrlToCookie = ( url: string ) => void;
 type GetUrlFromCookie = () => string | undefined;
@@ -57,7 +56,6 @@ export default function getThankYouPageUrl( {
 	saveUrlToCookie = persistSignupDestination,
 	isEligibleForSignupDestinationResult,
 	shouldShowOneClickTreatment,
-	shouldShowDifmUpsell,
 	hideNudge,
 	isInEditor,
 	previousRoute,
@@ -76,7 +74,6 @@ export default function getThankYouPageUrl( {
 	saveUrlToCookie?: SaveUrlToCookie;
 	isEligibleForSignupDestinationResult?: boolean;
 	shouldShowOneClickTreatment?: boolean;
-	shouldShowDifmUpsell?: boolean;
 	hideNudge?: boolean;
 	isInEditor?: boolean;
 	previousRoute?: string;
@@ -84,15 +81,20 @@ export default function getThankYouPageUrl( {
 	debug( 'starting getThankYouPageUrl' );
 
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
-	// (i.e. on WordPress.com), or a Jetpack or WP.com site's block editor (in wp-admin).
-	// This is required for Jetpack's (and WP.com's) paid blocks Upgrade Nudge.
-	if ( redirectTo && ! isExternal( redirectTo ) ) {
-		debug( 'has external redirectTo, so returning that', redirectTo );
-		return redirectTo;
-	}
+	// (i.e. on WordPress.com), the same site as the cart's site, or a Jetpack or WP.com
+	// site's block editor (in wp-admin). This is required for Jetpack's (and WP.com's)
+	// paid blocks Upgrade Nudge.
 	if ( redirectTo ) {
 		const { protocol, hostname, port, pathname, query } = parseUrl( redirectTo, true, true );
 
+		if ( resemblesUrl( redirectTo ) && hostname && urlToSlug( hostname ) === siteSlug ) {
+			debug( 'has same site redirectTo, so returning that', redirectTo );
+			return redirectTo;
+		}
+		if ( ! isExternal( redirectTo ) ) {
+			debug( 'has a redirectTo that is not external, so returning that', redirectTo );
+			return redirectTo;
+		}
 		// We cannot simply compare `hostname` to `siteSlug`, since the latter
 		// might contain a path in the case of Jetpack subdirectory installs.
 		if ( adminUrl && redirectTo.startsWith( `${ adminUrl }post.php?` ) ) {
@@ -188,7 +190,6 @@ export default function getThankYouPageUrl( {
 		hideNudge: Boolean( hideNudge ),
 		shouldShowOneClickTreatment,
 		previousRoute,
-		shouldShowDifmUpsell,
 	} );
 	if ( redirectPathForConciergeUpsell ) {
 		debug( 'redirect for concierge exists, so returning', redirectPathForConciergeUpsell );
@@ -353,7 +354,6 @@ function getRedirectUrlForConciergeNudge( {
 	hideNudge,
 	shouldShowOneClickTreatment,
 	previousRoute,
-	shouldShowDifmUpsell,
 }: {
 	pendingOrReceiptId: string;
 	orderId: number | undefined;
@@ -362,7 +362,6 @@ function getRedirectUrlForConciergeNudge( {
 	hideNudge: boolean;
 	shouldShowOneClickTreatment: boolean | undefined;
 	previousRoute: string | undefined;
-	shouldShowDifmUpsell: boolean | undefined;
 } ): string | undefined {
 	if ( hideNudge ) {
 		return;
@@ -392,15 +391,6 @@ function getRedirectUrlForConciergeNudge( {
 		} );
 		if ( upgradePath ) {
 			return upgradePath;
-		}
-
-		// This is for the DIFM upsell A/B test. Check pcbrnV-Y3-p2.
-		if ( hasBusinessPlan( cart ) ) {
-			recordTracksEvent( 'calypso_eligible_difm_upsell' );
-
-			if ( shouldShowDifmUpsell ) {
-				return `/checkout/${ siteSlug }/offer-difm/${ pendingOrReceiptId }`;
-			}
 		}
 
 		// The conciergeUpsellDial test is used when we need to quickly dial back the volume of concierge sessions

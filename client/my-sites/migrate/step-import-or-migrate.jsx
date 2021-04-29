@@ -17,8 +17,8 @@ import { get } from 'lodash';
 import { getImportSectionLocation, redirectTo } from 'calypso/my-sites/migrate/helpers';
 import SitesBlock from 'calypso/my-sites/migrate/components/sites-block';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { FEATURE_UPLOAD_THEMES_PLUGINS } from 'calypso/lib/plans/constants';
-import { planHasFeature } from 'calypso/lib/plans';
+import { FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
+import { planHasFeature } from '@automattic/calypso-products';
 
 /**
  * Style dependencies

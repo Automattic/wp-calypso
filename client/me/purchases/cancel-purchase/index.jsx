@@ -30,7 +30,7 @@ import {
 	getIncludedDomainPurchase,
 } from 'calypso/state/purchases/selectors';
 import HeaderCake from 'calypso/components/header-cake';
-import { isDomainRegistration, isDomainTransfer } from 'calypso/lib/products-values';
+import { isDomainRegistration, isDomainTransfer } from '@automattic/calypso-products';
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
 import { managePurchase, purchasesRoot } from 'calypso/me/purchases/paths';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';

@@ -9,7 +9,11 @@ import { localize } from 'i18n-calypso';
  */
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import { newPost } from 'calypso/lib/paths';
-import { isWpComBusinessPlan, isWpComEcommercePlan, isWpComPremiumPlan } from 'calypso/lib/plans';
+import {
+	isWpComBusinessPlan,
+	isWpComEcommercePlan,
+	isWpComPremiumPlan,
+} from '@automattic/calypso-products';
 
 /**
  * Image dependencies

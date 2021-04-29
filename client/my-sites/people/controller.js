@@ -65,7 +65,7 @@ function redirectToTeam( context ) {
 function renderPeopleList( context, next ) {
 	const filter = context.params.filter;
 
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'People', { textOnly: true } ) ) );
 
 	context.primary = React.createElement( PeopleList, {
@@ -79,7 +79,7 @@ function renderInvitePeople( context, next ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 
-	context.store.dispatch( setTitle( i18n.translate( 'Invite People', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	context.store.dispatch( setTitle( i18n.translate( 'Invite People', { textOnly: true } ) ) ); // FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 
 	context.primary = React.createElement( InvitePeople, {
 		site: site,
@@ -104,7 +104,7 @@ function renderPeopleInviteDetails( context, next ) {
 }
 
 function renderSingleTeamMember( context, next ) {
-	context.store.dispatch( setTitle( i18n.translate( 'View Team Member', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	context.store.dispatch( setTitle( i18n.translate( 'View Team Member', { textOnly: true } ) ) ); // FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 
 	context.primary = React.createElement( EditTeamMember, {
 		userLogin: context.params.user_login,

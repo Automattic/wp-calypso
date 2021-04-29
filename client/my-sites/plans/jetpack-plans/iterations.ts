@@ -1,13 +1,20 @@
 /**
+ * External dependencies
+ */
+import { getUrlParts } from '@automattic/calypso-url';
+
+/**
  * Internal dependencies
  */
-import { getUrlParts } from 'calypso/lib/url/url-parts';
+import { abtest } from 'calypso/lib/abtest';
 
 /**
  * Iterations
  */
 
-export enum Iterations {}
+export enum Iterations {
+	REVERSE_FEATURED = 'highToLow_test',
+}
 
 const iterationNames: string[] = Object.values( Iterations );
 
@@ -36,9 +43,17 @@ const getCurrentCROIterationName = (): Iterations | null => {
 		if ( iterationQuery && iterationNames.includes( iterationQuery ) ) {
 			return iterationQuery as Iterations;
 		}
+
+		// Allow for people to explicitly look at the control/default variation
+		if ( iterationQuery === 'default' ) {
+			return null;
+		}
 	}
 
-	return null;
+	const shouldReverseFeaturedProducts =
+		abtest( 'jetpackReverseFeaturedProducts' ) === Iterations.REVERSE_FEATURED;
+
+	return shouldReverseFeaturedProducts ? Iterations.REVERSE_FEATURED : null;
 };
 
 type IterationValueFunction< T > = ( key: Iterations | null ) => T | undefined;

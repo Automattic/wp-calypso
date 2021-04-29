@@ -154,7 +154,6 @@ object RunCalypsoE2eDesktopTests : BuildType({
 		vcs {
 			branchFilter = """
 				+:*
-				-:trunk
 				-:pull*
 			""".trimIndent()
 		}
@@ -321,7 +320,6 @@ object RunCalypsoE2eMobileTests : BuildType({
 		vcs {
 			branchFilter = """
 				+:*
-				-:trunk
 				-:pull*
 			""".trimIndent()
 		}
@@ -414,6 +412,11 @@ object BuildDockerImage : BuildType({
 				}
 				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
 			}
+		}
+		vcsLabeling {
+			vcsRootId = "${Settings.WpCalypso.id}"
+			labelingPattern = "calypso-%build.number%"
+			successfulOnly = true
 		}
 	}
 })

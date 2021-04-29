@@ -23,7 +23,9 @@ import {
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { styled } from '@automattic/wpcom-checkout';
 import type { RemoveProductFromCart, RequestCartProduct } from '@automattic/shopping-cart';
+import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -54,13 +56,10 @@ import {
 	hasDomainRegistration,
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
-import QueryExperiments from 'calypso/components/data/query-experiments';
 import PaymentMethodStep from './payment-method-step';
 import CheckoutHelpLink from './checkout-help-link';
-import styled from '../lib/styled';
 import type { CountryListItem } from '../types/country-list-item';
 import type { GetProductVariants } from '../hooks/product-variants';
-import type { ManagedContactDetails } from '../types/wpcom-store-state';
 import type { OnChangeItemVariant } from '../components/item-variation-picker';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
@@ -373,7 +372,6 @@ export default function WPCheckout( {
 
 	return (
 		<Checkout>
-			<QueryExperiments />
 			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
 				<CheckoutErrorBoundary
 					errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }

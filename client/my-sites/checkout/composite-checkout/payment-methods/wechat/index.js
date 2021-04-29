@@ -18,12 +18,12 @@ import {
 	PaymentProcessorResponseType,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { Field } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
 import { PaymentMethodLogos } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-logos';
-import Field from 'calypso/my-sites/checkout/composite-checkout/components/field';
 import {
 	SummaryLine,
 	SummaryDetails,

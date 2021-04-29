@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import React, { ReactElement, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { ReactElement } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -19,13 +18,8 @@ import {
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import LicenseStateFilter from 'calypso/jetpack-cloud/sections/partner-portal/license-state-filter';
-import SelectDropdown from 'calypso/components/select-dropdown';
-import {
-	getActivePartnerKeyId,
-	getCurrentPartner,
-} from 'calypso/state/partner-portal/partner/selectors';
-import { setActivePartnerKey } from 'calypso/state/partner-portal/partner/actions';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
+import SelectPartnerKeyDropdown from 'calypso/jetpack-cloud/sections/partner-portal/select-partner-key-dropdown';
 
 /**
  * Style dependencies
@@ -48,24 +42,6 @@ export default function Licenses( {
 	sortField,
 }: Props ): ReactElement {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
-	const partner = useSelector( getCurrentPartner );
-	const activeKeyId = useSelector( getActivePartnerKeyId );
-	const onKeySelect = useCallback(
-		( option ) => {
-			dispatch( setActivePartnerKey( parseInt( option.value ) ) );
-		},
-		[ dispatch ]
-	);
-
-	const options =
-		partner &&
-		partner.keys.map( ( key ) => ( {
-			value: key.id.toString(),
-			label: key.name,
-		} ) );
-
-	options?.unshift( { label: translate( 'Partner Key' ) as string, value: '', isLabel: true } );
 
 	const context = {
 		filter,
@@ -81,14 +57,9 @@ export default function Licenses( {
 
 			<div className="licenses__header">
 				<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>
-				{ options && options.length > 2 && (
-					<SelectDropdown
-						initialSelected={ activeKeyId.toString() }
-						options={ options }
-						onSelect={ onKeySelect }
-						compact
-					/>
-				) }
+
+				<SelectPartnerKeyDropdown />
+
 				<Button href="/partner-portal/issue-license" primary style={ { marginLeft: 'auto' } }>
 					{ translate( 'Issue New License' ) }
 				</Button>

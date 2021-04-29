@@ -20,6 +20,7 @@ export function login( {
 	site = undefined,
 	useMagicLink = undefined,
 	from = undefined,
+	skipUser = undefined,
 } = {} ) {
 	let url = config( 'login_url' );
 
@@ -75,6 +76,10 @@ export function login( {
 
 	if ( from ) {
 		url = addQueryArgs( { from }, url );
+	}
+
+	if ( skipUser ) {
+		url = addQueryArgs( { skip_user: '1' }, url );
 	}
 
 	return url;

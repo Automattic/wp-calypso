@@ -10,6 +10,10 @@ import debugFactory from 'debug';
 /**
  * Internal Dependencies
  */
+import { getDomainOrProductFromContext } from './utils';
+import { JETPACK_LEGACY_PLANS } from '@automattic/calypso-products';
+import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -32,7 +36,6 @@ import UpsellNudge, {
 	BUSINESS_PLAN_UPGRADE_UPSELL,
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
-	DIFM_UPSELL,
 } from './upsell-nudge';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { TRUENAME_COUPONS } from 'calypso/lib/domains';
@@ -40,7 +43,7 @@ import { TRUENAME_COUPONS } from 'calypso/lib/domains';
 const debug = debugFactory( 'calypso:checkout-controller' );
 
 export function checkout( context, next ) {
-	const { feature, plan, domainOrProduct, purchaseId } = context.params;
+	const { feature, plan, purchaseId } = context.params;
 
 	const user = userFactory();
 	const isLoggedOut = ! user.get();
@@ -58,18 +61,13 @@ export function checkout( context, next ) {
 		return;
 	}
 
-	let product;
-	if ( selectedSite && selectedSite.slug !== domainOrProduct && domainOrProduct ) {
-		product = domainOrProduct;
-	} else {
-		product = context.params.product;
-	}
+	const product = getDomainOrProductFromContext( context );
 
 	if ( 'thank-you' === product ) {
 		return;
 	}
 
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
 	setSectionMiddleware( { name: 'checkout' } )( context );
@@ -113,6 +111,21 @@ export function checkout( context, next ) {
 	next();
 }
 
+export function redirectJetpackLegacyPlans( context, next ) {
+	const product = getDomainOrProductFromContext( context );
+
+	if ( JETPACK_LEGACY_PLANS.includes( product ) ) {
+		const state = context.store.getState();
+		const selectedSite = getSelectedSite( state );
+
+		page( ( isJetpackCloud() ? '/pricing/' : CALYPSO_PLANS_PAGE ) + ( selectedSite?.slug || '' ) );
+
+		return;
+	}
+
+	next();
+}
+
 export function checkoutPending( context, next ) {
 	const orderId = Number( context.params.orderId );
 	const siteSlug = context.params.site;
@@ -140,7 +153,7 @@ export function checkoutThankYou( context, next ) {
 
 	setSectionMiddleware( { name: 'checkout-thank-you' } )( context );
 
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) );
 
 	context.primary = (
@@ -216,8 +229,6 @@ export function upsellNudge( context, next ) {
 			default:
 				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
 		}
-	} else if ( context.path.includes( 'offer-difm' ) ) {
-		upsellType = DIFM_UPSELL;
 	}
 
 	setSectionMiddleware( { name: upsellType } )( context );

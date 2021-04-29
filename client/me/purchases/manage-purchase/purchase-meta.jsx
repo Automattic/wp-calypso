@@ -26,15 +26,6 @@ import {
 	isWithinIntroductoryOfferPeriod,
 	isIntroductoryOfferFreeTrial,
 } from 'calypso/lib/purchases';
-import {
-	isDomainRegistration,
-	isDomainTransfer,
-	isConciergeSession,
-	isJetpackPlan,
-	isJetpackProduct,
-	getProductFromSlug,
-} from 'calypso/lib/products-values';
-import { getPlan } from 'calypso/lib/plans';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
@@ -43,7 +34,18 @@ import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import UserItem from 'calypso/components/user';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { canEditPaymentDetails } from '../utils';
-import { TERM_BIENNIALLY, TERM_MONTHLY, JETPACK_LEGACY_PLANS } from 'calypso/lib/plans/constants';
+import {
+	getPlan,
+	TERM_BIENNIALLY,
+	TERM_MONTHLY,
+	JETPACK_LEGACY_PLANS,
+	isDomainRegistration,
+	isDomainTransfer,
+	isConciergeSession,
+	isJetpackPlan,
+	isJetpackProduct,
+	getProductFromSlug,
+} from '@automattic/calypso-products';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';

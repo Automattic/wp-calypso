@@ -29,6 +29,9 @@
 		"editor-site-launch-button": "BROWSERSLIST_ENV=wpcom calypso-build --env source='editor-site-launch/launch-button'",
 		"editor-site-launch-gutenboarding": "BROWSERSLIST_ENV=wpcom calypso-build --env source='editor-site-launch/gutenboarding-launch'",
 		"editor-site-launch-focused": "BROWSERSLIST_ENV=wpcom calypso-build --env source='editor-site-launch/focused-launch'",
+		"error-reporting": "BROWSERSLIST_ENV=wpcom calypso-build --env source='error-reporting'",
+		"dev:error-reporting": "yarn run error-reporting",
+		"build:error-reporting": "NODE_ENV=production yarn run error-reporting",
 		"dev:editor-site-launch": "yarn run editor-site-launch",
 		"build:editor-site-launch": "NODE_ENV=production yarn run editor-site-launch",
 		"newspack-blocks": "npm run sync:newspack-blocks -- --nodemodules && npm-run-all --parallel newspack-blocks-*",
@@ -101,7 +104,7 @@
 		"@automattic/page-pattern-modal": "^1.0.0-alpha.0",
 		"@automattic/plans-grid": "^1.0.0-alpha.0",
 		"@automattic/typography": "^1.0.0",
-		"@babel/core": "^7.13.10",
+		"@babel/core": "^7.13.15",
 		"@wordpress/a11y": "^2.14.3",
 		"@wordpress/api-fetch": "^3.21.5",
 		"@wordpress/base-styles": "^3.3.3",
@@ -136,7 +139,7 @@
 		"classnames": "^2.2.6",
 		"emotion-theming": "^10.0.27",
 		"enzyme": "^3.11.0",
-		"eslint": "^7.12.0",
+		"eslint": "^7.24.0",
 		"jest": "^26.4.0",
 		"lodash": "^4.17.21",
 		"moment": "^2.26.0",
@@ -156,6 +159,6 @@
 		"@wordpress/eslint-plugin": "^8.0.2",
 		"babel-jest": "^26.3.0",
 		"wait-for-expect": "^3.0.2",
-		"webpack": "^5.30.0"
+		"webpack": "^5.34.0"
 	}
 }

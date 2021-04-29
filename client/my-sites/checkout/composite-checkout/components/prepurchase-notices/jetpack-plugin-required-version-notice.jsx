@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
  */
 import { useTranslate } from 'i18n-calypso';
 import { preventWidows } from 'calypso/lib/formatting';
-import { getJetpackProductDisplayName } from 'calypso/lib/products-values/get-jetpack-product-display-name';
+import { getJetpackProductDisplayName } from '@automattic/calypso-products';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';

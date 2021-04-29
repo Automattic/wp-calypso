@@ -18,18 +18,16 @@ import './style.scss';
 
 function Recaptcha( { badgePosition } ) {
 	useEffect( () => {
-		initGoogleRecaptcha(
-			'g-recaptcha',
-			'calypso/checkout/pageLoad',
-			config( 'google_recaptcha_site_key' )
-		).then( ( result ) => {
-			if ( ! result ) {
-				return;
-			}
+		initGoogleRecaptcha( 'g-recaptcha', config( 'google_recaptcha_site_key' ) ).then(
+			( clientId ) => {
+				if ( clientId === null ) {
+					return;
+				}
 
-			const { dispatch } = defaultRegistry;
-			dispatch( 'wpcom' ).setRecaptchaClientId( parseInt( result.clientId ) );
-		} );
+				const { dispatch } = defaultRegistry;
+				dispatch( 'wpcom' ).setRecaptchaClientId( parseInt( clientId ) );
+			}
+		);
 	}, [] );
 
 	return <div id="g-recaptcha" data-badge={ badgePosition }></div>;

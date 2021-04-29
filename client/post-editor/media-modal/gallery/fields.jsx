@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { assign, includes, times } from 'lodash';
+import { includes, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -41,7 +41,7 @@ export class EditorMediaModalGalleryFields extends React.Component {
 		};
 
 		if ( site && ( ! site.jetpack || isModuleActive( site, 'tiled-gallery' ) ) ) {
-			assign( options, {
+			Object.assign( options, {
 				rectangular: this.props.translate( 'Tiled Mosaic' ),
 				square: this.props.translate( 'Square Tiles' ),
 				circle: this.props.translate( 'Circles' ),
@@ -50,7 +50,7 @@ export class EditorMediaModalGalleryFields extends React.Component {
 		}
 
 		if ( site && ( ! site.jetpack || isModuleActive( site, 'shortcodes' ) ) ) {
-			assign( options, {
+			Object.assign( options, {
 				slideshow: this.props.translate( 'Slideshow' ),
 			} );
 		}

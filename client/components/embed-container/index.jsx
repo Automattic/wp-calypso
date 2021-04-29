@@ -4,7 +4,7 @@
 
 import React, { PureComponent } from 'react';
 import ReactDom from 'react-dom';
-import { assign, filter, forEach, forOwn } from 'lodash';
+import { filter, forEach, forOwn } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -52,11 +52,11 @@ function nodeNeedsProcessing( domNode ) {
 }
 
 function loadCSS( cssUrl ) {
-	const link = assign( document.createElement( 'link' ), {
-		rel: 'stylesheet',
-		type: 'text/css',
-		href: cssUrl,
-	} );
+	const link = document.createElement( 'link' );
+
+	link.rel = 'stylesheet';
+	link.type = 'text/css';
+	link.href = cssUrl;
 
 	document.head.appendChild( link );
 }

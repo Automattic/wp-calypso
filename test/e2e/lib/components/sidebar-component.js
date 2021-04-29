@@ -86,12 +86,12 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectPlans() {
-		await this.expandDrawerItem( 'Upgrades' );
+		await this.expandDrawerItem( 'Upgrades\nPremium' );
 		return await this._scrollToAndClickMenuItem( 'Plans' );
 	}
 
 	async selectDomains() {
-		await this.expandDrawerItem( 'Upgrades' );
+		await this.expandDrawerItem( 'Upgrades\nPremium' );
 		return await this._scrollToAndClickMenuItem( 'Domains' );
 	}
 

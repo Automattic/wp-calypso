@@ -6,7 +6,7 @@
 
 /**************************************************************************************************/
 /* This library is deprecated! Please consider ExPlat for your next A/B experiment.               */
-/* See /client/components/experiment/readme.md for more info!
+/* See /client/lib/explat/readme.md for more info!
 /**************************************************************************************************/
 
 export default {
@@ -58,5 +58,17 @@ export default {
 		localeExceptions: [ 'en', 'es' ],
 		defaultVariation: 'control',
 		allowExistingUsers: false,
+	},
+	// Change the ordering of featured Jetpack products:
+	// least to most expensive (control) vs most to least expensive (test)
+	jetpackReverseFeaturedProducts: {
+		datestamp: '20210422',
+		variations: {
+			highToLow_test: 50,
+			lowToHigh_control: 50,
+		},
+		localeTargets: 'any',
+		defaultVariation: 'lowToHigh_control',
+		allowExistingUsers: true,
 	},
 };

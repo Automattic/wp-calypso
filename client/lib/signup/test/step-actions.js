@@ -15,19 +15,19 @@ import {
 import { useNock } from 'calypso/test-helpers/use-nock';
 import flows from 'calypso/signup/config/flows';
 import { isDomainStepSkippable } from 'calypso/signup/config/steps';
-import { getUserStub } from 'calypso/lib/user';
+import user from 'calypso/lib/user';
 
 jest.mock( 'calypso/lib/abtest', () => ( { abtest: () => '' } ) );
 
 jest.mock( 'calypso/lib/user', () => {
 	const getStub = jest.fn();
 
-	const user = () => ( {
+	const userInstance = () => ( {
 		get: getStub,
 	} );
-	user.getUserStub = getStub;
+	userInstance.getUserStub = getStub;
 
-	return user;
+	return userInstance;
 } );
 
 jest.mock( 'calypso/signup/config/steps', () => require( './mocks/signup/config/steps' ) );
@@ -55,7 +55,7 @@ describe( 'createSiteWithCart()', () => {
 
 	beforeEach( () => {
 		isDomainStepSkippable.mockReset();
-		getUserStub.mockReset();
+		user.getUserStub.mockReset();
 	} );
 
 	test( 'should use the vertical field in the survey tree if the site topic one is empty.', () => {
@@ -148,7 +148,7 @@ describe( 'createSiteWithCart()', () => {
 
 	test( 'use username for blog_name if user data available', () => {
 		isDomainStepSkippable.mockReturnValue( true );
-		getUserStub.mockReturnValue( { username: 'alex' } );
+		user.getUserStub.mockReturnValue( { username: 'alex' } );
 
 		const fakeStore = {
 			getState: () => ( {} ),

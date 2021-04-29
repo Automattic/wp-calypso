@@ -27,7 +27,6 @@ import {
 	domainMapping,
 	domainTransfer,
 	domainRegistration,
-	planItem,
 	updatePrivacyForDomain,
 } from 'calypso/lib/cart-values/cart-items';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
@@ -54,7 +53,6 @@ import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
-import { PLAN_PERSONAL } from 'calypso/lib/plans/constants';
 
 /**
  * Style dependencies
@@ -132,23 +130,12 @@ class DomainSearch extends Component {
 
 	componentDidMount() {
 		this.isMounted = true;
-
-		if ( 'upgrade' === this.props.context.query.ref ) {
-			this.addPersonalPlan();
-		}
 	}
 
 	checkSiteIsUpgradeable( props ) {
 		if ( props.selectedSite && ! props.isSiteUpgradeable ) {
 			page.redirect( '/domains/add' );
 		}
-	}
-
-	addPersonalPlan() {
-		this.props.shoppingCartManager.addProductsToCart( [
-			fillInSingleCartItemAttributes( planItem( PLAN_PERSONAL, {} ), this.props.productsList ),
-		] );
-		page.replace( this.props.context.pathname );
 	}
 
 	addDomain( suggestion ) {

@@ -8,7 +8,7 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { receivePreferences, fetchPreferences, savePreference, setPreference } from '../actions';
-import { DEFAULT_PREFERENCES, USER_SETTING_KEY } from '../constants';
+import { DEFAULT_PREFERENCE_VALUES, USER_SETTING_KEY } from '../constants';
 import {
 	PREFERENCES_RECEIVE,
 	PREFERENCES_FETCH,
@@ -31,7 +31,7 @@ describe( 'actions', () => {
 		spy = sandbox.spy();
 	} );
 	const responseShape = {
-		[ USER_SETTING_KEY ]: DEFAULT_PREFERENCES,
+		[ USER_SETTING_KEY ]: DEFAULT_PREFERENCE_VALUES,
 	};
 
 	describe( 'receivePreferences()', () => {
@@ -62,11 +62,19 @@ describe( 'actions', () => {
 			} );
 		} );
 
+		test( 'should dispatch PREFERENCES_RECEIVE when request completes', () => {
+			return fetchPreferences()( spy ).then( () => {
+				expect( spy ).to.have.been.calledWithMatch( {
+					type: PREFERENCES_RECEIVE,
+					values: responseShape[ USER_SETTING_KEY ],
+				} );
+			} );
+		} );
+
 		test( 'should dispatch success action when request completes', () => {
 			return fetchPreferences()( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: PREFERENCES_FETCH_SUCCESS,
-					values: responseShape[ USER_SETTING_KEY ],
 				} );
 			} );
 		} );

@@ -15,6 +15,7 @@ import JetpackProductCardTimeFrame from './time-frame';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
 import InfoPopover from 'calypso/components/info-popover';
+import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 
 /**
  * Type dependencies
@@ -52,6 +53,7 @@ type OwnProps = {
 	displayFrom?: boolean;
 	tooltipText?: TranslateResult | ReactNode;
 	aboveButtonText?: TranslateResult | ReactNode;
+	hideSavingLabel?: boolean;
 };
 
 export type Props = OwnProps & Partial< FeaturesProps >;
@@ -59,6 +61,7 @@ export type Props = OwnProps & Partial< FeaturesProps >;
 const FRESHPACK_PERCENTAGE = 1 - 0.4; // 40% off
 
 const DisplayPrice = ( {
+	isDeprecated,
 	isOwned,
 	isIncludedInPlan,
 	isFree,
@@ -70,8 +73,25 @@ const DisplayPrice = ( {
 	expiryDate,
 	billingTerm,
 	tooltipText,
+	productName,
+	hideSavingLabel,
 } ) => {
 	const translate = useTranslate();
+
+	if ( isDeprecated ) {
+		return (
+			<div className="jetpack-product-card__price">
+				<p className="jetpack-product-card__price-deprecated">
+					{ translate( 'The %(productName)s plan is no longer available', {
+						args: {
+							productName,
+						},
+						comment: 'productName is the name of Jetpack plan such as Personal',
+					} ) }
+				</p>
+			</div>
+		);
+	}
 
 	if ( isOwned ) {
 		return (
@@ -119,8 +139,10 @@ const DisplayPrice = ( {
 		);
 	}
 
-	const couponOriginalPrice = discountedPrice ?? originalPrice;
-	const couponDiscountedPrice = ( discountedPrice ?? originalPrice ) * FRESHPACK_PERCENTAGE;
+	const couponOriginalPrice = parseFloat( ( discountedPrice ?? originalPrice ).toFixed( 2 ) );
+	const couponDiscountedPrice = parseFloat(
+		( ( discountedPrice ?? originalPrice ) * FRESHPACK_PERCENTAGE ).toFixed( 2 )
+	);
 
 	return (
 		<div className="jetpack-product-card__price">
@@ -144,12 +166,14 @@ const DisplayPrice = ( {
 						</InfoPopover>
 					) }
 					<JetpackProductCardTimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
-					<span className="jetpack-product-card__you-save">
-						{ translate( '* You Save %(percent)d%%', {
-							args: { percent: 40 },
-							comment: 'Asterisk clause describing the displayed price adjustment',
-						} ) }
-					</span>
+					{ ! hideSavingLabel && (
+						<span className="jetpack-product-card__you-save">
+							{ translate( '* You Save %(percent)d%%', {
+								args: { percent: INTRO_PRICING_DISCOUNT_PERCENTAGE },
+								comment: 'Asterisk clause describing the displayed price adjustment',
+							} ) }
+						</span>
+					) }
 				</>
 			) : (
 				<>
@@ -187,6 +211,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 	displayFrom,
 	belowPriceText,
 	tooltipText,
+	hideSavingLabel,
 	aboveButtonText = null,
 }: Props ) => {
 	const translate = useTranslate();
@@ -221,6 +246,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 				) }
 
 				<DisplayPrice
+					isDeprecated={ isDeprecated }
 					isOwned={ isOwned }
 					isIncludedInPlan={ isIncludedInPlan }
 					isFree={ isFree }
@@ -232,6 +258,8 @@ const JetpackProductCard: React.FC< Props > = ( {
 					expiryDate={ expiryDate }
 					billingTerm={ billingTerm }
 					tooltipText={ tooltipText }
+					productName={ productName }
+					hideSavingLabel={ hideSavingLabel }
 				/>
 
 				{ aboveButtonText && (
@@ -247,7 +275,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 						primary={ buttonPrimary }
 						className="jetpack-product-card__button"
 						onClick={ onButtonClick }
-						disabled={ isDisabled }
+						disabled={ isDisabled || isDeprecated }
 					>
 						{ buttonLabel }
 					</Button>

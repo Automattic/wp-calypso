@@ -24,7 +24,7 @@ import ErrorBanner from '../activity-log-banner/error-banner';
 import Filterbar from '../filterbar';
 import UpgradeBanner from '../activity-log-banner/upgrade-banner';
 import IntroBanner from '../activity-log-banner/intro-banner';
-import { isFreePlan } from 'calypso/lib/plans';
+import { isFreePlan } from '@automattic/calypso-products';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';

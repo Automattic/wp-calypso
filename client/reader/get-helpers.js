@@ -9,7 +9,7 @@ import { trim } from 'lodash';
  */
 import { decodeEntities } from 'calypso/lib/formatting';
 import { isSiteDescriptionBlocked } from 'calypso/reader/lib/site-description-blocklist';
-import { getUrlParts } from 'calypso/lib/url';
+import { getUrlParts } from '@automattic/calypso-url';
 import config from '@automattic/calypso-config';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 

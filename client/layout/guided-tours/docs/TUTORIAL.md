@@ -154,46 +154,6 @@ export const TutorialSitePreviewTour = makeTour(
 );
 ```
 
-### Add an A/B Test
-
-To assess the impact of a tour, it can be helpful to run it as an A/B test. If the user is in the test group we trigger the tour. If they're in the control group we don't trigger the tour. After you've collected some data, you'll hopefully be able to gauge the impact that the tour has on the metric(s) you're interested in.
-
-Open up `client/lib/abtest/active-tests.js` and add a new test such as this one:
-
-```javascript
-export default {
-	designShowcaseWelcomeTour: {
-		datestamp: '20170101',
-		variations: {
-			enabled: 0,
-			disabled: 100,
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
-	},
-};
-```
-
-Note that we've set the `enabled` variation to 0% so we don't show the tour to any user until we've tested it thoroughly.
-
-Now we need to make sure the tour only triggers if the user in the `enabled` variant.
-
-First, add an import for `isAbTestInVariant` to the list of things we import from `state/guided-tours/contexts` in `meta.js`.
-
-Now, use the import in the `when` property like so:
-
-```javascript
-export default {
-	when: and(
-		isNewUser,
-		isEnabled( 'guided-tours/main' ),
-		isAbTestInVariant( 'tutorialSitePreviewTour', 'enabled' )
-	),
-};
-```
-
-**Important:** note that we want to put the call to `isAbTestInVariant` last — it puts users into an A/B test variant, and having later parts of the function return false would taint our results. We want to assign the user to an A/B test variant if and only if the tour would have triggered based on all the other conditions.
-
 ## Adding the First Step
 
 Now let's insert the first `<Step>` element into the `<Tour>`. It looks like this:

@@ -6,7 +6,7 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getUrlParts } from 'calypso/lib/url';
+import { getUrlParts } from '@automattic/calypso-url';
 
 /** Determine if url is likely pointed to an image
  *

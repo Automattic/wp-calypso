@@ -4,7 +4,7 @@
  */
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactNode, ReactElement } from 'react';
-import type { TERM_ANNUALLY, TERM_MONTHLY } from 'calypso/lib/plans/constants';
+import type { TERM_ANNUALLY, TERM_MONTHLY } from '@automattic/calypso-products';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type {
 	ALL,
@@ -15,6 +15,7 @@ import type {
 	ITEM_TYPE_BUNDLE,
 	ITEM_TYPE_PRODUCT,
 } from './constants';
+import type { PlanRecommendation } from './plan-upgrade/types';
 
 export type Duration = typeof TERM_ANNUALLY | typeof TERM_MONTHLY;
 export type DurationString = 'annual' | 'monthly';
@@ -38,12 +39,14 @@ interface BasePageProps {
 export interface SelectorPageProps extends BasePageProps {
 	defaultDuration?: Duration;
 	siteSlug?: string;
+	planRecommendation?: PlanRecommendation;
 }
 
 export interface ProductsGridProps {
 	duration: Duration;
-	onSelectProduct: PurchaseCallback;
 	urlQueryArgs: QueryArgs;
+	planRecommendation?: PlanRecommendation;
+	onSelectProduct: PurchaseCallback;
 	onDurationChange?: DurationChangeCallback;
 }
 

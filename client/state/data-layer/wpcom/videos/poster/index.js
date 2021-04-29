@@ -13,7 +13,6 @@ import {
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
-import { assign } from 'lodash';
 import { receiveMedia } from 'calypso/state/media/actions';
 
 const fetch = ( action ) => {
@@ -46,13 +45,14 @@ const onSuccess = ( action, { poster: posterUrl } ) => ( dispatch, getState ) =>
 	// Photon does not support URLs with a querystring component.
 	const urlBeforeQuery = ( posterUrl || '' ).split( '?' )[ 0 ];
 
-	const updatedMediaItem = assign( {}, mediaItem, {
+	const updatedMediaItem = {
+		...mediaItem,
 		thumbnails: {
 			fmt_hd: urlBeforeQuery,
 			fmt_dvd: urlBeforeQuery,
 			fmt_std: urlBeforeQuery,
 		},
-	} );
+	};
 
 	dispatch( receiveMedia( siteId, updatedMediaItem ) );
 };

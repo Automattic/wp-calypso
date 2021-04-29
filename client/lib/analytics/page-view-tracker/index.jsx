@@ -5,7 +5,7 @@
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { get, isNumber } from 'lodash';
+import { get } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -100,7 +100,7 @@ const mapStateToProps = ( state ) => {
 
 	const hasSelectedSiteLoaded =
 		! currentSlug ||
-		( isNumber( currentSlug ) && currentSlug === selectedSiteId ) ||
+		( typeof currentSlug === 'number' && currentSlug === selectedSiteId ) ||
 		currentSlug === selectedSiteSlug;
 
 	return {

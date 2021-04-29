@@ -15,6 +15,7 @@ import { shallow } from 'enzyme';
  */
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import { JetpackSignup } from '../signup.js';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 const noop = () => {};
 const CLIENT_ID = 98765;
@@ -75,5 +76,27 @@ describe( 'JetpackSignup', () => {
 
 		expect( wrapper ).toMatchSnapshot();
 		expect( wrapper.find( LocaleSuggestions ) ).toHaveLength( 1 );
+	} );
+
+	test( 'should render WC Payments specific sub header copy', () => {
+		const props = {
+			...DEFAULT_PROPS,
+			authQuery: {
+				...DEFAULT_PROPS.authQuery,
+				from: 'woocommerce-payments',
+				woodna_service_name: 'WooCommerce Payments',
+				isFullLoginFormVisible: false,
+			},
+		};
+
+		// Notice we have \xa0. This is needed when we compare translated text.
+		// Please refer to https://stackoverflow.com/questions/54242039/intl-numberformat-space-character-does-not-match
+		const expectedText =
+			'Enter your email address to get started. Your account will enable you to start using the features and benefits offered by WooCommerce\xa0Payments';
+		const wrapper = shallow( <JetpackSignup { ...props } /> )
+			.find( FormattedHeader )
+			.render();
+
+		expect( wrapper.find( '.formatted-header__subtitle' ).text() ).toEqual( expectedText );
 	} );
 } );

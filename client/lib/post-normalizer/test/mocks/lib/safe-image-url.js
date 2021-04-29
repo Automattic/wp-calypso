@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-import { getUrlParts, getUrlFromParts } from 'calypso/lib/url/url-parts';
+import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 
 let returnValue;
 

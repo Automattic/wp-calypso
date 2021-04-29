@@ -7,10 +7,10 @@ All Atomic transfer information is stored as a single possible transfer per site
 
 ## Actions
 
-|             action              | description                                              |
-| :-----------------------------: | -------------------------------------------------------- |
-|      `fetchAtomicTransfer`      | returns an `ATOMIC_TRANSFER_REQUEST` action type         |
-|       `setAtomicTransfer`       | returns an `ATOMIC_TRANSFER_SET` action type             |
+|        action         | description                                      |
+| :-------------------: | ------------------------------------------------ |
+| `fetchAtomicTransfer` | returns an `ATOMIC_TRANSFER_REQUEST` action type |
+|  `setAtomicTransfer`  | returns an `ATOMIC_TRANSFER_SET` action type     |
 
 ## Data types and meaning
 

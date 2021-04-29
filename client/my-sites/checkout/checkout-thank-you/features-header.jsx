@@ -17,7 +17,7 @@ import {
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGuidedTransfer,
 	isTitanMail,
-} from 'calypso/lib/products-values';
+} from '@automattic/calypso-products';
 
 const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedPurchases } ) => {
 	const classes = classNames( 'checkout-thank-you__features-header', {

@@ -71,7 +71,7 @@ import getInlineHelpSupportVariation, {
 	SUPPORT_UPWORK_TICKET,
 } from 'calypso/state/selectors/get-inline-help-support-variation';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { getPlanTermLabel } from 'calypso/lib/plans';
+import { getPlanTermLabel } from '@automattic/calypso-products';
 
 /**
  * Style dependencies

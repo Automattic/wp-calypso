@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate, TranslateResult, numberFormat } from 'i18n-calypso';
-import { compact, isObject } from 'lodash';
+import { compact } from 'lodash';
 import page from 'page';
 import React, { createElement, Fragment } from 'react';
 import { createSelector } from '@automattic/state-utils';
@@ -34,29 +34,25 @@ import {
 	JETPACK_RESET_PLANS,
 	JETPACK_SECURITY_PLANS,
 	JETPACK_PLANS_BY_TERM,
-} from 'calypso/lib/plans/constants';
+	JETPACK_SEARCH_PRODUCTS,
+	JETPACK_PRODUCT_PRICE_MATRIX,
+	JETPACK_PRODUCTS_BY_TERM,
+} from '@automattic/calypso-products';
 import {
 	getPlan,
 	getMonthlyPlanByYearly,
 	getYearlyPlanByMonthly,
 	planHasFeature,
-} from 'calypso/lib/plans';
-import {
-	JETPACK_SEARCH_PRODUCTS,
-	JETPACK_PRODUCT_PRICE_MATRIX,
-	JETPACK_PRODUCTS_BY_TERM,
-} from 'calypso/lib/products-values/constants';
-import {
 	Product,
-	JETPACK_PRODUCTS_LIST,
+	JETPACK_PRODUCTS_LIST_WITH_FEATURES,
 	objectIsProduct,
 	PRODUCTS_LIST,
-} from 'calypso/lib/products-values/products-list';
-import { getJetpackProductDisplayName } from 'calypso/lib/products-values/get-jetpack-product-display-name';
-import { getJetpackProductTagline } from 'calypso/lib/products-values/get-jetpack-product-tagline';
-import { getJetpackProductCallToAction } from 'calypso/lib/products-values/get-jetpack-product-call-to-action';
-import { getJetpackProductDescription } from 'calypso/lib/products-values/get-jetpack-product-description';
-import { getJetpackProductShortName } from 'calypso/lib/products-values/get-jetpack-product-short-name';
+	getJetpackProductDisplayName,
+	getJetpackProductTagline,
+	getJetpackProductCallToAction,
+	getJetpackProductDescription,
+	getJetpackProductShortName,
+} from '@automattic/calypso-products';
 import config from '@automattic/calypso-config';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { getForCurrentCROIteration, Iterations } from './iterations';
@@ -84,8 +80,8 @@ import type {
 	Plan,
 	JetpackPlanCardFeature,
 	JetpackPlanCardFeatureSection,
-} from 'calypso/lib/plans/types';
-import type { JetpackProductSlug } from 'calypso/lib/products-values/types';
+} from '@automattic/calypso-products';
+import type { JetpackProductSlug } from '@automattic/calypso-products';
 import type { SitePlan } from 'calypso/state/sites/selectors/get-site-plan';
 import ExternalLink from 'calypso/components/external-link';
 import type { PriceTierEntry } from 'calypso/state/products-list/selectors/get-product-price-tiers';
@@ -136,21 +132,45 @@ export function getProductWithOptionDisplayName(
 	return slugToSelectorProduct( optionSlug )?.displayName || item.displayName;
 }
 
-// Takes any annual Jetpack product or plan slug and returns its corresponding monthly equivalent
-function getMonthlySlugFromYearly( yearlySlug: string | null ) {
+function getSlugInTerm( yearlySlug: string | null, slugTerm: Duration ) {
+	const mainTerm = slugTerm === TERM_MONTHLY ? 'monthly' : 'yearly';
+	const oppositeTerm = mainTerm === 'monthly' ? 'yearly' : 'monthly';
+
 	const matchingProduct = JETPACK_PRODUCTS_BY_TERM.find(
-		( product ) => product.yearly === yearlySlug
+		( product ) => product[ oppositeTerm ] === yearlySlug
 	);
 	if ( matchingProduct ) {
-		return matchingProduct.monthly;
+		return matchingProduct[ mainTerm ];
 	}
 
-	const matchingPlan = JETPACK_PLANS_BY_TERM.find( ( plan ) => plan.yearly === yearlySlug );
+	const matchingPlan = JETPACK_PLANS_BY_TERM.find(
+		( plan ) => plan[ oppositeTerm ] === yearlySlug
+	);
 	if ( matchingPlan ) {
-		return matchingPlan.monthly;
+		return matchingPlan[ mainTerm ];
 	}
 
 	return null;
+}
+
+/**
+ * Get the monthly version of a product slug.
+ *
+ * @param {string} yearlySlug a yearly term product slug
+ * @returns {string} a monthly term product slug
+ */
+export function getMonthlySlugFromYearly( yearlySlug: string | null ): string | null {
+	return getSlugInTerm( yearlySlug, TERM_MONTHLY );
+}
+
+/**
+ * Get the yearly version of a product slug.
+ *
+ * @param {string} monthlySlug a monthly term product slug
+ * @returns {string} a yearly term product slug
+ */
+export function getYearlySlugFromMonthly( monthlySlug: string | null ): string | null {
+	return getSlugInTerm( monthlySlug, TERM_ANNUALLY );
 }
 
 /**
@@ -207,12 +227,25 @@ export const getHighestAnnualDiscount = createSelector(
  * Product UI utils.
  */
 
-export function productButtonLabel(
-	product: SelectorProduct,
-	isOwned: boolean,
-	isUpgradeableToYearly: boolean,
-	currentPlan?: SitePlan | null
-): TranslateResult {
+interface productButtonLabelProps {
+	product: SelectorProduct;
+	isOwned: boolean;
+	isUpgradeableToYearly: boolean;
+	isDeprecated: boolean;
+	currentPlan?: SitePlan | null;
+}
+
+export function productButtonLabel( {
+	product,
+	isOwned,
+	isUpgradeableToYearly,
+	isDeprecated,
+	currentPlan,
+}: productButtonLabelProps ): TranslateResult {
+	if ( isDeprecated ) {
+		return translate( 'No longer available' );
+	}
+
 	if ( isUpgradeableToYearly ) {
 		return translate( 'Upgrade to Yearly' );
 	}
@@ -344,7 +377,7 @@ function slugIsSelectorProductSlug( slug: string ): slug is SelectorProductSlug 
 	return PRODUCTS_WITH_OPTIONS.includes( slug as typeof PRODUCTS_WITH_OPTIONS[ number ] );
 }
 function slugIsJetpackProductSlug( slug: string ): slug is JetpackProductSlug {
-	return slug in JETPACK_PRODUCTS_LIST;
+	return slug in JETPACK_PRODUCTS_LIST_WITH_FEATURES;
 }
 function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlugs {
 	return [ ...JETPACK_LEGACY_PLANS, ...JETPACK_RESET_PLANS ].includes( slug );
@@ -364,7 +397,7 @@ export function slugToItem( slug: string ): Plan | Product | SelectorProduct | n
 			EXTERNAL_PRODUCTS_SLUG_MAP[ slug ]( variation )
 		);
 	} else if ( slugIsJetpackProductSlug( slug ) ) {
-		return JETPACK_PRODUCTS_LIST[ slug ];
+		return JETPACK_PRODUCTS_LIST_WITH_FEATURES[ slug ];
 	} else if ( slugIsJetpackPlanSlug( slug ) ) {
 		return getPlan( slug ) as Plan;
 	}
@@ -566,7 +599,7 @@ export function buildCardFeaturesFromFeatureKeys(
 	}
 
 	// With sections (JetpackPlanCardFeatureSection)
-	if ( isObject( features ) ) {
+	if ( features !== null && typeof features === 'object' ) {
 		const result = [] as SelectorProductFeaturesSection[];
 
 		Object.getOwnPropertySymbols( features ).map( ( key ) => {

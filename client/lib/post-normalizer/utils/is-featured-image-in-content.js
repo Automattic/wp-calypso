@@ -8,7 +8,7 @@ import { findIndex } from 'lodash';
  */
 import { isPhotonHost } from 'calypso/lib/post-normalizer/utils/is-photon-host';
 import { thumbIsLikelyImage } from 'calypso/lib/post-normalizer/utils/thumb-is-likely-image';
-import { getUrlParts } from 'calypso/lib/url';
+import { getUrlParts } from '@automattic/calypso-url';
 
 function getPathname( uri ) {
 	const { pathname, hostname } = getUrlParts( uri );

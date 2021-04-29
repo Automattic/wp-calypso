@@ -36,7 +36,6 @@ export { default as getSiteTitle } from './get-site-title';
 export { default as getSiteUrl } from './get-site-url';
 export { default as getUpdatesBySiteId } from './get-updates-by-site-id';
 export { default as hasAllSitesList } from './has-all-sites-list';
-export { default as hasDefaultSiteTitle } from './has-default-site-title';
 export { default as hasJetpackSiteCustomDomain } from './has-jetpack-site-custom-domain';
 export { default as hasSiteProduct } from './has-site-product';
 export { default as hasStaticFrontPage } from './has-static-front-page';

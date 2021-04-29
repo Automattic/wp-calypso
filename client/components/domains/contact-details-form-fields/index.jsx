@@ -31,7 +31,7 @@ import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input
 import { countries } from 'calypso/components/phone-input/data';
 import formState from 'calypso/lib/form-state';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
+import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
 import NoticeErrorMessage from 'calypso/my-sites/checkout/checkout/notice-error-message';
 import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';

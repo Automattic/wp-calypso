@@ -29,16 +29,30 @@ const Designs: React.FunctionComponent = () => {
 	const locale = useLocale();
 	const { goBack, goNext } = useStepNavigation();
 
-	const { setSelectedDesign, setFonts } = useDispatch( ONBOARD_STORE );
+	const { setSelectedDesign, setFonts, resetFonts } = useDispatch( ONBOARD_STORE );
 	const { getSelectedDesign, hasPaidDesign, getRandomizedDesigns } = useSelect( ( select ) =>
 		select( ONBOARD_STORE )
 	);
 	const isAnchorFmSignup = useIsAnchorFm();
 
+	const selectedDesign = getSelectedDesign();
+
 	useTrackStep( 'DesignSelection', () => ( {
-		selected_design: getSelectedDesign()?.slug,
+		selected_design: selectedDesign?.slug,
 		is_selected_design_premium: hasPaidDesign(),
 	} ) );
+
+	const [ userHasSelectedDesign, setUserHasSelectedDesign ] = React.useState( false );
+
+	React.useEffect( () => {
+		if ( selectedDesign && userHasSelectedDesign ) {
+			// The `userHasSelectedDesign` local state variable is used to delay
+			// the call to `goNext()` by at least 1 re-render. This is to allow
+			// time for the `goNext()` function to update and correctly skip the
+			// `style` step when necessary
+			goNext();
+		}
+	}, [ goNext, userHasSelectedDesign, selectedDesign ] );
 
 	return (
 		<div className="gutenboarding-page designs">
@@ -69,11 +83,14 @@ const Designs: React.FunctionComponent = () => {
 				locale={ locale }
 				onSelect={ ( design: Design ) => {
 					setSelectedDesign( design );
+					setUserHasSelectedDesign( true );
 
-					// Update fonts to the design defaults
-					setFonts( design.fonts );
-
-					goNext();
+					if ( design.fonts ) {
+						setFonts( design.fonts );
+					} else {
+						// Some designs may not specify font pairings
+						resetFonts();
+					}
 				} }
 				premiumBadge={
 					<Badge className="designs__premium-badge">

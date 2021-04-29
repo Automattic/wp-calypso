@@ -29,7 +29,7 @@ import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QueryScanState from 'calypso/components/data/query-jetpack-scan';
 import ToolsMenu from './tools-menu';
-import { isBusiness, isEcommerce } from 'calypso/lib/products-values';
+import { isP2PlusPlan, isBusiness, isEcommerce } from '@automattic/calypso-products';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -90,8 +90,7 @@ import { isUnderEmailManagementAll } from 'calypso/my-sites/email/paths';
 import JetpackSidebarMenuItems from 'calypso/components/jetpack/sidebar/menu-items/calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
-import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
-import { isP2PlusPlan } from 'calypso/lib/plans';
+import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 
 /**
  * Style dependencies

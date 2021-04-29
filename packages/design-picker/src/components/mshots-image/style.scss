@@ -1,19 +1,36 @@
 @import '~@automattic/onboarding/styles/mixins';
 
-.mshots-image {
-	opacity: 0;
-	transition: 0.3s opacity;
-}
-
 .mshots-image__loader {
 	@include onboarding-placeholder();
-	position: absolute;
-	left: 0;
-	top: 0;
-	width: 100%;
-	height: 100%;
 }
 
-.mshots-image-hidden {
-	display: none;
+.mshots-image__container {
+    height: 100%;
+}
+
+.hover-scroll {
+    background-size: 100%;
+    background-position: top;
+    background-repeat: no-repeat;
+    margin-left: auto;
+    margin-right: auto;
+
+    transition: background-position 1.5s;
+
+    &:hover {
+        background-position: bottom;
+    }
+}
+
+.mshots-image-visible {
+    animation: fadein 1.5s;
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }

@@ -9,11 +9,17 @@ import React from 'react';
  */
 import wpcom from 'calypso/lib/wp';
 
-export default async () => ( {
+export default () => ( {
 	name: 'xpost',
 	className: 'autocompleters__xpost',
 	triggerPrefix: '+',
-	options: await wpcom.req
+	/**
+	 * The autocompleter will pass `options` to `Promise.resolve` so we can safely assign this to a promise that
+	 * will eventually resolve and can just be used over and over again, instead of caching the result manually
+	 *
+	 * @see https://github.com/WordPress/gutenberg/blob/a947375ea7df8e2257fecedeea5f323ebffa38f6/packages/components/src/autocomplete/index.js#L171
+	 */
+	options: wpcom.req
 		.get( {
 			path: '/internal/P2s',
 			apiVersion: '1.1',

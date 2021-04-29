@@ -10,11 +10,10 @@
 import getThankYouPageUrl from '../hooks/use-get-thank-you-url/get-thank-you-page-url';
 import { isEnabled } from '@automattic/calypso-config';
 import {
-	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 	JETPACK_REDIRECT_URL,
 	redirectCloudCheckoutToWpAdmin,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 let mockGSuiteCountryIsValid = true;
@@ -25,8 +24,8 @@ jest.mock( 'calypso/lib/user', () =>
 );
 
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => jest.fn() );
-jest.mock( 'calypso/lib/plans/constants', () => ( {
-	...jest.requireActual( 'calypso/lib/plans/constants' ),
+jest.mock( '@automattic/calypso-products', () => ( {
+	...jest.requireActual( '@automattic/calypso-products' ),
 	redirectCloudCheckoutToWpAdmin: jest.fn(),
 } ) );
 
@@ -159,26 +158,6 @@ describe( 'getThankYouPageUrl', () => {
 			shouldShowOneClickTreatment,
 		} );
 		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/premium/:receiptId' );
-	} );
-
-	// This test is for the A/B test defined in https://wp.me/pcbrnV-12W.
-	it( 'redirects to the DIFM offer page when a site but no orderId is set and the cart contains the business plan', () => {
-		const cart = {
-			products: [
-				{
-					product_slug: PLAN_BUSINESS,
-				},
-			],
-		};
-		// Note: This requires the user to be assigned to the treatment of the premium bump A/B test
-		const shouldShowDifmUpsell = true;
-		const url = getThankYouPageUrl( {
-			...defaultArgs,
-			siteSlug: 'foo.bar',
-			cart,
-			shouldShowDifmUpsell,
-		} );
-		expect( url ).toBe( '/checkout/foo.bar/offer-difm/:receiptId' );
 	} );
 
 	it( 'redirects to the thank-you page with a placeholder receiptId with a site when the cart is not empty but there is no receipt id', () => {
@@ -966,5 +945,15 @@ describe( 'getThankYouPageUrl', () => {
 			isJetpackNotAtomic: true,
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=traffic-guide' );
+	} );
+
+	it( 'redirects to a url on the site we are checking out', () => {
+		const redirectTo = 'https://foo.bar/some-path?with-args=yes';
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			redirectTo,
+			siteSlug: 'foo.bar',
+		} );
+		expect( url ).toBe( redirectTo );
 	} );
 } );

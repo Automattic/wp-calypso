@@ -22,5 +22,7 @@
 		"download": "node bin/download.js",
 		"test": "yarn jest"
 	},
-	"dependencies": {}
+	"dependencies": {
+		"tslib": "^2.1.0"
+	}
 }
