@@ -99,9 +99,11 @@ function SidebarOverflowDelay( { layoutFocus } ) {
 
 	React.useEffect( () => {
 		if ( layoutFocus !== 'sites' ) {
-			// Since `overflow` isn't an animated CSS property, we need to set it
-			// after the CSS transition of the layout elements finishes.
-			// @see https://github.com/Automattic/wp-calypso/blob/0c1176ddf16227307480fa4852e47cfe089bf181/client/layout/style.scss#L18
+			// The sidebar menu uses a flyout design that requires the overflowing content
+			// to be visible. However, `overflow` isn't an animatable CSS property, so we
+			// need to set it after the sliding transition finishes. We wait for 150ms (the
+			// CSS transition time) + a grace period of 350ms (since the sidebar menu is
+			// rendered asynchronously).
 			// @see https://github.com/Automattic/wp-calypso/issues/47019
 			setTimeout( () => {
 				setSidebarOverflowClass( true );
