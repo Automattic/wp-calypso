@@ -174,9 +174,9 @@ export function waitUntilNotLocated( driver, locator, timeout ) {
 	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
 
 	return driver.wait(
-		new WebElementCondition( `for element to NOT be located ${ locatorStr }`, () =>
-			isNotLocated( driver, locator )
-		),
+		new Condition( `for element to NOT be located ${ locatorStr }`, function () {
+			return isNotLocated( driver, locator );
+		} ),
 		timeout
 	);
 }
