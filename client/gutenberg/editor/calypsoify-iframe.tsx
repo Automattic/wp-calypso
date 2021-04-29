@@ -36,7 +36,6 @@ import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-confi
 import wpcom from 'calypso/lib/wp';
 import { openPostRevisionsDialog } from 'calypso/state/posts/revisions/actions';
 import { setEditorIframeLoaded, startEditingPost } from 'calypso/state/editor/actions';
-import { notifyDesktopViewPostClicked } from 'calypso/state/desktop/actions';
 import { Placeholder } from './placeholder';
 import WebPreview from 'calypso/components/web-preview';
 import { editPost, trashPost } from 'calypso/state/posts/actions';
@@ -347,13 +346,6 @@ class CalypsoifyIframe extends Component<
 		if ( EditorActions.PreviewPost === action ) {
 			const { postUrl } = payload;
 			this.openPreviewModal( postUrl, ports[ 0 ] );
-		}
-
-		if ( EditorActions.ViewPost === action ) {
-			const { postUrl } = payload;
-			config.isEnabled( 'desktop' )
-				? this.props.notifyDesktopViewPostClicked( postUrl )
-				: window.open( postUrl, '_top' );
 		}
 
 		if ( EditorActions.OpenCustomizer === action ) {
@@ -879,7 +871,6 @@ const mapDispatchToProps = {
 	openPostRevisionsDialog,
 	setEditorIframeLoaded,
 	startEditingPost,
-	notifyDesktopViewPostClicked,
 	editPost,
 	trashPost,
 	updateSiteFrontPage,

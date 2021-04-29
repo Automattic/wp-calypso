@@ -15,13 +15,7 @@ import { getStatsPathForTab } from 'calypso/lib/route';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { toggleNotificationsPanel, navigate } from 'calypso/state/ui/actions';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
-import {
-	NOTIFY_DESKTOP_DID_REQUEST_SITE,
-	NOTIFY_DESKTOP_SEND_TO_PRINTER,
-	NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_SET,
-	NOTIFY_DESKTOP_VIEW_POST_CLICKED,
-} from 'calypso/state/desktop/window-events';
-import { requestSite } from 'calypso/state/sites/actions';
+import { NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_SET } from 'calypso/state/desktop/window-events';
 import { setForceRefresh as forceNotificationsRefresh } from 'calypso/state/notifications-panel/actions';
 
 /**
@@ -33,7 +27,7 @@ const DesktopListeners = {
 	/**
 	 * Bootstraps network connection status change handler.
 	 *
-	 * @param {Object} reduxStore The redux store.
+	 * @param {object} reduxStore The redux store.
 	 */
 	init: function ( reduxStore ) {
 		debug( 'Registering IPC listeners' );
@@ -55,21 +49,13 @@ const DesktopListeners = {
 		window.electron.receive( 'notification-clicked', this.onNotificationClicked.bind( this ) );
 		window.electron.receive( 'page-help', this.onShowHelp.bind( this ) );
 		window.electron.receive( 'navigate', this.onNavigate.bind( this ) );
-		window.electron.receive( 'request-site', this.onRequestSite.bind( this ) );
 		window.electron.receive( 'enable-notification-badge', this.sendNotificationUnseenCount );
 		window.electron.receive( 'request-user-login-status', this.sendUserLoginStatus );
-
-		window.addEventListener(
-			NOTIFY_DESKTOP_VIEW_POST_CLICKED,
-			this.onViewPostClicked.bind( this )
-		);
 
 		window.addEventListener(
 			NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_SET,
 			this.onUnseenCountUpdated.bind( this )
 		);
-
-		window.addEventListener( NOTIFY_DESKTOP_SEND_TO_PRINTER, this.onSendToPrinter.bind( this ) );
 
 		this.store = reduxStore;
 
@@ -204,50 +190,12 @@ const DesktopListeners = {
 		this.navigate( '/help' );
 	},
 
-	// window event
-	onViewPostClicked: function ( event ) {
-		const { url } = event.detail;
-		debug( `Received window event: "View Post" clicked for URL: ${ url }` );
-
-		window.electron.send( 'view-post-clicked', url );
-	},
-
-	onRequestSite: function ( siteId ) {
-		debug( 'Refreshing redux state for siteId: ', siteId );
-
-		const response = NOTIFY_DESKTOP_DID_REQUEST_SITE;
-		function onDidRequestSite( responseEvent ) {
-			debug( 'Received site request response for: ', responseEvent.detail );
-
-			window.removeEventListener( response, this );
-			const { status, siteId: responseSiteId } = responseEvent.detail;
-			let { error } = responseEvent.detail;
-			if ( Number( siteId ) !== Number( responseSiteId ) ) {
-				error = `Expected response for siteId: ${ siteId }, got: ${ responseSiteId }`;
-			}
-			window.electron.send( 'request-site-response', { siteId, status, error } );
-		}
-		window.addEventListener( response, onDidRequestSite.bind( onDidRequestSite ) );
-
-		this.store.dispatch( requestSite( siteId ) );
-	},
-
 	onNavigate: function ( url ) {
 		debug( 'Navigating to URL: ', url );
 
 		if ( url ) {
 			this.navigate( url );
 		}
-	},
-
-	// window event
-	onSendToPrinter: function ( event ) {
-		const { title, contents } = event.detail;
-		this.print( title, contents );
-	},
-
-	print: function ( title, html ) {
-		window.electron.send( 'print', title, html );
 	},
 };
 

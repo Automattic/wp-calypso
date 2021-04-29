@@ -446,58 +446,9 @@ const boot = ( currentUser, registerRoutes ) => {
 	} );
 };
 
-function waitForCookieAuth( user ) {
-	const timeoutMs = 1500;
-	const loggedIn = user.get() !== false;
-
-	const promiseTimeout = ( ms, promise ) => {
-		const timeout = new Promise( ( _, reject ) => {
-			const id = setTimeout( () => {
-				clearTimeout( id );
-				reject( `Request timed out in ${ ms } ms` );
-			}, ms );
-		} );
-
-		return Promise.race( [ promise, timeout ] );
-	};
-
-	const renderPromise = () => {
-		return new Promise( function ( resolve ) {
-			const sendUserAuth = () => {
-				debug( 'Sending user info to desktop...' );
-				window.electron?.send(
-					'user-auth',
-					{ id: user.data.ID, username: user.data.username },
-					getToken()
-				);
-			};
-
-			if ( loggedIn ) {
-				debug( 'Desktop user logged in, waiting on cookie authentication...' );
-				window.electron?.receive( 'cookie-auth-complete', function () {
-					debug( 'Desktop cookies set, rendering main layout...' );
-					resolve();
-				} );
-				// Send user auth and wait on cookie-auth-complete
-				sendUserAuth();
-			} else {
-				debug( 'Desktop user logged out, rendering main layout...' );
-				// Send user auth and resolve immediately
-				sendUserAuth();
-				resolve();
-			}
-		} );
-	};
-
-	return promiseTimeout( timeoutMs, renderPromise() );
-}
-
 export const bootApp = async ( appName, registerRoutes ) => {
 	const user = userFactory();
 	await user.initialize();
-	if ( config.isEnabled( 'desktop' ) ) {
-		await waitForCookieAuth( user );
-	}
 	debug( `Starting ${ appName }. Let's do this.` );
 	boot( user, registerRoutes );
 };
