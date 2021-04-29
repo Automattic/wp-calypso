@@ -54,7 +54,7 @@ class DesignPickerStep extends Component {
 
 	renderDesignPicker() {
 		// props.locale obtained via `localize` HoC
-		return <DesignPicker locale={ this.props.locale } onSelect={ this.pickDesign } />;
+		return <DesignPicker theme="dark" locale={ this.props.locale } onSelect={ this.pickDesign } />;
 	}
 
 	headerText() {
