@@ -8,6 +8,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 object WPComPlugins : Project({
 	id("WPComPlugins")
 	name = "WPCom Plugins"
+	description = "Builds for WordPress.com plugins developed in calypso and deployed to wp-admin."
 
 	// Default params for WPcom Plugins.
 	params {

@@ -11,6 +11,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetr
 object WPComTests : Project({
 	id("WPComTests")
 	name = "WPCom Tests"
+	description = "Builds which test WordPress.com functionality, such as the Gutenberg plugin."
 
 	params {
 		param("docker_image", "%docker_image_e2e%")
