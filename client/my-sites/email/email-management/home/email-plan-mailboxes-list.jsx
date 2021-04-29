@@ -87,12 +87,24 @@ function EmailPlanMailboxesList( { emails, isLoadingEmails } ) {
 	}
 
 	const emailsItems = emails.map( ( email ) => {
+		const warningForMailbox = getWarningForMailbox( email, translate );
+
 		return (
 			<MailboxListItem key={ email.mailbox }>
-				<MaterialIcon icon="email" />
-				<span>
-					{ email.mailbox }@{ email.domain }
-				</span>
+				<div class="email-plan-mailboxes-list__mailbox-list-item-main">
+					<div>
+						<MaterialIcon icon="email" />
+						<span>
+							{ email.mailbox }@{ email.domain }
+						</span>
+					</div>
+					{ isEmailForward( email ) && (
+						<MailboxListItemSecondaryDetails className="email-plan-mailboxes-list__mailbox-list-forward">
+							<Gridicon icon="chevron-right" />
+							<span> { getEmailForwardAddress( email ) } </span>
+						</MailboxListItemSecondaryDetails>
+					) }
+				</div>
 				{ isEmailUserAdmin( email ) && (
 					<Badge type="info">
 						{ translate( 'Admin', {
@@ -100,13 +112,7 @@ function EmailPlanMailboxesList( { emails, isLoadingEmails } ) {
 						} ) }
 					</Badge>
 				) }
-				{ getWarningForMailbox( email, translate ) }
-				{ isEmailForward( email ) && (
-					<MailboxListItemSecondaryDetails className="email-plan-mailboxes-list__mailbox-list-forward">
-						<Gridicon icon="chevron-right" />
-						<span> { getEmailForwardAddress( email ) } </span>
-					</MailboxListItemSecondaryDetails>
-				) }
+				{ warningForMailbox }
 			</MailboxListItem>
 		);
 	} );

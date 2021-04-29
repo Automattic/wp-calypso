@@ -141,8 +141,15 @@
 
 .email-plan-mailboxes-list__mailbox-list-item {
 	display: flex;
-	align-items: center;
-	&.is-placeholder > span {
+	.email-plan-mailboxes-list__mailbox-list-item-main {
+		display: flex;
+		flex-direction: column;
+		> div:not( :first-child ) {
+			margin-top: 0.5em;
+		}
+	}
+	&.is-placeholder > span,
+	&.is-placeholder .email-plan-mailboxes-list__mailbox-list-item-main {
 		@include placeholder( --color-neutral-5 );
 		width: 50%;
 	}
@@ -150,13 +157,14 @@
 		color: var( --color-text-subtle );
 		font-style: italic;
 	}
-	> svg {
-		fill: var( --studio-gray-50 );
-		margin-left: 8px;
-		margin-right: 8px;
-		&:first-child {
-			margin-left: 0;
+	.email-plan-mailboxes-list__mailbox-list-item-main {
+		span {
+			vertical-align: middle;
+		}
+		svg {
+			fill: var( --studio-gray-40 );
 			margin-right: 10px;
+			vertical-align: middle;
 		}
 	}
 	> .badge {
