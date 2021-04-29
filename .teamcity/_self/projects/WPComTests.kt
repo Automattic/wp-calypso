@@ -12,11 +12,11 @@ object WPComTests : Project({
 	id("WPComTests")
 	name = "WPCom Tests"
 
-	// Default params for WPcom Plugins.
 	params {
 		param("docker_image", "%docker_image_e2e%")
 		param("build.prefix", "1")
 	}
+
 	buildType(Gutenberg)
 })
 
@@ -40,9 +40,6 @@ private object Gutenberg : BuildType({
 		text(name="URL", value="https://wordpress.com", label = "Test URL", description = "URL to test against", allowEmpty = false)
 		checkbox(name="GUTENBERG_EDGE", value="false", label = "Use gutenberg-edge", description = "Use a blog with gutenberg-edge sticker", checked="true", unchecked = "false")
 		checkbox(name="COBLOCKS_EDGE", value="false", label = "Use coblocks-edge", description = "Use a blog with coblocks-edge sticker", checked="true", unchecked = "false")
-
-		// Unused by this Build, but the Project expects it
-		param("plugin_slug", "")
 	}
 
 	steps {
