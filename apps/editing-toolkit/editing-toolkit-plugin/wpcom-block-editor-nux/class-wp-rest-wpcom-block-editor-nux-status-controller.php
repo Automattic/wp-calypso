@@ -11,6 +11,9 @@ namespace A8C\FSE;
  * Class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller.
  */
 class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controller {
+	/**
+	 * Use 30 minutes in case the user isn't taken to the editor immediately. See pbxlJb-Ly-p2#comment-1028.
+	 */
 	const NEW_SITE_AGE_SECONDS = 30 * 60;
 
 	/**
@@ -64,6 +67,10 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 
 	/**
 	 * Return the WPCOM NUX status
+	 *
+	 * This is only called for sites where the user hasn't already dismissed the tour.
+	 * Once the tour has been dismissed, the closed state is saved in local storage (for the current site)
+	 * see src/block-editor-nux.js
 	 *
 	 * @return WP_REST_Response
 	 */
