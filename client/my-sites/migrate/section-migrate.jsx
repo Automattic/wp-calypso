@@ -474,10 +474,7 @@ class SectionMigrate extends Component {
 					{ this.renderProgressList() }
 					<p class="migrate__note">
 						{ translate(
-							"You can safely navigate away from this page if you need to {{br/}} we'll send you a notification when it's done",
-							{
-								components: { br: <br /> },
-							}
+							"You can safely navigate away from this page if you need to; we'll send you a notification when it's done"
 						) }
 					</p>
 				</Card>
