@@ -15,7 +15,7 @@ import accessibleFocus from '@automattic/accessible-focus';
  */
 import { setupLocale } from './locale';
 import config from '@automattic/calypso-config';
-import Desktop from 'calypso/lib/desktop';
+import { desktop, foo } from 'calypso/lib/desktop';
 import { ProviderWrappedLayout } from 'calypso/controller';
 import { getToken } from 'calypso/lib/oauth-token';
 import emailVerification from 'calypso/components/email-verification';
@@ -377,7 +377,9 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	}
 
 	if ( window.electron ) {
-		Desktop.init( reduxStore );
+		console.log( foo );
+		foo();
+		desktop.init( reduxStore );
 	}
 
 	// temp: test -- will revert

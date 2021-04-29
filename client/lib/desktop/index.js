@@ -1,254 +1,263 @@
-/**
- * External dependencies
- */
-import debugFactory from 'debug';
+// /**
+//  * External dependencies
+//  */
+// import debugFactory from 'debug';
 
-/**
- * Internal dependencies
- */
-import { newPost } from 'calypso/lib/paths';
-import store from 'store';
-import user from 'calypso/lib/user';
-import userUtilities from 'calypso/lib/user/utils';
-import * as oAuthToken from 'calypso/lib/oauth-token';
-import { getStatsPathForTab } from 'calypso/lib/route';
-import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
-import { toggleNotificationsPanel, navigate } from 'calypso/state/ui/actions';
-import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
-import {
-	NOTIFY_DESKTOP_DID_REQUEST_SITE,
-	NOTIFY_DESKTOP_SEND_TO_PRINTER,
-	NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_SET,
-	NOTIFY_DESKTOP_VIEW_POST_CLICKED,
-} from 'calypso/state/desktop/window-events';
-import { requestSite } from 'calypso/state/sites/actions';
-import { setForceRefresh as forceNotificationsRefresh } from 'calypso/state/notifications-panel/actions';
+// /**
+//  * Internal dependencies
+//  */
+// import { newPost } from 'calypso/lib/paths';
+// import store from 'store';
+// import user from 'calypso/lib/user';
+// import userUtilities from 'calypso/lib/user/utils';
+// import * as oAuthToken from 'calypso/lib/oauth-token';
+// import { getStatsPathForTab } from 'calypso/lib/route';
+// import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+// import { toggleNotificationsPanel, navigate } from 'calypso/state/ui/actions';
+// import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+// import {
+// 	NOTIFY_DESKTOP_DID_REQUEST_SITE,
+// 	NOTIFY_DESKTOP_SEND_TO_PRINTER,
+// 	NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_SET,
+// 	NOTIFY_DESKTOP_VIEW_POST_CLICKED,
+// } from 'calypso/state/desktop/window-events';
+// import { requestSite } from 'calypso/state/sites/actions';
+// import { setForceRefresh as forceNotificationsRefresh } from 'calypso/state/notifications-panel/actions';
 
-/**
- * Module variables
- */
-const debug = debugFactory( 'calypso:desktop' );
+export function foo() {
+	return true;
+}
 
-const Desktop = {
-	/**
-	 * Bootstraps network connection status change handler.
-	 *
-	 * @param {Object} reduxStore The redux store.
-	 */
-	init: function ( reduxStore ) {
-		debug( 'Registering IPC listeners' );
-		// Register IPC listeners
-		window.electron.receive( 'page-my-sites', this.onShowMySites.bind( this ) );
-		window.electron.receive( 'page-reader', this.onShowReader.bind( this ) );
-		window.electron.receive( 'page-profile', this.onShowProfile.bind( this ) );
-		window.electron.receive( 'new-post', this.onNewPost.bind( this ) );
-		window.electron.receive( 'signout', this.onSignout.bind( this ) );
-		window.electron.receive( 'toggle-notification-bar', this.onToggleNotifications.bind( this ) );
-		window.electron.receive(
-			'notifications-panel-show',
-			this.onNotificationsPanelShow.bind( this )
-		);
-		window.electron.receive(
-			'notifications-panel-refresh',
-			this.onNotificationsPanelRefresh.bind( this )
-		);
-		window.electron.receive( 'notification-clicked', this.onNotificationClicked.bind( this ) );
-		window.electron.receive( 'page-help', this.onShowHelp.bind( this ) );
-		window.electron.receive( 'navigate', this.onNavigate.bind( this ) );
-		window.electron.receive( 'request-site', this.onRequestSite.bind( this ) );
-		window.electron.receive( 'enable-notification-badge', this.sendNotificationUnseenCount );
-		window.electron.receive( 'request-user-login-status', this.sendUserLoginStatus );
+// export const destop = {
+// 	init: true
+// }
 
-		window.addEventListener(
-			NOTIFY_DESKTOP_VIEW_POST_CLICKED,
-			this.onViewPostClicked.bind( this )
-		);
+// /**
+//  * Module variables
+//  */
+// const debug = debugFactory( 'calypso:desktop' );
 
-		window.addEventListener(
-			NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_SET,
-			this.onUnseenCountUpdated.bind( this )
-		);
+// const desktop = {
+// 	/**
+// 	 * Bootstraps network connection status change handler.
+// 	 *
+// 	 * @param {Object} reduxStore The redux store.
+// 	 */
+// 	init: function ( reduxStore ) {
+// 		debug( 'Registering IPC listeners' );
+// 		alert('blah');
+// 		// Register IPC listeners
+// 		window.electron.receive( 'page-my-sites', this.onShowMySites.bind( this ) );
+// 		window.electron.receive( 'page-reader', this.onShowReader.bind( this ) );
+// 		window.electron.receive( 'page-profile', this.onShowProfile.bind( this ) );
+// 		window.electron.receive( 'new-post', this.onNewPost.bind( this ) );
+// 		window.electron.receive( 'signout', this.onSignout.bind( this ) );
+// 		window.electron.receive( 'toggle-notification-bar', this.onToggleNotifications.bind( this ) );
+// 		window.electron.receive(
+// 			'notifications-panel-show',
+// 			this.onNotificationsPanelShow.bind( this )
+// 		);
+// 		window.electron.receive(
+// 			'notifications-panel-refresh',
+// 			this.onNotificationsPanelRefresh.bind( this )
+// 		);
+// 		window.electron.receive( 'notification-clicked', this.onNotificationClicked.bind( this ) );
+// 		window.electron.receive( 'page-help', this.onShowHelp.bind( this ) );
+// 		window.electron.receive( 'navigate', this.onNavigate.bind( this ) );
+// 		window.electron.receive( 'request-site', this.onRequestSite.bind( this ) );
+// 		window.electron.receive( 'enable-notification-badge', this.sendNotificationUnseenCount );
+// 		window.electron.receive( 'request-user-login-status', this.sendUserLoginStatus );
 
-		window.addEventListener( NOTIFY_DESKTOP_SEND_TO_PRINTER, this.onSendToPrinter.bind( this ) );
+// 		window.addEventListener(
+// 			NOTIFY_DESKTOP_VIEW_POST_CLICKED,
+// 			this.onViewPostClicked.bind( this )
+// 		);
 
-		this.store = reduxStore;
+// 		window.addEventListener(
+// 			NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_SET,
+// 			this.onUnseenCountUpdated.bind( this )
+// 		);
 
-		// Send some events immediately - this sets the app state
-		this.sendNotificationUnseenCount();
-		this.sendUserLoginStatus();
-	},
+// 		window.addEventListener( NOTIFY_DESKTOP_SEND_TO_PRINTER, this.onSendToPrinter.bind( this ) );
 
-	selectedSite: null,
+// 		this.store = reduxStore;
 
-	navigate: function ( to ) {
-		this.onNotificationsPanelShow( null, false );
-		this.store.dispatch( navigate( to ) );
-	},
+// 		// Send some events immediately - this sets the app state
+// 		this.sendNotificationUnseenCount();
+// 		this.sendUserLoginStatus();
+// 	},
 
-	toggleNotificationsPanel: function () {
-		this.store.dispatch( toggleNotificationsPanel() );
-	},
+// 	selectedSite: null,
 
-	setSelectedSite: function ( site ) {
-		this.selectedSite = site;
-	},
+// 	navigate: function ( to ) {
+// 		this.onNotificationsPanelShow( null, false );
+// 		this.store.dispatch( navigate( to ) );
+// 	},
 
-	sendNotificationUnseenCount: function () {
-		// Used to update unseen badge count when booting the app: no-op if not connected.
-		const navigator = window.navigator;
-		const connected = typeof navigator !== 'undefined' ? !! navigator.onLine : true;
-		if ( ! connected ) {
-			return;
-		}
-		const unseenCount = store.get( 'wpnotes_unseen_count' );
-		if ( unseenCount !== null ) {
-			debug( `Sending unseen count: ${ unseenCount }` );
-			window.electron.send( 'unread-notices-count', unseenCount );
-		}
-	},
+// 	toggleNotificationsPanel: function () {
+// 		this.store.dispatch( toggleNotificationsPanel() );
+// 	},
 
-	// window event
-	onUnseenCountUpdated: function ( event ) {
-		const { unseenCount } = event.detail;
-		debug( `Sending unseen count: ${ unseenCount }` );
-		window.electron.send( 'unread-notices-count', unseenCount );
-	},
+// 	setSelectedSite: function ( site ) {
+// 		this.selectedSite = site;
+// 	},
 
-	onNotificationClicked: function ( notification ) {
-		debug( `Notification ${ notification.id } clicked` );
+// 	sendNotificationUnseenCount: function () {
+// 		// Used to update unseen badge count when booting the app: no-op if not connected.
+// 		const navigator = window.navigator;
+// 		const connected = typeof navigator !== 'undefined' ? !! navigator.onLine : true;
+// 		if ( ! connected ) {
+// 			return;
+// 		}
+// 		const unseenCount = store.get( 'wpnotes_unseen_count' );
+// 		if ( unseenCount !== null ) {
+// 			debug( `Sending unseen count: ${ unseenCount }` );
+// 			window.electron.send( 'unread-notices-count', unseenCount );
+// 		}
+// 	},
 
-		const { id, type } = notification;
+// 	// window event
+// 	onUnseenCountUpdated: function ( event ) {
+// 		const { unseenCount } = event.detail;
+// 		debug( `Sending unseen count: ${ unseenCount }` );
+// 		window.electron.send( 'unread-notices-count', unseenCount );
+// 	},
 
-		// TODO: Make this a desktop-specific Tracks event.
-		this.store.dispatch( recordTracksEventAction( 'calypso_web_push_notification_clicked' ), {
-			push_notification_note_id: id,
-			push_notification_type: type,
-		} );
-	},
+// 	onNotificationClicked: function ( notification ) {
+// 		debug( `Notification ${ notification.id } clicked` );
 
-	onNotificationsPanelRefresh: function () {
-		this.store.dispatch( forceNotificationsRefresh( true ) );
-	},
+// 		const { id, type } = notification;
 
-	sendUserLoginStatus: function () {
-		let status = true;
+// 		// TODO: Make this a desktop-specific Tracks event.
+// 		this.store.dispatch( recordTracksEventAction( 'calypso_web_push_notification_clicked' ), {
+// 			push_notification_note_id: id,
+// 			push_notification_type: type,
+// 		} );
+// 	},
 
-		if ( user().get() === false ) {
-			status = false;
-		}
+// 	onNotificationsPanelRefresh: function () {
+// 		this.store.dispatch( forceNotificationsRefresh( true ) );
+// 	},
 
-		debug( 'Sending logged-in = ' + status );
+// 	sendUserLoginStatus: function () {
+// 		let status = true;
 
-		window.electron.send(
-			'user-login-status',
-			status,
-			{ id: user().data.ID },
-			oAuthToken.getToken()
-		);
-	},
+// 		if ( user().get() === false ) {
+// 			status = false;
+// 		}
 
-	onToggleNotifications: function () {
-		debug( 'Toggle notifications' );
+// 		debug( 'Sending logged-in = ' + status );
 
-		this.toggleNotificationsPanel();
-	},
+// 		window.electron.send(
+// 			'user-login-status',
+// 			status,
+// 			{ id: user().data.ID },
+// 			oAuthToken.getToken()
+// 		);
+// 	},
 
-	onNotificationsPanelShow: function ( show ) {
-		const isOpen = isNotificationsOpen( this.store.getState() );
+// 	onToggleNotifications: function () {
+// 		debug( 'Toggle notifications' );
 
-		if ( show ) {
-			if ( isOpen ) {
-				return;
-			}
-			this.toggleNotificationsPanel();
-		} else if ( isOpen ) {
-			this.toggleNotificationsPanel();
-		}
-	},
+// 		this.toggleNotificationsPanel();
+// 	},
 
-	onSignout: function () {
-		debug( 'Signout' );
+// 	onNotificationsPanelShow: function ( show ) {
+// 		const isOpen = isNotificationsOpen( this.store.getState() );
 
-		userUtilities.logout();
-	},
+// 		if ( show ) {
+// 			if ( isOpen ) {
+// 				return;
+// 			}
+// 			this.toggleNotificationsPanel();
+// 		} else if ( isOpen ) {
+// 			this.toggleNotificationsPanel();
+// 		}
+// 	},
 
-	onShowMySites: function () {
-		debug( 'Showing my sites' );
-		const site = this.selectedSite;
-		const siteSlug = site ? site.slug : null;
+// 	onSignout: function () {
+// 		debug( 'Signout' );
 
-		this.navigate( getStatsPathForTab( 'day', siteSlug ) );
-	},
+// 		userUtilities.logout();
+// 	},
 
-	onShowReader: function () {
-		debug( 'Showing reader' );
+// 	onShowMySites: function () {
+// 		debug( 'Showing my sites' );
+// 		const site = this.selectedSite;
+// 		const siteSlug = site ? site.slug : null;
 
-		this.navigate( '/read' );
-	},
+// 		this.navigate( getStatsPathForTab( 'day', siteSlug ) );
+// 	},
 
-	onShowProfile: function () {
-		debug( 'Showing my profile' );
+// 	onShowReader: function () {
+// 		debug( 'Showing reader' );
 
-		this.navigate( '/me' );
-	},
+// 		this.navigate( '/read' );
+// 	},
 
-	onNewPost: function () {
-		debug( 'New post' );
+// 	onShowProfile: function () {
+// 		debug( 'Showing my profile' );
 
-		this.navigate( newPost( this.selectedSite ) );
-	},
+// 		this.navigate( '/me' );
+// 	},
 
-	onShowHelp: function () {
-		debug( 'Showing help' );
+// 	onNewPost: function () {
+// 		debug( 'New post' );
 
-		this.navigate( '/help' );
-	},
+// 		this.navigate( newPost( this.selectedSite ) );
+// 	},
 
-	// window event
-	onViewPostClicked: function ( event ) {
-		const { url } = event.detail;
-		debug( `Received window event: "View Post" clicked for URL: ${ url }` );
+// 	onShowHelp: function () {
+// 		debug( 'Showing help' );
 
-		window.electron.send( 'view-post-clicked', url );
-	},
+// 		this.navigate( '/help' );
+// 	},
 
-	onRequestSite: function ( siteId ) {
-		debug( 'Refreshing redux state for siteId: ', siteId );
+// 	// window event
+// 	onViewPostClicked: function ( event ) {
+// 		const { url } = event.detail;
+// 		debug( `Received window event: "View Post" clicked for URL: ${ url }` );
 
-		const response = NOTIFY_DESKTOP_DID_REQUEST_SITE;
-		function onDidRequestSite( responseEvent ) {
-			debug( 'Received site request response for: ', responseEvent.detail );
+// 		window.electron.send( 'view-post-clicked', url );
+// 	},
 
-			window.removeEventListener( response, this );
-			const { status, siteId: responseSiteId } = responseEvent.detail;
-			let { error } = responseEvent.detail;
-			if ( Number( siteId ) !== Number( responseSiteId ) ) {
-				error = `Expected response for siteId: ${ siteId }, got: ${ responseSiteId }`;
-			}
-			window.electron.send( 'request-site-response', { siteId, status, error } );
-		}
-		window.addEventListener( response, onDidRequestSite.bind( onDidRequestSite ) );
+// 	onRequestSite: function ( siteId ) {
+// 		debug( 'Refreshing redux state for siteId: ', siteId );
 
-		this.store.dispatch( requestSite( siteId ) );
-	},
+// 		const response = NOTIFY_DESKTOP_DID_REQUEST_SITE;
+// 		function onDidRequestSite( responseEvent ) {
+// 			debug( 'Received site request response for: ', responseEvent.detail );
 
-	onNavigate: function ( url ) {
-		debug( 'Navigating to URL: ', url );
+// 			window.removeEventListener( response, this );
+// 			const { status, siteId: responseSiteId } = responseEvent.detail;
+// 			let { error } = responseEvent.detail;
+// 			if ( Number( siteId ) !== Number( responseSiteId ) ) {
+// 				error = `Expected response for siteId: ${ siteId }, got: ${ responseSiteId }`;
+// 			}
+// 			window.electron.send( 'request-site-response', { siteId, status, error } );
+// 		}
+// 		window.addEventListener( response, onDidRequestSite.bind( onDidRequestSite ) );
 
-		if ( url ) {
-			this.navigate( url );
-		}
-	},
+// 		this.store.dispatch( requestSite( siteId ) );
+// 	},
 
-	// window event
-	onSendToPrinter: function ( event ) {
-		const { title, contents } = event.detail;
-		this.print( title, contents );
-	},
+// 	onNavigate: function ( url ) {
+// 		debug( 'Navigating to URL: ', url );
 
-	print: function ( title, html ) {
-		window.electron.send( 'print', title, html );
-	},
-};
+// 		if ( url ) {
+// 			this.navigate( url );
+// 		}
+// 	},
 
-export default Desktop;
+// 	// window event
+// 	onSendToPrinter: function ( event ) {
+// 		const { title, contents } = event.detail;
+// 		this.print( title, contents );
+// 	},
+
+// 	print: function ( title, html ) {
+// 		window.electron.send( 'print', title, html );
+// 	},
+// };
+
+// export default desktop;
