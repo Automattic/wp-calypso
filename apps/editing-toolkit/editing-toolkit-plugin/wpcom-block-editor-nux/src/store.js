@@ -9,7 +9,11 @@ import { combineReducers, registerStore } from '@wordpress/data';
 const showWelcomeGuideReducer = ( state = undefined, action ) => {
 	switch ( action.type ) {
 		case 'WPCOM_WELCOME_GUIDE_FETCH_STATUS_SUCCESS':
+			if ( action.isSiteNew ) {
+				return 'enabled';
+			}
 			return action.response.show_welcome_guide;
+
 		case 'WPCOM_WELCOME_GUIDE_SHOW_SET':
 			return action.show;
 		case 'WPCOM_WELCOME_GUIDE_RESET_STORE':
@@ -66,12 +70,13 @@ const reducer = combineReducers( {
 } );
 
 const actions = {
-	*fetchWelcomeGuideStatus() {
+	*fetchWelcomeGuideStatus( isSiteNew ) {
 		const response = yield apiFetchControls( { path: '/wpcom/v2/block-editor/nux' } );
 
 		return {
 			type: 'WPCOM_WELCOME_GUIDE_FETCH_STATUS_SUCCESS',
 			response,
+			isSiteNew,
 		};
 	},
 	setShowWelcomeGuide: ( show, { openedManually } = {} ) => {
