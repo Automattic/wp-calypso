@@ -5,6 +5,7 @@
 ## Usage
 
 ```javascript
+// eslint-disable-next-line import/named
 import { supportsFeatureToDetect } from 'calypso/lib/feature-detection';
 
 if ( supportsFeatureToDetect() ) {
