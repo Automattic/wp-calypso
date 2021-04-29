@@ -377,7 +377,6 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	}
 
 	if ( window.electron ) {
-		console.log( foo );
 		foo();
 		desktop.init( reduxStore );
 	}
