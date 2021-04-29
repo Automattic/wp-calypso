@@ -57,12 +57,19 @@ export default class PlansPage extends AsyncBaseContainer {
 	}
 
 	async confirmCurrentPlan( planName ) {
-		let selector = by.css( `.is-${ planName }-plan .plan-pill` );
-		if ( host !== 'WPCOM' ) {
-			selector = by.css( `.is-${ planName }-plan` );
+		let selector = `.is-${ planName }-plan .plan-pill`;
+
+		if ( this.screenSize === 'MOBILE' ) {
+			selector = '.plan-features__mobile ' + selector;
+		} else {
+			selector = '.plan-features__table ' + selector;
 		}
 
-		return await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, selector );
+		if ( host !== 'WPCOM' ) {
+			selector = `.is-${ planName }-plan`;
+		}
+
+		return driverHelper.isElementEventuallyLocatedAndVisible( this.driver, by.css( selector ) );
 	}
 
 	async planTypesShown( planType ) {
