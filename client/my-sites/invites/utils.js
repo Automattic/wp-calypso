@@ -152,23 +152,21 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 }
 
 export function getRedirectAfterAccept( invite ) {
-	const isWPForTeamsSite = get( invite, 'site.is_wpforteams_site', false );
-
-	if ( isWPForTeamsSite ) {
+	if ( invite.site.is_wpforteams_site ) {
 		return `https://${ invite.site.domain }`;
 	}
 
 	const readerPath = '/read';
 	const postsListPath = '/posts/' + invite.site.ID;
 
-	if ( get( invite, 'site.is_vip' ) ) {
+	if ( invite.site.is_vip ) {
 		switch ( invite.role ) {
 			case 'viewer':
 			case 'follower':
-				return get( invite, 'site.URL' ) || readerPath;
+				return invite.site.URL || readerPath;
 
 			default:
-				return get( invite, 'site.admin_url' ) || postsListPath;
+				return invite.site.admin_url || postsListPath;
 		}
 	}
 
