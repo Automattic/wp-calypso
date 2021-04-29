@@ -371,6 +371,13 @@ $font-size: rem( 14px );
 	}
 
 	&.is-sidebar-collapsed {
+		.layout__primary .main,
+		.layout__secondary,
+		.layout__secondary .sidebar,
+		.layout__secondary .site-selector {
+			transition: none;
+		}
+
 		.dashicons-admin-collapse::before {
 			transform: rotate( 180deg );
 		}
@@ -393,7 +400,7 @@ $font-size: rem( 14px );
 			display: none;
 		}
 
-		.site__content {
+		.sidebar .site__content {
 			padding: 10px 2px;
 
 			.count {
@@ -409,7 +416,7 @@ $font-size: rem( 14px );
 			left: 2px;
 		}
 
-		.site .site-icon {
+		.sidebar .site .site-icon {
 			margin-bottom: 4px;
 		}
 
