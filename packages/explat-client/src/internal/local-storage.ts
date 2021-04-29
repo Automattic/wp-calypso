@@ -9,16 +9,16 @@ const localStorage =
 		  {
 				_data: {} as Record< string, string >,
 				setItem: function ( id: string, val: string ) {
-					return ( this._data[ id ] = String( val ) );
+					this._data[ id ] = val;
 				},
 				getItem: function ( id: string ) {
 					return this._data.hasOwnProperty( id ) ? this._data[ id ] : undefined;
 				},
 				removeItem: function ( id: string ) {
-					return delete this._data[ id ];
+					delete this._data[ id ];
 				},
 				clear: function () {
-					return ( this._data = {} );
+					this._data = {};
 				},
 		  };
 
