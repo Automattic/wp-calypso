@@ -5,16 +5,20 @@
 // the same characters for encoding as for decoding if they are UTF-8 encoded
 // because they will already be decoded by the time the decoding takes place.
 //
+// If all of that is confusing, see the tests for these functions to understand
+// how they will be used.
+//
 // If this is ever changed, please make sure to also change the code that
 // generates renewal emails on the backend, because it uses the same encoding!
 
 const slashForEncoding = '%25';
-const slashForDecoding = '%'; // WARNING: This will be used in a RegExp so it must not contain RegExp special characters unless they are escaped!
+const slashForDecoding = '%';
 
 export function encodeProductForUrl( slug: string ): string {
 	return slug.replace( /\//g, slashForEncoding );
 }
 
 export function decodeProductFromUrl( slug: string ): string {
-	return slug.replace( new RegExp( slashForDecoding, 'g' ), '/' );
+	// This should really use String.prototype.replaceAll but it's yet not fully supported
+	return slug.split( slashForDecoding ).join( '/' );
 }
