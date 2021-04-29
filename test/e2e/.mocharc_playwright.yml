@@ -5,3 +5,5 @@ require:
 file:
   - 'lib/before.js'
   - 'lib/hooks-playwright/hooks.ts'
+reporter:
+  - 'mocha-teamcity-reporter'

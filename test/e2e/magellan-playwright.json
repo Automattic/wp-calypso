@@ -1,6 +1,6 @@
 {
 	"mocha_tests": [ "specs-playwright" ],
-	"mocha_args": "-R spec-junit-reporter",
+	"mocha_config": "./.mocharc_playwright.yml",
 	"max_test_attempts": 3,
 	"max_workers": 1,
 	"sauce": false,
