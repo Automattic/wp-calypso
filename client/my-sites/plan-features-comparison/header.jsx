@@ -79,6 +79,8 @@ export class PlanFeaturesComparisonHeader extends Component {
 		const { isMonthlyPlan, rawPriceForMonthlyPlan, annualPricePerMonth, translate } = this.props;
 
 		if ( ! isMonthlyPlan ) {
+			const isLoading = ! rawPriceForMonthlyPlan;
+
 			const discountRate = Math.round(
 				( 100 * ( rawPriceForMonthlyPlan - annualPricePerMonth ) ) / rawPriceForMonthlyPlan
 			);
@@ -87,7 +89,11 @@ export class PlanFeaturesComparisonHeader extends Component {
 			} );
 
 			return (
-				<div className={ 'plan-features-comparison__header-annual-discount' }>
+				<div
+					className={ classNames( 'plan-features-comparison__header-annual-discount', {
+						'plan-features-comparison__header-annual-discount-is-loading': isLoading,
+					} ) }
+				>
 					<span>{ annualDiscountText }</span>
 				</div>
 			);
