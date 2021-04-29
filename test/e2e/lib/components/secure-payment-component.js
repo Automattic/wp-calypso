@@ -312,7 +312,10 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		if ( currentScreenSize() === 'mobile' ) {
 			await driverHelper.scrollIntoView( this.driver, this.getCartTotalSelector() );
 		}
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.getCartTotalSelector() );
+		await driverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			this.getCartTotalSelector()
+		);
 
 		const cartElement = await this.driver.findElement( this.getCartTotalSelector() );
 
@@ -369,7 +372,10 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 				By.css( '.checkout-review-order.is-summary #checkout-line-item-coupon-line-item' )
 			);
 		}
-		return driverHelper.waitUntilElementLocatedAndVisible( this.driver, By.css( '.cart__remove-link' ) );
+		return driverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			By.css( '.cart__remove-link' )
+		);
 	}
 
 	async waitForCouponToBeRemoved() {
@@ -385,7 +391,10 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 				By.css( '#checkout-line-item-coupon-line-item' )
 			);
 		}
-		return await driverHelper.waitUntilElementNotLocated( this.driver, By.css( '.cart__remove-link' ) );
+		return await driverHelper.waitUntilElementNotLocated(
+			this.driver,
+			By.css( '.cart__remove-link' )
+		);
 	}
 
 	async removeCoupon() {
@@ -450,7 +459,10 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async cartTotalDisplayed() {
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.getCartTotalSelector() );
+		await driverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			this.getCartTotalSelector()
+		);
 		return await this.driver.findElement( this.getCartTotalSelector() ).getText();
 	}
 

@@ -30,7 +30,10 @@ export default class PluginDetailsPage extends AsyncBaseContainer {
 	}
 
 	async waitForSuccessNotice() {
-		return await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.successNoticeSelector );
+		return await driverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			this.successNoticeSelector
+		);
 	}
 
 	async getSuccessNoticeText() {

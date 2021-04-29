@@ -105,7 +105,10 @@ export default class ViewPostPage extends AsyncBaseContainer {
 
 	async embedContentDisplayed( selector ) {
 		const element = By.css( `${ selector }` );
-		const displayed = await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, element );
+		const displayed = await driverHelper.isElementEventuallyLocatedAndVisible(
+			this.driver,
+			element
+		);
 		return assert.strictEqual(
 			displayed,
 			true,

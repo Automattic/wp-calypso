@@ -15,7 +15,10 @@ export default class DomainsPage extends AsyncBaseContainer {
 	}
 
 	async isInEmptyState() {
-		return await driverHelper.isElementLocated( this.driver, By.css( '.domain-picker__empty-state' ) );
+		return await driverHelper.isElementLocated(
+			this.driver,
+			By.css( '.domain-picker__empty-state' )
+		);
 	}
 
 	async enterDomainQuery( query ) {

@@ -170,7 +170,10 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async storeOptionDisplayed() {
-		return await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, this.storeSelector );
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
+			this.driver,
+			this.storeSelector
+		);
 	}
 
 	async settingsOptionExists( click = false ) {

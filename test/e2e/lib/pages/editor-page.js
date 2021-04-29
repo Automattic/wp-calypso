@@ -35,7 +35,10 @@ export default class EditorPage extends AsyncBaseContainer {
 			await driverHelper.clickWhenClickable( this.driver, cogSelector );
 		}
 		await this.waitForPage();
-		return await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.editorFrameName );
+		return await driverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			this.editorFrameName
+		);
 	}
 
 	async enterTitle( blogPostTitle ) {

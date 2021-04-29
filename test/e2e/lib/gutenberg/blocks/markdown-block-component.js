@@ -17,7 +17,10 @@ export default class MarkdownBlockComponent extends GutenbergBlockComponent {
 	}
 
 	async revealToolbar() {
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.expectedElementSelector );
+		await driverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			this.expectedElementSelector
+		);
 		await driverHelper.clickWhenClickable( this.driver, By.css( '.editor-post-title' ) );
 		return await driverHelper.clickWhenClickable( this.driver, this.expectedElementSelector );
 	}

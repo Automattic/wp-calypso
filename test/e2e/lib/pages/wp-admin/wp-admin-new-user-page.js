@@ -31,7 +31,10 @@ export default class WPAdminNewUserPage extends AsyncBaseContainer {
 		driverHelper.clickWhenClickable( this.driver, subscriberRoleSelect );
 
 		await driverHelper.clickWhenClickable( this.driver, buttonSelector );
-		return await driverHelper.waitUntilElementLocatedAndVisible( this.driver, successNoticeSelector );
+		return await driverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			successNoticeSelector
+		);
 	}
 
 	static async refreshIfJNError( driver ) {

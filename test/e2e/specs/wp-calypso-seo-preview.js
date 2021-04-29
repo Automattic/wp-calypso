@@ -55,7 +55,10 @@ describe( `[${ host }] SEO Preview page: (${ screenSize }) @parallel`, function 
 		} );
 
 		step( 'Ensure site preview stays open for 10 seconds', async function () {
-			await driverHelper.waitUntilElementLocatedAndVisible( driver, By.css( '.web-preview.is-seo' ) );
+			await driverHelper.waitUntilElementLocatedAndVisible(
+				driver,
+				By.css( '.web-preview.is-seo' )
+			);
 			const wait = async ( interval ) => {
 				return new Promise( ( resolve ) => {
 					setTimeout( resolve, interval );

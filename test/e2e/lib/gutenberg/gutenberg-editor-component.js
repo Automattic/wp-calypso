@@ -417,7 +417,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await this.openBlockInserterAndSearch( title );
 
 		if ( await driverHelper.isElementNotLocated( this.driver, inserterBlockItemSelector ) ) {
-			await driverHelper.waitUntilElementLocatedAndVisible( this.driver, inserterBlockItemSelector );
+			await driverHelper.waitUntilElementLocatedAndVisible(
+				this.driver,
+				inserterBlockItemSelector
+			);
 		}
 
 		// The normal click is needed to avoid hovering the element, which seems
@@ -579,7 +582,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable( this.driver, revertToDraftButtonLocator );
 		await driverHelper.acceptAlertIfPresent( this.driver );
 		await driverHelper.waitUntilElementNotLocated( this.driver, revertToDraftButtonLocator );
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, enabledPublishButtonLocator );
+		await driverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			enabledPublishButtonLocator
+		);
 	}
 
 	async viewPublishedPostOrPage() {

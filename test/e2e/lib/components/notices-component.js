@@ -17,7 +17,10 @@ export default class NoticesComponent extends AsyncBaseContainer {
 	}
 
 	async _isNoticeDisplayed( selector, actionSelector, click = false ) {
-		const isDisplayed = await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, selector );
+		const isDisplayed = await driverHelper.isElementEventuallyLocatedAndVisible(
+			this.driver,
+			selector
+		);
 		if ( click === true ) {
 			await driverHelper.clickWhenClickable( this.driver, actionSelector );
 		}

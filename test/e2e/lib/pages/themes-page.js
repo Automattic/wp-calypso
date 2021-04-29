@@ -90,7 +90,10 @@ export default class ThemesPage extends AsyncBaseContainer {
 
 	async popOverMenuDisplayed() {
 		const popOverMenuSelector = by.css( '.popover__menu' );
-		return await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, popOverMenuSelector );
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
+			this.driver,
+			popOverMenuSelector
+		);
 	}
 
 	static _getThemeSelectionXpath( phrase ) {

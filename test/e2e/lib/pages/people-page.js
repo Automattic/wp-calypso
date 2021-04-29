@@ -111,11 +111,17 @@ export default class PeoplePage extends AsyncBaseContainer {
 		if ( classNames.includes( 'is-open' ) === false ) {
 			await DriverHelper.clickWhenClickable( this.driver, this.searchButtonSelector );
 		}
-		return await DriverHelper.waitUntilElementLocatedAndVisible( this.driver, this.searchInputSelector );
+		return await DriverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			this.searchInputSelector
+		);
 	}
 
 	async waitForSearchResults() {
-		return await DriverHelper.waitUntilElementNotLocated( this.driver, this.searchResultsLoadingSelector );
+		return await DriverHelper.waitUntilElementNotLocated(
+			this.driver,
+			this.searchResultsLoadingSelector
+		);
 	}
 
 	async numberSearchResults() {

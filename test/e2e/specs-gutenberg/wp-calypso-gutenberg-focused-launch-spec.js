@@ -96,7 +96,10 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			const firstDomainSuggestionItemSelector = By.css(
 				'.domain-picker__suggestion-item:first-child'
 			);
-			await driverHelper.waitUntilElementLocatedAndVisible( driver, firstDomainSuggestionItemSelector );
+			await driverHelper.waitUntilElementLocatedAndVisible(
+				driver,
+				firstDomainSuggestionItemSelector
+			);
 
 			// Remove the spaces and make everything lowercase to match with the suggested domains, e.g.
 			// "Proud Elephants Wriggle Honestly" becomes "proudelephantswrigglehonestly"

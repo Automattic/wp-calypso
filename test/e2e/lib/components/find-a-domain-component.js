@@ -118,7 +118,10 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 			this.explicitWaitMS
 		);
 		try {
-			await driverHelper.waitUntilElementNotLocated( this.driver, this.declineGoogleAppsLinkSelector );
+			await driverHelper.waitUntilElementNotLocated(
+				this.driver,
+				this.declineGoogleAppsLinkSelector
+			);
 		} catch ( err ) {
 			//Sometimes the first click doesn't work. Clicking again
 			await driverHelper.clickWhenClickable( this.driver, this.declineGoogleAppsLinkSelector );

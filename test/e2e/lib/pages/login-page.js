@@ -52,7 +52,11 @@ export default class LoginPage extends AsyncBaseContainer {
 
 		if ( retry === true ) {
 			try {
-				await driverHelper.waitUntilElementNotLocated( driver, userNameSelector, this.explicitWaitMS * 2 );
+				await driverHelper.waitUntilElementNotLocated(
+					driver,
+					userNameSelector,
+					this.explicitWaitMS * 2
+				);
 			} catch ( e ) {
 				await SlackNotifier.warn( `The login didn't work as expected - retrying now: '${ e }'`, {
 					suppressDuplicateMessages: true,

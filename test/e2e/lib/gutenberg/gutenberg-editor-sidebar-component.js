@@ -26,7 +26,10 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		);
 		await driverHelper.scrollIntoView( this.driver, by );
 		await driverHelper.clickWhenClickable( this.driver, by );
-		return driverHelper.waitUntilElementLocatedAndVisible( this.driver, By.css( '.components-panel' ) );
+		return driverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			By.css( '.components-panel' )
+		);
 	}
 
 	async selectDocumentTab() {

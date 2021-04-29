@@ -29,7 +29,10 @@ export default class EmbedsBlockComponent extends GutenbergBlockComponent {
 
 	async isEmbeddedInEditor( selector ) {
 		const element = By.css( `${ this.blockID } ${ selector }` );
-		const displayed = await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, element );
+		const displayed = await driverHelper.isElementEventuallyLocatedAndVisible(
+			this.driver,
+			element
+		);
 		return assert.strictEqual(
 			displayed,
 			true,
