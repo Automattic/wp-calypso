@@ -3,7 +3,7 @@
  */
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, translate as __ } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -21,16 +21,21 @@ import { successNotice, removeNotice } from 'calypso/state/notices/actions';
 // Plugins list that should perfomr a redirect
 // once it's installed.
 const redirectingPluginsList = {
-	woocommerce: getSiteWoocommerceWizardUrl,
+	woocommerce: {
+		name: 'WooCommerce',
+		message: __( 'Redirecting to setup WooCommerce in five seconds.' ),
+		handler: getSiteWoocommerceWizardUrl,
+	},
 };
 
 /**
- * Return the handler function to get the plugin redirect URL.
+ * Return the redirec plugin object.
  *
  * @param {string} slug - Plugin slug.
- * @returns {Function|boolean} Selector handler if the plugin should redirect. Otherwise, False.
+ * @returns {object|boolean} Plugin redirect object. Otherwise, False.
  */
-function getPluginRedirectUrl( slug ) {
+
+function getPluginRedirect( slug ) {
 	if ( Object.keys( redirectingPluginsList ).indexOf( slug ) < 0 ) {
 		return false;
 	}
@@ -40,14 +45,14 @@ function getPluginRedirectUrl( slug ) {
 
 const withPluginRedirect = ( Component ) => ( props ) => {
 	const { plugin = {} } = props;
-	const pluginSlug = plugin?.slug;
+	const pluginSlug = props.pluginSlug || plugin?.slug;
 
 	if ( ! pluginSlug ) {
 		return <Component { ...props } />;
 	}
 
-	const redirectUrlHandler = getPluginRedirectUrl( pluginSlug );
-	if ( ! redirectUrlHandler ) {
+	const redirectPlugin = getPluginRedirect( pluginSlug );
+	if ( ! redirectPlugin ) {
 		return <Component { ...props } />;
 	}
 
@@ -59,7 +64,7 @@ const withPluginRedirect = ( Component ) => ( props ) => {
 			const site = getSelectedSite( state );
 			const isAtomic = isSiteAutomatedTransfer( state, site.ID );
 			const isJetpack = isJetpackSite( state, site.ID );
-			const woocommerceWizardUrl = redirectUrlHandler( state, site.ID );
+			const woocommerceWizardUrl = redirectPlugin.handler( state, site.ID );
 			const transferState = getAutomatedTransferStatus( state, site.ID );
 			const hasPluginJustBeenInstalled = isPluginActionCompleted(
 				state,
@@ -102,10 +107,8 @@ const withPluginRedirect = ( Component ) => ( props ) => {
 		[ pluginSlug ]
 	);
 
-	const pluginName = plugin?.name;
-
 	useEffect( () => {
-		if ( ! redirect || ! url || ! pluginName ) {
+		if ( ! redirect || ! url ) {
 			return;
 		}
 
@@ -119,30 +122,31 @@ const withPluginRedirect = ( Component ) => ( props ) => {
 				window.location.href = url;
 			}, 5500 );
 
+			const redirectMessage =
+				redirectPlugin.message ||
+				translate( 'Redirecting to setup %{pluginName} in five seconds.', {
+					args: {
+						pluginName: redirectPlugin.name,
+					},
+				} );
+
 			dispatch(
-				successNotice(
-					translate( 'Redirecting to the %(pluginName)s onborading page in five seconds.', {
-						args: {
-							pluginName,
-						},
-					} ),
-					{
-						duration: 5000,
-						button: translate( 'Cancel' ),
-						id: 'plugin-redirect-notice',
-						onClick: function () {
-							timerId && window.clearTimeout( timerId );
-							dispatch( removeNotice( 'plugin-redirect-notice' ) );
-						},
-					}
-				)
+				successNotice( redirectMessage, {
+					duration: 5000,
+					button: translate( 'Cancel' ),
+					id: 'plugin-redirect-notice',
+					onClick: function () {
+						timerId && window.clearTimeout( timerId );
+						dispatch( removeNotice( 'plugin-redirect-notice' ) );
+					},
+				} )
 			);
 		}, pluginInstalledNoticeTime );
 
 		return function () {
 			timerId && window.clearTimeout( timerId );
 		};
-	}, [ redirect, url, pluginName, dispatch, translate, hasSiteBeenTransferred ] );
+	}, [ redirect, url, redirectPlugin, dispatch, translate, hasSiteBeenTransferred ] );
 
 	return <Component { ...props } />;
 };
