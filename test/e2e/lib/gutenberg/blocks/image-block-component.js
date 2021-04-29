@@ -11,17 +11,24 @@ import GutenbergBlockComponent from './gutenberg-block-component';
 
 export class ImageBlockComponent extends GutenbergBlockComponent {
 	async uploadImage( fileDetails ) {
-		await driverHelper.waitUntilElementLocatedAndVisible(
+		/**
+		 * The image block is initially not selected. It has to be though, if we want
+		 * to sendKeys to the file input. That's why we're clicking the block title
+		 * here.
+		 */
+		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.components-form-file-upload ' )
+			By.css( `${ this.blockID } .components-placeholder__label` )
 		);
+
 		const filePathInput = await this.driver.findElement(
-			By.css( '.components-form-file-upload input[type="file"]' )
+			By.css( `${ this.blockID } .components-form-file-upload input[type="file"]` )
 		);
+
 		await filePathInput.sendKeys( fileDetails.file );
-		return await driverHelper.waitUntilElementNotLocated(
+		await driverHelper.waitUntilElementNotLocated(
 			this.driver,
-			By.css( '.wp-block-image .components-spinner' )
+			By.css( `${ this.blockID } .components-spinner` )
 		); // Wait for upload spinner to complete
 	}
 
