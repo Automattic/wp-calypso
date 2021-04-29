@@ -35,7 +35,7 @@ class InviteAcceptLoggedIn extends React.Component {
 
 				// Using page() for cross origin navigations would throw a `History.pushState` exception
 				// about creating state object with a cross-origin URL.
-				if ( new URL( redirectTo ).origin !== window.location.origin ) {
+				if ( new URL( redirectTo, window.location.href ).origin !== window.location.origin ) {
 					window.location = redirectTo;
 				} else {
 					page( redirectTo );

@@ -51,7 +51,7 @@ export function acceptInvite( context, next ) {
 
 				// Using page() for cross origin navigations would throw a `History.pushState` exception
 				// about creating state object with a cross-origin URL.
-				if ( new URL( redirect ).origin !== window.location.origin ) {
+				if ( new URL( redirect, window.location.href ).origin !== window.location.origin ) {
 					window.location = redirect;
 				} else {
 					page( redirect );
