@@ -62,7 +62,7 @@ const getWarningForMailbox = ( mailbox, translate ) => {
 	return null;
 };
 
-function EmailPlanMailboxesList( { emails, isLoadingEmails } ) {
+function EmailPlanMailboxesList( { mailboxes, isLoadingEmails } ) {
 	const translate = useTranslate();
 
 	if ( isLoadingEmails ) {
@@ -76,7 +76,7 @@ function EmailPlanMailboxesList( { emails, isLoadingEmails } ) {
 		);
 	}
 
-	if ( ! emails || emails.length < 1 ) {
+	if ( ! mailboxes || mailboxes.length < 1 ) {
 		return (
 			<MailboxListHeader>
 				<MailboxListItem hasNoEmails>
@@ -86,8 +86,8 @@ function EmailPlanMailboxesList( { emails, isLoadingEmails } ) {
 		);
 	}
 
-	const emailsItems = emails.map( ( email ) => {
-		const warningForMailbox = getWarningForMailbox( email, translate );
+	const mailboxItems = mailboxes.map( ( mailbox ) => {
+		const warningForMailbox = getWarningForMailbox( mailbox, translate );
 
 		return (
 			<MailboxListItem key={ email.mailbox }>
@@ -95,17 +95,17 @@ function EmailPlanMailboxesList( { emails, isLoadingEmails } ) {
 					<div>
 						<MaterialIcon icon="email" />
 						<span>
-							{ email.mailbox }@{ email.domain }
+							{ mailbox.mailbox }@{ mailbox.domain }
 						</span>
 					</div>
-					{ isEmailForward( email ) && (
+					{ isEmailForward( mailbox ) && (
 						<MailboxListItemSecondaryDetails className="email-plan-mailboxes-list__mailbox-list-forward">
 							<Gridicon icon="chevron-right" />
-							<span> { getEmailForwardAddress( email ) } </span>
+							<span> { getEmailForwardAddress( mailbox ) } </span>
 						</MailboxListItemSecondaryDetails>
 					) }
 				</div>
-				{ isEmailUserAdmin( email ) && (
+				{ isEmailUserAdmin( mailbox ) && (
 					<Badge type="info">
 						{ translate( 'Admin', {
 							comment: 'Email user role displayed as a badge',
@@ -117,7 +117,7 @@ function EmailPlanMailboxesList( { emails, isLoadingEmails } ) {
 		);
 	} );
 
-	return <MailboxListHeader>{ emailsItems }</MailboxListHeader>;
+	return <MailboxListHeader>{ mailboxItems }</MailboxListHeader>;
 }
 
 EmailPlanMailboxesList.propTypes = {
