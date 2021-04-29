@@ -18,6 +18,11 @@
 	color: var( --color-neutral-70 );
 }
 
+.export-card .foldable-card__summary div {
+	display: flex;
+	justify-content: flex-end;
+}
+
 .export-card__spinner-button {
 	float: right;
 	padding: 8px;
@@ -69,8 +74,4 @@
 	select {
 		width: 100%;
 	}
-}
-
-div.export-card .foldable-card__summary div {
-	display: flex;
 }
