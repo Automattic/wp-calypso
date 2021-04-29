@@ -11,7 +11,7 @@
 
 .plan-upgrade__description {
 	max-width: 400px;
-	margin: 2rem auto 3rem;
+	margin: 2rem auto;
 
 	font-size: 1rem;
 	text-align: center;
@@ -21,23 +21,13 @@
 
 		font-size: 1.25rem;
 	}
-
-	@include break-wide {
-		margin-bottom: 6rem;
-	}
-
-	.with-single-reco & {
-		@include break-xlarge {
-			margin-bottom: 6rem;
-		}
-	}
 }
 
 .plan-upgrade__list {
 	display: flex;
 	flex-direction: column;
 
-	margin: 0 auto 132px;
+	margin: 72px auto 132px;
 
 	list-style-type: none;
 

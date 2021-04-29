@@ -129,23 +129,28 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 		return () => window.removeEventListener( 'resize', onResize );
 	}, [ onResize ] );
 
+	const filterBar = (
+		<div className="product-grid__filter-bar">
+			<PlansFilterBar
+				showDiscountMessage
+				onDurationChange={ onDurationChange }
+				duration={ duration }
+			/>
+		</div>
+	);
+
 	return (
 		<>
 			{ planRecommendation && (
 				<PlanUpgradeSection
 					planRecommendation={ planRecommendation }
 					duration={ duration }
+					filterBar={ filterBar }
 					onSelectProduct={ onSelectProduct }
 				/>
 			) }
 			<ProductGridSection title={ translate( 'Most Popular' ) }>
-				<div className="product-grid__filter-bar">
-					<PlansFilterBar
-						showDiscountMessage
-						onDurationChange={ onDurationChange }
-						duration={ duration }
-					/>
-				</div>
+				{ ! planRecommendation && filterBar }
 				<ul
 					className={ classNames( 'product-grid__plan-grid', {
 						'is-wrapping': isPlanRowWrapping,

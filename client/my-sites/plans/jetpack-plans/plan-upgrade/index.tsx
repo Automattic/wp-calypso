@@ -31,12 +31,14 @@ import type { Duration, PurchaseCallback, SelectorProduct } from '../types';
 type Props = {
 	planRecommendation: PlanRecommendation;
 	duration: Duration;
+	filterBar: React.ReactNode;
 	onSelectProduct: PurchaseCallback;
 };
 
 const PlanUpgradeSection: React.FC< Props > = ( {
 	planRecommendation,
 	duration,
+	filterBar,
 	onSelectProduct,
 } ) => {
 	const translate = useTranslate();
@@ -88,6 +90,7 @@ const PlanUpgradeSection: React.FC< Props > = ( {
 					}
 				) }
 			</p>
+			{ filterBar }
 			<ul className="plan-upgrade__list">
 				<li className="plan-upgrade__legacy-item">
 					<ProductCard
