@@ -4,12 +4,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate, translate as __ } from 'i18n-calypso';
+import { createHigherOrderComponent } from '@wordpress/compose';
 
 /**
  * Internal dependencies
  */
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isJetpackSite, getSiteWoocommerceWizardUrl } from 'calypso/state/sites/selectors';
 import {
 	isPluginActionCompleted,
@@ -21,7 +22,7 @@ import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/sel
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { successNotice, removeNotice } from 'calypso/state/notices/actions';
 
-// Plugins list that should perfomr a redirect
+// List of plugins that should perform a redirect
 // once it's installed.
 const redirectingPluginsList = {
 	woocommerce: {
@@ -39,136 +40,139 @@ const redirectingPluginsList = {
  */
 
 function getPluginRedirect( slug ) {
-	if ( Object.keys( redirectingPluginsList ).indexOf( slug ) < 0 ) {
+	if ( ! redirectingPluginsList.hasOwnProperty( slug ) ) {
 		return false;
 	}
 
 	return redirectingPluginsList[ slug ];
 }
 
-const withPluginRedirect = ( Component ) => ( props ) => {
-	const { plugin } = props;
+const withPluginRedirect = createHigherOrderComponent(
+	( Component ) => ( props ) => {
+		const { plugin } = props;
 
-	if ( ! plugin?.slug ) {
-		return <Component { ...props } />;
-	}
+		if ( ! plugin?.slug ) {
+			return <Component { ...props } />;
+		}
 
-	const pluginSlug = plugin.slug;
-	const redirectPlugin = getPluginRedirect( pluginSlug );
-	if ( ! redirectPlugin ) {
-		return <Component { ...props } />;
-	}
+		const pluginSlug = plugin.slug;
+		const redirectPlugin = getPluginRedirect( pluginSlug );
+		if ( ! redirectPlugin ) {
+			return <Component { ...props } />;
+		}
 
-	const wasInstallingPlugin = useRef();
-	const [ redirectTo, setRedirectTo ] = useState( false );
+		const wasInstallingPlugin = useRef();
+		const [ redirectTo, setRedirectTo ] = useState( false );
 
-	const translate = useTranslate();
-	const dispatch = useDispatch();
+		const translate = useTranslate();
+		const dispatch = useDispatch();
 
-	const {
-		hasSiteBeenTransferred,
-		hasPluginBeenInstalled,
-		isInstallingPlugin,
-		isJetpack,
-		isAtomic,
-		isSiteConnected,
-		redirectUrl,
-	} = useSelector(
-		( state ) => {
-			const site = getSelectedSite( state );
-			const transferState = getAutomatedTransferStatus( state, site.ID );
+		const {
+			hasSiteBeenTransferred,
+			hasPluginBeenInstalled,
+			isInstallingPlugin,
+			isJetpack,
+			isAtomic,
+			isSiteConnected,
+			redirectUrl,
+		} = useSelector(
+			( state ) => {
+				const siteId = getSelectedSiteId( state );
+				const transferState = getAutomatedTransferStatus( state, siteId );
 
-			const isInstalling = isPluginActionInProgress( state, site.ID, pluginSlug, INSTALL_PLUGIN );
-			const hasBeenInstalled = isPluginActionCompleted(
-				state,
-				site.ID,
-				pluginSlug,
-				INSTALL_PLUGIN
-			);
+				const isInstalling = isPluginActionInProgress( state, siteId, pluginSlug, INSTALL_PLUGIN );
+				const hasBeenInstalled = isPluginActionCompleted(
+					state,
+					siteId,
+					pluginSlug,
+					INSTALL_PLUGIN
+				);
 
-			return {
-				hasSiteBeenTransferred: transferState === transferStates?.COMPLETE,
-				isInstallingPlugin: isInstalling,
-				hasPluginBeenInstalled: hasBeenInstalled,
-				isAtomic: isSiteAutomatedTransfer( state, site.ID ),
-				isJetpack: isJetpackSite( state, site.ID ),
-				isSiteConnected: getSiteConnectionStatus( state, site.ID ),
-				redirectUrl: redirectPlugin.handler( state, site.ID ),
+				return {
+					hasSiteBeenTransferred: transferState === transferStates?.COMPLETE,
+					isInstallingPlugin: isInstalling,
+					hasPluginBeenInstalled: hasBeenInstalled,
+					isAtomic: isSiteAutomatedTransfer( state, siteId ),
+					isJetpack: isJetpackSite( state, siteId ),
+					isSiteConnected: getSiteConnectionStatus( state, siteId ),
+					redirectUrl: redirectPlugin.handler( state, siteId ),
+				};
+			},
+			[ pluginSlug ]
+		);
+
+		useEffect( () => {
+			if ( ! isSiteConnected ) {
+				return;
+			}
+
+			// Store the previous state of `isInstalling`.
+			if ( isInstallingPlugin ) {
+				wasInstallingPlugin.current = true;
+			}
+
+			if (
+				( isJetpack && ! isInstallingPlugin && wasInstallingPlugin.current ) || // <- Jetpack site.
+				( isAtomic && hasSiteBeenTransferred ) // <- Atomic site.
+			) {
+				setRedirectTo( redirectUrl );
+			}
+		}, [
+			isInstallingPlugin,
+			hasPluginBeenInstalled,
+			redirectUrl,
+			hasSiteBeenTransferred,
+			isJetpack,
+			isAtomic,
+			isSiteConnected,
+		] );
+
+		useEffect( () => {
+			if ( ! redirectTo ) {
+				return;
+			}
+
+			// For Atomic sites, we shoulnd't wait since
+			/// there is not a Notice.
+			const pluginInstalledNoticeTime = hasSiteBeenTransferred ? 0 : 3000;
+
+			let timerId = setTimeout( () => {
+				dispatch( removeNotice( 'plugin-notice' ) );
+
+				// re-use same timer ID to redirect the client.
+				timerId = setTimeout( () => {
+					window.location.href = redirectTo;
+				}, 5500 );
+
+				const redirectMessage =
+					redirectPlugin.message ||
+					translate( 'Redirecting to setup %{pluginName} in five seconds.', {
+						args: {
+							pluginName: redirectPlugin.name,
+						},
+					} );
+
+				dispatch(
+					successNotice( redirectMessage, {
+						duration: 5000,
+						button: translate( 'Cancel' ),
+						id: 'plugin-redirect-notice',
+						onClick: function () {
+							timerId && window.clearTimeout( timerId );
+							dispatch( removeNotice( 'plugin-redirect-notice' ) );
+						},
+					} )
+				);
+			}, pluginInstalledNoticeTime );
+
+			return function () {
+				timerId && window.clearTimeout( timerId );
 			};
-		},
-		[ pluginSlug ]
-	);
+		}, [ redirectTo, redirectPlugin, dispatch, translate, hasSiteBeenTransferred ] );
 
-	useEffect( () => {
-		if ( ! isSiteConnected ) {
-			return;
-		}
-
-		// Store the previous state of `isInstalling`.
-		if ( isInstallingPlugin ) {
-			wasInstallingPlugin.current = true;
-		}
-
-		if (
-			( isJetpack && ! isInstallingPlugin && wasInstallingPlugin.current ) || // <- Jetpack site.
-			( isAtomic && hasSiteBeenTransferred ) // <- Atomic site.
-		) {
-			setRedirectTo( redirectUrl );
-		}
-	}, [
-		isInstallingPlugin,
-		hasPluginBeenInstalled,
-		redirectUrl,
-		hasSiteBeenTransferred,
-		isJetpack,
-		isAtomic,
-		isSiteConnected,
-	] );
-
-	useEffect( () => {
-		if ( ! redirectTo ) {
-			return;
-		}
-
-		// For Atomic sites, we shoulnd't wait since
-		/// there is not a Notice.
-		const pluginInstalledNoticeTime = hasSiteBeenTransferred ? 0 : 3000;
-
-		let timerId = setTimeout( () => {
-			dispatch( removeNotice( 'plugin-notice' ) );
-
-			// re-use same timer ID to redirect the client.
-			timerId = setTimeout( () => {
-				window.location.href = redirectTo;
-			}, 5500 );
-
-			const redirectMessage =
-				redirectPlugin.message ||
-				translate( 'Redirecting to setup %{pluginName} in five seconds.', {
-					args: {
-						pluginName: redirectPlugin.name,
-					},
-				} );
-
-			dispatch(
-				successNotice( redirectMessage, {
-					duration: 5000,
-					button: translate( 'Cancel' ),
-					id: 'plugin-redirect-notice',
-					onClick: function () {
-						timerId && window.clearTimeout( timerId );
-						dispatch( removeNotice( 'plugin-redirect-notice' ) );
-					},
-				} )
-			);
-		}, pluginInstalledNoticeTime );
-
-		return function () {
-			timerId && window.clearTimeout( timerId );
-		};
-	}, [ redirectTo, redirectPlugin, dispatch, translate, hasSiteBeenTransferred ] );
-
-	return <Component { ...props } />;
-};
+		return <Component { ...props } />;
+	},
+	'withPluginRedirect'
+);
 
 export default withPluginRedirect;
