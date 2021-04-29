@@ -733,7 +733,7 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 				export PLAYWRIGHT_BROWSERS_PATH=0
 
 				# Install modules
-				${_self.yarn_install_cmd}
+				yarn install
 
 				# Build package
 				yarn workspace @automattic/calypso-e2e build
