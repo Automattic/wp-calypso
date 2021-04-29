@@ -412,16 +412,9 @@ export class UserStep extends Component {
 		const queryArgsString = queryArgs.toString() ? '?' + queryArgs.toString() : '';
 
 		return (
-			this.originUrl() + getStepUrl( this.props.flowName, stepAfterRedirect ) + queryArgsString
-		);
-	}
-
-	originUrl() {
-		return (
-			window.location.protocol +
-			'//' +
-			window.location.hostname +
-			( window.location.port ? ':' + window.location.port : '' )
+			window.location.origin +
+			getStepUrl( this.props.flowName, stepAfterRedirect ) +
+			queryArgsString
 		);
 	}
 
