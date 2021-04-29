@@ -40,7 +40,7 @@ class SitePreviewComponent extends AsyncBaseContainer {
 	}
 
 	async leaveSitePreview() {
-		if ( this.screenSize === 'MOBILE' ) {
+		if ( this.screenSize === 'mobile' ) {
 			await this.driver.switchTo().defaultContent();
 			return await driverHelper.clickWhenClickable(
 				this.driver,
