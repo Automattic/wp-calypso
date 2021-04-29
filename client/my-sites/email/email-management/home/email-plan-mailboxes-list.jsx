@@ -40,6 +40,11 @@ const MailboxListItem = ( { children, isPlaceholder, hasNoEmails } ) => {
 	return <CompactCard className={ className }>{ children }</CompactCard>;
 };
 
+const MailboxListItemSecondaryDetails = ( { children, className } ) => {
+	const fullClassName = classNames( 'email-plan-mailboxes-list__mailbox-secondary', className );
+	return <div className={ fullClassName }>{ children }</div>;
+};
+
 const MailboxListItemWarning = ( { warningText } ) => {
 	return (
 		<div className="email-plan-mailboxes-list__mailbox-list-item-warning">
@@ -47,6 +52,14 @@ const MailboxListItemWarning = ( { warningText } ) => {
 			<span>{ warningText }</span>
 		</div>
 	);
+};
+
+const getWarningForMailbox = ( mailbox, translate ) => {
+	if ( isEmailForward( mailbox ) && ! isEmailForwardVerified( mailbox ) ) {
+		return <MailboxListItemWarning warningText={ translate( 'Verification required' ) } />;
+	}
+
+	return null;
 };
 
 function EmailPlanMailboxesList( { emails, isLoadingEmails } ) {
@@ -87,14 +100,12 @@ function EmailPlanMailboxesList( { emails, isLoadingEmails } ) {
 						} ) }
 					</Badge>
 				) }
+				{ getWarningForMailbox( email, translate ) }
 				{ isEmailForward( email ) && (
-					<>
+					<MailboxListItemSecondaryDetails className="email-plan-mailboxes-list__mailbox-list-forward">
 						<Gridicon icon="chevron-right" />
 						<span> { getEmailForwardAddress( email ) } </span>
-						{ ! isEmailForwardVerified( email ) && (
-							<MailboxListItemWarning warningText={ translate( 'Verification required' ) } />
-						) }
-					</>
+					</MailboxListItemSecondaryDetails>
 				) }
 			</MailboxListItem>
 		);
