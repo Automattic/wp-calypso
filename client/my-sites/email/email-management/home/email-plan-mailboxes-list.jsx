@@ -81,7 +81,7 @@ const getActionsForMailbox = ( mailbox, translate, dispatch ) => {
 		return {
 			action: (
 				<Button compact onClick={ () => resendEmailForwardVerification( mailbox, dispatch ) }>
-					{ translate( 'Resend verification' ) }
+					{ translate( 'Resend verification email' ) }
 				</Button>
 			),
 			warning: <MailboxListItemWarning warningText={ translate( 'Verification required' ) } />,
@@ -123,7 +123,7 @@ function EmailPlanMailboxesList( { mailboxes, isLoadingEmails } ) {
 		const { action, warning } = getActionsForMailbox( mailbox, translate, dispatch );
 
 		return (
-			<MailboxListItem key={ email.mailbox } isError={ !! warning }>
+			<MailboxListItem key={ mailbox.mailbox } isError={ !! warning }>
 				<div className="email-plan-mailboxes-list__mailbox-list-item-main">
 					<div>
 						<MaterialIcon icon="email" />
