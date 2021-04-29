@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { localize } from 'i18n-calypso';
-import { identity, startsWith } from 'lodash';
+import { startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -28,10 +28,6 @@ export class ReaderSidebarTags extends Component {
 		currentTag: PropTypes.string,
 		onFollowTag: PropTypes.func,
 		translate: PropTypes.func,
-	};
-
-	static defaultProps = {
-		translate: identity,
 	};
 
 	state = {

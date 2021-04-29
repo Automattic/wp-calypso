@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { identity, includes } from 'lodash';
+import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 
@@ -30,10 +29,6 @@ class SharingServiceTip extends Component {
 	static propTypes = {
 		service: PropTypes.object.isRequired,
 		translate: PropTypes.func,
-	};
-
-	static defaultProps = {
-		translate: identity,
 	};
 
 	facebook() {

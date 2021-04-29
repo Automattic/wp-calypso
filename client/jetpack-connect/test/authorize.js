@@ -7,7 +7,6 @@
  */
 import deepFreeze from 'deep-freeze';
 import React from 'react';
-import { identity } from 'lodash';
 import { shallow } from 'enzyme';
 
 /**
@@ -58,7 +57,7 @@ const DEFAULT_PROPS = deepFreeze( {
 	recordTracksEvent: noop,
 	retryAuth: noop,
 	siteSlug: SITE_SLUG,
-	translate: identity,
+	translate: ( string ) => string,
 	user: {
 		display_name: "A User's Name",
 	},

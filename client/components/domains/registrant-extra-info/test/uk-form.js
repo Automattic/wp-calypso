@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { shallow } from 'enzyme';
-import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,8 +13,8 @@ import FormInputValidation from 'calypso/components/forms/form-input-validation'
 const mockProps = {
 	contactDetails: {},
 	step: 'uk',
-	translate: identity,
-	updateContactDetailsCache: identity,
+	translate: ( string ) => string,
+	updateContactDetailsCache: () => {},
 };
 
 describe( 'uk-form', () => {

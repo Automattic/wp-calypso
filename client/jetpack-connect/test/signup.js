@@ -7,7 +7,6 @@
  */
 import deepFreeze from 'deep-freeze';
 import React from 'react';
-import { identity } from 'lodash';
 import { shallow } from 'enzyme';
 
 /**
@@ -51,7 +50,7 @@ const DEFAULT_PROPS = deepFreeze( {
 	createAccount: noop,
 	path: '/jetpack/connect/authorize',
 	recordTracksEvent: noop,
-	translate: identity,
+	translate: ( string ) => string,
 } );
 
 describe( 'JetpackSignup', () => {

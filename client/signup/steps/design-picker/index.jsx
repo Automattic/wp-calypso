@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
 import DesignPicker from '@automattic/design-picker';
 
 /**
@@ -31,7 +30,6 @@ class DesignPickerStep extends Component {
 
 	static defaultProps = {
 		useHeadstart: true,
-		translate: identity,
 	};
 
 	pickDesign = ( selectedDesign ) => {

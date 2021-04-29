@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flowRight as compose, get, identity } from 'lodash';
+import { flowRight as compose, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -55,10 +55,6 @@ class PrivacyPolicyBanner extends Component {
 		privacyPolicy: PropTypes.object,
 		userRegisterDate: PropTypes.number,
 		translate: PropTypes.func,
-	};
-
-	static defaultProps = {
-		translate: identity,
 	};
 
 	state = { showDialog: false };

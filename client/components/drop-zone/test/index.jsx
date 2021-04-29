@@ -28,6 +28,7 @@ describe( 'index', () => {
 	const requiredProps = {
 		hideDropZone: () => {},
 		showDropZone: () => {},
+		translate: ( string ) => string,
 	};
 
 	beforeAll( function () {
