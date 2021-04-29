@@ -204,63 +204,6 @@ describe( 'fetchExperimentAssignment', () => {
 	} );
 } );
 
-describe( 'localStorageMemoizedGetAnonId', () => {
-	it( 'should memoize an anonId for non-empty strings', async () => {
-		const mockGetAnonIdA = jest.fn( async () => 'asdf' );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdA ) ).toBe( 'asdf' );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdA ) ).toBe( 'asdf' );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdA ) ).toBe( 'asdf' );
-		expect( mockGetAnonIdA ).toHaveBeenCalledTimes( 1 );
-
-		const mockGetAnonIdB = jest.fn( async () => 'qwer' );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdB ) ).toBe( 'asdf' );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdB ) ).toBe( 'asdf' );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdB ) ).toBe( 'asdf' );
-		expect( mockGetAnonIdB ).toHaveBeenCalledTimes( 0 );
-	} );
-
-	it( 'should not memoize an anonId for falsy values', async () => {
-		const mockGetAnonIdA = jest.fn( async () => null );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdA ) ).toBe( null );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdA ) ).toBe( null );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdA ) ).toBe( null );
-		expect( mockGetAnonIdA ).toHaveBeenCalledTimes( 3 );
-
-		const mockGetAnonIdB = jest.fn( async () => undefined );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdB ) ).toBe( undefined );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdB ) ).toBe( undefined );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdB ) ).toBe( undefined );
-		expect( mockGetAnonIdB ).toHaveBeenCalledTimes( 3 );
-
-		const mockGetAnonIdC = jest.fn( async () => '' );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdC ) ).toBe( '' );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdC ) ).toBe( '' );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdC ) ).toBe( '' );
-		expect( mockGetAnonIdC ).toHaveBeenCalledTimes( 3 );
-
-		const mockGetAnonIdD = jest.fn( async () => 'asdf' );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdD ) ).toBe( 'asdf' );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdD ) ).toBe( 'asdf' );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdD ) ).toBe( 'asdf' );
-		expect( mockGetAnonIdD ).toHaveBeenCalledTimes( 1 );
-
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdA ) ).toBe( 'asdf' );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdA ) ).toBe( 'asdf' );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdA ) ).toBe( 'asdf' );
-		expect( mockGetAnonIdA ).toHaveBeenCalledTimes( 3 );
-
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdB ) ).toBe( 'asdf' );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdB ) ).toBe( 'asdf' );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdB ) ).toBe( 'asdf' );
-		expect( mockGetAnonIdB ).toHaveBeenCalledTimes( 3 );
-
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdC ) ).toBe( 'asdf' );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdC ) ).toBe( 'asdf' );
-		expect( await Requests.localStorageMemoizedGetAnonId( mockGetAnonIdC ) ).toBe( 'asdf' );
-		expect( mockGetAnonIdC ).toHaveBeenCalledTimes( 3 );
-	} );
-} );
-
 describe( 'isFetchExperimentAssignmentResponse', () => {
 	it( 'should return true for valid responses', () => {
 		expect(
@@ -351,5 +294,89 @@ describe( 'isFetchExperimentAssignmentResponse', () => {
 				variations: 'string',
 			} )
 		).toBe( false );
+	} );
+} );
+
+describe( 'localStorageCachedGetAnonId', () => {
+	it( 'should return a fresh anonId for non-falsy values', async () => {
+		const mockGetAnonIdA = jest.fn( async () => 'asdf' );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdA ) ).toBe( 'asdf' );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdA ) ).toBe( 'asdf' );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdA ) ).toBe( 'asdf' );
+		expect( mockGetAnonIdA ).toHaveBeenCalledTimes( 3 );
+
+		const mockGetAnonIdB = jest.fn( async () => 'qwer' );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdB ) ).toBe( 'qwer' );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdB ) ).toBe( 'qwer' );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdB ) ).toBe( 'qwer' );
+		expect( mockGetAnonIdB ).toHaveBeenCalledTimes( 3 );
+	} );
+
+	it( 'should not cache an anonId for falsy values', async () => {
+		const mockGetAnonIdNull = jest.fn( async () => null );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( null );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( null );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( null );
+		expect( mockGetAnonIdNull ).toHaveBeenCalledTimes( 3 );
+
+		const mockGetAnonIdEmpty = jest.fn( async () => '' );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdEmpty ) ).toBe( null );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdEmpty ) ).toBe( null );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdEmpty ) ).toBe( null );
+		expect( mockGetAnonIdEmpty ).toHaveBeenCalledTimes( 3 );
+
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( null );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( null );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( null );
+		expect( mockGetAnonIdNull ).toHaveBeenCalledTimes( 6 );
+	} );
+
+	it( 'should return a cached anonId for falsy-values within the expiry time', async () => {
+		const mockGetAnonIdA = jest.fn( async () => 'asdf' );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdA ) ).toBe( 'asdf' );
+
+		const mockGetAnonIdNull = jest.fn( async () => null );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( 'asdf' );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( 'asdf' );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( 'asdf' );
+		expect( mockGetAnonIdNull ).toHaveBeenCalledTimes( 3 );
+
+		const mockGetAnonIdEmpty = jest.fn( async () => '' );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdEmpty ) ).toBe( 'asdf' );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdEmpty ) ).toBe( 'asdf' );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdEmpty ) ).toBe( 'asdf' );
+		expect( mockGetAnonIdEmpty ).toHaveBeenCalledTimes( 3 );
+	} );
+
+	it( 'should not return the cached anonId for falsy-values outside of the expiry time', async () => {
+		const mockGetAnonIdA = jest.fn( async () => 'asdf' );
+		spiedMonotonicNow.mockImplementationOnce( () => 0 );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdA ) ).toBe( 'asdf' );
+
+		const mockGetAnonIdNull = jest.fn( async () => null );
+		spiedMonotonicNow.mockImplementationOnce( () => 1 );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( 'asdf' );
+		spiedMonotonicNow.mockImplementationOnce( () => 3 * 60 * 60 * 1000 - 1 );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( 'asdf' );
+		spiedMonotonicNow.mockImplementationOnce( () => 3 * 60 * 60 * 1000 );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( null );
+		spiedMonotonicNow.mockImplementationOnce( () => 3 * 60 * 60 * 1000 + 1 );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( null );
+		spiedMonotonicNow.mockImplementationOnce( () => Infinity );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( null );
+
+		// And let's make sure we can overwrite it:
+		spiedMonotonicNow.mockImplementationOnce( () => 0 );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdA ) ).toBe( 'asdf' );
+		spiedMonotonicNow.mockImplementationOnce( () => 1 );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( 'asdf' );
+		spiedMonotonicNow.mockImplementationOnce( () => 3 * 60 * 60 * 1000 - 1 );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( 'asdf' );
+		spiedMonotonicNow.mockImplementationOnce( () => 3 * 60 * 60 * 1000 );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( null );
+		spiedMonotonicNow.mockImplementationOnce( () => 3 * 60 * 60 * 1000 + 1 );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( null );
+		spiedMonotonicNow.mockImplementationOnce( () => Infinity );
+		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( null );
 	} );
 } );

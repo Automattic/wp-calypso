@@ -38,28 +38,44 @@ function validateFetchExperimentAssignmentResponse(
 	throw new Error( 'Invalid FetchExperimentAssignmentResponse' );
 }
 
-// As ExPlat prefers to assign based on anonId and things end up simplest if we can keep the same anonId
-// the whole time, we store the first anonId we see in LocalStorage and reuse it:
-const localStorageAnonIdKey = 'explat-first-anon-id';
+// We cache the anonId and add it to requests to ensure users that have recently
+// crossed the logged-out/logged-in boundry have a consistent assignment.
+//
+// There can be issues otherwise as matching anonId to userId is only eventually
+// consistent.
+const localStorageLastAnonIdKey = 'explat-last-anon-id';
+const localStorageLastAnonIdRetrievalTimeKey = 'explat-last-anon-id-retrieval-time';
+const lastAnonIdExpiryTimeMs = 3 * 60 * 60 * 1000; // 3 hours
 /**
  * INTERNAL USE ONLY
- * Runs the getAnonId provided memoized by LocalStorage, that is it returns the first anonId
- * encountered without re-running getAnonId.
+ *
+ * Runs the getAnonId provided cached by LocalStorage:
+ * - Returns the result of getAnonId if it can
+ * - Otherwise, within the expiry time, returns the cached anonId
+ *
  * Exported for testing.
  *
  * @param getAnonId The getAnonId function
  */
-export const localStorageMemoizedGetAnonId = async ( getAnonId: Config[ 'getAnonId' ] ) => {
-	const maybeStoredAnonId = localStorage.getItem( localStorageAnonIdKey );
-	if ( maybeStoredAnonId ) {
+export const localStorageCachedGetAnonId = async ( getAnonId: Config[ 'getAnonId' ] ) => {
+	const anonId = await getAnonId();
+	if ( anonId ) {
+		localStorage.setItem( localStorageLastAnonIdKey, anonId );
+		localStorage.setItem( localStorageLastAnonIdRetrievalTimeKey, String( monotonicNow() ) );
+		return anonId;
+	}
+
+	const maybeStoredAnonId = localStorage.getItem( localStorageLastAnonIdKey );
+	const maybeStoredRetrievalTime = localStorage.getItem( localStorageLastAnonIdRetrievalTimeKey );
+	if (
+		maybeStoredAnonId &&
+		maybeStoredRetrievalTime &&
+		monotonicNow() - parseInt( maybeStoredRetrievalTime, 10 ) < lastAnonIdExpiryTimeMs
+	) {
 		return maybeStoredAnonId;
 	}
 
-	const anonId = await getAnonId();
-	if ( anonId ) {
-		localStorage.setItem( localStorageAnonIdKey, anonId );
-	}
-	return anonId;
+	return null;
 };
 
 /**
@@ -76,7 +92,7 @@ export async function fetchExperimentAssignment(
 
 	const { variations, ttl: responseTtl } = validateFetchExperimentAssignmentResponse(
 		await config.fetchExperimentAssignment( {
-			anonId: await localStorageMemoizedGetAnonId( config.getAnonId ),
+			anonId: await localStorageCachedGetAnonId( config.getAnonId ),
 			experimentName,
 		} )
 	);

@@ -135,6 +135,9 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		spiedMonotonicNow.mockImplementationOnce(
 			() => validExperimentAssignment.retrievedTimestamp + 1000
 		);
+		spiedMonotonicNow.mockImplementationOnce(
+			() => validExperimentAssignment.retrievedTimestamp + 1001
+		);
 		await expect(
 			client.loadExperimentAssignment( validExperimentAssignment.experimentName )
 		).resolves.toEqual( validExperimentAssignment );

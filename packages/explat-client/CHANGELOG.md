@@ -4,7 +4,7 @@
 
 - Change dangerouslyGetExperimentAssignment to log rather than throw
 - Store state in LocalStorage
-- Memoize getAnonId in LocalStorage
+- Cache getAnonId in LocalStorage
 
 ## 0.0.1
 
