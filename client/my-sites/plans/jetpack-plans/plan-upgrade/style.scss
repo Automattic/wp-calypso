@@ -34,14 +34,13 @@
 	@include break-wide {
 		flex-direction: row;
 		justify-content: center;
-		align-items: center;
+		align-items: flex-start;
 	}
 
 	.with-single-reco & {
 		@include break-xlarge {
 			flex-direction: row;
 			justify-content: center;
-			align-items: center;
 		}
 	}
 }
@@ -70,6 +69,7 @@
 
 .plan-upgrade__separator {
 	display: flex;
+	align-self: center;
 
 	margin: 24px auto;
 
