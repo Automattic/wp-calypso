@@ -59,8 +59,6 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				sudo apt-get install -y ./google-chrome-stable_90.0.4430.93-1_amd64.deb
 				rm ./google-chrome-stable_90.0.4430.93-1_amd64.deb
 				cd test/e2e
-				google-chrome --version | cut -d' ' -f3 > .chromedriver_version
-      			echo -n "Google Chrome version: " && cat .chromedriver_version
 				npm install chromedriver --chromedriver-force-download --detect_chromedriver_version
 				cd ../..
 				# Chrome upgrade end
@@ -236,8 +234,6 @@ object RunCalypsoE2eMobileTests : BuildType({
 				sudo apt-get install -y ./google-chrome-stable_90.0.4430.93-1_amd64.deb
 				rm ./google-chrome-stable_90.0.4430.93-1_amd64.deb
 				cd test/e2e
-				google-chrome --version | cut -d' ' -f3 > .chromedriver_version
-      			echo -n "Google Chrome version: " && cat .chromedriver_version
 				npm install chromedriver --chromedriver-force-download --detect_chromedriver_version
 				cd ../..
 				# Chrome upgrade end
