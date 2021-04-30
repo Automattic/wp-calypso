@@ -21,8 +21,8 @@ object WPComTests : Project({
 	buildType(Gutenberg)
 })
 
-
 private object Gutenberg : BuildType({
+	id("Gutenberg")
 	name = "Gutenberg tests (desktop)"
 	description = "Runs Gutenberg E2E tests using desktop screen resolution"
 
