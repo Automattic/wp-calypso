@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const { app, dialog, BrowserWindow, ipcMain: ipc } = require( 'electron' );
+const { app, BrowserWindow, ipcMain: ipc } = require( 'electron' );
 
 /**
  * Internal dependencies
@@ -100,14 +100,6 @@ function showAppWindow() {
 
 	ipc.handle( 'get-settings', () => {
 		return Settings.toRenderer();
-	} );
-
-	ipc.on( 'pong', () => {
-		dialog.showMessageBox( mainWindow, {
-			buttons: [ 'OK' ],
-			title: 'Pong!',
-			message: '👋🏼',
-		} );
 	} );
 
 	mainWindow.loadURL( appUrl );
