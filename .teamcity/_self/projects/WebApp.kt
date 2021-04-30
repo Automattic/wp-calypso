@@ -20,7 +20,6 @@ object WebApp : Project({
 	buildType(CheckCodeStyleBranch)
 	buildType(BuildDockerImage)
 	buildType(RunCalypsoPlaywrightE2eTests)
-	buildType(RunVisualRegressionTests)
 })
 
 object RunCalypsoE2eDesktopTests : BuildType({
@@ -833,72 +832,6 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 
 	dependencies {
 		snapshot(BuildDockerImage) {
-		}
-	}
-})
-object RunVisualRegressionTests : BuildType({
-	name = "Visual Regression Tests"
-	description = "Runs visual regression tests"
-
-	artifactRules = """
-		reports => reports
-	""".trimIndent()
-
-	vcs {
-		root(Settings.WpCalypso)
-		cleanCheckout = true
-	}
-
-	steps {
-		bashNodeScript {
-			name = "Prepare environment"
-			scriptContent = """
-				export NODE_ENV="test"
-
-				# Install modules
-				${_self.yarn_install_cmd}
-			"""
-			dockerImage = "%docker_image_e2e%"
-		}
-		bashNodeScript {
-			name = "Run e2e tests (desktop)"
-			scriptContent = """
-				set -x
-
-				# Decrypt config
-				openssl aes-256-cbc -md sha1 -d -in ./test/visual/config/encrypted.enc -out ./test/visual/config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
-
-				# Run the test
-				yarn test-visual
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-		bashNodeScript {
-			name = "Collect results"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				set -x
-
-				mkdir -p screenshots
-				find test/visual -type f -path '*/html_report/*' -print0 | xargs -r -0 mv -t reports
-
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-	}
-	failureConditions {
-    	executionTimeoutMin = 30
-    }
-	triggers {
-		schedule {
-			schedulingPolicy = daily {
-				hour = 2
-			}
-			branchFilter = """
-				+:trunk
-			""".trimIndent()
-			triggerBuild = always()
-			withPendingChangesOnly = false
 		}
 	}
 })
