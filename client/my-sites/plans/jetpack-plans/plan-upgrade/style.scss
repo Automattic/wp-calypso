@@ -34,14 +34,13 @@
 	@include break-wide {
 		flex-direction: row;
 		justify-content: center;
-		align-items: center;
+		align-items: flex-start;
 	}
 
 	.with-single-reco & {
 		@include break-xlarge {
 			flex-direction: row;
 			justify-content: center;
-			align-items: center;
 		}
 	}
 }
@@ -70,6 +69,7 @@
 
 .plan-upgrade__separator {
 	display: flex;
+	align-self: center;
 
 	margin: 24px auto;
 
@@ -126,8 +126,10 @@
 			flex: 1;
 
 			max-width: 350px;
-			margin-left: 16px;
-			margin-right: 16px;
+
+			& + li {
+				margin-left: 16px;
+			}
 		}
 	}
 
@@ -144,4 +146,12 @@
 			}
 		}
 	}
+
+	.jetpack-product-card.is-featured.is-aligned {
+		margin-left: 0;
+	}
+}
+
+.jetpack-product-card.is-deprecated {
+	box-shadow: none;
 }
