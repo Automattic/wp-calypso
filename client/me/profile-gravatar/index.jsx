@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import Animate from 'calypso/components/animate';
 import Gravatar from 'calypso/components/gravatar';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Style dependencies
@@ -30,7 +31,13 @@ function ProfileGravatar( props ) {
 	const parentClassName = [ 'profile-gravatar', props.inSidebar ? 'is-in-sidebar' : '' ].join(
 		' '
 	);
-
+    const user = props.user.username;
+    let verified;
+    wpcom.me().get( function ( err, data ) {
+               if ( err ) return;
+               verified = data.email_verified;
+               console.log( verified );
+    } );
 	return (
 		<div className={ parentClassName }>
 			<div role="presentation" onClick={ props.recordGravatarMisclick }>
