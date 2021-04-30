@@ -12,6 +12,13 @@ const log = require( '../../lib/logger' )( 'desktop:external-links' );
 
 const isWordPress = ( url ) => url.hostname.includes( 'wordpress.com' );
 
+const isDevBuild = ( url ) => {
+	return (
+		process.env.WP_DESKTOP_DEBUG_LOCALHOST !== undefined &&
+		url.hostname.includes( 'calypso.localhost' )
+	);
+};
+
 const isJetpack = ( url ) => url.hostname.includes( 'jetpack.com' );
 
 const isWpAdmin = ( url ) => url.href.includes( 'wp-admin' );
@@ -30,6 +37,7 @@ module.exports = function ( mainWindow ) {
 
 		if (
 			isWordPress( parsed ) ||
+			isDevBuild( parsed ) ||
 			isJetpack( parsed ) ||
 			isWpAdmin( parsed ) ||
 			isWpLogin( parsed ) // Disable wp-login/self-hosted for now ?
@@ -57,6 +65,7 @@ module.exports = function ( mainWindow ) {
 
 		if (
 			isWordPress( parsed ) ||
+			isDevBuild( parsed ) ||
 			isJetpack( parsed ) ||
 			isWpAdmin( parsed ) ||
 			isWpLogin( parsed ) // Disable wp-login/self-hosted for now ?

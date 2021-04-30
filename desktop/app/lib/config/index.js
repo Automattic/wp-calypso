@@ -14,6 +14,13 @@ config.loginURL = function () {
 	return 'https://wordpress.com/log-in';
 };
 
+config.baseURL = function () {
+	if ( process.env.WP_DESKTOP_DEBUG_LOCALHOST !== undefined ) {
+		return 'http://calypso.localhost:3000/';
+	}
+	return 'https://wordpress.com/';
+};
+
 config.isRelease = function () {
 	return this.build === 'release';
 };
