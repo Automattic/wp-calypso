@@ -24,11 +24,11 @@
 	visibility: hidden;
 
 	position: absolute;
-	top: -90px;
+	top: -105px;
+}
 
-	@include breakpoint-deprecated( '>660px' ) {
-		top: -60px;
-	}
+.is-section-jetpack-cloud-pricing .jetpack-product-card__scroll-anchor {
+	top: -90px;
 }
 
 .jetpack-product-card__header {
