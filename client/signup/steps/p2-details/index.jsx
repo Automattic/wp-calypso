@@ -13,6 +13,7 @@ import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import { Button } from '@automattic/components';
 import { login } from 'calypso/lib/paths';
 import { getStepUrl } from 'calypso/signup/utils';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 /**
  * Style dependencies
@@ -82,6 +83,8 @@ function P2Details( {
 								stepName: stepName,
 							} );
 
+							recordTracksEvent( 'calypso_signup_p2_details_login_button_click' );
+
 							page( getLoginLink( { flowName, locale } ) );
 						} }
 					>
@@ -92,6 +95,8 @@ function P2Details( {
 							submitSignupStep( {
 								stepName: stepName,
 							} );
+
+							recordTracksEvent( 'calypso_signup_p2_details_signup_button_click' );
 
 							goToNextStep();
 						} }
