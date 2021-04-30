@@ -751,3 +751,30 @@ export const getJetpackDescriptionWithOptions = (
 		  } )
 		: product.description;
 };
+
+/**
+ * Return the slug of a highlighted product if the given slug is Jetpack product
+ * slug, otherwise, return null.
+ *
+ * @param {string} productSlug the slug of a Jetpack product
+ *
+ * @returns {[string, string] | null} the monthly and yearly slug of a supported Jetpack product
+ */
+export function getHighlightedProduct( productSlug?: string ): [ string, string ] | null {
+	if ( ! productSlug ) {
+		return null;
+	}
+
+	// If neither of these methods return a slug, it means that the `productSlug`
+	// is not really a Jetpack product slug.
+	const yearlySlug = getYearlySlugFromMonthly( productSlug );
+	const monthlySlug = getMonthlySlugFromYearly( productSlug );
+
+	if ( monthlySlug ) {
+		return [ monthlySlug, productSlug ];
+	} else if ( yearlySlug ) {
+		return [ productSlug, yearlySlug ];
+	}
+
+	return null;
+}
