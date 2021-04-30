@@ -2,6 +2,10 @@
  * Internal dependencies
  */
 const ipc = require( '../../lib/calypso-commands' );
+const Config = require( '../../lib/config' );
+const isCalypso = require( '../../lib/is-calypso' );
+
+const webBase = Config.baseURL();
 
 module.exports = function ( mainWindow, status ) {
 	status = status === 'enabled' ? true : false;
@@ -14,7 +18,11 @@ module.exports = function ( mainWindow, status ) {
 			accelerator: 'CmdOrCtrl+1',
 			click: function () {
 				mainWindow.show();
-				ipc.showMySites( mainWindow );
+				if ( isCalypso( mainWindow ) ) {
+					ipc.showMySites( mainWindow );
+				} else {
+					mainWindow.webContents.loadURL( webBase + 'stats/day' );
+				}
 			},
 		},
 		{
@@ -24,7 +32,11 @@ module.exports = function ( mainWindow, status ) {
 			accelerator: 'CmdOrCtrl+2',
 			click: function () {
 				mainWindow.show();
-				ipc.showReader( mainWindow );
+				if ( isCalypso( mainWindow ) ) {
+					ipc.showReader( mainWindow );
+				} else {
+					mainWindow.webContents.loadURL( webBase + 'read' );
+				}
 			},
 		},
 		{
@@ -34,17 +46,12 @@ module.exports = function ( mainWindow, status ) {
 			accelerator: 'CmdOrCtrl+3',
 			click: function () {
 				mainWindow.show();
-				ipc.showProfile( mainWindow );
-			},
-		},
-		{
-			label: 'Notifications',
-			requiresUser: true,
-			enabled: status,
-			accelerator: 'CmdOrCtrl+4',
-			click: function () {
 				mainWindow.show();
-				ipc.toggleNotifications( mainWindow );
+				if ( isCalypso( mainWindow ) ) {
+					ipc.showProfile( mainWindow );
+				} else {
+					mainWindow.webContents.loadURL( webBase + 'me' );
+				}
 			},
 		},
 		{
@@ -54,7 +61,12 @@ module.exports = function ( mainWindow, status ) {
 			accelerator: 'CmdOrCtrl+N',
 			click: function () {
 				mainWindow.show();
-				ipc.newPost( mainWindow );
+				mainWindow.show();
+				if ( isCalypso( mainWindow ) ) {
+					ipc.newPost( mainWindow );
+				} else {
+					mainWindow.webContents.loadURL( webBase + 'post' );
+				}
 			},
 		},
 	];

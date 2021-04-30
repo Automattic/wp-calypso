@@ -15,6 +15,7 @@ const AppQuit = require( '../../lib/app-quit' );
 const debugMenu = require( './debug-menu' );
 const { getUpdater } = require( '../../app-handlers/updater' );
 const log = require( '../../lib/logger' )( 'desktop:menu' );
+const isCalypso = require( '../../lib/is-calypso' );
 
 /**
  * Module variables
@@ -38,9 +39,14 @@ module.exports = function ( app, mainWindow ) {
 			requiresUser: true,
 			enabled: false,
 			id: 'loggedin',
-			click: function () {
+			click: async function () {
 				mainWindow.show();
-				ipc.signOut( mainWindow );
+				if ( isCalypso( mainWindow ) ) {
+					ipc.signOut( mainWindow );
+				} else {
+					await mainWindow.webContents.session.clearStorageData();
+					mainWindow.webContents.loadURL( Config.loginURL() );
+				}
 			},
 		},
 		{

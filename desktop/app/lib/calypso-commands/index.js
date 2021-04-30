@@ -24,11 +24,6 @@ module.exports = {
 		mainWindow.webContents.send( 'new-post' );
 	},
 
-	toggleNotifications: function ( mainWindow ) {
-		log.info( 'toggleNotifications triggered' );
-		mainWindow.webContents.send( 'toggle-notification-bar' );
-	},
-
 	showHelp: function ( mainWindow ) {
 		log.info( 'showHelp triggered' );
 		mainWindow.webContents.send( 'page-help' );
