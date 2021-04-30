@@ -276,7 +276,10 @@ export function slugIsFeaturedProduct( productSlug: string ): boolean {
 	return FEATURED_PRODUCTS.includes( productSlug );
 }
 
-function getPriceTierForUnits( tiers: PriceTierEntry[], units: number ): PriceTierEntry | null {
+export function getPriceTierForUnits(
+	tiers: PriceTierEntry[],
+	units: number
+): PriceTierEntry | null {
 	const firstUnboundedTier = tiers.find( ( tier ) => ! tier.maximum_units );
 	let matchingTier = tiers.find( ( tier ) => {
 		if ( ! tier.maximum_units ) {
