@@ -17,7 +17,7 @@ import titanUpsellIllustration from 'calypso/assets/images/customer-home/illustr
 
 const TitanBanner = () => {
 	const translate = useTranslate();
-	const siteSlug = useSelector( getSelectedSiteSlug ); // getSelectedSiteSlug should be imported from 'calypso/state/ui/selectors'
+	const siteSlug = useSelector( getSelectedSiteSlug );
 	const emailComparisonPath = emailManagement( siteSlug, siteSlug );
 
 	return (
@@ -28,7 +28,6 @@ const TitanBanner = () => {
 			) }
 			actionText={ translate( 'Get email' ) }
 			actionUrl={ emailComparisonPath }
-			actionTarget="_blank"
 			completeOnStart={ false }
 			enableSkipOptions={ true }
 			illustration={ titanUpsellIllustration }
