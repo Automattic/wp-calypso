@@ -185,7 +185,6 @@ export default class SignupFlowController {
 		};
 
 		if ( previousFlowName !== currentFlowName ) {
-			debugger;
 			if (
 				! hasStepThatProvidesSiteSlug( previousFlowName ) &&
 				hasStepThatProvidesSiteSlug( currentFlowName )
