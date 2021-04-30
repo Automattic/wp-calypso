@@ -31,6 +31,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { successNotice } from 'calypso/state/notices/actions';
 
 const wpcom = wp.undocumented();
 
@@ -105,7 +106,7 @@ export class MapDomain extends Component {
 	};
 
 	handleMapDomain = ( domain ) => {
-		const { selectedSite, selectedSiteSlug } = this.props;
+		const { selectedSite, selectedSiteSlug, translate } = this.props;
 
 		this.setState( {
 			errorMessage: null,
@@ -135,6 +136,13 @@ export class MapDomain extends Component {
 				.addDomainMapping( selectedSite.ID, domain )
 				.then(
 					() => {
+						this.props.successNotice(
+							translate( 'Domain mapping added! Please make sure to follow the next steps below.' ),
+							{
+								isPersistent: true,
+								duration: 10000,
+							}
+						);
 						page( domainManagementEdit( selectedSiteSlug, domain ) );
 					},
 					( error ) => {
@@ -236,15 +244,20 @@ export class MapDomain extends Component {
 	}
 }
 
-export default connect( ( state ) => {
-	const selectedSiteId = getSelectedSiteId( state );
-	return {
-		selectedSite: getSelectedSite( state ),
-		selectedSiteId,
-		selectedSiteSlug: getSelectedSiteSlug( state ),
-		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
-		isSiteUpgradeable: isSiteUpgradeable( state, selectedSiteId ),
-		isSiteOnPaidPlan: isSiteOnPaidPlan( state, selectedSiteId ),
-		productsList: getProductsList( state ),
-	};
-} )( withShoppingCart( localize( MapDomain ) ) );
+export default connect(
+	( state ) => {
+		const selectedSiteId = getSelectedSiteId( state );
+		return {
+			selectedSite: getSelectedSite( state ),
+			selectedSiteId,
+			selectedSiteSlug: getSelectedSiteSlug( state ),
+			domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
+			isSiteUpgradeable: isSiteUpgradeable( state, selectedSiteId ),
+			isSiteOnPaidPlan: isSiteOnPaidPlan( state, selectedSiteId ),
+			productsList: getProductsList( state ),
+		};
+	},
+	{
+		successNotice,
+	}
+)( withShoppingCart( localize( MapDomain ) ) );
