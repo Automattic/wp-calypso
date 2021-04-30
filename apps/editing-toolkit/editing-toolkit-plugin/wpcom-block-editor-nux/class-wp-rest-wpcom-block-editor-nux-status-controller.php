@@ -12,6 +12,11 @@ namespace A8C\FSE;
  */
 class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controller {
 	/**
+	 * Use 30 minutes in case the user isn't taken to the editor immediately. See pbxlJb-Ly-p2#comment-1028.
+	 */
+	const NEW_SITE_AGE_SECONDS = 30 * 60;
+
+	/**
 	 * WP_REST_WPCOM_Block_Editor_NUX_Status_Controller constructor.
 	 */
 	public function __construct() {
@@ -57,14 +62,15 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 	 * @return boolean
 	 */
 	public function show_wpcom_welcome_guide( $nux_status ) {
-		if ( defined( 'FORCE_SHOW_WPCOM_WELCOME_GUIDE' ) && FORCE_SHOW_WPCOM_WELCOME_GUIDE ) {
-			return true;
-		}
 		return 'enabled' === $nux_status;
 	}
 
 	/**
 	 * Return the WPCOM NUX status
+	 *
+	 * This is only called for sites where the user hasn't already dismissed the tour.
+	 * Once the tour has been dismissed, the closed state is saved in local storage (for the current site)
+	 * see src/block-editor-nux.js
 	 *
 	 * @return WP_REST_Response
 	 */
@@ -77,7 +83,11 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 			$variant = 'tour';
 		}
 
-		if ( has_filter( 'wpcom_block_editor_nux_get_status' ) ) {
+		$blog_age = time() - strtotime( get_blog_details()->registered );
+
+		if ( $blog_age < self::NEW_SITE_AGE_SECONDS ) {
+			$nux_status = 'enabled';
+		} elseif ( has_filter( 'wpcom_block_editor_nux_get_status' ) ) {
 			$nux_status = apply_filters( 'wpcom_block_editor_nux_get_status', false );
 		} elseif ( ! metadata_exists( 'user', get_current_user_id(), 'wpcom_block_editor_nux_status' ) ) {
 			$nux_status = 'enabled';
