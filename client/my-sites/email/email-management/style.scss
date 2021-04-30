@@ -157,15 +157,14 @@
 		color: var( --color-text-subtle );
 		font-style: italic;
 	}
-	.email-plan-mailboxes-list__mailbox-list-item-main {
-		span {
-			vertical-align: middle;
-		}
-		svg {
-			fill: var( --studio-gray-40 );
-			margin-right: 10px;
-			vertical-align: middle;
-		}
+	> svg,
+	.email-plan-mailboxes-list__mailbox-list-item-main svg {
+		fill: var( --studio-gray-40 );
+		margin-right: 10px;
+		vertical-align: middle;
+	}
+	.email-plan-mailboxes-list__mailbox-list-item-main span {
+		vertical-align: middle;
 	}
 	> .badge {
 		margin-left: 10px;
