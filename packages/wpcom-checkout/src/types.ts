@@ -13,6 +13,7 @@ export type WPCOMTransactionEndpointCart = {
 	cart_key: string;
 	create_new_blog: boolean;
 	is_jetpack_userless_checkout?: boolean;
+	jetpack_blog_id?: string;
 	coupon: string;
 	currency: string;
 	temporary: false;
