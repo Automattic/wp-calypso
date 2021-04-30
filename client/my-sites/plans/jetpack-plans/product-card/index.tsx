@@ -3,7 +3,7 @@
  */
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -42,6 +42,7 @@ interface ProductCardProps {
 	selectedTerm?: Duration;
 	isAligned?: boolean;
 	featuredPlans?: string[];
+	featuredLabel?: TranslateResult;
 	hideSavingLabel?: boolean;
 }
 
@@ -53,6 +54,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	selectedTerm,
 	isAligned,
 	featuredPlans,
+	featuredLabel,
 	hideSavingLabel,
 } ) => {
 	const translate = useTranslate();
@@ -163,6 +165,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			aboveButtonText={ productAboveButtonText( item, siteProduct, isOwned, isItemPlanFeature ) }
 			isDisabled={ isDisabled }
 			disabledMessage={ disabledMessage }
+			featuredLabel={ featuredLabel }
 			hideSavingLabel={ hideSavingLabel }
 		/>
 	);
