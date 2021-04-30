@@ -47,6 +47,8 @@ async function createAccountCallback( response ) {
 	} );
 }
 
+export async function createWpcomAccountForJetpackSite() {}
+
 export async function createAccount() {
 	let newSiteParams = null;
 	try {
