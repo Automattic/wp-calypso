@@ -9,7 +9,6 @@ jobs:
     name: 'Launch a Calypso.live instance for your branch'
     runs-on: ubuntu-latest
     # We only offer the Calypso.live link to PRs created from the Automattic organization.
-    if: github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
     timeout-minutes: 10
 
     steps:
