@@ -79,10 +79,6 @@ const Notice: FunctionComponent< Props > = ( {
 	const dismissTimeout = useRef< TimerHandle | null >( null );
 
 	useEffect( () => {
-		if ( dismissTimeout.current ) {
-			clearTimeout( dismissTimeout.current );
-		}
-
 		if ( duration > 0 ) {
 			dismissTimeout.current = setTimeout( onDismissClick, duration );
 		}
