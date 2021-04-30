@@ -123,12 +123,11 @@ ENTRYPOINT [ "/bin/bash" ]
 FROM ci-desktop as ci-e2e
 
 # test/e2e/test/mocha.env.js will install a compatible chromedriver.
-ENV CHROME_VERSION="current"
 ENV DETECT_CHROMEDRIVER_VERSION=true
 
-RUN wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
-	&& apt-get install -y ./google-chrome-stable_${CHROME_VERSION}_amd64.deb \
-	&& rm ./google-chrome-stable_${CHROME_VERSION}_amd64.deb
+RUN wget --no-verbose https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+	&& apt-get install -y ./google-chrome-stable_current_amd64.deb \
+	&& rm ./google-chrome-stable_current_amd64.deb
 
 ENTRYPOINT [ "/bin/bash" ]
 
