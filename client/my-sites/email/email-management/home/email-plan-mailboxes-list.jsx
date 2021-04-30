@@ -48,7 +48,10 @@ const MailboxListItem = ( { children, isError = false, isPlaceholder, hasNoEmail
 };
 
 const MailboxListItemSecondaryDetails = ( { children, className } ) => {
-	const fullClassName = classNames( 'email-plan-mailboxes-list__mailbox-secondary', className );
+	const fullClassName = classNames(
+		'email-plan-mailboxes-list__mailbox-secondary-details',
+		className
+	);
 	return <div className={ fullClassName }>{ children }</div>;
 };
 
