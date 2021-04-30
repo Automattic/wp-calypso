@@ -8,24 +8,27 @@ import { expect } from 'chai';
  */
 import { cancellationEffectDetail, cancellationEffectHeadline } from '../cancellation-effect';
 import productsValues from '@automattic/calypso-products';
-import purchases from 'calypso/lib/purchases';
+import { isRefundable, getSubscriptionEndDate } from 'calypso/lib/purchases';
 
 jest.mock( '@automattic/calypso-products', () => ( {} ) );
-jest.mock( 'calypso/lib/purchases', () => ( {} ) );
+jest.mock( 'calypso/lib/purchases', () => ( {
+	getName: jest.fn( () => 'purchase name' ),
+	isRefundable: jest.fn(),
+	getSubscriptionEndDate: jest.fn(),
+} ) );
 
 describe( 'cancellation-effect', () => {
 	const purchase = { domain: 'example.com' };
 	let translate;
 
 	beforeEach( () => {
-		purchases.getName = () => 'purchase name';
 		translate = ( text, args ) => ( { args, text } );
 	} );
 
 	describe( 'cancellationEffectHeadline', () => {
 		describe( 'when refundable', () => {
 			beforeEach( () => {
-				purchases.isRefundable = () => true;
+				isRefundable.mockImplementation( () => true );
 			} );
 
 			test( 'should return translation of cancel and return', () => {
@@ -38,7 +41,7 @@ describe( 'cancellation-effect', () => {
 
 		describe( 'when not refundable', () => {
 			beforeEach( () => {
-				purchases.isRefundable = () => false;
+				isRefundable.mockImplementation( () => false );
 			} );
 
 			test( 'should return translation of cancel', () => {
@@ -53,7 +56,7 @@ describe( 'cancellation-effect', () => {
 	describe( 'cancellationEffectDetail', () => {
 		describe( 'when refundable', () => {
 			beforeEach( () => {
-				purchases.isRefundable = () => true;
+				isRefundable.mockImplementation( () => true );
 			} );
 
 			test( 'should return translation of theme message when product is a theme', () => {
@@ -107,8 +110,8 @@ describe( 'cancellation-effect', () => {
 
 		describe( 'when not refundable', () => {
 			beforeEach( () => {
-				purchases.isRefundable = () => false;
-				purchases.getSubscriptionEndDate = () => '15/12/2093';
+				isRefundable.mockImplementation( () => false );
+				getSubscriptionEndDate.mockImplementation( () => '15/12/2093' );
 			} );
 
 			test( 'should return translation of g suite message when product is g suite', () => {
