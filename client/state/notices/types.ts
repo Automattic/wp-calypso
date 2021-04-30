@@ -12,7 +12,7 @@ export type NoticeRemovalActionType = 'NOTICE_REMOVE';
 export interface BaseNoticeOptions {
 	button?: string;
 	displayOnNextPage?: boolean;
-	duration?: null | number;
+	duration?: number;
 	href?: string;
 	isPersistent?: boolean;
 	onClick?: () => void;
