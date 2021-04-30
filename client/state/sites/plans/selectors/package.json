@@ -1,3 +1,6 @@
 {
-	"sideEffects": false
+	"sideEffects": false,
+	"volta": {
+		"extends": "../../../../../package.json"
+	}
 }

@@ -17,5 +17,8 @@
 		],
 		"module": "woocommerce",
 		"group": "sites"
+	},
+	"volta": {
+		"extends": "../../../package.json"
 	}
 }

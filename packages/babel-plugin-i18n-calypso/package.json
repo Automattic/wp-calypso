@@ -20,5 +20,8 @@
 	},
 	"keywords": [],
 	"author": "Automattic Inc.",
-	"license": "GPL-2.0-or-later"
+	"license": "GPL-2.0-or-later",
+	"volta": {
+		"extends": "../../package.json"
+	}
 }

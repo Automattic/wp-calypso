@@ -2,5 +2,8 @@
 	"name": "Jetpack Manage Error Pages",
 	"version": "0.0.0",
 	"private": true,
-	"main": "index.jsx"
+	"main": "index.jsx",
+	"volta": {
+		"extends": "../../../package.json"
+	}
 }

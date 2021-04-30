@@ -2,5 +2,8 @@
 	"name": "customizer",
 	"version": "0.1.0",
 	"private": true,
-	"main": "customize.jsx"
+	"main": "customize.jsx",
+	"volta": {
+		"extends": "../../../package.json"
+	}
 }

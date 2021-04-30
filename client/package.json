@@ -243,5 +243,8 @@
 		"pkg-dir": "^5.0.0",
 		"postcss-custom-properties": "^11.0.0",
 		"redux-mock-store": "^1.5.4"
+	},
+	"volta": {
+		"extends": "../package.json"
 	}
 }

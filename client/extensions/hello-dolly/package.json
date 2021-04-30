@@ -15,5 +15,8 @@
 		"module": "hello-dolly",
 		"group": "sites",
 		"enableLoggedOut": true
+	},
+	"volta": {
+		"extends": "../../../package.json"
 	}
 }

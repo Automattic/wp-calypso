@@ -41,5 +41,8 @@
 		"clean": "npx rimraf dist",
 		"build": "transpile",
 		"prepack": "yarn run clean && yarn run build"
+	},
+	"volta": {
+		"extends": "../../package.json"
 	}
 }

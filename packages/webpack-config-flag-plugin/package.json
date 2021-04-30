@@ -20,5 +20,8 @@
 	},
 	"devDependencies": {
 		"rimraf": "^3.0.0"
+	},
+	"volta": {
+		"extends": "../../package.json"
 	}
 }

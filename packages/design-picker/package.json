@@ -55,5 +55,8 @@
 		"react-dom": "^16.12.0",
 		"debug": "^4.1.1"
 	},
-	"private": true
+	"private": true,
+	"volta": {
+		"extends": "../../package.json"
+	}
 }

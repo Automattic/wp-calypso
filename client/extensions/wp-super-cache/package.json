@@ -18,5 +18,8 @@
 		"settings_path": "/extensions/wp-super-cache",
 		"module": "wp-super-cache",
 		"group": "sites"
+	},
+	"volta": {
+		"extends": "../../../package.json"
 	}
 }

@@ -46,5 +46,8 @@
 		"enzyme": "^3.11.0",
 		"html-webpack-plugin": "^5.0.0-beta.4",
 		"webpack": "^5.34.0"
+	},
+	"volta": {
+		"extends": "../../package.json"
 	}
 }

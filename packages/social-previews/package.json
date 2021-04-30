@@ -54,5 +54,8 @@
 	},
 	"peerDependencies": {
 		"react": "^16.12.0"
+	},
+	"volta": {
+		"extends": "../../package.json"
 	}
 }

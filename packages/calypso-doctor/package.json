@@ -20,5 +20,8 @@
 	"dependencies": {
 		"chalk": "^4.1.0",
 		"yargs": "^15.3.1"
+	},
+	"volta": {
+		"extends": "../../package.json"
 	}
 }

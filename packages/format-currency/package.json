@@ -36,5 +36,8 @@
 	"peerDependencies": {
 		"react": "^16.8"
 	},
-	"types": "types"
+	"types": "types",
+	"volta": {
+		"extends": "../../package.json"
+	}
 }

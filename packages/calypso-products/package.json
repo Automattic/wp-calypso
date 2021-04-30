@@ -45,5 +45,8 @@
 	"devDependencies": {
 		"chai": "^4.2.0"
 	},
-	"private": true
+	"private": true,
+	"volta": {
+		"extends": "../../package.json"
+	}
 }

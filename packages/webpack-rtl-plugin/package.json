@@ -37,5 +37,8 @@
 		"async": "^2.0.0",
 		"cssnano": "^4.1.10",
 		"rtlcss": "^2.4.0"
+	},
+	"volta": {
+		"extends": "../../package.json"
 	}
 }

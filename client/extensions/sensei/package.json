@@ -14,5 +14,8 @@
 		],
 		"module": "sensei",
 		"group": "sites"
+	},
+	"volta": {
+		"extends": "../../../package.json"
 	}
 }

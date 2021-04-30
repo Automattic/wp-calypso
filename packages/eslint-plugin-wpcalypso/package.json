@@ -33,5 +33,8 @@
 		"@babel/eslint-parser": "^7.13.14",
 		"@babel/parser": "^7.13.15",
 		"eslint": ">=7.24.0"
+	},
+	"volta": {
+		"extends": "../../package.json"
 	}
 }

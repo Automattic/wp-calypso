@@ -28,5 +28,8 @@
 		"isomorphic-fetch": "^2.2.1",
 		"regenerator-runtime": "^0.13.3",
 		"svg4everybody": "^2.1.9"
+	},
+	"volta": {
+		"extends": "../../package.json"
 	}
 }

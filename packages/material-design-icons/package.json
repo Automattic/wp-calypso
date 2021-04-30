@@ -27,5 +27,8 @@
 	],
 	"scripts": {
 		"build": "svgstore -o svg-sprite/material-icons.svg -p 'icon-' src/**/*.svg"
+	},
+	"volta": {
+		"extends": "../../package.json"
 	}
 }

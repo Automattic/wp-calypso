@@ -3,5 +3,8 @@
 	"version": "0.0.0",
 	"private": true,
 	"main": "node.js",
-	"browser": "browser.js"
+	"browser": "browser.js",
+	"volta": {
+		"extends": "../../../package.json"
+	}
 }

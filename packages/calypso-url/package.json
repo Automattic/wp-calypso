@@ -38,5 +38,8 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-url#readme",
 	"dependencies": {},
 	"devDependencies": {},
-	"private": true
+	"private": true,
+	"volta": {
+		"extends": "../../package.json"
+	}
 }

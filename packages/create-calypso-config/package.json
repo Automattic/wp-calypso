@@ -35,5 +35,8 @@
 	"dependencies": {
 		"cookie": "^0.4.0",
 		"tslib": "^2.1.0"
+	},
+	"volta": {
+		"extends": "../../package.json"
 	}
 }

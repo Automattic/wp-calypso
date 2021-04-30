@@ -1,4 +1,7 @@
 {
 	"main": "index.node.js",
-	"browser": "index.web.js"
+	"browser": "index.web.js",
+	"volta": {
+		"extends": "../../package.json"
+	}
 }

@@ -27,5 +27,8 @@
 	},
 	"devDependencies": {
 		"regenerator-runtime": "^0.13.4"
+	},
+	"volta": {
+		"extends": "../../package.json"
 	}
 }

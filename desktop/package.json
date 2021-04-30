@@ -46,5 +46,8 @@
 	},
 	"dependencies": {
 		"keytar": "7.1.0"
+	},
+	"volta": {
+		"extends": "../package.json"
 	}
 }

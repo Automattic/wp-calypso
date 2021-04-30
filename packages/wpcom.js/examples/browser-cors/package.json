@@ -10,5 +10,8 @@
 	"main": "index.js",
 	"dependencies": {
 		"express": "^3.5.0"
+	},
+	"volta": {
+		"extends": "../../../../package.json"
 	}
 }
