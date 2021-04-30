@@ -53,6 +53,7 @@ type OwnProps = {
 	displayFrom?: boolean;
 	tooltipText?: TranslateResult | ReactNode;
 	aboveButtonText?: TranslateResult | ReactNode;
+	featuredLabel?: TranslateResult;
 	hideSavingLabel?: boolean;
 };
 
@@ -211,6 +212,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 	displayFrom,
 	belowPriceText,
 	tooltipText,
+	featuredLabel,
 	hideSavingLabel,
 	aboveButtonText = null,
 }: Props ) => {
@@ -234,7 +236,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 			{ isFeatured && (
 				<div className="jetpack-product-card__header">
 					<img className="jetpack-product-card__header-icon" src={ starIcon } alt="" />
-					<span>{ translate( 'Recommended' ) }</span>
+					<span>{ featuredLabel || translate( 'Recommended' ) }</span>
 				</div>
 			) }
 			<div className="jetpack-product-card__body">

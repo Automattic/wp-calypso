@@ -115,6 +115,7 @@ const PlanUpgradeSection: React.FC< Props > = ( {
 									currencyCode={ currencyCode }
 									selectedTerm={ duration }
 									featuredPlans={ newPlans }
+									featuredLabel={ translate( 'Recommended for you' ) }
 									isAligned
 									hideSavingLabel
 									onClick={ onSelectProduct }
