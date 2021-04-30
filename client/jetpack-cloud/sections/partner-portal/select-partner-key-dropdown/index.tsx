@@ -15,6 +15,11 @@ import {
 import { setActivePartnerKey } from 'calypso/state/partner-portal/partner/actions';
 import SelectDropdown from 'calypso/components/select-dropdown';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default function SelectPartnerKeyDropdown(): ReactElement | null {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -42,6 +47,7 @@ export default function SelectPartnerKeyDropdown(): ReactElement | null {
 
 	return (
 		<SelectDropdown
+			className="select-partner-key-dropdown"
 			initialSelected={ activeKeyId.toString() }
 			options={ options }
 			onSelect={ onKeySelect }

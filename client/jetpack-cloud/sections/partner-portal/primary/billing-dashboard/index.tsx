@@ -9,6 +9,8 @@ import { useTranslate } from 'i18n-calypso';
  */
 import Main from 'calypso/components/main';
 import CardHeading from 'calypso/components/card-heading';
+import DocumentHead from 'calypso/components/data/document-head';
+import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 import BillingSummary from 'calypso/jetpack-cloud/sections/partner-portal/billing-summary';
 import BillingDetails from 'calypso/jetpack-cloud/sections/partner-portal/billing-details';
 import SelectPartnerKeyDropdown from 'calypso/jetpack-cloud/sections/partner-portal/select-partner-key-dropdown';
@@ -23,6 +25,9 @@ export default function BillingDashboard(): ReactElement {
 
 	return (
 		<Main wideLayout={ true } className="billing-dashboard">
+			<DocumentHead title={ translate( 'Billing' ) } />
+			<SidebarNavigation />
+
 			<div className="billing-dashboard__header">
 				<CardHeading size={ 36 }>{ translate( 'Billing' ) }</CardHeading>
 
