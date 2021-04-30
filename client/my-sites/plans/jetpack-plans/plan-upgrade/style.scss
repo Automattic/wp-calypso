@@ -126,8 +126,10 @@
 			flex: 1;
 
 			max-width: 350px;
-			margin-left: 16px;
-			margin-right: 16px;
+
+			& + li {
+				margin-left: 16px;
+			}
 		}
 	}
 
@@ -143,5 +145,9 @@
 				margin-top: 0;
 			}
 		}
+	}
+
+	.jetpack-product-card.is-featured.is-aligned {
+		margin-left: 0;
 	}
 }
