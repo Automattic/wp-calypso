@@ -12,6 +12,10 @@ const Settings = require( '../../lib/settings' );
 const Platform = require( '../../lib/platform' );
 const ViewModel = require( '../../lib/notifications/viewmodel' );
 const log = require( '../../lib/logger' )( 'desktop:notifications' );
+const Config = require( '../../lib/config' );
+const isCalypso = require( '../../lib/is-calypso' );
+
+const webBase = Config.baseURL();
 
 /**
  *
@@ -101,10 +105,18 @@ module.exports = function ( mainWindow ) {
 				if ( navigate ) {
 					// if we have a specific URL, then navigate Calypso there
 					log.info( `Navigating user to URL: ${ navigate }` );
-					mainWindow.webContents.send( 'navigate', navigate );
+					if ( isCalypso() ) {
+						mainWindow.webContents.send( 'navigate', navigate );
+					} else {
+						mainWindow.webContents.loadURL( webBase + navigate );
+					}
 				} else {
 					// else just display the notifications panel
-					mainWindow.webContents.send( 'navigate', '/' );
+					if ( isCalypso() ) {
+						mainWindow.webContents.send( 'navigate', '/' );
+					} else {
+						mainWindow.webContents.loadURL( webBase );
+					}
 
 					await delay( 300 );
 
