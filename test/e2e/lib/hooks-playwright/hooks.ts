@@ -6,7 +6,7 @@
 import { BrowserManager } from '@automattic/calypso-e2e';
 
 /**
- * Hook to launch a new BrowserContext.
+ * Hook to launch a Browser and obtain the BrowserContext.
  *
  * @returns {void} No return value.
  */
