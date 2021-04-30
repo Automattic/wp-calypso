@@ -76,6 +76,18 @@ const resendEmailForwardVerification = ( mailbox, dispatch ) => {
 	dispatch( resendVerificationEmail( mailbox.domain, mailbox.mailbox, destination ) );
 };
 
+const getSecondaryContentForMailbox = ( mailbox ) => {
+	if ( isEmailForward( mailbox ) ) {
+		return (
+			<MailboxListItemSecondaryDetails className="email-plan-mailboxes-list__mailbox-list-forward">
+				<Gridicon icon="chevron-right" />
+				<span>{ getEmailForwardAddress( mailbox ) }</span>
+			</MailboxListItemSecondaryDetails>
+		);
+	}
+	return null;
+};
+
 const getActionsForMailbox = ( mailbox, translate, dispatch ) => {
 	if ( isEmailForward( mailbox ) && ! isEmailForwardVerified( mailbox ) ) {
 		return {
@@ -131,12 +143,7 @@ function EmailPlanMailboxesList( { mailboxes, isLoadingEmails } ) {
 							{ mailbox.mailbox }@{ mailbox.domain }
 						</span>
 					</div>
-					{ isEmailForward( mailbox ) && (
-						<MailboxListItemSecondaryDetails className="email-plan-mailboxes-list__mailbox-list-forward">
-							<Gridicon icon="chevron-right" />
-							<span> { getEmailForwardAddress( mailbox ) } </span>
-						</MailboxListItemSecondaryDetails>
-					) }
+					{ getSecondaryContentForMailbox( mailbox ) }
 				</div>
 				{ isEmailUserAdmin( mailbox ) && (
 					<Badge type="info">
