@@ -62,6 +62,7 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors
 /**
  * Type dependencies
  */
+import type {} from './types';
 import type { AppState } from 'calypso/types';
 import type {
 	Duration,
