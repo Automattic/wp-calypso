@@ -6,11 +6,16 @@
 import { BrowserManager } from '@automattic/calypso-e2e';
 
 /**
- * Terminates an instance of the Browser.
+ * Hook to launch a new BrowserContext.
  *
- * When called, this function will unset the reference to the browser instance,
- * then call on the browser to terminate all instances of existing BrowserContexts.
- * Any open pages are also destroyed in this process.
+ * @returns {void} No return value.
+ */
+before( 'Launch browser instance', async function () {
+	this.browserContext = await BrowserManager.newBrowserContext();
+} );
+
+/**
+ * Hook to terminate a Browser instance.
  *
  * @returns {Promise<void>} Void promise.
  */
