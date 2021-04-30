@@ -2,40 +2,39 @@
  * External dependencies
  */
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 // import config from '@automattic/calypso-config';
-import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
+import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { TASK_UPSELL_TITAN } from 'calypso/my-sites/customer-home/cards/constants';
+import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import titanUpsellIllustration from 'calypso/assets/images/customer-home/illustration--titan-banner.svg';
 
 const TitanBanner = () => {
 	const translate = useTranslate();
-	/* Not sure if there  needs to be any such condition or based on a feature flag. */
-	const showTitanBanner = true;
+	const siteSlug = useSelector( getSelectedSiteSlug ); // getSelectedSiteSlug should be imported from 'calypso/state/ui/selectors'
+	const emailComparisonPath = emailManagement( siteSlug, siteSlug );
 
 	return (
-		<>
-			{ showTitanBanner && (
-				<Task
-					title={ translate( 'Get email @ your domain' ) }
-					description={ translate(
-						'Brand yourself and build trust with a custom email address @ your domain, free for 3 months.'
-					) }
-					actionText={ translate( 'Get email' ) }
-					actionUrl="https://www.cloudflare.com/pg-lp/cloudflare-for-wordpress-dot-com?utm_source=wordpress.com&utm_medium=affiliate&utm_campaign=paygo_2021-02_a8_pilot&utm_content=home"
-					actionTarget="_blank"
-					completeOnStart={ false }
-					enableSkipOptions={ false }
-					illustration={ titanUpsellIllustration }
-					taskId={ TASK_UPSELL_TITAN }
-					timing={ 2 }
-				/>
+		<Task
+			title={ translate( 'Get email @ your domain' ) }
+			description={ translate(
+				'Brand yourself and build trust with a custom email address @ your domain, free for 3 months.'
 			) }
-		</>
+			actionText={ translate( 'Get email' ) }
+			actionUrl={ emailComparisonPath }
+			actionTarget="_blank"
+			completeOnStart={ false }
+			enableSkipOptions={ true }
+			illustration={ titanUpsellIllustration }
+			taskId={ TASK_UPSELL_TITAN }
+			timing={ 2 }
+		/>
 	);
 };
 
