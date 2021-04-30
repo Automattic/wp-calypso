@@ -63,11 +63,9 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 			if ( highlightedProducts.includes( productSlug ) ) {
 				// Timeout to make sure everything has rendered before
 				// before scrolling the element into view.
-				setTimeout( () => {
-					element.scrollIntoView( {
-						behavior: 'smooth',
-					} );
-				}, 0 );
+				element.scrollIntoView( {
+					behavior: 'smooth',
+				} );
 			}
 		},
 		[ highlightedProducts ]

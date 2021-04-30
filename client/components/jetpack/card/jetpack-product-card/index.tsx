@@ -230,10 +230,11 @@ const JetpackProductCard: React.FC< Props > = ( {
 	const anchorRef = useRef< HTMLDivElement >( null );
 
 	useEffect( () => {
-		if ( anchorRef && anchorRef.current ) {
+		// The <DisplayPrice /> appearance changes the layout of the page and breaks the scroll into view behavior. Therefore, we will only scroll the element into view once the price is fully loaded.
+		if ( anchorRef && anchorRef.current && originalPrice ) {
 			scrollCardIntoView && scrollCardIntoView( anchorRef.current, productSlug );
 		}
-	}, [] );
+	}, [ originalPrice ] );
 
 	return (
 		<div

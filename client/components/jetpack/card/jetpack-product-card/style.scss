@@ -21,10 +21,14 @@
 // The anchor allow us to scroll into view exactly 100px on top of the
 // card. We need this so that the card never appears behind the filter bar.
 .jetpack-product-card__scroll-anchor {
-	position: absolute;
-	top: -100px;
-
 	visibility: hidden;
+
+	position: absolute;
+	top: -90px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		top: -60px;
+	}
 }
 
 .jetpack-product-card__header {
