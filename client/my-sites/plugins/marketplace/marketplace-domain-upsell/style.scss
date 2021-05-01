@@ -1,16 +1,23 @@
 .layout__content {
 	background-color: var( --studio-white );
 	height: 100vh;
+	padding-left: 0;
 	@media ( max-width: 782px ) {
 		padding: 0;
 		background-color: var( --studio-white );
-		height: 100vh;
+		height: calc( 100vh - 50px );
 		.layout__primary {
 			height: 100vh;
 			.marketplace-domain-upsell__root {
-				height: 85vh;
+				height: calc( 100vh - 50px );
 			}
 		}
+	}
+}
+
+.has-no-sidebar .layout__content {
+	@media ( max-width: 782px ) {
+		padding: 0;
 	}
 }
 
@@ -21,13 +28,12 @@
 		box-sizing: border-box;
 	}
 
-	// margin-top: 40px;
 	display: grid;
 	grid-template-rows: 100%;
 	grid-template-columns: 60% 40%;
 	grid-template-areas: 'domainpicker basket';
 
-	margin: 15px;
+	margin-top: 40px;
 	@media ( max-width: 782px ) {
 		grid-template-rows: 1fr 226px;
 		grid-template-columns: 100%;
@@ -35,14 +41,13 @@
 			'domainpicker'
 			'basket';
 
-		height: calc( 100vh - 135px );
-		margin: 55px 0 0;
+		margin: calc( var( --masterbar-height ) + 30px ) 0 0;
 	}
 
 	> div {
 		padding: 0 20px;
 		@media ( max-width: 782px ) {
-			padding: 0 45px;
+			padding: 0 20px;
 		}
 	}
 
@@ -55,23 +60,23 @@
 			margin: 0 0 20px;
 		}
 	}
-	.marketplace-title {
-		font-size: $font-title-medium;
-	}
-
-	.marketplace-subtitle {
-		font-size: $font-body-small;
-	}
 
 	.marketplace-domain-upsell__domain-picker-container {
 		grid-area: domainpicker;
+		display: flex;
+		width: 100%;
+		justify-content: space-around;
+		.domain-picker {
+			max-width: 611px;
+			padding: 0 20px;
+		}
 
 		@media ( max-width: 782px ) {
-			padding-top: 20px;
-			border-top: 1px solid var( --studio-gray-0 );
+			padding: 0;
 			overflow: scroll;
-			-ms-overflow-style: none; /* IE and Edge */
+			-ms-overflow-style: none;
 			scrollbar-width: none;
+
 			&::-webkit-scrollbar {
 				display: none;
 			}
@@ -80,9 +85,12 @@
 
 	.marketplace-domain-upsell__shopping-cart-container {
 		grid-area: basket;
+		display: flex;
+		width: 100%;
+		justify-content: space-around;
+
 		@media ( max-width: 782px ) {
-			padding-top: 20px;
-			border-top: 1px solid var( --studio-gray-0 );
+			padding: 0;
 		}
 	}
 }

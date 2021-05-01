@@ -7,8 +7,9 @@ import page from 'page';
 import DomainPicker from '@automattic/domain-picker';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { DomainSuggestions } from '@automattic/data-stores';
-import { __ } from '@wordpress/i18n';
 import { ThemeProvider } from 'emotion-theming';
+import styled from '@emotion/styled';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -25,24 +26,36 @@ import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import Item from 'calypso/layout/masterbar/item';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
+import { HorizontalRule } from '@wordpress/components';
 
 /**
  * Style dependencies
  */
-import './style.scss';
-import MarketplaceShoppingCart from '../components/marketplace-shopping-cart';
+import 'calypso/my-sites/plugins/marketplace/marketplace-domain-upsell/style.scss';
+import MarketplaceShoppingCart from 'calypso/my-sites/plugins/marketplace/components/marketplace-shopping-cart';
+import theme from 'calypso/my-sites/plugins/marketplace';
+
+const MarketplaceHeaderTitle = styled.h1`
+	font-size: 2rem;
+	margin-bottom: 8px;
+`;
+const MarketplaceHeaderSubTitle = styled.h2`
+	font-size: 0.875rem;
+	margin-bottom: 15px;
+`;
 
 function MarketplaceDomainUpsellHeader() {
 	return (
-		<div className="marketplace-domain-upsell__header domains__header">
-			<h1 className="marketplace-domain-upsell__header marketplace-title">
-				{ __( 'Choose a domain' ) }
-			</h1>
-			<h2 className="marketplace-domain-upsell__header marketplace-subtitle">
-				{ __(
+		<div>
+			<MarketplaceHeaderTitle className="marketplace-domain-upsell__title wp-brand-font">
+				{ translate( 'Choose a domain' ) }
+			</MarketplaceHeaderTitle>
+			<MarketplaceHeaderSubTitle>
+				{ translate(
 					'Yoast SEO requires a top level domain to index your site and help you rank higher.'
 				) }
-			</h2>
+			</MarketplaceHeaderSubTitle>
+			<HorizontalRule />
 		</div>
 	);
 }
@@ -105,7 +118,7 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 							? page( previousPath )
 							: page( `/plugins/wordpress-seo/${ selectedSite?.slug }` )
 					}
-					tooltip={ __( 'Close Checkout' ) }
+					tooltip={ translate( 'Close Domain Selection' ) }
 					tipTarget="close"
 				/>
 			</Masterbar>
@@ -134,7 +147,7 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 
 export default function MarketplaceDomainUpsell(): JSX.Element {
 	return (
-		<ThemeProvider theme={ { colors: {}, breakpoints: {}, weights: {}, fonts: {}, fontSize: {} } }>
+		<ThemeProvider theme={ theme }>
 			<CalypsoShoppingCartProvider>
 				<CalypsoWrappedMarketplaceDomainUpsell />
 			</CalypsoShoppingCartProvider>

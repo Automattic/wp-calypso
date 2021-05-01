@@ -1,10 +1,11 @@
 export type MarketplaceThemeType = {
 	colors: { textColorLight: string; borderColorLight: string };
 	breakpoints: {
-		desktopUp: string;
-		tabletUp: string;
-		bigPhoneUp: string;
-		smallPhoneUp: string;
+		desktopUp?: string;
+		tabletUp?: string;
+		bigPhoneUp?: string;
+		smallPhoneUp?: string;
+		tabletDown: string;
 	};
 	weights: {
 		bold: string;
@@ -24,10 +25,7 @@ const theme: MarketplaceThemeType = {
 		textColorLight: 'var(--color-text)',
 	},
 	breakpoints: {
-		desktopUp: 'min-width: 960px',
-		tabletUp: 'min-width: 700px',
-		bigPhoneUp: 'min-width: 480px',
-		smallPhoneUp: 'min-width: 400px',
+		tabletDown: 'max-width: 782px',
 	},
 	weights: {
 		bold: '600',
