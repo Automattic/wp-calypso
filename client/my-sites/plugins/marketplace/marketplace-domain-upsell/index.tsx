@@ -27,6 +27,7 @@ import Masterbar from 'calypso/layout/masterbar/masterbar';
 import Item from 'calypso/layout/masterbar/item';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import { HorizontalRule } from '@wordpress/components';
+import ExternalLink from 'calypso/components/external-link';
 
 /**
  * Style dependencies
@@ -55,6 +56,14 @@ function MarketplaceDomainUpsellHeader() {
 					'Yoast SEO requires a top level domain to index your site and help you rank higher.'
 				) }
 			</MarketplaceHeaderSubTitle>
+			<ExternalLink
+				href="https://yoast.com/domain-names-seo"
+				target="_blank"
+				rel="noopener noreferrer"
+				icon={ true }
+			>
+				{ translate( 'Domain names and their influence on SEO' ) }
+			</ExternalLink>
 			<HorizontalRule />
 		</div>
 	);
