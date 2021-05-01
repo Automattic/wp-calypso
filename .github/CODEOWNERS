@@ -100,3 +100,6 @@
 
 # Jetpack Search
 /client/my-sites/jetpack-search @Automattic/jetpack-search
+
+# TeamCity configuration
+/.teamcity @Automattic/team-calypso-platform
