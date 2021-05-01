@@ -90,6 +90,11 @@ export default class ViewPostPage extends AsyncBaseContainer {
 			} );
 	}
 
+	async hasImageWithFileName( fileName ) {
+		const imageElement = await this.driver.findElement( By.css( `img[src*='${ fileName }']` ) );
+		return await driverHelper.imageVisible( this.driver, imageElement );
+	}
+
 	async leaveAComment( comment ) {
 		const commentButtonSelector = By.css( '#comment-submit' );
 		const commentSubmittingSelector = By.css( '#comment-form-submitting' );

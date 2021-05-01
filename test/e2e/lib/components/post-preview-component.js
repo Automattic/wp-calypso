@@ -50,6 +50,12 @@ export default class PostPreviewComponent extends AsyncBaseContainer {
 		return await this.viewPostPage.imageDisplayed( fileDetails );
 	}
 
+	async hasImageWithFileName( fileName ) {
+		await PostPreviewComponent.switchToIFrame( this.driver );
+		this.viewPostPage = await ViewPostPage.Expect( this.driver );
+		return await this.viewPostPage.hasImageWithFileName( fileName );
+	}
+
 	async edit() {
 		await this.driver.switchTo().defaultContent();
 		return await driverHelper.clickWhenClickable(
