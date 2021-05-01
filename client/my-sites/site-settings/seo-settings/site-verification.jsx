@@ -39,6 +39,7 @@ class SiteVerification extends Component {
 		bing: 'msvalidate.01',
 		pinterest: 'p:domain_verify',
 		yandex: 'yandex-verification',
+		facebook: 'facebook-domain-verification',
 	};
 
 	state = {
@@ -52,6 +53,7 @@ class SiteVerification extends Component {
 		this.changeBingCode = this.handleVerificationCodeChange( 'bingCode' );
 		this.changePinterestCode = this.handleVerificationCodeChange( 'pinterestCode' );
 		this.changeYandexCode = this.handleVerificationCodeChange( 'yandexCode' );
+		this.changeFacebookCode = this.handleVerificationCodeChange( 'facebookCode' );
 	}
 
 	componentDidMount() {
@@ -115,6 +117,7 @@ class SiteVerification extends Component {
 			bingCode: get( site, 'options.verification_services_codes.bing', '' ),
 			pinterestCode: get( site, 'options.verification_services_codes.pinterest', '' ),
 			yandexCode: get( site, 'options.verification_services_codes.yandex', '' ),
+			facebookCode: get( site, 'options.verification_services_codes.facebook', '' ),
 			isFetchingSettings: get( site, 'fetchingSettings', false ),
 		};
 	}
@@ -222,6 +225,7 @@ class SiteVerification extends Component {
 			bing: this.state.bingCode,
 			pinterest: this.state.pinterestCode,
 			yandex: this.state.yandexCode,
+			facebook: this.state.facebookCode,
 		};
 
 		const filteredCodes = pickBy( verificationCodes, ( code ) => typeof code === 'string' );
@@ -263,6 +267,10 @@ class SiteVerification extends Component {
 		if ( dirtyFields.has( 'yandexCode' ) ) {
 			trackSiteVerificationUpdated( 'yandex', path );
 		}
+
+		if ( dirtyFields.has( 'facebookCode' ) ) {
+			trackSiteVerificationUpdated( 'facebook', path );
+		}
 	};
 
 	render() {
@@ -280,11 +288,12 @@ class SiteVerification extends Component {
 		const placeholderTagContent = '1234';
 
 		// The API returns 'false' for an empty array value, so we force it to an empty string if needed
-		let { googleCode, bingCode, pinterestCode, yandexCode } = this.state;
+		let { googleCode, bingCode, pinterestCode, yandexCode, facebookCode } = this.state;
 		googleCode = this.getMetaTag( 'google', googleCode || '' );
 		bingCode = this.getMetaTag( 'bing', bingCode || '' );
 		pinterestCode = this.getMetaTag( 'pinterest', pinterestCode || '' );
 		yandexCode = this.getMetaTag( 'yandex', yandexCode || '' );
+		facebookCode = this.getMetaTag( 'facebook', facebookCode || '' );
 
 		return (
 			<div className="seo-settings__site-verification">
@@ -323,7 +332,8 @@ class SiteVerification extends Component {
 								' and verify your site with a service, paste the HTML Tag code below. Read the' +
 								' {{support}}full instructions{{/support}} if you are having trouble. Supported verification services:' +
 								' {{google}}Google Search Console{{/google}}, {{bing}}Bing Webmaster Center{{/bing}},' +
-								' {{pinterest}}Pinterest Site Verification{{/pinterest}}, and {{yandex}}Yandex.Webmaster{{/yandex}}.',
+								' {{pinterest}}Pinterest Site Verification{{/pinterest}}, {{yandex}}Yandex.Webmaster{{/yandex}}' +
+								' and {{facebook}}Facebook Domain Verification{{/facebook}}.',
 							{
 								components: {
 									b: <strong />,
@@ -360,6 +370,13 @@ class SiteVerification extends Component {
 											icon={ true }
 											target="_blank"
 											href="https://webmaster.yandex.com/sites/"
+										/>
+									),
+									facebook: (
+										<ExternalLink
+											icon={ true }
+											target="_blank"
+											href="https://developers.facebook.com/"
 										/>
 									),
 								},
@@ -422,6 +439,20 @@ class SiteVerification extends Component {
 								onChange={ this.changeYandexCode }
 							/>
 							{ this.hasError( 'yandex' ) && this.getVerificationError( showPasteError ) }
+						</FormFieldset>
+						<FormFieldset>
+							<FormInput
+								prefix={ translate( 'Facebook' ) }
+								name="verification_code_facebook"
+								value={ facebookCode }
+								id="verification_code_facebook"
+								spellCheck="false"
+								disabled={ isVerificationDisabled }
+								isError={ this.hasError( 'facebook' ) }
+								placeholder={ this.getMetaTag( 'facebook', placeholderTagContent ) }
+								onChange={ this.changeFacebookCode }
+							/>
+							{ this.hasError( 'facebook' ) && this.getVerificationError( showPasteError ) }
 						</FormFieldset>
 					</form>
 				</Card>
