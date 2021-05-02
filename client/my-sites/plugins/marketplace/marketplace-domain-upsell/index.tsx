@@ -10,6 +10,8 @@ import { DomainSuggestions } from '@automattic/data-stores';
 import { ThemeProvider } from 'emotion-theming';
 import styled from '@emotion/styled';
 import { translate } from 'i18n-calypso';
+import classnames from 'classnames';
+import { isDesktop } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -73,11 +75,17 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 	const [ selectedDomain, setDomain ] = useState< DomainSuggestions.DomainSuggestion | null >(
 		null
 	);
+
+	const [ isExpandedBasketView, setIsExpandedBasketView ] = useState( false );
 	const { addProductsToCart, replaceProductsInCart } = useShoppingCart();
 	const products = useSelector( getProductsList );
 	const previousPath = useSelector( getPreviousPath );
 	const isFetchingProducts = useSelector( isProductsListFetching );
 	const selectedSite = useSelector( getSelectedSite );
+
+	useEffect( () => {
+		setIsExpandedBasketView( isDesktop() );
+	}, [ setIsExpandedBasketView ] );
 
 	useEffect( () => {
 		//FIXME: This code segment simulates yoast premium already being added when arriving here. To be removed when plugins page is completed.
@@ -131,7 +139,11 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 					tipTarget="close"
 				/>
 			</Masterbar>
-			<div className="marketplace-domain-upsell__root">
+			<div
+				className={ classnames( 'marketplace-domain-upsell__root', {
+					'expanded-basket-view': isExpandedBasketView,
+				} ) }
+			>
 				<div className="marketplace-domain-upsell__domain-picker-container">
 					<DomainPicker
 						header={ <MarketplaceDomainUpsellHeader /> }
@@ -147,6 +159,12 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 					<MarketplaceShoppingCart
 						onAddDomainToCart={ onAddDomainToCart }
 						selectedDomain={ selectedDomain }
+						isExpandedBasketView={ isExpandedBasketView }
+						toggleExpandedBasketView={ () =>
+							isExpandedBasketView
+								? setIsExpandedBasketView( false )
+								: setIsExpandedBasketView( true )
+						}
 					/>
 				</div>
 			</div>

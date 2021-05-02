@@ -18,25 +18,23 @@ import { MobileHiddenHorizontalRule } from 'calypso/my-sites/plugins/marketplace
 interface PropsForMarketplaceShoppingCart {
 	onAddDomainToCart: () => void;
 	selectedDomain: DomainSuggestions.DomainSuggestion | null;
+	isExpandedBasketView: boolean;
+	toggleExpandedBasketView: () => void;
 }
 
 const ShoppingCart = styled.div< { theme?: MarketplaceThemeType } >`
 	width: 100%;
 	background-color: var( --studio-gray-0 );
 	padding: 15px 25px;
-	height: 275px;
-
+	max-width: 611px;
 	@media ( ${ ( { theme } ) => theme.breakpoints.tabletDown } ) {
-		position: fixed;
-		bottom: 0;
-		height: auto;
-		max-height: 226px;
 		overflow-y: scroll;
 		-ms-overflow-style: none;
 		scrollbar-width: none;
 		&::-webkit-scrollbar {
 			display: none;
 		}
+		padding: 0 35px;
 	}
 `;
 
@@ -72,12 +70,47 @@ const ShoppingCartTotal = styled.div< { theme?: MarketplaceThemeType } >`
 const FullWidthButton = styled( Button )`
 	justify-content: center;
 	width: 100%;
+	margin-bottom: 15px;
+`;
+
+const MarketPlaceBasketItem = styled( LineItem )`
+	div,
+	span {
+		font-size: 0.875rem;
+	}
+	padding: 4px 0;
+`;
+
+const MobileToggleExpandedBasket = styled.a< { theme?: MarketplaceThemeType } >`
+	display: none;
+	background-color: transparent;
+	border-color: transparent;
+	color: var( --color-accent-60 );
+	margin-bottom: 20px;
+	box-shadow: none;
+	cursor: pointer;
+	&:hover {
+		color: var( --color-accent-60 );
+	}
+
+	@media ( ${ ( { theme } ) => theme.breakpoints.tabletDown } ) {
+		display: block;
+	}
+`;
+
+const ItemContainer = styled.div< { theme?: MarketplaceThemeType } >`
+	margin: 8px 0;
 `;
 
 export default function MarketplaceShoppingCart(
 	props: PropsForMarketplaceShoppingCart
 ): JSX.Element {
-	const { onAddDomainToCart, selectedDomain } = props;
+	const {
+		onAddDomainToCart,
+		selectedDomain,
+		isExpandedBasketView,
+		toggleExpandedBasketView,
+	} = props;
 	const { responseCart, isLoading } = useShoppingCart();
 	const { products, sub_total_display } = responseCart;
 
@@ -89,18 +122,26 @@ export default function MarketplaceShoppingCart(
 				<h1>{ translate( 'Your cart' ) } </h1>
 				<MobileTotal>{ sub_total_display }</MobileTotal>
 			</ShoppingCartTitle>
-
-			<div>
-				{ products.map( ( product ) => {
-					return <LineItem key={ product.uuid } product={ product } />;
-				} ) }
-			</div>
+			{ isExpandedBasketView ? (
+				<ItemContainer>
+					{ products.map( ( product ) => {
+						return <MarketPlaceBasketItem key={ product.uuid } product={ product } />;
+					} ) }
+					{ products.map( ( product ) => {
+						return <MarketPlaceBasketItem key={ product.uuid } product={ product } />;
+					} ) }
+				</ItemContainer>
+			) : null }
 			<MobileHiddenHorizontalRule />
 			<ShoppingCartTotal>
 				<div>{ translate( 'Total' ) }</div>
 				<div>{ sub_total_display }</div>
 			</ShoppingCartTotal>
-
+			<MobileToggleExpandedBasket onClick={ toggleExpandedBasketView } isLink isPrimary>
+				{ isExpandedBasketView
+					? translate( 'View less details' )
+					: translate( 'View more details' ) }
+			</MobileToggleExpandedBasket>
 			<FullWidthButton
 				onClick={ onAddDomainToCart }
 				isBusy={ false }
