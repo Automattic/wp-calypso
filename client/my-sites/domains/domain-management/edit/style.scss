@@ -180,7 +180,12 @@
 		align-items: center;
 		padding: 0;
 		> div {
+			display: flex;
 			margin: 16px 0 16px 24px;
+			&.domain-types__actions-container,
+			.button {
+				margin-left: 12px;
+			}
 		}
 		> div:nth-last-child( 2 ) {
 			margin-right: auto;
