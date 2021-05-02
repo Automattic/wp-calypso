@@ -77,6 +77,12 @@ export default function TaxFields( {
 					translate={ translate }
 					onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) => {
 						updateCountryCode( event.target.value );
+						// Reformat the postal code if the country changes
+						if ( postalCode ) {
+							updatePostalCode(
+								tryToGuessPostalCodeFormat( postalCode?.value, event.target.value )
+							);
+						}
 					} }
 					isError={ countryCode?.isTouched && ! isValid( countryCode ) }
 					isDisabled={ isDisabled }
