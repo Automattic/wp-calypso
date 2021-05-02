@@ -712,9 +712,13 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 		oldDetails: ManagedContactDetails,
 		newPostalCode: string
 	): ManagedContactDetails => {
+		const formattedPostalCode = tryToGuessPostalCodeFormat(
+			newPostalCode.toUpperCase(),
+			oldDetails.countryCode?.value
+		);
 		return {
 			...oldDetails,
-			postalCode: touchIfDifferent( newPostalCode, oldDetails.postalCode ),
+			postalCode: touchIfDifferent( formattedPostalCode, oldDetails.postalCode ),
 		};
 	},
 
