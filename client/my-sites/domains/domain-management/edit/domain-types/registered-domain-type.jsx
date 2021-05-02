@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DomainStatus from '../card/domain-status';
@@ -300,7 +300,14 @@ class RegisteredDomainType extends React.Component {
 	};
 
 	render() {
-		const { domain, selectedSite, purchase, isLoadingPurchase, isDomainOnlySite } = this.props;
+		const {
+			domain,
+			selectedSite,
+			purchase,
+			isLoadingPurchase,
+			isDomainOnlySite,
+			translate,
+		} = this.props;
 		const { name: domain_name } = domain;
 
 		const { statusText, statusClass, icon } = resolveDomainStatus( domain, purchase, {
@@ -346,7 +353,17 @@ class RegisteredDomainType extends React.Component {
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">
 					<DomainExpiryOrRenewal { ...this.props } />
-					{ this.renderDefaultRenewButton() }
+					<div className="domain-types__actions-container">
+						{ this.renderDefaultRenewButton() }
+						{ domain.currentUserCanManage && domain.subscriptionId !== null && (
+							<Button
+								compact
+								href={ `/me/purchases/${ selectedSite.slug }/${ domain.subscriptionId }` }
+							>
+								{ translate( 'Manage domain' ) }
+							</Button>
+						) }
+					</div>
 					{ domain.currentUserCanManage && this.renderAutoRenew() }
 				</Card>
 				<DomainManagementNavigationEnhanced
