@@ -733,6 +733,18 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 		oldDetails: ManagedContactDetails,
 		newCountryCode: string
 	): ManagedContactDetails => {
+		// Update postal code formatting if country code changes
+		if ( oldDetails.postalCode?.value ) {
+			const formattedPostalCode = tryToGuessPostalCodeFormat(
+				oldDetails.postalCode.value.toUpperCase(),
+				newCountryCode
+			);
+			return {
+				...oldDetails,
+				postalCode: touchIfDifferent( formattedPostalCode, oldDetails.postalCode ),
+				countryCode: touchIfDifferent( newCountryCode, oldDetails.countryCode ),
+			};
+		}
 		return {
 			...oldDetails,
 			countryCode: touchIfDifferent( newCountryCode, oldDetails.countryCode ),
