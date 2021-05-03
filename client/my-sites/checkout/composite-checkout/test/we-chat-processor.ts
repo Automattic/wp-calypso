@@ -190,6 +190,50 @@ describe( 'weChatProcessor', () => {
 		} );
 	} );
 
+	it( 'sends the correct data to the endpoint with tax information', async () => {
+		const submitData = {
+			name: 'test name',
+		};
+		const expected = { payload: { redirect_url }, type: 'MANUAL' };
+		await expect(
+			weChatProcessor( submitData, {
+				...options,
+				siteSlug: 'example.wordpress.com',
+				siteId: 1234567,
+				contactDetails: {
+					countryCode,
+					postalCode,
+				},
+				responseCart: {
+					...options.responseCart,
+					tax: {
+						display_taxes: true,
+						location: {
+							postal_code: 'pr267ry',
+							country_code: 'GB',
+						},
+					},
+				},
+			} )
+		).resolves.toStrictEqual( expected );
+		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
+			...basicExpectedStripeRequest,
+			cart: {
+				...basicExpectedStripeRequest.cart,
+				blog_id: '1234567',
+				cart_key: '1234567',
+				coupon: '',
+				create_new_blog: false,
+				tax: { location: { postal_code: 'PR26 7RY', country_code: 'GB' } },
+			},
+			payment: {
+				...basicExpectedStripeRequest.payment,
+				successUrl:
+					'https://example.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fexample.com',
+			},
+		} );
+	} );
+
 	it( 'sends the correct data to the endpoint with a site and one domain product', async () => {
 		const submitData = {
 			name: 'test name',
