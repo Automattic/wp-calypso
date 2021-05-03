@@ -4905,17 +4905,6 @@
     "@babel/runtime" "^7.12.5"
     lodash "^4.17.19"
 
-"@wordpress/e2e-test-utils@^5.0.3":
-  version "5.0.3"
-  resolved "https://registry.yarnpkg.com/@wordpress/e2e-test-utils/-/e2e-test-utils-5.0.3.tgz#179239a7ad49a4136a539fa55af3742c7d40a287"
-  integrity sha512-RaukiVx7tPxzPqah4sxwo2uYjIv09BsgJYybAKpFlryp/TDd3aFrH9nUwNDHgyLqrEeF+Q1NuMCd0XLg404rgg==
-  dependencies:
-    "@babel/runtime" "^7.12.5"
-    "@wordpress/keycodes" "^2.18.3"
-    "@wordpress/url" "^2.21.2"
-    lodash "^4.17.19"
-    node-fetch "^2.6.0"
-
 "@wordpress/edit-post@^3.13.0", "@wordpress/edit-post@^3.26.10":
   version "3.26.10"
   resolved "https://registry.yarnpkg.com/@wordpress/edit-post/-/edit-post-3.26.10.tgz#4d33fac892e91751ff952f4fc1262e01af4258dc"

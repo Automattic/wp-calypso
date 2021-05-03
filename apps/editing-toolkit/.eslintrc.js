@@ -14,12 +14,4 @@ module.exports = {
 		'wpcalypso/jsx-classname-namespace': 0,
 	},
 	ignorePatterns: [ '**/dist/*' ],
-	overrides: [
-		{
-			files: [ './**/?(*.)spec.[jt]s?(x)', './editing-toolkit-plugin/e2e-test-helpers/**' ],
-			globals: {
-				page: 'readonly',
-			},
-		},
-	],
 };
