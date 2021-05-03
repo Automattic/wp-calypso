@@ -24,7 +24,7 @@ module.exports = {
 
 		const currentValue = Number( match[ 1 ] );
 		const desiredValue = getMemInMb() * 0.75;
-		if ( desiredValue > currentValue ) {
+		if ( currentValue < desiredValue ) {
 			fail( `Memory set to ${ currentValue } mb, at least ${ desiredValue } mb expected` );
 			return;
 		}
