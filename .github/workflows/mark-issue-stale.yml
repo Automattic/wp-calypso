@@ -21,7 +21,7 @@ jobs:
           # Message to be added to stale PRs.
           stale-pr-message: 'This PR has been marked as stale due to lack of activity within the last 30 days.'
           # Exempted PR labels.
-          exempt-pr-labels: '[Pri] High,[Pri] BLOCKER'
+          exempt-pr-labels: '[Pri] High,[Pri] BLOCKER,[Status] Keep Open,[Status] Blocked / Hold'
           # Disable auto-close of both issues and PRs.
           days-before-close: -1
           # Get issues in ascending (oldest first) order.
