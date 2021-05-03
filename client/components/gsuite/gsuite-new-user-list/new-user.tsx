@@ -44,6 +44,7 @@ interface Props {
 	onUserValueChange: ( field: string, value: string ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
 	showLabels: boolean;
+	showTrashButton: boolean;
 	user: NewUser;
 }
 
@@ -61,6 +62,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 		password: { value: password, error: passwordError },
 	},
 	showLabels = false,
+	showTrashButton = true,
 } ) => {
 	const translate = useTranslate();
 
@@ -179,13 +181,15 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 						{ hasLastNameError && <FormInputValidation text={ lastNameError } isError /> }
 					</div>
 
-					<Button
-						className="gsuite-new-user-list__new-user-remove-user-button"
-						onClick={ onUserRemove }
-					>
-						<Gridicon icon="trash" />
-						<span>{ translate( 'Remove user' ) }</span>
-					</Button>
+					{ showTrashButton && (
+						<Button
+							className="gsuite-new-user-list__new-user-remove-user-button"
+							onClick={ onUserRemove }
+						>
+							<Gridicon icon="trash" />
+							<span>{ translate( 'Remove user' ) }</span>
+						</Button>
+					) }
 				</div>
 			</FormFieldset>
 

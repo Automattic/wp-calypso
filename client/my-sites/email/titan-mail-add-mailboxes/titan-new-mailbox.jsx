@@ -35,6 +35,7 @@ const TitanNewMailbox = ( {
 		password: { value: password, error: passwordError },
 	},
 	showLabels = true,
+	showTrashButton = true,
 } ) => {
 	const translate = useTranslate();
 
@@ -90,13 +91,15 @@ const TitanNewMailbox = ( {
 						{ hasNameError && <FormInputValidation text={ nameError } isError /> }
 					</FormFieldset>
 
-					<Button
-						className="titan-mail-add-mailboxes__new-mailbox-remove-mailbox-button"
-						onClick={ onMailboxRemove }
-					>
-						<Gridicon icon="trash" />
-						<span>{ translate( 'Remove mailbox' ) }</span>
-					</Button>
+					{ showTrashButton && (
+						<Button
+							className="titan-mail-add-mailboxes__new-mailbox-remove-mailbox-button"
+							onClick={ onMailboxRemove }
+						>
+							<Gridicon icon="trash" />
+							<span>{ translate( 'Remove mailbox' ) }</span>
+						</Button>
+					) }
 				</div>
 
 				<div className="titan-mail-add-mailboxes__new-mailbox-email-and-password">
