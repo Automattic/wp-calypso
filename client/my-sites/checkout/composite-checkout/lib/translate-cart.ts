@@ -2,11 +2,12 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { getTotalLineItemFromCart } from '@automattic/wpcom-checkout';
+import { getTotalLineItemFromCart, tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 import type { LineItem } from '@automattic/composite-checkout';
 import type {
 	ResponseCart,
 	ResponseCartProduct,
+	ResponseCartTaxData,
 	DomainContactDetails,
 } from '@automattic/shopping-cart';
 import type {
@@ -112,7 +113,22 @@ export function createTransactionEndpointCartFromResponseCart( {
 		products: responseCart.products.map( ( item ) =>
 			addRegistrationDataToGSuiteCartProduct( item, contactDetails )
 		),
-		tax: responseCart.tax,
+		tax: createTransactionEndpointTaxFromResponseCartTax( responseCart.tax ),
+	};
+}
+
+function createTransactionEndpointTaxFromResponseCartTax(
+	tax: ResponseCartTaxData
+): Omit< ResponseCartTaxData, 'display_taxes' > {
+	const { country_code, postal_code } = tax.location;
+	const formattedPostalCode = postal_code
+		? tryToGuessPostalCodeFormat( postal_code.toUpperCase(), country_code )
+		: undefined;
+	return {
+		location: {
+			...( country_code ? { country_code } : {} ),
+			...( formattedPostalCode ? { postal_code: formattedPostalCode } : {} ),
+		},
 	};
 }
 
