@@ -3,7 +3,7 @@
  */
 import React, { useEffect, FunctionComponent, useRef } from 'react';
 import classnames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -36,7 +36,6 @@ interface Props {
 	className?: string;
 	duration?: number;
 	onDismissClick: () => void;
-	translate: ( x: string ) => string;
 	children: React.ReactNode;
 	status?: NoticeStatus;
 	icon?: string | null;
@@ -67,7 +66,6 @@ const Notice: FunctionComponent< Props > = ( {
 	className,
 	duration = 0,
 	onDismissClick,
-	translate,
 	children,
 	status,
 	icon,
@@ -76,6 +74,7 @@ const Notice: FunctionComponent< Props > = ( {
 	showDismiss = ! isCompact, // by default, show on normal notices, don't show on compact ones
 	text,
 } ) => {
+	const translate = useTranslate();
 	const dismissTimeout = useRef< TimerHandle | null >( null );
 
 	useEffect( () => {
@@ -122,4 +121,4 @@ const Notice: FunctionComponent< Props > = ( {
 	);
 };
 
-export default localize( Notice );
+export default Notice;
