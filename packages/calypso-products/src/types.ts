@@ -17,17 +17,17 @@ import type {
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
 } from './constants';
 
+// WPCom
 export type WPComProductSlug = typeof PRODUCT_WPCOM_SEARCH | typeof PRODUCT_WPCOM_SEARCH_MONTHLY;
 
+// Jetpack
 export type JetpackLegacyPlanSlugs = typeof JETPACK_LEGACY_PLANS[ number ];
 export type JetpackResetPlanSlugs = typeof JETPACK_RESET_PLANS[ number ];
 export type JetpackPlanSlugs =
 	| typeof PLAN_JETPACK_FREE
 	| JetpackLegacyPlanSlugs
 	| JetpackResetPlanSlugs;
-
 export type JetpackProductSlug = typeof JETPACK_PRODUCTS_LIST[ number ];
-
 export type JetpackPurchasableItem =
 	| JetpackLegacyPlanSlugs
 	| JetpackResetPlanSlugs
@@ -62,7 +62,6 @@ export type Plan = {
 	getHiddenFeatures?: () => string[];
 	getInferiorHiddenFeatures?: () => string[];
 };
-
 export type ProductTranslations = {
 	title: TranslateResult;
 	description: TranslateResult;
