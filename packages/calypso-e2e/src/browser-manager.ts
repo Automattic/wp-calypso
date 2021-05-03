@@ -13,6 +13,7 @@ import type { Browser, BrowserContext, Page } from 'playwright';
 /**
  * Internal dependencies
  */
+import { getVideoDir } from './media-helper';
 import type { screenSize, localeCode } from './types';
 
 const playwrightTimeoutMS: number = config.get( 'playwrightTimeoutMS' );
@@ -110,9 +111,13 @@ export async function newBrowserContext(): Promise< BrowserContext > {
 		browser = await launchBrowser();
 	}
 
+	// By default, record video for each browser context.
+	const videoDir = getVideoDir();
+
 	// Generate a new BrowserContext.
 	return await browser.newContext( {
 		viewport: null, // Do not override window size set in the browser launch parameters.
+		recordVideo: { dir: videoDir },
 	} );
 }
 
