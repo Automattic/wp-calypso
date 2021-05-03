@@ -31,9 +31,11 @@ class JetpackConnectSkipUser extends Component {
 	}
 
 	render() {
+		const { translate } = this.props;
+
 		return (
 			<div className="jetpack-connect-skip-user__userless-form">
-				<h2>{ this.props.translate( 'Or start using Jetpack now' ) }</h2>
+				<h2>{ translate( 'Or start using Jetpack now' ) }</h2>
 
 				<p>Jump in and start using Jetpack right away.</p>
 				<p>
@@ -42,16 +44,16 @@ class JetpackConnectSkipUser extends Component {
 						href="https://jetpack.com/support/why-the-wordpress-com-connection-is-important-for-jetpack/"
 						rel="noreferrer"
 					>
-						{ this.props.translate( 'Some features' ) }
+						{ translate( 'Some features' ) }
 					</a>
 					&nbsp;
-					{ this.props.translate(
+					{ translate(
 						"will not be available, but you'll be able to connect your user account at any point to unlock them."
 					) }
 				</p>
 
 				<a className="jetpack-connect-skip-user__continue-link" href={ this.getPlansURL() }>
-					{ this.props.translate( 'Continue without user account' ) }
+					{ translate( 'Continue without user account' ) }
 				</a>
 			</div>
 		);
