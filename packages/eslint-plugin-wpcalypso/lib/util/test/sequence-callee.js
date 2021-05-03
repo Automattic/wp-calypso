@@ -6,6 +6,7 @@
  */
 
 const assert = require( 'assert' );
+
 const getCallee = require( '../get-callee' );
 
 describe( '#getCallee', function () {

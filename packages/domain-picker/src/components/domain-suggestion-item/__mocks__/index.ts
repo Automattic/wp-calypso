@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { MOCK_DOMAIN_SUGGESTION } from '../../../__mocks__/suggestions';
 
 export const MOCK_SUGGESTION_ITEM_PARTIAL_PROPS = {

@@ -1,37 +1,6 @@
-/**
- * Internal dependencies
- */
 import Button from './components/button';
 import CheckoutErrorBoundary from './components/checkout-error-boundary';
-import PaymentLogo from './lib/payment-methods/payment-logo';
-import { CheckoutProvider } from './components/checkout-provider';
-import useMessages from './components/use-messages';
-import useEvents from './components/use-events';
-import CheckoutSubmitButton from './components/checkout-submit-button';
-import {
-	Checkout,
-	CheckoutStep,
-	CheckoutStepArea,
-	CheckoutStepBody,
-	CheckoutSteps,
-	CheckoutSummaryArea,
-	CheckoutSummaryCard,
-	useIsStepActive,
-	useIsStepComplete,
-	useSetStepComplete,
-	MainContentWrapper,
-	CheckoutStepAreaWrapper,
-	SubmitButtonWrapper,
-} from './components/checkout-steps';
-import CheckoutPaymentMethods from './components/checkout-payment-methods';
-import {
-	OrderReviewLineItems,
-	OrderReviewTotal,
-	OrderReviewSection,
-} from './components/order-review-line-items';
 import CheckoutModal from './components/checkout-modal';
-import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
-import { useLineItems, useTotal, useLineItemsOfType } from './lib/line-items';
 import {
 	createRegistry,
 	defaultRegistry,
@@ -60,15 +29,45 @@ import CheckoutOrderSummaryStep, {
 	CheckoutOrderSummary,
 	CheckoutOrderSummaryStepTitle,
 } from './components/checkout-order-summary';
+import CheckoutPaymentMethods from './components/checkout-payment-methods';
+import { CheckoutProvider } from './components/checkout-provider';
+import {
+	Checkout,
+	CheckoutStep,
+	CheckoutStepArea,
+	CheckoutStepBody,
+	CheckoutSteps,
+	CheckoutSummaryArea,
+	CheckoutSummaryCard,
+	useIsStepActive,
+	useIsStepComplete,
+	useSetStepComplete,
+	MainContentWrapper,
+	CheckoutStepAreaWrapper,
+	SubmitButtonWrapper,
+} from './components/checkout-steps';
+import CheckoutSubmitButton from './components/checkout-submit-button';
 import {
 	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
 	getDefaultOrderReviewStep,
 } from './components/default-steps';
-import { useFormStatus } from './lib/form-status';
+import {
+	OrderReviewLineItems,
+	OrderReviewTotal,
+	OrderReviewSection,
+} from './components/order-review-line-items';
+import useProcessPayment from './components/use-process-payment';
+import RadioButton from './components/radio-button';
 import { CheckIcon as CheckoutCheckIcon } from './components/shared-icons';
-import { useTransactionStatus } from './lib/transaction-status';
+import useEvents from './components/use-events';
+import useMessages from './components/use-messages';
+import { useFormStatus } from './lib/form-status';
+import InvalidPaymentProcessorResponseError from './lib/invalid-payment-processor-response-error';
+import { useLineItems, useTotal, useLineItemsOfType } from './lib/line-items';
+import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
+import PaymentLogo from './lib/payment-methods/payment-logo';
 import {
 	usePaymentProcessor,
 	usePaymentProcessors,
@@ -77,10 +76,8 @@ import {
 	makeRedirectResponse,
 	makeErrorResponse,
 } from './lib/payment-processors';
-import useProcessPayment from './components/use-process-payment';
-import RadioButton from './components/radio-button';
 import checkoutTheme from './lib/theme';
-import InvalidPaymentProcessorResponseError from './lib/invalid-payment-processor-response-error';
+import { useTransactionStatus } from './lib/transaction-status';
 export * from './types';
 
 export type { Theme } from './lib/theme';

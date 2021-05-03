@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import { useSelect } from '@wordpress/data';
 import type { Plans } from '@automattic/data-stores';
+import { useSelect } from '@wordpress/data';
 
-/**
- * Internal dependencies
- */
 import { PLANS_STORE } from '../stores';
 
 export const useSupportedPlans = (

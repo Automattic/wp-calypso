@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { PLAN_HOST_BUNDLE } from './constants';
 import { formatProduct } from './format-product';
 

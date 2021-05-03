@@ -54,6 +54,17 @@ module.exports = {
 				// These two rules are to ensure packages don't import from calypso by accident to avoid circular deps.
 				'no-restricted-imports': [ 'error', { patterns: [ 'calypso/*' ] } ],
 				'no-restricted-modules': [ 'error', { patterns: [ 'calypso/*' ] } ],
+
+				'wpcalypso/import-docblock': 'off',
+				'import/order': [
+					'error',
+					{
+						'newlines-between': 'always',
+						alphabetize: {
+							order: 'asc',
+						},
+					},
+				],
 			},
 		},
 		{

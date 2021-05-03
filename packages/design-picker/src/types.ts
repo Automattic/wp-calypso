@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import type { ValuesType } from 'utility-types';
 
-/**
- * Internal dependencies
- */
 import type { FONT_PAIRINGS } from './constants';
 
 export type Font = ValuesType< ValuesType< typeof FONT_PAIRINGS > >;

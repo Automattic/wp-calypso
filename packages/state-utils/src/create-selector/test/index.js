@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import { filter } from 'lodash';
 import warn from '@wordpress/warning';
+import { filter } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import createSelector from '../';
 
 jest.mock( '@wordpress/warning', () => jest.fn() );

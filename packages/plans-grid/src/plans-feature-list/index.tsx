@@ -1,17 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import classnames from 'classnames';
-import { createInterpolateElement } from '@wordpress/element';
+import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { Icon, check, close } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import type { DomainSuggestions, Plans } from '@automattic/data-stores';
+import classnames from 'classnames';
+import React from 'react';
 
-/**
- * Internal dependencies
- */
 import '../types-patch';
 
 /**

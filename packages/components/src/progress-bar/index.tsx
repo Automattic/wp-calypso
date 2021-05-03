@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
 import classnames from 'classnames';
+import * as React from 'react';
 
-/**
- * Internal dependencies
- */
 import ScreenReaderText from '../screen-reader-text';
 
 /**

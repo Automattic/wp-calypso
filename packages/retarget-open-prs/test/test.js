@@ -1,5 +1,5 @@
-const retargetOpenPrs = require( '../index' );
 const { getPulls, retargetPr } = require( '../github' );
+const retargetOpenPrs = require( '../index' );
 const { isHittingRateLimit, warnOfRateLimit, sleepUntilRateLimitOver } = require( '../rate-limit' );
 
 jest.mock( '../github', () => ( {

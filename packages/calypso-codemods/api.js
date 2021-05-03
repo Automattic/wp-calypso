@@ -1,15 +1,9 @@
 #!/usr/bin/env node
 
-/**
- * External dependencies
- */
+const child_process = require( 'child_process' );
 const fs = require( 'fs' );
 const path = require( 'path' );
-const child_process = require( 'child_process' );
 
-/**
- * Internal dependencies
- */
 const config = require( path.join( __dirname, 'config' ) );
 const transformsDir = path.join( __dirname, './transforms' );
 

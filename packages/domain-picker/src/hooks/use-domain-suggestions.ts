@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
-import { useSelect, useDispatch } from '@wordpress/data';
 import type { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
 import type { DomainSuggestion } from '@automattic/data-stores/src/domain-suggestions/types';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useDebounce } from 'use-debounce';
 
-/**
- * Internal dependencies
- */
 import {
 	DOMAIN_SUGGESTIONS_STORE,
 	DOMAIN_SEARCH_DEBOUNCE_INTERVAL,

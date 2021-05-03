@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getNavigationStart } from '../api/performance-timing';
 
 export const collector: Collector = ( report ) => {

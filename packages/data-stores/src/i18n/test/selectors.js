@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getLocalizedLanguageNames } from '../selectors';
 
 describe( 'i18n selectors', () => {

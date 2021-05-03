@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import PopupMonitor from '@automattic/popup-monitor';
 
-/**
- * Internal dependencies
- */
 import requestExternalAccess from '../src';
 
 jest.mock( '@automattic/popup-monitor' );

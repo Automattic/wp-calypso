@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import React, { createElement } from 'react';
 import { numberFormat, translate } from 'i18n-calypso';
+import React, { createElement } from 'react';
 
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_ANTI_SPAM_PRODUCTS,
 	JETPACK_ANTI_SPAM_PRODUCT_LANDING_PAGE_URL,

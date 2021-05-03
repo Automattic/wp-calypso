@@ -1,6 +1,7 @@
 const path = require( 'path' );
-const rtlcss = require( 'rtlcss' );
+
 const cssDiff = require( '@romainberger/css-diff' );
+const rtlcss = require( 'rtlcss' );
 const { ConcatSource } = require( 'webpack' ).sources;
 
 const pluginName = 'WebpackRTLPlugin';

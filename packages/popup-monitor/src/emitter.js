@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { EventEmitter } from 'events';
 
 export default function ( prototype ) {

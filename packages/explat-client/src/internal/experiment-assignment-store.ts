@@ -1,7 +1,5 @@
-/**
- * Internal dependencies
- */
 import type { ExperimentAssignment } from '../types';
+
 import * as Validations from './validations';
 
 const localStorage =

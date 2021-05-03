@@ -1,7 +1,5 @@
-/**
- * External dependencies
- */
 import { createContext } from 'react';
+
 import {
 	FormStatus,
 	PaymentMethod,

@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import { determineUrlType } from '../src';
 
 test( 'should detect the correct type for absolute URLs', () => {

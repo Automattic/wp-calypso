@@ -1,12 +1,9 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { MouseEvent } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
+import type { StripePaymentRequest } from '@automattic/calypso-stripe';
 import { Button, useFormStatus, FormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
-import type { StripePaymentRequest } from '@automattic/calypso-stripe';
+import { useI18n } from '@wordpress/react-i18n';
+import PropTypes from 'prop-types';
+import React, { MouseEvent } from 'react';
 
 // Disabling this rule to make migrating this to calypso easier with fewer changes
 /* eslint-disable @typescript-eslint/no-use-before-define */

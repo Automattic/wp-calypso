@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React, { forwardRef, useState, useEffect } from 'react';
-import { createHigherOrderComponent } from '@wordpress/compose';
-
-/**
- * Internal dependencies
- */
 import {
 	isWithinBreakpoint,
 	subscribeIsWithinBreakpoint,
 	MOBILE_BREAKPOINT,
 	DESKTOP_BREAKPOINT,
 } from '@automattic/viewport';
+import { createHigherOrderComponent } from '@wordpress/compose';
+import React, { forwardRef, useState, useEffect } from 'react';
 
 /**
  * React hook for getting the status for a breakpoint and keeping it updated.

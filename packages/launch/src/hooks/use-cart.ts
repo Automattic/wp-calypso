@@ -1,17 +1,11 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { useSelect, useDispatch } from '@wordpress/data';
 import { useLocale } from '@automattic/i18n-utils';
+import { useSelect, useDispatch } from '@wordpress/data';
+import * as React from 'react';
 
-/**
- * Internal dependencies
- */
-import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../stores';
 import LaunchContext from '../context';
-import { getDomainProduct, getPlanProductForFlow } from '../utils';
 import { useSiteDomains, useHasEcommercePlan } from '../hooks';
+import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../stores';
+import { getDomainProduct, getPlanProductForFlow } from '../utils';
 
 type LaunchCart = {
 	goToCheckout: () => Promise< void >; // used in gutenboarding-launch

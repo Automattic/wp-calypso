@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type { Vertical } from './types';
 
 export const receiveVerticals = ( verticals: Vertical[] ) => ( {

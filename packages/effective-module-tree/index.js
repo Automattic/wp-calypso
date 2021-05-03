@@ -1,4 +1,5 @@
 const path = require( 'path' );
+
 const debug = require( 'debug' )( 'effective-module-tree' );
 const treeify = require( 'object-treeify' );
 

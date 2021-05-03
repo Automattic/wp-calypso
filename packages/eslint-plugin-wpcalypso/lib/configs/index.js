@@ -1,5 +1,5 @@
-const configRecommended = require( './recommended' );
 const configReact = require( './react' );
+const configRecommended = require( './recommended' );
 
 module.exports = {
 	recommended: configRecommended,

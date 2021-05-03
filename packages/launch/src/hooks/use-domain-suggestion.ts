@@ -1,14 +1,9 @@
-/**
- * External dependencies
- */
-import { useSelect } from '@wordpress/data';
-import { useLocale } from '@automattic/i18n-utils';
 import type { DomainSuggestions } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
+import { useSelect } from '@wordpress/data';
 
-/**
- * Internal dependencies
- */
 import { DOMAIN_SUGGESTIONS_STORE } from '../stores';
+
 import { useDomainSearch } from './';
 
 export function useDomainSuggestion(): DomainSuggestions.DomainSuggestion | undefined {

@@ -1,13 +1,8 @@
-/**
- * External dependencies
- */
 import React, { useContext, useMemo } from 'react';
 
-/**
- * Internal dependencies
- */
-import LineItemsContext from './line-items-context';
 import { LineItemsProviderProps, LineItem } from '../types';
+
+import LineItemsContext from './line-items-context';
 
 export const LineItemsProvider: React.FC< LineItemsProviderProps > = ( {
 	items,

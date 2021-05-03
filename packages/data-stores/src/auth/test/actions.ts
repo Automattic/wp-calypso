@@ -6,9 +6,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import { createActions } from '../actions';
 import { STORE_KEY } from '../constants';
 

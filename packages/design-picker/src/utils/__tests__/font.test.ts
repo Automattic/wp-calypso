@@ -1,10 +1,6 @@
-/**
- * Internal dependencies
- */
 import '../../constants';
-import { getFontTitle } from '../fonts';
-
 import type { Font } from '../../types';
+import { getFontTitle } from '../fonts';
 
 jest.mock( '../../constants', () => ( {
 	FONT_TITLES: {

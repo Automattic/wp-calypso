@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import * as ExperimentAssignments from '../experiment-assignments';
 import { validExperimentAssignment } from '../test-common';
 

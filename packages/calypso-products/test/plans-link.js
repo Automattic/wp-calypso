@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { plansLink } from '../src';
 
 describe( 'plansLink', () => {

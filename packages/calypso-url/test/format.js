@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import { format } from '../src';
 
 describe( 'getUrlType', () => {

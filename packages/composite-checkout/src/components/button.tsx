@@ -1,13 +1,10 @@
-/**
- * External dependencies
- */
 import React from 'react';
 
 /**
  * Internal Classes
  */
-import styled from '../lib/styled';
 import joinClasses from '../lib/join-classes';
+import styled from '../lib/styled';
 import { Theme } from '../lib/theme';
 
 const CallToAction = styled( 'button' )< CallToActionProps >`

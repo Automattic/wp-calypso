@@ -1,9 +1,8 @@
-/**
- * Module dependencies
- */
-const ProfileLinks = require( '../lib/me.settings.profile-links' );
-const util = require( './util' );
 const assert = require( 'assert' );
+
+const ProfileLinks = require( '../lib/me.settings.profile-links' );
+
+const util = require( './util' );
 
 /**
  * me.settings

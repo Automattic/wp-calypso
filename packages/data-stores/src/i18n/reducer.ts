@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type { I18nAction } from './actions';
 import type { LocalizedLanguageNames } from './types';
 

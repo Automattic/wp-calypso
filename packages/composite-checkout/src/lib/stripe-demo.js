@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
+import debugFactory from 'debug';
 import React, { useEffect, useReducer, useState, useContext, createContext } from 'react';
 import { injectStripe, StripeProvider, Elements } from 'react-stripe-elements';
-import debugFactory from 'debug';
 
 const debug = debugFactory( 'composite-checkout:lib-stripe' );
 const StripeContext = createContext();
@@ -55,6 +52,15 @@ const StripeInjectedWrapper = injectStripe( StripeHookProviderInnerWrapper );
  * This has one optional prop, `configurationArgs`, which is an object that
  * will be used when fetching the stripe configuration.
  *
+ * @param root0
+ * @param root0.children
+ * @param root0.fetchStripeConfiguration
+ * @param root0
+ * @param root0.children
+ * @param root0.fetchStripeConfiguration
+ * @param root0
+ * @param root0.children
+ * @param root0.fetchStripeConfiguration
  * @returns {object} React element
  */
 export function StripeHookProvider( { children, fetchStripeConfiguration } ) {

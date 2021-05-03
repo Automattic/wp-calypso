@@ -1,28 +1,21 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { useHistory } from 'react-router-dom';
-
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import type { DomainSuggestions } from '@automattic/data-stores';
 import DomainPicker, {
 	mockDomainSuggestion,
 	SUGGESTION_ITEM_TYPE_BUTTON,
 } from '@automattic/domain-picker';
-import { Title, SubTitle } from '@automattic/onboarding';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-import type { DomainSuggestions } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
+import { Title, SubTitle } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
+import * as React from 'react';
+import { useHistory } from 'react-router-dom';
 
-/**
- * Internal dependencies
- */
-import { useDomainSearch, useDomainSelection, useSiteDomains } from '../../hooks';
 import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
-import GoBackButton from '../go-back-button';
 import LaunchContext from '../../context';
+import { useDomainSearch, useDomainSelection, useSiteDomains } from '../../hooks';
+import GoBackButton from '../go-back-button';
 
 import './style.scss';
 

@@ -1,22 +1,17 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { __ } from '@wordpress/i18n';
 import { Title, SubTitle, NextButton, BackButton } from '@automattic/onboarding';
-import { Icon, external } from '@wordpress/icons';
 import { ClipboardButton } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
+import { Icon, external } from '@wordpress/icons';
+import * as React from 'react';
 
-/**
- * Internal dependencies
- */
-import { useSiteDomains, useHasEcommercePlan } from '../../hooks';
-import Confetti from './confetti';
 import LaunchContext from '../../context';
+import { useSiteDomains, useHasEcommercePlan } from '../../hooks';
 import { LAUNCH_STORE, SITE_STORE } from '../../stores';
+
+import Confetti from './confetti';
 
 import './style.scss';
 

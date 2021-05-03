@@ -1,17 +1,11 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
 import { Button } from '@wordpress/components';
-import { Icon, chevronDown } from '@wordpress/icons';
-import classNames from 'classnames';
-import { useI18n } from '@wordpress/react-i18n';
-import { useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
+import { useState } from '@wordpress/element';
+import { Icon, chevronDown } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
+import classNames from 'classnames';
+import * as React from 'react';
 
-/**
- * Internal dependencies
- */
 import { DOMAIN_SUGGESTIONS_STORE } from '../../constants';
 
 /**

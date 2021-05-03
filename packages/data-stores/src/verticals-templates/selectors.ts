@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type { State } from './reducer';
 
 /**

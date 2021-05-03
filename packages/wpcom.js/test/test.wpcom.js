@@ -1,8 +1,6 @@
-/**
- * Module dependencies
- */
-const util = require( './util' );
 const assert = require( 'assert' );
+
+const util = require( './util' );
 
 describe( 'wpcom', function () {
 	describe( 'wpcom.freshlyPressed', function () {

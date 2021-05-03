@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 const webpack = require( 'webpack' );
 
 /**

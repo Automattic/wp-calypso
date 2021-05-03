@@ -3,16 +3,10 @@
  * @author Edwin Takahashi
  */
 
-/**
- * External dependencies
- */
-import { chromium } from 'playwright';
 import config from 'config';
+import { chromium } from 'playwright';
 import type { Browser, BrowserContext } from 'playwright';
 
-/**
- * Internal dependencies
- */
 import type { screenSize, localeCode } from './types';
 
 const browserStartTimeoutMS = 2000;

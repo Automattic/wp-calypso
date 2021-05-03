@@ -1,10 +1,9 @@
-/**
- * External dependencies
- */
 const fs = require( 'fs' );
 const path = require( 'path' );
+
 const rimraf = require( 'rimraf' );
 const webpack = require( 'webpack' );
+
 const ConfigFlagPlugin = require( '..' );
 
 const fixturesDirectory = path.join( __dirname, 'fixtures' );

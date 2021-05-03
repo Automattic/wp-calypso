@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
 // This is required to fix the "regeneratorRuntime is not defined" error
 import '@automattic/calypso-polyfills';
 
-/**
- * Internal dependencies
- */
 import { createExPlatClient } from '../create-explat-client';
 import { clearAllExperimentAssignments } from '../internal/experiment-assignment-store';
 import {

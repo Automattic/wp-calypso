@@ -1,7 +1,5 @@
-/**
- * Internal dependencies
- */
-import { getJetpackProductsShortNames } from './translations';
+import type { TranslateResult } from 'i18n-calypso';
+
 import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
@@ -38,11 +36,7 @@ import {
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 } from './constants';
-
-/**
- * Type dependencies
- */
-import type { TranslateResult } from 'i18n-calypso';
+import { getJetpackProductsShortNames } from './translations';
 import type { ProductSlug, JetpackProductSlug } from './types';
 
 const PRODUCT_SHORT_NAMES = getJetpackProductsShortNames();

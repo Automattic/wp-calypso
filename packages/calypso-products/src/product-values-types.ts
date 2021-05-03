@@ -1,8 +1,7 @@
 /* eslint-disable wpcalypso/import-docblock */
-/**
- * Type dependencies
- */
+
 import type { TranslateResult } from 'i18n-calypso';
+
 import type {
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,

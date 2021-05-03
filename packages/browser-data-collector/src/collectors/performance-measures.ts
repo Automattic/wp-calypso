@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getMeasures } from '../api/user-timing';
 
 export const collector: Collector = ( report ) => {

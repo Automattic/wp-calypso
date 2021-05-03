@@ -1,8 +1,6 @@
-/**
- * Module dependencies
- */
-const util = require( './util' );
 const assert = require( 'assert' );
+
+const util = require( './util' );
 
 /**
  * wpcom.site.post.subscriber

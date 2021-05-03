@@ -1,17 +1,12 @@
-/**
- * External dependencies
- */
-import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
+import type { Reducer } from 'redux';
+
+import type { Plans } from '..';
 import type * as DomainSuggestions from '../domain-suggestions';
 
-/**
- * Internal dependencies
- */
+import type { LaunchAction } from './actions';
 import { LaunchStep } from './data';
 import type { LaunchStepType } from './types';
-import type { LaunchAction } from './actions';
-import type { Plans } from '..';
 
 const step: Reducer< LaunchStepType, LaunchAction > = ( state = LaunchStep.Name, action ) => {
 	if ( action.type === 'SET_STEP' ) {

@@ -1,10 +1,11 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/**
- * External dependencies
- */
 
+import { Button, Spinner } from '@wordpress/components';
+import { useInstanceId } from '@wordpress/compose';
+import { close, search, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
+import { debounce } from 'lodash';
 import React, { useEffect } from 'react';
 import type {
 	ReactNode,
@@ -15,18 +16,7 @@ import type {
 	KeyboardEvent,
 	MouseEvent,
 } from 'react';
-import { debounce } from 'lodash';
 
-/**
- * WordPress dependencies
- */
-import { Button, Spinner } from '@wordpress/components';
-import { close, search, Icon } from '@wordpress/icons';
-import { useInstanceId } from '@wordpress/compose';
-
-/**
- * Internal dependencies
- */
 import { useUpdateEffect } from './utils';
 
 /**

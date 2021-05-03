@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import DomainEmail from './domain.email';
 import DomainDns from './domain.dns';
+import DomainEmail from './domain.email';
 
 const root = '/domains/';
 
@@ -95,6 +92,7 @@ class Domain {
 	 * Update the nameservers for the domain
 	 *
 	 * @param {Array} nameservers- nameservers list
+	 * @param nameservers
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler

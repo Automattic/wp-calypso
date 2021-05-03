@@ -5,6 +5,7 @@
 //  --group=test/abc/xyz/Smoke
 //
 const path = require( 'path' );
+
 const logger = require( 'testarmada-logger' );
 
 module.exports = function ( tests, partialFilename ) {

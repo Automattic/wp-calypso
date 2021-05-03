@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import React, { useCallback } from 'react';
 import { createHigherOrderComponent } from '@wordpress/compose';
+import React, { useCallback } from 'react';
 
-/**
- * Internal dependencies
- */
 import { useLocale } from './locale-context';
 import {
 	localesWithBlog,

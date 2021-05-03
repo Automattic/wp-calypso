@@ -1,17 +1,11 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { useI18n } from '@wordpress/react-i18n';
-import { useLocale } from '@automattic/i18n-utils';
-import { sprintf } from '@wordpress/i18n';
-import { Popover } from '@wordpress/components';
-import classNames from 'classnames';
 import type { Plans } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
+import { Popover } from '@wordpress/components';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
+import classNames from 'classnames';
+import * as React from 'react';
 
-/**
- * Internal dependencies
- */
 import SegmentedControl from '../segmented-control';
 
 /**

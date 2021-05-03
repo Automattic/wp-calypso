@@ -1,6 +1,3 @@
-/**
- * Module dependencies
- */
 const util = require( './util' );
 
 function trueAssertion( done ) {

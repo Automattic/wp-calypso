@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { Button } from '@automattic/composite-checkout';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-/**
- * Internal dependencies
- */
 import styled from './styled';
 
 // Disabling this to make migrating files easier

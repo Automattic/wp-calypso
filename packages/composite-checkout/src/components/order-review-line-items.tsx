@@ -1,15 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 
-/**
- * Internal dependencies
- */
 import joinClasses from '../lib/join-classes';
-import type { LineItem } from '../types';
 import styled from '../lib/styled';
+import type { LineItem } from '../types';
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
 

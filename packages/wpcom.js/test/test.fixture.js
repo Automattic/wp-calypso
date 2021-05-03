@@ -1,6 +1,3 @@
-/**
- * Module dependencies
- */
 const assert = require( 'assert' );
 
 /**

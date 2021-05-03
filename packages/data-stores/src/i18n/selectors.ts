@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type { State } from './reducer';
 import type { LocalizedLanguageNames } from './types';
 

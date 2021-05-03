@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 export { default } from './components';
 
 export { getAvailableDesigns, availableDesignsConfig, getFontTitle } from './utils';

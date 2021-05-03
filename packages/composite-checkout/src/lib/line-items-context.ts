@@ -1,7 +1,5 @@
-/**
- * External dependencies
- */
 import { createContext } from 'react';
+
 import { LineItemsState } from '../types';
 
 const LineItemsContext = createContext< LineItemsState >( {

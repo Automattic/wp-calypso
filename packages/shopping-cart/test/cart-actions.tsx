@@ -1,18 +1,12 @@
 // This is required to fix the "regeneratorRuntime is not defined" error
 import '@automattic/calypso-polyfills';
 
-/**
- * External dependencies
- */
 import React, { useEffect, useRef } from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { screen, act, render, waitFor, fireEvent } from '@testing-library/react';
 
-/**
- * Internal dependencies
- */
-import { useShoppingCart, ShoppingCartProvider } from '../src/index';
 import { getEmptyResponseCart } from '../src/empty-carts';
+import { useShoppingCart, ShoppingCartProvider } from '../src/index';
 import type {
 	RequestCartProduct,
 	ResponseCartProduct,

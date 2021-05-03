@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import styled from '@emotion/styled';
 
 export const PaymentMethodLogos = styled.span`

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { PLAN_FREE } from './constants';
 import { formatProduct } from './format-product';
 

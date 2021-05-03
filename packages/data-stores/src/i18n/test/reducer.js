@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
 import { setLocalizedLanguageNames } from '../actions';
+import reducer from '../reducer';
 
 describe( 'i18n reducer', () => {
 	describe( 'localizedLanguageNames', () => {

@@ -1,10 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/**
- * External dependencies
- */
-import * as React from 'react';
 import { SVG, Rect, Circle } from '@wordpress/components';
+import * as React from 'react';
 
 const Confetti: React.FunctionComponent< { className?: string } > = ( { className } ) => (
 	<SVG

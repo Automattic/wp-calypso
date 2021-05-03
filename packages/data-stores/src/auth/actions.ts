@@ -1,12 +1,17 @@
-/**
- * External dependencies
- */
 import { select } from '@wordpress/data-controls';
 import { stringify } from 'qs';
 
-/**
- * Internal dependencies
- */
+import type { WpcomClientCredentials } from '../shared-types';
+import {
+	wpcomRequest,
+	fetchAndParse,
+	requestAllBlogsAccess,
+	reloadProxy,
+	wait,
+} from '../wpcom-request-controls';
+
+import { STORE_KEY, POLL_APP_PUSH_INTERVAL_SECONDS } from './constants';
+import { remoteLoginUser } from './controls';
 import type {
 	AuthOptionsSuccessResponse,
 	AuthOptionsErrorResponse,
@@ -18,16 +23,6 @@ import type {
 	PushNotificationSentData,
 	LoginCompleteData,
 } from './types';
-import { STORE_KEY, POLL_APP_PUSH_INTERVAL_SECONDS } from './constants';
-import {
-	wpcomRequest,
-	fetchAndParse,
-	requestAllBlogsAccess,
-	reloadProxy,
-	wait,
-} from '../wpcom-request-controls';
-import { remoteLoginUser } from './controls';
-import type { WpcomClientCredentials } from '../shared-types';
 import { getNextTaskId } from './utils';
 
 export interface ActionsConfig extends WpcomClientCredentials {

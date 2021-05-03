@@ -10,6 +10,7 @@
 //------------------------------------------------------------------------------
 
 const rule = require( '../../../lib/rules/import-docblock' );
+
 const RuleTester = require( 'eslint' ).RuleTester;
 
 //------------------------------------------------------------------------------
@@ -24,15 +25,11 @@ new RuleTester( {
 } ).run( 'import-docblock', rule, {
 	valid: [
 		{
-			code: `/**
- * External dependencies
- */
+			code: `
 import eslint from 'eslint';`,
 		},
 		{
-			code: `/**
- * External dependencies
- */
+			code: `
 import eslint from 'eslint';`,
 		},
 		{

@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
+import classNames from 'classnames';
 import React from 'react';
 import type { ReactNode, FunctionComponent } from 'react';
-import classNames from 'classnames';
 
 /**
  * Style dependencies

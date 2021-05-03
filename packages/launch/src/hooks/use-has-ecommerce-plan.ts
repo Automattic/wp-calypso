@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import { useSelect } from '@wordpress/data';
 import { useLocale } from '@automattic/i18n-utils';
+import { useSelect } from '@wordpress/data';
 
-/**
- * Internal dependencies
- */
 import { LAUNCH_STORE, PLANS_STORE } from '../stores';
 
 export function useHasEcommercePlan(): boolean {

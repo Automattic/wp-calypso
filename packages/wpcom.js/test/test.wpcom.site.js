@@ -1,13 +1,10 @@
-/**
- * Module dependencies
- */
-const util = require( './util' );
 const assert = require( 'assert' );
 
 /**
  * Testing data
  */
 const fixture = require( './fixture' );
+const util = require( './util' );
 
 describe( 'wpcom.site', function () {
 	// Global instances

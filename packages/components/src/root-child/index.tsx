@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { useLayoutEffect, useState } from 'react';
 import type { FunctionComponent, ReactNode } from 'react';
 import ReactDOM from 'react-dom';

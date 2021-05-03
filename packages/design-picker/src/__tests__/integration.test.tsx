@@ -1,17 +1,11 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import * as React from 'react';
 import '@automattic/calypso-config';
 
-/**
- * Internal dependencies
- */
 import DesignPicker from '../components';
-import { getAvailableDesigns } from '../utils';
-import type { Design } from '../types';
 import type { DesignPickerProps } from '../components';
+import type { Design } from '../types';
+import { getAvailableDesigns } from '../utils';
 
 jest.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: jest.fn().mockImplementation( ( feature: string ) => {

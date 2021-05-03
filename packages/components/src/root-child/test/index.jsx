@@ -2,16 +2,10 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { mount } from 'enzyme';
 import React from 'react';
 import ReactDom from 'react-dom';
 
-/**
- * Internal dependencies
- */
 import RootChild from '..';
 
 /**

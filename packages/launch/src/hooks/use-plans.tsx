@@ -1,17 +1,11 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { useLocale } from '@automattic/i18n-utils';
 import type { Plans } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
+import { useDispatch, useSelect } from '@wordpress/data';
+import * as React from 'react';
 
-/**
- * Internal dependencies
- */
-import { PLANS_STORE, SITE_STORE } from '../stores';
 import LaunchContext from '../context';
+import { PLANS_STORE, SITE_STORE } from '../stores';
 import { isPlanProduct } from '../utils';
 import type { PlanProductForFlow } from '../utils';
 

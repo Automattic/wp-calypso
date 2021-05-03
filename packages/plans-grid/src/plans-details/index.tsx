@@ -1,17 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import classnames from 'classnames';
-import { useI18n } from '@wordpress/react-i18n';
-import { useSelect } from '@wordpress/data';
-import { Button } from '@wordpress/components';
-import { Icon, check, close } from '@wordpress/icons';
 import type { Plans } from '@automattic/data-stores';
+import { Button } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
+import { Icon, check, close } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
+import React from 'react';
 
-/**
- * Internal dependencies
- */
 import { PLANS_STORE } from '../stores';
 
 /**

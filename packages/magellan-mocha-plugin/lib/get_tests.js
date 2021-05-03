@@ -1,12 +1,16 @@
-const _ = require( 'lodash' );
-const clc = require( 'cli-color' );
 const fs = require( 'fs' );
 const path = require( 'path' );
+
+const clc = require( 'cli-color' );
+const _ = require( 'lodash' );
+
 const spawnSync = require( 'child_process' ).spawnSync;
+
+const pkgUp = require( 'pkg-up' );
+const logger = require( 'testarmada-logger' );
+
 const Locator = require( './locator' );
 const mochaSettings = require( './settings' );
-const logger = require( 'testarmada-logger' );
-const pkgUp = require( 'pkg-up' );
 
 module.exports = function ( settings ) {
 	logger.prefix = 'Mocha Plugin';

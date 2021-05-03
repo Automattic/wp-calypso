@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 
 export function VisaLogo( { className }: { className?: string } ) {
 	return (

@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
-import { translate } from 'i18n-calypso';
 import type { LineItem } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
+import { translate } from 'i18n-calypso';
 
 export function getLineItemsFromCart( cart: ResponseCart ): LineItem[] {
 	return cart.products.map( ( product ) => ( {

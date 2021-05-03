@@ -1,6 +1,8 @@
 const path = require( 'path' );
-const Locator = require( '../lib/locator' );
+
 const testFramework = require( '../index' );
+const Locator = require( '../lib/locator' );
+
 const fs = require( 'fs' ).promises;
 const os = require( 'os' );
 

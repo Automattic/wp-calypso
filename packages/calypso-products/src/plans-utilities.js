@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN,
 	NEW_PLANS,

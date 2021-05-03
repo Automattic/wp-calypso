@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons'; // eslint-disable-line no-restricted-imports
+import React from 'react';
 import type { ElementType, ComponentProps, ReactNode, Ref } from 'react';
 
 /**

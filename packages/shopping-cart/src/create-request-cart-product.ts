@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type { RequestCartProduct, MinimalRequestCartProduct } from './shopping-cart-endpoint';
 
 export default function createRequestCartProduct(

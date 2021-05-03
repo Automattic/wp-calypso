@@ -1,7 +1,5 @@
-/**
- * Module dependencies
- */
 const util = require( './util' );
+
 // @todo Update these tests to use jest.expect
 // eslint-disable-next-line
 const assert = require( 'assert' );

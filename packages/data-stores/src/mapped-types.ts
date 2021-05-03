@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import type { FunctionKeys } from 'utility-types';
 
 /**

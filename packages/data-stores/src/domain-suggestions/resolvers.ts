@@ -1,13 +1,9 @@
-/**
- * External dependencies
- */
-import { stringify } from 'qs';
 import { translate } from 'i18n-calypso';
+import { stringify } from 'qs';
 import validator from 'validator';
 
-/**
- * Internal dependencies
- */
+import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
+
 import {
 	receiveCategories,
 	receiveDomainSuggestionsSuccess,
@@ -15,9 +11,8 @@ import {
 	fetchDomainSuggestions,
 	receiveDomainAvailability,
 } from './actions';
-import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
-import { getFormattedPrice } from './utils';
 import type { DomainSuggestion, DomainSuggestionQuery } from './types';
+import { getFormattedPrice } from './utils';
 
 function getAvailabilityURL( domainName: string ) {
 	return `https://public-api.wordpress.com/rest/v1.3/domains/${ encodeURIComponent(

@@ -1,15 +1,10 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
 import { useSelect } from '@wordpress/data';
+import * as React from 'react';
 
-/**
- * Internal dependencies
- */
-import { LAUNCH_STORE, PLANS_STORE } from '../stores';
 import LaunchContext from '../context';
 import { useCart, useSiteDomains } from '../hooks';
+import { LAUNCH_STORE, PLANS_STORE } from '../stores';
+
 import { useSite } from './';
 
 // Hook used exclusively in Step-by-step launch flow until it will be using Editor Checkout Modal

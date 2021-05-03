@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
 // This is required to fix the "regeneratorRuntime is not defined" error
 import '@automattic/calypso-polyfills';
 
-/**
- * Internal dependencies
- */
 import { createSsrSafeDummyExPlatClient } from '../create-explat-client';
 import * as Timing from '../internal/timing';
 import type { Config } from '../types';

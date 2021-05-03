@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type { LocalizedLanguageNames } from './types';
 
 export const setLocalizedLanguageNames = (

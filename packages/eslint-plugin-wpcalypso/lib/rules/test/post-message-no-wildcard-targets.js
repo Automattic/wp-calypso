@@ -10,6 +10,7 @@
 //------------------------------------------------------------------------------
 
 const rule = require( '../../../lib/rules/post-message-no-wildcard-targets' );
+
 const config = { env: { es6: true } };
 const RuleTester = require( 'eslint' ).RuleTester;
 

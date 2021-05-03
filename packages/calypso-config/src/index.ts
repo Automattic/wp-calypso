@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-import cookie from 'cookie';
-
-/**
- * Internal dependencies
- */
-
 import createConfig from '@automattic/create-calypso-config';
 import type { ConfigData } from '@automattic/create-calypso-config';
+import cookie from 'cookie';
 
 declare global {
 	interface Window {
