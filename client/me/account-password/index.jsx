@@ -54,7 +54,7 @@ class AccountPassword extends React.Component {
 			! this.props.hasUserSettingsRequestFailed
 		) {
 			this.props.markSaved();
-			window.location = window.location.pathname + '?updated=password';
+			window.location = '?updated=password';
 		}
 	}
 
