@@ -705,14 +705,19 @@ async function openLinksInParentFrame( calypsoPort ) {
 		}
 	} );
 
+	const shouldReplaceCreateNewPostLinksFor = ( node ) =>
+		createNewPostUrl &&
+		( node.classList.contains( 'interface-interface-skeleton__sidebar' ) || // Site editor
+			node.classList.contains( 'edit-post-sidebar' ) ); // Post editor
+
+	const shouldReplaceManageReusableBlockLinksFor = ( node ) =>
+		manageReusableBlocksUrl &&
+		node.classList.contains( 'interface-interface-skeleton__secondary-sidebar' );
+
 	const sidebarsObserver = new window.MutationObserver( ( mutations ) => {
 		for ( const record of mutations ) {
 			for ( const node of record.addedNodes ) {
-				if (
-					createNewPostUrl &&
-					( node.classList.contains( 'interface-interface-skeleton__sidebar' ) || // Site editor
-						node.classList.contains( 'edit-post-sidebar' ) ) // Post editor
-				) {
+				if ( shouldReplaceCreateNewPostLinksFor( node ) ) {
 					const componentsPanel = node.querySelector(
 						'.interface-interface-skeleton__sidebar .components-panel, .edit-post-sidebar .components-panel'
 					);
@@ -720,10 +725,7 @@ async function openLinksInParentFrame( calypsoPort ) {
 						childList: true,
 						subtree: true,
 					} );
-				} else if (
-					manageReusableBlocksUrl &&
-					node.classList.contains( 'interface-interface-skeleton__secondary-sidebar' )
-				) {
+				} else if ( shouldReplaceManageReusableBlockLinksFor( node ) ) {
 					const resuableTab = node.querySelector(
 						'.components-tab-panel__tabs-item[id*="reusable"]'
 					);
@@ -736,16 +738,9 @@ async function openLinksInParentFrame( calypsoPort ) {
 			}
 
 			for ( const node of record.removedNodes ) {
-				if (
-					createNewPostUrl &&
-					( node.classList.contains( 'interface-interface-skeleton__sidebar' ) || // Site editor
-						node.classList.contains( 'edit-post-sidebar' ) ) // Post editor
-				) {
+				if ( shouldReplaceCreateNewPostLinksFor( node ) ) {
 					createNewPostLinkObserver.disconnect();
-				} else if (
-					manageReusableBlocksUrl &&
-					node.classList.contains( 'interface-interface-skeleton__secondary-sidebar' )
-				) {
+				} else if ( shouldReplaceManageReusableBlockLinksFor( node ) ) {
 					inserterManageReusableBlocksObserver.disconnect();
 				}
 			}
