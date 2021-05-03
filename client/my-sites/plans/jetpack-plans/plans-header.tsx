@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getPlanRecommendationFromContext } from './plan-upgrade/utils';
-import { JETPACK_LEGACY_PLANS_MAX_PLUGIN_VERSION } from '@automattic/calypso-products/src/constants';
+import { JETPACK_LEGACY_PLANS_MAX_PLUGIN_VERSION } from '@automattic/calypso-products';
 import JetpackPluginUpdateWarning from 'calypso/blocks/jetpack-plugin-update-warning';
 import { preventWidows } from 'calypso/lib/formatting';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';

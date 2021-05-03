@@ -3,7 +3,6 @@
  */
 import {
 	JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN,
-	NEW_PLANS,
 	BEST_VALUE_PLANS,
 	TERM_MONTHLY,
 	PLAN_MONTHLY_PERIOD,
@@ -12,10 +11,6 @@ import {
 	TERM_BIENNIALLY,
 	PLAN_BIENNIAL_PERIOD,
 } from './constants';
-
-export function isNew( plan ) {
-	return NEW_PLANS.includes( plan );
-}
 
 export function isBestValue( plan ) {
 	return BEST_VALUE_PLANS.includes( plan );
