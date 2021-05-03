@@ -40,7 +40,7 @@ class JetpackConnectSkipUser extends Component {
 				<p>{ translate( 'Jump in and start using Jetpack right away.' ) }</p>
 				<p>
 					{ translate(
-						`{{link}}Some features{{/link}} will not be available, but you'll be able to connect your user account at any point to unlock them.`,
+						"{{link}}Some features{{/link}} will not be available, but you'll be able to connect your user account at any point to unlock them.",
 						{
 							components: {
 								link: (
