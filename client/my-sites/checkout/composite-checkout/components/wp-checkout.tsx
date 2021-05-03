@@ -218,7 +218,7 @@ export default function WPCheckout( {
 			}
 		}
 
-		if ( contactDetailsType === 'domain' ) {
+		if ( contactDetailsType === 'domain' || contactDetailsType === 'tax' ) {
 			const validationResult = await getDomainValidationResult(
 				responseCart.products,
 				contactInfo
@@ -267,7 +267,7 @@ export default function WPCheckout( {
 			}
 		}
 
-		if ( contactDetailsType === 'domain' ) {
+		if ( contactDetailsType === 'domain' || contactDetailsType === 'tax' ) {
 			const validationResult = await getDomainValidationResult(
 				responseCart.products,
 				contactInfo
