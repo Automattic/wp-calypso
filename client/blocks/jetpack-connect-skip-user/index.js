@@ -36,7 +36,11 @@ class JetpackConnectSkipUser extends Component {
 
 				<p>Jump in and start using Jetpack right away.</p>
 				<p>
-					<a target="_blank" href="https://jetpack.com/support/features/" rel="noreferrer">
+					<a
+						target="_blank"
+						href="https://jetpack.com/support/why-the-wordpress-com-connection-is-important-for-jetpack/"
+						rel="noreferrer"
+					>
 						Some features
 					</a>
 					&nbsp;will not be available, but you'll be able to connect your user account at any point
