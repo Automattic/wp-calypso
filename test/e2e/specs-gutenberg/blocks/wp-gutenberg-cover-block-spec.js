@@ -3,6 +3,7 @@
  */
 import assert from 'assert';
 import config from 'config';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -10,15 +11,16 @@ import config from 'config';
 import LoginFlow from '../../lib/flows/login-flow.js';
 
 import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
+import GutenbergBlockToolbarComponent from '../../lib/gutenberg/gutenberg-block-toolbar-component';
 import PostPreviewComponent from '../../lib/components/post-preview-component';
 import ViewPostPage from '../../lib/pages/view-post-page.js';
 import MediaBlockFlows from '../../lib/gutenberg/blocks/shared-block-flows/media-block-flows';
+import { CoverBlockComponent } from '../../lib/gutenberg/blocks';
 
 import * as driverManager from '../../lib/driver-manager';
 import * as dataHelper from '../../lib/data-helper';
 import * as mediaHelper from '../../lib/media-helper';
 import * as driverHelper from '../../lib/driver-helper';
-import CoverBlockComponent from '../../lib/gutenberg/blocks/cover-block-component.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -57,8 +59,9 @@ describe( `[${ host }] Calypso Gutenberg Editor: Cover Block (${ screenSize })`,
 
 		step( 'Can upload an image to the Cover', async function () {
 			const coverComponent = await CoverBlockComponent.Expect( driver, coverBlockId );
-			const mediaBlockFlows = new MediaBlockFlows( driver, coverComponent );
-			await mediaBlockFlows.uploadImage( imageFileDetails );
+			const mediaBlockFlows = new MediaBlockFlows( driver );
+			await mediaBlockFlows.uploadImage( coverComponent.blockID, imageFileDetails );
+
 			const imageSrcInEditor = await coverComponent.getImageSrc();
 			assert(
 				imageSrcInEditor.includes( imageFileDetails.fileName ),
@@ -70,6 +73,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Cover Block (${ screenSize })`,
 			const editorComponent = await GutenbergEditorComponent.Expect( driver );
 			const coverComponent = await CoverBlockComponent.Expect( driver, coverBlockId );
 			await coverComponent.setTitleText( coverTitleText );
+
 			const editorContent = await editorComponent.getContent();
 			assert(
 				editorContent.includes( coverTitleText ),
@@ -119,6 +123,72 @@ describe( `[${ host }] Calypso Gutenberg Editor: Cover Block (${ screenSize })`,
 			if ( imageFileDetails ) {
 				await mediaHelper.deleteFile( imageFileDetails );
 			}
+			await driverHelper.acceptAlertIfPresent( driver );
+		} );
+	} );
+
+	describe( 'Other ways to set Cover background @parallel', function () {
+		let coverBlockId;
+		let imageFileDetails;
+
+		before( async function () {
+			imageFileDetails = await mediaHelper.createFile();
+		} );
+
+		step( 'Can log in', async function () {
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
+			await this.loginFlow.loginAndStartNewPost( null, true );
+		} );
+
+		step( 'Can add Cover to post', async function () {
+			const editorComponent = await GutenbergEditorComponent.Expect( driver );
+			coverBlockId = await editorComponent.addBlock( CoverBlockComponent.blockTitle );
+		} );
+
+		step( 'Can use initial swatches buttons to set a background color', async function () {
+			const coverComponent = await CoverBlockComponent.Expect( driver, coverBlockId );
+			const primaryColorPosition = 1;
+			await coverComponent.selectInitialBackgroundColorByNthPosition( primaryColorPosition );
+			// Make sure it actually sets a background by waiting until block has updated class
+			await driverHelper.waitUntilLocatedAndVisible(
+				driver,
+				By.css( `${ coverComponent.blockID }.has-primary-background-color` )
+			);
+		} );
+
+		step( 'Can use Add Media toolbar button to launch Media Library', async function () {
+			const coverComponent = await CoverBlockComponent.Expect( driver, coverBlockId );
+			await coverComponent.focusBlock();
+
+			const blockToolbarComponent = await GutenbergBlockToolbarComponent.Expect( driver );
+			await blockToolbarComponent.clickToolbarButtonByText( 'Add Media' );
+			await blockToolbarComponent.selectDropdownOptionByText( 'Open Media Library' );
+
+			const mediaFlows = new MediaBlockFlows( driver );
+			// make sure it opens! If it doesn't, we want this step to fail.
+			await mediaFlows.waitForMediaLibraryDialog();
+		} );
+
+		step( 'Can use Media Library to insert background image', async function () {
+			// While we're in the top iframe, lets do the insert
+			const mediaFlows = new MediaBlockFlows( driver );
+			await mediaFlows.uploadAndSelectImageInMediaLibraryDialog( imageFileDetails );
+
+			// We should be returned to the editor iFrame by this point, but explicitly adding another to be safe
+			await GutenbergEditorComponent.Expect( driver );
+			const coverComponent = await CoverBlockComponent.Expect( driver, coverBlockId );
+			const coverImageSrc = await coverComponent.getImageSrc();
+			assert(
+				coverImageSrc.includes( imageFileDetails.fileName ),
+				'The inserted image did not have expected file name in src attribute'
+			);
+		} );
+
+		after( async function () {
+			if ( imageFileDetails ) {
+				await mediaHelper.deleteFile( imageFileDetails );
+			}
+
 			await driverHelper.acceptAlertIfPresent( driver );
 		} );
 	} );

@@ -3,6 +3,7 @@
  */
 import assert from 'assert';
 import config from 'config';
+import { By, Key } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -10,12 +11,14 @@ import config from 'config';
 import LoginFlow from '../../lib/flows/login-flow.js';
 
 import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
-import PullquoteBlockComponent from '../../lib/gutenberg/blocks/pullquote-block-component';
+import GutenbergBlockToolbarComponent from '../../lib/gutenberg/gutenberg-block-toolbar-component';
 import PostPreviewComponent from '../../lib/components/post-preview-component';
 import ViewPostPage from '../../lib/pages/view-post-page.js';
+import { PullquoteBlockComponent } from '../../lib/gutenberg/blocks';
 
 import * as driverManager from '../../lib/driver-manager';
 import * as dataHelper from '../../lib/data-helper';
+import * as driverHelper from '../../lib/driver-helper';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -104,6 +107,89 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pullquote Block (${ screenSize 
 			assert(
 				postContent.includes( citationText ),
 				'The citation text was not found in the published post'
+			);
+		} );
+	} );
+
+	describe( 'Block transforms to and from Pullquote', function () {
+		// This block ID will persist across transforms and be re-used in the block element each time
+		let blockId;
+		const quoteText = 'Dude, I never said half the things that people attribute to my name.';
+		const citationText = 'Mark Twain';
+
+		step( 'Can log in', async function () {
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
+			await this.loginFlow.loginAndStartNewPost( null, true );
+		} );
+
+		step( 'Can add text to Paragraph', async function () {
+			const editorComponent = await GutenbergEditorComponent.Expect( driver );
+			await editorComponent.enterText( quoteText );
+		} );
+
+		step( 'Can transform Paragraph to Pullquote', async function () {
+			const paragraphBlock = await driver.findElement(
+				By.css( `p[aria-label='Paragraph block']` )
+			);
+			blockId = await paragraphBlock.getAttribute( 'id' );
+
+			// Getting the toolbar to show up after typing text is surprisingly difficult!
+			// The simplest, stablest method is to tab the cursor out, then refocus the block.
+			const actions = driver.actions();
+			await actions.keyDown( Key.TAB ).keyUp( Key.TAB ).perform();
+			await driverHelper.clickWhenClickable( driver, By.css( `#${ blockId }` ) );
+
+			const blockToolbarComponent = await GutenbergBlockToolbarComponent.Expect( driver );
+			await blockToolbarComponent.transformBlockToNewType( 'pullquote' );
+
+			// we can't just look at block ID, because it actually stays the same between transforms!
+			// so specifically, we want to make sure a Paragraph block with that ID does not exist anymore
+			await driverHelper.waitTillNotPresent(
+				driver,
+				By.css( `p#${ blockId }.wp-block-paragraph` )
+			);
+		} );
+
+		step( 'Transformed Pullquote has the text as its quote text', async function () {
+			const pullquoteBlockComponent = await PullquoteBlockComponent.Expect( driver, blockId );
+			assert(
+				( await pullquoteBlockComponent.getQuoteText() ).includes( quoteText ),
+				'Text from Paragraph did not end up as Pullquote quote text'
+			);
+		} );
+
+		step( 'Can add citation to new transformed Pullquote', async function () {
+			const pullquoteBlockComponent = await PullquoteBlockComponent.Expect( driver, blockId );
+			await pullquoteBlockComponent.setCitation( citationText );
+		} );
+
+		step( 'Can transform the Pullquote back into Paragraph block(s)', async function () {
+			const pullquoteBlockComponent = await PullquoteBlockComponent.Expect( driver, blockId );
+
+			// Just like above, having just entered text here can block the toolbar from appearing.
+			// Using the same sequence of events to clear cursor and refocus the block.
+			const actions = driver.actions();
+			await actions.keyDown( Key.TAB ).keyUp( Key.TAB ).perform();
+			await pullquoteBlockComponent.focusBlock();
+
+			const blockToolbarComponent = await GutenbergBlockToolbarComponent.Expect( driver );
+			await blockToolbarComponent.transformBlockToNewType( 'paragraph' );
+
+			// once again, the block ID will persist!
+			// so we must be granular and look for a Pullquote specifically to disappear
+			await driverHelper.waitTillNotPresent( driver, By.css( `${ blockId }.wp-block-pullquote` ) );
+		} );
+
+		step( 'Both the quote and citation text are kept across transform', async function () {
+			const editorComponent = await GutenbergEditorComponent.Expect( driver );
+			const editorContent = await editorComponent.getContent();
+			assert(
+				editorContent.includes( quoteText ),
+				'Quote text could not be found after transform to Paragraph'
+			);
+			assert(
+				editorContent.includes( citationText ),
+				'Citation text could not be found after transform to Paragraph'
 			);
 		} );
 	} );
