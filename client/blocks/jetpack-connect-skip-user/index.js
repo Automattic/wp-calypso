@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -32,7 +33,7 @@ class JetpackConnectSkipUser extends Component {
 	render() {
 		return (
 			<div className="jetpack-connect-skip-user__userless-form">
-				<h2>Or start using Jetpack now</h2>
+				<h2>{ this.props.translate( 'Or start using Jetpack now' ) }</h2>
 
 				<p>Jump in and start using Jetpack right away.</p>
 				<p>
@@ -41,18 +42,20 @@ class JetpackConnectSkipUser extends Component {
 						href="https://jetpack.com/support/why-the-wordpress-com-connection-is-important-for-jetpack/"
 						rel="noreferrer"
 					>
-						Some features
+						{ this.props.translate( 'Some features' ) }
 					</a>
-					&nbsp;will not be available, but you'll be able to connect your user account at any point
-					to unlock them.
+					&nbsp;
+					{ this.props.translate(
+						"will not be available, but you'll be able to connect your user account at any point to unlock them."
+					) }
 				</p>
 
 				<a className="jetpack-connect-skip-user__continue-link" href={ this.getPlansURL() }>
-					Continue without user account
+					{ this.props.translate( 'Continue without user account' ) }
 				</a>
 			</div>
 		);
 	}
 }
 
-export default JetpackConnectSkipUser;
+export default localize( JetpackConnectSkipUser );
