@@ -37,7 +37,7 @@ class JetpackConnectSkipUser extends Component {
 			<div className="jetpack-connect-skip-user__userless-form">
 				<h2>{ translate( 'Or start using Jetpack now' ) }</h2>
 
-				<p>Jump in and start using Jetpack right away.</p>
+				<p>{ translate( 'Jump in and start using Jetpack right away.' ) }</p>
 				<p>
 					<a
 						target="_blank"
