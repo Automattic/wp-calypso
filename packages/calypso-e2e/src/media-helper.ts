@@ -16,6 +16,18 @@ export function getScreenshotDir(): string {
 }
 
 /**
+ * Returns the video save directory.
+ *
+ * @returns {string} Absolute path to the directory.
+ */
+export function getVideoDir(): string {
+	return path.resolve(
+		process.env.TEMP_ASSET_PATH || path.join( __dirname, '..' ),
+		process.env.VIDEODIR || 'videos'
+	);
+}
+
+/**
  * Returns the current date as a time stamp.
  *
  * @returns {string} Date represented as a timestamp.
