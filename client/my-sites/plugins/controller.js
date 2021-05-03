@@ -18,7 +18,7 @@ import PluginBrowser from './plugins-browser';
 import PluginUpload from './plugin-upload';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
-import MarketplaceDomainUpsell from './marketplace/marketplace-domain-upsell';
+import AsyncLoad from 'calypso/components/async-load';
 
 /**
  * Module variables
@@ -207,6 +207,8 @@ export function scrollTopIfNoHash( context, next ) {
 }
 
 export function renderDomainsPage( context, next ) {
-	context.primary = <MarketplaceDomainUpsell />;
+	context.primary = (
+		<AsyncLoad require="calypso/my-sites/plugins/marketplace/marketplace-domain-upsell" />
+	);
 	next();
 }
