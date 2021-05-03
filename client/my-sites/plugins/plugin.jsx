@@ -258,7 +258,7 @@ class SinglePlugin extends React.Component {
 	}
 
 	render() {
-		const { selectedSite, siteIds, sitesWithPlugin } = this.props;
+		const { selectedSite, siteIds, sitesWithPlugin, translate } = this.props;
 		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
 			return <NoPermissionsError title={ this.getPageTitle() } />;
 		}
@@ -306,7 +306,7 @@ class SinglePlugin extends React.Component {
 					) }
 					{ this.renderSitesList( plugin ) }
 
-					<MarketplacePluginUpsell />
+					<MarketplacePluginUpsell translate={ translate } />
 				</div>
 			</MainComponent>
 		);
