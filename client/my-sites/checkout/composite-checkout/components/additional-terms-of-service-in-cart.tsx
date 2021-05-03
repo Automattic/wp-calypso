@@ -74,14 +74,14 @@ function getMessageForTermsOfServiceRecord(
 			if (
 				( locale === 'en' ||
 					i18nCalypso.hasTranslation(
-						'The promotional period for your subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will begin charging your payment method (PAYPAL %(email)s) the regular subscription price of %(renewalPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionlink}}manage your subscription {{/manageSubscriptionlink}} at any time'
+						'The promotional period for your subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will begin charging your payment method (PAYPAL %(email)s) the regular subscription price of %(renewalPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionlink}}manage your subscription {{/manageSubscriptionlink}} at any time.'
 					) ) &&
 				args.subscription_start_date &&
 				args.subscription_expiry_date &&
 				args.subscription_auto_renew_date
 			) {
 				return translate(
-					'The promotional period for your subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will begin charging your payment method (PAYPAL %(email)s) the regular subscription price of %(renewalPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionlink}}manage your subscription {{/manageSubscriptionlink}} at any time',
+					'The promotional period for your subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will begin charging your payment method (PAYPAL %(email)s) the regular subscription price of %(renewalPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionlink}}manage your subscription {{/manageSubscriptionlink}} at any time.',
 					{
 						args: {
 							startDate: moment( args.subscription_start_date ).format( 'll' ),
@@ -136,14 +136,14 @@ function getMessageForTermsOfServiceRecord(
 			if (
 				( locale === 'en' ||
 					i18nCalypso.hasTranslation(
-						'The promotional period for your subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will begin charging your payment method (PAYPAL %(email)s) the regular subscription price of %(renewalPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionlink}}manage your subscription {{/manageSubscriptionlink}} at any time'
+						'The promotional period for your subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will begin charging your payment method (PAYPAL %(email)s) the regular subscription price of %(renewalPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionlink}}manage your subscription {{/manageSubscriptionlink}} at any time.'
 					) ) &&
 				args.subscription_start_date &&
 				args.subscription_expiry_date &&
 				args.subscription_auto_renew_date
 			) {
 				return translate(
-					'The promotional period for your subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will begin charging your payment method (%(cardType)s ****%(cardLast4)s) the regular subscription price of %(renewalPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionlink}}manage your subscription {{/manageSubscriptionlink}} at any time',
+					'The promotional period for your subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will begin charging your payment method (%(cardType)s ****%(cardLast4)s) the regular subscription price of %(renewalPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionlink}}manage your subscription {{/manageSubscriptionlink}} at any time.',
 					{
 						args: {
 							startDate: moment( args.subscription_start_date ).format( 'll' ),
