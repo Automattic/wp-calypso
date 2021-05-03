@@ -7,7 +7,6 @@ const sendChannels = [
 	'get-settings',
 	'log',
 	'request-site-response',
-	'unread-notices-count',
 	'user-auth',
 	'user-login-status',
 	'view-post-clicked',

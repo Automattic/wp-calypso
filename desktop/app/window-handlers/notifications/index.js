@@ -2,7 +2,7 @@
  * External Dependencies
  */
 const { debounce } = require( 'lodash' );
-const { ipcMain: ipc, Notification } = require( 'electron' );
+const { app, ipcMain: ipc, Notification } = require( 'electron' );
 const { promisify } = require( 'util' ); // eslint-disable-line import/no-nodejs-modules
 
 /**
@@ -23,14 +23,22 @@ const webBase = Config.baseURL();
  */
 const delay = promisify( setTimeout );
 
+// Updates the notification badge count. If count is not provided, the function
+// will increment the count from the previous value.
 function updateNotificationBadge( count ) {
 	const badgeEnabled = Settings.getSetting( 'notification-badge' );
 	if ( ! badgeEnabled ) {
 		return;
 	}
 
-	const bounceEnabled = Settings.getSetting( 'notification-bounce' );
+	if ( Platform.isOSX() || Platform.isLinux() ) {
+		if ( ! count ) {
+			count = app.getBadgeCount();
+			count = count + 1;
+		}
+	}
 
+	const bounceEnabled = Settings.getSetting( 'notification-bounce' );
 	if ( count > 0 ) {
 		Platform.showNotificationsBadge( count, bounceEnabled );
 	} else {
@@ -39,11 +47,9 @@ function updateNotificationBadge( count ) {
 }
 
 module.exports = function ( mainWindow ) {
-	ipc.on( 'unread-notices-count', function ( _, count ) {
-		log.info( 'Notification count received: ' + count );
-
-		updateNotificationBadge( count );
-	} );
+	// Whenever the application boots, clear the notification badge count.
+	// FIXME: Refine this when the Desktop app has backend support for unread notifications count.
+	updateNotificationBadge( 0 );
 
 	ipc.on( 'preferences-changed-notification-badge', function ( _, enabled ) {
 		if ( enabled ) {
@@ -69,6 +75,9 @@ module.exports = function ( mainWindow ) {
 
 	ViewModel.on( 'notification', function ( notification ) {
 		log.info( 'Received notification: ', notification );
+
+		// Increment the badge count when new notification is received.
+		updateNotificationBadge();
 
 		if ( ! Settings.getSetting( 'notifications' ) ) {
 			log.info( 'Notifications disabled!' );
