@@ -126,8 +126,8 @@ function createTransactionEndpointTaxFromResponseCartTax(
 		: undefined;
 	return {
 		location: {
-			country_code,
-			postal_code: formattedPostalCode,
+			...( country_code ? { country_code } : {} ),
+			...( formattedPostalCode ? { postal_code: formattedPostalCode } : {} ),
 		},
 	};
 }
