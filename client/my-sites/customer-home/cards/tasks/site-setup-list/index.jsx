@@ -22,7 +22,6 @@ import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/curren
 import getChecklistTaskUrls from 'calypso/state/selectors/get-checklist-task-urls';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import getMenusUrl from 'calypso/state/selectors/get-menus-url';
 import { getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
 import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -106,7 +105,6 @@ const SiteSetupList = ( {
 	firstIncompleteTask,
 	isEmailUnverified,
 	isPodcastingSite,
-	menusUrl,
 	siteId,
 	siteSlug,
 	tasks,
@@ -176,7 +174,6 @@ const SiteSetupList = ( {
 				isDomainUnverified,
 				isEmailUnverified,
 				isPodcastingSite,
-				menusUrl,
 				siteId,
 				siteSlug,
 				taskUrls,
@@ -192,7 +189,6 @@ const SiteSetupList = ( {
 		isDomainUnverified,
 		isEmailUnverified,
 		isPodcastingSite,
-		menusUrl,
 		siteId,
 		siteSlug,
 		tasks,
@@ -328,7 +324,6 @@ export default connect( ( state ) => {
 		firstIncompleteTask: taskList.getFirstIncompleteTask(),
 		isEmailUnverified: ! isCurrentUserEmailVerified( state ),
 		isPodcastingSite: !! getSiteOption( state, siteId, 'anchor_podcast' ),
-		menusUrl: getMenusUrl( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 		tasks: taskList.getAll(),

@@ -7,11 +7,9 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { verifyEmail } from 'calypso/state/current-user/email-verification/actions';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 
@@ -55,7 +53,6 @@ export const getTask = (
 		isDomainUnverified,
 		isEmailUnverified,
 		isPodcastingSite,
-		menusUrl,
 		siteId,
 		siteSlug,
 		taskUrls,
@@ -178,32 +175,6 @@ export const getTask = (
 				),
 				actionText: translate( 'Edit homepage' ),
 				actionUrl: taskUrls?.front_page_updated,
-			};
-			break;
-		case CHECKLIST_KNOWN_TASKS.SITE_MENU_UPDATED:
-			taskData = {
-				timing: 10,
-				title: translate( 'Edit the site menu' ),
-				description: (
-					<>
-						{ translate(
-							"Building an effective navigation menu makes it easier for someone to find what they're looking for and improve search engine rankings."
-						) }{ ' ' }
-						<InlineSupportLink
-							supportPostId={ 59580 }
-							supportLink={ localizeUrl( 'https://wordpress.com/support/menus/' ) }
-							showIcon={ false }
-							tracksEvent="calypso_customer_home_menus_support_page_view"
-							statsGroup="calypso_customer_home"
-							statsName="menus_view_tutorial"
-						>
-							{ translate( 'View tutorial.' ) }
-						</InlineSupportLink>
-					</>
-				),
-				actionText: translate( 'Add a menu' ),
-				isSkippable: true,
-				actionUrl: menusUrl,
 			};
 			break;
 		case CHECKLIST_KNOWN_TASKS.SITE_THEME_SELECTED:
