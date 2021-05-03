@@ -105,7 +105,7 @@ module.exports = function ( mainWindow ) {
 				if ( navigate ) {
 					// if we have a specific URL, then navigate Calypso there
 					log.info( `Navigating user to URL: ${ navigate }` );
-					if ( isCalypso() ) {
+					if ( isCalypso( mainWindow ) ) {
 						log.info( `Navigating to '${ navigate }'` );
 						mainWindow.webContents.send( 'navigate', navigate );
 					} else {
@@ -114,7 +114,7 @@ module.exports = function ( mainWindow ) {
 					}
 				} else {
 					// else just display the notifications panel
-					if ( isCalypso() ) {
+					if ( isCalypso( mainWindow ) ) {
 						mainWindow.webContents.send( 'navigate', '/' );
 					} else {
 						mainWindow.webContents.loadURL( webBase );
