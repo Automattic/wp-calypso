@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import React, { ComponentType } from 'react';
+import React from 'react';
 import debugModule from 'debug';
 import page from 'page';
 import i18n from 'i18n-calypso';
-import { Subtract } from 'utility-types';
+import { createHigherOrderComponent } from '@wordpress/compose';
 
 /**
  * Module variables
@@ -82,17 +82,13 @@ export interface ProtectedFormProps {
 /*
  * HOC that passes markChanged/markSaved props to the wrapped component instance
  */
-export const protectForm = < P extends ProtectedFormProps >(
-	WrappedComponent: ComponentType< P >
-): ComponentType< Subtract< P, ProtectedFormProps > > => (
-	props: Subtract< P, ProtectedFormProps >
-) => {
-	const { markChanged, markSaved } = useProtectForm();
+export const protectForm = createHigherOrderComponent( ( Component ) => {
+	return ( props ) => {
+		const { markChanged, markSaved } = useProtectForm();
 
-	return (
-		<WrappedComponent { ...( props as P ) } markChanged={ markChanged } markSaved={ markSaved } />
-	);
-};
+		return <Component { ...props } markChanged={ markChanged } markSaved={ markSaved } />;
+	};
+}, 'protectForm' );
 
 /*
  * Declarative variant that takes a 'isChanged' prop.
