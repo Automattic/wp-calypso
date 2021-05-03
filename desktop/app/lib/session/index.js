@@ -47,6 +47,7 @@ class SessionManager extends EventEmitter {
 		}
 
 		const wp_api = await getCookie( window, null, 'wp_api' );
+		// FIXME: For some reason unable to filter this cookie by domain 'https://public-api.wordpress.com'
 		if ( this.loggedIn && wp_api ) {
 			await keychainWrite( 'wp_api', decodeURIComponent( wp_api.value ) );
 		}
@@ -88,7 +89,7 @@ class SessionManager extends EventEmitter {
 					}
 
 					// Listen for wp_api cookie (Notifications REST API)
-					// if ( cookie.name === 'wp_api' && cookie.domain === 'https://public-api.wordpress.com' ) {
+					// FIXME: For some reason unable to filter this cookie by domain 'https://public-api.wordpress.com'
 					if ( cookie.name === 'wp_api' ) {
 						if ( this.loggedIn ) {
 							log.info( 'wp_api: ', cookie.value, cookie.domain );
