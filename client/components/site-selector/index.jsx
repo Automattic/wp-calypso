@@ -489,15 +489,13 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 			const urlType = determineUrlType( base );
 
 			// Get URL parts and modify the path.
-			const { protocol, hostname, port, pathname: urlPathname, search } = getUrlParts( base );
+			const { origin, pathname: urlPathname, search } = getUrlParts( base );
 			const newPathname = `${ urlPathname }/${ site.slug }`;
 
 			try {
 				// Get an absolute URL from the original URL, the modified path, and some defaults.
 				const absoluteUrl = getUrlFromParts( {
-					protocol: protocol || window.location.protocol,
-					hostname: hostname || window.location.hostname,
-					port: port || window.location.port,
+					origin: origin || window.location.origin,
 					pathname: newPathname,
 					search,
 				} );

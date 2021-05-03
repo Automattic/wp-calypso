@@ -13,11 +13,7 @@
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"facebook_app_id": "2373049596",
 	"rebrand_cities_prefix": "rebrandcitiessite",
-	"livechat_support_locales": [
-		"en",
-		"es",
-		"pt-br"
-	],
+	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
 		"ad-tracking": true,
 		"async-payments": false,
@@ -69,7 +65,7 @@
 		"jetpack/personal-plan": false,
 		"jetpack/magic-link-signup": true,
 		"jetpack/userless-checkout": false,
-		"jetpack/redirect-legacy-plans": false,
+		"jetpack/redirect-legacy-plans": true,
 		"jitms": true,
 		"lasagna": true,
 		"layout/app-banner": true,

@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-import { includes } from 'lodash';
-import { JETPACK_BACKUP_PRODUCTS } from './index';
+import { JETPACK_BACKUP_PRODUCTS } from './constants';
 
 export function isJetpackBackupSlug( productSlug ) {
-	return includes( JETPACK_BACKUP_PRODUCTS, productSlug );
+	return JETPACK_BACKUP_PRODUCTS.includes( productSlug );
 }

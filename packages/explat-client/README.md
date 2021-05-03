@@ -13,7 +13,7 @@ This is a standalone client for Automattic's ExPlat, allowing use of ExPlat in a
 - Dep injects outside parts so it can be fitted to any codebase.
 - Doesn't assume much of its environment.
 - No external dependencies or libs need.
-- Stores state internally and simply.
+- Stores state in LocalStorage if available otherwise in memory.
 
 ## Type: `ExperimentAssignment`
 

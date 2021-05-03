@@ -5,18 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { Component, createElement } from 'react';
 import { connect } from 'react-redux';
-import {
-	get,
-	deburr,
-	kebabCase,
-	pick,
-	head,
-	includes,
-	isEqual,
-	isEmpty,
-	camelCase,
-	identity,
-} from 'lodash';
+import { get, deburr, kebabCase, pick, head, includes, isEqual, isEmpty, camelCase } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -103,7 +92,6 @@ export class ContactDetailsFormFields extends Component {
 		needsOnlyGoogleAppsDetails: false,
 		needsAlternateEmailForGSuite: false,
 		hasCountryStates: false,
-		translate: identity,
 		userCountryCode: 'US',
 		shouldForceRenderOnPropChange: false,
 	};

@@ -445,7 +445,11 @@ function processItemCart(
 function addPrivacyProtectionIfSupported( item, state ) {
 	const { product_slug: productSlug } = item;
 	const productsList = getProductsList( state );
-	if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
+	if (
+		productSlug &&
+		productsList &&
+		supportsPrivacyProtectionPurchase( productSlug, productsList )
+	) {
 		return updatePrivacyForDomain( item, true );
 	}
 

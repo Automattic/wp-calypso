@@ -6,7 +6,6 @@
  */
 import React from 'react';
 import { shallow } from 'enzyme';
-import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +14,7 @@ import { JetpackConnectNotices } from '../jetpack-connect-notices';
 
 const terminalErrorNoticeType = 'siteBlocked';
 const nonTerminalErrorNoticeType = 'retryAuth';
-const requiredProps = { translate: identity };
+const requiredProps = { translate: ( string ) => string };
 
 describe( 'JetpackConnectNotices', () => {
 	test( 'Should render notice', () => {

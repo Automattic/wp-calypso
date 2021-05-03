@@ -11,7 +11,3 @@ export function isTreatmentOneClickTest(): boolean {
 export function isTreatmentPlansReorderTest( state: AppState ): boolean {
 	return 'treatment' === getCurrentUser( state )?.meta.plans_reorder_abtest_variation;
 }
-
-export function isTreatmentDifmUpsellTest(): boolean {
-	return false;
-}

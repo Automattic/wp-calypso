@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
 import DesignPicker from '@automattic/design-picker';
 
 /**
@@ -31,7 +30,6 @@ class DesignPickerStep extends Component {
 
 	static defaultProps = {
 		useHeadstart: true,
-		translate: identity,
 	};
 
 	pickDesign = ( selectedDesign ) => {
@@ -54,7 +52,7 @@ class DesignPickerStep extends Component {
 
 	renderDesignPicker() {
 		// props.locale obtained via `localize` HoC
-		return <DesignPicker locale={ this.props.locale } onSelect={ this.pickDesign } />;
+		return <DesignPicker theme="dark" locale={ this.props.locale } onSelect={ this.pickDesign } />;
 	}
 
 	headerText() {

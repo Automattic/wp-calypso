@@ -227,12 +227,25 @@ export const getHighestAnnualDiscount = createSelector(
  * Product UI utils.
  */
 
-export function productButtonLabel(
-	product: SelectorProduct,
-	isOwned: boolean,
-	isUpgradeableToYearly: boolean,
-	currentPlan?: SitePlan | null
-): TranslateResult {
+interface productButtonLabelProps {
+	product: SelectorProduct;
+	isOwned: boolean;
+	isUpgradeableToYearly: boolean;
+	isDeprecated: boolean;
+	currentPlan?: SitePlan | null;
+}
+
+export function productButtonLabel( {
+	product,
+	isOwned,
+	isUpgradeableToYearly,
+	isDeprecated,
+	currentPlan,
+}: productButtonLabelProps ): TranslateResult {
+	if ( isDeprecated ) {
+		return translate( 'No longer available' );
+	}
+
 	if ( isUpgradeableToYearly ) {
 		return translate( 'Upgrade to Yearly' );
 	}
@@ -263,7 +276,10 @@ export function slugIsFeaturedProduct( productSlug: string ): boolean {
 	return FEATURED_PRODUCTS.includes( productSlug );
 }
 
-function getPriceTierForUnits( tiers: PriceTierEntry[], units: number ): PriceTierEntry | null {
+export function getPriceTierForUnits(
+	tiers: PriceTierEntry[],
+	units: number
+): PriceTierEntry | null {
 	const firstUnboundedTier = tiers.find( ( tier ) => ! tier.maximum_units );
 	let matchingTier = tiers.find( ( tier ) => {
 		if ( ! tier.maximum_units ) {
@@ -735,3 +751,30 @@ export const getJetpackDescriptionWithOptions = (
 		  } )
 		: product.description;
 };
+
+/**
+ * Return the slug of a highlighted product if the given slug is Jetpack product
+ * slug, otherwise, return null.
+ *
+ * @param {string} productSlug the slug of a Jetpack product
+ *
+ * @returns {[string, string] | null} the monthly and yearly slug of a supported Jetpack product
+ */
+export function getHighlightedProduct( productSlug?: string ): [ string, string ] | null {
+	if ( ! productSlug ) {
+		return null;
+	}
+
+	// If neither of these methods return a slug, it means that the `productSlug`
+	// is not really a Jetpack product slug.
+	const yearlySlug = getYearlySlugFromMonthly( productSlug );
+	const monthlySlug = getMonthlySlugFromYearly( productSlug );
+
+	if ( monthlySlug ) {
+		return [ monthlySlug, productSlug ];
+	} else if ( yearlySlug ) {
+		return [ productSlug, yearlySlug ];
+	}
+
+	return null;
+}

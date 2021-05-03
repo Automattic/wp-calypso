@@ -14,7 +14,6 @@ import ProfileGravatar from 'calypso/me/profile-gravatar';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
-import SidebarHeading from 'calypso/layout/sidebar/heading';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarRegion from 'calypso/layout/sidebar/region';
@@ -88,10 +87,6 @@ class MeSidebar extends React.Component {
 					</div>
 
 					<SidebarMenu>
-						<SidebarHeading>
-							<span className="sidebar__informative-title">{ translate( 'Profile' ) }</span>
-						</SidebarHeading>
-
 						<SidebarItem
 							selected={ itemLinkMatches( '', path ) }
 							link={ '/me' }
@@ -159,12 +154,6 @@ class MeSidebar extends React.Component {
 							onNavigate={ this.onNavigate }
 							preloadSectionName="site-blocks"
 						/>
-					</SidebarMenu>
-
-					<SidebarMenu>
-						<SidebarHeading>
-							<span className="sidebar__informative-title">{ translate( 'Special' ) }</span>
-						</SidebarHeading>
 
 						<SidebarItem
 							selected={ itemLinkMatches( '/get-apps', path ) }

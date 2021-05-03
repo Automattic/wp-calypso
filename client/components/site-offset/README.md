@@ -39,7 +39,7 @@ in `withApplySiteOffset`. It's just a different implementation of the same conce
 
 ```jsx
 import React from 'react';
-import { useApplySiteOffset } from 'calypso/components/localized-moment';
+import { useApplySiteOffset } from 'calypso/components/site-offset';
 
 export default function Label( { date } ) {
 	const applySiteOffset = useApplySiteOffset();

@@ -3,7 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { clone, difference, each, forEach, identity, last, map, some, take } from 'lodash';
+import { clone, difference, each, forEach, last, map, some, take } from 'lodash';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 
@@ -59,7 +59,7 @@ class TokenField extends PureComponent {
 		maxSuggestions: 100,
 		value: Object.freeze( [] ),
 		placeholder: '',
-		displayTransform: identity,
+		displayTransform: ( token ) => token,
 		saveTransform: function ( token ) {
 			return token.trim();
 		},

@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -48,7 +47,6 @@ class SharingConnection extends Component {
 		recordGoogleEvent: () => {},
 		showDisconnect: false,
 		siteId: 0,
-		translate: identity,
 		userHasCaps: false,
 		userId: 0,
 		defaultServiceIcon: {

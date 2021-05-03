@@ -489,18 +489,11 @@ class Signup extends React.Component {
 	}
 
 	loginRedirectTo = ( path ) => {
-		let redirectTo;
-
 		if ( startsWith( path, 'https://' ) || startsWith( path, 'http://' ) ) {
 			return path;
 		}
 
-		redirectTo = window.location.protocol + '//' + window.location.hostname; // Don't force https because of local development
-
-		if ( window.location.port ) {
-			redirectTo += ':' + window.location.port;
-		}
-		return redirectTo + path;
+		return window.location.origin + path;
 	};
 
 	// `flowName` is an optional parameter used to redirect to another flow, i.e., from `main`
@@ -724,7 +717,7 @@ class Signup extends React.Component {
 
 		return (
 			<ProvideExperimentData
-				name="refined_reskin_v1"
+				name="refined_reskin_v2"
 				options={ { isEligible: 'onboarding' === this.props.flowName } }
 			>
 				{ ( isLoading, experimentAssignment ) => {

@@ -9,7 +9,7 @@ import config from 'config';
 import proxy from 'selenium-webdriver/proxy';
 import SauceLabs from 'saucelabs';
 import { times } from 'lodash';
-import { readFileSync } from 'fs';
+import { getChromeVersion } from '@testim/chrome-version';
 import * as remote from 'selenium-webdriver/remote';
 
 /**
@@ -84,8 +84,7 @@ export async function startBrowser( {
 	let driver;
 	let options;
 	let builder;
-	const chromeVersion = await readFileSync( './.chromedriver_version', 'utf8' ).trim();
-	const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ chromeVersion } Safari/537.36`;
+	const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ await getChromeVersion() } Safari/537.36`;
 	const pref = new webdriver.logging.Preferences();
 	pref.setLevel( webdriver.logging.Type.BROWSER, webdriver.logging.Level.ALL );
 	pref.setLevel( webdriver.logging.Type.PERFORMANCE, webdriver.logging.Level.ALL );

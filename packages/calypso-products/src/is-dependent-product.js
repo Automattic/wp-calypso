@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { assertValidProduct } from './utils/assert-valid-product';
 import { formatProduct } from './format-product';
 import { getDomain } from './get-domain';
 import { isDomainMapping } from './is-domain-mapping';
@@ -15,7 +14,7 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
-} from './index';
+} from './constants';
 
 const productDependencies = {
 	domain: {
@@ -51,7 +50,6 @@ export function isDependentProduct( product, dependentProduct, domainsWithPlansO
 	let isPlansOnlyDependent = false;
 
 	product = formatProduct( product );
-	assertValidProduct( product );
 
 	const slug = isDomainRegistration( product ) ? 'domain' : product.product_slug;
 	const dependentSlug = isDomainRegistration( dependentProduct )

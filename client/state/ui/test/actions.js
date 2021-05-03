@@ -9,7 +9,6 @@ import { expect } from 'chai';
 import {
 	navigate,
 	setAllSitesSelected,
-	setPreviewShowing,
 	setSection,
 	setSelectedSiteId,
 	toggleNotificationsPanel,
@@ -17,7 +16,6 @@ import {
 import {
 	NAVIGATE,
 	NOTIFICATIONS_PANEL_TOGGLE,
-	PREVIEW_IS_SHOWING,
 	SECTION_SET,
 	SELECTED_SITE_SET,
 } from 'calypso/state/action-types';
@@ -30,26 +28,6 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: SELECTED_SITE_SET,
 				siteId: null,
-			} );
-		} );
-	} );
-
-	describe( 'setPreviewShowing()', () => {
-		test( 'should return an action object where isShowing is true', () => {
-			const action = setPreviewShowing( true );
-
-			expect( action ).to.eql( {
-				type: PREVIEW_IS_SHOWING,
-				isShowing: true,
-			} );
-		} );
-
-		test( 'should return an action object where isShowing is false', () => {
-			const action = setPreviewShowing( false );
-
-			expect( action ).to.eql( {
-				type: PREVIEW_IS_SHOWING,
-				isShowing: false,
 			} );
 		} );
 	} );

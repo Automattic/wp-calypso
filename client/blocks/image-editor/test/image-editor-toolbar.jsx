@@ -7,7 +7,6 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { identity } from 'lodash';
 import React from 'react';
 
 /**
@@ -27,7 +26,9 @@ describe( 'ImageEditorToolbar', () => {
 	} );
 
 	beforeEach( () => {
-		wrapper = shallow( <ImageEditorToolbar { ...defaultProps } translate={ identity } /> );
+		wrapper = shallow(
+			<ImageEditorToolbar { ...defaultProps } translate={ ( string ) => string } />
+		);
 	} );
 
 	test( 'should not add `is-disabled` class to aspect ratio toolbar button by default', () => {

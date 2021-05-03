@@ -62,7 +62,6 @@ By design, `actionLog`'s reducer will react to all sorts of actions coming in th
 ```
 GUIDED_TOUR_UPDATE
 THEMES_RECEIVE
-PREVIEW_IS_SHOWING
 ROUTE_SET
 SITE_SETTINGS_RECEIVE
 ```

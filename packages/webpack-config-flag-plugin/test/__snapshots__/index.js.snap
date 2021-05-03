@@ -188,6 +188,7 @@ if ( true ) {
 }
 
 ;// CONCATENATED MODULE: ./named-import/config/wrong-path.js
+// eslint-disable-next-line import/named
 
 
 // Should NOT be replaced with true
@@ -314,6 +315,7 @@ if ( true ) {
 }
 
 ;// CONCATENATED MODULE: ./namespace-import/config/wrong-path.js
+/* eslint-disable import/namespace */
 
 
 // Should NOT be replaced with true

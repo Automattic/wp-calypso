@@ -154,6 +154,12 @@ module.exports = {
 					'@typescript-eslint/no-var-requires': 'off',
 					// REST API objects include underscores
 					'@typescript-eslint/camelcase': 'off',
+
+					// TypeScript compiler already takes care of these errors
+					'import/no-extraneous-dependencies': 'off',
+					'import/named': 'off',
+					'import/namespace': 'off',
+					'import/default': 'off',
 				},
 			}
 		),
@@ -375,6 +381,9 @@ module.exports = {
 
 		// Force packages to declare their dependencies
 		'import/no-extraneous-dependencies': 'error',
+		'import/named': 'error',
+		'import/namespace': 'error',
+		'import/default': 'error',
 
 		'wpcalypso/no-unsafe-wp-apis': [
 			'error',

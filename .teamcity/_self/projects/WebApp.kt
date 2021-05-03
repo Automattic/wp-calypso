@@ -54,6 +54,15 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				shopt -s globstar
 				set -x
 
+				# Chrome upgrade start
+				wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_90.0.4430.93-1_amd64.deb
+				sudo apt-get install -y ./google-chrome-stable_90.0.4430.93-1_amd64.deb
+				rm ./google-chrome-stable_90.0.4430.93-1_amd64.deb
+				cd test/e2e
+				npm install chromedriver --chromedriver-force-download --detect_chromedriver_version
+				cd ../..
+				# Chrome upgrade end
+
 				cd test/e2e
 				mkdir temp
 
@@ -219,6 +228,15 @@ object RunCalypsoE2eMobileTests : BuildType({
 			scriptContent = """
 				shopt -s globstar
 				set -x
+
+				# Chrome upgrade start
+				wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_90.0.4430.93-1_amd64.deb
+				sudo apt-get install -y ./google-chrome-stable_90.0.4430.93-1_amd64.deb
+				rm ./google-chrome-stable_90.0.4430.93-1_amd64.deb
+				cd test/e2e
+				npm install chromedriver --chromedriver-force-download --detect_chromedriver_version
+				cd ../..
+				# Chrome upgrade end
 
 				cd test/e2e
 				mkdir temp
@@ -412,11 +430,6 @@ object BuildDockerImage : BuildType({
 				}
 				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
 			}
-		}
-		vcsLabeling {
-			vcsRootId = "${Settings.WpCalypso.id}"
-			labelingPattern = "calypso-%build.number%"
-			successfulOnly = true
 		}
 	}
 })

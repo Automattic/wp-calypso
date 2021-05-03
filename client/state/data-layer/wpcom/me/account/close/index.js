@@ -43,7 +43,19 @@ export function receiveAccountCloseSuccess() {
 	return closeAccountSuccess();
 }
 
-export function receiveAccountCloseError() {
+export function receiveAccountCloseError( action, error ) {
+	if ( error.error === 'active-subscriptions' ) {
+		return errorNotice(
+			translate( 'This user account cannot be closed while it has active subscriptions.' )
+		);
+	}
+
+	if ( error.error === 'active-memberships' ) {
+		return errorNotice(
+			translate( 'This user account cannot be closed while it has active purchases.' )
+		);
+	}
+
 	return errorNotice(
 		translate( 'Sorry, there was a problem closing your account. Please contact support.' )
 	);

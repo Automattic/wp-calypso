@@ -6,14 +6,17 @@ import React from 'react';
 import { get, isEmpty } from 'lodash';
 import page from 'page';
 import debugFactory from 'debug';
+import { isJetpackLegacyItem } from '@automattic/calypso-products';
 
 /**
  * Internal Dependencies
  */
 import { getDomainOrProductFromContext } from './utils';
-import { JETPACK_LEGACY_PLANS } from '@automattic/calypso-products';
+import {
+	COMPARE_PLANS_QUERY_PARAM,
+	LEGACY_TO_RECOMMENDED_MAP,
+} from '../plans/jetpack-plans/plan-upgrade/constants';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -36,7 +39,6 @@ import UpsellNudge, {
 	BUSINESS_PLAN_UPGRADE_UPSELL,
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
-	DIFM_UPSELL,
 } from './upsell-nudge';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { TRUENAME_COUPONS } from 'calypso/lib/domains';
@@ -115,11 +117,16 @@ export function checkout( context, next ) {
 export function redirectJetpackLegacyPlans( context, next ) {
 	const product = getDomainOrProductFromContext( context );
 
-	if ( JETPACK_LEGACY_PLANS.includes( product ) ) {
+	if ( isJetpackLegacyItem( product ) ) {
 		const state = context.store.getState();
 		const selectedSite = getSelectedSite( state );
+		const recommendedItems = LEGACY_TO_RECOMMENDED_MAP[ product ].join( ',' );
 
-		page( ( isJetpackCloud() ? '/pricing/' : CALYPSO_PLANS_PAGE ) + ( selectedSite?.slug || '' ) );
+		page(
+			CALYPSO_PLANS_PAGE +
+				( selectedSite?.slug || '' ) +
+				`?${ COMPARE_PLANS_QUERY_PARAM }=${ product },${ recommendedItems }`
+		);
 
 		return;
 	}
@@ -230,8 +237,6 @@ export function upsellNudge( context, next ) {
 			default:
 				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
 		}
-	} else if ( context.path.includes( 'offer-difm' ) ) {
-		upsellType = DIFM_UPSELL;
 	}
 
 	setSectionMiddleware( { name: upsellType } )( context );

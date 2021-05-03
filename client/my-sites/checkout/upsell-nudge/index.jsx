@@ -41,7 +41,6 @@ import { ConciergeQuickstartSession } from './concierge-quickstart-session';
 import { ConciergeSupportSession } from './concierge-support-session';
 import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
 import { PremiumPlanUpgradeUpsell } from './premium-plan-upgrade-upsell';
-import { DifmUpsell } from './difm-upsell';
 import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
 import PurchaseModal from './purchase-modal';
 import Gridicon from 'calypso/components/gridicon';
@@ -68,7 +67,6 @@ export const CONCIERGE_QUICKSTART_SESSION = 'concierge-quickstart-session';
 export const CONCIERGE_SUPPORT_SESSION = 'concierge-support-session';
 export const PREMIUM_PLAN_UPGRADE_UPSELL = 'premium-plan-upgrade-upsell';
 export const BUSINESS_PLAN_UPGRADE_UPSELL = 'business-plan-upgrade-upsell';
-export const DIFM_UPSELL = 'difm-upsell';
 
 export class UpsellNudge extends React.Component {
 	static propTypes = {
@@ -236,19 +234,6 @@ export class UpsellNudge extends React.Component {
 						handleClickDecline={ this.handleClickDecline }
 					/>
 				);
-
-			case DIFM_UPSELL:
-				return (
-					<DifmUpsell
-						currencyCode={ currencyCode }
-						planRawPrice={ planRawPrice }
-						planDiscountedRawPrice={ planDiscountedRawPrice }
-						receiptId={ receiptId }
-						translate={ translate }
-						handleClickAccept={ this.handleClickAccept }
-						handleClickDecline={ this.handleClickDecline }
-					/>
-				);
 		}
 	}
 
@@ -302,11 +287,6 @@ export class UpsellNudge extends React.Component {
 				subdivisionCode: null,
 			} );
 			this.props.shoppingCartManager.replaceProductsInCart( [ this.props.product ] );
-			return;
-		}
-
-		if ( DIFM_UPSELL === upsellType ) {
-			page( '/me/difm-intake' );
 			return;
 		}
 

@@ -74,6 +74,7 @@ describe( 'index', () => {
 		userCanManageOptions: true,
 		successNotice: noop,
 		errorNotice: noop,
+		translate: ( string ) => string,
 	} );
 
 	function renderWithProps( props = defaultProps ) {

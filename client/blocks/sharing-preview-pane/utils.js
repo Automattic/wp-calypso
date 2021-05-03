@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-
-import { get, find, identity, trim } from 'lodash';
+import { get, find, trim } from 'lodash';
 import striptags from 'striptags';
 
 /**
@@ -49,7 +48,7 @@ export const getExcerptForPost = ( post ) => {
 	return trim(
 		striptags(
 			formatExcerpt(
-				find( [ PostMetadata.metaDescription( post ), post.excerpt, post.content ], identity )
+				find( [ PostMetadata.metaDescription( post ), post.excerpt, post.content ], Boolean )
 			)
 		)
 	);

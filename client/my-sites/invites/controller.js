@@ -48,7 +48,14 @@ export function acceptInvite( context, next ) {
 			.then( () => {
 				const redirect = getRedirectAfterAccept( acceptedInvite );
 				debug( 'Accepted invite and redirecting to:  ' + redirect );
-				page( redirect );
+
+				// Using page() for cross origin navigations would throw a `History.pushState` exception
+				// about creating state object with a cross-origin URL.
+				if ( new URL( redirect, window.location.href ).origin !== window.location.origin ) {
+					window.location = redirect;
+				} else {
+					page( redirect );
+				}
 			} )
 			.catch( ( error ) => {
 				debug( 'Accept invite error: ' + JSON.stringify( error ) );

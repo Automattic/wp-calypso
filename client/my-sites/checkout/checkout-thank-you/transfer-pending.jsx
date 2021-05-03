@@ -6,7 +6,6 @@ import { localize } from 'i18n-calypso';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { identity } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -25,15 +24,9 @@ import WordPressLogo from 'calypso/components/wordpress-logo';
 class TransferPending extends PureComponent {
 	static propTypes = {
 		error: PropTypes.object,
-		localize: PropTypes.func,
 		showErrorNotice: PropTypes.func,
 		siteId: PropTypes.number.isRequired,
 		transfer: PropTypes.object,
-	};
-
-	static defaultProps = {
-		localize: identity,
-		errorNotice: identity,
 	};
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {

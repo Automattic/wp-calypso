@@ -135,8 +135,8 @@ There are currently two ways to declare the condition to continue the tour with 
 ```
 
 ```jsx
-// continue when Redux selector evaluates to true (in this case after the user opens a preview)
-<Continue step="next-step" when={ isPreviewShowing } />;
+// continue when Redux selector evaluates to true (in this case after site credentials have been updated)
+<Continue step="next-step" when={ siteHasCredentials } />;
 ```
 
 ## Next

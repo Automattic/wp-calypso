@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { expect } from 'chai';
-import { identity } from 'lodash';
 import { shallow } from 'enzyme';
 
 /**
@@ -12,8 +11,10 @@ import { shallow } from 'enzyme';
 import { FormCountrySelect } from 'calypso/components/forms/form-country-select';
 
 describe( 'FormCountrySelect', () => {
+	const translate = ( string ) => string;
+
 	test( 'should render a select box with a placeholder when the country list provided is empty', () => {
-		const select = shallow( <FormCountrySelect countriesList={ [] } translate={ identity } /> );
+		const select = shallow( <FormCountrySelect countriesList={ [] } translate={ translate } /> );
 
 		const options = select.find( 'option' );
 
@@ -41,7 +42,7 @@ describe( 'FormCountrySelect', () => {
 						country_name: 'Argentina',
 					},
 				] }
-				translate={ identity }
+				translate={ translate }
 			/>
 		);
 

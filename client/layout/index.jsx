@@ -87,6 +87,35 @@ function SidebarScrollSynchronizer( { enabled } ) {
 	return null;
 }
 
+function SidebarOverflowDelay( { layoutFocus } ) {
+	const setSidebarOverflowClass = ( overflow ) => {
+		const classList = document.querySelector( 'body' ).classList;
+		if ( overflow ) {
+			classList.add( 'is-sidebar-overflow' );
+		} else {
+			classList.remove( 'is-sidebar-overflow' );
+		}
+	};
+
+	React.useEffect( () => {
+		if ( layoutFocus !== 'sites' ) {
+			// The sidebar menu uses a flyout design that requires the overflowing content
+			// to be visible. However, `overflow` isn't an animatable CSS property, so we
+			// need to set it after the sliding transition finishes. We wait for 150ms (the
+			// CSS transition time) + a grace period of 350ms (since the sidebar menu is
+			// rendered asynchronously).
+			// @see https://github.com/Automattic/wp-calypso/issues/47019
+			setTimeout( () => {
+				setSidebarOverflowClass( true );
+			}, 500 );
+		} else {
+			setSidebarOverflowClass( false );
+		}
+	}, [ layoutFocus ] );
+
+	return null;
+}
+
 class Layout extends Component {
 	static propTypes = {
 		primary: PropTypes.element,
@@ -241,6 +270,7 @@ class Layout extends Component {
 		return (
 			<div className={ sectionClass }>
 				<SidebarScrollSynchronizer enabled={ this.props.isNavUnificationEnabled } />
+				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
 					group={ this.props.sectionGroup }
 					section={ this.props.sectionName }

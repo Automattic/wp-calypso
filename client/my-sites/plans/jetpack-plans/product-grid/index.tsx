@@ -10,7 +10,9 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
+import ProductGridSection from './section';
 import PlansFilterBar from '../plans-filter-bar';
+import PlanUpgradeSection from '../plan-upgrade';
 import ProductCard from '../product-card';
 import { getProductPosition } from '../product-grid/products-order';
 import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from './utils';
@@ -41,9 +43,11 @@ import './style.scss';
 
 const ProductGrid: React.FC< ProductsGridProps > = ( {
 	duration,
-	onSelectProduct,
 	urlQueryArgs,
+	planRecommendation,
+	onSelectProduct,
 	onDurationChange,
+	scrollCardIntoView,
 } ) => {
 	const translate = useTranslate();
 
@@ -126,17 +130,28 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 		return () => window.removeEventListener( 'resize', onResize );
 	}, [ onResize ] );
 
+	const filterBar = (
+		<div className="product-grid__filter-bar">
+			<PlansFilterBar
+				showDiscountMessage
+				onDurationChange={ onDurationChange }
+				duration={ duration }
+			/>
+		</div>
+	);
+
 	return (
 		<>
-			<section className="product-grid__section">
-				<h2 className="product-grid__section-title">{ translate( 'Most Popular' ) }</h2>
-				<div className="product-grid__filter-bar">
-					<PlansFilterBar
-						showDiscountMessage
-						onDurationChange={ onDurationChange }
-						duration={ duration }
-					/>
-				</div>
+			{ planRecommendation && (
+				<PlanUpgradeSection
+					planRecommendation={ planRecommendation }
+					duration={ duration }
+					filterBar={ filterBar }
+					onSelectProduct={ onSelectProduct }
+				/>
+			) }
+			<ProductGridSection title={ translate( 'Most Popular' ) }>
+				{ ! planRecommendation && filterBar }
 				<ul
 					className={ classNames( 'product-grid__plan-grid', {
 						'is-wrapping': isPlanRowWrapping,
@@ -156,6 +171,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 									PLAN_JETPACK_SECURITY_DAILY,
 									PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 								] }
+								scrollCardIntoView={ scrollCardIntoView }
 							/>
 						</li>
 					) ) }
@@ -171,8 +187,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 						onButtonClick={ scrollToComparison }
 					/>
 				</div>
-			</section>
-			<section className="product-grid__section product-grid__asterisk-items">
 				<ul className="product-grid__asterisk-list">
 					<li className="product-grid__asterisk-item">
 						{ translate( 'Special introductory pricing, all renewals are at full price.' ) }
@@ -184,9 +198,8 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 						{ translate( 'All plans include priority support' ) }
 					</li>
 				</ul>
-			</section>
-			<section className="product-grid__section">
-				<h2 className="product-grid__section-title">{ translate( 'More Products' ) }</h2>
+			</ProductGridSection>
+			<ProductGridSection title={ translate( 'More Products' ) }>
 				<ul className="product-grid__product-grid">
 					{ otherProducts.map( ( product ) => (
 						<li key={ product.iconSlug }>
@@ -196,6 +209,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 								siteId={ siteId }
 								currencyCode={ currencyCode }
 								selectedTerm={ duration }
+								scrollCardIntoView={ scrollCardIntoView }
 							/>
 						</li>
 					) ) }
@@ -205,7 +219,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 						<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
 					) }
 				</div>
-			</section>
+			</ProductGridSection>
 			<StoreFooter />
 		</>
 	);

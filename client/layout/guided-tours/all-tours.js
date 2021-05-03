@@ -3,7 +3,6 @@
  */
 
 import { ChecklistSiteTitleTour } from './tours/checklist-site-title-tour';
-import { JetpackBackupsRewindTour } from './tours/jetpack-backups-rewind-tour';
 import { JetpackChecklistTour } from './tours/jetpack-checklist-tour';
 import { JetpackLazyImagesTour } from './tours/jetpack-lazy-images-tour';
 import { JetpackMonitoringTour } from './tours/jetpack-monitoring-tour';
@@ -20,7 +19,6 @@ import combineTours from './config-elements/combine-tours';
 
 export default combineTours( {
 	checklistSiteTitle: ChecklistSiteTitleTour,
-	jetpackBackupsRewind: JetpackBackupsRewindTour,
 	jetpackChecklistTour: JetpackChecklistTour,
 	jetpackLazyImages: JetpackLazyImagesTour,
 	jetpackMonitoring: JetpackMonitoringTour,

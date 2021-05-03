@@ -97,6 +97,7 @@ export default class DesignAssets extends React.Component {
 		return (
 			<SelectDropdown selectedText="Add a component" className="design__playground-examples">
 				{ keys( componentExamples ).map( ( name ) => {
+					// eslint-disable-next-line import/namespace
 					const ExampleComponentName = componentExamples[ name ];
 					const exampleComponent = <ExampleComponentName />;
 					const exampleCode = getExampleCodeFromComponent( exampleComponent );
