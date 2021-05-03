@@ -229,9 +229,9 @@ private object VisualRegressionTests : BuildType({
 				find test/visual -type f -path '*/html_report/*' -print0 | xargs -r -0 mv -t reports
 
 			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
 		}
 	}
+
 	failureConditions {
     	executionTimeoutMin = 30
     }
