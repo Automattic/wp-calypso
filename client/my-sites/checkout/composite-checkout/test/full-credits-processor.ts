@@ -52,7 +52,6 @@ describe( 'fullCreditsProcessor', () => {
 			extra: [],
 			products: [ product ],
 			tax: {
-				display_taxes: false,
 				location: {},
 			},
 			temporary: false,
