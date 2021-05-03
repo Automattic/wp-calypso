@@ -106,8 +106,10 @@ module.exports = function ( mainWindow ) {
 					// if we have a specific URL, then navigate Calypso there
 					log.info( `Navigating user to URL: ${ navigate }` );
 					if ( isCalypso() ) {
+						log.info( `Navigating to '${ navigate }'` );
 						mainWindow.webContents.send( 'navigate', navigate );
 					} else {
+						log.info( `Navigating to '${ webBase + navigate }'` );
 						mainWindow.webContents.loadURL( webBase + navigate );
 					}
 				} else {

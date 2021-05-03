@@ -1,8 +1,12 @@
 /*
+ * External dependencies
+ */
+const https = require( 'https' );
+
+/*
  * Internal dependencies
  */
-const state = require( '../../../lib/state' );
-const handler = require( 'wpcom-xhr-request' );
+const keychain = require( '../../../lib/keychain' );
 
 const promiseTimeout = function ( ms, promise ) {
 	const timeout = new Promise( ( _, reject ) => {
@@ -16,52 +20,80 @@ const promiseTimeout = function ( ms, promise ) {
 };
 
 async function fetchNote( noteId ) {
+	// FIXME: Add query fields!
+	// fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,url',
+	const response = await request( 'GET', null, `/rest/v1.1/notifications/${ noteId }` );
 	return new Promise( ( resolve, reject ) => {
-		handler(
-			{
-				path: `/notifications/${ noteId }`,
-				authToken: state.getUser().token,
-				apiVersion: '1.1',
-				query: {
-					fields: 'id,type,unread,body,subject,timestamp,meta,note_hash',
-				},
-			},
-			( error, body ) => {
-				if ( error ) {
-					return reject( error );
-				}
+		if ( response instanceof Error ) {
+			return reject( response );
+		}
 
-				if ( body.notes && Array.isArray( body.notes ) && body.notes.length > 0 ) {
-					return resolve( body.notes[ 0 ] );
-				}
-
-				return resolve( null );
-			}
-		);
+		const body = JSON.parse( response );
+		if ( body.notes && Array.isArray( body.notes ) && body.notes.length > 0 ) {
+			return resolve( body.notes[ 0 ] );
+		}
 	} );
 }
 
 async function markReadStatus( noteId, isRead ) {
+	const data = {
+		counts: {
+			[ noteId ]: isRead ? 9999 : -1, // magic values required by the API ¯\_(ツ)_/¯
+		},
+	};
+	const response = await request( 'POST', JSON.stringify( data ), '/rest/v1.1/notifications/read' );
 	return new Promise( ( resolve, reject ) => {
-		handler(
-			{
-				method: 'POST',
-				path: '/notifications/read',
-				apiVersion: '1.1',
-				authToken: state.getUser().token,
-				body: {
-					counts: {
-						[ noteId ]: isRead ? 9999 : -1, // magic values required by the API ¯\_(ツ)_/¯
-					},
-				},
+		if ( response instanceof Error ) {
+			return reject( response );
+		}
+		return resolve( null );
+	} );
+}
+
+async function request( method = 'GET', postData, path ) {
+	const wp_api = await keychain.read( 'wp_api' );
+	const wp_api_sec = await keychain.read( 'wp_api_sec' );
+	const wordpress_logged_in = await keychain.read( 'wordpress_logged_in' );
+
+	return new Promise( ( resolve, reject ) => {
+		if ( ! wp_api || ! wp_api_sec || ! wordpress_logged_in ) {
+			return reject(
+				new Error(
+					`Undefined cookie(s): wp_api=${ wp_api }, wp_api_sec=${ wp_api_sec }, wordpress_logged_in=${ wordpress_logged_in }`
+				)
+			);
+		}
+		const params = {
+			method,
+			host: 'public-api.wordpress.com',
+			path,
+			headers: {
+				Authorization: `X-WPCOOKIE ${ wp_api }:1:https://wordpress.com`,
+				Cookie: `wp_api_sec=${ wp_api_sec };wordpress_logged_in=${ wordpress_logged_in }`,
 			},
-			( error ) => {
-				if ( error ) {
-					reject( error );
-				}
-				resolve( null );
+		};
+
+		const req = https.request( params, ( res ) => {
+			if ( res.statusCode < 200 || res.statusCode >= 300 ) {
+				return reject( new Error( `Status Code: ${ res.statusCode }: `, res.statusMessage ) );
 			}
-		);
+
+			const data = [];
+
+			res.on( 'data', ( chunk ) => {
+				data.push( chunk );
+			} );
+
+			res.on( 'end', () => resolve( Buffer.concat( data ).toString() ) );
+		} );
+
+		req.on( 'error', reject );
+
+		if ( postData ) {
+			req.write( postData );
+		}
+
+		req.end();
 	} );
 }
 

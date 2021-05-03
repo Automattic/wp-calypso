@@ -36,12 +36,19 @@ class SessionManager extends EventEmitter {
 			this.loggedIn = true;
 			this.emit( 'logged-in', wordpress_logged_in );
 			log.debug( `Logged in with cookie 'wordpress_logged_in': `, wordpress_logged_in );
+
+			await keychainWrite( 'wordpress_logged_in', decodeURIComponent( wordpress_logged_in.value ) );
 		}
 
 		const wp_api_sec = await getCookie( window, 'https://public-api.wordpress.com', 'wp_api_sec' );
 		if ( this.loggedIn && wp_api_sec ) {
-			await keychainWrite( 'wp_api_sec', wp_api_sec.value );
+			await keychainWrite( 'wp_api_sec', decodeURIComponent( wp_api_sec.value ) );
 			this.emit( 'api:connect' );
+		}
+
+		const wp_api = await getCookie( window, null, 'wp_api' );
+		if ( this.loggedIn && wp_api ) {
+			await keychainWrite( 'wp_api', decodeURIComponent( wp_api.value ) );
 		}
 
 		// Listen for auth events
@@ -63,6 +70,8 @@ class SessionManager extends EventEmitter {
 
 						this.emit( 'logged-in', { wordpress_logged_in: wordpress_logged_in } );
 						log.debug( `Logged in with cookie 'wordpress_logged_in': `, wordpress_logged_in );
+
+						await keychainWrite( 'wordpress_logged_in', decodeURIComponent( cookie.value ) );
 					}
 
 					// Listen for wp_api_sec cookie (Pinghub)
@@ -73,8 +82,17 @@ class SessionManager extends EventEmitter {
 						if ( removed ) {
 							this.emit( 'api:disconnect' );
 						} else if ( this.loggedIn ) {
-							await keychainWrite( 'wp_api_sec', cookie.value );
+							await keychainWrite( 'wp_api_sec', decodeURIComponent( cookie.value ) );
 							this.emit( 'api:connect' );
+						}
+					}
+
+					// Listen for wp_api cookie (Notifications REST API)
+					// if ( cookie.name === 'wp_api' && cookie.domain === 'https://public-api.wordpress.com' ) {
+					if ( cookie.name === 'wp_api' ) {
+						if ( this.loggedIn ) {
+							log.info( 'wp_api: ', cookie.value, cookie.domain );
+							await keychainWrite( 'wp_api', decodeURIComponent( cookie.value ) );
 						}
 					}
 				}

@@ -50,7 +50,7 @@ class WPNotificationsAPI extends EventEmitter {
 			{
 				headers: {
 					Origin: `https://public-api.wordpress.com`,
-					Cookie: `wp_api_sec=${ decodeURIComponent( cookie ) }`,
+					Cookie: `wp_api_sec=${ cookie }`,
 				},
 			}
 		);
