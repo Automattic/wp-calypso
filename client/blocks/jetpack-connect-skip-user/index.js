@@ -39,16 +39,19 @@ class JetpackConnectSkipUser extends Component {
 
 				<p>{ translate( 'Jump in and start using Jetpack right away.' ) }</p>
 				<p>
-					<a
-						target="_blank"
-						href="https://jetpack.com/support/why-the-wordpress-com-connection-is-important-for-jetpack/"
-						rel="noreferrer"
-					>
-						{ translate( 'Some features' ) }
-					</a>
-					&nbsp;
 					{ translate(
-						"will not be available, but you'll be able to connect your user account at any point to unlock them."
+						`{{link}}Some features{{/link}} will not be available, but you'll be able to connect your user account at any point to unlock them.`,
+						{
+							components: {
+								link: (
+									<a
+										target="_blank"
+										href="https://jetpack.com/support/why-the-wordpress-com-connection-is-important-for-jetpack/"
+										rel="noreferrer"
+									/>
+								),
+							},
+						}
 					) }
 				</p>
 
