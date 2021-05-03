@@ -33,7 +33,7 @@ import StoreFooter from 'calypso/jetpack-connect/store-footer';
  * Type dependencies
  */
 import type { ProductsGridProps, SelectorProduct } from '../types';
-import type { JetpackProductSlug, JetpackPlanSlugs } from '@automattic/calypso-products';
+import type { JetpackProductSlug, JetpackPlanSlug } from '@automattic/calypso-products';
 
 /**
  * Style dependencies
@@ -71,7 +71,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	const sortedPlans = useMemo(
 		() =>
 			sortBy( getPlansToDisplay( { duration, currentPlanSlug } ), ( item ) =>
-				getProductPosition( item.productSlug as JetpackPlanSlugs )
+				getProductPosition( item.productSlug as JetpackPlanSlug )
 			),
 		[ duration, currentPlanSlug ]
 	);
@@ -93,7 +93,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	let otherProducts = [] as SelectorProduct[];
 
 	const allProducts = sortBy( [ ...sortedPlans, ...sortedProducts ], ( item ) =>
-		getProductPosition( item.productSlug as JetpackPlanSlugs | JetpackProductSlug )
+		getProductPosition( item.productSlug as JetpackPlanSlug | JetpackProductSlug )
 	);
 	popularProducts = allProducts.slice( 0, 3 );
 	otherProducts = allProducts.slice( 3 );
