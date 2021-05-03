@@ -9,9 +9,8 @@ import { Moment } from 'moment';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
+import { Button, ScreenReaderText } from '@automattic/components';
 import ButtonGroup from 'calypso/components/button-group';
-import { ScreenReaderText } from '@automattic/components';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};

@@ -8,8 +8,8 @@ import type { ResponseCartProduct } from '@automattic/shopping-cart';
 /**
  * Internal dependencies
  */
-import { isMonthly } from '@automattic/calypso-products';
 import {
+	isMonthly,
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
 	isWpComPersonalPlan,

@@ -384,6 +384,7 @@ module.exports = {
 		'import/named': 'error',
 		'import/namespace': 'error',
 		'import/default': 'error',
+		'import/no-duplicates': 'error',
 
 		'wpcalypso/no-unsafe-wp-apis': [
 			'error',

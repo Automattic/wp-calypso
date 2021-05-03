@@ -17,8 +17,12 @@ import styled from '@emotion/styled';
 import SegmentedControl from 'calypso/components/segmented-control';
 import Popover from 'calypso/components/popover';
 import { addQueryArgs } from 'calypso/lib/url';
-import { getYearlyPlanByMonthly, isWpComPlan, plansLink } from '@automattic/calypso-products';
-import { isMonthly } from '@automattic/calypso-products';
+import {
+	getYearlyPlanByMonthly,
+	isWpComPlan,
+	plansLink,
+	isMonthly,
+} from '@automattic/calypso-products';
 import { getPlanBySlug, getPlanRawPrice } from 'calypso/state/plans/selectors';
 
 type Props = {
