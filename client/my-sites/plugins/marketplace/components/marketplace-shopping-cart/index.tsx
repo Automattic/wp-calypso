@@ -3,21 +3,21 @@
  */
 import React from 'react';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { Button } from '@wordpress/components';
+import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { translate } from 'i18n-calypso';
+import { keyframes } from '@emotion/core';
 
 /**
  * Internal dependencies
  */
 import { LineItem } from 'calypso/my-sites/checkout/composite-checkout/components/wp-order-review-line-items';
-import { DomainSuggestions } from 'calypso/../packages/data-stores/src';
 import { MarketplaceThemeType } from 'calypso/my-sites/plugins/marketplace';
 import { MobileHiddenHorizontalRule } from 'calypso/my-sites/plugins/marketplace/components';
 
 interface PropsForMarketplaceShoppingCart {
-	onAddDomainToCart: () => void;
-	selectedDomain: DomainSuggestions.DomainSuggestion | null;
+	onCheckout: () => void;
+	selectedDomainProductUUID: string;
 	isExpandedBasketView: boolean;
 	toggleExpandedBasketView: () => void;
 }
@@ -27,6 +27,7 @@ const ShoppingCart = styled.div< { theme?: MarketplaceThemeType } >`
 	background-color: var( --studio-gray-0 );
 	padding: 15px 25px;
 	max-width: 611px;
+	display: inline-table;
 	@media ( ${ ( { theme } ) => theme.breakpoints.tabletDown } ) {
 		overflow-y: scroll;
 		-ms-overflow-style: none;
@@ -98,44 +99,90 @@ const MobileToggleExpandedBasket = styled.a< { theme?: MarketplaceThemeType } >`
 	}
 `;
 
-const ItemContainer = styled.div< { theme?: MarketplaceThemeType } >`
-	margin: 8px 0;
+const pulse = keyframes`
+  0% {
+    opacity: 1;
+  }
+
+  70% {
+  	opacity: 0.5;
+  }
+
+  100% {
+    opacity: 1;
+  }
 `;
+
+const SideBarLoadingCopy = styled.p`
+	font-size: 14px;
+	height: 31px;
+	width: 100%;
+	content: '';
+	background: var( --studio-gray-5 );
+	margin: 15px 0 0 0;
+	padding: 0;
+	animation: ${ pulse } 2s ease-in-out infinite;
+`;
+
+const StyledBasketItemContainer = styled( BasketItemContainer )`
+	margin: 8px 0;
+	min-height: 30px;
+`;
+
+function BasketItemContainer( { products, isLoading, isExpandedBasketView } ) {
+	if ( isLoading ) {
+		return (
+			<div>
+				<SideBarLoadingCopy />
+				<SideBarLoadingCopy />
+			</div>
+		);
+	}
+	return isExpandedBasketView ? (
+		<div>
+			{ products.map( ( product ) => (
+				<MarketPlaceBasketItem key={ product.uuid } product={ product } />
+			) ) }
+		</div>
+	) : null;
+}
 
 export default function MarketplaceShoppingCart(
 	props: PropsForMarketplaceShoppingCart
 ): JSX.Element {
 	const {
-		onAddDomainToCart,
-		selectedDomain,
+		onCheckout,
+		selectedDomainProductUUID,
 		isExpandedBasketView,
 		toggleExpandedBasketView,
 	} = props;
-	const { responseCart, isLoading } = useShoppingCart();
+	const { responseCart, isLoading, isPendingUpdate } = useShoppingCart();
 	const { products, sub_total_display } = responseCart;
+	const isBasketLoading = isLoading || isPendingUpdate;
 
-	return isLoading ? (
-		<></>
-	) : (
+	return (
 		<ShoppingCart className="marketplace-shopping-cart__root">
 			<ShoppingCartTitle>
 				<h1>{ translate( 'Your cart' ) } </h1>
-				<MobileTotal>{ sub_total_display }</MobileTotal>
+				{ isBasketLoading ? null : <MobileTotal>{ sub_total_display }</MobileTotal> }
 			</ShoppingCartTitle>
-			{ isExpandedBasketView ? (
-				<ItemContainer>
-					{ products.map( ( product ) => {
-						return <MarketPlaceBasketItem key={ product.uuid } product={ product } />;
-					} ) }
-					{ products.map( ( product ) => {
-						return <MarketPlaceBasketItem key={ product.uuid } product={ product } />;
-					} ) }
-				</ItemContainer>
-			) : null }
+			<StyledBasketItemContainer
+				isLoading={ isBasketLoading }
+				isExpandedBasketView={ isExpandedBasketView }
+				products={ products }
+			/>
+
 			<MobileHiddenHorizontalRule />
+
 			<ShoppingCartTotal>
-				<div>{ translate( 'Total' ) }</div>
-				<div>{ sub_total_display }</div>
+				{ isBasketLoading ? (
+					<SideBarLoadingCopy />
+				) : (
+					<>
+						<div>{ translate( 'Total' ) }</div>
+						<div>{ sub_total_display }</div>
+					</>
+				) }
 			</ShoppingCartTotal>
 			<MobileToggleExpandedBasket onClick={ toggleExpandedBasketView } isLink isPrimary>
 				{ isExpandedBasketView
@@ -143,10 +190,10 @@ export default function MarketplaceShoppingCart(
 					: translate( 'View more details' ) }
 			</MobileToggleExpandedBasket>
 			<FullWidthButton
-				onClick={ onAddDomainToCart }
-				isBusy={ false }
-				isPrimary
-				disabled={ selectedDomain === null }
+				onClick={ onCheckout }
+				busy={ isLoading || isPendingUpdate }
+				primary
+				disabled={ selectedDomainProductUUID === null }
 			>
 				{ translate( 'Checkout' ) }
 			</FullWidthButton>

@@ -29,9 +29,11 @@
 	}
 
 	display: grid;
-	grid-template-rows: 100%;
+	grid-template-rows: 1fr 1fr;
 	grid-template-columns: 60% 40%;
-	grid-template-areas: 'domainpicker basket';
+	grid-template-areas:
+		'domainpicker basket'
+		'domainpicker empty';
 
 	@media ( max-width: 782px ) {
 		grid-template-rows: 1fr 157px;
@@ -41,7 +43,7 @@
 			'basket';
 		margin: var( --masterbar-height ) 0 0;
 		&.expanded-basket-view {
-			grid-template-rows: 1fr 225px;
+			grid-template-rows: 1fr 245px;
 		}
 	}
 
@@ -91,7 +93,7 @@
 		display: flex;
 		width: 100%;
 		justify-content: space-around;
-		height: 250px;
+		height: auto;
 		@media ( max-width: 782px ) {
 			background-color: var( --studio-gray-0 );
 			padding: 0;

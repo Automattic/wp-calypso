@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import page from 'page';
 import DomainPicker from '@automattic/domain-picker';
-import { useShoppingCart } from '@automattic/shopping-cart';
+import { ResponseCart, useShoppingCart } from '@automattic/shopping-cart';
 import { DomainSuggestions } from '@automattic/data-stores';
 import { ThemeProvider } from 'emotion-theming';
 import styled from '@emotion/styled';
@@ -71,17 +71,28 @@ function MarketplaceDomainUpsellHeader() {
 	);
 }
 
+function getSiteNameFromURL( url ) {
+	const parts = url?.split( '.' );
+	if ( Array.isArray( parts ) && parts.length > 0 ) {
+		return parts[ 0 ];
+	}
+	return url;
+}
+
 function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
+	const [ selectedDomainProductUUID, setDomainProductUUID ] = useState< string >( '' );
 	const [ selectedDomain, setDomain ] = useState< DomainSuggestions.DomainSuggestion | null >(
 		null
 	);
 
 	const [ isExpandedBasketView, setIsExpandedBasketView ] = useState( false );
-	const { addProductsToCart, replaceProductsInCart } = useShoppingCart();
+	const { addProductsToCart, replaceProductsInCart, removeProductFromCart } = useShoppingCart();
 	const products = useSelector( getProductsList );
 	const previousPath = useSelector( getPreviousPath );
 	const isFetchingProducts = useSelector( isProductsListFetching );
 	const selectedSite = useSelector( getSelectedSite );
+	const { wpcom_url } = selectedSite;
+	const siteName = getSiteNameFromURL( wpcom_url );
 
 	useEffect( () => {
 		setIsExpandedBasketView( isDesktop() );
@@ -104,23 +115,37 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 		page( useYourDomainUrl );
 	};
 
-	const onAddDomainToCart = () => {
-		const { product_slug, domain_name } = selectedDomain as DomainSuggestions.DomainSuggestion;
+	const onDomainSelect = ( suggestion: DomainSuggestions.DomainSuggestion ) => {
+		const { product_slug, domain_name } = suggestion;
 		const domainProduct = {
 			...domainRegistration( {
 				productSlug: product_slug,
 				domain: domain_name,
 				source: 'Marketplace-Yoast-Domain-Upsell',
 			} ),
-			...selectedDomain,
+			...suggestion,
 		};
-		addProductsToCart( [ domainProduct ] ).then( () => {
-			page( '/checkout/' + selectedSite?.slug );
-		} );
-	};
+		setDomain( domainProduct );
 
-	const onDomainSelect = ( suggestion: DomainSuggestions.DomainSuggestion ): void => {
-		setDomain( suggestion );
+		//First remove the previously added domain
+		new Promise< void >( ( resolve ) => {
+			if ( ! selectedDomainProductUUID ) {
+				resolve();
+			} else {
+				removeProductFromCart( selectedDomainProductUUID ).then( () => {
+					setDomainProductUUID( '' );
+					resolve();
+				} );
+			}
+		} ).then( () => {
+			//Then add the new domain
+			addProductsToCart( [ domainProduct ] ).then( ( responseCart: ResponseCart ) => {
+				const productAdded = responseCart.products.find(
+					( { product_slug: added_product_slug } ) => added_product_slug === product_slug
+				);
+				setDomainProductUUID( productAdded?.uuid ?? '' );
+			} );
+		} );
 	};
 
 	return (
@@ -146,6 +171,7 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 			>
 				<div className="marketplace-domain-upsell__domain-picker-container">
 					<DomainPicker
+						initialDomainSearch={ siteName }
 						header={ <MarketplaceDomainUpsellHeader /> }
 						analyticsUiAlgo={ ANALYTICS_UI_LOCATON_MARKETPLACE_DOMAIN_SELECTION }
 						analyticsFlowId={ MARKETPLACE_FLOW_ID }
@@ -157,8 +183,8 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 				</div>
 				<div className="marketplace-domain-upsell__shopping-cart-container">
 					<MarketplaceShoppingCart
-						onAddDomainToCart={ onAddDomainToCart }
-						selectedDomain={ selectedDomain }
+						onCheckout={ () => page( '/checkout/' + selectedSite?.slug ) }
+						selectedDomainProductUUID={ selectedDomainProductUUID }
 						isExpandedBasketView={ isExpandedBasketView }
 						toggleExpandedBasketView={ () =>
 							isExpandedBasketView
