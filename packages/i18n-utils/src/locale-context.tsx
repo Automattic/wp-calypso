@@ -19,7 +19,7 @@ export const LocaleProvider: React.FC< Props > = ( { children, localeSlug } ) =>
  * Get the current locale slug from the @wordpress/i18n locale data
  */
 function getWpI18nLocaleSlug(): string | undefined {
-	return i18n.getLocaleData()?.[ '' ]?.language;
+	return i18n.getLocaleData()?.[ '' ]?.language || i18n.getLocaleData()?.[ '' ]?.lang;
 }
 
 /**
