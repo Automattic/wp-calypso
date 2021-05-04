@@ -95,7 +95,7 @@ export default function JetpackSearchMain(): ReactElement {
 
 				<PromoCardCTA
 					cta={ {
-						text: isSearchEnabled ? translate( 'Settings' ) : translate( 'Enable now' ),
+						text: translate( 'Settings' ),
 						action: {
 							url: `/settings/performance/${ siteSlug }`,
 							onClick: onSettingsClick,
