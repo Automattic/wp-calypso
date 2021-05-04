@@ -365,14 +365,6 @@ export function getPerformanceLogs( driver ) {
 	return driver.manage().logs().get( logging.Type.PERFORMANCE );
 }
 
-export function waitForInfiniteListLoad( driver, elementLocator, { numElements = 10 } = {} ) {
-	return driver.wait( function () {
-		return driver.findElements( elementLocator ).then( ( elements ) => {
-			return elements.length >= numElements;
-		} );
-	} );
-}
-
 export async function switchToWindowByIndex( driver, index ) {
 	const currentScreenSize = driverManager.currentScreenSize();
 	const handles = await driver.getAllWindowHandles();
