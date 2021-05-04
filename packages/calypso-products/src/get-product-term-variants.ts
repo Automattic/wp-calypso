@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { TERMS_LIST } from './index';
+import { TERMS_LIST } from './constants';
 import { PRODUCTS_LIST } from './products-list';
 
 /**

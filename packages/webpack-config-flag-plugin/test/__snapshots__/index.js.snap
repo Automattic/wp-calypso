@@ -315,6 +315,7 @@ if ( true ) {
 }
 
 ;// CONCATENATED MODULE: ./namespace-import/config/wrong-path.js
+/* eslint-disable import/namespace */
 
 
 // Should NOT be replaced with true

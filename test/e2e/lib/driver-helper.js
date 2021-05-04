@@ -92,6 +92,31 @@ export async function clickWhenClickable( driver, locator, timeout = explicitWai
 }
 
 /**
+ * Checks whether an element is located in DOM or not.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @returns {Promise<boolean>} A promise that will be resolved with whether the
+ * element is located or not
+ */
+export async function isElementLocated( driver, locator ) {
+	const elements = await driver.findElements( locator );
+	return elements.length > 0;
+}
+
+/**
+ * An opposite to the isElementLocated helper.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @returns {Promise<boolean>} A promise that will be resolved with true if the
+ * element is not in DOM
+ */
+export async function isElementNotLocated( driver, locator ) {
+	return ! ( await isElementLocated( driver, locator ) );
+}
+
+/**
  * Waits until an element is located in DOM and visible. Throws an error after
  * it times out.
  *
@@ -101,7 +126,7 @@ export async function clickWhenClickable( driver, locator, timeout = explicitWai
  * @returns {Promise<WebElement>} A promise that will be resolved with
  * the located element
  */
-export function waitUntilLocatedAndVisible( driver, locator, timeout = explicitWaitMS ) {
+export function waitUntilElementLocatedAndVisible( driver, locator, timeout = explicitWaitMS ) {
 	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
 
 	return driver.wait(
@@ -122,35 +147,60 @@ export function waitUntilLocatedAndVisible( driver, locator, timeout = explicitW
 	);
 }
 
-export function isEventuallyPresentAndDisplayed( driver, selector, waitOverride ) {
-	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
+/**
+ * Waits until an element is located in DOM. Throws an error after it times out.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise<WebElement>} A promise that will be resolved with
+ * the located element
+ */
+export function waitUntilElementLocated( driver, locator, timeout ) {
+	return driver.wait( until.elementLocated( locator ), timeout );
+}
 
-	return driver
-		.wait( function () {
-			return driver.findElement( selector ).then(
-				function ( element ) {
-					return element.isDisplayed().then(
-						function () {
-							return true;
-						},
-						function () {
-							return false;
-						}
-					);
-				},
-				function () {
-					return false;
-				}
-			);
-		}, timeoutWait )
-		.then(
-			( shown ) => {
-				return shown;
-			},
-			() => {
-				return false;
-			}
-		);
+/**
+ * Waits until an element is NOT located in DOM. Throws an error after it times
+ * out.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise<WebElement>} A promise that will be resolved with true when
+ * the element becomes unavaialble
+ */
+export function waitUntilElementNotLocated( driver, locator, timeout ) {
+	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
+
+	return driver.wait(
+		new Condition( `for element to NOT be located ${ locatorStr }`, function () {
+			return isElementNotLocated( driver, locator );
+		} ),
+		timeout
+	);
+}
+
+/**
+ * Checks whether an element is eventually located in DOM and visible.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise<WebElement>} A promise that will be resolved with whether
+ * the element is located and visible
+ */
+export async function isElementEventuallyLocatedAndVisible(
+	driver,
+	locator,
+	timeout = explicitWaitMS
+) {
+	try {
+		await waitUntilElementLocatedAndVisible( driver, locator, timeout );
+		return true;
+	} catch {
+		return false;
+	}
 }
 
 /**
@@ -172,17 +222,6 @@ export async function clickIfPresent( driver, locator ) {
 export async function getElementCount( driver, selector ) {
 	const elements = await driver.findElements( selector );
 	return elements.length || 0;
-}
-
-export async function isElementPresent( driver, selector ) {
-	const elements = await driver.findElements( selector );
-	return !! elements.length;
-}
-
-export function elementIsNotPresent( driver, selector ) {
-	return this.isElementPresent( driver, selector ).then( function ( isPresent ) {
-		return ! isPresent;
-	} );
 }
 
 /**
@@ -269,21 +308,6 @@ export function unsetCheckbox( driver, selector ) {
 			}
 		} );
 	} );
-}
-
-export function waitTillNotPresent( driver, selector, waitOverride ) {
-	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
-	const self = this;
-
-	return driver.wait(
-		function () {
-			return self.isElementPresent( driver, selector ).then( function ( isPresent ) {
-				return ! isPresent;
-			} );
-		},
-		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to NOT be present`
-	);
 }
 
 /**
@@ -401,8 +425,12 @@ export async function refreshIfJNError( driver, timeout = 2000 ) {
 	const jnDBError = by.xpath( '//h1[.="Error establishing a database connection"]' );
 
 	const refreshIfNeeded = async () => {
-		const jnErrorDisplayed = await isEventuallyPresentAndDisplayed( driver, jnSiteError, timeout );
-		const jnDBErrorDisplayed = await isElementPresent( driver, jnDBError );
+		const jnErrorDisplayed = await isElementEventuallyLocatedAndVisible(
+			driver,
+			jnSiteError,
+			timeout
+		);
+		const jnDBErrorDisplayed = await isElementLocated( driver, jnDBError );
 		if ( jnErrorDisplayed || jnDBErrorDisplayed ) {
 			console.log( 'JN Error! Refreshing the page' );
 			await driver.navigate().refresh();

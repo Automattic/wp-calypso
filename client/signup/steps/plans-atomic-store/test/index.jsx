@@ -11,7 +11,6 @@ jest.mock( 'i18n-calypso', () => ( {
  */
 import { shallow } from 'enzyme';
 import React from 'react';
-import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -40,7 +39,7 @@ import {
 
 const noop = () => {};
 const props = {
-	translate: identity,
+	translate: ( string ) => string,
 	stepName: 'Step name',
 	stepSectionName: 'Step section name',
 	signupDependencies: { domainItem: null },

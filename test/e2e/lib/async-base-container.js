@@ -19,7 +19,7 @@ export default class AsyncBaseContainer {
 	) {
 		this.name = this.constructor.name;
 		this.driver = driver;
-		this.screenSize = driverManager.currentScreenSize().toUpperCase();
+		this.screenSize = driverManager.currentScreenSize();
 		this.expectedElementSelector = expectedElementSelector;
 		this.url = url;
 		this.explicitWaitMS = waitMS;
@@ -62,7 +62,7 @@ export default class AsyncBaseContainer {
 	}
 
 	async waitForPage() {
-		return await driverHelper.waitUntilLocatedAndVisible(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			this.expectedElementSelector,
 			this.explicitWaitMS
@@ -70,7 +70,7 @@ export default class AsyncBaseContainer {
 	}
 
 	async displayed() {
-		return await driverHelper.isEventuallyPresentAndDisplayed(
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			this.expectedElementSelector,
 			this.explicitWaitMS

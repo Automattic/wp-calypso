@@ -13,10 +13,9 @@ import {
 	Partner,
 	PartnerPortalThunkAction,
 } from 'calypso/state/partner-portal/types';
-import { receivePartnerError } from 'calypso/state/partner-portal/partner/actions';
 import { dispatchRequest as vanillaDispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { receivePartner } from 'calypso/state/partner-portal/partner/actions';
+import { receivePartnerError, receivePartner } from 'calypso/state/partner-portal/partner/actions';
 import { formatApiPartner } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 
 export function fetchPartnerHandler( action: AnyAction ): AnyAction {

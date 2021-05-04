@@ -7,7 +7,6 @@
  */
 import React from 'react';
 import { shallow } from 'enzyme';
-import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,7 +25,7 @@ describe( 'AppsBadge', () => {
 		storeLink: 'https://wordpress.com',
 		storeName: 'ios',
 		titleText: 'titleText',
-		translate: identity,
+		translate: ( string ) => string,
 	};
 
 	test( 'should render', () => {

@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getPlan } from '@automattic/calypso-products';
 import {
 	JETPACK_ANTI_SPAM_PRODUCTS,
 	PRODUCT_JETPACK_BACKUP_DAILY,
@@ -19,6 +18,7 @@ import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_CRM_FREE_PRODUCTS,
+	getPlan,
 } from '@automattic/calypso-products';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';

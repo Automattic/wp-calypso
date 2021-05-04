@@ -30,7 +30,7 @@ async function openModal() {
 	const modalLocator = By.css( '.modal' );
 	await driverHelper
 		.clickWhenClickable( this.driver, modalButtonLocator )
-		.then( () => driverHelper.waitUntilLocatedAndVisible( modalLocator ) );
+		.then( () => driverHelper.waitUntilElementLocatedAndVisible( modalLocator ) );
 }
 ```
 
@@ -41,7 +41,7 @@ async function openModal() {
 	const modalButtonLocator = By.css( 'button.open-modal' );
 	const modalLocator = By.css( '.modal' );
 	await driverHelper.clickWhenClickable( this.driver, modalButtonLocator );
-	await driverHelper.waitUntilLocatedAndVisible( modalLocator );
+	await driverHelper.waitUntilElementLocatedAndVisible( modalLocator );
 }
 ```
 

@@ -25,6 +25,7 @@ jest.mock( 'calypso/lib/user', () => () => {} );
 describe( 'UK Address Fieldset', () => {
 	const defaultProps = {
 		getFieldProps: ( name ) => ( { name, value: '' } ),
+		translate: ( string ) => string,
 	};
 
 	test( 'should render correctly with default props', () => {

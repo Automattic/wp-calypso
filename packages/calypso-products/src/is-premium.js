@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isPremiumPlan } from './index';
+import { isPremiumPlan } from './main';
 import { formatProduct } from './format-product';
 
 export function isPremium( product ) {

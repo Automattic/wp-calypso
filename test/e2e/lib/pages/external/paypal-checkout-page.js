@@ -17,7 +17,7 @@ export default class PaypalCheckoutPage extends AsyncBaseContainer {
 	}
 
 	async priceDisplayed() {
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, this.priceSelector );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.priceSelector );
 		return await this.driver.findElement( this.priceSelector ).getText();
 	}
 }

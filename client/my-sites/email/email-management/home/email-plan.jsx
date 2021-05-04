@@ -108,7 +108,7 @@ class EmailPlan extends React.Component {
 			);
 	}
 
-	getEmails() {
+	getMailboxes() {
 		if ( this.state.emailAccounts[ 0 ] ) {
 			return this.state.emailAccounts[ 0 ].emails;
 		}
@@ -285,7 +285,7 @@ class EmailPlan extends React.Component {
 				) }
 
 				<EmailPlanMailboxesList
-					emails={ this.getEmails() }
+					mailboxes={ this.getMailboxes() }
 					isLoadingEmails={ isLoadingEmailAccounts }
 				/>
 

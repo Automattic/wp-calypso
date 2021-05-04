@@ -3,7 +3,7 @@
  */
 
 import { Children } from 'react';
-import { flatMap, identity } from 'lodash';
+import { flatMap } from 'lodash';
 
 /*
  * Transforms a React `Children` object into an array. The children of a `Step` are
@@ -11,7 +11,7 @@ import { flatMap, identity } from 'lodash';
  */
 const childrenToArray = ( children ) => {
 	if ( typeof children === 'function' ) {
-		children = children( { translate: identity } );
+		children = children( { translate: ( string ) => string } );
 	}
 
 	return Children.toArray( children );

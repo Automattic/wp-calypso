@@ -105,12 +105,7 @@ $font-size: rem( 14px );
 			}
 		}
 
-		.sidebar__informative-title {
-			display: block;
-		}
-
 		.sidebar__expandable-title,
-		.sidebar__informative-title,
 		.sidebar__menu-link-text {
 			padding: $sidebar-item-padding;
 			max-height: 34px;
@@ -321,7 +316,7 @@ $font-size: rem( 14px );
 	}
 
 	// client/blocks/upsell-nudge/style.scss
-	&:not( .is-classic-bright ) {
+	&:not( .is-classic-bright ):not( .is-contrast ) {
 		.upsell-nudge.banner.card.is-compact {
 			background-color: #fff;
 			color: #000;

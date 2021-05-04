@@ -33,8 +33,7 @@ import StoreFooter from 'calypso/jetpack-connect/store-footer';
  * Type dependencies
  */
 import type { ProductsGridProps, SelectorProduct } from '../types';
-import type { JetpackProductSlug } from '@automattic/calypso-products';
-import type { JetpackPlanSlugs } from '@automattic/calypso-products';
+import type { JetpackProductSlug, JetpackPlanSlugs } from '@automattic/calypso-products';
 
 /**
  * Style dependencies
@@ -47,6 +46,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	planRecommendation,
 	onSelectProduct,
 	onDurationChange,
+	scrollCardIntoView,
 } ) => {
 	const translate = useTranslate();
 
@@ -129,23 +129,28 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 		return () => window.removeEventListener( 'resize', onResize );
 	}, [ onResize ] );
 
+	const filterBar = (
+		<div className="product-grid__filter-bar">
+			<PlansFilterBar
+				showDiscountMessage
+				onDurationChange={ onDurationChange }
+				duration={ duration }
+			/>
+		</div>
+	);
+
 	return (
 		<>
 			{ planRecommendation && (
 				<PlanUpgradeSection
 					planRecommendation={ planRecommendation }
 					duration={ duration }
+					filterBar={ filterBar }
 					onSelectProduct={ onSelectProduct }
 				/>
 			) }
 			<ProductGridSection title={ translate( 'Most Popular' ) }>
-				<div className="product-grid__filter-bar">
-					<PlansFilterBar
-						showDiscountMessage
-						onDurationChange={ onDurationChange }
-						duration={ duration }
-					/>
-				</div>
+				{ ! planRecommendation && filterBar }
 				<ul
 					className={ classNames( 'product-grid__plan-grid', {
 						'is-wrapping': isPlanRowWrapping,
@@ -165,6 +170,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 									PLAN_JETPACK_SECURITY_DAILY,
 									PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 								] }
+								scrollCardIntoView={ scrollCardIntoView }
 							/>
 						</li>
 					) ) }
@@ -202,6 +208,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 								siteId={ siteId }
 								currencyCode={ currencyCode }
 								selectedTerm={ duration }
+								scrollCardIntoView={ scrollCardIntoView }
 							/>
 						</li>
 					) ) }

@@ -15,7 +15,7 @@ export default class ProfilePage extends AsyncBaseContainer {
 	}
 
 	async _preInit() {
-		if ( this.screenSize === 'MOBILE' ) {
+		if ( this.screenSize === 'mobile' ) {
 			// On mobile viewport, the sidebar is initially open and needs a bit to
 			// finish the slide-in animation. This is important because only after the
 			// animation is done, the sidebar items become fully interactable.
@@ -27,7 +27,7 @@ export default class ProfilePage extends AsyncBaseContainer {
 	async clickSignOut() {
 		const buttonLocator = By.css( '.me-sidebar__signout-button,.sidebar__me-signout-button' );
 		await driverHelper.clickWhenClickable( this.driver, buttonLocator );
-		await driverHelper.waitTillNotPresent( this.driver, buttonLocator );
+		await driverHelper.waitUntilElementNotLocated( this.driver, buttonLocator );
 	}
 
 	chooseManagePurchases() {

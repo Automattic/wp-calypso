@@ -1,25 +1,24 @@
 /**
  * External dependencies
  */
-import React, { Component, ComponentType } from 'react';
+import React from 'react';
 import debugModule from 'debug';
 import page from 'page';
 import i18n from 'i18n-calypso';
-import { includes, without } from 'lodash';
-import { Subtract } from 'utility-types';
+import { createHigherOrderComponent } from '@wordpress/compose';
 
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:protect-form' );
 
-type ComponentMarkedWithFormChanges = Component;
+type FormId = [  ];
 
-let formsChanged: ComponentMarkedWithFormChanges[] = [];
+let formsChanged = new Set< FormId >();
 let listenerCount = 0;
 
 function warnIfChanged( event: BeforeUnloadEvent ) {
-	if ( ! formsChanged.length ) {
+	if ( ! formsChanged.size ) {
 		return;
 	}
 	debug( 'unsaved form changes detected' );
@@ -42,15 +41,38 @@ function removeBeforeUnloadListener() {
 	}
 }
 
-function markChanged( form: ComponentMarkedWithFormChanges ) {
-	if ( ! includes( formsChanged, form ) ) {
-		formsChanged.push( form );
-	}
+function markChanged( formId: FormId ) {
+	formsChanged.add( formId );
 }
 
-function markSaved( form: ComponentMarkedWithFormChanges ) {
-	formsChanged = without( formsChanged, form );
+function markSaved( formId: FormId ) {
+	formsChanged.delete( formId );
 }
+
+type ProtectForm = {
+	markChanged: () => void;
+	markSaved: () => void;
+};
+
+export const useProtectForm = (): ProtectForm => {
+	const formId = React.useRef< FormId >( [] );
+	const _markSaved = React.useCallback( () => markSaved( formId.current ), [] );
+	const _markChanged = React.useCallback( () => markChanged( formId.current ), [] );
+
+	React.useEffect( () => {
+		addBeforeUnloadListener();
+
+		return () => {
+			removeBeforeUnloadListener();
+			_markSaved();
+		};
+	}, [ _markSaved ] );
+
+	return {
+		markChanged: _markChanged,
+		markSaved: _markSaved,
+	};
+};
 
 export interface ProtectedFormProps {
 	markChanged: () => void;
@@ -60,62 +82,29 @@ export interface ProtectedFormProps {
 /*
  * HOC that passes markChanged/markSaved props to the wrapped component instance
  */
-export const protectForm = < P extends ProtectedFormProps >(
-	WrappedComponent: ComponentType< P >
-): ComponentType< Subtract< P, ProtectedFormProps > > =>
-	class ProtectedFormComponent extends Component< Subtract< P, ProtectedFormProps > > {
-		markChanged = () => markChanged( this );
-		markSaved = () => markSaved( this );
+export const protectForm = createHigherOrderComponent( ( Component ) => {
+	return ( props ) => {
+		const { markChanged, markSaved } = useProtectForm();
 
-		componentDidMount() {
-			addBeforeUnloadListener();
-		}
-
-		componentWillUnmount() {
-			removeBeforeUnloadListener();
-			this.markSaved();
-		}
-
-		render() {
-			return (
-				<WrappedComponent
-					markChanged={ this.markChanged }
-					markSaved={ this.markSaved }
-					{ ...( this.props as P ) }
-				/>
-			);
-		}
+		return <Component { ...props } markChanged={ markChanged } markSaved={ markSaved } />;
 	};
+}, 'protectForm' );
 
-interface ProtectFormGuardProps {
-	isChanged: boolean;
-}
 /*
  * Declarative variant that takes a 'isChanged' prop.
  */
-export class ProtectFormGuard extends Component< ProtectFormGuardProps > {
-	componentDidMount() {
-		addBeforeUnloadListener();
-		if ( this.props.isChanged ) {
-			markChanged( this );
+export const ProtectFormGuard = ( { isChanged }: { isChanged: boolean } ): null => {
+	const { markChanged, markSaved } = useProtectForm();
+
+	React.useEffect( () => {
+		if ( isChanged ) {
+			markChanged();
+			return () => markSaved();
 		}
-	}
+	}, [ isChanged, markChanged, markSaved ] );
 
-	componentWillUnmount() {
-		removeBeforeUnloadListener();
-		markSaved( this );
-	}
-
-	UNSAFE_componentWillReceiveProps( nextProps: ProtectFormGuardProps ) {
-		if ( nextProps.isChanged !== this.props.isChanged ) {
-			nextProps.isChanged ? markChanged( this ) : markSaved( this );
-		}
-	}
-
-	render() {
-		return null;
-	}
-}
+	return null;
+};
 
 function windowConfirm() {
 	if ( typeof window === 'undefined' ) {
@@ -128,12 +117,12 @@ function windowConfirm() {
 }
 
 export const checkFormHandler: PageJS.Callback = ( context, next ) => {
-	if ( ! formsChanged.length ) {
+	if ( ! formsChanged.size ) {
 		return next();
 	}
 	debug( 'unsaved form changes detected' );
 	if ( windowConfirm() ) {
-		formsChanged = [];
+		formsChanged = new Set< FormId >();
 		next();
 	} else {
 		// save off the current path just in case context changes after this call

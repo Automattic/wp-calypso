@@ -61,7 +61,7 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 
 		const inserterSearchInputSelector = By.css( 'input.block-editor-inserter__search-input' );
 
-		await driverHelper.waitUntilLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( 'div.block-editor-inserter__quick-inserter.has-search.has-expand' ),
 			3000

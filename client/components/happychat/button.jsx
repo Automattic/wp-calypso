@@ -5,7 +5,6 @@ import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
-import { identity } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
@@ -50,7 +49,6 @@ export class HappychatButton extends Component {
 		isConnectionUninitialized: false,
 		onClick: noop,
 		openChat: noop,
-		translate: identity,
 	};
 
 	onClick = ( event ) => {

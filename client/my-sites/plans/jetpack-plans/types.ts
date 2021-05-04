@@ -28,6 +28,7 @@ export interface QueryArgs {
 
 export type PurchaseCallback = ( arg0: SelectorProduct, arg1?: boolean, arg2?: Purchase ) => void;
 export type DurationChangeCallback = ( arg0: Duration ) => void;
+export type ScrollCardIntoViewCallback = ( arg0: HTMLDivElement, arg1: string ) => void;
 
 interface BasePageProps {
 	rootUrl: string;
@@ -40,6 +41,7 @@ export interface SelectorPageProps extends BasePageProps {
 	defaultDuration?: Duration;
 	siteSlug?: string;
 	planRecommendation?: PlanRecommendation;
+	highlightedProducts?: string[];
 }
 
 export interface ProductsGridProps {
@@ -48,6 +50,7 @@ export interface ProductsGridProps {
 	planRecommendation?: PlanRecommendation;
 	onSelectProduct: PurchaseCallback;
 	onDurationChange?: DurationChangeCallback;
+	scrollCardIntoView: ScrollCardIntoViewCallback;
 }
 
 export type PlanGridProducts = {

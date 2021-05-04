@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { localize } from 'i18n-calypso';
-import { identity, map } from 'lodash';
+import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
@@ -17,10 +17,6 @@ export class ReaderSidebarTagsList extends Component {
 		path: PropTypes.string.isRequired,
 		currentTag: PropTypes.string,
 		translate: PropTypes.func,
-	};
-
-	static defaultProps = {
-		translate: identity,
 	};
 
 	renderItems() {

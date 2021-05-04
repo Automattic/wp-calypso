@@ -7,7 +7,6 @@
  */
 import React from 'react';
 import deepFreeze from 'deep-freeze';
-import { identity } from 'lodash';
 import { shallow } from 'enzyme';
 
 /**
@@ -37,7 +36,7 @@ const defaultProps = deepFreeze( {
 	fetchNextPage: noop,
 	getButtonOptions: noop,
 	onScreenshotClick: noop,
-	translate: identity,
+	translate: ( string ) => string,
 } );
 
 describe( 'ThemesList', () => {

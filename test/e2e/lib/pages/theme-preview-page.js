@@ -16,14 +16,14 @@ export default class ThemePreviewPage extends AsyncBaseContainer {
 	}
 
 	async _postInit() {
-		return await driverHelper.waitUntilLocatedAndVisible(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			by.css( '.web-preview.is-visible .web-preview__content' )
 		);
 	}
 
 	async activateButtonVisible() {
-		return await driverHelper.isElementPresent( this.driver, this.activateSelector );
+		return await driverHelper.isElementLocated( this.driver, this.activateSelector );
 	}
 
 	async activate() {

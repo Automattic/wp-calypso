@@ -29,7 +29,7 @@ export default class WPAdminLogonPage extends AsyncBaseContainer {
 		const passwordSelector = By.css( '#user_pass' );
 		const submitSelector = By.css( '#wp-submit' );
 
-		if ( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, ssoButton, 2000 ) ) {
+		if ( await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, ssoButton, 2000 ) ) {
 			await this.toggleSSOLogin();
 		}
 		await driverHelper.setWhenSettable( this.driver, userNameSelector, username );
@@ -38,7 +38,7 @@ export default class WPAdminLogonPage extends AsyncBaseContainer {
 		} );
 		await driverHelper.clickWhenClickable( this.driver, submitSelector );
 
-		return await driverHelper.waitTillNotPresent( this.driver, userNameSelector );
+		return await driverHelper.waitUntilElementNotLocated( this.driver, userNameSelector );
 	}
 
 	async toggleSSOLogin() {

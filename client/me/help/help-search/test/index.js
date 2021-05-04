@@ -6,17 +6,15 @@
  * External dependencies
  */
 import React from 'react';
-import { identity } from 'lodash';
 import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
  */
-
 import { HelpSearch } from '../';
 
 const defaultProps = {
-	translate: identity,
+	translate: ( string ) => string,
 };
 
 const helpLinks = {

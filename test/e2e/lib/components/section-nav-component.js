@@ -34,7 +34,7 @@ export default class SectionNavComponent extends AsyncBaseContainer {
 
 		if ( ! isMenuOpen ) {
 			await driverHelper.clickWhenClickable( this.driver, mobileHeaderLocator );
-			await driverHelper.waitUntilLocatedAndVisible( this.driver, openMenuLocator );
+			await driverHelper.waitUntilElementLocatedAndVisible( this.driver, openMenuLocator );
 		}
 	}
 }

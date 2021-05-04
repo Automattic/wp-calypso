@@ -56,6 +56,6 @@ export default class CommentsAreaComponent extends AsyncBaseContainer {
 			`//li[contains(@class,'depth-${ depth }')]//div[@class='comment-content']/p[.='${ comment }']`
 		);
 
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, commentLocator );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, commentLocator );
 	}
 }

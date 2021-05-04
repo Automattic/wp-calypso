@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isBloggerPlan } from './index';
+import { isBloggerPlan } from './main';
 import { formatProduct } from './format-product';
 
 export function isBlogger( product ) {

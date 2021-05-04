@@ -24,6 +24,6 @@ export default class CheckOutThankyouPage extends AsyncBaseContainer {
 	async isPremiumPlan() {
 		const premiumPlanCardSelector = By.css( '.plan-thank-you-card.is-premium-plan' );
 
-		return await driverHelper.isElementPresent( this.driver, premiumPlanCardSelector );
+		return await driverHelper.isElementLocated( this.driver, premiumPlanCardSelector );
 	}
 }

@@ -11,7 +11,7 @@ import GutenbergBlockComponent from './gutenberg-block-component';
 
 export class ImageBlockComponent extends GutenbergBlockComponent {
 	async uploadImage( fileDetails ) {
-		await driverHelper.waitUntilLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.components-form-file-upload ' )
 		);
@@ -19,14 +19,14 @@ export class ImageBlockComponent extends GutenbergBlockComponent {
 			By.css( '.components-form-file-upload input[type="file"]' )
 		);
 		await filePathInput.sendKeys( fileDetails.file );
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
 			By.css( '.wp-block-image .components-spinner' )
 		); // Wait for upload spinner to complete
 	}
 
 	async openMediaModal() {
-		await driverHelper.waitUntilLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.block-editor-media-placeholder' )
 		);
@@ -39,7 +39,7 @@ export class ImageBlockComponent extends GutenbergBlockComponent {
 			By.css( '.components-popover__content button.components-menu-item__button:nth-child(1)' )
 		);
 		await this.driver.switchTo().defaultContent();
-		return await driverHelper.waitUntilLocatedAndVisible(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.dialog__content .media-library' )
 		);
@@ -51,7 +51,7 @@ export class ImageBlockComponent extends GutenbergBlockComponent {
 			By.css( '.media-library__upload-button-input' )
 		);
 		await filePathInput.sendKeys( fileDetails.file );
-		await driverHelper.waitTillNotPresent(
+		await driverHelper.waitUntilElementNotLocated(
 			this.driver,
 			By.css( '.media-library__list-item.is-selected.is-transient' )
 		);

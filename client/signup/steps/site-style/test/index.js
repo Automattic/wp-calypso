@@ -7,7 +7,6 @@
  */
 import React from 'react';
 import { shallow } from 'enzyme';
-import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,7 +37,7 @@ describe( '<SiteStyleStep />', () => {
 		saveSignupStep: noop,
 		goToNextStep: noop,
 		recordTracksEvent: noop,
-		translate: identity,
+		translate: ( string ) => string,
 	};
 
 	test( 'should render', () => {

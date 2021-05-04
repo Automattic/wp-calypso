@@ -13,8 +13,9 @@ import debugFactory from 'debug';
  */
 import { requestPlans } from 'calypso/state/plans/actions';
 import { computeProductsWithPrices } from 'calypso/state/products-list/selectors';
-import { getPlan, findPlansKeys } from '@automattic/calypso-products';
 import {
+	getPlan,
+	findPlansKeys,
 	GROUP_WPCOM,
 	GROUP_JETPACK,
 	TERM_ANNUALLY,

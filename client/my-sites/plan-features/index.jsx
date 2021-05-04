@@ -57,7 +57,6 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import {
 	isBestValue,
 	isMonthly,
-	isNew,
 	PLAN_FREE,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
@@ -969,7 +968,7 @@ const ConnectedPlanFeatures = connect(
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;
 				const popular = popularPlanSpec && planMatches( plan, popularPlanSpec );
-				const newPlan = isNew( plan ) && ! isPaid;
+				const newPlan = false;
 				const bestValue = isBestValue( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
 				const isMonthlyPlan = isMonthly( plan );

@@ -37,28 +37,28 @@ export default class SettingsPage extends AsyncBaseContainer {
 	}
 
 	async mediaSettingsSectionDisplayed() {
-		return await DriverHelper.isEventuallyPresentAndDisplayed(
+		return await DriverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( '.site-settings__media-settings' )
 		);
 	}
 
 	async photonToggleDisplayed() {
-		return await DriverHelper.isEventuallyPresentAndDisplayed(
+		return await DriverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( '.jetpack-module-toggle .components-form-toggle__input' )
 		);
 	}
 
 	async carouselToggleDisplayed() {
-		return await DriverHelper.isEventuallyPresentAndDisplayed(
+		return await DriverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( '.jetpack-module-toggle .components-form-toggle__input' )
 		);
 	}
 
 	async carouseBackgroundColorDisplayed() {
-		return await DriverHelper.isEventuallyPresentAndDisplayed(
+		return await DriverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( '#carousel_background_color' )
 		);
@@ -77,7 +77,7 @@ export default class SettingsPage extends AsyncBaseContainer {
 			By.css( '.manage-connection__disconnect-link a' )
 		);
 
-		const present = await DriverHelper.isElementPresent(
+		const present = await DriverHelper.isElementLocated(
 			this.driver,
 			By.css( '.is-primary.is-scary' )
 		);
@@ -105,7 +105,7 @@ export default class SettingsPage extends AsyncBaseContainer {
 			this.driver,
 			By.className( 'button is-primary is-scary' )
 		);
-		return await DriverHelper.waitUntilLocatedAndVisible(
+		return await DriverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '#notices .is-success' )
 		);

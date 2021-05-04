@@ -15,7 +15,7 @@ export default class StepWrapperComponent extends AsyncBaseContainer {
 	}
 
 	async _postInit() {
-		return await driverHelper.waitUntilLocatedAndVisible(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.step-wrapper a.navigation-link' ),
 			this.explicitWaitMS

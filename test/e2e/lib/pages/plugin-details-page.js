@@ -23,14 +23,17 @@ export default class PluginDetailsPage extends AsyncBaseContainer {
 	}
 
 	async waitForPlugin() {
-		return await driverHelper.waitUntilLocatedAndVisible(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			this.activatePluginSelector
 		);
 	}
 
 	async waitForSuccessNotice() {
-		return await driverHelper.waitUntilLocatedAndVisible( this.driver, this.successNoticeSelector );
+		return await driverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			this.successNoticeSelector
+		);
 	}
 
 	async getSuccessNoticeText() {
