@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
  */
 import { addQueryArgs } from 'calypso/lib/route';
 import { urlToSlug } from 'calypso/lib/url';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 /**
  * Style dependencies
@@ -30,6 +31,14 @@ class JetpackConnectSkipUser extends Component {
 		);
 	}
 
+	onSkip() {
+		recordTracksEvent( 'calypso_jpc_iframe_skip_user_connection' );
+	}
+
+	onFeatures() {
+		recordTracksEvent( 'calypso_jpc_iframe_view_all_features' );
+	}
+
 	render() {
 		const { translate } = this.props;
 
@@ -48,6 +57,7 @@ class JetpackConnectSkipUser extends Component {
 										target="_blank"
 										href="https://jetpack.com/support/why-the-wordpress-com-connection-is-important-for-jetpack/"
 										rel="noreferrer"
+										onClick={ this.onFeatures }
 									/>
 								),
 							},
@@ -55,7 +65,11 @@ class JetpackConnectSkipUser extends Component {
 					) }
 				</p>
 
-				<a className="jetpack-connect-skip-user__continue-link" href={ this.getPlansURL() }>
+				<a
+					className="jetpack-connect-skip-user__continue-link"
+					href={ this.getPlansURL() }
+					onClick={ this.onSkip }
+				>
 					{ translate( 'Continue without user account' ) }
 				</a>
 			</div>
