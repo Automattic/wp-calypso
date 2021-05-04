@@ -81,7 +81,7 @@ class ImporterAuthorMapping extends React.Component {
 				<span className="importer__source-author">{ decodeEntities( name ) }</span>
 				<Gridicon className="importer__mapping-relation" icon="arrow-right" />
 				{ ! hasSingleAuthor ? (
-					<AuthorSelector siteId={ siteId } onSelect={ onSelect }>
+					<AuthorSelector key={ siteId } siteId={ siteId } onSelect={ onSelect }>
 						<User user={ selectedAuthor } />
 					</AuthorSelector>
 				) : (

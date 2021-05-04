@@ -40,12 +40,6 @@ class AuthorSwitcherShell extends Component {
 	authorSelectorToggleRef = createRef();
 	authorSelectorChevronRef = createRef();
 
-	componentDidUpdate( prevProps ) {
-		if ( ! this.props.siteId || this.props.siteId !== prevProps.siteId ) {
-			this.props.updateSearch( '' );
-		}
-	}
-
 	render() {
 		const { users } = this.props;
 

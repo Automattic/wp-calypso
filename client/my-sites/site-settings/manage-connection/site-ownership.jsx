@@ -144,6 +144,7 @@ class SiteOwnership extends Component {
 		return (
 			<div className="manage-connection__user-dropdown">
 				<AuthorSelector
+					key={ siteId }
 					siteId={ siteId }
 					exclude={ this.isUserExcludedFromSelector }
 					transformAuthor={ this.transformUser }
