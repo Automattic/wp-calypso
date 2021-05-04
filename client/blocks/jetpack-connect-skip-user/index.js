@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -17,6 +18,12 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import './style.scss';
 
 class JetpackConnectSkipUser extends Component {
+	static propTypes = {
+		homeUrl: PropTypes.string.isRequired,
+		redirectAfterAuth: PropTypes.string.isRequired,
+		source: PropTypes.string,
+	};
+
 	getPlansURL() {
 		const { homeUrl, redirectAfterAuth } = this.props;
 		const slug = urlToSlug( homeUrl );
@@ -31,12 +38,17 @@ class JetpackConnectSkipUser extends Component {
 		);
 	}
 
+	getTracksProps() {
+		const { source } = this.props;
+		return { source };
+	}
+
 	onSkip() {
-		recordTracksEvent( 'calypso_jpc_iframe_skip_user_connection' );
+		recordTracksEvent( 'calypso_jpc_iframe_skip_user_connection', this.getTracksProps() );
 	}
 
 	onFeatures() {
-		recordTracksEvent( 'calypso_jpc_iframe_view_all_features' );
+		recordTracksEvent( 'calypso_jpc_iframe_view_all_features', this.getTracksProps() );
 	}
 
 	render() {
@@ -57,7 +69,7 @@ class JetpackConnectSkipUser extends Component {
 										target="_blank"
 										href="https://jetpack.com/support/why-the-wordpress-com-connection-is-important-for-jetpack/"
 										rel="noreferrer"
-										onClick={ this.onFeatures }
+										onClick={ () => this.onFeatures() }
 									/>
 								),
 							},
@@ -68,7 +80,7 @@ class JetpackConnectSkipUser extends Component {
 				<a
 					className="jetpack-connect-skip-user__continue-link"
 					href={ this.getPlansURL() }
-					onClick={ this.onSkip }
+					onClick={ () => this.onSkip() }
 				>
 					{ translate( 'Continue without user account' ) }
 				</a>
