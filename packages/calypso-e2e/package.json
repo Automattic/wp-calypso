@@ -15,12 +15,11 @@
 	],
 	"license": "GPL-2.0-or-later",
 	"dependencies": {
+		"@types/config": "0.0.38",
 		"config": "^1.28.0",
 		"playwright": "^1.9.1"
 	},
-	"devDependencies": {
-		"@types/config": "^0.0.38"
-	},
+	"devDependencies": {},
 	"scripts": {
 		"clean": "yarn build --clean && npx rimraf dist",
 		"build": "tsc --build ./tsconfig.json"
