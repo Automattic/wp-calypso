@@ -62,7 +62,7 @@ function MarketplaceDomainUpsellHeader() {
 				href="https://yoast.com/domain-names-seo"
 				target="_blank"
 				rel="noopener noreferrer"
-				icon={ true }
+				icon
 			>
 				{ translate( 'Domain names and their influence on SEO' ) }
 			</ExternalLink>
