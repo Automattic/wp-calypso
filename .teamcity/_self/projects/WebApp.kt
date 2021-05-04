@@ -733,7 +733,12 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 				export PLAYWRIGHT_BROWSERS_PATH=0
 
 				# Install modules
-				yarn install
+				# Normally, we would use the following
+				# ${_self.yarn_install_cmd}
+				# However, due to the prepopulated node_modules
+				# folder not containing the Playwright binaries,
+				# for the time being the raw command is used.
+				yarn install --frozen-lockfile --production --ignore-optional
 
 				# Build package
 				yarn workspace @automattic/calypso-e2e build
