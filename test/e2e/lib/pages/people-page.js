@@ -7,6 +7,7 @@ import { By } from 'selenium-webdriver';
  * Internal dependencies
  */
 import AsyncBaseContainer from '../async-base-container';
+import SectionNavComponent from '../components/section-nav-component';
 
 import * as DriverHelper from '../driver-helper.js';
 
@@ -20,7 +21,8 @@ export default class PeoplePage extends AsyncBaseContainer {
 	}
 
 	async selectTeam() {
-		await DriverHelper.ensureMobileMenuOpen( this.driver );
+		const sectionNav = await SectionNavComponent.Expect( this.driver );
+		await sectionNav.ensureMobileMenuOpen();
 		return await DriverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.section-nav-tabs__list a[href*=team]' )
@@ -28,7 +30,8 @@ export default class PeoplePage extends AsyncBaseContainer {
 	}
 
 	async selectViewers() {
-		await DriverHelper.ensureMobileMenuOpen( this.driver );
+		const sectionNav = await SectionNavComponent.Expect( this.driver );
+		await sectionNav.ensureMobileMenuOpen();
 		await DriverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.section-nav-tabs__list a[href*=viewers]' )
@@ -37,7 +40,8 @@ export default class PeoplePage extends AsyncBaseContainer {
 	}
 
 	async selectEmailFollowers() {
-		await DriverHelper.ensureMobileMenuOpen( this.driver );
+		const sectionNav = await SectionNavComponent.Expect( this.driver );
+		await sectionNav.ensureMobileMenuOpen();
 		return await DriverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.section-nav-tabs__list a[href*=email-followers]' )
@@ -45,7 +49,8 @@ export default class PeoplePage extends AsyncBaseContainer {
 	}
 
 	async selectFollowers() {
-		await DriverHelper.ensureMobileMenuOpen( this.driver );
+		const sectionNav = await SectionNavComponent.Expect( this.driver );
+		await sectionNav.ensureMobileMenuOpen();
 		return await DriverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.section-nav-tabs__list a[href*="people/followers"]' )
@@ -53,7 +58,8 @@ export default class PeoplePage extends AsyncBaseContainer {
 	}
 
 	async selectInvites() {
-		await DriverHelper.ensureMobileMenuOpen( this.driver );
+		const sectionNav = await SectionNavComponent.Expect( this.driver );
+		await sectionNav.ensureMobileMenuOpen();
 		return await DriverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.section-nav-tabs__list a[href*="people/invites"]' )

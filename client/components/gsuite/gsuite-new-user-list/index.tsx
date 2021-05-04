@@ -81,7 +81,7 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 
 	return (
 		<div>
-			{ users.map( ( user ) => (
+			{ users.map( ( user, index ) => (
 				<Fragment key={ user.uuid }>
 					<GSuiteNewUser
 						autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
@@ -91,6 +91,7 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 						onUserRemove={ onUserRemove( user.uuid ) }
 						onReturnKeyPress={ onReturnKeyPress }
 						showLabels={ showLabels }
+						showTrashButton={ index > 0 }
 					/>
 
 					<hr className="gsuite-new-user-list__user-divider" />

@@ -136,7 +136,7 @@
 		"classnames": "^2.2.6",
 		"emotion-theming": "^10.0.27",
 		"enzyme": "^3.11.0",
-		"eslint": "^7.24.0",
+		"eslint": "^7.25.0",
 		"jest": "^26.4.0",
 		"lodash": "^4.17.21",
 		"moment": "^2.26.0",
@@ -156,6 +156,6 @@
 		"@wordpress/eslint-plugin": "^8.0.2",
 		"babel-jest": "^26.3.0",
 		"wait-for-expect": "^3.0.2",
-		"webpack": "^5.34.0"
+		"webpack": "^5.36.2"
 	}
 }
