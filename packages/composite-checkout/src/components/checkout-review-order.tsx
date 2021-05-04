@@ -1,15 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { useI18n } from '@wordpress/react-i18n';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-/**
- * Internal dependencies
- */
 import joinClasses from '../lib/join-classes';
 import { useLineItems } from '../public-api';
+
 import {
 	OrderReviewLineItems,
 	OrderReviewTotal,

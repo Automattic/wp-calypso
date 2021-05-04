@@ -4,9 +4,6 @@
 
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["runComponentTests", "expect"] }] */
 
-/**
- * External dependencies
- */
 import 'regenerator-runtime';
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';

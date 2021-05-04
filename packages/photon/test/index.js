@@ -1,8 +1,5 @@
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["expectHostedOnPhoton", "expectHostedOnPhotonInsecurely", "expectPathname", "expectQuery", "expect"] }] */
 
-/**
- * Internal dependencies
- */
 import photon from '../src';
 
 function expectHostedOnPhoton( url ) {

@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { JETPACK_SCAN_PRODUCTS } from './constants';
 
 export function isJetpackScanSlug( productSlug ) {

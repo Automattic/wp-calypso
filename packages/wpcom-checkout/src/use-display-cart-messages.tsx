@@ -1,12 +1,9 @@
-/**
- * External dependencies
- */
-import { useRef, useEffect } from 'react';
 import type {
 	ResponseCart,
 	ResponseCartMessages,
 	ResponseCartMessage,
 } from '@automattic/shopping-cart';
+import { useRef, useEffect } from 'react';
 
 export type ShowMessages = ( messages: ResponseCartMessage[] ) => void;
 

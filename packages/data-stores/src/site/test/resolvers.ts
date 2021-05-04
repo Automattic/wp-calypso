@@ -6,11 +6,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
-import { getSite } from '../resolvers';
 import { register } from '../';
+import { getSite } from '../resolvers';
 
 beforeAll( () => {
 	register( { client_id: '', client_secret: '' } );

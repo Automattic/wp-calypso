@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { Language } from './Language';
 
 type SearchableFields = string[];

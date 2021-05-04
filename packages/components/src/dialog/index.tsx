@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
+import classnames from 'classnames';
 import React from 'react';
 import type { ReactNode } from 'react';
 import Modal from 'react-modal';
-import classnames from 'classnames';
 
-/**
- * Internal dependencies
- */
 import ButtonBar from './button-bar';
 import type { Button, BaseButton } from './button-bar';
 

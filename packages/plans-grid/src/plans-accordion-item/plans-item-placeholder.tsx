@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import classNames from 'classnames';
 import { NextButton } from '@automattic/onboarding';
+import classNames from 'classnames';
+import React from 'react';
 
-/**
- * Internal dependencies
- */
 import PlansFeatureListPlaceholder from '../plans-feature-list/plans-feature-list-placeholder';
 
 /**

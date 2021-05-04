@@ -2,17 +2,12 @@
 
 /* eslint-disable no-console */
 
-/**
- * External dependencies
- */
 const fs = require( 'fs' );
-const globby = require( 'globby' );
 const path = require( 'path' );
-const program = require( 'commander' );
 
-/**
- * Internal dependencies
- */
+const program = require( 'commander' );
+const globby = require( 'globby' );
+
 const i18n = require( '.' );
 
 function collect( val, memo ) {

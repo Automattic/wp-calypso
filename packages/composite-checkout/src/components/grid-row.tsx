@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 
-/**
- * Internal dependencies
- */
 import styled from '../lib/styled';
 
 export default function GridRow( { gap, columnWidths, className, children }: GridRowProps ) {

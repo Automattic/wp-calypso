@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { useContext } from 'react';
 
-/**
- * Internal dependencies
- */
 import CheckoutContext from '../lib/checkout-context';
 
 export default function useEvents() {

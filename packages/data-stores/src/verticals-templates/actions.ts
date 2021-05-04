@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type { Template } from './types';
 
 export const receiveTemplates = ( verticalId: string, templates: Template[] ) => ( {

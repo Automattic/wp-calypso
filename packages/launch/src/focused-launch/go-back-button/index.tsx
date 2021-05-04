@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
+import { BackButton } from '@automattic/onboarding';
+import type { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, chevronLeft } from '@wordpress/icons';
-import type { Button } from '@wordpress/components';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { BackButton } from '@automattic/onboarding';
+import * as React from 'react';
 import './style.scss';
 
 declare const __i18n_text_domain__: string;

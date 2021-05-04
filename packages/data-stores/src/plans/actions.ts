@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type { Plan, PlanFeature, FeaturesByType, PlanProduct } from './types';
 
 type setFeaturesAction = {

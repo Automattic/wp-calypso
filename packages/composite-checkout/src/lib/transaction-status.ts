@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import { useCallback, useContext, useMemo, useReducer } from 'react';
 import debugFactory from 'debug';
+import { useCallback, useContext, useMemo, useReducer } from 'react';
 
-/**
- * Internal dependencies
- */
 import CheckoutContext from '../lib/checkout-context';
 import {
 	TransactionStatus,

@@ -1,12 +1,8 @@
-/**
- * External dependencies
- */
-import { useCallback, useMemo, useEffect, useRef } from 'react';
 import debugFactory from 'debug';
+import { useCallback, useMemo, useEffect, useRef } from 'react';
 
-/**
- * Internal dependencies
- */
+import { convertTempResponseCartToResponseCart } from './cart-functions';
+import { createRequestCartProducts } from './create-request-cart-product';
 import type {
 	TempResponseCart,
 	ResponseCart,
@@ -26,11 +22,9 @@ import type {
 	UpdateTaxLocationInCart,
 	CartValidCallback,
 } from './types';
-import { convertTempResponseCartToResponseCart } from './cart-functions';
-import useShoppingCartReducer from './use-shopping-cart-reducer';
-import useInitializeCartFromServer from './use-initialize-cart-from-server';
 import useCartUpdateAndRevalidate from './use-cart-update-and-revalidate';
-import { createRequestCartProducts } from './create-request-cart-product';
+import useInitializeCartFromServer from './use-initialize-cart-from-server';
+import useShoppingCartReducer from './use-shopping-cart-reducer';
 
 const debug = debugFactory( 'shopping-cart:use-shopping-cart-manager' );
 

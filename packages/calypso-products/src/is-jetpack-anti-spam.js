@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { formatProduct } from './format-product';
 import { isJetpackAntiSpamSlug } from './is-jetpack-anti-spam-slug';
 

@@ -2,15 +2,9 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { shallow } from 'enzyme';
 import React from 'react';
 
-/**
- * Internal dependencies
- */
 import ProgressBar from '../';
 
 describe( 'ProgressBar', () => {

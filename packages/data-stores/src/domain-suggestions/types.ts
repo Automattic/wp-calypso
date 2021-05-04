@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type { DataStatus } from './constants';
 
 export interface DomainSuggestionQuery {

@@ -1,15 +1,9 @@
 /* eslint-disable no-console */
 
-/**
- * External dependencies
- */
 const { Octokit } = require( '@octokit/core' );
 
-/**
- * Internal dependencies
- */
-const { isHittingRateLimit, warnOfRateLimit, sleepUntilRateLimitOver } = require( './rate-limit' );
 const { getPulls, retargetPr } = require( './github' );
+const { isHittingRateLimit, warnOfRateLimit, sleepUntilRateLimitOver } = require( './rate-limit' );
 
 const pullsExist = ( pulls ) => ( ( pulls && pulls.length ) || 0 ) > 0;
 

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { encodeProductForUrl, decodeProductFromUrl } from '../src/product-url-encoding';
 
 describe( 'encodeProductForUrl', () => {

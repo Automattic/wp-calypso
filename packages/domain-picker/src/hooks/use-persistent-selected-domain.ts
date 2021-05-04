@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
 import type { DomainSuggestions } from '@automattic/data-stores';
+import * as React from 'react';
 
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 

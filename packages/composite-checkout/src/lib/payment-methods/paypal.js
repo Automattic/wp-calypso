@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import styled from '@emotion/styled';
-import debugFactory from 'debug';
 import { useI18n } from '@wordpress/react-i18n';
+import debugFactory from 'debug';
+import React from 'react';
 
-/**
- * Internal dependencies
- */
 import Button from '../../components/button';
 import {
 	FormStatus,

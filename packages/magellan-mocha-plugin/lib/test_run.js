@@ -4,6 +4,7 @@
 //
 
 const _ = require( 'lodash' );
+
 const mochaSettings = require( './settings' );
 
 const MochaTestRun = function ( options ) {

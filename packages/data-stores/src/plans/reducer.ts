@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
+import type { Reducer } from 'redux';
 
-/**
- * Internal dependencies
- */
 import type { PlanAction } from './actions';
 import type { Plan, PlanFeature, FeaturesByType, PlanProduct } from './types';
 

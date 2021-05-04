@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import MeKeyringConnection from './me.keyring-connection';
 import MeConnectedApp from './me.connected-application';
+import MeKeyringConnection from './me.keyring-connection';
 import MePublicizeConnection from './me.publicize-connection';
 import MeSettings from './me.settings';
 import MeTwoStep from './me.two-step';

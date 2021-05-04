@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useState, useEffect } from 'react';
-
-/**
- * WordPress dependencies
- */
 import type { ExPlatClient, ExperimentAssignment } from '@automattic/explat-client';
+import React, { useState, useEffect } from 'react';
 
 interface ExperimentOptions {
 	/**

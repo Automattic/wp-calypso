@@ -1,19 +1,16 @@
 #!/usr/bin/env node
 
-/**
- * External dependencies
- */
-const program = require( 'commander' );
-const process = require( 'process' );
-const glob = require( 'glob' );
 const os = require( 'os' );
+const process = require( 'process' );
 
-/**
- * Internal dependencies
- */
-const makePot = require( './index' );
+const program = require( 'commander' );
+const glob = require( 'glob' );
+
 const presets = require( './presets' );
 const concatPot = require( './utils/concat-pot' );
+
+const makePot = require( './index' );
+
 const version = require( './package.json' ).version;
 
 const presetsKeys = Object.keys( presets );

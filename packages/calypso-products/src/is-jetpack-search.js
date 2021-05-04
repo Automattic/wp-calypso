@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { JETPACK_SEARCH_PRODUCTS } from './constants';
 import { formatProduct } from './format-product';
 

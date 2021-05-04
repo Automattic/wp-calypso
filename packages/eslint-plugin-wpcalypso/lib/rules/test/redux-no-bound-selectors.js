@@ -10,6 +10,7 @@
 //------------------------------------------------------------------------------
 
 const rule = require( '../../../lib/rules/redux-no-bound-selectors' );
+
 const RuleTester = require( 'eslint' ).RuleTester;
 
 const REF = ' See wp-calypso#14024';

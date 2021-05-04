@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
 import crc32 from 'crc32';
-import seed from 'seed-random';
 import debugFactory from 'debug';
+import seed from 'seed-random';
 
 const debug = debugFactory( 'photon' );
 

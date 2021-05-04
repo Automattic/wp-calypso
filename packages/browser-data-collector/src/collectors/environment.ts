@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getCalypsoVersion, getTarget, getEnvironment } from '../api/environment';
 
 export const collector: Collector = ( report ) => {

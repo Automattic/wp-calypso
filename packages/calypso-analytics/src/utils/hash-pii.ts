@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import sha256 from 'hash.js/lib/hash/sha/256';

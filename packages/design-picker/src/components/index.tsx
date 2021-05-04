@@ -1,18 +1,12 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/**
- * External dependencies
- */
-import React from 'react';
-import classnames from 'classnames';
+import { isEnabled } from '@automattic/calypso-config';
 import { Tooltip } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { isEnabled } from '@automattic/calypso-config';
+import classnames from 'classnames';
+import React from 'react';
 
-/**
- * Internal dependencies
- */
-import MShotsImage from './mshots-image';
+import type { Design } from '../types';
 import {
 	getAvailableDesigns,
 	getDesignImageUrl,
@@ -20,7 +14,8 @@ import {
 	mShotOptions,
 	isBlankCanvasDesign,
 } from '../utils';
-import type { Design } from '../types';
+
+import MShotsImage from './mshots-image';
 
 /**
  * Style dependencies

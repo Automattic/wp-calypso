@@ -1,12 +1,10 @@
-/**
- * Internal dependencies
- */
 import {
 	format as formatUrl,
 	getUrlParts,
 	getUrlFromParts,
 	determineUrlType,
 } from '@automattic/calypso-url';
+
 import {
 	TERM_MONTHLY,
 	TERM_ANNUALLY,

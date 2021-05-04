@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
+import { formatProduct } from './format-product';
 import {
 	isGoogleWorkspaceProductSlug,
 	isGSuiteProductSlug,
 	isGSuiteOrExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 } from './gsuite-product-slug';
-import { formatProduct } from './format-product';
 
 export function isGoogleWorkspace( product ) {
 	product = formatProduct( product );

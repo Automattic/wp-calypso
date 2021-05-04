@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { _x } from '@wordpress/i18n';
 
 const PLACEHOLDER_DEFAULTS = {

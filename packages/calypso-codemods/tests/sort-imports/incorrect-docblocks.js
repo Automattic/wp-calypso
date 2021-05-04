@@ -1,6 +1,4 @@
-/**
- * External dependencies
- */
+
 import chickenLibrary from 'chicken';
 import okapiMe from 'okapi-me';
 

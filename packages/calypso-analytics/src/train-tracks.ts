@@ -1,11 +1,5 @@
-/**
- * External Dependencies
- */
 import { v4 as uuid } from 'uuid';
 
-/**
- * Internal Dependencies
- */
 import { recordTracksEvent } from './tracks';
 
 interface TrainTracksRenderProps {

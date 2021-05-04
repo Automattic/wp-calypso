@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
 import React from 'react';
 
-/**
- * Internal dependencies
- */
+import ShoppingCartContext from './shopping-cart-context';
 import type { RequestCart, ResponseCart } from './types';
 import useShoppingCartManager from './use-shopping-cart-manager';
-import ShoppingCartContext from './shopping-cart-context';
 
 export default function ShoppingCartProvider( {
 	cartKey,

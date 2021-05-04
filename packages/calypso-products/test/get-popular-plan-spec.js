@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getPopularPlanSpec } from '../src';
 import { GROUP_WPCOM, TYPE_BUSINESS, TYPE_PREMIUM } from '../src/constants';
 

@@ -1,10 +1,7 @@
-/**
- * External dependencies
- */
 import type { DomainSuggestions } from '@automattic/data-stores';
-import type { ResponseCartProduct } from '@automattic/shopping-cart';
 import { Plans as PlansStore } from '@automattic/data-stores';
 import type { Plans } from '@automattic/data-stores';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 export type PlanProductForFlow = {
 	product_id: number;

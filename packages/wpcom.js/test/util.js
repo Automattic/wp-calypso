@@ -1,16 +1,8 @@
-/**
- * Module dependencies
- */
-/**
- * External dependencies
- */
 import qs from 'qs';
 import oauthCors from 'wpcom-oauth-cors';
 
-/**
- * Internal dependencies
- */
 import wpcomFactory from '../index';
+
 import fixture from './fixture';
 let configFactory;
 

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { ReportImpl } from './report';
 import { send } from './transports/logstash';
 
@@ -12,6 +9,7 @@ const inFlightReporters: Map< string, Promise< ReportImpl > > = new Map();
  * @param id id of the report, must be passed to `stop()` to stop it
  * @param obj Options
  * @param obj.fullPageLoad `true` if the report should start measuring from the load of the page, `false` to start measuring from now.
+ * @param obj.collectors
  */
 export const start = async (
 	id: string,
@@ -33,6 +31,7 @@ export const start = async (
  * Stops a report and sends it to the transporter.
  *
  * @param id id of the report to send, comes from `start()`
+ * @param collectors.collectors
  * @param collectors list of collectors to run
  * @returns `true` if the report was sent successfully, `false` otherwise
  */

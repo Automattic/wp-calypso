@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import uniqueBy from '../unique-by';
 
 describe( 'uniqueBy()', () => {

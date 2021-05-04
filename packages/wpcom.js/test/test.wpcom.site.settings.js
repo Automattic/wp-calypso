@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import assert from 'assert';
 
-/**
- * Internal dependencies
- */
 import util from './util';
 
 /**

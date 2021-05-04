@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import { apiFetch } from '@wordpress/data-controls';
 import type { APIFetchOptions } from '@wordpress/api-fetch';
+import { apiFetch } from '@wordpress/data-controls';
 import { addQueryArgs } from '@wordpress/url';
 
 import { setLocalizedLanguageNames } from './actions';

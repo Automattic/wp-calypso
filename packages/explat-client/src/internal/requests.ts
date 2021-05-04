@@ -1,11 +1,9 @@
-/**
- * Internal dependencies
- */
 import type { Config, ExperimentAssignment } from '../types';
-import { validateExperimentAssignment } from './validations';
-import { monotonicNow } from './timing';
-import { isObject } from './validations';
+
 import * as ExperimentAssignments from './experiment-assignments';
+import { monotonicNow } from './timing';
+import { validateExperimentAssignment } from './validations';
+import { isObject } from './validations';
 
 interface FetchExperimentAssignmentResponse {
 	variations: Record< string, unknown >;

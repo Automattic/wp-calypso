@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const yargs = require( 'yargs' );
+
 const retargetOpenPrs = require( './index' );
 
 const args = yargs

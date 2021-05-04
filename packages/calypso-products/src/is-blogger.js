@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { isBloggerPlan } from './main';
 import { formatProduct } from './format-product';
+import { isBloggerPlan } from './main';
 
 export function isBlogger( product ) {
 	product = formatProduct( product );

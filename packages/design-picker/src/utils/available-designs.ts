@@ -1,16 +1,11 @@
-/**
- * External dependencies
- */
-import { addQueryArgs } from '@wordpress/url';
 import { isEnabled } from '@automattic/calypso-config';
+import { addQueryArgs } from '@wordpress/url';
 
-/**
- * Internal dependencies
- */
-import { availableDesignsConfig } from './available-designs-config';
-import { DESIGN_IMAGE_FOLDER } from '../constants';
 import type { MShotsOptions } from '../components/mshots-image';
+import { DESIGN_IMAGE_FOLDER } from '../constants';
 import type { Design } from '../types';
+
+import { availableDesignsConfig } from './available-designs-config';
 import type { AvailableDesigns } from './available-designs-config';
 
 function getCanUseWebP() {

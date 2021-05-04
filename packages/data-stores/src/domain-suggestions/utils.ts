@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import deterministicStringify from 'fast-json-stable-stringify';
 import formatCurrency from '@automattic/format-currency';
+import deterministicStringify from 'fast-json-stable-stringify';
 
-/**
- * Internal dependencies
- */
 import type { DomainSuggestionQuery, DomainSuggestionSelectorOptions } from './types';
 
 /**

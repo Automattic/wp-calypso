@@ -1,9 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`basic.js 1`] = `
-"/**
- * External dependencies
- */
+"
 import { zip as zippy } from \\"lodash\\";
 
 import { map as mappy } from \\"lodash\\";

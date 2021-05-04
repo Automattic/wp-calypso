@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import React from 'react';
 
-/**
- * Internal dependencies
- */
 import Button, { ButtonProps } from './button';
 
 function CheckoutNextStepButton( {

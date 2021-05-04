@@ -1,7 +1,7 @@
-const BasicEvaluatedExpression = require( 'webpack/lib/javascript/BasicEvaluatedExpression' );
 const {
 	harmonySpecifierTag,
 } = require( 'webpack/lib/dependencies/HarmonyImportDependencyParserPlugin' );
+const BasicEvaluatedExpression = require( 'webpack/lib/javascript/BasicEvaluatedExpression' );
 
 // Checks if the identifier `name` in the current scope points to an imported binding
 const isImport = ( parser, name ) => {

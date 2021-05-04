@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import { getUrlParts, getUrlFromParts } from '../src';
 
 function convertParamsToObject( searchParams ) {

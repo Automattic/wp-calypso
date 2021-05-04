@@ -1,12 +1,7 @@
-/**
- * External dependencies
- */
 import { dispatch } from '@wordpress/data';
 
-/**
- * Internal dependencies
- */
 import { wpcomRequest } from '../wpcom-request-controls';
+
 import { STORE_KEY } from './constants';
 import type { SiteDetails, Domain } from './types';
 

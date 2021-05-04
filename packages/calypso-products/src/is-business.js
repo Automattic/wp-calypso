@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { isBusinessPlan } from './main';
 import { formatProduct } from './format-product';
+import { isBusinessPlan } from './main';
 
 export function isBusiness( product ) {
 	product = formatProduct( product );

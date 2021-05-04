@@ -1,9 +1,6 @@
 // Type definitions for i18n-calypso
 // Project: i18n-calypso
 
-/**
- * External dependencies
- */
 import * as React from 'react';
 
 declare namespace i18nCalypso {

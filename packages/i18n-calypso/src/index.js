@@ -1,10 +1,7 @@
-/**
- * Internal dependencies
- */
 import I18N from './i18n';
 import localizeFactory from './localize';
-import translateHookFactory from './use-translate';
 import rtlFactory from './rtl';
+import translateHookFactory from './use-translate';
 
 // Export the `I18N` class
 export { I18N };

@@ -1,16 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useI18n } from '@wordpress/react-i18n';
+import React from 'react';
 
-/**
- * Internal dependencies
- */
 import joinClasses from '../lib/join-classes';
 import { useFormStatus, FormStatus } from '../public-api';
-import CheckoutErrorBoundary from './checkout-error-boundary';
 import { usePaymentMethod, useProcessPayment } from '../public-api';
+
+import CheckoutErrorBoundary from './checkout-error-boundary';
 
 export default function CheckoutSubmitButton( {
 	className,

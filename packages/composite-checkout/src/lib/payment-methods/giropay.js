@@ -1,22 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import styled from '@emotion/styled';
-import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import debugFactory from 'debug';
+import React from 'react';
 
-/**
- * Internal dependencies
- */
-import Field from '../../components/field';
 import Button from '../../components/button';
+import Field from '../../components/field';
+import { registerStore, useSelect, useDispatch } from '../../lib/registry';
 import { FormStatus, useLineItems } from '../../public-api';
 import { useFormStatus } from '../form-status';
-import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
-import { registerStore, useSelect, useDispatch } from '../../lib/registry';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
+import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 
 const debug = debugFactory( 'composite-checkout:giropay-payment-method' );
 

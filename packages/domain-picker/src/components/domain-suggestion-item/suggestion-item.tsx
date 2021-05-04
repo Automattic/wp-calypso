@@ -1,28 +1,19 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/**
- * External dependencies
- */
-import * as React from 'react';
-import classnames from 'classnames';
-import { useI18n } from '@wordpress/react-i18n';
-import { useLocale } from '@automattic/i18n-utils';
 import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
+import { useLocale } from '@automattic/i18n-utils';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
-
-/**
- * Wordpress dependencies
- */
-import { createInterpolateElement } from '@wordpress/element';
 import { Spinner } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
 import { Button } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
+import * as React from 'react';
 
-/**
- * Internal dependencies
- */
 import InfoTooltip from '../info-tooltip';
+
 import WrappingComponent from './suggestion-item-wrapper';
 // TODO: remove when all needed core types are available
 /*#__PURE__*/ import '../../types-patch';

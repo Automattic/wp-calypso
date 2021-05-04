@@ -1,17 +1,11 @@
-/**
- * External dependencies
- */
 import assert from 'assert';
 
-/**
- * Internal dependencies
- */
+import fixture from './fixture';
 import util from './util';
 
 /**
  * Fixture data
  */
-import fixture from './fixture';
 
 /**
  * Test api versions

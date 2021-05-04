@@ -13,8 +13,5 @@ import React from 'react';
 The following patterns are not warnings:
 
 ```js
-/**
- * External dependencies
- */
 import React from 'react';
 ```

@@ -1,14 +1,9 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/**
- * External dependencies
- */
-import * as React from 'react';
+
 import { ArrowButton } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
+import * as React from 'react';
 
-/**
- * Internal dependencies
- */
 import WrappingComponent from './suggestion-item-wrapper';
 
 interface Props {

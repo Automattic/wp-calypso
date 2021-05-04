@@ -1,11 +1,8 @@
-/**
- * Internal dependencies
- */
+import type { PlanSlug } from '../plans';
+import { plansOrder } from '../plans/constants';
+
 import type { State } from './reducer';
 import type { FeatureId } from './types';
-
-import { plansOrder } from '../plans/constants';
-import type { PlanSlug } from '../plans';
 
 export const getAllFeatures = ( state: State ) => state;
 

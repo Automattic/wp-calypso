@@ -1,8 +1,7 @@
 /* eslint-disable wpcalypso/import-docblock */
-/**
- * Type dependencies
- */
+
 import type { TranslateResult } from 'i18n-calypso';
+
 import type {
 	GROUP_JETPACK,
 	GROUP_WPCOM,

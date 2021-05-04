@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import PopupMonitor from '@automattic/popup-monitor';
 
 /**

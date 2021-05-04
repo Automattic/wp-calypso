@@ -1,13 +1,8 @@
-/**
- * External dependencies
- */
-import React, { LabelHTMLAttributes, InputHTMLAttributes, HTMLAttributes } from 'react';
 import PropTypes from 'prop-types';
+import React, { LabelHTMLAttributes, InputHTMLAttributes, HTMLAttributes } from 'react';
 
-/**
- * Internal dependencies
- */
 import styled from '../lib/styled';
+
 import Button from './button';
 
 export default function Field( {

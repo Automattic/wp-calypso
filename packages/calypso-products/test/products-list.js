@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { objectIsProduct } from '../src';
 
 describe( 'objectIsProduct', () => {

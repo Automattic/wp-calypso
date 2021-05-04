@@ -1,16 +1,10 @@
-/**
- * External dependencies
- */
-import { Guide } from '@wordpress/components';
-import proxyRequest from 'wpcom-proxy-request';
-import React, { useEffect, useState } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
 import { useLocale } from '@automattic/i18n-utils';
+import { Guide } from '@wordpress/components';
+import { useI18n } from '@wordpress/react-i18n';
+import React, { useEffect, useState } from 'react';
 import wpcom from 'wpcom';
+import proxyRequest from 'wpcom-proxy-request';
 
-/**
- * Internal dependencies
- */
 import './style.scss';
 import WhatsNewPage from './whats-new-page';
 

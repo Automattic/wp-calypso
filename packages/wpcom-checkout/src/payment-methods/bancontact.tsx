@@ -1,10 +1,4 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import debugFactory from 'debug';
-import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@wordpress/react-i18n';
+import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
 import {
 	Button,
 	FormStatus,
@@ -14,16 +8,16 @@ import {
 	useSelect,
 	useDispatch,
 } from '@automattic/composite-checkout';
-import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
+import debugFactory from 'debug';
+import React from 'react';
 
-/**
- * Internal dependencies
- */
-import styled from '../styled';
 import Field from '../field';
-import { SummaryLine, SummaryDetails } from '../summary-details';
 import { PaymentMethodLogos } from '../payment-method-logos';
+import styled from '../styled';
+import { SummaryLine, SummaryDetails } from '../summary-details';
 
 const debug = debugFactory( 'composite-checkout:bancontact-payment-method' );
 

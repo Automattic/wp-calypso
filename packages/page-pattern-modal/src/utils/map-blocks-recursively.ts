@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { BlockInstance, cloneBlock } from '@wordpress/blocks';
 
 type Writeable< T > = { -readonly [ P in keyof T ]: T[ P ] };

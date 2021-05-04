@@ -1,15 +1,9 @@
-/**
- * External dependencies
- */
-import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
+import type { Reducer } from 'redux';
 
-/**
- * Internal dependencies
- */
-import type { DomainCategory, DomainSuggestionState, DomainAvailabilities } from './types';
-import { DataStatus } from './constants';
 import type { Action } from './actions';
+import { DataStatus } from './constants';
+import type { DomainCategory, DomainSuggestionState, DomainAvailabilities } from './types';
 import { stringifyDomainQueryObject } from './utils';
 
 const initialDomainSuggestionState: DomainSuggestionState = {

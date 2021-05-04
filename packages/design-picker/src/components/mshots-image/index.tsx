@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React, { useState, useEffect, useRef } from 'react';
-import classnames from 'classnames';
-import { addQueryArgs } from '@wordpress/url';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
 import { isEnabled } from '@automattic/calypso-config';
+import { addQueryArgs } from '@wordpress/url';
+import classnames from 'classnames';
+import debugFactory from 'debug';
+import React, { useState, useEffect, useRef } from 'react';
 
 /**
  * Style dependencies

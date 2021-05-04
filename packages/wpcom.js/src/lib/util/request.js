@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import sendRequest from './send-request';
 
 /**

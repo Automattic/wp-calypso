@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import createConfig from '../';
 
 describe( 'index', () => {

@@ -1,10 +1,6 @@
-/**
- * Internal dependencies
- */
-import { getSupportedPlans } from '../resolvers';
 import * as MockData from '../mock';
+import { getSupportedPlans } from '../resolvers';
 import { buildPlanFeaturesDict } from '../test-utils';
-
 import type { PricedAPIPlan } from '../types';
 
 // Don't need to mock specific functions for any tests, but mocking

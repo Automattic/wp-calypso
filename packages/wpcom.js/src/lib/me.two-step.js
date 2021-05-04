@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import MeTwoStepSMS from './me.two-step.sms';
 
 const root = '/me/two-step/';

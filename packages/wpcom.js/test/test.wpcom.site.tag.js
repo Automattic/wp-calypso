@@ -1,7 +1,3 @@
-/**
- * Module dependencies
- */
-const util = require( './util' );
 const assert = require( 'assert' );
 
 /**
@@ -9,6 +5,7 @@ const assert = require( 'assert' );
  */
 
 const fixture = require( './fixture' );
+const util = require( './util' );
 
 /**
  * site.tag

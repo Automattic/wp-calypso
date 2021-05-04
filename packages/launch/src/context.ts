@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
 import { addQueryArgs } from '@wordpress/url';
+import * as React from 'react';
 
 export interface LaunchContextProps {
 	siteId: number;

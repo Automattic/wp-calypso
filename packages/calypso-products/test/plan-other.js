@@ -1,10 +1,3 @@
-/**
- * External dependencies
- */
-
-/**
- * Internal dependencies
- */
 import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from '../src/constants';
 import { calculateMonthlyPrice, getBillingMonthsForTerm, getTermDuration } from '../src/index';
 

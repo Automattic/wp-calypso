@@ -1,10 +1,8 @@
-/**
- * External dependencies
- */
 const fs = require( 'fs' );
-const glob = require( 'glob' );
 const path = require( 'path' );
+
 const { po } = require( 'gettext-parser' );
+const glob = require( 'glob' );
 const merge = require( 'lodash.mergewith' );
 
 const mergeDeep = ( left, right, key ) => {

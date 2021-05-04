@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import SiteWordAdsSettings from './site.wordads.settings';
 import SiteWordAdsEarnings from './site.wordads.earnings';
+import SiteWordAdsSettings from './site.wordads.settings';
 import SiteWordAdsTOS from './site.wordads.tos';
 
 /**

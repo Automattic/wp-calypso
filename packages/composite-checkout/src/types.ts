@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
 import { DataRegistry } from '@wordpress/data';
 import { ReactElement } from 'react';
 
-/**
- * Internal dependencies
- */
 import { Theme } from './lib/theme';
 
 export interface CheckoutStepProps {

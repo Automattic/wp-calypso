@@ -3,15 +3,9 @@
  *
  */
 
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
 const debug = debugFactory( 'package/load-script' );
 
-/**
- * Internal dependencies
- */
 import { addScriptCallback, isLoading } from './callback-handler';
 import { createScriptElement, attachToHead } from './dom-operations';
 

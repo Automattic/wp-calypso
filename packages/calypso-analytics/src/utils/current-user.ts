@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import hashPii from './hash-pii';
 
 /**

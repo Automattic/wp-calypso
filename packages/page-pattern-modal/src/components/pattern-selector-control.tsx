@@ -1,16 +1,11 @@
-/**
- * WordPress dependencies
- */
 import { BaseControl } from '@wordpress/components';
+import { withInstanceId } from '@wordpress/compose';
 import { memo } from '@wordpress/element';
 
-/**
- * Internal dependencies
- */
-import PatternSelectorItem from './pattern-selector-item';
-import replacePlaceholders from '../utils/replace-placeholders';
-import { withInstanceId } from '@wordpress/compose';
 import type { PatternDefinition } from '../pattern-definition';
+import replacePlaceholders from '../utils/replace-placeholders';
+
+import PatternSelectorItem from './pattern-selector-item';
 
 const noop = () => undefined;
 
