@@ -28,7 +28,7 @@ import QueryGSuiteUsers from 'calypso/components/data/query-gsuite-users';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import EmailProvidersStackedComparison from '../email-providers-stacked-comparison';
+import EmailProvidersComparison from '../email-providers-comparison';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
@@ -85,7 +85,7 @@ class EmailManagementHome extends React.Component {
 
 			if ( ! domainHasEmail( selectedDomain ) ) {
 				return this.renderContentWithHeader(
-					<EmailProvidersStackedComparison
+					<EmailProvidersComparison
 						domain={ selectedDomain }
 						isGSuiteSupported={ hasGSuiteSupportedDomain( [ selectedDomain ] ) }
 					/>
@@ -108,7 +108,7 @@ class EmailManagementHome extends React.Component {
 		if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
 			const firstDomainWithNoEmail = domainsWithNoEmail[ 0 ];
 			return this.renderContentWithHeader(
-				<EmailProvidersStackedComparison
+				<EmailProvidersComparison
 					domain={ firstDomainWithNoEmail }
 					isGSuiteSupported={ hasGSuiteSupportedDomain( [ firstDomainWithNoEmail ] ) }
 				/>
