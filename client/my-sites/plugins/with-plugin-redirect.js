@@ -35,7 +35,7 @@ const withPluginRedirect = createHigherOrderComponent(
 		 * For Jetpack sites, it means the site was installing a plugin.
 		 * For Atomic sites, it was transferring the site.
 		 */
-		const [ wasSiteInProcess, setWasSiteInProccess ] = useState( false );
+		const [ prevProcessingState, setPrevProcessingState ] = useState( 'init' );
 		const [ redirectTo, setRedirectTo ] = useState( null );
 
 		const translate = useTranslate();
@@ -74,7 +74,7 @@ const withPluginRedirect = createHigherOrderComponent(
 		}
 
 		const {
-			hasSiteBeenTransferred,
+			transferringStatus,
 			hasPluginBeenInstalled,
 			isInstallingPlugin,
 			isJetpack,
@@ -84,10 +84,10 @@ const withPluginRedirect = createHigherOrderComponent(
 		} = useSelector(
 			( state ) => {
 				const siteId = getSelectedSiteId( state );
-				const transferState = getAutomatedTransferStatus( state, siteId );
 
+				// transferStates.COMPLETE
 				return {
-					hasSiteBeenTransferred: transferState === transferStates.COMPLETE,
+					transferringStatus: getAutomatedTransferStatus( state, siteId ),
 					isInstallingPlugin: isPluginActionInProgress( state, siteId, pluginSlug, INSTALL_PLUGIN ),
 					hasPluginBeenInstalled: isPluginActionCompleted(
 						state,
@@ -110,14 +110,23 @@ const withPluginRedirect = createHigherOrderComponent(
 				return;
 			}
 
-			// Store the previous state of `isInstalling`.
-			if ( isJetpack && isInstallingPlugin ) {
-				setWasSiteInProccess( true );
+			// Jetpack: Flag if the site was installing a plugin.
+			if ( isJetpack && isInstallingPlugin && ! hasPluginBeenInstalled ) {
+				setPrevProcessingState( 'plugin-installed' );
+			}
+
+			// Atomic: flag if the site was being transferred.
+			if (
+				isAtomic &&
+				transferringStatus === transferStates.COMPLETE &&
+				prevProcessingState === 'init'
+			) {
+				setPrevProcessingState( transferStates.COMPLETE );
 			}
 
 			if (
-				( isJetpack && ! isInstallingPlugin && wasSiteInProcess ) || // <- Jetpack site.
-				( isAtomic && ! hasSiteBeenTransferred && wasSiteInProcess ) // <- Atomic site.
+				( isJetpack && ! isInstallingPlugin && prevProcessingState === 'plugin-installed' ) || // <- Jetpack site.
+				( isAtomic && prevProcessingState === transferStates.COMPLETE ) // <- Atomic site.
 			) {
 				return setRedirectTo( redirectUrl );
 			}
@@ -127,11 +136,11 @@ const withPluginRedirect = createHigherOrderComponent(
 			isInstallingPlugin,
 			hasPluginBeenInstalled,
 			redirectUrl,
-			hasSiteBeenTransferred,
+			transferringStatus,
 			isJetpack,
 			isAtomic,
 			isSiteConnected,
-			wasSiteInProcess,
+			prevProcessingState,
 		] );
 
 		useEffect( () => {
@@ -141,13 +150,17 @@ const withPluginRedirect = createHigherOrderComponent(
 
 			// For Atomic sites, we shoulnd't wait since
 			// there is not a Notice about installing the plugin.
-			const pluginInstalledNoticeTime = hasSiteBeenTransferred ? 0 : 3000;
+			const pluginInstalledNoticeTime = transferringStatus ? 100 : 3000;
 
 			let timerId = setTimeout( () => {
 				dispatch( removeNotice( 'plugin-notice' ) );
 
 				// re-use same timer ID to redirect the client.
 				timerId = setTimeout( () => {
+					if ( ! window?.top.location.href ) {
+						return;
+					}
+
 					window.location.href = redirectTo;
 				}, 6000 );
 
@@ -165,7 +178,7 @@ const withPluginRedirect = createHigherOrderComponent(
 						id: 'plugin-redirect-notice',
 						onClick: function () {
 							timerId && window.clearTimeout( timerId );
-							setWasSiteInProccess( false );
+							setPrevProcessingState( 'done' );
 							setRedirectTo( null );
 							dispatch( removeNotice( 'plugin-redirect-notice' ) );
 						},
@@ -174,7 +187,7 @@ const withPluginRedirect = createHigherOrderComponent(
 			}, pluginInstalledNoticeTime );
 
 			return () => timerId && window.clearTimeout( timerId );
-		}, [ redirectTo, redirectPlugin, dispatch, translate, hasSiteBeenTransferred ] );
+		}, [ redirectTo, redirectPlugin, dispatch, translate, transferringStatus ] );
 
 		return <Component { ...props } />;
 	},
