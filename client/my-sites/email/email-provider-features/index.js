@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -14,12 +15,36 @@ import { preventWidows } from 'calypso/lib/formatting';
  */
 import './style.scss';
 
-export default ( { title } ) => {
+function EmailProviderFeature( { title } ) {
 	return (
-		<span className="email-provider-features">
+		<div className="email-provider-features">
 			<Gridicon icon="checkmark" size="18" />
 
 			{ preventWidows( title ) }
-		</span>
+		</div>
 	);
+}
+
+EmailProviderFeature.propTypes = {
+	title: PropTypes.string.isRequired,
 };
+
+function EmailProviderFeatures( { features } ) {
+	if ( ! features ) {
+		return null;
+	}
+
+	return (
+		<div className="email-providers-comparison__provider-features">
+			{ features.map( ( feature, index ) => (
+				<EmailProviderFeature key={ index } title={ feature } />
+			) ) }
+		</div>
+	);
+}
+
+EmailProviderFeatures.propTypes = {
+	features: PropTypes.arrayOf( PropTypes.string ),
+};
+
+export default EmailProviderFeatures;

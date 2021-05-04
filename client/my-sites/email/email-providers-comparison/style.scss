@@ -160,22 +160,6 @@
 				}
 			}
 		}
-
-		.email-providers-comparison__provider-features {
-			margin-bottom: 1em;
-			@include break-mobile {
-				margin-bottom: 0;
-				padding-left: 3.5em;
-			}
-
-			.email-provider-features:first-child {
-				margin-top: 0;
-			}
-			.email-provider-features:first-child::before {
-				border-bottom: none;
-				margin-bottom: 0;
-			}
-		}
 	}
 
 	/* Handle expanded vs contracted state */
