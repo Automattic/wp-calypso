@@ -8,8 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ActivityActor, { SIZE_S } from 'calypso/components/activity-card/activity-actor';

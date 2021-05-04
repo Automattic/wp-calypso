@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { PLAN_JETPACK_FREE } from './index';
+import { PLAN_JETPACK_FREE } from './constants';
 import { formatProduct } from './format-product';
 
 export function isFreeJetpackPlan( product ) {

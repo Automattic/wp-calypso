@@ -3,6 +3,7 @@
  */
 import debugFactory from 'debug';
 import { makeRedirectResponse, makeErrorResponse } from '@automattic/composite-checkout';
+import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { ResponseCart, DomainContactDetails } from '@automattic/shopping-cart';
 import type { PayPalExpressEndpointRequestPayload } from '@automattic/wpcom-checkout';
@@ -110,6 +111,8 @@ function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 	domainDetails: DomainContactDetails | null;
 	responseCart: ResponseCart;
 } ): PayPalExpressEndpointRequestPayload {
+	const postalCode = responseCart.tax.location.postal_code ?? '';
+	const country = responseCart.tax.location.country_code ?? '';
 	return {
 		successUrl,
 		cancelUrl,
@@ -118,8 +121,8 @@ function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 			contactDetails: domainDetails,
 			responseCart,
 		} ),
-		country: responseCart.tax.location.country_code ?? '',
-		postalCode: responseCart.tax.location.postal_code ?? '',
+		country,
+		postalCode: postalCode ? tryToGuessPostalCodeFormat( postalCode.toUpperCase(), country ) : '',
 		domainDetails,
 	};
 }

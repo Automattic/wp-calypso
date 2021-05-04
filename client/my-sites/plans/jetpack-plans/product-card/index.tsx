@@ -3,7 +3,7 @@
  */
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,12 +13,14 @@ import PlanRenewalMessage from '../plan-renewal-message';
 import useItemPrice from '../use-item-price';
 import { productAboveButtonText, productButtonLabel, productTooltip } from '../utils';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { planHasFeature } from '@automattic/calypso-products';
-import { TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
 import {
+	planHasFeature,
+	TERM_MONTHLY,
+	TERM_ANNUALLY,
 	PRODUCT_JETPACK_CRM_MONTHLY,
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
+	isJetpackPlanSlug,
 } from '@automattic/calypso-products';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
@@ -27,12 +29,17 @@ import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
-import { isJetpackPlanSlug } from '@automattic/calypso-products';
 
 /**
  * Type dependencies
  */
-import type { Duration, PurchaseCallback, SelectorProduct, SiteProduct } from '../types';
+import type {
+	Duration,
+	PurchaseCallback,
+	ScrollCardIntoViewCallback,
+	SelectorProduct,
+	SiteProduct,
+} from '../types';
 
 interface ProductCardProps {
 	item: SelectorProduct;
@@ -42,7 +49,9 @@ interface ProductCardProps {
 	selectedTerm?: Duration;
 	isAligned?: boolean;
 	featuredPlans?: string[];
+	featuredLabel?: TranslateResult;
 	hideSavingLabel?: boolean;
+	scrollCardIntoView: ScrollCardIntoViewCallback;
 }
 
 const ProductCard: React.FC< ProductCardProps > = ( {
@@ -53,7 +62,9 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	selectedTerm,
 	isAligned,
 	featuredPlans,
+	featuredLabel,
 	hideSavingLabel,
+	scrollCardIntoView,
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -163,7 +174,9 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			aboveButtonText={ productAboveButtonText( item, siteProduct, isOwned, isItemPlanFeature ) }
 			isDisabled={ isDisabled }
 			disabledMessage={ disabledMessage }
+			featuredLabel={ featuredLabel }
 			hideSavingLabel={ hideSavingLabel }
+			scrollCardIntoView={ scrollCardIntoView }
 		/>
 	);
 };

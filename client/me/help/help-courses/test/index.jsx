@@ -28,6 +28,7 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
+import { getUserPurchases } from 'calypso/state/purchases/selectors';
 
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/lib/user', () => () => {} );
@@ -62,8 +63,6 @@ jest.mock( 'i18n-calypso', () => ( {
 	numberFormat: ( x ) => x,
 } ) );
 
-import purchasesSelectors from 'calypso/state/purchases/selectors';
-
 describe( 'mapStateToProps should return correct value for isBusinessPlanUser', () => {
 	[
 		PLAN_FREE,
@@ -82,7 +81,7 @@ describe( 'mapStateToProps should return correct value for isBusinessPlanUser', 
 		PLAN_JETPACK_BUSINESS_MONTHLY,
 	].forEach( ( productSlug ) => {
 		test( `False for plan ${ productSlug }`, () => {
-			purchasesSelectors.getUserPurchases.mockImplementation( () => [ { productSlug } ] );
+			getUserPurchases.mockImplementation( () => [ { productSlug } ] );
 			expect( mapStateToProps( {}, {} ).isBusinessPlanUser ).toBe( false );
 		} );
 	} );
@@ -95,7 +94,7 @@ describe( 'mapStateToProps should return correct value for isBusinessPlanUser', 
 		PLAN_ECOMMERCE_2_YEARS,
 	].forEach( ( productSlug ) => {
 		test( `True for plan ${ productSlug }`, () => {
-			purchasesSelectors.getUserPurchases.mockImplementation( () => [ { productSlug } ] );
+			getUserPurchases.mockImplementation( () => [ { productSlug } ] );
 			expect( mapStateToProps( {}, {} ).isBusinessPlanUser ).toBe( true );
 		} );
 	} );

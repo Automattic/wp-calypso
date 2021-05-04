@@ -8,8 +8,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getRawSite from 'calypso/state/selectors/get-raw-site';

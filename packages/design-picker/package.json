@@ -37,7 +37,7 @@
 		"@wordpress/url": "^2.21.2",
 		"@wordpress/react-i18n": "^1.0.0",
 		"classnames": "^2.2.6",
-		"tslib": "^2.1.0",
+		"tslib": "^2.2.0",
 		"utility-types": "^3.10.0"
 	},
 	"devDependencies": {

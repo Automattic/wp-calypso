@@ -24,18 +24,16 @@ import EmptyContent from 'calypso/components/empty-content';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import QueryWordadsStatus from 'calypso/components/data/query-wordads-status';
-import {
-	FEATURE_WORDADS_INSTANT,
-	FEATURE_SIMPLE_PAYMENTS,
-	PLAN_PREMIUM,
-	PLAN_JETPACK_SECURITY_DAILY,
-} from '@automattic/calypso-products';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
 import {
+	FEATURE_WORDADS_INSTANT,
+	FEATURE_SIMPLE_PAYMENTS,
+	PLAN_PREMIUM,
+	PLAN_JETPACK_SECURITY_DAILY,
 	isPremiumPlan,
 	isBusinessPlan,
 	isEcommercePlan,

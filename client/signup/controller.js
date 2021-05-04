@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import debugModule from 'debug';
 import React from 'react';
 import page from 'page';
 import { isEmpty } from 'lodash';
@@ -47,6 +48,8 @@ import getSiteId from 'calypso/state/selectors/get-site-id';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
+
+const debug = debugModule( 'calypso:signup' );
 
 /**
  * Constants
@@ -99,7 +102,7 @@ export const removeP2SignupClassName = function () {
 export default {
 	redirectTests( context, next ) {
 		const currentFlowName = getFlowName( context.params );
-		currentFlowName === 'onboarding' && loadExperimentAssignment( 'refined_reskin_v1' );
+		currentFlowName === 'onboarding' && loadExperimentAssignment( 'refined_reskin_v2' );
 		currentFlowName === 'launch-site' && loadExperimentAssignment( 'hide_ecommerce_launch_site' );
 		if ( context.pathname.indexOf( 'new-launch' ) >= 0 ) {
 			next();
@@ -296,18 +299,31 @@ export default {
 			context.store.dispatch( setSelectedSiteId( null ) );
 		}
 
+		let actualFlowName = flowName;
+		if ( flowName === 'onboarding' || flowName === 'with-design-picker' ) {
+			const experimentAssignment = await loadExperimentAssignment(
+				'design_picker_after_onboarding'
+			);
+			debug(
+				`design_picker_after_onboarding experiment variation: ${ experimentAssignment?.variationName }`
+			);
+			if ( 'treatment' === experimentAssignment?.variationName ) {
+				actualFlowName = 'with-design-picker';
+			}
+		}
+
 		context.primary = React.createElement( SignupComponent, {
 			store: context.store,
 			path: context.path,
 			initialContext,
 			locale: context.params.lang,
-			flowName: flowName,
+			flowName: actualFlowName,
 			queryObject: query,
 			refParameter: query && query.ref,
 			stepName,
 			stepSectionName,
 			stepComponent,
-			pageTitle: getFlowPageTitle( flowName ),
+			pageTitle: getFlowPageTitle( actualFlowName ),
 		} );
 
 		next();

@@ -34,14 +34,15 @@ import { URL } from 'calypso/types';
 import { hasFeature, getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import getJetpackWpAdminUrl from 'calypso/state/selectors/get-jetpack-wp-admin-url';
 import {
+	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+	JETPACK_BACKUP_PRODUCTS,
+	isJetpackAntiSpam,
+	isJetpackBackupSlug,
 	isBusinessPlan,
 	isPremiumPlan,
 	isJetpackOfferResetPlan,
 	planHasFeature,
 } from '@automattic/calypso-products';
-import { FEATURE_VIDEO_UPLOADS_JETPACK_PRO } from '@automattic/calypso-products';
-import { isJetpackAntiSpam, isJetpackBackupSlug } from '@automattic/calypso-products';
-import { JETPACK_BACKUP_PRODUCTS } from '@automattic/calypso-products';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { Button, Card } from '@automattic/components';
 import JetpackProductInstall from 'calypso/my-sites/plans/current-plan/jetpack-product-install';

@@ -15,6 +15,11 @@ import {
 import { setActivePartnerKey } from 'calypso/state/partner-portal/partner/actions';
 import SelectDropdown from 'calypso/components/select-dropdown';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default function SelectPartnerKeyDropdown(): ReactElement | null {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -34,14 +39,15 @@ export default function SelectPartnerKeyDropdown(): ReactElement | null {
 			label: key.name,
 		} ) );
 
-	options?.unshift( { label: translate( 'Partner Key' ) as string, value: '', isLabel: true } );
-
-	if ( ! options || options.length < 2 ) {
+	if ( ! options || options.length <= 1 ) {
 		return null;
 	}
 
+	options?.unshift( { label: translate( 'Partner Key' ) as string, value: '', isLabel: true } );
+
 	return (
 		<SelectDropdown
+			className="select-partner-key-dropdown"
 			initialSelected={ activeKeyId.toString() }
 			options={ options }
 			onSelect={ onKeySelect }

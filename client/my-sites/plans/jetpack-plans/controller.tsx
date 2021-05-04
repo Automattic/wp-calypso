@@ -12,6 +12,7 @@ import SelectorPage from './selector';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
+import { getHighlightedProduct } from './utils';
 
 /**
  * Type dependencies
@@ -30,12 +31,15 @@ export const productSelect = ( rootUrl: string ): PageJS.Callback => ( context, 
 		? getPlanRecommendationFromContext( context )
 		: undefined;
 
+	const highlightedProducts = getHighlightedProduct( urlQueryArgs.plan ) || undefined;
+
 	context.primary = (
 		<SelectorPage
 			defaultDuration={ duration }
 			rootUrl={ rootUrl }
 			siteSlug={ context.params.site || context.query.site }
 			urlQueryArgs={ urlQueryArgs }
+			highlightedProducts={ highlightedProducts }
 			header={ context.header }
 			footer={ context.footer }
 			planRecommendation={ planRecommendation }

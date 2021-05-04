@@ -37,7 +37,6 @@ import { ToSConsent } from 'calypso/state/partner-portal/types';
 
 export function partnerContext( context: PageJS.Context, next: () => void ): void {
 	context.header = <Header />;
-	context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	context.primary = <PartnerAccess />;
 	context.footer = <JetpackComFooter />;
 	next();
@@ -45,7 +44,6 @@ export function partnerContext( context: PageJS.Context, next: () => void ): voi
 
 export function termsOfServiceContext( context: PageJS.Context, next: () => void ): void {
 	context.header = <Header />;
-	context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	context.primary = <TermsOfServiceConsent />;
 	context.footer = <JetpackComFooter />;
 	next();
@@ -53,7 +51,6 @@ export function termsOfServiceContext( context: PageJS.Context, next: () => void
 
 export function partnerKeyContext( context: PageJS.Context, next: () => void ): void {
 	context.header = <Header />;
-	context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	context.primary = <SelectPartnerKey />;
 	context.footer = <JetpackComFooter />;
 	next();
