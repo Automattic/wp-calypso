@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isObjectLike, omit } from 'lodash';
+import { omit } from 'lodash';
 import debug from 'debug';
 
 /**
@@ -45,7 +45,7 @@ export default ( eventName, eventProperties ) => {
 
 	if ( process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' ) {
 		for ( const key in eventProperties ) {
-			if ( isObjectLike( eventProperties[ key ] ) ) {
+			if ( eventProperties[ key ] !== null && typeof eventProperties[ key ] === 'object' ) {
 				const errorMessage =
 					`Tracks: Unable to record event "${ eventName }" because nested ` +
 					`properties are not supported by Tracks. Check '${ key }' on`;
