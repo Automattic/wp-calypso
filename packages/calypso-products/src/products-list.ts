@@ -43,7 +43,7 @@ import {
  * Type dependencies
  */
 import type { TranslateResult } from 'i18n-calypso';
-import type { ProductSlug, JetpackProductSlug } from './types';
+import type { ProductSlug, JetpackProductSlug, WPComProductSlug } from './types';
 
 const PRODUCT_SHORT_NAMES = getJetpackProductsShortNames();
 
@@ -56,7 +56,10 @@ export type Product = {
 	getFeatures?: ( variation: string ) => string[];
 };
 
-export const JETPACK_PRODUCTS_LIST_WITH_FEATURES: Record< JetpackProductSlug, Product > = {
+export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
+	Exclude< JetpackProductSlug, WPComProductSlug >,
+	Product
+> = {
 	[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
 		product_name: PRODUCT_SHORT_NAMES[ PRODUCT_JETPACK_BACKUP_DAILY ],
 		product_slug: PRODUCT_JETPACK_BACKUP_DAILY,
@@ -211,7 +214,7 @@ export const JETPACK_PRODUCTS_LIST_WITH_FEATURES: Record< JetpackProductSlug, Pr
 };
 
 export const PRODUCTS_LIST: Record< ProductSlug, Product > = {
-	...JETPACK_PRODUCTS_LIST_WITH_FEATURES,
+	...JETPACK_SITE_PRODUCTS_WITH_FEATURES,
 	[ PRODUCT_WPCOM_SEARCH ]: {
 		product_name: PRODUCT_SHORT_NAMES[ PRODUCT_WPCOM_SEARCH ],
 		product_slug: PRODUCT_WPCOM_SEARCH,

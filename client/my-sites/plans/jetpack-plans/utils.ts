@@ -42,7 +42,7 @@ import {
 	getYearlyPlanByMonthly,
 	planHasFeature,
 	Product,
-	JETPACK_PRODUCTS_LIST_WITH_FEATURES,
+	JETPACK_SITE_PRODUCTS_WITH_FEATURES,
 	objectIsProduct,
 	PRODUCTS_LIST,
 	getJetpackProductDisplayName,
@@ -379,7 +379,7 @@ function slugIsSelectorProductSlug( slug: string ): slug is SelectorProductSlug 
 	return PRODUCTS_WITH_OPTIONS.includes( slug as typeof PRODUCTS_WITH_OPTIONS[ number ] );
 }
 function slugIsJetpackProductSlug( slug: string ): slug is JetpackProductSlug {
-	return slug in JETPACK_PRODUCTS_LIST_WITH_FEATURES;
+	return slug in JETPACK_SITE_PRODUCTS_WITH_FEATURES;
 }
 function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlugs {
 	return [ ...JETPACK_LEGACY_PLANS, ...JETPACK_RESET_PLANS ].includes( slug );
@@ -399,7 +399,7 @@ export function slugToItem( slug: string ): Plan | Product | SelectorProduct | n
 			EXTERNAL_PRODUCTS_SLUG_MAP[ slug ]( variation )
 		);
 	} else if ( slugIsJetpackProductSlug( slug ) ) {
-		return JETPACK_PRODUCTS_LIST_WITH_FEATURES[ slug ];
+		return JETPACK_SITE_PRODUCTS_WITH_FEATURES[ slug ];
 	} else if ( slugIsJetpackPlanSlug( slug ) ) {
 		return getPlan( slug ) as Plan;
 	}
