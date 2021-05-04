@@ -615,6 +615,25 @@ export function checkout(
 	const productsArray = Array.isArray( products ) ? products : [ products ];
 	const productsString = productsArray.join( ',' );
 
+	// Enter userless checkout if unlinked, purchasetoken, and site are all set
+	if (
+		isJetpackCloud() &&
+		!! urlQueryArgs.unlinked &&
+		!! urlQueryArgs.purchasetoken &&
+		!! urlQueryArgs.site
+	) {
+		const host =
+			'development' === urlQueryArgs.calypso_env
+				? 'http://calypso.localhost:3000'
+				: 'https://wordpress.com';
+
+		window.location.href = addQueryArgs(
+			urlQueryArgs,
+			host + `/checkout/jetpack/${ siteSlug }/${ productsString }`
+		);
+		return;
+	}
+
 	// If there is not siteSlug, we need to redirect the user to the site selection
 	// step of the flow. Since purchases of multiple products are allowed, we need
 	// to pass all products separated by comma in the URL.
