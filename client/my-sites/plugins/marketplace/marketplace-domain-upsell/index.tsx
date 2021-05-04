@@ -152,7 +152,7 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 		<>
 			<Masterbar>
 				<Item
-					url={ '#' }
+					url="#"
 					icon="cross"
 					className="marketplace-domain-upsell__close-button"
 					onClick={ () =>
