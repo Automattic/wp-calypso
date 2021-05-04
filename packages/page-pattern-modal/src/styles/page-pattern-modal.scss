@@ -185,6 +185,15 @@ $sidebar-width-desktop: 324px;
 	}
 }
 
+// Correct position for child elements inside preview-wrap
+.pattern-selector-item__preview-wrap-inner-position {
+	position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
 .pattern-selector-item__media {
 	width: 100%;
 	height: 100%;

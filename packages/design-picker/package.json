@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/design-picker",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Design picker.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
