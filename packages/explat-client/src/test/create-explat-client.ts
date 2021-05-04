@@ -8,7 +8,6 @@ import '@automattic/calypso-polyfills';
  * Internal dependencies
  */
 import { createExPlatClient } from '../create-explat-client';
-import { clearAllExperimentAssignments } from '../internal/experiment-assignment-store';
 import {
 	delayedValue,
 	ONE_DELAY,
@@ -19,6 +18,7 @@ import {
 } from '../internal/test-common';
 import * as Timing from '../internal/timing';
 import type { Config, ExperimentAssignment } from '../types';
+import localStorage from '../internal/local-storage';
 
 type MockedFunction = ReturnType< typeof jest.fn >;
 
@@ -53,7 +53,7 @@ function mockFetchExperimentAssignmentToMatchExperimentAssignment(
 beforeEach( () => {
 	jest.resetAllMocks();
 	setBrowserContext();
-	clearAllExperimentAssignments();
+	localStorage.clear();
 } );
 
 describe( 'createExPlatClient', () => {
@@ -134,6 +134,9 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		const client = createExPlatClient( mockedConfig );
 		spiedMonotonicNow.mockImplementationOnce(
 			() => validExperimentAssignment.retrievedTimestamp + 1000
+		);
+		spiedMonotonicNow.mockImplementationOnce(
+			() => validExperimentAssignment.retrievedTimestamp + 1001
 		);
 		await expect(
 			client.loadExperimentAssignment( validExperimentAssignment.experimentName )
@@ -368,7 +371,7 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 		} );
 
 		await runTest();
-		clearAllExperimentAssignments();
+		localStorage.clear();
 		await runDevelopmentModeTest();
 	} );
 

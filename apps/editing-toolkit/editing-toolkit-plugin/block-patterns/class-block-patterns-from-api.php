@@ -76,7 +76,7 @@ class Block_Patterns_From_API {
 
 		// For every pattern source site, fetch the patterns.
 		foreach ( $this->patterns_sources as $patterns_source ) {
-			$patterns_cache_key = $this->utils->get_patterns_cache_key( 'block_patterns' );
+			$patterns_cache_key = $this->utils->get_patterns_cache_key( $patterns_source );
 
 			$pattern_categories = array();
 			$block_patterns     = $this->get_patterns( $patterns_cache_key, $patterns_source );

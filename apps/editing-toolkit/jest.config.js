@@ -22,9 +22,9 @@ const pluginRoot = path.resolve( './' );
 
 const config = {
 	...defaults,
-	rootDir: path.normalize( '../../../' ), // To detect wp-calypso root node_modules
+	rootDir: path.normalize( '../../' ), // To detect wp-calypso root node_modules
 	testMatch: [ `${ pluginRoot }/**/?(*.)test.[jt]s?(x)` ],
-	transform: { '^.+\\.[jt]sx?$': path.join( __dirname, 'babel-transform' ) },
+	transform: { '^.+\\.[jt]sx?$': path.join( __dirname, 'bin', 'babel-transform' ) },
 	setupFilesAfterEnv: [
 		...( defaults.setupFilesAfterEnv || [] ), // extend if present
 		'<rootDir>/apps/editing-toolkit/bin/js-unit-setup',

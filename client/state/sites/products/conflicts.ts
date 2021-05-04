@@ -2,8 +2,9 @@
  * Internal dependencies
  */
 import { createSelector } from '@automattic/state-utils';
-import { planHasFeature, planHasSuperiorFeature } from '@automattic/calypso-products';
 import {
+	planHasFeature,
+	planHasSuperiorFeature,
 	FEATURE_JETPACK_BACKUP_REALTIME,
 	FEATURE_JETPACK_BACKUP_DAILY,
 	JETPACK_PLANS,

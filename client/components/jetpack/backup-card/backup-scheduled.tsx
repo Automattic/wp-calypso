@@ -8,9 +8,8 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
 import { backupMainPath } from 'calypso/my-sites/backup/paths';
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import { applySiteOffset } from 'calypso/lib/site/timezone';

@@ -10,9 +10,10 @@ import {
 	storeExperimentAssignment,
 } from '../experiment-assignment-store';
 import { validExperimentAssignment, validFallbackExperimentAssignment } from '../test-common';
+import localStorage from '../local-storage';
 
 beforeEach( () => {
-	window.localStorage.clear();
+	localStorage.clear();
 } );
 
 describe( 'experiment-assignment-store', () => {
@@ -21,9 +22,9 @@ describe( 'experiment-assignment-store', () => {
 			undefined
 		);
 		storeExperimentAssignment( validExperimentAssignment );
-		expect( retrieveExperimentAssignment( validExperimentAssignment.experimentName ) ).toEqual(
-			validExperimentAssignment
-		);
+		expect(
+			retrieveExperimentAssignment( validExperimentAssignment.experimentName )
+		).toStrictEqual( validExperimentAssignment );
 
 		expect( retrieveExperimentAssignment( validFallbackExperimentAssignment.experimentName ) ).toBe(
 			undefined
@@ -31,7 +32,7 @@ describe( 'experiment-assignment-store', () => {
 		storeExperimentAssignment( validFallbackExperimentAssignment );
 		expect(
 			retrieveExperimentAssignment( validFallbackExperimentAssignment.experimentName )
-		).toEqual( validFallbackExperimentAssignment );
+		).toStrictEqual( validFallbackExperimentAssignment );
 	} );
 
 	it( 'should throw for storing an ExperimentAssignment for a currently stored Experiment with an older date', () => {
