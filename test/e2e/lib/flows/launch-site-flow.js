@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { By } from 'selenium-webdriver';
 
 /**
@@ -34,7 +33,7 @@ export default class LaunchSiteFlow {
 			dismissDomainUpsellLocator
 		);
 		if ( domainUpsellPresent ) {
-			return await driverHelper.clickWhenClickable( this.driver, dismissDomainUpsellLocator );
+			await driverHelper.clickWhenClickable( this.driver, dismissDomainUpsellLocator );
 		}
 
 		return await myHomePage.isSiteLaunched();
