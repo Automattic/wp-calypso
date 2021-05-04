@@ -19,7 +19,7 @@ export default class AsyncBaseContainer {
 	) {
 		this.name = this.constructor.name;
 		this.driver = driver;
-		this.screenSize = driverManager.currentScreenSize().toUpperCase();
+		this.screenSize = driverManager.currentScreenSize();
 		this.expectedElementSelector = expectedElementSelector;
 		this.url = url;
 		this.explicitWaitMS = waitMS;
