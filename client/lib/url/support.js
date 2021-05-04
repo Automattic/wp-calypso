@@ -6,7 +6,7 @@ import { localizeUrl } from 'calypso/lib/i18n-utils';
 const root = localizeUrl( 'https://wordpress.com/support/' ).replace( /\/$/, '' );
 
 export const ACCOUNT_RECOVERY = `${ root }/account-recovery`;
-export const ADDING_GSUITE_TO_YOUR_SITE = `${ root }/add-email/adding-g-suite-to-your-site/`;
+export const ADDING_GSUITE_TO_YOUR_SITE = `${ root }/add-email/adding-google-workspace-to-your-site/`;
 export const ADDING_USERS = `${ root }/adding-users`;
 export const AUTO_RENEWAL = `${ root }/auto-renewal`;
 export const BANDPAGE_WIDGET = `${ root }/widgets/bandpage-widget`;
