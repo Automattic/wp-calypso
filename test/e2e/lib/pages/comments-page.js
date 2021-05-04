@@ -21,7 +21,7 @@ export default class CommentsPage extends AsyncBaseContainer {
 		return await driver.wait(
 			function () {
 				return driverHelper
-					.isElementPresent( driver, resultsLoadingSelector )
+					.isElementLocated( driver, resultsLoadingSelector )
 					.then( function ( present ) {
 						return ! present;
 					} );

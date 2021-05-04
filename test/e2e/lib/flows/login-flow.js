@@ -64,7 +64,7 @@ export default class LoginFlow {
 		// 	console.log( 'Reusing login cookie for ' + this.account.username );
 		// 	await this.driver.navigate().refresh();
 		// 	const continueSelector = By.css( 'div.continue-as-user a' );
-		// 	if ( await driverHelper.isElementPresent( this.driver, continueSelector ) ) {
+		// 	if ( await driverHelper.isElementLocated( this.driver, continueSelector ) ) {
 		// 		await driverHelper.clickWhenClickable( this.driver, continueSelector );
 		// 	}
 		// 	return;

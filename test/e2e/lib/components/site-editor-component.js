@@ -54,7 +54,7 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 
 	async waitForTemplatePartsToLoad() {
 		await this.runInCanvas( async () => {
-			await driverHelper.waitTillNotPresent(
+			await driverHelper.waitUntilElementNotLocated(
 				this.driver,
 				By.css( '.wp-block-template-part .components-spinner' )
 			);
@@ -69,7 +69,7 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		);
 
 		await this.runInCanvas( async () => {
-			await driverHelper.waitUntilLocatedAndVisible(
+			await driverHelper.waitUntilElementLocatedAndVisible(
 				this.driver,
 				By.css( '.edit-site-block-editor__block-list' )
 			);

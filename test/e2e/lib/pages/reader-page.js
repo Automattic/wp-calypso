@@ -35,7 +35,7 @@ export default class ReaderPage extends AsyncBaseContainer {
 		// causing the share modal to close before it clicks the site button.
 		await this.driver.sleep( 2000 );
 
-		const hasSharablePost = await driverHelper.isElementPresent( this.driver, shareButtonSelector );
+		const hasSharablePost = await driverHelper.isElementLocated( this.driver, shareButtonSelector );
 		if ( ! hasSharablePost ) {
 			// no shareable posts on this screen. try moving into a combined card
 			const firstComboCardPostSelector = by.css( '.reader-combined-card__post-title-link' );

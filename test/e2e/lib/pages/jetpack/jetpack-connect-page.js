@@ -26,7 +26,7 @@ export default class JetpackConnectPage extends AsyncBaseContainer {
 	}
 
 	async waitToDisappear() {
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
 			By.css( '.jetpack-connect__main #siteUrl' ),
 			this.explicitWaitMS * 3

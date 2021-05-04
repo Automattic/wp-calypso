@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .email-providers-comparison__providers {
 	display: flex;
 	flex-direction: row;
@@ -7,10 +10,6 @@
 	.promo-card {
 		width: calc( 33% - 0.5em );
 		margin: 8px 0;
-
-		.email-providers-comparison__providers-wordpress-com-email {
-			color: var( --color-wordpress-com );
-		}
 
 		&.no-gsuite {
 			width: calc( 50% - 0.5em );
@@ -24,7 +23,7 @@
 			max-width: 24px;
 		}
 
-			&.titan {
+		&.titan {
 			.promo-card__title-badge {
 				background: none;
 				padding: 0;
@@ -44,6 +43,10 @@
 	}
 }
 
+.email-providers-comparison__providers-wordpress-com-email {
+	color: var( --color-wordpress-com );
+}
+
 .email-providers-comparison__action-panel {
 	@include breakpoint-deprecated( '>1040px' ) {
 		&.is-primary {
@@ -53,5 +56,145 @@
 
 	&.is-primary .action-panel__figure {
 		max-width: 170px;
+	}
+}
+
+.email-providers-comparison__provider-card.promo-card {
+
+	.action-panel__figure {
+		margin-bottom: 0.5em;
+		margin-top: 0;
+
+		img {
+			max-width: 24px;
+		}
+	}
+
+	@include break-mobile {
+		.action-panel__title {
+			margin-bottom: 0;
+		}
+	}
+
+	.promo-card__title-badge {
+		display: none;
+	}
+
+	&.is-expanded .promo-card__title-badge {
+		background: none;
+		display: inline-block;
+		padding: 0;
+
+		img {
+			max-height: 18px;
+		}
+	}
+
+	.email-providers-comparison__provider-card-main-details {
+		display: flex;
+		flex-direction: column;
+		margin-bottom: 1em;
+
+		@include break-mobile {
+			flex-direction: row;
+			margin-bottom: 0;
+		}
+
+		p {
+			margin-bottom: 1em;
+
+			@include break-xlarge {
+				flex-grow: 7;
+				line-height: 40px;
+				margin-bottom: 0;
+			}
+		}
+		.email-providers-comparison__provider-expand-cta {
+			flex-grow: 1;
+		}
+	}
+
+	.promo-card__price {
+		.price__cost {
+			font-size: $font-body-small;
+
+			span {
+				font-size: $font-title-medium;
+			}
+
+			.price__discounted {
+				text-decoration: line-through;
+			}
+		}
+
+		.price__discount {
+			display: block;
+			margin-left: 0;
+		}
+	}
+
+	.email-providers-comparison__provider-additional-price-information {
+		color: var( --color-text-subtle );
+		display: inline-block;
+		font-size: $font-body-extra-small;
+		font-style: normal;
+		margin-top: 3px;
+	}
+
+	.email-providers-comparison__provider-form-and-features {
+		justify-content: space-between;
+		margin-top: 1em;
+		line-height: 1.5;
+
+		.email-providers-comparison__provider-form {
+			flex-grow: 1;
+
+			.titan-new-mailbox-list__actions {
+				justify-content: space-between;
+			}
+
+			.email-providers-comparison__gsuite-user-list-action-continue {
+				margin-top: 1em;
+				@include break-mobile {
+					margin-top: 0;
+				}
+			}
+		}
+
+		.email-providers-comparison__provider-features {
+			margin-bottom: 1em;
+			@include break-mobile {
+				margin-bottom: 0;
+				padding-left: 3.5em;
+			}
+
+			.email-provider-features:first-child {
+				margin-top: 0;
+			}
+			.email-provider-features:first-child::before {
+				border-bottom: none;
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	/* Handle expanded vs contracted state */
+	.email-providers-comparison__provider-form-and-features {
+		display: none;
+	}
+
+	&.is-expanded {
+		.email-providers-comparison__provider-expand-cta {
+			display: none;
+		}
+
+		.email-providers-comparison__provider-form-and-features {
+			display: flex;
+			flex-direction: column-reverse;
+
+			@include break-mobile {
+				flex-direction: row;
+			}
+		}
 	}
 }

@@ -42,7 +42,7 @@ export default class PagePreviewExternalComponent extends AsyncBaseContainer {
 	}
 
 	async isDisplayed() {
-		return await driverHelper.waitUntilLocatedAndVisible(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			previewWindowMainSelector,
 			explicitWaitMS
@@ -52,7 +52,7 @@ export default class PagePreviewExternalComponent extends AsyncBaseContainer {
 	static async switchToWindow( driver ) {
 		const handles = await driver.getAllWindowHandles();
 		await driver.switchTo().window( handles[ 1 ] );
-		return await driverHelper.waitUntilLocatedAndVisible(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			previewWindowMainSelector,
 			explicitWaitMS

@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { includes, isObjectLike, omitBy, times } from 'lodash';
+import { includes, omitBy, times } from 'lodash';
 import cookie from 'cookie';
 import { EventEmitter } from 'events';
 import { loadScript } from '@automattic/load-script';
@@ -192,7 +192,7 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 		}
 
 		for ( const key in eventProperties ) {
-			if ( isObjectLike( eventProperties[ key ] ) ) {
+			if ( eventProperties[ key ] !== null && typeof eventProperties[ key ] === 'object' ) {
 				const errorMessage =
 					`Tracks: Unable to record event "${ eventName }" because nested ` +
 					`properties are not supported by Tracks. Check '${ key }' on`;

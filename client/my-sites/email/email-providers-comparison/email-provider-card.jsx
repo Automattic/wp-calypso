@@ -11,7 +11,7 @@ import classnames from 'classnames';
 import { Button } from '@automattic/components';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
-import EmailProviderFeature from 'calypso/my-sites/email/email-providers-comparison/email-provider-details/email-provider-feature';
+import EmailProviderFeature from 'calypso/my-sites/email/email-provider-features';
 
 const noop = () => {};
 
@@ -48,20 +48,20 @@ function EmailProviderCard( {
 
 	return (
 		<PromoCard
-			className={ classnames( 'email-providers-stacked-comparison__provider-card', {
+			className={ classnames( 'email-providers-comparison__provider-card', {
 				'is-expanded': detailsExpanded,
 			} ) }
 			image={ logo }
 			title={ title }
 			badge={ badge }
 		>
-			<div className="email-providers-stacked-comparison__provider-card-main-details">
+			<div className="email-providers-comparison__provider-card-main-details">
 				<p>{ description }</p>
 				{ showExpandButton && (
 					<Button
 						primary={ false }
 						onClick={ toggleVisibility }
-						className="email-providers-stacked-comparison__provider-expand-cta"
+						className="email-providers-comparison__provider-expand-cta"
 					>
 						{ labelForExpandButton }
 					</Button>
@@ -69,12 +69,12 @@ function EmailProviderCard( {
 			</div>
 			<PromoCardPrice formattedPrice={ formattedPrice } discount={ discount } />
 			{ additionalPriceInformation && (
-				<span className="email-providers-stacked-comparison__provider-additional-price-information">
+				<span className="email-providers-comparison__provider-additional-price-information">
 					{ additionalPriceInformation }
 				</span>
 			) }
-			<div className="email-providers-stacked-comparison__provider-form-and-features">
-				<div className="email-providers-stacked-comparison__provider-form">
+			<div className="email-providers-comparison__provider-form-and-features">
+				<div className="email-providers-comparison__provider-form">
 					{ formFields }
 					{ buttonLabel && (
 						<Button primary onClick={ onButtonClick }>
@@ -82,7 +82,7 @@ function EmailProviderCard( {
 						</Button>
 					) }
 				</div>
-				<div className="email-providers-stacked-comparison__provider-features">
+				<div className="email-providers-comparison__provider-features">
 					{ features && renderFeatures( providerKey, features ) }
 				</div>
 			</div>

@@ -4,17 +4,10 @@
 import { getUrlParts } from '@automattic/calypso-url';
 
 /**
- * Internal dependencies
- */
-import { abtest } from 'calypso/lib/abtest';
-
-/**
  * Iterations
  */
 
-export enum Iterations {
-	REVERSE_FEATURED = 'highToLow_test',
-}
+export enum Iterations {}
 
 const iterationNames: string[] = Object.values( Iterations );
 
@@ -50,10 +43,7 @@ const getCurrentCROIterationName = (): Iterations | null => {
 		}
 	}
 
-	const shouldReverseFeaturedProducts =
-		abtest( 'jetpackReverseFeaturedProducts' ) === Iterations.REVERSE_FEATURED;
-
-	return shouldReverseFeaturedProducts ? Iterations.REVERSE_FEATURED : null;
+	return null;
 };
 
 type IterationValueFunction< T > = ( key: Iterations | null ) => T | undefined;

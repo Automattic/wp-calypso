@@ -95,11 +95,11 @@ export default class WPAdminSidebar extends AsyncBaseContainer {
 	}
 
 	async _selectMenuItem( menuSelector, menuItemSelector ) {
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, menuSelector );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, menuSelector );
 		const classes = await this.driver.findElement( menuSelector ).getAttribute( 'class' );
 		if ( ! classes.includes( 'wp-menu-open' ) && ! classes.includes( 'wp-has-current-submenu' ) ) {
 			await driverHelper.clickWhenClickable( this.driver, menuSelector );
-			await driverHelper.waitUntilLocatedAndVisible( this.driver, menuItemSelector );
+			await driverHelper.waitUntilElementLocatedAndVisible( this.driver, menuItemSelector );
 		}
 		return await driverHelper.clickWhenClickable( this.driver, menuItemSelector );
 	}
