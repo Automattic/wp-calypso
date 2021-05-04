@@ -714,7 +714,7 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 	name = "Playwright E2E tests"
 	description = "Runs Calypso e2e tests using Playwright"
 	params {
-		param("use_cached_node_modules", "true")
+		param("use_cached_node_modules", "false")
 	}
 
 	artifactRules = """
