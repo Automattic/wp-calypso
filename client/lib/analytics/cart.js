@@ -18,8 +18,8 @@ export function recordEvents( previousCart, nextCart ) {
 	const previousItems = getAllCartItems( previousCart );
 	const nextItems = getAllCartItems( nextCart );
 
-	each( difference( nextItems, previousItems, isEqual ), recordAddEvent );
-	each( difference( previousItems, nextItems, isEqual ), recordRemoveEvent );
+	each( difference( nextItems, previousItems ), recordAddEvent );
+	each( difference( previousItems, nextItems ), recordRemoveEvent );
 }
 
 function removeNestedProperties( cartItem ) {
