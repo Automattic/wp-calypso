@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { translate } from 'i18n-calypso';
@@ -12,7 +13,7 @@ import { keyframes } from '@emotion/core';
  * Internal dependencies
  */
 import { LineItem } from 'calypso/my-sites/checkout/composite-checkout/components/wp-order-review-line-items';
-import { MarketplaceThemeType } from 'calypso/my-sites/plugins/marketplace';
+import type { MarketplaceThemeType } from 'calypso/my-sites/plugins/marketplace';
 import { MobileHiddenHorizontalRule } from 'calypso/my-sites/plugins/marketplace/components';
 
 interface PropsForMarketplaceShoppingCart {
@@ -28,7 +29,7 @@ const ShoppingCart = styled.div< { theme?: MarketplaceThemeType } >`
 	padding: 15px 25px;
 	max-width: 611px;
 	display: inline-table;
-	@media ( ${ ( { theme } ) => theme.breakpoints.tabletDown } ) {
+	@media ( ${ ( { theme } ) => theme?.breakpoints.tabletDown } ) {
 		overflow-y: scroll;
 		-ms-overflow-style: none;
 		scrollbar-width: none;
@@ -47,7 +48,7 @@ const ShoppingCartTitle = styled.div`
 
 const MobileTotal = styled.div< { theme?: MarketplaceThemeType } >`
 	display: none;
-	@media ( ${ ( { theme } ) => theme.breakpoints.tabletDown } ) {
+	@media ( ${ ( { theme } ) => theme?.breakpoints.tabletDown } ) {
 		display: block;
 	}
 `;
@@ -59,11 +60,11 @@ const ShoppingCartTotal = styled.div< { theme?: MarketplaceThemeType } >`
 	margin-bottom: 20px;
 	div {
 		font-size: 1.15rem;
-		font-weight: ${ ( { theme } ) => theme.weights.bold };
+		font-weight: ${ ( { theme } ) => theme?.weights.bold };
 		font-weight: 600;
 	}
 
-	@media ( ${ ( { theme } ) => theme.breakpoints.tabletDown } ) {
+	@media ( ${ ( { theme } ) => theme?.breakpoints.tabletDown } ) {
 		display: none;
 	}
 `;
@@ -94,7 +95,7 @@ const MobileToggleExpandedBasket = styled.a< { theme?: MarketplaceThemeType } >`
 		color: var( --color-accent-60 );
 	}
 
-	@media ( ${ ( { theme } ) => theme.breakpoints.tabletDown } ) {
+	@media ( ${ ( { theme } ) => theme?.breakpoints.tabletDown } ) {
 		display: block;
 	}
 `;
@@ -129,7 +130,15 @@ const StyledBasketItemContainer = styled( BasketItemContainer )`
 	min-height: 30px;
 `;
 
-function BasketItemContainer( { products, isLoading, isExpandedBasketView } ) {
+function BasketItemContainer( {
+	products,
+	isLoading,
+	isExpandedBasketView,
+}: {
+	products: Array< ResponseCartProduct >;
+	isLoading: boolean;
+	isExpandedBasketView: boolean;
+} ) {
 	if ( isLoading ) {
 		return (
 			<div>
@@ -140,7 +149,7 @@ function BasketItemContainer( { products, isLoading, isExpandedBasketView } ) {
 	}
 	return isExpandedBasketView ? (
 		<div>
-			{ products.map( ( product ) => (
+			{ products.map( ( product: ResponseCartProduct ) => (
 				<MarketPlaceBasketItem key={ product.uuid } product={ product } />
 			) ) }
 		</div>
@@ -184,7 +193,7 @@ export default function MarketplaceShoppingCart(
 					</>
 				) }
 			</ShoppingCartTotal>
-			<MobileToggleExpandedBasket onClick={ toggleExpandedBasketView } isLink isPrimary>
+			<MobileToggleExpandedBasket onClick={ toggleExpandedBasketView }>
 				{ isExpandedBasketView
 					? translate( 'View less details' )
 					: translate( 'View more details' ) }

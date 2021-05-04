@@ -5,13 +5,14 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import page from 'page';
 import DomainPicker from '@automattic/domain-picker';
-import { ResponseCart, useShoppingCart } from '@automattic/shopping-cart';
-import { DomainSuggestions } from '@automattic/data-stores';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { ThemeProvider } from 'emotion-theming';
 import styled from '@emotion/styled';
 import { translate } from 'i18n-calypso';
 import classnames from 'classnames';
 import { isDesktop } from '@automattic/viewport';
+import type { ResponseCart } from '@automattic/shopping-cart';
+import type { DomainSuggestions } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -20,7 +21,7 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import {
 	MARKETPLACE_FLOW_ID,
-	ANALYTICS_UI_LOCATON_MARKETPLACE_DOMAIN_SELECTION,
+	ANALYTICS_UI_LOCATION_MARKETPLACE_DOMAIN_SELECTION,
 } from 'calypso/my-sites/plugins/marketplace/constants';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
@@ -30,13 +31,13 @@ import Item from 'calypso/layout/masterbar/item';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import { HorizontalRule } from '@wordpress/components';
 import ExternalLink from 'calypso/components/external-link';
+import MarketplaceShoppingCart from 'calypso/my-sites/plugins/marketplace/components/marketplace-shopping-cart';
+import theme from 'calypso/my-sites/plugins/marketplace';
 
 /**
  * Style dependencies
  */
 import 'calypso/my-sites/plugins/marketplace/marketplace-domain-upsell/style.scss';
-import MarketplaceShoppingCart from 'calypso/my-sites/plugins/marketplace/components/marketplace-shopping-cart';
-import theme from 'calypso/my-sites/plugins/marketplace';
 
 const MarketplaceHeaderTitle = styled.h1`
 	font-size: 2rem;
@@ -71,13 +72,7 @@ function MarketplaceDomainUpsellHeader() {
 	);
 }
 
-function getSiteNameFromURL( url ) {
-	const parts = url?.split( '.' );
-	if ( Array.isArray( parts ) && parts.length > 0 ) {
-		return parts[ 0 ];
-	}
-	return url;
-}
+const getSiteNameFromURL = ( url: string ) => url?.split( '.' )?.[ 0 ] ?? url;
 
 function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 	const [ selectedDomainProductUUID, setDomainProductUUID ] = useState< string >( '' );
@@ -173,7 +168,7 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 					<DomainPicker
 						initialDomainSearch={ siteName }
 						header={ <MarketplaceDomainUpsellHeader /> }
-						analyticsUiAlgo={ ANALYTICS_UI_LOCATON_MARKETPLACE_DOMAIN_SELECTION }
+						analyticsUiAlgo={ ANALYTICS_UI_LOCATION_MARKETPLACE_DOMAIN_SELECTION }
 						analyticsFlowId={ MARKETPLACE_FLOW_ID }
 						onDomainSelect={ onDomainSelect }
 						currentDomain={ selectedDomain as DomainSuggestions.DomainSuggestion }

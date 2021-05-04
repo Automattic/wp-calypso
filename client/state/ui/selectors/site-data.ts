@@ -8,6 +8,7 @@ export interface SiteData {
 	domain: string;
 	locale: string;
 	options?: SiteDataOptions;
+	wpcom_url?: string;
 	// TODO: fill out the rest of this
 }
 

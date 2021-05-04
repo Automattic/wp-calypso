@@ -1,15 +1,16 @@
-.layout__content {
-	background-color: var( --studio-white );
-	height: 100vh;
-	padding-left: 0;
-	@media ( max-width: 782px ) {
-		padding: 0;
+.is-section-plugins.has-no-sidebar {
+	.layout__content {
 		background-color: var( --studio-white );
 		height: 100vh;
-		.layout__primary {
+		@media ( max-width: 782px ) {
+			padding: 0;
+			background-color: var( --studio-white );
 			height: 100vh;
-			.marketplace-domain-upsell__root {
-				height: calc( 100vh - 50px );
+			.layout__primary {
+				height: 100vh;
+				.marketplace-domain-upsell__root {
+					height: calc( 100vh - 50px );
+				}
 			}
 		}
 	}
@@ -69,6 +70,8 @@
 		display: flex;
 		width: 100%;
 		justify-content: space-around;
+		overflow-y: scroll;
+		max-height: calc( 100vh - 95px );
 
 		.domain-picker {
 			max-width: 611px;
