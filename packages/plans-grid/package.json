@@ -34,11 +34,11 @@
 		"@automattic/data-stores": "^2.0.0",
 		"@automattic/i18n-utils": "^1.0.0",
 		"@automattic/onboarding": "^1.0.0",
-		"@wordpress/components": "^12.0.8",
-		"@wordpress/compose": "^3.24.5",
-		"@wordpress/icons": "^2.9.1",
-		"@wordpress/primitives": "^1.11.1",
-		"@wordpress/react-i18n": "^1.0.0",
+		"@wordpress/components": "^13.0.3",
+		"@wordpress/compose": "^3.25.3",
+		"@wordpress/icons": "^2.10.3",
+		"@wordpress/primitives": "^1.12.3",
+		"@wordpress/react-i18n": "^1.0.3",
 		"classnames": "^2.2.6",
 		"debug": "^4.1.1",
 		"lodash": "^4.17.21",
@@ -47,13 +47,13 @@
 	},
 	"devDependencies": {
 		"@automattic/typography": "^1.0.0",
-		"@wordpress/base-styles": "^3.3.3",
+		"@wordpress/base-styles": "^3.4.3",
 		"prop-types": "^15.7.2"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^4.26.8",
-		"@wordpress/element": "^2.19.1",
-		"@wordpress/i18n": "^3.19.0",
+		"@wordpress/data": "^4.27.3",
+		"@wordpress/element": "^2.20.3",
+		"@wordpress/i18n": "^3.20.0",
 		"react": "^16.8"
 	},
 	"private": true
