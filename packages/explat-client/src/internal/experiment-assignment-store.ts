@@ -3,41 +3,12 @@
  */
 import type { ExperimentAssignment } from '../types';
 import * as Validations from './validations';
-
-const localStorage =
-	typeof window !== 'undefined' && window.localStorage
-		? window.localStorage
-		: // LocalStorage polyfill from https://gist.github.com/juliocesar/926500
-		  {
-				_data: {} as Record< string, string >,
-				setItem: function ( id: string, val: string ) {
-					return ( this._data[ id ] = String( val ) );
-				},
-				getItem: function ( id: string ) {
-					return this._data.hasOwnProperty( id ) ? this._data[ id ] : undefined;
-				},
-				removeItem: function ( id: string ) {
-					return delete this._data[ id ];
-				},
-				clear: function () {
-					return ( this._data = {} );
-				},
-		  };
+import localStorage from './local-storage';
 
 const localStorageExperimentAssignmentKeyPrefix = 'explat-experiment-';
 
 const localStorageExperimentAssignmentKey = ( experimentName: string ): string =>
 	`${ localStorageExperimentAssignmentKeyPrefix }-${ experimentName }`;
-
-/**
- * INTERNAL USE ONLY
- *
- * Clears all ExperimentAssignments.
- * Useful for testing.
- */
-export function clearAllExperimentAssignments(): void {
-	localStorage.clear();
-}
 
 /**
  * Store an ExperimentAssignment.
