@@ -312,17 +312,21 @@ export function unsetCheckbox( driver, locator ) {
 }
 
 /**
- * Check whether an image is actually visible - that is rendered to the screen - not just having a reference in the DOM
+ * Check whether an image element is actually visible - that is rendered to the
+ * screen - not just having a reference in the DOM.
  *
- * @param {object} driver - Browser context in which to search
- * @param {object} webElement - Element to search for
- * @returns {Promise} - Resolved when the script is done executing
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {WebElement} element The image element
+ * @returns {Promise<boolean>} A promise that will resolve with whether the
+ * image is visible or not
  */
-export function imageVisible( driver, webElement ) {
-	return driver.executeScript(
-		'return (typeof arguments[0].naturalWidth!="undefined" && arguments[0].naturalWidth>0)',
-		webElement
-	);
+export async function isImageVisible( driver, element ) {
+	const tagName = await element.getTagName();
+	if ( tagName !== 'IMG' ) {
+		throw new Error( `Element is not an image: ${ tagName }` );
+	}
+
+	return driver.executeScript( 'return arguments[ 0 ].naturalWidth > 0', element );
 }
 
 export function checkForConsoleErrors( driver ) {
