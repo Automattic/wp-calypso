@@ -36,6 +36,6 @@ export default class LaunchSiteFlow {
 			await driverHelper.clickWhenClickable( this.driver, dismissDomainUpsellLocator );
 		}
 
-		return await myHomePage.isSiteLaunched();
+		return await myHomePage.waitForSiteLaunchComplete();
 	}
 }
