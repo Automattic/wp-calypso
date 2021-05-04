@@ -57,6 +57,7 @@
 		"google-workspace-migration": true,
 		"gutenboarding/mshot-preview": true,
 		"gutenboarding/landscape-preview": true,
+		"gutenboarding/long-previews": true,
 		"gutenboarding/alpha-templates": true,
 		"happychat": true,
 		"help": true,
