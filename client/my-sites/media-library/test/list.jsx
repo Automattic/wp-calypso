@@ -9,7 +9,7 @@
  */
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import { defer, toArray } from 'lodash';
+import { defer } from 'lodash';
 import React from 'react';
 import moment from 'moment';
 
@@ -49,7 +49,7 @@ describe( 'MediaLibraryList item selection', () => {
 	function expectSelectedItems() {
 		defer( function () {
 			expect( mockSelectedItems ).to.have.members(
-				toArray( arguments ).map( function ( arg ) {
+				Array.from( arguments ).map( function ( arg ) {
 					return fixtures.media[ arg ];
 				} )
 			);
