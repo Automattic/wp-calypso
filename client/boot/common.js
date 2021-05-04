@@ -116,6 +116,27 @@ const setupContextMiddleware = ( reduxStore ) => {
 	} );
 };
 
+function authorizePath() {
+	// TODO: flags=oauth should be present only in dev-like environments
+	// where we need to preserve the flag on full reloads and redirects
+	const redirectUri = new URL( '/api/oauth/token', window.location );
+	redirectUri.search = new URLSearchParams( {
+		flags: 'oauth',
+		next: window.location.pathname + window.location.search,
+	} );
+
+	const authUri = new URL( 'https://public-api.wordpress.com/oauth2/authorize' );
+	authUri.search = new URLSearchParams( {
+		response_type: 'token',
+		client_id: config( 'oauth_client_id' ),
+		redirect_uri: redirectUri,
+		scope: 'global',
+		blog_id: 0,
+	} );
+
+	return authUri.toString();
+}
+
 const oauthTokenMiddleware = () => {
 	if ( config.isEnabled( 'oauth' ) ) {
 		const loggedOutRoutes = [
@@ -147,7 +168,8 @@ const oauthTokenMiddleware = () => {
 				! ( isJetpackCloud() && inJetpackCloudOAuthOverride() )
 			) {
 				const isDesktop = [ 'desktop', 'desktop-development' ].includes( config( 'env_id' ) );
-				const redirectPath = isDesktop || isJetpackCloud() ? config( 'login_url' ) : '/authorize';
+				const redirectPath =
+					isDesktop || isJetpackCloud() ? config( 'login_url' ) : authorizePath();
 
 				const currentPath = window.location.pathname;
 				// In the context of Jetpack Cloud, if the user isn't authorized, we want
@@ -165,7 +187,7 @@ const oauthTokenMiddleware = () => {
 						parseInt( new Date().getTime() / 1000 ) + EXPIRATION_IN_SECONDS
 					);
 				}
-				page( redirectPath );
+				window.location = redirectPath;
 				return;
 			}
 
