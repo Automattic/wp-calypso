@@ -1,21 +1,28 @@
 /**
+ * External dependencies
+ */
+import { forEach } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import wpcom from 'calypso/lib/wp';
 import productsListFactory from 'calypso/lib/products-list';
 const productsList = productsListFactory();
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { preprocessCartForServer, fillInAllCartItemAttributes } from 'calypso/lib/cart-values';
+import { addCartItem } from 'calypso/lib/cart-values/cart-items';
 
 function addProductsToCart( cart, newCartItems ) {
-	const productsData = productsList.get();
-	const newProducts = newCartItems.map( function ( cartItem ) {
-		cartItem.extra = { ...cartItem.extra, context: 'signup' };
-		return fillInSingleCartItemAttributes( cartItem, productsData );
+	forEach( newCartItems, function ( cartItem ) {
+		cartItem.extra = Object.assign( cartItem.extra || {}, {
+			context: 'signup',
+		} );
+		const addFunction = addCartItem( cartItem );
+
+		cart = fillInAllCartItemAttributes( addFunction( cart ), productsList.get() );
 	} );
-	return {
-		...cart,
-		products: [ ...cart.products, ...newProducts ],
-	};
+
+	return cart;
 }
 
 export default {
@@ -27,6 +34,7 @@ export default {
 		};
 
 		newCart = addProductsToCart( newCart, newCartItems );
+		newCart = preprocessCartForServer( newCart );
 
 		wpcom.undocumented().setCart( cartKey, newCart, function ( postError ) {
 			callback( postError );
@@ -42,7 +50,8 @@ export default {
 				newCartItems = [ newCartItems ];
 			}
 
-			const newCart = addProductsToCart( data, newCartItems );
+			let newCart = addProductsToCart( data, newCartItems );
+			newCart = preprocessCartForServer( newCart );
 
 			wpcom.undocumented().setCart( cartKey, newCart, callback );
 		} );

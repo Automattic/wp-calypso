@@ -5,11 +5,11 @@ import emailValidator from 'email-validator';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { countBy, find, includes, groupBy, map, mapValues } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
+import { CartItemValue } from 'calypso/lib/cart-values/types';
 import { googleApps, googleAppsExtraLicenses } from 'calypso/lib/cart-values/cart-items';
 import {
 	getGSuiteMailboxCount,
@@ -347,7 +347,7 @@ const getItemsForCart = (
 	domains: { name: string },
 	productSlug: string,
 	users: GSuiteNewUser[]
-): MinimalRequestCartProduct => {
+): CartItemValue => {
 	const usersGroupedByDomain: { [ domain: string ]: GSuiteProductUser[] } = mapValues(
 		groupBy( users, 'domain.value' ),
 		( groupedUsers ) => groupedUsers.map( transformUserForCart )

@@ -84,3 +84,4 @@ export { isTrafficGuide } from './is-traffic-guide';
 export * from './is-p2-plus';
 export * from './products-list';
 export * from './translations';
+export { default as sortProducts } from './sort';

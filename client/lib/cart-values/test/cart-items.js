@@ -32,7 +32,6 @@ const {
 	getDomainPriceRule,
 	hasToUpgradeToPayForADomain,
 	getRenewalItemFromProduct,
-	supportsPrivacyProtectionPurchase,
 } = cartItems;
 
 /**
@@ -821,25 +820,5 @@ describe( 'getRenewalItemFromProduct()', () => {
 				)
 			).toThrowError( 'This product cannot be renewed' );
 		} );
-	} );
-} );
-
-describe( 'supportsPrivacyProtectionPurchase', () => {
-	const testProducts = {
-		non_private_product: {
-			product_slug: 'non_private_product',
-		},
-		private_product: {
-			product_slug: 'private_product',
-			is_privacy_protection_product_purchase_allowed: true,
-		},
-	};
-
-	it( 'returns true if the product slug matches a product with privacy allowed', () => {
-		expect( supportsPrivacyProtectionPurchase( 'private_product', testProducts ) ).toBeTruthy();
-	} );
-
-	it( 'returns false if the product slug does not match a product with privacy allowed', () => {
-		expect( supportsPrivacyProtectionPurchase( 'non_private_product', testProducts ) ).toBeFalsy();
 	} );
 } );

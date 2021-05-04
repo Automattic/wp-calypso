@@ -203,7 +203,7 @@ function shouldProductReplaceCart(
 		product.extra?.purchaseType === 'renewal' &&
 		product.product_slug !== 'domain_redemption'
 	) {
-		// adding a renewal replaces the cart unless it is a privacy protection (comment copied from original code from old checkout; is domain_redemption really privacy protection?)
+		// adding a renewal replaces the cart unless it is a privacy protection (comment copied from cartItemShouldReplaceCart; is domain_redemption really privacy protection?)
 		return true;
 	}
 
