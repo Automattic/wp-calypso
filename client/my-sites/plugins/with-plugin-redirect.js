@@ -30,7 +30,12 @@ const withPluginRedirect = createHigherOrderComponent(
 			return <Component { ...props } />;
 		}
 
-		const [ wasInstalling, setWasInstalling ] = useState( false );
+		/*
+		 * Store if the site was in a processing state.
+		 * For Jetpack sites, it means the site was installing a plugin.
+		 * For Atomic sites, it was transferring the site.
+		 */
+		const [ wasSiteInProcess, setWasSiteInProccess ] = useState( false );
 		const [ redirectTo, setRedirectTo ] = useState( null );
 
 		const translate = useTranslate();
@@ -107,12 +112,12 @@ const withPluginRedirect = createHigherOrderComponent(
 
 			// Store the previous state of `isInstalling`.
 			if ( isJetpack && isInstallingPlugin ) {
-				setWasInstalling( true );
+				setWasSiteInProccess( true );
 			}
 
 			if (
-				( isJetpack && ! isInstallingPlugin && wasInstalling ) || // <- Jetpack site.
-				( isAtomic && ! hasSiteBeenTransferred && wasInstalling ) // <- Atomic site.
+				( isJetpack && ! isInstallingPlugin && wasSiteInProcess ) || // <- Jetpack site.
+				( isAtomic && ! hasSiteBeenTransferred && wasSiteInProcess ) // <- Atomic site.
 			) {
 				return setRedirectTo( redirectUrl );
 			}
@@ -126,7 +131,7 @@ const withPluginRedirect = createHigherOrderComponent(
 			isJetpack,
 			isAtomic,
 			isSiteConnected,
-			wasInstalling,
+			wasSiteInProcess,
 		] );
 
 		useEffect( () => {
@@ -160,7 +165,7 @@ const withPluginRedirect = createHigherOrderComponent(
 						id: 'plugin-redirect-notice',
 						onClick: function () {
 							timerId && window.clearTimeout( timerId );
-							setWasInstalling( false );
+							setWasSiteInProccess( false );
 							setRedirectTo( null );
 							dispatch( removeNotice( 'plugin-redirect-notice' ) );
 						},
