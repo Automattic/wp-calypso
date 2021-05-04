@@ -47,7 +47,7 @@ import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
+import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 
@@ -153,7 +153,7 @@ class EmailManagement extends React.Component {
 
 		return (
 			<CalypsoShoppingCartProvider>
-				<EmailProvidersStackedComparison
+				<EmailProvidersComparison
 					domain={ selectedDomain }
 					isGSuiteSupported={ isGSuiteSupported }
 				/>

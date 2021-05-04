@@ -28,7 +28,7 @@ import {
 	getEmailForwardingFeatures,
 	getGoogleFeatures,
 	getTitanFeatures,
-} from 'calypso/my-sites/email/email-providers-comparison/email-provider-features';
+} from 'calypso/my-sites/email/email-provider-features/list';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
@@ -63,7 +63,7 @@ import './style.scss';
 
 const identityMap = ( item ) => item;
 
-class EmailProvidersStackedComparison extends React.Component {
+class EmailProvidersComparison extends React.Component {
 	static propTypes = {
 		domain: PropTypes.object.isRequired,
 		isGSuiteSupported: PropTypes.bool.isRequired,
@@ -312,7 +312,7 @@ class EmailProvidersStackedComparison extends React.Component {
 					showLabels={ true }
 				>
 					<Button
-						className="email-providers-stacked-comparison__gsuite-user-list-action-continue"
+						className="email-providers-comparison__gsuite-user-list-action-continue"
 						primary
 						busy={ this.state.addingToCart }
 						onClick={ this.onGoogleConfirmNewUsers }
@@ -370,7 +370,7 @@ class EmailProvidersStackedComparison extends React.Component {
 
 		const logo = (
 			<Gridicon
-				className="email-providers-stacked-comparison__providers-wordpress-com-email"
+				className="email-providers-comparison__providers-wordpress-com-email"
 				icon="my-sites"
 			/>
 		);
@@ -387,7 +387,7 @@ class EmailProvidersStackedComparison extends React.Component {
 				showLabels={ true }
 			>
 				<Button
-					className="email-providers-stacked-comparison__titan-mailbox-action-continue"
+					className="email-providers-comparison__titan-mailbox-action-continue"
 					primary
 					busy={ this.state.addingToCart }
 					onClick={ this.onTitanConfirmNewMailboxes }
@@ -437,7 +437,7 @@ class EmailProvidersStackedComparison extends React.Component {
 				isPrimary
 				title={ translate( 'Get your own @%(domainName)s email address', translateArgs ) }
 				image={ image }
-				className="email-providers-stacked-comparison__action-panel"
+				className="email-providers-comparison__action-panel"
 			>
 				<p>
 					{ translate(
@@ -534,4 +534,4 @@ export default connect(
 			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
 		};
 	}
-)( withShoppingCart( localize( EmailProvidersStackedComparison ) ) );
+)( withShoppingCart( localize( EmailProvidersComparison ) ) );
