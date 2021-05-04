@@ -20,38 +20,3 @@
 		margin-left: 28px;
 	}
 }
-
-.promo-card .action-panel__body p.email-provider-details__description {
-	flex-grow: 0;
-}
-
-.promo-card div.promo-card__title-badge {
-	background-color: var( --studio-gray-80 );
-}
-
-.promo-card h2.action-panel__title {
-	flex-wrap: wrap;
-}
-
-.email-provider-details__additional-price-information {
-	color: var( --color-text-subtle );
-	display: inline-block;
-	font-size: $font-body-extra-small;
-	font-style: normal;
-	margin-top: 3px;
-}
-
-.email-provider-details__cta {
-	margin-top: 16px;
-	margin-right: auto;
-	margin-bottom: 16px;
-
-	.gsuite & {
-		margin-top: 16px;
-	}
-
-	@include breakpoint-deprecated( '>1040px' ) {
-		margin-top: 40px;
-		margin-bottom: 25px;
-	}
-}
