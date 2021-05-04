@@ -16,7 +16,7 @@ import './style.scss';
 
 export default ( { title } ) => {
 	return (
-		<span className="email-provider-details__feature">
+		<span className="email-provider-features">
 			<Gridicon icon="checkmark" size="18" />
 
 			{ preventWidows( title ) }
