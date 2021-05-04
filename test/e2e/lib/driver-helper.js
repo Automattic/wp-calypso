@@ -9,6 +9,7 @@ import webdriver, {
 	WebDriver,
 	WebElement,
 	WebElementCondition,
+	error as webdriverError,
 } from 'selenium-webdriver';
 import config from 'config';
 import { forEach } from 'lodash';
@@ -493,10 +494,25 @@ export async function waitUntilElementWithTextLocated(
 				if ( locatedElements.length === 0 ) {
 					return null;
 				}
-				const elementsWithText = await webdriver.promise.filter(
-					locatedElements,
-					getInnerTextMatcherFunction( text )
-				);
+
+				let elementsWithText;
+				try {
+					elementsWithText = await webdriver.promise.filter(
+						locatedElements,
+						getInnerTextMatcherFunction( text )
+					);
+				} catch ( err ) {
+					if ( err instanceof webdriverError.StaleElementReferenceError ) {
+						// The element was removed from the DOM after we found it. Likely it was an animation
+						// or react re-render. Return null so WebElementCondition retries again.
+						return null;
+					}
+					throw err;
+				}
+
+				if ( elementsWithText.length === 0 ) {
+					return null;
+				}
 
 				return elementsWithText[ 0 ];
 			}
