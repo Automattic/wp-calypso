@@ -13,7 +13,7 @@ import LoginPage from '../lib/pages/login-page';
  */
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 
-describe( `Main Suite 1`, function () {
+describe( `Main Suite 1 @parallel`, function () {
 	this.timeout( mochaTimeOut );
 	let page;
 
@@ -43,7 +43,7 @@ describe( `Main Suite 1`, function () {
 	} );
 } );
 
-describe( `Main Suite 2`, function () {
+describe( `Main Suite 2 @parallel`, function () {
 	this.timeout( mochaTimeOut );
 	let page;
 
