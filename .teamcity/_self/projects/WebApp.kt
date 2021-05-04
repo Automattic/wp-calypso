@@ -713,6 +713,9 @@ object CheckCodeStyleBranch : BuildType({
 object RunCalypsoPlaywrightE2eTests : BuildType({
 	name = "Playwright E2E tests"
 	description = "Runs Calypso e2e tests using Playwright"
+	params {
+		param("use_cached_node_modules", "true")
+	}
 
 	artifactRules = """
 		reports => reports
@@ -733,12 +736,7 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 				export PLAYWRIGHT_BROWSERS_PATH=0
 
 				# Install modules
-				# Normally, we would use the following
-				# ${_self.yarn_install_cmd}
-				# However, due to the prepopulated node_modules
-				# folder not containing the Playwright binaries,
-				# for the time being the raw command is used.
-				yarn install --frozen-lockfile --production --ignore-optional
+				${_self.yarn_install_cmd}
 
 				# Build package
 				yarn workspace @automattic/calypso-e2e build
