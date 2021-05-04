@@ -30,7 +30,7 @@ class ContactFormBlockComponent extends GutenbergBlockComponent {
 		const emailSelector = By.css(
 			'.jetpack-contact-form__popover .components-base-control:nth-of-type(1) .components-text-control__input'
 		);
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, emailSelector );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, emailSelector );
 
 		const emailTextfield = await this.driver.findElement( emailSelector );
 		return await emailTextfield.sendKeys( email );
@@ -40,7 +40,7 @@ class ContactFormBlockComponent extends GutenbergBlockComponent {
 		const subjectSelector = By.css(
 			'.jetpack-contact-form__popover .components-base-control:nth-of-type(2) .components-text-control__input'
 		);
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, subjectSelector );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, subjectSelector );
 
 		const subjectTextfield = await this.driver.findElement( subjectSelector );
 		return await subjectTextfield.sendKeys( subject );

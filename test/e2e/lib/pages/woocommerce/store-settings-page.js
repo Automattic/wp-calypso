@@ -25,7 +25,7 @@ export default class StoreSettingsPage extends AsyncBaseContainer {
 	}
 
 	async paymentsSettingsDisplayed() {
-		return await driverHelper.isEventuallyPresentAndDisplayed(
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			by.css( '.woocommerce .settingsPayments' )
 		);
@@ -40,7 +40,7 @@ export default class StoreSettingsPage extends AsyncBaseContainer {
 	}
 
 	async shippingSettingsDisplayed() {
-		return await driverHelper.isEventuallyPresentAndDisplayed(
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			by.css( '.woocommerce .shipping' )
 		);
@@ -55,7 +55,7 @@ export default class StoreSettingsPage extends AsyncBaseContainer {
 	}
 
 	async taxesSettingsDisplayed() {
-		return await driverHelper.isEventuallyPresentAndDisplayed(
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			by.css( '.woocommerce .settings-taxes' )
 		);

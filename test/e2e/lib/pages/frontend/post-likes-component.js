@@ -35,7 +35,7 @@ export default class PostLikesComponent extends AsyncBaseContainer {
 
 	async expectLiked() {
 		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.expectedElementSelector );
-		await driverHelper.waitUntilLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.xpath( `//span[@class='wpl-count-text'][.='You like this.']` )
 		);
@@ -52,7 +52,7 @@ export default class PostLikesComponent extends AsyncBaseContainer {
 
 	async expectNotLiked() {
 		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.expectedElementSelector );
-		await driverHelper.waitUntilLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.xpath( `//span[@class='wpl-count-text'][.='Be the first to like this.']` )
 		);

@@ -17,7 +17,10 @@ export default class MarkdownBlockComponent extends GutenbergBlockComponent {
 	}
 
 	async revealToolbar() {
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, this.expectedElementSelector );
+		await driverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			this.expectedElementSelector
+		);
 		await driverHelper.clickWhenClickable( this.driver, By.css( '.editor-post-title' ) );
 		return await driverHelper.clickWhenClickable( this.driver, this.expectedElementSelector );
 	}
@@ -35,13 +38,13 @@ export default class MarkdownBlockComponent extends GutenbergBlockComponent {
 	// Caution! make sure you in preview mode before calling this.
 	async getPreviewHTML() {
 		const previewSelector = By.css( `${ this.blockID } .wp-block-jetpack-markdown__preview` );
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, previewSelector );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, previewSelector );
 		return await this.driver.findElement( previewSelector ).getAttribute( 'innerHTML' );
 	}
 
 	async _switchMode( expectedSelector ) {
 		await this.revealToolbar();
-		const isVisible = await driverHelper.isEventuallyPresentAndDisplayed(
+		const isVisible = await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			expectedSelector,
 			1000
@@ -53,6 +56,6 @@ export default class MarkdownBlockComponent extends GutenbergBlockComponent {
 			`${ this.blockID } button.components-tab-button:not(.is-active)`
 		);
 		await driverHelper.clickWhenClickable( this.driver, switchSelector );
-		return await driverHelper.waitUntilLocatedAndVisible( this.driver, expectedSelector );
+		return await driverHelper.waitUntilElementLocatedAndVisible( this.driver, expectedSelector );
 	}
 }

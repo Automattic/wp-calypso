@@ -18,7 +18,7 @@ export default class PostsPage extends AsyncBaseContainer {
 
 	async waitForPosts() {
 		const resultsLoadingSelector = By.css( '.posts__post-list .is-placeholder:not(.post)' );
-		return await driverHelper.waitTillNotPresent( this.driver, resultsLoadingSelector );
+		return await driverHelper.waitUntilElementNotLocated( this.driver, resultsLoadingSelector );
 	}
 
 	async addNewPost() {
@@ -27,14 +27,14 @@ export default class PostsPage extends AsyncBaseContainer {
 	}
 
 	async waitForPostTitled( title ) {
-		return await driverHelper.waitUntilLocatedAndVisible(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			PostsPage.getPostTitleSelector( title )
 		);
 	}
 
 	async isPostDisplayed( title ) {
-		return await driverHelper.isEventuallyPresentAndDisplayed(
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			PostsPage.getPostTitleSelector( title )
 		);
@@ -49,7 +49,7 @@ export default class PostsPage extends AsyncBaseContainer {
 	}
 
 	async openSectionNav() {
-		const isOpen = await driverHelper.isElementPresent(
+		const isOpen = await driverHelper.isElementLocated(
 			this.driver,
 			By.css( '.post-type-filter .section-nav.is-open' )
 		);
@@ -78,7 +78,7 @@ export default class PostsPage extends AsyncBaseContainer {
 	}
 
 	async isPostPending() {
-		return await driverHelper.isEventuallyPresentAndDisplayed(
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( '.post-status.is-pending' )
 		);

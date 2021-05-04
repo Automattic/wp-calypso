@@ -28,7 +28,7 @@ class SitePreviewComponent extends AsyncBaseContainer {
 		const explicitWaitMS = config.get( 'explicitWaitMS' );
 
 		await this.driver.switchTo().defaultContent();
-		await driverHelper.waitUntilLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.web-preview__inner.is-visible.is-loaded' )
 		);
@@ -40,7 +40,7 @@ class SitePreviewComponent extends AsyncBaseContainer {
 	}
 
 	async leaveSitePreview() {
-		if ( this.screenSize === 'MOBILE' ) {
+		if ( this.screenSize === 'mobile' ) {
 			await this.driver.switchTo().defaultContent();
 			return await driverHelper.clickWhenClickable(
 				this.driver,

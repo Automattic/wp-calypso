@@ -49,7 +49,7 @@ export default class CommentLikesComponent extends AsyncBaseContainer {
 		const commentLikedText = By.xpath(
 			`//div[@class='comment-content']/p[.='${ this.comment }']/../p/span[starts-with(text(),'Liked by')]`
 		);
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, commentLikedText );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, commentLikedText );
 	}
 	async unlikeComment() {
 		const commentUnLikeLink = By.xpath(
@@ -66,6 +66,6 @@ export default class CommentLikesComponent extends AsyncBaseContainer {
 		const commentUnLikedText = By.xpath(
 			`//div[@class='comment-content']/p[.='${ this.comment }']/../p/span[starts-with(text(),'Like')]`
 		);
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, commentUnLikedText );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, commentUnLikedText );
 	}
 }

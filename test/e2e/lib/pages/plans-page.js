@@ -37,7 +37,7 @@ export default class PlansPage extends AsyncBaseContainer {
 	async waitForComparison() {
 		const plansPageMainCssClass =
 			host === 'WPCOM' ? '.plans-features-main__group' : '.selector__main';
-		return await driverHelper.waitUntilLocatedAndVisible(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			by.css( plansPageMainCssClass )
 		);
@@ -57,18 +57,25 @@ export default class PlansPage extends AsyncBaseContainer {
 	}
 
 	async confirmCurrentPlan( planName ) {
-		let selector = by.css( `.is-${ planName }-plan .plan-pill` );
-		if ( host !== 'WPCOM' ) {
-			selector = by.css( `.is-${ planName }-plan` );
+		let selector = `.is-${ planName }-plan .plan-pill`;
+
+		if ( this.screenSize === 'mobile' ) {
+			selector = '.plan-features__mobile ' + selector;
+		} else {
+			selector = '.plan-features__table ' + selector;
 		}
 
-		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
+		if ( host !== 'WPCOM' ) {
+			selector = `.is-${ planName }-plan`;
+		}
+
+		return driverHelper.isElementEventuallyLocatedAndVisible( this.driver, by.css( selector ) );
 	}
 
 	async planTypesShown( planType ) {
 		const plansCssHandle =
 			planType === 'jetpack' ? '.selector__main' : `[data-e2e-plans="${ planType }"]`;
-		return await driverHelper.isEventuallyPresentAndDisplayed(
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			by.css( plansCssHandle )
 		);
