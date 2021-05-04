@@ -21,16 +21,16 @@ import type {
 export type WPComProductSlug = typeof PRODUCT_WPCOM_SEARCH | typeof PRODUCT_WPCOM_SEARCH_MONTHLY;
 
 // Jetpack
-export type JetpackLegacyPlanSlugs = typeof JETPACK_LEGACY_PLANS[ number ];
-export type JetpackResetPlanSlugs = typeof JETPACK_RESET_PLANS[ number ];
-export type JetpackPlanSlugs =
+export type JetpackLegacyPlanSlug = typeof JETPACK_LEGACY_PLANS[ number ];
+export type JetpackResetPlanSlug = typeof JETPACK_RESET_PLANS[ number ];
+export type JetpackPlanSlug =
 	| typeof PLAN_JETPACK_FREE
-	| JetpackLegacyPlanSlugs
-	| JetpackResetPlanSlugs;
+	| JetpackLegacyPlanSlug
+	| JetpackResetPlanSlug;
 export type JetpackProductSlug = typeof JETPACK_PRODUCTS_LIST[ number ];
 export type JetpackPurchasableItem =
-	| JetpackLegacyPlanSlugs
-	| JetpackResetPlanSlugs
+	| JetpackLegacyPlanSlug
+	| JetpackResetPlanSlug
 	| JetpackProductSlug;
 
 export type ProductSlug = JetpackProductSlug | WPComProductSlug;
@@ -43,14 +43,14 @@ export type Plan = {
 	getDescription: ( variation?: string ) => TranslateResult;
 	getTagline?: ( featuresOrCROVariation?: string[] | string ) => TranslateResult;
 	getButtonLabel?: ( variation?: string ) => TranslateResult;
-	getAnnualSlug?: () => JetpackPlanSlugs | string;
-	getMonthlySlug?: () => JetpackPlanSlugs | string;
+	getAnnualSlug?: () => JetpackPlanSlug | string;
+	getMonthlySlug?: () => JetpackPlanSlug | string;
 	getAudience?: () => TranslateResult;
 	getBlogAudience?: () => TranslateResult;
 	getPortfolioAudience?: () => TranslateResult;
 	getStoreAudience?: () => TranslateResult;
 	getProductId: () => number;
-	getStoreSlug: () => JetpackPlanSlugs | string;
+	getStoreSlug: () => JetpackPlanSlug | string;
 	getPathSlug?: () => string;
 	getPlanCompareFeatures?: () => string[];
 	getPlanCardFeatures?: (

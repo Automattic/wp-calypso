@@ -74,7 +74,7 @@ import type {
 	SiteProduct,
 } from './types';
 import type {
-	JetpackPlanSlugs,
+	JetpackPlanSlug,
 	Plan,
 	JetpackPlanCardFeature,
 	JetpackPlanCardFeatureSection,
@@ -381,7 +381,7 @@ function slugIsSelectorProductSlug( slug: string ): slug is SelectorProductSlug 
 function slugIsJetpackProductSlug( slug: string ): slug is JetpackProductSlug {
 	return slug in JETPACK_SITE_PRODUCTS_WITH_FEATURES;
 }
-function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlugs {
+function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlug {
 	return [ ...JETPACK_LEGACY_PLANS, ...JETPACK_RESET_PLANS ].includes( slug );
 }
 

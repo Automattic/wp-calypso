@@ -13,7 +13,7 @@ import { COMPARE_PLANS_QUERY_PARAM } from './constants';
  * Type dependencies
  */
 import {
-	JetpackLegacyPlanSlugs,
+	JetpackLegacyPlanSlug,
 	JetpackPurchasableItem,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
@@ -51,7 +51,7 @@ export function getPlanRecommendationFromContext(
 		return;
 	}
 
-	return [ legacyPlan, resetPlans as Exclude< JetpackPurchasableItem, JetpackLegacyPlanSlugs >[] ];
+	return [ legacyPlan, resetPlans as Exclude< JetpackPurchasableItem, JetpackLegacyPlanSlug >[] ];
 }
 
 export function getItemSlugByDuration< T extends string >( slug: T, duration: Duration ): T {

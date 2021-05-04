@@ -54,7 +54,7 @@ import { buildCardFeaturesFromItem } from './utils';
  * Type dependencies
  */
 import type { SelectorProduct, SelectorProductSlug } from './types';
-import type { JetpackPlanSlugs } from '@automattic/calypso-products';
+import type { JetpackPlanSlug } from '@automattic/calypso-products';
 
 export const ALL = 'all';
 export const PERFORMANCE = 'performance';
@@ -404,7 +404,7 @@ export const UPSELL_PRODUCT_MATRIX: Record< string, string > = {
 /**
  * Matrix of products upsold by specific features.
  */
-export const PRODUCT_UPSELLS_BY_FEATURE: Record< string, JetpackPlanSlugs > = {
+export const PRODUCT_UPSELLS_BY_FEATURE: Record< string, JetpackPlanSlug > = {
 	[ FEATURE_GOOGLE_ANALYTICS ]: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	[ FEATURE_VIDEO_UPLOADS_JETPACK_PRO ]: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	[ FEATURE_ADVANCED_SEO ]: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
