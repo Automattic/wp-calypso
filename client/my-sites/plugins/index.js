@@ -113,7 +113,16 @@ export default function () {
 				makeLayout,
 				clientRender
 			);
+
+			page(
+				'/plugins/thank-you/:site?',
+				siteSelection,
+				() => 'THANK YOU FOR THE PURCHASE',
+				makeLayout,
+				clientRender
+			);
 		}
+
 		page(
 			'/plugins/:pluginFilter(active|inactive|updates)/:site_id?',
 			scrollTopIfNoHash,
