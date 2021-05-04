@@ -376,7 +376,7 @@ class SiteVerification extends Component {
 										<ExternalLink
 											icon={ true }
 											target="_blank"
-											href="https://developers.facebook.com/"
+											href="https://business.facebook.com/settings/"
 										/>
 									),
 								},
