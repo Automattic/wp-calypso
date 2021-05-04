@@ -10,7 +10,6 @@ import type {
 	ALL,
 	PERFORMANCE,
 	SECURITY,
-	PRODUCTS_WITH_OPTIONS,
 	ITEM_TYPE_PLAN,
 	ITEM_TYPE_BUNDLE,
 	ITEM_TYPE_PRODUCT,
@@ -63,8 +62,6 @@ export interface JetpackFreeProps {
 	urlQueryArgs: QueryArgs;
 	siteId: number | null;
 }
-
-export type SelectorProductSlug = typeof PRODUCTS_WITH_OPTIONS[ number ];
 
 export type SelectorProductCost = {
 	isFree?: boolean;
