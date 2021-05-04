@@ -88,9 +88,7 @@ export default function JetpackSearchMain(): ReactElement {
 				<p>
 					{ isSearchEnabled
 						? translate( 'Your visitors are getting our fastest search experience.' )
-						: translate(
-								'Enable it to ensure your visitors get our fastest search experience.'
-						  ) }
+						: translate( 'Enable it to ensure your visitors get our fastest search experience.' ) }
 				</p>
 
 				<PromoCardCTA
