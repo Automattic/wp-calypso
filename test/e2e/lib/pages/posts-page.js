@@ -17,33 +17,33 @@ export default class PostsPage extends AsyncBaseContainer {
 	}
 
 	async waitForPosts() {
-		const resultsLoadingSelector = By.css( '.posts__post-list .is-placeholder:not(.post)' );
-		return await driverHelper.waitUntilElementNotLocated( this.driver, resultsLoadingSelector );
+		const resultsLoadingLocator = By.css( '.posts__post-list .is-placeholder:not(.post)' );
+		return await driverHelper.waitUntilElementNotLocated( this.driver, resultsLoadingLocator );
 	}
 
 	async addNewPost() {
-		const addNewPostSelector = By.css( '.post-type-list__add-post' );
-		return await driverHelper.clickWhenClickable( this.driver, addNewPostSelector );
+		const addNewPostLocator = By.css( '.post-type-list__add-post' );
+		return await driverHelper.clickWhenClickable( this.driver, addNewPostLocator );
 	}
 
 	async waitForPostTitled( title ) {
 		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			PostsPage.getPostTitleSelector( title )
+			PostsPage.getPostTitleLocator( title )
 		);
 	}
 
 	async isPostDisplayed( title ) {
 		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
-			PostsPage.getPostTitleSelector( title )
+			PostsPage.getPostTitleLocator( title )
 		);
 	}
 
 	async editPostWithTitle( title ) {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			PostsPage.getPostTitleSelector( title ),
+			PostsPage.getPostTitleLocator( title ),
 			this.explicitWaitMS * 2
 		);
 	}
@@ -84,7 +84,7 @@ export default class PostsPage extends AsyncBaseContainer {
 		);
 	}
 
-	static getPostTitleSelector( title ) {
+	static getPostTitleLocator( title ) {
 		return By.css( `.post-item__title-link[data-e2e-title="${ title }"]` );
 	}
 }

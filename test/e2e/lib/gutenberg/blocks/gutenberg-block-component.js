@@ -23,14 +23,14 @@ export default class GutenbergBlockComponent extends AsyncBaseContainer {
 	}
 
 	async focusBlock() {
-		const selectedBlockSelector = By.css(
+		const selectedBlockLocator = By.css(
 			`${ this.blockID }.block-editor-block-list__block.is-selected`
 		);
 
-		await driverHelper.clickWhenClickable( this.driver, this.expectedElementSelector );
+		await driverHelper.clickWhenClickable( this.driver, this.expectedElementLocator );
 		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			selectedBlockSelector
+			selectedBlockLocator
 		);
 	}
 }

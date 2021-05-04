@@ -16,10 +16,10 @@ export default class MyPlanPage extends AsyncBaseContainer {
 
 	async openPlansTab() {
 		await driverHelper.ensureMobileMenuOpen( this.driver );
-		const selector = By.css(
+		const locator = By.css(
 			'.current-plan a[href*="plans"]:not([href*="my-plan"]).section-nav-tab__link'
 		);
-		return await driverHelper.clickWhenClickable( this.driver, selector );
+		return await driverHelper.clickWhenClickable( this.driver, locator );
 	}
 
 	async isSecurityPlan() {

@@ -69,8 +69,8 @@ export default class WporgCreatorPage extends AsyncBaseContainer {
 		await driverHelper.refreshIfJNError( this.driver );
 
 		if ( template === 'wooCommerceNoJetpack' ) {
-			const selector = By.css( 'a.wc-setup-footer-links' );
-			await driverHelper.clickWhenClickable( this.driver, selector );
+			const locator = By.css( 'a.wc-setup-footer-links' );
+			await driverHelper.clickWhenClickable( this.driver, locator );
 		}
 
 		return await driverHelper.waitUntilElementLocatedAndVisible( this.driver, PASSWORD_ELEMENT );

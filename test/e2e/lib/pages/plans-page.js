@@ -21,17 +21,17 @@ export default class PlansPage extends AsyncBaseContainer {
 
 	async openPlansTab() {
 		await driverHelper.ensureMobileMenuOpen( this.driver );
-		const selector = by.css(
+		const locator = by.css(
 			'.current-plan a[href*="plans"]:not([href*="my-plan"]).section-nav-tab__link'
 		);
-		return await driverHelper.clickWhenClickable( this.driver, selector );
+		return await driverHelper.clickWhenClickable( this.driver, locator );
 	}
 
 	async openAdvancedPlansSegment() {
-		const selector = by.css(
+		const locator = by.css(
 			'.plans-features-main ul.segmented-control.is-primary.plan-features__interval-type.is-customer-type-toggle li:nth-child(2)'
 		);
-		return await driverHelper.clickWhenClickable( this.driver, selector );
+		return await driverHelper.clickWhenClickable( this.driver, locator );
 	}
 
 	async waitForComparison() {

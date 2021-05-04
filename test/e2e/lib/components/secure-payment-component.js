@@ -21,7 +21,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 			null,
 			2 * config.get( 'explicitWaitMS' )
 		);
-		this.paymentButtonSelector = By.css( '.composite-checkout .checkout-submit-button button' );
+		this.paymentButtonLocator = By.css( '.composite-checkout .checkout-submit-button button' );
 		this.personalPlanSlug = getJetpackHost() === 'WPCOM' ? 'personal-bundle' : 'jetpack_personal';
 		this.premiumPlanSlug = getJetpackHost() === 'WPCOM' ? 'value_bundle' : 'jetpack_premium';
 		this.businessPlanSlug =
@@ -37,14 +37,14 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		// This is to wait for products to settle down during sign up see - https://github.com/Automattic/wp-calypso/issues/24579
 		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			this.paymentButtonSelector,
+			this.paymentButtonLocator,
 			this.explicitWaitMS
 		);
 	}
 
-	async setInElementsIframe( iframeSelector, what, value ) {
+	async setInElementsIframe( iframeLocator, what, value ) {
 		await this.driver.wait(
-			until.ableToSwitchToFrame( By.css( iframeSelector ) ),
+			until.ableToSwitchToFrame( By.css( iframeLocator ) ),
 			this.explicitWaitMS,
 			'Could not locate the ElementInput iFrame.'
 		);
@@ -75,14 +75,14 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		// SecurePaymentComponent.completeTaxDetailsInContactSection.
 		await this.completeTaxDetailsForCreditCard( { cardPostCode, cardCountryCode } );
 
-		const creditCardHandleSelector = By.css( 'label[for="card"]' );
-		await driverHelper.scrollIntoView( this.driver, creditCardHandleSelector );
+		const creditCardHandleLocator = By.css( 'label[for="card"]' );
+		await driverHelper.scrollIntoView( this.driver, creditCardHandleLocator );
 
 		// Sometimes the credit card form will be closed and it will require a click to be opened.
 		// This can happen when users have a credit card already associated with their account.
 		await driverHelper.selectElementByText(
 			this.driver,
-			creditCardHandleSelector,
+			creditCardHandleLocator,
 			'Credit or debit card'
 		);
 
@@ -168,7 +168,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		);
 
 		await driverHelper.waitUntilElementNotLocated( this.driver, disabledPaymentButton );
-		return await driverHelper.clickWhenClickable( this.driver, this.paymentButtonSelector );
+		return await driverHelper.clickWhenClickable( this.driver, this.paymentButtonLocator );
 	}
 
 	async waitForCreditCardPaymentProcessing() {
@@ -191,15 +191,15 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	async waitForPageToDisappear() {
 		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
-			this.expectedElementSelector,
+			this.expectedElementLocator,
 			this.explicitWaitMS * 5
 		);
 	}
 
 	async getProductsNames() {
-		const selector = By.css( '.product-name' );
+		const locator = By.css( '.product-name' );
 		return await this.driver
-			.findElements( selector )
+			.findElements( locator )
 			.then( ( products ) => promise.fullyResolved( products.map( ( e ) => e.getText() ) ) );
 	}
 
@@ -233,15 +233,15 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async payWithStoredCardIfPossible( cardCredentials ) {
-		const storedCardSelector = By.css( '.credit-card__stored-card' );
+		const storedCardLocator = By.css( '.credit-card__stored-card' );
 		if (
 			await driverHelper.isElementEventuallyLocatedAndVisible(
 				this.driver,
-				storedCardSelector,
+				storedCardLocator,
 				this.explicitWaitMS / 5
 			)
 		) {
-			await driverHelper.clickWhenClickable( this.driver, storedCardSelector );
+			await driverHelper.clickWhenClickable( this.driver, storedCardLocator );
 		} else {
 			await this.completeTaxDetailsInContactSection( cardCredentials );
 			await this.enterTestCreditCardDetails( cardCredentials );
@@ -250,11 +250,11 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		try {
 			await this.submitPaymentDetails();
 		} catch {
-			const noticeSelector = By.css(
+			const noticeLocator = By.css(
 				'.notice button.notice_dismiss, .notice button.notice__dismiss'
 			);
-			if ( await driverHelper.isElementLocated( this.driver, noticeSelector ) ) {
-				await driverHelper.clickWhenClickable( this.driver, noticeSelector );
+			if ( await driverHelper.isElementLocated( this.driver, noticeLocator ) ) {
+				await driverHelper.clickWhenClickable( this.driver, noticeLocator );
 				await this.submitPaymentDetails();
 			}
 		}
@@ -299,7 +299,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		);
 	}
 
-	getCartTotalSelector() {
+	getCartTotalLocator() {
 		if ( currentScreenSize() === 'mobile' ) {
 			return By.css( '.cart__total-amount,.cart-total-amount,.wp-checkout__total-price' );
 		}
@@ -310,14 +310,11 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 
 	async cartTotalAmount() {
 		if ( currentScreenSize() === 'mobile' ) {
-			await driverHelper.scrollIntoView( this.driver, this.getCartTotalSelector() );
+			await driverHelper.scrollIntoView( this.driver, this.getCartTotalLocator() );
 		}
-		await driverHelper.waitUntilElementLocatedAndVisible(
-			this.driver,
-			this.getCartTotalSelector()
-		);
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.getCartTotalLocator() );
 
-		const cartElement = await this.driver.findElement( this.getCartTotalSelector() );
+		const cartElement = await this.driver.findElement( this.getCartTotalLocator() );
 
 		const cartText = await cartElement.getAttribute( 'innerText' );
 
@@ -459,17 +456,14 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async cartTotalDisplayed() {
-		await driverHelper.waitUntilElementLocatedAndVisible(
-			this.driver,
-			this.getCartTotalSelector()
-		);
-		return await this.driver.findElement( this.getCartTotalSelector() ).getText();
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.getCartTotalLocator() );
+		return await this.driver.findElement( this.getCartTotalLocator() ).getText();
 	}
 
 	async paymentButtonText() {
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.paymentButtonSelector );
-		await driverHelper.scrollIntoView( this.driver, this.paymentButtonSelector );
-		return await this.driver.findElement( this.paymentButtonSelector ).getText();
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.paymentButtonLocator );
+		await driverHelper.scrollIntoView( this.driver, this.paymentButtonLocator );
+		return await this.driver.findElement( this.paymentButtonLocator ).getText();
 	}
 
 	async _cartContainsProduct( productSlug, expectedQuantity = 1 ) {

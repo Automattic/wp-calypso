@@ -15,10 +15,10 @@ export default class MapADomainCheckoutPage extends AsyncBaseContainer {
 	}
 
 	async _postInit() {
-		const completeCheckoutSelector = By.css( '.checkout-submit-button .checkout-button' );
+		const completeCheckoutLocator = By.css( '.checkout-submit-button .checkout-button' );
 		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			completeCheckoutSelector
+			completeCheckoutLocator
 		);
 	}
 }

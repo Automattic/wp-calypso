@@ -21,12 +21,12 @@ export default class PostLikesComponent extends AsyncBaseContainer {
 	}
 
 	async _preInit() {
-		// Ensure we're starting from the top frame before expecting on this.expectedElementSelector
+		// Ensure we're starting from the top frame before expecting on this.expectedElementLocator
 		await this.driver.switchTo().defaultContent();
 	}
 
 	async clickLike() {
-		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.expectedElementSelector );
+		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.expectedElementLocator );
 		const likeButton = By.css( '.like.sd-button' );
 		await driverHelper.scrollIntoView( this.driver, likeButton );
 		await driverHelper.clickWhenClickable( this.driver, likeButton );
@@ -34,7 +34,7 @@ export default class PostLikesComponent extends AsyncBaseContainer {
 	}
 
 	async expectLiked() {
-		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.expectedElementSelector );
+		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.expectedElementLocator );
 		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.xpath( `//span[@class='wpl-count-text'][.='You like this.']` )
@@ -43,7 +43,7 @@ export default class PostLikesComponent extends AsyncBaseContainer {
 	}
 
 	async clickUnlike() {
-		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.expectedElementSelector );
+		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.expectedElementLocator );
 		const likedButton = By.css( '.liked.sd-button' );
 		await driverHelper.scrollIntoView( this.driver, likedButton );
 		await driverHelper.clickWhenClickable( this.driver, likedButton );
@@ -51,7 +51,7 @@ export default class PostLikesComponent extends AsyncBaseContainer {
 	}
 
 	async expectNotLiked() {
-		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.expectedElementSelector );
+		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.expectedElementLocator );
 		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.xpath( `//span[@class='wpl-count-text'][.='Be the first to like this.']` )

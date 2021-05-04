@@ -27,10 +27,10 @@ export default class EditorConfirmationSidebarComponent extends AsyncBaseContain
 	}
 
 	async publishDateShown() {
-		const dateSelector = by.css(
+		const dateLocator = by.css(
 			'.editor-confirmation-sidebar .editor-publish-date__header-chrono'
 		);
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, dateSelector );
-		return await this.driver.findElement( dateSelector ).getText();
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, dateLocator );
+		return await this.driver.findElement( dateLocator ).getText();
 	}
 }

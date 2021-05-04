@@ -65,13 +65,13 @@ export default class PostPreviewComponent extends AsyncBaseContainer {
 	}
 
 	static async switchToIFrame( driver ) {
-		const iFrameSelector = By.css( '.web-preview__frame' );
+		const iFrameLocator = By.css( '.web-preview__frame' );
 		const webPreview = By.css( '.web-preview__inner.is-visible.is-loaded' );
 
 		await driver.switchTo().defaultContent();
 		await driverHelper.waitUntilElementLocatedAndVisible( driver, webPreview );
 		return await driver.wait(
-			until.ableToSwitchToFrame( iFrameSelector ),
+			until.ableToSwitchToFrame( iFrameLocator ),
 			this.explicitWaitMS,
 			'Could not switch to web preview iFrame'
 		);

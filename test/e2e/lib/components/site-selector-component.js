@@ -13,7 +13,7 @@ import AsyncBaseContainer from '../async-base-container';
 export default class SiteSelectorComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.site-selector-modal' ) );
-		this.firstSiteSelector = By.css( 'div.site-selector-modal div.site-selector__sites a' );
+		this.firstSiteLocator = By.css( 'div.site-selector-modal div.site-selector__sites a' );
 	}
 
 	async ok() {
@@ -30,7 +30,7 @@ export default class SiteSelectorComponent extends AsyncBaseContainer {
 			By.css( '.sites-dropdown' ),
 			this.explicitWaitMS
 		);
-		const element = await this.driver.findElement( this.firstSiteSelector );
+		const element = await this.driver.findElement( this.firstSiteLocator );
 		this.selectedSiteDomain = await element.findElement( By.css( '.site__domain' ) ).getText();
 		return await element.click();
 	}

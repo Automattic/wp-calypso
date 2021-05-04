@@ -15,9 +15,9 @@ export default class WooWizardProductPage extends AsyncBaseContainer {
 	}
 
 	async selectPhysicalProduct() {
-		const productSelector = By.css( '#inspector-checkbox-control-10' );
-		const buttonSelector = By.css( 'button.woocommerce-profile-wizard__continue:not([disabled])' );
-		await driverHelper.clickWhenClickable( this.driver, productSelector );
-		return await driverHelper.clickWhenClickable( this.driver, buttonSelector );
+		const productLocator = By.css( '#inspector-checkbox-control-10' );
+		const buttonLocator = By.css( 'button.woocommerce-profile-wizard__continue:not([disabled])' );
+		await driverHelper.clickWhenClickable( this.driver, productLocator );
+		return await driverHelper.clickWhenClickable( this.driver, buttonLocator );
 	}
 }

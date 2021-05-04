@@ -21,7 +21,7 @@ export default class SignupProcessingPage extends AsyncBaseContainer {
 		try {
 			await driverHelper.isElementEventuallyLocatedAndVisible(
 				this.driver,
-				this.expectedElementSelector,
+				this.expectedElementLocator,
 				this.explicitWaitMS
 			);
 		} catch {
@@ -34,7 +34,7 @@ export default class SignupProcessingPage extends AsyncBaseContainer {
 		try {
 			await driverHelper.waitUntilElementNotLocated(
 				this.driver,
-				this.expectedElementSelector,
+				this.expectedElementLocator,
 				signupProcessingTimeout
 			);
 		} catch ( e ) {
@@ -55,12 +55,12 @@ export default class SignupProcessingPage extends AsyncBaseContainer {
 	}
 
 	static async hideFloatiesinIE11( driver ) {
-		const floatiesStringSelector = '.signup-processing-screen__floaties';
+		const floatiesStringLocator = '.signup-processing-screen__floaties';
 
 		// Hides the floating background on signup that causes issues with Selenium/SauceLabs getting page loaded status
 		if ( global.browserName === 'Internet Explorer' ) {
 			await driver.executeScript(
-				'document.querySelector( "' + floatiesStringSelector + '" ).style.display = "none";'
+				'document.queryLocator( "' + floatiesStringLocator + '" ).style.display = "none";'
 			);
 		}
 	}

@@ -16,8 +16,8 @@ export default class AboutPage extends AsyncBaseContainer {
 	}
 
 	async submitForm() {
-		const submitSelector = By.css( '.about__submit-wrapper button.is-primary' );
-		return await driverHelper.clickWhenClickable( this.driver, submitSelector );
+		const submitLocator = By.css( '.about__submit-wrapper button.is-primary' );
+		return await driverHelper.clickWhenClickable( this.driver, submitLocator );
 	}
 
 	async enterSiteDetails(

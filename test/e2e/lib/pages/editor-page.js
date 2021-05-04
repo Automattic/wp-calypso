@@ -26,13 +26,13 @@ export default class EditorPage extends AsyncBaseContainer {
 	}
 
 	async _postInit() {
-		const contentSelector = by.css( 'div.is-section-post-editor' );
-		const cogSelector = by.css( 'button.editor-ground-control__toggle-sidebar' );
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, contentSelector );
-		const contentElement = await this.driver.findElement( contentSelector );
+		const contentLocator = by.css( 'div.is-section-post-editor' );
+		const cogLocator = by.css( 'button.editor-ground-control__toggle-sidebar' );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, contentLocator );
+		const contentElement = await this.driver.findElement( contentLocator );
 		const classes = await contentElement.getAttribute( 'class' );
 		if ( classes.indexOf( 'focus-content' ) < 0 ) {
-			await driverHelper.clickWhenClickable( this.driver, cogSelector );
+			await driverHelper.clickWhenClickable( this.driver, cogLocator );
 		}
 		await this.waitForPage();
 		return await driverHelper.waitUntilElementLocatedAndVisible(
@@ -80,7 +80,7 @@ export default class EditorPage extends AsyncBaseContainer {
 	}
 
 	async sendFile( file ) {
-		const fileNameInputSelector = webdriver.By.css(
+		const fileNameInputLocator = webdriver.By.css(
 			'.media-library__upload-button input[type="file"]'
 		);
 		const driver = this.driver;
@@ -89,7 +89,7 @@ export default class EditorPage extends AsyncBaseContainer {
 			driver,
 			by.className( 'media-library__upload-button' )
 		);
-		const fileNameInput = await driver.findElement( fileNameInputSelector );
+		const fileNameInput = await driver.findElement( fileNameInputLocator );
 		await fileNameInput.sendKeys( file );
 		await driverHelper.isElementNotLocated(
 			driver,
@@ -108,8 +108,8 @@ export default class EditorPage extends AsyncBaseContainer {
 	async saveImage( fileName ) {
 		const driver = this.driver;
 
-		const imageUploadedSelector = webdriver.By.css( 'img[alt="' + fileName + '"]' );
-		await driverHelper.waitUntilElementLocatedAndVisible( driver, imageUploadedSelector );
+		const imageUploadedLocator = webdriver.By.css( 'img[alt="' + fileName + '"]' );
+		await driverHelper.waitUntilElementLocatedAndVisible( driver, imageUploadedLocator );
 		return await driverHelper.clickWhenClickable(
 			driver,
 			by.css( 'button[data-e2e-button="confirm"]' )
@@ -117,18 +117,18 @@ export default class EditorPage extends AsyncBaseContainer {
 	}
 
 	async openImageDetails() {
-		const editSelector = by.css( 'button[data-e2e-button="edit"]:not([disabled])' );
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, editSelector );
-		return await driverHelper.clickWhenClickable( this.driver, editSelector );
+		const editLocator = by.css( 'button[data-e2e-button="edit"]:not([disabled])' );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, editLocator );
+		return await driverHelper.clickWhenClickable( this.driver, editLocator );
 	}
 
 	async selectEditImage() {
-		let editSelector = by.css( '.editor-media-modal-detail__edit:not([disabled])' );
+		let editLocator = by.css( '.editor-media-modal-detail__edit:not([disabled])' );
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
-			editSelector = by.css( '.is-mobile .editor-media-modal-detail__edit:not([disabled])' );
+			editLocator = by.css( '.is-mobile .editor-media-modal-detail__edit:not([disabled])' );
 		}
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, editSelector );
-		return await driverHelper.clickWhenClickable( this.driver, editSelector );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, editLocator );
+		return await driverHelper.clickWhenClickable( this.driver, editLocator );
 	}
 
 	async waitForImageEditor() {
@@ -139,15 +139,15 @@ export default class EditorPage extends AsyncBaseContainer {
 	}
 
 	async dismissImageEditor() {
-		const cancelSelector = by.css( 'button[data-e2e-button="cancel"]:not([disabled])' );
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, cancelSelector );
-		return await driverHelper.clickWhenClickable( this.driver, cancelSelector );
+		const cancelLocator = by.css( 'button[data-e2e-button="cancel"]:not([disabled])' );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, cancelLocator );
+		return await driverHelper.clickWhenClickable( this.driver, cancelLocator );
 	}
 
 	async dismissImageDetails() {
-		const backSelector = by.css( '.editor-media-modal-detail .header-cake__back:not([disabled])' );
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, backSelector );
-		return await driverHelper.clickWhenClickable( this.driver, backSelector );
+		const backLocator = by.css( '.editor-media-modal-detail .header-cake__back:not([disabled])' );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, backLocator );
+		return await driverHelper.clickWhenClickable( this.driver, backLocator );
 	}
 
 	async insertContactForm() {
@@ -232,8 +232,8 @@ export default class EditorPage extends AsyncBaseContainer {
 
 		await this.chooseInsertMediaOption();
 		await this.sendFile( newFile );
-		const imageUploadedSelector = webdriver.By.css( 'img[alt="' + newImageName + '"]' );
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, imageUploadedSelector );
+		const imageUploadedLocator = webdriver.By.css( 'img[alt="' + newImageName + '"]' );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, imageUploadedLocator );
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			by.css( 'button[data-e2e-button="confirm"]' )
@@ -326,9 +326,9 @@ export default class EditorPage extends AsyncBaseContainer {
 	}
 
 	async titleShown() {
-		const titleSelector = by.css( '.editor-title__input' );
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, titleSelector );
-		const element = await this.driver.findElement( titleSelector );
+		const titleLocator = by.css( '.editor-title__input' );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, titleLocator );
+		const element = await this.driver.findElement( titleLocator );
 		return await element.getAttribute( 'value' );
 	}
 

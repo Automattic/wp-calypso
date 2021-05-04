@@ -19,7 +19,7 @@ export default class ProfilePage extends AsyncBaseContainer {
 			// On mobile viewport, the sidebar is initially open and needs a bit to
 			// finish the slide-in animation. This is important because only after the
 			// animation is done, the sidebar items become fully interactable.
-			this.expectedElementSelector = By.css( '.focus-sidebar.is-section-me' );
+			this.expectedElementLocator = By.css( '.focus-sidebar.is-section-me' );
 			await this.driver.sleep( 600 );
 		}
 	}

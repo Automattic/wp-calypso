@@ -219,8 +219,8 @@ export async function clickIfPresent( driver, locator ) {
 	return clickWhenClickable( driver, locator );
 }
 
-export async function getElementCount( driver, selector ) {
-	const elements = await driver.findElements( selector );
+export async function getElementCount( driver, locator ) {
+	const elements = await driver.findElements( locator );
 	return elements.length || 0;
 }
 
@@ -290,21 +290,21 @@ export function setWhenSettable(
 	);
 }
 
-export function setCheckbox( driver, selector ) {
-	return driver.findElement( selector ).then( ( checkbox ) => {
+export function setCheckbox( driver, locator ) {
+	return driver.findElement( locator ).then( ( checkbox ) => {
 		checkbox.getAttribute( 'checked' ).then( ( checked ) => {
 			if ( checked !== 'true' ) {
-				return this.clickWhenClickable( driver, selector );
+				return this.clickWhenClickable( driver, locator );
 			}
 		} );
 	} );
 }
 
-export function unsetCheckbox( driver, selector ) {
-	return driver.findElement( selector ).then( ( checkbox ) => {
+export function unsetCheckbox( driver, locator ) {
+	return driver.findElement( locator ).then( ( checkbox ) => {
 		checkbox.getAttribute( 'checked' ).then( ( checked ) => {
 			if ( checked === 'true' ) {
-				return this.clickWhenClickable( driver, selector );
+				return this.clickWhenClickable( driver, locator );
 			}
 		} );
 	} );
@@ -381,9 +381,9 @@ export async function ensureMobileMenuOpen( driver ) {
 	}
 }
 
-export function waitForInfiniteListLoad( driver, elementSelector, { numElements = 10 } = {} ) {
+export function waitForInfiniteListLoad( driver, elementLocator, { numElements = 10 } = {} ) {
 	return driver.wait( function () {
-		return driver.findElements( elementSelector ).then( ( elements ) => {
+		return driver.findElements( elementLocator ).then( ( elements ) => {
 			return elements.length >= numElements;
 		} );
 	} );
@@ -464,16 +464,15 @@ export async function refreshIfJNError( driver, timeout = 2000 ) {
 }
 
 /**
- * @description
  * Scroll element on a page to desired position
  *
- * @param {object} driver WebDriver
- * @param {object} selector A element's selector
- * @param {string} position An element's position. Can be 'start', 'end' and 'center'
- * @returns {Promise<void>} Promise
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By} locator The element's locator
+ * @param {string} [position='center'] An element's position. Can be 'start', 'end' and 'center'
+ * @returns {Promise<WebElement>} A promise that will resolve with the located element
  */
-export async function scrollIntoView( driver, selector, position = 'center' ) {
-	const selectorElement = await driver.findElement( selector );
+export async function scrollIntoView( driver, locator, position = 'center' ) {
+	const selectorElement = await driver.findElement( locator );
 
 	return await driver.executeScript(
 		`arguments[0].scrollIntoView( { block: "${ position }", inline: "center" } )`,
@@ -481,9 +480,9 @@ export async function scrollIntoView( driver, selector, position = 'center' ) {
 	);
 }
 
-export async function selectElementByText( driver, selector, text ) {
+export async function selectElementByText( driver, locator, text ) {
 	const element = async () => {
-		const allElements = await driver.findElements( selector );
+		const allElements = await driver.findElements( locator );
 		return await webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
 	};
 	return await this.clickWhenClickable( driver, element );
@@ -526,9 +525,9 @@ export async function waitUntilElementWithTextLocated(
 	);
 }
 
-export function getElementByText( driver, selector, text ) {
+export function getElementByText( driver, locator, text ) {
 	return async () => {
-		const allElements = await driver.findElements( selector );
+		const allElements = await driver.findElements( locator );
 		return await webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
 	};
 }
@@ -568,12 +567,12 @@ function getInnerTextMatcherFunction( match ) {
 	};
 }
 
-export async function waitTillTextPresent( driver, selector, text, waitOverride ) {
+export async function waitTillTextPresent( driver, locator, text, waitOverride ) {
 	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
 
 	return driver.wait(
 		function () {
-			return driver.findElements( selector ).then(
+			return driver.findElements( locator ).then(
 				async function ( allElements ) {
 					return await webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
 				},
@@ -583,7 +582,7 @@ export async function waitTillTextPresent( driver, selector, text, waitOverride 
 			);
 		},
 		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be present and displayed with text '${ text }'`
+		`Timed out waiting for element with ${ locator.using } of '${ locator.value }' to be present and displayed with text '${ text }'`
 	);
 }
 
