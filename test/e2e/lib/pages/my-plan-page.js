@@ -7,6 +7,7 @@ import { By } from 'selenium-webdriver';
  * Internal dependencies
  */
 import AsyncBaseContainer from '../async-base-container';
+import SectionNavComponent from '../components/section-nav-component';
 import * as driverHelper from '../driver-helper';
 
 export default class MyPlanPage extends AsyncBaseContainer {
@@ -15,7 +16,8 @@ export default class MyPlanPage extends AsyncBaseContainer {
 	}
 
 	async openPlansTab() {
-		await driverHelper.ensureMobileMenuOpen( this.driver );
+		const sectionNav = await SectionNavComponent.Expect( this.driver );
+		await sectionNav.ensureMobileMenuOpen();
 		const selector = By.css(
 			'.current-plan a[href*="plans"]:not([href*="my-plan"]).section-nav-tab__link'
 		);
