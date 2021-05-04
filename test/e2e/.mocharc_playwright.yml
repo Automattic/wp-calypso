@@ -1,9 +1,10 @@
 require:
   - 'esm'
-  - 'test/mocha.env.js'
   - 'mocha-steps'
 file:
   - 'lib/before.js'
   - 'lib/hooks-playwright/hooks.ts'
 reporter:
   - 'spec-junit-reporter'
+# Timeout for mocha when starting up only.
+timeout: 5000
