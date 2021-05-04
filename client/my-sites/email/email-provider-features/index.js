@@ -17,7 +17,7 @@ import './style.scss';
 
 function EmailProviderFeature( { title } ) {
 	return (
-		<div className="email-provider-features">
+		<div className="email-provider-feature">
 			<Gridicon icon="checkmark" size="18" />
 
 			{ preventWidows( title ) }
@@ -35,7 +35,7 @@ function EmailProviderFeatures( { features } ) {
 	}
 
 	return (
-		<div className="email-providers-comparison__provider-features">
+		<div className="email-provider-features">
 			{ features.map( ( feature, index ) => (
 				<EmailProviderFeature key={ index } title={ feature } />
 			) ) }

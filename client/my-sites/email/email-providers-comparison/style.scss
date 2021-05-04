@@ -60,19 +60,12 @@
 }
 
 .email-providers-comparison__provider-card.promo-card {
-
 	.action-panel__figure {
 		margin-bottom: 0.5em;
 		margin-top: 0;
 
 		img {
 			max-width: 24px;
-		}
-	}
-
-	@include break-mobile {
-		.action-panel__title {
-			margin-bottom: 0;
 		}
 	}
 
@@ -91,27 +84,25 @@
 	}
 
 	.email-providers-comparison__provider-card-main-details {
+		align-items: center;
 		display: flex;
 		flex-direction: column;
+		justify-content: space-between;
 		margin-bottom: 1em;
 
 		@include break-mobile {
 			flex-direction: row;
-			margin-bottom: 0;
 		}
 
 		p {
-			margin-bottom: 1em;
+			margin-bottom: 0;
+		}
+	}
 
-			@include break-xlarge {
-				flex-grow: 7;
-				line-height: 40px;
-				margin-bottom: 0;
-			}
-		}
-		.email-providers-comparison__provider-expand-cta {
-			flex-grow: 1;
-		}
+	.email-providers-comparison__provider-expand-cta {
+		margin-left: 2em;
+		overflow: visible;
+		white-space: nowrap;
 	}
 
 	.promo-card__price {
@@ -142,29 +133,10 @@
 	}
 
 	.email-providers-comparison__provider-form-and-features {
+		display: none;
 		justify-content: space-between;
 		margin-top: 1em;
 		line-height: 1.5;
-
-		.email-providers-comparison__provider-form {
-			flex-grow: 1;
-
-			.titan-new-mailbox-list__actions {
-				justify-content: space-between;
-			}
-
-			.email-providers-comparison__gsuite-user-list-action-continue {
-				margin-top: 1em;
-				@include break-mobile {
-					margin-top: 0;
-				}
-			}
-		}
-	}
-
-	/* Handle expanded vs contracted state */
-	.email-providers-comparison__provider-form-and-features {
-		display: none;
 	}
 
 	&.is-expanded {
@@ -176,8 +148,38 @@
 			display: flex;
 			flex-direction: column-reverse;
 
-			@include break-mobile {
+			@include break-xlarge {
 				flex-direction: row;
+			}
+		}
+
+		.email-providers-comparison__provider-form {
+			flex-grow: 1;
+			margin-top: 2.5em;
+
+			@include break-xlarge {
+				margin-top: 0;
+			}
+
+			.titan-new-mailbox-list__actions {
+				justify-content: space-between;
+			}
+
+			.email-providers-comparison__gsuite-user-list-action-continue {
+				margin-top: 1em;
+
+				@include break-mobile {
+					margin-top: 0;
+				}
+			}
+		}
+
+		.email-provider-features {
+			margin-top: 1em;
+
+			@include break-xlarge {
+				margin-left: 2em;
+				margin-top: 0;
 			}
 		}
 	}
