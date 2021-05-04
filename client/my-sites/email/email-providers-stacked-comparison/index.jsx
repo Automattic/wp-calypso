@@ -28,7 +28,7 @@ import {
 	getEmailForwardingFeatures,
 	getGoogleFeatures,
 	getTitanFeatures,
-} from 'calypso/my-sites/email/email-providers-comparison/email-provider-features';
+} from 'calypso/my-sites/email/email-provider-features/list';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,

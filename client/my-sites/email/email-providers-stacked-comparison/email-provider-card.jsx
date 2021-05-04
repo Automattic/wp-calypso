@@ -11,7 +11,7 @@ import classnames from 'classnames';
 import { Button } from '@automattic/components';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
-import EmailProviderFeature from 'calypso/my-sites/email/email-providers-comparison/email-provider-details/email-provider-feature';
+import EmailProviderFeature from 'calypso/my-sites/email/email-provider-features';
 
 const noop = () => {};
 
