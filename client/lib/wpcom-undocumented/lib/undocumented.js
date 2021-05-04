@@ -949,6 +949,7 @@ Undocumented.prototype.setCart = function ( cartKey, data, fn ) {
 			path: '/me/shopping-cart/' + cartKey,
 			method: 'POST',
 			body: data,
+			apiVersion: '1.1',
 		},
 		fn
 	);
