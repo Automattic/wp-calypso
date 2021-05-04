@@ -25,6 +25,6 @@ before( 'Launch browser instance', async function () {
  *
  * @returns {Promise<void>} Void promise.
  */
-after( 'Close browser', function () {
-	return BrowserManager.browser.close();
+after( 'Close browser', async function () {
+	return await BrowserManager.browser.close();
 } );
