@@ -79,7 +79,7 @@ export default function JetpackSearchMain(): ReactElement {
 			<PromoCard
 				title={
 					isSearchEnabled
-						? translate( 'Jetpack Search is active on your site.' )
+						? translate( 'Jetpack Search is enabled on your site.' )
 						: translate( 'Jetpack Search is disabled on your site.' )
 				}
 				image={ { path: JetpackSearchSVG } }
@@ -89,7 +89,7 @@ export default function JetpackSearchMain(): ReactElement {
 					{ isSearchEnabled
 						? translate( 'Your visitors are getting our fastest search experience.' )
 						: translate(
-								'Enable it to ensure your visitors receive our fastest search experience.'
+								'Enable it to ensure your visitors get our fastest search experience.'
 						  ) }
 				</p>
 
