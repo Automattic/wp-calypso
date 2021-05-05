@@ -10,9 +10,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isEligibleForFreeToPaidUpsell from 'calypso/state/selectors/is-eligible-for-free-to-paid-upsell';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
@@ -66,8 +64,6 @@ function mapStateToProps( state ) {
 		siteSlug,
 		isEligibleForFreeToPaidUpsellNudge:
 			siteCount === 1 && // available when a user owns one site only
-			! isJetpackSite( state, siteId ) && // not for Jetpack sites
-			! isDomainOnlySite( state, siteId ) && // not for domain only sites
 			isEligibleForFreeToPaidUpsell( state, siteId ),
 	};
 }
