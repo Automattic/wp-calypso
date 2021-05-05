@@ -46,7 +46,7 @@ import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-me
 import useStoredCards from './hooks/use-stored-cards';
 import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
 import useCreatePaymentMethods from './hooks/use-create-payment-methods';
-import applePayProcessor from './lib/apple-pay-processor';
+import webPayProcessor from './lib/web-pay-processor';
 import multiPartnerCardProcessor from './lib/multi-partner-card-processor';
 import freePurchaseProcessor from './lib/free-purchase-processor';
 import fullCreditsProcessor from './lib/full-credits-processor';
@@ -467,7 +467,7 @@ export default function CompositeCheckout( {
 	const paymentProcessors = useMemo(
 		() => ( {
 			'apple-pay': ( transactionData: unknown ) =>
-				applePayProcessor( transactionData, dataForProcessor ),
+				webPayProcessor( transactionData, dataForProcessor ),
 			'free-purchase': () => freePurchaseProcessor( dataForProcessor ),
 			card: ( transactionData: unknown ) =>
 				multiPartnerCardProcessor( transactionData, dataForProcessor ),
