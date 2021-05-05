@@ -403,15 +403,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			`.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }`
 		);
 
-		// @TODO Remove the `deprecatedInsertedBlockLocator` once we get 10.5.0 in production.
-		const deprecatedInsertedBlockLocator = `.block-editor-block-list__block.${
-			initsWithChildFocus ? 'has-child-selected' : 'is-selected'
-		}[aria-label*='${ ariaLabel }']`;
-
 		const insertedBlockLocator = By.css(
-			`.block-editor-block-list__layout.${
+			`.block-editor-block-list__block.${
 				initsWithChildFocus ? 'has-child-selected' : 'is-selected'
-			}[aria-label*='${ ariaLabel }'], ${ deprecatedInsertedBlockLocator }`
+			}[aria-label*='${ ariaLabel }']`
 		);
 
 		await this.openBlockInserterAndSearch( title );
@@ -423,6 +418,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		// The normal click is needed to avoid hovering the element, which seems
 		// to cause the element to become stale.
 		await driverHelper.clickWhenClickable( this.driver, inserterBlockItemLocator );
+
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, insertedBlockLocator );
 
 		return this.driver.findElement( insertedBlockLocator ).getAttribute( 'id' );
