@@ -1,16 +1,13 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
-import { abtest } from 'calypso/lib/abtest';
-import { getUrlParts } from 'calypso/lib/url/url-parts';
+import { getUrlParts } from '@automattic/calypso-url';
 
 /**
  * Iterations
  */
 
-export enum Iterations {
-	NPIP = 'npip', // New purchase intro pricing
-}
+export enum Iterations {}
 
 const iterationNames: string[] = Object.values( Iterations );
 
@@ -39,11 +36,14 @@ const getCurrentCROIterationName = (): Iterations | null => {
 		if ( iterationQuery && iterationNames.includes( iterationQuery ) ) {
 			return iterationQuery as Iterations;
 		}
+
+		// Allow for people to explicitly look at the control/default variation
+		if ( iterationQuery === 'default' ) {
+			return null;
+		}
 	}
 
-	const newPurchaseIntroPricing = abtest( 'jetpackNewPurchaseIntroPricing' ) === 'withIntroPricing';
-
-	return newPurchaseIntroPricing ? Iterations.NPIP : null;
+	return null;
 };
 
 type IterationValueFunction< T > = ( key: Iterations | null ) => T | undefined;

@@ -1,15 +1,7 @@
 /**
  * External dependencies
  */
-import {
-	compact,
-	flowRight as compose,
-	fromPairs,
-	get,
-	map,
-	matchesProperty,
-	reduce,
-} from 'lodash';
+import { compact, flowRight as compose, get, map, matchesProperty, reduce } from 'lodash';
 import { convertFromRaw, convertToRaw } from 'draft-js';
 
 /*
@@ -214,7 +206,7 @@ export const toEditor = ( format, tokens ) => {
 
 	return convertFromRaw( {
 		blocks: [ blocks ],
-		entityMap: fromPairs(
+		entityMap: Object.fromEntries(
 			map( entityGuide, ( name, key ) => [
 				key, // entity key is position in list
 				{

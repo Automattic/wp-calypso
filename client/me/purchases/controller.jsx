@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -33,7 +32,7 @@ const PurchasesWrapper = ( { title = null, children } ) => {
 		</React.Fragment>
 	);
 };
-
+const noop = () => {};
 const userHasNoSites = ( state ) => getCurrentUserSiteCount( state ) <= 0;
 
 function noSites( context, analyticsPath ) {
@@ -100,35 +99,6 @@ export function confirmCancelDomain( context, next ) {
 	} );
 
 	context.primary = <ConfirmCancelDomainWrapper />;
-	next();
-}
-
-export function editCardDetails( context, next ) {
-	const state = context.store.getState();
-
-	if ( userHasNoSites( state ) ) {
-		return noSites( context, '/me/purchases/:site/:purchaseId/payment/edit/:cardId' );
-	}
-
-	const EditCardDetailsWrapper = localize( () => {
-		return (
-			<PurchasesWrapper title={ titles.editCardDetails }>
-				<Main className="purchases__change is-wide-layout">
-					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-					<ChangePaymentMethod
-						cardId={ context.params.cardId }
-						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-						siteSlug={ context.params.site }
-						getManagePurchaseUrlFor={ managePurchaseUrl }
-						purchaseListUrl={ purchasesRoot }
-						isFullWidth={ true }
-					/>
-				</Main>
-			</PurchasesWrapper>
-		);
-	} );
-
-	context.primary = <EditCardDetailsWrapper />;
 	next();
 }
 

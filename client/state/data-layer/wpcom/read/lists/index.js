@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,6 +29,8 @@ import {
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { navigate } from 'calypso/state/ui/actions';
 import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
+
+const noop = () => {};
 
 registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 	[ READER_LIST_CREATE ]: [

@@ -7,56 +7,74 @@
 	}
 }
 
+.titan-management-nav__mailbox-setup-prompt {
+	display: flex;
+
+	span {
+		flex-grow: 1;
+
+		.gridicon {
+			margin-right: 0.25em;
+			vertical-align: text-bottom;
+		}
+	}
+
+	.button .gridicon {
+		margin-left: 0.25em;
+		vertical-align: top;
+	}
+}
+
 .titan-management-nav__foldable-card {
 	margin-bottom: 0;
+}
 
-	.titan-management-nav__foldable-card-header-icon {
-		fill: var( --color-wordpress-com );
-		margin-left: -2px;
-		margin-right: 7px;
+.titan-management-nav__foldable-card-header-icon {
+	fill: var( --color-wordpress-com );
+	margin-left: -2px;
+	margin-right: 7px;
+}
+
+.titan-management-nav__foldable-card-header-text {
+	display: flex;
+	flex-direction: column;
+
+	em {
+		color: var( --color-neutral-50 );
+		font-style: normal;
+	}
+}
+
+.titan-management-nav__foldable-card-services {
+	column-gap: 10px;
+	display: grid;
+	grid-template-columns: repeat( 7, 1fr );
+	list-style: none;
+	margin: 0;
+	row-gap: 10px;
+
+	@include breakpoint-deprecated( '<960px' ) {
+		grid-template-columns: repeat( 4, 1fr );
 	}
 
-	.titan-management-nav__foldable-card-header-text {
+	a {
+		align-items: center;
 		display: flex;
 		flex-direction: column;
+		padding: 10px;
+		text-align: center;
 
-		em {
-			color: var( --color-neutral-50 );
-			font-style: normal;
-		}
-	}
-
-	.titan-management-nav__foldable-card-services {
-		column-gap: 10px;
-		display: grid;
-		grid-template-columns: repeat( 7, 1fr );
-		list-style: none;
-		margin: 0;
-		row-gap: 10px;
-
-		@include breakpoint-deprecated( '<960px' ) {
-			grid-template-columns: repeat( 4, 1fr );
+		&:hover {
+			background-color: #eee;
+			border-radius: 5px; /* stylelint-disable-line scales/radii */
 		}
 
-		a {
-			align-items: center;
-			display: flex;
-			flex-direction: column;
-			padding: 10px;
-			text-align: center;
+		img {
+			max-width: 30px;
+		}
 
-			&:hover {
-				background-color: #eee;
-				border-radius: 5px;
-			}
-
-			img {
-				max-width: 30px;
-			}
-
-			strong {
-				padding-top: 5px;
-			}
+		strong {
+			padding-top: 5px;
 		}
 	}
 }

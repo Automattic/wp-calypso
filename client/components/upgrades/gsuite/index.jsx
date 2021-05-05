@@ -3,7 +3,7 @@
  */
 import page from 'page';
 import React, { useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { useShoppingCart } from '@automattic/shopping-cart';
 
@@ -21,6 +21,7 @@ import HeaderCake from 'calypso/components/header-cake';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';
+import { infoNotice } from 'calypso/state/notices/actions';
 
 export default function GSuiteUpgrade( { domain } ) {
 	const { responseCart: cart, addProductsToCart, isLoading } = useShoppingCart();
@@ -50,14 +51,25 @@ export default function GSuiteUpgrade( { domain } ) {
 		page( `/checkout/${ selectedSiteSlug }` );
 	};
 
+	const translate = useTranslate();
+	const reduxDispatch = useDispatch();
+
+	const didRedirect = useRef( false );
 	useEffect( () => {
+		if ( didRedirect.current === true ) {
+			return;
+		}
 		if ( cart && ! isLoading && ! hasDomainInCart( cart, domain ) ) {
+			didRedirect.current = true;
+			const message = translate(
+				'To add email for %(domain)s, you must either own the domain or have it in your shopping cart.',
+				{ args: { domain } }
+			);
+			reduxDispatch( infoNotice( message, { displayOnNextPage: true } ) );
 			// Should we handle this more gracefully?
 			page( `/domains/add/${ selectedSiteSlug }` );
 		}
-	}, [ cart, domain, selectedSiteSlug, isLoading ] );
-
-	const translate = useTranslate();
+	}, [ cart, domain, selectedSiteSlug, isLoading, translate, reduxDispatch ] );
 
 	const productSlug = config.isEnabled( 'google-workspace-migration' )
 		? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY

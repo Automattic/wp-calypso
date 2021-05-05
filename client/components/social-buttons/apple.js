@@ -7,7 +7,6 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 import { loadScript } from '@automattic/load-script';
 
 /**
@@ -26,6 +25,7 @@ const appleClientUrl =
 	'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js';
 const connectUrlPopupFLow =
 	'https://public-api.wordpress.com/connect/?magic=keyring&service=apple&action=request&for=connect';
+const noop = () => {};
 
 class AppleLoginButton extends Component {
 	static propTypes = {
@@ -148,7 +148,11 @@ class AppleLoginButton extends Component {
 						className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
 						onClick={ this.handleClick }
 					>
-						<AppleIcon isDisabled={ isDisabled } />
+						<AppleIcon
+							isDisabled={ isDisabled }
+							width={ this.props.isReskinned ? 17 : 20 }
+							height={ this.props.isReskinned ? 17 : 20 }
+						/>
 
 						<span className="social-buttons__service-name">
 							{ this.props.translate( 'Continue with %(service)s', {

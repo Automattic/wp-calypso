@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { assign, noop } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -19,6 +18,8 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class ConversationFollowButtonContainer extends Component {
 	static propTypes = {
@@ -37,9 +38,10 @@ class ConversationFollowButtonContainer extends Component {
 	handleFollowToggle = ( isRequestingFollow ) => {
 		const { siteId, postId, post, followSource } = this.props;
 
-		const tracksProperties = assign( getTracksPropertiesForPost( post ), {
+		const tracksProperties = {
+			...getTracksPropertiesForPost( post ),
 			follow_source: followSource,
-		} );
+		};
 
 		if ( isRequestingFollow ) {
 			this.props.recordReaderTracksEvent(

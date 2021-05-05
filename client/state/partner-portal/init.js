@@ -10,11 +10,12 @@ import { registerReducer } from 'calypso/state/redux-store';
 import reducer from 'calypso/state/partner-portal/reducer';
 import { mergeHandlers } from 'calypso/state/action-watchers/utils';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import partner from 'calypso/state/partner-portal/partner/handlers';
 import licenses from 'calypso/state/partner-portal/licenses/handlers';
 
 const debug = debugFactory( 'partner-portal' );
 
-const handlers = mergeHandlers( licenses );
+const handlers = mergeHandlers( partner, licenses );
 
 export default function installActionHandlers() {
 	const id = 'partner-portal';

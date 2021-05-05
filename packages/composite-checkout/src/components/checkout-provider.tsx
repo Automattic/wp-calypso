@@ -4,7 +4,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ThemeProvider } from 'emotion-theming';
 import debugFactory from 'debug';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { DataRegistry } from '@wordpress/data';
 
 /**

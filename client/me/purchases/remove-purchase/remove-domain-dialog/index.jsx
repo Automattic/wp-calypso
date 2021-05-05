@@ -20,8 +20,7 @@ import { MOVE_DOMAIN } from 'calypso/lib/url/support';
 import { getName } from 'calypso/lib/purchases';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
-import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
+import { getTitanProductName, hasTitanMailWithUs } from 'calypso/lib/titan';
 
 class RemoveDomainDialog extends Component {
 	static propTypes = {

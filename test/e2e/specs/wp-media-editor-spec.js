@@ -8,8 +8,6 @@ import config from 'config';
  */
 import LoginFlow from '../lib/flows/login-flow.js';
 
-import assert from 'assert';
-
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper';
 import SideBarComponent from '../lib/components/sidebar-component';
@@ -20,28 +18,19 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Media: Edit Media (${ screenSize }) @parallel @jetpack`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
 
 	describe( 'Edit Existing Media:', function () {
 		before( 'Can login and select my site', async function () {
-			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			const loginFlow = new LoginFlow( driver );
 			await loginFlow.loginAndSelectMySite();
-		} );
-
-		step( "Can see a 'Media' option", async function () {
-			const sideBarComponent = await SideBarComponent.Expect( driver );
-			return assert(
-				await sideBarComponent.mediaOptionExists(),
-				'The settings menu option does not exist'
-			);
 		} );
 
 		step( "Select 'Media' option and see media content", async function () {

@@ -13,18 +13,25 @@ import {
 	JETPACK_CREDENTIALS_UPDATE_PROGRESS_START,
 	JETPACK_CREDENTIALS_UPDATE_PROGRESS_UPDATE,
 } from 'calypso/state/action-types';
-import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
+import {
+	combineReducers,
+	keyedReducer,
+	withSchemaValidation,
+	withPersistence,
+} from 'calypso/state/utils';
 import { itemsSchema } from './schema';
+
+const itemsReducer = ( state, { type, credentials } ) => {
+	if ( JETPACK_CREDENTIALS_STORE === type || JETPACK_CREDENTIALS_GET_SUCCESS === type ) {
+		return 'object' === typeof credentials ? credentials : {};
+	}
+
+	return state;
+};
 
 export const items = withSchemaValidation(
 	itemsSchema,
-	keyedReducer( 'siteId', ( state, { type, credentials } ) => {
-		if ( JETPACK_CREDENTIALS_STORE === type || JETPACK_CREDENTIALS_GET_SUCCESS === type ) {
-			return 'object' === typeof credentials ? credentials : {};
-		}
-
-		return state;
-	} )
+	keyedReducer( 'siteId', withPersistence( itemsReducer ) )
 );
 
 export const getRequestStatus = keyedReducer( 'siteId', ( state, { type } ) => {

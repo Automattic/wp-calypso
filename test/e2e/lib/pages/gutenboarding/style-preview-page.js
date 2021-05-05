@@ -22,7 +22,7 @@ export default class StylePreviewPage extends AsyncBaseContainer {
 
 	async selectFontPairing( fontIndex ) {
 		let fontOptions;
-		if ( this.screenSize === 'MOBILE' ) {
+		if ( this.screenSize === 'mobile' ) {
 			const mobileExpandFontOptionsButton = By.css(
 				'.style-preview__font-options-mobile .style-preview__font-option-select'
 			);

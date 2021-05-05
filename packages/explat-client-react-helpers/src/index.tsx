@@ -8,6 +8,19 @@ import React, { useState, useEffect } from 'react';
  */
 import type { ExPlatClient, ExperimentAssignment } from '@automattic/explat-client';
 
+interface ExperimentOptions {
+	/**
+	 * Determines whether a participant is currenlty eligible for an assignment.
+	 * - Only loads the experimentAssignment if isEligible is true.
+	 * - Only returns the experimentAssignment if isEligible is true.
+	 */
+	isEligible?: boolean;
+}
+
+const defaultExperimentOptions = {
+	isEligible: true,
+};
+
 interface ExPlatClientReactHelpers {
 	/**
 	 * An ExPlat useExperiment hook.
@@ -16,72 +29,125 @@ interface ExPlatClientReactHelpers {
 	 *
 	 * @returns [isExperimentAssignmentLoading, ExperimentAssignment | null]
 	 */
-	useExperiment: ( experimentName: string ) => [ boolean, ExperimentAssignment | null ];
+	useExperiment: (
+		experimentName: string,
+		options?: ExperimentOptions
+	) => [ boolean, ExperimentAssignment | null ];
 
 	/**
 	 * Experiment component, safest and simplest, should be first choice if usable.
 	 */
 	Experiment: ( props: {
 		name: string;
-		children: { default: React.ReactNode; treatment: React.ReactNode; loading: React.ReactNode };
+		defaultExperience: React.ReactNode;
+		treatmentExperience: React.ReactNode;
+		loadingExperience: React.ReactNode;
+		options?: ExperimentOptions;
+	} ) => JSX.Element;
+
+	/**
+	 * Inject experiment data into a child component.
+	 * Use when hooks aren't available.
+	 */
+	ProvideExperimentData: ( props: {
+		children: (
+			isLoading: boolean,
+			experimentAssignment: ExperimentAssignment | null
+		) => JSX.Element;
+		name: string;
+		options?: ExperimentOptions;
 	} ) => JSX.Element;
 }
 
 export default function createExPlatClientReactHelpers(
 	exPlatClient: ExPlatClient
 ): ExPlatClientReactHelpers {
-	const useExperiment = ( experimentName: string ): [ boolean, ExperimentAssignment | null ] => {
+	const useExperiment = (
+		experimentName: string,
+		providedOptions: ExperimentOptions = {}
+	): [ boolean, ExperimentAssignment | null ] => {
+		const options: Required< ExperimentOptions > = {
+			...defaultExperimentOptions,
+			...providedOptions,
+		};
+
 		const [ previousExperimentName ] = useState( experimentName );
-		const [ isLoading, setIsLoading ] = useState< boolean >( true );
-		const [
-			experimentAssignment,
-			setExperimentAssignment,
-		] = useState< ExperimentAssignment | null >( null );
+		const [ state, setState ] = useState< [ boolean, ExperimentAssignment | null ] >( [
+			true,
+			null,
+		] );
 
 		useEffect( () => {
 			let isSubscribed = true;
-			exPlatClient.loadExperimentAssignment( experimentName ).then( ( experimentAssignment ) => {
-				if ( isSubscribed ) {
-					setExperimentAssignment( experimentAssignment );
-					setIsLoading( false );
-				}
-			} );
+			if ( options.isEligible ) {
+				exPlatClient.loadExperimentAssignment( experimentName ).then( ( experimentAssignment ) => {
+					if ( isSubscribed ) {
+						setState( [ false, experimentAssignment ] );
+					}
+				} );
+			}
 			return () => {
 				isSubscribed = false;
 			};
-			// We don't expect experimentName to ever change and if it does we want to assignment to stay constant.
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, [] );
+		}, [ experimentName, options.isEligible ] );
 
-		if ( experimentName !== previousExperimentName ) {
-			const message = '[ExPlat] useExperiment: experimentName should never change between renders!';
-			if ( exPlatClient.config.isDevelopmentMode ) {
-				throw new Error( message );
-			}
-			exPlatClient.config.logError( { message } );
+		if (
+			experimentName !== previousExperimentName &&
+			! previousExperimentName.startsWith( 'explat_test' )
+		) {
+			exPlatClient.config.logError( {
+				message: '[ExPlat] useExperiment: experimentName should never change between renders!',
+			} );
 		}
 
-		return [ isLoading, experimentAssignment ];
+		if ( ! options.isEligible ) {
+			return [ false, null ];
+		}
+
+		return state;
 	};
 
 	const Experiment = ( {
+		defaultExperience,
+		treatmentExperience,
+		loadingExperience,
+		name: experimentName,
+		options,
+	}: {
+		defaultExperience: React.ReactNode;
+		treatmentExperience: React.ReactNode;
+		loadingExperience: React.ReactNode;
+		name: string;
+		options?: ExperimentOptions;
+	} ): JSX.Element => {
+		const [ isLoading, experimentAssignment ] = useExperiment( experimentName, options );
+		if ( isLoading ) {
+			return <>{ loadingExperience }</>;
+		} else if ( ! experimentAssignment?.variationName ) {
+			return <>{ defaultExperience }</>;
+		}
+		return <>{ treatmentExperience }</>;
+	};
+
+	const ProvideExperimentData = ( {
 		children,
 		name: experimentName,
+		options,
 	}: {
-		children: { default: React.ReactNode; treatment: React.ReactNode; loading: React.ReactNode };
+		children: (
+			isLoading: boolean,
+			experimentAssignment: ExperimentAssignment | null
+		) => JSX.Element;
 		name: string;
+		options?: ExperimentOptions;
 	} ): JSX.Element => {
-		const [ isLoading, experimentAssignment ] = useExperiment( experimentName );
-		if ( isLoading ) {
-			return <>{ children.loading }</>;
-		} else if ( ! experimentAssignment?.variationName ) {
-			return <>{ children.default }</>;
-		}
-		return <>{ children.treatment }</>;
+		const [ isLoading, experimentAssignment ] = useExperiment( experimentName, options );
+		return children( isLoading, experimentAssignment );
 	};
 
 	return {
 		useExperiment,
 		Experiment,
+		ProvideExperimentData,
 	};
 }

@@ -2,18 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import {
-	assign,
-	defer,
-	difference,
-	get,
-	includes,
-	isEmpty,
-	omitBy,
-	pick,
-	startsWith,
-	has,
-} from 'lodash';
+import { defer, difference, get, includes, isEmpty, omitBy, pick, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,7 +20,7 @@ import {
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'calypso/lib/cart-values/cart-items';
-import { getUrlParts } from 'calypso/lib/url';
+import { getUrlParts } from '@automattic/calypso-url';
 
 // State actions and selectors
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
@@ -155,6 +144,7 @@ function getNewSiteParams( {
 	const siteStyle = getSiteStyle( state ).trim();
 	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
 	const siteTypeTheme = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
+	const selectedDesign = get( signupDependencies, 'selectedDesign', false );
 
 	const shouldSkipDomainStep = ! siteUrl && isDomainStepSkippable( flowToCheck );
 	const shouldHideFreePlan = get( getSignupDependencyStore( state ), 'shouldHideFreePlan', false );
@@ -221,6 +211,22 @@ function getNewSiteParams( {
 	// Provide the default business starter content for the FSE user testing flow.
 	if ( 'test-fse' === lastKnownFlow ) {
 		newSiteParams.options.site_segment = 1;
+	}
+
+	if ( isEligibleForPageBuilder( siteSegment, flowToCheck ) && shouldEnterPageBuilder() ) {
+		newSiteParams.options.in_page_builder = true;
+	}
+
+	if ( selectedDesign ) {
+		// If there's a selected design, it means that the current flow contains the "design" step.
+		newSiteParams.options.theme = `pub/${ selectedDesign.theme }`;
+		newSiteParams.options.template = selectedDesign.template;
+		newSiteParams.options.use_patterns = true;
+
+		if ( selectedDesign.fonts ) {
+			newSiteParams.options.font_base = selectedDesign.fonts.base;
+			newSiteParams.options.font_headings = selectedDesign.fonts.headings;
+		}
 	}
 
 	return newSiteParams;
@@ -438,7 +444,11 @@ function processItemCart(
 function addPrivacyProtectionIfSupported( item, state ) {
 	const { product_slug: productSlug } = item;
 	const productsList = getProductsList( state );
-	if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
+	if (
+		productSlug &&
+		productsList &&
+		supportsPrivacyProtectionPurchase( productSlug, productsList )
+	) {
 		return updatePrivacyForDomain( item, true );
 	}
 
@@ -558,13 +568,15 @@ export function createAccount(
 			type: signupType,
 		} );
 
-		const providedDependencies = assign(
-			{ username, marketing_price_group, plans_reorder_abtest_variation },
-			bearerToken
-		);
+		const providedDependencies = {
+			username,
+			marketing_price_group,
+			plans_reorder_abtest_variation,
+			...bearerToken,
+		};
 
 		if ( signupType === SIGNUP_TYPE_DEFAULT && oauth2Signup ) {
-			assign( providedDependencies, {
+			Object.assign( providedDependencies, {
 				oauth2_client_id: queryArgs.oauth2_client_id,
 				oauth2_redirect: get( response, 'oauth2_redirect', '' ).split( '@' )[ 1 ],
 			} );
@@ -587,7 +599,7 @@ export function createAccount(
 		);
 	} else {
 		wpcom.undocumented().usersNew(
-			assign(
+			Object.assign(
 				{},
 				userData,
 				{
@@ -792,14 +804,8 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 
 export function isFreePlansDomainUpsellFulfilled( stepName, defaultDependencies, nextProps ) {
 	const { submitSignupStep, isPaidPlan } = nextProps;
-	const hasDomain = has( nextProps, 'signupDependencies.domainItem' );
-	const hasPlan = has( nextProps, 'signupDependencies.cartItem' );
 	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
 	const cartItem = get( nextProps, 'signupDependencies.cartItem', false );
-
-	if ( ! hasDomain || ! hasPlan ) {
-		return;
-	}
 
 	if ( isPaidPlan || domainItem || cartItem ) {
 		const selectedDomainUpsellItem = null;
@@ -808,6 +814,8 @@ export function isFreePlansDomainUpsellFulfilled( stepName, defaultDependencies,
 			{ selectedDomainUpsellItem }
 		);
 		flows.excludeStep( stepName );
+	} else {
+		flows.resetExcludedStep( stepName );
 	}
 }
 

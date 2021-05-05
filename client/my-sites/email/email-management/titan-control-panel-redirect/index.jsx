@@ -11,6 +11,7 @@ import React from 'react';
  */
 import { Card } from '@automattic/components';
 import EmptyContent from 'calypso/components/empty-content';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchTitanAutoLoginURL } from 'calypso/my-sites/email/email-management/titan-functions';
 import { getTitanMailOrderId, hasTitanMailWithUs } from 'calypso/lib/titan';
 import { getSelectedDomain } from 'calypso/lib/domains';
@@ -36,6 +37,10 @@ class TitanControlPanelRedirect extends React.Component {
 		// Connected props derived from the props above
 		domain: PropTypes.object,
 		siteId: PropTypes.number,
+
+		// Other props added via connect
+		errorNotice: PropTypes.function,
+		translate: PropTypes.function,
 	};
 
 	componentDidMount() {
@@ -95,15 +100,20 @@ class TitanControlPanelRedirect extends React.Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const site = getSiteBySlug( state, ownProps.siteSlug );
-	const siteId = site?.ID;
-	return {
-		domain: getSelectedDomain( {
-			domains: getDomainsBySiteId( state, siteId ),
-			selectedDomainName: ownProps.domainName,
-			isSiteRedirect: false,
-		} ),
-		siteId,
-	};
-} )( localize( TitanControlPanelRedirect ) );
+export default connect(
+	( state, ownProps ) => {
+		const site = getSiteBySlug( state, ownProps.siteSlug );
+		const siteId = site?.ID;
+		return {
+			domain: getSelectedDomain( {
+				domains: getDomainsBySiteId( state, siteId ),
+				selectedDomainName: ownProps.domainName,
+				isSiteRedirect: false,
+			} ),
+			siteId,
+		};
+	},
+	{
+		errorNotice,
+	}
+)( localize( TitanControlPanelRedirect ) );

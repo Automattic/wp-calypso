@@ -86,6 +86,11 @@
 	color: transparent !important;
 }
 
+.plugin-meta__supported-flag {
+	display: inline;
+	margin-left: 12px;
+}
+
 .plugin-meta__actions {
 	border-top: 1px solid var( --color-neutral-0 );
 	flex-grow: 1;

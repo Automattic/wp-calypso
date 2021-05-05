@@ -1,12 +1,9 @@
 body.hide-homepage-title {
-	.editor-post-title {
-		display: none;
-	}
 
-	// When the title is hidden in the block editor while editing the homepage,
-	// leave enough space above the first block for the toolbar to show correctly.
-	.block-editor-block-list__layout.is-root-container > .wp-block:first-child {
-		margin-top: 64px;
+	// Allow homepage title to be edited even when hidden
+	// Lighter color to signify not visible from front page
+	.editor-post-title {
+		opacity: .4;
 	}
 }
 

@@ -20,6 +20,20 @@ import type {
 	ResponseCartProduct,
 	RemoveCouponFromCart,
 } from '@automattic/shopping-cart';
+import {
+	getCouponLineItemFromCart,
+	getTaxLineItemFromCart,
+	getCreditsLineItemFromCart,
+} from '@automattic/wpcom-checkout';
+import {
+	isPlan,
+	isMonthlyProduct,
+	isYearly,
+	isBiennially,
+	isP2Plus,
+	isWpComPlan,
+	isJetpackSearch,
+} from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -31,28 +45,21 @@ import {
 	isGSuiteOrExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 } from 'calypso/lib/gsuite';
-import { planMatches, isWpComPlan } from 'calypso/lib/plans';
-import {
-	isMonthly as isMonthlyPlan,
-	TERM_ANNUALLY,
-	TERM_BIENNIALLY,
-} from 'calypso/lib/plans/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
-import {
-	getSublabel,
-	getLabel,
-	getCouponLineItem,
-	getTaxLineItem,
-	getCreditsLineItem,
-} from '../lib/translate-cart';
-import { isPlan } from 'calypso/lib/products-values';
+import { getSublabel, getLabel } from '../lib/translate-cart';
 import type {
 	WPCOMProductSlug,
 	WPCOMProductVariant,
 	OnChangeItemVariant,
 } from './item-variation-picker';
+import { getIntroductoryOfferIntervalDisplay } from 'calypso/lib/purchases/utils';
+import {
+	getProductDisplayCost,
+	getProductPriceTierList,
+} from 'calypso/state/products-list/selectors';
+import { getPriceTierForUnits } from 'calypso/my-sites/plans/jetpack-plans/utils';
 
 const WPOrderReviewList = styled.ul< { theme?: Theme } >`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
@@ -355,9 +362,9 @@ export function WPOrderReviewLineItems( {
 	createUserAndSiteBeforeTransaction?: boolean;
 } ): JSX.Element {
 	const { responseCart } = useShoppingCart();
-	const taxLineItem = getTaxLineItem( responseCart );
-	const creditsLineItem = getCreditsLineItem( responseCart );
-	const couponLineItem = getCouponLineItem( responseCart );
+	const taxLineItem = getTaxLineItemFromCart( responseCart );
+	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
+	const couponLineItem = getCouponLineItemFromCart( responseCart );
 
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
@@ -552,6 +559,59 @@ function canItemBeDeleted( item: ResponseCartProduct ): boolean {
 	return ! itemTypesThatCannotBeDeleted.includes( item.product_slug );
 }
 
+function JetpackSearchMeta( { product }: { product: ResponseCartProduct } ): JSX.Element {
+	return (
+		<>
+			<ProductTier product={ product } />
+			<RenewalFrequency product={ product } />
+		</>
+	);
+}
+
+function ProductTier( { product }: { product: ResponseCartProduct } ): JSX.Element | null {
+	const translate = useTranslate();
+	const priceTierList = useSelector( ( state ) =>
+		getProductPriceTierList( state, product.product_slug )
+	);
+
+	if ( isJetpackSearch( product ) && product.current_quantity ) {
+		const tier = getPriceTierForUnits( priceTierList, product.current_quantity );
+		const tierMaximum = tier?.maximum_units;
+		const tierMinimum = tier?.minimum_units;
+		if ( tierMaximum ) {
+			return (
+				<LineItemMeta>
+					{ translate( 'Up to %(tierMaximum)s records', { args: { tierMaximum } } ) }
+				</LineItemMeta>
+			);
+		}
+		if ( tier && ! tierMaximum ) {
+			return (
+				<LineItemMeta>
+					{ translate( 'More than %(tierMinimum) records', { args: { tierMinimum } } ) }
+				</LineItemMeta>
+			);
+		}
+	}
+	return null;
+}
+
+function RenewalFrequency( { product }: { product: ResponseCartProduct } ): JSX.Element | null {
+	const translate = useTranslate();
+	if ( isMonthlyProduct( product ) ) {
+		return <LineItemMeta>{ translate( 'Renews monthly' ) }</LineItemMeta>;
+	}
+
+	if ( isYearly( product ) ) {
+		return <LineItemMeta>{ translate( 'Renews annually' ) }</LineItemMeta>;
+	}
+
+	if ( isBiennially( product ) ) {
+		return <LineItemMeta>{ translate( 'Renews every two years' ) }</LineItemMeta>;
+	}
+	return null;
+}
+
 function LineItemSublabelAndPrice( {
 	product,
 }: {
@@ -561,44 +621,52 @@ function LineItemSublabelAndPrice( {
 	const isDomainRegistration = product.is_domain_registration;
 	const isDomainMap = product.product_slug === 'domain_map';
 	const productSlug = product.product_slug;
-	const sublabel = String( getSublabel( product ) );
-	const type = isPlan( product ) ? 'plan' : product.product_slug;
+	const sublabel = getSublabel( product );
 
 	const isGSuite =
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
+	// This is the price for one item for products with a quantity (eg. seats in a license).
+	const itemPrice = useSelector( ( state ) => getProductDisplayCost( state, productSlug ) );
 
-	if ( type === 'plan' && product.months_per_bill_period && product.months_per_bill_period > 1 ) {
-		return (
-			<>
-				{ translate( '%(sublabel)s: %(monthlyPrice)s/month × %(monthsPerBillPeriod)s', {
-					args: {
-						sublabel: sublabel,
-						monthlyPrice: product.item_subtotal_monthly_cost_display,
-						monthsPerBillPeriod: product.months_per_bill_period,
-					},
-					comment:
-						'product type and monthly breakdown of total cost, separated by a colon. For "/month", there is no space before and after the "/" but please add a space if it makes sense in other languages.',
-				} ) }
-			</>
-		);
-	}
-
-	if ( type === 'plan' && product.months_per_bill_period === 1 ) {
-		if ( isWpComPlan( productSlug ) ) {
-			return <>{ translate( 'Monthly subscription' ) }</>;
+	if ( isPlan( product ) ) {
+		if ( isP2Plus( product ) ) {
+			const members = product?.current_quantity || 1;
+			const p2Options = {
+				args: {
+					itemPrice: itemPrice,
+					members,
+				},
+				count: members,
+			};
+			return (
+				<>
+					{ translate(
+						'Monthly subscription: %(itemPrice)s x %(members)s active member',
+						'Monthly subscription: %(itemPrice)s x %(members)s active members',
+						p2Options
+					) }
+				</>
+			);
 		}
 
-		return (
-			<>
-				{ translate( '%(sublabel)s: %(monthlyPrice)s per month', {
-					args: {
-						sublabel: sublabel,
-						monthlyPrice: product.item_subtotal_monthly_cost_display,
-					},
-					comment: 'product type and monthly breakdown of total cost, separated by a colon',
-				} ) }
-			</>
-		);
+		const options = {
+			args: {
+				sublabel,
+				price: product.item_original_subtotal_display,
+			},
+		};
+
+		if ( isMonthlyProduct( product ) ) {
+			return <>{ translate( '%(sublabel)s: %(price)s per month', options ) }</>;
+		}
+
+		if ( isYearly( product ) ) {
+			return <>{ translate( '%(sublabel)s: %(price)s per year', options ) }</>;
+		}
+
+		if ( isBiennially( product ) ) {
+			return <>{ translate( '%(sublabel)s: %(price)s per two years', options ) }</>;
+		}
 	}
 
 	if (
@@ -623,27 +691,57 @@ function LineItemSublabelAndPrice( {
 	return <>{ sublabel || null }</>;
 }
 
-function AnnualDiscountCallout( {
+function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) {
+	return coupon_savings_integer > 0;
+}
+
+function FirstTermDiscountCallout( {
 	product,
 }: {
 	product: ResponseCartProduct;
 } ): JSX.Element | null {
 	const translate = useTranslate();
 	const planSlug = product.product_slug;
+	const origCost = product.item_original_cost_integer;
+	const cost = product.product_cost_integer;
+	const isRenewal = product.is_renewal;
 
-	if ( ! isWpComPlan( planSlug ) || isMonthlyPlan( planSlug ) ) {
+	if ( ! isWpComPlan( planSlug ) || origCost <= cost || isRenewal || isCouponApplied( product ) ) {
 		return null;
 	}
 
-	if ( planMatches( planSlug, { term: TERM_ANNUALLY } ) ) {
-		return <DiscountCallout>{ translate( 'Annual discount' ) }</DiscountCallout>;
+	if ( isMonthlyProduct( product ) ) {
+		return <DiscountCallout>{ translate( 'Discount for first month' ) }</DiscountCallout>;
 	}
 
-	if ( planMatches( planSlug, { term: TERM_BIENNIALLY } ) ) {
-		return <DiscountCallout>{ translate( 'Biennial discount' ) }</DiscountCallout>;
+	if ( isYearly( product ) ) {
+		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
+	}
+
+	if ( isBiennially( product ) ) {
+		return <DiscountCallout>{ translate( 'Discount for first term' ) }</DiscountCallout>;
 	}
 
 	return null;
+}
+
+function IntroductoryOfferCallout( {
+	product,
+}: {
+	product: ResponseCartProduct;
+} ): JSX.Element | null {
+	const translate = useTranslate();
+	if ( ! product.introductory_offer_terms?.enabled ) {
+		return null;
+	}
+	const isFreeTrial = product.item_subtotal_integer === 0;
+	const text = getIntroductoryOfferIntervalDisplay(
+		translate,
+		product.introductory_offer_terms.interval_unit,
+		product.introductory_offer_terms.interval_count,
+		isFreeTrial
+	);
+	return <DiscountCallout>{ text }</DiscountCallout>;
 }
 
 function DomainDiscountCallout( {
@@ -662,6 +760,20 @@ function DomainDiscountCallout( {
 		product.product_slug === 'domain_map' && product.item_subtotal_integer === 0;
 	if ( isFreeDomainMapping ) {
 		return <DiscountCallout>{ translate( 'Free with your plan' ) }</DiscountCallout>;
+	}
+
+	return null;
+}
+
+function CouponDiscountCallout( {
+	product,
+}: {
+	product: ResponseCartProduct;
+} ): JSX.Element | null {
+	const translate = useTranslate();
+
+	if ( isCouponApplied( product ) ) {
+		return <DiscountCallout>{ translate( 'Discounts applied' ) }</DiscountCallout>;
 	}
 
 	return null;
@@ -729,7 +841,7 @@ function WPLineItem( {
 	const onEvent = useEvents();
 	const isDisabled = formStatus !== FormStatus.READY;
 
-	const isRenewal = !! product?.extra?.purchaseId;
+	const isRenewal = product?.extra?.purchaseType === 'renewal';
 	// Show the variation picker when this is not a renewal
 	const shouldShowVariantSelector = getItemVariants && product && ! isRenewal;
 
@@ -740,15 +852,12 @@ function WPLineItem( {
 
 	const isTitanMail = productSlug === TITAN_MAIL_MONTHLY_SLUG;
 
-	const sublabel = String( getSublabel( product ) );
+	const sublabel = getSublabel( product );
 	const label = getLabel( product );
 
-	let originalAmountDisplay = product.item_original_subtotal_display;
-	let originalAmountInteger = product.item_original_subtotal_integer;
-	if ( product.related_monthly_plan_cost_integer && product.related_monthly_plan_cost_display ) {
-		originalAmountInteger = product.related_monthly_plan_cost_integer;
-		originalAmountDisplay = product.related_monthly_plan_cost_display;
-	}
+	const originalAmountDisplay = product.item_original_subtotal_display;
+	const originalAmountInteger = product.item_original_subtotal_integer;
+
 	const actualAmountDisplay = product.item_subtotal_display;
 	const isDiscounted = Boolean(
 		product.item_subtotal_integer < originalAmountInteger && originalAmountDisplay
@@ -776,9 +885,12 @@ function WPLineItem( {
 				<LineItemMeta>
 					<LineItemSublabelAndPrice product={ product } />
 					<DomainDiscountCallout product={ product } />
-					<AnnualDiscountCallout product={ product } />
+					<FirstTermDiscountCallout product={ product } />
+					<CouponDiscountCallout product={ product } />
+					<IntroductoryOfferCallout product={ product } />
 				</LineItemMeta>
 			) }
+			{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
 			{ isGSuite && <GSuiteUsersList product={ product } /> }
 			{ isTitanMail && <TitanMailMeta product={ product } isRenewal={ isRenewal } /> }
 			{ hasDeleteButton && removeProductFromCart && formStatus === FormStatus.READY && (

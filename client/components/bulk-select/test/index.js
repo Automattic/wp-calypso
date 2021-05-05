@@ -7,7 +7,6 @@
  */
 import { assert } from 'chai';
 import { mount, shallow } from 'enzyme';
-import { identity, noop } from 'lodash';
 import React from 'react';
 
 /**
@@ -15,11 +14,14 @@ import React from 'react';
  */
 import { BulkSelect } from '../index';
 
+const noop = () => {};
+const translate = ( string ) => string;
+
 describe( 'index', () => {
 	test( 'should have BulkSelect class', () => {
 		const bulkSelect = shallow(
 			<BulkSelect
-				translate={ identity }
+				translate={ translate }
 				selectedElements={ 0 }
 				totalElements={ 3 }
 				onToggle={ noop }
@@ -31,7 +33,7 @@ describe( 'index', () => {
 	test( 'should not be checked when initialized without selectedElements', () => {
 		const bulkSelect = shallow(
 			<BulkSelect
-				translate={ identity }
+				translate={ translate }
 				selectedElements={ 0 }
 				totalElements={ 3 }
 				onToggle={ noop }
@@ -43,7 +45,7 @@ describe( 'index', () => {
 	test( 'should be checked when initialized with all elements selected', () => {
 		const bulkSelect = shallow(
 			<BulkSelect
-				translate={ identity }
+				translate={ translate }
 				selectedElements={ 3 }
 				totalElements={ 3 }
 				onToggle={ noop }
@@ -55,7 +57,7 @@ describe( 'index', () => {
 	test( 'should not be checked when initialized with some elements selected', () => {
 		const bulkSelect = shallow(
 			<BulkSelect
-				translate={ identity }
+				translate={ translate }
 				selectedElements={ 2 }
 				totalElements={ 3 }
 				onToggle={ noop }
@@ -67,7 +69,7 @@ describe( 'index', () => {
 	test( 'should render line gridicon when initialized with some elements selected', () => {
 		const bulkSelect = shallow(
 			<BulkSelect
-				translate={ identity }
+				translate={ translate }
 				selectedElements={ 2 }
 				totalElements={ 3 }
 				onToggle={ noop }
@@ -79,7 +81,7 @@ describe( 'index', () => {
 	test( 'should add the aria-label to the input', () => {
 		const bulkSelect = mount(
 			<BulkSelect
-				translate={ identity }
+				translate={ translate }
 				selectedElements={ 2 }
 				totalElements={ 3 }
 				onToggle={ noop }
@@ -92,7 +94,7 @@ describe( 'index', () => {
 	test( 'should not mark the input readOnly', () => {
 		const bulkSelect = mount(
 			<BulkSelect
-				translate={ identity }
+				translate={ translate }
 				selectedElements={ 2 }
 				totalElements={ 3 }
 				onToggle={ noop }
@@ -109,7 +111,7 @@ describe( 'index', () => {
 		};
 		const bulkSelect = mount(
 			<BulkSelect
-				translate={ identity }
+				translate={ translate }
 				selectedElements={ 0 }
 				totalElements={ 3 }
 				onToggle={ callback }
@@ -127,7 +129,7 @@ describe( 'index', () => {
 			};
 			const bulkSelect = mount(
 				<BulkSelect
-					translate={ identity }
+					translate={ translate }
 					selectedElements={ 0 }
 					totalElements={ 3 }
 					onToggle={ callback }
@@ -145,7 +147,7 @@ describe( 'index', () => {
 			};
 			const bulkSelect = mount(
 				<BulkSelect
-					translate={ identity }
+					translate={ translate }
 					selectedElements={ 1 }
 					totalElements={ 3 }
 					onToggle={ callback }
@@ -163,7 +165,7 @@ describe( 'index', () => {
 			};
 			const bulkSelect = mount(
 				<BulkSelect
-					translate={ identity }
+					translate={ translate }
 					selectedElements={ 3 }
 					totalElements={ 3 }
 					onToggle={ callback }

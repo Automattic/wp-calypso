@@ -33,7 +33,7 @@
 	"include": [ "src" ],
 	"exclude": [ "**/test/*" ],
 	"references": [
-		{ "path": "../react-i18n" },
+		{ "path": "../shopping-cart" },
 		{ "path": "../data-stores" },
 		{ "path": "../components" },
 		{ "path": "../onboarding" },

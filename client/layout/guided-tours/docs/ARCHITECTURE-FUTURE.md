@@ -60,10 +60,8 @@ Most (if not all) of the ways `actionLog` is processed — with `map`, `filter`,
 By design, `actionLog`'s reducer will react to all sorts of actions coming in through the dispatcher. As of this writing, the [list][relevanttypes] of subscribed types is relatively limited:
 
 ```
-FIRST_VIEW_HIDE
 GUIDED_TOUR_UPDATE
 THEMES_RECEIVE
-PREVIEW_IS_SHOWING
 ROUTE_SET
 SITE_SETTINGS_RECEIVE
 ```

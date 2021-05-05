@@ -131,10 +131,6 @@ UndocumentedSite.prototype.getRoles = function ( callback ) {
 	return this.wpcom.req.get( '/sites/' + this._id + '/roles', {}, callback );
 };
 
-UndocumentedSite.prototype.getViewers = function ( query, callback ) {
-	return this.wpcom.req.get( '/sites/' + this._id + '/viewers', query, callback );
-};
-
 UndocumentedSite.prototype.removeViewer = function ( viewerId, callback ) {
 	return this.wpcom.req.post(
 		{

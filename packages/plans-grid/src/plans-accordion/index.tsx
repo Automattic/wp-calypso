@@ -3,7 +3,7 @@
  */
 import React, { useState } from 'react';
 import { useSelect } from '@wordpress/data';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { Button, SVG, Path } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 

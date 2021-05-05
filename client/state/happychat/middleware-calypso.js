@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { has, noop } from 'lodash';
+import { has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -47,6 +47,8 @@ import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/action
 import { getHelpSelectedSiteId } from 'calypso/state/help/selectors';
 import getSectionName from 'calypso/state/ui/selectors/get-section-name';
 import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
+
+const noop = () => {};
 
 const getRouteSetMessage = ( state, path ) => {
 	return `Looking at https://wordpress.com${ path }`;

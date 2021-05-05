@@ -22,3 +22,5 @@ beforeAll( () => {
 afterAll( () => {
 	global.console.error.mockRestore();
 } );
+
+jest.mock( 'a8c-fse-common-data-stores', () => {}, { virtual: true } );

@@ -55,7 +55,7 @@ const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {
 					brandFont
 					className="exporter__section-header"
 					headerText={ translate( 'Export Content' ) }
-					subHeaderText={ translate( 'Your content on WordPress.com is always yours.' ) }
+					subHeaderText={ translate( 'Back up or move your content to another site or platform.' ) }
 					align="left"
 				/>
 				<ExporterContainer />

@@ -8,31 +8,36 @@ import { get } from 'lodash';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import formatCurrency from '@automattic/format-currency';
+import { ProductIcon } from '@automattic/components';
+import {
+	getPlans,
+	getYearlyPlanByMonthly,
+	planMatches,
+	getPlanClass,
+	isFreePlan,
+	planLevelsMatch,
+	TYPE_FREE,
+	GROUP_WPCOM,
+	TERM_ANNUALLY,
+	PLAN_P2_FREE,
+	PLAN_P2_PLUS,
+} from '@automattic/calypso-products';
 
 /**
  * Internal Dependencies
  **/
-import { ProductIcon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import PlanIntervalDiscount from 'calypso/my-sites/plan-interval-discount';
 import PlanPill from 'calypso/components/plans/plan-pill';
-import {
-	TYPE_FREE,
-	GROUP_WPCOM,
-	TERM_ANNUALLY,
-	PLAN_P2_FREE,
-	PLAN_P2_PLUS,
-} from 'calypso/lib/plans/constants';
-import { PLANS_LIST } from 'calypso/lib/plans/plans-list';
-import { getYearlyPlanByMonthly, planMatches, getPlanClass, isFreePlan } from 'calypso/lib/plans';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getPlanBySlug } from 'calypso/state/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { planLevelsMatch } from 'calypso/lib/plans/index';
+
+const PLANS_LIST = getPlans();
 
 export class PlanFeaturesHeader extends Component {
 	render() {
@@ -207,7 +212,7 @@ export class PlanFeaturesHeader extends Component {
 		const price = formatCurrency( rawPrice, currencyCode );
 		const isDiscounted = !! discountPrice;
 
-		if ( planMatches( currentSitePlan.productSlug, { type: TYPE_FREE } ) ) {
+		if ( planMatches( currentSitePlan?.productSlug, { type: TYPE_FREE } ) ) {
 			return isDiscounted
 				? translate(
 						"You'll receive a discount for the first year. The plan will renew at %(price)s.",
@@ -229,17 +234,19 @@ export class PlanFeaturesHeader extends Component {
 			translate,
 			planType,
 			currentSitePlan,
-			annualPricePerMonth,
 			isInSignup,
 			isMonthlyPlan,
+			relatedYearlyPlan,
+			isLoggedInMonthlyPricing,
 		} = this.props;
 
-		if ( isInSignup && isMonthlyPlan && annualPricePerMonth < rawPrice ) {
+		if ( ( isInSignup || isLoggedInMonthlyPricing ) && isMonthlyPlan && relatedYearlyPlan ) {
+			const annualPricePerMonth = relatedYearlyPlan.raw_price / 12;
 			const discountRate = Math.round( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice );
 			return translate( `Save %(discountRate)s%% by paying annually`, { args: { discountRate } } );
 		}
 
-		if ( isInSignup && ! isMonthlyPlan ) {
+		if ( ( isInSignup || isLoggedInMonthlyPricing ) && ! isMonthlyPlan ) {
 			return translate( 'billed annually' );
 		}
 
@@ -277,12 +284,15 @@ export class PlanFeaturesHeader extends Component {
 			hideMonthly,
 			isInSignup,
 			plansWithScroll,
+			isLoggedInMonthlyPricing,
+			isMonthlyPlan,
 		} = this.props;
 
 		const isDiscounted = !! discountPrice;
 		const timeframeClasses = classNames( 'plan-features__header-timeframe', {
 			'is-discounted': isDiscounted,
 			'is-placeholder': isPlaceholder,
+			'is-logged-in-monthly-pricing': isLoggedInMonthlyPricing,
 		} );
 		const perMonthDescription = this.getPerMonthDescription() || billingTimeFrame;
 		if ( isInSignup || plansWithScroll ) {
@@ -302,7 +312,7 @@ export class PlanFeaturesHeader extends Component {
 			return (
 				<p className={ timeframeClasses }>
 					{ ! isPlaceholder ? perMonthDescription : '' }
-					{ isDiscounted && ! isPlaceholder && (
+					{ isDiscounted && ! isPlaceholder && ! isMonthlyPlan && (
 						<InfoPopover
 							className="plan-features__header-tip-info"
 							position={ isMobile() ? 'top' : 'bottom left' }
@@ -318,9 +328,9 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	isPlanCurrent() {
-		const { planType, current, currentSitePlan } = this.props;
+		const { planType, current, currentSitePlan, isLoggedInMonthlyPricing, isJetpack } = this.props;
 
-		if ( ! currentSitePlan ) {
+		if ( ! currentSitePlan || ( isLoggedInMonthlyPricing && ! isJetpack ) ) {
 			return current;
 		}
 
@@ -337,6 +347,7 @@ export class PlanFeaturesHeader extends Component {
 			discountPrice,
 			rawPrice,
 			relatedMonthlyPlan,
+			isLoggedInMonthlyPricing,
 		} = this.props;
 
 		if ( isPlaceholder && ! isInSignup ) {
@@ -348,7 +359,7 @@ export class PlanFeaturesHeader extends Component {
 			return <div className={ classes } />;
 		}
 
-		if ( availableForPurchase ) {
+		if ( availableForPurchase && ! isLoggedInMonthlyPricing ) {
 			// Only multiply price by 12 for Jetpack plans where we sell both monthly and yearly
 			if ( isJetpack && ! isSiteAT && relatedMonthlyPlan ) {
 				return this.renderPriceGroup(
@@ -369,6 +380,7 @@ export class PlanFeaturesHeader extends Component {
 			isInSignup,
 			plansWithScroll,
 			isInVerticalScrollingPlansExperiment,
+			isLoggedInMonthlyPricing,
 		} = this.props;
 		const displayFlatPrice =
 			isInSignup && ! plansWithScroll && ! isInVerticalScrollingPlansExperiment;
@@ -381,14 +393,14 @@ export class PlanFeaturesHeader extends Component {
 							currencyCode={ currencyCode }
 							rawPrice={ fullPrice }
 							displayFlatPrice={ displayFlatPrice }
-							isInSignup={ isInSignup }
+							displayPerMonthNotation={ true }
 							original
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ discountedPrice }
 							displayFlatPrice={ displayFlatPrice }
-							isInSignup={ isInSignup }
+							displayPerMonthNotation={ true }
 							discounted
 						/>
 					</div>
@@ -402,7 +414,7 @@ export class PlanFeaturesHeader extends Component {
 				currencyCode={ currencyCode }
 				rawPrice={ fullPrice }
 				displayFlatPrice={ displayFlatPrice }
-				isInSignup={ isInSignup }
+				displayPerMonthNotation={ isInSignup || isLoggedInMonthlyPricing }
 			/>
 		);
 	}
@@ -470,6 +482,7 @@ export class PlanFeaturesHeader extends Component {
 				)
 			);
 		}
+
 		return null;
 	}
 }
@@ -500,8 +513,7 @@ PlanFeaturesHeader.propTypes = {
 	isSiteAT: PropTypes.bool,
 	relatedYearlyPlan: PropTypes.object,
 
-	// For Monthly Pricing test
-	annualPricePerMonth: PropTypes.number,
+	isLoggedInMonthlyPricing: PropTypes.bool,
 };
 
 PlanFeaturesHeader.defaultProps = {
@@ -518,6 +530,7 @@ PlanFeaturesHeader.defaultProps = {
 	popular: false,
 	showPlanCreditsApplied: false,
 	siteSlug: '',
+	isLoggedInMonthlyPricing: false,
 };
 
 export default connect( ( state, { planType, relatedMonthlyPlan } ) => {

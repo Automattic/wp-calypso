@@ -11,7 +11,7 @@ import React, {
 } from 'react';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 
 /**
  * Internal dependencies
@@ -210,7 +210,7 @@ export function Checkout( {
 	children,
 	className,
 }: {
-	children: React.ReactChildren;
+	children: React.ReactNode;
 	className?: string;
 } ): JSX.Element {
 	const { isRTL } = useI18n();

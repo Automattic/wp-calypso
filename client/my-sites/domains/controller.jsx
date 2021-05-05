@@ -4,7 +4,7 @@
 import page from 'page';
 import { translate } from 'i18n-calypso';
 import React from 'react';
-import { get, includes, map, noop } from 'lodash';
+import { get, includes, map } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -40,6 +40,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { canUserPurchaseGSuite } from 'calypso/lib/gsuite';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
+const noop = () => {};
 const domainsAddHeader = ( context, next ) => {
 	context.getSiteSelectionHeaderText = () => {
 		return translate( 'Select a site to add a domain' );

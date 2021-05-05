@@ -15,7 +15,7 @@ const enabledClass = 'features-helper__feature-item-enabled';
 const disabledClass = 'features-helper__feature-item-disabled';
 
 export const FeatureList = React.memo( () => {
-	const currentXLProjects = [ 'nav-unification' ];
+	const currentXLProjects = [];
 	const enabledFeatures = config.enabledFeatures();
 	return (
 		<>

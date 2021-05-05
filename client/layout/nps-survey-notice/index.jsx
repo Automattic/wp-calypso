@@ -30,7 +30,7 @@ import {
 } from 'calypso/state/nps-survey/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
-import { isBusinessPlan } from 'calypso/lib/plans';
+import { isBusinessPlan } from '@automattic/calypso-products';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 

@@ -23,7 +23,7 @@ const RewindFlowProgressBar: FunctionComponent< Props > = ( {
 	entry,
 } ) => {
 	const translate = useTranslate();
-	const filteredPercent = percent !== null ? percent : 0;
+	const filteredPercent = ( Number.isFinite( percent ) ? percent : 0 ) as number;
 
 	return (
 		<div className="rewind-flow__progress-bar">

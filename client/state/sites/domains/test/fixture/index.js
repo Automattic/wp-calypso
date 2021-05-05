@@ -17,8 +17,12 @@ export const SUBSCRIPTION_ID_FIRST = '1111';
 export const SITE_ID_SECOND = 77203074;
 export const SUBSCRIPTION_ID_SECOND = null;
 
+export const DOMAIN_EXPIRED_ERROR_CODE = 'domain-expired';
+export const DOMAIN_EXPIRED_ERROR_MESSAGE = 'Domain expired message';
+
 // testing primary-domain
 export const DOMAIN_PRIMARY = {
+	aRecordsRequiredForMapping: undefined,
 	autoRenewalDate: '2017-02-07T00:00:00+00:00',
 	autoRenewing: true,
 	adminEmail: null,
@@ -27,7 +31,9 @@ export const DOMAIN_PRIMARY = {
 	canSetAsPrimary: true,
 	contactInfoDisclosed: false,
 	contactInfoDisclosureAvailable: false,
+	currentUserCanAddEmail: true,
 	currentUserCanManage: true,
+	currentUserCannotAddEmailReason: null,
 	domain: 'retronevergiveup.me',
 	domainLockingAvailable: true,
 	domainRegistrationAgreementUrl: null,
@@ -73,6 +79,7 @@ export const DOMAIN_PRIMARY = {
 	registrationDate: '2016-03-09T00:00:00+00:00',
 	renewableUntil: '',
 	sslStatus: null,
+	subdomainPart: typeof undefined,
 	subscriptionId: SUBSCRIPTION_ID_FIRST,
 	supportsDomainConnect: false,
 	supportsGdprConsentManagement: true,
@@ -90,6 +97,7 @@ export const DOMAIN_PRIMARY = {
 
 // testing not-primary-domain
 export const DOMAIN_NOT_PRIMARY = {
+	aRecordsRequiredForMapping: undefined,
 	autoRenewalDate: '',
 	autoRenewing: false,
 	adminEmail: null,
@@ -98,7 +106,12 @@ export const DOMAIN_NOT_PRIMARY = {
 	canSetAsPrimary: true,
 	contactInfoDisclosed: false,
 	contactInfoDisclosureAvailable: false,
+	currentUserCanAddEmail: false,
 	currentUserCanManage: true,
+	currentUserCannotAddEmailReason: {
+		code: DOMAIN_EXPIRED_ERROR_CODE,
+		message: DOMAIN_EXPIRED_ERROR_MESSAGE,
+	},
 	domain: 'retronevergiveup.wordpress.me',
 	domainLockingAvailable: true,
 	domainRegistrationAgreementUrl: null,
@@ -144,6 +157,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	registrar: '',
 	registrationDate: '',
 	sslStatus: null,
+	subdomainPart: typeof undefined,
 	subscriptionId: SUBSCRIPTION_ID_SECOND,
 	supportsDomainConnect: false,
 	supportsGdprConsentManagement: true,
@@ -170,6 +184,8 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	blog_id: SITE_ID_FIRST,
 	bundled_plan_subscription_id: null,
 	can_set_as_primary: true,
+	current_user_can_add_email: true,
+	current_user_cannot_add_email_reason: null,
 	domain: 'retronevergiveup.me',
 	domain_locking_available: true,
 	domainRegistrationAgreementUrl: null,
@@ -232,6 +248,15 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 	blog_id: SITE_ID_SECOND,
 	bundled_plan_subscription_id: null,
 	can_set_as_primary: true,
+	current_user_can_add_email: false,
+	current_user_cannot_add_email_reason: {
+		errors: {
+			[ DOMAIN_EXPIRED_ERROR_CODE ]: [
+				DOMAIN_EXPIRED_ERROR_MESSAGE,
+				'Extraneous ignorable error message',
+			],
+		},
+	},
 	domain: 'retronevergiveup.wordpress.me',
 	domain_locking_available: true,
 	domainRegistrationAgreementUrl: null,

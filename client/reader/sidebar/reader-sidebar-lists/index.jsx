@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
@@ -28,12 +27,8 @@ export class ReaderSidebarLists extends Component {
 		translate: PropTypes.func,
 	};
 
-	static defaultProps = {
-		translate: identity,
-	};
-
 	render() {
-		const { translate, isOpen, onClick, ...passedProps } = this.props;
+		const { translate, isOpen, onClick, path, ...passedProps } = this.props;
 		return (
 			<li>
 				<ExpandableSidebarMenu
@@ -42,9 +37,10 @@ export class ReaderSidebarLists extends Component {
 					onClick={ onClick }
 					materialIcon={ 'list' }
 					disableFlyout={ true }
+					className={ path.startsWith( '/read/list' ) && 'sidebar__menu--selected' }
 				>
 					<li>
-						<ReaderSidebarListsList { ...passedProps } />
+						<ReaderSidebarListsList path={ path } { ...passedProps } />
 					</li>
 				</ExpandableSidebarMenu>
 			</li>

@@ -30,6 +30,11 @@ const selectionPrompt = ( context, next ) => {
 	next();
 };
 
+const clearPageTitle = ( context, next ) => {
+	context.clearPageTitle = true;
+	next();
+};
+
 const redirectToPrimarySiteLanding = ( context ) => {
 	debug( 'controller: redirectToPrimarySiteLanding', context );
 	const state = context.store.getState();
@@ -55,7 +60,15 @@ export const handleOAuthOverride = () => {
 
 export default function () {
 	page( '/landing/:site', siteSelection, landingController, makeLayout, clientRender );
-	page( '/landing', siteSelection, selectionPrompt, sites, makeLayout, clientRender );
+	page(
+		'/landing',
+		siteSelection,
+		selectionPrompt,
+		clearPageTitle,
+		sites,
+		makeLayout,
+		clientRender
+	);
 	page( '/oauth-override', handleOAuthOverride );
 	page( '/', redirectToPrimarySiteLanding );
 }

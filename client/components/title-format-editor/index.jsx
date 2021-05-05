@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get, head, map, max, min, noop } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -24,6 +23,7 @@ import { localize } from 'i18n-calypso';
 import 'draft-js/dist/Draft.css';
 import './style.scss';
 
+const noop = () => {};
 const Chip = ( onClick ) => ( props ) => <Token { ...props } onClick={ onClick } />;
 
 export class TitleFormatEditor extends Component {
@@ -121,14 +121,15 @@ export class TitleFormatEditor extends Component {
 
 		// okay if cursor is at the spot
 		// right before the token
-		if ( offset === head( indices ) ) {
+		const [ firstIndex ] = indices;
+		if ( offset === firstIndex ) {
 			return editorState;
 		}
 
 		const outside =
 			direction > 0
-				? Math.min( max( indices ) + 1, block.getLength() )
-				: Math.max( min( indices ), 0 );
+				? Math.min( Math.max( ...indices ) + 1, block.getLength() )
+				: Math.max( Math.min( ...indices ), 0 );
 
 		return EditorState.forceSelection(
 			editorState,
@@ -190,8 +191,8 @@ export class TitleFormatEditor extends Component {
 			}, [] );
 
 			const range = SelectionState.createEmpty( block.key )
-				.set( 'anchorOffset', min( indices ) )
-				.set( 'focusOffset', max( indices ) );
+				.set( 'anchorOffset', Math.min( ...indices ) )
+				.set( 'focusOffset', Math.max( ...indices ) );
 
 			const withoutToken = EditorState.push(
 				editorState,
@@ -201,7 +202,9 @@ export class TitleFormatEditor extends Component {
 
 			const selectionBeforeToken = EditorState.forceSelection(
 				withoutToken,
-				range.set( 'anchorOffset', min( indices ) ).set( 'focusOffset', min( indices ) )
+				range
+					.set( 'anchorOffset', Math.min( ...indices ) )
+					.set( 'focusOffset', Math.min( ...indices ) )
 			);
 
 			this.updateEditor( selectionBeforeToken );
@@ -242,7 +245,7 @@ export class TitleFormatEditor extends Component {
 			<div className={ editorClassNames }>
 				<div className="title-format-editor__header">
 					<span className="title-format-editor__title">{ type.label }</span>
-					{ map( tokens, ( title, name ) => (
+					{ Object.entries( tokens ).map( ( [ name, title ] ) => (
 						/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 						<span
 							key={ name }
@@ -272,7 +275,9 @@ export class TitleFormatEditor extends Component {
 const mapStateToProps = ( state, ownProps ) => {
 	const site = getSelectedSite( state );
 	const { translate } = ownProps;
-	const formattedDate = moment().locale( get( site, 'lang', '' ) ).format( 'MMMM YYYY' );
+	const formattedDate = moment()
+		.locale( site?.lang ?? '' )
+		.format( 'MMMM YYYY' );
 
 	// Add example content for post/page title, tag name and archive dates
 	return {

@@ -13,7 +13,7 @@ import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, get, includes, noop } from 'lodash';
+import { flowRight, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { Button, Card } from '@wordpress/components';
 
@@ -54,8 +54,10 @@ import {
 import { resetAuthAccountType as resetAuthAccountTypeAction } from 'calypso/state/login/actions';
 import FormattedHeader from 'calypso/components/formatted-header';
 import wooDnaConfig from './woo-dna-config';
+import JetpackConnectSkipUser from 'calypso/blocks/jetpack-connect-skip-user';
 
 const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
+const noop = () => {};
 
 export class JetpackSignup extends Component {
 	static propTypes = {
@@ -150,6 +152,8 @@ export class JetpackSignup extends Component {
 			isNative: isEnabled( 'login/native-login-links' ),
 			locale: this.props.locale,
 			redirectTo: window.location.href,
+			skipUser: this.props.authQuery?.skipUser,
+			site: this.props.authQuery?.site,
 		} );
 	}
 
@@ -267,11 +271,21 @@ export class JetpackSignup extends Component {
 	}
 
 	renderFooterLink() {
+		const { authQuery } = this.props;
+
 		return (
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem href={ this.getLoginRoute() }>
 					{ this.props.translate( 'Already have an account? Sign in' ) }
 				</LoggedOutFormLinkItem>
+
+				{ authQuery.skipUser && (
+					<JetpackConnectSkipUser
+						homeUrl={ authQuery.homeUrl }
+						redirectAfterAuth={ authQuery.redirectAfterAuth }
+					/>
+				) }
+
 				<HelpButton />
 			</LoggedOutFormLinks>
 		);
@@ -381,7 +395,13 @@ export class JetpackSignup extends Component {
 				);
 			} else {
 				header = wooDna.getServiceName();
-				subHeader = translate( 'Enter your email address to get started' );
+				if ( wooDna.getFlowName() === 'woodna:woocommerce-payments' ) {
+					subHeader = translate(
+						'Enter your email address to get started. Your account will enable you to start using the features and benefits offered by WooCommerce Payments'
+					);
+				} else {
+					subHeader = translate( 'Enter your email address to get started' );
+				}
 				pageTitle = translate( 'Connect' );
 			}
 			content = (
@@ -467,6 +487,7 @@ export class JetpackSignup extends Component {
 						submitting={ isCreatingAccount }
 						suggestedUsername=""
 					/>
+
 					{ this.renderLoginUser() }
 				</div>
 			</MainWrapper>

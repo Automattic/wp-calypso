@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { isEqual, uniq } from 'lodash';
+import { isEqual } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
@@ -84,11 +84,13 @@ export class ImageSelectorPreview extends Component {
 	updateImageState = ( callback ) => {
 		const { itemIds, onImageChange, siteId } = this.props;
 		this.setTransientImages();
-		const images = uniq(
-			itemIds
-				.map( ( id ) => this.props.getMediaItem( siteId, id ) )
-				.filter( ( mediaItem ) => mediaItem )
-		);
+		const images = [
+			...new Set(
+				itemIds
+					.map( ( id ) => this.props.getMediaItem( siteId, id ) )
+					.filter( ( mediaItem ) => mediaItem )
+			),
+		];
 
 		this.setState( { images }, () => {
 			if ( 'function' === typeof callback ) {

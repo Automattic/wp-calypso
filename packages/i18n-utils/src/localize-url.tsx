@@ -98,7 +98,17 @@ const urlLocalizationMapping: UrlLocalizationMapping = {
 		url.pathname = url.pathname.replace( /\/help\//, '/support/' );
 		return prefixLocalizedUrlPath( supportSiteLocales )( url, localeSlug );
 	},
-	'wordpress.com': prefixLocalizedUrlPath( magnificentNonEnLocales ),
+	'wordpress.com': ( url: URL, localeSlug: Locale ) => {
+		// Don't rewrite checkout and me URLs.
+		if ( /^\/(checkout|me)(\/|$)/.test( url.pathname ) ) {
+			return url;
+		}
+		// Don't rewrite Calypso URLs that have the URL at the end.
+		if ( /\/([a-z0-9-]+\.)+[a-z]{2,}\/?$/.test( url.pathname ) ) {
+			return url;
+		}
+		return prefixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
+	},
 };
 
 export function localizeUrl( fullUrl: string, locale: Locale, isLoggedIn = true ): string {
@@ -120,6 +130,7 @@ export function localizeUrl( fullUrl: string, locale: Locale, isLoggedIn = true 
 	url.hostname = '';
 
 	if ( ! url.pathname.endsWith( '.php' ) ) {
+		// Essentially a trailingslashit.
 		url.pathname = ( url.pathname + '/' ).replace( /\/+$/, '/' );
 	}
 
@@ -130,7 +141,7 @@ export function localizeUrl( fullUrl: string, locale: Locale, isLoggedIn = true 
 	}
 
 	if ( '/' + locale + '/' === firstPathSegment ) {
-		return url.href;
+		return fullUrl;
 	}
 
 	// Lookup is checked back to front.

@@ -4,7 +4,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -22,6 +22,8 @@ import { addQueryArgs } from '@wordpress/url';
  * Internal dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 const TemplateEdit = compose(
 	withState( { templateClientId: null } ),

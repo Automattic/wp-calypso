@@ -29,7 +29,7 @@ import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QueryScanState from 'calypso/components/data/query-jetpack-scan';
 import ToolsMenu from './tools-menu';
-import { isBusiness, isEcommerce } from 'calypso/lib/products-values';
+import { isP2PlusPlan, isBusiness, isEcommerce } from '@automattic/calypso-products';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -54,7 +54,6 @@ import {
 	isJetpackSite,
 	canCurrentUserUseEarn,
 	getSiteOption,
-	canCurrentUserUseCalypsoStore,
 	canCurrentUserUseWooCommerceCoreStore,
 	getSiteWoocommerceUrl,
 } from 'calypso/state/sites/selectors';
@@ -91,8 +90,7 @@ import { isUnderEmailManagementAll } from 'calypso/my-sites/email/paths';
 import JetpackSidebarMenuItems from 'calypso/components/jetpack/sidebar/menu-items/calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
-import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
-import { isP2PlusPlan } from 'calypso/lib/plans';
+import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 
 /**
  * Style dependencies
@@ -695,7 +693,6 @@ export class MySitesSidebar extends Component {
 			translate,
 			site,
 			siteSuffix,
-			canUserUseCalypsoStore,
 			canUserUseWooCommerceCoreStore,
 			isSiteWpcomStore,
 		} = this.props;
@@ -713,7 +710,7 @@ export class MySitesSidebar extends Component {
 			// So, we'll just continue to change the link here as we have been doing.
 			experience = 'wpadmin-woocommerce-core';
 			storeLink = site.options.admin_url + 'admin.php?page=wc-admin';
-		} else if ( ! canUserUseCalypsoStore ) {
+		} else {
 			return null;
 		}
 
@@ -785,8 +782,8 @@ export class MySitesSidebar extends Component {
 
 		let storeLink = woocommerceUrl;
 		if ( ! isSiteWpcomStore ) {
-			// Navigate to Store UI for installation.
-			storeLink = '/store' + siteSuffix + '?redirect_after_install';
+			// Navigate to installation.
+			storeLink = '/woocommerce-installation' + siteSuffix;
 		}
 
 		return (
@@ -1168,7 +1165,6 @@ function mapStateToProps( state ) {
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
 		canUserManagePlugins: canCurrentUserManagePlugins( state ),
-		canUserUseCalypsoStore: canCurrentUserUseCalypsoStore( state, siteId ),
 		canUserUseWooCommerceCoreStore: canCurrentUserUseWooCommerceCoreStore( state, siteId ),
 		canUserUseEarn: canCurrentUserUseEarn( state, siteId ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),

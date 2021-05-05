@@ -7,7 +7,9 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { AutoSizer, List } from '@automattic/react-virtualized';
-import { debounce, noop, range } from 'lodash';
+import { debounce, range } from 'lodash';
+
+const noop = () => {};
 
 export class VirtualList extends Component {
 	static propTypes = {

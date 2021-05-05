@@ -6,6 +6,10 @@ import config from '@automattic/calypso-config';
 import * as wpcom from 'calypso/lib/wp';
 import * as selectedSite from 'calypso/state/help/selectors';
 
+jest.mock( 'calypso/state/help/selectors', () => ( {
+	getHelpSelectedSite: jest.fn(),
+} ) );
+
 describe( 'auth promise', () => {
 	const state = {
 		currentUser: {
@@ -32,7 +36,6 @@ describe( 'auth promise', () => {
 			);
 
 			// mock getHelpSelectedSite to return null
-			selectedSite.getHelpSelectedSite = jest.fn();
 			selectedSite.getHelpSelectedSite.mockReturnValue( null );
 		} );
 
@@ -58,7 +61,6 @@ describe( 'auth promise', () => {
 			);
 
 			// mock getHelpSelectedSite to return null
-			selectedSite.getHelpSelectedSite = jest.fn();
 			selectedSite.getHelpSelectedSite.mockReturnValue( null );
 		} );
 

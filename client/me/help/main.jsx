@@ -27,9 +27,7 @@ import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedu
 import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { getUserPurchases, isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
-import { planHasFeature } from 'calypso/lib/plans';
-import { FEATURE_BUSINESS_ONBOARDING } from 'calypso/lib/plans/constants';
-import Experiment, { DefaultVariation, Variation } from 'calypso/components/experiment';
+import { planHasFeature, FEATURE_BUSINESS_ONBOARDING } from '@automattic/calypso-products';
 
 /**
  * Style dependencies
@@ -336,16 +334,11 @@ class Help extends React.PureComponent {
 						subHeaderText={ translate( 'Get help with your WordPress.com site' ) }
 						align="left"
 					/>
-					<Experiment name="calypso_help_contact_button">
-						<Variation name="treatment">
-							<div className="help__contact-us-header-button">
-								<Button onClick={ this.trackContactUsClick }>
-									{ translate( 'Contact support' ) }
-								</Button>
-							</div>
-						</Variation>
-						<DefaultVariation name="control" />
-					</Experiment>
+					<div className="help__contact-us-header-button">
+						<Button onClick={ this.trackContactUsClick } href="/help/contact/">
+							{ translate( 'Contact support' ) }
+						</Button>
+					</div>
 				</div>
 				<HelpSearch onSearch={ this.setIsSearching } />
 				{ ! this.state.isSearching && (

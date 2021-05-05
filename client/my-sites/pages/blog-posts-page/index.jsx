@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { identity, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
@@ -27,6 +26,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
  */
 import './style.scss';
 
+const noop = () => {};
+
 class BlogPostsPage extends React.Component {
 	static propTypes = {
 		site: PropTypes.object,
@@ -34,7 +35,6 @@ class BlogPostsPage extends React.Component {
 	};
 
 	static defaultProps = {
-		translate: identity,
 		recordCalloutClick: noop,
 	};
 

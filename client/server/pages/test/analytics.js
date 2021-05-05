@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import events from 'events';
-import { noop } from 'lodash';
 import sinon from 'sinon';
 
 /**
@@ -14,6 +13,7 @@ import { logSectionResponse } from 'calypso/server/pages/analytics';
 import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
 
 const TWO_SECONDS = 2000;
+const noop = () => {};
 
 describe( 'index', () => {
 	describe( 'logSectionResponse middleware', () => {

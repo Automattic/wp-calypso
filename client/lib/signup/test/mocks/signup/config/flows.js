@@ -11,5 +11,6 @@ export default {
 	},
 
 	excludeStep: jest.fn(),
+	resetExcludedStep: jest.fn(),
 	resetExcludedSteps: jest.fn(),
 };

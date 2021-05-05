@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { getLocaleSlug } from 'i18n-calypso';
-import { compact, flatMap, omit, slice, some, values } from 'lodash';
+import { compact, flatMap, omit, some } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -35,9 +35,9 @@ function formatDate( date ) {
  * @returns {Array}             list of searchable strings
  */
 function getSearchableStrings( transaction ) {
-	const rootStrings = values( omit( transaction, [ 'date', 'items' ] ) );
+	const rootStrings = Object.values( omit( transaction, [ 'date', 'items' ] ) );
 	const dateString = transaction.date ? formatDate( transaction.date ) : null;
-	const itemStrings = flatMap( transaction.items, values );
+	const itemStrings = flatMap( transaction.items, ( item ) => Object.values( item ) );
 
 	return compact( [ ...rootStrings, dateString, ...itemStrings ] );
 }
@@ -108,7 +108,7 @@ export default createSelector(
 		const total = results.length;
 
 		const pageIndex = page - 1;
-		results = slice( results, pageIndex * PAGE_SIZE, pageIndex * PAGE_SIZE + PAGE_SIZE );
+		results = results.slice( pageIndex * PAGE_SIZE, pageIndex * PAGE_SIZE + PAGE_SIZE );
 
 		return {
 			transactions: results,
@@ -122,6 +122,6 @@ export default createSelector(
 		// Ideally, we shouldn't allow for full-text search matching against localized dates.
 		getCurrentLocaleSlug( state ),
 		getBillingTransactionsByType( state, transactionType ),
-		...values( getBillingTransactionFilters( state, transactionType ) ),
+		...Object.values( getBillingTransactionFilters( state, transactionType ) ),
 	]
 );

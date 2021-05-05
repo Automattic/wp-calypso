@@ -34,6 +34,7 @@ export default class extends React.PureComponent {
 							helpLink={ helpLink }
 							iconTypeDescription={ this.props.iconTypeDescription }
 							onClick={ this.props.onClick }
+							compact={ this.props.compact }
 						/>
 					) ) }
 					<a href={ this.props.searchLink } target="__blank">

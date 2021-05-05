@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 import { stub } from 'sinon';
 
@@ -12,6 +11,8 @@ import { stub } from 'sinon';
  */
 import { UpgradeATStep } from '../upgrade-at-step';
 import { Button } from '@automattic/components';
+
+const noop = () => {};
 
 describe( 'UpgradeATStep', () => {
 	const selectedSite = { slug: 'site_slug' };

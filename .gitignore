@@ -92,3 +92,6 @@ cached-requests.json
 
 # Typescript
 *.tsbuildinfo
+
+# TeamCity Kotlin compilation
+.teamcity/target

@@ -8,6 +8,7 @@ import ReactDom from 'react-dom';
 import { capitalize, defer, includes, get } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -50,8 +51,10 @@ import { getSignupUrl } from 'calypso/lib/login';
 import { isRegularAccount } from 'calypso/state/login/utils';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { preventWidows } from 'calypso/lib/formatting';
+import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
+import JetpackConnectSkipUser from 'calypso/blocks/jetpack-connect-skip-user';
 
 export class LoginForm extends Component {
 	static propTypes = {
@@ -64,6 +67,7 @@ export class LoginForm extends Component {
 		isFormDisabled: PropTypes.bool,
 		isLoggedIn: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
+		handleUsernameChange: PropTypes.func,
 		oauth2Client: PropTypes.object,
 		onSuccess: PropTypes.func.isRequired,
 		privateSite: PropTypes.bool,
@@ -95,8 +99,12 @@ export class LoginForm extends Component {
 		} );
 	}
 
-	componentDidUpdate( prevProps ) {
-		const { disableAutoFocus, requestError } = this.props;
+	componentDidUpdate( prevProps, prevState ) {
+		const { currentRoute, disableAutoFocus, requestError, handleUsernameChange } = this.props;
+
+		if ( handleUsernameChange && prevState.usernameOrEmail !== this.state.usernameOrEmail ) {
+			handleUsernameChange( this.state.usernameOrEmail );
+		}
 
 		if ( prevProps.requestError || ! requestError ) {
 			return;
@@ -108,6 +116,17 @@ export class LoginForm extends Component {
 
 		if ( requestError.field === 'usernameOrEmail' ) {
 			! disableAutoFocus && defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
+		}
+
+		// User entered an email address or username that doesn't have a corresponding WPCOM account
+		// and sign-up with magic links is enabled.
+		if (
+			currentRoute &&
+			currentRoute.includes( '/log-in/jetpack' ) &&
+			config.isEnabled( 'jetpack/magic-link-signup' ) &&
+			requestError.code === 'unknown_user'
+		) {
+			this.jetpackCreateAccountWithMagicLink();
 		}
 	}
 
@@ -231,6 +250,36 @@ export class LoginForm extends Component {
 	saveUsernameOrEmailRef = ( input ) => {
 		this.usernameOrEmail = input;
 	};
+
+	jetpackCreateAccountWithMagicLink() {
+		// When a user enters a username or an email address that doesn't have a corresponding
+		// WPCOM account, we need to figure out whether the user entered a username or an email
+		// address. If the user entered an email address, we can safely attempt to create a WPCOM
+		// account for this user with the help of magic links. On the other hand, if the user entered
+		// a username, we need to prompt the user specifically for an email address to proceed with
+		// the WPCOM account creation with magic links.
+
+		const isEmailAddress = includes( this.state.usernameOrEmail, '@' );
+		if ( isEmailAddress ) {
+			// With Magic Links, create the user a WPCOM account linked to the entered email address
+			this.props.sendEmailLogin( this.state.usernameOrEmail, {
+				redirectTo: this.props.redirectTo,
+				requestLoginEmailFormFlow: true,
+				createAccount: true,
+				flow: 'jetpack',
+			} );
+		}
+
+		// Redirect user to the Magic Link form page
+		page(
+			addQueryArgs(
+				{
+					email_address: this.state.usernameOrEmail,
+				},
+				'/log-in/jetpack/link'
+			)
+		);
+	}
 
 	renderPrivateSiteNotice() {
 		if ( this.props.privateSite && ! this.props.isLoggedIn ) {
@@ -515,7 +564,16 @@ export class LoginForm extends Component {
 										' Would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
 										{
 											components: {
-												newAccountLink: <a href={ signupUrl } />,
+												newAccountLink: (
+													<a
+														href={ addQueryArgs(
+															{
+																user_email: this.state.usernameOrEmail,
+															},
+															signupUrl
+														) }
+													/>
+												),
 											},
 										}
 									) }
@@ -608,6 +666,13 @@ export class LoginForm extends Component {
 							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
 						/>
 					</Fragment>
+				) }
+
+				{ currentQuery?.skip_user && (
+					<JetpackConnectSkipUser
+						homeUrl={ currentQuery?.site }
+						redirectAfterAuth={ currentQuery?.redirect_after_auth }
+					/>
 				) }
 			</form>
 		);

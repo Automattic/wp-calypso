@@ -60,6 +60,7 @@ const StatsInsights = ( props ) => {
 				brandFont
 				className="stats__section-header"
 				headerText={ translate( 'Stats and Insights' ) }
+				subHeaderText={ translate( "View your site's performance and learn from trends." ) }
 				align="left"
 			/>
 			<StatsNavigation selectedItem={ 'insights' } siteId={ siteId } slug={ siteSlug } />

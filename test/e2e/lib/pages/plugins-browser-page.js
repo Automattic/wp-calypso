@@ -20,7 +20,7 @@ export default class PluginsBrowserPage extends AsyncBaseContainer {
 	async searchForPlugin( searchTerm ) {
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( '.plugins-browser__main-header .search' )
+			by.css( '.plugins-browser__main-header .search-component__icon-navigation' )
 		);
 		return await driverHelper.setWhenSettable(
 			this.driver,
@@ -31,7 +31,7 @@ export default class PluginsBrowserPage extends AsyncBaseContainer {
 	}
 
 	async pluginTitledShown( pluginTitle, searchTerm ) {
-		const selector = async () => {
+		const locator = async () => {
 			const allElements = await this.driver.findElements(
 				by.css( '.plugins-browser-item__title' )
 			);
@@ -40,7 +40,7 @@ export default class PluginsBrowserPage extends AsyncBaseContainer {
 				async ( e ) => ( await e.getText() ) === pluginTitle
 			);
 		};
-		const shown = await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
+		const shown = await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, locator );
 		if ( shown === true ) {
 			return shown;
 		}
@@ -49,11 +49,11 @@ export default class PluginsBrowserPage extends AsyncBaseContainer {
 		);
 		await driverHelper.clickWhenClickable( this.driver, by.css( '.search__close-icon' ) );
 		await this.searchForPlugin( searchTerm );
-		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
+		return await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, locator );
 	}
 
 	async selectManagePlugins() {
-		const manageButtonSelector = by.css( ".plugins-browser__main a[href*='manage']" );
-		return await driverHelper.clickWhenClickable( this.driver, manageButtonSelector );
+		const manageButtonLocator = by.css( ".plugins-browser__main-buttons a[href*='manage']" );
+		return await driverHelper.clickWhenClickable( this.driver, manageButtonLocator );
 	}
 }

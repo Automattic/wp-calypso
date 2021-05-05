@@ -3,47 +3,53 @@
  */
 import type { ExperimentAssignment } from '../types';
 import * as Validations from './validations';
+import localStorage from './local-storage';
+
+const localStorageExperimentAssignmentKeyPrefix = 'explat-experiment-';
+
+const localStorageExperimentAssignmentKey = ( experimentName: string ): string =>
+	`${ localStorageExperimentAssignmentKeyPrefix }-${ experimentName }`;
 
 /**
- * Class to store existing ExperimentAssignments in memory
+ * Store an ExperimentAssignment.
+ *
+ * @param experimentAssignment The ExperimentAssignment
  */
-export default class ExperimentAssignmentStore {
-	private experimentNameToExperimentAssignment: Record<
-		string,
-		ExperimentAssignment | undefined
-	> = {};
+export function storeExperimentAssignment( experimentAssignment: ExperimentAssignment ): void {
+	Validations.validateExperimentAssignment( experimentAssignment );
 
-	/**
-	 * Store an ExperimentAssignment.
-	 *
-	 * @param experimentAssignment The ExperimentAssignment
-	 */
-	store( experimentAssignment: ExperimentAssignment ): void {
-		Validations.validateExperimentAssignment( experimentAssignment );
-
-		const previousExperimentAssignment = this.experimentNameToExperimentAssignment[
-			experimentAssignment.experimentName
-		];
-		if (
-			previousExperimentAssignment &&
-			experimentAssignment.retrievedTimestamp < previousExperimentAssignment.retrievedTimestamp
-		) {
-			throw new Error(
-				'Trying to store an older experiment assignment than is present in the store, likely a race condition.'
-			);
-		}
-
-		this.experimentNameToExperimentAssignment[
-			experimentAssignment.experimentName
-		] = experimentAssignment;
+	const previousExperimentAssignment = retrieveExperimentAssignment(
+		experimentAssignment.experimentName
+	);
+	if (
+		previousExperimentAssignment &&
+		experimentAssignment.retrievedTimestamp < previousExperimentAssignment.retrievedTimestamp
+	) {
+		throw new Error(
+			'Trying to store an older experiment assignment than is present in the store, likely a race condition.'
+		);
 	}
 
-	/**
-	 * Retrieve an ExperimentAssignment.
-	 *
-	 * @param experimentName The experiment name.
-	 */
-	retrieve( experimentName: string ): ExperimentAssignment | undefined {
-		return this.experimentNameToExperimentAssignment[ experimentName ];
+	localStorage.setItem(
+		localStorageExperimentAssignmentKey( experimentAssignment.experimentName ),
+		JSON.stringify( experimentAssignment )
+	);
+}
+
+/**
+ * Retrieve an ExperimentAssignment.
+ *
+ * @param experimentName The experiment name.
+ */
+export function retrieveExperimentAssignment(
+	experimentName: string
+): ExperimentAssignment | undefined {
+	const maybeExperimentAssignmentJson = localStorage.getItem(
+		localStorageExperimentAssignmentKey( experimentName )
+	);
+	if ( ! maybeExperimentAssignmentJson ) {
+		return undefined;
 	}
+
+	return Validations.validateExperimentAssignment( JSON.parse( maybeExperimentAssignmentJson ) );
 }

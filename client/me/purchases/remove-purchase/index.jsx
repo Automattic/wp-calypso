@@ -29,7 +29,8 @@ import {
 	isJetpackProduct,
 	isPlan,
 	isJetpackSearch,
-} from 'calypso/lib/products-values';
+	isTitanMail,
+} from '@automattic/calypso-products';
 import { purchasesRoot } from '../paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getPurchasesError } from 'calypso/state/purchases/selectors';
@@ -327,7 +328,7 @@ class RemovePurchase extends Component {
 			return this.renderDomainDialog();
 		}
 
-		if ( isDomainMapping( purchase ) || isDomainTransfer( purchase ) ) {
+		if ( isDomainMapping( purchase ) || isDomainTransfer( purchase ) || isTitanMail( purchase ) ) {
 			return this.renderPlanDialog();
 		}
 

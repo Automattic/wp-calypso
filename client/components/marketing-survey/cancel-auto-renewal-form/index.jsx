@@ -16,7 +16,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
-import { isDomainRegistration, isPlan } from 'calypso/lib/products-values';
+import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 

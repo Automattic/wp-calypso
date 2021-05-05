@@ -6,32 +6,46 @@
 
 	@include break-small {
 		display: flex;
+		flex-direction: column;
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		flex-direction: row;
 	}
 }
 
 .jetpack-free-card__header {
-	@include break-small {
+	@include breakpoint-deprecated( '>660px' ) {
 		flex: 1;
+		margin-inline-end: 32px;
 	}
 }
 
 .jetpack-free-card__title {
 	color: var( --studio-gray-100 );
+	margin: 12px 0 20px;
 
 	font-family: 'Noto Sans SemiCondensed Bold', 'Noto Sans', $sans;
 	font-size: 1.875rem;
 	font-weight: 700;
+	line-height: inherit;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-top: initial;
+		margin-bottom: initial;
+	}
 }
 
 .jetpack-free-card__subheadline {
 	color: var( --studio-gray-60 );
+
+	font-size: inherit;
 }
 
 .jetpack-free-card__button.button {
 	display: block;
 
 	width: 100%;
-	max-width: 210px;
 	margin: 24px 0;
 
 	color: var( --studio-jetpack-green-40 );
@@ -39,7 +53,10 @@
 	border-radius: 4px;
 
 	font-size: 1rem;
-	font-weight: 700;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		max-width: 210px;
+	}
 
 	@include break-large {
 		margin-bottom: 0;
@@ -49,46 +66,45 @@
 .jetpack-free-card__features-list {
 	margin: 28px 0 0;
 
-	color: var( --studio-gray-100 );
-	list-style-type: none;
+	color: var( --studio-gray-60 );
+
+	flex: 1;
+	margin: 0 16px 32px;
 
 	> li {
-		display: flex;
-		justify-content: flex-start;
-
-		margin: 12px 0;
-
-		fill: var( --studio-jetpack-green-40 );
+		margin-bottom: 16px;
+		padding-inline-start: 8px;
 	}
 
-	@include break-small {
-		flex: 1;
+	> li:last-child {
+		margin-bottom: initial;
+	}
 
-		margin-top: 0;
-		padding-left: 28px;
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-top: 16px;
+		margin-bottom: 16px;
 	}
 
 	@include break-large {
+		align-self: center;
+
 		display: flex;
 		align-items: center;
 		flex-wrap: wrap;
 		flex: 2 1;
 
-		padding-left: 0;
+		margin-top: initial;
+		margin-bottom: -14px;
 
 		> li {
-			width: 50%;
-			margin: 0;
+			width: calc( 50% - 8px );
+			padding-inline-start: 8px;
+
+			margin-bottom: 14px;
+		}
+
+		> li:last-child {
+			margin-bottom: 14px;
 		}
 	}
-}
-
-.jetpack-free-card__features-list .gridicon {
-	margin-right: 12px;
-
-	color: var( --studio-jetpack-green-40 );
-}
-
-.jetpack-free-card__features-text {
-	flex: 1;
 }

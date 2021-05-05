@@ -1,16 +1,6 @@
 @import '~@wordpress/base-styles/breakpoints';
 @import '~@wordpress/base-styles/mixins';
 
-/**
- * These color come from Jetpack.com color pallette. We leave them as they are
- * because we want to make this page resemble as closest as possible jetpack.com/pricing.
- */
-$jpcom-primary: #00be28;
-$jpcom-gray: #87a6bc;
-$jpcom-gray-lighten20: lighten( $jpcom-gray, 20% ); // #c8d7e1
-$jpcom-gray-lighten30: lighten( $jpcom-gray, 30% ); // #e9eff3
-$jpcom-gray-darken30: darken( $jpcom-gray, 30% ); // #3d596d
-
 .jpcom-masterbar {
 	background-color: var( --color-surface );
 
@@ -23,17 +13,21 @@ $jpcom-gray-darken30: darken( $jpcom-gray, 30% ); // #3d596d
 	// We need to use this deprecated breakpoint because we need
 	// to match Calypso's layout breakpoint also.
 	@include breakpoint-deprecated( '>660px' ) {
-		padding: 1em 0;
+		padding: 20px 0 22px;
 
 		margin-top: -71px;
 	}
 
 	@include break-large {
+		padding-bottom: 40px;
+
 		margin-top: -79px;
 	}
 }
 
 .jpcom-masterbar__inner {
+	position: relative;
+
 	// Breakpoint taken from jetpack.com, not standard in Calypso
 	@media ( min-width: 375px ) {
 		display: flex;
@@ -55,6 +49,15 @@ $jpcom-gray-darken30: darken( $jpcom-gray, 30% ); // #3d596d
 
 .jpcom-masterbar__logo {
 	padding-top: 0.25em;
+
+	svg {
+		width: 160px;
+		height: 49px;
+	}
+
+	.jetpack-logo__icon-circle {
+		fill: var( --studio-jetpack-green-40 );
+	}
 }
 
 .jpcom-masterbar__nav {
@@ -63,15 +66,12 @@ $jpcom-gray-darken30: darken( $jpcom-gray, 30% ); // #3d596d
 	display: none;
 	flex-direction: column;
 
-	list-style: none;
-	list-style-image: none;
+	list-style: none none;
 
 	line-height: 150%;
 
-	margin: 0 auto 1.5em;
-	padding: 1em 0;
-
-	background: $jpcom-gray-lighten30;
+	margin: 0 auto;
+	padding: 16px 0;
 
 	&.is-open {
 		display: flex;
@@ -90,85 +90,72 @@ $jpcom-gray-darken30: darken( $jpcom-gray, 30% ); // #3d596d
 }
 
 .jpcom-masterbar__nav-item {
-	padding: 0 30px;
+	padding: 0 38px;
 
-	// Breakpoint taken from jetpack.com, not standard in Calypso
-	@media ( min-width: 375px ) {
-		padding: 0 3px;
+	@include break-large {
+		padding: 0 4px;
 	}
 
 	a {
-		color: $jpcom-primary;
+		color: var( --studio-gray-60 );
 
 		display: inline-block;
 
-		width: 90%;
+		padding: 10px 16px;
 
-		padding: 10px 0;
+		font-size: 1.1rem;
 
-		font-weight: 600;
-		font-size: 0.875rem;
-
-		border-bottom: 2px transparent solid;
+		border-bottom: 1px transparent solid;
 		border-radius: 0;
 
 		transition: all 0.5s ease-in-out;
 
-		@media ( min-width: 375px ) {
-			margin-left: 16px;
-
-			font-size: 1.125rem;
-		}
-
 		@include break-large {
 			width: inherit;
 
-			padding: 10px 14px;
-
 			margin-left: 0;
 		}
+
 	}
 
 	a.current,
 	a:hover {
-		border-bottom: 2px $jpcom-gray solid;
 		color: black;
-		background: 0 0;
+
+		border-bottom: none;
+		border-left: 1px var( --studio-gray-60 ) solid;
+
+		@include break-large {
+			border-bottom: 1px var( --studio-gray-60 ) solid;
+			border-left: none;
+		}
+	}
+
+	a:focus {
+		outline: none;
+		box-shadow: 0 0 0 2px black;
+		border-radius: 3px;
+		border-color: transparent;
+		transition: none;
 	}
 }
 
 .jpcom-masterbar__navbutton.mobilenav {
-	width: 100%;
-	margin-top: 24px;
-
-	// Breakpoint taken from jetpack.com, not standard in Calypso
-	@media ( min-width: 375px ) {
-		width: auto;
-		margin-top: 0;
-		margin-bottom: 8px;
-	}
-
-	@include break-large {
-		display: none;
-	}
+	position: absolute;
+	top: 0;
+	right: 0;
 
 	display: flex;
 	flex-basis: 3em;
 	flex-grow: 0;
 	flex-shrink: 0;
 
-	padding: 16px;
+	padding: 14px;
 
-	color: $jpcom-gray-darken30;
-	font-weight: bold;
+	color: black;
 	text-transform: uppercase;
 
-	background: $jpcom-gray-lighten30;
-
-	border-color: $jpcom-gray-lighten30;
-	border-radius: 3px;
-	border-width: 2px;
-	border-style: outset;
+	border: none;
 
 	overflow: visible;
 
@@ -177,10 +164,8 @@ $jpcom-gray-darken30: darken( $jpcom-gray, 30% ); // #3d596d
 	transition-timing-function: linear;
 	transition: all 0.5s ease-in-out;
 
-	&:hover,
-	&.is-active {
-		background: $jpcom-gray-lighten20;
-		border-color: $jpcom-gray-lighten20;
+	@include break-large {
+		display: none;
 	}
 
 	.jpcom-masterbar__navbox {
@@ -188,7 +173,6 @@ $jpcom-gray-darken30: darken( $jpcom-gray, 30% ); // #3d596d
 		height: 20px;
 		display: inline-block;
 		position: relative;
-		margin-right: 1em;
 	}
 
 	.jpcom-masterbar__navinner {
@@ -202,7 +186,8 @@ $jpcom-gray-darken30: darken( $jpcom-gray, 30% ); // #3d596d
 	.jpcom-masterbar__navinner::after {
 		width: 30px;
 		height: 3px;
-		background-color: $jpcom-gray-darken30;
+		background-color: black;
+
 		border-radius: 4px;
 		position: absolute;
 		transition-property: transform;
@@ -226,14 +211,14 @@ $jpcom-gray-darken30: darken( $jpcom-gray, 30% ); // #3d596d
 
 	.jpcom-masterbar__navlabel {
 		display: inline-block;
-		line-height: 1.5;
-	}
-}
 
-// when mobilenav is tapped
-.jpcom-masterbar__navbutton.is-active {
-	.jpcom-masterbar__navbox {
-		margin-right: 0;
+		line-height: 1.5;
+
+		margin-left: 1em;
+
+		@media ( max-width: 375px ) {
+			display: none;
+		}
 	}
 }
 

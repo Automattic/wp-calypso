@@ -26,14 +26,14 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Themes: All sites (${ screenSize })`, function () {
+	let driver;
+
+	before( async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
+
 	describe( 'Preview a theme @parallel', function () {
 		this.timeout( mochaTimeOut );
 
@@ -45,7 +45,7 @@ describe( `[${ host }] Themes: All sites (${ screenSize })`, function () {
 			await this.loginFlow.loginAndSelectAllSites();
 
 			this.sidebarComponent = await SidebarComponent.Expect( driver );
-			await this.sidebarComponent.selectThemes();
+			await this.sidebarComponent.selectAllSitesThemes();
 		} );
 
 		step( 'can search for free themes', async function () {
@@ -110,7 +110,7 @@ describe( `[${ host }] Themes: All sites (${ screenSize })`, function () {
 			await this.loginFlow.loginAndSelectAllSites();
 
 			this.sidebarComponent = await SidebarComponent.Expect( driver );
-			await this.sidebarComponent.selectThemes();
+			await this.sidebarComponent.selectAllSitesThemes();
 		} );
 
 		step( 'can search for free themes', async function () {

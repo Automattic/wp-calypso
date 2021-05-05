@@ -21,8 +21,8 @@ import './style.scss';
 const JETPACK_COM_BASE_URL = 'https://jetpack.com';
 const MENU_ITEMS = [
 	{
-		title: translate( 'Product Tour' ),
-		path: 'features',
+		title: translate( 'Security' ),
+		path: 'features/security',
 	},
 	{
 		title: translate( 'Pricing' ),
@@ -46,7 +46,7 @@ const JetpackComMasterbar: React.FC = () => {
 	};
 
 	return (
-		<div className="jpcom-masterbar">
+		<nav className="jpcom-masterbar">
 			<div className="jpcom-masterbar__inner">
 				<ExternalLink
 					className="jpcom-masterbar__logo"
@@ -55,7 +55,7 @@ const JetpackComMasterbar: React.FC = () => {
 						recordTracksEvent( 'calypso_jetpack_nav_logo_click' );
 					} }
 				>
-					<JetpackLogo className="jpcom-masterbar__jetpack-logo" full size={ 49 } />
+					<JetpackLogo className="jpcom-masterbar__jetpack-logo" full size={ 43 } />
 				</ExternalLink>
 
 				<Button
@@ -69,9 +69,7 @@ const JetpackComMasterbar: React.FC = () => {
 					<span className="jpcom-masterbar__navbox">
 						<span className="jpcom-masterbar__navinner"></span>
 					</span>
-					<span className="jpcom-masterbar__navlabel">
-						{ isMenuOpen ? null : translate( 'Menu' ) }
-					</span>
+					<span className="jpcom-masterbar__navlabel">{ translate( 'Menu' ) }</span>
 				</Button>
 
 				<ul className={ classNames( 'jpcom-masterbar__nav', { 'is-open': isMenuOpen } ) }>
@@ -90,7 +88,7 @@ const JetpackComMasterbar: React.FC = () => {
 					) ) }
 				</ul>
 			</div>
-		</div>
+		</nav>
 	);
 };
 

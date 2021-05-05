@@ -1,0 +1,22 @@
+.web-server-logs-card__info {
+	color: var( --color-text-subtle );
+}
+
+.web-server-logs-card__dates {
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+}
+
+.web-server-logs-card__start {
+	flex: 1;
+}
+
+.web-server-logs-card__end {
+	flex: 1;
+	margin-left: 1em;
+}
+
+.web-server-logs-card__download {
+	margin-top: 1em;
+}

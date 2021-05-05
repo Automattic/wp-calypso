@@ -8,7 +8,7 @@ import page from 'page';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { get, isUndefined } from 'lodash';
+import { get } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -164,13 +164,15 @@ class TaxonomyManagerListItem extends Component {
 						<PodcastIndicator className="taxonomy-manager__podcast-indicator" />
 					) }
 				</span>
-				{ ! isUndefined( term.post_count ) && (
-					<Count
-						ref="count"
-						count={ term.post_count }
-						onMouseEnter={ this.showTooltip }
-						onMouseLeave={ this.hideTooltip }
-					/>
+				{ typeof term.post_count !== 'undefined' && (
+					<div className="taxonomy-manager__count">
+						<Count
+							ref="count"
+							count={ term.post_count }
+							onMouseEnter={ this.showTooltip }
+							onMouseLeave={ this.hideTooltip }
+						/>
+					</div>
 				) }
 				<Tooltip
 					context={ this.refs && this.refs.count }

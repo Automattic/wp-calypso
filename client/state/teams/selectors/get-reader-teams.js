@@ -12,5 +12,5 @@ import 'calypso/state/teams/init';
  */
 
 export default function getReaderTeams( state ) {
-	return state.teams.items;
+	return state.teams?.items || [];
 }

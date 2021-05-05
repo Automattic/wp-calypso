@@ -38,7 +38,6 @@ import {
 	canCurrentUserUseAds,
 	canCurrentUserUseCustomerHome,
 	canCurrentUserUseAnyWooCommerceBasedStore,
-	canCurrentUserUseCalypsoStore,
 	canCurrentUserUseWooCommerceCoreStore,
 	canJetpackSiteUpdateFiles,
 	canJetpackSiteAutoUpdateFiles,
@@ -52,17 +51,11 @@ import {
 	getSiteAdminUrl,
 	getCustomizerUrl,
 	getJetpackComputedAttributes,
-	hasDefaultSiteTitle,
 	getSiteComputedAttributes,
 } from '../selectors';
 import config from '@automattic/calypso-config';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
-import {
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
-	PLAN_FREE,
-	STORE_DEPRECATION_START_DATE,
-} from 'calypso/lib/plans/constants';
+import { PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_FREE } from '@automattic/calypso-products';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const configMock = () => '';
@@ -3308,78 +3301,6 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'hasDefaultSiteTitle()', () => {
-		test( 'should return null if the site is not known', () => {
-			const hasDefaultTitle = hasDefaultSiteTitle(
-				{
-					sites: {
-						items: {},
-					},
-				},
-				77203074
-			);
-
-			chaiExpect( hasDefaultTitle ).to.be.null;
-		} );
-
-		test( 'should return true if the site title is "Site Title"', () => {
-			const hasDefaultTitle = hasDefaultSiteTitle(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								URL: 'example.wordpress.com',
-								name: 'Site Title',
-							},
-						},
-					},
-				},
-				77203074
-			);
-
-			chaiExpect( hasDefaultTitle ).to.be.true;
-		} );
-
-		test( 'should return true if the site title is equal to the site slug', () => {
-			const hasDefaultTitle = hasDefaultSiteTitle(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								URL: 'example.wordpress.com',
-								name: 'example.wordpress.com',
-							},
-						},
-					},
-				},
-				77203074
-			);
-
-			chaiExpect( hasDefaultTitle ).to.be.true;
-		} );
-
-		test( 'should return false if the site title is any other title', () => {
-			const hasDefaultTitle = hasDefaultSiteTitle(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								URL: 'example.wordpress.com',
-								name: 'Example Site Name',
-							},
-						},
-					},
-				},
-				77203074
-			);
-
-			chaiExpect( hasDefaultTitle ).to.be.false;
-		} );
-	} );
-
 	describe( 'getJetpackComputedAttributes()', () => {
 		test( 'should return undefined attributes if a site is not Jetpack', () => {
 			const state = {
@@ -3577,115 +3498,6 @@ describe( 'selectors', () => {
 			expect( canCurrentUserUseAnyWooCommerceBasedStore( createState( false, false, true ) ) ).toBe(
 				false
 			);
-		} );
-	} );
-
-	describe( 'canCurrentUserUseCalypsoStore()', () => {
-		const createState = (
-			manage_options,
-			is_automated_transfer,
-			has_pending_automated_transfer,
-			subscribedDate = '2020-12-01T00:00:00+00:00'
-		) => ( {
-			ui: {
-				selectedSiteId: 1,
-			},
-			currentUser: {
-				capabilities: {
-					1: {
-						manage_options,
-					},
-				},
-			},
-			sites: {
-				items: {
-					1: {
-						options: {
-							is_automated_transfer,
-							has_pending_automated_transfer,
-						},
-						plan: {
-							PLAN_BUSINESS,
-						},
-					},
-				},
-				plans: {
-					1: {
-						data: {
-							0: {
-								currentPlan: true,
-								productSlug: PLAN_BUSINESS,
-								subscribedDate,
-							},
-						},
-					},
-				},
-			},
-		} );
-
-		beforeEach( () => {
-			// Enable all features except for store deprecation and removal
-			config.isEnabled.mockImplementation( ( feature ) => {
-				return feature !== 'woocommerce/store-removed';
-			} );
-		} );
-
-		test( 'should return true if site is AT and user can manage it', () => {
-			expect( canCurrentUserUseCalypsoStore( createState( true, true, false ) ) ).toBe( true );
-		} );
-
-		test( 'should return false if site is not AT and user can manage it', () => {
-			expect( canCurrentUserUseCalypsoStore( createState( true, false, false ) ) ).toBe( false );
-		} );
-
-		test( "should return false if site is AT and user can't manage it", () => {
-			expect( canCurrentUserUseCalypsoStore( createState( false, true, false ) ) ).toBe( false );
-		} );
-
-		test( "should return true if user can't manage a site, but it has background transfer and atomic store flow is enabled", () => {
-			expect( canCurrentUserUseCalypsoStore( createState( false, false, true ) ) ).toBe( true );
-		} );
-
-		test( "should return false if user can't manage a site, but it has background transfer and atomic store flow is disabled", () => {
-			// Enable all features except for the atomic store flow
-			config.isEnabled.mockImplementation( ( feature ) => feature !== 'signup/atomic-store-flow' );
-
-			expect( canCurrentUserUseCalypsoStore( createState( false, false, true ) ) ).toBe( false );
-		} );
-
-		test( 'should return true if plan subscription date is before Store deprecation', () => {
-			// Enable all features except for store removal, including store deprecation
-			config.isEnabled.mockImplementation( ( feature ) => feature !== 'woocommerce/store-removed' );
-
-			expect( canCurrentUserUseCalypsoStore( createState( true, true, false ) ) ).toBe( true );
-		} );
-
-		test( 'should return false if plan subscription date is on or after Store deprecation', () => {
-			// Enable all features except for store removal, including store deprecation
-			config.isEnabled.mockImplementation( ( feature ) => feature !== 'woocommerce/store-removed' );
-
-			const subscriptionDate = new Date();
-			subscriptionDate.setDate( STORE_DEPRECATION_START_DATE.getDate() + 1 );
-
-			expect(
-				canCurrentUserUseCalypsoStore( createState( true, true, false, subscriptionDate ) )
-			).toBe( false );
-		} );
-
-		test( 'should return false if extension dashboard is not enabled', () => {
-			// Enable all features except for the extension dashboard
-			config.isEnabled.mockImplementation(
-				( feature ) => feature !== 'woocommerce/extension-dashboard'
-			);
-
-			expect( canCurrentUserUseCalypsoStore( createState( true, true, false ) ) ).toBe( false );
-		} );
-
-		test( 'should return false if store is removed', () => {
-			// Enable all features, including store removal
-			config.isEnabled.mockImplementation( () => true );
-
-			expect( canCurrentUserUseCalypsoStore( createState( true, true, false ) ) ).toBe( false );
 		} );
 	} );
 

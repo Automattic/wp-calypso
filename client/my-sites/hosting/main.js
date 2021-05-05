@@ -26,6 +26,7 @@ import SupportCard from './support-card';
 import PhpVersionCard from './php-version-card';
 import SiteBackupCard from './site-backup-card';
 import MiscellaneousCard from './miscellaneous-card';
+import WebServerLogsCard from './web-server-logs-card';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import Notice from 'calypso/components/notice';
@@ -38,7 +39,7 @@ import {
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { requestSite } from 'calypso/state/sites/actions';
 import FeatureExample from 'calypso/components/feature-example';
-import { PLAN_BUSINESS, FEATURE_SFTP } from 'calypso/lib/plans/constants';
+import { PLAN_BUSINESS, FEATURE_SFTP } from '@automattic/calypso-products';
 
 /**
  * Style dependencies
@@ -167,6 +168,7 @@ class Hosting extends Component {
 							<PhpMyAdminCard disabled={ isDisabled } />
 							<PhpVersionCard disabled={ isDisabled } />
 							<MiscellaneousCard disabled={ isDisabled } />
+							<WebServerLogsCard disabled={ isDisabled } />
 						</Column>
 						<Column type="sidebar">
 							<SiteBackupCard disabled={ isDisabled } />
@@ -207,7 +209,8 @@ export default connect(
 		return {
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
-			isDisabled: ! isSiteAutomatedTransfer( state, siteId ),
+			isDisabled:
+				! isSiteOnAtomicPlan( state, siteId ) || ! isSiteAutomatedTransfer( state, siteId ),
 			isOnAtomicPlan: isSiteOnAtomicPlan( state, siteId ),
 			canViewAtomicHosting: canSiteViewAtomicHosting( state ),
 			siteSlug: getSelectedSiteSlug( state ),

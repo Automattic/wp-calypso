@@ -8,13 +8,13 @@ import type { ResponseCartProduct } from '@automattic/shopping-cart';
 /**
  * Internal dependencies
  */
-import { isMonthly } from 'calypso/lib/plans/constants';
 import {
+	isMonthly,
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
 	isWpComPersonalPlan,
 	isWpComPremiumPlan,
-} from 'calypso/lib/plans';
+} from '@automattic/calypso-products';
 import doesValueExist from './does-value-exist';
 
 export default function getPlanFeatures(
@@ -52,7 +52,7 @@ export default function getPlanFeatures(
 	if ( isWpComPersonalPlan( productSlug ) ) {
 		return [
 			isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
-			String( translate( 'Email support' ) ),
+			String( translate( 'Best-in-class hosting' ) ),
 			String( translate( 'Dozens of Free Themes' ) ),
 		].filter( doesValueExist );
 	}

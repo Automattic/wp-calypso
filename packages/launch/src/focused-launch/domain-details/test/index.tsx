@@ -19,7 +19,9 @@ describe( 'DomainStep', () => {
 		);
 
 		expect( screen.queryByText( /Choose a domain/i ) ).toBeTruthy();
-		expect( screen.queryByText( /Free for the first year with any paid plan/i ) ).toBeTruthy();
+		expect(
+			screen.queryByText( /Free for the first year with any (paid|annual) plan/i )
+		).toBeTruthy();
 	} );
 
 	test( 'Has domain search input', () => {

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React from 'react';
 import { Button, SVG, Circle } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import classnames from 'classnames';

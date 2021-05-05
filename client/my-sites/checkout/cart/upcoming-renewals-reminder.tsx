@@ -5,6 +5,7 @@ import React, { FunctionComponent, useMemo, useCallback, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import styled from '@emotion/styled';
+import type { RequestCartProduct } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -15,7 +16,7 @@ import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { Button } from '@automattic/components';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import { getName, isExpired, isRenewing } from 'calypso/lib/purchases';
-import { isPlan, isDomainRegistration } from 'calypso/lib/products-values';
+import { isPlan, isDomainRegistration } from '@automattic/calypso-products';
 import SectionHeader from 'calypso/components/section-header';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -55,7 +56,7 @@ interface SelectedSite {
 
 interface Props {
 	cart: MockResponseCart;
-	addItemToCart: ( product: object ) => void;
+	addItemToCart: ( product: RequestCartProduct ) => void;
 }
 
 const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemToCart } ) => {

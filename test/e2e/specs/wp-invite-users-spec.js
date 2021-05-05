@@ -37,15 +37,14 @@ const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 const emailClient = new EmailClient( inviteInboxId );
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
 
 	describe( 'Inviting new user as an Editor: @parallel @jetpack', function () {
 		const newUserName = 'e2eflowtestingeditora' + new Date().getTime().toString();
@@ -142,6 +141,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 		} );
 
 		step( 'As the invited user, I am no longer an editor on the site', async function () {
+			if ( 'WPCOM' !== dataHelper.getJetpackHost() ) return this.skip();
 			const loginPage = await LoginPage.Visit( driver );
 			await loginPage.login( newUserName, password );
 			await ReaderPage.Expect( driver );

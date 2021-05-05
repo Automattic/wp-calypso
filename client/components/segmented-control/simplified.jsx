@@ -3,12 +3,13 @@
  */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import SegmentedControl from '.';
+
+const noop = () => {};
 
 function SimplifiedSegmentedControl( {
 	options,

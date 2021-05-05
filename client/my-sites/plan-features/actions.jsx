@@ -4,7 +4,7 @@
 
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
@@ -15,10 +15,15 @@ import classNames from 'classnames';
 import { Button } from '@automattic/components';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isMonthly, PLAN_P2_FREE } from 'calypso/lib/plans/constants';
-import { getPlanClass, planLevelsMatch } from 'calypso/lib/plans';
+import {
+	isMonthly,
+	PLAN_P2_FREE,
+	getPlanClass,
+	planLevelsMatch,
+} from '@automattic/calypso-products';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
+const noop = () => {};
 const PlanFeaturesActions = ( props ) => {
 	return (
 		<div className="plan-features__actions">
@@ -145,12 +150,18 @@ const PlanFeaturesActionsButton = ( {
 		);
 	}
 
+	let buttonText = freePlan
+		? translate( 'Select Free', { context: 'button' } )
+		: translate( 'Upgrade', { context: 'verb' } );
+
+	if ( props.buttonText ) {
+		buttonText = props.buttonText;
+	}
+
 	if ( availableForPurchase || isPlaceholder ) {
 		return (
 			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
-				{ props.buttonText || freePlan
-					? translate( 'Select Free', { context: 'button' } )
-					: translate( 'Upgrade', { context: 'verb' } ) }
+				{ buttonText }
 			</Button>
 		);
 	}

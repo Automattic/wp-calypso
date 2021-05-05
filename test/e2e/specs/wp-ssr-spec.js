@@ -16,31 +16,31 @@ import * as driverManager from '../lib/driver-manager';
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 
-let driver;
-
-async function ssrWorksForPage( url ) {
+async function ssrWorksForPage( driver, url ) {
 	await driver.get( url );
-	const layoutSelector = by.css( '#wpcom[data-calypso-ssr="true"]' );
-	assert( await driver.findElement( layoutSelector ) );
+	const layoutLocator = by.css( '#wpcom[data-calypso-ssr="true"]' );
+	assert( await driver.findElement( layoutLocator ) );
 }
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-	await driverManager.ensureNotLoggedIn( driver );
-} );
 
 describe( 'Server-side rendering: @canary @parallel', function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+		await driverManager.ensureNotLoggedIn( driver );
+	} );
+
 	step( '/log-in renders on the server', async function () {
-		await ssrWorksForPage( LoginPage.getLoginURL() );
+		await ssrWorksForPage( driver, LoginPage.getLoginURL() );
 	} );
 
 	step( '/themes renders on the server', async function () {
-		await ssrWorksForPage( ThemesPage.getStartURL() );
+		await ssrWorksForPage( driver, ThemesPage.getStartURL() );
 	} );
 
 	step( '/theme/twentytwenty renders on the server', async function () {
-		await ssrWorksForPage( dataHelper.getCalypsoURL( 'theme/twentytwenty' ) );
+		await ssrWorksForPage( driver, dataHelper.getCalypsoURL( 'theme/twentytwenty' ) );
 	} );
 } );

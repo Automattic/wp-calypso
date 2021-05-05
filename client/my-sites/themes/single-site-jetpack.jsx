@@ -23,7 +23,7 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import {
 	FEATURE_UNLIMITED_PREMIUM_THEMES,
 	PLAN_JETPACK_SECURITY_REALTIME,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';

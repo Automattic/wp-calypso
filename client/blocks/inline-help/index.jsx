@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { identity } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -18,13 +17,10 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
 import { Button, RootChild } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
-import HappychatButton from 'calypso/components/happychat/button';
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
-import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'calypso/components/async-load';
 import { showInlineHelpPopover, hideInlineHelpPopover } from 'calypso/state/inline-help/actions';
 import isInlineHelpPopoverVisible from 'calypso/state/inline-help/selectors/is-inline-help-popover-visible';
-import isInlineHelpVisible from 'calypso/state/selectors/is-inline-help-visible';
 
 /**
  * Style dependencies
@@ -55,7 +51,6 @@ class InlineHelp extends Component {
 	};
 
 	static defaultProps = {
-		translate: identity,
 		isPopoverVisible: false,
 	};
 
@@ -128,14 +123,6 @@ class InlineHelp extends Component {
 	closeDialog = () => this.setState( { showDialog: false } );
 
 	render() {
-		// If the Customer Home Support Search is present then
-		// we do not want to render the InlineLine Help FAB at all
-		// otherwise there will be x2 Support Search UIs present on
-		// the page.
-		// see https://github.com/Automattic/wp-calypso/issues/38860
-		if ( ! this.props.isInlineHelpVisible ) {
-			return null;
-		}
 		const { translate, isPopoverVisible } = this.props;
 		const { showDialog, videoLink, dialogType } = this.state;
 		const inlineHelpButtonClasses = {
@@ -175,9 +162,6 @@ class InlineHelp extends Component {
 						onClose={ this.closeDialog }
 					/>
 				) }
-				{ this.props.isHappychatButtonVisible && config.isEnabled( 'happychat' ) && (
-					<HappychatButton className="inline-help__happychat-button" allowMobileRedirect />
-				) }
 			</div>
 		);
 	}
@@ -185,10 +169,8 @@ class InlineHelp extends Component {
 
 const mapStateToProps = ( state ) => {
 	return {
-		isHappychatButtonVisible: hasActiveHappychatSession( state ),
 		isHappychatOpen: isHappychatOpen( state ),
 		isPopoverVisible: isInlineHelpPopoverVisible( state ),
-		isInlineHelpVisible: isInlineHelpVisible( state ),
 	};
 };
 

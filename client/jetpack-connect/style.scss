@@ -230,7 +230,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 .jetpack-connect__logged-in-form {
 	.jetpack-connect__logged-in-form-user-text {
-		margin-bottom: 0;
 		text-align: center;
 	}
 
@@ -519,6 +518,15 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	font-size: $font-body-extra-small;
 	margin: 0 0 16px;
 	text-align: center;
+}
+
+.is-support-session {
+	.jetpack-connect__sso,
+	.jetpack-connect__authorize-form {
+		.jetpack-connect__tos-link {
+			display: none;
+		}
+	}
 }
 
 .jetpack-connect__tos-link-text {

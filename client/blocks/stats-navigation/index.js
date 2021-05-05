@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -109,4 +110,4 @@ export default connect( ( state, { siteId } ) => {
 			canCurrentUser( state, siteId, 'manage_options' ),
 		siteId,
 	};
-} )( StatsNavigation );
+} )( localize( StatsNavigation ) );

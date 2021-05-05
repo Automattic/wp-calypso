@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.1 (2021-04-05)
+
+- Ensure that lengthy text doesn't overflow in the Twitter preview.
+
 ## v1.1.0 (2020-09-10)
 
 - Twitter: Add previewing for attached images, videos, or quoted tweets.

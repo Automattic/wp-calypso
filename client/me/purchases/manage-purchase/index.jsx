@@ -14,7 +14,6 @@ import React, { Component, Fragment } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { abtest } from 'calypso/lib/abtest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { applyTestFiltersToPlansList } from 'calypso/lib/plans';
 import { Button, Card, CompactCard, ProductIcon } from '@automattic/components';
 import config from '@automattic/calypso-config';
 import {
@@ -77,10 +76,14 @@ import {
 	isJetpackProduct,
 	isConciergeSession,
 	isTitanMail,
-} from 'calypso/lib/products-values';
+	applyTestFiltersToPlansList,
+	isWpComMonthlyPlan,
+	JETPACK_PLANS,
+	JETPACK_LEGACY_PLANS,
+	JETPACK_PRODUCTS_LIST,
+	isP2Plus,
+} from '@automattic/calypso-products';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
-import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
-import { JETPACK_PLANS, JETPACK_LEGACY_PLANS } from 'calypso/lib/plans/constants';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import ProductLink from 'calypso/me/purchases/product-link';
 import PurchaseMeta from './purchase-meta';
@@ -112,7 +115,6 @@ import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dial
  * Style dependencies
  */
 import './style.scss';
-import { isP2Plus } from 'calypso/lib/products-values/is-p2-plus';
 
 class ManagePurchase extends Component {
 	static propTypes = {
@@ -524,7 +526,7 @@ class ManagePurchase extends Component {
 			);
 		} else if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
 			description = translate(
-				'The best way to create, communicate, and collaborate. An integrated workspace that is simple and easy to use.'
+				'Professional email integrated with Google Meet and other collaboration tools from Google.'
 			);
 
 			if ( purchase.purchaseRenewalQuantity ) {
@@ -636,6 +638,19 @@ class ManagePurchase extends Component {
 		return ! hasLoadedDomains;
 	}
 
+	getProductDisplayName() {
+		const { purchase, plan, translate } = this.props;
+
+		if ( ! plan || ! isWpComMonthlyPlan( purchase.productSlug ) ) {
+			return getDisplayName( purchase );
+		}
+
+		return translate( '%s Monthly', {
+			args: getDisplayName( purchase ),
+			comment: '%s will be a dotcom plan name. e.g. WordPress.com Business Monthly',
+		} );
+	}
+
 	renderPurchaseDetail( preventRenewal ) {
 		if ( this.isDataLoading( this.props ) || this.isDomainsLoading( this.props ) ) {
 			return this.renderPlaceholder();
@@ -670,7 +685,7 @@ class ManagePurchase extends Component {
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
 						{ this.renderPurchaseIcon() }
-						<h2 className="manage-purchase__title">{ getDisplayName( purchase ) }</h2>
+						<h2 className="manage-purchase__title">{ this.getProductDisplayName() }</h2>
 						<div className="manage-purchase__description">{ purchaseType( purchase ) }</div>
 						<div className="manage-purchase__price">
 							{ isPartnerPurchase( purchase ) ? (
@@ -810,9 +825,7 @@ function addPaymentMethodLinkText( { purchase, translate } ) {
 	if ( hasPaymentMethod( purchase ) && ! isPaidWithCredits( purchase ) ) {
 		linkText = translate( 'Change Payment Method' );
 	} else {
-		linkText = config.isEnabled( 'purchases/new-payment-methods' )
-			? translate( 'Add Payment Method' )
-			: translate( 'Add Credit Card' );
+		linkText = translate( 'Add Payment Method' );
 	}
 	return linkText;
 }

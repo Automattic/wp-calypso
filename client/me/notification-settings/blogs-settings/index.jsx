@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { find, noop } from 'lodash';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,7 +22,7 @@ import Placeholder from './placeholder';
 import './style.scss';
 
 const createPlaceholder = () => <Placeholder />;
-
+const noop = () => {};
 const getItemRef = ( { ID } ) => `blog-${ ID }`;
 
 class BlogsSettings extends Component {

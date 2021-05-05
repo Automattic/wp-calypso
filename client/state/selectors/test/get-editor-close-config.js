@@ -1,9 +1,13 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * Internal dependencies
  */
 import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
 import getPostTypeAllPostsUrl from 'calypso/state/selectors/get-post-type-all-posts-url';
-import getGutenbergEditorUrl from 'calypso/state/selectors/get-gutenberg-editor-url';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import PostQueryManager from 'calypso/lib/query-manager/post';
 
 const postType = 'post';
@@ -25,6 +29,7 @@ describe( 'getEditorCloseConfig()', () => {
 				},
 			},
 			ui: { selectedSiteId: siteId },
+			userSettings: { settings: {} },
 		};
 
 		expect( getEditorCloseConfig( state, siteId, postType ).url ).toEqual( customerHomeUrl );
@@ -43,6 +48,7 @@ describe( 'getEditorCloseConfig()', () => {
 			ui: {
 				selectedSiteId: siteId,
 			},
+			userSettings: { settings: {} },
 		};
 
 		const allPostsUrl = getPostTypeAllPostsUrl( state, postType );
@@ -76,9 +82,10 @@ describe( 'getEditorCloseConfig()', () => {
 				},
 			},
 			ui: { selectedSiteId: siteId },
+			userSettings: { settings: {} },
 		};
 
-		const parentPostEditorUrl = getGutenbergEditorUrl( state, siteId, parentPostId, pagePostType );
+		const parentPostEditorUrl = getEditorUrl( state, siteId, parentPostId, pagePostType );
 
 		expect( getEditorCloseConfig( state, siteId, templatePostType, parentPostId ).url ).toEqual(
 			parentPostEditorUrl
@@ -98,6 +105,7 @@ describe( 'getEditorCloseConfig()', () => {
 			ui: {
 				selectedSiteId: siteId,
 			},
+			userSettings: { settings: {} },
 		};
 
 		expect( getEditorCloseConfig( state, siteId, postType, '' ).url ).toEqual( customerHomeUrl );
@@ -116,6 +124,7 @@ describe( 'getEditorCloseConfig()', () => {
 			ui: {
 				selectedSiteId: siteId,
 			},
+			userSettings: { settings: {} },
 		};
 
 		expect( getEditorCloseConfig( state, siteId, postType, '' ).url ).toEqual( customerHomeUrl );
@@ -134,6 +143,7 @@ describe( 'getEditorCloseConfig()', () => {
 			ui: {
 				selectedSiteId: siteId,
 			},
+			userSettings: { settings: {} },
 		};
 
 		expect( getEditorCloseConfig( state, siteId, siteEditorPostType ).url ).toEqual(
@@ -154,6 +164,7 @@ describe( 'getEditorCloseConfig()', () => {
 			ui: {
 				selectedSiteId: siteId,
 			},
+			userSettings: { settings: {} },
 		};
 
 		expect( getEditorCloseConfig( state, siteId, siteEditorPostType, '' ).url ).toEqual(

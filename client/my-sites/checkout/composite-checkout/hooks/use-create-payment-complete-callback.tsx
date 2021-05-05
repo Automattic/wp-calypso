@@ -13,6 +13,7 @@ import type {
 } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
+import type { WPCOMTransactionEndpointResponse, Purchase } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -36,7 +37,6 @@ import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
-import type { TransactionResponse, Purchase } from '../types/wpcom-store-state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
@@ -50,10 +50,7 @@ import {
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import {
-	isTreatmentOneClickTest,
-	isTreatmentDifmUpsellTest,
-} from 'calypso/state/marketing/selectors';
+import { isTreatmentOneClickTest } from 'calypso/state/marketing/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
 
@@ -90,7 +87,6 @@ export default function useCreatePaymentCompleteCallback( {
 	const adminUrl = selectedSiteData?.options?.admin_url;
 	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( responseCart );
 	const shouldShowOneClickTreatment = useSelector( ( state ) => isTreatmentOneClickTest( state ) );
-	const shouldShowDifmUpsell = useSelector( ( state ) => isTreatmentDifmUpsellTest( state ) );
 	const previousRoute = useSelector( ( state ) => getPreviousRoute( state ) );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const isJetpackNotAtomic =
@@ -115,7 +111,6 @@ export default function useCreatePaymentCompleteCallback( {
 				productAliasFromUrl,
 				isEligibleForSignupDestinationResult,
 				shouldShowOneClickTreatment,
-				shouldShowDifmUpsell,
 				hideNudge: isComingFromUpsell,
 				isInEditor,
 				previousRoute,
@@ -225,7 +220,6 @@ export default function useCreatePaymentCompleteCallback( {
 		[
 			previousRoute,
 			shouldShowOneClickTreatment,
-			shouldShowDifmUpsell,
 			siteSlug,
 			adminUrl,
 			redirectTo,
@@ -330,7 +324,7 @@ function recordPaymentCompleteAnalytics( {
 	reduxDispatch,
 }: {
 	paymentMethodId: string | null;
-	transactionResult: TransactionResponse | undefined;
+	transactionResult: WPCOMTransactionEndpointResponse | undefined;
 	redirectUrl: string;
 	responseCart: ResponseCart;
 	reduxDispatch: ReturnType< typeof useDispatch >;

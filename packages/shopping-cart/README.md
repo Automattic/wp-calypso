@@ -29,14 +29,14 @@ This is a React hook that can be used in any child component under [ShoppingCart
 
 The following actions are also properties. Each one returns a Promise that resolves when the cart is next valid (this may be after several queued actions are complete).
 
-- `addProductsToCart: ( products: RequestCartProduct[] ) => Promise<void>`. A function that requests adding new products to the cart. May cause the cart to be replaced instead, depending on the RequestCartProducts (mostly renewals and non-renewals cannot co-exist in the cart at the same time).
-- `removeProductFromCart: ( uuidToRemove: string ) => Promise<void>`. A function that requests removing a product from the cart.
-- `applyCoupon: ( couponId: string ) => Promise<void>`. A function that requests applying a coupon to the cart (only one coupon can be applied at a time).
-- `removeCoupon: () => Promise<void>`. A function that requests removing a coupon to the cart.
-- `updateLocation: ( location: CartLocation ) => Promise<void>`. A function that can be used to change the tax location of the cart.
-- `replaceProductInCart: ( uuidToReplace: string, productPropertiesToChange: Partial< RequestCartProduct > ) => Promise<void>`. A function that can replace one product in the cart with another, retaining the same UUID; useful for changing product variants.
-- `replaceProductsInCart: ( products: RequestCartProduct[] ) => Promise<void>`. A function that replaces all the products in the cart with a new set of products. Can also be used to clear the cart.
-- `reloadFromServer: () => Promise<void>`. A function to throw away the current cart cache and fetch it fresh from the shopping cart API.
+- `addProductsToCart: ( products: RequestCartProduct[] ) => Promise<ResponseCart>`. A function that requests adding new products to the cart. May cause the cart to be replaced instead, depending on the RequestCartProducts (mostly renewals and non-renewals cannot co-exist in the cart at the same time).
+- `removeProductFromCart: ( uuidToRemove: string ) => Promise<ResponseCart>`. A function that requests removing a product from the cart.
+- `applyCoupon: ( couponId: string ) => Promise<ResponseCart>`. A function that requests applying a coupon to the cart (only one coupon can be applied at a time).
+- `removeCoupon: () => Promise<ResponseCart>`. A function that requests removing a coupon to the cart.
+- `updateLocation: ( location: CartLocation ) => Promise<ResponseCart>`. A function that can be used to change the tax location of the cart.
+- `replaceProductInCart: ( uuidToReplace: string, productPropertiesToChange: Partial< RequestCartProduct > ) => Promise<ResponseCart>`. A function that can replace one product in the cart with another, retaining the same UUID; useful for changing product variants.
+- `replaceProductsInCart: ( products: RequestCartProduct[] ) => Promise<ResponseCart>`. A function that replaces all the products in the cart with a new set of products. Can also be used to clear the cart.
+- `reloadFromServer: () => Promise<ResponseCart>`. A function to throw away the current cart cache and fetch it fresh from the shopping cart API.
 
 ## withShoppingCart
 
@@ -51,3 +51,7 @@ It takes one argument, an object which contains some or all of the properties in
 ## getEmptyResponseCart
 
 A function that returns an empty but valid `ResponseCart` object. Useful for tests where we need to mock the shopping cart response.
+
+## getEmptyResponseCartProduct
+
+A function that returns an empty but valid `ResponseCartProduct` object. Useful for tests where we need to mock the shopping cart response.

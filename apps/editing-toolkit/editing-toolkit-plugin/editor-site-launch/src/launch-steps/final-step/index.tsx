@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React from 'react';
 import classnames from 'classnames';
 import { ThemeProvider } from 'emotion-theming';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { sprintf } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Button, Tip } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import { useSiteDomains, useDomainSuggestion, useDomainSearch, useTitle } from '@automattic/launch';
-import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
+import { useI18n } from '@wordpress/react-i18n';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 import {
 	CheckoutStepBody,
@@ -22,7 +23,6 @@ import {
 	SubmitButtonWrapper,
 	FormStatus,
 } from '@automattic/composite-checkout';
-import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -48,6 +48,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 		}
 	);
 
+	const { __, hasTranslation } = useI18n();
 	const locale = useLocale();
 
 	const [ plan, planProduct ] = useSelect( ( select ) => [
@@ -127,7 +128,17 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 		</div>
 	);
 
-	const planSummaryCostLabelAnnually = __( 'billed annually', 'full-site-editing' );
+	const fallbackPlanSummaryCostLabelAnnually = __( 'billed annually', 'full-site-editing' );
+	// translators: %s is the cost per year (e.g "billed as 96$ annually")
+	const newPlanSummaryCostLabelAnnually = __(
+		'per month, billed as %s annually',
+		'full-site-editing'
+	);
+	const planSummaryCostLabelAnnually =
+		locale === 'en' || hasTranslation?.( 'per month, billed as %s annually' )
+			? sprintf( newPlanSummaryCostLabelAnnually, planProduct?.annualPrice )
+			: fallbackPlanSummaryCostLabelAnnually;
+
 	const planSummaryCostLabelMonthly = __( 'per month, billed monthly', 'full-site-editing' );
 
 	const planSummary = (

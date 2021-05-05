@@ -79,7 +79,7 @@ export interface PricedAPIPlanPaidMonthly extends PricedAPIPlan {
 }
 
 export type PlanFeature = {
-	id?: string;
+	id: string;
 	description?: string;
 	name: string;
 	requiresAnnuallyBilledPlan: boolean;

@@ -12,24 +12,24 @@ const mockIsEnabled = () => true;
  */
 jest.mock( 'i18n-calypso', () => ( {
 	...jest.requireActual( 'i18n-calypso' ),
-	useTranslate: jest.fn( mockUseTranslate ),
+	useTranslate: jest.fn(),
 } ) );
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
-	useSelector: jest.fn( mockUseSelector ),
-	useDispatch: jest.fn( mockUseDispatch ),
+	useSelector: jest.fn(),
+	useDispatch: jest.fn(),
 } ) );
 jest.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
 	default: jest.requireActual( '@automattic/calypso-config' ),
-	isEnabled: jest.fn( mockIsEnabled ),
+	isEnabled: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
 jest.mock( 'calypso/state/selectors/get-site-gmt-offset' );
 jest.mock( 'calypso/state/selectors/get-site-timezone-value' );
 jest.mock( '../hooks', () => ( {
 	...jest.requireActual( '../hooks' ),
-	useCanGoToDate: jest.fn( mockUseCanGoToDate ),
+	useCanGoToDate: jest.fn(),
 } ) );
 
 /**

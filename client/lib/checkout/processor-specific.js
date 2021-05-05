@@ -3,14 +3,13 @@
  *
  */
 import i18n from 'i18n-calypso';
-import { isUndefined, pick } from 'lodash';
+import { pick } from 'lodash';
 import { CPF, CNPJ } from 'cpf_cnpj';
 
 /**
  * Internal dependencies
  */
 import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'calypso/lib/checkout/constants';
-import CartStore from 'calypso/lib/cart/store';
 import isPaymentMethodEnabled from 'calypso/my-sites/checkout/composite-checkout/lib/is-payment-method-enabled';
 import { translateWpcomPaymentMethodToCheckoutPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 
@@ -18,15 +17,12 @@ import { translateWpcomPaymentMethodToCheckoutPaymentMethod } from 'calypso/my-s
  * Returns whether we should Ebanx credit card processing for a particular country
  *
  * @param {string} countryCode - a two-letter country code, e.g., 'DE', 'BR'
- * @param {import('@automattic/shopping-cart').ResponseCart} [cart] - The shopping cart
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - The shopping cart
  * @returns {boolean} Whether the country code requires ebanx payment processing
  */
-export function isEbanxCreditCardProcessingEnabledForCountry( countryCode = '', cart = null ) {
-	if ( ! cart ) {
-		cart = CartStore.get();
-	}
+export function isEbanxCreditCardProcessingEnabledForCountry( countryCode, cart ) {
 	return (
-		! isUndefined( PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ countryCode ] ) &&
+		typeof PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ countryCode ] !== 'undefined' &&
 		isPaymentMethodEnabled(
 			'ebanx',
 			cart.allowed_payment_methods?.map( translateWpcomPaymentMethodToCheckoutPaymentMethod )

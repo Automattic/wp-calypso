@@ -7,7 +7,6 @@
  */
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import pageSpy from 'page';
 import { parse } from 'qs';
 import React from 'react';
@@ -27,6 +26,7 @@ jest.mock( 'calypso/reader/stats', () => ( {
 jest.mock( 'calypso/lib/user', () => () => {} );
 jest.mock( 'page', () => require( 'sinon' ).spy() );
 const markPostSeen = jest.fn();
+const noop = () => {};
 
 describe( 'DailyPostButton', () => {
 	const [ sampleUserSite, sampleReadingSite ] = sites;

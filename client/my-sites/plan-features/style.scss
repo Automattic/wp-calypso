@@ -20,6 +20,10 @@ $plan-features-sidebar-width: 272px;
 
 		//To be moved to line 66 approximately
 		.plan-features__mobile {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+
 			@media ( min-width: 660px ) and ( max-width: 1040px ) {
 				.plan-features__summary, .plan-features__description {
 					padding: 16px 33px;
@@ -30,10 +34,6 @@ $plan-features-sidebar-width: 272px;
 				}
 			}
 
-			@media ( max-width: 1040px ) {
-				display: block;
-			}
-
 			.plan-features__header {
 				display: block;
 				position: relative;
@@ -42,27 +42,27 @@ $plan-features-sidebar-width: 272px;
 				border-top: solid 8px;
 				border-radius: 2px 2px 0 0;
 				padding-bottom: 12px;
-		
+
 				&.is-blogger-plan {
 					border-color: var( --color-plan-blogger );
 					border-bottom: solid 2px var( --color-neutral-10 );
 				}
-		
+
 				&.is-personal-plan {
 					border-color: var( --color-plan-personal );
 					border-bottom: solid 2px var( --color-neutral-10 );
 				}
-		
+
 				&.is-premium-plan {
 					border-color: var( --color-plan-premium );
 					border-bottom: solid 2px var( --color-neutral-10 );
 				}
-		
+
 				&.is-business-plan {
 					border-color: var( --color-plan-business );
 					border-bottom: solid 2px var( --color-neutral-10 );
 				}
-		
+
 				&.is-ecommerce-plan {
 					border-color: var( --color-plan-ecommerce );
 					border-bottom: solid 2px var( --color-neutral-10 );
@@ -81,7 +81,7 @@ $plan-features-sidebar-width: 272px;
 					font-size: $font-title-medium;
 					font-weight: 400;
 				}
-				
+
 				.plan-price__integer {
 					font-weight: 600;
 				}
@@ -98,6 +98,10 @@ $plan-features-sidebar-width: 272px;
 				color: var( --color-text-subtle );
 				line-height: normal;
 				text-align: center;
+			}
+
+			.plan-features__mobile-plan {
+				max-width: 408px;
 			}
 		}
 	}
@@ -132,7 +136,6 @@ $plan-features-sidebar-width: 272px;
 .plan-features__mobile {
 	color: var( --color-text-subtle );
 	margin: 0 16px;
-	display: block;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		display: none;
@@ -458,6 +461,10 @@ $plan-features-sidebar-width: 272px;
 			margin-bottom: 9px;
 		}
 	}
+
+	&.is-logged-in-monthly-pricing {
+		font-style: normal;
+	}
 }
 
 .plan-features__header-title-free {
@@ -586,6 +593,13 @@ $plan-features-sidebar-width: 272px;
 	margin-right: 10px;
 }
 
+.plan-features__item-unavailable {
+	flex: 0 1 auto;
+	fill: var( --color-neutral-30 );
+	margin-right: 10px;
+	transform: translate( 0, 2px );
+}
+
 .plan-features__item-tip-info {
 	flex: 0 1 auto;
 }
@@ -627,6 +641,13 @@ $plan-features-sidebar-width: 272px;
 	flex-direction: column;
 	flex: 1 0 0;
 	width: 100%;
+
+	&.is-annual-plan-feature:not( .is-available ) {
+		.plan-features__item-title {
+			text-decoration: line-through;
+			color: var( --color-neutral-30 );
+		}
+	}
 }
 
 .plan-features__item-title-outlined {
@@ -775,6 +796,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	.plan-features__pricing {
 		margin: 20px 20px -12px;
 		padding: 0;
+		text-align: center;
 
 		@include breakpoint-deprecated( '>660px' ) {
 			margin-bottom: 0;

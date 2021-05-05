@@ -27,6 +27,7 @@ import {
 	getEligibleGSuiteDomain,
 	getGoogleMailServiceFamily,
 	getGSuiteSupportedDomains,
+	getProductSlug,
 } from 'calypso/lib/gsuite';
 import {
 	areAllUsersValid,
@@ -35,10 +36,7 @@ import {
 	validateAgainstExistingUsers,
 } from 'calypso/lib/gsuite/new-users';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import {
-	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-	GSUITE_BASIC_SLUG,
-} from 'calypso/lib/gsuite/constants';
+import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -81,7 +79,7 @@ class GSuiteAddUsers extends React.Component {
 	}
 
 	handleContinue = () => {
-		const { domains, planType, selectedSite } = this.props;
+		const { domains, productType, selectedSite } = this.props;
 		const { users } = this.state;
 		const canContinue = areAllUsersValid( users );
 
@@ -90,11 +88,9 @@ class GSuiteAddUsers extends React.Component {
 		if ( canContinue ) {
 			this.props.shoppingCartManager
 				.addProductsToCart(
-					getItemsForCart(
-						domains,
-						'basic' === planType ? GSUITE_BASIC_SLUG : GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-						users
-					).map( ( item ) => fillInSingleCartItemAttributes( item, this.props.productsList ) )
+					getItemsForCart( domains, getProductSlug( productType ), users ).map( ( item ) =>
+						fillInSingleCartItemAttributes( item, this.props.productsList )
+					)
 				)
 				.then( () => {
 					this.isMounted && page( '/checkout/' + selectedSite.slug );
@@ -225,7 +221,7 @@ class GSuiteAddUsers extends React.Component {
 
 				<SectionHeader
 					label={ translate( 'Add New Users', {
-						comments: "'Users' refers to Google Workspace user accounts",
+						comment: 'This refers to Google Workspace user accounts',
 					} ) }
 				/>
 
@@ -256,11 +252,14 @@ class GSuiteAddUsers extends React.Component {
 	}
 
 	render() {
-		const { translate, planType, selectedDomainName, selectedSite } = this.props;
+		const { isNewAccount, productType, translate, selectedDomainName, selectedSite } = this.props;
 
-		const analyticsPath = planType
-			? emailManagementNewGSuiteAccount( ':site', ':domain', ':planType' )
+		const analyticsPath = isNewAccount
+			? emailManagementNewGSuiteAccount( ':site', ':domain', ':productType' )
 			: emailManagementAddGSuiteUsers( ':site', selectedDomainName ? ':domain' : undefined );
+
+		const googleMailServiceFamily = getGoogleMailServiceFamily( getProductSlug( productType ) );
+
 		return (
 			<Fragment>
 				<PageViewTracker path={ analyticsPath } title="Domain Management > Add G Suite Users" />
@@ -273,12 +272,12 @@ class GSuiteAddUsers extends React.Component {
 						onClick={ this.goToEmail }
 						selectedDomainName={ selectedDomainName }
 					>
-						{ getGoogleMailServiceFamily() }
+						{ googleMailServiceFamily }
 					</DomainManagementHeader>
 
 					<EmailVerificationGate
 						noticeText={ translate( 'You must verify your email to purchase %(productFamily)s.', {
-							args: { productFamily: getGoogleMailServiceFamily() },
+							args: { productFamily: googleMailServiceFamily },
 							comment: '%(productFamily)s can be either "G Suite" or "Google Workspace"',
 						} ) }
 						noticeStatus="is-info"
@@ -292,10 +291,12 @@ class GSuiteAddUsers extends React.Component {
 }
 
 GSuiteAddUsers.propTypes = {
+	currentRoute: PropTypes.string,
 	domains: PropTypes.array.isRequired,
 	gsuiteUsers: PropTypes.array,
+	isNewAccount: PropTypes.bool,
 	isRequestingDomains: PropTypes.bool.isRequired,
-	planType: PropTypes.oneOf( [ 'basic', 'starter' ] ),
+	productType: PropTypes.oneOf( [ GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE ] ),
 	selectedDomainName: PropTypes.string.isRequired,
 	selectedSite: PropTypes.shape( {
 		slug: PropTypes.string.isRequired,

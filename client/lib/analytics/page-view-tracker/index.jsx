@@ -5,7 +5,7 @@
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { get, isNumber, noop } from 'lodash';
+import { get } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -24,6 +24,7 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
  * Module variables
  */
 const debug = debugFactory( 'calypso:analytics:PageViewTracker' );
+const noop = () => {};
 
 export class PageViewTracker extends React.Component {
 	static displayName = 'PageViewTracker';
@@ -99,7 +100,7 @@ const mapStateToProps = ( state ) => {
 
 	const hasSelectedSiteLoaded =
 		! currentSlug ||
-		( isNumber( currentSlug ) && currentSlug === selectedSiteId ) ||
+		( typeof currentSlug === 'number' && currentSlug === selectedSiteId ) ||
 		currentSlug === selectedSiteSlug;
 
 	return {

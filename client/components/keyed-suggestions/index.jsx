@@ -5,11 +5,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
 	has,
-	noop,
 	pick,
 	pickBy,
 	without,
-	negate,
 	isEmpty,
 	take,
 	filter,
@@ -25,6 +23,8 @@ import i18n from 'i18n-calypso';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 function SuggestionsButtonAll( props ) {
 	function click() {
@@ -153,7 +153,7 @@ class KeyedSuggestions extends React.Component {
 	};
 
 	removeEmptySuggestions = ( suggestions ) => {
-		return pickBy( suggestions, negate( isEmpty ) );
+		return pickBy( suggestions, ( suggestion ) => ! isEmpty( suggestion ) );
 	};
 
 	/**

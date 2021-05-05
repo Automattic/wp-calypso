@@ -5,12 +5,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
+
+const noop = () => {};
 
 const SiteToolsLink = ( { description, href, isWarning, onClick, title } ) => {
 	const titleClasses = classNames( 'site-tools__section-title', {

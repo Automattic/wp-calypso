@@ -6,7 +6,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { includes, noop, truncate } from 'lodash';
+import { includes, truncate } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -27,6 +27,8 @@ import { ProgressBar } from '@automattic/components';
  * Style dependencies
  */
 import './uploading-pane.scss';
+
+const noop = () => {};
 
 class UploadingPane extends React.PureComponent {
 	static displayName = 'SiteSettingsUploadingPane';

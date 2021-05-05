@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-
 import debugModule from 'debug';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,7 +23,7 @@ import localStorageBypass from 'calypso/lib/local-storage-bypass';
 
 const debug = debugModule( 'calypso:support-user' );
 const STORAGE_KEY = 'boot_support_user';
-
+const noop = () => {};
 const isEnabled = () => config.isEnabled( 'support-user' );
 
 let _setReduxStore = noop;

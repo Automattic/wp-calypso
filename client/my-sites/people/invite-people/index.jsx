@@ -20,7 +20,7 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import { generateInviteLinks, disableInviteLinks } from 'calypso/lib/invites/actions';
+import { generateInviteLinks, disableInviteLinks } from 'calypso/state/invites/actions';
 import { Card, Button } from '@automattic/components';
 import Main from 'calypso/components/main';
 import HeaderCake from 'calypso/components/header-cake';
@@ -529,6 +529,8 @@ class InvitePeople extends React.Component {
 		this.setState( {
 			isGeneratingInviteLinks: true,
 		} );
+
+		this.props.recordTracksEventAction( 'calypso_invite_people_generate_new_link_button_click' );
 
 		return this.props.generateInviteLinks( this.props.siteId );
 	};

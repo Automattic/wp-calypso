@@ -23,6 +23,7 @@ describe( 'AppPromo', () => {
 		location: 'reader',
 		promoItem: appPromoDetails,
 		getPromoLink: () => appPromoLink,
+		translate: ( string ) => string,
 	};
 	// The reason we don't import this higher up is this component can't be
 	// imported until the fake DOM is setup.

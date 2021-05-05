@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { Theme } from 'src/lib/theme';
+import { Theme } from '../lib/theme';
 import styled from '../lib/styled';
 
 const RadioButtonWrapper = styled.div<

@@ -1,12 +1,10 @@
 /**
  * External dependencies
  */
-
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
-import { isFunction } from 'lodash';
 
 /**
  * Internal dependencies
@@ -39,12 +37,14 @@ export default function SidebarItem( props ) {
 	const expandSectionIfSelected = () => {
 		const { expandSection, selected } = props;
 
-		if ( selected && isFunction( expandSection ) ) {
+		if ( selected && typeof expandSection === 'function' ) {
 			expandSection();
 		}
 	};
 
 	useEffect( expandSectionIfSelected, [ props.selected ] );
+
+	const linkProps = showAsExternal ? { target: '_blank', rel: 'noreferrer' } : {};
 
 	return (
 		<li className={ classes } data-tip-target={ props.tipTarget } data-post-type={ props.postType }>
@@ -52,9 +52,8 @@ export default function SidebarItem( props ) {
 				className="sidebar__menu-link"
 				onClick={ props.onNavigate }
 				href={ props.link }
-				target={ showAsExternal ? '_blank' : null }
-				rel={ isExternalLink ? 'noopener noreferrer' : null }
 				onMouseEnter={ itemPreload }
+				{ ...linkProps }
 			>
 				{ icon && <Gridicon className={ 'sidebar__menu-icon' } icon={ icon } size={ 24 } /> }
 
@@ -70,7 +69,12 @@ export default function SidebarItem( props ) {
 
 				{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 				<span className="sidebar__menu-link-text menu-link-text" data-e2e-sidebar={ props.label }>
-					{ stripHTML( decodeEntities( props.label ) ) }
+					{
+						// String labels should be sanitized, whereas React components should be rendered as is
+						'string' === typeof props.label
+							? stripHTML( decodeEntities( props.label ) )
+							: props.label
+					}
 					{ !! count && <Count count={ count } /> }
 				</span>
 				{ showAsExternal && <Gridicon icon="external" size={ 24 } /> }

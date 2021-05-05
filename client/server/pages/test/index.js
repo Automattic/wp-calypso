@@ -74,11 +74,6 @@ jest.mock( 'calypso/state/redux-store', () => ( {
 
 jest.mock( 'calypso/state/reducer', () => jest.fn() );
 
-jest.mock( 'calypso/state/action-types', () => ( {
-	DESERIALIZE: 'DESERIALIZE',
-	LOCALE_SET: 'LOCALE_SET',
-} ) );
-
 jest.mock( 'calypso/state/current-user/actions', () => ( {
 	setCurrentUser: jest.fn(),
 } ) );
@@ -331,7 +326,7 @@ const buildApp = ( environment ) => {
 					url: defaultUrl,
 					method: 'GET',
 					get: jest.fn(),
-					connection: {},
+					socket: {},
 					logger: {
 						error: jest.fn(),
 					},
@@ -521,7 +516,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 			app.withMockedVariable( process.env, 'NODE_ENV', 'development' );
 		} );
 
-		it( 'uses the value from DEV_TARGET ', async () => {
+		it( 'uses the value from DEV_TARGET', async () => {
 			app.withMockedVariable( process.env, 'DEV_TARGET', 'fallback' );
 			const { request } = await app.run();
 			expect( request.context.target ).toEqual( 'fallback' );
@@ -638,15 +633,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		customApp.withMockFilesystem();
 		const { request } = await customApp.run();
 		expect( request.context.app.isDebug ).toEqual( true );
-	} );
-
-	it( 'sets the static files urls', async () => {
-		const { request } = await app.run();
-		const staticUrls = request.context.app.staticUrls;
-		expect( staticUrls ).toEqual( {
-			'tinymce/skins/wordpress/wp-content.css':
-				'/calypso/tinymce/skins/wordpress/wp-content.css?v=hash',
-		} );
 	} );
 
 	describe( 'with environment wpcalypso', () => {
@@ -1120,7 +1106,7 @@ describe( 'main app', () => {
 	} );
 
 	describe( 'Middleware localSubdomains', () => {
-		describe( 'sets locale info in the request context ', () => {
+		describe( 'sets locale info in the request context', () => {
 			it( 'rtl language', async () => {
 				const { request } = await app.run( {
 					request: {

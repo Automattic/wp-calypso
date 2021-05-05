@@ -21,18 +21,18 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-let driver;
 let supportSearchComponent;
 
-const helpCardSelector = By.css( '.help-search' );
+const helpCardLocator = By.css( '.help-search' );
 
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
-describe( `[${ host }] My Home "Get help" support search card: (${ screenSize }) @parallel`, async function () {
+describe( `[${ host }] My Home "Get help" support search card: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
 
 	step( 'Login and select the My Home page', async function () {
 		const loginFlow = new LoginFlow( driver );
@@ -47,13 +47,13 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 
 	step( 'Verify "Get help" support card is displayed', async function () {
 		// Card can take a little while to display, so let's wait...
-		await driverHelper.waitTillPresentAndDisplayed( driver, helpCardSelector );
+		await driverHelper.waitUntilElementLocatedAndVisible( driver, helpCardLocator );
 
 		// For safety also scroll into viewport - also helps when visually verify test runs.
-		await driverHelper.scrollIntoView( driver, helpCardSelector );
+		await driverHelper.scrollIntoView( driver, helpCardLocator );
 
 		// Verify it is there.
-		const isGetHelpCardPresent = await driverHelper.isElementPresent( driver, helpCardSelector );
+		const isGetHelpCardPresent = await driverHelper.isElementLocated( driver, helpCardLocator );
 		assert.equal(
 			isGetHelpCardPresent,
 			true,

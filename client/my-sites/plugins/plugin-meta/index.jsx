@@ -34,12 +34,17 @@ import PluginAutomatedTransfer from 'calypso/my-sites/plugins/plugin-automated-t
 import { getExtensionSettingsPath, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { userCan } from 'calypso/lib/site/utils';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { FEATURE_UPLOAD_PLUGINS, TYPE_BUSINESS } from 'calypso/lib/plans/constants';
-import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
-import { isBusiness, isEcommerce, isEnterprise } from 'calypso/lib/products-values';
+import {
+	findFirstSimilarPlanKey,
+	FEATURE_UPLOAD_PLUGINS,
+	TYPE_BUSINESS,
+	isBusiness,
+	isEcommerce,
+	isEnterprise,
+} from '@automattic/calypso-products';
 import { addSiteFragment } from 'calypso/lib/route';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { isAutomatedTransferActive } from 'calypso/state/automated-transfer/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -149,6 +154,23 @@ export class PluginMeta extends Component {
 			! this.props.selectedSite.jetpack && includes( installedPlugins, this.props.plugin.name )
 		);
 	};
+
+	renderSupportedFlag() {
+		const supportedAuthors = [ 'Automattic', 'WooCommerce' ];
+		const { plugin, translate } = this.props;
+		if (
+			this.props.isJetpackSite ||
+			! supportedAuthors.find( ( author ) => author === plugin.author_name )
+		) {
+			return;
+		}
+
+		return (
+			<div className="plugin-meta__supported-flag">
+				{ translate( 'Supported by WordPress.com' ) }
+			</div>
+		);
+	}
 
 	renderActions() {
 		if ( ! this.props.selectedSite ) {
@@ -559,7 +581,9 @@ export class PluginMeta extends Component {
 								isPlaceholder={ this.props.isPlaceholder }
 							/>
 							{ this.renderName() }
-							<div className="plugin-meta__meta">{ this.renderAuthorUrl() }</div>
+							<div className="plugin-meta__meta">
+								{ this.renderAuthorUrl() } { this.renderSupportedFlag() }
+							</div>
 						</div>
 						{ ! this.props.calypsoify && this.renderActions() }
 					</div>
@@ -639,6 +663,7 @@ const mapStateToProps = ( state, { plugin, sites } ) => {
 		isVipSite: isVipSite( state, siteId ),
 		slug: getSiteSlug( state, siteId ),
 		pluginsOnSites: getPluginOnSites( state, siteIds, plugin.slug ),
+		isJetpackSite: isJetpackSite( state, siteId ),
 	};
 };
 

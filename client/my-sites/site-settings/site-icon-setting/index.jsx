@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { head, partial, partialRight, isEqual, flow, compact, includes } from 'lodash';
+import { head, isEqual, flow, compact, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -55,8 +55,7 @@ class SiteIconSetting extends Component {
 		siteSupportsImageEditor: PropTypes.bool,
 		customizerUrl: PropTypes.string,
 		generalOptionsUrl: PropTypes.string,
-		onEditSelectedMedia: PropTypes.func,
-		onCancelEditingIcon: PropTypes.func,
+		setEditorMediaModalView: PropTypes.func,
 		resetAllImageEditorState: PropTypes.func,
 		crop: PropTypes.object,
 	};
@@ -84,7 +83,7 @@ class SiteIconSetting extends Component {
 	editSelectedMedia = ( value ) => {
 		if ( value ) {
 			this.setState( { isEditingSiteIcon: true } );
-			this.props.onEditSelectedMedia();
+			this.props.setEditorMediaModalView( ModalViews.IMAGE_EDITOR );
 		} else {
 			this.hideModal();
 		}
@@ -140,21 +139,21 @@ class SiteIconSetting extends Component {
 	};
 
 	confirmRemoval = () => {
-		const { translate, siteId, removeSiteIcon, recordEvent } = this.props;
+		const { translate, siteId, recordEvent } = this.props;
 		const message = translate( 'Are you sure you want to remove the site icon?' );
 
 		recordEvent( 'Clicked Remove Site Icon' );
 
 		accept( message, ( accepted ) => {
 			if ( accepted ) {
-				removeSiteIcon( siteId );
+				this.props.saveSiteSettings( siteId, { site_icon: '' } );
 				recordEvent( 'Confirmed Remove Site Icon' );
 			}
 		} );
 	};
 
 	cancelEditingSiteIcon = () => {
-		this.props.onCancelEditingIcon();
+		this.props.setEditorMediaModalView( ModalViews.LIST );
 		this.props.resetAllImageEditorState();
 		this.setState( { isEditingSiteIcon: false } );
 	};
@@ -300,11 +299,9 @@ export default connect(
 	},
 	{
 		recordEvent: ( action ) => recordGoogleEvent( 'Site Settings', action ),
-		onEditSelectedMedia: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
-		onCancelEditingIcon: partial( setEditorMediaModalView, ModalViews.LIST ),
+		setEditorMediaModalView,
 		resetAllImageEditorState,
 		saveSiteSettings,
-		removeSiteIcon: partialRight( saveSiteSettings, { site_icon: '' } ),
 		uploadSiteIcon,
 	}
 )( localize( SiteIconSetting ) );

@@ -34,17 +34,16 @@ const screenSize = driverManager.currentScreenSize();
 const domainsInboxId = config.get( 'domainsInboxId' );
 const host = dataHelper.getJetpackHost();
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
-describe( `[${ host }] Managing Domains: (${ screenSize })`, function () {
+describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
 
-	describe( 'Adding a domain to an existing site @parallel', function () {
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
+
+	describe( 'Adding a domain to an existing site', function () {
 		const blogName = dataHelper.getNewBlogName();
 		const domainEmailAddress = dataHelper.getEmailAddress( blogName, domainsInboxId );
 		const expectedDomainName = blogName + '.com';
@@ -67,7 +66,9 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function () {
 		step( 'Can see the Domains page and choose add a domain', async function () {
 			const domainsPage = await DomainsPage.Expect( driver );
 			await domainsPage.setABTestControlGroupsInLocalStorage();
-			return await domainsPage.clickAddDomain();
+			await domainsPage.clickAddDomain();
+			await domainsPage.popOverMenuDisplayed();
+			return await domainsPage.clickPopoverItem( 'to this site' );
 		} );
 
 		step( 'Can see the domain search component', async function () {
@@ -114,12 +115,16 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function () {
 			const sidebarComponent = await SidebarComponent.Expect( driver );
 			await sidebarComponent.selectDomains();
 			await DomainsPage.Expect( driver );
-			const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( driver );
-			return await shoppingCartWidgetComponent.empty();
+			try {
+				const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( driver );
+				await shoppingCartWidgetComponent.empty();
+			} catch {
+				console.log( 'Cart already empty' );
+			}
 		} );
 	} );
 
-	describe( 'Map a domain to an existing site @parallel', function () {
+	describe( 'Map a domain to an existing site', function () {
 		const blogName = 'nature.com';
 
 		before( async function () {
@@ -139,7 +144,9 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function () {
 		step( 'Can see the Domains page and choose add a domain', async function () {
 			const domainsPage = await DomainsPage.Expect( driver );
 			await domainsPage.setABTestControlGroupsInLocalStorage();
-			return await domainsPage.clickAddDomain();
+			await domainsPage.clickAddDomain();
+			await domainsPage.popOverMenuDisplayed();
+			return await domainsPage.clickPopoverItem( 'to this site' );
 		} );
 
 		step( 'Can see the domain search component', async function () {
@@ -196,8 +203,12 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function () {
 			const sideBarComponent = await SidebarComponent.Expect( driver );
 			await sideBarComponent.selectDomains();
 			await DomainsPage.Expect( driver );
-			const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( driver );
-			return await shoppingCartWidgetComponent.empty();
+			try {
+				const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( driver );
+				await shoppingCartWidgetComponent.empty();
+			} catch {
+				console.log( 'Cart already empty' );
+			}
 		} );
 	} );
 } );

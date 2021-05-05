@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
-import { isEmpty } from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { FunctionComponent, useMemo, useState, useEffect } from 'react';
+import React, { FunctionComponent, useCallback, useMemo, useState, useEffect } from 'react';
 
 /**
  * Internal dependencies
@@ -96,7 +95,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 		getJetpackCredentials( state, siteId, role )
 	) as FormState & { abspath: string };
 
-	const hasCredentials = ! isEmpty( credentials );
+	const hasCredentials = credentials && Object.keys( credentials ).length > 0;
 
 	const statusState = useMemo( (): StatusState => {
 		if ( isRequestingCredentials ) {
@@ -202,21 +201,34 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 		}
 	}, [ currentStep, dispatch, host ] );
 
+	const disableForm = 'pending' === formSubmissionStatus;
+	const formHasErrors = formErrors && Object.keys( formErrors ).length > 0;
+
 	const handleDeleteCredentials = () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_credentials_delete' ) );
-
 		dispatch( deleteCredentials( siteId, role ) );
+
+		setFormState( INITIAL_FORM_STATE );
+		setFormMode( FormMode.Password );
+		setFormErrors( INITIAL_FORM_ERRORS );
 	};
 
-	const handleUpdateCredentials = () => {
-		if ( ! isEmpty( formErrors ) ) {
+	const handleUpdateCredentials = useCallback( () => {
+		if ( formHasErrors ) {
 			return;
 		}
-		dispatch( recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_credentials_update' ) );
-		dispatch( updateCredentials( siteId, { role, ...formState }, true, false ) );
-	};
 
-	const disableForm = 'pending' === formSubmissionStatus;
+		const credentials = { role, ...formState };
+
+		if ( formMode === FormMode.Password ) {
+			credentials.kpri = '';
+		} else if ( formMode === FormMode.PrivateKey ) {
+			credentials.pass = '';
+		}
+
+		dispatch( recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_credentials_update' ) );
+		dispatch( updateCredentials( siteId, credentials, true, false ) );
+	}, [ formHasErrors, dispatch, siteId, role, formState, formMode ] );
 
 	const renderUnconnectedButtons = () => (
 		<>
@@ -234,11 +246,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 				<Gridicon icon="arrow-left" size={ 18 } />
 				{ translate( 'Change host' ) }
 			</Button>
-			<Button
-				primary
-				onClick={ handleUpdateCredentials }
-				disabled={ ! isEmpty( formErrors ) || disableForm }
-			>
+			<Button primary onClick={ handleUpdateCredentials } disabled={ disableForm || formHasErrors }>
 				{ translate( 'Test and save credentials' ) }
 			</Button>
 		</>
@@ -249,10 +257,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			<Button scary disabled={ disableForm } onClick={ handleDeleteCredentials }>
 				{ translate( 'Delete credentials' ) }
 			</Button>
-			<Button
-				onClick={ handleUpdateCredentials }
-				disabled={ ! isEmpty( formErrors ) || disableForm }
-			>
+			<Button onClick={ handleUpdateCredentials } disabled={ disableForm || formHasErrors }>
 				{ translate( 'Update credentials' ) }
 			</Button>
 		</>

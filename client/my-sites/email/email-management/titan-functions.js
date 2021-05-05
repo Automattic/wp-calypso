@@ -20,13 +20,15 @@ export const fetchTitanAutoLoginURL = ( emailAccountId, context ) => {
 	} );
 };
 
-export const fetchTitanIframeURL = ( emailAccountId ) => {
+export const fetchTitanIframeURL = ( emailAccountId, context ) => {
 	return new Promise( ( resolve ) => {
-		wpcom.undocumented().getTitanControlPanelIframeURL( emailAccountId, ( serverError, result ) => {
-			resolve( {
-				error: serverError?.message,
-				iframeURL: serverError ? null : result.iframe_url,
+		wpcom
+			.undocumented()
+			.getTitanControlPanelIframeURL( emailAccountId, context, ( serverError, result ) => {
+				resolve( {
+					error: serverError?.message,
+					iframeURL: serverError ? null : result.iframe_url,
+				} );
 			} );
-		} );
 	} );
 };

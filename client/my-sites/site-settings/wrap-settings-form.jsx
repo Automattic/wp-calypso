@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
-import { flowRight, isEqual, isObjectLike, keys, omit, pick, isNaN } from 'lodash';
+import { flowRight, isEqual, keys, omit, pick } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
@@ -98,7 +98,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			const previousDirtyFields = this.props.dirtyFields;
 			/*eslint-disable eqeqeq*/
 			const nextDirtyFields = previousDirtyFields.filter( ( field ) =>
-				isObjectLike( currentFields[ field ] )
+				currentFields[ field ] !== null && typeof currentFields[ field ] === 'object'
 					? ! isEqual( currentFields[ field ], persistedFields[ field ] )
 					: ! ( currentFields[ field ] == persistedFields[ field ] )
 			);
@@ -190,7 +190,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			const { name, value } = event.currentTarget;
 			// Attempt to cast numeric fields value to int
 			const parsedValue = parseInt( value, 10 );
-			this.props.updateFields( { [ name ]: isNaN( parsedValue ) ? value : parsedValue } );
+			this.props.updateFields( { [ name ]: Number.isNaN( parsedValue ) ? value : parsedValue } );
 		};
 
 		handleToggle = ( name ) => () => {

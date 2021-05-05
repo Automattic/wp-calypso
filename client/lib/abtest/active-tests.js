@@ -6,7 +6,7 @@
 
 /**************************************************************************************************/
 /* This library is deprecated! Please consider ExPlat for your next A/B experiment.               */
-/* See /client/components/experiment/readme.md for more info!
+/* See /client/lib/explat/readme.md for more info!
 /**************************************************************************************************/
 
 export default {
@@ -42,21 +42,12 @@ export default {
 	newUsersWithFreePlan: {
 		datestamp: '20210107',
 		variations: {
-			newOnboarding: 50,
-			control: 50,
+			newOnboarding: 0,
+			control: 100,
 		},
 		localeTargets: 'any',
 		localeExceptions: [ 'en', 'es' ],
 		defaultVariation: 'control',
 		allowExistingUsers: false,
-	},
-	jetpackNewPurchaseIntroPricing: {
-		datestamp: '20210217',
-		variations: {
-			withIntroPricing: 50,
-			withoutIntroPricing: 50,
-		},
-		defaultVariation: 'withoutIntroPricing',
-		allowExistingUsers: true,
 	},
 };

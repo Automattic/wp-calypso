@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { includes, noop, get } from 'lodash';
+import { includes, get } from 'lodash';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { Button } from '@automattic/components';
 
@@ -36,6 +36,8 @@ import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/co
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class MapDomainStep extends React.Component {
 	static propTypes = {

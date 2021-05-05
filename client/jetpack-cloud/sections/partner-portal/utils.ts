@@ -1,7 +1,20 @@
 /**
  * Internal dependencies
  */
-import { LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import {
+	LicenseFilter,
+	LicenseSortField,
+	LicenseState,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import { APIPartner, Partner } from 'calypso/state/partner-portal/types';
+
+/**
+ * Noop which can be reused (e.g. in equality checks).
+ *
+ * @returns {void}
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+export function noop() {}
 
 /**
  * Get the state of a license based on its properties.
@@ -45,4 +58,114 @@ export function valueToEnum< T >(
 	fallback: unknown
 ): T {
 	return Object.values( enumType ).includes( value ) ? ( value as T ) : ( fallback as T );
+}
+
+const internalFilterMap = {
+	[ LicenseFilter.NotRevoked ]: '',
+	[ LicenseFilter.Attached ]: 'assigned',
+	[ LicenseFilter.Detached ]: 'unassigned',
+} as { [ key: string ]: string };
+
+const publicFilterMap = {
+	[ internalFilterMap[ LicenseFilter.Attached ] ]: LicenseFilter.Attached,
+	[ internalFilterMap[ LicenseFilter.Detached ] ]: LicenseFilter.Detached,
+} as { [ key: string ]: LicenseFilter };
+
+/**
+ * Convert a public license filter to its internal representation.
+ * Public filter differences are entirely cosmetic.
+ *
+ * @param {string} publicFilter Public filter value (e.g. "assigned").
+ * @param {LicenseFilter} fallback Filter to return if publicFilter is invalid.
+ * @returns {LicenseFilter} Internal filter.
+ */
+export function publicToInternalLicenseFilter(
+	publicFilter: string,
+	fallback: LicenseFilter
+): LicenseFilter {
+	return valueToEnum< LicenseFilter >(
+		LicenseFilter,
+		publicFilterMap[ publicFilter ] || publicFilter,
+		fallback
+	);
+}
+
+/**
+ * Convert an internal license filter to its public representation.
+ * Public filter differences are entirely cosmetic.
+ *
+ * @param {LicenseFilter} internalFilter Internal filter (e.g. LicenseFilter.Attached).
+ * @returns {string} Public filter.
+ */
+export function internalToPublicLicenseFilter( internalFilter: LicenseFilter ): string {
+	return internalFilterMap[ internalFilter ] || internalFilter;
+}
+
+const internalSortFieldMap = {
+	[ LicenseSortField.AttachedAt ]: 'assigned_on',
+} as { [ key: string ]: string };
+
+const publicSortFieldMap = {
+	[ internalSortFieldMap[ LicenseSortField.AttachedAt ] ]: LicenseSortField.AttachedAt,
+} as { [ key: string ]: LicenseSortField };
+
+/**
+ * Convert a public license sort field to its internal representation.
+ * Public sort field differences are entirely cosmetic.
+ *
+ * @param {string} publicSortField Public sort field value (e.g. "assigned_on").
+ * @param {LicenseSortField} fallback Sort field to return if publicSortField is invalid.
+ * @returns {LicenseSortField} Internal sort field.
+ */
+export function publicToInternalLicenseSortField(
+	publicSortField: string,
+	fallback: LicenseSortField
+): LicenseSortField {
+	return valueToEnum< LicenseSortField >(
+		LicenseSortField,
+		publicSortFieldMap[ publicSortField ] || publicSortField,
+		fallback
+	);
+}
+
+/**
+ * Convert an internal license sort field to its public representation.
+ * Public sort field differences are entirely cosmetic.
+ *
+ * @param {LicenseSortField} internalSortField Internal sort field (e.g. LicenseSortField.AttachedAt).
+ * @returns {string} Public sort field.
+ */
+export function internalToPublicLicenseSortField( internalSortField: LicenseSortField ): string {
+	return internalSortFieldMap[ internalSortField ] || internalSortField;
+}
+
+/**
+ * Check if the given URL belongs to the Partner Portal. If true, returns the URL, otherwise it returns the
+ *  Partner Portal base URL: '/partner-portal'
+ *
+ * @param {string} returnToUrl The URL that
+ * @returns {string} The right URL to return to
+ */
+export function ensurePartnerPortalReturnUrl( returnToUrl: string ): string {
+	return returnToUrl && returnToUrl.startsWith( '/partner-portal' )
+		? returnToUrl
+		: '/partner-portal';
+}
+
+/**
+ * Format an APIPartner instance to a store-friendly Partner instance.
+ *
+ * @param {APIPartner} partner API partner object to format.
+ * @returns {Partner} Formatted store-friendly Partner object.
+ */
+export function formatApiPartner( partner: APIPartner ): Partner {
+	return {
+		...partner,
+		keys: partner.keys.map( ( key ) => ( {
+			id: key.id,
+			name: key.name,
+			oAuth2Token: key.oauth2_token,
+			disabledOn: key.disabled_on,
+		} ) ),
+	};
 }

@@ -2,6 +2,24 @@
 
 ## trunk
 
+## 8.0.0
+
+- Breaking: Drop option `postCssConfig` for Sass loader. The property `postCssOptions` will be passed as is
+  to `postcss-loader`. See the doc in <https://github.com/webpack-contrib/postcss-loader#postcssoptions>
+- Breaking: `calypso-build`, `transpile` and `webpack/minify` won't set `defaults` as browserslist environment anymore.
+  Instead they will fallback to the [default resolution methods from browserslist](https://github.com/browserslist/browserslist#queries)
+- Breaking: `webpack/minify` API has changed. Now it only accepts 4 options: `terserOptions`, `cssMinimizerOptions`, `parallel` and `extractComments`.
+- Added: `webpack/minify` will use CssMinimizerWebpackPlugin to minimize CSS files.
+- Added: option `cacheCompression` to toggle babel cache compression
+- Added: option `bugfixes` for `calypso-build/babel/default` preset to toggle <https://babeljs.io/docs/en/babel-preset-env#bugfixes>
+- Added dependencies:
+  - css-minimizer-webpack-plugin ^1.3.0
+  - postcss ^8.2.6 (peer dependency)
+- Updated dependencies:
+  - postcss-custom-properties to ^11.0.0
+  - postcss-loader to ^5.0.0
+  - @automattic/webpack-rtl-plugin to ^5.0.0
+
 ## 7.0.0
 
 - Breaking: drop support for wepback 4

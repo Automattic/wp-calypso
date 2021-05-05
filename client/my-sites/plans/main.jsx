@@ -32,14 +32,18 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { getPlan, isWpComPlan } from 'calypso/lib/plans';
-import getIntervalTypeForTerm from 'calypso/lib/plans/get-interval-type-for-term';
-import { isMonthly } from 'calypso/lib/plans/constants';
+import {
+	getPlan,
+	getIntervalTypeForTerm,
+	isWpComMonthlyPlan,
+	isWpComFreePlan,
+} from '@automattic/calypso-products';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 
 class Plans extends React.Component {
 	static propTypes = {
 		context: PropTypes.object.isRequired,
+		redirectToAddDomainFlow: PropTypes.bool,
 		displayJetpackPlans: PropTypes.bool,
 		intervalType: PropTypes.string,
 		customerType: PropTypes.string,
@@ -67,20 +71,22 @@ class Plans extends React.Component {
 	}
 
 	isInvalidPlanInterval() {
-		const { displayJetpackPlans, hasWpcomMonthlyPlan, intervalType, selectedSite } = this.props;
+		const {
+			displayJetpackPlans,
+			isEligibleForWpComMonthlyPlan,
+			intervalType,
+			selectedSite,
+		} = this.props;
 		const isJetpack2Yearly = displayJetpackPlans && intervalType === '2yearly';
 		const isWpcomMonthly = ! displayJetpackPlans && intervalType === 'monthly';
 
-		return selectedSite && ( isJetpack2Yearly || ( isWpcomMonthly && ! hasWpcomMonthlyPlan ) );
+		return (
+			selectedSite && ( isJetpack2Yearly || ( isWpcomMonthly && ! isEligibleForWpComMonthlyPlan ) )
+		);
 	}
 
 	redirectIfInvalidPlanInterval() {
-		const { currentPlanIntervalType, hasWpcomMonthlyPlan, selectedSite, intervalType } = this.props;
-
-		if ( hasWpcomMonthlyPlan && currentPlanIntervalType !== intervalType ) {
-			page.redirect( `/plans/${ currentPlanIntervalType }/${ selectedSite.slug }` );
-			return;
-		}
+		const { selectedSite } = this.props;
 
 		if ( this.isInvalidPlanInterval() ) {
 			page.redirect( '/plans/yearly/' + selectedSite.slug );
@@ -135,9 +141,9 @@ class Plans extends React.Component {
 							<FormattedHeader
 								brandFont
 								headerText={ translate( 'Plans' ) }
-								subHeaderText={
+								subHeaderText={ translate(
 									'See and compare the features available on each WordPress.com plan.'
-								}
+								) }
 								align="left"
 							/>
 							<div id="plans" className="plans plans__has-sidebar">
@@ -152,6 +158,7 @@ class Plans extends React.Component {
 									/>
 								) : (
 									<PlansFeaturesMain
+										redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
 										displayJetpackPlans={ displayJetpackPlans }
 										hideFreePlan={ true }
 										customerType={ customerType }
@@ -193,8 +200,8 @@ export default connect( ( state ) => {
 		displayJetpackPlans: ! isSiteAutomatedTransfer && jetpackSite,
 		canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 		isWPForTeamsSite: isSiteWPForTeams( state, selectedSiteId ),
-		hasWpcomMonthlyPlan:
-			isWpComPlan( currentPlan?.productSlug ) && isMonthly( currentPlan?.productSlug ),
+		isEligibleForWpComMonthlyPlan:
+			isWpComMonthlyPlan( currentPlan?.productSlug ) || isWpComFreePlan( currentPlan?.productSlug ),
 		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
 	};
 } )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );

@@ -13,6 +13,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import config from '@automattic/calypso-config';
 import { login } from 'calypso/lib/paths';
 import { CHECK_YOUR_EMAIL_PAGE } from 'calypso/state/login/magic-login/constants';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
@@ -141,6 +142,15 @@ class MagicLogin extends React.Component {
 	}
 
 	render() {
+		// If this is part of the Jetpack login flow and the `jetpack/magic-link-signup` feature
+		// flag is enabled, some steps will display a different UI
+		const requestLoginEmailFormProps = {
+			...( this.props.isJetpackLogin ? { flow: 'jetpack' } : {} ),
+			...( this.props.isJetpackLogin && config.isEnabled( 'jetpack/magic-link-signup' )
+				? { isJetpackMagicLinkSignUpEnabled: true }
+				: {} ),
+		};
+
 		return (
 			<Main
 				className={ classNames( 'magic-login', 'magic-login__request-link', {
@@ -154,7 +164,7 @@ class MagicLogin extends React.Component {
 
 				<GlobalNotices id="notices" />
 
-				<RequestLoginEmailForm />
+				<RequestLoginEmailForm { ...requestLoginEmailFormProps } />
 
 				{ this.renderLinks() }
 			</Main>

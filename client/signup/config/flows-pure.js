@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -9,6 +8,8 @@ import { translate } from 'i18n-calypso';
  */
 import { isEnabled } from '@automattic/calypso-config';
 import { addQueryArgs } from 'calypso/lib/route';
+
+const noop = () => {};
 
 export function generateFlows( {
 	getSiteDestination = noop,
@@ -131,10 +132,10 @@ export function generateFlows( {
 		},
 
 		desktop: {
-			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
+			steps: [ 'user' ],
 			destination: getSignupDestination,
 			description: 'Signup flow for desktop app',
-			lastModified: '2020-08-11',
+			lastModified: '2021-03-26',
 			showRecaptcha: true,
 		},
 
@@ -433,6 +434,14 @@ export function generateFlows( {
 		description:
 			'Create an account and a blog and then add the personal monthly plan to the users cart.',
 		lastModified: '2021-02-02',
+		showRecaptcha: true,
+	};
+
+	flows[ 'with-design-picker' ] = {
+		steps: [ 'user', 'domains', 'plans', 'design' ],
+		destination: getSignupDestination,
+		description: 'Default onboarding experience with design picker as the last step',
+		lastModified: '2021-03-29',
 		showRecaptcha: true,
 	};
 

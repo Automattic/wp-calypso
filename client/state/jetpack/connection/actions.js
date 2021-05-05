@@ -7,9 +7,6 @@ import {
 	JETPACK_CONNECTION_STATUS_REQUEST_SUCCESS,
 	JETPACK_CONNECTION_STATUS_REQUEST_FAILURE,
 	JETPACK_DISCONNECT_RECEIVE,
-	JETPACK_DISCONNECT_REQUEST,
-	JETPACK_DISCONNECT_REQUEST_FAILURE,
-	JETPACK_DISCONNECT_REQUEST_SUCCESS,
 	JETPACK_USER_CONNECTION_CHANGE_OWNER,
 	JETPACK_USER_CONNECTION_DATA_RECEIVE,
 	JETPACK_USER_CONNECTION_DATA_REQUEST,
@@ -83,36 +80,17 @@ export const requestJetpackUserConnectionData = ( siteId ) => {
 	};
 };
 
-export const disconnect = ( siteId ) => {
-	return ( dispatch ) => {
-		dispatch( {
-			type: JETPACK_DISCONNECT_REQUEST,
-			siteId,
-		} );
-
-		return wp
-			.undocumented()
-			.disconnectJetpack( siteId )
-			.then( ( response ) => {
-				dispatch( {
-					type: JETPACK_DISCONNECT_RECEIVE,
-					siteId,
-					status: response,
-				} );
-				dispatch( {
-					type: JETPACK_DISCONNECT_REQUEST_SUCCESS,
-					siteId,
-				} );
-			} )
-			.catch( ( error ) => {
-				dispatch( {
-					type: JETPACK_DISCONNECT_REQUEST_FAILURE,
-					siteId,
-					error: error.message,
-				} );
+export const disconnect = ( siteId ) => ( dispatch ) =>
+	wp
+		.undocumented()
+		.disconnectJetpack( siteId )
+		.then( ( response ) => {
+			dispatch( {
+				type: JETPACK_DISCONNECT_RECEIVE,
+				siteId,
+				status: response,
 			} );
-	};
-};
+		} );
 
 /**
  * Change the jetpack master user.

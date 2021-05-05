@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { noop, size } from 'lodash';
+import { size } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import config from '@automattic/calypso-config';
@@ -21,8 +21,9 @@ import {
 	isPremiumPlan,
 	isBusinessPlan,
 	isEcommercePlan,
-} from 'calypso/lib/plans';
-import { GROUP_JETPACK, GROUP_WPCOM } from 'calypso/lib/plans/constants';
+	GROUP_JETPACK,
+	GROUP_WPCOM,
+} from '@automattic/calypso-products';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -38,6 +39,8 @@ import { preventWidows } from 'calypso/lib/formatting';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class Banner extends Component {
 	static propTypes = {

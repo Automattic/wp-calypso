@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { castArray } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import {
@@ -32,5 +27,5 @@ export const addValidationSchemas = ( schemas ) => ( {
  */
 export const requestValidationSchemas = ( tlds ) => ( {
 	type: DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST,
-	tlds: castArray( tlds ),
+	tlds: Array.isArray( tlds ) ? tlds : [ tlds ],
 } );

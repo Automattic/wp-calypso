@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { noop, filter, get, flatMap } from 'lodash';
+import { filter, get, flatMap } from 'lodash';
 import classnames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 
@@ -21,6 +21,8 @@ import { getStream } from 'calypso/state/reader/streams/selectors';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class UpdateNotice extends React.PureComponent {
 	static propTypes = {

@@ -68,6 +68,9 @@ export function Purchases(): JSX.Element {
 				brandFont
 				className="purchases__page-heading"
 				headerText={ titles.sectionTitle }
+				subHeaderText={ translate(
+					'View, manage, or cancel your WordPress.com plan and other purchases.'
+				) }
 				align="left"
 			/>
 			<PurchasesNavigation sectionTitle={ 'Active Upgrades' } siteSlug={ siteSlug } />
@@ -179,7 +182,7 @@ export function PurchaseChangePaymentMethod( {
 
 	return (
 		<Main className="purchases is-wide-layout">
-			<DocumentHead title={ titles.editCardDetails } />
+			<DocumentHead title={ titles.changePaymentMethod } />
 			<FormattedHeader
 				brandFont
 				className="purchases__page-heading"

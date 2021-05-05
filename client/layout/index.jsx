@@ -21,9 +21,15 @@ import QueryPreferences from 'calypso/components/data/query-preferences';
 import QuerySites from 'calypso/components/data/query-sites';
 import QuerySiteSelectedEditor from 'calypso/components/data/query-site-selected-editor';
 import { isOffline } from 'calypso/state/application/selectors';
-import { getSelectedSiteId, masterbarIsVisible, getSelectedSite } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSiteId,
+	masterbarIsVisible,
+	getSelectedSite,
+	getSidebarIsCollapsed,
+} from 'calypso/state/ui/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
+import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import SitePreview from 'calypso/blocks/site-preview';
@@ -42,12 +48,12 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import LayoutLoader from './loader';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { withCurrentRoute } from 'calypso/components/route';
-import QueryExperiments from 'calypso/components/data/query-experiments';
-import Experiment from 'calypso/components/experiment';
-import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
-import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import { getShouldShowAppBanner, handleScroll } from './utils';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+import { useBreakpoint } from '@automattic/viewport-react';
+import { isWithinBreakpoint } from '@automattic/viewport';
 
 /**
  * Style dependencies
@@ -55,9 +61,60 @@ import { isWpMobileApp } from 'calypso/lib/mobile-app';
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
 import './style.scss';
-import { getShouldShowAppBanner, handleScroll } from './utils';
 
-const scrollCallback = ( e ) => handleScroll( e );
+function SidebarScrollSynchronizer( { enabled } ) {
+	const isNarrow = useBreakpoint( '<660px' );
+	const active = enabled && ! isNarrow;
+
+	React.useEffect( () => {
+		if ( active ) {
+			window.addEventListener( 'scroll', handleScroll );
+			window.addEventListener( 'resize', handleScroll );
+		}
+
+		return () => {
+			if ( active ) {
+				window.removeEventListener( 'scroll', handleScroll );
+				window.removeEventListener( 'resize', handleScroll );
+
+				// remove style attributes added by `handleScroll`
+				document.getElementById( 'content' )?.removeAttribute( 'style' );
+				document.getElementById( 'secondary' )?.removeAttribute( 'style' );
+			}
+		};
+	}, [ active ] );
+
+	return null;
+}
+
+function SidebarOverflowDelay( { layoutFocus } ) {
+	const setSidebarOverflowClass = ( overflow ) => {
+		const classList = document.querySelector( 'body' ).classList;
+		if ( overflow ) {
+			classList.add( 'is-sidebar-overflow' );
+		} else {
+			classList.remove( 'is-sidebar-overflow' );
+		}
+	};
+
+	React.useEffect( () => {
+		if ( layoutFocus !== 'sites' ) {
+			// The sidebar menu uses a flyout design that requires the overflowing content
+			// to be visible. However, `overflow` isn't an animatable CSS property, so we
+			// need to set it after the sliding transition finishes. We wait for 150ms (the
+			// CSS transition time) + a grace period of 350ms (since the sidebar menu is
+			// rendered asynchronously).
+			// @see https://github.com/Automattic/wp-calypso/issues/47019
+			setTimeout( () => {
+				setSidebarOverflowClass( true );
+			}, 500 );
+		} else {
+			setSidebarOverflowClass( false );
+		}
+	}, [ layoutFocus ] );
+
+	return null;
+}
 
 class Layout extends Component {
 	static propTypes = {
@@ -74,11 +131,6 @@ class Layout extends Component {
 		shouldShowAppBanner: PropTypes.bool,
 	};
 
-	UNSAFE_componentWillMount() {
-		// This is temporary helper function until we have rolled out to 100% of customers.
-		this.isNavUnificationEnabled();
-	}
-
 	componentDidMount() {
 		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
 			return;
@@ -92,23 +144,7 @@ class Layout extends Component {
 		}
 	}
 
-	componentWillUnmount() {
-		if ( config.isEnabled( 'nav-unification' ) ) {
-			window.removeEventListener( 'scroll', scrollCallback );
-			window.removeEventListener( 'resize', scrollCallback );
-		}
-	}
-
 	componentDidUpdate( prevProps ) {
-		// This code should be removed when the nav-unification project has been rolled out to 100% of the customers.
-		if ( config.isEnabled( 'nav-unification' ) ) {
-			window.addEventListener( 'scroll', scrollCallback );
-			window.addEventListener( 'resize', scrollCallback );
-		}
-		if ( prevProps.teams !== this.props.teams ) {
-			// This is temporary helper function until we have rolled out to 100% of customers.
-			this.isNavUnificationEnabled();
-		}
 		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
 			return;
 		}
@@ -124,6 +160,32 @@ class Layout extends Component {
 		// intentionally don't remove these in unmount
 	}
 
+	shouldShowHappyChatButton() {
+		if ( ! config.isEnabled( 'happychat' ) ) {
+			return false;
+		}
+
+		if ( isWpMobileApp() ) {
+			return false;
+		}
+
+		if ( ! this.props.hasActiveHappyChat ) {
+			return false;
+		}
+
+		const exemptedSections = [ 'happychat', 'devdocs' ];
+		const exemptedRoutes = [ '/log-in/jetpack' ];
+		const exemptedRoutesStartingWith = [ '/start/p2' ];
+
+		return (
+			! exemptedSections.includes( this.props.sectionName ) &&
+			! exemptedRoutes.includes( this.props.currentRoute ) &&
+			! some( exemptedRoutesStartingWith, ( startsWithString ) =>
+				this.props.currentRoute?.startsWith( startsWithString )
+			)
+		);
+	}
+
 	shouldLoadInlineHelp() {
 		if ( ! config.isEnabled( 'inline-help' ) ) {
 			return false;
@@ -133,8 +195,8 @@ class Layout extends Component {
 			return false;
 		}
 
-		const exemptedSections = [ 'jetpack-connect', 'happychat', 'devdocs', 'help' ];
-		const exemptedRoutes = [ '/log-in/jetpack', '/me/account/closed' ];
+		const exemptedSections = [ 'jetpack-connect', 'happychat', 'devdocs', 'help', 'home' ];
+		const exemptedRoutes = [ '/log-in/jetpack' ];
 		const exemptedRoutesStartingWith = [ '/start/p2' ];
 
 		return (
@@ -162,34 +224,14 @@ class Layout extends Component {
 		);
 	}
 
-	// This is temporary helper function until we have rolled out to 100% of customers.
-	isNavUnificationEnabled() {
-		if ( ! this.props.teams.length ) {
-			return;
-		}
-
-		// Having the feature enabled by default in all environments, will let anyone use ?disable-nav-unification to temporary disable it.
-		// We still have the feature disabled in production as safety mechanism for all customers.
-		if ( new URL( document.location ).searchParams.has( 'disable-nav-unification' ) ) {
-			return;
-		}
-
-		// Leave the feature enabled for all a12s.
-		if ( isAutomatticTeamMember( this.props.teams ) ) {
-			// Force enable even in Production.
-			return config.enable( 'nav-unification' );
-		}
-
-		// Disable the feature for all customers and non a12s accounts.
-		return config.disable( 'nav-unification' );
-	}
-
 	render() {
 		const sectionClass = classnames( 'layout', `focus-${ this.props.currentLayoutFocus }`, {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': ! this.props.secondary,
+			'is-inline-help-showing': this.shouldLoadInlineHelp(),
+			'is-happychat-button-showing': this.shouldShowHappyChatButton(),
 			'has-chat': this.props.chatIsOpen,
 			'has-no-masterbar': this.props.masterbarIsHidden,
 			'is-jetpack-login': this.props.isJetpackLogin,
@@ -202,24 +244,33 @@ class Layout extends Component {
 				config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 				isWooOAuth2Client( this.props.oauth2Client ) &&
 				this.props.wccomFrom,
-			'is-nav-unification': config.isEnabled( 'nav-unification' ),
 		} );
 
 		const optionalBodyProps = () => {
-			const optionalProps = {};
-
+			const bodyClass = [];
 			if ( this.props.isNewLaunchFlow || this.props.isCheckoutFromGutenboarding ) {
-				optionalProps.bodyClass = 'is-new-launch-flow';
+				bodyClass.push( 'is-new-launch-flow' );
+			}
+			if ( this.props.isNavUnificationEnabled ) {
+				bodyClass.push( 'is-nav-unification' );
 			}
 
-			return optionalProps;
-		};
+			if ( this.props.sidebarIsCollapsed && isWithinBreakpoint( '>800px' ) ) {
+				bodyClass.push( 'is-sidebar-collapsed' );
+			}
 
+			return {
+				bodyClass,
+			};
+		};
 		const { shouldShowAppBanner } = this.props;
+
+		const loadInlineHelp = this.shouldLoadInlineHelp();
+
 		return (
 			<div className={ sectionClass }>
-				<QueryExperiments />
-				<Experiment name="new_onboarding_existing_users_non_en_v5" />
+				<SidebarScrollSynchronizer enabled={ this.props.isNavUnificationEnabled } />
+				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
 					group={ this.props.sectionGroup }
 					section={ this.props.sectionName }
@@ -243,6 +294,9 @@ class Layout extends Component {
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<LayoutLoader />
+				{ isJetpackCloud() && (
+					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
+				) }
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
@@ -281,9 +335,22 @@ class Layout extends Component {
 				{ 'development' === process.env.NODE_ENV && (
 					<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 				) }
-				{ this.shouldLoadInlineHelp() && (
+				{ loadInlineHelp && (
 					<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />
 				) }
+				{ this.shouldShowHappyChatButton() && (
+					<AsyncLoad
+						require="calypso/components/happychat/button"
+						placeholder={ null }
+						allowMobileRedirect
+						borderless={ false }
+						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+						className={ classnames( 'floating-happychat-button', {
+							offset: loadInlineHelp,
+						} ) }
+					/>
+				) }
+
 				{ config.isEnabled( 'layout/support-article-dialog' ) && (
 					<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
 				) }
@@ -296,7 +363,6 @@ class Layout extends Component {
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
 				) }
-				<QueryReaderTeams />
 			</div>
 		);
 	}
@@ -358,6 +424,7 @@ export default compose(
 			isOffline: isOffline( state ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			chatIsOpen: isHappychatOpen( state ),
+			hasActiveHappyChat: hasActiveHappychatSession( state ),
 			colorSchemePreference: getPreference( state, 'colorScheme' ),
 			siteId,
 			// We avoid requesting sites in the Jetpack Connect authorization step, because this would
@@ -368,7 +435,8 @@ export default compose(
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 			isNewLaunchFlow,
 			isCheckoutFromGutenboarding,
-			teams: getReaderTeams( state ),
+			isNavUnificationEnabled: isNavUnificationEnabled( state ),
+			sidebarIsCollapsed: getSidebarIsCollapsed( state ),
 		};
 	} )
 )( Layout );

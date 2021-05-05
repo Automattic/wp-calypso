@@ -19,15 +19,14 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Jetpack Settings on Calypso: (${ screenSize }) @jetpack`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
 
 	before( async function () {
 		await driverManager.clearCookiesAndDeleteLocalStorage( driver );

@@ -1,3 +1,5 @@
+/* eslint-disable mocha/no-top-level-hooks */
+
 /**
  * External dependencies
  */
@@ -12,8 +14,7 @@ import * as slackNotifier from './slack-notifier';
 import * as mediaHelper from './media-helper';
 
 import * as driverManager from './driver-manager';
-import * as driverHelper from './driver-helper';
-import * as videoRecorder from '../lib/video-recorder';
+import { default as saveConsoleLog } from './hooks/save-console-log';
 
 const afterHookTimeoutMS = config.get( 'afterHookTimeoutMS' );
 let allPassed = true; // For SauceLabs status
@@ -23,16 +24,6 @@ before( function () {
 		const isCalypsoLiveURL = config.get( 'calypsoBaseURL' ).includes( 'calypso.live' );
 		assert.strictEqual( isCalypsoLiveURL, true );
 	}
-} );
-
-// Start xvfb display and recording
-before( async function () {
-	await videoRecorder.startDisplay();
-} );
-
-// Start xvfb display and recording
-before( async function () {
-	await videoRecorder.startVideo();
 } );
 
 // Sauce Breakpoint
@@ -120,19 +111,7 @@ afterEach( async function () {
 	}
 } );
 
-// Check for console errors
-afterEach( async function () {
-	this.timeout( afterHookTimeoutMS );
-	const driver = global.__BROWSER__;
-	await driverHelper.logPerformance( driver );
-	return await driverHelper.checkForConsoleErrors( driver );
-} );
-
-afterEach( async function () {
-	this.timeout( afterHookTimeoutMS );
-	const driver = global.__BROWSER__;
-	await driverHelper.printConsole( driver );
-} );
+saveConsoleLog();
 
 // Update Sauce Job Status locally
 afterEach( function () {
@@ -140,13 +119,6 @@ afterEach( function () {
 
 	if ( config.has( 'sauce' ) && config.get( 'sauce' ) ) {
 		driver.allPassed = driver.allPassed && this.currentTest.state === 'passed';
-	}
-} );
-
-// Stop video recording if the test has failed
-afterEach( async function () {
-	if ( this.currentTest && this.currentTest.state === 'failed' ) {
-		await videoRecorder.stopVideo( this.currentTest );
 	}
 } );
 
@@ -177,14 +149,4 @@ after( function () {
 	) {
 		return driverManager.quitBrowser( driver );
 	}
-} );
-
-// Stop video
-after( async function () {
-	await videoRecorder.stopVideo();
-} );
-
-// Stop xvfb display
-after( async function () {
-	await videoRecorder.stopDisplay();
 } );

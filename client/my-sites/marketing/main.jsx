@@ -25,7 +25,7 @@ import SectionNav from 'calypso/components/section-nav';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { FEATURE_NO_ADS } from 'calypso/lib/plans/constants';
+import { FEATURE_NO_ADS } from '@automattic/calypso-products';
 
 /**
  * Style Dependencies

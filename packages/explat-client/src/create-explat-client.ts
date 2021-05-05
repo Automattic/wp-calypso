@@ -1,10 +1,13 @@
 /**
  * Internal dependencies
  */
-import { ExperimentAssignment, Config } from './types';
+import type { ExperimentAssignment, Config } from './types';
 import * as ExperimentAssignments from './internal/experiment-assignments';
 import * as Request from './internal/requests';
-import ExperimentAssignmentStore from './internal/experiment-assignment-store';
+import {
+	retrieveExperimentAssignment,
+	storeExperimentAssignment,
+} from './internal/experiment-assignment-store';
 import * as Timing from './internal/timing';
 import * as Validation from './internal/validations';
 import { createFallbackExperimentAssignment as createFallbackExperimentAssignment } from './internal/experiment-assignments';
@@ -12,7 +15,7 @@ import { createFallbackExperimentAssignment as createFallbackExperimentAssignmen
 /**
  * The number of milliseconds before we abandon fetching an experiment
  */
-const EXPERIMENT_FETCH_TIMEOUT = 5000;
+const EXPERIMENT_FETCH_TIMEOUT = 10000;
 
 export interface ExPlatClient {
 	/**
@@ -43,8 +46,8 @@ export interface ExPlatClient {
 }
 
 export class MissingExperimentAssignmentError extends Error {
-	constructor( ...params: any[] ) {
-		super( ...params );
+	constructor( message?: string ) {
+		super( message );
 
 		// Maintains proper stack trace for where our error was thrown (only available on V8)
 		if ( Error.captureStackTrace ) {
@@ -65,8 +68,6 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 		throw new Error( 'Running outside of a browser context.' );
 	}
 
-	const experimentAssignmentStore = new ExperimentAssignmentStore();
-
 	/**
 	 * This bit of code is the heavy lifting behind loadExperimentAssignment, allowing it to be used intuitively.
 	 *
@@ -81,7 +82,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 				config,
 				experimentName
 			);
-			experimentAssignmentStore.store( fetchedExperimentAssignment );
+			storeExperimentAssignment( fetchedExperimentAssignment );
 			return fetchedExperimentAssignment;
 		} );
 	const experimentNameToWrappedExperimentAssignmentFetchAndStore: Record<
@@ -102,7 +103,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 					throw new Error( `Invalid experimentName: "${ experimentName }"` );
 				}
 
-				const storedExperimentAssignment = experimentAssignmentStore.retrieve( experimentName );
+				const storedExperimentAssignment = retrieveExperimentAssignment( experimentName );
 				if (
 					storedExperimentAssignment &&
 					ExperimentAssignments.isAlive( storedExperimentAssignment )
@@ -134,15 +135,12 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 					experimentName,
 					source: 'loadExperimentAssignment-initialError',
 				} );
-				if ( config.isDevelopmentMode ) {
-					throw initialError;
-				}
 			}
 
 			// Fetching failed and we're not in development mode.
 			try {
 				// We provide stale ExperimentAssignments, important for offline users.
-				const storedExperimentAssignment = experimentAssignmentStore.retrieve( experimentName );
+				const storedExperimentAssignment = retrieveExperimentAssignment( experimentName );
 				if ( storedExperimentAssignment ) {
 					return storedExperimentAssignment;
 				}
@@ -151,7 +149,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 				// be retrieved by all other loadExperimentAssignments that are currently running or will run,
 				// preventing a run on the server.
 				const fallbackExperimentAssignment = createFallbackExperimentAssignment( experimentName );
-				experimentAssignmentStore.store( fallbackExperimentAssignment );
+				storeExperimentAssignment( fallbackExperimentAssignment );
 				return fallbackExperimentAssignment;
 			} catch ( fallbackError ) {
 				safeLogError( {
@@ -165,31 +163,42 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 			}
 		},
 		dangerouslyGetExperimentAssignment: ( experimentName: string ): ExperimentAssignment => {
-			if ( ! Validation.isName( experimentName ) ) {
-				throw new Error( `Invalid experimentName: ${ experimentName }` );
-			}
+			try {
+				if ( ! Validation.isName( experimentName ) ) {
+					throw new Error( `Invalid experimentName: ${ experimentName }` );
+				}
 
-			const storedExperimentAssignment = experimentAssignmentStore.retrieve( experimentName );
-			if ( ! storedExperimentAssignment ) {
-				throw new MissingExperimentAssignmentError(
-					`Trying to dangerously get an ExperimentAssignment that hasn't loaded.`
-				);
-			}
-
-			// We want to be loud in development mode to help pick up any issues:
-			if ( config.isDevelopmentMode ) {
-				// Highlight when we dangerously get an experiment too soon to when we load one:
-				if (
-					storedExperimentAssignment &&
-					Timing.monotonicNow() - storedExperimentAssignment.retrievedTimestamp < 1000
-				) {
+				const storedExperimentAssignment = retrieveExperimentAssignment( experimentName );
+				if ( ! storedExperimentAssignment ) {
 					throw new Error(
-						`Warning: Trying to dangerously get an ExperimentAssignment too soon after loading it.`
+						`Trying to dangerously get an ExperimentAssignment that hasn't loaded.`
 					);
 				}
-			}
 
-			return storedExperimentAssignment;
+				// We want to be loud in development mode to help pick up any issues:
+				if ( config.isDevelopmentMode ) {
+					// Highlight when we dangerously get an experiment too soon to when we load one:
+					if (
+						storedExperimentAssignment &&
+						Timing.monotonicNow() - storedExperimentAssignment.retrievedTimestamp < 1000
+					) {
+						safeLogError( {
+							message: `Warning: Trying to dangerously get an ExperimentAssignment too soon after loading it.`,
+							experimentName,
+							source: 'dangerouslyGetExperimentAssignment',
+						} );
+					}
+				}
+
+				return storedExperimentAssignment;
+			} catch ( error ) {
+				safeLogError( {
+					message: error.message,
+					experimentName,
+					source: 'dangerouslyGetExperimentAssignment-error',
+				} );
+				return createFallbackExperimentAssignment( experimentName );
+			}
 		},
 		config,
 	};

@@ -2,42 +2,40 @@
  * External dependencies
  */
 import React from 'react';
-import page from 'page';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal Dependencies
  */
 import EmailForwarding from 'calypso/my-sites/email/email-forwarding';
 import EmailManagement from 'calypso/my-sites/email/email-management';
-import { emailManagementAddGSuiteUsers } from 'calypso/my-sites/email/paths';
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
-import TitanMailQuantitySelection from 'calypso/my-sites/email/titan-mail-quantity-selection';
+import TitanMailAddMailboxes from 'calypso/my-sites/email/titan-mail-add-mailboxes';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import TitanControlPanelRedirect from 'calypso/my-sites/email/email-management/titan-control-panel-redirect';
 import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan-management-iframe';
+import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';
 
 export default {
 	emailManagementAddGSuiteUsers( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
-				<GSuiteAddUsers selectedDomainName={ pageContext.params.domain } />
+				<GSuiteAddUsers
+					productType={ pageContext.params.productType }
+					selectedDomainName={ pageContext.params.domain }
+				/>
 			</CalypsoShoppingCartProvider>
 		);
 
 		next();
 	},
 
-	emailManagementAddGSuiteUsersLegacyRedirect( pageContext ) {
-		page.redirect(
-			emailManagementAddGSuiteUsers( pageContext.params.site, pageContext.params.domain )
-		);
-	},
-
 	emailManagementNewGSuiteAccount( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<GSuiteAddUsers
-					planType={ pageContext.params.planType }
+					isNewAccount
+					productType={ pageContext.params.productType }
 					selectedDomainName={ pageContext.params.domain }
 				/>
 			</CalypsoShoppingCartProvider>
@@ -47,7 +45,12 @@ export default {
 	},
 
 	emailManagementManageTitanAccount( pageContext, next ) {
-		pageContext.primary = <TitanManagementIframe domainName={ pageContext.params.domain } />;
+		pageContext.primary = (
+			<TitanManagementIframe
+				domainName={ pageContext.params.domain }
+				context={ pageContext.query.context }
+			/>
+		);
 
 		next();
 	},
@@ -55,7 +58,7 @@ export default {
 	emailManagementNewTitanAccount( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
-				<TitanMailQuantitySelection selectedDomainName={ pageContext.params.domain } />
+				<TitanMailAddMailboxes selectedDomainName={ pageContext.params.domain } />
 			</CalypsoShoppingCartProvider>
 		);
 
@@ -81,7 +84,15 @@ export default {
 	},
 
 	emailManagement( pageContext, next ) {
-		pageContext.primary = <EmailManagement selectedDomainName={ pageContext.params.domain } />;
+		if ( isEnabled( 'email/centralized-home' ) ) {
+			pageContext.primary = (
+				<CalypsoShoppingCartProvider>
+					<EmailManagementHome selectedDomainName={ pageContext.params.domain } />
+				</CalypsoShoppingCartProvider>
+			);
+		} else {
+			pageContext.primary = <EmailManagement selectedDomainName={ pageContext.params.domain } />;
+		}
 
 		next();
 	},

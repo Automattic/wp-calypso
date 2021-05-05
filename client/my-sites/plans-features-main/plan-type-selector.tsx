@@ -17,14 +17,16 @@ import styled from '@emotion/styled';
 import SegmentedControl from 'calypso/components/segmented-control';
 import Popover from 'calypso/components/popover';
 import { addQueryArgs } from 'calypso/lib/url';
-import { getYearlyPlanByMonthly, isWpComPlan, plansLink } from 'calypso/lib/plans';
-import { isMonthly } from 'calypso/lib/plans/constants';
+import {
+	getYearlyPlanByMonthly,
+	isWpComPlan,
+	plansLink,
+	isMonthly,
+} from '@automattic/calypso-products';
 import { getPlanBySlug, getPlanRawPrice } from 'calypso/state/plans/selectors';
 
 type Props = {
-	displayJetpackPlans: boolean;
-	withWPPlanTabs: boolean;
-	plansWithScroll: boolean;
+	kind: 'interval' | 'customer';
 	basePlansPath?: string | null;
 	intervalType: string;
 	customerType: string;
@@ -45,7 +47,6 @@ type GeneratePathFunction = ( props: Partial< Props >, args: PathArgs ) => strin
 
 export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} ) => {
 	const { intervalType = '' } = additionalArgs;
-	const plansUrl = props.basePlansPath || '/plans';
 	const defaultArgs = {
 		customerType: null,
 		discount: props.withDiscount,
@@ -59,7 +60,7 @@ export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} )
 				...defaultArgs,
 				...additionalArgs,
 			},
-			document.location.search
+			document.location?.search
 		);
 	}
 
@@ -68,7 +69,7 @@ export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} )
 			...defaultArgs,
 			...omit( additionalArgs, 'intervalType' ),
 		},
-		plansLink( plansUrl, props.siteSlug, intervalType, true )
+		plansLink( props.basePlansPath || '/plans', props.siteSlug, intervalType, true )
 	);
 };
 
@@ -99,18 +100,23 @@ export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 	);
 };
 
-type IntervalTypeProps = Pick< Props, 'intervalType' | 'plans' >;
+type IntervalTypeProps = Pick< Props, 'intervalType' | 'plans' | 'isInSignup' >;
 
 export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
 	const translate = useTranslate();
-	const { intervalType } = props;
+	const { intervalType, isInSignup } = props;
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
-	const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle' );
-	const popupIsVisible = intervalType === 'monthly';
+	const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle', {
+		'is-signup': isInSignup,
+	} );
+	const popupIsVisible = intervalType === 'monthly' && isInSignup;
 	const maxDiscount = useMaxDiscount( props.plans );
 
 	return (
-		<IntervalTypeToggleWrapper showingMonthly={ intervalType === 'monthly' }>
+		<IntervalTypeToggleWrapper
+			showingMonthly={ intervalType === 'monthly' }
+			isInSignup={ isInSignup }
+		>
 			<SegmentedControl compact className={ segmentClasses } primary={ true }>
 				<SegmentedControl.Item
 					selected={ intervalType === 'monthly' }
@@ -165,12 +171,12 @@ export const CustomerTypeToggle: React.FunctionComponent< CustomerTypeProps > = 
 	);
 };
 
-const PlanTypeSelector: React.FunctionComponent< Props > = ( props ) => {
-	if ( props.displayJetpackPlans || props.isInSignup ) {
+const PlanTypeSelector: React.FunctionComponent< Props > = ( { kind, ...props } ) => {
+	if ( kind === 'interval' ) {
 		return <IntervalTypeToggle { ...props } />;
 	}
 
-	if ( props.withWPPlanTabs && ! props.hidePersonalPlan ) {
+	if ( kind === 'customer' ) {
 		return <CustomerTypeToggle { ...props } />;
 	}
 
@@ -208,123 +214,163 @@ function useMaxDiscount( plans: string[] ): number {
 
 export default PlanTypeSelector;
 
-const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean } >`
-	display: flex;
+const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean; isInSignup: boolean } >`
+	display: ${ ( { isInSignup } ) => ( isInSignup ? 'flex' : 'block' ) };
 	align-content: space-between;
 
-	> .segmented-control {
-		margin: 0 auto 0;
+	> .segmented-control.is-compact:not( .is-signup ) {
+		margin: 8px auto 16px;
+		max-width: 480px;
+
+		.segmented-control__link {
+			padding: 8px 12px;
+		}
+	}
+
+	> .segmented-control.is-signup {
+		margin: 0 auto;
 		border: solid 1px var( --color-neutral-10 );
 
 		@media screen and ( max-width: 960px ) {
 			margin-bottom: ${ ( { showingMonthly } ) => ( showingMonthly ? '65px' : 0 ) };
 		}
-	}
 
-	.segmented-control__item {
-		--color-primary: var( --color-neutral-100 );
-		--color-text-inverted: var( --color-neutral-0 );
-		--color-primary-light: var( --color-neutral-80 );
-		--color-primary-dark: var( --color-neutral-80 );
-		--item-padding: 3px;
+		.segmented-control__item {
+			--color-primary: var( --color-neutral-100 );
+			--color-text-inverted: var( --color-neutral-0 );
+			--color-primary-light: var( --color-neutral-80 );
+			--color-primary-dark: var( --color-neutral-80 );
+			--item-padding: 3px;
 
-		padding: var( --item-padding ) 0;
+			padding: var( --item-padding ) 0;
 
-		&:first-of-type {
-			padding-left: var( --item-padding );
+			&:first-of-type {
+				padding-left: var( --item-padding );
+
+				.rtl & {
+					padding-right: var( --item-padding );
+				}
+			}
+
+			&:last-of-type {
+				padding-right: var( --item-padding );
+
+				.rtl & {
+					padding-left: var( --item-padding );
+				}
+			}
+
+			&:last-of-type .segmented-control__link {
+				border-right: none;
+			}
 		}
 
-		&:last-of-type {
-			padding-right: var( --item-padding );
+		.segmented-control__link {
+			border: none;
+			padding-top: 6px;
+			padding-bottom: 6px;
+			color: var( --color-neutral-80 );
 		}
 
-		&:last-of-type .segmented-control__link {
-			border-right: none;
-		}
-	}
-
-	.segmented-control__link {
-		border: none;
-		padding-top: 6px;
-		padding-bottom: 6px;
-		color: var( --color-neutral-80 );
-	}
-
-	.segmented-control__item:not( .is-selected ) {
-		.segmented-control__link:hover {
-			background-color: var( --color-neutral-5 );
+		.segmented-control__item:not( .is-selected ) {
+			.segmented-control__link:hover {
+				background-color: var( --color-neutral-5 );
+			}
 		}
 	}
 `;
 
 const StyledPopover = styled( Popover )`
-	display: none;
-	opacity: 0;
-	transition-property: opacity, transform;
-	transition-timing-function: ease-in;
+	&.popover {
+		display: none;
+		opacity: 0;
+		transition-property: opacity, transform;
+		transition-timing-function: ease-in;
 
-	&.popover-enter-active {
-		opacity: 1;
-		transition-duration: 0.3s;
-	}
-
-	&.popover-exit,
-	&.popover-enter-done {
-		opacity: 1;
-		transition-duration: 0.01s;
-	}
-
-	&.is-right {
-		@media ( min-width: 960px ) {
-			display: block;
+		&.popover-enter-active {
+			opacity: 1;
+			transition-duration: 0.3s;
 		}
 
-		&.popover-enter {
-			transform: translate( 30px, 0 );
-		}
-
-		&.popover-enter-active,
+		&.popover-exit,
 		&.popover-enter-done {
-			transform: translate( 20px, 0 );
+			opacity: 1;
+			transition-duration: 0.01s;
 		}
 
-		.popover__arrow {
-			border-right-color: var( --color-neutral-100 );
-			&::before {
+		&.is-right,
+		.rtl &.is-left {
+			@media ( min-width: 960px ) {
+				display: block;
+			}
+
+			&.popover-enter {
+				transform: translate( 30px, 0 );
+			}
+
+			&.popover-enter-active,
+			&.popover-enter-done {
+				transform: translate( 20px, 0 );
+			}
+
+			.popover__arrow {
 				border-right-color: var( --color-neutral-100 );
+				&::before {
+					border-right-color: var( --color-neutral-100 );
+				}
 			}
 		}
-	}
 
-	&.is-bottom {
-		@media ( max-width: 960px ) {
-			display: block;
+		.rtl &.is-left {
+			.popover__arrow {
+				right: 40px;
+				border-left-color: var( --color-neutral-100 );
+				&::before {
+					border-left-color: var( --color-neutral-100 );
+				}
+			}
+
+			.popover__inner {
+				left: -50px;
+			}
 		}
 
-		&.popover-enter {
-			transform: translate( 0, 22px );
-		}
+		&.is-bottom {
+			@media ( max-width: 960px ) {
+				display: block;
+			}
 
-		&.popover-enter-active,
-		&.popover-enter-done {
-			transform: translate( 0, 12px );
-		}
+			&.popover-enter {
+				transform: translate( 0, 22px );
+			}
 
-		.popover__arrow {
-			border-bottom-color: var( --color-neutral-100 );
-			&::before {
+			&.popover-enter-active,
+			&.popover-enter-done {
+				transform: translate( 0, 12px );
+			}
+
+			.popover__arrow {
 				border-bottom-color: var( --color-neutral-100 );
+				&::before {
+					border-bottom-color: var( --color-neutral-100 );
+				}
 			}
 		}
-	}
 
-	.popover__inner {
-		padding: 8px 10px;
-		max-width: 210px;
-		background-color: var( --color-neutral-100 );
-		border-color: var( --color-neutral-100 );
-		color: var( --color-neutral-0 );
-		border-radius: 2px;
-		text-align: left;
+		.rtl &.is-bottom {
+			.popover__arrow {
+				border-right-color: transparent;
+			}
+		}
+
+		.popover__inner {
+			padding: 8px 10px;
+			max-width: 210px;
+			background-color: var( --color-neutral-100 );
+			border-color: var( --color-neutral-100 );
+			color: var( --color-neutral-0 );
+			border-radius: 2px;
+			text-align: left;
+		}
 	}
 `;

@@ -508,7 +508,6 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 .site-settings__general-settings-launch-site {
 	display: flex;
 	justify-content: space-between;
-	margin-bottom: 1px;
 }
 
 .site-settings__general-settings-launch-site-text {
@@ -548,10 +547,9 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 
 .site-settings__cloudflare-text {
 	margin-left: 20px;
-	line-height: 2rem;
 
 	p {
-		margin: 0;
+		margin: 0 0 0.5rem;
 	}
 }
 

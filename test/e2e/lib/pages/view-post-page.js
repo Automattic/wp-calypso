@@ -21,11 +21,11 @@ export default class ViewPostPage extends AsyncBaseContainer {
 	}
 
 	async commentsVisible() {
-		return await driverHelper.isElementPresent( this.driver, By.css( '#respond' ) );
+		return await driverHelper.isElementLocated( this.driver, By.css( '#respond' ) );
 	}
 
 	async sharingButtonsVisible() {
-		return await driverHelper.isElementPresent( this.driver, By.css( 'div.sd-sharing' ) );
+		return await driverHelper.isElementLocated( this.driver, By.css( 'div.sd-sharing' ) );
 	}
 
 	async postContent() {
@@ -39,12 +39,12 @@ export default class ViewPostPage extends AsyncBaseContainer {
 	}
 
 	async tagDisplayed() {
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( 'a[rel=tag]' ) );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, By.css( 'a[rel=tag]' ) );
 		return await this.driver.findElement( By.css( 'a[rel=tag]' ) ).getText();
 	}
 
 	async contactFormDisplayed() {
-		return await driverHelper.isElementPresent( this.driver, By.css( '.contact-form' ) );
+		return await driverHelper.isElementLocated( this.driver, By.css( '.contact-form' ) );
 	}
 
 	async paymentButtonDisplayed( retries = 3 ) {
@@ -67,7 +67,7 @@ export default class ViewPostPage extends AsyncBaseContainer {
 	}
 
 	async isPasswordProtected() {
-		return await driverHelper.isElementPresent( this.driver, By.css( 'form.post-password-form' ) );
+		return await driverHelper.isElementLocated( this.driver, By.css( 'form.post-password-form' ) );
 	}
 
 	async enterPassword( password ) {
@@ -91,21 +91,24 @@ export default class ViewPostPage extends AsyncBaseContainer {
 	}
 
 	async leaveAComment( comment ) {
-		const commentButtonSelector = By.css( '#comment-submit' );
-		const commentSubmittingSelector = By.css( '#comment-form-submitting' );
+		const commentButtonLocator = By.css( '#comment-submit' );
+		const commentSubmittingLocator = By.css( '#comment-form-submitting' );
 		await driverHelper.setWhenSettable( this.driver, By.css( '#comment' ), comment );
-		await driverHelper.clickWhenClickable( this.driver, commentButtonSelector );
-		return await driverHelper.waitTillNotPresent( this.driver, commentSubmittingSelector );
+		await driverHelper.clickWhenClickable( this.driver, commentButtonLocator );
+		return await driverHelper.waitUntilElementNotLocated( this.driver, commentSubmittingLocator );
 	}
 
 	async commentEventuallyShown( comment ) {
-		const commentSelector = By.xpath( `//p[text() = "${ comment }"]` );
-		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, commentSelector );
+		const commentLocator = By.xpath( `//p[text() = "${ comment }"]` );
+		return await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, commentLocator );
 	}
 
 	async embedContentDisplayed( selector ) {
-		const element = By.css( `${ selector }` );
-		const displayed = await driverHelper.isEventuallyPresentAndDisplayed( this.driver, element );
+		const element = By.css( selector );
+		const displayed = await driverHelper.isElementEventuallyLocatedAndVisible(
+			this.driver,
+			element
+		);
 		return assert.strictEqual(
 			displayed,
 			true,

@@ -13,10 +13,10 @@ This document will cover the environment setup process to run the `wp-calypso` e
     - [Steps](#steps)
       - [Intel-based macOS](#intel-based-macos)
       - [Apple Silicon-based macOS](#apple-silicon-based-macos)
-  - [Configuration](#configuration)
+  - [Configuration File](#configuration-file)
     - [Overview](#overview)
     - [In-repo configuration](#in-repo-configuration)
-    - [Custom configurations](#custom-configurations)
+    - [Custom configurations optional](#custom-configurations-optional)
   - [Environment Variables](#environment-variables)
   - [Naming Branches](#naming-branches)
 
@@ -41,7 +41,9 @@ It is strongly recommended to use `nvm` to manage multiple Node.js versions.
 
 #### Intel-based macOS
 
-Once the prerequisite software are installed, simply execute the following:
+Up-to-date instructions on installing individual pieces of required software can be found on their respective sites.
+
+Once installed, open a Terminal instance and execute the following:
 
 1. navigate to the test directory:
 
@@ -71,6 +73,8 @@ arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebr
 ```
 arch -x86_64 /usr/local/bin/brew install nvm
 ```
+
+**This is critical as if nvm is installed using ARM64 Homebrew, installed Node versions will also be the ARM64 variant!**
 
 3. using `nvm`, install the current version of node used in `wp-calypso`:
 
@@ -102,21 +106,21 @@ arch -x86_64 npm install yarn
 arch -x86_64 yarn install --frozen-lockfile
 ```
 
-8. verify that mocha runs in `test/e2e/` directory:
+8. verify that mocha can run under `test/e2e/` directory:
 
 ```
-./node_modules/.bin/mocha
+./test/e2e/node_modules/.bin/mocha
 ```
 
 At any point, run `arch` to verify whether shell is running with Rosetta 2 emulation.
 
-## Configuration
+## Configuration File
 
 ### Overview
 
 The tests use the node [config](https://www.npmjs.com/package/config) library to specify config values for the tests.
 
-Under the [tests/e2e/config](test/e2e/config) directory are JSON files for predefined environments:
+Under the `tests/e2e/config` directory are JSON files for predefined environments:
 
 - `default.json` is for all environments
 - `development.json` is for local
@@ -130,7 +134,7 @@ There is a 'standard' configuration already in the GitHub repo under `test/e2e/c
 
 This configuration must be decrypted prior to running any e2e tests. To decrypt, please follow the steps outlined in the Field Guide.
 
-### Custom configurations
+### Custom configurations (optional)
 
 Custom config files should be added under `test/e2e/config/` and should follow the naming scheme:
 
@@ -138,14 +142,14 @@ Custom config files should be added under `test/e2e/config/` and should follow t
 local-<env>.json
 ```
 
-`.gitignore` ensures that custom configurations prefixed with `local-` will not be commited to the repository. However, **please ensure username/passwords and other configuration values are not committed by accident!**
+**Note** that `.gitignore` ensures that custom configurations prefixed with `local-` will not be commited to the repository. With tha said however, **please ensure username/passwords and other configuration values are not committed by accident!**
 
 Values found in the local configuration file will override ones found in `default.json`.
 
 This is useful to test various configurations in the local environment.
 e.g. testing on local Calypso instance, instead of production by setting the `calypsoBaseURL` property to `http://calypso.localhost:3000`.
 
-For the full list of possible configuration values, please see the following page: [config values](docs/config_values.md).
+For the full list of possible configuration values, please see the following page: [config values](config_values.md).
 
 ## Environment Variables
 
@@ -154,9 +158,11 @@ Environment Variables are values that are defined at the system level to serve a
 For e2e tests, the following are required environment variables without which e2e tests will not run locally:
 
 ```
-export CONFIG_KEY='<config_key_from_a8c_store>'
-export NODE_CONFIG='<config_name_to_use>'
+export NODE_CONFIG_ENV=<name_of_decrypted_config_to_use>
+export CONFIG_KEY=<decryption_key_from_a8c_store>
 ```
+
+**Trial Engineers**: please contact a team member in your Slack chat for the decryption key.
 
 Additionally, see the list of other environment variables [here](environment_variables.md).
 

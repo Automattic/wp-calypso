@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,6 +12,8 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { receiveSiteChecklist } from 'calypso/state/checklist/actions';
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 export const CHECKLIST_KNOWN_TASKS = {
 	START_SITE_SETUP: 'start_site_setup',

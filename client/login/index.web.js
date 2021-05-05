@@ -63,7 +63,7 @@ export default ( router ) => {
 
 	if ( config.isEnabled( 'login/magic-login' ) ) {
 		router(
-			`/log-in/link/use/${ lang }`,
+			[ `/log-in/link/use/${ lang }`, `/log-in/jetpack/link/use/${ lang }` ],
 			redirectLoggedIn,
 			setLocaleMiddleware,
 			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),

@@ -55,7 +55,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
           }
         }
       />
-      <Card
+      <Memo(Card)
         className="jetpack-connect__logged-in-card"
       >
         <Connect(Gravatar)
@@ -69,7 +69,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
         <p
           className="jetpack-connect__logged-in-form-user-text"
         >
-          Connecting as {{strong}}%(user)s{{/strong}}
+          Connecting as {{strong}}%(user)s{{/strong}} ({{strong}}%(email)s{{/strong}})
         </p>
         <LoggedOutFormFooter
           className="jetpack-connect__action-disclaimer"
@@ -86,7 +86,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
             Approve
           </ForwardRef(Button)>
         </LoggedOutFormFooter>
-      </Card>
+      </Memo(Card)>
       <LoggedOutFormLinks>
         <LoggedOutFormLinkItem
           href="http://an.example.site/wp-admin/admin.php?page=jetpack"

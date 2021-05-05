@@ -35,7 +35,6 @@ import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
-import { isEnabled } from '@automattic/calypso-config';
 import { concatTitle } from 'calypso/lib/react-helpers';
 import PaymentMethodSelector from '../payment-method-selector';
 import getPaymentMethodIdFromPayment from '../payment-method-selector/get-payment-method-id-from-payment';
@@ -84,11 +83,7 @@ function ChangePaymentMethod( props ) {
 				purchaseId={ props.purchaseId }
 			/>
 			<PageViewTracker
-				path={
-					isEnabled( 'purchases/new-payment-methods' )
-						? '/me/purchases/:site/:purchaseId/payment-method/change/:cardId'
-						: '/me/purchases/:site/:purchaseId/payment/change/:cardId'
-				}
+				path="/me/purchases/:site/:purchaseId/payment-method/change/:cardId"
 				title={ concatTitle( titles.activeUpgrades, changePaymentMethodTitle ) }
 			/>
 
@@ -133,13 +128,10 @@ ChangePaymentMethod.propTypes = {
 };
 
 function getChangePaymentMethodTitleCopy( currentPaymentMethodId ) {
-	if ( isEnabled( 'purchases/new-payment-methods' ) ) {
-		if ( [ 'credits', 'none' ].includes( currentPaymentMethodId ) ) {
-			return titles.addPaymentMethod;
-		}
-		return titles.changePaymentMethod;
+	if ( [ 'credits', 'none' ].includes( currentPaymentMethodId ) ) {
+		return titles.addPaymentMethod;
 	}
-	return titles.editCardDetails;
+	return titles.changePaymentMethod;
 }
 
 const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {

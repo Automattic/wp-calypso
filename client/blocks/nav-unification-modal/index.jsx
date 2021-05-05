@@ -13,6 +13,7 @@ import { useTranslate } from 'i18n-calypso';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import isNavUnificationNewUser from 'calypso/state/selectors/is-nav-unification-new-user';
 
 /**
  * Image dependencies
@@ -47,11 +48,17 @@ const Page = ( { heading, content, image } ) => {
 
 const Modal = () => {
 	const dispatch = useDispatch();
+	const isNewUser = useSelector( isNavUnificationNewUser );
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const hasPreferences = useSelector( hasReceivedRemotePreferences );
 	const dismissPreference = `nav-unification-modal-${ userId }`;
 	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
 	const translate = useTranslate();
+
+	// Don't show Modal to new users as they have nav-unification enabled by default.
+	if ( isNewUser ) {
+		return null;
+	}
 
 	/**
 	 * Since we don't extract strings from external packages in node_modules,
@@ -109,7 +116,12 @@ const Modal = () => {
 							}
 							heading={ translate( 'Do even more' ) }
 							content={ translate(
-								'Advanced admin features have a new home! You can find it in your account settings'
+								'Advanced admin features have a new home! You can find them in your {{a}}Account Settings{{/a}}.',
+								{
+									components: {
+										a: <a href="/me/account" target="_blank" rel="noopener noreferrer" />,
+									},
+								}
 							) }
 						/>
 					),
@@ -128,7 +140,7 @@ const Modal = () => {
 							}
 							heading={ translate( 'Create in color' ) }
 							content={ translate(
-								'Now you can choose a new color for your dashboard in {{a}}account settings{{/a}}.',
+								'Now you can choose a new color for your dashboard in {{a}}Account Settings{{/a}}.',
 								{
 									components: {
 										a: <a href="/me/account" />,

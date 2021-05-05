@@ -1,10 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`webpack-inline-constant-exports-plugin should produce expected output: Output bundle should match snapshot 1`] = `
-"(window[\\"webpackChunk\\"] = window[\\"webpackChunk\\"] || []).push([[\\"main\\"],{
+"(() => {
+var exports = {};
+exports.id = \\"main\\";
+exports.ids = [\\"main\\"];
+exports.modules = {
 
 /***/ \\"./index.js\\":
-/***/ (function() {
+/***/ (() => {
 
 \\"use strict\\";
 
@@ -15,7 +19,7 @@ exports[`webpack-inline-constant-exports-plugin should produce expected output: 
  */
 const BLOGGER = 'BLOGGER_PLAN';
 const PREMIUM = 'PREMIUM_PLAN';
-/* harmony default export */ var plans = ([ BLOGGER, PREMIUM ]);
+/* harmony default export */ const plans = ([ BLOGGER, PREMIUM ]);
 
 ;// CONCATENATED MODULE: ./paths.js
 /*
@@ -51,6 +55,14 @@ console.log( FOO );
 
 /***/ })
 
-},
-0,[[\\"./index.js\\",\\"runtime~main\\"]]]);"
+};
+;
+
+// load runtime
+var __webpack_require__ = require(\\"./runtime~main.js\\");
+__webpack_require__.C(exports);
+var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
+var __webpack_exports__ = (__webpack_exec__(\\"./index.js\\"));
+
+})();"
 `;

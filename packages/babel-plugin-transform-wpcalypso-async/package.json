@@ -11,9 +11,9 @@
 		"directory": "packages/babel-plugin-transform-wpcalypso-async"
 	},
 	"dependencies": {
-		"lodash": "^4.17.20"
+		"lodash": "^4.17.21"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.12.3"
+		"@babel/core": "^7.14.0"
 	}
 }

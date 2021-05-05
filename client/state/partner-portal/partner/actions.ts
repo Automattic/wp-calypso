@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import { AnyAction } from 'redux';
-import { ThunkAction } from 'redux-thunk';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -10,32 +9,37 @@ import { ThunkAction } from 'redux-thunk';
 import {
 	JETPACK_PARTNER_PORTAL_PARTNER_ACTIVE_PARTNER_KEY_UPDATE,
 	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST,
-	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_FAILURE,
-	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_SUCCESS,
+	JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE_ERROR,
+	JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE,
 } from 'calypso/state/action-types';
 import { ReduxDispatch } from 'calypso/state/redux-store';
-import { APIError, Partner, PartnerPortalStore } from 'calypso/state/partner-portal/types';
+import {
+	APIError,
+	Partner,
+	PartnerPortalStore,
+	PartnerPortalThunkAction,
+} from 'calypso/state/partner-portal/types';
 import {
 	getActivePartnerKey,
+	getActivePartnerKeyId,
 	isFetchingPartner,
 } from 'calypso/state/partner-portal/partner/selectors';
-import wpcom, { wpcomJetpackLicensing } from 'calypso/lib/wp';
+import { wpcomJetpackLicensing } from 'calypso/lib/wp';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 // Required for modular state.
 import 'calypso/state/partner-portal/init';
 
-export function setActivePartnerKey(
-	partnerKeyId: number
-): ThunkAction< void, PartnerPortalStore, unknown, AnyAction > {
+export function setActivePartnerKey( partnerKeyId: number ): PartnerPortalThunkAction {
 	return ( dispatch: ReduxDispatch, getState: () => PartnerPortalStore ) => {
-		if ( isFetchingPartner( getState() ) ) {
+		if ( ! partnerKeyId || isFetchingPartner( getState() ) ) {
 			return;
 		}
 
 		dispatch( { type: JETPACK_PARTNER_PORTAL_PARTNER_ACTIVE_PARTNER_KEY_UPDATE, partnerKeyId } );
 
 		const key = getActivePartnerKey( getState() );
-		wpcomJetpackLicensing.loadToken( key ? key.oauth2_token : '' );
+		wpcomJetpackLicensing.loadToken( key ? key.oAuth2Token : '' );
 	};
 }
 
@@ -45,33 +49,50 @@ export function fetchPartner( dispatch: ReduxDispatch, getState: () => PartnerPo
 	}
 
 	dispatch( { type: JETPACK_PARTNER_PORTAL_PARTNER_REQUEST } );
+}
 
-	wpcom
-		.undocumented()
-		.getJetpackPartnerPortalPartner()
-		.then(
-			( partner: Partner ) => {
-				dispatch( {
-					type: JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_SUCCESS,
-					partner,
-				} );
+export function receivePartner( partner: Partner ): PartnerPortalThunkAction {
+	return ( dispatch: ReduxDispatch, getState: () => PartnerPortalStore ): void => {
+		dispatch( {
+			type: JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE,
+			partner,
+		} );
 
-				// If we only get a single key, auto-select it for the user for simplicity.
-				const keys = partner.keys.map( ( key ) => key.id );
+		const activePartnerKeyId = getActivePartnerKeyId( getState() );
+		const keys = partner.keys.map( ( key ) => key.id );
+		let newKeyId = 0;
 
-				if ( keys.length === 1 ) {
-					dispatch( setActivePartnerKey( keys[ 0 ] ) );
-				}
+		if ( keys.length === 1 ) {
+			// If we only get a single key, auto-select it for the user for simplicity.
+			newKeyId = keys[ 0 ];
+		}
+
+		if ( keys.includes( activePartnerKeyId ) ) {
+			// If the active key id is for a valid key, select it.
+			newKeyId = activePartnerKeyId;
+		}
+
+		if ( newKeyId ) {
+			dispatch( setActivePartnerKey( newKeyId ) );
+		}
+	};
+}
+
+export function receivePartnerError( error: APIError ): PartnerPortalThunkAction {
+	return ( dispatch: ReduxDispatch ): void => {
+		dispatch( {
+			type: JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE_ERROR,
+			error: {
+				status: error.status,
+				code: error.code || '',
+				message: error.message,
 			},
-			( error: APIError ) => {
-				dispatch( {
-					type: JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_FAILURE,
-					error: {
-						status: error.status,
-						code: error.code || '',
-						message: error.message,
-					},
-				} );
-			}
-		);
+		} );
+
+		if ( error.code !== 'no_partner_found' ) {
+			dispatch(
+				errorNotice( translate( 'We were unable to retrieve your partner account details.' ) )
+			);
+		}
+	};
 }

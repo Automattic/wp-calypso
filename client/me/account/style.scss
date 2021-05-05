@@ -24,10 +24,27 @@
 	width: 100%;
 }
 
-.account__settings-form .sites-dropdown .site-selector .search {
-	top: 57px;
+.account__link-destination {
+	.components-base-control__field {
+		align-items: flex-start;
+		margin-top: 0.5em;
+	}
+
+	.components-toggle-control__label {
+		color: var( --color-text-subtle );
+
+		strong {
+			display: block;
+		}
+	}
+
+	.account__link-destination-label-extra {
+		font-style: italic;
+		margin-top: 0.1em;
+	}
+
+	.inline-support-link {
+		margin-left: 4px;
+	}
 }
 
-.account__link-destination .components-toggle-control__label {
-	color: var( --color-text-subtle );
-}

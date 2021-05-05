@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEqual, noop } from 'lodash';
+import { isEqual } from 'lodash';
 import React from 'react';
 import classNames from 'classnames';
 
@@ -39,7 +39,6 @@ interface Props {
 	showGalleryHelp?: boolean;
 	selectedIndex?: number;
 	onToggle?: ( media: Media | undefined, shiftKey: boolean ) => void;
-	onEditItem?: any; // Unused. Appears to have been left here for compatibility reasons.
 	style?: React.CSSProperties;
 }
 
@@ -49,8 +48,6 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 	static defaultProps = {
 		maxImageWidth: 450,
 		selectedIndex: -1,
-		onToggle: noop,
-		onEditItem: noop,
 	};
 
 	shouldComponentUpdate( nextProps: Props ) {
@@ -70,11 +67,11 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 		}
 	};
 
-	renderItem = () => {
+	renderItem() {
 		let component;
 
 		if ( ! this.props.media ) {
-			return;
+			return null;
 		}
 
 		switch ( getMimePrefix( this.props.media ) as string ) {
@@ -93,7 +90,7 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 		}
 
 		return React.createElement( component, this.props );
-	};
+	}
 
 	render() {
 		let title;
@@ -107,7 +104,6 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 			showGalleryHelp,
 			selectedIndex,
 			onToggle,
-			onEditItem,
 			style,
 			...otherProps
 		} = this.props;

@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { partial, isArray, isPlainObject } from 'lodash';
+import { partial, isPlainObject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,7 +26,7 @@ class Preference extends Component {
 			</ul>
 		);
 
-		if ( isArray( value ) ) {
+		if ( Array.isArray( value ) ) {
 			preferenceHandler = <ArrayPreference name={ name } value={ value } />;
 		} else if ( isPlainObject( value ) ) {
 			preferenceHandler = <ObjectPreference name={ name } value={ value } />;

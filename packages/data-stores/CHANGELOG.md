@@ -1,6 +1,10 @@
 # Changelog
 
-## Next
+## 2.0.1
+
+- Export the `ReturnOrGeneratorYieldUnion` type.
+
+## 2.0.0
 
 - Initial release with stores:
   - Domain Suggestions

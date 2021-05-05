@@ -30,7 +30,7 @@ $grid-wide: 1fr 128px 128px 128px 36px;
 	> *:nth-child(#{$column-toggle}) {
 		grid-column-end: -1;
 		display: inherit;
-		text-align: center;
+		padding: 0;
 	}
 
 	@include break-xlarge() {
@@ -44,12 +44,18 @@ $grid-wide: 1fr 128px 128px 128px 36px;
 		}
 
 		> * + * {
-			margin-left: 14px;
-			text-align: right;
+			margin-left: 0;
+			padding-right: 7px;
+			padding-left: 7px;
+			text-align: center;
 		}
 
 		> *:last-child {
-			margin-left: 6px;
+			margin-left: auto;
+		}
+
+		> *:nth-child(#{$column-actions}) {
+			display: block;
 		}
 
 		> *:nth-child(#{$column-domain}) {
@@ -63,10 +69,6 @@ $grid-wide: 1fr 128px 128px 128px 36px;
 
 	@include break-wide() {
 		grid-template-columns: $grid-wide;
-
-		> * + * {
-			margin-left: 28px;
-		}
 
 		> *:last-child {
 			margin-left: 12px;
@@ -96,6 +98,7 @@ $grid-wide: 1fr 128px 128px 128px 36px;
 		}
 
 		h2, h2 button {
+			justify-self: center;
 			font-size: 0.875rem;
 			line-height: 1.25rem;
 			white-space: nowrap;
@@ -103,7 +106,6 @@ $grid-wide: 1fr 128px 128px 128px 36px;
 		}
 
 		h2 {
-			justify-self: end;
 			font-weight: 400;
 		}
 
@@ -114,7 +116,6 @@ $grid-wide: 1fr 128px 128px 128px 36px;
 		button {
 			display: flex;
 			align-items: center;
-			justify-self: end;
 			padding: 16px 0;
 			font-weight: inherit;
 			cursor: pointer;

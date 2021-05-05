@@ -13,36 +13,51 @@ import React from 'react';
  * `div.layout` has the advantage of being maintained by React, where class names can be
  * specified declaratively and the DOM diffing and patching is done by React itself.
  */
-const addBodyClass = ( toClass ) => ( value ) => () => {
-	// if value is empty-ish, don't add any CSS classes
-	if ( ! value ) {
-		return;
-	}
-
-	// convert the value (section or group name) to a CSS class name
-	const className = toClass( value );
-
-	// add the CSS class to body when performing the effect
-	document.body.classList.add( className );
-
-	// remove the CSS class from body in the effect cleanup function
-	return () => document.body.classList.remove( className );
-};
-
-// two effect creators for groups and sections
-const addGroupClass = addBodyClass( ( g ) => `is-group-${ g }` );
-const addSectionClass = addBodyClass( ( s ) => `is-section-${ s }` );
-
-export default function BodySectionCssClass( { group, section, bodyClass } ) {
-	React.useEffect( addGroupClass( group ), [ group ] );
-	React.useEffect( addSectionClass( section ), [ section ] );
+function useBodyClass( prefix, value ) {
 	React.useEffect( () => {
-		if ( ! bodyClass ) {
+		// if value is empty-ish, don't add or remove any CSS classes
+		if ( ! value ) {
 			return;
 		}
 
-		document.body.classList.add( bodyClass );
-		return () => document.body.classList.remove( bodyClass );
+		// Remove any existing classes with the same prefix, coming from example from a
+		// server HTML markup. There should be max one class name with a gived `prefix`
+		// at any one time. We're removing existing classes only when `value` is not `null`,
+		// i.e., when we actually have a class name to add and want to prevent duplicate one.
+		for ( const className of document.body.classList ) {
+			if ( className.startsWith( prefix ) ) {
+				document.body.classList.remove( className );
+			}
+		}
+
+		// convert the value (section or group name) to a CSS class name
+		const className = prefix + value;
+
+		// add the CSS class to body when performing the effect
+		document.body.classList.add( className );
+
+		// remove the CSS class from body in the effect cleanup function
+		return () => document.body.classList.remove( className );
+	}, [ prefix, value ] );
+}
+
+export default function BodySectionCssClass( { group, section, bodyClass } ) {
+	useBodyClass( 'is-group-', group );
+	useBodyClass( 'is-section-', section );
+	React.useEffect( () => {
+		if ( ! Array.isArray( bodyClass ) || bodyClass.length === 0 ) {
+			return;
+		}
+
+		bodyClass.forEach( ( className ) => {
+			document.body.classList.add( className );
+		} );
+
+		return () => {
+			bodyClass.forEach( ( className ) => {
+				document.body.classList.remove( className );
+			} );
+		};
 	}, [ bodyClass ] );
 
 	return null;

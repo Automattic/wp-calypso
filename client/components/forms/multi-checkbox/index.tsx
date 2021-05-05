@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { useCallback, useRef } from 'react';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +13,9 @@ import FormLabel from 'calypso/components/forms/form-label';
  * Style dependencies
  */
 import './style.scss';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 
 type OptionValue = number | string;
 

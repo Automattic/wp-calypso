@@ -1,8 +1,11 @@
 /**
  * Internal dependencies
  */
-import { getMonthlyPlanByYearly, getYearlyPlanByMonthly } from 'calypso/lib/plans';
-import { JETPACK_RESET_PLANS } from 'calypso/lib/plans/constants';
+import {
+	JETPACK_RESET_PLANS,
+	getMonthlyPlanByYearly,
+	getYearlyPlanByMonthly,
+} from '@automattic/calypso-products';
 import { SELECTOR_PLANS } from '../constants';
 import { getJetpackDescriptionWithOptions, slugToSelectorProduct } from '../utils';
 

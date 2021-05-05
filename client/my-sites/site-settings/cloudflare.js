@@ -83,7 +83,9 @@ const Cloudflare = () => {
 									{ translate( 'Cloudflare CDN ' ) }
 								</p>
 								<p>
-									{ translate( 'An alternative to Jetpack CDN, with security-focused plans.' ) }
+									{ translate(
+										'An alternative to Jetpack CDN, with security-focused plans available for sites with a custom domain enabled.'
+									) }
 								</p>
 								<p>
 									<a

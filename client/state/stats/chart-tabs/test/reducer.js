@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { STATS_CHART_COUNTS_REQUEST, STATS_CHART_COUNTS_RECEIVE } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { counts, isLoading } from '../reducer';
 
 describe( 'reducer', () => {
@@ -115,6 +116,15 @@ describe( 'reducer', () => {
 					],
 				},
 			} );
+		} );
+
+		test( 'should serialize and deserialize state', () => {
+			const state = {
+				[ siteId ]: { [ period ]: responseWithViews },
+			};
+
+			expect( serialize( counts, state ).root() ).toEqual( state );
+			expect( deserialize( counts, state ) ).toEqual( state );
 		} );
 	} );
 

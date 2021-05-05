@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { identity, noop, sample } from 'lodash';
+import { sample } from 'lodash';
 import store from 'store';
 import Gridicon from 'calypso/components/gridicon';
 
@@ -33,6 +33,8 @@ import wordpressLogoImage from 'calypso/assets/images/illustrations/logo-jpc.svg
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 const getRandomPromo = () => {
 	const promoOptions = [
@@ -218,7 +220,6 @@ export class AppPromo extends React.Component {
 }
 
 AppPromo.defaultProps = {
-	translate: identity,
 	recordTracksEvent: noop,
 	saveDismissal: () => store.set( 'desktop_promo_disabled', true ),
 	getPromoLink,

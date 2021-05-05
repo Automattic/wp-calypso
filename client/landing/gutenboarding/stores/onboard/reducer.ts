@@ -4,23 +4,15 @@
 import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
 import type { DomainSuggestions, WPCOMFeatures } from '@automattic/data-stores';
+import type { Design, FontPair } from '@automattic/design-picker';
 
 /**
  * Internal dependencies
  */
-import type { SiteVertical, Design } from './types';
+import type { SiteVertical } from './types';
 import type { OnboardAction } from './actions';
-import type { FontPair } from '../../constants';
 
 type FeatureId = WPCOMFeatures.FeatureId;
-
-// Returns true if the url has a `?latest`, which is used to enable experimental features
-export function hasExperimentalQueryParam() {
-	if ( typeof window !== 'undefined' ) {
-		return new URLSearchParams( window.location.search ).has( 'latest' );
-	}
-	return false;
-}
 
 const domain: Reducer< DomainSuggestions.DomainSuggestion | undefined, OnboardAction > = (
 	state,
@@ -69,16 +61,6 @@ const hasUsedPlansStep: Reducer< boolean, OnboardAction > = ( state = false, act
 	if ( action.type === 'SET_HAS_USED_PLANS_STEP' ) {
 		return action.hasUsedPlansStep;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return false;
-	}
-	return state;
-};
-
-const isExperimental: Reducer< boolean, OnboardAction > = (
-	state = hasExperimentalQueryParam(),
-	action
-) => {
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return false;
 	}
@@ -244,6 +226,16 @@ const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false,
 	return state;
 };
 
+const lastLocation: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_LAST_LOCATION' ) {
+		return action.path;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainSearch,
@@ -261,9 +253,9 @@ const reducer = combineReducers( {
 	showSignupDialog,
 	planProductId,
 	wasVerticalSkipped,
-	isExperimental,
 	randomizedDesigns,
 	hasOnboardingStarted,
+	lastLocation,
 } );
 
 export type State = ReturnType< typeof reducer >;

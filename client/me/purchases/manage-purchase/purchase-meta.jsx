@@ -23,16 +23,9 @@ import {
 	isSubscription,
 	isCloseToExpiration,
 	isRenewable,
+	isWithinIntroductoryOfferPeriod,
+	isIntroductoryOfferFreeTrial,
 } from 'calypso/lib/purchases';
-import {
-	isDomainRegistration,
-	isDomainTransfer,
-	isConciergeSession,
-	isJetpackPlan,
-	isJetpackProduct,
-	getProductFromSlug,
-} from 'calypso/lib/products-values';
-import { getPlan } from 'calypso/lib/plans';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
@@ -41,11 +34,23 @@ import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import UserItem from 'calypso/components/user';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { canEditPaymentDetails } from '../utils';
-import { TERM_BIENNIALLY, TERM_MONTHLY, JETPACK_LEGACY_PLANS } from 'calypso/lib/plans/constants';
+import {
+	getPlan,
+	TERM_BIENNIALLY,
+	TERM_MONTHLY,
+	JETPACK_LEGACY_PLANS,
+	isDomainRegistration,
+	isDomainTransfer,
+	isConciergeSession,
+	isJetpackPlan,
+	isJetpackProduct,
+	getProductFromSlug,
+} from '@automattic/calypso-products';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import PaymentInfoBlock from './payment-info-block';
+import { getIntroductoryOfferIntervalDisplay } from 'calypso/lib/purchases/utils';
 
 export default function PurchaseMeta( {
 	purchaseId = false,
@@ -77,6 +82,7 @@ export default function PurchaseMeta( {
 					<em className="manage-purchase__detail-label">{ translate( 'Price' ) }</em>
 					<span className="manage-purchase__detail">
 						<PurchaseMetaPrice purchase={ purchase } />
+						<PurchaseMetaIntroductoryOfferDetail purchase={ purchase } />
 					</span>
 				</li>
 				<PurchaseMetaExpiration
@@ -256,6 +262,28 @@ function PurchaseMetaPrice( { purchase } ) {
 			period: <span className="manage-purchase__time-period" />,
 		},
 	} );
+}
+
+function PurchaseMetaIntroductoryOfferDetail( { purchase } ) {
+	const translate = useTranslate();
+
+	if ( ! isWithinIntroductoryOfferPeriod( purchase ) ) {
+		return null;
+	}
+
+	const text = getIntroductoryOfferIntervalDisplay(
+		translate,
+		purchase.introductoryOffer.intervalUnit,
+		purchase.introductoryOffer.intervalCount,
+		isIntroductoryOfferFreeTrial( purchase )
+	);
+
+	return (
+		<>
+			<br />
+			<small> { text } </small>
+		</>
+	);
 }
 
 function PurchaseMetaPaymentDetails( { purchase, getChangePaymentMethodUrlFor, siteSlug, site } ) {

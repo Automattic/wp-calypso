@@ -17,8 +17,7 @@ import {
 	fetchTitanAutoLoginURL,
 	fetchTitanIframeURL,
 } from 'calypso/my-sites/email/email-management/titan-functions';
-import { getTitanMailOrderId } from 'calypso/lib/titan/get-titan-mail-order-id';
-import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
+import { getTitanMailOrderId, getTitanProductName } from 'calypso/lib/titan';
 
 /**
  * Style dependencies
@@ -34,7 +33,9 @@ class TitanControlPanelLoginCard extends React.Component {
 	componentDidMount() {
 		this._mounted = true;
 
-		fetchTitanIframeURL( getTitanMailOrderId( this.props.domain ) ).then(
+		const { context, domain } = this.props;
+
+		fetchTitanIframeURL( getTitanMailOrderId( domain ), context ).then(
 			( { error, iframeURL } ) => {
 				if ( error ) {
 					this.props.errorNotice(
@@ -56,19 +57,21 @@ class TitanControlPanelLoginCard extends React.Component {
 			return;
 		}
 
-		const { domain, translate } = this.props;
+		const { context, domain, translate } = this.props;
 		this.setState( { isFetchingAutoLoginLink: true } );
 
-		fetchTitanAutoLoginURL( getTitanMailOrderId( domain ) ).then( ( { error, loginURL } ) => {
-			this.setState( { isFetchingAutoLoginLink: false } );
-			if ( error ) {
-				this.props.errorNotice(
-					error ?? translate( 'An unknown error occurred. Please try again later.' )
-				);
-			} else {
-				window.location.href = loginURL;
+		fetchTitanAutoLoginURL( getTitanMailOrderId( domain ), context ).then(
+			( { error, loginURL } ) => {
+				this.setState( { isFetchingAutoLoginLink: false } );
+				if ( error ) {
+					this.props.errorNotice(
+						error ?? translate( 'An unknown error occurred. Please try again later.' )
+					);
+				} else {
+					window.location.href = loginURL;
+				}
 			}
-		} );
+		);
 	};
 
 	renderAutoLogin() {
@@ -128,7 +131,7 @@ class TitanControlPanelLoginCard extends React.Component {
 							title={ translate( 'Email Control Panel' ) }
 							src={ this.state.iframeURL }
 							width="100%"
-							height="650px"
+							height="1200px"
 						/>
 					) : (
 						<div>{ translate( 'Loading the control panel…' ) }</div>
@@ -148,6 +151,7 @@ class TitanControlPanelLoginCard extends React.Component {
 }
 
 TitanControlPanelLoginCard.propTypes = {
+	context: PropTypes.string,
 	domain: PropTypes.object.isRequired,
 };
 

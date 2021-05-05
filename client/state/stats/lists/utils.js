@@ -1,18 +1,7 @@
 /**
  * External dependencies
  */
-import {
-	sortBy,
-	toPairs,
-	camelCase,
-	mapKeys,
-	isNumber,
-	get,
-	filter,
-	map,
-	concat,
-	flatten,
-} from 'lodash';
+import { sortBy, camelCase, mapKeys, get, filter, map, concat, flatten } from 'lodash';
 import { translate, getLocaleSlug } from 'i18n-calypso';
 import moment from 'moment';
 
@@ -138,7 +127,7 @@ export function buildExportArray( data, parent = null ) {
  * @returns {string}          Serialized stats query
  */
 export function getSerializedStatsQuery( query = {} ) {
-	return JSON.stringify( sortBy( toPairs( query ), ( pair ) => pair[ 0 ] ) );
+	return JSON.stringify( sortBy( Object.entries( query ), ( pair ) => pair[ 0 ] ) );
 }
 
 /**
@@ -354,7 +343,7 @@ export const normalizers = {
 	 * @returns {object?}        Normalized stats data
 	 */
 	statsInsights: ( data ) => {
-		if ( ! data || ! isNumber( data.highest_day_of_week ) ) {
+		if ( ! data || typeof data.highest_day_of_week !== 'number' ) {
 			return {};
 		}
 

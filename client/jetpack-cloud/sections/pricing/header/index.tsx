@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useTranslate } from 'i18n-calypso';
-import React, { useMemo } from 'react';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -10,16 +10,6 @@ import React, { useMemo } from 'react';
 import JetpackComMasterbar from '../jpcom-masterbar';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { preventWidows } from 'calypso/lib/formatting';
-import {
-	getForCurrentCROIteration,
-	Iterations,
-} from 'calypso/my-sites/plans/jetpack-plans/iterations';
-
-// Fresh Start 2021 promotion; runs from Feb 16 00:00 to Mar 3 23:59 UTC automatically.
-// Safe to remove on or after Mar 4.
-import FreshStart2021SaleBanner from 'calypso/components/jetpack/fresh-start-2021-sale-banner';
-
-// Part of the NPIP test iteration
 import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
 
 /**
@@ -27,26 +17,12 @@ import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner'
  */
 import './style.scss';
 
-const Header: React.FC< Props > = ( { urlQueryArgs } ) => {
+const Header: React.FC< Props > = () => {
 	const translate = useTranslate();
-
-	// Don't show for the NPIP variant
-	const showFreshStartBanner = useMemo(
-		() => getForCurrentCROIteration( ( variation: Iterations ) => variation !== Iterations.NPIP ),
-		[]
-	);
-
-	// *Only* show for the NPIP variant
-	const showIntroPricingBanner = useMemo(
-		() => getForCurrentCROIteration( ( variation: Iterations ) => variation === Iterations.NPIP ),
-		[]
-	);
 
 	return (
 		<>
 			<JetpackComMasterbar />
-
-			{ showFreshStartBanner && <FreshStart2021SaleBanner urlQueryArgs={ urlQueryArgs } /> }
 
 			<div className="header">
 				<FormattedHeader
@@ -58,7 +34,7 @@ const Header: React.FC< Props > = ( { urlQueryArgs } ) => {
 				/>
 			</div>
 
-			{ showIntroPricingBanner && <IntroPricingBanner /> }
+			<IntroPricingBanner />
 		</>
 	);
 };

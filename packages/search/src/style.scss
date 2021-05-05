@@ -170,9 +170,9 @@ $input-z-index: 20;
 
 	.components-button {
 		padding: 0;
-	
+
 		&:focus {
-			box-shadow: none;
+			z-index: 9999;
 		}
 	}
 

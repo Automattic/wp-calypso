@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { castArray, noop, zip } from 'lodash';
+import { zip } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +15,8 @@ import { requestMediaStorage } from 'calypso/state/sites/media-storage/actions';
 import { createTransientMediaItems } from 'calypso/state/media/thunks/create-transient-media-items';
 import { isFileList } from 'calypso/state/media/utils/is-file-list';
 
+const noop = () => {};
+
 /**
  * Add media items serially (one at a time) but dispatch creation
  * for all at the start. Use a safe default for when
@@ -24,9 +26,6 @@ import { isFileList } from 'calypso/state/media/utils/is-file-list';
  * Where Promise.all will fail on a single failed promise, this function
  * swallows all errors and depends on the `onItemFailure` and redux store's
  * handling of errors. It then returns only the list of successful uploads.
- *
- * Note: Temporarily this action will dispatch to the flux store, until
- * the flux store is removed.
  *
  * @param {object|object[]} files The file to upload
  * @param {object} site The site to add the media to
@@ -44,7 +43,11 @@ export const uploadMedia = (
 	onItemFailure = noop
 ) => async ( dispatch ) => {
 	// https://stackoverflow.com/questions/25333488/why-isnt-the-filelist-object-an-array
-	files = isFileList( files ) ? Array.from( files ) : castArray( files );
+	if ( isFileList( files ) ) {
+		files = Array.from( files );
+	} else if ( ! Array.isArray( files ) ) {
+		files = [ files ];
+	}
 	const uploadedItems = [];
 
 	const transientItems = dispatch( createTransientMediaItems( files, site ) );

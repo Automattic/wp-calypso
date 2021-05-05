@@ -5,6 +5,7 @@
 import { useSelector } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
+import classnames from 'classnames';
 
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
@@ -17,14 +18,15 @@ import formatCurrency from '@automattic/format-currency';
 import QuerySecureYourBrand from 'calypso/components/data/query-secure-your-brand';
 import Badge from 'calypso/components/badge';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormLabel from 'calypso/components/forms/form-label';
+import { useExperiment } from 'calypso/lib/explat';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormRadio from 'calypso/components/forms/form-radio';
-import FormLabel from 'calypso/components/forms/form-label';
 
 export default function DomainUpsellStep( props ) {
 	const translate = useTranslate();
@@ -45,8 +47,20 @@ export default function DomainUpsellStep( props ) {
 		}
 	);
 
+	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
+		'domain_upsell_emphasize_free_v3'
+	);
+	// An A/A experiment to check for anomalies in this location:
+	useExperiment( 'explat_test_aa_one_off_20210421' );
+
+	const isInDomainUpsellEmphasizeFreeTest = 'treatment' === experimentAssignment?.variationName;
+
 	return (
-		<div className="domain-upsell__step-secton-wrapper">
+		<div
+			className={ classnames( 'domain-upsell__step-secton-wrapper', {
+				is_in_domain_upsell_emphasize_free_test: isInDomainUpsellEmphasizeFreeTest,
+			} ) }
+		>
 			<StepWrapper
 				flowName={ flowName }
 				stepName={ stepName }
@@ -56,7 +70,11 @@ export default function DomainUpsellStep( props ) {
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
 				isWideLayout={ false }
-				stepContent={ RecommendedDomains( props ) }
+				stepContent={ RecommendedDomains( {
+					...props,
+					isInDomainUpsellEmphasizeFreeTest,
+					isLoadingExperimentAssignment,
+				} ) }
 			/>
 		</div>
 	);
@@ -97,17 +115,32 @@ function RecommendedDomains( props ) {
 		stepName,
 		submitSignupStep,
 		goToNextStep,
+		isInDomainUpsellEmphasizeFreeTest,
+		isLoadingExperimentAssignment,
 	} = props;
 	const translate = useTranslate();
 	const [ selectedDomain, setSelectedDomain ] = useState( null );
 	const selectDomain = ( event ) => setSelectedDomain( event.target.value );
 	const secureYourBrand = useSelector( ( state ) => getSecureYourBrand( state ) );
-	const isLoading = useSelector( ( state ) => isRequestingSecureYourBrand( state ) );
+	const isSecureYourBrandLoading = useSelector( ( state ) => isRequestingSecureYourBrand( state ) );
 	const hasError = useSelector( ( state ) => hasSecureYourBrandError( state ) );
 	const productData = secureYourBrand.product_data;
 	const selectedProduct = productData?.filter(
 		( product ) => product.domain === selectedDomain
 	)[ 0 ];
+
+	const isLoading = isSecureYourBrandLoading || isLoadingExperimentAssignment;
+
+	const upgradeCtaText = isInDomainUpsellEmphasizeFreeTest
+		? translate( 'Use %(selectedDomain)s (%(originalCost)s)', {
+				args: {
+					selectedDomain,
+					originalCost: formatCurrency( selectedProduct?.cost, selectedProduct?.currency, {
+						stripZeros: true,
+					} ),
+				},
+		  } )
+		: translate( 'Use %s', { args: [ selectedDomain ] } );
 
 	useEffect( () => {
 		if ( productData && ! selectedDomain ) {
@@ -154,7 +187,7 @@ function RecommendedDomains( props ) {
 	return (
 		<div className="domain-upsell">
 			{ ! productData && ! isLoading && ! hasError && <QuerySecureYourBrand domain={ siteSlug } /> }
-			<Card style={ { maxWidth: '615px' } } className="domain-upsell__card">
+			<Card className="domain-upsell__card">
 				{ isLoading ? (
 					[ ...Array( 3 ) ].map( ( e, i ) => (
 						<div key={ `${ i }` } className="domain-upsell__placeholder">
@@ -177,19 +210,24 @@ function RecommendedDomains( props ) {
 				) }
 				<div className="domain-upsell__buttons">
 					<Button busy={ isLoading } primary onClick={ handleUpgradeButtonClick }>
-						{ isLoading
-							? translate( 'Loading' )
-							: translate( 'Use %s', { args: [ selectedDomain ] } ) }
+						{ isLoading ? translate( 'Loading' ) : upgradeCtaText }
 					</Button>
+					{ isInDomainUpsellEmphasizeFreeTest && ! isLoading && (
+						<Button onClick={ handleSkipButtonClick }>
+							{ translate( 'Use %s (free)', { args: [ siteSlug ] } ) }
+						</Button>
+					) }
 				</div>
 			</Card>
-			<div className="domain-upsell__continue-link">
-				<Button compact borderless plain onClick={ handleSkipButtonClick }>
-					{ translate( `No thanks, I'll stick with %s`, {
-						args: [ siteSlug ],
-					} ) }
-				</Button>
-			</div>
+			{ ! isInDomainUpsellEmphasizeFreeTest && ! isLoading && (
+				<div className="domain-upsell__continue-link">
+					<Button compact borderless plain onClick={ handleSkipButtonClick }>
+						{ translate( `No thanks, I'll stick with %s`, {
+							args: [ siteSlug ],
+						} ) }
+					</Button>
+				</div>
+			) }
 		</div>
 	);
 }

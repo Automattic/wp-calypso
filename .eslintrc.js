@@ -1,14 +1,19 @@
 const { merge } = require( 'lodash' );
 const reactVersion = require( './client/package.json' ).dependencies.react;
+const path = require( 'path' );
 
 module.exports = {
 	root: true,
+	parserOptions: {
+		babelOptions: {
+			configFile: path.join( __dirname, './babel.config.js' ),
+		},
+	},
 	extends: [
 		'plugin:wpcalypso/react',
 		'plugin:jsx-a11y/recommended',
 		'plugin:jest/recommended',
 		'plugin:prettier/recommended',
-		'prettier/react',
 		'plugin:md/prettier',
 		'plugin:@wordpress/eslint-plugin/i18n',
 	],
@@ -47,20 +52,8 @@ module.exports = {
 			files: [ 'packages/**/*' ],
 			rules: {
 				// These two rules are to ensure packages don't import from calypso by accident to avoid circular deps.
-				'no-restricted-imports': [
-					'error',
-					{
-						patterns: [ 'calypso/*' ],
-						message: "Packages shouldn't import from calypso",
-					},
-				],
-				'no-restricted-modules': [
-					'error',
-					{
-						patterns: [ 'calypso/*' ],
-						message: "Packages shouldn't import from calypso",
-					},
-				],
+				'no-restricted-imports': [ 'error', { patterns: [ 'calypso/*' ] } ],
+				'no-restricted-modules': [ 'error', { patterns: [ 'calypso/*' ] } ],
 			},
 		},
 		{
@@ -74,12 +67,18 @@ module.exports = {
 		},
 		{
 			plugins: [ 'mocha' ],
-			files: [ 'test/e2e/**/*' ],
+			files: [
+				'test/e2e/**/*',
+				'packages/magellan-mocha-plugin/test/**/*',
+				'packages/magellan-mocha-plugin/test_support/**/*',
+			],
 			rules: {
 				'import/no-nodejs-modules': 'off',
 				'mocha/no-exclusive-tests': 'error',
 				'mocha/handle-done-callback': [ 'error', { ignoreSkipped: true } ],
 				'mocha/no-global-tests': 'error',
+				'mocha/no-async-describe': 'error',
+				'mocha/no-top-level-hooks': 'error',
 				'no-console': 'off',
 				// Disable all rules from "plugin:jest/recommended", as e2e tests use mocha
 				...Object.keys( require( 'eslint-plugin-jest' ).configs.recommended.rules ).reduce(
@@ -106,7 +105,7 @@ module.exports = {
 					.overrides[ 0 ].rules,
 			},
 			// Prettier rules config
-			require( 'eslint-config-prettier/@typescript-eslint' ),
+			require( 'eslint-config-prettier' ),
 			// Our own overrides
 			{
 				files: [ '**/*.ts', '**/*.tsx' ],
@@ -155,6 +154,12 @@ module.exports = {
 					'@typescript-eslint/no-var-requires': 'off',
 					// REST API objects include underscores
 					'@typescript-eslint/camelcase': 'off',
+
+					// TypeScript compiler already takes care of these errors
+					'import/no-extraneous-dependencies': 'off',
+					'import/named': 'off',
+					'import/namespace': 'off',
+					'import/default': 'off',
 				},
 			}
 		),
@@ -276,8 +281,6 @@ module.exports = {
 			2,
 			{
 				paths: [
-					// Error if any module depends on the data-observe mixin, which is deprecated.
-					'lib/mixins/data-observe',
 					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
 					{
 						name: 'gridicons',
@@ -313,8 +316,6 @@ module.exports = {
 			2,
 			{
 				paths: [
-					// Error if any module depends on the data-observe mixin, which is deprecated.
-					'lib/mixins/data-observe',
 					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
 					{
 						name: 'gridicons',
@@ -380,6 +381,10 @@ module.exports = {
 
 		// Force packages to declare their dependencies
 		'import/no-extraneous-dependencies': 'error',
+		'import/named': 'error',
+		'import/namespace': 'error',
+		'import/default': 'error',
+		'import/no-duplicates': 'error',
 
 		'wpcalypso/no-unsafe-wp-apis': [
 			'error',
@@ -395,17 +400,50 @@ module.exports = {
 		'@wordpress/i18n-text-domain': 'off',
 
 		// Disable Lodash methods that we've already migrated away from, see p4TIVU-9Bf-p2 for more details.
+		'you-dont-need-lodash-underscore/all': 'error',
+		'you-dont-need-lodash-underscore/any': 'error',
+		'you-dont-need-lodash-underscore/assign': 'error',
 		'you-dont-need-lodash-underscore/bind': 'error',
+		'you-dont-need-lodash-underscore/cast-array': 'error',
+		'you-dont-need-lodash-underscore/collect': 'error',
+		'you-dont-need-lodash-underscore/contains': 'error',
+		'you-dont-need-lodash-underscore/detect': 'error',
 		'you-dont-need-lodash-underscore/drop': 'error',
+		'you-dont-need-lodash-underscore/drop-right': 'error',
 		'you-dont-need-lodash-underscore/ends-with': 'error',
 		'you-dont-need-lodash-underscore/entries': 'error',
+		'you-dont-need-lodash-underscore/every': 'error',
+		'you-dont-need-lodash-underscore/extend-own': 'error',
+		'you-dont-need-lodash-underscore/fill': 'error',
+		'you-dont-need-lodash-underscore/first': 'error',
+		'you-dont-need-lodash-underscore/foldl': 'error',
+		'you-dont-need-lodash-underscore/foldr': 'error',
+		'you-dont-need-lodash-underscore/index-of': 'error',
+		'you-dont-need-lodash-underscore/inject': 'error',
+		'you-dont-need-lodash-underscore/is-array': 'error',
 		'you-dont-need-lodash-underscore/is-finite': 'error',
+		'you-dont-need-lodash-underscore/is-function': 'error',
+		'you-dont-need-lodash-underscore/is-integer': 'error',
+		'you-dont-need-lodash-underscore/is-nan': 'error',
 		'you-dont-need-lodash-underscore/is-nil': 'error',
 		'you-dont-need-lodash-underscore/is-null': 'error',
+		'you-dont-need-lodash-underscore/is-string': 'error',
+		'you-dont-need-lodash-underscore/is-undefined': 'error',
+		'you-dont-need-lodash-underscore/join': 'error',
+		'you-dont-need-lodash-underscore/last-index-of': 'error',
+		'you-dont-need-lodash-underscore/pad-end': 'error',
+		'you-dont-need-lodash-underscore/pad-start': 'error',
 		'you-dont-need-lodash-underscore/reduce-right': 'error',
+		'you-dont-need-lodash-underscore/repeat': 'error',
+		'you-dont-need-lodash-underscore/replace': 'error',
 		'you-dont-need-lodash-underscore/reverse': 'error',
+		'you-dont-need-lodash-underscore/select': 'error',
+		'you-dont-need-lodash-underscore/slice': 'error',
 		'you-dont-need-lodash-underscore/split': 'error',
+		'you-dont-need-lodash-underscore/take-right': 'error',
 		'you-dont-need-lodash-underscore/to-lower': 'error',
+		'you-dont-need-lodash-underscore/to-pairs': 'error',
 		'you-dont-need-lodash-underscore/to-upper': 'error',
+		'you-dont-need-lodash-underscore/uniq': 'error',
 	},
 };

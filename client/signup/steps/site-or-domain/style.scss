@@ -5,6 +5,7 @@
 }
 
 .site-or-domain__choice {
+	display: flex;
 	margin: 10px;
 	min-width: 230px;
 	max-width: 300px;
@@ -12,7 +13,13 @@
 	transition: box-shadow 100ms ease-in-out;
 	cursor: pointer;
 
-	a, svg {
+	a {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+	}
+
+	svg {
 		display: block;
 		width: 100%;
 	}
@@ -45,9 +52,11 @@
 
 .site-or-domain__choice-image {
 	display: none;
+	width: 100%;
 }
 
 .site-or-domain__choice-text {
+	flex-grow: 1;
 	color: var( --color-neutral-70 );
 }
 

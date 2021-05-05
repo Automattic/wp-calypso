@@ -11,9 +11,10 @@ import config from '@automattic/calypso-config';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
+import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { hasTrafficGuidePurchase } from 'calypso/my-sites/marketing/ultimate-traffic-guide';
 import MarketingToolsFeature from './feature';
 import MarketingToolsHeader from './header';
@@ -24,6 +25,7 @@ import {
 } from 'calypso/my-sites/marketing/paths';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 
 /**
@@ -31,7 +33,7 @@ import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
  */
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
-import facebookMessenger from 'calypso/assets/images/illustrations/facebook-messenger.svg';
+import facebookLogo from 'calypso/assets/images/illustrations/facebook-logo.png';
 import canvaLogo from 'calypso/assets/images/illustrations/canva-logo.svg';
 import sendinblueLogo from 'calypso/assets/images/illustrations/sendinblue-logo.svg';
 import simpletextLogo from 'calypso/assets/images/illustrations/simpletext-logo.png';
@@ -52,11 +54,17 @@ export const MarketingTools: FunctionComponent = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const recordTracksEvent = ( event: string ) => dispatch( recordTracksEventAction( event ) );
+
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) ) || 0;
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( ( state ) =>
 		getSelectedSiteSlug( state )
 	);
 	const purchases = useSelector( ( state ) => getUserPurchases( state, userId ) );
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || 0;
+	const sitePlan = useSelector( ( state ) => getSitePlanSlug( state, siteId ) ) || '';
+	const showFacebookUpsell = [ 'value_bundle', 'personal-bundle', 'free_plan' ].includes(
+		sitePlan
+	);
 
 	const handleBusinessToolsClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_business_tools_button_click' );
@@ -74,8 +82,8 @@ export const MarketingTools: FunctionComponent = () => {
 		recordTracksEvent( 'calypso_marketing_tools_create_a_logo_button_click' );
 	};
 
-	const handleFacebookMessengerClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_facebook_messenger_button_click' );
+	const handleFacebookClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_facebook_button_click' );
 	};
 
 	const handleCanvaClick = () => {
@@ -111,6 +119,7 @@ export const MarketingTools: FunctionComponent = () => {
 	return (
 		<Fragment>
 			{ ! purchases && <QueryUserPurchases userId={ userId } /> }
+			{ ! sitePlan && <QuerySitePlans siteId={ siteId } /> }
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 
 			<MarketingToolsHeader handleButtonClick={ handleBusinessToolsClick } />
@@ -119,7 +128,7 @@ export const MarketingTools: FunctionComponent = () => {
 				<MarketingToolsFeature
 					title={ translate( 'Want to build a great brand? Start with a great logo' ) }
 					description={ translate(
-						'A custom logo helps your brand pop and makes your site memorable. Make a professional logo in a few clicks with our partner Fiverr.'
+						'A custom logo helps your brand pop and makes your site memorable. Make a professional logo in a few clicks with our partner today.'
 					) }
 					imagePath={ fiverrLogo }
 				>
@@ -146,24 +155,34 @@ export const MarketingTools: FunctionComponent = () => {
 
 				{ getLocaleSlug() === 'en' && (
 					<MarketingToolsFeature
-						title={ translate( 'Want to convert visitors into customers? Add Messenger Chat!' ) }
+						title={ translate( 'Want to connect with your audience on Facebook and Instagram?' ) }
 						description={ translate(
-							'Customers like to buy from a business they can message. Build trust, help customers, and provide support with the Official Facebook Messenger Chat Plugin. {{em}}Available on Business and eCommerce plans{{/em}}.',
+							'Discover an easy way to advertise your brand across Facebook and Instagram. Capture website actions to help you target audiences and measure results. {{em}}Available on Business and eCommerce plans{{/em}}.',
 							{
 								components: {
 									em: <em />,
 								},
 							}
 						) }
-						imagePath={ facebookMessenger }
+						imagePath={ facebookLogo }
 					>
-						<Button
-							onClick={ handleFacebookMessengerClick }
-							href="https://wordpress.com/plugins/facebook-messenger-customer-chat"
-							target="_blank"
-						>
-							{ translate( 'Add Messenger Chat' ) }
-						</Button>
+						{ ! showFacebookUpsell && (
+							<Button
+								onClick={ handleFacebookClick }
+								href="https://wordpress.com/plugins/official-facebook-pixel"
+								target="_blank"
+							>
+								{ translate( 'Add Facebook for WordPress.com' ) }
+							</Button>
+						) }
+						{ showFacebookUpsell && (
+							<Button
+								onClick={ handleFacebookClick }
+								href={ `/plans/${ selectedSiteSlug }?customerType=business` }
+							>
+								{ translate( 'Unlock this feature' ) }
+							</Button>
+						) }
 					</MarketingToolsFeature>
 				) }
 

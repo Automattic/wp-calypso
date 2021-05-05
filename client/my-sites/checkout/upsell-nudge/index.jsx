@@ -8,6 +8,7 @@ import page from 'page';
 import { pick } from 'lodash';
 import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { isURL } from '@wordpress/url';
 
 /**
  * Internal dependencies
@@ -40,12 +41,10 @@ import { ConciergeQuickstartSession } from './concierge-quickstart-session';
 import { ConciergeSupportSession } from './concierge-support-session';
 import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
 import { PremiumPlanUpgradeUpsell } from './premium-plan-upgrade-upsell';
-import { DifmUpsell } from './difm-upsell';
 import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
 import PurchaseModal from './purchase-modal';
 import Gridicon from 'calypso/components/gridicon';
-import { isMonthly } from 'calypso/lib/plans/constants';
-import { getPlanByPathSlug } from 'calypso/lib/plans';
+import { isMonthly, getPlanByPathSlug } from '@automattic/calypso-products';
 import { isFetchingStoredCards, getStoredCards } from 'calypso/state/stored-cards/selectors';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
 import { extractStoredCardMetaValue } from './purchase-modal/util';
@@ -68,7 +67,6 @@ export const CONCIERGE_QUICKSTART_SESSION = 'concierge-quickstart-session';
 export const CONCIERGE_SUPPORT_SESSION = 'concierge-support-session';
 export const PREMIUM_PLAN_UPGRADE_UPSELL = 'premium-plan-upgrade-upsell';
 export const BUSINESS_PLAN_UPGRADE_UPSELL = 'business-plan-upgrade-upsell';
-export const DIFM_UPSELL = 'difm-upsell';
 
 export class UpsellNudge extends React.Component {
 	static propTypes = {
@@ -236,19 +234,6 @@ export class UpsellNudge extends React.Component {
 						handleClickDecline={ this.handleClickDecline }
 					/>
 				);
-
-			case DIFM_UPSELL:
-				return (
-					<DifmUpsell
-						currencyCode={ currencyCode }
-						planRawPrice={ planRawPrice }
-						planDiscountedRawPrice={ planDiscountedRawPrice }
-						receiptId={ receiptId }
-						translate={ translate }
-						handleClickAccept={ this.handleClickAccept }
-						handleClickDecline={ this.handleClickDecline }
-					/>
-				);
 		}
 	}
 
@@ -273,7 +258,13 @@ export class UpsellNudge extends React.Component {
 			clearSignupDestinationCookie();
 		}
 
-		page.redirect( url );
+		// If url starts with http, use browser redirect.
+		// If url is a route, use page router.
+		if ( isURL( url ) ) {
+			window.location.href = url;
+		} else {
+			page.redirect( url );
+		}
 	};
 
 	handleClickAccept = ( buttonAction ) => {
@@ -296,11 +287,6 @@ export class UpsellNudge extends React.Component {
 				subdivisionCode: null,
 			} );
 			this.props.shoppingCartManager.replaceProductsInCart( [ this.props.product ] );
-			return;
-		}
-
-		if ( DIFM_UPSELL === upsellType ) {
-			page( '/me/difm-intake' );
 			return;
 		}
 

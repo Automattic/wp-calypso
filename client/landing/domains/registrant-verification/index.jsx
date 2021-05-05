@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { get, join } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +14,7 @@ import DomainsLandingContentCard from '../content-card';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wp from 'calypso/lib/wp';
 import { getMaintenanceMessageFromError } from '../utils';
+import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 
 const wpcom = wp.undocumented();
 
@@ -62,7 +63,7 @@ class RegistrantVerificationPage extends Component {
 	getVerificationSuccessState = ( domains ) => {
 		const { translate } = this.props;
 
-		const verifiedDomains = join( domains, ', ' );
+		const verifiedDomains = domains.join( ', ' );
 
 		return {
 			title: translate( 'Success!' ),
@@ -80,7 +81,14 @@ class RegistrantVerificationPage extends Component {
 			),
 			actionTitle: null,
 			actionCallback: null,
-			footer: translate( 'All done. You can close this window now.' ),
+			footer: translate(
+				'All done. You can close this window now or {{domainsManagementLink}}manage your domains{{/domainsManagementLink}}.',
+				{
+					components: {
+						domainsManagementLink: <a href={ domainManagementRoot() } />,
+					},
+				}
+			),
 			isLoading: false,
 		};
 	};
@@ -143,7 +151,14 @@ class RegistrantVerificationPage extends Component {
 						},
 					}
 				),
-				footer: translate( 'All done. You can close this window now.' ),
+				footer: translate(
+					'All done. You can close this window now or {{domainsManagementLink}}manage your domains{{/domainsManagementLink}}.',
+					{
+						components: {
+							domainsManagementLink: <a href={ domainManagementRoot() } />,
+						},
+					}
+				),
 			};
 		}
 	};
@@ -203,6 +218,7 @@ class RegistrantVerificationPage extends Component {
 				break;
 
 			case 'KS_RAM_error':
+			case 'KS_RSP_error':
 				errorState = this.getKeySystemsErrorState( error.message );
 				break;
 

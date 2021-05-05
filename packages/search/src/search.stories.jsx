@@ -3,17 +3,16 @@
  */
 import React from 'react';
 
-import { Search } from './search';
+import Search from './search';
 
 export default { title: 'Search', component: Search };
 
 const BoxedSearch = ( props ) => (
 	<div style={ { position: 'relative', width: '270px', height: '50px' } }>
 		<Search
-			__={ ( str ) => str }
 			placeholder="Search..."
 			fitsContainer
-			onSearch={ ( search ) => console.log( 'Searched: ', search ) } // eslint-disable-line no-console
+			onSearch={ ( search ) => console.log( 'Searched:', search ) } // eslint-disable-line no-console
 			{ ...props }
 		/>
 	</div>
@@ -32,7 +31,8 @@ export const Delayed = () => {
 };
 
 export const Searching = () => {
-	return <BoxedSearch searching initialValue="Kiwi" />;
+	// eslint-disable-next-line jsx-a11y/no-autofocus
+	return <BoxedSearch searching defaultValue="Kiwi" autoFocus />;
 };
 
 export const Disabled = () => <BoxedSearch disabled isOpen />;
@@ -58,3 +58,5 @@ export const WithOverlayStyling = () => {
 
 	return <BoxedSearch overlayStyling={ overlayStyling } />;
 };
+
+export const WithDefaultValue = () => <BoxedSearch defaultValue="a default search value" />;

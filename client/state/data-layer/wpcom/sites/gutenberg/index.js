@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { has, noop } from 'lodash';
+import { has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,6 +18,8 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { replaceHistory } from 'calypso/state/ui/actions';
 
 import 'calypso/state/gutenberg-iframe-eligible/init';
+
+const noop = () => {};
 
 const fetchGutenbergOptInData = ( action ) =>
 	http(

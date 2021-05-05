@@ -31,7 +31,7 @@ import {
 import { getName as getDomainName } from 'calypso/lib/purchases';
 import { isDataLoading } from '../utils';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { isDomainRegistration } from 'calypso/lib/products-values';
+import { isDomainRegistration } from '@automattic/calypso-products';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { cancelPurchase, purchasesRoot } from 'calypso/me/purchases/paths';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';

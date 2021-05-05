@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { get, noop, some, flatMap } from 'lodash';
+import { get, some, flatMap } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
@@ -36,6 +36,8 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
  * Style dependencies
  */
 import './post-comment.scss';
+
+const noop = () => {};
 
 /**
  * A PostComment is the visual representation for a comment within a tree of comments.

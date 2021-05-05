@@ -6,7 +6,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { noop } from 'lodash';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import React from 'react';
@@ -16,6 +15,8 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { ImageSelector } from '../';
+
+const noop = () => {};
 
 jest.mock( 'event', () => {}, { virtual: true } );
 jest.mock( 'calypso/state/ui/media-modal/selectors', () => ( {
@@ -42,7 +43,7 @@ describe( 'ImageSelector', () => {
 		onImageSelected: noop,
 		onRemoveImage: noop,
 		imageIds: [],
-		setMediaLibrarySelectedItems: noop,
+		selectMediaItems: noop,
 	};
 	const store = {
 		getState: () => ( {

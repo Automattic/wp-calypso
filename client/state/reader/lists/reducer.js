@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { filter, some, find, get, includes, keyBy, map, omit, union, reject } from 'lodash';
+import { filter, some, find, get, includes, keyBy, map, omit, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,6 +28,8 @@ import {
 } from 'calypso/state/reader/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema, subscriptionsSchema, updatedListsSchema, errorsSchema } from './schema';
+
+const union = ( ...arrays ) => [ ...new Set( [].concat( ...arrays ) ) ];
 
 /**
  * Tracks all known list objects, indexed by list ID.

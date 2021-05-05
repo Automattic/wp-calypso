@@ -69,7 +69,7 @@ function WelcomeTourCard( {
 							isTertiary
 							onClick={ () => setCurrentCardIndex( 0 ) }
 						>
-							Restart tour
+							{ __( 'Restart tour', 'full-site-editing' ) }
 						</Button>
 					) : null }
 				</p>
@@ -91,6 +91,10 @@ function WelcomeTourCard( {
 }
 
 function CardNavigation( { cardIndex, lastCardIndex, onDismiss, setCurrentCardIndex } ) {
+	// These are defined on their own lines because of a minification issue.
+	// __('translations') do not always work correctly when used inside of ternary statements.
+	const startTourLabel = __( 'Start Tour', 'full-site-editing' );
+	const nextLabel = __( 'Next', 'full-site-editing' );
 	return (
 		<>
 			<PaginationControl
@@ -114,9 +118,7 @@ function CardNavigation( { cardIndex, lastCardIndex, onDismiss, setCurrentCardIn
 					isPrimary={ true }
 					onClick={ () => setCurrentCardIndex( cardIndex + 1 ) }
 				>
-					{ cardIndex === 0
-						? __( 'Start Tour', 'full-site-editing' )
-						: __( 'Next', 'full-site-editing' ) }
+					{ cardIndex === 0 ? startTourLabel : nextLabel }
 				</Button>
 			</div>
 		</>
@@ -136,7 +138,7 @@ function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
 		<div className="welcome-tour-card__overlay-controls">
 			<Flex>
 				<Button
-					aria-label={ __( 'Minimize Tour', 'full-site-editing' ) }
+					label={ __( 'Minimize Tour', 'full-site-editing' ) }
 					isPrimary
 					className="welcome-tour-card__minimize-icon"
 					icon={ minimize }
@@ -144,7 +146,7 @@ function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
 					onClick={ handleOnMinimize }
 				></Button>
 				<Button
-					aria-label={ __( 'Close Tour', 'full-site-editing' ) }
+					label={ __( 'Close Tour', 'full-site-editing' ) }
 					isPrimary
 					icon={ close }
 					iconSize={ 24 }
@@ -157,8 +159,10 @@ function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
 
 function TourRating() {
 	let isDisabled = false;
-	const tourRating = useSelect( ( select ) => select( 'automattic/nux' ).tourRating() );
-	const { setTourRating } = useDispatch( 'automattic/nux' );
+	const tourRating = useSelect( ( select ) =>
+		select( 'automattic/wpcom-welcome-guide' ).getTourRating()
+	);
+	const { setTourRating } = useDispatch( 'automattic/wpcom-welcome-guide' );
 
 	if ( ! isDisabled && tourRating ) {
 		isDisabled = true;
@@ -177,7 +181,9 @@ function TourRating() {
 
 	return (
 		<>
-			<p className="welcome-tour__end-text">Did you find this guide helpful?</p>
+			<p className="welcome-tour__end-text">
+				{ __( 'Did you find this guide helpful?', 'full-site-editing' ) }
+			</p>
 			<div>
 				<Button
 					aria-label={ __( 'Rate thumbs up', 'full-site-editing' ) }

@@ -3,7 +3,6 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +15,8 @@ import services from './services';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export default class ShareButton extends PureComponent {
 	static propTypes = {

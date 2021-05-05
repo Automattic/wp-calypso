@@ -10,23 +10,18 @@ import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import * as actions from './actions';
 import * as resolvers from './resolvers';
-import createSelectors, { Selectors } from './selectors';
+import * as selectors from './selectors';
 import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 import { controls } from '../wpcom-request-controls';
 
 export * from './types';
+export * from './constants';
 export { getFormattedPrice } from './utils';
 export type { State };
 
 let isRegistered = false;
-interface StoreConfiguration {
-	/**
-	 * The default vendor to pass to domain queries.
-	 * Can be overridden in individual queries.
-	 */
-	vendor: string;
-}
-export function register( { vendor }: StoreConfiguration ): typeof STORE_KEY {
+
+export function register(): typeof STORE_KEY {
 	if ( ! isRegistered ) {
 		isRegistered = true;
 		registerStore< State >( STORE_KEY, {
@@ -34,7 +29,7 @@ export function register( { vendor }: StoreConfiguration ): typeof STORE_KEY {
 			controls: controls as any,
 			reducer: reducer as any,
 			resolvers,
-			selectors: createSelectors( vendor ),
+			selectors,
 		} );
 	}
 	return STORE_KEY;
@@ -42,5 +37,5 @@ export function register( { vendor }: StoreConfiguration ): typeof STORE_KEY {
 
 declare module '@wordpress/data' {
 	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< typeof actions >;
-	function select( key: typeof STORE_KEY ): SelectFromMap< Selectors >;
+	function select( key: typeof STORE_KEY ): SelectFromMap< typeof selectors >;
 }

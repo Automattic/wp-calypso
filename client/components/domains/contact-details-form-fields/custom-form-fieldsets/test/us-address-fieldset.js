@@ -26,6 +26,7 @@ describe( 'US Address Fieldset', () => {
 	const defaultProps = {
 		countryCode: 'US',
 		getFieldProps: ( name ) => ( { name, value: '' } ),
+		translate: ( string ) => string,
 	};
 
 	test( 'should render correctly with default props', () => {

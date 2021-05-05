@@ -7,7 +7,6 @@
  */
 import deepFreeze from 'deep-freeze';
 import React from 'react';
-import { identity, noop } from 'lodash';
 import { shallow } from 'enzyme';
 
 /**
@@ -15,6 +14,7 @@ import { shallow } from 'enzyme';
  */
 import { JetpackAuthorize } from '../authorize';
 
+const noop = () => {};
 const CLIENT_ID = 98765;
 const SITE_SLUG = 'an.example.site';
 const DEFAULT_PROPS = deepFreeze( {
@@ -57,7 +57,7 @@ const DEFAULT_PROPS = deepFreeze( {
 	recordTracksEvent: noop,
 	retryAuth: noop,
 	siteSlug: SITE_SLUG,
-	translate: identity,
+	translate: ( string ) => string,
 	user: {
 		display_name: "A User's Name",
 	},
@@ -66,7 +66,12 @@ const DEFAULT_PROPS = deepFreeze( {
 
 jest.mock( '@automattic/calypso-config', () => {
 	const mock = () => 'development';
-	mock.isEnabled = jest.fn( () => true );
+	mock.isEnabled = jest.fn( ( featureFlag ) => {
+		if ( featureFlag === 'jetpack/magic-link-signup' ) {
+			return false;
+		}
+		return true;
+	} );
 	return mock;
 } );
 
@@ -248,6 +253,30 @@ describe( 'JetpackAuthorize', () => {
 			};
 
 			expect( isFromJetpackConnectionManager( props ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'isFromJetpackBackupPlugin', () => {
+		const isFromJetpackBackupPlugin = new JetpackAuthorize().isFromJetpackBackupPlugin;
+
+		test( 'is from backup plugin', () => {
+			const props = {
+				authQuery: {
+					from: 'jetpack-backup',
+				},
+			};
+
+			expect( isFromJetpackBackupPlugin( props ) ).toBe( true );
+		} );
+
+		test( 'is not from backup plugin', () => {
+			const props = {
+				authQuery: {
+					from: 'not-jetpack-backup',
+				},
+			};
+
+			expect( isFromJetpackBackupPlugin( props ) ).toBe( false );
 		} );
 	} );
 

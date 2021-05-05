@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,6 +17,8 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class SuggestionSearch extends Component {
 	static propTypes = {

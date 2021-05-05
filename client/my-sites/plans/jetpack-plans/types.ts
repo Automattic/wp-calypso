@@ -4,17 +4,17 @@
  */
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactNode, ReactElement } from 'react';
-import type { TERM_ANNUALLY, TERM_MONTHLY } from 'calypso/lib/plans/constants';
+import type { TERM_ANNUALLY, TERM_MONTHLY } from '@automattic/calypso-products';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type {
 	ALL,
 	PERFORMANCE,
 	SECURITY,
-	PRODUCTS_WITH_OPTIONS,
 	ITEM_TYPE_PLAN,
 	ITEM_TYPE_BUNDLE,
 	ITEM_TYPE_PRODUCT,
 } from './constants';
+import type { PlanRecommendation } from './plan-upgrade/types';
 
 export type Duration = typeof TERM_ANNUALLY | typeof TERM_MONTHLY;
 export type DurationString = 'annual' | 'monthly';
@@ -27,6 +27,7 @@ export interface QueryArgs {
 
 export type PurchaseCallback = ( arg0: SelectorProduct, arg1?: boolean, arg2?: Purchase ) => void;
 export type DurationChangeCallback = ( arg0: Duration ) => void;
+export type ScrollCardIntoViewCallback = ( arg0: HTMLDivElement, arg1: string ) => void;
 
 interface BasePageProps {
 	rootUrl: string;
@@ -38,13 +39,17 @@ interface BasePageProps {
 export interface SelectorPageProps extends BasePageProps {
 	defaultDuration?: Duration;
 	siteSlug?: string;
+	planRecommendation?: PlanRecommendation;
+	highlightedProducts?: string[];
 }
 
 export interface ProductsGridProps {
 	duration: Duration;
-	onSelectProduct: PurchaseCallback;
 	urlQueryArgs: QueryArgs;
+	planRecommendation?: PlanRecommendation;
+	onSelectProduct: PurchaseCallback;
 	onDurationChange?: DurationChangeCallback;
+	scrollCardIntoView: ScrollCardIntoViewCallback;
 }
 
 export type PlanGridProducts = {
@@ -57,8 +62,6 @@ export interface JetpackFreeProps {
 	urlQueryArgs: QueryArgs;
 	siteId: number | null;
 }
-
-export type SelectorProductSlug = typeof PRODUCTS_WITH_OPTIONS[ number ];
 
 export type SelectorProductCost = {
 	isFree?: boolean;

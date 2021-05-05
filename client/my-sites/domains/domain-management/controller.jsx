@@ -29,11 +29,7 @@ import {
 	domainManagementDomainConnectMapping,
 	domainManagementRoot,
 } from 'calypso/my-sites/domains/paths';
-import {
-	emailManagement,
-	emailManagementAddGSuiteUsers,
-	emailManagementForwarding,
-} from 'calypso/my-sites/email/paths';
+import { emailManagement, emailManagementForwarding } from 'calypso/my-sites/email/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
 
@@ -213,12 +209,6 @@ export default {
 		next();
 	},
 
-	domainManagementAddGSuiteUsersRedirect( pageContext ) {
-		page.redirect(
-			emailManagementAddGSuiteUsers( pageContext.params.site, pageContext.params.domain )
-		);
-	},
-
 	domainManagementSecurity( pageContext, next ) {
 		pageContext.primary = (
 			<DomainManagementData
@@ -261,7 +251,6 @@ export default {
 				component={ DomainManagement.Transfer }
 				context={ pageContext }
 				needsDomains
-				needsUsers
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
@@ -276,7 +265,6 @@ export default {
 				component={ DomainManagement.TransferToOtherSite }
 				context={ pageContext }
 				needsDomains
-				needsUsers
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
@@ -291,7 +279,6 @@ export default {
 				component={ DomainManagement.TransferToOtherUser }
 				context={ pageContext }
 				needsDomains
-				needsUsers
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
@@ -306,7 +293,6 @@ export default {
 				component={ DomainManagement.TransferOut }
 				context={ pageContext }
 				needsDomains
-				needsUsers
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);

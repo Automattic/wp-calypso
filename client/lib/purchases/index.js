@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
-import { find, includes, isObject } from 'lodash';
+import { find, includes } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
+import { encodeProductForUrl } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -13,22 +14,22 @@ import debugFactory from 'debug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
-import { getPlan } from 'calypso/lib/plans';
-import { isMonthly as isMonthlyPlan } from 'calypso/lib/plans/constants';
 import {
+	getPlan,
+	isMonthly as isMonthlyPlan,
 	getProductFromSlug,
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
 	isGoogleWorkspace,
 	isJetpackPlan,
-	isMonthly as isMonthlyProduct,
+	isMonthlyProduct,
 	isPlan,
 	isTheme,
 	isTitanMail,
 	isConciergeSession,
-} from 'calypso/lib/products-values';
-import { getJetpackProductsDisplayNames } from 'calypso/lib/products-values/translations';
+	getJetpackProductsDisplayNames,
+} from '@automattic/calypso-products';
 import { MembershipSubscription, MembershipSubscriptionsSite } from 'calypso/lib/purchases/types';
 import { errorNotice } from 'calypso/state/notices/actions';
 
@@ -161,7 +162,7 @@ function handleRenewNowClick( purchase, siteSlug, options = {} ) {
 	const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( [ renewItem ] );
 
 	let renewalUrl = `/checkout/${ productSlugs[ 0 ] }/renew/${ purchaseIds[ 0 ] }/${
-		siteSlug || renewItem.extra.purchaseDomain || ''
+		siteSlug || ''
 	}`;
 	if ( options.redirectTo ) {
 		renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
@@ -202,7 +203,7 @@ function handleRenewMultiplePurchasesClick( purchases, siteSlug, options = {} ) 
 	}
 
 	let renewalUrl = `/checkout/${ productSlugs.join( ',' ) }/renew/${ purchaseIds.join( ',' ) }/${
-		siteSlug || renewItems[ 0 ].extra.purchaseDomain || ''
+		siteSlug || ''
 	}`;
 	if ( options.redirectTo ) {
 		renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
@@ -225,15 +226,15 @@ function getProductSlugsAndPurchaseIds( renewItems ) {
 			debug( 'Could not find product slug for renewal.', currentRenewItem );
 			return null;
 		}
-		// There is a product with this weird slug, but left to itself the slug will
-		// cause a routing error since it contains a slash, so we encode it here and
-		// then decode it in the checkout code before adding to the cart.
-		const productSlug =
-			currentRenewItem.product_slug === 'no-adverts/no-adverts.php'
-				? 'no-ads'
-				: currentRenewItem.product_slug;
+		// Some product slugs or meta contain slashes which will break the URL, so
+		// we encode them first. We cannot use encodeURIComponent because the
+		// calypso router seems to break if the trailing part of the URL contains
+		// an encoded slash.
+		const productSlug = encodeProductForUrl( currentRenewItem.product_slug );
 		productSlugs.push(
-			currentRenewItem.meta ? `${ productSlug }:${ currentRenewItem.meta }` : productSlug
+			currentRenewItem.meta
+				? `${ productSlug }:${ encodeProductForUrl( currentRenewItem.meta ) }`
+				: productSlug
 		);
 		purchaseIds.push( currentRenewItem.extra.purchaseId );
 	} );
@@ -307,6 +308,10 @@ function hasPaymentMethod( purchase ) {
 
 function isPendingTransfer( purchase ) {
 	return purchase.pendingTransfer;
+}
+
+function isObject( value ) {
+	return value !== null && typeof value === 'object';
 }
 
 /**
@@ -555,6 +560,14 @@ function isRenewing( purchase ) {
 	return includes( [ 'active', 'autoRenewing' ], purchase.expiryStatus );
 }
 
+function isWithinIntroductoryOfferPeriod( purchase ) {
+	return purchase.introductoryOffer?.isWithinPeriod;
+}
+
+function isIntroductoryOfferFreeTrial( purchase ) {
+	return purchase.introductoryOffer?.costPerInterval === 0;
+}
+
 function isSubscription( purchase ) {
 	const nonSubscriptionFunctions = [ isDomainRegistration, isOneTimePurchase ];
 
@@ -759,6 +772,8 @@ export {
 	isRenewal,
 	isRenewing,
 	isSubscription,
+	isWithinIntroductoryOfferPeriod,
+	isIntroductoryOfferFreeTrial,
 	maybeWithinRefundPeriod,
 	needsToRenewSoon,
 	paymentLogoType,
@@ -769,3 +784,5 @@ export {
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 	shouldRenderExpiringCreditCard,
 };
+
+export { isGoogleWorkspaceExtraLicence } from './is-google-workspace-extra-license';

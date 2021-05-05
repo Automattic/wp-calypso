@@ -47,6 +47,9 @@ define( 'A8C_ETK_PLUGIN_VERSION', 'dev' );
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
 
+// Enqueues the shared JS data stores and defines shared helper functions.
+require_once __DIR__ . '/common/index.php';
+
 /**
  * Load dotcom-FSE.
  */
@@ -140,14 +143,6 @@ function load_timeline_block() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_timeline_block' );
 
 /**
- * Load common module.
- */
-function load_common_module() {
-	require_once __DIR__ . '/common/index.php';
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_common_module' );
-
-/**
  * Load Editor Site Launch.
  */
 function load_editor_site_launch() {
@@ -237,7 +232,7 @@ function load_blog_posts_block() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_blog_posts_block' );
 
 /**
- * Load WPCOM Block Editor NUX
+ * Load WPCOM Block Editor NUX.
  */
 function load_wpcom_block_editor_nux() {
 	require_once __DIR__ . '/wpcom-block-editor-nux/class-wpcom-block-editor-nux.php';
@@ -254,17 +249,27 @@ function load_block_patterns_from_api( $current_screen ) {
 		return;
 	}
 
-	if ( ! $current_screen->is_block_editor ) {
+	$is_site_editor = ( function_exists( 'gutenberg_is_edit_site_page' ) && gutenberg_is_edit_site_page( $current_screen->id ) );
+
+	if ( ! $current_screen->is_block_editor && ! $is_site_editor ) {
 		return;
 	}
 
+	$patterns_sources = array( 'block_patterns' );
+
+	// While we're still testing the FSE patterns, limit activation via a filter.
+	if ( $is_site_editor && apply_filters( 'a8c_enable_fse_block_patterns_api', false ) ) {
+		$patterns_sources[] = 'fse_block_patterns';
+	}
+
 	require_once __DIR__ . '/block-patterns/class-block-patterns-from-api.php';
-	Block_Patterns_From_API::get_instance();
+	$block_patterns_from_api = new Block_Patterns_From_API( $patterns_sources );
+	$block_patterns_from_api->register_patterns();
 }
 add_action( 'current_screen', __NAMESPACE__ . '\load_block_patterns_from_api' );
 
 /**
- * Load WPCOM Block Patterns Modifications
+ * Load WPCOM Block Patterns Modifications.
  *
  * This is responsible for modifying how block patterns behave in the editor,
  * including adding support for premium block patterns. The patterns themselves
@@ -281,7 +286,7 @@ function load_wpcom_block_patterns_modifications() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_patterns_modifications' );
 
 /**
- * Load Block Inserter Modifications module
+ * Load Block Inserter Modifications module.
  */
 function load_block_inserter_modifications() {
 	require_once __DIR__ . '/block-inserter-modifications/index.php';
@@ -297,7 +302,7 @@ function load_mailerlite() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_mailerlite' );
 
 /**
- * Load WPCOM block editor nav sidebar
+ * Load WPCOM block editor nav sidebar.
  */
 function load_wpcom_block_editor_sidebar() {
 	if (
@@ -310,7 +315,7 @@ function load_wpcom_block_editor_sidebar() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_sidebar' );
 
 /**
- * Coming soon
+ * Coming soon.
  */
 function load_coming_soon() {
 	if (
@@ -323,9 +328,17 @@ function load_coming_soon() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_coming_soon' );
 
 /**
- * What's New section of the Tools menu
+ * What's New section of the Tools menu.
  */
 function load_whats_new() {
 	require_once __DIR__ . '/whats-new/class-whats-new.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_whats_new' );
+
+/**
+ * Error reporting for wp-admin / Gutenberg
+ */
+function load_error_reporting() {
+	require_once __DIR__ . '/error-reporting/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_error_reporting' );

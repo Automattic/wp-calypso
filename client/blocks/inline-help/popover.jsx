@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-import { flowRight as compose, noop } from 'lodash';
+import { flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -26,6 +26,8 @@ import getInlineHelpCurrentlySelectedResult from 'calypso/state/inline-help/sele
 import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
 import InlineHelpContactView from 'calypso/blocks/inline-help/inline-help-contact-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+
+const noop = () => {};
 
 class InlineHelpPopover extends Component {
 	static propTypes = {

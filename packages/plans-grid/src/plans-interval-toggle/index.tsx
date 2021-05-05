@@ -2,7 +2,8 @@
  * External dependencies
  */
 import * as React from 'react';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
+import { useLocale } from '@automattic/i18n-utils';
 import { sprintf } from '@wordpress/i18n';
 import { Popover } from '@wordpress/components';
 import classNames from 'classnames';
@@ -56,7 +57,26 @@ const PlansIntervalToggle: React.FunctionComponent< PlansIntervalToggleProps > =
 	maxMonthlyDiscountPercentage,
 	className = '',
 } ) => {
-	const { __ } = useI18n();
+	const { __, _x, hasTranslation } = useI18n();
+	const locale = useLocale();
+
+	const fallbackMonthlyLabel = __( 'Pay monthly', __i18n_text_domain__ );
+	// Translators: intended as "pay monthly", as opposed to "pay annually"
+	const newMonthlyLabel = _x( 'Monthly', 'Adverb (as in "Pay monthly")', __i18n_text_domain__ );
+	const monthlyLabel =
+		locale === 'en' ||
+		hasTranslation( 'Monthly', 'Adverb (as in "Pay monthly")', __i18n_text_domain__ )
+			? newMonthlyLabel
+			: fallbackMonthlyLabel;
+
+	const fallbackAnnuallyLabel = __( 'Pay annually', __i18n_text_domain__ );
+	// Translators: intended as "pay annually", as opposed to "pay monthly"
+	const newAnnuallyLabel = _x( 'Annually', 'Adverb (as in "Pay annually")', __i18n_text_domain__ );
+	const annuallyLabel =
+		locale === 'en' ||
+		hasTranslation( 'Annually', 'Adverb (as in "Pay annually")', __i18n_text_domain__ )
+			? newAnnuallyLabel
+			: fallbackAnnuallyLabel;
 
 	return (
 		<div
@@ -71,18 +91,14 @@ const PlansIntervalToggle: React.FunctionComponent< PlansIntervalToggleProps > =
 					selected={ intervalType === 'MONTHLY' }
 					onClick={ () => onChange( 'MONTHLY' ) }
 				>
-					<span className="plans-interval-toggle__label">
-						{ __( 'Pay monthly', __i18n_text_domain__ ) }
-					</span>
+					<span className="plans-interval-toggle__label">{ monthlyLabel }</span>
 				</SegmentedControl.Item>
 
 				<SegmentedControl.Item
 					selected={ intervalType === 'ANNUALLY' }
 					onClick={ () => onChange( 'ANNUALLY' ) }
 				>
-					<span className="plans-interval-toggle__label">
-						{ __( 'Pay annually', __i18n_text_domain__ ) }
-					</span>
+					<span className="plans-interval-toggle__label">{ annuallyLabel }</span>
 					{ /*
 					 * Check covers both cases of maxMonthlyDiscountPercentage
 					 * not being undefined and not being 0

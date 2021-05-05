@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map, zipObject, fill, size, filter, get, compact, partition, min, noop } from 'lodash';
+import { map, zipObject, size, filter, get, compact, partition } from 'lodash';
 
 /**
  * Internal dependencies
@@ -57,6 +57,8 @@ import './list.scss';
  */
 
 const FETCH_NEW_COMMENTS_THRESHOLD = 20;
+const noop = () => {};
+
 export class ConversationCommentList extends React.Component {
 	static propTypes = {
 		post: PropTypes.object.isRequired, // required by PostComment
@@ -170,7 +172,7 @@ export class ConversationCommentList extends React.Component {
 	getCommentsToShow = () => {
 		const { commentIds, expansions, commentsTree, sortedComments } = this.props;
 
-		const minId = min( commentIds );
+		const minId = Math.min( ...commentIds );
 		const startingCommentIds = ( sortedComments || [] )
 			.filter( ( comment ) => {
 				return comment.ID >= minId || comment.isPlaceholder;
@@ -180,11 +182,10 @@ export class ConversationCommentList extends React.Component {
 		const parentIds = compact(
 			map( startingCommentIds, ( id ) => this.getParentId( commentsTree, id ) )
 		);
-		const commentExpansions = fill(
-			Array( startingCommentIds.length ),
+		const commentExpansions = Array( startingCommentIds.length ).fill(
 			POST_COMMENT_DISPLAY_TYPES.excerpt
 		);
-		const parentExpansions = fill( Array( parentIds.length ), POST_COMMENT_DISPLAY_TYPES.excerpt );
+		const parentExpansions = Array( parentIds.length ).fill( POST_COMMENT_DISPLAY_TYPES.excerpt );
 
 		const startingExpanded = zipObject(
 			startingCommentIds.concat( parentIds ),

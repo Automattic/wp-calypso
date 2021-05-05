@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React from 'react';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { hasQueryArg } from '@wordpress/url';
@@ -28,7 +28,7 @@ registerPlugin( 'a8c-editor-editor-focused-launch', {
 			[ currentSiteId ]
 		);
 
-		const { isFocusedLaunchOpen } = useSelect(
+		const { isFocusedLaunchOpen, isAnchorFm } = useSelect(
 			( select ) => select( LAUNCH_STORE ).getState(),
 			[]
 		);
@@ -60,7 +60,7 @@ registerPlugin( 'a8c-editor-editor-focused-launch', {
 				siteId={ currentSiteId }
 				getCurrentLaunchFlowUrl={ getCurrentLaunchFlowUrl }
 				isInIframe={ inIframe() }
-				isLaunchImmediately={ shouldLaunch }
+				isLaunchImmediately={ shouldLaunch || isAnchorFm }
 			/>
 		) : null;
 	},

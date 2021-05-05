@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { debounce, get, flow, inRange, isEmpty } from 'lodash';
+import { debounce, get, isEmpty } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 
@@ -105,7 +105,8 @@ export class SiteAddressChanger extends Component {
 		}
 
 		if (
-			! inRange( domainFieldValue.length, SUBDOMAIN_LENGTH_MINIMUM, SUBDOMAIN_LENGTH_MAXIMUM )
+			domainFieldValue.length < SUBDOMAIN_LENGTH_MINIMUM ||
+			domainFieldValue.length > SUBDOMAIN_LENGTH_MAXIMUM
 		) {
 			validationProperties = {
 				showValidationMessage: domainFieldValue.length > SUBDOMAIN_LENGTH_MAXIMUM,
@@ -368,28 +369,25 @@ export class SiteAddressChanger extends Component {
 	}
 }
 
-export default flow(
-	localize,
-	connect(
-		( state ) => {
-			const selectedSite = getSelectedSite( state );
-			const siteId = selectedSite.ID;
-			const selectedSiteSlug = selectedSite.slug;
+export default connect(
+	( state ) => {
+		const selectedSite = getSelectedSite( state );
+		const siteId = selectedSite.ID;
+		const selectedSiteSlug = selectedSite.slug;
 
-			return {
-				siteId,
-				selectedSiteSlug,
-				isAvailable: isSiteAddressValidationAvailable( state, siteId ),
-				isSiteAddressChangeRequesting: isRequestingSiteAddressChange( state, siteId ),
-				isAvailabilityPending: getSiteAddressAvailabilityPending( state, siteId ),
-				validationError: getSiteAddressValidationError( state, siteId ),
-			};
-		},
-		{
-			requestSiteAddressChange,
-			requestSiteAddressAvailability,
-			clearValidationError,
-			recordTracksEvent,
-		}
-	)
-)( SiteAddressChanger );
+		return {
+			siteId,
+			selectedSiteSlug,
+			isAvailable: isSiteAddressValidationAvailable( state, siteId ),
+			isSiteAddressChangeRequesting: isRequestingSiteAddressChange( state, siteId ),
+			isAvailabilityPending: getSiteAddressAvailabilityPending( state, siteId ),
+			validationError: getSiteAddressValidationError( state, siteId ),
+		};
+	},
+	{
+		requestSiteAddressChange,
+		requestSiteAddressAvailability,
+		clearValidationError,
+		recordTracksEvent,
+	}
+)( localize( SiteAddressChanger ) );

@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
 import { doAction, hasAction } from '@wordpress/hooks';
 import { LaunchContext } from '@automattic/launch';
-import { LocaleProvider } from '@automattic/i18n-utils';
+import { LocaleProvider, i18nDefaultLocaleSlug } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -23,9 +23,7 @@ const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > 
 
 registerPlugin( 'a8c-editor-site-launch', {
 	render: function LaunchSidebar() {
-		const { isSidebarOpen, isAnchorFm } = useSelect( ( select ) =>
-			select( LAUNCH_STORE ).getState()
-		);
+		const { isSidebarOpen } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 		const { closeSidebar, setSidebarFullscreen, unsetSidebarFullscreen } = useDispatch(
 			LAUNCH_STORE
 		);
@@ -47,7 +45,7 @@ registerPlugin( 'a8c-editor-site-launch', {
 		}
 
 		return (
-			<LocaleProvider localeSlug={ window.wpcomEditorSiteLaunch?.locale }>
+			<LocaleProvider localeSlug={ window.wpcomEditorSiteLaunch?.locale ?? i18nDefaultLocaleSlug }>
 				<LaunchContext.Provider
 					value={ {
 						siteId: window._currentSiteId,
@@ -58,7 +56,7 @@ registerPlugin( 'a8c-editor-site-launch', {
 						isInIframe: inIframe(),
 					} }
 				>
-					<LaunchModal onClose={ closeSidebar } isLaunchImmediately={ isAnchorFm } />
+					<LaunchModal onClose={ closeSidebar } />
 				</LaunchContext.Provider>
 			</LocaleProvider>
 		);

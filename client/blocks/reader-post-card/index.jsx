@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { noop, truncate, get } from 'lodash';
+import { truncate, get } from 'lodash';
 import classnames from 'classnames';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
@@ -36,13 +36,21 @@ import isReaderCardExpanded from 'calypso/state/selectors/is-reader-card-expande
  * Style dependencies
  */
 import './style.scss';
-import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import {
+	canBeMarkedAsSeen,
+	getDefaultSeenValue,
+	isEligibleForUnseen,
+} from 'calypso/reader/get-helpers';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+
+const noop = () => {};
 
 class ReaderPostCard extends React.Component {
 	static propTypes = {
+		currentRoute: PropTypes.string,
 		post: PropTypes.object.isRequired,
 		site: PropTypes.object,
 		feed: PropTypes.object,
@@ -120,6 +128,7 @@ class ReaderPostCard extends React.Component {
 
 	render() {
 		const {
+			currentRoute,
 			post,
 			discoverPost,
 			discoverSite,
@@ -139,8 +148,8 @@ class ReaderPostCard extends React.Component {
 			isWPForTeamsItem,
 		} = this.props;
 
-		let isSeen = true;
-		if ( canBeMarkedAsSeen( { post } ) ) {
+		let isSeen = getDefaultSeenValue( currentRoute );
+		if ( canBeMarkedAsSeen( { post, currentRoute } ) ) {
 			isSeen = isEligibleForUnseen( { teams, isWPForTeamsItem } ) && post.is_seen;
 		}
 		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY ) && ! compact;
@@ -289,6 +298,7 @@ class ReaderPostCard extends React.Component {
 
 export default connect(
 	( state, ownProps ) => ( {
+		currentRoute: getCurrentRoute( state ),
 		isWPForTeamsItem:
 			ownProps.postKey &&
 			( isSiteWPForTeams( state, ownProps.postKey.blogId ) ||

@@ -1,12 +1,9 @@
 /**
- * External dependencies
- */
-import { stubTrue } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { isNewUser } from 'calypso/state/guided-tours/contexts';
+
+const stubTrue = () => true;
 
 export const MainTourMeta = {
 	name: 'main',

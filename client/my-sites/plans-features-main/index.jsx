@@ -20,6 +20,19 @@ import AsyncLoad from 'calypso/components/async-load';
 import PlanFeatures from 'calypso/my-sites/plan-features';
 import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
 import {
+	chooseDefaultCustomerType,
+	findPlansKeys,
+	getPlan,
+	getPopularPlanSpec,
+	isFreePlan,
+	isBloggerPlan,
+	isPersonalPlan,
+	isPremiumPlan,
+	isBusinessPlan,
+	isEcommercePlan,
+	isWpComFreePlan,
+	isWpComMonthlyPlan,
+	planMatches,
 	JETPACK_PLANS,
 	PLAN_JETPACK_PERSONAL,
 	TYPE_FREE,
@@ -34,12 +47,10 @@ import {
 	GROUP_WPCOM,
 	GROUP_JETPACK,
 	PLAN_PERSONAL,
-} from 'calypso/lib/plans/constants';
-import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_PRODUCT_PRICE_MATRIX,
-} from 'calypso/lib/products-values/constants';
-import { getJetpackProducts } from 'calypso/lib/products-values/translations';
+	getJetpackProducts,
+} from '@automattic/calypso-products';
 import JetpackFAQ from './jetpack-faq';
 import PlansFeaturesMainProductsHeader from './products-header';
 import WpcomFAQ from './wpcom-faq';
@@ -47,19 +58,6 @@ import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { isEnabled } from '@automattic/calypso-config';
-import {
-	chooseDefaultCustomerType,
-	findPlansKeys,
-	getPlan,
-	getPopularPlanSpec,
-	isFreePlan,
-	isBloggerPlan,
-	isPersonalPlan,
-	isPremiumPlan,
-	isBusinessPlan,
-	isEcommercePlan,
-	planMatches,
-} from 'calypso/lib/plans';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { Button } from '@automattic/components';
 import ProductSelector from 'calypso/blocks/product-selector';
@@ -78,8 +76,9 @@ import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getTld } from 'calypso/lib/domains';
 import { isDiscountActive } from 'calypso/state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
-import { getABTestVariation } from 'calypso/lib/abtest';
 import PlanTypeSelector from './plan-type-selector';
+import { ProvideExperimentData } from 'calypso/lib/explat';
+import PulsingDot from 'calypso/components/pulsing-dot';
 
 /**
  * Style dependencies
@@ -125,17 +124,17 @@ export class PlansFeaturesMain extends Component {
 			isValidFeatureKey( selectedFeature ) &&
 			getPlan( selectedPlan ) &&
 			! isPersonalPlan( selectedPlan ) &&
-			! previousRoute.startsWith( '/plans/' )
+			( this.getKindOfPlanTypeSelector( this.props ) === 'interval' ||
+				! previousRoute.startsWith( '/plans/' ) )
 		) {
 			return true;
 		}
 	}
 
-	showFeatureComparison() {
+	showFeatureComparison( experimentVariation ) {
 		const {
 			basePlansPath,
 			customerType,
-			disableBloggerPlanWithNonBlogDomain,
 			displayJetpackPlans,
 			domainName,
 			isInSignup,
@@ -153,7 +152,7 @@ export class PlansFeaturesMain extends Component {
 			isReskinned,
 		} = this.props;
 
-		const plans = this.getPlansForPlanFeatures();
+		const plans = this.getPlansForPlanFeatures( experimentVariation );
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
 
 		return (
@@ -170,10 +169,8 @@ export class PlansFeaturesMain extends Component {
 			>
 				<PlanFeaturesComparison
 					basePlansPath={ basePlansPath }
-					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					displayJetpackPlans={ displayJetpackPlans }
 					domainName={ domainName }
-					nonDotBlogDomains={ this.filterDotBlogDomains() }
 					isInSignup={ isInSignup }
 					isLandingPage={ isLandingPage }
 					isLaunchPage={ isLaunchPage }
@@ -198,7 +195,7 @@ export class PlansFeaturesMain extends Component {
 		);
 	}
 
-	getPlanFeatures() {
+	getPlanFeatures( experimentVariation ) {
 		const {
 			basePlansPath,
 			customerType,
@@ -217,11 +214,11 @@ export class PlansFeaturesMain extends Component {
 			redirectTo,
 			siteId,
 			plansWithScroll,
-			isReskinned,
 			isInVerticalScrollingPlansExperiment,
+			redirectToAddDomainFlow,
 		} = this.props;
 
-		const plans = this.getPlansForPlanFeatures();
+		const plans = this.getPlansForPlanFeatures( experimentVariation );
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
 
 		return (
@@ -238,6 +235,7 @@ export class PlansFeaturesMain extends Component {
 			>
 				{ this.renderSecondaryFormattedHeader() }
 				<PlanFeatures
+					redirectToAddDomainFlow={ redirectToAddDomainFlow }
 					basePlansPath={ basePlansPath }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					displayJetpackPlans={ displayJetpackPlans }
@@ -261,14 +259,24 @@ export class PlansFeaturesMain extends Component {
 						availablePlans: visiblePlans,
 					} ) }
 					siteId={ siteId }
-					isReskinned={ isReskinned }
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+					kindOfPlanTypeSelector={ this.getKindOfPlanTypeSelector( this.props ) }
 				/>
 			</div>
 		);
 	}
 
-	getPlansForPlanFeatures() {
+	getPlanBillingPeriod( intervalType, defaultValue = null ) {
+		const plans = {
+			monthly: TERM_MONTHLY,
+			yearly: TERM_ANNUALLY,
+			'2yearly': TERM_BIENNIALLY,
+		};
+
+		return plans[ intervalType ] || defaultValue || TERM_ANNUALLY;
+	}
+
+	getPlansForPlanFeatures( experimentVariation ) {
 		const {
 			displayJetpackPlans,
 			intervalType,
@@ -280,23 +288,8 @@ export class PlansFeaturesMain extends Component {
 			showTreatmentPlansReorderTest,
 		} = this.props;
 
-		const currentPlan = getPlan( selectedPlan );
-
 		const hideBloggerPlan = ! isBloggerPlan( selectedPlan ) && ! isBloggerPlan( sitePlanSlug );
-
-		let term;
-		if ( intervalType === 'monthly' ) {
-			term = TERM_MONTHLY;
-		} else if ( intervalType === 'yearly' ) {
-			term = TERM_ANNUALLY;
-		} else if ( intervalType === '2yearly' ) {
-			term = TERM_BIENNIALLY;
-		} else if ( currentPlan ) {
-			term = currentPlan.term;
-		} else {
-			term = TERM_ANNUALLY;
-		}
-
+		const term = this.getPlanBillingPeriod( intervalType, getPlan( selectedPlan )?.term );
 		const group = displayJetpackPlans ? GROUP_JETPACK : GROUP_WPCOM;
 		const plansFromProps = this.getPlansFromProps( group, term );
 
@@ -332,6 +325,10 @@ export class PlansFeaturesMain extends Component {
 
 		if ( hidePremiumPlan ) {
 			plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
+		}
+
+		if ( 'treatment' === experimentVariation ) {
+			plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
 		}
 
 		if ( ! isEnabled( 'plans/personal-plan' ) && ! displayJetpackPlans ) {
@@ -409,7 +406,9 @@ export class PlansFeaturesMain extends Component {
 			);
 		}
 
-		if ( ! withWPPlanTabs || isAllPaidPlansShown ) {
+		const withIntervalSelector = this.getKindOfPlanTypeSelector( this.props ) === 'interval';
+
+		if ( ! withWPPlanTabs || isAllPaidPlansShown || withIntervalSelector ) {
 			return plans.filter( ( plan ) =>
 				isPlanOneOfType( plan, [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ] )
 			);
@@ -499,30 +498,87 @@ export class PlansFeaturesMain extends Component {
 		return displayJetpackPlans ? <JetpackFAQ /> : <WpcomFAQ />;
 	}
 
+	getKindOfPlanTypeSelector( props ) {
+		if (
+			props.displayJetpackPlans ||
+			props.isInSignup ||
+			props.eligibleForWpcomMonthlyPlans ||
+			props.redirectToAddDomainFlow
+		) {
+			return 'interval';
+		}
+
+		if ( props.withWPPlanTabs && ! props.hidePersonalPlan ) {
+			return 'customer';
+		}
+
+		return 'interval';
+	}
+
 	render() {
-		const { isInSignup, siteId, siteSlug, customHeader, shouldShowPlansRedesign } = this.props;
-		const basePlansPath = isInSignup ? window.location?.pathname : `/plans/${ siteSlug }`;
-		const plans = this.getPlansForPlanFeatures();
-		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+		const {
+			siteId,
+			customHeader,
+			redirectToAddDomainFlow,
+			shouldShowPlansFeatureComparison,
+			flowName,
+		} = this.props;
 
 		return (
-			<div className="plans-features-main">
-				<QueryPlans />
-				<QuerySites siteId={ siteId } />
-				<QuerySitePlans siteId={ siteId } />
-				<HappychatConnection />
-				<div className="plans-features-main__notice" />
+			<ProvideExperimentData
+				name="hide_ecommerce_launch_site"
+				options={ { isEligible: 'launch-site' === flowName } }
+			>
+				{ ( isLoading, experimentAssignment ) => {
+					if ( isLoading ) {
+						const loadingContainerClass = 'plans__loading-container';
+						return (
+							<div className={ loadingContainerClass }>
+								<PulsingDot delay={ 400 } active />
+							</div>
+						);
+					}
 
-				{ customHeader }
-				<PlanTypeSelector
-					{ ...this.props }
-					plans={ visiblePlans }
-					basePlansPath={ basePlansPath }
-				/>
-				{ shouldShowPlansRedesign ? this.showFeatureComparison() : this.getPlanFeatures() }
-				{ this.renderProductsSelector() }
-				{ this.mayRenderFAQ() }
-			</div>
+					const experimentVariation = experimentAssignment?.variationName;
+					const plans = this.getPlansForPlanFeatures( experimentVariation );
+					const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+					const kindOfPlanTypeSelector = this.getKindOfPlanTypeSelector( this.props );
+
+					// If advertising plans for a certain feature, ensure user has pressed "View all plans" before they can see others
+					let hidePlanSelector =
+						kindOfPlanTypeSelector === 'customer' && this.isDisplayingPlansNeededForFeature();
+
+					// In the "purchase a plan and free domain" flow we do not want to show
+					// monthly plans because monthly plans do not come with a free domain.
+					if ( redirectToAddDomainFlow ) {
+						hidePlanSelector = true;
+					}
+
+					return (
+						<div className="plans-features-main">
+							<QueryPlans />
+							<QuerySites siteId={ siteId } />
+							<QuerySitePlans siteId={ siteId } />
+							<HappychatConnection />
+							<div className="plans-features-main__notice" />
+
+							{ customHeader }
+							{ ! hidePlanSelector && (
+								<PlanTypeSelector
+									{ ...this.props }
+									kind={ kindOfPlanTypeSelector }
+									plans={ visiblePlans }
+								/>
+							) }
+							{ shouldShowPlansFeatureComparison
+								? this.showFeatureComparison( experimentVariation )
+								: this.getPlanFeatures( experimentVariation ) }
+							{ this.renderProductsSelector() }
+							{ this.mayRenderFAQ() }
+						</div>
+					);
+				} }
+			</ProvideExperimentData>
 		);
 	}
 
@@ -540,6 +596,7 @@ export class PlansFeaturesMain extends Component {
 }
 
 PlansFeaturesMain.propTypes = {
+	redirectToAddDomainFlow: PropTypes.bool,
 	basePlansPath: PropTypes.string,
 	displayJetpackPlans: PropTypes.bool.isRequired,
 	hideFreePlan: PropTypes.bool,
@@ -585,17 +642,15 @@ export default connect(
 	( state, props ) => {
 		const siteId = get( props.site, [ 'ID' ] );
 		const currentPlan = getSitePlan( state, siteId );
+		const sitePlanSlug = currentPlan?.product_slug;
+		const eligibleForWpcomMonthlyPlans =
+			isWpComFreePlan( sitePlanSlug ) || isWpComMonthlyPlan( sitePlanSlug );
 
 		const customerType = chooseDefaultCustomerType( {
 			currentCustomerType: props.customerType,
 			selectedPlan: props.selectedPlan,
 			currentPlan,
 		} );
-
-		const isReskinned =
-			props.isInSignup &&
-			'onboarding' === props.flowName &&
-			'reskinned' === getABTestVariation( 'reskinSignupFlow' );
 
 		return {
 			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and
@@ -612,8 +667,8 @@ export default connect(
 			previousRoute: getPreviousRoute( state ),
 			siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
-			sitePlanSlug: currentPlan && currentPlan.product_slug,
-			isReskinned,
+			sitePlanSlug,
+			eligibleForWpcomMonthlyPlans,
 		};
 	},
 	{

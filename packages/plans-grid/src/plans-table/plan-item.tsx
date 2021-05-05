@@ -6,7 +6,8 @@ import classNames from 'classnames';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
+import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { Icon, check } from '@wordpress/icons';
 
@@ -85,7 +86,8 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	popularBadgeVariation = 'ON_TOP',
 	isSelected,
 } ) => {
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
+	const locale = useLocale();
 
 	const planProduct = useSelect( ( select ) =>
 		select( PLANS_STORE ).getPlanProduct( slug, billingPeriod )
@@ -105,13 +107,21 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	const isOpen = allPlansExpanded || isDesktop || isPopular || isOpenInternalState;
 
 	const normalCtaLabelFallback = __( 'Choose', __i18n_text_domain__ );
-
 	const fullWidthCtaLabelSelected = __( 'Current Selection', __i18n_text_domain__ );
-
 	// translators: %s is a WordPress.com plan name (eg: Free, Personal)
 	const fullWidthCtaLabelUnselected = __( 'Select %s', __i18n_text_domain__ );
 
-	const planItemPriceLabelAnnually = __( 'billed annually', __i18n_text_domain__ );
+	const fallbackPlanItemPriceLabelAnnually = __( 'billed annually', __i18n_text_domain__ );
+	// translators: %s is the cost per year (e.g "billed as 96$ annually")
+	const newPlanItemPriceLabelAnnually = __(
+		'per month, billed as %s annually',
+		__i18n_text_domain__
+	);
+	const planItemPriceLabelAnnually =
+		locale === 'en' || hasTranslation?.( 'per month, billed as %s annually' )
+			? sprintf( newPlanItemPriceLabelAnnually, planProduct?.annualPrice )
+			: fallbackPlanItemPriceLabelAnnually;
+
 	const planItemPriceLabelMonthly = __( 'per month, billed monthly', __i18n_text_domain__ );
 
 	const expandToggleLabelExpanded = __( 'Collapse all plans', __i18n_text_domain__ );
@@ -220,7 +230,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 											<>
 												{ isSelected ? TickIcon : '' }
 												{ isSelected
-													? sprintf( fullWidthCtaLabelSelected, name )
+													? fullWidthCtaLabelSelected
 													: sprintf( fullWidthCtaLabelUnselected, name ) }
 											</>
 										) }

@@ -1,10 +1,15 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * Internal dependencies
  */
 
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { requestFetchAdminMenu, handleSuccess } from '../';
 import { requestAdminMenu, receiveAdminMenu } from 'calypso/state/admin-menu/actions';
+import { addQueryArgs } from 'calypso/lib/url';
 
 describe( 'requestFetchAdminMenu', () => {
 	test( 'should create the correct http request action', () => {
@@ -30,7 +35,7 @@ describe( 'handlers', () => {
 		},
 	} );
 
-	test( 'should create correct success action on fetch success ', () => {
+	test( 'should create correct success action on fetch success', () => {
 		const dispatch = jest.fn();
 		const menuData = {};
 		const action = receiveAdminMenu( 73738, menuData );
@@ -85,6 +90,12 @@ describe( 'handlers', () => {
 		const sanitizedMenu = [ ...unsafeMenu ];
 		sanitizedMenu[ 0 ].url = '';
 		sanitizedMenu[ 0 ].children[ 0 ].url = '';
+		sanitizedMenu[ 1 ].children[ 0 ].url = addQueryArgs(
+			{
+				return: document.location.href,
+			},
+			sanitizedMenu[ 1 ].children[ 0 ].url
+		);
 		sanitizedMenu[ 1 ].children[ 1 ].url = '';
 		const action = receiveAdminMenu( 73738, sanitizedMenu );
 

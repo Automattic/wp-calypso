@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { localize } from 'i18n-calypso';
-import { identity, startsWith } from 'lodash';
+import { startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -30,10 +30,6 @@ export class ReaderSidebarTags extends Component {
 		translate: PropTypes.func,
 	};
 
-	static defaultProps = {
-		translate: identity,
-	};
-
 	state = {
 		addTagCounter: 0,
 	};
@@ -54,7 +50,8 @@ export class ReaderSidebarTags extends Component {
 	};
 
 	render() {
-		const { tags, isOpen, translate, onClick } = this.props;
+		const { tags, isOpen, translate, onClick, path } = this.props;
+
 		return (
 			<li>
 				{ ! tags && <QueryReaderFollowedTags /> }
@@ -64,10 +61,12 @@ export class ReaderSidebarTags extends Component {
 					onClick={ onClick }
 					materialIcon="local_offer"
 					disableFlyout={ true }
+					className={ path.startsWith( '/tag' ) && 'sidebar__menu--selected' }
 				>
 					<ReaderSidebarTagsList { ...this.props } />
 
 					<FormTextInputWithAction
+						className="reader-sidebar-tags__text-input"
 						key={ this.state.addTagCounter }
 						action={ translate( 'Add' ) }
 						placeholder={ translate( 'Add a tag' ) }

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isObjectLike, isUndefined, omit } from 'lodash';
+import { omit } from 'lodash';
 import debug from 'debug';
 
 /**
@@ -45,7 +45,7 @@ export default ( eventName, eventProperties ) => {
 
 	if ( process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' ) {
 		for ( const key in eventProperties ) {
-			if ( isObjectLike( eventProperties[ key ] ) ) {
+			if ( eventProperties[ key ] !== null && typeof eventProperties[ key ] === 'object' ) {
 				const errorMessage =
 					`Tracks: Unable to record event "${ eventName }" because nested ` +
 					`properties are not supported by Tracks. Check '${ key }' on`;
@@ -67,7 +67,7 @@ export default ( eventName, eventProperties ) => {
 
 	// Remove properties that have an undefined value
 	// This allows a caller to easily remove properties from the recorded set by setting them to undefined
-	eventProperties = omit( eventProperties, isUndefined );
+	eventProperties = omit( eventProperties, ( prop ) => typeof prop === 'undefined' );
 
 	// Populate custom properties.
 	eventProperties = { ...eventProperties, ...customProperties };

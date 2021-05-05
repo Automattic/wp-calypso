@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -16,6 +15,8 @@ import resizeImageUrl from 'calypso/lib/resize-image-url';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 const ReaderFeaturedImage = ( {
 	imageUrl,

@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { get, includes, noop } from 'lodash';
+import { get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -23,6 +23,8 @@ import {
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class VerifyEmailDialog extends Component {
 	getResendButtonLabel() {

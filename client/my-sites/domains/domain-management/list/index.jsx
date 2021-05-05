@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { find, findIndex, get, identity, noop, times, isEmpty } from 'lodash';
+import { find, findIndex, get, times, isEmpty } from 'lodash';
 import page from 'page';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -52,12 +52,15 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import InfoPopover from 'calypso/components/info-popover';
 import ExternalLink from 'calypso/components/external-link';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
+import AddDomainButton from 'calypso/my-sites/domains/domain-management/list/add-domain-button';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 import 'calypso/my-sites/domains/style.scss';
+
+const noop = () => {};
 
 export class List extends React.Component {
 	static propTypes = {
@@ -70,7 +73,6 @@ export class List extends React.Component {
 	};
 
 	static defaultProps = {
-		translate: identity,
 		enablePrimaryDomainMode: noop,
 		disablePrimaryDomainMode: noop,
 		changePrimary: noop,
@@ -149,6 +151,7 @@ export class List extends React.Component {
 						brandFont
 						className="domain-management__page-heading"
 						headerText={ this.props.translate( 'Site Domains' ) }
+						subHeaderText={ this.props.translate( 'Manage the domains connected to your site.' ) }
 						align="left"
 					/>
 					<div className="domains__header-buttons">
@@ -267,18 +270,7 @@ export class List extends React.Component {
 			return null;
 		}
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		return (
-			<Button
-				primary
-				compact
-				className="domain-management-list__add-a-domain"
-				onClick={ this.clickAddDomain }
-			>
-				{ this.props.translate( 'Add a domain to this site' ) }
-			</Button>
-		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
+		return <AddDomainButton />;
 	}
 
 	setPrimaryDomain( domainName ) {

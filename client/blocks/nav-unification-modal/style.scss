@@ -114,7 +114,6 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	justify-content: flex-end;
 	background: white;
 	width: 100%;
-	height: 100%;
 	overflow: hidden;
 
 	@media ( min-width: $modal-breakpoint ) {
@@ -202,7 +201,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	/* Gray / Gray 90 */
 	color: #1d2327;
 	font-size: 24px;
-	
+
 	h2 {
 		line-height: 1.19;
 	}

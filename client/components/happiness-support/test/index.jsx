@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 import { spy } from 'sinon';
 
@@ -19,6 +18,8 @@ import {
 	JETPACK_SUPPORT,
 	SUPPORT_ROOT,
 } from 'calypso/lib/url/support';
+
+const noop = () => {};
 
 describe( 'HappinessSupport', () => {
 	let wrapper;

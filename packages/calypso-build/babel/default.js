@@ -18,6 +18,7 @@ module.exports = ( api, opts ) => ( {
 			{
 				corejs: opts.corejs ? opts.corejs : 3.6,
 				debug: opts.debug ? opts.debug : false,
+				bugfixes: opts.bugfixes ? opts.bugfixes : false,
 				modules: modulesOption( opts ),
 				useBuiltIns: opts.useBuiltIns ? opts.useBuiltIns : 'entry',
 				// Exclude transforms that make all code slower, see https://github.com/facebook/create-react-app/pull/5278

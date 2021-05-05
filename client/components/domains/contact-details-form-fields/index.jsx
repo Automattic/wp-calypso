@@ -5,19 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { Component, createElement } from 'react';
 import { connect } from 'react-redux';
-import {
-	noop,
-	get,
-	deburr,
-	kebabCase,
-	pick,
-	head,
-	includes,
-	isEqual,
-	isEmpty,
-	camelCase,
-	identity,
-} from 'lodash';
+import { get, deburr, kebabCase, pick, head, includes, isEqual, isEmpty, camelCase } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -32,7 +20,7 @@ import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input
 import { countries } from 'calypso/components/phone-input/data';
 import formState from 'calypso/lib/form-state';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
+import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
 import NoticeErrorMessage from 'calypso/my-sites/checkout/checkout/notice-error-message';
 import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
@@ -50,6 +38,8 @@ import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class ContactDetailsFormFields extends Component {
 	static propTypes = {
@@ -102,7 +92,6 @@ export class ContactDetailsFormFields extends Component {
 		needsOnlyGoogleAppsDetails: false,
 		needsAlternateEmailForGSuite: false,
 		hasCountryStates: false,
-		translate: identity,
 		userCountryCode: 'US',
 		shouldForceRenderOnPropChange: false,
 	};

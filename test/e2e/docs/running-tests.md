@@ -5,27 +5,27 @@
 <!-- TOC -->
 
 - [Run tests](#run-tests)
-    - [Table of Contents](#table-of-contents)
-    - [Local Against Staging](#local-against-staging)
-        - [Run all tests default](#run-all-tests-default)
-        - [Run individual spec](#run-individual-spec)
-        - [Run individual case](#run-individual-case)
-        - [Headless](#headless)
-        - [Other options](#other-options)
-    - [Local Development Environment](#local-development-environment)
-    - [CircleCI](#circleci)
-        - [Canary](#canary)
-        - [Full suite](#full-suite)
-        - [Schedule](#schedule)
-    - [Sauce Labs](#sauce-labs)
+  - [Table of Contents](#table-of-contents)
+  - [Local Against Staging](#local-against-staging)
+    - [Run all tests default](#run-all-tests-default)
+    - [Run individual spec](#run-individual-spec)
+    - [Run individual case](#run-individual-case)
+    - [Headless](#headless)
+    - [Other options](#other-options)
+  - [Local Development Environment](#local-development-environment)
+  - [CircleCI](#circleci)
+    - [Canary](#canary)
+    - [Full suite](#full-suite)
+    - [Schedule](#schedule)
+  - [Sauce Labs](#sauce-labs)
 
 <!-- /TOC -->
 
 ## Local Against Staging
 
-To run tests locally, ensure relevant steps in the [setup](docs/setup.md) have been followed.
+To run tests locally, ensure relevant steps in the [setup](setup.md) have been followed.
 
-These steps will execute tests against WordPress.com staging environment. To run against a local development environment see the section below.
+These steps will execute tests against WordPress.com staging environment. To run against a local development environment (Calypso webapp running locally, for example) please see the section on [Local Development Environment](#local-development-environment).
 
 ### Run all tests (default)
 
@@ -59,6 +59,9 @@ eg.
 describe.only( 'Logging In and Out:', function() {
 ```
 
+**!NOTE**: ensure this syntax should be removed once the test is to be committed to the repository.
+There is an eslint rule that will prevent committing tests with the `.only` syntax, but please also exercise due diligence.
+
 ### Run individual case
 
 ```
@@ -70,8 +73,6 @@ eg.
 ```
 ./node_modules/.bin/mocha specs/wp-calypso-gutenberg-coblocks-spec.js -g 'Insert a Pricing Table block'
 ```
-
-**!NOTE**: this syntax should be removed once the test is to be committed to the repository.
 
 ### Headless
 
@@ -100,8 +101,10 @@ For the list of current supported flags, use `run.sh -h`.
 
 Local development environment refers to a locally served instance of the `wp-calypso` frontend.
 
+With the [local environment](setup.md#software-environment#steps) set up, start the webapp as follows:
+
 ```shell
-npm start
+yarn start
 ./run.sh -g -u http://calypso.localhost:3000
 ```
 
@@ -121,7 +124,6 @@ Canary tests are triggered _**automatically**_ on all PRs and merges.
 Canary suites include:
 
 - chrome canary
-- internet explorer
 - safari
 - woocommerce
 
@@ -149,11 +151,9 @@ _All times are in UTC._
 | --------------------- | ---------------------------- | -------------------------- |
 | WordPress.com         | Each `wp-calypso` deployment | -                          |
 |                       | Every 6 hours                | 00:00, 06:00, 12:00, 18:00 |
-| Internet Explorer     | ?                            | ?                          |
 | Jetpack               | Every 12 hours               | 01:00, 13:00               |
 | Jetpack Bleeding Edge | Every 12 hours               | 07:00, 19:00               |
 | WooCommerce           | Every 12 hours               | 11:00, 23:00               |
-
 
 ## Sauce Labs
 

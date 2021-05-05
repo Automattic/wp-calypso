@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -13,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import {
 	activatePlugin,
-	installPlugin,
+	installPlugin as installAndActivatePlugin,
 	fetchPlugins,
 } from 'calypso/state/plugins/installed/actions';
 import { Button, ProgressBar } from '@automattic/components';
@@ -30,6 +29,7 @@ import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pe
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getSelectedSiteWithFallback, getSiteWoocommerceUrl } from 'calypso/state/sites/selectors';
+import { logToLogstash } from 'calypso/state/logstash/actions';
 import { recordTrack } from '../lib/analytics';
 
 // Time in seconds to complete various steps.
@@ -37,7 +37,8 @@ const TIME_TO_TRANSFER_ACTIVE = 5;
 const TIME_TO_TRANSFER_UPLOADING = 5;
 const TIME_TO_TRANSFER_BACKFILLING = 25;
 const TIME_TO_TRANSFER_COMPLETE = 6;
-const TIME_TO_PLUGIN_INSTALLATION = 15;
+const TIME_TO_PLUGIN_INSTALLATION = 60;
+const TIME_TO_PLUGIN_ACTIVATION = 60;
 
 const transferStatusesToTimes = {};
 
@@ -92,10 +93,16 @@ class RequiredPluginsInstallView extends Component {
 			toActivate: [],
 			toInstall: [],
 			workingOn: '',
-			progress: automatedTransferStatus ? transferStatusesToTimes[ automatedTransferStatus ] : 0,
+			progress:
+				automatedTransferStatus &&
+				transferStatusesToTimes[ automatedTransferStatus ] &&
+				! ( transferStates.COMPLETE === automatedTransferStatus ) // Don't need to wait transfer, proceed with everything else.
+					? transferStatusesToTimes[ automatedTransferStatus ]
+					: 0,
 			totalSeconds: this.getTotalSeconds(),
 		};
 		this.updateTimer = false;
+		this.timeoutTimer = false;
 	}
 
 	componentDidMount() {
@@ -110,6 +117,7 @@ class RequiredPluginsInstallView extends Component {
 
 	componentWillUnmount() {
 		this.destroyUpdateTimer();
+		this.destroyTimeoutTimer();
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -152,6 +160,71 @@ class RequiredPluginsInstallView extends Component {
 		}
 	};
 
+	timeoutElapsed = () => {
+		const { sitePlugins, pluginsStatus, automatedTransferStatus } = this.props;
+		// These status means store setup is finished, not stalled.
+		if ( [ 'IDLE', 'DONESUCCESS', 'DONEFAILURE' ].includes( this.state.engineState ) ) {
+			return;
+		}
+
+		const plugins = Array.isArray( sitePlugins )
+			? sitePlugins.flatMap( ( plugin ) => ( {
+					id: plugin.id,
+					active: plugin.active,
+			  } ) )
+			: sitePlugins;
+
+		this.props.logToLogstash( {
+			feature: 'calypso_client',
+			message: 'woocommerce setup timeout',
+			extra: {
+				state: this.state,
+				automatedTransferStatus,
+				plugins,
+				pluginsStatus,
+			},
+		} );
+
+		recordTrack( 'calypso_woocommerce_setup_timeout', {
+			engine_state: this.state.engineState,
+			to_activate: this.state.toActivate.join( ',' ),
+			to_install: this.state.toInstall.join( ',' ),
+			working_on: this.state.workingOn,
+			progress: this.state.progress,
+			transfer_status: automatedTransferStatus,
+		} );
+
+		this.setState( {
+			engineState: 'DONETIMEOUT',
+		} );
+	};
+
+	destroyTimeoutTimer = () => {
+		if ( this.timeoutTimer ) {
+			window.clearTimeout( this.timeoutTimer );
+			this.timeoutTimer = false;
+		}
+	};
+
+	setTimeoutTimer = ( durationInSeconds ) => {
+		if ( this.timeoutTimer ) {
+			this.destroyTimeoutTimer();
+		}
+
+		this.timeoutTimer = window.setTimeout( this.timeoutElapsed, durationInSeconds * 1000 );
+	};
+
+	/**
+	 * Sends a track for user contacting support.
+	 *
+	 * @param {string} reason Reason on why user would contact. Values can be 'failure' or 'timeout'.
+	 */
+	trackContactSupport = ( reason ) => {
+		recordTrack( 'calypso_woocommerce_setup_contact_support', {
+			reason,
+		} );
+	};
+
 	doInitialization = () => {
 		const { fixMode, site, sitePlugins, wporgPlugins } = this.props;
 		const { workingOn } = this.state;
@@ -177,6 +250,7 @@ class RequiredPluginsInstallView extends Component {
 			this.setState( {
 				workingOn: 'WAITING_FOR_PLUGIN_LIST_FROM_SITE',
 			} );
+			this.setTimeoutTimer( transferStatusesToTimes[ transferStates.COMPLETE ] );
 			return;
 		}
 
@@ -205,6 +279,7 @@ class RequiredPluginsInstallView extends Component {
 			this.setState( {
 				workingOn: 'LOAD_PLUGIN_DATA',
 			} );
+			this.setTimeoutTimer( transferStatusesToTimes[ transferStates.COMPLETE ] );
 			return;
 		}
 
@@ -271,7 +346,8 @@ class RequiredPluginsInstallView extends Component {
 				slug: workingOn,
 			};
 
-			this.props.installPlugin( site.ID, plugin );
+			this.setTimeoutTimer( TIME_TO_PLUGIN_INSTALLATION );
+			this.props.installAndActivatePlugin( site.ID, plugin );
 
 			this.setState( {
 				toInstall,
@@ -283,6 +359,7 @@ class RequiredPluginsInstallView extends Component {
 		// Otherwise, if we are working on something presently, see if it has appeared in state yet
 		const pluginFound = find( sitePlugins, { slug: this.state.workingOn } );
 		if ( pluginFound ) {
+			this.destroyTimeoutTimer();
 			this.setState( {
 				workingOn: '',
 				progress: this.state.progress + this.getPluginInstallationTime(),
@@ -295,6 +372,7 @@ class RequiredPluginsInstallView extends Component {
 			this.setState( {
 				engineState: 'DONEFAILURE',
 			} );
+			this.destroyTimeoutTimer();
 		}
 	};
 
@@ -328,6 +406,7 @@ class RequiredPluginsInstallView extends Component {
 				return;
 			}
 
+			this.setTimeoutTimer( TIME_TO_PLUGIN_ACTIVATION );
 			// Otherwise, activate!
 			this.props.activatePlugin( site.ID, pluginToActivate );
 
@@ -352,6 +431,7 @@ class RequiredPluginsInstallView extends Component {
 		this.setState( {
 			engineState: 'IDLE',
 		} );
+		this.destroyTimeoutTimer();
 
 		// Delay to ensure user wont bump into permission error
 		// that happens if navigated to wc-admin too soon.
@@ -400,6 +480,7 @@ class RequiredPluginsInstallView extends Component {
 			this.setState( {
 				engineState: 'INITIALIZING',
 			} );
+			this.setTimeoutTimer( transferStatusesToTimes[ transferStates.COMPLETE ] );
 		}
 	};
 
@@ -436,7 +517,7 @@ class RequiredPluginsInstallView extends Component {
 		return TIME_TO_PLUGIN_INSTALLATION;
 	};
 
-	renderContactSupport() {
+	renderContactSupportForFailure() {
 		const { translate, wporgPlugins } = this.props;
 		const { workingOn } = this.state;
 		const plugin = wporgPlugins?.[ workingOn ] ?? {};
@@ -466,8 +547,51 @@ class RequiredPluginsInstallView extends Component {
 						title={ translate( "We can't update your store" ) }
 						subtitle={ subtitle }
 					>
-						<Button primary href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer">
+						<Button
+							onClick={ () => {
+								this.trackContactSupport( 'failure' );
+							} }
+							primary
+							href={ CALYPSO_CONTACT }
+							target="_blank"
+							rel="noopener noreferrer"
+						>
 							{ this.props.translate( 'Get in touch' ) }
+						</Button>
+					</SetupHeader>
+				</div>
+			</div>
+		);
+	}
+
+	renderContactSupportForTimeout() {
+		const { translate } = this.props;
+
+		const subtitle = [
+			<p key="line-1">
+				{ translate( "Please contact support and we'll get your store up and running!" ) }
+			</p>,
+		];
+
+		return (
+			<div className="dashboard__setup-wrapper setup__wrapper">
+				<div className="card dashboard__plugins-install-view">
+					<SetupHeader
+						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
+						imageWidth={ 160 }
+						title={ translate( 'We were unable to set up your store.' ) }
+						subtitle={ subtitle }
+					>
+						<Button
+							onClick={ () => {
+								this.trackContactSupport( 'timeout' );
+							} }
+							primary
+							href={ CALYPSO_CONTACT }
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							{ translate( 'Get in touch' ) }
 						</Button>
 					</SetupHeader>
 				</div>
@@ -484,7 +608,11 @@ class RequiredPluginsInstallView extends Component {
 		}
 
 		if ( 'DONEFAILURE' === engineState ) {
-			return this.renderContactSupport();
+			return this.renderContactSupportForFailure();
+		}
+
+		if ( 'DONETIMEOUT' === engineState ) {
+			return this.renderContactSupportForTimeout();
 		}
 
 		const title = fixMode ? translate( 'Updating your store' ) : translate( 'Building your store' );
@@ -526,19 +654,10 @@ function mapStateToProps( state ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
-	return bindActionCreators(
-		{
-			activatePlugin,
-			fetchPluginData,
-			installPlugin,
-			fetchPlugins,
-		},
-		dispatch
-	);
-}
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( RequiredPluginsInstallView ) );
+export default connect( mapStateToProps, {
+	activatePlugin,
+	fetchPluginData,
+	installAndActivatePlugin,
+	fetchPlugins,
+	logToLogstash,
+} )( localize( RequiredPluginsInstallView ) );

@@ -8,7 +8,6 @@
 import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { identity, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +15,8 @@ import { identity, noop } from 'lodash';
 import { Auth } from '../login';
 import { makeAuthRequest } from '../login-request';
 import FormButton from 'calypso/components/forms/form-button';
+
+const noop = () => {};
 
 jest.mock( '../login-request', () => ( {
 	makeAuthRequest: require( 'sinon' ).stub(),
@@ -28,7 +29,7 @@ jest.mock( 'calypso/lib/analytics/ga', () => ( {
 } ) );
 
 describe( 'LoginTest', () => {
-	const page = shallow( <Auth translate={ identity } /> );
+	const page = shallow( <Auth translate={ ( string ) => string } /> );
 
 	test( 'OTP is not present on first render', () => {
 		return new Promise( ( done ) => {

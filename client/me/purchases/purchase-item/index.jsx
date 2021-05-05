@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
+import i18nCalypso, { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
 
@@ -24,8 +24,10 @@ import {
 	creditCardExpiresBeforeSubscription,
 	creditCardHasAlreadyExpired,
 	getPartnerName,
+	isWithinIntroductoryOfferPeriod,
+	isIntroductoryOfferFreeTrial,
 } from 'calypso/lib/purchases';
-import { isDomainTransfer, isConciergeSession } from 'calypso/lib/products-values';
+import { isDomainTransfer, isConciergeSession } from '@automattic/calypso-products';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import SiteIcon from 'calypso/blocks/site-icon';
@@ -53,7 +55,7 @@ class PurchaseItem extends Component {
 	}
 
 	getStatus() {
-		const { purchase, translate, moment, name, isJetpack, isDisconnectedSite } = this.props;
+		const { purchase, translate, locale, moment, name, isJetpack, isDisconnectedSite } = this.props;
 		const expiry = moment( purchase.expiryDate );
 
 		if ( purchase && isPartnerPurchase( purchase ) ) {
@@ -98,6 +100,53 @@ class PurchaseItem extends Component {
 					) }
 				</span>
 			);
+		}
+
+		if ( isWithinIntroductoryOfferPeriod( purchase ) && isIntroductoryOfferFreeTrial( purchase ) ) {
+			if (
+				isRenewing( purchase ) &&
+				( locale === 'en' ||
+					i18nCalypso.hasTranslation(
+						'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s'
+					) )
+			) {
+				return translate(
+					'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s',
+					{
+						args: {
+							date: expiry.format( 'LL' ),
+							amount: purchase.priceText,
+						},
+						components: {
+							span: <span className="purchase-item__date" />,
+						},
+					}
+				);
+			}
+
+			if (
+				locale === 'en' ||
+				i18nCalypso.hasTranslation( 'Free trial ends on {{span}}%(date)s{{/span}}' )
+			) {
+				const expiryClass =
+					expiry < moment().add( 7, 'days' )
+						? 'purchase-item__is-error'
+						: 'purchase-item__is-warning';
+
+				return (
+					<span className={ expiryClass }>
+						{ translate( 'Free trial ends on {{span}}%(date)s{{/span}}', {
+							args: {
+								date: expiry.format( 'LL' ),
+							},
+							components: {
+								span: <span className="purchase-item__date" />,
+							},
+						} ) }
+						{ this.trackImpression( 'purchase-expiring' ) }
+					</span>
+				);
+			}
 		}
 
 		if ( isRenewing( purchase ) && purchase.renewDate ) {
@@ -174,24 +223,24 @@ class PurchaseItem extends Component {
 		}
 
 		if ( isExpired( purchase ) ) {
-			const expiredToday = moment().diff( expiry, 'hours' ) < 24;
-			const expiredText = expiredToday ? expiry.format( '[today]' ) : expiry.fromNow();
-
 			if ( isConciergeSession( purchase ) ) {
 				return translate( 'Session used on %s', {
 					args: expiry.format( 'LL' ),
 				} );
 			}
 
+			const isExpiredToday = moment().diff( expiry, 'hours' ) < 24;
+			const expiredTodayText = translate( 'Expired today' );
+			const expiredFromNowText = translate( 'Expired %(timeSinceExpiry)s', {
+				args: {
+					timeSinceExpiry: expiry.fromNow(),
+				},
+				context: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
+			} );
+
 			return (
 				<span className="purchase-item__is-error">
-					{ translate( 'Expired %(timeSinceExpiry)s', {
-						args: {
-							timeSinceExpiry: expiredText,
-						},
-						context:
-							'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
-					} ) }
+					{ isExpiredToday ? expiredTodayText : expiredFromNowText }
 					{ this.trackImpression( 'purchase-expired' ) }
 				</span>
 			);

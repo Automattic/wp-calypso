@@ -33,9 +33,11 @@ import {
 import { login } from 'calypso/lib/paths';
 import { parseAuthorizationQuery } from './utils';
 import {
+	clearPlan,
 	isCalypsoStartedConnection,
 	persistMobileRedirect,
 	retrieveMobileRedirect,
+	retrievePlan,
 	storePlan,
 } from './persistence-utils';
 import { startAuthorizeStep } from 'calypso/state/jetpack-connect/actions';
@@ -46,13 +48,11 @@ import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors'
 import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
-} from 'calypso/lib/plans/constants';
-
-import {
 	JETPACK_SEARCH_PRODUCTS,
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
@@ -64,9 +64,9 @@ import {
 	PRODUCT_JETPACK_SCAN_MONTHLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
-} from 'calypso/lib/products-values/constants';
-import { getProductFromSlug } from 'calypso/lib/products-values/get-product-from-slug';
-import { getJetpackProductDisplayName } from 'calypso/lib/products-values/get-jetpack-product-display-name';
+	getProductFromSlug,
+	getJetpackProductDisplayName,
+} from '@automattic/calypso-products';
 import { externalRedirect } from 'calypso/lib/route/path';
 
 /**
@@ -109,6 +109,18 @@ export function offerResetRedirects( context, next ) {
 			context.params
 		);
 		return externalRedirect( CALYPSO_PLANS_PAGE + selectedSite.slug );
+	}
+
+	// If the user previously selected Jetpack Free, redirect them to their wp-admin page
+	const storedPlan = retrievePlan();
+	clearPlan();
+	if ( storedPlan === PLAN_JETPACK_FREE ) {
+		debug(
+			'controller: offerResetRedirects -> redirecting to wp-admin because the user got here by clicking Jetpack Free',
+			context.params
+		);
+		externalRedirect( context.query.redirect || selectedSite.options.admin_url );
+		return;
 	}
 
 	// If current user is not an admin (can't purchase plans), redirect the user to /posts if

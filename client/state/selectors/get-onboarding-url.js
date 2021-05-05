@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { getVariationForUser } from 'calypso/state/experiments/selectors';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import config from '@automattic/calypso-config';
 
@@ -17,20 +16,18 @@ import config from '@automattic/calypso-config';
 const GUTENBOARDING_LOCALES = [ 'en', 'en-gb' ];
 
 export default function getOnboardingUrl( state ) {
+	const isDesktopApp = config.isEnabled( 'desktop' );
+
+	if ( isDesktopApp ) {
+		return `https://wordpress.com/new`;
+	}
+
 	if ( isJetpackCloud() ) {
 		return config( 'jetpack_connect_url' );
 	}
 
 	const userLocale = getCurrentUserLocale( state );
 	if ( GUTENBOARDING_LOCALES.includes( userLocale ) ) {
-		return config( 'gutenboarding_url' );
-	}
-
-	const existingUsersOnboardingVariant = getVariationForUser(
-		state,
-		'new_onboarding_existing_users_non_en_v5'
-	);
-	if ( existingUsersOnboardingVariant === 'treatment' ) {
 		return config( 'gutenboarding_url' );
 	}
 

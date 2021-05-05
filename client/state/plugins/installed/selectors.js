@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { every, filter, find, get, pick, reduce, some, sortBy, values } from 'lodash';
+import { filter, find, get, pick, reduce, some, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -89,7 +89,7 @@ export function getPlugins( state, siteIds, pluginFilter ) {
 		pluginList = filter( pluginList, _filters[ pluginFilter ] );
 	}
 
-	return values( sortBy( pluginList, ( item ) => item.slug.toLowerCase() ) );
+	return sortBy( pluginList, ( item ) => item.slug.toLowerCase() );
 }
 
 export function getPluginsWithUpdates( state, siteIds ) {
@@ -148,7 +148,7 @@ export function getSitesWithoutPlugin( state, siteIds, pluginSlug ) {
 			return false;
 		}
 
-		return every( installedOnSiteIds, function ( installedOnSiteId ) {
+		return installedOnSiteIds.every( function ( installedOnSiteId ) {
 			return installedOnSiteId !== siteId;
 		} );
 	} );

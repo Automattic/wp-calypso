@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import wrapWithClickOutside from 'react-click-outside';
-import { noop } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -16,6 +15,8 @@ import SiteSelector from 'calypso/components/site-selector';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+
+const noop = () => {};
 
 class SitePicker extends React.Component {
 	static displayName = 'SitePicker';

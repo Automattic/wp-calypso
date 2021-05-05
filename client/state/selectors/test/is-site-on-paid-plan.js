@@ -14,7 +14,7 @@ import {
 	PLAN_FREE,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_FREE,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	getCurrentPlan: require( 'sinon' ).stub(),

@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { useSelect } from '@wordpress/data';
 import { Button } from '@wordpress/components';
 import { Icon, check, close } from '@wordpress/icons';
@@ -58,7 +58,7 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale, bil
 		__i18n_text_domain__
 	);
 	const annualBillingLabel =
-		locale === 'en' || hasTranslation?.( 'Monthly price (billed yearly)', __i18n_text_domain__ )
+		locale === 'en' || hasTranslation?.( 'Monthly price (billed yearly)' )
 			? newAnnualBillingLabel
 			: fallbackAnnualBillingLabel;
 

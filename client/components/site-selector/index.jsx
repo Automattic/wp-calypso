@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
-import { filter, find, flow, get, includes, isEmpty, noop } from 'lodash';
+import { filter, find, flow, get, includes, isEmpty } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -30,7 +30,7 @@ import Search from 'calypso/components/search';
 import SiteSelectorAddSite from './add-site';
 import searchSites from 'calypso/components/search-sites';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
-import { getUrlParts, getUrlFromParts, determineUrlType, format } from 'calypso/lib/url';
+import { getUrlParts, getUrlFromParts, determineUrlType, format } from '@automattic/calypso-url';
 
 /**
  * Style dependencies
@@ -38,7 +38,7 @@ import { getUrlParts, getUrlFromParts, determineUrlType, format } from 'calypso/
 import './style.scss';
 
 const ALL_SITES = 'ALL_SITES';
-
+const noop = () => {};
 const debug = debugFactory( 'calypso:site-selector' );
 
 class SiteSelector extends Component {
@@ -489,15 +489,13 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 			const urlType = determineUrlType( base );
 
 			// Get URL parts and modify the path.
-			const { protocol, hostname, port, pathname: urlPathname, search } = getUrlParts( base );
+			const { origin, pathname: urlPathname, search } = getUrlParts( base );
 			const newPathname = `${ urlPathname }/${ site.slug }`;
 
 			try {
 				// Get an absolute URL from the original URL, the modified path, and some defaults.
 				const absoluteUrl = getUrlFromParts( {
-					protocol: protocol || window.location.protocol,
-					hostname: hostname || window.location.hostname,
-					port: port || window.location.port,
+					origin: origin || window.location.origin,
 					pathname: newPathname,
 					search,
 				} );

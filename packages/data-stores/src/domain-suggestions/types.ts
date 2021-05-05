@@ -140,8 +140,12 @@ export interface DomainSuggestion {
 	 * Whether the domain requires HSTS
 	 */
 	hsts_required?: boolean;
-}
 
+	/**
+	 * Whether the domain is unavailable
+	 */
+	unavailable: boolean;
+}
 export interface DomainCategory {
 	/**
 	 * The domain category title
@@ -210,6 +214,8 @@ export interface DomainAvailability {
 
 export type TimestampMS = ReturnType< typeof Date.now >;
 
+export type DomainSuggestions = Record< string, DomainSuggestion[] | undefined >;
+
 export interface DomainSuggestionState {
 	/**
 	 * The state of the DomainSuggestions e.g. pending, failure etc
@@ -219,7 +225,7 @@ export interface DomainSuggestionState {
 	/**
 	 * Domain suggestion data typically returned from the API
 	 */
-	data: Record< string, DomainSuggestion[] | undefined >;
+	data: DomainSuggestions;
 
 	/**
 	 * Error message
@@ -236,3 +242,7 @@ export interface DomainSuggestionState {
 	 */
 	pendingSince: TimestampMS | undefined;
 }
+
+export type DomainAvailabilities = Record< string, DomainAvailability | undefined >;
+
+export type DomainSuggestionSelectorOptions = Partial< Exclude< DomainSuggestionQuery, 'query' > >;

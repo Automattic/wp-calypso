@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { isEmpty, mapValues, omit, pickBy, without, merge, isEqual } from 'lodash';
-import { isNullish } from '@automattic/js-utils';
 
 /**
  * Internal dependencies
@@ -28,6 +27,8 @@ import {
 	MEDIA_ITEM_EDIT,
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
+import isTransientMediaId from 'calypso/lib/media/utils/is-transient-media-id';
+import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import MediaQueryManager from 'calypso/lib/query-manager/media';
 import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
 import { transformSite as transformSiteTransientItems } from 'calypso/state/media/utils/transientItems';
@@ -144,58 +145,37 @@ export const errors = ( state = {}, action ) => {
 	return state;
 };
 
-export const queries = ( () => {
-	function applyToManager( state, siteId, method, createDefault, ...args ) {
-		if ( ! state[ siteId ] ) {
-			if ( ! createDefault ) {
+export const queries = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case MEDIA_RECEIVE: {
+			const { siteId, media, found, query } = action;
+			return withQueryManager(
+				state,
+				siteId,
+				( m ) => m.receive( media, { found, query } ),
+				() => new MediaQueryManager()
+			);
+		}
+		case MEDIA_DELETE: {
+			const { siteId, mediaIds } = action;
+			return withQueryManager( state, siteId, ( m ) => m.removeItems( mediaIds ) );
+		}
+		case MEDIA_ITEM_EDIT: {
+			const { siteId, mediaItem } = action;
+			return withQueryManager( state, siteId, ( m ) => m.receive( mediaItem, { patch: true } ) );
+		}
+		case MEDIA_SOURCE_CHANGE:
+		case MEDIA_CLEAR_SITE: {
+			if ( ! action.siteId ) {
 				return state;
 			}
 
-			return {
-				...state,
-				[ siteId ]: new MediaQueryManager()[ method ]( ...args ),
-			};
+			return omit( state, action.siteId );
 		}
-
-		const nextManager = state[ siteId ][ method ]( ...args );
-
-		if ( nextManager === state[ siteId ] ) {
-			return state;
-		}
-
-		return {
-			...state,
-			[ siteId ]: nextManager,
-		};
 	}
 
-	return ( state = {}, action ) => {
-		switch ( action.type ) {
-			case MEDIA_RECEIVE: {
-				const { siteId, media, found, query } = action;
-				return applyToManager( state, siteId, 'receive', true, media, { found, query } );
-			}
-			case MEDIA_DELETE: {
-				const { siteId, mediaIds } = action;
-				return applyToManager( state, siteId, 'removeItems', true, mediaIds );
-			}
-			case MEDIA_ITEM_EDIT: {
-				const { siteId, mediaItem } = action;
-				return applyToManager( state, siteId, 'receive', true, mediaItem, { patch: true } );
-			}
-			case MEDIA_SOURCE_CHANGE:
-			case MEDIA_CLEAR_SITE: {
-				if ( ! action.siteId ) {
-					return state;
-				}
-
-				return omit( state, action.siteId );
-			}
-		}
-
-		return state;
-	};
-} )();
+	return state;
+};
 
 /**
  * Returns the media library selected items state after an action has been
@@ -260,6 +240,12 @@ export const selectedItems = ( state = {}, action ) => {
 		}
 		case MEDIA_ITEM_REQUEST_SUCCESS: {
 			const { mediaId: transientMediaId, siteId } = action;
+
+			// We only want to deselect if it is a transient media item
+			if ( ! isTransientMediaId( transientMediaId ) ) {
+				return state;
+			}
+
 			const media = state[ siteId ] ?? [];
 
 			return {
@@ -356,9 +342,7 @@ export const transientItems = ( state = {}, action ) => {
 			 * in this reducer, if none of the received media were previously
 			 * transient, we can skip this work.
 			 */
-			const justSavedMedia = savedMedia.filter(
-				( mediaItem ) => ! isNullish( mediaItem.transientId )
-			);
+			const justSavedMedia = savedMedia.filter( ( mediaItem ) => mediaItem.transientId != null );
 
 			if ( justSavedMedia.length === 0 ) {
 				return state;

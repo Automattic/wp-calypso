@@ -94,3 +94,23 @@
 	line-height: 24px;
 	margin: 0 0 8px;
 }
+
+/* Contact form results */
+
+.help-contact-form .help-result__content-wrapper {
+	width: 100%;
+	margin-right: 0;
+
+	@include break-medium {
+		max-width: 100%;
+	}
+}
+
+.help-contact-form .help-result__title {
+	font-weight: 400;
+	margin: 0;
+}
+
+.help-contact-form .help-result__icon {
+	margin-right: 16px;
+}

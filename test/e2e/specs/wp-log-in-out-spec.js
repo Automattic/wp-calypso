@@ -16,6 +16,7 @@ import EmailClient from '../lib/email-client.js';
 import { listenForSMS } from '../lib/xmpp-client';
 import { subscribeToPush, approvePushToken } from '../lib/push-client';
 import ReaderPage from '../lib/pages/reader-page';
+import StatsPage from '../lib/pages/stats-page';
 import ProfilePage from '../lib/pages/profile-page';
 import WPHomePage from '../lib/pages/wp-home-page';
 import MagicLoginPage from '../lib/pages/magic-login-page';
@@ -32,21 +33,17 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Auth Screen Canary: (${ screenSize }) @parallel @safaricanary`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+		return await driverManager.ensureNotLoggedIn( driver );
+	} );
 
 	describe( 'Loading the log-in screen', function () {
-		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
-		} );
-
 		step( 'Can see the log in screen', async function () {
 			await LoginPage.Visit( driver, LoginPage.getLoginURL() );
 		} );
@@ -55,6 +52,12 @@ describe( `[${ host }] Auth Screen Canary: (${ screenSize }) @parallel @safarica
 
 describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
 
 	describe( 'Logging In and Out: @jetpack', function () {
 		before( async function () {
@@ -67,8 +70,8 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 				await loginFlow.login( { useFreshLogin: true } );
 			} );
 
-			step( 'Can see Reader Page after logging in', async function () {
-				return await ReaderPage.Expect( driver );
+			step( 'Can see Stats Page after logging in', async function () {
+				return await StatsPage.Expect( driver );
 			} );
 		} );
 
@@ -461,8 +464,11 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 
 describe( `[${ host }] User Agent: (${ screenSize }) @parallel @jetpack`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
 
-	before( async function () {
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
 		await driverManager.ensureNotLoggedIn( driver );
 	} );
 

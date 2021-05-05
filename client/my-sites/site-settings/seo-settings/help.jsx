@@ -18,7 +18,7 @@ import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { FEATURE_ADVANCED_SEO } from 'calypso/lib/plans/constants';
+import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
 
 const SeoSettingsHelpCard = ( {
 	disabled,

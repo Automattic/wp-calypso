@@ -25,8 +25,8 @@ import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import PurchasesListing from './purchases-listing';
 import QuerySites from 'calypso/components/data/query-sites';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import { getPlan } from 'calypso/lib/plans';
 import {
+	getPlan,
 	JETPACK_LEGACY_PLANS,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
@@ -34,13 +34,13 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
-} from 'calypso/lib/plans/constants';
-import {
 	JETPACK_ANTI_SPAM_PRODUCTS,
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
-} from 'calypso/lib/products-values/constants';
+	isFreeJetpackPlan,
+	isFreePlanProduct,
+} from '@automattic/calypso-products';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -62,7 +62,6 @@ import SearchProductThankYou from './current-plan-thank-you/search-thank-you';
 import JetpackCompleteThankYou from './current-plan-thank-you/jetpack-complete';
 import JetpackSecurityDailyThankYou from './current-plan-thank-you/jetpack-security-daily';
 import JetpackSecurityRealtimeThankYou from './current-plan-thank-you/jetpack-security-realtime';
-import { isFreeJetpackPlan, isFreePlan } from 'calypso/lib/products-values';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
@@ -151,7 +150,7 @@ class CurrentPlan extends Component {
 			return <JetpackCompleteThankYou />;
 		}
 
-		if ( ! currentPlan || isFreePlan( currentPlan ) || isFreeJetpackPlan( currentPlan ) ) {
+		if ( ! currentPlan || isFreePlanProduct( currentPlan ) || isFreeJetpackPlan( currentPlan ) ) {
 			return <FreePlanThankYou />;
 		}
 
@@ -199,6 +198,9 @@ class CurrentPlan extends Component {
 					brandFont
 					className="current-plan__page-heading"
 					headerText={ translate( 'Plans' ) }
+					subHeaderText={ translate(
+						'Learn about the features included in your WordPress.com plan.'
+					) }
 					align="left"
 				/>
 				{ selectedSiteId && (

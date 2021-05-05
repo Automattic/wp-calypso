@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, isArray, isEqual, mapValues, omit, pickBy, partial } from 'lodash';
+import { get, isEqual, mapValues, omit, pickBy, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -48,8 +48,8 @@ import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
 	TYPE_BUSINESS,
-} from 'calypso/lib/plans/constants';
-import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
+	findFirstSimilarPlanKey,
+} from '@automattic/calypso-products';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
@@ -225,7 +225,7 @@ export class SeoForm extends React.Component {
 		// We will pass an empty string in this case.
 		updatedOptions.advanced_seo_title_formats = mapValues(
 			updatedOptions.advanced_seo_title_formats,
-			( format ) => ( isArray( format ) && 0 === format.length ? '' : format )
+			( format ) => ( Array.isArray( format ) && 0 === format.length ? '' : format )
 		);
 
 		this.props.saveSiteSettings( siteId, updatedOptions );

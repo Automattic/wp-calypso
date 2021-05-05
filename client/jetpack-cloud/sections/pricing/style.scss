@@ -10,6 +10,10 @@
 
 	font-family: 'Noto Sans', $sans;
 
+	h2 {
+		line-height: inherit;
+	}
+
 	.header {
 		margin-bottom: 24px;
 		padding: 0 5%;
@@ -35,6 +39,11 @@
 				font-size: rem( 35px );
 			}
 		}
+	}
+
+	.main {
+		padding-left: 0;
+		padding-right: 0;
 	}
 
 	.foldable-card {
@@ -67,15 +76,12 @@
 
 	// On cloud.jetpack.com, we want to override the primary color, used on
 	// the featured product card, with --studio-pink-50.
-	.jetpack-product-card.is-featured,
-	.jetpack-product-card-npip.is-featured {
-		.jetpack-product-card__header,
-		.jetpack-product-card-npip__header {
+	.jetpack-product-card.is-featured {
+		.jetpack-product-card__header {
 			background-color: var( --studio-pink-50 );
 		}
 
-		.jetpack-product-card__body,
-		.jetpack-product-card-npip__body {
+		.jetpack-product-card__body {
 			border: solid 2px var( --studio-pink-50 );
 		}
 	}

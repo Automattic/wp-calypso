@@ -109,14 +109,6 @@ const isSidebarFullscreen: Reducer< boolean, LaunchAction > = ( state = false, a
 	return state;
 };
 
-const isExperimental: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
-	if ( action.type === 'ENABLE_EXPERIMENTAL' ) {
-		return true;
-	}
-
-	return state;
-};
-
 const isAnchorFm: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
 	if ( action.type === 'ENABLE_ANCHOR_FM' ) {
 		return true;
@@ -170,7 +162,6 @@ const reducer = combineReducers( {
 	planProductId,
 	isSidebarOpen,
 	isSidebarFullscreen,
-	isExperimental,
 	isAnchorFm,
 	isFocusedLaunchOpen,
 	isSiteTitleStepVisible,

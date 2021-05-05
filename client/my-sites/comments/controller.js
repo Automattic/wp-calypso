@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import page from 'page';
-import { each, isNaN, startsWith } from 'lodash';
+import { each, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,7 +18,7 @@ const mapPendingStatusToUnapproved = ( status ) => ( 'pending' === status ? 'una
 
 const sanitizeInt = ( number ) => {
 	const integer = parseInt( number, 10 );
-	return ! isNaN( integer ) && integer > 0 ? integer : false;
+	return ! Number.isNaN( integer ) && integer > 0 ? integer : false;
 };
 
 const sanitizeQueryAction = ( action ) => {

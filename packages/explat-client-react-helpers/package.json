@@ -7,7 +7,7 @@
 	"main": "dist/cjs/index.js",
 	"browser": "dist/esm/index.js",
 	"module": "dist/esm/index.js",
-	"calypso:src": "src/index.ts",
+	"calypso:src": "src/index.tsx",
 	"types": "dist/types/index.d.ts",
 	"sideEffects": false,
 	"repository": {
@@ -24,11 +24,13 @@
 	},
 	"dependencies": {
 		"@automattic/explat-client": "^0.0.1",
-		"react": "^16.12.0"
+		"react": "^16.12.0",
+		"tslib": "^2.2.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-polyfills": "^1.0.0",
-		"@testing-library/react": "^10.0.5",
-		"@testing-library/react-hooks": "^3.4.2"
+		"@testing-library/react": "^11.2.6",
+		"@testing-library/react-hooks": "5.1.1",
+		"react-dom": "^16.12.0"
 	}
 }

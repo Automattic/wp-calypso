@@ -13,16 +13,17 @@ import debugFactory from 'debug';
  */
 import { requestPlans } from 'calypso/state/plans/actions';
 import { computeProductsWithPrices } from 'calypso/state/products-list/selectors';
-import { getPlan, findPlansKeys, isWpComPlan } from 'calypso/lib/plans';
 import {
+	getPlan,
+	findPlansKeys,
 	GROUP_WPCOM,
 	GROUP_JETPACK,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import { requestProductsList } from 'calypso/state/products-list/actions';
-import type { Plan } from 'calypso/lib/plans/types';
+import type { Plan } from '@automattic/calypso-products';
 import type { WPCOMProductSlug, WPCOMProductVariant } from '../components/item-variation-picker';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
@@ -37,7 +38,6 @@ export interface AvailableProductVariant {
 	priceFullBeforeDiscount: number;
 	priceFull: number;
 	priceFinal: number;
-	priceMonthly: number;
 }
 
 export type GetProductVariants = ( productSlug: WPCOMProductSlug ) => WPCOMProductVariant[];
@@ -111,39 +111,8 @@ export function useProductVariants( {
 			return [];
 		}
 
-		if ( ! isWpComPlan( productSlug ) ) {
-			return productsWithPrices.map( getProductVariant );
-		}
-
-		return replaceFullPriceWithMonthlyCost( productsWithPrices ).map( getProductVariant );
+		return productsWithPrices.map( getProductVariant );
 	};
-}
-
-function replaceFullPriceWithMonthlyCost(
-	products: AvailableProductVariant[]
-): AvailableProductVariant[] {
-	const monthlyPlan = products.filter( ( product ) => product.plan?.term === TERM_MONTHLY )?.[ 0 ];
-
-	if ( ! monthlyPlan ) {
-		return products;
-	}
-
-	const monthlyPlanPrice = monthlyPlan.priceFinal || monthlyPlan.priceFull;
-
-	return products.map( ( product ) => {
-		const planTerm = product.plan?.term;
-		if ( planTerm === TERM_MONTHLY ) {
-			return product;
-		}
-
-		const months = planTerm === TERM_ANNUALLY ? 12 : 24;
-		const priceFullBeforeDiscount = monthlyPlanPrice * months;
-
-		return {
-			...product,
-			priceFullBeforeDiscount,
-		};
-	} );
 }
 
 function VariantPrice( { variant }: { variant: AvailableProductVariant } ) {

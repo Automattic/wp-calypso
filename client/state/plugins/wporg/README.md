@@ -18,7 +18,7 @@ dispatch( fetchPluginData( 'akismet' ) );
 
 ### `fetchPluginsList( category: String, page: Number, searchTerm: String )`
 
-Fetches the list of plugins by category or search term from the WP.org plugins API. 
+Fetches the list of plugins by category or search term from the WP.org plugins API.
 Please note that because of API limitations, WP.org plugins can be filtered either by category or search term, but not both at the same time.
 Pagination is supported only for category queries. Category can be one of `featured`, `popular`, `new`, `beta` or `recommended`.
 Search term is an open text field, and you can search single terms like "security" or "enhancement".

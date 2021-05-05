@@ -18,7 +18,6 @@ jest.mock( '@automattic/calypso-config', () => {
 jest.mock( 'calypso/components/happychat/connection-connected', () => 'HappychatConnection' );
 jest.mock( 'calypso/components/data/query-plans', () => 'QueryPlans' );
 jest.mock( 'calypso/components/data/query-site-plans', () => 'QuerySitePlans' );
-jest.mock( 'calypso/components/data/cart', () => 'CartData' );
 jest.mock( 'calypso/my-sites/plan-features', () => 'PlanFeatures' );
 jest.mock( 'calypso/my-sites/plans-features-main/wpcom-faq', () => 'WpcomFAQ' );
 jest.mock( 'calypso/my-sites/plans-features-main/jetpack-faq', () => 'JetpackFAQ' );
@@ -60,7 +59,7 @@ import {
 	TYPE_PERSONAL,
 	TERM_ANNUALLY,
 	TYPE_PREMIUM,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 
 const props = {
 	selectedPlan: PLAN_FREE,

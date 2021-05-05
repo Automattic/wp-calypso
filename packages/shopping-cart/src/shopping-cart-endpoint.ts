@@ -27,7 +27,6 @@ export interface RequestCart {
 	is_coupon_applied: boolean;
 	temporary: false;
 	extra: string;
-	is_update?: boolean;
 }
 
 export type RequestCartTaxData = null | {
@@ -47,7 +46,7 @@ export interface RequestCartProduct {
 	meta: string;
 	volume: number;
 	quantity: number | null;
-	extra: ResponseCartProductExtra;
+	extra: RequestCartProductExtra;
 }
 
 /**
@@ -90,6 +89,8 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	messages?: ResponseCartMessages;
 	cart_generated_at_timestamp: number;
 	tax: ResponseCartTaxData;
+	next_domain_is_free: boolean;
+	terms_of_service?: TermsOfServiceRecord[];
 }
 
 export interface ResponseCartTaxData {
@@ -140,21 +141,35 @@ export interface ResponseCartProduct {
 	is_bundled: boolean;
 	is_sale_coupon_applied: boolean;
 	meta: string;
+	time_added_to_cart: number;
 	months_per_bill_period: number | null;
 	volume: number;
 	quantity: number | null;
+	current_quantity: number | null;
 	extra: ResponseCartProductExtra;
 	uuid: string;
 	cost: number;
+	cost_before_coupon?: number;
+	coupon_savings?: number;
+	coupon_savings_display?: string;
+	coupon_savings_integer?: number;
 	price: number;
 	product_type: string;
 	included_domain_purchase_amount: number;
 	is_renewal?: boolean;
 	subscription_id?: string;
+	introductory_offer_terms?: IntroductoryOfferTerms;
 
 	// Temporary optional properties for the monthly pricing test
 	related_monthly_plan_cost_display?: string;
 	related_monthly_plan_cost_integer?: number;
+}
+
+export interface IntroductoryOfferTerms {
+	enabled: boolean;
+	interval_unit: string;
+	interval_count: number;
+	reason?: string;
 }
 
 export interface CartLocation {
@@ -163,7 +178,7 @@ export interface CartLocation {
 	subdivisionCode: string | null;
 }
 
-export type ResponseCartProductExtra = {
+export interface ResponseCartProductExtra {
 	context?: string;
 	source?: string;
 	premium?: boolean;
@@ -171,12 +186,14 @@ export type ResponseCartProductExtra = {
 	domain_to_bundle?: string;
 	google_apps_users?: GSuiteProductUser[];
 	google_apps_registration_data?: DomainContactDetails;
-	purchaseId?: string;
-	purchaseDomain?: string;
 	purchaseType?: string;
-	includedDomain?: string;
 	privacy?: boolean;
-};
+	afterPurchaseUrl?: string;
+}
+
+export interface RequestCartProductExtra extends ResponseCartProductExtra {
+	purchaseId?: string;
+}
 
 export interface GSuiteProductUser {
 	firstname: string;
@@ -227,3 +244,9 @@ export type FrDomainContactExtraDetails = {
 	trademarkNumber?: string;
 	sirenSiret?: string;
 };
+
+export interface TermsOfServiceRecord {
+	key: string;
+	code: string;
+	args?: Record< string, string >;
+}

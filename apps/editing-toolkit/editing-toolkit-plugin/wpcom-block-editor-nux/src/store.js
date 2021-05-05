@@ -3,20 +3,33 @@
  */
 import 'a8c-fse-common-data-stores';
 import apiFetch from '@wordpress/api-fetch';
+import { apiFetch as apiFetchControls, controls } from '@wordpress/data-controls';
 import { combineReducers, registerStore } from '@wordpress/data';
 
-const isNuxEnabledReducer = ( state = undefined, action ) => {
+const showWelcomeGuideReducer = ( state = undefined, action ) => {
 	switch ( action.type ) {
-		case 'WPCOM_BLOCK_EDITOR_NUX_SET_STATUS':
-			return action.isNuxEnabled;
+		case 'WPCOM_WELCOME_GUIDE_FETCH_STATUS_SUCCESS':
+			return action.response.show_welcome_guide;
+		case 'WPCOM_WELCOME_GUIDE_SHOW_SET':
+			return action.show;
+		case 'WPCOM_WELCOME_GUIDE_RESET_STORE':
+			return undefined;
 		default:
 			return state;
 	}
 };
-const isTourManuallyOpenedReducer = ( state = false, action ) => {
+
+const welcomeGuideManuallyOpenedReducer = ( state = false, action ) => {
 	switch ( action.type ) {
-		case 'WPCOM_BLOCK_EDITOR_SET_TOUR_OPEN':
-			return action.isTourManuallyOpened;
+		case 'WPCOM_WELCOME_GUIDE_SHOW_SET':
+			if ( typeof action.openedManually !== 'undefined' ) {
+				return action.openedManually;
+			}
+			return state;
+
+		case 'WPCOM_WELCOME_GUIDE_RESET_STORE':
+			return false;
+
 		default:
 			return state;
 	}
@@ -25,72 +38,79 @@ const isTourManuallyOpenedReducer = ( state = false, action ) => {
 // TODO: next PR convert file to Typescript to ensure control of tourRating values: null, 'thumbs-up' 'thumbs-down'
 const tourRatingReducer = ( state = undefined, action ) => {
 	switch ( action.type ) {
-		case 'WPCOM_BLOCK_EDITOR_SET_TOUR_RATING':
+		case 'WPCOM_WELCOME_GUIDE_TOUR_RATING_SET':
 			return action.tourRating;
+		case 'WPCOM_WELCOME_GUIDE_RESET_STORE':
+			return undefined;
 		default:
 			return state;
 	}
 };
 
-const showWpcomNuxVariantReducer = ( state = false, action ) => {
+const welcomeGuideVariantReducer = ( state = 'tour', action ) => {
 	switch ( action.type ) {
-		case 'WPCOM_BLOCK_EDITOR_SET_NUX_VARIANT':
-			return action.showVariant;
+		case 'WPCOM_WELCOME_GUIDE_FETCH_STATUS_SUCCESS':
+			return action.response.variant;
+		case 'WPCOM_WELCOME_GUIDE_RESET_STORE':
+			return 'tour';
 		default:
 			return state;
 	}
 };
 
 const reducer = combineReducers( {
-	isNuxEnabled: isNuxEnabledReducer,
-	isTourManuallyOpened: isTourManuallyOpenedReducer,
+	welcomeGuideManuallyOpened: welcomeGuideManuallyOpenedReducer,
+	showWelcomeGuide: showWelcomeGuideReducer,
 	tourRating: tourRatingReducer,
-	showWpcomNuxVariant: showWpcomNuxVariantReducer,
+	welcomeGuideVariant: welcomeGuideVariantReducer,
 } );
 
 const actions = {
-	// TODO: Clarify variable naming of nux vs tour for consistency and to better reflect terminology in core
-	// isFeatureActive instead of isNuxEnabled would match core nad make this logic easier to understand.
-	setWpcomNuxStatus: ( { isNuxEnabled, bypassApi } ) => {
-		if ( ! bypassApi ) {
-			apiFetch( {
-				path: '/wpcom/v2/block-editor/nux',
-				method: 'POST',
-				data: { isNuxEnabled },
-			} );
-		}
+	*fetchWelcomeGuideStatus() {
+		const response = yield apiFetchControls( { path: '/wpcom/v2/block-editor/nux' } );
+
 		return {
-			type: 'WPCOM_BLOCK_EDITOR_NUX_SET_STATUS',
-			isNuxEnabled,
+			type: 'WPCOM_WELCOME_GUIDE_FETCH_STATUS_SUCCESS',
+			response,
+		};
+	},
+	setShowWelcomeGuide: ( show, { openedManually } = {} ) => {
+		apiFetch( {
+			path: '/wpcom/v2/block-editor/nux',
+			method: 'POST',
+			data: { show_welcome_guide: show },
+		} );
+
+		return {
+			type: 'WPCOM_WELCOME_GUIDE_SHOW_SET',
+			show,
+			openedManually,
 		};
 	},
 	setTourRating: ( tourRating ) => {
-		return { type: 'WPCOM_BLOCK_EDITOR_SET_TOUR_RATING', tourRating };
+		return { type: 'WPCOM_WELCOME_GUIDE_TOUR_RATING_SET', tourRating };
 	},
-	setShowWpcomNuxVariant: ( { showVariant } ) => {
-		return {
-			type: 'WPCOM_BLOCK_EDITOR_SET_NUX_VARIANT',
-			showVariant,
-		};
-	},
-	setTourOpenStatus: ( { isTourManuallyOpened } ) => {
-		return {
-			type: 'WPCOM_BLOCK_EDITOR_SET_TOUR_OPEN',
-			isTourManuallyOpened,
-		};
-	},
+	// The `resetStore` action is only used for testing to reset the
+	// store inbetween tests.
+	resetStore: () => ( {
+		type: 'WPCOM_WELCOME_GUIDE_RESET_STORE',
+	} ),
 };
 
 const selectors = {
-	isTourManuallyOpened: ( state ) => state.isTourManuallyOpened,
-	isWpcomNuxEnabled: ( state ) => state.isNuxEnabled,
-	tourRating: ( state ) => state.tourRating,
-	shouldShowWpcomNuxVariant: ( state ) => state.showWpcomNuxVariant,
+	isWelcomeGuideManuallyOpened: ( state ) => state.welcomeGuideManuallyOpened,
+	isWelcomeGuideShown: ( state ) => !! state.showWelcomeGuide,
+	isWelcomeGuideStatusLoaded: ( state ) => typeof state.showWelcomeGuide !== 'undefined',
+	getTourRating: ( state ) => state.tourRating,
+	getWelcomeGuideVariant: ( state ) => state.welcomeGuideVariant,
 };
 
-registerStore( 'automattic/nux', {
-	reducer,
-	actions,
-	selectors,
-	persist: true,
-} );
+export function register() {
+	return registerStore( 'automattic/wpcom-welcome-guide', {
+		reducer,
+		actions,
+		selectors,
+		controls,
+		persist: true,
+	} );
+}

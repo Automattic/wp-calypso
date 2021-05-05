@@ -111,6 +111,53 @@ describe( '#localizeUrl', () => {
 		expect( localizeUrl( 'https://en.wordpress.com/', 'en' ) ).toEqual( 'https://wordpress.com/' );
 	} );
 
+	test( 'calypso standard URLs', () => {
+		expect( localizeUrl( 'https://wordpress.com/checkout/', 'en' ) ).toEqual(
+			'https://wordpress.com/checkout/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/checkout/', 'es' ) ).toEqual(
+			'https://wordpress.com/checkout/'
+		);
+		expect(
+			localizeUrl( 'https://wordpress.com/checkout/offer-quickstart-session/', 'en' )
+		).toEqual( 'https://wordpress.com/checkout/offer-quickstart-session/' );
+		expect(
+			localizeUrl( 'https://wordpress.com/checkout/offer-quickstart-session/', 'es' )
+		).toEqual( 'https://wordpress.com/checkout/offer-quickstart-session/' );
+
+		expect( localizeUrl( 'https://wordpress.com/me', 'en' ) ).toEqual(
+			'https://wordpress.com/me/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/me', 'es' ) ).toEqual(
+			'https://wordpress.com/me/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/me/', 'en' ) ).toEqual(
+			'https://wordpress.com/me/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/me/', 'es' ) ).toEqual(
+			'https://wordpress.com/me/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/me/account', 'en' ) ).toEqual(
+			'https://wordpress.com/me/account/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/me/account', 'es' ) ).toEqual(
+			'https://wordpress.com/me/account/'
+		);
+
+		expect( localizeUrl( 'https://wordpress.com/home/test.wordpress.com', 'en' ) ).toEqual(
+			'https://wordpress.com/home/test.wordpress.com/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/home/test.wordpress.com', 'es' ) ).toEqual(
+			'https://wordpress.com/home/test.wordpress.com/'
+		);
+		expect(
+			localizeUrl( 'https://wordpress.com/not-really-a-calypso-path/test.blog', 'en' )
+		).toEqual( 'https://wordpress.com/not-really-a-calypso-path/test.blog/' );
+		expect(
+			localizeUrl( 'https://wordpress.com/not-really-a-calypso-path/test.blog', 'es' )
+		).toEqual( 'https://wordpress.com/not-really-a-calypso-path/test.blog/' );
+	} );
+
 	test( 'blog url', () => {
 		expect( localizeUrl( 'https://en.blog.wordpress.com/', 'en' ) ).toEqual(
 			'https://wordpress.com/blog/'

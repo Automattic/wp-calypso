@@ -42,6 +42,11 @@ jest.mock( 'calypso/state/selectors/get-jetpack-credentials-update-status', () =
 	'unsubmitted'
 );
 
+jest.mock( 'calypso/state/jetpack/credentials/actions', () => ( {
+	updateCredentials: jest.fn( () => ( { type: 'update-credentials' } ) ),
+	deleteCredentials: jest.fn( () => ( { type: 'delete-credentials' } ) ),
+} ) );
+
 /**
  * Helper functions
  */
@@ -59,17 +64,6 @@ function renderInput( name, onChange, values, type = 'text' ) {
 }
 
 function setup( { role = 'main', siteId = 9999, siteUrl = 'siteUrl' } = {} ) {
-	// Mutate action creators to make assertions on them
-	/* eslint-disable no-import-assign */
-	actions.updateCredentials = jest.fn( () => ( {
-		type: 'update-credentials',
-	} ) );
-	// eslint-disable-line
-	actions.deleteCredentials = jest.fn( () => ( {
-		type: 'delete-credentials',
-	} ) );
-	/* eslint-enable no-import-assign */
-
 	// We create a simple form to test the utilities and data provided by
 	// the withServerCredentials HOC.
 	const WrappedForm = ( {
@@ -129,6 +123,10 @@ function setup( { role = 'main', siteId = 9999, siteUrl = 'siteUrl' } = {} ) {
 }
 
 describe( 'useWithServerCredentials HOC', () => {
+	afterEach( () => {
+		jest.clearAllMocks();
+	} );
+
 	it( 'should not update credentials (should display error messages)', async () => {
 		const { utils } = setup( {} );
 		const submitButton = utils.getByText( 'Submit' );

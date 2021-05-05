@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isArray, isUndefined, sortBy } from 'lodash';
+import { sortBy } from 'lodash';
 
 const getRequestActivityLogsId = ( siteId, filter ) => {
 	const knownFilterOptions = [
@@ -21,11 +21,13 @@ const getRequestActivityLogsId = ( siteId, filter ) => {
 	const filterCacheKey = knownFilterOptions
 		.map( ( opt ) => {
 			const optionValue = filter[ opt ];
-			if ( isUndefined( optionValue ) ) {
+			if ( typeof optionValue === 'undefined' ) {
 				return undefined;
 			}
 
-			const cacheKeyValue = String( isArray( optionValue ) ? sortBy( optionValue ) : optionValue );
+			const cacheKeyValue = String(
+				Array.isArray( optionValue ) ? sortBy( optionValue ) : optionValue
+			);
 
 			return `${ opt }=${ cacheKeyValue }`;
 		} )

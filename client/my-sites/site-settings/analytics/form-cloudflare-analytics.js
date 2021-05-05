@@ -23,8 +23,11 @@ import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-ro
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
-import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
-import { TYPE_PREMIUM, FEATURE_CLOUDFLARE_ANALYTICS } from 'calypso/lib/plans/constants';
+import {
+	findFirstSimilarPlanKey,
+	TYPE_PREMIUM,
+	FEATURE_CLOUDFLARE_ANALYTICS,
+} from '@automattic/calypso-products';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 
 /**
@@ -74,7 +77,9 @@ export function CloudflareAnalyticsSettings( {
 	};
 
 	const recordSupportLinkClick = () => {
-		trackTracksEvent( 'calypso_traffic_settings_cloudflare_support_click' );
+		trackTracksEvent( 'calypso_traffic_settings_cloudflare_support_click', {
+			plan: site.plan.product_slug,
+		} );
 	};
 
 	const handleCodeChange = ( event ) => {
@@ -109,8 +114,14 @@ export function CloudflareAnalyticsSettings( {
 			handleFieldChange( '', () => {
 				handleSubmitForm();
 			} );
+			trackTracksEvent( 'calypso_traffic_settings_cloudflare_disable_cloudflare', {
+				plan: site.plan.product_slug,
+			} );
 		} else {
 			setIsCloudflareEnabled( true );
+			trackTracksEvent( 'calypso_traffic_settings_cloudflare_enable_cloudflare', {
+				plan: site.plan.product_slug,
+			} );
 		}
 	};
 
@@ -129,6 +140,7 @@ export function CloudflareAnalyticsSettings( {
 					'Choose an additional analytics tool to connect and get unique insights about your site traffic.'
 				) }
 				event={ 'jetpack_cloudflare_analytics_settings' }
+				tracksClickProperties={ { plan: site.plan.product_slug } }
 				feature={ FEATURE_CLOUDFLARE_ANALYTICS }
 				plan={ plan }
 				href={ null }
@@ -153,7 +165,7 @@ export function CloudflareAnalyticsSettings( {
 						</div>
 						<div className="analytics site-settings__analytics-text">
 							<p className="analytics site-settings__analytics-title">
-								{ translate( 'Cloudflare Analytics' ) }
+								{ translate( 'Cloudflare Web Analytics' ) }
 							</p>
 							<p>
 								{ translate(
@@ -175,7 +187,7 @@ export function CloudflareAnalyticsSettings( {
 					{ isCloudflareEnabled && (
 						<FormFieldset>
 							<FormLabel htmlFor="cloudflareCode">
-								{ translate( 'Tracking ID', { context: 'site setting' } ) }
+								{ translate( 'Site Tag', { context: 'site setting' } ) }
 							</FormLabel>
 							<FormTextInput
 								name="cloudflareCode"
@@ -209,7 +221,7 @@ export function CloudflareAnalyticsSettings( {
 						<div className="analytics site-settings__analytics">
 							<FormToggle
 								checked={ isCloudflareEnabled }
-								disabled={ isRequestingSettings || isSavingSettings }
+								disabled={ isRequestingSettings || isSavingSettings || ! enableForm }
 								onChange={ () => handleFormToggle( ! isCloudflareEnabled ) }
 							>
 								{ translate( 'Add Cloudflare' ) }

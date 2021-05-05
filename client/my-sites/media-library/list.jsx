@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRtl } from 'i18n-calypso';
-import { clone, filter, findIndex, min, noop } from 'lodash';
+import { clone, filter, findIndex } from 'lodash';
 import ReactDom from 'react-dom';
 import React from 'react';
 
@@ -20,8 +20,10 @@ import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
 import SortedGrid from 'calypso/components/sorted-grid';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
+import { selectMediaItems } from 'calypso/state/media/actions';
 import isFetchingNextPage from 'calypso/state/selectors/is-fetching-next-page';
+
+const noop = () => {};
 
 export class MediaLibraryList extends React.Component {
 	static displayName = 'MediaLibraryList';
@@ -42,7 +44,6 @@ export class MediaLibraryList extends React.Component {
 		mediaOnFetchNextPage: PropTypes.func,
 		single: PropTypes.bool,
 		scrollable: PropTypes.bool,
-		onEditItem: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -53,7 +54,6 @@ export class MediaLibraryList extends React.Component {
 		mediaOnFetchNextPage: noop,
 		single: false,
 		scrollable: false,
-		onEditItem: noop,
 	};
 
 	state = {};
@@ -139,7 +139,7 @@ export class MediaLibraryList extends React.Component {
 		} );
 
 		if ( this.props.site ) {
-			this.props.setMediaLibrarySelectedItems( this.props.site.ID, selectedItems );
+			this.props.selectMediaItems( this.props.site.ID, selectedItems );
 		}
 	};
 
@@ -151,8 +151,13 @@ export class MediaLibraryList extends React.Component {
 		return this.props.moment( date ).format( 'LL' );
 	};
 
-	getItemGroup = ( item ) =>
-		min( [ item.date.slice( 0, 10 ), this.props.moment( new Date() ).format( 'YYYY-MM-DD' ) ] );
+	getItemGroup = ( item ) => {
+		const minDate = Math.min(
+			new Date( item.date.slice( 0, 10 ) ).getTime(),
+			new Date().getTime()
+		);
+		return this.props.moment( minDate ).format( 'YYYY-MM-DD' );
+	};
 
 	renderItem = ( item ) => {
 		const index = findIndex( this.props.media, { ID: item.ID } );
@@ -177,7 +182,6 @@ export class MediaLibraryList extends React.Component {
 				showGalleryHelp={ showGalleryHelp }
 				selectedIndex={ selectedIndex }
 				onToggle={ this.toggleItem }
-				onEditItem={ this.props.onEditItem }
 			/>
 		);
 	};
@@ -261,5 +265,5 @@ export default connect(
 		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
 		isFetchingNextPage: isFetchingNextPage( state, site?.ID ),
 	} ),
-	{ setMediaLibrarySelectedItems }
+	{ selectMediaItems }
 )( withRtl( withLocalizedMoment( MediaLibraryList ) ) );

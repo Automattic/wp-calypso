@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 const mocha = require( 'mocha' );
-const mochaJUnitReporter = require( 'mocha-junit-reporter' );
+const MochaJUnitReporter = require( 'mocha-junit-reporter' );
 const Spec = mocha.reporters.Spec;
 const utils = mocha.utils;
 const inherits = utils.inherits;
@@ -28,7 +28,9 @@ exports = module.exports = SpecJUnit;
  * @param {object} runner Test runner object, handled implicitly by mocha
  */
 function SpecJUnit( runner ) {
-	new mochaJUnitReporter( runner, { reporterOptions: { mochaFile: reportName } } );
+	// 'mocha-junit-reporter' attaches itself to mocha when the object is created
+	// eslint-disable-next-line no-new
+	new MochaJUnitReporter( runner, { reporterOptions: { mochaFile: reportName } } );
 	Spec.call( this, runner );
 }
 
@@ -36,4 +38,3 @@ function SpecJUnit( runner ) {
  * Inherit from Spec and JUnit prototypes.
  */
 inherits( SpecJUnit, Spec );
-

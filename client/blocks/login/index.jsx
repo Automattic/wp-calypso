@@ -364,7 +364,10 @@ class Login extends Component {
 				</p>
 			);
 		} else if ( isJetpack ) {
-			headerText = translate( 'Log in or create a WordPress.com account to set up Jetpack' );
+			const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
+			headerText = isJetpackMagicLinkSignUpFlow
+				? translate( 'Log in or create a WordPress.com account to get started with Jetpack' )
+				: translate( 'Log in or create a WordPress.com account to set up Jetpack' );
 			preHeader = (
 				<div className="login__jetpack-logo">
 					<AsyncLoad
@@ -444,6 +447,7 @@ class Login extends Component {
 			disableAutoFocus,
 			locale,
 			userEmail,
+			handleUsernameChange,
 		} = this.props;
 
 		if ( socialConnect ) {
@@ -487,6 +491,7 @@ class Login extends Component {
 				isGutenboarding={ isGutenboarding }
 				locale={ locale }
 				userEmail={ userEmail }
+				handleUsernameChange={ handleUsernameChange }
 			/>
 		);
 	}
@@ -553,6 +558,7 @@ export default connect(
 				redirectTo: stateProps.redirectTo,
 				loginFormFlow: true,
 				showGlobalNotices: true,
+				flow: ownProps.isJetpack ? 'jetpack' : null,
 			} ),
 	} )
 )( localize( Login ) );

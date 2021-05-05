@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { select } from '@wordpress/data';
+import deprecate from '@wordpress/deprecated';
 
 /**
  * Internal dependencies
@@ -14,7 +15,6 @@ import {
 	STORE_KEY,
 	FREE_PLAN_PRODUCT_ID,
 } from './constants';
-import deprecate from '@wordpress/deprecated';
 import type {
 	Plan,
 	PlanFeature,
@@ -121,6 +121,7 @@ export const getPlanByPath = (
 	if ( ! path ) {
 		return undefined;
 	}
+
 	const planProduct = select( STORE_KEY )
 		.getPlansProducts()
 		.find( ( product ) => product.pathSlug === path );
@@ -131,7 +132,7 @@ export const getPlanByPath = (
 
 	return select( STORE_KEY )
 		.getSupportedPlans( locale )
-		.find( ( plan ) => plan.periodAgnosticSlug === planProduct?.periodAgnosticSlug );
+		.find( ( plan ) => plan.periodAgnosticSlug === planProduct.periodAgnosticSlug );
 };
 
 export const getPlanProduct = (
@@ -142,15 +143,17 @@ export const getPlanProduct = (
 	if ( ! periodAgnosticSlug || ! billingPeriod ) {
 		return undefined;
 	}
-	const products = select( STORE_KEY ).getPlansProducts();
-	if ( periodAgnosticSlug === TIMELESS_PLAN_FREE ) {
-		return products.find( ( product ) => product.periodAgnosticSlug === periodAgnosticSlug );
-	}
-	const planProduct = products.find(
-		( product ) =>
-			product.billingPeriod === billingPeriod && product.periodAgnosticSlug === periodAgnosticSlug
-	);
-	return planProduct;
+
+	return select( STORE_KEY )
+		.getPlansProducts()
+		.find( ( product ) => {
+			const matchesSlug = product.periodAgnosticSlug === periodAgnosticSlug;
+			// The billing period doesn't matter when dealing with free plan
+			const matchesBillingPeriod =
+				periodAgnosticSlug === TIMELESS_PLAN_FREE || product.billingPeriod === billingPeriod;
+
+			return matchesSlug && matchesBillingPeriod;
+		} );
 };
 
 export const isPlanEcommerce = ( _: State, planSlug?: PlanSlug ): boolean => {

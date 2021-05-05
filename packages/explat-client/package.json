@@ -23,6 +23,7 @@
 		"test": "yarn jest"
 	},
 	"devDependencies": {
-		"@automattic/calypso-polyfills": "^1.0.0"
+		"@automattic/calypso-polyfills": "^1.0.0",
+		"tslib": "^2.2.0"
 	}
 }

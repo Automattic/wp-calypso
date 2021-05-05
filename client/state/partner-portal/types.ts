@@ -1,11 +1,28 @@
 /**
  * External dependencies
  */
-import { AnyAction } from 'redux';
+import { Action, AnyAction } from 'redux';
+import { ThunkAction } from 'redux-thunk';
+import {
+	LicenseFilter,
+	LicenseSortDirection,
+	LicenseSortField,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
 /**
  * Utility.
  */
+export interface DispatchRequest {
+	( options: unknown ): unknown;
+}
+
+export type PartnerPortalThunkAction< A extends Action = AnyAction, R = unknown > = ThunkAction<
+	void,
+	PartnerPortalStore,
+	R,
+	A
+>;
+
 export interface HttpAction extends AnyAction {
 	fetcher: string;
 }
@@ -17,6 +34,56 @@ export interface PaginatedItems< T > {
 	itemsPerPage: number;
 	totalItems: number;
 	totalPages: number;
+}
+
+export interface LicenseListContext {
+	currentPage: number;
+	search: string;
+	filter: LicenseFilter;
+	sortField: LicenseSortField;
+	sortDirection: LicenseSortDirection;
+}
+
+/**
+ * API schemas.
+ */
+export enum ToSConsent {
+	NotConsented = 'not_consented',
+	Consented = 'consented',
+}
+
+export interface APIPartnerKey {
+	id: number;
+	name: string;
+	oauth2_token: string;
+	disabled_on: string | null;
+}
+
+export interface APIPartner {
+	id: number;
+	slug: string;
+	name: string;
+	keys: APIPartnerKey[];
+	tos: string;
+}
+
+// The API-returned license object is not quite consistent right now so we only define the properties we actively rely on.
+export interface APILicense {
+	license_key: string;
+	issued_at: string;
+	revoked_at: string | null;
+}
+
+export interface APIProductFamilyProduct {
+	name: string;
+	slug: string;
+	product_id: number;
+}
+
+export interface APIProductFamily {
+	name: string;
+	slug: string;
+	products: APIProductFamilyProduct[];
 }
 
 export interface APIError {
@@ -31,8 +98,8 @@ export interface APIError {
 export interface PartnerKey {
 	id: number;
 	name: string;
-	oauth2_token: string;
-	disabled_on: string | null;
+	oAuth2Token: string;
+	disabledOn: string | null;
 }
 
 export interface Partner {
@@ -40,6 +107,7 @@ export interface Partner {
 	slug: string;
 	name: string;
 	keys: PartnerKey[];
+	tos: string;
 }
 
 export interface PartnerStore {
@@ -47,7 +115,7 @@ export interface PartnerStore {
 	isFetching: boolean;
 	activePartnerKey: number;
 	current: Partner | null;
-	error: string;
+	error: APIError | null;
 }
 
 export interface License {

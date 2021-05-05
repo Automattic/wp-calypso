@@ -1,5 +1,5 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
 import {
 	PLAN_JETPACK_SECURITY_DAILY,
@@ -7,8 +7,6 @@ import {
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 	JETPACK_COMPLETE_PLANS,
-} from 'calypso/lib/plans/constants';
-import {
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_CRM_FREE_PRODUCTS,
@@ -17,13 +15,12 @@ import {
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-} from 'calypso/lib/products-values/constants';
+} from '@automattic/calypso-products';
 
 /**
  * Type dependencies
  */
-import type { JetpackProductSlug } from 'calypso/lib/products-values/types';
-import type { JetpackPlanSlugs } from 'calypso/lib/plans/types';
+import type { JetpackPlanSlug, JetpackProductSlug } from '@automattic/calypso-products';
 
 const setProductsInPosition = ( slugs: string[], position: number ) =>
 	slugs.reduce( ( map, slug ) => ( { ...map, [ slug ]: position } ), {} );
@@ -44,5 +41,5 @@ const PRODUCT_POSITION_IN_GRID: Record< string, number > = {
 	...setProductsInPosition( JETPACK_CRM_FREE_PRODUCTS, 80 ),
 };
 
-export const getProductPosition = ( slug: JetpackPlanSlugs | JetpackProductSlug ): number =>
+export const getProductPosition = ( slug: JetpackPlanSlug | JetpackProductSlug ): number =>
 	PRODUCT_POSITION_IN_GRID[ slug ] ?? 100;

@@ -3,11 +3,6 @@
  */
 import { camelCase } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import sortProducts from 'calypso/lib/products-values/sort';
-
 function createPurchaseObject( purchase ) {
 	const object = {
 		id: Number( purchase.ID ),
@@ -34,6 +29,15 @@ function createPurchaseObject( purchase ) {
 		expiryStatus: camelCase( purchase.expiry_status ),
 		includedDomain: purchase.included_domain,
 		includedDomainPurchaseAmount: purchase.included_domain_purchase_amount,
+		introductoryOffer: purchase.introductory_offer
+			? {
+					costPerInterval: Number( purchase.introductory_offer.cost_per_interval ),
+					endDate: String( purchase.introductory_offer.end_date ),
+					intervalCount: Number( purchase.introductory_offer.interval_count ),
+					intervalUnit: String( purchase.introductory_offer.interval_unit ),
+					isWithinPeriod: Boolean( purchase.introductory_offer.is_within_period ),
+			  }
+			: null,
 		isCancelable: Boolean( purchase.is_cancelable ),
 		isDomainRegistration: Boolean( purchase.is_domain_registration ),
 		isRechargeable: Boolean( purchase.is_rechargable ),
@@ -97,5 +101,5 @@ export function createPurchasesArray( dataTransferObject ) {
 		return [];
 	}
 
-	return sortProducts( dataTransferObject.map( createPurchaseObject ) );
+	return dataTransferObject.map( createPurchaseObject );
 }

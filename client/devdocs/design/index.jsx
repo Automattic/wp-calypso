@@ -46,7 +46,6 @@ import Disableable from 'calypso/components/disableable/docs/example';
 import DotPager from 'calypso/components/dot-pager/docs/example';
 import DropZones from 'calypso/components/drop-zone/docs/example';
 import EllipsisMenu from 'calypso/components/ellipsis-menu/docs/example';
-import EmbedDialog from 'calypso/components/tinymce/plugins/embed/docs/example';
 import EmojifyExample from 'calypso/components/emojify/docs/example';
 import EmptyContent from 'calypso/components/empty-content/docs/example';
 import ExternalLink from 'calypso/components/external-link/docs/example';
@@ -76,6 +75,7 @@ import JetpackColophonExample from 'calypso/components/jetpack-colophon/docs/exa
 import JetpackHeaderExample from 'calypso/components/jetpack-header/docs/example';
 import JetpackLogoExample from 'calypso/components/jetpack-logo/docs/example';
 import LanguagePicker from 'calypso/components/language-picker/docs/example';
+import JetpackReviewPromptExample from 'calypso/blocks/jetpack-review-prompt/docs/example';
 import LayoutExample from 'calypso/components/layout/docs/example';
 import LineChart from 'calypso/components/line-chart/docs/example';
 import ListEnd from 'calypso/components/list-end/docs/example';
@@ -204,7 +204,6 @@ export default class DesignAssets extends React.Component {
 					<DotPager readmeFilePath="dot-pager" />
 					<DropZones searchKeywords="drag" readmeFilePath="drop-zone" />
 					<EllipsisMenu readmeFilePath="ellipsis-menu" />
-					<EmbedDialog readmeFilePath="tinymce/plugins/embed" />
 					<EmojifyExample readmeFilePath="emojify" />
 					<EmptyContent readmeFilePath="empty-content" />
 					<ExternalLink readmeFilePath="external-link" />
@@ -233,6 +232,7 @@ export default class DesignAssets extends React.Component {
 					<JetpackColophonExample readmeFilePath="jetpack-colophon" />
 					<JetpackHeaderExample readmeFilePath="jetpack-header" />
 					<JetpackLogoExample readmeFilePath="jetpack-logo" />
+					<JetpackReviewPromptExample readmeFilePath="jetpack/jetpack-review-prompt" />
 					<LanguagePicker readmeFilePath="language-picker" />
 					<LayoutExample readmeFilePath="layout" />
 					<LineChart readmeFilePath="line-chart" />

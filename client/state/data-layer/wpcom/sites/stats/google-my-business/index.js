@@ -64,3 +64,5 @@ registerHandlers( 'state/data-layer/wpcom/sites/stats/google-my-business/index.j
 		} ),
 	],
 } );
+
+export default {};

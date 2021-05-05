@@ -8,7 +8,7 @@ There have been three major "eras" of data management throughout the lifetime of
 
 ### First Era: Emitter Objects (June 2014 - April 2015)
 
-Our original approach to managing data took an object-oriented approach, wherein an instance of the store would inherit the [`EventEmitter` interface](https://nodejs.org/api/events.html#events_class_eventemitter). Typically, a single instance of each object store was shared across the entire application. The instance was responsible for storing data, but included conveniences to automatically fetch data upon the first request. Used in combination with the [`data-observe` mixin](../client/lib/mixins/data-observe), a developer could monitor an instance of the store passed as a prop to a React component to automatically re-render its contents if the store emitted a `change` event.
+Our original approach to managing data took an object-oriented approach, wherein an instance of the store would inherit the [`EventEmitter` interface](https://nodejs.org/api/events.html#events_class_eventemitter). Typically, a single instance of each object store was shared across the entire application. The instance was responsible for storing data, but included conveniences to automatically fetch data upon the first request. Used in combination with a `data-observe` mixin, a developer could monitor an instance of the store passed as a prop to a React component to automatically re-render its contents if the store emitted a `change` event.
 
 **Identifying characteristics:**
 
@@ -16,7 +16,7 @@ Our original approach to managing data took an object-oriented approach, wherein
 - Index file exports a common shared instance of the object prototype
 - A `list.js` file includes the store prototype
 - The list contains a `get` method which triggers a fetch if no data exists
-- Used with the [`data-observe` mixin](../client/lib/mixins/data-observe) in a React component
+- Used with a `data-observe` mixin in a React component
 
 ### Second Era: Facebook Flux (April 2015 - December 2015)
 

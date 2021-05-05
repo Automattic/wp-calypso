@@ -27,7 +27,7 @@ export class PlanPrice extends Component {
 			discounted,
 			className,
 			displayFlatPrice,
-			isInSignup,
+			displayPerMonthNotation,
 			isOnSale,
 			taxText,
 			translate,
@@ -112,7 +112,7 @@ export class PlanPrice extends Component {
 						{ translate( '(+%(taxText)s tax)', { args: { taxText } } ) }
 					</sup>
 				) }
-				{ isInSignup && (
+				{ displayPerMonthNotation && (
 					<span className="plan-price__term">
 						{ translate( 'per{{newline/}}month', {
 							components: { newline: <br /> },
@@ -138,6 +138,7 @@ PlanPrice.propTypes = {
 	isOnSale: PropTypes.bool,
 	taxText: PropTypes.string,
 	translate: PropTypes.func.isRequired,
+	displayPerMonthNotation: PropTypes.bool,
 };
 
 PlanPrice.defaultProps = {
@@ -146,4 +147,5 @@ PlanPrice.defaultProps = {
 	discounted: false,
 	className: '',
 	isOnSale: false,
+	displayPerMonthNotation: false,
 };

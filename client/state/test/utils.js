@@ -7,15 +7,16 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { withStorageKey } from '@automattic/state-utils';
-import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
+import { APPLY_STORED_STATE } from 'calypso/state/action-types';
 import {
-	extendAction,
 	keyedReducer,
 	withSchemaValidation,
 	combineReducers,
 	isValidStateWithSchema,
+	withPersistence,
 	withoutPersistence,
-	withEnhancers,
+	serialize,
+	deserialize,
 } from 'calypso/state/utils';
 
 /**
@@ -27,120 +28,6 @@ jest.mock( '@wordpress/warning', () => jest.fn() );
 
 describe( 'utils', () => {
 	beforeEach( () => warn.mockReset() );
-
-	describe( 'extendAction()', () => {
-		test( 'should return an updated action object, merging data', () => {
-			const action = extendAction(
-				{
-					type: 'ACTION_TEST',
-					meta: {
-						preserve: true,
-					},
-				},
-				{
-					meta: {
-						ok: true,
-					},
-				}
-			);
-
-			expect( action ).toEqual( {
-				type: 'ACTION_TEST',
-				meta: {
-					preserve: true,
-					ok: true,
-				},
-			} );
-		} );
-
-		test( 'should return an updated action thunk, merging data on dispatch', () => {
-			const dispatch = jest.fn();
-			const action = extendAction(
-				( thunkDispatch ) =>
-					thunkDispatch( {
-						type: 'ACTION_TEST',
-						meta: {
-							preserve: true,
-						},
-					} ),
-				{
-					meta: {
-						ok: true,
-					},
-				}
-			);
-
-			action( dispatch );
-			expect( dispatch ).toHaveBeenCalledWith( {
-				type: 'ACTION_TEST',
-				meta: {
-					preserve: true,
-					ok: true,
-				},
-			} );
-		} );
-
-		test( 'should return an updated action thunk, accepting also getState', () => {
-			const dispatch = jest.fn();
-			const getState = () => ( { selectedSiteId: 42 } );
-
-			const action = extendAction(
-				( thunkDispatch, thunkGetState ) =>
-					thunkDispatch( {
-						type: 'ACTION_TEST',
-						siteId: thunkGetState().selectedSiteId,
-						meta: {
-							preserve: true,
-						},
-					} ),
-				{
-					meta: {
-						ok: true,
-					},
-				}
-			);
-
-			action( dispatch, getState );
-			expect( dispatch ).toHaveBeenCalledWith( {
-				type: 'ACTION_TEST',
-				siteId: 42,
-				meta: {
-					preserve: true,
-					ok: true,
-				},
-			} );
-		} );
-
-		test( 'should return an updated nested action thunk, merging data on dispatch', () => {
-			const dispatch = jest.fn();
-			const action = extendAction(
-				( thunkDispatch ) =>
-					thunkDispatch( ( nestedThunkDispatch ) =>
-						nestedThunkDispatch( {
-							type: 'ACTION_TEST',
-							meta: {
-								preserve: true,
-							},
-						} )
-					),
-				{
-					meta: {
-						ok: true,
-					},
-				}
-			);
-
-			action( dispatch );
-			dispatch.mock.calls[ 0 ][ 0 ]( dispatch );
-			expect( dispatch ).toHaveBeenCalledWith( {
-				type: 'ACTION_TEST',
-				meta: {
-					preserve: true,
-					ok: true,
-				},
-			} );
-		} );
-	} );
 
 	describe( '#keyedReducer', () => {
 		const grow = ( name ) => ( { type: 'GROW', name } );
@@ -248,19 +135,28 @@ describe( 'utils', () => {
 			expect( keyed( { 10: 10 }, remove( '10' ) ) ).toEqual( {} );
 		} );
 
-		test( 'should handle SERIALIZE and DESERIALIZE as global actions', () => {
-			const chickenReducer = ( state = '', { type } ) => {
-				switch ( type ) {
-					case 'SET_CHICKEN':
-						return 'chicken';
-					case 'SERIALIZE':
-						return 'serialized chicken';
-					case 'DESERIALIZE':
-						return 'deserialized chicken';
-					default:
-						return state;
+		test( 'should disable persistence by default', () => {
+			const reducer = keyedReducer( 'id', age );
+
+			expect( serialize( reducer, { a: 10 } ) ).toBeUndefined();
+			expect( deserialize( reducer, { a: 10 } ) ).toEqual( {} );
+		} );
+
+		test( 'should handle serialize and deserialize calls', () => {
+			const chickenReducer = withPersistence(
+				( state = '', { type } ) => {
+					switch ( type ) {
+						case 'SET_CHICKEN':
+							return 'chicken';
+						default:
+							return state;
+					}
+				},
+				{
+					serialize: () => 'serialized chicken',
+					deserialize: () => 'deserialized chicken',
 				}
-			};
+			);
 
 			const keyed = keyedReducer( 'id', chickenReducer );
 			const prev = { 1: 'chicken' };
@@ -269,39 +165,34 @@ describe( 'utils', () => {
 				1: 'chicken',
 				2: 'chicken',
 			} );
-			expect( keyed( prev, { type: 'SERIALIZE' } ).root() ).toEqual( { 1: 'serialized chicken' } );
-			expect( keyed( prev, { type: 'DESERIALIZE' } ) ).toEqual( { 1: 'deserialized chicken' } );
+			expect( serialize( keyed, prev ).root() ).toEqual( { 1: 'serialized chicken' } );
+			expect( deserialize( keyed, prev ) ).toEqual( { 1: 'deserialized chicken' } );
 		} );
 
-		test( 'should omit initial/undefined state from SERIALIZE/DESERIALIZE results', () => {
-			const itemReducer = ( state = 0, { type } ) => {
-				switch ( type ) {
-					case 'SERIALIZE':
-					case 'DESERIALIZE':
-						// don't persist unlucky numbers
-						return state !== 13 ? state : undefined;
-					default:
-						return state;
-				}
-			};
+		test( 'should omit initial/undefined state from serialize/deserialize results', () => {
+			const itemReducer = withPersistence( ( state = 0 ) => state, {
+				// don't persist unlucky numbers
+				serialize: ( state ) => ( state !== 13 ? state : undefined ),
+				deserialize: ( persisted ) => ( persisted !== 13 ? persisted : undefined ),
+			} );
 
 			const keyed = keyedReducer( 'id', itemReducer );
 			const state = { a: 13, b: 0, c: 1 };
-			expect( keyed( state, { type: 'SERIALIZE' } ).root() ).toEqual( { c: 1 } );
-			expect( keyed( state, { type: 'DESERIALIZE' } ) ).toEqual( { c: 1 } );
+			expect( serialize( keyed, state ).root() ).toEqual( { c: 1 } );
+			expect( deserialize( keyed, state ) ).toEqual( { c: 1 } );
 		} );
 
 		test( 'should not serialize empty state', () => {
-			const keyed = keyedReducer( 'id', age );
-			expect( keyed( {}, { type: 'SERIALIZE' } ) ).toBeUndefined();
+			const keyed = keyedReducer( 'id', withPersistence( age ) );
+			expect( serialize( keyed, {} ) ).toBeUndefined();
 		} );
 
 		test( 'should serialize non-empty state', () => {
-			const keyed = keyedReducer( 'id', age );
+			const keyed = keyedReducer( 'id', withPersistence( age ) );
 
 			// state with non-initial value
 			const state = { 1: 1 };
-			const serialized = keyed( state, { type: 'SERIALIZE' } );
+			const serialized = serialize( keyed, state );
 			expect( serialized.root() ).toEqual( { 1: 1 } );
 		} );
 
@@ -312,7 +203,10 @@ describe( 'utils', () => {
 				patternProperties: { '^\\d+$': { type: 'number' } },
 			};
 
-			const keyedWithPersistence = withSchemaValidation( schema, keyedReducer( 'id', age ) );
+			const keyedWithPersistence = withSchemaValidation(
+				schema,
+				keyedReducer( 'id', withPersistence( age ) )
+			);
 			const nestedReducer = combineReducers( { a: keyedWithPersistence } );
 
 			// state with non-initial value should serialize: sanity check that we are testing the
@@ -320,18 +214,18 @@ describe( 'utils', () => {
 			// Another reason why empty state might not be persisted is that the tested reducer didn't
 			// opt in into persistence in the first place -- and we DON'T want to test that!
 			const stateWithData = { a: { 1: 1 } };
-			const serializedWithData = nestedReducer( stateWithData, { type: 'SERIALIZE' } );
+			const serializedWithData = serialize( nestedReducer, stateWithData );
 			expect( serializedWithData.root() ).toEqual( { a: { 1: 1 } } );
 
 			// initial state should not serialize
 			const state = nestedReducer( undefined, { type: 'INIT' } );
 			expect( state ).toEqual( { a: {} } );
-			expect( nestedReducer( state, { type: 'SERIALIZE' } ) ).toBeUndefined();
+			expect( serialize( nestedReducer, state ) ).toBeUndefined();
 		} );
 
 		test( 'should deserialize no state into default empty state', () => {
-			const keyed = keyedReducer( 'id', age );
-			expect( keyed( undefined, { type: 'DESERIALIZE' } ) ).toEqual( {} );
+			const keyed = keyedReducer( 'id', withPersistence( age ) );
+			expect( deserialize( keyed, undefined ) ).toEqual( {} );
 		} );
 	} );
 
@@ -353,7 +247,6 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#withSchemaValidation', () => {
-		const load = { type: DESERIALIZE };
 		const normal = { type: 'NORMAL' };
 		const grow = { type: 'GROW' };
 		const schema = {
@@ -363,39 +256,42 @@ describe( 'utils', () => {
 
 		const age = ( state = 0, action ) => ( 'GROW' === action.type ? state + 1 : state );
 
-		const date = ( state = new Date( 0 ), action ) => {
-			switch ( action.type ) {
-				case 'GROW':
-					return new Date( state.getTime() + 1 );
-				case SERIALIZE:
-					return state.getTime();
-				case DESERIALIZE:
-					if ( isValidStateWithSchema( state, schema ) ) {
-						return new Date( state );
+		test( 'should always pass valid state to the inner serialize handler', () => {
+			const date = withSchemaValidation(
+				schema,
+				withPersistence(
+					( state = new Date( 0 ), action ) => {
+						switch ( action.type ) {
+							case 'GROW':
+								return new Date( state.getTime() + 1 );
+							default:
+								return state;
+						}
+					},
+					{
+						serialize: ( state ) => state.getTime(),
+						deserialize: ( persisted ) => new Date( persisted ),
 					}
-					return new Date( 0 );
-				default:
-					return state;
-			}
-		};
-		date.hasCustomPersistence = true;
+				)
+			);
 
-		test( 'should invalidate DESERIALIZED state', () => {
-			const validated = withSchemaValidation( schema, age );
-
-			expect( validated( -5, load ) ).toBe( 0 );
+			expect( deserialize( date, 0 ) ).toEqual( new Date( 0 ) );
 		} );
 
-		test( 'should not invalidate normal state', () => {
+		test( 'should invalidate on deserialize call', () => {
 			const validated = withSchemaValidation( schema, age );
+			expect( deserialize( validated, -5 ) ).toBe( 0 );
+		} );
 
+		test( 'should not invalidate on normal action dispatch', () => {
+			const validated = withSchemaValidation( schema, age );
 			expect( validated( -5, normal ) ).toBe( -5 );
 		} );
 
 		test( 'should validate initial state', () => {
 			const validated = withSchemaValidation( schema, age );
 
-			expect( validated( 5, load ) ).toBe( 5 );
+			expect( deserialize( validated, 5 ) ).toBe( 5 );
 		} );
 
 		test( 'actions work as expected with schema', () => {
@@ -405,8 +301,6 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#combineReducers', () => {
-		const load = { type: DESERIALIZE };
-		const write = { type: SERIALIZE };
 		const grow = { type: 'GROW' };
 		const schema = {
 			type: 'number',
@@ -419,22 +313,25 @@ describe( 'utils', () => {
 		const height = ( state = 160, action ) => ( 'GROW' === action.type ? state + 1 : state );
 		const count = ( state = 1, action ) => ( 'GROW' === action.type ? state + 1 : state );
 
-		const date = ( state = new Date( 0 ), action ) => {
-			switch ( action.type ) {
-				case 'GROW':
-					return new Date( state.getTime() + 1 );
-				case SERIALIZE:
-					return state.getTime();
-				case DESERIALIZE:
-					if ( isValidStateWithSchema( state, schema ) ) {
-						return new Date( state );
+		const date = withPersistence(
+			( state = new Date( 0 ), action ) => {
+				switch ( action.type ) {
+					case 'GROW':
+						return new Date( state.getTime() + 1 );
+					default:
+						return state;
+				}
+			},
+			{
+				serialize: ( state ) => state.getTime(),
+				deserialize: ( persisted ) => {
+					if ( isValidStateWithSchema( persisted, schema ) ) {
+						return new Date( persisted );
 					}
 					return new Date( 0 );
-				default:
-					return state;
+				},
 			}
-		};
-		date.hasCustomPersistence = true;
+		);
 
 		let reducers;
 
@@ -455,23 +352,23 @@ describe( 'utils', () => {
 			expect( state ).toEqual( { age: 0, height: 160 } );
 		} );
 
-		test( 'should return initial state on DESERIALIZE', () => {
-			const state = reducers( undefined, load );
+		test( 'should return initial state on deserialize', () => {
+			const state = deserialize( reducers, undefined );
 			expect( state ).toEqual( { age: 0, height: 160 } );
 		} );
 
 		test( 'should not persist height, because it is missing a schema', () => {
-			const state = reducers( appState, write );
+			const state = serialize( reducers, appState );
 			expect( state.root() ).toEqual( { age: 20 } );
 		} );
 
 		test( 'should not load height, because it is missing a schema', () => {
-			const state = reducers( appState, load );
+			const state = deserialize( reducers, appState );
 			expect( state ).toEqual( { age: 20, height: 160 } );
 		} );
 
 		test( 'should validate age', () => {
-			const state = reducers( { age: -5 }, load );
+			const state = deserialize( reducers, { age: -5 } );
 			expect( state ).toEqual( { age: 0, height: 160 } );
 		} );
 
@@ -481,7 +378,7 @@ describe( 'utils', () => {
 		} );
 
 		test( 'undefined or missing state is not serialized and does not cause errors', () => {
-			const empty = reducers( undefined, write );
+			const empty = serialize( reducers, undefined );
 			expect( empty ).toBeUndefined();
 
 			const nested = combineReducers( {
@@ -489,7 +386,7 @@ describe( 'utils', () => {
 				date,
 			} );
 
-			const missingPerson = nested( { date: new Date( 100 ) }, write );
+			const missingPerson = serialize( nested, { date: new Date( 100 ) } );
 			expect( missingPerson.root() ).toEqual( { date: 100 } );
 		} );
 
@@ -503,13 +400,13 @@ describe( 'utils', () => {
 				person: reducers,
 				count,
 			} );
-			const valid = nested( { person: { age: 22, date: 224 } }, load );
+			const valid = deserialize( nested, { person: { age: 22, date: 224 } } );
 			expect( valid ).toEqual( {
 				person: { age: 22, height: 160, date: new Date( 224 ) },
 				count: 1,
 			} );
 
-			const invalid = nested( { person: { age: -5, height: 100, date: -5 } }, load );
+			const invalid = deserialize( nested, { person: { age: -5, height: 100, date: -5 } } );
 			expect( invalid ).toEqual( {
 				person: { age: 0, height: 160, date: new Date( 0 ) },
 				count: 1,
@@ -526,10 +423,12 @@ describe( 'utils', () => {
 				person: reducers,
 				count,
 			} );
-			const valid = nested( { person: { age: 22, date: new Date( 224 ) } }, write );
+			const valid = serialize( nested, { person: { age: 22, date: new Date( 224 ) } } );
 			expect( valid.root() ).toEqual( { person: { age: 22, date: 224 } } );
 
-			const invalid = nested( { person: { age: -5, height: 100, date: new Date( -500 ) } }, write );
+			const invalid = serialize( nested, {
+				person: { age: -5, height: 100, date: new Date( -500 ) },
+			} );
 			expect( invalid.root() ).toEqual( { person: { age: -5, date: -500 } } );
 		} );
 
@@ -544,15 +443,12 @@ describe( 'utils', () => {
 				age,
 			} );
 
-			const stored = nestedEphemeral(
-				{
-					// the `ephemeral` object should not be stored at all
-					ephemeral: { height: 100, count: 5 },
-					// `age` should be persisted, as it has a schema defined
-					age: 40,
-				},
-				write
-			);
+			const stored = serialize( nestedEphemeral, {
+				// the `ephemeral` object should not be stored at all
+				ephemeral: { height: 100, count: 5 },
+				// `age` should be persisted, as it has a schema defined
+				age: 40,
+			} );
 			expect( stored.root() ).toEqual( { age: 40 } );
 		} );
 
@@ -569,16 +465,19 @@ describe( 'utils', () => {
 				bob: nested,
 				count,
 			} );
-			const valid = veryNested( { bob: { person: { age: 22, date: 224 } }, count: 122 }, load );
+			const valid = deserialize( veryNested, {
+				bob: { person: { age: 22, date: 224 } },
+				count: 122,
+			} );
 			expect( valid ).toEqual( {
 				bob: { person: { age: 22, height: 160, date: new Date( 224 ) } },
 				count: 1,
 			} );
 
-			const invalid = veryNested(
-				{ bob: { person: { age: -5, height: 22, date: -500 } }, count: 123 },
-				load
-			);
+			const invalid = deserialize( veryNested, {
+				bob: { person: { age: -5, height: 22, date: -500 } },
+				count: 123,
+			} );
 			expect( invalid ).toEqual( {
 				bob: { person: { age: 0, height: 160, date: new Date( 0 ) } },
 				count: 1,
@@ -598,16 +497,16 @@ describe( 'utils', () => {
 				bob: nested,
 				count,
 			} );
-			const valid = veryNested(
-				{ bob: { person: { age: 22, date: new Date( 234 ) } }, count: 122 },
-				write
-			);
+			const valid = serialize( veryNested, {
+				bob: { person: { age: 22, date: new Date( 234 ) } },
+				count: 122,
+			} );
 			expect( valid.root() ).toEqual( { bob: { person: { age: 22, date: 234 } } } );
 
-			const invalid = veryNested(
-				{ bob: { person: { age: -5, height: 22, date: new Date( -5 ) } }, count: 123 },
-				write
-			);
+			const invalid = serialize( veryNested, {
+				bob: { person: { age: -5, height: 22, date: new Date( -5 ) } },
+				count: 123,
+			} );
 			expect( invalid.root() ).toEqual( { bob: { person: { age: -5, date: -5 } } } );
 		} );
 
@@ -623,13 +522,16 @@ describe( 'utils', () => {
 				bob: nested,
 				count,
 			} );
-			const valid = veryNested( { bob: { person: { date: new Date( 234 ) } }, count: 122 }, write );
+			const valid = serialize( veryNested, {
+				bob: { person: { date: new Date( 234 ) } },
+				count: 122,
+			} );
 			expect( valid.root() ).toEqual( { bob: { person: { date: 234 } } } );
 
-			const invalid = veryNested(
-				{ bob: { person: { height: 22, date: new Date( -5 ) } }, count: 123 },
-				write
-			);
+			const invalid = serialize( veryNested, {
+				bob: { person: { height: 22, date: new Date( -5 ) } },
+				count: 123,
+			} );
 			expect( invalid.root() ).toEqual( { bob: { person: { date: -5 } } } );
 		} );
 
@@ -639,121 +541,36 @@ describe( 'utils', () => {
 				count,
 			} );
 
-			const valid = reducers( { height: 22, count: 44 }, write );
+			const valid = serialize( reducers, { height: 22, count: 44 } );
 			expect( valid.root() ).toEqual( { height: 22 } );
 
-			const invalid = reducers( { height: -1, count: 44 }, load );
+			const invalid = deserialize( reducers, { height: -1, count: 44 } );
 			expect( invalid ).toEqual( { height: 160, count: 1 } );
 		} );
 	} );
 
 	describe( '#withoutPersistence', () => {
-		const age = ( state = 0, { type } ) => {
-			if ( 'GROW' === type ) {
-				return state + 1;
+		const age = withPersistence(
+			( state = 0, { type } ) => ( 'GROW' === type ? state + 1 : state ),
+			{
+				serialize: ( state ) => ( { age: state } ),
+				deserialize: ( persisted ) => persisted.age,
 			}
+		);
 
-			if ( DESERIALIZE === type ) {
-				return state.age;
-			}
-
-			if ( SERIALIZE === type ) {
-				return { age: state };
-			}
-
-			return state;
-		};
-		let wrapped;
-
-		beforeAll( () => ( wrapped = withoutPersistence( age ) ) );
+		const wrapped = withoutPersistence( age );
 
 		test( 'should pass through normal actions', () => {
 			expect( wrapped( 10, { type: 'GROW' } ) ).toBe( 11 );
 			expect( wrapped( 10, { type: 'FADE' } ) ).toBe( 10 );
 		} );
 
-		test( 'should DESERIALIZE to `initialState`', () => {
-			expect( wrapped( 10, { type: DESERIALIZE } ) ).toBe( 0 );
+		test( 'should deserialize to initial state', () => {
+			expect( deserialize( wrapped, 10 ) ).toBe( 0 );
 		} );
 
-		test( 'should SERIALIZE to `undefined`', () => {
-			expect( wrapped( 10, { type: SERIALIZE } ) ).toBeUndefined();
-		} );
-	} );
-
-	describe( '#withEnhancers', () => {
-		it( 'should enhance action creator', () => {
-			const actionCreator = () => ( { type: 'HELLO' } );
-			const enhancedActionCreator = withEnhancers( actionCreator, ( action ) =>
-				Object.assign( { name: 'test' }, action )
-			);
-			const thunk = enhancedActionCreator();
-			const getState = () => ( {} );
-			let dispatchedAction = null;
-			const dispatch = ( action ) => ( dispatchedAction = action );
-			thunk( dispatch, getState );
-
-			expect( dispatchedAction ).toEqual( {
-				name: 'test',
-				type: 'HELLO',
-			} );
-		} );
-
-		it( 'should enhance with multiple enhancers, from last to first', () => {
-			const actionCreator = () => ( { type: 'HELLO' } );
-			const enhancedActionCreator = withEnhancers( actionCreator, [
-				( action ) => Object.assign( { name: 'test' }, action ),
-				( action ) => Object.assign( { name: 'test!!!' }, action ),
-				( action ) => Object.assign( { meetup: 'akumal' }, action ),
-			] );
-			const thunk = enhancedActionCreator();
-			const getState = () => ( {} );
-			let dispatchedAction = null;
-			const dispatch = ( action ) => ( dispatchedAction = action );
-			thunk( dispatch, getState );
-
-			expect( dispatchedAction ).toEqual( {
-				name: 'test',
-				type: 'HELLO',
-				meetup: 'akumal',
-			} );
-		} );
-
-		it( 'should provider enhancers with getState function', () => {
-			let providedGetState = null;
-			const actionCreator = () => ( { type: 'HELLO' } );
-			const enhancedActionCreator = withEnhancers( actionCreator, [
-				( action, getState ) => {
-					providedGetState = getState;
-					Object.assign( { name: 'test' }, action );
-				},
-			] );
-			const thunk = enhancedActionCreator();
-			const getState = () => ( {} );
-			const dispatch = ( action ) => action;
-			thunk( dispatch, getState );
-
-			expect( providedGetState ).toEqual( getState );
-		} );
-
-		it( 'should accept an action creator as first parameter', () => {
-			const actionCreator = () => ( { type: 'HELLO' } );
-			const enhancedActionCreator = withEnhancers(
-				withEnhancers( actionCreator, ( action ) => Object.assign( { name: 'test' }, action ) ),
-				( action ) => Object.assign( { hello: 'world' }, action )
-			);
-
-			const thunk = enhancedActionCreator();
-			const getState = () => ( {} );
-			let dispatchedAction = null;
-			const dispatch = ( action ) => ( dispatchedAction = action );
-			thunk( dispatch, getState );
-
-			expect( dispatchedAction ).toEqual( {
-				name: 'test',
-				hello: 'world',
-				type: 'HELLO',
-			} );
+		test( 'should serialize to `undefined`', () => {
+			expect( serialize( wrapped, 10 ) ).toBeUndefined();
 		} );
 	} );
 } );
@@ -842,7 +659,7 @@ describe( 'addReducer', () => {
 			);
 
 			const state = newReducer( undefined, { type: 'INIT' } );
-			const serializedState = newReducer( state, { type: 'SERIALIZE' } );
+			const serializedState = serialize( newReducer, state );
 
 			expect( serializedState.get() ).toEqual( {
 				keyA: {
@@ -875,7 +692,7 @@ describe( 'withStorageKey', () => {
 		const state = reducer( undefined, { type: 'INIT' } );
 
 		// and serialize
-		const result = reducer( state, { type: 'SERIALIZE' } );
+		const result = serialize( reducer, state );
 
 		expect( result.get() ).toEqual( {
 			root: { posts: 'postsState' },
@@ -886,11 +703,7 @@ describe( 'withStorageKey', () => {
 
 describe( 'applyStoredState', () => {
 	// factory to manufacture toy reducers with custom persistence
-	const toyReducer = () => {
-		const r = ( state = null ) => state;
-		r.hasCustomPersistence = true;
-		return r;
-	};
+	const toyReducer = () => withPersistence( ( state = null ) => state );
 
 	test( 'stored state is correctly implanted into the right location', () => {
 		const reducer = combineReducers( {

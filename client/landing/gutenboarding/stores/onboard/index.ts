@@ -3,6 +3,7 @@
  */
 import { controls } from '@wordpress/data-controls';
 import { plugins, registerStore, use } from '@wordpress/data';
+import type { SelectFromMap, DispatchFromMap } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -12,7 +13,6 @@ import reducer, { State } from './reducer';
 import * as actions from './actions';
 import * as selectors from './selectors';
 import persistOptions from './persist';
-import type { SelectFromMap, DispatchFromMap } from '@automattic/data-stores';
 
 export type { State };
 export { STORE_KEY };
@@ -29,7 +29,7 @@ registerStore< State >( STORE_KEY, {
 		'domainSearch',
 		'hasUsedDomainsStep',
 		'hasUsedPlansStep',
-		'isExperimental',
+		'lastLocation',
 		'pageLayouts',
 		'planProductId',
 		'randomizedDesigns',

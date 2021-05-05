@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { identity, noop, find } from 'lodash';
+import { find } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -18,6 +18,7 @@ import FormCountrySelect from 'calypso/components/forms/form-country-select';
 import phoneValidation from 'calypso/lib/phone-validation';
 
 const CLEAN_REGEX = /^0|[\s.\-()]+/g;
+const noop = () => {};
 
 export class FormPhoneInput extends React.Component {
 	static propTypes = {
@@ -36,7 +37,6 @@ export class FormPhoneInput extends React.Component {
 		countrySelectProps: {},
 		phoneInputProps: {},
 		onChange: noop,
-		translate: identity,
 	};
 
 	state = {

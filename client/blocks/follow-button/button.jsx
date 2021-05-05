@@ -4,7 +4,6 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 
@@ -12,6 +11,8 @@ import Gridicon from 'calypso/components/gridicon';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class FollowButton extends React.Component {
 	static propTypes = {

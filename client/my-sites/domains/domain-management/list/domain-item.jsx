@@ -41,8 +41,7 @@ import {
 import Spinner from 'calypso/components/spinner';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getMaxTitanMailboxCount } from 'calypso/lib/titan/get-max-titan-mailbox-count';
-import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
+import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 
 class DomainItem extends PureComponent {
 	static propTypes = {

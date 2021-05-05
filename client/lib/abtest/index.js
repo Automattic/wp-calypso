@@ -1,13 +1,13 @@
 /**************************************************************************************************/
 /* This library is deprecated! Please consider ExPlat for your next A/B experiment.               */
-/* See /client/components/experiment/readme.md for more info!
+/* See /client/lib/explat/readme.md for more info!
 /**************************************************************************************************/
 
 /**
  * External dependencies
  */
 import debugFactory from 'debug';
-import { every, includes, isArray, keys, reduce, some } from 'lodash';
+import { includes, keys, reduce, some } from 'lodash';
 import store from 'store';
 import { getLocaleSlug } from 'i18n-calypso';
 
@@ -133,8 +133,8 @@ ABTest.prototype.init = function ( name, geoLocation ) {
 			// Allow any locales.
 			this.localeTargets = false;
 		} else if (
-			isArray( testConfig.localeTargets ) &&
-			every( testConfig.localeTargets, langSlugIsValid )
+			Array.isArray( testConfig.localeTargets ) &&
+			testConfig.localeTargets.every( langSlugIsValid )
 		) {
 			// Allow specific locales.
 			this.localeTargets = testConfig.localeTargets;
@@ -148,8 +148,8 @@ ABTest.prototype.init = function ( name, geoLocation ) {
 	this.localeExceptions = false;
 	if (
 		testConfig.localeExceptions &&
-		isArray( testConfig.localeExceptions ) &&
-		every( testConfig.localeExceptions, langSlugIsValid )
+		Array.isArray( testConfig.localeExceptions ) &&
+		testConfig.localeExceptions.every( langSlugIsValid )
 	) {
 		this.localeExceptions = testConfig.localeExceptions;
 	}

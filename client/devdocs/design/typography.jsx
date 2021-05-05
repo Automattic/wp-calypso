@@ -178,7 +178,7 @@ export default class Typography extends React.PureComponent {
 
 					<p>
 						A harmonic ratio helps in creating a more harmonious design. If we use the same scale
-						across WordPress.com, things feel more cohesive — it’s as much about consistency as it
+						across WordPress.com, things feel more cohesive — it’s as much about consistency as it
 						is about harmony. Instead of using arbitrary numbers, we conform to the WordPress core
 						typescale.
 					</p>

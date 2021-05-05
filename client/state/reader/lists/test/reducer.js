@@ -104,7 +104,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should add a list ID when a list is updated', () => {
-			const state = updatedLists( null, {
+			const state = updatedLists( [], {
 				type: READER_LIST_UPDATE_SUCCESS,
 				data: {
 					list: {

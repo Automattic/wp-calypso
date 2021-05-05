@@ -10,11 +10,10 @@
 import getThankYouPageUrl from '../hooks/use-get-thank-you-url/get-thank-you-page-url';
 import { isEnabled } from '@automattic/calypso-config';
 import {
-	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 	JETPACK_REDIRECT_URL,
 	redirectCloudCheckoutToWpAdmin,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 let mockGSuiteCountryIsValid = true;
@@ -25,8 +24,8 @@ jest.mock( 'calypso/lib/user', () =>
 );
 
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => jest.fn() );
-jest.mock( 'calypso/lib/plans/constants', () => ( {
-	...jest.requireActual( 'calypso/lib/plans/constants' ),
+jest.mock( '@automattic/calypso-products', () => ( {
+	...jest.requireActual( '@automattic/calypso-products' ),
 	redirectCloudCheckoutToWpAdmin: jest.fn(),
 } ) );
 
@@ -159,26 +158,6 @@ describe( 'getThankYouPageUrl', () => {
 			shouldShowOneClickTreatment,
 		} );
 		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/premium/:receiptId' );
-	} );
-
-	// This test is for the A/B test defined in https://wp.me/pcbrnV-12W.
-	it( 'redirects to the DIFM offer page when a site but no orderId is set and the cart contains the business plan', () => {
-		const cart = {
-			products: [
-				{
-					product_slug: PLAN_BUSINESS,
-				},
-			],
-		};
-		// Note: This requires the user to be assigned to the treatment of the premium bump A/B test
-		const shouldShowDifmUpsell = true;
-		const url = getThankYouPageUrl( {
-			...defaultArgs,
-			siteSlug: 'foo.bar',
-			cart,
-			shouldShowDifmUpsell,
-		} );
-		expect( url ).toBe( '/checkout/foo.bar/offer-difm/:receiptId' );
 	} );
 
 	it( 'redirects to the thank-you page with a placeholder receiptId with a site when the cart is not empty but there is no receipt id', () => {
@@ -327,7 +306,7 @@ describe( 'getThankYouPageUrl', () => {
 			},
 			adminUrl,
 		} );
-		expect( url ).toBe( `https://my.site/wp-admin/admin.php?page=jetpack#/my-plan` );
+		expect( url ).toBe( `https://my.site/wp-admin/admin.php?page=jetpack#/recommendations` );
 	} );
 
 	it( 'redirects to the plans page with thank-you query string if there is a non-atomic jetpack product', () => {
@@ -427,9 +406,57 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/plans/my-plan/foo.bar?thank-you=true&install=all' );
 	} );
 
+	it( 'redirects to the afterPurchaseUrl from a cart item if set', () => {
+		const cart = {
+			products: [ { extra: { afterPurchaseUrl: '/after/purchase/url' } } ],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			cart,
+			siteSlug: 'foo.bar',
+		} );
+		expect( url ).toBe( '/after/purchase/url' );
+	} );
+
+	it( 'redirects to the afterPurchaseUrl from the most recent cart item if multiple are set', () => {
+		const cart = {
+			products: [
+				{
+					product_slug: 'older_product',
+					time_added_to_cart: 1617228489,
+					extra: { afterPurchaseUrl: '/older/purchase/url' },
+				},
+				{
+					product_slug: 'newer_product',
+					time_added_to_cart: 1617228689,
+					extra: { afterPurchaseUrl: '/newer/purchase/url' },
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			cart,
+			siteSlug: 'foo.bar',
+		} );
+		expect( url ).toBe( '/newer/purchase/url' );
+	} );
+
 	it( 'redirects to internal redirectTo url if set', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
+			siteSlug: 'foo.bar',
+			redirectTo: '/foo/bar',
+		} );
+		expect( url ).toBe( '/foo/bar' );
+	} );
+
+	it( 'redirects to internal redirectTo url if set even if afterPurchaseUrl exists on a cart item', () => {
+		const cart = {
+			products: [ { extra: { afterPurchaseUrl: '/after/purchase/url' } } ],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			cart,
 			siteSlug: 'foo.bar',
 			redirectTo: '/foo/bar',
 		} );
@@ -452,9 +479,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to manage purchase page if there is a renewal', () => {
 		const cart = {
-			products: [
-				{ extra: { purchaseType: 'renewal', purchaseDomain: 'foo.bar', purchaseId: '123abc' } },
-			],
+			products: [ { subscription_id: '123abc', extra: { purchaseType: 'renewal' } } ],
 		};
 		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', cart } );
 		expect( url ).toBe( '/me/purchases/foo.bar/123abc' );
@@ -489,6 +514,21 @@ describe( 'getThankYouPageUrl', () => {
 			isEligibleForSignupDestinationResult: false,
 		} );
 		expect( url ).toBe( '/' );
+	} );
+
+	it( 'redirects to afterPurchaseUrl if set even if there is a url from a cookie', () => {
+		const getUrlFromCookie = jest.fn( () => '/cookie' );
+		const cart = {
+			products: [ { product_slug: 'foo', extra: { afterPurchaseUrl: '/after/purchase/url' } } ],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			getUrlFromCookie,
+			isEligibleForSignupDestinationResult: true,
+		} );
+		expect( url ).toBe( '/after/purchase/url' );
 	} );
 
 	it( 'redirects to url from cookie with notice type set to "purchase-success" if isEligibleForSignupDestination is set', () => {
@@ -905,5 +945,15 @@ describe( 'getThankYouPageUrl', () => {
 			isJetpackNotAtomic: true,
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=traffic-guide' );
+	} );
+
+	it( 'redirects to a url on the site we are checking out', () => {
+		const redirectTo = 'https://foo.bar/some-path?with-args=yes';
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			redirectTo,
+			siteSlug: 'foo.bar',
+		} );
+		expect( url ).toBe( redirectTo );
 	} );
 } );

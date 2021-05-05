@@ -1,10 +1,4 @@
 /**
- * External dependencies
- */
-
-import { assign } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { getMimePrefix } from 'calypso/lib/media/utils';
@@ -19,12 +13,10 @@ import { MediaTypes } from '../constants';
  */
 export function deserialize( node ) {
 	const normalized = {
-		media: assign(
-			{
-				transient: false,
-			},
-			node
-		),
+		media: {
+			transient: false,
+			...node,
+		},
 		appearance: {},
 	};
 
