@@ -4,16 +4,6 @@
 import fs from 'fs-extra';
 import path from 'path';
 import sanitize from 'sanitize-filename';
-import pngitxt from 'png-itxt';
-import { pipeline } from 'stream';
-import { mkdir } from 'fs/promises';
-import { createWriteStream } from 'fs';
-import { promisify } from 'util';
-
-export const screenshotsDir = path.resolve(
-	process.env.TEMP_ASSET_PATH || path.join( __dirname, '..' ),
-	process.env.SCREENSHOTDIR || 'screenshots'
-);
 
 export function createFile( notRandom, uploadDirectoryName = 'image-uploads' ) {
 	let randomImageNumber = Math.floor( Math.random() * 2 );
@@ -75,23 +65,4 @@ export function createFileWithFilename( filename, skipNameCheck ) {
 
 export function deleteFile( fileDetails ) {
 	return fs.deleteSync( fileDetails.file );
-}
-
-export async function takeScreenshot( currentTest ) {
-	const currentTestName = currentTest.title.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
-	const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
-	const fileName = path.resolve(
-		path.join( screenshotsDir, `${ currentTestName }-${ dateTime }.png` )
-	);
-	await mkdir( path.dirname( fileName ), { recursive: true } );
-
-	const driver = global.__BROWSER__;
-	const screenshotData = await driver.takeScreenshot();
-	const url = await driver.getCurrentUrl();
-
-	return promisify( pipeline )(
-		screenshotData,
-		pngitxt.set( 'url', url ),
-		createWriteStream( fileName )
-	);
 }

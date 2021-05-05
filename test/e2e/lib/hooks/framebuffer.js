@@ -2,15 +2,20 @@
  * External dependencies
  */
 import { spawn } from 'child_process';
-import { access } from 'fs/promises';
-
-/**
- * Internal dependencies
- */
-import * as mediaHelper from '../media-helper';
+import { access, mkdir } from 'fs/promises';
+import pngitxt from 'png-itxt';
+import { pipeline } from 'stream';
+import path from 'path';
+import { createWriteStream } from 'fs';
+import { promisify } from 'util';
 
 let xvfb;
 let displayNum;
+
+const screenshotsDir = path.resolve(
+	process.env.TEMP_ASSET_PATH || path.join( __dirname, '..' ),
+	process.env.SCREENSHOTDIR || 'screenshots'
+);
 
 const getFreeDisplay = async () => {
 	// eslint-disable-next-line no-constant-condition
@@ -51,5 +56,20 @@ export async function takeScreenshot() {
 		return;
 	}
 
-	await mediaHelper.takeScreenshot( this.currentTest );
+	const currentTestName = this.currentTest.title.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
+	const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
+	const fileName = path.resolve(
+		path.join( screenshotsDir, `${ currentTestName }-${ dateTime }.png` )
+	);
+	await mkdir( path.dirname( fileName ), { recursive: true } );
+
+	const driver = global.__BROWSER__;
+	const screenshotData = await driver.takeScreenshot();
+	const url = await driver.getCurrentUrl();
+
+	return promisify( pipeline )(
+		screenshotData,
+		pngitxt.set( { keyword: 'url', valye: url } ),
+		createWriteStream( fileName )
+	);
 }
