@@ -658,10 +658,18 @@ export function checkout(
 		? `/checkout/${ siteSlug }/${ productsString }`
 		: `/jetpack/connect/${ productsString }`;
 
+	// Unauthenticated users will be presented with a Jetpack branded version of the login form
+	// if the URL has the query parameter `source=jetpack-plans`. We only want to do this if the
+	// user is in Jetpack Cloud.
+	const urlQueryArgsWithSource =
+		isJetpackCloud() && ! urlQueryArgs.source
+			? { ...urlQueryArgs, source: 'jetpack-plans' }
+			: urlQueryArgs;
+
 	if ( isJetpackCloud() && ! config.isEnabled( 'jetpack-cloud/connect' ) ) {
-		window.location.href = addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` );
+		window.location.href = addQueryArgs( urlQueryArgsWithSource, `https://wordpress.com${ path }` );
 	} else {
-		page( addQueryArgs( urlQueryArgs, path ) );
+		page( addQueryArgs( urlQueryArgsWithSource, path ) );
 	}
 }
 
