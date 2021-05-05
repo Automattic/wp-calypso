@@ -62,7 +62,7 @@ class WPCOM_Block_Editor_NUX {
 		wp_localize_script(
 			'wpcom-block-editor-nux-script',
 			'wpcomBlockEditorNuxLocale',
-			determine_locale()
+			\A8C\FSE\Common\get_iso_639_locale( determine_locale() )
 		);
 
 		wp_set_script_translations( 'wpcom-block-editor-nux-script', 'full-site-editing' );
