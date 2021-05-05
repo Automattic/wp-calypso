@@ -67,14 +67,6 @@ Object.defineProperties( MORE_FEATURES_LINK, {
 	},
 } );
 
-/**
- * Plans and products that have options and can't be purchased themselves.
- */
-export const OPTIONS_JETPACK_SECURITY = 'jetpack_security';
-export const OPTIONS_JETPACK_SECURITY_MONTHLY = 'jetpack_security_monthly';
-export const OPTIONS_JETPACK_BACKUP = 'jetpack_backup';
-export const OPTIONS_JETPACK_BACKUP_MONTHLY = 'jetpack_backup_monthly';
-
 // Types of items. This determines the card UI.
 export const ITEM_TYPE_PLAN = 'item-type-plan';
 export const ITEM_TYPE_BUNDLE = 'item-type-bundle';
