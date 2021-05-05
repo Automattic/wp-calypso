@@ -78,7 +78,7 @@ function getTourContent( localeSlug ) {
 			animation: 'undo-button',
 		},
 		{
-			heading: __( 'Congratulations!', 'full-site-editing' ).replace( '&nbsp;', ' ' ),
+			heading: __( 'Congratulations!', 'full-site-editing' ),
 			description: createInterpolateElement(
 				__(
 					"You've learned the basics. Remember, your site is private until you <link_to_launch_site_docs>decide to launch</link_to_launch_site_docs>. View the <link_to_editor_docs>block editing docs</link_to_editor_docs> to learn more.",
