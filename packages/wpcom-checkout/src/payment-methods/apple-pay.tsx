@@ -4,7 +4,7 @@
 import React, { useCallback } from 'react';
 import debugFactory from 'debug';
 import { useI18n } from '@wordpress/react-i18n';
-import { useLineItems, useEvents, ProcessPayment } from '@automattic/composite-checkout';
+import { ProcessPayment } from '@automattic/composite-checkout';
 import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
 
@@ -56,10 +56,7 @@ export function ApplePaySubmitButton( {
 	stripe: Stripe;
 	stripeConfiguration: StripeConfiguration;
 } ): JSX.Element {
-	const { __ } = useI18n();
 	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration );
-	const [ items, total ] = useLineItems();
-	const onEvent = useEvents();
 	const onSubmit = useCallback(
 		( { name, paymentMethodToken } ) => {
 			debug( 'submitting stripe payment with key', paymentMethodToken );
@@ -68,17 +65,14 @@ export function ApplePaySubmitButton( {
 					'Missing onClick prop; ApplePaySubmitButton must be used as a payment button in CheckoutSubmitButton'
 				);
 			}
-			onEvent( { type: 'APPLE_PAY_TRANSACTION_BEGIN' } );
 			onClick( 'apple-pay', {
 				stripe,
 				paymentMethodToken,
 				name,
-				items,
-				total,
 				stripeConfiguration,
 			} );
 		},
-		[ onClick, onEvent, items, total, stripe, stripeConfiguration ]
+		[ onClick, stripe, stripeConfiguration ]
 	);
 	const { paymentRequest, canMakePayment, isLoading } = useStripePaymentRequest( {
 		webPaymentType: 'apple-pay',
