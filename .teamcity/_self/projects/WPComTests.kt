@@ -7,6 +7,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 
 object WPComTests : Project({
 	id("WPComTests")
@@ -127,4 +128,18 @@ private object Gutenberg : BuildType({
 			}
 		}
 	}
+
+	triggers {
+		schedule {
+			schedulingPolicy = daily {
+				hour = 4
+			}
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
+			triggerBuild = always()
+			withPendingChangesOnly = false
+		}
+	}
+
 })
