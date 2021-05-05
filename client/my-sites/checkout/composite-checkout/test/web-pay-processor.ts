@@ -120,14 +120,14 @@ describe( 'webPayProcessor', () => {
 
 	it( 'throws an error if there is no stripe object', async () => {
 		const submitData = { paymentPartner: 'stripe' };
-		await expect( webPayProcessor( submitData, options ) ).rejects.toThrowError(
+		await expect( webPayProcessor( 'apple-pay', submitData, options ) ).rejects.toThrowError(
 			/requires stripe and none was provided/
 		);
 	} );
 
 	it( 'throws an error if there is no stripeConfiguration object', async () => {
 		const submitData = { paymentPartner: 'stripe', stripe };
-		await expect( webPayProcessor( submitData, options ) ).rejects.toThrowError(
+		await expect( webPayProcessor( 'apple-pay', submitData, options ) ).rejects.toThrowError(
 			/requires stripeConfiguration and none was provided/
 		);
 	} );
@@ -141,7 +141,7 @@ describe( 'webPayProcessor', () => {
 		};
 		const expected = { payload: 'test success', type: 'SUCCESS' };
 		await expect(
-			webPayProcessor( submitData, {
+			webPayProcessor( 'apple-pay', submitData, {
 				...options,
 				contactDetails: {
 					countryCode,
@@ -162,7 +162,7 @@ describe( 'webPayProcessor', () => {
 		transactionsEndpoint.mockReturnValue( Promise.reject( new Error( 'test error' ) ) );
 		const expected = { payload: 'test error', type: 'ERROR' };
 		await expect(
-			webPayProcessor( submitData, {
+			webPayProcessor( 'apple-pay', submitData, {
 				...options,
 				contactDetails: {
 					countryCode,
@@ -181,7 +181,7 @@ describe( 'webPayProcessor', () => {
 		};
 		const expected = { payload: 'test success', type: 'SUCCESS' };
 		await expect(
-			webPayProcessor( submitData, {
+			webPayProcessor( 'apple-pay', submitData, {
 				...options,
 				siteSlug: 'example.wordpress.com',
 				siteId: 1234567,
@@ -212,7 +212,7 @@ describe( 'webPayProcessor', () => {
 		};
 		const expected = { payload: 'test success', type: 'SUCCESS' };
 		await expect(
-			webPayProcessor( submitData, {
+			webPayProcessor( 'apple-pay', submitData, {
 				...options,
 				siteSlug: 'example.wordpress.com',
 				siteId: 1234567,
@@ -254,7 +254,7 @@ describe( 'webPayProcessor', () => {
 		};
 		const expected = { payload: 'test success', type: 'SUCCESS' };
 		await expect(
-			webPayProcessor( submitData, {
+			webPayProcessor( 'apple-pay', submitData, {
 				...options,
 				siteSlug: 'example.wordpress.com',
 				siteId: 1234567,
