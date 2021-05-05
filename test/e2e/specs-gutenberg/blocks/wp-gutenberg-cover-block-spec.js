@@ -150,7 +150,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Cover Block (${ screenSize })`,
 			const primaryColorPosition = 1;
 			await coverComponent.selectInitialBackgroundColorByNthPosition( primaryColorPosition );
 			// Make sure it actually sets a background by waiting until block has updated class
-			await driverHelper.waitUntilLocatedAndVisible(
+			await driverHelper.waitUntilElementLocatedAndVisible(
 				driver,
 				By.css( `${ coverComponent.blockID }.has-primary-background-color` )
 			);

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By } from 'selenium-webdriver';
+import { By, WebDriver } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -33,8 +33,8 @@ export default class GutenbergPopoverMenuComponent extends AsyncBaseContainer {
 	 * and additional classes. So if you want to ensure a specific popover is open, use additionalMenuSelectors
 	 * to be more specific.
 	 *
-	 * @param {Object} driver Instance of the Selenium WebDriver
-	 * @param {{ariaLabel: string, class: string}} additionalMenuSelectors Optional object to specify more
+	 * @param {WebDriver} driver Instance of the Selenium WebDriver
+	 * @param {{ariaLabel?: string, class?: string}} [additionalMenuSelectors=undefined] Optional object to specify more
 	 * specific selectors to ensure a specific popover menu is open.
 	 * @returns An instance of this class
 	 */
@@ -80,6 +80,6 @@ export default class GutenbergPopoverMenuComponent extends AsyncBaseContainer {
 	 * Wait until the popover menu is gone
 	 */
 	async waitUntilPopoverIsGone() {
-		await driverHelper.waitTillNotPresent( this.driver, By.css( this.menuSelector ) );
+		await driverHelper.waitUntilElementNotLocated( this.driver, By.css( this.menuSelector ) );
 	}
 }

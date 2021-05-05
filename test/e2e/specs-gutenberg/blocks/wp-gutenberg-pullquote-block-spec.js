@@ -144,7 +144,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pullquote Block (${ screenSize 
 
 			// we can't just look at block ID, because it actually stays the same between transforms!
 			// so specifically, we want to make sure a Paragraph block with that ID does not exist anymore
-			await driverHelper.waitTillNotPresent(
+			await driverHelper.waitUntilElementNotLocated(
 				driver,
 				By.css( `p#${ blockId }.wp-block-paragraph` )
 			);
@@ -177,7 +177,10 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pullquote Block (${ screenSize 
 
 			// once again, the block ID will persist!
 			// so we must be granular and look for a Pullquote specifically to disappear
-			await driverHelper.waitTillNotPresent( driver, By.css( `${ blockId }.wp-block-pullquote` ) );
+			await driverHelper.waitUntilElementNotLocated(
+				driver,
+				By.css( `${ blockId }.wp-block-pullquote` )
+			);
 		} );
 
 		step( 'Both the quote and citation text are kept across transform', async function () {

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By } from 'selenium-webdriver';
+import { By, WebDriver } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -35,7 +35,7 @@ export default class GutenbergBlockToolbarComponent extends AsyncBaseContainer {
 	 * NOTE: the caller must take the necessary steps to ensure the toolbar will appear before calling Expect.
 	 * The requirements to make the toolbar appear are too different among blocks to standardize here.
 	 *
-	 * @param {Object} driver Instance of Selenium WebDriver
+	 * @param {WebDriver} driver Instance of Selenium WebDriver
 	 * @returns An instance of this class
 	 */
 	static async Expect( driver ) {
@@ -74,7 +74,7 @@ export default class GutenbergBlockToolbarComponent extends AsyncBaseContainer {
 	 * This pass-through method is added here for convenience so popover menu workflows can be completed all from
 	 * the toolbar component class.
 	 *
-	 * @param {*} text Target text of the popover menu item
+	 * @param {string} text Target text of the popover menu item
 	 */
 	async selectDropdownOptionByText( text ) {
 		const popoverMenuComponent = await GutenbergPopoverMenuComponent.Expect( this.driver );

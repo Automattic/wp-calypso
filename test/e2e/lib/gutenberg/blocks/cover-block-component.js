@@ -74,7 +74,7 @@ export default class CoverBlockComponent extends GutenbergBlockComponent {
 			.perform();
 
 		// make sure it actually gets focus
-		await driverHelper.waitUntilLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( `${ this.blockID }.block-editor-block-list__block.is-selected` )
 		);

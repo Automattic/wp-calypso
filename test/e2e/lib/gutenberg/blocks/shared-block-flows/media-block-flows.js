@@ -25,7 +25,7 @@ export default class MediaBlockFlows {
 	 * @param {Object} fileDetails A MediaHelper file details object for the image file to upload
 	 */
 	async uploadImage( parentBlockSelector, fileDetails ) {
-		await driverHelper.waitUntilLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( `${ parentBlockSelector } .components-form-file-upload` )
 		);
@@ -35,7 +35,7 @@ export default class MediaBlockFlows {
 		);
 		await filePathInput.sendKeys( fileDetails.file );
 
-		await driverHelper.waitTillNotPresent(
+		await driverHelper.waitUntilElementNotLocated(
 			this.driver,
 			By.css( `${ parentBlockSelector } .components-spinner` )
 		);
@@ -49,7 +49,7 @@ export default class MediaBlockFlows {
 	async waitForMediaLibraryDialog() {
 		// It's in top iframe, not the editor's!
 		await this.driver.switchTo().defaultContent();
-		await driverHelper.waitUntilLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.dialog__content .media-library' )
 		);
@@ -67,7 +67,7 @@ export default class MediaBlockFlows {
 			By.css( '.media-library__upload-button-input' )
 		);
 		await filePathInput.sendKeys( fileDetails.file );
-		await driverHelper.waitTillNotPresent(
+		await driverHelper.waitUntilElementNotLocated(
 			this.driver,
 			By.css( '.media-library__list-item.is-selected.is-transient' )
 		);
@@ -76,7 +76,7 @@ export default class MediaBlockFlows {
 			this.driver,
 			By.css( 'button[data-e2e-button=confirm]' )
 		);
-		await driverHelper.waitTillNotPresent(
+		await driverHelper.waitUntilElementNotLocated(
 			this.driver,
 			By.css( '.dialog__content .media-library' )
 		);
