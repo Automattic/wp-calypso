@@ -28,12 +28,18 @@ type WebPayTransactionRequest = {
 };
 
 export default async function webPayProcessor(
+	webPaymentType: 'google-pay' | 'apple-pay',
 	submitData: unknown,
 	transactionOptions: PaymentProcessorOptions
 ): Promise< PaymentProcessorResponse > {
 	if ( ! isValidWebPayTransactionData( submitData ) ) {
 		throw new Error( 'Required purchase data is missing' );
 	}
+	const webPaymentEventType =
+		webPaymentType === 'google-pay'
+			? 'GOOGLE_PAY_TRANSACTION_BEGIN'
+			: 'APPLE_PAY_TRANSACTION_BEGIN';
+	transactionOptions.recordEvent( { type: webPaymentEventType } );
 
 	const {
 		includeDomainDetails,
