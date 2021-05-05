@@ -8,7 +8,7 @@
  */
 import { chromium } from 'playwright';
 import config from 'config';
-import type { Browser, BrowserContext } from 'playwright';
+import type { Browser, BrowserContext, Page } from 'playwright';
 
 /**
  * Internal dependencies
@@ -68,6 +68,30 @@ export function getScreenDimension(): { width: number; height: number } {
 		default:
 			throw new Error( 'Unsupported screen size specified.' );
 	}
+}
+
+/**
+ * Familiar entrypoint to initialize the browser from a test writer's perspective.
+ *
+ * @returns {Promise<Page>} New Page instance.
+ */
+export async function start(): Promise< Page > {
+	return await newPage();
+}
+
+/**
+ * Returns a new instance of a Page.
+ *
+ * This function wraps and sets additional parameters before returning a new instance
+ * of a Page.
+ * Page represents a tab in a browser where the actual test are run.
+ *
+ * @returns {Promise<Page>} New Page instance.
+ */
+export async function newPage(): Promise< Page > {
+	const browserContext = await newBrowserContext();
+	browserContext.setDefaultTimeout( 5000 );
+	return await browserContext.newPage();
 }
 
 /**
