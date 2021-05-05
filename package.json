@@ -314,7 +314,7 @@
 		"webpack-dev-middleware": "^4.1.0",
 		"whybundled": "^1.4.2",
 		"wpcom": "^6.0.0",
-		"yargs": "^15.3.1"
+		"yargs": "^17.0.1"
 	},
 	"optionalDependencies": {
 		"fsevents": "^2.1.2"
