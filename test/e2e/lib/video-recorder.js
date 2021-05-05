@@ -3,12 +3,11 @@
  */
 import config from 'config';
 import path from 'path';
-import fs from 'fs';
+import { rename, mkdir, unlink } from 'fs/promises';
 import child_process from 'child_process';
 import ffmpeg from 'ffmpeg-static';
 
 let file;
-let xvfb;
 let ffVideo;
 
 function isVideoEnabled() {
@@ -18,44 +17,14 @@ function isVideoEnabled() {
 	return video === 'true';
 }
 
-function getFreeDisplay() {
-	let i = 99 + Math.round( Math.random() * 100 );
-	while ( fs.existsSync( `/tmp/.X${ i }-lock` ) ) {
-		i++;
-	}
-	global.displayNum = i;
-}
-
-export function startDisplay() {
-	if ( ! isVideoEnabled() ) {
-		return;
-	}
-	getFreeDisplay();
-	xvfb = child_process.spawn( 'Xvfb', [
-		'-ac',
-		':' + global.displayNum,
-		'-screen',
-		'0',
-		'1440x1000x24',
-		'+extension',
-		'RANDR',
-	] );
-}
-
-export function stopDisplay() {
-	if ( isVideoEnabled() && xvfb ) {
-		xvfb.kill();
-	}
-}
-
-export function startVideo() {
+export async function startVideoRecording() {
 	if ( ! isVideoEnabled() ) {
 		return;
 	}
 	const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
 	const fileName = `${ global.displayNum }-${ dateTime }.mpg`;
 	file = path.resolve( path.join( './screenshots/videos', fileName ) );
-	fs.mkdirSync( path.dirname( file ), { recursive: true } );
+	await mkdir( path.dirname( file ), { recursive: true } );
 	ffVideo = child_process.spawn( ffmpeg.path, [
 		'-f',
 		'x11grab',
@@ -64,7 +33,7 @@ export function startVideo() {
 		'-r',
 		30,
 		'-i',
-		':' + global.displayNum,
+		process.env.DISPLAY,
 		'-pix_fmt',
 		'yuv420p',
 		'-loglevel',
@@ -73,19 +42,15 @@ export function startVideo() {
 	] );
 }
 
-export function stopVideo() {
+export async function stopVideoRecording() {
 	if ( ! isVideoEnabled() || ! ffVideo || ffVideo.killed ) {
 		return;
 	}
 	ffVideo.kill();
-	fs.unlink( file, function ( err ) {
-		if ( err ) {
-			console.log( 'Deleting of file for passed test failed.' );
-		}
-	} );
+	return unlink( file );
 }
 
-export function takeScreenshot( currentTest ) {
+export async function saveVideoRecording( currentTest ) {
 	if ( ! isVideoEnabled() || ! ffVideo ) {
 		return;
 	}
@@ -93,11 +58,5 @@ export function takeScreenshot( currentTest ) {
 	const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
 	const fileName = `${ currentTestName }-${ dateTime }.mpg`;
 	const newFile = path.resolve( path.join( './screenshots/videos', fileName ) );
-
-	fs.rename( file, newFile, function ( err ) {
-		if ( err ) {
-			console.log( 'Screencast Video:' + file );
-		}
-		console.log( 'Screencast Video:' + newFile );
-	} );
+	return rename( file, newFile );
 }

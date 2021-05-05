@@ -5,7 +5,14 @@ import fs from 'fs-extra';
 import path from 'path';
 import sanitize from 'sanitize-filename';
 import pngitxt from 'png-itxt';
-import { PassThrough } from 'stream';
+import { pipeline } from 'stream';
+import { createWriteStream, mkdir } from 'fs/promises';
+import { promisify } from 'util';
+
+export const screenshotsDir = path.resolve(
+	process.env.TEMP_ASSET_PATH || path.join( __dirname, '..' ),
+	process.env.SCREENSHOTDIR || 'screenshots'
+);
 
 export function createFile( notRandom, uploadDirectoryName = 'image-uploads' ) {
 	let randomImageNumber = Math.floor( Math.random() * 2 );
@@ -69,49 +76,21 @@ export function deleteFile( fileDetails ) {
 	return fs.deleteSync( fileDetails.file );
 }
 
-export const screenshotsDir = path.resolve(
-	process.env.TEMP_ASSET_PATH || path.join( __dirname, '..' ),
-	process.env.SCREENSHOTDIR || 'screenshots'
-);
+export async function takeScreenshot( currentTest ) {
+	const currentTestName = currentTest.title.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
+	const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
+	const fileName = path.resolve(
+		path.join( screenshotsDir, `${ currentTestName }-${ dateTime }.png` )
+	);
+	await mkdir( path.dirname( fileName ), { recursive: true } );
 
-export function writeScreenshot( data, filenameCallback, metadata ) {
-	const buffer = Buffer.from( data, 'base64' );
-	let filename;
-	let pt = new PassThrough();
+	const driver = global.__BROWSER__;
+	const screenshotData = await driver.takeScreenshot();
+	const url = await driver.getCurrentUrl();
 
-	if ( ! fs.existsSync( screenshotsDir ) ) {
-		fs.mkdirSync( screenshotsDir );
-	}
-
-	if ( typeof filenameCallback === 'function' ) {
-		filename = filenameCallback();
-	} else {
-		filename = new Date().getTime().toString();
-	}
-	const screenshotPath = `${ screenshotsDir }/${ filename }.png`;
-
-	if ( typeof metadata === 'object' ) {
-		for ( const i in metadata ) {
-			pt = pt.pipe( pngitxt.set( i, metadata[ i ] ) );
-		}
-	}
-	pt.pipe( fs.createWriteStream( screenshotPath ) );
-	return pt.end( buffer, 'buffer' );
-}
-
-export function writeTextLogFile( textContent, prefix, pathOverride ) {
-	if ( prefix === undefined ) {
-		prefix = '';
-	}
-	const directoryName = pathOverride || '../logs';
-	const logDir = path.resolve( __dirname, directoryName );
-	if ( ! fs.existsSync( logDir ) ) {
-		fs.mkdirSync( logDir );
-	}
-	const dateString = new Date().getTime().toString();
-	const fileName = `${ dateString }-${ prefix }-log.txt`;
-	const logPath = `${ logDir }/${ fileName }`;
-	fs.writeFileSync( logPath, textContent );
-
-	return logPath;
+	return promisify( pipeline )(
+		screenshotData,
+		pngitxt.set( 'url', url ),
+		createWriteStream( fileName )
+	);
 }

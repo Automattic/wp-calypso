@@ -1,20 +1,31 @@
 /**
+ * External dependencies
+ */
+import config from 'config';
+
+/**
  * Internal dependencies
  */
 import * as videoRecorder from '../video-recorder';
 
-export const startVideo = async function () {
-	await videoRecorder.startDisplay();
-	await videoRecorder.startVideo();
-};
+const afterHookTimeoutMS = config.get( 'afterHookTimeoutMS' );
 
-export const takeScreenshot = async function () {
+export async function startVideoRecording() {
+	this.timeout( afterHookTimeoutMS );
+
+	await videoRecorder.startVideoRecording();
+}
+
+export async function saveVideoRecording() {
+	this.timeout( afterHookTimeoutMS );
+
 	if ( this.currentTest && this.currentTest.state === 'failed' ) {
-		await videoRecorder.takeScreenshot( this.currentTest );
+		await videoRecorder.saveVideoRecording( this.currentTest );
 	}
-};
+}
 
-export const stopVideo = async function () {
-	await videoRecorder.stopVideo();
-	await videoRecorder.stopDisplay();
-};
+export async function stopVideoRecording() {
+	this.timeout( afterHookTimeoutMS );
+
+	await videoRecorder.stopVideoRecording();
+}

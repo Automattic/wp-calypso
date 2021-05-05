@@ -1,10 +1,12 @@
 /**
  * Internal dependencies
  */
-import { startVideo, stopVideo, takeScreenshot } from './video-recorder';
+import { startVideoRecording, stopVideoRecording, saveVideoRecording } from './video-recorder';
+import { takeScreenshot } from './screenshot';
+import { saveBrowserLogs } from './save-browser-logs';
 
 export const mochaHooks = {
-	afterAll: [ stopVideo ],
-	beforeAll: [ startVideo ],
-	afterEach: [ takeScreenshot ],
+	beforeAll: [ startVideoRecording ],
+	afterEach: [ takeScreenshot, saveVideoRecording, saveBrowserLogs ],
+	afterAll: [ stopVideoRecording ],
 };
