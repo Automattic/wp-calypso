@@ -28,7 +28,6 @@ const getFreeDisplay = async () => {
 
 export const startFramebuffer = async () => {
 	displayNum = await getFreeDisplay();
-	console.log( displayNum );
 	global.displayNum = displayNum;
 	xvfb = spawn( 'Xvfb', [
 		'-ac',
