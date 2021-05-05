@@ -11,7 +11,6 @@ import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 import { currentScreenSize } from '../driver-manager';
 import { getJetpackHost } from '../data-helper';
-import NoticesComponent from './notices-component';
 
 export default class SecurePaymentComponent extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -332,8 +331,6 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 					'.checkout-steps__step-complete-content .coupon button'
 			)
 		);
-		const noticesComponent = await NoticesComponent.Expect( this.driver );
-		await noticesComponent.dismissNotice();
 		return this.waitForCouponToBeApplied();
 	}
 
