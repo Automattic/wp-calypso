@@ -210,7 +210,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 	 * Most problems are detected before (such as auth) or after (such as the page
 	 * loading the wrong thing).
 	 *
-	 * 2. The second stage waits 1 second to ensure the iframe is responding as
+	 * 2. The second stage waits 2 seconds to ensure the iframe is responding as
 	 * we expect. After `iframe.onload` is called, we still don't know if the editor
 	 * has loaded because the browser could be displaying an error message (such
 	 * is the case with `X-Frame-Options: DENY`) in the document which has loaded.
@@ -780,7 +780,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 							// onMessage handler to handle when the editor iframe
 							// has loaded and started responding. This is the
 							// redirect timer stage 2.
-							onLoad={ () => this.setEditorRedirectTimer( 1000 ) }
+							onLoad={ () => this.setEditorRedirectTimer( 2000 ) }
 							// When 3rd party cookies are disabled, the iframe
 							// shows an error page that flashes for a moment
 							// before the user is the redirected to wp-admin.
