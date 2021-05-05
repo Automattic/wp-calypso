@@ -27,6 +27,7 @@ export default class MyHomePage extends AsyncBaseContainer {
 		this.launchSiteTaskCompleteLocator = By.css(
 			'.customer-home__main [data-task="site_launched"] .nav-item__complete'
 		);
+		this.celebrateNoticeTitleLocator = By.css( '.celebrate-notice__title' );
 	}
 
 	async _postInit() {
@@ -58,9 +59,14 @@ export default class MyHomePage extends AsyncBaseContainer {
 		return assert( badgeText === 'Complete', 'Could not locate message that email is verified.' );
 	}
 
-	async isSiteLaunched() {
-		await this.closeCelebrateNotice();
-		return await driverHelper.isElementLocated( this.driver, this.launchSiteTaskCompleteLocator );
+	async waitForSiteLaunchComplete() {
+		await driverHelper.waitUntilElementLocated( this.driver, this.celebrateNoticeTitleLocator );
+		const notice = await this.driver.findElement( this.celebrateNoticeTitleLocator );
+		const noticeText = await notice.getText();
+		return assert(
+			noticeText === 'You launched your site!',
+			'Could not locate message that site was launched.'
+		);
 	}
 
 	async updateHomepageFromSiteSetup() {
