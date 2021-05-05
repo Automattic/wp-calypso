@@ -399,13 +399,8 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			title
 		);
 
-		// @TODO Remove the `deprecatedInserterBlockItemLocator` definition and usage after we activate GB 10.x on production.
-		const deprecatedInserterBlockItemLocator = `.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix.replace(
-			'\\/',
-			'-'
-		) }${ blockClass }`;
 		const inserterBlockItemLocator = By.css(
-			`.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }, ${ deprecatedInserterBlockItemLocator }`
+			`.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }`
 		);
 
 		const insertedBlockLocator = By.css(

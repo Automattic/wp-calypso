@@ -79,8 +79,9 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 		);
 
 		const insertedBlockLocator = By.css(
-			`${ this.blockID } div.wp-block-jetpack-layout-grid .block-editor-block-list__block[aria-label='Block: ${ blockClass.blockTitle }']`
+			`${ this.blockID } div[aria-label='Block: ${ blockClass.blockTitle }']`
 		);
+
 		const blockId = await this.driver.findElement( insertedBlockLocator ).getAttribute( 'id' );
 
 		// We need to move focus away from the layout grid, or any subsequent blocks inserted will be part of it
