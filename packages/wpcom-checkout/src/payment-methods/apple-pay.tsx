@@ -89,15 +89,9 @@ export function ApplePaySubmitButton( {
 	debug( 'apple-pay button isLoading', isLoading );
 
 	if ( ! isLoading && ! canMakePayment ) {
-		onEvent( { type: 'APPLE_PAY_LOADING_ERROR', payload: 'This payment type is not supported' } );
-		return (
-			<PaymentRequestButton
-				paymentRequest={ paymentRequest }
-				paymentType="apple-pay"
-				disabled
-				disabledReason={ __( 'This payment type is not supported' ) }
-			/>
-		);
+		// This should never occur because we should not display this payment
+		// method as an option if it is not supported.
+		throw new Error( 'This payment type is not supported' );
 	}
 
 	return (
