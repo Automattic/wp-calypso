@@ -53,11 +53,29 @@ export function mshotsUrl( url: string, options: MShotsOptions, count = 0 ): str
 
 const MAXTRIES = 10;
 
-// https://stackoverflow.com/a/60458593
-const useMshotsUrl = ( src: string, options: MShotsOptions ) => {
-	const [ loadedSrc, setLoadedSrc ] = useState( '' );
+// This custom react hook returns undefined while the image is loading and
+// a HTMLImageElement (i.e. the class you get from `new Image()`) once loading
+// is complete.
+//
+// It also triggers a re-render (via setState()) when the value changes, so just
+// check if it's truthy and then treat it like any other Image.
+//
+// Note the loading may occur immediately and synchronously if the image is
+// already or may take up to several seconds if mshots has to generate and cache
+// new images.
+//
+// The calling code doesn't need to worry about the details except that you'll
+// want some sort of loading display.
+//
+// Inspired by https://stackoverflow.com/a/60458593
+const useMshotsImg = ( src: string, options: MShotsOptions ): HTMLImageElement | undefined => {
+	const [ loadedImg, setLoadedImg ] = useState< HTMLImageElement >();
 	const [ count, setCount ] = useState( 0 );
 	const previousSrc = useRef( src );
+
+	const imgRef = useRef< HTMLImageElement >();
+	const timeoutIdRef = useRef< number >();
+
 	const previousImg = useRef< HTMLImageElement >();
 	const previousOptions = useRef< MShotsOptions >();
 	// Oddly, we need to assign to current here after ref creation in order to
@@ -67,11 +85,12 @@ const useMshotsUrl = ( src: string, options: MShotsOptions ) => {
 	// Note: Mshots doesn't care about the "count" param, but it is important
 	// to browser caching. Getting this wrong looks like the url resolving
 	// before the image is ready.
-
 	useEffect( () => {
-		const img = new Image();
 		// If there's been a "props" change we need to reset everything:
-		if ( options !== previousOptions.current || src !== previousSrc.current ) {
+		if (
+			options !== previousOptions.current ||
+			( src !== previousSrc.current && imgRef.current )
+		) {
 			// Make sure an old image can't trigger a spurious state update
 			debug( 'resetting mShotsUrl request' );
 			if ( src !== previousSrc.current ) {
@@ -82,40 +101,52 @@ const useMshotsUrl = ( src: string, options: MShotsOptions ) => {
 			}
 			if ( previousImg.current && previousImg.current.onload ) {
 				previousImg.current.onload = null;
+				if ( timeoutIdRef.current ) {
+					clearTimeout( timeoutIdRef.current );
+					timeoutIdRef.current = undefined;
+				}
 			}
 
-			setLoadedSrc( '' );
+			setLoadedImg( undefined );
 			setCount( 0 );
-			previousImg.current = img;
+			previousImg.current = imgRef.current;
+
 			previousOptions.current = options;
 			previousSrc.current = src;
 		}
+
 		const srcUrl = mshotsUrl( src, options, count );
-		let timeoutId: number;
-		img.onload = () => {
+		const newImage = new Image();
+		newImage.onload = () => {
 			// Detect default image (Don't request a 400x300 image).
 			//
 			// If this turns out to be a problem, it might help to know that the
 			// http request status for the default is a 307. Unfortunately we
 			// don't get the request through an img element so we'd need to
 			// take a completely different approach using ajax.
-			if ( img.naturalWidth !== 400 || img.naturalHeight !== 300 ) {
-				setLoadedSrc( srcUrl );
+			if ( newImage.naturalWidth !== 400 || newImage.naturalHeight !== 300 ) {
+				// Note we're using the naked object here, not the ref, because
+				// this is the callback on the image itself. We'd never want
+				// the image to finish loading and set some other image.
+				setLoadedImg( newImage );
 			} else if ( count < MAXTRIES ) {
 				// Only refresh 10 times
 				// Triggers a target.src change with increasing timeouts
-				timeoutId = setTimeout( () => setCount( count + 1 ), count * 500 );
+				timeoutIdRef.current = setTimeout( () => setCount( ( count ) => count + 1 ), count * 500 );
 			}
 		};
-		img.src = srcUrl;
+		newImage.src = srcUrl;
+		imgRef.current = newImage;
 
 		return () => {
-			img.onload = null;
-			clearTimeout( timeoutId );
+			if ( imgRef.current && imgRef.current.onload ) {
+				imgRef.current.onload = null;
+			}
+			clearTimeout( timeoutIdRef.current );
 		};
 	}, [ src, count, options ] );
 
-	return loadedSrc;
+	return loadedImg;
 };
 
 // For hover-scroll, we use a div with a background image (rather than an img element)
@@ -131,12 +162,22 @@ const MShotsImage = ( {
 	options,
 	scrollable = false,
 }: MShotsImageProps ): JSX.Element => {
-	const src = useMshotsUrl( url, options );
+	const maybeImage = useMshotsImg( url, options );
+	const src: string = maybeImage?.src || '';
 	const visible = !! src;
-	const backgroundImage = src && `url( ${ src } )`;
+	const backgroundImage = maybeImage?.src && `url( ${ maybeImage?.src } )`;
+
+	const animationScrollSpeedInPixelsPerSecond = 400;
+	const animationDuration =
+		( maybeImage?.naturalHeight || 600 ) / animationScrollSpeedInPixelsPerSecond;
+
+	const scrollableStyles = {
+		backgroundImage,
+		transition: `background-position ${ animationDuration }s`,
+	};
 
 	const style = {
-		...( scrollable ? { backgroundImage } : {} ),
+		...( scrollable ? scrollableStyles : {} ),
 	};
 
 	const className = classnames(
