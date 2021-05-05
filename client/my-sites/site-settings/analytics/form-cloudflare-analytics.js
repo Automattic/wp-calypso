@@ -25,7 +25,7 @@ import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-secti
 import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
 import {
 	findFirstSimilarPlanKey,
-	TYPE_PREMIUM,
+	TYPE_SECURITY_DAILY,
 	FEATURE_CLOUDFLARE_ANALYTICS,
 } from '@automattic/calypso-products';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -128,10 +128,10 @@ export function CloudflareAnalyticsSettings( {
 	const renderForm = () => {
 		const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
 
-		const nudgeTitle = translate( 'Available with Premium plans or higher' );
+		const nudgeTitle = translate( 'Available with Security plans or higher' );
 
 		const plan = findFirstSimilarPlanKey( site.plan.product_slug, {
-			type: TYPE_PREMIUM,
+			type: TYPE_SECURITY_DAILY,
 		} );
 
 		const nudge = (
