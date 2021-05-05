@@ -29,7 +29,7 @@ export default function () {
 	const isLoggedOut = ! user.get();
 
 	if ( isLoggedOut ) {
-		if ( config.isEnabled( 'jetpack/userless-checkout' ) ) {
+		if ( isEnabled( 'jetpack/userless-checkout' ) ) {
 			page( '/checkout/jetpack/:siteSlug/:productSlug', checkout, makeLayout, clientRender );
 		}
 
@@ -43,7 +43,7 @@ export default function () {
 	}
 
 	// Handle logged-in user visiting Jetpack checkout
-	if ( config.isEnabled( 'jetpack/userless-checkout' ) ) {
+	if ( isEnabled( 'jetpack/userless-checkout' ) ) {
 		page(
 			'/checkout/jetpack/:product/:domainOrProduct',
 			siteSelection,
