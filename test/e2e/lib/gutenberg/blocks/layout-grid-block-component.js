@@ -78,11 +78,8 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 			By.css( `button.editor-block-list-item-${ blockClass.blockName.replace( '/', '-' ) }` )
 		);
 
-		// @TODO Remove the `deprecatedInsertedBlockLocator` once we get 10.5.0 in production.
-		const deprecatedInsertedBlockLocator = `${ this.blockID } div.wp-block-jetpack-layout-grid .block-editor-block-list__block[aria-label='Block: ${ blockClass.blockTitle }']`;
-
 		const insertedBlockLocator = By.css(
-			`${ this.blockID } div[aria-label='Block: ${ blockClass.blockTitle }'], ${ deprecatedInsertedBlockLocator }`
+			`${ this.blockID } div[aria-label='Block: ${ blockClass.blockTitle }']`
 		);
 
 		const blockId = await this.driver.findElement( insertedBlockLocator ).getAttribute( 'id' );
