@@ -418,7 +418,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		// The normal click is needed to avoid hovering the element, which seems
 		// to cause the element to become stale.
 		await driverHelper.clickWhenClickable( this.driver, inserterBlockItemLocator );
-
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, insertedBlockLocator );
 
 		return this.driver.findElement( insertedBlockLocator ).getAttribute( 'id' );
