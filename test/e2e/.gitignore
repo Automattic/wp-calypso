@@ -6,12 +6,10 @@
 /screenshots-i18n/
 /temp/
 /temp-cookies/
+*.log
 
 # config overrides
 /config/local-*
-
-# chromedriver logs
-chrome*.log
 
 # typescript output
 dist/
