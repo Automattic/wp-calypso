@@ -468,6 +468,8 @@ export default function CompositeCheckout( {
 		() => ( {
 			'apple-pay': ( transactionData: unknown ) =>
 				webPayProcessor( 'apple-pay', transactionData, dataForProcessor ),
+			'google-pay': ( transactionData: unknown ) =>
+				webPayProcessor( 'google-pay', transactionData, dataForProcessor ),
 			'free-purchase': () => freePurchaseProcessor( dataForProcessor ),
 			card: ( transactionData: unknown ) =>
 				multiPartnerCardProcessor( transactionData, dataForProcessor ),
