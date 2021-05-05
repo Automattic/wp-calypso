@@ -14,6 +14,9 @@ import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
+	BLOCK_THEMES_FAIL,
+	BLOCK_THEMES_FETCH,
+	BLOCK_THEMES_SUCCESS,
 	RECOMMENDED_THEMES_FAIL,
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
@@ -491,6 +494,27 @@ export function recommendedThemes( state = { isLoading: true, themes: [] }, acti
 	return state;
 }
 
+/**
+ * Returns updated state for block themes after
+ * corresponding actions have been dispatched.
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}       Updated state
+ */
+export function blockThemes( state = { isLoading: true, themes: [] }, action ) {
+	switch ( action.type ) {
+		case BLOCK_THEMES_FETCH:
+			return { ...state, isLoading: true };
+		case BLOCK_THEMES_SUCCESS:
+			return { ...state, isLoading: false, themes: action.payload.themes };
+		case BLOCK_THEMES_FAIL:
+			return { ...state, isLoading: false };
+	}
+
+	return state;
+}
+
 const combinedReducer = combineReducers( {
 	queries,
 	queryRequests,
@@ -510,6 +534,7 @@ const combinedReducer = combineReducers( {
 	themeFilters,
 	recommendedThemes,
 	themeHasAutoLoadingHomepageWarning,
+	blockThemes,
 } );
 const themesReducer = withStorageKey( 'themes', combinedReducer );
 
