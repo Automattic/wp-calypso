@@ -23,8 +23,8 @@ before( 'Launch browser instance', async function () {
 /**
  * Hook to terminate a Browser instance.
  *
- * @returns {Promise<void>} Void promise.
+ * @returns {void} No return value.
  */
 after( 'Close browser', async function () {
-	return await BrowserManager.browser.close();
+	await BrowserManager.browser.close();
 } );
