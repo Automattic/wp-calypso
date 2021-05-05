@@ -1,17 +1,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import { Button } from '@automattic/components';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import { useBreakpoint } from '@automattic/viewport-react';
 
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
 import EmailProviderFeatures from 'calypso/my-sites/email/email-provider-features';
+import EmailProviderFeaturesButton from 'calypso/my-sites/email/email-provider-features/button';
 
 const noop = () => {};
 
@@ -34,8 +36,13 @@ function EmailProviderCard( {
 	expandButtonLabel,
 	features,
 } ) {
+	const [ areFeaturesToggled, toggleFeatures ] = useState( false );
+
+	const showFeaturesToggleButton = useBreakpoint( '<1040px' ) && detailsExpanded;
+
 	const toggleVisibility = ( event ) => {
 		event.preventDefault();
+
 		onExpandedChange( providerKey, ! detailsExpanded );
 	};
 
@@ -64,13 +71,24 @@ function EmailProviderCard( {
 				) }
 			</div>
 
-			<PromoCardPrice formattedPrice={ formattedPrice } discount={ discount } />
+			<div className="email-providers-comparison__provider-price-and-button">
+				<div>
+					<PromoCardPrice formattedPrice={ formattedPrice } discount={ discount } />
 
-			{ additionalPriceInformation && (
-				<span className="email-providers-comparison__provider-additional-price-information">
-					{ additionalPriceInformation }
-				</span>
-			) }
+					{ additionalPriceInformation && (
+						<div className="email-providers-comparison__provider-additional-price-information">
+							{ additionalPriceInformation }
+						</div>
+					) }
+				</div>
+
+				{ showFeaturesToggleButton && (
+					<EmailProviderFeaturesButton
+						handleClick={ () => toggleFeatures( ! areFeaturesToggled ) }
+						isToggled={ areFeaturesToggled }
+					/>
+				) }
+			</div>
 
 			<div className="email-providers-comparison__provider-form-and-features">
 				<div className="email-providers-comparison__provider-form">
@@ -83,7 +101,9 @@ function EmailProviderCard( {
 					) }
 				</div>
 
-				<EmailProviderFeatures features={ features } />
+				{ ( ! showFeaturesToggleButton || areFeaturesToggled ) && (
+					<EmailProviderFeatures features={ features } />
+				) }
 			</div>
 
 			{ children }

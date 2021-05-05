@@ -1,4 +1,4 @@
-.email-provider-feature {
+.email-provider-features__feature {
 	margin-left: 28px;
 	margin-top: 8px;
 
@@ -23,5 +23,14 @@
 		margin-left: -28px;
 		margin-top: 2px;
 		position: absolute;
+	}
+}
+
+.email-provider-features__button {
+	overflow: visible;
+	white-space: nowrap;
+
+	.gridicon {
+		margin-left: 5px;
 	}
 }

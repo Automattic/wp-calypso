@@ -84,13 +84,13 @@
 	}
 
 	.email-providers-comparison__provider-card-main-details {
-		align-items: center;
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
 		margin-bottom: 1em;
 
 		@include break-mobile {
+			align-items: center;
 			flex-direction: row;
 		}
 
@@ -99,10 +99,22 @@
 		}
 	}
 
+	.email-providers-comparison__provider-price-and-button {
+		align-items: center;
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 1em;
+	}
+
 	.email-providers-comparison__provider-expand-cta {
-		margin-left: 2em;
+		margin-top: 1em;
 		overflow: visible;
 		white-space: nowrap;
+
+		@include break-mobile {
+			margin-left: 2em;
+			margin-top: 0;
+		}
 	}
 
 	.promo-card__price {
@@ -126,7 +138,6 @@
 
 	.email-providers-comparison__provider-additional-price-information {
 		color: var( --color-text-subtle );
-		display: inline-block;
 		font-size: $font-body-extra-small;
 		font-style: normal;
 		margin-top: 3px;
@@ -148,16 +159,15 @@
 			display: flex;
 			flex-direction: column-reverse;
 
-			@include break-xlarge {
+			@include breakpoint-deprecated( '>1040px' ) {
 				flex-direction: row;
 			}
 		}
 
 		.email-providers-comparison__provider-form {
 			flex-grow: 1;
-			margin-top: 2.5em;
 
-			@include break-xlarge {
+			@include breakpoint-deprecated( '>1040px' ) {
 				margin-top: 0;
 			}
 
@@ -175,9 +185,10 @@
 		}
 
 		.email-provider-features {
-			margin-top: 1em;
+			margin-bottom: 2.5em;
 
-			@include break-xlarge {
+			@include breakpoint-deprecated( '>1040px' ) {
+				margin-bottom: 0;
 				margin-left: 2em;
 				margin-top: 0;
 			}

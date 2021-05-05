@@ -17,7 +17,7 @@ import './style.scss';
 
 function EmailProviderFeature( { title } ) {
 	return (
-		<div className="email-provider-feature">
+		<div className="email-provider-features__feature">
 			<Gridicon icon="checkmark" size="18" />
 
 			{ preventWidows( title ) }
