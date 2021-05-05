@@ -14,17 +14,17 @@ const by = webdriver.By;
 export default class StoreOrdersPage extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, by.css( '.woocommerce .orders__container' ) );
-		this.firstOrderSelector = by.css( '.orders__table .table-row.has-action' );
+		this.firstOrderLocator = by.css( '.orders__table .table-row.has-action' );
 	}
 
 	async atLeastOneOrderDisplayed() {
 		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
-			this.firstOrderSelector
+			this.firstOrderLocator
 		);
 	}
 
 	async clickFirstOrder() {
-		return await driverHelper.clickWhenClickable( this.driver, this.firstOrderSelector );
+		return await driverHelper.clickWhenClickable( this.driver, this.firstOrderLocator );
 	}
 }

@@ -23,16 +23,16 @@ export default class JetpackAuthorizePage extends AsyncBaseContainer {
 	}
 
 	async approveConnection() {
-		const authorizeButtonSelector = by.css( '.jetpack-connect__authorize-form button' );
-		await driverHelper.clickWhenClickable( this.driver, authorizeButtonSelector );
+		const authorizeButtonLocator = by.css( '.jetpack-connect__authorize-form button' );
+		await driverHelper.clickWhenClickable( this.driver, authorizeButtonLocator );
 		return await this.waitToDisappear();
 	}
 
 	async approveSSOConnection() {
-		const SSOAprroveSelector = by.css( '.jetpack-connect__sso-actions button' );
-		const loadingSelector = by.css( '.site.is-loading' );
-		await driverHelper.waitUntilElementNotLocated( this.driver, loadingSelector );
-		return await driverHelper.clickWhenClickable( this.driver, SSOAprroveSelector );
+		const SSOAprroveLocator = by.css( '.jetpack-connect__sso-actions button' );
+		const loadingLocator = by.css( '.site.is-loading' );
+		await driverHelper.waitUntilElementNotLocated( this.driver, loadingLocator );
+		return await driverHelper.clickWhenClickable( this.driver, SSOAprroveLocator );
 	}
 
 	async waitToDisappear() {

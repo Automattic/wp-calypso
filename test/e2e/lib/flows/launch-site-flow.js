@@ -28,13 +28,13 @@ export default class LaunchSiteFlow {
 		await pickAPlanPage.selectFreePlan();
 
 		// Dismiss the domain upsell if present.
-		const dismissDomainUpsellSelector = By.css( ' .domain-upsell__continue-link button ' );
+		const dismissDomainUpsellLocator = By.css( ' .domain-upsell__continue-link button ' );
 		const domainUpsellPresent = await driverHelper.isElementLocated(
 			this.driver,
-			dismissDomainUpsellSelector
+			dismissDomainUpsellLocator
 		);
 		if ( domainUpsellPresent ) {
-			return await driverHelper.clickWhenClickable( this.driver, dismissDomainUpsellSelector );
+			return await driverHelper.clickWhenClickable( this.driver, dismissDomainUpsellLocator );
 		}
 
 		return await myHomePage.isSiteLaunched();

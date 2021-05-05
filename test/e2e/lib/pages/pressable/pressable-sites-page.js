@@ -16,14 +16,14 @@ export default class PressableSitesPage extends AsyncBaseContainer {
 	}
 
 	async addNewSite( siteName ) {
-		const formSelector = By.css( 'form[action="/sites"]' );
+		const formLocator = By.css( 'form[action="/sites"]' );
 		const siteNameInput = By.css( '#new_site_name' );
 		const addNewSiteButton = By.css( '.new-site-index-button' );
 		const wpAdminSiteButton = By.css(
 			`div.wp-admin-btn a[href="http://${ siteName }.mystagingwebsite.com/wp-admin"]`
 		);
 
-		const present = await driverHelper.isElementLocated( this.driver, formSelector );
+		const present = await driverHelper.isElementLocated( this.driver, formLocator );
 		if ( present ) {
 			await this.deleteFirstSite();
 		}

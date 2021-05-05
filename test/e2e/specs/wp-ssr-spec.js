@@ -18,8 +18,8 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 
 async function ssrWorksForPage( driver, url ) {
 	await driver.get( url );
-	const layoutSelector = by.css( '#wpcom[data-calypso-ssr="true"]' );
-	assert( await driver.findElement( layoutSelector ) );
+	const layoutLocator = by.css( '#wpcom[data-calypso-ssr="true"]' );
+	assert( await driver.findElement( layoutLocator ) );
 }
 
 describe( 'Server-side rendering: @canary @parallel', function () {

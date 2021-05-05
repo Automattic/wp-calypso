@@ -15,7 +15,7 @@ export default class WooWizardWelcomePage extends AsyncBaseContainer {
 	}
 
 	async start() {
-		const selector = By.css( ".wc-setup-actions button[name='save_step']" );
-		return await driverHelper.clickWhenClickable( this.driver, selector );
+		const locator = By.css( ".wc-setup-actions button[name='save_step']" );
+		return await driverHelper.clickWhenClickable( this.driver, locator );
 	}
 }

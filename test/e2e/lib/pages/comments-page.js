@@ -17,11 +17,11 @@ export default class CommentsPage extends AsyncBaseContainer {
 
 	async waitForComments() {
 		const driver = this.driver;
-		const resultsLoadingSelector = By.css( '.comment .is-placeholder' );
+		const resultsLoadingLocator = By.css( '.comment .is-placeholder' );
 		return await driver.wait(
 			function () {
 				return driverHelper
-					.isElementLocated( driver, resultsLoadingSelector )
+					.isElementLocated( driver, resultsLoadingLocator )
 					.then( function ( present ) {
 						return ! present;
 					} );

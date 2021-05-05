@@ -16,26 +16,26 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 	}
 
 	async connectWordPressCom() {
-		const selector = By.css( ".jp-connect-full__button-container a[href*='register']" );
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, selector );
+		const locator = By.css( ".jp-connect-full__button-container a[href*='register']" );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, locator );
 		await this.driver.sleep( 1000 );
-		return await driverHelper.clickWhenClickable( this.driver, selector );
+		return await driverHelper.clickWhenClickable( this.driver, locator );
 	}
 
 	async inPlaceConnect() {
-		const selector = By.css( ".jp-connect-full__button-container a[href*='register']" );
-		const spinnerSelector = By.css(
+		const locator = By.css( ".jp-connect-full__button-container a[href*='register']" );
+		const spinnerLocator = By.css(
 			'.jp-connect-full__button-container:not([style="display: none;"]) .jp-spinner'
 		);
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, selector );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, locator );
 		await this.driver.sleep( 1000 );
-		await driverHelper.clickWhenClickable( this.driver, selector );
+		await driverHelper.clickWhenClickable( this.driver, locator );
 
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, spinnerSelector );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, spinnerLocator );
 
 		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
-			spinnerSelector,
+			spinnerLocator,
 			this.explicitWaitMS * 3
 		);
 	}
@@ -45,14 +45,14 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 	}
 
 	async openPlansTab() {
-		const selector = By.css( '.dops-section-nav__panel li.dops-section-nav-tab:nth-child(2) a' );
-		return await driverHelper.clickWhenClickable( this.driver, selector );
+		const locator = By.css( '.dops-section-nav__panel li.dops-section-nav-tab:nth-child(2) a' );
+		return await driverHelper.clickWhenClickable( this.driver, locator );
 	}
 
 	async clickUpgradeNudge() {
-		const selector = By.css( '.dops-banner a[href*="aag-search"]' );
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, selector );
-		return await driverHelper.clickWhenClickable( this.driver, selector );
+		const locator = By.css( '.dops-banner a[href*="aag-search"]' );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, locator );
+		return await driverHelper.clickWhenClickable( this.driver, locator );
 	}
 
 	async disconnectSite() {

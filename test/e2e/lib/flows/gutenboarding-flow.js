@@ -7,7 +7,7 @@ import config from 'config';
  * Internal dependencies
  */
 import AcquireIntentPage from '../pages/gutenboarding/acquire-intent-page.js';
-import DesignSelectorPage from '../pages/gutenboarding/designs-page.js';
+import DesignLocatorPage from '../pages/gutenboarding/designs-page.js';
 import StylePreviewPage from '../pages/gutenboarding/style-preview-page.js';
 import PlansPage from '../pages/gutenboarding/plans-page.js';
 import DomainsPage from '../pages/gutenboarding/domains-page.js';
@@ -30,8 +30,8 @@ export default class CreateSiteFlow {
 		const domainsPage = await DomainsPage.Expect( this.driver );
 		await domainsPage.skipStep();
 
-		const designSelectorPage = await DesignSelectorPage.Expect( this.driver );
-		await designSelectorPage.selectFreeDesign();
+		const designLocatorPage = await DesignLocatorPage.Expect( this.driver );
+		await designLocatorPage.selectFreeDesign();
 
 		const stylePreviewPage = await StylePreviewPage.Expect( this.driver );
 		await stylePreviewPage.continue();

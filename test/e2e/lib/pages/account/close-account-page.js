@@ -19,17 +19,17 @@ export default class CloseAccountPage extends AsyncBaseContainer {
 	}
 
 	async chooseCloseAccount() {
-		const buttonSelector = by.css( '.account-close button.is-scary' );
-		const confirmButtonSelector = by.css( '.dialog__action-buttons button.is-primary' );
-		const confirmDialogSelector = by.css( '.account-close__confirm-dialog' );
+		const buttonLocator = by.css( '.account-close button.is-scary' );
+		const confirmButtonLocator = by.css( '.dialog__action-buttons button.is-primary' );
+		const confirmDialogLocator = by.css( '.account-close__confirm-dialog' );
 		const pauseBetweenClickAttemptsMS = 100;
 
 		// Click doesn't always fire even if the button is already displayed.
 		// We can safely attempt to click the button until the confirmation dialog pop-up window is present.
 		for ( let i = 0; i < explicitWaitMS / pauseBetweenClickAttemptsMS; i++ ) {
-			await driverHelper.clickWhenClickable( this.driver, buttonSelector );
-			if ( await driverHelper.isElementLocated( this.driver, confirmDialogSelector ) ) {
-				await driverHelper.clickWhenClickable( this.driver, confirmButtonSelector );
+			await driverHelper.clickWhenClickable( this.driver, buttonLocator );
+			if ( await driverHelper.isElementLocated( this.driver, confirmDialogLocator ) ) {
+				await driverHelper.clickWhenClickable( this.driver, confirmButtonLocator );
 				return true;
 			}
 			await this.driver.sleep( pauseBetweenClickAttemptsMS );

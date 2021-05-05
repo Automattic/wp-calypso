@@ -15,13 +15,13 @@ export default class BusinessAddressPage extends AsyncBaseContainer {
 	}
 
 	async selectAddBusinessAddress() {
-		const businessAddressSelector = By.css( '.card[data-e2e-type="business-address"] button' );
-		return await driverHelper.clickWhenClickable( this.driver, businessAddressSelector );
+		const businessAddressLocator = By.css( '.card[data-e2e-type="business-address"] button' );
+		return await driverHelper.clickWhenClickable( this.driver, businessAddressLocator );
 	}
 
 	async selectContinue() {
-		const continueSelector = By.css( '.card[data-e2e-type="continue"] button' );
-		return await driverHelper.clickWhenClickable( this.driver, continueSelector );
+		const continueLocator = By.css( '.card[data-e2e-type="continue"] button' );
+		return await driverHelper.clickWhenClickable( this.driver, continueLocator );
 	}
 
 	async enterBusinessAddressAndSubmit( name, street, city, state, zip, country ) {

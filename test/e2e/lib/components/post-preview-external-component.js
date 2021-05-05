@@ -12,12 +12,12 @@ import ViewPostPage from '../../lib/pages/view-post-page.js';
 import * as driverHelper from '../driver-helper.js';
 
 const explicitWaitMS = config.get( 'explicitWaitMS' );
-const previewWindowMainSelector = By.css( '#main' );
+const previewWindowMainLocator = By.css( '#main' );
 
 export default class PostPreviewExternalComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		PostPreviewExternalComponent.switchToWindow( driver );
-		super( driver, previewWindowMainSelector );
+		super( driver, previewWindowMainLocator );
 	}
 
 	async postTitle() {
@@ -54,7 +54,7 @@ export default class PostPreviewExternalComponent extends AsyncBaseContainer {
 	async isDisplayed() {
 		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
-			previewWindowMainSelector,
+			previewWindowMainLocator,
 			explicitWaitMS
 		);
 	}

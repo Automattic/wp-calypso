@@ -91,20 +91,20 @@ export default class ViewPostPage extends AsyncBaseContainer {
 	}
 
 	async leaveAComment( comment ) {
-		const commentButtonSelector = By.css( '#comment-submit' );
-		const commentSubmittingSelector = By.css( '#comment-form-submitting' );
+		const commentButtonLocator = By.css( '#comment-submit' );
+		const commentSubmittingLocator = By.css( '#comment-form-submitting' );
 		await driverHelper.setWhenSettable( this.driver, By.css( '#comment' ), comment );
-		await driverHelper.clickWhenClickable( this.driver, commentButtonSelector );
-		return await driverHelper.waitUntilElementNotLocated( this.driver, commentSubmittingSelector );
+		await driverHelper.clickWhenClickable( this.driver, commentButtonLocator );
+		return await driverHelper.waitUntilElementNotLocated( this.driver, commentSubmittingLocator );
 	}
 
 	async commentEventuallyShown( comment ) {
-		const commentSelector = By.xpath( `//p[text() = "${ comment }"]` );
-		return await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, commentSelector );
+		const commentLocator = By.xpath( `//p[text() = "${ comment }"]` );
+		return await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, commentLocator );
 	}
 
 	async embedContentDisplayed( selector ) {
-		const element = By.css( `${ selector }` );
+		const element = By.css( selector );
 		const displayed = await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			element

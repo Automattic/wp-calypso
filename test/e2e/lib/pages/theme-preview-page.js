@@ -12,7 +12,7 @@ import AsyncBaseContainer from '../async-base-container';
 export default class ThemePreviewPage extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, by.css( '.web-preview.is-visible .web-preview__content' ) );
-		this.activateSelector = by.css( '.web-preview__toolbar-tray .is-primary' );
+		this.activateLocator = by.css( '.web-preview__toolbar-tray .is-primary' );
 	}
 
 	async _postInit() {
@@ -23,10 +23,10 @@ export default class ThemePreviewPage extends AsyncBaseContainer {
 	}
 
 	async activateButtonVisible() {
-		return await driverHelper.isElementLocated( this.driver, this.activateSelector );
+		return await driverHelper.isElementLocated( this.driver, this.activateLocator );
 	}
 
 	async activate() {
-		return await driverHelper.clickWhenClickable( this.driver, this.activateSelector );
+		return await driverHelper.clickWhenClickable( this.driver, this.activateLocator );
 	}
 }

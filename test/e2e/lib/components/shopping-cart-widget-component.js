@@ -32,12 +32,12 @@ export default class ShoppingCartWidgetComponent extends AsyncBaseContainer {
 
 	async empty() {
 		const self = this;
-		const cartBadgeSelector = by.css( '.cart__count-badge' );
+		const cartBadgeLocator = by.css( '.cart__count-badge' );
 
-		const present = await driverHelper.isElementLocated( self.driver, cartBadgeSelector );
+		const present = await driverHelper.isElementLocated( self.driver, cartBadgeLocator );
 		if ( present ) {
 			await self.open();
-			const numItems = await self.driver.findElement( cartBadgeSelector ).getText();
+			const numItems = await self.driver.findElement( cartBadgeLocator ).getText();
 			for ( let i = 0; i < numItems; i++ ) {
 				await self.removeItem( self );
 			}
