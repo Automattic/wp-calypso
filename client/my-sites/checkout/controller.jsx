@@ -67,7 +67,7 @@ export function checkout( context, next ) {
 		return;
 	}
 
-	const product = isJetpackCheckout
+	const product = isJetpackUserlessCheckout
 		? context.params.productSlug
 		: getDomainOrProductFromContext( context );
 
