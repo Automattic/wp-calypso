@@ -22,7 +22,7 @@ export async function startVideoRecording() {
 		return;
 	}
 	const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
-	const fileName = `${ global.displayNum }-${ dateTime }.mpg`;
+	const fileName = `${ dateTime }.mpg`;
 	file = path.resolve( path.join( './screenshots/videos', fileName ) );
 	await mkdir( path.dirname( file ), { recursive: true } );
 	ffVideo = child_process.spawn( ffmpeg.path, [
@@ -47,7 +47,11 @@ export async function stopVideoRecording() {
 		return;
 	}
 	ffVideo.kill();
-	return unlink( file );
+	try {
+		await unlink( file );
+	} catch ( e ) {
+		// Not a big deal if we can't delete it
+	}
 }
 
 export async function saveVideoRecording( currentTest ) {
