@@ -44,6 +44,8 @@ export async function saveVideoRecording() {
 }
 
 export async function stopVideoRecording() {
+	if ( ! ffVideo ) return;
+
 	ffVideo.kill();
 	try {
 		await unlink( file );

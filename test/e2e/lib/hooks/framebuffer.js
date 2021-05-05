@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { spawn } from 'child_process';
-import { exists } from 'fs/promises';
+import { access } from 'fs/promises';
 
 /**
  * Internal dependencies
@@ -13,15 +13,22 @@ let xvfb;
 let displayNum;
 
 const getFreeDisplay = async () => {
-	let i = 99 + Math.round( Math.random() * 100 );
-	while ( await exists( `/tmp/.X${ i }-lock` ) ) {
-		i++;
+	// eslint-disable-next-line no-constant-condition
+	while ( true ) {
+		const i = 99 + Math.round( Math.random() * 100 );
+		try {
+			await access( `/tmp/.X${ i }-lock` );
+			// File exists, retry with another port
+		} catch ( e ) {
+			// File doesn't exist, we found a free port
+			return i;
+		}
 	}
-	return i;
 };
 
 export const startFramebuffer = async () => {
 	displayNum = await getFreeDisplay();
+	console.log( displayNum );
 	global.displayNum = displayNum;
 	xvfb = spawn( 'Xvfb', [
 		'-ac',
@@ -35,6 +42,8 @@ export const startFramebuffer = async () => {
 };
 
 export const stopFramebuffer = async () => {
+	if ( ! xvfb ) return;
+
 	xvfb.kill();
 };
 
