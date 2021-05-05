@@ -161,11 +161,7 @@ class Help extends React.PureComponent {
 						</p>
 					</div>
 				</CompactCard>
-				<CompactCard
-					className="help__support-link"
-					href="https://dailypost.wordpress.com/blogging-university/"
-					target="__blank"
-				>
+				<CompactCard className="help__support-link" href="https://wpcourses.com" target="__blank">
 					<Gridicon icon="mail" size={ 36 } />
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">
