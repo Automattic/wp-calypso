@@ -25,7 +25,7 @@ import { getHighestAnnualDiscount } from '../utils';
 /**
  * Type dependencies
  */
-import type { Duration, DurationChangeCallback, ProductType } from '../types';
+import type { Duration, DurationChangeCallback } from '../types';
 
 /**
  * Style dependencies
@@ -37,7 +37,6 @@ interface FilterBarProps {
 	showDurations?: boolean;
 	duration?: Duration;
 	onDurationChange?: DurationChangeCallback;
-	onProductTypeChange?: ( arg0: ProductType ) => void;
 }
 
 type DiscountMessageProps = {

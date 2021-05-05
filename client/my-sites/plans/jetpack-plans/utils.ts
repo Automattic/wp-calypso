@@ -4,7 +4,7 @@
 import { translate, TranslateResult, numberFormat } from 'i18n-calypso';
 import { compact } from 'lodash';
 import page from 'page';
-import React, { createElement, Fragment } from 'react';
+import { createElement, Fragment } from 'react';
 import { createSelector } from '@automattic/state-utils';
 
 /**
@@ -12,13 +12,10 @@ import { createSelector } from '@automattic/state-utils';
  */
 import { getFeatureByKey, getFeatureCategoryByKey } from 'calypso/lib/plans/features-list';
 import {
-	DAILY_PRODUCTS,
 	EXTERNAL_PRODUCTS_LIST,
 	EXTERNAL_PRODUCTS_SLUG_MAP,
 	ITEM_TYPE_PRODUCT,
-	ITEM_TYPE_BUNDLE,
 	ITEM_TYPE_PLAN,
-	REALTIME_PRODUCTS,
 } from './constants';
 import RecordsDetails from './records-details';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -28,7 +25,6 @@ import {
 	TERM_BIENNIALLY,
 	JETPACK_LEGACY_PLANS,
 	JETPACK_RESET_PLANS,
-	JETPACK_SECURITY_PLANS,
 	JETPACK_PLANS_BY_TERM,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCT_PRICE_MATRIX,
@@ -436,7 +432,6 @@ export function itemToSelectorProduct(
 			iconSlug,
 			displayName: getJetpackProductDisplayName( item ),
 			type: ITEM_TYPE_PRODUCT,
-			subtypes: [],
 			shortName: getJetpackProductShortName( item ) || '',
 			tagline: getJetpackProductTagline( item ),
 			description: getJetpackProductDescription( item ),
@@ -472,15 +467,13 @@ export function itemToSelectorProduct(
 		}
 		const isResetPlan = JETPACK_RESET_PLANS.includes( productSlug );
 		const iconAppend = isResetPlan ? '_v2' : '';
-		const type = JETPACK_SECURITY_PLANS.includes( productSlug ) ? ITEM_TYPE_BUNDLE : ITEM_TYPE_PLAN;
 		return {
 			productSlug,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug: ( yearlyProductSlug || productSlug ) + iconAppend,
 			displayName: getForCurrentCROIteration( item.getTitle ),
 			buttonLabel: getForCurrentCROIteration( item.getButtonLabel ),
-			type,
-			subtypes: [],
+			type: ITEM_TYPE_PLAN,
 			shortName: getForCurrentCROIteration( item.getTitle ),
 			tagline: getForCurrentCROIteration( item.getTagline ) || '',
 			description: getForCurrentCROIteration( item.getDescription ),
@@ -681,33 +674,6 @@ export function manageSitePurchase( siteSlug: string, purchaseId: number ): void
 		page( relativePath );
 	}
 }
-
-/**
- * Append "Available Options: Real-time and Daily" to the product description.
- *
- * @param product SelectorProduct
- *
- * @returns ReactNode | TranslateResult
- */
-export const getJetpackDescriptionWithOptions = (
-	product: SelectorProduct
-): React.ReactNode | TranslateResult => {
-	const em = React.createElement( 'em', null, null );
-
-	// If the product has 'subtypes' (containing daily and real-time product slugs).
-	// then append "Available options: Real-time or Daily" to the product description.
-	return product.subtypes.some( ( subtype ) => DAILY_PRODUCTS.includes( subtype ) ) &&
-		product.subtypes.some( ( subtype ) => REALTIME_PRODUCTS.includes( subtype ) )
-		? translate( '%(productDescription)s {{em}}Available options: Real-time or Daily.{{/em}}', {
-				args: {
-					productDescription: product.description,
-				},
-				components: {
-					em,
-				},
-		  } )
-		: product.description;
-};
 
 /**
  * Return the slug of a highlighted product if the given slug is Jetpack product
