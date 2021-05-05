@@ -1,12 +1,34 @@
 /**
+ * External dependencies
+ */
+import config from 'config';
+
+/**
  * Internal dependencies
  */
 import { startVideoRecording, stopVideoRecording, saveVideoRecording } from './video-recorder';
-import { takeScreenshot } from './screenshot';
-import { saveBrowserLogs } from './save-browser-logs';
+import { saveBrowserLogs } from './browser-logs';
+import { startFramebuffer, stopFramebuffer, takeScreenshot } from './framebuffer';
 
-export const mochaHooks = {
-	beforeAll: [ startVideoRecording ],
-	afterEach: [ takeScreenshot, saveVideoRecording, saveBrowserLogs ],
-	afterAll: [ stopVideoRecording ],
+const isVideoEnabled = () => {
+	const video = config.has( 'useTestVideo' )
+		? config.get( 'useTestVideo' )
+		: process.env.TEST_VIDEO;
+	return video === 'true';
+};
+
+export const mochaHooks = () => {
+	const hooks = {
+		beforeAll: [],
+		afterEach: [ saveBrowserLogs ],
+		afterAll: [],
+	};
+
+	if ( isVideoEnabled() ) {
+		hooks.beforeAll = [ ...hooks.beforeAll, startFramebuffer, startVideoRecording ];
+		hooks.afterEach = [ ...hooks.afterEach, takeScreenshot, saveVideoRecording ];
+		hooks.afterAll = [ ...hooks.afterAll, stopFramebuffer, stopVideoRecording ];
+	}
+
+	return hooks;
 };

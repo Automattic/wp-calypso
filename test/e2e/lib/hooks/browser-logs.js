@@ -1,4 +1,6 @@
-/* eslint-disable mocha/no-top-level-hooks */
+/**
+ * External dependencies
+ */
 import fs from 'fs/promises';
 
 /**

@@ -6,7 +6,8 @@ import path from 'path';
 import sanitize from 'sanitize-filename';
 import pngitxt from 'png-itxt';
 import { pipeline } from 'stream';
-import { createWriteStream, mkdir } from 'fs/promises';
+import { mkdir } from 'fs/promises';
+import { createWriteStream } from 'fs';
 import { promisify } from 'util';
 
 export const screenshotsDir = path.resolve(
