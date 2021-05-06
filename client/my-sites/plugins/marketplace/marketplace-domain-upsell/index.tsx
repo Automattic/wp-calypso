@@ -8,7 +8,7 @@ import DomainPicker from '@automattic/domain-picker';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { ThemeProvider } from 'emotion-theming';
 import styled from '@emotion/styled';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import classnames from 'classnames';
 import { isDesktop } from '@automattic/viewport';
 import type { DomainSuggestions } from '@automattic/data-stores';
@@ -50,6 +50,8 @@ const MarketplaceHeaderSubTitle = styled.h2`
 `;
 
 function MarketplaceDomainUpsellHeader() {
+	const translate = useTranslate();
+
 	return (
 		<div>
 			<MarketplaceHeaderTitle className="marketplace-domain-upsell__title wp-brand-font">
@@ -80,18 +82,19 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 	const [ selectedDomain, setDomain ] = useState< DomainSuggestions.DomainSuggestion | null >(
 		null
 	);
-
 	const [ isExpandedBasketView, setIsExpandedBasketView ] = useState( false );
 	const { addProductsToCart, replaceProductsInCart, removeProductFromCart } = useShoppingCart();
 	const products = useSelector( getProductsList );
 	const previousPath = useSelector( getPreviousPath );
 	const isFetchingProducts = useSelector( isProductsListFetching );
 	const selectedSite = useSelector( getSelectedSite );
-	const { domain } = useSelector( ( state ) =>
-		getWpComDomainBySiteId( state, selectedSite && selectedSite.ID )
+	const domainObject = useSelector( ( state ) =>
+		getWpComDomainBySiteId( state, selectedSite?.ID )
 	);
+	const domain = domainObject?.domain;
 	const siteName = getSiteNameFromURL( domain );
 	const dispatch = useDispatch();
+	const translate = useTranslate();
 
 	useEffect( () => {
 		setIsExpandedBasketView( isDesktop() );
@@ -151,7 +154,9 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 					onClick={ () =>
 						previousPath
 							? page( previousPath )
-							: page( `/plugins/wordpress-seo/${ selectedSite?.slug }` )
+							: page(
+									`/plugins/wordpress-seo${ selectedSite?.slug ? `/${ selectedSite.slug }` : '' }`
+							  )
 					}
 					tooltip={ translate( 'Close Domain Selection' ) }
 					tipTarget="close"
@@ -169,14 +174,16 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 						analyticsUiAlgo={ ANALYTICS_UI_LOCATION_MARKETPLACE_DOMAIN_SELECTION }
 						analyticsFlowId={ MARKETPLACE_FLOW_ID }
 						onDomainSelect={ onDomainSelect }
-						currentDomain={ selectedDomain as DomainSuggestions.DomainSuggestion }
+						currentDomain={ selectedDomain }
 						showRecommendationLabel={ false }
 						onUseYourDomainClick={ redirectToUseDomainFlow }
 					/>
 				</div>
 				<div className="marketplace-domain-upsell__shopping-cart-container">
 					<MarketplaceShoppingCart
-						onCheckout={ () => page( '/checkout/' + selectedSite?.slug ) }
+						onCheckout={ () =>
+							page( `/checkout${ selectedSite ? `/${ selectedSite.slug }` : '' }` )
+						}
 						selectedDomainProductUUID={ selectedDomainProductUUID }
 						isExpandedBasketView={ isExpandedBasketView }
 						toggleExpandedBasketView={ () => setIsExpandedBasketView( ! isExpandedBasketView ) }

@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 // static empty array to ensure that empty return values from selectors are
 // identical to each other ( rv1 === rv2 )
 const EMPTY_SITE_DOMAINS = Object.freeze( [] );
@@ -25,20 +21,20 @@ export const getDomainsBySiteId = ( state, siteId ) => {
  * Returns the  wpcom domain for the proved site id.
  *
  * @param {object} state - global state tree
- * @param {number} siteId - identifier of the site
+ * @param {number | undefined} siteId - identifier of the site
  * @returns {object} the wpcom domain
  */
 export const getWpComDomainBySiteId = ( state, siteId ) => {
 	const domains = getDomainsBySiteId( state, siteId );
 	if ( ! Array.isArray( domains ) ) {
-		return {};
+		return null;
 	}
 
 	const WPComDomain = domains.find(
 		( { isWPCOMDomain, isWpcomStagingDomain } ) => isWPCOMDomain || isWpcomStagingDomain
 	);
 
-	return WPComDomain || {};
+	return WPComDomain || null;
 };
 
 export const getAllDomains = ( state ) => {

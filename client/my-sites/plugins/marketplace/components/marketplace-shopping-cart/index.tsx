@@ -6,7 +6,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { keyframes } from '@emotion/core';
 
 /**
@@ -168,7 +168,7 @@ export default function MarketplaceShoppingCart(
 	const { responseCart, isLoading, isPendingUpdate } = useShoppingCart();
 	const { products, sub_total_display } = responseCart;
 	const isBasketLoading = isLoading || isPendingUpdate;
-
+	const translate = useTranslate();
 	return (
 		<ShoppingCart className="marketplace-shopping-cart__root">
 			<ShoppingCartTitle>
