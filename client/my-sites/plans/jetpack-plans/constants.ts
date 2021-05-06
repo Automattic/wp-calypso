@@ -46,23 +46,6 @@ import type { JetpackPlanSlug } from '@automattic/calypso-products';
 export const PLAN_COMPARISON_PAGE = 'https://jetpack.com/features/comparison/';
 export const INTRO_PRICING_DISCOUNT_PERCENTAGE = 40;
 
-/**
- * Link to plan comparison page.
- */
-export const MORE_FEATURES_LINK = {
-	url: PLAN_COMPARISON_PAGE,
-	label: translate( 'See all features' ),
-};
-
-/**
- * Define properties with translatable strings getters.
- */
-Object.defineProperties( MORE_FEATURES_LINK, {
-	label: {
-		get: () => translate( 'See all features' ),
-	},
-} );
-
 // Types of items. This determines the card UI.
 export const ITEM_TYPE_PLAN = 'item-type-plan';
 export const ITEM_TYPE_PRODUCT = 'item-type-product';
