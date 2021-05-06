@@ -77,7 +77,7 @@ export function getScreenDimension(): { width: number; height: number } {
  * @returns {Promise<Page>} New Page instance.
  */
 export async function start(): Promise< Page > {
-	return await newPage();
+	return await launchPage();
 }
 
 /**
@@ -89,8 +89,8 @@ export async function start(): Promise< Page > {
  *
  * @returns {Promise<Page>} New Page instance.
  */
-export async function newPage(): Promise< Page > {
-	const browserContext = await newBrowserContext();
+export async function launchPage(): Promise< Page > {
+	const browserContext = await launchBrowserContext();
 	browserContext.setDefaultTimeout( 5000 );
 	return await browserContext.newPage();
 }
@@ -105,7 +105,7 @@ export async function newPage(): Promise< Page > {
  *
  * @returns {Promise<BrowserContext>} New BrowserContext instance.
  */
-export async function newBrowserContext(): Promise< BrowserContext > {
+export async function launchBrowserContext(): Promise< BrowserContext > {
 	// If no existing instance of a Browser, then launch a new instance.
 	if ( ! browser ) {
 		browser = await launchBrowser();
