@@ -79,7 +79,7 @@ export interface Props {
 	/** Called when the user leaves the search box */
 	onDomainSearchBlur?: ( value: string ) => void;
 
-	currentDomain?: DomainSuggestion | null | undefined;
+	currentDomain?: DomainSuggestion | undefined;
 
 	isCheckingDomainAvailability?: boolean;
 
