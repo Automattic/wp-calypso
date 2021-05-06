@@ -8,6 +8,11 @@ import { Button, useFormStatus, FormStatus } from '@automattic/composite-checkou
 import styled from '@emotion/styled';
 import type { StripePaymentRequest } from '@automattic/calypso-stripe';
 
+/**
+ * Internal dependencies
+ */
+import GooglePayButtonImage from './images/google-pay-buy-button-black.svg';
+
 // Disabling this rule to make migrating this to calypso easier with fewer changes
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
@@ -52,6 +57,9 @@ export default function PaymentRequestButton( {
 
 	if ( paymentType === 'apple-pay' ) {
 		return <ApplePayButton disabled={ disabled } onClick={ onClick } />;
+	}
+	if ( paymentType === 'google-pay' ) {
+		return <GooglePayButton disabled={ disabled } onClick={ onClick } />;
 	}
 	return (
 		<Button disabled={ disabled } onClick={ onClick } fullWidth>
@@ -98,3 +106,17 @@ const ApplePayButton = styled.button`
 		}
 	}
 `;
+
+function GooglePayButton( {
+	disabled,
+	onClick,
+}: {
+	disabled?: boolean;
+	onClick: ( event: MouseEvent ) => void;
+} ): JSX.Element {
+	return (
+		<button disabled={ disabled } onClick={ onClick }>
+			<GooglePayButtonImage />
+		</button>
+	);
+}
