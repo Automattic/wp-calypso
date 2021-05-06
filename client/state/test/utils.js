@@ -14,7 +14,6 @@ import {
 	combineReducers,
 	isValidStateWithSchema,
 	withPersistence,
-	withoutPersistence,
 	serialize,
 	deserialize,
 } from 'calypso/state/utils';
@@ -546,31 +545,6 @@ describe( 'utils', () => {
 
 			const invalid = deserialize( reducers, { height: -1, count: 44 } );
 			expect( invalid ).toEqual( { height: 160, count: 1 } );
-		} );
-	} );
-
-	describe( '#withoutPersistence', () => {
-		const age = withPersistence(
-			( state = 0, { type } ) => ( 'GROW' === type ? state + 1 : state ),
-			{
-				serialize: ( state ) => ( { age: state } ),
-				deserialize: ( persisted ) => persisted.age,
-			}
-		);
-
-		const wrapped = withoutPersistence( age );
-
-		test( 'should pass through normal actions', () => {
-			expect( wrapped( 10, { type: 'GROW' } ) ).toBe( 11 );
-			expect( wrapped( 10, { type: 'FADE' } ) ).toBe( 10 );
-		} );
-
-		test( 'should deserialize to initial state', () => {
-			expect( deserialize( wrapped, 10 ) ).toBe( 0 );
-		} );
-
-		test( 'should serialize to `undefined`', () => {
-			expect( serialize( wrapped, 10 ) ).toBeUndefined();
 		} );
 	} );
 } );
