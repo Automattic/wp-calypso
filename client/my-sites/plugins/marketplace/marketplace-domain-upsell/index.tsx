@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import page from 'page';
 import DomainPicker from '@automattic/domain-picker';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -23,6 +23,8 @@ import {
 	MARKETPLACE_FLOW_ID,
 	ANALYTICS_UI_LOCATION_MARKETPLACE_DOMAIN_SELECTION,
 } from 'calypso/my-sites/plugins/marketplace/constants';
+import { getWpComDomainOfSelectedSite } from 'calypso/state/sites/domains/selectors';
+import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
@@ -86,12 +88,14 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 	const previousPath = useSelector( getPreviousPath );
 	const isFetchingProducts = useSelector( isProductsListFetching );
 	const selectedSite = useSelector( getSelectedSite );
-	const { wpcom_url } = selectedSite;
-	const siteName = getSiteNameFromURL( wpcom_url );
+	const { domain } = useSelector( getWpComDomainOfSelectedSite );
+	const siteName = getSiteNameFromURL( domain );
+	const dispatch = useDispatch();
 
 	useEffect( () => {
 		setIsExpandedBasketView( isDesktop() );
-	}, [ setIsExpandedBasketView ] );
+		selectedSite && dispatch( fetchSiteDomains( selectedSite.ID ) );
+	}, [ setIsExpandedBasketView, selectedSite, dispatch ] );
 
 	useEffect( () => {
 		//FIXME: This code segment simulates yoast premium already being added when arriving here. To be removed when plugins page is completed.
@@ -181,11 +185,7 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 						onCheckout={ () => page( '/checkout/' + selectedSite?.slug ) }
 						selectedDomainProductUUID={ selectedDomainProductUUID }
 						isExpandedBasketView={ isExpandedBasketView }
-						toggleExpandedBasketView={ () =>
-							isExpandedBasketView
-								? setIsExpandedBasketView( false )
-								: setIsExpandedBasketView( true )
-						}
+						toggleExpandedBasketView={ () => setIsExpandedBasketView( ! isExpandedBasketView ) }
 					/>
 				</div>
 			</div>
