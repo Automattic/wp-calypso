@@ -39,10 +39,10 @@ const PatternSelectorItem = ( props: PatternSelectorItemProps ): JSX.Element | n
 	const innerPreview = (
 		<MShotsImage
 			url={ previewUrl }
-			aria-labelledby={ '' /*makeOptionId( design )*/ }
-			alt=""
+			aria-label={ title }
+			alt={ title }
 			options={ mShotsOptions }
-			scrollable={ true /*design.preview !== 'static'*/ }
+			scrollable={ true }
 		/>
 	);
 
