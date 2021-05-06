@@ -21,6 +21,8 @@ import QueryRewindBackupStatus from 'calypso/components/data/query-rewind-backup
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import FullStoryRecorder from 'calypso/components/full-story-recorder';
+import AnalyticsSafeContainer from 'calypso/components/analytics-safe-container';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
@@ -155,9 +157,11 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			<CheckYourEmail
-				message={ translate( "For your convenience, we'll email you when your file is ready." ) }
-			/>
+			<AnalyticsSafeContainer>
+				<CheckYourEmail
+					message={ translate( "For your convenience, we'll email you when your file is ready." ) }
+				/>
+			</AnalyticsSafeContainer>
 		</>
 	);
 
@@ -207,11 +211,13 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 			>
 				{ translate( 'Download file' ) }
 			</Button>
-			<CheckYourEmail
-				message={ translate(
-					"For your convenience, we've emailed you a link to your downloadable backup file."
-				) }
-			/>
+			<AnalyticsSafeContainer>
+				<CheckYourEmail
+					message={ translate(
+						"For your convenience, we've emailed you a link to your downloadable backup file."
+					) }
+				/>
+			</AnalyticsSafeContainer>
 		</>
 	);
 
@@ -266,6 +272,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 				downloadId={ downloadProgress !== undefined ? downloadId : undefined }
 				siteId={ siteId }
 			/>
+			<FullStoryRecorder />
 			<Card>{ render() }</Card>
 		</>
 	);
