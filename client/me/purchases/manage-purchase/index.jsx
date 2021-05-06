@@ -193,17 +193,15 @@ class ManagePurchase extends Component {
 
 	handleRenewMonthly = () => {
 		const { relatedMonthlyPlanSlug, siteSlug, redirectTo } = this.props;
-		const options = redirectTo ? { redirectTo } : undefined;
 		// Track the Renew Monthly submit.
 		recordTracksEvent( 'calypso_purchases_renew_monthly_click', {
 			product_slug: relatedMonthlyPlanSlug,
-			...options.tracksProps,
 		} );
 
 		// Redirect to the checkout page with the monthly plan in cart
 		const checkoutUrlArgs = {};
-		if ( options.redirectTo ) {
-			checkoutUrlArgs.redirect_to = options.redirectTo;
+		if ( redirectTo ) {
+			checkoutUrlArgs.redirect_to = redirectTo;
 		}
 		const checkoutUrlWithArgs = addQueryArgs(
 			checkoutUrlArgs,
