@@ -16,7 +16,7 @@ interface WindowWithFullStory extends Window {
 }
 
 interface Props {
-	record: boolean;
+	record?: boolean;
 }
 
 const FullStoryRecorder: FunctionComponent< Props > = ( { record = true } ) => {

@@ -38,7 +38,6 @@ import {
 	DailyStatus as DailyStatusSimplifiedI4,
 	RealtimeStatus as RealtimeStatusSimplifiedI4,
 } from './status/simplified-i4';
-import FullStoryRecorder from 'calypso/components/full-story-recorder';
 
 /**
  * Style dependencies
@@ -74,7 +73,6 @@ const BackupPage = ( { queryDate } ) => {
 					is_jetpackcom: isJetpackCloud(),
 				} ) }
 			>
-				<FullStoryRecorder />
 				<SidebarNavigation />
 				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
 				{ ! isJetpackCloud() && (
