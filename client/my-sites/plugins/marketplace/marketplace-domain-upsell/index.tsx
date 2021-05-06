@@ -11,7 +11,6 @@ import styled from '@emotion/styled';
 import { translate } from 'i18n-calypso';
 import classnames from 'classnames';
 import { isDesktop } from '@automattic/viewport';
-import type { ResponseCart } from '@automattic/shopping-cart';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
 /**
@@ -34,7 +33,7 @@ import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import { HorizontalRule } from '@wordpress/components';
 import ExternalLink from 'calypso/components/external-link';
 import MarketplaceShoppingCart from 'calypso/my-sites/plugins/marketplace/components/marketplace-shopping-cart';
-import theme from 'calypso/my-sites/plugins/marketplace';
+import theme from 'calypso/my-sites/plugins/marketplace/theme';
 
 /**
  * Style dependencies
@@ -116,7 +115,7 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 		page( useYourDomainUrl );
 	};
 
-	const onDomainSelect = ( suggestion: DomainSuggestions.DomainSuggestion ) => {
+	const onDomainSelect = async ( suggestion: DomainSuggestions.DomainSuggestion ) => {
 		const { product_slug, domain_name } = suggestion;
 		const domainProduct = {
 			...domainRegistration( {
@@ -129,24 +128,17 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 		setDomain( domainProduct );
 
 		//First remove the previously added domain
-		new Promise< void >( ( resolve ) => {
-			if ( ! selectedDomainProductUUID ) {
-				resolve();
-			} else {
-				removeProductFromCart( selectedDomainProductUUID ).then( () => {
-					setDomainProductUUID( '' );
-					resolve();
-				} );
-			}
-		} ).then( () => {
-			//Then add the new domain
-			addProductsToCart( [ domainProduct ] ).then( ( responseCart: ResponseCart ) => {
-				const productAdded = responseCart.products.find(
-					( { product_slug: added_product_slug } ) => added_product_slug === product_slug
-				);
-				setDomainProductUUID( productAdded?.uuid ?? '' );
-			} );
-		} );
+		if ( selectedDomainProductUUID ) {
+			await removeProductFromCart( selectedDomainProductUUID );
+			setDomainProductUUID( '' );
+		}
+
+		//Then add the new domain
+		const responseCart = await addProductsToCart( [ domainProduct ] );
+		const productAdded = responseCart.products.find(
+			( { product_slug: added_product_slug } ) => added_product_slug === product_slug
+		);
+		setDomainProductUUID( productAdded?.uuid ?? '' );
 	};
 
 	return (

@@ -13,7 +13,7 @@ import { keyframes } from '@emotion/core';
  * Internal dependencies
  */
 import { LineItem } from 'calypso/my-sites/checkout/composite-checkout/components/wp-order-review-line-items';
-import type { MarketplaceThemeType } from 'calypso/my-sites/plugins/marketplace';
+import type { MarketplaceThemeProps } from 'calypso/my-sites/plugins/marketplace/theme';
 import { MobileHiddenHorizontalRule } from 'calypso/my-sites/plugins/marketplace/components';
 
 interface PropsForMarketplaceShoppingCart {
@@ -23,9 +23,9 @@ interface PropsForMarketplaceShoppingCart {
 	toggleExpandedBasketView: () => void;
 }
 
-const ShoppingCart = styled.div< { theme?: MarketplaceThemeType } >`
+const ShoppingCart = styled.div< MarketplaceThemeProps >`
 	width: 100%;
-	background-color: var( --studio-gray-0 );
+	background-color: ${ ( { theme } ) => theme?.colors.studioGrey };
 	padding: 15px 25px;
 	max-width: 611px;
 	display: inline-table;
@@ -46,14 +46,14 @@ const ShoppingCartTitle = styled.div`
 	justify-content: space-between;
 `;
 
-const MobileTotal = styled.div< { theme?: MarketplaceThemeType } >`
+const MobileTotal = styled.div< MarketplaceThemeProps >`
 	display: none;
 	@media ( ${ ( { theme } ) => theme?.breakpoints.tabletDown } ) {
 		display: block;
 	}
 `;
 
-const ShoppingCartTotal = styled.div< { theme?: MarketplaceThemeType } >`
+const ShoppingCartTotal = styled.div< MarketplaceThemeProps >`
 	display: flex;
 	justify-content: space-between;
 	width: 100%;
@@ -83,7 +83,7 @@ const MarketPlaceBasketItem = styled( LineItem )`
 	padding: 4px 0;
 `;
 
-const MobileToggleExpandedBasket = styled.a< { theme?: MarketplaceThemeType } >`
+const MobileToggleExpandedBasket = styled.a< MarketplaceThemeProps >`
 	display: none;
 	background-color: transparent;
 	border-color: transparent;

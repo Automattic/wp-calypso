@@ -7,11 +7,9 @@ import styled from '@emotion/styled';
 /**
  * Internal dependencies
  */
-import { MarketplaceThemeType } from 'calypso/my-sites/plugins/marketplace';
+import { MarketplaceThemeProps } from 'calypso/my-sites/plugins/marketplace';
 
-export const MobileHiddenHorizontalRule = styled( HorizontalRule )< {
-	theme?: MarketplaceThemeType;
-} >`
+export const MobileHiddenHorizontalRule = styled( HorizontalRule )< MarketplaceThemeProps >`
 	@media ( ${ ( { theme } ) => theme?.breakpoints.tabletDown } ) {
 		display: none;
 	}
