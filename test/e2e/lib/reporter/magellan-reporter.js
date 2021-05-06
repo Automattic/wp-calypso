@@ -6,7 +6,6 @@ const slack = require( 'slack-notify' );
 const config = require( 'config' );
 const fs = require( 'fs-extra' );
 const XunitViewerParser = require( 'xunit-viewer/parser' );
-const pngitxt = require( 'png-itxt' );
 
 const Reporter = function () {};
 
@@ -53,55 +52,6 @@ Reporter.prototype.listenTo = function ( testRun, test, source ) {
 			if ( failCondition ) {
 				// Reports
 				sendFailureNotif( slackClient, reportDir, testRun );
-
-				// Screenshots
-				fs.readdir( screenshotDir, ( dirErr, files ) => {
-					if ( dirErr ) return 1;
-
-					files
-						.filter( ( file ) => file.match( /png$/i ) )
-						.forEach( ( screenshotPath ) => {
-							// Send screenshot to Slack on trunk branch only
-							if (
-								config.has( 'slackTokenForScreenshots' ) &&
-								process.env.CIRCLE_BRANCH === 'trunk' &&
-								! process.env.LIVEBRANCHES
-							) {
-								const SlackUpload = require( 'node-slack-upload' );
-								const slackUpload = new SlackUpload( config.get( 'slackTokenForScreenshots' ) );
-								const slackChannel = configGet( 'slackChannelForScreenshots' );
-
-								try {
-									fs.createReadStream( `${ screenshotDir }/${ screenshotPath }` ).pipe(
-										pngitxt.get( 'url', ( url ) => {
-											slackUpload.uploadFile(
-												{
-													file: fs.createReadStream( `${ screenshotDir }/${ screenshotPath }` ),
-													title: `${ screenshotPath } - # ${ process.env.CIRCLE_BUILD_NUM }`,
-													initialComment: url,
-													channels: slackChannel,
-												},
-												( err ) => {
-													if ( ! err ) return;
-
-													slackClient.send( {
-														icon_emoji: ':a8c:',
-														text: `Build <https://circleci.com/gh/${ process.env.CIRCLE_PROJECT_USERNAME }/${ process.env.CIRCLE_PROJECT_REPONAME }/${ process.env.CIRCLE_BUILD_NUM }|#${ process.env.CIRCLE_BUILD_NUM }> Upload to slack failed: '${ err }'`,
-														username: 'e2e Test Runner',
-													} );
-												}
-											);
-										} )
-									);
-								} catch ( e ) {
-									console.log(
-										`Error reading screenshot file, likely just timing race: ${ e.message }`
-									);
-								}
-							}
-							copyScreenshots( slackClient, screenshotDir, screenshotPath, finalScreenshotDir );
-						} );
-				} );
 			}
 
 			// Also move the report/screenshots files if the test passed
