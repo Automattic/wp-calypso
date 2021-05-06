@@ -42,6 +42,7 @@ class JetpackModuleToggle extends Component {
 	};
 
 	handleChange = () => {
+		this.props.onChange( ! this.props.checked );
 		if ( ! this.props.checked ) {
 			this.recordTracksEvent( 'calypso_jetpack_module_toggle', 'on' );
 			this.props.activateModule( this.props.siteId, this.props.moduleSlug );

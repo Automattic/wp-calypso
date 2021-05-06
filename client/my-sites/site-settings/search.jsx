@@ -132,6 +132,11 @@ class Search extends Component {
 		);
 	}
 
+	handleJetpackSearchToggleChange = ( jetpack_search_enabled ) =>
+		this.props.updateFields( { instant_search_enabled: jetpack_search_enabled }, () =>
+			this.props.setFieldValue( 'jetpack_search_enabled', jetpack_search_enabled, true )
+		);
+
 	renderSettingsCard() {
 		const {
 			activatingSearchModule,
@@ -143,7 +148,6 @@ class Search extends Component {
 			isSearchModuleActive,
 			siteId,
 			translate,
-			updateFields,
 		} = this.props;
 
 		return (
@@ -157,17 +161,13 @@ class Search extends Component {
 								moduleSlug="search"
 								label={ translate( 'Enable Jetpack Search' ) }
 								disabled={ isRequestingSettings || isSavingSettings }
+								onChange={ this.handleJetpackSearchToggleChange }
 							/>
 						) : (
 							<FormToggle
 								checked={ !! fields.jetpack_search_enabled }
 								disabled={ isRequestingSettings || isSavingSettings }
-								onChange={ () =>
-									updateFields(
-										{ instant_search_enabled: ! fields.jetpack_search_enabled },
-										handleAutosavingToggle( 'jetpack_search_enabled' )
-									)
-								}
+								onChange={ this.handleJetpackSearchToggleChange }
 							>
 								{ translate( 'Enable Jetpack Search' ) }
 							</FormToggle>
