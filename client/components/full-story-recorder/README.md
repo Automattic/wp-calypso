@@ -1,0 +1,1 @@
+# FullStory Recorder Component
