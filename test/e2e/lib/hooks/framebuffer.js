@@ -2,18 +2,14 @@
  * External dependencies
  */
 import { spawn } from 'child_process';
-import { access, mkdir } from 'fs/promises';
-import pngitxt from 'png-itxt';
-import { pipeline } from 'stream';
+import { access, mkdir, writeFile } from 'fs/promises';
 import path from 'path';
-import { createWriteStream } from 'fs';
-import { promisify } from 'util';
 
 let xvfb;
 let displayNum;
 
 const screenshotsDir = path.resolve(
-	process.env.TEMP_ASSET_PATH || path.join( __dirname, '..' ),
+	process.env.TEMP_ASSET_PATH || path.join( __dirname, '../..' ),
 	process.env.SCREENSHOTDIR || 'screenshots'
 );
 
@@ -65,11 +61,5 @@ export async function takeScreenshot() {
 
 	const driver = global.__BROWSER__;
 	const screenshotData = await driver.takeScreenshot();
-	const url = await driver.getCurrentUrl();
-
-	return promisify( pipeline )(
-		screenshotData,
-		pngitxt.set( { keyword: 'url', valye: url } ),
-		createWriteStream( fileName )
-	);
+	await writeFile( fileName, screenshotData, { encoding: 'base64' } );
 }
