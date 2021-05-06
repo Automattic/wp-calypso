@@ -23,7 +23,7 @@ import {
 	MARKETPLACE_FLOW_ID,
 	ANALYTICS_UI_LOCATION_MARKETPLACE_DOMAIN_SELECTION,
 } from 'calypso/my-sites/plugins/marketplace/constants';
-import { getWpComDomainOfSelectedSite } from 'calypso/state/sites/domains/selectors';
+import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
@@ -88,7 +88,9 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 	const previousPath = useSelector( getPreviousPath );
 	const isFetchingProducts = useSelector( isProductsListFetching );
 	const selectedSite = useSelector( getSelectedSite );
-	const { domain } = useSelector( getWpComDomainOfSelectedSite );
+	const { domain } = useSelector( ( state ) =>
+		getWpComDomainBySiteId( state, selectedSite && selectedSite.ID )
+	);
 	const siteName = getSiteNameFromURL( domain );
 	const dispatch = useDispatch();
 

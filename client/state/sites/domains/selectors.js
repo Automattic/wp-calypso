@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 // static empty array to ensure that empty return values from selectors are
 // identical to each other ( rv1 === rv2 )
@@ -23,28 +22,14 @@ export const getDomainsBySiteId = ( state, siteId ) => {
 };
 
 /**
- * Returns the list of domains for the selected site.
+ * Returns the  wpcom domain for the proved site id.
  *
  * @param {object} state - global state tree
- * @returns {Array} the list of domains
- */
-export const getDomainsOfSelectedSite = ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	if ( ! siteId ) {
-		return EMPTY_SITE_DOMAINS;
-	}
-
-	return state.sites.domains.items[ siteId ] || EMPTY_SITE_DOMAINS;
-};
-
-/**
- * Returns the  wpcom domain for the currently selected site.
- *
- * @param {object} state - global state tree
+ * @param {number} siteId - identifier of the site
  * @returns {object} the wpcom domain
  */
-export const getWpComDomainOfSelectedSite = ( state ) => {
-	const domains = getDomainsOfSelectedSite( state );
+export const getWpComDomainBySiteId = ( state, siteId ) => {
+	const domains = getDomainsBySiteId( state, siteId );
 	if ( ! Array.isArray( domains ) ) {
 		return {};
 	}
