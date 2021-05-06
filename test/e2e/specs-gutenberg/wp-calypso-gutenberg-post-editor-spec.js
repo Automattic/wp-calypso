@@ -1163,12 +1163,12 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 		step( 'Can see embedded content in our published post', async function () {
 			const viewPostPage = await ViewPostPage.Expect( driver );
-			this.youtubePostSelector = '.youtube-player';
-			await viewPostPage.embedContentDisplayed( this.youtubePostSelector ); // check YouTube content
-			this.instagramPostSelector = '.instagram-media-rendered';
-			await viewPostPage.embedContentDisplayed( this.instagramPostSelector ); // check Instagram content
-			this.instagramPostSelector = '.twitter-tweet-rendered';
-			return await viewPostPage.embedContentDisplayed( this.instagramPostSelector ); // check Twitter content
+			this.youtubePostLocator = '.youtube-player';
+			await viewPostPage.embedContentDisplayed( this.youtubePostLocator ); // check YouTube content
+			this.instagramPostLocator = '.instagram-media-rendered';
+			await viewPostPage.embedContentDisplayed( this.instagramPostLocator ); // check Instagram content
+			this.instagramPostLocator = '.twitter-tweet-rendered';
+			return await viewPostPage.embedContentDisplayed( this.instagramPostLocator ); // check Twitter content
 		} );
 
 		after( async function () {

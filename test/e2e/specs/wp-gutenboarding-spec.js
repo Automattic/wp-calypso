@@ -11,7 +11,7 @@ import LoginFlow from '../lib/flows/login-flow.js';
 import DeleteSiteFlow from '../lib/flows/delete-site-flow.js';
 import NewPage from '../lib/pages/gutenboarding/new-page.js';
 import AcquireIntentPage from '../lib/pages/gutenboarding/acquire-intent-page.js';
-import DesignSelectorPage from '../lib/pages/gutenboarding/designs-page.js';
+import DesignLocatorPage from '../lib/pages/gutenboarding/designs-page.js';
 import StylePreviewPage from '../lib/pages/gutenboarding/style-preview-page.js';
 import PlansPage from '../lib/pages/gutenboarding/plans-page.js';
 import DomainsPage from '../lib/pages/gutenboarding/domains-page.js';
@@ -64,7 +64,7 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 
 			await driverHelper.waitTillTextPresent(
 				driver,
-				acquireIntentPage.nextButtonSelector,
+				acquireIntentPage.nextButtonLocator,
 				'Continuar'
 			);
 
@@ -72,7 +72,7 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 
 			await driverHelper.waitTillTextPresent(
 				driver,
-				acquireIntentPage.nextButtonSelector,
+				acquireIntentPage.nextButtonLocator,
 				'Continue'
 			);
 
@@ -91,9 +91,9 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 			}
 		);
 
-		step( 'Can see Design Selector and select a random free design', async function () {
-			const designSelectorPage = await DesignSelectorPage.Expect( driver );
-			await designSelectorPage.selectFreeDesign();
+		step( 'Can see Design Locator and select a random free design', async function () {
+			const designLocatorPage = await DesignLocatorPage.Expect( driver );
+			await designLocatorPage.selectFreeDesign();
 		} );
 
 		step( 'Can see Style Preview, choose a random font pairing, and continue', async function () {

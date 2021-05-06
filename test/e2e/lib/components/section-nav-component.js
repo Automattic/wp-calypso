@@ -27,7 +27,7 @@ export default class SectionNavComponent extends AsyncBaseContainer {
 
 		const mobileHeaderLocator = By.css( '.section-nav__mobile-header' );
 		const openMenuLocator = By.css( '.section-nav.is-open' );
-		const menuElement = await this.driver.findElement( this.expectedElementSelector );
+		const menuElement = await this.driver.findElement( this.expectedElementLocator );
 		const isMenuOpen = await menuElement
 			.getAttribute( 'class' )
 			.then( ( classNames ) => classNames.includes( 'is-open' ) );

@@ -63,9 +63,9 @@ export default class LoginFlow {
 		// ) {
 		// 	console.log( 'Reusing login cookie for ' + this.account.username );
 		// 	await this.driver.navigate().refresh();
-		// 	const continueSelector = By.css( 'div.continue-as-user a' );
-		// 	if ( await driverHelper.isElementLocated( this.driver, continueSelector ) ) {
-		// 		await driverHelper.clickWhenClickable( this.driver, continueSelector );
+		// 	const continueLocator = By.css( 'div.continue-as-user a' );
+		// 	if ( await driverHelper.isElementLocated( this.driver, continueLocator ) ) {
+		// 		await driverHelper.clickWhenClickable( this.driver, continueLocator );
 		// 	}
 		// 	return;
 		// }
@@ -147,7 +147,7 @@ export default class LoginFlow {
 	async loginAndStartNewPage(
 		site = null,
 		usingGutenberg = false,
-		{ useFreshLogin = false, dismissPageTemplateSelector = true, editorType = 'iframe' } = {}
+		{ useFreshLogin = false, dismissPageTemplateLocator = true, editorType = 'iframe' } = {}
 	) {
 		if ( site || ( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' ) ) {
 			site = site || dataHelper.getJetpackSiteName();
@@ -163,7 +163,7 @@ export default class LoginFlow {
 
 		if ( usingGutenberg ) {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver, editorType );
-			await gEditorComponent.initEditor( { dismissPageTemplateSelector } );
+			await gEditorComponent.initEditor( { dismissPageTemplateLocator } );
 		}
 
 		if ( ! usingGutenberg ) {

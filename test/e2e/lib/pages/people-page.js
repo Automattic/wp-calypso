@@ -14,10 +14,10 @@ import * as DriverHelper from '../driver-helper.js';
 export default class PeoplePage extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.is-people' ) );
-		this.searchButtonSelector = By.css( '.section-nav__panel div.search' );
-		this.searchInputSelector = By.css( '.section-nav__panel input.search__input' );
-		this.searchResultsLoadingSelector = By.css( '.people-profile.is-placeholder' );
-		this.peopleListItemSelector = By.css( '.people-list-item' );
+		this.searchButtonLocator = By.css( '.section-nav__panel div.search' );
+		this.searchInputLocator = By.css( '.section-nav__panel input.search__input' );
+		this.searchResultsLoadingLocator = By.css( '.people-profile.is-placeholder' );
+		this.peopleListItemLocator = By.css( '.people-list-item' );
 	}
 
 	async selectTeam() {
@@ -107,36 +107,36 @@ export default class PeoplePage extends AsyncBaseContainer {
 	async searchForUser( username ) {
 		// This has to be a username without the @
 		await this.ensureSearchOpened();
-		await DriverHelper.setWhenSettable( this.driver, this.searchInputSelector, username );
+		await DriverHelper.setWhenSettable( this.driver, this.searchInputLocator, username );
 		return await this.waitForSearchResults();
 	}
 
 	async ensureSearchOpened() {
-		const searchElement = await this.driver.findElement( this.searchButtonSelector );
+		const searchElement = await this.driver.findElement( this.searchButtonLocator );
 		const classNames = await searchElement.getAttribute( 'class' );
 		if ( classNames.includes( 'is-open' ) === false ) {
-			await DriverHelper.clickWhenClickable( this.driver, this.searchButtonSelector );
+			await DriverHelper.clickWhenClickable( this.driver, this.searchButtonLocator );
 		}
 		return await DriverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			this.searchInputSelector
+			this.searchInputLocator
 		);
 	}
 
 	async waitForSearchResults() {
 		return await DriverHelper.waitUntilElementNotLocated(
 			this.driver,
-			this.searchResultsLoadingSelector
+			this.searchResultsLoadingLocator
 		);
 	}
 
 	async numberSearchResults() {
-		const peopleItems = await this.driver.findElements( this.peopleListItemSelector );
+		const peopleItems = await this.driver.findElements( this.peopleListItemLocator );
 		return peopleItems.length;
 	}
 
 	async selectOnlyPersonDisplayed() {
-		return await DriverHelper.clickWhenClickable( this.driver, this.peopleListItemSelector );
+		return await DriverHelper.clickWhenClickable( this.driver, this.peopleListItemLocator );
 	}
 
 	async inviteUser() {
@@ -188,7 +188,7 @@ export default class PeoplePage extends AsyncBaseContainer {
 	}
 
 	async cancelSearch() {
-		const cancelSelector = By.css( 'div[aria-label="Close Search"] svg' );
-		return await DriverHelper.clickWhenClickable( this.driver, cancelSelector );
+		const cancelLocator = By.css( 'div[aria-label="Close Search"] svg' );
+		return await DriverHelper.clickWhenClickable( this.driver, cancelLocator );
 	}
 }

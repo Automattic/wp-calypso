@@ -15,13 +15,13 @@ export default class JetpackConnectPage extends AsyncBaseContainer {
 	}
 
 	async addSiteUrl( url ) {
-		const urlInputSelector = By.css( '.jetpack-connect__site-address-container #siteUrl' );
-		const confirmButtonSelector = By.css(
+		const urlInputLocator = By.css( '.jetpack-connect__site-address-container #siteUrl' );
+		const confirmButtonLocator = By.css(
 			'.jetpack-connect__main .jetpack-connect__connect-button:not([disabled])'
 		);
 
-		await driverHelper.setWhenSettable( this.driver, urlInputSelector, url );
-		await driverHelper.clickWhenClickable( this.driver, confirmButtonSelector );
+		await driverHelper.setWhenSettable( this.driver, urlInputLocator, url );
+		await driverHelper.clickWhenClickable( this.driver, confirmButtonLocator );
 		return await this.waitToDisappear();
 	}
 

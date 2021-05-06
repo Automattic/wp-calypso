@@ -82,14 +82,14 @@ export default class MediaPage extends AsyncBaseContainer {
 	}
 
 	async uploadFile( file ) {
-		const fileNameInputSelector = By.css( '.media-library__upload-button input[type="file"]' );
+		const fileNameInputLocator = By.css( '.media-library__upload-button input[type="file"]' );
 		const driver = this.driver;
 
 		await driverHelper.waitUntilElementLocatedAndVisible(
 			driver,
 			By.className( 'media-library__upload-button' )
 		);
-		const fileNameInput = await driver.findElement( fileNameInputSelector );
+		const fileNameInput = await driver.findElement( fileNameInputLocator );
 		await fileNameInput.sendKeys( file );
 		await driverHelper.isElementNotLocated(
 			driver,

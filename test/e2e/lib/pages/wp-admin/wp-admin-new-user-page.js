@@ -15,25 +15,25 @@ export default class WPAdminNewUserPage extends AsyncBaseContainer {
 	}
 
 	async addUser( username, email = username ) {
-		const usernameInputSelector = By.css( '#user_login' );
-		const emailInputSelector = By.css( '#email' );
-		const passwordButtonSelector = By.css( '.wp-generate-pw' );
-		const passwordInputSelector = By.css( '#pass1' );
-		const buttonSelector = By.css( '#createusersub' );
+		const usernameInputLocator = By.css( '#user_login' );
+		const emailInputLocator = By.css( '#email' );
+		const passwordButtonLocator = By.css( '.wp-generate-pw' );
+		const passwordInputLocator = By.css( '#pass1' );
+		const buttonLocator = By.css( '#createusersub' );
 		const subscriberRoleSelect = By.css( "#role [value='subscriber']" );
-		const successNoticeSelector = By.css( '#message.updated a[href*="user-edit"]' );
+		const successNoticeLocator = By.css( '#message.updated a[href*="user-edit"]' );
 
-		await driverHelper.setWhenSettable( this.driver, usernameInputSelector, username );
-		await driverHelper.setWhenSettable( this.driver, emailInputSelector, email );
-		await driverHelper.clickWhenClickable( this.driver, passwordButtonSelector );
-		await driverHelper.setWhenSettable( this.driver, passwordInputSelector, email );
+		await driverHelper.setWhenSettable( this.driver, usernameInputLocator, username );
+		await driverHelper.setWhenSettable( this.driver, emailInputLocator, email );
+		await driverHelper.clickWhenClickable( this.driver, passwordButtonLocator );
+		await driverHelper.setWhenSettable( this.driver, passwordInputLocator, email );
 
 		driverHelper.clickWhenClickable( this.driver, subscriberRoleSelect );
 
-		await driverHelper.clickWhenClickable( this.driver, buttonSelector );
+		await driverHelper.clickWhenClickable( this.driver, buttonLocator );
 		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			successNoticeSelector
+			successNoticeLocator
 		);
 	}
 

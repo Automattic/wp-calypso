@@ -56,7 +56,7 @@ export default class SiteViewComponent extends AsyncBaseContainer {
 	}
 
 	static async switchToIFrame( driver ) {
-		const iFrameSelector = by.css( '.web-preview__frame' );
+		const iFrameLocator = by.css( '.web-preview__frame' );
 		const explicitWaitMS = config.get( 'explicitWaitMS' );
 		driver.switchTo().defaultContent();
 		await driverHelper.waitUntilElementLocatedAndVisible(
@@ -64,7 +64,7 @@ export default class SiteViewComponent extends AsyncBaseContainer {
 			by.css( '.web-preview__inner.is-loaded' )
 		);
 		return await driver.wait(
-			until.ableToSwitchToFrame( iFrameSelector ),
+			until.ableToSwitchToFrame( iFrameLocator ),
 			explicitWaitMS,
 			'Could not switch to web preview iFrame'
 		);

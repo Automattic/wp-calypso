@@ -15,7 +15,7 @@ export default class GutenboardingLanguagePickerComponent extends AsyncBaseConta
 	}
 
 	async switchLanguage( languageSlug ) {
-		await driverHelper.clickWhenClickable( this.driver, this.expectedElementSelector );
+		await driverHelper.clickWhenClickable( this.driver, this.expectedElementLocator );
 		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( `.language-picker-component__language-button [lang="${ languageSlug }"]` )

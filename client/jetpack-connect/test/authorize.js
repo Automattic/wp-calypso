@@ -256,6 +256,30 @@ describe( 'JetpackAuthorize', () => {
 		} );
 	} );
 
+	describe( 'isFromJetpackBackupPlugin', () => {
+		const isFromJetpackBackupPlugin = new JetpackAuthorize().isFromJetpackBackupPlugin;
+
+		test( 'is from backup plugin', () => {
+			const props = {
+				authQuery: {
+					from: 'jetpack-backup',
+				},
+			};
+
+			expect( isFromJetpackBackupPlugin( props ) ).toBe( true );
+		} );
+
+		test( 'is not from backup plugin', () => {
+			const props = {
+				authQuery: {
+					from: 'not-jetpack-backup',
+				},
+			};
+
+			expect( isFromJetpackBackupPlugin( props ) ).toBe( false );
+		} );
+	} );
+
 	describe( 'isFromJetpackBoost', () => {
 		const isFromJetpackBoost = new JetpackAuthorize().isFromJetpackBoost;
 

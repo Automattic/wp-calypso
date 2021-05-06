@@ -16,9 +16,9 @@ export default class AccountSettingsPage extends AsyncBaseContainer {
 	}
 
 	async chooseCloseYourAccount() {
-		const closeAccountSelector = By.css( '.account__settings-close' );
-		await driverHelper.scrollIntoView( this.driver, closeAccountSelector, 'end' );
-		return await driverHelper.clickWhenClickable( this.driver, closeAccountSelector );
+		const closeAccountLocator = By.css( '.account__settings-close' );
+		await driverHelper.scrollIntoView( this.driver, closeAccountLocator, 'end' );
+		return await driverHelper.clickWhenClickable( this.driver, closeAccountLocator );
 	}
 
 	getUsername() {

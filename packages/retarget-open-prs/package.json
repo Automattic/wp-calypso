@@ -20,6 +20,6 @@
 	},
 	"dependencies": {
 		"@octokit/core": "^3.1.2",
-		"yargs": "^15.3.1"
+		"yargs": "^17.0.1"
 	}
 }

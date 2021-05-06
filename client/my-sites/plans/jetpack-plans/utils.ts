@@ -15,14 +15,10 @@ import {
 	DAILY_PRODUCTS,
 	EXTERNAL_PRODUCTS_LIST,
 	EXTERNAL_PRODUCTS_SLUG_MAP,
-	FEATURED_PRODUCTS,
 	ITEM_TYPE_PRODUCT,
 	ITEM_TYPE_BUNDLE,
 	ITEM_TYPE_PLAN,
-	OPTIONS_SLUG_MAP,
-	PRODUCTS_WITH_OPTIONS,
 	REALTIME_PRODUCTS,
-	SUBTYPE_TO_OPTION,
 } from './constants';
 import RecordsDetails from './records-details';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -42,7 +38,7 @@ import {
 	getYearlyPlanByMonthly,
 	planHasFeature,
 	Product,
-	JETPACK_PRODUCTS_LIST_WITH_FEATURES,
+	JETPACK_SITE_PRODUCTS_WITH_FEATURES,
 	objectIsProduct,
 	PRODUCTS_LIST,
 	getJetpackProductDisplayName,
@@ -66,7 +62,6 @@ import type { AppState } from 'calypso/types';
 import type {
 	Duration,
 	SelectorProduct,
-	SelectorProductSlug,
 	DurationString,
 	SelectorProductFeaturesItem,
 	SelectorProductFeaturesSection,
@@ -74,7 +69,7 @@ import type {
 	SiteProduct,
 } from './types';
 import type {
-	JetpackPlanSlugs,
+	JetpackPlanSlug,
 	Plan,
 	JetpackPlanCardFeature,
 	JetpackPlanCardFeatureSection,
@@ -113,22 +108,6 @@ export function durationToText( duration: Duration ): TranslateResult {
 	}
 
 	return translate( '/month, paid yearly' );
-}
-
-// In the case of products that have options (daily and real-time), we want to display
-// the name of the option, not the name of one of the variants.
-export function getProductWithOptionDisplayName(
-	item: SelectorProduct,
-	isOwned: boolean,
-	isItemPlanFeature: boolean
-): TranslateResult {
-	const optionSlug = getOptionFromSlug( item.productSlug );
-
-	if ( ! optionSlug || isOwned || isItemPlanFeature ) {
-		return item.displayName;
-	}
-
-	return slugToSelectorProduct( optionSlug )?.displayName || item.displayName;
 }
 
 function getSlugInTerm( yearlySlug: string | null, slugTerm: Duration ) {
@@ -271,10 +250,6 @@ export function productButtonLabel( {
 	);
 }
 
-export function slugIsFeaturedProduct( productSlug: string ): boolean {
-	return FEATURED_PRODUCTS.includes( productSlug );
-}
-
 export function getPriceTierForUnits(
 	tiers: PriceTierEntry[],
 	units: number
@@ -375,13 +350,10 @@ export function productAboveButtonText(
  * Type guards.
  */
 
-function slugIsSelectorProductSlug( slug: string ): slug is SelectorProductSlug {
-	return PRODUCTS_WITH_OPTIONS.includes( slug as typeof PRODUCTS_WITH_OPTIONS[ number ] );
-}
 function slugIsJetpackProductSlug( slug: string ): slug is JetpackProductSlug {
-	return slug in JETPACK_PRODUCTS_LIST_WITH_FEATURES;
+	return slug in JETPACK_SITE_PRODUCTS_WITH_FEATURES;
 }
-function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlugs {
+function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlug {
 	return [ ...JETPACK_LEGACY_PLANS, ...JETPACK_RESET_PLANS ].includes( slug );
 }
 
@@ -390,16 +362,12 @@ function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlugs {
  */
 
 export function slugToItem( slug: string ): Plan | Product | SelectorProduct | null | undefined {
-	if ( slugIsSelectorProductSlug( slug ) ) {
-		return getForCurrentCROIteration( ( variation: Iterations ) =>
-			OPTIONS_SLUG_MAP[ slug ]( variation )
-		);
-	} else if ( EXTERNAL_PRODUCTS_LIST.includes( slug ) ) {
+	if ( EXTERNAL_PRODUCTS_LIST.includes( slug ) ) {
 		return getForCurrentCROIteration( ( variation: Iterations ) =>
 			EXTERNAL_PRODUCTS_SLUG_MAP[ slug ]( variation )
 		);
 	} else if ( slugIsJetpackProductSlug( slug ) ) {
-		return JETPACK_PRODUCTS_LIST_WITH_FEATURES[ slug ];
+		return JETPACK_SITE_PRODUCTS_WITH_FEATURES[ slug ];
 	} else if ( slugIsJetpackPlanSlug( slug ) ) {
 		return getPlan( slug ) as Plan;
 	}
@@ -666,16 +634,6 @@ export function slugToSelectorProduct( slug: string ): SelectorProduct | null {
 		return null;
 	}
 	return itemToSelectorProduct( item );
-}
-
-/**
- * Returns the slug of an option product given a real product/plan slug.
- *
- * @param slug string
- * @returns string | null
- */
-export function getOptionFromSlug( slug: string ): string | null {
-	return SUBTYPE_TO_OPTION[ slug ];
 }
 
 /**

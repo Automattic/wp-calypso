@@ -22,18 +22,18 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		super( driver, By.css( '.edit-post-header' ), url );
 		this.editorType = editorType;
 
-		this.editoriFrameSelector = By.css( '.calypsoify.is-iframe iframe.is-loaded' );
-		this.publishHeaderSelector = By.css( '.editor-post-publish-panel__header' );
-		this.prePublishButtonSelector = By.css(
+		this.editoriFrameLocator = By.css( '.calypsoify.is-iframe iframe.is-loaded' );
+		this.publishHeaderLocator = By.css( '.editor-post-publish-panel__header' );
+		this.prePublishButtonLocator = By.css(
 			'.editor-post-publish-panel__toggle[aria-disabled="false"]'
 		);
-		this.publishButtonSelector = By.css(
+		this.publishButtonLocator = By.css(
 			'.editor-post-publish-panel__header-publish-button button.editor-post-publish-button'
 		);
-		this.publishingSpinnerSelector = By.css(
+		this.publishingSpinnerLocator = By.css(
 			'.editor-post-publish-panel__content .components-spinner'
 		);
-		this.closePublishPanelButtonSelector = By.css(
+		this.closePublishPanelButtonLocator = By.css(
 			'.editor-post-publish-panel__header button[aria-label="Close panel"]'
 		);
 	}
@@ -49,17 +49,17 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			return;
 		}
 		await this.driver.switchTo().defaultContent();
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.editoriFrameSelector );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.editoriFrameLocator );
 		await this.driver.wait(
-			until.ableToSwitchToFrame( this.editoriFrameSelector ),
+			until.ableToSwitchToFrame( this.editoriFrameLocator ),
 			this.explicitWaitMS,
 			'Could not locate the editor iFrame.'
 		);
 	}
 
-	async initEditor( { dismissPageTemplateSelector = false } = {} ) {
-		if ( dismissPageTemplateSelector ) {
-			await this.dismissPageTemplateSelector();
+	async initEditor( { dismissPageTemplateLocator = false } = {} ) {
+		if ( dismissPageTemplateLocator ) {
+			await this.dismissPageTemplateLocator();
 		}
 		const editorWelcomeModal = new GuideComponent( this.driver );
 		await editorWelcomeModal.dismiss( 4000 );
@@ -67,19 +67,19 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async publish( { visit = false } = {} ) {
-		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
-		await driverHelper.clickWhenClickable( this.driver, this.publishButtonSelector );
+		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonLocator );
+		await driverHelper.clickWhenClickable( this.driver, this.publishButtonLocator );
 
-		const publishedPostLinkSelector = By.css( '.post-publish-panel__postpublish-header a' );
+		const publishedPostLinkLocator = By.css( '.post-publish-panel__postpublish-header a' );
 		const publishedPostLinkElement = await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			publishedPostLinkSelector
+			publishedPostLinkLocator
 		);
 
 		const publishedPostLinkUrl = await publishedPostLinkElement.getAttribute( 'href' );
 
 		if ( visit ) {
-			await driverHelper.clickWhenClickable( this.driver, publishedPostLinkSelector );
+			await driverHelper.clickWhenClickable( this.driver, publishedPostLinkLocator );
 			await driverHelper.waitUntilElementLocatedAndVisible( this.driver, By.css( '#page' ) );
 		} else {
 			// Close the panel if we're not visiting the published page
@@ -108,8 +108,8 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async enterTitle( title ) {
-		const titleSelector = By.css( '.editor-post-title__input' );
-		return driverHelper.setWhenSettable( this.driver, titleSelector, title );
+		const titleLocator = By.css( '.editor-post-title__input' );
+		return driverHelper.setWhenSettable( this.driver, titleLocator, title );
 	}
 
 	async getTitle() {
@@ -119,18 +119,18 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async enterText( text ) {
-		const appenderSelector = By.css( '.block-editor-default-block-appender' );
-		const paragraphSelector = By.css( 'p.block-editor-rich-text__editable:first-of-type' );
-		await driverHelper.clickWhenClickable( this.driver, appenderSelector );
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, paragraphSelector );
-		const paragraphElement = await this.clearText( paragraphSelector );
+		const appenderLocator = By.css( '.block-editor-default-block-appender' );
+		const paragraphLocator = By.css( 'p.block-editor-rich-text__editable:first-of-type' );
+		await driverHelper.clickWhenClickable( this.driver, appenderLocator );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, paragraphLocator );
+		const paragraphElement = await this.clearText( paragraphLocator );
 		await paragraphElement.sendKeys( text );
 
 		return paragraphElement;
 	}
 
-	async clearText( selector ) {
-		const paragraphElement = await this.driver.findElement( selector );
+	async clearText( locator ) {
+		const paragraphElement = await this.driver.findElement( locator );
 		const text = await paragraphElement.getText();
 		let i = text.length;
 		while ( i > 0 ) {
@@ -145,8 +145,8 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async replaceTextOnLastParagraph( text ) {
-		const paragraphSelector = By.css( 'p.block-editor-rich-text__editable:first-of-type' );
-		const paragraphElement = await this.clearText( paragraphSelector );
+		const paragraphLocator = By.css( 'p.block-editor-rich-text__editable:first-of-type' );
+		const paragraphElement = await this.clearText( paragraphLocator );
 		await paragraphElement.sendKeys( text );
 
 		return paragraphElement;
@@ -190,13 +190,13 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		);
 
 		// Wait for the code editor element.
-		const textAreaSelector = By.css( 'textarea.editor-post-text-editor' );
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, textAreaSelector );
+		const textAreaLocator = By.css( 'textarea.editor-post-text-editor' );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, textAreaLocator );
 
 		// Close the menu.
 		await this.toggleOptionsMenu();
 
-		return textAreaSelector;
+		return textAreaLocator;
 	}
 
 	async exitCodeEditor() {
@@ -207,23 +207,23 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async getBlocksCode() {
-		const textAreaSelector = await this.switchToCodeEditor();
-		const blocksCode = this.driver.findElement( textAreaSelector ).getAttribute( 'value' );
+		const textAreaLocator = await this.switchToCodeEditor();
+		const blocksCode = this.driver.findElement( textAreaLocator ).getAttribute( 'value' );
 		await this.exitCodeEditor();
 
 		return blocksCode;
 	}
 
 	async setBlocksCode( blocksCode ) {
-		const textAreaSelector = await this.switchToCodeEditor();
-		await driverHelper.setWhenSettable( this.driver, textAreaSelector, blocksCode );
+		const textAreaLocator = await this.switchToCodeEditor();
+		await driverHelper.setWhenSettable( this.driver, textAreaLocator, blocksCode );
 		await this.exitCodeEditor();
 	}
 
-	blockDisplayedInEditor( dataTypeSelectorVal ) {
+	blockDisplayedInEditor( dataTypeLocatorVal ) {
 		return driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
-			By.css( `[data-type="${ dataTypeSelectorVal }"]` )
+			By.css( `[data-type="${ dataTypeLocatorVal }"]` )
 		);
 	}
 
@@ -248,44 +248,44 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			By.css( '.block-editor-writing-flow' ),
 			'start'
 		);
-		const inserterToggleSelector = By.css(
+		const inserterToggleLocator = By.css(
 			'.edit-post-header .edit-post-header-toolbar__inserter-toggle'
 		);
-		const inserterMenuSelector = By.css( '.block-editor-inserter__menu' );
-		const inserterSearchInputSelector = By.css( 'input.block-editor-inserter__search-input' );
+		const inserterMenuLocator = By.css( '.block-editor-inserter__menu' );
+		const inserterSearchInputLocator = By.css( 'input.block-editor-inserter__search-input' );
 
-		if ( await driverHelper.isElementNotLocated( this.driver, inserterMenuSelector ) ) {
-			await driverHelper.clickWhenClickable( this.driver, inserterToggleSelector );
+		if ( await driverHelper.isElementNotLocated( this.driver, inserterMenuLocator ) ) {
+			await driverHelper.clickWhenClickable( this.driver, inserterToggleLocator );
 			// "Click" twice - the first click seems to trigger a tooltip, the second opens the menu
 			// See https://github.com/Automattic/wp-calypso/issues/43179
-			if ( await driverHelper.isElementNotLocated( this.driver, inserterMenuSelector ) ) {
-				await driverHelper.clickWhenClickable( this.driver, inserterToggleSelector );
+			if ( await driverHelper.isElementNotLocated( this.driver, inserterMenuLocator ) ) {
+				await driverHelper.clickWhenClickable( this.driver, inserterToggleLocator );
 			}
 
-			await driverHelper.waitUntilElementLocatedAndVisible( this.driver, inserterMenuSelector );
+			await driverHelper.waitUntilElementLocatedAndVisible( this.driver, inserterMenuLocator );
 		}
-		await driverHelper.setWhenSettable( this.driver, inserterSearchInputSelector, searchTerm );
+		await driverHelper.setWhenSettable( this.driver, inserterSearchInputLocator, searchTerm );
 	}
 
 	// @TODO: Remove `.block-editor-inserter__results .components-panel__body-title` selector in favor of the `.block-editor-inserter__block-list .block-editor-inserter__panel-title` selector when Gutenberg 8.0.0 is deployed.
 	async isBlockCategoryPresent( name ) {
-		const categorySelector =
+		const categoryLocator =
 			'.block-editor-inserter__results .components-panel__body-title, .block-editor-inserter__block-list .block-editor-inserter__panel-title';
-		const categoryName = await this.driver.findElement( By.css( categorySelector ) ).getText();
+		const categoryName = await this.driver.findElement( By.css( categoryLocator ) ).getText();
 		return categoryName.toLowerCase() === name.toLowerCase();
 	}
 
 	async closeBlockInserter() {
 		// @TODO: Remove `.edit-post-header .block-editor-inserter__toggle` selector in favor of the `.edit-post-header-toolbar__inserter-toggle` selector when Gutenberg 8.0.0 is deployed.
 		// @TODO: Remove `.block-editor-inserter__popover .components-popover__close` selector in favor of the `.edit-post-layout__inserter-panel-header .components-button` selector when Gutenberg 8.0.0 is deployed.
-		const inserterCloseSelector = By.css(
+		const inserterCloseLocator = By.css(
 			driverManager.currentScreenSize() === 'mobile'
 				? '.block-editor-inserter__popover .components-popover__close, .edit-post-layout__inserter-panel-header .components-button'
 				: '.edit-post-header .block-editor-inserter__toggle, .edit-post-header .edit-post-header-toolbar__inserter-toggle'
 		);
-		const inserterMenuSelector = By.css( '.block-editor-inserter__menu' );
-		await driverHelper.clickWhenClickable( this.driver, inserterCloseSelector );
-		await driverHelper.waitUntilElementNotLocated( this.driver, inserterMenuSelector );
+		const inserterMenuLocator = By.css( '.block-editor-inserter__menu' );
+		await driverHelper.clickWhenClickable( this.driver, inserterCloseLocator );
+		await driverHelper.waitUntilElementNotLocated( this.driver, inserterMenuLocator );
 	}
 
 	/**
@@ -304,7 +304,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	/**
-	 * @typedef {Object} BlockSelectorSettings
+	 * @typedef {Object} BlockLocatorSettings
 	 * @property {string} title The block title as it appears in the inserter
 	 * @property {string} blockClass The suffix that's part of a wrapper CSS class that's used to select the block button in the inserter.
 	 * Calcualted from the title if not present.
@@ -323,9 +323,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	 * the @see {@link insertBlock} function, too.
 	 *
 	 * @param {string} title The block title.
-	 * @returns {BlockSelectorSettings} the selector settings for the given block, to be used by {@link addBlock}.
+	 * @returns {BlockLocatorSettings} the selector settings for the given block, to be used by {@link addBlock}.
 	 */
-	getBlockSelectorSettings( title ) {
+	getBlockLocatorSettings( title ) {
 		const defaultSettings = {
 			title: title.charAt( 0 ).toUpperCase() + title.slice( 1 ), // Capitalize block name
 			blockClass: kebabCase( title.toLowerCase() ),
@@ -395,20 +395,15 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 	// return blockID - top level block id which is looks like `block-b91ce479-fb2d-45b7-ad92-22ae7a58cf04`. Should be used for further interaction with added block.
 	async addBlock( title ) {
-		const { ariaLabel, prefix, blockClass, initsWithChildFocus } = this.getBlockSelectorSettings(
+		const { ariaLabel, prefix, blockClass, initsWithChildFocus } = this.getBlockLocatorSettings(
 			title
 		);
 
-		// @TODO Remove the `deprecatedInserterBlockItemSelector` definition and usage after we activate GB 10.x on production.
-		const deprecatedInserterBlockItemSelector = `.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix.replace(
-			'\\/',
-			'-'
-		) }${ blockClass }`;
-		const inserterBlockItemSelector = By.css(
-			`.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }, ${ deprecatedInserterBlockItemSelector }`
+		const inserterBlockItemLocator = By.css(
+			`.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }`
 		);
 
-		const insertedBlockSelector = By.css(
+		const insertedBlockLocator = By.css(
 			`.block-editor-block-list__block.${
 				initsWithChildFocus ? 'has-child-selected' : 'is-selected'
 			}[aria-label*='${ ariaLabel }']`
@@ -416,19 +411,16 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		await this.openBlockInserterAndSearch( title );
 
-		if ( await driverHelper.isElementNotLocated( this.driver, inserterBlockItemSelector ) ) {
-			await driverHelper.waitUntilElementLocatedAndVisible(
-				this.driver,
-				inserterBlockItemSelector
-			);
+		if ( await driverHelper.isElementNotLocated( this.driver, inserterBlockItemLocator ) ) {
+			await driverHelper.waitUntilElementLocatedAndVisible( this.driver, inserterBlockItemLocator );
 		}
 
 		// The normal click is needed to avoid hovering the element, which seems
 		// to cause the element to become stale.
-		await driverHelper.clickWhenClickable( this.driver, inserterBlockItemSelector );
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, insertedBlockSelector );
+		await driverHelper.clickWhenClickable( this.driver, inserterBlockItemLocator );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, insertedBlockLocator );
 
-		return this.driver.findElement( insertedBlockSelector ).getAttribute( 'id' );
+		return this.driver.findElement( insertedBlockLocator ).getAttribute( 'id' );
 	}
 
 	/**
@@ -447,9 +439,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async titleShown() {
-		const titleSelector = By.css( '.editor-post-title__input' );
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, titleSelector );
-		const element = await this.driver.findElement( titleSelector );
+		const titleLocator = By.css( '.editor-post-title__input' );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, titleLocator );
+		const element = await this.driver.findElement( titleLocator );
 		return await element.getAttribute( 'value' );
 	}
 
@@ -472,13 +464,13 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async removeBlock( blockID ) {
-		const blockSelector = By.css( `.wp-block[id="${ blockID }"]` );
+		const blockLocator = By.css( `.wp-block[id="${ blockID }"]` );
 		await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
-			blockSelector,
+			blockLocator,
 			this.explicitWaitMS / 5
 		);
-		await this.driver.findElement( blockSelector ).click();
+		await this.driver.findElement( blockLocator ).click();
 		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.block-editor-block-settings-menu' )
@@ -505,10 +497,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async toggleSidebar( open = true ) {
-		const sidebarSelector = '.interface-complementary-area-header';
+		const sidebarLocator = '.interface-complementary-area-header';
 		const sidebarOpen = await driverHelper.isElementLocated(
 			this.driver,
-			By.css( sidebarSelector )
+			By.css( sidebarLocator )
 		);
 		if ( open && ! sidebarOpen ) {
 			return await driverHelper.clickWhenClickable(
@@ -542,20 +534,20 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async closePublishedPanel() {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			this.closePublishPanelButtonSelector
+			this.closePublishPanelButtonLocator
 		);
 	}
 
 	async ensureSaved() {
 		await driverHelper.clickWhenClickable( this.driver, By.css( '.editor-post-save-draft' ) );
-		const savedSelector = By.css( 'span.is-saved' );
+		const savedLocator = By.css( 'span.is-saved' );
 
-		return await driverHelper.waitUntilElementLocatedAndVisible( this.driver, savedSelector );
+		return await driverHelper.waitUntilElementLocatedAndVisible( this.driver, savedLocator );
 	}
 
 	async waitForSuccessViewPostNotice() {
-		const noticeSelector = By.css( '.components-snackbar' );
-		return await driverHelper.waitUntilElementLocatedAndVisible( this.driver, noticeSelector );
+		const noticeLocator = By.css( '.components-snackbar' );
+		return await driverHelper.waitUntilElementLocatedAndVisible( this.driver, noticeLocator );
 	}
 
 	async dismissSuccessNotice() {
@@ -597,15 +589,15 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async schedulePost( publishDate ) {
-		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.publishHeaderSelector );
+		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonLocator );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.publishHeaderLocator );
 		await driverHelper.waitUntilElementWithTextLocated(
 			this.driver,
 			By.css( '.editor-post-publish-panel__link' ),
 			publishDate
 		);
-		await driverHelper.clickWhenClickable( this.driver, this.publishButtonSelector );
-		await driverHelper.waitUntilElementNotLocated( this.driver, this.publishingSpinnerSelector );
+		await driverHelper.clickWhenClickable( this.driver, this.publishButtonLocator );
+		await driverHelper.waitUntilElementNotLocated( this.driver, this.publishingSpinnerLocator );
 		await driverHelper.waitUntilElementWithTextLocated(
 			this.driver,
 			By.css( '.post-publish-panel__postpublish-header' ),
@@ -614,16 +606,16 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async closeScheduledPanel() {
-		const publishCloseButtonSelector = By.css(
+		const publishCloseButtonLocator = By.css(
 			'.editor-post-publish-panel__header > .components-button'
 		);
-		return await driverHelper.clickWhenClickable( this.driver, publishCloseButtonSelector );
+		return await driverHelper.clickWhenClickable( this.driver, publishCloseButtonLocator );
 	}
 
 	async submitForReview() {
-		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.publishHeaderSelector );
-		return await driverHelper.clickWhenClickable( this.driver, this.publishButtonSelector );
+		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonLocator );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.publishHeaderLocator );
+		return await driverHelper.clickWhenClickable( this.driver, this.publishButtonLocator );
 	}
 
 	async closeEditor() {
@@ -642,7 +634,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		);
 	}
 
-	async dismissPageTemplateSelector() {
+	async dismissPageTemplateLocator() {
 		if ( await driverHelper.isElementLocated( this.driver, By.css( '.page-pattern-modal' ) ) ) {
 			if ( driverManager.currentScreenSize() === 'mobile' ) {
 				// For some reason, when the screensize is set to mobile,

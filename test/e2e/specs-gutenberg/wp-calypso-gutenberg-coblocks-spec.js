@@ -48,10 +48,10 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		} );
 
 		step( 'Can enter text to tweet', async function () {
-			const textSelector = By.css( '.wp-block-coblocks-click-to-tweet__text' );
-			await driverHelper.waitUntilElementLocatedAndVisible( driver, textSelector );
+			const textLocator = By.css( '.wp-block-coblocks-click-to-tweet__text' );
+			await driverHelper.waitUntilElementLocatedAndVisible( driver, textLocator );
 			return await driver
-				.findElement( textSelector )
+				.findElement( textLocator )
 				.sendKeys(
 					'The foolish man seeks happiness in the distance. The wise grows it under his feet. — James Oppenheim'
 				);

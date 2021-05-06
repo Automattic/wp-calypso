@@ -197,7 +197,10 @@ describe( 'Design Picker design utils', () => {
 			);
 		} );
 
-		it( 'should randomize the results order when the randomize flag is specified', () => {
+		// The next test is temporarily disabled because of its flakeyness.
+		// Tracked in https://github.com/Automattic/wp-calypso/issues/51743
+		// eslint-disable-next-line jest/no-disabled-tests
+		it.skip( 'should randomize the results order when the randomize flag is specified', () => {
 			// Randomization is checked by comparing randomized and non-randomized
 			// return values, and checking that these values are normally different,
 			// but that they are equal after being sorted.

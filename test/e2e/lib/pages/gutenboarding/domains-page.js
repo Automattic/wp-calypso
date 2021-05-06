@@ -22,8 +22,8 @@ export default class DomainsPage extends AsyncBaseContainer {
 	}
 
 	async enterDomainQuery( query ) {
-		const searchFieldSelector = By.css( '.domain-picker__search input[type="text"]' );
-		await driverHelper.setWhenSettable( this.driver, searchFieldSelector, query );
+		const searchFieldLocator = By.css( '.domain-picker__search input[type="text"]' );
+		await driverHelper.setWhenSettable( this.driver, searchFieldLocator, query );
 		// After typing the new query value, wait for domain suggestions to reload.
 		// The sleep value should be higher than the DOMAIN_SEARCH_DEBOUNCE_INTERVAL defined in domain-picker.
 		// https://github.com/Automattic/wp-calypso/blob/trunk/packages/domain-picker/src/constants.ts#L18
@@ -31,8 +31,8 @@ export default class DomainsPage extends AsyncBaseContainer {
 	}
 
 	async waitForDomainSuggestionsToLoad() {
-		const placeholderSelector = By.css( '.domain-picker__suggestion-item.placeholder' );
-		await driverHelper.waitUntilElementNotLocated( this.driver, placeholderSelector );
+		const placeholderLocator = By.css( '.domain-picker__suggestion-item.placeholder' );
+		await driverHelper.waitUntilElementNotLocated( this.driver, placeholderLocator );
 	}
 
 	/**
@@ -41,28 +41,28 @@ export default class DomainsPage extends AsyncBaseContainer {
 	 * @returns {Promise<string>} The free domain
 	 */
 	async getFreeDomainName() {
-		const freeDomainNameSelector = By.css(
+		const freeDomainNameLocator = By.css(
 			'.domain-picker__suggestion-item.is-free .domain-picker__suggestion-item-name'
 		);
 		const domainNameElement = await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			freeDomainNameSelector
+			freeDomainNameLocator
 		);
 		return await domainNameElement.getText();
 	}
 
 	async selectFreeDomain() {
-		const freeDomainButtonSelector = By.css( '.domain-picker__suggestion-item.is-free' );
-		await driverHelper.clickWhenClickable( this.driver, freeDomainButtonSelector );
+		const freeDomainButtonLocator = By.css( '.domain-picker__suggestion-item.is-free' );
+		await driverHelper.clickWhenClickable( this.driver, freeDomainButtonLocator );
 	}
 
 	async continueToNextStep() {
-		const nextButtonSelector = By.css( '.action-buttons__next' );
-		return await driverHelper.clickWhenClickable( this.driver, nextButtonSelector );
+		const nextButtonLocator = By.css( '.action-buttons__next' );
+		return await driverHelper.clickWhenClickable( this.driver, nextButtonLocator );
 	}
 
 	async skipStep() {
-		const skipButtonSelector = By.css( '.action-buttons__skip' );
-		return await driverHelper.clickWhenClickable( this.driver, skipButtonSelector );
+		const skipButtonLocator = By.css( '.action-buttons__skip' );
+		return await driverHelper.clickWhenClickable( this.driver, skipButtonLocator );
 	}
 }

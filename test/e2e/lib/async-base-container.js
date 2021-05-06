@@ -13,14 +13,14 @@ import * as overrideABTests from './override-abtest';
 export default class AsyncBaseContainer {
 	constructor(
 		driver,
-		expectedElementSelector,
+		expectedElementLocator,
 		url = null,
 		waitMS = config.get( 'explicitWaitMS' )
 	) {
 		this.name = this.constructor.name;
 		this.driver = driver;
 		this.screenSize = driverManager.currentScreenSize();
-		this.expectedElementSelector = expectedElementSelector;
+		this.expectedElementLocator = expectedElementLocator;
 		this.url = url;
 		this.explicitWaitMS = waitMS;
 		this.visiting = false;
@@ -64,7 +64,7 @@ export default class AsyncBaseContainer {
 	async waitForPage() {
 		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			this.expectedElementSelector,
+			this.expectedElementLocator,
 			this.explicitWaitMS
 		);
 	}
@@ -72,7 +72,7 @@ export default class AsyncBaseContainer {
 	async displayed() {
 		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
-			this.expectedElementSelector,
+			this.expectedElementLocator,
 			this.explicitWaitMS
 		);
 	}

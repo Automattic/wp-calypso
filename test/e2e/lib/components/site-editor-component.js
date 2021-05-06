@@ -15,8 +15,8 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		super( driver, By.css( '.edit-site-header' ), url );
 		this.editorType = editorType;
 
-		this.editoriFrameSelector = By.css( '.calypsoify.is-iframe iframe' );
-		this.editorCanvasiFrameSelector = By.css( 'iframe[name="editor-canvas"]' );
+		this.editoriFrameLocator = By.css( '.calypsoify.is-iframe iframe' );
+		this.editorCanvasiFrameLocator = By.css( 'iframe[name="editor-canvas"]' );
 	}
 
 	static async Expect( driver, editorType ) {
@@ -31,7 +31,7 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		}
 		await this.driver.switchTo().defaultContent();
 		await this.driver.wait(
-			until.ableToSwitchToFrame( this.editoriFrameSelector ),
+			until.ableToSwitchToFrame( this.editoriFrameLocator ),
 			this.explicitWaitMS,
 			'Could not locate the editor iFrame.'
 		);
@@ -44,7 +44,7 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 
 	async runInCanvas( fn ) {
 		await this.driver.wait(
-			until.ableToSwitchToFrame( this.editorCanvasiFrameSelector ),
+			until.ableToSwitchToFrame( this.editorCanvasiFrameLocator ),
 			this.explicitWaitMS,
 			'Could not locate the editor canvas iFrame.'
 		);

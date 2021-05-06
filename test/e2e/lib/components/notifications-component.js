@@ -13,7 +13,7 @@ import AsyncBaseContainer from '../async-base-container';
 export default class NotificationsComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, by.css( '#wpnc-panel' ) );
-		this.undoSelector = by.css( '.wpnc__undo-item' );
+		this.undoLocator = by.css( '.wpnc__undo-item' );
 	}
 
 	async selectComments() {
@@ -33,8 +33,8 @@ export default class NotificationsComponent extends AsyncBaseContainer {
 	}
 
 	async selectCommentByText( commentText ) {
-		const commentSelector = by.css( '.wpnc__excerpt' );
-		return await driverHelper.selectElementByText( this.driver, commentSelector, commentText );
+		const commentLocator = by.css( '.wpnc__excerpt' );
+		return await driverHelper.selectElementByText( this.driver, commentLocator, commentText );
 	}
 
 	async trashComment() {
@@ -44,10 +44,10 @@ export default class NotificationsComponent extends AsyncBaseContainer {
 	}
 
 	async waitForUndoMessage() {
-		return await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.undoSelector );
+		return await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.undoLocator );
 	}
 
 	async waitForUndoMessageToDisappear() {
-		return await driverHelper.waitUntilElementNotLocated( this.driver, this.undoSelector );
+		return await driverHelper.waitUntilElementNotLocated( this.driver, this.undoLocator );
 	}
 }

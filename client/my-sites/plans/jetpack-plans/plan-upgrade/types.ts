@@ -5,9 +5,9 @@
 /**
  * Type dependencies
  */
-import type { JetpackPurchasableItem, JetpackLegacyPlanSlugs } from '@automattic/calypso-products';
+import type { JetpackPurchasableItem, JetpackLegacyPlanSlug } from '@automattic/calypso-products';
 
 export type PlanRecommendation = [
-	JetpackLegacyPlanSlugs,
-	Exclude< JetpackPurchasableItem, JetpackLegacyPlanSlugs >[]
+	JetpackLegacyPlanSlug,
+	Exclude< JetpackPurchasableItem, JetpackLegacyPlanSlug >[]
 ];
