@@ -8,52 +8,77 @@ import { spawn } from 'child_process';
 import ffmpeg from 'ffmpeg-static';
 import { generatePath } from '../test-utils';
 
-let file;
-let ffVideo;
+const kill = ( proc ) =>
+	new Promise( ( resolve ) => {
+		proc.on( 'close', resolve );
+		proc.kill();
+	} );
 
-export const startVideoRecording = ( displayNum ) => async () => {
-	const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
-	file = generatePath( `screenshots/${ dateTime }.mpg` );
-	await mkdir( path.dirname( file ), { recursive: true } );
+export const buildHooks = ( displayNum ) => {
+	let file;
+	let ffVideo;
 
-	const logging = createWriteStream( generatePath( 'ffmpeg.log' ), { flags: 'a' } );
-	ffVideo = spawn( ffmpeg.path, [
-		'-f',
-		'x11grab',
-		'-video_size',
-		'1440x1000',
-		'-r',
-		30,
-		'-i',
-		`:${ displayNum }`,
-		'-pix_fmt',
-		'yuv420p',
-		'-loglevel',
-		'info',
-		file,
-	] );
-	ffVideo.stdout.pipe( logging );
-	ffVideo.stderr.pipe( logging );
-};
+	const startVideoRecording = async () => {
+		const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
+		file = generatePath( `screenshots/${ displayNum }-${ dateTime }.mpg` );
+		await mkdir( path.dirname( file ), { recursive: true } );
 
-export async function saveVideoRecording() {
-	if ( ! this.currentTest || this.currentTest.state !== 'failed' ) {
-		return;
+		const logging = createWriteStream( generatePath( 'ffmpeg.log' ), { flags: 'a' } );
+		ffVideo = spawn( ffmpeg.path, [
+			'-f',
+			'x11grab',
+			'-video_size',
+			'1440x1000',
+			'-r',
+			30,
+			'-i',
+			`:${ displayNum }`,
+			'-pix_fmt',
+			'yuv420p',
+			'-loglevel',
+			'info',
+			file,
+		] );
+		ffVideo.stdout.pipe( logging );
+		ffVideo.stderr.pipe( logging );
+	};
+
+	async function saveVideoRecording() {
+		if ( ! this.currentTest || this.currentTest.state !== 'failed' ) {
+			return;
+		}
+
+		const currentTestName = this.currentTest.title.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
+		const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
+		const newFile = generatePath( `screenshots/${ currentTestName }-${ dateTime }.mpg` );
+		await mkdir( path.dirname( newFile ), { recursive: true } );
+
+		await kill( ffVideo );
+		try {
+			await rename( file, newFile );
+		} catch ( err ) {
+			console.warn(
+				'Got an error trying to save the recorded video. This IS NOT causing the test to break, is just a warning'
+			);
+			console.warn( 'Original error:' );
+			console.warn( err );
+		}
 	}
 
-	const currentTestName = this.currentTest.title.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
-	const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
-	const newFile = generatePath( `screnshots/${ currentTestName }-${ dateTime }.mpg` );
-	await rename( file, newFile );
-}
+	const stopVideoRecording = async () => {
+		if ( ! ffVideo || ffVideo.killed ) return;
 
-export const stopVideoRecording = async () => {
-	if ( ! ffVideo ) return;
+		await kill( ffVideo );
+		try {
+			await unlink( file );
+		} catch ( err ) {
+			console.warn(
+				'Got an error trying to clean up the recorded video. This IS NOT causing the test to break, is just a warning'
+			);
+			console.warn( 'Original error:' );
+			console.warn( err );
+		}
+	};
 
-	ffVideo.kill();
-	try {
-		await unlink( file );
-	} catch ( e ) {
-		// Not a big deal if we can't delete it
-	}
+	return { startVideoRecording, saveVideoRecording, stopVideoRecording };
 };

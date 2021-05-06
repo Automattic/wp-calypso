@@ -6,9 +6,9 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import { startVideoRecording, stopVideoRecording, saveVideoRecording } from './video-recorder';
+import { buildHooks as buildVideoHooks } from './video-recorder';
 import { saveBrowserLogs } from './browser-logs';
-import { startFramebuffer, stopFramebuffer, takeScreenshot, getFreeDisplay } from './framebuffer';
+import { buildHooks as buildFramebufferHooks, getFreeDisplay } from './framebuffer';
 
 const isVideoEnabled = () => {
 	const video = config.has( 'useTestVideo' )
@@ -26,14 +26,19 @@ export const mochaHooks = async () => {
 
 	if ( isVideoEnabled() ) {
 		const displayNum = await getFreeDisplay();
+
+		const { startVideoRecording, saveVideoRecording, stopVideoRecording } = buildVideoHooks(
+			displayNum
+		);
+		const { startFramebuffer, stopFramebuffer, takeScreenshot } = buildFramebufferHooks(
+			displayNum
+		);
+
 		// Used by driver-manager
 		global.displayNum = displayNum;
+
 		// startVideoRecording must come after startFramebuffer, as it depends on the framebuffer being up
-		hooks.beforeAll = [
-			...hooks.beforeAll,
-			startFramebuffer( displayNum ),
-			startVideoRecording( displayNum ),
-		];
+		hooks.beforeAll = [ ...hooks.beforeAll, startFramebuffer, startVideoRecording ];
 		hooks.afterEach = [ ...hooks.afterEach, takeScreenshot, saveVideoRecording ];
 		hooks.afterAll = [ ...hooks.afterAll, stopFramebuffer, stopVideoRecording ];
 	}
