@@ -4,9 +4,11 @@ import _self.bashNodeScript
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 
 object WPComTests : Project({
 	id("WPComTests")
@@ -103,6 +105,20 @@ private object Gutenberg : BuildType({
 	features {
 		perfmon {
 		}
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#gutenberg-e2e"
+				messageFormat = verboseMessageFormat {
+					addBranch = true
+					addStatusText = true
+					maximumNumberOfChanges = 10
+				}
+			}
+			branchFilter = "+:<default>"
+			buildFailed = true
+			buildFinishedSuccessfully = true
+		}
 	}
 
 	failureConditions {
@@ -127,4 +143,18 @@ private object Gutenberg : BuildType({
 			}
 		}
 	}
+
+	triggers {
+		schedule {
+			schedulingPolicy = daily {
+				hour = 4
+			}
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
+			triggerBuild = always()
+			withPendingChangesOnly = false
+		}
+	}
+
 })
