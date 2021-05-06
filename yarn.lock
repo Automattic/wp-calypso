@@ -1500,6 +1500,11 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
+"@fullstory/browser@^1.4.9":
+  version "1.4.9"
+  resolved "https://registry.yarnpkg.com/@fullstory/browser/-/browser-1.4.9.tgz#e350d779caa1ba56bed22615d9b157efbefa7b47"
+  integrity sha512-h8ihrXT8pGemh5n7CKrukkEbbRIuCi0I/GJKI8DJpGyloI4WNTX5SC8Aihec7ScfK6Fi6ZpiLkGP3hogZqoNWw==
+
 "@github/webauthn-json@^0.4.1":
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/@github/webauthn-json/-/webauthn-json-0.4.1.tgz#1666441e10806c5871f3ac26e8bca169407560b3"
