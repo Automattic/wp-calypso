@@ -3,3 +3,4 @@
  */
 export * as BrowserManager from './browser-manager';
 export * as MediaHelper from './media-helper';
+export { saveScreenshot } from './hooks';
