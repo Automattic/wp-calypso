@@ -174,7 +174,6 @@ $sidebar-width-desktop: 324px;
 	// Aspect ratio of boxes. Height will be 65% of width.
 	padding-top: 65%;
 	position: relative;
-	pointer-events: none;
 	opacity: 1;
 	transform: translateZ( 0 ); // Fix for Safari rounded border overflow (2/2).
 	border: solid 1px $pattern-selector-border-color;
