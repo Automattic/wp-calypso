@@ -56,6 +56,7 @@ class Search extends Component {
 		isSavingSettings: PropTypes.bool,
 		isRequestingSettings: PropTypes.bool,
 		fields: PropTypes.object,
+		trackEvent: PropTypes.func.isRequired,
 	};
 
 	renderInfoLink( link ) {
@@ -139,14 +140,16 @@ class Search extends Component {
 	 *       as it controls the availability of the Instant Search toggle.
 	 *
 	 * @param {boolean} jetpackSearchEnabled Whether Jetpack Search is enabled after toggling
-	 * @returns void
 	 */
-	handleJetpackSearchToggleChange = ( jetpackSearchEnabled ) =>
+	handleJetpackSearchToggleChange = ( jetpackSearchEnabled ) => {
+		this.props.trackEvent( `Toggled instant_search_enabled` );
 		// Change instant toggle status with Jetpack Search toggle
-		this.props.updateFields( { instant_search_enabled: jetpackSearchEnabled }, () =>
+		this.props.updateFields( { instant_search_enabled: jetpackSearchEnabled }, () => {
 			// Set Jetpack Search status and submit form
-			this.props.setFieldValue( 'jetpack_search_enabled', jetpackSearchEnabled, true )
-		);
+			this.props.trackEvent( `Toggled jetpack_search_enabled` );
+			this.props.setFieldValue( 'jetpack_search_enabled', jetpackSearchEnabled, true );
+		} );
+	};
 
 	renderSettingsCard() {
 		const {

@@ -80,6 +80,7 @@ class SiteSettingsPerformance extends Component {
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
+					trackEvent={ trackEvent }
 				/>
 
 				{ siteIsJetpack && (
