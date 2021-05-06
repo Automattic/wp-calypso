@@ -132,8 +132,19 @@ class Search extends Component {
 		);
 	}
 
+	/**
+	 * Change Instant toggle with Jetpack Toggle.
+	 *
+	 * Note: Even if it's a Jetpack site, we need to set jetpack_search_enabled,
+	 *       as it controls the availability of the Instant Search toggle.
+	 *
+	 * @param {boolean} jetpack_search_enabled Whether Jetpack Search is enabled after toggling
+	 * @returns void
+	 */
 	handleJetpackSearchToggleChange = ( jetpack_search_enabled ) =>
+		// Change instant toggle status with Jetpack Search toggle
 		this.props.updateFields( { instant_search_enabled: jetpack_search_enabled }, () =>
+			// Set Jetpack Search status and submit form
 			this.props.setFieldValue( 'jetpack_search_enabled', jetpack_search_enabled, true )
 		);
 
