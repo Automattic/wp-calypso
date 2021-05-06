@@ -143,6 +143,7 @@ class Search extends Component {
 			isSearchModuleActive,
 			siteId,
 			translate,
+			updateFields,
 		} = this.props;
 
 		return (
@@ -161,7 +162,12 @@ class Search extends Component {
 							<FormToggle
 								checked={ !! fields.jetpack_search_enabled }
 								disabled={ isRequestingSettings || isSavingSettings }
-								onChange={ handleAutosavingToggle( 'jetpack_search_enabled' ) }
+								onChange={ () =>
+									updateFields(
+										{ instant_search_enabled: ! fields.jetpack_search_enabled },
+										handleAutosavingToggle( 'jetpack_search_enabled' )
+									)
+								}
 							>
 								{ translate( 'Improve built-in WordPress search performance.' ) }
 							</FormToggle>

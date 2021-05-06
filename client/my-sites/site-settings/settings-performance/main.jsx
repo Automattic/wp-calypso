@@ -74,6 +74,7 @@ class SiteSettingsPerformance extends Component {
 
 				<Search
 					handleAutosavingToggle={ handleAutosavingToggle }
+					updateFields={ updateFields }
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
