@@ -29,9 +29,9 @@ import {
 	isTitanMail,
 	isConciergeSession,
 	getJetpackProductsDisplayNames,
-	getMonthlyPlanByYearly,
 	isWpComPlan,
 	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
 } from '@automattic/calypso-products';
 import { MembershipSubscription, MembershipSubscriptionsSite } from 'calypso/lib/purchases/types';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -747,7 +747,7 @@ function shouldRenderMonthlyRenewalOption( purchase ) {
 
 	const plan = getPlan( purchase.productSlug );
 
-	if ( TERM_ANNUALLY !== plan.term ) {
+	if ( ! [ TERM_ANNUALLY, TERM_BIENNIALLY ].includes( plan.term ) ) {
 		return false;
 	}
 
