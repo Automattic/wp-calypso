@@ -6,20 +6,12 @@ import type { TranslateResult } from 'i18n-calypso';
 import type { ReactNode, ReactElement } from 'react';
 import type { TERM_ANNUALLY, TERM_MONTHLY } from '@automattic/calypso-products';
 import type { Purchase } from 'calypso/lib/purchases/types';
-import type {
-	ALL,
-	PERFORMANCE,
-	SECURITY,
-	ITEM_TYPE_PLAN,
-	ITEM_TYPE_BUNDLE,
-	ITEM_TYPE_PRODUCT,
-} from './constants';
+import type { ITEM_TYPE_PLAN, ITEM_TYPE_PRODUCT } from './constants';
 import type { PlanRecommendation } from './plan-upgrade/types';
 
 export type Duration = typeof TERM_ANNUALLY | typeof TERM_MONTHLY;
 export type DurationString = 'annual' | 'monthly';
-export type ProductType = typeof ALL | typeof PERFORMANCE | typeof SECURITY;
-export type ItemType = typeof ITEM_TYPE_PLAN | typeof ITEM_TYPE_BUNDLE | typeof ITEM_TYPE_PRODUCT;
+export type ItemType = typeof ITEM_TYPE_PLAN | typeof ITEM_TYPE_PRODUCT;
 
 export interface QueryArgs {
 	[ key: string ]: string;
@@ -113,7 +105,6 @@ export interface SelectorProduct extends SelectorProductCost {
 	term: Duration;
 	buttonLabel?: TranslateResult;
 	features: SelectorProductFeatures;
-	subtypes: string[];
 	infoText?: TranslateResult | ReactNode;
 	legacy?: boolean;
 	hidePrice?: boolean;
