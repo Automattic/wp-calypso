@@ -9,6 +9,7 @@ import { init, shutdown, restart } from '@fullstory/browser';
  * Internal dependencies
  */
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
+import { isEnabled } from '@automattic/calypso-config';
 import { TRACKING_IDS } from 'calypso/lib/analytics/ad-tracking/constants';
 
 interface WindowWithFullStory extends Window {
@@ -24,7 +25,13 @@ const FullStoryRecorder: FunctionComponent< Props > = ( { record = true } ) => {
 		getCurrentUserCountryCode( state )
 	);
 
+	const isFullStoryEnabled = isEnabled( 'fullstory' );
+
 	useEffect( () => {
+		if ( ! isFullStoryEnabled ) {
+			return;
+		}
+
 		// No tracking can happen unless we have a US user
 		if ( 'US' === currentUserCountryCode ) {
 			if ( ! ( window as WindowWithFullStory )._fs_initialized ) {
@@ -45,7 +52,8 @@ const FullStoryRecorder: FunctionComponent< Props > = ( { record = true } ) => {
 				shutdown();
 			};
 		}
-	}, [ currentUserCountryCode, record ] );
+	}, [ currentUserCountryCode, isFullStoryEnabled, record ] );
+
 	return null;
 };
 
