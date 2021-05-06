@@ -9,10 +9,14 @@ import ffmpeg from 'ffmpeg-static';
 let file;
 let ffVideo;
 
-export async function startVideoRecording() {
+const videoRecordingsDir = path.resolve(
+	process.env.TEMP_ASSET_PATH || path.join( __dirname, '../..' ),
+	process.env.SCREENSHOTDIR || 'screenshots'
+);
+
+export const startVideoRecording = ( displayNum ) => async () => {
 	const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
-	const fileName = `${ dateTime }.mpg`;
-	file = path.resolve( path.join( './screenshots/videos', fileName ) );
+	file = path.resolve( path.join( videoRecordingsDir, `${ dateTime }.mpg` ) );
 	await mkdir( path.dirname( file ), { recursive: true } );
 	ffVideo = child_process.spawn( ffmpeg.path, [
 		'-f',
@@ -22,14 +26,14 @@ export async function startVideoRecording() {
 		'-r',
 		30,
 		'-i',
-		process.env.DISPLAY,
+		`:${ displayNum }`,
 		'-pix_fmt',
 		'yuv420p',
 		'-loglevel',
 		'error',
 		file,
 	] );
-}
+};
 
 export async function saveVideoRecording() {
 	if ( ! this.currentTest || this.currentTest.state !== 'failed' ) {
@@ -43,7 +47,7 @@ export async function saveVideoRecording() {
 	await rename( file, newFile );
 }
 
-export async function stopVideoRecording() {
+export const stopVideoRecording = async () => {
 	if ( ! ffVideo ) return;
 
 	ffVideo.kill();
@@ -52,4 +56,4 @@ export async function stopVideoRecording() {
 	} catch ( e ) {
 		// Not a big deal if we can't delete it
 	}
-}
+};

@@ -175,9 +175,7 @@ export async function startBrowser( {
 				}
 
 				if ( global.displayNum ) {
-					// Do not update spacing in the variable below. It will break test video
-					// prettier-ignore
-					options.addArguments( `--display=:${global.displayNum}` );
+					options.addArguments( `--display=:${ global.displayNum }` );
 				}
 
 				options.addArguments( '--app=https://www.wordpress.com' );

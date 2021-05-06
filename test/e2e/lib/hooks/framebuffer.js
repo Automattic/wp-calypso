@@ -6,14 +6,13 @@ import { access, mkdir, writeFile } from 'fs/promises';
 import path from 'path';
 
 let xvfb;
-let displayNum;
 
 const screenshotsDir = path.resolve(
 	process.env.TEMP_ASSET_PATH || path.join( __dirname, '../..' ),
 	process.env.SCREENSHOTDIR || 'screenshots'
 );
 
-const getFreeDisplay = async () => {
+export const getFreeDisplay = async () => {
 	// eslint-disable-next-line no-constant-condition
 	while ( true ) {
 		const i = 99 + Math.round( Math.random() * 100 );
@@ -27,9 +26,7 @@ const getFreeDisplay = async () => {
 	}
 };
 
-export const startFramebuffer = async () => {
-	displayNum = await getFreeDisplay();
-	global.displayNum = displayNum;
+export const startFramebuffer = ( displayNum ) => async () => {
 	xvfb = spawn( 'Xvfb', [
 		'-ac',
 		`:${ displayNum }`,
