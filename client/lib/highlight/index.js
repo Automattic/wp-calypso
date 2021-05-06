@@ -69,10 +69,13 @@ function highlightNode( node, term, wrapperNode ) {
  * @private
  */
 function walk( node, term, wrapperNode ) {
+	let children;
 	debug( 'Node type', node.nodeName );
 	if ( node.childNodes.length ) {
-		for ( let i = 0; i < node.childNodes.length; i++ ) {
-			walk( node.childNodes[ i ], term, wrapperNode );
+		children = Array.from( node.childNodes );
+
+		for ( let i = 0; i < children.length; i++ ) {
+			walk( children[ i ], term, wrapperNode );
 		}
 	} else if ( node.nodeName === '#text' ) {
 		debug( 'Parsing node with value:', node.nodeValue );

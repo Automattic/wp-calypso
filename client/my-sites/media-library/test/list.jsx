@@ -47,9 +47,9 @@ describe( 'MediaLibraryList item selection', () => {
 	}
 
 	function expectSelectedItems() {
-		defer( function ( ...args ) {
+		defer( function () {
 			expect( mockSelectedItems ).to.have.members(
-				args.map( function ( arg ) {
+				Array.from( arguments ).map( function ( arg ) {
 					return fixtures.media[ arg ];
 				} )
 			);
