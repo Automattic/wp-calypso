@@ -125,7 +125,7 @@ export default function usePrepareProductsForCart( {
 
 	// Do not strip products from url until the URL has been parsed
 	const areProductsRetrievedFromUrl = ! state.isLoading && ! isInEditor;
-	useStripProductsFromUrl( siteSlug, ! areProductsRetrievedFromUrl );
+	useStripProductsFromUrl( siteSlug, ! areProductsRetrievedFromUrl || isJetpackUserlessCheckout );
 
 	return state;
 }
