@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { invoke } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,15 +15,12 @@ import {
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_ACTIVITY_LOG,
 	FEATURE_ACTIVITY_LOG_1_YEAR_V2,
-	FEATURE_ACTIVITY_LOG_30_DAYS_V2,
-	FEATURE_ACTIVITY_LOG_V2,
 	FEATURE_ADVANCED_CUSTOMIZATION,
 	FEATURE_ADVANCED_DESIGN,
 	FEATURE_ADVANCED_SEO,
 	FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
 	FEATURE_ADVANCED_SEO_TOOLS,
 	FEATURE_ADVANCED_STATS_V2,
-	FEATURE_ADVANCED_TRAFFIC_TOOLS_JETPACK,
 	FEATURE_AKISMET_V2,
 	FEATURE_ALL_BUSINESS_FEATURES,
 	FEATURE_ALL_FREE_FEATURES,
@@ -37,29 +33,17 @@ import {
 	FEATURE_AUDIO_UPLOADS,
 	FEATURE_AUTOMATED_RESTORES,
 	FEATURE_AUTOMATIC_SECURITY_FIXES,
-	FEATURE_BACKUP_ARCHIVE_15,
 	FEATURE_BACKUP_ARCHIVE_30,
 	FEATURE_BACKUP_ARCHIVE_UNLIMITED,
 	FEATURE_BACKUP_DAILY_V2,
 	FEATURE_BACKUP_REALTIME_V2,
 	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
-	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED_SIGNUP,
-	FEATURE_BACKUP_V2,
 	FEATURE_BASIC_DESIGN,
-	FEATURE_BASIC_SECURITY_JETPACK,
-	FEATURE_BASIC_SUPPORT_JETPACK,
 	FEATURE_BLANK,
 	FEATURE_BLOG_DOMAIN,
 	FEATURE_BUSINESS_ONBOARDING,
-	FEATURE_CATEGORY_DESIGN,
-	FEATURE_CATEGORY_GROWTH,
-	FEATURE_CATEGORY_OTHER,
-	FEATURE_CATEGORY_PERFORMANCE,
-	FEATURE_CATEGORY_SECURITY,
 	FEATURE_COLLECT_PAYMENTS_V2,
 	FEATURE_COMMUNITY_SUPPORT,
-	FEATURE_CONCIERGE_SETUP,
-	FEATURE_CORE_JETPACK,
 	FEATURE_CRM_LEADS_AND_FUNNEL,
 	FEATURE_CRM_NO_CONTACT_LIMITS,
 	FEATURE_CRM_PROPOSALS_AND_INVOICES,
@@ -72,7 +56,6 @@ import {
 	FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 	FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
 	FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
 	FEATURE_EMAIL_SUPPORT,
 	FEATURE_EMAIL_SUPPORT_SIGNUP,
 	FEATURE_FILTERING_V2,
@@ -82,7 +65,6 @@ import {
 	FEATURE_FREE_THEMES_SIGNUP,
 	FEATURE_FREE_WORDPRESS_THEMES,
 	FEATURE_GOOGLE_ANALYTICS,
-	FEATURE_GOOGLE_ANALYTICS_SIGNUP,
 	FEATURE_GOOGLE_MY_BUSINESS,
 	FEATURE_HOSTING,
 	FEATURE_INSTALL_PLUGINS,
@@ -96,7 +78,6 @@ import {
 	FEATURE_MALWARE_SCANNING_DAILY,
 	FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 	FEATURE_MANAGE,
-	FEATURE_MARKETING_AUTOMATION,
 	FEATURE_MEMBERSHIPS,
 	FEATURE_MONETISE,
 	FEATURE_NO_ADS,
@@ -111,7 +92,6 @@ import {
 	FEATURE_P2_ACTIVITY_OVERVIEW,
 	FEATURE_P2_ADVANCED_SEARCH,
 	FEATURE_P2_CUSTOMIZATION_OPTIONS,
-	FEATURE_P2_CUSTOM_DOMAIN,
 	FEATURE_P2_MORE_FILE_TYPES,
 	FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT,
 	FEATURE_P2_SIMPLE_SEARCH,
@@ -119,59 +99,36 @@ import {
 	FEATURE_P2_UNLIMITED_USERS,
 	FEATURE_P2_VIDEO_SHARING,
 	FEATURE_PLAN_SECURITY_DAILY,
-	FEATURE_PLAN_SECURITY_REALTIME,
-	FEATURE_POLLS_PRO,
 	FEATURE_PREMIUM_CONTENT_BLOCK,
 	FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
 	FEATURE_PREMIUM_SUPPORT,
 	FEATURE_PREMIUM_THEMES,
-	FEATURE_PREMIUM_THEMES_V2,
-	FEATURE_PRODUCT_ANTISPAM_V2,
 	FEATURE_PRODUCT_BACKUP_DAILY_V2,
 	FEATURE_PRODUCT_BACKUP_REALTIME_V2,
-	FEATURE_PRODUCT_BACKUP_V2,
 	FEATURE_PRODUCT_SCAN_DAILY_V2,
 	FEATURE_PRODUCT_SCAN_REALTIME_V2,
-	FEATURE_PRODUCT_SCAN_V2,
-	FEATURE_PRODUCT_SCAN_V2_NO_SLIDEOUT,
 	FEATURE_PRODUCT_SEARCH_V2,
 	FEATURE_REPUBLICIZE,
-	FEATURE_REVENUE_GENERATION_JETPACK,
 	FEATURE_SCAN_V2,
 	FEATURE_SEARCH_V2,
 	FEATURE_SECURE_STORAGE_V2,
-	FEATURE_SECURITY_ESSENTIALS_JETPACK,
-	FEATURE_SECURITY_REALTIME_V2,
-	FEATURE_SECURITY_SCANNING_JETPACK,
 	FEATURE_SEO_PREVIEW_TOOLS,
 	FEATURE_SFTP_DATABASE,
 	FEATURE_SHIPPING_CARRIERS,
 	FEATURE_SIMPLE_PAYMENTS,
 	FEATURE_SITE_BACKUPS_AND_RESTORE,
-	FEATURE_SITE_BACKUPS_JETPACK,
-	FEATURE_SITE_MONETIZATION_V2,
 	FEATURE_SITE_STATS,
-	FEATURE_SOCIAL_MEDIA_POSTING_V2,
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURE_SPAM_BLOCK_V2,
-	FEATURE_SPEED_ADVANCED_JETPACK,
-	FEATURE_SPEED_JETPACK,
-	FEATURE_SPEED_UNLIMITED_JETPACK,
 	FEATURE_SPELLING_CORRECTION_V2,
 	FEATURE_STANDARD_SECURITY_TOOLS,
 	FEATURE_TRAFFIC_TOOLS,
-	FEATURE_TRAFFIC_TOOLS_JETPACK,
 	FEATURE_UNLIMITED_PREMIUM_THEMES,
 	FEATURE_UNLIMITED_PRODUCTS_SERVICES,
 	FEATURE_UNLIMITED_STORAGE,
-	FEATURE_UNLIMITED_STORAGE_SIGNUP,
 	FEATURE_UPLOAD_PLUGINS,
 	FEATURE_UPLOAD_THEMES,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
-	FEATURE_UPLOAD_VIDEO,
-	FEATURE_VIDEO_CDN_LIMITED,
-	FEATURE_VIDEO_CDN_UNLIMITED,
-	FEATURE_VIDEO_HOSTING_JETPACK,
 	FEATURE_VIDEO_HOSTING_V2,
 	FEATURE_VIDEO_UPLOADS,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
@@ -185,29 +142,6 @@ import MaterialIcon from 'calypso/components/material-icon';
 import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
-
-export const FEATURE_CATEGORIES = {
-	[ FEATURE_CATEGORY_SECURITY ]: {
-		getSlug: () => FEATURE_CATEGORY_SECURITY,
-		getTitle: () => i18n.translate( 'Security' ),
-	},
-	[ FEATURE_CATEGORY_PERFORMANCE ]: {
-		getSlug: () => FEATURE_CATEGORY_PERFORMANCE,
-		getTitle: () => i18n.translate( 'Performance' ),
-	},
-	[ FEATURE_CATEGORY_GROWTH ]: {
-		getSlug: () => FEATURE_CATEGORY_GROWTH,
-		getTitle: () => i18n.translate( 'Growth' ),
-	},
-	[ FEATURE_CATEGORY_DESIGN ]: {
-		getSlug: () => FEATURE_CATEGORY_DESIGN,
-		getTitle: () => i18n.translate( 'Design' ),
-	},
-	[ FEATURE_CATEGORY_OTHER ]: {
-		getSlug: () => FEATURE_CATEGORY_OTHER,
-		getTitle: () => i18n.translate( 'Other' ),
-	},
-};
 
 export const FEATURES_LIST = {
 	[ FEATURE_BLANK ]: {
@@ -384,28 +318,12 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Upload themes and plugins' ),
 		getDescription: () => i18n.translate( 'Upload custom themes and plugins on your site.' ),
 	},
-
-	[ FEATURE_GOOGLE_ANALYTICS_SIGNUP ]: {
-		getSlug: () => FEATURE_GOOGLE_ANALYTICS_SIGNUP,
-		getTitle: () => i18n.translate( 'Google Analytics' ),
-	},
-
 	[ FEATURE_EMAIL_SUPPORT_SIGNUP ]: {
 		getSlug: () => FEATURE_EMAIL_SUPPORT_SIGNUP,
 		getTitle: () => i18n.translate( 'Unlimited email support' ),
 		getDescription: () =>
 			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
 	},
-
-	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP ]: {
-		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
-		getTitle: () => i18n.translate( 'Email and live chat support' ),
-		getDescription: () =>
-			i18n.translate(
-				'High quality support to help you get your website up and running and working how you want it.'
-			),
-	},
-
 	[ FEATURE_FREE_THEMES_SIGNUP ]: {
 		getSlug: () => FEATURE_FREE_THEMES_SIGNUP,
 		getTitle: () => i18n.translate( 'Dozens of free themes' ),
@@ -423,14 +341,6 @@ export const FEATURES_LIST = {
 				'Your site address will use a WordPress.com subdomain (sitename.wordpress.com).'
 			),
 	},
-
-	[ FEATURE_UNLIMITED_STORAGE_SIGNUP ]: {
-		getSlug: () => FEATURE_UNLIMITED_STORAGE_SIGNUP,
-		getTitle: () => i18n.translate( '200 GB storage' ),
-		getDescription: () =>
-			i18n.translate( 'Upload more images, videos, audio, and documents to your website.' ),
-	},
-
 	[ FEATURE_ADVANCED_SEO_TOOLS ]: {
 		getSlug: () => FEATURE_ADVANCED_SEO_TOOLS,
 		getTitle: () => i18n.translate( 'Advanced SEO tools' ),
@@ -445,31 +355,10 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Advanced SEO (Search Engine Optimisation) tools' ),
 		getDescription: () => {},
 	},
-
-	[ FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED_SIGNUP ]: {
-		getSlug: () => FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED_SIGNUP,
-		getTitle: () => i18n.translate( 'Unlimited backup space' ),
-	},
-
 	[ FEATURE_FREE_WORDPRESS_THEMES ]: {
 		getSlug: () => FEATURE_FREE_WORDPRESS_THEMES,
 		getTitle: () => i18n.translate( 'Free WordPress Themes' ),
 	},
-
-	[ FEATURE_VIDEO_CDN_LIMITED ]: {
-		getSlug: () => FEATURE_VIDEO_CDN_LIMITED,
-		getTitle: () => i18n.translate( '13 GB video storage' ),
-		getDescription: () =>
-			i18n.translate(
-				'High-speed video hosting on our CDN, free of ads and watermarks, fully optimized for WordPress.'
-			),
-	},
-
-	[ FEATURE_VIDEO_CDN_UNLIMITED ]: {
-		getSlug: () => FEATURE_VIDEO_CDN_UNLIMITED,
-		getTitle: () => i18n.translate( 'Unlimited video storage' ),
-	},
-
 	[ FEATURE_SEO_PREVIEW_TOOLS ]: {
 		getSlug: () => FEATURE_SEO_PREVIEW_TOOLS,
 		getTitle: () => i18n.translate( 'SEO tools' ),
@@ -617,13 +506,6 @@ export const FEATURES_LIST = {
 			),
 		getStoreSlug: () => 'videopress',
 	},
-
-	[ FEATURE_UPLOAD_VIDEO ]: {
-		getSlug: () => FEATURE_UPLOAD_VIDEO,
-		getTitle: () => i18n.translate( 'Upload videos' ),
-		getDescription: () => {},
-	},
-
 	[ FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ]: {
 		getSlug: () => FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 		getTitle: () => i18n.translate( 'VideoPress support' ),
@@ -955,12 +837,6 @@ export const FEATURES_LIST = {
 		getDescription: () =>
 			i18n.translate( 'Browse or restore any backup made within the past 30 days.' ),
 	},
-	[ FEATURE_BACKUP_ARCHIVE_15 ]: {
-		getSlug: () => FEATURE_BACKUP_ARCHIVE_15,
-		getTitle: () => i18n.translate( '15-day backup archive' ),
-		getDescription: () =>
-			i18n.translate( 'Browse or restore any backup made within the past 15 days.' ),
-	},
 	[ FEATURE_BACKUP_ARCHIVE_UNLIMITED ]: {
 		getSlug: () => FEATURE_BACKUP_ARCHIVE_UNLIMITED,
 		getTitle: () => i18n.translate( 'Unlimited backup archive' ),
@@ -1033,137 +909,11 @@ export const FEATURES_LIST = {
 				'Take the guesswork out of site management and debugging with a filterable record of all the activity happening on your site.'
 			),
 	},
-	[ FEATURE_POLLS_PRO ]: {
-		getSlug: () => FEATURE_POLLS_PRO,
-		getTitle: () => i18n.translate( 'Advanced polls and ratings' ),
-		getDescription: () =>
-			i18n.translate(
-				'Custom polls, surveys, ratings, and quizzes for the ultimate in customer and reader engagement.'
-			),
-	},
-
-	[ FEATURE_CORE_JETPACK ]: {
-		getSlug: () => FEATURE_CORE_JETPACK,
-		getTitle: () => i18n.translate( 'Core Jetpack services' ),
-		getDescription: () => i18n.translate( 'Stats, themes, and promotion tools.' ),
-		hideInfoPopover: true,
-	},
-	[ FEATURE_BASIC_SECURITY_JETPACK ]: {
-		getSlug: () => FEATURE_BASIC_SECURITY_JETPACK,
-		getTitle: () => i18n.translate( 'Basic security' ),
-		getDescription: () =>
-			i18n.translate( 'Brute force protection, monitoring, secure logins, updates.' ),
-		hideInfoPopover: true,
-	},
-
-	[ FEATURE_BASIC_SUPPORT_JETPACK ]: {
-		getSlug: () => FEATURE_BASIC_SUPPORT_JETPACK,
-		getTitle: () => i18n.translate( 'Basic support' ),
-		getDescription: () => i18n.translate( 'Free support to help you make the most of Jetpack.' ),
-		hideInfoPopover: true,
-	},
-
-	[ FEATURE_SPEED_JETPACK ]: {
-		getSlug: () => FEATURE_SPEED_JETPACK,
-		getTitle: () => i18n.translate( 'Speed and storage' ),
-		getDescription: () =>
-			i18n.translate( 'Unlimited use of our high speed image content delivery network.' ),
-		hideInfoPopover: true,
-	},
-
-	[ FEATURE_SPEED_ADVANCED_JETPACK ]: {
-		getSlug: () => FEATURE_SPEED_ADVANCED_JETPACK,
-		getTitle: () => i18n.translate( 'Speed and storage' ),
-		getDescription: () =>
-			i18n.translate( 'Also includes 13 GB of high-speed, ad-free video hosting.' ),
-		hideInfoPopover: true,
-	},
-
-	[ FEATURE_SPEED_UNLIMITED_JETPACK ]: {
-		getSlug: () => FEATURE_SPEED_UNLIMITED_JETPACK,
-		getTitle: () => i18n.translate( 'Speed and storage' ),
-		getDescription: () =>
-			i18n.translate( 'Also includes unlimited, high-speed, ad-free video hosting.' ),
-		hideInfoPopover: true,
-	},
-
-	[ FEATURE_SITE_BACKUPS_JETPACK ]: {
-		getSlug: () => FEATURE_SITE_BACKUPS_JETPACK,
-		getTitle: () => i18n.translate( 'Site backups' ),
-		getDescription: () =>
-			i18n.translate(
-				'Automated daily backups (unlimited storage), one-click restores, and 30-day archive.'
-			),
-		hideInfoPopover: true,
-	},
-
 	[ FEATURE_SITE_BACKUPS_AND_RESTORE ]: {
 		getSlug: () => FEATURE_SITE_BACKUPS_AND_RESTORE,
 		getTitle: () => i18n.translate( 'Automated site backups and one-click restore' ),
 		getDescription: () => {},
 	},
-
-	[ FEATURE_SECURITY_SCANNING_JETPACK ]: {
-		getSlug: () => FEATURE_SECURITY_SCANNING_JETPACK,
-		getTitle: () => i18n.translate( 'Advanced security' ),
-		getDescription: () =>
-			i18n.translate( 'Also includes daily scans for malware and security threats.' ),
-		hideInfoPopover: true,
-	},
-
-	[ FEATURE_REVENUE_GENERATION_JETPACK ]: {
-		getSlug: () => FEATURE_REVENUE_GENERATION_JETPACK,
-		getTitle: () => i18n.translate( 'Revenue generation' ),
-		getDescription: () => i18n.translate( 'High-quality ads to generate income from your site.' ),
-		hideInfoPopover: true,
-	},
-
-	[ FEATURE_VIDEO_HOSTING_JETPACK ]: {
-		getSlug: () => FEATURE_VIDEO_HOSTING_JETPACK,
-		getTitle: () => i18n.translate( 'Video hosting' ),
-		getDescription: () => i18n.translate( '13 GB of high-speed, HD, and ad-free video hosting.' ),
-		hideInfoPopover: true,
-	},
-
-	[ FEATURE_SECURITY_ESSENTIALS_JETPACK ]: {
-		getSlug: () => FEATURE_SECURITY_ESSENTIALS_JETPACK,
-		getTitle: () => i18n.translate( 'Essential security' ),
-		getDescription: () =>
-			i18n.translate( 'Daily backups, unlimited storage, one-click restores, spam filtering.' ),
-		hideInfoPopover: true,
-	},
-
-	[ FEATURE_TRAFFIC_TOOLS_JETPACK ]: {
-		getSlug: () => FEATURE_TRAFFIC_TOOLS_JETPACK,
-		getTitle: () => i18n.translate( 'Advanced traffic tools' ),
-		getDescription: () =>
-			i18n.translate( 'Automatically re-promote existing content to social media.' ),
-		hideInfoPopover: true,
-	},
-
-	[ FEATURE_ADVANCED_TRAFFIC_TOOLS_JETPACK ]: {
-		getSlug: () => FEATURE_ADVANCED_TRAFFIC_TOOLS_JETPACK,
-		getTitle: () => i18n.translate( 'Advanced traffic tools' ),
-		getDescription: () => i18n.translate( 'Also includes SEO previews and Google Analytics.' ),
-		hideInfoPopover: true,
-	},
-
-	[ FEATURE_CONCIERGE_SETUP ]: {
-		getSlug: () => FEATURE_CONCIERGE_SETUP,
-		getTitle: () => i18n.translate( 'Concierge setup' ),
-		getDescription: () =>
-			i18n.translate( 'A complimentary one-on-one orientation session with a Jetpack expert.' ),
-	},
-
-	[ FEATURE_MARKETING_AUTOMATION ]: {
-		getSlug: () => FEATURE_MARKETING_AUTOMATION,
-		getTitle: () => i18n.translate( 'Social media automation' ),
-		getDescription: () =>
-			i18n.translate(
-				'Re-share previously published content on social media, or schedule new shares in advance.'
-			),
-	},
-
 	[ FEATURE_ACCEPT_PAYMENTS ]: {
 		getSlug: () => FEATURE_ACCEPT_PAYMENTS,
 		getTitle: () => i18n.translate( 'Accept payments in 60+ countries' ),
@@ -1240,47 +990,6 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'All Security Daily features' ),
 		isPlan: true,
 	},
-
-	[ FEATURE_PLAN_SECURITY_REALTIME ]: {
-		getSlug: () => FEATURE_PLAN_SECURITY_REALTIME,
-		getIcon: () => 'lock',
-		getTitle: () =>
-			i18n.translate( '{{strong}}All Security {{em}}Real{{nbh/}}time{{/em}}{{/strong}} features', {
-				components: {
-					em: <em />,
-					strong: <strong />,
-					nbh: <>&#8209;</>,
-				},
-				comment: '{{nbh}} represents a non breakable hyphen',
-			} ),
-		isPlan: true,
-	},
-
-	[ FEATURE_SECURITY_REALTIME_V2 ]: {
-		getSlug: () => FEATURE_SECURITY_REALTIME_V2,
-		getIcon: () => 'lock',
-		getTitle: () =>
-			i18n.translate( 'Security {{em}}Real-time{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ),
-		getDescription: () =>
-			i18n.translate(
-				'Includes all Jetpack security features to protect your site in real-time: backups, malware scanning, spam protection. {{link}}Learn more{{/link}}.',
-				{
-					components: {
-						link: <ExternalLink icon href="https://jetpack.com/features/security/" />,
-					},
-				}
-			),
-	},
-
-	[ FEATURE_BACKUP_V2 ]: {
-		getSlug: () => FEATURE_BACKUP_V2,
-		getTitle: () => i18n.translate( 'Automated WordPress backups' ),
-	},
-
 	[ FEATURE_BACKUP_DAILY_V2 ]: {
 		getSlug: () => FEATURE_BACKUP_DAILY_V2,
 		getTitle: () => i18n.translate( 'Automated daily backups (off-site)' ),
@@ -1290,22 +999,6 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_BACKUP_REALTIME_V2,
 		getTitle: () => i18n.translate( 'Backup (real-time, off-site)' ),
 	},
-
-	[ FEATURE_PRODUCT_BACKUP_V2 ]: {
-		getSlug: () => FEATURE_PRODUCT_BACKUP_V2,
-		getIcon: () => 'cloud-upload',
-		getTitle: () => i18n.translate( 'Backup' ),
-		getDescription: () =>
-			i18n.translate(
-				'Automatic backups of your entire site, with unlimited, WordPress-optimized secure storage. {{link}}Learn more{{/link}}.',
-				{
-					components: {
-						link: <ExternalLink icon href="https://jetpack.com/upgrade/backup/" />,
-					},
-				}
-			),
-	},
-
 	[ FEATURE_PRODUCT_BACKUP_DAILY_V2 ]: {
 		getSlug: () => FEATURE_PRODUCT_BACKUP_DAILY_V2,
 		getIcon: () => 'cloud-upload',
@@ -1339,40 +1032,6 @@ export const FEATURES_LIST = {
 	[ FEATURE_SCAN_V2 ]: {
 		getSlug: () => FEATURE_SCAN_V2,
 		getTitle: () => i18n.translate( 'Automated daily scanning' ),
-	},
-
-	[ FEATURE_PRODUCT_SCAN_V2 ]: {
-		getSlug: () => FEATURE_PRODUCT_SCAN_V2,
-		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
-		getTitle: () => i18n.translate( 'Scan' ),
-		getDescription: () =>
-			i18n.translate(
-				'Automated scanning for security vulnerabilities or threats on your site. Includes instant notifications and automatic security fixes. {{link}}Learn more{{/link}}.',
-				{
-					components: {
-						link: <ExternalLink icon href="https://jetpack.com/upgrade/scan/" />,
-					},
-				}
-			),
-	},
-
-	/**
-	 * This is a special feature that is defined in order to be able to specifically exclude it from rendering the product slide-out
-	 * in Jetpack Security real-time plan only (in the alt-v2 plans grid page)
-	 */
-	[ FEATURE_PRODUCT_SCAN_V2_NO_SLIDEOUT ]: {
-		getSlug: () => FEATURE_PRODUCT_SCAN_V2_NO_SLIDEOUT,
-		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
-		getTitle: () => i18n.translate( 'Scan' ),
-		getDescription: () =>
-			i18n.translate(
-				'Automated scanning for security vulnerabilities or threats on your site. Includes instant notifications and automatic security fixes. {{link}}Learn more{{/link}}.',
-				{
-					components: {
-						link: <ExternalLink icon href="https://jetpack.com/upgrade/scan/" />,
-					},
-				}
-			),
 	},
 
 	// * Scan Daily *
@@ -1416,51 +1075,6 @@ export const FEATURES_LIST = {
 	[ FEATURE_ANTISPAM_V2 ]: {
 		getSlug: () => FEATURE_ANTISPAM_V2,
 		getTitle: () => i18n.translate( 'Comment and form protection' ),
-	},
-
-	[ FEATURE_PRODUCT_ANTISPAM_V2 ]: {
-		getSlug: () => FEATURE_PRODUCT_ANTISPAM_V2,
-		getIcon: () => 'bug',
-		getTitle: () => i18n.translate( 'Anti-spam' ),
-		getDescription: () =>
-			i18n.translate(
-				'Automated spam protection for comments and forms, powered by Akismet. Save time, get more responses, and give your visitors a better experience. {{link}}Learn more{{/link}}.',
-				{
-					components: {
-						link: <ExternalLink icon href="https://jetpack.com/upgrade/anti-spam/" />,
-					},
-				}
-			),
-	},
-
-	[ FEATURE_ACTIVITY_LOG_V2 ]: {
-		getSlug: () => FEATURE_ACTIVITY_LOG_V2,
-		getIcon: () => 'clipboard',
-		getTitle: () => i18n.translate( 'Activity log' ),
-		getDescription: () =>
-			i18n.translate(
-				'View every change to your site. Pairs with Backup to restore your site to any earlier version. {{link}}Learn more.{{/link}}',
-				{
-					components: {
-						link: <ExternalLink icon href="https://jetpack.com/features/security/activity-log/" />,
-					},
-				}
-			),
-	},
-
-	[ FEATURE_ACTIVITY_LOG_30_DAYS_V2 ]: {
-		getSlug: () => FEATURE_ACTIVITY_LOG_30_DAYS_V2,
-		getIcon: () => 'clipboard',
-		getTitle: () => i18n.translate( 'Activity log: 30-day archive' ),
-		getDescription: () =>
-			i18n.translate(
-				'View every change to your site in the last 30 days. Pairs with Backup to restore your site to any earlier version. {{link}}Learn more.{{/link}}',
-				{
-					components: {
-						link: <ExternalLink icon href="https://jetpack.com/features/security/activity-log/" />,
-					},
-				}
-			),
 	},
 
 	[ FEATURE_ACTIVITY_LOG_1_YEAR_V2 ]: {
@@ -1546,25 +1160,6 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'No contact limits' ),
 	},
 
-	[ FEATURE_SOCIAL_MEDIA_POSTING_V2 ]: {
-		getSlug: () => FEATURE_SOCIAL_MEDIA_POSTING_V2,
-		getTitle: () => i18n.translate( 'Scheduled social media posting' ),
-		getDescription: () =>
-			i18n.translate(
-				'Automate and schedule your social media content on Facebook, Instagram, Twitter, LinkedIn, and Tumblr. {{link}}Learn more.{{/link}}',
-				{
-					components: {
-						link: (
-							<ExternalLink
-								icon
-								href="https://jetpack.com/features/traffic/automatic-publishing/"
-							/>
-						),
-					},
-				}
-			),
-	},
-
 	[ FEATURE_COLLECT_PAYMENTS_V2 ]: {
 		getSlug: () => FEATURE_COLLECT_PAYMENTS_V2,
 		getTitle: () => i18n.translate( 'Collect payments' ),
@@ -1583,35 +1178,6 @@ export const FEATURES_LIST = {
 				}
 			),
 	},
-
-	[ FEATURE_SITE_MONETIZATION_V2 ]: {
-		getSlug: () => FEATURE_SITE_MONETIZATION_V2,
-		getTitle: () => i18n.translate( 'Site monetization' ),
-		getDescription: () =>
-			i18n.translate(
-				'Earn money on your site by displaying ads from the WordPress.com ad network. {{link}}Learn more.{{/link}}',
-				{
-					components: {
-						link: <ExternalLink icon href="https://jetpack.com/features/traffic/ads/" />,
-					},
-				}
-			),
-	},
-
-	[ FEATURE_PREMIUM_THEMES_V2 ]: {
-		getSlug: () => FEATURE_PREMIUM_THEMES_V2,
-		getTitle: () => i18n.translate( 'Unlimited premium themes' ),
-		getDescription: () =>
-			i18n.translate(
-				'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses. {{link}}Learn more{{/link}}.',
-				{
-					components: {
-						link: <ExternalLink icon href="https://jetpack.com/features/design/themes/" />,
-					},
-				}
-			),
-	},
-
 	[ FEATURE_SECURE_STORAGE_V2 ]: {
 		getSlug: () => FEATURE_SECURE_STORAGE_V2,
 		getTitle: () => i18n.translate( 'Unlimited site storage' ),
@@ -1750,13 +1316,6 @@ export const FEATURES_LIST = {
 		getDescription: () =>
 			i18n.translate( 'A complete record of everything that happens on your P2.' ),
 	},
-
-	[ FEATURE_P2_CUSTOM_DOMAIN ]: {
-		getSlug: () => FEATURE_P2_CUSTOM_DOMAIN,
-		getTitle: () => i18n.translate( 'Custom domain' ),
-		getDescription: () => i18n.translate( 'Make your P2 more memorable using your own domain.' ),
-	},
-
 	[ FEATURE_SFTP_DATABASE ]: {
 		getSlug: () => FEATURE_SFTP_DATABASE,
 		getTitle: () => i18n.translate( 'SFTP (SSH File Transfer Protocol) and Database Access' ),
@@ -1786,22 +1345,10 @@ export const getPlanFeaturesObject = ( planFeaturesList ) => {
 	return planFeaturesList.map( ( featuresConst ) => FEATURES_LIST[ featuresConst ] );
 };
 
-export function getValidFeatureKeys() {
-	return Object.keys( FEATURES_LIST );
-}
-
 export function isValidFeatureKey( feature ) {
 	return !! FEATURES_LIST[ feature ];
 }
 
 export function getFeatureByKey( feature ) {
 	return FEATURES_LIST[ feature ];
-}
-
-export function getFeatureCategoryByKey( category ) {
-	return FEATURE_CATEGORIES[ category ];
-}
-
-export function getFeatureTitle( feature ) {
-	return invoke( FEATURES_LIST, [ feature, 'getTitle' ] );
 }

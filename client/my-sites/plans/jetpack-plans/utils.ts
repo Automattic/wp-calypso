@@ -10,7 +10,7 @@ import { createSelector } from '@automattic/state-utils';
 /**
  * Internal dependencies
  */
-import { getFeatureByKey, getFeatureCategoryByKey } from 'calypso/lib/plans/features-list';
+import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import {
 	EXTERNAL_PRODUCTS_LIST,
 	EXTERNAL_PRODUCTS_SLUG_MAP,
@@ -46,7 +46,6 @@ import {
 import config from '@automattic/calypso-config';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { getForCurrentCROIteration, Iterations } from './iterations';
-import { MORE_FEATURES_LINK } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
@@ -68,7 +67,6 @@ import type {
 	JetpackPlanSlug,
 	Plan,
 	JetpackPlanCardFeature,
-	JetpackPlanCardFeatureSection,
 	JetpackProductSlug,
 } from '@automattic/calypso-products';
 
@@ -484,7 +482,6 @@ export function itemToSelectorProduct(
 					getForCurrentCROIteration( ( variation: Iterations ) =>
 						buildCardFeaturesFromItem( item, undefined, variation )
 					) || [],
-				more: MORE_FEATURES_LINK,
 			},
 			legacy: ! isResetPlan,
 		};
@@ -544,45 +541,19 @@ export function buildCardFeatureItemFromFeatureKey(
 /**
  * Builds the feature items passed to the product card, from feature keys.
  *
- * @param {JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection} features Feature keys
+ * @param {JetpackPlanCardFeature[]} features Feature keys
  * @param {object?} options Options
  * @param {string?} variation Experiment variation
  * @returns {SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[]} Features
  */
 export function buildCardFeaturesFromFeatureKeys(
-	features: JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection,
+	features: JetpackPlanCardFeature[],
 	options?: Record< string, unknown >,
 	variation?: Iterations
 ): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
-	// Without sections (JetpackPlanCardFeature[])
-	if ( Array.isArray( features ) ) {
-		return compact(
-			features.map( ( f ) => buildCardFeatureItemFromFeatureKey( f, options, variation ) )
-		);
-	}
-
-	// With sections (JetpackPlanCardFeatureSection)
-	if ( features !== null && typeof features === 'object' ) {
-		const result = [] as SelectorProductFeaturesSection[];
-
-		Object.getOwnPropertySymbols( features ).map( ( key ) => {
-			const category = getFeatureCategoryByKey( key );
-			const subfeatures = features[ key ];
-
-			if ( category ) {
-				result.push( {
-					heading: category.getTitle(),
-					list: subfeatures.map( ( f: JetpackPlanCardFeature ) =>
-						buildCardFeatureItemFromFeatureKey( f, options, variation )
-					),
-				} as SelectorProductFeaturesSection );
-			}
-		} );
-
-		return result;
-	}
-
-	return [];
+	return compact(
+		features.map( ( f ) => buildCardFeatureItemFromFeatureKey( f, options, variation ) )
+	);
 }
 
 /**
@@ -599,7 +570,7 @@ export function buildCardFeaturesFromItem(
 	variation?: Iterations
 ): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
 	if ( objectIsPlan( item ) ) {
-		const features = item.getPlanCardFeatures?.( variation );
+		const features = item.getPlanCardFeatures?.();
 
 		if ( features ) {
 			return buildCardFeaturesFromFeatureKeys( features, options, variation );
