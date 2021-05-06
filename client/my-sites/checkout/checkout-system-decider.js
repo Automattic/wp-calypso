@@ -22,6 +22,7 @@ import Recaptcha from 'calypso/signup/recaptcha';
 import getCartKey from './get-cart-key';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
+import AnalyticsSafeContainer from 'calypso/components/analytics-safe-container';
 
 // Aliasing wpcom functions explicitly bound to wpcom is required here;
 // otherwise we get `this is not defined` errors.

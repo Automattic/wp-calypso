@@ -55,6 +55,7 @@ import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions'
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { inJetpackCloudOAuthOverride } from 'calypso/lib/jetpack/oauth-override';
 import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
+import { init as fullStoryInit } from '@fullstory/browser';
 
 const debug = debugFactory( 'calypso' );
 
@@ -283,6 +284,10 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 
 	// The analytics module requires user (when logged in) and superProps objects. Inject these here.
 	initializeAnalytics( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
+
+	// TEMP: FullStory Test
+	console.log( `----FullStory Init----` );
+	fullStoryInit( { orgId: '1149DX' } );
 
 	setupErrorLogger( reduxStore );
 
