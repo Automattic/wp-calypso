@@ -34,6 +34,7 @@ import GuidedTransferDetails from './guided-transfer-details';
 import HappinessSupport from 'calypso/components/happiness-support';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
 import AtomicStoreThankYouCard from './atomic-store-thank-you-card';
+import MarketplacePurchaseDetails from './marletplace-purchase-details';
 import {
 	isChargeback,
 	isDelayedDomainTransfer,
@@ -57,6 +58,7 @@ import {
 	isJetpackBusinessPlan,
 	isWpComBusinessPlan,
 	shouldFetchSitePlans,
+	isMarketplaceProduct,
 } from '@automattic/calypso-products';
 import { isExternal } from 'calypso/lib/url';
 import JetpackPlanDetails from './jetpack-plan-details';
@@ -508,7 +510,6 @@ export class CheckoutThankYou extends React.Component {
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			const purchases = getPurchases( this.props );
 			const failedPurchases = getFailedPurchases( this.props );
-
 			if ( failedPurchases.length > 0 ) {
 				return [ FailedPurchaseDetails ];
 			} else if ( purchases.some( isJetpackPlan ) ) {
@@ -523,6 +524,8 @@ export class CheckoutThankYou extends React.Component {
 				return [ BusinessPlanDetails, find( purchases, isBusiness ) ];
 			} else if ( purchases.some( isEcommerce ) ) {
 				return [ EcommercePlanDetails, find( purchases, isEcommerce ) ];
+			} else if ( purchases.some( isMarketplaceProduct ) ) {
+				return [ MarketplacePurchaseDetails, find( purchases, isEcommerce ) ];
 			} else if ( purchases.some( isDomainRegistration ) ) {
 				return [
 					DomainRegistrationDetails,
