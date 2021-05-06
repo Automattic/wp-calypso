@@ -52,7 +52,7 @@ describe( 'JetpackFreeCardButton', () => {
 			ui: { selectedSiteId: siteId },
 			sites: {
 				items: {
-					[ siteId ]: { options: { admin_url: adminUrl } },
+					[ siteId ]: { options: { admin_url: adminUrl }, jetpack: true },
 				},
 			},
 		};
@@ -60,6 +60,21 @@ describe( 'JetpackFreeCardButton', () => {
 		render( <JetpackFreeCardButton />, { initialState } );
 
 		expect( getHref() ).toEqual( jetpackAdminUrl );
+	} );
+
+	it( 'should link to the connect page if the site is not a Jetpack site', () => {
+		const initialState = {
+			ui: { selectedSiteId: siteId },
+			sites: {
+				items: {
+					[ siteId ]: { options: { admin_url: adminUrl }, jetpack: false },
+				},
+			},
+		};
+
+		render( <JetpackFreeCardButton />, { initialState } );
+
+		expect( getHref() ).toEqual( JPC_PATH_BASE );
 	} );
 
 	it( 'should link to the Jetpack section in the site admin, when site in context', () => {
