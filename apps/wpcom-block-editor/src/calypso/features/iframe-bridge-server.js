@@ -696,7 +696,7 @@ async function openLinksInParentFrame( calypsoPort ) {
 	// Post editor only
 	const inserterManageReusableBlocksObserver = new window.MutationObserver( ( mutations ) => {
 		const node = mutations[ 0 ].target;
-		if ( node.ariaSelected === 'true' ) {
+		if ( node.attributes.getNamedItem( 'aria-selected' )?.nodeValue === 'true' ) {
 			const hyperlink = document.querySelector( 'a.block-editor-inserter__manage-reusable-blocks' );
 			if ( hyperlink ) {
 				hyperlink.href = manageReusableBlocksUrl;
@@ -761,13 +761,18 @@ async function openLinksInParentFrame( calypsoPort ) {
 			'.edit-post-more-menu button, .edit-site-more-menu button'
 		);
 		const moreMenuManageReusableBlocksObserver = new window.MutationObserver( () => {
-			const isExpanded = toggleButton.ariaExpanded === 'true';
+			const isExpanded =
+				toggleButton.attributes.getNamedItem( 'aria-expanded' )?.nodeValue === 'true';
 			if ( isExpanded ) {
-				const hyperlink = document.querySelector(
-					'a.components-menu-item__button[href*="post_type=wp_block"]'
-				);
-				hyperlink.href = manageReusableBlocksUrl;
-				hyperlink.target = '_top';
+				// The menu has not expanded at this point in Safari, so modify the link
+				// after the call stack has cleared and the menu has rendered.
+				setTimeout( () => {
+					const hyperlink = document.querySelector(
+						'a.components-menu-item__button[href*="post_type=wp_block"]'
+					);
+					hyperlink.href = manageReusableBlocksUrl;
+					hyperlink.target = '_top';
+				} );
 			}
 		} );
 		moreMenuManageReusableBlocksObserver.observe( toggleButton, {
