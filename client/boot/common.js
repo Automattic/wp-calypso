@@ -55,8 +55,6 @@ import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions'
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { inJetpackCloudOAuthOverride } from 'calypso/lib/jetpack/oauth-override';
 import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
-import { init as fullStoryInit } from '@fullstory/browser';
-import { TRACKING_IDS } from 'calypso/lib/analytics/ad-tracking/constants';
 
 const debug = debugFactory( 'calypso' );
 
@@ -273,16 +271,6 @@ function setupErrorLogger( reduxStore ) {
 	} );
 }
 
-const maybeInitFullStory = ( currentUser ) => {
-	if (
-		undefined !== currentUser &&
-		currentUser.user_ip_country_code &&
-		'US' === currentUser.user_ip_country_code
-	) {
-		fullStoryInit( { orgId: TRACKING_IDS.fullStoryOrgId } );
-	}
-};
-
 const setupMiddlewares = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso setup middlewares.' );
 
@@ -293,10 +281,8 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	setRouteMiddleware();
 	unsavedFormsMiddleware();
 
-	const fetchedCurrentUser = currentUser ? currentUser.get() : undefined;
 	// The analytics module requires user (when logged in) and superProps objects. Inject these here.
-	initializeAnalytics( fetchedCurrentUser, getSuperProps( reduxStore ) );
-	maybeInitFullStory( fetchedCurrentUser );
+	initializeAnalytics( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
 
 	setupErrorLogger( reduxStore );
 
