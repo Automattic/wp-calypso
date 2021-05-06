@@ -36,7 +36,7 @@ const SLIDESHOW_URLS = {
 };
 
 function processEmbeds( domNode ) {
-	Object.entries( embedsToLookFor ).map( ( [ embedSelector, fn ] ) => {
+	Object.entries( embedsToLookFor ).forEach( ( [ embedSelector, fn ] ) => {
 		const nodes = domNode.querySelectorAll( embedSelector );
 		forEach( filter( nodes, nodeNeedsProcessing ), fn );
 	} );

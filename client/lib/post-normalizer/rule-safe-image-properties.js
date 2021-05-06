@@ -22,7 +22,7 @@ export default function safeImagePropertiesForWidth( maxWidth ) {
 			makeImageURLSafe( post.canonical_image, 'uri', maxWidth, post.URL );
 		}
 		if ( post.attachments ) {
-			Object.values( post.attachments ).map( function ( attachment ) {
+			Object.values( post.attachments ).forEach( function ( attachment ) {
 				if ( startsWith( attachment.mime_type, 'image/' ) ) {
 					makeImageURLSafe( attachment, 'URL', maxWidth, post.URL );
 				}

@@ -17,7 +17,7 @@ import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
  */
 export function transformer( apiResponse ) {
 	const groups = [];
-	Object.entries( get( apiResponse, [ 'groups' ], {} ) ).map( ( [ slug, group ] ) => {
+	Object.entries( get( apiResponse, [ 'groups' ], {} ) ).forEach( ( [ slug, group ] ) => {
 		groups.push( {
 			key: slug,
 			name: group.name,

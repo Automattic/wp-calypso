@@ -31,7 +31,7 @@ export default function decodeEntities( post, fields = DEFAULT_FIELDS ) {
 
 	if ( post.tags ) {
 		// tags is an object
-		Object.values( post.tags ).map( function ( tag ) {
+		Object.values( post.tags ).forEach( function ( tag ) {
 			tag.name = decode( tag.name );
 		} );
 	}
