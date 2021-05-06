@@ -9,6 +9,7 @@ import config from 'config';
 import { buildHooks as buildVideoHooks } from './video-recorder';
 import { saveBrowserLogs } from './browser-logs';
 import { buildHooks as buildFramebufferHooks, getFreeDisplay } from './framebuffer';
+import { generatePath } from '../test-utils';
 
 const isVideoEnabled = () => {
 	const video = config.has( 'useTestVideo' )
@@ -19,7 +20,11 @@ const isVideoEnabled = () => {
 
 export const mochaHooks = async () => {
 	const hooks = {
-		beforeAll: [],
+		beforeAll: [
+			() => {
+				console.log( 'Assets path: ' + generatePath( '' ) );
+			},
+		],
 		afterEach: [ saveBrowserLogs ],
 		afterAll: [],
 	};

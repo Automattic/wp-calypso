@@ -345,10 +345,11 @@ export async function acceptAllAlerts( driver ) {
 		try {
 			await driver.get( 'data:,' );
 		} catch ( err ) {
-			await driver.sleep( 2000 );
-			console.log( `Accepting an open alert: '${ err }'` );
-			const alert = await driver.switchTo().alert();
-			await alert.accept();
+			try {
+				await driver.sleep( 2000 );
+				const alert = await driver.switchTo().alert();
+				await alert.accept();
+			} catch ( e ) {}
 		}
 	} );
 }

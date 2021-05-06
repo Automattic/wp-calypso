@@ -78,6 +78,7 @@ after( async function () {
 
 // Quit browser
 after( function () {
+	console.log( 'QUIT BROWSER' );
 	if ( ! global.__BROWSER__ ) {
 		// Early return if there's no browser, i.e. when all specs were skipped.
 		return;

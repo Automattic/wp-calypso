@@ -19,6 +19,7 @@ export const buildHooks = ( displayNum ) => {
 	let ffVideo;
 
 	const startVideoRecording = async () => {
+		console.log( `Start video recording on port :${ displayNum }}` );
 		const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
 		file = generatePath( `screenshots/${ displayNum }-${ dateTime }.mpg` );
 		await mkdir( path.dirname( file ), { recursive: true } );
@@ -52,6 +53,7 @@ export const buildHooks = ( displayNum ) => {
 		const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
 		const newFile = generatePath( `screenshots/${ currentTestName }-${ dateTime }.mpg` );
 		await mkdir( path.dirname( newFile ), { recursive: true } );
+		console.log( `Test failed, saving video recording ${ newFile }` );
 
 		await kill( ffVideo );
 		try {
@@ -68,6 +70,7 @@ export const buildHooks = ( displayNum ) => {
 	const stopVideoRecording = async () => {
 		if ( ! ffVideo || ffVideo.killed ) return;
 
+		console.log( `Stopped recording` );
 		await kill( ffVideo );
 		try {
 			await unlink( file );
