@@ -13,7 +13,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
 import EmailProviderFeatures from 'calypso/my-sites/email/email-provider-features';
-import EmailProviderFeaturesButton from 'calypso/my-sites/email/email-provider-features/button';
+import EmailProviderFeaturesToggleButton from 'calypso/my-sites/email/email-provider-features/toggle-button';
 
 const noop = () => {};
 
@@ -36,9 +36,11 @@ function EmailProviderCard( {
 	expandButtonLabel,
 	features,
 } ) {
-	const [ areFeaturesToggled, toggleFeatures ] = useState( false );
+	const [ areFeaturesExpanded, setFeaturesExpanded ] = useState( false );
 
-	const showFeaturesToggleButton = useBreakpoint( '<1040px' ) && detailsExpanded;
+	const isViewportSizeLowerThan1040px = useBreakpoint( '<1040px' );
+
+	const showFeaturesToggleButton = detailsExpanded && isViewportSizeLowerThan1040px;
 
 	const toggleVisibility = ( event ) => {
 		event.preventDefault();
@@ -83,9 +85,9 @@ function EmailProviderCard( {
 				</div>
 
 				{ showFeaturesToggleButton && (
-					<EmailProviderFeaturesButton
-						handleClick={ () => toggleFeatures( ! areFeaturesToggled ) }
-						isToggled={ areFeaturesToggled }
+					<EmailProviderFeaturesToggleButton
+						handleClick={ () => setFeaturesExpanded( ! areFeaturesExpanded ) }
+						isSwitched={ areFeaturesExpanded }
 					/>
 				) }
 			</div>
@@ -101,7 +103,7 @@ function EmailProviderCard( {
 					) }
 				</div>
 
-				{ ( ! showFeaturesToggleButton || areFeaturesToggled ) && (
+				{ ( ! showFeaturesToggleButton || areFeaturesExpanded ) && (
 					<EmailProviderFeatures features={ features } />
 				) }
 			</div>

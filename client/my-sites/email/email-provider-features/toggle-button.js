@@ -11,21 +11,21 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { Button } from '@automattic/components';
 
-function EmailProviderFeaturesButton( { handleClick, isToggled } ) {
+function EmailProviderFeaturesToggleButton( { handleClick, isSwitched } ) {
 	const translate = useTranslate();
 
 	return (
-		<Button className="email-provider-features__button" onClick={ handleClick }>
+		<Button className="email-provider-features__toggle-button" onClick={ handleClick }>
 			<span>{ translate( 'Learn more' ) }</span>
 
-			<Gridicon icon={ isToggled ? 'chevron-up' : 'chevron-down' } />
+			<Gridicon icon={ isSwitched ? 'chevron-up' : 'chevron-down' } />
 		</Button>
 	);
 }
 
-EmailProviderFeaturesButton.propTypes = {
+EmailProviderFeaturesToggleButton.propTypes = {
 	handleClick: PropTypes.func.isRequired,
-	isToggled: PropTypes.bool.isRequired,
+	isSwitched: PropTypes.bool.isRequired,
 };
 
-export default EmailProviderFeaturesButton;
+export default EmailProviderFeaturesToggleButton;
