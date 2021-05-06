@@ -155,7 +155,7 @@ class Search extends Component {
 							<JetpackModuleToggle
 								siteId={ siteId }
 								moduleSlug="search"
-								label={ translate( 'Improve built-in WordPress search performance.' ) }
+								label={ translate( 'Enable Jetpack Search' ) }
 								disabled={ isRequestingSettings || isSavingSettings }
 							/>
 						) : (
@@ -169,7 +169,7 @@ class Search extends Component {
 									)
 								}
 							>
-								{ translate( 'Improve built-in WordPress search performance.' ) }
+								{ translate( 'Enable Jetpack Search' ) }
 							</FormToggle>
 						) }
 
