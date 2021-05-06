@@ -145,7 +145,9 @@ export default function CompositeCheckout( {
 	const isJetpackNotAtomic =
 		useSelector(
 			( state ) => siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
-		) || false;
+		) ||
+		isJetpackUserlessCheckout ||
+		false;
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const createUserAndSiteBeforeTransaction =
@@ -616,7 +618,6 @@ export default function CompositeCheckout( {
 	}
 
 	if ( isJetpackUserlessCheckout ) {
-		// This works, but is ugly, need to do it more better
 		siteId = parseInt( responseCart.blog_id );
 		siteSlug = responseCart.jetpack_site_slug;
 	}

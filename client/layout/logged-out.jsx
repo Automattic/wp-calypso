@@ -51,6 +51,8 @@ const LayoutLoggedOut = ( {
 	useOAuth2Layout,
 } ) => {
 	const isCheckout = sectionName === 'checkout';
+	const isJetpackUserlessCheckout =
+		sectionName === 'checkout' && window.location.pathname.startsWith( '/checkout/jetpack' );
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
@@ -59,6 +61,7 @@ const LayoutLoggedOut = ( {
 		'has-no-sidebar': ! secondary,
 		'has-no-masterbar': masterbarIsHidden,
 		'is-jetpack-login': isJetpackLogin,
+		'is-jetpack-site': isJetpackUserlessCheckout,
 		'is-gutenboarding-login': isGutenboardingLogin,
 		'is-popup': isPopup,
 		'is-jetpack-woocommerce-flow':
