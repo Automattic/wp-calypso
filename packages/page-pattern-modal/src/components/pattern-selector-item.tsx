@@ -36,10 +36,12 @@ const PatternSelectorItem = ( props: PatternSelectorItemProps ): JSX.Element | n
 		screen_height: 3600,
 	};
 
+	const descriptionClass = `pattern-selector-item__preview-label__${ value }`;
+
 	const innerPreview = (
 		<MShotsImage
 			url={ previewUrl }
-			aria-label={ title }
+			aria-labelledby={ descriptionClass }
 			alt={ title }
 			options={ mShotsOptions }
 			scrollable={ true }
@@ -56,7 +58,7 @@ const PatternSelectorItem = ( props: PatternSelectorItemProps ): JSX.Element | n
 			<span className="pattern-selector-item__preview-wrap">
 				<div className="pattern-selector-item__preview-wrap-inner-position">{ innerPreview }</div>
 			</span>
-			{ description }
+			<div id={ descriptionClass }>{ description }</div>
 		</button>
 	);
 };
