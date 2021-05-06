@@ -145,9 +145,6 @@
 
 	.email-providers-comparison__provider-form-and-features {
 		display: none;
-		justify-content: space-between;
-		margin-top: 1em;
-		line-height: 1.5;
 	}
 
 	&.is-expanded {
@@ -158,6 +155,9 @@
 		.email-providers-comparison__provider-form-and-features {
 			display: flex;
 			flex-direction: column-reverse;
+			justify-content: space-between;
+			margin-top: 1em;
+			line-height: 1.5;
 
 			@include breakpoint-deprecated( '>1040px' ) {
 				flex-direction: row;
