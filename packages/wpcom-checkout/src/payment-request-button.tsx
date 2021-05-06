@@ -11,7 +11,7 @@ import type { StripePaymentRequest } from '@automattic/calypso-stripe';
 /**
  * Internal dependencies
  */
-import GooglePayButtonImage from './images/google-pay-buy-button-black.svg';
+import googlePayButtonImage from './images/google-pay-buy-button-black.svg';
 
 // Disabling this rule to make migrating this to calypso easier with fewer changes
 /* eslint-disable @typescript-eslint/no-use-before-define */
@@ -107,6 +107,15 @@ const ApplePayButton = styled.button`
 	}
 `;
 
+const ButtonContainer = styled.div`
+	display: flex;
+	justify-content: center;
+`;
+
+const GooglePayImage = styled.img`
+	width: 100%;
+`;
+
 function GooglePayButton( {
 	disabled,
 	onClick,
@@ -115,8 +124,10 @@ function GooglePayButton( {
 	onClick: ( event: MouseEvent ) => void;
 } ): JSX.Element {
 	return (
-		<button disabled={ disabled } onClick={ onClick }>
-			<GooglePayButtonImage />
-		</button>
+		<ButtonContainer>
+			<button disabled={ disabled } onClick={ onClick }>
+				<GooglePayImage alt="Google Pay" src={ googlePayButtonImage } />
+			</button>
+		</ButtonContainer>
 	);
 }
