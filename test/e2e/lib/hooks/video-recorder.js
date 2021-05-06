@@ -3,22 +3,21 @@
  */
 import path from 'path';
 import { rename, mkdir, unlink } from 'fs/promises';
-import child_process from 'child_process';
+import { createWriteStream } from 'fs';
+import { spawn } from 'child_process';
 import ffmpeg from 'ffmpeg-static';
+import { generatePath } from '../test-utils';
 
 let file;
 let ffVideo;
 
-const videoRecordingsDir = path.resolve(
-	process.env.TEMP_ASSET_PATH || path.join( __dirname, '../..' ),
-	process.env.SCREENSHOTDIR || 'screenshots'
-);
-
 export const startVideoRecording = ( displayNum ) => async () => {
 	const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
-	file = path.resolve( path.join( videoRecordingsDir, `${ dateTime }.mpg` ) );
+	file = generatePath( `screenshots/${ dateTime }.mpg` );
 	await mkdir( path.dirname( file ), { recursive: true } );
-	ffVideo = child_process.spawn( ffmpeg.path, [
+
+	const logging = createWriteStream( generatePath( 'ffmpeg.log' ), { flags: 'a' } );
+	ffVideo = spawn( ffmpeg.path, [
 		'-f',
 		'x11grab',
 		'-video_size',
@@ -30,9 +29,11 @@ export const startVideoRecording = ( displayNum ) => async () => {
 		'-pix_fmt',
 		'yuv420p',
 		'-loglevel',
-		'error',
+		'info',
 		file,
 	] );
+	ffVideo.stdout.pipe( logging );
+	ffVideo.stderr.pipe( logging );
 };
 
 export async function saveVideoRecording() {
@@ -42,8 +43,7 @@ export async function saveVideoRecording() {
 
 	const currentTestName = this.currentTest.title.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
 	const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
-	const fileName = `${ currentTestName }-${ dateTime }.mpg`;
-	const newFile = path.resolve( path.join( './screenshots/videos', fileName ) );
+	const newFile = generatePath( `screnshots/${ currentTestName }-${ dateTime }.mpg` );
 	await rename( file, newFile );
 }
 

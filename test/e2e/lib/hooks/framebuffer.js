@@ -4,13 +4,9 @@
 import { spawn } from 'child_process';
 import { access, mkdir, writeFile } from 'fs/promises';
 import path from 'path';
+import { generatePath } from '../test-utils';
 
 let xvfb;
-
-const screenshotsDir = path.resolve(
-	process.env.TEMP_ASSET_PATH || path.join( __dirname, '../..' ),
-	process.env.SCREENSHOTDIR || 'screenshots'
-);
 
 export const getFreeDisplay = async () => {
 	// eslint-disable-next-line no-constant-condition
@@ -51,9 +47,7 @@ export async function takeScreenshot() {
 
 	const currentTestName = this.currentTest.title.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
 	const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
-	const fileName = path.resolve(
-		path.join( screenshotsDir, `${ currentTestName }-${ dateTime }.png` )
-	);
+	const fileName = generatePath( `screenshots/${ currentTestName }-${ dateTime }.png` );
 	await mkdir( path.dirname( fileName ), { recursive: true } );
 
 	const driver = global.__BROWSER__;
