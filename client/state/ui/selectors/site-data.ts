@@ -8,6 +8,7 @@ export interface SiteData {
 	domain: string;
 	locale: string;
 	options?: SiteDataOptions;
+	jetpack?: boolean;
 	// TODO: fill out the rest of this
 }
 
