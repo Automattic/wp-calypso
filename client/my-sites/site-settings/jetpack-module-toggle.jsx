@@ -39,6 +39,7 @@ class JetpackModuleToggle extends Component {
 		activateModule: PropTypes.func,
 		deactivateModule: PropTypes.func,
 		path: PropTypes.string,
+		onChange: PropTypes.func,
 	};
 
 	handleChange = () => {
