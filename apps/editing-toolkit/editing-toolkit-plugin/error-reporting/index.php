@@ -16,9 +16,8 @@ namespace A8C\FSE\ErrorReporting;
 function head_error_handler() {
 	?><script type="text/javascript">
 		window._headJsErrorHandler = function( errEvent ) {
-			console.log(errEvent);
 			window._jsErr = window._jsErr || [];
-			window._jsErr.push(errEvent);
+			window._jsErr.push( errEvent );
 		}
 		window.addEventListener( 'error', window._headJsErrorHandler );
 	</script>
@@ -35,7 +34,7 @@ function head_error_handler() {
  */
 function add_crossorigin_to_script_els( $tag ) {
 	// phpcs:disable WordPress.WP.EnqueuedResources.NonEnqueuedScript
-	if ( preg_match( '/<script\s.*src=.*s0\.wp\.com.*>/', $tag ) ) {
+	if ( preg_match( '/<script\s.*src=.*(s0\.wp\.com|stats\.wp\.com|widgets\.wp\.com).*>/', $tag ) ) {
 		return str_replace( ' src', " crossorigin='anonymous' src", $tag );
 	};
 	return $tag;
