@@ -7,7 +7,7 @@ import { find, matches } from 'lodash';
  * Internal Dependencies
  */
 import { withStorageKey } from '@automattic/state-utils';
-import { withoutPersistence } from 'calypso/state/utils';
+
 import {
 	PURCHASES_REMOVE,
 	PURCHASES_SITE_FETCH,
@@ -88,7 +88,7 @@ function updatePurchases( existingPurchases, action ) {
 	return purchases;
 }
 
-const reducer = withoutPersistence( ( state = initialState, action ) => {
+const reducer = ( state = initialState, action ) => {
 	switch ( action.type ) {
 		case PURCHASES_REMOVE:
 			return {
@@ -157,7 +157,7 @@ const reducer = withoutPersistence( ( state = initialState, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export { reducer };
 

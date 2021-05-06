@@ -10,7 +10,6 @@ import {
 	READER_TAGS_RECEIVE,
 	READER_UNFOLLOW_TAG_RECEIVE,
 } from 'calypso/state/reader/action-types';
-import { withoutPersistence } from 'calypso/state/utils';
 
 /*
  * since the api always returns the whole list of followed tags unpaginated, both read/tags*,
@@ -18,7 +17,7 @@ import { withoutPersistence } from 'calypso/state/utils';
  *
  * the shape of a tag is { id, url, title, displayName, isFollowing }.
  */
-export const items = withoutPersistence( ( state = null, action ) => {
+export default ( state = null, action ) => {
 	switch ( action.type ) {
 		case READER_TAGS_RECEIVE: {
 			const tags = action.payload;
@@ -39,6 +38,4 @@ export const items = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
-
-export default items;
+};
