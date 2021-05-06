@@ -9,7 +9,7 @@ config.author = pkg.author;
 
 config.loginURL = function () {
 	if ( process.env.WP_DESKTOP_DEBUG_LOCALHOST !== undefined ) {
-		return 'http://calypso.localhost:3000';
+		return 'http://calypso.localhost:3000/log-in';
 	}
 	return 'https://wordpress.com/log-in';
 };
