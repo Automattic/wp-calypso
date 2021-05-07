@@ -8,14 +8,14 @@
  */
 import { chromium } from 'playwright';
 import config from 'config';
-import type { Browser, BrowserContext } from 'playwright';
+import type { Browser, BrowserContext, Page } from 'playwright';
 
 /**
  * Internal dependencies
  */
 import type { screenSize, localeCode } from './types';
 
-const browserStartTimeoutMS = 2000;
+const playwrightTimeoutMS: number = config.get( 'playwrightTimeoutMS' );
 
 export let browser: Browser;
 
@@ -71,6 +71,30 @@ export function getScreenDimension(): { width: number; height: number } {
 }
 
 /**
+ * Familiar entrypoint to initialize the browser from a test writer's perspective.
+ *
+ * @returns {Promise<Page>} New Page instance.
+ */
+export async function start(): Promise< Page > {
+	return await newPage();
+}
+
+/**
+ * Returns a new instance of a Page.
+ *
+ * This function wraps and sets additional parameters before returning a new instance
+ * of a Page.
+ * Page represents a tab in a browser where the actual test are run.
+ *
+ * @returns {Promise<Page>} New Page instance.
+ */
+export async function newPage(): Promise< Page > {
+	const browserContext = await newBrowserContext();
+	browserContext.setDefaultTimeout( 5000 );
+	return await browserContext.newPage();
+}
+
+/**
  * Returns a new instance of a BrowserContext.
  *
  * A BrowserContext represents an isolated environment, akin to incognito mode
@@ -107,19 +131,6 @@ export async function launchBrowser(): Promise< Browser > {
 	return await chromium.launch( {
 		headless: isHeadless,
 		args: [ '--window-position=0,0', `--window-size=${ dimension.width },${ dimension.height }` ],
-		timeout: browserStartTimeoutMS,
+		timeout: playwrightTimeoutMS,
 	} );
-}
-
-/**
- * Terminates an instance of the Browser.
- *
- * When called, this function will unset the reference to the browser instance,
- * then call on the browser to terminate all instances of existing BrowserContexts.
- * Any open pages are also destroyed in this process.
- *
- * @returns {void} No return value.
- */
-export function quitBrowser(): void {
-	browser.close();
 }
