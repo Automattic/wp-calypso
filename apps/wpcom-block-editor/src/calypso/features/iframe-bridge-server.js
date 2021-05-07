@@ -685,11 +685,15 @@ async function openLinksInParentFrame( calypsoPort ) {
 
 	// Create a new post link in block settings sidebar for Query block
 	const tryToReplaceCreateNewPostLink = () => {
-		const hyperlink = document.querySelector( '.wp-block-query__create-new-link a' );
-		if ( hyperlink ) {
-			hyperlink.href = createNewPostUrl;
-			hyperlink.target = '_top';
-		}
+		// We need to wait for the rendering to be finished.
+		// This is mostly for Safari, but it doesn't hurt for other browsers.
+		setTimeout( () => {
+			const hyperlink = document.querySelector( '.wp-block-query__create-new-link a' );
+			if ( hyperlink ) {
+				hyperlink.href = createNewPostUrl;
+				hyperlink.target = '_top';
+			}
+		} );
 	};
 	const createNewPostLinkObserver = new window.MutationObserver( tryToReplaceCreateNewPostLink );
 
