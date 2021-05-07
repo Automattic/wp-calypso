@@ -238,7 +238,31 @@ export async function startBrowser( {
 		await resizeBrowser( driver, screenSize );
 	}
 
-	return driver;
+	return driver.then( function ( d ) {
+		return new Proxy( d, {
+			get: function ( target, prop ) {
+				const orig = target[ prop ];
+				if ( 'function' !== typeof orig ) {
+					return orig;
+				}
+
+				if ( 'wait' === prop ) {
+					return async function ( ...args ) {
+						let result;
+						try {
+							result = await orig.apply( target, args );
+						} catch ( error ) {
+							throw new Error( error );
+						}
+
+						return result;
+					};
+				}
+
+				return orig.bind( target );
+			},
+		} );
+	} );
 }
 
 export async function resizeBrowser( driver, screenSize ) {
