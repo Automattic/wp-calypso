@@ -5,11 +5,23 @@
 
 const _ = require( 'lodash' );
 const mochaSettings = require( './settings' );
+const path = require( 'path' );
+const fs = require( 'fs' );
+
+const testCounter = {};
 
 const MochaTestRun = function ( options ) {
 	// Share assets directory with mocha tests
-	process.env.TEMP_ASSET_PATH = options.tempAssetPath;
-
+	const testName = options.locator.name;
+	const sanitizedName = testName
+		.replace( /[^a-z0-9]/gi, '-' )
+		.replace( /-+/g, '-' )
+		.replace( /^-|-$/, '' )
+		.toLowerCase();
+	testCounter[ options.locator.name ] = ( testCounter[ options.locator.name ] ?? 0 ) + 1;
+	const assetsDir = sanitizedName + '-' + testCounter[ options.locator.name ];
+	process.env.TEMP_ASSET_PATH = path.join( options.tempAssetPath, '..', assetsDir );
+	fs.mkdirSync( process.env.TEMP_ASSET_PATH, { recursive: true } );
 	_.extend( this, options );
 };
 
