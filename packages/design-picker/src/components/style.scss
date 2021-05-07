@@ -122,6 +122,16 @@
 
 	.design-picker__image-frame-blank {
 		background: var( --studio-white );
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding-top: 32.5%; // 65% Aspect ratio for the picker divided by two
+		padding-bottom: 32.5%; // 65% Aspect ratio for the picker divided by two
+	}
+
+	.design-picker__image-frame-blank-canvas__title {
+		color: var( --studio-gray-40 );
+		font-weight: 600;
 	}
 
 	.design-picker__image-frame-inside {
