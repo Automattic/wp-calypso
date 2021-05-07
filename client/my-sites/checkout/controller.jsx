@@ -35,7 +35,6 @@ import {
 	setSignupCheckoutPageUnloaded,
 } from 'calypso/signup/storageUtils';
 import UpsellNudge, {
-	PREMIUM_PLAN_UPGRADE_UPSELL,
 	BUSINESS_PLAN_UPGRADE_UPSELL,
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
@@ -228,10 +227,6 @@ export function upsellNudge( context, next ) {
 		switch ( upgradeItem ) {
 			case 'business':
 				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
-				break;
-
-			case 'premium':
-				upsellType = PREMIUM_PLAN_UPGRADE_UPSELL;
 				break;
 
 			default:
