@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { useMemo } from 'react';
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	createPayPalMethod,
 	createAlipayMethod,
@@ -406,7 +407,8 @@ function useCreateGooglePay( {
 		! isWebPayLoading &&
 		stripe &&
 		stripeConfiguration &&
-		isGooglePayAvailable;
+		isGooglePayAvailable &&
+		isEnabled( 'checkout/google-pay' );
 
 	return useMemo( () => {
 		return isStripeReady && stripe && stripeConfiguration
