@@ -3,7 +3,6 @@
  */
 import { useMemo } from 'react';
 import {
-	createPayPalMethod,
 	createAlipayMethod,
 	createAlipayPaymentMethodStore,
 	createGiropayMethod,
@@ -21,6 +20,7 @@ import {
 	createApplePayMethod,
 	createBancontactMethod,
 	createBancontactPaymentMethodStore,
+	createPayPalMethod,
 } from '@automattic/wpcom-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import type { StripeConfiguration, Stripe, StripeLoadingError } from '@automattic/calypso-stripe';
