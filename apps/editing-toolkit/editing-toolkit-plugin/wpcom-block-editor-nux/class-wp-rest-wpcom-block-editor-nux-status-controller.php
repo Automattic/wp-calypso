@@ -83,9 +83,11 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 			$variant = 'tour';
 		}
 
-		$blog_age = time() - strtotime( get_blog_details()->registered );
+		if ( function_exists( 'get_blog_details' ) ) {
+			$blog_age = time() - strtotime( get_blog_details()->registered );
+		}
 
-		if ( $blog_age < self::NEW_SITE_AGE_SECONDS ) {
+		if ( isset( $blog_age ) && $blog_age < self::NEW_SITE_AGE_SECONDS ) {
 			$nux_status = 'enabled';
 		} elseif ( has_filter( 'wpcom_block_editor_nux_get_status' ) ) {
 			$nux_status = apply_filters( 'wpcom_block_editor_nux_get_status', false );
