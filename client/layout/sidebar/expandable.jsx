@@ -5,7 +5,8 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { useState, useRef, useLayoutEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { get, uniqueId } from 'lodash';
+import { get } from 'lodash';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
@@ -98,7 +99,7 @@ export const ExpandableSidebarMenu = ( {
 		setSubmenuHovered( false );
 	};
 
-	const menuId = uniqueId( 'menu' );
+	const menuId = 'menu' + uuid().replace( /-/g, '' );
 
 	useLayoutEffect( () => {
 		if ( submenuHovered && offScreen( submenu.current ) ) {
