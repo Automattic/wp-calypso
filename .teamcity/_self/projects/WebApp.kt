@@ -726,6 +726,9 @@ object CheckCodeStyleBranch : BuildType({
 object RunCalypsoPlaywrightE2eTests : BuildType({
 	name = "Playwright E2E tests"
 	description = "Runs Calypso e2e tests using Playwright"
+	params {
+		param("use_cached_node_modules", "false")
+	}
 
 	artifactRules = """
 		reports => reports
@@ -810,7 +813,7 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 				export TEST_FILES=${'$'}(join ',' ${'$'}(ls -1 specs-playwright/**/*spec.js))
 
-				xvfb-run yarn magellan --config=magellan-playwright.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
+				xvfb-run yarn magellan --config=magellan-playwright.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="-R mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"

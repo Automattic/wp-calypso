@@ -43,33 +43,11 @@ import { buildCardFeaturesFromItem } from './utils';
 import type { SelectorProduct } from './types';
 import type { JetpackPlanSlug } from '@automattic/calypso-products';
 
-export const ALL = 'all';
-export const PERFORMANCE = 'performance';
-export const SECURITY = 'security';
 export const PLAN_COMPARISON_PAGE = 'https://jetpack.com/features/comparison/';
-
 export const INTRO_PRICING_DISCOUNT_PERCENTAGE = 40;
-
-/**
- * Link to plan comparison page.
- */
-export const MORE_FEATURES_LINK = {
-	url: PLAN_COMPARISON_PAGE,
-	label: translate( 'See all features' ),
-};
-
-/**
- * Define properties with translatable strings getters.
- */
-Object.defineProperties( MORE_FEATURES_LINK, {
-	label: {
-		get: () => translate( 'See all features' ),
-	},
-} );
 
 // Types of items. This determines the card UI.
 export const ITEM_TYPE_PLAN = 'item-type-plan';
-export const ITEM_TYPE_BUNDLE = 'item-type-bundle';
 export const ITEM_TYPE_PRODUCT = 'item-type-product';
 
 // Jetpack CRM
@@ -83,7 +61,6 @@ export const EXTERNAL_PRODUCT_CRM_FREE: ( variation: Iterations ) => SelectorPro
 	productSlug: PRODUCT_JETPACK_CRM_FREE,
 	term: TERM_ANNUALLY,
 	type: ITEM_TYPE_PRODUCT,
-	subtypes: [],
 	isFree: true,
 	costProductSlug: PRODUCT_JETPACK_CRM_FREE,
 	monthlyProductSlug: PRODUCT_JETPACK_CRM_FREE_MONTHLY,
@@ -134,7 +111,6 @@ export const EXTERNAL_PRODUCT_CRM: ( variation: Iterations ) => SelectorProduct 
 	productSlug: PRODUCT_JETPACK_CRM,
 	term: TERM_ANNUALLY,
 	type: ITEM_TYPE_PRODUCT,
-	subtypes: [],
 	costProductSlug: PRODUCT_JETPACK_CRM,
 	monthlyProductSlug: PRODUCT_JETPACK_CRM,
 	iconSlug: 'jetpack_crm',
@@ -173,7 +149,6 @@ export const EXTERNAL_PRODUCT_CRM_MONTHLY: ( variation: Iterations ) => Selector
 	productSlug: PRODUCT_JETPACK_CRM_MONTHLY,
 	term: TERM_MONTHLY,
 	displayTerm: TERM_ANNUALLY,
-	subtypes: [],
 	costProductSlug: PRODUCT_JETPACK_CRM_MONTHLY,
 } );
 
@@ -230,23 +205,6 @@ export const PRODUCT_UPSELLS_BY_FEATURE: Record< string, JetpackPlanSlug > = {
 	[ FEATURE_ADVANCED_SEO ]: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	[ FEATURE_ACTIVITY_LOG ]: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 };
-
-/*
- * Constants that contain products that have real-time and daily options.
- */
-export const DAILY_PRODUCTS = [
-	PRODUCT_JETPACK_BACKUP_DAILY,
-	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
-	PLAN_JETPACK_SECURITY_DAILY,
-	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
-];
-
-export const REALTIME_PRODUCTS = [
-	PRODUCT_JETPACK_BACKUP_REALTIME,
-	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-	PLAN_JETPACK_SECURITY_REALTIME,
-	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
-];
 
 /**
  * Matrix of available dowgradable plans for each plan.

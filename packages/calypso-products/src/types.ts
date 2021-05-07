@@ -34,34 +34,6 @@ export type JetpackPurchasableItem =
 	| JetpackProductSlug;
 
 export type ProductSlug = JetpackProductSlug | WPComProductSlug;
-export type Plan = {
-	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK;
-	type: string;
-	term: typeof TERM_ANNUALLY | typeof TERM_BIENNIALLY | typeof TERM_MONTHLY;
-	getBillingTimeFrame: () => TranslateResult;
-	getTitle: ( variation?: string ) => TranslateResult;
-	getDescription: ( variation?: string ) => TranslateResult;
-	getTagline?: ( featuresOrCROVariation?: string[] | string ) => TranslateResult;
-	getButtonLabel?: ( variation?: string ) => TranslateResult;
-	getAnnualSlug?: () => JetpackPlanSlug | string;
-	getMonthlySlug?: () => JetpackPlanSlug | string;
-	getAudience?: () => TranslateResult;
-	getBlogAudience?: () => TranslateResult;
-	getPortfolioAudience?: () => TranslateResult;
-	getStoreAudience?: () => TranslateResult;
-	getProductId: () => number;
-	getStoreSlug: () => JetpackPlanSlug | string;
-	getPathSlug?: () => string;
-	getPlanCompareFeatures?: () => string[];
-	getPlanCardFeatures?: (
-		variation?: string
-	) => JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection;
-	getSignupFeatures?: () => string[];
-	getBlogSignupFeatures?: () => string[];
-	getPortfolioSignupFeatures?: () => string[];
-	getHiddenFeatures?: () => string[];
-	getInferiorHiddenFeatures?: () => string[];
-};
 export type ProductTranslations = {
 	title: TranslateResult;
 	description: TranslateResult;
@@ -89,6 +61,29 @@ export type ProductTranslations = {
 	optionsLabelCallback?: ( arg0: Record< string, unknown > ) => TranslateResult;
 	optionsLabel: TranslateResult;
 };
-
-export type JetpackPlanCardFeature = symbol | [ symbol, symbol[] ];
-export type JetpackPlanCardFeatureSection = Record< symbol, JetpackPlanCardFeature[] >;
+export type Plan = {
+	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK;
+	type: string;
+	term: typeof TERM_ANNUALLY | typeof TERM_BIENNIALLY | typeof TERM_MONTHLY;
+	getBillingTimeFrame: () => TranslateResult;
+	getTitle: ( variation?: string ) => TranslateResult;
+	getDescription: ( variation?: string ) => TranslateResult;
+	getTagline?: ( featuresOrCROVariation?: string[] | string ) => TranslateResult;
+	getButtonLabel?: ( variation?: string ) => TranslateResult;
+	getAnnualSlug?: () => JetpackPlanSlug | string;
+	getMonthlySlug?: () => JetpackPlanSlug | string;
+	getAudience?: () => TranslateResult;
+	getBlogAudience?: () => TranslateResult;
+	getPortfolioAudience?: () => TranslateResult;
+	getStoreAudience?: () => TranslateResult;
+	getProductId: () => number;
+	getStoreSlug: () => JetpackPlanSlug | string;
+	getPathSlug?: () => string;
+	getPlanCompareFeatures?: () => string[];
+	getPlanCardFeatures?: () => string[];
+	getSignupFeatures?: () => string[];
+	getBlogSignupFeatures?: () => string[];
+	getPortfolioSignupFeatures?: () => string[];
+	getHiddenFeatures?: () => string[];
+	getInferiorHiddenFeatures?: () => string[];
+};

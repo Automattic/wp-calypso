@@ -4,21 +4,18 @@
 import { translate, TranslateResult, numberFormat } from 'i18n-calypso';
 import { compact } from 'lodash';
 import page from 'page';
-import React, { createElement, Fragment } from 'react';
+import { createElement, Fragment } from 'react';
 import { createSelector } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
-import { getFeatureByKey, getFeatureCategoryByKey } from 'calypso/lib/plans/features-list';
+import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import {
-	DAILY_PRODUCTS,
 	EXTERNAL_PRODUCTS_LIST,
 	EXTERNAL_PRODUCTS_SLUG_MAP,
 	ITEM_TYPE_PRODUCT,
-	ITEM_TYPE_BUNDLE,
 	ITEM_TYPE_PLAN,
-	REALTIME_PRODUCTS,
 } from './constants';
 import RecordsDetails from './records-details';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -28,7 +25,6 @@ import {
 	TERM_BIENNIALLY,
 	JETPACK_LEGACY_PLANS,
 	JETPACK_RESET_PLANS,
-	JETPACK_SECURITY_PLANS,
 	JETPACK_PLANS_BY_TERM,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCT_PRICE_MATRIX,
@@ -50,7 +46,6 @@ import {
 import config from '@automattic/calypso-config';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { getForCurrentCROIteration, Iterations } from './iterations';
-import { MORE_FEATURES_LINK } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
@@ -72,7 +67,6 @@ import type {
 	JetpackPlanSlug,
 	Plan,
 	JetpackPlanCardFeature,
-	JetpackPlanCardFeatureSection,
 	JetpackProductSlug,
 } from '@automattic/calypso-products';
 
@@ -436,7 +430,6 @@ export function itemToSelectorProduct(
 			iconSlug,
 			displayName: getJetpackProductDisplayName( item ),
 			type: ITEM_TYPE_PRODUCT,
-			subtypes: [],
 			shortName: getJetpackProductShortName( item ) || '',
 			tagline: getJetpackProductTagline( item ),
 			description: getJetpackProductDescription( item ),
@@ -472,15 +465,13 @@ export function itemToSelectorProduct(
 		}
 		const isResetPlan = JETPACK_RESET_PLANS.includes( productSlug );
 		const iconAppend = isResetPlan ? '_v2' : '';
-		const type = JETPACK_SECURITY_PLANS.includes( productSlug ) ? ITEM_TYPE_BUNDLE : ITEM_TYPE_PLAN;
 		return {
 			productSlug,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug: ( yearlyProductSlug || productSlug ) + iconAppend,
 			displayName: getForCurrentCROIteration( item.getTitle ),
 			buttonLabel: getForCurrentCROIteration( item.getButtonLabel ),
-			type,
-			subtypes: [],
+			type: ITEM_TYPE_PLAN,
 			shortName: getForCurrentCROIteration( item.getTitle ),
 			tagline: getForCurrentCROIteration( item.getTagline ) || '',
 			description: getForCurrentCROIteration( item.getDescription ),
@@ -491,7 +482,6 @@ export function itemToSelectorProduct(
 					getForCurrentCROIteration( ( variation: Iterations ) =>
 						buildCardFeaturesFromItem( item, undefined, variation )
 					) || [],
-				more: MORE_FEATURES_LINK,
 			},
 			legacy: ! isResetPlan,
 		};
@@ -551,45 +541,19 @@ export function buildCardFeatureItemFromFeatureKey(
 /**
  * Builds the feature items passed to the product card, from feature keys.
  *
- * @param {JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection} features Feature keys
+ * @param {JetpackPlanCardFeature[]} features Feature keys
  * @param {object?} options Options
  * @param {string?} variation Experiment variation
  * @returns {SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[]} Features
  */
 export function buildCardFeaturesFromFeatureKeys(
-	features: JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection,
+	features: JetpackPlanCardFeature[],
 	options?: Record< string, unknown >,
 	variation?: Iterations
 ): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
-	// Without sections (JetpackPlanCardFeature[])
-	if ( Array.isArray( features ) ) {
-		return compact(
-			features.map( ( f ) => buildCardFeatureItemFromFeatureKey( f, options, variation ) )
-		);
-	}
-
-	// With sections (JetpackPlanCardFeatureSection)
-	if ( features !== null && typeof features === 'object' ) {
-		const result = [] as SelectorProductFeaturesSection[];
-
-		Object.getOwnPropertySymbols( features ).map( ( key ) => {
-			const category = getFeatureCategoryByKey( key );
-			const subfeatures = features[ key ];
-
-			if ( category ) {
-				result.push( {
-					heading: category.getTitle(),
-					list: subfeatures.map( ( f: JetpackPlanCardFeature ) =>
-						buildCardFeatureItemFromFeatureKey( f, options, variation )
-					),
-				} as SelectorProductFeaturesSection );
-			}
-		} );
-
-		return result;
-	}
-
-	return [];
+	return compact(
+		features.map( ( f ) => buildCardFeatureItemFromFeatureKey( f, options, variation ) )
+	);
 }
 
 /**
@@ -606,7 +570,7 @@ export function buildCardFeaturesFromItem(
 	variation?: Iterations
 ): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
 	if ( objectIsPlan( item ) ) {
-		const features = item.getPlanCardFeatures?.( variation );
+		const features = item.getPlanCardFeatures?.();
 
 		if ( features ) {
 			return buildCardFeaturesFromFeatureKeys( features, options, variation );
@@ -658,10 +622,18 @@ export function checkout(
 		? `/checkout/${ siteSlug }/${ productsString }`
 		: `/jetpack/connect/${ productsString }`;
 
+	// Unauthenticated users will be presented with a Jetpack branded version of the login form
+	// if the URL has the query parameter `source=jetpack-plans`. We only want to do this if the
+	// user is in Jetpack Cloud.
+	const urlQueryArgsWithSource =
+		isJetpackCloud() && ! urlQueryArgs.source
+			? { ...urlQueryArgs, source: 'jetpack-plans' }
+			: urlQueryArgs;
+
 	if ( isJetpackCloud() && ! config.isEnabled( 'jetpack-cloud/connect' ) ) {
-		window.location.href = addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` );
+		window.location.href = addQueryArgs( urlQueryArgsWithSource, `https://wordpress.com${ path }` );
 	} else {
-		page( addQueryArgs( urlQueryArgs, path ) );
+		page( addQueryArgs( urlQueryArgsWithSource, path ) );
 	}
 }
 
@@ -681,33 +653,6 @@ export function manageSitePurchase( siteSlug: string, purchaseId: number ): void
 		page( relativePath );
 	}
 }
-
-/**
- * Append "Available Options: Real-time and Daily" to the product description.
- *
- * @param product SelectorProduct
- *
- * @returns ReactNode | TranslateResult
- */
-export const getJetpackDescriptionWithOptions = (
-	product: SelectorProduct
-): React.ReactNode | TranslateResult => {
-	const em = React.createElement( 'em', null, null );
-
-	// If the product has 'subtypes' (containing daily and real-time product slugs).
-	// then append "Available options: Real-time or Daily" to the product description.
-	return product.subtypes.some( ( subtype ) => DAILY_PRODUCTS.includes( subtype ) ) &&
-		product.subtypes.some( ( subtype ) => REALTIME_PRODUCTS.includes( subtype ) )
-		? translate( '%(productDescription)s {{em}}Available options: Real-time or Daily.{{/em}}', {
-				args: {
-					productDescription: product.description,
-				},
-				components: {
-					em,
-				},
-		  } )
-		: product.description;
-};
 
 /**
  * Return the slug of a highlighted product if the given slug is Jetpack product
