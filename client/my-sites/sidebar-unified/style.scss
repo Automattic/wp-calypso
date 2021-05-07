@@ -157,6 +157,7 @@ $font-size: rem( 14px );
 		}
 
 		.sidebar__menu-icon {
+			background-size: contain;
 			color: var( --color-sidebar-gridicon-fill );
 			margin-right: 8px;
 		}

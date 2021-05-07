@@ -19,18 +19,22 @@ const SidebarCustomIcon = ( { icon, ...rest } ) => {
 	}
 
 	if ( icon.indexOf( 'data:image' ) === 0 || icon.indexOf( 'http' ) === 0 ) {
+		const isSVG = icon.indexOf( 'data:image/svg+xml' ) === 0;
 		const imgStyle = `url("${ icon }")`;
-		const imgStyles = { backgroundImage: imgStyle, maskImage: imgStyle, WebkitMaskImage: imgStyle };
+		const imgStyles = {
+			backgroundImage: imgStyle,
+			...( isSVG ? { maskImage: imgStyle, WebkitMaskImage: imgStyle } : {} ),
+		};
 
 		return (
 			<span
-				className={ 'sidebar__menu-icon dashicons sidebar__menu-icon-img' }
+				className={ 'sidebar__menu-icon dashicons' + ( isSVG ? ' sidebar__menu-icon-img' : '' ) }
 				style={ imgStyles }
 				{ ...rest }
-			></span>
+			/>
 		);
 	}
 
-	return <span className={ 'sidebar__menu-icon dashicons-before ' + icon } { ...rest }></span>;
+	return <span className={ 'sidebar__menu-icon dashicons-before ' + icon } { ...rest } />;
 };
 export default SidebarCustomIcon;
