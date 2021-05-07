@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { ReactElement, useCallback, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -11,6 +12,7 @@ import { Button } from '@automattic/components';
 import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import RevokeLicenseDialog from 'calypso/jetpack-cloud/sections/partner-portal/revoke-license-dialog';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 interface Props {
 	licenseKey: string;
@@ -27,17 +29,20 @@ export default function LicenseDetailsActions( {
 	attachedAt,
 	revokedAt,
 }: Props ): ReactElement {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const [ revokeDialog, setRevokeDialog ] = useState( false );
 
 	const openRevokeDialog = useCallback( () => {
 		setRevokeDialog( true );
-	}, [ setRevokeDialog ] );
+		dispatch( recordTracksEvent( 'calypso_partner_portal_license_details_revoke_dialog_open' ) );
+	}, [ dispatch, setRevokeDialog ] );
 
 	const closeRevokeDialog = useCallback( () => {
 		setRevokeDialog( false );
-	}, [ setRevokeDialog ] );
+		dispatch( recordTracksEvent( 'calypso_partner_portal_license_details_revoke_dialog_close' ) );
+	}, [ dispatch, setRevokeDialog ] );
 
 	return (
 		<div className="license-details__actions">

@@ -15,6 +15,7 @@ import { noop } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import useRefreshLicenseList from 'calypso/state/partner-portal/licenses/hooks/use-refresh-license-list';
 import useRevokeLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-revoke-license-mutation';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -56,6 +57,7 @@ export default function RevokeLicenseDialog( {
 	}, [ onClose, mutation.isLoading ] );
 
 	const revoke = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_partner_portal_license_list_revoke_dialog_revoke' ) );
 		mutation.mutate( { licenseKey } );
 	}, [ licenseKey, mutation.mutate ] );
 

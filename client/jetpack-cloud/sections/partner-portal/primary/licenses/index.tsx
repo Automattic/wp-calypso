@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { ReactElement } from 'react';
+import { useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -21,6 +22,7 @@ import {
 import LicenseStateFilter from 'calypso/jetpack-cloud/sections/partner-portal/license-state-filter';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import SelectPartnerKeyDropdown from 'calypso/jetpack-cloud/sections/partner-portal/select-partner-key-dropdown';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -42,6 +44,7 @@ export default function Licenses( {
 	sortDirection,
 	sortField,
 }: Props ): ReactElement {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	const context = {
@@ -50,6 +53,10 @@ export default function Licenses( {
 		currentPage,
 		sortDirection,
 		sortField,
+	};
+
+	const onIssueNewLicenseClick = () => {
+		dispatch( recordTracksEvent( 'calypso_partner_portal_license_list_issue_license_click' ) );
 	};
 
 	return (
@@ -62,7 +69,12 @@ export default function Licenses( {
 
 				<SelectPartnerKeyDropdown />
 
-				<Button href="/partner-portal/issue-license" primary style={ { marginLeft: 'auto' } }>
+				<Button
+					href="/partner-portal/issue-license"
+					onClick={ onIssueNewLicenseClick }
+					primary
+					style={ { marginLeft: 'auto' } }
+				>
 					{ translate( 'Issue New License' ) }
 				</Button>
 			</div>
