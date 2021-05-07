@@ -42,7 +42,7 @@ export default function CheckoutSystemDecider( {
 	redirectTo,
 	isLoggedOutCart,
 	isNoSiteCart,
-	isJetpackUserlessCheckout,
+	isJetpackCheckout,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 } ) {
@@ -134,7 +134,7 @@ export default function CheckoutSystemDecider( {
 							infoMessage={ prepurchaseNotices }
 							isLoggedOutCart={ isLoggedOutCart }
 							isNoSiteCart={ isNoSiteCart }
-							isJetpackUserlessCheckout={ isJetpackUserlessCheckout }
+							isJetpackCheckout={ isJetpackCheckout }
 							jetpackSiteSlug={ jetpackSiteSlug }
 							jetpackPurchaseToken={ jetpackPurchaseToken }
 						/>

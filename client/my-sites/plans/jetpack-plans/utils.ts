@@ -615,10 +615,10 @@ export function checkout(
 	const productsArray = Array.isArray( products ) ? products : [ products ];
 	const productsString = productsArray.join( ',' );
 	const { unlinked, purchasetoken, purchaseNonce, site } = urlQueryArgs;
-	const canDoUserlessCheckout = unlinked && !! site && ( !! purchasetoken || purchaseNonce );
+	const canDoUnlinkedCheckout = unlinked && !! site && ( !! purchasetoken || purchaseNonce );
 
 	// Enter userless checkout if unlinked, purchasetoken or purchaseNonce, and site are all set
-	if ( isJetpackCloud() && canDoUserlessCheckout ) {
+	if ( isJetpackCloud() && canDoUnlinkedCheckout ) {
 		const host =
 			'development' === urlQueryArgs.calypso_env
 				? 'http://calypso.localhost:3000'

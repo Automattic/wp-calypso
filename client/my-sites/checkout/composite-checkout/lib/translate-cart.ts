@@ -102,16 +102,12 @@ export function createTransactionEndpointCartFromResponseCart( {
 	contactDetails: DomainContactDetails | null;
 	responseCart: ResponseCart;
 } ): WPCOMTransactionEndpointCart {
-	const is_jetpack_userless_checkout = responseCart.products.some(
-		( product ) => product.extra.isJetpackUserlessCheckout
-	);
-
-	if ( responseCart.products.some( ( product ) => product.extra.isJetpackUserlessCheckout ) ) {
+	if ( responseCart.products.some( ( product ) => product.extra.isJetpackCheckout ) ) {
 		return {
 			blog_id: responseCart.blog_id.toString(),
 			cart_key: responseCart.blog_id.toString(),
 			create_new_blog: false,
-			is_jetpack_userless_checkout: true,
+			is_jetpack_checkout: true,
 			coupon: responseCart.coupon || '',
 			currency: responseCart.currency,
 			temporary: false,
@@ -127,8 +123,8 @@ export function createTransactionEndpointCartFromResponseCart( {
 		blog_id: siteId || '0',
 		cart_key: siteId || 'no-site',
 		create_new_blog: siteId ? false : true,
-		is_jetpack_userless_checkout: responseCart.products.some(
-			( product ) => product.extra.isJetpackUserlessCheckout
+		is_jetpack_checkout: responseCart.products.some(
+			( product ) => product.extra.isJetpackCheckout
 		),
 		coupon: responseCart.coupon || '',
 		currency: responseCart.currency,
