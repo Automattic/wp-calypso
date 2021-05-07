@@ -51,7 +51,7 @@ describe( `[${ host }] Experimental features we depend on are available (${ scre
 		driver = await driverManager.startBrowser();
 	} );
 
-	step( 'Can log in', async function () {
+	it( 'Can log in', async function () {
 		this.loginFlow = new LoginFlow( driver, gutenbergUser );
 		return await this.loginFlow.loginAndStartNewPost( null, true );
 	} );
@@ -62,22 +62,19 @@ describe( `[${ host }] Experimental features we depend on are available (${ scre
 			// The algorithm WP uses to convert package names to variable names is here: https://github.com/WordPress/gutenberg/blob/a03ea51e11a36d0abeecb4ce4e4cea5ffebdffc5/packages/dependency-extraction-webpack-plugin/lib/util.js#L40-L45
 			const wpGlobalName = camelCaseDash( packageName.substr( '@wordpress/'.length ) );
 
-			step(
-				`"${ wpGlobalName }" package should be available in the global window object`,
-				async function () {
-					const typeofPackage = await driver.executeScript(
-						`return typeof window.wp['${ wpGlobalName }']`
-					);
-					assert.notStrictEqual(
-						typeofPackage,
-						'undefined',
-						`${ wpGlobalName } is ${ typeofPackage }`
-					);
-				}
-			);
+			it( `"${ wpGlobalName }" package should be available in the global window object`, async function () {
+				const typeofPackage = await driver.executeScript(
+					`return typeof window.wp['${ wpGlobalName }']`
+				);
+				assert.notStrictEqual(
+					typeofPackage,
+					'undefined',
+					`${ wpGlobalName } is ${ typeofPackage }`
+				);
+			} );
 
 			for ( const feature of features ) {
-				step( `${ feature } should be available in ${ packageName }`, async function () {
+				it( `${ feature } should be available in ${ packageName }`, async function () {
 					const typeofExperimentalFeature = await driver.executeScript(
 						`return typeof window.wp['${ wpGlobalName }']['${ feature }']`
 					);
@@ -92,18 +89,15 @@ describe( `[${ host }] Experimental features we depend on are available (${ scre
 	} );
 
 	describe( 'Experimental data we depend on is available', function () {
-		step(
-			`is iterable: wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns`,
-			async function () {
-				const __experimentalBlockPatternsAreIterable = await driver.executeScript(
-					`return Array.isArray( window.wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns )`
-				);
-				assert(
-					__experimentalBlockPatternsAreIterable,
-					'__experimentalBlockPatterns was not iterable, please contact #team-ganon to update premium pattern highlighting'
-				);
-			}
-		);
+		it( `is iterable: wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns`, async function () {
+			const __experimentalBlockPatternsAreIterable = await driver.executeScript(
+				`return Array.isArray( window.wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns )`
+			);
+			assert(
+				__experimentalBlockPatternsAreIterable,
+				'__experimentalBlockPatterns was not iterable, please contact #team-ganon to update premium pattern highlighting'
+			);
+		} );
 
 		// Regression test for https://github.com/Automattic/wp-calypso/pull/48940.
 		// At the time I write this, the default block patterns in the test site /
@@ -113,7 +107,7 @@ describe( `[${ host }] Experimental features we depend on are available (${ scre
 		// also to avoid potential false-negatives. I assume it's more likely that more
 		// patterns will be added than removed. This also means if we see a dramatic
 		// change in the number to the lower end, then something is probably wrong.
-		step( `number of block patterns loaded should be greater than the default`, async function () {
+		it( `number of block patterns loaded should be greater than the default`, async function () {
 			const expectedExperimentalBlockPatternsLength = 50;
 			const __experimentalBlockPatternsLength = await driver.executeScript(
 				`return window.wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns.length`

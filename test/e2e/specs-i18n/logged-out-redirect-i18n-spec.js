@@ -27,7 +27,7 @@ describe( `Logged out homepage redirect test @i18n (${ locale })`, function () {
 		driver = await driverManager.startBrowser();
 	} );
 
-	step( `should redirect to the correct url for wordpress.com (${ locale })`, async function () {
+	it( `should redirect to the correct url for wordpress.com (${ locale })`, async function () {
 		// No culture here implies 'en'
 		const wpHomePage = await WPHomePage.Visit( driver );
 		await wpHomePage.checkURL( locale );

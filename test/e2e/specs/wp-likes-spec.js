@@ -39,7 +39,7 @@ describe( `[${ host }] Likes: (${ screenSize })`, function () {
 	} );
 
 	describe( 'Like posts and comments @parallel', function () {
-		step( 'Login, create a new post and view it', async function () {
+		it( 'Login, create a new post and view it', async function () {
 			const loginFlow = new LoginFlow( driver, accountKey );
 			await loginFlow.loginAndStartNewPost( null, true );
 
@@ -49,19 +49,19 @@ describe( `[${ host }] Likes: (${ screenSize })`, function () {
 			postUrl = await gEditorComponent.publish( { visit: true } );
 		} );
 
-		step( 'Like post', async function () {
+		it( 'Like post', async function () {
 			const postLikes = await PostLikesComponent.Expect( driver );
 			await postLikes.clickLike();
 			await postLikes.expectLiked();
 		} );
 
-		step( 'Unlike post', async function () {
+		it( 'Unlike post', async function () {
 			const postLikes = await PostLikesComponent.Expect( driver );
 			await postLikes.clickUnlike();
 			await postLikes.expectNotLiked();
 		} );
 
-		step( 'Post comment', async function () {
+		it( 'Post comment', async function () {
 			const commentArea = await CommentsAreaComponent.Expect( driver );
 
 			// commentArea.reply fails to find .comment-reply-link at times,
@@ -69,19 +69,19 @@ describe( `[${ host }] Likes: (${ screenSize })`, function () {
 			await commentArea._postComment( comment );
 		} );
 
-		step( 'Like comment', async function () {
+		it( 'Like comment', async function () {
 			const commentLikes = await CommentLikesComponent.Expect( driver, comment );
 			await commentLikes.likeComment();
 			await commentLikes.expectLiked();
 		} );
 
-		step( 'Unlike comment', async function () {
+		it( 'Unlike comment', async function () {
 			const commentLikes = await CommentLikesComponent.Expect( driver, comment );
 			await commentLikes.unlikeComment();
 			await commentLikes.expectNotLiked();
 		} );
 
-		step( 'Like post as logged out user', async function () {
+		it( 'Like post as logged out user', async function () {
 			await driverManager.ensureNotLoggedIntoSite( driver, postUrl );
 
 			const postLikes = await PostLikesComponent.Visit( driver, postUrl );

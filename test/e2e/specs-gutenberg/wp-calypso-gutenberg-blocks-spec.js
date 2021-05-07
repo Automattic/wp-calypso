@@ -31,12 +31,12 @@ describe( `[${ host }] Calypso Gutenberg Editor: Blocks (${ screenSize })`, func
 	} );
 
 	describe( 'Can see monetization blocks in block inserter @canary @parallel', function () {
-		step( 'Can log in', async function () {
+		it( 'Can log in', async function () {
 			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
-		step( 'Can see the Earn blocks', async function () {
+		it( 'Can see the Earn blocks', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.openBlockInserterAndSearch( 'earn' );
 			const shownItems = await gEditorComponent.getShownBlockInserterItems();
@@ -57,7 +57,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Blocks (${ screenSize })`, func
 			await gEditorComponent.closeBlockInserter();
 		} );
 
-		step( 'Can see the Grow blocks', async function () {
+		it( 'Can see the Grow blocks', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.openBlockInserterAndSearch( 'grow' );
 			const shownItems = await gEditorComponent.getShownBlockInserterItems();

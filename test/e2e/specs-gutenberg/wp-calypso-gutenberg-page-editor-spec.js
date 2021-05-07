@@ -51,7 +51,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			return fileDetails;
 		} );
 
-		step( 'Can log in', async function () {
+		it( 'Can log in', async function () {
 			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			if ( host !== 'WPCOM' ) {
 				this.loginFlow = new LoginFlow( driver );
@@ -59,7 +59,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			return await this.loginFlow.loginAndStartNewPage( null, true );
 		} );
 
-		step( 'Can enter page title, content and image', async function () {
+		it( 'Can enter page title, content and image', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.enterTitle( pageTitle );
 			await gEditorComponent.enterText( pageQuote );
@@ -72,7 +72,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		} );
 
 		/* Skip until sharing is added in Gutenberg editor
-		step( 'Can disable sharing buttons', async function() {
+		it( 'Can disable sharing buttons', async function() {
 			const gEditorSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
 			await gEditorSidebarComponent.selectDocumentTab();
 			await gEditorSidebarComponent.expandSharingSection();
@@ -80,13 +80,13 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			await gEditorSidebarComponent.closeSharingSection();
 		} );*/
 
-		step( 'Can launch page preview', async function () {
+		it( 'Can launch page preview', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.ensureSaved();
 			await gEditorComponent.launchPreview();
 		} );
 
-		step( 'Can see correct page title in preview', async function () {
+		it( 'Can see correct page title in preview', async function () {
 			const pagePreviewComponent = await PagePreviewComponent.Expect( driver );
 			const actualPageTitle = await pagePreviewComponent.pageTitle();
 			assert.strictEqual(
@@ -96,7 +96,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			);
 		} );
 
-		step( 'Can see correct page content in preview', async function () {
+		it( 'Can see correct page content in preview', async function () {
 			const pagePreviewComponent = await PagePreviewComponent.Expect( driver );
 			const content = await pagePreviewComponent.pageContent();
 			assert.strictEqual(
@@ -110,7 +110,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			);
 		} );
 
-		step( 'Can see the image uploaded in the preview', async function () {
+		it( 'Can see the image uploaded in the preview', async function () {
 			const pagePreviewComponent = await PagePreviewComponent.Expect( driver );
 			const imageDisplayed = await pagePreviewComponent.imageDisplayed( fileDetails );
 			return assert.strictEqual(
@@ -120,17 +120,17 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			);
 		} );
 
-		step( 'Can close page preview', async function () {
+		it( 'Can close page preview', async function () {
 			const pagePreviewComponent = await PagePreviewComponent.Expect( driver );
 			await pagePreviewComponent.close();
 		} );
 
-		step( 'Can publish and preview published content', async function () {
+		it( 'Can publish and preview published content', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.publish( { visit: true } );
 		} );
 
-		step( 'Can see correct page title', async function () {
+		it( 'Can see correct page title', async function () {
 			const viewPagePage = await ViewPagePage.Expect( driver );
 			const actualPageTitle = await viewPagePage.pageTitle();
 			assert.strictEqual(
@@ -140,7 +140,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			);
 		} );
 
-		step( 'Can see correct page content', async function () {
+		it( 'Can see correct page content', async function () {
 			const viewPagePage = await ViewPagePage.Expect( driver );
 			const content = await viewPagePage.pageContent();
 			assert.strictEqual(
@@ -155,7 +155,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		} );
 
 		/* Skip until sharing is added in Gutenberg editor
-		step( "Can't see sharing buttons", async function() {
+		it( "Can't see sharing buttons", async function() {
 			const viewPagePage = await ViewPagePage.Expect( driver );
 			let visible = await viewPagePage.sharingButtonsVisible();
 			assert.strictEqual(
@@ -165,7 +165,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			);
 		} ); */
 
-		step( 'Can see the image uploaded displayed', async function () {
+		it( 'Can see the image uploaded displayed', async function () {
 			const viewPagePage = await ViewPagePage.Expect( driver );
 			const imageDisplayed = await viewPagePage.imageDisplayed( fileDetails );
 			assert.strictEqual( imageDisplayed, true, 'Could not see the image in the published page' );
@@ -183,31 +183,31 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		const pageQuote =
 			'Few people know how to take a walk. The qualifications are endurance, plain clothes, old shoes, an eye for nature, good humor, vast curiosity, good speech, good silence and nothing too much.\n— Ralph Waldo Emerson';
 
-		step( 'Can log in', async function () {
+		it( 'Can log in', async function () {
 			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPage( null, true );
 		} );
 
-		step( 'Can enter page title and content', async function () {
+		it( 'Can enter page title and content', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.enterTitle( pageTitle );
 			await gEditorComponent.enterText( pageQuote );
 			return await gEditorComponent.ensureSaved();
 		} );
 
-		step( 'Can set visibility to private which immediately publishes it', async function () {
+		it( 'Can set visibility to private which immediately publishes it', async function () {
 			const gSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
 			await gSidebarComponent.chooseDocumentSettings();
 			await gSidebarComponent.setVisibilityToPrivate();
 			return await gSidebarComponent.hideComponentIfNecessary();
 		} );
 
-		step( 'Can view content', async function () {
+		it( 'Can view content', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.viewPublishedPostOrPage();
 		} );
 
-		step( 'Can view page title as logged in user', async function () {
+		it( 'Can view page title as logged in user', async function () {
 			const viewPagePage = await ViewPagePage.Expect( driver );
 			const actualPageTitle = await viewPagePage.pageTitle();
 			assert.strictEqual(
@@ -217,7 +217,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			);
 		} );
 
-		step( 'Can view page content as logged in user', async function () {
+		it( 'Can view page content as logged in user', async function () {
 			const viewPagePage = await ViewPagePage.Expect( driver );
 			const content = await viewPagePage.pageContent();
 			assert.strictEqual(
@@ -231,7 +231,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			);
 		} );
 
-		step( "Can't view page title or content as non-logged in user", async function () {
+		it( "Can't view page title or content as non-logged in user", async function () {
 			await driver.manage().deleteAllCookies();
 			await driver.navigate().refresh();
 
@@ -252,12 +252,12 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		const postPassword = 'e2e' + new Date().getTime().toString();
 
 		describe( 'Publish a Password Protected Page', function () {
-			step( 'Can log in', async function () {
+			it( 'Can log in', async function () {
 				this.loginFlow = new LoginFlow( driver, gutenbergUser );
 				return await this.loginFlow.loginAndStartNewPage( null, true );
 			} );
 
-			step( 'Can enter page title and content and set to password protected', async function () {
+			it( 'Can enter page title and content and set to password protected', async function () {
 				let gHeaderComponent = await GutenbergEditorComponent.Expect( driver );
 				await gHeaderComponent.enterTitle( pageTitle );
 
@@ -270,24 +270,21 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 				return await gHeaderComponent.enterText( pageQuote );
 			} );
 
-			step( 'Can publish and view content', async function () {
+			it( 'Can publish and view content', async function () {
 				const gHeaderComponent = await GutenbergEditorComponent.Expect( driver );
 				await gHeaderComponent.publish( { visit: true } );
 			} );
 
-			step(
-				'As a logged in user, With no password entered, Can view page title',
-				async function () {
-					const viewPagePage = await ViewPagePage.Expect( driver );
-					const actualPageTitle = await viewPagePage.pageTitle();
-					assert.strictEqual(
-						actualPageTitle.toUpperCase(),
-						( 'Protected: ' + pageTitle ).toUpperCase()
-					);
-				}
-			);
+			it( 'As a logged in user, With no password entered, Can view page title', async function () {
+				const viewPagePage = await ViewPagePage.Expect( driver );
+				const actualPageTitle = await viewPagePage.pageTitle();
+				assert.strictEqual(
+					actualPageTitle.toUpperCase(),
+					( 'Protected: ' + pageTitle ).toUpperCase()
+				);
+			} );
 
-			step( 'Can see password field', async function () {
+			it( 'Can see password field', async function () {
 				const viewPagePage = await ViewPagePage.Expect( driver );
 				const isPasswordProtected = await viewPagePage.isPasswordProtected();
 				assert.strictEqual(
@@ -297,7 +294,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 				);
 			} );
 
-			step( "Can't see content when no password is entered", async function () {
+			it( "Can't see content when no password is entered", async function () {
 				const viewPagePage = await ViewPagePage.Expect( driver );
 				const content = await viewPagePage.pageContent();
 				assert.strictEqual(
@@ -311,12 +308,12 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 				);
 			} );
 
-			step( 'With incorrect password entered, Enter incorrect password', async function () {
+			it( 'With incorrect password entered, Enter incorrect password', async function () {
 				const viewPagePage = await ViewPagePage.Expect( driver );
 				await viewPagePage.enterPassword( 'password' );
 			} );
 
-			step( 'Can view page title', async function () {
+			it( 'Can view page title', async function () {
 				const viewPagePage = await ViewPagePage.Expect( driver );
 				const actualPageTitle = await viewPagePage.pageTitle();
 				assert.strictEqual(
@@ -325,7 +322,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 				);
 			} );
 
-			step( 'Can see password field', async function () {
+			it( 'Can see password field', async function () {
 				const viewPagePage = await ViewPagePage.Expect( driver );
 				const isPasswordProtected = await viewPagePage.isPasswordProtected();
 				assert.strictEqual(
@@ -335,7 +332,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 				);
 			} );
 
-			step( "Can't see content when incorrect password is entered", async function () {
+			it( "Can't see content when incorrect password is entered", async function () {
 				const viewPagePage = await ViewPagePage.Expect( driver );
 				const content = await viewPagePage.pageContent();
 				assert.strictEqual(
@@ -349,12 +346,12 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 				);
 			} );
 
-			step( 'With correct password entered, Enter correct password', async function () {
+			it( 'With correct password entered, Enter correct password', async function () {
 				const viewPagePage = await ViewPagePage.Expect( driver );
 				await viewPagePage.enterPassword( postPassword );
 			} );
 
-			step( 'Can view page title', async function () {
+			it( 'Can view page title', async function () {
 				const viewPagePage = await ViewPagePage.Expect( driver );
 				const actualPageTitle = await viewPagePage.pageTitle();
 				assert.strictEqual(
@@ -363,7 +360,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 				);
 			} );
 
-			step( "Can't see password field", async function () {
+			it( "Can't see password field", async function () {
 				const viewPagePage = await ViewPagePage.Expect( driver );
 				const isPasswordProtected = await viewPagePage.isPasswordProtected();
 				assert.strictEqual(
@@ -373,7 +370,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 				);
 			} );
 
-			step( 'Can see page content', async function () {
+			it( 'Can see page content', async function () {
 				const viewPagePage = await ViewPagePage.Expect( driver );
 				const content = await viewPagePage.pageContent();
 				assert.strictEqual(
@@ -387,12 +384,12 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 				);
 			} );
 
-			step( 'As a non-logged in user, Clear cookies (log out)', async function () {
+			it( 'As a non-logged in user, Clear cookies (log out)', async function () {
 				await driver.manage().deleteAllCookies();
 				await driver.navigate().refresh();
 			} );
 
-			step( 'With no password entered, Can view page title', async function () {
+			it( 'With no password entered, Can view page title', async function () {
 				const viewPagePage = await ViewPagePage.Expect( driver );
 				const actualPageTitle = await viewPagePage.pageTitle();
 				assert.strictEqual(
@@ -401,7 +398,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 				);
 			} );
 
-			step( 'Can see password field', async function () {
+			it( 'Can see password field', async function () {
 				const viewPagePage = await ViewPagePage.Expect( driver );
 				const isPasswordProtected = await viewPagePage.isPasswordProtected();
 				assert.strictEqual(
@@ -411,7 +408,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 				);
 			} );
 
-			step( "Can't see content when no password is entered", async function () {
+			it( "Can't see content when no password is entered", async function () {
 				const viewPagePage = await ViewPagePage.Expect( driver );
 				const content = await viewPagePage.pageContent();
 				assert.strictEqual(
@@ -425,12 +422,12 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 				);
 			} );
 
-			step( 'With incorrect password entered, Enter incorrect password', async function () {
+			it( 'With incorrect password entered, Enter incorrect password', async function () {
 				const viewPagePage = await ViewPagePage.Expect( driver );
 				await viewPagePage.enterPassword( 'password' );
 			} );
 
-			step( 'Can view page title', async function () {
+			it( 'Can view page title', async function () {
 				const viewPagePage = await ViewPagePage.Expect( driver );
 				const actualPageTitle = await viewPagePage.pageTitle();
 				assert.strictEqual(
@@ -439,7 +436,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 				);
 			} );
 
-			step( 'Can see password field', async function () {
+			it( 'Can see password field', async function () {
 				const viewPagePage = await ViewPagePage.Expect( driver );
 				const isPasswordProtected = await viewPagePage.isPasswordProtected();
 				assert.strictEqual(
@@ -449,7 +446,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 				);
 			} );
 
-			step( "Can't see content when incorrect password is entered", async function () {
+			it( "Can't see content when incorrect password is entered", async function () {
 				const viewPagePage = await ViewPagePage.Expect( driver );
 				const content = await viewPagePage.pageContent();
 				assert.strictEqual(
@@ -463,12 +460,12 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 				);
 			} );
 
-			step( 'With correct password entered, Enter correct password', async function () {
+			it( 'With correct password entered, Enter correct password', async function () {
 				const viewPagePage = await ViewPagePage.Expect( driver );
 				await viewPagePage.enterPassword( postPassword );
 			} );
 
-			step( 'Can view page title', async function () {
+			it( 'Can view page title', async function () {
 				const viewPagePage = await ViewPagePage.Expect( driver );
 				const actualPageTitle = await viewPagePage.pageTitle();
 				assert.strictEqual(
@@ -477,7 +474,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 				);
 			} );
 
-			step( "Can't see password field", async function () {
+			it( "Can't see password field", async function () {
 				const viewPagePage = await ViewPagePage.Expect( driver );
 				const isPasswordProtected = await viewPagePage.isPasswordProtected();
 				assert.strictEqual(
@@ -487,7 +484,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 				);
 			} );
 
-			step( 'Can see page content', async function () {
+			it( 'Can see page content', async function () {
 				const viewPagePage = await ViewPagePage.Expect( driver );
 				const content = await viewPagePage.pageContent();
 				assert.strictEqual(
@@ -514,12 +511,12 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			email: 'test@wordpress.com',
 		};
 
-		step( 'Can log in', async function () {
+		it( 'Can log in', async function () {
 			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPage( null, true );
 		} );
 
-		step( 'Can insert the payment button', async function () {
+		it( 'Can insert the payment button', async function () {
 			const pageTitle = 'Payment Button Page: ' + dataHelper.randomPhrase();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			const blockId = await gEditorComponent.addBlock( 'Pay with PayPal' );
@@ -532,7 +529,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			return await gPaymentComponent.ensurePaymentButtonDisplayedInEditor();
 		} );
 
-		step( 'Can publish and view content', async function () {
+		it( 'Can publish and view content', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			try {
 				await gEditorComponent.publish( { visit: true } );
@@ -550,7 +547,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			}
 		} );
 
-		step( 'Can see the payment button in our published page', async function () {
+		it( 'Can see the payment button in our published page', async function () {
 			const viewPagePage = await ViewPagePage.Expect( driver );
 			const displayed = await viewPagePage.paymentButtonDisplayed();
 			return assert.strictEqual(
@@ -560,35 +557,32 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			);
 		} );
 
-		step(
-			'The payment button in our published page opens a new Paypal window for payment',
-			async function () {
-				const numberOfOpenBrowserWindows = await driverHelper.numberOfOpenWindows( driver );
-				assert.strictEqual(
-					numberOfOpenBrowserWindows,
-					1,
-					'There is more than one open browser window before clicking payment button'
-				);
-				const viewPagePage = await ViewPagePage.Expect( driver );
-				await viewPagePage.clickPaymentButton();
-				// Skip some lines and checks until Chrome can handle multiple windows in app mode
-				// await driverHelper.waitForNumberOfWindows( driver, 2 );
-				// await driverHelper.switchToWindowByIndex( driver, 1 );
-				await PaypalCheckoutPage.Expect( driver );
-				// const amountDisplayed = await paypalCheckoutPage.priceDisplayed();
-				// assert.strictEqual(
-				// 	amountDisplayed,
-				// 	`${ paymentButtonDetails.symbol }${ paymentButtonDetails.price } ${
-				// 		paymentButtonDetails.currency
-				// 	}`,
-				// 	"The amount displayed on Paypal isn't correct"
-				// );
-				// await driverHelper.closeCurrentWindow( driver );
-				// await driverHelper.switchToWindowByIndex( driver, 0 );
-				// viewPagePage = await ViewPagePage.Expect( driver );
-				// assert( await viewPagePage.displayed(), 'view page page is not displayed' );
-			}
-		);
+		it( 'The payment button in our published page opens a new Paypal window for payment', async function () {
+			const numberOfOpenBrowserWindows = await driverHelper.numberOfOpenWindows( driver );
+			assert.strictEqual(
+				numberOfOpenBrowserWindows,
+				1,
+				'There is more than one open browser window before clicking payment button'
+			);
+			const viewPagePage = await ViewPagePage.Expect( driver );
+			await viewPagePage.clickPaymentButton();
+			// Skip some lines and checks until Chrome can handle multiple windows in app mode
+			// await driverHelper.waitForNumberOfWindows( driver, 2 );
+			// await driverHelper.switchToWindowByIndex( driver, 1 );
+			await PaypalCheckoutPage.Expect( driver );
+			// const amountDisplayed = await paypalCheckoutPage.priceDisplayed();
+			// assert.strictEqual(
+			// 	amountDisplayed,
+			// 	`${ paymentButtonDetails.symbol }${ paymentButtonDetails.price } ${
+			// 		paymentButtonDetails.currency
+			// 	}`,
+			// 	"The amount displayed on Paypal isn't correct"
+			// );
+			// await driverHelper.closeCurrentWindow( driver );
+			// await driverHelper.switchToWindowByIndex( driver, 0 );
+			// viewPagePage = await ViewPagePage.Expect( driver );
+			// assert( await viewPagePage.displayed(), 'view page page is not displayed' );
+		} );
 
 		after( async function () {
 			await driverHelper.ensurePopupsClosed( driver );

@@ -31,7 +31,7 @@ MochaTestRun.prototype.getArguments = function () {
 		grepString = grepString.split( ch ).join( '\\' + ch );
 	} );
 
-	let args = [ '--mocking_port=' + this.mockingPort, '--worker=1', '-g', grepString ];
+	let args = [ '--bail', '--mocking_port=' + this.mockingPort, '--worker=1', '-g', grepString ];
 
 	if ( mochaSettings.mochaConfig ) {
 		args.push( '--config', mochaSettings.mochaConfig );

@@ -28,26 +28,26 @@ describe( `[${ host }] Site Editor (${ screenSize }) @parallel`, function () {
 		driver = await driverManager.startBrowser();
 	} );
 
-	step( 'Can log in', async function () {
+	it( 'Can log in', async function () {
 		this.loginFlow = new LoginFlow( driver, gutenbergUser );
 		return await this.loginFlow.loginAndSelectMySite();
 	} );
 
-	step( 'Can open site editor', async function () {
+	it( 'Can open site editor', async function () {
 		const sidebarComponent = await SidebarComponent.Expect( driver );
 		return await sidebarComponent.selectSiteEditor();
 	} );
 
-	step( 'Site editor opens', async function () {
+	it( 'Site editor opens', async function () {
 		return await SiteEditorPage.Expect( driver );
 	} );
 
-	step( 'Template loads', async function () {
+	it( 'Template loads', async function () {
 		const editor = await SiteEditorComponent.Expect( driver );
 		return await editor.waitForTemplateToLoad();
 	} );
 
-	step( 'Template parts load', async function () {
+	it( 'Template parts load', async function () {
 		const editor = await SiteEditorComponent.Expect( driver );
 		return await editor.waitForTemplatePartsToLoad();
 	} );

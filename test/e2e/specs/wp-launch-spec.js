@@ -55,11 +55,11 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 			await loginFlow.login();
 		} );
 
-		step( 'Can create a free site', async function () {
+		it( 'Can create a free site', async function () {
 			return await new CreateSiteFlow( driver, siteName ).createFreeSite();
 		} );
 
-		step( 'Can launch a site', async function () {
+		it( 'Can launch a site', async function () {
 			return await new LaunchSiteFlow( driver ).launchFreeSite();
 		} );
 
@@ -84,7 +84,7 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 			await new CreateSiteFlow( driver, secondSiteName ).createFreeSite();
 		} );
 
-		step( 'Can start launch flow and abandon', async function () {
+		it( 'Can start launch flow and abandon', async function () {
 			const myHomePage = await MyHomePage.Expect( driver );
 			await myHomePage.launchSiteFromSiteSetup();
 			await FindADomainComponent.Expect( driver );
@@ -94,7 +94,7 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 			return await driver.navigate().back();
 		} );
 
-		step( 'Can switch sites and launch the first site', async function () {
+		it( 'Can switch sites and launch the first site', async function () {
 			const sideBarComponent = await SidebarComponent.Expect( driver );
 			await sideBarComponent.selectSiteSwitcher();
 			await sideBarComponent.searchForSite( firstSiteName );

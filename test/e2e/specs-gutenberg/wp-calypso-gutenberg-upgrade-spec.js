@@ -122,12 +122,12 @@ async function startNewPost( loginFlow ) {
  * @param {Function} Block A block class.
  */
 function verifyBlockInEditor( Block ) {
-	step( 'Block is displayed in the editor', async function () {
+	it( 'Block is displayed in the editor', async function () {
 		const blockDisplayed = await editor.blockDisplayedInEditor( Block.blockName );
 		assert( blockDisplayed, `The block "${ Block.blockName }" was not found in the editor.` );
 	} );
 
-	step( 'Block does not invalidate', async function () {
+	it( 'Block does not invalidate', async function () {
 		const hasInvalidBlocks = await editor.hasInvalidBlocks();
 		assert( ! hasInvalidBlocks, `The block "${ Block.blockName }" is invalid.` );
 	} );
@@ -139,7 +139,7 @@ function verifyBlockInEditor( Block ) {
  * @param {Function} Block A block class.
  */
 function verifyBlockInPublishedPage( Block ) {
-	step( 'Publish page', async function () {
+	it( 'Publish page', async function () {
 		await editor.publish( { visit: true } );
 	} );
 
@@ -151,7 +151,7 @@ function verifyBlockInPublishedPage( Block ) {
 	 * removed.
 	 */
 	if ( ! [ YoutubeBlockComponent, SlideshowBlockComponent ].includes( Block ) ) {
-		step( 'Block is displayed in the published page', async function () {
+		it( 'Block is displayed in the published page', async function () {
 			await driverHelper.waitUntilElementLocatedAndVisible( driver, Block.blockFrontendLocator );
 		} );
 	}
@@ -199,34 +199,34 @@ describe( `[${ host }, ${ screenSize }] Test Gutenberg upgrade against most popu
 			let currentGutenbergBlocksCode;
 
 			describe( `Test the block on a non-edge site`, function () {
-				step( `Log in and start a new post`, async function () {
+				it( `Log in and start a new post`, async function () {
 					const loginFlow = new LoginFlow( driver, 'gutenbergUpgradeUser' );
 
 					await loginFlow.login();
 					editor = await startNewPost( loginFlow );
 				} );
 
-				step( `Insert and configure the block`, async function () {
+				it( `Insert and configure the block`, async function () {
 					await insertBlock( Block );
 				} );
 
 				verifyBlockInEditor( Block );
 
-				step( 'Copy the markup for the block', async function () {
+				it( 'Copy the markup for the block', async function () {
 					currentGutenbergBlocksCode = await editor.getBlocksCode();
 				} );
 
 				verifyBlockInPublishedPage( Block );
 
 				describe( `Test the same block on a corresponding edge site`, function () {
-					step( `Start a new post`, async function () {
+					it( `Start a new post`, async function () {
 						const loginFlow = new LoginFlow( driver, 'gutenbergUpgradeEdgeUser' );
 
 						// No need to log in again as the edge site is owned by the same user.
 						editor = await startNewPost( loginFlow );
 					} );
 
-					step( 'Load the block via markup copied from the non-edge site', async function () {
+					it( 'Load the block via markup copied from the non-edge site', async function () {
 						await editor.setBlocksCode( currentGutenbergBlocksCode );
 					} );
 
