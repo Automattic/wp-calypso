@@ -29,11 +29,11 @@ export function oauthLogin( context, next ) {
 
 // Store token into local storage
 export function storeToken( context ) {
-	if ( context.hash && context.hash.access_token ) {
+	if ( context.hash?.access_token ) {
 		store.set( 'wpcom_token', context.hash.access_token );
 	}
 
-	if ( context.hash && context.hash.expires_in ) {
+	if ( context.hash?.expires_in ) {
 		store.set( 'wpcom_token_expires_in', context.hash.expires_in );
 	}
 

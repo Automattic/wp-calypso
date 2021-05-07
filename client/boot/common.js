@@ -139,14 +139,7 @@ function authorizePath() {
 
 const oauthTokenMiddleware = () => {
 	if ( config.isEnabled( 'oauth' ) ) {
-		const loggedOutRoutes = [
-			'/oauth-login',
-			'/oauth',
-			'/start',
-			'/authorize',
-			'/api/oauth/token',
-			'/connect',
-		];
+		const loggedOutRoutes = [ '/oauth-login', '/oauth', '/start', '/api/oauth/token', '/connect' ];
 
 		if ( config.isEnabled( 'jetpack-cloud/connect' ) ) {
 			loggedOutRoutes.push( '/jetpack/connect', '/plans' );
