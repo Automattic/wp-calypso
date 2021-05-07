@@ -1,6 +1,5 @@
 require:
   - 'esm'
-  - 'mocha-steps'
   - 'lib/hooks-playwright/index.ts'
 file:
   - 'lib/before.js'
