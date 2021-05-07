@@ -15,7 +15,7 @@ import {
 	FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 	FEATURE_ACTIVITY_LOG,
 	PLAN_PERSONAL,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 
 /**

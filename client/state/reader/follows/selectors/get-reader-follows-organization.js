@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { values, sortBy } from 'lodash';
+import { sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,7 +17,7 @@ const getOrganizationSites = createSelector(
 	( state, organizationId ) => {
 		// remove subs where the sub has an error
 		return sortBy(
-			values( state.reader.follows.items ).filter(
+			Object.values( state.reader.follows.items ).filter(
 				( blog ) => blog.organization_id === organizationId
 			),
 			sorter

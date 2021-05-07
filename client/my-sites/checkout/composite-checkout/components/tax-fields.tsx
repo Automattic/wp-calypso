@@ -5,16 +5,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
+import { Field, tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
-import Field from './field';
 import { LeftColumn, RightColumn } from './ie-fallback';
 import { isValid } from '../types/wpcom-store-state';
 import CountrySelectMenu from './country-select-menu';
 import type { CountryListItem } from '../types/country-list-item';
-import type { ManagedContactDetails } from '../types/wpcom-store-state';
 
 const GridRow = styled.div`
 	display: -ms-grid;
@@ -61,7 +61,11 @@ export default function TaxFields( {
 					label={ String( translate( 'Postal code' ) ) }
 					value={ postalCode?.value ?? '' }
 					disabled={ isDisabled }
-					onChange={ updatePostalCode }
+					onChange={ ( newValue ) =>
+						updatePostalCode(
+							tryToGuessPostalCodeFormat( newValue.toUpperCase(), countryCode?.value )
+						)
+					}
 					autoComplete={ section + ' postal-code' }
 					isError={ postalCode?.isTouched && ! isValid( postalCode ) }
 					errorMessage={ String( translate( 'This field is required.' ) ) }
@@ -73,6 +77,12 @@ export default function TaxFields( {
 					translate={ translate }
 					onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) => {
 						updateCountryCode( event.target.value );
+						// Reformat the postal code if the country changes
+						if ( postalCode ) {
+							updatePostalCode(
+								tryToGuessPostalCodeFormat( postalCode?.value, event.target.value )
+							);
+						}
 					} }
 					isError={ countryCode?.isTouched && ! isValid( countryCode ) }
 					isDisabled={ isDisabled }

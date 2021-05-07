@@ -27,7 +27,7 @@ import {
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 
 describe( 'canUpgradeToPlan', () => {
 	const siteId = 1234567;

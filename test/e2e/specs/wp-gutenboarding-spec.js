@@ -11,7 +11,7 @@ import LoginFlow from '../lib/flows/login-flow.js';
 import DeleteSiteFlow from '../lib/flows/delete-site-flow.js';
 import NewPage from '../lib/pages/gutenboarding/new-page.js';
 import AcquireIntentPage from '../lib/pages/gutenboarding/acquire-intent-page.js';
-import DesignSelectorPage from '../lib/pages/gutenboarding/design-selector-page.js';
+import DesignLocatorPage from '../lib/pages/gutenboarding/designs-page.js';
 import StylePreviewPage from '../lib/pages/gutenboarding/style-preview-page.js';
 import PlansPage from '../lib/pages/gutenboarding/plans-page.js';
 import DomainsPage from '../lib/pages/gutenboarding/domains-page.js';
@@ -64,7 +64,7 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 
 			await driverHelper.waitTillTextPresent(
 				driver,
-				acquireIntentPage.nextButtonSelector,
+				acquireIntentPage.nextButtonLocator,
 				'Continuar'
 			);
 
@@ -72,23 +72,28 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 
 			await driverHelper.waitTillTextPresent(
 				driver,
-				acquireIntentPage.nextButtonSelector,
+				acquireIntentPage.nextButtonLocator,
 				'Continue'
 			);
 
 			await acquireIntentPage.goToNextStep();
 		} );
 
-		step( 'Can see Domains Page and pick a free domain and continue', async function () {
-			const domainsPage = await DomainsPage.Expect( driver );
-			await domainsPage.enterDomainQuery( domainQuery );
-			newSiteDomain = await domainsPage.selectFreeDomain();
-			await domainsPage.continueToNextStep();
-		} );
+		step(
+			'Can see Domains Page, search for domains, pick a free domain, and continue',
+			async function () {
+				const domainsPage = await DomainsPage.Expect( driver );
+				await domainsPage.enterDomainQuery( domainQuery );
+				await domainsPage.waitForDomainSuggestionsToLoad();
+				newSiteDomain = await domainsPage.getFreeDomainName();
+				await domainsPage.selectFreeDomain();
+				await domainsPage.continueToNextStep();
+			}
+		);
 
-		step( 'Can see Design Selector and select a random free design', async function () {
-			const designSelectorPage = await DesignSelectorPage.Expect( driver );
-			await designSelectorPage.selectFreeDesign();
+		step( 'Can see Design Locator and select a random free design', async function () {
+			const designLocatorPage = await DesignLocatorPage.Expect( driver );
+			await designLocatorPage.selectFreeDesign();
 		} );
 
 		step( 'Can see Style Preview, choose a random font pairing, and continue', async function () {
@@ -144,45 +149,13 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 		} );
 	} );
 
-	describe( 'Visit Gutenboarding page as a logged in user', function () {
+	describe( 'Visit Gutenboarding page as a logged in user @parallel', function () {
 		step( 'Can log in as user', async function () {
 			await new LoginFlow( driver ).login();
 		} );
 
 		step( 'Can visit Gutenboarding', async function () {
 			await NewPage.Visit( driver );
-		} );
-	} );
-
-	/**
-	 * Paid "premium" designs are temporarily disabled in the flow.
-	 * See https://github.com/Automattic/wp-calypso/pull/49251
-	 */
-	describe.skip( 'Skip first step in Gutenboarding, select paid design and see Domains page after Style preview @parallel', function () {
-		before( async function () {
-			await driverManager.ensureNotLoggedIn( driver );
-			await NewPage.Visit( driver );
-		} );
-
-		step( 'Can skip Acquire Intent step', async function () {
-			const acquireIntentPage = await AcquireIntentPage.Expect( driver );
-			await acquireIntentPage.skipStep();
-		} );
-
-		step( 'Can see Design Selector and select a random paid design', async function () {
-			const designSelectorPage = await DesignSelectorPage.Expect( driver );
-			await designSelectorPage.selectPaidDesign();
-		} );
-
-		step( 'Can see Style Preview and continue', async function () {
-			const stylePreviewPage = await StylePreviewPage.Expect( driver );
-			await stylePreviewPage.continue();
-		} );
-
-		step( 'Can see Domain Picker in an empty state', async function () {
-			const domainPickerPage = await DomainsPage.Expect( driver );
-			const isEmptyState = await domainPickerPage.isInEmptyState();
-			assert.strictEqual( isEmptyState, true, 'Domain picker should be in empty state' );
 		} );
 	} );
 } );

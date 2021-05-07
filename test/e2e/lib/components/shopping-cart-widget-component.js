@@ -24,7 +24,7 @@ export default class ShoppingCartWidgetComponent extends AsyncBaseContainer {
 	}
 
 	async removeItem( self ) {
-		const cartEmpty = await driverHelper.isElementPresent( this.driver, by.css( '.cart-empty' ) );
+		const cartEmpty = await driverHelper.isElementLocated( this.driver, by.css( '.cart-empty' ) );
 		if ( ! cartEmpty ) {
 			return await driverHelper.clickWhenClickable( self.driver, by.css( '.cart__remove-item' ) );
 		}
@@ -32,12 +32,12 @@ export default class ShoppingCartWidgetComponent extends AsyncBaseContainer {
 
 	async empty() {
 		const self = this;
-		const cartBadgeSelector = by.css( '.cart__count-badge' );
+		const cartBadgeLocator = by.css( '.cart__count-badge' );
 
-		const present = await driverHelper.isElementPresent( self.driver, cartBadgeSelector );
+		const present = await driverHelper.isElementLocated( self.driver, cartBadgeLocator );
 		if ( present ) {
 			await self.open();
-			const numItems = await self.driver.findElement( cartBadgeSelector ).getText();
+			const numItems = await self.driver.findElement( cartBadgeLocator ).getText();
 			for ( let i = 0; i < numItems; i++ ) {
 				await self.removeItem( self );
 			}

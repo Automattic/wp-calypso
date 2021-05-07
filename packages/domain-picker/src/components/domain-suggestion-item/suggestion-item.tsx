@@ -6,17 +6,16 @@
 import * as React from 'react';
 import classnames from 'classnames';
 import { useI18n } from '@wordpress/react-i18n';
-import { useLocale } from '@automattic/i18n-utils';
 import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
-import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
 
 /**
  * Wordpress dependencies
  */
 import { createInterpolateElement } from '@wordpress/element';
-import { Spinner } from '@wordpress/components';
+import { Spinner, Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { Button } from '@wordpress/components';
+
 import { sprintf } from '@wordpress/i18n';
 
 /**

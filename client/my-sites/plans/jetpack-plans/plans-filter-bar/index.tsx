@@ -11,18 +11,21 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 /**
  * Internal dependencies
  */
-import { JETPACK_PRODUCTS_BY_TERM } from 'calypso/lib/products-values/constants';
-import { JETPACK_RESET_PLANS_BY_TERM } from 'calypso/lib/plans/constants';
+import {
+	JETPACK_PRODUCTS_BY_TERM,
+	JETPACK_RESET_PLANS_BY_TERM,
+	TERM_MONTHLY,
+	TERM_ANNUALLY,
+} from '@automattic/calypso-products';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
-import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
 import useDetectWindowBoundary from '../use-detect-window-boundary';
 import { getHighestAnnualDiscount } from '../utils';
 
 /**
  * Type dependencies
  */
-import type { Duration, DurationChangeCallback, ProductType } from '../types';
+import type { Duration, DurationChangeCallback } from '../types';
 
 /**
  * Style dependencies
@@ -34,20 +37,17 @@ interface FilterBarProps {
 	showDurations?: boolean;
 	duration?: Duration;
 	onDurationChange?: DurationChangeCallback;
-	onProductTypeChange?: ( arg0: ProductType ) => void;
-	withTreatmentVariant: boolean;
 }
 
 type DiscountMessageProps = {
 	primary?: boolean;
-	withTreatmentVariant: boolean;
 };
 
 const CLOUD_MASTERBAR_STICKY = false;
 const CALYPSO_MASTERBAR_HEIGHT = 47;
 const CLOUD_MASTERBAR_HEIGHT = CLOUD_MASTERBAR_STICKY ? 94 : 0;
 
-const DiscountMessage: React.FC< DiscountMessageProps > = ( { primary, withTreatmentVariant } ) => {
+const DiscountMessage: React.FC< DiscountMessageProps > = ( { primary } ) => {
 	const translate = useTranslate();
 	const isMobile: boolean = useMobileBreakpoint();
 
@@ -68,7 +68,6 @@ const DiscountMessage: React.FC< DiscountMessageProps > = ( { primary, withTreat
 		<div
 			className={ classNames( 'plans-filter-bar__discount-message', {
 				primary,
-				treatment: withTreatmentVariant,
 			} ) }
 		>
 			<div>
@@ -93,7 +92,6 @@ const PlansFilterBar: React.FC< FilterBarProps > = ( {
 	showDiscountMessage,
 	duration,
 	onDurationChange,
-	withTreatmentVariant,
 } ) => {
 	const translate = useTranslate();
 	const isInConnectStore = useMemo( isConnectStore, [] );
@@ -126,12 +124,7 @@ const PlansFilterBar: React.FC< FilterBarProps > = ( {
 				/>
 				<span className="plans-filter-bar__toggle-on-label">{ translate( 'Bill yearly' ) }</span>
 			</div>
-			{ showDiscountMessage && (
-				<DiscountMessage
-					primary={ durationChecked }
-					withTreatmentVariant={ withTreatmentVariant }
-				/>
-			) }
+			{ showDiscountMessage && <DiscountMessage primary={ durationChecked } /> }
 		</div>
 	);
 };

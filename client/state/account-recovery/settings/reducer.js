@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { combineReducers, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE,
@@ -22,7 +22,7 @@ const setTargetState = ( value ) => ( state, { target } ) => ( {
 	[ target ]: value,
 } );
 
-const isUpdating = withoutPersistence( ( state = {}, action ) => {
+const isUpdating = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case ACCOUNT_RECOVERY_SETTINGS_UPDATE:
 			return setTargetState( true )( state, action );
@@ -33,9 +33,9 @@ const isUpdating = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
-const isDeleting = withoutPersistence( ( state = {}, action ) => {
+const isDeleting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case ACCOUNT_RECOVERY_SETTINGS_DELETE:
 			return setTargetState( true )( state, action );
@@ -46,9 +46,9 @@ const isDeleting = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
-const hasSentValidation = withoutPersistence( ( state = {}, action ) => {
+const hasSentValidation = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION:
 			return setTargetState( true )( state, action );
@@ -57,7 +57,7 @@ const hasSentValidation = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 const convertPhoneResponse = ( phoneResponse ) => {
 	if ( ! phoneResponse ) {
@@ -74,7 +74,7 @@ const convertPhoneResponse = ( phoneResponse ) => {
 	};
 };
 
-const phone = withoutPersistence( ( state = null, action ) => {
+const phone = ( state = null, action ) => {
 	switch ( action.type ) {
 		case ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS: {
 			const { settings } = action;
@@ -91,9 +91,9 @@ const phone = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+};
 
-const email = withoutPersistence( ( state = '', action ) => {
+const email = ( state = '', action ) => {
 	switch ( action.type ) {
 		case ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS: {
 			const { settings } = action;
@@ -110,9 +110,9 @@ const email = withoutPersistence( ( state = '', action ) => {
 	}
 
 	return state;
-} );
+};
 
-const phoneValidated = withoutPersistence( ( state = false, action ) => {
+const phoneValidated = ( state = false, action ) => {
 	switch ( action.type ) {
 		case ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS: {
 			const { settings } = action;
@@ -131,9 +131,9 @@ const phoneValidated = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+};
 
-const isValidatingPhone = withoutPersistence( ( state = false, action ) => {
+const isValidatingPhone = ( state = false, action ) => {
 	switch ( action.type ) {
 		case ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE:
 			return true;
@@ -144,9 +144,9 @@ const isValidatingPhone = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+};
 
-const emailValidated = withoutPersistence( ( state = false, action ) => {
+const emailValidated = ( state = false, action ) => {
 	switch ( action.type ) {
 		case ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS: {
 			const { settings } = action;
@@ -163,16 +163,16 @@ const emailValidated = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+};
 
-const isReady = withoutPersistence( ( state = false, action ) => {
+const isReady = ( state = false, action ) => {
 	switch ( action.type ) {
 		case ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS:
 			return true;
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	data: combineReducers( {

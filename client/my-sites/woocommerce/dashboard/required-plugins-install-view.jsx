@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -38,8 +37,8 @@ const TIME_TO_TRANSFER_ACTIVE = 5;
 const TIME_TO_TRANSFER_UPLOADING = 5;
 const TIME_TO_TRANSFER_BACKFILLING = 25;
 const TIME_TO_TRANSFER_COMPLETE = 6;
-const TIME_TO_PLUGIN_INSTALLATION = 30;
-const TIME_TO_PLUGIN_ACTIVATION = 30;
+const TIME_TO_PLUGIN_INSTALLATION = 60;
+const TIME_TO_PLUGIN_ACTIVATION = 60;
 
 const transferStatusesToTimes = {};
 
@@ -215,6 +214,17 @@ class RequiredPluginsInstallView extends Component {
 		this.timeoutTimer = window.setTimeout( this.timeoutElapsed, durationInSeconds * 1000 );
 	};
 
+	/**
+	 * Sends a track for user contacting support.
+	 *
+	 * @param {string} reason Reason on why user would contact. Values can be 'failure' or 'timeout'.
+	 */
+	trackContactSupport = ( reason ) => {
+		recordTrack( 'calypso_woocommerce_setup_contact_support', {
+			reason,
+		} );
+	};
+
 	doInitialization = () => {
 		const { fixMode, site, sitePlugins, wporgPlugins } = this.props;
 		const { workingOn } = this.state;
@@ -349,6 +359,7 @@ class RequiredPluginsInstallView extends Component {
 		// Otherwise, if we are working on something presently, see if it has appeared in state yet
 		const pluginFound = find( sitePlugins, { slug: this.state.workingOn } );
 		if ( pluginFound ) {
+			this.destroyTimeoutTimer();
 			this.setState( {
 				workingOn: '',
 				progress: this.state.progress + this.getPluginInstallationTime(),
@@ -536,7 +547,15 @@ class RequiredPluginsInstallView extends Component {
 						title={ translate( "We can't update your store" ) }
 						subtitle={ subtitle }
 					>
-						<Button primary href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer">
+						<Button
+							onClick={ () => {
+								this.trackContactSupport( 'failure' );
+							} }
+							primary
+							href={ CALYPSO_CONTACT }
+							target="_blank"
+							rel="noopener noreferrer"
+						>
 							{ this.props.translate( 'Get in touch' ) }
 						</Button>
 					</SetupHeader>
@@ -563,7 +582,15 @@ class RequiredPluginsInstallView extends Component {
 						title={ translate( 'We were unable to set up your store.' ) }
 						subtitle={ subtitle }
 					>
-						<Button primary href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer">
+						<Button
+							onClick={ () => {
+								this.trackContactSupport( 'timeout' );
+							} }
+							primary
+							href={ CALYPSO_CONTACT }
+							target="_blank"
+							rel="noopener noreferrer"
+						>
 							{ translate( 'Get in touch' ) }
 						</Button>
 					</SetupHeader>
@@ -627,20 +654,10 @@ function mapStateToProps( state ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
-	return bindActionCreators(
-		{
-			activatePlugin,
-			fetchPluginData,
-			installAndActivatePlugin,
-			fetchPlugins,
-			logToLogstash,
-		},
-		dispatch
-	);
-}
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( RequiredPluginsInstallView ) );
+export default connect( mapStateToProps, {
+	activatePlugin,
+	fetchPluginData,
+	installAndActivatePlugin,
+	fetchPlugins,
+	logToLogstash,
+} )( localize( RequiredPluginsInstallView ) );

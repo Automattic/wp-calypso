@@ -43,26 +43,25 @@ export default class WporgCreatorPage extends AsyncBaseContainer {
 	}
 
 	async _postInit() {
-		await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.clickWhenClickable(
 			this.driver,
 			CONTINUE_LINK,
 			this.explicitWaitMS * 20
 		);
-		return await driverHelper.clickWhenClickable( this.driver, CONTINUE_LINK );
 	}
 
 	async getPassword() {
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, PASSWORD_ELEMENT );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, PASSWORD_ELEMENT );
 		return await this.driver.findElement( PASSWORD_ELEMENT ).getText();
 	}
 
 	async getUsername() {
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, USERNAME_ELEMENT );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, USERNAME_ELEMENT );
 		return await this.driver.findElement( USERNAME_ELEMENT ).getText();
 	}
 
 	async getUrl() {
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, URL_ELEMENT );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, URL_ELEMENT );
 		return await this.driver.findElement( URL_ELEMENT ).getText();
 	}
 
@@ -70,12 +69,11 @@ export default class WporgCreatorPage extends AsyncBaseContainer {
 		await driverHelper.refreshIfJNError( this.driver );
 
 		if ( template === 'wooCommerceNoJetpack' ) {
-			const selector = By.css( 'a.wc-setup-footer-links' );
-			await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
-			await driverHelper.clickWhenClickable( this.driver, selector );
+			const locator = By.css( 'a.wc-setup-footer-links' );
+			await driverHelper.clickWhenClickable( this.driver, locator );
 		}
 
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, PASSWORD_ELEMENT );
+		return await driverHelper.waitUntilElementLocatedAndVisible( this.driver, PASSWORD_ELEMENT );
 	}
 
 	static _getCreatorURL( template = 'default' ) {

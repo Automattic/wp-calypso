@@ -1,9 +1,4 @@
 /**
- *  External dependencies
- */
-import { has, invoke } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { recordPageView } from 'calypso/lib/analytics/page-view';
@@ -50,10 +45,10 @@ const dispatcher = ( action ) => {
 
 		switch ( type ) {
 			case ANALYTICS_EVENT_RECORD:
-				return invoke( eventServices, service, params );
+				return eventServices[ service ]?.( params );
 
 			case ANALYTICS_PAGE_VIEW_RECORD:
-				return invoke( pageViewServices, service, params );
+				return pageViewServices[ service ]?.( params );
 
 			case ANALYTICS_STAT_BUMP:
 				return statBump( params );
@@ -72,7 +67,7 @@ export const analyticsMiddleware = () => ( next ) => ( action ) => {
 			return;
 
 		default:
-			if ( has( action, 'meta.analytics' ) ) {
+			if ( action.meta?.analytics ) {
 				dispatcher( action );
 			}
 	}

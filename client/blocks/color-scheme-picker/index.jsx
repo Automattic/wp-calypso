@@ -26,6 +26,7 @@ class ColorSchemePicker extends PureComponent {
 		defaultSelection: PropTypes.string,
 		temporarySelection: PropTypes.bool,
 		onSelection: PropTypes.func,
+		disabled: PropTypes.bool,
 		// Connected props
 		colorSchemePreference: PropTypes.string,
 		saveColorSchemePreference: PropTypes.func,
@@ -57,6 +58,7 @@ class ColorSchemePicker extends PureComponent {
 					checked={ checkedColorScheme }
 					onChange={ this.handleColorSchemeSelection }
 					items={ colorSchemesData }
+					disabled={ this.props.disabled }
 				/>
 			</div>
 		);

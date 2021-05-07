@@ -6,7 +6,7 @@ import { some } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { isJetpackBackup } from 'calypso/lib/products-values';
+import { isJetpackBackup } from '@automattic/calypso-products';
 import { getSitePurchases } from './get-site-purchases';
 
 import 'calypso/state/purchases/init';

@@ -48,7 +48,6 @@ export default function RevokeLicenseDialog( {
 			dispatch( errorNotice( error.message ) );
 		},
 	} );
-	const helpUrl = '';
 
 	close = useCallback( () => {
 		if ( ! mutation.isLoading ) {
@@ -70,15 +69,17 @@ export default function RevokeLicenseDialog( {
 		</Button>,
 	];
 
-	if ( helpUrl ) {
-		buttons.unshift(
-			<a href={ helpUrl } target="_blank" rel="noreferrer noopener">
-				{ translate( 'Learn more about revoking licenses' ) }
-				&nbsp;
-				<Gridicon icon="external" size={ 18 } />
-			</a>
-		);
-	}
+	buttons.unshift(
+		<a
+			href="https://github.com/Automattic/jetpack-licensing-api/tree/master/integration-docs#glossary"
+			target="_blank"
+			rel="noreferrer noopener"
+		>
+			{ translate( 'Learn more about revoking licenses' ) }
+			&nbsp;
+			<Gridicon icon="external" size={ 18 } />
+		</a>
+	);
 
 	return (
 		<Dialog
@@ -94,7 +95,7 @@ export default function RevokeLicenseDialog( {
 
 			<p>
 				{ translate(
-					'A revoked license cannot be reused and the associated site will no longer have access to the provisioned product. You will stop being billing for this license immediately.'
+					'A revoked license cannot be reused, and the associated site will no longer have access to the provisioned product. You will stop being billed for this license immediately.'
 				) }
 			</p>
 

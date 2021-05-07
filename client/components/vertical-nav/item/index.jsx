@@ -47,9 +47,9 @@ class VerticalNavItem extends Component {
 	};
 
 	render() {
-		const { isPlaceHolder, external, onClick, path, className, children } = this.props;
+		const { isPlaceholder, external, onClick, path, className, children } = this.props;
 
-		if ( isPlaceHolder ) {
+		if ( isPlaceholder ) {
 			return this.placeholder();
 		}
 

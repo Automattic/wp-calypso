@@ -33,10 +33,8 @@ const receivedExampleData = ( action, data ) => ( {
 	data,
 } );
 
-const receivedExampleDataError = ( action, error ) => createNotice(
-	'is-error',
-	get( error, 'response.body.error', null )
-);
+const receivedExampleDataError = ( action, error ) =>
+	createNotice( 'is-error', get( error, 'response.body.error', null ) );
 
 export default {
 	[ GET_EXAMPLE_DATA ]: dispatchRequest( {

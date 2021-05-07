@@ -8,7 +8,7 @@ import moment from 'moment';
  * Internal dependencies
  */
 import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
 	INVITES_DELETE_REQUEST,
 	INVITES_DELETE_REQUEST_FAILURE,
@@ -152,7 +152,7 @@ function deleteInvites( siteInvites, invitesToDelete ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const counts = withoutPersistence( ( state = {}, action ) => {
+export const counts = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case INVITES_REQUEST_SUCCESS: {
 			return {
@@ -169,7 +169,7 @@ export const counts = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated site invites resend requests state after an action has been

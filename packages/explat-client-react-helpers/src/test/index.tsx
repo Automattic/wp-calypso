@@ -62,12 +62,47 @@ describe( 'useExperiment', () => {
 		);
 
 		expect( result.current ).toEqual( [ true, null ] );
+		expect( exPlatClient.loadExperimentAssignment ).toHaveBeenCalledTimes( 1 );
 		actReactHooks( () => controllablePromise1.resolve( validExperimentAssignment ) );
 		expect( result.current ).toEqual( [ true, null ] );
 		await waitForNextUpdate();
 		expect( result.current ).toEqual( [ false, validExperimentAssignment ] );
 		rerender();
 		expect( result.current ).toEqual( [ false, validExperimentAssignment ] );
+	} );
+
+	it( 'should correctly load an experiment assignment respecting eligibility', async () => {
+		const exPlatClient = createMockExPlatClient();
+		const { useExperiment } = createExPlatClientReactHelpers( exPlatClient );
+
+		const controllablePromise1 = createControllablePromise< ExperimentAssignment >();
+		( exPlatClient.loadExperimentAssignment as jest.MockedFunction<
+			typeof exPlatClient.loadExperimentAssignment
+		> ).mockImplementationOnce( () => controllablePromise1.promise );
+
+		let isEligible = false;
+		const { result, rerender, waitForNextUpdate } = renderHook( () =>
+			useExperiment( 'experiment_a', { isEligible } )
+		);
+
+		expect( result.current ).toEqual( [ false, null ] );
+		expect( exPlatClient.loadExperimentAssignment ).toHaveBeenCalledTimes( 0 );
+
+		isEligible = true;
+		rerender();
+		expect( result.current ).toEqual( [ true, null ] );
+		expect( exPlatClient.loadExperimentAssignment ).toHaveBeenCalledTimes( 1 );
+		actReactHooks( () => controllablePromise1.resolve( validExperimentAssignment ) );
+		expect( result.current ).toEqual( [ true, null ] );
+		await waitForNextUpdate();
+		expect( result.current ).toEqual( [ false, validExperimentAssignment ] );
+		rerender();
+		expect( result.current ).toEqual( [ false, validExperimentAssignment ] );
+
+		isEligible = false;
+		rerender();
+		expect( result.current ).toEqual( [ false, null ] );
+		expect( exPlatClient.loadExperimentAssignment ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
 
@@ -112,7 +147,7 @@ describe( 'Experiment', () => {
 		expect( container.textContent ).toBe( 'treatment-2' );
 	} );
 
-	it( 'should correctly show default after loading ', async () => {
+	it( 'should correctly show default after loading', async () => {
 		const exPlatClient = createMockExPlatClient();
 		const { Experiment } = createExPlatClientReactHelpers( exPlatClient );
 
@@ -164,17 +199,14 @@ describe( 'ProvideExperimentData', () => {
 				) }
 			</ProvideExperimentData>
 		);
-		expect( capture.mock.calls.length ).toBe( 1 );
-		expect( capture.mock.calls[ capture.mock.calls.length - 1 ] ).toEqual( [ true, null ] );
+		expect( capture ).toHaveBeenCalledTimes( 1 );
+		expect( capture.mock.calls[ 0 ] ).toEqual( [ true, null ] );
 		capture.mockReset();
 		const experimentAssignment = { ...validExperimentAssignment, variationName: null };
 		await actReact( async () => controllablePromise1.resolve( experimentAssignment ) );
 		await waitFor( () => {
-			expect( capture.mock.calls.length ).toBe( 1 );
+			expect( capture ).toHaveBeenCalledTimes( 1 );
 		} );
-		expect( capture.mock.calls[ capture.mock.calls.length - 1 ] ).toEqual( [
-			false,
-			experimentAssignment,
-		] );
+		expect( capture.mock.calls[ 0 ] ).toEqual( [ false, experimentAssignment ] );
 	} );
 } );

@@ -27,7 +27,7 @@ const CalypsoI18nProvider: React.FunctionComponent = ( { children } ) => {
 		return () => {
 			i18n.off( 'change', onChange );
 		};
-	}, [] );
+	}, [ wpI18n ] );
 
 	return (
 		<LocaleProvider localeSlug={ localeSlug || i18nDefaultLocaleSlug }>

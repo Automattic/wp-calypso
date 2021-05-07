@@ -30,7 +30,6 @@ const sanitizeUrl = ( url, wpAdminUrl ) => {
 		url = addQueryArgs(
 			{
 				return: document.location.href, // Gives WP Admin a chance to return to where we started from.
-				from: 'calypso-unified-menu', // `from` param is used by WP Admin on Atomic sites for enabling Nav Unification in that context. Can be removed after rolling Nav Unification out to 100% of users.
 			},
 			url
 		);

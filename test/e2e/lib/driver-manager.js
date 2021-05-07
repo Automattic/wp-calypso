@@ -9,13 +9,13 @@ import config from 'config';
 import proxy from 'selenium-webdriver/proxy';
 import SauceLabs from 'saucelabs';
 import { times } from 'lodash';
-import { readFileSync } from 'fs';
-
+import { getChromeVersion } from '@testim/chrome-version';
 import * as remote from 'selenium-webdriver/remote';
 
 /**
  * Internal dependencies
  */
+import { generatePath } from './test-utils';
 import * as dataHelper from './data-helper';
 
 const webDriverImplicitTimeOutMS = 2000;
@@ -71,7 +71,11 @@ export function getProxyType() {
 	}
 }
 
-export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = true } = {} ) {
+export async function startBrowser( {
+	useCustomUA = true,
+	resizeBrowserWindow = true,
+	disableThirdPartyCookies = false,
+} = {} ) {
 	if ( global.__BROWSER__ ) {
 		return global.__BROWSER__;
 	}
@@ -80,11 +84,11 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 	let driver;
 	let options;
 	let builder;
-	const chromeVersion = await readFileSync( './.chromedriver_version', 'utf8' ).trim();
-	const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ chromeVersion } Safari/537.36`;
+	const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ await getChromeVersion() } Safari/537.36`;
 	const pref = new webdriver.logging.Preferences();
-	pref.setLevel( 'browser', webdriver.logging.Level.ALL );
-	pref.setLevel( 'performance', webdriver.logging.Level.ALL );
+	pref.setLevel( webdriver.logging.Type.BROWSER, webdriver.logging.Level.ALL );
+	pref.setLevel( webdriver.logging.Type.PERFORMANCE, webdriver.logging.Level.ALL );
+
 	if ( config.has( 'sauce' ) && config.get( 'sauce' ) ) {
 		const sauceURL = 'http://ondemand.saucelabs.com:80/wd/hub';
 		const sauceConfig = config.get( 'sauceConfig' );
@@ -135,11 +139,26 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 		switch ( browser.toLowerCase() ) {
 			case 'chrome':
 				options = new chrome.Options();
-				options.setUserPreferences( {
+				// eslint-disable-next-line no-case-declarations
+				const prefs = {
 					enable_do_not_track: true,
 					credentials_enable_service: false,
 					intl: { accept_languages: locale },
-				} );
+					profile: {
+						// 1 = allow all cookies (default), 2 = block all cookies
+						default_content_setting_values: { cookies: 1 },
+						block_third_party_cookies: false, // For chrome v84. (ci)
+						// 0 = allow 3pc, 1 = block 3pc, 2 = block 3pc in incognito (default)
+						cookie_controls_mode: 2, // For chrome v90.
+					},
+				};
+
+				if ( disableThirdPartyCookies ) {
+					prefs.profile.cookie_controls_mode = 1;
+					prefs.profile.block_third_party_cookies = true;
+				}
+
+				options.setUserPreferences( prefs );
 				options.setProxy( getProxyType() );
 				options.addArguments( '--no-first-run' );
 				options.addArguments( '--no-sandbox' );
@@ -165,14 +184,11 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 
 				// eslint-disable-next-line no-case-declarations
 				const service = new chrome.ServiceBuilder( chromedriver.path )
-					.loggingTo( './chromedriver.' + process.pid + '.log' )
-					.enableVerboseLogging()
+					.loggingTo( generatePath( 'chromedriver.log' ) )
 					.build();
 				chrome.setDefaultService( service );
-				options.setChromeLogFile( './chrome.' + process.pid + '.log' );
+				options.setChromeLogFile( generatePath( './chrome.log' ) );
 				options.addArguments( '--enable-logging' );
-				options.addArguments( '--log-level 0' );
-				options.addArguments( '--log-net-log ./chrome.net.' + process.pid + '.log' );
 
 				builder = new webdriver.Builder();
 				builder.setChromeOptions( options );
@@ -189,12 +205,16 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 				profile.setPreference( 'browser.startup.homepage', 'about:blank' );
 				profile.setPreference( 'startup.homepage_welcome_url.additional', 'about:blank' );
 				profile.setPreference( 'intl.accept_languages', locale );
+				if ( disableThirdPartyCookies ) {
+					profile.setPreference( 'network.cookie.cookieBehavior', 2 );
+				}
 				if ( useCustomUA ) {
 					profile.setPreference(
 						'general.useragent.override',
 						'Mozilla/5.0 (wp-e2e-tests) Gecko/20100101 Firefox/46.0'
 					);
 				}
+
 				options = new firefox.Options().setProfile( profile );
 				options.setProxy( getProxyType() );
 				builder = new webdriver.Builder();
@@ -291,6 +311,22 @@ export async function ensureNotLoggedIn( driver ) {
 	);
 
 	return driver.sleep( 500 );
+}
+
+/**
+ * Ensure a user isn't logged into wordpress.com, remote-login, or the given test site url.
+ *
+ * Clearing cookies on each site ensures a login step is required for popup based logins.
+ *
+ * @param driver Webdriver
+ * @param siteUrl to clear cookies from
+ */
+export async function ensureNotLoggedIntoSite( driver, siteUrl = false ) {
+	await ensureNotLoggedIn( driver ); // Clear wpcom/calypso cookies
+	await clearCookiesAndDeleteLocalStorage( driver, 'https://r-login.wordpress.com/' ); // Clear cookies on remote login
+	if ( siteUrl ) {
+		await clearCookiesAndDeleteLocalStorage( driver, siteUrl ); // Clear cookies on url
+	}
 }
 
 export async function dismissAllAlerts( driver ) {

@@ -1,0 +1,11 @@
+.select-partner-key-dropdown {
+	@include breakpoint-deprecated( '<960px' ) {
+		width: 100%;
+		margin-bottom: 16px;
+		margin-left: 0;
+
+		.select-dropdown__container {
+			width: 100%;
+		}
+	}
+}

@@ -16,7 +16,7 @@ import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { Button } from '@automattic/components';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import { getName, isExpired, isRenewing } from 'calypso/lib/purchases';
-import { isPlan, isDomainRegistration } from 'calypso/lib/products-values';
+import { isPlan, isDomainRegistration } from '@automattic/calypso-products';
 import SectionHeader from 'calypso/components/section-header';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getSelectedSite } from 'calypso/state/ui/selectors';

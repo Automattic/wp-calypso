@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -51,7 +50,6 @@ UsAddressFieldset.propTypes = {
 UsAddressFieldset.defaultProps = {
 	countryCode: 'US',
 	getFieldProps: noop,
-	translate: identity,
 };
 
 export default localize( UsAddressFieldset );

@@ -2,11 +2,7 @@
  * External dependencies
  */
 import styled from '@emotion/styled';
-
-/**
- * Internal dependencies
- */
-import Field from 'calypso/my-sites/checkout/composite-checkout/components/field';
+import { Field } from '@automattic/wpcom-checkout';
 
 export const GridRow = styled.div`
 	display: -ms-grid;

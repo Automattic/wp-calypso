@@ -47,6 +47,7 @@ export function authQueryTransformer( queryObject ) {
 		userEmail: queryObject.user_email || null,
 		woodna_service_name: queryObject.woodna_service_name || null,
 		woodna_help_url: queryObject.woodna_help_url || null,
+		skipUser: queryObject.skip_user || null,
 	};
 }
 

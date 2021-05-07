@@ -16,6 +16,7 @@ import GuideComponent from '../components/guide-component.js';
 
 import * as dataHelper from '../data-helper';
 import * as driverManager from '../driver-manager';
+import * as driverHelper from '../driver-helper';
 import * as loginCookieHelper from '../login-cookie-helper';
 import PagesPage from '../pages/pages-page';
 
@@ -62,9 +63,9 @@ export default class LoginFlow {
 		// ) {
 		// 	console.log( 'Reusing login cookie for ' + this.account.username );
 		// 	await this.driver.navigate().refresh();
-		// 	const continueSelector = By.css( 'div.continue-as-user a' );
-		// 	if ( await driverHelper.isElementPresent( this.driver, continueSelector ) ) {
-		// 		await driverHelper.clickWhenClickable( this.driver, continueSelector );
+		// 	const continueLocator = By.css( 'div.continue-as-user a' );
+		// 	if ( await driverHelper.isElementLocated( this.driver, continueLocator ) ) {
+		// 		await driverHelper.clickWhenClickable( this.driver, continueLocator );
 		// 	}
 		// 	return;
 		// }
@@ -146,7 +147,7 @@ export default class LoginFlow {
 	async loginAndStartNewPage(
 		site = null,
 		usingGutenberg = false,
-		{ useFreshLogin = false, dismissPageTemplateSelector = true, editorType = 'iframe' } = {}
+		{ useFreshLogin = false, dismissPageTemplateLocator = true, editorType = 'iframe' } = {}
 	) {
 		if ( site || ( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' ) ) {
 			site = site || dataHelper.getJetpackSiteName();
@@ -162,7 +163,7 @@ export default class LoginFlow {
 
 		if ( usingGutenberg ) {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver, editorType );
-			await gEditorComponent.initEditor( { dismissPageTemplateSelector } );
+			await gEditorComponent.initEditor( { dismissPageTemplateLocator } );
 		}
 
 		if ( ! usingGutenberg ) {
@@ -255,6 +256,28 @@ export default class LoginFlow {
 			this.account.email || this.account.username,
 			this.account.password
 		);
+	}
+
+	async loginUsingPopup() {
+		await driverHelper.waitUntilAbleToSwitchToWindow( this.driver, 1 );
+		const loginPage = await LoginPage.Expect( this.driver );
+
+		try {
+			await loginPage.login(
+				this.account.email || this.account.username,
+				this.account.password,
+				false,
+				{ retry: false }
+			);
+		} catch ( error ) {
+			// Popup login window closes itself so let's handle WebDriver complaints
+			if ( 'NoSuchWindowError' !== error.name ) {
+				throw error;
+			}
+		}
+
+		// Make sure we've switched back to the post window
+		await driverHelper.waitUntilAbleToSwitchToWindow( this.driver, 0 );
 	}
 
 	async loginAndOpenWooStore() {

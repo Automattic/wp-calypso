@@ -11,7 +11,7 @@ import GutenbergBlockComponent from './gutenberg-block-component';
 class DynamicSeparatorBlockComponent extends GutenbergBlockComponent {
 	static blockTitle = 'Dynamic HR';
 	static blockName = 'coblocks/dynamic-separator';
-	static blockFrontendSelector = By.css( '.entry-content .wp-block-coblocks-dynamic-separator' );
+	static blockFrontendLocator = By.css( '.entry-content .wp-block-coblocks-dynamic-separator' );
 
 	/**
 	 * Expands the horizontal ruler by the amount of pixels specified. This is useful
@@ -22,7 +22,7 @@ class DynamicSeparatorBlockComponent extends GutenbergBlockComponent {
 	 */
 	async resizeBy( pixels ) {
 		// We need to move focus away from the layout grid, or any subsequent blocks inserted will be part of it
-		const resizeHandleSelector = await this.driver.findElement(
+		const resizeHandleLocator = await this.driver.findElement(
 			By.css(
 				`${ this.blockID } div.components-resizable-box__handle.components-resizable-box__side-handle.components-resizable-box__handle-bottom`
 			)
@@ -30,7 +30,7 @@ class DynamicSeparatorBlockComponent extends GutenbergBlockComponent {
 
 		const bbox = await this.driver.executeScript(
 			'return arguments[0].getBoundingClientRect()',
-			resizeHandleSelector
+			resizeHandleLocator
 		);
 
 		const actions = await this.driver.actions( { bridge: true } );

@@ -1,10 +1,7 @@
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
 import React from 'react';
-import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -26,13 +23,5 @@ const SharingConnections = ( { translate } ) => (
 		<SharingServicesGroup type="other" title={ translate( 'Manage connections' ) } />
 	</div>
 );
-
-SharingConnections.propTypes = {
-	translate: PropTypes.func,
-};
-
-SharingConnections.defaultProps = {
-	translate: identity,
-};
 
 export default localize( SharingConnections );

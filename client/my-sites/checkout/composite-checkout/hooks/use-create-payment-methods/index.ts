@@ -6,8 +6,6 @@ import {
 	createPayPalMethod,
 	createAlipayMethod,
 	createAlipayPaymentMethodStore,
-	createBancontactMethod,
-	createBancontactPaymentMethodStore,
 	createGiropayMethod,
 	createGiropayPaymentMethodStore,
 	createP24Method,
@@ -18,8 +16,12 @@ import {
 	createSofortPaymentMethodStore,
 	createEpsMethod,
 	createEpsPaymentMethodStore,
-	createApplePayMethod,
 } from '@automattic/composite-checkout';
+import {
+	createApplePayMethod,
+	createBancontactMethod,
+	createBancontactPaymentMethodStore,
+} from '@automattic/wpcom-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import type { StripeConfiguration, Stripe, StripeLoadingError } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
@@ -374,7 +376,9 @@ function useCreateApplePay( {
 	const shouldCreateApplePayMethod = isStripeReady && ! isApplePayLoading && isApplePayAvailable;
 
 	const applePayMethod = useMemo( () => {
-		return shouldCreateApplePayMethod ? createApplePayMethod( stripe, stripeConfiguration ) : null;
+		return shouldCreateApplePayMethod && stripe && stripeConfiguration
+			? createApplePayMethod( stripe, stripeConfiguration )
+			: null;
 	}, [ shouldCreateApplePayMethod, stripe, stripeConfiguration ] );
 
 	return applePayMethod;

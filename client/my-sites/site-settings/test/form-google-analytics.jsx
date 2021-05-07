@@ -22,8 +22,8 @@ import {
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
-} from 'calypso/lib/plans/constants';
-import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans/jetpack-plans/constants';
+	PLAN_JETPACK_SECURITY_DAILY,
+} from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -100,7 +100,7 @@ describe( 'UpsellNudge should get appropriate plan constant for both forms', () 
 				);
 				expect( comp.find( 'UpsellNudge[event="google_analytics_settings"]' ) ).toHaveLength( 1 );
 				expect( comp.find( 'UpsellNudge[event="google_analytics_settings"]' ).props().plan ).toBe(
-					OPTIONS_JETPACK_SECURITY
+					PLAN_JETPACK_SECURITY_DAILY
 				);
 			} );
 		}

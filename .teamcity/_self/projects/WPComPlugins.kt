@@ -4,12 +4,11 @@ import _self.PluginBaseBuild
 import _self.bashNodeScript
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
-import jetbrains.buildServer.configs.kotlin.v2019_2.Parametrized
-import jetbrains.buildServer.configs.kotlin.v2019_2.ParametrizedWithType
 
 object WPComPlugins : Project({
 	id("WPComPlugins")
 	name = "WPCom Plugins"
+	description = "Builds for WordPress.com plugins developed in calypso and deployed to wp-admin."
 
 	// Default params for WPcom Plugins.
 	params {
@@ -27,6 +26,23 @@ object WPComPlugins : Project({
 
 	// For some reason, TeamCity needs this to reference the Template.
 	template(PluginBaseBuild())
+
+	cleanup {
+		keepRule {
+			id = "keepReleaseBuilds"
+			keepAtLeast = allBuilds()
+			applyToBuilds {
+				inBranches {
+					branchFilter = patterns("+:<default>")
+				}
+				withStatus = successful()
+				withTags = anyOf("notifications-release-build", "etk-release-build", "wpcom-block-editor-release-build", "o2-blocks-release-build")
+			}
+			dataToKeep = everything()
+			applyPerEachBranch = true
+			preserveArtifactsDependencies = true
+		}
+	}
 })
 
 

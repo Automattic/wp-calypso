@@ -15,7 +15,7 @@ const by = webdriver.By;
 export default class CancelDomainPage extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, by.css( '.confirm-cancel-domain.main' ) );
-		this.confirmButtonSelector = by.css( '.confirm-cancel-domain .button.is-primary' );
+		this.confirmButtonLocator = by.css( '.confirm-cancel-domain .button.is-primary' );
 	}
 
 	async completeSurveyAndConfirm() {
@@ -34,15 +34,15 @@ export default class CancelDomainPage extends AsyncBaseContainer {
 			this.driver,
 			by.css( '.confirm-cancel-domain__confirm-container input[type="checkbox"]' )
 		);
-		await driverHelper.clickWhenClickable( this.driver, this.confirmButtonSelector );
+		await driverHelper.clickWhenClickable( this.driver, this.confirmButtonLocator );
 		const noticesComponent = await NoticesComponent.Expect( this.driver );
 		return await noticesComponent.isSuccessNoticeDisplayed(); // TODO: Check when signup test is enabled again
 	}
 
 	async waitToDisappear() {
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
-			this.confirmButtonSelector,
+			this.confirmButtonLocator,
 			this.explicitWaitMS * 3
 		);
 	}

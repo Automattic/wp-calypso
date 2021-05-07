@@ -1,8 +1,7 @@
 /**
  * Internal Dependencies
  */
-import { getPlan, findPlansKeys } from 'calypso/lib/plans';
-import { TYPE_PERSONAL } from 'calypso/lib/plans/constants';
+import { getPlan, findPlansKeys, TYPE_PERSONAL } from '@automattic/calypso-products';
 
 import 'calypso/state/purchases/init';
 

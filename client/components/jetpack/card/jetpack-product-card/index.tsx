@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import React, { createElement, ReactNode } from 'react';
+import React, { createElement, ReactNode, useEffect, useRef } from 'react';
 import { Button, ProductIcon } from '@automattic/components';
 
 /**
@@ -15,12 +15,17 @@ import JetpackProductCardTimeFrame from './time-frame';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
 import InfoPopover from 'calypso/components/info-popover';
+import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 
 /**
  * Type dependencies
  */
 import type { Moment } from 'moment';
-import type { Duration, PurchaseCallback } from 'calypso/my-sites/plans/jetpack-plans/types';
+import type {
+	Duration,
+	PurchaseCallback,
+	ScrollCardIntoViewCallback,
+} from 'calypso/my-sites/plans/jetpack-plans/types';
 
 /**
  * Style dependencies
@@ -37,12 +42,14 @@ type OwnProps = {
 	currencyCode?: string | null;
 	originalPrice: number;
 	discountedPrice?: number;
+	belowPriceText?: TranslateResult;
 	billingTerm: Duration;
 	buttonLabel: TranslateResult;
 	buttonPrimary: boolean;
 	onButtonClick: PurchaseCallback;
 	expiryDate?: Moment;
 	isFeatured?: boolean;
+	isFree?: boolean;
 	isOwned?: boolean;
 	isIncludedInPlan?: boolean;
 	isDeprecated?: boolean;
@@ -52,6 +59,9 @@ type OwnProps = {
 	displayFrom?: boolean;
 	tooltipText?: TranslateResult | ReactNode;
 	aboveButtonText?: TranslateResult | ReactNode;
+	featuredLabel?: TranslateResult;
+	hideSavingLabel?: boolean;
+	scrollCardIntoView?: ScrollCardIntoViewCallback;
 };
 
 export type Props = OwnProps & Partial< FeaturesProps >;
@@ -59,6 +69,7 @@ export type Props = OwnProps & Partial< FeaturesProps >;
 const FRESHPACK_PERCENTAGE = 1 - 0.4; // 40% off
 
 const DisplayPrice = ( {
+	isDeprecated,
 	isOwned,
 	isIncludedInPlan,
 	isFree,
@@ -70,8 +81,25 @@ const DisplayPrice = ( {
 	expiryDate,
 	billingTerm,
 	tooltipText,
+	productName,
+	hideSavingLabel,
 } ) => {
 	const translate = useTranslate();
+
+	if ( isDeprecated ) {
+		return (
+			<div className="jetpack-product-card__price">
+				<p className="jetpack-product-card__price-deprecated">
+					{ translate( 'The %(productName)s plan is no longer available', {
+						args: {
+							productName,
+						},
+						comment: 'productName is the name of Jetpack plan such as Personal',
+					} ) }
+				</p>
+			</div>
+		);
+	}
 
 	if ( isOwned ) {
 		return (
@@ -119,8 +147,10 @@ const DisplayPrice = ( {
 		);
 	}
 
-	const couponOriginalPrice = discountedPrice ?? originalPrice;
-	const couponDiscountedPrice = ( discountedPrice ?? originalPrice ) * FRESHPACK_PERCENTAGE;
+	const couponOriginalPrice = parseFloat( ( discountedPrice ?? originalPrice ).toFixed( 2 ) );
+	const couponDiscountedPrice = parseFloat(
+		( ( discountedPrice ?? originalPrice ) * FRESHPACK_PERCENTAGE ).toFixed( 2 )
+	);
 
 	return (
 		<div className="jetpack-product-card__price">
@@ -144,12 +174,14 @@ const DisplayPrice = ( {
 						</InfoPopover>
 					) }
 					<JetpackProductCardTimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
-					<span className="jetpack-product-card__you-save">
-						{ translate( '* You Save %(percent)d%%', {
-							args: { percent: 40 },
-							comment: 'Asterisk clause describing the displayed price adjustment',
-						} ) }
-					</span>
+					{ ! hideSavingLabel && (
+						<span className="jetpack-product-card__you-save">
+							{ translate( '* You Save %(percent)d%%', {
+								args: { percent: INTRO_PRICING_DISCOUNT_PERCENTAGE },
+								comment: 'Asterisk clause describing the displayed price adjustment',
+							} ) }
+						</span>
+					) }
 				</>
 			) : (
 				<>
@@ -187,12 +219,24 @@ const JetpackProductCard: React.FC< Props > = ( {
 	displayFrom,
 	belowPriceText,
 	tooltipText,
+	featuredLabel,
+	hideSavingLabel,
 	aboveButtonText = null,
+	scrollCardIntoView,
 }: Props ) => {
 	const translate = useTranslate();
 	const parsedHeadingLevel = Number.isFinite( headingLevel )
 		? Math.min( Math.max( Math.floor( headingLevel as number ), 1 ), 6 )
 		: 2;
+
+	const anchorRef = useRef< HTMLDivElement >( null );
+
+	useEffect( () => {
+		// The <DisplayPrice /> appearance changes the layout of the page and breaks the scroll into view behavior. Therefore, we will only scroll the element into view once the price is fully loaded.
+		if ( anchorRef && anchorRef.current && originalPrice ) {
+			scrollCardIntoView && scrollCardIntoView( anchorRef.current, productSlug );
+		}
+	}, [ originalPrice ] );
 
 	return (
 		<div
@@ -206,10 +250,11 @@ const JetpackProductCard: React.FC< Props > = ( {
 			} ) }
 			data-e2e-product-slug={ productSlug }
 		>
+			<div className="jetpack-product-card__scroll-anchor" ref={ anchorRef }></div>
 			{ isFeatured && (
 				<div className="jetpack-product-card__header">
 					<img className="jetpack-product-card__header-icon" src={ starIcon } alt="" />
-					<span>{ translate( 'Recommended' ) }</span>
+					<span>{ featuredLabel || translate( 'Recommended' ) }</span>
 				</div>
 			) }
 			<div className="jetpack-product-card__body">
@@ -221,6 +266,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 				) }
 
 				<DisplayPrice
+					isDeprecated={ isDeprecated }
 					isOwned={ isOwned }
 					isIncludedInPlan={ isIncludedInPlan }
 					isFree={ isFree }
@@ -232,6 +278,8 @@ const JetpackProductCard: React.FC< Props > = ( {
 					expiryDate={ expiryDate }
 					billingTerm={ billingTerm }
 					tooltipText={ tooltipText }
+					productName={ productName }
+					hideSavingLabel={ hideSavingLabel }
 				/>
 
 				{ aboveButtonText && (
@@ -247,7 +295,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 						primary={ buttonPrimary }
 						className="jetpack-product-card__button"
 						onClick={ onButtonClick }
-						disabled={ isDisabled }
+						disabled={ isDisabled || isDeprecated }
 					>
 						{ buttonLabel }
 					</Button>

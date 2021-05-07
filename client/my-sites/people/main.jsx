@@ -14,7 +14,6 @@ import FollowersList from './followers-list';
 import ViewersList from './viewers-list';
 import TeamList from 'calypso/my-sites/people/team-list';
 import EmptyContent from 'calypso/components/empty-content';
-import PeopleNotices from 'calypso/my-sites/people/people-notices';
 import PeopleSectionNav from 'calypso/my-sites/people/people-section-nav';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -113,7 +112,6 @@ class People extends React.Component {
 							site={ site }
 						/>
 					}
-					<PeopleNotices />
 					{ this.renderPeopleList() }
 				</div>
 			</Main>

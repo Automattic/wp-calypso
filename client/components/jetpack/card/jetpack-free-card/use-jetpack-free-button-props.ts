@@ -11,9 +11,9 @@ import { JPC_PATH_BASE } from 'calypso/jetpack-connect/constants';
 import { storePlan } from 'calypso/jetpack-connect/persistence-utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import { PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
+import { PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import { addQueryArgs } from 'calypso/lib/route';
-import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
+import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 import getJetpackRecommendationsUrl from 'calypso/state/selectors/get-jetpack-recommendations-url';
 
 /**

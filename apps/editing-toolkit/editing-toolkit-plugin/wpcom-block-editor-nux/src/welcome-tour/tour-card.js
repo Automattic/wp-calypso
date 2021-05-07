@@ -138,7 +138,7 @@ function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
 		<div className="welcome-tour-card__overlay-controls">
 			<Flex>
 				<Button
-					aria-label={ __( 'Minimize Tour', 'full-site-editing' ) }
+					label={ __( 'Minimize Tour', 'full-site-editing' ) }
 					isPrimary
 					className="welcome-tour-card__minimize-icon"
 					icon={ minimize }
@@ -146,7 +146,7 @@ function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
 					onClick={ handleOnMinimize }
 				></Button>
 				<Button
-					aria-label={ __( 'Close Tour', 'full-site-editing' ) }
+					label={ __( 'Close Tour', 'full-site-editing' ) }
 					isPrimary
 					icon={ close }
 					iconSize={ 24 }

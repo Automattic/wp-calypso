@@ -12,7 +12,6 @@ import {
 	get,
 	zipObject,
 	includes,
-	values,
 	omit,
 	startsWith,
 } from 'lodash';
@@ -38,7 +37,7 @@ import {
 	COMMENTS_SET_ACTIVE_REPLY,
 } from 'calypso/state/action-types';
 import { READER_EXPAND_COMMENTS } from 'calypso/state/reader/action-types';
-import { combineReducers, keyedReducer, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import {
 	PLACEHOLDER_STATE,
 	NUMBER_OF_COMMENTS_PER_FETCH,
@@ -229,7 +228,7 @@ const isValidExpansionsAction = ( action ) => {
 		siteId &&
 		postId &&
 		Array.isArray( commentIds ) &&
-		includes( values( POST_COMMENT_DISPLAY_TYPES ), displayType )
+		includes( Object.values( POST_COMMENT_DISPLAY_TYPES ), displayType )
 	);
 };
 
@@ -245,7 +244,7 @@ const expansionValue = ( type ) => {
 	}
 };
 
-export const expansions = withoutPersistence( ( state = {}, action ) => {
+export const expansions = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case READER_EXPAND_COMMENTS: {
 			const { siteId, postId, commentIds, displayType } = action.payload;
@@ -277,7 +276,7 @@ export const expansions = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Stores whether or not there are more comments, and in which directions, for a particular post.
@@ -296,7 +295,7 @@ export const expansions = withoutPersistence( ( state = {}, action ) => {
  * @param {object} action redux action
  * @returns {object} new redux state
  */
-export const fetchStatus = withoutPersistence( ( state = {}, action ) => {
+export const fetchStatus = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case COMMENTS_RECEIVE: {
 			const { siteId, postId, direction, commentById } = action;
@@ -323,7 +322,7 @@ export const fetchStatus = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Stores latest comments count for post we've seen from the server
@@ -332,7 +331,7 @@ export const fetchStatus = withoutPersistence( ( state = {}, action ) => {
  * @param {object} action redux action
  * @returns {object} new redux state
  */
-export const totalCommentsCount = withoutPersistence( ( state = {}, action ) => {
+export const totalCommentsCount = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case COMMENTS_COUNT_RECEIVE: {
 			const key = getStateKey( action.siteId, action.postId );
@@ -345,12 +344,16 @@ export const totalCommentsCount = withoutPersistence( ( state = {}, action ) => 
 	}
 
 	return state;
-} );
+};
 
 /**
  * Houses errors by `siteId-commentId`
+ *
+ * @param {object} state redux state
+ * @param {object} action redux action
+ * @returns {object} new redux state
  */
-export const errors = withoutPersistence( ( state = {}, action ) => {
+export const errors = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case COMMENTS_RECEIVE_ERROR: {
 			const { siteId, commentId } = action;
@@ -381,7 +384,7 @@ export const errors = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export const treesInitializedReducer = ( state = {}, action ) => {
 	if ( action.type === COMMENTS_TREE_SITE_ADD ) {
@@ -402,7 +405,7 @@ export const treesInitialized = keyedReducer(
  * @param {object} action redux action
  * @returns {object} new redux state
  */
-export const activeReplies = withoutPersistence( ( state = {}, action ) => {
+export const activeReplies = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case COMMENTS_SET_ACTIVE_REPLY: {
 			const { siteId, postId, commentId } = action.payload;
@@ -423,7 +426,7 @@ export const activeReplies = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 function updateCount( counts, rawStatus, value = 1 ) {
 	const status = rawStatus === 'unapproved' ? 'pending' : rawStatus;
@@ -442,7 +445,7 @@ function updateCount( counts, rawStatus, value = 1 ) {
 	};
 }
 
-export const counts = withoutPersistence( ( state = {}, action ) => {
+export const counts = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case COMMENT_COUNTS_UPDATE: {
 			const { siteId, postId, ...commentCounts } = omit( action, 'type' );
@@ -526,7 +529,7 @@ export const counts = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 const combinedReducer = combineReducers( {
 	counts,

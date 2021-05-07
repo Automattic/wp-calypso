@@ -43,11 +43,14 @@ export const MySitesSidebarUnifiedMenu = ( {
 	isHappychatSessionActive,
 	isJetpackNonAtomicSite,
 	continueInCalypso,
+	...props
 } ) => {
 	const hasAutoExpanded = useRef( false );
 	const reduxDispatch = useDispatch();
 	const sectionId = 'SIDEBAR_SECTION_' + slug;
 	const isExpanded = useSelector( ( state ) => isSidebarSectionOpen( state, sectionId ) );
+	const allowExpansion =
+		( isWithinBreakpoint( '>782px' ) && ! sidebarCollapsed ) || ! isWithinBreakpoint( '>782px' ); // Do not allow expansion on Desktop with sidebar collapsed.
 
 	const selectedMenuItem =
 		Array.isArray( children ) &&
@@ -88,6 +91,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 			}
 		}
 
+		window.scrollTo( 0, 0 );
 		reduxDispatch( toggleSection( sectionId ) );
 	};
 
@@ -95,12 +99,14 @@ export const MySitesSidebarUnifiedMenu = ( {
 		<li>
 			<ExpandableSidebarMenu
 				onClick={ () => onClick() }
-				expanded={ ! sidebarCollapsed && isExpanded }
+				expanded={ isExpanded && allowExpansion }
 				title={ title }
 				customIcon={ <SidebarCustomIcon icon={ icon } /> }
 				className={ ( selected || childIsSelected ) && 'sidebar__menu--selected' }
 				count={ count }
 				hideExpandableIcon={ true }
+				inlineText={ props.inlineText }
+				{ ...props }
 			>
 				{ children.map( ( item ) => {
 					const isSelected = selectedMenuItem?.url === item.url;

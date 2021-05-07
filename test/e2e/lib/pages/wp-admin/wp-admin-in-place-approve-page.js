@@ -15,14 +15,13 @@ export default class WPAdminInPlaceApprovePage extends AsyncBaseContainer {
 	}
 
 	async approve() {
-		const approveButtonSelector = By.css( '#approve' );
+		const approveButtonLocator = By.css( '#approve' );
 		await this.driver.wait(
-			until.ableToSwitchToFrame( this.expectedElementSelector ),
+			until.ableToSwitchToFrame( this.expectedElementLocator ),
 			this.explicitWaitMS,
 			'Could not locate the payment button iFrame.'
 		);
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, approveButtonSelector );
-		await driverHelper.clickWhenClickable( this.driver, approveButtonSelector );
+		await driverHelper.clickWhenClickable( this.driver, approveButtonLocator );
 		return await this.driver.switchTo().defaultContent();
 	}
 }

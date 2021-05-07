@@ -38,9 +38,15 @@ import { getSitePlan, isJetpackSite, isRequestingSites } from 'calypso/state/sit
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import { Button } from '@automattic/components';
-import { isBusiness, isEcommerce, isEnterprise, isPremium } from 'calypso/lib/products-values';
-import { FEATURE_UPLOAD_PLUGINS, TYPE_BUSINESS } from 'calypso/lib/plans/constants';
-import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
+import {
+	isBusiness,
+	isEcommerce,
+	isEnterprise,
+	isPremium,
+	findFirstSimilarPlanKey,
+	FEATURE_UPLOAD_PLUGINS,
+	TYPE_BUSINESS,
+} from '@automattic/calypso-products';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { isEnabled } from '@automattic/calypso-config';
 import QuerySiteRecommendedPlugins from 'calypso/components/data/query-site-recommended-plugins';

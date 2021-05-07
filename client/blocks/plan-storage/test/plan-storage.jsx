@@ -18,7 +18,7 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_FREE,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -36,7 +36,7 @@ describe( 'PlanStorage basic tests', () => {
 		sitePlanSlug: PLAN_FREE,
 	};
 
-	test( 'should not blow up and have class .plan-storage ', () => {
+	test( 'should not blow up and have class .plan-storage', () => {
 		const storage = shallow( <PlanStorage { ...props } /> );
 		assert.lengthOf( storage.find( '.plan-storage' ), 1 );
 	} );

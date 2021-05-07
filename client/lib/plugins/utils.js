@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-
-import { assign, filter, map, pick, sortBy } from 'lodash';
+import { filter, map, pick, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -163,7 +162,7 @@ export function normalizeCompatibilityList( compatibilityList ) {
 }
 
 export function normalizePluginData( plugin, pluginData ) {
-	plugin = getAllowedPluginData( assign( plugin, pluginData ) );
+	plugin = getAllowedPluginData( { ...plugin, ...pluginData } );
 
 	return Object.entries( plugin ).reduce( ( returnData, [ key, item ] ) => {
 		switch ( key ) {

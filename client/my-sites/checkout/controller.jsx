@@ -6,10 +6,17 @@ import React from 'react';
 import { get, isEmpty } from 'lodash';
 import page from 'page';
 import debugFactory from 'debug';
+import { isJetpackLegacyItem } from '@automattic/calypso-products';
 
 /**
  * Internal Dependencies
  */
+import { getDomainOrProductFromContext } from './utils';
+import {
+	COMPARE_PLANS_QUERY_PARAM,
+	LEGACY_TO_RECOMMENDED_MAP,
+} from '../plans/jetpack-plans/plan-upgrade/constants';
+import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -28,11 +35,9 @@ import {
 	setSignupCheckoutPageUnloaded,
 } from 'calypso/signup/storageUtils';
 import UpsellNudge, {
-	PREMIUM_PLAN_UPGRADE_UPSELL,
 	BUSINESS_PLAN_UPGRADE_UPSELL,
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
-	DIFM_UPSELL,
 } from './upsell-nudge';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { TRUENAME_COUPONS } from 'calypso/lib/domains';
@@ -40,7 +45,7 @@ import { TRUENAME_COUPONS } from 'calypso/lib/domains';
 const debug = debugFactory( 'calypso:checkout-controller' );
 
 export function checkout( context, next ) {
-	const { feature, plan, domainOrProduct, purchaseId } = context.params;
+	const { feature, plan, purchaseId } = context.params;
 
 	const user = userFactory();
 	const isLoggedOut = ! user.get();
@@ -58,18 +63,13 @@ export function checkout( context, next ) {
 		return;
 	}
 
-	let product;
-	if ( selectedSite && selectedSite.slug !== domainOrProduct && domainOrProduct ) {
-		product = domainOrProduct;
-	} else {
-		product = context.params.product;
-	}
+	const product = getDomainOrProductFromContext( context );
 
 	if ( 'thank-you' === product ) {
 		return;
 	}
 
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
 	setSectionMiddleware( { name: 'checkout' } )( context );
@@ -113,6 +113,26 @@ export function checkout( context, next ) {
 	next();
 }
 
+export function redirectJetpackLegacyPlans( context, next ) {
+	const product = getDomainOrProductFromContext( context );
+
+	if ( isJetpackLegacyItem( product ) ) {
+		const state = context.store.getState();
+		const selectedSite = getSelectedSite( state );
+		const recommendedItems = LEGACY_TO_RECOMMENDED_MAP[ product ].join( ',' );
+
+		page(
+			CALYPSO_PLANS_PAGE +
+				( selectedSite?.slug || '' ) +
+				`?${ COMPARE_PLANS_QUERY_PARAM }=${ product },${ recommendedItems }`
+		);
+
+		return;
+	}
+
+	next();
+}
+
 export function checkoutPending( context, next ) {
 	const orderId = Number( context.params.orderId );
 	const siteSlug = context.params.site;
@@ -140,7 +160,7 @@ export function checkoutThankYou( context, next ) {
 
 	setSectionMiddleware( { name: 'checkout-thank-you' } )( context );
 
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) );
 
 	context.primary = (
@@ -209,15 +229,9 @@ export function upsellNudge( context, next ) {
 				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
 				break;
 
-			case 'premium':
-				upsellType = PREMIUM_PLAN_UPGRADE_UPSELL;
-				break;
-
 			default:
 				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
 		}
-	} else if ( context.path.includes( 'offer-difm' ) ) {
-		upsellType = DIFM_UPSELL;
 	}
 
 	setSectionMiddleware( { name: upsellType } )( context );

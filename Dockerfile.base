@@ -1,7 +1,7 @@
 #### cache image
 #### This image is not pushed to any repository and it shouldn't be used as base image for any other docker build.
 #### Its main goal is to create a `/calypso/.cache` that can be copied over other images that can benefit from a warm cache.
-FROM node:14.16.0-buster as cache
+FROM node:14.16.1-buster as cache
 
 ARG node_memory=8192
 WORKDIR /calypso
@@ -34,9 +34,10 @@ ENTRYPOINT [ "/bin/bash" ]
 
 #### base image
 #### This image can be used as a base image for other builds, or to uni test and build calypso.
-FROM node:14.16.0-buster as base
+FROM node:14.16.1-buster as base
 
 ARG node_memory=8192
+ARG user=calypso
 ARG UID=1003
 
 WORKDIR /calypso
@@ -48,7 +49,15 @@ ENV HOME=/calypso
 ENV CHROMEDRIVER_SKIP_DOWNLOAD=true
 ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
-RUN chown $UID /calypso
+
+# Add user calypso with uid 1003, give it sudo permissions
+RUN apt-get update \
+	&& apt-get install -y sudo zip jq \
+	&& adduser --uid $UID --disabled-password $user \
+	&& echo "$user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$user \
+	&& chmod 0440 /etc/sudoers.d/$user \
+	&& chown $UID /calypso \
+	&& rm -rf /var/lib/apt/lists/*
 
 # Set bash as the default shell
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
@@ -113,14 +122,12 @@ ENTRYPOINT [ "/bin/bash" ]
 #### This image is used to run e2e tests. The only difference with ci-desktop is the Chrome version.
 FROM ci-desktop as ci-e2e
 
-# This chrome image is the latest version that accepts SameSite=None.
 # test/e2e/test/mocha.env.js will install a compatible chromedriver.
-ENV CHROME_VERSION="84.0.4147.135-1"
 ENV DETECT_CHROMEDRIVER_VERSION=true
 
-RUN wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
-	&& apt-get install -y ./google-chrome-stable_${CHROME_VERSION}_amd64.deb \
-	&& rm ./google-chrome-stable_${CHROME_VERSION}_amd64.deb
+RUN wget --no-verbose https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+	&& apt-get install -y ./google-chrome-stable_current_amd64.deb \
+	&& rm ./google-chrome-stable_current_amd64.deb
 
 ENTRYPOINT [ "/bin/bash" ]
 
@@ -133,7 +140,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 COPY --from=cache --chown=$UID /calypso/composer.* /calypso/
 
 RUN apt update &&\
-	apt-get install -y apt-transport-https zip &&\
+	apt-get install -y apt-transport-https &&\
 	wget https://packages.sury.org/php/apt.gpg -O /etc/apt/trusted.gpg.d/php-sury.gpg &&\
 	echo "deb https://packages.sury.org/php/ buster main" > /etc/apt/sources.list.d/php-sury.list &&\
 	apt update &&\

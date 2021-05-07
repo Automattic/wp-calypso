@@ -47,3 +47,11 @@ const ProviderWrappedLoggedOutLayout = ( {
  * `context.primary` and `context.secondary` to populate it.
  */
 export const makeLayout = makeLayoutMiddleware( ProviderWrappedLoggedOutLayout );
+
+/**
+ * These functions are not used by Node. It is here to provide an APi compatible with `./index.web.js`
+ */
+export const redirectLoggedOut = () => {};
+export const render = () => {};
+export const ProviderWrappedLayout = () => null;
+export const notFound = () => null;

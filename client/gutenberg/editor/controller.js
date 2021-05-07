@@ -12,6 +12,7 @@ import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { hasUserSettingsRequestFailed } from 'calypso/state/user-settings/selectors';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import CalypsoifyIframe from './calypsoify-iframe';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -162,10 +163,7 @@ export const authenticate = ( context, next ) => {
 	// We could use `window.location.href` to generate the return URL but there are some potential race conditions that
 	// can cause the browser to not update it before redirecting to WP Admin. To avoid that, we manually generate the
 	// URL from the relevant parts.
-	let origin = `${ window.location.protocol }//${ window.location.hostname }`;
-	if ( window.location.port ) {
-		origin += `:${ window.location.port }`;
-	}
+	const origin = window.location.origin;
 	const returnUrl = addQueryArgs(
 		{ ...context.query, authWpAdmin: true },
 		`${ origin }${ context.path }`
@@ -205,6 +203,12 @@ export const redirect = async ( context, next ) => {
 
 	const state = getState();
 	const siteId = getSelectedSiteId( state );
+	const isPostShare = context.query.is_post_share; // Added here https://github.com/Automattic/wp-calypso/blob/4b5fdb65b115e02baf743d2487eeca94fbd28a18/client/blocks/reader-share/index.jsx#L74
+
+	// Force load Gutenframe when choosing to share a post to a Simple site.
+	if ( isPostShare && isPostShare === 'true' && ! isAtomicSite( state, siteId ) ) {
+		return next();
+	}
 
 	if ( ! shouldLoadGutenframe( state, siteId ) ) {
 		const postType = determinePostType( context );

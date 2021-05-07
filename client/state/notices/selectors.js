@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { values } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { createSelector } from '@automattic/state-utils';
@@ -17,7 +12,7 @@ import 'calypso/state/notices/init';
  * @returns {Array}        Notice objects as array
  */
 export const getNotices = createSelector(
-	( state ) => values( state.notices.items ),
+	( state ) => Object.values( state.notices.items ),
 	( state ) => state.notices.items
 );
 

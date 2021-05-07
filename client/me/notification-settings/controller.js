@@ -14,7 +14,7 @@ import WPcomSettingsComponent from 'calypso/me/notification-settings/wpcom-setti
 import NotificationSubscriptions from 'calypso/me/notification-settings/reader-subscriptions';
 
 export function notifications( context, next ) {
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) );
 
 	context.primary = React.createElement( NotificationsComponent, {
@@ -24,7 +24,7 @@ export function notifications( context, next ) {
 }
 
 export function comments( context, next ) {
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch(
 		setTitle( i18n.translate( 'Comments on other sites', { textOnly: true } ) )
 	);
@@ -36,7 +36,7 @@ export function comments( context, next ) {
 }
 
 export function updates( context, next ) {
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch(
 		setTitle( i18n.translate( 'Updates from WordPress.com', { textOnly: true } ) )
 	);
@@ -48,7 +48,7 @@ export function updates( context, next ) {
 }
 
 export function subscriptions( context, next ) {
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) );
 
 	context.primary = React.createElement( NotificationSubscriptions, {

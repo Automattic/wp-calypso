@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { identity, isEqual, find, replace, some, get } from 'lodash';
+import { isEqual, find, some, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -96,7 +96,6 @@ export class SharingService extends Component {
 		removableConnections: [],
 		siteId: 0,
 		siteUserConnections: [],
-		translate: identity,
 		updateSiteConnection: () => {},
 		warningNotice: () => {},
 	};
@@ -469,7 +468,7 @@ export class SharingService extends Component {
 		return (
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<SocialLogo
-				icon={ replace( this.props.service.ID, /_/g, '-' ) }
+				icon={ this.props.service.ID.replace( /_/g, '-' ) }
 				size={ 48 }
 				className="sharing-service__logo"
 			/>

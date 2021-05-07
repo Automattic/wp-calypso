@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import validatorFactory from 'is-my-json-valid';
-import { get, isEmpty, map, once, reduce, replace, update } from 'lodash';
+import { get, isEmpty, map, once, reduce, update } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:domains:with-contact-details-validation' );
 
@@ -65,7 +65,7 @@ export function interpretIMJVError( error, schema ) {
 	}
 
 	// use field from error
-	const path = explicitPath || replace( error.field, /^data\./, '' );
+	const path = explicitPath || ( error.field ?? '' ).replace( /^data\./, '' );
 
 	return { errorMessage, errorCode, path };
 }

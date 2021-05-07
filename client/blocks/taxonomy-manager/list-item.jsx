@@ -165,12 +165,14 @@ class TaxonomyManagerListItem extends Component {
 					) }
 				</span>
 				{ typeof term.post_count !== 'undefined' && (
-					<Count
-						ref="count"
-						count={ term.post_count }
-						onMouseEnter={ this.showTooltip }
-						onMouseLeave={ this.hideTooltip }
-					/>
+					<div className="taxonomy-manager__count">
+						<Count
+							ref="count"
+							count={ term.post_count }
+							onMouseEnter={ this.showTooltip }
+							onMouseLeave={ this.hideTooltip }
+						/>
+					</div>
 				) }
 				<Tooltip
 					context={ this.refs && this.refs.count }

@@ -54,6 +54,15 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				shopt -s globstar
 				set -x
 
+				# Chrome upgrade start
+				wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_90.0.4430.93-1_amd64.deb
+				sudo apt-get install -y ./google-chrome-stable_90.0.4430.93-1_amd64.deb
+				rm ./google-chrome-stable_90.0.4430.93-1_amd64.deb
+				cd test/e2e
+				npm install chromedriver --chromedriver-force-download --detect_chromedriver_version
+				cd ../..
+				# Chrome upgrade end
+
 				cd test/e2e
 				mkdir temp
 
@@ -106,7 +115,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 				export TEST_FILES=${'$'}(join ',' ${'$'}(find specs*/**/*spec.js -type f -not -path specs-playwright/*))
 
-				yarn magellan --config=magellan.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
+				yarn magellan --config=magellan-calypso.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
@@ -154,7 +163,6 @@ object RunCalypsoE2eDesktopTests : BuildType({
 		vcs {
 			branchFilter = """
 				+:*
-				-:trunk
 				-:pull*
 			""".trimIndent()
 		}
@@ -221,6 +229,15 @@ object RunCalypsoE2eMobileTests : BuildType({
 				shopt -s globstar
 				set -x
 
+				# Chrome upgrade start
+				wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_90.0.4430.93-1_amd64.deb
+				sudo apt-get install -y ./google-chrome-stable_90.0.4430.93-1_amd64.deb
+				rm ./google-chrome-stable_90.0.4430.93-1_amd64.deb
+				cd test/e2e
+				npm install chromedriver --chromedriver-force-download --detect_chromedriver_version
+				cd ../..
+				# Chrome upgrade end
+
 				cd test/e2e
 				mkdir temp
 
@@ -273,7 +290,7 @@ object RunCalypsoE2eMobileTests : BuildType({
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 				export TEST_FILES=${'$'}(join ',' ${'$'}(find specs*/**/*spec.js -type f -not -path specs-playwright/*))
 
-				yarn magellan --config=magellan.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
+				yarn magellan --config=magellan-calypso.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
@@ -321,7 +338,6 @@ object RunCalypsoE2eMobileTests : BuildType({
 		vcs {
 			branchFilter = """
 				+:*
-				-:trunk
 				-:pull*
 			""".trimIndent()
 		}
@@ -539,22 +555,6 @@ object RunAllUnitTests : BuildType({
 			"""
 		}
 		bashNodeScript {
-			name = "Build artifacts"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				export NODE_ENV="production"
-
-				# Build o2-blocks
-				(cd apps/o2-blocks/ && yarn build --output-path="../../artifacts/o2-blocks")
-
-				# Build wpcom-block-editor
-				(cd apps/wpcom-block-editor/ &&  NODE_ENV=development yarn build --output-path="../../artifacts/wpcom-block-editor")
-
-				# Build notifications
-				(cd apps/notifications/ && yarn build --output-path="../../artifacts/notifications")
-			"""
-		}
-		bashNodeScript {
 			name = "Build components storybook"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
@@ -726,6 +726,9 @@ object CheckCodeStyleBranch : BuildType({
 object RunCalypsoPlaywrightE2eTests : BuildType({
 	name = "Playwright E2E tests"
 	description = "Runs Calypso e2e tests using Playwright"
+	params {
+		param("use_cached_node_modules", "false")
+	}
 
 	artifactRules = """
 		reports => reports
@@ -810,7 +813,7 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 				export TEST_FILES=${'$'}(join ',' ${'$'}(ls -1 specs-playwright/**/*spec.js))
 
-				xvfb-run yarn magellan --config=magellan-playwright.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
+				xvfb-run yarn magellan --config=magellan-playwright.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="-R mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"

@@ -35,7 +35,7 @@ describe( 'handlers', () => {
 		},
 	} );
 
-	test( 'should create correct success action on fetch success ', () => {
+	test( 'should create correct success action on fetch success', () => {
 		const dispatch = jest.fn();
 		const menuData = {};
 		const action = receiveAdminMenu( 73738, menuData );
@@ -93,7 +93,6 @@ describe( 'handlers', () => {
 		sanitizedMenu[ 1 ].children[ 0 ].url = addQueryArgs(
 			{
 				return: document.location.href,
-				from: 'calypso-unified-menu',
 			},
 			sanitizedMenu[ 1 ].children[ 0 ].url
 		);

@@ -45,6 +45,7 @@
 }
 
 .product-grid__plan-grid:not( .is-wrapping ) {
+	margin-top: 72px;
 	grid-gap: 24px 0;
 
 	// Considering there are 3 plans
@@ -86,7 +87,7 @@
 }
 
 .product-grid__asterisk-list {
-	margin: 0;
+	margin: 76px;
 	padding: 0;
 
 	list-style-type: none;

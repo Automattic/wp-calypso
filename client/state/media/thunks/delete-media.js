@@ -13,9 +13,6 @@ const debug = debugFactory( 'calypso:media' );
 /**
  * Redux thunk to edit a media item.
  *
- * Note: Temporarily this action will dispatch to the flux store, until
- * the flux store is removed.
- *
  * @param {number} siteId site identifier
  * @param {object} item edited media item
  */

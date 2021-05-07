@@ -13,7 +13,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { useSiteDomains, useWillRedirectAfterSuccess } from '../../hooks';
+import { useSiteDomains, useHasEcommercePlan } from '../../hooks';
 import Confetti from './confetti';
 import LaunchContext from '../../context';
 import { LAUNCH_STORE, SITE_STORE } from '../../stores';
@@ -23,17 +23,20 @@ import './style.scss';
 // Success is shown when the site is launched but also while the site is still launching.
 // This view is technically going to be the selected view in the modal even while the user goes through the checkout flow (which is rendered on top of this view).
 const Success: React.FunctionComponent = () => {
-	const { redirectTo, siteId, getCurrentLaunchFlowUrl } = React.useContext( LaunchContext );
+	const { redirectTo, siteId, getCurrentLaunchFlowUrl, isInIframe } = React.useContext(
+		LaunchContext
+	);
 
 	const isSiteLaunching = useSelect(
 		( select ) => select( SITE_STORE ).isSiteLaunching( siteId ),
 		[]
 	);
 
-	const isSelectedPlanPaid = useSelect(
-		( select ) => select( LAUNCH_STORE ).isSelectedPlanPaid(),
-		[]
-	);
+	const [ isSelectedPlanPaid, selectedDomain ] = useSelect( ( select ) => {
+		const launchStore = select( LAUNCH_STORE );
+
+		return [ launchStore.isSelectedPlanPaid(), launchStore.getSelectedDomain() ];
+	}, [] );
 
 	// Save the post before displaying the action buttons and launch succes message
 	const [ isPostSaved, setIsPostSaved ] = React.useState( false );
@@ -56,9 +59,13 @@ const Success: React.FunctionComponent = () => {
 	const [ displayedSiteUrl, setDisplayedSiteUrl ] = React.useState( '' );
 	const [ hasCopied, setHasCopied ] = React.useState( false );
 
-	// if the user has an ecommerce plan or they're using focused launch from wp-admin
-	// they will be automatically redirected to /checkout, in which case the CTAs are not needed
-	const willUserBeRedirectedAutomatically = useWillRedirectAfterSuccess();
+	// Show CTA buttons needed to dismiss the success view only if the user is not going to be redirected to /checkout after launch.
+	// When we display the CTA buttons?
+	// 1. All the time for the free flow (no selected custom domain or paid plan).
+	// 2. If the selected plan isn't Ecommerce and we are in the iframed editor (conditions when we display Checkout Modal).
+	const isEcommerce = useHasEcommercePlan();
+	const isFreeFlow = ! selectedDomain && ! isSelectedPlanPaid;
+	const shouldShowCTAs = isFreeFlow || ( ! isEcommerce && isInIframe );
 
 	React.useEffect( () => {
 		setDisplayedSiteUrl( `https://${ sitePrimaryDomain?.domain }` );
@@ -105,7 +112,7 @@ const Success: React.FunctionComponent = () => {
 			<SubTitle tagName="h3">
 				{ isLaunchComplete ? subtitleTextLaunched : subtitleTextLaunching }
 			</SubTitle>
-			{ ! willUserBeRedirectedAutomatically && isLaunchComplete && (
+			{ shouldShowCTAs && isLaunchComplete && (
 				<>
 					<div className="focused-launch-success__url-wrapper">
 						<span className="focused-launch-success__url-field">{ displayedSiteUrl }</span>

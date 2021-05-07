@@ -24,6 +24,7 @@
 		"@babel/preset-env": "^7.3.1",
 		"@babel/register": "^7.0.0",
 		"@babel/runtime": "^7.3.1",
+		"@testim/chrome-version": "^1.0.7",
 		"@xmpp/plugins": "^0.3.0",
 		"asana-phrase": "^0.0.8",
 		"cached-path-relative": ">=1.0.2",
@@ -66,7 +67,7 @@
 		"spec-junit-reporter": "^0.0.1",
 		"testarmada-magellan": "11.0.10",
 		"testarmada-magellan-local-executor": "^2.0.3",
-		"testarmada-magellan-mocha-plugin": "github:Automattic/magellan-mocha-plugin#b731cdf6f27a6fa6e45ddcba0b8741370b2df523",
+		"@automattic/testarmada-magellan-mocha-plugin": "^10.0.0",
 		"xml2json-command": "^0.0.3",
 		"xmpp.js": "^0.3.0",
 		"xunit-viewer": "^5.1.8"

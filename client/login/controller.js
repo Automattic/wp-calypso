@@ -13,7 +13,7 @@ import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import HandleEmailedLinkFormJetpackConnect from './magic-login/handle-emailed-link-form-jetpack-connect';
 import MagicLogin from './magic-login';
 import WPLogin from './wp-login';
-import { getUrlParts } from 'calypso/lib/url';
+import { getUrlParts } from '@automattic/calypso-url';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getCurrentUser, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
@@ -161,15 +161,21 @@ export function redirectJetpack( context, next ) {
 	const { isJetpack } = context.params;
 	const { redirect_to } = context.query;
 
+	const isUserComingFromPricingPage =
+		includes( redirect_to, 'source=jetpack-plans' ) ||
+		includes( redirect_to, 'source=jetpack-connect-plans' );
 	/**
-	 * Send arrivals from the jetpack connect process (when site user email matches
-	 * a wpcom account) to the jetpack branded login.
+	 * Send arrivals from the jetpack connect process or jetpack's pricing page
+	 * (when site user email matches a wpcom account) to the jetpack branded login.
 	 *
 	 * A direct redirect to /log-in/jetpack is not currently done at jetpack.wordpress.com
 	 * because the iOS app relies on seeing a request to /log-in$ to show its
 	 * native credentials form.
 	 */
-	if ( isJetpack !== 'jetpack' && includes( redirect_to, 'jetpack/connect' ) ) {
+	if (
+		isJetpack !== 'jetpack' &&
+		( includes( redirect_to, 'jetpack/connect' ) || isUserComingFromPricingPage )
+	) {
 		return context.redirect( context.path.replace( 'log-in', 'log-in/jetpack' ) );
 	}
 	next();

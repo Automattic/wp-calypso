@@ -39,58 +39,61 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async selectNewThemeStartingWith( phrase ) {
-		const selector = ThemesPage._getThemeSelectionXpath( phrase );
-		return await driverHelper.clickWhenClickable( this.driver, selector );
+		const locator = ThemesPage._getThemeSelectionXpath( phrase );
+		return await driverHelper.clickWhenClickable( this.driver, locator );
 	}
 
 	async waitUntilThemesLoaded() {
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
 			by.css( '.themes-list .is-placeholder' )
 		);
 	}
 
 	async waitForThemeStartingWith( phrase ) {
-		const selector = ThemesPage._getThemeSelectionXpath( phrase );
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
+		const locator = ThemesPage._getThemeSelectionXpath( phrase );
+		return await driverHelper.waitUntilElementLocatedAndVisible( this.driver, locator );
 	}
 
 	async clickNewThemeMoreButton() {
-		const selector = by.css( '.theme-showcase__all-themes .is-actionable:not(.is-active) button' );
+		const locator = by.css( '.theme-showcase__all-themes .is-actionable:not(.is-active) button' );
 
-		await driverHelper.scrollIntoView( this.driver, selector );
-		return await driverHelper.clickWhenClickable( this.driver, selector );
+		await driverHelper.scrollIntoView( this.driver, locator );
+		return await driverHelper.clickWhenClickable( this.driver, locator );
 	}
 
 	async getFirstThemeName() {
-		const selector = by.css( '.theme-showcase__all-themes .is-actionable:not(.is-active) h2' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
-		return await this.driver.findElement( selector ).getText();
+		const locator = by.css( '.theme-showcase__all-themes .is-actionable:not(.is-active) h2' );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, locator );
+		return await this.driver.findElement( locator ).getText();
 	}
 
 	async getActiveThemeName() {
-		const selector = by.css( '.is-actionable.is-active h2' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
-		return await this.driver.findElement( selector ).getText();
+		const locator = by.css( '.is-actionable.is-active h2' );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, locator );
+		return await this.driver.findElement( locator ).getText();
 	}
 
 	async searchFor( phrase ) {
-		const searchToggleSelector = by.css( '.themes-magic-search-card div.search' );
-		const searchFieldSelector = by.css( '.themes-magic-search-card input.search__input' );
-		await driverHelper.clickWhenClickable( this.driver, searchToggleSelector, this.explicitWaitMS );
-		await driverHelper.setWhenSettable( this.driver, searchFieldSelector, phrase );
-		await this.driver.findElement( searchFieldSelector ).sendKeys( ' ' );
+		const searchToggleLocator = by.css( '.themes-magic-search-card div.search' );
+		const searchFieldLocator = by.css( '.themes-magic-search-card input.search__input' );
+		await driverHelper.clickWhenClickable( this.driver, searchToggleLocator, this.explicitWaitMS );
+		await driverHelper.setWhenSettable( this.driver, searchFieldLocator, phrase );
+		await this.driver.findElement( searchFieldLocator ).sendKeys( ' ' );
 		return await this.waitUntilThemesLoaded();
 	}
 
 	async clickPopoverItem( name ) {
-		const actionItemSelector = by.css( '.popover__menu-item' );
-		return await driverHelper.selectElementByText( this.driver, actionItemSelector, name );
+		const actionItemLocator = by.css( '.popover__menu-item' );
+		return await driverHelper.selectElementByText( this.driver, actionItemLocator, name );
 	}
 
 	async popOverMenuDisplayed() {
-		const popOverMenuSelector = by.css( '.popover__menu' );
-		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, popOverMenuSelector );
+		const popOverMenuLocator = by.css( '.popover__menu' );
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
+			this.driver,
+			popOverMenuLocator
+		);
 	}
 
 	static _getThemeSelectionXpath( phrase ) {

@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import React, { useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -30,7 +29,7 @@ const InlineHelpSearchCard = ( {
 	isSearching,
 	isVisible = true,
 	placeholder,
-	translate = identity,
+	translate,
 } ) => {
 	const cardRef = useRef();
 

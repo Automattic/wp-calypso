@@ -19,7 +19,7 @@ export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm
 
 export interface Design {
 	categories: Array< string >;
-	fonts: FontPair;
+	fonts?: FontPair;
 	is_alpha?: boolean;
 	is_fse?: boolean;
 	is_premium: boolean;
@@ -32,7 +32,8 @@ export interface Design {
 
 	/**
 	 * Quickly hide a design from the picker without having to remove
-	 * it from the available-designs-config.json file.
+	 * it from the list of available design configs (stored in the
+	 * `@automattic/design-picker` package)
 	 */
 	hide?: boolean;
 }

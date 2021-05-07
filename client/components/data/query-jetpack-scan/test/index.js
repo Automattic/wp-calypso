@@ -40,7 +40,7 @@ function setup( siteId ) {
 }
 
 describe( 'QueryJetpackScan', () => {
-	it( 'should not dispatch the action if the siteId is null ', () => {
+	it( 'should not dispatch the action if the siteId is null', () => {
 		const siteId = null;
 		const { requestScanStatusActionSpy } = setup( siteId );
 		expect( requestScanStatusActionSpy ).not.toHaveBeenCalled();

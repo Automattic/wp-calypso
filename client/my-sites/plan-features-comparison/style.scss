@@ -1,53 +1,151 @@
 $plan-features-header-banner-height: 20px;
 $plan-features-sidebar-width: 272px;
 
-/******************************************/
-/*       Plans step redesign Experiment       */
-/*  	       pau2Xa-2yE-p2                  */
-/******************************************/
+.plan-pill.is-in-signup {
+	right: 52%;
+	transform: translate( 50% );
+	border-radius: 4px; /* stylelint-disable-line */
+	background-color: var( --studio-green-5 );
+	color: var( --studio-gray-80 );
+	font-size: $font-body-small;
+}
 
-.in-plans-redesign-experiment {
-	.plan-features--signup {
-		.plan-features-comparison__table {
-			width: 80%;
-			@media ( min-width: 1040px ) {
-				border-spacing: 0;
-			}
+.plan-features--loading-container {
+	margin-top: 300px;
+}
+
+.plan-features-comparison__table.has-3-cols {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 980px;
+}
+
+.plan-features-comparison__table.has-2-cols {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 800px;
+}
+
+.plan-features-comparison__table.has-1-cols {
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 337px;
+}
+
+.plan-features-comparison__table-item.has-border-top {
+	border-top: solid 1px var( --color-neutral-5 );
+}
+
+.plan-features-comparison__table-item.is-top-buttons {
+	padding-top: 8px;
+}
+
+.plan-features-comparison__header {
+	position: relative;
+	display: flex;
+	align-items: flex-start;
+	padding: 12px 24px 12px 15px;
+	background-color: var( --color-surface );
+	justify-content: center;
+	font-weight: 400;
+	margin-top: 30px;
+}
+
+.plan-features-comparison__header-text {
+	flex: 1;
+	padding: 6px 0 0;
+}
+
+.plan-features-comparison__actions-buttons {
+	text-align: center;
+}
+
+.plans-features-main__group.is-wpcom {
+	padding-top: 19px;
+}
+
+.plans-wrapper {
+	margin: 0 auto;
+	padding: 20px 0 10px;
+	transform: translateY( -20px );
+	overflow-x: auto;
+}
+
+.plan-features--signup {
+	margin: 0 auto;
+
+	.signup__steps & {
+		width: auto;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			max-width: 1100px;
 		}
 	}
 
-	.plans-features-main__group.is-wpcom .plan-features-comparison__header {
-		&.is-blogger-plan {
-			border-bottom: none;
+	.plan-features-comparison__table {
+		display: none;
+		font-size: $font-body-small;
+		color: var( --color-text-subtle );
+		border-spacing: 16px 0;
+		margin-top: -16px;
+		table-layout: fixed;
+		width: 80%;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			display: table;
+			margin: 0 auto;
+			padding: 0 16px;
 		}
 
-		&.is-personal-plan {
-			border-bottom: none;
+		@include breakpoint-deprecated( '<1040px' ) {
+			border-spacing: 0;
+			margin-left: 15px;
+			margin-right: 15px;
+			width: calc( 100% - 30px );
 		}
 
-		&.is-premium-plan {
-			border-bottom: none;
-		}
-
-		&.is-business-plan {
-			border-bottom: none;
-		}
-
-		&.is-ecommerce-plan {
-			border-bottom: none;
+		@include breakpoint-deprecated( '>1040px' ) {
+			border-spacing: 0;
+			padding: 0;
 		}
 	}
 
-	.plan-features-comparison__header {
-		justify-content: center;
+	.plan-features-comparison__header-title {
+		margin-bottom: 5px;
+		font-size: $font-title-small;
+		line-height: 0.7;
+		color: var( --studio-gray-80 );
 		font-weight: 400;
-		margin-top: 30px;
+	}
+
+	.is-premium-plan .plan-features-comparison__header-title {
+		color: var( --studio-gray-100 );
+		font-weight: 600;
+	}
+
+	.plan-features-comparison__table-item {
+		text-align: center;
+		transition: opacity 0.05s;
+		border-right: solid 1px var( --color-neutral-5 );
+		border-left: solid 1px var( --color-neutral-5 );
+		background-color: var( --color-surface );
+		position: relative;
+
+		&.is-bold {
+			font-weight: bold;
+		}
+	}
+
+	.plan-features-comparison__pricing,
+	.plan-price.is-discounted {
+		color: var( --color-neutral-70 );
 	}
 
 	.plan-features-comparison__pricing {
 		padding: 8px 16px;
 		margin: 0;
-		
 
 		.plan-price {
 			font-weight: 600;
@@ -85,39 +183,92 @@ $plan-features-sidebar-width: 272px;
 		.plan-features-comparison__header-annual-discount {
 			color: var( --studio-green-60 );
 		}
+
+		.plan-price.is-original {
+			color: var( --color-neutral-light );
+
+			&::before {
+				border-color: var( --color-success );
+			}
+
+			.plan-price__currency-symbol,
+			.plan-price__tax-amount {
+				color: var( --color-text-subtle );
+			}
+		}
 	}
 
-	.plan-features--signup {
-		.plan-features-comparison__pricing {
+	.is-placeholder {
+		width: 60%;
+		margin: 5px auto;
+	}
+
+	.plan-features-comparison__item-info {
+		padding: 0 5px;
+		display: flex;
+		flex-direction: column;
+		flex: 1 0 0;
+		width: 100%;
+
+		.plan-features-comparison__item-title {
+			line-height: 18px;
+			overflow-wrap: break-word;
 			margin: 0;
+			flex: 1 0 0;
+			width: 100%;
 		}
 
-		.plan-features-comparison__header-title {
-			color: var( --studio-gray-80 );
-			font-weight: 400;
-		}
+		&:not( .is-available ) {
+			color: var( --studio-gray-20 );
 
-		.is-premium-plan .plan-features-comparison__header-title {
-			color: var( --studio-gray-100 );
-			font-weight: 600;
+			.plan-features-comparison__item-title {
+				text-decoration: line-through;
+				color: var( --color-neutral-30 );
+			}
 		}
 	}
 
-	.plan-pill.is-in-signup {
-		right: 52%;
-		transform: translate( 50% );
-		border-radius: 4px; /* stylelint-disable-line */
-		background-color: var( --studio-green-5 );
-		color: var( --studio-gray-80 );
-		font-size: $font-body-small;
+	.plan-features-comparison__actions {
+		padding: 0 15px 15px;
+
+		@include breakpoint-deprecated( '<1040px' ) {
+			padding: 0 12px 12px;
+		}
+	
+		@include breakpoint-deprecated( '<660px' ) {
+			padding: 0 20px 20px;
+			border-bottom: solid 1px var( --color-neutral-0 );
+		}
 	}
 
-	.plan-features__actions-button {
-		border-radius: 4px; /* stylelint-disable-line */
+	.plan-features-comparison__actions-button {
+		margin-top: 8px;
+		width: 100%;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			margin-top: 20px;
+		}
+
+		&.disabled,
+		&[disabled] {
+			color: var( --color-neutral-light );
+		}
+	}
+
+	.plan-features-comparison__row:last-of-type .plan-features-comparison__table-item {
+		border-bottom: solid 1px var( --color-neutral-5 );
+
+		&.is-last-feature {
+			.plan-features-comparison__item-info {
+				padding-bottom: 30px;
+			}
+		}
 	}
 
 	.plan-features-comparison__item {
 		padding: 0.5rem;
+		margin: 0 15px;
+		text-align: left;
 
 		&.plan-features-comparison__item-available {
 			display: flex;
@@ -132,6 +283,8 @@ $plan-features-sidebar-width: 272px;
 				& .plan-features-comparison__item-annual-plan {
 					font-weight: 600;
 					color: var( --color-error );
+					font-size: 0.6rem; /* stylelint-disable-line */
+					text-transform: uppercase;
 				}
 			}
 
@@ -144,7 +297,8 @@ $plan-features-sidebar-width: 272px;
 			}
 		}
 
-		.plan-features-comparison__item-checkmark {
+		.plan-features-comparison__item-checkmark,
+		.plan-features-comparison__item-cross {
 			fill: var( --studio-green-50 );
 			width: 16px;
 			height: 16px;
@@ -153,813 +307,8 @@ $plan-features-sidebar-width: 272px;
 		}
 
 		.plan-features-comparison__item-cross {
-			fill: var( --studio-gray-20 );
-			width: 16px;
-			height: 16px;
-			margin-right: 0;
+			fill: #a7aaad;
 		}
-
-		.plan-features-comparison__item-info {
-			&:not( .is-available ) {
-				color: var( --studio-gray-20 );
-			}
-			.plan-features-comparison__item-title {
-				line-height: 18px;
-				overflow-wrap: break-word;
-			}
-		}
-	}
-
-	.plan-features-comparison__table-item.is-bold {
-		font-weight: bold;
-	}
-
-	.notouch & .segmented-control.price-toggle {
-		background-color: var( --studio-gray-5 );
-		border-color: var( --studio-gray-5 );
-		border-radius: 6px; /* stylelint-disable-line */
-		color: var( --color-text );
-
-		.segmented-control__item {
-			border: 1px solid;
-			border-radius: 6px; /* stylelint-disable-line */
-			border-color: var( --studio-gray-5 );
-			
-			&.is-selected {
-				padding: 1px 0 0 1px;
-			}
-
-			&:hover:not( .is-selected ) {
-				border-color: var( --studio-gray-30 );
-			}
-
-			&:first-child {
-				margin-right: 5px;
-			}
-
-			& .segmented-control__link {
-				color: var( --color-text );
-				padding: 10px 20px;
-
-				&:hover {
-					background-color: unset;
-				}
-			}
-
-			&.is-selected .segmented-control__link {
-				border-radius: 5px; /* stylelint-disable-line */
-				background-color: var( --studio-white );
-				border-color: var( --studio-white );
-				box-shadow: 0 4px 4px rgba( 0, 0, 0, 0.25 ), 0 3px 8px rgba( 0, 0, 0, 0.12 ), inset 0 0 0 rgba( 0, 0, 0, 0.2 );
-				border: 0.5px solid rgba( 0, 0, 0, 0.07 );
-				padding: 11px 20px;
-				color: var( --color-text );
-
-				&:hover {
-					background-color: var( --studio-white );
-				}
-			}
-		}
-	}
-	
-	.plan-features-comparison__row:last-of-type  .plan-features-comparison__table-item.is-last-feature {
-		.plan-features-comparison__item-info {
-			padding-bottom: 30px;
-		}
-	}
-}
-
-
-.plan-features--loading-container {
-	margin-top: 300px;
-}
-
-/******************************************/
-
-
-/* Breakpoints 1150px, */
-
-.plan-features-comparison__content {
-	margin: -16px -16px 0;
-	padding-top: $plan-features-header-banner-height;
-}
-
-.is-section-plans .plan-features-comparison__mobile {
-	display: block;
-	@media ( min-width: $plan-features-sidebar-width + 480px ) {
-		display: none;
-	}
-}
-
-.plan-features-comparison__notice {
-	margin-bottom: 16px;
-}
-
-.plan-features-comparison__mobile {
-	color: var( --color-text-subtle );
-	margin: 0 16px;
-	display: block;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		display: none;
-	}
-
-	.foldable-card {
-		box-shadow: none;
-	}
-
-	.foldable-card.card.is-expanded {
-		//original rule has this specificity
-		margin: 0;
-	}
-
-	.foldable-card.is-expanded .foldable-card__content {
-		//original rule has this specificity
-		padding: 0;
-	}
-
-	.plan-features-comparison__header-banner {
-		display: none;
-	}
-
-	.plan-features-comparison__item {
-		border-bottom: solid 1px var( --color-neutral-5 );
-		font-size: $font-body-small;
-	}
-
-	.plan-features-comparison__item:last-child {
-		border-bottom: none;
-	}
-}
-
-.plan-features-comparison__mobile .plan-features-comparison__header .plan-features-comparison__header-figure,
-.plan-features-comparison__table.has-1-cols .plan-features-comparison__header-figure,
-.plan-features-comparison__table.has-2-cols .plan-features-comparison__header-figure {
-	display: block;
-	width: 50px;
-	height: 50px;
-}
-
-.plan-features-comparison__table.has-2-cols {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-	max-width: 800px;
-}
-
-.plan-features-comparison__table.has-1-cols {
-	margin-left: auto;
-	margin-right: auto;
-	max-width: 337px;
-}
-
-.plan-features-comparison__mobile-plan {
-	font-size: $font-body-small;
-	border: solid 1px var( --color-neutral-5 );
-	background-color: var( --color-surface );
-	margin-bottom: 24px;
-}
-
-.is-section-plans .plan-features-comparison__table {
-	display: none;
-	@media ( min-width: $plan-features-sidebar-width + 480px ) {
-		display: table;
-	}
-}
-
-.plan-features-comparison__table {
-	font-size: $font-body-small;
-	color: var( --color-text-subtle );
-	border-spacing: 16px 0;
-	margin-top: -16px;
-	display: none;
-	table-layout: fixed;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		display: table;
-	}
-
-	@include breakpoint-deprecated( '<1040px' ) {
-		border-spacing: 0;
-		margin-left: 15px;
-		margin-right: 15px;
-		width: calc( 100% - 30px );
-	}
-}
-
-.plan-features-comparison__table-item {
-	border-right: solid 1px var( --color-neutral-5 );
-	border-left: solid 1px var( --color-neutral-5 );
-	background-color: var( --color-surface );
-	position: relative;
-
-	&.is-highlighted {
-		border: 1px solid var( --color-primary );
-		background-color: rgba( var( --color-primary-rgb ), 0.1 );
-		position: relative;
-		top: -1px;
-
-		.plan-features-comparison__item-checkmark {
-			fill: var( --color-primary );
-		}
-
-		&.has-partial-border::after {
-			display: none;
-		}
-	}
-
-	&.is-selected {
-		display: table-cell;
-	}
-}
-
-.plan-features-comparison__table-item.has-partial-border {
-	&::after {
-		content: '';
-		display: block;
-		height: 1px;
-		width: calc( 100% - 48px );
-		border-bottom: 1px solid var( --color-neutral-5 );
-		position: absolute;
-		bottom: 0;
-		margin: 0 24px;
-
-		@include breakpoint-deprecated( '<1040px' ) {
-			margin: 0 12px;
-			width: calc( 100% - 24px );
-		}
-	}
-}
-
-.plan-features-comparison__table-item.has-border-bottom {
-	border-bottom: solid 1px var( --color-neutral-5 );
-}
-
-.plan-features-comparison__table-item.has-border-top {
-	border-top: solid 1px var( --color-neutral-5 );
-}
-
-.plan-features-comparison__table-item.is-placeholder {
-	.spinner-line {
-		margin: 0;
-		position: absolute;
-		top: -3px;
-		width: 100%;
-	}
-}
-
-.plan-features-comparison__table-item.is-bottom-buttons {
-	padding-top: 33px;
-}
-
-.plan-features-comparison__table-item.is-top-buttons {
-	padding-top: 8px;
-}
-
-.plan-features-comparison__header {
-	position: relative;
-	display: flex;
-	align-items: flex-start;
-	padding: 12px 24px 0 15px;
-	border-bottom: solid 2px var( --color-neutral-10 );
-	background-color: var( --color-surface );
-
-	@include breakpoint-deprecated( '<960px' ) {
-		padding: 12px 12px 0;
-	}
-
-	&.is-p2-free,
-	&.is-p2-plus {
-		padding-left: 12px;
-		@include breakpoint-deprecated( '>1040px' ) {
-			padding-left: 24px;
-		}
-	}
-
-	&.is-p2-plus {
-		border-bottom-color: var( --p2-color-link );
-	}
-
-	.plans-features-main__group.is-wpcom & {
-		&.is-blogger-plan {
-			border-bottom: solid 2px var( --color-plan-blogger );
-		}
-
-		&.is-personal-plan {
-			border-bottom: solid 2px var( --color-plan-personal );
-		}
-
-		&.is-premium-plan {
-			border-bottom: solid 2px var( --color-plan-premium );
-		}
-
-		&.is-business-plan {
-			border-bottom: solid 2px var( --color-plan-business );
-		}
-
-		&.is-ecommerce-plan {
-			border-bottom: solid 2px var( --color-plan-ecommerce );
-		}
-	}
-
-	.plans-features-main__group.is-jetpack & {
-		&.is-personal-plan {
-			border-bottom: solid 2px var( --color-warning );
-		}
-
-		&.is-premium-plan {
-			border-bottom: solid 2px var( --color-success );
-		}
-
-		&.is-business-plan {
-			border-bottom: solid 2px var( --color-plan-ecommerce );
-		}
-	}
-}
-
-.plan-features-comparison__header-figure {
-	position: relative;
-	width: 56px;
-	height: 56px;
-	margin-right: 15px;
-	border-radius: 50%; /* stylelint-disable-line */
-}
-
-.is-section-plans .plan-features-comparison__header-figure {
-	@include breakpoint-deprecated( '<1280px' ) {
-		width: 24px;
-		height: 24px;
-		margin-right: 10px;
-	}
-}
-
-.plan-features-comparison__header-figure,
-.plan-features-comparison__table.has-1-cols .plan-features-comparison__header-figure,
-.plan-features-comparison__table.has-2-cols .plan-features-comparison__header-figure {
-	@include breakpoint-deprecated( '<1040px' ) {
-		display: none;
-	}
-}
-
-.plan-features-comparison__header-text {
-	flex: 1;
-	padding: 6px 0 0;
-}
-
-.plan-features-comparison__header-title {
-	font-size: $font-title-small;
-	color: var( --color-primary );
-	line-height: 0.7;
-}
-
-.plan-features-comparison__audience {
-	display: block;
-	color: var( --color-text-subtle );
-}
-
-.plan-features-comparison__header-price-group,
-.plan-features-comparison__header-price-group-prices {
-	display: flex;
-	flex-flow: row wrap;
-	align-items: center;
-}
-
-.plan-features-comparison__header-price-group {
-	width: calc( 100% + 20px );
-
-	@include breakpoint-deprecated( '<960px' ) {
-		width: calc( 100% + 10px );
-	}
-}
-
-.plan-features-comparison__header-price-group-prices {
-	max-width: calc( 100% - 20px );
-
-	@include breakpoint-deprecated( '<960px' ) {
-		max-width: calc( 100% - 10px );
-	}
-
-	.plan-price.is-discounted {
-		@include breakpoint-deprecated( '>960px' ) {
-			margin-right: 0;
-		}
-	}
-}
-
-.plan-features-comparison__header-credit-label {
-	font-size: $font-body-extra-small;
-	line-height: 20px;
-	height: 20px;
-	border-radius: 10px; /* stylelint-disable-line */
-	color: var( --color-text-inverted );
-	background: var( --color-success );
-	font-weight: 400;
-	vertical-align: middle;
-	padding: 0 8px;
-	margin-bottom: 4px;
-
-	@include breakpoint-deprecated( '>960px' ) {
-		margin-left: 4px;
-	}
-	@include breakpoint-deprecated( '>1280px' ) {
-		margin-left: 8px;
-	}
-}
-
-.plan-features-comparison__header-timeframe {
-	margin-bottom: 1.4em;
-	font-size: $font-body-extra-small;
-	font-style: italic;
-	font-weight: 400;
-	color: var( --color-text-subtle );
-	line-height: normal;
-
-	&.is-placeholder {
-		@include placeholder( --color-neutral-10 );
-		width: 140px;
-		height: 12px;
-		margin-bottom: 15px;
-
-		@include breakpoint-deprecated( '<960px' ) {
-			margin-bottom: 9px;
-		}
-	}
-}
-
-.plan-features-comparison__header-title-free {
-	font-size: 1.5rem;
-	line-height: 1.5;
-	font-weight: 400;
-	color: var( --color-neutral-70 );
-	padding-bottom: 8px;
-
-	@include breakpoint-deprecated( '>960px' ) {
-		font-size: 2rem;
-	}
-	@media ( min-width: $plan-features-sidebar-width + 480px ) {
-		padding-bottom: 32px;
-	}
-}
-
-.segmented-control.is-customer-type-toggle {
-	max-width: 520px;
-	margin: 8px auto 16px;
-
-	@include breakpoint-deprecated( '<480px' ) {
-		flex-wrap: wrap;
-		border-radius: 0;
-
-		.segmented-control__link {
-			border-radius: 0;
-		}
-	}
-}
-
-.info-popover.plan-features-comparison__header-tip-info {
-	position: relative;
-	top: 4px;
-	left: 3px;
-	margin-top: -10px;
-	margin-bottom: -10px;
-	display: inline-block;
-}
-
-.plan-features-comparison__price {
-	&.is-placeholder {
-		@include placeholder( --color-neutral-10 );
-		width: 45px;
-		height: 25px;
-		margin-top: 9px;
-		margin-bottom: 5px;
-	}
-}
-.plan-features-comparison__price-jetpack {
-	&.is-placeholder {
-		@include placeholder( --color-neutral-10 );
-		width: 140px;
-		height: 32px;
-		margin-top: 5px;
-		margin-bottom: 5px;
-
-		@include breakpoint-deprecated( '<960px' ) {
-			height: 26px;
-		}
-	}
-}
-
-.plan-features-comparison__header-banner {
-	box-sizing: border-box;
-	position: absolute;
-	left: -1px;
-	right: -1px;
-	top: 0;
-	transform: translateY( -21px );
-	padding: 0 8px;
-	background: var( --color-neutral-70 );
-	font-size: $font-body-extra-small;
-	line-height: $plan-features-header-banner-height;
-	text-align: center;
-	text-transform: uppercase;
-	color: var( --color-text-inverted );
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-.plan-features-comparison__summary,
-.plan-features-comparison__description {
-	margin: 0;
-	padding: 24px 24px 0;
-
-	@include breakpoint-deprecated( '<1040px' ) {
-		padding: 12px 12px 0;
-	}
-
-	@include breakpoint-deprecated( '<660px' ) {
-		padding: 20px 20px 0;
-	}
-}
-
-.plan-features-comparison__targeted-description-heading {
-	display: block;
-	color: var( --color-text-subtle );
-}
-
-.plan-features-comparison__item {
-	display: flex;
-	margin: 0 24px;
-	padding: 12px 0;
-	font-size: $font-body-small;
-	color: var( --color-neutral-70 );
-
-	@include breakpoint-deprecated( '<960px' ) {
-		font-size: $font-body-extra-small;
-	}
-
-	@include breakpoint-deprecated( '<1040px' ) {
-		margin: 0 12px;
-	}
-}
-
-.plan-features-comparison__item-title {
-	flex: 1 0 0;
-	width: 100%;
-}
-
-.plan-features-comparison__item-checkmark {
-	flex: 0 1 auto;
-	fill: var( --color-primary );
-	margin-right: 10px;
-}
-
-.plan-features-comparison__item-tip-info {
-	flex: 0 1 auto;
-}
-
-.popover__plan-features {
-	.popover__inner {
-		width: 200px;
-	}
-}
-
-.plan-features-comparison__actions {
-	padding: 0 24px 24px;
-
-	@include breakpoint-deprecated( '<1040px' ) {
-		padding: 0 12px 12px;
-	}
-
-	@include breakpoint-deprecated( '<660px' ) {
-		padding: 0 20px 20px;
-		border-bottom: solid 1px var( --color-neutral-0 );
-	}
-}
-
-.plan-features-comparison__actions-buttons {
-	text-align: center;
-}
-
-.plan-features-comparison__actions-button {
-	width: 100%;
-	margin-top: 8px;
-
-	@include breakpoint-deprecated( '<660px' ) {
-		margin-top: 20px;
-	}
-}
-
-.plan-features-comparison__item-info {
-	display: flex;
-	flex-direction: column;
-	flex: 1 0 0;
-	width: 100%;
-}
-
-.plan-features-comparison__item-title-outlined {
-	font-weight: 600;
-	display: block;
-}
-
-.plan-features-comparison__item-description {
-	display: inline-block;
-	margin-left: 10px;
-}
-
-/*= Plans in Signup
-========================================*/
-
-.plans-features-main__group.is-wpcom {
-	padding-top: 19px;
-}
-
-// This is the customer type buttons that let
-// you toggle the visible plans in signup.
-// The #primary id is included to increase specificity
-// and override some of the segmented-control styles.
-// This UI should really use buttons instead.
-/* stylelint-disable selector-max-id */
-body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
-	margin: 0 auto 16px;
-	box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.14 ), 0 2px 1px -1px rgba( 0, 0, 0, 0.12 ),
-		0 1px 3px 0 rgba( 0, 0, 0, 0.2 );
-
-	.segmented-control__item a {
-		text-decoration: underline;
-		border: none;
-	}
-
-	.segmented-control__item.is-selected {
-		position: relative;
-
-		// This adds a little pointer arrow to the bottom
-		// of the selected segment item. It relies on the
-		// relative positioning above.
-		@include breakpoint-deprecated( '>480px' ) {
-			&::after {
-				display: block;
-				content: '';
-				width: 0;
-				height: 0;
-				border-left: 10px solid transparent;
-				border-right: 10px solid transparent;
-				border-top: 10px solid var( --color-primary-70 );
-				position: absolute;
-				bottom: -10px;
-				left: calc( 50% - 10px );
-			}
-		}
-
-		a,
-		a:hover,
-		a:focus {
-			@include breakpoint-deprecated( '<660px' ) {
-				flex-wrap: wrap;
-			}
-			cursor: default;
-			text-decoration: none;
-			background-color: var( --color-primary-70 );
-		}
-	}
-}
-/* stylelint-enable */
-
-.plans-wrapper {
-	margin: 0 auto;
-	padding: 20px 0 10px;
-	transform: translateY( -20px );
-	overflow-x: auto;
-}
-
-.plan-features--signup {
-	margin: 0 auto;
-
-	.signup__steps & {
-		width: auto;
-
-		@include breakpoint-deprecated( '>660px' ) {
-			max-width: 1100px;
-		}
-	}
-
-	.plan-features-comparison__table {
-		display: none;
-
-		@include breakpoint-deprecated( '>660px' ) {
-			display: table;
-			width: 100%;
-			margin: 0 auto;
-			padding: 0 16px;
-		}
-
-		@include breakpoint-deprecated( '>1040px' ) {
-			border-spacing: 15px 0;
-			padding: 0;
-		}
-	}
-
-	.plan-features-comparison__content {
-		margin: -16px 0 0;
-	}
-
-	.plan-features-comparison__header {
-		padding-bottom: 12px;
-	}
-
-	.plan-features-comparison__header-title {
-		color: var( --color-neutral-70 );
-		margin-bottom: 5px;
-	}
-
-	.plan-features-comparison__table-item {
-		text-align: center;
-		transition: opacity 0.05s;
-	}
-
-	.plan-features-comparison__table-item.has-border-bottom {
-		border-bottom: 0;
-	}
-
-	.plan-features-comparison__graphic {
-		float: right;
-		width: 50px;
-		height: 50px;
-		margin: 16px 20px;
-
-		@include breakpoint-deprecated( '>660px' ) {
-			float: none;
-			width: 100px;
-			height: 100px;
-			margin: 20px auto;
-		}
-	}
-
-	.plan-features-comparison__pricing,
-	.plan-price.is-discounted {
-		color: var( --color-neutral-70 );
-	}
-
-	.plan-features-comparison__pricing {
-		margin: 20px 20px -12px;
-		padding: 0;
-
-		@include breakpoint-deprecated( '>660px' ) {
-			margin-bottom: 0;
-			padding: 0 12px;
-		}
-	}
-
-	.is-placeholder {
-		width: 60%;
-		margin: 5px auto;
-	}
-
-	.plan-features-comparison__item {
-		margin: 0 15px;
-		text-align: left;
-	}
-
-	.plan-features-comparison__item-info {
-		padding: 0 5px;
-	}
-
-	.plan-features-comparison__item-title {
-		margin: 0;
-	}
-
-	.plan-features-comparison__actions {
-		padding: 0 15px 15px;
-	}
-
-	.plan-features-comparison__actions-button {
-		margin-top: 8px;
-
-		&.disabled,
-		&[disabled] {
-			color: var( --color-neutral-light );
-		}
-	}
-
-	.plan-price.is-original::before {
-		border-color: var( --color-success );
-	}
-
-	/* TODO: If the plans-redesign experiment wins, this may need to be included depending on whether we want to show the promotional pricing for INR, MX*/
-
-	// .plan-price,
-	// .plan-price.is-original {
-	// 	font-size: $font-body;
-	// }
-
-	.plan-features-comparison__header-price-group {
-		display: inline;
-	}
-
-	.plan-features-comparison__row:last-of-type .plan-features-comparison__table-item {
-		border-bottom: solid 1px var( --color-neutral-5 );
-	}
-
-	.plan-features-comparison__header-price-group-prices {
-		display: inline-block;
 	}
 }
 
@@ -980,364 +329,162 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		}
 	}
 
-	.is-section-plans & {
-		overflow: hidden;
-		width: calc( 100vw - 278px );
-		margin-left: calc( 50% - 50vw + 138px );
-
-		@include breakpoint-deprecated( '<660px' ) {
-			margin-left: 0;
-			width: 100%;
-		}
-
-		@media ( min-width: 1800px ) {
-			max-width: 1520px;
-			margin-left: -240px;
-		}
-	}
-
 	.signup__steps & .plan-features--signup {
 		max-width: 100%;
 	}
 
 	.plan-features-comparison__content {
-		margin-left: 0;
-		margin-right: 0;
+		margin: -16px 0 0;
+		padding-top: $plan-features-header-banner-height;
 	}
 }
 
-.plan-features-comparison__scroller-container {
-	padding: 0 0 30px;
+.notouch .signup__step .segmented-control.price-toggle {
+	background-color: var( --studio-gray-5 );
+	border-color: var( --studio-gray-5 );
+	border-radius: 6px; /* stylelint-disable-line */
+	color: var( --color-text );
+	margin-top: 16px;
 
-	.is-section-plans & {
-		margin: 0 0 30px;
+	.segmented-control__item {
+		border: 1px solid;
+		border-radius: 6px; /* stylelint-disable-line */
+		border-color: var( --studio-gray-5 );
+		
+		&.is-selected {
+			padding: 1px 0 0 1px;
+		}
+
+		&:hover:not( .is-selected ) {
+			border-color: var( --studio-gray-30 );
+		}
+
+		&:first-child {
+			margin-right: 5px;
+		}
+
+		& .segmented-control__link {
+			color: var( --color-text );
+			padding: 10px 20px;
+
+			&:hover {
+				background-color: unset;
+			}
+		}
+
+		&.is-selected .segmented-control__link {
+			border-radius: 5px; /* stylelint-disable-line */
+			background-color: var( --studio-white );
+			border-color: var( --studio-white );
+			box-shadow: 0 4px 4px rgba( 0, 0, 0, 0.25 ), 0 3px 8px rgba( 0, 0, 0, 0.12 ), inset 0 0 0 rgba( 0, 0, 0, 0.2 );
+			border: 0.5px solid rgba( 0, 0, 0, 0.07 );
+			padding: 11px 20px;
+			color: var( --color-text );
+
+			&:hover {
+				background-color: var( --studio-white );
+			}
+		}
 	}
 }
 
-.plan-features-comparison__scroller-wrapper {
-	overflow: auto;
-	-ms-overflow-style: none;
-	scrollbar-width: none;
-	scroll-snap-type: x mandatory;
-	-webkit-overflow-scrolling: touch;
+.plan-features__actions-button {
+	border-radius: 4px; /* stylelint-disable-line */
+}
 
-	&::-webkit-scrollbar {
-		height: 0;
+.plan-features-comparison__header-price-group {
+	display: inline;
+	width: calc( 100% + 20px );
+
+	@include breakpoint-deprecated( '<960px' ) {
+		width: calc( 100% + 10px );
 	}
 }
 
-.plan-features-comparison__scroller {
-	position: relative;
-	margin: 0 auto;
+.plan-features-comparison__header-price-group-prices {
+	display: inline-block;
+}
 
-	.plan-features-comparison__table {
-		display: table;
-		padding: 0;
-		margin: 0 auto;
-		width: 100%;
-		border-spacing: 7px 0;
-
-		.is-section-plans & {
-			border-spacing: 0;
-		}
-	}
-
-	.plan-features-comparison__header {
-		display: block;
-		position: relative;
-		text-align: left;
-		box-sizing: border-box;
-		border-top: solid 8px;
-		border-radius: 2px 2px 0 0;
-		padding-bottom: 12px;
-
-		.plans-features-main__group.is-wpcom & {
-			border-bottom: none;
-		}
-
-		&.is-blogger-plan {
-			border-color: var( --color-plan-blogger );
-		}
-
-		&.is-personal-plan {
-			border-color: var( --color-plan-personal );
-		}
-
-		&.is-premium-plan {
-			border-color: var( --color-plan-premium );
-		}
-
-		&.is-business-plan {
-			border-color: var( --color-plan-business );
-		}
-
-		&.is-ecommerce-plan {
-			border-color: var( --color-plan-ecommerce );
-		}
-
-		/* scroll stops */
-		.scroll-snap-enabled & {
-			scroll-snap-align: start;
-		}
-	}
-
-	.plan-features-comparison__header-title {
-		color: var( --color-text );
-		font-weight: 600;
-		font-size: $font-title-medium;
-		margin-bottom: 6px;
-	}
-
-	.plan-features-comparison__header-billing-info {
-		display: block;
-		color: var( --color-text-subtle );
-		align-items: center;
-		text-align: center;
-	}
-
-	.plan-features-comparison__pricing {
-		padding: 8px 16px;
-		margin: 0;
-		border-top: solid 1px var( --color-neutral-10 );
-
-		.plan-price {
-			font-weight: 600;
-			margin-right: 10px;
-			font-size: $font-headline-large;
-			font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
-		}
-
-		.plan-price__currency-symbol {
-			font-size: $font-title-medium;
-			font-weight: 400;
-		}
-
-		.plan-price__integer {
-			font-weight: 600;
-		}
-	}
-
+body.is-section-signup.is-white-signup {
 	.plan-features-comparison__table-item {
-		border-top: solid 1px var( --color-neutral-5 );
-		vertical-align: middle;
-		padding: 7px 0;
+		border-left: none;
 
-		.is-section-signup & {
+		&:last-of-type {
 			border-right: none;
-			border-left: none;
-		}
-
-		&:empty {
-			background: transparent;
-			border-top: none;
-		}
-
-		&.has-border-top {
-			vertical-align: top;
-		}
-
-		&.has-border-top,
-		&.is-top-buttons,
-		&.is-description {
-			border-top: none;
-			border-bottom: none;
-			padding-top: 0;
-		}
-
-		&.is-description {
-			vertical-align: top;
-		}
-
-		&.is-last-feature {
-			border-bottom: solid 1px var( --color-neutral-5 );
 		}
 	}
 
-	tr:first-child .plan-features-comparison__table-item {
-		border-radius: 2px 2px 0 0;
+	.plan-features-comparison__row:last-of-type .plan-features-comparison__table-item {
+		border-bottom: none;
 	}
 
-	tr:last-child .plan-features-comparison__table-item {
-		border-radius: 0 0 5px 5px; /* stylelint-disable-line */
+	.plan-features--signup .is-premium-plan .plan-features-comparison__header-title {
+		font-weight: 500; /* stylelint-disable-line */
 	}
 
-	.plan-features-comparison__actions {
-		padding-bottom: 12px;
+	.plan-features--signup .plan-features-comparison__pricing {
+		.plan-price {
+			font-weight: 500; /* stylelint-disable-line */
+
+			.plan-price__integer {
+				font-weight: 500; /* stylelint-disable-line */
+			}
+		}
+
+		.plan-features-comparison__header-billing-info {
+			font-weight: 500; /* stylelint-disable-line */
+		}
 	}
 
-	.plan-features-comparison__item {
-		align-items: center;
-		font-size: inherit;
-		font-weight: 600;
-		min-height: 42px;
-		margin: 0;
-		padding: 0 8px 0 16px;
+
+	.plan-pill.is-in-signup {
+		font-size: 0.75rem;
+		font-weight: 500; /* stylelint-disable-line */
+		letter-spacing: 0.2px;
+		line-height: 1.25rem;
+		padding: 0 8px;
 	}
 
 	.plan-features-comparison__item-title {
-		padding: 0;
+		color: var( --studio-gray-60 );
 	}
 
-	.plan-features-comparison__description {
-		text-align: initial;
-		padding: 0 24px;
-	}
-
-	.plan-features-comparison__item-tip-info {
-		margin-left: 10px;
-	}
-
-	.plan-features-comparison__row:last-child .plan-features-comparison__table-item {
-		border-bottom: solid 1px var( --color-neutral-5 );
-	}
-}
-
-.plan-features-comparison__scroll-left,
-.plan-features-comparison__scroll-right {
-	display: flex;
-	position: absolute;
-	top: 24px;
-	bottom: 40px;
-	width: 12%;
-	cursor: pointer;
-	overflow: hidden;
-	z-index: 1;
-}
-
-.plan-features-comparison__scroll-left {
-	left: 0;
-	cursor: w-resize;
-
-	&.disabled {
-		cursor: default;
-	}
-}
-
-.plan-features-comparison__scroll-right {
-	right: 0;
-	cursor: e-resize;
-
-	&.disabled {
-		cursor: default;
-	}
-}
-
-button.plan-features-comparison__scroll-button {
-	align-self: start;
-	margin: 180px auto 0;
-	width: 30px;
-	height: 30px;
-	padding: 0;
-	background-color: var( --color-neutral );
-	border: 0;
-	border-radius: 15px; /* stylelint-disable-line */
-	color: var( --color-text-inverted );
-	cursor: pointer;
-
-	&:hover,
-	&:active,
-	&:focus {
-		color: var( --color-text-inverted );
-	}
-
-	.gridicon {
-		width: 24px;
-		height: 24px;
-	}
-
-	:root body.is-section-signup .plan-features-comparison__scroller-container & {
-		background-color: var( --color-surface );
-		color: var( --color-primary );
-		padding: 0;
-	}
-
-	&:disabled,
-	&[disabled] {
-		background-color: rgba( var( --color-neutral-rgb ), 0.5 );
-		color: var( --color-neutral-5 );
-	}
-
-	:root body.is-section-signup &:disabled,
-	.is-section-signup &[disabled] {
-		background-color: rgba( var( --color-surface-rgb ), 0.5 );
-		color: var( --color-primary );
-	}
-
-	.plan-features-comparison__scroll-right & {
-		margin-left: 20px;
-
-		@include breakpoint-deprecated( '<480px' ) {
-			margin-left: 5px;
-		}
-	}
-
-	.plan-features-comparison__scroll-left & {
-		margin-right: 20px;
-
-		@include breakpoint-deprecated( '<480px' ) {
-			margin-right: 5px;
+	.plan-features-comparison__item.plan-features-comparison__item-available {
+		.plan-features-comparison__item-annual-plan-container .plan-features-comparison__item-annual-plan {
+			color: var( --studio-orange-40 );
 		}
 	}
 }
 
-.plan-features-comparison__scroll-indicator {
-	position: absolute;
-	width: auto;
-	bottom: 0;
-	left: 50%;
-	transform: translateX( -50% );
-	white-space: nowrap;
+.notouch body.is-section-signup.is-white-signup .signup__step .segmented-control.price-toggle {
+	background-color: #f2f2f2;
+	margin-top: 0;
 
-	.is-section-plans & {
-		bottom: 20px;
-	}
-}
-
-.plan-features-comparison__scroll-indicator-dot {
-	display: inline-block;
-	background: var( --color-neutral-dark );
-	opacity: 0.3;
-	width: 8px;
-	height: 8px;
-	margin: 0 2px;
-	border-radius: 2px;
-
-	.is-section-signup & {
-		background: var( --color-surface );
-		opacity: 0.5;
+	.segmented-control__link {
+		padding: 6px 11px;
 	}
 
-	&.is-highlighted {
-		opacity: 1;
-	}
-}
+	.segmented-control__item {
+		border: 6px;
+		padding: 2px;
 
-@include breakpoint-deprecated( '<480px' ) {
-	.plan-features-comparison__upgrade-launch-dialog .dialog__content p {
-		padding: 0 20px;
-	}
-}
-
-.plans-wrapper {
-	.plan-features-comparison__item-annual-plan {
-		font-size: 0.6rem; /* stylelint-disable-line */
-		text-transform: uppercase;
-	}
-
-	.plan-features-comparison__item-info.is-annual-plan-feature {
-		&.is-available {
-			.plan-features-comparison__item-annual-plan {
-				color: var( --color-success );
+		& .segmented-control__link {
+			border: 1px solid #f2f2f2;
+			&:hover {
+				border: 1px solid var( --studio-gray-10 );
+				background-color: unset;
+				border-radius: 5px; /* stylelint-disable-line */
 			}
 		}
 
-		&:not( .is-available ) {
-			.plan-features-comparison__item-annual-plan {
-				color: var( --color-error );
-			}
-			.plan-features-comparison__item-title {
-				text-decoration: line-through;
-				color: var( --color-neutral-30 );
+		&.is-selected .segmented-control__link {
+			border: 0.5px solid rgba( 0, 0, 0, 0.04 );
+			box-shadow: 0 3px 8px rgba( 0, 0, 0, 0.12 ), 0 3px 1px rgba( 0, 0, 0, 0.04 );
+			border-radius: 5px; /* stylelint-disable-line */
+
+			&:hover {
+				background-color: #fff;
+				border-color: rgba( 0, 0, 0, 0.04 );
 			}
 		}
 	}

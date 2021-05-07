@@ -22,39 +22,41 @@ export default class LoginPage extends AsyncBaseContainer {
 
 	async login( username, password, emailSSO = false, { retry = true } = {} ) {
 		const driver = this.driver;
-		const userNameSelector = By.css( '#usernameOrEmail' );
-		const passwordSelector = By.css( '#password' );
-		const changeAccountSelector = By.css( '#loginAsAnotherUser' );
-		const alreadyLoggedInSelector = By.css( '.continue-as-user' );
+		const userNameLocator = By.css( '#usernameOrEmail' );
+		const passwordLocator = By.css( '#password' );
+		const changeAccountLocator = By.css( '#loginAsAnotherUser' );
+		const alreadyLoggedInLocator = By.css( '.continue-as-user' );
 
-		const isDisplayed = await driverHelper.isEventuallyPresentAndDisplayed(
+		const isDisplayed = await driverHelper.isElementEventuallyLocatedAndVisible(
 			driver,
-			alreadyLoggedInSelector,
+			alreadyLoggedInLocator,
 			2000
 		);
 		if ( isDisplayed ) {
-			await driverHelper.clickWhenClickable( driver, changeAccountSelector );
+			await driverHelper.clickWhenClickable( driver, changeAccountLocator );
 		}
-		await driverHelper.waitTillPresentAndDisplayed( driver, userNameSelector );
-		await driverHelper.setWhenSettable( driver, userNameSelector, username );
+		await driverHelper.setWhenSettable( driver, userNameLocator, username );
 		await this.driver.sleep( 1000 );
-		await driver.findElement( userNameSelector ).sendKeys( Key.ENTER );
+		await driver.findElement( userNameLocator ).sendKeys( Key.ENTER );
 
 		if ( emailSSO === false ) {
-			await driverHelper.waitTillPresentAndDisplayed( driver, passwordSelector );
-			await driverHelper.setWhenSettable( driver, passwordSelector, password, {
+			await driverHelper.setWhenSettable( driver, passwordLocator, password, {
 				secureValue: true,
 			} );
 
 			await this.driver.sleep( 1000 );
-			await driver.findElement( passwordSelector ).sendKeys( Key.ENTER );
+			await driver.findElement( passwordLocator ).sendKeys( Key.ENTER );
 		}
 
 		await this.driver.sleep( 1000 );
 
 		if ( retry === true ) {
 			try {
-				await driverHelper.waitTillNotPresent( driver, userNameSelector, this.explicitWaitMS * 2 );
+				await driverHelper.waitUntilElementNotLocated(
+					driver,
+					userNameLocator,
+					this.explicitWaitMS * 2
+				);
 			} catch ( e ) {
 				await SlackNotifier.warn( `The login didn't work as expected - retrying now: '${ e }'`, {
 					suppressDuplicateMessages: true,
@@ -63,39 +65,39 @@ export default class LoginPage extends AsyncBaseContainer {
 				return await this.login( username, password, { retry: false } );
 			}
 		}
-		return await driverHelper.waitTillNotPresent( driver, userNameSelector );
+		return await driverHelper.waitUntilElementNotLocated( driver, userNameLocator );
 	}
 
 	use2FAMethod( twoFAMethod ) {
-		let actionSelector;
+		let actionLocator;
 
 		if ( twoFAMethod === 'sms' ) {
-			actionSelector = By.css( 'button[data-e2e-link="2fa-sms-link"]' );
+			actionLocator = By.css( 'button[data-e2e-link="2fa-sms-link"]' );
 		} else if ( twoFAMethod === 'otp' ) {
-			actionSelector = By.css( 'button[data-e2e-link="2fa-otp-link"]' );
+			actionLocator = By.css( 'button[data-e2e-link="2fa-otp-link"]' );
 		} else if ( twoFAMethod === 'backup' ) {
-			actionSelector = By.css( 'button[data-e2e-link="lost-phone-link"]' );
+			actionLocator = By.css( 'button[data-e2e-link="lost-phone-link"]' );
 		}
 
-		if ( actionSelector ) {
+		if ( actionLocator ) {
 			return driverHelper
-				.isElementPresent( this.driver, actionSelector )
+				.isElementLocated( this.driver, actionLocator )
 				.then( ( actionAvailable ) => {
 					if ( actionAvailable ) {
-						return driverHelper.clickWhenClickable( this.driver, actionSelector );
+						return driverHelper.clickWhenClickable( this.driver, actionLocator );
 					}
 				} );
 		}
 	}
 
 	async enter2FACode( twoFACode ) {
-		const twoStepCodeSelector = By.css( 'input[name="twoStepCode"]' );
-		const submitSelector = By.css( '#wp-submit, button[type="submit"]' );
+		const twoStepCodeLocator = By.css( 'input[name="twoStepCode"]' );
+		const submitLocator = By.css( '#wp-submit, button[type="submit"]' );
 
-		await driverHelper.setWhenSettable( this.driver, twoStepCodeSelector, twoFACode );
-		await driverHelper.clickWhenClickable( this.driver, submitSelector );
+		await driverHelper.setWhenSettable( this.driver, twoStepCodeLocator, twoFACode );
+		await driverHelper.clickWhenClickable( this.driver, submitLocator );
 
-		return await driverHelper.waitTillNotPresent( this.driver, twoStepCodeSelector );
+		return await driverHelper.waitUntilElementNotLocated( this.driver, twoStepCodeLocator );
 	}
 
 	async requestMagicLink( emailAddress ) {
@@ -104,7 +106,7 @@ export default class LoginPage extends AsyncBaseContainer {
 		 *
 		 * @see {@link https://github.com/Automattic/wp-calypso/pull/50999}
 		 */
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.login__form-action button:not(:disabled)' )
 		);
@@ -122,7 +124,7 @@ export default class LoginPage extends AsyncBaseContainer {
 			this.driver,
 			By.css( '.magic-login__form-action button.is-primary' )
 		);
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.magic-login__check-email-image' )
 		);

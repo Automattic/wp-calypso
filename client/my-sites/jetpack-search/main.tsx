@@ -21,11 +21,12 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import getSiteSetting from 'calypso/state/selectors/get-site-setting';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import JetpackSearchUpsell from './upsell';
 import JetpackSearchPlaceholder from './placeholder';
-import { isJetpackSearch } from 'calypso/lib/products-values';
-import { planHasJetpackSearch } from 'calypso/lib/plans';
+import { isJetpackSearch, planHasJetpackSearch } from '@automattic/calypso-products';
 import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
@@ -43,6 +44,9 @@ export default function JetpackSearchMain(): ReactElement {
 	const siteId = useSelector( getSelectedSiteId );
 	const checkForSearchProduct = ( purchase ) => purchase.active && isJetpackSearch( purchase );
 	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
+	const isSearchEnabled = useSelector( ( state ) =>
+		getSiteSetting( state, siteId, 'jetpack_search_enabled' )
+	);
 	const hasSearchProduct =
 		sitePurchases.find( checkForSearchProduct ) || planHasJetpackSearch( site?.plan?.product_slug );
 	const hasLoadedSitePurchases = useSelector( hasLoadedSitePurchasesFromServer );
@@ -62,6 +66,7 @@ export default function JetpackSearchMain(): ReactElement {
 			<DocumentHead title="Jetpack Search" />
 			<SidebarNavigation />
 			<PageViewTracker path="/jetpack-search/:site" title="Jetpack Search" />
+			<QuerySiteSettings siteId={ siteId } />
 
 			<FormattedHeader
 				headerText={ translate( 'Jetpack Search' ) }
@@ -71,11 +76,19 @@ export default function JetpackSearchMain(): ReactElement {
 			/>
 
 			<PromoCard
-				title={ translate( 'Jetpack Search is active on your site.' ) }
+				title={
+					isSearchEnabled
+						? translate( 'Jetpack Search is enabled on your site.' )
+						: translate( 'Jetpack Search is disabled on your site.' )
+				}
 				image={ { path: JetpackSearchSVG } }
 				isPrimary
 			>
-				<p>{ translate( 'Your visitors are getting our fastest search experience.' ) }</p>
+				<p>
+					{ isSearchEnabled
+						? translate( 'Your visitors are getting our fastest search experience.' )
+						: translate( 'Enable it to ensure your visitors get our fastest search experience.' ) }
+				</p>
 
 				<PromoCardCTA
 					cta={ {

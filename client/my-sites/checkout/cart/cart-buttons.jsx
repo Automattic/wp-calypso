@@ -1,11 +1,9 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { identity } from 'lodash';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 
@@ -19,10 +17,6 @@ export class CartButtons extends React.Component {
 	static propTypes = {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		translate: PropTypes.func.isRequired,
-	};
-
-	static defaultProps = {
-		translate: identity,
 	};
 
 	render() {

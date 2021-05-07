@@ -29,79 +29,79 @@ export default class WPAdminSidebar extends AsyncBaseContainer {
 	}
 
 	async selectPlugins() {
-		const plugInMenuSelector = by.css( '#menu-plugins' );
-		const plugInMenuItemSelector = by.css( '#menu-plugins li a[href="plugins.php"]' );
+		const plugInMenuLocator = by.css( '#menu-plugins' );
+		const plugInMenuItemLocator = by.css( '#menu-plugins li a[href="plugins.php"]' );
 
-		return await this._selectMenuItem( plugInMenuSelector, plugInMenuItemSelector );
+		return await this._selectMenuItem( plugInMenuLocator, plugInMenuItemLocator );
 	}
 
 	async selectJetpack() {
-		const jetpackMenuSelector = by.css( '#toplevel_page_jetpack' );
-		const menuItemSelector = by.css(
+		const jetpackMenuLocator = by.css( '#toplevel_page_jetpack' );
+		const menuItemLocator = by.css(
 			'#toplevel_page_jetpack li a[href$="jetpack#/dashboard"], ' +
 				'#toplevel_page_jetpack li a[href$="jetpack"]'
 		);
 
-		return await this._selectMenuItem( jetpackMenuSelector, menuItemSelector );
+		return await this._selectMenuItem( jetpackMenuLocator, menuItemLocator );
 	}
 
 	async selectJetpackSettings() {
-		const jetpackMenuSelector = by.css( '#toplevel_page_jetpack' );
-		const menuItemSelector = by.css( '#toplevel_page_jetpack li a[href$="jetpack#/settings"]' );
+		const jetpackMenuLocator = by.css( '#toplevel_page_jetpack' );
+		const menuItemLocator = by.css( '#toplevel_page_jetpack li a[href$="jetpack#/settings"]' );
 
-		return await this._selectMenuItem( jetpackMenuSelector, menuItemSelector );
+		return await this._selectMenuItem( jetpackMenuLocator, menuItemLocator );
 	}
 
 	async selectSettingsSharing() {
-		const settingsSelector = by.css( '#menu-settings' );
-		const itemSelector = by.css( '#menu-settings a[href$="sharing"]' );
+		const settingsLocator = by.css( '#menu-settings' );
+		const itemLocator = by.css( '#menu-settings a[href$="sharing"]' );
 
-		return await this._selectMenuItem( settingsSelector, itemSelector );
+		return await this._selectMenuItem( settingsLocator, itemLocator );
 	}
 
 	async selectSnippets() {
-		const settingsSelector = by.css( '#toplevel_page_snippets' );
-		const itemSelector = by.css( '#toplevel_page_snippets a.wp-first-item[href$="snippets"]' );
+		const settingsLocator = by.css( '#toplevel_page_snippets' );
+		const itemLocator = by.css( '#toplevel_page_snippets a.wp-first-item[href$="snippets"]' );
 
-		return await this._selectMenuItem( settingsSelector, itemSelector );
+		return await this._selectMenuItem( settingsLocator, itemLocator );
 	}
 
 	async selectAppearanceEditCSS() {
-		const settingsSelector = by.css( '#menu-appearance' );
-		const itemSelector = by.css( '#menu-appearance a[href$="editcss"]' );
+		const settingsLocator = by.css( '#menu-appearance' );
+		const itemLocator = by.css( '#menu-appearance a[href$="editcss"]' );
 
-		return await this._selectMenuItem( settingsSelector, itemSelector );
+		return await this._selectMenuItem( settingsLocator, itemLocator );
 	}
 
 	async selectAddNewUser() {
-		const usersSelector = by.css( '#menu-users' );
-		const itemSelector = by.css( '#menu-users a[href*="user-new"]' );
+		const usersLocator = by.css( '#menu-users' );
+		const itemLocator = by.css( '#menu-users a[href*="user-new"]' );
 
-		return await this._selectMenuItem( usersSelector, itemSelector );
+		return await this._selectMenuItem( usersLocator, itemLocator );
 	}
 
 	async selectAllPosts() {
-		const postsSelector = by.css( '#menu-posts' );
-		const itemSelector = by.css( '#menu-posts a[href*="edit"]' );
+		const postsLocator = by.css( '#menu-posts' );
+		const itemLocator = by.css( '#menu-posts a[href*="edit"]' );
 
-		return await this._selectMenuItem( postsSelector, itemSelector );
+		return await this._selectMenuItem( postsLocator, itemLocator );
 	}
 
 	async selectNewPost() {
-		const postsSelector = by.css( '#menu-posts' );
-		const itemSelector = by.css( '#menu-posts a[href*="post-new"]' );
+		const postsLocator = by.css( '#menu-posts' );
+		const itemLocator = by.css( '#menu-posts a[href*="post-new"]' );
 
-		return await this._selectMenuItem( postsSelector, itemSelector );
+		return await this._selectMenuItem( postsLocator, itemLocator );
 	}
 
-	async _selectMenuItem( menuSelector, menuItemSelector ) {
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, menuSelector );
-		const classes = await this.driver.findElement( menuSelector ).getAttribute( 'class' );
+	async _selectMenuItem( menuLocator, menuItemLocator ) {
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, menuLocator );
+		const classes = await this.driver.findElement( menuLocator ).getAttribute( 'class' );
 		if ( ! classes.includes( 'wp-menu-open' ) && ! classes.includes( 'wp-has-current-submenu' ) ) {
-			await driverHelper.clickWhenClickable( this.driver, menuSelector );
-			await driverHelper.waitTillPresentAndDisplayed( this.driver, menuItemSelector );
+			await driverHelper.clickWhenClickable( this.driver, menuLocator );
+			await driverHelper.waitUntilElementLocatedAndVisible( this.driver, menuItemLocator );
 		}
-		return await driverHelper.clickWhenClickable( this.driver, menuItemSelector );
+		return await driverHelper.clickWhenClickable( this.driver, menuItemLocator );
 	}
 
 	static async refreshIfJNError( driver ) {

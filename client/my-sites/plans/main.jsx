@@ -32,13 +32,18 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { getPlan, isWpComMonthlyPlan, isWpComFreePlan } from 'calypso/lib/plans';
-import getIntervalTypeForTerm from 'calypso/lib/plans/get-interval-type-for-term';
+import {
+	getPlan,
+	getIntervalTypeForTerm,
+	isWpComMonthlyPlan,
+	isWpComFreePlan,
+} from '@automattic/calypso-products';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 
 class Plans extends React.Component {
 	static propTypes = {
 		context: PropTypes.object.isRequired,
+		redirectToAddDomainFlow: PropTypes.bool,
 		displayJetpackPlans: PropTypes.bool,
 		intervalType: PropTypes.string,
 		customerType: PropTypes.string,
@@ -153,6 +158,7 @@ class Plans extends React.Component {
 									/>
 								) : (
 									<PlansFeaturesMain
+										redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
 										displayJetpackPlans={ displayJetpackPlans }
 										hideFreePlan={ true }
 										customerType={ customerType }

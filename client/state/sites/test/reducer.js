@@ -7,12 +7,9 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import reducer, { items, requestingAll, requesting, deleting, hasAllSitesList } from '../reducer';
+import reducer, { items, requestingAll, requesting, hasAllSitesList } from '../reducer';
 import {
 	MEDIA_DELETE,
-	SITE_DELETE,
-	SITE_DELETE_FAILURE,
-	SITE_DELETE_SUCCESS,
 	SITE_DELETE_RECEIVE,
 	JETPACK_DISCONNECT_RECEIVE,
 	SITE_RECEIVE,
@@ -40,7 +37,6 @@ describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'connection',
-			'deleting',
 			'domains',
 			'requestingAll',
 			'items',
@@ -628,72 +624,6 @@ describe( 'reducer', () => {
 			} );
 			const state = requesting( original, {
 				type: SITE_REQUEST_FAILURE,
-				siteId: 77203074,
-			} );
-
-			expect( state ).to.eql( {
-				2916284: false,
-				77203074: false,
-			} );
-		} );
-	} );
-
-	describe( 'deleting()', () => {
-		test( 'should default to an empty object', () => {
-			const state = deleting( undefined, {} );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		test( 'should track request for deleting a site started', () => {
-			const state = deleting( undefined, {
-				type: SITE_DELETE,
-				siteId: 2916284,
-			} );
-
-			expect( state ).to.eql( {
-				2916284: true,
-			} );
-		} );
-
-		test( 'should accumulate requests for deleting a site started', () => {
-			const original = deepFreeze( {
-				2916284: true,
-			} );
-			const state = deleting( original, {
-				type: SITE_DELETE,
-				siteId: 77203074,
-			} );
-
-			expect( state ).to.eql( {
-				2916284: true,
-				77203074: true,
-			} );
-		} );
-
-		test( 'should track request for deleting a site succeeded', () => {
-			const original = deepFreeze( {
-				2916284: true,
-				77203074: true,
-			} );
-			const state = deleting( original, {
-				type: SITE_DELETE_SUCCESS,
-				siteId: 2916284,
-			} );
-
-			expect( state ).to.eql( {
-				2916284: false,
-				77203074: true,
-			} );
-		} );
-
-		test( 'should track request for deleting a site failed', () => {
-			const original = deepFreeze( {
-				2916284: false,
-				77203074: true,
-			} );
-			const state = deleting( original, {
-				type: SITE_DELETE_FAILURE,
 				siteId: 77203074,
 			} );
 

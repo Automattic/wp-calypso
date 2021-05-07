@@ -3,6 +3,7 @@ export const ACTION_WP_FOR_TEAMS_QUICK_LINKS = 'home-action-wp-for-teams-quick-l
 export const EDUCATION_FREE_PHOTO_LIBRARY = 'home-education-free-photo-library';
 export const EDUCATION_GUTENBERG = 'home-education-gutenberg';
 export const EDUCATION_EARN = 'home-education-earn';
+export const EDUCATION_WPCOURSES = 'home-education-wpcourses';
 export const FEATURE_GO_MOBILE = 'home-feature-go-mobile';
 export const FEATURE_QUICK_START = 'home-feature-quick-start';
 export const FEATURE_STATS = 'home-feature-stats';

@@ -3,17 +3,17 @@
  */
 import { doesPurchaseHaveFullCredits } from '@automattic/wpcom-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
+import type { ContactDetailsType } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
-import type { ContactDetailsType } from '../types/contact-details';
 import {
 	hasDomainRegistration,
 	hasTransferProduct,
 	hasOnlyRenewalItems,
 } from 'calypso/lib/cart-values/cart-items';
-import { isGoogleWorkspaceExtraLicence } from 'calypso/lib/products-values';
+import { isGoogleWorkspaceExtraLicence } from '@automattic/calypso-products';
 import { isGoogleWorkspaceProductSlug, isGSuiteProductSlug } from 'calypso/lib/gsuite';
 
 export default function getContactDetailsType( responseCart: ResponseCart ): ContactDetailsType {

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import debugModule from 'debug';
 import { connect } from 'react-redux';
@@ -16,7 +16,6 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { updateUser } from 'calypso/lib/users/actions';
 import RoleSelect from 'calypso/my-sites/people/role-select';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -26,6 +25,7 @@ import {
 	requestExternalContributorsRemoval,
 } from 'calypso/state/data-getters';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import withUpdateUser from './with-update-user';
 
 /**
  * Style dependencies
@@ -37,7 +37,7 @@ import './style.scss';
  */
 const debug = debugModule( 'calypso:my-sites:people:edit-team-member-form' );
 
-class EditUserForm extends Component {
+class EditUserForm extends React.Component {
 	state = this.getStateObject( this.props );
 
 	componentDidUpdate() {
@@ -80,7 +80,7 @@ class EditUserForm extends Component {
 		const { currentUser, user, isJetpack } = this.props;
 		const allowedSettings = [];
 
-		if ( ! user?.ID ) {
+		if ( ! user.ID ) {
 			return allowedSettings;
 		}
 
@@ -114,13 +114,11 @@ class EditUserForm extends Component {
 		// Since we store 'roles' in state as a string, but user objects expect
 		// roles to be an array, if we've updated the user's role, we need to
 		// place the role in an array before updating the user.
-		updateUser(
-			siteId,
-			user.ID,
-			changedSettings.roles
-				? Object.assign( changedSettings, { roles: [ changedSettings.roles ] } )
-				: changedSettings
-		);
+		const changedAttributes = changedSettings.roles
+			? Object.assign( changedSettings, { roles: [ changedSettings.roles ] } )
+			: changedSettings;
+
+		this.props.updateUser( user.ID, changedAttributes );
 
 		if ( true === changedSettings.isExternalContributor ) {
 			requestExternalContributorsAddition(
@@ -151,7 +149,7 @@ class EditUserForm extends Component {
 	isExternalRole = ( role ) =>
 		[ 'administrator', 'editor', 'author', 'contributor' ].includes( role );
 
-	renderField = ( fieldId ) => {
+	renderField = ( fieldId, isDisabled ) => {
 		let returnField = null;
 		switch ( fieldId ) {
 			case 'roles':
@@ -164,6 +162,7 @@ class EditUserForm extends Component {
 							value={ this.state.roles }
 							onChange={ this.handleChange }
 							onFocus={ this.recordFieldFocus( 'roles' ) }
+							disabled={ isDisabled }
 						/>
 						{ ! this.props.isVip &&
 							! this.props.isWPForTeamsSite &&
@@ -171,6 +170,7 @@ class EditUserForm extends Component {
 								<ContractorSelect
 									onChange={ this.handleExternalChange }
 									checked={ this.state.isExternalContributor }
+									disabled={ isDisabled }
 								/>
 							) }
 					</Fragment>
@@ -190,6 +190,7 @@ class EditUserForm extends Component {
 							value={ this.state.first_name }
 							onChange={ this.handleChange }
 							onFocus={ this.recordFieldFocus( 'first_name' ) }
+							disabled={ isDisabled }
 						/>
 					</FormFieldset>
 				);
@@ -208,6 +209,7 @@ class EditUserForm extends Component {
 							value={ this.state.last_name }
 							onChange={ this.handleChange }
 							onFocus={ this.recordFieldFocus( 'last_name' ) }
+							disabled={ isDisabled }
 						/>
 					</FormFieldset>
 				);
@@ -226,6 +228,7 @@ class EditUserForm extends Component {
 							value={ this.state.name }
 							onChange={ this.handleChange }
 							onFocus={ this.recordFieldFocus( 'name' ) }
+							disabled={ isDisabled }
 						/>
 					</FormFieldset>
 				);
@@ -236,7 +239,7 @@ class EditUserForm extends Component {
 	};
 
 	render() {
-		if ( ! this.props.user?.ID ) {
+		if ( ! this.props.user.ID ) {
 			return null;
 		}
 
@@ -253,9 +256,9 @@ class EditUserForm extends Component {
 				onSubmit={ this.updateUser }
 				onChange={ this.props.markChanged }
 			>
-				{ editableFields.map( this.renderField ) }
+				{ editableFields.map( ( fieldId ) => this.renderField( fieldId, this.props.isUpdating ) ) }
 				<FormButtonsBar>
-					<FormButton disabled={ ! this.hasUnsavedSettings() }>
+					<FormButton disabled={ ! this.hasUnsavedSettings() || this.props.isUpdating }>
 						{ this.props.translate( 'Save changes', {
 							context: 'Button label that prompts user to save form',
 						} ) }
@@ -270,9 +273,11 @@ export default localize(
 	connect(
 		( state, { siteId, user } ) => {
 			const externalContributors = ( siteId && requestExternalContributors( siteId ).data ) || [];
+			const userId = user.linked_user_ID || user.ID;
+
 			return {
 				currentUser: getCurrentUser( state ),
-				isExternalContributor: externalContributors.includes( user?.linked_user_ID ?? user?.ID ),
+				isExternalContributor: userId && externalContributors.includes( userId ),
 				isVip: isVipSite( state, siteId ),
 				isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			};
@@ -280,5 +285,5 @@ export default localize(
 		{
 			recordGoogleEvent,
 		}
-	)( EditUserForm )
+	)( withUpdateUser( EditUserForm ) )
 );

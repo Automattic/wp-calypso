@@ -67,7 +67,7 @@ const TitanNewMailboxList = ( {
 
 	return (
 		<div className="titan-new-mailbox-list__main">
-			{ mailboxes.map( ( mailbox ) => (
+			{ mailboxes.map( ( mailbox, index ) => (
 				<TitanNewMailbox
 					key={ mailbox.uuid }
 					onMailboxAdd={ onMailboxAdd }
@@ -76,6 +76,7 @@ const TitanNewMailboxList = ( {
 					mailbox={ mailbox }
 					onReturnKeyPress={ onReturnKeyPress }
 					showLabels={ showLabels }
+					showTrashButton={ index > 0 }
 				/>
 			) ) }
 

@@ -20,29 +20,26 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import GutenboardingHeader from 'calypso/my-sites/plans-features-main/gutenboarding-header';
 import QueryPlans from 'calypso/components/data/query-plans';
-import { FEATURE_UPLOAD_THEMES_PLUGINS } from '../../../lib/plans/constants';
-import { planHasFeature } from '../../../lib/plans';
+import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
 import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
-import { getUrlParts } from 'calypso/lib/url/url-parts';
+import { getUrlParts } from '@automattic/calypso-url';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import { Experiment } from 'calypso/components/experiment';
-import { getVariationForUser, isLoading } from 'calypso/state/experiments/selectors';
 import PulsingDot from 'calypso/components/pulsing-dot';
-import { isTabletResolution } from '@automattic/viewport';
+import { isTabletResolution, isDesktop } from '@automattic/viewport';
 
 export class PlansStep extends Component {
 	state = {
-		plansWithScroll: ! isTabletResolution(),
+		isDesktop: ! isTabletResolution(),
 	};
 
 	windowResize = () => {
@@ -165,10 +162,8 @@ export class PlansStep extends Component {
 			showTreatmentPlansReorderTest,
 			isLoadingExperiment,
 			isInVerticalScrollingPlansExperiment,
-			isTreatmentPlansRedesign,
+			isReskinned,
 		} = this.props;
-
-		const shouldShowPlansRedesign = isTreatmentPlansRedesign && this.state.plansWithScroll;
 
 		return (
 			<div>
@@ -190,16 +185,15 @@ export class PlansStep extends Component {
 						domainName={ this.getDomainName() }
 						customerType={ this.getCustomerType() }
 						disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-						plansWithScroll={
-							isInVerticalScrollingPlansExperiment ? this.state.plansWithScroll : true
-						}
+						plansWithScroll={ isDesktop() }
 						planTypes={ planTypes }
 						flowName={ flowName }
 						customHeader={ this.getGutenboardingHeader() }
 						showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
 						isAllPaidPlansShown={ true }
 						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-						shouldShowPlansRedesign={ shouldShowPlansRedesign }
+						shouldShowPlansFeatureComparison={ isDesktop() } // Show feature comparison layout in signup flow and desktop resolutions
+						isReskinned={ isReskinned }
 					/>
 				) }
 			</div>
@@ -207,14 +201,9 @@ export class PlansStep extends Component {
 	}
 
 	getHeaderText() {
-		const { isLoadingExperiment, isTreatmentPlansRedesign, headerText, translate } = this.props;
+		const { headerText, translate } = this.props;
 
-		if ( isLoadingExperiment ) {
-			return '';
-		}
-
-		const shouldShowPlansRedesign = isTreatmentPlansRedesign && this.state.plansWithScroll;
-		if ( shouldShowPlansRedesign ) {
+		if ( isDesktop() ) {
 			return translate( 'Choose a plan' );
 		}
 
@@ -222,21 +211,10 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const {
-			hideFreePlan,
-			subHeaderText,
-			isTreatmentPlansRedesign,
-			isLoadingExperiment,
-			translate,
-		} = this.props;
-		const shouldShowPlansRedesign = isTreatmentPlansRedesign && this.state.plansWithScroll;
-
-		if ( isLoadingExperiment ) {
-			return '';
-		}
+		const { hideFreePlan, subHeaderText, translate } = this.props;
 
 		if ( ! hideFreePlan ) {
-			if ( shouldShowPlansRedesign ) {
+			if ( isDesktop() ) {
 				return translate(
 					"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
 					{
@@ -254,7 +232,7 @@ export class PlansStep extends Component {
 			} );
 		}
 
-		if ( shouldShowPlansRedesign ) {
+		if ( isDesktop() ) {
 			return translate( "Pick one that's right for you and unlock features that help you grow." );
 		}
 
@@ -285,8 +263,6 @@ export class PlansStep extends Component {
 
 		return (
 			<>
-				<Experiment name="vertical_plan_listing_v2" />
-				<Experiment name="signup_plans_step_redesign_v1" />
 				<StepWrapper
 					flowName={ flowName }
 					stepName={ stepName }
@@ -307,11 +283,8 @@ export class PlansStep extends Component {
 	}
 
 	render() {
-		const shouldShowPlansRedesign =
-			this.props.isTreatmentPlansRedesign && this.state.plansWithScroll;
 		const classes = classNames( 'plans plans-step', {
 			'in-vertically-scrolled-plans-experiment': this.props.isInVerticalScrollingPlansExperiment,
-			'in-plans-redesign-experiment': shouldShowPlansRedesign,
 			'has-no-sidebar': true,
 			'is-wide-layout': true,
 		} );
@@ -354,7 +327,7 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 export default connect(
 	(
 		state,
-		{ path, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation }, flowName }
+		{ path, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation } }
 	) => ( {
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 		disableBloggerPlanWithNonBlogDomain:
@@ -369,12 +342,11 @@ export default connect(
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 		showTreatmentPlansReorderTest:
 			'treatment' === plans_reorder_abtest_variation || isTreatmentPlansReorderTest( state ),
-		isLoadingExperiment: isLoading( state ),
-		isInVerticalScrollingPlansExperiment:
-			'treatment' === getVariationForUser( state, 'vertical_plan_listing_v2' ),
-		isTreatmentPlansRedesign:
-			flowName === 'onboarding' &&
-			'treatment' === getVariationForUser( state, 'signup_plans_step_redesign_v1' ),
+		isLoadingExperiment: false,
+		// IMPORTANT NOTE: The following is always set to true. It's a hack to resolve the bug reported
+		// in https://github.com/Automattic/wp-calypso/issues/50896, till a proper cleanup and deploy of
+		// treatment for the `vertical_plan_listing_v2` experiment is implemented.
+		isInVerticalScrollingPlansExperiment: true,
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );

@@ -66,7 +66,7 @@ import {
 	FEATURE_UPLOAD_THEMES,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';

@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import page from 'page';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { filter, get, range } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -170,9 +169,7 @@ class PlansSetup extends React.Component {
 
 		const getPluginFromStore = function () {
 			if ( ! sitePlugin && requestingInstalledPlugins ) {
-				// if the Plugins are still being fetched, we wait. We are not using flux
-				// store events because it would be more messy to handle the one-time-only
-				// callback with bound parameters than to do it this way.
+				// if the Plugins are still being fetched, we wait.
 				return setTimeout( getPluginFromStore, 500 );
 			}
 			// Merge any site-specific info into the plugin object, setting a default plugin ID if needed
@@ -581,5 +578,5 @@ export default connect(
 			siteId,
 		};
 	},
-	( dispatch ) => bindActionCreators( { requestSites, fetchPluginData, installPlugin }, dispatch )
+	{ requestSites, fetchPluginData, installPlugin }
 )( localize( PlansSetup ) );
