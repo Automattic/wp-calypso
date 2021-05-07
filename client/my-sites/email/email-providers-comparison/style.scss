@@ -60,19 +60,12 @@
 }
 
 .email-providers-comparison__provider-card.promo-card {
-
 	.action-panel__figure {
 		margin-bottom: 0.5em;
 		margin-top: 0;
 
 		img {
 			max-width: 24px;
-		}
-	}
-
-	@include break-mobile {
-		.action-panel__title {
-			margin-bottom: 0;
 		}
 	}
 
@@ -93,24 +86,34 @@
 	.email-providers-comparison__provider-card-main-details {
 		display: flex;
 		flex-direction: column;
+		justify-content: space-between;
 		margin-bottom: 1em;
 
 		@include break-mobile {
+			align-items: center;
 			flex-direction: row;
-			margin-bottom: 0;
 		}
 
 		p {
-			margin-bottom: 1em;
-
-			@include break-xlarge {
-				flex-grow: 7;
-				line-height: 40px;
-				margin-bottom: 0;
-			}
+			margin-bottom: 0;
 		}
-		.email-providers-comparison__provider-expand-cta {
-			flex-grow: 1;
+	}
+
+	.email-providers-comparison__provider-price-and-button {
+		align-items: center;
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 1em;
+	}
+
+	.email-providers-comparison__provider-expand-cta {
+		margin-top: 1em;
+		overflow: visible;
+		white-space: nowrap;
+
+		@include break-mobile {
+			margin-left: 2em;
+			margin-top: 0;
 		}
 	}
 
@@ -135,50 +138,11 @@
 
 	.email-providers-comparison__provider-additional-price-information {
 		color: var( --color-text-subtle );
-		display: inline-block;
 		font-size: $font-body-extra-small;
 		font-style: normal;
 		margin-top: 3px;
 	}
 
-	.email-providers-comparison__provider-form-and-features {
-		justify-content: space-between;
-		margin-top: 1em;
-		line-height: 1.5;
-
-		.email-providers-comparison__provider-form {
-			flex-grow: 1;
-
-			.titan-new-mailbox-list__actions {
-				justify-content: space-between;
-			}
-
-			.email-providers-comparison__gsuite-user-list-action-continue {
-				margin-top: 1em;
-				@include break-mobile {
-					margin-top: 0;
-				}
-			}
-		}
-
-		.email-providers-comparison__provider-features {
-			margin-bottom: 1em;
-			@include break-mobile {
-				margin-bottom: 0;
-				padding-left: 3.5em;
-			}
-
-			.email-provider-features:first-child {
-				margin-top: 0;
-			}
-			.email-provider-features:first-child::before {
-				border-bottom: none;
-				margin-bottom: 0;
-			}
-		}
-	}
-
-	/* Handle expanded vs contracted state */
 	.email-providers-comparison__provider-form-and-features {
 		display: none;
 	}
@@ -191,9 +155,42 @@
 		.email-providers-comparison__provider-form-and-features {
 			display: flex;
 			flex-direction: column-reverse;
+			justify-content: space-between;
+			margin-top: 1em;
+			line-height: 1.5;
 
-			@include break-mobile {
+			@include breakpoint-deprecated( '>1040px' ) {
 				flex-direction: row;
+			}
+		}
+
+		.email-providers-comparison__provider-form {
+			flex-grow: 1;
+
+			@include breakpoint-deprecated( '>1040px' ) {
+				margin-top: 0;
+			}
+
+			.titan-new-mailbox-list__actions {
+				justify-content: space-between;
+			}
+
+			.email-providers-comparison__gsuite-user-list-action-continue {
+				margin-top: 1em;
+
+				@include break-mobile {
+					margin-top: 0;
+				}
+			}
+		}
+
+		.email-provider-features {
+			margin-bottom: 2.5em;
+
+			@include breakpoint-deprecated( '>1040px' ) {
+				margin-bottom: 0;
+				margin-left: 2em;
+				margin-top: 0;
 			}
 		}
 	}

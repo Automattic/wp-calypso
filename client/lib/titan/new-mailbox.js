@@ -35,7 +35,7 @@ const getMailboxRequiredBooleanValue = () =>
 const getMailboxOptionalStringValueWithTranslatedError = () =>
 	PropTypes.shape( {
 		value: PropTypes.string.isRequired,
-		error: PropTypes.oneOfType( PropTypes.string, PropTypes.array ),
+		error: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
 	} );
 
 const getMailboxRequiredStringValue = () =>
@@ -47,7 +47,7 @@ const getMailboxRequiredStringValue = () =>
 const getMailboxRequiredStringValueWithTranslatedError = () =>
 	PropTypes.shape( {
 		value: PropTypes.string.isRequired,
-		error: PropTypes.oneOfType( PropTypes.string, PropTypes.array ),
+		error: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
 	} ).isRequired;
 
 const getMailboxPropTypeShape = () =>

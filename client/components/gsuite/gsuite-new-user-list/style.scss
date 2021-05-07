@@ -28,6 +28,14 @@
 	@include breakpoint-deprecated( '>480px' ) {
 		width: auto;
 	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-bottom: 20px;
+	}
+
+	@include breakpoint-deprecated( '>800px' ) {
+		margin-bottom: 0;
+	}
 }
 
 .gsuite-new-user-list__domain-select {
