@@ -684,13 +684,14 @@ async function openLinksInParentFrame( calypsoPort ) {
 	await isEditorReadyWithBlocks();
 
 	// Create a new post link in block settings sidebar for Query block
-	const createNewPostLinkObserver = new window.MutationObserver( () => {
+	const tryToReplaceCreateNewPostLink = () => {
 		const hyperlink = document.querySelector( '.wp-block-query__create-new-link a' );
 		if ( hyperlink ) {
 			hyperlink.href = createNewPostUrl;
 			hyperlink.target = '_top';
 		}
-	} );
+	};
+	const createNewPostLinkObserver = new window.MutationObserver( tryToReplaceCreateNewPostLink );
 
 	// Manage reusable blocks link in the global block inserter's Reusable tab
 	// Post editor only
@@ -725,6 +726,9 @@ async function openLinksInParentFrame( calypsoPort ) {
 						childList: true,
 						subtree: true,
 					} );
+					// If a Query block is selected, then the sidebar will
+					// directly open on the block settings tab
+					tryToReplaceCreateNewPostLink();
 				} else if ( shouldReplaceManageReusableBlockLinksFor( node ) ) {
 					const resuableTab = node.querySelector(
 						'.components-tab-panel__tabs-item[id*="reusable"]'
@@ -790,6 +794,7 @@ async function openLinksInParentFrame( calypsoPort ) {
 				childList: true,
 				subtree: true,
 			} );
+			tryToReplaceCreateNewPostLink();
 		}
 	}
 }
