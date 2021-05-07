@@ -26,7 +26,7 @@ object WPComTests : Project({
 
 fun gutenbergBuildType(screenSize: String): BuildType {
 	return BuildType {
-		id("Gutenberg")
+		id("Gutenberg_$screenSize")
 		name = "Gutenberg tests ($screenSize)"
 		description = "Runs Gutenberg E2E tests using $screenSize screen resolution"
 
