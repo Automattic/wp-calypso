@@ -116,7 +116,7 @@ export default function CompositeCheckout( {
 	isInEditor,
 	onAfterPaymentComplete,
 	isFocusedLaunch,
-	isJetpackUserlessCheckout,
+	isJetpackCheckout,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 }: {
@@ -137,7 +137,7 @@ export default function CompositeCheckout( {
 	infoMessage?: JSX.Element;
 	onAfterPaymentComplete?: () => void;
 	isFocusedLaunch?: boolean;
-	isJetpackUserlessCheckout?: boolean;
+	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 } ): JSX.Element {
@@ -146,12 +146,12 @@ export default function CompositeCheckout( {
 		useSelector(
 			( state ) => siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
 		) ||
-		isJetpackUserlessCheckout ||
+		isJetpackCheckout ||
 		false;
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const createUserAndSiteBeforeTransaction =
-		Boolean( isLoggedOutCart || isNoSiteCart ) && ! isJetpackUserlessCheckout;
+		Boolean( isLoggedOutCart || isNoSiteCart ) && ! isJetpackCheckout;
 	const reduxDispatch = useDispatch();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const recordEvent: ( action: ReactStandardAction ) => void = useCallback(
@@ -214,7 +214,7 @@ export default function CompositeCheckout( {
 		siteSlug,
 		isLoggedOutCart,
 		isNoSiteCart,
-		isJetpackUserlessCheckout,
+		isJetpackCheckout,
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
 	} );
@@ -617,7 +617,7 @@ export default function CompositeCheckout( {
 		);
 	}
 
-	if ( isJetpackUserlessCheckout ) {
+	if ( isJetpackCheckout ) {
 		siteId = parseInt( responseCart.blog_id );
 		siteSlug = responseCart.jetpack_site_slug;
 	}
@@ -658,7 +658,7 @@ export default function CompositeCheckout( {
 					isLoggedOutCart={ !! isLoggedOutCart }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					infoMessage={ infoMessage }
-					isJetpackUserlessCheckout={ isJetpackUserlessCheckout }
+					isJetpackCheckout={ isJetpackCheckout }
 				/>
 			</CheckoutProvider>
 		</React.Fragment>

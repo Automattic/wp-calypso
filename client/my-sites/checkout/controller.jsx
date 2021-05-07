@@ -59,18 +59,18 @@ export function checkout( context, next ) {
 		( isLoggedOut || ! hasSite || isDomainOnlyFlow );
 	const jetpackPurchaseToken = context.query.purchasetoken;
 	const jetpackPurchaseNonce = context.query.purchaseNonce;
-	const isJetpackUserlessCheckout =
+	const isJetpackCheckout =
 		context.pathname.includes( '/checkout/jetpack' ) &&
 		isLoggedOut &&
 		( !! jetpackPurchaseToken || !! jetpackPurchaseNonce );
 	const jetpackSiteSlug = context.params.siteSlug;
 
-	if ( ! selectedSite && ! isDisallowedForSitePicker && ! isJetpackUserlessCheckout ) {
+	if ( ! selectedSite && ! isDisallowedForSitePicker && ! isJetpackCheckout ) {
 		sites( context, next );
 		return;
 	}
 
-	const product = isJetpackUserlessCheckout
+	const product = isJetpackCheckout
 		? context.params.productSlug
 		: getDomainOrProductFromContext( context );
 
@@ -87,10 +87,9 @@ export function checkout( context, next ) {
 	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
 
 	const isLoggedOutCart =
-		isJetpackUserlessCheckout ||
-		( isLoggedOut && context.pathname.includes( '/checkout/no-site' ) );
+		isJetpackCheckout || ( isLoggedOut && context.pathname.includes( '/checkout/no-site' ) );
 	const isNoSiteCart =
-		isJetpackUserlessCheckout ||
+		isJetpackCheckout ||
 		( ! isLoggedOut &&
 			context.pathname.includes( '/checkout/no-site' ) &&
 			'no-user' === context.query.cart );
@@ -119,7 +118,7 @@ export function checkout( context, next ) {
 			redirectTo={ context.query.redirect_to }
 			isLoggedOutCart={ isLoggedOutCart }
 			isNoSiteCart={ isNoSiteCart }
-			isJetpackUserlessCheckout={ isJetpackUserlessCheckout }
+			isJetpackCheckout={ isJetpackCheckout }
 			jetpackSiteSlug={ jetpackSiteSlug }
 			jetpackPurchaseToken={ jetpackPurchaseToken || jetpackPurchaseNonce }
 		/>

@@ -46,8 +46,8 @@ class CheckoutMasterbar extends React.Component {
 
 	render() {
 		const { translate, title, isJetpackNotAtomic } = this.props;
-		const isJetpackUserlessCheckout = window.location.pathname.startsWith( '/checkout/jetpack' );
-		const isJetpack = isJetpackUserlessCheckout || isJetpackNotAtomic;
+		const isJetpackCheckout = window.location.pathname.startsWith( '/checkout/jetpack' );
+		const isJetpack = isJetpackCheckout || isJetpackNotAtomic;
 
 		return (
 			<Masterbar>

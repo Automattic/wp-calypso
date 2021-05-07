@@ -10,7 +10,7 @@ import type {
  * Internal dependencies
  */
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import { createAccount, createWpcomAccountForJetpackSite } from '../payment-method-helpers';
+import { createAccount } from '../payment-method-helpers';
 import wp from 'calypso/lib/wp';
 
 export default async function submitWpcomTransaction(
@@ -19,7 +19,7 @@ export default async function submitWpcomTransaction(
 ): Promise< WPCOMTransactionEndpointResponse > {
 	if (
 		( transactionOptions && transactionOptions.createUserAndSiteBeforeTransaction ) ||
-		payload.cart.is_jetpack_userless_checkout
+		payload.cart.is_jetpack_checkout
 	) {
 		return createAccount().then( ( response ) => {
 			const siteIdFromResponse = response?.blog_details?.blogid;

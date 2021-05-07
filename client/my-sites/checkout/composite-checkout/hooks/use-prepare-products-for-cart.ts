@@ -51,7 +51,7 @@ export default function usePrepareProductsForCart( {
 	siteSlug,
 	isLoggedOutCart,
 	isNoSiteCart,
-	isJetpackUserlessCheckout,
+	isJetpackCheckout,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 }: {
@@ -63,7 +63,7 @@ export default function usePrepareProductsForCart( {
 	siteSlug: string | undefined;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
-	isJetpackUserlessCheckout?: boolean;
+	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 } ): PreparedProductsForCart {
@@ -78,8 +78,8 @@ export default function usePrepareProductsForCart( {
 		isLoggedOutCart,
 		'and isNoSiteCart',
 		isNoSiteCart,
-		'and isJetpackUserlessCheckout',
-		isJetpackUserlessCheckout,
+		'and isJetpackCheckout',
+		isJetpackCheckout,
 		'and jetpackSiteSlug',
 		jetpackSiteSlug,
 		'and jetpackPurchaseToken',
@@ -94,7 +94,7 @@ export default function usePrepareProductsForCart( {
 		productAliasFromUrl,
 		isLoggedOutCart,
 		isNoSiteCart,
-		isJetpackUserlessCheckout,
+		isJetpackCheckout,
 	} );
 	debug( 'isLoading', state.isLoading );
 	debug( 'handler is', addHandler );
@@ -111,7 +111,7 @@ export default function usePrepareProductsForCart( {
 		isJetpackNotAtomic,
 		isPrivate,
 		addHandler,
-		isJetpackUserlessCheckout,
+		isJetpackCheckout,
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
 	} );
@@ -125,7 +125,7 @@ export default function usePrepareProductsForCart( {
 
 	// Do not strip products from url until the URL has been parsed
 	const areProductsRetrievedFromUrl = ! state.isLoading && ! isInEditor;
-	useStripProductsFromUrl( siteSlug, ! areProductsRetrievedFromUrl || isJetpackUserlessCheckout );
+	useStripProductsFromUrl( siteSlug, ! areProductsRetrievedFromUrl || isJetpackCheckout );
 
 	return state;
 }
@@ -165,16 +165,16 @@ function chooseAddHandler( {
 	productAliasFromUrl,
 	isLoggedOutCart,
 	isNoSiteCart,
-	isJetpackUserlessCheckout,
+	isJetpackCheckout,
 }: {
 	isLoading: boolean;
 	originalPurchaseId: string | number | null | undefined;
 	productAliasFromUrl: string | null | undefined;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
-	isJetpackUserlessCheckout?: boolean;
+	isJetpackCheckout?: boolean;
 } ): AddHandler {
-	if ( isJetpackUserlessCheckout ) {
+	if ( isJetpackCheckout ) {
 		return 'addProductFromSlug';
 	}
 
@@ -347,7 +347,7 @@ function useAddProductFromSlug( {
 	isJetpackNotAtomic,
 	isPrivate,
 	addHandler,
-	isJetpackUserlessCheckout,
+	isJetpackCheckout,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 }: {
@@ -356,7 +356,7 @@ function useAddProductFromSlug( {
 	isJetpackNotAtomic: boolean;
 	isPrivate: boolean;
 	addHandler: AddHandler;
-	isJetpackUserlessCheckout?: boolean;
+	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 } ) {
@@ -409,7 +409,7 @@ function useAddProductFromSlug( {
 				productSlug: product.product_slug,
 				productAlias: product.internal_product_alias,
 				productId: product.product_id,
-				isJetpackUserlessCheckout,
+				isJetpackCheckout,
 				jetpackSiteSlug,
 				jetpackPurchaseToken,
 			} )
@@ -447,7 +447,7 @@ function useAddProductFromSlug( {
 		isJetpackNotAtomic,
 		productAliasFromUrl,
 		validProducts,
-		isJetpackUserlessCheckout,
+		isJetpackCheckout,
 		dispatch,
 	] );
 }
@@ -525,14 +525,14 @@ function createItemToAddToCart( {
 	productSlug,
 	productAlias,
 	productId,
-	isJetpackUserlessCheckout,
+	isJetpackCheckout,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 }: {
 	productSlug: string;
 	productId: number;
 	productAlias: string;
-	isJetpackUserlessCheckout?: boolean;
+	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 } ): RequestCartProduct {
@@ -567,7 +567,7 @@ function createItemToAddToCart( {
 		createRequestCartProduct( {
 			product_id: productId,
 			product_slug: productSlug,
-			extra: { isJetpackUserlessCheckout, jetpackSiteSlug, jetpackPurchaseToken },
+			extra: { isJetpackCheckout, jetpackSiteSlug, jetpackPurchaseToken },
 		} )
 	);
 }
