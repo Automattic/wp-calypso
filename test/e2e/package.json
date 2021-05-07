@@ -20,6 +20,7 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-e2e": "^0.1.0",
+		"@automattic/testarmada-magellan-mocha-plugin": "^10.0.0",
 		"@babel/core": "^7.2.2",
 		"@babel/preset-env": "^7.3.1",
 		"@babel/register": "^7.0.0",
@@ -66,9 +67,11 @@
 		"spec-junit-reporter": "^0.0.1",
 		"testarmada-magellan": "11.0.10",
 		"testarmada-magellan-local-executor": "^2.0.3",
-		"@automattic/testarmada-magellan-mocha-plugin": "^10.0.0",
 		"xml2json-command": "^0.0.3",
 		"xmpp.js": "^0.3.0",
 		"xunit-viewer": "^5.1.8"
+	},
+	"devDependencies": {
+		"mocha-suite-hooks": "^0.1.0"
 	}
 }

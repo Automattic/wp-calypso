@@ -1,5 +1,6 @@
 require:
   - 'esm'
+  - 'mocha-suite-hooks'
   - 'lib/hooks-playwright/index.ts'
 file:
   - 'lib/before.js'
