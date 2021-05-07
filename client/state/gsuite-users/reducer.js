@@ -2,12 +2,7 @@
  * Internal dependencies
  */
 import { withStorageKey } from '@automattic/state-utils';
-import {
-	combineReducers,
-	keyedReducer,
-	withoutPersistence,
-	withSchemaValidation,
-} from 'calypso/state/utils';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 import {
 	GSUITE_USERS_REQUEST,
 	GSUITE_USERS_REQUEST_FAILURE,
@@ -32,7 +27,7 @@ export const usersReducer = withSchemaValidation( usersSchema, ( state = null, a
 	return state;
 } );
 
-export const requestErrorReducer = withoutPersistence( ( state = false, action ) => {
+export const requestErrorReducer = ( state = false, action ) => {
 	switch ( action.type ) {
 		case GSUITE_USERS_REQUEST:
 			return false;
@@ -45,9 +40,9 @@ export const requestErrorReducer = withoutPersistence( ( state = false, action )
 	}
 
 	return state;
-} );
+};
 
-export const requestingReducer = withoutPersistence( ( state = false, action ) => {
+export const requestingReducer = ( state = false, action ) => {
 	switch ( action.type ) {
 		case GSUITE_USERS_REQUEST:
 			return true;
@@ -60,7 +55,7 @@ export const requestingReducer = withoutPersistence( ( state = false, action ) =
 	}
 
 	return state;
-} );
+};
 
 const combinedReducer = keyedReducer(
 	'siteId',

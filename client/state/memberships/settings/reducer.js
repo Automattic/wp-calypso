@@ -6,10 +6,10 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'calypso/state/utils';
+
 import { MEMBERSHIPS_SETTINGS_RECEIVE } from '../../action-types';
 
-export default withoutPersistence( ( state = {}, action ) => {
+export default ( state = {}, action ) => {
 	switch ( action.type ) {
 		case MEMBERSHIPS_SETTINGS_RECEIVE:
 			return {
@@ -23,4 +23,4 @@ export default withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
