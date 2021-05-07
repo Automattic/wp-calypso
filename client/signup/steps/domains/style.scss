@@ -6,6 +6,34 @@
 	max-width: 720px;
 }
 
+// Custom styles for the Skip button in the context of Domains step
+// They are applied only when redering <StepWrapper /> with prop hideSkip={false}
+.signup__step.is-domains .step-wrapper__buttons .step-wrapper__skip-wrapper {
+	display: inline-block;
+	background: var( --color-surface );
+	border-radius: 2px;
+	padding: 2px 12px;
+	@include elevation ( 2dp );
+
+	.navigation-link {
+		color: var( --color-accent );
+		text-decoration: underline;
+		transform: none;
+		vertical-align: baseline;
+		margin-left: 0.5em;
+		padding: 7px 0 9px !important;
+	}
+
+	.navigation-link svg {
+		display: none;
+	}
+
+	.step-wrapper__skip-heading {
+		display: inline;
+		color: var( --color-text );
+	}
+}
+
 .is-section-signup .domains__step-content {
 	margin-bottom: 50px;
 
