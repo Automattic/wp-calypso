@@ -46,8 +46,8 @@ describe( 'MediaLibraryList item selection', () => {
 		mediaList.toggleItem( fixtures.media[ itemIndex ], shiftClick );
 	}
 
-	function expectSelectedItems() {
-		defer( function ( ...args ) {
+	function expectSelectedItems( ...args ) {
+		defer( function () {
 			expect( mockSelectedItems ).to.have.members(
 				args.map( function ( arg ) {
 					return fixtures.media[ arg ];
