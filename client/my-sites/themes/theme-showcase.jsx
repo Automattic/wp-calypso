@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { compact, pickBy } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
@@ -111,8 +110,6 @@ class ThemeShowcase extends React.Component {
 		getScreenshotOption: PropTypes.func,
 		siteSlug: PropTypes.string,
 		upsellBanner: PropTypes.any,
-		trackUploadClick: PropTypes.func,
-		trackATUploadClick: PropTypes.func,
 		trackMoreThemesClick: PropTypes.func,
 		loggedOutComponent: PropTypes.bool,
 	};
@@ -218,20 +215,6 @@ class ThemeShowcase extends React.Component {
 		this.scrollToSearchInput();
 	};
 
-	onUploadClick = () => {
-		trackClick( 'upload theme' );
-		this.props.trackUploadClick();
-		if ( this.props.atEnabled ) {
-			this.props.trackATUploadClick();
-		}
-	};
-
-	showUploadButton = () => {
-		const { isMultisite, isLoggedIn } = this.props;
-
-		return isLoggedIn && ! isMultisite;
-	};
-
 	render() {
 		const {
 			currentThemeId,
@@ -241,7 +224,6 @@ class ThemeShowcase extends React.Component {
 			search,
 			filter,
 			translate,
-			siteSlug,
 			isLoggedIn,
 			pathName,
 			title,
@@ -304,17 +286,6 @@ class ThemeShowcase extends React.Component {
 					/>
 				) }
 				<div className="themes__content">
-					{ this.showUploadButton() && (
-						<Button
-							className="themes__upload-button"
-							compact
-							onClick={ this.onUploadClick }
-							href={ getInstallThemeSlug( siteSlug, canUploadThemesOrPlugins ) }
-						>
-							<Gridicon icon="cloud-upload" />
-							{ translate( 'Install theme' ) }
-						</Button>
-					) }
 					{ ! this.props.loggedOutComponent && ! isQueried && (
 						<>
 							<RecommendedThemes
@@ -459,8 +430,6 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 } );
 
 const mapDispatchToProps = {
-	trackUploadClick: () => recordTracksEvent( 'calypso_click_theme_upload' ),
-	trackATUploadClick: () => recordTracksEvent( 'calypso_automated_transfer_click_theme_upload' ),
 	trackMoreThemesClick: () => recordTracksEvent( 'calypso_themeshowcase_more_themes_clicked' ),
 	openThemesShowcase: () => openThemesShowcase(),
 };
