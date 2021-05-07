@@ -62,15 +62,6 @@ class Block_Patterns_From_API {
 	 * @return array Results of pattern registration.
 	 */
 	public function register_patterns() {
-		if ( class_exists( 'WP_Block_Patterns_Registry' ) ) {
-			// Remove core patterns.
-			foreach ( \WP_Block_Patterns_Registry::get_instance()->get_all_registered() as $pattern ) {
-				if ( 'core/' === substr( $pattern['name'], 0, 5 ) ) {
-					unregister_block_pattern( $pattern['name'] );
-				}
-			}
-		}
-
 		// Used to track which patterns we successfully register.
 		$results = array();
 
