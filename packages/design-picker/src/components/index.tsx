@@ -84,7 +84,11 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 					{ 'design-picker__image-frame-blank': isBlankCanvas }
 				) }
 			>
-				{ ! isBlankCanvas && (
+				{ isBlankCanvas ? (
+					<div className="design-picker__image-frame-blank-canvas__title">
+						{ __( 'Blank Canvas' ) }
+					</div>
+				) : (
 					<div className="design-picker__image-frame-inside">
 						<DesignPreviewImage design={ design } locale={ locale } />
 					</div>
