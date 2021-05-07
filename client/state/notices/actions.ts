@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import impureLodash from 'calypso/lib/impure-lodash';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
@@ -14,8 +14,6 @@ import type {
 } from 'calypso/state/notices/types';
 
 import 'calypso/state/notices/init';
-
-const { uniqueId } = impureLodash;
 
 export const removeNotice: NoticeRemovalActionCreator = ( noticeId ) => {
 	return {
@@ -32,7 +30,7 @@ export const createNotice: NoticeActionCreatorWithStatus = (
 	return {
 		type: NOTICE_CREATE,
 		notice: Object.assign( { showDismiss: true }, noticeOptions, {
-			noticeId: id || uniqueId(),
+			noticeId: id || uuid().replace( /-/g, '' ),
 			status,
 			text,
 		} ),

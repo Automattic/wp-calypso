@@ -21,6 +21,10 @@ import {
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
+jest.mock( 'uuid', () => ( {
+	v4: () => 'noticeid',
+} ) );
+
 describe( 'handlers', () => {
 	describe( '#fetchLicensesHandler()', () => {
 		test( 'should return an http request action', () => {
@@ -214,7 +218,7 @@ describe( 'handlers', () => {
 				type: 'NOTICE_CREATE',
 				notice: {
 					showDismiss: true,
-					noticeId: '1',
+					noticeId: 'noticeid',
 					status: 'is-error',
 					text: translate( 'Failed to retrieve your licenses. Please try again later.' ),
 				},

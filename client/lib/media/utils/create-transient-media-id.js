@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import impureLodash from 'calypso/lib/impure-lodash';
-
-const { uniqueId } = impureLodash;
+import { v4 as uuid } from 'uuid';
 
 /**
  * Returns an ID for transient media items. To be consistent in creating
@@ -12,5 +10,5 @@ const { uniqueId } = impureLodash;
  * @param {string} moreSpecificPrefix can be used to further specify the prefix
  */
 export function createTransientMediaId( moreSpecificPrefix = '' ) {
-	return uniqueId( `media-${ moreSpecificPrefix }` );
+	return `media-${ moreSpecificPrefix }${ uuid().replace( /-/g, '' ) }`;
 }
