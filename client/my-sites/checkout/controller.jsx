@@ -274,6 +274,7 @@ function getRememberedCoupon() {
 	const ALLOWED_COUPON_CODE_LIST = [
 		'ALT',
 		'FBSAVE15',
+		'FBSAVE25',
 		'FIVERR',
 		'FLASHFB20OFF',
 		'FLASHFB50OFF',
