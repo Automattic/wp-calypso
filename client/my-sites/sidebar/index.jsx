@@ -500,7 +500,7 @@ export class MySitesSidebar extends Component {
 						link={ this.props.customizeUrl }
 						onNavigate={ this.trackCustomizeClick }
 						preloadSectionName="customize"
-						forceInternalLink
+						forceInternalLink={ ! this.props.isJetpack || this.props.isAtomicSite }
 						expandSection={ this.expandDesignSection }
 					/>
 				) }
