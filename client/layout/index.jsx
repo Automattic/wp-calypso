@@ -64,7 +64,7 @@ import './style.scss';
 
 function SidebarScrollSynchronizer( { enabled } ) {
 	const isNarrow = useBreakpoint( '<660px' );
-	const active = enabled && ! isNarrow;
+	const active = enabled && ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ); // Jetpack cloud hasn't yet aligned with WPCOM.
 
 	React.useEffect( () => {
 		if ( active ) {
@@ -251,7 +251,8 @@ class Layout extends Component {
 			if ( this.props.isNewLaunchFlow || this.props.isCheckoutFromGutenboarding ) {
 				bodyClass.push( 'is-new-launch-flow' );
 			}
-			if ( this.props.isNavUnificationEnabled ) {
+			if ( this.props.isNavUnificationEnabled && ! config.isEnabled( 'jetpack-cloud' ) ) {
+				// Jetpack cloud hasn't yet aligned with WPCOM.
 				bodyClass.push( 'is-nav-unification' );
 			}
 
