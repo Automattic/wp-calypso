@@ -34,7 +34,7 @@ import GuidedTransferDetails from './guided-transfer-details';
 import HappinessSupport from 'calypso/components/happiness-support';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
 import AtomicStoreThankYouCard from './atomic-store-thank-you-card';
-import MarketplacePurchaseDetails from './marletplace-purchase-details';
+import MarketplaceThankYou from './marketplace/marketplace-thank-you';
 import {
 	isChargeback,
 	isDelayedDomainTransfer,
@@ -392,6 +392,7 @@ export class CheckoutThankYou extends React.Component {
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
+		let wasMarketplaceProduct = true;
 		let delayedTransferPurchase = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
@@ -400,6 +401,7 @@ export class CheckoutThankYou extends React.Component {
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
+			wasMarketplaceProduct = purchases.some( isMarketplaceProduct );
 		}
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
@@ -430,7 +432,9 @@ export class CheckoutThankYou extends React.Component {
 			);
 		}
 
-		if ( wasEcommercePlanPurchased ) {
+		if ( wasMarketplaceProduct ) {
+			return <MarketplaceThankYou purchases={ purchases } />;
+		} else if ( wasEcommercePlanPurchased ) {
 			if ( ! this.props.transferComplete ) {
 				return (
 					<TransferPending orderId={ this.props.receiptId } siteId={ this.props.selectedSite.ID } />
@@ -524,8 +528,6 @@ export class CheckoutThankYou extends React.Component {
 				return [ BusinessPlanDetails, find( purchases, isBusiness ) ];
 			} else if ( purchases.some( isEcommerce ) ) {
 				return [ EcommercePlanDetails, find( purchases, isEcommerce ) ];
-			} else if ( purchases.some( isMarketplaceProduct ) ) {
-				return [ MarketplacePurchaseDetails, find( purchases, isEcommerce ) ];
 			} else if ( purchases.some( isDomainRegistration ) ) {
 				return [
 					DomainRegistrationDetails,
