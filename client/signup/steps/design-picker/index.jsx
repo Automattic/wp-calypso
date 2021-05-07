@@ -77,6 +77,7 @@ class DesignPickerStep extends Component {
 				fallbackSubHeaderText={ subHeaderText }
 				subHeaderText={ subHeaderText }
 				stepContent={ this.renderDesignPicker() }
+				isTopButtons
 				{ ...this.props }
 			/>
 		);

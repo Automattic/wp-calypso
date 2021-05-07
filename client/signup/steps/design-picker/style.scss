@@ -29,10 +29,6 @@
 		@include break-mobile {
 			margin-top: 32px;
 		}
-
-		@include break-medium {
-			margin-top: 48px;
-		}
 	}
 
 	// Ugly, but necessary to cancel out some signup styles
