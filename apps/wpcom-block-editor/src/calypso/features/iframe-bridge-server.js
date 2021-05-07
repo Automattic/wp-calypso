@@ -715,9 +715,12 @@ async function openLinksInParentFrame( calypsoPort ) {
 		manageReusableBlocksUrl &&
 		node.classList.contains( 'interface-interface-skeleton__secondary-sidebar' );
 
+	// This observer functions as a "parent" observer, which connects and disconnects
+	// "child" observers as the relevant sidebar settings appear and disappear in the DOM.
 	const sidebarsObserver = new window.MutationObserver( ( mutations ) => {
 		for ( const record of mutations ) {
 			for ( const node of record.addedNodes ) {
+				// Block settings sidebar for Query block.
 				if ( shouldReplaceCreateNewPostLinksFor( node ) ) {
 					const componentsPanel = node.querySelector(
 						'.interface-interface-skeleton__sidebar .components-panel, .edit-post-sidebar .components-panel'
@@ -729,7 +732,10 @@ async function openLinksInParentFrame( calypsoPort ) {
 					// If a Query block is selected, then the sidebar will
 					// directly open on the block settings tab
 					tryToReplaceCreateNewPostLink();
-				} else if ( shouldReplaceManageReusableBlockLinksFor( node ) ) {
+				} else if (
+					// Block inserter sidebar, Reusable tab
+					shouldReplaceManageReusableBlockLinksFor( node )
+				) {
 					const resuableTab = node.querySelector(
 						'.components-tab-panel__tabs-item[id*="reusable"]'
 					);
@@ -759,7 +765,7 @@ async function openLinksInParentFrame( calypsoPort ) {
 		childList: true,
 	} );
 
-	// Manage reusable blocks link in the 3 dots more menu
+	// Manage reusable blocks link in the 3 dots more menu, post and site editors
 	if ( manageReusableBlocksUrl ) {
 		const toggleButton = document.querySelector(
 			'.edit-post-more-menu button, .edit-site-more-menu button'
