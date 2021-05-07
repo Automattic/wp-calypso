@@ -20,7 +20,7 @@ export default class LoginPage extends AsyncBaseContainer {
 		super( driver, By.css( '.wp-login__container' ), LoginPage.getLoginURL() );
 	}
 
-	async login( username, password, emailSSO = false, { retry = true } = {} ) {
+	async login( username, password, emailSSO = false, { retry = true, isPopup = false } = {} ) {
 		const driver = this.driver;
 		const userNameLocator = By.css( '#usernameOrEmail' );
 		const passwordLocator = By.css( '#password' );
@@ -48,6 +48,10 @@ export default class LoginPage extends AsyncBaseContainer {
 			await driver.findElement( passwordLocator ).sendKeys( Key.ENTER );
 		}
 
+		if ( isPopup ) {
+			return;
+		}
+
 		await this.driver.sleep( 1000 );
 
 		if ( retry === true ) {
@@ -65,7 +69,7 @@ export default class LoginPage extends AsyncBaseContainer {
 				return await this.login( username, password, { retry: false } );
 			}
 		}
-		return await driverHelper.waitUntilElementNotLocated( driver, userNameLocator );
+		await driverHelper.waitUntilElementNotLocated( driver, userNameLocator );
 	}
 
 	use2FAMethod( twoFAMethod ) {
