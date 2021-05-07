@@ -123,13 +123,20 @@ class Profile extends React.Component {
 								onChange={ this.toggleGravatarHidden }
 							>
 								{ this.props.translate(
-									'{{spanLead}}Hide my Gravatar profile.{{/spanLead}} {{spanExtra}}This will prevent your {{profileLink}}Gravatar Profile{{/profileLink}} and Photo from appearing on any site. It may take some time for the changes to take effect.{{/spanExtra}}',
+									'{{spanLead}}Hide my Gravatar profile.{{/spanLead}} {{spanExtra}}This will prevent your {{profileLink}}Gravatar profile{{/profileLink}} and photo from appearing on any site. It may take some time for the changes to take effect. Gravatar profiles can be deleted at {{deleteLink}}Gravatar.com{{/deleteLink}}.{{/spanExtra}}',
 									{
 										components: {
 											spanLead: <strong className="profile__link-destination-label-lead" />,
 											spanExtra: <span className="profile__link-destination-label-extra" />,
 											profileLink: (
 												<a href={ gravatarProfileLink } target="_blank" rel="noreferrer" />
+											),
+											deleteLink: (
+												<a
+													href="https://gravatar.com/account/disable/"
+													target="_blank"
+													rel="noreferrer"
+												/>
 											),
 										},
 									}
