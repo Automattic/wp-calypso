@@ -5,7 +5,7 @@
 .unison
 .env
 .DS_Store
-.idea
+/.idea
 .vscode
 .nova
 *.code-workspace
