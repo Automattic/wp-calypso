@@ -19,14 +19,16 @@ object WPComTests : Project({
 		param("docker_image", "%docker_image_e2e%")
 		param("build.prefix", "1")
 	}
-
-	buildType(gutenbergBuildType("desktop"));
+	// Keep the previous ID in order to preserve the historical data
+	buildType(gutenbergBuildType("desktop", "Gutenberg"));
 	buildType(gutenbergBuildType("mobile"));
 })
 
-fun gutenbergBuildType(screenSize: String): BuildType {
+fun gutenbergBuildType(screenSize: String, overrideId: String? = null): BuildType {
+	var theId = if (overrideId === null) "Gutenberg_$screenSize" else overrideId;
+
 	return BuildType {
-		id("Gutenberg_$screenSize")
+		id(theId as String)
 		name = "Gutenberg tests ($screenSize)"
 		description = "Runs Gutenberg E2E tests using $screenSize screen resolution"
 
