@@ -67,6 +67,7 @@ const optionShape = PropTypes.shape( {
 	action: PropTypes.func,
 } );
 
+// New Comment
 class ThemeShowcase extends React.Component {
 	constructor( props ) {
 		super( props );
