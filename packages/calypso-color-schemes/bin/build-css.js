@@ -1,7 +1,7 @@
 /* eslint-disable import/no-nodejs-modules */
 const { dirname, join } = require( 'path' );
 const { existsSync, mkdirSync, writeFileSync } = require( 'fs' );
-const { renderSync } = require( 'node-sass' );
+const { renderSync } = require( 'sass' );
 const postcss = require( 'postcss' );
 const postcssCustomProperties = require( 'postcss-custom-properties' );
 
