@@ -11,9 +11,9 @@ import {
 import { updateConciergeInitial } from 'calypso/state/concierge/actions';
 import { CONCIERGE_INITIAL_REQUEST } from 'calypso/state/action-types';
 
-// we are mocking impure-lodash here, so that conciergeInitialFetchError() will contain the expected id in the tests
-jest.mock( 'calypso/lib/impure-lodash', () => ( {
-	uniqueId: () => 'mock-unique-id',
+// we are mocking uuid.v4 here, so that conciergeInitialFetchError() will contain the expected id in the tests
+jest.mock( 'uuid', () => ( {
+	v4: () => 'fake-uuid',
 } ) );
 
 describe( 'wpcom-api', () => {

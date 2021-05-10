@@ -44,6 +44,11 @@ jest.mock( 'calypso/my-sites/media-library', () =>
 	require( 'calypso/components/empty-component' )
 );
 
+const mockV4 = jest.fn();
+jest.mock( 'uuid', () => ( {
+	v4: () => mockV4(),
+} ) );
+
 /**
  * Module variables
  */
@@ -345,6 +350,9 @@ describe( 'EditorMediaModal', () => {
 		} );
 
 		test( 'should copy external media after loading WordPress library if 1 or more media are selected and button is pressed', () => {
+			mockV4.mockImplementationOnce( () => '1' );
+			mockV4.mockImplementationOnce( () => '2' );
+
 			const tree = shallow(
 				<EditorMediaModal { ...baseProps } view={ ModalViews.DETAIL } setView={ spy } />
 			).instance();
@@ -369,6 +377,8 @@ describe( 'EditorMediaModal', () => {
 		} );
 
 		test( 'should copy external after loading WordPress library if 1 video is selected and button is pressed', () => {
+			mockV4.mockImplementationOnce( () => '3' );
+
 			const tree = shallow(
 				<EditorMediaModal
 					{ ...baseProps }

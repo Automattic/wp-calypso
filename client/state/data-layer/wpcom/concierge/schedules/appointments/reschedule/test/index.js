@@ -8,9 +8,9 @@ import { CONCIERGE_APPOINTMENT_RESCHEDULE } from 'calypso/state/action-types';
 import { CONCIERGE_STATUS_BOOKING } from 'calypso/me/concierge/constants';
 import toApi from '../to-api';
 
-// we are mocking impure-lodash here, so that conciergeShiftsFetchError() will contain the expected id in the tests
-jest.mock( 'calypso/lib/impure-lodash', () => ( {
-	uniqueId: () => 'mock-unique-id',
+// we are mocking uuid.v4 here, so that conciergeShiftsFetchError() will contain the expected id in the tests
+jest.mock( 'uuid', () => ( {
+	v4: () => 'fake-uuid',
 } ) );
 
 describe( 'wpcom-api', () => {
