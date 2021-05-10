@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useState, useRef, useLayoutEffect } from 'react';
+import React, { useMemo, useState, useRef, useLayoutEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { get } from 'lodash';
 import { v4 as uuid } from 'uuid';
@@ -99,7 +99,7 @@ export const ExpandableSidebarMenu = ( {
 		setSubmenuHovered( false );
 	};
 
-	const menuId = 'menu' + uuid();
+	const menuId = useMemo( () => 'menu' + uuid(), [] );
 
 	useLayoutEffect( () => {
 		if ( submenuHovered && offScreen( submenu.current ) ) {
