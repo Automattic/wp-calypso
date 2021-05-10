@@ -195,7 +195,7 @@ class WPCOMNotifications extends React.Component {
 
 	render() {
 		return (
-			<Main className="wpcom-settings__main is-wide-layout">
+			<Main wideLayout={ true } className="wpcom-settings__main">
 				<PageViewTracker
 					path="/me/notifications/updates"
 					title="Me > Notifications > Updates from WordPress.com"

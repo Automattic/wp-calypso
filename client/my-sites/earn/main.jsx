@@ -191,7 +191,7 @@ class EarningsMain extends Component {
 		};
 
 		return (
-			<Main className="earn is-wide-layout">
+			<Main wideLayout={ true } className="earn">
 				<PageViewTracker
 					path={ section ? `/earn/${ section }/:site` : `/earn/:site` }
 					title={ `${ adsProgramName } ${ capitalize( section ) }` }

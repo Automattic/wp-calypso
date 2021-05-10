@@ -63,7 +63,7 @@ class SiteBlockList extends Component {
 		const hasNoBlocks = blockedSites.length === 0 && currentPage === lastPage;
 
 		return (
-			<Main className="site-blocks is-wide-layout">
+			<Main wideLayout={ true } className="site-blocks">
 				<QuerySiteBlocks />
 				<PageViewTracker path="/me/site-blocks" title="Me > Blocked Sites" />
 				<DocumentHead title={ translate( 'Blocked Sites' ) } />

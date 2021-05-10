@@ -84,7 +84,7 @@ class SocialLogin extends Component {
 		const title = useCheckupMenu ? translate( 'Social Logins' ) : translate( 'Social Login' );
 
 		return (
-			<Main className="security social-login is-wide-layout">
+			<Main wideLayout={ true } className="security social-login">
 				<PageViewTracker path="/me/security/social-login" title="Me > Social Login" />
 				<DocumentHead title={ title } />
 				<MeSidebarNavigation />
