@@ -1,6 +1,6 @@
-@import '~@wordpress/base-styles/breakpoints';
-@import '~@wordpress/base-styles/mixins';
-@import '~@automattic/typography/styles/fonts';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@automattic/typography/styles/fonts';
 
 .layout__content--partner-portal-issue-license {
 	// Make sure the layout container is high enough so select dropdowns do not get cut off.

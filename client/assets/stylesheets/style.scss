@@ -2,7 +2,7 @@
 @import 'vendor';
 
 // Color Schemes
-@import '~@automattic/calypso-color-schemes/src/calypso-color-schemes';
+@import '@automattic/calypso-color-schemes/src/calypso-color-schemes';
 
 // Shared
 @import 'shared/reset'; // css reset before the rest of the styles are defined
@@ -19,7 +19,7 @@
 @import './_nav-unification';
 
 // @wordpress/components stylesheet
-@import '~@wordpress/components/build-style/style.css';
+@import '@wordpress/components/build-style/style.css';
 
 // Overrides for @wordpress/components
 @import './_wp-components-overrides.scss';

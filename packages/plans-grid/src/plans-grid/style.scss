@@ -1,7 +1,7 @@
-@import '~@wordpress/base-styles/breakpoints';
-@import '~@wordpress/base-styles/mixins';
-@import '~@automattic/onboarding/styles/variables';
-@import '~@automattic/onboarding/styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@automattic/onboarding/styles/variables';
+@import '@automattic/onboarding/styles/mixins';
 @import '../variables.scss';
 
 .plans-grid {

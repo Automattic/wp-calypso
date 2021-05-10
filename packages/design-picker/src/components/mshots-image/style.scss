@@ -1,4 +1,4 @@
-@import '~@automattic/onboarding/styles/mixins';
+@import '@automattic/onboarding/styles/mixins';
 
 .mshots-image__loader {
 	@include onboarding-placeholder();
