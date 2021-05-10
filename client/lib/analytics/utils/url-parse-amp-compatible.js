@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import cookie from 'cookie';
+
+/**
  * Internal dependencies
  */
 import debug from './debug';
@@ -57,8 +62,11 @@ export default function urlParseAmpCompatible( url ) {
 
 		debug( 'urlParseAmpCompatible: original query:', parsedUrl.search );
 
-		if ( parsedUrl.searchParams.has( 'tk_amp' ) ) {
-			const tk_amp = parseAmpEncodedParams( parsedUrl.searchParams.get( 'tk_amp' ) );
+		const cookies = cookie.parse( document.cookie );
+		const tkAmpEncoded = parsedUrl.searchParams.get( 'tk_amp' ) || cookies.tk_amp;
+
+		if ( tkAmpEncoded ) {
+			const tk_amp = parseAmpEncodedParams( tkAmpEncoded );
 			debug( 'urlParseAmpCompatible: tk_amp:', tk_amp );
 			for ( const key of Object.keys( tk_amp ) ) {
 				if ( ! parsedUrl.searchParams.has( key ) ) {
