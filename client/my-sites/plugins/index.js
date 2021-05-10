@@ -14,6 +14,7 @@ import {
 	eligibility,
 	jetpackCanUpdate,
 	plugins,
+	renderDomainsPage,
 	resetHistory,
 	scrollTopIfNoHash,
 	setupPlugins,
@@ -102,6 +103,9 @@ export default function () {
 			clientRender
 		);
 
+		if ( config.isEnabled( 'marketplace-yoast' ) ) {
+			page( '/plugins/domain/:site', siteSelection, renderDomainsPage, makeLayout, clientRender );
+		}
 		page(
 			'/plugins/:pluginFilter(active|inactive|updates)/:site_id?',
 			scrollTopIfNoHash,
