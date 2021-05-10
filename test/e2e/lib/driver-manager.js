@@ -281,8 +281,8 @@ export async function startBrowser( {
 		await resizeBrowser( driver, screenSize );
 	}
 
-	// return driver;
-	return createDriverProxy( driver );
+	return driver;
+	// return createDriverProxy( driver );
 }
 
 export async function resizeBrowser( driver, screenSize ) {

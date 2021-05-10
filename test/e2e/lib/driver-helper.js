@@ -47,18 +47,19 @@ const until = {
 
 		return new WebElementCondition(
 			`for element to be clickable ${ locatorStr }`,
-			async function ( driver ) {
-				try {
-					const element = await waitUntilElementStopsMoving( driver, locator );
-					const isEnabled = await element.isEnabled();
-					const isAriaEnabled = await element
-						.getAttribute( 'aria-disabled' )
-						.then( ( v ) => v !== 'true' );
+			async function () {
+				return null;
+				// try {
+				// 	const element = await waitUntilElementStopsMoving( driver, locator );
+				// 	const isEnabled = await element.isEnabled();
+				// 	const isAriaEnabled = await element
+				// 		.getAttribute( 'aria-disabled' )
+				// 		.then( ( v ) => v !== 'true' );
 
-					return isEnabled && isAriaEnabled ? element : null;
-				} catch {
-					return null;
-				}
+				// 	return isEnabled && isAriaEnabled ? element : null;
+				// } catch {
+				// 	return null;
+				// }
 			}
 		);
 	},
