@@ -723,9 +723,12 @@ async function openLinksInParentFrame( calypsoPort ) {
 	// "child" observers as the relevant sidebar settings appear and disappear in the DOM.
 	const sidebarsObserver = new window.MutationObserver( ( mutations ) => {
 		for ( const record of mutations ) {
+			// We are checking for added nodes here to start observing for more specific changes.
 			for ( const node of record.addedNodes ) {
-				// Block settings sidebar for Query block.
-				if ( shouldReplaceCreateNewPostLinksFor( node ) ) {
+				if (
+					// Block settings sidebar for Query block.
+					shouldReplaceCreateNewPostLinksFor( node )
+				) {
 					const componentsPanel = node.querySelector(
 						'.interface-interface-skeleton__sidebar .components-panel, .edit-post-sidebar .components-panel'
 					);
@@ -751,20 +754,32 @@ async function openLinksInParentFrame( calypsoPort ) {
 				}
 			}
 
+			// We are checking the removed nodes here to disconect
+			// the correct observer when a node is removed.
 			for ( const node of record.removedNodes ) {
-				if ( shouldReplaceCreateNewPostLinksFor( node ) ) {
+				if (
+					// Block settings sidebar for Query block.
+					shouldReplaceCreateNewPostLinksFor( node )
+				) {
 					createNewPostLinkObserver.disconnect();
-				} else if ( shouldReplaceManageReusableBlockLinksFor( node ) ) {
+				} else if (
+					// Block inserter sidebar, Reusable tab
+					shouldReplaceManageReusableBlockLinksFor( node )
+				) {
 					inserterManageReusableBlocksObserver.disconnect();
 				}
 			}
 		}
 	} );
-	// Site editor
+	// In the Site editor the `.interface-interface-skeleton__sidebar` element
+	// is totally removed when all the sidebars are closed.
+	// We need to observer the body to make sure we catch when a sidebar
+	// is opened or closed.
 	sidebarsObserver.observe( document.querySelector( '.interface-interface-skeleton__body' ), {
 		childList: true,
 	} );
-	// Post editor
+	// In the Post editor the `.interface-interface-skeleton__sidebar` element
+	// is always present. We can scope down our observer to the sidebar element in this case.
 	sidebarsObserver.observe( document.querySelector( '.interface-interface-skeleton__sidebar' ), {
 		childList: true,
 	} );
@@ -794,7 +809,8 @@ async function openLinksInParentFrame( calypsoPort ) {
 		} );
 	}
 
-	// Sidebar might already be open
+	// Sidebar might already be open before this script is executed.
+	// post and site editors
 	if ( createNewPostUrl ) {
 		const sidebarComponentsPanel = document.querySelector(
 			'.interface-interface-skeleton__sidebar .components-panel'
