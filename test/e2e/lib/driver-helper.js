@@ -47,19 +47,18 @@ const until = {
 
 		return new WebElementCondition(
 			`for element to be clickable ${ locatorStr }`,
-			async function () {
-				return null;
-				// try {
-				// 	const element = await waitUntilElementStopsMoving( driver, locator );
-				// 	const isEnabled = await element.isEnabled();
-				// 	const isAriaEnabled = await element
-				// 		.getAttribute( 'aria-disabled' )
-				// 		.then( ( v ) => v !== 'true' );
+			async function ( driver ) {
+				try {
+					const element = await waitUntilElementStopsMoving( driver, locator );
+					const isEnabled = await element.isEnabled();
+					const isAriaEnabled = await element
+						.getAttribute( 'aria-disabled' )
+						.then( ( v ) => v !== 'true' );
 
-				// 	return isEnabled && isAriaEnabled ? element : null;
-				// } catch {
-				// 	return null;
-				// }
+					return isEnabled && isAriaEnabled ? element : null;
+				} catch {
+					return null;
+				}
 			}
 		);
 	},
@@ -75,7 +74,7 @@ const until = {
  * @returns {Promise<WebElement>} A promise that will be resolved with
  * the clicked element
  */
-export async function clickWhenClickable( driver, locator, timeout = 1 ) {
+export async function clickWhenClickable( driver, locator, timeout = explicitWaitMS ) {
 	const element = await driver.wait( until.elementIsClickable( locator ), timeout );
 
 	try {
