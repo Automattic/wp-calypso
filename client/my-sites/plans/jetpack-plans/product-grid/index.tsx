@@ -59,8 +59,13 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	// is connected, and thus, we don't need to show the Jetpack Free card.
 	const isSiteInContext = !! siteId;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const currentPlanSlug =
-		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
+	const currentPlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
+	const currentPlanSlug = currentPlan?.product_slug || null;
+	const currentPlanTranslatedName =
+		currentPlan && currentPlan.product_name_short
+			? // eslint-disable-next-line wpcalypso/i18n-no-variables
+			  translate( currentPlan.product_name_short )
+			: null;
 
 	const { availableProducts, purchasedProducts, includedInPlanProducts } = useGetPlansGridProducts(
 		siteId
@@ -73,7 +78,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 			sortBy( getPlansToDisplay( { duration, currentPlanSlug } ), ( item ) =>
 				getProductPosition( item.productSlug as JetpackPlanSlug )
 			),
-		[ duration, currentPlanSlug ]
+		[ duration, currentPlanSlug, currentPlanTranslatedName ]
 	);
 	const sortedProducts = useMemo(
 		() =>
