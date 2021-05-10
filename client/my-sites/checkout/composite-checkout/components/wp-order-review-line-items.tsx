@@ -24,6 +24,7 @@ import {
 	getCouponLineItemFromCart,
 	getTaxLineItemFromCart,
 	getCreditsLineItemFromCart,
+	isWpComProductRenewal,
 } from '@automattic/wpcom-checkout';
 import {
 	isPlan,
@@ -60,7 +61,6 @@ import {
 	getProductPriceTierList,
 } from 'calypso/state/products-list/selectors';
 import { getPriceTierForUnits } from 'calypso/my-sites/plans/jetpack-plans/utils';
-import isWpComProductRenewal from 'calypso/my-sites/checkout/composite-checkout/lib/is-wpcom-product-renewal';
 
 const WPOrderReviewList = styled.ul< { theme?: Theme } >`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
@@ -482,7 +482,13 @@ function returnModalCopyForProduct(
 	const productType =
 		isPlan( product ) && hasDomainsInCart ? 'plan with dependencies' : product.product_slug;
 	const isRenewal = isWpComProductRenewal( product );
-	return returnModalCopy( productType, translate, createUserAndSiteBeforeTransaction, isPwpoUser, isRenewal );
+	return returnModalCopy(
+		productType,
+		translate,
+		createUserAndSiteBeforeTransaction,
+		isPwpoUser,
+		isRenewal
+	);
 }
 
 function returnModalCopy(
@@ -490,16 +496,18 @@ function returnModalCopy(
 	translate: ReturnType< typeof useTranslate >,
 	createUserAndSiteBeforeTransaction: boolean,
 	isPwpoUser: boolean,
-	isRenewal: boolean = false,
+	isRenewal = false
 ): ModalCopy {
 	switch ( productType ) {
 		case 'plan with dependencies': {
 			if ( isRenewal ) {
 				return {
 					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
-					description: String( translate(
-						'When you press Continue, we will remove your plan renewal from the cart and your plan will keep its current expiry date.'
-					) ),
+					description: String(
+						translate(
+							'When you press Continue, we will remove your plan renewal from the cart and your plan will keep its current expiry date.'
+						)
+					),
 				};
 			}
 			const title = String( translate( 'You are about to remove your plan from the cart' ) );
@@ -528,9 +536,11 @@ function returnModalCopy(
 			if ( isRenewal ) {
 				return {
 					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
-					description: String( translate(
-						'When you press Continue, we will remove your plan renewal from the cart and your plan will keep its current expiry date. We will then take you back to your site.'
-					) ),
+					description: String(
+						translate(
+							'When you press Continue, we will remove your plan renewal from the cart and your plan will keep its current expiry date. We will then take you back to your site.'
+						)
+					),
 				};
 			}
 
@@ -548,9 +558,11 @@ function returnModalCopy(
 			if ( isRenewal ) {
 				return {
 					title: String( translate( 'You are about to remove your domain renewal from the cart' ) ),
-					description: String( translate(
-						'When you press Continue, we will remove your domain renewal from the cart and your domain will keep its current expiry date.'
-					) ),
+					description: String(
+						translate(
+							'When you press Continue, we will remove your domain renewal from the cart and your domain will keep its current expiry date.'
+						)
+					),
 				};
 			}
 
@@ -573,9 +585,11 @@ function returnModalCopy(
 			if ( isRenewal ) {
 				return {
 					title: String( translate( 'You are about to remove your renewal from the cart' ) ),
-					description: String( translate(
-						'When you press Continue, we will remove your renewal from the cart and your product will keep its current expiry date.'
-					) ),
+					description: String(
+						translate(
+							'When you press Continue, we will remove your renewal from the cart and your product will keep its current expiry date.'
+						)
+					),
 				};
 			}
 
