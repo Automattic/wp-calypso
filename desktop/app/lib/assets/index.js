@@ -1,12 +1,13 @@
 const path = require( 'path' );
 
+let pathStub;
 if ( process.env.NODE_ENV !== 'development' ) {
-	global.__public = path.resolve( __dirname ).replace( /\\/g, '\\\\' );
+	pathStub = path.resolve( __dirname ).replace( /\\/g, '\\\\' );
 } else {
-	global.__public = path.resolve( __dirname, '..', '..', '..' ).replace( /\\/g, '\\\\' );
+	pathStub = path.resolve( __dirname, '..', '..', '..' ).replace( /\\/g, '\\\\' );
 }
 
-const publicPath = path.resolve( global.__public, 'public_desktop' );
+const publicPath = path.resolve( pathStub, 'public_desktop' );
 
 module.exports = {
 	getPath: function ( filename ) {
