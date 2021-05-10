@@ -5,16 +5,16 @@
 <!-- TOC -->
 
 - [Run tests](#run-tests)
-    - [Table of Contents](#table-of-contents)
-    - [Staging](#staging)
-        - [All tests default](#all-tests-default)
-        - [Spec files](#spec-files)
-        - [Individual suite](#individual-suite)
-        - [Headless](#headless)
-        - [Other options](#other-options)
-    - [Locally Development Environment](#locally-development-environment)
-    - [TeamCity](#teamcity)
-    - [Sauce Labs](#sauce-labs)
+  - [Table of Contents](#table-of-contents)
+  - [Staging](#staging)
+    - [All tests default](#all-tests-default)
+    - [Spec files](#spec-files)
+    - [Individual suite](#individual-suite)
+    - [Headless](#headless)
+    - [Other options](#other-options)
+  - [Locally Development Environment](#locally-development-environment)
+  - [TeamCity](#teamcity)
+  - [Sauce Labs](#sauce-labs)
 
 <!-- /TOC -->
 
@@ -38,10 +38,10 @@ Note that this command will search for tests tagged with `@parallel`. If you add
 
 ### Spec file(s)
 
-Calypso e2e tests use `mocha` as the test runner. 
+Calypso e2e tests use `mocha` as the test runner.
 
- 
 Specify spec file(s) directly to mocha:
+
 ```
 ./node_modules/.bin/mocha <path_to_e2e_spec>
 ```
@@ -119,7 +119,7 @@ When calypso e2e test are now run, they will hit againt the local development se
 
 ## TeamCity
 
-Calypso end-to-end tests have migrated to TeamCity as of 2021-01. 
+Calypso end-to-end tests have migrated to TeamCity as of 2021-01.
 
 Both sets of E2E Tests (desktop, mobile) are run against all branches, PRs and trunk. This process is automatic.
 

@@ -7,18 +7,18 @@ This document will cover the environment setup process to run the `wp-calypso` e
 <!-- TOC -->
 
 - [Setup](#setup)
-    - [Table of contents](#table-of-contents)
-    - [Software Environment](#software-environment)
-        - [Required software](#required-software)
-        - [Steps](#steps)
-            - [Intel-based macOS](#intel-based-macos)
-            - [Apple Silicon-based macOS](#apple-silicon-based-macos)
-    - [Configuration File](#configuration-file)
-        - [Overview](#overview)
-        - [In-repo configuration](#in-repo-configuration)
-        - [Custom configurations optional](#custom-configurations-optional)
-    - [Environment Variables](#environment-variables)
-    - [Naming Branches](#naming-branches)
+  - [Table of contents](#table-of-contents)
+  - [Software Environment](#software-environment)
+    - [Required software](#required-software)
+    - [Steps](#steps)
+      - [Intel-based macOS](#intel-based-macos)
+      - [Apple Silicon-based macOS](#apple-silicon-based-macos)
+  - [Configuration File](#configuration-file)
+    - [Overview](#overview)
+    - [In-repo configuration](#in-repo-configuration)
+    - [Custom configurations optional](#custom-configurations-optional)
+  - [Environment Variables](#environment-variables)
+  - [Naming Branches](#naming-branches)
 
 <!-- /TOC -->
 
@@ -133,7 +133,7 @@ It is also possible to use custom configuration files that are not part of the r
 
 There is a 'standard' configuration already in the GitHub repo under `test/e2e/config/`.
 
-This configuration must be decrypted prior to running any e2e tests. To decrypt, please follow the steps outlined in the Field Guide. 
+This configuration must be decrypted prior to running any e2e tests. To decrypt, please follow the steps outlined in the Field Guide.
 
 **Trialmatticians**: please contact a team member in your Slack chat for the decryption key.
 

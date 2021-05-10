@@ -5,8 +5,8 @@
 <!-- TOC -->
 
 - [Troubleshooting & Debugging](#troubleshooting--debugging)
-    - [Table of contents](#table-of-contents)
-    - [git pre-commit hook/husky](#git-pre-commit-hookhusky)
+  - [Table of contents](#table-of-contents)
+  - [git pre-commit hook/husky](#git-pre-commit-hookhusky)
 
 <!-- /TOC -->
 

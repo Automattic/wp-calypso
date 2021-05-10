@@ -5,11 +5,11 @@
 <!-- TOC -->
 
 - [Overview](#overview)
-    - [Table of contents](#table-of-contents)
-    - [What is this?](#what-is-this)
-    - [Our Goals](#our-goals)
-    - [Technology](#technology)
-    - [What is tested?](#what-is-tested)
+  - [Table of contents](#table-of-contents)
+  - [What is this?](#what-is-this)
+  - [Our Goals](#our-goals)
+  - [Technology](#technology)
+  - [What is tested?](#what-is-tested)
 
 <!-- /TOC -->
 
@@ -33,12 +33,12 @@ These e2e tests use the same technology as the `wp-calypso` GitHub repository, n
 
 At the high level, each test file (or `spec`) fall under one of the following flows:
 
-| Flow          | Directory            |
-| ------------- | -------------------- |
-| WordPress.com | `specs/`             |
-| Gutenberg     | `specs-gutenberg/`   |
-| Internationalization     | `specs-i18n/`   |
-| Jetpack       | `specs-jetpack-calypso/`     |
-| WooCommerce   | `specs-woocommerce/` |
+| Flow                 | Directory                |
+| -------------------- | ------------------------ |
+| WordPress.com        | `specs/`                 |
+| Gutenberg            | `specs-gutenberg/`       |
+| Internationalization | `specs-i18n/`            |
+| Jetpack              | `specs-jetpack-calypso/` |
+| WooCommerce          | `specs-woocommerce/`     |
 
 Core code for Jetpack, WooCommerce and Gutenberg are hosted in other repositories and they have separate e2e testing infrastructure. Tests here are meant to test interactions between their respective components and Calypso.
