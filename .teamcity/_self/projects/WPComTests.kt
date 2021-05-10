@@ -20,15 +20,14 @@ object WPComTests : Project({
 		param("build.prefix", "1")
 	}
 	// Keep the previous ID in order to preserve the historical data
-	buildType(gutenbergBuildType("desktop", "Gutenberg"));
-	buildType(gutenbergBuildType("mobile"));
+	buildType(gutenbergBuildType("desktop", "aee94c18-ee11-4c80-b6aa-245b967a97db"));
+	buildType(gutenbergBuildType("mobile","2af2eaed-87d5-41f4-ab1d-4ed589d5ae82"));
 })
 
-fun gutenbergBuildType(screenSize: String, overrideId: String? = null): BuildType {
-	var theId = if (overrideId === null) "Gutenberg_$screenSize" else overrideId;
-
+fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
 	return BuildType {
-		id(theId as String)
+		uuid = buildUuid
+		id("WPComTests_gutenberg_$screenSize")
 		name = "Gutenberg tests ($screenSize)"
 		description = "Runs Gutenberg E2E tests using $screenSize screen resolution"
 
