@@ -48,7 +48,6 @@ describe( 'TestRun class', function () {
 
 		const args = localRun.getArguments();
 		expect( args ).toEqual( [
-			'--bail',
 			'--mocking_port=10',
 			'--worker=1',
 			'-g',

@@ -1,3 +1,4 @@
+bail: true
 require:
   - 'esm'
   - 'test/mocha.env.js'
