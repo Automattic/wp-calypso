@@ -27,6 +27,7 @@ import {
 	isWpComProductRenewal,
 } from '@automattic/wpcom-checkout';
 import {
+	isDomainRegistration,
 	isPlan,
 	isMonthlyProduct,
 	isYearly,
@@ -479,8 +480,7 @@ function returnModalCopyForProduct(
 	createUserAndSiteBeforeTransaction: boolean,
 	isPwpoUser: boolean
 ): ModalCopy {
-	const productType =
-		isPlan( product ) && hasDomainsInCart ? 'plan with dependencies' : product.product_slug;
+	const productType = getProductTypeForModalCopy( product, hasDomainsInCart );
 	const isRenewal = isWpComProductRenewal( product );
 	return returnModalCopy(
 		productType,
@@ -489,6 +489,24 @@ function returnModalCopyForProduct(
 		isPwpoUser,
 		isRenewal
 	);
+}
+
+function getProductTypeForModalCopy(
+	product: ResponseCartProduct,
+	hasDomainsInCart: boolean
+): string {
+	if ( isPlan( product ) ) {
+		if ( hasDomainsInCart ) {
+			return 'plan with dependencies';
+		}
+		return 'plan';
+	}
+
+	if ( isDomainRegistration( product ) ) {
+		return 'domain';
+	}
+
+	return product.product_slug;
 }
 
 function returnModalCopy(
