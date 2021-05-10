@@ -8,20 +8,35 @@ const mochaSettings = require( './settings' );
 const path = require( 'path' );
 const fs = require( 'fs' );
 
-const testCounter = {};
-
 const MochaTestRun = function ( options ) {
 	// Share assets directory with mocha tests
 	const testName = options.locator.name;
 	const sanitizedName = testName
+		//non-alpha to `-`
 		.replace( /[^a-z0-9]/gi, '-' )
+		//many `-` in a row to a single `-`
 		.replace( /-+/g, '-' )
+		//drop initial or trailing `-`
 		.replace( /^-|-$/, '' )
 		.toLowerCase();
-	testCounter[ options.locator.name ] = ( testCounter[ options.locator.name ] ?? 0 ) + 1;
-	const assetsDir = sanitizedName + '-' + testCounter[ options.locator.name ];
-	process.env.TEMP_ASSET_PATH = path.join( options.tempAssetPath, '..', assetsDir );
-	fs.mkdirSync( process.env.TEMP_ASSET_PATH, { recursive: true } );
+
+	const pathWithCounter = ( function incrementCandidatePathCounter( { basePath, counter } ) {
+		const candidatePath = counter === 0 ? basePath : basePath + '-' + counter;
+		try {
+			fs.accessSync( candidatePath );
+			// If it exists, increment counter and try again
+			return incrementCandidatePathCounter( { basePath, counter: counter + 1 } );
+		} catch {
+			// An error means it doesn't exists, we can use it!
+			return candidatePath;
+		}
+	} )( {
+		basePath: path.join( options.tempAssetPath, '..', sanitizedName ),
+		counter: 1,
+	} );
+
+	process.env.TEMP_ASSET_PATH = pathWithCounter;
+	fs.mkdirSync( pathWithCounter, { recursive: true } );
 	_.extend( this, options );
 };
 
