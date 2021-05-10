@@ -47,7 +47,7 @@ async function createAccountCallback( response ) {
 	} );
 }
 
-export async function createAccount( extraArgs = {} ) {
+export async function createAccount( { signupFlowName } ) {
 	let newSiteParams = null;
 	try {
 		newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
@@ -86,8 +86,8 @@ export async function createAccount( extraArgs = {} ) {
 				'g-recaptcha-error': recaptchaError,
 				'g-recaptcha-response': recaptchaToken || undefined,
 				is_passwordless: true,
-				extra: { username_hint: blogName, ...extraArgs },
-				signup_flow_name: 'onboarding-registrationless',
+				extra: { username_hint: blogName },
+				signup_flow_name: signupFlowName,
 				validate: false,
 				ab_test_variations: getSavedVariations(),
 				new_site_params: newSiteParams,
