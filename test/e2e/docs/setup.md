@@ -133,7 +133,9 @@ It is also possible to use custom configuration files that are not part of the r
 
 There is a 'standard' configuration already in the GitHub repo under `test/e2e/config/`.
 
-This configuration must be decrypted prior to running any e2e tests. To decrypt, please follow the steps outlined in the Field Guide.
+This configuration must be decrypted prior to running any e2e tests. To decrypt, please follow the steps outlined in the Field Guide. 
+
+**Trialmatticians**: please contact a team member in your Slack chat for the decryption key.
 
 ### Custom configurations (optional)
 
@@ -156,14 +158,12 @@ For the full list of possible configuration values, please see the following pag
 
 Environment Variables are values that are defined at the system level to serve as configuration for programs.
 
-For e2e tests, the following are required environment variables without which e2e tests will not run locally:
+For e2e tests, the following are required environment variables without which e2e tests will not run:
 
 ```
 export NODE_CONFIG_ENV=<name_of_decrypted_config_to_use>
 export CONFIG_KEY=<decryption_key_from_a8c_store>
 ```
-
-**Trial Engineers**: please contact a team member in your Slack chat for the decryption key.
 
 Additionally, see the list of other environment variables [here](environment_variables.md).
 
