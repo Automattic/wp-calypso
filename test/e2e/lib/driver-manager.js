@@ -71,6 +71,44 @@ export function getProxyType() {
 	}
 }
 
+/**
+ * This proxy is meant to only catch & re-throw driver.wait() errors in order to
+ * provide a full stack to the relevant test. Without it, the stack provides
+ * merely a single line to the webdriver.js source.
+ *
+ * @param {webdriver.ThenableWebDriver} twd A ThenableWebDriver instance
+ * @returns {webdriver.WebDriver} A WebDriver instance
+ */
+export async function createDriverProxy( twd ) {
+	const driver = await twd;
+
+	return new Proxy( driver, {
+		get: function ( target, prop ) {
+			const orig = target[ prop ];
+			if ( 'function' !== typeof orig ) {
+				return orig;
+			}
+
+			if ( 'wait' === prop ) {
+				return async function ( ...args ) {
+					try {
+						const result = await orig.apply( target, args );
+						return result;
+					} catch ( error ) {
+						/**
+						 * By re-throwing the same error we're only replacing its stack.
+						 * The message will stay the same.
+						 */
+						throw new Error( error );
+					}
+				};
+			}
+
+			return orig.bind( target );
+		},
+	} );
+}
+
 export async function startBrowser( {
 	useCustomUA = true,
 	resizeBrowserWindow = true,
@@ -238,31 +276,7 @@ export async function startBrowser( {
 		await resizeBrowser( driver, screenSize );
 	}
 
-	return driver.then( function ( d ) {
-		return new Proxy( d, {
-			get: function ( target, prop ) {
-				const orig = target[ prop ];
-				if ( 'function' !== typeof orig ) {
-					return orig;
-				}
-
-				if ( 'wait' === prop ) {
-					return async function ( ...args ) {
-						let result;
-						try {
-							result = await orig.apply( target, args );
-						} catch ( error ) {
-							throw new Error( error );
-						}
-
-						return result;
-					};
-				}
-
-				return orig.bind( target );
-			},
-		} );
-	} );
+	return createDriverProxy( driver );
 }
 
 export async function resizeBrowser( driver, screenSize ) {
