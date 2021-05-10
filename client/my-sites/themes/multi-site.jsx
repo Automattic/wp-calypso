@@ -12,10 +12,12 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import ThemesSiteSelectorModal from './themes-site-selector-modal';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
+import InstallThemeButton from './install-theme-button';
 
 const MultiSiteThemeShowcase = connectOptions( ( props ) => (
 	<Main fullWidthLayout className="themes">
 		<SidebarNavigation />
+		<InstallThemeButton />
 		<ThemesSiteSelectorModal { ...props }>
 			<ThemeShowcase source="showcase" showUploadButton={ false } />
 		</ThemesSiteSelectorModal>
