@@ -36,36 +36,36 @@ describe( `[${ host }] Jetpack Connection: (${ screenSize }) @jetpack`, function
 			return await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 		} );
 
-		step( 'Can log into WordPress.com', async function () {
+		it( 'Can log into WordPress.com', async function () {
 			this.loginFlow = new LoginFlow( driver, 'jetpackUserCI' );
 			return await this.loginFlow.login();
 		} );
 
-		step( 'Can log into site via wp-login.php', async function () {
+		it( 'Can log into site via wp-login.php', async function () {
 			const user = dataHelper.getAccountConfig( 'jetpackUserCI' );
 			const loginPage = await WPAdminLogonPage.Visit( driver, dataHelper.getJetpackSiteName() );
 			await loginPage.login( user[ 0 ], user[ 1 ] );
 		} );
 
-		step( 'Can open Plugins page', async function () {
+		it( 'Can open Plugins page', async function () {
 			await WPAdminSidebar.refreshIfJNError( driver );
 			this.wpAdminSidebar = await WPAdminSidebar.Expect( driver );
 			return await this.wpAdminSidebar.selectPlugins();
 		} );
 
-		step( 'Can activate Jetpack', async function () {
+		it( 'Can activate Jetpack', async function () {
 			await driverHelper.refreshIfJNError( driver );
 			this.wpAdminPlugins = await WPAdminPluginsPage.Expect( driver );
 			return await this.wpAdminPlugins.activateJetpack();
 		} );
 
-		step( 'Can connect Jetpack', async function () {
+		it( 'Can connect Jetpack', async function () {
 			this.wpAdminPlugins.connectJetpackAfterActivation();
 			this.jetpackAuthorizePage = await JetpackAuthorizePage.Expect( driver );
 			await this.jetpackAuthorizePage.approveConnection();
 		} );
 
-		step( 'Can select Free plan', async function () {
+		it( 'Can select Free plan', async function () {
 			const pickAPlanPage = await PickAPlanPage.Expect( driver );
 			return await pickAPlanPage.selectFreePlan();
 		} );

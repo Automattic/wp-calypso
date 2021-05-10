@@ -49,19 +49,19 @@ describe( `[${ host }] Editor: Media Upload (${ screenSize }) @parallel @jetpack
 			describe( 'Can upload a normal image', function () {
 				let fileDetails;
 
-				step( 'Navigate to Editor page and create image file for upload', async function () {
+				it( 'Navigate to Editor page and create image file for upload', async function () {
 					fileDetails = await mediaHelper.createFileWithFilename( 'normal.jpg' );
 				} );
 
-				step( 'Can upload an image', async function () {
+				it( 'Can upload an image', async function () {
 					blockID = await gutenbergEditor.addImage( fileDetails );
 				} );
 
-				step( 'Can delete image', async function () {
+				it( 'Can delete image', async function () {
 					await gutenbergEditor.removeBlock( blockID );
 				} );
 
-				step( 'Clean up', async function () {
+				it( 'Clean up', async function () {
 					if ( fileDetails ) {
 						await mediaHelper.deleteFile( fileDetails );
 					}
@@ -71,22 +71,22 @@ describe( `[${ host }] Editor: Media Upload (${ screenSize }) @parallel @jetpack
 			describe( 'Can upload an image with reserved url chars in the filename', function () {
 				let fileDetails;
 
-				step( 'Create image file for upload', async function () {
+				it( 'Create image file for upload', async function () {
 					fileDetails = await mediaHelper.createFileWithFilename(
 						'filewith#?#?reservedurlchars.jpg',
 						true
 					);
 				} );
 
-				step( 'Can upload an image', async function () {
+				it( 'Can upload an image', async function () {
 					blockID = await gutenbergEditor.addImage( fileDetails );
 				} );
 
-				step( 'Can delete image', async function () {
+				it( 'Can delete image', async function () {
 					await gutenbergEditor.removeBlock( blockID );
 				} );
 
-				step( 'Clean up', async function () {
+				it( 'Clean up', async function () {
 					if ( fileDetails ) {
 						await mediaHelper.deleteFile( fileDetails );
 					}
@@ -96,19 +96,19 @@ describe( `[${ host }] Editor: Media Upload (${ screenSize }) @parallel @jetpack
 			describe( 'Can upload an mp3', function () {
 				let fileDetails;
 
-				step( 'Create mp3 for upload', async function () {
+				it( 'Create mp3 for upload', async function () {
 					fileDetails = await mediaHelper.getMP3FileWithFilename( 'new.mp3' );
 				} );
 
-				step( 'Can upload an mp3', async function () {
+				it( 'Can upload an mp3', async function () {
 					blockID = await gutenbergEditor.addFile( fileDetails );
 				} );
 
-				step( 'Can delete mp3', async function () {
+				it( 'Can delete mp3', async function () {
 					await gutenbergEditor.removeBlock( blockID );
 				} );
 
-				step( 'Clean up', async function () {
+				it( 'Clean up', async function () {
 					if ( fileDetails ) {
 						await mediaHelper.deleteFile( fileDetails );
 					}

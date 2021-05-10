@@ -59,11 +59,11 @@ describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function 
 			}
 		} );
 
-		step( 'Log In and Select Domains', async function () {
+		it( 'Log In and Select Domains', async function () {
 			return await new LoginFlow( driver, 'gutenbergSimpleSiteUser' ).loginAndSelectDomains();
 		} );
 
-		step( 'Can see the Domains page and choose add a domain', async function () {
+		it( 'Can see the Domains page and choose add a domain', async function () {
 			const domainsPage = await DomainsPage.Expect( driver );
 			await domainsPage.setABTestControlGroupsInLocalStorage();
 			await domainsPage.clickAddDomain();
@@ -71,7 +71,7 @@ describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function 
 			return await domainsPage.clickPopoverItem( 'to this site' );
 		} );
 
-		step( 'Can see the domain search component', async function () {
+		it( 'Can see the domain search component', async function () {
 			let findADomainComponent;
 			try {
 				findADomainComponent = await FindADomainComponent.Expect( driver );
@@ -86,29 +86,29 @@ describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function 
 			return await findADomainComponent.waitForResults();
 		} );
 
-		step( 'Can search for a blog name', async function () {
+		it( 'Can search for a blog name', async function () {
 			const findADomainComponent = await FindADomainComponent.Expect( driver );
 			// Search for the full blog name including the .com, as the default TLD suggestion is not always .com.
 			return await findADomainComponent.searchForBlogNameAndWaitForResults( expectedDomainName );
 		} );
 
-		step( 'Can select the .com search result and decline Google Apps for email', async function () {
+		it( 'Can select the .com search result and decline Google Apps for email', async function () {
 			const findADomainComponent = await FindADomainComponent.Expect( driver );
 			await findADomainComponent.selectDomainAddress( expectedDomainName );
 			return await findADomainComponent.declineGoogleApps();
 		} );
 
-		step( 'Can see checkout page and enter registrar details', async function () {
+		it( 'Can see checkout page and enter registrar details', async function () {
 			const checkOutPage = await CheckOutPage.Expect( driver );
 			await checkOutPage.enterRegistrarDetails( testDomainRegistarDetails );
 			return await checkOutPage.submitForm();
 		} );
 
-		step( 'Can then see secure payment component', async function () {
+		it( 'Can then see secure payment component', async function () {
 			return await SecurePaymentComponent.Expect( driver );
 		} );
 
-		step( 'Empty the cart', async function () {
+		it( 'Empty the cart', async function () {
 			await ReaderPage.Visit( driver );
 			const navBarComponent = await NavBarComponent.Expect( driver );
 			await navBarComponent.clickMySites();
@@ -137,11 +137,11 @@ describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function 
 			}
 		} );
 
-		step( 'Log In and Select Domains', async function () {
+		it( 'Log In and Select Domains', async function () {
 			return await new LoginFlow( driver, 'gutenbergSimpleSiteUser' ).loginAndSelectDomains();
 		} );
 
-		step( 'Can see the Domains page and choose add a domain', async function () {
+		it( 'Can see the Domains page and choose add a domain', async function () {
 			const domainsPage = await DomainsPage.Expect( driver );
 			await domainsPage.setABTestControlGroupsInLocalStorage();
 			await domainsPage.clickAddDomain();
@@ -149,7 +149,7 @@ describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function 
 			return await domainsPage.clickPopoverItem( 'to this site' );
 		} );
 
-		step( 'Can see the domain search component', async function () {
+		it( 'Can see the domain search component', async function () {
 			let findADomainComponent;
 			try {
 				findADomainComponent = await FindADomainComponent.Expect( driver );
@@ -164,39 +164,39 @@ describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function 
 			return await findADomainComponent.waitForResults();
 		} );
 
-		step( 'Can select to use an existing domain', async function () {
+		it( 'Can select to use an existing domain', async function () {
 			const findADomainComponent = await FindADomainComponent.Expect( driver );
 			return await findADomainComponent.selectUseOwnDomain();
 		} );
 
-		step( 'Can see use my own domain page', async function () {
+		it( 'Can see use my own domain page', async function () {
 			return await MyOwnDomainPage.Expect( driver );
 		} );
 
-		step( 'Can select to buy domain mapping', async function () {
+		it( 'Can select to buy domain mapping', async function () {
 			const myOwnDomainPage = await MyOwnDomainPage.Expect( driver );
 			return await myOwnDomainPage.selectBuyDomainMapping();
 		} );
 
-		step( 'Can see enter a domain component', async function () {
+		it( 'Can see enter a domain component', async function () {
 			return await MapADomainPage.Expect( driver );
 		} );
 
-		step( 'Can enter the domain name', async function () {
+		it( 'Can enter the domain name', async function () {
 			const enterADomainComponent = await EnterADomainComponent.Expect( driver );
 			return await enterADomainComponent.enterADomain( blogName );
 		} );
 
-		step( 'Can add domain to the cart', async function () {
+		it( 'Can add domain to the cart', async function () {
 			const enterADomainComponent = await EnterADomainComponent.Expect( driver );
 			return await enterADomainComponent.clickonAddButtonToAddDomainToTheCart();
 		} );
 
-		step( 'Can see checkout page', async function () {
+		it( 'Can see checkout page', async function () {
 			return await MapADomainCheckoutPage.Expect( driver );
 		} );
 
-		step( 'Empty the cart', async function () {
+		it( 'Empty the cart', async function () {
 			await ReaderPage.Visit( driver );
 			const navBarComponent = await NavBarComponent.Expect( driver );
 			await navBarComponent.clickMySites();

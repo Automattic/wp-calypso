@@ -39,13 +39,13 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 	} );
 
 	describe( 'Can trigger the checkout modal via post editor', function () {
-		step( 'Can log in', async function () {
+		it( 'Can log in', async function () {
 			this.timeout( mochaTimeOut * 12 );
 			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser' );
 			return await loginFlow.loginAndStartNewPost( null, true );
 		} );
 
-		step( 'We can set the sandbox cookie for payments', async function () {
+		it( 'We can set the sandbox cookie for payments', async function () {
 			const wPHomePage = await WPHomePage.Visit( driver );
 			await wPHomePage.checkURL( locale );
 			await wPHomePage.setSandboxModeForPayments( sandboxCookieValue );
@@ -53,7 +53,7 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 			return await driver.navigate().back();
 		} );
 
-		step( 'Can insert the premium block', async function () {
+		it( 'Can insert the premium block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.addBlock( 'Simple Payments' );
 			return await driverHelper.waitUntilElementLocatedAndVisible(
@@ -62,14 +62,14 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 			);
 		} );
 
-		step( 'Can click Upgrade button on premium block', async function () {
+		it( 'Can click Upgrade button on premium block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.ensureSaved();
 			await gEditorComponent.clickUpgradeOnPremiumBlock();
 			return await driver.switchTo().defaultContent();
 		} );
 
-		step( 'Can view checkout modal', async function () {
+		it( 'Can view checkout modal', async function () {
 			editorUrl = await driver.executeScript( 'return window.location.href' );
 			const compositeCheckoutIsPresent = await driverHelper.isElementEventuallyLocatedAndVisible(
 				driver,
@@ -84,7 +84,7 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 	} );
 
 	describe( 'Has correct plan details', function () {
-		step( 'Contains Premium Plan', async function () {
+		it( 'Contains Premium Plan', async function () {
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 			const checkoutContainsPremiumPlan = await securePaymentComponent.containsPremiumPlan();
 			assert.strictEqual(
@@ -94,7 +94,7 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 			);
 		} );
 
-		step( 'Can change plan length', async function () {
+		it( 'Can change plan length', async function () {
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 			const originalCartAmount = await securePaymentComponent.cartTotalAmount();
 			await driverHelper.waitUntilElementLocatedAndVisible(
@@ -129,7 +129,7 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 	} );
 
 	describe( 'Can add/remove coupons', function () {
-		step( 'Can Enter Coupon Code', async function () {
+		it( 'Can Enter Coupon Code', async function () {
 			const enterCouponCodeButton = await driverHelper.isElementLocated(
 				driver,
 				By.css( '.wp-checkout-order-review__show-coupon-field-button' )
@@ -156,7 +156,7 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 			}
 		} );
 
-		step( 'Can Remove Coupon', async function () {
+		it( 'Can Remove Coupon', async function () {
 			await driver.switchTo().defaultContent();
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 			const originalCartAmount = await securePaymentComponent.cartTotalAmount();
@@ -169,7 +169,7 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 			);
 		} );
 
-		step( 'Can Save Order And Continue', async function () {
+		it( 'Can Save Order And Continue', async function () {
 			return await driverHelper.clickWhenClickable(
 				driver,
 				By.css(
@@ -182,14 +182,14 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 	describe( 'Can make payment', function () {
 		const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
 
-		step( 'Can fill out billing information', async function () {
+		it( 'Can fill out billing information', async function () {
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 			return await securePaymentComponent.completeTaxDetailsInContactSection(
 				testCreditCardDetails
 			);
 		} );
 
-		step( 'Can select and fill out credit card payment method', async function () {
+		it( 'Can select and fill out credit card payment method', async function () {
 			const existingCardIsPresent = await driverHelper.isElementLocated(
 				driver,
 				By.css( '[id*="existingCard-"]:checked' )
@@ -203,7 +203,7 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 			return true;
 		} );
 
-		step( 'Can process the payment', async function () {
+		it( 'Can process the payment', async function () {
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 			await securePaymentComponent.submitPaymentDetails();
 			await securePaymentComponent.waitForCreditCardPaymentProcessing();
@@ -219,12 +219,12 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 			return await securePaymentComponent.waitForPageToDisappear();
 		} );
 
-		step( 'Can decline upgrade offer', async function () {
+		it( 'Can decline upgrade offer', async function () {
 			const upsellPage = await UpsellPage.Expect( driver );
 			return await upsellPage.declineOffer();
 		} );
 
-		step( 'Can return to editor', async function () {
+		it( 'Can return to editor', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.initEditor();
 			await driver.switchTo().defaultContent();
@@ -238,12 +238,12 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 	} );
 
 	describe( 'Can delete the premium plan', function () {
-		step( 'Can log in', async function () {
+		it( 'Can log in', async function () {
 			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser' );
 			return await loginFlow.login();
 		} );
 
-		step( 'We can set the sandbox cookie for payments', async function () {
+		it( 'We can set the sandbox cookie for payments', async function () {
 			const wPHomePage = await WPHomePage.Visit( driver );
 			await wPHomePage.checkURL( locale );
 			await wPHomePage.setSandboxModeForPayments( sandboxCookieValue );
@@ -251,7 +251,7 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 			return await driver.navigate().back();
 		} );
 
-		step( 'Can delete the premium plan', async function () {
+		it( 'Can delete the premium plan', async function () {
 			return await new DeletePlanFlow( driver ).deletePlan( 'premium' );
 		} );
 	} );

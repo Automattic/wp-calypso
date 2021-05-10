@@ -38,7 +38,7 @@ describe( `[${ host }] Comments: (${ screenSize })`, function () {
 	} );
 
 	describe( 'Commenting and replying to newly created post in Gutenberg Editor: @parallel', function () {
-		step( 'Can login and create a new post', async function () {
+		it( 'Can login and create a new post', async function () {
 			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
 			await this.loginFlow.loginAndStartNewPost( null, true );
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
@@ -46,12 +46,12 @@ describe( `[${ host }] Comments: (${ screenSize })`, function () {
 			await gEditorComponent.enterText( blogPostQuote );
 		} );
 
-		step( 'Can publish and visit site', async function () {
+		it( 'Can publish and visit site', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.publish( { visit: true } );
 		} );
 
-		step( 'Can post a comment', async function () {
+		it( 'Can post a comment', async function () {
 			const commentArea = await CommentsAreaComponent.Expect( driver );
 			const comment = dataHelper.randomPhrase();
 
@@ -60,7 +60,7 @@ describe( `[${ host }] Comments: (${ screenSize })`, function () {
 			await commentArea.verifyCommentIsVisible( comment );
 		} );
 
-		step( 'Can post a reply', async function () {
+		it( 'Can post a reply', async function () {
 			const commentArea = await CommentsAreaComponent.Expect( driver );
 			const comment = dataHelper.randomPhrase();
 

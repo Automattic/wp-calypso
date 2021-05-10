@@ -33,22 +33,22 @@ describe( `[${ host }] Jetpack Connection Removal: (${ screenSize }) @jetpack`, 
 			return await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 		} );
 
-		step( 'Can log into WordPress.com and open My Sites', async function () {
+		it( 'Can log into WordPress.com and open My Sites', async function () {
 			this.loginFlow = new LoginFlow( driver, 'jetpackUserCI' );
 			return await this.loginFlow.loginAndSelectMySite();
 		} );
 
-		step( 'Can open site Settings', async function () {
+		it( 'Can open site Settings', async function () {
 			this.sidebarComponent = await SidebarComponent.Expect( driver );
 			return await this.sidebarComponent.selectSettings();
 		} );
 
-		step( 'Can manage connection', async function () {
+		it( 'Can manage connection', async function () {
 			this.settingsPage = await SettingsPage.Expect( driver );
 			return await this.settingsPage.manageConnection();
 		} );
 
-		step( 'Can disconnect site', async function () {
+		it( 'Can disconnect site', async function () {
 			return await this.settingsPage.disconnectSite();
 		} );
 	} );

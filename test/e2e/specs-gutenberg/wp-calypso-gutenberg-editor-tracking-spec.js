@@ -49,7 +49,7 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 	} );
 
 	describe( 'Tracking: @parallel', function () {
-		step( 'Can log in to WPAdmin and create new Post', async function () {
+		it( 'Can log in to WPAdmin and create new Post', async function () {
 			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 
 			if ( host !== 'WPCOM' ) {
@@ -62,14 +62,14 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 			await wpadminSidebarComponent.selectNewPost();
 		} );
 
-		step( 'Check for presence of e2e specific tracking events stack on global', async function () {
+		it( 'Check for presence of e2e specific tracking events stack on global', async function () {
 			await GutenbergEditorComponent.Expect( driver, 'wp-admin' );
 			const eventsStack = await driver.executeScript( `return window._e2eEventsStack;` );
 			// Check evaluates to truthy
 			assert( eventsStack, 'Tracking events stack missing from window._e2eEventsStack' );
 		} );
 
-		step( 'Tracks "wpcom_block_inserted" event', async function () {
+		it( 'Tracks "wpcom_block_inserted" event', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver, 'wp-admin' );
 
 			// Insert some Blocks

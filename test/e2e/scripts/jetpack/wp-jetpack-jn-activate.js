@@ -45,12 +45,12 @@ describe( `[${ host }] Jurassic Ninja Connection: (${ screenSize }) @jetpack`, f
 		return driverManager.clearCookiesAndDeleteLocalStorage( driver );
 	} );
 
-	step( 'Can connect from WP Admin', async function () {
+	it( 'Can connect from WP Admin', async function () {
 		this.jnFlow = new JetpackConnectFlow( driver, 'jetpackUserJN' );
 		return await this.jnFlow.connectFromWPAdmin();
 	} );
 
-	step( 'Can logout from WP admin', async function () {
+	it( 'Can logout from WP admin', async function () {
 		const wpDashboard = await WPAdminDashboardPage.Visit(
 			driver,
 			WPAdminDashboardPage.getUrl( this.jnFlow.url )
@@ -58,7 +58,7 @@ describe( `[${ host }] Jurassic Ninja Connection: (${ screenSize }) @jetpack`, f
 		return wpDashboard.logout();
 	} );
 
-	step( 'Can save JN credentials to file', async function () {
+	it( 'Can save JN credentials to file', async function () {
 		await writeJNCredentials( this.jnFlow.url, 'demo', this.jnFlow.password );
 	} );
 } );

@@ -33,20 +33,20 @@ describe( `[${ host }] Media: Edit Media (${ screenSize }) @parallel @jetpack`, 
 			await loginFlow.loginAndSelectMySite();
 		} );
 
-		step( "Select 'Media' option and see media content", async function () {
+		it( "Select 'Media' option and see media content", async function () {
 			const sideBarComponent = await SideBarComponent.Expect( driver );
 			await sideBarComponent.selectMedia();
 			return await MediaPage.Expect( driver );
 		} );
 
-		step( 'Select a random media item and click edit', async function () {
+		it( 'Select a random media item and click edit', async function () {
 			const mediaPage = await MediaPage.Expect( driver );
 			await mediaPage.selectFirstImage();
 			await mediaPage.selectEditMedia();
 			return await mediaPage.mediaEditorShowing();
 		} );
 
-		step( 'Click Edit Image', async function () {
+		it( 'Click Edit Image', async function () {
 			const mediaPage = await MediaPage.Expect( driver );
 			await mediaPage.clickEditImage();
 			return await mediaPage.imageShowingInEditor();

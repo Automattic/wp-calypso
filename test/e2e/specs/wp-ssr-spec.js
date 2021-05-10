@@ -32,15 +32,15 @@ describe( 'Server-side rendering: @canary @parallel', function () {
 		await driverManager.ensureNotLoggedIn( driver );
 	} );
 
-	step( '/log-in renders on the server', async function () {
+	it( '/log-in renders on the server', async function () {
 		await ssrWorksForPage( driver, LoginPage.getLoginURL() );
 	} );
 
-	step( '/themes renders on the server', async function () {
+	it( '/themes renders on the server', async function () {
 		await ssrWorksForPage( driver, ThemesPage.getStartURL() );
 	} );
 
-	step( '/theme/twentytwenty renders on the server', async function () {
+	it( '/theme/twentytwenty renders on the server', async function () {
 		await ssrWorksForPage( driver, dataHelper.getCalypsoURL( 'theme/twentytwenty' ) );
 	} );
 } );

@@ -41,50 +41,50 @@ describe.skip( `[${ host }] Pressable NUX: (${ screenSize })`, function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'Can log into WordPress.com', async function () {
+		it( 'Can log into WordPress.com', async function () {
 			return await new LoginFlow( driver, 'jetpackUser' + host ).login();
 		} );
 
-		step( 'Can log into Pressable', async function () {
+		it( 'Can log into Pressable', async function () {
 			const pressableLogonPage = await PressableLogonPage.Visit( driver );
 			return await pressableLogonPage.loginWithWP();
 		} );
 
-		step( 'Can approve login with WordPress', async function () {
+		it( 'Can approve login with WordPress', async function () {
 			const pressableApprovePage = await PressableApprovePage.Expect( driver );
 			return await pressableApprovePage.approve();
 		} );
 
-		step( 'Can create new site', async function () {
+		it( 'Can create new site', async function () {
 			this.siteName = dataHelper.getNewBlogName();
 			this.pressableSitesPage = await PressableSitesPage.Expect( driver );
 			return await this.pressableSitesPage.addNewSite( this.siteName );
 		} );
 
-		step( 'Can go to site settings', async function () {
+		it( 'Can go to site settings', async function () {
 			return await this.pressableSitesPage.gotoSettings( this.siteName );
 		} );
 
-		step( 'Can proceed to Jetpack activation', async function () {
+		it( 'Can proceed to Jetpack activation', async function () {
 			const siteSettings = await PressableSiteSettingsPage.Expect( driver );
 			await siteSettings.waitForJetpackPremium();
 			return await siteSettings.activateJetpackPremium();
 		} );
 
-		step( 'Can approve connection on the authorization page', async function () {
+		it( 'Can approve connection on the authorization page', async function () {
 			const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( driver );
 			return await jetpackAuthorizePage.approveConnection();
 		} );
 
-		step( 'Can wait for 30 sec until Jetpack Rewind will be ready for configuration', function () {
+		it( 'Can wait for 30 sec until Jetpack Rewind will be ready for configuration', function () {
 			return driver.sleep( 30000 );
 		} );
 
-		step( 'Can proceed with Pressable NUX flow', async function () {
+		it( 'Can proceed with Pressable NUX flow', async function () {
 			return await new PressableNUXFlow( driver ).addSiteCredentials();
 		} );
 
-		step( 'Can open Rewind activity page', async function () {
+		it( 'Can open Rewind activity page', async function () {
 			await ReaderPage.Visit( driver );
 			const navBarComponent = await NavBarComponent.Expect( driver );
 			await navBarComponent.clickMySites();
@@ -95,7 +95,7 @@ describe.skip( `[${ host }] Pressable NUX: (${ screenSize })`, function () {
 		} );
 
 		// Disabled due to to longer time is required to make a backup.
-		// step( 'Can wait until Rewind backup is completed', function() {
+		// it( 'Can wait until Rewind backup is completed', function() {
 		// 	const activityPage = new ActivityPage( driver );
 		// 	return activityPage.waitUntilBackupCompleted();
 		// } );

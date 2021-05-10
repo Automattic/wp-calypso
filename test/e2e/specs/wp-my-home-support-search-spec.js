@@ -34,7 +34,7 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 		driver = await driverManager.startBrowser();
 	} );
 
-	step( 'Login and select the My Home page', async function () {
+	it( 'Login and select the My Home page', async function () {
 		const loginFlow = new LoginFlow( driver );
 
 		await loginFlow.loginAndSelectMySite();
@@ -45,7 +45,7 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 		await sidebarComponent.selectMyHome();
 	} );
 
-	step( 'Verify "Get help" support card is displayed', async function () {
+	it( 'Verify "Get help" support card is displayed', async function () {
 		// Card can take a little while to display, so let's wait...
 		await driverHelper.waitUntilElementLocatedAndVisible( driver, helpCardLocator );
 
@@ -61,13 +61,13 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 		);
 	} );
 
-	step( 'Displays Default Results initially', async function () {
+	it( 'Displays Default Results initially', async function () {
 		supportSearchComponent = await SupportSearchComponent.Expect( driver );
 		const resultsCount = await supportSearchComponent.getDefaultResultsCount();
 		assert.equal( resultsCount, 6, 'There are not 6 Default Results displayed.' );
 	} );
 
-	step( 'Returns API Search Results for valid search query', async function () {
+	it( 'Returns API Search Results for valid search query', async function () {
 		await supportSearchComponent.searchFor( 'Domain' );
 
 		const searchResultsCount = await supportSearchComponent.getSearchResultsCount();
@@ -104,7 +104,7 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 		);
 	} );
 
-	step( 'Resets search UI to default state when search input is cleared', async function () {
+	it( 'Resets search UI to default state when search input is cleared', async function () {
 		await supportSearchComponent.clearSearchField();
 
 		const searchResults = await supportSearchComponent.waitForSearchResultsNotToBePresent();
@@ -120,28 +120,25 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 		assert.equal( defaultResultsCount, 6, 'The 6 Default Results are not displayed.' );
 	} );
 
-	step(
-		'Shows "No results" indicator and re-displays contextual results for search queries which return no results',
-		async function () {
-			const invalidSearchQueryReturningNoResults = ';;;ppp;;;';
+	it( 'Shows "No results" indicator and re-displays contextual results for search queries which return no results', async function () {
+		const invalidSearchQueryReturningNoResults = ';;;ppp;;;';
 
-			await supportSearchComponent.searchFor( invalidSearchQueryReturningNoResults );
+		await supportSearchComponent.searchFor( invalidSearchQueryReturningNoResults );
 
-			const searchResults = await supportSearchComponent.waitForSearchResultsNotToBePresent();
+		const searchResults = await supportSearchComponent.waitForSearchResultsNotToBePresent();
 
-			const resultsCount = await supportSearchComponent.getErrorResultsCount();
+		const resultsCount = await supportSearchComponent.getErrorResultsCount();
 
-			const hasNoResultsMessage = await supportSearchComponent.hasNoResultsMessage();
+		const hasNoResultsMessage = await supportSearchComponent.hasNoResultsMessage();
 
-			assert.equal( searchResults, true, 'The API Search Results are not displayed.' );
+		assert.equal( searchResults, true, 'The API Search Results are not displayed.' );
 
-			assert.equal( hasNoResultsMessage, true, 'The "No results" message was not displayed.' );
+		assert.equal( hasNoResultsMessage, true, 'The "No results" message was not displayed.' );
 
-			assert.equal( resultsCount, 6, 'The 6 default Error Results are not displayed.' );
-		}
-	);
+		assert.equal( resultsCount, 6, 'The 6 default Error Results are not displayed.' );
+	} );
 
-	step( 'Clearing search resets to default state', async function () {
+	it( 'Clearing search resets to default state', async function () {
 		await supportSearchComponent.clearSearchField();
 
 		const errorResults = await supportSearchComponent.waitForErrorResultsNotToBePresent();
@@ -153,7 +150,7 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 		assert.equal( resultsCount, 6, 'The 6 Default Results are not displayed.' );
 	} );
 
-	step( 'Does not request API Search Results for empty search queries', async function () {
+	it( 'Does not request API Search Results for empty search queries', async function () {
 		const emptyWhitespaceQuery = '         ';
 
 		await supportSearchComponent.searchFor( emptyWhitespaceQuery );

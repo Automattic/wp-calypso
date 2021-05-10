@@ -32,7 +32,7 @@ describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, function () {
 		driver = await driverManager.startBrowser();
 	} );
 
-	step( 'Login and select a page that is not the My Home page', async function () {
+	it( 'Login and select a page that is not the My Home page', async function () {
 		const loginFlow = new LoginFlow( driver );
 
 		// The "/home" route is the only one where the "FAB" inline help
@@ -44,7 +44,7 @@ describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, function () {
 	} );
 
 	describe( 'Popover UI visibility', function () {
-		step( 'Check help toggle is not visible on My Home page', async function () {
+		it( 'Check help toggle is not visible on My Home page', async function () {
 			const sidebarComponent = await SidebarComponent.Expect( driver );
 			await sidebarComponent.selectMyHome();
 
@@ -53,7 +53,7 @@ describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, function () {
 			await inlineHelpPopoverComponent.waitForToggleNotToBePresent();
 		} );
 
-		step( 'Check help toggle is visible on Settings page', async function () {
+		it( 'Check help toggle is visible on Settings page', async function () {
 			const sidebarComponent = await SidebarComponent.Expect( driver );
 
 			// The "inline help" FAB should not appear on the My Home
@@ -74,17 +74,17 @@ describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, function () {
 	} );
 
 	describe( 'Performing searches', function () {
-		step( 'Open Inline Help popover', async function () {
+		it( 'Open Inline Help popover', async function () {
 			await inlineHelpPopoverComponent.toggleOpen();
 			supportSearchComponent = await SupportSearchComponent.Expect( driver );
 		} );
 
-		step( 'Displays contextual search results by default', async function () {
+		it( 'Displays contextual search results by default', async function () {
 			const resultsCount = await supportSearchComponent.getDefaultResultsCount();
 			assert.equal( resultsCount, 6, 'There are no 6 contextual results displayed' );
 		} );
 
-		step( 'Returns search results for valid search query', async function () {
+		it( 'Returns search results for valid search query', async function () {
 			await supportSearchComponent.searchFor( 'Podcast' );
 			const resultsCount = await supportSearchComponent.getSearchResultsCount();
 
@@ -100,7 +100,7 @@ describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, function () {
 			);
 		} );
 
-		step( 'Resets search UI to default state when search input is cleared ', async function () {
+		it( 'Resets search UI to default state when search input is cleared ', async function () {
 			await supportSearchComponent.clearSearchField();
 
 			const resultsCount = await supportSearchComponent.getDefaultResultsCount();
@@ -108,23 +108,20 @@ describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, function () {
 			assert.equal( resultsCount, 6, 'There are no contextual results displayed' );
 		} );
 
-		step(
-			'Shows "No results" indicator and re-displays contextual results for search queries which return no results',
-			async function () {
-				const invalidSearchQueryReturningNoResults = ';;;ppp;;;';
+		it( 'Shows "No results" indicator and re-displays contextual results for search queries which return no results', async function () {
+			const invalidSearchQueryReturningNoResults = ';;;ppp;;;';
 
-				await supportSearchComponent.searchFor( invalidSearchQueryReturningNoResults );
-				const resultsCount = await supportSearchComponent.getErrorResultsCount();
+			await supportSearchComponent.searchFor( invalidSearchQueryReturningNoResults );
+			const resultsCount = await supportSearchComponent.getErrorResultsCount();
 
-				const hasNoResultsMessage = await supportSearchComponent.hasNoResultsMessage();
+			const hasNoResultsMessage = await supportSearchComponent.hasNoResultsMessage();
 
-				assert.equal( hasNoResultsMessage, true, 'The "No results" message was not displayed.' );
+			assert.equal( hasNoResultsMessage, true, 'The "No results" message was not displayed.' );
 
-				assert.equal( resultsCount, 6, 'There are no contextual results displayed.' );
-			}
-		);
+			assert.equal( resultsCount, 6, 'There are no contextual results displayed.' );
+		} );
 
-		step( 'Does not request search results for empty search queries', async function () {
+		it( 'Does not request search results for empty search queries', async function () {
 			await supportSearchComponent.clearSearchField();
 
 			const emptyWhitespaceQuery = '         ';
@@ -140,7 +137,7 @@ describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, function () {
 			);
 		} );
 
-		step( 'Close Inline Help popover', async function () {
+		it( 'Close Inline Help popover', async function () {
 			await inlineHelpPopoverComponent.toggleClosed();
 			const isPopoverVisible = await inlineHelpPopoverComponent.isPopoverVisible();
 			assert.equal( isPopoverVisible, false, 'Popover was not closed correctly.' );

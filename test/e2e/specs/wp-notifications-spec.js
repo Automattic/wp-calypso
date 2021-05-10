@@ -37,12 +37,12 @@ describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function () 
 	const comment = dataHelper.randomPhrase() + ' TBD';
 	let commentedPostTitle;
 
-	step( 'Can log in as commenting user', async function () {
+	it( 'Can log in as commenting user', async function () {
 		const loginFlow = new LoginFlow( driver, 'commentingUser' );
 		return await loginFlow.login();
 	} );
 
-	step( 'Can view the first post', async function () {
+	it( 'Can view the first post', async function () {
 		const testSiteForInvitationsURL = `https://${ dataHelper.configGet(
 			'testSiteForNotifications'
 		) }`;
@@ -50,17 +50,17 @@ describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function () 
 		return await viewBlogPage.viewFirstPost();
 	} );
 
-	step( 'Can see the first post page and capture the title', async function () {
+	it( 'Can see the first post page and capture the title', async function () {
 		const viewPostPage = await ViewPostPage.Expect( driver );
 		commentedPostTitle = await viewPostPage.postTitle();
 	} );
 
-	step( 'Can leave a comment', async function () {
+	it( 'Can leave a comment', async function () {
 		const viewPostPage = await ViewPostPage.Expect( driver );
 		return await viewPostPage.leaveAComment( comment );
 	} );
 
-	step( 'Can see the comment', async function () {
+	it( 'Can see the comment', async function () {
 		const viewPostPage = await ViewPostPage.Expect( driver );
 		const shown = await viewPostPage.commentEventuallyShown( comment );
 		if ( shown === false ) {
@@ -70,19 +70,19 @@ describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function () 
 		}
 	} );
 
-	step( 'Can log in as notifications user', async function () {
+	it( 'Can log in as notifications user', async function () {
 		const loginFlow = new LoginFlow( driver, 'notificationsUser' );
 		return await loginFlow.login();
 	} );
 
-	step( 'Can open notifications tab with keyboard shortcut', async function () {
+	it( 'Can open notifications tab with keyboard shortcut', async function () {
 		const navBarComponent = await NavBarComponent.Expect( driver );
 		await navBarComponent.openNotificationsShortcut();
 		const present = await navBarComponent.confirmNotificationsOpen();
 		return assert( present, 'Notifications tab is not open' );
 	} );
 
-	step( 'Can see the notification of the comment', async function () {
+	it( 'Can see the notification of the comment', async function () {
 		const expectedContent = `${ commentingUser } commented on ${ commentedPostTitle }\n${ comment }`;
 		const navBarComponent = await NavBarComponent.Expect( driver );
 		await navBarComponent.openNotifications();
@@ -96,14 +96,11 @@ describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function () 
 		);
 	} );
 
-	step(
-		'Can delete the comment (and wait for UNDO grace period so it is actually deleted)',
-		async function () {
-			const notificationsComponent = await NotificationsComponent.Expect( driver );
-			await notificationsComponent.selectCommentByText( comment );
-			await notificationsComponent.trashComment();
-			await notificationsComponent.waitForUndoMessage();
-			return await notificationsComponent.waitForUndoMessageToDisappear();
-		}
-	);
+	it( 'Can delete the comment (and wait for UNDO grace period so it is actually deleted)', async function () {
+		const notificationsComponent = await NotificationsComponent.Expect( driver );
+		await notificationsComponent.selectCommentByText( comment );
+		await notificationsComponent.trashComment();
+		await notificationsComponent.waitForUndoMessage();
+		return await notificationsComponent.waitForUndoMessageToDisappear();
+	} );
 } );
