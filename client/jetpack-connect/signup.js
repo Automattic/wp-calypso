@@ -283,6 +283,7 @@ export class JetpackSignup extends Component {
 					<JetpackConnectSkipUser
 						homeUrl={ authQuery.homeUrl }
 						redirectAfterAuth={ authQuery.redirectAfterAuth }
+						source="signup"
 					/>
 				) }
 

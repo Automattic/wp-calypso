@@ -672,6 +672,7 @@ export class LoginForm extends Component {
 					<JetpackConnectSkipUser
 						homeUrl={ currentQuery?.site }
 						redirectAfterAuth={ currentQuery?.redirect_after_auth }
+						source="login"
 					/>
 				) }
 			</form>
