@@ -62,7 +62,7 @@ class ImportURLStepComponent extends Component {
 
 	handleInputRef = ( el ) => ( this.inputRef = el );
 
-	focusInput = () => this.inputRef.focus();
+	focusInput = () => this.inputRef?.focus();
 
 	setUrlError = ( urlValidationMessage ) =>
 		this.setState( { urlValidationMessage }, this.focusInput );

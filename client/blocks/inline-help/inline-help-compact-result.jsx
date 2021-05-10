@@ -20,7 +20,7 @@ class InlineHelpCompactResult extends Component {
 	};
 
 	onClick = ( event ) => {
-		this.props.onClick( event, this.props.helpLink );
+		this.props.onClick?.( event, this.props.helpLink );
 	};
 
 	render() {
