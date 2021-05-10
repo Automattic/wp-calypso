@@ -75,8 +75,11 @@ export const StatsV2 = ( {
 		i18nCalypso.hasTranslation(
 			'No stats to display yet. Publish or share a post to get some traffic to your site.'
 		)
-			? translate(
-					'No stats to display yet. Publish or share a post to get some traffic to your site.'
+			? preventWidows(
+					translate(
+						'No stats to display yet. Publish or share a post to get some traffic to your site.'
+					),
+					4
 			  )
 			: translate( "No traffic yet, but you'll get there!" );
 
