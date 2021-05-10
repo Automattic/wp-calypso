@@ -25,7 +25,7 @@ import {
 	getImmediateLoginLocale,
 } from 'calypso/state/immediate-login/selectors';
 import { getSiteFragment } from 'calypso/lib/route';
-import { hydrate } from './web-util.js';
+import { render } from './web-util.js';
 
 /**
  * Re-export
@@ -87,7 +87,7 @@ export const makeLayout = makeLayoutMiddleware( ProviderWrappedLayout );
  * divs.
  */
 export function clientRouter( route, ...middlewares ) {
-	page( route, ...middlewares, hydrate );
+	page( route, ...middlewares, render );
 }
 
 export function redirectLoggedOut( context, next ) {
