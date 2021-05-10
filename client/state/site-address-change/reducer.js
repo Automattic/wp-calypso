@@ -7,7 +7,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	SITE_ADDRESS_AVAILABILITY_REQUEST,
 	SITE_ADDRESS_AVAILABILITY_SUCCESS,
@@ -27,7 +27,7 @@ import {
  * @param  {object} action Action payload
  * @returns {object}        Updated rename request state
  */
-export const requesting = withoutPersistence( ( state = {}, action ) => {
+export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_ADDRESS_CHANGE_REQUEST: {
 			const { siteId } = action;
@@ -52,7 +52,7 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated site-rename state after an action has been dispatched.
@@ -62,7 +62,7 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action 	Action object
  * @returns {object} 		Updated rename request state
  */
-export const status = withoutPersistence( ( state = {}, action ) => {
+export const status = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_ADDRESS_CHANGE_REQUEST: {
 			const { siteId } = action;
@@ -100,9 +100,9 @@ export const status = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export const validation = withoutPersistence( ( state = {}, action ) => {
+export const validation = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_ADDRESS_AVAILABILITY_REQUEST: {
 			const { siteId } = action;
@@ -161,7 +161,7 @@ export const validation = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 const combinedReducer = combineReducers( {
 	validation,

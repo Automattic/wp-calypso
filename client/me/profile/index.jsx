@@ -17,6 +17,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import Main from 'calypso/components/main';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import ProfileLinks from 'calypso/me/profile-links';
@@ -43,6 +44,10 @@ class Profile extends React.Component {
 		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
 	}
 
+	toggleGravatarHidden = ( isHidden ) => {
+		this.props.setUserSetting( 'gravatar_profile_hidden', isHidden );
+	};
+
 	render() {
 		const gravatarProfileLink = 'https://gravatar.com/' + this.props.getSetting( 'user_login' );
 
@@ -59,33 +64,6 @@ class Profile extends React.Component {
 
 				<SectionHeader label={ this.props.translate( 'Profile' ) } />
 				<Card className="profile__settings">
-					<p>
-						{ this.props.translate(
-							'This information will be displayed publicly on {{profilelink}}your profile{{/profilelink}} and in ' +
-								'{{hovercardslink}}Gravatar Hovercards{{/hovercardslink}}.',
-							{
-								components: {
-									profilelink: (
-										<a
-											onClick={ this.getClickHandler( 'My Profile Link' ) }
-											href={ gravatarProfileLink }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-									hovercardslink: (
-										<a
-											onClick={ this.getClickHandler( 'Gravatar Hovercards Link' ) }
-											href={ localizeUrl( 'https://wordpress.com/support/gravatar-hovercards/' ) }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							}
-						) }
-					</p>
-
 					<EditGravatar />
 
 					<form onSubmit={ this.props.submitForm } onChange={ this.props.markChanged }>
@@ -137,6 +115,33 @@ class Profile extends React.Component {
 								onFocus={ this.getFocusHandler( 'About Me Field' ) }
 								value={ this.props.getSetting( 'description' ) }
 							/>
+						</FormFieldset>
+
+						<FormFieldset>
+							<FormToggle
+								checked={ this.props.getSetting( 'gravatar_profile_hidden' ) }
+								onChange={ this.toggleGravatarHidden }
+							>
+								{ this.props.translate(
+									'{{spanLead}}Hide my Gravatar profile.{{/spanLead}} {{spanExtra}}This will prevent your {{profileLink}}Gravatar profile{{/profileLink}} and photo from appearing on any site. It may take some time for the changes to take effect. Gravatar profiles can be deleted at {{deleteLink}}Gravatar.com{{/deleteLink}}.{{/spanExtra}}',
+									{
+										components: {
+											spanLead: <strong className="profile__link-destination-label-lead" />,
+											spanExtra: <span className="profile__link-destination-label-extra" />,
+											profileLink: (
+												<a href={ gravatarProfileLink } target="_blank" rel="noreferrer" />
+											),
+											deleteLink: (
+												<a
+													href="https://gravatar.com/account/disable/"
+													target="_blank"
+													rel="noreferrer"
+												/>
+											),
+										},
+									}
+								) }
+							</FormToggle>
 						</FormFieldset>
 
 						<p className="profile__submit-button-wrapper">

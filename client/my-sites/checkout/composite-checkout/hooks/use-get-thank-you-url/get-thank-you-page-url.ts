@@ -55,10 +55,8 @@ export default function getThankYouPageUrl( {
 	getUrlFromCookie = retrieveSignupDestination,
 	saveUrlToCookie = persistSignupDestination,
 	isEligibleForSignupDestinationResult,
-	shouldShowOneClickTreatment,
 	hideNudge,
 	isInEditor,
-	previousRoute,
 }: {
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
@@ -73,10 +71,8 @@ export default function getThankYouPageUrl( {
 	getUrlFromCookie?: GetUrlFromCookie;
 	saveUrlToCookie?: SaveUrlToCookie;
 	isEligibleForSignupDestinationResult?: boolean;
-	shouldShowOneClickTreatment?: boolean;
 	hideNudge?: boolean;
 	isInEditor?: boolean;
-	previousRoute?: string;
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -188,8 +184,6 @@ export default function getThankYouPageUrl( {
 		cart,
 		siteSlug,
 		hideNudge: Boolean( hideNudge ),
-		shouldShowOneClickTreatment,
-		previousRoute,
 	} );
 	if ( redirectPathForConciergeUpsell ) {
 		debug( 'redirect for concierge exists, so returning', redirectPathForConciergeUpsell );
@@ -352,16 +346,12 @@ function getRedirectUrlForConciergeNudge( {
 	cart,
 	siteSlug,
 	hideNudge,
-	shouldShowOneClickTreatment,
-	previousRoute,
 }: {
 	pendingOrReceiptId: string;
 	orderId: number | undefined;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	hideNudge: boolean;
-	shouldShowOneClickTreatment: boolean | undefined;
-	previousRoute: string | undefined;
 } ): string | undefined {
 	if ( hideNudge ) {
 		return;
@@ -372,7 +362,6 @@ function getRedirectUrlForConciergeNudge( {
 	if (
 		config.isEnabled( 'upsell/concierge-session' ) &&
 		cart &&
-		! previousRoute?.includes( '/offer-plan-upgrade/premium' ) &&
 		! hasConciergeSession( cart ) &&
 		! hasJetpackPlan( cart ) &&
 		( hasBloggerPlan( cart ) ||
@@ -397,13 +386,6 @@ function getRedirectUrlForConciergeNudge( {
 		// being offered and so sold, to be inline with HE availability.
 		// To dial back, uncomment the condition below and modify the test config.
 		if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
-			if ( hasPersonalPlan( cart ) ) {
-				if ( shouldShowOneClickTreatment ) {
-					const upgradeItem = hasMonthlyCartItem( cart ) ? 'premium-monthly' : 'premium';
-					return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ pendingOrReceiptId }`;
-				}
-			}
-
 			return getQuickstartUrl( { pendingOrReceiptId, siteSlug, orderId } );
 		}
 	}

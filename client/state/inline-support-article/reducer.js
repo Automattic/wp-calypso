@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { withStorageKey } from '@automattic/state-utils';
-import { withoutPersistence } from 'calypso/state/utils';
+
 import {
 	SUPPORT_ARTICLE_DIALOG_OPEN,
 	SUPPORT_ARTICLE_DIALOG_CLOSE,
@@ -10,35 +10,33 @@ import {
 
 export default withStorageKey(
 	'inlineSupportArticle',
-	withoutPersistence(
-		(
-			state = {
-				postId: null,
-				postUrl: null,
-				isVisible: false,
-			},
-			action
-		) => {
-			switch ( action.type ) {
-				case SUPPORT_ARTICLE_DIALOG_OPEN: {
-					const { postId, postUrl = null, actionLabel = null, actionUrl = null } = action;
+	(
+		state = {
+			postId: null,
+			postUrl: null,
+			isVisible: false,
+		},
+		action
+	) => {
+		switch ( action.type ) {
+			case SUPPORT_ARTICLE_DIALOG_OPEN: {
+				const { postId, postUrl = null, actionLabel = null, actionUrl = null } = action;
 
-					return {
-						postUrl,
-						postId,
-						isVisible: true,
-						actionLabel,
-						actionUrl,
-					};
-				}
-				case SUPPORT_ARTICLE_DIALOG_CLOSE:
-					return {
-						...state,
-						isVisible: false,
-					};
+				return {
+					postUrl,
+					postId,
+					isVisible: true,
+					actionLabel,
+					actionUrl,
+				};
 			}
-
-			return state;
+			case SUPPORT_ARTICLE_DIALOG_CLOSE:
+				return {
+					...state,
+					isVisible: false,
+				};
 		}
-	)
+
+		return state;
+	}
 );

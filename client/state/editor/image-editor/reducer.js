@@ -14,7 +14,7 @@ import {
 	IMAGE_EDITOR_STATE_RESET_ALL,
 	IMAGE_EDITOR_IMAGE_HAS_LOADED,
 } from 'calypso/state/action-types';
-import { combineReducers, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import { AspectRatios } from './constants';
 
 export const defaultTransform = {
@@ -64,7 +64,7 @@ export function hasChanges( state = false, action ) {
 	return state;
 }
 
-export const originalAspectRatio = withoutPersistence( ( state = null, action ) => {
+export const originalAspectRatio = ( state = null, action ) => {
 	switch ( action.type ) {
 		case IMAGE_EDITOR_IMAGE_HAS_LOADED: {
 			const { width, height } = action;
@@ -75,7 +75,7 @@ export const originalAspectRatio = withoutPersistence( ( state = null, action ) 
 	}
 
 	return state;
-} );
+};
 
 export function imageIsLoading( state = true, action ) {
 	switch ( action.type ) {

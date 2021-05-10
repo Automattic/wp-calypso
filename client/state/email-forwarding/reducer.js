@@ -7,12 +7,7 @@ import { orderBy } from 'lodash';
  * Internal dependencies
  */
 import { withStorageKey } from '@automattic/state-utils';
-import {
-	combineReducers,
-	keyedReducer,
-	withoutPersistence,
-	withSchemaValidation,
-} from 'calypso/state/utils';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 import {
 	EMAIL_FORWARDING_REQUEST,
 	EMAIL_FORWARDING_REQUEST_SUCCESS,
@@ -29,7 +24,7 @@ import {
 } from 'calypso/state/action-types';
 import { forwardsSchema, mxSchema, typeSchema } from './schema';
 
-export const requestingReducer = withoutPersistence( ( state = false, action ) => {
+export const requestingReducer = ( state = false, action ) => {
 	switch ( action.type ) {
 		case EMAIL_FORWARDING_REQUEST:
 			return true;
@@ -40,7 +35,7 @@ export const requestingReducer = withoutPersistence( ( state = false, action ) =
 	}
 
 	return state;
-} );
+};
 
 const handleCreateRequest = ( forwards, { domainName, mailbox, destination } ) => {
 	return orderBy(
@@ -164,7 +159,7 @@ export const forwardsReducer = withSchemaValidation( forwardsSchema, ( state = n
 	return state;
 } );
 
-export const requestErrorReducer = withoutPersistence( ( state = false, action ) => {
+export const requestErrorReducer = ( state = false, action ) => {
 	switch ( action.type ) {
 		case EMAIL_FORWARDING_REQUEST:
 			return false;
@@ -179,7 +174,7 @@ export const requestErrorReducer = withoutPersistence( ( state = false, action )
 	}
 
 	return state;
-} );
+};
 
 const combinedReducer = keyedReducer(
 	'domainName',

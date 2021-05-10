@@ -3,7 +3,7 @@
  */
 
 import striptags from 'striptags';
-import { trim, toArray, forEach } from 'lodash';
+import { trim, forEach } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -70,12 +70,12 @@ export function formatExcerpt( content ) {
 	dom.id = '__better_excerpt__';
 
 	// strip any p's that are empty
-	toArray( dom.querySelectorAll( 'p' ) )
+	Array.from( dom.querySelectorAll( 'p' ) )
 		.filter( ( element ) => trim( element.textContent ).length === 0 )
 		.forEach( removeElement );
 
 	// remove styles for all p's that remain
-	toArray( dom.querySelectorAll( 'p' ) ).forEach( ( element ) => {
+	Array.from( dom.querySelectorAll( 'p' ) ).forEach( ( element ) => {
 		element.removeAttribute( 'style' );
 		element.removeAttribute( 'align' );
 	} );

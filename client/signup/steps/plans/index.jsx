@@ -283,10 +283,8 @@ export class PlansStep extends Component {
 	}
 
 	render() {
-		const shouldShowPlansRedesign = isDesktop();
 		const classes = classNames( 'plans plans-step', {
 			'in-vertically-scrolled-plans-experiment': this.props.isInVerticalScrollingPlansExperiment,
-			'in-plans-redesign-experiment': shouldShowPlansRedesign,
 			'has-no-sidebar': true,
 			'is-wide-layout': true,
 		} );

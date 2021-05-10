@@ -35,7 +35,6 @@ import {
 	setSignupCheckoutPageUnloaded,
 } from 'calypso/signup/storageUtils';
 import UpsellNudge, {
-	PREMIUM_PLAN_UPGRADE_UPSELL,
 	BUSINESS_PLAN_UPGRADE_UPSELL,
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
@@ -230,10 +229,6 @@ export function upsellNudge( context, next ) {
 				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
 				break;
 
-			case 'premium':
-				upsellType = PREMIUM_PLAN_UPGRADE_UPSELL;
-				break;
-
 			default:
 				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
 		}
@@ -279,6 +274,7 @@ function getRememberedCoupon() {
 	const ALLOWED_COUPON_CODE_LIST = [
 		'ALT',
 		'FBSAVE15',
+		'FBSAVE25',
 		'FIVERR',
 		'FLASHFB20OFF',
 		'FLASHFB50OFF',
