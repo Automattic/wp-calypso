@@ -21,12 +21,11 @@ export default async function submitWpcomTransaction(
 		( transactionOptions && transactionOptions.createUserAndSiteBeforeTransaction ) ||
 		payload.cart.is_jetpack_checkout
 	) {
-		const extraArgs = {
-			...( payload.cart.is_jetpack_userless_checkout
-				? { is_jetpack_userless_checkout: true }
-				: {} ),
-		};
-		return createAccount( extraArgs ).then( ( response ) => {
+		const createAccountOptions = payload.cart.is_jetpack_checkout
+			? { signupFlowName: 'jetpack-userless-checkout' }
+			: { signupFlowName: 'onboarding-registrationless' };
+
+		return createAccount( createAccountOptions ).then( ( response ) => {
 			const siteIdFromResponse = response?.blog_details?.blogid;
 
 			// If the account is already created(as happens when we are reprocessing after a transaction error), then
