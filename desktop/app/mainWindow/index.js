@@ -132,4 +132,20 @@ module.exports = function () {
 	if ( appInstance.isSingleInstance() ) {
 		app.on( 'ready', showAppWindow );
 	}
+
+	app.on( 'will-finish-launching', function () {
+		app.on( 'open-url', function ( event, url ) {
+			log.info( event, url );
+			event.preventDefault();
+			if ( url.startsWith( 'wordpress://auth' ) ) {
+				const redirectUrl = url.split( '?redirect=' )[ 1 ];
+				url.mainWindow.loadUrL( redirectUrl );
+			}
+		} );
+	} );
+
+	if ( ! app.isDefaultProtocolClient( 'wordpress' ) ) {
+		// Define custom protocol handler. This allows for deeplinking into the app from wordpress://
+		app.setAsDefaultProtocolClient( 'wordpress' );
+	}
 };
