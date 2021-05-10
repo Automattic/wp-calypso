@@ -296,7 +296,6 @@ export class PlanFeaturesComparison extends Component {
 
 PlanFeaturesComparison.propTypes = {
 	basePlansPath: PropTypes.string,
-	displayJetpackPlans: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	// either you specify the plans prop or isPlaceholder prop
@@ -311,7 +310,6 @@ PlanFeaturesComparison.propTypes = {
 
 PlanFeaturesComparison.defaultProps = {
 	basePlansPath: null,
-	displayJetpackPlans: false,
 	isInSignup: true,
 	siteId: null,
 	onUpgradeClick: noop,
