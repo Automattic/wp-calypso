@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-
-import { uniqueId } from 'lodash';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
@@ -12,7 +11,7 @@ import { WOOCOMMERCE_API_REQUEST } from 'woocommerce/state/action-types';
 function _createRequestAction( method, siteId, path, body, onSuccessAction, onFailureAction ) {
 	const action = {
 		type: WOOCOMMERCE_API_REQUEST,
-		requestId: uniqueId( 'request_' ),
+		requestId: 'request_' + uuid(),
 		method,
 		siteId,
 		path,
