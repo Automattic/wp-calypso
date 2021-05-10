@@ -69,17 +69,20 @@ describe( 'actions', () => {
 
 			return request
 				.then( () => {
+					// eslint-disable-next-line jest/no-conditional-expect
 					expect( dispatchSpy ).to.have.been.calledWith( {
 						type: READER_THUMBNAIL_REQUEST_SUCCESS,
 						embedUrl: successfulEmbedUrl,
 					} );
 
+					// eslint-disable-next-line jest/no-conditional-expect
 					expect( dispatchSpy ).to.have.been.calledWith( {
 						type: READER_THUMBNAIL_RECEIVE,
 						embedUrl: successfulEmbedUrl,
 						thumbnailUrl,
 					} );
 
+					// eslint-disable-next-line jest/no-conditional-expect
 					expect( dispatchSpy ).to.have.been.calledThrice;
 				} )
 				.catch( ( err ) => {
@@ -110,11 +113,13 @@ describe( 'actions', () => {
 
 			return request
 				.then( () => {
+					// eslint-disable-next-line jest/no-conditional-expect
 					expect( dispatchSpy ).to.have.been.calledWithMatch( {
 						type: READER_THUMBNAIL_REQUEST_FAILURE,
 						embedUrl: failureEmbedUrl,
 					} );
 
+					// eslint-disable-next-line jest/no-conditional-expect
 					expect( dispatchSpy ).to.have.been.calledTwice;
 				} )
 				.catch( ( err ) => {

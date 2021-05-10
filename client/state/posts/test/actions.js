@@ -416,8 +416,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch failure action when saving new post fails', () => {
+			expect.hasAssertions();
 			return new Promise( ( done ) => {
 				savePost( 77203074, null, { title: 'Hello World' } )( dispatch ).catch( () => {
+					// eslint-disable-next-line jest/no-conditional-expect
 					expect( dispatch ).toHaveBeenCalledWith( {
 						type: POST_SAVE_FAILURE,
 						siteId: 77203074,
@@ -430,8 +432,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch failure action when saving existing post fails', () => {
+			expect.hasAssertions();
 			return new Promise( ( done ) => {
 				savePost( 77203074, 102, { title: 'Hello World' } )( dispatch ).catch( () => {
+					// eslint-disable-next-line jest/no-conditional-expect
 					expect( dispatch ).toHaveBeenCalledWith( {
 						type: POST_SAVE_FAILURE,
 						siteId: 77203074,
@@ -496,8 +500,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch failure action when deleting post fails', () => {
+			expect.hasAssertions();
 			return new Promise( ( done ) => {
 				deletePost( 77203074, 102 )( dispatch, getState ).catch( () => {
+					// eslint-disable-next-line jest/no-conditional-expect
 					expect( dispatch ).toHaveBeenCalledWith( {
 						type: POST_DELETE_FAILURE,
 						siteId: 77203074,
@@ -556,8 +562,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch failure action when restoring post fails', () => {
+			expect.hasAssertions();
 			return new Promise( ( done ) => {
 				restorePost( 77203074, 102 )( dispatch, getState ).catch( () => {
+					// eslint-disable-next-line jest/no-conditional-expect
 					expect( dispatch ).toHaveBeenCalledWith( {
 						type: POST_RESTORE_FAILURE,
 						siteId: 77203074,

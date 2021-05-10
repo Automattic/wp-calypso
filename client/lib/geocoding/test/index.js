@@ -29,6 +29,7 @@ describe( 'geocoding', () => {
 				return new Promise( ( done ) => {
 					geocode( TEST_ADDRESS )
 						.then( ( results ) => {
+							// eslint-disable-next-line jest/no-conditional-expect
 							expect( results ).to.eql( [ 1, 2, 3 ] );
 							done();
 						} )
@@ -48,6 +49,7 @@ describe( 'geocoding', () => {
 				return new Promise( ( done ) => {
 					reverseGeocode( TEST_LATITUDE, TEST_LONGITUDE )
 						.then( ( results ) => {
+							// eslint-disable-next-line jest/no-conditional-expect
 							expect( results ).to.eql( [ 1, 2, 3 ] );
 							done();
 						} )

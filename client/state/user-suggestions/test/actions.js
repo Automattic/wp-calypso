@@ -57,6 +57,7 @@ describe( 'actions', () => {
 
 			return request
 				.then( () => {
+					/* eslint-disable jest/no-conditional-expect */
 					expect( dispatchSpy ).to.have.been.calledWith( {
 						type: USER_SUGGESTIONS_REQUEST_SUCCESS,
 						data: sampleSuccessResponse,
@@ -68,6 +69,7 @@ describe( 'actions', () => {
 						suggestions: sampleSuccessResponse.suggestions,
 						siteId,
 					} );
+					/* eslint-enable jest/no-conditional-expect */
 				} )
 				.catch( ( err ) => {
 					assert.fail( err, undefined, 'errback should not have been called' );

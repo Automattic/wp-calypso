@@ -612,8 +612,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should not dispatch any action on Failure', () => {
+			expect.hasAssertions();
 			const spy = jest.fn();
 			return updateTerm( siteId, taxonomyName, 10, 'toto', { name: 'ribs' } )( spy ).catch( () => {
+				// eslint-disable-next-line jest/no-conditional-expect
 				expect( spy ).not.toHaveBeenCalled();
 			} );
 		} );

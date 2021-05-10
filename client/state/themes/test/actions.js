@@ -893,6 +893,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch failure on error', () => {
 			return initiateThemeTransfer( siteId )( spy ).catch( () => {
+				/* eslint-disable jest/no-conditional-expect */
 				expect( spy ).to.have.been.calledOnce;
 
 				expect( spy ).to.have.been.calledWithMatch( {
@@ -900,6 +901,7 @@ describe( 'actions', () => {
 					siteId,
 				} );
 				expect( spy ).to.have.been.calledWith( sinon.match.has( 'error', sinon.match.truthy ) );
+				/* eslint-enable jest/no-conditional-expect */
 			} );
 		} );
 	} );

@@ -117,6 +117,7 @@ describe( 'actions', () => {
 
 		test( 'should have dispatched receive with an empty array', () => {
 			return requestPromise.catch( () => {
+				// eslint-disable-next-line jest/no-conditional-expect
 				expect( fakeDispatch ).to.have.been.calledWith( {
 					type: READER_RELATED_POSTS_RECEIVE,
 					payload: {
@@ -131,6 +132,7 @@ describe( 'actions', () => {
 
 		test( 'should fail the promise and dispatch failure', () => {
 			return requestPromise.catch( () => {
+				// eslint-disable-next-line jest/no-conditional-expect
 				expect( fakeDispatch ).to.have.been.calledWith( {
 					type: READER_RELATED_POSTS_REQUEST_FAILURE,
 					payload: {

@@ -80,15 +80,18 @@ describe( 'connection', () => {
 			} );
 
 			test( 'unauthorized event', () => {
+				expect.hasAssertions();
 				socket.close = jest.fn();
 				expect.assertions( 3 );
 				socket.emit( 'unauthorized' );
 				return openSocket.catch( () => {
+					/* eslint-disable jest/no-conditional-expect */
 					expect( dispatch ).toHaveBeenCalledTimes( 1 );
 					expect( dispatch ).toHaveBeenCalledWith(
 						receiveUnauthorized( 'User is not authorized' )
 					);
 					expect( socket.close ).toHaveBeenCalled();
+					/* eslint-enable jest/no-conditional-expect */
 				} );
 			} );
 
@@ -263,16 +266,19 @@ describe( 'connection', () => {
 
 		describe( 'connection.request should emit a SocketIO event', () => {
 			test( 'and dispatch callbackTimeout if request ran out of time', () => {
+				expect.hasAssertions();
 				socket.emit( 'init' ); // resolve internal openSocket promise
 
 				const action = requestTranscript( null );
 				socket.emit = jest.fn();
 				return connection.request( action, 100 ).catch( ( error ) => {
+					/* eslint-disable jest/no-conditional-expect */
 					expect( socket.emit ).toHaveBeenCalled();
 					expect( socket.emit.mock.calls[ 0 ][ 0 ] ).toBe( action.event );
 					expect( socket.emit.mock.calls[ 0 ][ 1 ] ).toBe( action.payload );
 					expect( dispatch ).toHaveBeenCalledWith( receiveTranscriptTimeout() );
 					expect( error.message ).toBe( 'timeout' );
+					/* eslint-enable jest/no-conditional-expect */
 				} );
 			} );
 
@@ -300,10 +306,13 @@ describe( 'connection', () => {
 					callback( 'no data', null ); // fake server responded with error
 				} );
 				return connection.request( action, 100 ).catch( ( error ) => {
+					expect.hasAssertions();
+					/* eslint-disable jest/no-conditional-expect */
 					expect( error.message ).toBe( 'no data' );
 					expect( dispatch ).toHaveBeenCalledWith(
 						receiveError( action.event + ' request failed: ' + error.message )
 					);
+					/* eslint-enable jest/no-conditional-expect */
 				} );
 			} );
 		} );
@@ -323,9 +332,11 @@ describe( 'connection', () => {
 		} );
 
 		test( 'connection.send should dispatch receiveError action', () => {
+			expect.hasAssertions();
 			socket.emit = jest.fn();
 			const action = sendTyping( 'content' );
 			return connection.send( action ).catch( ( e ) => {
+				// eslint-disable-next-line jest/no-conditional-expect
 				expect( dispatch ).toHaveBeenCalledWith(
 					receiveError( 'failed to send ' + action.event + ': ' + e )
 				);
@@ -333,9 +344,11 @@ describe( 'connection', () => {
 		} );
 
 		test( 'connection.request should dispatch receiveError action', () => {
+			expect.hasAssertions();
 			socket.emit = jest.fn();
 			const action = requestTranscript( null );
 			return connection.request( action, 100 ).catch( ( e ) => {
+				// eslint-disable-next-line jest/no-conditional-expect
 				expect( dispatch ).toHaveBeenCalledWith(
 					receiveError( 'failed to send ' + action.event + ': ' + e )
 				);

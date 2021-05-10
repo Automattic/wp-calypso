@@ -93,6 +93,7 @@ describe( 'actions', () => {
 			return new Promise( ( done ) => {
 				advancedSettingsFetch( 100658273 )( spy, getState )
 					.then( () => {
+						// eslint-disable-next-line jest/no-conditional-expect
 						expect( spy ).to.have.been.calledWithMatch( {
 							type: EXPORT_ADVANCED_SETTINGS_RECEIVE,
 							siteId: 100658273,
@@ -109,6 +110,7 @@ describe( 'actions', () => {
 			return new Promise( ( done ) => {
 				advancedSettingsFetch( 0 )( spy, getState )
 					.then( () => {
+						// eslint-disable-next-line jest/no-conditional-expect
 						expect( spy ).to.have.been.calledWithMatch( {
 							type: EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
 							siteId: 0,
@@ -161,6 +163,7 @@ describe( 'actions', () => {
 			return new Promise( ( done ) => {
 				startExport( 2916284, false )( spy, getStateCustomSettings )
 					.then( () => {
+						// eslint-disable-next-line jest/no-conditional-expect
 						expect( spy ).to.have.been.calledWith( {
 							type: EXPORT_STARTED,
 							siteId: 2916284,
@@ -176,11 +179,13 @@ describe( 'actions', () => {
 			return new Promise( ( done ) => {
 				startExport( 2916284 )( spy, getState )
 					.then( () => {
+						/* eslint-disable jest/no-conditional-expect */
 						expect( spy ).to.have.been.calledTwice;
 						expect( spy ).to.have.been.calledWith( {
 							type: EXPORT_STARTED,
 							siteId: 2916284,
 						} );
+						/* eslint-enable jest/no-conditional-expect */
 
 						done();
 					} )
@@ -192,11 +197,13 @@ describe( 'actions', () => {
 			return new Promise( ( done ) => {
 				startExport( 77203074 )( spy, getState )
 					.then( () => {
+						/* eslint-disable jest/no-conditional-expect */
 						expect( spy ).to.have.been.calledTwice;
 						expect( spy ).to.have.been.calledWithMatch( {
 							type: EXPORT_FAILURE,
 							siteId: 77203074,
 						} );
+						/* eslint-enable jest/no-conditional-expect */
 
 						done();
 					} )

@@ -57,12 +57,14 @@ describe( 'actions', () => {
 
 			return request
 				.then( () => {
+					// eslint-disable-next-line jest/no-conditional-expect
 					expect( dispatchSpy ).to.have.been.calledWith( {
 						type: READER_TAG_IMAGES_REQUEST_SUCCESS,
 						data: sampleSuccessResponse,
 						tag: 'banana',
 					} );
 
+					// eslint-disable-next-line jest/no-conditional-expect
 					expect( dispatchSpy ).to.have.been.calledWith( {
 						type: READER_TAG_IMAGES_RECEIVE,
 						images: sampleSuccessResponse.images,

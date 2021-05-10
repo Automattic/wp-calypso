@@ -343,6 +343,7 @@ describe( 'actions', () => {
 			);
 			// updatePlugin returns a rejected promise here
 			return response.catch( () => {
+				// eslint-disable-next-line jest/no-conditional-expect
 				expect( spy.callCount ).to.eql( 0 );
 			} );
 		} );
@@ -569,6 +570,7 @@ describe( 'actions', () => {
 		test( 'should dispatch fail action when request fails', () => {
 			const response = installPlugin( site.ID, { slug: 'fake', id: 'fake/fake' } )( spy, getState );
 			return response.catch( () => {
+				// eslint-disable-next-line jest/no-conditional-expect
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_INSTALL_REQUEST_FAILURE,
 					action: INSTALL_PLUGIN,
@@ -640,6 +642,7 @@ describe( 'actions', () => {
 		test( 'should dispatch fail action when request fails', () => {
 			const response = removePlugin( site.ID, { slug: 'fake', id: 'fake/fake' } )( spy, getState );
 			return response.catch( () => {
+				// eslint-disable-next-line jest/no-conditional-expect
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_REMOVE_REQUEST_FAILURE,
 					action: REMOVE_PLUGIN,

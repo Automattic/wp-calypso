@@ -91,7 +91,9 @@ describe( 'index', () => {
 					directly
 						.initialize()
 						.catch( ( e ) => {
+							// eslint-disable-next-line jest/no-conditional-expect
 							expect( e ).to.be.an.instanceof( Error );
+							// eslint-disable-next-line jest/no-conditional-expect
 							expect( e.message ).to.contain( error.src );
 						} )
 						.then( () => done() );
@@ -150,10 +152,12 @@ describe( 'index', () => {
 					directly
 						.initialize()
 						.catch( ( e ) => {
+							/* eslint-disable jest/no-conditional-expect */
 							expect( e ).to.be.an.instanceof( Error );
 							expect( e.message ).to.equal(
 								'Directly Real-Time Messaging is not available at this time.'
 							);
+							/* eslint-enable jest/no-conditional-expect */
 						} )
 						.then( () => done() );
 				} );
@@ -164,6 +168,7 @@ describe( 'index', () => {
 					directly
 						.initialize()
 						.catch( () => {
+							// eslint-disable-next-line jest/no-conditional-expect
 							expect( loadScript.loadScript ).not.to.have.been.called;
 						} )
 						.then( () => done() );

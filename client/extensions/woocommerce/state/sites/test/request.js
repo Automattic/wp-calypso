@@ -33,6 +33,7 @@ describe( 'request', () => {
 			return request( siteId )
 				.get( 'bad_placeholder_endpoint' )
 				.catch( ( error ) => {
+					// eslint-disable-next-line jest/no-conditional-expect
 					expect( error.statusCode ).to.equal( 404 );
 				} );
 		} );
@@ -65,6 +66,7 @@ describe( 'request', () => {
 			return request( siteId )
 				.post( 'bad_placeholder_endpoint' )
 				.catch( ( error ) => {
+					// eslint-disable-next-line jest/no-conditional-expect
 					expect( error.statusCode ).to.equal( 404 );
 				} );
 		} );
@@ -97,6 +99,7 @@ describe( 'request', () => {
 			return request( siteId )
 				.put( 'bad_placeholder_endpoint' )
 				.catch( ( error ) => {
+					// eslint-disable-next-line jest/no-conditional-expect
 					expect( error.statusCode ).to.equal( 404 );
 				} );
 		} );
@@ -127,6 +130,7 @@ describe( 'request', () => {
 			return request( siteId )
 				.del( 'bad_placeholder_endpoint' )
 				.catch( ( error ) => {
+					// eslint-disable-next-line jest/no-conditional-expect
 					expect( error.statusCode ).to.equal( 404 );
 				} );
 		} );
