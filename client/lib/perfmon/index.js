@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { each, remove } from 'lodash';
+import { remove } from 'lodash';
 import page from 'page';
 
 /**
@@ -152,7 +152,7 @@ function recordPlaceholders( mutation ) {
 		return;
 	}
 
-	each( nodes, function ( node ) {
+	nodes.forEach( function ( node ) {
 		if ( isPlaceholder( node ) ) {
 			recordPlaceholderNode( node );
 		}
@@ -161,7 +161,7 @@ function recordPlaceholders( mutation ) {
 		// only fires for the top element of an added subtree
 		if ( node.querySelectorAll ) {
 			// funky syntax because NodeList walks like an array but doesn't quack like one
-			each( node.querySelectorAll( PLACEHOLDER_MATCHER ), recordPlaceholderNode );
+			Array.from( node.querySelectorAll( PLACEHOLDER_MATCHER ) ).forEach( recordPlaceholderNode );
 		}
 	} );
 }
