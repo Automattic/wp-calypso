@@ -10,5 +10,5 @@ import { v4 as uuid } from 'uuid';
  * @param {string} moreSpecificPrefix can be used to further specify the prefix
  */
 export function createTransientMediaId( moreSpecificPrefix = '' ) {
-	return `media-${ moreSpecificPrefix }${ uuid().replace( /-/g, '' ) }`;
+	return `media-${ moreSpecificPrefix }${ uuid() }`;
 }

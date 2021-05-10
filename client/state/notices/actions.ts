@@ -30,7 +30,7 @@ export const createNotice: NoticeActionCreatorWithStatus = (
 	return {
 		type: NOTICE_CREATE,
 		notice: Object.assign( { showDismiss: true }, noticeOptions, {
-			noticeId: id || uuid().replace( /-/g, '' ),
+			noticeId: id || uuid(),
 			status,
 			text,
 		} ),
