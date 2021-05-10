@@ -8,7 +8,6 @@ import page from 'page';
  * Internal dependencies
  */
 import OAuthLogin from './login';
-import ConnectComponent from './connect';
 import { getToken } from 'calypso/lib/oauth-token';
 import config from '@automattic/calypso-config';
 import store from 'store';
@@ -18,54 +17,26 @@ import store from 'store';
  */
 import './style.scss';
 
-export default {
-	oauthLogin: function ( context, next ) {
-		if ( ! config.isEnabled( 'oauth' ) || getToken() ) {
-			page( '/' );
-			return;
-		}
+export function oauthLogin( context, next ) {
+	if ( ! config.isEnabled( 'oauth' ) || getToken() ) {
+		page( '/' );
+		return;
+	}
 
-		context.primary = <OAuthLogin />;
-		next();
-	},
+	context.primary = <OAuthLogin />;
+	next();
+}
 
-	// This controller renders the API authentication screen
-	// for granting the app access to the user data using oauth
-	authorize: function ( context, next ) {
-		let authUrl;
+// Store token into local storage
+export function storeToken( context ) {
+	if ( context.hash?.access_token ) {
+		store.set( 'wpcom_token', context.hash.access_token );
+	}
 
-		if ( config( 'oauth_client_id' ) ) {
-			// TODO: flags=oauth should be present only in dev-like environments
-			// where we need to preserve the flag on full reloads and redirects
-			const redirectUri = `${ window.location.origin }/api/oauth/token?flags=oauth`;
+	if ( context.hash?.expires_in ) {
+		store.set( 'wpcom_token_expires_in', context.hash.expires_in );
+	}
 
-			const params = new URLSearchParams( {
-				response_type: 'token',
-				client_id: config( 'oauth_client_id' ),
-				redirect_uri: redirectUri,
-				scope: 'global',
-				blog_id: 0,
-			} );
-
-			authUrl = `https://public-api.wordpress.com/oauth2/authorize?${ params.toString() }`;
-		}
-
-		context.primary = <ConnectComponent authUrl={ authUrl } />;
-		next();
-	},
-
-	// Store token into local storage
-	getToken: function ( context ) {
-		if ( context.hash && context.hash.access_token ) {
-			store.set( 'wpcom_token', context.hash.access_token );
-		}
-
-		if ( context.hash && context.hash.expires_in ) {
-			store.set( 'wpcom_token_expires_in', context.hash.expires_in );
-		}
-
-		// TODO: flags=oauth should be present only in dev-like environments
-		// where we need to preserve the flag on full reloads and redirects
-		document.location.replace( '/?flags=oauth' );
-	},
-};
+	const { next = '/' } = context.query;
+	document.location.replace( next );
+}
