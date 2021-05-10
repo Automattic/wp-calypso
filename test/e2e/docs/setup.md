@@ -7,18 +7,18 @@ This document will cover the environment setup process to run the `wp-calypso` e
 <!-- TOC -->
 
 - [Setup](#setup)
-  - [Table of contents](#table-of-contents)
-  - [Software Environment](#software-environment)
-    - [Required software](#required-software)
-    - [Steps](#steps)
-      - [Intel-based macOS](#intel-based-macos)
-      - [Apple Silicon-based macOS](#apple-silicon-based-macos)
-  - [Configuration File](#configuration-file)
-    - [Overview](#overview)
-    - [In-repo configuration](#in-repo-configuration)
-    - [Custom configurations optional](#custom-configurations-optional)
-  - [Environment Variables](#environment-variables)
-  - [Naming Branches](#naming-branches)
+    - [Table of contents](#table-of-contents)
+    - [Software Environment](#software-environment)
+        - [Required software](#required-software)
+        - [Steps](#steps)
+            - [Intel-based macOS](#intel-based-macos)
+            - [Apple Silicon-based macOS](#apple-silicon-based-macos)
+    - [Configuration File](#configuration-file)
+        - [Overview](#overview)
+        - [In-repo configuration](#in-repo-configuration)
+        - [Custom configurations optional](#custom-configurations-optional)
+    - [Environment Variables](#environment-variables)
+    - [Naming Branches](#naming-branches)
 
 <!-- /TOC -->
 
@@ -59,8 +59,9 @@ yarn install
 
 #### Apple Silicon-based macOS
 
-It appears that key dependencies do not support ARM64 yet, notably `mocha`.
-This means we must install and run a parallel Intel-based set of dependencies.
+It appears that key dependencies do not support ARM64 yet, notably `mocha`. This is true as of 2021-01 and may be subject to change in the coming months.
+
+Currently the restrictions mean we must install and run x86_64 binaries.
 
 1. install i386 Homebrew:
 
