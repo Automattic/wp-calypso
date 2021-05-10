@@ -2,6 +2,7 @@
  * External Dependencies
  */
 const { app } = require( 'electron' );
+// eslint-disable-next-line no-restricted-modules
 const request = require( 'superagent' );
 const path = require( 'path' );
 
