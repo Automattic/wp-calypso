@@ -99,7 +99,7 @@ export const ExpandableSidebarMenu = ( {
 		setSubmenuHovered( false );
 	};
 
-	const menuId = 'menu' + uuid().replace( /-/g, '' );
+	const menuId = 'menu' + uuid();
 
 	useLayoutEffect( () => {
 		if ( submenuHovered && offScreen( submenu.current ) ) {

@@ -34,7 +34,7 @@ import 'calypso/state/terms/init';
  */
 export function addTerm( siteId, taxonomy, term ) {
 	return ( dispatch ) => {
-		const temporaryId = 'temporary' + uuid().replace( /-/g, '' );
+		const temporaryId = 'temporary' + uuid();
 
 		dispatch(
 			receiveTerm( siteId, taxonomy, {
