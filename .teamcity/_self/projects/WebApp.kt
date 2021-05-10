@@ -824,7 +824,7 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 			scriptContent = """
 				set -x
 
-				mkdir -p screenshots-playwright
+				mkdir -p screenshots
 				find test/e2e/temp -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
