@@ -773,13 +773,15 @@ async function openLinksInParentFrame( calypsoPort ) {
 	} );
 	// In the Site editor the `.interface-interface-skeleton__sidebar` element
 	// is totally removed when all the sidebars are closed.
-	// We need to observer the body to make sure we catch when a sidebar
-	// is opened or closed.
+	// We need to observe the body to make sure we catch when a sidebar is opened or closed.
+	// Block inserter sidebar, post editor
+	// Block settings sidebar, site editor
 	sidebarsObserver.observe( document.querySelector( '.interface-interface-skeleton__body' ), {
 		childList: true,
 	} );
 	// In the Post editor the `.interface-interface-skeleton__sidebar` element
 	// is always present. We can scope down our observer to the sidebar element in this case.
+	// Block settings sidebar, post editor
 	sidebarsObserver.observe( document.querySelector( '.interface-interface-skeleton__sidebar' ), {
 		childList: true,
 	} );
