@@ -405,6 +405,11 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			this.openPreviewModal( postUrl, ports[ 0 ] );
 		}
 
+		if ( EditorActions.ViewPost === action ) {
+			const { postUrl } = payload;
+			window.open( postUrl, '_top' );
+		}
+
 		if ( EditorActions.OpenCustomizer === action ) {
 			const { autofocus = null, unsavedChanges = false } = payload;
 			this.openCustomizer( autofocus, unsavedChanges );
