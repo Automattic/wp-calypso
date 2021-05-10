@@ -18,22 +18,28 @@ import {
 } from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 
-const debug = debugFactory( 'calypso:composite-checkout:apple-pay-processor' );
+const debug = debugFactory( 'calypso:composite-checkout:web-pay-processor' );
 
-type ApplePayTransactionRequest = {
+type WebPayTransactionRequest = {
 	stripe: Stripe;
 	stripeConfiguration: StripeConfiguration;
 	paymentMethodToken: string;
 	name: string | undefined;
 };
 
-export default async function applePayProcessor(
+export default async function webPayProcessor(
+	webPaymentType: 'google-pay' | 'apple-pay',
 	submitData: unknown,
 	transactionOptions: PaymentProcessorOptions
 ): Promise< PaymentProcessorResponse > {
-	if ( ! isValidApplePayTransactionData( submitData ) ) {
+	if ( ! isValidWebPayTransactionData( submitData ) ) {
 		throw new Error( 'Required purchase data is missing' );
 	}
+	const webPaymentEventType =
+		webPaymentType === 'google-pay'
+			? 'GOOGLE_PAY_TRANSACTION_BEGIN'
+			: 'APPLE_PAY_TRANSACTION_BEGIN';
+	transactionOptions.recordEvent( { type: webPaymentEventType } );
 
 	const {
 		includeDomainDetails,
@@ -43,7 +49,7 @@ export default async function applePayProcessor(
 		contactDetails,
 	} = transactionOptions;
 
-	debug( 'formatting apple-pay transaction', submitData );
+	debug( 'formatting web-pay transaction', submitData );
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...submitData,
 		name: submitData.name || '',
@@ -63,16 +69,16 @@ export default async function applePayProcessor(
 		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
 		paymentPartnerProcessorId: transactionOptions.stripeConfiguration?.processor_id,
 	} );
-	debug( 'submitting apple-pay transaction', formattedTransactionData );
+	debug( 'submitting web-pay transaction', formattedTransactionData );
 	return submitWpcomTransaction( formattedTransactionData, transactionOptions )
 		.then( makeSuccessResponse )
 		.catch( ( error ) => makeErrorResponse( error.message ) );
 }
 
-function isValidApplePayTransactionData(
+function isValidWebPayTransactionData(
 	submitData: unknown
-): submitData is ApplePayTransactionRequest {
-	const data = submitData as ApplePayTransactionRequest;
+): submitData is WebPayTransactionRequest {
+	const data = submitData as WebPayTransactionRequest;
 	if ( ! data?.stripe ) {
 		throw new Error( 'Transaction requires stripe and none was provided' );
 	}

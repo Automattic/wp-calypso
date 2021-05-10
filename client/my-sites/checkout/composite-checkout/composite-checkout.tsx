@@ -15,6 +15,7 @@ import {
 	defaultRegistry,
 	Button,
 } from '@automattic/composite-checkout';
+import { useIsWebPayAvailable } from '@automattic/wpcom-checkout';
 import { ThemeProvider } from 'emotion-theming';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
@@ -41,12 +42,11 @@ import QueryContactDetailsCache from 'calypso/components/data/query-contact-deta
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProducts from 'calypso/components/data/query-products-list';
-import useIsApplePayAvailable from './hooks/use-is-apple-pay-available';
 import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-methods';
 import useStoredCards from './hooks/use-stored-cards';
 import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
 import useCreatePaymentMethods from './hooks/use-create-payment-methods';
-import applePayProcessor from './lib/apple-pay-processor';
+import webPayProcessor from './lib/web-pay-processor';
 import multiPartnerCardProcessor from './lib/multi-partner-card-processor';
 import freePurchaseProcessor from './lib/free-purchase-processor';
 import fullCreditsProcessor from './lib/full-credits-processor';
@@ -334,13 +334,15 @@ export default function CompositeCheckout( {
 	} );
 
 	const {
-		canMakePayment: isApplePayAvailable,
-		isLoading: isApplePayLoading,
-	} = useIsApplePayAvailable(
+		isApplePayAvailable,
+		isGooglePayAvailable,
+		isLoading: isWebPayLoading,
+	} = useIsWebPayAvailable(
 		stripe,
 		stripeConfiguration,
 		!! stripeLoadingError,
-		responseCart.currency
+		responseCart.currency,
+		responseCart.total_cost_integer
 	);
 
 	const paymentMethodObjects = useCreatePaymentMethods( {
@@ -349,7 +351,8 @@ export default function CompositeCheckout( {
 		stripeConfiguration,
 		stripe,
 		isApplePayAvailable,
-		isApplePayLoading,
+		isGooglePayAvailable,
+		isWebPayLoading,
 		storedCards,
 		siteSlug,
 	} );
@@ -363,8 +366,8 @@ export default function CompositeCheckout( {
 		isInitialCartLoading ||
 		// Only wait for stored cards to load if we are using cards
 		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards ) ||
-		// Only wait for apple pay to load if we are using apple pay
-		( allowedPaymentMethods.includes( 'apple-pay' ) && isApplePayLoading );
+		// Only wait for web pay to load if we are using web pay
+		( allowedPaymentMethods.includes( 'web-pay' ) && isWebPayLoading );
 
 	const contactDetails: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
 	const countryCode: string = contactDetails?.countryCode?.value ?? '';
@@ -464,7 +467,7 @@ export default function CompositeCheckout( {
 	const paymentProcessors = useMemo(
 		() => ( {
 			'apple-pay': ( transactionData: unknown ) =>
-				applePayProcessor( transactionData, dataForProcessor ),
+				webPayProcessor( 'apple-pay', transactionData, dataForProcessor ),
 			'free-purchase': () => freePurchaseProcessor( dataForProcessor ),
 			card: ( transactionData: unknown ) =>
 				multiPartnerCardProcessor( transactionData, dataForProcessor ),

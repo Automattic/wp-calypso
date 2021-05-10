@@ -1,23 +1,19 @@
 /**
  * External dependencies
  */
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import debugFactory from 'debug';
 import { useI18n } from '@wordpress/react-i18n';
-import { useLineItems, useEvents, ProcessPayment } from '@automattic/composite-checkout';
-import type { PaymentMethod, LineItem } from '@automattic/composite-checkout';
-import type {
-	Stripe,
-	StripeConfiguration,
-	StripePaymentRequest,
-	PaymentRequestOptions,
-} from '@automattic/calypso-stripe';
+import { ProcessPayment } from '@automattic/composite-checkout';
+import type { PaymentMethod } from '@automattic/composite-checkout';
+import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
  */
 import PaymentRequestButton from '../payment-request-button';
 import { PaymentMethodLogos } from '../payment-method-logos';
+import { usePaymentRequestOptions, useStripePaymentRequest } from './web-pay-utils';
 
 const debug = debugFactory( 'composite-checkout:apple-pay-payment-method' );
 
@@ -60,10 +56,7 @@ export function ApplePaySubmitButton( {
 	stripe: Stripe;
 	stripeConfiguration: StripeConfiguration;
 } ): JSX.Element {
-	const { __ } = useI18n();
 	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration );
-	const [ items, total ] = useLineItems();
-	const onEvent = useEvents();
 	const onSubmit = useCallback(
 		( { name, paymentMethodToken } ) => {
 			debug( 'submitting stripe payment with key', paymentMethodToken );
@@ -72,19 +65,17 @@ export function ApplePaySubmitButton( {
 					'Missing onClick prop; ApplePaySubmitButton must be used as a payment button in CheckoutSubmitButton'
 				);
 			}
-			onEvent( { type: 'APPLE_PAY_TRANSACTION_BEGIN' } );
 			onClick( 'apple-pay', {
 				stripe,
 				paymentMethodToken,
 				name,
-				items,
-				total,
 				stripeConfiguration,
 			} );
 		},
-		[ onClick, onEvent, items, total, stripe, stripeConfiguration ]
+		[ onClick, stripe, stripeConfiguration ]
 	);
 	const { paymentRequest, canMakePayment, isLoading } = useStripePaymentRequest( {
+		webPaymentType: 'apple-pay',
 		paymentRequestOptions,
 		onSubmit,
 		stripe,
@@ -92,15 +83,9 @@ export function ApplePaySubmitButton( {
 	debug( 'apple-pay button isLoading', isLoading );
 
 	if ( ! isLoading && ! canMakePayment ) {
-		onEvent( { type: 'APPLE_PAY_LOADING_ERROR', payload: 'This payment type is not supported' } );
-		return (
-			<PaymentRequestButton
-				paymentRequest={ paymentRequest }
-				paymentType="apple-pay"
-				disabled
-				disabledReason={ __( 'This payment type is not supported' ) }
-			/>
-		);
+		// This should never occur because we should not display this payment
+		// method as an option if it is not supported.
+		throw new Error( 'This payment type is not supported' );
 	}
 
 	return (
@@ -150,140 +135,4 @@ function ApplePayIcon( { fill }: { fill: string } ): JSX.Element {
 			/>
 		</svg>
 	);
-}
-
-type SubmitCompletePaymentMethodTransaction = ( {
-	paymentMethodToken,
-	name,
-}: {
-	paymentMethodToken: string;
-	name: string;
-} ) => void;
-
-const PAYMENT_REQUEST_OPTIONS = {
-	requestPayerName: true,
-	requestPayerPhone: false,
-	requestPayerEmail: false,
-	requestShipping: false,
-};
-
-function usePaymentRequestOptions(
-	stripeConfiguration: StripeConfiguration
-): PaymentRequestOptions | null {
-	const [ items, total ] = useLineItems();
-	const country = getProcessorCountryFromStripeConfiguration( stripeConfiguration );
-	const currency = items.reduce(
-		( firstCurrency: string | null, item: LineItem ) => firstCurrency || item.amount.currency,
-		null
-	);
-	const paymentRequestOptions = useMemo( () => {
-		if ( ! currency || ! total.amount.value ) {
-			return null;
-		}
-		return {
-			country,
-			currency: currency?.toLowerCase(),
-			total: getPaymentRequestTotalFromTotal( total ),
-			displayItems: getDisplayItemsForLineItems( items ),
-			...PAYMENT_REQUEST_OPTIONS,
-		};
-	}, [ country, currency, items, total ] );
-	return paymentRequestOptions;
-}
-
-function useStripePaymentRequest( {
-	paymentRequestOptions,
-	onSubmit,
-	stripe,
-}: {
-	paymentRequestOptions: PaymentRequestOptions | null;
-	stripe: Stripe;
-	onSubmit: SubmitCompletePaymentMethodTransaction;
-} ) {
-	const [ canMakePayment, setCanMakePayment ] = useState< boolean | string >( 'loading' );
-	const [ paymentRequest, setPaymentRequest ] = useState< StripePaymentRequest | undefined >();
-
-	// We have to memoize this to prevent re-creating the paymentRequest
-	const callback = useCallback(
-		( paymentMethodResponse ) => {
-			completePaymentMethodTransaction( {
-				onSubmit,
-				...paymentMethodResponse,
-			} );
-		},
-		[ onSubmit ]
-	);
-
-	useEffect( () => {
-		let isSubscribed = true;
-		if ( ! stripe || ! paymentRequestOptions ) {
-			return;
-		}
-		const request = stripe.paymentRequest( paymentRequestOptions );
-		request.canMakePayment().then( ( result ) => {
-			debug( 'canMakePayment updating to', result );
-			isSubscribed && setCanMakePayment( !! result?.applePay );
-		} );
-		request.on( 'paymentmethod', callback );
-		setPaymentRequest( request );
-		return () => {
-			isSubscribed = false;
-		};
-	}, [ stripe, paymentRequestOptions, callback ] );
-
-	return {
-		paymentRequest,
-		canMakePayment: canMakePayment === 'loading' ? false : canMakePayment,
-		isLoading: canMakePayment === 'loading',
-	};
-}
-
-function getDisplayItemsForLineItems( items: LineItem[] ) {
-	return items.map( ( { label, amount } ) => ( {
-		label,
-		amount: amount.value,
-	} ) );
-}
-
-function getPaymentRequestTotalFromTotal( total: LineItem ) {
-	return {
-		label: total.label,
-		amount: total.amount.value,
-	};
-}
-
-function completePaymentMethodTransaction( {
-	onSubmit,
-	complete,
-	paymentMethod,
-	payerName,
-}: {
-	onSubmit: SubmitCompletePaymentMethodTransaction;
-	complete: ( message: string ) => void;
-	paymentMethod: { id: string };
-	payerName: string;
-} ) {
-	onSubmit( { paymentMethodToken: paymentMethod.id, name: payerName } );
-	complete( 'success' );
-}
-
-function getProcessorCountryFromStripeConfiguration( stripeConfiguration: StripeConfiguration ) {
-	let countryCode = 'US';
-
-	if ( stripeConfiguration ) {
-		switch ( stripeConfiguration.processor_id ) {
-			case 'stripe_ie':
-				countryCode = 'IE';
-				break;
-			case 'stripe_au':
-				countryCode = 'AU';
-				break;
-			case 'stripe_ca':
-				countryCode = 'CA';
-				break;
-			default:
-				break;
-		}
-	}
-	return countryCode;
 }

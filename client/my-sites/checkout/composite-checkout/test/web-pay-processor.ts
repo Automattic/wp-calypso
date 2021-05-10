@@ -6,12 +6,12 @@ import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/s
 /**
  * Internal dependencies
  */
-import applePayProcessor from '../lib/apple-pay-processor';
+import webPayProcessor from '../lib/web-pay-processor';
 import wp from 'calypso/lib/wp';
 
 jest.mock( 'calypso/lib/wp' );
 
-describe( 'applePayProcessor', () => {
+describe( 'webPayProcessor', () => {
 	const stripeConfiguration = {
 		processor_id: 'IE',
 		js_url: 'https://stripe-js-url',
@@ -72,7 +72,7 @@ describe( 'applePayProcessor', () => {
 			name: 'test name',
 			nik: undefined,
 			pan: undefined,
-			paymentKey: 'apple-pay-token',
+			paymentKey: 'web-pay-token',
 			paymentMethod: 'WPCOM_Billing_Stripe_Payment_Method',
 			paymentPartner: 'IE',
 			phoneNumber: undefined,
@@ -120,14 +120,14 @@ describe( 'applePayProcessor', () => {
 
 	it( 'throws an error if there is no stripe object', async () => {
 		const submitData = { paymentPartner: 'stripe' };
-		await expect( applePayProcessor( submitData, options ) ).rejects.toThrowError(
+		await expect( webPayProcessor( 'apple-pay', submitData, options ) ).rejects.toThrowError(
 			/requires stripe and none was provided/
 		);
 	} );
 
 	it( 'throws an error if there is no stripeConfiguration object', async () => {
 		const submitData = { paymentPartner: 'stripe', stripe };
-		await expect( applePayProcessor( submitData, options ) ).rejects.toThrowError(
+		await expect( webPayProcessor( 'apple-pay', submitData, options ) ).rejects.toThrowError(
 			/requires stripeConfiguration and none was provided/
 		);
 	} );
@@ -136,12 +136,12 @@ describe( 'applePayProcessor', () => {
 		const submitData = {
 			stripe,
 			stripeConfiguration,
-			paymentMethodToken: 'apple-pay-token',
+			paymentMethodToken: 'web-pay-token',
 			name: 'test name',
 		};
 		const expected = { payload: 'test success', type: 'SUCCESS' };
 		await expect(
-			applePayProcessor( submitData, {
+			webPayProcessor( 'apple-pay', submitData, {
 				...options,
 				contactDetails: {
 					countryCode,
@@ -156,13 +156,13 @@ describe( 'applePayProcessor', () => {
 		const submitData = {
 			stripe,
 			stripeConfiguration,
-			paymentMethodToken: 'apple-pay-token',
+			paymentMethodToken: 'web-pay-token',
 			name: 'test name',
 		};
 		transactionsEndpoint.mockReturnValue( Promise.reject( new Error( 'test error' ) ) );
 		const expected = { payload: 'test error', type: 'ERROR' };
 		await expect(
-			applePayProcessor( submitData, {
+			webPayProcessor( 'apple-pay', submitData, {
 				...options,
 				contactDetails: {
 					countryCode,
@@ -176,12 +176,12 @@ describe( 'applePayProcessor', () => {
 		const submitData = {
 			stripe,
 			stripeConfiguration,
-			paymentMethodToken: 'apple-pay-token',
+			paymentMethodToken: 'web-pay-token',
 			name: 'test name',
 		};
 		const expected = { payload: 'test success', type: 'SUCCESS' };
 		await expect(
-			applePayProcessor( submitData, {
+			webPayProcessor( 'apple-pay', submitData, {
 				...options,
 				siteSlug: 'example.wordpress.com',
 				siteId: 1234567,
@@ -207,12 +207,12 @@ describe( 'applePayProcessor', () => {
 		const submitData = {
 			stripe,
 			stripeConfiguration,
-			paymentMethodToken: 'apple-pay-token',
+			paymentMethodToken: 'web-pay-token',
 			name: 'test name',
 		};
 		const expected = { payload: 'test success', type: 'SUCCESS' };
 		await expect(
-			applePayProcessor( submitData, {
+			webPayProcessor( 'apple-pay', submitData, {
 				...options,
 				siteSlug: 'example.wordpress.com',
 				siteId: 1234567,
@@ -249,12 +249,12 @@ describe( 'applePayProcessor', () => {
 		const submitData = {
 			stripe,
 			stripeConfiguration,
-			paymentMethodToken: 'apple-pay-token',
+			paymentMethodToken: 'web-pay-token',
 			name: 'test name',
 		};
 		const expected = { payload: 'test success', type: 'SUCCESS' };
 		await expect(
-			applePayProcessor( submitData, {
+			webPayProcessor( 'apple-pay', submitData, {
 				...options,
 				siteSlug: 'example.wordpress.com',
 				siteId: 1234567,

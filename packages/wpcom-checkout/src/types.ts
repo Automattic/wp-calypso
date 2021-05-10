@@ -205,7 +205,7 @@ export interface WPCOMCart {
 
 export type CheckoutPaymentMethodSlug =
 	| 'alipay'
-	| 'apple-pay'
+	| 'web-pay'
 	| 'bancontact'
 	| 'card'
 	| 'ebanx'
