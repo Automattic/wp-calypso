@@ -14,8 +14,7 @@ const useIframeProxyClient = () => {
 	const [ client, setClient ] = useState( null );
 
 	useEffect( () => {
-		const tempClient = wpcom();
-		tempClient.request = proxyRequest;
+		const tempClient = wpcom( proxyRequest );
 		tempClient.request( { metaAPI: { accessAllUsersBlogs: true } }, ( error ) => {
 			if ( error ) {
 				throw error;
@@ -28,17 +27,27 @@ const useIframeProxyClient = () => {
 	return client;
 };
 
-const IframeProxyWrapper = ( Wrapped ) => ( { ...childProps } ) => {
+const IframeProxyWrapper = ( Wrapped ) => {
 	// This is a wrapped component, not a callback, so hooks are okay.
-	// eslint-disable-next-line react-hooks/rules-of-hooks
-	const client = useIframeProxyClient();
-	if ( ! client ) {
-		return null;
-	}
+	/* eslint-disable react-hooks/rules-of-hooks */
+	return ( { ...childProps } ) => {
+		const client = useIframeProxyClient();
 
-	setTracksUser( client );
+		useEffect( () => {
+			if ( ! client ) {
+				return;
+			}
 
-	return <Wrapped wpcom={ client } { ...childProps } />;
+			setTracksUser( client );
+		}, [ client ] );
+
+		if ( ! client ) {
+			return null;
+		}
+
+		return <Wrapped wpcom={ client } { ...childProps } />;
+	};
+	/* eslint-enable react-hooks/rules-of-hooks */
 };
 
 export default IframeProxyWrapper;

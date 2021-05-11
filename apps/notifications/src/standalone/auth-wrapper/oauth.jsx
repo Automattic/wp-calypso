@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import wpcom from 'wpcom';
+import wpcomXhrRequest from 'wpcom-xhr-request';
 
 /**
  * Internal dependencies
@@ -73,17 +74,42 @@ const redirectForOauth = ( clientId, redirectPath ) => {
 	return;
 };
 
-const OAuthWrapper = ( Wrapped ) => ( { clientId, redirectPath, ...childProps } ) => {
-	const token = getStoredToken();
-	if ( ! token ) {
-		redirectForOauth( clientId, redirectPath );
-		return null;
-	}
+const useOauthClient = ( clientId, redirectPath ) => {
+	const [ client, setClient ] = useState( null );
 
-	const client = wpcom( token );
-	setTracksUser( client );
+	useEffect( () => {
+		const token = getStoredToken();
+		if ( ! token ) {
+			redirectForOauth( clientId, redirectPath );
+			return;
+		}
 
-	return <Wrapped wpcom={ client } { ...childProps } />;
+		setClient( wpcom( token, wpcomXhrRequest ) );
+	}, [ clientId, redirectPath, setClient ] );
+
+	useEffect( () => {
+		if ( ! client ) {
+			return;
+		}
+
+		setTracksUser( client );
+	}, [ client ] );
+
+	return client;
+};
+
+const OAuthWrapper = ( Wrapped ) => {
+	// This is a wrapped component, not a callback, so hooks are okay.
+	/* eslint-disable react-hooks/rules-of-hooks */
+	return ( { clientId, redirectPath, ...childProps } ) => {
+		const client = useOauthClient( clientId, redirectPath );
+		if ( ! client ) {
+			return null;
+		}
+
+		return <Wrapped wpcom={ client } { ...childProps } />;
+	};
+	/* eslint-enable react-hooks/rules-of-hooks */
 };
 
 export default OAuthWrapper;

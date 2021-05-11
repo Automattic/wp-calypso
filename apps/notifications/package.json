@@ -39,7 +39,8 @@
 		"redux": "^4.0.5",
 		"redux-thunk": "^2.3.0",
 		"wpcom": "^6.0.0",
-		"wpcom-proxy-request": "^6.0.0"
+		"wpcom-proxy-request": "^6.0.0",
+		"wpcom-xhr-request": "^1.2.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "^8.0.0",
