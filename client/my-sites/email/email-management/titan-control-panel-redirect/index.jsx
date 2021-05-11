@@ -90,7 +90,7 @@ class TitanControlPanelRedirect extends React.Component {
 				<EmptyContent illustration="" title="">
 					<Card>
 						<Spinner size={ 40 } />
-						<h1>{ translate( 'Redirecting you to your Email Control Panel' ) }</h1>
+						<h1>{ translate( 'Redirecting you to your Professional Email Control Panel' ) }</h1>
 						<hr />
 						<img src={ poweredByTitanLogo } alt={ translate( 'Powered by Titan' ) } />
 					</Card>

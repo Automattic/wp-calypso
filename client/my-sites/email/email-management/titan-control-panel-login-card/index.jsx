@@ -82,12 +82,10 @@ class TitanControlPanelLoginCard extends React.Component {
 				productName: getTitanProductName(),
 			},
 			comment:
-				'%(domainName)s is a domain name, e.g. example.com; %(productName)s is the product name, either Email or Titan Mail',
+				'%(domainName)s is a domain name, e.g. example.com; %(productName)s is the product name, which should be Professional Email',
 		};
 		const sectionHeaderLabel = translate( '%(productName)s: %(domainName)s', translateArgs );
-		const buttonCtaText = isEnabled( 'titan/phase-2' )
-			? translate( 'Log in to the Email control panel' )
-			: translate( "Log in to Titan's control panel" );
+		const buttonCtaText = translate( 'Log in to your Professional Email control panel' );
 		const cardText = translate(
 			'Go to the %(productName)s control panel to manage email for %(domainName)s.',
 			translateArgs
@@ -118,7 +116,7 @@ class TitanControlPanelLoginCard extends React.Component {
 				productName: getTitanProductName(),
 			},
 			comment:
-				'%(domainName)s is a domain name, e.g. example.com; %(productName)s is the product name, either Email or Titan Mail',
+				'%(domainName)s is a domain name, e.g. example.com; %(productName)s is the product name, which should be Professional Email',
 		};
 		const sectionHeaderLabel = translate( '%(productName)s: %(domainName)s', translateArgs );
 
@@ -128,7 +126,7 @@ class TitanControlPanelLoginCard extends React.Component {
 				<CompactCard>
 					{ this.state.iframeURL ? (
 						<iframe
-							title={ translate( 'Email Control Panel' ) }
+							title={ translate( 'Professional Email Control Panel' ) }
 							src={ this.state.iframeURL }
 							width="100%"
 							height="1200px"
