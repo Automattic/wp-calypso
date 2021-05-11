@@ -159,7 +159,7 @@ class Search extends Component {
 		} = this.props;
 
 		/**
-		 * Call WPCOM endpionts to update remote Jetpack sites' settings
+		 * Call WPCOM endpoints to update remote Jetpack sites' settings
 		 *
 		 * @param {boolean} jetpackSearchEnabled Whether Jetpack Search is enabled
 		 */
