@@ -142,7 +142,7 @@ class PurchasesList extends Component {
 		) {
 			if ( ! sites.length ) {
 				return (
-					<Main wideLayout={ true } className="purchases-list">
+					<Main wideLayout className="purchases-list">
 						<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
 						<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 						<PurchasesNavigation section="activeUpgrades" />
@@ -171,7 +171,7 @@ class PurchasesList extends Component {
 		}
 
 		return (
-			<Main wideLayout={ true } className="purchases-list">
+			<Main wideLayout className="purchases-list">
 				<QueryUserPurchases userId={ userId } />
 				<QueryMembershipsSubscriptions />
 				<PageViewTracker path="/me/purchases" title="Purchases" />

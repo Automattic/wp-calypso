@@ -93,7 +93,7 @@ const Home = ( {
 	);
 
 	return (
-		<Main wideLayout={ true } className="customer-home__main">
+		<Main wideLayout className="customer-home__main">
 			<PageViewTracker path={ `/home/:site` } title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }

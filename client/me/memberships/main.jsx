@@ -112,7 +112,7 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 	}
 
 	return (
-		<Main wideLayout={ true } className="memberships">
+		<Main wideLayout className="memberships">
 			<DocumentHead title={ translate( 'Other Sites' ) } />
 			<PageViewTracker path="/me/purchases/other" title="Me > Other Sites" />
 			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />

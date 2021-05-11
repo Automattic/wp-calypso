@@ -64,7 +64,7 @@ class NotificationSubscriptions extends React.Component {
 
 	render() {
 		return (
-			<Main wideLayout={ true } className="reader-subscriptions__notifications-settings">
+			<Main wideLayout className="reader-subscriptions__notifications-settings">
 				<PageViewTracker
 					path="/me/notifications/subscriptions"
 					title="Me > Notifications > Subscriptions Delivery"

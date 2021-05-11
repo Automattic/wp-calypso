@@ -40,7 +40,7 @@ export function BillingHistoryContent( {
 
 function BillingHistory(): JSX.Element {
 	return (
-		<Main wideLayout={ true } className="billing-history">
+		<Main wideLayout className="billing-history">
 			<DocumentHead title={ titles.billingHistory } />
 			<PageViewTracker path="/me/purchases/billing" title="Me > Billing History" />
 			<MeSidebarNavigation />

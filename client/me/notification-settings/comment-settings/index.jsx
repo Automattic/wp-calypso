@@ -56,7 +56,7 @@ class NotificationCommentsSettings extends Component {
 		const { path, translate } = this.props;
 
 		return (
-			<Main wideLayout={ true } className="comment-settings__main">
+			<Main wideLayout className="comment-settings__main">
 				<PageViewTracker
 					path="/me/notifications/comments"
 					title="Me > Notifications > Comments on other sites"

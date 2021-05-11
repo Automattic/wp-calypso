@@ -56,7 +56,7 @@ function AddNewPaymentMethod() {
 	}
 
 	return (
-		<Main wideLayout={ true } className="add-new-payment-method">
+		<Main wideLayout className="add-new-payment-method">
 			<PageViewTracker
 				path="/me/purchases/add-payment-method"
 				title={ concatTitle( titles.activeUpgrades, addPaymentMethodTitle ) }

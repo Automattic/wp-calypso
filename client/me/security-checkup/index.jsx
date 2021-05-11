@@ -41,7 +41,7 @@ class SecurityCheckupComponent extends React.Component {
 		const { path, translate } = this.props;
 
 		return (
-			<Main wideLayout={ true } className="security security-checkup">
+			<Main wideLayout className="security security-checkup">
 				<PageViewTracker path={ path } title="Me > Security Checkup" />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<MeSidebarNavigation />

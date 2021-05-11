@@ -40,7 +40,7 @@ class Subscription extends React.Component {
 		const { translate, subscription, moment, stoppingStatus } = this.props;
 
 		return (
-			<Main wideLayout={ true } className="memberships__subscription">
+			<Main wideLayout className="memberships__subscription">
 				<DocumentHead title={ translate( 'Subscription Details' ) } />
 				<MeSidebarNavigation />
 				<QueryMembershipsSubscriptions />

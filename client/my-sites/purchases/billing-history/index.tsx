@@ -67,7 +67,7 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 		getReceiptUrlFor( siteSlug, targetReceiptId );
 
 	return (
-		<Main wideLayout={ true } className="purchases billing-history">
+		<Main wideLayout className="purchases billing-history">
 			<MySitesSidebarNavigation />
 			<DocumentHead title={ titles.billingHistory } />
 			<PageViewTracker path="/purchases/billing-history" title="Billing History" />
@@ -122,7 +122,7 @@ export function ReceiptView( {
 	};
 
 	return (
-		<Main wideLayout={ true } className="purchases billing-history">
+		<Main wideLayout className="purchases billing-history">
 			<DocumentHead title={ titles.billingHistory } />
 			<PageViewTracker
 				path="/purchases/billing-history/:site/:receipt"
