@@ -71,6 +71,7 @@ module.exports = {
 				'test/e2e/**/*',
 				'packages/magellan-mocha-plugin/test/**/*',
 				'packages/magellan-mocha-plugin/test_support/**/*',
+				'packages/calypso-e2e/**/*',
 			],
 			rules: {
 				'import/no-nodejs-modules': 'off',
