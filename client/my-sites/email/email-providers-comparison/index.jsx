@@ -401,7 +401,7 @@ class EmailProvidersComparison extends React.Component {
 			<EmailProviderCard
 				providerKey="titan"
 				logo={ logo }
-				title={ translate( 'Email' ) }
+				title={ translate( 'Professional Email' ) }
 				badge={ poweredByTitan }
 				description={ translate(
 					'Easy-to-use email with incredibly powerful features. Manage your email and more on any device.'
