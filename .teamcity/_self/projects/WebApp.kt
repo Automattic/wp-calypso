@@ -808,6 +808,8 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 
 				mkdir -p screenshots
 				find test/e2e/temp -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+
+				find test/e2e -type f -path '*/videos/*' -print0 | xargs -r -0 mv -t screenshots
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
