@@ -16,6 +16,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getTitanProductName } from 'calypso/lib/titan';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import { isEnabled } from '@automattic/calypso-config';
 import Main from 'calypso/components/main';
@@ -77,11 +78,25 @@ class TitanManagementIframe extends React.Component {
 					<QueryEmailAccounts siteId={ selectedSiteId } />
 				) }
 				<QuerySiteDomains siteId={ selectedSiteId } />
-				<DocumentHead title={ translate( 'Professional Email Management' ) } />
+				<DocumentHead
+					title={ translate( '%(titanProductName)s Management', {
+						args: {
+							titanProductName: getTitanProductName(),
+						},
+						comment:
+							'%(titanProductName) is the name of the product, which should be "Professional Email" translated',
+					} ) }
+				/>
 				<SidebarNavigation />
 
 				<Header backHref={ emailManagementPath } selectedDomainName={ domainName }>
-					{ translate( 'Professional Email Settings' ) }
+					{ translate( '%(titanProductName)s settings', {
+						args: {
+							titanProductName: getTitanProductName(),
+						},
+						comment:
+							'%(titanProductName) is the name of the product, which should be "Professional Email" translated',
+					} ) }
 				</Header>
 				{ this.renderManagementSection() }
 			</Main>

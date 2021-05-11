@@ -85,7 +85,11 @@ class TitanControlPanelLoginCard extends React.Component {
 				'%(domainName)s is a domain name, e.g. example.com; %(productName)s is the product name, which should be Professional Email',
 		};
 		const sectionHeaderLabel = translate( '%(productName)s: %(domainName)s', translateArgs );
-		const buttonCtaText = translate( 'Log in to your Professional Email control panel' );
+		const buttonCtaText = translate( 'Log in to your %(productName)s control panel', {
+			args: { productName: getTitanProductName() },
+			comment:
+				'%(productName)s is the product name, which will be the translated version of "Professional Email"',
+		} );
 		const cardText = translate(
 			'Go to the %(productName)s control panel to manage email for %(domainName)s.',
 			translateArgs
@@ -126,7 +130,13 @@ class TitanControlPanelLoginCard extends React.Component {
 				<CompactCard>
 					{ this.state.iframeURL ? (
 						<iframe
-							title={ translate( 'Professional Email Control Panel' ) }
+							title={ translate( '%(titanProductName)s Control Panel', {
+								args: {
+									titanProductName: getTitanProductName(),
+								},
+								comment:
+									'%(titanProductName) is the name of the product, which should be "Professional Email" translated',
+							} ) }
 							src={ this.state.iframeURL }
 							width="100%"
 							height="1200px"

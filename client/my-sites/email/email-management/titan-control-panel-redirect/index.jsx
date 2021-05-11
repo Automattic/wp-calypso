@@ -13,7 +13,7 @@ import { Card } from '@automattic/components';
 import EmptyContent from 'calypso/components/empty-content';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchTitanAutoLoginURL } from 'calypso/my-sites/email/email-management/titan-functions';
-import { getTitanMailOrderId, hasTitanMailWithUs } from 'calypso/lib/titan';
+import { getTitanMailOrderId, getTitanProductName, hasTitanMailWithUs } from 'calypso/lib/titan';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
@@ -90,7 +90,15 @@ class TitanControlPanelRedirect extends React.Component {
 				<EmptyContent illustration="" title="">
 					<Card>
 						<Spinner size={ 40 } />
-						<h1>{ translate( 'Redirecting you to your Professional Email Control Panel' ) }</h1>
+						<h1>
+							{ translate( 'Redirecting you to your %(titanProductName)s Control Panel', {
+								args: {
+									titanProductName: getTitanProductName(),
+								},
+								comment:
+									'%(titanProductName) is the name of the product, which should be "Professional Email" translated',
+							} ) }
+						</h1>
 						<hr />
 						<img src={ poweredByTitanLogo } alt={ translate( 'Powered by Titan' ) } />
 					</Card>
