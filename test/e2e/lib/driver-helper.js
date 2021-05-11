@@ -493,25 +493,6 @@ function getInnerTextMatcherFunction( match ) {
 	};
 }
 
-export async function waitTillTextPresent( driver, locator, text, waitOverride ) {
-	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
-
-	return driver.wait(
-		function () {
-			return driver.findElements( locator ).then(
-				async function ( allElements ) {
-					return await webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
-				},
-				function () {
-					return false;
-				}
-			);
-		},
-		timeoutWait,
-		`Timed out waiting for element with ${ locator.using } of '${ locator.value }' to be present and displayed with text '${ text }'`
-	);
-}
-
 /**
  * Waits until the input driver is able to switch to the designated frame.
  * Upon successful resolution, the driver will be left focused on the new frame.

@@ -62,19 +62,19 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 
 			await languagePicker.switchLanguage( 'es' );
 
-			await driverHelper.waitTillTextPresent(
-				driver,
+			const nextButtonLocatorES = driverHelper.createTextLocator(
 				acquireIntentPage.nextButtonLocator,
 				'Continuar'
 			);
+			await driverHelper.waitUntilElementLocatedAndVisible( driver, nextButtonLocatorES );
 
 			await languagePicker.switchLanguage( 'en' );
 
-			await driverHelper.waitTillTextPresent(
-				driver,
+			const nextButtonLocatorEN = driverHelper.createTextLocator(
 				acquireIntentPage.nextButtonLocator,
 				'Continue'
 			);
+			await driverHelper.waitUntilElementLocatedAndVisible( driver, nextButtonLocatorEN );
 
 			await acquireIntentPage.goToNextStep();
 		} );
