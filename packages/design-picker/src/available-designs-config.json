@@ -435,6 +435,16 @@
 			"is_fse": false,
 			"is_alpha": true,
 			"features": []
+		},
+		{
+			"title": "Start with an empty page",
+			"slug": "blank-canvas-blocks",
+			"template": "blank-canvas-blocks",
+			"theme": "blank-canvas-blocks",
+			"categories": [ "featured" ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
 		}
 	]
 }
