@@ -9,7 +9,6 @@ import webdriver, {
 	WebDriver,
 	WebElement,
 	WebElementCondition,
-	error as webdriverError,
 } from 'selenium-webdriver';
 import config from 'config';
 import { forEach } from 'lodash';
@@ -440,58 +439,6 @@ export async function scrollIntoView( driver, locator, position = 'center' ) {
 	return await driver.executeScript(
 		`arguments[0].scrollIntoView( { block: "${ position }", inline: "center" } )`,
 		selectorElement
-	);
-}
-
-/**
- * Waits until an element with given locator and inner text is located.
- *
- * @param {WebDriver} driver The parent WebDriver instance
- * @param {By|Function} locator The element's locator
- * @param {string|RegExp} text The text the element should contain
- * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
- * @returns {Promise<WebElement>} A promise that will resolve with the located element
- */
-export async function waitUntilElementWithTextLocated(
-	driver,
-	locator,
-	text,
-	timeout = explicitWaitMS
-) {
-	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
-
-	return driver.wait(
-		new WebElementCondition(
-			`for element to be located ${ locatorStr } and contain text "${ text }"`,
-			async function () {
-				const locatedElements = await driver.findElements( locator );
-				if ( locatedElements.length === 0 ) {
-					return null;
-				}
-
-				let elementsWithText;
-				try {
-					elementsWithText = await webdriver.promise.filter(
-						locatedElements,
-						getInnerTextMatcherFunction( text )
-					);
-				} catch ( err ) {
-					if ( err instanceof webdriverError.StaleElementReferenceError ) {
-						// The element was removed from the DOM after we found it. Likely it was an animation
-						// or react re-render. Return null so WebElementCondition retries again.
-						return null;
-					}
-					throw err;
-				}
-
-				if ( elementsWithText.length === 0 ) {
-					return null;
-				}
-
-				return elementsWithText[ 0 ];
-			}
-		),
-		timeout
 	);
 }
 
