@@ -174,7 +174,7 @@ class Search extends Component {
 		 * @param {boolean} jetpackSearchEnabled Whether Jetpack Search is enabled
 		 */
 		const handleJetpackSearchToggleForSimpleSites = ( jetpackSearchEnabled ) => {
-			trackEvent( `Toggled instant_search_enabled` );
+			trackEvent( 'Toggled instant_search_enabled' );
 			updateFields(
 				{
 					instant_search_enabled: jetpackSearchEnabled,
