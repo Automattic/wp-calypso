@@ -32,7 +32,7 @@ const MochaTestRun = function ( options ) {
 		}
 	} )( {
 		basePath: path.join( options.tempAssetPath, '..', sanitizedName ),
-		counter: 1,
+		counter: 0,
 	} );
 
 	process.env.TEMP_ASSET_PATH = pathWithCounter;
