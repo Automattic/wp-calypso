@@ -217,9 +217,9 @@ class Search extends Component {
 									! this.props.hasSearchProduct
 								}
 								onChange={
-									! this.props.siteIsJetpack
-										? handleAutosavingToggle( 'instant_search_enabled' )
-										: handleInstantSearchToggleForJetpackSites
+									this.props.siteIsJetpack
+										? handleInstantSearchToggleForJetpackSites
+										: handleAutosavingToggle( 'instant_search_enabled' )
 								}
 							>
 								{ translate( 'Enable instant search experience (recommended)' ) }
