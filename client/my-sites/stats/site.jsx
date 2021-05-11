@@ -352,7 +352,7 @@ class StatsSite extends Component {
 		const { period } = this.props.period;
 
 		return (
-			<Main wideLayout={ true }>
+			<Main wideLayout>
 				<QueryKeyringConnections />
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
