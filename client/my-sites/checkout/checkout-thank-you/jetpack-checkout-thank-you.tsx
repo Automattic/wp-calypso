@@ -61,7 +61,7 @@ const JetpackCheckoutThankYou: FunctionComponent< Props > = ( {
 
 	const {
 		state: requestState,
-		data: { name, URL } = { name: null, URL: null },
+		data: { name: siteName, URL: siteUrl } = { name: null, URL: null },
 		// error: requestError,
 	} = useSelector( () => getHttpData( getRequestUnauthorizedSiteId( siteFragment ) ) );
 
@@ -82,32 +82,36 @@ const JetpackCheckoutThankYou: FunctionComponent< Props > = ( {
 					{ translate( 'Thank you for your purchase!' ) }{ ' ' }
 					{ String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */ }
 				</h2>
-				<p
-					className={
-						isLoading
-							? 'jetpack-checkout-thank-you__sub-message-loading'
-							: 'jetpack-checkout-thank-you__sub-message'
-					}
-				>
-					{ translate( '%(productName)s was added to your site %(siteName)s.', {
-						args: {
-							siteName: name,
-							productName: productName,
-						},
-					} ) }
-				</p>
-				<Button
-					className="jetpack-checkout-thank-you__button"
-					disabled={ isLoading }
-					href={ URL }
-					primary
-				>
-					{ isLoading
-						? translate( 'loading' )
-						: translate( 'Back to %s', {
-								args: name,
-						  } ) }
-				</Button>
+				{ ( isLoading || ( siteName && productName ) ) && (
+					<p
+						className={
+							isLoading
+								? 'jetpack-checkout-thank-you__sub-message-loading'
+								: 'jetpack-checkout-thank-you__sub-message'
+						}
+					>
+						{ translate( '%(productName)s was added to your site %(siteName)s.', {
+							args: {
+								productName,
+								siteName,
+							},
+						} ) }
+					</p>
+				) }
+				{ ( isLoading || ( siteName && siteUrl ) ) && (
+					<Button
+						className="jetpack-checkout-thank-you__button"
+						disabled={ isLoading }
+						href={ siteUrl }
+						primary
+					>
+						{ isLoading
+							? translate( 'Loading' )
+							: translate( 'Back to %s', {
+									args: siteName,
+							  } ) }
+					</Button>
+				) }
 			</Card>
 		</Main>
 	);

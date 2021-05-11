@@ -698,6 +698,7 @@
 			}
 		}
 
+		.jetpack-checkout-thank-you__sub-message-loading,
 		.jetpack-checkout-thank-you__sub-message {
 			font-size: 24px;
 			font-weight: 500;
@@ -717,6 +718,14 @@
 				background-color: var( --studio-jetpack-green-60 );
 				border-color: var( --studio-jetpack-green-60 );
 				color: var( --color-text-inverted );
+			}
+
+			&[disabled],
+			&:disabled,
+			&.disabled {
+				color: var( --color-neutral-20 );
+				background-color: var( --color-surface );
+				border-color: var( --color-neutral-5 );
 			}
 		}
 	}
