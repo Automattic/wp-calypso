@@ -739,8 +739,9 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 				# Install modules
 				${_self.yarn_install_cmd}
 
-				# Build package
+				# Build packages
 				yarn workspace @automattic/calypso-e2e build
+				yarn workspace @automattic/mocha-debug-reporter build
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
