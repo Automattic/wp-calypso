@@ -29,7 +29,7 @@ export default function useGetThankYouUrl( {
 	productAliasFromUrl,
 	hideNudge,
 	isInEditor,
-	isJetpackUserlessCheckout = false,
+	isJetpackCheckout = false,
 }: GetThankYouUrlProps ): GetThankYouUrl {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 
@@ -56,7 +56,7 @@ export default function useGetThankYouUrl( {
 			hideNudge,
 			isInEditor,
 			previousRoute,
-			isJetpackUserlessCheckout,
+			isJetpackCheckout,
 		};
 		debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
@@ -75,7 +75,7 @@ export default function useGetThankYouUrl( {
 		purchaseId,
 		cart,
 		hideNudge,
-		isJetpackUserlessCheckout,
+		isJetpackCheckout,
 	] );
 	return getThankYouUrl;
 }
@@ -91,5 +91,5 @@ export interface GetThankYouUrlProps {
 	productAliasFromUrl?: string | undefined;
 	hideNudge?: boolean;
 	isInEditor?: boolean;
-	isJetpackUserlessCheckout?: boolean;
+	isJetpackCheckout?: boolean;
 }

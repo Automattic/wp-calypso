@@ -211,7 +211,7 @@ export default function CompositeCheckout( {
 		isInEditor,
 		isJetpackNotAtomic,
 		isPrivate,
-		siteSlug: isJetpackUserlessCheckout ? jetpackSiteSlug : siteSlug,
+		siteSlug: isJetpackCheckout ? jetpackSiteSlug : siteSlug,
 		isLoggedOutCart,
 		isNoSiteCart,
 		isJetpackCheckout,
@@ -260,7 +260,7 @@ export default function CompositeCheckout( {
 	);
 
 	const getThankYouUrlBase = useGetThankYouUrl( {
-		siteSlug: isJetpackUserlessCheckout ? jetpackSiteSlug : siteSlug,
+		siteSlug: isJetpackCheckout ? jetpackSiteSlug : siteSlug,
 		redirectTo,
 		purchaseId,
 		feature,
@@ -269,7 +269,7 @@ export default function CompositeCheckout( {
 		productAliasFromUrl,
 		hideNudge: !! isComingFromUpsell,
 		isInEditor,
-		isJetpackUserlessCheckout,
+		isJetpackCheckout,
 	} );
 	const getThankYouUrl = useCallback( () => {
 		const url = getThankYouUrlBase();
@@ -330,7 +330,7 @@ export default function CompositeCheckout( {
 		isRemovingProductFromCart,
 		removeProductFromCartAndMaybeRedirect,
 	} = useRemoveFromCartAndRedirect(
-		isJetpackUserlessCheckout ? jetpackSiteSlug : siteSlug,
+		isJetpackCheckout ? jetpackSiteSlug : siteSlug,
 		siteSlugLoggedOutCart,
 		createUserAndSiteBeforeTransaction
 	);
@@ -364,7 +364,7 @@ export default function CompositeCheckout( {
 		isApplePayAvailable,
 		isApplePayLoading,
 		storedCards,
-		siteSlug: isJetpackUserlessCheckout ? jetpackSiteSlug : siteSlug,
+		siteSlug: isJetpackCheckout ? jetpackSiteSlug : siteSlug,
 	} );
 	debug( 'created payment method objects', paymentMethodObjects );
 
@@ -402,7 +402,7 @@ export default function CompositeCheckout( {
 	const { analyticsPath, analyticsProps } = getAnalyticsPath(
 		purchaseId,
 		productAliasFromUrl,
-		isJetpackUserlessCheckout ? jetpackSiteSlug : siteSlug,
+		isJetpackCheckout ? jetpackSiteSlug : siteSlug,
 		feature,
 		plan
 	);
@@ -450,7 +450,7 @@ export default function CompositeCheckout( {
 			reduxDispatch,
 			responseCart,
 			siteId,
-			siteSlug: isJetpackUserlessCheckout ? jetpackSiteSlug : siteSlug,
+			siteSlug: isJetpackCheckout ? jetpackSiteSlug : siteSlug,
 			stripeConfiguration,
 		} ),
 		[
@@ -459,7 +459,7 @@ export default function CompositeCheckout( {
 			getThankYouUrl,
 			includeDomainDetails,
 			includeGSuiteDetails,
-			isJetpackUserlessCheckout,
+			isJetpackCheckout,
 			jetpackSiteSlug,
 			recordEvent,
 			reduxDispatch,
@@ -567,8 +567,8 @@ export default function CompositeCheckout( {
 		isInEditor,
 		isComingFromUpsell,
 		isFocusedLaunch,
-		siteSlug: isJetpackUserlessCheckout ? jetpackSiteSlug : siteSlug,
-		isJetpackUserlessCheckout,
+		siteSlug: isJetpackCheckout ? jetpackSiteSlug : siteSlug,
+		isJetpackCheckout,
 	} );
 
 	const handlePaymentComplete = useCallback(

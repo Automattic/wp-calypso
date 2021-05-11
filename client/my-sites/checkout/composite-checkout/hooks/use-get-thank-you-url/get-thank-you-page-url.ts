@@ -58,7 +58,7 @@ export default function getThankYouPageUrl( {
 	hideNudge,
 	isInEditor,
 	previousRoute,
-	isJetpackUserlessCheckout = false,
+	isJetpackCheckout = false,
 }: {
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
@@ -76,7 +76,7 @@ export default function getThankYouPageUrl( {
 	hideNudge?: boolean;
 	isInEditor?: boolean;
 	previousRoute?: string;
-	isJetpackUserlessCheckout?: boolean;
+	isJetpackCheckout?: boolean;
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -128,7 +128,7 @@ export default function getThankYouPageUrl( {
 	debug( 'pendingOrReceiptId is', pendingOrReceiptId );
 
 	// jetpack userless checkout uses a special thank you page
-	if ( isJetpackUserlessCheckout ) {
+	if ( isJetpackCheckout ) {
 		debug( 'redirecting to userless jetpack thank you' );
 
 		// extract a product from the cart, in userless checkout there should only be one
