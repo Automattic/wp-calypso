@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .email-management {
 	.empty-content__illustration {
 		width: 250px;
@@ -141,6 +144,12 @@
 
 .email-plan-mailboxes-list__mailbox-list-item {
 	display: flex;
+	flex-direction: column;
+
+	@include break-mobile {
+		flex-direction: row;
+	}
+
 	.email-plan-mailboxes-list__mailbox-list-item-main {
 		display: flex;
 		flex-direction: column;
@@ -165,15 +174,28 @@
 	}
 	.email-plan-mailboxes-list__mailbox-list-item-main span {
 		vertical-align: middle;
+		word-break: break-all;
 	}
 	> .badge {
 		margin-left: 10px;
 	}
 	.email-plan-mailboxes-list__mailbox-list-item-warning {
+		border-top: 1px solid var( --color-neutral-5 );
 		color: var( --color-error );
 		font-size: $font-body-small;
 		line-height: 24px;
-		margin-left: 16px;
+		margin-top: 24px;
+		padding-top: 24px;
+		text-align: center;
+
+		@include break-mobile {
+			border-top: none;
+			margin-left: 16px;
+			margin-top: 0;
+			padding-top: 0;
+			text-align: left;
+		}
+
 		> svg {
 			margin-right: 6px;
 			vertical-align: middle;
@@ -184,8 +206,13 @@
 	}
 
 	.button {
-		margin-left: auto;
+		margin-top: 18px;
 		max-height: 2rem;
+
+		@include break-mobile {
+			margin-top: 0;
+			margin-left: auto;
+		}
 	}
 }
 
