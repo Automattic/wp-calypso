@@ -38,7 +38,10 @@
 }
 
 .button.app-banner__open-button {
-	margin-top: 8px;
+	background-color: var( --color-accent-40 );
+	border: 0;
+	border-radius: 4px; /* stylelint-disable-line */
+	margin-right: 10px;
 }
 
 .button.app-banner__no-thanks-button {
