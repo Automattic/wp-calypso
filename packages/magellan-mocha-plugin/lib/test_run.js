@@ -5,11 +5,38 @@
 
 const _ = require( 'lodash' );
 const mochaSettings = require( './settings' );
+const path = require( 'path' );
+const fs = require( 'fs' );
 
 const MochaTestRun = function ( options ) {
 	// Share assets directory with mocha tests
-	process.env.TEMP_ASSET_PATH = options.tempAssetPath;
+	const testName = options.locator.name;
+	const sanitizedName = testName
+		//non-alpha to `-`
+		.replace( /[^a-z0-9]/gi, '-' )
+		//many `-` in a row to a single `-`
+		.replace( /-+/g, '-' )
+		//drop initial or trailing `-`
+		.replace( /^-|-$/, '' )
+		.toLowerCase();
 
+	const pathWithCounter = ( function incrementCandidatePathCounter( { basePath, counter } ) {
+		const candidatePath = counter === 0 ? basePath : basePath + '-' + counter;
+		try {
+			fs.accessSync( candidatePath );
+			// If it exists, increment counter and try again
+			return incrementCandidatePathCounter( { basePath, counter: counter + 1 } );
+		} catch {
+			// An error means it doesn't exists, we can use it!
+			return candidatePath;
+		}
+	} )( {
+		basePath: path.join( options.tempAssetPath, '..', sanitizedName ),
+		counter: 0,
+	} );
+
+	process.env.TEMP_ASSET_PATH = pathWithCounter;
+	fs.mkdirSync( pathWithCounter, { recursive: true } );
 	_.extend( this, options );
 };
 
