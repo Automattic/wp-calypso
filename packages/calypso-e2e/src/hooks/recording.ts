@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-/* eslint-disable-next-line import/no-nodejs-modules */
 import { unlink, renameSync } from 'fs';
 import { Context } from 'mocha';
 
@@ -78,7 +77,6 @@ export async function saveVideo( this: Context ): Promise< void > {
 async function removeVideo( path: string ) {
 	unlink( path, function ( err ) {
 		if ( err ) {
-			/* eslint-disable-next-line no-console */
 			console.log( 'Failed to delete video recording of passed test case.' );
 		}
 	} );
@@ -106,10 +104,8 @@ async function renameVideo( context: Context, path: string ): Promise< void > {
 
 	try {
 		renameSync( path, newPath );
-		/* eslint-disable-next-line no-console */
 		console.log( `Video file saved as ${ newPath }` );
 	} catch ( error ) {
-		/* eslint-disable-next-line no-console */
 		console.log( `Renaming video file failed! \n ${ error }` );
 	}
 }
