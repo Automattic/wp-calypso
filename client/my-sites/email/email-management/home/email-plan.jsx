@@ -158,7 +158,7 @@ class EmailPlan extends React.Component {
 		}
 
 		if ( hasTitanMailWithUs( domain ) ) {
-			return translate( 'Email settings' );
+			return translate( 'Professional Email settings' );
 		}
 
 		return translate( 'Email forwarding settings' );

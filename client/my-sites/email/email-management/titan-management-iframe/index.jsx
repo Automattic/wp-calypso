@@ -77,11 +77,11 @@ class TitanManagementIframe extends React.Component {
 					<QueryEmailAccounts siteId={ selectedSiteId } />
 				) }
 				<QuerySiteDomains siteId={ selectedSiteId } />
-				<DocumentHead title={ translate( 'Email Management' ) } />
+				<DocumentHead title={ translate( 'Professional Email Management' ) } />
 				<SidebarNavigation />
 
 				<Header backHref={ emailManagementPath } selectedDomainName={ domainName }>
-					{ translate( 'Email Settings' ) }
+					{ translate( 'Professional Email Settings' ) }
 				</Header>
 				{ this.renderManagementSection() }
 			</Main>

@@ -115,7 +115,7 @@ class TitanRedirector extends Component {
 				<EmptyContent
 					title={ translate( "We couldn't locate your account details" ) }
 					line={ translate(
-						'Please check that you purchased the Email subscription, as only the original purchaser can manage billing and add more accounts'
+						'Please check that you purchased the Professional Email subscription, as only the original purchaser can manage billing and add more accounts'
 					) }
 					action={ translate( 'Contact support' ) }
 					actionURL={ SUPPORT_ROOT }
