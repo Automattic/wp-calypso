@@ -23,7 +23,7 @@ export default async function submitWpcomTransaction(
 	) {
 		const createAccountOptions = payload.cart.is_jetpack_checkout
 			? { signupFlowName: 'jetpack-userless-checkout' }
-			: { signupFlowName: 'onboarding-registrationless' };
+			: {};
 
 		return createAccount( createAccountOptions ).then( ( response ) => {
 			const siteIdFromResponse = response?.blog_details?.blogid;
