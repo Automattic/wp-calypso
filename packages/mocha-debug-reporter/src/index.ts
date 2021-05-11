@@ -55,14 +55,11 @@ export = class DebugReporter extends Mocha.reporters.Base {
 	}
 
 	writeLog(): void {
-		const fileTemplate = path.resolve(
-			process.cwd(),
-			( this.reporterOptions?.file as string ) ?? 'mocha-debug.log'
-		);
-		const fileName = fileTemplate.replace(
+		const fileTemplate = ( this.reporterOptions?.file as string | undefined )?.replace(
 			/%(.*?)%/,
 			( _match, envVar ) => process.env[ envVar ] || ''
 		);
+		const fileName = path.resolve( process.cwd(), fileTemplate ?? 'mocha-debug.log' );
 		fs.writeFileSync( fileName, JSON.stringify( this.events, null, 2 ) );
 	}
 
