@@ -21,9 +21,10 @@
 }
 
 .app-banner__title {
-	font-size: 17px;
-	font-weight: 600;
-	line-height: 1.4;
+	/* stylelint-disable-next-line */
+	font-size: rem( 22px ); //typography-exception
+	font-family: $brand-serif;
+	line-height: 30px;
 }
 
 .app-banner__copy {
