@@ -669,3 +669,11 @@
 		transform: scale( 1 );
 	}
 }
+
+.jetpack-checkout-thank-you {
+	&__loading {
+		@include placeholder( --color-neutral-30 );
+	}
+	// TODO min width
+	// TODO primary button color
+}

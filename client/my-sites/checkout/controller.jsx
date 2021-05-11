@@ -24,7 +24,7 @@ import GSuiteNudge from './gsuite-nudge';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
-import UserlessJetpackThankYou from './checkout-thank-you/userless-jetpack-thank-you';
+import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import { canUserPurchaseGSuite } from 'calypso/lib/gsuite';
 import { setSectionMiddleware } from 'calypso/controller';
@@ -283,7 +283,7 @@ export function redirectToSupportSession( context ) {
 
 export function userlessCheckoutThankYou( context, next ) {
 	context.primary = (
-		<UserlessJetpackThankYou site={ context.params.site } product={ context.params.product } />
+		<JetpackCheckoutThankYou site={ context.params.site } productSlug={ context.params.product } />
 	);
 
 	next();
