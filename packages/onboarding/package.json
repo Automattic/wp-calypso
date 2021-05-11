@@ -36,8 +36,11 @@
 		"@wordpress/data": "^4.27.3",
 		"@wordpress/icons": "^2.10.3",
 		"@wordpress/react-i18n": "^1.0.3",
+		"@wordpress/is-shallow-equal": "^3.1.3",
+		"@wp-g2/create-styles": "^0.0.160",
 		"classnames": "^2.2.6",
-		"react-router-dom": "^5.1.2"
+		"react-router-dom": "^5.1.2",
+		"reakit-utils": "^0.15.1"
 	},
 	"devDependencies": {
 		"@automattic/typography": "^1.0.0",
@@ -51,7 +54,8 @@
 	},
 	"peerDependencies": {
 		"@wordpress/i18n": "^3.20.0",
-		"react": "^16.8"
+		"react": "^16.8",
+		"react-dom": "^16.13.1"
 	},
 	"private": true
 }
