@@ -28,6 +28,7 @@ export const isCriteoEnabled = false;
 export const isPandoraEnabled = false;
 export const isQuoraEnabled = false;
 export const isAdRollEnabled = false;
+export const isIponwebEnabled = true;
 
 /**
  * Module variables
@@ -65,6 +66,7 @@ export const LINKED_IN_SCRIPT_URL = 'https://snap.licdn.com/li.lms-analytics/ins
 export const QUORA_SCRIPT_URL = 'https://a.quora.com/qevents.js';
 export const OUTBRAIN_SCRIPT_URL = 'https://amplify.outbrain.com/cp/obtp.js';
 export const PINTEREST_SCRIPT_URL = 'https://s.pinimg.com/ct/core.js';
+export const IPONWEB_SCRIPT_URL = 'https://s.pubmine.com/loader.js';
 export const TRACKING_IDS = {
 	bingInit: '4074038',
 	facebookInit: '823166884443641',

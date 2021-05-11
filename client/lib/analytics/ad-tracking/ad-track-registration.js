@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { isAdTrackingAllowed, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
+import { getCurrentUser } from '@automattic/calypso-analytics';
 
 import {
 	debug,
@@ -10,6 +11,7 @@ import {
 	isWpcomGoogleAdsGtagEnabled,
 	isFloodlightEnabled,
 	isPinterestEnabled,
+	isIponwebEnabled,
 	TRACKING_IDS,
 } from './constants';
 import { loadTrackingScripts } from './load-tracking-scripts';
@@ -27,6 +29,7 @@ export async function adTrackRegistration() {
 	}
 
 	await loadTrackingScripts();
+	const currentUser = getCurrentUser();
 
 	// Google Ads Gtag
 
@@ -75,6 +78,19 @@ export async function adTrackRegistration() {
 		const params = [ 'track', 'lead' ];
 		debug( 'adTrackRegistration: [Pinterest]', params );
 		window.pintrk( ...params );
+	}
+
+	// Iponweb
+
+	if ( isIponwebEnabled ) {
+		debug( 'adTrackRegistration: [Iponweb]' );
+		window.smartPixel( 'sendEvent', {
+			id: 'registration',
+			data: {
+				is_new_user: 0,
+				user_id: currentUser ? currentUser.hashedPii.ID : '',
+			},
+		} );
 	}
 
 	debug( 'adTrackRegistration: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );

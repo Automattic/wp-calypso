@@ -4,7 +4,13 @@
 import { isAdTrackingAllowed, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
 
 import { getCurrentUser } from '@automattic/calypso-analytics';
-import { debug, isWpcomGoogleAdsGtagEnabled, isFloodlightEnabled, TRACKING_IDS } from './constants';
+import {
+	debug,
+	isWpcomGoogleAdsGtagEnabled,
+	isFloodlightEnabled,
+	isIponwebEnabled,
+	TRACKING_IDS,
+} from './constants';
 import { loadTrackingScripts } from './load-tracking-scripts';
 import { recordParamsInFloodlightGtag } from './floodlight';
 
@@ -49,5 +55,18 @@ export async function adTrackSignupStart( flow ) {
 		];
 		debug( 'adTrackSignupStart: [Google Ads Gtag]', params );
 		window.gtag( ...params );
+	}
+
+	// Iponweb
+
+	if ( isIponwebEnabled && ! currentUser && 'onboarding' === flow ) {
+		debug( 'adTrackSignupStart: [Iponweb]' );
+		window.smartPixel( 'sendEvent', {
+			id: 'signup_start',
+			data: {
+				is_new_user: 0,
+				user_id: currentUser ? currentUser.hashedPii.ID : '',
+			},
+		} );
 	}
 }
