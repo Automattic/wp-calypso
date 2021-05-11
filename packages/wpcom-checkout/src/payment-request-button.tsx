@@ -118,6 +118,7 @@ const GooglePayButtonWrapper = styled.button`
 	padding: 12px 24px 10px;
 	position: relative;
 	text-align: center;
+	cursor: pointer;
 
 	svg {
 		height: 18px;
