@@ -381,19 +381,6 @@ export async function numberOfOpenWindows( driver ) {
 	return handles.length;
 }
 
-export async function waitForNumberOfWindows( driver, numberWindows, waitOverride ) {
-	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
-
-	return await driver.wait(
-		async function () {
-			const handles = await driver.getAllWindowHandles();
-			return handles.length === numberWindows;
-		},
-		timeoutWait,
-		`Timed out waiting for ${ numberWindows } browser windows`
-	);
-}
-
 export async function closeCurrentWindow( driver ) {
 	return await driver.close();
 }
