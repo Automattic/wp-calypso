@@ -131,7 +131,10 @@ export default function getThankYouPageUrl( {
 	if ( isJetpackUserlessCheckout ) {
 		debug( 'redirecting to userless jetpack thank you' );
 
-		return `/checkout/jetpack/thank-you/${ siteSlug }/${ pendingOrReceiptId }`;
+		// extract a product from the cart, in userless checkout there should only be one
+		const productSlug = cart?.products[ 0 ]?.product_slug;
+
+		return `/checkout/jetpack/thank-you/${ siteSlug }/${ productSlug }`;
 	}
 
 	const fallbackUrl = getFallbackDestination( {

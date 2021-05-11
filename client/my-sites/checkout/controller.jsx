@@ -282,7 +282,9 @@ export function redirectToSupportSession( context ) {
 }
 
 export function userlessCheckoutThankYou( context, next ) {
-	context.primary = <UserlessJetpackThankYou site={ context.params.site } />;
+	context.primary = (
+		<UserlessJetpackThankYou site={ context.params.site } product={ context.params.product } />
+	);
 
 	next();
 }
