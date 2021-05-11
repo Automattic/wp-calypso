@@ -223,7 +223,7 @@ class StatsSummary extends Component {
 		const { module } = this.props.context.params;
 
 		return (
-			<Main wideLayout>
+			<Main wideLayout={ true }>
 				<PageViewTracker
 					path={ `/stats/${ period }/${ module }/:site` }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }

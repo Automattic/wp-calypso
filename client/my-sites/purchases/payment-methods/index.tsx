@@ -64,7 +64,7 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ): JSX.Elemen
 	);
 
 	return (
-		<Main wideLayout className="purchases">
+		<Main className="purchases is-wide-layout">
 			<MySitesSidebarNavigation />
 			<DocumentHead title={ titles.paymentMethods } />
 			<PageViewTracker path="/purchases/payment-methods" title="Payment Methods" />
@@ -118,7 +118,7 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ):
 	}
 
 	return (
-		<Main wideLayout className="purchases">
+		<Main className="purchases is-wide-layout">
 			<MySitesSidebarNavigation />
 			<PageViewTracker path={ '/purchases/add-payment-method' } title={ titles.addPaymentMethod } />
 			<DocumentHead title={ titles.addPaymentMethod } />

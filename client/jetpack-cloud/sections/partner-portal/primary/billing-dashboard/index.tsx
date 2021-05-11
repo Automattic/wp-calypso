@@ -24,7 +24,7 @@ export default function BillingDashboard(): ReactElement {
 	const translate = useTranslate();
 
 	return (
-		<Main wideLayout className="billing-dashboard">
+		<Main wideLayout={ true } className="billing-dashboard">
 			<DocumentHead title={ translate( 'Billing' ) } />
 			<SidebarNavigation />
 

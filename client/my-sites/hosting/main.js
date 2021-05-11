@@ -180,7 +180,7 @@ class Hosting extends Component {
 		};
 
 		return (
-			<Main wideLayout className="hosting">
+			<Main className="hosting is-wide-layout">
 				<PageViewTracker path="/hosting-config/:site" title="Hosting Configuration" />
 				<DocumentHead title={ translate( 'Hosting Configuration' ) } />
 				<SidebarNavigation />

@@ -53,7 +53,7 @@ export default function Licenses( {
 	};
 
 	return (
-		<Main wideLayout className="licenses">
+		<Main wideLayout={ true } className="licenses">
 			<DocumentHead title={ translate( 'Licenses' ) } />
 			<SidebarNavigation />
 

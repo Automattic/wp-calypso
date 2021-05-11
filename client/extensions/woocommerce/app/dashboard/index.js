@@ -16,7 +16,7 @@ function Dashboard( className ) {
 	const translate = useTranslate();
 
 	return (
-		<Main className={ classNames( 'dashboard', className ) } wideLayout>
+		<Main className={ classNames( 'dashboard', className ) } wideLayout={ true }>
 			<ActionHeader breadcrumbs={ translate( 'Store' ) } />
 			<StoreMoveNoticeView />
 		</Main>

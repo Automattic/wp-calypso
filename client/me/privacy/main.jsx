@@ -96,7 +96,7 @@ class Privacy extends React.Component {
 		);
 
 		return (
-			<Main wideLayout className="privacy">
+			<Main className="privacy is-wide-layout">
 				<QueryUserSettings />
 				<PageViewTracker path="/me/privacy" title="Me > Privacy" />
 				<DocumentHead title={ translate( 'Privacy Settings' ) } />

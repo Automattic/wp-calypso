@@ -23,6 +23,7 @@ import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
 import SectionHeader from 'calypso/components/section-header';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import { protectForm } from 'calypso/lib/protect-form';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -51,7 +52,7 @@ class Profile extends React.Component {
 		const gravatarProfileLink = 'https://gravatar.com/' + this.props.getSetting( 'user_login' );
 
 		return (
-			<Main className="profile">
+			<Main className="profile is-wide-layout">
 				<PageViewTracker path="/me" title="Me > My Profile" />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />

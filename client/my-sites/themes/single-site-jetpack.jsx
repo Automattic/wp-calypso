@@ -87,7 +87,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 	const isPartnerPlan = purchase && isPartnerPurchase( purchase );
 
 	return (
-		<Main wideLayout className="themes">
+		<Main className="themes">
 			<SidebarNavigation />
 			<FormattedHeader
 				brandFont

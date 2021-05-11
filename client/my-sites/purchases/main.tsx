@@ -61,7 +61,7 @@ export function Purchases(): JSX.Element {
 	const logPurchasesError = useLogPurchasesError( 'site level purchases load error' );
 
 	return (
-		<Main wideLayout className="purchases">
+		<Main className="purchases is-wide-layout">
 			<MySitesSidebarNavigation />
 			<DocumentHead title={ titles.sectionTitle } />
 			<FormattedHeader
@@ -96,7 +96,7 @@ export function PurchaseDetails( {
 	const logPurchasesError = useLogPurchasesError( 'site level purchase details load error' );
 
 	return (
-		<Main wideLayout className="purchases">
+		<Main className="purchases is-wide-layout">
 			<DocumentHead title={ titles.managePurchase } />
 			<FormattedHeader
 				brandFont
@@ -141,7 +141,7 @@ export function PurchaseCancel( {
 	const logPurchasesError = useLogPurchasesError( 'site level purchase cancel load error' );
 
 	return (
-		<Main wideLayout className="purchases">
+		<Main className="purchases is-wide-layout">
 			<DocumentHead title={ titles.cancelPurchase } />
 			<FormattedHeader
 				brandFont
@@ -181,7 +181,7 @@ export function PurchaseChangePaymentMethod( {
 	);
 
 	return (
-		<Main wideLayout className="purchases">
+		<Main className="purchases is-wide-layout">
 			<DocumentHead title={ titles.changePaymentMethod } />
 			<FormattedHeader
 				brandFont
@@ -218,7 +218,7 @@ export function PurchaseCancelDomain( {
 	const logPurchasesError = useLogPurchasesError( 'site level purchase cancel domain load error' );
 
 	return (
-		<Main wideLayout className="purchases">
+		<Main className="purchases is-wide-layout">
 			<DocumentHead title={ titles.confirmCancelDomain } />
 			<FormattedHeader
 				brandFont

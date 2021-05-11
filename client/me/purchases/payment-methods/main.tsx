@@ -24,7 +24,7 @@ import './style.scss';
 
 function PaymentMethods(): JSX.Element {
 	return (
-		<Main wideLayout className="payment-methods__main">
+		<Main className="payment-methods__main is-wide-layout">
 			<DocumentHead title={ titles.paymentMethods } />
 			<PageViewTracker path="/me/purchases/payment-methods" title="Me > Payment Methods" />
 			<MeSidebarNavigation />

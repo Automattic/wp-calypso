@@ -70,7 +70,7 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 		}
 	}
 	return (
-		<Main wideLayout className="themes">
+		<Main className="themes">
 			<SidebarNavigation />
 			<FormattedHeader
 				brandFont

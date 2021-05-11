@@ -18,7 +18,7 @@ export default function Subscriptions() {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 
 	return (
-		<Main wideLayout className="subscriptions">
+		<Main className="subscriptions is-wide-layout">
 			<QuerySitePurchases siteId={ selectedSiteId } />
 			<PageViewTracker path="/purchases/subscriptions" title="Subscriptions" />
 			<SubscriptionsContent />

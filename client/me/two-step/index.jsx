@@ -106,7 +106,7 @@ class TwoStep extends Component {
 		const useCheckupMenu = config.isEnabled( 'security/security-checkup' );
 
 		return (
-			<Main wideLayout className="security two-step">
+			<Main className="security two-step is-wide-layout">
 				<QueryUserSettings />
 				<PageViewTracker path="/me/security/two-step" title="Me > Two-Step Authentication" />
 				<MeSidebarNavigation />

@@ -55,7 +55,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import './style.scss';
 
 const SecurityAccountRecovery = ( props ) => (
-	<Main wideLayout className="security security-account-recovery">
+	<Main className="security security-account-recovery is-wide-layout">
 		<PageViewTracker path="/me/security/account-recovery" title="Me > Account Recovery" />
 		<QueryAccountRecoverySettings />
 

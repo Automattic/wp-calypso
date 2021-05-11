@@ -110,7 +110,7 @@ class ConnectedApplications extends PureComponent {
 		const { translate } = this.props;
 
 		return (
-			<Main wideLayout className="security connected-applications">
+			<Main className="security connected-applications is-wide-layout">
 				<QueryConnectedApplications />
 
 				<PageViewTracker
