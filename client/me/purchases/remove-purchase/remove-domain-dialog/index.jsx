@@ -62,7 +62,7 @@ class RemoveDomainDialog extends Component {
 									productName: getTitanProductName(),
 								},
 								comment:
-									'%(productName) is the name of the product, which is either Email or Titan Mail',
+									'%(productName) is the name of the product, which should be Professional Email',
 							}
 						) }
 			</p>
