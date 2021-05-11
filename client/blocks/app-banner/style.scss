@@ -33,7 +33,8 @@
 }
 
 .app-banner__buttons {
-	width: calc( 100% - 84px );
+	width: 100%;
+	margin-top: 20px;
 }
 
 .button.app-banner__open-button {
