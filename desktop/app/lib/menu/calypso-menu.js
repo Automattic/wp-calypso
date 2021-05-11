@@ -46,7 +46,6 @@ module.exports = function ( mainWindow, status ) {
 			accelerator: 'CmdOrCtrl+3',
 			click: function () {
 				mainWindow.show();
-				mainWindow.show();
 				if ( isCalypso( mainWindow ) ) {
 					ipc.showProfile( mainWindow );
 				} else {
@@ -60,7 +59,6 @@ module.exports = function ( mainWindow, status ) {
 			enabled: status,
 			accelerator: 'CmdOrCtrl+N',
 			click: function () {
-				mainWindow.show();
 				mainWindow.show();
 				if ( isCalypso( mainWindow ) ) {
 					ipc.newPost( mainWindow );
