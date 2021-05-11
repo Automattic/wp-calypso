@@ -443,14 +443,6 @@ export async function scrollIntoView( driver, locator, position = 'center' ) {
 	);
 }
 
-export async function selectElementByText( driver, locator, text ) {
-	const element = async () => {
-		const allElements = await driver.findElements( locator );
-		return await webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
-	};
-	return await this.clickWhenClickable( driver, element );
-}
-
 /**
  * Waits until an element with given locator and inner text is located.
  *

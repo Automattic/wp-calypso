@@ -31,11 +31,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		);
 		const isExpanded = await itemElement.getAttribute( 'aria-expanded' );
 		if ( isExpanded === 'false' ) {
-			await driverHelper.selectElementByText(
-				this.driver,
-				By.css( '.sidebar__heading' ),
-				itemName
-			);
+			await driverHelper.clickWhenClickable( this.driver, itemLocator );
 		}
 	}
 

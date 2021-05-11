@@ -235,7 +235,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	async scheduleFuturePost() {
 		await this.expandStatusAndVisibility();
 		const nextMonthLocator = By.css( '.DayPickerNavigation_rightButton__horizontalDefault' );
-		const firstDay = By.css( '.CalendarDay' );
+		const firstDayLocator = driverHelper.createTextLocator( By.css( '.CalendarDay' ), '1' );
 		const publishDateLocator = By.css( '.edit-post-post-schedule__toggle' );
 
 		await driverHelper.clickWhenClickable(
@@ -244,12 +244,12 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		);
 		// schedulePost post for the first day of the next month
 		await driverHelper.clickWhenClickable( this.driver, nextMonthLocator );
-		await driverHelper.selectElementByText( this.driver, firstDay, '1' );
+		await driverHelper.clickWhenClickable( this.driver, firstDayLocator );
 		// Add another click so the calendar modal disappears and makes space for
 		// the follow-up clicks. This is because of a bug reported in
 		// https://github.com/WordPress/gutenberg/issues/30415 and can be reverted
 		// once an upstream fix is in.
-		await driverHelper.selectElementByText( this.driver, firstDay, '1' );
+		await driverHelper.clickWhenClickable( this.driver, firstDayLocator );
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, publishDateLocator );
 		const publishDate = await this.driver.findElement( publishDateLocator ).getText();
 
