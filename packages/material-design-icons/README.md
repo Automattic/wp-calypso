@@ -11,7 +11,7 @@ out an alternative distribution of the icons.
 
 ## Using a Material icon in Calypso
 
-We use svgr to load SVG files and convert them to React components.
+We use `svgr` to load SVG files and convert them to React components:
 
 ```jsx
 import { ReactComponent as SvgExample } from './test.svg';
@@ -19,20 +19,20 @@ import { ReactComponent as SvgExample } from './test.svg';
 <SvgExample />;
 ```
 
-## Adding icons
+## Adding a Material icon
 
-To add more Material Design icons, you'll have to download individual icons to appropriate directories
-then rebuild and checkin updated `material-icons.svg` file.
+To add more icons, you'll have to download individual icons to the appropriate directories,
+then rebuild and commit the updated sprites file:
 
-Select and download individual icon's SVG file from <https://material.io/tools/icons/>,
-minding the style (like `outline`) and size.
+  1. Select an icon from the [official repository](https://fonts.google.com/icons?selected=Material+Icons), minding the style (like `outline`)
 
-Move the SVG files in the sub-folder matching the category used on material.io.
+  2. Download the corresponding SVG file with `black` as color
 
-Rebuild `material-icons.svg` by running:
+  3. Move that SVG file in the sub-folder matching the category of that icon
 
-```bash
-yarn workspace @automattic/material-design-icons run build
-```
+  4. Rebuild `material-icons.svg` by running:
+     ```bash
+     yarn workspace @automattic/material-design-icons run build
+     ```
 
-Beware that default style and size for `MaterialIcon` class is `outline` and `24`.
+Beware that default style and size for the `MaterialIcon` class is `outline` and `24`.
