@@ -18597,11 +18597,6 @@ mocha-junit-reporter@^2.0.0:
     strip-ansi "^4.0.0"
     xml "^1.0.0"
 
-mocha-suite-hooks@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/mocha-suite-hooks/-/mocha-suite-hooks-0.1.0.tgz#cc1ed9e2f5a3de3700bd561471222308c05379e7"
-  integrity sha512-9jfs6UxHOkjRKABETxgwt0Kj5wWr8ryG1rlh1eKITzTYWH6h3dSw4ZKgdea50AGD4KMm/snQi9o4nuzeOqR8Rw==
-
 mocha-teamcity-reporter@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/mocha-teamcity-reporter/-/mocha-teamcity-reporter-3.0.0.tgz#2c4776288f23dac61aa0fee5930571cc2a51df1a"
