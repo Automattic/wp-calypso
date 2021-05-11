@@ -12,3 +12,5 @@ export { default as requestGeoLocation } from './request-geo-location';
 export { default as requestFeedDiscovery } from './request-feed-discovery';
 export { default as requestSiteAlerts } from './request-site-alerts';
 export { default as requestDpa } from './request-dpa';
+export { default as requestUnauthorizedSite } from './request-unauthorized-site';
+export { default as getRequestUnauthorizedSiteId } from './get-request-unauthorized-site-id';

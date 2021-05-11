@@ -33,7 +33,7 @@ export default function () {
 		if ( isEnabled( 'jetpack/userless-checkout' ) ) {
 			page( '/checkout/jetpack/:siteSlug/:productSlug', checkout, makeLayout, clientRender );
 			page(
-				'/checkout/jetpack/thank-you/:siteSlug/:receiptId',
+				'/checkout/jetpack/thank-you/:site/:product',
 				userlessCheckoutThankYou,
 				makeLayout,
 				clientRender
@@ -59,7 +59,7 @@ export default function () {
 			clientRender
 		);
 		page(
-			'/checkout/jetpack/thank-you/:siteSlug/:receiptId',
+			'/checkout/jetpack/thank-you/:site/:product',
 			siteSelection,
 			userlessCheckoutThankYou,
 			makeLayout,
