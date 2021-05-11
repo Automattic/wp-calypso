@@ -11,7 +11,7 @@ import type { StripePaymentRequest } from '@automattic/calypso-stripe';
 /**
  * Internal dependencies
  */
-import googlePayButtonImage from './images/google-pay-buy-button-black.svg';
+import { GooglePayMark } from './payment-methods/google-pay';
 
 // Disabling this rule to make migrating this to calypso easier with fewer changes
 /* eslint-disable @typescript-eslint/no-use-before-define */
@@ -87,7 +87,7 @@ const ApplePayButton = styled.button`
 	-apple-pay-button-style: black;
 	-apple-pay-button-type: plain;
 	height: 38px;
-	width: 100%;
+	width: calc( 100% - 60px );
 	position: relative;
 
 	&::after {
@@ -105,15 +105,27 @@ const ApplePayButton = styled.button`
 			left: auto;
 		}
 	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		width: 100%;
+	}
 `;
 
-const ButtonContainer = styled.div`
-	display: flex;
-	justify-content: center;
-`;
+const GooglePayButtonWrapper = styled.button`
+	background-color: #000;
+	border-radius: 4px;
+	width: calc( 100% - 60px );
+	padding: 12px 24px 10px;
+	position: relative;
+	text-align: center;
 
-const GooglePayImage = styled.img`
-	width: 100%;
+	svg {
+		height: 18px;
+	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		width: 100%;
+	}
 `;
 
 function GooglePayButton( {
@@ -124,10 +136,8 @@ function GooglePayButton( {
 	onClick: ( event: MouseEvent ) => void;
 } ): JSX.Element {
 	return (
-		<ButtonContainer>
-			<button disabled={ disabled } onClick={ onClick }>
-				<GooglePayImage alt="Google Pay" src={ googlePayButtonImage } />
-			</button>
-		</ButtonContainer>
+		<GooglePayButtonWrapper disabled={ disabled } onClick={ onClick }>
+			<GooglePayMark fill="white" />
+		</GooglePayButtonWrapper>
 	);
 }
