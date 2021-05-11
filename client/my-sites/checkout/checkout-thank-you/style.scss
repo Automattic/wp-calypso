@@ -1,5 +1,6 @@
 @import '~@wordpress/base-styles/breakpoints';
 @import '~@wordpress/base-styles/mixins';
+@import '~@wordpress/base-styles/variables';
 
 .checkout-thank-you {
 	box-sizing: border-box;
@@ -673,16 +674,28 @@
 .jetpack-checkout-thank-you {
 	.jetpack-checkout-thank-you__card,
 	.jetpack-checkout-thank-you__card-loading {
-		max-width: 650px;
-		padding: 96px;
 		box-shadow: 0px 0px 40px 0px #00000014;
+
+		width: 100%;
+		max-width: none;
+		padding: 16px;
+
+		@include break-mobile {
+			width: auto;
+			max-width: 650px;
+			padding: 96px;
+		}
 
 		// TODO min width
 		// TODO primary button color
 		.jetpack-checkout-thank-you__main-message {
-			font-size: 48px;
+			font-size: 36px;
 			font-weight: 700;
 			margin-bottom: 24px;
+
+			@include break-mobile {
+				font-size: 48px;
+			}
 		}
 
 		.jetpack-checkout-thank-you__sub-message {
