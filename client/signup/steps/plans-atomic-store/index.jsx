@@ -126,7 +126,6 @@ export class PlansAtomicStoreStep extends Component {
 					isInSignup={ true }
 					siteId={ siteId }
 					domainName={ this.getDomainName() }
-					displayJetpackPlans={ false }
 				/>
 			</div>
 		);
