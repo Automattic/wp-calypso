@@ -11,7 +11,7 @@ import type { StripePaymentRequest } from '@automattic/calypso-stripe';
  * Internal dependencies
  */
 import styled from './styled';
-import { GooglePayMark } from './payment-methods/google-pay';
+import { GooglePayMark } from './google-pay-mark';
 
 // Disabling this rule to make migrating this to calypso easier with fewer changes
 /* eslint-disable @typescript-eslint/no-use-before-define */
