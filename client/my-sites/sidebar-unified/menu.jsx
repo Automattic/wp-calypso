@@ -8,7 +8,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import page from 'page';
@@ -20,7 +20,6 @@ import { isWithinBreakpoint } from '@automattic/viewport';
 import { isSidebarSectionOpen } from 'calypso/state/my-sites/sidebar/selectors';
 import {
 	toggleMySitesSidebarSection as toggleSection,
-	expandMySitesSidebarSection as expandSection,
 	collapseAllMySitesSidebarSections,
 } from 'calypso/state/my-sites/sidebar/actions';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
@@ -45,28 +44,16 @@ export const MySitesSidebarUnifiedMenu = ( {
 	continueInCalypso,
 	...props
 } ) => {
-	const hasAutoExpanded = useRef( false );
 	const reduxDispatch = useDispatch();
 	const sectionId = 'SIDEBAR_SECTION_' + slug;
 	const isExpanded = useSelector( ( state ) => isSidebarSectionOpen( state, sectionId ) );
-	const allowExpansion =
-		( isWithinBreakpoint( '>782px' ) && ! sidebarCollapsed ) || ! isWithinBreakpoint( '>782px' ); // Do not allow expansion on Desktop with sidebar collapsed.
-
 	const selectedMenuItem =
 		Array.isArray( children ) &&
 		children.find( ( menuItem ) => menuItem?.url && itemLinkMatches( menuItem.url, path ) );
 	const childIsSelected = !! selectedMenuItem;
-
-	/**
-	 * One time only, auto-expand the currently active section, or the section
-	 * which contains the current active item.
-	 */
-	useEffect( () => {
-		if ( ! hasAutoExpanded.current && ( selected || childIsSelected ) && ! sidebarCollapsed ) {
-			reduxDispatch( expandSection( sectionId ) );
-			hasAutoExpanded.current = true;
-		}
-	}, [ selected, childIsSelected, reduxDispatch, sectionId, sidebarCollapsed ] );
+	const showAsExpanded =
+		( ! isWithinBreakpoint( '>782px' ) && isExpanded ) || // For mobile breakpoints, we dont' care whether a child is secleted or the sidebar collapsed status.
+		( isWithinBreakpoint( '>782px' ) && childIsSelected && ! sidebarCollapsed ); // For desktop breakpoints, a child should be selected and the sidebar being expanded.
 
 	const onClick = () => {
 		if ( isWithinBreakpoint( '>782px' ) ) {
@@ -99,7 +86,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 		<li>
 			<ExpandableSidebarMenu
 				onClick={ () => onClick() }
-				expanded={ isExpanded && allowExpansion }
+				expanded={ showAsExpanded }
 				title={ title }
 				customIcon={ <SidebarCustomIcon icon={ icon } /> }
 				className={ ( selected || childIsSelected ) && 'sidebar__menu--selected' }
