@@ -54,6 +54,10 @@ const LayoutLoggedOut = ( {
 	const isJetpackCheckout =
 		sectionName === 'checkout' && window.location.pathname.startsWith( '/checkout/jetpack' );
 
+	const isJetpackThankYou =
+		sectionName === 'checkout' &&
+		window.location.pathname.startsWith( '/checkout/jetpack/thank-you' );
+
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
 		[ 'is-section-' + sectionName ]: sectionName,
@@ -94,7 +98,7 @@ const LayoutLoggedOut = ( {
 
 			masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
 		}
-	} else if ( config.isEnabled( 'jetpack-cloud' ) || isWpMobileApp() ) {
+	} else if ( config.isEnabled( 'jetpack-cloud' ) || isWpMobileApp() || isJetpackThankYou ) {
 		masterbar = null;
 	} else {
 		masterbar = (
