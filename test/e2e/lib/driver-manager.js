@@ -71,6 +71,49 @@ export function getProxyType() {
 	}
 }
 
+/**
+ * This proxy is meant to only catch & re-throw internal driver.wait() errors
+ * ("Waiting for ... timed out.") in order to provide a full stack to the
+ * relevant line. Without it, the stack provides merely a single line to the
+ * webdriver.js source.
+ *
+ * @param {webdriver.ThenableWebDriver} twd A ThenableWebDriver instance
+ * @returns {webdriver.WebDriver} A WebDriver instance
+ */
+export async function createDriverProxy( twd ) {
+	const driver = await twd;
+
+	return new Proxy( driver, {
+		get: function ( target, prop ) {
+			const orig = target[ prop ];
+			if ( 'function' !== typeof orig ) {
+				return orig;
+			}
+
+			if ( 'wait' === prop ) {
+				return async function ( ...args ) {
+					try {
+						const result = await orig.apply( target, args );
+						return result;
+					} catch ( error ) {
+						if ( error instanceof webdriver.error.TimeoutError ) {
+							/**
+							 * By re-throwing the same error we're only replacing its stack.
+							 * The message will stay the same.
+							 */
+							throw new Error( error );
+						}
+
+						throw error;
+					}
+				};
+			}
+
+			return orig.bind( target );
+		},
+	} );
+}
+
 export async function startBrowser( {
 	useCustomUA = true,
 	resizeBrowserWindow = true,
@@ -238,7 +281,7 @@ export async function startBrowser( {
 		await resizeBrowser( driver, screenSize );
 	}
 
-	return driver;
+	return createDriverProxy( driver );
 }
 
 export async function resizeBrowser( driver, screenSize ) {
