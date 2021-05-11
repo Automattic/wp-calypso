@@ -4,7 +4,6 @@
 import React from 'react';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
-import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { keyframes } from '@emotion/core';
@@ -14,7 +13,10 @@ import { keyframes } from '@emotion/core';
  */
 import { LineItem } from 'calypso/my-sites/checkout/composite-checkout/components/wp-order-review-line-items';
 import type { MarketplaceThemeProps } from 'calypso/my-sites/plugins/marketplace/theme';
-import { MobileHiddenHorizontalRule } from 'calypso/my-sites/plugins/marketplace/components';
+import {
+	MobileHiddenHorizontalRule,
+	FullWidthButton,
+} from 'calypso/my-sites/plugins/marketplace/components';
 
 interface PropsForMarketplaceShoppingCart {
 	onCheckout: () => void;
@@ -67,12 +69,6 @@ const ShoppingCartTotal = styled.div< MarketplaceThemeProps >`
 	@media ( ${ ( { theme } ) => theme?.breakpoints.tabletDown } ) {
 		display: none;
 	}
-`;
-
-const FullWidthButton = styled( Button )`
-	justify-content: center;
-	width: 100%;
-	margin-bottom: 15px;
 `;
 
 const MarketPlaceBasketItem = styled( LineItem )`
