@@ -47,8 +47,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 		} );
 
 		it( 'Can open focused launch modal', async function () {
-			const launchButtonLocator = await driverHelper.getElementByText(
-				driver,
+			const launchButtonLocator = driverHelper.createTextLocator(
 				By.css( '.editor-gutenberg-launch__launch-button' ),
 				'Launch'
 			);
@@ -105,8 +104,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			const normalizedSiteTitle = siteTitle.toLowerCase().replace( / /g, '' );
 
 			// Check if there are domain suggestions that contains user entered site title
-			const domainSuggestionsContainUserEnteredSiteTitleLocator = driverHelper.getElementByText(
-				driver,
+			const domainSuggestionsContainUserEnteredSiteTitleLocator = driverHelper.createTextLocator(
 				By.css( `.domain-picker__domain-sub-domain` ),
 				normalizedSiteTitle
 			);
@@ -159,8 +157,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 
 		it( 'Can open detailed plans grid', async function () {
 			// Click on "View All Plans" button
-			const viewAllPlansButtonLocator = driverHelper.getElementByText(
-				driver,
+			const viewAllPlansButtonLocator = driverHelper.createTextLocator(
 				By.css( `.focused-launch-summary__details-link` ),
 				'View all plans'
 			);
@@ -183,8 +180,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 
 		it( 'Can switch to monthly plans view', async function () {
 			// Click "Monthly" toggle button
-			const monthlyButtonLocator = driverHelper.getElementByText(
-				driver,
+			const monthlyButtonLocator = driverHelper.createTextLocator(
 				By.css( `.plans-interval-toggle__label` ),
 				'Monthly'
 			);
@@ -193,8 +189,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 
 			// Check if plans grid is really switched over to monthly view
 			// by checking if the price note "per month, billed monthly" exists.
-			const perMonthBilledMonthlyPriceNoteLocator = driverHelper.getElementByText(
-				driver,
+			const perMonthBilledMonthlyPriceNoteLocator = driverHelper.createTextLocator(
 				By.css( `.plan-item__price-note` ),
 				'per month, billed monthly'
 			);
@@ -212,8 +207,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 
 		it( 'Can select Personal monthly plan', async function () {
 			// Click "Select Personal" button
-			const selectPersonalPlanButtonLocator = driverHelper.getElementByText(
-				driver,
+			const selectPersonalPlanButtonLocator = driverHelper.createTextLocator(
 				By.css( `.plan-item__select-button` ),
 				'Select Personal'
 			);
@@ -222,8 +216,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 
 			// When the detailed plans grid is closed and user returns to the summary view,
 			// check if the selected monthly plan item is "Personal Plan".
-			const selectedPlanIsPersonalMonthlyPlanLocator = driverHelper.getElementByText(
-				driver,
+			const selectedPlanIsPersonalMonthlyPlanLocator = driverHelper.createTextLocator(
 				By.css( '.focused-launch-summary__item.is-selected' ),
 				/Personal Plan/
 			);
@@ -255,8 +248,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			await GutenbergEditorComponent.Expect( driver );
 
 			// Click on the launch button
-			const launchButtonLocator = await driverHelper.getElementByText(
-				driver,
+			const launchButtonLocator = driverHelper.createTextLocator(
 				By.css( '.editor-gutenberg-launch__launch-button' ),
 				'Launch'
 			);
@@ -273,8 +265,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 		} );
 
 		it( 'Can persist previously selected domain in focused launch', async function () {
-			const selectedDomainSuggestionContainingPreviouslySelectedSubdomainLocator = await driverHelper.getElementByText(
-				driver,
+			const selectedDomainSuggestionContainingPreviouslySelectedSubdomainLocator = driverHelper.createTextLocator(
 				By.css( '.domain-picker__suggestion-item.is-selected' ),
 				new RegExp( selectedSubdomain )
 			);
@@ -292,8 +283,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 
 		it( 'Can persist previously selected plan in focused launch', async function () {
 			// Check if the selected monthly plan item is "Personal Plan".
-			const selectedPlanIsPersonalMonthlyPlanLocator = driverHelper.getElementByText(
-				driver,
+			const selectedPlanIsPersonalMonthlyPlanLocator = driverHelper.createTextLocator(
 				By.css( `.focused-launch-summary__item.is-selected` ),
 				/Personal Plan/
 			);
@@ -311,8 +301,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 
 		it( 'Can select Free plan', async function () {
 			// Click "Free Plan" button
-			const freePlanLocator = driverHelper.getElementByText(
-				driver,
+			const freePlanLocator = driverHelper.createTextLocator(
 				By.css( '.focused-launch-summary__item' ),
 				/Free Plan/
 			);
@@ -321,8 +310,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 
 			// When the detailed plans grid is closed and user returns to the summary view,
 			// check if the selected monthly plan item is "Free Plan".
-			const selectedPlanIsFreePlanLocator = driverHelper.getElementByText(
-				driver,
+			const selectedPlanIsFreePlanLocator = driverHelper.createTextLocator(
 				By.css( '.focused-launch-summary__item.is-selected' ),
 				/Free Plan/
 			);

@@ -100,13 +100,14 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async _expandOrCollapseSectionByText( text, expand = true ) {
-		const sectionLocator = await driverHelper.getElementByText(
-			this.driver,
+		const sectionLocator = driverHelper.createTextLocator(
 			By.css( '.components-panel__body-toggle' ),
 			text
 		);
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, sectionLocator );
-		const sectionButton = await this.driver.findElement( sectionLocator );
+		const sectionButton = await driverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			sectionLocator
+		);
 		const c = await sectionButton.getAttribute( 'aria-expanded' );
 		if ( expand && c === 'false' ) {
 			await driverHelper.scrollIntoView( this.driver, sectionLocator );
@@ -119,8 +120,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async setCommentsPreference( { allow = true } = {} ) {
-		const labelLocator = await driverHelper.getElementByText(
-			this.driver,
+		const labelLocator = driverHelper.createTextLocator(
 			By.css( '.components-checkbox-control__label' ),
 			'Allow comments'
 		);

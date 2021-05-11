@@ -61,18 +61,12 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		} );
 	}
 
-	async waitForTemplateToLoad( templateName = 'Front Page' ) {
-		await driverHelper.getElementByText(
-			this.driver,
-			By.css( '.edit-site-document-actions__title' ),
-			templateName
-		);
-
-		await this.runInCanvas( async () => {
-			await driverHelper.waitUntilElementLocatedAndVisible(
+	async waitForTemplateToLoad() {
+		await this.runInCanvas( () =>
+			driverHelper.waitUntilElementLocatedAndVisible(
 				this.driver,
 				By.css( '.edit-site-block-editor__block-list' )
-			);
-		} );
+			)
+		);
 	}
 }
