@@ -94,14 +94,10 @@ class Search extends Component {
 					{ this.props.translate(
 						'Allow your visitors to get search results as soon as they start typing.'
 					) }{ ' ' }
-					{ this.props.hasSearchProduct
-						? this.props.translate(
-								'If deactivated, Jetpack Search will still optimize your search results but visitors will have to submit a search query before seeing any results.'
-						  )
-						: // The following notice is only shown for Business/Pro plan holders.
-						  this.props.translate(
-								'Instant search is only available with a Jetpack Search subscription.'
-						  ) }
+					{ ! this.props.hasSearchProduct && // The following notice is only shown for Business/Pro plan holders.
+						this.props.translate(
+							'Instant search is only available with a Jetpack Search subscription.'
+						) }
 				</FormSettingExplanation>
 			</div>
 		);
