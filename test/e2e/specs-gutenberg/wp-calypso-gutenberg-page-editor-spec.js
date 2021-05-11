@@ -584,7 +584,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		} );
 
 		after( async function () {
-			await driverHelper.ensurePopupsClosed( driver );
+			await driverHelper.closeAllPopupWindows( driver );
 		} );
 	} );
 } );

@@ -385,7 +385,7 @@ export async function closeCurrentWindow( driver ) {
 	return await driver.close();
 }
 
-export async function ensurePopupsClosed( driver ) {
+export async function closeAllPopupWindows( driver ) {
 	const numWindows = await numberOfOpenWindows( driver );
 	let windowIndex;
 	for ( windowIndex = 1; windowIndex < numWindows; windowIndex++ ) {
@@ -528,8 +528,8 @@ export async function acceptAlertIfPresent( driver ) {
 	}
 }
 
-export async function waitForAlertPresent( driver ) {
-	return await driver.wait( until.alertIsPresent(), this.explicitWaitMS, 'Alert is not present.' );
+export function waitForAlertPresent( driver, timeout = explicitWaitMS ) {
+	return driver.wait( until.alertIsPresent(), timeout );
 }
 
 function getInnerTextMatcherFunction( match ) {

@@ -1040,7 +1040,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 		after( async function () {
 			await driverHelper.acceptAlertIfPresent( driver );
-			await driverHelper.ensurePopupsClosed( driver );
+			await driverHelper.closeAllPopupWindows( driver );
 		} );
 	} );
 
