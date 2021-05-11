@@ -1,8 +1,15 @@
 /**
  * Internal dependencies
  */
-import { saveScreenshot } from '@automattic/calypso-e2e';
+import {
+	saveScreenshot,
+	saveVideo,
+	clearFailedTest,
+	recordFailedTestName,
+} from '@automattic/calypso-e2e';
 
 export const mochaHooks = {
-	afterEach: [ saveScreenshot ],
+	beforeAll: [ clearFailedTest ],
+	afterEach: [ saveScreenshot, recordFailedTestName ],
+	afterAll: [ saveVideo ],
 };
