@@ -51,19 +51,9 @@ const welcomeGuideVariantReducer = ( state = 'tour', action ) => {
 	switch ( action.type ) {
 		case 'WPCOM_WELCOME_GUIDE_FETCH_STATUS_SUCCESS':
 			return action.response.variant;
+		case 'WPCOM_OPENED_PATTERNS_MODAL':
 		case 'WPCOM_WELCOME_GUIDE_RESET_STORE':
 			return 'tour';
-		default:
-			return state;
-	}
-};
-
-const shouldOpenPatternsPanelReducer = ( state = false, action ) => {
-	switch ( action.type ) {
-		case 'WPCOM_WELCOME_GUIDE_FETCH_STATUS_SUCCESS':
-			return action.response.should_open_patterns_panel;
-		case 'WPCOM_WELCOME_GUIDE_RESET_STORE':
-			return false;
 		default:
 			return state;
 	}
@@ -74,7 +64,6 @@ const reducer = combineReducers( {
 	showWelcomeGuide: showWelcomeGuideReducer,
 	tourRating: tourRatingReducer,
 	welcomeGuideVariant: welcomeGuideVariantReducer,
-	shouldOpenPatternsPanel: shouldOpenPatternsPanelReducer,
 } );
 
 const actions = {
@@ -102,6 +91,9 @@ const actions = {
 	setTourRating: ( tourRating ) => {
 		return { type: 'WPCOM_WELCOME_GUIDE_TOUR_RATING_SET', tourRating };
 	},
+	setOpenedPatternsModal: () => {
+		return { type: 'WPCOM_OPENED_PATTERNS_MODAL' };
+	},
 	// The `resetStore` action is only used for testing to reset the
 	// store inbetween tests.
 	resetStore: () => ( {
@@ -115,7 +107,6 @@ const selectors = {
 	isWelcomeGuideStatusLoaded: ( state ) => typeof state.showWelcomeGuide !== 'undefined',
 	getTourRating: ( state ) => state.tourRating,
 	getWelcomeGuideVariant: ( state ) => state.welcomeGuideVariant,
-	shouldOpenPatternsPanel: ( state ) => state.shouldOpenPatternsPanel,
 };
 
 export function register() {

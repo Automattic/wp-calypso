@@ -76,9 +76,13 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 	 */
 	public function get_nux_status() {
 
+		$should_open_patterns_panel = (bool) get_option( 'is_blank_canvas' );
+
 		if ( wp_is_mobile() ) {
 			// Designs for welcome tour on mobile are in progress, until then do not show on mobile.
 			$variant = 'modal';
+		} elseif ( $should_open_patterns_panel ) {
+			$variant = 'blank-canvas-tour';
 		} else {
 			$variant = 'tour';
 		}
@@ -99,13 +103,10 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 
 		$show_welcome_guide = $this->show_wpcom_welcome_guide( $nux_status );
 
-		$should_open_patterns_panel = (bool) get_option( 'is_blank_canvas' );
-
 		return rest_ensure_response(
 			array(
-				'show_welcome_guide'         => $show_welcome_guide,
-				'variant'                    => $variant,
-				'should_open_patterns_panel' => $should_open_patterns_panel,
+				'show_welcome_guide' => $show_welcome_guide,
+				'variant'            => $variant,
 			)
 		);
 	}
