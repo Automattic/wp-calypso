@@ -48,6 +48,7 @@ describe( 'logError', () => {
 		        "context": "explat",
 		        "explat_client": "calypso",
 		        "foo": "bar",
+		        "message": "asdf",
 		      },
 		    },
 		  ],
@@ -62,7 +63,7 @@ describe( 'logError', () => {
 		    "https://public-api.wordpress.com/rest/v1.1/js-error",
 		    Object {
 		      "body": FormData {
-		        "error": "{\\"message\\":\\"asdf\\",\\"properties\\":{\\"foo\\":\\"bar\\",\\"context\\":\\"explat\\",\\"explat_client\\":\\"calypso\\"}}",
+		        "error": "{\\"message\\":\\"asdf\\",\\"properties\\":{\\"foo\\":\\"bar\\",\\"context\\":\\"explat\\",\\"explat_client\\":\\"calypso\\",\\"message\\":\\"asdf\\"}}",
 		      },
 		      "method": "POST",
 		    },

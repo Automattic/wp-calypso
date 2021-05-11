@@ -31,6 +31,7 @@ export const logError = ( error: Record< string, string > & { message: string } 
 				...properties,
 				context: 'explat',
 				explat_client: 'calypso',
+				message,
 			},
 		};
 

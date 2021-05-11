@@ -1,8 +1,18 @@
 const testFramework = require( '../index' );
 const TestRun = testFramework.TestRun;
+const mockFs = require( 'mock-fs' );
 
 describe( 'TestRun class', function () {
 	let run;
+
+	beforeAll( () => {
+		mockFs( {
+			'/tmp': {},
+		} );
+	} );
+	afterAll( () => {
+		mockFs.restore();
+	} );
 
 	beforeEach( function () {
 		run = new TestRun( {
@@ -10,6 +20,7 @@ describe( 'TestRun class', function () {
 				name: 'The full name of the test to run',
 			},
 			mockingPort: 10,
+			tempAssetPath: '/tmp',
 		} );
 	} );
 
@@ -44,10 +55,12 @@ describe( 'TestRun class', function () {
 				name: 'The full name of the test to run',
 			},
 			mockingPort: 10,
+			tempAssetPath: '/tmp',
 		} );
 
 		const args = localRun.getArguments();
 		expect( args ).toEqual( [
+			'--bail',
 			'--mocking_port=10',
 			'--worker=1',
 			'-g',

@@ -990,7 +990,7 @@ class Account extends React.Component {
 		const renderUsernameForm = this.hasUnsavedUserSetting( 'user_login' );
 
 		return (
-			<Main className="account is-wide-layout">
+			<Main wideLayout className="account">
 				<QueryUserSettings />
 				<PageViewTracker path="/me/account" title="Me > Account Settings" />
 				<MeSidebarNavigation />
