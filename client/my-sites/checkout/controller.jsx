@@ -281,7 +281,7 @@ export function redirectToSupportSession( context ) {
 	page.redirect( `/checkout/offer-support-session/${ site }` );
 }
 
-export function userlessCheckoutThankYou( context, next ) {
+export function jetpackCheckoutThankYou( context, next ) {
 	context.primary = (
 		<JetpackCheckoutThankYou site={ context.params.site } productSlug={ context.params.product } />
 	);
