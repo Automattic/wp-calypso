@@ -114,6 +114,7 @@
 	align-items: center;
 	h2 {
 		font-size: $font-title-large;
+		word-break: break-all;
 	}
 
 	&.success {
@@ -146,7 +147,7 @@
 	display: flex;
 	flex-direction: column;
 
-	@include break-mobile {
+	@include break-small {
 		flex-direction: row;
 	}
 
@@ -182,13 +183,13 @@
 	.email-plan-mailboxes-list__mailbox-list-item-warning {
 		border-top: 1px solid var( --color-neutral-5 );
 		color: var( --color-error );
-		font-size: $font-body-small;
+		font-size: $font-body-extra-small;
 		line-height: 24px;
-		margin-top: 24px;
-		padding-top: 24px;
+		margin-top: 18px;
+		padding-top: 18px;
 		text-align: center;
 
-		@include break-mobile {
+		@include break-small {
 			border-top: none;
 			margin-left: 16px;
 			margin-top: 0;
@@ -206,12 +207,12 @@
 	}
 
 	.button {
-		margin-top: 18px;
-		max-height: 2rem;
+		margin-top: 12px;
 
-		@include break-mobile {
+		@include break-small {
 			margin-top: 0;
 			margin-left: auto;
+			max-height: 2rem;
 		}
 	}
 }
