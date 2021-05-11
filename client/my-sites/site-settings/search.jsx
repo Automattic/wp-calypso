@@ -57,6 +57,14 @@ class Search extends Component {
 		isRequestingSettings: PropTypes.bool,
 		fields: PropTypes.object,
 		trackEvent: PropTypes.func.isRequired,
+		activatingSearchModule: PropTypes.func.isRequired,
+		isLoading: PropTypes.bool,
+		isSearchModuleActive: PropTypes.bool,
+		siteId: PropTypes.number,
+		translate: PropTypes.func.isRequired,
+		saveJetpackSettings: PropTypes.func.isRequired,
+		submitForm: PropTypes.func.isRequired,
+		updateFields: PropTypes.func.isRequired,
 	};
 
 	renderInfoLink( link ) {
