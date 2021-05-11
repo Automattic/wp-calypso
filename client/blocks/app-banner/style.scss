@@ -28,8 +28,9 @@
 }
 
 .app-banner__copy {
-	font-size: $font-body-extra-small;
-	font-weight: 400;
+	margin-top: 12px;
+	/* stylelint-disable-next-line */
+	font-size: rem( 15px ); //typography-exception
 }
 
 .app-banner__buttons {
