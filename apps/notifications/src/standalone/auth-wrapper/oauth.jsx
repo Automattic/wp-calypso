@@ -74,6 +74,10 @@ const redirectForOauth = ( clientId, redirectPath ) => {
 	return;
 };
 
+const getOauthRequestHandler = ( authToken ) => ( options, fn ) => {
+	return wpcomXhrRequest( { ...options, authToken }, fn );
+};
+
 const useOauthClient = ( clientId, redirectPath ) => {
 	const [ client, setClient ] = useState( null );
 
@@ -84,7 +88,8 @@ const useOauthClient = ( clientId, redirectPath ) => {
 			return;
 		}
 
-		setClient( wpcom( token, wpcomXhrRequest ) );
+		const requestHandler = getOauthRequestHandler( token );
+		setClient( wpcom( token, requestHandler ) );
 	}, [ clientId, redirectPath, setClient ] );
 
 	useEffect( () => {

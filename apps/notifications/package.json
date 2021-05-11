@@ -20,6 +20,8 @@
 		"clean": "npx rimraf dist",
 		"prebuild": "yarn run clean",
 		"build": "BROWSERSLIST_ENV=wpcom calypso-build --config='./webpack.config.js'",
+		"dev-server": "webpack serve --inline --progress --liveReload --content-base dist --watch-content-base --host notifications.localhost --port 8888",
+		"start": "yarn run clean && yarn run build && yarn run dev-server",
 		"sync": "yarn run clean && yarn run build && sh ./bin/wpcom-watch-and-sync.sh"
 	},
 	"dependencies": {
@@ -46,6 +48,7 @@
 		"@automattic/calypso-build": "^8.0.0",
 		"enzyme": "^3.11.0",
 		"html-webpack-plugin": "^5.0.0-beta.4",
-		"webpack": "^5.36.2"
+		"webpack": "^5.36.2",
+		"webpack-dev-server": "^3.11.2"
 	}
 }
