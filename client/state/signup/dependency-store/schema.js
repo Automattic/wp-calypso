@@ -34,6 +34,7 @@ export const dependencyStoreSchema = {
 				headings: { type: 'string' },
 				base: { type: 'string' },
 			},
+			slug: { type: 'string' },
 			template: { type: 'string' },
 			theme: { type: 'string' },
 		},
