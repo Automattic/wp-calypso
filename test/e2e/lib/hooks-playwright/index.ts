@@ -6,10 +6,12 @@ import {
 	saveVideo,
 	clearFailedTest,
 	recordFailedTestName,
+	startBrowser,
+	closeBrowser,
 } from '@automattic/calypso-e2e';
 
 export const mochaHooks = {
-	beforeAll: [ clearFailedTest ],
+	beforeAll: [ startBrowser, clearFailedTest ],
 	afterEach: [ saveScreenshot, recordFailedTestName ],
-	afterAll: [ saveVideo ],
+	afterAll: [ saveVideo, closeBrowser ],
 };

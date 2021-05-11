@@ -113,11 +113,12 @@ export async function launchBrowserContext(): Promise< BrowserContext > {
 
 	// By default, record video for each browser context.
 	const videoDir = getVideoDir();
+	const dimension = getScreenDimension();
 
 	// Generate a new BrowserContext.
 	return await browser.newContext( {
 		viewport: null, // Do not override window size set in the browser launch parameters.
-		recordVideo: { dir: videoDir },
+		recordVideo: { dir: videoDir, size: { width: dimension.width, height: dimension.height } },
 	} );
 }
 
@@ -126,6 +127,7 @@ export async function launchBrowserContext(): Promise< BrowserContext > {
  *
  * A Browser instance can be any one of the browser types supported by Playwright.
  * Considerable overhead and costs are incurred when launching a new Browser instance.
+ * Where possible, use BrowserContexts.
  *
  * @returns {Promise<Browser>} New Browser instance.
  */
@@ -138,4 +140,16 @@ export async function launchBrowser(): Promise< Browser > {
 		args: [ '--window-position=0,0', `--window-size=${ dimension.width },${ dimension.height }` ],
 		timeout: playwrightTimeoutMS,
 	} );
+}
+
+/**
+ * Terminates the Browser instance.
+ *
+ * Once a Browser instance is terminated, all open contexts and pages are also terminated.
+ * The terminated browser cannot be reused.
+ *
+ * @returns {Promise<void>} No return value.
+ */
+export async function close(): Promise< void > {
+	await browser.close();
 }
