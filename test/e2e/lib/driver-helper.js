@@ -11,7 +11,6 @@ import webdriver, {
 	WebElementCondition,
 } from 'selenium-webdriver';
 import config from 'config';
-import { forEach } from 'lodash';
 
 /**
  * Internal dependencies
@@ -335,7 +334,7 @@ export function checkForConsoleErrors( driver ) {
 			.get( 'browser' )
 			.then( function ( logs ) {
 				if ( logs.length > 0 ) {
-					forEach( logs, ( log ) => {
+					logs.forEach( ( log ) => {
 						// Ignore chrome cast errors in Chrome - http://stackoverflow.com/questions/24490323/google-chrome-cast-sender-error-if-chrome-cast-extension-is-not-installed-or-usi/26095117#26095117
 						// Also ignore post message errors - this is a known limitation at present
 						// Also ignore 404 errors for viewing sites or posts/pages that are private
