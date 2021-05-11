@@ -18,7 +18,7 @@ function TitanTermsOfService( { cart, translate } ) {
 	}
 
 	const titanTerms = translate(
-		"You understand that your Email service will be powered by Titan and is subject to Titan's {{titanCustomerTos}}Customer Terms of Service{{/titanCustomerTos}}, {{titanAup}}Acceptable Use Policy{{/titanAup}}, and {{titanPrivacy}}Privacy Policy{{/titanPrivacy}}.",
+		"You understand that your Professional Email service will be powered by Titan and is subject to Titan's {{titanCustomerTos}}Customer Terms of Service{{/titanCustomerTos}}, {{titanAup}}Acceptable Use Policy{{/titanAup}}, and {{titanPrivacy}}Privacy Policy{{/titanPrivacy}}.",
 		{
 			components: {
 				titanCustomerTos: (
