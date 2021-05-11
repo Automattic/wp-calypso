@@ -21,7 +21,6 @@ import * as dataHelper from './data-helper';
 import * as driverManager from './driver-manager';
 
 const explicitWaitMS = config.get( 'explicitWaitMS' );
-const by = webdriver.By;
 
 export async function highlightElement( driver, element ) {
 	if ( process.env.HIGHLIGHT_ELEMENT === 'true' ) {
@@ -400,12 +399,12 @@ export async function refreshIfJNError( driver, timeout = 2000 ) {
 	}
 
 	// Match only 503 Error codes
-	const jnSiteError = by.xpath(
+	const jnSiteError = By.xpath(
 		"//pre[@class='error' and .='/srv/users/SYSUSER/log/APPNAME/APPNAME_apache.error.log' and //title[.='503 Service Unavailable']]"
 	);
 
 	// Match WP DB error
-	const jnDBError = by.xpath( '//h1[.="Error establishing a database connection"]' );
+	const jnDBError = By.xpath( '//h1[.="Error establishing a database connection"]' );
 
 	const refreshIfNeeded = async () => {
 		const jnErrorDisplayed = await isElementEventuallyLocatedAndVisible(
