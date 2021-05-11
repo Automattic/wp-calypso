@@ -13,14 +13,9 @@ import { connectOptions } from './theme-options';
 import { translate } from 'i18n-calypso';
 import { trackClick } from './helpers';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
-import { isATEnabled } from 'calypso/lib/automated-transfer';
 import { Button } from '@automattic/components';
 import Gridicon from 'calypso/components/gridicon';
 
@@ -29,7 +24,7 @@ import Gridicon from 'calypso/components/gridicon';
  */
 import './install-theme-button.scss';
 
-const InstallThemeButton = connectOptions( ( { isMultisite, isLoggedIn, ATEnabled, siteSlug } ) => {
+const InstallThemeButton = connectOptions( ( { isMultisite, isLoggedIn, siteSlug } ) => {
 	// I'm not sure if this below code is needed, or if we can enforce these conditions by only including this component in the appropriate pages.
 	if ( ! isLoggedIn || isMultisite ) {
 		return null;
@@ -38,9 +33,6 @@ const InstallThemeButton = connectOptions( ( { isMultisite, isLoggedIn, ATEnable
 	const clickHandler = () => {
 		trackClick( 'upload theme' );
 		recordTracksEvent( 'calypso_click_theme_upload' );
-		if ( ATEnabled ) {
-			recordTracksEvent( 'calypso_automated_transfer_click_theme_upload' );
-		}
 	};
 
 	return (
@@ -57,12 +49,10 @@ const InstallThemeButton = connectOptions( ( { isMultisite, isLoggedIn, ATEnable
 
 const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
-	const selectedSite = getSelectedSite( state );
 	return {
 		siteSlug: getSelectedSiteSlug( state ),
 		isLoggedIn: isUserLoggedIn( state ),
 		isMultisite: isJetpackSiteMultiSite( state, selectedSiteId ),
-		ATEnabled: isATEnabled( selectedSite ),
 	};
 };
 
