@@ -17,6 +17,7 @@ import {
 	isProductsListFetching as getIsProductListFetching,
 	getProductName,
 } from 'calypso/state/products-list/selectors';
+import Main from 'calypso/components/main';
 
 interface Props {
 	site: number | string;
@@ -72,30 +73,43 @@ const JetpackCheckoutThankYou: FunctionComponent< Props > = ( {
 	}, [ siteFragment ] );
 
 	return (
-		<Card
-			className={ isLoading ? 'jetpack-checkout-thank-you__loading' : 'jetpack-checkout-thank-you' }
-		>
-			<JetpackLogo full />
-			<QueryProducts type="jetpack" />
-			<h2>
-				{ translate( 'Thank you for your purchase!' ) }
-				{ String.fromCodePoint( 0x1f389 ) }
-				{ /* Celebration emoji 🎉 */ }
-			</h2>
-			<p>
-				{ translate( '%(productName)s was added to your site %(siteName)s.', {
-					args: {
-						siteName: name,
-						productName: productName,
-					},
-				} ) }
-			</p>
-			<Button href={ URL } primary>
-				{ translate( 'Back to %s', {
-					args: name,
-				} ) }
-			</Button>
-		</Card>
+		<Main className="jetpack-checkout-thank-you">
+			<Card className="jetpack-checkout-thank-you__card">
+				<JetpackLogo full size={ 45 } />
+				<QueryProducts type="jetpack" />
+				<h2 className="jetpack-checkout-thank-you__main-message">
+					{ /* the single space literal below is intentional for rendering purposes */ }
+					{ translate( 'Thank you for your purchase!' ) }{ ' ' }
+					{ String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */ }
+				</h2>
+				<p
+					className={
+						isLoading
+							? 'jetpack-checkout-thank-you__sub-message-loading'
+							: 'jetpack-checkout-thank-you__sub-message'
+					}
+				>
+					{ translate( '%(productName)s was added to your site %(siteName)s.', {
+						args: {
+							siteName: name,
+							productName: productName,
+						},
+					} ) }
+				</p>
+				<Button
+					className="jetpack-checkout-thank-you__button"
+					disabled={ isLoading }
+					href={ URL }
+					primary
+				>
+					{ isLoading
+						? translate( 'loading' )
+						: translate( 'Back to %s', {
+								args: name,
+						  } ) }
+				</Button>
+			</Card>
+		</Main>
 	);
 };
 

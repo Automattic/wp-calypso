@@ -671,9 +671,44 @@
 }
 
 .jetpack-checkout-thank-you {
-	&__loading {
+	.jetpack-checkout-thank-you__card,
+	.jetpack-checkout-thank-you__card-loading {
+		max-width: 650px;
+		padding: 96px;
+		box-shadow: 0px 0px 40px 0px #00000014;
+
+		// TODO min width
+		// TODO primary button color
+		.jetpack-checkout-thank-you__main-message {
+			font-size: 48px;
+			font-weight: 700;
+			margin-bottom: 24px;
+		}
+
+		.jetpack-checkout-thank-you__sub-message {
+			font-size: 24px;
+			font-weight: 500;
+			margin-bottom: 64px;
+		}
+
+		.jetpack-checkout-thank-you__button,
+		.jetpack-checkout-thank-you__button:visited {
+			border-radius: 4px;
+			// button colors imported from packages/calypso-color-schemes/src/shared/color-schemes/_jetpack-cloud.scss
+			background-color: var( --studio-jetpack-green-50 );
+			border-color: var( --studio-jetpack-green-50 );
+			color: var( --color-text-inverted );
+
+			&:hover,
+			&:focus {
+				background-color: var( --studio-jetpack-green-60 );
+				border-color: var( --studio-jetpack-green-60 );
+				color: var( --color-text-inverted );
+			}
+		}
+	}
+
+	.jetpack-checkout-thank-you__sub-message-loading {
 		@include placeholder( --color-neutral-30 );
 	}
-	// TODO min width
-	// TODO primary button color
 }
