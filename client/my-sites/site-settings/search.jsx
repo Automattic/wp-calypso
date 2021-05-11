@@ -162,7 +162,37 @@ class Search extends Component {
 			isSearchModuleActive,
 			siteId,
 			translate,
+			saveJetpackSettings,
+			submitForm,
+			updateFields,
+			trackEvent,
 		} = this.props;
+
+		/**
+		 * Call WPCOM endpionts to update remote Jetpack sites' settings
+		 *
+		 * @param {boolean} jetpackSearchEnabled Whether Jetpack Search is enabled
+		 */
+		const handleInstantSearchToggleForJetpackSites = ( jetpackSearchEnabled ) =>
+			saveJetpackSettings( siteId, {
+				instant_search_enabled: jetpackSearchEnabled,
+			} );
+
+		/**
+		 * Change instant toggle status with Jetpack Search toggle and then save settings
+		 *
+		 * @param {boolean} jetpackSearchEnabled Whether Jetpack Search is enabled
+		 */
+		const handleJetpackSearchToggleForSimpleSites = ( jetpackSearchEnabled ) => {
+			trackEvent( `Toggled instant_search_enabled` );
+			updateFields(
+				{
+					instant_search_enabled: jetpackSearchEnabled,
+					jetpack_search_enabled: jetpackSearchEnabled,
+				},
+				submitForm
+			);
+		};
 
 		return (
 			<Fragment>
@@ -175,13 +205,13 @@ class Search extends Component {
 								moduleSlug="search"
 								label={ translate( 'Enable Jetpack Search' ) }
 								disabled={ isRequestingSettings || isSavingSettings }
-								onChange={ this.handleJetpackSearchToggleChange }
+								onChange={ handleInstantSearchToggleForJetpackSites }
 							/>
 						) : (
 							<FormToggle
 								checked={ !! fields.jetpack_search_enabled }
 								disabled={ isRequestingSettings || isSavingSettings }
-								onChange={ this.handleJetpackSearchToggleChange }
+								onChange={ handleJetpackSearchToggleForSimpleSites }
 							>
 								{ translate( 'Enable Jetpack Search' ) }
 							</FormToggle>
@@ -196,7 +226,11 @@ class Search extends Component {
 									! ( isSearchModuleActive || fields.jetpack_search_enabled ) ||
 									! this.props.hasSearchProduct
 								}
-								onChange={ handleAutosavingToggle( 'instant_search_enabled' ) }
+								onChange={
+									! this.props.siteIsJetpack
+										? handleAutosavingToggle( 'instant_search_enabled' )
+										: handleInstantSearchToggleForJetpackSites
+								}
 							>
 								{ translate( 'Enable instant search experience (recommended)' ) }
 							</FormToggle>

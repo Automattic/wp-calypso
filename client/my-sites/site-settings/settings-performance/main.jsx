@@ -53,7 +53,7 @@ class SiteSettingsPerformance extends Component {
 			translate,
 			trackEvent,
 			updateFields,
-			setFieldValue,
+			saveJetpackSettings,
 		} = this.props;
 		const siteIsJetpackNonAtomic = siteIsJetpack && ! siteIsAtomic;
 
@@ -76,7 +76,8 @@ class SiteSettingsPerformance extends Component {
 				<Search
 					handleAutosavingToggle={ handleAutosavingToggle }
 					updateFields={ updateFields }
-					setFieldValue={ setFieldValue }
+					submitForm={ submitForm }
+					saveJetpackSettings={ saveJetpackSettings }
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
