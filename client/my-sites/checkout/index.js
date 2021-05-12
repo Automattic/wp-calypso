@@ -58,6 +58,13 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
+		page(
+			'/checkout/jetpack/thank-you/:siteSlug/:receiptId',
+			siteSelection,
+			userlessCheckoutThankYou,
+			makeLayout,
+			clientRender
+		);
 	}
 
 	// Show these paths only for logged in users

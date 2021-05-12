@@ -280,8 +280,12 @@ export function redirectToSupportSession( context ) {
 	page.redirect( `/checkout/offer-support-session/${ site }` );
 }
 
-export function userlessCheckoutThankYou( context ) {
-	context.primary = <div>{ context.params.toString() }</div>;
+export function userlessCheckoutThankYou( context, next ) {
+	const jetpackSiteSlug = context.params.siteSlug;
+	const receiptId = Number( context.params.receiptId );
+
+	context.primary = <div>{ 'hello!' }</div>;
+	next();
 }
 
 function getRememberedCoupon() {

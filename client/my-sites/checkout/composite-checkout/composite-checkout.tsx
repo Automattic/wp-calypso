@@ -211,7 +211,7 @@ export default function CompositeCheckout( {
 		isInEditor,
 		isJetpackNotAtomic,
 		isPrivate,
-		siteSlug,
+		siteSlug: isJetpackUserlessCheckout ? jetpackSiteSlug : siteSlug,
 		isLoggedOutCart,
 		isNoSiteCart,
 		isJetpackCheckout,
@@ -260,7 +260,7 @@ export default function CompositeCheckout( {
 	);
 
 	const getThankYouUrlBase = useGetThankYouUrl( {
-		siteSlug,
+		siteSlug: isJetpackUserlessCheckout ? jetpackSiteSlug : siteSlug,
 		redirectTo,
 		purchaseId,
 		feature,
@@ -330,7 +330,7 @@ export default function CompositeCheckout( {
 		isRemovingProductFromCart,
 		removeProductFromCartAndMaybeRedirect,
 	} = useRemoveFromCartAndRedirect(
-		siteSlug,
+		isJetpackUserlessCheckout ? jetpackSiteSlug : siteSlug,
 		siteSlugLoggedOutCart,
 		createUserAndSiteBeforeTransaction
 	);
@@ -364,7 +364,7 @@ export default function CompositeCheckout( {
 		isApplePayAvailable,
 		isApplePayLoading,
 		storedCards,
-		siteSlug,
+		siteSlug: isJetpackUserlessCheckout ? jetpackSiteSlug : siteSlug,
 	} );
 	debug( 'created payment method objects', paymentMethodObjects );
 
@@ -402,7 +402,7 @@ export default function CompositeCheckout( {
 	const { analyticsPath, analyticsProps } = getAnalyticsPath(
 		purchaseId,
 		productAliasFromUrl,
-		siteSlug,
+		isJetpackUserlessCheckout ? jetpackSiteSlug : siteSlug,
 		feature,
 		plan
 	);
@@ -441,6 +441,7 @@ export default function CompositeCheckout( {
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const dataForProcessor: PaymentProcessorOptions = useMemo(
 		() => ( {
+			contactDetails,
 			createUserAndSiteBeforeTransaction,
 			getThankYouUrl,
 			includeDomainDetails,
@@ -449,9 +450,8 @@ export default function CompositeCheckout( {
 			reduxDispatch,
 			responseCart,
 			siteId,
-			siteSlug,
+			siteSlug: isJetpackUserlessCheckout ? jetpackSiteSlug : siteSlug,
 			stripeConfiguration,
-			contactDetails,
 		} ),
 		[
 			contactDetails,
@@ -459,6 +459,8 @@ export default function CompositeCheckout( {
 			getThankYouUrl,
 			includeDomainDetails,
 			includeGSuiteDetails,
+			isJetpackUserlessCheckout,
+			jetpackSiteSlug,
 			recordEvent,
 			reduxDispatch,
 			responseCart,
@@ -565,6 +567,7 @@ export default function CompositeCheckout( {
 		isInEditor,
 		isComingFromUpsell,
 		isFocusedLaunch,
+		siteSlug: isJetpackUserlessCheckout ? jetpackSiteSlug : siteSlug,
 		isJetpackUserlessCheckout,
 	} );
 
