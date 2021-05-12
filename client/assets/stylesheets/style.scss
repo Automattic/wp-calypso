@@ -19,7 +19,7 @@
 @import './_nav-unification';
 
 // @wordpress/components stylesheet
-@import '@wordpress/components/build-style/style.css';
+@import '@wordpress/components/build-style/style';
 
 // Overrides for @wordpress/components
 @import './_wp-components-overrides.scss';
