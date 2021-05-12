@@ -106,7 +106,7 @@ fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
 					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 					# Run the test
-					yarn magellan --config=magellan-wpcom.json --max_workers=%E2E_WORKERS% --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
+					yarn magellan --config=magellan-wpcom.json --max_workers=%E2E_WORKERS% --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
 				""".trimIndent()
 				dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
 			}
