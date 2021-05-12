@@ -180,7 +180,7 @@ export default function LicensePreview( {
 				<LicenseDetails
 					licenseKey={ licenseKey }
 					product={ product }
-					domain={ domain }
+					siteUrl={ siteUrl }
 					username={ username }
 					blogId={ blogId }
 					issuedAt={ issuedAt }
