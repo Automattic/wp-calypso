@@ -614,22 +614,6 @@ export function checkout(
 ): void {
 	const productsArray = Array.isArray( products ) ? products : [ products ];
 	const productsString = productsArray.join( ',' );
-	const { unlinked, purchasetoken, purchaseNonce, site } = urlQueryArgs;
-	const canDoUnlinkedCheckout = unlinked && !! site && ( !! purchasetoken || purchaseNonce );
-
-	// Enter userless checkout if unlinked, purchasetoken or purchaseNonce, and site are all set
-	if ( isJetpackCloud() && canDoUnlinkedCheckout ) {
-		const host =
-			'development' === urlQueryArgs.calypso_env
-				? 'http://calypso.localhost:3000'
-				: 'https://wordpress.com';
-
-		window.location.href = addQueryArgs(
-			urlQueryArgs,
-			host + `/checkout/jetpack/${ siteSlug }/${ productsString }`
-		);
-		return;
-	}
 
 	// If there is not siteSlug, we need to redirect the user to the site selection
 	// step of the flow. Since purchases of multiple products are allowed, we need
