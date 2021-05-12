@@ -13,19 +13,19 @@ import { isCountryStatesFetching } from 'calypso/state/country-states/selectors'
 import { requestCountryStates } from 'calypso/state/country-states/actions';
 
 class QueryCountryStates extends Component {
-	UNSAFE_componentWillMount() {
-		this.request( this.props );
+	componentDidMount() {
+		this.request();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.countryCode !== nextProps.countryCode ) {
-			this.request( nextProps );
+	componentDidUpdate( prevProps ) {
+		if ( this.props.countryCode !== prevProps.countryCode ) {
+			this.request();
 		}
 	}
 
-	request( props ) {
-		if ( ! props.isRequesting ) {
-			props.requestCountryStates( props.countryCode );
+	request() {
+		if ( ! this.props.isRequesting ) {
+			this.props.requestCountryStates( this.props.countryCode );
 		}
 	}
 
