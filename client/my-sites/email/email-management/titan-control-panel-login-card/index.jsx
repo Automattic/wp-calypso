@@ -82,7 +82,7 @@ class TitanControlPanelLoginCard extends React.Component {
 				productName: getTitanProductName(),
 			},
 			comment:
-				'%(domainName)s is a domain name, e.g. example.com; %(productName)s is the product name, which should be Professional Email',
+				'%(domainName)s is a domain name, e.g. example.com; %(productName)s is the product name, which should be "Professional Email" translated',
 		};
 		const sectionHeaderLabel = translate( '%(productName)s: %(domainName)s', translateArgs );
 		const buttonCtaText = translate( 'Log in to your %(productName)s control panel', {
@@ -120,7 +120,7 @@ class TitanControlPanelLoginCard extends React.Component {
 				productName: getTitanProductName(),
 			},
 			comment:
-				'%(domainName)s is a domain name, e.g. example.com; %(productName)s is the product name, which should be Professional Email',
+				'%(domainName)s is a domain name, e.g. example.com; %(productName)s is the product name, which should be "Professional Email" translated',
 		};
 		const sectionHeaderLabel = translate( '%(productName)s: %(domainName)s', translateArgs );
 
