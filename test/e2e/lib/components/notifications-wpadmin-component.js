@@ -10,24 +10,24 @@ import * as driverHelper from '../driver-helper.js';
 
 import AsyncBaseContainer from '../async-base-container';
 
-export default class NotificationsComponent extends AsyncBaseContainer {
+export default class NotificationsWPAdminComponent extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, by.css( '#wp-admin-bar-notes #wpnt-notes-panel2' ) );
+		super( driver, by.css( '#wpnt-notes-panel2' ) );
 		this.undoSelector = by.css( '.wpnc__undo-item' );
 	}
 
 	async _preInit() {
-		// Ensure we're starting from the top frame before expecting on this.expectedElementSelector
 		await this.driver.switchTo().defaultContent();
 	}
-
+	async _postInit() {
+		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, by.css( '#wpnt-notes-iframe2' ) );
+	}
 	async selectComments() {
-		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.expectedElementSelector );
 		await driverHelper.clickWhenClickable(
 			this.driver,
 			by.css( 'li[data-filter-name="comments"]' )
 		);
-		return await driverHelper.waitUntilLocatedAndVisible(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			by.css( 'li.wpnc__comment' )
 		);
@@ -45,16 +45,14 @@ export default class NotificationsComponent extends AsyncBaseContainer {
 
 	async trashComment() {
 		const trashPostLocator = by.css( 'button[title="Trash comment"]' );
-
-		await this.driver.sleep( 400 ); // Wait for menu animation to complete
 		await driverHelper.clickWhenClickable( this.driver, trashPostLocator );
 	}
 
 	async waitForUndoMessage() {
-		return await driverHelper.waitUntilLocatedAndVisible( this.driver, this.undoSelector );
+		return await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.undoSelector );
 	}
 
 	async waitForUndoMessageToDisappear() {
-		return await driverHelper.waitTillNotPresent( this.driver, this.undoSelector );
+		return await driverHelper.waitUntilElementNotLocated( this.driver, this.undoSelector );
 	}
 }

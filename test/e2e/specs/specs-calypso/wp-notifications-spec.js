@@ -30,7 +30,7 @@ describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function () 
 
 	before( 'Start browser', async function () {
 		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
+		driver = await driverManager.startBrowser( true, true, true );
 	} );
 
 	const commentingUser = dataHelper.getAccountConfig( 'commentingUser' )[ 0 ];

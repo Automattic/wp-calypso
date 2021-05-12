@@ -17,7 +17,7 @@ import ViewSitePage from '../lib/pages/view-site-page.js';
 import ViewPostPage from '../lib/pages/view-post-page.js';
 
 import NavBarWPAdminComponent from '../lib/components/nav-bar-wpadmin-component.js';
-import NotificationsComponent from '../lib/components/notifications-component.js';
+import NotificationsWPAdminComponent from '../lib/components/notifications-wpadmin-component.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -30,37 +30,37 @@ describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function () 
 
 	before( 'Start browser', async function () {
 		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
+		driver = await driverManager.startBrowser( true, true, true );
 	} );
 
 	const commentingUser = dataHelper.getAccountConfig( 'commentingUser' )[ 0 ];
 	const comment = dataHelper.randomPhrase() + ' TBD';
 	let commentedPostTitle;
 
-	step( 'Can log in as commenting user', async function () {
+	it( 'Can log in as commenting user', async function () {
 		const loginFlow = new LoginFlow( driver, 'commentingUser' );
 		return await loginFlow.login();
 	} );
 
-	step( 'Can view the first post', async function () {
-		const testSiteForInvitationsURL = `https://${ dataHelper.configGet(
-			'testSiteForNotifications'
+	it( 'Can view the first post', async function () {
+		const testSiteForNotifications = `https://${ dataHelper.configGet(
+			'testSiteForWPAdminNotifications'
 		) }`;
-		const viewBlogPage = await ViewSitePage.Visit( driver, testSiteForInvitationsURL );
+		const viewBlogPage = await ViewSitePage.Visit( driver, testSiteForNotifications );
 		return await viewBlogPage.viewFirstPost();
 	} );
 
-	step( 'Can see the first post page and capture the title', async function () {
+	it( 'Can see the first post page and capture the title', async function () {
 		const viewPostPage = await ViewPostPage.Expect( driver );
 		commentedPostTitle = await viewPostPage.postTitle();
 	} );
 
-	step( 'Can leave a comment', async function () {
+	it( 'Can leave a comment', async function () {
 		const viewPostPage = await ViewPostPage.Expect( driver );
 		return await viewPostPage.leaveAComment( comment );
 	} );
 
-	step( 'Can see the comment', async function () {
+	it( 'Can see the comment', async function () {
 		const viewPostPage = await ViewPostPage.Expect( driver );
 		const shown = await viewPostPage.commentEventuallyShown( comment );
 		if ( shown === false ) {
@@ -70,16 +70,17 @@ describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function () 
 		}
 	} );
 
-	step( 'Can log in as notifications user', async function () {
-		const loginFlow = new LoginFlow( driver, 'notificationsUser' );
+	it( 'Can log in as notifications user', async function () {
+		const loginFlow = new LoginFlow( driver, 'louisTestUser' );
 		return await loginFlow.login();
 	} );
 
-	step( 'Can open notifications tab', async function () {
-		const testSiteForInvitationsURL = `https://${ dataHelper.configGet(
-			'testSiteForNotifications'
+	it( 'Can open notifications tab', async function () {
+		const testSiteForNotifications = `https://${ dataHelper.configGet(
+			'testSiteForWPAdminNotifications'
 		) }`;
-		const viewBlogPage = await ViewSitePage.Visit( driver, testSiteForInvitationsURL );
+
+		const viewBlogPage = await ViewSitePage.Visit( driver, testSiteForNotifications );
 		await viewBlogPage.viewFirstPost();
 
 		const navBarComponent = await NavBarWPAdminComponent.Expect( driver );
@@ -88,11 +89,11 @@ describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function () 
 		return assert( present, 'Notifications tab is not open' );
 	} );
 
-	step( 'Can see the notification of the comment', async function () {
+	it( 'Can see the notification of the comment', async function () {
 		const expectedContent = `${ commentingUser } commented on ${ commentedPostTitle }\n${ comment }`;
 		const navBarComponent = await NavBarWPAdminComponent.Expect( driver );
 		await navBarComponent.openNotifications();
-		const notificationsComponent = await NotificationsComponent.Expect( driver );
+		const notificationsComponent = await NotificationsWPAdminComponent.Expect( driver );
 		await notificationsComponent.selectComments();
 		const content = await notificationsComponent.allCommentsContent();
 		return assert.strictEqual(
@@ -102,14 +103,15 @@ describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function () 
 		);
 	} );
 
-	step(
-		'Can delete the comment (and wait for UNDO grace period so it is actually deleted)',
-		async function () {
-			const notificationsComponent = await NotificationsComponent.Expect( driver );
-			await notificationsComponent.selectCommentByText( comment );
-			await notificationsComponent.trashComment();
-			await notificationsComponent.waitForUndoMessage();
-			return await notificationsComponent.waitForUndoMessageToDisappear();
-		}
-	);
+	it( 'Can delete the comment (and wait for UNDO grace period so it is actually deleted)', async function () {
+		const notificationsComponent = await NotificationsWPAdminComponent.Expect( driver );
+		await notificationsComponent.selectCommentByText( comment );
+		await notificationsComponent.trashComment();
+		await notificationsComponent.waitForUndoMessage();
+		return await notificationsComponent.waitForUndoMessageToDisappear();
+	} );
+
+	after( async () => {
+		return await driver.switchTo().defaultContent();
+	} );
 } );
