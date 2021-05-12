@@ -152,7 +152,7 @@ function recordPlaceholders( mutation ) {
 		return;
 	}
 
-	nodes.forEach( function ( node ) {
+	Array.from( nodes ).forEach( function ( node ) {
 		if ( isPlaceholder( node ) ) {
 			recordPlaceholderNode( node );
 		}
