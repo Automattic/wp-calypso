@@ -77,7 +77,7 @@
 }
 
 @include breakpoint-deprecated( '<800px' ) {
-	&.migrate__plan-upsell {
+	.migrate__plan-upsell {
 		flex-wrap: wrap;
 		margin: 16px 0;
 		padding: 16px 0;
@@ -86,14 +86,14 @@
 		border-bottom: none;
 	}
 
-	&.migrate__plan-upsell-container,
-	&.migrate__plan-upsell-themes,
-	&.migrate__plan-upsell-plugins {
+	.migrate__plan-upsell-container,
+	.migrate__plan-upsell-themes,
+	.migrate__plan-upsell-plugins {
 		display: flex;
 		flex-wrap: wrap;
 	}
 
-	&.migrate__plan-upsell-container {
+	.migrate__plan-upsell-container {
 		display: flex;
 		border-top: 1px solid var( --color-neutral-10 );
 
