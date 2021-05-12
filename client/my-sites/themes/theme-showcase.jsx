@@ -444,21 +444,19 @@ class ThemeShowcase extends React.Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
-	return {
-		currentThemeId: getActiveTheme( state, siteId ),
-		isLoggedIn: !! getCurrentUserId( state ),
-		siteSlug: getSiteSlug( state, siteId ),
-		description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
-		title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
-		subjects: getThemeFilterTerms( state, 'subject' ) || {},
-		filterString: prependThemeFilterKeys( state, filter ),
-		filterToTermTable: getThemeFilterToTermTable( state ),
-		hasShowcaseOpened: hasShowcaseOpenedSelector( state ),
-		themesBookmark: getThemesBookmark( state ),
-		hasBusinessOrEcommercePlan: siteHasBusinessOrEcommercePlan( state, siteId ),
-	};
-};
+const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
+	currentThemeId: getActiveTheme( state, siteId ),
+	isLoggedIn: !! getCurrentUserId( state ),
+	siteSlug: getSiteSlug( state, siteId ),
+	description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
+	title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
+	subjects: getThemeFilterTerms( state, 'subject' ) || {},
+	filterString: prependThemeFilterKeys( state, filter ),
+	filterToTermTable: getThemeFilterToTermTable( state ),
+	hasShowcaseOpened: hasShowcaseOpenedSelector( state ),
+	themesBookmark: getThemesBookmark( state ),
+	hasBusinessOrEcommercePlan: siteHasBusinessOrEcommercePlan( state, siteId ),
+} );
 
 const mapDispatchToProps = {
 	trackUploadClick: () => recordTracksEvent( 'calypso_click_theme_upload' ),
