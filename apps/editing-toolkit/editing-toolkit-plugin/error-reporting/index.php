@@ -88,7 +88,7 @@ function activate_error_reporting() {
  * @return bool
  */
 function user_in_test_segment( $user_id ) {
-	$current_segment = 10; // segment of existing users that will get this feature.
+	$current_segment = 25; // segment of existing users that will get this feature in %.
 	$user_segment    = $user_id % 100;
 
 	// We get the last two digits of the user id and that will be used to decide in what
