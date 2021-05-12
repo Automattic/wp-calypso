@@ -3,7 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { clone, difference, each, forEach, last, map, some, take } from 'lodash';
+import { clone, difference, forEach, last, map, some, take } from 'lodash';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 
@@ -344,8 +344,7 @@ class TokenField extends PureComponent {
 		} else {
 			match = match.toLocaleLowerCase();
 
-			each(
-				suggestions,
+			suggestions.forEach(
 				function ( suggestion ) {
 					const index = suggestion.toLocaleLowerCase().indexOf( match );
 					if ( this.props.value.indexOf( suggestion ) === -1 ) {

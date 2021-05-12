@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { isEmpty, get, each, includes, find } from 'lodash';
+import { isEmpty, get, includes, find } from 'lodash';
 import page from 'page';
 
 /**
@@ -278,7 +278,7 @@ class ActivityLogTasklist extends Component {
 
 		const { showErrorNotice, showSuccessNotice, siteName, translate } = this.props;
 
-		each( itemsWithUpdate, ( item ) => {
+		itemsWithUpdate.forEach( ( item ) => {
 			const { slug, updateStatus, type, name } = item;
 			// Finds in prevProps.pluginWithUpdate, prevProps.themeWithUpdate or prevpros.coreWithUpdate
 			const prevItemWithUpdate = find( prevProps[ `${ type }WithUpdate` ], { slug } );

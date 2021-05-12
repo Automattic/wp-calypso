@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
-import { each, get, includes, isEqual, map } from 'lodash';
+import { get, includes, isEqual, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -125,7 +125,7 @@ export class CommentNavigation extends Component {
 			unlike,
 		} = this.props;
 		this.props.removeNotice( 'comment-notice' );
-		each( selectedComments, ( { commentId, isLiked, postId, status } ) => {
+		selectedComments.forEach( ( { commentId, isLiked, postId, status } ) => {
 			if ( 'delete' === newStatus ) {
 				deletePermanently( postId, commentId );
 				return;
