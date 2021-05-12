@@ -102,7 +102,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				export BROWSERLOCALE="en"
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 
-				yarn magellan --config=magellan-calypso.json --max_workers=%E2E_WORKERS% --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
+				yarn magellan --config=magellan-calypso.json --max_workers=%E2E_WORKERS% --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
@@ -264,7 +264,7 @@ object RunCalypsoE2eMobileTests : BuildType({
 				export BROWSERLOCALE="en"
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 
-				yarn magellan --config=magellan-calypso.json --max_workers=%E2E_WORKERS% --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
+				yarn magellan --config=magellan-calypso.json --max_workers=%E2E_WORKERS% --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
@@ -781,7 +781,7 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 				export BROWSERLOCALE="en"
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 
-				xvfb-run yarn magellan --config=magellan-playwright.json --max_workers=%E2E_WORKERS% --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
+				xvfb-run yarn magellan --config=magellan-playwright.json --max_workers=%E2E_WORKERS% --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
