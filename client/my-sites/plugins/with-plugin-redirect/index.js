@@ -128,7 +128,7 @@ const withPluginRedirect = createHigherOrderComponent(
 
 			// For Atomic sites, we shoulnd't wait since
 			// there is not a Notice about installing the plugin.
-			const pluginInstalledNoticeTime = transferringStatus ? 100 : 3000;
+			const pluginInstalledNoticeTime = transferringStatus === transferStates.COMPLETE ? 100 : 3000;
 
 			let timerId = setTimeout( () => {
 				dispatch( removeNotice( 'plugin-notice' ) );
