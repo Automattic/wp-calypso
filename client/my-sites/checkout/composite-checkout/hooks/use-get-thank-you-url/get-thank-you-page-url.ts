@@ -57,7 +57,6 @@ export default function getThankYouPageUrl( {
 	isEligibleForSignupDestinationResult,
 	hideNudge,
 	isInEditor,
-	previousRoute,
 	isJetpackCheckout = false,
 }: {
 	siteSlug: string | undefined;
@@ -75,7 +74,6 @@ export default function getThankYouPageUrl( {
 	isEligibleForSignupDestinationResult?: boolean;
 	hideNudge?: boolean;
 	isInEditor?: boolean;
-	previousRoute?: string;
 	isJetpackCheckout?: boolean;
 } ): string {
 	debug( 'starting getThankYouPageUrl' );

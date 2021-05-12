@@ -83,9 +83,7 @@ export default function useCreatePaymentCompleteCallback( {
 	const reduxStore = useStore();
 	const selectedSiteData = useSelector( getSelectedSite );
 	const adminUrl = selectedSiteData?.options?.admin_url;
-	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( responseCart );
-	const shouldShowOneClickTreatment = useSelector( ( state ) => isTreatmentOneClickTest( state ) );
-	const previousRoute = useSelector( ( state ) => getPreviousRoute( state ) );
+	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( responseCart ); );
 	const isJetpackNotAtomic =
 		useSelector(
 			( state ) => siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
@@ -109,7 +107,6 @@ export default function useCreatePaymentCompleteCallback( {
 				isEligibleForSignupDestinationResult,
 				hideNudge: isComingFromUpsell,
 				isInEditor,
-				previousRoute,
 				isJetpackCheckout,
 			};
 			debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );

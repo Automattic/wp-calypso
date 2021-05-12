@@ -55,7 +55,6 @@ export default function useGetThankYouUrl( {
 			isEligibleForSignupDestinationResult,
 			hideNudge,
 			isInEditor,
-			previousRoute,
 			isJetpackCheckout,
 		};
 		debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
