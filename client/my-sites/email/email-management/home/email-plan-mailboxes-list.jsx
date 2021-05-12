@@ -64,6 +64,16 @@ const MailboxListItemWarning = ( { warningText } ) => {
 	);
 };
 
+const MailboxListItemAction = ( { buttonText, onClick } ) => {
+	return (
+		<div className="email-plan-mailboxes-list__mailbox-list-item-action">
+			<Button compact onClick={ onClick }>
+				{ buttonText }
+			</Button>
+		</div>
+	);
+};
+
 const resendEmailForwardVerification = ( mailbox, dispatch ) => {
 	const destination = getEmailForwardAddress( mailbox );
 	dispatch(
@@ -95,9 +105,10 @@ const getActionsForMailbox = ( mailbox, translate, dispatch ) => {
 	if ( isEmailForward( mailbox ) && ! isEmailForwardVerified( mailbox ) ) {
 		return {
 			action: (
-				<Button compact onClick={ () => resendEmailForwardVerification( mailbox, dispatch ) }>
-					{ translate( 'Resend verification email' ) }
-				</Button>
+				<MailboxListItemAction
+					buttonText={ translate( 'Resend verification email' ) }
+					onClick={ () => resendEmailForwardVerification( mailbox, dispatch ) }
+				/>
 			),
 			warning: <MailboxListItemWarning warningText={ translate( 'Verification required' ) } />,
 		};
