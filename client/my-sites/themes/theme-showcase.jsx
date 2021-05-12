@@ -20,7 +20,7 @@ import { addTracking, trackClick } from './helpers';
 import DocumentHead from 'calypso/components/data/document-head';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import siteHasBusinessOrEcommercePlan from 'calypso/state/sites/selectors/has-business-or-ecommerce-plan';
+import siteCanUploadThemesOrPlugins from 'calypso/state/sites/selectors/can-upload-themes-or-plugins';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from '@automattic/calypso-config';
@@ -48,12 +48,12 @@ import RecommendedThemes from './recommended-themes';
  */
 import './theme-showcase.scss';
 
-function getInstallThemeSlug( siteSlug, hasBusinessOrEcommercePlan ) {
+function getInstallThemeSlug( siteSlug, canUploadThemesOrPlugins ) {
 	if ( ! siteSlug ) {
 		return '/themes/upload';
 	}
 
-	if ( hasBusinessOrEcommercePlan ) {
+	if ( canUploadThemesOrPlugins ) {
 		return `https://${ siteSlug }/wp-admin/theme-install.php`;
 	}
 
@@ -247,7 +247,7 @@ class ThemeShowcase extends React.Component {
 			title,
 			filterString,
 			isMultisite,
-			hasBusinessOrEcommercePlan,
+			canUploadThemesOrPlugins,
 		} = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
@@ -309,7 +309,7 @@ class ThemeShowcase extends React.Component {
 							className="themes__upload-button"
 							compact
 							onClick={ this.onUploadClick }
-							href={ getInstallThemeSlug( siteSlug, hasBusinessOrEcommercePlan ) }
+							href={ getInstallThemeSlug( siteSlug, canUploadThemesOrPlugins ) }
 						>
 							<Gridicon icon="cloud-upload" />
 							{ translate( 'Install theme' ) }
@@ -455,7 +455,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	filterToTermTable: getThemeFilterToTermTable( state ),
 	hasShowcaseOpened: hasShowcaseOpenedSelector( state ),
 	themesBookmark: getThemesBookmark( state ),
-	hasBusinessOrEcommercePlan: siteHasBusinessOrEcommercePlan( state, siteId ),
+	canUploadThemesOrPlugins: siteCanUploadThemesOrPlugins( state, siteId ),
 } );
 
 const mapDispatchToProps = {
