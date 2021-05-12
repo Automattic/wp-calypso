@@ -2,8 +2,11 @@
 	position: fixed;
 	bottom: 0;
 	width: 100%;
-	background-color: var( --color-primary-light );
-	color: var( --color-text-inverted );
+	background-color: var( --color-surface );
+	color: var( --color-primary-80 );
+	padding: 20px;
+	margin-bottom: 0;
+	box-shadow: 3px -2px 24px 4px rgba( 0, 0, 0, 0.29 );
 	/* Needed for banner to appear in front of notifications panel. */
 	z-index: z-index( 'root', '.app-banner' );
 }
