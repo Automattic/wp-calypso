@@ -68,7 +68,9 @@ export default function TaxFields( {
 					}
 					autoComplete={ section + ' postal-code' }
 					isError={ postalCode?.isTouched && ! isValid( postalCode ) }
-					errorMessage={ String( translate( 'This field is required.' ) ) }
+					errorMessage={
+						postalCode?.errors[ 0 ] ?? String( translate( 'This field is required.' ) )
+					}
 				/>
 			</LeftColumn>
 
@@ -86,7 +88,7 @@ export default function TaxFields( {
 					} }
 					isError={ countryCode?.isTouched && ! isValid( countryCode ) }
 					isDisabled={ isDisabled }
-					errorMessage={ translate( 'This field is required.' ) }
+					errorMessage={ countryCode?.errors[ 0 ] ?? translate( 'This field is required.' ) }
 					currentValue={ countryCode?.value }
 					countriesList={ countriesList }
 				/>
