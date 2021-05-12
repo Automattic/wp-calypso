@@ -6,14 +6,14 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import LoginFlow from '../lib/flows/login-flow.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
 
-import NavBarComponent from '../lib/components/nav-bar-component.js';
-import SidebarComponent from '../lib/components/sidebar-component.js';
+import NavBarComponent from '../../lib/components/nav-bar-component.js';
+import SidebarComponent from '../../lib/components/sidebar-component.js';
 
-import StatsPage from '../lib/pages/stats-page.js';
+import StatsPage from '../../lib/pages/stats-page.js';
 
-import * as driverManager from '../lib/driver-manager.js';
+import * as driverManager from '../../lib/driver-manager.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );

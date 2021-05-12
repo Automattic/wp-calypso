@@ -6,13 +6,13 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import LoginFlow from '../lib/flows/login-flow.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
 
-import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
+import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
 
-import * as driverManager from '../lib/driver-manager.js';
-import * as mediaHelper from '../lib/media-helper.js';
-import * as dataHelper from '../lib/data-helper';
+import * as driverManager from '../../lib/driver-manager.js';
+import * as mediaHelper from '../../lib/media-helper.js';
+import * as dataHelper from '../../lib/data-helper';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );

@@ -7,27 +7,27 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import LoginFlow from '../lib/flows/login-flow.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
 
-import AcceptInvitePage from '../lib/pages/accept-invite-page.js';
-import PostsPage from '../lib/pages/posts-page.js';
-import PeoplePage from '../lib/pages/people-page.js';
-import RevokePage from '../lib/pages/revoke-page.js';
-import InviteErrorPage from '../lib/pages/invite-error-page.js';
-import InvitePeoplePage from '../lib/pages/invite-people-page.js';
-import EditTeamMemberPage from '../lib/pages/edit-team-member-page.js';
-import LoginPage from '../lib/pages/login-page.js';
-import ReaderPage from '../lib/pages/reader-page.js';
-import ViewBlogPage from '../lib/pages/signup/view-blog-page.js';
-import PrivateSiteLoginPage from '../lib/pages/private-site-login-page.js';
+import AcceptInvitePage from '../../lib/pages/accept-invite-page.js';
+import PostsPage from '../../lib/pages/posts-page.js';
+import PeoplePage from '../../lib/pages/people-page.js';
+import RevokePage from '../../lib/pages/revoke-page.js';
+import InviteErrorPage from '../../lib/pages/invite-error-page.js';
+import InvitePeoplePage from '../../lib/pages/invite-people-page.js';
+import EditTeamMemberPage from '../../lib/pages/edit-team-member-page.js';
+import LoginPage from '../../lib/pages/login-page.js';
+import ReaderPage from '../../lib/pages/reader-page.js';
+import ViewBlogPage from '../../lib/pages/signup/view-blog-page.js';
+import PrivateSiteLoginPage from '../../lib/pages/private-site-login-page.js';
 
-import NoticesComponent from '../lib/components/notices-component.js';
-import NavBarComponent from '../lib/components/nav-bar-component.js';
-import NoSitesComponent from '../lib/components/no-sites-component.js';
+import NoticesComponent from '../../lib/components/notices-component.js';
+import NavBarComponent from '../../lib/components/nav-bar-component.js';
+import NoSitesComponent from '../../lib/components/no-sites-component.js';
 
-import * as dataHelper from '../lib/data-helper.js';
-import * as driverManager from '../lib/driver-manager.js';
-import EmailClient from '../lib/email-client.js';
+import * as dataHelper from '../../lib/data-helper.js';
+import * as driverManager from '../../lib/driver-manager.js';
+import EmailClient from '../../lib/email-client.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );

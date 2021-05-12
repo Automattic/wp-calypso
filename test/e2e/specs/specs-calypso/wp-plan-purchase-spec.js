@@ -7,17 +7,17 @@ import assert from 'assert';
 /**
  * Internal dependencies
  */
-import * as driverManager from '../lib/driver-manager.js';
-import * as dataHelper from '../lib/data-helper';
+import * as driverManager from '../../lib/driver-manager.js';
+import * as dataHelper from '../../lib/data-helper';
 
-import LoginFlow from '../lib/flows/login-flow.js';
-import PlansPage from '../lib/pages/plans-page.js';
-import SidebarComponent from '../lib/components/sidebar-component.js';
-import SecurePaymentComponent from '../lib/components/secure-payment-component';
-import NavBarComponent from '../lib/components/nav-bar-component';
-import ProfilePage from '../lib/pages/profile-page';
-import PurchasesPage from '../lib/pages/purchases-page';
-import ManagePurchasePage from '../lib/pages/manage-purchase-page';
+import LoginFlow from '../../lib/flows/login-flow.js';
+import PlansPage from '../../lib/pages/plans-page.js';
+import SidebarComponent from '../../lib/components/sidebar-component.js';
+import SecurePaymentComponent from '../../lib/components/secure-payment-component';
+import NavBarComponent from '../../lib/components/nav-bar-component';
+import ProfilePage from '../../lib/pages/profile-page';
+import PurchasesPage from '../../lib/pages/purchases-page';
+import ManagePurchasePage from '../../lib/pages/manage-purchase-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );

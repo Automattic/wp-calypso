@@ -6,27 +6,27 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import * as driverManager from '../lib/driver-manager.js';
-import * as dataHelper from '../lib/data-helper.js';
+import * as driverManager from '../../lib/driver-manager.js';
+import * as dataHelper from '../../lib/data-helper.js';
 
-import DomainsPage from '../lib/pages/domains-page.js';
-import CheckOutPage from '../lib/pages/signup/checkout-page.js';
-import ReaderPage from '../lib/pages/reader-page.js';
+import DomainsPage from '../../lib/pages/domains-page.js';
+import CheckOutPage from '../../lib/pages/signup/checkout-page.js';
+import ReaderPage from '../../lib/pages/reader-page.js';
 
-import FindADomainComponent from '../lib/components/find-a-domain-component.js';
-import RegistrationUnavailableComponent from '../lib/components/domain-registration-unavailable-component';
-import SecurePaymentComponent from '../lib/components/secure-payment-component.js';
-import ShoppingCartWidgetComponent from '../lib/components/shopping-cart-widget-component.js';
-import SidebarComponent from '../lib/components/sidebar-component.js';
-import NavBarComponent from '../lib/components/nav-bar-component.js';
-import MyOwnDomainPage from '../lib/pages/domain-my-own-page';
-import MapADomainPage from '../lib/pages/domain-map-page';
-import EnterADomainComponent from '../lib/components/enter-a-domain-component';
-import MapADomainCheckoutPage from '../lib/pages/domain-map-checkout-page';
+import FindADomainComponent from '../../lib/components/find-a-domain-component.js';
+import RegistrationUnavailableComponent from '../../lib/components/domain-registration-unavailable-component';
+import SecurePaymentComponent from '../../lib/components/secure-payment-component.js';
+import ShoppingCartWidgetComponent from '../../lib/components/shopping-cart-widget-component.js';
+import SidebarComponent from '../../lib/components/sidebar-component.js';
+import NavBarComponent from '../../lib/components/nav-bar-component.js';
+import MyOwnDomainPage from '../../lib/pages/domain-my-own-page';
+import MapADomainPage from '../../lib/pages/domain-map-page';
+import EnterADomainComponent from '../../lib/components/enter-a-domain-component';
+import MapADomainCheckoutPage from '../../lib/pages/domain-map-checkout-page';
 
-import LoginFlow from '../lib/flows/login-flow.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
 
-import * as SlackNotifier from '../lib/slack-notifier';
+import * as SlackNotifier from '../../lib/slack-notifier';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );

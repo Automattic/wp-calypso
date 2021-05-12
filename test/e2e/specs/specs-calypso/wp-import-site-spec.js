@@ -7,14 +7,14 @@ import assert from 'assert';
 /**
  * Internal dependencies
  */
-import LoginFlow from '../lib/flows/login-flow.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
 
-import NavBarComponent from '../lib/components/nav-bar-component.js';
-import SideBarComponent from '../lib/components/sidebar-component';
+import NavBarComponent from '../../lib/components/nav-bar-component.js';
+import SideBarComponent from '../../lib/components/sidebar-component';
 
-import ImporterPage from '../lib/pages/importer-page';
+import ImporterPage from '../../lib/pages/importer-page';
 
-import * as driverManager from '../lib/driver-manager.js';
+import * as driverManager from '../../lib/driver-manager.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );

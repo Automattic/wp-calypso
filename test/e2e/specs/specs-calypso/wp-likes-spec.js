@@ -6,13 +6,13 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import * as driverManager from '../lib/driver-manager';
-import * as dataHelper from '../lib/data-helper';
-import LoginFlow from '../lib/flows/login-flow';
-import CommentsAreaComponent from '../lib/pages/frontend/comments-area-component';
-import PostLikesComponent from '../lib/pages/frontend/post-likes-component';
-import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
-import CommentLikesComponent from '../lib/pages/frontend/comment-likes-component';
+import * as driverManager from '../../lib/driver-manager';
+import * as dataHelper from '../../lib/data-helper';
+import LoginFlow from '../../lib/flows/login-flow';
+import CommentsAreaComponent from '../../lib/pages/frontend/comments-area-component';
+import PostLikesComponent from '../../lib/pages/frontend/post-likes-component';
+import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
+import CommentLikesComponent from '../../lib/pages/frontend/comment-likes-component';
 
 const host = dataHelper.getJetpackHost();
 const screenSize = driverManager.currentScreenSize();

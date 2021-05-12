@@ -10,51 +10,51 @@ import { By } from 'selenium-webdriver';
 /**
  * Internal dependencies
  */
-import * as driverManager from '../lib/driver-manager.js';
-import * as driverHelper from '../lib/driver-helper.js';
-import * as dataHelper from '../lib/data-helper.js';
+import * as driverManager from '../../lib/driver-manager.js';
+import * as driverHelper from '../../lib/driver-helper.js';
+import * as dataHelper from '../../lib/data-helper.js';
 
-import WPHomePage from '../lib/pages/wp-home-page.js';
-import StartPage from '../lib/pages/signup/start-page.js';
+import WPHomePage from '../../lib/pages/wp-home-page.js';
+import StartPage from '../../lib/pages/signup/start-page.js';
 
-import AboutPage from '../lib/pages/signup/about-page.js';
-import CustomerHomePage from '../lib/pages/customer-home-page';
-import DomainFirstPage from '../lib/pages/signup/domain-first-page';
-import ReaderLandingPage from '../lib/pages/signup/reader-landing-page';
-import PickAPlanPage from '../lib/pages/signup/pick-a-plan-page.js';
-import CreateYourAccountPage from '../lib/pages/signup/create-your-account-page.js';
-import CheckOutPage from '../lib/pages/signup/checkout-page';
-import SiteTypePage from '../lib/pages/signup/site-type-page';
-import SiteTitlePage from '../lib/pages/signup/site-title-page';
-import LoginPage from '../lib/pages/login-page';
-import MagicLoginPage from '../lib/pages/magic-login-page';
-import ReaderPage from '../lib/pages/reader-page';
-import DomainOnlySettingsPage from '../lib/pages/domain-only-settings-page';
-import DomainDetailsPage from '../lib/pages/domain-details-page';
-import CancelPurchasePage from '../lib/pages/cancel-purchase-page';
-import CancelDomainPage from '../lib/pages/cancel-domain-page';
-import SettingsPage from '../lib/pages/settings-page';
-import NewPage from '../lib/pages/gutenboarding/new-page';
-import AccountSettingsPage from '../lib/pages/account/account-settings-page';
+import AboutPage from '../../lib/pages/signup/about-page.js';
+import CustomerHomePage from '../../lib/pages/customer-home-page';
+import DomainFirstPage from '../../lib/pages/signup/domain-first-page';
+import ReaderLandingPage from '../../lib/pages/signup/reader-landing-page';
+import PickAPlanPage from '../../lib/pages/signup/pick-a-plan-page.js';
+import CreateYourAccountPage from '../../lib/pages/signup/create-your-account-page.js';
+import CheckOutPage from '../../lib/pages/signup/checkout-page';
+import SiteTypePage from '../../lib/pages/signup/site-type-page';
+import SiteTitlePage from '../../lib/pages/signup/site-title-page';
+import LoginPage from '../../lib/pages/login-page';
+import MagicLoginPage from '../../lib/pages/magic-login-page';
+import ReaderPage from '../../lib/pages/reader-page';
+import DomainOnlySettingsPage from '../../lib/pages/domain-only-settings-page';
+import DomainDetailsPage from '../../lib/pages/domain-details-page';
+import CancelPurchasePage from '../../lib/pages/cancel-purchase-page';
+import CancelDomainPage from '../../lib/pages/cancel-domain-page';
+import SettingsPage from '../../lib/pages/settings-page';
+import NewPage from '../../lib/pages/gutenboarding/new-page';
+import AccountSettingsPage from '../../lib/pages/account/account-settings-page';
 
-import FindADomainComponent from '../lib/components/find-a-domain-component.js';
-import SecurePaymentComponent from '../lib/components/secure-payment-component.js';
-import NavBarComponent from '../lib/components/nav-bar-component';
-import SidebarComponent from '../lib/components/sidebar-component';
-import NoSitesComponent from '../lib/components/no-sites-component';
+import FindADomainComponent from '../../lib/components/find-a-domain-component.js';
+import SecurePaymentComponent from '../../lib/components/secure-payment-component.js';
+import NavBarComponent from '../../lib/components/nav-bar-component';
+import SidebarComponent from '../../lib/components/sidebar-component';
+import NoSitesComponent from '../../lib/components/no-sites-component';
 
-import * as SlackNotifier from '../lib/slack-notifier';
+import * as SlackNotifier from '../../lib/slack-notifier';
 
-import EmailClient from '../lib/email-client.js';
-import NewUserRegistrationUnavailableComponent from '../lib/components/new-user-domain-registration-unavailable-component';
-import DeleteAccountFlow from '../lib/flows/delete-account-flow';
-import DeletePlanFlow from '../lib/flows/delete-plan-flow';
-import SignUpStep from '../lib/flows/sign-up-step';
-import GutenboardingFlow from '../lib/flows/gutenboarding-flow';
+import EmailClient from '../../lib/email-client.js';
+import NewUserRegistrationUnavailableComponent from '../../lib/components/new-user-domain-registration-unavailable-component';
+import DeleteAccountFlow from '../../lib/flows/delete-account-flow';
+import DeletePlanFlow from '../../lib/flows/delete-plan-flow';
+import SignUpStep from '../../lib/flows/sign-up-step';
+import GutenboardingFlow from '../../lib/flows/gutenboarding-flow';
 
-import * as sharedSteps from '../lib/shared-steps/wp-signup-spec';
-import MyHomePage from '../lib/pages/my-home-page';
-import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
+import * as sharedSteps from '../../lib/shared-steps/wp-signup-spec';
+import MyHomePage from '../../lib/pages/my-home-page';
+import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
