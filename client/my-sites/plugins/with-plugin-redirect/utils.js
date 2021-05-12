@@ -6,7 +6,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getSiteWoocommerceWizardUrl } from 'calypso/state/sites/selectors';
+import { getSiteWooCommerceWizardUrl } from 'calypso/state/sites/selectors';
 
 /*
  * Plugins list that, once installed in the site,
@@ -17,7 +17,7 @@ export const redirectingPluginsList = {
 	woocommerce: {
 		name: 'WooCommerce',
 		message: translate( 'Redirecting to setup WooCommerce in five seconds.' ),
-		getUrl: getSiteWoocommerceWizardUrl,
+		getUrl: getSiteWooCommerceWizardUrl,
 	},
 };
 
