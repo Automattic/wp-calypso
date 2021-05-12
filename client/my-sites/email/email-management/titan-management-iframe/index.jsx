@@ -71,6 +71,13 @@ class TitanManagementIframe extends React.Component {
 			);
 		}
 		const emailManagementPath = emailManagement( selectedSiteSlug, domainName, currentRoute );
+		const pageTitle = translate( '%(titanProductName)s settings', {
+			args: {
+				titanProductName: getTitanProductName(),
+			},
+			comment:
+				'%(titanProductName) is the name of the product, which should be "Professional Email" translated',
+		} );
 
 		return (
 			<Main className="titan-management-iframe" wideLayout>
@@ -78,25 +85,11 @@ class TitanManagementIframe extends React.Component {
 					<QueryEmailAccounts siteId={ selectedSiteId } />
 				) }
 				<QuerySiteDomains siteId={ selectedSiteId } />
-				<DocumentHead
-					title={ translate( '%(titanProductName)s Management', {
-						args: {
-							titanProductName: getTitanProductName(),
-						},
-						comment:
-							'%(titanProductName) is the name of the product, which should be "Professional Email" translated',
-					} ) }
-				/>
+				<DocumentHead title={ pageTitle } />
 				<SidebarNavigation />
 
 				<Header backHref={ emailManagementPath } selectedDomainName={ domainName }>
-					{ translate( '%(titanProductName)s settings', {
-						args: {
-							titanProductName: getTitanProductName(),
-						},
-						comment:
-							'%(titanProductName) is the name of the product, which should be "Professional Email" translated',
-					} ) }
+					{ pageTitle }
 				</Header>
 				{ this.renderManagementSection() }
 			</Main>
