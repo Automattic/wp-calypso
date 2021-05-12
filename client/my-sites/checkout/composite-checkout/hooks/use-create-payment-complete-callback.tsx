@@ -63,6 +63,7 @@ export default function useCreatePaymentCompleteCallback( {
 	isInEditor,
 	isComingFromUpsell,
 	isFocusedLaunch,
+	isJetpackUserlessCheckout = false,
 }: {
 	createUserAndSiteBeforeTransaction?: boolean;
 	productAliasFromUrl?: string | undefined;
@@ -72,6 +73,7 @@ export default function useCreatePaymentCompleteCallback( {
 	isInEditor?: boolean;
 	isComingFromUpsell?: boolean;
 	isFocusedLaunch?: boolean;
+	isJetpackUserlessCheckout?: boolean;
 } ): PaymentCompleteCallback {
 	const { responseCart } = useShoppingCart();
 	const reduxDispatch = useDispatch();
@@ -108,6 +110,8 @@ export default function useCreatePaymentCompleteCallback( {
 				isEligibleForSignupDestinationResult,
 				hideNudge: isComingFromUpsell,
 				isInEditor,
+				previousRoute,
+				isJetpackUserlessCheckout,
 			};
 			debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 			const url = getThankYouPageUrl( getThankYouPageUrlArguments );
@@ -231,6 +235,7 @@ export default function useCreatePaymentCompleteCallback( {
 			responseCart,
 			createUserAndSiteBeforeTransaction,
 			isFocusedLaunch,
+			isJetpackUserlessCheckout,
 		]
 	);
 }

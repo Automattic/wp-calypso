@@ -14,6 +14,7 @@ import {
 	upsellNudge,
 	redirectToSupportSession,
 	redirectJetpackLegacyPlans,
+	userlessCheckoutThankYou,
 } from './controller';
 import { noop } from './utils';
 import SiftScience from 'calypso/lib/siftscience';
@@ -31,6 +32,12 @@ export default function () {
 	if ( isLoggedOut ) {
 		if ( isEnabled( 'jetpack/userless-checkout' ) ) {
 			page( '/checkout/jetpack/:siteSlug/:productSlug', checkout, makeLayout, clientRender );
+			page(
+				'/checkout/jetpack/thank-you/:siteSlug/:receiptId',
+				userlessCheckoutThankYou,
+				makeLayout,
+				clientRender
+			);
 		}
 
 		page( '/checkout/offer-quickstart-session', upsellNudge, makeLayout, clientRender );

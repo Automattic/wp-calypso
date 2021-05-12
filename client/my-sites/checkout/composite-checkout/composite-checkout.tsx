@@ -269,6 +269,7 @@ export default function CompositeCheckout( {
 		productAliasFromUrl,
 		hideNudge: !! isComingFromUpsell,
 		isInEditor,
+		isJetpackUserlessCheckout,
 	} );
 	const getThankYouUrl = useCallback( () => {
 		const url = getThankYouUrlBase();
@@ -564,6 +565,7 @@ export default function CompositeCheckout( {
 		isInEditor,
 		isComingFromUpsell,
 		isFocusedLaunch,
+		isJetpackUserlessCheckout,
 	} );
 
 	const handlePaymentComplete = useCallback(

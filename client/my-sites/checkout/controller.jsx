@@ -280,6 +280,10 @@ export function redirectToSupportSession( context ) {
 	page.redirect( `/checkout/offer-support-session/${ site }` );
 }
 
+export function userlessCheckoutThankYou( context ) {
+	context.primary = <div>{ context.params.toString() }</div>;
+}
+
 function getRememberedCoupon() {
 	// read coupon list from localStorage, return early if it's not there
 	let coupons = null;
