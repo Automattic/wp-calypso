@@ -83,7 +83,7 @@ export default function useCreatePaymentCompleteCallback( {
 	const reduxStore = useStore();
 	const selectedSiteData = useSelector( getSelectedSite );
 	const adminUrl = selectedSiteData?.options?.admin_url;
-	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( responseCart ); );
+	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( responseCart );
 	const isJetpackNotAtomic =
 		useSelector(
 			( state ) => siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
