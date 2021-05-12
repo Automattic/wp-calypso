@@ -133,5 +133,6 @@
 	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": "desktop",
 	"google_analytics_key": "UA-10673494-10",
-	"hotjar_enabled": true
+	"hotjar_enabled": true,
+	"fullstory_enabled": false
 }

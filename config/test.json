@@ -18,6 +18,7 @@
 	"google_analytics_key": "UA-10673494-15",
 	"google_recaptcha_site_key": "",
 	"hotjar_enabled": true,
+	"fullstory_enabled": false,
 	"signup_url": "/start",
 	"gutenboarding_url": "/new",
 	"login_url": "https://wordpress.com/wp-login.php",
