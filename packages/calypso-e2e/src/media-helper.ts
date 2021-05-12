@@ -6,7 +6,7 @@ import path from 'path';
 /**
  * Internal dependencies
  */
-import { getTargetLocale, getTargetScreenSize } from './browser-manager';
+import { getTargetLocale, getTargetScreenSize } from './browser-helper';
 
 /**
  * Returns the screenshot save directory.
@@ -32,6 +32,29 @@ export function getVideoDir(): string {
 	);
 }
 
+/**
+ * Returns a descriptive file name for the screenshot file.
+ *
+ * @param {string} name Name of the test case that failed.
+ * @param {string} state Pass/fail state of the test case.
+ * @returns {string} A Path-like string.
+ */
+export function getScreenshotName( name: string, state: string ): string {
+	const shortTestFileName = name.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
+	const screenSize = getTargetScreenSize().toUpperCase();
+	const locale = getTargetLocale().toUpperCase();
+	const date = getDateString();
+	const fileName = `${ state }-${ locale }-${ screenSize }-${ shortTestFileName }-${ date }`;
+	const screenshotDir = getScreenshotDir();
+	return `${ screenshotDir }/${ fileName }.png`;
+}
+
+/**
+ * Returns a descriptive file name for video recording file.
+ *
+ * @param {string} name Name of the suite and test case that failed.
+ * @returns {string} A Path-like string.
+ */
 export function getVideoName( name: string ): string {
 	const suiteName = name.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
 	const locale = getTargetLocale().toUpperCase();

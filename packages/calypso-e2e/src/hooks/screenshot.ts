@@ -6,8 +6,7 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import { getTargetLocale, getTargetScreenSize } from '../browser-manager';
-import { getDateString, getScreenshotDir } from '../media-helper';
+import { getScreenshotName } from '../media-helper';
 
 /**
  * Type dependencies
@@ -54,13 +53,5 @@ export async function saveScreenshot( this: Context ): Promise< void > {
 	// If we are here, screenshot needs to be captured.
 	// Build the necessary components of the filename then call Playwright's
 	// built-in screenshot utility to output a PNG file.
-	const shortTestFileName = test.title.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
-	const screenSize = getTargetScreenSize().toUpperCase();
-	const locale = getTargetLocale().toUpperCase();
-	const date = getDateString();
-	const fileName = `${ state }-${ locale }-${ screenSize }-${ shortTestFileName }-${ date }`;
-	const screenshotDir = getScreenshotDir();
-	const screenshotPath = `${ screenshotDir }/${ fileName }.png`;
-
-	await page.screenshot( { path: screenshotPath } );
+	await page.screenshot( { path: getScreenshotName( test.title, state ) } );
 }
