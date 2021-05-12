@@ -616,12 +616,6 @@ export default function CompositeCheckout( {
 		);
 	}
 
-	// TODO: can we remove this?
-	if ( isJetpackCheckout ) {
-		siteId = parseInt( responseCart.blog_id );
-		siteSlug = responseCart.jetpack_site_slug;
-	}
-
 	const updatedSiteId = isJetpackCheckout ? parseInt( responseCart.blog_id ) : siteId;
 
 	return (
