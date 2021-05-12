@@ -47,7 +47,7 @@ async function createAccountCallback( response ) {
 	} );
 }
 
-export async function createAccount( { signupFlowName = 'onboarding-registrationless' } = {} ) {
+export async function createAccount( { signupFlowName } ) {
 	let newSiteParams = null;
 	try {
 		newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
