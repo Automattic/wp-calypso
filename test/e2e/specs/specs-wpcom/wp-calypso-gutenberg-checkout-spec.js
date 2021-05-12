@@ -8,16 +8,16 @@ import assert from 'assert';
 /**
  * Internal dependencies
  */
-import LoginFlow from '../lib/flows/login-flow.js';
-import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
-import SecurePaymentComponent from '../lib/components/secure-payment-component.js';
-import UpsellPage from '../lib/pages/signup/upsell-page';
-import DeletePlanFlow from '../lib/flows/delete-plan-flow';
-import WPHomePage from '../lib/pages/wp-home-page.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
+import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
+import SecurePaymentComponent from '../../lib/components/secure-payment-component.js';
+import UpsellPage from '../../lib/pages/signup/upsell-page';
+import DeletePlanFlow from '../../lib/flows/delete-plan-flow';
+import WPHomePage from '../../lib/pages/wp-home-page.js';
 
-import * as driverManager from '../lib/driver-manager';
-import * as driverHelper from '../lib/driver-helper';
-import * as dataHelper from '../lib/data-helper';
+import * as driverManager from '../../lib/driver-manager';
+import * as driverHelper from '../../lib/driver-helper';
+import * as dataHelper from '../../lib/data-helper';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );

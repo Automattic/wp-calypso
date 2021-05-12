@@ -6,7 +6,7 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import LoginPage from '../lib/pages/login-page';
+import LoginPage from '../../lib/pages/login-page';
 
 /**
  * Constants

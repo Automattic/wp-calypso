@@ -8,14 +8,14 @@ import { times } from 'lodash';
 /**
  * Internal dependencies
  */
-import * as driverManager from '../lib/driver-manager.js';
-import * as dataHelper from '../lib/data-helper.js';
-import * as mediaHelper from '../lib/media-helper';
-import * as driverHelper from '../lib/driver-helper';
-import LoginFlow from '../lib/flows/login-flow.js';
-import ReaderPage from '../lib/pages/reader-page';
-import NavBarComponent from '../lib/components/nav-bar-component.js';
-import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
+import * as driverManager from '../../lib/driver-manager.js';
+import * as dataHelper from '../../lib/data-helper.js';
+import * as mediaHelper from '../../lib/media-helper';
+import * as driverHelper from '../../lib/driver-helper';
+import LoginFlow from '../../lib/flows/login-flow.js';
+import ReaderPage from '../../lib/pages/reader-page';
+import NavBarComponent from '../../lib/components/nav-bar-component.js';
+import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
 import {
 	BlogPostsBlockComponent,
 	ContactFormBlockComponent,
@@ -29,7 +29,7 @@ import {
 	TiledGalleryBlockComponent,
 	YoutubeBlockComponent,
 	PremiumContentBlockComponent,
-} from '../lib/gutenberg/blocks';
+} from '../../lib/gutenberg/blocks';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );

@@ -7,14 +7,14 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import LoginFlow from '../lib/flows/login-flow.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
 
-import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
+import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
 
-import * as driverManager from '../lib/driver-manager';
-import * as driverHelper from '../lib/driver-helper';
-import * as dataHelper from '../lib/data-helper';
-import * as mediaHelper from '../lib/media-helper';
+import * as driverManager from '../../lib/driver-manager';
+import * as driverHelper from '../../lib/driver-helper';
+import * as dataHelper from '../../lib/data-helper';
+import * as mediaHelper from '../../lib/media-helper';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );

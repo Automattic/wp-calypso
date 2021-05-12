@@ -6,12 +6,12 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import LoginFlow from '../lib/flows/login-flow.js';
-import * as driverManager from '../lib/driver-manager';
-import * as dataHelper from '../lib/data-helper';
-import SidebarComponent from '../lib/components/sidebar-component.js';
-import SiteEditorPage from '../lib/pages/site-editor-page.js';
-import SiteEditorComponent from '../lib/components/site-editor-component';
+import LoginFlow from '../../lib/flows/login-flow.js';
+import * as driverManager from '../../lib/driver-manager';
+import * as dataHelper from '../../lib/data-helper';
+import SidebarComponent from '../../lib/components/sidebar-component.js';
+import SiteEditorPage from '../../lib/pages/site-editor-page.js';
+import SiteEditorComponent from '../../lib/components/site-editor-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );

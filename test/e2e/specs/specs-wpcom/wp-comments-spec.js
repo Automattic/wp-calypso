@@ -6,12 +6,12 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import * as driverManager from '../lib/driver-manager';
-import * as dataHelper from '../lib/data-helper';
-import * as mediaHelper from '../lib/media-helper';
-import LoginFlow from '../lib/flows/login-flow';
-import CommentsAreaComponent from '../lib/pages/frontend/comments-area-component';
-import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
+import * as driverManager from '../../lib/driver-manager';
+import * as dataHelper from '../../lib/data-helper';
+import * as mediaHelper from '../../lib/media-helper';
+import LoginFlow from '../../lib/flows/login-flow';
+import CommentsAreaComponent from '../../lib/pages/frontend/comments-area-component';
+import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
 
 const host = dataHelper.getJetpackHost();
 const screenSize = driverManager.currentScreenSize();

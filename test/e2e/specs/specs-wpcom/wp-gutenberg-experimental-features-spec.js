@@ -7,9 +7,9 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import LoginFlow from '../lib/flows/login-flow.js';
-import * as driverManager from '../lib/driver-manager';
-import * as dataHelper from '../lib/data-helper';
+import LoginFlow from '../../lib/flows/login-flow.js';
+import * as driverManager from '../../lib/driver-manager';
+import * as dataHelper from '../../lib/data-helper';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );

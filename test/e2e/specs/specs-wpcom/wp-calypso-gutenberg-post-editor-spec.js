@@ -8,30 +8,30 @@ import { By } from 'selenium-webdriver';
 /**
  * Internal dependencies
  */
-import LoginFlow from '../lib/flows/login-flow.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
 
-import ViewPostPage from '../lib/pages/view-post-page.js';
-import NotFoundPage from '../lib/pages/not-found-page.js';
-import PostsPage from '../lib/pages/posts-page.js';
-import ReaderPage from '../lib/pages/reader-page';
-import ActivityPage from '../lib/pages/stats/activity-page';
-import PaypalCheckoutPage from '../lib/pages/external/paypal-checkout-page';
+import ViewPostPage from '../../lib/pages/view-post-page.js';
+import NotFoundPage from '../../lib/pages/not-found-page.js';
+import PostsPage from '../../lib/pages/posts-page.js';
+import ReaderPage from '../../lib/pages/reader-page';
+import ActivityPage from '../../lib/pages/stats/activity-page';
+import PaypalCheckoutPage from '../../lib/pages/external/paypal-checkout-page';
 
-import SidebarComponent from '../lib/components/sidebar-component.js';
-import NoticesComponent from '../lib/components/notices-component.js';
-import NavBarComponent from '../lib/components/nav-bar-component.js';
-import PostPreviewComponent from '../lib/components/post-preview-component';
-import RevisionsModalComponent from '../lib/components/revisions-modal-component';
-import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
-import GutenbergEditorSidebarComponent from '../lib/gutenberg/gutenberg-editor-sidebar-component';
-import SimplePaymentsBlockComponent from '../lib/gutenberg/blocks/payment-block-component';
+import SidebarComponent from '../../lib/components/sidebar-component.js';
+import NoticesComponent from '../../lib/components/notices-component.js';
+import NavBarComponent from '../../lib/components/nav-bar-component.js';
+import PostPreviewComponent from '../../lib/components/post-preview-component';
+import RevisionsModalComponent from '../../lib/components/revisions-modal-component';
+import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
+import GutenbergEditorSidebarComponent from '../../lib/gutenberg/gutenberg-editor-sidebar-component';
+import SimplePaymentsBlockComponent from '../../lib/gutenberg/blocks/payment-block-component';
 
-import * as driverManager from '../lib/driver-manager';
-import * as driverHelper from '../lib/driver-helper';
-import * as mediaHelper from '../lib/media-helper';
-import * as dataHelper from '../lib/data-helper';
-import * as SlackNotifier from '../lib/slack-notifier';
-import EmbedsBlockComponent from '../lib/gutenberg/blocks/embeds-block-component';
+import * as driverManager from '../../lib/driver-manager';
+import * as driverHelper from '../../lib/driver-helper';
+import * as mediaHelper from '../../lib/media-helper';
+import * as dataHelper from '../../lib/data-helper';
+import * as SlackNotifier from '../../lib/slack-notifier';
+import EmbedsBlockComponent from '../../lib/gutenberg/blocks/embeds-block-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );

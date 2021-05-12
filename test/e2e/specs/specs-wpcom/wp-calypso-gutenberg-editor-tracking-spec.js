@@ -7,13 +7,13 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import LoginFlow from '../lib/flows/login-flow.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
 
-import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
-import WPAdminSidebar from '../lib/pages/wp-admin/wp-admin-sidebar';
+import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
+import WPAdminSidebar from '../../lib/pages/wp-admin/wp-admin-sidebar';
 
-import * as driverManager from '../lib/driver-manager.js';
-import * as dataHelper from '../lib/data-helper.js';
+import * as driverManager from '../../lib/driver-manager.js';
+import * as dataHelper from '../../lib/data-helper.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
