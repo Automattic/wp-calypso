@@ -69,7 +69,7 @@ export function recordSignupComplete(
 	// Google Analytics
 	gaRecordEvent( 'Signup', 'calypso_signup_complete:' + flags.join( ',' ) );
 
-	// Tracks & Google Analytics
+	// Tracks, Google Analytics, FullStory
 	if ( isNew7DUserSite ) {
 		const device = resolveDeviceTypeByViewPort();
 
@@ -77,6 +77,8 @@ export function recordSignupComplete(
 		recordTracksEvent( 'calypso_new_user_site_creation', { flow, device } );
 		// Google Analytics
 		gaRecordEvent( 'Signup', 'calypso_new_user_site_creation' );
+		// FullStory
+		recordFullStoryEvent( 'calypso_new_user_site_creation', { flow, device } );
 	}
 
 	// Marketing
