@@ -296,16 +296,13 @@ ABTest.prototype.hasBeenInPreviousSeriesTest = function () {
 	const previousExperimentIds = keys( getSavedVariations() );
 	let previousName;
 
-	return some(
-		previousExperimentIds,
-		function ( previousExperimentId ) {
-			previousName = previousExperimentId.substring(
-				0,
-				previousExperimentId.length - '_YYYYMMDD'.length
-			);
-			return previousExperimentId !== this.experimentId && previousName === this.name;
-		}.bind( this )
-	);
+	return some( previousExperimentIds, ( previousExperimentId ) => {
+		previousName = previousExperimentId.substring(
+			0,
+			previousExperimentId.length - '_YYYYMMDD'.length
+		);
+		return previousExperimentId !== this.experimentId && previousName === this.name;
+	} );
 };
 
 ABTest.prototype.hasRegisteredBeforeTestBegan = function () {
@@ -365,17 +362,13 @@ ABTest.prototype.saveVariation = function ( variation ) {
 };
 
 ABTest.prototype.saveVariationOnBackend = function ( variation ) {
-	wpcom.undocumented().saveABTestData(
-		this.experimentId,
-		variation,
-		function ( error ) {
-			if ( error ) {
-				debug( '%s: Error saving variation %s: %s', this.experimentId, variation, error );
-			} else {
-				debug( '%s: Variation saved successfully: %s.', this.experimentId, variation );
-			}
-		}.bind( this )
-	);
+	wpcom.undocumented().saveABTestData( this.experimentId, variation, ( error ) => {
+		if ( error ) {
+			debug( '%s: Error saving variation %s: %s', this.experimentId, variation, error );
+		} else {
+			debug( '%s: Variation saved successfully: %s.', this.experimentId, variation );
+		}
+	} );
 };
 
 ABTest.prototype.saveVariationInLocalStorage = function ( variation ) {
