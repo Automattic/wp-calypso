@@ -17,11 +17,9 @@ import { isWithinBreakpoint } from '@automattic/viewport';
 /**
  * Internal dependencies
  */
+
 import { isSidebarSectionOpen } from 'calypso/state/my-sites/sidebar/selectors';
-import {
-	toggleMySitesSidebarSection as toggleSection,
-	collapseAllMySitesSidebarSections,
-} from 'calypso/state/my-sites/sidebar/actions';
+import { toggleMySitesSidebarSection as toggleSection } from 'calypso/state/my-sites/sidebar/actions';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import MySitesSidebarUnifiedItem from './item';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
@@ -52,7 +50,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 		children.find( ( menuItem ) => menuItem?.url && itemLinkMatches( menuItem.url, path ) );
 	const childIsSelected = !! selectedMenuItem;
 	const showAsExpanded =
-		( ! isWithinBreakpoint( '>782px' ) && isExpanded ) || // For mobile breakpoints, we dont' care whether a child is secleted or the sidebar collapsed status.
+		( ! isWithinBreakpoint( '>782px' ) && ( childIsSelected || isExpanded ) ) || // For mobile breakpoints, we dont' care about the sidebar collapsed status.
 		( isWithinBreakpoint( '>782px' ) && childIsSelected && ! sidebarCollapsed ); // For desktop breakpoints, a child should be selected and the sidebar being expanded.
 
 	const onClick = () => {
@@ -70,11 +68,6 @@ export const MySitesSidebarUnifiedMenu = ( {
 
 				// Only open the page if menu is NOT full-width, otherwise just open / close the section instead of directly redirecting to the section.
 				page( link );
-			}
-
-			if ( ! sidebarCollapsed ) {
-				// Keep only current submenu open.
-				reduxDispatch( collapseAllMySitesSidebarSections() );
 			}
 		}
 
@@ -102,7 +95,6 @@ export const MySitesSidebarUnifiedMenu = ( {
 							key={ item.title }
 							{ ...item }
 							selected={ isSelected }
-							sectionId={ sectionId }
 							isSubItem={ true }
 							isHappychatSessionActive={ isHappychatSessionActive }
 							isJetpackNonAtomicSite={ isJetpackNonAtomicSite }
