@@ -541,6 +541,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				site={ selectedSite }
 				purchase={ purchase }
 				useVerticalNavItem={ true }
+				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 				className="navigation-enhanced__delete-domain is-clickable"
 				onClickTracks={ this.handleDomainDeleteClick }
 			>

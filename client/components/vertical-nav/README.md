@@ -7,15 +7,15 @@ The following components can be used to display rows of links.
 ```js
 <VerticalNav>
 	<VerticalNavItem path="/stats">Stats</VerticalNavItem>
-	
+
 	<VerticalNavItem path="https://google.com" external>
 		Google
 	</VerticalNavItem>
-	
+
 	<VerticalNavItem path="/posts" onClick={ this.handleClickPosts }>
 		Posts
 	</VerticalNavItem>
-	
+
 	<VerticalNavItem isPlaceholder />
 
 	<VerticalNavItemEnhanced
@@ -46,4 +46,4 @@ instead on the following props:
 - **materialIcon** - String _optional_ - the identifier of the [Material Design icon](../../../packages/material-design-icons/README.md) to show in front of the text and description.
 - **onClick** - Function _optional_ - called when the item is clicked.
 - **path** - String _optional_ - the page the user is taken to when the item is clicked.
-- **text** - String _required_ - the main text of the navigation item.  
+- **text** - String _required_ - the main text of the navigation item.

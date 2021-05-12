@@ -16,18 +16,39 @@ import VerticalNavItem from 'calypso/components/vertical-nav/item';
  */
 import './style.scss';
 
-const VerticalNavItemEnhanced = ( { description, external, gridicon, materialIcon, path, onClick, text, } ) => {
+const VerticalNavItemEnhanced = ( {
+	description,
+	external,
+	gridicon,
+	materialIcon,
+	path,
+	onClick,
+	text,
+} ) => {
 	return (
 		<VerticalNavItem
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			className="vertical-nav-item-enhanced"
 			external={ external }
 			onClick={ onClick }
 			path={ path }
 		>
 			<>
-				{ gridicon && <Gridicon className="vertical-nav-item-enhanced__icon" icon={ gridicon } /> }
+				{ gridicon && (
+					<Gridicon
+						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+						className="vertical-nav-item-enhanced__icon"
+						icon={ gridicon }
+					/>
+				) }
 
-				{ ! gridicon && <MaterialIcon icon={ materialIcon } className="vertical-nav-item-enhanced__icon" /> }
+				{ ! gridicon && (
+					<MaterialIcon
+						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+						className="vertical-nav-item-enhanced__icon"
+						icon={ materialIcon }
+					/>
+				) }
 
 				<div>
 					<div>{ text }</div>
