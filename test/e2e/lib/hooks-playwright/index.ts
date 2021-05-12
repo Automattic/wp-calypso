@@ -8,10 +8,11 @@ import {
 	recordFailedTestName,
 	startBrowser,
 	closeBrowser,
+	closePage,
 } from '@automattic/calypso-e2e';
 
 export const mochaHooks = {
 	beforeAll: [ startBrowser, clearFailedTest ],
 	afterEach: [ saveScreenshot, recordFailedTestName ],
-	afterAll: [ saveVideo, closeBrowser ],
+	afterAll: [ closePage, saveVideo, closeBrowser ],
 };
