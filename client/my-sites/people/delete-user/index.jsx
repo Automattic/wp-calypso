@@ -102,7 +102,6 @@ class DeleteUser extends React.Component {
 	getAuthorSelector = () => {
 		return (
 			<AuthorSelector
-				key={ this.props.siteId }
 				allowSingleUser
 				siteId={ this.props.siteId }
 				onSelect={ this.onSelectAuthor }

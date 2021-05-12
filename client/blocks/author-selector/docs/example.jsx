@@ -15,12 +15,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 function AuthorSelectorExample( { primarySiteId, displayName } ) {
 	return (
 		<Card>
-			<AuthorSelector
-				key={ primarySiteId }
-				siteId={ primarySiteId }
-				allowSingleUser
-				popoverPosition="bottom"
-			>
+			<AuthorSelector siteId={ primarySiteId } allowSingleUser popoverPosition="bottom">
 				<span>You are { displayName } </span>
 			</AuthorSelector>
 		</Card>
