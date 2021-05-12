@@ -32,7 +32,13 @@ export function PagePatternsPlugin( props: PagePatternsPluginProps ): JSX.Elemen
 			areTipsEnabled: select( 'core/nux' )
 				? ( select( 'core/nux' ).areTipsEnabled() as boolean )
 				: false, // Gutenberg 7.1.0 or lower
-			...( isPatternPicker() && { title: __( 'Choose a Pattern', 'full-site-editing' ) } ),
+			...( isPatternPicker() && {
+				title: __( 'Choose a Pattern', 'full-site-editing' ),
+				description: __(
+					'Pick a pre-defined layout or continue with a blank page',
+					'full-site-editing'
+				),
+			} ),
 		};
 	} );
 

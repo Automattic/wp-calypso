@@ -33,6 +33,7 @@ interface PagePatternModalProps {
 	patterns: PatternDefinition[];
 	theme?: string;
 	title?: string;
+	description?: string;
 }
 
 interface PagePatternModalState {
@@ -320,10 +321,11 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 							id={ `page-pattern-modal__description-${ instanceId }` }
 							className="page-pattern-modal__description"
 						>
-							{ __(
-								'Pick a pre-defined layout or start with a blank page.',
-								__i18n_text_domain__
-							) }
+							{ this.props.description ||
+								__(
+									'Pick a pre-defined layout or start with a blank page.',
+									__i18n_text_domain__
+								) }
 						</p>
 						<div className="page-pattern-modal__button-container">
 							<Button
