@@ -20,7 +20,6 @@
 	"google_analytics_key": false,
 	"google_recaptcha_site_key": false,
 	"hotjar_enabled": false,
-	"fullstory_enabled": false,
 	"hostname": false,
 	"i18n_default_locale_slug": "en",
 	"lasagna_url": "wss://rt-api.wordpress.com/socket",

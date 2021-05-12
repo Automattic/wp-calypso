@@ -43,13 +43,15 @@ export function recordFullStoryEvent( name, _props ) {
 function maybeAddFullStoryScript() {
 	if (
 		fullStoryScriptLoaded ||
-		! config( 'fullstory_enabled' ) ||
+		! config( 'fullstory-enabled' ) ||
 		isE2ETest() ||
 		getDoNotTrack() ||
 		isPiiUrl() ||
 		! mayWeTrackCurrentUserGdpr()
 	) {
-		fullStoryDebug( 'maybeAddFullStoryScript:', false );
+		if ( ! fullStoryScriptLoaded ) {
+			fullStoryDebug( 'maybeAddFullStoryScript:', false );
+		}
 		return;
 	}
 

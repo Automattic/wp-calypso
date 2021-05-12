@@ -21,7 +21,6 @@
 	"login_url",
 	"logout_url",
 	"hotjar_enabled",
-	"fullstory_enabled",
 	"jetpack_support_blog",
 	"mc_analytics_enabled",
 	"oauth_client_id",

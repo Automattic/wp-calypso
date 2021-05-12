@@ -19,7 +19,6 @@
 	"boom_analytics_key": "development",
 	"google_analytics_key": "UA-10673494-15",
 	"hotjar_enabled": true,
-	"fullstory_enabled": false,
 	"signup_url": "/start",
 	"gutenboarding_url": "/new",
 	"login_url": "https://wordpress.com/wp-login.php",
@@ -31,6 +30,7 @@
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
 		"ad-tracking": false,
+		"fullstory-enabled": false,
 		"async-payments": false,
 		"automated-transfer": true,
 		"blogger-plan": true,

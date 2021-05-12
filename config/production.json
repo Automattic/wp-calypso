@@ -16,6 +16,7 @@
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
 		"ad-tracking": true,
+		"fullstory-enabled": false,
 		"async-payments": false,
 		"automated-transfer": true,
 		"blogger-plan": false,
@@ -182,6 +183,5 @@
 	"server_side_boom_analytics_enabled": true,
 	"boom_analytics_key": "production",
 	"google_analytics_key": "UA-10673494-10",
-	"hotjar_enabled": true,
-	"fullstory_enabled": false
+	"hotjar_enabled": true
 }
