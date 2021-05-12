@@ -6,7 +6,10 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getSiteWooCommerceWizardUrl } from 'calypso/state/sites/selectors';
+import {
+	getSiteWooCommerceWizardUrl,
+	getSiteWordPressSeoWizardUrl,
+} from 'calypso/state/sites/selectors';
 
 /*
  * Plugins list that, once installed in the site,
@@ -18,6 +21,12 @@ export const redirectingPluginsList = {
 		name: 'WooCommerce',
 		message: translate( 'Redirecting to setup WooCommerce in five seconds.' ),
 		getUrl: getSiteWooCommerceWizardUrl,
+	},
+
+	'wordpress-seo': {
+		name: 'WooCommerce',
+		message: translate( 'Redirecting to setup Yoast in five seconds.' ),
+		getUrl: getSiteWordPressSeoWizardUrl,
 	},
 };
 
