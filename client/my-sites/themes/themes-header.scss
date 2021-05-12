@@ -1,8 +1,6 @@
 .themes__header {
     display: flex;
     flex: 1 1 auto;
-    justify-content: flex-start;
-    align-items: center;
 
 	.themes__page-heading {
 		width: 100%;
@@ -10,31 +8,16 @@
 }
 
 .themes__install-theme-button-container {
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-end;
-	align-items: stretch;
 	margin: auto;
 	margin-right: 15px;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		flex-direction: row;
-		align-items: flex-end;
 		margin-right: 0;
 		margin-bottom: 17px;
 	}
 
 	.themes__upload-button {
 		white-space: nowrap;
-
-		&:not( :last-child ) {
-			margin-bottom: 8px;
-
-			@include breakpoint-deprecated( '>480px' ) {
-				margin-bottom: 0;
-				margin-right: 10px;
-			}
-		}
 	}
 }
 
