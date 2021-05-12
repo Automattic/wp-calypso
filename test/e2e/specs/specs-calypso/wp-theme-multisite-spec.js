@@ -21,7 +21,6 @@ import CurrentThemeComponent from '../../lib/components/current-theme-component'
 
 import LoginFlow from '../../lib/flows/login-flow.js';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
@@ -34,8 +33,6 @@ describe( `[${ host }] Themes: All sites (${ screenSize })`, function () {
 	}, startBrowserTimeoutMS );
 
 	describe( 'Preview a theme @parallel', function () {
-		this.timeout( mochaTimeOut );
-
 		it( 'Login and select themes', async function () {
 			this.themeSearchName = 'twenty';
 			this.expectedTheme = 'Twenty F';
@@ -99,8 +96,6 @@ describe( `[${ host }] Themes: All sites (${ screenSize })`, function () {
 	} );
 
 	describe( 'Activate a theme @parallel', function () {
-		this.timeout( mochaTimeOut );
-
 		it( 'Login and select themes', async function () {
 			this.themeSearchName = 'twenty';
 			this.expectedTheme = 'Twenty F';

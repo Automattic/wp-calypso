@@ -28,7 +28,6 @@ import LoginFlow from '../../lib/flows/login-flow';
 import LoginPage from '../../lib/pages/login-page';
 import WPAdminLogonPage from '../../lib/pages/wp-admin/wp-admin-logon-page.js';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
@@ -460,14 +459,12 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 } );
 
 describe( `[${ host }] User Agent: (${ screenSize }) @parallel @jetpack`, function () {
-	this.timeout( mochaTimeOut );
 	let driver;
 
 	beforeAll( async function () {
-		this.timeout( startBrowserTimeoutMS );
 		driver = await driverManager.startBrowser();
-		await driverManager.ensureNotLoggedIn( driver );
-	} );
+		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
+	}, startBrowserTimeoutMS );
 
 	it( 'Can see the correct user agent set', async function () {
 		await WPHomePage.Visit( driver );

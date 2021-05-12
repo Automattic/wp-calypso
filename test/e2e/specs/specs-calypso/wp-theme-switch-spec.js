@@ -21,7 +21,6 @@ import WPAdminCustomizerPage from '../../lib/pages/wp-admin/wp-admin-customizer-
 import WPAdminLogonPage from '../../lib/pages/wp-admin/wp-admin-logon-page.js';
 import * as dataHelper from '../../lib/data-helper';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
@@ -64,13 +63,12 @@ describe( `[${ host }] Previewing Themes: (${ screenSize })`, function () {
 
 // NOTE: test in jetpack env is failing due to some strange issue, when switching to new tab. It fails only in CI
 describe( `[${ host }] Activating Themes: (${ screenSize }) @parallel`, function () {
-	this.timeout( mochaTimeOut );
 	let driver;
 
 	beforeAll( async function () {
-		this.timeout( startBrowserTimeoutMS );
 		driver = await driverManager.startBrowser();
-	} );
+		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
+	}, startBrowserTimeoutMS );
 
 	describe( 'Activating Themes:', function () {
 		it( 'Login', async function () {
