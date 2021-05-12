@@ -146,8 +146,9 @@ export function planHasFeature( plan, feature ) {
  */
 export function planHasSuperiorFeature( plan, feature ) {
 	const planConstantObj = getPlan( plan );
+	const features = planConstantObj.getInferiorHiddenFeatures?.() ?? [];
 
-	return planConstantObj.getInferiorHiddenFeatures().includes( feature );
+	return features.includes( feature );
 }
 
 export function shouldFetchSitePlans( sitePlans, selectedSite ) {
