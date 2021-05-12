@@ -1,3 +1,5 @@
+@import '~@wordpress/base-styles/variables';
+
 @media ( max-width: 600px ) {
 	// stylelint-disable-next-line selector-max-id
 	.is-iframed #wpbody {
@@ -45,4 +47,8 @@ body.is-fullscreen-mode {
 
 .components-notice-list {
 	z-index: 29; // Ensure notices are placed behind the editor header (z-index: 30).
+}
+
+.wpcom-block-editor__close-button {
+	height: $header-height !important;
 }

@@ -4,16 +4,22 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { getDomainTypeText, isSubdomain } from 'lib/domains';
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
-import MaterialIcon from 'components/material-icon';
+import { addQueryArgs } from '@wordpress/url';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import {
+	getDomainTypeText,
+	isSubdomain,
+	isDomainUpdateable,
+	isDomainInGracePeriod,
+} from 'calypso/lib/domains';
+import VerticalNav from 'calypso/components/vertical-nav';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import MaterialIcon from 'calypso/components/material-icon';
 import {
 	domainAddNew,
 	domainManagementNameServers,
@@ -22,26 +28,34 @@ import {
 	domainManagementDns,
 	domainManagementDomainConnectMapping,
 	domainManagementChangeSiteAddress,
+	domainManagementRedirectSettings,
 	domainTransferIn,
 	domainManagementSecurity,
-} from 'my-sites/domains/paths';
-import { emailManagement } from 'my-sites/email/paths';
-import { type as domainTypes, transferStatus, sslStatuses } from 'lib/domains/constants';
-import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
-import { isCancelable } from 'lib/purchases';
-import { cancelPurchase } from 'me/purchases/paths';
-import { getUnmappedUrl } from 'lib/site/utils';
-import { withoutHttp } from 'lib/url';
-import RemovePurchase from 'me/purchases/remove-purchase';
-import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
+	isUnderDomainManagementAll,
+} from 'calypso/my-sites/domains/paths';
+import { emailManagement } from 'calypso/my-sites/email/paths';
+import { type as domainTypes, transferStatus, sslStatuses } from 'calypso/lib/domains/constants';
+import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { isCancelable } from 'calypso/lib/purchases';
+import { cancelPurchase } from 'calypso/me/purchases/paths';
+import { getUnmappedUrl } from 'calypso/lib/site/utils';
+import { withoutHttp } from 'calypso/lib/url';
+import RemovePurchase from 'calypso/me/purchases/remove-purchase';
+import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
+import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 
 import './style.scss';
 
 const DomainManagementNavigationItemContents = function ( props ) {
-	const { materialIcon, text, description } = props;
+	const { gridicon, materialIcon, text, description } = props;
 	return (
 		<React.Fragment>
-			<MaterialIcon icon={ materialIcon } className="navigation__icon" />
+			{ gridicon && <Gridicon className="navigation__icon" icon={ gridicon } /> }
+			{ ! gridicon && <MaterialIcon icon={ materialIcon } className="navigation__icon" /> }
 			<div>
 				<div>{ text }</div>
 				<small>{ description }</small>
@@ -51,7 +65,7 @@ const DomainManagementNavigationItemContents = function ( props ) {
 };
 
 const DomainManagementNavigationItem = function ( props ) {
-	const { path, onClick, external, materialIcon, text, description } = props;
+	const { path, onClick, external, gridicon, materialIcon, text, description } = props;
 
 	return (
 		<VerticalNavItem
@@ -62,6 +76,7 @@ const DomainManagementNavigationItem = function ( props ) {
 		>
 			<DomainManagementNavigationItemContents
 				materialIcon={ materialIcon }
+				gridicon={ gridicon }
 				text={ text }
 				description={ description }
 			/>
@@ -70,23 +85,11 @@ const DomainManagementNavigationItem = function ( props ) {
 };
 
 class DomainManagementNavigationEnhanced extends React.Component {
-	isDomainInNormalState() {
-		const { domain } = this.props;
-		const { expired, pendingTransfer } = domain;
-		return ! pendingTransfer && ! expired;
-	}
-
-	isDomainInGracePeriod() {
-		const { domain, moment } = this.props;
-		const { expiry } = domain;
-		return moment().subtract( 18, 'days' ) <= moment( expiry );
-	}
-
 	getEmail() {
-		const { selectedSite, translate, domain } = this.props;
+		const { selectedSite, translate, currentRoute, domain } = this.props;
 		const { emailForwardsCount } = domain;
 
-		if ( ! this.isDomainInNormalState() ) {
+		if ( ! isDomainUpdateable( domain ) ) {
 			return null;
 		}
 
@@ -106,6 +109,19 @@ class DomainManagementNavigationEnhanced extends React.Component {
 						gSuiteMailboxCount,
 					},
 					comment: 'The number of GSuite mailboxes active for the current domain',
+				}
+			);
+		} else if ( hasTitanMailWithUs( domain ) ) {
+			const titanMailboxCount = getMaxTitanMailboxCount( domain );
+			navigationDescription = translate(
+				'%(titanMailboxCount)d mailbox',
+				'%(titanMailboxCount)d mailboxes',
+				{
+					args: {
+						titanMailboxCount,
+					},
+					count: titanMailboxCount,
+					comment: '%(titanMailboxCount)d is the number of mailboxes for the current domain',
 				}
 			);
 		} else if ( emailForwardsCount > 0 ) {
@@ -129,7 +145,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 		return (
 			<DomainManagementNavigationItem
-				path={ emailManagement( selectedSite.slug, domain.name ) }
+				path={ emailManagement( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="email"
 				text={ navigationText }
 				description={ navigationDescription }
@@ -141,31 +157,31 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		const { selectedSite, translate, domain } = this.props;
 
 		const wpcomUrl = withoutHttp( getUnmappedUrl( selectedSite ) );
-		const { pointsToWpcom, isPrimary } = domain;
+		const { isPrimary, pendingTransfer, pointsToWpcom, registrationDate } = domain;
 
-		if ( pointsToWpcom && isPrimary ) {
-			return translate( 'Destination: primary domain for %(wpcomUrl)s', {
-				args: {
-					wpcomUrl,
-				},
-			} );
-		}
+		const activating = isRecentlyRegistered( registrationDate ) && ! pendingTransfer;
 
-		if ( pointsToWpcom && ! isPrimary ) {
-			return translate( 'Destination: %(wpcomUrl)s', {
-				args: {
-					wpcomUrl,
-				},
-			} );
+		if ( pointsToWpcom || activating ) {
+			return isPrimary
+				? translate( 'Destination: primary domain for %(wpcomUrl)s', {
+						args: {
+							wpcomUrl,
+						},
+				  } )
+				: translate( 'Destination: %(wpcomUrl)s', {
+						args: {
+							wpcomUrl,
+						},
+				  } );
 		}
 
 		return translate( 'Destination: external service' );
 	}
 
 	getNameServers() {
-		const { translate, domain, selectedSite } = this.props;
+		const { translate, domain, currentRoute, selectedSite } = this.props;
 
-		if ( ! this.isDomainInNormalState() && ! this.isDomainInGracePeriod() ) {
+		if ( ! isDomainUpdateable( domain ) && ! isDomainInGracePeriod( domain ) ) {
 			return null;
 		}
 
@@ -173,7 +189,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 		return (
 			<DomainManagementNavigationItem
-				path={ domainManagementNameServers( selectedSite.slug, domain.name ) }
+				path={ domainManagementNameServers( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="language"
 				text={ translate( 'Change your name servers & DNS records' ) }
 				description={ description }
@@ -182,13 +198,13 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getDnsRecords() {
-		const { selectedSite, translate, domain } = this.props;
+		const { selectedSite, translate, currentRoute, domain } = this.props;
 
 		const description = this.getDestinationText();
 
 		return (
 			<DomainManagementNavigationItem
-				path={ domainManagementDns( selectedSite.slug, domain.name ) }
+				path={ domainManagementDns( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="language"
 				text={ translate( 'Update your DNS records' ) }
 				description={ description }
@@ -197,10 +213,10 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getContactsAndPrivacy() {
-		const { selectedSite, translate, domain } = this.props;
+		const { selectedSite, translate, currentRoute, domain } = this.props;
 		const { privateDomain, privacyAvailable } = domain;
 
-		if ( ! this.isDomainInNormalState() && ! this.isDomainInGracePeriod() ) {
+		if ( ! isDomainUpdateable( domain ) && ! isDomainInGracePeriod( domain ) ) {
 			return null;
 		}
 
@@ -208,14 +224,14 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		if ( ! privacyAvailable ) {
 			description = translate( 'Privacy protection: not available' );
 		} else if ( privateDomain ) {
-			description = translate( 'Privacy protection: yes' );
+			description = translate( 'Privacy protection: on' );
 		} else {
-			description = translate( 'Privacy protection: no' );
+			description = translate( 'Privacy protection: off' );
 		}
 
 		return (
 			<DomainManagementNavigationItem
-				path={ domainManagementContactsPrivacy( selectedSite.slug, domain.name ) }
+				path={ domainManagementContactsPrivacy( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="chrome_reader_mode"
 				text={ translate( 'Update your contact information' ) }
 				description={ description }
@@ -224,10 +240,10 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getTransferDomain() {
-		const { moment, selectedSite, translate, domain } = this.props;
+		const { moment, selectedSite, translate, domain, currentRoute } = this.props;
 		const { expired, isLocked, transferAwayEligibleAt } = domain;
 
-		if ( expired && ! this.isDomainInGracePeriod() ) {
+		if ( expired && ! isDomainInGracePeriod( domain ) ) {
 			return null;
 		}
 
@@ -248,7 +264,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 		return (
 			<DomainManagementNavigationItem
-				path={ domainManagementTransfer( selectedSite.slug, domain.name ) }
+				path={ domainManagementTransfer( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="sync_alt"
 				text={ translate( 'Transfer domain' ) }
 				description={ description }
@@ -257,6 +273,22 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getTransferMappedDomain() {
+		const { selectedSite, translate, domain, currentRoute, isVip } = this.props;
+
+		if ( isVip ) {
+			return null;
+		}
+
+		return (
+			<DomainManagementNavigationItem
+				path={ domainManagementTransfer( selectedSite.slug, domain.name, currentRoute ) }
+				materialIcon="sync_alt"
+				text={ translate( 'Transfer mapping' ) }
+			/>
+		);
+	}
+
+	getTransferInMappedDomain() {
 		const { selectedSite, domain, translate } = this.props;
 
 		const { isEligibleForInboundTransfer } = domain;
@@ -293,6 +325,25 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				materialIcon="double_arrow"
 				text={ translate( 'Connect your domain' ) }
 				description={ translate( 'Point your domain to your site with zero hassle' ) }
+			/>
+		);
+	}
+
+	getManageSite() {
+		const { isManagingAllSites, selectedSite, translate } = this.props;
+
+		if ( ! isManagingAllSites ) {
+			return null;
+		}
+
+		const wpcomUrl = withoutHttp( getUnmappedUrl( selectedSite ) );
+
+		return (
+			<DomainManagementNavigationItem
+				path={ `/home/${ selectedSite.slug }` }
+				gridicon="my-sites"
+				text={ translate( 'Manage your site' ) }
+				description={ wpcomUrl }
 			/>
 		);
 	}
@@ -348,6 +399,15 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		} );
 	};
 
+	handleDomainDeleteClick = () => {
+		const { domain, purchase } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_domain_management_delete_click', {
+			section: domain.type,
+			is_cancelable: purchase && isCancelable( purchase ),
+		} );
+	};
+
 	getPickCustomDomain() {
 		const { selectedSite, translate } = this.props;
 
@@ -363,7 +423,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getSiteAddressChange() {
-		const { domain, selectedSite, translate } = this.props;
+		const { domain, selectedSite, translate, currentRoute } = this.props;
 		const { isWpcomStagingDomain } = domain;
 
 		if ( isWpcomStagingDomain ) {
@@ -372,7 +432,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 		return (
 			<DomainManagementNavigationItem
-				path={ domainManagementChangeSiteAddress( selectedSite.slug, domain.name ) }
+				path={ domainManagementChangeSiteAddress( selectedSite.slug, domain.name, currentRoute ) }
 				onClick={ this.handleChangeSiteAddressClick }
 				materialIcon="create"
 				text={ translate( 'Change site address' ) }
@@ -391,9 +451,20 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		// we don't use the full domain name, to avoid an error about the taken domain
 		const searchTerm = domain.name.split( '.' )[ 0 ];
 
+		let path;
+
+		if ( selectedSite && selectedSite.options && selectedSite.options.is_domain_only ) {
+			path = addQueryArgs( '/start/domain/domain-only', {
+				search: 'yes',
+				new: searchTerm,
+			} );
+		} else {
+			path = domainAddNew( selectedSite.slug, searchTerm );
+		}
+
 		return (
 			<DomainManagementNavigationItem
-				path={ domainAddNew( selectedSite.slug, searchTerm ) }
+				path={ path }
 				onClick={ this.handlePickCustomDomainClick }
 				materialIcon="search"
 				text={ translate( 'Find similar domains' ) }
@@ -403,15 +474,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getSecurity() {
-		const { selectedSite, domain, translate } = this.props;
-
-		const shouldRenderDomainSecurity = config.isEnabled(
-			'domains/new-status-design/security-option'
-		);
-
-		if ( ! shouldRenderDomainSecurity ) {
-			return null;
-		}
+		const { selectedSite, domain, currentRoute, translate } = this.props;
 
 		const { pointsToWpcom, sslStatus } = domain;
 
@@ -427,8 +490,8 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				} );
 				break;
 			case sslStatuses.SSL_ACTIVE:
-				sslStatusHuman = translate( 'on', {
-					comment: 'Shows as "HTTPS encryption: on" in the nav menu',
+				sslStatusHuman = translate( 'active', {
+					comment: 'Shows as "HTTPS encryption: active" in the nav menu',
 				} );
 				break;
 			case sslStatuses.SSL_DISABLED:
@@ -440,7 +503,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 		return (
 			<DomainManagementNavigationItem
-				path={ domainManagementSecurity( selectedSite.slug, domain.name ) }
+				path={ domainManagementSecurity( selectedSite.slug, domain.name, currentRoute ) }
 				onClick={ this.handleDomainSecurityClick }
 				materialIcon="security"
 				text={ translate( 'Review your domain security' ) }
@@ -475,6 +538,8 @@ class DomainManagementNavigationEnhanced extends React.Component {
 			}
 		} else if ( domainTypes.MAPPED === domainType ) {
 			title = translate( 'Delete domain mapping' );
+		} else if ( domainTypes.SITE_REDIRECT === domainType ) {
+			title = translate( 'Delete site redirect' );
 		} else {
 			title = translate( 'Delete your domain permanently' );
 		}
@@ -490,7 +555,14 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		if ( isCancelable( purchase ) ) {
 			const link = cancelPurchase( selectedSite.slug, purchase.id );
 
-			return <DomainManagementNavigationItem path={ link } materialIcon="delete" text={ title } />;
+			return (
+				<DomainManagementNavigationItem
+					path={ link }
+					onClick={ this.handleDomainDeleteClick }
+					materialIcon="delete"
+					text={ title }
+				/>
+			);
 		}
 
 		return (
@@ -501,6 +573,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				purchase={ purchase }
 				useVerticalNavItem={ true }
 				className="navigation__nav-item is-clickable"
+				onClickTracks={ this.handleDomainDeleteClick }
 			>
 				<span>
 					<DomainManagementNavigationItemContents materialIcon="delete" text={ title } />
@@ -509,9 +582,23 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		);
 	}
 
+	getRedirectSettings() {
+		const { domain, selectedSite, currentRoute, translate } = this.props;
+
+		return (
+			<DomainManagementNavigationItem
+				path={ domainManagementRedirectSettings( selectedSite.slug, domain.name, currentRoute ) }
+				materialIcon="language"
+				text={ translate( 'Redirect settings' ) }
+				description={ translate( 'Update your site redirect' ) }
+			/>
+		);
+	}
+
 	renderRegisteredDomainNavigation() {
 		return (
 			<React.Fragment>
+				{ this.getManageSite() }
 				{ this.getNameServers() }
 				{ this.getEmail() }
 				{ this.getContactsAndPrivacy() }
@@ -523,13 +610,25 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		);
 	}
 
+	renderSiteRedirectNavigation() {
+		return (
+			<React.Fragment>
+				{ this.getManageSite() }
+				{ this.getRedirectSettings() }
+				{ this.getDeleteDomain() }
+			</React.Fragment>
+		);
+	}
+
 	renderMappedDomainNavigation() {
 		return (
 			<React.Fragment>
+				{ this.getManageSite() }
 				{ this.getDnsRecords() }
 				{ this.getEmail() }
 				{ this.getDomainConnectMapping() }
 				{ this.getTransferMappedDomain() }
+				{ this.getTransferInMappedDomain() }
 				{ this.getSecurity() }
 				{ this.getSimilarDomains() }
 				{ this.getDeleteDomain() }
@@ -538,12 +637,20 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	renderTransferInDomainNavigation() {
-		return <React.Fragment>{ this.getDeleteDomain() }</React.Fragment>;
+		return (
+			<React.Fragment>
+				{ this.getManageSite() }
+				{ this.getDnsRecords() }
+				{ this.getSecurity() }
+				{ this.getDeleteDomain() }
+			</React.Fragment>
+		);
 	}
 
 	renderWpcomDomainNavigation() {
 		return (
 			<React.Fragment>
+				{ this.getManageSite() }
 				{ this.getSiteAddressChange() }
 				{ this.getPickCustomDomain() }
 			</React.Fragment>
@@ -559,12 +666,22 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				{ domainType === domainTypes.WPCOM && this.renderWpcomDomainNavigation() }
 				{ domainType === domainTypes.MAPPED && this.renderMappedDomainNavigation() }
 				{ domainType === domainTypes.REGISTERED && this.renderRegisteredDomainNavigation() }
+				{ domainType === domainTypes.SITE_REDIRECT && this.renderSiteRedirectNavigation() }
 				{ domainType === domainTypes.TRANSFER && this.renderTransferInDomainNavigation() }
 			</VerticalNav>
 		);
 	}
 }
 
-export default connect( null, { recordTracksEvent, recordGoogleEvent } )(
-	localize( withLocalizedMoment( DomainManagementNavigationEnhanced ) )
-);
+export default connect(
+	( state ) => {
+		const currentRoute = getCurrentRoute( state );
+		const siteId = getSelectedSiteId( state );
+		return {
+			currentRoute,
+			isManagingAllSites: isUnderDomainManagementAll( currentRoute ),
+			isVip: isVipSite( state, siteId ),
+		};
+	},
+	{ recordTracksEvent, recordGoogleEvent }
+)( localize( withLocalizedMoment( DomainManagementNavigationEnhanced ) ) );

@@ -13,10 +13,9 @@ import {
 	POST_STATS_REQUEST,
 	POST_STATS_REQUEST_FAILURE,
 	POST_STATS_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {
@@ -270,7 +269,7 @@ describe( 'reducer', () => {
 					2454: { views: 2 },
 				},
 			} );
-			const state = items( previousState, { type: SERIALIZE } );
+			const state = serialize( items, previousState );
 
 			expect( state ).to.eql( {
 				2916284: {
@@ -285,7 +284,7 @@ describe( 'reducer', () => {
 					2454: { views: 2 },
 				},
 			} );
-			const state = items( previousState, { type: DESERIALIZE } );
+			const state = deserialize( items, previousState );
 
 			expect( state ).to.eql( {
 				2916284: {
@@ -298,7 +297,7 @@ describe( 'reducer', () => {
 			const previousInvalidState = deepFreeze( {
 				2454: { views: 2 },
 			} );
-			const state = items( previousInvalidState, { type: DESERIALIZE } );
+			const state = deserialize( items, previousInvalidState );
 
 			expect( state ).to.eql( {} );
 		} );

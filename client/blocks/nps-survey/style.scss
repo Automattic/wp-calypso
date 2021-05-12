@@ -92,13 +92,13 @@
 	float: right;
 }
 
-.nps-survey__recommendation-option {
+.nps-survey__recommendation-option.form-label {
 	display: inline-block;
 }
 
 .nps-survey__recommendation-option.is-selected {
 	color: var( --color-primary-40 );
-	font-weight: bold;
+	font-weight: 600;
 }
 
 .nps-survey__recommendation-option input[type='radio'] {

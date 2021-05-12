@@ -1,5 +1,5 @@
 /**
- * Module dependencies.
+ * External dependencies
  */
 import fs from 'fs';
 

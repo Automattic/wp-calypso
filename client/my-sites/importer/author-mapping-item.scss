@@ -21,7 +21,7 @@
 		width: 100%;
 
 		@include breakpoint-deprecated( '<480px' ) {
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 		}
 	}
 }
@@ -35,7 +35,7 @@
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 
 	@include breakpoint-deprecated( '<480px' ) {
@@ -47,7 +47,7 @@
 	float: left;
 	color: var( --color-neutral-20 );
 
-	@include breakpoint-deprecated( '<480px') {
+	@include breakpoint-deprecated( '<480px' ) {
 		display: none;
 	}
 }

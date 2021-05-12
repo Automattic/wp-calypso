@@ -48,12 +48,12 @@
 
 	.quick-links__action-box-label {
 		color: var( --color-text );
-		font-size: 15px;
+		font-size: $font-body;
 	}
 
 	.quick-links__action-box-subtitle {
 		color: var( --color-text-subtle );
-		font-size: 14px;
+		font-size: $font-body-small;
 		display: none;
 
 		@include breakpoint-deprecated( '>480px' ) {
@@ -80,5 +80,5 @@
 }
 
 .quick-links__action-box-label {
-	font-size: 16px;
+	font-size: $font-body;
 }

@@ -11,7 +11,7 @@
 			}
 
 			p {
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 				margin: 0;
 
 				@include breakpoint-deprecated( '>660px' ) {
@@ -32,14 +32,14 @@
 	.contacts-privacy__settings-explanation {
 		color: var( --color-text-subtle );
 		display: block;
-		font-size: 13px;
+		font-size: $font-body-small;
 		font-style: italic;
 		margin: 5px 0;
 	}
 
 	.notice {
 		clear: both;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		margin-top: 10px;
 		margin-bottom: 10px;
 	}
@@ -48,7 +48,7 @@
 		.contact-display__content {
 			background-color: var( --color-neutral-0 );
 			color: var( --color-neutral );
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			line-height: 140%;
 			margin: 0;
 			padding: 16px;

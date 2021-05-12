@@ -23,17 +23,17 @@
 	font-size: 34px;
 
 	@include breakpoint-deprecated( '<660px' ) {
-		font-size: 24px;
+		font-size: $font-title-medium;
 	}
 }
 
 .empty-content__line {
 	color: var( --color-neutral-50 );
-	font-size: 22px;
+	font-size: $font-title-small;
 	margin-bottom: 40px;
 
 	@include breakpoint-deprecated( '<660px' ) {
-		font-size: 16px;
+		font-size: $font-body;
 	}
 }
 
@@ -55,10 +55,10 @@
 	}
 
 	.empty-content__title {
-		font-size: 30px;
+		font-size: $font-title-large;
 
 		@include breakpoint-deprecated( '<660px' ) {
-			font-size: 24px;
+			font-size: $font-title-medium;
 		}
 	}
 }

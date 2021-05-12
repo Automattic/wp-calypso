@@ -1,12 +1,18 @@
 /**
  * External dependencies
  */
-import { flow, mapKeys, mapValues, snakeCase, startsWith, noop } from 'lodash';
+import { mapKeys, mapValues, snakeCase, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
+
+const noop = () => {};
 
 export const recordMapDomainButtonClick = ( section ) =>
 	composeAnalytics(
@@ -125,11 +131,10 @@ export function recordShowMoreResults( searchQuery, pageNumber, section ) {
 
 function processFiltersForAnalytics( filters ) {
 	const convertArraysToCSV = ( input ) =>
-		mapValues( input, ( value ) => ( Array.isArray( value ) ? value.join( ',' ) : value)  );
+		mapValues( input, ( value ) => ( Array.isArray( value ) ? value.join( ',' ) : value ) );
 	const prepareKeys = ( input ) =>
 		mapKeys( input, ( value, key ) => `filters_${ snakeCase( key ) }` );
-	const transformation = flow( prepareKeys, convertArraysToCSV );
-	return transformation( filters );
+	return convertArraysToCSV( prepareKeys( filters ) );
 }
 
 export function recordFiltersReset( filters, keysToReset, section ) {

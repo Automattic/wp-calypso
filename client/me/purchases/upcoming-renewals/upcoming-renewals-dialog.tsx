@@ -16,30 +16,28 @@ import { capitalize } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getName, getRenewalPrice, purchaseType, isExpired, isAutoRenewing } from 'lib/purchases';
-import FormLabel from 'components/forms/form-label';
-import FormInputCheckbox from 'components/forms/form-checkbox';
+import {
+	getName,
+	getRenewalPrice,
+	purchaseType,
+	isExpired,
+	isRenewing,
+} from 'calypso/lib/purchases';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import { Button, Dialog } from '@automattic/components';
-import { useLocalizedMoment } from 'components/localized-moment';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { managePurchase } from '../paths';
+
+/**
+ * Type dependencies
+ */
+import type { Purchase } from 'calypso/lib/purchases/types';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-export interface Purchase {
-	id: number;
-	saleAmount?: number;
-	amount: number;
-	meta?: string;
-	isDomainRegistration?: boolean;
-	productName: string;
-	currencyCode: string;
-	expiryDate: string;
-	renewDate: string;
-	productSlug: string;
-}
 
 interface Site {
 	domain: string;
@@ -54,6 +52,7 @@ interface Props {
 	onConfirm: ( purchases: Purchase[] ) => void;
 	submitButtonText?: string | TranslateResult;
 	showManagePurchaseLinks?: boolean;
+	getManagePurchaseUrlFor: ( siteSlug: string, purchaseId: number ) => string;
 }
 
 function getExpiresText(
@@ -61,7 +60,7 @@ function getExpiresText(
 	moment: ReturnType< typeof useLocalizedMoment >,
 	purchase: Purchase
 ): TranslateResult {
-	if ( isAutoRenewing( purchase ) ) {
+	if ( isRenewing( purchase ) ) {
 		return translate( 'renews %(renewDate)s', {
 			comment:
 				'"renewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month"',
@@ -92,13 +91,20 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 	onConfirm,
 	submitButtonText = '',
 	showManagePurchaseLinks = true,
+	getManagePurchaseUrlFor = managePurchase,
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const [ selectedPurchases, setSelectedPurchases ] = useState< number[] >( [] );
 
 	const purchasesSortByRecentExpiryDate = useMemo(
-		() => [ ...purchases ].sort( ( a, b ) => a?.expiryDate?.localeCompare( b?.expiryDate ) ),
+		() =>
+			[ ...purchases ].sort( ( a, b ) => {
+				const compareDateA = isRenewing( a ) ? a.renewDate : a.expiryDate;
+				const compareDateB = isRenewing( b ) ? b.renewDate : b.expiryDate;
+
+				return compareDateA?.localeCompare?.( compareDateB );
+			} ),
 		[ purchases ]
 	);
 
@@ -168,7 +174,10 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 								</div>
 								{ showManagePurchaseLinks && (
 									<div className="upcoming-renewals-dialog__renewal-settings-link">
-										<a onClick={ onClose } href={ managePurchase( site.slug, purchase.id ) }>
+										<a
+											onClick={ onClose }
+											href={ getManagePurchaseUrlFor( site.slug, purchase.id ) }
+										>
 											{ translate( 'Manage purchase' ) }
 										</a>
 									</div>

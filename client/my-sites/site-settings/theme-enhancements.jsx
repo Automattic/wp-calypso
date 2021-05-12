@@ -13,21 +13,25 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import { getCustomizerUrl, isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import SupportInfo from 'components/support-info';
-import versionCompare from 'lib/version-compare';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import {
+	getCustomizerUrl,
+	isJetpackSite,
+	isJetpackMinimumVersion,
+} from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import SupportInfo from 'calypso/components/support-info';
+import versionCompare from 'calypso/lib/version-compare';
 
 class ThemeEnhancements extends Component {
 	static defaultProps = {
@@ -55,13 +59,13 @@ class ThemeEnhancements extends Component {
 	renderToggle( name, isDisabled, label ) {
 		const { fields, handleAutosavingToggle } = this.props;
 		return (
-			<CompactFormToggle
+			<FormToggle
 				checked={ !! fields[ name ] }
 				disabled={ this.isFormPending() || isDisabled }
 				onChange={ handleAutosavingToggle( name ) }
 			>
 				{ label }
-			</CompactFormToggle>
+			</FormToggle>
 		);
 	}
 
@@ -75,8 +79,8 @@ class ThemeEnhancements extends Component {
 					checked={ value === fields[ name ] }
 					onChange={ handleAutosavingRadio( name, value ) }
 					disabled={ this.isFormPending() }
+					label={ label }
 				/>
-				<span>{ label }</span>
 			</FormLabel>
 		);
 	}

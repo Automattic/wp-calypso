@@ -3,7 +3,7 @@
  */
 
 .popover {
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	z-index: z-index( 'root', '.popover' );
 	position: absolute;
 	top: 0;
@@ -13,7 +13,7 @@
 	.popover__inner {
 		background-color: var( --color-surface );
 		border: 1px solid var( --color-neutral-10 );
-		border-radius: 4px;
+		border-radius: 2px;
 		box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
 		text-align: center;
 		position: relative;
@@ -148,7 +148,7 @@
 	border-radius: 0;
 	cursor: pointer;
 	display: block;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 400;
 	margin: 0;
 	padding: 8px 16px;

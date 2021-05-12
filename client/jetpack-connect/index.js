@@ -6,13 +6,16 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import userFactory from 'lib/user';
+import config from '@automattic/calypso-config';
+import userFactory from 'calypso/lib/user';
 import * as controller from './controller';
-import { login } from 'lib/paths';
-import { siteSelection } from 'my-sites/controller';
-import { makeLayout, render as clientRender } from 'controller';
-import { getLanguageRouteParam } from 'lib/i18n-utils';
+import { login } from 'calypso/lib/paths';
+import { siteSelection } from 'calypso/my-sites/controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
+import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
+import { OFFER_RESET_FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 /**
  * Style dependencies
@@ -24,8 +27,22 @@ export default function () {
 	const isLoggedOut = ! user.get();
 	const locale = getLanguageRouteParam( 'locale' );
 
+	const planTypeString = [
+		'personal',
+		'premium',
+		'pro',
+		'backup',
+		'scan',
+		'realtimebackup',
+		'antispam',
+		'jetpack_search',
+		'wpcom_search',
+		...OFFER_RESET_FLOW_TYPES,
+	].join( '|' );
+
 	page(
-		'/jetpack/connect/:type(personal|premium|pro|backup|scan|realtimebackup|jetpack_search)/:interval(yearly|monthly)?',
+		`/jetpack/connect/:type(${ planTypeString })/:interval(yearly|monthly)?`,
+		controller.loginBeforeJetpackSearch,
 		controller.persistMobileAppFlow,
 		controller.setMasterbar,
 		controller.connect,
@@ -89,13 +106,7 @@ export default function () {
 		clientRender
 	);
 
-	page(
-		`/jetpack/connect/store/:interval(yearly|monthly)?/${ locale }`,
-		controller.setLoggedOutLocale,
-		controller.plansLanding,
-		makeLayout,
-		clientRender
-	);
+	jetpackPlans( `/jetpack/connect/store`, controller.offerResetContext );
 
 	page(
 		'/jetpack/connect/:_(akismet|plans|vaultpress)/:interval(yearly|monthly)?',
@@ -105,20 +116,19 @@ export default function () {
 
 	if ( isLoggedOut ) {
 		page( '/jetpack/connect/plans/:interval(yearly|monthly)?/:site', ( { path } ) =>
-			page.redirect( login( { isNative: true, redirectTo: path } ) )
+			page( login( { isNative: true, isJetpack: true, redirectTo: path } ) )
 		);
 	}
 
-	page(
-		'/jetpack/connect/plans/:interval(yearly|monthly)?/:site',
+	jetpackPlans(
+		`/jetpack/connect/plans`,
 		siteSelection,
-		controller.plansSelection,
-		makeLayout,
-		clientRender
+		controller.offerResetRedirects,
+		controller.offerResetContext
 	);
 
 	page(
-		`/jetpack/connect/${ locale }`,
+		`/jetpack/connect/:type(${ planTypeString })?/${ locale }`,
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.persistMobileAppFlow,
 		controller.setMasterbar,
@@ -129,6 +139,15 @@ export default function () {
 
 	page( '/jetpack/sso/:siteId?/:ssoNonce?', controller.sso, makeLayout, clientRender );
 	page( '/jetpack/sso/*', controller.sso, makeLayout, clientRender );
-	page( '/jetpack/new', controller.newSite, makeLayout, clientRender );
-	page( '/jetpack/new/*', '/jetpack/connect' );
+
+	// The /jetpack/new route previously allowed to create a .com site and
+	// connect a Jetpack site. The redirect rule will skip this page and take
+	// the user directly to the .com site creation flow.
+	// See https://github.com/Automattic/wp-calypso/issues/45486
+
+	// For some reason, the first redirection below redirects `/jetpack/connect` to `/jetpack/new` in Jetpack cloud.
+	if ( ! isJetpackCloud() ) {
+		page( '/jetpack/new', config( 'signup_url' ) );
+		page( '/jetpack/new/*', '/jetpack/connect' );
+	}
 }

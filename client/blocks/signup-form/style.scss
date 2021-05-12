@@ -1,11 +1,14 @@
 @import 'woocommerce/components/text-control/style.scss';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
 
-.signup-form .signup-form__input {
+.signup-form .signup-form__input.form-text-input {
 	margin-bottom: 20px;
 	transition: none;
 
 	&.is-error,
-	&[type='password'] {
+	&[type='password'],
+	&[name='password'] {
 		margin-bottom: 0;
 	}
 
@@ -16,7 +19,7 @@
 }
 
 .signup-form__terms-of-service-link {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	margin: 0 0 20px;
 	text-align: center;
 
@@ -34,7 +37,7 @@
 	box-sizing: border-box;
 
 	p {
-		font-size: 13px;
+		font-size: $font-body-small;
 		color: var( --color-text-inverted );
 		margin: 0 0 12px;
 		text-align: center;
@@ -59,24 +62,10 @@
 	text-decoration: underline;
 }
 
-.signup-form__passwordless-form-wrapper {
-	.signup-form__terms-of-service-link {
-		margin: 4px 0;
-	}
-
-	.logged-out-form__footer {
-		margin-top: 0;
-	}
-
-	.validation-fieldset__validation-message {
-		min-height: auto;
-	}
-}
-
 .signup-form__recaptcha-tos {
 	display: none;
 	padding: 20px 10px 10px;
-	font-size: 13px;
+	font-size: $font-body-small;
 	color: var( --studio-blue-5 );
 	text-align: center;
 

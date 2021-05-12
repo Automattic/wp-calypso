@@ -3,24 +3,24 @@
 	display: grid;
 }
 @mixin grid-template-columns( $cols, $gap, $fr ) {
-	-ms-grid-columns: $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr;
+	-ms-grid-columns: $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap
+		$fr $gap $fr $gap $fr;
 	grid-template-columns: repeat( $cols, [col-start] minmax( 0, $fr ) );
 	grid-column-gap: $gap;
 }
 @mixin grid-row( $row-start, $span ) {
 	-ms-grid-row: $row-start;
 	-ms-grid-row-span: $span;
-		grid-row: $row-start / span $span;
+	grid-row: $row-start / span $span;
 }
 @mixin grid-column( $col-start, $span ) {
 	-ms-grid-column: $col-start * 2 - 1;
-	-ms-grid-column-span: $span + ($span - 1);
-		grid-column: $col-start / span $span;
+	-ms-grid-column-span: $span + ( $span - 1 );
+	grid-column: $col-start / span $span;
 }
 
 .customer-home__heading {
 	display: flex;
-	border-bottom: 1px solid var( --color-neutral-5 );
 
 	@include breakpoint-deprecated( '<660px' ) {
 		padding-right: 16px;
@@ -28,10 +28,6 @@
 
 	.formatted-header {
 		margin-right: 12px;
-	}
-
-	.formatted-header__title {
-		font-family: 'Recoleta', $serif;
 	}
 
 	.formatted-header__subtitle {
@@ -74,6 +70,7 @@
 	& > .foldable-card.card,
 	& > .foldable-card.card.is-expanded {
 		margin-bottom: 24px;
+		margin-top: 0;
 	}
 }
 
@@ -83,7 +80,6 @@
 }
 
 .customer-home__section-heading {
-	font-family: 'Recoleta', serif;
 	font-size: 1.25rem;
 	margin: 32px 0 16px;
 
@@ -93,15 +89,13 @@
 }
 
 .customer-home__main .card-heading {
-	line-height: 1.3;
-	margin-top: -8px;
 	margin-bottom: 8px;
 }
 
 .customer-home__main .card-heading,
 .customer-home__main .foldable-card__header {
 	margin-top: 0;
-	font-size: 16px;
+	font-size: $font-body;
 	font-weight: 600;
 }
 
@@ -109,7 +103,6 @@
 	color: var( --color-text-subtle );
 	margin: 0 0 1rem;
 }
-
 
 .customer-home__main .vertical-nav {
 	margin: -0.5rem 0;

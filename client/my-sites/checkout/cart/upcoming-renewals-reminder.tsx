@@ -5,30 +5,30 @@ import React, { FunctionComponent, useMemo, useCallback, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import styled from '@emotion/styled';
+import type { RequestCartProduct } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import { ReduxDispatch } from 'state/redux-store';
-import { recordTracksEvent } from 'state/analytics/actions';
-import QueryUserPurchases from 'components/data/query-user-purchases';
+import { ReduxDispatch } from 'calypso/state/redux-store';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { Button } from '@automattic/components';
-import { getRenewalItemFromProduct } from 'lib/cart-values/cart-items';
-import { getName, isExpired } from 'lib/purchases';
-import { isPlan, isDomainRegistration } from 'lib/products-values';
-import SectionHeader from 'components/section-header';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
+import { getName, isExpired, isRenewing } from 'calypso/lib/purchases';
+import { isPlan, isDomainRegistration } from '@automattic/calypso-products';
+import SectionHeader from 'calypso/components/section-header';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	getRenewableSitePurchases,
 	hasLoadedUserPurchasesFromServer,
-} from 'state/purchases/selectors';
-import UpcomingRenewalsDialog, {
-	Purchase,
-} from 'me/purchases/upcoming-renewals/upcoming-renewals-dialog';
-import { MockResponseCart } from 'my-sites/checkout/composite-checkout/wpcom/components/secondary-cart-promotions';
-import { useLocalizedMoment } from 'components/localized-moment';
+} from 'calypso/state/purchases/selectors';
+import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
+import type { Purchase } from 'calypso/lib/purchases/types';
+import { MockResponseCart } from 'calypso/my-sites/checkout/composite-checkout/components/secondary-cart-promotions';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 const OtherPurchasesLink = styled.button`
 	background: transparent;
@@ -56,7 +56,7 @@ interface SelectedSite {
 
 interface Props {
 	cart: MockResponseCart;
-	addItemToCart: ( product: object ) => void;
+	addItemToCart: ( product: RequestCartProduct ) => void;
 }
 
 const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemToCart } ) => {
@@ -226,6 +226,8 @@ function getMessages( {
 	const buttonLabel = translate( 'Add to Cart' );
 	let message: ReturnType< typeof translate > = '';
 	const translateOptions = {
+		comment:
+			'"expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "a week ago"',
 		args: {
 			purchaseName: getName( purchase ),
 			expiry: moment( purchase.expiryDate ).fromNow(),
@@ -247,6 +249,31 @@ function getMessages( {
 			message = translate(
 				'Your %(purchaseName)s subscription expired %(expiry)s. Would you like to renew it now?',
 				translateOptions
+			);
+		}
+	} else if ( isRenewing( purchase ) ) {
+		const renewingTranslateOptions = {
+			comment:
+				'"relativeRenewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month"',
+			args: {
+				purchaseName: getName( purchase ),
+				relativeRenewDate: moment( purchase.renewDate ).fromNow(),
+			},
+		};
+		if ( isDomainRegistration( purchase ) ) {
+			message = translate(
+				'Your %(purchaseName)s domain is renewing %(relativeRenewDate)s. Would you like to renew it now?',
+				renewingTranslateOptions
+			);
+		} else if ( isPlan( purchase ) ) {
+			message = translate(
+				'Your %(purchaseName)s plan is renewing %(relativeRenewDate)s. Would you like to renew it now?',
+				renewingTranslateOptions
+			);
+		} else {
+			message = translate(
+				'Your %(purchaseName)s subscription is renewing %(relativeRenewDate)s. Would you like to renew it now?',
+				renewingTranslateOptions
 			);
 		}
 	} else if ( isDomainRegistration( purchase ) ) {

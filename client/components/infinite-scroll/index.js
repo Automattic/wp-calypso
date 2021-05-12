@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { throttle, defer } from 'lodash';
-import afterLayoutFlush from 'lib/after-layout-flush';
+import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 
 const SCROLL_CHECK_RATE_IN_MS = 400;
 

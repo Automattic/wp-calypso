@@ -1,29 +1,28 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import ImageSelectorPreview from './preview';
 import ImageSelectorDropZone from './dropzone';
-import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
-import MediaActions from 'lib/media/actions';
-import MediaModal from 'post-editor/media-modal';
-import MediaStore from 'lib/media/store';
+import isDropZoneVisible from 'calypso/state/selectors/is-drop-zone-visible';
+import MediaModal from 'calypso/post-editor/media-modal';
 import { localize } from 'i18n-calypso';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { selectMediaItems } from 'calypso/state/media/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class ImageSelector extends Component {
 	static propTypes = {
@@ -41,6 +40,7 @@ export class ImageSelector extends Component {
 		showEditIcon: PropTypes.bool,
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
+		selectMediaItems: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -58,8 +58,10 @@ export class ImageSelector extends Component {
 		const { siteId, imageIds } = this.props;
 
 		if ( imageIds ) {
-			const images = imageIds.map( ( imageId ) => MediaStore.get( siteId, imageId ) );
-			MediaActions.setLibrarySelectedItems( siteId, images );
+			this.props.selectMediaItems(
+				siteId,
+				imageIds.map( ( ID ) => ( { ID } ) )
+			);
 		}
 
 		this.setState( {
@@ -159,15 +161,18 @@ export class ImageSelector extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const { siteId } = ownProps;
-	const props = {
-		siteId: getSelectedSiteId( state ),
-		isImageSelectorDropZoneVisible: isDropZoneVisible( state, 'imageSelector' ),
-	};
+export default connect(
+	( state, ownProps ) => {
+		const { siteId } = ownProps;
+		const props = {
+			siteId: getSelectedSiteId( state ),
+			isImageSelectorDropZoneVisible: isDropZoneVisible( state, 'imageSelector' ),
+		};
 
-	if ( siteId ) {
-		props.siteId = siteId;
-	}
-	return props;
-} )( localize( ImageSelector ) );
+		if ( siteId ) {
+			props.siteId = siteId;
+		}
+		return props;
+	},
+	{ selectMediaItems }
+)( localize( ImageSelector ) );

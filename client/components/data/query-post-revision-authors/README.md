@@ -8,7 +8,7 @@ Render the component, passing `siteId` and `userIds`. It does not accept any chi
 
 ```jsx
 import React from 'react';
-import QueryUsers from 'components/data/query-users';
+import QueryUsers from 'calypso/components/data/query-users';
 
 export default function PostRevisionAuthors( { authors } ) {
 	return (

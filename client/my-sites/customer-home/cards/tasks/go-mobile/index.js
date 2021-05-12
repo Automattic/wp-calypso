@@ -8,38 +8,21 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Task from 'my-sites/customer-home/cards/tasks/task';
-import { preventWidows } from 'lib/formatting';
-import AppsBadge from 'blocks/get-apps/apps-badge';
-import { TASK_GO_MOBILE_ANDROID, TASK_GO_MOBILE_IOS } from 'my-sites/customer-home/cards/constants';
-
-/**
- * Image dependencies
- */
-import appleStoreLogo from 'assets/images/customer-home/apple-store.png';
-import googlePlayLogo from 'assets/images/customer-home/google-play.png';
+import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
+import { preventWidows } from 'calypso/lib/formatting';
+import AppsBadge from 'calypso/blocks/get-apps/apps-badge';
+import {
+	TASK_GO_MOBILE_ANDROID,
+	TASK_GO_MOBILE_IOS,
+} from 'calypso/my-sites/customer-home/cards/constants';
 
 const GoMobile = ( { isIos } ) => {
 	const translate = useTranslate();
 
 	const actionButton = isIos ? (
-		<AppsBadge
-			storeLink="https://apps.apple.com/app/apple-store/id335703880?pt=299112&ct=calypso-customer-home&mt=8"
-			storeName={ 'ios' }
-			titleText={ translate( 'Download the WordPress iOS mobile app.' ) }
-			altText={ translate( 'Apple App Store download badge' ) }
-		>
-			<img src={ appleStoreLogo } alt="" />
-		</AppsBadge>
+		<AppsBadge storeName={ 'ios' } utm_source="calypso-customer-home"></AppsBadge>
 	) : (
-		<AppsBadge
-			storeLink="https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3Dcalypso-customer-home%26utm_medium%3Dweb%26utm_campaign%3Dmobile-download-promo-pages"
-			storeName={ 'android' }
-			titleText={ translate( 'Download the WordPress Android mobile app.' ) }
-			altText={ translate( 'Google Play Store download badge' ) }
-		>
-			<img src={ googlePlayLogo } alt="" />
-		</AppsBadge>
+		<AppsBadge storeName={ 'android' } utm_source={ 'calypso-customer-home' }></AppsBadge>
 	);
 
 	return (

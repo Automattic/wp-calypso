@@ -6,21 +6,22 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { navigation, siteSelection, sites } from 'my-sites/controller';
-import config from 'config';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import config from '@automattic/calypso-config';
 import {
 	browsePlugins,
 	browsePluginsOrPlugin,
 	eligibility,
 	jetpackCanUpdate,
 	plugins,
+	renderDomainsPage,
 	resetHistory,
 	scrollTopIfNoHash,
 	setupPlugins,
 	upload,
 } from './controller';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { makeLayout, render as clientRender } from 'controller';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
 export default function () {
 	if ( config.isEnabled( 'manage/plugins/setup' ) ) {
@@ -102,6 +103,9 @@ export default function () {
 			clientRender
 		);
 
+		if ( config.isEnabled( 'marketplace-yoast' ) ) {
+			page( '/plugins/domain/:site', siteSelection, renderDomainsPage, makeLayout, clientRender );
+		}
 		page(
 			'/plugins/:pluginFilter(active|inactive|updates)/:site_id?',
 			scrollTopIfNoHash,

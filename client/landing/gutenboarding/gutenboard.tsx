@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import { useI18n } from '@automattic/react-i18n';
+import * as React from 'react';
 import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
 import { Popover, DropZoneProvider } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import '@wordpress/format-library';
-import React, { useRef, useEffect } from 'react';
+import { useI18n } from '@wordpress/react-i18n';
+import { FontPair, getFontTitle } from '@automattic/design-picker';
 
 // Uncomment and remove the redundant sass import from `./style.css` when a release after @wordpress/components@8.5.0 is published.
 // See https://github.com/WordPress/gutenberg/pull/19535
@@ -16,23 +17,36 @@ import React, { useRef, useEffect } from 'react';
  * Internal dependencies
  */
 import Header from './components/header';
+import SignupForm from './components/signup-form';
 import { name, settings } from './onboarding-block';
-import './style.scss';
-import { fontPairings, getFontTitle } from './constants';
-import { recordOnboardingStart } from './lib/analytics';
 import useOnSiteCreation from './hooks/use-on-site-creation';
+import { usePageViewTracksEvents } from './hooks/use-page-view-tracks-events';
+import useSignup from './hooks/use-signup';
+import useOnSignup from './hooks/use-on-signup';
+import useOnLogin from './hooks/use-on-login';
+import useSiteTitle from './hooks/use-site-title';
+import useTrackOnboardingStart from './hooks/use-track-onboarding-start';
+import { useFontPairings } from './fonts';
+
+import './style.scss';
 
 registerBlockType( name, settings );
 
-export function Gutenboard() {
+const Gutenboard: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-
+	useOnLogin();
+	useOnSignup();
 	useOnSiteCreation();
+	usePageViewTracksEvents();
+	useTrackOnboardingStart();
+	useSiteTitle();
+	const { showSignupDialog, onSignupDialogClose } = useSignup();
+	const effectiveFontPairings = useFontPairings();
 
 	// TODO: Explore alternatives for loading fonts and optimizations
 	// TODO: Don't load like this
-	useEffect( () => {
-		fontPairings.forEach( ( { base, headings } ) => {
+	React.useEffect( () => {
+		effectiveFontPairings.forEach( ( { base, headings }: FontPair ) => {
 			const linkBase = document.createElement( 'link' );
 			const linkHeadings = document.createElement( 'link' );
 
@@ -52,9 +66,7 @@ export function Gutenboard() {
 			document.head.appendChild( linkBase );
 			document.head.appendChild( linkHeadings );
 		} );
-
-		recordOnboardingStart();
-	}, [] );
+	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	// @TODO: This is currently needed in addition to the routing (inside the Onboarding Block)
 	// for the 'Back' and 'Next' buttons in the header. If we remove those (and move navigation
@@ -63,7 +75,7 @@ export function Gutenboard() {
 	// We're persisting the block via `useRef` in order to prevent re-renders
 	// which would collide with the routing done inside of the block
 	// (and would lead to weird mounting/unmounting behavior).
-	const onboardingBlock = useRef( createBlock( name, {} ) );
+	const onboardingBlock = React.useRef( createBlock( name, {} ) );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -71,6 +83,7 @@ export function Gutenboard() {
 			<DropZoneProvider>
 				<div className="gutenboarding__layout edit-post-layout">
 					<Header />
+					{ showSignupDialog && <SignupForm onRequestClose={ onSignupDialogClose } /> }
 					<BlockEditorProvider
 						useSubRegistry={ false }
 						value={ [ onboardingBlock.current ] }
@@ -96,4 +109,6 @@ export function Gutenboard() {
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
-}
+};
+
+export default Gutenboard;

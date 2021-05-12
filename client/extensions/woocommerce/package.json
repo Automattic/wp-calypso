@@ -16,7 +16,6 @@
 			"/store"
 		],
 		"module": "woocommerce",
-		"group": "sites",
-		"secondary": true
+		"group": "sites"
 	}
 }

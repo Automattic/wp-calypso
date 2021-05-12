@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-import { isEqual, noop } from 'lodash';
+import { isEqual } from 'lodash';
 import React from 'react';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Spinner from 'components/spinner';
-import Gridicon from 'components/gridicon';
+import Spinner from 'calypso/components/spinner';
+import Gridicon from 'calypso/components/gridicon';
 import ListItemImage from './list-item-image';
 import ListItemVideo from './list-item-video';
 import ListItemAudio from './list-item-audio';
 import ListItemDocument from './list-item-document';
-import { getMimePrefix } from 'lib/media/utils';
-import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
+import { getMimePrefix } from 'calypso/lib/media/utils';
+import EditorMediaModalGalleryHelp from 'calypso/post-editor/media-modal/gallery-help';
 
 /**
  * Style dependencies
@@ -39,7 +39,6 @@ interface Props {
 	showGalleryHelp?: boolean;
 	selectedIndex?: number;
 	onToggle?: ( media: Media | undefined, shiftKey: boolean ) => void;
-	onEditItem?: any; // Unused. Appears to have been left here for compatibility reasons.
 	style?: React.CSSProperties;
 }
 
@@ -49,8 +48,6 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 	static defaultProps = {
 		maxImageWidth: 450,
 		selectedIndex: -1,
-		onToggle: noop,
-		onEditItem: noop,
 	};
 
 	shouldComponentUpdate( nextProps: Props ) {
@@ -70,11 +67,11 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 		}
 	};
 
-	renderItem = () => {
+	renderItem() {
 		let component;
 
 		if ( ! this.props.media ) {
-			return;
+			return null;
 		}
 
 		switch ( getMimePrefix( this.props.media ) as string ) {
@@ -93,10 +90,11 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 		}
 
 		return React.createElement( component, this.props );
-	};
+	}
 
 	render() {
-		let title, selectedNumber;
+		let title;
+		let selectedNumber;
 
 		const {
 			media,
@@ -106,7 +104,6 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 			showGalleryHelp,
 			selectedIndex,
 			onToggle,
-			onEditItem,
 			style,
 			...otherProps
 		} = this.props;

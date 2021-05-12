@@ -28,7 +28,7 @@ if ( process.env.CIRCLECI ) {
 } else {
 	workerCount = getEnvVarAsNaturalNumber(
 		'WORKERS',
-		Math.min( Math.max( cpus().length - 1, 2, 16 ) )
+		Math.min( Math.max( cpus().length - 1, 2, 32 ) )
 	);
 }
 

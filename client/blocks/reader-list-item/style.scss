@@ -1,7 +1,7 @@
 .reader-list-item {
 	display: flex;
 	flex-flow: row wrap;
-	font-size: 14px;
+	font-size: $font-body-small;
 	height: 100%;
 
 	@include breakpoint-deprecated( '<660px' ) {
@@ -114,7 +114,6 @@
 
 .reader-list-item__site-title {
 	font-weight: 600;
-	font-size: 15px;
 }
 
 .reader-list-item__site-url-timestamp {

@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/legal/init';
+
+/**
  * Indicates if a Terms or Service update banner should be displayed.
  *
  * @param state {object}

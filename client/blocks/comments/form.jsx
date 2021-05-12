@@ -5,26 +5,30 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import FormInputValidation from 'components/forms/form-input-validation';
-import Gravatar from 'components/gravatar';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { writeComment, deleteComment, replyComment } from 'state/comments/actions';
-import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
-import { isCommentableDiscoverPost } from 'blocks/comments/helper';
-import { ProtectFormGuard } from 'lib/protect-form';
-import PostCommentFormTextarea from './form-textarea';
+import { Button } from '@automattic/components';
+import { isEnabled } from '@automattic/calypso-config';
+import AutoresizingFormTextarea from './autoresizing-form-textarea';
+import AsyncLoad from 'calypso/components/async-load';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import Gravatar from 'calypso/components/gravatar';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { writeComment, deleteComment, replyComment } from 'calypso/state/comments/actions';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
+import { isCommentableDiscoverPost } from 'calypso/blocks/comments/helper';
+import { ProtectFormGuard } from 'calypso/lib/protect-form';
 
 /**
  * Style dependencies
  */
 import './form.scss';
+
+const noop = () => {};
 
 class PostCommentForm extends React.Component {
 	constructor( props ) {
@@ -79,14 +83,16 @@ class PostCommentForm extends React.Component {
 		this.setState( { haveFocus: true } );
 	}
 
-	handleTextChange( event ) {
-		const commentText = event.target.value;
-
+	handleTextChange( commentText ) {
 		this.setState( { commentText } );
 
 		// Update the comment text in the container's state
 		this.props.onUpdateCommentText( commentText );
 	}
+
+	handleTextChangeEvent = ( event ) => {
+		this.handleTextChange( event.target.value );
+	};
 
 	resetCommentText() {
 		this.setState( { commentText: '' } );
@@ -178,48 +184,45 @@ class PostCommentForm extends React.Component {
 			'is-visible': this.state.haveFocus || this.hasCommentText(),
 		} );
 
-		const expandingAreaClasses = classNames( {
-			focused: this.state.haveFocus,
-			'expanding-area': true,
-		} );
-
 		const isReply = !! this.props.parentCommentId;
+
+		const formTextarea = isEnabled( 'reader/gutenberg-for-comments' ) ? (
+			<AsyncLoad
+				require="./block-editor"
+				onChange={ this.handleTextChange }
+				siteId={ this.props.post.site_ID }
+			/>
+		) : (
+			<AutoresizingFormTextarea
+				value={ this.state.commentText }
+				placeholder={ translate( 'Enter your comment here…' ) }
+				onKeyUp={ this.handleKeyUp }
+				onKeyDown={ this.handleKeyDown }
+				onFocus={ this.handleFocus }
+				onBlur={ this.handleBlur }
+				onChange={ this.handleTextChangeEvent }
+				siteId={ this.props.post.site_ID }
+				enableAutoFocus={ isReply }
+			/>
+		);
 
 		// How auto expand works for the textarea is covered in this article:
 		// http://alistapart.com/article/expanding-text-areas-made-elegant
 		return (
 			<form className="comments__form">
 				<ProtectFormGuard isChanged={ this.hasCommentText() } />
-				<fieldset>
+				<FormFieldset>
 					<Gravatar user={ this.props.currentUser } />
-					<div className={ expandingAreaClasses }>
-						<pre>
-							<span>{ this.state.commentText }</span>
-							<br />
-						</pre>
-						<AutoDirection>
-							<PostCommentFormTextarea
-								value={ this.state.commentText }
-								placeholder={ translate( 'Enter your comment here…' ) }
-								onKeyUp={ this.handleKeyUp }
-								onKeyDown={ this.handleKeyDown }
-								onFocus={ this.handleFocus }
-								onBlur={ this.handleBlur }
-								onChange={ this.handleTextChange }
-								siteId={ post.site_ID }
-								enableAutoFocus={ isReply }
-							/>
-						</AutoDirection>
-					</div>
-					<button
+					{ formTextarea }
+					<Button
 						className={ buttonClasses }
 						disabled={ this.state.commentText.length === 0 }
 						onClick={ this.handleSubmit }
 					>
 						{ this.props.error ? translate( 'Resend' ) : translate( 'Send' ) }
-					</button>
+					</Button>
 					{ this.renderError() }
-				</fieldset>
+				</FormFieldset>
 			</form>
 		);
 	}

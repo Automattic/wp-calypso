@@ -91,11 +91,11 @@ describe( 'Premium Plugin Selectors', () => {
 			expect( isInstalling( state, 'installing.site' ) ).toBe( true );
 		} );
 
-		test( 'Should get `true` if there is a plugin installing on the requested site, using whitelist', () => {
+		test( 'Should get `true` if there is a plugin installing on the requested site, filtering for a specified plugin (akismet)', () => {
 			expect( isInstalling( state, 'installing.site', 'akismet' ) ).toBe( true );
 		} );
 
-		test( 'Should get `true` if there is a plugin configuring on the requested site, using whitelist', () => {
+		test( 'Should get `true` if there is a plugin configuring on the requested site, filtering for a specified plugin (akismet)', () => {
 			expect( isInstalling( state, 'config.site', 'akismet' ) ).toBe( true );
 		} );
 

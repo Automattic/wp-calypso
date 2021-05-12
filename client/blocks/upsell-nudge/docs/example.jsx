@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import UpsellNudge from 'blocks/upsell-nudge';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 
 const UpsellNudgeExample = () => (
 	<>

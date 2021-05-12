@@ -1,0 +1,12 @@
+// Define variables, but only if they already don't exist.
+//                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+// This is for any outside consumers of the package that
+// don't have the entire calypso environment, which provides
+// these variables from a private package.
+// (See: https://sass-lang.com/documentation/variables#default-values )
+
+// In a regular calypso environment with @automattic/typography pulled in,
+// these won't have any effect.
+
+$font-body-extra-small: 12px !default;
+$font-body-small: 14px !default;

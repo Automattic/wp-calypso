@@ -41,7 +41,7 @@ $compact-header-height: 35;
 	}
 
 	.accessible-focus & {
-		border-radius: 4px;
+		border-radius: 2px;
 	}
 
 	.accessible-focus &:focus {
@@ -69,7 +69,7 @@ $compact-header-height: 35;
 	border-radius: 2px;
 	background-color: var( --color-surface );
 
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	color: var( --color-neutral-70 );
 	transition: background-color 0.2s ease;
@@ -90,7 +90,7 @@ $compact-header-height: 35;
 		height: #{$compact-header-height}px;
 		line-height: #{$compact-header-height - 3}px;
 		padding-right: #{$side-margin / 2}px;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 
 		.count {
 			border-width: 0;
@@ -190,7 +190,7 @@ $compact-header-height: 35;
 	padding: 0 #{$side-margin + 46}px 0 #{$side-margin}px;
 
 	color: var( --color-neutral-70 );
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 400;
 	white-space: nowrap;
 	overflow: hidden;
@@ -278,8 +278,11 @@ $compact-header-height: 35;
 	color: var( --color-text-subtle );
 	line-height: 20px;
 
-	label {
-		font-size: 12px;
+	.form-label {
+		font-size: $font-body-extra-small;
+		font-weight: 400;
 		padding: 0 #{$side-margin}px;
+		margin-bottom: 0;
+		display: inline;
 	}
 }

@@ -6,10 +6,10 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getThemeTaxonomySlugs } from 'state/themes/utils';
-import { getTheme } from 'state/themes/selectors/get-theme';
+import { getThemeTaxonomySlugs } from 'calypso/state/themes/utils';
+import { getTheme } from 'calypso/state/themes/selectors/get-theme';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Checks if a theme has auto loading homepage feature.

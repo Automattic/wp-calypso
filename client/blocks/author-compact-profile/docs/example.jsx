@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import AuthorCompactProfile from 'blocks/author-compact-profile';
+import AuthorCompactProfile from 'calypso/blocks/author-compact-profile';
 import { Card } from '@automattic/components';
 
 export default class AuthorCompactProfileExample extends React.Component {

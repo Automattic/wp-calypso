@@ -85,7 +85,7 @@
 		@extend %mobile-link-element;
 		border-top: 1px solid var( --color-border-subtle );
 		display: block;
-		font-size: 14px;
+		font-size: $font-body-small;
 		padding: 0 24px;
 		position: relative;
 
@@ -105,7 +105,7 @@
 
 		@include breakpoint-deprecated( '>960px' ) {
 			.stats__module-list & {
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 			}
 		}
 	}
@@ -264,7 +264,7 @@ ul.module-header-actions {
 .module-content-text {
 	box-sizing: border-box;
 	color: var( --color-neutral-70 );
-	font-size: 13px;
+	font-size: $font-body-small;
 	padding: 16px 16px 0;
 	min-height: 1em;
 	width: 100%;
@@ -280,7 +280,7 @@ ul.module-header-actions {
 
 	@include breakpoint-deprecated( '>960px' ) {
 		.stats__module-list & {
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 		}
 	}
 
@@ -337,12 +337,12 @@ ul.module-header-actions {
 		list-style: none;
 
 		li {
-			font-size: 14px;
+			font-size: $font-body-small;
 			line-height: 2em;
 
 			@include breakpoint-deprecated( '>960px' ) {
 				.stats__module-list & {
-					font-size: 12px;
+					font-size: $font-body-extra-small;
 				}
 			}
 
@@ -399,7 +399,7 @@ ul.module-header-actions {
 	th {
 		border-bottom: 1px solid var( --color-border-subtle );
 		border-right: 1px solid var( --color-border-subtle );
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		padding: 8px 12px;
 		white-space: nowrap; // 1
 
@@ -479,7 +479,7 @@ ul.module-header-actions {
 
 	.stats-detail-weeks__value {
 		display: block;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 
 		&.is-rising {
 			color: var( --color-success );
@@ -512,7 +512,7 @@ ul.module-header-actions {
 
 	.stats-detail-weeks__date {
 		display: block;
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 		letter-spacing: 0.1em;
 		text-transform: uppercase;
 	}
@@ -580,12 +580,12 @@ ul.module-header-actions {
 }
 
 .stats-module__availability-warning-message {
-	font-size: 14px;
+	font-size: $font-body-small;
 	margin-left: 8px;
 	margin-bottom: 0;
 	color: var( --color-text-subtle );
 }
 
 .stats__module-list .stats-module__availability-warning-message {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }

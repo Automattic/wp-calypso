@@ -33,7 +33,7 @@
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
 	color: var( --color-text-subtle );
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	padding: 2px 9px 6px 11px;
 	position: relative;
 	top: -1px;
@@ -100,7 +100,7 @@
 
 	.following-manage__subscriptions-sort .following-manage__sort-controls {
 		color: var( --color-text-subtle );
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		font-weight: normal;
 		padding-top: 8px;
 		width: 100%;
@@ -150,9 +150,21 @@
 }
 
 .following-manage__subscriptions-import-export-menu-item {
+	.reader-import-button,
+	.reader-export-button {
+		padding: 0;
+		font-weight: 400;
+	}
+
 	.reader-import-button__icon,
 	.reader-export-button__icon {
+		fill: var( --color-neutral-light );
 		vertical-align: middle;
+	}
+
+	.reader-import-button__label,
+	.reader-export-button__label {
+		color: var( --color-text-subtle );
 	}
 
 	&:hover,

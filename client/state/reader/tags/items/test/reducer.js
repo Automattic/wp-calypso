@@ -8,7 +8,7 @@ import { keyBy } from 'lodash';
  * Internal dependencies
  */
 import { receiveUnfollowTag, receiveTags } from '../actions';
-import { items } from '../reducer';
+import items from '../reducer';
 
 // helpers
 const keyById = ( tags ) => keyBy( tags, 'id' );

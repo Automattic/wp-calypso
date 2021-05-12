@@ -10,7 +10,7 @@
 	}
 
 	@include breakpoint-deprecated( '>480px' ) {
-		border-radius: 3px;
+		border-radius: 2px;
 		max-width: 700px;
 		margin: 16px auto;
 		text-align: left;
@@ -131,8 +131,8 @@
 
 .purchase-detail__title {
 	clear: none;
-	color: var( --color-neutral-40 );
-	font-size: 21px;
+	color: var( --color-text-subtle );
+	font-size: $font-title-small;
 }
 
 .purchase-detail__description {
@@ -142,6 +142,7 @@
 
 .purchase-detail__text {
 	flex-grow: 1;
+	word-break: break-word;
 }
 
 .purchase-detail__body {
@@ -158,7 +159,7 @@
 .purchase-detail__required-notice {
 	background-color: var( --color-warning );
 	color: var( --color-text );
-	font-size: 14px;
+	font-size: $font-body-small;
 	padding: 8px;
 	text-align: center;
 }

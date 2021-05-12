@@ -1,5 +1,4 @@
-Form Text Input With Affixes
-============================
+# Form Text Input With Affixes
 
 This component is a wrapper around the default form text input that adds support for affixes, i.e. the ability to display a fixed part either at the beginning or at the end of the text input.
 

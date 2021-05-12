@@ -3,8 +3,7 @@
 	max-width: 720px;
 	z-index: z-index( 'root', '.main' );
 
-	// Themes is a great example of using all this new space ;)
-	&.themes {
+	&.is-full-width-layout {
 		max-width: 100%;
 	}
 
@@ -16,17 +15,4 @@
 // Used on views (ex posts & pages ) where the empty-content is already inside a padded div
 .main .empty-content {
 	margin-top: 0;
-}
-
-@font-face {
-	font-display: swap;
-	font-family: 'Recoleta';
-	font-weight: 400;
-	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.woff2' ) format( 'woff2' ),
-	url( 'https://s1.wp.com/i/fonts/recoleta/400.woff' ) format( 'woff' );
-}
-
-// Use Recoleta on all page headings
-.main > .formatted-header .formatted-header__title {
-	font-family: 'Recoleta', $serif;
 }

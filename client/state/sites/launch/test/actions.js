@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { SITE_LAUNCH } from 'state/action-types';
-import { launchSite } from 'state/sites/launch/actions';
+import { SITE_LAUNCH } from 'calypso/state/action-types';
+import { launchSite } from 'calypso/state/sites/launch/actions';
 
 describe( 'actions', () => {
 	describe( '#launchSite', () => {

@@ -9,8 +9,8 @@
 }
 
 .is-reader-page .recommended-for-you.main,
-.is-reader-page .following.main {
-
+.is-reader-page .following.main,
+.is-reader-page .tag-stream__main.main {
 	@include breakpoint-deprecated( '>660px' ) {
 		margin: 30px auto;
 	}
@@ -23,7 +23,7 @@
 .reader__content {
 	sup, sub {
 		position: relative;
-		font-size: 0.83em;
+		font-size: 0.875rem;
 	}
 
 	sup {
@@ -38,7 +38,7 @@
 .reader__site-name {
 	clear: none;
 	color: var( --color-neutral-50 );
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 1.3;
 	display: inline-block;
 	white-space: nowrap;
@@ -55,7 +55,7 @@
 	}
 
 	@include breakpoint-deprecated( '<480px' ) {
-		font-size: 13px;
+		font-size: $font-body-small;
 		max-width: 180px;
 	}
 }
@@ -66,7 +66,7 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	font-weight: 700;
-	font-size: 28px;
+	font-size: $font-title-large;
 	line-height: 1.416;
 	color: var( --color-neutral-70 );
 	margin: 24px 0 8px;
@@ -75,7 +75,7 @@
 	word-wrap: break-word;
 
 	@include breakpoint-deprecated( '<480px' ) {
-		font-size: 18px;
+		font-size: $font-title-small;
 		line-height: 1.3;
 	}
 
@@ -148,7 +148,7 @@
 		margin: 0 -32px;
 		padding: 16px 32px 8px;
 		font-family: $sans;
-		font-size: 15px;
+		font-size: $font-body;
 		font-weight: 600;
 		line-height: 1.6;
 		border-top: 1px solid var( --color-neutral-10 );
@@ -165,7 +165,7 @@
 		position: relative;
 			top: 16px;
 		font-family: $sans;
-		font-size: 15px;
+		font-size: $font-body;
 		padding-top: 5px;
 		border-top: 1px solid var( --color-neutral-10 );
 
@@ -189,7 +189,7 @@
 	padding: 0;
 	margin: 16px 0 0 -4px;
 	list-style: none;
-	font-size: 14px;
+	font-size: $font-body-small;
 	color: var( --color-text-subtle );
 	display: flex;
 	align-items: center;
@@ -218,17 +218,17 @@
 .is-group-reader .comment-button__label-status,
 .is-group-reader .like-button__label-status {
 	@media( max-width: 530px ) {
-		display: none;
+		@include hide-content-accessibly();
 	}
 
 	@media( min-width: 661px ) and ( max-width: 790px ) {
-		display: none;
+		@include hide-content-accessibly();
 	}
 }
 
 .reader__post-embed-count {
 	padding: 4px 6px;
-	border-radius: 4px;
+	border-radius: 2px;
 	background: var( --color-neutral-0 );
 }
 
@@ -283,7 +283,7 @@
 	background: linear-gradient( to bottom, transparent, rgba( 0, 0, 0, 0.2 ) 73%, rgba( 0, 0, 0, 0.5 ) 100% );
 	color: var( --color-text-inverted );
 	font-family: $sans;
-	font-size: 14px;
+	font-size: $font-body-small;
 	text-shadow: 0 1px rgba( 0, 0, 0, 0.3 );
 	font-weight: 400;
 	overflow: hidden;
@@ -295,7 +295,7 @@
 }
 
 .tiled-gallery .tiled-gallery-item-small .tiled-gallery-caption { /* Smaller captions */
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 }
 
 /* Hide galleries in widgets until they've been resized to fit.

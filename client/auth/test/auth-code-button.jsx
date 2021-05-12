@@ -17,7 +17,9 @@ const savedFetch = fetch;
  * Internal dependencies
  */
 import { AuthCodeButton } from '../auth-code-button';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
+
+const localizeProps = { translate: ( string ) => string };
 
 describe( 'AuthCodeButton', () => {
 	beforeAll( () => {
@@ -32,7 +34,7 @@ describe( 'AuthCodeButton', () => {
 	} );
 
 	test( 'button renders in ready state', () => {
-		const button = shallow( <AuthCodeButton username="usr" password="pwd" /> );
+		const button = shallow( <AuthCodeButton username="usr" password="pwd" { ...localizeProps } /> );
 		const notice = button.find( Notice );
 		expect( notice ).toHaveLength( 1 );
 		expect( notice.props().status ).toBe( 'is-info' );
@@ -44,7 +46,7 @@ describe( 'AuthCodeButton', () => {
 			.post( '/sms', { username: 'usr', password: 'pwd' } )
 			.reply( 400, { error: 'needs_2fa' } );
 
-		const button = shallow( <AuthCodeButton username="usr" password="pwd" /> );
+		const button = shallow( <AuthCodeButton username="usr" password="pwd" { ...localizeProps } /> );
 		const request = button.instance().requestSMSCode();
 
 		// synchronous check immediately after firing the request should see status as 'requesting'
@@ -62,7 +64,7 @@ describe( 'AuthCodeButton', () => {
 			.post( '/sms', { username: 'usr', password: 'pwd' } )
 			.reply( 400, { error: 'other', error_description: 'Failed' } );
 
-		const button = shallow( <AuthCodeButton username="usr" password="pwd" /> );
+		const button = shallow( <AuthCodeButton username="usr" password="pwd" { ...localizeProps } /> );
 		const request = button.instance().requestSMSCode();
 
 		// wait for the request to finish and then check the error status
@@ -77,7 +79,7 @@ describe( 'AuthCodeButton', () => {
 			.post( '/sms', { username: 'usr', password: 'pwd' } )
 			.replyWithError( 'Failed' );
 
-		const button = shallow( <AuthCodeButton username="usr" password="pwd" /> );
+		const button = shallow( <AuthCodeButton username="usr" password="pwd" { ...localizeProps } /> );
 		const request = button.instance().requestSMSCode();
 
 		// wait for the request to finish and then check the error status

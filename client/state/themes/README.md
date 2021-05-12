@@ -1,5 +1,4 @@
-Themes State
-============
+# Themes State
 
 When working with `themes` state, it is helpful to bear some assumptions in mind:
 
@@ -26,12 +25,12 @@ themes: {
 }
 ```
 
-### `activeThemes`
+## `activeThemes`
 
 The `activeThemes` tree contains one entry for each site a user has (no matter if hosted on WordPress.com, or a Jetpack-connected, self-hosted site). Its keys are the numerical `siteId`s, while the values are `themeId` strings.
 Arguably, this duplicates information that is also found in the `sites` subtree (in `sites.items[ siteId ].options.theme_slug`). However, due to the way theme activation works (in particular after a premium theme is purchased), we've found that relying on that state is unreliable for our purposes.
 
-### `queries`
+## `queries`
 
 Most per-theme information is stored in the `queries` tree. It has one subtree per Jetpack site (keyed by its numerical `siteId`), and additionally, one named `wpcom` (for all themes on WordPress.com), and one named `wporg` (for themes found on WordPress.org). These subtrees are populated by querying the corresponding REST API 'themes list/search' endpoints.
 For retired themes, information obtained from the 'active theme' endpoint is stored in the `wpcom` subtree.
@@ -61,8 +60,7 @@ data: {
 
 This means that individual theme information (like theme name, description, screenshot link etc) is stored in the `items` object, while the `queries` object associates serialized queries with the corresponding themes (stored per theme ID in `itemKeys`).
 
-Jetpack Sites
--------------
+## Jetpack Sites
 
 Jetpack sites come with a REST API endpoint that triggers installation of a theme from either WordPress.org, or WordPress.com. To tell Jetpack which of either repository to use, we append a `-wpcom` suffix for WP.com themes. The suffix is then also present in the installed theme's ID (and directory name). There's another reason for that, which is to avoid collisions with existing themes in the WordPress.org repository -- otherwise, the WP.com theme would get overridden with a WP.org one of the same name by the self-hosted site's updater. Instead, downloaded WP.com themes include a little plugin that updates them from WP.com.
 

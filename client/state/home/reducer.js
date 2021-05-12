@@ -1,12 +1,13 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	HOME_LAYOUT_SET,
 	HOME_QUICK_LINKS_EXPAND,
 	HOME_QUICK_LINKS_COLLAPSE,
-} from 'state/action-types';
-import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 
 export const layout = ( state = {}, action ) =>
 	action.type === HOME_LAYOUT_SET ? action.layout : state;
@@ -36,7 +37,9 @@ export const quickLinksToggleStatus = withSchemaValidation(
 	}
 );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	quickLinksToggleStatus,
 	sites,
 } );
+
+export default withStorageKey( 'home', combinedReducer );

@@ -11,9 +11,9 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { activateRewind } from 'state/activity-log/actions';
-import isRewindActivating from 'state/selectors/is-rewind-activating';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { activateRewind } from 'calypso/state/activity-log/actions';
+import isRewindActivating from 'calypso/state/selectors/is-rewind-activating';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies

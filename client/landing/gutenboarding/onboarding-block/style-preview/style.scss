@@ -9,36 +9,16 @@
 
 	@include break-small {
 		// Full height comes from viewport heigh - header - some space for the preview's box-shadow (20px)
-		height: calc( 100vh - #{$gutenboarding-header-height + 20px} );
+		height: calc( 100vh - #{$onboarding-header-height + 20px} );
 	}
 }
 
 .style-preview__header {
 	position: relative;
+	display: flex; // IE11 fix
+	justify-content: space-between;
+	align-items: center;
 	@include onboarding-heading-padding;
-}
-
-.style-preview__actions-mobile {
-	clear: both;
-	padding-top: 32px;
-
-	a.is-link {
-		@include onboarding-medium-text;
-		display: block;
-		text-align: center;
-		margin: 1em 0;
-		color: var( --studio-gray-40 );
-	}
-
-	&-continue-button.is-primary.is-large {
-		display: block;
-		width: 100%;
-		padding: 0 40px;
-	}
-
-	@include break-small {
-		display: none;
-	}
 }
 
 .style-preview__viewport-select {
@@ -51,69 +31,11 @@
 	}
 }
 
-.style-preview__actions {
-	display: none;
-	@include break-small {
-		display: block;
-	}
-}
-
-.style-preview__actions {
-	position: absolute;
-	top: 50%;
-	right: 0;
-	transform: translateY( -50% );
-
-	@include break-small {
-		display: flex;
-		flex-flow: column;
-	}
-
-	a.is-link {
-		@include onboarding-medium-text;
-		margin: 1em 0 0;
-		color: var( --studio-gray-40 );
-		order: 2;
-
-		@include break-xlarge {
-			margin: 0 1em;
-			order: 1;
-		}
-	}
-
-	&-continue-button.is-primary.is-large {
-		height: auto;
-		padding: 13px 29px;
-		display: block;
-		width: 100%;
-		order: 1;
-
-		@include break-xlarge {
-			display: initial;
-			width: auto;
-			order: 2;
-		}
-	}
-
-	@include break-xlarge {
-		display: block;
-	}
-}
-
 @supports ( display: grid ) {
 	.style-preview__header {
 		display: grid;
 		grid-template-areas: 'title viewport-select actions';
 		column-gap: 1em;
-		align-items: center;
-		@include onboarding-heading-padding;
-
-		@include break-small {
-			grid-template-columns: auto auto 180px;
-		}
-		@include break-xlarge {
-			grid-template-columns: auto auto auto;
-		}
 	}
 
 	.style-preview__titles {
@@ -130,19 +52,17 @@
 
 	.style-preview__actions {
 		grid-area: actions;
-		position: initial;
-		top: 0;
-		left: 0;
-		transform: none;
 		justify-self: end;
 	}
 }
 
 .style-preview__content {
-	padding-bottom: $gutenboarding-footer-height + 28px;
+	padding-bottom: $onboarding-footer-height + 28px;
+	display: flex; // needed for IE
 
 	@include break-small {
 		padding-bottom: 0;
+		height: 100%; // needed for IE
 	}
 }
 
@@ -167,13 +87,13 @@
 	display: block;
 	margin-bottom: 28px;
 
-	.dashicon {
-		margin-left: 0.5em;
-		vertical-align: bottom;
+	svg {
+		margin-left: 0.2em;
+		vertical-align: middle;
 		transition: transform 100ms ease-in-out;
 	}
 
-	.is-open .dashicon {
+	.is-open svg {
 		transform: rotate( 180deg );
 	}
 
@@ -264,25 +184,6 @@
 		width: 100%;
 	}
 
-	// Extra specificity to override core style
-	// This is effectively a more-specific synonmy of the same selector
-	&.components-button {
-		color: var( --studio-gray-90 );
-		height: auto;
-		border-radius: 2px;
-
-		&.is-open {
-			border-radius: 2px 2px 0 0;
-		}
-
-		&:hover,
-		&:focus,
-		&:focus:not( :disabled ) {
-			color: var( --studio-gray-90 );
-			box-shadow: inset 0 0 0 1px var( --studio-gray-90 );
-		}
-	}
-
 	&.is-selected {
 		// override default focus and hover styles for selected-fonts buttons
 		// `!important` is used because there are default `focus` and `hover` styles with high specificities.
@@ -337,13 +238,20 @@
 .style-preview__preview-wrapper {
 	background: var( --studio-white );
 	box-shadow: 0 0 0 1px var( --studio-gray-5 );
-	border-radius: 4px;
+	border-radius: 2px;
 	overflow: hidden;
 	position: relative;
 
 	width: 100%;
 	margin: 0 auto;
 	height: 100%;
+	@include break-small {
+		min-height: 400px;
+	}
+
+	@include break-wide {
+		min-height: 600px;
+	}
 
 	.is-viewport-mobile &,
 	.is-viewport-tablet & {

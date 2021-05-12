@@ -5,16 +5,15 @@
 import debug from 'debug';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { isFunction } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import DocService from './service';
-import DocumentHead from 'components/data/document-head';
+import DocumentHead from 'calypso/components/data/document-head';
 import { Card } from '@automattic/components';
-import Main from 'components/main';
-import SearchCard from 'components/search-card';
+import Main from 'calypso/components/main';
+import SearchCard from 'calypso/components/search-card';
 
 /**
  * Style dependencies
@@ -90,7 +89,7 @@ export default class Devdocs extends React.Component {
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
-		if ( isFunction( this.props.onSearchChange ) && prevState.term !== this.state.term ) {
+		if ( typeof this.props.onSearchChange === 'function' && prevState.term !== this.state.term ) {
 			this.props.onSearchChange( this.state.term );
 		}
 	}

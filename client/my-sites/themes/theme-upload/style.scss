@@ -1,10 +1,10 @@
 // View : theme successfully uploaded
 .theme-upload__theme-sheet {
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
 .theme-upload__theme-name {
-	font-size: 24px;
+	font-size: $font-title-medium;
 	font-weight: 600;
 	clear: none;
 }

@@ -1,4 +1,3 @@
-
 /*
  * Search card and text input
  */
@@ -10,7 +9,8 @@
 	display: flex;
 	align-items: center;
 	background: white;
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
+		0 1px 2px var( --color-neutral-0 );
 	transition: all 0.15s ease-in-out;
 
 	&.has-highlight {
@@ -22,7 +22,8 @@
 		margin: 0;
 		height: 58px;
 
-		&.has-focus, &.has-focus:hover {
+		&.has-focus,
+		&.has-focus:hover {
 			box-shadow: none;
 		}
 	}
@@ -71,12 +72,12 @@
 	}
 }
 
-
 /*
  * Tokens
  */
 .themes-magic-search-card__token {
 	/* These are required to make token alignment work */
+	/* stylelint-disable-next-line */
 	font: inherit;
 	pointer-events: none;
 	position: relative;
@@ -123,6 +124,7 @@
 
 .themes-magic-search-card__search-text {
 	/* These are required to make token alignment work */
+	/* stylelint-disable-next-line */
 	font: inherit;
 	pointer-events: none;
 	color: transparent;
@@ -130,11 +132,11 @@
 
 .themes-magic-search-card__search-white-space {
 	/* These are required to make token alignment work */
+	/* stylelint-disable-next-line */
 	font: inherit;
 	pointer-events: none;
 	white-space: pre;
 }
-
 
 /*
  * Suggestions: Welcome Card
@@ -142,7 +144,8 @@
 .themes-magic-search-card__welcome {
 	color: var( --color-neutral-light );
 	background-color: var( --color-surface );
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
+		0 1px 2px var( --color-neutral-0 );
 	display: flex;
 	flex-direction: column;
 }
@@ -152,7 +155,7 @@
 	border-bottom: 1px solid var( --color-neutral-5 );
 	border-top: 0;
 	padding: 4px 8px;
-	font-size: 13px;
+	font-size: $font-body-small;
 
 	text-transform: uppercase;
 	color: var( --color-neutral-70 );
@@ -175,7 +178,7 @@
 	overflow: hidden;
 	padding: 10px 6px;
 	margin: 0;
-	font-size: 13px;
+	font-size: $font-body-small;
 	line-height: 16px;
 	cursor: pointer;
 	color: var( --color-neutral-70 );

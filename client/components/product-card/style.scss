@@ -66,12 +66,8 @@
 }
 
 .product-card__title {
-	font-size: 20px;
+	font-size: $font-title-small;
 	line-height: 24px;
-
-	@include breakpoint-deprecated( '>960px' ) {
-		font-size: 22px;
-	}
 
 	em,
 	strong,
@@ -81,7 +77,7 @@
 }
 
 .product-card__subtitle {
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 20px;
 	font-style: italic;
 	color: var( --color-text-subtle );
@@ -101,7 +97,7 @@
 		&,
 		& * {
 			@include breakpoint-deprecated( '>660px' ) {
-				font-size: 14px;
+				font-size: $font-body-small;
 				vertical-align: baseline;
 			}
 		}
@@ -109,7 +105,7 @@
 }
 
 .product-card__billing-timeframe {
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-weight: 400;
 	line-height: 13px;
 	color: var( --color-text-subtle );
@@ -119,7 +115,7 @@
 	}
 
 	@include breakpoint-deprecated( '>960px' ) {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 	}
 }
 
@@ -137,7 +133,7 @@
 
 		@include breakpoint-deprecated( '>660px' ) {
 			width: auto;
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			font-weight: 600;
 		}
 	}
@@ -147,12 +143,12 @@
 .product-card__option {
 	.plan-price,
 	.plan-price * {
-		font-size: 16px;
+		font-size: $font-body;
 		font-weight: 400;
 		vertical-align: baseline;
 
 		@include breakpoint-deprecated( '>960px' ) {
-			font-size: 14px;
+			font-size: $font-body-small;
 		}
 	}
 
@@ -168,10 +164,9 @@
 
 // Description
 .product-card__description {
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 20px;
 	color: var( --color-text-subtle );
-	text-align: left;
 
 	p:last-child {
 		margin: 0;
@@ -192,7 +187,7 @@
 
 .product-card__options-label {
 	margin-top: 16px;
-	font-size: 14px;
+	font-size: $font-body-small;
 	text-align: center;
 	color: var( --color-text-subtle );
 
@@ -215,7 +210,7 @@
 	margin: 16px 0 8px;
 	padding: 16px;
 	border: 1px solid var( --color-neutral-20 );
-	border-radius: 4px;
+	border-radius: 2px;
 	cursor: pointer;
 
 	@include breakpoint-deprecated( '>480px' ) {
@@ -263,7 +258,7 @@
 
 .product-card__option-name {
 	margin-bottom: 2px;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	line-height: 20px;
 	text-align: center;
@@ -277,7 +272,7 @@
 
 .product-card__action-intro {
 	margin-bottom: 12px;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	color: var( --color-neutral-90 );
 }
@@ -313,7 +308,7 @@
 	color: var( --studio-white );
 	background: url( '/calypso/images/illustrations/promo-star.svg' ) no-repeat center;
 	background-size: contain;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	line-height: 17px;
 	text-align: center;
@@ -325,7 +320,7 @@
 	border-radius: 16px;
 	background-color: var( --color-neutral-0 );
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	line-height: 18px;
 	text-align: left;
 	text-transform: uppercase;
@@ -333,7 +328,7 @@
 	strong {
 		display: block;
 		color: var( --color-text );
-		font-size: 14px;
+		font-size: $font-body-small;
 		font-weight: 600;
 		text-transform: none;
 	}

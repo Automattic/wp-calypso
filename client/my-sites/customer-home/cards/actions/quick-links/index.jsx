@@ -8,33 +8,34 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import FoldableCard from 'calypso/components/foldable-card';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	getSiteFrontPage,
 	getCustomizerUrl,
 	getSiteOption,
 	isNewSite,
-} from 'state/sites/selectors';
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
-import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
-import { getGSuiteSupportedDomains } from 'lib/gsuite';
-import { getDomainsBySiteId } from 'state/sites/domains/selectors';
-import { navigate } from 'state/ui/actions';
+} from 'calypso/state/sites/selectors';
+import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
+import { getGSuiteSupportedDomains } from 'calypso/lib/gsuite';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { navigate } from 'calypso/state/ui/actions';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
+} from 'calypso/state/analytics/actions';
 import ActionBox from './action-box';
-import isHomeQuickLinksExpanded from 'state/selectors/is-home-quick-links-expanded';
-import { expandHomeQuickLinks, collapseHomeQuickLinks } from 'state/home/actions';
+import isHomeQuickLinksExpanded from 'calypso/state/selectors/is-home-quick-links-expanded';
+import { expandHomeQuickLinks, collapseHomeQuickLinks } from 'calypso/state/home/actions';
 
 /**
  * Image dependencies
  */
-import logoIcon from 'assets/images/customer-home/looka-logo-60.svg';
+import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
+import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';
 
 /**
  * Style dependencies
@@ -55,6 +56,7 @@ export const QuickLinks = ( {
 	trackCustomizeThemeAction,
 	changeThemeAction,
 	trackDesignLogoAction,
+	trackAnchorPodcastAction,
 	addEmailAction,
 	addDomainAction,
 	isExpanded,
@@ -142,9 +144,17 @@ export const QuickLinks = ( {
 				href="https://wp.me/logo-maker"
 				onClick={ trackDesignLogoAction }
 				target="_blank"
-				label={ translate( 'Create a logo with Looka' ) }
+				label={ translate( 'Create a logo' ) }
 				external
-				iconSrc={ logoIcon }
+				iconSrc={ fiverrIcon }
+			/>
+			<ActionBox
+				href="https://anchor.fm/wordpressdotcom"
+				onClick={ trackAnchorPodcastAction }
+				target="_blank"
+				label={ translate( 'Create a podcast with Anchor' ) }
+				external
+				iconSrc={ anchorLogoIcon }
 			/>
 		</div>
 	);
@@ -242,6 +252,14 @@ const trackDesignLogoAction = ( isStaticHomePage ) =>
 		bumpStat( 'calypso_customer_home', 'my_site_design_logo' )
 	);
 
+const trackAnchorPodcastAction = ( isStaticHomePage ) =>
+	composeAnalytics(
+		recordTracksEvent( 'calypso_customer_home_my_site_anchor_podcast_click', {
+			is_static_home_page: isStaticHomePage,
+		} ),
+		bumpStat( 'calypso_customer_home', 'my_site_anchor_podcast' )
+	);
+
 const addEmailAction = ( siteSlug, isStaticHomePage ) =>
 	withAnalytics(
 		composeAnalytics(
@@ -272,8 +290,7 @@ const mapStateToProps = ( state ) => {
 		! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' );
 	const siteSlug = getSelectedSiteSlug( state );
 	const staticHomePageId = getSiteFrontPage( state, siteId );
-	const editHomePageUrl =
-		isStaticHomePage && `/block-editor/page/${ siteSlug }/${ staticHomePageId }`;
+	const editHomePageUrl = isStaticHomePage && `/page/${ siteSlug }/${ staticHomePageId }`;
 
 	return {
 		customizeUrl: getCustomizerUrl( state, siteId ),
@@ -297,6 +314,7 @@ const mapDispatchToProps = {
 	trackCustomizeThemeAction,
 	changeThemeAction,
 	trackDesignLogoAction,
+	trackAnchorPodcastAction,
 	addEmailAction,
 	addDomainAction,
 	expand: expandHomeQuickLinks,
@@ -316,6 +334,7 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		trackCustomizeThemeAction: () => dispatchProps.trackCustomizeThemeAction( isStaticHomePage ),
 		changeThemeAction: () => dispatchProps.changeThemeAction( siteSlug, isStaticHomePage ),
 		trackDesignLogoAction: () => dispatchProps.trackDesignLogoAction( isStaticHomePage ),
+		trackAnchorPodcastAction: () => dispatchProps.trackAnchorPodcastAction( isStaticHomePage ),
 		addEmailAction: () => dispatchProps.addEmailAction( siteSlug, isStaticHomePage ),
 		addDomainAction: () => dispatchProps.addDomainAction( siteSlug, isStaticHomePage ),
 		...ownProps,

@@ -178,9 +178,9 @@ function processNumberFormat( format ) {
  * @returns {object} obj, with keys with value "undefined" removed.
  */
 function deepRemoveUndefinedKeysFromObject( obj ) {
-	for ( let key in obj ) {
+	for ( const key in obj ) {
 		if ( obj.hasOwnProperty( key ) ) {
-			if ( _.isUndefined( obj[ key ] ) ) {
+			if ( typeof obj[ key ] === 'undefined' ) {
 				delete obj[ key ];
 			} else if ( _.isObject( obj[ key ] ) ) {
 				deepRemoveUndefinedKeysFromObject( obj[ key ] );
@@ -192,11 +192,11 @@ function deepRemoveUndefinedKeysFromObject( obj ) {
 
 function generateDeepRemoveEmptyArraysFromObject( allowedKeys ) {
 	return function deepRemoveEmptyArraysFromObject( obj ) {
-		for ( let key in obj ) {
+		for ( const key in obj ) {
 			if ( obj.hasOwnProperty( key ) ) {
 				if (
 					_.includes( allowedKeys, key ) &&
-					_.isArray( obj[ key ] ) &&
+					Array.isArray( obj[ key ] ) &&
 					obj[ key ].length === 0
 				) {
 					delete obj[ key ];
@@ -214,10 +214,10 @@ function removeAllNumberKeys( obj ) {
 }
 
 function removeRegionCodeAndCountryDialCodeIfSameWithCountryDialCode( countryData ) {
-	for ( let key in countryData ) {
+	for ( const key in countryData ) {
 		if ( countryData.hasOwnProperty( key ) ) {
-			const country = countryData[ key ],
-				{ countryDialCode, dialCode } = country;
+			const country = countryData[ key ];
+			const { countryDialCode, dialCode } = country;
 			if ( countryDialCode === dialCode ) {
 				delete country.regionCode;
 				delete country.countryDialCode;
@@ -235,7 +235,7 @@ function removeRegionCodeAndCountryDialCodeIfSameWithCountryDialCode( countryDat
  */
 function processLibPhoneNumberMetadata( libPhoneNumberData ) {
 	const data = {};
-	for ( let countryCode in libPhoneNumberData ) {
+	for ( const countryCode in libPhoneNumberData ) {
 		if ( libPhoneNumberData.hasOwnProperty( countryCode ) ) {
 			const countryCodeUpper = countryCode.toUpperCase();
 			const country = libPhoneNumberData[ countryCode ];

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/comments/init';
+import 'calypso/state/comments/init';
 
 /**
  * Returns true if a comment tree has been initialized.

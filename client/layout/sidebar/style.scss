@@ -32,10 +32,18 @@
 	// Reset lists to avoid bullets and margins.
 	ul {
 		margin: 0;
+		padding: 0;
 	}
 
 	li {
 		list-style: none;
+	}
+
+	.count {
+		margin-left: 8px;
+		background-color: var( --color-sidebar-menu-hover-background );
+		border-color: var( --color-sidebar-menu-hover-background );
+		color: var( --color-sidebar-menu-hover-text );
 	}
 }
 
@@ -56,15 +64,18 @@
 // like in Reader, and for the expandable menus.
 .sidebar__heading {
 	color: var( --color-sidebar-text-alternative );
-	font-size: 15px;
+	font-size: $font-body;
 	font-weight: 600;
 	padding: 16px 8px 6px 16px;
+	margin: 0;
+	outline: 0;
 }
 
 // Sidebar menu icons for main sections
 .sidebar__menu-icon {
 	fill: var( --color-sidebar-gridicon-fill );
 	margin-right: 11px;
+	flex-shrink: 0;
 }
 
 // Checklist progress
@@ -78,7 +89,7 @@
 	width: 80px;
 
 	.sidebar__checklist-progress-text {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		margin: 0;
 		white-space: normal;
 		text-overflow: ellipsis;
@@ -106,12 +117,11 @@
 // Menu links: The actual anchor tags that contain links to
 // various sections of Calypso.
 .sidebar__menu-link {
-	font-size: 15px;
-	line-height: 1;
+	font-size: $font-body;
+	line-height: 1.2;
 	position: relative;
 	padding: 10px 16px 10px 20px;
 	box-sizing: border-box;
-	white-space: nowrap;
 	overflow: hidden;
 	display: flex;
 	align-items: center;
@@ -132,6 +142,14 @@
 		.sidebar__menu-icon {
 			fill: var( --color-sidebar-menu-hover-text );
 		}
+
+		.count {
+			border-color: var( --color-sidebar-menu-hover-text );
+		}
+	}
+
+	&:focus {
+		outline: none;
 	}
 
 	.badge {
@@ -143,8 +161,18 @@
 		color: var( --color-sidebar-menu-selected-text );
 		background-color: var( --color-sidebar-menu-selected-background );
 
+		.stats-sparkline {
+			--color-stats-sparkline: var( --color-sidebar-menu-selected-text );
+		}
+
 		.sidebar__menu-icon {
 			fill: var( --color-sidebar-menu-selected-text );
+		}
+
+		.count {
+			background-color: transparent;
+			border-color: var( --color-sidebar-menu-selected-text );
+			color: var( --color-sidebar-menu-selected-text );
 		}
 	}
 
@@ -161,6 +189,11 @@
 	}
 }
 
+.sidebar__menu.is-togglable .sidebar__menu-link {
+	line-height: 1.5;
+	padding: 7px 16px 7px 20px;
+}
+
 .sidebar__menu-link-text {
 	flex: auto;
 }
@@ -169,7 +202,7 @@
 	margin-right: 8px;
 	align-self: center;
 	font-weight: 600;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	position: absolute;
 	right: 0;
 	z-index: 1;
@@ -199,6 +232,12 @@
 			.sidebar__expandable-arrow {
 				fill: var( --color-sidebar-menu-hover-text );
 			}
+
+			.count {
+				background-color: transparent;
+				border-color: var( --color-sidebar-submenu-selected-text );
+				color: var( --color-sidebar-submenu-selected-text );
+			}
 		}
 	}
 
@@ -219,6 +258,11 @@
 		.sidebar__expandable-arrow {
 			transform: rotate( 180deg );
 		}
+		.count {
+			background-color: transparent;
+			border-color: var( --color-sidebar-submenu-selected-text );
+			color: var( --color-sidebar-submenu-selected-text );
+		}
 	}
 }
 
@@ -228,4 +272,8 @@
 .sidebar__wp-admin,
 .sidebar__footer {
 	margin-top: 16px;
+}
+
+.sidebar__menu-wrapper {
+	border-top: 1px solid var( --color-sidebar-border );
 }

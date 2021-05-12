@@ -4,7 +4,7 @@
 
 	& .button.domain-suggestion__action.is-borderless {
 	  flex: 1 0 auto;
-	  font-size: 14px;
+	  font-size: $font-body-small;
 	  text-align: left;
 	  width: 100%;
 
@@ -30,12 +30,12 @@
 	}
 
 	h3 {
-		font-size: 16px;
+		font-size: $font-body;
 	}
 
 	> p {
 		color: var( --color-neutral-70 );
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		margin-bottom: 0;
 
 		@include breakpoint-deprecated( '>960px' ) {

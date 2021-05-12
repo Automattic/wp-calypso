@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns true if a theme upload is in progress.

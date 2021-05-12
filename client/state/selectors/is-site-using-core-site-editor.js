@@ -6,13 +6,13 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import getRawSite from 'state/selectors/get-raw-site';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
 
 /**
  * Checks if a site is using the core Site Editor
  *
  * @param {object} state  Global state tree
- * @param {object} siteId Site ID
+ * @param {number|null} siteId Site ID
  * @returns {boolean} True if the site is using core Site Editor, otherwise false
  */
 export default function isSiteUsingCoreSiteEditor( state, siteId ) {

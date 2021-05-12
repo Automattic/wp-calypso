@@ -1,0 +1,161 @@
+.backup__page {
+	.filterbar .filterbar__wrap.card {
+		display: flex;
+	}
+	.main {
+		padding-bottom: 0;
+	}
+}
+
+.backup__last-backup-status {
+	background: var( --studio-white );
+	padding: 16px 16px 0;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		background: var( --color-surface-backdrop );
+		padding: 0;
+		margin: 0;
+	}
+}
+.backup__page .main {
+	overflow-y: auto;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		overflow-y: visible;
+	}
+}
+
+.backup__main .formatted-header.is-left-align {
+	margin-top: 20px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-top: 4px;
+		margin-bottom: 18px;
+	}
+}
+
+.backup__main-wrap {
+	display: flex;
+	flex-direction: column;
+	height: calc( 100vh - 120px );
+	margin-left: -16px;
+	margin-right: -16px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		height: auto;
+	}
+}
+
+.backup__search {
+	padding: 0 1rem;
+}
+
+.backup__search-header {
+	font-size: $font-title-small;
+	font-weight: 400;
+	margin-top: 2rem;
+	margin-bottom: 0.5rem;
+}
+
+.backup__search-description {
+	margin-bottom: 2rem;
+}
+
+.backup__subheader {
+	margin: 20px 16px 8px;
+
+	@extend .wp-brand-font;
+	font-size: $font-title-small;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin: 36px 0 4px;
+	}
+}
+
+.backup__restore-banner {
+	width: 100%;
+
+	&.banner.card {
+		@include banner-color( var( --color-jetpack ) );
+	}
+}
+
+/* WordPress.com-only styles */
+.wordpressdotcom.backup__page {
+	.backup__main-wrap {
+		margin-left: initial;
+		margin-right: initial;
+	}
+
+	.backup__last-backup-status {
+		padding: initial;
+		background: initial;
+	}
+
+	.button {
+		color: var( --color-neutral-70 );
+
+		&.is-borderless {
+			color: var( --color-text-subtle );
+		}
+
+		&.is-primary {
+			color: var( --color-text-inverted );
+		}
+
+		&.is-primary.is-borderless {
+			color: var( --color-accent );
+		}
+
+		&[disabled] {
+			color: var( --color-neutral-20 );
+		}
+	}
+}
+
+.backup__upsell-icon {
+	fill: #7bb1cd;
+}
+
+.backup__wpcom-upsell {
+	.what-is-jetpack {
+		margin-top: 32px;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			margin-top: 64px;
+		}
+	}
+
+	.action-panel__figure img {
+		height: 120px;
+	}
+
+	.backup__wpcom-ctas {
+		margin: 16px 0;
+	}
+
+	.backup__wpcom-cta {
+		margin-top: 8px;
+	}
+
+	.backup__wpcom-realtime-cta {
+		margin-right: 16px;
+	}
+
+	.promo-section__promos {
+		.promo-card {
+			@include breakpoint-deprecated( '>1280px' ) {
+				flex: 1 1 calc( 50% - 1em );
+			}
+		}
+	}
+}
+
+/* Jetpack.com-only changes */
+.is_jetpackcom {
+	.backup__restore-banner {
+		&.banner.card {
+			@include banner-color( var( --color-accent ) );
+		}
+	}
+}

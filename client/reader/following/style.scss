@@ -4,6 +4,7 @@
 
 .following__search.card.is-compact {
 	padding: 0;
+	border-radius: 2px;
 	box-shadow: 0 0 0 2px var( --color-neutral-10 ), 0 1px 2px var( --color-neutral-10 );
 	z-index: z-index( 'root', '.reader-following-search' );
 }
@@ -68,7 +69,7 @@
 	display: flex;
 	flex: 1 1 0;
 	flex-direction: column;
-	font-size: 18px;
+	font-size: $font-title-small;
 	justify-content: center;
 	margin-left: 24px;
 
@@ -78,15 +79,15 @@
 	}
 
 	@include breakpoint-deprecated( '<960px' ) {
-		font-size: 16px;
+		font-size: $font-body;
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
-		font-size: 18px;
+		font-size: $font-title-small;
 	}
 
 	@include breakpoint-deprecated( '<480px' ) {
-		font-size: 16px;
+		font-size: $font-body;
 	}
 }
 
@@ -147,8 +148,4 @@
 	.following__intro-close-icon-bg {
 		background-color: var( --color-surface );
 	}
-}
-
-div.following__reader-vote {
-	border-left-color: #d94f4f !important;
 }

@@ -1,16 +1,13 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import '../../../variables.scss';
-@import '../../../_z-index.scss';
+@import '../../../mixins';
+@import '~@automattic/onboarding/styles/z-index';
 
 // Restyle `<Suggestion />` component
 .vertical-select {
 	transition: flex-grow $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
 	display: flex;
 	flex-direction: column;
-
-	&--with-suggestions {
-		flex-grow: 1;
-	}
 
 	@include break-small {
 		display: block;
@@ -51,18 +48,18 @@
 	position: relative;
 	display: block;
 	flex: 1;
-	z-index: gutenboarding-z-index( '.vertical-select__suggestions-wrapper' );
+	z-index: z-index( '.vertical-select__suggestions-wrapper' );
 
 	@include break-small {
-		display: inline;
+		display: inline-block;
+		padding-bottom: 5px;
 	}
 }
 
 .vertical-select__suggestions {
 	position: absolute;
 	left: -16px;
-	margin-top: 20px;
-	min-height: 100px;
+	min-height: 300px;
 	max-height: calc( 100% - 50px );
 	overflow: auto;
 
@@ -70,31 +67,19 @@
 		width: 250px;
 		max-height: 400px;
 	}
+
+	@include break-medium {
+		left: 0;
+	}
 }
 
 .vertical-select__input-wrapper {
 	position: relative;
-
-	&--with-arrow {
-		margin-right: 40px; // make space for absolute positioned arrow
-	}
-
-	.madlib__input:empty {
-		@include break-small {
-			padding-right: 300px; // there's not enough container width on smaller screens
-		}
-		@include break-medium {
-			padding-right: 400px;
-		}
-	}
 }
 
-.vertical-select__arrow {
-	position: absolute;
-	bottom: 8px;
-	margin-left: 15px;
-
-	@include break-small {
-		bottom: 25px;
-	}
+.vertical-select__input {
+	height: 100%;
+	display: inline-block;
+	line-height: 1;
+	padding-bottom: 5px;
 }

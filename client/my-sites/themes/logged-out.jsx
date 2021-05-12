@@ -7,14 +7,14 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import ThemeShowcase from './theme-showcase';
 import { connectOptions } from './theme-options';
 
 const ConnectedThemeShowcase = connectOptions( ThemeShowcase );
 
 export default ( props ) => (
-	<Main className="themes">
+	<Main fullWidthLayout className="themes">
 		<ConnectedThemeShowcase
 			{ ...props }
 			origin="wpcom"

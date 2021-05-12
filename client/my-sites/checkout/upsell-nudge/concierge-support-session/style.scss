@@ -1,5 +1,5 @@
 main.concierge-support-session.main {
-	margin:auto;
+	margin: auto;
 }
 
 .concierge-support-session {
@@ -89,14 +89,14 @@ main.concierge-support-session.main {
 	}
 
 	&__sub-header {
-		font-size: 21px;
+		font-size: $font-title-small;
 		font-weight: 400;
 		line-height: 1.4;
 		margin-top: 5px;
 		margin-bottom: 0.75em;
 
 		@include breakpoint-deprecated( '<660px' ) {
-			font-size: 18px;
+			font-size: $font-body;
 		}
 	}
 

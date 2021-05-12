@@ -6,9 +6,9 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { key } from 'state/reader/conversations/utils';
+import { key } from 'calypso/state/reader/conversations/utils';
 
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 /*
  * Get the conversation following status for a given post

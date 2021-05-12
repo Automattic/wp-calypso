@@ -11,15 +11,15 @@ const debug = debugFactory( 'calypso:me:security:2fa-code-prompt' );
 /**
  * Internal dependencies
  */
-import { gaRecordEvent } from 'lib/analytics/ga';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormVerificationCodeInput from 'components/forms/form-verification-code-input';
-import Notice from 'components/notice';
-import twoStepAuthorization from 'lib/two-step-authorization';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import FormButton from 'calypso/components/forms/form-button';
+import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
+import Notice from 'calypso/components/notice';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 
 /**
  * Style dependencies
@@ -192,6 +192,7 @@ class Security2faCodePrompt extends React.Component {
 
 	render() {
 		const method = twoStepAuthorization.isTwoStepSMSEnabled() ? 'sms' : 'app';
+		const hasSmsRecoveryNumber = !! twoStepAuthorization?.data?.two_step_sms_last_four?.length;
 
 		return (
 			<form className="security-2fa-code-prompt" onSubmit={ this.onSubmit }>
@@ -201,9 +202,9 @@ class Security2faCodePrompt extends React.Component {
 					</FormLabel>
 
 					<FormVerificationCodeInput
-						autoFocus
 						className="security-2fa-code-prompt__verification-code"
 						disabled={ this.state.submittingForm }
+						id="verification-code"
 						method={ method }
 						name="verificationCode"
 						onFocus={ function () {
@@ -215,7 +216,7 @@ class Security2faCodePrompt extends React.Component {
 					{ this.state.codeRequestPerformed ? (
 						<FormSettingExplanation>
 							{ this.props.translate(
-								'A code has been sent to your device via SMS.  ' +
+								'A code has been sent to your device via SMS. ' +
 									'You may request another code after one minute.'
 							) }
 						</FormSettingExplanation>
@@ -233,7 +234,7 @@ class Security2faCodePrompt extends React.Component {
 						{ this.getSubmitButtonLabel() }
 					</FormButton>
 
-					{ this.props.showSMSButton ? (
+					{ hasSmsRecoveryNumber && this.props.showSMSButton ? (
 						<FormButton
 							className="security-2fa-code-prompt__send-code"
 							disabled={ ! this.state.codeRequestsAllowed }

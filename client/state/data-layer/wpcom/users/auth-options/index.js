@@ -6,17 +6,17 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING,
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS,
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
-} from 'state/action-types';
-import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
+} from 'calypso/state/action-types';
+import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const getAuthAccountType = ( action ) =>
 	http(

@@ -80,12 +80,12 @@
 
 	.form__hidden-input a {
 		display: block;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		margin-top: 5px;
 	}
 
 	select {
-		font-size: 15px;
+		font-size: $font-body;
 		width: 100%;
 		min-width: 100px;
 	}
@@ -96,8 +96,8 @@
 
 }
 
-.contact-details-form-fields__extra-fields {
-	margin-top: 15px;
+.contact-details-form-fields__contact-details {
+	margin-bottom: 1.5rem;
 }
 
 .form__hidden-input .form__hidden-input {

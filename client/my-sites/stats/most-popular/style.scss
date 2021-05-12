@@ -1,4 +1,3 @@
-
 // Most popular Day and Time section
 
 .most-popular__wrapper {
@@ -32,7 +31,7 @@
 
 .most-popular__label {
 	text-transform: uppercase;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	letter-spacing: 0.1em;
 }
 
@@ -40,7 +39,7 @@
 	color: var( --color-neutral-light );
 	display: block;
 	margin-top: -1em;
-	font-size: 14px;
+	font-size: $font-body-small;
 	letter-spacing: 0.01em;
 }
 
@@ -48,7 +47,7 @@
 .most-popular__hour {
 	display: block;
 	color: var( --color-neutral-70 );
-	font-size: 20px;
+	font-size: $font-title-small;
 	margin: 6px 0 22px;
 }
 

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
@@ -31,15 +30,17 @@ export function trackEventWithFlow( eventId: string, params = {}, flow = FLOW_ID
  * Analytics call at the start of the Gutenboarding flow
  *
  * @param {string} ref  The value of a `ref` query parameter, usually set by marketing landing pages
+ * @param {number} site_count The number of sites owned by the current user or 0 if there is no logged in user
+ * @param {string} flow the current onboarding flow
  */
-export function recordOnboardingStart( ref = '' ): void {
+export function recordOnboardingStart( ref = '', site_count: number, flow: string ): void {
 	if ( ! ref ) {
 		ref = new URLSearchParams( window.location.search ).get( 'ref' ) || ref;
 	}
-
-	trackEventWithFlow( 'calypso_newsite_start', { ref } );
+	const eventProps = { ref, site_count };
+	trackEventWithFlow( 'calypso_newsite_start', eventProps, flow );
 	// Also fire the signup start|complete events. See: pbmFJ6-95-p2
-	trackEventWithFlow( 'calypso_signup_start', { ref } );
+	trackEventWithFlow( 'calypso_signup_start', eventProps, flow );
 }
 
 /**
@@ -53,6 +54,7 @@ export function recordOnboardingComplete( params: OnboardingCompleteParameters )
 		is_new_site: params.isNewSite,
 		blog_id: params.blogId,
 		has_cart_items: params.hasCartItems,
+		flow: params.flow,
 	};
 	trackEventWithFlow( 'calypso_newsite_complete', trackingParams );
 	// Also fire the signup start|complete events. See: pbmFJ6-95-p2
@@ -69,64 +71,6 @@ export function recordOnboardingError( params: ErrorParameters ): void {
 		error: params.error,
 		step: params.step,
 	} );
-}
-
-interface TrainTracksRenderProps {
-	trainTracksType: 'render';
-	railcarId: string;
-	uiAlgo: string;
-	uiPosition: number;
-	fetchAlgo: string;
-	result: string;
-	query: string;
-}
-
-interface TrainTracksInteractProps {
-	trainTracksType: 'interact';
-	railcarId: string;
-	action: string;
-}
-
-export function recordTrainTracksRender( {
-	railcarId,
-	uiAlgo,
-	uiPosition,
-	fetchAlgo,
-	result,
-	query,
-}: TrainTracksRenderProps ) {
-	recordTracksEvent( 'calypso_traintracks_render', {
-		railcar: railcarId,
-		ui_algo: uiAlgo,
-		ui_position: uiPosition,
-		fetch_algo: fetchAlgo,
-		rec_result: result,
-		fetch_query: query,
-	} );
-}
-
-export function recordTrainTracksInteract( { railcarId, action }: TrainTracksInteractProps ) {
-	recordTracksEvent( 'calypso_traintracks_interact', {
-		railcar: railcarId,
-		action,
-	} );
-}
-
-export type RecordTrainTracksEventProps =
-	| Omit< TrainTracksRenderProps, 'uiAlgo' >
-	| TrainTracksInteractProps;
-
-export function recordTrainTracksEvent( uiAlgo: string, event: RecordTrainTracksEventProps ) {
-	if ( event.trainTracksType === 'render' ) {
-		recordTrainTracksRender( { ...event, uiAlgo } );
-	}
-	if ( event.trainTracksType === 'interact' ) {
-		recordTrainTracksInteract( event );
-	}
-}
-
-export function getNewRailcarId( suffix = 'suggestion' ) {
-	return `${ uuid().replace( /-/g, '' ) }-${ suffix }`;
 }
 
 /**

@@ -8,10 +8,14 @@ import { stringify } from 'qs';
 /**
  * Internal dependencies
  */
-import { recordTrack } from 'reader/stats';
-import { trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
-import AsyncLoad from 'components/async-load';
-import { SEARCH_TYPES } from 'reader/search-stream/search-stream-header';
+import { recordTrack } from 'calypso/reader/stats';
+import {
+	trackPageLoad,
+	trackUpdatesLoaded,
+	trackScrollPage,
+} from 'calypso/reader/controller-helper';
+import AsyncLoad from 'calypso/components/async-load';
+import { SEARCH_TYPES } from 'calypso/reader/search-stream/search-stream-header';
 
 const analyticsPageTitle = 'Reader';
 
@@ -26,9 +30,9 @@ function replaceSearchUrl( newValue, sort ) {
 
 const exported = {
 	search: function ( context, next ) {
-		const basePath = '/read/search',
-			fullAnalyticsPageTitle = analyticsPageTitle + ' > Search',
-			mcKey = 'search';
+		const basePath = '/read/search';
+		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Search';
+		const mcKey = 'search';
 
 		const { sort = 'relevance', q, show = SEARCH_TYPES.POSTS } = context.query;
 		const searchSlug = q;
@@ -64,7 +68,7 @@ const exported = {
 
 		context.primary = (
 			<AsyncLoad
-				require="reader/search-stream"
+				require="calypso/reader/search-stream"
 				key="search"
 				streamKey={ streamKey }
 				isSuggestion={ isQuerySuggestion }

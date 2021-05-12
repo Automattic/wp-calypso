@@ -24,7 +24,7 @@ jest.mock( 'i18n-calypso', () => ( {
 } ) );
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'Region Address Fieldsets', () => {
 	const defaultProps = {
@@ -33,6 +33,7 @@ describe( 'Region Address Fieldsets', () => {
 			name,
 		} ),
 		hasCountryStates: false,
+		translate: ( string ) => string,
 	};
 
 	const propsWithStates = {
@@ -41,6 +42,7 @@ describe( 'Region Address Fieldsets', () => {
 			name,
 		} ),
 		hasCountryStates: true,
+		translate: ( string ) => string,
 	};
 
 	test( 'should render `<UsAddressFieldset />` with default props', () => {

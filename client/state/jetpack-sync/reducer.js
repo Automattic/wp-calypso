@@ -2,12 +2,12 @@
  * External dependencis
  *
  */
-
 import { pick, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	JETPACK_SYNC_START_REQUEST,
 	JETPACK_SYNC_START_SUCCESS,
@@ -15,8 +15,8 @@ import {
 	JETPACK_SYNC_STATUS_REQUEST,
 	JETPACK_SYNC_STATUS_SUCCESS,
 	JETPACK_SYNC_STATUS_ERROR,
-} from 'state/action-types';
-import { combineReducers } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
 import { getExpectedResponseKeys } from './utils';
 
 export function fullSyncRequest( state = {}, action ) {
@@ -109,7 +109,9 @@ export function syncStatus( state = {}, action ) {
 	return state;
 }
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	syncStatus,
 	fullSyncRequest,
 } );
+
+export default withStorageKey( 'jetpackSync', combinedReducer );

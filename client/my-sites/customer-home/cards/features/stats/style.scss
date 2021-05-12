@@ -4,10 +4,6 @@
 	}
 }
 
-.customer-home__main .stats .card-heading {
-	margin-bottom: 4px;
-}
-
 .stats .chart {
 	margin: 0 -16px;
 
@@ -32,6 +28,10 @@
 		.chart__bars,
 		.chart__bar {
 			height: 150px;
+		}
+
+		.chart__empty {
+			text-align: center;
 		}
 	}
 }
@@ -95,7 +95,7 @@
 }
 
 .stats__data-label {
-	font-size: 14px;
+	font-size: $font-body-small;
 	color: var( --color-text-subtle );
 	margin-bottom: 4px;
 }
@@ -107,5 +107,5 @@
 }
 
 .stats__all {
-	font-size: 14px;
+	font-size: $font-body-small;
 }

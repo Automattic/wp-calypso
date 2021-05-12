@@ -9,8 +9,12 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { EMAIL_FORWARDING } from 'lib/url/support';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
+import { EMAIL_FORWARDING } from 'calypso/lib/url/support';
 
 class EmailForwardingDetails extends React.Component {
 	static propTypes = {

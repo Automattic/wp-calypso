@@ -9,8 +9,8 @@ import {
 	GUIDED_TRANSFER_STATUS_REQUEST,
 	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
 	GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { guidedTransferStatusSchema } from './schema';
 
 // Stores the status of guided transfers per site
@@ -27,7 +27,7 @@ export const status = withSchemaValidation( guidedTransferStatusSchema, ( state 
 } );
 
 // Tracks whether we're fetching the status of a guided transfer for a site
-export const isFetching = withoutPersistence( ( state = {}, action ) => {
+export const isFetching = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case GUIDED_TRANSFER_STATUS_REQUEST:
 			return {
@@ -47,10 +47,10 @@ export const isFetching = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 // Tracks whether we're fetching the status of a guided transfer for a site
-export const error = withoutPersistence( ( state = {}, action ) => {
+export const error = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case GUIDED_TRANSFER_HOST_DETAILS_SAVE:
 			return {
@@ -72,10 +72,10 @@ export const error = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 // Tracks whether we're saving host details on a guided transfer for a site
-export const isSaving = withoutPersistence( ( state = {}, action ) => {
+export const isSaving = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case GUIDED_TRANSFER_HOST_DETAILS_SAVE:
 			return {
@@ -95,7 +95,7 @@ export const isSaving = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	error,

@@ -27,7 +27,7 @@
 }
 
 .app-banner__copy {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	font-weight: 400;
 }
 
@@ -48,6 +48,6 @@
 	padding: 7px 0 9px 14px;
 	text-decoration: none;
 	font-weight: 600;
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 24px;
 }

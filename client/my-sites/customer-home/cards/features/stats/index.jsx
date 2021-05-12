@@ -3,7 +3,7 @@
  */
 import React, { useEffect } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import i18nCalypso, { numberFormat, useTranslate } from 'i18n-calypso';
 import { Card } from '@automattic/components';
 import { times } from 'lodash';
 import moment from 'moment';
@@ -11,23 +11,24 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import CardHeading from 'components/card-heading';
-import Chart from 'components/chart';
-import Spinner from 'components/spinner';
-import QuerySiteStats from 'components/data/query-site-stats';
-import InlineSupportLink from 'components/inline-support-link';
-import { localizeUrl } from 'lib/i18n-utils';
-import { buildChartData } from 'my-sites/stats/stats-chart-tabs/utility';
-import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
-import { getSiteOption } from 'state/sites/selectors';
-import { requestChartCounts } from 'state/stats/chart-tabs/actions';
-import { getCountRecords, getLoadingTabs } from 'state/stats/chart-tabs/selectors';
+import CardHeading from 'calypso/components/card-heading';
+import Chart from 'calypso/components/chart';
+import Spinner from 'calypso/components/spinner';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { preventWidows } from 'calypso/lib/formatting';
+import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import { getSiteOption } from 'calypso/state/sites/selectors';
+import { requestChartCounts } from 'calypso/state/stats/chart-tabs/actions';
+import { getCountRecords, getLoadingTabs } from 'calypso/state/stats/chart-tabs/selectors';
 import {
 	getMostPopularDatetime,
 	getTopPostAndPage,
 	isRequestingSiteStatsForQuery,
-} from 'state/stats/lists/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+} from 'calypso/state/stats/lists/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 /**
  * Style dependencies
@@ -46,6 +47,7 @@ export const StatsV2 = ( {
 	isSiteUnlaunched,
 	mostPopularDay,
 	mostPopularTime,
+	siteCreatedAt,
 	siteId,
 	siteSlug,
 	topPage,
@@ -68,6 +70,25 @@ export const StatsV2 = ( {
 		}
 	}, [ isSiteUnlaunched ] );
 
+	const newSiteCopy =
+		[ 'en', 'en-gb' ].includes( i18nCalypso.getLocaleSlug() ) ||
+		i18nCalypso.hasTranslation(
+			'No stats to display yet. Publish or share a post to get some traffic to your site.'
+		)
+			? preventWidows(
+					translate(
+						'No stats to display yet. Publish or share a post to get some traffic to your site.'
+					),
+					4
+			  )
+			: translate( "No traffic yet, but you'll get there!" );
+
+	const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
+	const siteOlderThanAWeek = Date.now() - new Date( siteCreatedAt ).getTime() > WEEK_IN_MS;
+	const statsPlaceholderMessage = siteOlderThanAWeek
+		? translate( "No traffic this week, but don't give up!" )
+		: newSiteCopy;
+
 	return (
 		<div className="stats">
 			{ ! isSiteUnlaunched && (
@@ -76,9 +97,7 @@ export const StatsV2 = ( {
 					<QuerySiteStats siteId={ siteId } statType="statsTopPosts" query={ topPostsQuery } />
 				</>
 			) }
-			<h2 className="stats__heading customer-home__section-heading">
-				{ translate( 'Stats at a glance' ) }
-			</h2>
+
 			<Card>
 				{ isSiteUnlaunched && (
 					<Chart data={ placeholderChartData } isPlaceholder>
@@ -88,17 +107,18 @@ export const StatsV2 = ( {
 								supportPostId={ 4454 }
 								supportLink={ localizeUrl( 'https://wordpress.com/support/stats/' ) }
 								showIcon={ false }
-								text={ translate( 'Learn about stats.' ) }
 								tracksEvent="calypso_customer_home_stats_support_page_view"
 								statsGroup="calypso_customer_home"
 								statsName="stats_learn_more"
-							/>
+							>
+								{ preventWidows( translate( 'Learn about stats.' ) ) }
+							</InlineSupportLink>
 						</div>
 					</Chart>
 				) }
 				{ ! isSiteUnlaunched && ( isLoading || views === 0 ) && (
 					<Chart data={ placeholderChartData } isPlaceholder>
-						{ isLoading ? <Spinner /> : translate( "No traffic this week, but don't give up!" ) }
+						{ isLoading ? <Spinner /> : statsPlaceholderMessage }
 					</Chart>
 				) }
 				{ ! isSiteUnlaunched && ! isLoading && views === 0 && (
@@ -114,11 +134,12 @@ export const StatsV2 = ( {
 								supportPostId={ 4454 }
 								supportLink={ localizeUrl( 'https://wordpress.com/support/stats/' ) }
 								showIcon={ false }
-								text={ translate( 'Read more.' ) }
 								tracksEvent="calypso_customer_home_stats_support_page_view"
 								statsGroup="calypso_customer_home"
 								statsName="stats_learn_more"
-							/>
+							>
+								{ translate( 'Read more.' ) }
+							</InlineSupportLink>
 						</div>
 					</div>
 				) }
@@ -256,6 +277,7 @@ const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
 	const isSiteUnlaunched = isUnlaunchedSite( state, siteId );
+	const siteCreatedAt = getSiteOption( state, siteId, 'created_at' );
 
 	const { chartQuery, insightsQuery, topPostsQuery, visitsQuery } = getStatsQueries(
 		state,
@@ -282,6 +304,7 @@ const mapStateToProps = ( state ) => {
 		insightsQuery,
 		isLoading: canShowStatsData ? statsData.chartData.length !== chartQuery.quantity : isLoading,
 		isSiteUnlaunched,
+		siteCreatedAt,
 		siteId,
 		siteSlug,
 		topPostsQuery,

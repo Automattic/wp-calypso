@@ -1,14 +1,7 @@
 /**
- * External dependencies
- */
-import { flow } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import { getTermIdsFromEdits } from 'state/posts/utils/get-term-ids-from-edits';
-
-const normalizeEditedFlow = flow( [ getTermIdsFromEdits ] );
+import { getTermIdsFromEdits } from 'calypso/state/posts/utils/get-term-ids-from-edits';
 
 /**
  * Given a post object, returns a normalized post object
@@ -21,5 +14,5 @@ export function normalizePostForEditing( post ) {
 		return null;
 	}
 
-	return normalizeEditedFlow( post );
+	return getTermIdsFromEdits( post );
 }

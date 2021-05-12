@@ -1,13 +1,12 @@
-Sites
-=====
+# Sites
 
-This module is used to manage data and requests to/from the WooCommerce API. 
+This module is used to manage data and requests to/from the WooCommerce API.
 
 ## Reducer structure
 
 ```js
-{
-	[siteId]: {
+const objects = {
+	[ siteId ]: {
 		paymentMethods: {},
 		productCategories: {},
 		products: {},
@@ -18,8 +17,8 @@ This module is used to manage data and requests to/from the WooCommerce API.
 		shippingMethods: {},
 		shippingZoneMethods: {},
 		shippingZones: {},
-	}
-}
+	},
+};
 ```
 
 - [paymentMethods](payment-methods/README.md)

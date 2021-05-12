@@ -8,14 +8,14 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from '@automattic/calypso-config';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
+import HandleEmailedLinkFormJetpackConnect from './magic-login/handle-emailed-link-form-jetpack-connect';
 import MagicLogin from './magic-login';
 import WPLogin from './wp-login';
-import { getUrlParts } from 'lib/url';
-import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
-import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
-import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
+import { getUrlParts } from '@automattic/calypso-url';
+import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
+import { getCurrentUser, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
 const enhanceContextWithLogin = ( context ) => {
 	const {
@@ -33,7 +33,7 @@ const enhanceContextWithLogin = ( context ) => {
 	context.primary = (
 		<WPLogin
 			isJetpack={ isJetpack === 'jetpack' }
-			isGutenboarding={ isGutenboarding === GUTENBOARDING_BASE_NAME }
+			isGutenboarding={ isGutenboarding === 'new' }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }
 			socialService={ socialService }
@@ -96,6 +96,13 @@ export function magicLogin( context, next ) {
 	next();
 }
 
+function getHandleEmailedLinkFormComponent( flow ) {
+	if ( flow === 'jetpack' && config.isEnabled( 'jetpack/magic-link-signup' ) ) {
+		return HandleEmailedLinkFormJetpackConnect;
+	}
+	return HandleEmailedLinkForm;
+}
+
 export function magicLoginUse( context, next ) {
 	/**
 	 * Pull the query arguments out of the URL & into the state.
@@ -109,10 +116,14 @@ export function magicLoginUse( context, next ) {
 
 	const previousQuery = context.state || {};
 
-	const { client_id, email, token } = previousQuery;
+	const { client_id, email, redirect_to, token } = previousQuery;
+
+	const flow = includes( redirect_to, 'jetpack/connect' ) ? 'jetpack' : null;
+
+	const PrimaryComponent = getHandleEmailedLinkFormComponent( flow );
 
 	context.primary = (
-		<HandleEmailedLinkForm clientId={ client_id } emailAddress={ email } token={ token } />
+		<PrimaryComponent clientId={ client_id } emailAddress={ email } token={ token } />
 	);
 
 	next();
@@ -150,15 +161,21 @@ export function redirectJetpack( context, next ) {
 	const { isJetpack } = context.params;
 	const { redirect_to } = context.query;
 
+	const isUserComingFromPricingPage =
+		includes( redirect_to, 'source=jetpack-plans' ) ||
+		includes( redirect_to, 'source=jetpack-connect-plans' );
 	/**
-	 * Send arrivals from the jetpack connect process (when site user email matches
-	 * a wpcom account) to the jetpack branded login.
+	 * Send arrivals from the jetpack connect process or jetpack's pricing page
+	 * (when site user email matches a wpcom account) to the jetpack branded login.
 	 *
 	 * A direct redirect to /log-in/jetpack is not currently done at jetpack.wordpress.com
 	 * because the iOS app relies on seeing a request to /log-in$ to show its
 	 * native credentials form.
 	 */
-	if ( isJetpack !== 'jetpack' && includes( redirect_to, 'jetpack/connect' ) ) {
+	if (
+		isJetpack !== 'jetpack' &&
+		( includes( redirect_to, 'jetpack/connect' ) || isUserComingFromPricingPage )
+	) {
 		return context.redirect( context.path.replace( 'log-in', 'log-in/jetpack' ) );
 	}
 	next();

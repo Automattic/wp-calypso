@@ -16,9 +16,9 @@ import { Card } from '@automattic/components';
 import CurrentThemeButton from './button';
 import { connectOptions } from '../theme-options';
 import { trackClick } from '../helpers';
-import { getActiveTheme, getCanonicalTheme } from 'state/themes/selectors';
-import QueryActiveTheme from 'components/data/query-active-theme';
-import QueryCanonicalTheme from 'components/data/query-canonical-theme';
+import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
+import QueryActiveTheme from 'calypso/components/data/query-active-theme';
+import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 
 /**
  * Style dependencies
@@ -46,9 +46,9 @@ class CurrentTheme extends Component {
 	trackClick = ( event ) => trackClick( 'current theme', event );
 
 	render() {
-		const { currentTheme, currentThemeId, siteId, translate } = this.props,
-			placeholderText = <span className="current-theme__placeholder">loading...</span>,
-			text = currentTheme && currentTheme.name ? currentTheme.name : placeholderText;
+		const { currentTheme, currentThemeId, siteId, translate } = this.props;
+		const placeholderText = <span className="current-theme__placeholder">loading...</span>;
+		const text = currentTheme && currentTheme.name ? currentTheme.name : placeholderText;
 
 		const options = pickBy(
 			this.props.options,

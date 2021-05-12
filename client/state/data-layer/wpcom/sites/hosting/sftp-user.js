@@ -7,16 +7,16 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import {
 	HOSTING_SFTP_USERS_REQUEST,
 	HOSTING_SFTP_USER_CREATE,
 	HOSTING_SFTP_PASSWORD_RESET,
-} from 'state/action-types';
-import { errorNotice } from 'state/notices/actions';
-import { updateAtomicSftpUser, setAtomicSftpUsers } from 'state/hosting/actions';
+} from 'calypso/state/action-types';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { updateAtomicSftpUser, setAtomicSftpUsers } from 'calypso/state/hosting/actions';
 
 const requestAtomicSftpUsers = ( action ) => {
 	return http(

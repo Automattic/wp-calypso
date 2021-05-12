@@ -6,7 +6,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import getGeoLocation from 'state/happychat/selectors/get-geolocation';
+import getGeoLocation from 'calypso/state/happychat/selectors/get-geolocation';
 
 export default ( state ) => ( { site, howCanWeHelp, howYouFeel } ) => {
 	const info = {

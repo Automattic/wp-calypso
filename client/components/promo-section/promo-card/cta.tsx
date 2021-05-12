@@ -5,27 +5,28 @@
 import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 import { partialRight } from 'lodash';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import ActionPanelCta from 'components/action-panel/cta';
-import { hasFeature } from 'state/sites/plans/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { URL } from 'types';
-import { localizeUrl } from 'lib/i18n-utils';
+import ActionPanelCta from 'calypso/components/action-panel/cta';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { URL } from 'calypso/types';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 type ClickCallback = () => void;
 
 interface CtaAction {
 	url: URL;
 	onClick: ClickCallback;
+	selfTarget?: boolean;
 }
 
 export interface CtaButton {
-	text: string;
+	text: string | TranslateResult;
 	action: URL | ClickCallback | CtaAction;
 	component?: JSX.Element;
 }
@@ -62,13 +63,20 @@ function buttonProps( button: CtaButton, isPrimary: boolean ) {
 		? {
 				href: button.action.url,
 				onClick: button.action.onClick,
+				selfTarget: button.action.selfTarget,
 		  }
 		: {
 				[ typeof button.action === 'string' ? 'href' : 'onClick' ]: button.action,
 		  };
-	if ( undefined !== actionProps.href ) {
+
+	if ( undefined !== actionProps.href && ! actionProps.selfTarget ) {
 		actionProps.target = '_blank';
 	}
+	// React doesn't recognize `selfTarget` as a valid prop of a DOM element. Removing it prevents a warning in the console.
+	if ( 'selfTarget' in actionProps ) {
+		delete actionProps.selfTarget;
+	}
+
 	return {
 		className: 'promo-card__cta-button',
 		primary: isPrimary,

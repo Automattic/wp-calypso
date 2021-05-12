@@ -177,7 +177,7 @@
 .editor-media-modal-detail__file-info th {
 	color: var( --color-neutral-light );
 	display: block;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	margin-bottom: 4px;
 	text-transform: uppercase;
 }
@@ -194,6 +194,10 @@
 
 	span {
 		display: block;
+
+		&.clipboard-button-input {
+			width: inherit;
+		}
 	}
 }
 

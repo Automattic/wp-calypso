@@ -11,9 +11,9 @@ import { debounce } from 'lodash';
 /**
  * Internal Dependencies
  */
-import SelectDropdown from 'components/select-dropdown';
-import afterLayoutFlush from 'lib/after-layout-flush';
-import TranslatableString from 'components/translatable/proptype';
+import SelectDropdown from 'calypso/components/select-dropdown';
+import afterLayoutFlush from 'calypso/lib/after-layout-flush';
+import TranslatableString from 'calypso/components/translatable/proptype';
 
 /**
  * Style dependencies

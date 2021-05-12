@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
+import FormLabel from 'calypso/components/forms/form-label';
 
 const RelatedContentPreview = ( { showHeadline, showThumbnails, translate } ) => {
 	const posts = [

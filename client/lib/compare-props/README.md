@@ -27,11 +27,11 @@ const comparator = compareProps( { ignore: [ 'irrelevant' ] } );
 comparator(
 	{
 		a: 1,
-		irrelevant: 'whatever1'
+		irrelevant: 'whatever1',
 	},
 	{
 		a: 1,
-		irrelevant: 'whatever2'
+		irrelevant: 'whatever2',
 	}
 );
 ```
@@ -48,11 +48,11 @@ const comparator = compareProps( { deep: [ 'query' ] } );
 comparator(
 	{
 		query: { text: 'plugin' },
-		page: 2
+		page: 2,
 	},
 	{
 		query: { text: 'plugin' },
-		page: 2
+		page: 2,
 	}
 );
 ```
@@ -71,11 +71,11 @@ const comparator = compareProps( { shallow: [ 'id' ] } );
 comparator(
 	{
 		id: 1,
-		is_jetpack: true
+		is_jetpack: true,
 	},
 	{
 		id: 1,
-	  is_domain_only: true
+		is_domain_only: true,
 	}
 );
 ```

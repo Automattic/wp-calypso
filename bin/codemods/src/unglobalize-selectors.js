@@ -1,5 +1,12 @@
-import config from './config';
+/**
+ * External dependencies
+ */
 import { kebabCase } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import config from './config';
 
 export default function transformer( file, api ) {
 	const j = api.jscodeshift;

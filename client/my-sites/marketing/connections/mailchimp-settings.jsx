@@ -4,21 +4,23 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, isArray } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { requestSettingsUpdate } from 'state/mailchimp/settings/actions';
-import QueryMailchimpLists from 'components/data/query-mailchimp-lists';
-import QueryMailchimpSettings from 'components/data/query-mailchimp-settings';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { isJetpackSite } from 'state/sites/selectors';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import getJetpackConnectionStatus from 'state/selectors/get-jetpack-connection-status';
-import { localizeUrl } from 'lib/i18n-utils';
+import FormSelect from 'calypso/components/forms/form-select';
+import { requestSettingsUpdate } from 'calypso/state/mailchimp/settings/actions';
+import QueryMailchimpLists from 'calypso/components/data/query-mailchimp-lists';
+import QueryMailchimpSettings from 'calypso/components/data/query-mailchimp-settings';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getAllLists } from 'calypso/state/mailchimp/lists/selectors';
+import { getListId } from 'calypso/state/mailchimp/settings/selectors';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
+import getJetpackConnectionStatus from 'calypso/state/selectors/get-jetpack-connection-status';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 const MailchimpSettings = ( {
 	siteId,
@@ -89,13 +91,12 @@ const MailchimpSettings = ( {
 		);
 	}
 
-	/* eslint-disable jsx-a11y/no-onchange */
 	return (
 		<div>
 			<QueryMailchimpLists siteId={ siteId } />
 			<QueryMailchimpSettings siteId={ siteId } />
 			<p>{ translate( 'What Mailchimp list should subscribers be added to?' ) }</p>
-			{ isArray( mailchimpLists ) && mailchimpLists.length === 0 && (
+			{ Array.isArray( mailchimpLists ) && mailchimpLists.length === 0 && (
 				<Notice
 					status="is-info"
 					text={ translate(
@@ -115,7 +116,7 @@ const MailchimpSettings = ( {
 					showDismiss={ false }
 				/>
 			) }
-			<select value={ mailchimpListId } onChange={ chooseMailchimpList }>
+			<FormSelect value={ mailchimpListId } onChange={ chooseMailchimpList }>
 				<option key="none" value={ 0 }>
 					{ translate( 'Do not save subscribers to Mailchimp for this site' ) }
 				</option>
@@ -125,11 +126,10 @@ const MailchimpSettings = ( {
 							{ list.name }
 						</option>
 					) ) }
-			</select>
+			</FormSelect>
 			{ common }
 		</div>
 	);
-	/* eslint-enable jsx-a11y/no-onchange */
 };
 
 export const renderMailchimpLogo = () => (
@@ -157,12 +157,8 @@ export default connect(
 			siteId,
 			isJetpack,
 			isJetpackConnectionBroken: isJetpack && getJetpackConnectionStatus( state, siteId ) === false,
-			mailchimpLists: get( state, [ 'mailchimp', 'lists', 'items', siteId ], null ),
-			mailchimpListId: get(
-				state,
-				[ 'mailchimp', 'settings', 'items', siteId, 'follower_list_id' ],
-				0
-			),
+			mailchimpLists: getAllLists( state, siteId ),
+			mailchimpListId: getListId( state, siteId ),
 		};
 	},
 	{

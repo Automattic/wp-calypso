@@ -4,7 +4,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import config from 'config';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -16,17 +16,19 @@ import {
 	isPremiumPlan,
 	isBusinessPlan,
 	isEcommercePlan,
-} from 'lib/plans';
-import Banner from 'components/banner';
-import { GROUP_JETPACK, GROUP_WPCOM, FEATURE_NO_ADS } from 'lib/plans/constants';
-import { addQueryArgs } from 'lib/url';
-import { hasFeature } from 'state/sites/plans/selectors';
-import { isFreePlan } from 'lib/products-values';
-import canCurrentUser from 'state/selectors/can-current-user';
-import isVipSite from 'state/selectors/is-vip-site';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSite, isJetpackSite } from 'state/sites/selectors';
-import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+	GROUP_JETPACK,
+	GROUP_WPCOM,
+	FEATURE_NO_ADS,
+	isFreePlanProduct,
+} from '@automattic/calypso-products';
+import Banner from 'calypso/components/banner';
+import { addQueryArgs } from 'calypso/lib/url';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 /**
  * Style dependencies
@@ -79,7 +81,7 @@ export const UpsellNudge = ( {
 		typeof site !== 'object' ||
 		typeof site.jetpack !== 'boolean' ||
 		( feature && planHasFeature ) ||
-		( ! feature && ! isFreePlan( site.plan ) ) ||
+		( ! feature && ! isFreePlanProduct( site.plan ) ) ||
 		( feature === FEATURE_NO_ADS && site.options.wordads ) ||
 		( ! jetpack && site.jetpack ) ||
 		( jetpack && ! site.jetpack );

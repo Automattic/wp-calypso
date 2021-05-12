@@ -2,10 +2,10 @@
  * Internal dependencies
  */
 import { bypassDataLayer } from './utils';
-import { getHandlers, registerHandlers } from 'state/data-layer/handler-registry';
+import { getHandlers, registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import wpcomHttpHandlers from './wpcom-http';
 import httpData from './http-data';
-import httpHandlers from 'state/http';
+import httpHandlers from 'calypso/state/http';
 
 registerHandlers( 'declarative resource loader', httpData );
 registerHandlers( 'raw HTTP request loader', httpHandlers );

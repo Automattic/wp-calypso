@@ -10,22 +10,21 @@ import React from 'react';
  * Internal dependencies
  */
 import EmailForwardingLimit from './email-forwarding-limit';
-import { validateAllFields } from 'lib/domains/email-forwarding';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import FormInputValidation from 'components/forms/form-input-validation';
-import formState from 'lib/form-state';
-import { addEmailForward } from 'state/email-forwarding/actions';
+import { validateAllFields } from 'calypso/lib/domains/email-forwarding';
+import FormButton from 'calypso/components/forms/form-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import formState from 'calypso/lib/form-state';
+import { addEmailForward } from 'calypso/state/email-forwarding/actions';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
+} from 'calypso/state/analytics/actions';
 
 class EmailForwardingAddNew extends React.Component {
 	static propTypes = {
@@ -145,10 +144,10 @@ class EmailForwardingAddNew extends React.Component {
 
 	formFooter() {
 		return (
-			<FormFooter>
+			<div>
 				{ this.addButton() }
 				{ this.cancelButton() }
-			</FormFooter>
+			</div>
 		);
 	}
 
@@ -157,17 +156,17 @@ class EmailForwardingAddNew extends React.Component {
 			return null;
 		}
 
-		const { translate, selectedDomainName } = this.props,
-			contactText = translate( 'contact', {
-				context: 'part of e-mail address',
-				comment: 'As it would be part of an e-mail address contact@example.com',
-			} ),
-			exampleEmailText = translate( 'e.g. %(example)s', {
-				args: { example: contactText },
-			} ),
-			isValidMailbox = this.isValid( 'mailbox' ),
-			isValidDestination = this.isValid( 'destination' ),
-			{ mailbox, destination } = formState.getAllFieldValues( this.state.fields );
+		const { translate, selectedDomainName } = this.props;
+		const contactText = translate( 'contact', {
+			context: 'part of e-mail address',
+			comment: 'As it would be part of an e-mail address contact@example.com',
+		} );
+		const exampleEmailText = translate( 'e.g. %(example)s', {
+			args: { example: contactText },
+		} );
+		const isValidMailbox = this.isValid( 'mailbox' );
+		const isValidDestination = this.isValid( 'destination' );
+		const { mailbox, destination } = formState.getAllFieldValues( this.state.fields );
 
 		return (
 			<div className="email-forwarding__form-content">
@@ -180,7 +179,6 @@ class EmailForwardingAddNew extends React.Component {
 						onFocus={ this.mailboxFieldFocus }
 						isError={ ! isValidMailbox }
 						placeholder={ exampleEmailText }
-						type="text"
 						suffix={ '@' + selectedDomainName }
 						value={ mailbox }
 					/>
@@ -201,7 +199,6 @@ class EmailForwardingAddNew extends React.Component {
 						onFocus={ this.destinationFieldFocus }
 						isError={ ! isValidDestination }
 						placeholder={ translate( 'Your Existing Email Address' ) }
-						type="text"
 						value={ destination }
 					/>
 					{ ! isValidDestination && (

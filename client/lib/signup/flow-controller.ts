@@ -22,20 +22,24 @@ import { Store, Unsubscribe as ReduxUnsubscribe } from 'redux';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import flows from 'signup/config/flows';
-import untypedSteps from 'signup/config/steps';
-import wpcom from 'lib/wp';
-import { getStepUrl } from 'signup/utils';
-import { isUserLoggedIn } from 'state/current-user/selectors';
-import { ProgressState } from 'state/signup/progress/schema';
-import { getSignupProgress } from 'state/signup/progress/selectors';
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
-import { resetSignup, updateDependencies } from 'state/signup/actions';
-import { completeSignupStep, invalidateStep, processStep } from 'state/signup/progress/actions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import flows from 'calypso/signup/config/flows';
+import untypedSteps from 'calypso/signup/config/steps';
+import wpcom from 'calypso/lib/wp';
+import { getStepUrl } from 'calypso/signup/utils';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { ProgressState } from 'calypso/state/signup/progress/schema';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { resetSignup, updateDependencies } from 'calypso/state/signup/actions';
+import {
+	completeSignupStep,
+	invalidateStep,
+	processStep,
+} from 'calypso/state/signup/progress/actions';
 
 interface Dependencies {
-	[ other: string ]: any;
+	[ other: string ]: string[];
 }
 
 interface Flow {
@@ -46,7 +50,7 @@ interface Flow {
 
 interface Step {
 	apiRequestFunction?: (
-		callback: ( errors: any, providedDependencies: Dependencies ) => void,
+		callback: ( errors: Record< string, string >[], providedDependencies: Dependencies ) => void,
 		dependenciesFound: Dependencies,
 		step: Step,
 		reduxStore: Store
@@ -58,6 +62,7 @@ interface Step {
 	optionalDependencies?: string[];
 	providesToken?: boolean;
 	stepName: string;
+	allowUnauthenticated?: boolean;
 }
 
 const steps: Record< string, Step > = untypedSteps;
@@ -119,7 +124,7 @@ export default class SignupFlowController {
 		this._resetStoresIfProcessing(); // reset the stores if the cached progress contained a processing step
 		this._resetStoresIfUserHasLoggedIn(); // reset the stores if user has newly authenticated
 
-		if ( this._flow.providesDependenciesInQuery ) {
+		if ( this._flow.providesDependenciesInQuery || options.providedDependencies ) {
 			this._assertFlowProvidedDependenciesFromConfig( options.providedDependencies );
 			this._reduxStore.dispatch( updateDependencies( options.providedDependencies ) );
 		} else {
@@ -277,10 +282,15 @@ export default class SignupFlowController {
 		);
 		const allStepsSubmitted =
 			reject( signupProgress, { status: 'in-progress' } ).length === currentSteps.length;
+		const allowUnauthenticated = get(
+			getSignupDependencyStore( this._reduxStore.getState() ),
+			'allowUnauthenticated',
+			false
+		);
 
 		return (
 			dependenciesSatisfied &&
-			( providesToken || this._canMakeAuthenticatedRequests() ) &&
+			( allowUnauthenticated || providesToken || this._canMakeAuthenticatedRequests() ) &&
 			( ! steps[ step.stepName ].delayApiRequestUntilComplete || allStepsSubmitted )
 		);
 	}
@@ -297,23 +307,6 @@ export default class SignupFlowController {
 			getSignupDependencyStore( this._reduxStore.getState() ),
 			dependencies
 		);
-
-		/*
-			AB Test: passwordlessSignup
-
-			`isPasswordlessSignupForm` is set by the PasswordlessSignupForm.
-
-			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow.
-			For passwordless signups, the API call has already occurred in the PasswordlessSignupForm, so here it is skipped.
-		*/
-		if ( get( step, 'isPasswordlessSignupForm' ) ) {
-			this._processingSteps.delete( step.stepName );
-			recordTracksEvent( 'calypso_signup_actions_complete_step', {
-				step: step.stepName,
-			} );
-			this._reduxStore.dispatch( completeSignupStep( step, dependenciesFound ) );
-			return;
-		}
 
 		// deferred because a step can be processed as soon as it is submitted
 		defer( () => {

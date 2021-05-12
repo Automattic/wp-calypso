@@ -1,5 +1,5 @@
 /**
- * Module dependencies
+ * External dependencies
  */
 import qs from 'qs';
 import debugFactory from 'debug';

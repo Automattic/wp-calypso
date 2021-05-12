@@ -1,5 +1,4 @@
 .theme-download-card {
-
 	text-align: center;
 
 	.gridicon {
@@ -19,11 +18,9 @@
 			text-decoration: underline;
 		}
 	}
-
 }
 
 @include breakpoint-deprecated( '>1040px' ) {
-
 	.theme-download-card {
 		text-align: inherit;
 
@@ -46,5 +43,4 @@
 			margin: 0 122px 0 71px;
 		}
 	}
-
 }

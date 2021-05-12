@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { equal, ok, deepStrictEqual } from 'assert';
-import { groupBy, pickBy, forIn } from 'lodash';
+import { groupBy, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,8 +24,6 @@ import {
 	getUpdatedCursorPosition,
 } from '../phone-number';
 
-/* eslint-disable jest/expect-expect */
-
 describe( 'metadata:', () => {
 	describe( 'data assertions:', () => {
 		const countriesShareDialCode = pickBy(
@@ -34,9 +32,10 @@ describe( 'metadata:', () => {
 		);
 
 		describe( 'countries sharing dial code should have priority data', () => {
-			forIn( countriesShareDialCode, ( countriesWithDialCode, dialCode ) => {
+			Object.entries( countriesShareDialCode ).map( ( [ dialCode, countriesWithDialCode ] ) => {
 				describe( 'Dialcode: ' + dialCode, () => {
 					countriesWithDialCode.forEach( ( country ) =>
+						// eslint-disable-next-line jest/valid-title
 						test( country.isoCode, () =>
 							ok( country.priority, `"${ country.isoCode }" has no priority` )
 						)

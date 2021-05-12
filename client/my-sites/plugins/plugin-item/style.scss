@@ -48,12 +48,13 @@
 }
 
 // Checkbox for multiselect purposes
-.plugin-item__checkbox[type=checkbox] {
+.plugin-item__checkbox[type='checkbox'] {
 	position: absolute;
 	top: 50%;
 	margin-top: -8px;
 
-	&::after { // Making tap area larger
+	&::after {
+		// Making tap area larger
 		content: '';
 		position: absolute;
 		top: -20px;
@@ -84,7 +85,7 @@
 .plugin-item__title {
 	color: var( --color-neutral-70 );
 	display: block;
-	font-size: 15px;
+	font-size: $font-body;
 	font-weight: 600;
 	margin-top: 3px;
 	overflow: hidden;
@@ -112,7 +113,7 @@
 }
 
 .plugin-item__count {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	line-height: 18px;
 	color: var( --color-text-subtle );
 }
@@ -140,7 +141,7 @@
 
 .plugin-item__last-updated {
 	color: var( --color-text-subtle );
-	font-size: 13px;
+	font-size: $font-body-small;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -173,31 +174,21 @@
 	}
 }
 
-.plugin-item .plugin-action .form-toggle__label {
-	@include breakpoint-deprecated( '>1040px' ) {
-		flex-direction: row;
-	}
-}
-
-.plugin-item .form-toggle__label .form-toggle__label-content {
-	@include breakpoint-deprecated( '>1040px' ) {
-		margin-right: 12px;
-		margin-left: 0;
-	}
-}
-
-.plugin-item .plugin-activate-toggle__link,
 .plugin-item .plugin-activate-toggle__disabled {
 	@include breakpoint-deprecated( '>1040px' ) {
 		flex-direction: row;
-		margin-right: 12px;
+	}
+}
+
+.plugin-item .plugin-activate-toggle__link {
+	@include breakpoint-deprecated( '>1040px' ) {
+		flex-direction: row-reverse;
 	}
 }
 
 .plugin-item .plugin-activate-toggle__label {
 	@include breakpoint-deprecated( '>1040px' ) {
-		margin-left: 8px;
-		margin-right: 0;
+		margin-right: 8px;
 	}
 }
 

@@ -6,18 +6,33 @@ import { groupBy } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { isPaymentAgreement, isCreditCard } from 'lib/checkout/payment-methods';
+import { isPaymentAgreement, isCreditCard } from 'calypso/lib/checkout/payment-methods';
+
+import 'calypso/state/stored-cards/init';
 
 /**
  * Return user's stored cards from state object
  *
+ * @param {object} state - current state object
+ * @returns {Array} Stored Cards
+ */
+export const getStoredCards = ( state ) =>
+	( state.storedCards?.items ?? [] )
+		.filter( ( method ) => isCreditCard( method ) )
+		.filter( ( method ) => ! method.is_expired )
+		.map( ( card ) => ( {
+			...card,
+			allStoredDetailsIds: [ card.stored_details_id ],
+		} ) );
+
+/**
+ * Return user's stored cards including expired cards
  *
  * @param {object} state - current state object
  * @returns {Array} Stored Cards
  */
-
-export const getStoredCards = ( state ) =>
-	state.storedCards.items
+export const getAllStoredCards = ( state ) =>
+	( state.storedCards?.items ?? [] )
 		.filter( ( method ) => isCreditCard( method ) )
 		.map( ( card ) => ( {
 			...card,
@@ -32,7 +47,7 @@ export const getStoredCards = ( state ) =>
  * @returns {Array} Stored Payment Agreements
  */
 export const getStoredPaymentAgreements = ( state ) =>
-	state.storedCards.items
+	( state.storedCards?.items ?? [] )
 		.filter( ( stored ) => isPaymentAgreement( stored ) )
 		.map( ( method ) => ( {
 			...method,
@@ -71,8 +86,9 @@ export const getStoredCardById = ( state, cardId ) =>
 		.filter( ( card ) => card.stored_details_id === cardId )
 		.shift();
 
-export const hasLoadedStoredCardsFromServer = ( state ) => state.storedCards.hasLoadedFromServer;
+export const hasLoadedStoredCardsFromServer = ( state ) =>
+	Boolean( state.storedCards?.hasLoadedFromServer );
 
 export const isDeletingStoredCard = ( state, cardId ) =>
-	Boolean( state.storedCards.isDeleting[ cardId ] );
-export const isFetchingStoredCards = ( state ) => state.storedCards.isFetching;
+	Boolean( state.storedCards?.isDeleting[ cardId ] );
+export const isFetchingStoredCards = ( state ) => Boolean( state.storedCards?.isFetching );

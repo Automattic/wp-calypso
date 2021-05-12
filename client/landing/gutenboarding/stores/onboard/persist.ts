@@ -1,5 +1,6 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
-import createPersistenceConfig from '../persistence-config';
-export default createPersistenceConfig( 'WP_ONBOARD' );
+import { persistenceConfigFactory } from '@automattic/data-stores';
+
+export default persistenceConfigFactory( 'WP_ONBOARD' );

@@ -11,25 +11,25 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import StatsNavigation from 'blocks/stats-navigation';
-import DocumentHead from 'components/data/document-head';
-import Gridicon from 'components/gridicon';
-import { withLocalizedMoment } from 'components/localized-moment';
-import Main from 'components/main';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import QueryKeyringConnections from 'components/data/query-keyring-connections';
-import QueryKeyringServices from 'components/data/query-keyring-services';
-import QuerySiteKeyrings from 'components/data/query-site-keyrings';
-import { CALYPSO_CONTACT } from 'lib/url/support';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
-import GoogleMyBusinessStatsChart from 'my-sites/google-my-business/stats/chart';
-import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
-import getGoogleMyBusinessConnectedLocation from 'state/selectors/get-google-my-business-connected-location';
-import { withEnhancers } from 'state/utils';
+import StatsNavigation from 'calypso/blocks/stats-navigation';
+import DocumentHead from 'calypso/components/data/document-head';
+import Gridicon from 'calypso/components/gridicon';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
+import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
+import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import GoogleMyBusinessLocation from 'calypso/my-sites/google-my-business/location';
+import GoogleMyBusinessStatsChart from 'calypso/my-sites/google-my-business/stats/chart';
+import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getGoogleMyBusinessConnectedLocation from 'calypso/state/selectors/get-google-my-business-connected-location';
+import { withEnhancers } from 'calypso/state/utils';
 
 /**
  * Style dependencies

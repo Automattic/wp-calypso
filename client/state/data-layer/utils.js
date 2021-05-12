@@ -1,21 +1,8 @@
 /**
  * External dependencies
  */
-import {
-	camelCase,
-	isArray,
-	isObjectLike,
-	isPlainObject,
-	map,
-	reduce,
-	set,
-	snakeCase,
-} from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { extendAction } from 'state/utils';
+import { camelCase, isPlainObject, map, reduce, set, snakeCase } from 'lodash';
+import { extendAction } from '@automattic/state-utils';
 
 const doBypassDataLayer = {
 	meta: {
@@ -35,7 +22,7 @@ export const bypassDataLayer = ( action ) => extendAction( action, doBypassDataL
  * @returns {object} a new object with all keys converted
  */
 export function convertKeysBy( obj, fn ) {
-	if ( isArray( obj ) ) {
+	if ( Array.isArray( obj ) ) {
 		return map( obj, ( v ) => convertKeysBy( v, fn ) );
 	}
 
@@ -44,7 +31,7 @@ export function convertKeysBy( obj, fn ) {
 			obj,
 			( result, value, key ) => {
 				const newKey = fn( key );
-				const newValue = isObjectLike( value ) ? convertKeysBy( value, fn ) : value;
+				const newValue = convertKeysBy( value, fn );
 				return set( result, [ newKey ], newValue );
 			},
 			{}

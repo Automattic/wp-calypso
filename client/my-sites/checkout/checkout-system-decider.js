@@ -1,188 +1,143 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect, useCallback, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import debugFactory from 'debug';
-import wp from 'lib/wp';
+import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
+import { useTranslate } from 'i18n-calypso';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { getEmptyResponseCart } from '@automattic/shopping-cart';
 
 /**
  * Internal Dependencies
  */
-import CheckoutContainer from './checkout/checkout-container';
+import wp from 'calypso/lib/wp';
+import PrePurchaseNotices from './composite-checkout/components/prepurchase-notices';
 import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
-import { StripeHookProvider } from 'lib/stripe';
-import config from 'config';
-import { getCurrentUserLocale, getCurrentUserCountryCode } from 'state/current-user/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { abtest } from 'lib/abtest';
-import { logToLogstash } from 'state/logstash/actions';
+import config from '@automattic/calypso-config';
+import { logToLogstash } from 'calypso/state/logstash/actions';
+import Recaptcha from 'calypso/signup/recaptcha';
+import getCartKey from './get-cart-key';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 
-const debug = debugFactory( 'calypso:checkout-system-decider' );
+// Aliasing wpcom functions explicitly bound to wpcom is required here;
+// otherwise we get `this is not defined` errors.
 const wpcom = wp.undocumented();
 
-// Decide if we should use CompositeCheckout or CheckoutContainer
+const emptyCart = getEmptyResponseCart();
+
+const debug = debugFactory( 'calypso:checkout-system-decider' );
+
 export default function CheckoutSystemDecider( {
-	product,
+	productAliasFromUrl,
 	purchaseId,
 	selectedFeature,
 	couponCode,
-	isComingFromSignup,
-	isComingFromGutenboarding,
-	isGutenboardingCreate,
+	isComingFromUpsell,
 	plan,
 	selectedSite,
-	reduxStore,
 	redirectTo,
-	upgradeIntent,
-	clearTransaction,
-	cart,
+	isLoggedOutCart,
+	isNoSiteCart,
 } ) {
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
-	const countryCode = useSelector( ( state ) => getCurrentUserCountryCode( state ) );
-	const locale = useSelector( ( state ) => getCurrentUserLocale( state ) );
 	const reduxDispatch = useDispatch();
+	const translate = useTranslate();
+	const locale = useSelector( getCurrentUserLocale );
+
+	const prepurchaseNotices = <PrePurchaseNotices />;
+
 	useEffect( () => {
-		if ( product ) {
+		if ( productAliasFromUrl ) {
 			reduxDispatch(
 				logToLogstash( {
 					feature: 'calypso_client',
 					message: 'CheckoutSystemDecider saw productSlug to add',
 					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
 					extra: {
-						productSlug: product,
+						productSlug: productAliasFromUrl,
 					},
 				} )
 			);
 		}
-	}, [ reduxDispatch, product ] );
+	}, [ reduxDispatch, productAliasFromUrl ] );
 
-	// TODO: fetch the current cart, ideally without using CartData, and use that to pass to shouldShowCompositeCheckout
+	const logCheckoutError = useCallback(
+		( error ) => {
+			reduxDispatch(
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'composite checkout load error',
+					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+					extra: {
+						env: config( 'env_id' ),
+						type: 'checkout_system_decider',
+						message: String( error ),
+					},
+				} )
+			);
+		},
+		[ reduxDispatch ]
+	);
 
-	if ( ! cart || ! cart.currency ) {
-		debug( 'not deciding yet; cart has not loaded' );
-		return null; // TODO: replace with loading page
+	const cartKey = useMemo(
+		() =>
+			getCartKey( {
+				selectedSite,
+				isLoggedOutCart,
+				isNoSiteCart,
+			} ),
+		[ selectedSite, isLoggedOutCart, isNoSiteCart ]
+	);
+	debug( 'cartKey is', cartKey );
+
+	let siteSlug = selectedSite?.slug;
+
+	if ( ! siteSlug ) {
+		siteSlug = 'no-site';
+
+		if ( isLoggedOutCart || isNoSiteCart ) {
+			siteSlug = 'no-user';
+		}
 	}
 
-	if ( shouldShowCompositeCheckout( cart, countryCode, locale, product, purchaseId, isJetpack ) ) {
-		return (
-			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
-				<CompositeCheckout
-					siteSlug={ selectedSite?.slug }
-					siteId={ selectedSite?.ID }
-					product={ product }
-					purchaseId={ purchaseId }
-					couponCode={ couponCode }
-					redirectTo={ redirectTo }
-					feature={ selectedFeature }
-					plan={ plan }
-					cart={ cart }
-				/>
-			</StripeHookProvider>
-		);
-	}
+	// If we do not have a site or user, we cannot fetch the initial cart from
+	// the server, so we'll just mock it as an empty cart here.
+	const getCart = isLoggedOutCart || isNoSiteCart ? () => Promise.resolve( emptyCart ) : undefined;
 
 	return (
-		<CheckoutContainer
-			product={ product }
-			purchaseId={ purchaseId }
-			selectedFeature={ selectedFeature }
-			couponCode={ couponCode }
-			isComingFromSignup={ isComingFromSignup }
-			isComingFromGutenboarding={ isComingFromGutenboarding }
-			isGutenboardingCreate={ isGutenboardingCreate }
-			plan={ plan }
-			selectedSite={ selectedSite }
-			reduxStore={ reduxStore }
-			redirectTo={ redirectTo }
-			upgradeIntent={ upgradeIntent }
-			clearTransaction={ clearTransaction }
-		/>
+		<>
+			<CheckoutErrorBoundary
+				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
+				onError={ logCheckoutError }
+			>
+				<CalypsoShoppingCartProvider cartKey={ cartKey } getCart={ getCart }>
+					<StripeHookProvider
+						fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
+						locale={ locale }
+					>
+						<CompositeCheckout
+							siteSlug={ siteSlug }
+							siteId={ selectedSite?.ID }
+							productAliasFromUrl={ productAliasFromUrl }
+							purchaseId={ purchaseId }
+							couponCode={ couponCode }
+							redirectTo={ redirectTo }
+							feature={ selectedFeature }
+							plan={ plan }
+							isComingFromUpsell={ isComingFromUpsell }
+							infoMessage={ prepurchaseNotices }
+							isLoggedOutCart={ isLoggedOutCart }
+							isNoSiteCart={ isNoSiteCart }
+						/>
+					</StripeHookProvider>
+				</CalypsoShoppingCartProvider>
+			</CheckoutErrorBoundary>
+			{ isLoggedOutCart && <Recaptcha badgePosition="bottomright" /> }
+		</>
 	);
-}
-
-function shouldShowCompositeCheckout(
-	cart,
-	countryCode,
-	locale,
-	productSlug,
-	purchaseId,
-	isJetpack
-) {
-	if ( config.isEnabled( 'composite-checkout-force' ) ) {
-		debug( 'shouldShowCompositeCheckout true because force config is enabled' );
-		return true;
-	}
-
-	// Disable if this is a jetpack site
-	if ( isJetpack ) {
-		debug( 'shouldShowCompositeCheckout false because jetpack site' );
-		return false;
-	}
-	// Disable for non-USD
-	if ( cart.currency !== 'USD' ) {
-		debug( 'shouldShowCompositeCheckout false because currency is not USD' );
-		return false;
-	}
-	// Disable for GSuite plans
-	if ( cart.products?.find( ( product ) => product.product_slug.includes( 'gapps' ) ) ) {
-		debug( 'shouldShowCompositeCheckout false because cart contains GSuite' );
-		return false;
-	}
-	// Disable for jetpack plans
-	if ( cart.products?.find( ( product ) => product.product_slug.includes( 'jetpack' ) ) ) {
-		debug( 'shouldShowCompositeCheckout false because cart contains jetpack' );
-		return false;
-	}
-	// Disable for non-EN
-	if ( ! locale?.toLowerCase().startsWith( 'en' ) ) {
-		debug( 'shouldShowCompositeCheckout false because locale is not EN' );
-		return false;
-	}
-	// Disable for non-US
-	if ( countryCode?.toLowerCase() !== 'us' ) {
-		debug( 'shouldShowCompositeCheckout false because country is not US' );
-		return false;
-	}
-
-	// If the URL is adding a product, only allow things already supported.
-	// Calypso uses special slugs that aren't real product slugs when adding
-	// products via URL, so we list those slugs here. Renewals use actual slugs,
-	// so they do not need to go through this check.
-	const isRenewal = !! purchaseId;
-	const pseudoSlugsToAllow = [
-		'personal',
-		'premium',
-		'blogger',
-		'ecommerce',
-		'business',
-		'concierge-session',
-	];
-	const slugPrefixesToAllow = [ 'domain-mapping:', 'theme:' ];
-	if (
-		! isRenewal &&
-		productSlug &&
-		! pseudoSlugsToAllow.find( ( slug ) => productSlug === slug ) &&
-		! slugPrefixesToAllow.find( ( slugPrefix ) => productSlug.startsWith( slugPrefix ) )
-	) {
-		debug(
-			'shouldShowCompositeCheckout false because product does not match list of allowed products',
-			productSlug
-		);
-		return false;
-	}
-
-	if ( config.isEnabled( 'composite-checkout-testing' ) ) {
-		debug( 'shouldShowCompositeCheckout true because testing config is enabled' );
-		return true;
-	}
-	if ( abtest( 'showCompositeCheckout' ) === 'composite' ) {
-		debug( 'shouldShowCompositeCheckout true because user is in abtest' );
-		return true;
-	}
-	debug( 'shouldShowCompositeCheckout false because test not enabled' );
-	return false;
 }
 
 function fetchStripeConfigurationWpcom( args ) {

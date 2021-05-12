@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 
-import { withoutPersistence } from 'state/utils';
 import { LOADING } from 'woocommerce/state/constants';
 import {
 	WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS,
@@ -14,7 +13,7 @@ import {
 
 // TODO: Handle error
 
-export default withoutPersistence( ( state = {}, action ) => {
+export default ( state = {}, action ) => {
 	switch ( action.type ) {
 		case WOOCOMMERCE_SETUP_CHOICES_REQUEST: {
 			return LOADING;
@@ -30,4 +29,4 @@ export default withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};

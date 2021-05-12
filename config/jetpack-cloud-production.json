@@ -7,36 +7,65 @@
 	"i18n_default_locale_slug": "en",
 	"rtl": false,
 	"login_url": "/connect",
-	"logout_url": "https://wordpress.com/wp-login.php?action=logout",
+	"logout_url": "https://jetpack.com",
+	"jetpack_connect_url": "https://wordpress.com/jetpack/connect",
 	"site_name": "Jetpack.com",
+	"meta": [
+		{
+			"name": "description",
+			"content": "Pricing page for Jetpack security, performance, and marketing plans"
+		},
+		{
+			"property": "og:description",
+			"content": "Pricing page for Jetpack security, performance, and marketing plans"
+		},
+		{
+			"property": "og:image",
+			"content": "https://i1.wp.com/s0.wp.com/wp-content/themes/a8c/jetpackme-new/images-2019/jetpack-logo.png?ssl=1"
+		}
+	],
 	"oauth_client_id": 69041,
 	"features": {
+		"activity-log/v2": true,
+		"always_use_logout_url": true,
 		"current-site/domain-warning": false,
 		"current-site/notice": false,
 		"current-site/stale-cart-notice": false,
+		"checkout/google-pay": false,
+		"i18n/community-translator": false,
+		"ive/use-external-assignment": true,
 		"jetpack-cloud": true,
-		"jetpack-cloud/backups-restore": true,
-		"jetpack-cloud/backups": true,
-		"jetpack-cloud/on-demand-scan": false,
-		"jetpack-cloud/scan-history": true,
-		"jetpack-cloud/scan": true,
-		"jetpack-cloud/settings": true,
+		"jetpack-cloud/connect": false,
+		"jetpack/backups-date-picker": true,
+		"jetpack/pricing-page": true,
+		"jetpack/server-credentials-advanced-flow": true,
+		"jetpack/redirect-legacy-plans": true,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/nps-survey-notice": false,
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
+		"marketplace-yoast": false,
 		"oauth": true,
-		"site-indicator": false
+		"purchases/new-payment-methods": true,
+		"realtime-site-count": true,
+		"site-indicator": false,
+		"support-user": true,
+		"upgrades/redirect-payments": false
 	},
 	"enable_all_sections": false,
 	"sections": {
-		"jetpack-cloud": true,
-		"scan": true,
-		"backups": true,
+		"activity": true,
+		"backup": true,
+		"jetpack-cloud-auth": true,
+		"jetpack-cloud-pricing": true,
 		"jetpack-cloud-settings": true,
-		"jetpack-cloud-auth": true
+		"jetpack-cloud-partner-portal": true,
+		"jetpack-cloud": true,
+		"scan": true
 	},
 	"site_filter": [ "jetpack" ],
-	"theme": "jetpack-cloud"
+	"theme": "jetpack-cloud",
+	"restricted_me_access": false,
+	"theme_color": "#2fb41f"
 }

@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { selectSiteId } from '../actions';
-import { HELP_CONTACT_FORM_SITE_SELECT } from 'state/action-types';
+import { HELP_CONTACT_FORM_SITE_SELECT } from 'calypso/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#selectSiteId()', () => {

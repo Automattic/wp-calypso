@@ -6,19 +6,20 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { debounce, get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { gaRecordEvent } from 'lib/analytics/ga';
-import { bumpStat } from 'lib/analytics/mc';
-import { getMimePrefix, url } from 'lib/media/utils';
-import MediaActions from 'lib/media/actions';
-import ClipboardButtonInput from 'components/clipboard-button-input';
-import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
-import TrackInputChanges from 'components/track-input-changes';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import { getMimePrefix, url } from 'calypso/lib/media/utils';
+import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import TrackInputChanges from 'calypso/components/track-input-changes';
 import EditorMediaModalFieldset from '../fieldset';
+import { updateMedia } from 'calypso/state/media/thunks';
 
 class EditorMediaModalDetailFields extends Component {
 	static propTypes = {
@@ -67,7 +68,7 @@ class EditorMediaModalDetailFields extends Component {
 			return;
 		}
 
-		MediaActions.update( this.props.site.ID, this.state.modifiedItem );
+		this.props.updateMedia( this.props.site.ID, this.state.modifiedItem );
 	}
 
 	setFieldValue = ( { target } ) => {
@@ -121,6 +122,7 @@ class EditorMediaModalDetailFields extends Component {
 	render() {
 		const { translate } = this.props;
 		return (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<div className="editor-media-modal-detail__fields">
 				<EditorMediaModalFieldset legend={ translate( 'Title' ) }>
 					<TrackInputChanges onNewValue={ this.bumpTitleStat }>
@@ -162,4 +164,4 @@ class EditorMediaModalDetailFields extends Component {
 	}
 }
 
-export default localize( EditorMediaModalDetailFields );
+export default localize( connect( null, { updateMedia } )( EditorMediaModalDetailFields ) );

@@ -14,7 +14,7 @@ import {
 
 const debug = debugFactory( 'woocommerce:wc-api' );
 
-import { dispatchRequest as dataLayerDispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest as dataLayerDispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 export function dispatchRequest( fetch, onSuccess, onError ) {
 	return dataLayerDispatchRequest( {

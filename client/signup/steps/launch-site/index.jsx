@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { submitSignupStep } from 'state/signup/progress/actions';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 class LaunchSiteComponent extends Component {
 	componentDidMount() {

@@ -29,20 +29,20 @@
 
 .title-format-editor__title {
 	font-weight: 600;
-	font-size: 14px;
+	font-size: $font-body-small;
 	flex: 1;
 	margin-right: auto;
 }
 
 .title-format-editor__button {
-	border-radius: 3px;
+	border-radius: 2px;
 	background-color: var( --color-surface );
 	color: var( --color-neutral-60 );
 	border: 1px solid var( --color-neutral-10 );
 	padding: 3px 8px;
 	margin-left: 10px;
 	margin-top: 3px;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	font-weight: 600;
 	cursor: pointer;
 
@@ -67,7 +67,7 @@
 	display: inline-block;
 	background-color: var( --color-neutral-50 );
 	color: var( --color-text-inverted );
-	border-radius: 4px;
+	border-radius: 2px;
 	cursor: pointer;
 	transition: all 0.3s ease;
 
@@ -79,12 +79,12 @@
 .title-format-editor__token-close {
 	margin-left: 10px;
 	color: var( --color-neutral-20 );
-	font-size: 10px;
+	font-size: $font-body-extra-small;
 }
 
 .title-format-editor__preview {
 	color: var( --color-neutral-light );
 	font-style: italic;
 	margin-top: 5px;
-	font-size: 13px;
+	font-size: $font-body-small;
 }

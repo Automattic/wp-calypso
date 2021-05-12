@@ -3,6 +3,8 @@
  */
 import { get } from 'lodash';
 
+import 'calypso/state/connected-applications/init';
+
 /**
  * Returns the connected applications of the current user.
  *

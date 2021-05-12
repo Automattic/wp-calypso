@@ -1,38 +1,37 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
-import notices from 'notices';
 import { connect } from 'react-redux';
-import { get, includes, isString, omit, partial, pickBy } from 'lodash';
+import { get, includes, omit, partial, pickBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import SupportInfo from 'components/support-info';
-import ExternalLink from 'components/external-link';
-import FormInput from 'components/forms/form-text-input-with-affixes';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormFieldset from 'components/forms/form-fieldset';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { isJetpackSite } from 'state/sites/selectors';
+import SupportInfo from 'calypso/components/support-info';
+import ExternalLink from 'calypso/components/external-link';
+import FormInput from 'calypso/components/forms/form-text-input-with-affixes';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveError,
-} from 'state/site-settings/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { requestSite } from 'state/sites/actions';
-import { requestSiteSettings, saveSiteSettings } from 'state/site-settings/actions';
-import { protectForm } from 'lib/protect-form';
+} from 'calypso/state/site-settings/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { requestSite } from 'calypso/state/sites/actions';
+import { requestSiteSettings, saveSiteSettings } from 'calypso/state/site-settings/actions';
+import { protectForm } from 'calypso/lib/protect-form';
 
 class SiteVerification extends Component {
 	static serviceIds = {
@@ -78,7 +77,12 @@ class SiteVerification extends Component {
 		// save error
 		if ( this.state.isSubmittingForm && nextProps.saveError ) {
 			this.setState( { isSubmittingForm: false } );
-			notices.error( translate( 'There was a problem saving your changes. Please, try again.' ) );
+			this.props.errorNotice(
+				translate( 'There was a problem saving your changes. Please, try again.' ),
+				{
+					id: 'site-verification-settings-error',
+				}
+			);
 		}
 
 		// if we are changing sites, everything goes
@@ -211,7 +215,7 @@ class SiteVerification extends Component {
 			event.preventDefault();
 		}
 
-		notices.clearNotices( 'notices' );
+		this.props.removeNotice( 'site-verification-settings-error' );
 
 		const verificationCodes = {
 			google: this.state.googleCode,
@@ -220,14 +224,16 @@ class SiteVerification extends Component {
 			yandex: this.state.yandexCode,
 		};
 
-		const filteredCodes = pickBy( verificationCodes, isString );
+		const filteredCodes = pickBy( verificationCodes, ( code ) => typeof code === 'string' );
 		const invalidCodes = Object.keys(
 			pickBy( filteredCodes, ( name, content ) => ! this.isValidCode( content, name ) )
 		);
 
 		this.setState( { invalidCodes } );
 		if ( invalidCodes.length > 0 ) {
-			notices.error( translate( 'Invalid site verification tag entered.' ) );
+			this.props.errorNotice( translate( 'Invalid site verification tag entered.' ), {
+				id: 'site-verification-settings-error',
+			} );
 			return;
 		}
 
@@ -365,7 +371,6 @@ class SiteVerification extends Component {
 							<FormInput
 								prefix={ translate( 'Google' ) }
 								name="verification_code_google"
-								type="text"
 								value={ googleCode }
 								id="verification_code_google"
 								spellCheck="false"
@@ -380,7 +385,6 @@ class SiteVerification extends Component {
 							<FormInput
 								prefix={ translate( 'Bing' ) }
 								name="verification_code_bing"
-								type="text"
 								value={ bingCode }
 								id="verification_code_bing"
 								spellCheck="false"
@@ -395,7 +399,6 @@ class SiteVerification extends Component {
 							<FormInput
 								prefix={ translate( 'Pinterest' ) }
 								name="verification_code_pinterest"
-								type="text"
 								value={ pinterestCode }
 								id="verification_code_pinterest"
 								spellCheck="false"
@@ -410,7 +413,6 @@ class SiteVerification extends Component {
 							<FormInput
 								prefix={ translate( 'Yandex' ) }
 								name="verification_code_yandex"
-								type="text"
 								value={ yandexCode }
 								id="verification_code_yandex"
 								spellCheck="false"
@@ -444,6 +446,8 @@ export default connect(
 		};
 	},
 	{
+		errorNotice,
+		removeNotice,
 		requestSite,
 		requestSiteSettings,
 		saveSiteSettings,

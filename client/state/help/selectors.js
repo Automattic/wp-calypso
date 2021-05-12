@@ -6,10 +6,12 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import getSelectedOrPrimarySiteId from 'state/selectors/get-selected-or-primary-site-id';
-import { getSite } from 'state/sites/selectors';
+import getSelectedOrPrimarySiteId from 'calypso/state/selectors/get-selected-or-primary-site-id';
+import { getSite } from 'calypso/state/sites/selectors';
 
-export const getHelpSiteId = ( state ) => state.help.selectedSiteId;
+import 'calypso/state/help/init';
+
+export const getHelpSiteId = ( state ) => state.help?.selectedSiteId;
 
 /*
  * Returns the site the customer wishes to request help for. Returns in order of preference:

@@ -12,30 +12,41 @@ import { get, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import Header from 'my-sites/domains/domain-management/components/header';
+import Main from 'calypso/components/main';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import CustomNameserversForm from './custom-nameservers-form';
 import WpcomNameserversToggle from './wpcom-nameservers-toggle';
-import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
+import IcannVerificationCard from 'calypso/my-sites/domains/domain-management/components/icann-verification';
 import DnsTemplates from './dns-templates';
-import { domainManagementEdit, domainManagementDns } from 'my-sites/domains/paths';
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
-import { updateNameservers } from 'lib/domains/nameservers/actions';
-import { WPCOM_DEFAULTS, isWpcomDefaults } from 'lib/domains/nameservers';
-import { getSelectedDomain } from 'lib/domains';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import DomainWarnings from 'my-sites/domains/components/domain-warnings';
+import { domainManagementEdit, domainManagementDns } from 'calypso/my-sites/domains/paths';
+import QueryDomainNameservers from 'calypso/components/data/query-domain-nameservers';
+import VerticalNav from 'calypso/components/vertical-nav';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import { updateNameservers } from 'calypso/state/domains/nameservers/actions';
+import {
+	WPCOM_DEFAULT_NAMESERVERS,
+	WPCOM_DEFAULT_NAMESERVERS_REGEX,
+	CLOUDFLARE_NAMESERVERS_REGEX,
+} from 'calypso/state/domains/nameservers/constants';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import FetchError from './fetch-error';
-import Notice from 'components/notice';
-import { CHANGE_NAME_SERVERS } from 'lib/url/support';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import Notice from 'calypso/components/notice';
+import { CHANGE_NAME_SERVERS } from 'calypso/lib/url/support';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getNameserversByDomainName } from 'calypso/state/domains/nameservers/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import NonPrimaryDomainPlanUpsell from 'my-sites/domains/domain-management/components/domain/non-primary-domain-plan-upsell';
+import NonPrimaryDomainPlanUpsell from 'calypso/my-sites/domains/domain-management/components/domain/non-primary-domain-plan-upsell';
 
 class NameServers extends React.Component {
 	static propTypes = {
@@ -47,7 +58,6 @@ class NameServers extends React.Component {
 	};
 
 	state = {
-		formSubmitting: false,
 		nameservers: this.props.nameservers.hasLoadedFromServer ? this.props.nameservers.list : null,
 	};
 
@@ -60,7 +70,23 @@ class NameServers extends React.Component {
 			return true;
 		}
 
-		return isWpcomDefaults( this.state.nameservers );
+		if ( this.state.nameservers.length === 0 ) {
+			return false;
+		}
+
+		return this.state.nameservers.every( ( nameserver ) => {
+			return ! nameserver || WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
+		} );
+	};
+
+	hasCloudflareNameservers = () => {
+		if ( this.state.nameservers.length === 0 ) {
+			return false;
+		}
+
+		return this.state.nameservers.every( ( nameserver ) => {
+			return ! nameserver || CLOUDFLARE_NAMESERVERS_REGEX.test( nameserver );
+		} );
 	};
 
 	setStateWhenLoadedFromServer( props ) {
@@ -88,12 +114,13 @@ class NameServers extends React.Component {
 
 	warning() {
 		const { translate } = this.props;
-
 		if (
 			this.hasWpcomNameservers() ||
+			this.hasCloudflareNameservers() ||
 			this.isPendingTransfer() ||
 			this.needsVerification() ||
-			! this.state.nameservers
+			! this.state.nameservers ||
+			! this.state.nameservers.length
 		) {
 			return null;
 		}
@@ -133,7 +160,7 @@ class NameServers extends React.Component {
 					domain={ domain }
 					position="domain-name-servers"
 					selectedSite={ this.props.selectedSite }
-					ruleWhiteList={ [ 'pendingTransfer' ] }
+					allowedRules={ [ 'pendingTransfer' ] }
 				/>
 				{ this.warning() }
 				{ this.planUpsellForNonPrimaryDomain( domain ) }
@@ -159,6 +186,7 @@ class NameServers extends React.Component {
 
 		return (
 			<Main className={ classes }>
+				<QueryDomainNameservers domainName={ this.props.selectedDomainName } />
 				{ this.header() }
 				{ this.getContent() }
 			</Main>
@@ -189,9 +217,9 @@ class NameServers extends React.Component {
 
 	resetToWpcomNameservers = () => {
 		if ( isEmpty( this.state.nameservers ) ) {
-			this.setState( { nameservers: WPCOM_DEFAULTS } );
+			this.setState( { nameservers: WPCOM_DEFAULT_NAMESERVERS } );
 		} else {
-			this.setState( { nameservers: WPCOM_DEFAULTS }, () => {
+			this.setState( { nameservers: WPCOM_DEFAULT_NAMESERVERS }, () => {
 				this.saveNameservers();
 			} );
 		}
@@ -199,24 +227,9 @@ class NameServers extends React.Component {
 
 	saveNameservers = () => {
 		const { nameservers } = this.state;
-		const { selectedDomainName, translate } = this.props;
+		const { selectedDomainName } = this.props;
 
-		this.setState( { formSubmitting: true } );
-
-		updateNameservers( selectedDomainName, nameservers, ( error ) => {
-			if ( error ) {
-				this.props.errorNotice( error.message );
-			} else {
-				this.props.successNotice(
-					translate( 'Yay, the name servers have been successfully updated!' ),
-					{
-						duration: 5000,
-					}
-				);
-			}
-
-			this.setState( { formSubmitting: false } );
-		} );
+		this.props.updateNameservers( selectedDomainName, nameservers );
 	};
 
 	header() {
@@ -228,7 +241,13 @@ class NameServers extends React.Component {
 	}
 
 	back = () => {
-		page( domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page(
+			domainManagementEdit(
+				this.props.selectedSite.slug,
+				this.props.selectedDomainName,
+				this.props.currentRoute
+			)
+		);
 	};
 
 	customNameservers() {
@@ -254,7 +273,7 @@ class NameServers extends React.Component {
 				onChange={ this.handleChange }
 				onReset={ this.handleReset }
 				onSubmit={ this.handleSubmit }
-				submitDisabled={ this.state.formSubmitting }
+				submitDisabled={ this.isLoading() }
 			/>
 		);
 	}
@@ -297,7 +316,11 @@ class NameServers extends React.Component {
 		return (
 			<VerticalNavItem
 				isPlaceholder={ this.isLoading() }
-				path={ domainManagementDns( this.props.selectedSite.slug, this.props.selectedDomainName ) }
+				path={ domainManagementDns(
+					this.props.selectedSite.slug,
+					this.props.selectedDomainName,
+					this.props.currentRoute
+				) }
 			>
 				{ this.props.translate( 'DNS records' ) }
 			</VerticalNavItem>
@@ -319,8 +342,15 @@ const customNameServersLearnMoreClick = ( domainName ) =>
 		)
 	);
 
-export default connect( null, {
-	customNameServersLearnMoreClick,
-	errorNotice,
-	successNotice,
-} )( localize( NameServers ) );
+export default connect(
+	( state, { selectedDomainName } ) => ( {
+		currentRoute: getCurrentRoute( state ),
+		nameservers: getNameserversByDomainName( state, selectedDomainName ),
+	} ),
+	{
+		customNameServersLearnMoreClick,
+		errorNotice,
+		successNotice,
+		updateNameservers,
+	}
+)( localize( NameServers ) );

@@ -1,33 +1,32 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { identity, includes } from 'lodash';
+import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ServiceExample from './service-example';
 import GooglePlusDeprication from './google-plus-deprecation';
-import { localizeUrl } from 'lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Module constants
  */
 /**
- * Whitelist of services that we provide examples for.
+ * List of services that we provide examples for.
  *
- * When adding examples for more services, please update the whitelist in addition to adding
+ * When adding examples for more services, please update the list in addition to adding
  * a method with the example's content.
  *
  * @type {string[]}
  */
-const SERVICES_WHITELIST = [
+const SERVICES_WITH_EXAMPLES = [
 	'bandpage',
 	'facebook',
 	'google_plus',
@@ -49,7 +48,6 @@ class SharingServiceExamples extends Component {
 
 	static defaultProps = {
 		site: Object.freeze( {} ),
-		translate: identity,
 	};
 
 	getSharingButtonsLink() {
@@ -85,7 +83,7 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/google-photos.png',
+					src: '/calypso/images/sharing/connections-google-photos.png',
 					alt: this.props.translate(
 						'Connect to use photos stored in your Google Photos library directly inside the editor',
 						{ textOnly: true }
@@ -107,7 +105,7 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/facebook-profile.png',
+					src: '/calypso/images/sharing/connections-facebook.png',
 					alt: this.props.translate( 'Share posts to your Facebook page', {
 						textOnly: true,
 					} ),
@@ -123,7 +121,7 @@ class SharingServiceExamples extends Component {
 			},
 			{
 				image: {
-					src: '/calypso/images/sharing/facebook-sharing.png',
+					src: '/calypso/images/sharing/connections-button-facebook.png',
 					alt: this.props.translate( 'Add a sharing button', { textOnly: true } ),
 				},
 				label: this.props.translate(
@@ -162,7 +160,7 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/instagram-widget.png',
+					src: '/calypso/images/sharing/connections-instagram.png',
 					alt: this.props.translate( 'Add an Instagram widget', { textOnly: true } ),
 				},
 				label: this.props.translate(
@@ -187,7 +185,7 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/linkedin-publicize.png',
+					src: '/calypso/images/sharing/connections-linkedin.png',
 					alt: this.props.translate( 'Share posts with your LinkedIn connections', {
 						textOnly: true,
 					} ),
@@ -203,7 +201,7 @@ class SharingServiceExamples extends Component {
 			},
 			{
 				image: {
-					src: '/calypso/images/sharing/linkedin-sharing.png',
+					src: '/calypso/images/sharing/connections-button-linkedin.png',
 					alt: this.props.translate( 'Add a sharing button', { textOnly: true } ),
 				},
 				label: this.props.translate(
@@ -222,7 +220,7 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/tumblr-publicize.png',
+					src: '/calypso/images/sharing/connections-tumblr.png',
 					alt: this.props.translate( 'Share posts to your Tumblr blog', { textOnly: true } ),
 				},
 				label: this.props.translate(
@@ -236,7 +234,7 @@ class SharingServiceExamples extends Component {
 			},
 			{
 				image: {
-					src: '/calypso/images/sharing/tumblr-sharing.png',
+					src: '/calypso/images/sharing/connections-button-tumblr.png',
 					alt: this.props.translate( 'Add a sharing button', { textOnly: true } ),
 				},
 				label: this.props.translate(
@@ -255,7 +253,7 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/twitter-publicize.png',
+					src: '/calypso/images/sharing/connections-twitter2.png',
 					alt: this.props.translate( 'Share posts to your Twitter followers', { textOnly: true } ),
 				},
 				label: this.props.translate(
@@ -269,7 +267,7 @@ class SharingServiceExamples extends Component {
 			},
 			{
 				image: {
-					src: '/calypso/images/sharing/twitter-timeline.png',
+					src: '/calypso/images/sharing/connections-twitter.png',
 					alt: this.props.translate( 'Add a Twitter Timeline Widget', { textOnly: true } ),
 				},
 				label: this.props.translate(
@@ -305,7 +303,7 @@ class SharingServiceExamples extends Component {
 	}
 
 	render() {
-		if ( ! includes( SERVICES_WHITELIST, this.props.service.ID ) ) {
+		if ( ! includes( SERVICES_WITH_EXAMPLES, this.props.service.ID ) ) {
 			/**
 			 * TODO: Refactoring this line has to be tackled in a seperate diff.
 			 * Touching this changes services-group.jsx which changes service.jsx

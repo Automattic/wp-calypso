@@ -4,12 +4,12 @@
  */
 import { isDesktop } from '@automattic/viewport';
 import React, { Fragment } from 'react';
-import { overEvery as and } from 'lodash';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'calypso/components/gridicon';
+import { and } from 'calypso/layout/guided-tours/utils';
 import {
 	makeTour,
 	Continue,
@@ -19,8 +19,9 @@ import {
 	Next,
 	Quit,
 	Link,
-} from 'layout/guided-tours/config-elements';
+} from 'calypso/layout/guided-tours/config-elements';
 import { hasSelectedSitePremiumOrBusinessPlan } from '../selectors/has-selected-site-premium-or-business-plan';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 export const SimplePaymentsEndOfYearGuide = makeTour(
 	<Tour
@@ -67,8 +68,8 @@ export const SimplePaymentsEndOfYearGuide = makeTour(
 						<Next step="add-new-page">{ translate( 'Get started!' ) }</Next>
 						<Quit>{ translate( 'No thanks.' ) }</Quit>
 					</ButtonRow>
-					<Link href="https://wordpress.com/support/simple-payments/">
-						{ translate( 'Learn more about Simple Payments.' ) }
+					<Link href={ localizeUrl( 'https://wordpress.com/support/pay-with-paypal/' ) }>
+						{ translate( 'Learn more about Pay with PayPal.' ) }
 					</Link>
 				</Fragment>
 			) }

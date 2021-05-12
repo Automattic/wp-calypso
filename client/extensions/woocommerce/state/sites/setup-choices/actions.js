@@ -3,7 +3,7 @@
  */
 
 import { areSetupChoicesLoaded, areSetupChoicesLoading } from './selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import request from 'woocommerce/state/sites/request';
 import { setError } from '../status/wc-api/actions';
 import {
@@ -13,7 +13,7 @@ import {
 	WOOCOMMERCE_SETUP_CHOICES_REQUEST_SUCCESS,
 	WOOCOMMERCE_SETUP_STORE_PAGES_REQUEST,
 } from 'woocommerce/state/action-types';
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 
 export const fetchSetupChoices = ( siteId ) => ( dispatch, getState ) => {
 	if ( areSetupChoicesLoading( getState(), siteId ) ) {

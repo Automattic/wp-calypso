@@ -6,6 +6,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	PREFERENCES_SET,
 	PREFERENCES_RECEIVE,
@@ -13,8 +14,8 @@ import {
 	PREFERENCES_FETCH_SUCCESS,
 	PREFERENCES_FETCH_FAILURE,
 	PREFERENCES_SAVE_SUCCESS,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { remoteValuesSchema } from './schema';
 
 /**
@@ -27,7 +28,7 @@ import { remoteValuesSchema } from './schema';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const localValues = withoutPersistence( ( state = {}, action ) => {
+export const localValues = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case PREFERENCES_SET: {
 			const { key, value } = action;
@@ -44,7 +45,7 @@ export const localValues = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated remote values state after an action has been dispatched.
@@ -66,7 +67,7 @@ export const remoteValues = withSchemaValidation( remoteValuesSchema, ( state = 
 	return state;
 } );
 
-export const fetching = withoutPersistence( ( state = false, action ) => {
+export const fetching = ( state = false, action ) => {
 	switch ( action.type ) {
 		case PREFERENCES_FETCH_SUCCESS:
 			return false;
@@ -77,20 +78,22 @@ export const fetching = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+};
 
-const lastFetchedTimestamp = withoutPersistence( ( state = false, action ) => {
+const lastFetchedTimestamp = ( state = false, action ) => {
 	switch ( action.type ) {
 		case PREFERENCES_FETCH_SUCCESS:
 			return Date.now();
 	}
 
 	return state;
-} );
+};
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	localValues,
 	remoteValues,
 	fetching,
 	lastFetchedTimestamp,
 } );
+const preferencesReducer = withStorageKey( 'preferences', combinedReducer );
+export default preferencesReducer;

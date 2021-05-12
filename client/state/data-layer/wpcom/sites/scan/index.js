@@ -6,15 +6,15 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	JETPACK_SCAN_UPDATE,
 	JETPACK_SCAN_REQUEST,
 	JETPACK_SCAN_REQUEST_SUCCESS,
 	JETPACK_SCAN_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Make a Threat object response contain only camel-case keys and transform
@@ -28,14 +28,15 @@ export const formatScanThreat = ( threat ) => ( {
 	signature: threat.signature,
 	description: threat.description,
 	status: threat.status,
-	firstDetected: new Date( threat.first_detected ),
-	fixedOn: new Date( threat.fixed_on ),
+	firstDetected: threat.first_detected ? new Date( threat.first_detected ) : undefined,
+	fixedOn: threat.fixed_on ? new Date( threat.fixed_on ) : undefined,
 	fixable: threat.fixable,
 	fixerStatus: threat.fixer_status,
 	filename: threat.filename,
 	extension: threat.extension,
 	rows: threat.rows,
 	diff: threat.diff,
+	table: threat.table,
 	context: threat.context,
 } );
 
@@ -44,20 +45,25 @@ export const formatScanThreat = ( threat ) => ( {
  * dates represented as string to Date object.
  *
  * @param {object} scanState Raw Scan state object from Scan endpoint
+ * @param {string} scanState.state State of the scan. E.g. "idle"
+ * @param {object[]} scanState.threats Array of active threats
+ * @param {object} scanState.most_recent Info about the most recent scan
+ * @param {object} scanState.current Info about the current scan
  * @returns {object} Processed Scan state
  */
 const formatScanStateRawResponse = ( {
 	state,
 	threats,
-	credentials,
 	most_recent: mostRecent,
 	current,
 	...rest
 } ) => {
+	if ( ! threats ) {
+		threats = [];
+	}
 	return {
 		state,
 		threats: threats.map( formatScanThreat ),
-		credentials,
 		mostRecent: mostRecent
 			? {
 					...omit( mostRecent, [ 'is_initial' ] ),
@@ -125,13 +131,11 @@ const onFetchStatusSuccess = ( action, scan ) => ( dispatch ) => {
 	}
 };
 
-const onFetchStatusFailure = ( ...response ) => {
-	return [
-		{
-			type: JETPACK_SCAN_REQUEST_FAILURE,
-			siteId: response.siteId,
-		},
-	];
+const onFetchStatusFailure = ( { siteId } ) => ( dispatch ) => {
+	dispatch( {
+		type: JETPACK_SCAN_REQUEST_FAILURE,
+		siteId,
+	} );
 };
 
 registerHandlers( 'state/data-layer/wpcom/sites/scan', {

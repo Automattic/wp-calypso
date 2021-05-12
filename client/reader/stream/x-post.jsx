@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import ReactDom from 'react-dom';
 import classnames from 'classnames';
-import url from 'url';
 import { localize } from 'i18n-calypso';
 import closest from 'component-closest';
 import { get, forEach, uniqBy } from 'lodash';
@@ -15,12 +14,17 @@ import { connect } from 'react-redux';
  * Internal Dependencies
  */
 import { Card } from '@automattic/components';
-import ReaderAvatar from 'blocks/reader-avatar';
-import { getSite } from 'state/reader/sites/selectors';
-import { getFeed } from 'state/reader/feeds/selectors';
-import QueryReaderSite from 'components/data/query-reader-site';
-import QueryReaderFeed from 'components/data/query-reader-feed';
-import Emojify from 'components/emojify';
+import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import { getSite } from 'calypso/state/reader/sites/selectors';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import Emojify from 'calypso/components/emojify';
+import { getUrlParts } from '@automattic/calypso-url';
+import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 class CrossPost extends PureComponent {
@@ -34,6 +38,8 @@ class CrossPost extends PureComponent {
 		postKey: PropTypes.object,
 		site: PropTypes.object,
 		feed: PropTypes.object,
+		isWPForTeamsItem: PropTypes.bool,
+		teams: PropTypes.array,
 	};
 
 	handleTitleClick = ( event ) => {
@@ -80,7 +86,7 @@ class CrossPost extends PureComponent {
 	};
 
 	getSiteNameFromURL = ( siteURL ) => {
-		return siteURL && `+${ url.parse( siteURL ).hostname.split( '.' )[ 0 ] }`;
+		return siteURL && `+${ getUrlParts( siteURL ).hostname.split( '.' )[ 0 ] }`;
 	};
 
 	getDescription = ( authorFirstName ) => {
@@ -161,15 +167,20 @@ class CrossPost extends PureComponent {
 	};
 
 	render() {
-		const { post, postKey, site, feed, translate } = this.props;
+		const { post, postKey, site, feed, translate, teams, isWPForTeamsItem } = this.props;
 		const { blogId: siteId, feedId } = postKey;
 		const siteIcon = get( site, 'icon.img' );
 		const feedIcon = get( feed, 'image' );
 
+		let isSeen = true;
+		if ( canBeMarkedAsSeen( { post } ) ) {
+			isSeen = isEligibleForUnseen( { teams, isWPForTeamsItem } ) && !! post.is_seen;
+		}
 		const articleClasses = classnames( {
 			reader__card: true,
 			'is-x-post': true,
 			'is-selected': this.props.isSelected,
+			'is-seen': isSeen,
 		} );
 
 		// Remove the x-post text from the title.
@@ -216,7 +227,8 @@ class CrossPost extends PureComponent {
 
 export default connect( ( state, ownProps ) => {
 	const { feedId, blogId } = ownProps.postKey;
-	let feed, site;
+	let feed;
+	let site;
 	if ( feedId ) {
 		feed = getFeed( state, feedId );
 		site = feed && feed.blog_ID ? getSite( state, feed.blog_ID ) : undefined;
@@ -225,6 +237,8 @@ export default connect( ( state, ownProps ) => {
 		feed = site && site.feed_ID ? getFeed( state, site.feed_ID ) : undefined;
 	}
 	return {
+		isWPForTeamsItem: isSiteWPForTeams( state, blogId ) || isFeedWPForTeams( state, feedId ),
+		teams: getReaderTeams( state ),
 		feed,
 		site,
 	};

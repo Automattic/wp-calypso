@@ -21,18 +21,18 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 }
 
 .signup.is-crowdsignal .formatted-header__title {
-	font-family: 'Recoleta', serif;
-	font-size: 32px;
-	font-weight: bold;
+	@extend .wp-brand-font;
+	font-size: $font-title-large;
+	font-weight: 600;
 	margin-bottom: 10px;
 }
 
 .signup.is-crowdsignal .formatted-header__subtitle {
 	color: var( --color-text-subtle );
-	font-size: 15px;
+	font-size: $font-body;
 
 	a {
-		font-weight: bold;
+		font-weight: 600;
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
@@ -145,7 +145,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 
 .signup-form__crowdsignal-card-header {
 	display: none;
-	font-size: 20px;
+	font-size: $font-title-small;
 	font-weight: 600;
 	margin: 0 0 30px;
 	text-align: center;
@@ -191,7 +191,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 }
 
 .signup-form__crowdsignal-learn-more {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	margin-bottom: -10px;
 	margin-top: 20px;
 	text-align: center;
@@ -219,7 +219,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	box-sizing: border-box;
 	display: none;
 	flex-direction: column;
-	font-size: 25px;
+	font-size: $font-title-medium;
 	font-weight: 600;
 	justify-content: center;
 	margin: 0 auto;
@@ -303,7 +303,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 
 .signup-form__crowdsignal-footer-text {
 	display: none;
-	font-size: 10px;
+	font-size: $font-body-extra-small;
 	flex: 1;
 	height: 18px;
 	letter-spacing: 0.8px;

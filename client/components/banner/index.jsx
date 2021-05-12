@@ -6,10 +6,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { noop, size } from 'lodash';
-import Gridicon from 'components/gridicon';
-import JetpackLogo from 'components/jetpack-logo';
-import config from 'config';
+import { size } from 'lodash';
+import Gridicon from 'calypso/components/gridicon';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -21,22 +21,26 @@ import {
 	isPremiumPlan,
 	isBusinessPlan,
 	isEcommercePlan,
-} from 'lib/plans';
-import { GROUP_JETPACK, GROUP_WPCOM } from 'lib/plans/constants';
-import { addQueryArgs } from 'lib/url';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
+	GROUP_JETPACK,
+	GROUP_WPCOM,
+} from '@automattic/calypso-products';
+import { addQueryArgs } from 'calypso/lib/url';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { Button, Card } from '@automattic/components';
-import DismissibleCard from 'blocks/dismissible-card';
-import PlanPrice from 'my-sites/plan-price';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+import DismissibleCard from 'calypso/blocks/dismissible-card';
+import PlanPrice from 'calypso/my-sites/plan-price';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { preventWidows } from 'calypso/lib/formatting';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class Banner extends Component {
 	static propTypes = {
@@ -44,6 +48,7 @@ export class Banner extends Component {
 		className: PropTypes.string,
 		description: PropTypes.node,
 		forceHref: PropTypes.bool,
+		disableCircle: PropTypes.bool,
 		disableHref: PropTypes.bool,
 		dismissPreferenceName: PropTypes.string,
 		dismissTemporary: PropTypes.bool,
@@ -52,6 +57,7 @@ export class Banner extends Component {
 		horizontal: PropTypes.bool,
 		href: PropTypes.string,
 		icon: PropTypes.string,
+		iconPath: PropTypes.string,
 		jetpack: PropTypes.bool,
 		compact: PropTypes.bool,
 		list: PropTypes.arrayOf( PropTypes.string ),
@@ -76,6 +82,7 @@ export class Banner extends Component {
 
 	static defaultProps = {
 		forceHref: false,
+		disableCircle: false,
 		disableHref: false,
 		dismissTemporary: false,
 		compact: false,
@@ -143,7 +150,7 @@ export class Banner extends Component {
 	};
 
 	getIcon() {
-		const { icon, jetpack, showIcon } = this.props;
+		const { disableCircle, icon, iconPath, jetpack, showIcon } = this.props;
 
 		if ( ! showIcon ) {
 			return;
@@ -157,14 +164,20 @@ export class Banner extends Component {
 			);
 		}
 
+		let iconComponent;
+		if ( iconPath ) {
+			iconComponent = <img src={ iconPath } alt="" />;
+		} else {
+			iconComponent = <Gridicon icon={ icon || 'star' } size={ 18 } />;
+		}
+
 		return (
 			<div className="banner__icons">
-				<div className="banner__icon">
-					<Gridicon icon={ icon || 'star' } size={ 18 } />
-				</div>
-				<div className="banner__icon-circle">
-					<Gridicon icon={ icon || 'star' } size={ 18 } />
-				</div>
+				<div className="banner__icon">{ iconComponent }</div>
+				{ ! disableCircle && <div className="banner__icon-circle">{ iconComponent }</div> }
+				{ disableCircle && iconPath && (
+					<div className="banner__icon-no-circle">{ iconComponent }</div>
+				) }
 			</div>
 		);
 	}
@@ -227,7 +240,7 @@ export class Banner extends Component {
 						{ callToAction &&
 							( forceHref ? (
 								<Button compact primary={ primaryButton } target={ target }>
-									{ callToAction }
+									{ preventWidows( callToAction ) }
 								</Button>
 							) : (
 								<Button
@@ -237,7 +250,7 @@ export class Banner extends Component {
 									primary={ primaryButton }
 									target={ target }
 								>
-									{ callToAction }
+									{ preventWidows( callToAction ) }
 								</Button>
 							) ) }
 					</div>

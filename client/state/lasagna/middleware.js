@@ -6,17 +6,16 @@ import Lasagna from '@automattic/lasagna';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import wpcom from 'lib/wp';
+import config from '@automattic/calypso-config';
+import wpcom from 'calypso/lib/wp';
 import connectMiddleware from './connect/middleware';
 import postChannelMiddleware from './post-channel/middleware';
 import userChannelMiddleware from './user-channel/middleware';
 
 const jwtFetcher = ( jwtType, { params } ) => {
-	return wpcom
-		.request( {
+	return wpcom.req
+		.post( {
 			apiNamespace: 'wpcom/v2',
-			method: 'POST',
 			path: '/lasagna/jwt/sign',
 			body: { jwt_type: jwtType, payload: params },
 		} )

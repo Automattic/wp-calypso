@@ -8,7 +8,7 @@ import { debounce } from 'lodash';
 /**
  * Internal dependencies
  */
-import afterLayoutFlush from 'lib/after-layout-flush';
+import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 
 const OVERFLOW_BUFFER = 4; // fairly arbitrary. feel free to tweak
 

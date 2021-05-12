@@ -1,5 +1,5 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -8,18 +8,20 @@ import { connect } from 'react-redux';
 import { find } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import Stream from 'reader/stream';
-import DocumentHead from 'components/data/document-head';
+import Stream from 'calypso/reader/stream';
+import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from './empty';
 import TagStreamHeader from './header';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import HeaderBack from 'reader/header-back';
-import { getReaderTags, getReaderFollowedTags } from 'state/reader/tags/selectors';
-import { requestFollowTag, requestUnfollowTag } from 'state/reader/tags/items/actions';
-import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
-import QueryReaderTag from 'components/data/query-reader-tag';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import HeaderBack from 'calypso/reader/header-back';
+import { getReaderTags, getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
+import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
+import QueryReaderTag from 'calypso/components/data/query-reader-tag';
+import ReaderMain from 'calypso/reader/components/reader-main';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
@@ -88,7 +90,7 @@ class TagStream extends React.Component {
 			isFollowing ? 'Clicked Unfollow Topic' : 'Clicked Follow Topic',
 			decodedTagSlug
 		);
-		recordTrack(
+		this.props.recordReaderTracksEvent(
 			isFollowing ? 'calypso_reader_reader_tag_unfollowed' : 'calypso_reader_reader_tag_followed',
 			{
 				tag: decodedTagSlug,
@@ -112,7 +114,7 @@ class TagStream extends React.Component {
 
 		if ( tag && tag.error ) {
 			return (
-				<React.Fragment>
+				<ReaderMain className="tag-stream__main">
 					<QueryReaderFollowedTags />
 					<QueryReaderTag tag={ this.props.decodedTagSlug } />
 					{ this.props.showBack && <HeaderBack /> }
@@ -122,8 +124,8 @@ class TagStream extends React.Component {
 						showFollow={ false }
 						showBack={ this.props.showBack }
 					/>
-					<EmptyContent />
-				</React.Fragment>
+					{ emptyContent }
+				</ReaderMain>
 			);
 		}
 
@@ -133,7 +135,7 @@ class TagStream extends React.Component {
 				listName={ this.state.title }
 				emptyContent={ emptyContent }
 				showFollowInHeader={ true }
-				forcePlaceholders={ ! tag } // if tag hasn't loaded yet, then make everything a placeholder
+				forcePlaceholders={ ! tag } // if tag has not loaded yet, then make everything a placeholder
 			>
 				<QueryReaderFollowedTags />
 				<QueryReaderTag tag={ this.props.decodedTagSlug } />
@@ -164,6 +166,7 @@ export default connect(
 	} ),
 	{
 		followTag: requestFollowTag,
+		recordReaderTracksEvent,
 		unfollowTag: requestUnfollowTag,
 	}
 )( localize( TagStream ) );

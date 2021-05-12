@@ -1,32 +1,33 @@
 /**
  * External dependencies
  */
-import config from 'config';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import { setSection } from 'state/ui/actions';
-import { activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import { bumpStat } from 'state/analytics/actions';
-import * as LoadingError from 'layout/error';
+import config from '@automattic/calypso-config';
+import { setSectionLoading } from 'calypso/state/ui/actions';
+import { activateNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { bumpStat } from 'calypso/state/analytics/actions';
+import * as LoadingError from 'calypso/layout/error';
 import * as controller from './controller/index.web';
 import { pathToRegExp } from './utils';
 import { receiveSections, load } from './sections-helper';
 import isSectionEnabled from './sections-filter';
-import { addReducerToStore } from 'state/add-reducer';
+import { addReducerToStore } from 'calypso/state/add-reducer';
+import { performanceTrackerStart } from 'calypso/lib/performance-tracking';
 
 import sections from './sections';
 receiveSections( sections );
 
-function activateSection( sectionDefinition, context ) {
-	context.store.dispatch( setSection( sectionDefinition ) );
+function activateSection( section, context ) {
+	controller.setSectionMiddleware( section )( context );
 	context.store.dispatch( activateNextLayoutFocus() );
 }
 
 async function loadSection( context, sectionDefinition ) {
-	context.store.dispatch( { type: 'SECTION_SET', isLoading: true } );
+	context.store.dispatch( setSectionLoading( true ) );
 
 	// If the section chunk is not loaded within 400ms, report it to analytics
 	const loadReportTimeout = setTimeout( () => {
@@ -39,7 +40,7 @@ async function loadSection( context, sectionDefinition ) {
 		// call the module initialization function (possibly async, registers page.js handlers etc.)
 		await requiredModule.default( controller.clientRouter, addReducerToStore( context.store ) );
 	} finally {
-		context.store.dispatch( { type: 'SECTION_SET', isLoading: false } );
+		context.store.dispatch( setSectionLoading( false ) );
 
 		// If the load was faster than the timeout, this will cancel the analytics reporting
 		clearTimeout( loadReportTimeout );
@@ -68,6 +69,11 @@ function createPageDefinition( path, sectionDefinition ) {
 	// if the section doesn't support logged-out views, redirect to login if user is not logged in
 	if ( ! sectionDefinition.enableLoggedOut ) {
 		page( pathRegex, controller.redirectLoggedOut );
+	}
+
+	// Install navigation performance tracking.
+	if ( sectionDefinition.trackLoadPerformance ) {
+		page( pathRegex, performanceTrackerStart( sectionDefinition.name ) );
 	}
 
 	page( pathRegex, async function ( context, next ) {

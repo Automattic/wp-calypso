@@ -9,7 +9,7 @@
 }
 
 .plugin-ratings__rating-stars {
-	font-size: 24px;
+	font-size: $font-title-medium;
 
 	@include breakpoint-deprecated( '<480px' ) {
 		display: inline-block;
@@ -18,7 +18,7 @@
 }
 
 .plugin-ratings__rating-text {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	color: var( --color-neutral-light );
 	margin-bottom: 16px;
 
@@ -31,7 +31,7 @@
 
 .plugin-ratings__rating-tier-text,
 .plugin-ratings__downloads {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	color: var( --color-neutral-light );
 	white-space: pre;
 	text-overflow: ellipsis;

@@ -39,11 +39,11 @@
 
 		.plugin-item__count,
 		.plugin-item__actions {
-			align-self: flex-start;
+			align-self: flex-end;
 			flex-direction: column;
 			margin-top: -6px;
 			padding-top: 0;
-			text-align: left;
+			text-align: right;
 		}
 
 		.plugin-item__count {

@@ -5,41 +5,28 @@
 import PropTypes from 'prop-types';
 import React, { Component, createElement } from 'react';
 import { connect } from 'react-redux';
-import {
-	noop,
-	get,
-	deburr,
-	kebabCase,
-	pick,
-	head,
-	includes,
-	isEqual,
-	isEmpty,
-	camelCase,
-	identity,
-} from 'lodash';
+import { get, deburr, kebabCase, pick, head, includes, isEqual, isEmpty, camelCase } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { getCountryStates } from 'state/country-states/selectors';
-import { CountrySelect, Input, HiddenInput } from 'my-sites/domains/components/form';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
-import FormButton from 'components/forms/form-button';
-import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
-import { countries } from 'components/phone-input/data';
-import formState from 'lib/form-state';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
-import { toIcannFormat } from 'components/phone-input/phone-number';
-import NoticeErrorMessage from 'my-sites/checkout/checkout/notice-error-message';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { getCountryStates } from 'calypso/state/country-states/selectors';
+import { CountrySelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormButton from 'calypso/components/forms/form-button';
+import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
+import { countries } from 'calypso/components/phone-input/data';
+import formState from 'calypso/lib/form-state';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
+import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
+import NoticeErrorMessage from 'calypso/my-sites/checkout/checkout/notice-error-message';
 import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
-import notices from 'notices';
-import { CALYPSO_CONTACT } from 'lib/url/support';
-import getCountries from 'state/selectors/get-countries';
-import QueryDomainCountries from 'components/data/query-countries/domains';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import getCountries from 'calypso/state/selectors/get-countries';
+import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
 import {
 	CONTACT_DETAILS_FORM_FIELDS,
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
@@ -51,6 +38,8 @@ import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class ContactDetailsFormFields extends Component {
 	static propTypes = {
@@ -103,7 +92,6 @@ export class ContactDetailsFormFields extends Component {
 		needsOnlyGoogleAppsDetails: false,
 		needsAlternateEmailForGSuite: false,
 		hasCountryStates: false,
-		translate: identity,
 		userCountryCode: 'US',
 		shouldForceRenderOnPropChange: false,
 	};
@@ -273,7 +261,7 @@ export class ContactDetailsFormFields extends Component {
 					comment: 'Validation error when filling out domain checkout contact details form',
 				}
 			);
-			notices.error( noticeMessage );
+			this.props.errorNotice( noticeMessage );
 			throw new Error(
 				`Cannot focus() on invalid form element in domain details checkout form with name: '${ firstErrorName }'`
 			);
@@ -537,10 +525,12 @@ export class ContactDetailsFormFields extends Component {
 					? this.renderGAppsFieldset()
 					: this.renderContactDetailsFields() }
 
-				<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
+				{ this.props.children && (
+					<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
+				) }
 
 				{ isFooterVisible && (
-					<FormFooter>
+					<div>
 						{ this.props.onSubmit && (
 							<FormButton
 								className="contact-details-form-fields__submit-button"
@@ -560,7 +550,7 @@ export class ContactDetailsFormFields extends Component {
 								{ translate( 'Cancel' ) }
 							</FormButton>
 						) }
-					</FormFooter>
+					</div>
 				) }
 				<QueryDomainCountries />
 			</FormFieldset>
@@ -568,17 +558,22 @@ export class ContactDetailsFormFields extends Component {
 	}
 }
 
-export default connect( ( state, props ) => {
-	const contactDetails = props.contactDetails;
-	const countryCode = contactDetails.countryCode;
+export default connect(
+	( state, props ) => {
+		const contactDetails = props.contactDetails;
+		const countryCode = contactDetails.countryCode;
 
-	const hasCountryStates =
-		contactDetails && contactDetails.countryCode
-			? ! isEmpty( getCountryStates( state, contactDetails.countryCode ) )
-			: false;
-	return {
-		countryCode,
-		countriesList: getCountries( state, 'domains' ),
-		hasCountryStates,
-	};
-} )( localize( ContactDetailsFormFields ) );
+		const hasCountryStates =
+			contactDetails && contactDetails.countryCode
+				? ! isEmpty( getCountryStates( state, contactDetails.countryCode ) )
+				: false;
+		return {
+			countryCode,
+			countriesList: getCountries( state, 'domains' ),
+			hasCountryStates,
+		};
+	},
+	{
+		errorNotice,
+	}
+)( localize( ContactDetailsFormFields ) );

@@ -4,23 +4,22 @@
 import { isMobile } from '@automattic/viewport';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { hasTouch } from 'lib/touch-detect';
+import { hasTouch } from 'calypso/lib/touch-detect';
 import { localize } from 'i18n-calypso';
 import { RootChild } from '@automattic/components';
-import { setPreviewShowing } from 'state/ui/actions';
 import WebPreviewContent from './content';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class WebPreviewModal extends Component {
 	static propTypes = {
@@ -38,6 +37,8 @@ export class WebPreviewModal extends Component {
 		showDeviceSwitcher: PropTypes.bool,
 		// Show edit button
 		showEdit: PropTypes.bool,
+		// Show edit the header link button
+		showEditHeaderLink: PropTypes.bool,
 		// The URL for the edit button
 		editUrl: PropTypes.string,
 		// The URL that should be displayed in the iframe
@@ -109,7 +110,6 @@ export class WebPreviewModal extends Component {
 		if ( this.props.showPreview ) {
 			document.documentElement.classList.add( 'no-scroll', 'is-previewing' );
 		}
-		this.props.setPreviewShowing( this.props.showPreview );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -119,7 +119,6 @@ export class WebPreviewModal extends Component {
 		if ( showPreview === prevProps.showPreview ) {
 			return;
 		}
-		this.props.setPreviewShowing( showPreview );
 		if ( showPreview ) {
 			window.addEventListener( 'keydown', this.keyDown );
 			document.documentElement.classList.add( 'no-scroll', 'is-previewing' );
@@ -130,7 +129,6 @@ export class WebPreviewModal extends Component {
 	}
 
 	componentWillUnmount() {
-		this.props.setPreviewShowing( false );
 		window.removeEventListener( 'keydown', this.keyDown );
 		document.documentElement.classList.remove( 'no-scroll', 'is-previewing' );
 	}
@@ -177,12 +175,10 @@ export class WebPreviewModal extends Component {
 	}
 }
 
-const ConnectedWebPreviewModal = connect( null, { setPreviewShowing } )(
-	localize( WebPreviewModal )
-);
+const LocalizedWebPreviewModal = localize( WebPreviewModal );
 
 const WebPreviewInner = ( { isContentOnly, ...restProps } ) => {
-	const WebPreviewComponent = isContentOnly ? WebPreviewContent : ConnectedWebPreviewModal;
+	const WebPreviewComponent = isContentOnly ? WebPreviewContent : LocalizedWebPreviewModal;
 
 	return <WebPreviewComponent { ...restProps } />;
 };

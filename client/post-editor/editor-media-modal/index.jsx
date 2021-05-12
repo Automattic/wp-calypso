@@ -1,21 +1,19 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { some, partial, map, get } from 'lodash';
+import { partial, map, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import MediaModal from 'post-editor/media-modal';
-import { generateGalleryShortcode } from 'lib/media/utils';
-import markup from 'post-editor/media-modal/markup';
-import { bumpStat } from 'state/analytics/actions';
-import { getSelectedSite } from 'state/ui/selectors';
-import { blockSave } from 'state/ui/editor/save-blockers/actions';
+import MediaModal from 'calypso/post-editor/media-modal';
+import { generateGalleryShortcode } from 'calypso/lib/media/utils';
+import markup from 'calypso/post-editor/media-modal/markup';
+import { bumpStat } from 'calypso/state/analytics/actions';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 class EditorMediaModal extends Component {
 	static propTypes = {
@@ -32,7 +30,8 @@ class EditorMediaModal extends Component {
 
 	insertMedia( { type, items, settings } ) {
 		const { site } = this.props;
-		let media, stat;
+		let media;
+		let stat;
 
 		const getItemMarkup = partial( markup.get, site );
 
@@ -51,10 +50,6 @@ class EditorMediaModal extends Component {
 			default:
 				media = map( items, getItemMarkup ).join( '' );
 				stat = 'insert_item';
-		}
-
-		if ( some( items, 'transient' ) ) {
-			this.props.blockSave( 'MEDIA_MODAL_TRANSIENT_INSERT' );
 		}
 
 		if ( media ) {
@@ -89,7 +84,6 @@ export default connect(
 		site: getSelectedSite( state ),
 	} ),
 	{
-		blockSave,
 		bumpStat,
 	}
 )( EditorMediaModal );

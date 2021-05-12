@@ -52,12 +52,12 @@
 	}
 
 	h1 {
-		font-size: 24px;
+		font-size: $font-title-medium;
 		line-height: 1.2;
 		color: var( --color-neutral-70 );
 
 		@include breakpoint-deprecated( '>480px' ) {
-			font-size: 32px;
+			font-size: $font-title-large;
 		}
 	}
 
@@ -76,15 +76,15 @@
 	}
 
 	h4 {
-		font-weight: bold;
+		font-weight: 600;
 		color: var( --color-neutral-50 );
-		font-size: 15px;
+		font-size: $font-body;
 	}
 
 	p {
 		color: var( --color-neutral-40 );
 		margin: 0;
-		font-size: 15px;
+		font-size: $font-body;
 	}
 
 	.button {

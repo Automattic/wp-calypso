@@ -1,20 +1,24 @@
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { HOME_LAYOUT_REQUEST, HOME_LAYOUT_SKIP_CURRENT_VIEW } from 'state/action-types';
-import { setHomeLayout } from 'state/home/actions';
-import config from 'config';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { HOME_LAYOUT_REQUEST, HOME_LAYOUT_SKIP_CURRENT_VIEW } from 'calypso/state/action-types';
+import { setHomeLayout } from 'calypso/state/home/actions';
+import config from '@automattic/calypso-config';
 
 const requestLayout = ( action ) => {
+	const isDev = config.isEnabled( 'home/layout-dev' ) || action.isDev;
 	return http(
 		{
 			method: 'GET',
 			path: `/sites/${ action.siteId }/home/layout`,
 			apiNamespace: 'wpcom/v2',
-			...( config.isEnabled( 'home/layout-dev' ) && { query: { dev: true } } ),
+			query: {
+				...( isDev && { dev: true } ),
+				...( isDev && action.forcedView && { view: action.forcedView } ),
+			},
 		},
 		action
 	);

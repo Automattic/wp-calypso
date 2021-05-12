@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 /**
  * Returns the PostsQueryManager from the state tree for a given site ID (or

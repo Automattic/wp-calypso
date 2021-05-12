@@ -5,13 +5,13 @@ import classNames from 'classnames';
 import React, { Children, PureComponent, cloneElement } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { isFunction, times } from 'lodash';
+import { times } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import TaskPlaceholder from './task-placeholder';
 import { Card } from '@automattic/components';
 
@@ -56,7 +56,7 @@ class Checklist extends PureComponent {
 		const { children } = this.props;
 		const childrenArray = Children.toArray( children ).filter( Boolean );
 		const completedCount = childrenArray.reduce(
-			( count, task ) => ( true === task.props.completed ? count + 1 : count) ,
+			( count, task ) => ( true === task.props.completed ? count + 1 : count ),
 			0
 		);
 		const total = childrenArray.length;
@@ -81,7 +81,7 @@ class Checklist extends PureComponent {
 				return { expandedTaskIndex: null }; // Collapse
 			}
 
-			if ( isFunction( this.props.onExpandTask ) ) {
+			if ( typeof this.props.onExpandTask === 'function' ) {
 				this.props.onExpandTask(
 					Children.toArray( this.props.children )[ newExpandedTaskIndex ].props
 				);

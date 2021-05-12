@@ -11,9 +11,9 @@ import {
 	EMAIL_ACCOUNTS_REQUEST,
 	EMAIL_ACCOUNTS_REQUEST_SUCCESS,
 	EMAIL_ACCOUNTS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 const isErrorNotice = ( action ) => {
 	return action && action.notice && 'is-error' === action.notice.status;
@@ -21,11 +21,11 @@ const isErrorNotice = ( action ) => {
 
 describe( 'wpcom-api', () => {
 	describe( 'email accounts request', () => {
-		const siteId = 1,
-			action = {
-				type: EMAIL_ACCOUNTS_REQUEST,
-				siteId,
-			};
+		const siteId = 1;
+		const action = {
+			type: EMAIL_ACCOUNTS_REQUEST,
+			siteId,
+		};
 
 		describe( '#getEmailAccounts', () => {
 			test( 'should dispatch an HTTP request to the get email-accounts endpoint', () => {

@@ -4,13 +4,13 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { Card, Button } from '@automattic/components';
-import { recordTracksEvent } from 'lib/analytics/tracks';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 export default localize( ( props ) => {
 	const { date, registrationUrl, isBusinessPlanUser, translate } = props;

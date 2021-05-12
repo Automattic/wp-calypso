@@ -11,20 +11,23 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
+import EmptyContent from 'calypso/components/empty-content';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
 import SiteRedirectStep from './site-redirect-step';
-import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
-import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
-import { getSiteAdminUrl } from 'state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import QueryProductsList from 'components/data/query-products-list';
-import { getProductsList } from 'state/products-list/selectors';
+import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 
 class SiteRedirect extends Component {
 	static propTypes = {
-		cart: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
 		isSiteAtomic: PropTypes.bool.isRequired,
@@ -55,7 +58,6 @@ class SiteRedirect extends Component {
 
 	render() {
 		const {
-			cart,
 			selectedSite,
 			selectedSiteAdminUrl,
 			isSiteAtomic,
@@ -83,7 +85,7 @@ class SiteRedirect extends Component {
 					{ translate( 'Redirect a Site' ) }
 				</HeaderCake>
 
-				<SiteRedirectStep cart={ cart } products={ productsList } selectedSite={ selectedSite } />
+				<SiteRedirectStep products={ productsList } selectedSite={ selectedSite } />
 			</Main>
 		);
 	}

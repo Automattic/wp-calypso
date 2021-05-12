@@ -42,10 +42,10 @@
 .podcasting-details__publish-notice {
 	position: relative;
 	background: var( --color-neutral-0 );
-	border-radius: 4px;
+	border-radius: 2px;
 	align-self: stretch;
 	padding: 6px;
-	font-size: 14px;
+	font-size: $font-body-small;
 	text-align: left;
 	// Center contents vertically
 	// Note this element contains a <span> container to ensure normal
@@ -147,10 +147,6 @@
 	&.is-disabled .form-textarea {
 		color: var( --color-neutral-20 );
 		border-color: var( --color-neutral-10 );
-	}
-
-	.podcasting-details__save-button {
-		float: right;
 	}
 }
 

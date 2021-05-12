@@ -46,14 +46,14 @@
 
 .people-profile__username {
 	color: var( --color-neutral-70 );
-	font-size: 16px;
+	font-size: $font-body;
 	font-weight: 600;
 	white-space: pre;
 	text-overflow: clip;
 	overflow: hidden;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 21px;
+		font-size: $font-title-small;
 	}
 
 	&::before {
@@ -63,10 +63,10 @@
 
 .people-profile__login {
 	color: var( --color-text-subtle );
-	font-size: 13px;
+	font-size: $font-body-small;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 15px;
+		font-size: $font-body;
 		margin-top: -3px;
 	}
 }
@@ -78,7 +78,7 @@
 
 .people-profile__subscribed {
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	margin-top: 4px;
 }
 
@@ -88,7 +88,7 @@
 	border: 1px solid var( --color-neutral-light );
 	border-radius: 2px;
 	color: var( --color-text-subtle );
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	margin-left: 8px;
 	padding: 2px 6px;
 	white-space: pre;

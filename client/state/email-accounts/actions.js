@@ -5,10 +5,10 @@ import {
 	EMAIL_ACCOUNTS_REQUEST,
 	EMAIL_ACCOUNTS_REQUEST_SUCCESS,
 	EMAIL_ACCOUNTS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/email-accounts/init';
-import 'state/data-layer/wpcom/email-accounts';
+import 'calypso/state/email-accounts/init';
+import 'calypso/state/data-layer/wpcom/email-accounts';
 
 export const getEmailAccounts = ( siteId ) => {
 	return {

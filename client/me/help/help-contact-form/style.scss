@@ -5,6 +5,7 @@
 	}
 
 	.form-button {
+		display: block;
 		margin-top: 11px;
 	}
 }
@@ -37,7 +38,7 @@
 		}
 
 		.segmented-control__text {
-			font-size: 14px;
+			font-size: $font-body-small;
 			line-height: 18px;
 		}
 
@@ -50,13 +51,13 @@
 
 .help-contact-form__selection-subtext {
 	display: block;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	line-height: 16px;
 }
 
 .help-contact-form__title {
 	display: block;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	margin-bottom: 5px;
 }

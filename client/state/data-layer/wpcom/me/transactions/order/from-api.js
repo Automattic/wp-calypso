@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import makeJsonSchemaParser from 'lib/make-json-schema-parser';
+import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import responseSchema from './schema';
-import { ORDER_TRANSACTION_STATUS } from 'state/order-transactions/constants';
+import { ORDER_TRANSACTION_STATUS } from 'calypso/state/order-transactions/constants';
 
 export const convertProcessingStatus = ( responseStatus ) => {
 	switch ( responseStatus ) {

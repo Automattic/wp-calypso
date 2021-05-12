@@ -2,101 +2,52 @@
  * External dependencies
  */
 
-import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import AppPasswords from 'me/application-passwords';
+import AppPasswords from 'calypso/me/application-passwords';
 import { Card } from '@automattic/components';
-import DocumentHead from 'components/data/document-head';
-import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import ReauthRequired from 'me/reauth-required';
-import Security2faBackupCodes from 'me/security-2fa-backup-codes';
-import Security2faDisable from 'me/security-2fa-disable';
-import Security2faSetup from 'me/security-2fa-setup';
-import SecuritySectionNav from 'me/security-section-nav';
-import Security2faKey from 'me/security-2fa-key';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import config from '@automattic/calypso-config';
+import DocumentHead from 'calypso/components/data/document-head';
+import { fetchUserSettings } from 'calypso/state/user-settings/actions';
+import FormattedHeader from 'calypso/components/formatted-header';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import HeaderCake from 'calypso/components/header-cake';
+import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
+import isTwoStepEnabled from 'calypso/state/selectors/is-two-step-enabled';
+import Main from 'calypso/components/main';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import ReauthRequired from 'calypso/me/reauth-required';
+import Security2faBackupCodes from 'calypso/me/security-2fa-backup-codes';
+import Security2faDisable from 'calypso/me/security-2fa-disable';
+import Security2faKey from 'calypso/me/security-2fa-key';
+import Security2faSetup from 'calypso/me/security-2fa-setup';
+import SecuritySectionNav from 'calypso/me/security-section-nav';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const debug = debugFactory( 'calypso:me:two-step' );
-
 class TwoStep extends Component {
-	static displayName = 'TwoStep';
-
 	static propTypes = {
 		translate: PropTypes.func.isRequired,
 	};
 
-	state = {
-		initialized: false,
-		doingSetup: false,
-	};
-
-	componentDidMount() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
-		this.props.userSettings.on( 'change', this.onUserSettingsChange );
-		this.props.userSettings.fetchSettings();
-	}
-
-	componentWillUnmount() {
-		debug( this.constructor.displayName + ' React component is unmounting.' );
-		this.props.userSettings.off( 'change', this.onUserSettingsChange );
-	}
-
-	onUserSettingsChange = () => {
-		// NOTE: This was removed to transform to React.Component.
-		// Ensure no behavior change from this omission.
-		// if ( ! this.isMounted() ) {
-		// 	return;
-		// }
-
-		if ( ! this.state.initialized ) {
-			this.setState( {
-				initialized: true,
-				doingSetup: ! this.props.userSettings.isTwoStepEnabled(),
-			} );
-			return;
-		}
-
-		// are we doing setup? don't re-render during the setup flow
-		if ( this.state.doingSetup ) {
-			return;
-		}
-
-		this.forceUpdate();
-	};
-
 	onSetupFinished = () => {
-		this.setState(
-			{
-				doingSetup: false,
-			},
-			this.refetchSettings
-		);
+		this.props.fetchUserSettings();
 	};
 
 	onDisableFinished = () => {
-		this.setState(
-			{
-				doingSetup: true,
-			},
-			this.refetchSettings
-		);
-	};
-
-	refetchSettings = () => {
-		this.props.userSettings.fetchSettings();
+		this.props.fetchUserSettings();
 	};
 
 	renderPlaceholders = () => {
@@ -115,29 +66,19 @@ class TwoStep extends Component {
 	};
 
 	renderTwoStepSection = () => {
-		if ( ! this.state.initialized ) {
+		if ( this.props.isFetchingUserSettings ) {
 			return this.renderPlaceholders();
 		}
 
-		if ( this.state.doingSetup ) {
-			return (
-				<Security2faSetup
-					userSettings={ this.props.userSettings }
-					onFinished={ this.onSetupFinished }
-				/>
-			);
+		if ( ! this.props.isTwoStepEnabled ) {
+			return <Security2faSetup onFinished={ this.onSetupFinished } />;
 		}
 
-		return (
-			<Security2faDisable
-				userSettings={ this.props.userSettings }
-				onFinished={ this.onDisableFinished }
-			/>
-		);
+		return <Security2faDisable onFinished={ this.onDisableFinished } />;
 	};
 
 	renderApplicationPasswords = () => {
-		if ( ! this.state.initialized || this.state.doingSetup ) {
+		if ( this.props.isFetchingUserSettings || ! this.props.isTwoStepEnabled ) {
 			return null;
 		}
 
@@ -145,7 +86,7 @@ class TwoStep extends Component {
 	};
 
 	render2faKey = () => {
-		if ( ! this.state.initialized || this.state.doingSetup ) {
+		if ( this.props.isFetchingUserSettings || ! this.props.isTwoStepEnabled ) {
 			return null;
 		}
 
@@ -153,24 +94,35 @@ class TwoStep extends Component {
 	};
 
 	renderBackupCodes = () => {
-		if ( ! this.state.initialized || this.state.doingSetup ) {
+		if ( this.props.isFetchingUserSettings || ! this.props.isTwoStepEnabled ) {
 			return null;
 		}
 
-		return <Security2faBackupCodes userSettings={ this.props.userSettings } />;
+		return <Security2faBackupCodes />;
 	};
 
 	render() {
+		const { path, translate } = this.props;
+		const useCheckupMenu = config.isEnabled( 'security/security-checkup' );
+
 		return (
-			<Main className="two-step">
+			<Main wideLayout className="security two-step">
+				<QueryUserSettings />
 				<PageViewTracker path="/me/security/two-step" title="Me > Two-Step Authentication" />
 				<MeSidebarNavigation />
 
-				<SecuritySectionNav path={ this.props.path } />
-
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
-				<DocumentHead title={ this.props.translate( 'Two-Step Authentication' ) } />
+				<DocumentHead title={ translate( 'Two-Step Authentication' ) } />
+
+				<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
+
+				{ ! useCheckupMenu && <SecuritySectionNav path={ path } /> }
+				{ useCheckupMenu && (
+					<HeaderCake backText={ translate( 'Back' ) } backHref="/me/security">
+						{ translate( 'Two-Step Authentication' ) }
+					</HeaderCake>
+				) }
 
 				<Card>{ this.renderTwoStepSection() }</Card>
 
@@ -182,4 +134,13 @@ class TwoStep extends Component {
 	}
 }
 
-export default localize( TwoStep );
+export default connect(
+	( state ) => ( {
+		isFetchingUserSettings: isFetchingUserSettings( state ),
+		userSettings: getUserSettings( state ),
+		isTwoStepEnabled: isTwoStepEnabled( state ),
+	} ),
+	{
+		fetchUserSettings,
+	}
+)( localize( TwoStep ) );

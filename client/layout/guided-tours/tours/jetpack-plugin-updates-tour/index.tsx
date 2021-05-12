@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import Gridicon from 'components/gridicon';
 import React, { Fragment } from 'react';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'calypso/components/gridicon';
 import meta from './meta';
-import PluginsStore from 'lib/plugins/store';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getPluginOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
 import {
 	ButtonRow,
 	Continue,
@@ -18,9 +18,9 @@ import {
 	SiteLink,
 	Step,
 	Tour,
-} from 'layout/guided-tours/config-elements';
+} from 'calypso/layout/guided-tours/config-elements';
 
-const JETPACK_TOGGLE_SELECTOR = '.plugin-item-jetpack .form-toggle__switch';
+const JETPACK_TOGGLE_SELECTOR = '.plugin-item-jetpack .components-form-toggle';
 
 // Wait until the desired DOM element appears. Check every 125ms.
 // This function is a Redux action creator, hence the two arrows.
@@ -36,8 +36,9 @@ export const JetpackPluginUpdatesTour = makeTour(
 		{ ...meta }
 		when={ ( state ) => {
 			const site = getSelectedSite( state );
-			const res =
-				! PluginsStore.isFetchingSite( site ) && !! PluginsStore.getSitePlugin( site, 'jetpack' );
+			const isRequestingPlugins = isRequesting( state, site.ID );
+			const sitePlugin = getPluginOnSite( state, site.ID, 'jetpack' );
+			const res = ! isRequestingPlugins && !! sitePlugin;
 			return res;
 		} }
 	>
@@ -51,6 +52,7 @@ export const JetpackPluginUpdatesTour = makeTour(
 				animationDelay: '0.7s',
 				zIndex: 1,
 			} }
+			shouldScrollTo
 		>
 			{ ( { translate } ) => (
 				<Fragment>
@@ -62,7 +64,7 @@ export const JetpackPluginUpdatesTour = makeTour(
 					</p>
 					<ButtonRow>
 						<Continue
-							target=".plugin-item-jetpack .form-toggle__switch"
+							target=".plugin-item-jetpack .components-form-toggle"
 							step="finish"
 							click
 							hidden

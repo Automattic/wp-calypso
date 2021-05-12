@@ -12,32 +12,43 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import config from 'config';
+import Gridicon from 'calypso/components/gridicon';
+import config from '@automattic/calypso-config';
+import { sendEmailLogin } from 'calypso/state/auth/actions';
 import {
+	getAuthAccountType,
+	getRedirectToOriginal,
+	getLastCheckedUsernameOrEmail,
 	getRequestNotice,
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled,
 	isTwoFactorAuthTypeSupported,
 	getSocialAccountIsLinking,
 	getSocialAccountLinkService,
-} from 'state/login/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { wasManualRenewalImmediateLoginAttempted } from 'state/immediate-login/selectors';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
-import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
-import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
-import { rebootAfterLogin } from 'state/login/actions';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
-import { login } from 'lib/paths';
-import Notice from 'components/notice';
-import AsyncLoad from 'components/async-load';
-import VisitSite from 'blocks/visit-site';
-import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
+} from 'calypso/state/login/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { wasManualRenewalImmediateLoginAttempted } from 'calypso/state/immediate-login/selectors';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
+import { rebootAfterLogin } from 'calypso/state/login/actions';
+import { isPasswordlessAccount } from 'calypso/state/login/utils';
+import {
+	isCrowdsignalOAuth2Client,
+	isJetpackCloudOAuth2Client,
+	isWooOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
+import { login } from 'calypso/lib/paths';
+import Notice from 'calypso/components/notice';
+import AsyncLoad from 'calypso/components/async-load';
+import VisitSite from 'calypso/blocks/visit-site';
+import WooCommerceConnectCartHeader from 'calypso/extensions/woocommerce/components/woocommerce-connect-cart-header';
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
-import { isWebAuthnSupported } from 'lib/webauthn';
+import { isWebAuthnSupported } from 'calypso/lib/webauthn';
+import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
+import { getIsAnchorFmSignup } from 'calypso/landing/gutenboarding/utils';
 
 /**
  * Style dependencies
@@ -57,6 +68,7 @@ class Login extends Component {
 		privateSite: PropTypes.bool,
 		rebootAfterLogin: PropTypes.func.isRequired,
 		requestNotice: PropTypes.object,
+		sendEmailLogin: PropTypes.func.isRequired,
 		socialConnect: PropTypes.bool,
 		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
@@ -64,6 +76,9 @@ class Login extends Component {
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
 		isSecurityKeySupported: PropTypes.bool,
+		userEmail: PropTypes.string,
+		onSocialConnectStart: PropTypes.func,
+		onTwoFactorRequested: PropTypes.func,
 	};
 
 	state = {
@@ -80,7 +95,9 @@ class Login extends Component {
 	componentDidMount() {
 		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
 			// Disallow access to the 2FA pages unless the user has 2FA enabled
-			page( login( { isNative: true, isJetpack: this.props.isJetpack } ) );
+			page(
+				login( { isNative: true, isJetpack: this.props.isJetpack, locale: this.props.locale } )
+			);
 		}
 
 		window.scrollTo( 0, 0 );
@@ -92,6 +109,11 @@ class Login extends Component {
 
 		if ( isNewPage || hasNotice ) {
 			window.scrollTo( 0, 0 );
+		}
+
+		if ( ! prevProps.accountType && isPasswordlessAccount( this.props.accountType ) ) {
+			this.props.sendEmailLogin();
+			this.handleTwoFactorRequested( 'link' );
 		}
 	}
 
@@ -122,6 +144,37 @@ class Login extends Component {
 		);
 	};
 
+	handleTwoFactorRequested = ( authType ) => {
+		if ( this.props.onTwoFactorRequested ) {
+			this.props.onTwoFactorRequested( authType );
+		} else {
+			page(
+				login( {
+					isNative: true,
+					isJetpack: this.props.isJetpack,
+					isGutenboarding: this.props.isGutenboarding,
+					// If no notification is sent, the user is using the authenticator for 2FA by default
+					twoFactorAuthType: authType,
+					locale: this.props.locale,
+				} )
+			);
+		}
+	};
+
+	handleSocialConnectStart = () => {
+		if ( this.props.onSocialConnectStart ) {
+			this.props.onSocialConnectStart();
+		} else {
+			page(
+				login( {
+					isNative: true,
+					socialConnect: true,
+					locale: this.props.locale,
+				} )
+			);
+		}
+	};
+
 	handleValidLogin = () => {
 		if ( this.props.twoFactorEnabled ) {
 			let defaultAuthType;
@@ -134,22 +187,9 @@ class Login extends Component {
 			} else {
 				defaultAuthType = this.props.twoFactorNotificationSent.replace( 'none', 'authenticator' );
 			}
-			page(
-				login( {
-					isNative: true,
-					isJetpack: this.props.isJetpack,
-					isGutenboarding: this.props.isGutenboarding,
-					// If no notification is sent, the user is using the authenticator for 2FA by default
-					twoFactorAuthType: defaultAuthType,
-				} )
-			);
+			this.handleTwoFactorRequested( defaultAuthType );
 		} else if ( this.props.isLinking ) {
-			page(
-				login( {
-					isNative: true,
-					socialConnect: true,
-				} )
-			);
+			this.handleSocialConnectStart();
 		} else {
 			this.rebootAfterLogin();
 		}
@@ -157,12 +197,7 @@ class Login extends Component {
 
 	handleValid2FACode = () => {
 		if ( this.props.isLinking ) {
-			page(
-				login( {
-					isNative: true,
-					socialConnect: true,
-				} )
-			);
+			this.handleSocialConnectStart();
 		} else {
 			this.rebootAfterLogin();
 		}
@@ -192,6 +227,7 @@ class Login extends Component {
 			translate,
 			twoStepNonce,
 			fromSite,
+			isAnchorFmSignup,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
@@ -258,7 +294,7 @@ class Login extends Component {
 								<div className={ classNames( 'login__woocommerce-logo' ) }>
 									<svg width={ 200 } viewBox={ '0 0 1270 170' }>
 										<AsyncLoad
-											require="components/jetpack-header/woocommerce"
+											require="calypso/components/jetpack-header/woocommerce"
 											darkColorScheme={ false }
 											placeholder={ null }
 										/>
@@ -278,6 +314,27 @@ class Login extends Component {
 				);
 			}
 
+			if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
+				headerText = translate( 'Howdy! Log in to Jetpack.com with your WordPress.com account.' );
+				preHeader = (
+					<div className="login__jetpack-cloud-wrapper">
+						<JetpackPlusWpComLogo className="login__jetpack-plus-wpcom-logo" size={ 24 } />
+					</div>
+				);
+
+				// If users arrived here from the lost password flow, show them a specific message about it
+				const currentUrl = new URL( window.location.href );
+				const displayLostPasswordConfirmation =
+					currentUrl.searchParams.get( 'lostpassword_flow' ) === 'true';
+				postHeader = displayLostPasswordConfirmation && (
+					<p className="login__form-post-header">
+						{ translate(
+							'Check your e-mail address linked to the account for the confirmation link, including the spam or junk folder.'
+						) }
+					</p>
+				);
+			}
+
 			if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 				headerText = translate( 'Sign in to %(clientTitle)s', {
 					args: {
@@ -290,7 +347,7 @@ class Login extends Component {
 			preHeader = (
 				<div className="login__jetpack-logo">
 					<AsyncLoad
-						require="components/jetpack-header"
+						require="calypso/components/jetpack-header"
 						placeholder={ null }
 						partnerSlug={ this.props.partnerSlug }
 						isWoo
@@ -307,16 +364,27 @@ class Login extends Component {
 				</p>
 			);
 		} else if ( isJetpack ) {
-			headerText = translate( 'Log in or create a WordPress.com account to set up Jetpack' );
+			const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
+			headerText = isJetpackMagicLinkSignUpFlow
+				? translate( 'Log in or create a WordPress.com account to get started with Jetpack' )
+				: translate( 'Log in or create a WordPress.com account to set up Jetpack' );
 			preHeader = (
 				<div className="login__jetpack-logo">
 					<AsyncLoad
-						require="components/jetpack-header"
+						require="calypso/components/jetpack-header"
 						placeholder={ null }
 						partnerSlug={ this.props.partnerSlug }
 						darkColorScheme
 					/>
 				</div>
+			);
+		} else if ( isAnchorFmSignup ) {
+			postHeader = (
+				<p className="login__header-subtitle">
+					{ translate(
+						'Log in to your WordPress.com account to transcribe and save your Anchor.fm podcasts.'
+					) }
+				</p>
 			);
 		} else if ( fromSite ) {
 			// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
@@ -378,12 +446,23 @@ class Login extends Component {
 			socialServiceResponse,
 			disableAutoFocus,
 			locale,
+			userEmail,
+			handleUsernameChange,
 		} = this.props;
+
+		if ( socialConnect ) {
+			return (
+				<AsyncLoad
+					require="calypso/blocks/login/social-connect-prompt"
+					onSuccess={ this.handleValidLogin }
+				/>
+			);
+		}
 
 		if ( twoFactorEnabled ) {
 			return (
 				<AsyncLoad
-					require="blocks/login/two-factor-authentication/two-factor-content"
+					require="calypso/blocks/login/two-factor-authentication/two-factor-content"
 					isBrowserSupported={ this.state.isBrowserSupported }
 					isJetpack={ isJetpack }
 					isGutenboarding={ isGutenboarding }
@@ -391,15 +470,7 @@ class Login extends Component {
 					twoFactorNotificationSent={ twoFactorNotificationSent }
 					handleValid2FACode={ this.handleValid2FACode }
 					rebootAfterLogin={ this.rebootAfterLogin }
-				/>
-			);
-		}
-
-		if ( socialConnect ) {
-			return (
-				<AsyncLoad
-					require="blocks/login/social-connect-prompt"
-					onSuccess={ this.handleValidLogin }
+					switchTwoFactorAuthType={ this.handleTwoFactorRequested }
 				/>
 			);
 		}
@@ -417,9 +488,10 @@ class Login extends Component {
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
-				isJetpack={ isJetpack }
 				isGutenboarding={ isGutenboarding }
 				locale={ locale }
+				userEmail={ userEmail }
+				handleUsernameChange={ handleUsernameChange }
 			/>
 		);
 	}
@@ -429,9 +501,14 @@ class Login extends Component {
 	}
 
 	render() {
-		const { isJetpack } = this.props;
+		const { isJetpack, oauth2Client } = this.props;
 		return (
-			<div className={ classNames( 'login', { 'is-jetpack': isJetpack } ) }>
+			<div
+				className={ classNames( 'login', {
+					'is-jetpack': isJetpack,
+					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
+				} ) }
+			>
 				{ this.renderHeader() }
 
 				<ErrorNotice />
@@ -439,6 +516,7 @@ class Login extends Component {
 				{ this.renderNotice() }
 
 				{ this.renderContent() }
+
 				{ this.renderFooter() }
 			</div>
 		);
@@ -447,6 +525,9 @@ class Login extends Component {
 
 export default connect(
 	( state ) => ( {
+		accountType: getAuthAccountType( state ),
+		redirectTo: getRedirectToOriginal( state ),
+		usernameOrEmail: getLastCheckedUsernameOrEmail( state ),
 		currentUser: getCurrentUser( state ),
 		requestNotice: getRequestNotice( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
@@ -460,6 +541,24 @@ export default connect(
 		isJetpackWooCommerceFlow:
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+		isAnchorFmSignup: getIsAnchorFmSignup(
+			get( getCurrentQueryArguments( state ), 'redirect_to' )
+		),
 	} ),
-	{ rebootAfterLogin }
+	{
+		rebootAfterLogin,
+		sendEmailLogin,
+	},
+	( stateProps, dispatchProps, ownProps ) => ( {
+		...ownProps,
+		...stateProps,
+		...dispatchProps,
+		sendEmailLogin: () =>
+			dispatchProps.sendEmailLogin( stateProps.usernameOrEmail, {
+				redirectTo: stateProps.redirectTo,
+				loginFormFlow: true,
+				showGlobalNotices: true,
+				flow: ownProps.isJetpack ? 'jetpack' : null,
+			} ),
+	} )
 )( localize( Login ) );

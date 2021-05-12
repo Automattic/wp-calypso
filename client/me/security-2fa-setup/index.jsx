@@ -10,25 +10,21 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Security2faEnable from 'me/security-2fa-enable';
-import Security2faSetupBackupCodes from 'me/security-2fa-setup-backup-codes';
-import Security2faSMSSettings from 'me/security-2fa-sms-settings';
-import Security2faInitialSetup from 'me/security-2fa-initial-setup';
-import { successNotice } from 'state/notices/actions';
+import Security2faEnable from 'calypso/me/security-2fa-enable';
+import Security2faSetupBackupCodes from 'calypso/me/security-2fa-setup-backup-codes';
+import Security2faSMSSettings from 'calypso/me/security-2fa-sms-settings';
+import Security2faInitialSetup from 'calypso/me/security-2fa-initial-setup';
+import { successNotice } from 'calypso/state/notices/actions';
 
 class Security2faSetup extends Component {
 	static propTypes = {
 		onFinished: PropTypes.func.isRequired,
-		userSettings: PropTypes.object.isRequired,
 		translate: PropTypes.func,
 	};
 
-	constructor() {
-		super( ...arguments );
-		this.state = {
-			step: 'initial-setup',
-		};
-	}
+	state = {
+		step: 'initial-setup',
+	};
 
 	onCancelSetup = ( event ) => {
 		event.preventDefault();
@@ -70,7 +66,6 @@ class Security2faSetup extends Component {
 
 				{ 'sms-settings' === this.state.step ? (
 					<Security2faSMSSettings
-						userSettings={ this.props.userSettings }
 						onCancel={ this.onCancelSetup }
 						onVerifyByApp={ this.onVerifyByApp }
 						onVerifyBySMS={ this.onVerifyBySMS }
@@ -82,7 +77,6 @@ class Security2faSetup extends Component {
 						doSMSFlow={ false }
 						onCancel={ this.onCancelSetup }
 						onSuccess={ this.onSetupSuccess }
-						userSettings={ this.props.userSettings }
 					/>
 				) : null }
 
@@ -91,7 +85,6 @@ class Security2faSetup extends Component {
 						doSMSFlow
 						onCancel={ this.onCancelSetup }
 						onSuccess={ this.onSetupSuccess }
-						userSettings={ this.props.userSettings }
 					/>
 				) : null }
 

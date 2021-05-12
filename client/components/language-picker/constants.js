@@ -1,6 +1,10 @@
 /**
  * @jest-environment jsdom
  */
+/**
+ * WordPress dependencies
+ */
+import { __ } from '@wordpress/i18n';
 
 /*
  * List of territories that languages are grouped into (displayed as tabs in the UI).
@@ -23,11 +27,11 @@ export const DEFAULT_LANGUAGE_GROUP = 'popular';
 export const LANGUAGE_GROUPS = [
 	{
 		id: 'popular',
-		name: ( translate ) => translate( 'Popular languages' ),
+		name: () => __( 'Popular languages' ),
 	},
 	{
 		id: 'africa-middle-east',
-		name: ( translate ) => translate( 'Africa and Middle East' ),
+		name: () => __( 'Africa and Middle East' ),
 		subTerritories: [ '145', '002' ],
 		countries: [
 			'AE',
@@ -112,7 +116,7 @@ export const LANGUAGE_GROUPS = [
 	},
 	{
 		id: 'americas',
-		name: ( translate ) => translate( 'Americas' ),
+		name: () => __( 'Americas' ),
 		subTerritories: [ '019' ],
 		countries: [
 			'AG',
@@ -175,7 +179,7 @@ export const LANGUAGE_GROUPS = [
 	{
 		id: 'asia-pacific',
 		default: true,
-		name: ( translate ) => translate( 'Asia-Pacific' ),
+		name: () => __( 'Asia-Pacific' ),
 		subTerritories: [ '143', '009', '030', '034', '035' ],
 		countries: [
 			'AC',
@@ -254,13 +258,13 @@ export const LANGUAGE_GROUPS = [
 	},
 	{
 		id: 'eastern-europe',
-		name: ( translate ) => translate( 'Eastern Europe' ),
+		name: () => __( 'Eastern Europe' ),
 		subTerritories: [ '151' ],
 		countries: [ 'BG', 'BY', 'CZ', 'HU', 'MD', 'PL', 'RO', 'RU', 'SK', 'UA' ],
 	},
 	{
 		id: 'western-europe',
-		name: ( translate ) => translate( 'Western Europe' ),
+		name: () => __( 'Western Europe' ),
 		subTerritories: [ '154', '155', '039' ],
 		countries: [
 			'AD',

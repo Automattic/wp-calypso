@@ -5,7 +5,7 @@ import reducer from '../reducer';
 import {
 	PLUGINS_RECOMMENDED_REQUEST_FAILURE,
 	PLUGINS_RECOMMENDED_RECEIVE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 const EXAMPLE_SITE_ID = 77203074;
 

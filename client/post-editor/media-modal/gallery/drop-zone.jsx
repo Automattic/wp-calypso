@@ -10,10 +10,10 @@ import { isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
-import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
-import MediaActions from 'lib/media/actions';
-import { filterItemsByMimePrefix } from 'lib/media/utils';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import MediaLibraryDropZone from 'calypso/my-sites/media-library/drop-zone';
+import { filterItemsByMimePrefix } from 'calypso/lib/media/utils';
+import { selectMediaItems } from 'calypso/state/media/actions';
 
 class EditorMediaModalGalleryDropZone extends React.Component {
 	static propTypes = {
@@ -34,7 +34,7 @@ class EditorMediaModalGalleryDropZone extends React.Component {
 		const filteredItems = filterItemsByMimePrefix( selectedItems, 'image' );
 
 		if ( ! isEqual( selectedItems, filteredItems ) ) {
-			MediaActions.setLibrarySelectedItems( site.ID, filteredItems );
+			this.props.selectMediaItems( site.ID, filteredItems );
 			this.props.onInvalidItemAdded();
 		}
 	};
@@ -50,6 +50,9 @@ class EditorMediaModalGalleryDropZone extends React.Component {
 	}
 }
 
-export default connect( ( state, { site } ) => ( {
-	selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
-} ) )( EditorMediaModalGalleryDropZone );
+export default connect(
+	( state, { site } ) => ( {
+		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
+	} ),
+	{ selectMediaItems }
+)( EditorMediaModalGalleryDropZone );

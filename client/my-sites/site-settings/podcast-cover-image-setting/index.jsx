@@ -5,34 +5,33 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { head, isEqual, partial, uniqueId } from 'lodash';
+import { head, isEqual } from 'lodash';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import AsyncLoad from 'components/async-load';
+import AsyncLoad from 'calypso/components/async-load';
 import { Button } from '@automattic/components';
-import EditorMediaModalDialog from 'post-editor/media-modal/dialog';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
-import Image from 'components/image';
-import MediaStore from 'lib/media/store';
-import { isItemBeingUploaded } from 'lib/media/utils';
-import MediaActions from 'lib/media/actions';
-import { receiveMedia, deleteMedia } from 'state/media/actions';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
+import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import getMediaItem from 'calypso/state/media/thunks/get-media-item';
+import Image from 'calypso/components/image';
+import { addMedia } from 'calypso/state/media/thunks';
+import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
+import { resetAllImageEditorState } from 'calypso/state/editor/image-editor/actions';
 import {
 	getImageEditorCrop,
 	getImageEditorTransform,
-} from 'state/ui/editor/image-editor/selectors';
-import { setEditorMediaModalView } from 'state/ui/editor/actions';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import resizeImageUrl from 'lib/resize-image-url';
-import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import Spinner from 'components/spinner';
+} from 'calypso/state/editor/image-editor/selectors';
+import { setEditorMediaModalView } from 'calypso/state/editor/actions';
+import { ModalViews } from 'calypso/state/ui/media-modal/constants';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
+import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
+import Spinner from 'calypso/components/spinner';
+import { createTransientMediaId } from 'calypso/lib/media/utils';
 
 /**
  * Debug
@@ -54,6 +53,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		onSelect: PropTypes.func,
 		onUploadStateChange: PropTypes.func,
 		isDisabled: PropTypes.bool,
+		addMedia: PropTypes.func,
 	};
 
 	state = {
@@ -80,59 +80,34 @@ class PodcastCoverImageSetting extends PureComponent {
 	editSelectedMedia = ( value ) => {
 		if ( value ) {
 			this.setState( { isEditingCoverImage: true } );
-			this.props.onEditSelectedMedia();
+			this.props.setEditorMediaModalView( ModalViews.IMAGE_EDITOR );
 		} else {
 			this.hideModal();
 		}
 	};
 
-	uploadCoverImage( blob, fileName ) {
-		const { siteId, site } = this.props;
-
+	async uploadCoverImage( blob, fileName ) {
 		// Upload media using a manually generated ID so that we can continue
 		// to reference it within this function
-		const transientMediaId = uniqueId( 'podcast-cover-image' );
+		const transientMediaId = createTransientMediaId( 'podcast-cover-image' );
 
 		this.setState( { transientMediaId } );
 		this.onUploadStateChange( true );
 
-		const checkUploadComplete = () => {
-			// MediaStore tracks pointers from transient media to the persisted
-			// copy, so if our request is for a media which is not transient,
-			// we can assume the upload has finished.
-			const media = MediaStore.get( siteId, transientMediaId );
-			const isUploadInProgress = media && isItemBeingUploaded( media );
-			const isFailedUpload = ! media;
-
-			if ( isFailedUpload ) {
-				this.props.deleteMedia( siteId, transientMediaId );
-			} else {
-				this.props.receiveMedia( siteId, media );
-			}
-
-			if ( isUploadInProgress ) {
-				return;
-			}
-
-			MediaStore.off( 'change', checkUploadComplete );
-
-			if ( ! isFailedUpload ) {
-				debug( 'upload media', media );
-				this.props.onSelect( media.ID, media.URL );
-			}
-
+		try {
+			const file = {
+				ID: transientMediaId,
+				fileContents: blob,
+				fileName,
+			};
+			const [ uploadedMedia ] = await this.props.addMedia( file, this.props.site );
+			debug( 'upload media', uploadedMedia );
+			this.props.onSelect( uploadedMedia.ID, uploadedMedia.URL );
+		} finally {
 			// Remove transient image so that new image shows or if failed upload, the prior image
 			this.setState( { transientMediaId: null } );
 			this.onUploadStateChange( false );
-		};
-
-		MediaStore.on( 'change', checkUploadComplete );
-
-		MediaActions.add( site, {
-			ID: transientMediaId,
-			fileContents: blob,
-			fileName,
-		} );
+		}
 	}
 
 	onUploadStateChange = ( isUploading ) => {
@@ -182,7 +157,7 @@ class PodcastCoverImageSetting extends PureComponent {
 	};
 
 	cancelEditingCoverImage = () => {
-		this.props.onCancelEditingCoverImage();
+		this.props.setEditorMediaModalView( ModalViews.LIST );
 		this.props.resetAllImageEditorState();
 		this.setState( { isEditingCoverImage: false } );
 	};
@@ -192,7 +167,7 @@ class PodcastCoverImageSetting extends PureComponent {
 	}
 
 	preloadModal() {
-		asyncRequire( 'post-editor/media-modal' );
+		asyncRequire( 'calypso/post-editor/media-modal' );
 	}
 
 	renderChangeButton() {
@@ -216,7 +191,7 @@ class PodcastCoverImageSetting extends PureComponent {
 	renderCoverPreview() {
 		const { coverImageUrl, siteId, translate, isDisabled } = this.props;
 		const { transientMediaId, isUploading } = this.state;
-		const media = transientMediaId && MediaStore.get( siteId, transientMediaId );
+		const media = transientMediaId && this.props.getMediaItem( siteId, transientMediaId );
 		const imageUrl = ( media && media.URL ) || coverImageUrl;
 		const imageSrc = imageUrl && resizeImageUrl( imageUrl, 96 );
 		const isTransient = !! transientMediaId;
@@ -254,7 +229,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		return (
 			hasToggledModal && (
 				<AsyncLoad
-					require="post-editor/media-modal"
+					require="calypso/post-editor/media-modal"
 					placeholder={ <EditorMediaModalDialog isVisible /> }
 					siteId={ siteId }
 					onClose={ this.editSelectedMedia }
@@ -329,9 +304,8 @@ export default connect(
 	},
 	{
 		resetAllImageEditorState,
-		onEditSelectedMedia: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
-		onCancelEditingCoverImage: partial( setEditorMediaModalView, ModalViews.LIST ),
-		receiveMedia,
-		deleteMedia,
+		setEditorMediaModalView,
+		addMedia,
+		getMediaItem,
 	}
 )( localize( PodcastCoverImageSetting ) );

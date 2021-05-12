@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .checkout-thank-you {
 	box-sizing: border-box;
 	position: static;
@@ -28,7 +31,7 @@
 
 	&:first-child {
 		border-bottom: none;
-		border-radius: 3px 3px 0 0;
+		border-radius: 2px 2px 0 0;
 		margin-top: 16px;
 
 		.purchase-detail__required-notice {
@@ -38,7 +41,7 @@
 
 	&:last-child {
 		border-bottom: 1px solid var( --color-neutral-0 );
-		border-radius: 0 0 3px 3px;
+		border-radius: 0 0 2px 2px;
 	}
 }
 
@@ -53,6 +56,25 @@
 	}
 }
 
+.checkout-thank-you__domain-mapping-details {
+	.purchase-detail__description {
+		margin: 0;
+	}
+	.purchase-detail__image {
+		@include break-mobile {
+			width: auto;
+			margin-right: 1em;
+		}
+	}
+	.purchase-detail__content {
+		padding: 32px 0 0;
+
+		@include break-mobile {
+			padding: 32px;
+		}
+	}
+}
+
 .checkout-thank-you__domain-mapping-details-nameservers,
 .checkout-thank-you__failed-purchases-details-list {
 	border-left: solid 5px var( --color-neutral-5 );
@@ -64,7 +86,7 @@
 
 .checkout-thank-you__features-header {
 	color: var( --color-neutral-50 );
-	font-size: 24px;
+	font-size: $font-title-medium;
 	font-weight: 400;
 	line-height: 32px;
 	margin: 48px 48px 24px;
@@ -169,15 +191,17 @@
 }
 
 .checkout-thank-you__header-heading {
-	font-size: 24px;
+	font-size: $font-title-medium;
 	font-weight: 400;
 	margin: 24px 0 8px;
 }
 
 .checkout-thank-you__header-text,
 .checkout-thank-you__success-message-item {
-	font-size: 18px;
+	font-size: $font-title-small;
 	font-weight: 400;
+	margin-top: 15px;
+	word-break: break-word;
 }
 
 .checkout-thank-you__header.is-placeholder {
@@ -233,7 +257,7 @@
 	padding: 32px 20px;
 
 	@include breakpoint-deprecated( '>660px' ) {
-		font-size: 16px;
+		font-size: $font-body;
 		padding: 60px 24px;
 		text-align: left;
 	}
@@ -287,7 +311,7 @@
 }
 
 .checkout-thank-you__jetpack-error-heading {
-	font-size: 21px;
+	font-size: $font-title-small;
 	font-weight: 400;
 	line-height: 32px;
 	margin-top: 0;
@@ -295,7 +319,7 @@
 
 .checkout-thank-you__jetpack-error-explanation {
 	color: var( --color-text-subtle );
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-style: italic;
 	font-weight: 400;
 }
@@ -321,7 +345,8 @@
 			.thank-you-card {
 				color: var( --color-text );
 				background-color: var( --color-surface );
-				box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+				box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
+					0 1px 2px var( --color-neutral-0 );
 			}
 		}
 	}
@@ -621,12 +646,12 @@
 }
 
 .is-section-checkout-thank-you .empty-content__title {
-	font-size: 20px;
+	font-size: $font-title-small;
 	font-weight: normal;
 }
 
 .is-section-checkout-thank-you .empty-content__line {
-	font-size: 16px;
+	font-size: $font-body;
 	font-weight: normal;
 }
 

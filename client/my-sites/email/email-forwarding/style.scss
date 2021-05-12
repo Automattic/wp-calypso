@@ -49,11 +49,11 @@ ul.email-forwarding__list {
 		position: relative;
 
 		span {
-			font-size: 14px;
+			font-size: $font-body-small;
 			line-height: 40px;
 
 			@include breakpoint-deprecated( '<660px' ) {
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 				line-height: 150%;
 			}
 
@@ -85,7 +85,7 @@ ul.email-forwarding__list {
 }
 
 .email-forwarding__limit {
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	line-height: 3em;
 	margin-bottom: 15px;
 }

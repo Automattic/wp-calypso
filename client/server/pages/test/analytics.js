@@ -3,23 +3,26 @@
  */
 import { expect } from 'chai';
 import events from 'events';
-import { noop } from 'lodash';
 import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
 import analytics from '../../lib/analytics';
-import { logSectionResponse } from 'pages/analytics';
-import { useFakeTimers } from 'test/helpers/use-sinon';
+import { logSectionResponse } from 'calypso/server/pages/analytics';
+import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
 
 const TWO_SECONDS = 2000;
+const noop = () => {};
 
 describe( 'index', () => {
 	describe( 'logSectionResponse middleware', () => {
 		// Stub request, response, and next
-		let request, response, next;
-		let request2, response2;
+		let request;
+		let response;
+		let next;
+		let request2;
+		let response2;
 		beforeEach( () => {
 			request = { context: {} };
 			request2 = { context: {} };

@@ -1,9 +1,9 @@
 .manage-purchase__info {
-	font-size: 13px;
+	font-size: $font-body-small;
 	padding: 0;
 
 	@include breakpoint-deprecated( '>660px' ) {
-		font-size: 14px;
+		font-size: $font-body-small;
 		padding: 0;
 	}
 
@@ -135,6 +135,15 @@
 		fill: var( --color-text-inverted );
 	}
 
+	.gridicons-my-sites {
+		background: unset;
+		fill: var( --color-wordpress-com );
+		margin-left: -3px;
+		margin-top: -3px;
+		padding: 0;
+		transform: scale( 1.1 );
+	}
+
 	.gridicons-themes {
 		border-radius: 8px;
 	}
@@ -143,12 +152,12 @@
 .manage-purchase__title {
 	color: var( --color-text );
 	display: block;
-	font-size: 18px;
+	font-size: $font-title-small;
 	font-weight: 400;
 	clear: none;
 
 	@include breakpoint-deprecated( '>660px' ) {
-		font-size: 22px;
+		font-size: $font-title-small;
 		padding-right: 100px;
 	}
 }
@@ -158,7 +167,7 @@
 }
 
 .manage-purchase__contact-partner {
-	font-weight: bold;
+	font-weight: 600;
 	display: block;
 }
 
@@ -191,7 +200,7 @@
 
 	li {
 		color: var( --color-neutral-60 );
-		font-size: 13px;
+		font-size: $font-body-small;
 
 		@include breakpoint-deprecated( '<660px' ) {
 			clear: both;
@@ -202,7 +211,7 @@
 		@include breakpoint-deprecated( '>660px' ) {
 			box-sizing: border-box;
 			flex: 1 1 auto;
-			font-size: 14px;
+			font-size: $font-body-small;
 			text-align: center;
 			padding: 15px 8px 12px;
 
@@ -245,7 +254,7 @@
 		color: var( --color-text-subtle );
 		display: block;
 		font-family: $sans;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		font-weight: 400;
 		margin: 0 0 12px;
 	}
@@ -258,6 +267,10 @@
 
 	display: block;
 
+	.components-toggle-control {
+		display: inline-block;
+	}
+
 	.payment-logo {
 		margin-right: 5px;
 	}
@@ -265,6 +278,10 @@
 	a {
 		display: block;
 		cursor: pointer;
+	}
+
+	&.is-expiring .manage-purchase__detail-date-span {
+		color: var( --studio-pink-50 );
 	}
 }
 

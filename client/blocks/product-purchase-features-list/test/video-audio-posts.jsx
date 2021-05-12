@@ -1,5 +1,4 @@
-jest.mock( 'components/purchase-detail', () => 'PurchaseDetail' );
-jest.mock( '../google-vouchers', () => 'GoogleVouchers' );
+jest.mock( 'calypso/components/purchase-detail', () => 'PurchaseDetail' );
 
 /**
  * External dependencies
@@ -23,7 +22,7 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'lib/plans/constants';
+} from '@automattic/calypso-products';
 
 /**
  * Internal dependencies

@@ -8,14 +8,14 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import UpsellNudge from 'blocks/upsell-nudge';
-import { SETTING_PRIMARY_DOMAIN } from 'lib/url/support';
-import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
-import { getPlansBySite } from 'state/sites/plans/selectors';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import { SETTING_PRIMARY_DOMAIN } from 'calypso/lib/url/support';
+import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
+import { getPlansBySite } from 'calypso/state/sites/plans/selectors';
 
 const NonPrimaryDomainPlanUpsell = ( {
 	domain,

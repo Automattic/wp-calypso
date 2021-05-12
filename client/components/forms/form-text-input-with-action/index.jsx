@@ -5,18 +5,19 @@
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
-import FormButton from 'components/forms/form-button';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormButton from 'calypso/components/forms/form-button';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 function FormTextInputWithAction( {
 	className,

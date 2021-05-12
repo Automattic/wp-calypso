@@ -104,8 +104,6 @@ describe( 'WPCOM HTTP Data Layer', () => {
 
 			expect( next ).toMatchObject( { dogs: { lastUpdated: 1000 } } );
 		} );
-
-		test( 'should not care if pending flag is persisted', () => {} );
 	} );
 
 	describe( '#trackRequests', () => {

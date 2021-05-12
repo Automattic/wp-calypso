@@ -5,19 +5,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { identity, noop, find } from 'lodash';
+import { find } from 'lodash';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormTelInput from 'components/forms/form-tel-input';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormCountrySelect from 'components/forms/form-country-select';
-import phoneValidation from 'lib/phone-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTelInput from 'calypso/components/forms/form-tel-input';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormCountrySelect from 'calypso/components/forms/form-country-select';
+import phoneValidation from 'calypso/lib/phone-validation';
 
 const CLEAN_REGEX = /^0|[\s.\-()]+/g;
+const noop = () => {};
 
 export class FormPhoneInput extends React.Component {
 	static propTypes = {
@@ -36,7 +37,6 @@ export class FormPhoneInput extends React.Component {
 		countrySelectProps: {},
 		phoneInputProps: {},
 		onChange: noop,
-		translate: identity,
 	};
 
 	state = {
@@ -131,11 +131,11 @@ export class FormPhoneInput extends React.Component {
 	}
 
 	getValue() {
-		const countryData = this.getCountryData(),
-			numberClean = this.cleanNumber( this.state.phoneNumber ),
-			countryNumericCode = countryData ? countryData.numeric_code : '',
-			numberFull = countryNumericCode + numberClean,
-			isValid = this.validate( numberFull );
+		const countryData = this.getCountryData();
+		const numberClean = this.cleanNumber( this.state.phoneNumber );
+		const countryNumericCode = countryData ? countryData.numeric_code : '';
+		const numberFull = countryNumericCode + numberClean;
+		const isValid = this.validate( numberFull );
 
 		return {
 			isValid: ! isValid.error,

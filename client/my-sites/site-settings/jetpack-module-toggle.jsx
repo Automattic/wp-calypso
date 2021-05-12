@@ -9,16 +9,16 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { activateModule, deactivateModule } from 'state/jetpack/modules/actions';
-import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
-import getJetpackModule from 'state/selectors/get-jetpack-module';
-import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
-import isDeactivatingJetpackModule from 'state/selectors/is-deactivating-jetpack-module';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { isJetpackSite } from 'state/sites/selectors';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { activateModule, deactivateModule } from 'calypso/state/jetpack/modules/actions';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import getJetpackModule from 'calypso/state/selectors/get-jetpack-module';
+import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
+import isDeactivatingJetpackModule from 'calypso/state/selectors/is-deactivating-jetpack-module';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 class JetpackModuleToggle extends Component {
 	static defaultProps = {
@@ -69,15 +69,14 @@ class JetpackModuleToggle extends Component {
 		return (
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<span className="jetpack-module-toggle">
-				<CompactFormToggle
+				<FormToggle
 					id={ `${ this.props.siteId }-${ this.props.moduleSlug }-toggle` }
 					checked={ this.props.checked || false }
-					toggling={ this.props.toggling }
 					onChange={ this.handleChange }
-					disabled={ this.props.disabled || this.props.toggleDisabled }
+					disabled={ this.props.disabled || this.props.toggleDisabled || this.props.toggling }
 				>
 					{ this.props.label }
-				</CompactFormToggle>
+				</FormToggle>
 				{ this.props.description && (
 					<FormSettingExplanation isIndented>{ this.props.description }</FormSettingExplanation>
 				) }

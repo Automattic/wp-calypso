@@ -1,15 +1,14 @@
 .transfer-to-other-user__select {
 	margin-top: 20px;
 	width: 100%;
-	@include breakpoint-deprecated('>480px') {
+	@include breakpoint-deprecated( '>480px' ) {
 		width: 300px;
 	}
-
 }
 .transfer-to-other-user__confirmation-dialog {
 	width: 90%;
 
-	@include breakpoint-deprecated('>480px') {
+	@include breakpoint-deprecated( '>480px' ) {
 		max-width: 500px;
 	}
 }

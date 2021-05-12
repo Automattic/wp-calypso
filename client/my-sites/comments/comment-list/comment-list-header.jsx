@@ -9,18 +9,22 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import QueryPosts from 'components/data/query-posts';
-import StickyPanel from 'components/sticky-panel';
-import { convertDateToUserLocation } from 'components/post-schedule/utils';
-import { decodeEntities, stripHTML } from 'lib/formatting';
-import { gmtOffset, timezone } from 'lib/site/utils';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import { getSiteComments } from 'state/comments/selectors';
-import hasNavigated from 'state/selectors/has-navigated';
-import { getSitePost } from 'state/posts/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import HeaderCake from 'calypso/components/header-cake';
+import QueryPosts from 'calypso/components/data/query-posts';
+import StickyPanel from 'calypso/components/sticky-panel';
+import { convertDateToUserLocation } from 'calypso/components/post-schedule/utils';
+import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import { gmtOffset, timezone } from 'calypso/lib/site/utils';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSiteComments } from 'calypso/state/comments/selectors';
+import hasNavigated from 'calypso/state/selectors/has-navigated';
+import { getSitePost } from 'calypso/state/posts/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 
 function goBack() {
 	window.history.back();

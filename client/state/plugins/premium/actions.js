@@ -1,16 +1,18 @@
 /**
  * External dependencies
  */
-
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import { get, keys } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import versionCompare from 'lib/version-compare';
+import versionCompare from 'calypso/lib/version-compare';
+import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import {
+	PLUGIN_INSTALL_REQUEST,
+	PLUGIN_INSTALL_REQUEST_FAILURE,
+	PLUGIN_INSTALL_REQUEST_SUCCESS,
 	PLUGIN_SETUP_INSTRUCTIONS_FETCH,
 	PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
 	PLUGIN_SETUP_INSTALL,
@@ -18,7 +20,9 @@ import {
 	PLUGIN_SETUP_CONFIGURE,
 	PLUGIN_SETUP_FINISH,
 	PLUGIN_SETUP_ERROR,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+
+import 'calypso/state/plugins/init';
 
 /**
  *  Local variables;
@@ -44,7 +48,7 @@ const normalizePluginInstructions = ( data ) => {
  *
  * @param {object} site - site object
  * @param {string} plugin - plugin identifier
- * @returns {SitePlugin} SitePlugin instance
+ * @returns {any} SitePlugin instance
  */
 const getPluginHandler = ( site, plugin ) => {
 	const siteHandler = wpcom.site( site.ID );
@@ -53,13 +57,11 @@ const getPluginHandler = ( site, plugin ) => {
 };
 
 function install( site, plugin, dispatch ) {
-	Dispatcher.handleViewAction( {
-		type: 'INSTALL_PLUGIN',
-		action: 'INSTALL_PLUGIN',
-		site: site,
-		plugin: plugin,
-		data: null,
-		error: null,
+	dispatch( {
+		type: PLUGIN_INSTALL_REQUEST,
+		action: INSTALL_PLUGIN,
+		siteId: site.ID,
+		pluginId: plugin.id,
 	} );
 
 	if ( plugin.active ) {
@@ -75,6 +77,13 @@ function install( site, plugin, dispatch ) {
 	getPluginHandler( site, plugin.slug )
 		.install()
 		.then( ( data ) => {
+			dispatch( {
+				type: PLUGIN_INSTALL_REQUEST_SUCCESS,
+				action: INSTALL_PLUGIN,
+				siteId: site.ID,
+				pluginId: plugin.id,
+				data,
+			} );
 			dispatch( {
 				type: PLUGIN_SETUP_ACTIVATE,
 				siteId: site.ID,
@@ -94,13 +103,12 @@ function install( site, plugin, dispatch ) {
 					slug: plugin.slug,
 					error,
 				} );
-				Dispatcher.handleServerAction( {
-					type: 'RECEIVE_INSTALLED_PLUGIN',
-					action: 'INSTALL_PLUGIN',
-					site: site,
-					plugin: plugin,
-					data: null,
-					error: error,
+				dispatch( {
+					type: PLUGIN_INSTALL_REQUEST_FAILURE,
+					action: INSTALL_PLUGIN,
+					siteId: site.ID,
+					pluginId: plugin.id,
+					error,
 				} );
 			}
 		} );
@@ -126,13 +134,12 @@ function update( site, plugin, dispatch ) {
 				slug: plugin.slug,
 				error,
 			} );
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_INSTALLED_PLUGIN',
-				action: 'INSTALL_PLUGIN',
-				site: site,
-				plugin: plugin,
-				data: null,
-				error: error,
+			dispatch( {
+				type: PLUGIN_INSTALL_REQUEST_FAILURE,
+				action: INSTALL_PLUGIN,
+				siteId: site.ID,
+				pluginId: plugin.id,
+				error,
 			} );
 		} );
 }
@@ -144,13 +151,12 @@ function activate( site, plugin, dispatch ) {
 			siteId: site.ID,
 			slug: data.slug,
 		} );
-		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_INSTALLED_PLUGIN',
-			action: 'INSTALL_PLUGIN',
-			site: site,
-			plugin: data,
-			data: data,
-			error: null,
+		dispatch( {
+			type: PLUGIN_INSTALL_REQUEST_SUCCESS,
+			action: INSTALL_PLUGIN,
+			siteId: site.ID,
+			pluginId: plugin.id,
+			data,
 		} );
 
 		autoupdate( site, data );
@@ -172,13 +178,12 @@ function activate( site, plugin, dispatch ) {
 				slug: plugin.slug,
 				error,
 			} );
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_INSTALLED_PLUGIN',
-				action: 'INSTALL_PLUGIN',
-				site: site,
-				plugin: plugin,
-				data: null,
-				error: error,
+			dispatch( {
+				type: PLUGIN_INSTALL_REQUEST_FAILURE,
+				action: INSTALL_PLUGIN,
+				siteId: site.ID,
+				pluginId: plugin.id,
+				error,
 			} );
 		} );
 }

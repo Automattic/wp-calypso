@@ -1,29 +1,28 @@
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
-import { PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_FREE, PLAN_PREMIUM } from 'lib/plans/constants';
+import {
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+	PLAN_FREE,
+	PLAN_PREMIUM,
+} from '@automattic/calypso-products';
 import isEligibleForUpworkSupport, {
 	UPWORK_LOCALES,
-} from 'state/selectors/is-eligible-for-upwork-support';
+} from 'calypso/state/selectors/is-eligible-for-upwork-support';
 
 describe( 'isEligibleForUpworkSupport()', () => {
 	test( 'returns false for `en` users and all sites have a free plan', () => {
 		const state = {
-			currentUser: { id: 1 },
+			currentUser: { id: 1, user: { ID: 1, localeSlug: 'en' } },
 			sites: {
 				items: {
 					111: { plan: { product_slug: PLAN_FREE } },
 					222: { plan: { product_slug: PLAN_PREMIUM } },
 				},
 			},
-			users: { items: { 1: { localeSlug: 'en' } } },
 		};
-		expect( isEligibleForUpworkSupport( state ) ).to.be.false;
+		expect( isEligibleForUpworkSupport( state ) ).toBe( false );
 	} );
 
 	/**
@@ -35,30 +34,28 @@ describe( 'isEligibleForUpworkSupport()', () => {
 	describe.each( UPWORK_LOCALES )( 'when locale %s', ( localeSlug ) => {
 		test( 'returns true for users without Business and E-Commerce plans', () => {
 			const state = {
-				currentUser: { id: 1 },
+				currentUser: { id: 1, user: { localeSlug } },
 				sites: {
 					items: {
 						111: { plan: { product_slug: PLAN_FREE } },
 						222: { plan: { product_slug: PLAN_PREMIUM } },
 					},
 				},
-				users: { items: { 1: { localeSlug } } },
 			};
-			expect( isEligibleForUpworkSupport( state ) ).to.be.true;
+			expect( isEligibleForUpworkSupport( state ) ).toBe( true );
 		} );
 
 		describe.each( nonUpworkPlans )( 'with plan %s', ( product_slug ) => {
 			test( 'returns false', () => {
 				const state = {
-					currentUser: { id: 1 },
+					currentUser: { id: 1, user: { localeSlug } },
 					sites: {
 						items: {
 							333: { plan: { product_slug } },
 						},
 					},
-					users: { items: { 1: { localeSlug } } },
 				};
-				expect( isEligibleForUpworkSupport( state ) ).to.be.false;
+				expect( isEligibleForUpworkSupport( state ) ).toBe( false );
 			} );
 		} );
 	} );

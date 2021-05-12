@@ -10,9 +10,9 @@ import { useTranslate } from 'i18n-calypso';
  */
 import ActivityLogBanner from './index';
 import { ProgressBar } from '@automattic/components';
-import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
-import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
-import { useLocalizedMoment } from 'components/localized-moment';
+import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
+import QueryRewindBackupStatus from 'calypso/components/data/query-rewind-backup-status';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
  * Normalize timestamp values

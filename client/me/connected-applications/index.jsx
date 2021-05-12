@@ -10,17 +10,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ConnectedAppItem from 'me/connected-application-item';
-import DocumentHead from 'components/data/document-head';
-import EmptyContent from 'components/empty-content';
-import getConnectedApplications from 'state/selectors/get-connected-applications';
-import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QueryConnectedApplications from 'components/data/query-connected-applications';
-import ReauthRequired from 'me/reauth-required';
-import SecuritySectionNav from 'me/security-section-nav';
-import twoStepAuthorization from 'lib/two-step-authorization';
+import config from '@automattic/calypso-config';
+import ConnectedAppItem from 'calypso/me/connected-application-item';
+import DocumentHead from 'calypso/components/data/document-head';
+import EmptyContent from 'calypso/components/empty-content';
+import getConnectedApplications from 'calypso/state/selectors/get-connected-applications';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QueryConnectedApplications from 'calypso/components/data/query-connected-applications';
+import ReauthRequired from 'calypso/me/reauth-required';
+import SecuritySectionNav from 'calypso/me/security-section-nav';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -86,11 +89,17 @@ class ConnectedApplications extends PureComponent {
 	}
 
 	renderConnectedAppsList() {
-		const { path } = this.props;
+		const { path, translate } = this.props;
+		const useCheckupMenu = config.isEnabled( 'security/security-checkup' );
 
 		return (
 			<Fragment>
-				<SecuritySectionNav path={ path } />
+				{ ! useCheckupMenu && <SecuritySectionNav path={ path } /> }
+				{ useCheckupMenu && (
+					<HeaderCake backText={ translate( 'Back' ) } backHref="/me/security">
+						{ translate( 'Connected Applications' ) }
+					</HeaderCake>
+				) }
 
 				{ this.renderConnectedApps() }
 			</Fragment>
@@ -101,7 +110,7 @@ class ConnectedApplications extends PureComponent {
 		const { translate } = this.props;
 
 		return (
-			<Main className="connected-applications">
+			<Main wideLayout className="security connected-applications">
 				<QueryConnectedApplications />
 
 				<PageViewTracker
@@ -110,6 +119,8 @@ class ConnectedApplications extends PureComponent {
 				/>
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<MeSidebarNavigation />
+
+				<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
 
 				<DocumentHead title={ translate( 'Connected Applications' ) } />
 

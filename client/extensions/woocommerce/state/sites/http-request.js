@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 /**
  * Returns a proper WPCOM_HTTP_REQUEST action (http data layer) for dispatching requests

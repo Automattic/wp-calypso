@@ -15,7 +15,7 @@
 	transform: translateY( -100px );
 	pointer-events: none;
 	transition: background 0.15s ease-in-out, transform 0.2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
-	font-size: 15px;
+	font-size: $font-body;
 
 	&:hover {
 		background: var( --color-primary );

@@ -59,7 +59,7 @@
 
 .reader-landing__feature-image {
 	border: 2px solid var( --color-neutral-10 );
-	border-radius: 5px;
+	border-radius: 2px;
 	width: 100%;
 
 	@include breakpoint-deprecated( '>660px' ) {
@@ -75,7 +75,7 @@
 
 .reader-landing__feature-heading {
 	font-size: 1.2em;
-	font-weight: bold;
+	font-weight: 600;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		font-size: 1.6em;

@@ -11,7 +11,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import Search from 'components/search';
+import Search from 'calypso/components/search';
 import PostSuggestions from './post-suggestions';
 
 class SearchAutocomplete extends Component {

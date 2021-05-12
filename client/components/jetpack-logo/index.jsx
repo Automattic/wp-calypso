@@ -1,15 +1,21 @@
 /**
  * External dependencies
  */
-import { colors as PALETTE } from '@automattic/color-studio';
+import colorStudio from '@automattic/color-studio';
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 /**
+ * Internal dependencies
+ */
+import useAriaProps from 'calypso/lib/a11y/use-aria-props';
+
+/**
  * Module constants
  */
-const COLOR_JETPACK = PALETTE[ 'Jetpack Green' ];
+const PALETTE = colorStudio.colors;
+const COLOR_JETPACK = PALETTE[ 'Jetpack Green 50' ];
 const COLOR_WHITE = PALETTE[ 'White' ]; // eslint-disable-line dot-notation
 
 const LogoPathSize32 = ( { monochrome = false } ) => {
@@ -50,12 +56,13 @@ const LogoPathSize32Monochrome = () => (
 	</>
 );
 
-const JetpackLogo = ( { full = false, monochrome = false, size = 32, className } ) => {
+const JetpackLogo = ( { full = false, monochrome = false, size = 32, className, aria } ) => {
 	const classes = classNames( 'jetpack-logo', className );
+	const ariaProps = useAriaProps( aria );
 
 	if ( full === true ) {
 		return (
-			<svg height={ size } className={ classes } viewBox="0 0 118 32">
+			<svg height={ size } className={ classes } viewBox="0 0 118 32" { ...ariaProps }>
 				<title>Jetpack</title>
 				{ monochrome ? <LogoPathSize32Monochrome /> : <LogoPathSize32 /> }
 				<path
@@ -69,14 +76,14 @@ const JetpackLogo = ( { full = false, monochrome = false, size = 32, className }
 	if ( 24 === size ) {
 		return (
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-			<svg className={ classes } height="24" width="24" viewBox="0 0 24 24">
+			<svg className={ classes } height="24" width="24" viewBox="0 0 24 24" { ...ariaProps }>
 				<path d="M12,2C6.5,2,2,6.5,2,12s4.5,10,10,10s10-4.5,10-10S17.5,2,12,2z M11,14H6l5-10V14z M13,20V10h5L13,20z" />
 			</svg>
 		);
 	}
 
 	return (
-		<svg className={ classes } height={ size } width={ size } viewBox="0 0 32 32">
+		<svg className={ classes } height={ size } width={ size } viewBox="0 0 32 32" { ...ariaProps }>
 			{ monochrome ? <LogoPathSize32Monochrome /> : <LogoPathSize32 /> }
 		</svg>
 	);
@@ -86,6 +93,8 @@ JetpackLogo.propTypes = {
 	full: PropTypes.bool,
 	monochrome: PropTypes.bool,
 	size: PropTypes.number,
+	className: PropTypes.string,
+	aria: PropTypes.object,
 };
 
 export default JetpackLogo;

@@ -11,12 +11,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSiteStatsViewSummary } from 'state/stats/lists/selectors';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSiteStatsViewSummary } from 'calypso/state/stats/lists/selectors';
 import { Card } from '@automattic/components';
 import Months from './months';
-import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
+import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 
 /**

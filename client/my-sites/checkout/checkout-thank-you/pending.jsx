@@ -6,20 +6,19 @@ import { localize } from 'i18n-calypso';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { identity } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import getOrderTransaction from 'state/selectors/get-order-transaction';
+import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
 
-import getOrderTransactionError from 'state/selectors/get-order-transaction-error';
-import { ORDER_TRANSACTION_STATUS } from 'state/order-transactions/constants';
-import { errorNotice } from 'state/notices/actions';
-import QueryOrderTransaction from 'components/data/query-order-transaction';
-import EmptyContent from 'components/empty-content';
-import Main from 'components/main';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
+import { ORDER_TRANSACTION_STATUS } from 'calypso/state/order-transactions/constants';
+import { errorNotice } from 'calypso/state/notices/actions';
+import QueryOrderTransaction from 'calypso/components/data/query-order-transaction';
+import EmptyContent from 'calypso/components/empty-content';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 class CheckoutPending extends PureComponent {
 	static propTypes = {
@@ -27,14 +26,7 @@ class CheckoutPending extends PureComponent {
 		siteSlug: PropTypes.string.isRequired,
 		transaction: PropTypes.object,
 		error: PropTypes.object,
-		errorNotice: PropTypes.func,
-		localize: PropTypes.func,
 		redirectTo: PropTypes.string,
-	};
-
-	static defaultProps = {
-		localize: identity,
-		errorNotice: identity,
 	};
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {

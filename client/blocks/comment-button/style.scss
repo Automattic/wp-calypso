@@ -9,7 +9,6 @@
 	position: relative;
 
 	&:hover,
-	&:focus,
 	&:active {
 		color: var( --color-primary );
 	}
@@ -26,8 +25,12 @@
 }
 
 .comment-button__label {
-	font-size: 14px;
+	font-size: $font-body-small;
 	margin-left: 4px;
+
+	&:empty {
+		display: none;
+	}
 }
 
 .comment-button__icon {

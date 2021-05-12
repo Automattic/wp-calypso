@@ -9,29 +9,34 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import FormSecurity from 'my-sites/site-settings/form-security';
-import getRewindState from 'state/selectors/get-rewind-state';
-import JetpackCredentials from 'my-sites/site-settings/jetpack-credentials';
-import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import JetpackMonitor from 'my-sites/site-settings/form-jetpack-monitor';
-import Main from 'components/main';
-import QueryRewindState from 'components/data/query-rewind-state';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
-import { getSitePurchases } from 'state/purchases/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
+import DocumentHead from 'calypso/components/data/document-head';
+import FormSecurity from 'calypso/my-sites/site-settings/form-security';
+import JetpackCredentials from 'calypso/my-sites/site-settings/jetpack-credentials';
+import JetpackCredentialsBanner from 'calypso/my-sites/site-settings/jetpack-credentials-banner';
+import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
+import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
+import JetpackMonitor from 'calypso/my-sites/site-settings/form-jetpack-monitor';
+import Main from 'calypso/components/main';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
+import { shouldDisplayJetpackCredentialsBanner } from 'calypso/state/site-settings/jetpack-credentials-banner/selectors';
+import { siteHasScanProductPurchase } from 'calypso/state/purchases/selectors';
+import isRewindActive from 'calypso/state/selectors/is-rewind-active';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const SiteSettingsSecurity = ( {
-	rewindState,
-	sitePurchases,
 	site,
 	siteId,
 	siteIsJetpack,
+	hasScanProduct,
+	hasActiveRewind,
+	isJetpackSectionEnabled,
+	shouldDisplayBanner,
 	translate,
 } ) => {
 	if ( ! siteIsJetpack ) {
@@ -48,12 +53,11 @@ const SiteSettingsSecurity = ( {
 		);
 	}
 
-	const isRewindActive = [ 'awaitingCredentials', 'provisioning', 'active' ].includes(
-		rewindState.state
-	);
-	const hasScanProduct = sitePurchases.some( ( p ) => p.productSlug.includes( 'jetpack_scan' ) );
-
-	const showCredentials = isRewindActive || hasScanProduct;
+	// If Jetpack section is enabled, we no longer display the credentials here, instead we
+	// display a Banner with a CTA that points to their new location (Settings > Jetpack).
+	const showCredentials = ! isJetpackSectionEnabled && ( hasActiveRewind || hasScanProduct );
+	const showJetpackBanner =
+		isJetpackSectionEnabled && ( hasActiveRewind || hasScanProduct ) && shouldDisplayBanner;
 
 	return (
 		<Main className="settings-security site-settings">
@@ -63,12 +67,15 @@ const SiteSettingsSecurity = ( {
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
 			<FormattedHeader
+				brandFont
 				className="settings-security__page-heading"
 				headerText={ translate( 'Settings' ) }
+				subHeaderText={ translate( "Manage your site's security settings." ) }
 				align="left"
 			/>
 			<SiteSettingsNavigation site={ site } section="security" />
 			{ showCredentials && <JetpackCredentials /> }
+			{ showJetpackBanner && <JetpackCredentialsBanner siteSlug={ site.slug } /> }
 			<JetpackMonitor />
 			<FormSecurity />
 		</Main>
@@ -76,24 +83,26 @@ const SiteSettingsSecurity = ( {
 };
 
 SiteSettingsSecurity.propTypes = {
-	rewindState: PropTypes.bool,
-	sitePurchases: PropTypes.array,
 	site: PropTypes.object,
 	siteId: PropTypes.number,
 	siteIsJetpack: PropTypes.bool,
+	hasScanProduct: PropTypes.bool,
+	hasActiveRewind: PropTypes.bool,
+	isJetpackSectionEnabled: PropTypes.bool,
+	shouldDisplayBanner: PropTypes.bool,
 };
 
 export default connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const rewindState = getRewindState( state, siteId );
-	const sitePurchases = getSitePurchases( state, siteId );
 
 	return {
-		rewindState,
-		sitePurchases,
 		site,
 		siteId,
 		siteIsJetpack: isJetpackSite( state, siteId ),
+		hasScanProduct: siteHasScanProductPurchase( state, siteId ),
+		hasActiveRewind: isRewindActive( state, siteId ),
+		isJetpackSectionEnabled: isJetpackSectionEnabledForSite( state, siteId ),
+		shouldDisplayBanner: shouldDisplayJetpackCredentialsBanner( state ),
 	};
 } )( localize( SiteSettingsSecurity ) );

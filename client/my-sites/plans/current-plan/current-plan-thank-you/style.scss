@@ -1,16 +1,17 @@
 .current-plan-thank-you {
 	display: flex;
 	flex-direction: row;
+	align-items: center;
 	max-width: 720px;
 
 	@include breakpoint-deprecated( '>800px' ) {
-		font-size: 16px;
+		font-size: $font-body;
 		padding: 20px 0;
 		width: 720px;
 	}
 
 	&__title {
-		font-size: 24px;
+		font-size: $font-title-medium;
 
 		@include breakpoint-deprecated( '<660px' ) {
 			text-align: center;
@@ -18,7 +19,7 @@
 	}
 
 	&__link {
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 
 	.progress-bar {

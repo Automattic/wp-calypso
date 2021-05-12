@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import i18n, { localize } from 'i18n-calypso';
 import React, { Fragment } from 'react';
 import ReactDOM from 'react-dom';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { addQueryArgs } from '@wordpress/url';
@@ -14,18 +14,24 @@ import { addQueryArgs } from '@wordpress/url';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import translator, { trackTranslatorStatus } from 'lib/translator-jumpstart';
+import config from '@automattic/calypso-config';
+import translator, { trackTranslatorStatus } from 'calypso/lib/translator-jumpstart';
 import localStorageHelper from 'store';
 import { Button, Dialog } from '@automattic/components';
-import { bumpStat } from 'lib/analytics/mc';
-import { TranslationScanner } from 'lib/i18n-utils/translation-scanner';
-import getUserSettings from 'state/selectors/get-user-settings';
-import getOriginalUserSetting from 'state/selectors/get-original-user-setting';
-import { setLocale } from 'state/ui/language/actions';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import QueryUserSettings from 'components/data/query-user-settings';
-import FormTextInput from 'components/forms/form-text-input';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import { TranslationScanner } from 'calypso/lib/i18n-utils/translation-scanner';
+import {
+	getLanguageEmpathyModeActive,
+	toggleLanguageEmpathyMode,
+} from 'calypso/lib/i18n-utils/empathy-mode';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import getOriginalUserSetting from 'calypso/state/selectors/get-original-user-setting';
+import { setLocale } from 'calypso/state/ui/language/actions';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 
 /**
  * Style dependencies
@@ -196,8 +202,20 @@ class TranslatorLauncher extends React.Component {
 		this.setState( { infoDialogVisible: false } );
 	};
 
+	toggleEmpathyMode = () => {
+		toggleLanguageEmpathyMode();
+	};
+
 	toggle = ( event ) => {
 		event.preventDefault();
+
+		const { isEmpathyModeEnabled } = this.props;
+
+		if ( isEmpathyModeEnabled ) {
+			this.toggleEmpathyMode();
+			return;
+		}
+
 		const nextIsActive = translator.toggle();
 		bumpStat( 'calypso_translator_toggle', nextIsActive ? 'on' : 'off' );
 		this.setState( { isActive: nextIsActive } );
@@ -338,37 +356,48 @@ class TranslatorLauncher extends React.Component {
 					) }
 				</p>
 				<p>
-					<label htmlFor="toggle">
-						<input type="checkbox" id="toggle" onClick={ this.toggleInfoCheckbox } />
+					<FormLabel htmlFor="toggle">
+						<FormInputCheckbox id="toggle" onClick={ this.toggleInfoCheckbox } />
 						<span>{ translate( "Don't show again" ) }</span>
-					</label>
+					</FormLabel>
 				</p>
 			</Dialog>
 		);
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { translate, isEmpathyModeEnabled, selectedLanguageSlug } = this.props;
 		const { isEnabled, isActive, infoDialogVisible } = this.state;
 
-		const launcherClasses = classNames( 'community-translator', { 'is-active': isActive } );
+		const launcherClasses = classNames( 'community-translator', {
+			'is-active': isActive,
+			'is-incompatible': isEmpathyModeEnabled,
+		} );
 		const toggleString = isActive
 			? translate( 'Disable Translator' )
 			: translate( 'Enable Translator' );
+		const toggleEmpathyModeString = getLanguageEmpathyModeActive()
+			? 'Deactivate Empathy mode'
+			: 'Activate Empathy mode';
+		const buttonString = isEmpathyModeEnabled ? toggleEmpathyModeString : toggleString;
+		const shouldRenderLauncherButton = isEnabled || isEmpathyModeEnabled;
 
 		return (
 			<Fragment>
 				<QueryUserSettings />
-				{ isEnabled && (
+				{ shouldRenderLauncherButton && (
 					<Fragment>
 						<div className={ launcherClasses }>
 							<button
-								className="community-translator__button"
 								onClick={ this.toggle }
+								className="community-translator__button"
 								title={ translate( 'Community Translator' ) }
 							>
 								<Gridicon icon="globe" />
-								<div className="community-translator__text">{ toggleString }</div>
+								{ isEmpathyModeEnabled && (
+									<span className="community-translator__badge">{ selectedLanguageSlug }</span>
+								) }
+								<div className="community-translator__text">{ buttonString }</div>
 							</button>
 						</div>
 						{ infoDialogVisible && this.renderConfirmationModal() }
@@ -384,6 +413,9 @@ export default connect(
 	( state ) => ( {
 		isUserSettingsReady: !! getUserSettings( state ),
 		isTranslatorEnabled: getOriginalUserSetting( state, 'enable_translator' ),
+		isEmpathyModeEnabled:
+			config.isEnabled( 'i18n/empathy-mode' ) &&
+			getOriginalUserSetting( state, 'i18n_empathy_mode' ),
 		selectedLanguageSlug: getCurrentLocaleSlug( state ),
 	} ),
 	{ setLocale }

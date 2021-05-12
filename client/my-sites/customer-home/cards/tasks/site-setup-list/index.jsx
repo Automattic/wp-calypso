@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import { Card, Button } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { translate } from 'i18n-calypso';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Fragment } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import page from 'page';
 import classnames from 'classnames';
@@ -12,24 +12,24 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Badge from 'components/badge';
-import CardHeading from 'components/card-heading';
-import Spinner from 'components/spinner';
-import { getTaskList } from 'lib/checklist';
-import Gridicon from 'components/gridicon';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
-import { resetVerifyEmailState } from 'state/current-user/email-verification/actions';
-import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import getChecklistTaskUrls from 'state/selectors/get-checklist-task-urls';
-import getSiteChecklist from 'state/selectors/get-site-checklist';
-import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
-import getMenusUrl from 'state/selectors/get-menus-url';
-import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
-import { requestGuidedTour } from 'state/ui/guided-tours/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { skipCurrentViewHomeLayout } from 'state/home/actions';
+import CardHeading from 'calypso/components/card-heading';
+import Spinner from 'calypso/components/spinner';
+import { getTaskList } from 'calypso/lib/checklist';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
+import { resetVerifyEmailState } from 'calypso/state/current-user/email-verification/actions';
+import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import getChecklistTaskUrls from 'calypso/state/selectors/get-checklist-task-urls';
+import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import getMenusUrl from 'calypso/state/selectors/get-menus-url';
+import { getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
+import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { skipCurrentViewHomeLayout } from 'calypso/state/home/actions';
 import NavItem from './nav-item';
+import CurrentTaskItem from './current-task-item';
+import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import { getTask } from './get-task';
 
 /**
@@ -37,7 +37,7 @@ import { getTask } from './get-task';
  */
 import './style.scss';
 
-const startTask = ( dispatch, task, siteId ) => {
+const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask, isPodcastingSite ) => {
 	dispatch(
 		recordTracksEvent( 'calypso_checklist_task_start', {
 			checklist_name: 'new_blog',
@@ -45,6 +45,7 @@ const startTask = ( dispatch, task, siteId ) => {
 			location: 'checklist_show',
 			step_name: task.id,
 			completed: task.isCompleted,
+			is_podcasting_site: isPodcastingSite,
 		} )
 	);
 
@@ -59,9 +60,13 @@ const startTask = ( dispatch, task, siteId ) => {
 	if ( task.actionDispatch ) {
 		dispatch( task.actionDispatch( ...task.actionDispatchArgs ) );
 	}
+
+	if ( task.actionAdvanceToNext ) {
+		advanceToNextIncompleteTask();
+	}
 };
 
-const skipTask = ( dispatch, task, tasks, siteId, setIsLoading ) => {
+const skipTask = ( dispatch, task, tasks, siteId, setIsLoading, isPodcastingSite ) => {
 	const isLastTask = tasks.filter( ( t ) => ! t.isCompleted ).length === 1;
 
 	if ( isLastTask ) {
@@ -78,11 +83,12 @@ const skipTask = ( dispatch, task, tasks, siteId, setIsLoading ) => {
 			checklist_name: 'new_blog',
 			site_id: siteId,
 			step_name: task.id,
+			is_podcasting_site: isPodcastingSite,
 		} )
 	);
 };
 
-const trackTaskDisplay = ( dispatch, task, siteId ) => {
+const trackTaskDisplay = ( dispatch, task, siteId, isPodcastingSite ) => {
 	dispatch(
 		recordTracksEvent( 'calypso_checklist_task_display', {
 			checklist_name: 'new_blog',
@@ -90,13 +96,16 @@ const trackTaskDisplay = ( dispatch, task, siteId ) => {
 			step_name: task.id,
 			completed: task.isCompleted,
 			location: 'home',
+			is_podcasting_site: isPodcastingSite,
 		} )
 	);
 };
 
 const SiteSetupList = ( {
 	emailVerificationStatus,
+	firstIncompleteTask,
 	isEmailUnverified,
+	isPodcastingSite,
 	menusUrl,
 	siteId,
 	siteSlug,
@@ -106,14 +115,16 @@ const SiteSetupList = ( {
 } ) => {
 	const [ currentTaskId, setCurrentTaskId ] = useState( null );
 	const [ currentTask, setCurrentTask ] = useState( null );
-	const [ userSelectedTask, setUserSelectedTask ] = useState( false );
-	const [ useDrillLayout, setUseDrillLayout ] = useState( false );
-	const [ currentDrillLayoutView, setCurrentDrillLayoutView ] = useState( 'nav' );
+	const [ taskIsManuallySelected, setTaskIsManuallySelected ] = useState( false );
+	const [ useAccordionLayout, setUseAccordionLayout ] = useState( false );
+	const [ showAccordionSelectedTask, setShowAccordionSelectedTask ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const dispatch = useDispatch();
 
 	const isDomainUnverified =
-		tasks.filter( ( task ) => task.id === 'domain_verified' && ! task.isCompleted ).length > 0;
+		tasks.filter(
+			( task ) => task.id === CHECKLIST_KNOWN_TASKS.DOMAIN_VERIFIED && ! task.isCompleted
+		).length > 0;
 
 	// Move to first incomplete task on first load.
 	useEffect( () => {
@@ -125,6 +136,15 @@ const SiteSetupList = ( {
 		}
 	}, [ currentTaskId, dispatch, tasks ] );
 
+	// If specified, then automatically complete the current task when viewed
+	// if it is not already complete.
+	useEffect( () => {
+		if ( currentTask?.completeOnView && ! currentTask?.isCompleted ) {
+			dispatch( requestSiteChecklistTaskUpdate( siteId, currentTask.id ) );
+			setTaskIsManuallySelected( true ); // force selected even though complete
+		}
+	}, [ currentTask, dispatch, siteId ] );
+
 	// Reset verification email state on first load.
 	useEffect( () => {
 		if ( isEmailUnverified ) {
@@ -134,18 +154,18 @@ const SiteSetupList = ( {
 
 	// Move to next task after completing current one, unless directly selected by the user.
 	useEffect( () => {
-		if ( userSelectedTask ) {
+		if ( taskIsManuallySelected ) {
 			return;
 		}
 		if ( currentTaskId && currentTask && tasks.length ) {
 			const rawCurrentTask = tasks.find( ( task ) => task.id === currentTaskId );
 			if ( rawCurrentTask.isCompleted && ! currentTask.isCompleted ) {
 				const nextTaskId = tasks.find( ( task ) => ! task.isCompleted )?.id;
-				setUserSelectedTask( false );
+				setTaskIsManuallySelected( false );
 				setCurrentTaskId( nextTaskId );
 			}
 		}
-	}, [ currentTask, currentTaskId, userSelectedTask, tasks ] );
+	}, [ currentTask, currentTaskId, taskIsManuallySelected, tasks ] );
 
 	// Update current task.
 	useEffect( () => {
@@ -155,6 +175,7 @@ const SiteSetupList = ( {
 				emailVerificationStatus,
 				isDomainUnverified,
 				isEmailUnverified,
+				isPodcastingSite,
 				menusUrl,
 				siteId,
 				siteSlug,
@@ -162,7 +183,7 @@ const SiteSetupList = ( {
 				userEmail,
 			} );
 			setCurrentTask( newCurrentTask );
-			trackTaskDisplay( dispatch, newCurrentTask, siteId );
+			trackTaskDisplay( dispatch, newCurrentTask, siteId, isPodcastingSite );
 		}
 	}, [
 		currentTaskId,
@@ -170,6 +191,7 @@ const SiteSetupList = ( {
 		emailVerificationStatus,
 		isDomainUnverified,
 		isEmailUnverified,
+		isPodcastingSite,
 		menusUrl,
 		siteId,
 		siteSlug,
@@ -180,100 +202,103 @@ const SiteSetupList = ( {
 
 	useEffect( () => {
 		if ( isWithinBreakpoint( '<960px' ) ) {
-			setUseDrillLayout( true );
+			setUseAccordionLayout( true );
 		}
-		subscribeIsWithinBreakpoint( '<960px', ( isActive ) => setUseDrillLayout( isActive ) );
+		subscribeIsWithinBreakpoint( '<960px', ( isActive ) => setUseAccordionLayout( isActive ) );
 	}, [] );
 
 	if ( ! currentTask ) {
 		return null;
 	}
 
+	const advanceToNextIncompleteTask = () => {
+		if ( firstIncompleteTask ) {
+			setCurrentTaskId( firstIncompleteTask.id );
+		}
+	};
+
 	return (
 		<Card className={ classnames( 'site-setup-list', { 'is-loading': isLoading } ) }>
 			{ isLoading && <Spinner /> }
-			{ useDrillLayout && (
-				<CardHeading>
-					<>
-						{ currentDrillLayoutView === 'task' && (
-							<Gridicon
-								icon="chevron-left"
-								size={ 18 }
-								className="site-setup-list__nav-back"
-								onClick={ () => setCurrentDrillLayoutView( 'nav' ) }
-							/>
-						) }
-						{ translate( 'Site setup' ) }
-					</>
-				</CardHeading>
+			{ ! useAccordionLayout && (
+				<CurrentTaskItem
+					currentTask={ currentTask }
+					skipTask={ () => {
+						setTaskIsManuallySelected( false );
+						skipTask( dispatch, currentTask, tasks, siteId, setIsLoading, isPodcastingSite );
+					} }
+					startTask={ () =>
+						startTask(
+							dispatch,
+							currentTask,
+							siteId,
+							advanceToNextIncompleteTask,
+							isPodcastingSite
+						)
+					}
+				/>
 			) }
-			{ ( ! useDrillLayout || currentDrillLayoutView === 'nav' ) && (
-				<div className="site-setup-list__nav">
-					{ ! useDrillLayout && <CardHeading>{ translate( 'Site setup' ) }</CardHeading> }
-					{ tasks.map( ( task ) => (
-						<NavItem
-							key={ task.id }
-							taskId={ task.id }
-							text={ getTask( task ).title }
-							isCompleted={ task.isCompleted }
-							isCurrent={ task.id === currentTask.id }
-							onClick={ () => {
-								setUserSelectedTask( true );
-								setCurrentTaskId( task.id );
-								setCurrentDrillLayoutView( 'task' );
-							} }
-							showChevron={ useDrillLayout }
-						/>
-					) ) }
-				</div>
-			) }
-			{ ( ! useDrillLayout || currentDrillLayoutView === 'task' ) && (
-				<div className="site-setup-list__task task">
-					<div className="site-setup-list__task-text task__text">
-						{ currentTask.isCompleted ? (
-							<Badge type="info" className="site-setup-list__task-badge task__badge">
-								{ translate( 'Complete' ) }
-							</Badge>
-						) : (
-							<div className="site-setup-list__task-timing task__timing">
-								<Gridicon icon="time" size={ 18 } />
-								{ translate( '%d minute', '%d minutes', {
-									count: currentTask.timing,
-									args: [ currentTask.timing ],
-								} ) }
-							</div>
-						) }
-						<h2 className="site-setup-list__task-title task__title">{ currentTask.title }</h2>
-						<p className="site-setup-list__task-description task__description">
-							{ currentTask.description }
-						</p>
-						<div className="site-setup-list__task-actions task__actions">
-							<Button
-								className="site-setup-list__task-action task__action"
-								primary
-								onClick={ () => startTask( dispatch, currentTask, siteId ) }
-								disabled={
-									currentTask.isDisabled ||
-									( currentTask.isCompleted && currentTask.actionDisableOnComplete )
+
+			<div className="site-setup-list__nav">
+				<CardHeading>{ translate( 'Site setup' ) }</CardHeading>
+				{ tasks.map( ( task ) => {
+					const enhancedTask = getTask( task );
+					const isCurrent = task.id === currentTask.id;
+					const isCompleted = task.isCompleted;
+
+					return (
+						<Fragment key={ task.id }>
+							<NavItem
+								key={ task.id }
+								taskId={ task.id }
+								text={ enhancedTask.label || enhancedTask.title }
+								isCompleted={ isCompleted }
+								isCurrent={
+									useAccordionLayout ? isCurrent && showAccordionSelectedTask : isCurrent
 								}
-							>
-								{ currentTask.actionText }
-							</Button>
-							{ currentTask.isSkippable && ! currentTask.isCompleted && (
-								<Button
-									className="site-setup-list__task-skip task__skip is-link"
-									onClick={ () => {
-										setUserSelectedTask( false );
-										skipTask( dispatch, currentTask, tasks, siteId, setIsLoading );
+								onClick={
+									useAccordionLayout && isCurrent && showAccordionSelectedTask
+										? () => {
+												setShowAccordionSelectedTask( false );
+										  }
+										: () => {
+												setShowAccordionSelectedTask( true );
+												setTaskIsManuallySelected( true );
+												setCurrentTaskId( task.id );
+										  }
+								}
+								useAccordionLayout={ useAccordionLayout }
+							/>
+							{ useAccordionLayout && isCurrent && showAccordionSelectedTask ? (
+								<CurrentTaskItem
+									currentTask={ currentTask }
+									skipTask={ () => {
+										setTaskIsManuallySelected( false );
+										skipTask(
+											dispatch,
+											currentTask,
+											tasks,
+											siteId,
+											setIsLoading,
+											isPodcastingSite
+										);
 									} }
-								>
-									{ translate( 'Skip for now' ) }
-								</Button>
-							) }
-						</div>
-					</div>
-				</div>
-			) }
+									startTask={ () =>
+										startTask(
+											dispatch,
+											currentTask,
+											siteId,
+											advanceToNextIncompleteTask,
+											isPodcastingSite
+										)
+									}
+									useAccordionLayout={ useAccordionLayout }
+								/>
+							) : null }
+						</Fragment>
+					);
+				} ) }
+			</div>
 		</Card>
 	);
 };
@@ -300,7 +325,9 @@ export default connect( ( state ) => {
 
 	return {
 		emailVerificationStatus,
+		firstIncompleteTask: taskList.getFirstIncompleteTask(),
 		isEmailUnverified: ! isCurrentUserEmailVerified( state ),
+		isPodcastingSite: !! getSiteOption( state, siteId, 'anchor_podcast' ),
 		menusUrl: getMenusUrl( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),

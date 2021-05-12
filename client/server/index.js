@@ -1,24 +1,26 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-nodejs-modules */
 
-require( '@automattic/calypso-polyfills' );
+import 'source-map-support/register';
+import '@automattic/calypso-polyfills';
 
 /**
  * External dependencies.
  */
-const chalk = require( 'chalk' );
-const fs = require( 'fs' );
+import fs from 'fs';
 
 /**
  * Internal dependencies
  */
-const boot = require( './boot' );
-const config = require( './config' );
+import boot from './boot';
+import config from '@automattic/calypso-config';
+import { getLogger } from './lib/logger';
 
+const logger = getLogger();
 const start = Date.now();
-const protocol = process.env.PROTOCOL || config( 'protocol' );
-const port = process.env.PORT || config( 'port' );
-const host = process.env.HOST || config( 'hostname' );
+const protocol = config( 'protocol' );
+const port = config( 'port' );
+const host = config( 'hostname' );
 const app = boot();
 
 function sendBootStatus( status ) {
@@ -29,13 +31,7 @@ function sendBootStatus( status ) {
 	process.send( { boot: status } );
 }
 
-console.log(
-	chalk.yellow( 'wp-calypso booted in %dms - %s://%s:%s' ),
-	Date.now() - start,
-	protocol,
-	host,
-	port
-);
+logger.info( 'wp-calypso booted in %dms - %s://%s:%s', Date.now() - start, protocol, host, port );
 
 function loadSslCert() {
 	const { execSync } = require( 'child_process' );
@@ -76,9 +72,15 @@ function createServer() {
 }
 
 const server = createServer();
+if ( process.env.NODE_ENV !== 'development' ) {
+	server.timeout = 50 * 1000; //50 seconds, in ms;
+}
+
+process.on( 'uncaughtExceptionMonitor', ( err ) => {
+	logger.error( err );
+} );
 
 // The desktop app runs Calypso in a fork. Let non-forks listen on any host.
-
 server.listen( { port, host: process.env.CALYPSO_IS_FORK ? host : null }, function () {
 	// Tell the parent process that Calypso has booted.
 	sendBootStatus( 'ready' );

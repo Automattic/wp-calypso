@@ -35,7 +35,7 @@
 	}
 
 	@include breakpoint-deprecated( '<480px' ) {
-		font-size: 15px;
+		font-size: $font-body;
 		line-height: 24px;
 	}
 
@@ -50,7 +50,7 @@
 	}
 
 	color: var( --color-neutral-70 );
-	font-size: 17px;
+	font-size: $font-title-small;
 	line-height: 28px;
 }
 
@@ -66,22 +66,21 @@
 	text-decoration: none;
 	clear: none;
 	color: var( --color-neutral-70 );
-	font-family: $serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	font-size: 26px;
-	font-weight: 700;
+	font-size: $font-title-medium;
+	font-weight: 600;
 	line-height: 34px;
 	margin: 56px 0 0;
 	max-width: 750px;
 
 	@include breakpoint-deprecated( '>960px' ) {
-		font-size: 36px;
+		font-size: $font-headline-small;
 		line-height: 46px;
 	}
 
 	@include breakpoint-deprecated( '480px-960px' ) {
-		font-size: 32px;
+		font-size: $font-title-large;
 		line-height: 40px;
 	}
 

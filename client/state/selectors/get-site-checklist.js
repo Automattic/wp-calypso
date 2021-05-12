@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/checklist/init';
+
+/**
  * Returns the checklist for the specified site ID
  *
  * @param  {object}  state  Global state tree

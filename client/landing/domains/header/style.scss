@@ -1,12 +1,12 @@
 .header {
 	text-align: center;
 	h2.header__title {
-		font-size: 20px;
+		font-size: $font-title-small;
 		font-weight: 400;
 		margin: 0;
 
 		@include breakpoint-deprecated( '<660px' ) {
-			font-size: 16px;
+			font-size: $font-body;
 		}
 	}
 }

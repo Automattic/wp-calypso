@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
+
 import {
 	WOOCOMMERCE_WC_API_SUCCESS,
 	WOOCOMMERCE_WC_API_UNAVAILABLE,
@@ -14,7 +14,7 @@ const initialState = {
 	lastErrorTime: null,
 };
 
-export default withoutPersistence( ( state = initialState, action ) => {
+export default ( state = initialState, action ) => {
 	switch ( action.type ) {
 		case WOOCOMMERCE_WC_API_SUCCESS:
 			return apiSuccess( state, action );
@@ -25,7 +25,7 @@ export default withoutPersistence( ( state = initialState, action ) => {
 	}
 
 	return state;
-} );
+};
 
 function apiSuccess( state, action ) {
 	const actionTime = action.time || Date.now();

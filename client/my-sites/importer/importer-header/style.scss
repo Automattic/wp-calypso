@@ -13,7 +13,6 @@
 			line-height: 56px;
 		}
 	}
-
 }
 
 .importer-header__service-info {
@@ -25,7 +24,7 @@
 }
 
 .importer-header__service-title {
-	font-size: 21px;
+	font-size: $font-title-small;
 	color: var( --color-text-subtle );
 	clear: none;
 

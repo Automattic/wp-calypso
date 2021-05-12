@@ -11,12 +11,12 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import MainComponent from 'components/main';
-import HeaderCake from 'components/header-cake';
-import EligibilityWarnings from 'blocks/eligibility-warnings';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { initiateThemeTransfer } from 'state/themes/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import MainComponent from 'calypso/components/main';
+import HeaderCake from 'calypso/components/header-cake';
+import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { initiateThemeTransfer } from 'calypso/state/themes/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class PluginEligibility extends Component {
 	static propTypes = {

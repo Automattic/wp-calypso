@@ -11,15 +11,18 @@ import {
 	PURCHASES_SITE_FETCH,
 	PURCHASES_SITE_FETCH_COMPLETED,
 	PURCHASES_SITE_FETCH_FAILED,
+	PURCHASES_SITE_RESET_STATE,
 	PURCHASES_USER_FETCH,
 	PURCHASES_USER_FETCH_COMPLETED,
 	PURCHASES_USER_FETCH_FAILED,
 	PURCHASE_REMOVE_COMPLETED,
 	PURCHASE_REMOVE_FAILED,
-} from 'state/action-types';
-import { requestHappychatEligibility } from 'state/happychat/user/actions';
+} from 'calypso/state/action-types';
+import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
+import wp from 'calypso/lib/wp';
 
-import wp from 'lib/wp';
+import 'calypso/state/purchases/init';
+
 const wpcom = wp.undocumented();
 
 const PURCHASES_FETCH_ERROR_MESSAGE = i18n.translate( 'There was an error retrieving purchases.' );
@@ -103,3 +106,6 @@ export const removePurchase = ( purchaseId, userId ) => ( dispatch ) => {
 			} );
 		} );
 };
+
+export const resetSiteState = () => ( dispatch ) =>
+	dispatch( { type: PURCHASES_SITE_RESET_STATE } );

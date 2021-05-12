@@ -12,7 +12,7 @@ export type ArrowPosition =
 	| 'top-left'
 	| 'top-right';
 
-export type DialogPosition = 'above' | 'below' | 'beside' | 'center' | 'middle' | 'right';
+export type DialogPosition = 'above' | 'below' | 'beside' | 'left' | 'center' | 'middle' | 'right';
 
 export interface Coordinate {
 	x: number;

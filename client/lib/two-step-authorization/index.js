@@ -3,22 +3,21 @@
  */
 import debugFactory from 'debug';
 import { get as webauthn_auth } from '@github/webauthn-json';
-import { replace } from 'lodash';
 
 const debug = debugFactory( 'calypso:two-step-authorization' );
 
 /**
  * Internal Dependencies
  */
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { bumpStat } from 'lib/analytics/mc';
-import config from 'config';
-import emitter from 'lib/mixins/emitter';
-import userSettings from 'lib/user-settings';
-import { reduxDispatch } from 'lib/redux-bridge';
-import { requestConnectedApplications } from 'state/connected-applications/actions';
-import { requestUserProfileLinks } from 'state/profile-links/actions';
-import wp from 'lib/wp';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import config from '@automattic/calypso-config';
+import emitter from 'calypso/lib/mixins/emitter';
+import { fetchUserSettings } from 'calypso/state/user-settings/actions';
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
+import { requestConnectedApplications } from 'calypso/state/connected-applications/actions';
+import { requestUserProfileLinks } from 'calypso/state/profile-links/actions';
+import wp from 'calypso/lib/wp';
 
 const wpcom = wp.undocumented();
 
@@ -100,7 +99,7 @@ TwoStepAuthorization.prototype.refreshDataOnSuccessfulAuth = function () {
 	// If the validation was successful AND re-auth was required, fetch
 	// data from the following modules.
 	if ( this.isReauthRequired() ) {
-		userSettings.fetchSettings();
+		reduxDispatch( fetchUserSettings() );
 		reduxDispatch( requestConnectedApplications() );
 		reduxDispatch( requestUserProfileLinks() );
 	}
@@ -146,7 +145,7 @@ TwoStepAuthorization.prototype.validateCode = function ( args, callback ) {
 	wpcom.me().validateTwoStepCode(
 		{
 			...args,
-			code: replace( args.code, /\s/g, '' ),
+			code: args.code.replace( /\s/g, '' ),
 		},
 		function ( error, data ) {
 			if ( ! error && data.success ) {
@@ -236,7 +235,7 @@ TwoStepAuthorization.prototype.backupCodes = function ( callback ) {
  */
 TwoStepAuthorization.prototype.validateBackupCode = function ( code, callback ) {
 	const args = {
-		code: replace( code, /\s/g, '' ),
+		code: code.replace( /\s/g, '' ),
 		action: 'create-backup-receipt',
 	};
 

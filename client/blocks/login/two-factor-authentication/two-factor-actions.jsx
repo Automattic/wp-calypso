@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -13,11 +12,10 @@ import page from 'page';
 
 import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { isTwoFactorAuthTypeSupported } from 'state/login/selectors';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import { sendSmsCode } from 'state/login/actions';
-import { login } from 'lib/paths';
-import { isWebAuthnSupported } from 'lib/webauthn';
+import { isTwoFactorAuthTypeSupported } from 'calypso/state/login/selectors';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { sendSmsCode } from 'calypso/state/login/actions';
+import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 
 /**
  * Style dependencies
@@ -28,11 +26,10 @@ class TwoFactorActions extends Component {
 	static propTypes = {
 		isAuthenticatorSupported: PropTypes.bool.isRequired,
 		isSecurityKeySupported: PropTypes.bool.isRequired,
-		isJetpack: PropTypes.bool,
-		isGutenboarding: PropTypes.bool,
 		isSmsSupported: PropTypes.bool.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		sendSmsCode: PropTypes.func.isRequired,
+		switchTwoFactorAuthType: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string.isRequired,
 	};
@@ -42,14 +39,7 @@ class TwoFactorActions extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_to_sms_link_click' );
 
-		page(
-			login( {
-				isNative: true,
-				twoFactorAuthType: 'sms',
-				isJetpack: this.props.isJetpack,
-				isGutenboarding: this.props.isGutenboarding,
-			} )
-		);
+		this.props.switchTwoFactorAuthType( 'sms' );
 
 		this.props.sendSmsCode();
 	};
@@ -59,18 +49,11 @@ class TwoFactorActions extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_to_authenticator_link_click' );
 
-		page(
-			login( {
-				isNative: true,
-				twoFactorAuthType: 'authenticator',
-				isJetpack: this.props.isJetpack,
-				isGutenboarding: this.props.isGutenboarding,
-			} )
-		);
+		this.props.switchTwoFactorAuthType( 'authenticator' );
 	};
 	recordSecurityKey = ( event ) => {
 		event.preventDefault();
-		page( login( { isNative: true, twoFactorAuthType: 'webauthn' } ) );
+		this.props.switchTwoFactorAuthType( 'webauthn' );
 	};
 
 	render() {

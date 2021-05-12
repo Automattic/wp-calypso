@@ -28,8 +28,8 @@ function parseImage( node, _parsed ) {
 
 	// Parse dimensions
 	[ 'width', 'height' ].forEach( ( dimension ) => {
-		let natural = 'natural' + dimension[ 0 ].toUpperCase() + dimension.slice( 1 ),
-			value = node.getAttribute( dimension ) || node[ natural ] || node[ dimension ];
+		const natural = 'natural' + dimension[ 0 ].toUpperCase() + dimension.slice( 1 );
+		const value = node.getAttribute( dimension ) || node[ natural ] || node[ dimension ];
 
 		if ( value && isFinite( value ) ) {
 			_parsed.media[ dimension ] = parseInt( value, 10 );

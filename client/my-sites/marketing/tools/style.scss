@@ -15,14 +15,14 @@
 }
 
 .tools__header-title {
-	font-size: 21px;
+	font-size: $font-title-small;
 	font-weight: 400;
 	margin-bottom: 10px;
 	margin-top: 10px;
 }
 
 .tools__header-description {
-	font-size: 16px;
+	font-size: $font-body;
 	font-weight: 400;
 }
 
@@ -50,7 +50,7 @@
 
 	.tools__header-image {
 		position: relative;
-			left: -20px;
+		left: -20px;
 	}
 }
 
@@ -99,6 +99,8 @@
 	width: 100%;
 
 	> p {
+		color: var( --color-text-subtle );
+		font-size: $font-body-small;
 		margin-bottom: 0;
 	}
 
@@ -110,7 +112,7 @@
 .tools__feature-list-item-body-image {
 	margin: 10px 20px 0 0;
 	max-width: 150px;
-	width: 15%;
+	width: 16%;
 
 	@include breakpoint-deprecated( '>1040px' ) {
 		display: flex;
@@ -129,6 +131,7 @@
 
 	.button {
 		margin: 0;
+		margin-left: calc( 15% + 20px );
 		text-align: center;
 		width: auto;
 	}
@@ -137,39 +140,16 @@
 		margin-top: 1em;
 	}
 
-	.google-voucher__initial-step .purchase-detail__button {
-		float: right;
-		font-size: 12px;
-		line-height: 1;
-		padding: 7px;
-	}
-
-	.google-voucher__initial-step {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-	}
-
 	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
-		justify-content: flex-end;
-
-		.google-voucher__initial-step {
-			display: block;
-		}
+		justify-content: flex-start;
 
 		.button {
-			margin: 0 1em 0 0;
 			width: auto;
 		}
 	}
 
 	@include breakpoint-deprecated( '>1040px' ) {
-
-		.button {
-			margin: 0 0 0 1em;
-		}
-
 		.purchase-detail__button {
 			float: right;
 		}

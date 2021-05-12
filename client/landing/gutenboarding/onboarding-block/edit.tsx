@@ -1,143 +1,246 @@
 /**
  * External dependencies
  */
-import { BlockEditProps } from '@wordpress/blocks';
-import { useDispatch, useSelect } from '@wordpress/data';
-import React, { FunctionComponent, useEffect, useCallback } from 'react';
+import * as React from 'react';
 import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
+import { useSelect, useDispatch } from '@wordpress/data';
+import type { BlockEditProps } from '@wordpress/blocks';
+import { isE2ETest } from 'calypso/lib/e2e';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY } from '../stores/onboard';
 import { SITE_STORE } from '../stores/site';
-import { USER_STORE } from '../stores/user';
-import DesignSelector from './design-selector';
+import {
+	GutenLocationStateType,
+	Step,
+	StepType,
+	useIsAnchorFm,
+	useCurrentStep,
+	usePath,
+	useNewQueryParam,
+	useAnchorFmParams,
+	useStepRouteParam,
+} from '../path';
+import { usePrevious } from '../hooks/use-previous';
+import Designs from './designs';
 import CreateSite from './create-site';
-import { Attributes } from './types';
-import { Step, usePath, useNewQueryParam } from '../path';
+import CreateSiteError from './create-site-error';
 import AcquireIntent from './acquire-intent';
+import AnchorError from './anchor-error';
 import StylePreview from './style-preview';
+import Features from './features';
 import Plans from './plans';
-import { isEnabled } from '../../../config';
-import { useFreeDomainSuggestion } from '../hooks/use-free-domain-suggestion';
+import Domains from './domains';
+import Language from './language';
+
+import type { Attributes } from './types';
 
 import './colors.scss';
 import './style.scss';
 
-const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
+const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = () => {
 	const {
-		siteTitle,
-		siteVertical,
-		selectedDesign,
-		selectedFonts,
-		wasVerticalSkipped,
-	} = useSelect( ( select ) => select( STORE_KEY ).getState() );
-	const { createSite } = useDispatch( STORE_KEY );
-	const isRedirecting = useSelect( ( select ) => select( STORE_KEY ).getIsRedirecting() );
-	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
-	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+		hasSiteTitle,
+		hasSelectedDesign,
+		hasSelectedDesignWithoutFonts,
+		isRedirecting,
+	} = useSelect(
+		( select ) => {
+			const onboardSelect = select( STORE_KEY );
+
+			return {
+				hasSiteTitle: onboardSelect.hasSiteTitle(),
+				hasSelectedDesign: onboardSelect.hasSelectedDesign(),
+				hasSelectedDesignWithoutFonts: onboardSelect.hasSelectedDesignWithoutFonts(),
+				isRedirecting: onboardSelect.getIsRedirecting(),
+			};
+		},
+		[ STORE_KEY ]
+	);
+	const { isCreatingSite, newSiteError } = useSelect(
+		( select ) => {
+			const { isFetchingSite, getNewSiteError } = select( SITE_STORE );
+
+			return {
+				isCreatingSite: isFetchingSite(),
+				newSiteError: getNewSiteError(),
+			};
+		},
+		[ SITE_STORE ]
+	);
 	const shouldTriggerCreate = useNewQueryParam();
-	const freeDomainSuggestion = useFreeDomainSuggestion();
+	const isAnchorFmSignup = useIsAnchorFm();
+	const { isAnchorFmPodcastIdError } = useAnchorFmParams();
 
 	const makePath = usePath();
+	const currentStep = useCurrentStep();
+	const previousStep = usePrevious( currentStep );
 
-	const { pathname } = useLocation();
+	const { state: locationState = {} } = useLocation< GutenLocationStateType >();
 
-	React.useEffect( () => {
-		window.scrollTo( 0, 0 );
-	}, [ pathname ] );
+	React.useLayoutEffect( () => {
+		// Runs some navigation related side-effects when the step changes
+		// We only want to run when a real transition happens:
+		// - not on first load when `previousStep === undefined` and,
+		// - during an intermediate state when `previousStep === currentStep`
+		if ( previousStep && previousStep !== currentStep ) {
+			setTimeout( () => window.scrollTo( 0, 0 ), 0 );
 
-	const canUseDesignSelection = useCallback( (): boolean => {
-		return !! ( siteVertical || siteTitle || wasVerticalSkipped );
-	}, [ siteTitle, siteVertical, wasVerticalSkipped ] );
+			if ( window.getSelection && window.getSelection()?.empty ) {
+				window.getSelection()?.empty();
+			}
+		}
+	}, [ currentStep, previousStep ] );
 
-	const canUseStyleStep = useCallback( (): boolean => {
-		return !! selectedDesign;
-	}, [ selectedDesign ] );
+	// makePathWithState( path: StepType ) - A wrapper around makePath() that preserves location state.
+	// This uses makePath() to generate a string path, then transforms that
+	// string path into an object that also contains the location state.
+	const makePathWithState = React.useCallback(
+		( path: StepType ) => {
+			return {
+				pathname: makePath( path ),
+				state: locationState,
+			};
+		},
+		[ makePath, locationState ]
+	);
 
-	const canUseCreateSiteStep = useCallback( (): boolean => {
+	const canUseDesignStep = React.useCallback( (): boolean => {
+		return hasSiteTitle;
+	}, [ hasSiteTitle ] );
+
+	const canUseStyleStep = React.useCallback( (): boolean => {
+		return hasSelectedDesign;
+	}, [ hasSelectedDesign ] );
+
+	const shouldSkipStyleStep = React.useCallback( (): boolean => {
+		return hasSelectedDesignWithoutFonts;
+	}, [ hasSelectedDesignWithoutFonts ] );
+
+	const canUseFeatureStep = React.useCallback( (): boolean => {
+		return hasSelectedDesign;
+	}, [ hasSelectedDesign ] );
+
+	const canUsePlanStep = React.useCallback( (): boolean => {
+		return hasSelectedDesign;
+	}, [ hasSelectedDesign ] );
+
+	const canUseCreateSiteStep = React.useCallback( (): boolean => {
 		return isCreatingSite || isRedirecting;
 	}, [ isCreatingSite, isRedirecting ] );
 
-	const canUsePlansStep = useCallback( (): boolean => {
-		return !! selectedDesign && !! selectedFonts && isEnabled( 'gutenboarding/plans-grid' );
-	}, [ selectedDesign, selectedFonts ] );
-
-	const getLatestStepPath = (): string => {
-		if ( canUsePlansStep() ) {
-			return makePath( Step.Plans );
+	const getLatestStepPath = () => {
+		if ( hasSelectedDesign && ! isAnchorFmSignup ) {
+			return makePathWithState( Step.Plans );
 		}
 
-		if ( canUseStyleStep() ) {
-			return makePath( Step.Style );
-		}
-		if ( canUseDesignSelection() ) {
-			return makePath( Step.DesignSelection );
+		if ( canUseDesignStep() ) {
+			return makePathWithState( Step.DesignSelection );
 		}
 
-		return makePath( Step.IntentGathering );
+		return makePathWithState( Step.IntentGathering );
 	};
 
-	useEffect( () => {
-		if (
-			! isCreatingSite &&
-			! newSite &&
-			currentUser &&
-			shouldTriggerCreate &&
-			canUseDesignSelection() &&
-			canUseStyleStep()
-		) {
-			createSite( currentUser.username, freeDomainSuggestion );
+	const getDesignWithoutFontsPath = () => {
+		// This is the path the is used to redirect the user when a design
+		// with no 'fonts' is selected
+		if ( hasSiteTitle ) {
+			return makePathWithState( Step.Features );
 		}
-	}, [
-		canUseDesignSelection,
-		canUseStyleStep,
-		createSite,
-		currentUser,
-		freeDomainSuggestion,
-		isCreatingSite,
-		newSite,
-		shouldTriggerCreate,
-	] );
+		return makePathWithState( Step.Domains );
+	};
+
+	const redirectToLatestStep = <Redirect to={ getLatestStepPath() } />;
+	const redirectToDesignWithoutFontsStep = <Redirect to={ getDesignWithoutFontsPath() } />;
+
+	function createSiteOrError() {
+		if ( newSiteError ) {
+			// Temporarily capture error related to new site creation to E2E
+			if ( isE2ETest() ) {
+				throw new Error( `onboarding-debug ${ JSON.stringify( newSiteError ) }` );
+			}
+
+			return <CreateSiteError linkTo={ getLatestStepPath() } />;
+		} else if ( canUseCreateSiteStep() ) {
+			return <CreateSite />;
+		}
+
+		return redirectToLatestStep;
+	}
+
+	// Remember the last accessed route path
+	const location = useLocation();
+	const step = useStepRouteParam();
+	const { setLastLocation } = useDispatch( STORE_KEY );
+
+	React.useEffect( () => {
+		const modalSteps: StepType[] = [ Step.DomainsModal, Step.PlansModal, Step.LanguageModal ];
+		if (
+			// When location.key is undefined, this means user has just entered gutenboarding from url.
+			location.key !== undefined &&
+			// When step exists, and step is not any from the modals
+			step &&
+			! modalSteps.includes( step )
+		) {
+			// Remember last location
+			setLastLocation( location.pathname );
+		}
+	}, [ location, step, setLastLocation ] );
+
+	const styleStepIfNotSkipped = shouldSkipStyleStep() ? (
+		redirectToDesignWithoutFontsStep
+	) : (
+		<StylePreview />
+	);
 
 	return (
-		<div className="onboarding-block" data-vertical={ siteVertical?.label }>
+		<div className="onboarding-block">
 			{ isCreatingSite && (
 				<Redirect
 					push={ shouldTriggerCreate ? undefined : true }
-					to={ makePath( Step.CreateSite ) }
+					to={ makePathWithState( Step.CreateSite ) }
 				/>
 			) }
 			<Switch>
 				<Route exact path={ makePath( Step.IntentGathering ) }>
-					<AcquireIntent />
+					{ isAnchorFmPodcastIdError ? <AnchorError /> : <AcquireIntent /> }
 				</Route>
 
 				<Route path={ makePath( Step.DesignSelection ) }>
-					{ canUseDesignSelection() ? (
-						<DesignSelector />
-					) : (
-						<Redirect to={ makePath( Step.IntentGathering ) } />
-					) }
+					<Designs />
 				</Route>
 
 				<Route path={ makePath( Step.Style ) }>
-					{ canUseStyleStep() ? (
-						<StylePreview />
-					) : (
-						<Redirect to={ makePath( Step.DesignSelection ) } />
-					) }
+					{ canUseStyleStep() ? styleStepIfNotSkipped : redirectToLatestStep }
+				</Route>
+
+				<Route path={ makePath( Step.Features ) }>
+					{ canUseFeatureStep() ? <Features /> : redirectToLatestStep }
+				</Route>
+
+				<Route path={ makePath( Step.Domains ) }>
+					<Domains />
+				</Route>
+
+				<Route path={ makePath( Step.DomainsModal ) }>
+					<Domains isModal />
 				</Route>
 
 				<Route path={ makePath( Step.Plans ) }>
-					{ canUsePlansStep() ? <Plans /> : <Redirect to={ makePath( Step.Style ) } /> }
+					{ canUsePlanStep() ? <Plans /> : redirectToLatestStep }
 				</Route>
 
-				<Route path={ makePath( Step.CreateSite ) }>
-					{ canUseCreateSiteStep() ? <CreateSite /> : <Redirect to={ getLatestStepPath() } /> }
+				<Route path={ makePath( Step.PlansModal ) }>
+					<Plans isModal />
 				</Route>
+
+				<Route path={ makePath( Step.LanguageModal ) }>
+					<Language previousStep={ previousStep } />
+				</Route>
+
+				<Route path={ makePath( Step.CreateSite ) }>{ createSiteOrError() }</Route>
 			</Switch>
 		</div>
 	);

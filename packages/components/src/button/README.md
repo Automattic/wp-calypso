@@ -5,7 +5,7 @@ Buttons express what action will occur when the user clicks or taps it. Buttons 
 ## Usage
 
 ```jsx
-import Gridicon from 'components/gridicons';
+import Gridicon from 'calypso/components/gridicons';
 import { Button } from '@automattic/components';
 
 export default function RockOnButton() {
@@ -21,6 +21,7 @@ export default function RockOnButton() {
 
 | Name         | Type     | Default | Description                                                                        |
 | ------------ | -------- | ------- | ---------------------------------------------------------------------------------- |
+| `plain`      | `bool`   | false   | Renders a button with no user-agent styles                                         |
 | `compact`    | `bool`   | false   | Decreases the size of the button                                                   |
 | `primary`    | `bool`   | false   | Provides extra visual weight and identifies the primary action in a set of buttons |
 | `borderless` | `bool`   | false   | Renders a button without borders                                                   |
@@ -36,13 +37,14 @@ export default function RockOnButton() {
 - **Scary**: Use when the action will delete customer data or be otherwise difficult to recover from. Destructive buttons should trigger a confirmation dialog before the action is completed. Be thoughtful about using destructive buttons because they can feel stressful for customers.
 - **Borderless**: Use for less important or less commonly used actions since they’re less prominent.
 - **Busy**: Use when a button has been pressed and the associated action is in progress.
+- **Plain**: Use when you need a "button-as-div", to reset all styles from a button that will then be augmented by a consumer. For example, if you need something to _behave_ as a button but not _appear_ as a button, this is a good option.
 
 #### Icon buttons
 
 To use an icon button, insert a Gridicon so that it displays to the left of the text (displaying the `external` icon to the right of the text is the exception). Wrap the text in a `span` or some other element for spacing purposes. You may also create an icon button without text, but use sparingly because it may reduce clarity.
 
 ```jsx
-import Gridicon from 'components/gridicons';
+import Gridicon from 'calypso/components/gridicons';
 import { Button } from '@automattic/components';
 
 export default function RockOnButton() {

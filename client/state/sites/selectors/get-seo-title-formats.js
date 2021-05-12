@@ -6,7 +6,7 @@ import { flowRight as compose } from 'lodash';
 /**
  * Internal dependencies
  */
-import getRawSite from 'state/selectors/get-raw-site';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSeoTitleFormatsForSite from './get-seo-title-formats-for-site';
 
 /**

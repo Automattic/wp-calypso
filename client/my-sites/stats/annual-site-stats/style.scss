@@ -20,7 +20,7 @@
 		padding: 13px 16px;
 
 		&.is-year {
-			font-weight: bold;
+			font-weight: 600;
 		}
 	}
 
@@ -43,35 +43,35 @@
 
 .annual-site-stats__stat-title {
 	color: var( --color-neutral-light );
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	text-transform: uppercase;
 
 	@include breakpoint-deprecated( '<480px' ) {
 		color: var( --color-neutral-70 );
-		font-size: 14px;
+		font-size: $font-body-small;
 		text-transform: capitalize;
 		width: 50%;
 	}
 }
 
 .annual-site-stats__stat-figure {
-	font-size: 18px;
+	font-size: $font-title-small;
 
 	@include breakpoint-deprecated( '<480px' ) {
-		font-size: 14px;
+		font-size: $font-body-small;
 		text-align: right;
 		width: 50%;
 
 		.is-year {
-			font-weight: bold;
+			font-weight: 600;
 		}
 	}
 
 	&.is-large {
-		font-size: 14px;
+		font-size: $font-body-small;
 
 		@include breakpoint-deprecated( '>480px' ) {
-			font-size: 30px;
+			font-size: $font-title-large;
 		}
 	}
 }

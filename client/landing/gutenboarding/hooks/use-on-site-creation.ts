@@ -4,18 +4,18 @@
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import wp from '../../../lib/wp';
-import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
-import { STORE_KEY as PLANS_STORE } from '../stores/plans';
-import { PLAN_FREE, PLAN_ECOMMERCE } from '../stores/plans/constants';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
+import { PLANS_STORE } from '../stores/plans';
 import { recordOnboardingComplete } from '../lib/analytics';
-import { useSelectedPlan } from './use-selected-plan';
+import { useSelectedPlan, useShouldRedirectToEditorAfterCheckout } from './use-selected-plan';
+import { clearLastNonEditorRoute } from '../lib/clear-last-non-editor-route';
+import { useOnboardingFlow } from '../path';
 
 const wpcom = wp.undocumented();
 
@@ -57,16 +57,24 @@ interface Cart {
  * 3. The user is still seeing 'Free Plan' label on PlansButton => redirect to editor
  **/
 
-export default function useOnSiteCreation() {
+export default function useOnSiteCreation(): void {
 	const { domain } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
-	const hasPaidDomain = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDomain() );
 	const isRedirecting = useSelect( ( select ) => select( ONBOARD_STORE ).getIsRedirecting() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const selectedPlan = useSelectedPlan();
+	const shouldRedirectToEditorAfterCheckout = useShouldRedirectToEditorAfterCheckout();
+	const design = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+	const selectedPlanProductId = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getPlanProductId()
+	);
+	const planProductSource = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPlanProductById( selectedPlanProductId )
+	);
+
+	const flow = useOnboardingFlow();
 
 	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
-	const { resetPlan } = useDispatch( PLANS_STORE );
 	const flowCompleteTrackingParams = {
 		isNewSite: !! newSite,
 		isNewUser: !! newUser,
@@ -79,11 +87,10 @@ export default function useOnSiteCreation() {
 		if ( newSite && ! isRedirecting ) {
 			setIsRedirecting( true );
 
-			if ( selectedPlan && selectedPlan?.getStoreSlug() !== PLAN_FREE ) {
+			if ( selectedPlan && ! selectedPlan?.isFree ) {
 				const planProduct = {
-					meta: selectedPlan.getTitle(),
-					product_id: selectedPlan.getProductId(),
-					product_slug: selectedPlan.getStoreSlug(),
+					product_id: planProductSource?.productId,
+					product_slug: planProductSource?.storeSlug,
 					extra: {
 						source: 'gutenboarding',
 					},
@@ -103,69 +110,54 @@ export default function useOnSiteCreation() {
 						...cart,
 						products: [ ...cart.products, planProduct, domainProduct ],
 					} );
-					resetPlan();
 					resetOnboardStore();
+					clearLastNonEditorRoute();
 					setSelectedSite( newSite.blogid );
 
-					const redirectionUrl =
-						selectedPlan.getStoreSlug() === PLAN_ECOMMERCE
-							? `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1`
-							: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2Fblock-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
+					const editorUrl = design?.is_fse
+						? `site-editor%2F${ newSite.site_slug }`
+						: `block-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
+
+					const redirectionUrl = shouldRedirectToEditorAfterCheckout
+						? `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2F${ editorUrl }`
+						: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1`;
 					window.location.href = redirectionUrl;
 				};
 				recordOnboardingComplete( {
 					...flowCompleteTrackingParams,
 					hasCartItems: true,
+					flow,
 				} );
 				go();
 				return;
 			}
-
-			if ( hasPaidDomain && ! isEnabled( 'gutenboarding/plans-grid' ) ) {
-				// I'd rather not make my own product, but this works.
-				// lib/cart-items helpers did not perform well.
-				const domainProduct = {
-					meta: domain?.domain_name,
-					product_id: domain?.product_id,
-					extra: {
-						privacy_available: domain?.supports_privacy,
-						privacy: domain?.supports_privacy,
-						source: 'gutenboarding',
-					},
-				};
-
-				const go = async () => {
-					const cart: Cart = await wpcom.getCart( newSite.site_slug );
-					await wpcom.setCart( newSite.blogid, {
-						...cart,
-						products: [ ...cart.products, domainProduct ],
-					} );
-					resetPlan();
-					resetOnboardStore();
-					setSelectedSite( newSite.blogid );
-					window.location.href = `/start/prelaunch?siteSlug=${ newSite.blogid }`;
-				};
-				go();
-				return;
-			}
-
-			recordOnboardingComplete( flowCompleteTrackingParams );
-			resetPlan();
+			recordOnboardingComplete( {
+				...flowCompleteTrackingParams,
+				flow,
+			} );
 			resetOnboardStore();
+			clearLastNonEditorRoute();
 			setSelectedSite( newSite.blogid );
 
-			window.location.href = `/block-editor/page/${ newSite.site_slug }/home`;
+			let destination;
+			if ( design?.is_fse ) {
+				destination = `/site-editor/${ newSite.site_slug }/`;
+			} else {
+				destination = `/page/${ newSite.site_slug }/home`;
+			}
+			window.location.href = destination;
 		}
 	}, [
 		domain,
-		hasPaidDomain,
 		selectedPlan,
 		isRedirecting,
 		newSite,
 		newUser,
 		resetOnboardStore,
-		resetPlan,
 		setIsRedirecting,
 		setSelectedSite,
+		flowCompleteTrackingParams,
+		shouldRedirectToEditorAfterCheckout,
+		design,
 	] );
 }

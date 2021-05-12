@@ -25,7 +25,8 @@ export const domainAvailability = {
 	AVAILABLE: 'available',
 	AVAILABLE_PREMIUM: 'available_premium',
 	AVAILABILITY_CHECK_ERROR: 'availability_check_error',
-	BLACKLISTED: 'blacklisted_domain',
+	CONFLICTING_CNAME_EXISTS: 'conflicting_cname_exists',
+	DISALLOWED: 'blacklisted_domain',
 	DOMAIN_SUGGESTIONS_THROTTLED: 'domain_suggestions_throttled',
 	DOTBLOG_SUBDOMAIN: 'dotblog_subdomain',
 	EMPTY_QUERY: 'empty_query',
@@ -78,9 +79,7 @@ export const dnsTemplates = {
 	},
 };
 
-export const domainProductSlugs = {
-	TRANSFER_IN: 'domain_transfer',
-};
+export { domainProductSlugs } from '@automattic/calypso-products';
 
 export const gdprConsentStatus = {
 	NONE: 'NONE',

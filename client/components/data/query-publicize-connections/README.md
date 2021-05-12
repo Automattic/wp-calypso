@@ -1,5 +1,4 @@
-Query Publicize Connections
-===========================
+# Query Publicize Connections
 
 `<QueryPublicizeConnections />` is a React component used in managing network requests for Publicize connections.
 
@@ -9,7 +8,7 @@ Render the component, passing `siteId` or the boolean attribute `selectedSite`. 
 
 ```jsx
 import React from 'react';
-import QueryPublicizeConnections from 'components/data/query-publicize-connetions';
+import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connetions';
 import MyConnectionsListItem from './list-item';
 
 export default function MyConnectionsList( { connections } ) {
@@ -17,9 +16,7 @@ export default function MyConnectionsList( { connections } ) {
 		<div>
 			<QueryPublicizeConnections siteId={ 3584907 } />
 			{ connections.map( ( connection ) => (
-				<MyConnectionsListItem
-					key={ connection.ID }
-					connection={ connection } />
+				<MyConnectionsListItem key={ connection.ID } connection={ connection } />
 			) ) }
 		</div>
 	);

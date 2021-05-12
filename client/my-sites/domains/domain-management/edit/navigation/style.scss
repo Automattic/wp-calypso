@@ -8,12 +8,19 @@
 			height: 32px;
 			margin-right: 16px;
 		}
+		> .gridicons-my-sites {
+			position: static;
+		}
 		div {
 			color: var( --color-neutral-90 );
 			small {
 				color: var( --color-neutral-50 );
-				font-size: 100%;
+				font-size: $font-body-small;
 			}
 		}
+	}
+
+	a:hover & {
+		background: var( --color-neutral-0 );
 	}
 }

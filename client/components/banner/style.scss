@@ -11,7 +11,7 @@
 
 	&.is-compact {
 		border-left-width: 4px;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		margin-bottom: 8px;
 		padding: 8px 12px 8px 8px;
 	}
@@ -90,6 +90,14 @@
 		padding: 3px 4px 4px 3px;
 	}
 
+	.banner__icon-no-circle {
+		display: flex;
+		padding: 3px 4px 4px 3px;
+		margin-right: 16px;
+		align-items: center;
+		justify-content: center;
+	}
+
 	@include breakpoint-deprecated( '>480px' ) {
 		align-items: center;
 
@@ -144,17 +152,17 @@
 	}
 
 	.banner__title {
-		font-size: 14px;
+		font-size: $font-body-small;
 		font-weight: 600;
 	}
 
 	.banner__description {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		margin-top: 3px;
 	}
 
 	.banner__list {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		list-style: none;
 		margin: 0;
 		li {
@@ -178,12 +186,12 @@
 }
 
 .banner.is-compact .banner__title {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }
 
 .banner__action {
 	align-self: center;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	margin: 8px 0 0;
 	text-align: left;
 	width: 100%;

@@ -11,6 +11,9 @@
 	@media ( prefers-reduced-motion: reduce ) {
 		animation: none;
 	}
+
+	max-width: 1440px;
+	margin: auto;
 }
 
 @keyframes gutenboarding-page-appear {

@@ -1,12 +1,7 @@
 /**
- * External dependencies
- */
-import { identity } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import { getCreditCardType } from 'lib/checkout';
+import { getCreditCardType } from 'calypso/lib/checkout';
 
 /**
  * Formats a credit card card number
@@ -42,6 +37,7 @@ export function formatAmexCreditCard( cardNumber ) {
 }
 
 const fieldMasks = {};
+const unmask = ( value ) => value;
 
 fieldMasks[ 'expiration-date' ] = {
 	mask: function ( previousValue, nextValue ) {
@@ -70,7 +66,7 @@ fieldMasks[ 'expiration-date' ] = {
 		return nextValue.substring( 0, 2 ) + '/' + nextValue.substring( 2, 4 );
 	},
 
-	unmask: identity,
+	unmask,
 };
 
 fieldMasks.number = {
@@ -88,7 +84,16 @@ fieldMasks.cvv = {
 		return nextValue.replace( /[^\d]/g, '' ).substring( 0, 4 );
 	},
 
-	unmask: identity,
+	unmask,
+};
+
+fieldMasks.nik = {
+	mask: function ( previousValue, nextValue ) {
+		const digitsOnly = nextValue.replace( /[^0-9]/g, '' );
+		return digitsOnly;
+	},
+
+	unmask,
 };
 
 // `document` is an EBANX field. Currently used for Brazilian CPF numbers
@@ -123,10 +128,10 @@ fieldMasks.document = {
 				digits.slice( 9, 11 );
 		}
 
-		return string.replace( /^[\s\.\-]+|[\s\.\-]+$/g, '' );
+		return string.replace( /^[\s.-]+|[\s.-]+$/g, '' );
 	},
 
-	unmask: identity,
+	unmask,
 };
 
 /**

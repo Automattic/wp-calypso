@@ -8,7 +8,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { localizeUrl } from 'lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 export function getSMSMessageFromResponse( response ) {
 	const phoneNumber = get( response, 'body.data.phone_number' );

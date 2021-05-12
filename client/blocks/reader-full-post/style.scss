@@ -1,5 +1,3 @@
-
-
 // Styles targeted at story content
 @import './_content.scss';
 
@@ -47,7 +45,7 @@
 .reader-full-post__visit-site-container {
 	background: var( --color-surface );
 	border-bottom: 1px solid var( --color-neutral-0 );
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	font-weight: 600;
 	height: 46px;
 	margin: 0;
@@ -63,7 +61,7 @@
 	@include breakpoint-deprecated( '>660px' ) {
 		border: 0;
 		position: absolute;
-		top: 47px;
+		top: var( --masterbar-height );
 		z-index: 0;
 	}
 
@@ -125,11 +123,27 @@
 	}
 }
 
+.reader-full-post__seen-button {
+	align-items: center;
+	box-sizing: border-box;
+	color: #646970;
+	cursor: pointer;
+	display: inline-flex;
+	list-style-type: none;
+	padding: 4px;
+	position: relative;
+	user-select: none;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		top: 12px;
+	}
+}
+
 .reader-full-post__story {
 	max-width: 720px;
 
 	@include breakpoint-deprecated( '<480px' ) {
-		font-size: 15px;
+		font-size: $font-body;
 		line-height: 24px;
 	}
 
@@ -341,7 +355,7 @@
 		height: 47px;
 		justify-content: flex-end;
 		position: fixed;
-		left: 0;
+		right: 60px;
 		top: 0;
 		width: 100%;
 		z-index: z-index( 'root', '.reader-full-post__sidebar-comment-like' );
@@ -349,8 +363,9 @@
 }
 
 .reader-full-post__sidebar .like-button {
+	margin-right: 18px;
+
 	@include breakpoint-deprecated( '<660px' ) {
-		margin-right: 60px;
 		top: 9px;
 	}
 
@@ -361,7 +376,7 @@
 
 .reader-full-post__sidebar .comment-button__label,
 .reader-full-post__sidebar .like-button__label {
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
 .reader-full-post__sidebar .comment-button {
@@ -422,19 +437,19 @@
 	font-family: $serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	font-size: 26px;
+	font-size: $font-title-medium;
 	font-weight: 700;
 	line-height: 34px;
 	margin: 56px 0 0;
 	max-width: 750px;
 
 	@include breakpoint-deprecated( '>960px' ) {
-		font-size: 36px;
+		font-size: $font-headline-small;
 		line-height: 46px;
 	}
 
 	@include breakpoint-deprecated( '480px-960px' ) {
-		font-size: 32px;
+		font-size: $font-title-large;
 		line-height: 40px;
 	}
 
@@ -455,7 +470,7 @@
 .reader-full-post__header-meta {
 	display: flex;
 	flex-direction: row;
-	font-size: 15px;
+	font-size: $font-body;
 	max-width: 750px;
 }
 
@@ -544,28 +559,6 @@
 
 .reader-full-post__featured-image {
 	margin: 28px 0 26px;
-}
-
-.reader-full-post .embed-youtube,
-.reader-full-post .embed-vimeo {
-	display: block;
-	margin-bottom: 25px;
-	position: relative;
-	padding: 25px 0 56.25%;
-	// We currently have to use !important here to override the inline style on the Youtube embed
-	// - see https://github.com/Automattic/wp-calypso/issues/9615
-	text-align: initial !important;
-
-	iframe {
-		height: 100%;
-		position: absolute;
-		top: 0;
-		width: 100%;
-	}
-}
-
-.reader-full-post .embed-vimeo {
-	margin-bottom: 0;
 }
 
 .reader-full-post__unavailable-body {

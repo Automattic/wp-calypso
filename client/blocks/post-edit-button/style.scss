@@ -36,7 +36,7 @@
 }
 
 .post-edit-button__label {
-	font-size: 14px;
+	font-size: $font-body-small;
 	margin-left: 4px;
 
 	@include breakpoint-deprecated( '<480px' ) {

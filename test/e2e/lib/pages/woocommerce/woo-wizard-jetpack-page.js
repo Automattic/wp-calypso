@@ -11,16 +11,17 @@ import AsyncBaseContainer from '../../async-base-container';
 
 export default class WooWizardJetpackPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, By.css( 'div.wc-setup-content form.activate-jetpack' ) );
+		super( driver, By.css( '.woocommerce-profile-wizard__benefits-card' ) );
 	}
 
 	async selectContinueWithJetpack() {
-		const buttonSelector = By.css( 'button.button-primary' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, buttonSelector );
-		await driverHelper.clickWhenClickable( this.driver, buttonSelector );
-		return await driverHelper.waitTillNotPresent(
+		const buttonLocator = By.css( 'button.is-primary' );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, buttonLocator );
+		await this.driver.sleep( 5000 );
+		await driverHelper.clickWhenClickable( this.driver, buttonLocator );
+		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
-			buttonSelector,
+			buttonLocator,
 			this.explicitWaitMS * 20
 		);
 	}

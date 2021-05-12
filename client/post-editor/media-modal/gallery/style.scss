@@ -122,8 +122,8 @@
 	}
 }
 
-input.editor-media-modal-gallery__caption[type='text'] {
-	font-size: 12px;
+input.editor-media-modal-gallery__caption.form-text-input[type='text'] {
+	font-size: $font-body-extra-small;
 
 	&:focus {
 		box-shadow: none;
@@ -292,7 +292,7 @@ input[type].editor-media-modal-gallery__input-width-auto {
 .editor-media-modal-gallery__preview-individual .wp-caption-dd {
 	background: var( --color-neutral-0 );
 	color: var( --color-neutral-50 );
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 1.7;
 	padding: 16px;
 }

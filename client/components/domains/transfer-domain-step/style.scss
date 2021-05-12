@@ -137,7 +137,7 @@
 	border: 1px solid var( --color-neutral-10 );
 	background-color: var( --color-neutral-0 );
 	color: var( --color-neutral-50 );
-	font-size: 18px;
+	font-size: $font-title-small;
 	text-align: center;
 	margin-right: 15px;
 	flex-shrink: 0;
@@ -156,7 +156,7 @@
 		color: var( --color-neutral-50 );
 		align-items: center;
 		display: flex;
-		font-size: 16px;
+		font-size: $font-body;
 		justify-content: space-between;
 	}
 
@@ -198,7 +198,7 @@
 }
 
 .transfer-domain-step__lock-status {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	display: flex;
 	align-items: center;
 	margin-left: 10px;
@@ -244,11 +244,11 @@
 
 	p {
 		color: var( --color-neutral-40 );
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 }
 
-input {
+input[type='text'].form-text-input {
 	&.transfer-domain-step__auth-code-input {
 		width: 200px;
 		margin-top: 15px;
@@ -284,13 +284,13 @@ input {
 
 	legend {
 		small {
-			font-size: 14px;
+			font-size: $font-body-small;
 			padding-left: 10px;
 			color: var( --color-primary );
 		}
 
 		color: var( --color-neutral-70 );
 		margin-bottom: 0;
-		font-size: 16px;
+		font-size: $font-body;
 	}
 }

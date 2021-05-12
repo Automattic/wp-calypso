@@ -30,6 +30,10 @@
 		}
 	}
 
+	&.is-seen {
+		opacity: 0.5;
+	}
+
 	&.has-thumbnail {
 		.reader-featured-image {
 			flex-basis: auto;
@@ -84,7 +88,7 @@
 			.reader-post-card__title .reader-post-card__title-link {
 				color: var( --color-text-inverted );
 				display: inline;
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 				letter-spacing: 0.01em;
 			}
 
@@ -190,7 +194,7 @@
 		}
 
 		.reader-post-card__post-details .reader-excerpt {
-			font-size: 15px;
+			font-size: $font-body;
 			font-weight: 400;
 			margin-top: 4px;
 			max-height: 16px * 1.4;
@@ -250,7 +254,7 @@
 
 .reader-post-card__byline {
 	display: flex;
-	font-size: 13px;
+	font-size: $font-body-small;
 }
 
 .reader-post-card__author::after {
@@ -345,6 +349,7 @@
 	fill: var( --color-neutral-light );
 	flex: 0 0 15px;
 	margin-right: 5px;
+	margin-top: 3px;
 }
 
 .reader-post-card__byline .reader-avatar {
@@ -357,7 +362,7 @@
 	.gravatar {
 		float: left;
 		height: 32px;
-		margin: 2px 6px 0 0;
+		margin: 4px 6px 0 0;
 		vertical-align: text-top;
 		width: 32px;
 	}
@@ -369,6 +374,7 @@
 	.site-icon {
 		width: 32px !important;
 		height: 32px !important;
+		/* stylelint-disable-next-line scales/font-size */
 		font-size: 32px !important;
 		line-height: 32px !important;
 	}
@@ -428,21 +434,17 @@
 .reader-post-card__title-link:visited {
 	color: var( --color-neutral-70 );
 	cursor: pointer;
-	font-size: 19px;
+	font-size: $font-title-small;
 	font-weight: 600;
 	display: block;
 
 	&:hover {
 		color: var( --color-neutral-70 );
 	}
-
-	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 19px;
-	}
 }
 
 .reader-post-card .reader-excerpt {
-	font-size: 16px;
+	font-size: $font-body;
 	line-height: 1.55;
 	font-weight: 400;
 	margin-top: 9px;
@@ -499,7 +501,7 @@
 
 // Action buttons in post card
 .reader-post-card.card .reader-post-actions__item {
-	font-size: 14px;
+	font-size: $font-body-small;
 	height: 22px;
 
 	&.reader-post-actions__visit .gridicon {
@@ -514,7 +516,9 @@
 
 	.reader-share__button .gridicon {
 		position: relative;
-		top: 1px;
+		top: 0;
+		margin-right: 0;
+		margin-top: 0;
 	}
 
 	.like-button .gridicon {
@@ -538,11 +542,11 @@
 	.comment-button__label-status,
 	.like-button__label-status {
 		@include breakpoint-deprecated( '>960px' ) {
-			display: none;
+			@include hide-content-accessibly();
 		}
 
 		@include breakpoint-deprecated( '<660px' ) {
-			display: none;
+			@include hide-content-accessibly();
 		}
 	}
 }

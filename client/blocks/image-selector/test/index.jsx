@@ -6,7 +6,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { noop } from 'lodash';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import React from 'react';
@@ -17,29 +16,26 @@ import sinon from 'sinon';
  */
 import { ImageSelector } from '../';
 
+const noop = () => {};
+
 jest.mock( 'event', () => {}, { virtual: true } );
-jest.mock( 'lib/media/store', () => ( {
-	dispatchToken: require( 'dispatcher' ).register( () => {} ),
-	get: ( siteId, itemId ) => require( './fixtures' ).DUMMY_MEDIA[ itemId ],
-	on: () => {},
-} ) );
-jest.mock( 'state/ui/media-modal/selectors', () => ( {
+jest.mock( 'calypso/state/ui/media-modal/selectors', () => ( {
 	view: () => {},
 	getMediaModalView: () => {},
 } ) );
-jest.mock( 'state/selectors/get-sites-items', () => ( {
+jest.mock( 'calypso/state/selectors/get-sites-items', () => ( {
 	__esModule: true,
 	default: () => ( { 1: '' } ),
 } ) );
-jest.mock( 'state/ui/editor/selectors', () => ( {
+jest.mock( 'calypso/state/editor/selectors', () => ( {
 	postId: '',
 	getEditorPostId: () => {},
 } ) );
-jest.mock( 'state/ui/selectors', () => ( {
+jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: jest.fn( () => require( './fixtures' ).DUMMY_SITE_ID ),
 	getSelectedSite: () => {},
 } ) );
-jest.mock( 'state/selectors/get-current-locale-slug', () => () => 'en' );
+jest.mock( 'calypso/state/selectors/get-current-locale-slug', () => () => 'en' );
 
 describe( 'ImageSelector', () => {
 	const testProps = {
@@ -47,6 +43,7 @@ describe( 'ImageSelector', () => {
 		onImageSelected: noop,
 		onRemoveImage: noop,
 		imageIds: [],
+		selectMediaItems: noop,
 	};
 	const store = {
 		getState: () => ( {
@@ -83,28 +80,6 @@ describe( 'ImageSelector', () => {
 			);
 		} );
 
-		test( 'should not show an uploader when an image exists and multiple images not allowed', () => {
-			const wrapper = mount(
-				<Provider store={ store }>
-					<ImageSelector { ...testProps } imageIds={ [ 100 ] } />
-				</Provider>
-			);
-
-			expect( wrapper.find( '.image-selector__uploader-wrapper' ).hostNodes() ).to.have.lengthOf(
-				0
-			);
-		} );
-
-		test( 'should show image when valid ID is passed', () => {
-			const wrapper = mount(
-				<Provider store={ store }>
-					<ImageSelector { ...testProps } imageIds={ [ 100 ] } />
-				</Provider>
-			);
-
-			expect( wrapper.find( '.image-selector__item' ).hostNodes() ).to.have.lengthOf( 1 );
-		} );
-
 		test( 'should not show image when invalid ID is passed', () => {
 			const wrapper = mount(
 				<Provider store={ store }>
@@ -126,24 +101,6 @@ describe( 'ImageSelector', () => {
 
 			wrapper.find( '.image-selector__uploader-wrapper' ).hostNodes().simulate( 'click' );
 			expect( wrapper.find( 'ImageSelector' ).instance().state.isSelecting ).to.be.true;
-		} );
-
-		test( 'should pass back image for removal when remove button is clicked', () => {
-			const mockOnRemoveImage = sinon.spy();
-			const wrapper = mount(
-				<Provider store={ store }>
-					<ImageSelector
-						{ ...testProps }
-						imageIds={ [ 100 ] }
-						onRemoveImage={ mockOnRemoveImage }
-					/>
-				</Provider>
-			);
-
-			wrapper.find( '.image-selector__remove' ).hostNodes().simulate( 'click' );
-			expect( mockOnRemoveImage ).to.have.been.calledWith(
-				require( './fixtures' ).DUMMY_MEDIA[ 100 ]
-			);
 		} );
 
 		test( 'should pass back image when file is dropped', () => {

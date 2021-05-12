@@ -1,5 +1,5 @@
 /**
- * Module dependencies
+ * Internal dependencies
  */
 import MeTwoStepSMS from './me.two-step.sms';
 

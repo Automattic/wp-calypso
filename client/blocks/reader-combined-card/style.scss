@@ -1,7 +1,7 @@
 .reader-combined-card__header {
-	font-size: 13px;
+	font-size: $font-body-small;
 	display: flex;
-	max-height: 32px;
+	max-height: 34px;
 	margin-bottom: 20px;
 }
 
@@ -14,7 +14,7 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	max-height: 32px;
+	max-height: 34px;
 }
 
 .reader-combined-card__site-link {
@@ -105,6 +105,10 @@
 	margin-bottom: 20px;
 	position: relative;
 
+	&.is-seen {
+		opacity: 0.5;
+	}
+
 	&.is-selected {
 		&::before {
 			content: '';
@@ -165,11 +169,11 @@
 }
 
 .reader-combined-card__post-author-and-time {
-	font-size: 13px;
+	font-size: $font-body-small;
 	color: var( --color-text-subtle );
 	font-family: $sans;
 	overflow: hidden;
-	max-height: 13px * 1.4 * 1;
+	max-height: 14px * 1.4 * 1;
 	word-wrap: break-word;
 	position: relative;
 	margin-top: 3px;
@@ -203,7 +207,7 @@
 }
 
 .reader-combined-card__post .reader-excerpt {
-	font-size: 15px;
+	font-size: $font-body;
 	font-weight: 400;
 	overflow: hidden;
 	max-height: 16px * 1.4 * 1;

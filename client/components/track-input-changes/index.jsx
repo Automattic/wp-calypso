@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { assign, noop } from 'lodash';
+
+const noop = () => {};
 
 export default class TrackInputChanges extends Component {
 	static displayName = 'TrackInputChanges';
@@ -36,7 +36,8 @@ export default class TrackInputChanges extends Component {
 		// Multiple children not supported
 		const child = React.Children.only( this.props.children );
 
-		const props = assign( {}, child.props, {
+		const props = {
+			...child.props,
 			onChange: ( event ) => {
 				if ( typeof child.props.onChange === 'function' ) {
 					child.props.onChange.call( child, event );
@@ -49,7 +50,7 @@ export default class TrackInputChanges extends Component {
 				}
 				this.onInputBlur( event );
 			},
-		} );
+		};
 
 		return React.cloneElement( child, props );
 	}

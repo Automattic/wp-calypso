@@ -1,7 +1,7 @@
 // Comment Base Style
 
 .card.comment {
-	font-size: 14px;
+	font-size: $font-body-small;
 	margin: 0 auto;
 	padding: 0;
 
@@ -105,7 +105,7 @@
 
 	.comment__date,
 	.comment__author-url {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 	}
 
 	.comment__author-url-separator {
@@ -142,7 +142,7 @@
 
 	.popover__inner {
 		color: var( --color-text-subtle );
-		font-size: 13px;
+		font-size: $font-body-small;
 		max-width: 220px;
 		padding: 16px;
 		text-align: left;
@@ -194,7 +194,7 @@
 	.comment__status-label {
 		border-radius: 9px;
 		float: right;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		margin-left: 8px;
 		padding: 0 10px;
 
@@ -251,7 +251,11 @@
 	position: relative;
 
 	&::after {
-		background: linear-gradient( to right, rgba( var( --color-surface-rgb ), 0 ), rgba( var( --color-surface-rgb ), 1 ) 50% );
+		background: linear-gradient(
+			to right,
+			rgba( var( --color-surface-rgb ), 0 ),
+			rgba( var( --color-surface-rgb ), 1 ) 50%
+		);
 		content: '';
 		height: 20px;
 		position: absolute;
@@ -284,8 +288,6 @@
 // Comment Post Link Block
 
 .comment__post-link {
-	font-family: $serif;
-
 	a {
 		color: var( --color-text-subtle );
 	}
@@ -385,7 +387,7 @@
 }
 
 .comment__reply-textarea {
-	font-size: 14px;
+	font-size: $font-body-small;
 	height: 47px; // 1 line
 	line-height: 21px;
 	min-height: 47px; // 1 line
@@ -458,7 +460,7 @@
 
 	input[type='text'],
 	textarea {
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 
 	.info-popover {

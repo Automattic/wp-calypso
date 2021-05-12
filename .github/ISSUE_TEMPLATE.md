@@ -30,8 +30,8 @@ PLEASE NOTE
 - Everything is optional, but try to add as many details as possible.
 
 Docs & troubleshooting:
-https://github.com/Automattic/wp-calypso/blob/master/docs/CONTRIBUTING.md
-https://github.com/Automattic/wp-calypso/blob/master/docs/troubleshooting.md
+https://github.com/Automattic/wp-calypso/blob/HEAD/docs/CONTRIBUTING.md
+https://github.com/Automattic/wp-calypso/blob/HEAD/docs/troubleshooting.md
 
 Helpful tips for screenshots:
 https://wordpress.com/support/make-a-screenshot/

@@ -18,7 +18,7 @@
 		box-sizing: border-box;
 		clear: none;
 		float: none;
-		font-size: 16px;
+		font-size: $font-body;
 		margin: 0;
 		text-align: left;
 
@@ -32,7 +32,7 @@
 			float: none;
 			width: 100%;
 			text-align: left;
-			font-size: 14px;
+			font-size: $font-body-small;
 
 			&:first-child {
 				border-top: none;
@@ -50,7 +50,7 @@
 				float: left;
 				text-transform: none;
 				letter-spacing: 0;
-				font-size: 14px;
+				font-size: $font-body-small;
 			}
 
 			.gridicon {
@@ -107,7 +107,7 @@
 			letter-spacing: 0.1em;
 
 			@include breakpoint-deprecated( '>480px' ) {
-				font-size: 11px;
+				font-size: $font-body-extra-small;
 				line-height: inherit;
 				float: none;
 			}
@@ -136,7 +136,7 @@
 			@include breakpoint-deprecated( '<480px' ) {
 				clear: none;
 				float: right;
-				font-size: 16px;
+				font-size: $font-body;
 				padding: 0 20px 0 10px;
 			}
 		}
@@ -236,7 +236,7 @@
 		}
 
 		.label {
-			font-size: 14px;
+			font-size: $font-body-small;
 			line-height: 24px;
 			float: left;
 		}

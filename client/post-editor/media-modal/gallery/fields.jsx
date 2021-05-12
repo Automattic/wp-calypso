@@ -4,17 +4,19 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { assign, fromPairs, includes, noop, times } from 'lodash';
+import { includes, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import EditorMediaModalFieldset from '../fieldset';
-import SelectDropdown from 'components/select-dropdown';
-import FormCheckbox from 'components/forms/form-checkbox';
-import { GalleryColumnedTypes, GallerySizeableTypes } from 'lib/media/constants';
-import { isModuleActive } from 'lib/site/utils';
+import SelectDropdown from 'calypso/components/select-dropdown';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import { GalleryColumnedTypes, GallerySizeableTypes } from 'calypso/lib/media/constants';
+import { isModuleActive } from 'calypso/lib/site/utils';
+
+const noop = () => {};
 
 export class EditorMediaModalGalleryFields extends React.Component {
 	static propTypes = {
@@ -39,7 +41,7 @@ export class EditorMediaModalGalleryFields extends React.Component {
 		};
 
 		if ( site && ( ! site.jetpack || isModuleActive( site, 'tiled-gallery' ) ) ) {
-			assign( options, {
+			Object.assign( options, {
 				rectangular: this.props.translate( 'Tiled Mosaic' ),
 				square: this.props.translate( 'Square Tiles' ),
 				circle: this.props.translate( 'Circles' ),
@@ -48,7 +50,7 @@ export class EditorMediaModalGalleryFields extends React.Component {
 		}
 
 		if ( site && ( ! site.jetpack || isModuleActive( site, 'shortcodes' ) ) ) {
-			assign( options, {
+			Object.assign( options, {
 				slideshow: this.props.translate( 'Slideshow' ),
 			} );
 		}
@@ -83,7 +85,7 @@ export class EditorMediaModalGalleryFields extends React.Component {
 
 	getColumnOptions = () => {
 		const max = Math.min( this.props.numberOfItems, 9 );
-		return fromPairs( times( max, ( n ) => [ n + 1, ( n + 1 ).toString() ] ) );
+		return Object.fromEntries( times( max, ( n ) => [ n + 1, ( n + 1 ).toString() ] ) );
 	};
 
 	updateRandomOrder = ( event ) => {

@@ -10,7 +10,7 @@ ul.module-tabs {
 
 	.module-tab {
 		margin: 0;
-		font-size: 16px;
+		font-size: $font-body;
 		clear: none;
 		border-top: 1px solid var( --color-neutral-0 );
 		box-sizing: border-box;
@@ -61,13 +61,13 @@ ul.module-tabs {
 		}
 
 		.label {
-			font-size: 11px;
+			font-size: $font-body-extra-small;
 			letter-spacing: 0.1em;
 			line-height: inherit;
 			text-transform: uppercase;
 
 			@include breakpoint-deprecated( '<480px' ) {
-				font-size: 14px;
+				font-size: $font-body-small;
 				line-height: 24px;
 				float: left;
 			}
@@ -97,7 +97,7 @@ ul.module-tabs {
 			@include breakpoint-deprecated( '<480px' ) {
 				clear: none;
 				float: right;
-				font-size: 16px;
+				font-size: $font-body;
 				margin-right: 24px;
 				padding: 0;
 			}
@@ -197,7 +197,7 @@ ul.module-tabs {
 		}
 
 		.label {
-			font-size: 14px;
+			font-size: $font-body-small;
 			line-height: 24px;
 			float: left;
 		}

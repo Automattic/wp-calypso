@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import debugModule from 'debug';
 import React from 'react';
 import page from 'page';
 import { isEmpty } from 'lodash';
@@ -8,9 +9,9 @@ import { isEmpty } from 'lodash';
 /**
  * Internal Dependencies
  */
-import config from 'config';
-import { sectionify } from 'lib/route';
-import { recordPageView } from 'lib/analytics/page-view';
+import config from '@automattic/calypso-config';
+import { sectionify } from 'calypso/lib/route';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
 import SignupComponent from './main';
 import { getStepComponent } from './config/step-components';
 import {
@@ -23,16 +24,32 @@ import {
 	getFlowPageTitle,
 	shouldForceLogin,
 } from './utils';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import store from 'store';
-import { setCurrentFlowName } from 'state/signup/flow/actions';
-import { isUserLoggedIn } from 'state/current-user/selectors';
-import { getSignupProgress } from 'state/signup/progress/selectors';
-import { getCurrentFlowName } from 'state/signup/flow/selectors';
-import { login } from 'lib/paths';
-import { waitForData } from 'state/data-layer/http-data';
-import { requestGeoLocation } from 'state/data-getters';
-import { abtest } from 'lib/abtest';
+import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
+import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
+import {
+	getSiteVerticalId,
+	getSiteVerticalIsUserInput,
+} from 'calypso/state/signup/steps/site-vertical/selectors';
+import { setSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { setSiteType } from 'calypso/state/signup/steps/site-type/actions';
+import { login } from 'calypso/lib/paths';
+import { waitForHttpData } from 'calypso/state/data-layer/http-data';
+import { requestGeoLocation } from 'calypso/state/data-getters';
+import { getDotBlogVerticalId } from './config/dotblog-verticals';
+import { abtest } from 'calypso/lib/abtest';
+import user from 'calypso/lib/user';
+import getSiteId from 'calypso/state/selectors/get-site-id';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
+
+const debug = debugModule( 'calypso:signup' );
 
 /**
  * Constants
@@ -45,33 +62,111 @@ const basePageTitle = 'Signup'; // used for analytics, doesn't require translati
 let initialContext;
 
 const removeWhiteBackground = function () {
-	document.body.className = document.body.className.split( 'is-white-signup' ).join( '' );
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.remove( 'is-white-signup' );
+};
+
+const gutenbergRedirect = function ( flowName, locale ) {
+	const url = new URL( window.location );
+	let path = '/new';
+	if ( [ 'free', 'personal', 'premium', 'business', 'ecommerce' ].includes( flowName ) ) {
+		path += `/${ flowName }`;
+	}
+	if ( locale ) {
+		path += `/${ locale }`;
+	}
+
+	url.pathname = path;
+	window.location.replace( url.toString() );
+};
+
+export const addP2SignupClassName = () => {
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.add( 'is-p2-signup' );
+};
+
+export const removeP2SignupClassName = function () {
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.remove( 'is-p2-signup' );
 };
 
 export default {
 	redirectTests( context, next ) {
+		const currentFlowName = getFlowName( context.params );
+		currentFlowName === 'onboarding' && loadExperimentAssignment( 'refined_reskin_v2' );
+		currentFlowName === 'launch-site' && loadExperimentAssignment( 'hide_ecommerce_launch_site' );
 		if ( context.pathname.indexOf( 'new-launch' ) >= 0 ) {
+			next();
+		} else if ( currentFlowName === 'onboarding' ) {
 			next();
 		} else if (
 			context.pathname.indexOf( 'domain' ) >= 0 ||
 			context.pathname.indexOf( 'plan' ) >= 0 ||
+			context.pathname.indexOf( 'onboarding-registrationless' ) >= 0 ||
 			context.pathname.indexOf( 'wpcc' ) >= 0 ||
 			context.pathname.indexOf( 'launch-site' ) >= 0 ||
-			context.params.flowName === 'user' ||
-			context.params.flowName === 'account'
+			context.pathname.indexOf( 'launch-only' ) >= 0 ||
+			context.params.flowName === 'account' ||
+			context.params.flowName === 'crowdsignal' ||
+			context.params.flowName === 'pressable-nux' ||
+			context.params.flowName === 'clone-site'
 		) {
 			removeWhiteBackground();
 			next();
+		} else if ( context.pathname.includes( 'p2' ) ) {
+			// We still want to keep the original styling for the new user creation step
+			// so people know they are creating an account at WP.com.
+			if ( context.pathname.includes( 'user' ) ) {
+				removeP2SignupClassName();
+			} else {
+				addP2SignupClassName();
+			}
+
+			removeWhiteBackground();
+
+			next();
 		} else {
-			waitForData( {
-				geo: () => requestGeoLocation(),
-			} )
+			waitForHttpData( () => ( { geo: requestGeoLocation() } ) )
 				.then( ( { geo } ) => {
-					const countryCode = geo.data.body.country_short;
-					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
-						window.location.replace( window.location.origin + '/new' + window.location.search );
-					} else {
+					const countryCode = geo.data;
+					const localeFromParams = context.params.lang;
+					const flowName = getFlowName( context.params );
+
+					if ( flowName === 'free' && 'newOnboarding' === abtest( 'newUsersWithFreePlan' ) ) {
+						gutenbergRedirect( flowName, localeFromParams );
+						return;
+					}
+
+					if (
+						( ! user() || ! user().get() ) &&
+						-1 === context.pathname.indexOf( 'free' ) &&
+						-1 === context.pathname.indexOf( 'personal' ) &&
+						-1 === context.pathname.indexOf( 'premium' ) &&
+						-1 === context.pathname.indexOf( 'business' ) &&
+						-1 === context.pathname.indexOf( 'ecommerce' ) &&
+						-1 === context.pathname.indexOf( 'with-theme' ) &&
+						'variantUserless' === abtest( 'userlessCheckout', countryCode )
+					) {
 						removeWhiteBackground();
+						const stepName = getStepName( context.params );
+						const stepSectionName = getStepSectionName( context.params );
+						const urlWithLocale = getStepUrl(
+							'onboarding-registrationless',
+							stepName,
+							stepSectionName,
+							localeFromParams
+						);
+						window.location = urlWithLocale;
+					} else {
 						next();
 					}
 				} )
@@ -200,19 +295,88 @@ export default {
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
 
+		if ( ! [ 'launch-site', 'new-launch' ].includes( flowName ) ) {
+			context.store.dispatch( setSelectedSiteId( null ) );
+		}
+
+		let actualFlowName = flowName;
+		if ( flowName === 'onboarding' || flowName === 'with-design-picker' ) {
+			const experimentAssignment = await loadExperimentAssignment(
+				'design_picker_after_onboarding'
+			);
+			debug(
+				`design_picker_after_onboarding experiment variation: ${ experimentAssignment?.variationName }`
+			);
+			if ( 'treatment' === experimentAssignment?.variationName ) {
+				actualFlowName = 'with-design-picker';
+			}
+		}
+
 		context.primary = React.createElement( SignupComponent, {
 			store: context.store,
 			path: context.path,
 			initialContext,
 			locale: context.params.lang,
-			flowName: flowName,
+			flowName: actualFlowName,
 			queryObject: query,
 			refParameter: query && query.ref,
 			stepName,
 			stepSectionName,
 			stepComponent,
-			pageTitle: getFlowPageTitle( flowName ),
+			pageTitle: getFlowPageTitle( actualFlowName ),
 		} );
+
+		next();
+	},
+	setSelectedSiteForSignup( { store: signupStore, query }, next ) {
+		const { getState, dispatch } = signupStore;
+		const signupDependencies = getSignupDependencyStore( getState() );
+
+		const siteSlug = signupDependencies?.siteSlug || query?.siteSlug;
+		if ( ! siteSlug ) {
+			next();
+			return;
+		}
+		const siteId = getSiteId( getState(), siteSlug );
+		if ( siteId ) {
+			dispatch( setSelectedSiteId( siteId ) );
+			next();
+		} else {
+			// Fetch the site by siteSlug and then try to select again
+			dispatch( requestSite( siteSlug ) ).then( () => {
+				let freshSiteId = getSiteId( getState(), siteSlug );
+
+				if ( ! freshSiteId ) {
+					const wpcomStagingFragment = siteSlug.replace( /\.wordpress\.com$/, '.wpcomstaging.com' );
+					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
+				}
+
+				if ( freshSiteId ) {
+					dispatch( setSelectedSiteId( freshSiteId ) );
+					next();
+				}
+			} );
+			next();
+		}
+	},
+	importSiteInfoFromQuery( { store: signupStore, query }, next ) {
+		const state = signupStore.getState();
+		const verticalId = getSiteVerticalId( state );
+		const verticalIsUserInput = getSiteVerticalIsUserInput( state );
+		const siteType = getSiteType( state );
+
+		if ( ! siteType && query.site_type ) {
+			signupStore.dispatch( setSiteType( query.site_type ) );
+		}
+
+		if ( ( ! verticalId || ! verticalIsUserInput ) && query.vertical ) {
+			signupStore.dispatch(
+				setSiteVertical( {
+					id: getDotBlogVerticalId( query.vertical ) || query.vertical,
+					isUserInput: false,
+				} )
+			);
+		}
 
 		next();
 	},

@@ -22,8 +22,6 @@ import {
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
 	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
@@ -41,7 +39,7 @@ import {
 	SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
 	ROUTE_SET,
 	CURRENT_USER_RECEIVE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
@@ -50,6 +48,7 @@ describe( 'reducer', () => {
 			'isFormDisabled',
 			'isRequesting',
 			'isRequestingTwoFactorAuth',
+			'lastCheckedUsernameOrEmail',
 			'magicLogin',
 			'redirectTo',
 			'requestError',
@@ -107,22 +106,6 @@ describe( 'reducer', () => {
 
 			state = isRequesting( undefined, {
 				type: SOCIAL_LOGIN_REQUEST_SUCCESS,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		test( 'should not persist state', () => {
-			const state = isRequesting( true, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = isRequesting( true, {
-				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.be.false;
@@ -201,22 +184,6 @@ describe( 'reducer', () => {
 
 			expect( state ).to.be.false;
 		} );
-
-		test( 'should not persist state', () => {
-			const state = isRequestingTwoFactorAuth( true, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = isRequestingTwoFactorAuth( true, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.be.false;
-		} );
 	} );
 
 	describe( 'requestError', () => {
@@ -277,22 +244,6 @@ describe( 'reducer', () => {
 
 			expect( state ).to.be.null;
 		} );
-
-		test( 'should not persist state', () => {
-			const state = requestError( 'some error', {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = requestError( 'some error', {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.be.null;
-		} );
 	} );
 
 	describe( 'twoFactorAuthRequestError', () => {
@@ -330,22 +281,6 @@ describe( 'reducer', () => {
 		test( 'should reset the error to null when switching routes', () => {
 			const state = twoFactorAuthRequestError( 'some error', {
 				type: ROUTE_SET,
-			} );
-
-			expect( state ).to.be.null;
-		} );
-
-		test( 'should not persist state', () => {
-			const state = twoFactorAuthRequestError( 'some error', {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = twoFactorAuthRequestError( 'some error', {
-				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.be.null;
@@ -392,22 +327,6 @@ describe( 'reducer', () => {
 
 			expect( state ).to.be.null;
 		} );
-
-		test( 'should not persist state', () => {
-			const state = requestNotice( true, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = requestNotice( true, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.be.null;
-		} );
 	} );
 
 	describe( 'requestSuccess', () => {
@@ -439,22 +358,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.be.false;
-		} );
-
-		test( 'should not persist state', () => {
-			const state = requestSuccess( true, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = requestSuccess( true, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.be.null;
 		} );
 	} );
 
@@ -547,22 +450,6 @@ describe( 'reducer', () => {
 				two_step_id: 12345678,
 				two_step_nonce_authenticator: 'foo',
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = twoFactorAuth( true, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = twoFactorAuth( true, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.be.null;
 		} );
 
 		test( 'should reset the "notice" value when an SMS code request is made', () => {

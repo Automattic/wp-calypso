@@ -6,7 +6,7 @@
 .activity-log-item__restore-confirm {
 	.activity-log-item__card {
 		padding-bottom: 8px;
-		border-radius: 4px;
+		border-radius: 2px;
 		box-shadow: 0 0 0 1px rgba( var( --color-neutral-10 ), 0.5 ),
 			0 2px 5px var( --color-neutral-10 );
 		white-space: normal;
@@ -21,7 +21,7 @@
 
 	h1 {
 		color: var( --color-neutral-70 );
-		font-size: 24px;
+		font-size: $font-title-medium;
 		height: 2em;
 		line-height: 32px;
 		margin-top: 0.5em;
@@ -30,7 +30,7 @@
 }
 
 .activity-log-confirm-dialog__title {
-	font-size: 21px;
+	font-size: $font-title-small;
 	margin-bottom: 12px;
 	line-height: 1;
 }
@@ -87,7 +87,7 @@
 .activity-log-confirm-dialog__line {
 	padding: 14px 24px 14px 44px;
 	text-align: left;
-	font-size: 13px;
+	font-size: $font-body-small;
 	border-bottom: 1px solid var( --color-neutral-5 );
 
 	&:first-of-type {
@@ -138,7 +138,7 @@
 
 	@include breakpoint-deprecated( '<480px' ) {
 		margin-bottom: 4px;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 	}
 
 	.gridicon {
@@ -173,6 +173,15 @@
 			margin-left: 0;
 			margin-right: 10px;
 		}
+	}
+}
+
+.activity-log-confirm-dialog__secondary-actions {
+	
+	.external-link {
+		display: inline-block;
+		padding: 8px 8px 0 0;
+		font-size: $font-body-small;
 	}
 }
 

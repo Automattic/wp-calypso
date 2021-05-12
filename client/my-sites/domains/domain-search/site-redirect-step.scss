@@ -3,8 +3,9 @@
 .site-redirect-step {
 	padding: 0;
 
-	fieldset {
+	.form-fieldset {
 		clear: left;
+		margin-bottom: 0;
 	}
 
 	form.map-domain-step__form {
@@ -14,7 +15,7 @@
 
 	p {
 		color: var( --color-neutral-70 );
-		font-size: 13px;
+		font-size: $font-body-small;
 		font-weight: 600;
 		margin-bottom: 0;
 		opacity: 0.7;
@@ -43,7 +44,7 @@
 	}
 }
 
-input.site-redirect-step__external-domain {
+input[type='text'].form-text-input.site-redirect-step__external-domain {
 	@include breakpoint-deprecated( '>660px' ) {
 		float: left;
 		width: calc( 100% - 90px );

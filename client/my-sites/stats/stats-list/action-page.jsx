@@ -9,8 +9,8 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { gaRecordEvent } from 'lib/analytics/ga';
-import Gridicon from 'components/gridicon';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import Gridicon from 'calypso/components/gridicon';
 
 const debug = debugFactory( 'calypso:stats:action-page' );
 

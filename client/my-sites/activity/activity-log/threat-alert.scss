@@ -1,10 +1,10 @@
 .activity-log__threat-alert {
 	padding: 8px 0;
-	font-size: 13px;
+	font-size: $font-body-small;
 	box-shadow: 0 -1px 0 rbga( var( --color-neutral-10 ), 0.5 );
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 
 	.foldable-card__main {
@@ -72,7 +72,7 @@
 
 	.activity-log__threat-alert-filename {
 		padding: 0 2px;
-		font-size: 13px;
+		font-size: $font-body-small;
 		font-weight: 600;
 	}
 }
@@ -87,11 +87,11 @@
 
 .activity-log__threat-alert-filename {
 	padding: 4px;
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-weight: 600;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 }
 

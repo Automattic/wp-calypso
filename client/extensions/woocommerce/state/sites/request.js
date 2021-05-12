@@ -2,19 +2,19 @@
  * External dependencies
  */
 
-import { omit, mapValues, isArray, isObject } from 'lodash';
+import { omit, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 
 const omitDeep = ( input, props ) => {
-	if ( isArray( input ) ) {
+	if ( Array.isArray( input ) ) {
 		return input.map( ( elem ) => omitDeep( elem, props ) );
 	}
 
-	if ( isObject( input ) ) {
+	if ( input !== null && typeof input === 'object' ) {
 		return mapValues( omit( input, props ), ( value ) => omitDeep( value, props ) );
 	}
 

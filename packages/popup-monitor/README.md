@@ -1,5 +1,4 @@
-Popup Monitor
-=============
+# Popup Monitor
 
 Popup Monitor is a small utility to facilitate the monitoring of a popup window close action, which is especially useful for temporary popup windows (e.g. an authorization step).
 
@@ -8,13 +7,13 @@ Popup Monitor is a small utility to facilitate the monitoring of a popup window 
 A Popup Monitor instance offers an `open` function which accepts an identical set of arguments as the standard `window.open` browser offering. When the window is closed, a `close` event is emitted to the instance with the name of the closed window.
 
 ```js
-import PopupMonitor '@automattic/popup-monitor';
+import PopupMonitor from '@automattic/popup-monitor';
 
 const popupMonitor = new PopupMonitor();
 
 popupMonitor.open( 'https://wordpress.com/', 'my-popup' );
 
-popupMonitor.on( 'close', function( name ) {
+popupMonitor.on( 'close', function ( name ) {
 	if ( 'my-popup' === name ) {
 		console.log( 'Window closed!' );
 	}

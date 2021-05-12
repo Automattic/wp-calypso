@@ -3,9 +3,10 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import Gridicon from 'components/gridicon';
-import { identity } from 'lodash';
+import Gridicon from 'calypso/components/gridicon';
 import React from 'react';
+
+const translate = ( string ) => string;
 
 describe( 'PostStatus', () => {
 	let PostStatus;
@@ -16,7 +17,7 @@ describe( 'PostStatus', () => {
 
 	describe( 'no post', () => {
 		test( 'should be empty', () => {
-			const PostStatusComponent = <PostStatus translate={ identity } />;
+			const PostStatusComponent = <PostStatus translate={ translate } />;
 			const wrapper = shallow( PostStatusComponent );
 
 			expect( wrapper ).to.be.empty;
@@ -26,7 +27,9 @@ describe( 'PostStatus', () => {
 	describe( 'post', () => {
 		describe( 'sticky', () => {
 			test( 'should render the primary components', () => {
-				const PostStatusComponent = <PostStatus post={ { sticky: true } } translate={ identity } />;
+				const PostStatusComponent = (
+					<PostStatus post={ { sticky: true } } translate={ translate } />
+				);
 				const wrapper = shallow( PostStatusComponent );
 
 				expect( wrapper ).to.have.descendants( 'span' );
@@ -41,7 +44,7 @@ describe( 'PostStatus', () => {
 			describe( 'pending', () => {
 				test( 'should render the primary components', () => {
 					const PostStatusComponent = (
-						<PostStatus post={ { sticky: false, status: 'pending' } } translate={ identity } />
+						<PostStatus post={ { sticky: false, status: 'pending' } } translate={ translate } />
 					);
 					const wrapper = shallow( PostStatusComponent );
 
@@ -60,7 +63,7 @@ describe( 'PostStatus', () => {
 							<PostStatus
 								post={ { sticky: false, status: 'future' } }
 								showAll
-								translate={ identity }
+								translate={ translate }
 							/>
 						);
 						const wrapper = shallow( PostStatusComponent );
@@ -76,7 +79,7 @@ describe( 'PostStatus', () => {
 				describe( 'not showAll', () => {
 					test( 'should be empty', () => {
 						const PostStatusComponent = (
-							<PostStatus post={ { sticky: false, status: 'future' } } translate={ identity } />
+							<PostStatus post={ { sticky: false, status: 'future' } } translate={ translate } />
 						);
 						const wrapper = shallow( PostStatusComponent );
 
@@ -92,7 +95,7 @@ describe( 'PostStatus', () => {
 							<PostStatus
 								post={ { sticky: false, status: 'trash' } }
 								showAll
-								translate={ identity }
+								translate={ translate }
 							/>
 						);
 						const wrapper = shallow( PostStatusComponent );
@@ -108,7 +111,7 @@ describe( 'PostStatus', () => {
 				describe( 'not showAll', () => {
 					test( 'should be empty', () => {
 						const PostStatusComponent = (
-							<PostStatus post={ { sticky: false, status: 'trash' } } translate={ identity } />
+							<PostStatus post={ { sticky: false, status: 'trash' } } translate={ translate } />
 						);
 						const wrapper = shallow( PostStatusComponent );
 
@@ -124,7 +127,7 @@ describe( 'PostStatus', () => {
 							<PostStatus
 								post={ { sticky: false, status: 'draft' } }
 								showAll
-								translate={ identity }
+								translate={ translate }
 							/>
 						);
 						const wrapper = shallow( PostStatusComponent );
@@ -140,7 +143,7 @@ describe( 'PostStatus', () => {
 				describe( 'not showAll', () => {
 					test( 'should be empty', () => {
 						const PostStatusComponent = (
-							<PostStatus post={ { sticky: false, status: 'draft' } } translate={ identity } />
+							<PostStatus post={ { sticky: false, status: 'draft' } } translate={ translate } />
 						);
 						const wrapper = shallow( PostStatusComponent );
 
@@ -156,7 +159,7 @@ describe( 'PostStatus', () => {
 							<PostStatus
 								post={ { sticky: false, status: 'publish' } }
 								showAll
-								translate={ identity }
+								translate={ translate }
 							/>
 						);
 						const wrapper = shallow( PostStatusComponent );
@@ -172,7 +175,7 @@ describe( 'PostStatus', () => {
 				describe( 'not showAll', () => {
 					test( 'should be empty', () => {
 						const PostStatusComponent = (
-							<PostStatus post={ { sticky: false, status: 'publish' } } translate={ identity } />
+							<PostStatus post={ { sticky: false, status: 'publish' } } translate={ translate } />
 						);
 						const wrapper = shallow( PostStatusComponent );
 
@@ -184,7 +187,7 @@ describe( 'PostStatus', () => {
 			describe( 'unhandled status', () => {
 				test( 'should be empty', () => {
 					const PostStatusComponent = (
-						<PostStatus post={ { sticky: false, status: 'wow' } } translate={ identity } />
+						<PostStatus post={ { sticky: false, status: 'wow' } } translate={ translate } />
 					);
 					const wrapper = shallow( PostStatusComponent );
 

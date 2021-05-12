@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { compact, find, initial } from 'lodash';
+import { compact, find } from 'lodash';
 
 /**
  * Comparator function for sorting formatted ranges
@@ -11,10 +11,14 @@ import { compact, find, initial } from 'lodash';
  *   - it starts before the other
  *   - it has the same start but ends before the other
  *
- * @param {number} aStart start index of first range
- * @param {number} aEnd end index of first range
- * @param {number} bStart start index of second range
- * @param {number} bEnd end index of second range
+ * @param {object} rangeA                  First range
+ * @param {Array}  rangeA.indices          Start and end of the first range
+ * @param {number} rangeA.indices.0 aStart Start index of first range
+ * @param {number} rangeA.indices.1 aEnd   End index of first range
+ * @param {object} rangeB                  Second range
+ * @param {Array}  rangeB.indices          Start and end of the second range
+ * @param {number} rangeB.indices.0 aStart Start index of second range
+ * @param {number} rangeB.indices.1 aEnd   End index of second range
  * @returns {number} -1/0/1 indicating sort order
  */
 const rangeSort = ( { indices: [ aStart, aEnd ] }, { indices: [ bStart, bEnd ] } ) => {
@@ -48,8 +52,10 @@ const rangeSort = ( { indices: [ aStart, aEnd ] }, { indices: [ bStart, bEnd ] }
  *
  * The initial "invisible token" ranges are not enclosed
  *
- * @param {number} innerStart start of possibly-inner range
- * @param {number} innerEnd end of possibly-inner range
+ * @param {object} range                      Range
+ * @param {Array}  range.indices              Start and end of the range
+ * @param {number} range.indices.0 innerStart Start index of the range
+ * @param {number} range.indices.1 innerEnd   End index of the range
  * @returns {Function({indices: Number[]}): boolean} performs the check
  */
 const encloses = ( { indices: [ innerStart, innerEnd ] } ) =>
@@ -86,7 +92,7 @@ const addRange = ( ranges, range ) => {
 	const parent = find( ranges, encloses( range ) );
 
 	return parent
-		? [ ...initial( ranges ), { ...parent, children: addRange( parent.children, range ) } ]
+		? [ ...ranges.slice( 0, -1 ), { ...parent, children: addRange( parent.children, range ) } ]
 		: [ ...ranges, range ];
 };
 
@@ -207,8 +213,9 @@ const newNode = ( text, range = {} ) => ( {
 /**
  * Reducer to combine ongoing results with new results
  *
- * @param {?Array} reduced existing results
- * @param {?Array} remainder new results
+ * @param {Array}  results   All results
+ * @param {?Array} results.0 Existing results
+ * @param {?Array} results.1 New results
  * @returns {Array} combined results
  */
 const joinResults = ( [ reduced, remainder ] ) =>
@@ -230,10 +237,11 @@ const joinResults = ( [ reduced, remainder ] ) =>
  * to implement some kind of stack safety here such
  * as the use of a "trampoline".
  *
- * @param {Array} accum.0 previously parsed results
- * @param {string} accum.1 remaining text to parse
- * @param {number} accum.2 current index into text string
- * @param {object} nextRange next range from formatted block
+ * @param {Array}  reducer   Reducer arguments
+ * @param {Array}  reducer.0 Previously parsed results
+ * @param {string} reducer.1 Remaining text to parse
+ * @param {number} reducer.2 Current index into text string
+ * @param {object} nextRange Next range from formatted block
  * @returns {Array} parsed results: text and nodes
  */
 const parse = ( [ prev, text, offset ], nextRange ) => {

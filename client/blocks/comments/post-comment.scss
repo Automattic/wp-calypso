@@ -23,6 +23,11 @@
 		background: transparent;
 	}
 
+	&.is-highlighted {
+		animation: highlight 2s ease-in-out;
+		animation-iteration-count: 1;
+	}
+
 	.comments__form {
 		margin-top: 10px;
 	}
@@ -59,7 +64,7 @@
 	color: var( --color-text );
 	display: flex;
 	flex-wrap: wrap;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 
 	.gravatar {
@@ -155,5 +160,5 @@ a.comments__comment-username {
 	color: var( --color-text-subtle );
 	margin-top: 0.5em;
 	margin-bottom: 0.5em;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }

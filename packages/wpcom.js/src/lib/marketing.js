@@ -1,5 +1,5 @@
 /**
- * Local module dependencies.
+ * Internal dependencies
  */
 import MarketingSurvey from './marketing.survey';
 

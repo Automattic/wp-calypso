@@ -4,23 +4,26 @@
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRtl } from 'i18n-calypso';
-import { clone, filter, findIndex, min, noop } from 'lodash';
+import { clone, filter, findIndex } from 'lodash';
 import ReactDom from 'react-dom';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
-import MediaActions from 'lib/media/actions';
-import { getMimePrefix } from 'lib/media/utils';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import { getMimePrefix } from 'calypso/lib/media/utils';
 import ListItem from './list-item';
 import ListNoResults from './list-no-results';
 import ListNoContent from './list-no-content';
 import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
-import SortedGrid from 'components/sorted-grid';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { getPreference } from 'state/preferences/selectors';
+import SortedGrid from 'calypso/components/sorted-grid';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import { selectMediaItems } from 'calypso/state/media/actions';
+import isFetchingNextPage from 'calypso/state/selectors/is-fetching-next-page';
+
+const noop = () => {};
 
 export class MediaLibraryList extends React.Component {
 	static displayName = 'MediaLibraryList';
@@ -37,22 +40,20 @@ export class MediaLibraryList extends React.Component {
 		mediaScale: PropTypes.number.isRequired,
 		thumbnailType: PropTypes.string,
 		mediaHasNextPage: PropTypes.bool,
-		mediaFetchingNextPage: PropTypes.bool,
+		isFetchingNextPage: PropTypes.bool,
 		mediaOnFetchNextPage: PropTypes.func,
 		single: PropTypes.bool,
 		scrollable: PropTypes.bool,
-		onEditItem: PropTypes.func,
 	};
 
 	static defaultProps = {
 		containerWidth: 0,
 		rowPadding: 10,
 		mediaHasNextPage: false,
-		mediaFetchingNextPage: false,
+		isFetchingNextPage: false,
 		mediaOnFetchNextPage: noop,
 		single: false,
 		scrollable: false,
-		onEditItem: noop,
 	};
 
 	state = {};
@@ -138,7 +139,7 @@ export class MediaLibraryList extends React.Component {
 		} );
 
 		if ( this.props.site ) {
-			MediaActions.setLibrarySelectedItems( this.props.site.ID, selectedItems );
+			this.props.selectMediaItems( this.props.site.ID, selectedItems );
 		}
 	};
 
@@ -147,18 +148,16 @@ export class MediaLibraryList extends React.Component {
 	};
 
 	getGroupLabel = ( date ) => {
-		const itemDate = new Date( date );
-		const currentDate = new Date();
-
-		if ( itemDate.getFullYear() === currentDate.getFullYear() ) {
-			return this.props.moment( date ).format( 'MMM D' );
-		}
-
-		return this.props.moment( date ).format( 'MMM D, YYYY' );
+		return this.props.moment( date ).format( 'LL' );
 	};
 
-	getItemGroup = ( item ) =>
-		min( [ item.date.slice( 0, 10 ), this.props.moment( new Date() ).format( 'YYYY-MM-DD' ) ] );
+	getItemGroup = ( item ) => {
+		const minDate = Math.min(
+			new Date( item.date.slice( 0, 10 ) ).getTime(),
+			new Date().getTime()
+		);
+		return this.props.moment( minDate ).format( 'YYYY-MM-DD' );
+	};
 
 	renderItem = ( item ) => {
 		const index = findIndex( this.props.media, { ID: item.ID } );
@@ -183,7 +182,6 @@ export class MediaLibraryList extends React.Component {
 				showGalleryHelp={ showGalleryHelp }
 				selectedIndex={ selectedIndex }
 				onToggle={ this.toggleItem }
-				onEditItem={ this.props.onEditItem }
 			/>
 		);
 	};
@@ -249,7 +247,7 @@ export class MediaLibraryList extends React.Component {
 				items={ this.props.media || [] }
 				itemsPerRow={ this.getItemsPerRow() }
 				lastPage={ ! this.props.mediaHasNextPage }
-				fetchingNextPage={ this.props.mediaFetchingNextPage }
+				fetchingNextPage={ this.props.isFetchingNextPage }
 				guessedItemHeight={ this.getMediaItemHeight() }
 				fetchNextPage={ onFetchNextPage }
 				getItemRef={ this.getItemRef }
@@ -261,7 +259,11 @@ export class MediaLibraryList extends React.Component {
 	}
 }
 
-export default connect( ( state, { site } ) => ( {
-	mediaScale: getPreference( state, 'mediaScale' ),
-	selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
-} ) )( withRtl( withLocalizedMoment( MediaLibraryList ) ) );
+export default connect(
+	( state, { site } ) => ( {
+		mediaScale: getPreference( state, 'mediaScale' ),
+		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
+		isFetchingNextPage: isFetchingNextPage( state, site?.ID ),
+	} ),
+	{ selectMediaItems }
+)( withRtl( withLocalizedMoment( MediaLibraryList ) ) );

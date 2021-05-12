@@ -6,15 +6,15 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { flow, get } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { selectPostRevision } from 'state/posts/revisions/actions';
-import { getPostRevisionAuthor } from 'state/posts/revisions/authors/selectors';
-import { isSingleUserSite } from 'state/sites/selectors';
-import TimeSince from 'components/time-since';
+import { selectPostRevision } from 'calypso/state/posts/revisions/actions';
+import { getPostRevisionAuthor } from 'calypso/state/posts/revisions/authors/selectors';
+import { isSingleUserSite } from 'calypso/state/sites/selectors';
+import TimeSince from 'calypso/components/time-since';
 
 class EditorRevisionsListItem extends PureComponent {
 	selectRevision = () => {
@@ -105,17 +105,14 @@ EditorRevisionsListItem.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default flow(
-	localize,
-	connect(
-		( state, { revision, siteId } ) => ( {
-			authorName: get(
-				getPostRevisionAuthor( state, get( revision, 'post_author' ) ),
-				'display_name',
-				''
-			),
-			isMultiUserSite: ! isSingleUserSite( state, siteId ),
-		} ),
-		{ selectPostRevision }
-	)
-)( EditorRevisionsListItem );
+export default connect(
+	( state, { revision, siteId } ) => ( {
+		authorName: get(
+			getPostRevisionAuthor( state, get( revision, 'post_author' ) ),
+			'display_name',
+			''
+		),
+		isMultiUserSite: ! isSingleUserSite( state, siteId ),
+	} ),
+	{ selectPostRevision }
+)( localize( EditorRevisionsListItem ) );

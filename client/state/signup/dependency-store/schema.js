@@ -29,6 +29,14 @@ export const dependencyStoreSchema = {
 				},
 			],
 		},
+		selectedDesign: {
+			fonts: {
+				headings: { type: 'string' },
+				base: { type: 'string' },
+			},
+			template: { type: 'string' },
+			theme: { type: 'string' },
+		},
 		surveyQuestion: { type: 'string' },
 		surveySiteType: { type: 'string' },
 		theme: { type: 'string' },

@@ -24,7 +24,6 @@ import {
 	CheckoutSteps,
 	useSelect,
 	useDispatch,
-	useFormStatus,
 	createRegistry,
 	useRegisterStore,
 	useIsStepComplete,
@@ -46,7 +45,6 @@ describe( 'Checkout', () => {
 			beforeEach( () => {
 				MyCheckout = () => (
 					<CheckoutProvider
-						locale="en-us"
 						items={ items }
 						total={ total }
 						onPaymentComplete={ noop }
@@ -55,6 +53,7 @@ describe( 'Checkout', () => {
 						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
+						initiallySelectedPaymentMethodId={ mockMethod.id }
 					>
 						<Checkout />
 					</CheckoutProvider>
@@ -112,7 +111,6 @@ describe( 'Checkout', () => {
 				const registry = createRegistry();
 				MyCheckout = () => (
 					<CheckoutProvider
-						locale="en-us"
 						items={ items }
 						total={ total }
 						onPaymentComplete={ noop }
@@ -122,6 +120,7 @@ describe( 'Checkout', () => {
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
 						registry={ registry }
+						initiallySelectedPaymentMethodId={ mockMethod.id }
 					>
 						<Checkout />
 					</CheckoutProvider>
@@ -178,7 +177,6 @@ describe( 'Checkout', () => {
 				const { items, total } = createMockItems();
 				const MyCheckout = () => (
 					<CheckoutProvider
-						locale="en-us"
 						items={ items }
 						total={ total }
 						onPaymentComplete={ noop }
@@ -187,6 +185,7 @@ describe( 'Checkout', () => {
 						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
+						initiallySelectedPaymentMethodId={ mockMethod.id }
 					>
 						<Checkout />
 					</CheckoutProvider>
@@ -196,7 +195,7 @@ describe( 'Checkout', () => {
 			} );
 
 			it( 'makes the review step active', () => {
-				const activeSteps = container.querySelectorAll( '.checkout-step--is-active' );
+				const activeSteps = container.querySelectorAll( '.checkout-step.is-active' );
 				expect( activeSteps ).toHaveLength( 1 );
 				expect( activeSteps[ 0 ] ).toHaveTextContent( 'Review your order' );
 			} );
@@ -218,12 +217,11 @@ describe( 'Checkout', () => {
 		describe( 'when clicking continue from the first step', function () {
 			let container;
 
-			beforeEach( () => {
+			beforeEach( async () => {
 				const mockMethod = createMockMethod();
 				const { items, total } = createMockItems();
 				const MyCheckout = () => (
 					<CheckoutProvider
-						locale="en-us"
 						items={ items }
 						total={ total }
 						onPaymentComplete={ noop }
@@ -232,6 +230,7 @@ describe( 'Checkout', () => {
 						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
+						initiallySelectedPaymentMethodId={ mockMethod.id }
 					>
 						<Checkout />
 					</CheckoutProvider>
@@ -239,7 +238,9 @@ describe( 'Checkout', () => {
 				const renderResult = render( <MyCheckout /> );
 				container = renderResult.container;
 				const firstStepContinue = renderResult.getAllByText( 'Continue' )[ 0 ];
-				fireEvent.click( firstStepContinue );
+				await act( async () => {
+					return fireEvent.click( firstStepContinue );
+				} );
 			} );
 
 			it( 'makes the first step invisible', () => {
@@ -268,7 +269,6 @@ describe( 'Checkout', () => {
 				return (
 					<myContext.Provider value={ [ paymentData, setPaymentData ] }>
 						<CheckoutProvider
-							locale="en-us"
 							items={ items }
 							total={ total }
 							onPaymentComplete={ noop }
@@ -277,6 +277,7 @@ describe( 'Checkout', () => {
 							showSuccessMessage={ noop }
 							paymentMethods={ [ mockMethod ] }
 							paymentProcessors={ getMockPaymentProcessors() }
+							initiallySelectedPaymentMethodId={ mockMethod.id }
 						>
 							<Checkout>
 								{ createStepsFromStepObjects( props.steps || steps, paymentData ) }
@@ -382,7 +383,7 @@ describe( 'Checkout', () => {
 			expect( getByTextInNode( step, 'Continue' ) ).not.toBeDisabled();
 		} );
 
-		it( 'does not change steps if the continue button is clicked when the step is active and incomplete', () => {
+		it( 'does not change steps if the continue button is clicked when the step is active and incomplete', async () => {
 			const incompleteStep = {
 				...steps[ 0 ],
 				hasStepNumber: true,
@@ -395,11 +396,13 @@ describe( 'Checkout', () => {
 			const firstStep = container.querySelector( '.' + steps[ 0 ].className );
 			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
-			fireEvent.click( firstStepContinue );
+			await act( async () => {
+				return fireEvent.click( firstStepContinue );
+			} );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 		} );
 
-		it( 'does change steps if the continue button is clicked when the step is active and complete', () => {
+		it( 'does change steps if the continue button is clicked when the step is active and complete', async () => {
 			const completeStep = { ...steps[ 0 ], hasStepNumber: true, isCompleteCallback: () => true };
 			const { container, getAllByText } = render(
 				<MyCheckout steps={ [ completeStep, steps[ 4 ], steps[ 1 ] ] } />
@@ -408,7 +411,9 @@ describe( 'Checkout', () => {
 			const firstStep = container.querySelector( '.custom-summary-step-class' );
 			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
-			fireEvent.click( firstStepContinue );
+			await act( async () => {
+				return fireEvent.click( firstStepContinue );
+			} );
 			expect( firstStepContent ).toHaveStyle( 'display: none' );
 		} );
 
@@ -423,7 +428,7 @@ describe( 'Checkout', () => {
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
 			expect( firstStepContinue ).not.toBeDisabled();
 			await act( async () => {
-				await fireEvent.click( firstStepContinue );
+				return fireEvent.click( firstStepContinue );
 			} );
 			expect( firstStepContinue ).toBeDisabled();
 		} );
@@ -441,7 +446,7 @@ describe( 'Checkout', () => {
 			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 			await act( async () => {
-				await fireEvent.click( firstStepContinue );
+				return fireEvent.click( firstStepContinue );
 			} );
 			expect( firstStepContent ).toHaveStyle( 'display: none' );
 		} );
@@ -459,7 +464,7 @@ describe( 'Checkout', () => {
 			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 			await act( async () => {
-				await fireEvent.click( firstStepContinue );
+				return fireEvent.click( firstStepContinue );
 			} );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 		} );
@@ -492,23 +497,29 @@ describe( 'Checkout', () => {
 			expect( queryByTextInNode( step, 'Edit' ) ).not.toBeInTheDocument();
 		} );
 
-		it( 'renders the edit button for editable steps with a lower index than the active step', () => {
+		it( 'renders the edit button for editable steps with a lower index than the active step', async () => {
 			const { container, getAllByText } = render( <MyCheckout /> );
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
-			fireEvent.click( firstStepContinue );
+			await act( async () => {
+				return fireEvent.click( firstStepContinue );
+			} );
 			const step = container.querySelector( '.' + steps[ 1 ].className );
 			expect( getByTextInNode( step, 'Edit' ) ).toBeInTheDocument();
 		} );
 
-		it( 'does not render the edit button if the form status is submitting', () => {
+		it( 'does not render the edit button if the form status is submitting', async () => {
 			const { queryByText, getAllByText } = render(
 				<MyCheckout steps={ [ steps[ 0 ], steps[ 1 ], steps[ 2 ] ] } />
 			);
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
-			fireEvent.click( firstStepContinue );
+			await act( async () => {
+				return fireEvent.click( firstStepContinue );
+			} );
 			expect( queryByText( 'Edit' ) ).toBeInTheDocument();
 			const submitButton = getAllByText( 'Pay Please' )[ 0 ];
-			fireEvent.click( submitButton );
+			await act( async () => {
+				return fireEvent.click( submitButton );
+			} );
 			expect( queryByText( 'Edit' ) ).not.toBeInTheDocument();
 		} );
 
@@ -547,11 +558,13 @@ describe( 'Checkout', () => {
 			);
 			expect( getByText( 'Possibly Complete isComplete false' ) ).toBeInTheDocument();
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
-			fireEvent.click( firstStepContinue );
+			await act( async () => {
+				return fireEvent.click( firstStepContinue );
+			} );
 			fireEvent.change( getByLabelText( 'User Name' ), { target: { value: 'Lyra' } } );
 			await act( async () => {
 				// isComplete does not update until we press continue
-				await fireEvent.click( firstStepContinue );
+				return fireEvent.click( firstStepContinue );
 			} );
 			expect( getByText( 'Possibly Complete isComplete true' ) ).toBeInTheDocument();
 		} );
@@ -570,11 +583,10 @@ function createMockMethod() {
 }
 
 function MockSubmitButton( { disabled } ) {
-	const { setFormSubmitting } = useFormStatus();
-	const { setTransactionComplete } = useTransactionStatus();
+	const { setTransactionComplete, setTransactionPending } = useTransactionStatus();
 	const process = usePaymentProcessor( 'mock' );
 	const onClick = () => {
-		setFormSubmitting();
+		setTransactionPending();
 		process().then( ( result ) => setTransactionComplete( result ) );
 	};
 	return (
@@ -683,7 +695,6 @@ function createStepObjectConverter( paymentData ) {
 				isStepActive={ false }
 				isStepComplete={ true }
 				stepNumber={ 1 }
-				totalSteps={ 1 }
 				stepId={ stepObject.id }
 				key={ stepObject.id }
 				activeStepContent={ stepObject.activeStepContent }
