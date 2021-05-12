@@ -57,11 +57,7 @@ const ThankYouBody = styled.div`
 	> div {
 		width: 460px;
 		padding: 0 35px;
-		> div {
-			min-width: 144px;
-		}
 	}
-
 	div {
 		min-width: 144px;
 	}
@@ -190,7 +186,7 @@ const MarketplaceThankYou = () => {
 	);
 };
 
-export default function MarketplaceWrapper() {
+export default function MarketplaceWrapper(): JSX.Element {
 	return (
 		<ThemeProvider theme={ theme }>
 			<MarketplaceThankYou />
