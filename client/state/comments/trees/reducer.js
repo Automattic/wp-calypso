@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, map, reject, unionBy } from 'lodash';
+import { get, map, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +13,11 @@ import {
 	COMMENTS_TREE_SITE_ADD,
 } from 'calypso/state/action-types';
 import { keyedReducer } from 'calypso/state/utils';
+
+const unionByCommentId = ( a = [], b = [] ) => [
+	...a,
+	...b.filter( ( { commentId: bId } ) => ! a.some( ( { commentId: aId } ) => aId === bId ) ),
+];
 
 const convertToTree = ( comments ) =>
 	map(
@@ -44,10 +49,10 @@ const siteTree = ( state = [], action ) => {
 			return reject( state, { commentId: action.commentId } );
 		case COMMENTS_RECEIVE:
 			// Add the new comments to the state
-			return unionBy( convertToTree( action.comments ), state, 'commentId' );
+			return unionByCommentId( convertToTree( action.comments ), state );
 		case COMMENTS_TREE_SITE_ADD:
 			// Replace the comments of a given status with the comments freshly fetched from the server
-			return unionBy( action.tree, reject( state, { status: action.status } ), 'commentId' );
+			return unionByCommentId( action.tree, reject( state, { status: action.status } ) );
 	}
 	return state;
 };
