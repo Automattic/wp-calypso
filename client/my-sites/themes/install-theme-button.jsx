@@ -25,7 +25,6 @@ import Gridicon from 'calypso/components/gridicon';
 import './install-theme-button.scss';
 
 const InstallThemeButton = connectOptions( ( { isMultisite, isLoggedIn, siteSlug } ) => {
-	// I'm not sure if this below code is needed, or if we can enforce these conditions by only including this component in the appropriate pages.
 	if ( ! isLoggedIn || isMultisite ) {
 		return null;
 	}
