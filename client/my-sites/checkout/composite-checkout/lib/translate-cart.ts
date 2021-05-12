@@ -115,7 +115,7 @@ export function createTransactionEndpointCartFromResponseCart( {
 			products: responseCart.products.map( ( item ) =>
 				addRegistrationDataToGSuiteCartProduct( item, contactDetails )
 			),
-			tax: responseCart.tax,
+			tax: createTransactionEndpointTaxFromResponseCartTax( responseCart.tax ),
 		};
 	}
 
