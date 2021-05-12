@@ -68,7 +68,7 @@ function maybeAddFullStoryScript() {
 	fullStoryScriptLoaded = true;
 	fullStoryDebug( 'maybeAddFullStoryScript:', true );
 
-	window._fs_debug = false;
+	window._fs_debug = 'development' === process.env.NODE_ENV;
 	window._fs_host = 'fullstory.com';
 	window._fs_script = 'edge.fullstory.com/s/fs.js';
 	window._fs_org = TRACKING_IDS.fullStory;
