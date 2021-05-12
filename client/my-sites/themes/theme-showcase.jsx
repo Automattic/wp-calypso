@@ -52,6 +52,7 @@ function getInstallThemeSlug( siteSlug, hasBusinessOrEcommercePlan ) {
 	if ( ! siteSlug ) {
 		return '/themes/upload';
 	}
+
 	if ( hasBusinessOrEcommercePlan ) {
 		return `https://${ siteSlug }/wp-admin/theme-install.php`;
 	}
