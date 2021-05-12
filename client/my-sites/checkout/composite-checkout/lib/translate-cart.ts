@@ -102,10 +102,30 @@ export function createTransactionEndpointCartFromResponseCart( {
 	contactDetails: DomainContactDetails | null;
 	responseCart: ResponseCart;
 } ): WPCOMTransactionEndpointCart {
+	if ( responseCart.products.some( ( product ) => product.extra.isJetpackCheckout ) ) {
+		return {
+			blog_id: responseCart.blog_id.toString(),
+			cart_key: responseCart.blog_id.toString(),
+			create_new_blog: false,
+			is_jetpack_checkout: true,
+			coupon: responseCart.coupon || '',
+			currency: responseCart.currency,
+			temporary: false,
+			extra: [],
+			products: responseCart.products.map( ( item ) =>
+				addRegistrationDataToGSuiteCartProduct( item, contactDetails )
+			),
+			tax: createTransactionEndpointTaxFromResponseCartTax( responseCart.tax ),
+		};
+	}
+
 	return {
 		blog_id: siteId || '0',
 		cart_key: siteId || 'no-site',
 		create_new_blog: siteId ? false : true,
+		is_jetpack_checkout: responseCart.products.some(
+			( product ) => product.extra.isJetpackCheckout
+		),
 		coupon: responseCart.coupon || '',
 		currency: responseCart.currency,
 		temporary: false,

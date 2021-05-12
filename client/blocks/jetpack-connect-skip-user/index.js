@@ -28,13 +28,25 @@ class JetpackConnectSkipUser extends Component {
 		const { homeUrl, redirectAfterAuth } = this.props;
 		const slug = urlToSlug( homeUrl );
 
+		// Pull the purchase nonce out of the redirect uri
+		const urlParams = new URLSearchParams( window.location.search );
+		const calypsoEnv = urlParams.get( 'calypso_env' );
+		const redirectParams = new URLSearchParams( urlParams.get( 'redirect_to' ) );
+		const purchaseNonce = redirectParams.get( 'purchase_nonce' );
+
+		const url =
+			'development' === calypsoEnv
+				? `http://jetpack.cloud.localhost:3001/pricing/${ slug }`
+				: `https://cloud.jetpack.com/pricing/${ slug }`;
+
 		return addQueryArgs(
 			{
 				redirect: redirectAfterAuth,
 				site: slug,
 				unlinked: '1',
+				purchaseNonce,
 			},
-			`https://cloud.jetpack.com/pricing/${ slug }`
+			url
 		);
 	}
 
