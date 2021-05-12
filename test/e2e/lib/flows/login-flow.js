@@ -70,7 +70,7 @@ export default class LoginFlow {
 		// 	return;
 		// }
 
-		console.log( 'Logging in as ' + this.account.username );
+		// console.log( 'Logging in as ' + this.account.username );
 
 		let loginURL = this.account.loginURL;
 		let loginPage;
