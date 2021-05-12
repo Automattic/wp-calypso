@@ -3,8 +3,12 @@
 	max-width: 720px;
 	z-index: z-index( 'root', '.main' );
 
-	&.is-wide-layout {
+	&.is-full-width-layout {
 		max-width: 100%;
+	}
+
+	&.is-wide-layout {
+		max-width: 1040px;
 	}
 }
 
