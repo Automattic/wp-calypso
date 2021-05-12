@@ -55,7 +55,7 @@ import flows from 'calypso/signup/config/flows';
 import steps, { isDomainStepSkippable } from 'calypso/signup/config/steps';
 import { isEligibleForPageBuilder, shouldEnterPageBuilder } from 'calypso/lib/signup/page-builder';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
-import isBlankCanvasDesign from '@automattic/design-picker';
+import { isBlankCanvasDesign } from '@automattic/design-picker';
 
 /**
  * Constants
