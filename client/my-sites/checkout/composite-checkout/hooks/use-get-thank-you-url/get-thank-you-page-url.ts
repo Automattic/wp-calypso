@@ -57,6 +57,7 @@ export default function getThankYouPageUrl( {
 	isEligibleForSignupDestinationResult,
 	hideNudge,
 	isInEditor,
+	isJetpackCheckout = false,
 }: {
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
@@ -73,6 +74,7 @@ export default function getThankYouPageUrl( {
 	isEligibleForSignupDestinationResult?: boolean;
 	hideNudge?: boolean;
 	isInEditor?: boolean;
+	isJetpackCheckout?: boolean;
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -122,6 +124,16 @@ export default function getThankYouPageUrl( {
 	// The `:receiptId` string is filled in by our pending page after the PayPal checkout
 	const pendingOrReceiptId = getPendingOrReceiptId( receiptId, orderId, purchaseId );
 	debug( 'pendingOrReceiptId is', pendingOrReceiptId );
+
+	// jetpack userless checkout uses a special thank you page
+	if ( isJetpackCheckout ) {
+		debug( 'redirecting to userless jetpack thank you' );
+
+		// extract a product from the cart, in userless checkout there should only be one
+		const productSlug = cart?.products[ 0 ]?.product_slug;
+
+		return `/checkout/jetpack/thank-you/${ siteSlug }/${ productSlug ?? 'no_product' }`;
+	}
 
 	const fallbackUrl = getFallbackDestination( {
 		pendingOrReceiptId,

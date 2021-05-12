@@ -158,6 +158,7 @@ export default function CompositeCheckout( {
 		createAnalyticsEventHandler( reduxDispatch ),
 		[]
 	);
+	const updatedSiteSlug = isJetpackCheckout ? jetpackSiteSlug : siteSlug;
 
 	const showErrorMessage = useCallback(
 		( error ) => {
@@ -211,7 +212,7 @@ export default function CompositeCheckout( {
 		isInEditor,
 		isJetpackNotAtomic,
 		isPrivate,
-		siteSlug,
+		siteSlug: updatedSiteSlug,
 		isLoggedOutCart,
 		isNoSiteCart,
 		isJetpackCheckout,
@@ -260,7 +261,7 @@ export default function CompositeCheckout( {
 	);
 
 	const getThankYouUrlBase = useGetThankYouUrl( {
-		siteSlug,
+		siteSlug: updatedSiteSlug,
 		redirectTo,
 		purchaseId,
 		feature,
@@ -269,6 +270,7 @@ export default function CompositeCheckout( {
 		productAliasFromUrl,
 		hideNudge: !! isComingFromUpsell,
 		isInEditor,
+		isJetpackCheckout,
 	} );
 	const getThankYouUrl = useCallback( () => {
 		const url = getThankYouUrlBase();
@@ -329,7 +331,7 @@ export default function CompositeCheckout( {
 		isRemovingProductFromCart,
 		removeProductFromCartAndMaybeRedirect,
 	} = useRemoveFromCartAndRedirect(
-		siteSlug,
+		updatedSiteSlug,
 		siteSlugLoggedOutCart,
 		createUserAndSiteBeforeTransaction
 	);
@@ -366,7 +368,7 @@ export default function CompositeCheckout( {
 		isGooglePayAvailable,
 		isWebPayLoading,
 		storedCards,
-		siteSlug,
+		siteSlug: updatedSiteSlug,
 	} );
 	debug( 'created payment method objects', paymentMethodObjects );
 
@@ -404,7 +406,7 @@ export default function CompositeCheckout( {
 	const { analyticsPath, analyticsProps } = getAnalyticsPath(
 		purchaseId,
 		productAliasFromUrl,
-		siteSlug,
+		updatedSiteSlug,
 		feature,
 		plan
 	);
@@ -443,6 +445,7 @@ export default function CompositeCheckout( {
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const dataForProcessor: PaymentProcessorOptions = useMemo(
 		() => ( {
+			contactDetails,
 			createUserAndSiteBeforeTransaction,
 			getThankYouUrl,
 			includeDomainDetails,
@@ -451,9 +454,8 @@ export default function CompositeCheckout( {
 			reduxDispatch,
 			responseCart,
 			siteId,
-			siteSlug,
+			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
-			contactDetails,
 		} ),
 		[
 			contactDetails,
@@ -465,8 +467,8 @@ export default function CompositeCheckout( {
 			reduxDispatch,
 			responseCart,
 			siteId,
-			siteSlug,
 			stripeConfiguration,
+			updatedSiteSlug,
 		]
 	);
 
@@ -569,6 +571,8 @@ export default function CompositeCheckout( {
 		isInEditor,
 		isComingFromUpsell,
 		isFocusedLaunch,
+		siteSlug: updatedSiteSlug,
+		isJetpackCheckout,
 	} );
 
 	const handlePaymentComplete = useCallback(
@@ -592,8 +596,8 @@ export default function CompositeCheckout( {
 			recordEvent( {
 				type: 'EMPTY_CART_CTA_CLICKED',
 			} );
-			if ( siteSlug ) {
-				page( `/plans/${ siteSlug }` );
+			if ( updatedSiteSlug ) {
+				page( `/plans/${ updatedSiteSlug }` );
 			} else {
 				page( '/plans' );
 			}
@@ -617,15 +621,12 @@ export default function CompositeCheckout( {
 		);
 	}
 
-	if ( isJetpackCheckout ) {
-		siteId = parseInt( responseCart.blog_id );
-		siteSlug = responseCart.jetpack_site_slug;
-	}
+	const updatedSiteId = isJetpackCheckout ? parseInt( responseCart.blog_id ) : siteId;
 
 	return (
 		<React.Fragment>
-			<QuerySitePlans siteId={ siteId } />
-			<QuerySitePurchases siteId={ siteId } />
+			<QuerySitePlans siteId={ updatedSiteId } />
+			<QuerySitePurchases siteId={ updatedSiteId } />
 			<QueryPlans />
 			<QueryProducts />
 			<QueryContactDetailsCache />
@@ -649,8 +650,8 @@ export default function CompositeCheckout( {
 				<WPCheckout
 					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
 					changePlanLength={ changePlanLength }
-					siteId={ siteId }
-					siteUrl={ siteSlug }
+					siteId={ updatedSiteId }
+					siteUrl={ updatedSiteSlug }
 					countriesList={ countriesList }
 					getItemVariants={ getItemVariants }
 					addItemToCart={ addItemWithEssentialProperties }
