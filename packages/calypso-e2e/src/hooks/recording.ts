@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-// import * as fs from 'fs/promises';
+import * as fs from 'fs/promises';
 import { Context } from 'mocha';
 
 /**
@@ -54,20 +54,15 @@ export async function saveVideo( this: Context ): Promise< void > {
 	}
 
 	if ( this.failedTest.length === 0 ) {
+		// Videos for passing tests are currently not saved.
 		await this.page.video().delete();
 	} else {
-		// const original = await this.page.video().path();
-		const custom = await getVideoName( this.failedTest[ 0 ] );
-		// Unfortunately, the saveAs call produces two files:
-		// named file and auto-generated alphanumeric named file.
-		// I have filed an issue with the Playwright devs at
-		// https://github.com/microsoft/playwright/issues/6524.
-		// At this time, file must be manually removed.
-		await this.page.video().saveAs( custom );
-		// try {
-		// 	await fs.unlink( original );
-		// } catch ( err ) {
-		// 	console.log( 'Failed to delete video recording of passed test case.' );
-		// }
+		const original = await this.page.video().path();
+		const custom = getVideoName( this.failedTest[ 0 ] );
+		try {
+			await fs.rename( original, custom );
+		} catch ( err ) {
+			console.log( 'Failed to rename video of failing test case.' );
+		}
 	}
 }
