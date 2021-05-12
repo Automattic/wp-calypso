@@ -49,15 +49,14 @@ import RecommendedThemes from './recommended-themes';
 import './theme-showcase.scss';
 
 function getInstallThemeSlug( siteSlug, hasBusinessOrEcommercePlan ) {
-	if ( siteSlug && hasBusinessOrEcommercePlan ) {
+	if ( ! siteSlug ) {
+		return '/themes/upload';
+	}
+	if ( hasBusinessOrEcommercePlan ) {
 		return `https://${ siteSlug }/wp-admin/theme-install.php`;
 	}
 
-	if ( siteSlug ) {
-		return `/themes/upload/${ siteSlug }`;
-	}
-
-	return '/themes/upload';
+	return `/themes/upload/${ siteSlug }`;
 }
 
 const subjectsMeta = {
