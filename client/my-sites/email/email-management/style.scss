@@ -187,14 +187,12 @@
 		line-height: 24px;
 		margin-top: 18px;
 		padding-top: 18px;
-		text-align: center;
 
 		@include break-small {
 			border-top: none;
 			margin-left: 16px;
 			margin-top: 0;
 			padding-top: 0;
-			text-align: left;
 		}
 
 		> svg {
