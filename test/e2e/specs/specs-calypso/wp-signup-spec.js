@@ -996,4 +996,67 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await new DeleteAccountFlow( this.driver ).deleteAccount( username );
 		} );
 	} );
+
+	describe( 'Sign up for a site on a paid plan w/ domain name then move back to domain step @signup', function () {
+		const siteName = dataHelper.getNewBlogName();
+		const expectedDomainName = `${ siteName }.live`;
+		const emailAddress = dataHelper.getEmailAddress( siteName, signupInboxId );
+		const testDomainRegistarDetails = dataHelper.getTestDomainRegistarDetails( emailAddress );
+
+		before( async function () {
+			return await driverManager.ensureNotLoggedIn( driver );
+		} );
+
+		it( 'Can visit the start page', async function () {
+			await StartPage.Visit( driver, StartPage.getStartURL() );
+		} );
+
+		it( 'Can see the account page and enter account details', async function () {
+			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
+			return await createYourAccountPage.enterAccountDetailsAndSubmit(
+				emailAddress,
+				siteName,
+				passwordForTestAccounts
+			);
+		} );
+
+		it( 'Can then see the domains page, and can search for a blog name, can see and select a paid .live address in results ', async function () {
+			const findADomainComponent = await FindADomainComponent.Expect( driver );
+			await findADomainComponent.searchForBlogNameAndWaitForResults( expectedDomainName );
+			try {
+				return await findADomainComponent.selectDomainAddress( expectedDomainName );
+			} catch ( err ) {
+				if ( await NewUserRegistrationUnavailableComponent.Expect( driver ) ) {
+					await SlackNotifier.warn( 'SKIPPING: Domain registration is currently unavailable. ' );
+					return this.skip();
+				}
+			}
+		} );
+
+		it( 'Can then see the plans page and select the premium plan ', async function () {
+			const pickAPlanPage = await PickAPlanPage.Expect( driver );
+			const displayed = await pickAPlanPage.displayed();
+			assert.strictEqual( displayed, true, 'The pick a plan page is not displayed' );
+			return await pickAPlanPage.selectPremiumPlan();
+		} );
+
+		it( 'Can then see the sign up processing page which will finish automatically move along', async function () {
+			return await new SignUpStep( driver ).continueAlong( siteName, passwordForTestAccounts );
+		} );
+
+		it( 'Can see checkout page and enter registrar details', async function () {
+			const checkOutPage = await CheckOutPage.Expect( driver );
+			return await checkOutPage.enterRegistrarDetails( testDomainRegistarDetails );
+		} );
+
+		it( 'Can see the domain suggestions when moves back from the checkout page', async function () {
+			await driver.navigate().back();
+			const findADomainComponent = await FindADomainComponent.Expect( driver );
+			return await findADomainComponent.selectFreeAddress();
+		} );
+
+		after( 'Can delete our newly created account', async function () {
+			return await new DeleteAccountFlow( driver ).deleteAccount( siteName );
+		} );
+	} );
 } );
