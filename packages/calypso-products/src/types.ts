@@ -18,9 +18,12 @@ import type {
 	JETPACK_RESET_PLANS,
 	TERMS_LIST,
 	TYPES_LIST,
+	PERIOD_LIST,
 } from './constants';
 
-export type Features = keyof typeof features;
+const featureValues = Object.values( features );
+
+export type Feature = typeof featureValues[ number ];
 
 // WPCom
 export type WPComProductSlug = typeof WPCOM_PRODUCTS[ number ];
@@ -36,9 +39,9 @@ export interface WPComPlan extends Plan {
 		experiment: string,
 		options: Record< string, unknown >
 	) => TranslateResult[];
-	getSignupFeatures?: () => Features[];
-	getBlogSignupFeatures?: () => Features[];
-	getPortfolioSignupFeatures?: () => Features[];
+	getSignupFeatures?: () => Feature[];
+	getBlogSignupFeatures?: () => Feature[];
+	getPortfolioSignupFeatures?: () => Feature[];
 }
 
 // Jetpack
@@ -53,44 +56,25 @@ export type JetpackPurchasableItemSlug =
 	| JetpackProductSlug
 	| Exclude< JetpackPlanSlug, typeof PLAN_JETPACK_FREE >;
 
-export interface JetpackProduct {
-	title: TranslateResult;
-	description: TranslateResult;
-	forceRadios?: boolean;
-	hasPromo: boolean;
-	id: ProductSlug;
-	link: {
-		label: TranslateResult;
-		props: {
-			location: string;
-			slug: string;
-		};
-		url: string;
-	};
-	slugs: ProductSlug[];
-	options: {
-		yearly: ProductSlug[];
-		monthly: ProductSlug[];
-	};
-	optionShortNames: () => Record< ProductSlug, TranslateResult >;
-	optionActionButtonNames?: () => Record< ProductSlug, TranslateResult >;
-	optionDisplayNames: () => Record< ProductSlug, TranslateResult >;
-	optionDescriptions: () => Record< ProductSlug, TranslateResult >;
-	optionShortNamesCallback?: ( arg0: Record< string, unknown > ) => TranslateResult;
-	optionsLabelCallback?: ( arg0: Record< string, unknown > ) => TranslateResult;
-	optionsLabel: TranslateResult;
-}
-
 export interface JetpackPlan extends Plan {
 	getAnnualSlug?: () => JetpackPlanSlug;
 	getMonthlySlug?: () => JetpackPlanSlug;
-	getPlanCardFeatures?: () => Features[];
+	getPlanCardFeatures?: () => Feature[];
 }
 
 // All
 export type ProductSlug = WPComProductSlug | JetpackProductSlug;
 export type PlanSlug = WPComPlanSlug | JetpackPlanSlug;
 export type PurchasableItemSlug = WPComPurchasableItemSlug | JetpackPurchasableItemSlug;
+
+export interface Product {
+	product_name: TranslateResult;
+	product_slug: ProductSlug;
+	type: ProductSlug;
+	term: typeof TERMS_LIST[ number ];
+	bill_period: typeof PERIOD_LIST[ number ];
+	getFeatures?: () => Feature[];
+}
 
 export interface Plan {
 	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK;
@@ -104,6 +88,6 @@ export interface Plan {
 	getTitle: () => TranslateResult;
 	getDescription: () => TranslateResult;
 	getTagline: () => TranslateResult;
-	getHiddenFeatures?: () => Features[];
-	getInferiorHiddenFeatures?: () => Features[];
+	getHiddenFeatures?: () => Feature[];
+	getInferiorHiddenFeatures?: () => Feature[];
 }

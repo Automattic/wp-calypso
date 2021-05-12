@@ -12,7 +12,7 @@ import { getJetpackProductsCallToAction } from './translations';
 /**
  * Type dependencies
  */
-import type { Product } from './products-list';
+import type { Product } from './types';
 
 /**
  * Get Jetpack product call-to-action based on the product purchase object.
@@ -20,7 +20,9 @@ import type { Product } from './products-list';
  * @param {object} product Product purchase object
  * @returns {TranslateResult} Product display name
  */
-export function getJetpackProductCallToAction( product: object ): TranslateResult | undefined {
+export function getJetpackProductCallToAction(
+	product: Record< string, unknown >
+): TranslateResult | undefined {
 	product = formatProduct( product );
 	const jetpackProductsCallToActions = getJetpackProductsCallToAction() as Record<
 		string,
